@@ -17,7 +17,7 @@ class DBManagerTest extends TestCase
     /**
      * @var DBManager
      */
-    protected $_db;
+    private $db;
     protected $created = [];
 
     protected $backupGlobals = false;
@@ -43,34 +43,34 @@ class DBManagerTest extends TestCase
 
     protected function setUp() : void
     {
-        if (empty($this->_db)) {
-            $this->_db = DBManagerFactory::getInstance();
-            $this->dbEncode = $this->_db->getEncode();
+        if (empty($this->db)) {
+            $this->db = DBManagerFactory::getInstance();
+            $this->dbEncode = $this->db->getEncode();
         }
         $this->created = [];
     }
 
     protected function tearDown() : void
     {
-        $this->_db->setEncode($this->dbEncode);
+        $this->db->setEncode($this->dbEncode);
         foreach ($this->created as $table => $dummy) {
-            $this->_db->dropTableName($table);
+            $this->db->dropTableName($table);
         }
     }
 
     protected function createTableParams($tablename, $fieldDefs, $indices)
     {
         $this->created[$tablename] = true;
-        return $this->_db->createTableParams($tablename, $fieldDefs, $indices);
+        return $this->db->createTableParams($tablename, $fieldDefs, $indices);
     }
 
     protected function dropTableName($tablename)
     {
         unset($this->created[$tablename]);
-        return $this->_db->dropTableName($tablename);
+        return $this->db->dropTableName($tablename);
     }
 
-    private function _createRecords(
+    private function createRecords(
         $num
     ) {
         $beanIds = [];
@@ -78,41 +78,41 @@ class DBManagerTest extends TestCase
             $bean = new Contact();
             $bean->id = create_guid();
             $bean->last_name = "foobar";
-            $this->_db->insert($bean);
+            $this->db->insert($bean);
             $beanIds[] = $bean->id;
         }
 
         return $beanIds;
     }
 
-    private function _removeRecords(
+    private function removeRecords(
         array $ids
     ) {
         foreach ($ids as $id) {
-            $this->_db->query("DELETE From contacts where id = '{$id}'");
+            $this->db->query("DELETE From contacts where id = '{$id}'");
         }
     }
 
     public function testGetDatabase()
     {
-        if ($this->_db instanceof MysqliManager) {
-            $this->assertInstanceOf('Mysqli', $this->_db->getDatabase());
+        if ($this->db instanceof MysqliManager) {
+            $this->assertInstanceOf('Mysqli', $this->db->getDatabase());
         } else {
-            $this->assertTrue(is_resource($this->_db->getDatabase()));
+            $this->assertTrue(is_resource($this->db->getDatabase()));
         }
     }
 
     public function testCheckError()
     {
-        $this->assertFalse($this->_db->checkError("testCheckError"));
-        $this->assertFalse($this->_db->lastError());
+        $this->assertFalse($this->db->checkError("testCheckError"));
+        $this->assertFalse($this->db->lastError());
     }
 
     public function testCheckErrorNoConnection()
     {
-        $this->_db->disconnect();
-        $this->assertTrue($this->_db->checkError("testCheckErrorNoConnection"));
-        $this->_db = DBManagerFactory::getInstance();
+        $this->db->disconnect();
+        $this->assertTrue($this->db->checkError("testCheckErrorNoConnection"));
+        $this->db = DBManagerFactory::getInstance();
     }
 
     public function testGetQueryTime()
@@ -121,17 +121,17 @@ class DBManagerTest extends TestCase
         // using a random query.
         $randVal= rand(0, 10000);
         $sql = "SELECT accounts.* FROM accounts WHERE DELETED = 0";
-        $this->_db->limitQuery($sql, 0, 1+$randVal, true);
-        $this->assertTrue($this->_db->getQueryTime() > 0);
+        $this->db->limitQuery($sql, 0, 1 + $randVal, true);
+        $this->assertTrue($this->db->getQueryTime() > 0);
     }
 
     public function testCheckConnection()
     {
-        $this->_db->checkConnection();
-        if ($this->_db instanceof MysqliManager) {
-            $this->assertInstanceOf('Mysqli', $this->_db->getDatabase());
+        $this->db->checkConnection();
+        if ($this->db instanceof MysqliManager) {
+            $this->assertInstanceOf('Mysqli', $this->db->getDatabase());
         } else {
-            $this->assertTrue(is_resource($this->_db->getDatabase()));
+            $this->assertTrue(is_resource($this->db->getDatabase()));
         }
     }
 
@@ -141,30 +141,30 @@ class DBManagerTest extends TestCase
         $bean->last_name = 'foobar' . mt_rand();
         $bean->id = create_guid();
 
-        $this->assertTrue($this->_db->insert($bean));
+        $this->assertTrue($this->db->insert($bean));
 
-        $result = $this->_db->query("select id, last_name from contacts where id = '{$bean->id}'");
-        $row = $this->_db->fetchByAssoc($result);
+        $result = $this->db->query("select id, last_name from contacts where id = '{$bean->id}'");
+        $row = $this->db->fetchByAssoc($result);
         $this->assertEquals($row['last_name'], $bean->last_name);
         $this->assertEquals($row['id'], $bean->id);
 
-        $this->_db->query("delete from contacts where id = '{$row['id']}'");
+        $this->db->query("delete from contacts where id = '{$row['id']}'");
     }
 
     public function testUpdate()
     {
-        list($id) = $this->_createRecords(1);
+        list($id) = $this->createRecords(1);
 
         $bean = new Contact();
         $bean->last_name = 'newfoobar' . mt_rand();
-        $this->assertTrue($this->_db->update($bean));
+        $this->assertTrue($this->db->update($bean));
 
-        $result = $this->_db->query("select id, last_name from contacts where id = '{$id}'");
-        $row = $this->_db->fetchByAssoc($result);
+        $result = $this->db->query("select id, last_name from contacts where id = '{$id}'");
+        $row = $this->db->fetchByAssoc($result);
         $this->assertEquals($row['last_name'], $bean->last_name);
         $this->assertEquals($row['id'], $id);
 
-        $this->_db->query("delete from contacts where id = '{$row['id']}'");
+        $this->db->query("delete from contacts where id = '{$row['id']}'");
     }
 
     public function testCreateTableParams()
@@ -187,7 +187,7 @@ class DBManagerTest extends TestCase
                     ],
                 ]
         );
-        $this->assertTrue(in_array($tablename, $this->_db->getTablesArray()));
+        $this->assertTrue(in_array($tablename, $this->db->getTablesArray()));
     }
 
     public function testRepairTableNoChanges()
@@ -410,13 +410,13 @@ class DBManagerTest extends TestCase
             ],
         ];
 
-        if ($this->_db->tableExists($tableName)) {
-            $this->_db->dropTableName($tableName);
+        if ($this->db->tableExists($tableName)) {
+            $this->db->dropTableName($tableName);
         }
 
         $this->createTableParams($tableName, $params, $indexes);
 
-        $repair = $this->_db->repairTableParams($tableName, $params, $indexes, true);
+        $repair = $this->db->repairTableParams($tableName, $params, $indexes, true);
         $this->assertEmpty($repair, "Unexpected repairs: " . $repair);
     }
 
@@ -475,10 +475,10 @@ class DBManagerTest extends TestCase
                 ],
             ],
         ];
-        $repair = $this->_db->repairTableParams($tableName, $fields, $indices, true);
+        $repair = $this->db->repairTableParams($tableName, $fields, $indices, true);
         $this->assertNotEmpty($repair, "Shouldn't be empty repair");
 
-        $dbIndexes = $this->_db->get_indices($tableName);
+        $dbIndexes = $this->db->get_indices($tableName);
 
         //Should replaced with assertArraySubset in future
         $pk = false;
@@ -502,8 +502,8 @@ class DBManagerTest extends TestCase
                     ],
         ];
 
-        if ($this->_db->tableExists($tableName)) {
-            $this->_db->dropTableName($tableName);
+        if ($this->db->tableExists($tableName)) {
+            $this->db->dropTableName($tableName);
         }
         $this->createTableParams($tableName, $params, []);
 
@@ -511,16 +511,16 @@ class DBManagerTest extends TestCase
                     'name' => 'bar',
                     'type' => 'int',
                     ];
-        $cols = $this->_db->get_columns($tableName);
+        $cols = $this->db->get_columns($tableName);
         $this->assertArrayNotHasKey('bar', $cols);
 
-        $repair = $this->_db->repairTableParams($tableName, $params, [], false);
+        $repair = $this->db->repairTableParams($tableName, $params, [], false);
         $this->assertMatchesRegularExpression('#MISSING IN DATABASE.*bar#i', $repair);
-        $repair = $this->_db->repairTableParams($tableName, $params, [], true);
-        $cols = $this->_db->get_columns($tableName);
+        $repair = $this->db->repairTableParams($tableName, $params, [], true);
+        $cols = $this->db->get_columns($tableName);
         $this->assertArrayHasKey('bar', $cols);
         $this->assertEquals('bar', $cols['bar']['name']);
-        $this->assertEquals($this->_db->getColumnType('int'), $cols['bar']['type']);
+        $this->assertEquals($this->db->getColumnType('int'), $cols['bar']['type']);
     }
 
     public function testRepairTableParamsAddIndex()
@@ -552,8 +552,8 @@ class DBManagerTest extends TestCase
                 'fields' => ['foo', 'bar', 'bazz'],
             ],
         ];
-        if ($this->_db->tableExists($tableName)) {
-            $this->_db->dropTableName($tableName);
+        if ($this->db->tableExists($tableName)) {
+            $this->db->dropTableName($tableName);
         }
         $this->createTableParams($tableName, $params, []);
         $params['bazz'] =   [
@@ -561,13 +561,13 @@ class DBManagerTest extends TestCase
                     'type' => 'int',
         ];
 
-        $repair = $this->_db->repairTableParams($tableName, $params, $indices, false);
+        $repair = $this->db->repairTableParams($tableName, $params, $indices, false);
         $this->assertMatchesRegularExpression('#MISSING IN DATABASE.*bazz#i', $repair);
         $this->assertMatchesRegularExpression('#MISSING INDEX IN DATABASE.*test_index#i', $repair);
         $this->assertMatchesRegularExpression('#MISSING INDEX IN DATABASE.*primary#i', $repair);
-        $this->_db->repairTableParams($tableName, $params, $indices, true);
+        $this->db->repairTableParams($tableName, $params, $indices, true);
 
-        $idx = $this->_db->get_indices($tableName);
+        $idx = $this->db->get_indices($tableName);
         foreach ($idx as $index) {
             if ($index['type'] == 'primary') {
                 $idx['primary'] = $index;
@@ -580,10 +580,10 @@ class DBManagerTest extends TestCase
         $this->assertArrayHasKey('primary', $idx);
         $this->assertContains('foo', $idx['primary']['fields']);
 
-        $cols = $this->_db->get_columns($tableName);
+        $cols = $this->db->get_columns($tableName);
         $this->assertArrayHasKey('bazz', $cols);
         $this->assertEquals('bazz', $cols['bazz']['name']);
-        $this->assertEquals($this->_db->getColumnType('int'), $cols['bazz']['type']);
+        $this->assertEquals($this->db->getColumnType('int'), $cols['bazz']['type']);
     }
 
     public function testRepairTableParamsAddIndexAndData()
@@ -605,15 +605,15 @@ class DBManagerTest extends TestCase
             'type'          => 'index',
             'fields'        => ['foo', 'bar'],
         ];
-        if ($this->_db->tableExists($tableName)) {
-            $this->_db->dropTableName($tableName);
+        if ($this->db->tableExists($tableName)) {
+            $this->db->dropTableName($tableName);
         }
         $this->createTableParams($tableName, $params, []);
 
-        $repair = $this->_db->repairTableParams($tableName, $params, [$index], false);
+        $repair = $this->db->repairTableParams($tableName, $params, [$index], false);
         $this->assertMatchesRegularExpression('#MISSING INDEX IN DATABASE.*test_index#i', $repair);
-        $repair = $this->_db->repairTableParams($tableName, $params, [$index], true);
-        $idx = $this->_db->get_indices($tableName);
+        $repair = $this->db->repairTableParams($tableName, $params, [$index], true);
+        $idx = $this->db->get_indices($tableName);
         $this->assertArrayHasKey('test_index', $idx);
         $this->assertContains('foo', $idx['test_index']['fields']);
         $this->assertContains('bar', $idx['test_index']['fields']);
@@ -646,7 +646,7 @@ class DBManagerTest extends TestCase
             []
         );
 
-        $res = $this->_db->compareFieldInTables(
+        $res = $this->db->compareFieldInTables(
             'foo',
             $tablename1,
             $tablename2
@@ -682,7 +682,7 @@ class DBManagerTest extends TestCase
             []
         );
 
-        $res = $this->_db->compareFieldInTables(
+        $res = $this->db->compareFieldInTables(
             'foo',
             $tablename1,
             $tablename2
@@ -717,7 +717,7 @@ class DBManagerTest extends TestCase
             []
         );
 
-        $res = $this->_db->compareFieldInTables(
+        $res = $this->db->compareFieldInTables(
             'foo',
             $tablename1,
             $tablename2
@@ -752,7 +752,7 @@ class DBManagerTest extends TestCase
             []
         );
 
-        $res = $this->_db->compareFieldInTables(
+        $res = $this->db->compareFieldInTables(
             'foo',
             $tablename1,
             $tablename2
@@ -824,7 +824,7 @@ class DBManagerTest extends TestCase
     public function testRepairIndexes($current, $new, $query)
     {
         $tablename1 = 'test23_' . mt_rand();
-        $dbmock = $this->getMockBuilder(get_class($this->_db))
+        $dbmock = $this->getMockBuilder(get_class($this->db))
             ->setMethods(['get_columns', 'get_indices', 'add_drop_constraint'])
             ->getMock();
 
@@ -913,7 +913,7 @@ class DBManagerTest extends TestCase
             []
         );
 
-        $res = $this->_db->compareFieldInTables(
+        $res = $this->db->compareFieldInTables(
             'foobar',
             $tablename1,
             $tablename2
@@ -921,7 +921,7 @@ class DBManagerTest extends TestCase
 
         $this->assertEquals($res['msg'], 'not_exists_table2');
 
-        $this->_db->addColumn(
+        $this->db->addColumn(
             $tablename2,
             [
                 'foobar' =>  [
@@ -932,7 +932,7 @@ class DBManagerTest extends TestCase
                 ]
         );
 
-        $res = $this->_db->compareFieldInTables(
+        $res = $this->db->compareFieldInTables(
             'foobar',
             $tablename1,
             $tablename2
@@ -1052,7 +1052,7 @@ class DBManagerTest extends TestCase
             []
         );
 
-        $res = $this->_db->compareFieldInTables('foobar', $t1, $t2);
+        $res = $this->db->compareFieldInTables('foobar', $t1, $t2);
 
         $this->assertEquals(
             'no_match',
@@ -1061,9 +1061,9 @@ class DBManagerTest extends TestCase
             . print_r($res, true)
         );
 
-        $this->_db->alterColumn($t2, ['foobar' => $target]);
+        $this->db->alterColumn($t2, ['foobar' => $target]);
 
-        $res = $this->_db->compareFieldInTables('foobar', $t1, $t2);
+        $res = $this->db->compareFieldInTables('foobar', $t1, $t2);
 
         $this->assertEquals(
             'match',
@@ -1089,23 +1089,23 @@ class DBManagerTest extends TestCase
             ],
         ]);
 
-        $columns = $this->_db->get_columns('alter_column_with_index');
+        $columns = $this->db->get_columns('alter_column_with_index');
         $this->assertEquals(16, $columns['name']['len']);
 
-        $this->_db->alterColumn('alter_column_with_index', [
+        $this->db->alterColumn('alter_column_with_index', [
             'name' => 'name',
             'type' => 'varchar',
             'len' => 20,
         ]);
 
-        $columns = $this->_db->get_columns('alter_column_with_index');
+        $columns = $this->db->get_columns('alter_column_with_index');
         $this->assertEquals(20, $columns['name']['len']);
     }
 
     public function testOracleAlterVarchar2ToNumber()
     {
         $insertValue = '100';
-        if (!($this->_db instanceof OracleManager)) {
+        if (!($this->db instanceof OracleManager)) {
             $this->markTestSkipped('This test can run only on Oracle instance');
         }
         $params = [
@@ -1118,12 +1118,12 @@ class DBManagerTest extends TestCase
         ];
         $tableName = 'testVarchar2ToNumber' . mt_rand();
 
-        if ($this->_db->tableExists($tableName)) {
-            $this->_db->dropTableName($tableName);
+        if ($this->db->tableExists($tableName)) {
+            $this->db->dropTableName($tableName);
         }
         $this->createTableParams($tableName, $params, []);
 
-        $this->_db->insertParams($tableName, $params, ['foo' => $insertValue]);
+        $this->db->insertParams($tableName, $params, ['foo' => $insertValue]);
 
         $params = [
             'foo' => [
@@ -1134,12 +1134,12 @@ class DBManagerTest extends TestCase
             ],
         ];
 
-        $this->_db->repairTableParams($tableName, $params, [], true);
+        $this->db->repairTableParams($tableName, $params, [], true);
 
-        $columns = $this->_db->get_columns($tableName);
+        $columns = $this->db->get_columns($tableName);
         $this->assertEquals('number', $columns['foo']['type']);
 
-        $checkResult = $this->_db->fetchOne('SELECT foo FROM ' . $tableName);
+        $checkResult = $this->db->fetchOne('SELECT foo FROM ' . $tableName);
         $this->assertEquals($insertValue, $checkResult['foo']);
     }
 
@@ -1157,50 +1157,50 @@ class DBManagerTest extends TestCase
                 ],
             []
         );
-        $this->assertTrue(in_array($tablename, $this->_db->getTablesArray()));
+        $this->assertTrue(in_array($tablename, $this->db->getTablesArray()));
 
         $this->dropTableName($tablename);
 
-        $this->assertFalse(in_array($tablename, $this->_db->getTablesArray()));
+        $this->assertFalse(in_array($tablename, $this->db->getTablesArray()));
     }
 
     public function testDisconnectAll()
     {
         DBManagerFactory::disconnectAll();
-        $this->assertTrue($this->_db->checkError("testDisconnectAll"));
-        $this->_db = DBManagerFactory::getInstance();
+        $this->assertTrue($this->db->checkError("testDisconnectAll"));
+        $this->db = DBManagerFactory::getInstance();
     }
 
     public function testQuery()
     {
-        $beanIds = $this->_createRecords(5);
+        $beanIds = $this->createRecords(5);
 
-        $result = $this->_db->query("SELECT id From contacts where last_name = 'foobar'");
-        if ($this->_db instanceof MysqliManager) {
+        $result = $this->db->query("SELECT id From contacts where last_name = 'foobar'");
+        if ($this->db instanceof MysqliManager) {
             $this->assertInstanceOf('Mysqli_result', $result);
         } else {
             $this->assertTrue(is_resource($result));
         }
 
-        while ($row = $this->_db->fetchByAssoc($result)) {
+        while ($row = $this->db->fetchByAssoc($result)) {
             $this->assertTrue(in_array($row['id'], $beanIds), "Id not found '{$row['id']}'");
         }
 
-        $this->_removeRecords($beanIds);
+        $this->removeRecords($beanIds);
     }
 
     public function disabledLimitQuery()
     {
-        $beanIds = $this->_createRecords(5);
+        $beanIds = $this->createRecords(5);
         $_REQUEST['module'] = 'contacts';
-        $result = $this->_db->limitQuery("SELECT id From contacts where last_name = 'foobar'", 1, 3);
-        if ($this->_db instanceof MysqliManager) {
+        $result = $this->db->limitQuery("SELECT id From contacts where last_name = 'foobar'", 1, 3);
+        if ($this->db instanceof MysqliManager) {
             $this->assertInstanceOf('Mysqli_result', $result);
         } else {
             $this->assertTrue(is_resource($result));
         }
 
-        while ($row = $this->_db->fetchByAssoc($result)) {
+        while ($row = $this->db->fetchByAssoc($result)) {
             if ($row['id'][0] > 3 || $row['id'][0] < 0) {
                 $this->assertFalse(in_array($row['id'], $beanIds), "Found {$row['id']} in error");
             } else {
@@ -1208,7 +1208,7 @@ class DBManagerTest extends TestCase
             }
         }
         unset($_REQUEST['module']);
-        $this->_removeRecords($beanIds);
+        $this->removeRecords($beanIds);
     }
 
     public function testLimitQueryOrderedByAlias()
@@ -1224,65 +1224,65 @@ WHERE
 ORDER BY
     name_alias ASC
 SQL;
-        $result = $this->_db->limitQuery($sql, 0, 1);
-        $this->assertNotEmpty($result, $this->_db->lastDbError());
+        $result = $this->db->limitQuery($sql, 0, 1);
+        $this->assertNotEmpty($result, $this->db->lastDbError());
     }
 
     public function testGetOne()
     {
-        $beanIds = $this->_createRecords(1);
+        $beanIds = $this->createRecords(1);
 
-        $id = $this->_db->getOne("SELECT id From contacts where last_name = 'foobar'");
+        $id = $this->db->getOne("SELECT id From contacts where last_name = 'foobar'");
         $this->assertEquals($id, $beanIds[0]);
 
         // bug 38994
-        if ($this->_db->dbType == 'mysql') {
-            $id = $this->_db->getOne($this->_db->limitQuerySql("SELECT id From contacts where last_name = 'foobar'", 0, 1));
+        if ($this->db->dbType == 'mysql') {
+            $id = $this->db->getOne($this->db->limitQuerySql("SELECT id From contacts where last_name = 'foobar'", 0, 1));
             $this->assertEquals($id, $beanIds[0]);
         }
 
-        $this->_removeRecords($beanIds);
+        $this->removeRecords($beanIds);
     }
 
     public function testGetFieldsArray()
     {
-        $beanIds = $this->_createRecords(1);
+        $beanIds = $this->createRecords(1);
 
-        $result = $this->_db->query("SELECT id From contacts where id = '{$beanIds[0]}'");
-        $fields = $this->_db->getFieldsArray($result, true);
+        $result = $this->db->query("SELECT id From contacts where id = '{$beanIds[0]}'");
+        $fields = $this->db->getFieldsArray($result, true);
 
         $this->assertEquals(["id"], $fields);
 
-        $this->_removeRecords($beanIds);
+        $this->removeRecords($beanIds);
     }
 
     public function testGetAffectedRowCount()
     {
-        $beanIds = $this->_createRecords(1);
+        $beanIds = $this->createRecords(1);
         // need to keep $result
-        $result = $this->_db->query("DELETE From contacts where id = '{$beanIds[0]}'", false, '', false, true);
-        $this->assertEquals(1, $this->_db->getAffectedRowCount($result));
+        $result = $this->db->query("DELETE From contacts where id = '{$beanIds[0]}'", false, '', false, true);
+        $this->assertEquals(1, $this->db->getAffectedRowCount($result));
     }
 
     public function testFetchByAssoc()
     {
-        $beanIds = $this->_createRecords(1);
+        $beanIds = $this->createRecords(1);
 
-        $result = $this->_db->query("SELECT id From contacts where id = '{$beanIds[0]}'");
+        $result = $this->db->query("SELECT id From contacts where id = '{$beanIds[0]}'");
 
-        $row = $this->_db->fetchByAssoc($result);
+        $row = $this->db->fetchByAssoc($result);
 
         $this->assertTrue(is_array($row));
         $this->assertEquals($row['id'], $beanIds[0]);
 
-        $this->_removeRecords($beanIds);
+        $this->removeRecords($beanIds);
     }
 
     public function testDisconnect()
     {
-        $this->_db->disconnect();
-        $this->assertTrue($this->_db->checkError("testDisconnect"));
-        $this->_db = DBManagerFactory::getInstance();
+        $this->db->disconnect();
+        $this->assertTrue($this->db->checkError("testDisconnect"));
+        $this->db = DBManagerFactory::getInstance();
     }
 
     public function testGetTablesArray()
@@ -1300,12 +1300,12 @@ SQL;
             []
         );
 
-        $this->assertTrue($this->_db->tableExists($tablename));
+        $this->assertTrue($this->db->tableExists($tablename));
     }
 
     public function testVersion()
     {
-        $ver = $this->_db->version();
+        $ver = $this->db->version();
 
         $this->assertTrue(is_string($ver));
     }
@@ -1325,7 +1325,7 @@ SQL;
             []
         );
 
-        $this->assertTrue(in_array($tablename, $this->_db->getTablesArray()));
+        $this->assertTrue(in_array($tablename, $this->db->getTablesArray()));
     }
 
     public function providerCompareVardefs()
@@ -1452,9 +1452,9 @@ SQL;
     public function testCompareVarDefs($fieldDef1, $fieldDef2, $expectedResult)
     {
         if ($expectedResult) {
-            $this->assertTrue($this->_db->compareVarDefs($fieldDef1, $fieldDef2));
+            $this->assertTrue($this->db->compareVarDefs($fieldDef1, $fieldDef2));
         } else {
-            $this->assertFalse($this->_db->compareVarDefs($fieldDef1, $fieldDef2));
+            $this->assertFalse($this->db->compareVarDefs($fieldDef1, $fieldDef2));
         }
     }
 
@@ -1464,22 +1464,22 @@ SQL;
     public function test_Bug34892_MssqlNotClearingErrorResults()
     {
             // execute a bad query
-            $this->_db->query("select dsdsdsdsdsdsdsdsdsd", false, "test_Bug34892_MssqlNotClearingErrorResults", true);
+            $this->db->query("select dsdsdsdsdsdsdsdsdsd", false, "test_Bug34892_MssqlNotClearingErrorResults", true);
             // assert it found an error
-            $this->assertNotEmpty($this->_db->lastError(), "lastError should return true as a result of the previous illegal query");
+            $this->assertNotEmpty($this->db->lastError(), "lastError should return true as a result of the previous illegal query");
             // now, execute a good query
-            $this->_db->query("select * from config");
+            $this->db->query("select * from config");
             // and make no error messages are asserted
-            $this->assertEmpty($this->_db->lastError(), "lastError should have cleared the previous error and return false of the last legal query");
+            $this->assertEmpty($this->db->lastError(), "lastError should have cleared the previous error and return false of the last legal query");
     }
 
     public function vardefProvider()
     {
-        $GLOBALS['log']->info('DBManagerTest.vardefProvider: _db = ' . print_r($this->_db));
+        $GLOBALS['log']->info('DBManagerTest.vardefProvider: _db = ' . print_r($this->db));
         $this->setUp(); // Just in case the DB driver is not created yet.
-        $emptydate = $this->_db->emptyValue("date");
-        $emptytime = $this->_db->emptyValue("time");
-        $emptydatetime = $this->_db->emptyValue("datetime");
+        $emptydate = $this->db->emptyValue("date");
+        $emptytime = $this->db->emptyValue("time");
+        $emptydatetime = $this->db->emptyValue("datetime");
 
         return [
             ["testid",  [
@@ -1581,8 +1581,8 @@ SQL;
                         'test_dt' => '1998-10-04', 'test_tm' => '03:04:05',
                   ],
                   ["id" => "'test123'", 'intval' => 42, 'floatval' => 42.24,
-                        'money' => 56.78, 'test_dtm' => $this->_db->convert('\'2002-01-02 12:34:56\'', "datetime"), 'test_dtm2' => $this->_db->convert('\'2011-10-08 01:02:03\'', 'datetime'),
-                        'test_dt' => $this->_db->convert('\'1998-10-04\'', 'date'), 'test_tm' => $this->_db->convert('\'03:04:05\'', 'time'),
+                        'money' => 56.78, 'test_dtm' => $this->db->convert('\'2002-01-02 12:34:56\'', "datetime"), 'test_dtm2' => $this->db->convert('\'2011-10-08 01:02:03\'', 'datetime'),
+                        'test_dt' => $this->db->convert('\'1998-10-04\'', 'date'), 'test_tm' => $this->db->convert('\'03:04:05\'', 'time'),
                   ],
             ],
             ["testreqnull",  [
@@ -1759,8 +1759,8 @@ SQL;
      */
     public function testCanInstall()
     {
-        $DBManagerClass = get_class($this->_db);
-        if (!method_exists($this->_db, 'version') || !method_exists($this->_db, 'canInstall')) {
+        $DBManagerClass = get_class($this->db);
+        if (!method_exists($this->db, 'version') || !method_exists($this->db, 'canInstall')) {
             $this->markTestSkipped(
                 "Class {$DBManagerClass} doesn't implement canInstall or version methods"
             );
@@ -1774,7 +1774,7 @@ SQL;
         }
 
         // First assuming that we are only running unit tests against a supported database :)
-        $this->assertTrue($this->_db->canInstall(), "Apparently we are not running this unit test against a supported database!!!");
+        $this->assertTrue($this->db->canInstall(), "Apparently we are not running this unit test against a supported database!!!");
 
         $DBstub = $this->getMockBuilder($DBManagerClass)->setMethods(['version'])->getMock();
         $DBstub->expects($this->any())
@@ -1801,7 +1801,7 @@ SQL;
      */
     public function testValidateQuery($good, $sql)
     {
-        $check = $this->_db->validateQuery($sql);
+        $check = $this->db->validateQuery($sql);
         $this->assertEquals($good, $check);
     }
 
@@ -1829,17 +1829,17 @@ SQL;
         $str = str_repeat('x', 131072);
 
         $size = strlen($str);
-        $this->_db->insertParams($tablename, $fielddefs, ['id' => $size, 'test' => $str, 'dummy' => $str]);
+        $this->db->insertParams($tablename, $fielddefs, ['id' => $size, 'test' => $str, 'dummy' => $str]);
 
         $select = "SELECT test FROM $tablename WHERE id = '{$size}'";
-        $strresult = $this->_db->getOne($select);
+        $strresult = $this->db->getOne($select);
 
         $this->assertEquals(0, mb_strpos($str, $strresult), "String returned from temp table did not match data just written");
     }
 
     public function testGetIndicesContainsPrimary()
     {
-        $indices = $this->_db->get_indices('accounts');
+        $indices = $this->db->get_indices('accounts');
 
         // find if any are primary
         $found = false;
@@ -1861,9 +1861,9 @@ SQL;
     public function testDBGuidGeneration()
     {
         $guids = [];
-        $sql = "SELECT {$this->_db->getGuidSQL()} {$this->_db->getFromDummyTable()}";
+        $sql = "SELECT {$this->db->getGuidSQL()} {$this->db->getFromDummyTable()}";
         for ($i = 0; $i < 1000; $i++) {
-            $newguid = $this->_db->getOne($sql);
+            $newguid = $this->db->getOne($sql);
             $this->assertFalse(in_array($newguid, $guids), "'$newguid' already existed in the array of GUIDs!");
             $guids []= $newguid;
         }
@@ -1888,7 +1888,7 @@ SQL;
         $this->createTableParams($tablename, $fielddefs, []);
         unset($this->created[$tablename]); // that table is required by testRemovePrimaryKey test
 
-        $sql = $this->_db->add_drop_constraint(
+        $sql = $this->db->add_drop_constraint(
             $tablename,
             [
                 'name'   => 'testConstraints_pk',
@@ -1898,9 +1898,9 @@ SQL;
             false
         );
 
-        $result = $this->_db->query($sql);
+        $result = $this->db->query($sql);
 
-        $indices = $this->_db->get_indices($tablename);
+        $indices = $this->db->get_indices($tablename);
 
         // find if any are primary
         $found = false;
@@ -1923,7 +1923,7 @@ SQL;
         $tablename = 'testConstraints';
         $this->created[$tablename] = true;
 
-         $sql = $this->_db->add_drop_constraint(
+         $sql = $this->db->add_drop_constraint(
              $tablename,
              [
                 'name'   => 'testConstraints_pk',
@@ -1933,9 +1933,9 @@ SQL;
              true
          );
 
-        $result = $this->_db->query($sql);
+        $result = $this->db->query($sql);
 
-        $indices = $this->_db->get_indices($tablename);
+        $indices = $this->db->get_indices($tablename);
 
         // find if any are primary
         $found = false;
@@ -1966,13 +1966,13 @@ SQL;
 
     private function addRecord($tableName, $id, $parent_id, $name, $level)
     {
-        $this->_db->query(sprintf(
+        $this->db->query(sprintf(
             'INSERT INTO %s (id, parent_id, name, db_level) VALUES (%s, %s, %s, %s)',
             $tableName,
-            $this->_db->quoted($id),
-            ($parent_id !== null ? $this->_db->quoted($parent_id) : 'NULL'),
-            $this->_db->quoted($name),
-            $this->_db->quoted($level)
+            $this->db->quoted($id),
+            ($parent_id !== null ? $this->db->quoted($parent_id) : 'NULL'),
+            $this->db->quoted($name),
+            $this->db->quoted($level)
         ));
     }
 
@@ -2046,32 +2046,32 @@ SQL;
      */
     public function testRecursiveQuery($startName, $startDbLevel, $nrchildren)
     {
-        $this->_db->preInstall();
+        $this->db->preInstall();
 
         // setup test table and fill it with data if it doesn't already exist
         $table = 'test_recursive';
-        if (!$this->_db->tableExists($table)) {
+        if (!$this->db->tableExists($table)) {
             $this->setupRecursiveStructure($table);
         }
 
-        $startId = $currentId = $this->_db->getOne('SELECT id FROM ' . $table . ' WHERE name = '
-            . $this->_db->quoted($startName));
+        $startId = $currentId = $this->db->getOne('SELECT id FROM ' . $table . ' WHERE name = '
+            . $this->db->quoted($startName));
         $levels = $startDbLevel;
 
         // Testing lineage
-        $lineageSQL = $this->_db->getRecursiveSelectSQL(
+        $lineageSQL = $this->db->getRecursiveSelectSQL(
             $table,
             'id',
             'parent_id',
             'id, parent_id, name, db_level',
             true,
-            'id = ' . $this->_db->quoted($startId)
+            'id = ' . $this->db->quoted($startId)
         );
 
-        $result = $this->_db->query($lineageSQL);
+        $result = $this->db->query($lineageSQL);
 
         $currentName = null;
-        while ($row = $this->_db->fetchByAssoc($result)) {
+        while ($row = $this->db->fetchByAssoc($result)) {
             $currentName = $row['name'];
             $this->assertEquals($currentId, $row['id'], "Incorrect ID found");
             if (!empty($row['parent_id'])) {
@@ -2084,7 +2084,7 @@ SQL;
 
         // Testing children
         $childcount = 0;
-        $childrenSQL = $this->_db->getRecursiveSelectSQL(
+        $childrenSQL = $this->db->getRecursiveSelectSQL(
             $table,
             'id',
             'parent_id',
@@ -2092,12 +2092,12 @@ SQL;
             // internally depending on the value of $lineage (probably should be fixed)
             'id, parent_id, name',
             false,
-            'id = ' . $this->_db->quoted($startId)
+            'id = ' . $this->db->quoted($startId)
         );
 
-        $result = $this->_db->query($childrenSQL);
+        $result = $this->db->query($childrenSQL);
 
-        while (($row = $this->_db->fetchByAssoc($result)) != null) {
+        while (($row = $this->db->fetchByAssoc($result)) != null) {
             $this->assertStringStartsWith(
                 $startName,
                 $row['name'],
@@ -2130,7 +2130,7 @@ SQL;
 
             // Insert the data
             $sql = $sqlPrefix . $sqlBody . $sqlPostfix;
-            $result = $this->_db->query($sql);
+            $result = $this->db->query($sql);
         }
     }
 
@@ -2145,20 +2145,20 @@ SQL;
         $sql .= ")";
 
         // Delete the data
-        $result = $this->_db->query($sql);
+        $result = $this->db->query($sql);
     }
 
     public function testRecursiveQueryMultiHierarchy()
     {
-        if (!$this->_db->supports('recursive_query')) {
+        if (!$this->db->supports('recursive_query')) {
             $this->markTestSkipped('DBManager does not support recursive query');
         }
 
-        $this->_db->preInstall();
+        $this->db->preInstall();
 
         // Setup test data
         $tableName = 'forecast_tree';
-        $this->assertTrue($this->_db->tableExists($tableName), "Table $tableName does not exist");
+        $this->assertTrue($this->db->tableExists($tableName), "Table $tableName does not exist");
         $tableDataArray = [  [ 'id',             'parent_id',      'name',     'hierarchy_type', 'user_id' ]
         , [ 'sales_test_1',    null,            'sales1',   'sales_test',     'user1'   ]
         , [ 'sales_test_11',  'sales_test_1',   'sales11',  'sales_test',     'user11'  ]
@@ -2209,11 +2209,11 @@ SQL;
             $startWith = "id = '{$resultsRow[0]}'";
             $level = null;
 
-            $hierarchicalSQL = $this->_db->getRecursiveSelectSQL($tableName, $key, $parent_key, $fields, $lineage, $startWith, $level, $whereClause);
-            $result = $this->_db->query($hierarchicalSQL);
+            $hierarchicalSQL = $this->db->getRecursiveSelectSQL($tableName, $key, $parent_key, $fields, $lineage, $startWith, $level, $whereClause);
+            $result = $this->db->query($hierarchicalSQL);
             $resultsCnt = 0;
 
-            while (($row = $this->_db->fetchByAssoc($result)) != null) {
+            while (($row = $this->db->fetchByAssoc($result)) != null) {
                 $resultsCnt++;
             }
 
@@ -2232,7 +2232,7 @@ SQL;
      */
     public function testMassageValueEmptyValue($fieldDef, $value, $expected)
     {
-        $return = $this->_db->massageValue($value, $fieldDef);
+        $return = $this->db->massageValue($value, $fieldDef);
         $this->assertEquals($expected, $return);
     }
 
@@ -2358,7 +2358,7 @@ SQL;
         $GLOBALS['sugar_config']['search_wildcard_char'] = $wildcard;
         $GLOBALS['sugar_config']['search_wildcard_infront'] = $inFront;
 
-        $str = $this->_db->sqlLikeString($search);
+        $str = $this->db->sqlLikeString($search);
         $this->assertEquals($expected, $str);
 
         $GLOBALS['sugar_config']['search_wildcard_char'] = $defaultConfigWildcard;
@@ -2557,7 +2557,7 @@ SQL;
      */
     public function testOneColumnSQLRep($fieldDef, $expected)
     {
-        $db = $this->getMockBuilder(get_class($this->_db))->setMethods(['massageValue'])->getMock();
+        $db = $this->getMockBuilder(get_class($this->db))->setMethods(['massageValue'])->getMock();
         $method = $db->expects($this->$expected())->method('massageValue');
         if ($expected != 'never') {
             $method->with($this->equalTo($fieldDef['default']), $this->equalTo($fieldDef))->will($this->returnValue("correct"));
@@ -2625,7 +2625,7 @@ SQL;
     public function testChangeFieldLength($dbcol, $vardefcol, $result, $driver)
     {
         DBManagerFactory::getDbDrivers(); // load the drivers
-        $DBManagerClass = get_class($this->_db);
+        $DBManagerClass = get_class($this->db);
         $db_columns = [
             "id" => ["name" => "id", 'type' => 'char', 'len' => '36'],
             "quantity" => ["name" => "quantity", 'type' => 'int', 'len' => '5'],
@@ -2728,7 +2728,7 @@ SQL;
      */
     public function testIsNullable($vardef, $isNullable)
     {
-        $this->assertEquals($isNullable, SugarTestReflection::callProtectedMethod($this->_db, 'isNullable', [$vardef]));
+        $this->assertEquals($isNullable, SugarTestReflection::callProtectedMethod($this->db, 'isNullable', [$vardef]));
     }
 
     private function setupInsertStructure()
@@ -2763,8 +2763,8 @@ SQL;
                 'fields' => ['id'],
             ],
         ];
-        if ($this->_db->tableExists($tableName)) {
-            $this->_db->dropTableName($tableName);
+        if ($this->db->tableExists($tableName)) {
+            $this->db->dropTableName($tableName);
         }
         $this->createTableParams($tableName, $params, $indexes);
 
@@ -2803,12 +2803,12 @@ SQL;
         $dataStructure = $this->setupInsertStructure();
         $params = $dataStructure['params'];
         $tableName = $dataStructure['tableName'];
-        $this->assertTrue($this->_db->insertParams($tableName, $params, $data));
+        $this->assertTrue($this->db->insertParams($tableName, $params, $data));
         $resultsCntExpected = 1;
 
-        $result = $this->_db->query("SELECT * FROM $tableName");
+        $result = $this->db->query("SELECT * FROM $tableName");
         $resultsCnt = 0;
-        while (($row = $this->_db->fetchByAssoc($result)) != null) {
+        while (($row = $this->db->fetchByAssoc($result)) != null) {
             $resultsCnt++;
         }
         $this->assertEquals($resultsCnt, $resultsCntExpected, "Incorrect number or records. Found: $resultsCnt Expected: $resultsCntExpected");
@@ -2819,7 +2819,7 @@ SQL;
         $dataStructure = $this->setupInsertStructure();
         $params = $dataStructure['params'];
         $tableName = $dataStructure['tableName'];
-        $this->_db->query("DELETE FROM $tableName");
+        $this->db->query("DELETE FROM $tableName");
 
         $blobData = '0123456789abcdefghijklmnopqrstuvwxyz';
         while (strlen($blobData) < 100000) {
@@ -2827,10 +2827,10 @@ SQL;
         }
 
         $data = [ 'id'=> '1', 'col1' => '10', 'col2' => $blobData];
-        $this->assertTrue($this->_db->insertParams($tableName, $params, $data));
+        $this->assertTrue($this->db->insertParams($tableName, $params, $data));
 
-        $result = $this->_db->query("SELECT * FROM $tableName");
-        $row = $this->_db->fetchByAssoc($result);
+        $result = $this->db->query("SELECT * FROM $tableName");
+        $row = $this->db->fetchByAssoc($result);
         $foundLen = strlen($row['col2']);
         $expectedLen = strlen($blobData);
         $this->assertEquals($row['col2'], $blobData, "Failed test writing blob data. Found: $foundLen chars, Expected: $expectedLen");
@@ -2844,10 +2844,10 @@ SQL;
         $bean->id = create_guid();
         $bean->description = 'description' . mt_rand();
         $bean->new_with_id = true;
-        $this->_db->insert($bean);
+        $this->db->insert($bean);
 
-        $result = $this->_db->query("select id, last_name, description from contacts where id = '{$bean->id}'");
-        $row = $this->_db->fetchByAssoc($result);
+        $result = $this->db->query("select id, last_name, description from contacts where id = '{$bean->id}'");
+        $row = $this->db->fetchByAssoc($result);
         $this->assertEquals($bean->last_name, $row['last_name'], 'last_name failed');
         $this->assertEquals($bean->description, $row['description'], 'description failed');
         $this->assertEquals($bean->id, $row['id'], 'id failed');
@@ -2855,9 +2855,9 @@ SQL;
         // update test
         $bean->last_name = 'newfoobar' . mt_rand();   // change their lastname field
         $bean->description = 'newdescription' . mt_rand();
-        $this->_db->update($bean, ['id'=>$bean->id]);
-        $result = $this->_db->query("select id, last_name, description from contacts where id = '{$bean->id}'");
-        $row = $this->_db->fetchByAssoc($result);
+        $this->db->update($bean, ['id'=>$bean->id]);
+        $result = $this->db->query("select id, last_name, description from contacts where id = '{$bean->id}'");
+        $row = $this->db->fetchByAssoc($result);
         $this->assertEquals($bean->last_name, $row['last_name'], 'last_name failed');
         $this->assertEquals($bean->description, $row['description'], 'description failed');
         $this->assertEquals($bean->id, $row['id'], 'id failed');
@@ -2908,8 +2908,8 @@ SQL;
                 'fields' => ['id'],
             ],
         ];
-        if ($this->_db->tableExists($tableName)) {
-            $this->_db->dropTableName($tableName);
+        if ($this->db->tableExists($tableName)) {
+            $this->db->dropTableName($tableName);
         }
         $this->createTableParams($tableName, $params, $indexes);
 
@@ -3007,12 +3007,12 @@ SQL;
         $dataArray = $this->setupDataTypesData();
 
         foreach ($dataArray as $data) {  // insert a single row of data and check it column by column
-            $this->_db->insertParams($tableName, $params, $data);
+            $this->db->insertParams($tableName, $params, $data);
             $id = $data['id'];
-            $result = $this->_db->query("SELECT * FROM $tableName WHERE id = " . $this->_db->quoted($id));
-            while (($row = $this->_db->fetchByAssoc($result)) != null) {
+            $result = $this->db->query("SELECT * FROM $tableName WHERE id = " . $this->db->quoted($id));
+            while (($row = $this->db->fetchByAssoc($result)) != null) {
                 foreach ($data as $colKey => $col) {
-                    $found = $this->_db->fromConvert($row[$colKey], $params[$colKey]['type']);
+                    $found = $this->db->fromConvert($row[$colKey], $params[$colKey]['type']);
                     $expected=$data[$colKey];
                     if (empty($expected)) { // if null then compare to the table defined default
                         $expected = $params[$colKey]['default'];
@@ -3031,7 +3031,7 @@ SQL;
      */
     public function testAlterTableBlobToClob($data)
     {
-        if (!($this->_db instanceof IBMDB2Manager)) {
+        if (!($this->db instanceof IBMDB2Manager)) {
             $this->markTestSkipped('This test can run only on DB2 instance');
         }
         $params = [
@@ -3044,12 +3044,12 @@ SQL;
         ];
         $tableName = 'testAlterTableBlobToClob' . mt_rand();
 
-        if ($this->_db->tableExists($tableName)) {
-            $this->_db->dropTableName($tableName);
+        if ($this->db->tableExists($tableName)) {
+            $this->db->dropTableName($tableName);
         }
         $this->createTableParams($tableName, $params, []);
 
-        $this->_db->insertParams($tableName, $params, ['logmeta' => $data]);
+        $this->db->insertParams($tableName, $params, ['logmeta' => $data]);
 
         $params = [
             'logmeta' => [
@@ -3060,18 +3060,18 @@ SQL;
             ],
         ];
 
-        $this->_db->repairTableParams($tableName, $params, [], true);
+        $this->db->repairTableParams($tableName, $params, [], true);
 
-        $columns = $this->_db->get_columns($tableName);
+        $columns = $this->db->get_columns($tableName);
         $this->assertEquals('clob', $columns['logmeta']['type']);
 
-        $checkResult = $this->_db->fetchOne('SELECT logmeta FROM ' . $tableName);
+        $checkResult = $this->db->fetchOne('SELECT logmeta FROM ' . $tableName);
         $this->assertEquals($data, $checkResult['logmeta']);
     }
 
     public function testCreateTableSQL()
     {
-        $sql = $this->_db->createTableSQL(new Contact);
+        $sql = $this->db->createTableSQL(new Contact);
 
         $this->assertMatchesRegularExpression('/create\s*table\s*contacts/i', $sql);
     }
@@ -3080,7 +3080,7 @@ SQL;
     {
         $bean = BeanFactory::newBean('Contacts');
 
-        $sql = $this->_db->createTableSQLParams(
+        $sql = $this->db->createTableSQLParams(
             $bean->getTableName(),
             $bean->getFieldDefinitions(),
             $bean->getIndices()
@@ -3091,7 +3091,7 @@ SQL;
 
     public function testCreateIndexSQL()
     {
-        $sql = $this->_db->createIndexSQL(
+        $sql = $this->db->createIndexSQL(
             new Contact,
             ['id' => ['name'=>'id']],
             'idx_id'
@@ -3102,7 +3102,7 @@ SQL;
             $sql
         );
 
-        $sql = $this->_db->createIndexSQL(
+        $sql = $this->db->createIndexSQL(
             new Contact,
             ['id' => ['name'=>'id']],
             'idx_id',
@@ -3114,7 +3114,7 @@ SQL;
             $sql
         );
 
-        $sql = $this->_db->createIndexSQL(
+        $sql = $this->db->createIndexSQL(
             new Contact,
             ['id' => ['name'=>'id'],'deleted' => ['name'=>'deleted']],
             'idx_id'
@@ -3136,15 +3136,15 @@ SQL;
             'data_type' => 'email',
         ];
 
-        $this->assertEquals($this->_db->getFieldType($fieldDef), 'varchar');
+        $this->assertEquals($this->db->getFieldType($fieldDef), 'varchar');
         unset($fieldDef['dbType']);
-        $this->assertEquals($this->_db->getFieldType($fieldDef), 'int');
+        $this->assertEquals($this->db->getFieldType($fieldDef), 'int');
         unset($fieldDef['dbtype']);
-        $this->assertEquals($this->_db->getFieldType($fieldDef), 'char');
+        $this->assertEquals($this->db->getFieldType($fieldDef), 'char');
         unset($fieldDef['type']);
-        $this->assertEquals($this->_db->getFieldType($fieldDef), 'bool');
+        $this->assertEquals($this->db->getFieldType($fieldDef), 'bool');
         unset($fieldDef['Type']);
-        $this->assertEquals($this->_db->getFieldType($fieldDef), 'email');
+        $this->assertEquals($this->db->getFieldType($fieldDef), 'email');
     }
     public function testGetAutoIncrement()
     {
@@ -3153,7 +3153,7 @@ SQL;
         $case->save();
         $case->retrieve($case->id);
         $lastAuto = $case->case_number;
-        $helperResult = $this->_db->getAutoIncrement("cases", "case_number");
+        $helperResult = $this->db->getAutoIncrement("cases", "case_number");
 
         $this->assertEquals($lastAuto + 1, $helperResult);
     }
@@ -3161,11 +3161,11 @@ SQL;
     //BEGIN SUGARCRM flav=ent ONLY
     public function testGetAutoIncrementSQL()
     {
-        if ($this->_db->dbType != 'oci8') {
+        if ($this->db->dbType != 'oci8') {
             $this->markTestSkipped('Only applies to Oracle');
         }
 
-        $sql = $this->_db->getAutoIncrementSQL('cases', 'case_number');
+        $sql = $this->db->getAutoIncrementSQL('cases', 'case_number');
         $this->assertMatchesRegularExpression('/cases_case_number_seq\.nextval/i', $sql);
     }
 
@@ -3180,7 +3180,7 @@ SQL;
         $case->deleted = true;
         $case->save();
         $newAuto = $lastAuto + 5;
-        $this->_db->setAutoIncrementStart("cases", "case_number", $newAuto);
+        $this->db->setAutoIncrementStart("cases", "case_number", $newAuto);
         $case2 = BeanFactory::newBean('Cases');
         $case2->name = "foo2";
         $case2->save();
@@ -3194,7 +3194,7 @@ SQL;
     }
     public function testAddColumnSQL()
     {
-        $sql = $this->_db->addColumnSQL(
+        $sql = $this->db->addColumnSQL(
             'contacts',
             ['foo' => ['name'=>'foo','type'=>'varchar']]
         );
@@ -3204,7 +3204,7 @@ SQL;
 
     public function testAlterColumnSQL()
     {
-        $sql = $this->_db->alterColumnSQL(
+        $sql = $this->db->alterColumnSQL(
             'contacts',
             ['foo' => ['name'=>'foo','type'=>'varchar']]
         );
@@ -3222,27 +3222,27 @@ SQL;
 
     public function testDropTableSQL()
     {
-        $sql = $this->_db->dropTableSQL(new Contact);
+        $sql = $this->db->dropTableSQL(new Contact);
 
         $this->assertMatchesRegularExpression('/drop\s*table.*contacts/i', $sql);
     }
 
     public function testDropTableNameSQL()
     {
-        $sql = $this->_db->dropTableNameSQL('contacts');
+        $sql = $this->db->dropTableNameSQL('contacts');
 
         $this->assertMatchesRegularExpression('/drop\s*table.*contacts/i', $sql);
     }
 
     public function testDeleteColumnSQL()
     {
-        $sql = $this->_db->deleteColumnSQL(
+        $sql = $this->db->deleteColumnSQL(
             new Contact,
             ['foo' => ['name'=>'foo','type'=>'varchar']]
         );
 // BEGIN SUGARCRM flav=ent ONLY
 
-        if ($this->_db->dbType == 'oci8') {
+        if ($this->db->dbType == 'oci8') {
             $this->assertMatchesRegularExpression('/alter\s*table\s*contacts\s*drop\s*\(\s*foo\s*\)/i', $sql);
             return;
         }
@@ -3281,22 +3281,22 @@ SQL;
         );
 
         $this->assertNotFalse(
-            $this->_db->query(
-                $this->_db->dropColumnSQL($tableName, $field1)
+            $this->db->query(
+                $this->db->dropColumnSQL($tableName, $field1)
             )
         );
 
         $this->assertNotFalse(
-            $this->_db->query(
-                $this->_db->dropColumnSQL($tableName, [$field2])
+            $this->db->query(
+                $this->db->dropColumnSQL($tableName, [$field2])
             )
         );
 
-        $this->_db->addColumn($tableName, [$field1, $field2]);
+        $this->db->addColumn($tableName, [$field1, $field2]);
 
         $this->assertNotFalse(
-            $this->_db->query(
-                $this->_db->dropColumnSQL($tableName, [$field1, $field2])
+            $this->db->query(
+                $this->db->dropColumnSQL($tableName, [$field1, $field2])
             )
         );
     }
@@ -3305,10 +3305,10 @@ SQL;
     {
         $this->assertEquals(
             123,
-            $this->_db->massageValue(123, ['name' => 'foo', 'type' => 'int'])
+            $this->db->massageValue(123, ['name' => 'foo', 'type' => 'int'])
         );
 
-        switch ($this->_db->dbType) {
+        switch ($this->db->dbType) {
             case 'mssql':
 // BEGIN SUGARCRM flav=ent ONLY
             case 'oci8':
@@ -3323,13 +3323,13 @@ SQL;
 
         $this->assertEquals(
             $expected,
-            $this->_db->massageValue("'dog'", ['name'=>'foo','type'=>'varchar'])
+            $this->db->massageValue("'dog'", ['name'=>'foo','type'=>'varchar'])
         );
     }
 
     public function testGetColumnType()
     {
-        switch ($this->_db->dbType) {
+        switch ($this->db->dbType) {
             //BEGIN SUGARCRM flav=ent ONLY
             case 'oci8':
                 $expected_type = 'number';
@@ -3342,39 +3342,39 @@ SQL;
                 $expected_type = 'int';
         }
 
-        $this->assertEquals($expected_type, $this->_db->getColumnType('int'));
+        $this->assertEquals($expected_type, $this->db->getColumnType('int'));
     }
 
     public function testIsFieldArray()
     {
         $this->assertTrue(
-            $this->_db->isFieldArray(['name'=>'foo','type'=>['int']])
+            $this->db->isFieldArray(['name'=>'foo','type'=>['int']])
         );
 
         $this->assertFalse(
-            $this->_db->isFieldArray(['name'=>'foo','type'=>'int'])
+            $this->db->isFieldArray(['name'=>'foo','type'=>'int'])
         );
 
         $this->assertTrue(
-            $this->_db->isFieldArray(['name'=>'foo'])
+            $this->db->isFieldArray(['name'=>'foo'])
         );
 
         $this->assertFalse(
-            $this->_db->isFieldArray(1)
+            $this->db->isFieldArray(1)
         );
     }
 
     public function testQuoted()
     {
         $this->assertEquals(
-            "'".$this->_db->quote('foobar')."'",
-            $this->_db->quoted('foobar')
+            "'".$this->db->quote('foobar')."'",
+            $this->db->quoted('foobar')
         );
     }
 
     public function testGetIndices()
     {
-        $indices = $this->_db->get_indices('contacts');
+        $indices = $this->db->get_indices('contacts');
 
         foreach ($indices as $index) {
             $this->assertTrue(!empty($index['name']));
@@ -3386,7 +3386,7 @@ SQL;
     public function testAddDropConstraint()
     {
         $tablename = 'test' . date("YmdHis");
-        $sql = $this->_db->add_drop_constraint(
+        $sql = $this->db->add_drop_constraint(
             $tablename,
             [
                 'name'   => 'idx_foo',
@@ -3400,7 +3400,7 @@ SQL;
         $this->assertMatchesRegularExpression("/foo/i", $sql);
 
         $tablename = 'test' . date("YmdHis");
-        $sql = $this->_db->add_drop_constraint(
+        $sql = $this->db->add_drop_constraint(
             $tablename,
             [
                 'name'   => 'idx_foo',
@@ -3426,12 +3426,12 @@ SQL;
             ],
         ], []);
 
-        $this->assertEquals($this->_db->number_of_columns($tablename), 1);
+        $this->assertEquals($this->db->number_of_columns($tablename), 1);
     }
 
     public function testGetColumns()
     {
-        $vardefs = $this->_db->get_columns('contacts');
+        $vardefs = $this->db->get_columns('contacts');
 
         $this->assertTrue(isset($vardefs['id']));
         $this->assertTrue(isset($vardefs['id']['name']));
@@ -3444,12 +3444,12 @@ SQL;
     public function testEmptyPrecision()
     {
         //BEGIN SUGARCRM flav=ent ONLY
-        if (in_array($this->_db->dbType, ['oci8', 'ibm_db2'])) {
-            $this->markTestSkipped("Skipping on {$this->_db->dbType}, as it doesn't apply to this backend");
+        if (in_array($this->db->dbType, ['oci8', 'ibm_db2'])) {
+            $this->markTestSkipped("Skipping on {$this->db->dbType}, as it doesn't apply to this backend");
         }
         //END SUGARCRM flav=ent ONLY
 
-        $sql = $this->_db->alterColumnSQL(
+        $sql = $this->db->alterColumnSQL(
             'contacts',
             ['compensation_min' =>
                 [
@@ -3481,12 +3481,12 @@ SQL;
     public function testBlankSpacePrecision()
     {
         //BEGIN SUGARCRM flav=ent ONLY
-        if (in_array($this->_db->dbType, ['oci8', 'ibm_db2'])) {
-            $this->markTestSkipped("Skipping on {$this->_db->dbType}, as it doesn't apply to this backend");
+        if (in_array($this->db->dbType, ['oci8', 'ibm_db2'])) {
+            $this->markTestSkipped("Skipping on {$this->db->dbType}, as it doesn't apply to this backend");
         }
         //END SUGARCRM flav=ent ONLY
 
-        $sql = $this->_db->alterColumnSQL(
+        $sql = $this->db->alterColumnSQL(
             'contacts',
             ['compensation_min' =>
                 [
@@ -3518,12 +3518,12 @@ SQL;
     public function testSetPrecision()
     {
         //BEGIN SUGARCRM flav=ent ONLY
-        if (in_array($this->_db->dbType, ['oci8', 'ibm_db2'])) {
-            $this->markTestSkipped("Skipping on {$this->_db->dbType}, as it doesn't apply to this backend");
+        if (in_array($this->db->dbType, ['oci8', 'ibm_db2'])) {
+            $this->markTestSkipped("Skipping on {$this->db->dbType}, as it doesn't apply to this backend");
         }
         //END SUGARCRM flav=ent ONLY
 
-        $sql = $this->_db->alterColumnSQL(
+        $sql = $this->db->alterColumnSQL(
             'contacts',
             ['compensation_min' =>
                 [
@@ -3545,7 +3545,7 @@ SQL;
             ]
         );
 
-        if ($this->_db->dbType == 'mssql') {
+        if ($this->db->dbType == 'mssql') {
             $this->assertMatchesRegularExpression('/float\s*\(18\)/i', $sql);
         } else {
             $this->assertMatchesRegularExpression('/float\s*\(18,2\)/i', $sql);
@@ -3558,12 +3558,12 @@ SQL;
     public function testSetPrecisionInLen()
     {
         //BEGIN SUGARCRM flav=ent ONLY
-        if (in_array($this->_db->dbType, ['oci8', 'ibm_db2'])) {
-            $this->markTestSkipped("Skipping on {$this->_db->dbType}, as it doesn't apply to this backend");
+        if (in_array($this->db->dbType, ['oci8', 'ibm_db2'])) {
+            $this->markTestSkipped("Skipping on {$this->db->dbType}, as it doesn't apply to this backend");
         }
         //END SUGARCRM flav=ent ONLY
 
-        $sql = $this->_db->alterColumnSQL(
+        $sql = $this->db->alterColumnSQL(
             'contacts',
             ['compensation_min' =>
                 [
@@ -3584,7 +3584,7 @@ SQL;
             ]
         );
 
-        if ($this->_db->dbType == 'mssql') {
+        if ($this->db->dbType == 'mssql') {
             $this->assertMatchesRegularExpression('/float\s*\(18\)/i', $sql);
         } else {
             $this->assertMatchesRegularExpression('/float\s*\(18,2\)/i', $sql);
@@ -3597,8 +3597,8 @@ SQL;
     public function testEmptyPrecisionMassageFieldDef()
     {
         //BEGIN SUGARCRM flav=ent ONLY
-        if (in_array($this->_db->dbType, ['oci8', 'ibm_db2'])) {
-            $this->markTestSkipped("Skipping on {$this->_db->dbType}, as it doesn't apply to this backend");
+        if (in_array($this->db->dbType, ['oci8', 'ibm_db2'])) {
+            $this->markTestSkipped("Skipping on {$this->db->dbType}, as it doesn't apply to this backend");
         }
         //END SUGARCRM flav=ent ONLY
         $fielddef = [
@@ -3617,7 +3617,7 @@ SQL;
             'len' => '18',
             'precision' => '',
         ];
-        $this->_db->massageFieldDef($fielddef);
+        $this->db->massageFieldDef($fielddef);
 
         $this->assertEquals("18", $fielddef['len']);
     }
@@ -3628,8 +3628,8 @@ SQL;
     public function testBlankSpacePrecisionMassageFieldDef()
     {
         //BEGIN SUGARCRM flav=ent ONLY
-        if (in_array($this->_db->dbType, ['oci8', 'ibm_db2'])) {
-            $this->markTestSkipped("Skipping on {$this->_db->dbType}, as it doesn't apply to this backend");
+        if (in_array($this->db->dbType, ['oci8', 'ibm_db2'])) {
+            $this->markTestSkipped("Skipping on {$this->db->dbType}, as it doesn't apply to this backend");
         }
         //END SUGARCRM flav=ent ONLY
 
@@ -3649,7 +3649,7 @@ SQL;
             'len' => '18',
             'precision' => ' ',
         ];
-        $this->_db->massageFieldDef($fielddef);
+        $this->db->massageFieldDef($fielddef);
 
         $this->assertEquals("18", $fielddef['len']);
     }
@@ -3660,8 +3660,8 @@ SQL;
     public function testSetPrecisionMassageFieldDef()
     {
         //BEGIN SUGARCRM flav=ent ONLY
-        if (in_array($this->_db->dbType, ['oci8', 'ibm_db2'])) {
-            $this->markTestSkipped("Skipping on {$this->_db->dbType}, as it doesn't apply to this backend");
+        if (in_array($this->db->dbType, ['oci8', 'ibm_db2'])) {
+            $this->markTestSkipped("Skipping on {$this->db->dbType}, as it doesn't apply to this backend");
         }
         //END SUGARCRM flav=ent ONLY
         $fielddef = [
@@ -3680,7 +3680,7 @@ SQL;
             'len' => '18',
             'precision' => '2',
         ];
-        $this->_db->massageFieldDef($fielddef);
+        $this->db->massageFieldDef($fielddef);
 
         $this->assertEquals("18,2", $fielddef['len']);
     }
@@ -3691,8 +3691,8 @@ SQL;
     public function testSetPrecisionInLenMassageFieldDef()
     {
         //BEGIN SUGARCRM flav=ent ONLY
-        if (in_array($this->_db->dbType, ['oci8', 'ibm_db2'])) {
-            $this->markTestSkipped("Skipping on {$this->_db->dbType}, as it doesn't apply to this backend");
+        if (in_array($this->db->dbType, ['oci8', 'ibm_db2'])) {
+            $this->markTestSkipped("Skipping on {$this->db->dbType}, as it doesn't apply to this backend");
         }
         //END SUGARCRM flav=ent ONLY
         $fielddef = [
@@ -3710,7 +3710,7 @@ SQL;
             'reportable' => 1,
             'len' => '18,2',
         ];
-        $this->_db->massageFieldDef($fielddef);
+        $this->db->massageFieldDef($fielddef);
 
         $this->assertEquals("18,2", $fielddef['len']);
     }
@@ -3736,7 +3736,7 @@ SQL;
                 $expected[] = $as;
             }
             $query = "SELECT ".join(', ', $fields);
-            $result = $this->_db->getSelectFieldsFromQuery($query);
+            $result = $this->db->getSelectFieldsFromQuery($query);
             foreach ($expected as $expect) {
                 $this->assertContains($expect, array_keys($result), "Result should include $expect");
             }
@@ -3762,7 +3762,7 @@ SQL;
      */
     public function testOrderByEnum($order_by, $values, $order_dir, $expected)
     {
-        $result = $this->_db->orderByEnum($order_by, $values, $order_dir);
+        $result = $this->db->orderByEnum($order_by, $values, $order_dir);
         $this->assertEquals($expected, $result);
     }
 
@@ -3775,19 +3775,19 @@ SQL;
 
     public function testLimitSubQuery()
     {
-        if (!$this->_db->supports('limit_subquery')) {
+        if (!$this->db->supports('limit_subquery')) {
             $this->markTestSkipped('Backend does not support LIMIT clauses in subqueries');
         }
 
-        $subQuery = $this->_db->limitQuery('SELECT id FROM users WHERE 1=1 ORDER BY id', 0, 1, false, '', false);
+        $subQuery = $this->db->limitQuery('SELECT id FROM users WHERE 1=1 ORDER BY id', 0, 1, false, '', false);
         $query = 'SELECT id FROM users WHERE id IN (' . $subQuery . ')';
-        $row = $this->_db->fetchOne($query);
+        $row = $this->db->fetchOne($query);
         $this->assertIsArray($row);
     }
 
     public function testLimitSubQueryWithUnionAndComment()
     {
-        $dummy = 'SELECT \'x\' id ' . $this->_db->getFromDummyTable();
+        $dummy = 'SELECT \'x\' id ' . $this->db->getFromDummyTable();
 
         $query = <<<SQL
 SELECT
@@ -3805,18 +3805,18 @@ ORDER BY accounts.id
 SQL;
 
         // the LIMIT needs to be greater than 1
-        $result = $this->_db->limitQuery($query, 0, 2);
+        $result = $this->db->limitQuery($query, 0, 2);
         $this->assertNotEmpty($result);
     }
 
     public function testLimitUnionQueryWithoutOrderBy()
     {
-        $dummy = 'SELECT 1 id ' . $this->_db->getFromDummyTable();
+        $dummy = 'SELECT 1 id ' . $this->db->getFromDummyTable();
 
         $query = $dummy . ' UNION ALL ' . $dummy;
 
-        $result = $this->_db->limitQuery($query, 0, 1);
-        $row = $this->_db->fetchRow($result);
+        $result = $this->db->limitQuery($query, 0, 1);
+        $row = $this->db->fetchRow($result);
 
         $this->assertEquals('1', $row['id']);
     }

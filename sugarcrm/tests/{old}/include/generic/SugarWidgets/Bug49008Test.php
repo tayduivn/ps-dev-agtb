@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 class Bug49008Test extends TestCase
 {
-    var $sugarWidgetField;
+    public $sugarWidgetField;
 
     protected function setUp() : void
     {

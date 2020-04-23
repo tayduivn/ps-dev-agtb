@@ -23,9 +23,9 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug43208Test extends TestCase
 {
-    var $tableDictionaryExtFile1 = 'custom/Extension/application/Ext/TableDictionary/tabledictionary.ext.php';
-    var $tableDictionaryExtFile2 = 'custom/application/Ext/TableDictionary/tabledictionary.ext.php';
-    var $corruptExtModuleFile = 'custom/Extension/application/Ext/TableDictionary/Bug43208_module.php';
+    public $tableDictionaryExtFile1 = 'custom/Extension/application/Ext/TableDictionary/tabledictionary.ext.php';
+    public $tableDictionaryExtFile2 = 'custom/application/Ext/TableDictionary/tabledictionary.ext.php';
+    public $corruptExtModuleFile = 'custom/Extension/application/Ext/TableDictionary/Bug43208_module.php';
 
     protected function setUp() : void
     {
@@ -108,7 +108,7 @@ EOQ;
     }
 
 
-    function testRepairTableDictionaryExtFile()
+    public function testRepairTableDictionaryExtFile()
     {
         require_once 'ModuleInstall/ModuleInstaller.php';
         repairTableDictionaryExtFile();

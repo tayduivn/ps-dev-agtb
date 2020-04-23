@@ -17,7 +17,7 @@ abstract class MssqlManagerTest extends TestCase
     /**
      * @var MssqlManager
      */
-    protected $_db;
+    protected $db;
 
     public static function setUpBeforeClass() : void
     {
@@ -28,13 +28,13 @@ abstract class MssqlManagerTest extends TestCase
     public function testQuote()
     {
         $string = "'dog eat ";
-        $this->assertEquals($this->_db->quote($string), "''dog eat ");
+        $this->assertEquals($this->db->quote($string), "''dog eat ");
     }
 
     public function testArrayQuote()
     {
         $string = ["'dog eat "];
-        $this->_db->arrayQuote($string);
+        $this->db->arrayQuote($string);
         $this->assertEquals($string, ["''dog eat "]);
     }
 
@@ -139,7 +139,7 @@ abstract class MssqlManagerTest extends TestCase
      */
     public function testConvert(array $parameters, $result)
     {
-        $this->assertEquals($result, call_user_func_array([$this->_db, "convert"], $parameters));
+        $this->assertEquals($result, call_user_func_array([$this->db, "convert"], $parameters));
     }
 
      /**
@@ -147,7 +147,7 @@ abstract class MssqlManagerTest extends TestCase
       */
     public function testConcat()
     {
-        $ret = $this->_db->concat('foo', ['col1','col2','col3']);
+        $ret = $this->db->concat('foo', ['col1','col2','col3']);
         $this->assertEquals("LTRIM(RTRIM(CONCAT(ISNULL(foo.col1,''),' ',ISNULL(foo.col2,''),' ',ISNULL(foo.col3,''))))", $ret);
     }
 
@@ -176,7 +176,7 @@ abstract class MssqlManagerTest extends TestCase
         $result
     ) {
         $this->assertEquals(
-            $this->_db->fromConvert($parameters[0], $parameters[1]),
+            $this->db->fromConvert($parameters[0], $parameters[1]),
             $result
         );
     }
@@ -198,7 +198,7 @@ abstract class MssqlManagerTest extends TestCase
             'db_password' => $GLOBALS['db']->connectOptions['db_password'],
         ];
 
-        $this->assertTrue($this->_db->connect($configOptions));
+        $this->assertTrue($this->db->connect($configOptions));
     }
 
     /**
@@ -206,7 +206,7 @@ abstract class MssqlManagerTest extends TestCase
      */
     public function testTruncateTableSQL()
     {
-        $sql = $this->_db->truncateTableSQL('TEST_TABLE');
+        $sql = $this->db->truncateTableSQL('TEST_TABLE');
 
         $this->assertEquals('TRUNCATE TABLE TEST_TABLE', $sql);
     }
@@ -214,7 +214,7 @@ abstract class MssqlManagerTest extends TestCase
     public function testSqlLikeString()
     {
         $str = '[[A-Z]';
-        $likestr = $this->_db->sqlLikeString($str, '%', false);
+        $likestr = $this->db->sqlLikeString($str, '%', false);
         $this->assertEquals('[[][[]A-Z]', $likestr);
     }
 
@@ -367,7 +367,7 @@ abstract class MssqlManagerTest extends TestCase
      */
     public function testIsUnionQuery($sql, $isUnionExpected)
     {
-        $isUnion = SugarTestReflection::callProtectedMethod($this->_db, 'isUnionQuery', [$sql]);
+        $isUnion = SugarTestReflection::callProtectedMethod($this->db, 'isUnionQuery', [$sql]);
 
         $this->assertEquals($isUnionExpected, $isUnion);
     }
@@ -525,12 +525,12 @@ abstract class MssqlManagerTest extends TestCase
      */
     public function testColumnLengthLimits(array $fieldDef, $successRegex)
     {
-        $colType = $this->_db->getColumnType($this->_db->getFieldType($fieldDef));
-        if ($type = $this->_db->getTypeParts($colType)) {
+        $colType = $this->db->getColumnType($this->db->getFieldType($fieldDef));
+        if ($type = $this->db->getTypeParts($colType)) {
             $successRegex = preg_replace('/\$baseType/', $type['baseType'], $successRegex);
         }
 
-        $result = SugarTestReflection::callProtectedMethod($this->_db, 'oneColumnSQLRep', [$fieldDef]);
+        $result = SugarTestReflection::callProtectedMethod($this->db, 'oneColumnSQLRep', [$fieldDef]);
         $this->assertEquals(1, preg_match($successRegex, $result), "Resulting statement: $result failed to match /$successRegex/");
     }
 
@@ -540,6 +540,6 @@ abstract class MssqlManagerTest extends TestCase
     public function testOrderStability()
     {
         $msg = 'SQL Server adapter should not declare order_stability capability';
-        $this->assertFalse($this->_db->supports('order_stability'), $msg);
+        $this->assertFalse($this->db->supports('order_stability'), $msg);
     }
 }

@@ -14,14 +14,14 @@ use PHPUnit\Framework\TestCase;
 
 class ImportFileSplitterTest extends TestCase
 {
-    protected $_goodFile;
-    protected $_badFile;
+    protected $goodFile;
+    protected $badFile;
 
     protected function setUp() : void
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-        $this->_goodFile = SugarTestImportUtilities::createFile(2000, 3);
-        $this->_badFile  = ImportCacheFiles::getImportDir().'/thisfileisntthere'.date("YmdHis");
+        $this->goodFile = SugarTestImportUtilities::createFile(2000, 3);
+        $this->badFile  = ImportCacheFiles::getImportDir().'/thisfileisntthere'.date("YmdHis");
         $this->_whiteSpaceFile  = SugarTestImportUtilities::createFileWithWhiteSpace();
     }
 
@@ -34,19 +34,19 @@ class ImportFileSplitterTest extends TestCase
 
     public function testLoadNonExistantFile()
     {
-        $importFileSplitter = new ImportFileSplitter($this->_badFile);
+        $importFileSplitter = new ImportFileSplitter($this->badFile);
         $this->assertFalse($importFileSplitter->fileExists());
     }
 
     public function testLoadGoodFile()
     {
-        $importFileSplitter = new ImportFileSplitter($this->_goodFile);
+        $importFileSplitter = new ImportFileSplitter($this->goodFile);
         $this->assertTrue($importFileSplitter->fileExists());
     }
 
     public function testSplitSourceFile()
     {
-        $importFileSplitter = new ImportFileSplitter($this->_goodFile);
+        $importFileSplitter = new ImportFileSplitter($this->goodFile);
         $importFileSplitter->splitSourceFile(',', '"');
 
         $this->assertEquals(2000, $importFileSplitter->getRecordCount());
@@ -55,7 +55,7 @@ class ImportFileSplitterTest extends TestCase
 
     public function testSplitSourceFileNoEnclosure()
     {
-        $importFileSplitter = new ImportFileSplitter($this->_goodFile);
+        $importFileSplitter = new ImportFileSplitter($this->goodFile);
         $importFileSplitter->splitSourceFile(',', '');
 
         $this->assertEquals(2000, $importFileSplitter->getRecordCount());
@@ -64,7 +64,7 @@ class ImportFileSplitterTest extends TestCase
 
     public function testSplitSourceFileWithHeader()
     {
-        $importFileSplitter = new ImportFileSplitter($this->_goodFile);
+        $importFileSplitter = new ImportFileSplitter($this->goodFile);
         $importFileSplitter->splitSourceFile(',', '"', true);
 
         $this->assertEquals(1999, $importFileSplitter->getRecordCount());
@@ -73,7 +73,7 @@ class ImportFileSplitterTest extends TestCase
 
     public function testSplitSourceFileWithThreshold()
     {
-        $importFileSplitter = new ImportFileSplitter($this->_goodFile, 500);
+        $importFileSplitter = new ImportFileSplitter($this->goodFile, 500);
         $importFileSplitter->splitSourceFile(',', '"');
 
         $this->assertEquals(2000, $importFileSplitter->getRecordCount());
@@ -82,11 +82,11 @@ class ImportFileSplitterTest extends TestCase
 
     public function testGetSplitFileName()
     {
-        $importFileSplitter = new ImportFileSplitter($this->_goodFile);
+        $importFileSplitter = new ImportFileSplitter($this->goodFile);
         $importFileSplitter->splitSourceFile(',', '"');
 
-        $this->assertEquals($importFileSplitter->getSplitFileName(0), "{$this->_goodFile}-0");
-        $this->assertEquals($importFileSplitter->getSplitFileName(1), "{$this->_goodFile}-1");
+        $this->assertEquals($importFileSplitter->getSplitFileName(0), "{$this->goodFile}-0");
+        $this->assertEquals($importFileSplitter->getSplitFileName(1), "{$this->goodFile}-1");
         $this->assertEquals($importFileSplitter->getSplitFileName(2), false);
     }
 

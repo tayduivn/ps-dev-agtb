@@ -21,11 +21,10 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug49772Test extends TestCase
 {
-    private $_old_label = '';
-    private $_test_label = 'LBL_ACCOUNT_NAME';
-    private $_test_module = 'Contacts';
-    private $_lang = 'en_us';
-
+    private $oldLabel = '';
+    private $testLabel = 'LBL_ACCOUNT_NAME';
+    private $testModule = 'Contacts';
+    private $lang = 'en_us';
 
     /**
      * Generating new label with HTML tags
@@ -33,24 +32,24 @@ class Bug49772Test extends TestCase
      */
     public function testLabelSaving()
     {
-        $mod_strings = return_module_language($this->_lang, $this->_test_module);
-        $this->_old_label = $mod_strings[$this->_test_label];
+        $mod_strings = return_module_language($this->lang, $this->testModule);
+        $this->oldLabel = $mod_strings[$this->testLabel];
         $pref = '<img alt="<script>" src="www.test.com/img.png" ="alert(7001)" width="1" height="1"/>';
         $prepared_pref = to_html(strip_tags(from_html($pref)));
-        $new_label = $prepared_pref . ' ' . $this->_old_label;
+        $new_label = $prepared_pref . ' ' . $this->oldLabel;
 
         // save the new label to the language file
-        ParserLabel::addLabels($this->_lang, [$this->_test_label => $new_label], $this->_test_module);
+        ParserLabel::addLabels($this->lang, [$this->testLabel => $new_label], $this->testModule);
 
         // read the language file to get the new value
-        include "custom/modules/{$this->_test_module}/Ext/Language/{$this->_lang}.lang.ext.php";
+        include "custom/modules/{$this->testModule}/Ext/Language/{$this->lang}.lang.ext.php";
 
-        $this->assertEquals($new_label, $mod_strings[$this->_test_label]);
-        $this->assertNotEquals($pref . ' ' . $this->_old_label, $mod_strings[$this->_test_label]);
+        $this->assertEquals($new_label, $mod_strings[$this->testLabel]);
+        $this->assertNotEquals($pref . ' ' . $this->oldLabel, $mod_strings[$this->testLabel]);
     }
 
     protected function tearDown() : void
     {
-        ParserLabel::addLabels($this->_lang, [$this->_test_label=>$this->_old_label], $this->_test_module);
+        ParserLabel::addLabels($this->lang, [$this->testLabel=>$this->oldLabel], $this->testModule);
     }
 }

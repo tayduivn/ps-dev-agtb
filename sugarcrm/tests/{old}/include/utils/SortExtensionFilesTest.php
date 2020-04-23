@@ -67,7 +67,7 @@ class SortExtensionFilesTest extends TestCase
         $this->assertEquals($expected_result, $files_sorted);
     }
 
-    function providerSortExtensionFiles()
+    public static function providerSortExtensionFiles()
     {
         return [
             [

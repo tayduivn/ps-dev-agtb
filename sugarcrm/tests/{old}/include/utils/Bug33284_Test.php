@@ -14,8 +14,8 @@ use PHPUnit\Framework\TestCase;
 
 class Bug33284_Test extends TestCase
 {
-    var $max_display_set = false;
-    var $max_display_length;
+    public $max_display_set = false;
+    public $max_display_length;
     
     protected function setUp() : void
     {

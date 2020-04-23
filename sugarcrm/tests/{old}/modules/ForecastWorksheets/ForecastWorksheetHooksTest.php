@@ -44,7 +44,7 @@ class ForecastWorksheetHooksTest extends TestCase
 
         /* @var $hook ForecastWorksheetHooks */
         $hook = new MockForecastWorksheetHooks();
-        $hook::$_isForecastSetup = false;
+        MockForecastWorksheetHooks::$isForecastSetup = false;
         $ret = $hook::managerNotifyCommitStage($this->worksheet, 'before_save', []);
         $this->assertFalse($ret);
     }
@@ -63,8 +63,7 @@ class ForecastWorksheetHooksTest extends TestCase
 
 
         $hook = new MockForecastWorksheetHooks();
-        $hook::$_isForecastSetup = false;
-        /* @var $hook ForecastWorksheetHooks */
+        MockForecastWorksheetHooks::$isForecastSetup = false;
         $hook::$settings = ['forecast_by' => 'Test1'];
         $ret = $hook::managerNotifyCommitStage($this->worksheet, 'before_save', []);
         $this->assertFalse($ret);
@@ -85,8 +84,7 @@ class ForecastWorksheetHooksTest extends TestCase
 
 
         $hook = new MockForecastWorksheetHooks();
-        $hook::$_isForecastSetup = false;
-        /* @var $hook ForecastWorksheetHooks */
+        MockForecastWorksheetHooks::$isForecastSetup = false;
         $hook::$settings = ['forecast_by' => 'Test'];
         $ret = $hook::managerNotifyCommitStage($this->worksheet, 'before_save', []);
         $this->assertFalse($ret);
@@ -183,29 +181,29 @@ class MockForecastWorksheetHooks extends ForecastWorksheetHooks
      * Allow us to easily change it depending on the test
      * @var bool
      */
-    public static $_isForecastSetup = true;
+    public static $isForecastSetup = true;
 
     /**
      * Allow us to set a custom notification bean
      *
-     * @var null|SugarBean
+     * @var SugarBean|null
      */
-    public static $_notificationBean = null;
+    private static $notificationBean;
 
-    public static $_languageStringsMock = [];
+    private static $languageStringsMock = [];
 
     public static function isForecastSetup()
     {
-        return static::$_isForecastSetup;
+        return static::$isForecastSetup;
     }
 
     public static function getNotificationBean()
     {
-        return static::$_notificationBean;
+        return static::$notificationBean;
     }
 
     public static function getLanguageStrings($key)
     {
-        return static::$_languageStringsMock;
+        return static::$languageStringsMock;
     }
 }

@@ -19,17 +19,17 @@ require_once 'modules/DynamicFields/FieldCases.php';
  */
 class URLFieldTest extends TestCase
 {
-    private $_modulename = 'Accounts';
-    
+    private $moduleName = 'Accounts';
+
     protected function setUp() : void
     {
         $this->field = get_widget('url');
-        $this->field->id = $this->_modulename.'foo_c';
+        $this->field->id = $this->moduleName.'foo_c';
         $this->field->name = 'foo_c';
         $this->field->vanme = 'LBL_Foo';
         $this->field->comments = null;
         $this->field->help = null;
-        $this->field->custom_module = $this->_modulename;
+        $this->field->custom_module = $this->moduleName;
         $this->field->type = 'url';
         $this->field->len = 255;
         $this->field->required = 0;

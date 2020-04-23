@@ -17,21 +17,21 @@ class Bug39756Test extends TestCase
     /**
      * @var Account
      */
-    var $_account = null;
+    private $account;
 
     protected function setUp() : void
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-        $this->_account = new Account();
-        $this->_account->name = 'Account_'.create_guid();
-        $this->_account->save();
+        $this->account = new Account();
+        $this->account->name = 'Account_'.create_guid();
+        $this->account->save();
     }
     
     protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
-        $sql = "DELETE FROM accounts where id = '{$this->_account->id}'";
+        $sql = "DELETE FROM accounts where id = '{$this->account->id}'";
         $GLOBALS['db']->query($sql);
     }
     
@@ -41,14 +41,14 @@ class Bug39756Test extends TestCase
         $disable_date_format = true;
 
         $newDateEntered = '2011-01-28 11:05:10';
-        $oldDateEntered = $this->_account->date_entered;
+        $oldDateEntered = $this->account->date_entered;
 
-        $this->_account->update_date_entered = true;
-        $this->_account->date_entered = $newDateEntered;
-        $this->_account->save();
+        $this->account->update_date_entered = true;
+        $this->account->date_entered = $newDateEntered;
+        $this->account->save();
 
         $acct = new Account();
-        $acct->retrieve($this->_account->id);
+        $acct->retrieve($this->account->id);
        
         $this->assertNotEquals($acct->date_entered, $oldDateEntered, "Account date_entered should not be equal to old date_entered");
         $this->assertEquals($acct->date_entered, $newDateEntered, "Account date_entered should be equal to old date_entered");
@@ -60,13 +60,13 @@ class Bug39756Test extends TestCase
         $disable_date_format = true;
 
         $newDateEntered = '2011-01-28 11:05:10';
-        $oldDateEntered = $this->_account->date_entered;
+        $oldDateEntered = $this->account->date_entered;
 
-        $this->_account->date_entered = $newDateEntered;
-        $this->_account->save();
+        $this->account->date_entered = $newDateEntered;
+        $this->account->save();
 
         $acct = new Account();
-        $acct->retrieve($this->_account->id);
+        $acct->retrieve($this->account->id);
        
         $this->assertEquals($acct->date_entered, $oldDateEntered, "Account date_entered should be equal to old date_entered");
         $this->assertNotEquals($acct->date_entered, $newDateEntered, "Account date_entered should not be equal to old date_entered");

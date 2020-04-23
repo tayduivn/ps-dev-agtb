@@ -20,16 +20,16 @@ class RestFileTempTest extends RestFileTestBase
     {
         // Upload a temporary file
         $post = ['picture' => '@include/images/badge_256.png'];
-        $reply = $this->_restCall('Contacts/temp/file/picture', $post);
+        $reply = $this->restCall('Contacts/temp/file/picture', $post);
         $this->assertArrayHasKey('picture', $reply['reply'], 'Reply is missing field name key');
         $this->assertNotEmpty($reply['reply']['picture']['guid'], 'File guid not returned');
 
         // Grab the temporary file and make sure it is present
-        $fetch = $this->_restCall('Contacts/temp/file/picture/' . $reply['reply']['picture']['guid']);
+        $fetch = $this->restCall('Contacts/temp/file/picture/' . $reply['reply']['picture']['guid']);
         $this->assertNotEmpty($fetch['replyRaw'], 'Temporary file is missing');
 
         // Grab the temporary file and make sure it's been deleted
-        $fetch = $this->_restCall('Contacts/temp/file/picture/' . $reply['reply']['picture']['guid']);
+        $fetch = $this->restCall('Contacts/temp/file/picture/' . $reply['reply']['picture']['guid']);
         $this->assertArrayHasKey('error', $fetch['reply'], 'Temporary file is still here');
         $this->assertEquals('invalid_parameter', $fetch['reply']['error'], 'Expected error string not returned');
     }

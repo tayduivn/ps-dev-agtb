@@ -20,14 +20,14 @@ require_once 'include/SearchForm/SearchForm2.php';
  */
 class Bug45966 extends TestCase
 {
-    var $module = 'Notes';
-    var $action = 'index';
-    var $seed;
+    public $module = 'Notes';
+    public $action = 'index';
+    public $seed;
     /**
      * @var SearchForm
      */
-    var $form;
-    var $array;
+    public $form;
+    public $array;
 
     protected $timezone = 'America/Denver';
 

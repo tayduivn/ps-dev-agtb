@@ -16,9 +16,9 @@ class RestMetadataModuleListMobileTest extends RestTestBase
     public $unitTestFiles = [];
 
     // Need to set the platform to something else
-    protected function _restLogin($username = '', $password = '', $platform = 'mobile')
+    protected function restLogin($username = '', $password = '', $platform = 'mobile')
     {
-        return parent::_restLogin($username, $password, $platform);
+        return parent::restLogin($username, $password, $platform);
     }
 
     protected function setUp() : void
@@ -41,8 +41,8 @@ class RestMetadataModuleListMobileTest extends RestTestBase
      */
     public function testMetadataGetModuleListMobile()
     {
-        $this->_clearMetadataCache();
-        $restReply = $this->_restCall('me');
+        $this->clearMetadataCache();
+        $restReply = $this->restCall('me');
 
         foreach (SugarAutoLoader::existingCustom('include/MVC/Controller/wireless_module_registry.php') as $file) {
             require $file;
@@ -75,8 +75,8 @@ class RestMetadataModuleListMobileTest extends RestTestBase
 
         $enabledMobile = ['Accounts','Contacts','Opportunities',  ];
 
-        $this->_clearMetadataCache();
-        $restReply = $this->_restCall('me');
+        $this->clearMetadataCache();
+        $restReply = $this->restCall('me');
         $this->assertTrue(isset($restReply['reply']['current_user']['module_list']), 'There is no mobile module list on the second pass');
         $restModules = $restReply['reply']['current_user']['module_list'];
         foreach ($enabledMobile as $module) {
@@ -87,8 +87,8 @@ class RestMetadataModuleListMobileTest extends RestTestBase
 
     public function testMetadataMobileUsers()
     {
-        $this->_clearMetadataCache();
-        $restReply = $this->_restCall('metadata');
+        $this->clearMetadataCache();
+        $restReply = $this->restCall('metadata');
         $this->assertTrue(!empty($restReply['reply']['modules']['Users']), 'Users does not exist in the metadata list.');
     }
 }

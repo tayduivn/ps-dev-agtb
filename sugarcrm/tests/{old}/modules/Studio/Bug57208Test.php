@@ -14,11 +14,11 @@ use PHPUnit\Framework\TestCase;
 
 class Bug57208Test extends TestCase
 {
-    protected $_testModule = 'Bug57208Test';
+    private $testModule = 'Bug57208Test';
     
     protected function setUp() : void
     {
-        sugar_mkdir("modules/{$this->_testModule}");
+        sugar_mkdir("modules/{$this->testModule}");
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
@@ -27,7 +27,7 @@ class Bug57208Test extends TestCase
     
     protected function tearDown() : void
     {
-        rmdir("modules/{$this->_testModule}");
+        rmdir("modules/{$this->testModule}");
         SugarTestHelper::tearDown();
     }
 
@@ -36,7 +36,7 @@ class Bug57208Test extends TestCase
      */
     public function testModuleTypeIsBasicForModuleWithNoBeanListEntry()
     {
-        $sm = new StudioModule($this->_testModule);
+        $sm = new StudioModule($this->testModule);
         $type = $sm->getType();
         
         $this->assertEquals('basic', $type, "Type should be 'basic' but '$type' was returned from StudioModule :: getType()");

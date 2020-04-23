@@ -17,22 +17,20 @@ require_once 'vendor/nusoap//nusoap.php';
  */
 class SetEntryTest extends SOAPTestCase
 {
-    public $_soapURL = null;
-    private $_tsk = null;
+    private $task;
 
     protected function setUp() : void
     {
-        $this->_soapURL = $GLOBALS['sugar_config']['site_url'] . '/service/v4_1/soap.php';
         parent::setUp();
 
-        $this->_tsk = new Task();
-        $this->_tsk->name = "Unit Test";
-        $this->_tsk->save();
+        $this->task = new Task();
+        $this->task->name = "Unit Test";
+        $this->task->save();
     }
 
     protected function tearDown() : void
     {
-        $GLOBALS['db']->query("DELETE FROM tasks WHERE id = '{$this->_tsk->id}'");
+        $GLOBALS['db']->query("DELETE FROM tasks WHERE id = '{$this->task->id}'");
         parent::tearDown();
     }
 
@@ -46,21 +44,21 @@ class SetEntryTest extends SOAPTestCase
     {
         $privateTeamID = $GLOBALS['current_user']->getPrivateTeamID();
 
-        $this->_login();
-        $result = $this->_soapClient->call(
+        $this->login();
+        $result = $this->soapClient->call(
             'set_entry',
             [
-                'session' => $this->_sessionId,
+                'session' => $this->sessionId,
                 'module' => 'Tasks',
                 'name_value_list' => [
-                    ['name' => 'id', 'value' => $this->_tsk->id],
+                    ['name' => 'id', 'value' => $this->task->id],
                     ['name' => 'team_id', 'value' => $privateTeamID],
                 ],
             ]
         );
 
         $modifiedTask = new Task();
-        $modifiedTask->retrieve($this->_tsk->id);
+        $modifiedTask->retrieve($this->task->id);
         $this->assertEquals($privateTeamID, $modifiedTask->team_id);
     }
 }

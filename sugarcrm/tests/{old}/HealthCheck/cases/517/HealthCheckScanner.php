@@ -12,7 +12,7 @@
 
 class S_517_PackageManager extends PackageManager
 {
-    function getinstalledPackages($types = ['module', 'langpack'])
+    public function getinstalledPackages($types = ['module', 'langpack'])
     {
         return [
             [

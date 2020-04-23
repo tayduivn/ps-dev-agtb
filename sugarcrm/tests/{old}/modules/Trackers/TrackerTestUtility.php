@@ -13,9 +13,9 @@
 
 class TrackerTestUtility
 {
-    static $trackerSettings = [];
+    private static $trackerSettings = [];
 
-    static function setUp()
+    public static function setUp()
     {
         require 'modules/Trackers/config.php';
         foreach ($tracker_config as $entry) {
@@ -32,7 +32,7 @@ class TrackerTestUtility
         }
     }
 
-    static function tearDown()
+    public static function tearDown()
     {
         foreach (self::$trackerSettings as $name => $value) {
             $GLOBALS['db']->query("INSERT into config (category, name, value) values ('tracker', '{$name}', '{$value}')");

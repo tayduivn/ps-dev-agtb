@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 class Bug43770Test extends TestCase
 {
-    private $_fieldOutput;
+    private $fieldOutput;
 
     protected function setUp() : void
     {
@@ -27,7 +27,7 @@ class Bug43770Test extends TestCase
         $displayParams = [
             'idName' => 'Contactsassigned_user_name',
         ];
-        $this->_fieldOutput = $sfr->getEditViewSmarty([], $vardef, $displayParams, 1);
+        $this->fieldOutput = $sfr->getEditViewSmarty([], $vardef, $displayParams, 1);
     }
     /**
      * @group   bug43770
@@ -36,12 +36,12 @@ class Bug43770Test extends TestCase
     {
         $this->assertStringContainsString(
             'id="Contacts{$Array.assigned_user_name.id_name}"',
-            $this->_fieldOutput
+            $this->fieldOutput
         );
     }
 
     public function testCustomIdNameJS()
     {
-        $this->assertStringContainsString('"id":"Contactsassigned_user_id"', $this->_fieldOutput);
+        $this->assertStringContainsString('"id":"Contactsassigned_user_id"', $this->fieldOutput);
     }
 }

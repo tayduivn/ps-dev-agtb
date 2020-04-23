@@ -17,18 +17,18 @@ class HistoryTest extends TestCase
     /**
      * @var string
      */
-    private $_path;
+    private $path;
 
     /**
      * @var History
      */
-    private $_history;
+    private $history;
 
     protected function setUp() : void
     {
-        $this->_path = sugar_cached('/history/' . time());
+        $this->path = sugar_cached('/history/' . time());
         sugar_mkdir($this->getHistoryDir());
-        $this->_history = new History($this->_path);
+        $this->history = new History($this->path);
     }
 
     protected function tearDown() : void
@@ -53,15 +53,15 @@ class HistoryTest extends TestCase
     {
         $tempFile = tempnam($this->getHistoryDir(), 'history');
 
-        $time = $this->_history->append($tempFile);
-        $this->assertTrue(file_exists($this->_history->getFileByTimestamp($time)), "Didn't create history file");
-        $this->assertEquals($this->_history->restoreByTimestamp($time), $time, 'Restore returns incorrect timestamp');
+        $time = $this->history->append($tempFile);
+        $this->assertTrue(file_exists($this->history->getFileByTimestamp($time)), "Didn't create history file");
+        $this->assertEquals($this->history->restoreByTimestamp($time), $time, 'Restore returns incorrect timestamp');
 
-        $this->assertTrue(file_exists($this->_path), 'Preview file not created');
-        $this->assertFileEquals($tempFile, $this->_path, 'Restored file incorrect');
+        $this->assertTrue(file_exists($this->path), 'Preview file not created');
+        $this->assertFileEquals($tempFile, $this->path, 'Restored file incorrect');
 
-        $this->_history->undoRestore();
-        $this->assertFalse(file_exists($this->_path), 'Preview file not removed');
+        $this->history->undoRestore();
+        $this->assertFalse(file_exists($this->path), 'Preview file not removed');
     }
 
     /**
@@ -70,15 +70,15 @@ class HistoryTest extends TestCase
     public function testPositioning()
     {
         // Pause for a second in between each append for different timestamps
-        $el1 = $this->_history->append(tempnam($this->getHistoryDir(), 'history'));
-        $el2 = $this->_history->append(tempnam($this->getHistoryDir(), 'history'));
-        $el3 = $this->_history->append(tempnam($this->getHistoryDir(), 'history'));
+        $el1 = $this->history->append(tempnam($this->getHistoryDir(), 'history'));
+        $el2 = $this->history->append(tempnam($this->getHistoryDir(), 'history'));
+        $el3 = $this->history->append(tempnam($this->getHistoryDir(), 'history'));
 
         // Grab our values for testing
-        $getFirst = $this->_history->getFirst();
-        $getLast  = $this->_history->getLast();
-        $getNth1  = $this->_history->getNth(1);
-        $getNext  = $this->_history->getNext();
+        $getFirst = $this->history->getFirst();
+        $getLast  = $this->history->getLast();
+        $getNth1  = $this->history->getNth(1);
+        $getNext  = $this->history->getNext();
 
         // Assertions
         $this->assertEquals($el3, $getFirst, "$el3 was not the timestamp returned by getFirst() [$getFirst]");
@@ -87,12 +87,12 @@ class HistoryTest extends TestCase
         $this->assertEquals($el1, $getNext, "$el1 was not the timestamp returned by getNext() [$getNext]");
 
         // Last assertion
-        $getNext  = $this->_history->getNext();
+        $getNext  = $this->history->getNext();
         $this->assertFalse($getNext, "Expected getNext() [$getNext] to return false");
     }
 
     private function getHistoryDir()
     {
-        return dirname($this->_path);
+        return dirname($this->path);
     }
 }

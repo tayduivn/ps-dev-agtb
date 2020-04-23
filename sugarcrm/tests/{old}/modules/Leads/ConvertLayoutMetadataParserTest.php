@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -18,7 +19,11 @@ use PHPUnit\Framework\TestCase;
  */
 class ConvertLayoutMetadataParserTest extends TestCase
 {
-    protected $parser;
+    /**
+     * @var ConvertLayoutMetadataParser&MockObject
+     */
+    private $parser;
+
     protected $contactDef = [
         'module' => 'Contacts',
         'required' => true,
@@ -32,6 +37,10 @@ class ConvertLayoutMetadataParserTest extends TestCase
         'duplicateCheckOnStart' => true,
     ];
 
+    private $originalDefinition = [
+        'module' => 'Foo',
+    ];
+
     protected $customFile = null;
 
     protected $customModule = null;
@@ -40,13 +49,18 @@ class ConvertLayoutMetadataParserTest extends TestCase
 
     protected function setUp() : void
     {
-        $this->parser = new TestConvertLayoutMetadataParser('Contacts');
-        $this->parser->setConvertDefs([
-                'modules' => [
-                    $this->contactDef,
-                    $this->accountDef,
-                ],
-            ]);
+        $this->parser = $this->createPartialMock(ConvertLayoutMetadataParser::class, [
+            'getOriginalViewDefs',
+            'isDupeCheckEnabledForModule',
+            '_saveToFile',
+        ]);
+        SugarTestReflection::setProtectedValue($this->parser, '_convertdefs', [
+            'modules' => [
+                $this->contactDef,
+                $this->accountDef,
+            ],
+        ]);
+
         // custom def
         $this->customModule = 'TestModule';
         $this->customDef = [
@@ -79,6 +93,7 @@ class ConvertLayoutMetadataParserTest extends TestCase
      */
     public function testUpdateConvertDef_WithExistingDef_UpdatesDef()
     {
+        $this->mockOriginalDefinition();
         $this->parser->updateConvertDef([
                 $this->contactDef,
                 [
@@ -98,7 +113,10 @@ class ConvertLayoutMetadataParserTest extends TestCase
             ],
         ];
 
-        $this->assertEquals($expectedModules, $this->parser->getConvertDefs(), 'Account def should be updated');
+        $this->assertEquals(
+            $expectedModules,
+            SugarTestReflection::getProtectedValue($this->parser, '_convertdefs')
+        );
     }
 
     /**
@@ -112,6 +130,7 @@ class ConvertLayoutMetadataParserTest extends TestCase
             'copyData' => false,
         ];
 
+        $this->mockOriginalDefinition();
         $this->parser->updateConvertDef([
                 $this->contactDef,
                 $this->accountDef,
@@ -126,7 +145,10 @@ class ConvertLayoutMetadataParserTest extends TestCase
             ],
         ];
 
-        $this->assertEquals($expectedModules, $this->parser->getConvertDefs(), 'Foo def should be added');
+        $this->assertEquals(
+            $expectedModules,
+            SugarTestReflection::getProtectedValue($this->parser, '_convertdefs')
+        );
     }
 
     /**
@@ -138,6 +160,7 @@ class ConvertLayoutMetadataParserTest extends TestCase
             'module' => 'Opportunities',
             'required' => true,
         ];
+        $this->mockOriginalDefinition();
         $this->parser->updateConvertDef([
                 $this->contactDef,
                 [
@@ -157,7 +180,10 @@ class ConvertLayoutMetadataParserTest extends TestCase
             ],
         ];
 
-        $this->assertEquals($expectedModules, $this->parser->getConvertDefs(), 'Account def should be forced to required');
+        $this->assertEquals(
+            $expectedModules,
+            SugarTestReflection::getProtectedValue($this->parser, '_convertdefs')
+        );
     }
 
     /**
@@ -166,13 +192,17 @@ class ConvertLayoutMetadataParserTest extends TestCase
     public function testApplyDependenciesAndHiddenFields_DependenciesApply_AddedToDef()
     {
         $dependency = ['Bar' => []];
-        $this->parser->mockOriginalDef['dependentModules'] = $dependency;
+        $this->mockOriginalDefinition(['dependentModules' => $dependency]);
         $def = [
             'module' => 'Foo',
             'required' => true,
         ];
         $includedModules = ['Foo', 'Bar'];
-        $resultDef = $this->parser->applyDependenciesAndHiddenFields($def, $includedModules);
+        $resultDef = SugarTestReflection::callProtectedMethod(
+            $this->parser,
+            'applyDependenciesAndHiddenFields',
+            [$def, $includedModules]
+        );
         $this->assertEquals($dependency, $resultDef['dependentModules'], 'Dependency should be set');
     }
 
@@ -182,13 +212,17 @@ class ConvertLayoutMetadataParserTest extends TestCase
     public function testApplyDependenciesAndHiddenFields_DependencyDoesNotApply_NotAddedToDef()
     {
         $dependency = ['Bar' => []];
-        $this->parser->mockOriginalDef['dependentModules'] = $dependency;
+        $this->mockOriginalDefinition(['dependentModules' => $dependency]);
         $def = [
             'module' => 'Foo',
             'required' => true,
         ];
         $includedModules = ['Foo']; //Bar not included
-        $resultDef = $this->parser->applyDependenciesAndHiddenFields($def, $includedModules);
+        $resultDef = SugarTestReflection::callProtectedMethod(
+            $this->parser,
+            'applyDependenciesAndHiddenFields',
+            [$def, $includedModules]
+        );
         $this->assertFalse(isset($resultDef['dependentModules']), 'Dependency should not be set');
     }
 
@@ -198,13 +232,17 @@ class ConvertLayoutMetadataParserTest extends TestCase
     public function testApplyDependenciesAndHiddenFields_HiddenFieldsApply_AddedToDef()
     {
         $hiddenFields = ['baz' => 'Bar'];
-        $this->parser->mockOriginalDef['hiddenFields'] = $hiddenFields;
+        $this->mockOriginalDefinition(['hiddenFields' => $hiddenFields]);
         $def = [
             'module' => 'Foo',
             'required' => true,
         ];
         $includedModules = ['Foo', 'Bar'];
-        $resultDef = $this->parser->applyDependenciesAndHiddenFields($def, $includedModules);
+        $resultDef = SugarTestReflection::callProtectedMethod(
+            $this->parser,
+            'applyDependenciesAndHiddenFields',
+            [$def, $includedModules]
+        );
         $this->assertEquals($hiddenFields, $resultDef['hiddenFields'], 'Hidden fields should be set');
     }
 
@@ -214,18 +252,22 @@ class ConvertLayoutMetadataParserTest extends TestCase
     public function testApplyDependenciesAndHiddenFields_ExcludedFieldsApply_AddedToDef()
     {
         $hiddenFields = ['baz' => 'Bar'];
-        $this->parser->setExcludedFields([
+        SugarTestReflection::setProtectedValue($this->parser, 'excludedFields', [
             'Foo' => [
                 'repeat_type' => 'Bar',
             ],
         ]);
-        $this->parser->mockOriginalDef['hiddenFields'] = $hiddenFields;
+        $this->mockOriginalDefinition(['hiddenFields' => $hiddenFields]);
         $def = [
             'module' => 'Foo',
             'required' => true,
         ];
         $includedModules = ['Foo', 'Bar'];
-        $resultDef = $this->parser->applyDependenciesAndHiddenFields($def, $includedModules);
+        $resultDef = SugarTestReflection::callProtectedMethod(
+            $this->parser,
+            'applyDependenciesAndHiddenFields',
+            [$def, $includedModules]
+        );
         $this->assertArrayHasKey('baz', $resultDef['hiddenFields'], 'Hidden fields should be set');
         $this->assertArrayHasKey('repeat_type', $resultDef['hiddenFields'], 'Hidden fields should be set');
     }
@@ -241,7 +283,10 @@ class ConvertLayoutMetadataParserTest extends TestCase
                 $this->contactDef,
             ],
         ];
-        $this->assertEquals($expectedModules, $this->parser->getConvertDefs(), 'Account def should be removed');
+        $this->assertEquals(
+            $expectedModules,
+            SugarTestReflection::getProtectedValue($this->parser, '_convertdefs')
+        );
     }
 
     /**
@@ -249,8 +294,9 @@ class ConvertLayoutMetadataParserTest extends TestCase
      */
     public function testDeploy()
     {
-        $this->parser->deploy();
-        $this->assertEquals(1, $this->parser->saveToFileCallCount, 'saveToFile() should be called once');
+        $this->parser->expects($this->once())
+            ->method('_saveToFile');
+        SugarTestReflection::callProtectedMethod($this->parser, 'deploy');
     }
 
     /**
@@ -291,8 +337,9 @@ class ConvertLayoutMetadataParserTest extends TestCase
      */
     public function testGetDefaultDefForModules_ForModuleInOriginalViewDefs_ReturnsOriginalValues()
     {
+        $this->mockOriginalDefinition();
         $actualDef = $this->parser->getDefaultDefForModule('Foo');
-        $this->assertEquals($this->parser->mockOriginalDef, $actualDef, 'Original Foo def should be returned');
+        $this->assertEquals($this->originalDefinition, $actualDef, 'Original Foo def should be returned');
     }
 
     /**
@@ -300,8 +347,9 @@ class ConvertLayoutMetadataParserTest extends TestCase
      */
     public function testGetDefaultDefForModules_ForModuleNotInOriginalViewDefs_ReturnsDefaultValues()
     {
+        $this->mockOriginalDefinition();
         $actualDef = $this->parser->getDefaultDefForModule('Bar');
-        $defaultSettings = $this->parser->getDefaultModuleDefSettings();
+        $defaultSettings = SugarTestReflection::getProtectedValue($this->parser, 'defaultModuleDefSettings');
         $expectedDef = array_merge(['module' => 'Bar'], $defaultSettings);
         $this->assertEquals($expectedDef, $actualDef, 'Default settings should be returned');
     }
@@ -311,80 +359,32 @@ class ConvertLayoutMetadataParserTest extends TestCase
      */
     public function testGetDefaultDefForModules_ForModuleNotInOriginalAndDupeCheckEnabled_ReturnsDefaultWithDupeOnStart()
     {
-        $this->parser->mockDupeCheckEnabledFlag = true;
+        $this->mockOriginalDefinition();
+        $this->parser->method('isDupeCheckEnabledForModule')
+            ->willReturn(true);
+
         $actualDef = $this->parser->getDefaultDefForModule('Bar');
-        $defaultSettings = $this->parser->getDefaultModuleDefSettings();
+        $defaultSettings = SugarTestReflection::getProtectedValue($this->parser, 'defaultModuleDefSettings');
         $defaultSettings['duplicateCheckOnStart'] = true;
         $expectedDef = array_merge(['module' => 'Bar'], $defaultSettings);
         $this->assertEquals($expectedDef, $actualDef, 'Default settings should be returned');
     }
-}
 
-class TestConvertLayoutMetadataParser extends ConvertLayoutMetadataParser
-{
-    public $saveToFileCallCount = 0;
-    public $mockOriginalDef = [
-        'module' => 'Foo',
-        'required' => 'ohyeah',
-    ];
-    public $mockDupeCheckEnabledFlag = false;
-
-    public $mockExcludedFields = [];
-
-    protected function loadViewDefs()
+    private function mockOriginalDefinition(array $properties = []) : void
     {
-        //defer loading of the view defs for testing
-        $this->_viewdefs = [];
-        $this->_convertdefs = [];
-    }
-
-    public function deploy()
-    {
-        parent::deploy();
-    }
-
-    public function applyDependenciesAndHiddenFields($def, $includedModules)
-    {
-        return parent::applyDependenciesAndHiddenFields($def, $includedModules);
-    }
-
-    protected function _saveToFile($filename, $defs)
-    {
-        //stub out the actual saving of the file for testing
-        $this->saveToFileCallCount++;
-    }
-
-    public function getConvertDefs()
-    {
-        return $this->_convertdefs;
-    }
-
-    public function setConvertDefs($convertdefs)
-    {
-        $this->_convertdefs = $convertdefs;
-    }
-
-    public function getOriginalViewDefs()
-    {
-        $viewdefs = [];
-        $viewdefs['Leads']['base']['layout']['convert-main'] = [
-            'modules' => [$this->mockOriginalDef],
-        ];
-        return $viewdefs;
-    }
-
-    public function getDefaultModuleDefSettings()
-    {
-        return $this->defaultModuleDefSettings;
-    }
-
-    protected function isDupeCheckEnabledForModule($module)
-    {
-        return $this->mockDupeCheckEnabledFlag;
-    }
-
-    public function setExcludedFields($excludedFields)
-    {
-        $this->excludedFields = $excludedFields;
+        $this->parser->method('getOriginalViewDefs')
+            ->willReturn([
+                'Leads' => [
+                    'base' => [
+                        'layout' => [
+                            'convert-main' => [
+                                'modules' => [
+                                    array_merge($this->originalDefinition, $properties),
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ]);
     }
 }

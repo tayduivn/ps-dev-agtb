@@ -13,37 +13,14 @@
 use PHPUnit\Framework\TestCase;
 
 /**
- * Bug #36668
  * Name field is no longer a hyperlink after moving the field from Default to Hidden back to Default
  * in the Studio subpanel definition for custom module
+ *
  * @ticket 36668
  */
-class LinkFieldTest extends SubpanelMetaDataParser
-{
-    /**
-     * Field defs without id_name properties were throwing errors. Adding id_name
-     * here to allow tests to run around modification to the core code.
-     *
-     * @var array
-     */
-    public $_fielddefs = [
-        'name' => ['module' => 'test', 'id_name' => 'test'],
-    ];
-    
-    function __construct()
-    {
-        return true;
-    }
-    
-    function makeFieldsAsLink($defs)
-    {
-        return $this->makeRelateFieldsAsLink($defs);
-    }
-}
-
 class Bug36668Test extends TestCase
 {
-    function fieldDefProvider()
+    public static function fieldDefProvider()
     {
         return [
             [true, 'relate', '0'],
@@ -59,10 +36,21 @@ class Bug36668Test extends TestCase
     public function testMakeRelateFieldsAsLink($flag, $type, $link)
     {
         $defs = ['name' => ['type' => $type, 'link' => $link]];
-        
-        $lt = new LinkFieldTest();
-        $newDefs = $lt->makeFieldsAsLink($defs);
 
-        $this->assertTrue(array_key_exists('widget_class', $newDefs['name']) == $flag);
+        $parser = $this->createPartialMock(SubpanelMetaDataParser::class, []);
+
+        // Field defs without id_name properties were throwing errors. Adding id_name
+        // here to allow tests to run around modification to the core code.
+        $parser->_fielddefs = [
+            'name' => ['module' => 'test', 'id_name' => 'test'],
+        ];
+
+        $newDefs = SugarTestReflection::callProtectedMethod($parser, 'makeRelateFieldsAsLink', [$defs]);
+
+        if ($flag) {
+            $this->assertArrayHasKey('widget_class', $newDefs['name']);
+        } else {
+            $this->assertArrayNotHasKey('widget_class', $newDefs['name']);
+        }
     }
 }

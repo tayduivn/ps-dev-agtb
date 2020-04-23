@@ -40,7 +40,7 @@ class Bug44009Test extends TestCase
      * @dataProvider getData
      * @param string $url
      */
-    function testEmailCleanup($data, $res)
+    public function testEmailCleanup($data, $res)
     {
         $this->assertEquals($res, SugarCleaner::cleanHtml($data));
     }

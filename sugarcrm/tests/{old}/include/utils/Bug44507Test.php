@@ -20,8 +20,8 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug44507Test extends TestCase
 {
-    var $disableCountQuery;
-    var $skipped = false;
+    public $disableCountQuery;
+    public $skipped = false;
 
     protected function setUp() : void
     {
@@ -106,7 +106,7 @@ class Bug44507Test extends TestCase
 
 class Bug44507SqlManager extends MysqliManager
 {
-    var $expectedSql;
+    public $expectedSql;
 
     protected function addDistinctClause(&$sql)
     {

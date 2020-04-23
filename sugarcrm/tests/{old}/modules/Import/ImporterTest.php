@@ -14,8 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 class ImporterTest extends TestCase
 {
-    private $_importModule;
-    private $_importObject;
+    private $importModule;
 
     // date_entered and last_name
     private static $CsvContent =  [
@@ -33,8 +32,7 @@ class ImporterTest extends TestCase
         $GLOBALS['beanFiles'] = $beanFiles;
         
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-        $this->_importModule = 'Contacts';
-        $this->_importObject = 'Contact';
+        $this->importModule = 'Contacts';
     }
     
     protected function tearDown() : void
@@ -65,7 +63,7 @@ class ImporterTest extends TestCase
 
         $importSource = new ImportFile(\UploadStream::STREAM_NAME . '://' . 'ImporterTest.csv', ',', '"');
 
-        $bean = BeanFactory::newBean($this->_importModule);
+        $bean = BeanFactory::newBean($this->importModule);
 
         $_REQUEST['columncount'] = 2;
         $_REQUEST['colnum_0'] = 'date_entered';

@@ -18,10 +18,10 @@ require_once 'include/SearchForm/SearchForm2.php';
 
 class Bug45287_2Test extends TestCase
 {
-    var $meetingsArr;
-    var $searchDefs;
-    var $searchFields;
-    var $timedate;
+    public $meetingsArr;
+    public $searchDefs;
+    public $searchFields;
+    public $timedate;
 
 
     protected function setUp() : void

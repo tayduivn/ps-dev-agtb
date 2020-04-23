@@ -17,22 +17,22 @@ require_once 'modules/Campaigns/utils.php';
 
 class Bug39665Test extends TestCase
 {
-    var $campaign = null;
-    var $prospectlist = null;
-    var $prospectlist2 = null;
-    var $emailmarketing = null;
-    var $emailmarketing2 = null;
-    var $saved_current_user = null;
-    var $clear_database = true;
-    var $remove_beans = true;
-    
+    public $campaign = null;
+    public $prospectlist = null;
+    public $prospectlist2 = null;
+    public $emailmarketing = null;
+    public $emailmarketing2 = null;
+    public $saved_current_user = null;
+    public $clear_database = true;
+    public $remove_beans = true;
+
     protected function setUp() : void
     {
         $this->saved_current_user = $GLOBALS['current_user'];
         $user = new User();
         $user->retrieve('1');
         $GLOBALS['current_user'] = $user;
-        
+
         $this->campaign = new Campaign();
         $this->campaign->name = 'Bug39665Test ' . time();
         $this->campaign->campaign_type = 'Email';
@@ -43,7 +43,7 @@ class Bug39665Test extends TestCase
         $this->campaign->team_id = '1';
         $this->campaign->team_set_id = '1';
         $this->campaign->save();
-        
+
         $this->emailmarketing = new EmailMarketing();
         $this->emailmarketing->name = $this->campaign->name . ' Email1';
         $this->emailmarketing->campaign_id = $this->campaign->id;
@@ -54,7 +54,7 @@ class Bug39665Test extends TestCase
         $this->emailmarketing->status = 'active';
         $this->emailmarketing->all_prospect_lists = 1;
         $this->emailmarketing->date_start = $timeDate->to_display_date(date('Y')+1 .'-01-01') . ' 00:00:00';
-        
+
         $this->emailmarketing2 = new EmailMarketing();
         $this->emailmarketing2->name = $this->campaign->name . ' Email2';
         $this->emailmarketing2->campaign_id = $this->campaign->id;
@@ -65,7 +65,7 @@ class Bug39665Test extends TestCase
         $this->emailmarketing2->status = 'active';
         $this->emailmarketing2->all_prospect_lists = 1;
         $this->emailmarketing2->date_start = $timeDate->to_display_date(date('Y')+1 .'-01-01') . ' 00:00:00';
-        
+
         $query = 'SELECT id FROM inbound_email WHERE deleted=0';
         $result = $GLOBALS['db']->query($query);
         while ($row = $GLOBALS['db']->fetchByAssoc($result)) {
@@ -73,7 +73,7 @@ class Bug39665Test extends TestCase
               $this->emailmarketing2->inbound_email_id = $row['id'];
               break;
         }
-        
+
         $query = 'SELECT id FROM email_templates WHERE deleted=0';
         $result = $GLOBALS['db']->query($query);
         while ($row = $GLOBALS['db']->fetchByAssoc($result)) {
@@ -81,10 +81,10 @@ class Bug39665Test extends TestCase
               $this->emailmarketing2->template_id = $row['id'];
               break;
         }
-        
+
         $this->emailmarketing->save();
         $this->emailmarketing2->save();
-        
+
         $this->campaign->load_relationship('prospectlists');
         $this->prospectlist = new ProspectList();
         $this->prospectlist->name = $this->campaign->name.' Prospect List1';
@@ -143,48 +143,48 @@ class Bug39665Test extends TestCase
     protected function tearDown() : void
     {
         $GLOBALS['current_user'] = $this->saved_current_user;
-        
+
         if ($this->remove_beans) {
             $this->campaign->mark_deleted($this->campaign->id);
             $this->prospectlist->mark_deleted($this->prospectlist->id);
-            
+
             SugarTestContactUtilities::removeAllCreatedContacts();
             SugarTestLeadUtilities::removeAllCreatedLeads();
         }
-        
+
         if ($this->clear_database) {
             $sql = 'DELETE FROM email_marketing WHERE campaign_id = \'' . $this->campaign->id . '\'';
             $GLOBALS['db']->query($sql);
-            
+
             $sql = 'DELETE FROM campaign_log WHERE campaign_id = \'' . $this->campaign->id . '\'';
             $GLOBALS['db']->query($sql);
-            
+
             $sql = 'DELETE FROM prospect_lists_prospects WHERE prospect_list_id=\'' . $this->prospectlist->id . '\'';
             $GLOBALS['db']->query($sql);
-            
+
             $sql = 'DELETE FROM prospect_lists_prospects WHERE prospect_list_id=\'' . $this->prospectlist2->id . '\'';
             $GLOBALS['db']->query($sql);
-            
+
             $sql = 'DELETE FROM prospect_lists WHERE id = \'' . $this->prospectlist->id . '\'';
             $GLOBALS['db']->query($sql);
 
             $sql = 'DELETE FROM prospect_lists WHERE id = \'' . $this->prospectlist2->id . '\'';
             $GLOBALS['db']->query($sql);
-            
+
             $sql = 'DELETE FROM prospect_list_campaigns WHERE campaign_id = \'' . $this->campaign->id . '\'';
             $GLOBALS['db']->query($sql);
-            
+
             $sql = 'DELETE FROM campaigns WHERE id = \'' . $this->campaign->id . '\'';
             $GLOBALS['db']->query($sql);
         }
     }
     
-    function test_viewed_message()
+    public function test_viewed_message()
     {
         $_SERVER['REQUEST_METHOD'] = 'POST';
         $_REQUEST['module'] = 'Campaigns';
         $subpanel_definitions = new SubPanelDefinitions($this->campaign);
-        
+
         $ids = ['viewed', 'link', 'blocked'];
         foreach ($ids as $id) {
             $subpanel_def = $subpanel_definitions->load_subpanel($id);

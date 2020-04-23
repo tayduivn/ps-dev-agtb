@@ -15,14 +15,14 @@ use PHPUnit\Framework\TestCase;
 
 class Bug42994Test extends TestCase
 {
-    private $_smarty;
-    private $_lang_manager;
+    private $smarty;
+    private $langManager;
 
     protected function setUp() : void
     {
-        $this->_smarty = new Sugar_Smarty();
+        $this->smarty = new Sugar_Smarty();
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-        $this->_lang_manager = new SugarTestLangPackCreator();
+        $this->langManager = new SugarTestLangPackCreator();
         $GLOBALS['current_language'] = 'en_us';
     }
 
@@ -30,24 +30,24 @@ class Bug42994Test extends TestCase
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
-        unset($this->_lang_manager);
+        unset($this->langManager);
     }
 
     public function testSetLanguageStringDependant()
     {
-        $this->_lang_manager->setModString('LBL_DEPENDENT', 'XXDependentXX', 'DynamicFields');
-        $this->_lang_manager->save();
+        $this->langManager->setModString('LBL_DEPENDENT', 'XXDependentXX', 'DynamicFields');
+        $this->langManager->save();
         $GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], 'DynamicFields');
-        $output = $this->_smarty->fetch('modules/DynamicFields/templates/Fields/Forms/coreDependent.tpl');
+        $output = $this->smarty->fetch('modules/DynamicFields/templates/Fields/Forms/coreDependent.tpl');
 
         $this->assertStringContainsString('XXDependentXX', $output);
     }
 
     public function testSetLanguageStringVisible()
     {
-        $this->_lang_manager->setModString('LBL_VISIBLE_IF', 'XXVisible ifXX', 'DynamicFields');
-        $this->_lang_manager->save();
-        $output = $this->_smarty->fetch('modules/DynamicFields/templates/Fields/Forms/coreDependent.tpl');
+        $this->langManager->setModString('LBL_VISIBLE_IF', 'XXVisible ifXX', 'DynamicFields');
+        $this->langManager->save();
+        $output = $this->smarty->fetch('modules/DynamicFields/templates/Fields/Forms/coreDependent.tpl');
 
         $this->assertStringContainsString('XXVisible ifXX', $output);
     }

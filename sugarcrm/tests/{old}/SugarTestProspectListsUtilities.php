@@ -13,10 +13,10 @@
 
 class SugarTestProspectListsUtilities
 {
-    private static $_aCreatedProspectLists = [];
-    private static $_aCreatedProspectListsIds = [];
+    private static $aCreatedProspectLists = [];
+    private static $aCreatedProspectListsIds = [];
 
-    private static $_createdProspectLists = [];
+    private static $createdProspectLists = [];
 
     /**
      * @static Creates a test prospectList
@@ -34,7 +34,7 @@ class SugarTestProspectListsUtilities
             $prospectList->id = $id;
         }
         $prospectList->save();
-        self::$_createdProspectLists[] = $prospectList;
+        self::$createdProspectLists[] = $prospectList;
         return $prospectList;
     }
 
@@ -77,7 +77,7 @@ class SugarTestProspectListsUtilities
     public static function getCreatedProspectListIds()
     {
         $prospectListIds = [];
-        foreach (self::$_createdProspectLists as $prospectList) {
+        foreach (self::$createdProspectLists as $prospectList) {
             $prospectListIds[] = $prospectList->id;
         }
         return $prospectListIds;
@@ -97,8 +97,8 @@ class SugarTestProspectListsUtilities
             }
         }
         $oProspectList->save();
-        self::$_aCreatedProspectLists[] = $oProspectList;
-        self::$_aCreatedProspectListsIds[] = $oProspectList->id;
+        self::$aCreatedProspectLists[] = $oProspectList;
+        self::$aCreatedProspectListsIds[] = $oProspectList->id;
         return $oProspectList;
     }
 
@@ -110,8 +110,8 @@ class SugarTestProspectListsUtilities
     {
         if (!empty($id)) {
             $GLOBALS['db']->query("DELETE FROM prospect_lists WHERE id = '{$id}'");
-        } elseif (!empty(self::$_aCreatedProspectLists)) {
-            $GLOBALS['db']->query("DELETE FROM prospect_lists WHERE id IN ('" . implode("','", self::$_aCreatedProspectListsIds) . "')");
+        } elseif (!empty(self::$aCreatedProspectLists)) {
+            $GLOBALS['db']->query("DELETE FROM prospect_lists WHERE id IN ('" . implode("','", self::$aCreatedProspectListsIds) . "')");
         }
     }
 }

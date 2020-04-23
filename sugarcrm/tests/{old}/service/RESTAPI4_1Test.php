@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 class RESTAPI4_1Test extends TestCase
 {
-    protected $_lastRawResponse;
+    private $lastRawResponse;
     protected $contact1;
     protected $contact2;
     protected $another_user;
@@ -34,7 +34,7 @@ class RESTAPI4_1Test extends TestCase
         $this->_soapURL = $GLOBALS['sugar_config']['site_url'] . '/service/v4_1/soap.php';
         $current_user = SugarTestUserUtilities::createAnonymousUser();
         $this->another_user = SugarTestUserUtilities::createAnonymousUser();
-        $this->_login();
+        $this->login();
         $this->another_user = SugarTestUserUtilities::createAnonymousUser();
 
         $this->contact1 = SugarTestContactUtilities::createContact();
@@ -110,7 +110,7 @@ class RESTAPI4_1Test extends TestCase
         unset($GLOBALS['mod_strings']);
     }
 
-    protected function _makeRESTCall($method, $parameters)
+    private function makeRESTCall($method, $parameters)
     {
         // specify the REST web service to interact with
         $url = $GLOBALS['sugar_config']['site_url'].'/service/v4_1/rest.php';
@@ -133,22 +133,22 @@ class RESTAPI4_1Test extends TestCase
         // Close the connection
         curl_close($curl);
 
-        $this->_lastRawResponse = $response;
+        $this->lastRawResponse = $response;
 
         // Convert the result from JSON format to a PHP array
         return json_decode($response, true);
     }
 
-    protected function _returnLastRawResponse()
+    private function returnLastRawResponse()
     {
-        return "Error in web services call. Response was: {$this->_lastRawResponse}";
+        return "Error in web services call. Response was: {$this->lastRawResponse}";
     }
 
-    protected function _login()
+    private function login()
     {
         $GLOBALS['db']->commit(); // Making sure we commit any changes before logging in
         global $current_user;
-        return $this->_makeRESTCall(
+        return $this->makeRESTCall(
             'login',
             [
                 'user_auth' =>
@@ -165,8 +165,8 @@ class RESTAPI4_1Test extends TestCase
 
     public function testGetModifiedRelationships()
     {
-        $result = $this->_login();
-        $this->assertTrue(!empty($result['id']) && $result['id'] != -1, $this->_returnLastRawResponse());
+        $result = $this->login();
+        $this->assertTrue(!empty($result['id']) && $result['id'] != -1, $this->returnLastRawResponse());
         $session = $result['id'];
 
         $callsAndMeetingsFields = ['id', 'date_modified', 'deleted', 'name', 'rt.deleted synced'];
@@ -176,7 +176,7 @@ class RESTAPI4_1Test extends TestCase
         $one_hour_ago = $timedate->asDb($timedate->getNow()->get("-1 hours"));
         $one_hour_later = $timedate->asDb($timedate->getNow()->get("+1 hours"));
 
-        $result = $this->_makeRESTCall(
+        $result = $this->makeRESTCall(
             'get_modified_relationships',
             [
                 'session' => $session,
@@ -199,7 +199,7 @@ class RESTAPI4_1Test extends TestCase
         $this->assertEquals(1, $result['next_offset']);
 
 
-        $result = $this->_makeRESTCall(
+        $result = $this->makeRESTCall(
             'get_modified_relationships',
             [
                 'session' => $session,
@@ -221,7 +221,7 @@ class RESTAPI4_1Test extends TestCase
         $this->assertEquals(2, $result['result_count']);
         $this->assertEquals(2, $result['next_offset']);
 
-        $result = $this->_makeRESTCall(
+        $result = $this->makeRESTCall(
             'get_modified_relationships',
             [
                 'session' => $session,

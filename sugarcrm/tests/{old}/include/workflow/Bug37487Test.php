@@ -17,7 +17,7 @@ require_once 'include/workflow/workflow_utils.php';
 
 class Bug37487Test extends TestCase
 {
-    function testDropDownFromFunction()
+    public function testDropDownFromFunction()
     {
         $fakedBean = new stdClass();
         $fakedBean->field_defs = [

@@ -16,7 +16,7 @@
  */
 class SugarTestTimePeriodUtilities
 {
-    public static $_createdTimePeriods = [];
+    private static $createdTimePeriods = [];
 
     private function __construct()
     {
@@ -74,7 +74,7 @@ class SugarTestTimePeriodUtilities
         $db = DBManagerFactory::getInstance();
         $db->commit();
 
-        self::$_createdTimePeriods[] = $timeperiod;
+        self::$createdTimePeriods[] = $timeperiod;
         return $timeperiod;
     }
 
@@ -94,7 +94,7 @@ class SugarTestTimePeriodUtilities
 
         $timeperiod->name = $name;
         $timeperiod->save();
-        self::$_createdTimePeriods[] = $timeperiod;
+        self::$createdTimePeriods[] = $timeperiod;
         return $timeperiod;
     }
 
@@ -139,7 +139,7 @@ class SugarTestTimePeriodUtilities
      */
     public static function addCreatedTimePeriod($timeperiod)
     {
-        self::$_createdTimePeriods[] = $timeperiod;
+        self::$createdTimePeriods[] = $timeperiod;
     }
 
     /**
@@ -151,7 +151,7 @@ class SugarTestTimePeriodUtilities
     public static function getCreatedTimePeriodIds()
     {
         $timeperiod_ids = [];
-        foreach (self::$_createdTimePeriods as $tp) {
+        foreach (self::$createdTimePeriods as $tp) {
             $timeperiod_ids[] = $tp->id;
         }
         return $timeperiod_ids;
@@ -165,6 +165,6 @@ class SugarTestTimePeriodUtilities
      */
     public static function setCreatedTimePeriods($timePeriods = [])
     {
-        self::$_createdTimePeriods = $timePeriods;
+        self::$createdTimePeriods = $timePeriods;
     }
 }

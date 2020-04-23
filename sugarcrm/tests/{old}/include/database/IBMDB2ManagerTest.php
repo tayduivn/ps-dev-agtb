@@ -16,7 +16,7 @@ use PHPUnit\Framework\TestCase;
 class IBMDB2ManagerTest extends TestCase
 {
     /** @var IBMDB2Manager */
-    protected $_db = null;
+    private $db;
 
     public static function setUpBeforeClass() : void
     {
@@ -33,7 +33,7 @@ class IBMDB2ManagerTest extends TestCase
 
     protected function setUp() : void
     {
-        $this->_db = new IBMDB2Manager();
+        $this->db = new IBMDB2Manager();
     }
 
     /**
@@ -66,13 +66,13 @@ class IBMDB2ManagerTest extends TestCase
 
         $this->assertStringNotContainsString(
             'NOT NULL',
-            $this->_db->addColumnSQL('testTable', $fieldDef)
+            $this->db->addColumnSQL('testTable', $fieldDef)
         );
 
         $fieldDef['default'] = 0;
         $this->assertStringContainsString(
             'NOT NULL',
-            $this->_db->addColumnSQL('testTable', $fieldDef)
+            $this->db->addColumnSQL('testTable', $fieldDef)
         );
     }
 
@@ -96,7 +96,7 @@ class IBMDB2ManagerTest extends TestCase
      */
     public function testConvert(array $parameters, $result)
     {
-        $this->assertEquals($result, call_user_func_array([$this->_db, "convert"], $parameters));
+        $this->assertEquals($result, call_user_func_array([$this->db, "convert"], $parameters));
     }
 
     /**
@@ -106,7 +106,7 @@ class IBMDB2ManagerTest extends TestCase
      */
     public function testMassageFieldDefDefault(array $defs, $expected)
     {
-        $this->_db->massageFieldDef($defs);
+        $this->db->massageFieldDef($defs);
         if (isset($expected)) {
             $this->assertArrayHasKey('default', $defs, 'Default value is not present');
             $this->assertEquals($expected, $defs['default'], 'Default value is incorrect');
@@ -173,6 +173,6 @@ class IBMDB2ManagerTest extends TestCase
     public function testOrderStability()
     {
         $msg = 'IBMDB2Manager should not have order_stability capability';
-        $this->assertFalse($this->_db->supports('order_stability'), $msg);
+        $this->assertFalse($this->db->supports('order_stability'), $msg);
     }
 }

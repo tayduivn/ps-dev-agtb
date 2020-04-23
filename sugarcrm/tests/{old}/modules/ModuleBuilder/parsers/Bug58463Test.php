@@ -17,8 +17,8 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug58463Test extends TestCase
 {
-    protected $_testCustomFile = 'custom/application/Ext/Language/en_us.lang.ext.php';
-    protected $_currentRequest;
+    private $testCustomFile = 'custom/application/Ext/Language/en_us.lang.ext.php';
+    private $currentRequest;
 
     protected function setUp() : void
     {
@@ -26,16 +26,16 @@ class Bug58463Test extends TestCase
         SugarTestHelper::setUp('app_list_strings');
 
         // Back up the current file if there is one
-        if (file_exists($this->_testCustomFile)) {
-            rename($this->_testCustomFile, $this->_testCustomFile . '.testbackup');
+        if (file_exists($this->testCustomFile)) {
+            rename($this->testCustomFile, $this->testCustomFile . '.testbackup');
         }
 
         // Create an empty test custom file
-        mkdir_recursive(dirname($this->_testCustomFile));
-        sugar_file_put_contents($this->_testCustomFile, '<?php' . "\n");
+        mkdir_recursive(dirname($this->testCustomFile));
+        sugar_file_put_contents($this->testCustomFile, '<?php' . "\n");
 
         // Back up the current request vars
-        $this->_currentRequest = $_REQUEST;
+        $this->currentRequest = $_REQUEST;
     }
 
     protected function tearDown() : void
@@ -43,14 +43,14 @@ class Bug58463Test extends TestCase
         SugarTestHelper::tearDown();
 
         // Clean up our file
-        unlink($this->_testCustomFile);
+        unlink($this->testCustomFile);
 
-        if (file_exists($this->_testCustomFile . '.testbackup')) {
-            rename($this->_testCustomFile . '.testbackup', $this->_testCustomFile);
+        if (file_exists($this->testCustomFile . '.testbackup')) {
+            rename($this->testCustomFile . '.testbackup', $this->testCustomFile);
         }
 
         // Reset the request
-        $_REQUEST = $this->_currentRequest;
+        $_REQUEST = $this->currentRequest;
 
         // Clear the cache
         sugar_cache_clear('app_list_strings.en_us');
@@ -76,17 +76,17 @@ class Bug58463Test extends TestCase
         $parser = new ParserDropDown();
         $parser->saveDropDown($_REQUEST);
 
-        $als = $this->_getCustomDropDownEntry();
+        $als = $this->getCustomDropDownEntry();
         $this->assertArrayHasKey('test_dropdown', $als, "The dropdown did not save");
         foreach ($values as $item) {
             $this->assertArrayHasKey($item[0], $als['test_dropdown'], "The dropdown list item {$item[0]} did not save");
         }
     }
 
-    protected function _getCustomDropDownEntry()
+    private function getCustomDropDownEntry()
     {
-        if (file_exists($this->_testCustomFile)) {
-            require $this->_testCustomFile;
+        if (file_exists($this->testCustomFile)) {
+            require $this->testCustomFile;
             if (isset($app_list_strings)) {
                 return $app_list_strings;
             }

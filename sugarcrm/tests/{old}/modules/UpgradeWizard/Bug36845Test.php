@@ -14,10 +14,10 @@ use PHPUnit\Framework\TestCase;
 
 class Bug36845Test extends TestCase
 {
-    var $has_custom_unified_search_modules_display = false;
-    var $has_custom_unified_search_modules = false;
-    var $module_dir = 'modules/clabc_Bug36845Test';
-    var $module = 'clabc_Bug36845Test';
+    public $has_custom_unified_search_modules_display = false;
+    public $has_custom_unified_search_modules = false;
+    public $module_dir = 'modules/clabc_Bug36845Test';
+    public $module = 'clabc_Bug36845Test';
 
     protected function setUp() : void
     {

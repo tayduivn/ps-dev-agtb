@@ -55,7 +55,7 @@ class ValidMetadataHashTest extends TestCase
 
 class ValidMetadataHashMetadataManager extends MetaDataManager
 {
-    function setHashCacheForTest($hashes)
+    public function setHashCacheForTest($hashes)
     {
         foreach ($hashes as $key => $hash) {
             $this->addToHashCache($key, $hash);

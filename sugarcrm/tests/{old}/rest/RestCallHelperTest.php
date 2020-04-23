@@ -30,7 +30,7 @@ class RestCallHelperTest extends RestTestBase
             'assigned_user_id' => 1,
         ];
 
-        $restReply = $this->_restCall('Calls/', json_encode($call), 'POST');
+        $restReply = $this->restCall('Calls/', json_encode($call), 'POST');
 
         $this->assertTrue(isset($restReply['reply']['id']), 'call was not created, reply was: ' . print_r($restReply['reply'], true));
 
@@ -39,7 +39,7 @@ class RestCallHelperTest extends RestTestBase
 
 
         // verify the user has the Call, which will validate on calendar
-        $restReplyUsers = $this->_restCall("Calls/{$call_id}/link/users");
+        $restReplyUsers = $this->restCall("Calls/{$call_id}/link/users");
         $users_linked = [];
         foreach ($restReplyUsers['reply']['records'] as $record) {
             $users_linked[] = $record['id'];
@@ -61,7 +61,7 @@ class RestCallHelperTest extends RestTestBase
             'status' => 'Held',
         ];
 
-        $restReply = $this->_restCall('Calls/', json_encode($call), 'POST');
+        $restReply = $this->restCall('Calls/', json_encode($call), 'POST');
 
         $this->assertTrue(isset($restReply['reply']['id']), 'call was not created, reply was: ' . print_r($restReply['reply'], true));
 
@@ -70,7 +70,7 @@ class RestCallHelperTest extends RestTestBase
 
 
         // verify the user has the Call, which will validate on calendar
-        $restReplyUsers = $this->_restCall("Calls/{$call_id}/link/users");
+        $restReplyUsers = $this->restCall("Calls/{$call_id}/link/users");
         $users_linked = [];
         foreach ($restReplyUsers['reply']['records'] as $record) {
             $users_linked[] = $record['id'];

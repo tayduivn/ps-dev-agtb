@@ -52,7 +52,7 @@ class RestConfigModuleApiTest extends RestTestBase
      */
     public function testRetrieveConfigSettingsByValidModuleNoSettings()
     {
-        $restReply = $this->_restCall('Opportunities/config?platform=base');
+        $restReply = $this->restCall('Opportunities/config?platform=base');
         // now returns an empty array not an error
         $this->assertEmpty($restReply['reply']);
     }
@@ -62,7 +62,7 @@ class RestConfigModuleApiTest extends RestTestBase
      */
     public function testRetrieveConfigSettingsByInvalidModule()
     {
-        $restReply = $this->_restCall('OneDoesNotSimplyWalkIntoASugarModule/config?platform=base');
+        $restReply = $this->restCall('OneDoesNotSimplyWalkIntoASugarModule/config?platform=base');
         $this->assertEquals('404', $restReply['info']['http_code']);
     }
 
@@ -71,7 +71,7 @@ class RestConfigModuleApiTest extends RestTestBase
      */
     public function testRetrieveSettingsByValidModuleWithPlatformReturnsSettings()
     {
-        $restReply = $this->_restCall('Forecasts/config?platform=base');
+        $restReply = $this->restCall('Forecasts/config?platform=base');
         $this->assertEquals('200', $restReply['info']['http_code']);
         $this->assertTrue($restReply['reply'] > 0);
     }
@@ -81,7 +81,7 @@ class RestConfigModuleApiTest extends RestTestBase
      */
     public function testRetrieveSettingsByValidModuleWithPlatformOverRidesBasePlatform()
     {
-        $restReply = $this->_restCall('Forecasts/config?platform=portal');
+        $restReply = $this->restCall('Forecasts/config?platform=portal');
         $this->assertEquals('200', $restReply['info']['http_code']);
         $this->assertEquals('Portal', $restReply['reply']['AdministrationTest']);
     }
@@ -91,7 +91,7 @@ class RestConfigModuleApiTest extends RestTestBase
      */
     public function testJsonValueIsArray()
     {
-        $restReply = $this->_restCall('Forecasts/config?platform=json');
+        $restReply = $this->restCall('Forecasts/config?platform=json');
         $this->assertEquals('200', $restReply['info']['http_code']);
         $this->assertEquals(["Portal"], $restReply['reply']['AdministrationTest']);
     }
@@ -103,7 +103,7 @@ class RestConfigModuleApiTest extends RestTestBase
     {
         $GLOBALS['current_user']->is_admin = false;
         $GLOBALS['current_user']->save();
-        $restReply = $this->_restCall('Forecasts/config?platform=base', json_encode(['AdministrationSaveTest' => 'My voice is my passport, verify me']), 'POST');
+        $restReply = $this->restCall('Forecasts/config?platform=base', json_encode(['AdministrationSaveTest' => 'My voice is my passport, verify me']), 'POST');
         $this->assertEquals('403', $restReply['info']['http_code']);
         $this->assertEquals("Current User not authorized to change Forecasts configuration settings", $restReply['reply']['error_message']);
     }
@@ -115,7 +115,7 @@ class RestConfigModuleApiTest extends RestTestBase
     {
         $GLOBALS['current_user']->is_admin = true;
         $GLOBALS['current_user']->save();
-        $restReply = $this->_restCall('Forecasts/config?platform=base', json_encode(['AdministrationSaveTest' => 'My voice is my passport, verify me']), 'POST');
+        $restReply = $this->restCall('Forecasts/config?platform=base', json_encode(['AdministrationSaveTest' => 'My voice is my passport, verify me']), 'POST');
         $this->assertEquals('200', $restReply['info']['http_code']);
         $this->assertEquals('My voice is my passport, verify me', $restReply['reply']['AdministrationSaveTest']);
     }

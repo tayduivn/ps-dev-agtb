@@ -20,7 +20,7 @@ include_once "include/workflow/custom_utils.php";
 if (!class_exists('Accounts_workflow')) {
     class Accounts_workflow
     {
-        function process_wflow_triggers(&$focus)
+        public function process_wflow_triggers(&$focus)
         {
             include "custom/modules/Accounts/workflow/triggers_array.php";
             include "custom/modules/Accounts/workflow/alerts_array.php";

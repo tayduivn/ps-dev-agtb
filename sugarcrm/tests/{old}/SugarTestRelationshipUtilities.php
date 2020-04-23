@@ -13,9 +13,9 @@
 
 class SugarTestRelationshipUtilities
 {
-    private static $_relsAdded = [];
+    private static $relsAdded = [];
 
-    protected static $_relRequiredKeys = [
+    private static $relRequiredKeys = [
         'relationship_type',
         'lhs_module',
         'rhs_module',
@@ -67,7 +67,7 @@ class SugarTestRelationshipUtilities
         unset($REQUEST_Backup);
 
 
-        self::$_relsAdded[] = $relationship->getDefinition();
+        self::$relsAdded[] = $relationship->getDefinition();
 
         return $relationship;
     }
@@ -79,7 +79,7 @@ class SugarTestRelationshipUtilities
      */
     public static function removeAllCreatedRelationships()
     {
-        foreach (self::$_relsAdded as $rel) {
+        foreach (self::$relsAdded as $rel) {
             $relationships = new DeployedRelationships($rel['lhs_module']);
 
             $relationships->delete($rel['relationship_name']);
@@ -105,7 +105,7 @@ class SugarTestRelationshipUtilities
      */
     protected static function checkRequiredFields(array $relationship_def)
     {
-        foreach (self::$_relRequiredKeys as $key) {
+        foreach (self::$relRequiredKeys as $key) {
             if (!array_key_exists($key, $relationship_def)) {
                 return false;
             }

@@ -17,7 +17,7 @@ class SetNoteAttachmentTest extends SOAPTestCase
     protected function setUp() : void
     {
         parent::setUp();
-        $this->_login();
+        $this->login();
     }
 
     protected function tearDown() : void
@@ -34,7 +34,7 @@ class SetNoteAttachmentTest extends SOAPTestCase
         //create Note
         $set_entry_parameters = [
             //session id
-            'session' => $this->_sessionId,
+            'session' => $this->sessionId,
             //The name of the module
             'module_name' => 'Notes',
             //Record attributes
@@ -43,7 +43,7 @@ class SetNoteAttachmentTest extends SOAPTestCase
             ],
         ];
 
-        $set_entry_result = $this->_soapClient->call('set_entry', $set_entry_parameters);
+        $set_entry_result = $this->soapClient->call('set_entry', $set_entry_parameters);
         $note_id = $set_entry_result['id'];
         $this->noteId = $note_id;
         //create document revision
@@ -52,7 +52,7 @@ class SetNoteAttachmentTest extends SOAPTestCase
 
         $set_note_attachment_parameters = [
             //session id
-            'session' => $this->_sessionId,
+            'session' => $this->sessionId,
             //The attachment details
             'note' => [
                 //The ID of the parent document.
@@ -65,7 +65,7 @@ class SetNoteAttachmentTest extends SOAPTestCase
             ],
         ];
 
-        $set_note_attachment_result = $this->_soapClient->call(
+        $set_note_attachment_result = $this->soapClient->call(
             'set_note_attachment',
             $set_note_attachment_parameters
         );

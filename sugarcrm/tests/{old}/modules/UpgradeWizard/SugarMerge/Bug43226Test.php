@@ -16,7 +16,7 @@ require_once 'include/dir_inc.php';
 
 class Bug43226Test extends TestCase
 {
-    var $merge;
+    public $merge;
 
     protected function setUp() : void
     {
@@ -28,7 +28,7 @@ class Bug43226Test extends TestCase
         SugarTestMergeUtilities::teardownFiles();
     }
 
-    function test_uploadfile_convert_merge_600()
+    public function test_uploadfile_convert_merge_600()
     {
         $this->merge = new EditViewMerge();
         $this->merge->merge('Documents', 'tests/{old}/modules/UpgradeWizard/SugarMerge/metadata_files/600/modules/Documents/metadata/editviewdefs.php', 'modules/Documents/metadata/editviewdefs.php', 'custom/modules/Documents/metadata/editviewdefs.php');
@@ -65,7 +65,7 @@ class Bug43226Test extends TestCase
         }
     }
 
-    function test_uploadfile_convert_merge_610()
+    public function test_uploadfile_convert_merge_610()
     {
         $this->merge = new EditViewMerge();
         $this->merge->merge('Documents', 'tests/{old}/modules/UpgradeWizard/SugarMerge/metadata_files/610/modules/Documents/metadata/editviewdefs.php', 'modules/Documents/metadata/editviewdefs.php', 'custom/modules/Documents/metadata/editviewdefs.php');

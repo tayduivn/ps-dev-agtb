@@ -15,26 +15,20 @@
  */
 class RestBug58174Test extends RestTestBase
 {
-    protected $_testLangFile;
-    private $_customContents;
-    
+    private $testLangFile;
+    private $customContents;
+
     protected function setUp() : void
     {
         parent::setUp();
 
-        /*
-        if(file_exists('cache/modules/Notes/language/en_us.lang.php')) {
-           unlink('cache/modules/Notes/language/en_us.lang.php');
-        }
-        */
-
         // Create a custom language file
-        $this->_testLangFile = 'custom/modules/Notes/language/en_us.lang.php';
+        $this->testLangFile = 'custom/modules/Notes/language/en_us.lang.php';
 
-        if (file_exists($this->_testLangFile)) {
-            $this->_customContents = file_get_contents($this->_testLangFile);
+        if (file_exists($this->testLangFile)) {
+            $this->customContents = file_get_contents($this->testLangFile);
         } else {
-            mkdir_recursive(dirname($this->_testLangFile));
+            mkdir_recursive(dirname($this->testLangFile));
         }
         
         // Write our test file
@@ -44,20 +38,20 @@ class RestBug58174Test extends RestTestBase
            'LBL_ACCOUNT_ID' => 'Account&#039;s ID:',
          );";
 
-        file_put_contents($this->_testLangFile, $content);
+        file_put_contents($this->testLangFile, $content);
 
         LanguageManager::refreshLanguage('Notes', 'en_us');
 
         // Clear the metadata cache to ensure a fresh load of data
-        $this->_clearMetadataCache();
+        $this->clearMetadataCache();
     }
     
     protected function tearDown() : void
     {
         // Get rid of our test file and restore if there's a need
-        unlink($this->_testLangFile);
-        if (!empty($this->_customContents)) {
-            file_put_contents($this->_testLangFile, $this->_customContents);
+        unlink($this->testLangFile);
+        if (!empty($this->customContents)) {
+            file_put_contents($this->testLangFile, $this->customContents);
         }
         
         parent::tearDown();
@@ -69,7 +63,7 @@ class RestBug58174Test extends RestTestBase
      */
     public function testHtmlEntitiesAreConvertedInMetaDataManager()
     {
-        $mm = new RestBug58174MetaDataManager($this->_user);
+        $mm = new RestBug58174MetaDataManager($this->user);
         $data = [
             'TEST_LBL_1' => 'Test&#039;s Label',
             'TEST_LBL_GRP_1' => [
@@ -94,8 +88,8 @@ class RestBug58174Test extends RestTestBase
      */
     public function testHtmlEntitiesAreConvertedInMetadataRequest()
     {
-        $this->_clearMetadataCache();
-        $reply = $this->_restCall('metadata?module_filter=Notes&type_filter=labels');
+        $this->clearMetadataCache();
+        $reply = $this->restCall('metadata?module_filter=Notes&type_filter=labels');
 
         //$this->assertFileExists($reply['reply']['labels']['en_us'], "Language file does not exist");
 

@@ -15,9 +15,9 @@ use PHPUnit\Framework\TestCase;
 
 class Bug59196Test extends TestCase
 {
-    protected $_request;
-    protected $_customFile = 'custom/include/MVC/Controller/wireless_module_registry.php';
-    protected $_backedUp;
+    private $request;
+    private $customFile = 'custom/include/MVC/Controller/wireless_module_registry.php';
+    private $backedUp;
 
     protected function setUp() : void
     {
@@ -27,24 +27,24 @@ class Bug59196Test extends TestCase
         SugarTestHelper::setUp('current_user', [true, true]); // Admin
 
         // Backup the custom file if there is one
-        if (file_exists($this->_customFile)) {
-            $this->_backedUp = true;
-            rename($this->_customFile, $this->_customFile . '.backup');
+        if (file_exists($this->customFile)) {
+            $this->backedUp = true;
+            rename($this->customFile, $this->customFile . '.backup');
         }
 
         // Backup the request
         if (!empty($_REQUEST)) {
-            $this->_request = $_REQUEST;
+            $this->request = $_REQUEST;
         }
     }
 
     protected function tearDown() : void
     {
-        $_REQUEST = $this->_request;
+        $_REQUEST = $this->request;
 
-        @unlink($this->_customFile);
-        if ($this->_backedUp) {
-            rename($this->_customFile . '.backup', $this->_customFile);
+        @unlink($this->customFile);
+        if ($this->backedUp) {
+            rename($this->customFile . '.backup', $this->customFile);
         }
 
         SugarTestHelper::tearDown();
@@ -65,9 +65,9 @@ class Bug59196Test extends TestCase
         $out = ob_get_clean();
 
         // Begin assertions
-        $this->assertFileExists($this->_customFile, "Custom wireless module registry file was not written");
+        $this->assertFileExists($this->customFile, "Custom wireless module registry file was not written");
 
-        include $this->_customFile;
+        include $this->customFile;
 
         $this->assertTrue(isset($wireless_module_registry), "Wireless module registry not found in the custom file");
         $this->assertIsArray($wireless_module_registry, "Wireless module registry is not an array");

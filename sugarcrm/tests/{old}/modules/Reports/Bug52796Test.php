@@ -55,7 +55,7 @@ class Bug52796Test extends TestCase
      * testReportCurrencyConversion
      * This method tests if conversion from dollar to another currency (Euro for tests) works after change of base_rate
      */
-    function testReportCurrencyConversion()
+    public function testReportCurrencyConversion()
     {
         // FIXME TY-1320: investigate why this test fails
         $id = create_guid();

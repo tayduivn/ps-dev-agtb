@@ -14,30 +14,30 @@ use PHPUnit\Framework\TestCase;
 
 class UsersLastImportTest extends TestCase
 {
-    private $_importModule = 'Notes';
-    private $_importObject = 'Note';
-    private $_importRecordCount = 3;
-    private $_importIds = [];
-    private $_usersLastImport;
-    private $_usersLastImportIds;
+    private $importModule = 'Notes';
+    private $importObject = 'Note';
+    private $importRecordCount = 3;
+    private $importIds = [];
+    private $usersLastImport;
+    private $usersLastImportIds;
     private $cstmTableExistBefore;
     private $oldCustomFields;
     
     protected function setUp() : void
     {
         SugarTestHelper::setUp("current_user");
-        $this->_usersLastImport = new UsersLastImport();
-        $this->_addImportedRecords();
+        $this->usersLastImport = new UsersLastImport();
+        $this->addImportedRecords();
     }
     
     protected function tearDown() : void
     {
-        $focus = $this->_loadBean($this->_importModule);
+        $focus = $this->loadBean($this->importModule);
         
-        $sql = "DELETE FROM {$focus->table_name} WHERE id IN ('" . implode("','", $this->_importIds) . "')";
+        $sql = "DELETE FROM {$focus->table_name} WHERE id IN ('" . implode("','", $this->importIds) . "')";
         $GLOBALS['db']->query($sql);
         
-        $sql = 'DELETE FROM users_last_import WHERE id IN (\'' . implode("','", $this->_usersLastImportIds) . '\')';
+        $sql = 'DELETE FROM users_last_import WHERE id IN (\'' . implode("','", $this->usersLastImportIds) . '\')';
         $GLOBALS['db']->query($sql);
 
         if (!$this->cstmTableExistBefore && $GLOBALS['db']->tableExists('notes_cstm')) {
@@ -53,31 +53,31 @@ class UsersLastImportTest extends TestCase
         SugarTestHelper::tearDown();
     }
     
-    private function _loadBean($module)
+    private function loadBean($module)
     {
         return BeanFactory::newBean($module);
     }
     
-    private function _addImportedRecords()
+    private function addImportedRecords()
     {
-        for ($i = 0; $i < $this->_importRecordCount; $i++) {
-            $focus = $this->_loadBean($this->_importModule);
+        for ($i = 0; $i < $this->importRecordCount; $i++) {
+            $focus = $this->loadBean($this->importModule);
             $focus->name = "record $i";
             $focus->save();
-            $this->_importIds[$i] = $focus->id;
+            $this->importIds[$i] = $focus->id;
             
             $last_import = new UsersLastImport();
             $last_import->assigned_user_id = $GLOBALS['current_user']->id;
-            $last_import->import_module = $this->_importModule;
-            $last_import->bean_type = $this->_importObject;
-            $last_import->bean_id = $this->_importIds[$i];
-            $this->_usersLastImportIds[] = $last_import->save();
+            $last_import->import_module = $this->importModule;
+            $last_import->bean_type = $this->importObject;
+            $last_import->bean_id = $this->importIds[$i];
+            $this->usersLastImportIds[] = $last_import->save();
         }
     }
     
     public function testMarkDeletedByUserId()
     {
-        $this->_usersLastImport->mark_deleted_by_user_id($GLOBALS['current_user']->id);
+        $this->usersLastImport->mark_deleted_by_user_id($GLOBALS['current_user']->id);
         
         $query = "SELECT * FROM users_last_import 
                     WHERE assigned_user_id = '{$GLOBALS['current_user']->id}'";
@@ -89,15 +89,15 @@ class UsersLastImportTest extends TestCase
     
     public function testUndo()
     {
-        $this->_usersLastImport->undo(
-            $this->_importModule
+        $this->usersLastImport->undo(
+            $this->importModule
         );
 
-        $focus = $this->_loadBean($this->_importModule);
+        $focus = $this->loadBean($this->importModule);
         
         $query = "SELECT * FROM {$focus->table_name}
                     WHERE id IN ('" .
-                        implode("','", $this->_importIds) . "')";
+                        implode("','", $this->importIds) . "')";
         
         $result = $GLOBALS['db']->query($query);
         
@@ -136,7 +136,7 @@ class UsersLastImportTest extends TestCase
         $last_import->import_module = 'Notes';
         $last_import->bean_type = 'Note';
         $last_import->bean_id = $focus->id;
-        $this->_usersLastImportIds[] = $last_import->save();
+        $this->usersLastImportIds[] = $last_import->save();
 
         $last_import->undo(
             $last_import->import_module
@@ -193,14 +193,14 @@ class UsersLastImportTest extends TestCase
     
     public function testUndoById()
     {
-        $this->_usersLastImport->undoById(
-            $this->_usersLastImportIds[0]
+        $this->usersLastImport->undoById(
+            $this->usersLastImportIds[0]
         );
 
-        $focus = $this->_loadBean($this->_importModule);
+        $focus = $this->loadBean($this->importModule);
         
         $query = "SELECT * FROM {$focus->table_name}
-                    WHERE id = '{$this->_importIds[0]}'";
+                    WHERE id = '{$this->importIds[0]}'";
         
         $result = $GLOBALS['db']->query($query);
         

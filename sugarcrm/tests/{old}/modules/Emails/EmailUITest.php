@@ -14,7 +14,12 @@ use PHPUnit\Framework\TestCase;
 
 class EmailUITest extends TestCase
 {
-    private $_folders = null;
+    /**
+     * @var EmailUI
+     */
+    private $eui;
+
+    private $folders;
 
     protected function setUp() : void
     {
@@ -27,21 +32,21 @@ class EmailUITest extends TestCase
         $this->_user = $GLOBALS['current_user'];
         $this->_user->is_admin = 1;
         $GLOBALS['current_user'] = $this->_user;
-        $this->eui = new EmailUIMock();
-        $this->_folders = [];
+        $this->eui = new EmailUI();
+        $this->folders = [];
     }
 
     protected function tearDown() : void
     {
         $GLOBALS['db']->query("DELETE FROM folders_subscriptions WHERE assigned_user_id='{$GLOBALS['current_user']->id}'");
-        foreach ($this->_folders as $f) {
+        foreach ($this->folders as $f) {
             $GLOBALS['db']->query("DELETE FROM folders_subscriptions WHERE folder_id='{$f}'");
             $GLOBALS['db']->query("DELETE FROM folders WHERE id='{$f}'");
         }
 
         $GLOBALS['db']->query("DELETE FROM folders_subscriptions WHERE assigned_user_id='{$this->_user->id}'");
 
-        foreach ($this->_folders as $f) {
+        foreach ($this->folders as $f) {
             $GLOBALS['db']->query("DELETE FROM folders_subscriptions WHERE folder_id='{$f}'");
             $GLOBALS['db']->query("DELETE FROM folders WHERE id='{$f}'");
         }
@@ -57,7 +62,7 @@ class EmailUITest extends TestCase
         $newFolderName = "UNIT_TEST";
         $rs = $this->eui->saveNewFolder($newFolderName, 'Home', 0);
         $newFolderID = $rs['id'];
-        $this->_folders[] = $newFolderID;
+        $this->folders[] = $newFolderID;
 
         $sf = new SugarFolder();
         $sf->retrieve($newFolderID);
@@ -121,7 +126,7 @@ class EmailUITest extends TestCase
      */
     public function testLoadQuickCreateModules()
     {
-        $qArray = $this->eui->_loadQuickCreateModules();
+        $qArray = SugarTestReflection::callProtectedMethod($this->eui, '_loadQuickCreateModules');
 
         $this->assertEquals(['Bugs','Cases','Contacts', 'Opportunities', 'Leads', 'Tasks'], $qArray);
     }
@@ -140,7 +145,7 @@ class EmailUITest extends TestCase
             '<?php $QCModules[] = "Users"; ?>'
         );
 
-        $qArray = $this->eui->_loadQuickCreateModules();
+        $qArray = SugarTestReflection::callProtectedMethod($this->eui, '_loadQuickCreateModules');
 
         if (file_exists('custom/modules/Emails/metadata/qcmodulesdefs.php.test.bak')) {
             copy('custom/modules/Emails/metadata/qcmodulesdefs.php.test.bak', 'custom/modules/Emails/metadata/qcmodulesdefs.php');
@@ -166,7 +171,7 @@ class EmailUITest extends TestCase
             '<?php $QCModules[] = "EmailUIUnitTest"; ?>'
         );
 
-        $qArray = $this->eui->_loadQuickCreateModules();
+        $qArray = SugarTestReflection::callProtectedMethod($this->eui, '_loadQuickCreateModules');
 
         if (file_exists('custom/modules/Emails/metadata/qcmodulesdefs.php.test.bak')) {
             copy('custom/modules/Emails/metadata/qcmodulesdefs.php.test.bak', 'custom/modules/Emails/metadata/qcmodulesdefs.php');
@@ -192,7 +197,7 @@ class EmailUITest extends TestCase
             '<?php $QCModules = array("Users"); ?>'
         );
 
-        $qArray = $this->eui->_loadQuickCreateModules();
+        $qArray = SugarTestReflection::callProtectedMethod($this->eui, '_loadQuickCreateModules');
 
         if (file_exists('custom/modules/Emails/metadata/qcmodulesdefs.php.test.bak')) {
             copy('custom/modules/Emails/metadata/qcmodulesdefs.php.test.bak', 'custom/modules/Emails/metadata/qcmodulesdefs.php');
@@ -282,12 +287,4 @@ class Bug56711Mock
     public $from_addr;
     public $to_addrs_names;
     public $description;
-}
-
-class EmailUIMock extends EmailUI
-{
-    public function _loadQuickCreateModules()
-    {
-        return parent::_loadQuickCreateModules();
-    }
 }

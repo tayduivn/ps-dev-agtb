@@ -31,82 +31,82 @@ class RestClearMetadataCacheTest extends RestTestBase
      *
      * @var array
      */
-    protected $_teardowns = [];
+    private $teardowns = [];
     
     /**
      * Holder for the current request array
      *
      * @var array
      */
-    protected $_request = [];
+    private $request = [];
 
     /**
      * Object containing various request arrays
      *
      * @var RestCacheClearRequestMock
      */
-    protected $_requestMock;
+    private $requestMock;
 
     /**
      * Flag used in handling modListHeader global
      *
      * @var bool
      */
-    protected $_modListHeaderSet = false;
+    private $modListHeaderSet = false;
     
     protected function setUp() : void
     {
         parent::setUp();
         
-        $this->_requestMock = new RestCacheClearRequestMock;
+        $this->requestMock = new RestCacheClearRequestMock;
         
         // User needs to be an admin user
-        $this->_user->is_admin = 1;
-        $this->_user->save();
+        $this->user->is_admin = 1;
+        $this->user->save();
         
         // Backup the request
-        $this->_request = $_REQUEST;
+        $this->request = $_REQUEST;
         
         // Setup one GLOBAL for relationships
         if (!isset($GLOBALS['modListHeader'])) {
-            $GLOBALS['modListHeader'] = query_module_access_list($this->_user);
-            $this->_modListHeaderSet = true;
+            $GLOBALS['modListHeader'] = query_module_access_list($this->user);
+            $this->modListHeaderSet = true;
         }
         
         // Back up the current file if there is one
-        if (file_exists($this->_requestMock->ddlCustomFile)) {
-            rename($this->_requestMock->ddlCustomFile, $this->_requestMock->ddlCustomFile . '.testbackup');
+        if (file_exists($this->requestMock->ddlCustomFile)) {
+            rename($this->requestMock->ddlCustomFile, $this->requestMock->ddlCustomFile . '.testbackup');
         }
         
         // Create an empty test custom file
-        mkdir_recursive(dirname($this->_requestMock->ddlCustomFile));
-        sugar_file_put_contents($this->_requestMock->ddlCustomFile, '<?php' . "\n");
+        mkdir_recursive(dirname($this->requestMock->ddlCustomFile));
+        sugar_file_put_contents($this->requestMock->ddlCustomFile, '<?php' . "\n");
         
         // Force a mobile platform
-        $this->_restLogin($this->_user->user_name, $this->_user->user_name, 'mobile');
+        $this->restLogin($this->user->user_name, $this->user->user_name, 'mobile');
         
         // Lets clear the metadata cache to make sure we are start with fresh data
-        $this->_clearMetadataCache();
+        $this->clearMetadataCache();
     }
     
     protected function tearDown() : void
     {
-        if (file_exists($this->_requestMock->ddlCustomFile . '.testbackup')) {
-            rename($this->_requestMock->ddlCustomFile . '.testbackup', $this->_requestMock->ddlCustomFile);
+        if (file_exists($this->requestMock->ddlCustomFile . '.testbackup')) {
+            rename($this->requestMock->ddlCustomFile . '.testbackup', $this->requestMock->ddlCustomFile);
         }
         // This should really only happen if the test suite doesn't pass completely
-        foreach ($this->_teardowns as $teardown) {
+        foreach ($this->teardowns as $teardown) {
             $this->$teardown();
         }
         
         // Set the request back to what it was originally
-        $_REQUEST = $this->_request;
+        $_REQUEST = $this->request;
         
         // Clean up at the parent
         parent::tearDown();
         
         // Handle modListHeader
-        if ($this->_modListHeaderSet) {
+        if ($this->modListHeaderSet) {
             unset($GLOBALS['modListHeader']);
         }
     }
@@ -124,7 +124,7 @@ class RestClearMetadataCacheTest extends RestTestBase
         $mm->rebuildCache();
         
         // Create a relationship
-        $_REQUEST = $this->_requestMock->createRelationshipRequestVars;
+        $_REQUEST = $this->requestMock->createRelationshipRequestVars;
         $relationships = new DeployedRelationships($_REQUEST ['view_module']);
         // This should return the new relationship object
         $new = $relationships->addFromPost();
@@ -132,14 +132,14 @@ class RestClearMetadataCacheTest extends RestTestBase
         $relName = $new->getName();
         
         // We also need it in our delete process, so set it there now
-        $this->_requestMock->createRelationshipRequestVars['relationship_name'] = $relName;
+        $this->requestMock->createRelationshipRequestVars['relationship_name'] = $relName;
         
         // Finish the save now
         $relationships->save();
         $relationships->build();
         
         // Add to the teardown stack for catching failures
-        $this->_teardowns['r'] = '_teardownRelationship';
+        $this->teardowns['r'] = 'tearDownRelationship';
         
         // Test relationship shows in metadata
         $data = $mm->getMetadata();
@@ -147,43 +147,19 @@ class RestClearMetadataCacheTest extends RestTestBase
         
         // Delete the relationship and remove the teardown method from the
         // teardown stack since at this point it will have cleaned itself up
-        $this->_teardownRelationship();
-        unset($this->_teardowns['r']);
+        $this->tearDownRelationship();
+        unset($this->teardowns['r']);
         
         // Test relationship no longer shows up
         $data = $mm->getMetadata();
         $this->assertFalse(isset($data['relationships'][$relName]), "The created relationship was found in the metadata response and it should not have been");
     }
 
-    protected function _teardownCustomField()
+    private function tearDownRelationship()
     {
-        // Set the request
-        $_REQUEST = $this->_requestMock->deleteFieldRequestVars;
-        
-        // Delete
-        $mb = new ModuleBuilderController();
-        $mb->action_DeleteField();
-    }
-    
-    protected function _teardownRelationship()
-    {
-        $_REQUEST = $this->_requestMock->createRelationshipRequestVars;
+        $_REQUEST = $this->requestMock->createRelationshipRequestVars;
         $mb = new ModuleBuilderController();
         $mb->action_DeleteRelationship();
-    }
-
-    protected function _teardownDropdownList()
-    {
-        // Clean up our file
-        unlink($this->_requestMock->ddlCustomFile);
-        
-        if (file_exists($this->_requestMock->ddlCustomFile . '.testbackup')) {
-            rename($this->_requestMock->ddlCustomFile . '.testbackup', $this->_requestMock->ddlCustomFile);
-        }
-        
-        // Clear the cache
-        sugar_cache_clear('app_list_strings.en_us');
-        $this->_clearMetadataCache();
     }
 }
 

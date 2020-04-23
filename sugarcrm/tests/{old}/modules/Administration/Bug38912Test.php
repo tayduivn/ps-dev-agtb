@@ -21,23 +21,22 @@ class Bug38912 extends TestCase
      * Test whitelist of modules and actions
      * @var array
      */
-    private $_whiteList;
+    private $whiteList;
 
-    private $_state                     = 'LICENSE_KEY';
+    private $state                     = 'LICENSE_KEY';
 
-    private $_whiteListModuleAllActions = 'SomeWhiteListModuleAllActions';
-    private $_whiteListModule           = 'SomeWhiteListModule';
-    private $_whiteListAction           = 'SomeWhiteListAction';
-    private $_nonWhiteListModule        = 'SomeNonWhiteListModule';
-    private $_nonWhiteListAction        = 'SomeNonWhiteListAction';
-
+    private $whiteListModuleAllActions = 'SomeWhiteListModuleAllActions';
+    private $whiteListModule           = 'SomeWhiteListModule';
+    private $whiteListAction           = 'SomeWhiteListAction';
+    private $nonWhiteListModule        = 'SomeNonWhiteListModule';
+    private $nonWhiteListAction        = 'SomeNonWhiteListAction';
 
     protected function setUp() : void
     {
         // read format in function getModuleWhiteListForLicenseCheck() description
-        $this->_whiteList       = [
-            $this->_whiteListModule             => [$this->_whiteListAction],
-            $this->_whiteListModuleAllActions   => 'all',
+        $this->whiteList       = [
+            $this->whiteListModule             => [$this->whiteListAction],
+            $this->whiteListModuleAllActions   => 'all',
         ];
     }
 
@@ -45,10 +44,10 @@ class Bug38912 extends TestCase
     {
         $this->assertTrue(
             isNeedRedirectDependingOnUserAndSystemState(
-                $this->_state,
-                $this->_nonWhiteListModule,
+                $this->state,
+                $this->nonWhiteListModule,
                 null,
-                $this->_whiteList
+                $this->whiteList
             ),
             "Assert that we need redirect for User on module not in whitelist"
         );
@@ -58,10 +57,10 @@ class Bug38912 extends TestCase
     {
         $this->assertTrue(
             isNeedRedirectDependingOnUserAndSystemState(
-                $this->_state,
-                $this->_nonWhiteListModule,
-                $this->_nonWhiteListAction,
-                $this->_whiteList
+                $this->state,
+                $this->nonWhiteListModule,
+                $this->nonWhiteListAction,
+                $this->whiteList
             ),
             "Assert that we need redirect for User on module and action not in whitelist"
         );
@@ -71,10 +70,10 @@ class Bug38912 extends TestCase
     {
         $this->assertTrue(
             isNeedRedirectDependingOnUserAndSystemState(
-                $this->_state,
-                $this->_whiteListModule,
-                $this->_nonWhiteListAction,
-                $this->_whiteList
+                $this->state,
+                $this->whiteListModule,
+                $this->nonWhiteListAction,
+                $this->whiteList
             ),
             "Assert that we need redirect for User on module in whitelist and action not in whitelist"
         );
@@ -84,10 +83,10 @@ class Bug38912 extends TestCase
     {
         $this->assertFalse(
             isNeedRedirectDependingOnUserAndSystemState(
-                $this->_state,
-                $this->_whiteListModule,
-                $this->_whiteListAction,
-                $this->_whiteList
+                $this->state,
+                $this->whiteListModule,
+                $this->whiteListAction,
+                $this->whiteList
             ),
             "Assert that we dont need redirect for User on module in whitelist and action in whitelist"
         );
@@ -97,10 +96,10 @@ class Bug38912 extends TestCase
     {
         $this->assertFalse(
             isNeedRedirectDependingOnUserAndSystemState(
-                $this->_state,
-                $this->_whiteListModuleAllActions,
-                $this->_nonWhiteListAction,
-                $this->_whiteList
+                $this->state,
+                $this->whiteListModuleAllActions,
+                $this->nonWhiteListAction,
+                $this->whiteList
             ),
             "Assert that we dont need redirect for User on module in whitelist for all actions"
         );

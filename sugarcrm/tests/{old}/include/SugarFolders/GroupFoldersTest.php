@@ -18,8 +18,6 @@ use PHPUnit\Framework\TestCase;
  */
 class GroupFoldersTest extends TestCase
 {
-    protected $_user = null;
-    
     /**
      * Create test user
      */
@@ -27,7 +25,7 @@ class GroupFoldersTest extends TestCase
     {
         global $groupfolder_id;
         if (empty($groupfolder_id)) {
-            $this->_setupTestUser();
+            $this->setupTestUser();
         } // IF
         $GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], "Emails");
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
@@ -138,11 +136,11 @@ class GroupFoldersTest extends TestCase
     public function testDeleteGroupFolder()
     {
         global $groupfolder_id;
-        $focus = $this->_retrieveGroupFolder();
+        $focus = $this->retrieveGroupFolder();
         $status = $focus->delete();
         if ($status) {
-            $this->_tearDownGroupFolder();
-            $this->_tearDownTestUser();
+            $this->tearDownGroupFolder();
+            $this->tearDownTestUser();
             unset($groupfolder_id);
         }
         $this->assertTrue($status, "UnitTestGroupFolder can not be deleted");
@@ -151,7 +149,7 @@ class GroupFoldersTest extends TestCase
     /**
      * retrieve a group folder
      */
-    protected function _retrieveGroupFolder()
+    private function retrieveGroupFolder()
     {
         global $groupfolder_id;
         $focus = new SugarFolder();
@@ -162,7 +160,7 @@ class GroupFoldersTest extends TestCase
     /**
      * Delete this inbound account.
      */
-    protected function _tearDownGroupFolder()
+    private function tearDownGroupFolder()
     {
         global $groupfolder_id;
         $GLOBALS['db']->query("delete from folders WHERE id = '{$groupfolder_id}'");
@@ -171,21 +169,21 @@ class GroupFoldersTest extends TestCase
     /**
      * Create a test user
      */
-    protected function _setupTestUser()
+    private function setupTestUser()
     {
         global $current_user;
-        $this->_user = SugarTestUserUtilities::createAnonymousUser();
-        $GLOBALS['current_user'] = $this->_user;
-        $current_user = $this->_user;
-        $this->_user->status = 'Active';
-        $this->_user->is_admin = 1;
-        $this->_user->save();
+        $user = SugarTestUserUtilities::createAnonymousUser();
+        $GLOBALS['current_user'] = $user;
+        $current_user = $user;
+        $user->status = 'Active';
+        $user->is_admin = 1;
+        $user->save();
     }
         
     /**
      * Remove user created for test
      */
-    protected function _tearDownTestUser()
+    private function tearDownTestUser()
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);

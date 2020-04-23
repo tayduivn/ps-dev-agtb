@@ -327,12 +327,12 @@ class SearchViewMetaDataParserTest extends TestCase
  */
 class SearchViewMetaDataParserTestDerivative extends SearchViewMetaDataParser
 {
-    function __construct($layout)
+    public function __construct($layout)
     {
         $this->_searchLayout = $layout;
     }
 
-    function setImpl($impl)
+    public function setImpl($impl)
     {
         $this->implementation = $impl;
     }

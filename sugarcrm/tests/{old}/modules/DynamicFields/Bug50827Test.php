@@ -15,16 +15,16 @@ use PHPUnit\Framework\TestCase;
 
 class Bug50827Test extends TestCase
 {
-    private $_smarty;
+    private $smarty;
 
     protected function setUp() : void
     {
-        $this->_smarty = new Sugar_Smarty();
+        $this->smarty = new Sugar_Smarty();
     }
 
     protected function tearDown() : void
     {
-        unset($this->_smarty);
+        unset($this->smarty);
     }
 
     /**
@@ -32,8 +32,8 @@ class Bug50827Test extends TestCase
      */
     public function testCalculatedVisible($vardef, $expected)
     {
-        $this->_smarty->assign("vardef", $vardef);
-        $output = $this->_smarty->fetch('modules/DynamicFields/templates/Fields/Forms/coreDependent.tpl');
+        $this->smarty->assign("vardef", $vardef);
+        $output = $this->smarty->fetch('modules/DynamicFields/templates/Fields/Forms/coreDependent.tpl');
         
         if ($expected) {
             $this->assertStringContainsString('name="calculated" id="calculated"', $output);

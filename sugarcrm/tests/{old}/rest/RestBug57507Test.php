@@ -53,7 +53,7 @@ class RestBug57507Test extends RestTestBase
      */
     public function testEmptySaveInt()
     {
-        $reply = $this->_restCall(
+        $reply = $this->restCall(
             "Calls/",
             json_encode(['name' => 'Test call, empty int',
                                                     'duration_hours' => 1,
@@ -89,7 +89,7 @@ class RestBug57507Test extends RestTestBase
         $call->save();
         $this->calls[] = $call;
         
-        $reply = $this->_restCall("Calls/".$call->id);
+        $reply = $this->restCall("Calls/".$call->id);
 
         $this->assertNull($reply['reply']['repeat_count'], 'Repeat count is different from null');
     }

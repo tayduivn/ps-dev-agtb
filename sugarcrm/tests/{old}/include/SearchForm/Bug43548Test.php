@@ -85,7 +85,7 @@ EOQ;
 //Create SugarSpotMock since getSearchFields is protected
 class SugarSpotMock extends SugarSpot
 {
-    function getTestSearchFields($moduleName)
+    public function getTestSearchFields($moduleName)
     {
         return parent::getSearchFields($moduleName);
     }

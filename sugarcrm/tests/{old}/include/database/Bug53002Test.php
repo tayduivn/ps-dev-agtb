@@ -14,25 +14,25 @@ use PHPUnit\Framework\TestCase;
 
 class Bug53002Test extends TestCase
 {
-    private $_db;
+    private $db;
 
     protected function setUp() : void
     {
-        if (empty($this->_db)) {
-            $this->_db = DBManagerFactory::getInstance();
+        if (empty($this->db)) {
+            $this->db = DBManagerFactory::getInstance();
         }
     }
 
     public function test_order_by_amount()
     {
         $query = "SELECT * FROM opportunities ORDER BY amount ASC";
-        $this->_db->query($query);
+        $this->db->query($query);
         // and make no error messages are asserted
-        $this->assertEmpty($this->_db->lastError(), "lastError should return false of the last legal query that is ordering by amount against opportunities");
+        $this->assertEmpty($this->db->lastError(), "lastError should return false of the last legal query that is ordering by amount against opportunities");
 
         $query = "SELECT * FROM opportunities ORDER BY amount_usdollar ASC";
-        $this->_db->query($query);
+        $this->db->query($query);
         // and make no error messages are asserted
-        $this->assertEmpty($this->_db->lastError(), "lastError should return false of the last legal query that is ordering by amount_usdollar against opportunities");
+        $this->assertEmpty($this->db->lastError(), "lastError should return false of the last legal query that is ordering by amount_usdollar against opportunities");
     }
 }

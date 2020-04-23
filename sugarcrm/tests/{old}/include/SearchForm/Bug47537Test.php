@@ -17,11 +17,11 @@ require_once 'include/SearchForm/SearchForm2.php';
 
 class Bug47537Test extends TestCase
 {
-    var $module = 'Quotes';
-    var $action = 'index';
-    var $seed;
-    var $form;
-    var $array;
+    public $module = 'Quotes';
+    public $action = 'index';
+    public $seed;
+    public $form;
+    public $array;
 
     protected function setUp() : void
     {
@@ -60,7 +60,7 @@ class Bug47537Test extends TestCase
      * Data provider for single integer range searches
      * @return array data for tests
      */
-    function singleIntRangeProvider()
+    public function singleIntRangeProvider()
     {
         return [
             ["=", "1", [strtolower($this->module).".quote_num = 1"]],

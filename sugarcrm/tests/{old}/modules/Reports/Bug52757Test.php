@@ -67,7 +67,7 @@ class Bug52757Test extends TestCase
     /**
      * Test presents all information and asserts that all tables are present in full_table_list
      */
-    function testReportValidationAllDataArePresent()
+    public function testReportValidationAllDataArePresent()
     {
         $this->report->report_def['display_columns'] = [
             [
@@ -118,7 +118,7 @@ class Bug52757Test extends TestCase
     /**
      * Test presents account and call only and asserts that Account:calls:assigned_user_link is removed from full_table_list
      */
-    function testReportValidationAssignedUserIsNotPresent()
+    public function testReportValidationAssignedUserIsNotPresent()
     {
         $this->report->report_def['display_columns'] = [
             [
@@ -161,7 +161,7 @@ class Bug52757Test extends TestCase
      * Test presents account and assigned user only and asserts that all tables are present in full_table_list
      * because assigned user depends on call
      */
-    function testReportValidationCallIsNotPresent()
+    public function testReportValidationCallIsNotPresent()
     {
         $this->report->report_def['display_columns'] = [
             [
@@ -205,7 +205,7 @@ class Bug52757Test extends TestCase
      * Test presents assigned user only and asserts that all tables are present in full_table_list
      * because assigned user depends on call and call depends on account
      */
-    function testReportValidationOnlyAssignedUserIsPresent()
+    public function testReportValidationOnlyAssignedUserIsPresent()
     {
         $this->report->report_def['display_columns'] = [
             [
@@ -240,7 +240,7 @@ class Bug52757Test extends TestCase
     /**
      * Test presents account only and asserts that only self table is present in full_table_list
      */
-    function testReportValidationOnlyAccountIsPresent()
+    public function testReportValidationOnlyAccountIsPresent()
     {
         $this->report->report_def['display_columns'] = [
             [

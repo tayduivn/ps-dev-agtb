@@ -18,7 +18,7 @@ class SetDocRevisionTest extends SOAPTestCase
     protected function setUp() : void
     {
         parent::setUp();
-        $this->_login();
+        $this->login();
     }
 
     protected function tearDown() : void
@@ -36,7 +36,7 @@ class SetDocRevisionTest extends SOAPTestCase
         //create document
         $set_entry_parameters = [
             //session id
-            'session' => $this->_sessionId,
+            'session' => $this->sessionId,
             //The name of the module
             'module_name' => 'Documents',
             //Record attributes
@@ -46,7 +46,7 @@ class SetDocRevisionTest extends SOAPTestCase
             ],
         ];
 
-        $set_entry_result = $this->_soapClient->call('set_entry', $set_entry_parameters);
+        $set_entry_result = $this->soapClient->call('set_entry', $set_entry_parameters);
         $document_id = $set_entry_result['id'];
         $this->docId = $document_id;
         //create document revision
@@ -55,7 +55,7 @@ class SetDocRevisionTest extends SOAPTestCase
 
         $set_document_revision_parameters = [
             //session id
-            'session' => $this->_sessionId,
+            'session' => $this->sessionId,
             //The attachment details
             'note' => [
                 //The ID of the parent document.
@@ -69,7 +69,7 @@ class SetDocRevisionTest extends SOAPTestCase
             ],
         ];
 
-        $set_document_revision_result = $this->_soapClient->call(
+        $set_document_revision_result = $this->soapClient->call(
             'set_document_revision',
             $set_document_revision_parameters
         );

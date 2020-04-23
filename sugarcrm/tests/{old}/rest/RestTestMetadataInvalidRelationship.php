@@ -16,9 +16,9 @@ class RestTestMetadataInvalidRelationship extends RestTestBase
     protected function setUp() : void
     {
         //Create an anonymous user for login purposes/
-        $this->_user = SugarTestUserUtilities::createAnonymousUser();
-        $GLOBALS['current_user'] = $this->_user;
-        $this->_restLogin($this->_user->user_name, $this->_user->user_name);
+        $this->user = SugarTestUserUtilities::createAnonymousUser();
+        $GLOBALS['current_user'] = $this->user;
+        $this->restLogin($this->user->user_name, $this->user->user_name);
         $invalidRelationship = [
                 "lhs_key" => "id",
                 "lhs_module" => "badModule",
@@ -41,7 +41,7 @@ class RestTestMetadataInvalidRelationship extends RestTestBase
     public function testFullMetadataWithInvalidRelationship()
     {
         global $dictionary;
-        $restReply = $this->_restCall('metadata');
+        $restReply = $this->restCall('metadata');
 
         $this->assertTrue(isset($restReply['reply']['_hash']), 'Primary hash is missing.');
         $this->assertTrue(isset($restReply['reply']['modules']), 'Modules are missing.');

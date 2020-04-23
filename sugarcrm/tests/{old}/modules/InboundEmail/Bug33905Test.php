@@ -18,39 +18,37 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug33905Test extends TestCase
 {
-    public $folder = null;
-    public $_user = null;
-    public $_team = null;
-    public $_ie = null;
-    
+    private $user;
+    private $team;
+    private $ie;
+
     protected function setUp() : void
     {
-        global $current_user, $currentModule;
+        global $current_user;
 
-        $this->_user = SugarTestUserUtilities::createAnonymousUser();
-        $this->_team = SugarTestTeamUtilities::createAnonymousTeam();
-        $this->_user->default_team=$this->_team->id;
-        $this->_team->add_user_to_team($this->_user->id);
-        $this->_user->save();
-        $current_user = $this->_user;
-        $ieID = $this->_createInboundAccount();
+        $this->user = SugarTestUserUtilities::createAnonymousUser();
+        $this->team = SugarTestTeamUtilities::createAnonymousTeam();
+        $this->user->default_team=$this->team->id;
+        $this->team->add_user_to_team($this->user->id);
+        $this->user->save();
+        $current_user = $this->user;
+        $ieID = $this->createInboundAccount();
         $ie = new InboundEmail();
-        $this->_ie = $ie->retrieve($ieID);
+        $this->ie = $ie->retrieve($ieID);
     }
 
     protected function tearDown() : void
     {
-        $GLOBALS['db']->query("DELETE FROM user_preferences WHERE assigned_user_id='{$this->_user->id}'");
+        $GLOBALS['db']->query("DELETE FROM user_preferences WHERE assigned_user_id='{$this->user->id}'");
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestTeamUtilities::removeAllCreatedAnonymousTeams();
         unset($GLOBALS['current_user']);
         
-        $GLOBALS['db']->query("DELETE FROM inbound_email WHERE id='{$this->_ie->id}'");
+        $GLOBALS['db']->query("DELETE FROM inbound_email WHERE id='{$this->ie->id}'");
     }
     
-    function _createInboundAccount()
+    private function createInboundAccount()
     {
-        global $inbound_account_id, $current_user;
         $stored_options = [];
         $stored_options['from_name'] = "UnitTest";
         $stored_options['from_addr'] = "UT@sugarcrm.com";
@@ -61,7 +59,6 @@ class Bug33905Test extends TestCase
         $stored_options['trashFolder'] = "INBOX.Trash";
         $stored_options['leaveMessagesOnMailServer'] = 1;
 
-        $useSsl = false;
         $focus = new InboundEmail();
         $focus->name = "Unittest";
         $focus->email_user = "ajaysales@sugarcrm.com";
@@ -75,21 +72,21 @@ class Bug33905Test extends TestCase
         $focus->status = "Active";
         $focus->mailbox_type = 'pick';
         $focus->group_id = create_guid();
-        $focus->team_id = $this->_team->id;
-        $focus->team_set_id = $this->_team->id;
+        $focus->team_id = $this->team->id;
+        $focus->team_set_id = $this->team->id;
         $focus->stored_options = base64_encode(serialize($stored_options));
         return $focus->save();
     }
     
-    function testCreateSubscriptions()
+    public function testCreateSubscriptions()
     {
         global $current_user;
 
-        $this->assertInstanceOf("InboundEmail", $this->_ie);
+        $this->assertInstanceOf("InboundEmail", $this->ie);
 
-        $this->_ie->createUserSubscriptionsForGroupAccount();
+        $this->ie->createUserSubscriptionsForGroupAccount();
 
         $subs = unserialize(base64_decode($current_user->getPreference('showFolders', 'Emails')));
-        $this->assertEquals($this->_ie->id, $subs[0], "Unable to create subscriptions for IE Group Account (Import not enabled)");
+        $this->assertEquals($this->ie->id, $subs[0], "Unable to create subscriptions for IE Group Account (Import not enabled)");
     }
 }

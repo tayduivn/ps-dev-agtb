@@ -41,7 +41,7 @@ class RestPublicMetadataSugarViewsTest extends RestTestBase
      */
     public function testMetadataSugarViews()
     {
-        $restReply = $this->_restCall('metadata/public?type_filter=views');
+        $restReply = $this->restCall('metadata/public?type_filter=views');
 
         $this->assertTrue(isset($restReply['reply']['views']['_hash']), 'SugarView hash is missing.');
     }
@@ -89,40 +89,40 @@ class RestPublicMetadataSugarViewsTest extends RestTestBase
 
         // Make sure we get it when we ask for mobile
         file_put_contents('clients/mobile/views/address/editView.hbs', 'MOBILE EDITVIEW');
-        $this->_clearMetadataCache();
-        $restReply = $this->_restCall('metadata/public?type_filter=views&platform=mobile');
+        $this->clearMetadataCache();
+        $restReply = $this->restCall('metadata/public?type_filter=views&platform=mobile');
         $this->assertEquals('MOBILE EDITVIEW', $restReply['reply']['views']['address']['templates']['editView'], "Didn't get mobile code when that was the direct option");
 
 
         // Make sure we get it when we ask for mobile, even though there is base code there
         file_put_contents('clients/base/views/address/editView.hbs', 'BASE EDITVIEW');
-        $this->_clearMetadataCache();
-        $restReply = $this->_restCall('metadata/public?type_filter=views&platform=mobile');
+        $this->clearMetadataCache();
+        $restReply = $this->restCall('metadata/public?type_filter=views&platform=mobile');
         $this->assertEquals('MOBILE EDITVIEW', $restReply['reply']['views']['address']['templates']['editView'], "Didn't get mobile code when base code was there.");
 
 
         // Make sure we get the base code when we ask for it.
-        $this->_clearMetadataCache();
-        $restReply = $this->_restCall('metadata/public?type_filter=views&platform=base');
+        $this->clearMetadataCache();
+        $restReply = $this->restCall('metadata/public?type_filter=views&platform=base');
         $this->assertEquals('BASE EDITVIEW', $restReply['reply']['views']['address']['templates']['editView'], "Didn't get base code when it was the direct option");
         $this->assertTrue(!isset($restReply['reply']['views']['mobile']), "Only should be base platform");
 
         // Delete the mobile address and make sure it falls back to base
         unlink('clients/mobile/views/address/editView.hbs');
-        $this->_clearMetadataCache();
-        $restReply = $this->_restCall('metadata/public?type_filter=views&platform=mobile');
+        $this->clearMetadataCache();
+        $restReply = $this->restCall('metadata/public?type_filter=views&platform=mobile');
         $this->assertEquals('BASE EDITVIEW', $restReply['reply']['views']['address']['templates']['editView'], "Didn't fall back to base code when mobile code wasn't there.");
 
         // Make sure the mobile code is loaded before the non-custom base code
         file_put_contents('custom/clients/mobile/views/address/editView.hbs', 'CUSTOM MOBILE EDITVIEW');
-        $this->_clearMetadataCache();
-        $restReply = $this->_restCall('metadata/public?type_filter=views&platform=mobile');
+        $this->clearMetadataCache();
+        $restReply = $this->restCall('metadata/public?type_filter=views&platform=mobile');
         $this->assertEquals('CUSTOM MOBILE EDITVIEW', $restReply['reply']['views']['address']['templates']['editView'], "Didn't use the custom mobile code.");
 
         // Make sure custom base code works
         file_put_contents('custom/clients/base/views/address/editView.hbs', 'CUSTOM BASE EDITVIEW');
-        $this->_clearMetadataCache();
-        $restReply = $this->_restCall('metadata/public?type_filter=views&platform=base');
+        $this->clearMetadataCache();
+        $restReply = $this->restCall('metadata/public?type_filter=views&platform=base');
         $this->assertEquals('CUSTOM BASE EDITVIEW', $restReply['reply']['views']['address']['templates']['editView'], "Didn't use the custom base code.");
     }
 }

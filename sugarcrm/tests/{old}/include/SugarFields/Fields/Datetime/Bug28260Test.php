@@ -31,7 +31,7 @@ class Bug28260Test extends TestCase
         unset($GLOBALS['current_user']);
     }
     
-    public function _providerEmailTemplateFormat()
+    public static function providerEmailTemplateFormat()
     {
         return [
             ['10/11/2010 13:00','10/11/2010 13:00', 'm/d/Y', 'H:i' ],
@@ -45,7 +45,7 @@ class Bug28260Test extends TestCase
     }
     
      /**
-     * @dataProvider _providerEmailTemplateFormat
+     * @dataProvider providerEmailTemplateFormat
      */
     public function testEmailTemplateFormat($unformattedValue, $expectedValue, $dateFormat, $timeFormat)
     {

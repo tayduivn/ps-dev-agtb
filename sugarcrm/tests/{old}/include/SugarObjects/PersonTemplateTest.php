@@ -14,12 +14,12 @@ use PHPUnit\Framework\TestCase;
 
 class PersonTemplateTest extends TestCase
 {
-    private $_bean;
+    private $bean;
 
     protected function setUp() : void
     {
         // Can't use Person since Localization needs actual bean
-        $this->_bean = $this->getMockBuilder('Contact')
+        $this->bean = $this->getMockBuilder('Contact')
             ->setMethods(['getVCalData'])
             ->getMock();
         SugarTestHelper::setUp('current_user');
@@ -29,7 +29,7 @@ class PersonTemplateTest extends TestCase
     protected function tearDown() : void
     {
         BeanFactory::setBeanClass('vCals');
-        unset($this->_bean);
+        unset($this->bean);
         SugarTestHelper::tearDown();
     }
 
@@ -37,11 +37,11 @@ class PersonTemplateTest extends TestCase
     {
         $GLOBALS['current_user']->setPreference('default_locale_name_format', 'l f');
 
-        $this->_bean->first_name = 'Test';
-        $this->_bean->last_name = 'Contact';
-        $this->_bean->title = '';
-        $this->_bean->salutation = '';
-        $this->assertEquals('Contact Test', $this->_bean->get_summary_text());
+        $this->bean->first_name = 'Test';
+        $this->bean->last_name = 'Contact';
+        $this->bean->title = '';
+        $this->bean->salutation = '';
+        $this->assertEquals('Contact Test', $this->bean->get_summary_text());
     }
 
     /**
@@ -51,11 +51,11 @@ class PersonTemplateTest extends TestCase
     {
         $GLOBALS['current_user']->setPreference('default_locale_name_format', 's l f');
 
-        $this->_bean->salutation = 'Tester';
-        $this->_bean->first_name = 'Test';
-        $this->_bean->last_name = 'Contact';
-        $this->_bean->title = '';
-        $this->assertEquals('Tester Contact Test', $this->_bean->get_summary_text());
+        $this->bean->salutation = 'Tester';
+        $this->bean->first_name = 'Test';
+        $this->bean->last_name = 'Contact';
+        $this->bean->title = '';
+        $this->assertEquals('Tester Contact Test', $this->bean->get_summary_text());
     }
 
     public function testCustomPersonTemplateFound()
@@ -98,11 +98,11 @@ class PersonTemplateTest extends TestCase
             'END:VCALENDAR',
         ];
 
-        $this->_bean->expects($this->once())
+        $this->bean->expects($this->once())
             ->method('getVCalData')
             ->will($this->returnValue($vcalData));
 
-        $result = $this->_bean->getFreeBusySchedule();
+        $result = $this->bean->getFreeBusySchedule();
 
         $this->assertEquals(1, count($result), 'Unexpected number of Start/End times from getFreeBusySchedule()');
         $this->assertEquals($expectedStartTime, $result[0]['start'], 'Unexpected Start time from getFreeBusySchedule()');

@@ -21,17 +21,17 @@ use PHPUnit\Framework\TestCase;
 require_once 'soap/SoapRelationshipHelper.php';
 class SoapRelationshipHelperTest extends TestCase
 {
-    var $noSoapErrorArray = ['number'=>0, 'name'=>'No Error', 'description'=>'No Error'];
-    var $callsAndMeetingsSelectFields = ['id', 'date_modified', 'deleted', 'name', 'rt.deleted synced'];
-    var $tasksSelectFields = ['id', 'date_modified', 'deleted', 'name'];
-    var $contactsSelectFields =  ['id', 'date_modified', 'deleted', 'first_name', 'last_name', 'rt.deleted synced', "(SELECT email_addresses.email_address FROM contacts LEFT JOIN  email_addr_bean_rel on contacts.id = email_addr_bean_rel.bean_id and email_addr_bean_rel.bean_module='Contacts' and email_addr_bean_rel.deleted=0 and email_addr_bean_rel.primary_address=1 LEFT JOIN email_addresses on email_addresses.id = email_addr_bean_rel.email_address_id Where contacts.ID = m1.ID) email1","(SELECT email_addresses.email_address FROM contacts LEFT JOIN  email_addr_bean_rel on contacts.id = email_addr_bean_rel.bean_id and email_addr_bean_rel.bean_module='Contacts' and email_addr_bean_rel.deleted=0 and email_addr_bean_rel.primary_address!=1 LEFT JOIN email_addresses on email_addresses.id = email_addr_bean_rel.email_address_id Where contacts.ID = m1.ID Limit 1) email2"];
-    var $meeting;
-    var $call;
-    var $contact;
-    var $task;
-    var $nowTime;
-    var $tenMinutesLaterTime;
-    var $testData;
+    public $noSoapErrorArray = ['number'=>0, 'name'=>'No Error', 'description'=>'No Error'];
+    public $callsAndMeetingsSelectFields = ['id', 'date_modified', 'deleted', 'name', 'rt.deleted synced'];
+    public $tasksSelectFields = ['id', 'date_modified', 'deleted', 'name'];
+    public $contactsSelectFields =  ['id', 'date_modified', 'deleted', 'first_name', 'last_name', 'rt.deleted synced', "(SELECT email_addresses.email_address FROM contacts LEFT JOIN  email_addr_bean_rel on contacts.id = email_addr_bean_rel.bean_id and email_addr_bean_rel.bean_module='Contacts' and email_addr_bean_rel.deleted=0 and email_addr_bean_rel.primary_address=1 LEFT JOIN email_addresses on email_addresses.id = email_addr_bean_rel.email_address_id Where contacts.ID = m1.ID) email1","(SELECT email_addresses.email_address FROM contacts LEFT JOIN  email_addr_bean_rel on contacts.id = email_addr_bean_rel.bean_id and email_addr_bean_rel.bean_module='Contacts' and email_addr_bean_rel.deleted=0 and email_addr_bean_rel.primary_address!=1 LEFT JOIN email_addresses on email_addresses.id = email_addr_bean_rel.email_address_id Where contacts.ID = m1.ID Limit 1) email2"];
+    public $meeting;
+    public $call;
+    public $contact;
+    public $task;
+    public $nowTime;
+    public $tenMinutesLaterTime;
+    public $testData;
 
     protected function setUp() : void
     {

@@ -35,7 +35,7 @@ class RestAuditTest extends RestTestBase
         // For some unknown reason, creating an account directly will cause a 'out of memory' error in SugarBean::retrieve()
         // when we call AuditApi below. This has something to do with how an account is created, not the api.
         // The api works fine when tested using Postman
-        $restReply = $this->_restCall(
+        $restReply = $this->restCall(
             "Accounts/",
             json_encode(['name'=>'UNIT TEST - BEFORE', 'my_favorite' => true]),
             'POST'
@@ -50,7 +50,7 @@ class RestAuditTest extends RestTestBase
         $account->name = "UNIT TEST - AFTER";
         $account->save();
         $GLOBALS['db']->commit();
-        $restReply = $this->_restCall('Audit?module=Accounts&record='.$this->account_id);
+        $restReply = $this->restCall('Audit?module=Accounts&record='.$this->account_id);
         $this->assertNotEmpty($restReply['reply']['records'], "There should be one record");
     }
 }

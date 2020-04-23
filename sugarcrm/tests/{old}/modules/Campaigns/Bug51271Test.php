@@ -15,14 +15,14 @@ use PHPUnit\Framework\TestCase;
 
 class Bug51271Test extends TestCase
 {
-    var $campaign = null;
-    var $prospectlist = null;
-    var $emailmarketing = null;
-    var $emailmarketing2 = null;
-    var $email = null;
-    var $emailman = null;
-    var $saved_current_user = null;
-    var $clear_database = true;
+    public $campaign = null;
+    public $prospectlist = null;
+    public $emailmarketing = null;
+    public $emailmarketing2 = null;
+    public $email = null;
+    public $emailman = null;
+    public $saved_current_user = null;
+    public $clear_database = true;
 
     protected function setUp() : void
     {

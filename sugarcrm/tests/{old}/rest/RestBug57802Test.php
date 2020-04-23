@@ -21,7 +21,7 @@ class RestBug57802Test extends RestTestBase
      */
     public function testMetadataModuleVardefLenFieldsAreNumericType()
     {
-        $reply = $this->_restCall('metadata?module_filter=Accounts&type_filter=modules');
+        $reply = $this->restCall('metadata?module_filter=Accounts&type_filter=modules');
         $this->assertTrue(isset($reply['reply']['modules']['Accounts']['fields']), "Fields were not returned in the metadata response");
         
         // Handle assertions for all defs

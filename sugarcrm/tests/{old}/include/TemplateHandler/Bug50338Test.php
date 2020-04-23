@@ -18,7 +18,7 @@ class Bug50338Test extends TestCase
     private $TemplateHandler;
     private $fieldDefs;
 
-    function testCreateFieldFefs()
+    public function testCreateFieldFefs()
     {
         $this->TemplateHandler = new MockTemplateHandler();
         $this->fieldDefs = [

@@ -16,7 +16,7 @@ class SugarTestDashboardUtilities
     /**
      * @var array List of previously created dashboard records.
      */
-    private static $_createdDashboards = [];
+    private static $createdDashboards = [];
 
     private function __construct()
     {
@@ -58,7 +58,7 @@ class SugarTestDashboardUtilities
 
         $GLOBALS['db']->commit();
 
-        self::$_createdDashboards[] = $dashboard;
+        self::$createdDashboards[] = $dashboard;
         return $dashboard;
     }
 
@@ -81,7 +81,7 @@ class SugarTestDashboardUtilities
     public static function getCreatedDashboardIds()
     {
         $dashboardIds = [];
-        foreach (self::$_createdDashboards as $dashboard) {
+        foreach (self::$createdDashboards as $dashboard) {
             $dashboardIds[] = $dashboard->id;
         }
         return $dashboardIds;

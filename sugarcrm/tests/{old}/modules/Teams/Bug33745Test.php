@@ -15,8 +15,8 @@ use PHPUnit\Framework\TestCase;
 
 class Bug33745 extends TestCase
 {
-    var $set_silent_upgrade = false;
-    var $created_anonymous_user = false;
+    public $set_silent_upgrade = false;
+    public $created_anonymous_user = false;
     
     protected function setUp() : void
     {

@@ -14,16 +14,16 @@ use PHPUnit\Framework\TestCase;
 
 class DBManagerFactoryTest extends TestCase
 {
-    private $_oldSugarConfig;
+    private $oldSugarConfig;
 
     protected function setUp() : void
     {
-        $this->_oldSugarConfig = $GLOBALS['sugar_config'];
+        $this->oldSugarConfig = $GLOBALS['sugar_config'];
     }
 
     protected function tearDown() : void
     {
-        $GLOBALS['sugar_config'] = $this->_oldSugarConfig;
+        $GLOBALS['sugar_config'] = $this->oldSugarConfig;
     }
 
     public function testGetInstance()

@@ -24,9 +24,9 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug44607Test extends TestCase
 {
-    var $testUser;
-    var $testUser2;
-    
+    public $testUser;
+    public $testUser2;
+
     protected function setUp() : void
     {
         $this->testUser = SugarTestUserUtilities::createAnonymousUser();
@@ -39,7 +39,7 @@ class Bug44607Test extends TestCase
         $this->testUser = null;
         $this->testUser2 = null;
     }
-    
+
     /**
      * testAddUserToTeam
      */
@@ -56,11 +56,11 @@ class Bug44607Test extends TestCase
             $row = $GLOBALS['db']->fetchByAssoc($results);
             $this->assertEquals($row['total'], 0, 'Assert that no team_membership entries were created');
         }
-        
+
         $this->testUser->reports_to_id = $this->testUser2->id;
         $team = BeanFactory::newBean('Teams');
         $team->add_user_to_team($this->testUser->id);
-        
+
         $results = $GLOBALS['db']->query("SELECT count(*) as total FROM team_memberships WHERE user_id = '{$this->testUser->reports_to_id}'");
         if (!empty($results)) {
             $row = $GLOBALS['db']->fetchByAssoc($results);

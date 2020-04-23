@@ -17,8 +17,7 @@ require_once 'service/v4/SugarWebServiceImplv4.php';
 
 class Bug41985Test extends TestCase
 {
-    protected $_contact;
-    protected $_account;
+    private $contact;
 
     protected function setUp() : void
     {
@@ -62,14 +61,14 @@ class Bug41985Test extends TestCase
         VardefManager::refreshVardefs('Accounts', 'Account');
         $this->mod->field_defs = $GLOBALS['dictionary']['Account']['fields'];
 
-        $this->_contact = SugarTestContactUtilities::createContact();
-        $this->_account = SugarTestAccountUtilities::createAccount();
+        $this->contact = SugarTestContactUtilities::createContact();
+        $account = SugarTestAccountUtilities::createAccount();
 
-        $this->_contact->load_relationship('accounts');
-        $this->_contact->accounts->add($this->_account->id);
+        $this->contact->load_relationship('accounts');
+        $this->contact->accounts->add($account->id);
 
-        $this->_account->test_custom_c = 'Custom Field';
-        $this->_account->save();
+        $account->test_custom_c = 'Custom Field';
+        $account->save();
 
         $GLOBALS['db']->commit(); // Making sure we commit any changes
     }
@@ -92,7 +91,7 @@ class Bug41985Test extends TestCase
     {
         $web_service_util = new SugarWebServiceUtilv4();
 
-        $result = $web_service_util->getRelationshipResults($this->_contact, 'accounts', ['id', 'name', 'test_custom_c']);
+        $result = $web_service_util->getRelationshipResults($this->contact, 'accounts', ['id', 'name', 'test_custom_c']);
 
         $this->assertTrue(isset($result['rows'][0]));
         $this->assertTrue(isset($result['rows'][0]['test_custom_c']));

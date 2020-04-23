@@ -13,7 +13,7 @@
 
 class SugarOAuth2StorageTest extends RestTestPortalBase
 {
-    protected $_sessionType;
+    private $sessionType;
 
     public static function setUpBeforeClass() : void
     {
@@ -58,15 +58,15 @@ class SugarOAuth2StorageTest extends RestTestPortalBase
         // call. This was lasting beyond this test and causing failure downstream
         // in full suite runs.
         if (!empty($_SESSION['type'])) {
-            $this->_sessionType = $_SESSION['type'];
+            $this->sessionType = $_SESSION['type'];
         }
     }
 
     protected function tearDown() : void
     {
         // Handle session 'type' resetting
-        if (!empty($this->_sessionType)) {
-            $_SESSION['type'] = $this->_sessionType;
+        if (!empty($this->sessionType)) {
+            $_SESSION['type'] = $this->sessionType;
         } else {
             unset($_SESSION['type']);
         }

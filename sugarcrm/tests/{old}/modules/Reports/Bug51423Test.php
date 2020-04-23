@@ -25,7 +25,7 @@ class Bug51423Test extends TestCase
     /**
      * @var array Request for creating/deleting related field for Accounts module
      */
-    private $_req =  [
+    private $req = [
         'to_pdf' => 'true',
         'sugar_body_only' => '1',
         'module' => 'ModuleBuilder',
@@ -48,17 +48,13 @@ class Bug51423Test extends TestCase
         'duplicate_merge' => '0',
     ];
 
-    private $_account_1;
+    private $account_1;
 
-    private $_account_2;
+    private $account_2;
 
-    private $_contact_1;
+    private $contact_1;
 
-    private $_contact_2;
-
-    private $_report;
-
-    private $_user;
+    private $contact_2;
 
     /**
      * @var bool
@@ -73,45 +69,45 @@ class Bug51423Test extends TestCase
         SugarTestHelper::setUp("app_strings");
         SugarTestHelper::setUp("app_list_strings");
 
-        $this->_user = SugarTestUserUtilities::createAnonymousUser(true, 1);
-        $GLOBALS['current_user'] = $this->_user;
+        $user = SugarTestUserUtilities::createAnonymousUser(true, 1);
+        $GLOBALS['current_user'] = $user;
 
-        $this->_req['action'] = 'saveField';
-        $request = InputValidation::create($this->_req, []);
+        $this->req['action'] = 'saveField';
+        $request = InputValidation::create($this->req, []);
         $mb = new ModuleBuilderController($request);
         $mb->action_saveField();
 
-        $this->_contact_1 = SugarTestContactUtilities::createContact();
-        $this->_contact_1->last_name = 'Contact #1';
-        $this->_contact_1->team_id = 1;
-        $this->_contact_1->save();
+        $this->contact_1 = SugarTestContactUtilities::createContact();
+        $this->contact_1->last_name = 'Contact #1';
+        $this->contact_1->team_id = 1;
+        $this->contact_1->save();
 
-        $this->_contact_2 = SugarTestContactUtilities::createContact();
-        $this->_contact_2->last_name = 'Contact #2';
-        $this->_contact_2->team_id = 1;
-        $this->_contact_2->save();
+        $this->contact_2 = SugarTestContactUtilities::createContact();
+        $this->contact_2->last_name = 'Contact #2';
+        $this->contact_2->team_id = 1;
+        $this->contact_2->save();
 
-        $this->_account_1 = SugarTestAccountUtilities::createAccount();
-        $this->_account_1->name = 'Account #1';
-        $this->_account_1->contact_id_c = $this->_contact_1->id;
-        $this->_account_1->team_id = 1;
-        $this->_account_1->relate_contacts_c = $this->_contact_1->last_name;
-        $this->_account_1->save();
+        $this->account_1 = SugarTestAccountUtilities::createAccount();
+        $this->account_1->name = 'Account #1';
+        $this->account_1->contact_id_c = $this->contact_1->id;
+        $this->account_1->team_id = 1;
+        $this->account_1->relate_contacts_c = $this->contact_1->last_name;
+        $this->account_1->save();
 
-        $this->_account_2 = SugarTestAccountUtilities::createAccount();
-        $this->_account_2->name = 'Account #2';
-        $this->_account_2->contact_id_c = $this->_contact_2->id;
-        $this->_account_2->relate_contacts_c = $this->_contact_2->last_name;
-        $this->_account_2->parent_id = $this->_account_1->id;
-        $this->_account_2->team_id = 1;
-        $this->_account_2->save();
+        $this->account_2 = SugarTestAccountUtilities::createAccount();
+        $this->account_2->name = 'Account #2';
+        $this->account_2->contact_id_c = $this->contact_2->id;
+        $this->account_2->relate_contacts_c = $this->contact_2->last_name;
+        $this->account_2->parent_id = $this->account_1->id;
+        $this->account_2->team_id = 1;
+        $this->account_2->save();
     }
 
     protected function tearDown() : void
     {
-        $this->_req['action'] = 'DeleteField';
-        $this->_req['name'] = 'relate_contacts_c';
-        $request = InputValidation::create($this->_req, []);
+        $this->req['action'] = 'DeleteField';
+        $this->req['name'] = 'relate_contacts_c';
+        $request = InputValidation::create($this->req, []);
         $mb = new ModuleBuilderController($request);
         $mb->action_DeleteField();
 
@@ -221,17 +217,17 @@ class Bug51423Test extends TestCase
                 ],
             ],
         ];
-        $rep_defs['filters_def']['Filter_1']['0']['input_name0'] = $this->_account_2->id;
-        $rep_defs['filters_def']['Filter_1']['0']['input_name1'] = $this->_account_2->name;
+        $rep_defs['filters_def']['Filter_1']['0']['input_name0'] = $this->account_2->id;
+        $rep_defs['filters_def']['Filter_1']['0']['input_name1'] = $this->account_2->name;
         $json = getJSONobj();
         $tmp = $json->encode($rep_defs);
-        $this->_report = new Report($tmp);
-        $this->_report->run_query();
-        while (( $row = $this->_report->get_next_row() ) != 0) {
-            $this->assertMatchesRegularExpression('/.*' . preg_quote($this->_account_2->name) . '.*/', $row['cells']['0']);
-            $this->assertMatchesRegularExpression('/.*' . preg_quote($this->_contact_2->last_name) . '.*/', $row['cells']['1']);
-            $this->assertMatchesRegularExpression('/.*' . preg_quote($this->_account_1->name) . '.*/', $row['cells']['2']);
-            $this->assertMatchesRegularExpression('/.*' . preg_quote($this->_contact_1->last_name) . '.*/', $row['cells']['3']);
+        $report = new Report($tmp);
+        $report->run_query();
+        while (( $row = $report->get_next_row() ) != 0) {
+            $this->assertMatchesRegularExpression('/.*' . preg_quote($this->account_2->name) . '.*/', $row['cells']['0']);
+            $this->assertMatchesRegularExpression('/.*' . preg_quote($this->contact_2->last_name) . '.*/', $row['cells']['1']);
+            $this->assertMatchesRegularExpression('/.*' . preg_quote($this->account_1->name) . '.*/', $row['cells']['2']);
+            $this->assertMatchesRegularExpression('/.*' . preg_quote($this->contact_1->last_name) . '.*/', $row['cells']['3']);
         }
     }
 }

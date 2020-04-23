@@ -24,10 +24,10 @@ class SOAPAPI4Test extends SOAPTestCase
      */
     protected function setUp() : void
     {
-        $this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/service/v4/soap.php';
+        $this->soapURL = $GLOBALS['sugar_config']['site_url'].'/service/v4/soap.php';
         parent::setUp();
         self::$helperObject = new APIv3Helper();
-        $this->_login();
+        $this->login();
         $this->cleanup = false;
     }
 
@@ -45,10 +45,10 @@ class SOAPAPI4Test extends SOAPTestCase
     {
         $contact = SugarTestContactUtilities::createContact();
 
-        $result = $this->_soapClient->call(
+        $result = $this->soapClient->call(
             'get_entry_list',
             [
-                'session' => $this->_sessionId,
+                'session' => $this->sessionId,
                 'module_name' => 'Contacts',
                 'query' => "contacts.id = '{$contact->id}'",
                 'order_by' => '',
@@ -79,10 +79,10 @@ class SOAPAPI4Test extends SOAPTestCase
         $GLOBALS['db']->commit();
         $this->assertTrue(SugarFavorites::isUserFavorite('Contacts', $contact->id), "The contact wasn't correctly marked as a favorite.");
 
-        $result = $this->_soapClient->call(
+        $result = $this->soapClient->call(
             'get_entry_list',
             [
-                'session' => $this->_sessionId,
+                'session' => $this->sessionId,
                 'module_name' => 'Contacts',
                 'query' => "contacts.id = '{$contact->id}'",
                 'order_by' => '',
@@ -112,10 +112,10 @@ class SOAPAPI4Test extends SOAPTestCase
         $offSet = 0;
         $maxResults = 10;
 
-        $results = $this->_soapClient->call(
+        $results = $this->soapClient->call(
             'search_by_module',
             [
-                            'session' => $this->_sessionId,
+                            'session' => $this->sessionId,
                             'search'  => $searchString,
                             'modules' => $searchModules,
                             'offset'  => $offSet,
@@ -154,10 +154,10 @@ class SOAPAPI4Test extends SOAPTestCase
         $offSet = 0;
         $maxResults = 10;
 
-        $results = $this->_soapClient->call(
+        $results = $this->soapClient->call(
             'search_by_module',
             [
-                            'session' => $this->_sessionId,
+                            'session' => $this->sessionId,
                             'search'  => $searchString,
                             'modules' => $searchModules,
                             'offset'  => $offSet,
@@ -179,11 +179,11 @@ class SOAPAPI4Test extends SOAPTestCase
     {
         $contact = SugarTestContactUtilities::createContact();
 
-        $this->_login();
-        $result = $this->_soapClient->call(
+        $this->login();
+        $result = $this->soapClient->call(
             'get_entries',
             [
-                'session' => $this->_sessionId,
+                'session' => $this->sessionId,
                 'module_name' => 'Contacts',
                 'ids' => [$contact->id],
                 'select_fields' => ['last_name', 'first_name', 'do_not_call', 'lead_source', 'email1'],
@@ -200,20 +200,20 @@ class SOAPAPI4Test extends SOAPTestCase
     /**
      * Test get avaiable modules call
      */
-    function testGetAllAvailableModules()
+    public function testGetAllAvailableModules()
     {
-        $soap_data = ['session' => $this->_sessionId];
+        $soap_data = ['session' => $this->sessionId];
 
-        $result = $this->_soapClient->call('get_available_modules', $soap_data);
+        $result = $this->soapClient->call('get_available_modules', $soap_data);
         $actual = $result['modules'][0];
         $this->assertArrayHasKey("module_key", $actual);
         $this->assertArrayHasKey("module_label", $actual);
         $this->assertArrayHasKey("acls", $actual);
         $this->assertArrayHasKey("favorite_enabled", $actual);
 
-        $soap_data = ['session' => $this->_sessionId, 'filter' => 'all'];
+        $soap_data = ['session' => $this->sessionId, 'filter' => 'all'];
 
-        $result = $this->_soapClient->call('get_available_modules', $soap_data);
+        $result = $this->soapClient->call('get_available_modules', $soap_data);
         $actual = $result['modules'][0];
         $this->assertArrayHasKey("module_key", $actual);
         $this->assertArrayHasKey("module_label", $actual);
@@ -224,10 +224,10 @@ class SOAPAPI4Test extends SOAPTestCase
     /**
      * Test get avaiable modules call
      */
-    function testGetAvailableModules()
+    public function testGetAvailableModules()
     {
-        $soap_data = ['session' => $this->_sessionId,'filter' => 'mobile'];
-        $result = $this->_soapClient->call('get_available_modules', $soap_data);
+        $soap_data = ['session' => $this->sessionId,'filter' => 'mobile'];
+        $result = $this->soapClient->call('get_available_modules', $soap_data);
 
         foreach ($result['modules'] as $tmpModEntry) {
             $tmpModEntry['module_key'];

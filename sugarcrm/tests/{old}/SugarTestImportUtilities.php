@@ -13,7 +13,7 @@
 
 class SugarTestImportUtilities
 {
-    public static $_createdFiles = [];
+    private static $createdFiles = [];
 
     private function __construct()
     {
@@ -37,7 +37,7 @@ class SugarTestImportUtilities
         }
         fclose($fp);
 
-        self::$_createdFiles[] = $filename;
+        self::$createdFiles[] = $filename;
 
         return $filename;
     }
@@ -58,7 +58,7 @@ class SugarTestImportUtilities
         }
         fclose($fp);
 
-        self::$_createdFiles[] = $filename;
+        self::$createdFiles[] = $filename;
 
         return $filename;
     }
@@ -71,14 +71,14 @@ account2,foo bar
 EOTEXT;
         file_put_contents($filename, $contents);
 
-        self::$_createdFiles[] = $filename;
+        self::$createdFiles[] = $filename;
 
         return $filename;
     }
 
     public static function removeAllCreatedFiles()
     {
-        foreach (self::$_createdFiles as $file) {
+        foreach (self::$createdFiles as $file) {
             @unlink($file);
             $i = 0;
             while (true) {

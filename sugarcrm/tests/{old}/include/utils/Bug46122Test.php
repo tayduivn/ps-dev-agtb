@@ -14,10 +14,10 @@ use PHPUnit\Framework\TestCase;
 
 class Bug46122Test extends TestCase
 {
-    var $hasCustomModulesLogicHookFile = false;
-    var $hasCustomContactLogicHookFile = false;
-    var $modulesHookFile = 'custom/modules/logic_hooks.php';
-    var $contactsHookFile = 'custom/modules/Contacts/logic_hooks.php';
+    public $hasCustomModulesLogicHookFile = false;
+    public $hasCustomContactLogicHookFile = false;
+    public $modulesHookFile = 'custom/modules/logic_hooks.php';
+    public $contactsHookFile = 'custom/modules/Contacts/logic_hooks.php';
 
     protected function setUp() : void
     {
@@ -93,9 +93,9 @@ class Bug46122Test extends TestCase
 
 class LogicHookMock extends LogicHook
 {
-    var $hookRunCount = 0;
+    public $hookRunCount = 0;
 
-    function process_hooks($hook_array, $event, $arguments)
+    public function process_hooks($hook_array, $event, $arguments)
     {
         if (!empty($hook_array[$event])) {
             if ($event == 'after_ui_frame') {

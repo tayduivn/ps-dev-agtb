@@ -13,7 +13,7 @@
 
 class APIv3Helper
 {
-    function populateSeedDataForSearchTest($user_id)
+    public function populateSeedDataForSearchTest($user_id)
     {
         $results = [];
         $a1_id = create_guid();
@@ -73,7 +73,7 @@ class APIv3Helper
      * @param array $list
      * @param string $bean_id
      */
-    function findBeanIdFromEntryList($list, $bean_id, $module)
+    public function findBeanIdFromEntryList($list, $bean_id, $module)
     {
         $found = false;
         foreach ($list as $moduleEntry) {
@@ -97,14 +97,14 @@ class APIv3Helper
      * @param array $list
      * @param string $bean_id
      */
-    function findFieldByNameFromEntryList($list, $bean_id, $module, $fieldName)
+    public function findFieldByNameFromEntryList($list, $bean_id, $module, $fieldName)
     {
         $found = false;
 
         foreach ($list as $moduleEntry) {
             if ($moduleEntry['name'] == $module) {
                 foreach ($moduleEntry['records'] as $entry) {
-                    $value = $this->_retrieveFieldValueByFieldName($entry, $fieldName, $bean_id);
+                    $value = $this->retrieveFieldValueByFieldName($entry, $fieldName, $bean_id);
                     if ($value !== false) {
                         return $value;
                     }
@@ -115,7 +115,7 @@ class APIv3Helper
         return $found;
     }
 
-    function _retrieveFieldValueByFieldName($entry, $fieldName, $beanId)
+    private function retrieveFieldValueByFieldName($entry, $fieldName, $beanId)
     {
         $found = false;
         $fieldValue = false;

@@ -14,8 +14,6 @@ use PHPUnit\Framework\TestCase;
 
 class SugarTestThemeUtilitiesTest extends TestCase
 {
-    private $_before_snapshot = [];
-    
     protected function tearDown() : void
     {
         SugarTestThemeUtilities::removeAllCreatedAnonymousThemes();

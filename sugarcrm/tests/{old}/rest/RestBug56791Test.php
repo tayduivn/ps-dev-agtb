@@ -28,7 +28,7 @@ class RestBug56791Test extends TestCase
 
 class UnifiedSearchApiMock extends UnifiedSearchApi
 {
-    function determineSugarSearchEngine(ServiceBase $api, array $args, array $options)
+    public function determineSugarSearchEngine(ServiceBase $api, array $args, array $options)
     {
         return parent::determineSugarSearchEngine($api, $args, $options);
     }

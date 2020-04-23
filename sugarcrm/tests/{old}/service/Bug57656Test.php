@@ -17,7 +17,7 @@ class Bug57656Test extends SOAPTestCase
 {
     protected function setUp() : void
     {
-        $this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/soap.php';
+        $this->soapURL = $GLOBALS['sugar_config']['site_url'].'/soap.php';
 
         parent::setUp();
         $this->tabs = new TabController();
@@ -51,8 +51,8 @@ class Bug57656Test extends SOAPTestCase
      */
     public function testCreateBug($url)
     {
-        $this->_soapClient = new nusoapclient($url, false, false, false, false, false, 600, 600);
-        $this->_login();
+        $this->soapClient = new nusoapclient($url, false, false, false, false, false, 600, 600);
+        $this->login();
         $params = [
         ["name" => "name", "value" => "TEST"],
         ["name" => "parent_id", "value" => "5a770071-66ca-6127-5a1a-4cb3a2c46e40"],
@@ -60,7 +60,7 @@ class Bug57656Test extends SOAPTestCase
         ["name" => "from_addr", "value" => "test@test.com"],
         ["name" => "to_addrs", "value" => "test@test.com"],
         ];
-        $res = $this->_soapClient->call('set_entry', [$this->_sessionId, 'Bugs', $params]);
+        $res = $this->soapClient->call('set_entry', [$this->sessionId, 'Bugs', $params]);
         $this->assertNotEquals("-1", $res['id'], "Bad bug ID");
 
         $b = new Bug();

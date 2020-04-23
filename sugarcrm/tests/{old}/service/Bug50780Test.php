@@ -25,14 +25,14 @@ class Bug50780Test extends SOAPTestCase
 {
     protected function setUp() : void
     {
-        $this->_soapURL = $GLOBALS['sugar_config']['site_url'] . '/service/v4_1/soap.php';
+        $this->soapURL = $GLOBALS['sugar_config']['site_url'] . '/service/v4_1/soap.php';
         parent::setUp();
-        $this->_login(); // Logging in just before the SOAP call as this will also commit any pending DB changes
+        $this->login(); // Logging in just before the SOAP call as this will also commit any pending DB changes
 
 
         for ($x = 0; $x < 4; $x++) {
             $mid = SugarTestMeetingUtilities::createMeeting();
-            SugarTestMeetingUtilities::addMeetingUserRelation($mid->id, self::$_user->id);
+            SugarTestMeetingUtilities::addMeetingUserRelation($mid->id, self::$user->id);
         }
 
         $GLOBALS['db']->commit();
@@ -49,10 +49,10 @@ class Bug50780Test extends SOAPTestCase
 
     public function testGetRelationshipReturnAllMeetings()
     {
-        $result = $this->_soapClient->call('get_relationships', [
-                'session' => $this->_sessionId,
+        $result = $this->soapClient->call('get_relationships', [
+                'session' => $this->sessionId,
                 'module_name' => 'Users',
-                'module_id' => self::$_user->id,
+                'module_id' => self::$user->id,
                 'link_field_name' => 'meetings',
                 'related_module_query' => '',
                 'related_fields' => ['id', 'name'],
@@ -67,10 +67,10 @@ class Bug50780Test extends SOAPTestCase
 
     public function testGetRelationshipReturnNothingWithOffsetSetHigh()
     {
-        $result = $this->_soapClient->call('get_relationships', [
-                'session' => $this->_sessionId,
+        $result = $this->soapClient->call('get_relationships', [
+                'session' => $this->sessionId,
                 'module_name' => 'Users',
-                'module_id' => self::$_user->id,
+                'module_id' => self::$user->id,
                 'link_field_name' => 'meetings',
                 'related_module_query' => '',
                 'related_fields' => ['id', 'name'],
@@ -85,10 +85,10 @@ class Bug50780Test extends SOAPTestCase
 
     public function testGetRelationshipReturnThirdMeeting()
     {
-        $result = $this->_soapClient->call('get_relationships', [
-                'session' => $this->_sessionId,
+        $result = $this->soapClient->call('get_relationships', [
+                'session' => $this->sessionId,
                 'module_name' => 'Users',
-                'module_id' => self::$_user->id,
+                'module_id' => self::$user->id,
                 'link_field_name' => 'meetings',
                 'related_module_query' => '',
                 'related_fields' => ['id', 'name'],
@@ -103,10 +103,10 @@ class Bug50780Test extends SOAPTestCase
 
     public function testGetRelationshipOffsetDoesntReturnSameRecords()
     {
-        $result1 = $this->_soapClient->call('get_relationships', [
-                'session' => $this->_sessionId,
+        $result1 = $this->soapClient->call('get_relationships', [
+                'session' => $this->sessionId,
                 'module_name' => 'Users',
-                'module_id' => self::$_user->id,
+                'module_id' => self::$user->id,
                 'link_field_name' => 'meetings',
                 'related_module_query' => '',
                 'related_fields' => ['id', 'name', 'date_entered'],
@@ -118,10 +118,10 @@ class Bug50780Test extends SOAPTestCase
 
         $this->assertEquals(2, count($result1['entry_list']));
 
-        $result2 = $this->_soapClient->call('get_relationships', [
-                'session' => $this->_sessionId,
+        $result2 = $this->soapClient->call('get_relationships', [
+                'session' => $this->sessionId,
                 'module_name' => 'Users',
-                'module_id' => self::$_user->id,
+                'module_id' => self::$user->id,
                 'link_field_name' => 'meetings',
                 'related_module_query' => '',
                 'related_fields' => ['id', 'name', 'date_entered'],

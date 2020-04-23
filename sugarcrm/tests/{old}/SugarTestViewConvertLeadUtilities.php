@@ -13,7 +13,7 @@
 
 class SugarTestViewConvertLeadUtilities
 {
-    private static $_createdViewConvertLeads = [];
+    private static $createdViewConvertLeads = [];
 
     private function __construct()
     {
@@ -24,7 +24,7 @@ class SugarTestViewConvertLeadUtilities
         $view_conv_lead = new ViewConvertLead();
         require 'modules/Leads/metadata/convertdefs.php';
         $view_conv_lead->defs = $viewdefs;
-        self::$_createdViewConvertLeads[] = $view_conv_lead;
+        self::$createdViewConvertLeads[] = $view_conv_lead;
         return $view_conv_lead;
     }
 }

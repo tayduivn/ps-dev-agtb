@@ -14,10 +14,9 @@ use PHPUnit\Framework\TestCase;
 
 class OAuthTest extends TestCase
 {
-    protected static $_user;
-    protected static $_consumer;
-    protected $_admin_user;
-    protected $_lastRawResponse;
+    protected static $user;
+    protected static $consumer;
+    protected $admin;
 
     private static $helperObject;
 
@@ -30,17 +29,17 @@ class OAuthTest extends TestCase
         SugarTestHelper::setUp("beanFiles");
         SugarTestHelper::setUp("app_strings");
         //Create an anonymous user for login purposes/
-        self::$_user = SugarTestHelper::setUp("current_user");
+        self::$user = SugarTestHelper::setUp("current_user");
         SugarTestHelper::setUp("mod_strings", ['Accounts']);
 
         self::$helperObject = new APIv3Helper();
         // create our own customer key
         $GLOBALS['db']->query("DELETE FROM oauth_consumer where c_key='TESTCUSTOMER'");
         $GLOBALS['db']->query("DELETE FROM oauth_nonce where conskey='TESTCUSTOMER'");
-        self::$_consumer = new OAuthKey();
-        self::$_consumer->c_key = "TESTCUSTOMER";
-        self::$_consumer->c_secret = "TESTSECRET";
-        self::$_consumer->save();
+        self::$consumer = new OAuthKey();
+        self::$consumer->c_key = "TESTCUSTOMER";
+        self::$consumer->c_secret = "TESTSECRET";
+        self::$consumer->save();
     }
 
     public static function tearDownAfterClass(): void
@@ -48,7 +47,7 @@ class OAuthTest extends TestCase
         SugarTestHelper::tearDown();
         $GLOBALS['db']->query("DELETE FROM oauth_consumer where c_key='TESTCUSTOMER'");
         $GLOBALS['db']->query("DELETE FROM oauth_nonce where conskey='TESTCUSTOMER'");
-        $GLOBALS['db']->query("DELETE FROM oauth_tokens where consumer='".self::$_consumer->id."'");
+        $GLOBALS['db']->query("DELETE FROM oauth_tokens where consumer='".self::$consumer->id."'");
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }
 
@@ -59,12 +58,7 @@ class OAuthTest extends TestCase
         }
         $this->oauth = new OAuth('TESTCUSTOMER', 'TESTSECRET', OAUTH_SIG_METHOD_HMACSHA1, OAUTH_AUTH_TYPE_URI);
         $this->url = rtrim($GLOBALS['sugar_config']['site_url'], '/').'/service/v4/rest.php';
-        $GLOBALS['current_user'] = self::$_user;
-    }
-
-    protected function _returnLastRawResponse()
-    {
-        return "Error in web services call. Response was: {$this->_lastRawResponse}";
+        $GLOBALS['current_user'] = self::$user;
     }
 
     public function testOauthRequestToken()
@@ -110,7 +104,7 @@ class OAuthTest extends TestCase
         $this->assertEquals(OAuthToken::INVALID, $rtoken->tstate, "Request token was not invalidated");
     }
 
-    protected function _makeRESTCall($method, $parameters)
+    private function makeRESTCall($method, $parameters)
     {
         // specify the REST web service to interact with
         $url = $GLOBALS['sugar_config']['site_url'].'/service/v4/rest.php';
@@ -133,7 +127,7 @@ class OAuthTest extends TestCase
         // Close the connection
         curl_close($curl);
 
-        $this->_lastRawResponse = $response;
+        $this->lastRawResponse = $response;
 
         // Convert the result from JSON format to a PHP array
         return json_decode($response, true);
@@ -166,7 +160,7 @@ class OAuthTest extends TestCase
         $id = json_decode($this->oauth->getLastResponse(), true);
         $this->assertEquals($current_user->id, $id);
         // test fetch through session initiated by OAuth
-        $id2 = $this->_makeRESTCall('get_user_id', ["session" => $session["id"]]);
+        $id2 = $this->makeRESTCall('get_user_id', ["session" => $session["id"]]);
         $this->assertEquals($current_user->id, $id2);
     }
 }

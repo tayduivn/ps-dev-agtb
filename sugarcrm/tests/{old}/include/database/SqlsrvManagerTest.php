@@ -15,6 +15,6 @@ class SqlsrvManagerTest extends MssqlManagerTest
     protected function setUp() : void
     {
         parent::setUp();
-        $this->_db = new SqlsrvManager();
+        $this->db = new SqlsrvManager();
     }
 }

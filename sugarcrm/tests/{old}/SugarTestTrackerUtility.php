@@ -12,8 +12,8 @@
  
 class SugarTestTrackerUtility
 {
-    private static $_trackerSettings = [];
-    private static $_monitorId = '';
+    private static $trackerSettings = [];
+    private static $monitorId;
     
     private function __construct()
     {
@@ -31,7 +31,7 @@ class SugarTestTrackerUtility
         
         $result = $GLOBALS['db']->query("SELECT category, name, value from config WHERE category = 'tracker' and name != 'prune_interval'");
         while ($row = $GLOBALS['db']->fetchByAssoc($result)) {
-            self::$_trackerSettings[$row['name']] = $row['value'];
+            self::$trackerSettings[$row['name']] = $row['value'];
             $GLOBALS['db']->query("DELETE FROM config WHERE category = 'tracker' AND name = '{$row['name']}'");
         }
 
@@ -41,7 +41,7 @@ class SugarTestTrackerUtility
     
     public static function restore()
     {
-        foreach (self::$_trackerSettings as $name => $value) {
+        foreach (self::$trackerSettings as $name => $value) {
             $GLOBALS['db']->query("INSERT INTO config (category, name, value) VALUES ('tracker', '{$name}', '{$value}')");
         }
     }
@@ -73,16 +73,16 @@ class SugarTestTrackerUtility
                 return false;
             }
             $trackerManager->saveMonitor($monitor, true, true);
-            if (empty(self::$_monitorId)) {
-                self::$_monitorId = $monitor->monitor_id;
+            if (empty(self::$monitorId)) {
+                self::$monitorId = $monitor->monitor_id;
             }
         }
     }
     
     public static function removeAllTrackerEntries()
     {
-        if (!empty(self::$_monitorId)) {
-            $GLOBALS['db']->query("DELETE FROM tracker WHERE monitor_id = '".self::$_monitorId."'");
+        if (!empty(self::$monitorId)) {
+            $GLOBALS['db']->query("DELETE FROM tracker WHERE monitor_id = '".self::$monitorId."'");
         }
 
         // make sure that next requested TrackerManager instance has default configuration

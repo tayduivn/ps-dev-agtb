@@ -20,18 +20,18 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug58207Test extends TestCase
 {
-    private $_file;
-    private $_sugarConfig;
+    private $file;
+    private $sugarConfig;
 
     protected function setUp() : void
     {
         // SJIS encoded Japanese CSV
-        $this->_file = 'Bug58207Test.csv';
-        $dst = SUGAR_BASE_DIR . '/'. $GLOBALS['sugar_config']['upload_dir'] . '/' . $this->_file;
-        copy(__DIR__ . '/'. $this->_file, $dst);
+        $this->file = 'Bug58207Test.csv';
+        $dst = SUGAR_BASE_DIR . '/'. $GLOBALS['sugar_config']['upload_dir'] . '/' . $this->file;
+        copy(__DIR__ . '/'. $this->file, $dst);
         
         global $sugar_config;
-        $this->_sugarConfig = $sugar_config;
+        $this->sugarConfig = $sugar_config;
         $sugar_config['default_export_charset'] = "SJIS";
 
         SugarTestHelper::setUp('current_user');
@@ -41,7 +41,7 @@ class Bug58207Test extends TestCase
     {
         SugarTestHelper::tearDown();
         global $sugar_config;
-        $sugar_config = $this->_sugarConfig;
+        $sugar_config = $this->sugarConfig;
     }
 
     /**
@@ -50,7 +50,7 @@ class Bug58207Test extends TestCase
      */
     public function testFileImportEncoding()
     {
-        $importFile = new ImportFile(\UploadStream::STREAM_NAME . '://' . $this->_file, ',', '"', false, false);
+        $importFile = new ImportFile(\UploadStream::STREAM_NAME . '://' . $this->file, ',', '"', false, false);
 
         $row = $importFile->getNextRow();
 

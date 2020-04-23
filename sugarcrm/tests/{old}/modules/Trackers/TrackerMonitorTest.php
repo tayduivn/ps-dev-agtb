@@ -26,7 +26,7 @@ class TrackerMonitorTest extends TestCase
         unset($GLOBALS['app_strings']);
     }
     
-    function testValidMonitors()
+    public function testValidMonitors()
     {
         $trackerManager = TrackerManager::getInstance();
         $exceptionThrown = false;
@@ -42,7 +42,7 @@ class TrackerMonitorTest extends TestCase
         $this->assertFalse($exceptionThrown);
     }
 
-    function testInvalidMonitors()
+    public function testInvalidMonitors()
     {
         $trackerManager = TrackerManager::getInstance();
         $exceptionThrown = false;
@@ -50,7 +50,7 @@ class TrackerMonitorTest extends TestCase
         $this->assertTrue(get_class($monitor) == 'BlankMonitor');
     }
             
-    function testInvalidValue()
+    public function testInvalidValue()
     {
         $trackerManager = TrackerManager::getInstance();
         $monitor = $trackerManager->getMonitor('tracker');

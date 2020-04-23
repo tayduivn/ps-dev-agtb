@@ -14,9 +14,9 @@ use PHPUnit\Framework\TestCase;
 
 class RESTAPI4Test extends TestCase
 {
-    protected $_user;
-    protected $_admin_user;
-    protected $_lastRawResponse;
+    private $user;
+    private $adminUser;
+    private $lastRawResponse;
 
     private static $helperObject;
 
@@ -27,7 +27,7 @@ class RESTAPI4Test extends TestCase
         SugarTestHelper::setUp("beanList");
         SugarTestHelper::setUp("beanFiles");
         //Create an anonymous user for login purposes/
-        $this->_user = SugarTestHelper::setUp("current_user");
+        $this->user = SugarTestHelper::setUp("current_user");
 
         //Reload langauge strings
         $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
@@ -35,10 +35,10 @@ class RESTAPI4Test extends TestCase
         $GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], 'Accounts');
 
 
-        $this->_admin_user = SugarTestUserUtilities::createAnonymousUser();
-        $this->_admin_user->status = 'Active';
-        $this->_admin_user->is_admin = 1;
-        $this->_admin_user->save();
+        $this->adminUser = SugarTestUserUtilities::createAnonymousUser();
+        $this->adminUser->status = 'Active';
+        $this->adminUser->is_admin = 1;
+        $this->adminUser->save();
         $GLOBALS['db']->commit(); // Making sure we commit any changes before continuing
 
         self::$helperObject = new APIv3Helper();
@@ -49,11 +49,11 @@ class RESTAPI4Test extends TestCase
         $this->aclRole->save();
         $GLOBALS['db']->commit(); // Making sure we commit any changes before continuing
 
-        $this->aclRole->set_relationship('acl_roles_users', ['role_id'=>$this->aclRole->id ,'user_id'=> $this->_user->id], false);
+        $this->aclRole->set_relationship('acl_roles_users', ['role_id'=>$this->aclRole->id ,'user_id'=> $this->user->id], false);
         $GLOBALS['db']->commit(); // Making sure we commit any changes before continuing
         ACLField::setAccessControl('Accounts', $this->aclRole->id, 'website', -99);
         $GLOBALS['db']->commit(); // Making sure we commit any changes before continuing
-        ACLField::loadUserFields('Accounts', 'Account', $this->_user->id, true);
+        ACLField::loadUserFields('Accounts', 'Account', $this->user->id, true);
         $GLOBALS['db']->commit(); // Making sure we commit any changes before continuing
     }
 
@@ -75,7 +75,7 @@ class RESTAPI4Test extends TestCase
         SugarTestHelper::tearDown();
     }
 
-    protected function _makeRESTCall($method, $parameters)
+    private function makeRESTCall($method, $parameters)
     {
         // specify the REST web service to interact with
         $url = $GLOBALS['sugar_config']['site_url'].'/service/v4/rest.php';
@@ -98,24 +98,24 @@ class RESTAPI4Test extends TestCase
         // Close the connection
         curl_close($curl);
 
-        $this->_lastRawResponse = $response;
+        $this->lastRawResponse = $response;
 
         // Convert the result from JSON format to a PHP array
         return json_decode($response, true);
     }
 
-    protected function _returnLastRawResponse()
+    private function returnLastRawResponse()
     {
-        return "Error in web services call. Response was: {$this->_lastRawResponse}";
+        return "Error in web services call. Response was: {$this->lastRawResponse}";
     }
 
-    protected function _login($user = null)
+    private function login($user = null)
     {
         $GLOBALS['db']->commit(); // Making sure we commit any changes before logging in
         if ($user == null) {
-            $user = $this->_user;
+            $user = $this->user;
         }
-        return $this->_makeRESTCall(
+        return $this->makeRESTCall(
             'login',
             [
                 'user_auth' =>
@@ -135,18 +135,18 @@ class RESTAPI4Test extends TestCase
      */
     public function testGetEntryListWithExportRole()
     {
-        $this->_user = SugarTestUserUtilities::createAnonymousUser();
+        $this->user = SugarTestUserUtilities::createAnonymousUser();
 
         //Set the Export Role to no access for user.
         $aclRole = new ACLRole();
         $aclRole->name = "Unit Test Export";
         $aclRole->save();
-        $aclRole->set_relationship('acl_roles_users', ['role_id'=> $aclRole->id ,'user_id'=> $this->_user->id], false);
+        $aclRole->set_relationship('acl_roles_users', ['role_id'=> $aclRole->id ,'user_id'=> $this->user->id], false);
         $role_actions = $aclRole->getRoleActions($aclRole->id);
         $action_id = $role_actions['Accounts']['module']['export']['id'];
         $aclRole->setAction($aclRole->id, $action_id, -99);
 
-        $result = $this->_login($this->_user);
+        $result = $this->login($this->user);
         $session = $result['id'];
 
         $module = 'Accounts';
@@ -157,7 +157,7 @@ class RESTAPI4Test extends TestCase
         $maxResults = 2;
         $deleted = false;
         $favorites = false;
-        $result = $this->_makeRESTCall('get_entry_list', [$session, $module, '', $orderBy,$offset, $returnFields,$linkNameFields, $maxResults, $deleted, $favorites]);
+        $result = $this->makeRESTCall('get_entry_list', [$session, $module, '', $orderBy,$offset, $returnFields,$linkNameFields, $maxResults, $deleted, $favorites]);
 
         $this->assertFalse(isset($result['name']));
         if (isset($result['name'])) {
@@ -170,7 +170,7 @@ class RESTAPI4Test extends TestCase
      */
     public function testGetQuotesPDF()
     {
-        $log_result = $this->_login($this->_admin_user);
+        $log_result = $this->login($this->adminUser);
         $session = $log_result['id'];
 
         //Retrieve a list of quote ids to work with
@@ -183,24 +183,24 @@ class RESTAPI4Test extends TestCase
         $maxResults = 2;
         $deleted = false;
         $favorites = false;
-        $list_result = $this->_makeRESTCall('get_entry_list', [$session, $module, $whereClause, $orderBy,$offset, $returnFields,$linkNameFields, $maxResults, $deleted, $favorites]);
+        $list_result = $this->makeRESTCall('get_entry_list', [$session, $module, $whereClause, $orderBy,$offset, $returnFields,$linkNameFields, $maxResults, $deleted, $favorites]);
 
         //Test for standard oob layouts
         foreach ($list_result['entry_list'] as $entry) {
             $quote_id = $entry['id'];
-            $result = $this->_makeRESTCall('get_quotes_pdf', [$session, $quote_id, 'Standard' ]);
+            $result = $this->makeRESTCall('get_quotes_pdf', [$session, $quote_id, 'Standard' ]);
             $this->assertTrue(!empty($result['file_contents']));
         }
 
         //Test for a fake pdf type.
         if (count($list_result['entry_list']) > 0) {
             $quote_id = $list_result['entry_list'][0]['id'];
-            $result = $this->_makeRESTCall('get_quotes_pdf', [$session, $quote_id, 'Fake' ]);
+            $result = $this->makeRESTCall('get_quotes_pdf', [$session, $quote_id, 'Fake' ]);
             $this->assertTrue(!empty($result['file_contents']));
         }
 
         //Test for a fake bean.
-        $result = $this->_makeRESTCall('get_quotes_pdf', [$session, '-1', 'Standard' ]);
+        $result = $this->makeRESTCall('get_quotes_pdf', [$session, '-1', 'Standard' ]);
         $this->assertTrue(!empty($result['file_contents']));
     }
     /**
@@ -214,10 +214,10 @@ class RESTAPI4Test extends TestCase
         $account->name = "Test " . $account->id;
         $account->save();
 
-        $result = $this->_login($this->_admin_user); // Logging in just before the REST call as this will also commit any pending DB changes
+        $result = $this->login($this->adminUser); // Logging in just before the REST call as this will also commit any pending DB changes
         $session = $result['id'];
 
-        $this->_markBeanAsFavorite($session, "Accounts", $account->id);
+        $this->markBeanAsFavorite($session, "Accounts", $account->id);
 
         $whereClause = "accounts.name='{$account->name}'";
         $module = 'Accounts';
@@ -228,7 +228,7 @@ class RESTAPI4Test extends TestCase
         $maxResults = 50;
         $deleted = false;
         $favorites = true;
-        $result = $this->_makeRESTCall('get_entry_list', [$session, $module, $whereClause, $orderBy,$offset, $returnFields,$linkNameFields, $maxResults, $deleted, $favorites]);
+        $result = $this->makeRESTCall('get_entry_list', [$session, $module, $whereClause, $orderBy,$offset, $returnFields,$linkNameFields, $maxResults, $deleted, $favorites]);
 
         $this->assertEquals($account->id, $result['entry_list'][0]['id'], 'Unable to retrieve account favorite list.');
 
@@ -241,7 +241,7 @@ class RESTAPI4Test extends TestCase
      */
     public function testSetEntriesCall()
     {
-        $result = $this->_login();
+        $result = $this->login();
         $session = $result['id'];
         $module = 'Contacts';
         $c1_uuid = uniqid();
@@ -250,7 +250,7 @@ class RESTAPI4Test extends TestCase
             ['first_name' => 'Unit Test', 'last_name' => $c1_uuid],
             ['first_name' => 'Unit Test', 'last_name' => $c2_uuid],
         ];
-        $results = $this->_makeRESTCall(
+        $results = $this->makeRESTCall(
             'set_entries',
             [
             'session' => $session,
@@ -260,7 +260,7 @@ class RESTAPI4Test extends TestCase
         );
         $this->assertTrue(isset($results['ids']) && count($results['ids']) == 2);
 
-        $actual_results = $this->_makeRESTCall(
+        $actual_results = $this->makeRESTCall(
             'get_entries',
             [
             'session' => $session,
@@ -283,7 +283,7 @@ class RESTAPI4Test extends TestCase
     {
         $account = new Account();
         $account->id = uniqid();
-        $account->assigned_user_id = $this->_user->id;
+        $account->assigned_user_id = $this->user->id;
         $account->team_id = 1;
         $account->new_with_id = true;
         $account->name = "Unit Test Fav " . $account->id;
@@ -294,20 +294,20 @@ class RESTAPI4Test extends TestCase
         $account2->id = uniqid();
         $account2->new_with_id = true;
         $account2->name = "Unit Test Fav " . $account->id;
-        $account->assigned_user_id = $this->_user->id;
+        $account->assigned_user_id = $this->user->id;
         $account2->save();
 
-        $result = $this->_login($this->_admin_user); // Logging in just before the REST call as this will also commit any pending DB changes
+        $result = $this->login($this->adminUser); // Logging in just before the REST call as this will also commit any pending DB changes
         $session = $result['id'];
 
-        $this->_markBeanAsFavorite($session, "Accounts", $account->id);
+        $this->markBeanAsFavorite($session, "Accounts", $account->id);
 
         $searchModules = ['Accounts'];
         $searchString = "Unit Test Fav ";
         $offSet = 0;
         $maxResults = 10;
 
-        $results = $this->_makeRESTCall(
+        $results = $this->makeRESTCall(
             'search_by_module',
             [
                             'session' => $session,
@@ -315,7 +315,7 @@ class RESTAPI4Test extends TestCase
                             'modules' => $searchModules,
                             'offset'  => $offSet,
                             'max_results'     => $maxResults,
-                            'assigned_user_id'    => $this->_user->id,
+                            'assigned_user_id'    => $this->user->id,
                             'select_fields' => [],
                             'unified_search_only' => true,
                             'favorites' => true,
@@ -329,7 +329,8 @@ class RESTAPI4Test extends TestCase
         $this->assertTrue(self::$helperObject->findBeanIdFromEntryList($results['entry_list'], $account->id, 'Accounts'), "Unable to find {$account->id} id in favorites search.");
         $this->assertFalse(self::$helperObject->findBeanIdFromEntryList($results['entry_list'], $account2->id, 'Accounts'), "Account {$account2->id} id in favorites search should not be there.");
     }
-    public function _aclEditViewFieldProvider()
+
+    public static function aclEditViewFieldProvider()
     {
         return [
 
@@ -346,14 +347,14 @@ class RESTAPI4Test extends TestCase
     }
 
     /**
-     * @dataProvider _aclEditViewFieldProvider
+     * @dataProvider aclEditViewFieldProvider
      */
     public function testMetadataEditViewFieldLevelACLS($module, $view_type, $view, $expected_fields)
     {
-        $result = $this->_login();
+        $result = $this->login();
         $session = $result['id'];
 
-        $results = $this->_makeRESTCall(
+        $results = $this->makeRESTCall(
             'get_module_layout',
             [
             'session' => $session,
@@ -378,7 +379,7 @@ class RESTAPI4Test extends TestCase
         }
     }
 
-    public function _aclListViewFieldProvider()
+    public static function aclListViewFieldProvider()
     {
         return [
             ['Accounts','wireless', ['name' => 99,  'website' => -99, 'phone_office' => 99, 'email1' => 99 ]],
@@ -389,13 +390,13 @@ class RESTAPI4Test extends TestCase
     }
 
     /**
-     * @dataProvider _aclListViewFieldProvider
+     * @dataProvider aclListViewFieldProvider
      */
     public function testMetadataListViewFieldLevelACLS($module, $view_type, $expected_fields)
     {
-        $result = $this->_login();
+        $result = $this->login();
         $session = $result['id'];
-        $results = $this->_makeRESTCall(
+        $results = $this->makeRESTCall(
             'get_module_layout',
             [
             'session' => $session,
@@ -420,9 +421,9 @@ class RESTAPI4Test extends TestCase
      * @param string $moduleName
      * @param string $recordID
      */
-    private function _markBeanAsFavorite($session, $moduleName, $recordID)
+    private function markBeanAsFavorite($session, $moduleName, $recordID)
     {
-        $result = $this->_makeRESTCall(
+        $this->makeRESTCall(
             'set_entry',
             [
                 'session' => $session,
@@ -438,11 +439,11 @@ class RESTAPI4Test extends TestCase
 
     public function testRelateAccountToTwoContacts()
     {
-        $result = $this->_login();
-        $this->assertTrue(!empty($result['id']) && $result['id'] != -1, $this->_returnLastRawResponse());
+        $result = $this->login();
+        $this->assertTrue(!empty($result['id']) && $result['id'] != -1, $this->returnLastRawResponse());
         $session = $result['id'];
 
-        $result = $this->_makeRESTCall(
+        $result = $this->makeRESTCall(
             'set_entry',
             [
                 'session' => $session,
@@ -454,11 +455,11 @@ class RESTAPI4Test extends TestCase
                 ]
         );
 
-        $this->assertTrue(!empty($result['id']) && $result['id'] != -1, $this->_returnLastRawResponse());
+        $this->assertTrue(!empty($result['id']) && $result['id'] != -1, $this->returnLastRawResponse());
 
         $accountId = $result['id'];
 
-        $result = $this->_makeRESTCall(
+        $result = $this->makeRESTCall(
             'set_entry',
             [
                 'session' => $session,
@@ -470,11 +471,11 @@ class RESTAPI4Test extends TestCase
                 ]
         );
 
-        $this->assertTrue(!empty($result['id']) && $result['id'] != -1, $this->_returnLastRawResponse());
+        $this->assertTrue(!empty($result['id']) && $result['id'] != -1, $this->returnLastRawResponse());
 
         $contactId1 = $result['id'];
 
-        $result = $this->_makeRESTCall(
+        $result = $this->makeRESTCall(
             'set_entry',
             [
                 'session' => $session,
@@ -486,12 +487,12 @@ class RESTAPI4Test extends TestCase
                 ]
         );
 
-        $this->assertTrue(!empty($result['id']) && $result['id'] != -1, $this->_returnLastRawResponse());
+        $this->assertTrue(!empty($result['id']) && $result['id'] != -1, $this->returnLastRawResponse());
 
         $contactId2 = $result['id'];
 
         // now relate them together
-        $result = $this->_makeRESTCall(
+        $result = $this->makeRESTCall(
             'set_relationship',
             [
                 'session' => $session,
@@ -502,10 +503,10 @@ class RESTAPI4Test extends TestCase
                 ]
         );
 
-        $this->assertEquals($result['created'], 1, $this->_returnLastRawResponse());
+        $this->assertEquals($result['created'], 1, $this->returnLastRawResponse());
 
         // check the relationship
-        $result = $this->_makeRESTCall(
+        $result = $this->makeRESTCall(
             'get_relationships',
             [
                 'session' => $session,
@@ -528,8 +529,8 @@ class RESTAPI4Test extends TestCase
         $GLOBALS['db']->query("DELETE FROM contacts WHERE id= '{$contactId2}'");
         $GLOBALS['db']->query("DELETE FROM accounts_contacts WHERE account_id= '{$accountId}'");
 
-        $this->assertContains('New Contact 1', $returnedValues, $this->_returnLastRawResponse());
-        $this->assertContains('New Contact 2', $returnedValues, $this->_returnLastRawResponse());
+        $this->assertContains('New Contact 1', $returnedValues, $this->returnLastRawResponse());
+        $this->assertContains('New Contact 2', $returnedValues, $this->returnLastRawResponse());
     }
 
     /**
@@ -537,11 +538,11 @@ class RESTAPI4Test extends TestCase
      */
     public function testGetEntriesProspectFilter()
     {
-        $result = $this->_login();
-        $this->assertTrue(!empty($result['id']) && $result['id'] != -1, $this->_returnLastRawResponse());
+        $result = $this->login();
+        $this->assertTrue(!empty($result['id']) && $result['id'] != -1, $this->returnLastRawResponse());
         $session = $result['id'];
 
-        $result = $this->_makeRESTCall(
+        $result = $this->makeRESTCall(
             'get_entries',
             [
                 'session' => $session,
@@ -551,7 +552,8 @@ class RESTAPI4Test extends TestCase
         );
         $this->assertNull($result);
     }
-    public static function _wirelessGridModuleLayoutProvider()
+
+    public static function wirelessGridModuleLayoutProvider()
     {
         return [
             ['module' => 'Accounts', 'view' => 'edit', 'metadatafile' => 'modules/Accounts/clients/mobile/views/edit/edit.php',],
@@ -565,7 +567,7 @@ class RESTAPI4Test extends TestCase
      * @static
      * @return array
      */
-    public static function _wirelessListModuleLayoutProvider()
+    public static function wirelessListModuleLayoutProvider()
     {
         return [
             ['module' => 'Cases'],
@@ -573,17 +575,17 @@ class RESTAPI4Test extends TestCase
     }
     
     /**
-     * @dataProvider _wirelessListModuleLayoutProvider
+     * @dataProvider wirelessListModuleLayoutProvider
      */
     public function testGetWirelessListModuleLayout($module)
     {
-        $result = $this->_login();
+        $result = $this->login();
         $session = $result['id'];
         
         $type = 'wireless';
         $view = 'list';
         
-        $result = $this->_makeRESTCall(
+        $result = $this->makeRESTCall(
             'get_module_layout',
             [
                             'session' => $session,
@@ -618,15 +620,15 @@ class RESTAPI4Test extends TestCase
     }
     
     /**
-     * @dataProvider _wirelessGridModuleLayoutProvider
+     * @dataProvider wirelessGridModuleLayoutProvider
      */
     public function testGetWirelessGridModuleLayout($module, $view, $metadatafile)
     {
-        $result = $this->_login();
+        $result = $this->login();
         $session = $result['id'];
         
         $type = 'wireless';
-        $result = $this->_makeRESTCall(
+        $result = $this->makeRESTCall(
             'get_module_layout',
             [
                             'session' => $session,

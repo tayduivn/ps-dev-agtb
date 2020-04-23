@@ -74,11 +74,6 @@ class ForecastsCommittedApiTest extends TestCase
         unset($this->api);
     }
 
-    protected function _getMockApi($class_name)
-    {
-        return $this->createMock($class_name);
-    }
-
     /**
      * @group forecastapi
      * @group forecasts
@@ -163,7 +158,7 @@ class ForecastsCommittedApiTest extends TestCase
     {
         $GLOBALS["current_user"] = self::$reportee;
 
-        $stub = $this->_getMockApi('ForecastsFilterApi');
+        $stub = $this->createMock('ForecastsFilterApi');
         $stub->expects($this->any())
              ->method('filterList')
              ->will($this->returnValue(
@@ -186,7 +181,7 @@ class ForecastsCommittedApiTest extends TestCase
     {
         $GLOBALS["current_user"] = self::$reportee;
 
-        $stub = $this->_getMockApi('ForecastsFilterApi');
+        $stub = $this->createMock('ForecastsFilterApi');
         $stub->expects($this->any())
              ->method('filterList')
              ->will($this->returnValue(

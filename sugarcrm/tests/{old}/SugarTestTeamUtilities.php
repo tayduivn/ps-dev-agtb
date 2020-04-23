@@ -14,7 +14,7 @@
 
 class SugarTestTeamUtilities
 {
-    public static $_createdTeams = [];
+    private static $createdTeams = [];
 
     private function __construct()
     {
@@ -42,7 +42,7 @@ class SugarTestTeamUtilities
         }
 
         $team->save();
-        self::$_createdTeams[] = $team;
+        self::$createdTeams[] = $team;
         return $team;
     }
 
@@ -55,7 +55,7 @@ class SugarTestTeamUtilities
     public static function getCreatedTeamIds()
     {
         $team_ids = [];
-        foreach (self::$_createdTeams as $team) {
+        foreach (self::$createdTeams as $team) {
             $team_ids[] = $team->id;
         }
         

@@ -22,7 +22,7 @@ class SetEntriesMultipleTest extends SOAPTestCase
 
     protected function setUp() : void
     {
-        $this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/service/v2/soap.php';
+        $this->soapURL = $GLOBALS['sugar_config']['site_url'].'/service/v2/soap.php';
         parent::setUp();
     }
 
@@ -74,7 +74,7 @@ class SetEntriesMultipleTest extends SOAPTestCase
 
     public function testSetEntries()
     {
-        $this->_login();
+        $this->login();
 
         // first create two accounts with identical account names
         $this->accnt1 = $this->createAccount("sugar_account_name", "sugarUser1");
@@ -86,7 +86,7 @@ class SetEntriesMultipleTest extends SOAPTestCase
         $this->cont2 = $this->createContact("first2", "last2", "adsf@asdf.com");
 
         // this will be used in set_entries call
-        $accounts_list=[ 'session'=>$this->_sessionId, 'module_name' => 'Accounts',
+        $accounts_list=[ 'session'=>$this->sessionId, 'module_name' => 'Accounts',
             'name_value_lists' => [
                 [
                     ['name'=>'id','value'=>$this->accnt1->id],
@@ -111,10 +111,10 @@ class SetEntriesMultipleTest extends SOAPTestCase
             ],
         ];
         // add the accounts
-        $result = $this->_soapClient->call('set_entries', $accounts_list);
+        $result = $this->soapClient->call('set_entries', $accounts_list);
 
         // add the contacts & set the relationship to account
-        $contacts_list = [ 'session'=>$this->_sessionId, 'module_name' => 'Contacts',
+        $contacts_list = [ 'session'=>$this->sessionId, 'module_name' => 'Contacts',
             'name_value_lists' => [
                 [
                     ['name'=>'last_name','value'=>$this->cont1->last_name],
@@ -139,7 +139,7 @@ class SetEntriesMultipleTest extends SOAPTestCase
         ];
 
 
-        $result2 = $this->_soapClient->call('set_entries', $contacts_list);
+        $result2 = $this->soapClient->call('set_entries', $contacts_list);
 
         // lets check first relationship
         $query1 = "SELECT account_id FROM accounts_contacts WHERE contact_id='{$this->cont1->id}'";

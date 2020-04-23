@@ -14,22 +14,22 @@ use PHPUnit\Framework\TestCase;
 
 class Bug34993Test extends TestCase
 {
-    private $_tablename;
-    private $_old_installing;
+    private $tablename;
+    private $old_installing;
 
     protected function setUp() : void
     {
         $this->accountMockBean = $this->getMockBuilder('Account')
             ->setMethods(['hasCustomFields'])
             ->getMock();
-        $this->_tablename = 'test' . date("YmdHis");
+        $this->tablename = 'test' . date("YmdHis");
         if (isset($GLOBALS['installing'])) {
-            $this->_old_installing = $GLOBALS['installing'];
+            $this->old_installing = $GLOBALS['installing'];
         }
         $GLOBALS['installing'] = true;
 
         $GLOBALS['db']->createTableParams(
-            $this->_tablename . '_cstm',
+            $this->tablename . '_cstm',
             [
                 'id_c' =>  [
                     'name' => 'id_c',
@@ -38,7 +38,7 @@ class Bug34993Test extends TestCase
             ],
             []
         );
-        $GLOBALS['db']->query("INSERT INTO {$this->_tablename}_cstm (id_c) VALUES ('12345')");
+        $GLOBALS['db']->query("INSERT INTO {$this->tablename}_cstm (id_c) VALUES ('12345')");
 
         //Safety check in case the previous run had failed
         $GLOBALS['db']->query("DELETE FROM fields_meta_data WHERE id in ('Accountsbug34993_test_c', 'Accountsbug34993_test2_c', 'Accountsfloat_test1_c', 'Accountsfloat_test2_c')");
@@ -46,10 +46,10 @@ class Bug34993Test extends TestCase
 
     protected function tearDown() : void
     {
-        $GLOBALS['db']->dropTableName($this->_tablename . '_cstm');
+        $GLOBALS['db']->dropTableName($this->tablename . '_cstm');
         $GLOBALS['db']->query("DELETE FROM fields_meta_data WHERE id in ('Accountsbug34993_test_c', 'Accountsbug34993_test2_c', 'Accountsfloat_test1_c', 'Accountsfloat_test2_c')");
-        if (isset($this->_old_installing)) {
-            $GLOBALS['installing'] = $this->_old_installing;
+        if (isset($this->old_installing)) {
+            $GLOBALS['installing'] = $this->old_installing;
         } else {
             unset($GLOBALS['installing']);
         }
@@ -107,7 +107,7 @@ class Bug34993Test extends TestCase
         $bean->expects($this->any())
             ->method('hasCustomFields')
             ->will($this->returnValue(true));
-        $bean->table_name = $this->_tablename;
+        $bean->table_name = $this->tablename;
         $bean->id = '12345';
         $bean->custom_fields->addFieldObject($templateText);
         $bean->custom_fields->retrieve();
@@ -143,7 +143,7 @@ class Bug34993Test extends TestCase
         $bean->expects($this->any())
             ->method('hasCustomFields')
             ->will($this->returnValue(true));
-        $bean->table_name = $this->_tablename;
+        $bean->table_name = $this->tablename;
         $bean->id = '12345';
         $bean->custom_fields->addFieldObject($templateText);
         $bean->custom_fields->retrieve();
@@ -188,7 +188,7 @@ class Bug34993Test extends TestCase
         $bean->expects($this->any())
             ->method('hasCustomFields')
             ->will($this->returnValue(true));
-        $bean->table_name = $this->_tablename;
+        $bean->table_name = $this->tablename;
         $bean->id = '12345';
         $bean->custom_fields->addFieldObject($templateFloat);
         $bean->custom_fields->retrieve();
@@ -227,7 +227,7 @@ class Bug34993Test extends TestCase
         $bean->expects($this->any())
             ->method('hasCustomFields')
             ->will($this->returnValue(true));
-        $bean->table_name = $this->_tablename;
+        $bean->table_name = $this->tablename;
         $bean->id = '12345';
         $bean->custom_fields->addFieldObject($templateFloat);
         $bean->custom_fields->retrieve();

@@ -21,7 +21,7 @@ class RestBug57890Test extends RestTestBase
      */
     public function testMetadataModuleVardefRequiredFieldsAreBooleanType()
     {
-        $reply = $this->_restCall('metadata?module_filter=Leads&type_filter=modules');
+        $reply = $this->restCall('metadata?module_filter=Leads&type_filter=modules');
         $this->assertTrue(isset($reply['reply']['modules']['Leads']['fields']), "Fields were not returned in the metadata response");
         
         // Handle assertions for all defs
@@ -73,7 +73,7 @@ class RestBug57890Test extends RestTestBase
             ],
         ];
         
-        $mm = new RestBug57890MetaDataHacks($this->_user);
+        $mm = new RestBug57890MetaDataHacks($this->user);
         $cleaned = $mm->getNormalizedFields($fielddef);
         
         foreach ($cleaned as $field => $def) {

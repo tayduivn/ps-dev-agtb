@@ -55,7 +55,7 @@ class Bug46325Test extends TestCase
     /**
      * @outputBuffering enabled
      */
-    function testUpdateCustomAccountMetadataPopupdefsSave()
+    public function testUpdateCustomAccountMetadataPopupdefsSave()
     {
         $this->parser = new PopupMetaDataParser('popuplist', 'Accounts');
         $this->parser->_viewdefs = $this->fields;
@@ -69,7 +69,7 @@ class Bug46325Test extends TestCase
     /**
      * @outputBuffering enabled
      */
-    function testUpdateCustomProspectsMetadataPopupdefsSave()
+    public function testUpdateCustomProspectsMetadataPopupdefsSave()
     {
         $this->parser = new PopupMetaDataParser('popuplist', 'Prospects');
         $this->parser->_viewdefs = $this->fields;

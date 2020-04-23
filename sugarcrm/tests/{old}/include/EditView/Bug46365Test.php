@@ -16,11 +16,11 @@ require_once 'include/EditView/EditView2.php';
 
 class Bug46365Test extends TestCase
 {
-    protected $_o = null;
+    private $o;
 
     protected function setUp() : void
     {
-        $this->_o = $this->getMockBuilder('EditView')
+        $this->o = $this->getMockBuilder('EditView')
             ->setMethods(['requiredFirst'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -78,9 +78,9 @@ class Bug46365Test extends TestCase
      */
     public function testPanelWithOneFullWidthItem($defs)
     {
-        $this->_o->defs = $defs;
-        $this->_o->render();
+        $this->o->defs = $defs;
+        $this->o->render();
 
-        $this->assertEquals($defs['panels'], $this->_o->defs['panels']);
+        $this->assertEquals($defs['panels'], $this->o->defs['panels']);
     }
 }

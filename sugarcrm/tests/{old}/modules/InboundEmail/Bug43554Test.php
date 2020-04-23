@@ -17,13 +17,13 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug43554Test extends TestCase
 {
-    static $ie = null;
-    static $_user = null;
+    private static $ie;
+    private static $user;
 
     public static function setUpBeforeClass() : void
     {
-        self::$_user = SugarTestUserUtilities::createAnonymousUser();
-        $GLOBALS['current_user'] = self::$_user;
+        self::$user = SugarTestUserUtilities::createAnonymousUser();
+        $GLOBALS['current_user'] = self::$user;
 
         self::$ie = new InboundEmail();
     }
@@ -51,7 +51,7 @@ class Bug43554Test extends TestCase
      * @dataProvider getUrls
      * @param string $url
      */
-    function testEmailCleanup($url)
+    public function testEmailCleanup($url)
     {
         $data = "Test: <img src=\"$url\">";
         $res = str_replace("<img />", "", SugarCleaner::cleanHtml($data));

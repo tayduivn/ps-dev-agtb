@@ -14,11 +14,11 @@ use PHPUnit\Framework\TestCase;
 
 class JavascriptTest extends TestCase
 {
-    protected $_javascript;
-    
+    private $javascript;
+
     protected function setUp() : void
     {
-        $this->_javascript = new javascript();
+        $this->javascript = new javascript();
     }
     
     public function providerBuildStringToTranslateInSmarty()
@@ -41,6 +41,6 @@ class JavascriptTest extends TestCase
      */
     public function testBuildStringToTranslateInSmarty($string, $returnedString)
     {
-        $this->assertEquals($returnedString, $this->_javascript->buildStringToTranslateInSmarty($string));
+        $this->assertEquals($returnedString, $this->javascript->buildStringToTranslateInSmarty($string));
     }
 }

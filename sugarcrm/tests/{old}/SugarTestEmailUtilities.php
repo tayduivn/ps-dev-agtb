@@ -13,7 +13,7 @@
 
 class SugarTestEmailUtilities
 {
-    private static $_createdEmails = [];
+    private static $createdEmails = [];
 
     private function __construct()
     {
@@ -46,7 +46,7 @@ class SugarTestEmailUtilities
         if (!empty($override['parent_id']) && !empty($override['parent_type'])) {
             self::createEmailsBeansRelationship($email->id, $override['parent_type'], $override['parent_id']);
         }
-        self::$_createdEmails[] = $email;
+        self::$createdEmails[] = $email;
         return $email;
     }
 
@@ -59,7 +59,7 @@ class SugarTestEmailUtilities
         $GLOBALS['db']->query("DELETE FROM emails_email_addr_rel WHERE email_id IN ({$emailIdsSql})");
         self::removeCreatedEmailBeansRelationships();
         static::removeCreatedEmailsAttachments();
-        self::$_createdEmails = [];
+        self::$createdEmails = [];
     }
     
     private static function createEmailsBeansRelationship($email_id, $parent_type, $parent_id)
@@ -100,7 +100,7 @@ class SugarTestEmailUtilities
     public static function getCreatedEmailIds()
     {
         $email_ids = [];
-        foreach (self::$_createdEmails as $email) {
+        foreach (self::$createdEmails as $email) {
             $email_ids[] = $email->id;
         }
         return $email_ids;
@@ -112,7 +112,7 @@ class SugarTestEmailUtilities
         foreach ($ids as $id) {
             $email = new Email();
             $email->id = $id;
-            self::$_createdEmails[] = $email;
+            self::$createdEmails[] = $email;
         }
     }
 }

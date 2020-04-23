@@ -17,9 +17,9 @@ require_once 'modules/UpgradeWizard/uw_utils.php';
 
 class Bug37214Test extends TestCase
 {
-    var $original_argv;
-    var $has_original_config_si_file;
-    var $current_working_dir;
+    public $original_argv;
+    public $has_original_config_si_file;
+    public $current_working_dir;
 
     protected function setUp() : void
     {

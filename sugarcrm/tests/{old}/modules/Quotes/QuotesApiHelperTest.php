@@ -19,7 +19,7 @@ class QuotesApiHelperTest extends TestCase
      */
     protected $helper;
 
-    private $_address_fields = [
+    private $address_fields = [
         'address_street',
         'address_city',
         'address_state',
@@ -61,7 +61,7 @@ class QuotesApiHelperTest extends TestCase
 
         $this->helper->populateFromApi($bean, $data);
 
-        foreach ($this->_address_fields as $field) {
+        foreach ($this->address_fields as $field) {
             $_field = 'billing_' . $field;
             $this->assertEquals($account->$_field, $bean->$_field);
         }
@@ -88,7 +88,7 @@ class QuotesApiHelperTest extends TestCase
 
         $this->assertEquals($account->id, $bean->shipping_account_id);
 
-        foreach ($this->_address_fields as $field) {
+        foreach ($this->address_fields as $field) {
             $_bean_field = 'billing_' . $field;
             $_field = 'shipping_' . $field;
             $this->assertEquals($account->$_bean_field, $bean->$_field);
@@ -117,7 +117,7 @@ class QuotesApiHelperTest extends TestCase
 
         $this->assertEquals($account->id, $bean->shipping_account_id);
 
-        foreach ($this->_address_fields as $field) {
+        foreach ($this->address_fields as $field) {
             $_field = 'shipping_' . $field;
             $this->assertEquals($account->$_field, $bean->$_field);
         }
@@ -152,12 +152,12 @@ class QuotesApiHelperTest extends TestCase
 
         $this->assertEquals($account->id, $bean->shipping_account_id);
 
-        foreach ($this->_address_fields as $field) {
+        foreach ($this->address_fields as $field) {
             $_field = 'billing_' . $field;
             $this->assertEquals($account->$_field, $bean->$_field, 'Billing ' . $field . ' does not match');
         }
 
-        foreach ($this->_address_fields as $field) {
+        foreach ($this->address_fields as $field) {
             $_bean_field = 'primary_' . $field;
             $_field = 'shipping_' . $field;
             $this->assertEquals($contact->$_bean_field, $bean->$_field, 'Shipping ' . $field . ' does not match');
@@ -168,7 +168,7 @@ class QuotesApiHelperTest extends TestCase
     {
         $address = in_array($address, ['billing', 'shipping']) ? $address : 'billing';
         $time = time();
-        foreach ($this->_address_fields as $_field) {
+        foreach ($this->address_fields as $_field) {
             $_field = $address . '_' . $_field;
             $account->$_field = $_field . $time;
         }
@@ -179,7 +179,7 @@ class QuotesApiHelperTest extends TestCase
     {
         $address = in_array($address, ['primary', 'alt']) ? $address : 'primary';
         $time = time();
-        foreach ($this->_address_fields as $_field) {
+        foreach ($this->address_fields as $_field) {
             $_field = $address . '_' . $_field;
             $contact->$_field = $_field . $time;
         }

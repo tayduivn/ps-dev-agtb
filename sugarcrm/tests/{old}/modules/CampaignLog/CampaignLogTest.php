@@ -16,17 +16,17 @@ require_once 'include/SugarEmailAddress/SugarEmailAddress.php';
 
 class CampaignLogTest extends TestCase
 {
-    var $campaign_id = 'campaignforcamplogunittest';
-    var $prospect_list_id = 'prospectlistforcamplogunittest';
-    var $email_marketing_id = 'marketingforcamplogunittest';
-    var $targetObjectArray = ['User','Contact','Lead','Prospect','Account','CampaignTracker'];
+    public $campaign_id = 'campaignforcamplogunittest';
+    public $prospect_list_id = 'prospectlistforcamplogunittest';
+    public $email_marketing_id = 'marketingforcamplogunittest';
+    public $targetObjectArray = ['User','Contact','Lead','Prospect','Account','CampaignTracker'];
 
-    var $target_Prospect;
-    var $target_Contact;
-    var $target_User;
-    var $target_Account;
-    var $campaign_tracker;
-    var $campaign_log;
+    public $target_Prospect;
+    public $target_Contact;
+    public $target_User;
+    public $target_Account;
+    public $campaign_tracker;
+    public $campaign_log;
 
     protected function setUp() : void
     {

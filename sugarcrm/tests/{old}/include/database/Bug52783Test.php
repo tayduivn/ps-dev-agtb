@@ -21,11 +21,11 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug52783Test extends TestCase
 {
-    private $_db;
+    private $db;
 
     protected function setUp() : void
     {
-        $this->_db = new SqlsrvManager();
+        $this->db = new SqlsrvManager();
     }
 
     /**
@@ -35,7 +35,7 @@ class Bug52783Test extends TestCase
     public function testReturnOrderBy($sql, $expected)
     {
         $expected = strtolower($expected);
-        $result = strtolower($this->_db->limitQuery($sql, 21, 20, false, '', false));
+        $result = strtolower($this->db->limitQuery($sql, 21, 20, false, '', false));
         $this->assertStringContainsString($expected, $result);
     }
 

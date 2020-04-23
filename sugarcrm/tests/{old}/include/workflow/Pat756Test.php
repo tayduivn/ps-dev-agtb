@@ -35,7 +35,7 @@ class Pat756Test extends TestCase
         SugarTestHelper::tearDown();
     }
 
-    function testProcessActionNewAssnUserId()
+    public function testProcessActionNewAssnUserId()
     {
         $action_array = [
             'action_type' => 'new',

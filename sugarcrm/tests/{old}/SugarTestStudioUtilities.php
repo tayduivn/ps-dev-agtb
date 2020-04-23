@@ -13,7 +13,7 @@
 
 class SugarTestStudioUtilities
 {
-    private static $_fieldsAdded = [];
+    private static $fieldsAdded = [];
 
     private function __construct()
     {
@@ -32,12 +32,12 @@ class SugarTestStudioUtilities
         $parser->handleSave(false);
         unset($parser);
         
-        self::$_fieldsAdded[$module_name][$view][$field_name] = $field_name;
+        self::$fieldsAdded[$module_name][$view][$field_name] = $field_name;
     }
     
     public static function removeAllCreatedFields()
     {
-        foreach (self::$_fieldsAdded as $module_name => $views) {
+        foreach (self::$fieldsAdded as $module_name => $views) {
             foreach ($views as $view => $fields) {
                 $parser = ParserFactory::getParser($view, $module_name);
                 foreach ($fields as $field_name) {

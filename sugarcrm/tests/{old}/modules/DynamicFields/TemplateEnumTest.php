@@ -17,14 +17,13 @@ require_once 'modules/DynamicFields/FieldCases.php';
 
 class TemplateEnumTest extends TestCase
 {
-    private $_modulename = 'Accounts';
-    private $_originaldbType = '';
+    private $moduleName = 'Accounts';
     private $field;
     
     protected function setUp() : void
     {
         $this->field = get_widget('enum');
-        $this->field->id = $this->_modulename.'foofighter_c';
+        $this->field->id = $this->moduleName.'foofighter_c';
         $this->field->name = 'foofighter_c';
         $this->field->dependency = htmlentities('equal(strlen($name),5)');
         $this->field->ext4 = serialize(htmlentities('fred'));

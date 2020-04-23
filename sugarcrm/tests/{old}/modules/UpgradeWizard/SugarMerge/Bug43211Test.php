@@ -16,7 +16,7 @@ require_once 'include/dir_inc.php';
 
 class Bug43211Test extends TestCase
 {
-    var $merge;
+    public $merge;
 
     protected function setUp() : void
     {
@@ -28,7 +28,7 @@ class Bug43211Test extends TestCase
         SugarTestMergeUtilities::teardownFiles();
     }
 
-    function test_leads_searchdefs_merge()
+    public function test_leads_searchdefs_merge()
     {
         $this->merge = new SearchMerge();
         $this->merge->merge('Leads', 'tests/{old}/modules/UpgradeWizard/SugarMerge/metadata_files/600/modules/Leads/metadata/searchdefs.php', 'modules/Leads/metadata/searchdefs.php', 'custom/modules/Leads/metadata/searchdefs.php');
@@ -55,7 +55,7 @@ class Bug43211Test extends TestCase
     }
 
 
-    function test_accounts_searchdefs_merge()
+    public function test_accounts_searchdefs_merge()
     {
         $this->merge = new SearchMerge();
         $this->merge->merge('Accounts', 'tests/{old}/modules/UpgradeWizard/SugarMerge/metadata_files/600/modules/Accounts/metadata/searchdefs.php', 'modules/Accounts/metadata/searchdefs.php', 'custom/modules/Accounts/metadata/searchdefs.php');

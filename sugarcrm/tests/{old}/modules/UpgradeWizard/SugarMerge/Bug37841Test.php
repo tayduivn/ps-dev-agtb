@@ -16,9 +16,9 @@ require_once 'include/dir_inc.php';
 
 class Bug37841Test extends TestCase
 {
-    var $merge;
-    var $has_dir;
-    var $modules;
+    public $merge;
+    public $has_dir;
+    public $modules;
 
     protected function setUp() : void
     {
@@ -76,7 +76,7 @@ class Bug37841Test extends TestCase
     /**
      * Ensure that no custom metadata is created and no history item created.
      */
-    function testHistoryCreationForNonUpgradedMetadataFiles()
+    public function testHistoryCreationForNonUpgradedMetadataFiles()
     {
         $this->clearFilesInDirectory('custom/modules/Accounts/metadata');
         $this->clearFilesInDirectory('custom/history/modules/Accounts/metadata');
@@ -91,7 +91,7 @@ class Bug37841Test extends TestCase
     /**
      * Ensure that a history item is created when SugarMerge executes and that the file contents are identical.
      */
-    function testHistoryCreationForUpgradedMetadataFiles()
+    public function testHistoryCreationForUpgradedMetadataFiles()
     {
         $accountsHistoryMetadataLocation = 'custom/history/modules/Accounts/metadata';
         $this->clearFilesInDirectory('custom/modules/Accounts/metadata');

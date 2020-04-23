@@ -59,7 +59,7 @@ class TestBean2 extends SugarBean
 class TestBean3 extends SugarBean
 {
     public $ok;
-    function __construct()
+    public function __construct()
     {
         parent::__construct();
         $this->ok = true;
@@ -69,7 +69,7 @@ class TestBean3 extends SugarBean
 class TestBean4 extends SugarBean
 {
     public $ok;
-    function __construct()
+    public function __construct()
     {
         parent::__construct();
         $this->ok = true;
@@ -99,7 +99,7 @@ class TestBean6 extends Basic
 class TestBean7 extends Basic
 {
     public $ok;
-    function __construct()
+    public function __construct()
     {
         parent::__construct();
         $this->ok = true;
@@ -109,7 +109,7 @@ class TestBean7 extends Basic
 class TestBean8 extends Basic
 {
     public $ok;
-    function __construct()
+    public function __construct()
     {
         parent::__construct();
         $this->ok = true;
@@ -120,7 +120,7 @@ class TestBean9 extends Basic
 {
     public $ok;
 
-    function __construct()
+    public function __construct()
     {
         parent::__construct();
         $this->ok = true;
@@ -131,7 +131,7 @@ class TestBean10 extends TestBean9
 {
     public $ok;
 
-    function __construct()
+    public function __construct()
     {
         parent::__construct();
         $this->ok = true;

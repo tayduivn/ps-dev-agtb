@@ -28,7 +28,7 @@ class PopulateTimePeriodsSeedDataTest extends TestCase
         $GLOBALS['db']->query("UPDATE timeperiods SET deleted = 0");
     }
 
-    function testPopulateSeedData()
+    public function testPopulateSeedData()
     {
         $this->createdTimePeriods = TimePeriodsSeedData::populateSeedData();
         $this->assertEquals(20, count($this->createdTimePeriods));

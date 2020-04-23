@@ -20,8 +20,6 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug46984Test extends TestCase
 {
-    private $_user;
-
     protected function setUp() : void
     {
         $beanList = [];
@@ -32,8 +30,7 @@ class Bug46984Test extends TestCase
         $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
 
-        $this->_user = SugarTestUserUtilities::createAnonymousUser(true, 1);
-        $GLOBALS['current_user'] = $this->_user;
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser(true, 1);
     }
 
     protected function tearDown() : void

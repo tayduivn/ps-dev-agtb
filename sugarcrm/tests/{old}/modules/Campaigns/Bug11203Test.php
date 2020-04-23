@@ -19,13 +19,13 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug11203Test extends TestCase
 {
-    public $_user = null;
+    private $user;
 
     protected function setUp() : void
     {
         //set the global user to an admin
         global $current_user;
-        $this->_user = $current_user;
+        $this->user = $current_user;
 
         $user = SugarTestUserUtilities::createAnonymousUser();
         $user->is_admin = 1;
@@ -74,13 +74,13 @@ class Bug11203Test extends TestCase
     {
         global $current_user;
         $GLOBALS['db']->query("DELETE FROM user_preferences WHERE assigned_user_id='{$current_user->id}'");
-        $current_user = $this->_user;
+        $current_user = $this->user;
         $GLOBALS['db']->query("DELETE FROM inbound_email WHERE name='UnitTest_Mailbox11203'");
         unset($_REQUEST);
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }
 
-    function test_CampaignEmailSetupFailure()
+    public function test_CampaignEmailSetupFailure()
     {
         //include the save file like WizardEmailSetupSave.php does
          require_once 'modules/InboundEmail/Save.php';

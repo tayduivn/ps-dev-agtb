@@ -22,9 +22,9 @@
 
 class ExtAPILotusLiveMock extends ExtAPILotusLive
 {
-    var $sugarOauthMock;
+    public $sugarOauthMock;
 
-    function __construct()
+    public function __construct()
     {
         parent::__construct();
         $this->api_data = [];

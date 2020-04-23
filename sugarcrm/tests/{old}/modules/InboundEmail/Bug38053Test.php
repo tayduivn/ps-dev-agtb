@@ -20,19 +20,17 @@ require_once 'modules/Campaigns/ProcessBouncedEmails.php';
  */
 class Bug38053Test extends TestCase
 {
-    public $folder = null;
-    public $_user = null;
-    public $_team = null;
-    
+    private $user;
+
     protected function setUp() : void
     {
-        $this->_user = SugarTestUserUtilities::createAnonymousUser();
-        $GLOBALS['current_user'] = $this->_user;
+        $this->user = SugarTestUserUtilities::createAnonymousUser();
+        $GLOBALS['current_user'] = $this->user;
     }
 
     protected function tearDown() : void
     {
-        $GLOBALS['db']->query("DELETE FROM user_preferences WHERE assigned_user_id='{$this->_user->id}'");
+        $GLOBALS['db']->query("DELETE FROM user_preferences WHERE assigned_user_id='{$this->user->id}'");
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestTeamUtilities::removeAllCreatedAnonymousTeams();
         unset($GLOBALS['current_user']);
@@ -41,7 +39,7 @@ class Bug38053Test extends TestCase
     /**
      * The purpose of this test is to ensure that the user's default team is properly set on the attachment.
      */
-    function testGetNoteBeanForAttachment()
+    public function testGetNoteBeanForAttachment()
     {
         $GLOBALS['current_user']->team_id = 1;
         $GLOBALS['current_user']->team_set_id = 2;

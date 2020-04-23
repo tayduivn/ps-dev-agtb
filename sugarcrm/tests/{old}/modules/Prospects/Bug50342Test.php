@@ -31,11 +31,11 @@ use PHPUnit\Framework\TestCase;
 
 class Bug50342Test extends TestCase
 {
-    var $prospect;
+    public $prospect;
 
-    var $prospectList;
+    public $prospectList;
 
-    var $campaign;
+    public $campaign;
 
     protected function setUp() : void
     {

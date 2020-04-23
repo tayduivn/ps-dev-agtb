@@ -16,8 +16,8 @@
  */
 class SugarTestForecastUtilities
 {
-    private static $_createdForecasts = [];
-    private static $timeperiod;
+    private static $createdForecasts = [];
+    private static $timePeriod;
 
     /**
      * Utility method to setup Forecasts Data
@@ -73,7 +73,7 @@ class SugarTestForecastUtilities
         $forecast->pipeline_amount = 0;
         $forecast->save();
         
-        self::$_createdForecasts[$forecast->id] = $forecast;
+        self::$createdForecasts[$forecast->id] = $forecast;
         return $forecast;
     }
 
@@ -83,9 +83,9 @@ class SugarTestForecastUtilities
      */
     public static function removeAllCreatedForecasts()
     {
-        $forecast_ids = array_keys(self::$_createdForecasts);
+        $forecast_ids = array_keys(self::$createdForecasts);
         $GLOBALS['db']->query('DELETE FROM forecasts WHERE id IN (\'' . implode("', '", $forecast_ids) . '\')');
-        self::$_createdForecasts = [];
+        self::$createdForecasts = [];
     }
 
     /**
@@ -93,16 +93,16 @@ class SugarTestForecastUtilities
      */
     public static function getCreatedTimePeriod()
     {
-        if (empty(self::$timeperiod)) {
-            self::$timeperiod = SugarTestTimePeriodUtilities::createTimePeriod();
+        if (empty(self::$timePeriod)) {
+            self::$timePeriod = SugarTestTimePeriodUtilities::createTimePeriod();
         }
 
-        return self::$timeperiod;
+        return self::$timePeriod;
     }
 
     public static function setTimePeriod($timeperiod)
     {
-        self::$timeperiod = $timeperiod;
+        self::$timePeriod = $timeperiod;
     }
 
     /**
@@ -173,7 +173,7 @@ class SugarTestForecastUtilities
                 }
 
                 // random date
-                $int_date_closed = rand(strtotime(self::$timeperiod->start_date), strtotime(self::$timeperiod->end_date));
+                $int_date_closed = rand(strtotime(self::$timePeriod->start_date), strtotime(self::$timePeriod->end_date));
                 $date_closed = date('Y-m-d', $int_date_closed);
 
                 $opp = SugarTestOpportunityUtilities::createOpportunity();
@@ -275,7 +275,7 @@ class SugarTestForecastUtilities
             }
 
             if ($config['createForecast'] === true) {
-                $forecast = self::createForecast(self::$timeperiod, $user);
+                $forecast = self::createForecast(self::$timePeriod, $user);
 
                 $forecast->best_case = $forecast_best_total;
                 $forecast->worst_case = $forecast_worst_total;
@@ -330,7 +330,7 @@ class SugarTestForecastUtilities
                 $users[] = func_get_arg($i);
             }
         }
-        $tmpForecast = SugarTestForecastUtilities::createForecast(self::$timeperiod, $manager['user']);
+        $tmpForecast = SugarTestForecastUtilities::createForecast(self::$timePeriod, $manager['user']);
         $tmpForecast->best_case = $manager['forecast']->best_case;
         $tmpForecast->worst_case = $manager['forecast']->worst_case;
         $tmpForecast->likely_case = $manager['forecast']->likely_case;
@@ -376,7 +376,7 @@ class SugarTestForecastUtilities
      */
     public static function createRepDirectForecast($user)
     {
-        $tmpForecast = SugarTestForecastUtilities::createForecast(self::$timeperiod, $user["user"]);
+        $tmpForecast = SugarTestForecastUtilities::createForecast(self::$timePeriod, $user["user"]);
         $tmpForecast->best_case = 0;
         $tmpForecast->worst_case = 0;
         $tmpForecast->likely_case = 0;
@@ -404,9 +404,9 @@ class SugarTestForecastUtilities
 
     public static function cleanUpCreatedForecastUsers()
     {
-        if (!empty(self::$timeperiod)) {
+        if (!empty(self::$timePeriod)) {
             SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
-            self::$timeperiod = null;
+            self::$timePeriod = null;
         }
         SugarTestForecastUtilities::removeAllCreatedForecasts();
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();

@@ -83,14 +83,13 @@ class Bug40658Test extends TestCase
     }
 }
 
-
 class SubpanelMetaDataParserMock extends SubpanelMetaDataParser
 {
     //Override constructor... don't do anything
-    function __construct($subpanelName, $moduleName, $packageName = '')
+    public function __construct($subpanelName, $moduleName, $packageName = '')
     {
     }
-        
+
     public function makeRelateFieldsAsLink($defs)
     {
         $this->_moduleName = 'def_M1';

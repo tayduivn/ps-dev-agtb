@@ -17,9 +17,9 @@ class RestMetadataViewTemplatesTest extends RestTestBase
     {
         parent::setUp();
 
-        $this->_restLogin('', '', 'mobile');
+        $this->restLogin('', '', 'mobile');
         $this->mobileAuthToken = $this->authToken;
-        $this->_restLogin('', '', 'base');
+        $this->restLogin('', '', 'base');
         $this->baseAuthToken = $this->authToken;
     }
 
@@ -28,7 +28,7 @@ class RestMetadataViewTemplatesTest extends RestTestBase
      */
     public function testMetadataViewTemplates()
     {
-        $restReply = $this->_restCall('metadata?type_filter=views');
+        $restReply = $this->restCall('metadata?type_filter=views');
 
         $this->assertTrue(isset($restReply['reply']['views']['_hash']), 'Views hash is missing.');
     }
@@ -71,45 +71,45 @@ class RestMetadataViewTemplatesTest extends RestTestBase
 
         // Make sure we get it when we ask for mobile
         file_put_contents($filesToCheck['mobile'][0], 'MOBILE CODE');
-        $this->_clearMetadataCache();
+        $this->clearMetadataCache();
         $this->authToken = $this->mobileAuthToken;
-        $restReply = $this->_restCall('metadata/?type_filter=views');
+        $restReply = $this->restCall('metadata/?type_filter=views');
         $this->assertEquals('MOBILE CODE', $restReply['reply']['views']['edit']['templates']['edit'], "Didn't get mobile code when that was the direct option");
 
 
         // Make sure we get it when we ask for mobile, even though there is base code there
         file_put_contents($filesToCheck['base'][0], 'BASE CODE');
-        $this->_clearMetadataCache();
-        $restReply = $this->_restCall('metadata/?type_filter=views');
+        $this->clearMetadataCache();
+        $restReply = $this->restCall('metadata/?type_filter=views');
         $this->assertEquals('MOBILE CODE', $restReply['reply']['views']['edit']['templates']['edit'], "Didn't get mobile code when base code was there.");
 
         // Make sure we get the base code when we ask for it.
         file_put_contents($filesToCheck['base'][0], 'BASE CODE');
-        $this->_clearMetadataCache();
+        $this->clearMetadataCache();
         $this->authToken = $this->baseAuthToken;
-        $restReply = $this->_restCall('metadata/?type_filter=views');
+        $restReply = $this->restCall('metadata/?type_filter=views');
         $this->assertEquals('BASE CODE', $restReply['reply']['views']['edit']['templates']['edit'], "Didn't get base code when it was the direct option");
 
         //BEGIN SUGARCRM flav=ent ONLY
         // Delete the mobile template and make sure it falls back to base
         unlink($filesToCheck['mobile'][0]);
-        $this->_clearMetadataCache();
+        $this->clearMetadataCache();
         $this->authToken = $this->mobileAuthToken;
-        $restReply = $this->_restCall('metadata/?type_filter=views');
+        $restReply = $this->restCall('metadata/?type_filter=views');
         $this->assertEquals('BASE CODE', $restReply['reply']['views']['edit']['templates']['edit'], "Didn't fall back to base code when mobile code wasn't there.");
 
         // Make sure the mobile code is loaded before the non-custom base code
         file_put_contents($filesToCheck['mobile'][1], 'CUSTOM MOBILE CODE');
-        $this->_clearMetadataCache();
-        $restReply = $this->_restCall('metadata/?type_filter=views');
+        $this->clearMetadataCache();
+        $restReply = $this->restCall('metadata/?type_filter=views');
         $this->assertEquals('CUSTOM MOBILE CODE', $restReply['reply']['views']['edit']['templates']['edit'], "Didn't use the custom mobile code.");
         //END SUGARCRM flav=ent ONLY
 
         // Make sure custom base code works
         file_put_contents($filesToCheck['base'][1], 'CUSTOM BASE CODE');
-        $this->_clearMetadataCache();
+        $this->clearMetadataCache();
         $this->authToken = $this->baseAuthToken;
-        $restReply = $this->_restCall('metadata/?type_filter=views');
+        $restReply = $this->restCall('metadata/?type_filter=views');
         $this->assertEquals('CUSTOM BASE CODE', $restReply['reply']['views']['edit']['templates']['edit'], "Didn't use the custom base code.");
     }
 }

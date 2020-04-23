@@ -30,7 +30,7 @@ class RestMetadataJssourceTest extends RestTestBase
      */
     public function testJssource()
     {
-        $restReply = $this->_restCall('metadata?type_filter=jssource&platform=portal');
+        $restReply = $this->restCall('metadata?type_filter=jssource&platform=portal');
         // Hash should always be set
         $this->assertTrue(isset($restReply['reply']['jssource']), "Jssource is missing");
     }
@@ -41,7 +41,7 @@ class RestMetadataJssourceTest extends RestTestBase
      */
     public function testNoJssource()
     {
-        $restReply = $this->_restCall('metadata?type_filter=modules&module_filter=Contacts&platform=portal');
+        $restReply = $this->restCall('metadata?type_filter=modules&module_filter=Contacts&platform=portal');
         // Hash should always be set
         $this->assertTrue(!isset($restReply['reply']['jssource']), "Jssource should not be here");
     }

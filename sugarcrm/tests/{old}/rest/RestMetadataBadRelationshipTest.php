@@ -85,8 +85,8 @@ $dictionary[\'Account\'][\'fields\'][\'notes\'][\'relationship\'] = "accounts_no
         $GLBOALS['current_user'] = $old_user;
 
         // call module metadata
-        $this->_restCall('metadata/flush', 'flush');
-        $restReply = $this->_restCall('metadata?type_filter=modules');
+        $this->restCall('metadata/flush', 'flush');
+        $restReply = $this->restCall('metadata?type_filter=modules');
 
         // verify no 500 and results for the module
         $this->assertNotEquals($restReply['info']['http_code'], 500, 'HTTP Code is 500');

@@ -57,14 +57,14 @@ class Bug46486Test extends TestCase
         $GLOBALS['db']->query($query);
     }
 
-    function testGetActiveSessionCount()
+    public function testGetActiveSessionCount()
     {
         $totalSessions = rand(0, 10);
         $this->createFakeSessions($totalSessions);
         $this->assertEquals($totalSessions, $this->sm->getNumActiveSessions($totalSessions));
     }
 
-    function testGetNumPortalUsers()
+    public function testGetNumPortalUsers()
     {
         $fakeCounts = [200,5,398,102,234];
         foreach ($fakeCounts as $count) {
@@ -83,8 +83,7 @@ class Bug46486Test extends TestCase
         }
     }
 
-
-    function providerPortalSessionLoginCount()
+    public static function providerPortalSessionLoginCount()
     {
         return [
             //Valid
@@ -106,7 +105,7 @@ class Bug46486Test extends TestCase
     /**
      * @dataProvider providerPortalSessionLoginCount
      */
-    function testPortalSessionLoginCount($systemPortalUsers, $activeSessions, $expectedResult)
+    public function testPortalSessionLoginCount($systemPortalUsers, $activeSessions, $expectedResult)
     {
         $admin = new Administration();
         $admin->saveSetting('license', 'num_portal_users', $systemPortalUsers);

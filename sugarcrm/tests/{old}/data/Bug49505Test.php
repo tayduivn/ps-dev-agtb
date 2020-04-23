@@ -21,7 +21,7 @@ class Bug49505Test extends TestCase
     /**
      * @var array
      */
-    private $_createdBeans = [];
+    private $createdBeans = [];
 
     protected function setUp() : void
     {
@@ -32,7 +32,7 @@ class Bug49505Test extends TestCase
 
     protected function tearDown() : void
     {
-        foreach ($this->_createdBeans as $bean) {
+        foreach ($this->createdBeans as $bean) {
             $bean->retrieve($bean->id);
             $bean->mark_deleted($bean->id);
         }
@@ -51,13 +51,13 @@ class Bug49505Test extends TestCase
         $focus = BeanFactory::newBean($focusModule);
         $focus->name = "bug49505";
         $focus->save();
-        $this->_createdBeans[] = $focus;
+        $this->createdBeans[] = $focus;
 
         foreach ($linkedModules as $v) {
             $linkedBean = BeanFactory::newBean($v);
             $linkedBean->name = "bug49505";
             $linkedBean->save();
-            $this->_createdBeans[] = $linkedBean;
+            $this->createdBeans[] = $linkedBean;
 
             $link = new Link2(strtolower($v), $focus);
             $link->add([$linkedBean]);

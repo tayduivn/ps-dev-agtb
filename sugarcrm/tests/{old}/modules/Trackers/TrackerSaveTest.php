@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 class TrackerSaveTest extends TestCase
 {
-    function testSaveObject()
+    public function testSaveObject()
     {
         $trackerManager = TrackerManager::getInstance();
         $monitor = $trackerManager->getMonitor('tracker');

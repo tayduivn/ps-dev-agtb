@@ -13,7 +13,7 @@
 
 class SugarTestCommentUtilities
 {
-    private static $_createdComments = [];
+    private static $createdComments = [];
 
     public static function createUnsavedComment(Activity $a = null, $new_id = '')
     {
@@ -39,7 +39,7 @@ class SugarTestCommentUtilities
             $comment->save();
             Activity::restoreToPreviousState();
             $GLOBALS['db']->commit();
-            self::$_createdComments[] = $comment;
+            self::$createdComments[] = $comment;
         }
         return $comment;
     }
@@ -49,7 +49,7 @@ class SugarTestCommentUtilities
         foreach ($comment_ids as $comment_id) {
             $comment = new Comment();
             $comment->id = $comment_id;
-            self::$_createdComments[] = $comment;
+            self::$createdComments[] = $comment;
         }
     }
 
@@ -62,7 +62,7 @@ class SugarTestCommentUtilities
     public static function getCreatedCommentIds()
     {
         $comment_ids = [];
-        foreach (self::$_createdComments as $comment) {
+        foreach (self::$createdComments as $comment) {
             $comment_ids[] = $comment->id;
         }
         return $comment_ids;

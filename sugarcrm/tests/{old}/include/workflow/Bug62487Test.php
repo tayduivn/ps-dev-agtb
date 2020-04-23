@@ -17,7 +17,7 @@ require_once 'include/workflow/plugin_utils.php';
 
 class Bug62487Test extends TestCase
 {
-    var $file = "workflow/plugins/Bug62487Test/component_list.php";
+    public $file = "workflow/plugins/Bug62487Test/component_list.php";
 
     protected function setUp() : void
     {
@@ -42,7 +42,7 @@ class Bug62487Test extends TestCase
         rmdir_recursive(dirname($this->file));
     }
 
-    function testPluginListArrayKeys()
+    public function testPluginListArrayKeys()
     {
         $list = extract_plugin_list();
 

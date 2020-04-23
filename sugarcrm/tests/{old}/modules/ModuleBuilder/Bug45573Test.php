@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 class Bug45573Test extends TestCase
 {
-    var $hasCustomSearchFields;
+    public $hasCustomSearchFields;
 
     protected function setUp() : void
     {

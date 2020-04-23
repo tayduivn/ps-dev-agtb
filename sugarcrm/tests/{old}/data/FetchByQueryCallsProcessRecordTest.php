@@ -14,9 +14,9 @@ use PHPUnit\Framework\TestCase;
 
 class FetchByQueryCallsProcessRecordTest extends TestCase
 {
-    var $hasCustomAccountLogicHookFile = false;
-    var $accountsHookFile = 'custom/modules/Accounts/logic_hooks.php';
-    var $accountsLogicHookFile = 'custom/modules/Accounts/checkProcess.php';
+    public $hasCustomAccountLogicHookFile = false;
+    public $accountsHookFile = 'custom/modules/Accounts/logic_hooks.php';
+    public $accountsLogicHookFile = 'custom/modules/Accounts/checkProcess.php';
 
     protected function setUp() : void
     {

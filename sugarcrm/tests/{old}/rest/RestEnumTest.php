@@ -40,7 +40,7 @@ class RestEnumTest extends RestTestBase
                 $ct->name = $name;
                 $ct->save();
             }
-            $restReply = $this->_restCall('/Contracts/enum/type');
+            $restReply = $this->restCall('/Contracts/enum/type');
         // add the blank one
             $contract_types['']='';
 
@@ -51,10 +51,10 @@ class RestEnumTest extends RestTestBase
      */
     public function testETagHeaders()
     {
-        $restReply = $this->_restCall('Products/enum/commit_stage');
+        $restReply = $this->restCall('Products/enum/commit_stage');
         $this->assertNotEmpty($restReply['headers']['ETag']);
         $this->assertEquals($restReply['info']['http_code'], 200);
-        $restReply = $this->_restCall('Products/enum/commit_stage', '', '', [], ['If-None-Match: ' . $restReply['headers']['ETag']]);
+        $restReply = $this->restCall('Products/enum/commit_stage', '', '', [], ['If-None-Match: ' . $restReply['headers']['ETag']]);
         $this->assertNotEmpty($restReply['headers']['ETag']);
         $this->assertEquals($restReply['info']['http_code'], 304);
     }
@@ -63,7 +63,7 @@ class RestEnumTest extends RestTestBase
      */
     public function testHtmlDropDown()
     {
-        $restReply = $this->_restCall('Products/enum/type_id');
+        $restReply = $this->restCall('Products/enum/type_id');
         $this->assertEquals('fatal_error', $restReply['reply']['error'], "Did not return a fatal error");
         $this->assertEquals('html dropdowns are not supported', $restReply['reply']['error_message'], "Did not return the correct error message");
     }
@@ -73,7 +73,7 @@ class RestEnumTest extends RestTestBase
      */
     public function testStandardDropDown()
     {
-        $restReply = $this->_restCall('Products/enum/commit_stage');
+        $restReply = $this->restCall('Products/enum/commit_stage');
         $this->assertTrue(!empty($restReply['reply']), "Commit Stage came back empty");
     }
 
@@ -82,7 +82,7 @@ class RestEnumTest extends RestTestBase
      */
     public function testNonExistantDropDown()
     {
-        $restReply = $this->_restCall('Accounts/enum/UnitTest'.create_guid());
+        $restReply = $this->restCall('Accounts/enum/UnitTest'.create_guid());
         $this->assertEquals('not_found', $restReply['reply']['error'], "Incorrect Error Returned");
         $this->assertEquals('field not found', $restReply['reply']['error_message'], "Incorrect message returned");
     }

@@ -16,14 +16,14 @@ require_once 'modules/Campaigns/ProcessBouncedEmails.php';
 
 class Bug12755Test extends TestCase
 {
-    protected $emailAddress = 'unittest@example.com';
-    protected $_user;
+    private $emailAddress = 'unittest@example.com';
+    private $user;
 
     protected function setUp() : void
     {
-        $this->_user = SugarTestUserUtilities::createAnonymousUser();
-        $this->_user->emailAddress->addAddress($this->emailAddress, false, false, 0);
-        $this->_user->emailAddress->save($this->_user->id, $this->_user->module_dir);
+        $this->user = SugarTestUserUtilities::createAnonymousUser();
+        $this->user->emailAddress->addAddress($this->emailAddress, false, false, 0);
+        $this->user->emailAddress->save($this->user->id, $this->user->module_dir);
     }
 
     protected function tearDown() : void
@@ -31,7 +31,7 @@ class Bug12755Test extends TestCase
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         $query = "DELETE from email_addresses where email_address = '{$this->emailAddress}'";
         $GLOBALS['db']->query($query);
-        $query = "DELETE from email_addr_bean_rel where bean_id = '{$this->_user->id}'";
+        $query = "DELETE from email_addr_bean_rel where bean_id = '{$this->user->id}'";
         $GLOBALS['db']->query($query);
     }
 

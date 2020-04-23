@@ -24,17 +24,17 @@ class RestCurrentUserPreferenceTest extends RestTestBase
 
         // add a test preference to the user
         foreach (self::$testPreferences as $key => $pref) {
-            $this->_user->setPreference($key, $pref);
+            $this->user->setPreference($key, $pref);
         }
 
         // save the preferences to the db.
-        $this->_user->savePreferencesToDB();
+        $this->user->savePreferencesToDB();
     }
     
     protected function tearDown() : void
     {
         // clean up the preferences
-        $this->_user->resetPreferences();
+        $this->user->resetPreferences();
 
         parent::tearDown();
     }
@@ -44,7 +44,7 @@ class RestCurrentUserPreferenceTest extends RestTestBase
      */
     public function testGetUserPreferences()
     {
-        $reply = $this->_restCall("me/preferences");
+        $reply = $this->restCall("me/preferences");
 
         // assert that the reply has our two preferences in it
         $this->assertEquals('world', $reply['reply']['hello']);
@@ -60,7 +60,7 @@ class RestCurrentUserPreferenceTest extends RestTestBase
      */
     public function testGetSpecificPreference($key, $value)
     {
-        $reply = $this->_restCall('me/preference/' . $key);
+        $reply = $this->restCall('me/preference/' . $key);
 
         $this->assertEquals($value, $reply['reply']);
     }
@@ -70,14 +70,14 @@ class RestCurrentUserPreferenceTest extends RestTestBase
      */
     public function testUpdatePreferenceReturnsNewKeyValuePair()
     {
-        $reply = $this->_restCall('me/preference/hello', json_encode(['value' => 'world1']), 'PUT');
+        $reply = $this->restCall('me/preference/hello', json_encode(['value' => 'world1']), 'PUT');
 
         $this->assertEquals(['hello' => 'world1'], $reply['reply']);
     }
 
     public function testUpdateMultiplePreferencesReturnsUpdatedKeyValuePair()
     {
-        $reply = $this->_restCall(
+        $reply = $this->restCall(
             'me/preferences',
             json_encode(['hello' => 'world1', 'test' => 'preference1']),
             'PUT'
@@ -91,7 +91,7 @@ class RestCurrentUserPreferenceTest extends RestTestBase
      */
     public function testUpdatePreferenceWithSpecificMetaName()
     {
-        $reply = $this->_restCall(
+        $reply = $this->restCall(
             'me/preferences',
             json_encode(['datepref' => '(y)(m)(d)', 'timepref' => '(h)(i)']),
             'PUT'
@@ -101,7 +101,7 @@ class RestCurrentUserPreferenceTest extends RestTestBase
         $this->assertEquals('(h)(i)', $reply['reply']['timepref']);
 
         // check updated preferences in current user object
-        $reply = $this->_restCall('me');
+        $reply = $this->restCall('me');
         $this->assertEquals('(y)(m)(d)', $reply['reply']['current_user']['preferences']['datepref']);
         $this->assertEquals('(h)(i)', $reply['reply']['current_user']['preferences']['timepref']);
     }
@@ -111,7 +111,7 @@ class RestCurrentUserPreferenceTest extends RestTestBase
      */
     public function testCreatePreferenceReturnsCreatedKeyValuePair()
     {
-        $reply = $this->_restCall('me/preference/create', json_encode(['value' => 'preference']), 'POST');
+        $reply = $this->restCall('me/preference/create', json_encode(['value' => 'preference']), 'POST');
 
         $this->assertEquals(['create' => 'preference'], $reply['reply']);
     }
@@ -121,7 +121,7 @@ class RestCurrentUserPreferenceTest extends RestTestBase
      */
     public function testDeletePreferenceReturnsDeletedKey()
     {
-        $reply = $this->_restCall('me/preference/hello', json_encode(['value' => 'preference']), 'DELETE');
+        $reply = $this->restCall('me/preference/hello', json_encode(['value' => 'preference']), 'DELETE');
 
         $this->assertEquals('hello', $reply['reply']);
     }
@@ -131,7 +131,7 @@ class RestCurrentUserPreferenceTest extends RestTestBase
      */
     public function testGetNonExistantPreferenceReturnsEmptyValue()
     {
-        $reply = $this->_restCall('me/preference/this_pref_does_not_exist');
+        $reply = $this->restCall('me/preference/this_pref_does_not_exist');
 
         $this->assertSame("", $reply['reply']);
     }

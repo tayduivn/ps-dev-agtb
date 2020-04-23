@@ -26,7 +26,7 @@ class Bug56389SugarModule extends StudioModule
      *
      * @param $fieldName
      */
-    function removeFieldFromLayouts($fieldName)
+    public function removeFieldFromLayouts($fieldName)
     {
         $sources = $this->getPortalLayoutSources();
         foreach ($sources as $defs) {
@@ -96,7 +96,7 @@ class Bug56389Test extends TestCase
      * @param array $defs The defs, as of view type
      * @return bool
      */
-    protected function _fieldExistsInDefs($fieldname, $defs)
+    private function fieldExistsInDefs($fieldname, $defs)
     {
         foreach ($defs['panels'] as $panel) {
             foreach ($panel['fields'] as $field) {
@@ -118,7 +118,7 @@ class Bug56389Test extends TestCase
         foreach ($this->filesToTest as $testfile) {
             require $testfile;
             $type = key($viewdefs[$this->moduleToTest]['portal']['view']);
-            $exists = $this->_fieldExistsInDefs($this->fieldToTest, $viewdefs[$this->moduleToTest]['portal']['view'][$type]);
+            $exists = $this->fieldExistsInDefs($this->fieldToTest, $viewdefs[$this->moduleToTest]['portal']['view'][$type]);
             $this->assertTrue($exists, "$this->fieldToTest does not exists in $type layout field for $this->moduleToTest");
             unset($viewdefs);
         }
@@ -132,7 +132,7 @@ class Bug56389Test extends TestCase
         foreach ($this->filesToTest as $testfile) {
             require "custom/$testfile";
             $type = key($viewdefs[$this->moduleToTest]['portal']['view']);
-            $exists = $this->_fieldExistsInDefs($this->fieldToTest, $viewdefs[$this->moduleToTest]['portal']['view'][$type]);
+            $exists = $this->fieldExistsInDefs($this->fieldToTest, $viewdefs[$this->moduleToTest]['portal']['view'][$type]);
             $this->assertFalse($exists, "$this->fieldToTest DOES exists in $type layout field for $this->moduleToTest");
             unset($viewdefs);
         }

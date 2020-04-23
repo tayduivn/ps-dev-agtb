@@ -26,12 +26,12 @@ class Bug53944Test extends TestCase
     /**
      * @var string
      */
-    var $lhs_module=null;
+    public $lhs_module=null;
 
     /**
      * @var string
      */
-    var $rhs_module=null;
+    public $rhs_module=null;
 
     /**
      * @var DeployedRelationships

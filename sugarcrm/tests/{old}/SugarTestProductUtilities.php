@@ -13,7 +13,7 @@
 
 class SugarTestProductUtilities
 {
-    protected static $_createdProducts = [];
+    private static $createdProducts = [];
 
     private function __construct()
     {
@@ -48,7 +48,7 @@ class SugarTestProductUtilities
             $product->id = $id;
         }
         $product->save();
-        self::$_createdProducts[] = $product;
+        self::$createdProducts[] = $product;
         return $product;
     }
 
@@ -57,7 +57,7 @@ class SugarTestProductUtilities
         foreach ($product_ids as $product_id) {
             $product = new Product();
             $product->id = $product_id;
-            self::$_createdProducts[] = $product;
+            self::$createdProducts[] = $product;
         } // foreach
     } // fn
     
@@ -73,7 +73,7 @@ class SugarTestProductUtilities
     public static function getCreatedProductIds()
     {
         $product_ids = [];
-        foreach (self::$_createdProducts as $product) {
+        foreach (self::$createdProducts as $product) {
             $product_ids[] = $product->id;
         }
         return $product_ids;

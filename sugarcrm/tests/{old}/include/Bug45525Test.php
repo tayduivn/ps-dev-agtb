@@ -17,7 +17,7 @@ class Bug45525 extends TestCase
     /**
      * @group Bug45525
      */
-    var $testLangFile = "cache/upload/myLang.php";
+    public $testLangFile = "cache/upload/myLang.php";
 
     protected function setUp() : void
     {

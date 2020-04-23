@@ -163,13 +163,6 @@ class MetaDataConverterTest extends TestCase
      */
     public function testConvertSubpanels()
     {
-        static $fieldMap = [
-            'name' => true,
-            'label' => true,
-            'type' => true,
-            'target_module' => true,
-            'target_record_key' => true,
-        ];
         $converter = new MetaDataConverter();
         $bean = BeanFactory::newBean('Users');
 

@@ -85,7 +85,7 @@ class PMSEWrapperTest extends TestCase
 
 class PMSEWrapperMock extends PMSEWrapper
 {
-    public function getBuiltCondition(\SugarBean $bean, array $keys)
+    public function getBuiltCondition(SugarBean $bean, array $keys)
     {
         return parent::buildConditionFromKeys($bean, $keys);
     }

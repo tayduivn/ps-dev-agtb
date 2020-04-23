@@ -35,7 +35,7 @@ class ConnectorsWebexPropertiesTest extends Sugar_Connectors_TestCase
         SugarTestHelper::tearDown();
     }
 
-    function testWebexProperty()
+    public function testWebexProperty()
     {
         $controller = new ConnectorsController();
         $_REQUEST['action'] = 'SaveModifyProperties';

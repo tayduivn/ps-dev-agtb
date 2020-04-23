@@ -15,40 +15,18 @@ use PHPUnit\Framework\TestCase;
 class Bug61736Test extends TestCase
 {
     /**
-     * Holds the vardef after first require so we don't have to keep including the
-     * custom vardef file
-     *
-     * @var array
-     */
-    protected static $_vardef = null;
-
-    /**
      * The custom vardef file created during the test
      *
      * @var string
      */
-    protected static $_vardefFile = 'custom/modulebuilder/packages/p1/modules/bbb/vardefs.php';
-    
-    /**
-     * Module Builder Controller
-     *
-     * @var ModuleBuilderController
-     */
-    protected static $_mb;
-
-    /**
-     * Holder for the current request array
-     *
-     * @var array
-     */
-    protected static $_request = [];
+    private static $vardefFile = 'custom/modulebuilder/packages/p1/modules/bbb/vardefs.php';
 
     /**
      * Mock REQUEST array used to create the test package
      *
      * @var array
      */
-    protected static $_createPackageRequestVars = [
+    private static $createPackageRequestVars = [
         'name' => 'p1',
         'description' => '',
         'author' => '',
@@ -61,7 +39,7 @@ class Bug61736Test extends TestCase
      *
      * @var array
      */
-    protected static $_createModuleRequestVars = [
+    private static $createModuleRequestVars = [
         'name' => 'bbb',
         'label' => 'BBB',
         'label_singular' => 'BBB',
@@ -75,7 +53,7 @@ class Bug61736Test extends TestCase
      *
      * @var array
      */
-    protected static $_createFieldRequestVars = [
+    private static $createFieldRequestVars = [
         "labelValue" => "Basic Address",
         "label" => "LBL_BASIC_ADDRESS",
         "type" => "address",
@@ -89,7 +67,7 @@ class Bug61736Test extends TestCase
      *
      * @var array
      */
-    protected static $_deleteFieldRequestVars = [
+    private static $deleteFieldRequestVars = [
         "labelValue" => "Basic Address",
         "label" => "LBL_BASIC_ADDRESS",
         "to_pdf" => "true",
@@ -109,17 +87,17 @@ class Bug61736Test extends TestCase
         SugarTestHelper::setUp('mod_strings', ['ModuleBuilder']);
 
         // Create the package
-        $request = InputValidation::create(self::$_createPackageRequestVars, []);
+        $request = InputValidation::create(self::$createPackageRequestVars, []);
         $mbc = new ModuleBuilderController($request);
         $mbc->action_SavePackage();
 
         // Now create the module
-        $request = InputValidation::create(self::$_createModuleRequestVars, []);
+        $request = InputValidation::create(self::$createModuleRequestVars, []);
         $mbc = new ModuleBuilderController($request);
         $mbc->action_SaveModule();
 
         // Now create the address field
-        $request = InputValidation::create(self::$_createFieldRequestVars, []);
+        $request = InputValidation::create(self::$createFieldRequestVars, []);
         $mbc = new ModuleBuilderController($request);
         $mbc->action_SaveField();
     }
@@ -127,26 +105,26 @@ class Bug61736Test extends TestCase
     public static function tearDownAfterClass(): void
     {
         // Set the request to delete the test field
-        $vars = self::$_deleteFieldRequestVars;
+        $vars = self::$deleteFieldRequestVars;
 
         // Loop through the created fields and wipe them out
         $suffixes = ['street', 'city', 'state', 'postalcode', 'country'];
         foreach ($suffixes as $suffix) {
-            $vars['name'] = self::_getFieldName($suffix);
+            $vars['name'] = self::getFieldName($suffix);
             $request = InputValidation::create($vars, []);
             $mbc = new ModuleBuilderController($request);
             $mbc->action_DeleteField();
         }
 
         // Delete the custom module
-        $vars = self::$_createModuleRequestVars;
+        $vars = self::$createModuleRequestVars;
         $vars['view_module'] = 'bbb';
         $request = InputValidation::create($vars, []);
         $mbc = new ModuleBuilderController($request);
         $mbc->action_DeleteModule();
 
         // Delete the custom package
-        $vars = self::$_createPackageRequestVars;
+        $vars = self::$createPackageRequestVars;
         $vars['package'] = $vars['name'];
         $request = InputValidation::create($vars, []);
         $mbc = new ModuleBuilderController($request);
@@ -155,12 +133,12 @@ class Bug61736Test extends TestCase
     
     public function testCustomAddressFieldVardefFileCreated()
     {
-        $this->assertFileExists(self::$_vardefFile, "The custom field vardef for the new module was not found");
+        $this->assertFileExists(self::$vardefFile, "The custom field vardef for the new module was not found");
     }
 
-    protected static function _getFieldName($suffix)
+    private static function getFieldName($suffix)
     {
-        $field = self::$_createFieldRequestVars['name'];
+        $field = self::$createFieldRequestVars['name'];
         $name = $field . '_' . $suffix;
         return $name;
     }

@@ -28,20 +28,16 @@ class Bug37307Test extends TestCase
             'relationship' => 'Cat',
             ];
         
-        $view = new MockReportsViewBuildreportmoduletree;
-        $output = $view->_populateNodeItem($bean_name, $link_module, $linked_field);
-        
+        $view = new ReportsViewBuildreportmoduletree();
+        $output = SugarTestReflection::callProtectedMethod(
+            $view,
+            '_populateNodeItem',
+            [$bean_name, $link_module, $linked_field]
+        );
+
         $this->assertEquals(
             "javascript:SUGAR.reports.populateFieldGrid('Bar','Cat','Foo','My Dog\'s');",
             $output['href']
         );
-    }
-}
-
-class MockReportsViewBuildreportmoduletree extends ReportsViewBuildreportmoduletree
-{
-    public function _populateNodeItem($bean_name, $link_module, $linked_field)
-    {
-        return parent::_populateNodeItem($bean_name, $link_module, $linked_field);
     }
 }

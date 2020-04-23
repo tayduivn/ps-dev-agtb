@@ -63,7 +63,7 @@ class RestPortalCreateTest extends RestTestPortalBase
         $GLOBALS['db']->commit();
 
         // create case
-        $caseReply = $this->_restCall(
+        $caseReply = $this->restCall(
             "Cases/",
             json_encode(['name' => 'UNIT TEST Case','portal_visible'=>true]),
             'POST'
@@ -79,7 +79,7 @@ class RestPortalCreateTest extends RestTestPortalBase
         // Make sure new case is cleaned up
         $this->cases[] = $this->case;
         // create bug
-        $bugReply = $this->_restCall(
+        $bugReply = $this->restCall(
             "Bugs/",
             json_encode(['name' => 'UNIT TEST Bug']),
             'POST'
@@ -106,7 +106,7 @@ class RestPortalCreateTest extends RestTestPortalBase
         // we need to be an admin to get at the relationship data
         $GLOBALS['current_user']->is_admin = 1;
         $GLOBALS['db']->commit();
-        $this->_restLogin($this->contact->portal_name, 'unittest');
+        $this->restLogin($this->contact->portal_name, 'unittest');
 
         // Remove the Account from Contact so this Contact can no longer create Cases
         if (isset($this->account->id)) {
@@ -115,7 +115,7 @@ class RestPortalCreateTest extends RestTestPortalBase
 
         // create case
         $GLOBALS['db']->commit();
-        $caseReply = $this->_restCall(
+        $caseReply = $this->restCall(
             "Cases/",
             json_encode(['name' => 'UNIT TEST Case']),
             'POST'
@@ -134,7 +134,7 @@ class RestPortalCreateTest extends RestTestPortalBase
      */
     public function testAddingNoteToBugAsSupportPortal()
     {
-        $bugReply = $this->_restCall(
+        $bugReply = $this->restCall(
             "Bugs/",
             json_encode([
                 'name' => 'UNIT TEST CREATE BUG PORTAL USER',
@@ -147,7 +147,7 @@ class RestPortalCreateTest extends RestTestPortalBase
         $this->bugId = $bugReply['reply']['id'];
 
         // Create a note on the bug without an attachment
-        $bugNoteReply = $this->_restCall(
+        $bugNoteReply = $this->restCall(
             "Bugs/{$this->bugId}/link/notes",
             json_encode([
                 'name' => 'UNIT TEST BUG NOTE PORTAL USER',

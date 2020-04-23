@@ -32,7 +32,7 @@ class TrackerManagerTest extends TestCase
         $GLOBALS['current_user'] = $user;
     }
     
-    function testPausing()
+    public function testPausing()
     {
         $trackerManager = TrackerManager::getInstance();
         $trackerManager->unPause();
@@ -41,7 +41,7 @@ class TrackerManagerTest extends TestCase
         $this->assertTrue($trackerManager->isPaused());
     }
     
-    function testPausing2()
+    public function testPausing2()
     {
         $query = "select count(id) as total from tracker";
         $result = $GLOBALS['db']->query($query);
@@ -75,7 +75,7 @@ class TrackerManagerTest extends TestCase
     }
     
 
-    function testPausing3()
+    public function testPausing3()
     {
         $query = "select count(id) as total from tracker_queries";
         $result = $GLOBALS['db']->query($query);

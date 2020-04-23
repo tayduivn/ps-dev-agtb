@@ -12,9 +12,9 @@
 
 class SugarTestACLUtilities
 {
-    public static $_createdRoles = [];
-    public static $_modules = [];
-    public static $objects = [];
+    private static $createdRoles = [];
+    private static $modules = [];
+    private static $objects = [];
 
     private function __construct()
     {
@@ -41,7 +41,7 @@ class SugarTestACLUtilities
         $type = 'module',
         bool $applyRestrictions = true
     ) {
-        self::$_modules = array_merge($allowedModules, self::$_modules);
+        self::$modules = array_merge($allowedModules, self::$modules);
 
         $role = new ACLRole();
         $role->name = $name;
@@ -82,7 +82,7 @@ class SugarTestACLUtilities
             }
         }
 
-        self::$_createdRoles[] = $role;
+        self::$createdRoles[] = $role;
 
         return $role;
     }
@@ -105,7 +105,7 @@ class SugarTestACLUtilities
         $access_level,
         string $objectName = ''
     ) {
-        self::$_modules[] = $module;
+        self::$modules[] = $module;
 
         if (!empty($objectName)) {
             self::$objects[$module] = $objectName;
@@ -146,7 +146,7 @@ class SugarTestACLUtilities
             BeanFactory::newBean('ACLFields')->clearACLCache();
         }
 
-        foreach (self::$_modules as $module) {
+        foreach (self::$modules as $module) {
             $object = self::$objects[$module] ?? $module;
             ACLField::loadUserFields($module, $object, $current_user->id, true);
         }
@@ -162,12 +162,12 @@ class SugarTestACLUtilities
      */
     public static function tearDown()
     {
-        foreach (self::$_createdRoles as $role) {
+        foreach (self::$createdRoles as $role) {
             $role->mark_deleted($role->id);
             $role->mark_relationships_deleted($role->id);
             $GLOBALS['db']->query("DELETE FROM acl_fields WHERE role_id = '{$role->id}'");
         }
-        self::$_createdRoles = [];
+        self::$createdRoles = [];
         BeanFactory::newBean('ACLFields')->clearACLCache();
         SugarACL::resetACLs();
     }

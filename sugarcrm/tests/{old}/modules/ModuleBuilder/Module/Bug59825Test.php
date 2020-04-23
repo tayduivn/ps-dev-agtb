@@ -19,7 +19,7 @@ class Bug59825Test extends TestCase
      *
      * @var string
      */
-    protected static $_module = 'Bugs';
+    private static $module = 'Bugs';
 
     /**
      * Rather than setting up and tearing down for each iteration of the data
@@ -45,11 +45,11 @@ class Bug59825Test extends TestCase
      * Tests not null parsers for views
      *
      * @param string $type A type of view to get a parser for
-     * @dataProvider _layoutProvider
+     * @dataProvider layoutProvider
      */
     public function testParserIsNotNullForLayoutType($type)
     {
-        $parser = ParserFactory::getParser($type, self::$_module);
+        $parser = ParserFactory::getParser($type, self::$module);
         $this->assertNotNull($parser, "Portal parser for $type in Bugs module is null");
     }
 
@@ -60,7 +60,7 @@ class Bug59825Test extends TestCase
      *
      * @return array
      */
-    public function _layoutProvider()
+    public static function layoutProvider()
     {
         return [
             // Basic types for all OOTB installations

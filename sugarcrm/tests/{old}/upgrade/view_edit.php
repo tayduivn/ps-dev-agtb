@@ -19,7 +19,7 @@
 
 class test_tttViewEdit extends ViewEdit
 {
-    function display()
+    public function display()
     {
         if (isset($this->bean->id)) {
             $this->ss->assign("FILE_OR_HIDDEN", "hidden");

@@ -17,7 +17,7 @@ require_once "modules/ProductTemplates/Formulas.php";
 
 class Bug44515Test extends TestCase
 {
-    var $customDir = "custom/modules/ProductTemplates/formulas";
+    public $customDir = "custom/modules/ProductTemplates/formulas";
 
     protected function setUp() : void
     {

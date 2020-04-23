@@ -15,12 +15,12 @@ use PHPUnit\Framework\TestCase;
 
 class Bug57571Test extends TestCase
 {
-    protected $_module = 'Quotes';
-    protected $_backedUpDefs = false;
-    protected $_field;
-    protected $_panel;
-    protected $_testFile = 'custom/modules/Quotes/metadata/editviewdefs.php';
-    
+    private $module = 'Quotes';
+    private $backedUpDefs = false;
+    private $field;
+    private $panel;
+    private $testFile = 'custom/modules/Quotes/metadata/editviewdefs.php';
+
     protected function setUp() : void
     {
         // Setup our environment
@@ -30,26 +30,26 @@ class Bug57571Test extends TestCase
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('moduleList');
         SugarTestHelper::setUp('app_list_strings');
-        SugarTestHelper::setUp('mod_strings', [$this->_module]);
+        SugarTestHelper::setUp('mod_strings', [$this->module]);
         
         // Backup the custom metadata for quotes if there is one
-        if (file_exists($this->_testFile)) {
-            rename($this->_testFile, $this->_testFile . '.backup');
-            $this->_backedUpDefs = true;
+        if (file_exists($this->testFile)) {
+            rename($this->testFile, $this->testFile . '.backup');
+            $this->backedUpDefs = true;
         }
         
         // Write it out
-        $this->_addTabIndex();
+        $this->addTabIndex();
     }
     
     protected function tearDown() : void
     {
         // Get rid of the custom file we created
-        unlink($this->_testFile);
+        unlink($this->testFile);
         
         // Restore if necessary
-        if ($this->_backedUpDefs) {
-            rename($this->_testFile . '.backup', $this->_testFile);
+        if ($this->backedUpDefs) {
+            rename($this->testFile . '.backup', $this->testFile);
         }
         
         SugarTestHelper::tearDown();
@@ -57,18 +57,18 @@ class Bug57571Test extends TestCase
     
     public function testTabIndexFoundInViewDefs()
     {
-        $parser = new GridLayoutMetaDataParser(MB_EDITVIEW, $this->_module);
+        $parser = new GridLayoutMetaDataParser(MB_EDITVIEW, $this->module);
         $defs = $parser->getLayout();
-        $this->assertNotEmpty($defs[$this->_panel], "No panel named $this->_panel found in the modified defs");
-        $panel = $defs[$this->_panel];
+        $this->assertNotEmpty($defs[$this->panel], "No panel named $this->panel found in the modified defs");
+        $panel = $defs[$this->panel];
         
-        $col = $this->_getColFromPanel($panel);
+        $col = $this->getColFromPanel($panel);
         $this->assertNotEmpty($col, "No column found with the correct field name for testing");
         $this->assertTrue(isset($col['tabindex']), "Tab index was not properly fetched for this test");
         $this->assertEquals($col['tabindex'], '1', 'Tab Index was not set to 1 as expected');
     }
     
-    protected function _addTabIndex()
+    private function addTabIndex()
     {
         require 'modules/Quotes/metadata/editviewdefs.php';
         foreach ($viewdefs['Quotes']['EditView']['panels'] as $panelname => $paneldef) {
@@ -76,8 +76,8 @@ class Bug57571Test extends TestCase
                 foreach ($row as $id => $value) {
                     if (is_string($value)) {
                         // Save the field name & panel
-                        $this->_panel = $panelname;
-                        $this->_field = $value;
+                        $this->panel = $panelname;
+                        $this->field = $value;
                         
                         // Rewrite the def
                         $viewdefs['Quotes']['EditView']['panels'][$panelname][$index][$id] = [
@@ -91,15 +91,15 @@ class Bug57571Test extends TestCase
             }
         }
         
-        mkdir_recursive(dirname($this->_testFile));
-        write_array_to_file('viewdefs', $viewdefs, $this->_testFile);
+        mkdir_recursive(dirname($this->testFile));
+        write_array_to_file('viewdefs', $viewdefs, $this->testFile);
     }
     
-    protected function _getColFromPanel($panel)
+    private function getColFromPanel($panel)
     {
         foreach ($panel as $row) {
             foreach ($row as $col) {
-                if (isset($col['name']) && $col['name'] == $this->_field) {
+                if (isset($col['name']) && $col['name'] == $this->field) {
                     return $col;
                 }
             }

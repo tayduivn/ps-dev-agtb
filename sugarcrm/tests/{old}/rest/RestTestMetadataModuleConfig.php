@@ -28,7 +28,7 @@ class RestTestMetadataModuleConfig extends RestTestBase
         }
 
         parent::setUp();
-        $this->_clearMetadataCache();
+        $this->clearMetadataCache();
     }
 
     protected function tearDown() : void
@@ -42,7 +42,7 @@ class RestTestMetadataModuleConfig extends RestTestBase
 
     public function testMetaDataReturnsForecastsConfigs()
     {
-        $restReply = $this->_restCall('metadata?typeFilter=&moduleFilter=Forecasts&platform=base');
+        $restReply = $this->restCall('metadata?typeFilter=&moduleFilter=Forecasts&platform=base');
 
         $this->assertArrayHasKey('hello', $restReply['reply']['modules']['Forecasts']['config']);
         $this->assertEquals('world', $restReply['reply']['modules']['Forecasts']['config']['hello']);
@@ -50,7 +50,7 @@ class RestTestMetadataModuleConfig extends RestTestBase
 
     public function testMetaDataReturnEmptyConfigForModule()
     {
-        $restReply = $this->_restCall('metadata?typeFilter=&moduleFilter=Accounts&platform=base');
+        $restReply = $this->restCall('metadata?typeFilter=&moduleFilter=Accounts&platform=base');
 
         $this->assertEmpty($restReply['reply']['modules']['Accounts']['config']);
     }

@@ -20,13 +20,13 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug49784Test extends TestCase
 {
-    var $hasCustomCasesLogicHookFile = false;
-    var $casesHookFile = 'custom/modules/Cases/logic_hooks.php';
-    var $casesCountFile = 'custom/modules/Cases/count.php';
-    var $user ='';
-    var $case ='';
-    var $account='';
-    var $email ='';
+    public $hasCustomCasesLogicHookFile = false;
+    public $casesHookFile = 'custom/modules/Cases/logic_hooks.php';
+    public $casesCountFile = 'custom/modules/Cases/count.php';
+    public $user ='';
+    public $case ='';
+    public $account='';
+    public $email ='';
 
     protected function setUp() : void
     {

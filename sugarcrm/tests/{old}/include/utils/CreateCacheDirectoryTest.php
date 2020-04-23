@@ -13,46 +13,26 @@
 use PHPUnit\Framework\TestCase;
 
 require_once 'include/utils/file_utils.php';
+require_once 'include/dir_inc.php';
 
 class CreateCacheDirectoryTest extends TestCase
 {
-    private $_original_cwd = '';
+    private $original_cwd = '';
 
     protected function setUp() : void
     {
         global $sugar_config;
-        $this->_original_cwd = getcwd();
-        $this->_original_cachedir = $sugar_config['cache_dir'];
+        $this->original_cwd = getcwd();
         $sugar_config['cache_dir'] = 'cache/';
         chdir(dirname(__FILE__));
-        $this->_removeCacheDirectory('./cache');
+        rmdir_recursive('./cache');
     }
 
     protected function tearDown() : void
     {
-        $this->_removeCacheDirectory('./cache');
-        chdir($this->_original_cwd);
-        $sugar_config['cache_dir'] = $this->_original_cwd;
-    }
-
-    private function _removeCacheDirectory($dir)
-    {
-        $dir_handle = @opendir($dir);
-        if ($dir_handle === false) {
-            return;
-        }
-        while (($filename = readdir($dir_handle)) !== false) {
-            if ($filename == '.' || $filename == '..') {
-                continue;
-            }
-            if (is_dir("{$dir}/{$filename}")) {
-                $this->_removecacheDirectory("{$dir}/{$filename}");
-            } else {
-                unlink("{$dir}/{$filename}");
-            }
-        }
-        closedir($dir_handle);
-        rmdir("{$dir}");
+        rmdir_recursive('./cache');
+        chdir($this->original_cwd);
+        $sugar_config['cache_dir'] = $this->original_cwd;
     }
 
     public function testCreatesCacheDirectoryIfDoesnotExist()

@@ -32,7 +32,7 @@ class RestExportTest extends RestTestBase
     {
         parent::tearDown();
 
-        $this->_cleanUpRecords();
+        $this->cleanUpRecords();
         $this->accounts = [];
     }
 
@@ -41,7 +41,7 @@ class RestExportTest extends RestTestBase
         // FIXME TY-1314: investigate why this test fails
         $chosenIndex = 13;
         // this filter should retrieve only one account.
-        $reply = $this->_restCall($this->massRestPath.'?filter='.urlencode('[{"name":"'.$this->accounts[$chosenIndex]->name.'"}]'));
+        $reply = $this->restCall($this->massRestPath.'?filter='.urlencode('[{"name":"'.$this->accounts[$chosenIndex]->name.'"}]'));
         foreach ($this->accounts as $i => $account) {
             if ($i == $chosenIndex) {
                 $this->assertContains($account->name, $reply['replyRaw'], 'Reply does not contain chosen account '.$i.' '.$account->name);
@@ -54,7 +54,7 @@ class RestExportTest extends RestTestBase
     public function testExportWithoutFilter()
     {
         // FIXME TY-1314: investigate why this test fails
-        $reply = $this->_restCall($this->massRestPath);
+        $reply = $this->restCall($this->massRestPath);
 
         // we want them all.
         foreach ($this->accounts as $i => $account) {
@@ -65,7 +65,7 @@ class RestExportTest extends RestTestBase
     public function testExportSample()
     {
         // FIXME TY-1314: investigate why this test fails
-        $reply = $this->_restCall($this->massRestPath.'?sample=true$all=true');
+        $reply = $this->restCall($this->massRestPath.'?sample=true$all=true');
         $this->assertContains('This is a sample import file', $reply['replyRaw'], 'Reply does not contain description text');
     }
 
@@ -78,7 +78,7 @@ class RestExportTest extends RestTestBase
         // FIXME TY-1314: investigate why this test fails
         // single uid as array
         $chosenIndex = 17;
-        $reply = $this->_restCall($this->massRestPath.'?uid[]='.$this->accounts[$chosenIndex]->id);
+        $reply = $this->restCall($this->massRestPath.'?uid[]='.$this->accounts[$chosenIndex]->id);
         foreach ($this->accounts as $i => $account) {
             if ($i == $chosenIndex) {
                 $this->assertContains($account->name, $reply['replyRaw'], 'Reply does not contain chosen account '.$i.' '.$account->name);
@@ -97,7 +97,7 @@ class RestExportTest extends RestTestBase
         }
         $accountString = rtrim($accountString, '&');
 
-        $reply = $this->_restCall($this->massRestPath.'?'.$accountString);
+        $reply = $this->restCall($this->massRestPath.'?'.$accountString);
         foreach ($this->accounts as $i => $account) {
             if ($i < $chosenIndex) {
                 $this->assertContains($account->name, $reply['replyRaw'], 'Reply does not contain chosen account '.$i.' '.$account->name);

@@ -17,14 +17,14 @@
  */
 class Bug57699Test extends SubPanelTestBase
 {
-    protected $_testModule = 'Accounts';
-    
+    protected $testModule = 'Accounts';
+
     protected function setUp() : void
     {
         parent::setUp();
         
         // Set up our test defs
-        $this->_testDefs = [
+        $this->testDefs = [
             'order' => 40,
             'title_key' => 'LBL_HISTORY_SUBPANEL_TITLE',
             'type' => 'collection',
@@ -53,7 +53,7 @@ class Bug57699Test extends SubPanelTestBase
      */
     public function testNotesSubpanelOnCallsAllowedOnDefaultInstallation()
     {
-        $subpanel = new aSubPanel('history', $this->_testDefs, $this->_testBean);
+        $subpanel = new aSubPanel('history', $this->testDefs, $this->testBean);
         $this->assertArrayHasKey('notes', $subpanel->sub_subpanels, "Notes module not found in History subpanel's Notes subpanel");
     }
     
@@ -66,11 +66,11 @@ class Bug57699Test extends SubPanelTestBase
     public function testNotesSubpanelOnCallsAllowedWhenNotesIsHiddenFromNav()
     {
         // Adjust the module list by removing Notes from nav and prove it's still there
-        $currentTabs = $this->_currentTabs;
+        $currentTabs = $this->currentTabs;
         unset($currentTabs['Notes']);
-        $this->_tabController->set_system_tabs($currentTabs);
+        $this->tabController->set_system_tabs($currentTabs);
         
-        $subpanel = new aSubPanel('history', $this->_testDefs, $this->_testBean);
+        $subpanel = new aSubPanel('history', $this->testDefs, $this->testBean);
         $this->assertArrayHasKey('notes', $subpanel->sub_subpanels, "Notes module not found in History subpanel's Notes subpanel after module list modified");
     }
     
@@ -82,16 +82,16 @@ class Bug57699Test extends SubPanelTestBase
     public function testNotesSubpanelOnCallsNotAllowedWhenNotesIsHiddenFromSubpanels()
     {
         // Remove Notes from the subpanel modules and test it is NOT shown
-        $hidden = $this->_currentSubpanels['hidden'];
+        $hidden = $this->currentSubpanels['hidden'];
         $hidden['notes'] = 'notes';
         $hiddenKeyArray = TabController::get_key_array($hidden);
-        $this->_subPanelDefinitions->set_hidden_subpanels($hiddenKeyArray);
+        $this->subPanelDefinitions->set_hidden_subpanels($hiddenKeyArray);
         
         // Rebuild the cache
-        $this->_subPanelDefinitions->get_all_subpanels(true);
-        $this->_subPanelDefinitions->get_hidden_subpanels();
+        $this->subPanelDefinitions->get_all_subpanels(true);
+        $this->subPanelDefinitions->get_hidden_subpanels();
         
-        $subpanel = new aSubPanel('history', $this->_testDefs, $this->_testBean);
+        $subpanel = new aSubPanel('history', $this->testDefs, $this->testBean);
         $this->assertEmpty($subpanel->sub_subpanels, "History subpanel's subpanel should be empty after Notes removed from subpanel module list");
     }
 }

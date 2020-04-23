@@ -16,7 +16,7 @@
  */
 class SugarTestNotificationUtilities
 {
-    private static $_createdNotifications = [];
+    private static $createdNotifications = [];
 
     public static function createNotification($id = '')
     {
@@ -24,7 +24,7 @@ class SugarTestNotificationUtilities
         $notification = BeanFactory::newBean('Notifications');
         $notification->name = 'SugarNotification' . $time;
         $notification->save();
-        self::$_createdNotifications[] = $notification;
+        self::$createdNotifications[] = $notification;
         return $notification;
     }
 
@@ -42,7 +42,7 @@ class SugarTestNotificationUtilities
     {
         $notification_ids = [];
         
-        foreach (self::$_createdNotifications as $notification) {
+        foreach (self::$createdNotifications as $notification) {
             $notification_ids[] = $notification->id;
         }
         

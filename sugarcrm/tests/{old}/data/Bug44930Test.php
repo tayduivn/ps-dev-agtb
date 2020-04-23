@@ -61,7 +61,7 @@ class Link44930
 {
     public $lastCall = '';
 
-    function __call($function, $arguments)
+    public function __call($function, $arguments)
     {
         if ($function == 'add') {
             $this->lastCall = reset($arguments);

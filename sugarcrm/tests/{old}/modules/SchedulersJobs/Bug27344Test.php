@@ -14,23 +14,21 @@ use PHPUnit\Framework\TestCase;
 
 class Bug27344Test extends TestCase
 {
-    private $_url;
-    private $_initial_server_port;
-    private $_has_initial_server_port;
-    private $_cron_test_file = 'cronUnitTestBug27344.php';
+    private $initialServerPort;
+    private $hasInitialServerPort;
 
     protected function setUp() : void
     {
-        $this->_has_initial_server_port = isset($_SERVER['SERVER_PORT']);
-        if ($this->_has_initial_server_port) {
-            $this->_initial_server_port = $_SERVER['SERVER_PORT'];
+        $this->hasInitialServerPort = isset($_SERVER['SERVER_PORT']);
+        if ($this->hasInitialServerPort) {
+            $this->initialServerPort = $_SERVER['SERVER_PORT'];
         }
     }
 
     protected function tearDown() : void
     {
-        if ($this->_has_initial_server_port) {
-            $_SERVER['SERVER_PORT'] = $this->_initial_server_port;
+        if ($this->hasInitialServerPort) {
+            $_SERVER['SERVER_PORT'] = $this->initialServerPort;
         } else {
             unset($_SERVER['SERVER_PORT']);
         }

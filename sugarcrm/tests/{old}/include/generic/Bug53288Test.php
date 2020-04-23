@@ -20,8 +20,8 @@ use PHPUnit\Framework\TestCase;
 
 class Bug53288Test extends TestCase
 {
-    protected $_oProspectList;
-    protected $_oProspect;
+    private $oProspectList;
+    private $oProspect;
 
     protected function setUp() : void
     {
@@ -30,15 +30,15 @@ class Bug53288Test extends TestCase
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('current_user', [true, 1]);
-        $this->_oProspect = SugarTestProspectUtilities::createProspect();
+        $this->oProspect = SugarTestProspectUtilities::createProspect();
         $this->createProspectList();
     }
 
     protected function tearDown() : void
     {
-        SugarTestProspectListsUtilities::removeProspectsListToProspectRelation($this->_oProspectList->id, $this->_oProspect->id);
+        SugarTestProspectListsUtilities::removeProspectsListToProspectRelation($this->oProspectList->id, $this->oProspect->id);
         SugarTestProspectUtilities::removeAllCreatedProspects();
-        SugarTestProspectListsUtilities::removeProspectLists($this->_oProspectList->id);
+        SugarTestProspectListsUtilities::removeProspectLists($this->oProspectList->id);
         $_REQUEST = [];
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestHelper::tearDown();
@@ -46,20 +46,20 @@ class Bug53288Test extends TestCase
 
     public function testAddProspectsToProspectList()
     {
-        $_REQUEST['prospect_list_id'] = $this->_oProspectList->id;
-        $_REQUEST['prospect_id'] = $this->_oProspect->id;
-        $_REQUEST['prospect_ids'] = [$this->_oProspect->id];
+        $_REQUEST['prospect_list_id'] = $this->oProspectList->id;
+        $_REQUEST['prospect_id'] = $this->oProspect->id;
+        $_REQUEST['prospect_ids'] = [$this->oProspect->id];
         $_REQUEST['return_type'] = 'addtoprospectlist';
         require 'include/generic/Save2.php';
-        $res = $GLOBALS['db']->query("SELECT * FROM prospect_lists_prospects WHERE prospect_list_id='{$this->_oProspectList->id}' AND related_id='{$this->_oProspect->id}'");
+        $res = $GLOBALS['db']->query("SELECT * FROM prospect_lists_prospects WHERE prospect_list_id='{$this->oProspectList->id}' AND related_id='{$this->oProspect->id}'");
         $row = $GLOBALS['db']->fetchByAssoc($res);
         $this->assertIsArray($row);
     }
 
     protected function createProspectList()
     {
-        $this->_oProspectList = new ProspectList();
-        $this->_oProspectList->name = "Bug53288Test_ProspectListName";
-        $this->_oProspectList->save();
+        $this->oProspectList = new ProspectList();
+        $this->oProspectList->name = "Bug53288Test_ProspectListName";
+        $this->oProspectList->save();
     }
 }

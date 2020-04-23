@@ -20,16 +20,16 @@ class Bug60664Test extends TestCase
     /**
      * Holder for the current mod_strings if there are any
      *
-     * @var null|array
+     * @var array
      */
-    protected static $_modStrings = null;
+    private static $modStrings;
 
     public static function setUpBeforeClass() : void
     {
         // We are working directly on mod_strings, so we won't set it up but rather
         // back it up if necessary
         if (isset($GLOBALS['mod_strings'])) {
-            self::$_modStrings = $GLOBALS['mod_strings'];
+            self::$modStrings = $GLOBALS['mod_strings'];
         }
         
         // Create our own test mod strings for this test
@@ -41,8 +41,8 @@ class Bug60664Test extends TestCase
     
     public static function tearDownAfterClass(): void
     {
-        if (self::$_modStrings) {
-            $GLOBALS['mod_strings'] = self::$_modStrings;
+        if (self::$modStrings) {
+            $GLOBALS['mod_strings'] = self::$modStrings;
         }
     }
 

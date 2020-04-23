@@ -26,13 +26,13 @@ class StoreQueryTest extends TestCase
         unset($GLOBALS['current_user']);
     }
     
-    function testGetStoredQuery()
+    public function testGetStoredQuery()
     {
         $query = StoreQuery::getStoredQueryForUser("Contacts");
         $this->assertTrue(empty($query), "StoreQuery::getStoredQueryForUser is not empty.");
     }
 
-    function testPopulateRequestOverride()
+    public function testPopulateRequestOverride()
     {
         $_REQUEST['lvso'] = 'desc';
         $_REQUEST['foo'] = 'bar';

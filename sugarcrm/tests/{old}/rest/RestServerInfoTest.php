@@ -31,7 +31,7 @@ class RestServerInfoTest extends RestTestBase
         // Test Server Fetch
         // SIDECAR-14 - Changed endpoint of the test to be consistent with moving
         // server info into the metadata api
-        $restReply = $this->_restCall("metadata?type_filter=server_info");
+        $restReply = $this->restCall("metadata?type_filter=server_info");
 
         $this->assertTrue(isset($restReply['reply']['server_info']['flavor']), "No Flavor Set");
         $this->assertTrue(isset($restReply['reply']['server_info']['version']), "No Version Set");

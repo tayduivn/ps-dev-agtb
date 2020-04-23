@@ -17,8 +17,8 @@
  */
 class SugarTestJobQueueUtilities
 {
-    private static $_jobQueue;
-    private static $_createdJobs = [];
+    private static $jobQueue;
+    private static $createdJobs = [];
 
     private function __construct()
     {
@@ -43,10 +43,10 @@ class SugarTestJobQueueUtilities
         $job->data = $data;
         $job->retry_count = 0;
         $job->assigned_user_id = $user->id;
-        self::$_jobQueue = new SugarJobQueue();
-        self::$_jobQueue->submitJob($job);
+        self::$jobQueue = new SugarJobQueue();
+        self::$jobQueue->submitJob($job);
         $job->runJob();
-        self::$_createdJobs[] = $job;
+        self::$createdJobs[] = $job;
         return $job;
     }
 
@@ -59,7 +59,7 @@ class SugarTestJobQueueUtilities
      */
     public static function removeAllCreatedJobs()
     {
-        if (empty(self::$_createdJobs)) {
+        if (empty(self::$createdJobs)) {
             return true;
         }
         $jobIds = self::getCreatedJobIds();
@@ -69,7 +69,7 @@ class SugarTestJobQueueUtilities
                 implode("','", $jobIds)
             )
         );
-        self::$_createdJobs = [];
+        self::$createdJobs = [];
         return true;
     }
 
@@ -83,7 +83,7 @@ class SugarTestJobQueueUtilities
     public static function getCreatedJobIds()
     {
         $jobIds = [];
-        foreach (self::$_createdJobs as $job) {
+        foreach (self::$createdJobs as $job) {
             // handle the use case where $job could be an array
             if ($job instanceof SchedulersJob) {
                 $jobIds[] = $job->id;
@@ -97,7 +97,7 @@ class SugarTestJobQueueUtilities
     public static function setCreatedJobs(array $jobs)
     {
         foreach ($jobs as $job) {
-            self::$_createdJobs[] = $job;
+            self::$createdJobs[] = $job;
         }
     }
 }

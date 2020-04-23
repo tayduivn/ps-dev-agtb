@@ -16,20 +16,20 @@ require_once 'include/utils/file_utils.php';
 
 class FileUtilsTests extends TestCase
 {
-    protected $_testFileWithExt   = 'upload/sugartestfile.txt';
-    protected $_testFileNoExt     = 'upload/noextfile';
-    protected $_testFileNotExists = 'thisfilenamedoesnotexist.doc';
+    private $testFileWithExt   = 'upload/sugartestfile.txt';
+    private $testFileNoExt     = 'upload/noextfile';
+    private $testFileNotExists = 'thisfilenamedoesnotexist.doc';
 
     protected function setUp() : void
     {
-        sugar_file_put_contents($this->_testFileWithExt, create_guid());
-        sugar_file_put_contents($this->_testFileNoExt, create_guid());
+        sugar_file_put_contents($this->testFileWithExt, create_guid());
+        sugar_file_put_contents($this->testFileNoExt, create_guid());
     }
 
     protected function tearDown() : void
     {
-        unlink($this->_testFileWithExt);
-        unlink($this->_testFileNoExt);
+        unlink($this->testFileWithExt);
+        unlink($this->testFileNoExt);
     }
 
     public function testIsMimeDetectableByFinfo()
@@ -51,8 +51,8 @@ class FileUtilsTests extends TestCase
     public function testEmail2GetMime()
     {
         $email = new Email();
-        $expected = $email->email2GetMime($this->_testFileWithExt);
-        $actual = $this->_getDefaultMimeType();
+        $expected = $email->email2GetMime($this->testFileWithExt);
+        $actual = $this->getDefaultMimeType();
         $this->assertEquals($expected, $actual, "Email bean returned $actual but was expected $expected");
     }
 
@@ -62,16 +62,16 @@ class FileUtilsTests extends TestCase
         $dl = new DownloadFile();
 
         // Assert #1 file with extension
-        $expected = $this->_getDefaultMimeType();
-        $actual   = $dl->getMimeType($this->_testFileWithExt);
+        $expected = $this->getDefaultMimeType();
+        $actual   = $dl->getMimeType($this->testFileWithExt);
         $this->assertEquals($expected, $actual, "Download File mime getter with extension returned $actual but expected $expected");
 
         // Assert #2 file with no extension
-        $actual = $dl->getMimeType($this->_testFileNoExt);
+        $actual = $dl->getMimeType($this->testFileNoExt);
         $this->assertEquals($expected, $actual, "Download File mime getter without extension returned $actual but expected $expected");
 
         // Assert #3 nonexistent file
-        $condition = $dl->getMimeType($this->_testFileNotExists);
+        $condition = $dl->getMimeType($this->testFileNotExists);
         $this->assertFalse($condition, "Nonexistent file mime getter expected (bool) FALSE but returned $condition");
     }
 
@@ -80,16 +80,16 @@ class FileUtilsTests extends TestCase
         $ul = new UploadFile();
 
         // Assert #1 file with extension
-        $expected = $this->_getDefaultMimeType();
-        $actual   = $ul->getMimeSoap($this->_testFileWithExt);
+        $expected = $this->getDefaultMimeType();
+        $actual   = $ul->getMimeSoap($this->testFileWithExt);
         $this->assertEquals($expected, $actual, "Upload File SOAP mime getter with extension returned $actual but expected $expected");
 
         // Assert #2 file with no extension
-        $actual = $ul->getMimeSoap($this->_testFileNoExt);
+        $actual = $ul->getMimeSoap($this->testFileNoExt);
         $this->assertEquals($expected, $actual, "Upload File SOAP mime getter without extension returned $actual but expected $expected");
 
         // Assert #3 nonexistent file
-        $actual = $ul->getMimeSoap($this->_testFileNotExists);
+        $actual = $ul->getMimeSoap($this->testFileNotExists);
         $this->assertEquals('application/octet-stream', $actual, "Nonexistent Upload File SOAP mime getter expected 'application/octet-stream' but returned $actual");
     }
 
@@ -98,18 +98,18 @@ class FileUtilsTests extends TestCase
         $ul = new UploadFile();
 
         // Assert #1 - file with extension and type set
-        $files = ['name' => $this->_testFileWithExt, 'type' => 'text/plain'];
+        $files = ['name' => $this->testFileWithExt, 'type' => 'text/plain'];
         $actual = $ul->getMime($files);
         $this->assertEquals('text/plain', $actual, "Upload File Get Mime should have returned 'text/plain' but returned $actual");
 
         // Assert #2 - file without extension and type set to octet-stream
-        $files = ['name' => $this->_testFileNoExt, 'type' => 'application/octet-stream', 'tmp_name' => $this->_testFileNoExt];
+        $files = ['name' => $this->testFileNoExt, 'type' => 'application/octet-stream', 'tmp_name' => $this->testFileNoExt];
         $actual = $ul->getMime($files);
-        $expected = $this->_getDefaultMimeType();
+        $expected = $this->getDefaultMimeType();
         $this->assertEquals($expected, $actual, "Upload File Get Mime on file with no extension should have returned $expected but returneded $actual");
 
         // Assert #3 - nonexistent file
-        $files = ['name' => $this->_testFileNotExists, 'type' => 'application/octet-stream', 'tmp_name' => $this->_testFileNotExists];
+        $files = ['name' => $this->testFileNotExists, 'type' => 'application/octet-stream', 'tmp_name' => $this->testFileNotExists];
         $actual = $ul->getMime($files);
         $this->assertEquals('application/octet-stream', $actual, "Upload File Get Mime on nonexistent file should have returned 'application/octet-stream' but returned $actual");
     }
@@ -154,7 +154,7 @@ class FileUtilsTests extends TestCase
         }
     }
 
-    protected function _getDefaultMimeType()
+    protected function getDefaultMimeType()
     {
         $mime = 'text/plain';
 

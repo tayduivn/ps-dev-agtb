@@ -14,7 +14,7 @@
 
 class SugarTestProspectUtilities
 {
-    private static $_createdProspects = [];
+    private static $createdProspects = [];
 
     private function __construct()
     {
@@ -48,7 +48,7 @@ class SugarTestProspectUtilities
             $prospect->id = $id;
         }
         $prospect->save();
-        self::$_createdProspects[] = $prospect;
+        self::$createdProspects[] = $prospect;
         return $prospect;
     }
 
@@ -86,7 +86,7 @@ class SugarTestProspectUtilities
     public static function getCreatedProspectIds()
     {
         $prospect_ids = [];
-        foreach (self::$_createdProspects as $prospect) {
+        foreach (self::$createdProspects as $prospect) {
             $prospect_ids[] = $prospect->id;
         }
         return $prospect_ids;

@@ -16,7 +16,7 @@ use PHPUnit\Framework\TestCase;
 class MetaDataLocationChangeTest extends TestCase
 {
     //BEGIN SUGARCRM flav=ent ONLY
-    protected $_expectedPortalModules = [
+    private $expectedPortalModules = [
         'Bugs' => 'Bugs',
         'Cases' => 'Cases',
         'Contacts' => 'Contacts',
@@ -37,7 +37,7 @@ class MetaDataLocationChangeTest extends TestCase
     }
     
     /**
-     * @dataProvider _mobileMetaDataFilesExistsProvider
+     * @dataProvider mobileMetaDataFilesExistsProvider
      * @param string $module The module name
      * @param string $view The view type
      * @param string $filepath The path to the metadata file
@@ -50,7 +50,7 @@ class MetaDataLocationChangeTest extends TestCase
     
     //BEGIN SUGARCRM flav=ent ONLY
     /**
-     * @dataProvider _portalMetaDataFilesExistsProvider
+     * @dataProvider portalMetaDataFilesExistsProvider
      * @param string $module The module name
      * @param string $view The view type
      * @param string $filepath The path to the metadata file
@@ -63,7 +63,7 @@ class MetaDataLocationChangeTest extends TestCase
     //END SUGARCRM flav=ent ONLY
     
     /**
-     * @dataProvider _platformList
+     * @dataProvider platformList
      * @param string $platform The platform to test
      */
     public function testMetaDataManagerReturnsCorrectPlatformResults($platform)
@@ -86,15 +86,15 @@ class MetaDataLocationChangeTest extends TestCase
         
         foreach ($layoutNode['children'] as $child) {
             $this->assertTrue(isset($child['module']), 'Module is not set in a child node');
-            $this->assertNotEmpty($this->_expectedPortalModules[$child['module']], "$child[module] not found in expected portal modules");
+            $this->assertNotEmpty($this->expectedPortalModules[$child['module']], "$child[module] not found in expected portal modules");
             $this->assertNotEmpty($child['children'], 'Children of the child not set');
-            $hasDetailView = $this->_hasRecordViewLink($child['children']);
+            $hasDetailView = $this->hasRecordViewLink($child['children']);
             $this->assertTrue($hasDetailView, "$child[module] does not have a record view link");
         }
     }
     //END SUGARCRM flav=ent ONLY
     
-    public function _mobileMetaDataFilesExistsProvider()
+    public static function mobileMetaDataFilesExistsProvider()
     {
         return [
             ['module' => 'Accounts', 'view' => 'edit', 'filepath' => 'modules/Accounts/clients/mobile/views/edit/edit.php'],
@@ -106,7 +106,7 @@ class MetaDataLocationChangeTest extends TestCase
     }
     
     //BEGIN SUGARCRM flav=ent ONLY
-    public function _portalMetaDataFilesExistsProvider()
+    public static function portalMetaDataFilesExistsProvider()
     {
         return [
             ['module' => 'Bugs', 'view' => 'record', 'filepath' => 'modules/Bugs/clients/portal/views/record/record.php'],
@@ -116,7 +116,7 @@ class MetaDataLocationChangeTest extends TestCase
     }
     //END SUGARCRM flav=ent ONLY
     
-    public function _platformList()
+    public static function platformList()
     {
         return [
             //BEGIN SUGARCRM flav=ent ONLY
@@ -127,7 +127,7 @@ class MetaDataLocationChangeTest extends TestCase
     }
     
     //BEGIN SUGARCRM flav=ent ONLY
-    protected function _hasRecordViewLink($child)
+    private function hasRecordViewLink($child)
     {
         foreach ($child as $props) {
             if (isset($props['action']) && strpos($props['action'], 'RecordView') !== false) {

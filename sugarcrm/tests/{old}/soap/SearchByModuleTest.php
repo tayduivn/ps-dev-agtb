@@ -36,9 +36,9 @@ class SearchByModuleTest extends SOAPTestCase
         $account->email1 = 'Bug4192Test@example.com';
         $account->save();
 
-        $this->_login();
+        $this->login();
         $params = [
-            'session' => $this->_sessionId,
+            'session' => $this->sessionId,
             'search_string' => '%4192Test%',
             'modules' => [
                 'Accounts',
@@ -47,7 +47,7 @@ class SearchByModuleTest extends SOAPTestCase
             'max_results' => 30,
         ];
 
-        $actual = $this->_soapClient->call('search_by_module', $params);
+        $actual = $this->soapClient->call('search_by_module', $params);
 
         $account->mark_deleted($account->id);
 

@@ -18,7 +18,7 @@ class AdvancedQueryTest extends TestCase
     /**
      * @var DBManager
      */
-    private $_db;
+    private $db;
     protected $created = [];
 
     protected $backupGlobals = false;
@@ -37,8 +37,8 @@ class AdvancedQueryTest extends TestCase
 
     protected function setUp() : void
     {
-        if (empty($this->_db)) {
-            $this->_db = DBManagerFactory::getInstance();
+        if (empty($this->db)) {
+            $this->db = DBManagerFactory::getInstance();
         }
     }
 
@@ -52,12 +52,12 @@ class AdvancedQueryTest extends TestCase
             $bean = BeanFactory::newBean('Contacts');
             $contactList = [];
             foreach ($this->contacts as $contact) {
-                $contactList[] = $this->_db->quoted($contact->id);
+                $contactList[] = $this->db->quoted($contact->id);
             }
 
-            $this->_db->query("DELETE FROM {$bean->getTableName()} WHERE id IN (" . implode(",", $contactList). ")");
+            $this->db->query("DELETE FROM {$bean->getTableName()} WHERE id IN (" . implode(",", $contactList). ")");
             if ($bean->hasCustomFields()) {
-                $this->_db->query(
+                $this->db->query(
                     "DELETE FROM {$bean->get_custom_table_name()} WHERE id_c IN (" . implode(",", $contactList) . ")"
                 );
             }
@@ -65,12 +65,12 @@ class AdvancedQueryTest extends TestCase
         if (!empty($this->accounts)) {
             $accountList = [];
             foreach ($this->accounts as $account) {
-                $accountList[] = $this->_db->quoted($account->id);
+                $accountList[] = $this->db->quoted($account->id);
             }
             $bean = BeanFactory::newBean('Accounts');
-            $this->_db->query("DELETE FROM {$bean->getTableName()} WHERE id IN (" . implode(",", $accountList) . ")");
+            $this->db->query("DELETE FROM {$bean->getTableName()} WHERE id IN (" . implode(",", $accountList) . ")");
             if ($bean->hasCustomFields()) {
-                $this->_db->query(
+                $this->db->query(
                     "DELETE FROM {$bean->get_custom_table_name()} WHERE id_c IN (" . implode(",", $accountList) . ")"
                 );
             }
@@ -79,12 +79,12 @@ class AdvancedQueryTest extends TestCase
         if (!empty($this->cases)) {
             $casesList = [];
             foreach ($this->cases as $case) {
-                $casesList[] = $this->_db->quoted($case->id);
+                $casesList[] = $this->db->quoted($case->id);
             }
             $bean = BeanFactory::newBean('Cases');
-            $this->_db->query("DELETE FROM {$bean->getTableName()} WHERE id IN (" . implode(",", $casesList) . ")");
+            $this->db->query("DELETE FROM {$bean->getTableName()} WHERE id IN (" . implode(",", $casesList) . ")");
             if ($bean->hasCustomFields()) {
-                $this->_db->query(
+                $this->db->query(
                     "DELETE FROM {$bean->get_custom_table_name()} WHERE id_c IN (" . implode(",", $casesList) . ")"
                 );
             }
@@ -93,12 +93,12 @@ class AdvancedQueryTest extends TestCase
         if (!empty($this->notes)) {
             $notesList = [];
             foreach ($this->notes as $note) {
-                $notesList[] = $this->_db->quoted($note->id);
+                $notesList[] = $this->db->quoted($note->id);
             }
             $bean = BeanFactory::newBean('Notes');
-            $this->_db->query("DELETE FROM {$bean->getTableName()} WHERE id IN (" . implode(",", $notesList) . ")");
+            $this->db->query("DELETE FROM {$bean->getTableName()} WHERE id IN (" . implode(",", $notesList) . ")");
             if ($bean->hasCustomFields()) {
-                $this->_db->query(
+                $this->db->query(
                     "DELETE FROM {$bean->get_custom_table_name()} WHERE id_c IN (" . implode(",", $notesList) . ")"
                 );
             }

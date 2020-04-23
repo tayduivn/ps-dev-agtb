@@ -20,7 +20,7 @@ class SetEntryEmailTest extends SOAPTestCase
     protected function setUp() : void
     {
         $this->acc = SugarTestAccountUtilities::createAccount();
-        $this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/service/v3_1/soap.php';
+        $this->soapURL = $GLOBALS['sugar_config']['site_url'].'/service/v3_1/soap.php';
         parent::setUp();
     }
 
@@ -37,7 +37,7 @@ class SetEntryEmailTest extends SOAPTestCase
 
     public function testEmailImport()
     {
-        $this->_login();
+        $this->login();
         $nv = [
             'from_addr' => 'test@test.com',
             'parent_type' => 'Accounts',
@@ -45,7 +45,7 @@ class SetEntryEmailTest extends SOAPTestCase
             'description' => 'test',
             'name' => 'Test Subject',
         ];
-        $result = $this->_soapClient->call('set_entry', ['session'=>$this->_sessionId,"module_name" => 'Emails', 'name_value_list' => $nv]);
+        $result = $this->soapClient->call('set_entry', ['session'=>$this->sessionId,"module_name" => 'Emails', 'name_value_list' => $nv]);
         $this->email_id = $result['id'];
         $email = new Email();
         $email->retrieve($this->email_id);

@@ -20,11 +20,11 @@ class UserTest extends TestCase
     /**
      * @var User
      */
-    protected $_user = null;
+    private $user;
 
     protected function setUp() : void
     {
-        $this->_user = SugarTestUserUtilities::createAnonymousUser();
+        $this->user = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
     }
 
@@ -109,27 +109,27 @@ class UserTest extends TestCase
 
     public function testSettingAUserPreference()
     {
-        $this->_user->setPreference('test_pref', 'dog');
+        $this->user->setPreference('test_pref', 'dog');
 
-        $this->assertEquals('dog', $this->_user->getPreference('test_pref'));
+        $this->assertEquals('dog', $this->user->getPreference('test_pref'));
     }
 
     public function testRemoveAUserPreference()
     {
-        $this->_user->setPreference('test_pref2', 'DeleteThis');
+        $this->user->setPreference('test_pref2', 'DeleteThis');
 
-        $this->assertEquals('DeleteThis', $this->_user->getPreference('test_pref2'));
+        $this->assertEquals('DeleteThis', $this->user->getPreference('test_pref2'));
 
-        $this->_user->removePreference('test_pref2');
+        $this->user->removePreference('test_pref2');
 
-        $this->assertEmpty($this->_user->getPreference('test_pref2'));
+        $this->assertEmpty($this->user->getPreference('test_pref2'));
     }
 
     public function testGettingSystemPreferenceWhenNoUserPreferenceExists()
     {
         $GLOBALS['sugar_config']['somewhackypreference'] = 'somewhackyvalue';
 
-        $result = $this->_user->getPreference('somewhackypreference');
+        $result = $this->user->getPreference('somewhackypreference');
 
         unset($GLOBALS['sugar_config']['somewhackypreference']);
 
@@ -146,7 +146,7 @@ class UserTest extends TestCase
         }
         $GLOBALS['sugar_config']['email_default_client'] = 'somewhackyvalue';
 
-        $result = $this->_user->getPreference('email_link_type');
+        $result = $this->user->getPreference('email_link_type');
 
         if (isset($oldvalue)) {
             $GLOBALS['sugar_config']['email_default_client'] = $oldvalue;
@@ -159,11 +159,11 @@ class UserTest extends TestCase
 
     public function testResetingUserPreferences()
     {
-        $this->_user->setPreference('test_pref', 'dog');
+        $this->user->setPreference('test_pref', 'dog');
 
-        $this->_user->resetPreferences();
+        $this->user->resetPreferences();
 
-        $this->assertNull($this->_user->getPreference('test_pref'));
+        $this->assertNull($this->user->getPreference('test_pref'));
     }
 
     /**
@@ -171,33 +171,33 @@ class UserTest extends TestCase
      */
     public function testCertainPrefsAreNotResetWhenResetingUserPreferences()
     {
-        $this->_user->setPreference('ut', '1');
-        $this->_user->setPreference('timezone', 'GMT');
+        $this->user->setPreference('ut', '1');
+        $this->user->setPreference('timezone', 'GMT');
 
-        $this->_user->resetPreferences();
+        $this->user->resetPreferences();
 
-        $this->assertEquals('1', $this->_user->getPreference('ut'));
-        $this->assertEquals('GMT', $this->_user->getPreference('timezone'));
+        $this->assertEquals('1', $this->user->getPreference('ut'));
+        $this->assertEquals('GMT', $this->user->getPreference('timezone'));
     }
 
     public function testSavingToMultipleUserPreferenceCategories()
     {
-        $this->_user->setPreference('test_pref1', 'dog', 0, 'cat1');
-        $this->_user->setPreference('test_pref2', 'dog', 0, 'cat2');
+        $this->user->setPreference('test_pref1', 'dog', 0, 'cat1');
+        $this->user->setPreference('test_pref2', 'dog', 0, 'cat2');
 
-        $this->_user->savePreferencesToDB();
+        $this->user->savePreferencesToDB();
 
         $this->assertEquals(
             'cat1',
             $GLOBALS['db']->getOne(
-                "SELECT category FROM user_preferences WHERE assigned_user_id = '{$this->_user->id}' AND category = 'cat1'"
+                "SELECT category FROM user_preferences WHERE assigned_user_id = '{$this->user->id}' AND category = 'cat1'"
             )
         );
 
         $this->assertEquals(
             'cat2',
             $GLOBALS['db']->getOne(
-                "SELECT category FROM user_preferences WHERE assigned_user_id = '{$this->_user->id}' AND category = 'cat2'"
+                "SELECT category FROM user_preferences WHERE assigned_user_id = '{$this->user->id}' AND category = 'cat2'"
             )
         );
     }
@@ -359,52 +359,52 @@ class UserTest extends TestCase
     public function testGetEmailClientPreference($emailLinkType, $emailDefaultClient, $expected)
     {
         $oc = $this->backUpConfig("email_default_client"); // original client
-        $op = $this->_user->getPreference("email_link_type"); // original preference
+        $op = $this->user->getPreference("email_link_type"); // original preference
         $os = $this->backUpSession("isMobile"); // original session
 
         $GLOBALS['sugar_config']['email_default_client'] = $emailDefaultClient;
-        $this->_user->setPreference("email_link_type", $emailLinkType);
+        $this->user->setPreference("email_link_type", $emailLinkType);
         unset($_SESSION["isMobile"]);
 
-        $actual = $this->_user->getEmailClientPreference();
+        $actual = $this->user->getEmailClientPreference();
         $this->assertEquals($expected, $actual);
 
         $this->restoreConfig("email_default_client", $oc);
-        $this->_user->setPreference("email_link_type", $op);
+        $this->user->setPreference("email_link_type", $op);
         $this->restoreSession("isMobile", $os);
     }
 
     public function testGetEmailClientPreference_SessionIsMobile()
     {
         $oc = $this->backUpConfig("email_default_client"); // original client
-        $op = $this->_user->getPreference("email_link_type"); // original preference
+        $op = $this->user->getPreference("email_link_type"); // original preference
         $os = $this->backUpSession("isMobile"); // original session
 
         $GLOBALS['sugar_config']['email_default_client'] = "sugar";
-        $this->_user->setPreference("email_link_type", "sugar");
+        $this->user->setPreference("email_link_type", "sugar");
         $_SESSION["isMobile"] = true;
 
         $expected = "other";
-        $actual   = $this->_user->getEmailClientPreference();
+        $actual   = $this->user->getEmailClientPreference();
         $this->assertEquals($expected, $actual, "Should have returned {$expected} when the session is mobile and PRO+");
 
         $this->restoreConfig("email_default_client", $oc);
-        $this->_user->setPreference("email_link_type", $op);
+        $this->user->setPreference("email_link_type", $op);
         $this->restoreSession("isMobile", $os);
     }
 
     public function testPrimaryEmailShouldBeCaseInsensitive()
     {
-        $this->_user->email1 = 'example@example.com';
-        $this->assertTrue($this->_user->isPrimaryEmail('EXAMPLE@example.com'));
+        $this->user->email1 = 'example@example.com';
+        $this->assertTrue($this->user->isPrimaryEmail('EXAMPLE@example.com'));
     }
 
     public function testUserPictureIsEmptyWhenItDoesntExist()
     {
-        $this->_user->picture = 'thisdoesntexist';
-        $this->_user->save();
+        $this->user->picture = 'thisdoesntexist';
+        $this->user->save();
 
-        $tuser = $this->_user->retrieve($this->_user->id);
+        $tuser = $this->user->retrieve($this->user->id);
 
         $this->assertEmpty($tuser->picture);
     }
@@ -412,10 +412,10 @@ class UserTest extends TestCase
     public function testUserPictureIsSetWhenFileExists()
     {
         touch('upload/test_user_picture');
-        $this->_user->picture = 'test_user_picture';
-        $this->_user->save();
+        $this->user->picture = 'test_user_picture';
+        $this->user->save();
 
-        $tuser = $this->_user->retrieve($this->_user->id);
+        $tuser = $this->user->retrieve($this->user->id);
 
         $this->assertEquals('test_user_picture', $tuser->picture);
 
@@ -521,7 +521,7 @@ class UserTest extends TestCase
     {
         $now = TimeDate::getInstance()->nowDb();
 
-        $last_login = $this->_user->updateLastLogin();
+        $last_login = $this->user->updateLastLogin();
 
         $this->assertEquals($now, $last_login);
     }

@@ -18,10 +18,10 @@ class RestFileTest extends RestFileTestBase
      */
     public function testGetList()
     {
-        $restReply = $this->_restCall('Contacts/' . $this->_contact_id . '/file/');
+        $restReply = $this->restCall('Contacts/' . $this->contact_id . '/file/');
         $this->assertNotEmpty($restReply['reply'], 'First reply was empty');
         $this->assertArrayHasKey('picture', $restReply['reply'], 'Missing response data for Contacts');
-        $restReply = $this->_restCall('Notes/' . $this->_note_id . '/file/');
+        $restReply = $this->restCall('Notes/' . $this->note_id . '/file/');
         $this->assertNotEmpty($restReply['reply'], 'Second reply was empty');
         $this->assertArrayHasKey('filename', $restReply['reply'], 'Missing response data for Notes');
     }
@@ -32,16 +32,16 @@ class RestFileTest extends RestFileTestBase
     {
         // Upload a temporary file
         $post = ['picture' => '@include/images/badge_256.png'];
-        $reply = $this->_restCall('Contacts/temp/file/picture', $post);
+        $reply = $this->restCall('Contacts/temp/file/picture', $post);
         $this->assertArrayHasKey('picture', $reply['reply'], 'Reply is missing field name key');
         $this->assertNotEmpty($reply['reply']['picture']['guid'], 'File guid not returned');
 
         // Grab the temporary file and make sure it is present
-        $fetch = $this->_restCall('Contacts/temp/file/picture/' . $reply['reply']['picture']['guid']);
+        $fetch = $this->restCall('Contacts/temp/file/picture/' . $reply['reply']['picture']['guid']);
         $this->assertNotEmpty($fetch['replyRaw'], 'Temporary file is missing');
 
         // Grab the temporary file and make sure it's been deleted
-        $fetch = $this->_restCall('Contacts/temp/file/picture/' . $reply['reply']['picture']['guid']);
+        $fetch = $this->restCall('Contacts/temp/file/picture/' . $reply['reply']['picture']['guid']);
         $this->assertArrayHasKey('error', $fetch['reply'], 'Temporary file is still here');
         $this->assertEquals('invalid_parameter', $fetch['reply']['error'], 'Expected error string not returned');
     }
@@ -52,14 +52,14 @@ class RestFileTest extends RestFileTestBase
     public function testPostUploadImageToContact()
     {
         $post = ['picture' => '@include/images/badge_256.png'];
-        $reply = $this->_restCall('Contacts/' . $this->_contact_id . '/file/picture', $post);
+        $reply = $this->restCall('Contacts/' . $this->contact_id . '/file/picture', $post);
         $this->assertArrayHasKey('picture', $reply['reply'], 'Reply is missing field name key');
         $this->assertNotEmpty($reply['reply']['picture']['name'], 'File name not returned');
 
         // Grab the contact and make sure it saved
-        $fetch = $this->_restCall('Contacts/' . $this->_contact_id);
+        $fetch = $this->restCall('Contacts/' . $this->contact_id);
         $this->assertNotEmpty($fetch['reply']['id'], 'Contact ID is missing');
-        $this->assertEquals($this->_contact_id, $fetch['reply']['id'], 'Known contact id and fetched contact id do not match');
+        $this->assertEquals($this->contact_id, $fetch['reply']['id'], 'Known contact id and fetched contact id do not match');
         $this->assertEquals($reply['reply']['picture']['name'], $fetch['reply']['picture'], 'Contact picture field and picture file name do not match');
     }
 
@@ -69,7 +69,7 @@ class RestFileTest extends RestFileTestBase
     public function testPostUploadImageToContactWithHTMLJSONResponse()
     {
         $post = ['picture' => '@include/images/badge_256.png'];
-        $reply = $this->_restCall('Contacts/' . $this->_contact_id . '/file/picture?format=sugar-html-json', $post);
+        $reply = $this->restCall('Contacts/' . $this->contact_id . '/file/picture?format=sugar-html-json', $post);
         //$this->assertArrayHasKey('picture', $reply['reply'], 'Reply is missing field name key');
         //$this->assertNotEmpty($reply['reply']['picture']['name'], 'File name not returned');
         $this->assertNull($reply['reply'], 'Decoded reply should be null');
@@ -88,12 +88,12 @@ class RestFileTest extends RestFileTestBase
     public function testPostUploadCrazyEncodingErrorStatusResponse()
     {
         $post = ['picture' => ''];
-        $reply = $this->_restCall('Contacts/' . $this->_contact_id . '/file/picture?format=sugar-html-json', $post);
+        $reply = $this->restCall('Contacts/' . $this->contact_id . '/file/picture?format=sugar-html-json', $post);
         $this->assertEquals($reply['info']['http_code'], 200, 'HTTP Code should be 200 (bug59995)');
 
 
         $post = ['picture' => ''];
-        $reply = $this->_restCall('Contacts/' . $this->_contact_id . '/file/picture', $post);
+        $reply = $this->restCall('Contacts/' . $this->contact_id . '/file/picture', $post);
         $this->assertEquals($reply['info']['http_code'], 413, 'HTTP Code is not 413 (bug59995)');
     }
 
@@ -103,7 +103,7 @@ class RestFileTest extends RestFileTestBase
     public function testPostUploadNonImageToContact()
     {
         $post = ['picture' => '@include/fonts/Courier.afm'];
-        $reply = $this->_restCall('Contacts/' . $this->_contact_id . '/file/picture', $post);
+        $reply = $this->restCall('Contacts/' . $this->contact_id . '/file/picture', $post);
         $this->assertArrayHasKey('error', $reply['reply'], 'Bug58324 - No error message returned');
         $this->assertEquals('fatal_error', $reply['reply']['error'], 'Bug58324 - Expected error string not returned');
     }
@@ -116,14 +116,14 @@ class RestFileTest extends RestFileTestBase
         $filename = 'include/images/badge_256.png';
         $opts = [CURLOPT_INFILESIZE => filesize($filename), CURLOPT_INFILE => fopen($filename, 'r')];
         $headers = ['Content-Type: image/png', 'filename: ' . basename($filename)];
-        $reply = $this->_restCall('Contacts/' . $this->_contact_id . '/file/picture', '', 'PUT', $opts, $headers);
+        $reply = $this->restCall('Contacts/' . $this->contact_id . '/file/picture', '', 'PUT', $opts, $headers);
         $this->assertArrayHasKey('picture', $reply['reply'], 'Reply is missing field name key');
         $this->assertNotEmpty($reply['reply']['picture']['name'], 'File name not returned');
 
         // Grab the contact and make sure it saved
-        $fetch = $this->_restCall('Contacts/' . $this->_contact_id);
+        $fetch = $this->restCall('Contacts/' . $this->contact_id);
         $this->assertNotEmpty($fetch['reply']['id'], 'Contact ID is missing');
-        $this->assertEquals($this->_contact_id, $fetch['reply']['id'], 'Known contact id and fetched contact id do not match');
+        $this->assertEquals($this->contact_id, $fetch['reply']['id'], 'Known contact id and fetched contact id do not match');
         $this->assertEquals($reply['reply']['picture']['name'], $fetch['reply']['picture'], 'Contact picture field and picture file name do not match');
     }
 
@@ -132,7 +132,7 @@ class RestFileTest extends RestFileTestBase
      */
     public function testDeleteImageFromContact()
     {
-        $reply = $this->_restCall('Contacts/' . $this->_contact_id . '/file/picture', '', 'DELETE');
+        $reply = $this->restCall('Contacts/' . $this->contact_id . '/file/picture', '', 'DELETE');
         $this->assertArrayHasKey('picture', $reply['reply'], 'Reply is missing fields');
     }
     /**
@@ -140,15 +140,15 @@ class RestFileTest extends RestFileTestBase
      */
     public function testPostUploadFileToNote()
     {
-        $post = ['filename' => '@' . $this->_testfile1];
-        $restReply = $this->_restCall('Notes/' . $this->_note_id . '/file/filename', $post);
+        $post = ['filename' => '@' . $this->testfile1];
+        $restReply = $this->restCall('Notes/' . $this->note_id . '/file/filename', $post);
         $this->assertArrayHasKey('filename', $restReply['reply'], 'Reply is missing file name key');
         $this->assertNotEmpty($restReply['reply']['filename']['name'], 'File name returned empty');
 
         // Now get the note to make sure it saved
-        $fetch = $this->_restCall('Notes/' . $this->_note_id);
+        $fetch = $this->restCall('Notes/' . $this->note_id);
         $this->assertNotEmpty($fetch['reply']['id'], 'Note id not returned');
-        $this->assertEquals($this->_note_id, $fetch['reply']['id'], 'Known note id and fetched note id do not match');
+        $this->assertEquals($this->note_id, $fetch['reply']['id'], 'Known note id and fetched note id do not match');
         $this->assertEquals($restReply['reply']['filename']['name'], $fetch['reply']['filename']);
     }
 
@@ -157,15 +157,15 @@ class RestFileTest extends RestFileTestBase
      */
     public function testPutUploadFileToNote()
     {
-        $params = ['filename' => $this->_testfile2, 'type' => 'text/plain'];
-        $restReply = $this->_restCallFilePut('Notes/' . $this->_note_id . '/file/filename', $params);
+        $params = ['filename' => $this->testfile2, 'type' => 'text/plain'];
+        $restReply = $this->restCallFilePut('Notes/' . $this->note_id . '/file/filename', $params);
         $this->assertArrayHasKey('filename', $restReply['reply'], 'Reply is missing file name key');
         $this->assertNotEmpty($restReply['reply']['filename']['name'], 'File name returned empty');
 
         // Now get the note to make sure it saved
-        $fetch = $this->_restCall('Notes/' . $this->_note_id);
+        $fetch = $this->restCall('Notes/' . $this->note_id);
         $this->assertNotEmpty($fetch['reply']['id'], 'Note id not returned');
-        $this->assertEquals($this->_note_id, $fetch['reply']['id'], 'Known note id and fetched note id do not match');
+        $this->assertEquals($this->note_id, $fetch['reply']['id'], 'Known note id and fetched note id do not match');
         $this->assertEquals($restReply['reply']['filename']['name'], $fetch['reply']['filename']);
     }
 
@@ -174,7 +174,7 @@ class RestFileTest extends RestFileTestBase
      */
     public function testDeleteFileFromNote()
     {
-        $reply = $this->_restCall('Notes/' . $this->_note_id . '/file/filename', '', 'DELETE');
+        $reply = $this->restCall('Notes/' . $this->note_id . '/file/filename', '', 'DELETE');
         $this->assertArrayHasKey('filename', $reply['reply'], 'Reply is missing fields');
     }
 }

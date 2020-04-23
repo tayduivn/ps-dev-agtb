@@ -68,10 +68,10 @@ class RestDateTimeTest extends RestTestBase
         
         $GLOBALS['db']->commit();
         
-        $restReply = $this->_restCall("Opportunities/{$this->opp->id}");
+        $restReply = $this->restCall("Opportunities/{$this->opp->id}");
         $this->assertEquals('2012-11-10', $restReply['reply']['date_closed'], "POST REST request comparison failed to match");
 
-        $restReply = $this->_restCall(
+        $restReply = $this->restCall(
             "Opportunities/{$this->opp->id}",
             json_encode(['date_closed'=>'2012-10-11']),
             'PUT'
@@ -105,12 +105,12 @@ class RestDateTimeTest extends RestTestBase
         $GLOBALS['current_user']->setPreference('timezone', 'America/Boise');
         $GLOBALS['current_user']->savePreferencesToDB();
 
-        $restReply = $this->_restCall("Meetings/{$this->meeting->id}");
+        $restReply = $this->restCall("Meetings/{$this->meeting->id}");
         $this->assertEquals($restReply['reply']['date_start'], '2012-12-13T10:00:00-07:00');
         $this->assertEquals($restReply['reply']['date_end'], '2012-12-13T10:15:00-07:00');
 
         // Check saving without offset
-        $restReply = $this->_restCall(
+        $restReply = $this->restCall(
             "Meetings/{$this->meeting->id}",
             json_encode(['date_end'=>'2012-12-13T10:15:00']),
             'PUT'
@@ -121,7 +121,7 @@ class RestDateTimeTest extends RestTestBase
 
 
         // Check saving with the user's offset
-        $restReply = $this->_restCall(
+        $restReply = $this->restCall(
             "Meetings/{$this->meeting->id}",
             json_encode(['date_end'=>'2012-12-13T10:15:00-07:00']),
             'PUT'
@@ -131,7 +131,7 @@ class RestDateTimeTest extends RestTestBase
         $this->assertEquals('2012-12-13 17:15:00', date('Y-m-d H:i:s', strtotime($row['date_end'])));
 
         // Check saving in GMT
-        $restReply = $this->_restCall(
+        $restReply = $this->restCall(
             "Meetings/{$this->meeting->id}",
             json_encode(['date_end'=>'2012-12-13T17:15:00Z']),
             'PUT'
@@ -141,7 +141,7 @@ class RestDateTimeTest extends RestTestBase
         $this->assertEquals('2012-12-13 17:15:00', date('Y-m-d H:i:s', strtotime($row['date_end'])));
 
         // Check saving with the user's offset (in JS format)
-        $restReply = $this->_restCall(
+        $restReply = $this->restCall(
             "Meetings/{$this->meeting->id}",
             json_encode(['date_end'=>'2012-12-13T10:15:00.1234-07:00']),
             'PUT'
@@ -151,7 +151,7 @@ class RestDateTimeTest extends RestTestBase
         $this->assertEquals('2012-12-13 17:15:00', date('Y-m-d H:i:s', strtotime($row['date_end'])));
 
         // Check saving in GMT (in JS format)
-        $restReply = $this->_restCall(
+        $restReply = $this->restCall(
             "Meetings/{$this->meeting->id}",
             json_encode(['date_end'=>'2012-12-13T17:15:00.1234Z']),
             'PUT'
@@ -167,12 +167,12 @@ class RestDateTimeTest extends RestTestBase
         // Need to logout so the perference changes will come in to effect.
         unset($this->authToken);
 
-        $restReply = $this->_restCall("Meetings/{$this->meeting->id}");
+        $restReply = $this->restCall("Meetings/{$this->meeting->id}");
         $this->assertEquals($restReply['reply']['date_start'], '2012-12-13T19:00:00+02:00');
         $this->assertEquals($restReply['reply']['date_end'], '2012-12-13T19:15:00+02:00');
 
         // Check saving without offset
-        $restReply = $this->_restCall(
+        $restReply = $this->restCall(
             "Meetings/{$this->meeting->id}",
             json_encode(['date_end'=>'2012-12-13T19:15:00']),
             'PUT'
@@ -182,7 +182,7 @@ class RestDateTimeTest extends RestTestBase
         $this->assertEquals('2012-12-13 17:15:00', date('Y-m-d H:i:s', strtotime($row['date_end'])));
 
         // Check saving without offset (in JS format)
-        $restReply = $this->_restCall(
+        $restReply = $this->restCall(
             "Meetings/{$this->meeting->id}",
             json_encode(['date_end'=>'2012-12-13T19:15:00.1234']),
             'PUT'
@@ -193,7 +193,7 @@ class RestDateTimeTest extends RestTestBase
 
 
         // Check saving with the user's offset
-        $restReply = $this->_restCall(
+        $restReply = $this->restCall(
             "Meetings/{$this->meeting->id}",
             json_encode(['date_end'=>'2012-12-13T19:15:00+02:00']),
             'PUT'
@@ -203,7 +203,7 @@ class RestDateTimeTest extends RestTestBase
         $this->assertEquals('2012-12-13 17:15:00', date('Y-m-d H:i:s', strtotime($row['date_end'])));
 
         // Check saving in GMT
-        $restReply = $this->_restCall(
+        $restReply = $this->restCall(
             "Meetings/{$this->meeting->id}",
             json_encode(['date_end'=>'2012-12-13T17:15:00Z']),
             'PUT'
@@ -235,7 +235,7 @@ class RestDateTimeTest extends RestTestBase
         $GLOBALS['current_user']->savePreferencesToDB();
 
         // Check saving without offset
-        $restReply = $this->_restCall(
+        $restReply = $this->restCall(
             "Meetings/{$this->meeting->id}",
             json_encode(['date_end'=>'this meeting will never end']),
             'PUT'
@@ -266,7 +266,7 @@ class RestDateTimeTest extends RestTestBase
         $GLOBALS['current_user']->savePreferencesToDB();
 
         // Check saving without offset
-        $restReply = $this->_restCall(
+        $restReply = $this->restCall(
             "Meetings/{$this->meeting->id}",
             json_encode(['date_start'=>'','date_end'=>'']),
             'PUT'

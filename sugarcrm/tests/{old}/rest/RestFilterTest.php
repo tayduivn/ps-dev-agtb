@@ -63,7 +63,7 @@ class RestFilterTest extends RestTestBase
 
         $GLOBALS['db']->query("DELETE FROM sugarfavorites WHERE created_by = '".$GLOBALS['current_user']->id."'");
 
-        $this->_cleanUpRecords();
+        $this->cleanUpRecords();
         SugarTestFilterUtilities::removeAllCreatedFilters();
     }
 
@@ -72,7 +72,7 @@ class RestFilterTest extends RestTestBase
      */
     public function testSimpleFilter()
     {
-        $reply = $this->_restCall('Accounts/filter?filter='.urlencode('[{"name":"TEST 7 Account"}]').'&fields=id,name');
+        $reply = $this->restCall('Accounts/filter?filter='.urlencode('[{"name":"TEST 7 Account"}]').'&fields=id,name');
         $this->assertEquals('TEST 7 Account', $reply['reply']['records'][0]['name'], 'Simple: The name is not set correctly');
         $this->assertEquals(-1, $reply['reply']['next_offset'], 'Simple: Next offset is not set correctly');
         $this->assertEquals(1, count($reply['reply']['records']), 'Simple: Returned too many results');
@@ -83,15 +83,15 @@ class RestFilterTest extends RestTestBase
      */
     public function testSimpleFilterWithOffset()
     {
-        $reply = $this->_restCall('Accounts/filter?filter='.urlencode('[{"name":{"$starts":"TEST 1"}}]').'&fields=id,name&max_num=5');
+        $reply = $this->restCall('Accounts/filter?filter='.urlencode('[{"name":{"$starts":"TEST 1"}}]').'&fields=id,name&max_num=5');
         $this->assertEquals(5, $reply['reply']['next_offset'], 'Offset-1: Next offset is not set correctly');
         $this->assertEquals(5, count($reply['reply']['records']), 'Offset-1: Returned too many results');
 
-        $reply = $this->_restCall('Accounts/filter?filter='.urlencode('[{"name":{"$starts":"TEST 1"}}]').'&fields=id,name&max_num=5&offset=5');
+        $reply = $this->restCall('Accounts/filter?filter='.urlencode('[{"name":{"$starts":"TEST 1"}}]').'&fields=id,name&max_num=5&offset=5');
         $this->assertEquals(10, $reply['reply']['next_offset'], 'Offset-2: Next offset is not set correctly');
         $this->assertEquals(5, count($reply['reply']['records']), 'Offset-2: Returned too many results');
 
-        $reply = $this->_restCall('Accounts/filter?filter='.urlencode('[{"name":{"$starts":"TEST 1"}}]').'&fields=id,name&max_num=5&offset=10');
+        $reply = $this->restCall('Accounts/filter?filter='.urlencode('[{"name":{"$starts":"TEST 1"}}]').'&fields=id,name&max_num=5&offset=10');
         $this->assertEquals(-1, $reply['reply']['next_offset'], 'Offset-3: Next offset is not set correctly');
         $this->assertEquals(1, count($reply['reply']['records']), 'Offset-3: Returned too many results');
     }
@@ -101,7 +101,7 @@ class RestFilterTest extends RestTestBase
      */
     public function testOrFilter()
     {
-        $reply = $this->_restCall('Accounts/filter?filter='.urlencode('[{"$or":[{"name":"TEST 7 Account"},{"name":"TEST 17 Account"}]}]').'&fields=id,name&order_by=name:ASC');
+        $reply = $this->restCall('Accounts/filter?filter='.urlencode('[{"$or":[{"name":"TEST 7 Account"},{"name":"TEST 17 Account"}]}]').'&fields=id,name&order_by=name:ASC');
         $this->assertEquals('TEST 17 Account', $reply['reply']['records'][0]['name'], 'Or-1: The name is not set correctly');
         $this->assertEquals('TEST 7 Account', $reply['reply']['records'][1]['name'], 'Or-2: The name is not set correctly');
         $this->assertEquals(-1, $reply['reply']['next_offset'], 'Or: Next offset is not set correctly');
@@ -113,7 +113,7 @@ class RestFilterTest extends RestTestBase
      */
     public function testAndFilter()
     {
-        $reply = $this->_restCall('Accounts/filter?filter='.urlencode('[{"$and":[{"name":{"$starts":"TEST 1"}},{"billing_address_postalcode":"70210"}]}]').'&fields=id,name&order_by=name:ASC');
+        $reply = $this->restCall('Accounts/filter?filter='.urlencode('[{"$and":[{"name":{"$starts":"TEST 1"}},{"billing_address_postalcode":"70210"}]}]').'&fields=id,name&order_by=name:ASC');
         $this->assertEquals('TEST 17 Account', $reply['reply']['records'][0]['name'], 'And: The name is not set correctly');
         $this->assertEquals(-1, $reply['reply']['next_offset'], 'And: Next offset is not set correctly');
         $this->assertEquals(1, count($reply['reply']['records']), 'And: Returned too many results');
@@ -136,7 +136,7 @@ class RestFilterTest extends RestTestBase
         $fav->deleted = 0;
         $fav->save();
 
-        $reply = $this->_restCall('Accounts/filter?filter='.urlencode('[{"$favorite":""}]').'&fields=id,name&order_by=name:ASC');
+        $reply = $this->restCall('Accounts/filter?filter='.urlencode('[{"$favorite":""}]').'&fields=id,name&order_by=name:ASC');
         $this->assertEquals('TEST 4 Account', $reply['reply']['records'][0]['name'], 'Favorites: The name is not set correctly');
         $this->assertEquals(-1, $reply['reply']['next_offset'], 'Favorites: Next offset is not set correctly');
         $this->assertEquals(1, count($reply['reply']['records']), 'Favorites: Returned too many results');
@@ -159,7 +159,7 @@ class RestFilterTest extends RestTestBase
         $fav->deleted = 0;
         $fav->save();
 
-        $reply = $this->_restCall('Accounts/filter?filter='.urlencode('[{"$favorite":"opportunities"}]').'&fields=id,name&order_by=name:ASC');
+        $reply = $this->restCall('Accounts/filter?filter='.urlencode('[{"$favorite":"opportunities"}]').'&fields=id,name&order_by=name:ASC');
         $this->assertEquals('TEST 3 Account', $reply['reply']['records'][0]['name'], 'FavRelated: The name is not set correctly');
         $this->assertEquals(-1, $reply['reply']['next_offset'], 'FavRelated: Next offset is not set correctly');
         $this->assertEquals(1, count($reply['reply']['records']), 'FavRelated: Returned too many results');
@@ -194,7 +194,7 @@ class RestFilterTest extends RestTestBase
         $fav->deleted = 0;
         $fav->save();
 
-        $reply = $this->_restCall('Accounts/filter?filter='.urlencode('[{"$or":[{"$favorite":"opportunities"},{"$favorite":"notes"}]}]').'&fields=id,name&order_by=name:ASC');
+        $reply = $this->restCall('Accounts/filter?filter='.urlencode('[{"$or":[{"$favorite":"opportunities"},{"$favorite":"notes"}]}]').'&fields=id,name&order_by=name:ASC');
         $this->assertEquals('TEST 0 Account', $reply['reply']['records'][0]['name'], 'FavMulRelated: The first name is not set correctly');
         $this->assertEquals('TEST 4 Account', $reply['reply']['records'][1]['name'], 'FavMulRelated: The second name is not set correctly');
         $this->assertEquals(-1, $reply['reply']['next_offset'], 'FavMulRelated: Next offset is not set correctly');
@@ -211,7 +211,7 @@ class RestFilterTest extends RestTestBase
         $this->accounts[7]->assigned_user_id = $GLOBALS['current_user']->id;
         $this->accounts[7]->save();
 
-        $reply = $this->_restCall('Accounts/filter?filter='.urlencode('[{"$owner":""}]').'&fields=id,name&order_by=name:ASC');
+        $reply = $this->restCall('Accounts/filter?filter='.urlencode('[{"$owner":""}]').'&fields=id,name&order_by=name:ASC');
         $this->assertEquals('TEST 7 Account', $reply['reply']['records'][0]['name'], 'Owner: The name is not set correctly');
         $this->assertEquals(-1, $reply['reply']['next_offset'], 'Owner: Next offset is not set correctly');
         $this->assertEquals(1, count($reply['reply']['records']), 'Owner: Returned too many results');
@@ -227,7 +227,7 @@ class RestFilterTest extends RestTestBase
         $this->opps[7]->assigned_user_id = $GLOBALS['current_user']->id;
         $this->opps[7]->save();
 
-        $reply = $this->_restCall('Accounts/filter?filter='.urlencode('[{"$owner":"opportunities"}]').'&fields=id,name&order_by=name:ASC');
+        $reply = $this->restCall('Accounts/filter?filter='.urlencode('[{"$owner":"opportunities"}]').'&fields=id,name&order_by=name:ASC');
         $this->assertEquals('TEST 3 Account', $reply['reply']['records'][0]['name'], 'OwnerRelated: The name is not set correctly');
         $this->assertEquals(-1, $reply['reply']['next_offset'], 'OwnerRelated: Next offset is not set correctly');
         $this->assertEquals(1, count($reply['reply']['records']), 'OwnerRelated: Returned too many results');
@@ -244,21 +244,21 @@ class RestFilterTest extends RestTestBase
         $this->assertEquals($filter->name, 'test_user_filter');
         $this->assertEquals($filter->filter_definition, '{"name":"TEST 1 Account"}');
 
-        $reply = $this->_restCall('Filters/'. $filter->id);
+        $reply = $this->restCall('Filters/'. $filter->id);
         $this->assertEquals('test_user_filter', $reply['reply']['name']);
         $this->assertEquals(json_decode('{"name":"TEST 1 Account"}', true), $reply['reply']['filter_definition']);
 
-        $reply = $this->_restCall('Filters', json_encode(['name'=>'test_user_filter2','filter_definition'=>'TEST 2 Account']), 'POST');
+        $reply = $this->restCall('Filters', json_encode(['name'=>'test_user_filter2','filter_definition'=>'TEST 2 Account']), 'POST');
         $this->assertEquals('test_user_filter2', $reply['reply']['name']);
         $this->assertEquals('TEST 2 Account', $reply['reply']['filter_definition']);
 
         $id = $reply['reply']['id'];
 
-        $reply = $this->_restCall('Filters/' . $id, json_encode(['name'=>'test_user_filter3','filter_definition'=>'TEST 3 Account']), 'PUT');
+        $reply = $this->restCall('Filters/' . $id, json_encode(['name'=>'test_user_filter3','filter_definition'=>'TEST 3 Account']), 'PUT');
         $this->assertEquals('test_user_filter3', $reply['reply']['name']);
         $this->assertEquals('TEST 3 Account', $reply['reply']['filter_definition']);
 
-        $reply = $this->_restCall('Filters/' . $id, [], 'DELETE');
+        $reply = $this->restCall('Filters/' . $id, [], 'DELETE');
         $this->assertEquals($id, $reply['reply']['id']);
     }
 
@@ -273,13 +273,13 @@ class RestFilterTest extends RestTestBase
         $this->assertEquals($filter->name, 'test_user_filter');
         $this->assertEquals($filter->filter_definition, '{"name":"TEST 1 Account"}');
 
-        $reply = $this->_restCall('Filters/Accounts/used/', json_encode(['filters' => [$filter->id,]]), 'PUT');
+        $reply = $this->restCall('Filters/Accounts/used/', json_encode(['filters' => [$filter->id,]]), 'PUT');
         $this->assertEquals($filter->id, $reply['reply'][0]['id'], 'Test Put');
 
-        $reply = $this->_restCall('Filters/Accounts/used/');
+        $reply = $this->restCall('Filters/Accounts/used/');
         $this->assertEquals($filter->id, $reply['reply'][0]['id'], 'Test Get');
 
-        $reply = $this->_restCall('Filters/Accounts/used/'. $filter->id, [], 'DELETE');
+        $reply = $this->restCall('Filters/Accounts/used/'. $filter->id, [], 'DELETE');
 
         if (!empty($reply['reply'])) {
             foreach ($reply['reply'] as $record) {
@@ -298,7 +298,7 @@ class RestFilterTest extends RestTestBase
         $account_id = $this->accounts[0]->id;
         $oppty_id = $this->opps[0]->id;
         $url = 'Accounts/' . $account_id . '/link/opportunities/filter?filter='.urlencode('[{"name":{"$starts":"TEST 0 Opportunity"}}]');
-        $reply = $this->_restCall($url);
+        $reply = $this->restCall($url);
         $this->assertEquals(1, count($reply['reply']['records']));
         $this->assertEquals($oppty_id, $reply['reply']['records'][0]['id']);
     }
@@ -308,7 +308,7 @@ class RestFilterTest extends RestTestBase
      */
     public function testNoFilter()
     {
-        $reply = $this->_restCall('Accounts/filter?max_num=10');
+        $reply = $this->restCall('Accounts/filter?max_num=10');
         $this->assertNotEmpty($reply['reply'], "Empty filter returned no results.");
         $this->assertEquals(10, $reply['reply']['next_offset'], "Empty filter did not return at least 10 results.");
     }

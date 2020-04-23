@@ -17,17 +17,17 @@ require_once 'include/utils/file_utils.php';
 
 class Bug55455Test extends TestCase
 {
-    protected $_actualFile = 'upload/sugartestfile.txt';
-    protected $_mockFile   = 'thisfilenamedoesnotexist.doc';
+    private $actualFile = 'upload/sugartestfile.txt';
+    private $mockFile   = 'thisfilenamedoesnotexist.doc';
     
     protected function setUp() : void
     {
-        sugar_file_put_contents($this->_actualFile, create_guid());
+        sugar_file_put_contents($this->actualFile, create_guid());
     }
     
     protected function tearDown() : void
     {
-        unlink($this->_actualFile);
+        unlink($this->actualFile);
     }
     
     public function testProperMimeTypeFetching()
@@ -36,11 +36,11 @@ class Bug55455Test extends TestCase
         // Additionally, in some odd cases, PHP errors on finfo and mime_content_type
         // calls and, when this happens, the mime getter will return application/octet-stream
         $dl = new DownloadFile();
-        $actual = $dl->getMimeType($this->_actualFile);
+        $actual = $dl->getMimeType($this->actualFile);
         $expected = mime_is_detectable() ? 'text/plain' : 'application/octet-stream';
         $this->assertEquals($expected, $actual, "Returned mime type [$actual] was not $expected");
 
-        $mime = $dl->getMimeType($this->_mockFile);
+        $mime = $dl->getMimeType($this->mockFile);
         $this->assertFalse($mime, "$mime should be (boolean) FALSE");
     }
 }

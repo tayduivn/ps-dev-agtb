@@ -16,7 +16,7 @@ use PHPUnit\Framework\TestCase;
 class OracleManagerTest extends TestCase
 {
     /** @var OracleManager */
-    protected $_db = null;
+    private $db;
 
     public static function setUpBeforeClass() : void
     {
@@ -33,19 +33,19 @@ class OracleManagerTest extends TestCase
 
     protected function setUp() : void
     {
-        $this->_db = new OracleManager();
+        $this->db = new OracleManager();
     }
 
     public function testQuote()
     {
         $string = "'dog eat ";
-        $this->assertEquals($this->_db->quote($string), "''dog eat ");
+        $this->assertEquals($this->db->quote($string), "''dog eat ");
     }
 
     public function testArrayQuote()
     {
         $string = ["'dog eat "];
-        $this->_db->arrayQuote($string);
+        $this->db->arrayQuote($string);
         $this->assertEquals($string, ["''dog eat "]);
     }
 
@@ -174,7 +174,7 @@ class OracleManagerTest extends TestCase
      */
     public function testConvert(array $parameters, $result)
     {
-        $this->assertEquals($result, call_user_func_array([$this->_db, "convert"], $parameters));
+        $this->assertEquals($result, call_user_func_array([$this->db, "convert"], $parameters));
     }
 
      /**
@@ -182,7 +182,7 @@ class OracleManagerTest extends TestCase
       */
     public function testConcat()
     {
-        $ret = $this->_db->concat('foo', ['col1','col2','col3']);
+        $ret = $this->db->concat('foo', ['col1','col2','col3']);
         $this->assertEquals("LTRIM(RTRIM(NVL(foo.col1,'')||' '||NVL(foo.col2,'')||' '||NVL(foo.col3,'')))", $ret);
     }
 
@@ -216,7 +216,7 @@ class OracleManagerTest extends TestCase
     ) {
         $this->assertEquals(
             $result,
-            $this->_db->fromConvert($parameters[0], $parameters[1])
+            $this->db->fromConvert($parameters[0], $parameters[1])
         );
     }
 
@@ -226,7 +226,7 @@ class OracleManagerTest extends TestCase
     public function testOrderStability()
     {
         $msg = 'OracleManager should not have order_stability capability';
-        $this->assertFalse($this->_db->supports('order_stability'), $msg);
+        $this->assertFalse($this->db->supports('order_stability'), $msg);
     }
 
     /**
@@ -239,7 +239,7 @@ class OracleManagerTest extends TestCase
             'dbType' => 'text',
         ];
         /** @var MockObject|OracleManager $db */
-        $db = $this->createPartialMock(get_class($this->_db), ['getFieldType', 'isTextType']);
+        $db = $this->createPartialMock(get_class($this->db), ['getFieldType', 'isTextType']);
         $db->expects($this->atLeastOnce())->method('getFieldType')->with($this->equalTo($vardef))->will($this->returnValue($vardef['dbType']));
         $db->expects($this->atLeastOnce())->method('isTextType')->with($this->equalTo($vardef['dbType']))->will($this->returnValue(true));
         SugarTestReflection::callProtectedMethod($db, 'isNullable', [$vardef]);
@@ -287,6 +287,6 @@ class OracleManagerTest extends TestCase
      */
     public function testCompareVarDefs($fieldDef1, $fieldDef2, $expectedResult)
     {
-        $this->assertEquals($expectedResult, $this->_db->compareVarDefs($fieldDef1, $fieldDef2));
+        $this->assertEquals($expectedResult, $this->db->compareVarDefs($fieldDef1, $fieldDef2));
     }
 }

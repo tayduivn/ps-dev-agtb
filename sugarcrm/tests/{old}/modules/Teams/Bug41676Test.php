@@ -15,10 +15,10 @@ use PHPUnit\Framework\TestCase;
 
 class Bug41676Test extends TestCase
 {
-    var $testUser;
-    var $testAccount;
-    var $teamSet;
-    
+    public $testUser;
+    public $testAccount;
+    public $teamSet;
+
     protected function setUp() : void
     {
         //Make sure we are an admin
@@ -38,13 +38,13 @@ class Bug41676Test extends TestCase
         $this->testAccount->assigned_user_id = $this->testUser->id;
         $this->testAccount->save();
     }
-    
+
     protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestAccountUtilities::removeAllCreatedAccounts();
     }
-    
+
     public function testAccountWithDeletedUserAndTeam()
     {
         //Simulate deleting the user
@@ -63,7 +63,7 @@ class Bug41676Test extends TestCase
      
         $this->assertEquals($account->team_set_id, $this->teamSet->id, 'Assert that team set id value is correctly set');
         $this->assertEquals($account->assigned_user_id, $this->testUser->id, 'Assert that assigned user id value is correctly set');
-          
+
         $query = "SELECT * FROM teams WHERE id = '{$team->id}'";
         $results = $GLOBALS['db']->query($query);
         $row = $GLOBALS['db']->fetchByAssoc($results);

@@ -20,33 +20,32 @@ require_once 'modules/Campaigns/ProcessBouncedEmails.php';
  */
 class Bug33918Test extends TestCase
 {
-    public $folder = null;
-    public $_user = null;
-    public $_team = null;
-    public $_ie = null;
+    private $user;
+    private $team;
+    private $ie;
     
     protected function setUp() : void
     {
-        $this->_user = SugarTestUserUtilities::createAnonymousUser();
-        $this->_team = SugarTestTeamUtilities::createAnonymousTeam();
-        $this->_user->default_team=$this->_team->id;
-        $this->_team->add_user_to_team($this->_user->id);
-        $this->_user->save();
-        $this->_ie = new InboundEmail();
+        $this->user = SugarTestUserUtilities::createAnonymousUser();
+        $this->team = SugarTestTeamUtilities::createAnonymousTeam();
+        $this->user->default_team=$this->team->id;
+        $this->team->add_user_to_team($this->user->id);
+        $this->user->save();
+        $this->ie = new InboundEmail();
         
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
     }
 
     protected function tearDown() : void
     {
-        $GLOBALS['db']->query("DELETE FROM user_preferences WHERE assigned_user_id='{$this->_user->id}'");
+        $GLOBALS['db']->query("DELETE FROM user_preferences WHERE assigned_user_id='{$this->user->id}'");
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestTeamUtilities::removeAllCreatedAnonymousTeams();
         unset($GLOBALS['current_user']);
     }
     
     
-    function testGetExistingCampaignLogEntry()
+    public function testGetExistingCampaignLogEntry()
     {
         $targetTrackerKey = create_guid();
         $campaignLogID = create_guid();
@@ -70,7 +69,7 @@ class Bug33918Test extends TestCase
         $GLOBALS['db']->query("DELETE FROM campaign_log WHERE id='$campaignLogID'");
     }
     
-    function testCreateBouncedCampaignLogEntry()
+    public function testCreateBouncedCampaignLogEntry()
     {
         $row = [
             'campaign_id' => create_guid(),
@@ -100,7 +99,7 @@ class Bug33918Test extends TestCase
         $GLOBALS['db']->query("DELETE FROM campaign_log WHERE id='$bounce_id'");
     }
     
-    function testErrorReportRetrieval()
+    public function testErrorReportRetrieval()
     {
         $noteID = uniqid();
         $emailId = uniqid();
@@ -127,15 +126,15 @@ class Bug33918Test extends TestCase
     }
     
     /**
-     * @dataProvider _breadCrumbOffsetsData
+     * @dataProvider breadCrumbOffsetsData
      */
-    function testAddBreadCrumbOffset($base, $offset, $expected)
+    public function testAddBreadCrumbOffset($base, $offset, $expected)
     {
-        $rs = $this->_ie->addBreadCrumbOffset($base, $offset);
+        $rs = $this->ie->addBreadCrumbOffset($base, $offset);
         $this->assertEquals($expected, $rs, "Unable to add bread crumb offset");
     }
-    
-    function _breadCrumbOffsetsData()
+
+    public static function breadCrumbOffsetsData()
     {
         return [
             ['base' => '1.0', 'offset' => '0.1', 'expected' => '1.1'],
@@ -151,9 +150,9 @@ class Bug33918Test extends TestCase
     
 
     /**
-     * @dataProvider _gmailEmailData
+     * @dataProvider gmailEmailData
      */
-    function testProcessBouncedGmailEmailWithIdentifierInHeader($trackerKey, $message)
+    public function testProcessBouncedGmailEmailWithIdentifierInHeader($trackerKey, $message)
     {
         $noteID = uniqid();
         $emailId = uniqid();
@@ -172,7 +171,7 @@ class Bug33918Test extends TestCase
         $email->description = $message;
         $email->raw_source = $message;
         $email->date_created = gmdate('Y-m-d H:i:s');
-        $logID = $this->_createCampaignLogForTrackerKey($trackerKey);
+        $logID = $this->createCampaignLogForTrackerKey($trackerKey);
         $email_header = new stdClass();
         $email_header->fromaddress = "Mail Delivery Subsystem <mailer-daemon@googlemail.com>";
         $this->assertTrue(campaign_process_bounced_emails($email, $email_header), "Unable to process bounced email");
@@ -182,7 +181,7 @@ class Bug33918Test extends TestCase
     }
     
     
-    function testProcessBouncedEmail()
+    public function testProcessBouncedEmail()
     {
         $trackerKey = '173e8e08-5826-c6a4-a17f-4be9d7c6d8b4';
         $message = <<<CIA
@@ -236,7 +235,7 @@ CIA;
         $email->description = $message;
         $email->raw_source = $message;
         $email->date_created = gmdate('Y-m-d H:i:s');
-        $logID = $this->_createCampaignLogForTrackerKey($trackerKey);
+        $logID = $this->createCampaignLogForTrackerKey($trackerKey);
         $email_header = new stdClass();
         $email_header->fromaddress = "MAILER-DAEMON";
         $this->assertTrue(campaign_process_bounced_emails($email, $email_header), "Unable to process bounced email");
@@ -244,9 +243,8 @@ CIA;
         $GLOBALS['db']->query("DELETE FROM notes WHERE id='{$note->id}'");
         $GLOBALS['db']->query("DELETE FROM campaign_log WHERE id='{$logID}' OR target_tracker_key='{$trackerKey}'");
     }
-    
-    
-    function _createCampaignLogForTrackerKey($trackerKey)
+
+    private function createCampaignLogForTrackerKey($trackerKey)
     {
         $l = new CampaignLog();
         $l->activity_type = 'targeted';
@@ -258,7 +256,7 @@ CIA;
     }
     
     
-    function _gmailEmailData()
+    public static function gmailEmailData()
     {
         $trackerKey1 = '166da286-eb7a-207a-1987-4c3b8975aac9';
         $message1 = <<<CIA

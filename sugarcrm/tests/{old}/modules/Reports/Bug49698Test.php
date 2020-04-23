@@ -26,7 +26,7 @@ class Bug49698Test extends TestCase
 {
     public function testModuleRenameForReportsTree()
     {
-        $mock = new ReportsViewBuildreportmoduletreeMock();
+        $view = new ReportsViewBuildreportmoduletree();
         $linked_field = [
         'name' => 'accounts',
         'type' => 'link',
@@ -38,23 +38,11 @@ class Bug49698Test extends TestCase
         'vname' => 'LBL_ACCOUNTS',
         'label' => 'Prospects', //Assume here that Accounts module label was renamed to Prospects
         ];
-        $node = $mock->_populateNodeItem('Opportunity', 'Accounts', $linked_field);
+        $node = SugarTestReflection::callProtectedMethod(
+            $view,
+            '_populateNodeItem',
+            ['Opportunity', 'Accounts', $linked_field]
+        );
         $this->assertMatchesRegularExpression('/\\\'Prospects\\\'/', $node['href']);
-    }
-}
-
-/**
- * ReportsViewBuildreportmoduletreeMock
- * This is a mock class to override the protected function _populateNodeItem so we may test it
- */
-class ReportsViewBuildreportmoduletreeMock extends ReportsViewBuildreportmoduletree
-{
-    public function __construct()
-    {
-    }
-
-    public function _populateNodeItem($bean_name, $link_module, $linked_field)
-    {
-        return parent::_populateNodeItem($bean_name, $link_module, $linked_field);
     }
 }

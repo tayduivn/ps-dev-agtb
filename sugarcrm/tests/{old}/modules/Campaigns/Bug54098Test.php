@@ -24,8 +24,8 @@ require_once 'modules/Campaigns/utils.php';
 
 class Bug54098Test extends TestCase
 {
-    private $_aProspectlists_Prospects;
-    private $_aProspectlists_Campaigns;
+    private $aProspectlists_Prospects;
+    private $aProspectlists_Campaigns;
 
     protected function setUp() : void
     {
@@ -81,7 +81,7 @@ class Bug54098Test extends TestCase
     {
         if (!empty($oCampaign->id) and !empty($oProspectList->id)) {
             $id = 'BUg54098' . mt_rand();
-            $this->_aProspectlists_Campaigns[] = $id;
+            $this->aProspectlists_Campaigns[] = $id;
             $sDate = $GLOBALS['db']->convert(date('\'Y-m-d H:i:s\''), 'datetime');
             $GLOBALS['db']->query("INSERT INTO prospect_list_campaigns VALUES ('{$id}','{$oProspectList->id}', '{$oCampaign->id}', {$sDate}, 0)");
         }
@@ -89,8 +89,8 @@ class Bug54098Test extends TestCase
 
     private function deleteProspectlistToCampaignRelationRecords()
     {
-        if (!empty($this->_aProspectlists_Campaigns)) {
-            $GLOBALS['db']->query("DELETE FROM prospect_list_campaigns WHERE id IN ('" . implode("','", $this->_aProspectlists_Campaigns) . "')");
+        if (!empty($this->aProspectlists_Campaigns)) {
+            $GLOBALS['db']->query("DELETE FROM prospect_list_campaigns WHERE id IN ('" . implode("','", $this->aProspectlists_Campaigns) . "')");
         }
     }
 
@@ -98,7 +98,7 @@ class Bug54098Test extends TestCase
     {
         if (!empty($oContact->id) and !empty($oProspectList->id)) {
             $id = 'BUg54098' . mt_rand();
-            $this->_aProspectlists_Prospects[] = $id;
+            $this->aProspectlists_Prospects[] = $id;
             $sDate = $GLOBALS['db']->convert(date('\'Y-m-d H:i:s\''), 'datetime');
             $GLOBALS['db']->query("INSERT INTO prospect_lists_prospects VALUES ('{$id}','{$oProspectList->id}', '{$oContact->id}','Contacts',{$sDate}, 0)");
         }
@@ -106,8 +106,8 @@ class Bug54098Test extends TestCase
 
     private function deleteProspectlistToContactRelationRecords()
     {
-        if (!empty($this->_aProspectlists_Campaigns)) {
-            $GLOBALS['db']->query("DELETE FROM prospect_lists_prospects WHERE id IN ('" . implode("','", $this->_aProspectlists_Prospects) . "')");
+        if (!empty($this->aProspectlists_Campaigns)) {
+            $GLOBALS['db']->query("DELETE FROM prospect_lists_prospects WHERE id IN ('" . implode("','", $this->aProspectlists_Prospects) . "')");
         }
     }
 }

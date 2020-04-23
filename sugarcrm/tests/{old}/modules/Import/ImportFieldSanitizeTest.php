@@ -1144,12 +1144,12 @@ class ImportEnumOptions
 
 class Import_Bug26897_Mock extends Account
 {
-    function ACLAccess($view, $is_owner = 'not_set')
+    public function ACLAccess($view, $is_owner = 'not_set')
     {
         return false;
     }
 
-    function bean_implements($interface)
+    public function bean_implements($interface)
     {
         return true;
     }
@@ -1157,9 +1157,9 @@ class Import_Bug26897_Mock extends Account
 
 class Import_Bug27562_Mock extends Contact
 {
-    var $contact_id;
+    public $contact_id;
 
-    function ACLAccess($view, $is_owner = 'not_set')
+    public function ACLAccess($view, $context = null)
     {
         return true;
     }
@@ -1167,17 +1167,17 @@ class Import_Bug27562_Mock extends Contact
 
 class Import_Bug27046_Mock extends Account
 {
-    function ACLAccess($view, $is_owner = 'not_set')
+    public function ACLAccess($view, $context = null)
     {
         return false;
     }
 
-    function bean_implements($interface)
+    public function bean_implements($interface)
     {
         return true;
     }
 
-    function getFieldDefintion($name)
+    public function getFieldDefintion($name)
     {
         return [
             'name' => 'name',

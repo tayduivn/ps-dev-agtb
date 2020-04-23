@@ -15,17 +15,16 @@ use PHPUnit\Framework\TestCase;
 
 class SugarFoldersTest extends TestCase
 {
-    var $folder = null;
-    var $additionalFolders = null;
-    var $_user = null;
-    var $emails = null;
+    private $folder = null;
+    private $additionalFolders = null;
+    private $user = null;
+    private $emails = null;
     private $toDelete = [];
 
     protected function setUp() : void
     {
-        $this->_user = SugarTestUserUtilities::createAnonymousUser();
-        $current_user = $this->_user;
-        $GLOBALS['current_user'] = $this->_user;
+        $this->user = SugarTestUserUtilities::createAnonymousUser();
+        $GLOBALS['current_user'] = $this->user;
         $this->folder = new SugarFolder();
         $this->additionalFolders = [];
         $this->emails = [];
@@ -39,11 +38,11 @@ class SugarFoldersTest extends TestCase
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
 
-        $GLOBALS['db']->query("DELETE FROM folders_subscriptions WHERE assigned_user_id='{$this->_user->id}'");
-        $this->_clearFolder($this->folder->id);
+        $GLOBALS['db']->query("DELETE FROM folders_subscriptions WHERE assigned_user_id='{$this->user->id}'");
+        $this->clearFolder($this->folder->id);
 
         foreach ($this->additionalFolders as $additionalID) {
-            $this->_clearFolder($additionalID);
+            $this->clearFolder($additionalID);
         }
 
         foreach ($this->emails as $emailID) {
@@ -60,7 +59,7 @@ class SugarFoldersTest extends TestCase
     /**
      * Test the Set Folder method.
      */
-    function testSetFolder()
+    public function testSetFolder()
     {
         //Set folder
         $this->folder->id = create_guid();
@@ -80,7 +79,7 @@ class SugarFoldersTest extends TestCase
         $this->assertEquals($fields['parent_folder'], $this->folder->parent_folder, $error_message);
         $this->assertEquals($fields['team_id'], $this->folder->team_id, $error_message);
         $this->assertEquals($fields['team_set_id'], $this->folder->team_set_id, $error_message);
-        $this->assertEquals($this->_user->id, $this->folder->assign_to_id, $error_message);
+        $this->assertEquals($this->user->id, $this->folder->assign_to_id, $error_message);
 
         //Check for folder subscriptions create for global user
         $sub_ids = $this->folder->getSubscriptions($GLOBALS['current_user']);
@@ -91,9 +90,9 @@ class SugarFoldersTest extends TestCase
     /**
      * Test sugar folder subscriptions: create, clear, insert, clear specific folder.
      */
-    function testFolderSubscriptions()
+    public function testFolderSubscriptions()
     {
-        $this->_createNewSugarFolder();
+        $this->createNewSugarFolder();
         $error_message = "Unable to create|insert|delete sugar folder subscriptions.";
 
         //Clear subscriptions
@@ -115,7 +114,7 @@ class SugarFoldersTest extends TestCase
     /**
      * Test the getParentIDRecursive function which is used to find a grouping of folders.
      */
-    function testgetParentIDRecursive()
+    public function testgetParentIDRecursive()
     {
         $f1 = new SugarFolder();
         $f12 = new SugarFolder();
@@ -159,7 +158,7 @@ class SugarFoldersTest extends TestCase
     /**
      * Test to ensure that for a new user, the My Email, My Drafts, Sent Email, etc. folders can be retrieved.
      */
-    function testGetUserFolders()
+    public function testGetUserFolders()
     {
         $emailUI = new EmailUI();
         $emailUI->preflightUser($GLOBALS['current_user']);
@@ -178,13 +177,13 @@ class SugarFoldersTest extends TestCase
     /**
      * Tests sugar folder methods that deal with emails.
      */
-    function testFolderEmailMethods()
+    public function testFolderEmailMethods()
     {
         $emailParams = ['status' => 'read'];
-        $email = $this->_createEmailObject($emailParams);
+        $email = $this->createEmailObject($emailParams);
         $this->emails[] = $email->id;
 
-        $this->_createNewSugarFolder();
+        $this->createNewSugarFolder();
         $this->folder->addBean($email, $GLOBALS['current_user']);
 
         $emailExists = $this->folder->checkEmailExistForFolder($email->id);
@@ -317,7 +316,7 @@ class SugarFoldersTest extends TestCase
         $this->assertEquals(0, $result);
     }
 
-    function _createEmailObject($additionalParams = [])
+    private function createEmailObject($additionalParams = [])
     {
         global $timedate;
 
@@ -337,7 +336,7 @@ class SugarFoldersTest extends TestCase
         return $em;
     }
 
-    function _createNewSugarFolder()
+    private function createNewSugarFolder()
     {
         $this->folder->id = create_guid();
         $this->folder->new_with_id = true;
@@ -345,9 +344,9 @@ class SugarFoldersTest extends TestCase
         $this->folder->save();
     }
 
-    private function _clearFolder($folder_id)
+    private function clearFolder($folder_id)
     {
-        $GLOBALS['db']->query("DELETE FROM folders_subscriptions WHERE assigned_user_id='{$this->_user->id}'");
+        $GLOBALS['db']->query("DELETE FROM folders_subscriptions WHERE assigned_user_id='{$this->user->id}'");
         $GLOBALS['db']->query("DELETE FROM folders_subscriptions WHERE folder_id='{$folder_id}'");
         $GLOBALS['db']->query("DELETE FROM folders WHERE id='{$folder_id}'");
     }

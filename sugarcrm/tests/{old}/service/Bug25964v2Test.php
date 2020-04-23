@@ -16,17 +16,15 @@ require_once 'vendor/nusoap//nusoap.php';
 
 class Bug25964v2Test extends SOAPTestCase
 {
-    var $_resultId;
-    var $c = null;
-    var $c2 = null;
+    private $resultId;
+    private $c;
 
     protected function setUp() : void
     {
-        $this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/service/v2_1/soap.php';
+        $this->soapURL = $GLOBALS['sugar_config']['site_url'].'/service/v2_1/soap.php';
         parent::setUp();
 
         $unid = uniqid();
-        $time = date('Y-m-d H:i:s');
 
         $contact = new Contact();
         $contact->id = 'c_'.$unid;
@@ -38,38 +36,38 @@ class Bug25964v2Test extends SOAPTestCase
         $contact->disable_custom_fields = true;
         $contact->save();
         $this->c = $contact;
-        $this->_login();
+        $this->login();
     }
 
     protected function tearDown() : void
     {
         $GLOBALS['db']->query("DELETE FROM contacts WHERE id= '{$this->c->id}'");
-        $GLOBALS['db']->query("DELETE FROM contacts WHERE id= '{$this->_resultId}'");
+        $GLOBALS['db']->query("DELETE FROM contacts WHERE id= '{$this->resultId}'");
         unset($this->c);
         parent::tearDown();
     }
 
     public function testFindSameContact()
     {
-        $contacts_list=[ 'session'=>$this->_sessionId, 'module_name' => 'Contacts',
+        $contacts_list=[ 'session'=>$this->sessionId, 'module_name' => 'Contacts',
                    'name_value_lists' => [
                                         [['name'=>'assigned_user_id' , 'value'=>$GLOBALS['current_user']->id],['name'=>'first_name' , 'value'=>'testfirst'],['name'=>'last_name' , 'value'=>'testlast'],['name'=>'email1' , 'value'=>'one_other@example.com']],
                                         ]];
 
-        $result = $this->_soapClient->call('set_entries', $contacts_list);
-        $this->_resultId = $result['ids'][0];
+        $result = $this->soapClient->call('set_entries', $contacts_list);
+        $this->resultId = $result['ids'][0];
         $this->assertEquals($this->c->id, $result['ids'][0], "did not match contacts");
     }
 
     public function testDoNotFindSameContact()
     {
-        $contacts_list=[ 'session'=>$this->_sessionId, 'module_name' => 'Contacts',
+        $contacts_list=[ 'session'=>$this->sessionId, 'module_name' => 'Contacts',
                    'name_value_lists' => [
                                         [['name'=>'assigned_user_id' , 'value'=>$GLOBALS['current_user']->id],['name'=>'first_name' , 'value'=>'testfirst'],['name'=>'last_name' , 'value'=>'testlast'],['name'=>'email1' , 'value'=>'mytest1@example.com']],
                                         ]];
 
-        $result = $this->_soapClient->call('set_entries', $contacts_list);
-        $this->_resultId = $result['ids'][0];
+        $result = $this->soapClient->call('set_entries', $contacts_list);
+        $this->resultId = $result['ids'][0];
         $this->assertNotEquals($this->c->id, $result['ids'][0], "did not match contacts");
     }
 }

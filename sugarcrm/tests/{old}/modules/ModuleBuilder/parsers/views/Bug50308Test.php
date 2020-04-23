@@ -18,10 +18,10 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug50308Test extends TestCase
 {
-    var $customFilePath = 'custom/modules/Users/metadata/popupdefs.php';
-    var $customFileDir = 'custom/modules/Users/metadata';
-    var $originalPopupMeta = [];
-    var $newPopupMeta = ['moduleMain'=>['one','two'], 'varName'=>['one','two'] , 'orderBy'=>['one','two'], 'whereClauses'=>['one','two'], 'searchInputs'=>['one','two'], 'create'=>['one','two']];
+    public $customFilePath = 'custom/modules/Users/metadata/popupdefs.php';
+    public $customFileDir = 'custom/modules/Users/metadata';
+    public $originalPopupMeta = [];
+    public $newPopupMeta = ['moduleMain'=>['one','two'], 'varName'=>['one','two'] , 'orderBy'=>['one','two'], 'whereClauses'=>['one','two'], 'searchInputs'=>['one','two'], 'create'=>['one','two']];
 
     protected function setUp() : void
     {

@@ -38,7 +38,7 @@ class RestRetrieveTest extends RestTestBase
         $this->account->name = "UNIT TEST - BEFORE";
         $this->account->save();
         $GLOBALS['db']->commit();
-        $restReply = $this->_restCall("Accounts/{$this->account->id}");
+        $restReply = $this->restCall("Accounts/{$this->account->id}");
 
         $this->assertEquals($this->account->id, $restReply['reply']['id'], "The returned account id was not the same as the requested account.");
         $this->assertEquals("UNIT TEST - BEFORE", $restReply['reply']['name'], "Did not retrieve the account name.");
@@ -54,7 +54,7 @@ class RestRetrieveTest extends RestTestBase
         $this->account->name = "UNIT TEST << >> BEFORE";
         $this->account->save();
         $GLOBALS['db']->commit();
-        $restReply = $this->_restCall("Accounts/{$this->account->id}");
+        $restReply = $this->restCall("Accounts/{$this->account->id}");
 
         $this->assertEquals($this->account->id, $restReply['reply']['id'], "The returned account id was not the same as the requested account.");
         $this->assertEquals("UNIT TEST << >> BEFORE", $restReply['reply']['name'], "Did not retrieve the account name.");

@@ -21,9 +21,9 @@
  */
 class SearchByModuleWithSessionIdTest extends SOAPTestCase
 {
-    var $contact;
-    var $account;
-    var $lead;
+    public $contact;
+    public $account;
+    public $lead;
 
     /**
      * setUp
@@ -31,9 +31,9 @@ class SearchByModuleWithSessionIdTest extends SOAPTestCase
      */
     protected function setUp() : void
     {
-        $this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/soap.php';
+        $this->soapURL = $GLOBALS['sugar_config']['site_url'].'/soap.php';
         parent::setUp();
-        $this->_login(); // Logging in just before the SOAP call as this will also commit any pending DB changes
+        $this->login(); // Logging in just before the SOAP call as this will also commit any pending DB changes
         $this->contact = SugarTestContactUtilities::createContact();
         $this->contact->contacts_users_id = $GLOBALS['current_user']->id;
         $this->contact->save();
@@ -50,11 +50,11 @@ class SearchByModuleWithSessionIdTest extends SOAPTestCase
     {
         //Assert that the plugin fix to use a blank user_name and session id as password works
         $modules = ['Contacts', 'Accounts', 'Leads'];
-        $result = $this->_soapClient->call('search_by_module', ['user_name' => '', 'password' => $this->_sessionId, 'search_string' => $this->contact->email1, 'modules' => $modules, 'offset' => 0, 'max_results' => 10]);
-        $this->assertTrue(!empty($result) && count($result['entry_list']) == 3, 'Incorrect number of results returned. HTTP Response: '.$this->_soapClient->response);
+        $result = $this->soapClient->call('search_by_module', ['user_name' => '', 'password' => $this->sessionId, 'search_string' => $this->contact->email1, 'modules' => $modules, 'offset' => 0, 'max_results' => 10]);
+        $this->assertTrue(!empty($result) && count($result['entry_list']) == 3, 'Incorrect number of results returned. HTTP Response: '.$this->soapClient->response);
 
         //Assert that the traditional method of using user_name and password also works
-        $result = $this->_soapClient->call('search_by_module', ['user_name' => 'admin', 'password' => md5('asdf'), 'search_string' => $this->contact->email1, 'modules' => $modules, 'offset' => 0, 'max_results' => 10]);
-        $this->assertTrue(!empty($result) && count($result['entry_list']) == 3, 'Incorrect number of results returned. HTTP Response: '.$this->_soapClient->response);
+        $result = $this->soapClient->call('search_by_module', ['user_name' => 'admin', 'password' => md5('asdf'), 'search_string' => $this->contact->email1, 'modules' => $modules, 'offset' => 0, 'max_results' => 10]);
+        $this->assertTrue(!empty($result) && count($result['entry_list']) == 3, 'Incorrect number of results returned. HTTP Response: '.$this->soapClient->response);
     }
 }

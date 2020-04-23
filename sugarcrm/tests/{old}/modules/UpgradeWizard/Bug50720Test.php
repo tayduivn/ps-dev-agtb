@@ -22,8 +22,8 @@ require_once 'modules/UpgradeWizard/uw_utils.php';
  */
 class Bug50720Test extends TestCase
 {
-    var $customConnectors;
-    var $file = 'custom/modules/Connectors/metadata/connectors.php';
+    public $customConnectors;
+    public $file = 'custom/modules/Connectors/metadata/connectors.php';
     
     protected function setUp() : void
     {

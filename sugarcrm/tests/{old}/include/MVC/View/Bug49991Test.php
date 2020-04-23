@@ -23,8 +23,8 @@ use PHPUnit\Framework\TestCase;
 
 class Bug49991Test extends TestCase
 {
-    var $mock;
-    var $sourceBackup;
+    public $mock;
+    public $sourceBackup;
 
     protected function setUp() : void
     {

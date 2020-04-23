@@ -56,7 +56,7 @@ class RestBug54864Test extends RestTestPortalBase
         $GLOBALS['db']->commit();
         
 
-        $restReply = $this->_restCall("me");
+        $restReply = $this->restCall("me");
         $this->assertTrue(in_array($this->accounts[1]->id, $restReply['reply']['current_user']['account_ids']), 'The first account id is missing from the list #1');
         $this->assertTrue(in_array($this->accounts[2]->id, $restReply['reply']['current_user']['account_ids']), 'The second account id is missing from the list #1');
         
@@ -65,7 +65,7 @@ class RestBug54864Test extends RestTestPortalBase
 
         $GLOBALS['db']->commit();
 
-        $restReply = $this->_restCall("me");
+        $restReply = $this->restCall("me");
         $this->assertFalse(in_array($this->accounts[1]->id, $restReply['reply']['current_user']['account_ids']), 'The first account id is not missing from the list when it should be #2');
         $this->assertTrue(in_array($this->accounts[2]->id, $restReply['reply']['current_user']['account_ids']), 'The second account id is missing from the list #2');
 
@@ -73,7 +73,7 @@ class RestBug54864Test extends RestTestPortalBase
         
         $GLOBALS['db']->commit();
         
-        $restReply = $this->_restCall("me");
+        $restReply = $this->restCall("me");
         $this->assertFalse(in_array($this->accounts[1]->id, $restReply['reply']['current_user']['account_ids']), 'The first account id is not missing from the list when it should be #3');
         $this->assertFalse(in_array($this->accounts[2]->id, $restReply['reply']['current_user']['account_ids']), 'The second account id is not missing from the list when it should be #3');
     }

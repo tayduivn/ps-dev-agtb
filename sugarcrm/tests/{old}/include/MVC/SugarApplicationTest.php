@@ -14,16 +14,16 @@ use PHPUnit\Framework\TestCase;
 
 class SugarApplicationTest extends TestCase
 {
-    private $_app;
+    private $app;
     // Run in isolation so that it doesn't mess up other tests
     public $inIsolation = true;
 
     protected function setUp() : void
     {
-        $this->_app = $this->getMockBuilder('SugarApplication')
+        $this->app = $this->getMockBuilder('SugarApplication')
             ->setMethods(null)
             ->getMock();
-        $this->_app->controller = new stdClass();
+        $this->app->controller = new stdClass();
         if (isset($_SESSION['authenticated_user_theme'])) {
             unset($_SESSION['authenticated_user_theme']);
         }
@@ -35,13 +35,13 @@ class SugarApplicationTest extends TestCase
         $GLOBALS['sugar_config']['http_referer'] = ['list' => [], 'actions' => []];
     }
 
-    private function _loadUser()
+    private function loadUser()
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $_SESSION[$GLOBALS['current_user']->user_name.'_PREFERENCES']['global']['gridline'] = 'on';
     }
 
-    private function _removeUser()
+    private function removeUser()
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
@@ -66,7 +66,7 @@ class SugarApplicationTest extends TestCase
     {
         $_GET['foo'] = 'bar';
         $_POST['dog'] = 'cat';
-        $this->_app->setupPrint();
+        $this->app->setupPrint();
         $this->assertEquals(
             $GLOBALS['request_string'],
             'foo=bar&dog=cat&print=true'
@@ -86,31 +86,31 @@ class SugarApplicationTest extends TestCase
                             '2' => 'notMultidemensional',
                            ];
         $_POST['dog'] = 'cat';
-        $this->_app->setupPrint();
+        $this->app->setupPrint();
         $this->assertEquals('foo[1]=notMultidemensional&foo[2]=notMultidemensional&dog=cat&print=true', $GLOBALS['request_string']);
     }
 
     public function testLoadDisplaySettingsDefault()
     {
-        $this->_loadUser();
+        $this->loadUser();
 
-        $this->_app->loadDisplaySettings();
+        $this->app->loadDisplaySettings();
 
         $this->assertEquals(
             $GLOBALS['theme'],
             $GLOBALS['sugar_config']['default_theme']
         );
 
-        $this->_removeUser();
+        $this->removeUser();
     }
 
     public function testLoadDisplaySettingsAuthUserTheme()
     {
-        $this->_loadUser();
+        $this->loadUser();
 
         $_SESSION['authenticated_user_theme'] = 'Sugar';
 
-        $this->_app->loadDisplaySettings();
+        $this->app->loadDisplaySettings();
 
         $this->assertEquals(
             $GLOBALS['theme'],
@@ -118,15 +118,15 @@ class SugarApplicationTest extends TestCase
             'Multiple themes are no longer supported. It should always load RacerX'
         );
 
-        $this->_removeUser();
+        $this->removeUser();
     }
 
     public function testLoadDisplaySettingsUserTheme()
     {
-        $this->_loadUser();
+        $this->loadUser();
         $_REQUEST['usertheme'] = (string) SugarThemeRegistry::getDefault();
 
-        $this->_app->loadDisplaySettings();
+        $this->app->loadDisplaySettings();
 
         global $sugar_config;
         $disabledThemes = !empty($sugar_config['disabled_themes']) ? $sugar_config['disabled_themes'] : [];
@@ -140,18 +140,18 @@ class SugarApplicationTest extends TestCase
             $_REQUEST['usertheme']
         );
 
-        $this->_removeUser();
+        $this->removeUser();
     }
 
     public function testLoadGlobals()
     {
-        $this->_app->controller =
-            ControllerFactory::getController($this->_app->default_module);
-        $this->_app->loadGlobals();
+        $this->app->controller =
+            ControllerFactory::getController($this->app->default_module);
+        $this->app->loadGlobals();
 
-        $this->assertEquals($GLOBALS['currentModule'], $this->_app->default_module);
-        $this->assertEquals($_REQUEST['module'], $this->_app->default_module);
-        $this->assertEquals($_REQUEST['action'], $this->_app->default_action);
+        $this->assertEquals($GLOBALS['currentModule'], $this->app->default_module);
+        $this->assertEquals($_REQUEST['module'], $this->app->default_module);
+        $this->assertEquals($_REQUEST['action'], $this->app->default_action);
     }
 
     /**
@@ -170,15 +170,15 @@ class SugarApplicationTest extends TestCase
 
         // first test a valid value
         $GLOBALS['sugar_db_version'] = $sugar_db_version;
-        $this->assertTrue($this->_app->checkDatabaseVersion(false));
+        $this->assertTrue($this->app->checkDatabaseVersion(false));
 
         $GLOBALS['sugar_db_version'] = '1.1.1';
         // then test to see if we pull against the cache the valid value
-        $this->assertTrue($this->_app->checkDatabaseVersion(false));
+        $this->assertTrue($this->app->checkDatabaseVersion(false));
 
         // now retest to be sure we actually do the check again
         sugar_cache_put('checkDatabaseVersion_row_count', 0);
-        $this->assertFalse($this->_app->checkDatabaseVersion(false));
+        $this->assertFalse($this->app->checkDatabaseVersion(false));
 
         if (isset($old_sugar_db_version)) {
             $GLOBALS['sugar_db_version'] = $old_sugar_db_version;
@@ -190,8 +190,8 @@ class SugarApplicationTest extends TestCase
 
     public function testLoadLanguages()
     {
-        $this->_app->controller->module = 'Contacts';
-        $this->_app->loadLanguages();
+        $this->app->controller->module = 'Contacts';
+        $this->app->loadLanguages();
         //since there is a logged in user, the welcome screen should not be empty
         $this->assertEmpty($GLOBALS['app_strings']['NTC_WELCOME'], 'Testing that Welcome message is not empty');
         $this->assertNotEmpty($GLOBALS['app_strings'], "App Strings is not empty.");
@@ -203,9 +203,9 @@ class SugarApplicationTest extends TestCase
     {
         $_SERVER['HTTP_REFERER'] = '';
         $_SERVER['SERVER_NAME'] = 'dog';
-        $this->_app->controller->action = 'index';
+        $this->app->controller->action = 'index';
 
-        $this->assertTrue($this->_app->checkHTTPReferer(false));
+        $this->assertTrue($this->app->checkHTTPReferer(false));
     }
 
     /**
@@ -215,77 +215,77 @@ class SugarApplicationTest extends TestCase
     {
         $_SERVER['HTTP_REFERER'] = 'http://localhost';
         $_SERVER['SERVER_NAME'] = 'localhost';
-        $this->_app->controller->action = 'poo';
+        $this->app->controller->action = 'poo';
 
-        $this->assertTrue($this->_app->checkHTTPReferer(false));
+        $this->assertTrue($this->app->checkHTTPReferer(false));
 
         $_SERVER['HTTP_REFERER'] = 'http://127.0.0.1';
         $_SERVER['SERVER_NAME'] = 'localhost';
-        $this->_app->controller->action = 'poo';
+        $this->app->controller->action = 'poo';
 
-        $this->assertTrue($this->_app->checkHTTPReferer(false));
+        $this->assertTrue($this->app->checkHTTPReferer(false));
 
         $_SERVER['HTTP_REFERER'] = 'http://localhost';
         $_SERVER['SERVER_NAME'] = '127.0.0.1';
-        $this->_app->controller->action = 'poo';
+        $this->app->controller->action = 'poo';
 
-        $this->assertTrue($this->_app->checkHTTPReferer(false));
+        $this->assertTrue($this->app->checkHTTPReferer(false));
 
         $_SERVER['HTTP_REFERER'] = 'http://127.0.0.1';
         $_SERVER['SERVER_NAME'] = '127.0.0.1';
-        $this->_app->controller->action = 'poo';
+        $this->app->controller->action = 'poo';
 
-        $this->assertTrue($this->_app->checkHTTPReferer(false));
+        $this->assertTrue($this->app->checkHTTPReferer(false));
     }
 
     public function testCheckHTTPRefererReturnsTrueIfRefererIsServerName()
     {
         $_SERVER['HTTP_REFERER'] = 'http://dog';
         $_SERVER['SERVER_NAME'] = 'dog';
-        $this->_app->controller->action = 'index';
+        $this->app->controller->action = 'index';
 
-        $this->assertTrue($this->_app->checkHTTPReferer(false));
+        $this->assertTrue($this->app->checkHTTPReferer(false));
     }
 
     public function testCheckHTTPRefererReturnsTrueIfRefererIsInWhitelist()
     {
         $_SERVER['HTTP_REFERER'] = 'http://dog';
         $_SERVER['SERVER_NAME'] = 'cat';
-        $this->_app->controller->action = 'index';
+        $this->app->controller->action = 'index';
 
         $GLOBALS['sugar_config']['http_referer']['list'][] = 'http://dog';
 
-        $this->assertTrue($this->_app->checkHTTPReferer(false));
+        $this->assertTrue($this->app->checkHTTPReferer(false));
     }
 
     public function testCheckHTTPRefererReturnsFalseIfRefererIsNotInWhitelist()
     {
         $_SERVER['HTTP_REFERER'] = 'http://dog';
         $_SERVER['SERVER_NAME'] = 'cat';
-        $this->_app->controller->action = 'poo';
+        $this->app->controller->action = 'poo';
 
         $GLOBALS['sugar_config']['http_referer']['list'] = [];
 
-        $this->assertFalse($this->_app->checkHTTPReferer(false));
+        $this->assertFalse($this->app->checkHTTPReferer(false));
     }
 
     public function testCheckHTTPRefererReturnsTrueIfRefererIsNotInWhitelistButActionIs()
     {
         $_SERVER['HTTP_REFERER'] = 'http://dog';
         $_SERVER['SERVER_NAME'] = 'cat';
-        $this->_app->controller->action = 'index';
+        $this->app->controller->action = 'index';
 
-        $this->assertTrue($this->_app->checkHTTPReferer(false));
+        $this->assertTrue($this->app->checkHTTPReferer(false));
     }
 
     public function testCheckHTTPRefererReturnsTrueIfRefererIsNotInWhitelistButActionIsInConfig()
     {
         $_SERVER['HTTP_REFERER'] = 'http://dog';
         $_SERVER['SERVER_NAME'] = 'cat';
-        $this->_app->controller->action = 'poo';
+        $this->app->controller->action = 'poo';
 
         $GLOBALS['sugar_config']['http_referer']['actions'][] = 'poo';
-        $this->assertTrue($this->_app->checkHTTPReferer(false));
+        $this->assertTrue($this->app->checkHTTPReferer(false));
     }
 
     /**
@@ -296,12 +296,12 @@ class SugarApplicationTest extends TestCase
         $_SERVER['HTTP_REFERER'] = 'http://dog';
         $_SERVER['SERVER_NAME'] = 'cat';
         $GLOBALS['sugar_config']['http_referer']['actions'] = ['poo'];
-        $this->_app->controller->action = 'oauth';
-        $this->assertTrue($this->_app->checkHTTPReferer(false));
-        $this->_app->controller->action = 'index';
-        $this->assertTrue($this->_app->checkHTTPReferer(false));
-        $this->_app->controller->action = 'save';
-        $this->assertFalse($this->_app->checkHTTPReferer(false));
+        $this->app->controller->action = 'oauth';
+        $this->assertTrue($this->app->checkHTTPReferer(false));
+        $this->app->controller->action = 'index';
+        $this->assertTrue($this->app->checkHTTPReferer(false));
+        $this->app->controller->action = 'save';
+        $this->assertFalse($this->app->checkHTTPReferer(false));
     }
 
     /**
@@ -313,7 +313,7 @@ class SugarApplicationTest extends TestCase
         $method = $appReflection->getMethod('getAuthenticatedHomeUrl');
         $method->setAccessible(true);
 
-        $url = $method->invoke($this->_app);
+        $url = $method->invoke($this->app);
 
         $this->assertStringContainsString('index.php?action=sidecar#Home', $url);
     }
@@ -329,7 +329,7 @@ class SugarApplicationTest extends TestCase
         
         $_GET['sidecar'] = '0';
         
-        $url = $method->invoke($this->_app);
+        $url = $method->invoke($this->app);
 
         $this->assertStringContainsString('index.php?module=Home&action=index', $url);
     }
@@ -344,12 +344,12 @@ class SugarApplicationTest extends TestCase
         $method->setAccessible(true);
 
         $_POST = $post_data;
-        $url = $method->invoke($this->_app, $add_empty);
+        $url = $method->invoke($this->app, $add_empty);
 
         $this->assertStringContainsString($result_query, $url);
     }
 
-    function providerGetLoginRedirect()
+    public static function providerGetLoginRedirect()
     {
         return [
             [

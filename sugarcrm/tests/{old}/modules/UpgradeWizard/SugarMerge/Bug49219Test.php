@@ -26,7 +26,7 @@ require_once 'include/dir_inc.php';
 
 class Bug49219Test extends TestCase
 {
-    var $merge;
+    public $merge;
 
     protected function setUp() : void
     {
@@ -50,7 +50,7 @@ class Bug49219Test extends TestCase
  * This test asserts that the footerTpl and headerTpl form attributes are removed from quickcreatedefs.php when
  * upgrading to 641
  */
-    function testUpgradeMeetingsQuickCreate641()
+    public function testUpgradeMeetingsQuickCreate641()
     {
         require 'custom/modules/Meetings/metadata/quickcreatedefs.php';
         $this->assertArrayHasKey('headerTpl', $viewdefs['Meetings']['QuickCreate']['templateMeta']['form'], 'Unit test setup failed');
@@ -69,7 +69,7 @@ class Bug49219Test extends TestCase
  * @outputBuffering enabled
  * This test asserts that we can pick up the footerTpl and headerTpl attributes in the quickcreatedefs.php files
  */
-    function testSubpanelQuickCreate()
+    public function testSubpanelQuickCreate()
     {
         $quickCreate = new SubpanelQuickCreate('Meetings', 'QuickCreate', true);
         $this->assertEquals('modules/Meetings/tpls/header.tpl', $quickCreate->ev->defs['templateMeta']['form']['headerTpl'], 'SubpanelQuickCreate fails to pick up headerTpl attribute');

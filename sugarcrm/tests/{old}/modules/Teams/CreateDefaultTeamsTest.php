@@ -15,8 +15,7 @@ use PHPUnit\Framework\TestCase;
 
 class CreateDefaultTeamsTest extends TestCase
 {
-    private $_user = null;
-    private $_contact = null;
+    private $contact;
 
     protected function setUp() : void
     {
@@ -24,8 +23,7 @@ class CreateDefaultTeamsTest extends TestCase
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
 
-        $this->_user = SugarTestUserUtilities::createAnonymousUser();
-        $GLOBALS['current_user'] = $this->_user;
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['db']->query("DELETE FROM contacts WHERE first_name = 'Collin' AND last_name = 'Lee'");
     }
     
@@ -33,11 +31,11 @@ class CreateDefaultTeamsTest extends TestCase
     {
         unset($GLOBALS['current_user']);
      
-        if ($this->_contact instanceof Contact && !empty($this->_contact->id)) {
-            $GLOBALS['db']->query("DELETE FROM contacts WHERE id = '{$this->_contact->id}'");
+        if ($this->contact instanceof Contact && !empty($this->contact->id)) {
+            $GLOBALS['db']->query("DELETE FROM contacts WHERE id = '{$this->contact->id}'");
         }
         
-        $this->_contact = null;
+        $this->contact = null;
         
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }

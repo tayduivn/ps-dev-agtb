@@ -15,8 +15,8 @@ use PHPUnit\Framework\TestCase;
 
 class Bug41050Test extends TestCase
 {
-    var $quote;
-    var $account;
+    public $quote;
+    public $account;
     
     protected function setUp() : void
     {

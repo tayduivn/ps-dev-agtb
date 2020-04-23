@@ -35,7 +35,7 @@ class Bug43652Test extends TestCase
         unlink($this->fileData1);
     }
 
-    function _fileMimeProvider()
+    public static function fileMimeProvider()
     {
         return [
             [ ['name' => 'te.st.png','type' => 'img/png'],'img/png'],
@@ -48,7 +48,7 @@ class Bug43652Test extends TestCase
     /**
      * Test the getMime function for the use case where the mime type is already provided.
      *
-     * @dataProvider _fileMimeProvider
+     * @dataProvider fileMimeProvider
      */
     public function testUploadFileWithMimeType($file_info, $expectedMime)
     {

@@ -58,9 +58,9 @@ class RestMetadataModuleListPortalTest extends RestTestPortalBase
     }
 
     // Need to set the platform to something else
-    protected function _restLogin($username = '', $password = '', $platform = 'portal')
+    protected function restLogin($username = '', $password = '', $platform = 'portal')
     {
-        return parent::_restLogin($username, $password, $platform);
+        return parent::restLogin($username, $password, $platform);
     }
     /**
      * @group rest
@@ -71,8 +71,8 @@ class RestMetadataModuleListPortalTest extends RestTestPortalBase
         $tabs = new TabController();
         $this->defaultTabs = $tabs->get_tabs_system();
 
-        $this->_clearMetadataCache();
-        $restReply = $this->_restCall('me');
+        $this->clearMetadataCache();
+        $restReply = $this->restCall('me');
 
         $this->assertTrue(isset($restReply['reply']['current_user']['module_list']), 'There is no portal module list');
         // There should only be the following modules by default: Bugs, Cases, KBOLDDocuments, Leads
@@ -98,8 +98,8 @@ class RestMetadataModuleListPortalTest extends RestTestPortalBase
         $GLOBALS['db']->commit();
         // Do this to load the tab list into cache
         $tabs->get_tabs_system();
-        $this->_clearMetadataCache();
-        $restReply = $this->_restCall('me');
+        $this->clearMetadataCache();
+        $restReply = $this->restCall('me');
 
         $this->assertTrue(isset($restReply['reply']['current_user']['module_list']), 'There is no portal module list');
         // There should only be the following modules by default: Bugs, Cases, KBOLDDocuments, Contacts
@@ -128,8 +128,8 @@ class RestMetadataModuleListPortalTest extends RestTestPortalBase
             $this->oppTestPath,
             "<?php\n\$viewdefs['Accounts']['portal']['view']['list'] = array('test' => 'Testing');"
         );
-        $this->_clearMetadataCache();
-        $restReply = $this->_restCall('me');
+        $this->clearMetadataCache();
+        $restReply = $this->restCall('me');
 
         $this->assertTrue(in_array('Accounts', $restReply['reply']['current_user']['module_list']), 'The new Accounts module did not appear in the portal list');
     }
@@ -141,7 +141,7 @@ class RestMetadataModuleListPortalTest extends RestTestPortalBase
     public function testPortalMetadataModulesContainsNotes()
     {
         // Get the metadata for portal
-        $restReply = $this->_restCall('metadata?type_filter=modules&platform=portal');
+        $restReply = $this->restCall('metadata?type_filter=modules&platform=portal');
         $this->assertArrayHasKey('modules', $restReply['reply'], "The modules index is missing from the response");
         $this->assertArrayHasKey('Notes', $restReply['reply']['modules'], 'Notes was not returned in the modules metadata as expected');
     }

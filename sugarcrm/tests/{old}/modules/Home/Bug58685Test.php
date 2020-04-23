@@ -47,7 +47,7 @@ class Bug58685Test extends TestCase
     /**
      * testEmptyPostError
      */
-    function testSaveUploadErrorMessage()
+    public function testSaveUploadErrorMessage()
     {
         //first lets test that no errors show up under normal conditions, clear out Post array just in case there is stale info
         $_POST = [];

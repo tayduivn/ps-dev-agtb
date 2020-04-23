@@ -15,26 +15,26 @@ use PHPUnit\Framework\TestCase;
 
 class DependencyManagerTest extends TestCase
 {
-    var $removeCustomDir = false;
-    var $cf_test_field = [
+    public $removeCustomDir = false;
+    public $cf_test_field = [
         'name' => 'cf_field',
         'type' => 'varchar',
         'calculated' => true,
         'formula' => 'strlen($name)',
     ];
-    var $cf_enforced_field = [
+    public $cf_enforced_field = [
         'name' => 'cf_enforced_field',
         'type' => 'varchar',
         'calculated' => true,
         'formula' => 'strlen($name)',
         'enforced' => true,
     ];
-    var $dep_field = [
+    public $dep_field = [
         'name' => 'dep_field',
         'type' => 'varchar',
         'dependency' => 'strlen($name)',
     ];
-    var $dd_field = [
+    public $dd_field = [
         'name' => 'dd_field',
         'type' => 'enum',
         'options' => 'dd_options',
@@ -46,23 +46,23 @@ class DependencyManagerTest extends TestCase
             ],
         ],
     ];
-    var $dd_trigger = [
+    public $dd_trigger = [
         'name' => 'dd_trigger',
         'type' => 'enum',
         'options' => 'dd_trigger_options',
     ];
-    var $dd_options = [
+    public $dd_options = [
         "foo" => "Foo",
         "bar" => "Bar",
     ];
-    var $dd_trigger_options = [
+    public $dd_trigger_options = [
         "one" => "One",
         "two" => "Two",
     ];
 
 
 //Final order for these should be cf1, cf2, cf5, cf3, cf4
-    var $reliantCalcFields = [
+    public $reliantCalcFields = [
         'cf1' => [
             'name' => "cf1",
             'type' => 'int',

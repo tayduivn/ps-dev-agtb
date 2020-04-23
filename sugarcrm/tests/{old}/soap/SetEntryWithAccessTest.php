@@ -16,14 +16,14 @@
  */
 class SetEntryWithAccessTest extends SOAPTestCase
 {
-    var $testUser;
-    var $testAccount;
-    var $teamSet;
-    var $testTeam;
+    public $testUser;
+    public $testAccount;
+    public $teamSet;
+    public $testTeam;
 
     protected function setUp() : void
     {
-        $this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/soap.php';
+        $this->soapURL = $GLOBALS['sugar_config']['site_url'].'/soap.php';
         parent::setUp();
         $this->testUser = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['current_user'] = $this->testUser;
@@ -53,9 +53,9 @@ class SetEntryWithAccessTest extends SOAPTestCase
     public function testSetEntryHasAccess()
     {
         $time = mt_rand();
-        $this->_login();
+        $this->login();
 
-        $result = $this->_soapClient->call('set_entry', ['session'=> $this->_sessionId,'module_name'=>'Accounts', 'name_value_list'=>[['name'=>'id' , 'value'=>$this->testAccount->id],['name'=>'name' , 'value'=>"$time Account SINGLE"]]]);
+        $result = $this->soapClient->call('set_entry', ['session'=> $this->sessionId,'module_name'=>'Accounts', 'name_value_list'=>[['name'=>'id' , 'value'=>$this->testAccount->id],['name'=>'name' , 'value'=>"$time Account SINGLE"]]]);
 
         $this->assertEquals($this->testAccount->id, $result['id'], "Did not update the Account as expected.");
     }

@@ -15,11 +15,11 @@ use PHPUnit\Framework\TestCase;
 
 class Bug40247Test extends TestCase
 {
-    var $has_custom_connectors_file;
-    var $has_custom_display_config_file;
-    var $has_custom_accounts_detailviewdefs_file;
-    var $has_custom_leads_detailviewdefs_file;
-    var $has_custom_contacts_detailviewdefs_file;
+    public $has_custom_connectors_file;
+    public $has_custom_display_config_file;
+    public $has_custom_accounts_detailviewdefs_file;
+    public $has_custom_leads_detailviewdefs_file;
+    public $has_custom_contacts_detailviewdefs_file;
 
     protected function setUp() : void
     {
@@ -87,7 +87,7 @@ class Bug40247Test extends TestCase
         SugarAutoLoader::buildCache();
     }
 
-    function test_default_pro_connectors()
+    public function test_default_pro_connectors()
     {
         $this->install_connectors();
         if (!file_exists('custom/modules/connectors/metadata/display_config.php')) {

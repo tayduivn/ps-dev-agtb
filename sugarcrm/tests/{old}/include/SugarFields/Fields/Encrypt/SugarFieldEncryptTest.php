@@ -27,7 +27,7 @@ class SugarFieldEncryptTest extends TestCase
         unset($GLOBALS['current_user']);
     }
     
-    public function _providerEmailTemplateFormat()
+    public static function providerEmailTemplateFormat()
     {
         return [
             [Blowfish::encode(Blowfish::getKey('encrypt_field'), 'Test value'), 'Test value'],
@@ -35,7 +35,7 @@ class SugarFieldEncryptTest extends TestCase
     }
     
     /**
-     * @dataProvider _providerEmailTemplateFormat
+     * @dataProvider providerEmailTemplateFormat
      */
     public function testEmailTemplateFormat($unformattedValue, $expectedValue)
     {

@@ -31,7 +31,7 @@ class RestFavoriteTest extends RestTestBase
 
     public function testSetFavorite()
     {
-        $restReply = $this->_restCall(
+        $restReply = $this->restCall(
             "Accounts/",
             json_encode(['name'=>'UNIT TEST - AFTER', 'my_favorite' => true]),
             'POST'
@@ -56,31 +56,31 @@ class RestFavoriteTest extends RestTestBase
         );
 
 
-        $restReply = $this->_restCall("Accounts/{$account->id}/favorite", [], 'PUT');
+        $restReply = $this->restCall("Accounts/{$account->id}/favorite", [], 'PUT');
         
-        $is_fav = SugarFavorites::isUserFavorite('Accounts', $account->id, $this->_user->id);
-        
-        $this->assertEquals($is_fav, (bool) $restReply['reply']['my_favorite'], "The returned favorite was not the same.");
-
-
-        $restReply = $this->_restCall("Accounts/{$account->id}/unfavorite", [], 'PUT');
-
-        
-        $is_fav = SugarFavorites::isUserFavorite('Accounts', $account->id, $this->_user->id);
-        
-        $this->assertEquals($is_fav, (bool) $restReply['reply']['my_favorite'], "The returned favorite was not the same.");
-
-        $restReply = $this->_restCall("Accounts/{$account->id}/favorite", [], 'PUT');
-        
-        $is_fav = SugarFavorites::isUserFavorite('Accounts', $account->id, $this->_user->id);
+        $is_fav = SugarFavorites::isUserFavorite('Accounts', $account->id, $this->user->id);
         
         $this->assertEquals($is_fav, (bool) $restReply['reply']['my_favorite'], "The returned favorite was not the same.");
 
 
-        $restReply = $this->_restCall("Accounts/{$account->id}/favorite", [], 'DELETE');
+        $restReply = $this->restCall("Accounts/{$account->id}/unfavorite", [], 'PUT');
 
         
-        $is_fav = SugarFavorites::isUserFavorite('Accounts', $account->id, $this->_user->id);
+        $is_fav = SugarFavorites::isUserFavorite('Accounts', $account->id, $this->user->id);
+        
+        $this->assertEquals($is_fav, (bool) $restReply['reply']['my_favorite'], "The returned favorite was not the same.");
+
+        $restReply = $this->restCall("Accounts/{$account->id}/favorite", [], 'PUT');
+        
+        $is_fav = SugarFavorites::isUserFavorite('Accounts', $account->id, $this->user->id);
+        
+        $this->assertEquals($is_fav, (bool) $restReply['reply']['my_favorite'], "The returned favorite was not the same.");
+
+
+        $restReply = $this->restCall("Accounts/{$account->id}/favorite", [], 'DELETE');
+
+        
+        $is_fav = SugarFavorites::isUserFavorite('Accounts', $account->id, $this->user->id);
         
         $this->assertEquals($is_fav, (bool) $restReply['reply']['my_favorite'], "The returned favorite was not the same.");
     }

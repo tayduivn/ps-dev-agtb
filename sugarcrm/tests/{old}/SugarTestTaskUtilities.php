@@ -13,7 +13,7 @@
 
 class SugarTestTaskUtilities
 {
-    private static $_createdTasks = [];
+    private static $createdTasks = [];
 
     private function __construct()
     {
@@ -40,7 +40,7 @@ class SugarTestTaskUtilities
             $task->id = $id;
         }
         $task->save();
-        self::$_createdTasks[] = $task;
+        self::$createdTasks[] = $task;
         return $task;
     }
 
@@ -49,7 +49,7 @@ class SugarTestTaskUtilities
         foreach ($task_ids as $task_id) {
             $task = new Task();
             $task->id = $task_id;
-            self::$_createdTasks[] = $task;
+            self::$createdTasks[] = $task;
         } // foreach
     } // fn
     
@@ -62,7 +62,7 @@ class SugarTestTaskUtilities
     public static function getCreatedTaskIds()
     {
         $task_ids = [];
-        foreach (self::$_createdTasks as $task) {
+        foreach (self::$createdTasks as $task) {
             $task_ids[] = $task->id;
         }
         return $task_ids;

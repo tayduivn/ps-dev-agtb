@@ -17,8 +17,8 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug40263Test extends TestCase
 {
-    var $user;
-    var $note;
+    public $user;
+    public $note;
 
     protected function setUp() : void
     {

@@ -27,7 +27,7 @@ class Bug44472Test extends TestCase
     }
 
 
-    function test620TemplateMetaMergeOnCases()
+    public function test620TemplateMetaMergeOnCases()
     {
         $this->merge = new EditViewMerge();
         $this->merge->merge('Cases', 'tests/{old}/modules/UpgradeWizard/SugarMerge/od_metadata_files/610/oob/modules/Cases/metadata/editviewdefs.php', 'modules/Cases/metadata/editviewdefs.php', 'custom/modules/Cases/metadata/editviewdefs.php');
@@ -36,7 +36,7 @@ class Bug44472Test extends TestCase
         $this->assertFalse(isset($viewdefs['Cases']['EditView']['templateMeta']['form']), 'Assert that the templateMeta is pulled from the upgraded view rather than the customized view');
     }
 
-    function test620TemplateMetaMergeOnMeetings()
+    public function test620TemplateMetaMergeOnMeetings()
     {
         $this->merge = new EditViewMergeMock();
         $this->merge->setModule('Meetings');
@@ -51,7 +51,7 @@ class Bug44472Test extends TestCase
         $this->assertTrue(!isset($newData['Meetings']['EditView']['templateMeta']['form']), 'Assert that we do not take customized templateMeta section for Meetings');
     }
 
-    function test620TemplateMetaMergeOnCalls()
+    public function test620TemplateMetaMergeOnCalls()
     {
         $this->merge = new EditViewMergeMock();
         $this->merge->setModule('Calls');
@@ -70,27 +70,27 @@ class Bug44472Test extends TestCase
 
 class EditViewMergeMock extends EditViewMerge
 {
-    function setModule($module)
+    public function setModule($module)
     {
         $this->module = $module;
     }
-    
-    function setCustomData($data)
+
+    public function setCustomData($data)
     {
         $this->customData = $data;
     }
-    
-    function setNewData($data)
+
+    public function setNewData($data)
     {
         $this->newData = $data;
     }
-    
-    function getNewData()
+
+    public function getNewData()
     {
         return $this->newData;
     }
-    
-    function testMergeTemplateMeta()
+
+    public function testMergeTemplateMeta()
     {
         $this->mergeTemplateMeta();
     }

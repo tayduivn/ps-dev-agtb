@@ -15,23 +15,22 @@ use PHPUnit\Framework\TestCase;
 
 class Bug42085Test extends TestCase
 {
-    var $meeting;
-    //var $listLayoutMetaDataParser;
-    
+    public $meeting;
+
     protected function setUp() : void
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $this->meeting = SugarTestMeetingUtilities::createMeeting();
         //$this->listLayoutMetaDataParser = new ListLayoutMetaDataParser(MB_LISTVIEW, 'Meetings');
     }
-    
+
     protected function tearDown() : void
     {
         SugarTestMeetingUtilities::removeAllCreatedMeetings();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
     }
-    
+
     public function testHideMeetingType()
     {
         $validDef = $this->meeting->field_defs['type'];

@@ -15,7 +15,6 @@
  */
 class SOAPAPI3Test extends SOAPTestCase
 {
-    public $_contactId = '';
     private static $helperObject;
 
     /**
@@ -23,9 +22,9 @@ class SOAPAPI3Test extends SOAPTestCase
      */
     protected function setUp() : void
     {
-        $this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/service/v3/soap.php';
+        $this->soapURL = $GLOBALS['sugar_config']['site_url'].'/service/v3/soap.php';
         parent::setUp();
-        $this->_login();
+        $this->login();
         $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
 
@@ -46,10 +45,10 @@ class SOAPAPI3Test extends SOAPTestCase
      */
     public function testCanLogin()
     {
-        $result = $this->_login();
+        $result = $this->login();
         $this->assertTrue(
             !empty($result['id']) && $result['id'] != -1,
-            'SOAP Session not created. Error ('.$this->_soapClient->faultcode.'): '.$this->_soapClient->faultstring.': '.$this->_soapClient->faultdetail
+            'SOAP Session not created. Error ('.$this->soapClient->faultcode.'): '.$this->soapClient->faultstring.': '.$this->soapClient->faultdetail
         );
     }
 
@@ -62,10 +61,10 @@ class SOAPAPI3Test extends SOAPTestCase
         $offSet = 0;
         $maxResults = 10;
 
-        $results = $this->_soapClient->call(
+        $results = $this->soapClient->call(
             'search_by_module',
             [
-                'session' => $this->_sessionId,
+                'session' => $this->sessionId,
                 'search'  => $searchString,
                 'modules' => $searchModules,
                 'offset'  => $offSet,
@@ -90,10 +89,10 @@ class SOAPAPI3Test extends SOAPTestCase
         $offSet = 0;
         $maxResults = 10;
 
-        $results = $this->_soapClient->call(
+        $results = $this->soapClient->call(
             'search_by_module',
             [
-                'session' => $this->_sessionId,
+                'session' => $this->sessionId,
                 'search'  => $searchString,
                 'modules' => $searchModules,
                 'offset'  => $offSet,
@@ -113,7 +112,7 @@ class SOAPAPI3Test extends SOAPTestCase
     {
         $GLOBALS['reload_vardefs'] = true;
         //Test a regular module
-        $result = $this->_getVardefsMD5('Accounts');
+        $result = $this->getVardefsMD5('Accounts');
         $a = new Account();
         $soapHelper = new SugarWebServiceUtilv3();
         $actualVardef = $soapHelper->get_return_module_fields($a, 'Accounts', '');
@@ -123,20 +122,20 @@ class SOAPAPI3Test extends SOAPTestCase
 
     public function testGetUpcomingActivities()
     {
-        $expected = $this->_createUpcomingActivities(); //Seed the data.
-        $results = $this->_soapClient->call('get_upcoming_activities', ['session'=>$this->_sessionId]);
-        $this->_removeUpcomingActivities();
+        $expected = $this->createUpcomingActivities(); //Seed the data.
+        $results = $this->soapClient->call('get_upcoming_activities', ['session'=>$this->sessionId]);
+        $this->removeUpcomingActivities();
 
-        $this->assertEquals($expected[0], $results[1]['id'], 'Unable to get upcoming activities Error ('.$this->_soapClient->faultcode.'): '.$this->_soapClient->faultstring.': '.$this->_soapClient->faultdetail);
-        $this->assertEquals($expected[1], $results[2]['id'], 'Unable to get upcoming activities Error ('.$this->_soapClient->faultcode.'): '.$this->_soapClient->faultstring.': '.$this->_soapClient->faultdetail);
+        $this->assertEquals($expected[0], $results[1]['id'], 'Unable to get upcoming activities Error ('.$this->soapClient->faultcode.'): '.$this->soapClient->faultstring.': '.$this->soapClient->faultdetail);
+        $this->assertEquals($expected[1], $results[2]['id'], 'Unable to get upcoming activities Error ('.$this->soapClient->faultcode.'): '.$this->soapClient->faultstring.': '.$this->soapClient->faultdetail);
     }
 
     public function testSetEntriesForAccount()
     {
-        $result = $this->_setEntriesForAccount();
+        $result = $this->setEntriesForAccount();
         $this->assertTrue(
             !empty($result['ids']) && $result['ids'][0] != -1,
-            'Can not create new account using testSetEntriesForAccount. Error ('.$this->_soapClient->faultcode.'): '.$this->_soapClient->faultstring.': '.$this->_soapClient->faultdetail
+            'Can not create new account using testSetEntriesForAccount. Error ('.$this->soapClient->faultcode.'): '.$this->soapClient->faultstring.': '.$this->soapClient->faultdetail
         );
     } // fn
 
@@ -148,10 +147,10 @@ class SOAPAPI3Test extends SOAPTestCase
         $testModule = 'Accounts';
         $testModuleID = create_guid();
 
-        $this->_createTrackerEntry($testModule, $testModuleID);
+        $this->createTrackerEntry($testModule, $testModuleID);
 
-        $this->_login();
-        $results = $this->_soapClient->call('get_last_viewed', ['session'=>$this->_sessionId,'module_names'=> [$testModule] ]);
+        $this->login();
+        $results = $this->soapClient->call('get_last_viewed', ['session'=>$this->sessionId,'module_names'=> [$testModule] ]);
 
         $found = false;
         foreach ($results as $entry) {
@@ -164,16 +163,16 @@ class SOAPAPI3Test extends SOAPTestCase
         $this->assertTrue($found, "Unable to get last viewed modules");
     }
 
-    private function _createTrackerEntry($module, $id, $summaryText = "UNIT TEST SUMMARY")
+    private function createTrackerEntry($module, $id, $summaryText = "UNIT TEST SUMMARY")
     {
         $trackerManager = TrackerManager::getInstance();
         $trackerManager->unPause();
 
         $timeStamp = TimeDate::getInstance()->nowDb();
         $monitor = $trackerManager->getMonitor('tracker');
-        $monitor->setValue('team_id', self::$_user->getPrivateTeamID());
+        $monitor->setValue('team_id', self::$user->getPrivateTeamID());
         $monitor->setValue('action', 'detail');
-        $monitor->setValue('user_id', self::$_user->id);
+        $monitor->setValue('user_id', self::$user->id);
         $monitor->setValue('module_name', $module);
         $monitor->setValue('date_modified', $timeStamp);
         $monitor->setValue('visible', true);
@@ -188,20 +187,20 @@ class SOAPAPI3Test extends SOAPTestCase
      */
     public function testGetModuleLayoutMD5()
     {
-        $result = $this->_getModuleLayoutMD5();
+        $result = $this->getModuleLayoutMD5();
         $this->assertStringContainsString('Client', $result['faultcode']);
     }
 
     /**********************************
      * HELPER PUBLIC FUNCTIONS
      **********************************/
-    private function _removeUpcomingActivities()
+    private function removeUpcomingActivities()
     {
         $GLOBALS['db']->query("DELETE FROM calls where name = 'UNIT TEST'");
         $GLOBALS['db']->query("DELETE FROM tasks where name = 'UNIT TEST'");
     }
 
-    private function _createUpcomingActivities()
+    private function createUpcomingActivities()
     {
         $GLOBALS['current_user']->setPreference('datef', 'Y-m-d') ;
         $GLOBALS['current_user']->setPreference('timef', 'H:i') ;
@@ -243,29 +242,27 @@ class SOAPAPI3Test extends SOAPTestCase
         return [$callID, $taskID];
     }
 
-    public function _getVardefsMD5($module)
+    private function getVardefsMD5($module)
     {
-        $result = $this->_soapClient->call('get_module_fields_md5', ['session'=>$this->_sessionId,'module'=> $module ]);
+        $result = $this->soapClient->call('get_module_fields_md5', ['session'=>$this->sessionId,'module'=> $module ]);
         return $result;
     }
 
-    public function _getModuleLayoutMD5()
+    private function getModuleLayoutMD5()
     {
-        $result = $this->_soapClient->call(
+        $result = $this->soapClient->call(
             'get_module_layout_md5',
-            ['session'=>$this->_sessionId,'module_names'=> ['Accounts'],'types' => ['default'],'views' => ['list']]
+            ['session'=>$this->sessionId,'module_names'=> ['Accounts'],'types' => ['default'],'views' => ['list']]
         );
         return $result;
     }
 
-    public function _setEntriesForAccount()
+    private function setEntriesForAccount()
     {
-        global $timedate;
-        $current_date = $timedate->nowDb();
         $time = mt_rand();
         $name = 'SugarAccount' . $time;
         $email1 = 'account@'. $time. 'sugar.com';
-        $result = $this->_soapClient->call('set_entries', ['session'=>$this->_sessionId,'module_name'=>'Accounts', 'name_value_lists'=>[[['name'=>'name' , 'value'=>"$name"], ['name'=>'email1' , 'value'=>"$email1"]]]]);
+        $result = $this->soapClient->call('set_entries', ['session'=>$this->sessionId,'module_name'=>'Accounts', 'name_value_lists'=>[[['name'=>'name' , 'value'=>"$name"], ['name'=>'email1' , 'value'=>"$email1"]]]]);
         $soap_version_test_accountId = $result['ids'][0];
         SugarTestAccountUtilities::setCreatedAccount([$soap_version_test_accountId]);
         return $result;

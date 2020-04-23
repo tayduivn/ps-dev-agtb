@@ -17,8 +17,8 @@ require_once 'include/workflow/action_utils.php';
 
 class Bug47403Test extends TestCase
 {
-    protected $_focus;
-    protected $_actionArray;
+    private $focus;
+    private $actionArray;
 
     protected function setUp() : void
     {
@@ -26,9 +26,9 @@ class Bug47403Test extends TestCase
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
 
-        $this->_focus = SugarTestAccountUtilities::createAccount();
+        $this->focus = SugarTestAccountUtilities::createAccount();
 
-        $this->_actionArray =  [
+        $this->actionArray =  [
             'action_module' => '',
             'action_type' => 'update',
             'rel_module' => '',
@@ -40,28 +40,28 @@ class Bug47403Test extends TestCase
 
     protected function tearDown() : void
     {
-        unset($this->_actionArray);
+        unset($this->actionArray);
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestHelper::tearDown();
     }
 
     public function testWorkflowCanSetNonRequiredFieldToEmpty()
     {
-        $this->_focus->assigned_user_id = $GLOBALS['current_user']->id;
-        $this->_actionArray['basic'] = ['assigned_user_id' => ''];
+        $this->focus->assigned_user_id = $GLOBALS['current_user']->id;
+        $this->actionArray['basic'] = ['assigned_user_id' => ''];
 
-        $this->assertSame($GLOBALS['current_user']->id, $this->_focus->assigned_user_id);
-        process_action_update($this->_focus, $this->_actionArray);
-        $this->assertSame('', $this->_focus->assigned_user_id);
+        $this->assertSame($GLOBALS['current_user']->id, $this->focus->assigned_user_id);
+        process_action_update($this->focus, $this->actionArray);
+        $this->assertSame('', $this->focus->assigned_user_id);
     }
 
     public function testWorkflowCanNotSetRequiredFieldToEmpty()
     {
-        $this->_focus->user_name = $GLOBALS['current_user']->user_name;
-        $this->_actionArray['basic'] = ['name' => ''];
+        $this->focus->user_name = $GLOBALS['current_user']->user_name;
+        $this->actionArray['basic'] = ['name' => ''];
 
-        $this->assertSame($GLOBALS['current_user']->user_name, $this->_focus->user_name);
-        process_action_update($this->_focus, $this->_actionArray);
-        $this->assertNotSame('', $this->_focus->user_name);
+        $this->assertSame($GLOBALS['current_user']->user_name, $this->focus->user_name);
+        process_action_update($this->focus, $this->actionArray);
+        $this->assertNotSame('', $this->focus->user_name);
     }
 }

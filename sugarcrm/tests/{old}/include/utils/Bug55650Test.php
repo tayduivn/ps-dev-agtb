@@ -40,7 +40,7 @@ class Bug55650Test extends TestCase
         $this->assertEquals(getTrackerSubstring($value), substr($expected, 0, $cut) . $add, '');
     }
     
-    function providerTestGetTrackerSubstring()
+    public static function providerTestGetTrackerSubstring()
     {
         return [
             0 => ["A lot of quotes &#039;&#039;&#039;&#039;&#039;&#039;&#039;&#039;&#039;&#039;&#039;&#039;&#039;&#039;&#039;", "A lot of quotes '''''''''''''''"],

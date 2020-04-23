@@ -13,9 +13,9 @@
 
 class SugarTestKBContentUtilities
 {
-    protected static $_createdKbContentIds = [];
-    protected static $_createdKbDocumentIds = [];
-    protected static $_createdKbArticleIds = [];
+    private static $createdKbContentIds = [];
+    private static $createdKbDocumentIds = [];
+    private static $createdKbArticleIds = [];
 
     private function __construct()
     {
@@ -45,37 +45,37 @@ class SugarTestKBContentUtilities
     {
         $bean->save();
         DBManagerFactory::getInstance()->commit();
-        self::$_createdKbContentIds[] = $bean->id;
-        self::$_createdKbArticleIds[] = $bean->kbarticle_id;
-        self::$_createdKbDocumentIds[] = $bean->kbdocument_id;
+        self::$createdKbContentIds[] = $bean->id;
+        self::$createdKbArticleIds[] = $bean->kbarticle_id;
+        self::$createdKbDocumentIds[] = $bean->kbdocument_id;
     }
 
     public static function removeAllCreatedBeans()
     {
         $db = DBManagerFactory::getInstance();
 
-        if (self::$_createdKbDocumentIds) {
+        if (self::$createdKbDocumentIds) {
             $db->query('DELETE FROM kbdocuments WHERE id IN ('
-                . static::getPreparedIdsString(self::$_createdKbDocumentIds)
+                . static::getPreparedIdsString(self::$createdKbDocumentIds)
                 . ')');
 
-            self::$_createdKbDocumentIds = [];
+            self::$createdKbDocumentIds = [];
         }
 
-        if (self::$_createdKbArticleIds) {
+        if (self::$createdKbArticleIds) {
             $db->query('DELETE FROM kbarticles WHERE id IN ('
-                . static::getPreparedIdsString(self::$_createdKbArticleIds)
+                . static::getPreparedIdsString(self::$createdKbArticleIds)
                 . ')');
 
-            self::$_createdKbArticleIds = [];
+            self::$createdKbArticleIds = [];
         }
 
-        if (self::$_createdKbContentIds) {
-            $conditions = static::getPreparedIdsString(self::$_createdKbContentIds);
+        if (self::$createdKbContentIds) {
+            $conditions = static::getPreparedIdsString(self::$createdKbContentIds);
             $db->query('DELETE FROM kbcontents WHERE id IN (' . $conditions . ')');
             $db->query('DELETE FROM kbcontents_audit WHERE parent_id IN (' . $conditions . ')');
 
-            self::$_createdKbContentIds = [];
+            self::$createdKbContentIds = [];
         }
     }
 

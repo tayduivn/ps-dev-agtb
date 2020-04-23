@@ -17,12 +17,12 @@ class LocalizationTest extends TestCase
     /**
      * @var Localization
      */
-    private $_locale;
+    private $locale;
 
     /**
      * @var User
      */
-    protected $_user;
+    private $user;
 
     /**
      * pre-class environment setup
@@ -42,9 +42,9 @@ class LocalizationTest extends TestCase
     protected function setUp() : void
     {
         global $current_user;
-        $this->_locale = Localization::getObject();
-        $this->_user = SugarTestUserUtilities::createAnonymousUser();
-        $current_user = $this->_user;
+        $this->locale = Localization::getObject();
+        $this->user = SugarTestUserUtilities::createAnonymousUser();
+        $current_user = $this->user;
         $this->_currency = SugarTestCurrencyUtilities::createCurrency('Yen', '¥', 'YEN', 78.87);
     }
 
@@ -52,8 +52,8 @@ class LocalizationTest extends TestCase
     {
         // remove test user
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($this->_locale);
-        unset($this->_user);
+        unset($this->locale);
+        unset($this->user);
         unset($this->_currency);
 
         // remove test currencies
@@ -98,8 +98,8 @@ class LocalizationTest extends TestCase
      */
     public function testGetLocaleFormattedNameUsingFormatInUserPreference($nameFormat, $firstName, $lastName, $salutation, $title, $expectedOutput)
     {
-        $this->_user->setPreference('default_locale_name_format', $nameFormat);
-        $outputName = $this->_locale->getLocaleFormattedName($firstName, $lastName, $salutation, $title, '', $this->_user);
+        $this->user->setPreference('default_locale_name_format', $nameFormat);
+        $outputName = $this->locale->getLocaleFormattedName($firstName, $lastName, $salutation, $title, '', $this->user);
         $this->assertEquals($expectedOutput, $outputName);
     }
 
@@ -108,7 +108,7 @@ class LocalizationTest extends TestCase
      */
     public function testGetLocaleFormattedNameUsingFormatSpecified($nameFormat, $firstName, $lastName, $salutation, $title, $expectedOutput)
     {
-        $outputName = $this->_locale->getLocaleFormattedName($firstName, $lastName, $salutation, $title, $nameFormat, $this->_user);
+        $outputName = $this->locale->getLocaleFormattedName($firstName, $lastName, $salutation, $title, $nameFormat, $this->user);
         $this->assertEquals($expectedOutput, $outputName);
     }
 
@@ -117,9 +117,9 @@ class LocalizationTest extends TestCase
      */
     public function testGetLocaleFormattedNameWhenNameIsEmpty()
     {
-        $this->_user->setPreference('default_locale_name_format', 'l f');
+        $this->user->setPreference('default_locale_name_format', 'l f');
         $expectedOutput = ' ';
-        $outputName = $this->_locale->getLocaleFormattedName('', '', '', '', '', $this->_user);
+        $outputName = $this->locale->getLocaleFormattedName('', '', '', '', '', $this->user);
 
         $this->assertEquals($expectedOutput, $outputName);
     }
@@ -129,9 +129,9 @@ class LocalizationTest extends TestCase
      */
     public function testGetLocaleFormattedNameWhenNameIsEmptyAndReturningEmptyString()
     {
-        $this->_user->setPreference('default_locale_name_format', 'l f');
+        $this->user->setPreference('default_locale_name_format', 'l f');
         $expectedOutput = '';
-        $outputName = $this->_locale->getLocaleFormattedName('', '', '', '', '', $this->_user, true);
+        $outputName = $this->locale->getLocaleFormattedName('', '', '', '', '', $this->user, true);
 
         $this->assertEquals($expectedOutput, $outputName);
     }
@@ -140,7 +140,7 @@ class LocalizationTest extends TestCase
     {
         global $sugar_config;
 
-        $currencies = $this->_locale->getCurrencies();
+        $currencies = $this->locale->getCurrencies();
 
         $this->assertEquals($currencies['-99']['name'], $sugar_config['default_currency_name']);
         $this->assertEquals($currencies['-99']['symbol'], $sugar_config['default_currency_symbol']);
@@ -151,11 +151,11 @@ class LocalizationTest extends TestCase
     {
         $string = "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモガギグゲゴザジズゼゾダヂヅデド";
 
-        $convertedString = $this->_locale->translateCharset($string, 'UTF-8', 'EUC-CN');
+        $convertedString = $this->locale->translateCharset($string, 'UTF-8', 'EUC-CN');
         $this->assertNotEquals($string, $convertedString);
 
         // test for this working by being able to convert back and the string match
-        $convertedString = $this->_locale->translateCharset($convertedString, 'EUC-CN', 'UTF-8');
+        $convertedString = $this->locale->translateCharset($convertedString, 'EUC-CN', 'UTF-8');
         $this->assertEquals($string, $convertedString);
     }
 
@@ -167,11 +167,11 @@ class LocalizationTest extends TestCase
 
         $string = file_get_contents(dirname(__FILE__)."/Bug49619.txt");
 
-        $convertedString = $this->_locale->translateCharset($string, 'KS_C_5601-1987', 'UTF-8', true);
+        $convertedString = $this->locale->translateCharset($string, 'KS_C_5601-1987', 'UTF-8', true);
         $this->assertNotEquals($string, $convertedString);
 
         // test for this working by being able to convert back and the string match
-        $convertedString = $this->_locale->translateCharset($convertedString, 'UTF-8', 'KS_C_5601-1987', true);
+        $convertedString = $this->locale->translateCharset($convertedString, 'UTF-8', 'KS_C_5601-1987', true);
         $this->assertEquals($string, $convertedString);
     }
 
@@ -180,7 +180,7 @@ class LocalizationTest extends TestCase
         $string = 'string';
 
         $this->assertEquals(
-            $this->_locale->detectCharset($string),
+            $this->locale->detectCharset($string),
             'ASCII'
         );
     }
@@ -190,7 +190,7 @@ class LocalizationTest extends TestCase
         $string = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモガギグゲゴザジズゼゾダヂヅデド';
 
         $this->assertEquals(
-            $this->_locale->detectCharset($string),
+            $this->locale->detectCharset($string),
             'UTF-8'
         );
     }
@@ -199,11 +199,11 @@ class LocalizationTest extends TestCase
     {
         $backup = $GLOBALS['sugar_config']['export_delimiter'];
         $GLOBALS['sugar_config']['export_delimiter'] = 'John is Cool';
-        $this->_user->setPreference('export_delimiter', 'John is Really Cool');
+        $this->user->setPreference('export_delimiter', 'John is Really Cool');
 
         $this->assertEquals(
-            $this->_locale->getPrecedentPreference('export_delimiter', $this->_user),
-            $this->_user->getPreference('export_delimiter')
+            $this->locale->getPrecedentPreference('export_delimiter', $this->user),
+            $this->user->getPreference('export_delimiter')
         );
 
         $GLOBALS['sugar_config']['export_delimiter'] = $backup;
@@ -215,7 +215,7 @@ class LocalizationTest extends TestCase
         $GLOBALS['sugar_config']['export_delimiter'] = 'John is Cool';
 
         $this->assertEquals(
-            $this->_locale->getPrecedentPreference('export_delimiter', $this->_user),
+            $this->locale->getPrecedentPreference('export_delimiter', $this->user),
             $GLOBALS['sugar_config']['export_delimiter']
         );
 
@@ -229,11 +229,11 @@ class LocalizationTest extends TestCase
     {
         $backup = $GLOBALS['sugar_config']['export_delimiter'];
         $GLOBALS['sugar_config']['export_delimiter'] = 'John is Cool';
-        $this->_user->setPreference('export_delimiter', '');
+        $this->user->setPreference('export_delimiter', '');
         $GLOBALS['sugar_config']['default_random_setting_for_localization_test'] = 'John is not Cool at all';
 
         $this->assertEquals(
-            $this->_locale->getPrecedentPreference('export_delimiter', $this->_user, 'default_random_setting_for_localization_test'),
+            $this->locale->getPrecedentPreference('export_delimiter', $this->user, 'default_random_setting_for_localization_test'),
             $GLOBALS['sugar_config']['default_random_setting_for_localization_test']
         );
 
@@ -247,10 +247,10 @@ class LocalizationTest extends TestCase
     public function testGetPrecedentPreferenceForDefaultEmailCharset()
     {
         $emailSettings = ['defaultOutboundCharset' => 'something fun'];
-        $this->_user->setPreference('emailSettings', $emailSettings, 0, 'Emails');
+        $this->user->setPreference('emailSettings', $emailSettings, 0, 'Emails');
 
         $this->assertEquals(
-            $this->_locale->getPrecedentPreference('default_email_charset', $this->_user),
+            $this->locale->getPrecedentPreference('default_email_charset', $this->user),
             $emailSettings['defaultOutboundCharset']
         );
     }
@@ -260,10 +260,10 @@ class LocalizationTest extends TestCase
      */
     public function testGetCurrencySymbol()
     {
-        $this->_user->setPreference('currency', $this->_currency->id);
+        $this->user->setPreference('currency', $this->_currency->id);
 
         $this->assertEquals(
-            $this->_locale->getCurrencySymbol($this->_user),
+            $this->locale->getCurrencySymbol($this->user),
             '¥'
         );
     }
@@ -273,13 +273,13 @@ class LocalizationTest extends TestCase
      */
     public function testGetLocaleFormattedNumberWithNoCurrencySymbolSpecified()
     {
-        $this->_user->setPreference('currency', $this->_currency->id);
-        $this->_user->setPreference('dec_sep', '.');
-        $this->_user->setPreference('num_grp_sep', ',');
-        $this->_user->setPreference('default_currency_significant_digits', 2);
+        $this->user->setPreference('currency', $this->_currency->id);
+        $this->user->setPreference('dec_sep', '.');
+        $this->user->setPreference('num_grp_sep', ',');
+        $this->user->setPreference('default_currency_significant_digits', 2);
 
         $this->assertEquals(
-            $this->_locale->getLocaleFormattedNumber(20, '', true, $this->_user),
+            $this->locale->getLocaleFormattedNumber(20, '', true, $this->user),
             '¥20'
         );
     }
@@ -289,8 +289,8 @@ class LocalizationTest extends TestCase
      */
     public function testGetNumberGroupingSeparatorIfSepIsEmpty()
     {
-        $this->_user->setPreference('num_grp_sep', '');
-        $this->assertEmpty($this->_locale->getNumberGroupingSeparator(), "1000s separator should be ''");
+        $this->user->setPreference('num_grp_sep', '');
+        $this->assertEmpty($this->locale->getNumberGroupingSeparator(), "1000s separator should be ''");
     }
 
     /**
@@ -312,7 +312,7 @@ class LocalizationTest extends TestCase
                 ->method('getLocaleFormatMacro')
                 ->will($this->returnValue($macro));
         } else {
-            $locale = $this->_locale;
+            $locale = $this->locale;
         }
 
         $actual = $locale->formatName($bean, $data);
@@ -383,7 +383,7 @@ class LocalizationTest extends TestCase
      */
     public function testGetPrecedentPreferenceReturnsNullForNumGrpSep()
     {
-        $this->assertNull($this->_locale->getPrecedentPreference('num_grp_sep', $this->_user));
+        $this->assertNull($this->locale->getPrecedentPreference('num_grp_sep', $this->user));
     }
 
     /**
@@ -394,8 +394,8 @@ class LocalizationTest extends TestCase
      */
     public function testGetPrecedentPreferenceReturnsValueForNumGrpSep()
     {
-        $this->_user->setPreference('num_grp_sep', '!');
-        $this->assertEquals('!', $this->_locale->getPrecedentPreference('num_grp_sep', $this->_user));
+        $this->user->setPreference('num_grp_sep', '!');
+        $this->assertEquals('!', $this->locale->getPrecedentPreference('num_grp_sep', $this->user));
     }
 
     /**
@@ -404,20 +404,20 @@ class LocalizationTest extends TestCase
     public function testGetAuthenticatedUserLanguage()
     {
         //test from user pref
-        $this->_user->preferred_language = 'fr_FR';
-        $this->assertEquals('fr_FR', $this->_locale->getAuthenticatedUserLanguage());
-        $this->_user->preferred_language = 'de_DE';
-        $this->assertEquals('de_DE', $this->_locale->getAuthenticatedUserLanguage());
+        $this->user->preferred_language = 'fr_FR';
+        $this->assertEquals('fr_FR', $this->locale->getAuthenticatedUserLanguage());
+        $this->user->preferred_language = 'de_DE';
+        $this->assertEquals('de_DE', $this->locale->getAuthenticatedUserLanguage());
         //test from session
         if (!empty($_SESSION['authenticated_user_language'])) {
             $oSESSION = $_SESSION['authenticated_user_language'];
         }
-        $this->_user->preferred_language = null;
+        $this->user->preferred_language = null;
         $_SESSION['authenticated_user_language'] = 'ja_JP';
-        $this->assertEquals('ja_JP', $this->_locale->getAuthenticatedUserLanguage());
+        $this->assertEquals('ja_JP', $this->locale->getAuthenticatedUserLanguage());
         //test from default
         unset($_SESSION['authenticated_user_language']);
-        $this->assertEquals($GLOBALS['sugar_config']['default_language'], $this->_locale->getAuthenticatedUserLanguage());
+        $this->assertEquals($GLOBALS['sugar_config']['default_language'], $this->locale->getAuthenticatedUserLanguage());
         if (isset($oSESSION)) {
             $_SESSION['authenticated_user_language'] = $oSESSION;
         }
@@ -565,7 +565,7 @@ class LocalizationTest extends TestCase
      */
     public function testGetLocaleUnFormattedName($name, $format, $expected)
     {
-        $result = $this->_locale->getLocaleUnFormattedName($name, $format);
+        $result = $this->locale->getLocaleUnFormattedName($name, $format);
         $this->assertEquals($expected, $result);
     }
 }

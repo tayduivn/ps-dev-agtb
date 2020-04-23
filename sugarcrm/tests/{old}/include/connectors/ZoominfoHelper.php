@@ -36,7 +36,7 @@ class ZoominfoMockStream
     public $query_params = [];
     protected $data = '';
 
-    function stream_open($path, $mode, $options, &$opened_path)
+    public function stream_open($path, $mode, $options, &$opened_path)
     {
         $dir = dirname(__FILE__);
         $urlinfo = parse_url($path);
@@ -51,25 +51,25 @@ class ZoominfoMockStream
         return true;
     }
 
-    function stream_close()
+    public function stream_close()
     {
         $this->data = '';
         return true;
     }
 
-    function stream_read($count)
+    public function stream_read($count)
     {
         $ret = substr($this->data, $this->position, $count);
         $this->position += strlen($ret);
         return $ret;
     }
 
-    function stream_tell()
+    public function stream_tell()
     {
         return $this->position;
     }
 
-    function stream_eof()
+    public function stream_eof()
     {
         return $this->position >= strlen($this->data);
     }

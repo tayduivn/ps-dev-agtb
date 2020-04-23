@@ -33,9 +33,9 @@ class Bug53360Test extends TestCase
         SugarTestHelper::setUp('beanList');
 
         $this->report = new Report();
-        $this->report->report_def = ['group_defs' => $this->_getDummyGroupDefs()];
-        $this->report->group_defs_Info = $this->_getDummyGroupDefsInfo();
-        $this->rowsAndColumnsData = $this->_getData();
+        $this->report->report_def = ['group_defs' => $this->getDummyGroupDefs()];
+        $this->report->group_defs_Info = $this->getDummyGroupDefsInfo();
+        $this->rowsAndColumnsData = $this->getData();
     }
 
     protected function tearDown() : void
@@ -69,7 +69,7 @@ class Bug53360Test extends TestCase
         $this->assertEquals(1, $ret); // first appearance of sarah is 1st index
     }
 
-    private function _getDummyGroupDefs()
+    private function getDummyGroupDefs()
     {
         return [
             0 => ['name' => 'user_name', 'label' => 'User Name', 'table_key' => 'Opportunities:assigned_user_link', 'type' => 'user_name'],
@@ -77,7 +77,7 @@ class Bug53360Test extends TestCase
         ];
     }
 
-    private function _getDummyGroupDefsInfo()
+    private function getDummyGroupDefsInfo()
     {
         $grpDefs = [
             ['name' => 'user_name', 'label' => 'User Name', 'table_key' => 'Opportunities:assigned_user_link',
@@ -89,7 +89,7 @@ class Bug53360Test extends TestCase
         return array_combine($grpKeys, $grpDefs);
     }
 
-    private function _getData()
+    private function getData()
     {
         return [
             ['cells' => ["chris", "Value Proposition", "$10,000.00", "$10,000.00", "1"], 'count' => 1, 'User Name' => 'chris'],

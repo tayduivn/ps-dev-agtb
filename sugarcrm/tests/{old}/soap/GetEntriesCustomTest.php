@@ -19,11 +19,10 @@
  */
 class GetEntriesCustomTest extends SOAPTestCase
 {
-    private $_module = null;
-    private $_moduleName = 'Contacts';
-    private $_customFieldName = 'test_custom_c';
-    private $_field = null;
-    private $_df = null;
+    private $moduleName = 'Contacts';
+    private $customFieldName = 'test_custom_c';
+    private $field;
+    private $df;
 
     protected $session = [];
 
@@ -37,40 +36,40 @@ class GetEntriesCustomTest extends SOAPTestCase
         $_SERVER['REMOTE_ADDR'] = '0.0.0.0';
 
         require_once 'modules/DynamicFields/FieldCases.php';
-        $this->_field = get_widget('varchar');
-        $this->_field->id = $this->_moduleName . $this->_customFieldName;
-        $this->_field->name = $this->_customFieldName;
-        $this->_field->vanme = 'LBL_' . strtoupper($this->_customFieldName);
-        $this->_field->comments = null;
-        $this->_field->help = null;
-        $this->_field->custom_module = $this->_moduleName;
-        $this->_field->type = 'varchar';
-        $this->_field->label = 'LBL_' . strtoupper($this->_customFieldName);
-        $this->_field->len = 255;
-        $this->_field->required = 0;
-        $this->_field->default_value = '';
-        $this->_field->date_modified = '2012-03-14 02:23:23';
-        $this->_field->deleted = 0;
-        $this->_field->audited = 0;
-        $this->_field->massupdate = 0;
-        $this->_field->duplicate_merge = 0;
-        $this->_field->reportable = 1;
-        $this->_field->importable = 'true';
-        $this->_field->ext1 = null;
-        $this->_field->ext2 = null;
-        $this->_field->ext3 = null;
-        $this->_field->ext4 = null;
+        $this->field = get_widget('varchar');
+        $this->field->id = $this->moduleName . $this->customFieldName;
+        $this->field->name = $this->customFieldName;
+        $this->field->vanme = 'LBL_' . strtoupper($this->customFieldName);
+        $this->field->comments = null;
+        $this->field->help = null;
+        $this->field->custom_module = $this->moduleName;
+        $this->field->type = 'varchar';
+        $this->field->label = 'LBL_' . strtoupper($this->customFieldName);
+        $this->field->len = 255;
+        $this->field->required = 0;
+        $this->field->default_value = '';
+        $this->field->date_modified = '2012-03-14 02:23:23';
+        $this->field->deleted = 0;
+        $this->field->audited = 0;
+        $this->field->massupdate = 0;
+        $this->field->duplicate_merge = 0;
+        $this->field->reportable = 1;
+        $this->field->importable = 'true';
+        $this->field->ext1 = null;
+        $this->field->ext2 = null;
+        $this->field->ext3 = null;
+        $this->field->ext4 = null;
 
         global $beanList, $beanFiles;
 
-        $className = $beanList[$this->_moduleName];
+        $className = $beanList[$this->moduleName];
         require_once $beanFiles[$className];
-        $this->_module = new $className();
+        $module = new $className();
 
-        $this->_df = new DynamicField($this->_moduleName);
+        $this->df = new DynamicField($this->moduleName);
 
-        $this->_df->setup($this->_module);
-        $this->_df->addFieldObject($this->_field);
+        $this->df->setup($module);
+        $this->df->addFieldObject($this->field);
     }
 
     /**
@@ -80,25 +79,25 @@ class GetEntriesCustomTest extends SOAPTestCase
      */
     public function testGetEntriesCountFromBasicSoap()
     {
-        $this->_login();
+        $this->login();
         $params = [
-            'session' => $this->_sessionId,
-            'module_name' => $this->_moduleName,
-            'query' => $this->_customFieldName . ' LIKE \'\'',
+            'session' => $this->sessionId,
+            'module_name' => $this->moduleName,
+            'query' => $this->customFieldName . ' LIKE \'\'',
             'deleted' => 0,
         ];
-        $actual = $this->_soapClient->call('get_entries_count', $params);
+        $actual = $this->soapClient->call('get_entries_count', $params);
 
         $this->assertNotSame(null, $actual['result_count'], 'Null value returned by get_entries_count.');
     }
 
     protected function tearDown() : void
     {
-        $this->_df->deleteField($this->_field);
+        $this->df->deleteField($this->field);
 
         SugarTestHelper::tearDown();
         unset($_SERVER['REMOTE_ADDR']);
 
-        $this->_tearDownTestUser();
+        $this->tearDownTestUser();
     }
 }

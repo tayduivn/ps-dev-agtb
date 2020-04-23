@@ -39,11 +39,11 @@ class SearchByModuleMultiVersionTest extends SOAPTestCase
     {
         $soapURL = $GLOBALS['sugar_config']['site_url'] . $endpoint;
 
-        $this->_soapClient = new nusoapclient($soapURL, false, false, false, false, false, 600, 600);
+        $this->soapClient = new nusoapclient($soapURL, false, false, false, false, false, 600, 600);
 
-        $this->_login();
+        $this->login();
         $params = [
-            'session' => $this->_sessionId,
+            'session' => $this->sessionId,
             'search_string' => $this->account->name,
             'modules' => [
                 'Accounts',
@@ -52,7 +52,7 @@ class SearchByModuleMultiVersionTest extends SOAPTestCase
             'max_results' => 30,
         ];
 
-        $actual = $this->_soapClient->call('search_by_module', $params);
+        $actual = $this->soapClient->call('search_by_module', $params);
         $this->assertGreaterThan(0, count($actual['entry_list']), 'Call must return one bean minimum');
         $this->assertEquals('Accounts', $actual['entry_list'][0]['name'], 'Bean must be account');
         $this->assertEquals(

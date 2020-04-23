@@ -14,7 +14,7 @@ use Doctrine\DBAL\Connection;
 
 class SugarTestContactUtilities
 {
-    private static $_createdContacts = [];
+    private static $createdContacts = [];
 
     private function __construct()
     {
@@ -50,7 +50,7 @@ class SugarTestContactUtilities
         }
         $contact->save();
         $GLOBALS['db']->commit();
-        self::$_createdContacts[] = $contact;
+        self::$createdContacts[] = $contact;
         return $contact;
     }
 
@@ -59,7 +59,7 @@ class SugarTestContactUtilities
         foreach ($contact_ids as $contact_id) {
             $contact = new Contact();
             $contact->id = $contact_id;
-            self::$_createdContacts[] = $contact;
+            self::$createdContacts[] = $contact;
         } // foreach
     } // fn
 
@@ -116,7 +116,7 @@ class SugarTestContactUtilities
     public static function getCreatedContactIds()
     {
         $contact_ids = [];
-        foreach (self::$_createdContacts as $contact) {
+        foreach (self::$createdContacts as $contact) {
             $contact_ids[] = $contact->id;
         }
         return $contact_ids;

@@ -22,11 +22,11 @@ require_once "include/SearchForm/SearchForm2.php";
  */
 class Bug45709_53785_Test extends TestCase
 {
-    var $task = null;
-    var $contact = null;
-    var $team = null;
-    var $requestArray = null;
-    var $searchForm = null;
+    public $task = null;
+    public $contact = null;
+    public $team = null;
+    public $requestArray = null;
+    public $searchForm = null;
 
     protected function setUp() : void
     {

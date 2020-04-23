@@ -17,14 +17,14 @@ use PHPUnit\Framework\TestCase;
  */
 class ComposePackageTest extends TestCase
 {
-    var $c = null;
-    var $a = null;
-    var $ac_id = null;
-    
+    public $c = null;
+    public $a = null;
+    public $ac_id = null;
+
     protected function setUp() : void
     {
-        global $current_user, $currentModule ;
-        $mod_strings = return_module_language($GLOBALS['current_language'], "Contacts");
+        global $current_user;
+
         $beanList = [];
         $beanFiles = [];
         require 'include/modules.php';
@@ -35,7 +35,7 @@ class ComposePackageTest extends TestCase
         $time = date('Y-m-d H:i:s');
 
         $this->c = SugarTestContactUtilities::createContact();
-        
+
         $beanList = [];
         $beanFiles = [];
         require 'include/modules.php';
@@ -65,7 +65,7 @@ class ComposePackageTest extends TestCase
         require_once 'modules/Emails/Compose.php';
         $data = [];
         $compose_data = generateComposeDataPackage($data, false);
-        
+
         $this->assertEquals('', $compose_data['to_email_addrs']);
     }
     
@@ -76,7 +76,7 @@ class ComposePackageTest extends TestCase
         $data = [];
         $data['parent_type'] = 'Contacts';
         $data['parent_id'] = $this->c->id;
-        
+
         $compose_data = generateComposeDataPackage($data, false);
 
         $this->assertEquals('Contacts', $compose_data['parent_type']);

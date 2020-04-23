@@ -19,7 +19,7 @@ class SidecarGridLayoutMetaDataParserTest extends TestCase
     /**
      * @var SidecarGridLayoutMetaDataParserTestDerivative
      */
-    protected $_parser;
+    private $parser;
 
     protected function setUp() : void
     {
@@ -30,7 +30,7 @@ class SidecarGridLayoutMetaDataParserTest extends TestCase
         $GLOBALS['mod_strings'] = [];
 
         $implementation = $this->getMockForAbstractClass('AbstractMetaDataImplementation');
-        $this->_parser = new SidecarGridLayoutMetaDataParserTestDerivative(
+        $this->parser = new SidecarGridLayoutMetaDataParserTestDerivative(
             MB_PORTALRECORDVIEW,
             'Leads',
             $implementation
@@ -298,7 +298,7 @@ class SidecarGridLayoutMetaDataParserTest extends TestCase
     {
         static $it = 0;
 
-        $output = $this->_parser->convertFromCanonicalForm($input);
+        $output = $this->parser->convertFromCanonicalForm($input);
 
         $this->assertEquals($expected, $output, "Iteration $it expectation did not match result");
 
@@ -398,7 +398,7 @@ class SidecarGridLayoutMetaDataParserTest extends TestCase
      */
     public function testGetFieldsFromLayout($input, $expected)
     {
-        $output = $this->_parser->testGetFieldsFromLayout(['panels' => $input]);
+        $output = $this->parser->testGetFieldsFromLayout(['panels' => $input]);
         $this->assertEquals($expected, $output);
     }
 
@@ -411,7 +411,7 @@ class SidecarGridLayoutMetaDataParserTest extends TestCase
     {
         // put on the additional array path on the input
         $canonical_input['portal']['view']['record']['panels'] = $input;
-        $output = $this->_parser->testGetFieldsFromLayout($canonical_input);
+        $output = $this->parser->testGetFieldsFromLayout($canonical_input);
         $this->assertEquals($expected, $output);
     }
 
@@ -426,12 +426,12 @@ class SidecarGridLayoutMetaDataParserTest extends TestCase
     public function testConvertToCanonicalForm($expected, $panels, $fieldDef = null, $previousViewDef = null, $baseViewDef = null)
     {
         // need this to prime our viewdefs
-        $this->_parser->testInstallOriginalViewdefs([
+        $this->parser->testInstallOriginalViewdefs([
             'panels' => $expected,
         ]);
 
         if ($previousViewDef) {
-            $implementation = $this->_parser->getImplementation();
+            $implementation = $this->parser->getImplementation();
             $ref = new ReflectionClass($implementation);
             $prop = $ref->getProperty('_viewdefs');
             $prop->setAccessible(true);
@@ -439,10 +439,10 @@ class SidecarGridLayoutMetaDataParserTest extends TestCase
         }
 
         if ($baseViewDef) {
-            $this->_parser->testInstallBaseViewFields($baseViewDef);
+            $this->parser->testInstallBaseViewFields($baseViewDef);
         }
 
-        $output = $this->_parser->testConvertToCanonicalForm($panels, $fieldDef);
+        $output = $this->parser->testConvertToCanonicalForm($panels, $fieldDef);
 
         $this->assertEquals($expected, $output);
     }
@@ -457,7 +457,7 @@ class SidecarGridLayoutMetaDataParserTest extends TestCase
     public function testPanelLabelsAreSetByPanelDefs($panel, $expectation)
     {
         // Convert the panel def
-        $converted =  $this->_parser->convertFromCanonicalForm($panel);
+        $converted =  $this->parser->convertFromCanonicalForm($panel);
 
         // Get the key from the conversion as this is the label
         $label = key($converted);
@@ -496,7 +496,7 @@ class SidecarGridLayoutMetaDataParserTest extends TestCase
      */
     public function testReadonlyPropertyIsParsed($defs, $expectation)
     {
-        $result = $this->_parser->_trimFieldDefs($defs);
+        $result = $this->parser->_trimFieldDefs($defs);
         $actual = !empty($result['readonly']);
         $this->assertEquals($expectation, $actual, "Assertion of readonly property existence failed");
     }
@@ -522,14 +522,14 @@ class SidecarGridLayoutMetaDataParserTest extends TestCase
      */
     public function testSpanAdjustments($fieldCount, $lastField, $baseSpans, $singleSpanUnit, $expectResult, $expectBaseSpans)
     {
-        $this->_parser->setBaseSpans($baseSpans);
-        $result = $this->_parser->testGetLastFieldSpan($lastField, $singleSpanUnit, $fieldCount);
+        $this->parser->setBaseSpans($baseSpans);
+        $result = $this->parser->testGetLastFieldSpan($lastField, $singleSpanUnit, $fieldCount);
 
         // Test the result
         $this->assertEquals($result, $expectResult);
 
         // Test the adjusted spans
-        $adjSpans = $this->_parser->getBaseSpans();
+        $adjSpans = $this->parser->getBaseSpans();
         $this->assertEquals($adjSpans, $expectBaseSpans);
     }
 
@@ -650,11 +650,11 @@ class SidecarGridLayoutMetaDataParserTest extends TestCase
             ],
         ];
 
-        $this->_parser->_viewdefs['panels'] = $panel;
+        $this->parser->_viewdefs['panels'] = $panel;
 
-        $this->_parser->removeField('sales_status');
+        $this->parser->removeField('sales_status');
 
-        foreach ($this->_parser->_viewdefs [ 'panels' ] as $panelID => $panel) {
+        foreach ($this->parser->_viewdefs [ 'panels' ] as $panelID => $panel) {
             foreach ($panel as $rowIndex => $row) {
                 if (is_array($row)) {
                     foreach ($row as $fieldIndex => $field) {
@@ -691,11 +691,11 @@ class SidecarGridLayoutMetaDataParserTest extends TestCase
             ],
         ];
 
-        $this->_parser->_viewdefs['panels'] = $panel;
+        $this->parser->_viewdefs['panels'] = $panel;
 
-        $this->_parser->removeField('sales_status');
+        $this->parser->removeField('sales_status');
 
-        $this->assertCount(3, $this->_parser->_viewdefs['panels']['LBL_RECORD_BODY']);
+        $this->assertCount(3, $this->parser->_viewdefs['panels']['LBL_RECORD_BODY']);
     }
 
     /**
@@ -716,9 +716,9 @@ class SidecarGridLayoutMetaDataParserTest extends TestCase
             ],
         ];
 
-        $this->_parser->_viewdefs['panels'] = $panels;
+        $this->parser->_viewdefs['panels'] = $panels;
 
-        $this->_parser->removeField('field_1');
+        $this->parser->removeField('field_1');
 
         $this->assertSame([
             'LBL_PANEL_2' => [
@@ -726,7 +726,7 @@ class SidecarGridLayoutMetaDataParserTest extends TestCase
                     'field_2',
                 ],
             ],
-        ], $this->_parser->_viewdefs['panels']);
+        ], $this->parser->_viewdefs['panels']);
     }
 }
 

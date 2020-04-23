@@ -14,8 +14,8 @@ use PHPUnit\Framework\TestCase;
 
 class ContactFormBaseTest extends TestCase
 {
-    var $form;
-    var $contact1;
+    public $form;
+    public $contact1;
 
     protected function setUp() : void
     {

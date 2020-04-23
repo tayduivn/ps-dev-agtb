@@ -17,8 +17,8 @@ require_once 'install/install_utils.php';
 
 class MultiLevelAdminTest extends TestCase
 {
-    private $_role_id;
-    
+    private $role_id;
+
     protected function setUp() : void
     {
         $beanList = [];
@@ -26,7 +26,7 @@ class MultiLevelAdminTest extends TestCase
         require 'include/modules.php';
         $GLOBALS['beanList'] = $beanList;
         $GLOBALS['beanFiles'] = $beanFiles;
-        $this->_role_id = null;
+        $this->role_id = null;
         $beanList = $beanFiles = [];
         require 'include/modules.php';
         $GLOBALS['beanList'] = $beanList;
@@ -36,10 +36,10 @@ class MultiLevelAdminTest extends TestCase
     protected function tearDown() : void
     {
         $this->mlaResetSession();
-        if (!empty($this->_role_id)) {
-            $GLOBALS['db']->query('DELETE FROM acl_roles_users WHERE role_id =\''.$this->_role_id.'\'');
-            $GLOBALS['db']->query('DELETE FROM acl_roles WHERE id =\''.$this->_role_id.'\'');
-            $GLOBALS['db']->query('DELETE FROM acl_roles_actions WHERE role_id =\''.$this->_role_id.'\'');
+        if (!empty($this->role_id)) {
+            $GLOBALS['db']->query('DELETE FROM acl_roles_users WHERE role_id =\''.$this->role_id.'\'');
+            $GLOBALS['db']->query('DELETE FROM acl_roles WHERE id =\''.$this->role_id.'\'');
+            $GLOBALS['db']->query('DELETE FROM acl_roles_actions WHERE role_id =\''.$this->role_id.'\'');
         }
         
         if (isset($GLOBALS['current_user'])) {
@@ -93,7 +93,7 @@ class MultiLevelAdminTest extends TestCase
         
         $user->role_id = $GLOBALS['db']->getOne("SELECT id FROM acl_roles WHERE name='test_for_module'");
         $GLOBALS['db']->query("INSERT into acl_roles_users(id,user_id,role_id) values('".create_guid()."','".$user->id."','".$user->role_id."')");
-        $this->_role_id = $user->role_id;
+        $this->role_id = $user->role_id;
         
         $module = 'Accounts';
 
@@ -120,7 +120,7 @@ class MultiLevelAdminTest extends TestCase
         
         $user->role_id = $GLOBALS['db']->getOne("SELECT id FROM acl_roles WHERE name='test_for_module'");
         $GLOBALS['db']->query("INSERT into acl_roles_users(id,user_id,role_id) values('".create_guid()."','".$user->id."','".$user->role_id."')");
-        $this->_role_id = $user->role_id;
+        $this->role_id = $user->role_id;
         
         $module = 'Accounts';
 
@@ -144,7 +144,7 @@ class MultiLevelAdminTest extends TestCase
         
         $user->role_id = $GLOBALS['db']->getOne("SELECT id FROM acl_roles WHERE name='test_for_module'");
         $GLOBALS['db']->query("INSERT into acl_roles_users(id,user_id,role_id) values('".create_guid()."','".$user->id."','".$user->role_id."')");
-        $this->_role_id = $user->role_id;
+        $this->role_id = $user->role_id;
         
         $module = 'Accounts';
 
@@ -178,7 +178,7 @@ class MultiLevelAdminTest extends TestCase
                  
         $user->role_id = $GLOBALS['db']->getOne("SELECT id FROM acl_roles WHERE name='Sales Administrator'");
         $GLOBALS['db']->query("INSERT into acl_roles_users(id,user_id,role_id) values('".create_guid()."','".$user->id."','".$user->role_id."')");
-        $this->_role_id = $user->role_id;
+        $this->role_id = $user->role_id;
 
         ACLAction::clearACLCache();
         $this->mlaResetSession();
@@ -209,7 +209,7 @@ class MultiLevelAdminTest extends TestCase
                  
         $user->role_id = $GLOBALS['db']->getOne("SELECT id FROM acl_roles WHERE name='test1'");
         $GLOBALS['db']->query("INSERT into acl_roles_users(id,user_id,role_id) values('".create_guid()."','".$user->id."','".$user->role_id."')");
-        $this->_role_id = $user->role_id;
+        $this->role_id = $user->role_id;
 
         ACLAction::clearACLCache();
         $this->mlaResetSession();
@@ -240,7 +240,7 @@ class MultiLevelAdminTest extends TestCase
                  
         $user->role_id = $GLOBALS['db']->getOne("SELECT id FROM acl_roles WHERE name='test4'");
         $GLOBALS['db']->query("INSERT into acl_roles_users(id,user_id,role_id) values('".create_guid()."','".$user->id."','".$user->role_id."')");
-        $this->_role_id = $user->role_id;
+        $this->role_id = $user->role_id;
 
         ACLAction::clearACLCache();
         $this->mlaResetSession();
@@ -270,7 +270,7 @@ class MultiLevelAdminTest extends TestCase
                  
         $user->role_id = $GLOBALS['db']->getOne("SELECT id FROM acl_roles WHERE name='test5'");
         $GLOBALS['db']->query("INSERT into acl_roles_users(id,user_id,role_id) values('".create_guid()."','".$user->id."','".$user->role_id."')");
-        $this->_role_id = $user->role_id;
+        $this->role_id = $user->role_id;
 
         ACLAction::clearACLCache();
         $this->mlaResetSession();
@@ -302,7 +302,7 @@ class MultiLevelAdminTest extends TestCase
                  
         $GLOBALS['current_user']->role_id = $GLOBALS['db']->getOne("SELECT id FROM acl_roles WHERE name='test6'");
         $GLOBALS['db']->query("INSERT into acl_roles_users(id,user_id,role_id) values('".create_guid()."','".$GLOBALS['current_user']->id."','".$GLOBALS['current_user']->role_id."')");
-        $this->_role_id = $GLOBALS['current_user']->role_id;
+        $this->role_id = $GLOBALS['current_user']->role_id;
 
         ACLAction::clearACLCache();
         $this->mlaResetSession();
@@ -334,7 +334,7 @@ class MultiLevelAdminTest extends TestCase
                  
         $GLOBALS['current_user']->role_id = $GLOBALS['db']->getOne("SELECT id FROM acl_roles WHERE name='test7'");
         $GLOBALS['db']->query("INSERT into acl_roles_users(id,user_id,role_id) values('".create_guid()."','".$GLOBALS['current_user']->id."','".$GLOBALS['current_user']->role_id."')");
-        $this->_role_id = $GLOBALS['current_user']->role_id;
+        $this->role_id = $GLOBALS['current_user']->role_id;
 
         ACLAction::clearACLCache();
         $this->mlaResetSession();
@@ -389,7 +389,7 @@ class MultiLevelAdminTest extends TestCase
         $current_user->is_admin = 0;
         $current_user->role_id = $GLOBALS['db']->getOne("SELECT id FROM acl_roles WHERE name='test8'");
         $GLOBALS['db']->query("INSERT into acl_roles_users(id,user_id,role_id) values('".create_guid()."','".$current_user->id."','".$current_user->role_id."')");
-        $this->_role_id = $current_user->role_id;
+        $this->role_id = $current_user->role_id;
 
         // needed for adminpaneldefs.php
         $app_list_strings = return_app_list_strings_language($sugar_config['default_language']);

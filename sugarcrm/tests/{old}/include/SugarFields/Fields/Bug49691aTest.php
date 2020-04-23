@@ -17,11 +17,11 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug49691aTest extends TestCase
 {
-    var $bean;
-    var $sugarField;
+    public $bean;
+    public $sugarField;
 
-    var $oldDate;
-    var $oldTime;
+    public $oldDate;
+    public $oldTime;
 
     protected function setUp() : void
     {
@@ -77,5 +77,5 @@ class Bug49691aTest extends TestCase
 
 class Bug49691aMockBean
 {
-    var $test_c;
+    public $test_c;
 }

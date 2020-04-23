@@ -23,10 +23,6 @@ use PHPUnit\Framework\TestCase;
  */
 abstract class RestTestCase extends TestCase
 {
-    protected $_soapClient = null;
-    protected $_sessionId;
-    protected $_lastRawResponse;
-
     protected function setUp() : void
     {
         SugarTestHelper::setUp("beanList");
@@ -58,8 +54,6 @@ abstract class RestTestCase extends TestCase
     }
 
     /**
-     * _makeRestCall
-     *
      * This function helps wrap the REST call using the CURL libraries
      *
      * @param $method String name of the method to call
@@ -67,7 +61,7 @@ abstract class RestTestCase extends TestCase
      *
      * @return mixed JSON decoded response made from REST call
      */
-    protected function _makeRESTCall($method, $parameters)
+    protected function makeRESTCall($method, $parameters)
     {
         // specify the REST web service to interact with
         $url = $GLOBALS['sugar_config']['site_url'].'/service/v4/rest.php';
@@ -90,32 +84,21 @@ abstract class RestTestCase extends TestCase
         // Close the connection
         curl_close($curl);
 
-        $this->_lastRawResponse = $response;
-
         // Convert the result from JSON format to a PHP array
         return json_decode($response, true);
     }
 
-    protected function _returnLastRawResponse()
-    {
-        return "Error in web services call. Response was: {$this->_lastRawResponse}";
-    }
-
-
     /**
-     * _login
-     *
      * This function helps make the login call
      *
-     * @param $user The SugarCRM User bean instance to login with
      * @return mixed The REST response from the login operation
      */
-    protected function _login($user)
+    protected function login()
     {
         $GLOBALS['db']->commit(); // Making sure we commit any changes before logging in
         // for now hard coded admin login as reg user login does not work
         // because of password hash issue
-        return $this->_makeRESTCall(
+        return $this->makeRESTCall(
             'login',
             [
                 'user_auth' =>

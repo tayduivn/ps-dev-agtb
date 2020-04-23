@@ -27,7 +27,7 @@ class AttachmentHeaderTest extends TestCase
      * @param $v -> value
      * @return stdClass:  $obj->attribute = $a, $obj->value = $v
      */
-    protected function _convertToObject($param, $a, $v)
+    private function convertToObject($param, $a, $v)
     {
         $obj = new stdClass;
         $obj->attribute = $a;
@@ -47,13 +47,13 @@ class AttachmentHeaderTest extends TestCase
         return [
             // pretty standard dparameters
             [
-                $this->_convertToObject('dparameters', 'filename', 'test.txt'),
+                $this->convertToObject('dparameters', 'filename', 'test.txt'),
                 'test.txt',
             ],
 
             // how about a regular parameter set
             [
-                $this->_convertToObject('parameters', 'name', 'bonus.txt'),
+                $this->convertToObject('parameters', 'name', 'bonus.txt'),
                 'bonus.txt',
             ],
         ];

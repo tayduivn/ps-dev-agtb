@@ -15,8 +15,8 @@ use PHPUnit\Framework\TestCase;
 
 class Bug42286Test extends TestCase
 {
-    var $testUser;
-    
+    public $testUser;
+
     protected function setUp() : void
     {
         $this->testUser = SugarTestUserUtilities::createAnonymousUser();
@@ -27,7 +27,7 @@ class Bug42286Test extends TestCase
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         $this->testUser = null;
     }
-    
+
     /**
      * testRemoveUserFromTeam
      *
@@ -37,17 +37,17 @@ class Bug42286Test extends TestCase
     public function testRemoveUserFromTeam()
     {
         $team = BeanFactory::getBean('Teams', $this->testUser->getPrivateTeamID());
-       
+
         $user2 = SugarTestUserUtilities::createAnonymousUser();
         $team->add_user_to_team($user2->id, $user2);
-       
+
         $exceptionThrown = false;
         try {
             $team->remove_user_from_team($user2->id, $user2);
         } catch (Exception $ex) {
             $exceptionThrown = true;
         }
-       
+
         $this->assertFalse($exceptionThrown, 'Assert that an exception was not thrown for attempting to remove user off team');
     }
 }

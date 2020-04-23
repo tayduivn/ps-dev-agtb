@@ -14,18 +14,18 @@ use PHPUnit\Framework\TestCase;
 
 class Bug58089Test extends TestCase
 {
-    protected $_tabController;
-    protected $_currentTabs;
-    protected $_currentSubpanels = ['hidden' => [], 'shown' => []];
-    protected $_modListGlobal;
-    protected $_subPanelDefinitions;
-    protected $_testDefs;
-    protected $_exemptModules;
-    
+    private $tabController;
+    private $currentTabs;
+    private $currentSubpanels = ['hidden' => [], 'shown' => []];
+    private $modListGlobal;
+    private $subPanelDefinitions;
+    private $testDefs;
+    private $exemptModules;
+
     protected function setUp() : void
     {
         // Set up our test defs
-        $this->_testDefs = [
+        $this->testDefs = [
             'order' => 40,
             'title_key' => 'LBL_HISTORY_SUBPANEL_TITLE',
             'type' => 'collection',
@@ -56,29 +56,29 @@ class Bug58089Test extends TestCase
         // @hack - Projects totally overrides the exempt module list in its subpanel
         // viewdefs, so to run this test effectively, Projects needs to be
         // disabled if it is enabled. - rgonzalez
-        $this->_modListGlobal = $GLOBALS['moduleList'];
+        $this->modListGlobal = $GLOBALS['moduleList'];
         $key = array_search('Project', $GLOBALS['moduleList']);
         unset($GLOBALS['moduleList'][$key]);
         
         // Get the current module and subpanel settings
-        $this->_tabController = new TabController();
-        $this->_currentTabs = $this->_tabController->get_system_tabs();
-        $this->_subPanelDefinitions = new SubPanelDefinitions(BeanFactory::newBean('Calls'));
-        $subpanels = $this->_subPanelDefinitions->get_all_subpanels();
-        $subpanels_hidden = $this->_subPanelDefinitions->get_hidden_subpanels();
+        $this->tabController = new TabController();
+        $this->currentTabs = $this->tabController->get_system_tabs();
+        $this->subPanelDefinitions = new SubPanelDefinitions(BeanFactory::newBean('Calls'));
+        $subpanels = $this->subPanelDefinitions->get_all_subpanels();
+        $subpanels_hidden = $this->subPanelDefinitions->get_hidden_subpanels();
 
         if (!empty($subpanels)) {
-            $this->_currentSubpanels['shown'] = $subpanels;
+            $this->currentSubpanels['shown'] = $subpanels;
         }
         
         if (!empty($subpanels_hidden)) {
-            $this->_currentSubpanels['hidden'] = $subpanels_hidden;
+            $this->currentSubpanels['hidden'] = $subpanels_hidden;
         }
         
         // Handle exempt modules, since this global gets set in other places in
         // the code base and is causing the last unit test to fail because of the
         // override that happens in the Project module subpaneldefs.php file.
-        $this->_exemptModules = empty($GLOBALS['modules_exempt_from_availability_check']) ? [] : $GLOBALS['modules_exempt_from_availability_check'];
+        $this->exemptModules = empty($GLOBALS['modules_exempt_from_availability_check']) ? [] : $GLOBALS['modules_exempt_from_availability_check'];
         unset($GLOBALS['modules_exempt_from_availability_check']);
         
         // Copied from include/utils/security_utils.php
@@ -105,16 +105,16 @@ class Bug58089Test extends TestCase
     protected function tearDown() : void
     {
         // Restore the globals
-        $GLOBALS['moduleList'] = $this->_modListGlobal;
-        if (!empty($this->_exemptModules)) {
-            $GLOBALS['modules_exempt_from_availability_check'] = $this->_exemptModules;
+        $GLOBALS['moduleList'] = $this->modListGlobal;
+        if (!empty($this->exemptModules)) {
+            $GLOBALS['modules_exempt_from_availability_check'] = $this->exemptModules;
         }
         
         // Restore the system tabs to pre-test state
-        $this->_tabController->set_system_tabs($this->_currentTabs);
+        $this->tabController->set_system_tabs($this->currentTabs);
         
         // Restore the hidden subpanels to pre-test state
-        $this->_subPanelDefinitions->set_hidden_subpanels($this->_currentSubpanels['hidden']);
+        $this->subPanelDefinitions->set_hidden_subpanels($this->currentSubpanels['hidden']);
         
         // Clean up the rest
         SugarTestHelper::tearDown();
@@ -127,7 +127,7 @@ class Bug58089Test extends TestCase
      */
     public function testNotesSubpanelOnAccountsAllowedOnDefaultInstallation()
     {
-        $subpanel = new aSubPanel('history', $this->_testDefs, BeanFactory::newBean('Accounts'));
+        $subpanel = new aSubPanel('history', $this->testDefs, BeanFactory::newBean('Accounts'));
         $this->assertArrayHasKey('notes', $subpanel->sub_subpanels, "Notes module not found in History subpanel's Notes subpanel");
     }
     
@@ -139,16 +139,16 @@ class Bug58089Test extends TestCase
     public function testNotesSubpanelOnAccountsNotAllowedWhenNotesIsHiddenFromSubpanels()
     {
         // Remove Notes from the subpanel modules and test it is NOT shown
-        $hidden = $this->_currentSubpanels['hidden'];
+        $hidden = $this->currentSubpanels['hidden'];
         $hidden['notes'] = 'notes';
         $hiddenKeyArray = TabController::get_key_array($hidden);
-        $this->_subPanelDefinitions->set_hidden_subpanels($hiddenKeyArray);
+        $this->subPanelDefinitions->set_hidden_subpanels($hiddenKeyArray);
         
         // Rebuild the cache
-        $this->_subPanelDefinitions->get_all_subpanels(true);
-        $this->_subPanelDefinitions->get_hidden_subpanels();
+        $this->subPanelDefinitions->get_all_subpanels(true);
+        $this->subPanelDefinitions->get_hidden_subpanels();
         
-        $subpanel = new aSubPanel('history', $this->_testDefs, BeanFactory::newBean('Accounts'));
+        $subpanel = new aSubPanel('history', $this->testDefs, BeanFactory::newBean('Accounts'));
         $this->assertEmpty($subpanel->sub_subpanels, "History subpanel's subpanel should be empty after Notes removed from subpanel module list");
     }
 }

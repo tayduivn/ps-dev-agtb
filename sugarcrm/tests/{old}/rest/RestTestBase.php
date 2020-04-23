@@ -17,10 +17,10 @@ abstract class RestTestBase extends TestCase
 {
     protected $authToken;
     protected $refreshToken;
-    protected $_user;
+    protected $user;
     protected $consumerId = "sugar";
     protected $version = '10';
-    protected $_platform = 'base';
+    protected $platform = 'base';
     protected $accounts = [];
     protected $contacts = [];
     protected $opps = [];
@@ -31,8 +31,8 @@ abstract class RestTestBase extends TestCase
     protected function setUp() : void
     {
         //Create an anonymous user for login purposes/
-        $this->_user = SugarTestUserUtilities::createAnonymousUser();
-        $GLOBALS['current_user'] = $this->_user;
+        $this->user = SugarTestUserUtilities::createAnonymousUser();
+        $GLOBALS['current_user'] = $this->user;
         // call a commit for transactional dbs
         $GLOBALS['db']->commit();
         SugarTestHelper::setUp('app_list_strings');
@@ -52,7 +52,7 @@ abstract class RestTestBase extends TestCase
         SugarTestHelper::tearDown();
     }
 
-    protected function _cleanUpRecords()
+    protected function cleanUpRecords()
     {
         // Cleaning up after ourselves, but only if there is cleanup to do
         // Accounts clean up
@@ -141,16 +141,16 @@ abstract class RestTestBase extends TestCase
         }
     }
 
-    protected function _restLogin($username = '', $password = '', $platform = 'base')
+    protected function restLogin($username = '', $password = '', $platform = 'base')
     {
         if (empty($username) && empty($password)) {
-            $username = $this->_user->user_name;
+            $username = $this->user->user_name;
             // Let's assume test users have a password the same as their username
-            $password = $this->_user->user_name;
+            $password = $this->user->user_name;
         }
 
         // Save the platform for reauth
-        $this->_platform = $platform;
+        $this->platform = $platform;
 
         $args = [
             'grant_type' => 'password',
@@ -164,7 +164,7 @@ abstract class RestTestBase extends TestCase
         // Prevent an infinite loop, put a fake authtoken in here.
         $this->authToken = 'LOGGING_IN';
 
-        $reply = $this->_restCall('oauth2/token', json_encode($args));
+        $reply = $this->restCall('oauth2/token', json_encode($args));
         if (empty($reply['reply']['access_token'])) {
             self::fail("Rest authentication failed, message looked like: ".$reply['replyRaw']);
         }
@@ -172,7 +172,7 @@ abstract class RestTestBase extends TestCase
         $this->refreshToken = $reply['reply']['refresh_token'];
     }
 
-    protected function _restReauth()
+    protected function restReauth()
     {
         if ($this->refreshToken) {
             $args = [
@@ -180,12 +180,12 @@ abstract class RestTestBase extends TestCase
                 'refresh_token' => $this->refreshToken,
                 'client_id' => $this->consumerId,
                 'client_secret' => '',
-                'platform' => $this->_platform,
+                'platform' => $this->platform,
             ];
 
             // Prevents _restCall from automatically logging in
             $this->authToken = 'LOGGING_IN';
-            $reply = $this->_restCall('oauth2/token', json_encode($args));
+            $reply = $this->restCall('oauth2/token', json_encode($args));
             if (empty($reply['reply']['access_token'])) {
                 self::fail("Rest re-authentication failed, message looked like: ".$reply['replyRaw']);
             }
@@ -196,7 +196,7 @@ abstract class RestTestBase extends TestCase
         }
     }
 
-    protected function _restCall($urlPart, $postBody = '', $httpAction = '', $addedOpts = [], $addedHeaders = [])
+    protected function restCall($urlPart, $postBody = '', $httpAction = '', $addedOpts = [], $addedHeaders = [])
     {
         // Hold state in case we need to reauth
         $funcArgs = [
@@ -214,7 +214,7 @@ abstract class RestTestBase extends TestCase
         $urlBase = $GLOBALS['sugar_config']['site_url'].'/api/rest.php/v' . $this->version . '/';
 
         if (empty($this->authToken)) {
-            $this->_restLogin();
+            $this->restLogin();
         }
 
         $ch = curl_init($urlBase.$urlPart);
@@ -287,7 +287,7 @@ abstract class RestTestBase extends TestCase
 
         // Handle reauth if need be.
         if (isset($httpInfo['http_code']) && $httpInfo['http_code'] == 401) {
-            $this->_restReauth();
+            $this->restReauth();
         }
 
         $httpError = $httpReply === false ? curl_error($ch) : null;
@@ -296,7 +296,7 @@ abstract class RestTestBase extends TestCase
         // Handle the headers from the reply
         $headerLen = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
         $httpHeaders = substr($httpReply, 0, $headerLen);
-        $httpHeaders = $this->_parseHeaderString($httpHeaders);
+        $httpHeaders = $this->parseHeaderString($httpHeaders);
 
         // Get just the body for parsing the reply
         $httpReply = substr($httpReply, $headerLen);
@@ -314,7 +314,7 @@ abstract class RestTestBase extends TestCase
      * @param  bool   $passInQueryString Whether to add the filename to the querystring
      * @return array
      */
-    protected function _restCallFilePut($urlPart, $args, $passInQueryString = true)
+    protected function restCallFilePut($urlPart, $args, $passInQueryString = true)
     {
         // Set this to capture our own errors, which is needed in case of non-200
         // response codes from the file_get_contents call
@@ -322,7 +322,7 @@ abstract class RestTestBase extends TestCase
 
         // Auth check early to prevent work when not needed
         if (empty($this->authToken)) {
-            $this->_restLogin();
+            $this->restLogin();
         }
 
         $urlBase = $GLOBALS['sugar_config']['site_url'].'/api/rest.php/v' . $this->version . '/';
@@ -395,7 +395,7 @@ abstract class RestTestBase extends TestCase
         return ['info' => [], 'reply' => $reply, 'replyRaw' => $response, 'error' => null];
     }
 
-    protected function _clearMetadataCache()
+    protected function clearMetadataCache()
     {
         MetaDataFiles::clearModuleClientCache();
 
@@ -413,7 +413,7 @@ abstract class RestTestBase extends TestCase
      * @param  string $header
      * @return array
      */
-    protected function _parseHeaderString($header)
+    protected function parseHeaderString($header)
     {
         $lines = explode("\n", rtrim($header));
         $headers = [];

@@ -20,8 +20,8 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug50800Test extends TestCase
 {
-    var $custom_path = 'custom/modules/Connectors/metadata';
-    var $custom_contents;
+    public $custom_path = 'custom/modules/Connectors/metadata';
+    public $custom_contents;
 
     protected function setUp() : void
     {
@@ -46,7 +46,7 @@ class Bug50800Test extends TestCase
         SugarTestHelper::tearDown();
     }
 
-    function testConnectorFailsStringGracefully()
+    public function testConnectorFailsStringGracefully()
     {
         //now write a connector file with a string instead of an array for the connector var
         file_put_contents($this->custom_path.'/connectors.php', "<?php\n \$connector = 'Connector String ';");
@@ -59,7 +59,7 @@ class Bug50800Test extends TestCase
         );
     }
 
-    function testConnectorFailsNullGracefully()
+    public function testConnectorFailsNullGracefully()
     {
         //now write a connector file with missing array info instead of an array for the connector var
         file_put_contents($this->custom_path.'/connectors.php', "<?php\n ");

@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 class GetSearchWhereValueTest extends TestCase
 {
-    var $intField;
+    public $intField;
 
     protected function setUp() : void
     {

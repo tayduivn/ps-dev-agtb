@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 class ImportMapTest extends TestCase
 {
-    private $_importMap;
+    private $importMap;
     
     protected function setUp() : void
     {
@@ -25,8 +25,8 @@ class ImportMapTest extends TestCase
         $GLOBALS['beanFiles'] = $beanFiles;
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['current_user']->is_admin = '1';
-        $this->_importMap = new ImportMap();
-        $this->_importMap->enclosure = '"';
+        $this->importMap = new ImportMap();
+        $this->importMap->enclosure = '"';
     }
     
     protected function tearDown() : void
@@ -42,11 +42,11 @@ class ImportMapTest extends TestCase
         unset($GLOBALS['current_user']);
     }
     
-    private function _addMapping(
+    private function addMapping(
         $name = 'test mapping for importmaptest',
         $enclosure = '"'
     ) {
-        $this->_importMap->save(
+        $this->importMap->save(
             $GLOBALS['current_user']->id,
             $name,
             'TEST',
@@ -59,7 +59,7 @@ class ImportMapTest extends TestCase
     
     public function testSave()
     {
-        $this->_addMapping();
+        $this->addMapping();
         $query = "SELECT * FROM import_maps 
                     WHERE assigned_user_id = '{$GLOBALS['current_user']->id}'
                         AND name = 'test mapping'
@@ -76,7 +76,7 @@ class ImportMapTest extends TestCase
     
     public function testSaveEmptyEnclosure()
     {
-        $this->_addMapping('test mapping', '');
+        $this->addMapping('test mapping', '');
         $query = "SELECT * FROM import_maps 
                     WHERE assigned_user_id = '{$GLOBALS['current_user']->id}'
                         AND name = 'test mapping'
@@ -99,11 +99,11 @@ class ImportMapTest extends TestCase
             'D&B Principal Id' => 'db_principal_id',
         ];
         
-        $this->_importMap->setMapping($mapping);
-        $enclosure = $this->_importMap->enclosure;
+        $this->importMap->setMapping($mapping);
+        $enclosure = $this->importMap->enclosure;
         // Save to a DB with the same enclosure.
-        $this->_addMapping('Test mapping.', $enclosure);
-        $id = $this->_importMap->id;
+        $this->addMapping('Test mapping.', $enclosure);
+        $id = $this->importMap->id;
         
         $importMapRetrieve = new ImportMap();
         $importMapRetrieve->retrieve($id, false);
@@ -119,11 +119,11 @@ class ImportMapTest extends TestCase
             'D&B Principal Id' => 'db_principal_id',
         ];
         
-        $this->_importMap->setDefaultValues($mapping);
-        $enclosure = $this->_importMap->enclosure;
+        $this->importMap->setDefaultValues($mapping);
+        $enclosure = $this->importMap->enclosure;
         // Save to a DB with the same enclosure.
-        $this->_addMapping('Test mapping.', $enclosure);
-        $id = $this->_importMap->id;
+        $this->addMapping('Test mapping.', $enclosure);
+        $id = $this->importMap->id;
         
         $importMapRetrieve = new ImportMap();
         $importMapRetrieve->retrieve($id, false);
@@ -133,12 +133,12 @@ class ImportMapTest extends TestCase
     
     public function testMarkPublished()
     {
-        $this->_addMapping();
-        $this->assertTrue($this->_importMap->mark_published(
+        $this->addMapping();
+        $this->assertTrue($this->importMap->mark_published(
             $GLOBALS['current_user']->id,
             true
         ));
-        $id = $this->_importMap->id;
+        $id = $this->importMap->id;
         
         $query = "SELECT * FROM import_maps 
                     WHERE id = '$id'";
@@ -152,22 +152,22 @@ class ImportMapTest extends TestCase
     
     public function testMarkPublishedNameConflict()
     {
-        $this->_addMapping();
-        $this->_importMap->mark_published(
+        $this->addMapping();
+        $this->importMap->mark_published(
             $GLOBALS['current_user']->id,
             true
         );
         
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-        $this->_importMap = new ImportMap();
-        $this->_addMapping();
-        $this->assertFalse($this->_importMap->mark_published(
+        $this->importMap = new ImportMap();
+        $this->addMapping();
+        $this->assertFalse($this->importMap->mark_published(
             $GLOBALS['current_user']->id,
             true
         ));
         
         $query = "SELECT * FROM import_maps 
-                    WHERE id = '{$this->_importMap->id}'";
+                    WHERE id = '{$this->importMap->id}'";
         
         $result = $GLOBALS['db']->query($query);
         
@@ -180,8 +180,8 @@ class ImportMapTest extends TestCase
     {
         $GLOBALS['current_user']->is_admin = '0';
         
-        $this->_addMapping();
-        $this->assertFalse($this->_importMap->mark_published(
+        $this->addMapping();
+        $this->assertFalse($this->importMap->mark_published(
             $GLOBALS['current_user']->id,
             true
         ));
@@ -189,16 +189,16 @@ class ImportMapTest extends TestCase
     
     public function testMarkUnpublished()
     {
-        $this->_addMapping();
-        $this->_importMap->mark_published(
+        $this->addMapping();
+        $this->importMap->mark_published(
             $GLOBALS['current_user']->id,
             true
         );
-        $id = $this->_importMap->id;
+        $id = $this->importMap->id;
         
         $importMapRetrieve = new ImportMap();
         $importMapRetrieve->retrieve($id, false);
-        $this->assertTrue($this->_importMap->mark_published(
+        $this->assertTrue($this->importMap->mark_published(
             $GLOBALS['current_user']->id,
             false
         ));
@@ -215,20 +215,20 @@ class ImportMapTest extends TestCase
     
     public function testMarkUnpublishedNameConflict()
     {
-        $this->_addMapping();
-        $this->_importMap->mark_published(
+        $this->addMapping();
+        $this->importMap->mark_published(
             $GLOBALS['current_user']->id,
             true
         );
-        $id = $this->_importMap->id;
+        $id = $this->importMap->id;
         
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-        $this->_importMap = new ImportMap();
-        $this->_addMapping();
+        $this->importMap = new ImportMap();
+        $this->addMapping();
         
         $importMapRetrieve = new ImportMap();
         $importMapRetrieve->retrieve($id, false);
-        $this->assertFalse($this->_importMap->mark_published(
+        $this->assertFalse($this->importMap->mark_published(
             $GLOBALS['current_user']->id,
             false
         ));
@@ -245,11 +245,11 @@ class ImportMapTest extends TestCase
     
     public function testMarkDeleted()
     {
-        $this->_addMapping();
-        $id = $this->_importMap->id;
+        $this->addMapping();
+        $id = $this->importMap->id;
         
-        $this->_importMap = new ImportMap();
-        $this->_importMap->mark_deleted($id);
+        $this->importMap = new ImportMap();
+        $this->importMap->mark_deleted($id);
         
         $query = "SELECT * FROM import_maps 
                     WHERE id = '$id'";
@@ -263,13 +263,13 @@ class ImportMapTest extends TestCase
     
     public function testMarkDeletedAdminDifferentUser()
     {
-        $this->_addMapping();
-        $id = $this->_importMap->id;
+        $this->addMapping();
+        $id = $this->importMap->id;
         
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['current_user']->is_admin = '1';
-        $this->_importMap = new ImportMap();
-        $this->_importMap->mark_deleted($id);
+        $this->importMap = new ImportMap();
+        $this->importMap->mark_deleted($id);
         
         $query = "SELECT * FROM import_maps 
                     WHERE id = '$id'";
@@ -283,24 +283,24 @@ class ImportMapTest extends TestCase
     
     public function testMarkDeletedNotAdminDifferentUser()
     {
-        $this->_addMapping();
-        $id = $this->_importMap->id;
+        $this->addMapping();
+        $id = $this->importMap->id;
         
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['current_user']->is_admin = '0';
-        $this->_importMap = new ImportMap();
-        $this->assertFalse($this->_importMap->mark_deleted($id), 'Record should not be allowed to be deleted');
+        $this->importMap = new ImportMap();
+        $this->assertFalse($this->importMap->mark_deleted($id), 'Record should not be allowed to be deleted');
     }
     
     public function testRetrieveAllByStringFields()
     {
-        $this->_addMapping();
-        $this->_importMap = new ImportMap();
-        $this->_addMapping('test mapping 2');
-        $this->_importMap = new ImportMap();
-        $this->_addMapping('test mapping 3');
+        $this->addMapping();
+        $this->importMap = new ImportMap();
+        $this->addMapping('test mapping 2');
+        $this->importMap = new ImportMap();
+        $this->addMapping('test mapping 3');
         
-        $objarr = $this->_importMap->retrieve_all_by_string_fields(
+        $objarr = $this->importMap->retrieve_all_by_string_fields(
             ['assigned_user_id' => $GLOBALS['current_user']->id]
         );
         

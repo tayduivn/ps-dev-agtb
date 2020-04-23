@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 class LoadMenuTest extends TestCase
 {
-    protected $_moduleName;
+    protected $moduleName;
 
     protected function setUp() : void
     {
@@ -25,11 +25,11 @@ class LoadMenuTest extends TestCase
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
 
         // create a dummy module directory
-        $this->_moduleName = 'TestModule'.mt_rand();
+        $this->moduleName = 'TestModule'.mt_rand();
 
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
 
-        sugar_mkdir("modules/{$this->_moduleName}", null, true);
+        sugar_mkdir("modules/{$this->moduleName}", null, true);
     }
 
     protected function tearDown() : void
@@ -39,12 +39,12 @@ class LoadMenuTest extends TestCase
 
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
-        if (!empty($this->_moduleName)) {
-            if (is_dir("modules/{$this->_moduleName}")) {
-                rmdir_recursive("modules/{$this->_moduleName}");
+        if (!empty($this->moduleName)) {
+            if (is_dir("modules/{$this->moduleName}")) {
+                rmdir_recursive("modules/{$this->moduleName}");
             }
-            if (is_dir("custom/modules/{$this->_moduleName}")) {
-                rmdir_recursive("custom/modules/{$this->_moduleName}");
+            if (is_dir("custom/modules/{$this->moduleName}")) {
+                rmdir_recursive("custom/modules/{$this->moduleName}");
             }
         }
         unset($GLOBALS['current_user']);
@@ -53,7 +53,7 @@ class LoadMenuTest extends TestCase
     public function testMenuDoesNotExists()
     {
         $view = new SugarView;
-        $module_menu = $view->getMenu($this->_moduleName);
+        $module_menu = $view->getMenu($this->moduleName);
         $this->assertTrue(empty($module_menu), 'Assert the module menu array is empty');
     }
 
@@ -63,7 +63,7 @@ class LoadMenuTest extends TestCase
     public function testMenuExistsCanFindModuleMenu()
     {
         // Create module menu
-        if ($fh = @fopen("modules/{$this->_moduleName}/Menu.php", 'w+')) {
+        if ($fh = @fopen("modules/{$this->moduleName}/Menu.php", 'w+')) {
             $string = <<<EOQ
 <?php
 \$module_menu[]=Array("index.php?module=Import&action=bar&import_module=Accounts&return_module=Accounts&return_action=index","Foo","Foo", 'Accounts');
@@ -74,7 +74,7 @@ EOQ;
         }
 
         $view = new SugarView;
-        $module_menu = $view->getMenu($this->_moduleName);
+        $module_menu = $view->getMenu($this->moduleName);
         $found_menu = false;
         $found_menu_twice = false;
         foreach ($module_menu as $menu_entry) {
@@ -99,8 +99,8 @@ EOQ;
     public function testMenuExistsCanFindModuleExtMenu()
     {
         // Create module ext menu
-        sugar_mkdir("custom/modules/{$this->_moduleName}/Ext/Menus/", null, true);
-        if ($fh = @fopen("custom/modules/{$this->_moduleName}/Ext/Menus/menu.ext.php", 'w+')) {
+        sugar_mkdir("custom/modules/{$this->moduleName}/Ext/Menus/", null, true);
+        if ($fh = @fopen("custom/modules/{$this->moduleName}/Ext/Menus/menu.ext.php", 'w+')) {
             $string = <<<EOQ
 <?php
 \$module_menu[]=Array("index.php?module=Import&action=foo&import_module=Accounts&return_module=Accounts&return_action=index","Foo","Foo", 'Accounts');
@@ -111,7 +111,7 @@ EOQ;
         }
 
         $view = new SugarView;
-        $module_menu = $view->getMenu($this->_moduleName);
+        $module_menu = $view->getMenu($this->moduleName);
         $found_custom_menu = false;
         $found_custom_menu_twice = false;
         foreach ($module_menu as $key => $menu_entry) {
@@ -135,8 +135,8 @@ EOQ;
     public function testMenuExistsCanFindModuleExtMenuWhenModuleMenuDefinedGlobal()
     {
         // Create module ext menu
-        sugar_mkdir("custom/modules/{$this->_moduleName}/Ext/Menus/", null, true);
-        if ($fh = @fopen("custom/modules/{$this->_moduleName}/Ext/Menus/menu.ext.php", 'w+')) {
+        sugar_mkdir("custom/modules/{$this->moduleName}/Ext/Menus/", null, true);
+        if ($fh = @fopen("custom/modules/{$this->moduleName}/Ext/Menus/menu.ext.php", 'w+')) {
             $string = <<<EOQ
 <?php
 global \$module_menu;
@@ -148,7 +148,7 @@ EOQ;
         }
 
         $view = new SugarView;
-        $module_menu = $view->getMenu($this->_moduleName);
+        $module_menu = $view->getMenu($this->moduleName);
         $found_custom_menu = false;
         $found_custom_menu_twice = false;
         foreach ($module_menu as $key => $menu_entry) {
@@ -192,7 +192,7 @@ EOQ;
         }
 
         $view = new SugarView;
-        $module_menu = $view->getMenu($this->_moduleName);
+        $module_menu = $view->getMenu($this->moduleName);
         $found_application_custom_menu = false;
         $found_application_custom_menu_twice = false;
         foreach ($module_menu as $key => $menu_entry) {
@@ -223,7 +223,7 @@ EOQ;
     public function testMenuExistsCanFindModuleMenuAndModuleExtMenu()
     {
         // Create module menu
-        if ($fh = @fopen("modules/{$this->_moduleName}/Menu.php", 'w+')) {
+        if ($fh = @fopen("modules/{$this->moduleName}/Menu.php", 'w+')) {
             $string = <<<EOQ
 <?php
 \$module_menu[]=Array("index.php?module=Import&action=foo&import_module=Accounts&return_module=Accounts&return_action=index","Foo","Foo", 'Accounts');
@@ -234,8 +234,8 @@ EOQ;
         }
 
         // Create module ext menu
-        sugar_mkdir("custom/modules/{$this->_moduleName}/Ext/Menus/", null, true);
-        if ($fh = @fopen("custom/modules/{$this->_moduleName}/Ext/Menus/menu.ext.php", 'w+')) {
+        sugar_mkdir("custom/modules/{$this->moduleName}/Ext/Menus/", null, true);
+        if ($fh = @fopen("custom/modules/{$this->moduleName}/Ext/Menus/menu.ext.php", 'w+')) {
             $string = <<<EOQ
 <?php
 \$module_menu[]=Array("index.php?module=Import&action=bar&import_module=Accounts&return_module=Accounts&return_action=index","Foo","Foo", 'Accounts');
@@ -246,7 +246,7 @@ EOQ;
         }
 
         $view = new SugarView;
-        $module_menu = $view->getMenu($this->_moduleName);
+        $module_menu = $view->getMenu($this->moduleName);
         $found_custom_menu = false;
         $found_custom_menu_twice = false;
         $found_menu = false;

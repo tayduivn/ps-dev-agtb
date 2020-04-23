@@ -17,9 +17,9 @@ require_once "include/SearchForm/SearchForm2.php";
 
 class Bug47735Test extends TestCase
 {
-    var $user = null;
-    var $requestArray = null;
-    var $searchForm = null;
+    public $user = null;
+    public $requestArray = null;
+    public $searchForm = null;
 
     protected function setUp() : void
     {

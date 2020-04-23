@@ -16,16 +16,15 @@ require_once 'vendor/nusoap//nusoap.php';
 
 abstract class SOAPTestCase extends TestCase
 {
-    public static $_user = null;
-    public $_soapClient = null;
-    public $_session = null;
-    public $_sessionId;
-    public $_soapURL;
+    protected static $user;
+    protected $soapClient;
+    protected $sessionId;
+    protected $soapURL;
 
     public static function setUpBeforeClass() : void
     {
-        self::$_user = BeanFactory::retrieveBean('Users', '1');
-        $GLOBALS['current_user'] = self::$_user;
+        self::$user = BeanFactory::retrieveBean('Users', '1');
+        $GLOBALS['current_user'] = self::$user;
     }
 
     public static function tearDownAfterClass(): void
@@ -45,11 +44,11 @@ abstract class SOAPTestCase extends TestCase
         SugarTestHelper::setUp("beanList");
         SugarTestHelper::setUp("beanFiles");
 
-        $this->_soapURL = $this->_soapURL ?? $GLOBALS['sugar_config']['site_url']
+        $this->soapURL = $this->soapURL ?? $GLOBALS['sugar_config']['site_url']
             . '/service/v4_1/soap.php';
         // $this->_soapURL .= '?XDEBUG_SESSION_START=phpstorm-xdebug';
 
-        $this->_soapClient = new nusoapclient($this->_soapURL, false, false, false, false, false, 600, 600);
+        $this->soapClient = new nusoapclient($this->soapURL, false, false, false, false, false, 600, 600);
         $GLOBALS['db']->commit();
     }
 
@@ -58,16 +57,16 @@ abstract class SOAPTestCase extends TestCase
      */
     protected function tearDown() : void
     {
-        $this->_sessionId = '';
+        $this->sessionId = '';
 
         SugarTestHelper::tearDown();
         $GLOBALS['db']->commit();
     }
 
-    protected function _login()
+    protected function login()
     {
         $GLOBALS['db']->commit();
-        $result = $this->_soapClient->call(
+        $result = $this->soapClient->call(
             'login',
             ['user_auth' =>
                 ['user_name' => 'admin',
@@ -75,27 +74,14 @@ abstract class SOAPTestCase extends TestCase
                     'version' => '.01'],
                 'application_name' => 'SoapTest', "name_value_list" => []]
         );
-        $this->_sessionId = $result['id'];
+        $this->sessionId = $result['id'];
         return $result;
-    }
-
-    /**
-     * Create a test user
-     */
-    public function _setupTestUser()
-    {
-        $this->_user = SugarTestUserUtilities::createAnonymousUser();
-        $this->_user->status = 'Active';
-        $this->_user->is_admin = 1;
-        $this->_user->save();
-        $GLOBALS['db']->commit();
-        $GLOBALS['current_user'] = $this->_user;
     }
 
     /**
      * Remove user created for test
      */
-    public function _tearDownTestUser()
+    protected function tearDownTestUser()
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);

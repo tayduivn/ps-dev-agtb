@@ -14,9 +14,9 @@ use PHPUnit\Framework\TestCase;
 
 class Bug15255Test extends TestCase
 {
-    var $c = null;
-    var $a = null;
-    var $ac_id = null;
+    public $c = null;
+    public $a = null;
+    public $ac_id = null;
 
     protected function setUp() : void
     {
@@ -65,7 +65,7 @@ class Bug15255Test extends TestCase
         unset($this->ac_id);
     }
 
-    function testFill_in_additional_detail_fields()
+    public function testFill_in_additional_detail_fields()
     {
         $locale = Localization::getObject();
         $this->c->fill_in_additional_detail_fields();

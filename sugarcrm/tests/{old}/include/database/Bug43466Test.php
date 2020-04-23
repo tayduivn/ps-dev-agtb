@@ -18,11 +18,11 @@ class Bug43466 extends TestCase
     /**
      * @var DBManager
      */
-    private $_db;
+    private $db;
 
     protected function setUp() : void
     {
-        $this->_db = DBManagerFactory::getInstance();
+        $this->db = DBManagerFactory::getInstance();
     }
 
     /**
@@ -30,7 +30,7 @@ class Bug43466 extends TestCase
      */
     public function testMatchingIndexDoesNotGenerateSql($indices)
     {
-        $sql = $this->_db->repairTableParams('calls', [
+        $sql = $this->db->repairTableParams('calls', [
             'name' => [],
         ], $indices, false);
 
@@ -140,7 +140,7 @@ class Bug43466 extends TestCase
      */
     public function testNonMatchingIndexGeneratesSql($indices)
     {
-        $sql = $this->_db->repairTableParams('calls', [
+        $sql = $this->db->repairTableParams('calls', [
             'name' => [],
         ], $indices, false);
 
@@ -177,7 +177,7 @@ class Bug43466 extends TestCase
      */
     public function testMatchingVarDefs(array $a, array $b)
     {
-        $this->assertTrue($this->_db->compareVarDefs($a, $b));
+        $this->assertTrue($this->db->compareVarDefs($a, $b));
     }
 
     public static function matchingVarDefProvider()
@@ -227,7 +227,7 @@ class Bug43466 extends TestCase
      */
     public function testNonMatchingVarDefs(array $a, array $b)
     {
-        $this->assertFalse($this->_db->compareVarDefs($a, $b));
+        $this->assertFalse($this->db->compareVarDefs($a, $b));
     }
 
     public static function nonMatchingVarDefProvider()

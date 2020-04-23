@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
 
 class Bug50000Test extends TestCase
 {
-    var $reporter;
+    public $reporter;
 
     protected function setUp() : void
     {
@@ -66,6 +66,6 @@ class Bug50000Test extends TestCase
 
 class Bug50000MockReporter
 {
-    var $report_def;
-    var $group_defs_Info;
+    public $report_def;
+    public $group_defs_Info;
 }

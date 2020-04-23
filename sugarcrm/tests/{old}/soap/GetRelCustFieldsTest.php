@@ -115,10 +115,10 @@ class GetRelCustFieldsTest extends SOAPTestCase
      */
     public function testGetRelationships($url)
     {
-        $this->_soapURL = $GLOBALS['sugar_config']['site_url'] . $url;
-        $this->_login();
-        $actual = $this->_soapClient->call('get_relationships', [
-            'session' => $this->_sessionId,
+        $this->soapURL = $GLOBALS['sugar_config']['site_url'] . $url;
+        $this->login();
+        $actual = $this->soapClient->call('get_relationships', [
+            'session' => $this->sessionId,
             'module_name' => 'Accounts',
             'module_id' => $this->account->id,
             'link_field_name' => 'contacts',

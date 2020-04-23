@@ -18,11 +18,11 @@ use PHPUnit\Framework\TestCase;
 class Bug46941Test extends TestCase
 {
     /** @var ModuleBuilderController */
-    var $mbController;
-    var $mbPackage;
-    var $mbModule;
-    var $hasCustomSearchFields;
-    var $filename = 'custom/modulebuilder/packages/test/modules/test/metadata/SearchFields.php';
+    public $mbController;
+    public $mbPackage;
+    public $mbModule;
+    public $hasCustomSearchFields;
+    public $filename = 'custom/modulebuilder/packages/test/modules/test/metadata/SearchFields.php';
 
     protected function setUp() : void
     {

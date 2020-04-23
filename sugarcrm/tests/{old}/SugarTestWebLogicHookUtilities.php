@@ -14,7 +14,7 @@
 
 class SugarTestWebLogicHookUtilities
 {
-    private static $_createdWebLogicHooks = [];
+    private static $createdWebLogicHooks = [];
 
     private function __construct()
     {
@@ -36,7 +36,7 @@ class SugarTestWebLogicHookUtilities
 
         $webLogicHook->save();
         $GLOBALS['db']->commit();
-        self::$_createdWebLogicHooks[] = $webLogicHook;
+        self::$createdWebLogicHooks[] = $webLogicHook;
         return $webLogicHook;
     }
 
@@ -44,7 +44,7 @@ class SugarTestWebLogicHookUtilities
     {
         $db = DBManagerFactory::getInstance();
         $conditions = implode(',', array_map([$db, 'quoted'], self::getCreatedWebLogicHookIds()));
-        foreach (self::$_createdWebLogicHooks as $hook) {
+        foreach (self::$createdWebLogicHooks as $hook) {
             $hook->mark_deleted($hook->id);
         }
         if (!empty($conditions)) {
@@ -57,7 +57,7 @@ class SugarTestWebLogicHookUtilities
     public static function getCreatedWebLogicHookIds()
     {
         $hook_ids = [];
-        foreach (self::$_createdWebLogicHooks as $hook) {
+        foreach (self::$createdWebLogicHooks as $hook) {
             $hook_ids[] = $hook->id;
         }
         return $hook_ids;

@@ -14,7 +14,7 @@
 
 class SugarTestManagerWorksheetUtilities
 {
-    private static $_createdWorksheets = [];
+    private static $createdWorksheets = [];
 
     public static function createWorksheet($id = '')
     {
@@ -28,7 +28,7 @@ class SugarTestManagerWorksheetUtilities
             $worksheet->id = $id;
         }
         $worksheet->save();
-        self::$_createdWorksheets[] = $worksheet;
+        self::$createdWorksheets[] = $worksheet;
         return $worksheet;
     }
 
@@ -37,7 +37,7 @@ class SugarTestManagerWorksheetUtilities
         foreach ($worksheet_ids as $worksheet_id) {
             $worksheet = BeanFactory::newBean("ForecastManagerWorksheets");
             $worksheet->id = $worksheet_id;
-            self::$_createdWorksheets[] = $worksheet;
+            self::$createdWorksheets[] = $worksheet;
         }
     }
 
@@ -57,7 +57,7 @@ class SugarTestManagerWorksheetUtilities
     public static function getCreatedWorksheetIds()
     {
         $worksheet_ids = [];
-        foreach (self::$_createdWorksheets as $worksheet) {
+        foreach (self::$createdWorksheets as $worksheet) {
             $worksheet_ids[] = $worksheet->id;
         }
         return $worksheet_ids;
@@ -86,7 +86,7 @@ class SugarTestManagerWorksheetUtilities
             return false;
         }
 
-        self::$_createdWorksheets[] = $worksheet;
+        self::$createdWorksheets[] = $worksheet;
 
         return $worksheet;
     }

@@ -17,7 +17,7 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug59193Test extends TestCase
 {
-    var $disableCountQuery;
+    public $disableCountQuery;
 
     protected function setUp() : void
     {

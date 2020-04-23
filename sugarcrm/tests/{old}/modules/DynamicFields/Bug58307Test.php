@@ -14,7 +14,8 @@ use PHPUnit\Framework\TestCase;
 
 class Bug58307Test extends TestCase
 {
-    protected $_fv;
+    private $fv;
+
     protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user');
@@ -24,7 +25,7 @@ class Bug58307Test extends TestCase
         // Setting the module in the request for this test
         $_REQUEST['view_module'] = 'Accounts';
         
-        $this->_fv = new FieldViewer();
+        $this->fv = new FieldViewer();
     }
     
     protected function tearDown() : void
@@ -39,7 +40,7 @@ class Bug58307Test extends TestCase
             'len' => 30,
         ];
         
-        $layout = $this->_fv->getLayout($vardef);
+        $layout = $this->fv->getLayout($vardef);
         
         // Inspect the layout for things we expect. Yes, this is kinda not
         // scientific but to support varies builds this needs to happen this way.

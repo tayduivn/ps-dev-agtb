@@ -30,7 +30,7 @@ class RestMeetingHelperTest extends RestTestBase
             'assigned_user_id' => 1,
         ];
 
-        $restReply = $this->_restCall('Meetings/', json_encode($meeting), 'POST');
+        $restReply = $this->restCall('Meetings/', json_encode($meeting), 'POST');
 
         $this->assertTrue(isset($restReply['reply']['id']), 'Meeting was not created, reply was: ' . print_r($restReply, true));
 
@@ -39,7 +39,7 @@ class RestMeetingHelperTest extends RestTestBase
 
 
         // verify the user has the meeting, which will validate on calendar
-        $restReplyUsers = $this->_restCall("Meetings/{$meeting_id}/link/users");
+        $restReplyUsers = $this->restCall("Meetings/{$meeting_id}/link/users");
         $users_linked = [];
         foreach ($restReplyUsers['reply']['records'] as $record) {
             $users_linked[] = $record['id'];
@@ -61,7 +61,7 @@ class RestMeetingHelperTest extends RestTestBase
             'status' => 'Held',
         ];
 
-        $restReply = $this->_restCall('Meetings/', json_encode($meeting), 'POST');
+        $restReply = $this->restCall('Meetings/', json_encode($meeting), 'POST');
 
         $this->assertTrue(isset($restReply['reply']['id']), 'Meeting was not created, reply was: ' . print_r($restReply, true));
 
@@ -70,7 +70,7 @@ class RestMeetingHelperTest extends RestTestBase
 
 
         // verify the user has the meeting, which will validate on calendar
-        $restReplyUsers = $this->_restCall("Meetings/{$meeting_id}/link/users");
+        $restReplyUsers = $this->restCall("Meetings/{$meeting_id}/link/users");
         $users_linked = [];
         foreach ($restReplyUsers['reply']['records'] as $record) {
             $users_linked[] = $record['id'];

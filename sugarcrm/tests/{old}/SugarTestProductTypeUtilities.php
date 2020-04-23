@@ -14,7 +14,7 @@
 
 class SugarTestProductTypesUtilities
 {
-    protected static $_createdTypes = [];
+    private static $createdTypes = [];
 
     private function __construct()
     {
@@ -29,7 +29,7 @@ class SugarTestProductTypesUtilities
             $type->id = $id;
         }
         $type->save();
-        self::$_createdTypes[] = $type;
+        self::$createdTypes[] = $type;
         return $type;
     }
 
@@ -42,7 +42,7 @@ class SugarTestProductTypesUtilities
     public static function getCreatedTypeIds()
     {
         $type_ids = [];
-        foreach (self::$_createdTypes as $type) {
+        foreach (self::$createdTypes as $type) {
             $type_ids[] = $type->id;
         }
         return $type_ids;

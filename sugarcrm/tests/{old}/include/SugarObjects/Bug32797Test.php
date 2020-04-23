@@ -17,11 +17,11 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug32797Test extends TestCase
 {
-    private $_old_sugar_config = null;
+    private $oldSugarConfig = null;
 
     protected function setUp() : void
     {
-        $this->_old_sugar_config = $GLOBALS['sugar_config'];
+        $this->oldSugarConfig = $GLOBALS['sugar_config'];
         $GLOBALS['sugar_config'] = ['require_accounts' => false];
     }
 
@@ -29,7 +29,7 @@ class Bug32797Test extends TestCase
     {
         $config = SugarConfig::getInstance();
         $config->clearCache();
-        $GLOBALS['sugar_config'] = $this->_old_sugar_config;
+        $GLOBALS['sugar_config'] = $this->oldSugarConfig;
     }
 
     public function vardefProvider()

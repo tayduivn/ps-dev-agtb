@@ -17,7 +17,7 @@ require_once 'include/workflow/workflow_utils.php';
 
 class Bug43572Test extends TestCase
 {
-    function testGlueDate()
+    public function testGlueDate()
     {
         $condition = new Expression();
         $condition->lhs_field = 'date_closed';

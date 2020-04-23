@@ -16,7 +16,7 @@ require_once 'include/utils.php';
 
 class XssTest extends TestCase
 {
-    var $email_xss;
+    public $email_xss;
 
     /**
      * @var mixed

@@ -20,22 +20,22 @@ require_once 'modules/DynamicFields/FieldCases.php';
 
 class DynamicFieldsCurrencyTest extends TestCase
 {
-    private $_modulename = 'Accounts';
-    private $_originaldbType = '';
+    private $moduleName = 'Accounts';
+    private $originalDbType = '';
     private $field;
     
     protected function setUp() : void
     {
         // Set Original Global dbType
-        $this->_originaldbType = $GLOBALS['db']->dbType;
+        $this->originalDbType = $GLOBALS['db']->dbType;
         
         $this->field = get_widget('currency');
-        $this->field->id = $this->_modulename.'foofighter_c';
+        $this->field->id = $this->moduleName.'foofighter_c';
         $this->field->name = 'foofighter_c';
         $this->field->vanme = 'LBL_Foo';
         $this->field->comments = null;
         $this->field->help = null;
-        $this->field->custom_module = $this->_modulename;
+        $this->field->custom_module = $this->moduleName;
         $this->field->type = 'currency';
         $this->field->len = 18;
         $this->field->precision = 6;
@@ -57,7 +57,7 @@ class DynamicFieldsCurrencyTest extends TestCase
     protected function tearDown() : void
     {
         // Reset Original Global dbType
-        $GLOBALS['db']->dbType = $this->_originaldbType;
+        $GLOBALS['db']->dbType = $this->originalDbType;
     }
     
     public function testCurrencyDbType()

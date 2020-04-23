@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
 
 class DateExpressionTest extends TestCase
 {
-    static $createdBeans = [];
+    private static $createdBeans = [];
 
     public static function setUpBeforeClass() : void
     {

@@ -43,7 +43,7 @@ class RESTAPI4FieldACLsTest extends TestCase
     }
     
     /**
-     * @dataProvider _wirelessListProvider
+     * @dataProvider wirelessListProvider
      * @param $module
      * @param $metadatafile
      */
@@ -68,7 +68,7 @@ class RESTAPI4FieldACLsTest extends TestCase
     }
     
     /**
-     * @dataProvider _wirelessGridProvider
+     * @dataProvider wirelessGridProvider
      * @param $module
      * @param $view
      */
@@ -92,7 +92,7 @@ class RESTAPI4FieldACLsTest extends TestCase
      *
      * @return array
      */
-    public function _wirelessGridProvider()
+    public static function wirelessGridProvider()
     {
         return [
             ['module' => 'Accounts', 'view' => 'edit', 'metadatafile' => 'modules/Accounts/clients/mobile/views/edit/edit.php',],
@@ -106,7 +106,7 @@ class RESTAPI4FieldACLsTest extends TestCase
      *
      * @return array
      */
-    public function _wirelessListProvider()
+    public static function wirelessListProvider()
     {
         return [
             ['module' => 'Cases', 'metadatafile' => 'modules/Cases/clients/mobile/views/list/list.php',],

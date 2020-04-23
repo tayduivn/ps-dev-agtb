@@ -15,8 +15,8 @@ use PHPUnit\Framework\TestCase;
 
 class iCalTest extends TestCase
 {
-    var $timedate;
-    var $project;
+    public $timedate;
+    public $project;
 
     protected function setUp() : void
     {

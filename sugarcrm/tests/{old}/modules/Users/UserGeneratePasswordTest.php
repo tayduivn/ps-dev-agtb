@@ -21,12 +21,12 @@ use PHPUnit\Framework\TestCase;
  */
 class UserGeneratePasswordTest extends TestCase
 {
-    var $_passwordSetting;
+    private $passwordSetting;
 
     protected function setUp() : void
     {
         if (isset($GLOBALS['sugar_config']['passwordsetting'])) {
-            $this->_passwordSetting = $GLOBALS['sugar_config']['passwordsetting'];
+            $this->passwordSetting = $GLOBALS['sugar_config']['passwordsetting'];
         }
         $GLOBALS['sugar_config']['passwordsetting'] = ['onenumber'=>0,
                                                             'onelower'=>0,
@@ -37,8 +37,8 @@ class UserGeneratePasswordTest extends TestCase
 
     protected function tearDown() : void
     {
-        if (!empty($this->_passwordSetting)) {
-            $GLOBALS['sugar_config']['passwordsetting'] = $this->_passwordSetting;
+        if (!empty($this->passwordSetting)) {
+            $GLOBALS['sugar_config']['passwordsetting'] = $this->passwordSetting;
         }
     }
 

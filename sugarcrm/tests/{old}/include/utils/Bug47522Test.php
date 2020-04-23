@@ -21,7 +21,7 @@ require_once 'include/utils.php';
   */
 class Bug47522Test extends TestCase
 {
-    var $orig_ini_encoding_val;
+    public $orig_ini_encoding_val;
     protected function setUp() : void
     {
         $this->orig_ini_encoding_val = ini_get('mbstring.encoding_translation');

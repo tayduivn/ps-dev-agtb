@@ -14,12 +14,10 @@ use PHPUnit\Framework\TestCase;
 
 class SugarViewTest extends TestCase
 {
-    private $_backup = [];
-
     /**
      * @var SugarViewTestMock
      */
-    private $_view;
+    private $view;
 
     protected function setUp() : void
     {
@@ -29,7 +27,7 @@ class SugarViewTest extends TestCase
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('mod_strings', ['Users']);
-        $this->_view = new SugarViewTestMock();
+        $this->view = new SugarViewTestMock();
         $this->dir = getcwd();
     }
 
@@ -42,7 +40,7 @@ class SugarViewTest extends TestCase
     public function testGetModuleTab()
     {
         $_REQUEST['module_tab'] = 'ADMIN';
-        $moduleTab = $this->_view->getModuleTab();
+        $moduleTab = $this->view->getModuleTab();
         $this->assertEquals('ADMIN', $moduleTab, 'Module Tab names are not equal from request');
     }
 
@@ -53,9 +51,9 @@ class SugarViewTest extends TestCase
             copy('custom/modules/Contacts/metadata/listviewdefs.php', 'custom/modules/Contacts/metadata/listviewdefs.php.bak');
             unlink('custom/modules/Contacts/metadata/listviewdefs.php');
         }
-        $this->_view->module = 'Contacts';
-        $this->_view->type = 'list';
-        $metaDataFile = $this->_view->getMetaDataFile();
+        $this->view->module = 'Contacts';
+        $this->view->type = 'list';
+        $metaDataFile = $this->view->getMetaDataFile();
         $this->assertEquals('modules/Contacts/metadata/listviewdefs.php', $metaDataFile, 'Did not load the correct metadata file');
 
         //test custom file
@@ -65,7 +63,7 @@ class SugarViewTest extends TestCase
         $customFile = 'custom/modules/Contacts/metadata/listviewdefs.php';
         if (!file_exists($customFile)) {
             sugar_touch($customFile);
-            $customMetaDataFile = $this->_view->getMetaDataFile();
+            $customMetaDataFile = $this->view->getMetaDataFile();
             $this->assertEquals($customFile, $customMetaDataFile, 'Did not load the correct custom metadata file');
             unlink($customFile);
         }
@@ -82,13 +80,13 @@ class SugarViewTest extends TestCase
         $GLOBALS['action'] = 'barbar';
         $GLOBALS['module'] = 'foofoo';
 
-        $this->_view->init($bean, $view_object_map);
+        $this->view->init($bean, $view_object_map);
 
-        $this->assertInstanceOf('SugarBean', $this->_view->bean);
-        $this->assertEquals($view_object_map, $this->_view->view_object_map);
-        $this->assertEquals($GLOBALS['action'], $this->_view->action);
-        $this->assertEquals($GLOBALS['module'], $this->_view->module);
-        $this->assertInstanceOf('Sugar_Smarty', $this->_view->ss);
+        $this->assertInstanceOf('SugarBean', $this->view->bean);
+        $this->assertEquals($view_object_map, $this->view->view_object_map);
+        $this->assertEquals($GLOBALS['action'], $this->view->action);
+        $this->assertEquals($GLOBALS['module'], $this->view->module);
+        $this->assertInstanceOf('Sugar_Smarty', $this->view->ss);
     }
 
     public function testInitNoParameters()
@@ -96,22 +94,22 @@ class SugarViewTest extends TestCase
         $GLOBALS['action'] = 'barbar';
         $GLOBALS['module'] = 'foofoo';
 
-        $this->_view->init();
+        $this->view->init();
 
-        $this->assertNull($this->_view->bean);
-        $this->assertEquals([], $this->_view->view_object_map);
-        $this->assertEquals($GLOBALS['action'], $this->_view->action);
-        $this->assertEquals($GLOBALS['module'], $this->_view->module);
-        $this->assertInstanceOf('Sugar_Smarty', $this->_view->ss);
+        $this->assertNull($this->view->bean);
+        $this->assertEquals([], $this->view->view_object_map);
+        $this->assertEquals($GLOBALS['action'], $this->view->action);
+        $this->assertEquals($GLOBALS['module'], $this->view->module);
+        $this->assertInstanceOf('Sugar_Smarty', $this->view->ss);
     }
 
     public function testInitSmarty()
     {
-        $this->_view->initSmarty();
+        $this->view->initSmarty();
 
-        $this->assertInstanceOf('Sugar_Smarty', $this->_view->ss);
-        $this->assertEquals($this->_view->ss->get_template_vars('MOD'), $GLOBALS['mod_strings']);
-        $this->assertEquals($this->_view->ss->get_template_vars('APP'), $GLOBALS['app_strings']);
+        $this->assertInstanceOf('Sugar_Smarty', $this->view->ss);
+        $this->assertEquals($this->view->ss->get_template_vars('MOD'), $GLOBALS['mod_strings']);
+        $this->assertEquals($this->view->ss->get_template_vars('APP'), $GLOBALS['app_strings']);
     }
 
     /**
@@ -119,12 +117,12 @@ class SugarViewTest extends TestCase
      */
     public function testDisplayErrors()
     {
-        $this->_view->errors = ['error1','error2'];
-        $this->_view->suppressDisplayErrors = true;
+        $this->view->errors = ['error1','error2'];
+        $this->view->suppressDisplayErrors = true;
 
         $this->assertEquals(
             '<span class="error">error1</span><br><span class="error">error2</span><br>',
-            $this->_view->displayErrors()
+            $this->view->displayErrors()
         );
     }
 
@@ -133,11 +131,11 @@ class SugarViewTest extends TestCase
      */
     public function testDisplayErrorsDoNotSupressOutput()
     {
-        $this->_view->errors = ['error1','error2'];
-        $this->_view->suppressDisplayErrors = false;
+        $this->view->errors = ['error1','error2'];
+        $this->view->suppressDisplayErrors = false;
 
         $this->expectOutputString('<span class="error">error1</span><br><span class="error">error2</span><br>');
-        $this->_view->displayErrors();
+        $this->view->displayErrors();
     }
 
     public function testGetBrowserTitle()
@@ -155,12 +153,12 @@ class SugarViewTest extends TestCase
 
     public function testGetBrowserTitleUserLogin()
     {
-        $this->_view->module = 'Users';
-        $this->_view->action = 'Login';
+        $this->view->module = 'Users';
+        $this->view->action = 'Login';
 
         $this->assertEquals(
             "{$GLOBALS['app_strings']['LBL_BROWSER_TITLE']}",
-            $this->_view->getBrowserTitle()
+            $this->view->getBrowserTitle()
         );
     }
 
@@ -172,7 +170,7 @@ class SugarViewTest extends TestCase
 
         $this->assertEquals(
             "<span class='breadCrumbSymbol'>&raquo;</span>",
-            $this->_view->getBreadCrumbSymbol()
+            $this->view->getBreadCrumbSymbol()
         );
     }
 
@@ -184,7 +182,7 @@ class SugarViewTest extends TestCase
 
         $this->assertEquals(
             "<span class='breadCrumbSymbol'>&laquo;</span>",
-            $this->_view->getBreadCrumbSymbol()
+            $this->view->getBreadCrumbSymbol()
         );
     }
 
@@ -194,7 +192,7 @@ class SugarViewTest extends TestCase
 
         $sugar_config['js_available'] = ['default_action'];
 
-        $js_array = $this->_view->getSugarConfigJS();
+        $js_array = $this->view->getSugarConfigJS();
         $this->assertContains('SUGAR.config.default_action = "index";', $js_array);
     }
 }

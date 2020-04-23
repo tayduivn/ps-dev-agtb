@@ -15,9 +15,9 @@ use PHPUnit\Framework\TestCase;
 
 class SugarSearchEngineMetadataHelperTest extends TestCase
 {
-    private $_cacheRenamed;
-    private $_cacheFile;
-    private $_backupCacheFile;
+    private $cacheRenamed;
+    private $cacheFile;
+    private $backupCacheFile;
 
     protected function setUp() : void
     {
@@ -27,25 +27,25 @@ class SugarSearchEngineMetadataHelperTest extends TestCase
         SugarTestHelper::setUp('moduleList');
         SugarTestHelper::setUp('app_list_strings');
 
-        $this->_cacheFile = sugar_cached('modules/ftsModulesCache.php');
-        $this->_backupCacheFile = sugar_cached('modules/ftsModulesCache.php').'.save';
+        $this->cacheFile = sugar_cached('modules/ftsModulesCache.php');
+        $this->backupCacheFile = sugar_cached('modules/ftsModulesCache.php').'.save';
 
-        if (file_exists($this->_cacheFile)) {
-            $this->_cacheRenamed = true;
-            rename($this->_cacheFile, $this->_backupCacheFile);
+        if (file_exists($this->cacheFile)) {
+            $this->cacheRenamed = true;
+            rename($this->cacheFile, $this->backupCacheFile);
         } else {
-            $this->_cacheRenamed = false;
+            $this->cacheRenamed = false;
         }
     }
 
     protected function tearDown() : void
     {
-        if ($this->_cacheRenamed) {
-            if (file_exists($this->_backupCacheFile)) {
-                rename($this->_backupCacheFile, $this->_cacheFile);
+        if ($this->cacheRenamed) {
+            if (file_exists($this->backupCacheFile)) {
+                rename($this->backupCacheFile, $this->cacheFile);
             }
-        } elseif (file_exists($this->_cacheFile)) {
-            unlink($this->_cacheFile);
+        } elseif (file_exists($this->cacheFile)) {
+            unlink($this->cacheFile);
         }
         SugarTestHelper::tearDown();
     }

@@ -14,8 +14,8 @@ use PHPUnit\Framework\TestCase;
 
 class CampaignTrackersTest extends TestCase
 {
-    var $campaign = 'campaignforcamplogunittest';
-    var $campaign_tracker;
+    public $campaign = 'campaignforcamplogunittest';
+    public $campaign_tracker;
 
     
     protected function setUp() : void

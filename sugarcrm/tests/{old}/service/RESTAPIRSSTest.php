@@ -31,7 +31,7 @@ class RESTAPIRSSTest extends TestCase
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }
 
-    protected function _makeRESTCall($method, $parameters, $response_type = 'JSON', $api = 'v3_1')
+    private function makeRESTCall($method, $parameters, $response_type = 'JSON', $api = 'v3_1')
     {
         // specify the REST web service to interact with
         $url = $GLOBALS['sugar_config']['site_url']."/service/$api/rest.php";
@@ -61,10 +61,10 @@ class RESTAPIRSSTest extends TestCase
         return $response;
     }
 
-    protected function _login()
+    private function login()
     {
         $GLOBALS['db']->commit(); // Making sure we commit any changes before logging in
-        return $this->_makeRESTCall(
+        return $this->makeRESTCall(
             'login',
             [
                 'user_auth' =>
@@ -81,10 +81,10 @@ class RESTAPIRSSTest extends TestCase
 
     public function testGetEntryListReturnsRSScorrectly()
     {
-        $result = $this->_login();
+        $result = $this->login();
         $sessionId = $result['id'];
 
-        $rss = $this->_makeRESTCall(
+        $rss = $this->makeRESTCall(
             'get_entry_list',
             [
                             'session' => $sessionId,
@@ -101,10 +101,10 @@ class RESTAPIRSSTest extends TestCase
 
     public function testGetEntryReturnsRSScorrectly()
     {
-        $result = $this->_login();
+        $result = $this->login();
         $sessionId = $result['id'];
 
-        $rss = $this->_makeRESTCall(
+        $rss = $this->makeRESTCall(
             'get_entry',
             [
                             'session' => $sessionId,
@@ -121,10 +121,10 @@ class RESTAPIRSSTest extends TestCase
 
     public function testGetEntriesReturnsRSScorrectly()
     {
-        $result = $this->_login();
+        $result = $this->login();
         $sessionId = $result['id'];
 
-        $rss = $this->_makeRESTCall(
+        $rss = $this->makeRESTCall(
             'get_entries',
             [
                             'session' => $sessionId,

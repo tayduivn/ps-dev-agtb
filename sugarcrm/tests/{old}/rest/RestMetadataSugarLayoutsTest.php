@@ -13,50 +13,50 @@
 
 class RestMetadataSugarLayoutsTest extends RestTestBase
 {
-    protected $_testPaths = [
+    private $testPaths = [
         'wiggle' => 'clients/base/layouts/wiggle/wiggle.php',
         'woggle' => 'custom/clients/base/layouts/woggle/woggle.php',
         'pizzle' => 'clients/mobile/layouts/dizzle/dazzle.php', // Tests improperly named metadata files
         'pozzle' => 'custom/clients/mobile/layouts/pozzle/pozzle.php',
     ];
 
-    protected $_testFilesCreated = [];
+    private $testFilesCreated = [];
 
-    protected $_oldFileContents = [];
+    private $oldFileContents = [];
 
     protected function setUp() : void
     {
         parent::setUp();
 
-        foreach ($this->_testPaths as $file) {
+        foreach ($this->testPaths as $file) {
             preg_match('#clients/(.*)/layouts/#', $file, $m);
             $platform = $m[1];
             $filename = basename($file, '.php');
             $contents = "<?php\n\$viewdefs['$platform']['layout']['$filename'] = array('test' => 'foo');\n";
             if (file_exists($file)) {
-                $this->_oldFileContents[$file] = file_get_contents($file);
+                $this->oldFileContents[$file] = file_get_contents($file);
             } else {
-                $this->_testFilesCreated[] = $file;
+                $this->testFilesCreated[] = $file;
                 SugarAutoLoader::ensureDir(dirname($file));
             }
 
             file_put_contents($file, $contents);
         }
 
-        $this->_restLogin('', '', 'mobile');
+        $this->restLogin('', '', 'mobile');
         $this->mobileAuthToken = $this->authToken;
-        $this->_restLogin('', '', 'base');
+        $this->restLogin('', '', 'base');
         $this->baseAuthToken = $this->authToken;
-        $this->_clearMetadataCache();
+        $this->clearMetadataCache();
     }
 
     protected function tearDown() : void
     {
-        foreach ($this->_oldFileContents as $file => $contents) {
+        foreach ($this->oldFileContents as $file => $contents) {
             file_put_contents($file, $contents);
         }
 
-        foreach ($this->_testFilesCreated as $file) {
+        foreach ($this->testFilesCreated as $file) {
             unlink($file);
         }
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
@@ -67,8 +67,8 @@ class RestMetadataSugarLayoutsTest extends RestTestBase
      */
     public function testBaseLayoutRequestAll()
     {
-        $this->_clearMetadataCache();
-        $reply = $this->_restCall('metadata');
+        $this->clearMetadataCache();
+        $reply = $this->restCall('metadata');
         $this->assertNotEmpty($reply['reply']['layouts'], 'Layouts return data is missing');
         $this->assertTrue(isset($reply['reply']['layouts']['_hash']), 'Layout hash is missing.');
         $this->assertArrayHasKey('wiggle', $reply['reply']['layouts'], 'Test result not found');
@@ -78,8 +78,8 @@ class RestMetadataSugarLayoutsTest extends RestTestBase
      */
     public function testBaseLayoutRequestLayoutsOnly()
     {
-        $this->_clearMetadataCache();
-        $reply = $this->_restCall('metadata?type_filter=layouts');
+        $this->clearMetadataCache();
+        $reply = $this->restCall('metadata?type_filter=layouts');
         $this->assertNotEmpty($reply['reply']['layouts'], 'Layouts return data is missing');
         $this->assertTrue(isset($reply['reply']['layouts']['_hash']), 'Layout hash is missing.');
         $this->assertArrayHasKey('woggle', $reply['reply']['layouts'], 'Test result not found');
@@ -90,8 +90,8 @@ class RestMetadataSugarLayoutsTest extends RestTestBase
     public function testMobileLayoutRequestAll()
     {
         $this->authToken = $this->mobileAuthToken;
-        $this->_clearMetadataCache();
-        $reply = $this->_restCall('metadata');
+        $this->clearMetadataCache();
+        $reply = $this->restCall('metadata');
         $this->assertNotEmpty($reply['reply']['layouts'], 'Layouts return data is missing');
         $this->assertTrue(isset($reply['reply']['layouts']['_hash']), 'Layout hash is missing.');
         $this->assertArrayHasKey('pozzle', $reply['reply']['layouts'], 'Test result not found');
@@ -102,8 +102,8 @@ class RestMetadataSugarLayoutsTest extends RestTestBase
     public function testMobileLayoutRequestLayoutsOnly()
     {
         $this->authToken = $this->mobileAuthToken;
-        $this->_clearMetadataCache();
-        $reply = $this->_restCall('metadata?type_filter=layouts');
+        $this->clearMetadataCache();
+        $reply = $this->restCall('metadata?type_filter=layouts');
         $this->assertNotEmpty($reply['reply']['layouts'], 'Layouts return data is missing');
         $this->assertTrue(isset($reply['reply']['layouts']['_hash']), 'Layout hash is missing.');
         $this->assertTrue(!isset($reply['reply']['layouts']['dizzle']), 'Incorrectly picked up metadata that should not have been read');

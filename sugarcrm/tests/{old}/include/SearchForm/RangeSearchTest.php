@@ -17,9 +17,9 @@ require_once 'include/SearchForm/SearchForm2.php';
 class RangeSearchTest extends TestCase
 {
     private $hasExistingCustomSearchFields = false;
-    var $searchForm;
-    var $originalDbType;
-    var $smartyTestFile;
+    public $searchForm;
+    public $originalDbType;
+    public $smartyTestFile;
 
     protected function setUp() : void
     {

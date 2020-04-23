@@ -21,9 +21,9 @@ use PHPUnit\Framework\TestCase;
 
 class Bug50438Test extends TestCase
 {
-    var $contact;
-    var $fileArr;
-    var $call_id;
+    public $contact;
+    public $fileArr;
+    public $call_id;
     protected function setUp() : void
     {
         global $currentModule ;

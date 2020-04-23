@@ -17,9 +17,9 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug32487Test extends TestCase
 {
-    var $ib = null;
-    var $outbound_id = null;
-    
+    public $ib = null;
+    public $outbound_id = null;
+
     protected function setUp() : void
     {
         global $current_user, $currentModule ;
@@ -52,18 +52,18 @@ class Bug32487Test extends TestCase
         unset($this->ib);
     }
     
-    function testGetAssoicatedInboundAccountForOutboundAccounts()
+    public function testGetAssoicatedInboundAccountForOutboundAccounts()
     {
         global $current_user;
         $ob = new OutboundEmail();
         $ob->id = $this->outbound_id;
-        
+
         $results = $ob->getAssociatedInboundAccounts($current_user);
         $this->assertEquals($this->ib->id, $results[0], "Could not retrieve the inbound mail accounts for an outbound account");
-        
+
         $obEmpty = new OutboundEmail();
         $obEmpty->id = uniqid();
-        
+
         $empty_results = $obEmpty->getAssociatedInboundAccounts($current_user);
         $this->assertEquals(0, count($empty_results), "Outbound email account returned for unspecified/empty inbound mail account.");
     }

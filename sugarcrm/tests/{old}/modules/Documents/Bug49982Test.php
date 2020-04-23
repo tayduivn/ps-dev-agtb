@@ -21,8 +21,8 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug49982Test extends TestCase
 {
-    var $doc = null;
-    var $contract = null;
+    public $doc = null;
+    public $contract = null;
 
     protected function setUp() : void
     {
@@ -44,7 +44,7 @@ class Bug49982Test extends TestCase
      * In the scenario we are trying to simulate, the post AND files array are returned empty by php, so let's simulate that
      * in order to test the error message from home page
      */
-    function testSaveUploadError()
+    public function testSaveUploadError()
     {
         //first lets test that no errors show up under normal conditions, clear out Post array just in case there is stale info
         $sv = new SugarView();

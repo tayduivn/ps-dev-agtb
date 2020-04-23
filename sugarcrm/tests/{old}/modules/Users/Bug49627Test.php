@@ -151,5 +151,5 @@ class Bug49627Test extends TestCase
 //This class turns the $ss class variable to have public access
 class UserViewHelperMock extends UserViewHelper
 {
-    var $ss;
+    public $ss;
 }

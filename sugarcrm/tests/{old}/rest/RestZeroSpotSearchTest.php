@@ -34,7 +34,7 @@ class RestZeroSpotSearchTest extends RestTestBase
 
     public function testZeroSpotSearch()
     {
-        $restReply = $this->_restCall(
+        $restReply = $this->restCall(
             "Accounts/",
             json_encode(['name'=>'0 - UNIT TEST - AFTER &nbsp;']),
             'POST'
@@ -48,7 +48,7 @@ class RestZeroSpotSearchTest extends RestTestBase
         );
 
 
-        $restReply = $this->_restCall(
+        $restReply = $this->restCall(
             "Accounts/",
             json_encode(['name'=>'1 - UNIT TEST - AFTER &nbsp;']),
             'POST'
@@ -62,7 +62,7 @@ class RestZeroSpotSearchTest extends RestTestBase
 
         $this->account_id[] = $restReply['reply']['id'];
 
-        $restReply = $this->_restCall("Accounts/?q=0");
+        $restReply = $this->restCall("Accounts/?q=0");
 
         $this->assertEquals($this->account_id[0], $restReply['reply']['records'][0]['id'], "The record returned does not match the 0 record");
 

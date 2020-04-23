@@ -38,18 +38,18 @@ class RestTestPortalBase extends RestTestBase
         parent::setUp();
 
         // Make the current user a portal only user
-        $this->_user->portal_only = '1';
-        $this->_user->save();
+        $this->user->portal_only = '1';
+        $this->user->save();
 
         // Reset the support portal user id to the newly created user id
-        $system_config->saveSetting('supportPortal', 'RegCreatedBy', $this->_user->id);
+        $system_config->saveSetting('supportPortal', 'RegCreatedBy', $this->user->id);
 
         $portalConfig = new ParserModifyPortalConfig();
         $this->role = $portalConfig->getPortalACLRole();
-        if (!($this->_user->check_role_membership($this->role->name))) {
-            $this->_user->load_relationship('aclroles');
-            $this->_user->aclroles->add($this->role);
-            $this->_user->save();
+        if (!($this->user->check_role_membership($this->role->name))) {
+            $this->user->load_relationship('aclroles');
+            $this->user->aclroles->add($this->role);
+            $this->user->save();
         }
 
         // A little bit destructive, but necessary.
@@ -66,7 +66,7 @@ class RestTestPortalBase extends RestTestBase
         $this->contact->portal_name = "unittestportal";
         $this->contact->portal_active = '1';
         $this->contact->portal_password = User::getPasswordHash("unittest");
-        $this->contact->assigned_user_id = $this->_user->id;
+        $this->contact->assigned_user_id = $this->user->id;
         $this->contact->save();
 
         $this->portalGuy = $this->contact;
@@ -108,7 +108,7 @@ class RestTestPortalBase extends RestTestBase
         // Delete test support_portal user
         $db->query("DELETE FROM ".$this->testConsumer->table_name." WHERE client_type = 'support_portal'");
         
-        $this->_cleanUpRecords();
+        $this->cleanUpRecords();
 
         // Add back original support_portal user
         if (!empty($this->currentPortalBean->id)) {
@@ -128,7 +128,7 @@ class RestTestPortalBase extends RestTestBase
         parent::tearDown();
     }
 
-    protected function _restLogin($username = '', $password = '', $platform = 'base')
+    protected function restLogin($username = '', $password = '', $platform = 'base')
     {
         $args = [
             'grant_type' => 'password',
@@ -142,7 +142,7 @@ class RestTestPortalBase extends RestTestBase
         // Prevent an infinite loop, put a fake authtoken in here.
         $this->authToken = 'LOGGING_IN';
 
-        $reply = $this->_restCall('oauth2/token', json_encode($args));
+        $reply = $this->restCall('oauth2/token', json_encode($args));
 
         $this->assertNotEmpty(
             $reply['reply']['access_token'],
@@ -153,14 +153,14 @@ class RestTestPortalBase extends RestTestBase
         $this->refreshToken = $reply['reply']['refresh_token'];
     }
 
-    protected function _restLogout()
+    protected function restLogout()
     {
         if (!empty($this->authToken) && !empty($this->refreshToken)) {
             $args = [
                 'token' => $this->authToken,
             ];
 
-            $reply = $this->_restCall('oauth2/logout', json_encode($args));
+            $reply = $this->restCall('oauth2/logout', json_encode($args));
             if (!isset($reply['reply']['success'])) {
                 throw new Exception("Rest logout failed, message looked like: ".$reply['replyRaw']);
             }

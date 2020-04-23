@@ -23,8 +23,8 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug49873Test extends TestCase
 {
-    var $doc = null;
-    var $contract = null;
+    public $doc = null;
+    public $contract = null;
 
     protected function setUp() : void
     {

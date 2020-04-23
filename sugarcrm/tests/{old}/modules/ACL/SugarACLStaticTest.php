@@ -18,7 +18,7 @@ use PHPUnit\Framework\TestCase;
 class SugarACLStaticTest extends TestCase
 {
     public $testUser;
-    public static $_modules = [];
+    public static $modules = [];
 
     protected function setUp() : void
     {

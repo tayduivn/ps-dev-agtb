@@ -15,19 +15,18 @@
  */
 class Bug47683Test extends SOAPTestCase
 {
-    public $_contact = null;
-    public $_sessionId = '';
+    private $contact;
 
     /**
      * Create test user
      */
     protected function setUp() : void
     {
-        $this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/soap.php';
+        $this->soapURL = $GLOBALS['sugar_config']['site_url'].'/soap.php';
         parent::setUp();
         SugarTestHelper::setUp("beanList");
         SugarTestHelper::setUp("beanFiles");
-        $this->_setupTestContact();
+        $this->setupTestContact();
     }
 
     /**
@@ -39,32 +38,30 @@ class Bug47683Test extends SOAPTestCase
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestContactUtilities::removeCreatedContactsUsersRelationships();
-        $this->_contact = null;
         SugarTestMeetingUtilities::removeMeetingContacts();
         SugarTestHelper::tearDown();
     }
 
     public function testGetModifiedEntries()
     {
-        $this->_login();
-        $ids = [$this->_contact->id];
-        $result = $this->_soapClient->call('get_modified_entries', ['session' => $this->_sessionId, 'module_name' => 'Contacts', 'ids' => $ids, 'select_fields' => []]);
+        $this->login();
+        $ids = [$this->contact->id];
+        $result = $this->soapClient->call('get_modified_entries', ['session' => $this->sessionId, 'module_name' => 'Contacts', 'ids' => $ids, 'select_fields' => []]);
         $decoded = base64_decode($result['result']);
 
-        $this->assertContains("<value>{$this->_contact->first_name}</value>", $decoded, "First name not found in data");
-        $this->assertContains("<value>{$this->_contact->last_name}</value>", $decoded, "Last name not found in data");
+        $this->assertContains("<value>{$this->contact->first_name}</value>", $decoded, "First name not found in data");
+        $this->assertContains("<value>{$this->contact->last_name}</value>", $decoded, "Last name not found in data");
     }
 
 
     /**********************************
      * HELPER PUBLIC FUNCTIONS
      **********************************/
-    private function _setupTestContact()
+    private function setupTestContact()
     {
-        $this->_contact = SugarTestContactUtilities::createContact();
-        $this->_contact->last_name .= " Пупкин-Васильев"; // test special chars
-        $this->_contact->description = "<==>";
-        //$this->_contact->contacts_users_id = $this->_user->id;
-        $this->_contact->save();
+        $this->contact = SugarTestContactUtilities::createContact();
+        $this->contact->last_name .= " Пупкин-Васильев"; // test special chars
+        $this->contact->description = "<==>";
+        $this->contact->save();
     }
 }

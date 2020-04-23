@@ -18,7 +18,7 @@ class RestLabelsTest extends RestTestBase
      */
     public function testLabels()
     {
-        $restReply = $this->_restCall('metadata?type_filter=labels');
+        $restReply = $this->restCall('metadata?type_filter=labels');
         $this->assertArrayHasKey('en_us', $restReply['reply']['labels']);
         $fileLoc = ltrim($GLOBALS['sugar_config']['site_url'], $restReply['reply']['labels']['en_us']);
         $en_us = json_decode(file_get_contents($restReply['reply']['labels']['en_us']), true);
@@ -31,7 +31,7 @@ class RestLabelsTest extends RestTestBase
      */
     public function testAppListLabels()
     {
-        $restReply = $this->_restCall('metadata?type_filter=labels');
+        $restReply = $this->restCall('metadata?type_filter=labels');
         $this->assertArrayHasKey('en_us', $restReply['reply']['labels']);
         $fileLoc = ltrim($GLOBALS['sugar_config']['site_url'], $restReply['reply']['labels']['en_us']);
         $en_us = json_decode(file_get_contents($restReply['reply']['labels']['en_us']), true);

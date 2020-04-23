@@ -22,9 +22,9 @@ require_once 'modules/ProductTemplates/TreeData.php';
  */
 class Bug51792Test extends TestCase
 {
-    private $_category1;
-    private $_category2;
-    private $_category3;
+    private $category1;
+    private $category2;
+    private $category3;
 
     protected function setUp() : void
     {
@@ -34,20 +34,20 @@ class Bug51792Test extends TestCase
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('app_list_strings');
 
-        $this->_category1 = SugarTestProductCategoryUtilities::createProductCategory();
-        $this->_category1->name = $this->_category1->name.'_1';
-        $this->_category1->list_order = 3;
-        $this->_category1->save();
+        $this->category1 = SugarTestProductCategoryUtilities::createProductCategory();
+        $this->category1->name = $this->category1->name.'_1';
+        $this->category1->list_order = 3;
+        $this->category1->save();
 
-        $this->_category2 = SugarTestProductCategoryUtilities::createProductCategory();
-        $this->_category2->name = $this->_category2->name.'_2';
-        $this->_category2->list_order = 2;
-        $this->_category2->save();
+        $this->category2 = SugarTestProductCategoryUtilities::createProductCategory();
+        $this->category2->name = $this->category2->name.'_2';
+        $this->category2->list_order = 2;
+        $this->category2->save();
 
-        $this->_category3 = SugarTestProductCategoryUtilities::createProductCategory();
-        $this->_category3->name = $this->_category3->name.'_3';
-        $this->_category3->list_order = 1;
-        $this->_category3->save();
+        $this->category3 = SugarTestProductCategoryUtilities::createProductCategory();
+        $this->category3->name = $this->category3->name.'_3';
+        $this->category3->list_order = 1;
+        $this->category3->save();
     }
 
     protected function tearDown() : void
@@ -61,7 +61,7 @@ class Bug51792Test extends TestCase
      */
     public function testOrder()
     {
-        $labels = [$this->_category1->name, $this->_category2->name, $this->_category3->name];
+        $labels = [$this->category1->name, $this->category2->name, $this->category3->name];
         $indexes = [];
 
         $catalogtree = new Tree('productcatalog');
@@ -78,7 +78,7 @@ class Bug51792Test extends TestCase
             $this->assertArrayHasKey($label, $indexes, 'Test-created Product Category is not in the result list');
         }
 
-        $this->assertLessThan($indexes[$this->_category2->name], $indexes[$this->_category3->name]);
-        $this->assertLessThan($indexes[$this->_category1->name], $indexes[$this->_category2->name]);
+        $this->assertLessThan($indexes[$this->category2->name], $indexes[$this->category3->name]);
+        $this->assertLessThan($indexes[$this->category1->name], $indexes[$this->category2->name]);
     }
 }

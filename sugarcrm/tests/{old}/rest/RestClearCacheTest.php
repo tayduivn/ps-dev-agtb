@@ -13,13 +13,13 @@
 
 class RestClearCacheTest extends RestTestBase
 {
-    protected $_customFile = 'custom/clients/base/api/PongApi.php';
-    protected $_customDirMade = false;
+    private $customFile = 'custom/clients/base/api/PongApi.php';
+    private $customDirMade = false;
 
     protected function tearDown() : void
     {
-        if (file_exists($this->_customFile)) {
-            unlink($this->_customFile);
+        if (file_exists($this->customFile)) {
+            unlink($this->customFile);
         }
     }
 
@@ -29,11 +29,11 @@ class RestClearCacheTest extends RestTestBase
     public function testCache()
     {
         // This needs to be called before the custom dir is made
-        $replyPing = $this->_restCall('ping');
+        $replyPing = $this->restCall('ping');
         $this->assertEquals('pong', $replyPing['reply']);
 
         if (!is_dir('custom/clients/base/api')) {
-            $this->_customDirMade = true;
+            $this->customDirMade = true;
             SugarAutoLoader::ensureDir('custom/clients/base/api');
         }
 
@@ -58,10 +58,10 @@ class PongApi extends SugarApi {
     }
 }
 EOQ;
-        file_put_contents($this->_customFile, $file_contents);
+        file_put_contents($this->customFile, $file_contents);
         // verify ping
         // verify pong isn't there
-        $replyPong = $this->_restCall('ping');
+        $replyPong = $this->restCall('ping');
         $this->assertNotEquals('ping', $replyPong['reply'], "Wrong reply: ".var_export($replyPong, true));
 
         // run repair and rebuild
@@ -78,16 +78,16 @@ EOQ;
 
 
         // verify pong is there now
-        $replyPong = $this->_restCall('ping');
+        $replyPong = $this->restCall('ping');
         $this->assertEquals('ping', $replyPong['reply']);
 
         // Now undo it all and test again
         // Clean up after ourselves
-        if (file_exists($this->_customFile)) {
-            $dirname = dirname($this->_customFile);
-            unlink($this->_customFile);
+        if (file_exists($this->customFile)) {
+            $dirname = dirname($this->customFile);
+            unlink($this->customFile);
 
-            if ($this->_customDirMade) {
+            if ($this->customDirMade) {
                 $done = rmdir($dirname);
             }
         }
@@ -105,7 +105,7 @@ EOQ;
         $this->assertTrue(!file_exists('cache/include/api/ServiceDictionary.rest.php'), "Didn't really clear the cache the SECOND time");
 
         // verify pong isn't there
-        $replyPong = $this->_restCall('ping');
+        $replyPong = $this->restCall('ping');
         $this->assertEquals('pong', $replyPong['reply']);
     }
 }

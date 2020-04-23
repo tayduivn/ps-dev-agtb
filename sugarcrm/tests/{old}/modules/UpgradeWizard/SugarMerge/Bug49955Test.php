@@ -16,7 +16,7 @@ require_once 'include/dir_inc.php';
 
 class Bug49955Test extends TestCase
 {
-    var $merge;
+    public $merge;
 
     protected function setUp() : void
     {
@@ -57,7 +57,7 @@ class Bug49955Test extends TestCase
         }
     }
 
-    function test_filename_convert_merge()
+    public function test_filename_convert_merge()
     {
         $this->merge = new EditViewMerge();
         $this->merge->merge('Notes', 'tests/{old}/modules/UpgradeWizard/SugarMerge/metadata_files/610/modules/Notes/metadata/editviewdefs.php', 'modules/Notes/metadata/editviewdefs.php', 'custom/modules/Notes/metadata/editviewdefs.php');

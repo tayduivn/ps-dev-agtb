@@ -19,7 +19,7 @@ require_once 'modules/ModuleBuilder/MB/MBModule.php';
 
 class Bug40299Test extends TestCase
 {
-    var $MBModule;
+    public $MBModule;
     
     protected function setUp() : void
     {

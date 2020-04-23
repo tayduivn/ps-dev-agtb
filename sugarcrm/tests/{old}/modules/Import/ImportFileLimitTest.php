@@ -14,23 +14,23 @@ use PHPUnit\Framework\TestCase;
 
 class ImportFileLimitTest extends TestCase
 {
-    protected $_fileSample1;
-    protected $_fileSample2;
-    protected $_fileSample3;
-    protected $_fileSample4;
+    private $fileSample1;
+    private $fileSample2;
+    private $fileSample3;
+    private $fileSample4;
 
-    protected $_fileLineCount1 = 555;
-    protected $_fileLineCount2 = 111;
-    protected $_fileLineCount3 = 2;
-    protected $_fileLineCount4 = 0;
+    private $fileLineCount1 = 555;
+    private $fileLineCount2 = 111;
+    private $fileLineCount3 = 2;
+    private $fileLineCount4 = 0;
 
     protected function setUp() : void
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-        $this->_fileSample1 = SugarTestImportUtilities::createFile($this->_fileLineCount1, 3);
-        $this->_fileSample2 = SugarTestImportUtilities::createFile($this->_fileLineCount2, 3);
-        $this->_fileSample3 = SugarTestImportUtilities::createFile($this->_fileLineCount3, 3);
-        $this->_fileSample4 = SugarTestImportUtilities::createFile($this->_fileLineCount4, 3);
+        $this->fileSample1 = SugarTestImportUtilities::createFile($this->fileLineCount1, 3);
+        $this->fileSample2 = SugarTestImportUtilities::createFile($this->fileLineCount2, 3);
+        $this->fileSample3 = SugarTestImportUtilities::createFile($this->fileLineCount3, 3);
+        $this->fileSample4 = SugarTestImportUtilities::createFile($this->fileLineCount4, 3);
     }
 
     protected function tearDown() : void
@@ -42,14 +42,14 @@ class ImportFileLimitTest extends TestCase
 
     public function testGetFileRowCount()
     {
-        $if1 = new ImportFile($this->_fileSample1, ',', "\"", false);
-        $if2 = new ImportFile($this->_fileSample2, ',', "\"", false);
-        $if3 = new ImportFile($this->_fileSample3, ',', "\"", false);
-        $if4 = new ImportFile($this->_fileSample4, ',', "\"", false);
+        $if1 = new ImportFile($this->fileSample1, ',', "\"", false);
+        $if2 = new ImportFile($this->fileSample2, ',', "\"", false);
+        $if3 = new ImportFile($this->fileSample3, ',', "\"", false);
+        $if4 = new ImportFile($this->fileSample4, ',', "\"", false);
 
-        $this->assertEquals($this->_fileLineCount1, $if1->getNumberOfLinesInfile());
-        $this->assertEquals($this->_fileLineCount2, $if2->getNumberOfLinesInfile());
-        $this->assertEquals($this->_fileLineCount3, $if3->getNumberOfLinesInfile());
-        $this->assertEquals($this->_fileLineCount4, $if4->getNumberOfLinesInfile());
+        $this->assertEquals($this->fileLineCount1, $if1->getNumberOfLinesInfile());
+        $this->assertEquals($this->fileLineCount2, $if2->getNumberOfLinesInfile());
+        $this->assertEquals($this->fileLineCount3, $if3->getNumberOfLinesInfile());
+        $this->assertEquals($this->fileLineCount4, $if4->getNumberOfLinesInfile());
     }
 }

@@ -21,7 +21,7 @@ class RestBug57887Test extends RestTestBase
      *
      * @var array
      */
-    protected $_newDefs = [
+    private $newDefs = [
         'LBL_PANEL_DEFAULT' => [
             ['name', '(empty)'],
             ['phone_office', '(empty)'],
@@ -33,22 +33,22 @@ class RestBug57887Test extends RestTestBase
      * Custom file to be checked and deleted
      * @var string
      */
-    protected $_metadataFile = 'custom/modules/Accounts/clients/mobile/views/detail/detail.php';
+    private $metadataFile = 'custom/modules/Accounts/clients/mobile/views/detail/detail.php';
 
     /**
      * List of backed up metadata caches
      *
      * @var array
      */
-    protected $_backedUp = [];
+    private $backedUp = [];
 
     protected function setUp() : void
     {
         parent::setUp();
 
         // Backup existing files if needed
-        SugarTestHelper::saveFile($this->_metadataFile);
-        @unlink($this->_metadataFile);
+        SugarTestHelper::saveFile($this->metadataFile);
+        @unlink($this->metadataFile);
 
         $dir = $this->getMetadataCacheDir();
         $tempdir = rtrim(sys_get_temp_dir(), DIRECTORY_SEPARATOR) . '/';
@@ -56,14 +56,14 @@ class RestBug57887Test extends RestTestBase
         foreach ($files as $file) {
             $filename = $tempdir . basename($file);
             if (rename($file, $filename)) {
-                $this->_backedUp[$filename] = $file;
+                $this->backedUp[$filename] = $file;
             }
         }
         
         // Add the current metadata file to the restore list
-        if (file_exists($this->_metadataFile)) {
-            $filename = $tempdir . basename($this->_metadataFile);
-            $this->_backedUp[$filename] = $this->_metadataFile;
+        if (file_exists($this->metadataFile)) {
+            $filename = $tempdir . basename($this->metadataFile);
+            $this->backedUp[$filename] = $this->metadataFile;
         }
 
         //Turn off caching now() or else date_modified checks are invalid
@@ -73,10 +73,10 @@ class RestBug57887Test extends RestTestBase
     protected function tearDown() : void
     {
         // Clear the cache
-        $this->_clearMetadataCache();
+        $this->clearMetadataCache();
 
         // Restore the backups
-        foreach ($this->_backedUp as $temp => $file) {
+        foreach ($this->backedUp as $temp => $file) {
             rename($temp, $file);
         }
 
@@ -100,16 +100,16 @@ class RestBug57887Test extends RestTestBase
         $this->assertNotEmpty($dateModified);
 
         // Confirm custom file does not exist in the file map cache
-        $exists = file_exists($this->_metadataFile);
+        $exists = file_exists($this->metadataFile);
         $this->assertFalse($exists, "The custom file was found in the file map cache");
 
         // Make a change to the layouts using the parsers
         $parser = new SidecarGridLayoutMetaDataParser(MB_WIRELESSDETAILVIEW, 'Accounts', '', MB_WIRELESS);
-        $parser->_viewdefs['panels'] = $this->_newDefs;
+        $parser->_viewdefs['panels'] = $this->newDefs;
         $parser->handleSave(false);
 
         // Confirm custom file is in the file map cache
-        $exists = (bool) file_exists($this->_metadataFile);
+        $exists = (bool) file_exists($this->metadataFile);
         $this->assertTrue($exists, "The custom file was not found in the file map cache");
 
         // Confirm metadata cache is now updated and that the change was picked

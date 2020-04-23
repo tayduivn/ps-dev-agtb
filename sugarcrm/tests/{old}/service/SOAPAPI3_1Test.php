@@ -16,8 +16,8 @@
  */
 class SOAPAPI3_1Test extends SOAPTestCase
 {
-    protected static $_contactId = '';
-    protected static $_opportunities = [];
+    private static $contactId;
+    private static $opportunities = [];
 
     public static function setUpBeforeClass() : void
     {
@@ -25,7 +25,7 @@ class SOAPAPI3_1Test extends SOAPTestCase
         SugarTestHelper::setUp('beanList');
         parent::setUpBeforeClass();
         $contact = SugarTestContactUtilities::createContact();
-        self::$_contactId = $contact->id;
+        self::$contactId = $contact->id;
     }
 
     /**
@@ -33,9 +33,9 @@ class SOAPAPI3_1Test extends SOAPTestCase
      */
     protected function setUp() : void
     {
-        $this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/service/v3_1/soap.php';
+        $this->soapURL = $GLOBALS['sugar_config']['site_url'].'/service/v3_1/soap.php';
         parent::setUp();
-        $this->_login();
+        $this->login();
     }
 
     /**
@@ -50,8 +50,8 @@ class SOAPAPI3_1Test extends SOAPTestCase
 
     public static function tearDownAfterClass(): void
     {
-        if (!empty(self::$_opportunities)) {
-            $GLOBALS['db']->query('DELETE FROM opportunities WHERE id IN (\'' . implode("', '", self::$_opportunities) . '\')');
+        if (!empty(self::$opportunities)) {
+            $GLOBALS['db']->query('DELETE FROM opportunities WHERE id IN (\'' . implode("', '", self::$opportunities) . '\')');
         }
         parent::tearDownAfterClass();
         SugarTestHelper::tearDown();
@@ -62,10 +62,10 @@ class SOAPAPI3_1Test extends SOAPTestCase
      */
     public function testCanLogin()
     {
-        $result = $this->_login();
+        $result = $this->login();
         $this->assertTrue(
             !empty($result['id']) && $result['id'] != -1,
-            'SOAP Session not created. Error ('.$this->_soapClient->faultcode.'): '.$this->_soapClient->faultstring.': '.$this->_soapClient->faultdetail
+            'SOAP Session not created. Error ('.$this->soapClient->faultcode.'): '.$this->soapClient->faultstring.': '.$this->soapClient->faultdetail
         );
     }
 
@@ -83,7 +83,7 @@ class SOAPAPI3_1Test extends SOAPTestCase
         $c1->save();
         $GLOBALS['db']->commit();
 
-        $soap_data = ['session' => $this->_sessionId,
+        $soap_data = ['session' => $this->sessionId,
                           'module_name' => 'Contacts',
                           'query' => "contacts.id = '$c1_id'",
                           'order_by' => 'name',
@@ -95,18 +95,18 @@ class SOAPAPI3_1Test extends SOAPTestCase
                           'favorites' => 0,
                           ];
 
-        $result = $this->_soapClient->call('get_entry_list', $soap_data);
+        $result = $this->soapClient->call('get_entry_list', $soap_data);
         $actual = $result['relationship_list'][0]['link_list'][0]['records'][0]['link_value'][1]['value'];
         $this->assertEquals($c1->email1, $actual);
     }
     /**
      * Test get avaiable modules call
      */
-    function testGetAvailableModulesForMobile()
+    public function testGetAvailableModulesForMobile()
     {
-        $soap_data = ['session' => $this->_sessionId,'filter' => 'mobile'];
+        $soap_data = ['session' => $this->sessionId,'filter' => 'mobile'];
 
-        $result = $this->_soapClient->call('get_available_modules', $soap_data);
+        $result = $this->soapClient->call('get_available_modules', $soap_data);
 
         $actual = $result['modules'][0];
         $this->assertEquals('Accounts', $actual['module_key']);
@@ -115,19 +115,19 @@ class SOAPAPI3_1Test extends SOAPTestCase
     /**
      * Test get avaiable modules call
      */
-    function testGetAllAvailableModules()
+    public function testGetAllAvailableModules()
     {
-        $soap_data = ['session' => $this->_sessionId];
+        $soap_data = ['session' => $this->sessionId];
 
-        $result = $this->_soapClient->call('get_available_modules', $soap_data);
+        $result = $this->soapClient->call('get_available_modules', $soap_data);
         $actual = $result['modules'][0];
         $this->assertArrayHasKey("module_key", $actual);
         $this->assertArrayHasKey("module_label", $actual);
         $this->assertArrayHasKey("acls", $actual);
 
-        $soap_data = ['session' => $this->_sessionId, 'filter' => 'all'];
+        $soap_data = ['session' => $this->sessionId, 'filter' => 'all'];
 
-        $result = $this->_soapClient->call('get_available_modules', $soap_data);
+        $result = $this->soapClient->call('get_available_modules', $soap_data);
         $actual = $result['modules'][0];
         $this->assertArrayHasKey("module_key", $actual);
         $this->assertArrayHasKey("module_label", $actual);
@@ -145,7 +145,7 @@ class SOAPAPI3_1Test extends SOAPTestCase
         $a1->save();
         $GLOBALS['db']->commit();
 
-        $soap_data = ['session' => $this->_sessionId,
+        $soap_data = ['session' => $this->sessionId,
                           'module_name' => 'Accounts',
                           'query' => "accounts.name = '$account_name'",
                           'order_by' => 'name',
@@ -157,7 +157,7 @@ class SOAPAPI3_1Test extends SOAPTestCase
                           'favorites' => 0,
                           ];
 
-        $result = $this->_soapClient->call('get_entry_list', $soap_data);
+        $result = $this->soapClient->call('get_entry_list', $soap_data);
 
         $GLOBALS['db']->query("DELETE FROM accounts WHERE id= '{$a1->id}'");
 
@@ -168,25 +168,25 @@ class SOAPAPI3_1Test extends SOAPTestCase
 
     public function testSetEntryForContact()
     {
-        $result = $this->_setEntryForContact();
+        $result = $this->setEntryForContact();
         $soap_version_test_contactId = $result['id'];
         $this->assertTrue(
             !empty($result['id']) && $result['id'] != -1,
-            'Can not create new contact. Error ('.$this->_soapClient->faultcode.'): '.$this->_soapClient->faultstring.': '.$this->_soapClient->faultdetail
+            'Can not create new contact. Error ('.$this->soapClient->faultcode.'): '.$this->soapClient->faultstring.': '.$this->soapClient->faultdetail
         );
     } // fn
 
     public function testGetEntryForContact()
     {
-        $setresult = $this->_setEntryForContact();
-        $result = $this->_getEntryForContact($setresult['id']);
-        if (empty($this->_soapClient->faultcode)) {
+        $setresult = $this->setEntryForContact();
+        $result = $this->getEntryForContact($setresult['id']);
+        if (empty($this->soapClient->faultcode)) {
             if (($result['entry_list'][0]['name_value_list'][2]['value'] == 1) &&
                 ($result['entry_list'][0]['name_value_list'][3]['value'] == "Cold Call")) {
                 $this->assertEquals($result['entry_list'][0]['name_value_list'][2]['value'], 1, "testGetEntryForContact method - Get Entry For contact is not same as Set Entry");
             } // else
         } else {
-            $this->fail('Can not retrieve newly created contact. Error ('.$this->_soapClient->faultcode.'): '.$this->_soapClient->faultstring.': '.$this->_soapClient->faultdetail);
+            $this->fail('Can not retrieve newly created contact. Error ('.$this->soapClient->faultcode.'): '.$this->soapClient->faultstring.': '.$this->soapClient->faultdetail);
         }
     } // fn
 
@@ -195,43 +195,43 @@ class SOAPAPI3_1Test extends SOAPTestCase
     */
     public function testGetEntryForContactNoSelectFields()
     {
-        $result = $this->_soapClient->call('get_entry', ['session'=>$this->_sessionId,'module_name'=>'Contacts','id'=>self::$_contactId,'select_fields'=>[], 'link_name_to_fields_array' => []]);
+        $result = $this->soapClient->call('get_entry', ['session'=>$this->sessionId,'module_name'=>'Contacts','id'=>self::$contactId,'select_fields'=>[], 'link_name_to_fields_array' => []]);
         $this->assertNotEmpty($result['entry_list'][0]['name_value_list'], "testGetEntryForContactNoSelectFields returned no field data");
     }
 
     public function testSetEntriesForAccount()
     {
-        $result = $this->_setEntriesForAccount();
+        $result = $this->setEntriesForAccount();
         $this->assertTrue(
             !empty($result['ids']) && $result['ids'][0] != -1,
-            'Can not create new account using testSetEntriesForAccount. Error ('.$this->_soapClient->faultcode.'): '.$this->_soapClient->faultstring.': '.$this->_soapClient->faultdetail
+            'Can not create new account using testSetEntriesForAccount. Error ('.$this->soapClient->faultcode.'): '.$this->soapClient->faultstring.': '.$this->soapClient->faultdetail
         );
     } // fn
 
     public function testSetEntryForOpportunity()
     {
-        $result = $this->_setEntryForOpportunity();
+        $result = $this->setEntryForOpportunity();
         $this->assertTrue(
             !empty($result['id']) && $result['id'] != -1,
-            'Can not create new account using testSetEntryForOpportunity. Error ('.$this->_soapClient->faultcode.'): '.$this->_soapClient->faultstring.': '.$this->_soapClient->faultdetail
+            'Can not create new account using testSetEntryForOpportunity. Error ('.$this->soapClient->faultcode.'): '.$this->soapClient->faultstring.': '.$this->soapClient->faultdetail
         );
     } // fn
 
     public function testSetRelationshipForOpportunity()
     {
-        $setresult = $this->_setEntryForOpportunity();
-        $result = $this->_setRelationshipForOpportunity($setresult['id']);
+        $setresult = $this->setEntryForOpportunity();
+        $result = $this->setRelationshipForOpportunity($setresult['id']);
         $this->assertTrue(($result['created'] > 0), 'testSetRelationshipForOpportunity method - Relationship for opportunity to Contact could not be created');
     } // fn
 
 
     public function testGetRelationshipForOpportunity()
     {
-        $setresult = $this->_setEntryForOpportunity();
-        $this->_setRelationshipForOpportunity($setresult['id']);
-        $result = $this->_getRelationshipForOpportunity($setresult['id']);
+        $setresult = $this->setEntryForOpportunity();
+        $this->setRelationshipForOpportunity($setresult['id']);
+        $result = $this->getRelationshipForOpportunity($setresult['id']);
         $this->assertEquals(
-            self::$_contactId,
+            self::$contactId,
             $result['entry_list'][0]['id'],
             "testGetRelationshipForOpportunity - Get Relationship of Opportunity to Contact failed"
         );
@@ -239,7 +239,7 @@ class SOAPAPI3_1Test extends SOAPTestCase
 
     public function testSearchByModule()
     {
-        $result = $this->_searchByModule();
+        $result = $this->searchByModule();
         $this->assertTrue(($result['entry_list'][0]['records'] > 0 && $result['entry_list'][1]['records'] && $result['entry_list'][2]['records']), "testSearchByModule - could not retrieve any data by search");
     } // fn
 
@@ -247,7 +247,7 @@ class SOAPAPI3_1Test extends SOAPTestCase
      * HELPER PUBLIC FUNCTIONS
      **********************************/
 
-    public function _setEntryForContact()
+    private function setEntryForContact()
     {
         global $timedate;
         $current_date = $timedate->nowDb();
@@ -255,57 +255,53 @@ class SOAPAPI3_1Test extends SOAPTestCase
         $first_name = 'SugarContactFirst' . $time;
         $last_name = 'SugarContactLast';
         $email1 = 'contact@sugar.com';
-        $result = $this->_soapClient->call('set_entry', ['session'=>$this->_sessionId,'module_name'=>'Contacts', 'name_value_list'=>[['name'=>'last_name' , 'value'=>"$last_name"], ['name'=>'first_name' , 'value'=>"$first_name"], ['name'=>'do_not_call' , 'value'=>"1"], ['name'=>'birthdate' , 'value'=>"$current_date"], ['name'=>'lead_source' , 'value'=>"Cold Call"], ['name'=>'email1' , 'value'=>"$email1"]]]);
+        $result = $this->soapClient->call('set_entry', ['session'=>$this->sessionId,'module_name'=>'Contacts', 'name_value_list'=>[['name'=>'last_name' , 'value'=>"$last_name"], ['name'=>'first_name' , 'value'=>"$first_name"], ['name'=>'do_not_call' , 'value'=>"1"], ['name'=>'birthdate' , 'value'=>"$current_date"], ['name'=>'lead_source' , 'value'=>"Cold Call"], ['name'=>'email1' , 'value'=>"$email1"]]]);
         SugarTestContactUtilities::setCreatedContact([$result['id']]);
         return $result;
     } // fn
 
-    public function _getEntryForContact($id)
+    private function getEntryForContact($id)
     {
-        $result = $this->_soapClient->call('get_entry', ['session'=>$this->_sessionId,'module_name'=>'Contacts','id'=>$id,'select_fields'=>['last_name', 'first_name', 'do_not_call', 'lead_source', 'email1'], 'link_name_to_fields_array' => [['name' =>  'email_addresses', 'value' => ['id', 'email_address', 'opt_out', 'primary_address']]]]);
+        $result = $this->soapClient->call('get_entry', ['session'=>$this->sessionId,'module_name'=>'Contacts','id'=>$id,'select_fields'=>['last_name', 'first_name', 'do_not_call', 'lead_source', 'email1'], 'link_name_to_fields_array' => [['name' =>  'email_addresses', 'value' => ['id', 'email_address', 'opt_out', 'primary_address']]]]);
         return $result;
     }
 
-    public function _setEntriesForAccount()
+    private function setEntriesForAccount()
     {
-        global $timedate;
-        $current_date = $timedate->nowDb();
         $time = mt_rand();
         $name = 'SugarAccount' . $time;
         $email1 = 'account@'. $time. 'sugar.com';
-        $result = $this->_soapClient->call('set_entries', ['session'=>$this->_sessionId,'module_name'=>'Accounts', 'name_value_lists'=>[[['name'=>'name' , 'value'=>"$name"], ['name'=>'email1' , 'value'=>"$email1"]]]]);
+        $result = $this->soapClient->call('set_entries', ['session'=>$this->sessionId,'module_name'=>'Accounts', 'name_value_lists'=>[[['name'=>'name' , 'value'=>"$name"], ['name'=>'email1' , 'value'=>"$email1"]]]]);
         $soap_version_test_accountId = $result['ids'][0];
         SugarTestAccountUtilities::setCreatedAccount([$soap_version_test_accountId]);
         return $result;
     } // fn
 
-    public function _setEntryForOpportunity()
+    private function setEntryForOpportunity()
     {
-        global $timedate;
-        $date_closed = $timedate->getNow()->get("+1 week")->asDb();
         $time = mt_rand();
         $name = 'SugarOpportunity' . $time;
         $account = SugarTestAccountUtilities::createAccount();
         $sales_stage = 'Prospecting';
         $probability = 10;
         $amount = 1000;
-        $result = $this->_soapClient->call('set_entry', ['session'=>$this->_sessionId,'module_name'=>'Opportunities', 'name_value_lists'=>[['name'=>'name' , 'value'=>"$name"], ['name'=>'amount' , 'value'=>"$amount"], ['name'=>'probability' , 'value'=>"$probability"], ['name'=>'sales_stage' , 'value'=>"$sales_stage"], ['name'=>'account_id' , 'value'=>$account->id]]]);
-        self::$_opportunities[] = $result['id'];
+        $result = $this->soapClient->call('set_entry', ['session'=>$this->sessionId,'module_name'=>'Opportunities', 'name_value_lists'=>[['name'=>'name' , 'value'=>"$name"], ['name'=>'amount' , 'value'=>"$amount"], ['name'=>'probability' , 'value'=>"$probability"], ['name'=>'sales_stage' , 'value'=>"$sales_stage"], ['name'=>'account_id' , 'value'=>$account->id]]]);
+        self::$opportunities[] = $result['id'];
         return $result;
     } // fn
 
-    public function _setRelationshipForOpportunity($id)
+    private function setRelationshipForOpportunity($id)
     {
-        $result = $this->_soapClient->call('set_relationship', ['session'=>$this->_sessionId,'module_name' => 'Opportunities','module_id' => $id, 'link_field_name' => 'contacts','related_ids' =>[self::$_contactId], 'name_value_list' => [['name' => 'contact_role', 'value' => 'testrole']], 'delete'=>0]);
+        $result = $this->soapClient->call('set_relationship', ['session'=>$this->sessionId,'module_name' => 'Opportunities','module_id' => $id, 'link_field_name' => 'contacts','related_ids' =>[self::$contactId], 'name_value_list' => [['name' => 'contact_role', 'value' => 'testrole']], 'delete'=>0]);
         return $result;
     } // fn
 
-    public function _getRelationshipForOpportunity($id)
+    private function getRelationshipForOpportunity($id)
     {
-        $result = $this->_soapClient->call(
+        $result = $this->soapClient->call(
             'get_relationships',
             [
-                'session' => $this->_sessionId,
+                'session' => $this->sessionId,
                 'module_name' => 'Opportunities',
                 'module_id' => $id,
                 'link_field_name' => 'contacts',
@@ -318,12 +314,12 @@ class SOAPAPI3_1Test extends SOAPTestCase
         return $result;
     } // fn
 
-    public function _searchByModule()
+    private function searchByModule()
     {
-        $result = $this->_soapClient->call(
+        $result = $this->soapClient->call(
             'search_by_module',
             [
-                'session' => $this->_sessionId,
+                'session' => $this->sessionId,
                 'search_string' => 'Sugar',
                 'modules' => ['Accounts', 'Contacts', 'Opportunities'],
                 'offset' => '0',

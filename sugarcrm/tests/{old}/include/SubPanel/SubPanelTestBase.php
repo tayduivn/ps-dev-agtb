@@ -14,15 +14,15 @@ use PHPUnit\Framework\TestCase;
 
 class SubPanelTestBase extends TestCase
 {
-    protected $_tabController;
-    protected $_currentTabs;
-    protected $_currentSubpanels = ['hidden' => [], 'shown' => []];
-    protected $_modListGlobal;
-    protected $_subPanelDefinitions;
-    protected $_testDefs;
-    protected $_exemptModules;
-    protected $_testModule; // This needs to be set in the child
-    protected $_testBean; // Will be created from the testModule
+    protected $tabController;
+    protected $currentTabs;
+    protected $currentSubpanels = ['hidden' => [], 'shown' => []];
+    protected $modListGlobal;
+    protected $subPanelDefinitions;
+    protected $testDefs;
+    protected $exemptModules;
+    protected $testModule; // This needs to be set in the child
+    protected $testBean; // Will be created from the testModule
     
     protected function setUp() : void
     {
@@ -36,31 +36,31 @@ class SubPanelTestBase extends TestCase
         // @hack - Projects totally overrides the exempt module list in its subpanel
         // viewdefs, so to run this test effectively, Projects needs to be
         // disabled if it is enabled. - rgonzalez
-        $this->_modListGlobal = $GLOBALS['moduleList'];
+        $this->modListGlobal = $GLOBALS['moduleList'];
         $key = array_search('Project', $GLOBALS['moduleList']);
         unset($GLOBALS['moduleList'][$key]);
         
         // Setup the test bean
-        $this->_testBean = BeanFactory::newBean($this->_testModule);
+        $this->testBean = BeanFactory::newBean($this->testModule);
         // Get the current module and subpanel settings
-        $this->_tabController = new TabController();
-        $this->_currentTabs = $this->_tabController->get_system_tabs();
-        $this->_subPanelDefinitions = new SubPanelDefinitions($this->_testBean);
-        $subpanels = $this->_subPanelDefinitions->get_all_subpanels();
-        $subpanels_hidden = $this->_subPanelDefinitions->get_hidden_subpanels();
+        $this->tabController = new TabController();
+        $this->currentTabs = $this->tabController->get_system_tabs();
+        $this->subPanelDefinitions = new SubPanelDefinitions($this->testBean);
+        $subpanels = $this->subPanelDefinitions->get_all_subpanels();
+        $subpanels_hidden = $this->subPanelDefinitions->get_hidden_subpanels();
 
         if (!empty($subpanels)) {
-            $this->_currentSubpanels['shown'] = $subpanels;
+            $this->currentSubpanels['shown'] = $subpanels;
         }
         
         if (!empty($subpanels_hidden)) {
-            $this->_currentSubpanels['hidden'] = $subpanels_hidden;
+            $this->currentSubpanels['hidden'] = $subpanels_hidden;
         }
         
         // Handle exempt modules, since this global gets set in other places in
         // the code base and is causing the last unit test to fail because of the
         // override that happens in the Project module subpaneldefs.php file.
-        $this->_exemptModules = empty($GLOBALS['modules_exempt_from_availability_check']) ? [] : $GLOBALS['modules_exempt_from_availability_check'];
+        $this->exemptModules = empty($GLOBALS['modules_exempt_from_availability_check']) ? [] : $GLOBALS['modules_exempt_from_availability_check'];
         unset($GLOBALS['modules_exempt_from_availability_check']);
         
         // Copied from include/utils/security_utils.php
@@ -87,16 +87,16 @@ class SubPanelTestBase extends TestCase
     protected function tearDown() : void
     {
         // Restore the globals
-        $GLOBALS['moduleList'] = $this->_modListGlobal;
-        if (!empty($this->_exemptModules)) {
-            $GLOBALS['modules_exempt_from_availability_check'] = $this->_exemptModules;
+        $GLOBALS['moduleList'] = $this->modListGlobal;
+        if (!empty($this->exemptModules)) {
+            $GLOBALS['modules_exempt_from_availability_check'] = $this->exemptModules;
         }
         
         // Restore the system tabs to pre-test state
-        $this->_tabController->set_system_tabs($this->_currentTabs);
+        $this->tabController->set_system_tabs($this->currentTabs);
         
         // Restore the hidden subpanels to pre-test state
-        $this->_subPanelDefinitions->set_hidden_subpanels($this->_currentSubpanels['hidden']);
+        $this->subPanelDefinitions->set_hidden_subpanels($this->currentSubpanels['hidden']);
         
         // Clean up the rest
         SugarTestHelper::tearDown();

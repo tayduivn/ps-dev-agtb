@@ -17,15 +17,15 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug33906Test extends TestCase
 {
-    protected $folder = null;
-    protected $_user = null;
+    private $folder = null;
+    private $user = null;
     
     protected function setUp() : void
     {
         global $current_user, $currentModule;
 
-        $this->_user = SugarTestUserUtilities::createAnonymousUser();
-         $GLOBALS['current_user'] = $this->_user;
+        $this->user = SugarTestUserUtilities::createAnonymousUser();
+         $GLOBALS['current_user'] = $this->user;
         $this->folder = new SugarFolder();
     }
 
@@ -34,7 +34,7 @@ class Bug33906Test extends TestCase
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
         
-        $GLOBALS['db']->query("DELETE FROM folders_subscriptions WHERE assigned_user_id='{$this->_user->id}'");
+        $GLOBALS['db']->query("DELETE FROM folders_subscriptions WHERE assigned_user_id='{$this->user->id}'");
         $GLOBALS['db']->query("DELETE FROM folders_subscriptions WHERE folder_id='{$this->folder->id}'");
         $GLOBALS['db']->query("DELETE FROM folders WHERE id='{$this->folder->id}'");
         

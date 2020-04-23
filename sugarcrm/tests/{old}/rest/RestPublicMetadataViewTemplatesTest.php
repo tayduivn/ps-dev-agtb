@@ -18,7 +18,7 @@ class RestPublicMetadataViewTemplatesTest extends RestTestBase
      */
     public function testMetadataViewTemplates()
     {
-        $restReply = $this->_restCall('metadata/public?type_filter=views');
+        $restReply = $this->restCall('metadata/public?type_filter=views');
 
         $this->assertTrue(isset($restReply['reply']['views']['_hash']), 'Views hash is missing.');
     }
@@ -64,42 +64,42 @@ class RestPublicMetadataViewTemplatesTest extends RestTestBase
         //BEGIN SUGARCRM flav=ent ONLY
         // Make sure we get it when we ask for portal
         file_put_contents($filesToCheck['portal'][0], 'PORTAL CODE');
-        $this->_clearMetadataCache();
+        $this->clearMetadataCache();
         // To test public API's, we need to not login.
         $this->authToken = 'LOGGING_IN';
-        $restReply = $this->_restCall('metadata/public?type_filter=views&platform=portal');
+        $restReply = $this->restCall('metadata/public?type_filter=views&platform=portal');
         $this->assertEquals('PORTAL CODE', $restReply['reply']['views']['edit']['templates']['edit'], "Didn't get portal code when that was the direct option");
 
 
         // Make sure we get it when we ask for portal, even though there is base code there
         file_put_contents($filesToCheck['base'][0], 'BASE CODE');
-        $this->_clearMetadataCache();
-        $restReply = $this->_restCall('metadata/public?type_filter=views&platform=portal');
+        $this->clearMetadataCache();
+        $restReply = $this->restCall('metadata/public?type_filter=views&platform=portal');
         $this->assertEquals('PORTAL CODE', $restReply['reply']['views']['edit']['templates']['edit'], "Didn't get portal code when base code was there.");
         //END SUGARCRM flav=ent ONLY
 
         // Make sure we get the base code when we ask for it.
-        $restReply = $this->_restCall('metadata/public?type_filter=views&platform=base');
+        $restReply = $this->restCall('metadata/public?type_filter=views&platform=base');
         $this->assertEquals('BASE CODE', $restReply['reply']['views']['edit']['templates']['edit'], "Didn't get base code when it was the direct option");
 
         //BEGIN SUGARCRM flav=ent ONLY
         // Delete the portal template and make sure it falls back to base
         unlink($filesToCheck['portal'][0]);
-        $this->_clearMetadataCache();
-        $restReply = $this->_restCall('metadata/public?type_filter=views&platform=portal');
+        $this->clearMetadataCache();
+        $restReply = $this->restCall('metadata/public?type_filter=views&platform=portal');
         $this->assertEquals('BASE CODE', $restReply['reply']['views']['edit']['templates']['edit'], "Didn't fall back to base code when portal code wasn't there.");
 
         // Make sure the portal code is loaded before the non-custom base code
         file_put_contents($filesToCheck['portal'][1], 'CUSTOM PORTAL CODE');
-        $this->_clearMetadataCache();
-        $restReply = $this->_restCall('metadata/public?type_filter=views&platform=portal');
+        $this->clearMetadataCache();
+        $restReply = $this->restCall('metadata/public?type_filter=views&platform=portal');
         $this->assertEquals('CUSTOM PORTAL CODE', $restReply['reply']['views']['edit']['templates']['edit'], "Didn't use the custom portal code.");
         //END SUGARCRM flav=ent ONLY
 
         // Make sure custom base code works
         file_put_contents($filesToCheck['base'][1], 'CUSTOM BASE CODE');
-        $this->_clearMetadataCache();
-        $restReply = $this->_restCall('metadata/public?type_filter=views');
+        $this->clearMetadataCache();
+        $restReply = $this->restCall('metadata/public?type_filter=views');
         $this->assertEquals('CUSTOM BASE CODE', $restReply['reply']['views']['edit']['templates']['edit'], "Didn't use the custom base code.");
     }
 }

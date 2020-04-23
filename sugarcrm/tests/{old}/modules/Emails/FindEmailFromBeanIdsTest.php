@@ -49,7 +49,7 @@ EOQ;
         unset($GLOBALS['current_user']);
     }
 
-    function testFindEmailFromBeanIdTest()
+    public function testFindEmailFromBeanIdTest()
     {
         $resultQuery = $this->emailUI->findEmailFromBeanIds($this->beanIds, $this->beanType, $this->whereArr);
         $this->assertEquals($this->expectedQuery, $resultQuery);

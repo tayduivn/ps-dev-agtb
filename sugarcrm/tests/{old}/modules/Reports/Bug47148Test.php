@@ -36,19 +36,19 @@ class ChartDisplayMock47148 extends ChartDisplay
  */
 class Bug47148Test extends TestCase
 {
-    private $_backup = [];
+    private $backup = [];
 
     protected function setUp() : void
     {
         global $beanFiles, $beanList;
         require 'include/modules.php';
-        $this->_backup['do_thousands'] = (isset($GLOBALS['do_thousands'])) ? $GLOBALS['do_thousands'] : false;
+        $this->backup['do_thousands'] = (isset($GLOBALS['do_thousands'])) ? $GLOBALS['do_thousands'] : false;
         $GLOBALS['do_thousands'] = true;
     }
 
     protected function tearDown() : void
     {
-        $GLOBALS['do_thousands'] = $this->_backup['do_thousands'];
+        $GLOBALS['do_thousands'] = $this->backup['do_thousands'];
     }
 
     public function testBigNumber()

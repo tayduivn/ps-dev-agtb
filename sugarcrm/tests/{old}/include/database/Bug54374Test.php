@@ -21,12 +21,12 @@ use PHPUnit\Framework\TestCase;
 
 class Bug54374Test extends TestCase
 {
-    private $_db;
+    private $db;
 
     protected function setUp() : void
     {
-        if (empty($this->_db)) {
-            $this->_db = DBManagerFactory::getInstance();
+        if (empty($this->db)) {
+            $this->db = DBManagerFactory::getInstance();
         }
     }
 
@@ -68,7 +68,7 @@ class Bug54374Test extends TestCase
      */
     public function testMessageValue($val, $fieldDef, $expected)
     {
-        $val = $this->_db->massageValue($val, $fieldDef);
+        $val = $this->db->massageValue($val, $fieldDef);
         $this->assertEquals($expected, $val, "Assert that {$expected} is equal to {$val} after massageValue");
     }
 }

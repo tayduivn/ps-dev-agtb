@@ -17,37 +17,37 @@ require_once 'vendor/nusoap//nusoap.php';
 
 class AdvancedSearchWidgetTest extends TestCase
 {
-    private $_sugarField;
-    private $_smarty;
-    private $_params;
-    private $_customSugarFieldTeamsetContents;
+    private $sugarField;
+    private $smarty;
+    private $params;
+    private $customSugarFieldTeamsetContents;
 
     protected function setUp() : void
     {
         if (file_exists('custom/include/SugarFields/Fields/Teamset/SugarFieldTeamset.php')) {
-            $this->_customSugarFieldTeamsetContents = file_get_contents('custom/include/SugarFields/Fields/Teamset/SugarFieldTeamset.php');
+            $this->customSugarFieldTeamsetContents = file_get_contents('custom/include/SugarFields/Fields/Teamset/SugarFieldTeamset.php');
             unlink('custom/include/SugarFields/Fields/Teamset/SugarFieldTeamset.php');
         }
 
         $sfh = new SugarFieldHandler();
-        $this->_sugarField = $sfh->getSugarField('Teamset', true);
+        $this->sugarField = $sfh->getSugarField('Teamset', true);
 
-        $this->_params = [];
-        $this->_params['parentFieldArray'] = 'fields';
-        $this->_params['tabindex'] = true;
-        $this->_params['displayType'] = 'renderSearchView';
-        $this->_params['display'] = '';
-        $this->_params['labelSpan'] = '';
-        $this->_params['fieldSpan'] = '';
-        $this->_params['formName'] = 'search_form';
-        $this->_params['displayParams'] = ['formName'=>''];
+        $this->params = [];
+        $this->params['parentFieldArray'] = 'fields';
+        $this->params['tabindex'] = true;
+        $this->params['displayType'] = 'renderSearchView';
+        $this->params['display'] = '';
+        $this->params['labelSpan'] = '';
+        $this->params['fieldSpan'] = '';
+        $this->params['formName'] = 'search_form';
+        $this->params['displayParams'] = ['formName'=>''];
         $team = BeanFactory::newBean('Accounts');
         $fieldDefs = $team->field_defs;
         $fieldDefs['team_name_advanced'] = $fieldDefs['team_name'];
         $fieldDefs['team_name_advanced']['name'] = 'team_name_advanced';
-        $this->_smarty = new Sugar_Smarty();
-        $this->_smarty->assign('fields', $fieldDefs);
-        $this->_smarty->assign('displayParams', []);
+        $this->smarty = new Sugar_Smarty();
+        $this->smarty->assign('fields', $fieldDefs);
+        $this->smarty->assign('displayParams', []);
         $_REQUEST['module'] = 'Accounts';
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
     }
@@ -55,8 +55,8 @@ class AdvancedSearchWidgetTest extends TestCase
     protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        if (!empty($this->_customSugarFieldTeamsetContents)) {
-            file_put_contents('custom/include/SugarFields/Fields/Teamset/SugarFieldTeamset.php', $this->_customSugarFieldTeamsetContents);
+        if (!empty($this->customSugarFieldTeamsetContents)) {
+            file_put_contents('custom/include/SugarFields/Fields/Teamset/SugarFieldTeamset.php', $this->customSugarFieldTeamsetContents);
         }
     }
 
@@ -87,7 +87,7 @@ class AdvancedSearchWidgetTest extends TestCase
         $_REQUEST['id_team_name_advanced_collection_0'] = 'West';
         $_REQUEST['primary_team_name_advanced_collection'] = 0;
         $_REQUEST['team_name_advanced_type'] = 'all';
-        $this->_sugarField->render($this->_params, $this->_smarty);
+        $this->sugarField->render($this->params, $this->smarty);
         $this->setOutputCallback([$this, "checkSearchValues"]);
     }
 }

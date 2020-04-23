@@ -18,7 +18,7 @@ class Bug42683Test extends SOAPTestCase
 {
     protected function setUp() : void
     {
-        $this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/service/v2/soap.php';
+        $this->soapURL = $GLOBALS['sugar_config']['site_url'].'/service/v2/soap.php';
         parent::setUp();
     }
 
@@ -32,11 +32,11 @@ class Bug42683Test extends SOAPTestCase
     {
         $lead = SugarTestLeadUtilities::createLead();
 
-        $this->_login();
-        $result = $this->_soapClient->call(
+        $this->login();
+        $result = $this->soapClient->call(
             'get_entry_list',
             [
-                'session' => $this->_sessionId,
+                'session' => $this->sessionId,
                 "module_name" => 'Leads',
                 "query" => "leads.id = '{$lead->id}'",
                 'order_by' => '',

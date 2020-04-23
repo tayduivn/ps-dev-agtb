@@ -13,7 +13,7 @@
 
 class SugarTestCallUtilities
 {
-    private static $_createdCalls = [];
+    private static $createdCalls = [];
 
     private function __construct()
     {
@@ -29,7 +29,7 @@ class SugarTestCallUtilities
         $call->date_start = TimeDate::getInstance()->getNow()->asDb();
         $call->assigned_user_id = $current_user->id;
         $call->save();
-        self::$_createdCalls[] = $call;
+        self::$createdCalls[] = $call;
         return $call;
     }
 
@@ -48,7 +48,7 @@ class SugarTestCallUtilities
     public static function getCreatedCallIds()
     {
         $call_ids = [];
-        foreach (self::$_createdCalls as $call) {
+        foreach (self::$createdCalls as $call) {
             $call_ids[] = $call->id;
         }
         return $call_ids;

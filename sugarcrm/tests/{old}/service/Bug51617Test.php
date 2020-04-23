@@ -14,11 +14,11 @@ require_once 'modules/DynamicFields/FieldCases.php';
 
 class Bug51617Test extends SOAPTestCase
 {
-    protected $_account;
+    private $account;
 
     protected function setUp() : void
     {
-        $this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/service/v2/soap.php';
+        $this->soapURL = $GLOBALS['sugar_config']['site_url'].'/service/v2/soap.php';
 
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -58,12 +58,12 @@ class Bug51617Test extends SOAPTestCase
         VardefManager::refreshVardefs('Accounts', 'Account');
         $this->mod->field_defs = $GLOBALS['dictionary']['Account']['fields'];
 
-        $this->_account = SugarTestAccountUtilities::createAccount();
+        $this->account = SugarTestAccountUtilities::createAccount();
 
-        $this->_account->test_custom_c = 'Custom Field';
-        $this->_account->team_set_id = '1';
-        $this->_account->team_id = '1';
-        $this->_account->save();
+        $this->account->test_custom_c = 'Custom Field';
+        $this->account->team_set_id = '1';
+        $this->account->team_id = '1';
+        $this->account->save();
 
         $GLOBALS['db']->commit(); // Making sure we commit any changes
 
@@ -74,7 +74,7 @@ class Bug51617Test extends SOAPTestCase
     {
         $this->df->deleteField($this->field);
         if ($GLOBALS['db']->tableExists('accounts_cstm')) {
-            $GLOBALS['db']->query("DELETE FROM accounts_cstm WHERE id_c = '{$this->_account->id}'");
+            $GLOBALS['db']->query("DELETE FROM accounts_cstm WHERE id_c = '{$this->account->id}'");
         }
 
         SugarTestAccountUtilities::removeAllCreatedAccounts();
@@ -95,14 +95,14 @@ class Bug51617Test extends SOAPTestCase
      */
     public function testGetEntryListWithCustomField()
     {
-        $this->_login();
+        $this->login();
         $GLOBALS['db']->commit();
-        $result = $this->_soapClient->call(
+        $result = $this->soapClient->call(
             'get_entry_list',
             [
-                 'session'=>$this->_sessionId,
+                 'session'=>$this->sessionId,
                  "module_name" => 'Accounts',
-                 "accounts.id = '{$this->_account->id}'",
+                 "accounts.id = '{$this->account->id}'",
                  '',
                  0,
                  "select_fields" => ['id', 'name', 'test_custom_c'],
@@ -113,7 +113,7 @@ class Bug51617Test extends SOAPTestCase
 
         $this->assertTrue(
             $result['result_count'] > 0,
-            'Get_entry_list failed: Fault code: '.$this->_soapClient->faultcode.', fault string:'.$this->_soapClient->faultstring.', fault detail: '.$this->_soapClient->faultdetail
+            'Get_entry_list failed: Fault code: '.$this->soapClient->faultcode.', fault string:'.$this->soapClient->faultstring.', fault detail: '.$this->soapClient->faultdetail
         );
 
         $row = [];

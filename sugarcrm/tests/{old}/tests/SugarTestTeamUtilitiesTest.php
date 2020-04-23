@@ -15,11 +15,11 @@ use PHPUnit\Framework\TestCase;
 
 class SugarTestTeamUtilitiesTest extends TestCase
 {
-    private $_before_snapshot = [];
+    private $beforeSnapshot = [];
     
     protected function setUp() : void
     {
-        $this->_before_snapshot = $this->_takeTeamDBSnapshot();
+        $this->beforeSnapshot = $this->takeTeamDBSnapshot();
     }
 
     protected function tearDown() : void
@@ -27,7 +27,7 @@ class SugarTestTeamUtilitiesTest extends TestCase
         SugarTestTeamUtilities::removeAllCreatedAnonymousTeams();
     }
 
-    public function _takeTeamDBSnapshot()
+    private function takeTeamDBSnapshot()
     {
         $snapshot = [];
         $query = 'SELECT * FROM teams';
@@ -44,8 +44,8 @@ class SugarTestTeamUtilitiesTest extends TestCase
 
         $this->assertInstanceOf('Team', $team);
 
-        $after_snapshot = $this->_takeTeamDBSnapshot();
-        $this->assertNotEquals($this->_before_snapshot, $after_snapshot, "Simply insure that something was added");
+        $after_snapshot = $this->takeTeamDBSnapshot();
+        $this->assertNotEquals($this->beforeSnapshot, $after_snapshot, "Simply insure that something was added");
     }
 
     public function testAnonymousTeamHasARandomTeamName()
@@ -69,8 +69,8 @@ class SugarTestTeamUtilitiesTest extends TestCase
         SugarTestTeamUtilities::removeAllCreatedAnonymousTeams();
         
         $this->assertEquals(
-            $this->_before_snapshot,
-            $this->_takeTeamDBSnapshot(),
+            $this->beforeSnapshot,
+            $this->takeTeamDBSnapshot(),
             "removeAllCreatedAnonymousTeams() should have removed the team it added"
         );
     }

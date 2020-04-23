@@ -18,7 +18,7 @@ class EditViewMergeTest extends TestCase
      * @dataProvider deepMergeProvider
      * @group unit
      */
-    function testDeepMergeDef($old, $new, $custom, $expected)
+    public function testDeepMergeDef($old, $new, $custom, $expected)
     {
         $this->assertEquals($expected, MergeUtils::deepMergeDef($old, $new, $custom));
     }
@@ -993,7 +993,7 @@ class EditViewMergeTest extends TestCase
      * @dataProvider mergeTemplateProvider
      * @group unit
      */
-    function testMergeTemplateMeta($old, $new, $custom, $expected)
+    public function testMergeTemplateMeta($old, $new, $custom, $expected)
     {
         $module = "TestModule";
         $viewDefs = "TestView";
@@ -1135,7 +1135,7 @@ class MockEditViewMerge extends EditViewMerge
         $this->customData = [$module => [$viewdefs => [$this->templateMetaName => $custom]]];
     }
 
-    function testMergeTemplateMeta()
+    public function testMergeTemplateMeta()
     {
         $this->mergeTemplateMeta();
 

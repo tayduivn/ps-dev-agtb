@@ -13,7 +13,7 @@
 
 class SugarTestObjectUtilities
 {
-    protected static $_createdInstances = [];
+    private static $createdInstances = [];
 
     private function __construct()
     {
@@ -21,7 +21,7 @@ class SugarTestObjectUtilities
 
     public static function pushObject($project)
     {
-        self::$_createdInstances[] = $project;
+        self::$createdInstances[] = $project;
     }
 
     public static function removeAllCreatedObjects($tablename)
@@ -32,7 +32,7 @@ class SugarTestObjectUtilities
     public static function getCreatedObjectIds()
     {
         $ids = [];
-        foreach (self::$_createdInstances as $value) {
+        foreach (self::$createdInstances as $value) {
             $ids[] = $value->id;
         }
         return $ids;

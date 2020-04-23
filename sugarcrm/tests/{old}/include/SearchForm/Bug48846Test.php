@@ -17,11 +17,11 @@ require_once 'include/SearchForm/SearchForm2.php';
 
 class Bug48846Test extends TestCase
 {
-    var $module = 'Cases';
-    var $action = 'wirelesslist';
-    var $seed;
-    var $form;
-    var $array;
+    public $module = 'Cases';
+    public $action = 'wirelesslist';
+    public $seed;
+    public $form;
+    public $array;
 
     protected function setUp() : void
     {

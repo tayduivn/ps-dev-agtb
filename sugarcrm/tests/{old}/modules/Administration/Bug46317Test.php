@@ -21,7 +21,7 @@ require_once 'modules/Administration/updater_utils.php';
  */
 class Bug46317Test extends TestCase
 {
-    function versionProvider()
+    public static function versionProvider()
     {
         return [
             ['6.3.1', '6_3_0', true],
@@ -47,7 +47,7 @@ class Bug46317Test extends TestCase
      * @dataProvider versionProvider
      * @group 46317
      */
-    function testCompareVersions($last_version, $current_version, $expectedResult)
+    public function testCompareVersions($last_version, $current_version, $expectedResult)
     {
         $this->assertEquals($expectedResult, compareVersions($last_version, $current_version), "Current version: $current_version, last available version: $last_version");
     }

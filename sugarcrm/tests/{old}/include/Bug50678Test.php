@@ -14,13 +14,13 @@ use PHPUnit\Framework\TestCase;
 
 class Bug50678Test extends TestCase
 {
-    private $_backupConfig;
+    private $backupConfig;
 
     protected function setUp() : void
     {
         global $sugar_config;
 
-        $this->_backupConfig = $sugar_config;
+        $this->backupConfig = $sugar_config;
 
         if (!empty($sugar_config['custom_help_url'])) {
             unset($sugar_config['custom_help_url']);
@@ -33,7 +33,7 @@ class Bug50678Test extends TestCase
     protected function tearDown() : void
     {
         global $sugar_config;
-        $sugar_config = $this->_backupConfig;
+        $sugar_config = $this->backupConfig;
     }
 
     public function testGetDefaultHelpURL()

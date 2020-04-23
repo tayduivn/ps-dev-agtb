@@ -16,7 +16,7 @@ require_once 'include/dir_inc.php';
 
 class UpgradeCustomTemplateMetaTest extends TestCase
 {
-    var $merge;
+    public $merge;
 
     protected function setUp() : void
     {
@@ -31,7 +31,7 @@ class UpgradeCustomTemplateMetaTest extends TestCase
     /**
      * @group SugarMerge
      */
-    function testMergeCallsEditviewdefsFor611()
+    public function testMergeCallsEditviewdefsFor611()
     {
         $this->merge = new EditViewMerge();
         $this->merge->merge('Calls', 'tests/{old}/modules/UpgradeWizard/SugarMerge/metadata_files/611/modules/Calls/metadata/editviewdefs.php', 'modules/Calls/metadata/editviewdefs.php', 'custom/modules/Calls/metadata/editviewdefs.php');
@@ -48,7 +48,7 @@ class UpgradeCustomTemplateMetaTest extends TestCase
     /**
      * @group SugarMerge
      */
-    function testMergeMeetingsEditviewdefsFor611()
+    public function testMergeMeetingsEditviewdefsFor611()
     {
         $this->merge = new EditViewMerge();
         $this->merge->merge('Meetings', 'tests/{old}/modules/UpgradeWizard/SugarMerge/metadata_files/611/modules/Meetings/metadata/editviewdefs.php', 'modules/Meetings/metadata/editviewdefs.php', 'custom/modules/Meetings/metadata/editviewdefs.php');
@@ -67,7 +67,7 @@ class UpgradeCustomTemplateMetaTest extends TestCase
      * Custom button definitions should not be kept during upgrade
      * @group SugarMerge
      */
-    function testMergeCustomButtonsAndStudioChanges()
+    public function testMergeCustomButtonsAndStudioChanges()
     {
         $this->merge = new EditViewMerge();
         $this->merge->merge('Notes', 'tests/{old}/modules/UpgradeWizard/SugarMerge/metadata_files/610/modules/Notes/metadata/editviewdefs.php', 'modules/Notes/metadata/editviewdefs.php', 'custom/modules/Notes/metadata/editviewdefs.php');

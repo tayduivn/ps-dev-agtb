@@ -17,8 +17,8 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug36329Test extends TestCase
 {
-    var $save_query;
-    var $current_language;
+    public $save_query;
+    public $current_language;
 
     protected function setUp() : void
     {

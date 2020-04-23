@@ -14,9 +14,9 @@ require_once 'include/SugarEmailAddress/SugarEmailAddress.php';
 
 class SugarTestSugarEmailAddressUtilities
 {
-    private static $_createdEmailAddresses = [];
+    private static $createdEmailAddresses = [];
 
-    private static $_createdContact = null;
+    private static $createdContact;
 
     private function __construct()
     {
@@ -29,51 +29,18 @@ class SugarTestSugarEmailAddressUtilities
      */
     private static function createContact($time)
     {
-        if (self::$_createdContact === null) {
+        if (self::$createdContact === null) {
             $name = 'SugarEmailAddressContact';
-            $lname = 'LastName';
             $contact = new Contact();
             $contact->first_name = $name . $time;
             $contact->last_name = 'LastName';
             $contact->save();
 
             $GLOBALS['db']->commit();
-            self::$_createdContact = $contact;
+            self::$createdContact = $contact;
         }
 
-        return self::$_createdContact;
-    }
-
-    /**
-     * @param $contact
-     * @param $time
-     * @param $id
-     * @param $override
-     * @return SugarEmailAddress
-     */
-    private static function _createEmailAddress($contact, $time, $id, $override)
-    {
-        $params['email_address'] = 'semailaddress@'. $time. 'sugar.com';
-        $params['primary'] = true;
-        $params['reply_to'] = false;
-        $params['invalid'] = false;
-        $params['opt_out'] = false;
-        foreach ($override as $key => $value) {
-            $params[$key] = $value;
-        }
-
-
-        $contact->emailAddress->addAddress(
-            $params['email_address'],
-            $params['primary'],
-            $params['reply_to'],
-            $params['invalid'],
-            $params['opt_out'],
-            $id
-        );
-        $contact->emailAddress->save($contact->id, $contact->module_dir);
-        self::$_createdEmailAddresses[] = $contact->emailAddress;
-        return $contact->emailAddress;
+        return self::$createdContact;
     }
 
     /**
@@ -93,8 +60,29 @@ class SugarTestSugarEmailAddressUtilities
         if (!empty($address)) {
             $override['email_address'] = $address;
         }
-        $address = self::_createEmailAddress($contact, $time, $id, $override);
-        return $address;
+
+        $params['email_address'] = 'semailaddress@'. $time. 'sugar.com';
+        $params['primary'] = true;
+        $params['reply_to'] = false;
+        $params['invalid'] = false;
+        $params['opt_out'] = false;
+        foreach ($override as $key => $value) {
+            $params[$key] = $value;
+        }
+
+        $contact->emailAddress->addAddress(
+            $params['email_address'],
+            $params['primary'],
+            $params['reply_to'],
+            $params['invalid'],
+            $params['opt_out'],
+            $id
+        );
+        $contact->emailAddress->save($contact->id, $contact->module_dir);
+
+        self::$createdEmailAddresses[] = $contact->emailAddress;
+
+        return $contact->emailAddress;
     }
 
     /**
@@ -113,13 +101,13 @@ class SugarTestSugarEmailAddressUtilities
      */
     public static function removeCreatedContactAndRelationships()
     {
-        if (self::$_createdContact === null) {
+        if (self::$createdContact === null) {
             return;
         }
 
-        $GLOBALS['db']->query("DELETE FROM contacts WHERE id = '".self::$_createdContact->id."'");
-        $GLOBALS['db']->query('DELETE FROM email_addr_bean_rel WHERE bean_module=\'Contacts\' AND bean_id =\'' . self::$_createdContact->id . '\'');
-        self::$_createdContact = null;
+        $GLOBALS['db']->query("DELETE FROM contacts WHERE id = '".self::$createdContact->id."'");
+        $GLOBALS['db']->query('DELETE FROM email_addr_bean_rel WHERE bean_module=\'Contacts\' AND bean_id =\'' . self::$createdContact->id . '\'');
+        self::$createdContact = null;
     }
 
 
@@ -131,7 +119,7 @@ class SugarTestSugarEmailAddressUtilities
     public static function getCreatedEmailAddressIds()
     {
         $address_ids = [];
-        foreach (self::$_createdEmailAddresses as $address) {
+        foreach (self::$createdEmailAddresses as $address) {
             $address_ids[] = $address->id;
         }
         return $address_ids;

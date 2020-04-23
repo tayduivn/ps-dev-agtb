@@ -22,20 +22,20 @@
  */
 class RestBug57210Test extends RestFileTestBase
 {
-    private $_config_override_existed = false;
-    private $_config_override_name = 'config_override.php';
+    private $configOverrideExisted = false;
+    private $configOverrideName = 'config_override.php';
 
     protected function setUp() : void
     {
         parent::setUp();
 
         // Hijack the config_override.php file if exists, otherwise we'll create sugar_config anew
-        if (file_exists($this->_config_override_name)) {
-            require $this->_config_override_name;
-            rename($this->_config_override_name, ($this->_config_override_name.".bak"));
-            $this->_config_override_existed = true;
+        if (file_exists($this->configOverrideName)) {
+            require $this->configOverrideName;
+            rename($this->configOverrideName, ($this->configOverrideName.".bak"));
+            $this->configOverrideExisted = true;
         } else {
-            $this->_config_override_existed = false;
+            $this->configOverrideExisted = false;
         }
         $sugar_config['upload_maxsize'] = '1';
 
@@ -45,7 +45,7 @@ class RestBug57210Test extends RestFileTestBase
         foreach ($sugar_config as $key => $value) {
             $newContents .= override_value_to_string_recursive2('sugar_config', $key, $value);
         }
-        file_put_contents($this->_config_override_name, $newContents);
+        file_put_contents($this->configOverrideName, $newContents);
     }
 
     protected function tearDown() : void
@@ -53,12 +53,12 @@ class RestBug57210Test extends RestFileTestBase
         parent::tearDown();
 
         // If was original config override, copy back over original kept in our ".bak"
-        if ($this->_config_override_existed && file_exists($this->_config_override_name.".bak")) {
-            rename(($this->_config_override_name.".bak"), $this->_config_override_name);
+        if ($this->configOverrideExisted && file_exists($this->configOverrideName.".bak")) {
+            rename(($this->configOverrideName.".bak"), $this->configOverrideName);
         } else {
             // If it didn't exist before, we need to remove the one we created
-            if (file_exists($this->_config_override_name)) {
-                unlink($this->_config_override_name);
+            if (file_exists($this->configOverrideName)) {
+                unlink($this->configOverrideName);
             }
         }
     }
@@ -69,10 +69,10 @@ class RestBug57210Test extends RestFileTestBase
     public function testSimulateFileTooLargeWithDeleteIfFails()
     {
         $fileToPost = ['filename' => '@include/images/badge_256.png'];
-        $reply = $this->_restCall('Notes/' . $this->_note_id . '/file/filename' . '?delete_if_fails=true', $fileToPost, 'POST');
+        $reply = $this->restCall('Notes/' . $this->note_id . '/file/filename' . '?delete_if_fails=true', $fileToPost, 'POST');
 
         // Check DB to see if the related Note actually got marked deleted
-        $ret = $GLOBALS['db']->query("SELECT deleted from notes where id = '".$this->_note_id."'", true);
+        $ret = $GLOBALS['db']->query("SELECT deleted from notes where id = '".$this->note_id."'", true);
         $row = $GLOBALS['db']->fetchByAssoc($ret);
 
         // Our main expectation is that the related Note record got marked deleted=1
@@ -88,10 +88,10 @@ class RestBug57210Test extends RestFileTestBase
     public function testSimulateFileTooLargeWithOutDeleteIfFails()
     {
         $fileToPost = ['filename' => '@include/images/badge_256.png'];
-        $reply = $this->_restCall('Notes/' . $this->_note_id . '/file/filename', $fileToPost, 'POST');
+        $reply = $this->restCall('Notes/' . $this->note_id . '/file/filename', $fileToPost, 'POST');
 
         // Check DB to ensure that the related Note did NOT got marked deleted
-        $ret = $GLOBALS['db']->query("SELECT deleted from notes where id = '".$this->_note_id."'", true);
+        $ret = $GLOBALS['db']->query("SELECT deleted from notes where id = '".$this->note_id."'", true);
         $row = $GLOBALS['db']->fetchByAssoc($ret);
 
         // Our main expectation is that the related Note record did NOT get marked as deleted (e.g. deleted=0)

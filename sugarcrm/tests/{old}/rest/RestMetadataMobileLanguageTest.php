@@ -18,7 +18,7 @@ class RestMetadataMobileLanguageTest extends RestTestBase
      */
     public function testMobileMetadataLanguageFiles()
     {
-        $restReply = $this->_restCall('metadata?platform=mobile');
+        $restReply = $this->restCall('metadata?platform=mobile');
         $labels = $restReply['reply']['labels'];
 
         unset($labels['_hash']);

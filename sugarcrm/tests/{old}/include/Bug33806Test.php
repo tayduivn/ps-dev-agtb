@@ -20,7 +20,7 @@ require_once 'include/utils.php';
  */
 class Bug33806Test extends TestCase
 {
-    function _moduleNameProvider()
+    public static function moduleNameProvider()
     {
         return [
             [ 'singular' => 'Account', 'module' => 'Accounts'],
@@ -31,7 +31,7 @@ class Bug33806Test extends TestCase
     /**
      * Test the getMime function for the use case where the mime type is already provided.
      *
-     * @dataProvider _moduleNameProvider
+     * @dataProvider moduleNameProvider
      */
     public function testGetModuleFromSingular($singular, $expectedName)
     {
@@ -42,7 +42,7 @@ class Bug33806Test extends TestCase
         $this->assertEquals($expectedName, $module);
     }
 
-    function _moduleNameProvider2()
+    public static function moduleNameProvider2()
     {
         return [
             [ 'renamed' => 'Acct', 'module' => 'Accounts'],
@@ -52,7 +52,7 @@ class Bug33806Test extends TestCase
     /**
      * Test the getMime function for the use case where the mime type is already provided.
      *
-     * @dataProvider _moduleNameProvider2
+     * @dataProvider moduleNameProvider2
      */
     public function testGetModuleFromRenamed($renamed, $expectedName)
     {

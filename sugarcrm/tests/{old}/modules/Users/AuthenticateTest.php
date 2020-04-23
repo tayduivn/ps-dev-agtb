@@ -14,8 +14,6 @@ use PHPUnit\Framework\TestCase;
 
 class AuthenticateTest extends TestCase
 {
-    protected $_user = null;
-
     protected function setUp() : void
     {
         $GLOBALS['app'] = new SugarApplication();

@@ -178,7 +178,7 @@ class SidecarMetaDataFileBuilder
         foreach ($this->filesToMake as $filedata) {
             SugarTestHelper::saveFile($filedata['legacypath']);
             SugarTestHelper::saveFile($filedata['sidecarpath']);
-            $this->_installTestFile($filedata);
+            $this->installTestFile($filedata);
         }
     }
 
@@ -259,7 +259,7 @@ class SidecarMetaDataFileBuilder
      *
      * @param array $filedata
      */
-    protected function _installTestFile($filedata)
+    private function installTestFile($filedata)
     {
         if (file_exists($filedata['testpath'])) {
             $dir = dirname($filedata['legacypath']);

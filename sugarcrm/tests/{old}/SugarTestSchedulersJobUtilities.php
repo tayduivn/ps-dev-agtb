@@ -13,7 +13,7 @@
 
 class SugarTestSchedulersJobUtilities
 {
-    private static $_createdJobs = [];
+    private static $createdJobs = [];
 
     /**
      * Create a new job.
@@ -32,7 +32,7 @@ class SugarTestSchedulersJobUtilities
         $job->assigned_user_id = $GLOBALS['current_user']->id;
         $job->save();
         DBManagerFactory::getInstance()->commit();
-        self::$_createdJobs[] = $job;
+        self::$createdJobs[] = $job;
         return $job;
     }
 
@@ -46,7 +46,7 @@ class SugarTestSchedulersJobUtilities
         foreach ($ids as $jobId) {
             $job = BeanFactory::newBean('SchedulersJobs');
             $job->id = $jobId;
-            self::$_createdJobs[] = $job;
+            self::$createdJobs[] = $job;
         }
     }
 
@@ -68,7 +68,7 @@ class SugarTestSchedulersJobUtilities
     public static function getCreatedJobIds()
     {
         $jobIds = [];
-        foreach (self::$_createdJobs as $job) {
+        foreach (self::$createdJobs as $job) {
             $jobIds[] = $job->id;
         }
         return $jobIds;

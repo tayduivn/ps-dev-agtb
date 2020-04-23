@@ -35,7 +35,7 @@ class RestBug54519Test extends RestTestBase
      */
     public function testCreate()
     {
-        $restReply = $this->_restCall(
+        $restReply = $this->restCall(
             "Accounts/",
             json_encode(['name'=>'UNIT TEST - AFTER &nbsp;']),
             'POST'
@@ -51,7 +51,7 @@ class RestBug54519Test extends RestTestBase
         
         $account = new Account();
         $account->retrieve($this->account_id);
-        $restReply = $this->_restCall(
+        $restReply = $this->restCall(
             "Accounts/".$this->account_id,
             json_encode([]),
             'GET'

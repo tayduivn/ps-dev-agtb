@@ -18,10 +18,10 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug59273Test extends TestCase
 {
-    protected $_viewFile = 'custom/modulebuilder/packages/test/modules/test/clients/mobile/views/list/list.php';
-    protected $_request = [];
-    protected $_mbc;
-    
+    private $viewFile = 'custom/modulebuilder/packages/test/modules/test/clients/mobile/views/list/list.php';
+    private $request = [];
+    private $mbc;
+
     protected function setUp() : void
     {
         SugarTestHelper::setUp('app_list_strings');
@@ -29,22 +29,22 @@ class Bug59273Test extends TestCase
         SugarTestHelper::setUp('current_user', [true, true]);
         SugarTestHelper::setUp('mod_strings', ['ModuleBuilder']);
         
-        $this->_request = $_REQUEST;
+        $this->request = $_REQUEST;
 
         $_REQUEST['name'] = 'test';
         $_REQUEST['view_package'] = 'test';
         $_REQUEST['view_module'] = 'test';
 
-        $this->_mbc = new ModuleBuilderController();
+        $this->mbc = new ModuleBuilderController();
         $_REQUEST['description'] = '';
         $_REQUEST['author'] = '';
         $_REQUEST['readme'] = '';
         $_REQUEST['label'] = 'test';
         $_REQUEST['key'] = 'test';
-        $this->_mbc->action_SavePackage();
+        $this->mbc->action_SavePackage();
         
         $_REQUEST['type'] = 'issue';
-        $this->_mbc->action_SaveModule();
+        $this->mbc->action_SaveModule();
         unset($_REQUEST);
     }
 
@@ -54,12 +54,12 @@ class Bug59273Test extends TestCase
         $_REQUEST['module'] = 'test';
         $_REQUEST['view_module'] = 'test';
         $_REQUEST['view_package']= 'test';
-        $this->_mbc->action_DeleteModule();
+        $this->mbc->action_DeleteModule();
         unset($_REQUEST['view_module']);
         unset($_REQUEST['module']);
-        $this->_mbc->action_DeletePackage();
+        $this->mbc->action_DeletePackage();
         
-        $_REQUEST = $this->_request;
+        $_REQUEST = $this->request;
 
         SugarTestHelper::tearDown();
     }
@@ -71,14 +71,14 @@ class Bug59273Test extends TestCase
      */
     public function testCustomModuleListViewDefsUseCorrectCase()
     {
-        $this->assertFileExists($this->_viewFile, "Custom module list view file {$this->_viewFile} was not found");
+        $this->assertFileExists($this->viewFile, "Custom module list view file {$this->viewFile} was not found");
         
-        include $this->_viewFile;
+        include $this->viewFile;
         
         $this->assertTrue(isset($viewdefs['test_test']['mobile']['view']['list']['panels']), "Cannot find the panels in the mobile list view defs");
         $panels = $viewdefs['test_test']['mobile']['view']['list']['panels'];
         $this->assertTrue(isset($panels[0]['fields'][0]), "First member of the fields array not found in the mobile list view defs");
-        $test = $this->_hasField('test_test_number', $panels[0]['fields']);
+        $test = $this->hasField('test_test_number', $panels[0]['fields']);
         $this->assertTrue($test, "Lowercase test_test_number not found in the fields array");
     }
 
@@ -89,7 +89,7 @@ class Bug59273Test extends TestCase
      * @param array $fields The fields array to search in
      * @return bool
      */
-    protected function _hasField($field, $fields)
+    private function hasField($field, $fields)
     {
         foreach ($fields as $f) {
             if (isset($f['name']) && $f['name'] == $field) {

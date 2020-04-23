@@ -148,18 +148,18 @@ class RestRelateRecordTest extends RestTestBase
         $GLOBALS['db']->commit();
 
         // Test normal fetch
-        $restReply = $this->_restCall("Opportunities/".$this->opps[0]->id."/link/contacts/".$this->contacts[0]->id);
+        $restReply = $this->restCall("Opportunities/".$this->opps[0]->id."/link/contacts/".$this->contacts[0]->id);
 
         $this->assertEquals($this->contacts[0]->id, $restReply['reply']['id'], "Did not fetch the related contact");
         $this->assertNotEmpty($restReply['reply']['opportunity_role'], "The role field on the Opportunity -> Contact relationship was not populated.");
         $this->assertEquals($this->contacts[0]->opportunity_role, $restReply['reply']['opportunity_role'], "The role field on the Opportunity -> Contact relationship does not match the bean.");
 
         // Test fetch where the opp id is not there
-        $restReply = $this->_restCall("Opportunities/UNIT_TEST_THIS_IS_NOT_A_REAL_ID/link/contacts/".$this->contacts[0]->id);
+        $restReply = $this->restCall("Opportunities/UNIT_TEST_THIS_IS_NOT_A_REAL_ID/link/contacts/".$this->contacts[0]->id);
         $this->assertEquals('not_found', $restReply['reply']['error']);
 
         // Test fetch where the opp id is there, but the contact ID isn't
-        $restReply = $this->_restCall("Opportunities/".$this->opps[0]->id."/link/contacts/UNIT_TEST_THIS_IS_NOT_A_REAL_ID");
+        $restReply = $this->restCall("Opportunities/".$this->opps[0]->id."/link/contacts/UNIT_TEST_THIS_IS_NOT_A_REAL_ID");
         $this->assertEquals('not_found', $restReply['reply']['error']);
     }
 
@@ -203,7 +203,7 @@ class RestRelateRecordTest extends RestTestBase
         }
 
         // Test normal fetch
-        $restReply = $this->_restCall("Opportunities/".$this->opps[0]->id."/link/contacts/".$this->contacts[0]->id);
+        $restReply = $this->restCall("Opportunities/".$this->opps[0]->id."/link/contacts/".$this->contacts[0]->id);
         $fetch_fields = count($restReply['reply']);
         // create a record
 
@@ -219,7 +219,7 @@ class RestRelateRecordTest extends RestTestBase
 
         $GLOBALS['db']->commit();
 
-        $restReply = $this->_restCall(
+        $restReply = $this->restCall(
             "Opportunities/".$this->opps[0]->id."/link/contacts",
             json_encode([
                                                       'last_name'=>'TEST',
@@ -269,7 +269,7 @@ class RestRelateRecordTest extends RestTestBase
 
         $GLOBALS['db']->commit();
 
-        $restReply = $this->_restCall(
+        $restReply = $this->restCall(
             "Opportunities/".$this->opps[0]->id."/link/contacts/".$this->contacts[1]->id,
             json_encode([
                                                       'last_name'=>"Test O'Chango",
@@ -305,7 +305,7 @@ class RestRelateRecordTest extends RestTestBase
 
         $GLOBALS['db']->commit();
 
-        $restReply = $this->_restCall(
+        $restReply = $this->restCall(
             "Opportunities/".$this->opps[0]->id."/link/contacts",
             json_encode([
                                                       'last_name'=>'TEST',
@@ -372,7 +372,7 @@ class RestRelateRecordTest extends RestTestBase
 
         $GLOBALS['db']->commit();
 
-        $restReply = $this->_restCall(
+        $restReply = $this->restCall(
             "Opportunities/".$this->opps[0]->id."/link/contacts/".$this->contacts[1]->id,
             json_encode([
                                                       'opportunity_role'=>'Primary Decision Maker',
@@ -437,7 +437,7 @@ class RestRelateRecordTest extends RestTestBase
         $contactCountRow = $db->fetchByAssoc($contactCountQuery);
         $contactCount = $contactCountRow['count'];
 
-        $restReply = $this->_restCall(
+        $restReply = $this->restCall(
             "Opportunities/" . $this->opps[0]->id . "/link/contacts/" . $this->contacts[1]->id,
             json_encode([
                 'contact_role' => $this->contacts[1]->opportunity_role,
@@ -478,7 +478,7 @@ class RestRelateRecordTest extends RestTestBase
         $this->contacts[] = SugarTestContactUtilities::createContact();
         $this->opps[] = SugarTestOpportunityUtilities::createOpportunity();
 
-        $restReply = $this->_restCall(
+        $restReply = $this->restCall(
             'Opportunities/' . $this->opps[0]->id . '/link',
             json_encode(
                 [
@@ -549,7 +549,7 @@ class RestRelateRecordTest extends RestTestBase
         $row = $db->fetchByAssoc($ret);
         $this->assertEquals('2', $row['link_count'], "The links were not properly generated");
 
-        $restReply = $this->_restCall(
+        $restReply = $this->restCall(
             "Opportunities/".$this->opps[0]->id."/link/contacts/".$this->contacts[1]->id,
             '',
             'DELETE'
@@ -565,7 +565,7 @@ class RestRelateRecordTest extends RestTestBase
         $row = $db->fetchByAssoc($ret);
         $this->assertEquals('1', $row['link_count'], "The wrong link was deleted");
 
-        $restReply = $this->_restCall(
+        $restReply = $this->restCall(
             "Opportunities/".$this->opps[0]->id."/link/contacts/".$this->contacts[0]->id,
             '',
             'DELETE'
@@ -600,7 +600,7 @@ class RestRelateRecordTest extends RestTestBase
                 'assigned_user_id'  => 1,
             ];
 
-        $restReply = $this->_restCall("Calls/{$call->id}/link/notes", $post, 'POST');
+        $restReply = $this->restCall("Calls/{$call->id}/link/notes", $post, 'POST');
 
         $this->assertNotEmpty($restReply['reply']['related_record']['id'], "ID was not set for the related record");
         $this->notes[] = BeanFactory::getBean('Notes', $restReply['reply']['related_record']['id']);
@@ -617,7 +617,7 @@ class RestRelateRecordTest extends RestTestBase
             'name' => 'CALL FOR LEAD ' . create_guid(),
             ];
 
-        $restReply = $this->_restCall("Leads/{$lead->id}/link/calls", $post, 'POST');
+        $restReply = $this->restCall("Leads/{$lead->id}/link/calls", $post, 'POST');
         $this->assertNotEmpty($restReply['reply']['related_record']['id'], "ID was not set for the related record");
         $this->calls[] = BeanFactory::getBean('Calls', $restReply['reply']['related_record']['id']);
 
@@ -644,7 +644,7 @@ class RestRelateRecordTest extends RestTestBase
                 'assigned_user_id'  => 1,
             ];
 
-        $restReply = $this->_restCall("Calls/{$call->id}/link/notes", $post, 'POST');
+        $restReply = $this->restCall("Calls/{$call->id}/link/notes", $post, 'POST');
         $this->assertNotEmpty($restReply['reply']['related_record']['id'], "ID was not set for the related record");
         $this->notes[] = BeanFactory::getBean('Notes', $restReply['reply']['related_record']['id']);
         $this->assertEquals($restReply['reply']['related_record']['parent_id'], $call->id, "Call ID was not the parent id of the note.");
@@ -662,7 +662,7 @@ class RestRelateRecordTest extends RestTestBase
             'parent_id' => $lead->id,
             ];
 
-        $restReply = $this->_restCall("Leads/{$lead->id}/link/calls", $post, 'POST');
+        $restReply = $this->restCall("Leads/{$lead->id}/link/calls", $post, 'POST');
         
         $this->assertNotEmpty($restReply['reply']['related_record']['id'], "ID was not set for the related record");
         $this->calls[] = BeanFactory::getBean('Calls', $restReply['reply']['related_record']['id']);
@@ -689,7 +689,7 @@ class RestRelateRecordTest extends RestTestBase
                 'assigned_user_id'  => 1,
             ];
 
-        $restReply = $this->_restCall("Calls/{$call->id}/link/notes", $post, 'POST');
+        $restReply = $this->restCall("Calls/{$call->id}/link/notes", $post, 'POST');
         $this->assertNotEmpty($restReply['reply']['related_record']['id'], "ID was not set for the related record");
         $this->notes[] = BeanFactory::getBean('Notes', $restReply['reply']['related_record']['id']);
         $this->assertEquals($restReply['reply']['related_record']['parent_id'], $call->id, "Call ID was not the parent id of the note.");
@@ -707,7 +707,7 @@ class RestRelateRecordTest extends RestTestBase
             'parent_type' => 'Leads',
             ];
 
-        $restReply = $this->_restCall("Leads/{$lead->id}/link/calls", $post, 'POST');
+        $restReply = $this->restCall("Leads/{$lead->id}/link/calls", $post, 'POST');
         $this->assertNotEmpty($restReply['reply']['related_record']['id'], "ID was not set for the related record");
         $this->calls[] = BeanFactory::getBean('Calls', $restReply['reply']['related_record']['id']);
         $this->assertEquals($restReply['reply']['related_record']['parent_id'], $lead->id, "Lead ID was not the parent id of the call.");
@@ -732,7 +732,7 @@ class RestRelateRecordTest extends RestTestBase
                 'assigned_user_id'  => 1,
             ];
 
-        $restReply = $this->_restCall("Calls/{$call->id}/link/notes", $post, 'POST');
+        $restReply = $this->restCall("Calls/{$call->id}/link/notes", $post, 'POST');
         $this->assertNotEmpty($restReply['reply']['related_record']['id'], "ID was not set for the related record");
         $this->notes[] = BeanFactory::getBean('Notes', $restReply['reply']['related_record']['id']);
         $this->assertEquals($restReply['reply']['related_record']['parent_id'], $call->id, "Call ID was not the parent id of the note.");
@@ -750,7 +750,7 @@ class RestRelateRecordTest extends RestTestBase
             'parent_type' => 'Leads',
             ];
 
-        $restReply = $this->_restCall("Leads/{$lead->id}/link/calls", $post, 'POST');
+        $restReply = $this->restCall("Leads/{$lead->id}/link/calls", $post, 'POST');
         $this->assertNotEmpty($restReply['reply']['related_record']['id'], "ID was not set for the related record");
         $this->calls[] = BeanFactory::getBean('Calls', $restReply['reply']['related_record']['id']);
         $this->assertEquals($restReply['reply']['related_record']['parent_id'], $lead->id, "Lead ID was not the parent id of the call.");

@@ -17,9 +17,9 @@ require_once 'include/dir_inc.php';
 
 class CE_to_PRO_60Test extends TestCase
 {
-    var $merge;
-    var $has_dir;
-    var $modules;
+    public $merge;
+    public $has_dir;
+    public $modules;
 
     protected function setUp() : void
     {
@@ -85,7 +85,7 @@ class CE_to_PRO_60Test extends TestCase
         }
     }
 
-    function test_contacts_detailview_merge()
+    public function test_contacts_detailview_merge()
     {
         $this->merge = new DetailViewMerge();
         $this->merge->merge('Contacts', 'tests/{old}/modules/UpgradeWizard/SugarMerge/ce_metadata_files/600/modules/Contacts/metadata/detailviewdefs.php', 'modules/Contacts/metadata/detailviewdefs.php', 'custom/modules/Contacts/metadata/detailviewdefs.php');
@@ -144,7 +144,7 @@ class CE_to_PRO_60Test extends TestCase
     }
 
 
-    function test_contacts_editview_merge()
+    public function test_contacts_editview_merge()
     {
         $this->merge = new EditViewMerge();
         $this->merge->merge('Contacts', 'tests/{old}/modules/UpgradeWizard/SugarMerge/ce_metadata_files/600/modules/Contacts/metadata/editviewdefs.php', 'modules/Contacts/metadata/editviewdefs.php', 'custom/modules/Contacts/metadata/editviewdefs.php');
@@ -205,7 +205,7 @@ class CE_to_PRO_60Test extends TestCase
 
 
 
-    function test_contacts_listview_merge()
+    public function test_contacts_listview_merge()
     {
         $this->merge = new ListViewMerge();
         $this->merge->merge('Contacts', 'tests/{old}/modules/UpgradeWizard/SugarMerge/ce_metadata_files/600/modules/Contacts/metadata/listviewdefs.php', 'modules/Contacts/metadata/listviewdefs.php', 'custom/modules/Contacts/metadata/listviewdefs.php');

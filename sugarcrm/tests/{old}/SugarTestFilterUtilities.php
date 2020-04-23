@@ -17,7 +17,7 @@
  */
 class SugarTestFilterUtilities
 {
-    private static $_createdFilters = [];
+    private static $createdFilters = [];
 
     private function __construct()
     {
@@ -30,7 +30,7 @@ class SugarTestFilterUtilities
      * @param string $name the name of the filter
      * @param string $filter_definition the body of the filter (JSON)
      * @param string $id Optional the id for the currency record
-     * @return Filter
+     * @return Filters
      */
     public static function createUserFilter($assigned_user_id, $name, $filter_definition, $id = null)
     {
@@ -44,7 +44,7 @@ class SugarTestFilterUtilities
         $filter->filter_definition = $filter_definition;
         $filter->save();
         $GLOBALS['db']->commit();
-        self::$_createdFilters[] = $filter;
+        self::$createdFilters[] = $filter;
         return $filter;
     }
 
@@ -65,7 +65,7 @@ class SugarTestFilterUtilities
     public static function getCreatedFilterIds()
     {
         $filter_ids = [];
-        foreach (self::$_createdFilters as $filter) {
+        foreach (self::$createdFilters as $filter) {
             $filter_ids[] = $filter->id;
         }
         return $filter_ids;

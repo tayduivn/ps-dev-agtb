@@ -18,9 +18,9 @@ class RestMetadataSugarFieldsTest extends RestTestBase
         parent::setUp();
         $this->oldFiles = [];
 
-        $this->_restLogin('', '', 'mobile');
+        $this->restLogin('', '', 'mobile');
         $this->mobileAuthToken = $this->authToken;
-        $this->_restLogin('', '', 'base');
+        $this->restLogin('', '', 'base');
         $this->baseAuthToken = $this->authToken;
     }
 
@@ -29,8 +29,8 @@ class RestMetadataSugarFieldsTest extends RestTestBase
      */
     public function testMetadataSugarFields()
     {
-        $this->_clearMetadataCache();
-        $restReply = $this->_restCall('metadata?type_filter=fields');
+        $this->clearMetadataCache();
+        $restReply = $this->restCall('metadata?type_filter=fields');
         $this->assertTrue(isset($restReply['reply']['fields']['_hash']), 'SugarField hash is missing.');
     }
 
@@ -70,43 +70,43 @@ class RestMetadataSugarFieldsTest extends RestTestBase
         file_put_contents('clients/base/fields/address/editView.hbs', 'BASE EDITVIEW');
         // Make sure we get it when we ask for mobile
         file_put_contents('clients/mobile/fields/address/editView.hbs', 'MOBILE EDITVIEW');
-        $this->_clearMetadataCache();
+        $this->clearMetadataCache();
         $this->authToken = $this->mobileAuthToken;
-        $restReply = $this->_restCall('metadata/?type_filter=fields');
+        $restReply = $this->restCall('metadata/?type_filter=fields');
         $this->assertEquals('MOBILE EDITVIEW', $restReply['reply']['fields']['address']['templates']['editView'], "Didn't get mobile code when that was the direct option");
 
         // Make sure we get it when we ask for mobile, even though there is base code there
-        $this->_clearMetadataCache();
+        $this->clearMetadataCache();
         $this->authToken = $this->mobileAuthToken;
-        $restReply = $this->_restCall('metadata/?type_filter=fields');
+        $restReply = $this->restCall('metadata/?type_filter=fields');
         $this->assertEquals('MOBILE EDITVIEW', $restReply['reply']['fields']['address']['templates']['editView'], "Didn't get mobile code when base code was there.");
 
         // Make sure we get the base code when we ask for it.
-        $this->_clearMetadataCache();
+        $this->clearMetadataCache();
         $this->authToken = $this->baseAuthToken;
-        $restReply = $this->_restCall('metadata/?type_filter=fields');
+        $restReply = $this->restCall('metadata/?type_filter=fields');
         $this->assertEquals('BASE EDITVIEW', $restReply['reply']['fields']['address']['templates']['editView'], "Didn't get base code when it was the direct option");
 
         // Delete the mobile address and make sure it falls back to base
         unlink('clients/mobile/fields/address/editView.hbs');
-        $this->_clearMetadataCache();
+        $this->clearMetadataCache();
         $this->authToken = $this->mobileAuthToken;
-        $restReply = $this->_restCall('metadata/?type_filter=fields');
+        $restReply = $this->restCall('metadata/?type_filter=fields');
         $this->assertEquals('BASE EDITVIEW', $restReply['reply']['fields']['address']['templates']['editView'], "Didn't fall back to base code when mobile code wasn't there.");
 
 
         // Make sure the mobile code is loaded before the non-custom base code
         file_put_contents('custom/clients/mobile/fields/address/editView.hbs', 'CUSTOM MOBILE EDITVIEW');
-        $this->_clearMetadataCache();
+        $this->clearMetadataCache();
         $this->authToken = $this->mobileAuthToken;
-        $restReply = $this->_restCall('metadata/?type_filter=fields');
+        $restReply = $this->restCall('metadata/?type_filter=fields');
         $this->assertEquals('CUSTOM MOBILE EDITVIEW', $restReply['reply']['fields']['address']['templates']['editView'], "Didn't use the custom mobile code.");
 
         // Make sure custom base code works
         file_put_contents('custom/clients/base/fields/address/editView.hbs', 'CUSTOM BASE EDITVIEW');
-        $this->_clearMetadataCache();
+        $this->clearMetadataCache();
         $this->authToken = $this->baseAuthToken;
-        $restReply = $this->_restCall('metadata/?type_filter=fields');
+        $restReply = $this->restCall('metadata/?type_filter=fields');
         $this->assertEquals('CUSTOM BASE EDITVIEW', $restReply['reply']['fields']['address']['templates']['editView'], "Didn't use the custom base code.");
     }
 }

@@ -13,7 +13,7 @@
 
 class SugarTestAccountUtilities
 {
-    private static $_createdAccounts = [];
+    private static $createdAccounts = [];
 
     private function __construct()
     {
@@ -49,7 +49,7 @@ class SugarTestAccountUtilities
         }
         $account->save();
         $GLOBALS['db']->commit();
-        self::$_createdAccounts[] = $account;
+        self::$createdAccounts[] = $account;
         return $account;
     }
 
@@ -58,7 +58,7 @@ class SugarTestAccountUtilities
         foreach ($account_ids as $account_id) {
             $account = BeanFactory::newBean('Accounts');
             $account->id = $account_id;
-            self::$_createdAccounts[] = $account;
+            self::$createdAccounts[] = $account;
         } // foreach
     } // fn
 
@@ -95,7 +95,7 @@ class SugarTestAccountUtilities
     public static function getCreatedAccountIds()
     {
         $account_ids = [];
-        foreach (self::$_createdAccounts as $account) {
+        foreach (self::$createdAccounts as $account) {
             $account_ids[] = $account->id;
         }
         return $account_ids;

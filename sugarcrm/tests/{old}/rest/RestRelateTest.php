@@ -130,24 +130,24 @@ class RestRelateTest extends RestTestBase
         $GLOBALS['db']->commit();
 
         // Test normal fetch
-        $restReply = $this->_restCall("Accounts/".$this->accounts[4]->id."/link/opportunities");
+        $restReply = $this->restCall("Accounts/".$this->accounts[4]->id."/link/opportunities");
 
         $this->assertEquals(10, $restReply['reply']['next_offset'], "Next offset was set incorrectly.");
 
         // Test Offset
-        $restReply2 = $this->_restCall("Accounts/".$this->accounts[4]->id."/link/opportunities?offset=20");
+        $restReply2 = $this->restCall("Accounts/".$this->accounts[4]->id."/link/opportunities?offset=20");
 
         $this->assertEquals(-1, $restReply2['reply']['next_offset'], "Next offset was set incorrectly on the second page.");
 
         // Test basic search
-        $restReply3 = $this->_restCall("Accounts/".$this->accounts[4]->id."/link/contacts?q=".rawurlencode($this->contacts[47]->last_name));
+        $restReply3 = $this->restCall("Accounts/".$this->accounts[4]->id."/link/contacts?q=".rawurlencode($this->contacts[47]->last_name));
         
         $tmp = array_keys($restReply3['reply']['records']);
         $firstRecord = $restReply3['reply']['records'][$tmp[0]];
         $this->assertEquals($this->contacts[47]->last_name, $firstRecord['last_name'], "The search failed for record: ".$this->contacts[47]->last_name);
 
         // Sorting descending
-        $restReply4 = $this->_restCall("Accounts/".$this->accounts[4]->id."/link/contacts?order_by=last_name:DESC");
+        $restReply4 = $this->restCall("Accounts/".$this->accounts[4]->id."/link/contacts?order_by=last_name:DESC");
         
         $tmp = array_keys($restReply4['reply']['records']);
         $this->assertLessThan(
@@ -157,7 +157,7 @@ class RestRelateTest extends RestTestBase
         );
 
         // Sorting ascending
-        $restReply5 = $this->_restCall("Accounts/".$this->accounts[4]->id."/link/contacts?order_by=first_name:ASC");
+        $restReply5 = $this->restCall("Accounts/".$this->accounts[4]->id."/link/contacts?order_by=first_name:ASC");
         
         $tmp = array_keys($restReply5['reply']['records']);
         $this->assertGreaterThan(
@@ -168,13 +168,13 @@ class RestRelateTest extends RestTestBase
 
 
         // Fetching the role field from the opportunity contact relationship
-        $restReply6 = $this->_restCall("Opportunities/".$this->opps[29]->id."/link/contacts?order_by=first_name:DESC");
+        $restReply6 = $this->restCall("Opportunities/".$this->opps[29]->id."/link/contacts?order_by=first_name:DESC");
         $this->assertNotEmpty($restReply6['reply']['records'][0]['opportunity_role'], "The role field on the Opportunity -> Contact relationship was not populated.");
 
         // verify accounts don't return the same contacts
-        $restReply7 = $this->_restCall("Accounts/".$this->accounts[4]->id."/link/contacts?order_by=last_name:ASC");
+        $restReply7 = $this->restCall("Accounts/".$this->accounts[4]->id."/link/contacts?order_by=last_name:ASC");
 
-        $restReply8 = $this->_restCall("Accounts/".$this->accounts[3]->id."/link/contacts?order_by=last_name:ASC");
+        $restReply8 = $this->restCall("Accounts/".$this->accounts[3]->id."/link/contacts?order_by=last_name:ASC");
 
         $account3 = $restReply8['reply']['records'];
 
@@ -215,13 +215,13 @@ class RestRelateTest extends RestTestBase
             $contact->accounts->add([$account]);
         }
 
-        $reply = $this->_restCall('Accounts/'.$account->id.'/link/contacts?fields=id,first_name,last_name,date_modified');
+        $reply = $this->restCall('Accounts/'.$account->id.'/link/contacts?fields=id,first_name,last_name,date_modified');
 
         $this->assertEquals($this->contacts[2]->id, $reply['reply']['records'][0]['id'], "First record didn't match");
         $this->assertEquals($this->contacts[1]->id, $reply['reply']['records'][1]['id'], "Second record didn't match");
         $this->assertEquals($this->contacts[0]->id, $reply['reply']['records'][2]['id'], "Third record didn't match");
 
-        $reply = $this->_restCall('Accounts/'.$account->id.'/link/contacts?order_by=first_name:ASC&fields=id,first_name,last_name,date_modified');
+        $reply = $this->restCall('Accounts/'.$account->id.'/link/contacts?order_by=first_name:ASC&fields=id,first_name,last_name,date_modified');
 
         $this->assertEquals($this->contacts[0]->id, $reply['reply']['records'][0]['id'], "First record didn't match (2)");
         $this->assertEquals($this->contacts[1]->id, $reply['reply']['records'][1]['id'], "Second record didn't match (2)");

@@ -13,7 +13,7 @@
 
 class SugarTestCaseUtilities
 {
-    private static $_createdCases = [];
+    private static $createdCases = [];
 
     private function __construct()
     {
@@ -45,7 +45,7 @@ class SugarTestCaseUtilities
         }
         $case->save();
         $GLOBALS['db']->commit();
-        self::$_createdCases[] = $case;
+        self::$createdCases[] = $case;
         return $case;
     }
 
@@ -54,7 +54,7 @@ class SugarTestCaseUtilities
         foreach ($case_ids as $case_id) {
             $case = new aCase();
             $case->id = $case_id;
-            self::$_createdCases[] = $case;
+            self::$createdCases[] = $case;
         } // foreach
     } // fn
 
@@ -70,7 +70,7 @@ class SugarTestCaseUtilities
     public static function getCreatedCaseIds()
     {
         $case_ids = [];
-        foreach (self::$_createdCases as $case) {
+        foreach (self::$createdCases as $case) {
             $case_ids[] = $case->id;
         }
         return $case_ids;

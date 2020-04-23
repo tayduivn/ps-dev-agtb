@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 class Bug48496Test extends TestCase
 {
-    var $backup_config;
+    public $backup_config;
 
     protected function setUp() : void
     {

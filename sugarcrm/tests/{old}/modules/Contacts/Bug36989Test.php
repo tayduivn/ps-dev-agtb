@@ -41,7 +41,7 @@ class Bug36989Test extends TestCase
         SugarTestHelper::tearDown();
     }
 
-    function testOverrideSearchFields()
+    public function testOverrideSearchFields()
     {
          $list = new ViewList();
          $list->module = "Contacts";

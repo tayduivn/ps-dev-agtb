@@ -18,21 +18,21 @@ class Bug43805Test extends TestCase
 {
     /**
      * Contains created prospect lists' ids
-     * @var Array
+     * @var array
      */
-    protected static $_createdProspectListsIds = [];
+    private static $createdProspectListsIds = [];
 
     /**
      * Instance of ProspectList
      * @var ProspectList
      */
-    protected $_prospectList;
+    private $prospectList;
 
     /**
      * prospects array
-     * @var Array
+     * @var array
      */
-    protected $_prospects = [];
+    private $prospects = [];
 
     /**
      * Create prospect instance (with account)
@@ -54,7 +54,7 @@ class Bug43805Test extends TestCase
         $prospectList = new ProspectList();
         $prospectList->name = "TargetList_code";
         $prospectList->save();
-        self::$_createdProspectListsIds[] = $prospectList->id;
+        self::$createdProspectListsIds[] = $prospectList->id;
 
         if ($prospect instanceof Prospect) {
             self::attachProspectToProspectList($prospectList, $prospect);
@@ -89,16 +89,16 @@ class Bug43805Test extends TestCase
         $GLOBALS['beanList'] = $beanList;
         $GLOBALS['beanFiles'] = $beanFiles;
 
-        $this->_prospects[] = self::createProspect();
-        $this->_prospectList = self::createProspectList($this->_prospects[0]);
-        self::attachProspectToProspectList($this->_prospectList, $this->_prospects[0]);
+        $this->prospects[] = self::createProspect();
+        $this->prospectList = self::createProspectList($this->prospects[0]);
+        self::attachProspectToProspectList($this->prospectList, $this->prospects[0]);
     }
 
     protected function tearDown() : void
     {
         SugarTestProspectUtilities::removeAllCreatedProspects();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        $this->_clearProspects();
+        $this->clearProspects();
         unset($GLOBALS['current_user']);
         unset($GLOBALS['beanList']);
         unset($GLOBALS['beanFiles']);
@@ -109,13 +109,13 @@ class Bug43805Test extends TestCase
      */
     public function testTitleExistsExportList()
     {
-        $content = export("ProspectLists", [$this->_prospectList->id], true);
-        $this->assertStringContainsString($this->_prospects[0]->title, $content);
+        $content = export("ProspectLists", [$this->prospectList->id], true);
+        $this->assertStringContainsString($this->prospects[0]->title, $content);
     }
 
-    private function _clearProspects()
+    private function clearProspects()
     {
-        $ids = implode("', '", self::$_createdProspectListsIds);
+        $ids = implode("', '", self::$createdProspectListsIds);
         $GLOBALS['db']->query('DELETE FROM prospect_list_campaigns WHERE prospect_list_id IN (\'' . $ids . '\')');
         $GLOBALS['db']->query('DELETE FROM prospect_lists_prospects WHERE prospect_list_id IN (\'' . $ids . '\')');
         $GLOBALS['db']->query('DELETE FROM prospect_lists WHERE id IN (\'' . $ids . '\')');

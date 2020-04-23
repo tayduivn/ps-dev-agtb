@@ -11,17 +11,10 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$beanList = [];
-$beanFiles = [];
-require 'include/modules.php';
-$GLOBALS['beanList'] = $beanList;
-$GLOBALS['beanFiles'] = $beanFiles;
-require_once 'modules/Quotas/Quota.php';
-
 class SugarTestQuotaUtilities
 {
-    private static $_createdQuotas = [];
-    private static $_createdUserIds = [];
+    private static $createdQuotas = [];
+    private static $createdUserIds = [];
 
     private function __construct()
     {
@@ -38,7 +31,7 @@ class SugarTestQuotaUtilities
             $quota->id = $id;
         }
         $quota->save();
-        self::$_createdQuotas[] = $quota;
+        self::$createdQuotas[] = $quota;
         return $quota;
     }
 
@@ -47,18 +40,18 @@ class SugarTestQuotaUtilities
         foreach ($quota_ids as $quota_id) {
             $quota = new Quota();
             $quota->id = $quota_id;
-            self::$_createdQuotas[] = $quota;
+            self::$createdQuotas[] = $quota;
         } // foreach
     } // fn
 
     public static function setCreatedUserIds($user_ids)
     {
-        self::$_createdUserIds = $user_ids;
+        self::$createdUserIds = $user_ids;
     }
 
     public static function getCreatedUserIds()
     {
-        return self::$_createdUserIds;
+        return self::$createdUserIds;
     }
 
     public static function removeAllCreatedQuotas()
@@ -69,13 +62,13 @@ class SugarTestQuotaUtilities
         //remove quotas generated in the worksheets by using the temporary user id's
         $GLOBALS['db']->query('DELETE FROM quotas WHERE user_id IN (\'' . implode("', '", self::getCreatedUserIds()) . '\')');
 
-        self::$_createdQuotas = [];
+        self::$createdQuotas = [];
     }
 
     public static function getCreatedQuotaIds()
     {
         $quota_ids = [];
-        foreach (self::$_createdQuotas as $quota) {
+        foreach (self::$createdQuotas as $quota) {
             $quota_ids[] = $quota->id;
         }
         return $quota_ids;

@@ -17,11 +17,11 @@ use PHPUnit\Framework\TestCase;
  */
 class SugarTestUserUtilitiesTest extends TestCase
 {
-    private $_before_snapshot = [];
+    private $before_snapshot = [];
     
     protected function setUp() : void
     {
-        $this->_before_snapshot = $this->_takeUserDBSnapshot();
+        $this->before_snapshot = $this->takeUserDBSnapshot();
     }
 
     protected function tearDown() : void
@@ -30,7 +30,7 @@ class SugarTestUserUtilitiesTest extends TestCase
         SugarTestUserUtilities::removeAllCreatedUserSignatures();
     }
 
-    public function _takeUserDBSnapshot()
+    private function takeUserDBSnapshot()
     {
         $snapshot = [];
         $query = 'SELECT * FROM users';
@@ -41,7 +41,7 @@ class SugarTestUserUtilitiesTest extends TestCase
         return $snapshot;
     }
 
-    public function _takeTeamDBSnapshot()
+    private function takeTeamDBSnapshot()
     {
         $snapshot = [];
         $query = 'SELECT * FROM teams';
@@ -52,7 +52,7 @@ class SugarTestUserUtilitiesTest extends TestCase
         return $snapshot;
     }
 
-    public function _takeSignatureDBSnapshot()
+    private function takeSignatureDBSnapshot()
     {
         $snapshot = [];
         $query    = "SELECT * FROM users_signatures";
@@ -71,9 +71,9 @@ class SugarTestUserUtilitiesTest extends TestCase
 
         $this->assertInstanceOf('User', $user);
 
-        $after_snapshot = $this->_takeUserDBSnapshot();
+        $after_snapshot = $this->takeUserDBSnapshot();
         $this->assertNotEquals(
-            $this->_before_snapshot,
+            $this->before_snapshot,
             $after_snapshot,
             "Simply insure that something was added"
         );
@@ -85,9 +85,9 @@ class SugarTestUserUtilitiesTest extends TestCase
 
         $this->assertInstanceOf('User', $user);
 
-        $after_snapshot = $this->_takeUserDBSnapshot();
+        $after_snapshot = $this->takeUserDBSnapshot();
         $this->assertEquals(
-            $this->_before_snapshot,
+            $this->before_snapshot,
             $after_snapshot,
             "Simply insure that something was added"
         );
@@ -109,20 +109,20 @@ class SugarTestUserUtilitiesTest extends TestCase
     public function testCanTearDownAllCreatedAnonymousUsers()
     {
         $userIds = [];
-        $before_snapshot_teams = $this->_takeTeamDBSnapshot();
+        $before_snapshot_teams = $this->takeTeamDBSnapshot();
         for ($i = 0; $i < 5; $i++) {
             $userIds[] = SugarTestUserUtilities::createAnonymousUser()->id;
         }
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         
         $this->assertEquals(
-            $this->_before_snapshot,
-            $this->_takeUserDBSnapshot(),
+            $this->before_snapshot,
+            $this->takeUserDBSnapshot(),
             'SugarTest_UserUtilities::removeAllCreatedAnonymousUsers() should have removed the users it added'
         );
         $this->assertEquals(
             $before_snapshot_teams,
-            $this->_takeTeamDBSnapshot(),
+            $this->takeTeamDBSnapshot(),
             'SugarTest_UserUtilities::removeAllCreatedAnonymousUsers() should have removed the teams it added'
         );
 
@@ -152,12 +152,12 @@ class SugarTestUserUtilitiesTest extends TestCase
 
     public function testCanCreateAUserSignature()
     {
-        $beforeSnapshot = $this->_takeSignatureDBSnapshot();
+        $beforeSnapshot = $this->takeSignatureDBSnapshot();
         $signature      = SugarTestUserUtilities::createUserSignature();
 
         $this->assertInstanceOf("UserSignature", $signature);
 
-        $afterSnapshot = $this->_takeSignatureDBSnapshot();
+        $afterSnapshot = $this->takeSignatureDBSnapshot();
         $this->assertNotEquals($beforeSnapshot, $afterSnapshot, "The user signature was not added");
     }
 
@@ -176,7 +176,7 @@ class SugarTestUserUtilitiesTest extends TestCase
 
     public function testCanTearDownAllCreatedUserSignatures()
     {
-        $expected = $this->_takeSignatureDBSnapshot();
+        $expected = $this->takeSignatureDBSnapshot();
 
         for ($i = 0; $i < 5; $i++) {
             SugarTestUserUtilities::createUserSignature();
@@ -184,7 +184,7 @@ class SugarTestUserUtilitiesTest extends TestCase
 
         SugarTestUserUtilities::removeAllCreatedUserSignatures();
 
-        $actual = $this->_takeSignatureDBSnapshot();
+        $actual = $this->takeSignatureDBSnapshot();
         $this->assertEquals($expected, $actual, "The user signatures were not removed");
     }
 }

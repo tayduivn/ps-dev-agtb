@@ -15,13 +15,13 @@ use PHPUnit\Framework\TestCase;
 
 class Bug51161Test extends TestCase
 {
-    private $_db;
+    private $db;
 
 
 
     protected function setUp() : void
     {
-        $this->_db = DBManagerFactory::getInstance();
+        $this->db = DBManagerFactory::getInstance();
     }
 
     public function providerClobsNonOracle()
@@ -168,7 +168,7 @@ class Bug51161Test extends TestCase
      */
     public function testOracleClobs($fieldDef, $successRegex)
     {
-        if (!$this->_db instanceof OracleManager) {
+        if (!$this->db instanceof OracleManager) {
             $this->markTestSkipped('Oracle only');
         }
         list($sql, $successRegex) = $this->getTableSql($fieldDef, $successRegex);
@@ -186,7 +186,7 @@ class Bug51161Test extends TestCase
      */
     public function testNonOracleClobs($fieldDef, $successRegex)
     {
-        if ($this->_db instanceof OracleManager) {
+        if ($this->db instanceof OracleManager) {
             $this->markTestSkipped('non-Oracle only');
         }
         list($sql, $successRegex) = $this->getTableSql($fieldDef, $successRegex);
@@ -199,10 +199,10 @@ class Bug51161Test extends TestCase
 
     protected function getTableSql($fieldDef, $successRegex)
     {
-        $ftype = $this->_db->getFieldType($fieldDef['foo']);
-        $colType = $this->_db->getColumnType($ftype);
+        $ftype = $this->db->getFieldType($fieldDef['foo']);
+        $colType = $this->db->getColumnType($ftype);
         $successRegex = preg_replace('/\$colType/', $colType, $successRegex);
-        if ($type = $this->_db->getTypeParts($colType)) {
+        if ($type = $this->db->getTypeParts($colType)) {
             if (isset($type['baseType'])) {
                 $successRegex = preg_replace('/\$baseType/', $type['baseType'], $successRegex);
             }
@@ -216,6 +216,6 @@ class Bug51161Test extends TestCase
                 $successRegex = preg_replace('/\$arg/', $type['arg'], $successRegex);
             }
         }
-        return [$this->_db->createTableSQLParams('test', $fieldDef, []), $successRegex];
+        return [$this->db->createTableSQLParams('test', $fieldDef, []), $successRegex];
     }
 }

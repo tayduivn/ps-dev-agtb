@@ -31,7 +31,7 @@ class TimeDateTest extends TestCase
     {
         $this->time_date = new TimeDate();
         unset($GLOBALS['disable_date_format']);
-        $this->_noUserCache();
+        $this->noUserCache();
     }
 
     protected function tearDown() : void
@@ -105,29 +105,29 @@ class TimeDateTest extends TestCase
         ];
     }
 
-    protected function _noUserCache()
+    private function noUserCache()
     {
         $this->time_date->allow_cache = false;
     }
 
-    protected function _setPrefs($datef, $timef, $tz)
+    private function setPrefs($datef, $timef, $tz)
     {
         $GLOBALS['current_user']->setPreference('datef', $datef);
         $GLOBALS['current_user']->setPreference('timef', $timef);
         $GLOBALS['current_user']->setPreference('timezone', $tz);
         // new object to avoid TZ caching
         $this->time_date = new TimeDate();
-        $this->_noUserCache();
+        $this->noUserCache();
     }
 
-    protected function _dateOnly($datetime)
+    private function dateOnly($datetime)
     {
         // FIXME: assumes dates have no spaces
         $dt = explode(' ', $datetime);
         return $dt[0];
     }
 
-    protected function _timeOnly($datetime)
+    private function timeOnly($datetime)
     {
         // FIXME: assumes dates have no spaces
         $dt = explode(' ', $datetime);
@@ -144,7 +144,7 @@ class TimeDateTest extends TestCase
     public function testToDbFormats($db, $df, $tf, $tz, $display, $dbdate)
     {
         $tf = empty($tf) ? self::DEFAULT_TIME_FORMAT : $tf;
-        $this->_setPrefs($df, $tf, $tz);
+        $this->setPrefs($df, $tf, $tz);
         $this->assertEquals(
             $db,
             $this->time_date->to_db($display),
@@ -159,9 +159,9 @@ class TimeDateTest extends TestCase
     public function testToDbDateFormatsWithOffset($db, $df, $tf, $tz, $display, $dbdate)
     {
         $tf = empty($tf) ? self::DEFAULT_TIME_FORMAT : $tf;
-        $this->_setPrefs($df, $tf, $tz);
+        $this->setPrefs($df, $tf, $tz);
         $this->assertEquals(
-            $this->_dateOnly($db),
+            $this->dateOnly($db),
             $this->time_date->to_db_date($display, true),
             "Broken conversion for '{$df} $tf' with date '{$display}' and TZ {$tz}"
         );
@@ -174,10 +174,10 @@ class TimeDateTest extends TestCase
     public function testToDbDateFormatsNoOffset($db, $df, $tf, $tz, $display, $dbdate)
     {
         $tf = empty($tf) ? self::DEFAULT_TIME_FORMAT : $tf;
-        $this->_setPrefs($df, $tf, $tz);
+        $this->setPrefs($df, $tf, $tz);
         $this->assertEquals(
-            $this->_dateOnly($dbdate),
-            $this->time_date->to_db_date($this->_dateOnly($display), false),
+            $this->dateOnly($dbdate),
+            $this->time_date->to_db_date($this->dateOnly($display), false),
             "Broken conversion for '{$df} $tf' with date '{$display}' and TZ {$tz}"
         );
     }
@@ -189,12 +189,12 @@ class TimeDateTest extends TestCase
     public function testToDbTimeFormatsWithTz($db, $df, $tf, $tz, $display, $dbdate)
     {
         $tf = empty($tf) ? self::DEFAULT_TIME_FORMAT : $tf;
-        $this->_setPrefs($df, $tf, $tz);
+        $this->setPrefs($df, $tf, $tz);
         if (strpos($display, ' ') === false) {
             $display = $this->time_date->expandDate($display, "$df $tf");
         }
         $this->assertEquals(
-            $this->_timeOnly($db),
+            $this->timeOnly($db),
             $this->time_date->to_db_time($display, true),
             "Broken conversion for '{$df} $tf' with date '{$display}' and TZ {$tz}"
         );
@@ -207,7 +207,7 @@ class TimeDateTest extends TestCase
     public function testToDbTimeFormatsNoTz($db, $tf, $display)
     {
         $tf = empty($tf) ? self::DEFAULT_TIME_FORMAT : $tf;
-        $this->_setPrefs('Y-m-d', $tf, '');
+        $this->setPrefs('Y-m-d', $tf, '');
         $this->assertEquals(
             $db,
             $this->time_date->to_db_time($display, false),
@@ -222,7 +222,7 @@ class TimeDateTest extends TestCase
     public function testToDbDateTimeFormats($db, $df, $tf, $tz, $display, $dbdate)
     {
         $tf = empty($tf) ? self::DEFAULT_TIME_FORMAT : $tf;
-        $this->_setPrefs($df, $tf, $tz);
+        $this->setPrefs($df, $tf, $tz);
         $dt = explode(' ', $display);
         if (count($dt) > 1) {
             list($date, $time) = $dt;
@@ -245,10 +245,10 @@ class TimeDateTest extends TestCase
      */
     public function testToDisplayDateTimeFormats($db, $df, $tf, $tz, $display, $dbdate)
     {
-        $this->_setPrefs($df, $tf, $tz);
+        $this->setPrefs($df, $tf, $tz);
         $result = $this->time_date->to_display_date_time($db, true, true, $GLOBALS['current_user']);
         if (empty($tf)) {
-            $result = $this->_dateOnly($result);
+            $result = $this->dateOnly($result);
         }
         $this->assertEquals(
             $display,
@@ -263,13 +263,13 @@ class TimeDateTest extends TestCase
      */
     public function testToDisplayFormatsNoTz($db, $df, $tf, $tz, $display, $dbdate)
     {
-        $this->_setPrefs($df, $tf, $tz);
+        $this->setPrefs($df, $tf, $tz);
         if (!empty($tf)) {
             $df .= " $tf";
         }
         $result = $this->time_date->to_display($dbdate, $this->time_date->get_db_date_time_format(), $df);
         if (empty($tf)) {
-            $result = $this->_dateOnly($result);
+            $result = $this->dateOnly($result);
         }
         $this->assertEquals(
             $display,
@@ -284,9 +284,9 @@ class TimeDateTest extends TestCase
      */
     public function testToDisplayTimeFormatsNoTZ($db, $tf, $display)
     {
-        $this->_setPrefs('Y-m-d', $tf, '');
+        $this->setPrefs('Y-m-d', $tf, '');
         $this->assertEquals(
-            $this->_timeOnly($display),
+            $this->timeOnly($display),
             $this->time_date->to_display_time($db, true, false),
             "Broken conversion for '$tf' with date '{$db}'"
         );
@@ -299,11 +299,11 @@ class TimeDateTest extends TestCase
      */
     public function testToDisplayTimeFormatsWithTZ($db, $df, $tf, $tz, $display)
     {
-        $this->_setPrefs($df, $tf, $tz);
+        $this->setPrefs($df, $tf, $tz);
         $result = $this->time_date->to_display_time($db, true, true);
-        $result = $this->_timeOnly($result);
+        $result = $this->timeOnly($result);
         $this->assertEquals(
-            $this->_timeOnly($display),
+            $this->timeOnly($display),
             $result,
             "Broken conversion for '{$tf}' with date '{$db}' and TZ {$tz}"
         );
@@ -315,11 +315,11 @@ class TimeDateTest extends TestCase
      */
     public function testToDisplayDateFormatsNoTz($db, $df, $tf, $tz, $display, $dbdate)
     {
-        $this->_setPrefs($df, $tf, $tz);
-        $result = $this->time_date->to_display_date($this->_dateOnly($dbdate), false);
+        $this->setPrefs($df, $tf, $tz);
+        $result = $this->time_date->to_display_date($this->dateOnly($dbdate), false);
         $this->assertEquals(
-            $this->_dateOnly($display),
-            $this->_dateOnly($result),
+            $this->dateOnly($display),
+            $this->dateOnly($result),
             "Broken conversion for '{$df}' with date '{$dbdate}' and TZ {$tz}"
         );
     }
@@ -330,11 +330,11 @@ class TimeDateTest extends TestCase
      */
     public function testToDisplayDateFormatsWithTz($db, $df, $tf, $tz, $display, $dbdate)
     {
-        $this->_setPrefs($df, $tf, $tz);
+        $this->setPrefs($df, $tf, $tz);
         $result = $this->time_date->to_display_date($db, true);
         $this->assertEquals(
-            $this->_dateOnly($display),
-            $this->_dateOnly($result),
+            $this->dateOnly($display),
+            $this->dateOnly($result),
             "Broken conversion for '{$df}' with date '{$dbdate}' and TZ {$tz}"
         );
     }
@@ -357,7 +357,7 @@ class TimeDateTest extends TestCase
      */
     public function testGetMidnight($tf, $time)
     {
-        $this->_setPrefs('', $tf, "America/Los_Angeles");
+        $this->setPrefs('', $tf, "America/Los_Angeles");
         $this->assertEquals(
             $time,
             $this->time_date->get_default_midnight(true),
@@ -518,7 +518,7 @@ class TimeDateTest extends TestCase
             $this->time_date->to_db('25-10-2007')
         );
 
-        $this->_noUserCache();
+        $this->noUserCache();
         $GLOBALS['current_user']->setPreference('datef', 'm-d-Y');
         $this->assertMatchesRegularExpression(
             $db_date_pattern,
@@ -660,7 +660,7 @@ class TimeDateTest extends TestCase
      */
     public function testGetUserSettings()
     {
-        $this->_setPrefs('d/m/Y', 'h:i:sA', "America/Lima");
+        $this->setPrefs('d/m/Y', 'h:i:sA', "America/Lima");
         $this->assertEquals('dd/mm/yyyy', $this->time_date->get_user_date_format());
         //FIXME: $this->assertEquals('11:00:00PM', $this->time_date->get_user_time_format());
         $tz = $this->time_date->getUserTimeZone();
@@ -711,7 +711,7 @@ class TimeDateTest extends TestCase
             ["df" => "Y-m-d", "caldf" => "%Y-%m-%d", "tf" => "h:iA", "caltf" => "%I:%M%p"],
         ];
         foreach ($cal_tests as $datetest) {
-            $this->_setPrefs($datetest["df"], $datetest["tf"], "America/Los_Angeles");
+            $this->setPrefs($datetest["df"], $datetest["tf"], "America/Los_Angeles");
             $this->assertEquals(
                 $datetest["caldf"],
                 $this->time_date->get_cal_date_format(),
@@ -747,7 +747,7 @@ class TimeDateTest extends TestCase
      */
     public function testDayMinMax($date, $start, $end, $tz)
     {
-        $this->_setPrefs('', '', $tz);
+        $this->setPrefs('', '', $tz);
         $dates = $this->time_date->handleOffsetMax($date, '');
         $this->assertEquals(
             $start,
@@ -767,7 +767,7 @@ class TimeDateTest extends TestCase
      */
     public function testGetDayStartEnd($date, $start, $end, $tz)
     {
-        $this->_setPrefs('m/d/Y', '', $tz);
+        $this->setPrefs('m/d/Y', '', $tz);
         $date_arr = explode("-", $date);
         $date = $date_arr[1].'/'.$date_arr[2].'/'.$date_arr[0];
         $dates = $this->time_date->getDayStartEndGMT($date);
@@ -838,7 +838,7 @@ class TimeDateTest extends TestCase
 
     public function testNoCache()
     {
-        $this->_setPrefs("Y-m-d", "H:i:s", "GMT");
+        $this->setPrefs("Y-m-d", "H:i:s", "GMT");
         $now1 = $this->time_date->now();
         sleep(2);
         $now2 = $this->time_date->now();
@@ -847,7 +847,7 @@ class TimeDateTest extends TestCase
 
     public function testCache()
     {
-        $this->_setPrefs("Y-m-d", "H:i:s", "GMT");
+        $this->setPrefs("Y-m-d", "H:i:s", "GMT");
         $this->time_date->allow_cache = true;
         $now1 = $this->time_date->now();
         sleep(2);
@@ -883,7 +883,7 @@ class TimeDateTest extends TestCase
      */
     public function testCreateFromString($format, $string, $result)
     {
-        $this->_setPrefs("Y-m-d", $format, "GMT");
+        $this->setPrefs("Y-m-d", $format, "GMT");
         $tz = new DateTimeZone("GMT");
         SugarDateTime::$use_php_parser = true;
         $date = SugarDateTime::createFromFormat($format, $string, $tz);
@@ -907,7 +907,7 @@ class TimeDateTest extends TestCase
     public function testGetTimeDate()
     {
         global $current_user;
-        $this->_setPrefs("Y-m-d", "H:i", "GMT");
+        $this->setPrefs("Y-m-d", "H:i", "GMT");
 
         $f = $this->time_date->get_date_time_format();
         $this->assertEquals("Y-m-d H:i", $f);
@@ -1017,7 +1017,7 @@ class TimeDateTest extends TestCase
      */
     public function testFromIso($input, $dbdate, $tz)
     {
-        $this->_setPrefs('d/m/Y', 'h:i:sA', $tz);
+        $this->setPrefs('d/m/Y', 'h:i:sA', $tz);
         
         $timeDate = new TimeDate();
 
@@ -1041,7 +1041,7 @@ class TimeDateTest extends TestCase
 
     public function testAsIso($output, $dbdate, $tz)
     {
-        $this->_setPrefs('d/m/Y', 'h:i:sA', $tz);
+        $this->setPrefs('d/m/Y', 'h:i:sA', $tz);
         
         $timeDate = new TimeDate();
 
@@ -1057,7 +1057,7 @@ class TimeDateTest extends TestCase
      */
     public function testAsIsoWithOptions($output, $dbdate, $tz)
     {
-        $this->_setPrefs('d/m/Y', 'h:i:sA', $tz);
+        $this->setPrefs('d/m/Y', 'h:i:sA', $tz);
         
         $timeDate = new TimeDate();
 
@@ -1140,7 +1140,7 @@ class TimeDateTest extends TestCase
      */
     public function testFromUserType($date, $type, $user, $timezone, $expected, $function, $dateFormat)
     {
-        $this->_setPrefs($dateFormat, "H:i:s", "GMT");
+        $this->setPrefs($dateFormat, "H:i:s", "GMT");
 
         $GLOBALS['current_user']->setPreference('timezone', $timezone);
 

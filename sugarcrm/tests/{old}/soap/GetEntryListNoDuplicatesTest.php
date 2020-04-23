@@ -41,12 +41,12 @@ class GetEntryListNoDuplicatesTest extends SOAPTestCase
         SugarTestMeetingUtilities::addMeetingContactRelation($this->meeting1->id, $this->contact->id);
         SugarTestMeetingUtilities::addMeetingContactRelation($this->meeting2->id, $this->contact->id);
 
-        $this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/soap.php';
+        $this->soapURL = $GLOBALS['sugar_config']['site_url'].'/soap.php';
 
         parent::setUp();
 
-        $this->user = self::$_user = $GLOBALS['current_user'];
-        $this->_login();
+        self::$user = $GLOBALS['current_user'];
+        $this->login();
     }
 
     protected function tearDown() : void
@@ -61,7 +61,7 @@ class GetEntryListNoDuplicatesTest extends SOAPTestCase
     public function testGetEntryList()
     {
         $client = [
-            'session'       => $this->_sessionId,
+            'session'       => $this->sessionId,
             'module_name'   => 'Contacts',
             'query'         => 'contacts.id=' . $GLOBALS['db']->quoted($this->contact->id),
             'order_by'      => '',
@@ -71,7 +71,7 @@ class GetEntryListNoDuplicatesTest extends SOAPTestCase
             'deleted'       => -1,
         ];
 
-        $result = $this->_soapClient->call('get_entry_list', $client);
+        $result = $this->soapClient->call('get_entry_list', $client);
         $data = [];
         foreach ($result['entry_list'] as $v) {
             $this->assertNotContains($v['id'], $data, 'Duplicates were found');

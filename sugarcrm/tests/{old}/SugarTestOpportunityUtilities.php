@@ -12,55 +12,21 @@
 
 class SugarTestOpportunityUtilities
 {
-    private static $_createdOpportunities = [];
+    private static $createdOpportunities = [];
 
-    private static $_createdAccount = null;
+    private static $createdAccount;
 
     private function __construct()
     {
     }
 
-    /*
-    private function _createAccount($time)
-    {
-        if (self::$_createdAccount === null)
-        {
-            $name = 'SugarOpportunityAccount';
-            $account = new Account();
-            $account->name = $name . $time;
-            $account->email1 = 'account@' . $time . 'sugar.com';
-            $account->save();
-
-            $GLOBALS['db']->commit();
-            self::$_createdAccount = $account;
-        }
-
-        return self::$_createdAccount;
-    }
-    */
-
     public static function createOpportunity($id = '', Account $account = null)
-    {
-        $opportunity = self::_createOpportunity($id);
-
-        if ($account !== null) {
-            $opportunity->account_id = $account->id;
-            $opportunity->account_name = $account->name;
-            $opportunity->save();
-        }
-
-        return $opportunity;
-    }
-
-    private static function _createOpportunity($id)
     {
         $timedate = TimeDate::getInstance();
         $db = DBManagerFactory::getInstance();
         $name = 'SugarOpportunity';
 
         $opportunity = new Opportunity();
-
-        global $app_list_strings;
 
         if (!empty($id)) {
             $opportunity->new_with_id = true;
@@ -74,18 +40,24 @@ class SugarTestOpportunityUtilities
 
         $db->commit();
 
-        self::$_createdOpportunities[] = $opportunity;
+        self::$createdOpportunities[] = $opportunity;
         $opportunity->load_relationship('revenuelineitems');
+
+        if ($account !== null) {
+            $opportunity->account_id = $account->id;
+            $opportunity->account_name = $account->name;
+            $opportunity->save();
+        }
+
         return $opportunity;
     }
-
 
     public static function setCreatedOpportunity($opportunity_ids)
     {
         foreach ($opportunity_ids as $opportunity_id) {
             $opportunity = new Opportunity();
             $opportunity->id = $opportunity_id;
-            self::$_createdOpportunities[] = $opportunity;
+            self::$createdOpportunities[] = $opportunity;
         }
     }
 
@@ -103,17 +75,17 @@ class SugarTestOpportunityUtilities
             $db->query("DELETE FROM forecast_worksheets WHERE parent_type = 'Opportunities' and parent_id IN ('" . implode("', '", $opp_ids) . "')");
         }
 
-        if (self::$_createdAccount !== null && self::$_createdAccount->id) {
-            $db->query("DELETE FROM accounts WHERE id = '" . self::$_createdAccount->id . "'");
+        if (self::$createdAccount !== null && self::$createdAccount->id) {
+            $db->query("DELETE FROM accounts WHERE id = '" . self::$createdAccount->id . "'");
         }
-        self::$_createdOpportunities = [];
+        self::$createdOpportunities = [];
     }
 
     public static function getCreatedOpportunityIds()
     {
         $opportunity_ids = [];
 
-        foreach (self::$_createdOpportunities as $opportunity) {
+        foreach (self::$createdOpportunities as $opportunity) {
             $opportunity_ids[] = $opportunity->id;
         }
 

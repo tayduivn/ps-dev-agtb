@@ -17,8 +17,8 @@ require_once 'include/workflow/action_utils.php';
 class WorkFlowProcessActionsTest extends TestCase
 {
     private $quote;
-    private $_wf_array;
-    private $_workflow_id;
+    private $wfArray;
+    private $workflowId;
 
     protected function setUp() : void
     {
@@ -39,7 +39,7 @@ class WorkFlowProcessActionsTest extends TestCase
         $workflow->save();
         $workflow->check_logic_hook_file();
         $workflow->write_workflow();
-        $this->_workflow_id = $workflow->id;
+        $this->workflowId = $workflow->id;
 
         $this->quote = SugarTestQuoteUtilities::createQuote();
 
@@ -55,7 +55,7 @@ class WorkFlowProcessActionsTest extends TestCase
         $this->quote->teams->setSaved(false);
         $this->quote->teams->add([$team->id, $user->team_id]);
 
-        $this->_wf_array =  [
+        $this->wfArray =  [
             'action_type' => 'new',
             'action_module' => 'Tasks',
             'rel_module' => '',
@@ -82,8 +82,8 @@ class WorkFlowProcessActionsTest extends TestCase
     {
         rmdir_recursive('custom/modules/Quotes/workflow');
         rmdir_recursive('custom/modules/Quotes/logic_hooks.php');
-        $GLOBALS['db']->query("DELETE FROM workflow WHERE id = '$this->_workflow_id'");
-        $GLOBALS['db']->query("DELETE FROM workflow_schedules WHERE workflow_id = '$this->_workflow_id'");
+        $GLOBALS['db']->query("DELETE FROM workflow WHERE id = '$this->workflowId'");
+        $GLOBALS['db']->query("DELETE FROM workflow_schedules WHERE workflow_id = '$this->workflowId'");
 
         SugarTestQuoteUtilities::removeAllCreatedQuotes();
         SugarTestAccountUtilities::removeAllCreatedAccounts();
@@ -99,7 +99,7 @@ class WorkFlowProcessActionsTest extends TestCase
     public function testWorkflowsForQuotesModule()
     {
         $quote_teams = $this->quote->teams->get();
-        process_workflow_actions($this->quote, $this->_wf_array);
+        process_workflow_actions($this->quote, $this->wfArray);
 
         $this->quote->load_relationship('tasks');
         $quote_task_id = $this->quote->tasks->get();

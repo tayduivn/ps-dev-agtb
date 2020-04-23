@@ -20,23 +20,18 @@ require_once "modules/Bugs/Bug.php";
  */
 class Bug20955Test extends TestCase
 {
-    public $_user = null;
-    public $_team = null;
-
     protected function setUp() : void
     {
         global $current_user;
-        $time = date($GLOBALS['timedate']->get_db_date_time_format());
 
-        $this->_team = SugarTestTeamUtilities::createAnonymousTeam();
-
-        $this->_user = SugarTestUserUtilities::createAnonymousUser();//new User();
-        $this->_user->first_name = "leon";
-        $this->_user->last_name = "zhang";
-        $this->_user->user_name = "leon zhang";
-        $this->_user->default_team=$this->_team->id;
-        $this->_user->save();
-        $current_user=$this->_user;
+        $team = SugarTestTeamUtilities::createAnonymousTeam();
+        $user = SugarTestUserUtilities::createAnonymousUser();//new User();
+        $user->first_name = "leon";
+        $user->last_name = "zhang";
+        $user->user_name = "leon zhang";
+        $user->default_team= $team->id;
+        $user->save();
+        $current_user= $user;
     }
 
     protected function tearDown() : void

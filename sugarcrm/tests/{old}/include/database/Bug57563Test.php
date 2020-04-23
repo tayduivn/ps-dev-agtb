@@ -16,12 +16,12 @@ use PHPUnit\Framework\TestCase;
 
 class Bug57563Test extends TestCase
 {
-    private $_db;
+    private $db;
 
     protected function setUp() : void
     {
-        if (empty($this->_db)) {
-            $this->_db = DBManagerFactory::getInstance();
+        if (empty($this->db)) {
+            $this->db = DBManagerFactory::getInstance();
         }
     }
 
@@ -87,8 +87,8 @@ class Bug57563Test extends TestCase
             WHERE opportunities.date_closed <= $m_date5 AND  opportunities.date_closed >= $today
             )";
 
-        $this->_db->limitQuery($query, 0, 1);
+        $this->db->limitQuery($query, 0, 1);
 
-        $this->assertEmpty($this->_db->lastError(), "lastError should return empty");
+        $this->assertEmpty($this->db->lastError(), "lastError should return empty");
     }
 }

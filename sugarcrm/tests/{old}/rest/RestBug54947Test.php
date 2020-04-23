@@ -31,7 +31,7 @@ class RestBug54947Test extends RestTestBase
      */
     public function testModuleNameSingular()
     {
-        $restReply = $this->_restCall('metadata?type_filter=mod_strings&platform=mobile');
+        $restReply = $this->restCall('metadata?type_filter=mod_strings&platform=mobile');
         foreach (SugarAutoLoader::existingCustom('include/MVC/Controller/wireless_module_registry.php') as $file) {
             require $file;
         }

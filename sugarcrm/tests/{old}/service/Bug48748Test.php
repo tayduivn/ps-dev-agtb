@@ -85,9 +85,9 @@ EOQ;
         include 'custom/modules/' . $this->package . '/Ext/WirelessLayoutdefs/wireless.subpaneldefs.ext.php';
 
         global $current_user;
-        $result = $this->_login($current_user);
+        $result = $this->login($current_user);
         $session = $result['id'];
-        $results = $this->_makeRESTCall(
+        $results = $this->makeRESTCall(
             'get_module_layout',
             [
             'session' => $session,

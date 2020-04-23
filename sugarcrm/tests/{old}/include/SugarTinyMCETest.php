@@ -20,10 +20,10 @@ use PHPUnit\Framework\TestCase;
  */
 class SugarTinyMCETest extends TestCase
 {
-    static $customDir = 'custom/include';
-    static $customConfigFile = 'custom/include/tinyButtonConfig.php';
-    static $customDefaultConfigFile = 'custom/include/tinyMCEDefaultConfig.php';
-    static $MCE;
+    private static $customDir = 'custom/include';
+    private static $customConfigFile = 'custom/include/tinyButtonConfig.php';
+    private static $customDefaultConfigFile = 'custom/include/tinyMCEDefaultConfig.php';
+    private static $MCE;
 
     /*
      * Setup: Backup old custom files and create new ones for the test

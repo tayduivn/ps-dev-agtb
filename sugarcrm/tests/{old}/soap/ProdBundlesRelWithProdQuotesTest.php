@@ -37,7 +37,7 @@ class ProdBundlesRelWithProdQuotesTest extends SOAPTestCase
 
     protected function tearDown() : void
     {
-        $this->_tearDownTestUser();
+        $this->tearDownTestUser();
 
         SugarTestProductBundleUtilities::removeAllCreatedProductBundles();
         SugarTestQuoteUtilities::removeAllCreatedQuotes();
@@ -54,13 +54,13 @@ class ProdBundlesRelWithProdQuotesTest extends SOAPTestCase
      */
     public function testProductBundlesRelationsWithProductsAndQuotesSoapV4()
     {
-        $this->_soapURL = $GLOBALS['sugar_config']['site_url'] . '/service/v4_1/soap.php';
-        $this->_login();
+        $this->soapURL = $GLOBALS['sugar_config']['site_url'] . '/service/v4_1/soap.php';
+        $this->login();
 
-        $this->_soapClient->call(
+        $this->soapClient->call(
             'set_relationship',
             [
-                'session' => $this->_sessionId,
+                'session' => $this->sessionId,
                 'module_name' => 'ProductBundles',
                 'module_id' => $this->prodBundle->id,
                 'link_field_name' => 'products',
@@ -70,10 +70,10 @@ class ProdBundlesRelWithProdQuotesTest extends SOAPTestCase
             ]
         );
 
-        $this->_soapClient->call(
+        $this->soapClient->call(
             'set_relationship',
             [
-                'session' => $this->_sessionId,
+                'session' => $this->sessionId,
                 'module_name' => 'ProductBundles',
                 'module_id' => $this->prodBundle->id,
                 'link_field_name' => 'quotes',
@@ -83,10 +83,10 @@ class ProdBundlesRelWithProdQuotesTest extends SOAPTestCase
             ]
         );
 
-        $assertProductsRel = $this->_soapClient->call(
+        $assertProductsRel = $this->soapClient->call(
             'get_relationships',
             [
-                'session' => $this->_sessionId,
+                'session' => $this->sessionId,
                 'module_name' => 'ProductBundles',
                 'module_id' => $this->prodBundle->id,
                 'link_field_name' => 'products',
@@ -97,10 +97,10 @@ class ProdBundlesRelWithProdQuotesTest extends SOAPTestCase
             ]
         );
 
-        $assertQuoteRel = $this->_soapClient->call(
+        $assertQuoteRel = $this->soapClient->call(
             'get_relationships',
             [
-                'session' => $this->_sessionId,
+                'session' => $this->sessionId,
                 'module_name' => 'ProductBundles',
                 'module_id' => $this->prodBundle->id,
                 'link_field_name' => 'quotes',

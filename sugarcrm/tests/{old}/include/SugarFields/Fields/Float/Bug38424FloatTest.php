@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 class Bug38424FloatTest extends TestCase
 {
-    private $_fieldOutput;
+    private $fieldOutput;
 
     protected function setUp() : void
     {
@@ -22,12 +22,12 @@ class Bug38424FloatTest extends TestCase
         $vardef = [
             'len' => '10',
         ];
-        $this->_fieldOutput = $sfr->getEditViewSmarty([], $vardef, [], 1);
+        $this->fieldOutput = $sfr->getEditViewSmarty([], $vardef, [], 1);
     }
 
     
     public function testMaxLength()
     {
-        $this->assertStringContainsString("maxlength='10'", $this->_fieldOutput);
+        $this->assertStringContainsString("maxlength='10'", $this->fieldOutput);
     }
 }

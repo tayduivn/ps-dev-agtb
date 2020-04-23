@@ -14,8 +14,8 @@ use PHPUnit\Framework\TestCase;
 
 class LeadFormBaseTest extends TestCase
 {
-    var $form;
-    var $lead1;
+    public $form;
+    public $lead1;
 
     protected function setUp() : void
     {

@@ -45,10 +45,10 @@ class GetEntryListOne2ManyTest extends SOAPTestCase
         $account->contacts->add($contact1->id);
         $account->contacts->add($contact2->id);
 
-        $this->_login();
+        $this->login();
 
         $parameters = [
-            'session' => $this->_sessionId,
+            'session' => $this->sessionId,
             'module_name' => 'Accounts',
             'query' => "accounts.id = '{$account->id}'",
             'order_by' => '',
@@ -59,7 +59,7 @@ class GetEntryListOne2ManyTest extends SOAPTestCase
             'deleted' => 0,
         ];
 
-        $result = $this->_soapClient->call('get_entry_list', $parameters);
+        $result = $this->soapClient->call('get_entry_list', $parameters);
 
         $contact_names = [$contact1->name, $contact2->name];
         $contact_ids = [$contact1->id, $contact2->id];

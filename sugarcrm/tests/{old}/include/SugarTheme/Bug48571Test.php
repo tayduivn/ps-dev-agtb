@@ -14,9 +14,9 @@ use PHPUnit\Framework\TestCase;
 
 class Bug48571Test extends TestCase
 {
-    var $globalDefaultTheme;
-    var $unavailableThemes;
-    var $customThemeDef;
+    public $globalDefaultTheme;
+    public $unavailableThemes;
+    public $customThemeDef;
 
     protected function setUp() : void
     {

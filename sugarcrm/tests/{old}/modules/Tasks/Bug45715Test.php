@@ -27,7 +27,7 @@ class Bug45715Test extends TestCase
 
 class ListLayoutMetaDataParserMock extends ListLayoutMetaDataParser
 {
-    function __construct($view, $moduleName, $packageName = '')
+    public function __construct($view)
     {
         $this->view = $view;
     }

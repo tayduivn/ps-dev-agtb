@@ -19,21 +19,21 @@ class Bug36422Test extends TestCase
 {
     /**
      * Contains created prospect lists' ids
-     * @var Array
+     * @var array
      */
-    protected static $_createdProspectListsIds = [];
+    protected static $createdProspectListsIds = [];
 
     /**
      * Instance of ProspectList
      * @var ProspectList
      */
-    protected $_prospectList;
+    private $prospectList;
 
     /**
      * Contacts array
-     * @var Array
+     * @var array
      */
-    protected $_contacts = [];
+    private $contacts = [];
 
     /**
      * Create contact instance (with account)
@@ -56,7 +56,7 @@ class Bug36422Test extends TestCase
         $prospectList = new ProspectList();
         $prospectList->name = "test";
         $prospectList->save();
-        self::$_createdProspectListsIds[] = $prospectList->id;
+        self::$createdProspectListsIds[] = $prospectList->id;
 
         if ($contact instanceof Contact) {
             self::attachContactToProspectList($prospectList, $contact);
@@ -88,10 +88,10 @@ class Bug36422Test extends TestCase
 
         $current_user = SugarTestUserUtilities::createAnonymousUser();
         ;
-        $this->_contacts[] = self::createContact();
-        $this->_contacts[] = self::createContact();
-        $this->_prospectList = self::createProspectList($this->_contacts[0]);
-        self::attachContactToProspectList($this->_prospectList, $this->_contacts[1]);
+        $this->contacts[] = self::createContact();
+        $this->contacts[] = self::createContact();
+        $this->prospectList = self::createProspectList($this->contacts[0]);
+        self::attachContactToProspectList($this->prospectList, $this->contacts[1]);
     }
 
     protected function tearDown() : void
@@ -99,7 +99,7 @@ class Bug36422Test extends TestCase
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        $this->_clearProspects();
+        $this->clearProspects();
     }
 
     /**
@@ -107,24 +107,24 @@ class Bug36422Test extends TestCase
      */
     public function testEmailExistsExportList()
     {
-        $content = export("ProspectLists", [$this->_prospectList->id], true);
-        $this->assertStringContainsString($this->_contacts[0]->email1, $content);
-        $this->assertStringContainsString($this->_contacts[1]->email1, $content);
+        $content = export("ProspectLists", [$this->prospectList->id], true);
+        $this->assertStringContainsString($this->contacts[0]->email1, $content);
+        $this->assertStringContainsString($this->contacts[1]->email1, $content);
 
-        $this->_contacts[0]->email1 = "changed" . $this->_contacts[0]->email1;
-        $this->_contacts[0]->save();
+        $this->contacts[0]->email1 = "changed" . $this->contacts[0]->email1;
+        $this->contacts[0]->save();
 
-        $this->_contacts[1]->email1 = "changed" . $this->_contacts[1]->email1;
-        $this->_contacts[1]->save();
+        $this->contacts[1]->email1 = "changed" . $this->contacts[1]->email1;
+        $this->contacts[1]->save();
 
-        $content = export("ProspectLists", [$this->_prospectList->id], true);
-        $this->assertStringContainsString($this->_contacts[0]->email1, $content);
-        $this->assertStringContainsString($this->_contacts[1]->email1, $content);
+        $content = export("ProspectLists", [$this->prospectList->id], true);
+        $this->assertStringContainsString($this->contacts[0]->email1, $content);
+        $this->assertStringContainsString($this->contacts[1]->email1, $content);
     }
 
-    private function _clearProspects()
+    private function clearProspects()
     {
-        $ids = implode("', '", self::$_createdProspectListsIds);
+        $ids = implode("', '", self::$createdProspectListsIds);
         $GLOBALS['db']->query('DELETE FROM prospect_list_campaigns WHERE prospect_list_id IN (\'' . $ids . '\')');
         $GLOBALS['db']->query('DELETE FROM prospect_lists_prospects WHERE prospect_list_id IN (\'' . $ids . '\')');
         $GLOBALS['db']->query('DELETE FROM prospect_lists WHERE id IN (\'' . $ids . '\')');

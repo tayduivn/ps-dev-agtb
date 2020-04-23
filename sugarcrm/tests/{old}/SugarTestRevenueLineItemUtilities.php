@@ -14,7 +14,7 @@
 
 class SugarTestRevenueLineItemUtilities
 {
-    protected static $_createdRlis = [];
+    private static $createdRlis = [];
 
     private function __construct()
     {
@@ -45,7 +45,7 @@ class SugarTestRevenueLineItemUtilities
             $rli->id = $id;
         }
         $rli->save();
-        self::$_createdRlis[] = $rli;
+        self::$createdRlis[] = $rli;
         return $rli;
     }
 
@@ -54,7 +54,7 @@ class SugarTestRevenueLineItemUtilities
         foreach ($rli_ids as $rli_id) {
             $rli = new RevenueLineItem();
             $rli->id = $rli_id;
-            self::$_createdRlis[] = $rli;
+            self::$createdRlis[] = $rli;
         }
     }
     public static function removeAllCreatedRevenueLineItems()
@@ -67,14 +67,14 @@ class SugarTestRevenueLineItemUtilities
             $db->query('DELETE FROM forecast_worksheets WHERE parent_type = ' . $db->quoted('RevenueLineItems') . ' and parent_id IN (' . $conditions . ')');
         }
 
-        self::$_createdRlis = [];
+        self::$createdRlis = [];
     }
         
     public static function getCreatedRevenueLineItemIds()
     {
         $product_ids = [];
         $rli_ids = [];
-        foreach (self::$_createdRlis as $rli) {
+        foreach (self::$createdRlis as $rli) {
             $rli_ids[] = $rli->id;
         }
         return $rli_ids;

@@ -111,24 +111,24 @@ class RestListFTSTest extends RestTestBase
         $GLOBALS['db']->commit();
         
         // Test searching for a lot of records
-        $restReply = $this->_restCall("Accounts/?q=".rawurlencode("UNIT TEST")."&max_num=30");
+        $restReply = $this->restCall("Accounts/?q=".rawurlencode("UNIT TEST")."&max_num=30");
 
         $this->assertEquals(30, $restReply['reply']['next_offset'], "Next offset was set incorrectly.");
 
         // Test Offset
-        $restReply2 = $this->_restCall("Accounts?offset=".$restReply['reply']['next_offset']);
+        $restReply2 = $this->restCall("Accounts?offset=".$restReply['reply']['next_offset']);
 
         $this->assertNotEquals($restReply['reply']['next_offset'], $restReply2['reply']['next_offset'], "Next offset was not set correctly on the second page.");
 
         // Test finding one record exact match, needs quotes in elastic or it returns a match for each word..thus returning all unit tests
-        $restReply3 = $this->_restCall("Accounts/?q=".rawurlencode('"' . $this->accounts[17]->name . '"'));
+        $restReply3 = $this->restCall("Accounts/?q=".rawurlencode('"' . $this->accounts[17]->name . '"'));
 
         $tmp = array_keys($restReply3['reply']['records']);
         $firstRecord = $restReply3['reply']['records'][$tmp[0]];
         $this->assertEquals($this->accounts[17]->name, $firstRecord['name'], "The search failed for record: ".$this->accounts[17]->name);
 
         // Test Favorites
-        $restReply = $this->_restCall("Accounts?favorites=1&max_num=10");
+        $restReply = $this->restCall("Accounts?favorites=1&max_num=10");
 
         $this->assertEquals(6, count($restReply['reply']['records']));
     }
@@ -210,34 +210,34 @@ class RestListFTSTest extends RestTestBase
         $GLOBALS['db']->commit();
         
         // Test searching for a lot of records
-        $restReply = $this->_restCall("search?q=".rawurlencode("UNIT TEST")."&max_num=5");
+        $restReply = $this->restCall("search?q=".rawurlencode("UNIT TEST")."&max_num=5");
         
         $this->assertEquals(5, $restReply['reply']['next_offset'], "Next offset was set incorrectly.");
 
         $this->assertNotEmpty($restReply['reply']['records'][0]['_search']['highlighted'], "No highlighted Property");
 
         // Test Offset
-        $restReply2 = $this->_restCall("search/?offset=".$restReply['reply']['next_offset']);
+        $restReply2 = $this->restCall("search/?offset=".$restReply['reply']['next_offset']);
 
         $this->assertNotEquals($restReply['reply']['next_offset'], $restReply2['reply']['next_offset'], "Next offset was not set correctly on the second page.");
 
         // Test finding one record
-        $restReply3 = $this->_restCall("search/?q=".rawurlencode('"' . $this->opps[17]->name . '"'));
+        $restReply3 = $this->restCall("search/?q=".rawurlencode('"' . $this->opps[17]->name . '"'));
         
         $tmp = array_keys($restReply3['reply']['records']);
         $firstRecord = $restReply3['reply']['records'][$tmp[0]];
         $this->assertEquals($this->opps[17]->name, $firstRecord['name'], "The search failed for record: ".$this->opps[17]->name);
         // Get a list, no searching
-        $restReply = $this->_restCall("search?max_num=10");
+        $restReply = $this->restCall("search?max_num=10");
 
         $this->assertEquals(10, count($restReply['reply']['records']));
 
         // my favorites
-        $restReply = $this->_restCall("Accounts/{$this->accounts[0]->id}/favorite", [], "PUT");
+        $restReply = $this->restCall("Accounts/{$this->accounts[0]->id}/favorite", [], "PUT");
         $this->assertEquals($restReply['reply']['id'], $this->accounts[0]->id, "Did not return the record");
         $this->assertEquals((bool)$restReply['reply']['my_favorite'], true, "Did not favorite");
 
-        $restReply = $this->_restCall("search?favorites=1&max_num=10");
+        $restReply = $this->restCall("search?favorites=1&max_num=10");
 
         foreach ($restReply['reply']['records'] as $record) {
             $this->assertEquals('true', (bool)$record['my_favorite'], "Did not return a favorite");

@@ -20,22 +20,22 @@
  */
 class RestBug55655Test extends RestTestPortalBase
 {
-    protected $_testfile1 = 'Bug55655-01.txt';
-    protected $_testfile2 = 'Bug55655-02.txt';
-    
+    private $testfile1 = 'Bug55655-01.txt';
+    private $testfile2 = 'Bug55655-02.txt';
+
     protected function setUp() : void
     {
         parent::setUp();
         
         // Create two sample text files for uploading
-        sugar_file_put_contents($this->_testfile1, create_guid());
-        sugar_file_put_contents($this->_testfile2, create_guid());
+        sugar_file_put_contents($this->testfile1, create_guid());
+        sugar_file_put_contents($this->testfile2, create_guid());
     }
     
     protected function tearDown() : void
     {
-        unlink($this->_testfile1);
-        unlink($this->_testfile2);
+        unlink($this->testfile1);
+        unlink($this->testfile2);
         parent::tearDown();
     }
     
@@ -44,7 +44,7 @@ class RestBug55655Test extends RestTestPortalBase
      */
     public function testAddingNoteAttachmentToBugAsSupportPortal()
     {
-        $bugReply = $this->_restCall(
+        $bugReply = $this->restCall(
             "Bugs/",
             json_encode([
                 'name' => 'UNIT TEST CREATE BUG PORTAL USER',
@@ -57,7 +57,7 @@ class RestBug55655Test extends RestTestPortalBase
         $this->bugId = $bugReply['reply']['id'];
         
         // Create a note on the bug without an attachment
-        $bugNoteReply = $this->_restCall(
+        $bugNoteReply = $this->restCall(
             "Bugs/{$this->bugId}/link/notes",
             json_encode([
                 'name' => 'UNIT TEST BUG NOTE PORTAL USER',
@@ -69,29 +69,29 @@ class RestBug55655Test extends RestTestPortalBase
         $this->noteId = $bugNoteReply['reply']['related_record']['id'];
                 
         // Create the attachment
-        $post = ['filename' => '@' . $this->_testfile1];
-        $restReply = $this->_restCall('Notes/' . $this->noteId . '/file/filename', $post);
+        $post = ['filename' => '@' . $this->testfile1];
+        $restReply = $this->restCall('Notes/' . $this->noteId . '/file/filename', $post);
         $this->assertArrayHasKey('filename', $restReply['reply'], 'Reply is missing file name key');
         $this->assertNotEmpty($restReply['reply']['filename']['name'], 'File name returned empty');
 
         // Now get the note to make sure it saved
-        $fetch = $this->_restCall('Notes/' . $this->noteId);
+        $fetch = $this->restCall('Notes/' . $this->noteId);
         $this->assertNotEmpty($fetch['reply']['id'], 'Note id not returned');
         $this->assertEquals($this->noteId, $fetch['reply']['id'], 'Known note id and fetched note id do not match');
         $this->assertEquals($restReply['reply']['filename']['name'], $fetch['reply']['filename']);
         
         // Now edit this attachment
-        $params = ['filename' => $this->_testfile2, 'type' => 'text/plain'];
-        $restReply = $this->_restCallFilePut('Notes/' . $this->noteId . '/file/filename', $params);
+        $params = ['filename' => $this->testfile2, 'type' => 'text/plain'];
+        $restReply = $this->restCallFilePut('Notes/' . $this->noteId . '/file/filename', $params);
         // This should fail like a savage
         $this->assertArrayHasKey('error', $restReply['reply'], 'There is no error reply in the response');
         $this->assertEquals('not_authorized', $restReply['reply']['error'], 'Error returned is not not_authorized');
         
         // Lastly check the note again
-        $fetch = $this->_restCall('Notes/' . $this->noteId);
+        $fetch = $this->restCall('Notes/' . $this->noteId);
         $this->assertNotEmpty($fetch['reply']['id'], 'Note id not returned');
         $this->assertEquals($this->noteId, $fetch['reply']['id'], 'Known note id and fetched note id do not match');
         $this->assertArrayHasKey('filename', $fetch['reply'], 'Filename field was not returned in Note fetch');
-        $this->assertEquals($fetch['reply']['filename'], $this->_testfile1, 'Filename was changed when it should not have been');
+        $this->assertEquals($fetch['reply']['filename'], $this->testfile1, 'Filename was changed when it should not have been');
     }
 }

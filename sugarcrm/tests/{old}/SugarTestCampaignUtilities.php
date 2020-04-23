@@ -13,9 +13,9 @@
 
 class SugarTestCampaignUtilities
 {
-    private static $_createdCampaigns    = [];
-    private static $_createdCampaignLogs = [];
-    private static $_createdCampaignTrackers = [];
+    private static $createdCampaigns    = [];
+    private static $createdCampaignLogs = [];
+    private static $createdCampaignTrackers = [];
 
     private function __construct()
     {
@@ -35,7 +35,7 @@ class SugarTestCampaignUtilities
             $campaign->id = $id;
         }
         $campaign->save();
-        self::$_createdCampaigns[] = $campaign;
+        self::$createdCampaigns[] = $campaign;
         return $campaign;
     }
 
@@ -51,7 +51,7 @@ class SugarTestCampaignUtilities
     public static function getCreatedCampaignIds()
     {
         $campaign_ids = [];
-        foreach (self::$_createdCampaigns as $campaign) {
+        foreach (self::$createdCampaigns as $campaign) {
             $campaign_ids[] = $campaign->id;
         }
         return $campaign_ids;
@@ -63,7 +63,7 @@ class SugarTestCampaignUtilities
         foreach ($ids as $id) {
             $campaign = new Campaign();
             $campaign->id = $id;
-            self::$_createdCampaigns[] = $campaign;
+            self::$createdCampaigns[] = $campaign;
         }
     }
 
@@ -83,7 +83,7 @@ class SugarTestCampaignUtilities
 
         $campaignLog->save();
         $GLOBALS["db"]->commit();
-        self::$_createdCampaignLogs[] = $campaignLog;
+        self::$createdCampaignLogs[] = $campaignLog;
 
         return $campaignLog;
     }
@@ -98,7 +98,7 @@ class SugarTestCampaignUtilities
     {
         $campaignLogIds = [];
 
-        foreach (self::$_createdCampaignLogs as $campaignLog) {
+        foreach (self::$createdCampaignLogs as $campaignLog) {
             $campaignLogIds[] = $campaignLog->id;
         }
 
@@ -121,7 +121,7 @@ class SugarTestCampaignUtilities
 
         $campaignTracker->save();
         $GLOBALS["db"]->commit();
-        self::$_createdCampaignTrackers[] = $campaignTracker;
+        self::$createdCampaignTrackers[] = $campaignTracker;
 
         return $campaignTracker;
     }
@@ -136,7 +136,7 @@ class SugarTestCampaignUtilities
     {
         $campaignTrackerIds = [];
 
-        foreach (self::$_createdCampaignTrackers as $campaignTracker) {
+        foreach (self::$createdCampaignTrackers as $campaignTracker) {
             $campaignTrackerIds[] = $campaignTracker->id;
         }
 

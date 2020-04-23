@@ -16,23 +16,23 @@ require_once 'vendor/nusoap//nusoap.php';
 
 class RetrieveEmailFieldsTest extends SOAPTestCase
 {
-    var $acc;
-    var $email_id;
+    public $acc;
+    public $email_id;
 
     protected function setUp() : void
     {
-        $this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/soap.php';
+        $this->soapURL = $GLOBALS['sugar_config']['site_url'].'/soap.php';
         parent::setUp();
-        $this->_login();
+        $this->login();
     }
 
     public function testGetEmailAddressFields()
     {
         $this->acc = SugarTestAccountUtilities::createAccount();
-        $result = $this->_soapClient->call('set_entry', ['session'=>$this->_sessionId,"module_name" => 'Emails', 'name_value_list' => [['name'=>'assigned_user_id' , 'value'=>$GLOBALS['current_user']->id],['name'=>'from_addr_name' , 'value'=>'test@test.com'],['name'=>'parent_type' , 'value'=>'Accounts'],['name'=>'parent_id' , 'value'=>$this->acc->id],['name'=>'description' , 'value'=>"test"],['name'=>'name' , 'value'=>"Test Subject"]]]);
+        $result = $this->soapClient->call('set_entry', ['session'=>$this->sessionId,"module_name" => 'Emails', 'name_value_list' => [['name'=>'assigned_user_id' , 'value'=>$GLOBALS['current_user']->id],['name'=>'from_addr_name' , 'value'=>'test@test.com'],['name'=>'parent_type' , 'value'=>'Accounts'],['name'=>'parent_id' , 'value'=>$this->acc->id],['name'=>'description' , 'value'=>"test"],['name'=>'name' , 'value'=>"Test Subject"]]]);
         $this->email_id = $result['id'];
 
-        $result = $this->_soapClient->call('get_entry_list', ['session'=> $this->_sessionId,'module_name'=>'Emails', 'query' => "emails.id='".$this->email_id."'", 'order_by' => '', 'offset' => 0, 'select_fields' => ['id', 'from_addr_name', 'to_addrs_names'],'max_results'=>10,'deleted'=>0]);
+        $result = $this->soapClient->call('get_entry_list', ['session'=> $this->sessionId,'module_name'=>'Emails', 'query' => "emails.id='".$this->email_id."'", 'order_by' => '', 'offset' => 0, 'select_fields' => ['id', 'from_addr_name', 'to_addrs_names'],'max_results'=>10,'deleted'=>0]);
 
         $this->assertEquals('from_addr_name', $result['entry_list'][0]['name_value_list'][1]['name']);
         $this->assertEquals('test@test.com', $result['entry_list'][0]['name_value_list'][1]['value']);
@@ -40,7 +40,7 @@ class RetrieveEmailFieldsTest extends SOAPTestCase
 
     public function testGetEmailModuleFields()
     {
-        $result = $this->_soapClient->call('get_module_fields', ['session'=>$this->_sessionId,"module_name" => 'Emails']);
+        $result = $this->soapClient->call('get_module_fields', ['session'=>$this->sessionId,"module_name" => 'Emails']);
         $foundFromAddrsName = false;
         foreach ($result['module_fields'] as $field) {
             if ($field['name'] == 'from_addr_name') {

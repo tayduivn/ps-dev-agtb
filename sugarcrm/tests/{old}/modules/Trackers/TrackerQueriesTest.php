@@ -14,10 +14,10 @@ use PHPUnit\Framework\TestCase;
 
 class TrackerQueriesTest extends TestCase
 {
-    var $dump_slow_queries;
-    var $slow_query_time_msec;
-    var $paused;
-    var $query_hash = '01968500dc05a7c938343c02f58f833a';
+    public $dump_slow_queries;
+    public $slow_query_time_msec;
+    public $paused;
+    public $query_hash = '01968500dc05a7c938343c02f58f833a';
 
     protected function setUp() : void
     {
@@ -53,7 +53,7 @@ class TrackerQueriesTest extends TestCase
         $GLOBALS['db']->query($query);
     }
 
-    function test_track_slow_query()
+    public function test_track_slow_query()
     {
         $trackerManager = TrackerManager::getInstance();
         $disabledMonitors = $trackerManager->getDisabledMonitors();

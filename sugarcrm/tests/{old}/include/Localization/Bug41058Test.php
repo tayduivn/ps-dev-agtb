@@ -16,10 +16,10 @@ require_once 'modules/UpgradeWizard/uw_utils.php';
 
 class Bug41058Test extends TestCase
 {
-    var $user;
-    var $backupConfig;
-    var $backupSystemLocaleNameFormat;
-    var $loc;
+    public $user;
+    public $backupConfig;
+    public $backupSystemLocaleNameFormat;
+    public $loc;
 
     protected function setUp() : void
     {

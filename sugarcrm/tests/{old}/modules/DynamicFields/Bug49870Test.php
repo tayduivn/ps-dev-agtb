@@ -16,7 +16,7 @@ require_once 'modules/DynamicFields/FieldCases.php';
 
 class Bug49870Test extends TestCase
 {
-    var $field;
+    public $field;
 
     protected function setUp() : void
     {

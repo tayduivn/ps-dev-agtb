@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
 
 class Bug50549Test extends TestCase
 {
-    var $field;
+    public $field;
 
     protected function setUp() : void
     {
@@ -140,7 +140,7 @@ class Bug50549Test extends TestCase
 
 class Bug50549MockReporter extends Report
 {
-    var $all_fields =  [
+    public $all_fields =  [
         'self:multi_c' =>  [
             'dependency' => '',
             'required' => false,

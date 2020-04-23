@@ -1167,11 +1167,11 @@ class EmailTest extends TestCase
 
 class MockMailer extends SmtpMailer
 {
-    var $_sent;
+    private $sent;
 
-    function __construct(OutboundEmailConfiguration $config)
+    public function __construct(OutboundEmailConfiguration $config)
     {
-        $this->_sent = false;
+        $this->sent = false;
         $this->config = $config;
         $headers = new EmailHeaders();
         $headers->setHeader(EmailHeaders::From, $config->getFrom());
@@ -1192,12 +1192,12 @@ class MockMailer extends SmtpMailer
 
     public function send()
     {
-        $this->_sent = true;
+        $this->sent = true;
     }
 
     public function wasSent()
     {
-        return $this->_sent;
+        return $this->sent;
     }
 
     public function toArray()

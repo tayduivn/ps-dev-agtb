@@ -20,21 +20,21 @@ class Bug58560Test extends RestTestBase
      *
      * @var ModuleBuilderController
      */
-    protected static $_mb;
+    private static $mb;
 
     /**
      * Holder for the current request array
      *
      * @var array
      */
-    protected static $_request = [];
+    private static $request = [];
 
     /**
      * Mock request for creating a field
      *
      * @var array
      */
-    protected static $_createFieldRequestVars = [
+    private static $createFieldRequestVars = [
         "action" => "saveField",
         "comments" => "",
         "default" => "",
@@ -64,7 +64,7 @@ class Bug58560Test extends RestTestBase
      *
      * @var array
      */
-    protected static $_deleteFieldRequestVars = [
+    private static $deleteFieldRequestVars = [
         "action" => "DeleteField",
         "labelValue" => "Test Address",
         "label" => "LBL_TEST_ADDRESS",
@@ -85,33 +85,33 @@ class Bug58560Test extends RestTestBase
         SugarTestHelper::setUp('mod_strings', ['ModuleBuilder']);
         
         // Back up and reset the REQUEST
-        self::$_request = $_REQUEST;
-        $_REQUEST = self::$_createFieldRequestVars;
+        self::$request = $_REQUEST;
+        $_REQUEST = self::$createFieldRequestVars;
         
         // Build up the controller to save the new field
-        self::$_mb = new ModuleBuilderController();
-        self::$_mb->metadataApiCacheCleared = false;
-        self::$_mb->action_SaveField();
+        self::$mb = new ModuleBuilderController();
+        self::$mb->metadataApiCacheCleared = false;
+        self::$mb->action_SaveField();
     }
     
     public static function tearDownAfterClass(): void
     {
         // Set the request to delete the test field
-        $_REQUEST = self::$_deleteFieldRequestVars;
+        $_REQUEST = self::$deleteFieldRequestVars;
         
         // Loop through the created fields and wipe them out
         $suffixes = ['street', 'city', 'state', 'postalcode', 'country'];
         foreach ($suffixes as $suffix) {
-            $_REQUEST['name'] = self::_getFieldName($suffix);
-            self::$_mb->metadataApiCacheCleared = false;
-            self::$_mb->action_DeleteField();
+            $_REQUEST['name'] = self::getFieldName($suffix);
+            self::$mb->metadataApiCacheCleared = false;
+            self::$mb->action_DeleteField();
         }
         
         // Clean up the environment
         SugarTestHelper::tearDown();
         
         // Reset the request
-        $_REQUEST = self::$_request;
+        $_REQUEST = self::$request;
     }
 
     /**
@@ -123,7 +123,7 @@ class Bug58560Test extends RestTestBase
     {
         // Copied from RestTestBase and modified for our use here
         // Create an anonymous user for login purposes
-        $this->_user = $GLOBALS['current_user'];
+        $this->user = $GLOBALS['current_user'];
     }
 
     /**
@@ -131,16 +131,16 @@ class Bug58560Test extends RestTestBase
      */
     public function testCustomFieldMetaDataFilesSaved()
     {
-        $field = self::$_deleteFieldRequestVars['name'];
+        $field = self::$deleteFieldRequestVars['name'];
         
         // Eliminating the repetitive rebuilding of metadata cache in action_saveField
         // phpUnit should NOT be running setUpBeforeClass and tearDownAfterClass
         // for each test case, but it appears it is doing just that so this test
         // is being pulled out of the data provider and hit in a loop. Not ideal
         // but necessary.
-        foreach ($this->_testFieldFileProvider() as $params) {
+        foreach ($this->testFieldFileProvider() as $params) {
             $suffix = $params['suffix'];
-            $name = self::_getFieldName($suffix);
+            $name = self::getFieldName($suffix);
             $file = 'custom/Extension/modules/Accounts/Ext/Vardefs/sugarfield_' . $name . '.php';
             $this->assertFileExists($file, "Custom field vardefs file not found");
             
@@ -157,23 +157,23 @@ class Bug58560Test extends RestTestBase
      */
     public function testGroupSetForAddressInMetaData()
     {
-        $field = self::$_deleteFieldRequestVars['name'];
-        $reply = $this->_restCall("metadata?module_filter=Accounts&type_filter=modules");
+        $field = self::$deleteFieldRequestVars['name'];
+        $reply = $this->restCall("metadata?module_filter=Accounts&type_filter=modules");
         $this->assertNotEmpty($reply['reply']['modules']['Accounts']['fields'], "Fields metadata array is empty");
         
         // Break it down a bit
         $fields = $reply['reply']['modules']['Accounts']['fields'];
         
         // This is kinda dirty, but it saves us from making 5 rest calls
-        foreach ($this->_testFieldFileProvider() as $params) {
-            $name = self::_getFieldName($params['suffix']);
+        foreach ($this->testFieldFileProvider() as $params) {
+            $name = self::getFieldName($params['suffix']);
             $this->assertArrayHasKey($name, $fields, "The field $name is missing");
             $this->assertNotEmpty($fields[$name]['group'], "Group index of the fields metadata for $name is not set");
             $this->assertEquals($fields[$name]['group'], $field, "Field group {$fields[$name]['group']} did not match the known field name $field");
         }
     }
     
-    public function _testFieldFileProvider()
+    public function testFieldFileProvider()
     {
         return [
             ['suffix' => 'street'],
@@ -184,9 +184,9 @@ class Bug58560Test extends RestTestBase
         ];
     }
     
-    protected static function _getFieldName($suffix)
+    private static function getFieldName($suffix)
     {
-        $field = self::$_createFieldRequestVars['name'];
+        $field = self::$createFieldRequestVars['name'];
         $name = $field . '_' . $suffix . '_c';
         return $name;
     }

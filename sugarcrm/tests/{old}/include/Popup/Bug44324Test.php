@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 class Bug44324Test extends TestCase
 {
-    var $contact;
+    public $contact;
 
     protected function setUp() : void
     {

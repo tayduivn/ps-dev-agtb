@@ -21,14 +21,14 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug35413Test extends TestCase
 {
-    private $_localization = null;
+    private $localization;
 
     protected function setUp() : void
     {
-        $this->_localization = Localization::getObject();
+        $this->localization = Localization::getObject();
     }
 
-    function stringsProvider()
+    public static function stringsProvider()
     {
         return [
             [
@@ -79,7 +79,7 @@ class Bug35413Test extends TestCase
     public function testEncodings($source, $utf8string, $encoding)
     {
         $source = base64_decode($source);
-        $translateCharsetResult = $this->_localization->translateCharset($source, $encoding, 'UTF-8');
+        $translateCharsetResult = $this->localization->translateCharset($source, $encoding, 'UTF-8');
 
         $this->assertEquals($utf8string, $translateCharsetResult, 'Strings have to be the same');
     }

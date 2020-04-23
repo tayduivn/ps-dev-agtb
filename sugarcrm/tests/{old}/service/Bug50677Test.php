@@ -22,12 +22,12 @@ class Bug50677Test extends SOAPTestCase
     /**
      * @var Product
      */
-    protected $_product;
+    private $product;
 
     /**
      * @var ProductBundle
      */
-    protected $_product_bundle;
+    private $productBundle;
 
     /**
      * setUp
@@ -35,18 +35,18 @@ class Bug50677Test extends SOAPTestCase
      */
     protected function setUp() : void
     {
-        $this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/service/v3_1/soap.php';
+        $this->soapURL = $GLOBALS['sugar_config']['site_url'].'/service/v3_1/soap.php';
         parent::setUp();
-        $this->_login(); // Logging in just before the SOAP call as this will also commit any pending DB changes
+        $this->login(); // Logging in just before the SOAP call as this will also commit any pending DB changes
 
-        $this->_product = SugarTestProductUtilities::createProduct();
-        $this->_product_bundle = SugarTestProductBundleUtilities::createProductBundle();
+        $this->product = SugarTestProductUtilities::createProduct();
+        $this->productBundle = SugarTestProductBundleUtilities::createProductBundle();
         $GLOBALS['db']->commit();
     }
 
     protected function tearDown() : void
     {
-        $GLOBALS['db']->query("DELETE FROM product_bundle_product WHERE bundle_id = '{$this->_product_bundle->id}'");
+        $GLOBALS['db']->query("DELETE FROM product_bundle_product WHERE bundle_id = '{$this->productBundle->id}'");
 
         SugarTestProductUtilities::removeAllCreatedProducts();
         SugarTestProductBundleUtilities::removeAllCreatedProductBundles();
@@ -55,12 +55,12 @@ class Bug50677Test extends SOAPTestCase
 
     public function testSetRelationshipProductBundleProduct()
     {
-        $result = $this->_soapClient->call('set_relationship', [
-            'session' => $this->_sessionId,
+        $result = $this->soapClient->call('set_relationship', [
+            'session' => $this->sessionId,
             'module_name' => 'ProductBundles',
-            'module_id' => $this->_product_bundle->id,
+            'module_id' => $this->productBundle->id,
             'link_field_name' => 'products',
-            'related_ids' => $this->_product->id,
+            'related_ids' => $this->product->id,
             'name_value_list' => [
                 ['name' => 'product_index', 'value' => 1],
                 ],
@@ -71,8 +71,8 @@ class Bug50677Test extends SOAPTestCase
         // lets make sure the row is correct since it was created
         // it should have a product_index of 1.
         $db = $GLOBALS['db'];
-        $sql = "SELECT id, product_index FROM product_bundle_product WHERE bundle_id = '" . $db->quote($this->_product_bundle->id) . "'
-                AND product_id = '" . $db->quote($this->_product->id) . "'";
+        $sql = "SELECT id, product_index FROM product_bundle_product WHERE bundle_id = '" . $db->quote($this->productBundle->id) . "'
+                AND product_id = '" . $db->quote($this->product->id) . "'";
         $result = $db->query($sql);
         $row = $db->fetchByAssoc($result);
 

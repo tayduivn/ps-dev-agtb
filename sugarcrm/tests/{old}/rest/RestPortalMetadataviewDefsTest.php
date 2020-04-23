@@ -43,7 +43,7 @@ class RestMetadataViewDefsTest extends RestTestPortalBase
     public function testDefaultPortalLayoutMetaData()
     {
         // FIXME TY-1298: investigate why this test fails
-        $restReply = $this->_restCall('metadata?type_filter=modules&module_filter=Contacts');
+        $restReply = $this->restCall('metadata?type_filter=modules&module_filter=Contacts');
         // Hash should always be set
         $this->assertTrue(isset($restReply['reply']['modules']['Contacts']['layouts']['_hash']), "Portal layouts missing hash empty");
         unset($restReply['reply']['modules']['Contacts']['layouts']['_hash']);
@@ -57,8 +57,8 @@ class RestMetadataViewDefsTest extends RestTestPortalBase
      */
     public function testDefaultPortalViewMetaData()
     {
-        $this->_clearMetadataCache();
-        $restReply = $this->_restCall('metadata?type_filter=modules&module_filter=Cases');
+        $this->clearMetadataCache();
+        $restReply = $this->restCall('metadata?type_filter=modules&module_filter=Cases');
         $this->assertTrue(empty($restReply['reply']['modules']['Cases']['views']['ghostrider']), "Test file found unexpectedly");
     }
 
@@ -74,8 +74,8 @@ class RestMetadataViewDefsTest extends RestTestPortalBase
             "<?php\n\$viewdefs['Contacts']['portal']['layout']['banana'] = array('yummy' => 'Banana Split');"
         );
 
-        $this->_clearMetadataCache();
-        $restReply = $this->_restCall('metadata?type_filter=modules&module_filter=Contacts');
+        $this->clearMetadataCache();
+        $restReply = $this->restCall('metadata?type_filter=modules&module_filter=Contacts');
         $this->assertEquals('Banana Split', $restReply['reply']['modules']['Contacts']['layouts']['banana']['meta']['yummy'], "Failed to retrieve all layout metadata");
     }
 
@@ -91,8 +91,8 @@ class RestMetadataViewDefsTest extends RestTestPortalBase
             "<?php\n\$viewdefs['Cases']['portal']['view']['ghostrider'] = array('pattern' => 'Full');"
         );
 
-        $this->_clearMetadataCache();
-        $restReply = $this->_restCall('metadata?type_filter=modules&module_filter=Cases');
+        $this->clearMetadataCache();
+        $restReply = $this->restCall('metadata?type_filter=modules&module_filter=Cases');
         $this->assertEquals('Full', $restReply['reply']['modules']['Cases']['views']['ghostrider']['meta']['pattern'], "Failed to retrieve all view metadata");
     }
 
@@ -101,11 +101,11 @@ class RestMetadataViewDefsTest extends RestTestPortalBase
      */
     public function testMetadataCacheBuild()
     {
-        $this->_clearMetadataCache();
-        $restReply = $this->_restCall('metadata/public?type_filter=config&platform=portal');
+        $this->clearMetadataCache();
+        $restReply = $this->restCall('metadata/public?type_filter=config&platform=portal');
         $this->assertArrayHasKey('_hash', $restReply['reply'], "Did not have a _hash on the first run");
 
-        $restReply = $this->_restCall('metadata/public?type_filter=config&platform=portal');
+        $restReply = $this->restCall('metadata/public?type_filter=config&platform=portal');
         $this->assertArrayHasKey('_hash', $restReply['reply'], "Did not have a _hash on the second run");
     }
 

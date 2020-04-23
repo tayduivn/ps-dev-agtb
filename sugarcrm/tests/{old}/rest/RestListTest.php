@@ -167,16 +167,16 @@ class RestListTest extends RestTestBase
         $GLOBALS['db']->commit();
 
         // Test searching for a lot of records
-        $restReply = $this->_restCall("Accounts/?q=".rawurlencode("UNIT TEST")."&max_num=30");
+        $restReply = $this->restCall("Accounts/?q=".rawurlencode("UNIT TEST")."&max_num=30");
         $this->assertEquals(30, $restReply['reply']['next_offset'], "Next offset was set incorrectly.");
 
         // Test Offset
-        $restReply2 = $this->_restCall("Accounts?offset=".$restReply['reply']['next_offset']);
+        $restReply2 = $this->restCall("Accounts?offset=".$restReply['reply']['next_offset']);
 
         $this->assertNotEquals($restReply['reply']['next_offset'], $restReply2['reply']['next_offset'], "Next offset was not set correctly on the second page.");
 
         // Test finding one record
-        $restReply3 = $this->_restCall("Accounts/?q=".rawurlencode($this->accounts[17]->name));
+        $restReply3 = $this->restCall("Accounts/?q=".rawurlencode($this->accounts[17]->name));
 
         $this->assertTrue(is_array($restReply3['reply']['records']), "Reply3 Records is not an array");
 
@@ -185,7 +185,7 @@ class RestListTest extends RestTestBase
         $this->assertEquals($this->accounts[17]->name, $firstRecord['name'], "The search failed for record: ".$this->accounts[17]->name);
 
         // Sorting descending
-        $restReply4 = $this->_restCall("Accounts?q=".rawurlencode("UNIT TEST")."&order_by=id:DESC");
+        $restReply4 = $this->restCall("Accounts?q=".rawurlencode("UNIT TEST")."&order_by=id:DESC");
 
         $this->assertTrue(is_array($restReply4['reply']['records']), "Reply4 Records is not an array");
 
@@ -197,7 +197,7 @@ class RestListTest extends RestTestBase
         );
 
         // Sorting ascending
-        $restReply5 = $this->_restCall("Accounts?q=".rawurlencode("UNIT TEST")."&order_by=id:ASC");
+        $restReply5 = $this->restCall("Accounts?q=".rawurlencode("UNIT TEST")."&order_by=id:ASC");
 
         $this->assertTrue(is_array($restReply5['reply']['records']), "Reply5 Records is not an array");
 
@@ -208,11 +208,11 @@ class RestListTest extends RestTestBase
             'Second record is not lower than the first, ascending order failed.'
         );
         // Test Favorites
-        $restReply = $this->_restCall("Accounts?favorites=1&max_num=10");
+        $restReply = $this->restCall("Accounts?favorites=1&max_num=10");
         $this->assertEquals(6, count($restReply['reply']['records']));
 
         // Test My Items
-        $restReply = $this->_restCall("Accounts?my_items=1&max_num=20");
+        $restReply = $this->restCall("Accounts?my_items=1&max_num=20");
         $this->assertEquals(10, count($restReply['reply']['records']));
 
         // validate each is actually my item
@@ -221,16 +221,16 @@ class RestListTest extends RestTestBase
         }
 
         // Test Favorites & My Items
-        $restReply = $this->_restCall("Accounts?favorites=1&my_items=1&max_num=10");
+        $restReply = $this->restCall("Accounts?favorites=1&my_items=1&max_num=10");
         $this->assertEquals(2, count($restReply['reply']['records']));
 
         // Get a list, no searching
-        $restReply = $this->_restCall("Accounts?max_num=10");
+        $restReply = $this->restCall("Accounts?max_num=10");
         $this->assertEquals(10, count($restReply['reply']['records']));
 
         // Get 2 pages, verify the data is different [check guids]
-        $restReply_page1 = $this->_restCall("Accounts?offset=0&max_num=5");
-        $restReply_page2 = $this->_restCall("Accounts?offset=5&max_num=5");
+        $restReply_page1 = $this->restCall("Accounts?offset=0&max_num=5");
+        $restReply_page2 = $this->restCall("Accounts?offset=5&max_num=5");
         foreach ($restReply_page1['reply']['records'] as $page1_record) {
             foreach ($restReply_page2['reply']['records'] as $page2_record) {
                 $this->assertNotEquals($page2_record['id'], $page1_record['id'], "ID's match, pagination may be broke");
@@ -249,7 +249,7 @@ class RestListTest extends RestTestBase
         $bug->save();
         $this->bugs[] = $bug;
         $GLOBALS['db']->commit();
-        $restReply = $this->_restCall("Bugs?q=" . rawurlencode("UNIT TEST"));
+        $restReply = $this->restCall("Bugs?q=" . rawurlencode("UNIT TEST"));
         $tmp = array_keys($restReply['reply']['records']);
         $this->assertTrue(!empty($restReply['reply']['records'][$tmp[0]]['description']), "Description not filled out");
     }
@@ -291,17 +291,17 @@ class RestListTest extends RestTestBase
         }
         $GLOBALS['db']->commit();
         // Test searching for a lot of records
-        $restReply = $this->_restCall("Cases/?q=".rawurlencode("UNIT TEST")."&max_num=30");
+        $restReply = $this->restCall("Cases/?q=".rawurlencode("UNIT TEST")."&max_num=30");
 
         $this->assertEquals(30, $restReply['reply']['next_offset'], "Next offset was set incorrectly.");
 
         // Test Offset
-        $restReply2 = $this->_restCall("Cases?offset=".$restReply['reply']['next_offset']);
+        $restReply2 = $this->restCall("Cases?offset=".$restReply['reply']['next_offset']);
 
         $this->assertNotEquals($restReply['reply']['next_offset'], $restReply2['reply']['next_offset'], "Next offset was not set correctly on the second page.");
 
         // Test finding one record
-        $restReply3 = $this->_restCall("Cases/?q=".rawurlencode($this->cases[17]->name));
+        $restReply3 = $this->restCall("Cases/?q=".rawurlencode($this->cases[17]->name));
 
         $tmp = array_keys($restReply3['reply']['records']);
         $firstRecord = $restReply3['reply']['records'][$tmp[0]];
@@ -309,11 +309,11 @@ class RestListTest extends RestTestBase
 
         // Here is where the problem came
         // First searching for specific fields broke
-        $restReply = $this->_restCall("Cases/?q=".rawurlencode("UNIT TEST")."&fields=name,case_number");
+        $restReply = $this->restCall("Cases/?q=".rawurlencode("UNIT TEST")."&fields=name,case_number");
         $this->assertGreaterThan(0, count($restReply['reply']['records']));
 
         // Then searching without specific fields broke
-        $restReply = $this->_restCall("Cases/?q=".rawurlencode("UNIT TEST"));
+        $restReply = $this->restCall("Cases/?q=".rawurlencode("UNIT TEST"));
         $this->assertGreaterThan(0, count($restReply['reply']['records']));
 
         // add a search field
@@ -342,7 +342,7 @@ class RestListTest extends RestTestBase
         // switch back to the user
         $GLBOALS['current_user'] = $old_user;
 
-        $restReply = $this->_restCall("Cases/?q=New");
+        $restReply = $this->restCall("Cases/?q=New");
 
         foreach ($restReply['reply']['records'] as $record) {
             $status = trim($record['status']);
@@ -380,10 +380,10 @@ class RestListTest extends RestTestBase
         $row = $GLOBALS['db']->fetchByAssoc($result);
         $user_count = $row['user_count'];
 
-        $restReply = $this->_restCall('Employees');
+        $restReply = $this->restCall('Employees');
         $this->assertEquals($employee_count, count($restReply['reply']['records']), "Number of employees incorrect.  Should be 11 but is " . count($restReply['reply']['records']));
 
-        $restReply = $this->_restCall('Users');
+        $restReply = $this->restCall('Users');
         $this->assertEquals($user_count, count($restReply['reply']['records']), "Number of users incorrect.  Should be {$user_count} but is " . count($restReply['reply']['records']));
 
         // set a user employee_status as terminated
@@ -393,10 +393,10 @@ class RestListTest extends RestTestBase
 
         $current_employee_count = $employee_count-1;
 
-        $restReply = $this->_restCall('Employees');
+        $restReply = $this->restCall('Employees');
         $this->assertEquals($current_employee_count, count($restReply['reply']['records']), "Number of employees incorrect.  Should be {$current_employee_count} but is " . count($restReply['reply']['records']));
 
-        $restReply = $this->_restCall('Users');
+        $restReply = $this->restCall('Users');
         $this->assertEquals($user_count, count($restReply['reply']['records']), "Number of users incorrect.  Should be {$user_count} but is " . count($restReply['reply']['records']));
 
         // set a users status as inactive
@@ -408,10 +408,10 @@ class RestListTest extends RestTestBase
 
         $current_user_count = $user_count-1;
 
-        $restReply = $this->_restCall('Employees');
+        $restReply = $this->restCall('Employees');
         $this->assertEquals($current_employee_count, count($restReply['reply']['records']), "Number of employees incorrect.  Should be {$current_employee_count} but is " . count($restReply['reply']['records']));
 
-        $restReply = $this->_restCall('Users');
+        $restReply = $this->restCall('Users');
         $this->assertEquals($current_user_count, count($restReply['reply']['records']), "Number of users incorrect.  Should be {$current_user_count} but is " . count($restReply['reply']['records']));
     }
 
@@ -503,23 +503,23 @@ class RestListTest extends RestTestBase
         $GLOBALS['db']->commit();
 
         // Test searching for a lot of records
-        $restReply = $this->_restCall("search?q=".rawurlencode("UNIT TEST")."&max_num=5");
+        $restReply = $this->restCall("search?q=".rawurlencode("UNIT TEST")."&max_num=5");
         $this->assertEquals(5, $restReply['reply']['next_offset'], "Next offset was set incorrectly.");
 
         // Test Offset
-        $restReply2 = $this->_restCall("search/?offset=".$restReply['reply']['next_offset']);
+        $restReply2 = $this->restCall("search/?offset=".$restReply['reply']['next_offset']);
 
         $this->assertNotEquals($restReply['reply']['next_offset'], $restReply2['reply']['next_offset'], "Next offset was not set correctly on the second page.");
 
         // Test finding one record
-        $restReply3 = $this->_restCall("search/?q=".rawurlencode($this->opps[17]->name));
+        $restReply3 = $this->restCall("search/?q=".rawurlencode($this->opps[17]->name));
 
         $tmp = array_keys($restReply3['reply']['records']);
         $firstRecord = $restReply3['reply']['records'][$tmp[0]];
         $this->assertEquals($this->opps[17]->name, $firstRecord['name'], "The search failed for record: ".$this->opps[17]->name);
 
         // Sorting descending
-        $restReply4 = $this->_restCall("search?q=".rawurlencode("UNIT TEST")."&order_by=id:DESC");
+        $restReply4 = $this->restCall("search?q=".rawurlencode("UNIT TEST")."&order_by=id:DESC");
 
         $tmp = array_keys($restReply4['reply']['records']);
         $this->assertLessThan(
@@ -529,7 +529,7 @@ class RestListTest extends RestTestBase
         );
 
         // Sorting ascending
-        $restReply5 = $this->_restCall("search?q=".rawurlencode("UNIT TEST")."&order_by=id:ASC");
+        $restReply5 = $this->restCall("search?q=".rawurlencode("UNIT TEST")."&order_by=id:ASC");
 
         $tmp = array_keys($restReply5['reply']['records']);
         $this->assertGreaterThan(
@@ -538,19 +538,19 @@ class RestListTest extends RestTestBase
             'Second record is not lower than the first, ascending order failed.'
         );
         // Test Favorites
-        $restReply = $this->_restCall("search?favorites=1&max_num=30&max_num_module=10&fields=name");
+        $restReply = $this->restCall("search?favorites=1&max_num=30&max_num_module=10&fields=name");
         $this->assertEquals(18, count($restReply['reply']['records']));
 
         // Test My Items
-        $restReply = $this->_restCall("search?my_items=1&max_num=50&max_num_module=20");
+        $restReply = $this->restCall("search?my_items=1&max_num=50&max_num_module=20");
         $this->assertEquals(30, count($restReply['reply']['records']));
 
         // Test Favorites & My Items
-        $restReply = $this->_restCall("search?favorites=1&my_items=1&max_num=10");
+        $restReply = $this->restCall("search?favorites=1&my_items=1&max_num=10");
         $this->assertEquals(6, count($restReply['reply']['records']));
 
         // Get a list, no searching
-        $restReply = $this->_restCall("search?max_num=10");
+        $restReply = $this->restCall("search?max_num=10");
         $this->assertEquals(10, count($restReply['reply']['records']));
     }
 }

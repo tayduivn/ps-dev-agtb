@@ -15,16 +15,11 @@
  */
 class RestBug57839Test extends RestTestBase
 {
-    protected $_accountId;
-    
-    protected function setUp() : void
-    {
-        parent::setUp();
-    }
-    
+    private $accountId;
+
     protected function tearDown() : void
     {
-        $GLOBALS['db']->query("DELETE FROM accounts WHERE id = '{$this->_accountId}'");
+        $GLOBALS['db']->query("DELETE FROM accounts WHERE id = '{$this->accountId}'");
         $GLOBALS['db']->commit();
         
         parent::tearDown();
@@ -36,9 +31,9 @@ class RestBug57839Test extends RestTestBase
     public function testCorrectResponseHeadersForRequestTypes()
     {
         // Create an Account - POST
-        $reply = $this->_restCall("Accounts/", json_encode(['name'=>'UNIT TEST - AFTER']), 'POST');
+        $reply = $this->restCall("Accounts/", json_encode(['name'=>'UNIT TEST - AFTER']), 'POST');
         $this->assertTrue(isset($reply['reply']['id']), "An account was not created (or if it was, the ID was not returned)");
-        $this->_accountId = $reply['reply']['id'];
+        $this->accountId = $reply['reply']['id'];
         
         // Header assertions
         $this->assertNotEmpty($reply['headers']['Cache-Control'], "Cache-Control header missing after POST request");
@@ -47,7 +42,7 @@ class RestBug57839Test extends RestTestBase
         $this->assertEquals('no-cache', $reply['headers']['Pragma'], "Incorrect Pragma value for POST request");
         
         // Get the Account - GET with ETag
-        $reply = $this->_restCall("Accounts/{$this->_accountId}");
+        $reply = $this->restCall("Accounts/{$this->accountId}");
         $this->assertTrue(isset($reply['reply']['id']), "Account ID was not returned");
         
         // Sugar REST GET reply includes empty Cache-Control and Pragma headers
@@ -56,9 +51,9 @@ class RestBug57839Test extends RestTestBase
         $this->assertNotEmpty($reply['headers']['ETag'], "ETag header missing from GET request");
         
         // Modify the Account - PUT
-        $reply = $this->_restCall("Accounts/{$this->_accountId}", json_encode(['name'=>'UNIT TEST - AFTER']), 'PUT');
+        $reply = $this->restCall("Accounts/{$this->accountId}", json_encode(['name'=>'UNIT TEST - AFTER']), 'PUT');
         $this->assertTrue(isset($reply['reply']['id']), "Account ID was not returned in the PUT request");
-        $this->assertEquals($this->_accountId, $reply['reply']['id'], "Account ID from reply is different from the create after PUT");
+        $this->assertEquals($this->accountId, $reply['reply']['id'], "Account ID from reply is different from the create after PUT");
         
         // Header assertions
         $this->assertNotEmpty($reply['headers']['Cache-Control'], "Cache-Control header missing after PUT request");
@@ -67,9 +62,9 @@ class RestBug57839Test extends RestTestBase
         $this->assertEquals('no-cache', $reply['headers']['Pragma'], "Incorrect Pragma value for PUT request");
         
         // Delete the Account - DELETE
-        $reply = $this->_restCall("Accounts/{$this->_accountId}", '', 'DELETE');
+        $reply = $this->restCall("Accounts/{$this->accountId}", '', 'DELETE');
         $this->assertTrue(isset($reply['reply']['id']), "Account ID was not returned in the DELETE request");
-        $this->assertEquals($this->_accountId, $reply['reply']['id'], "Account ID from reply is different from the create after DELETE");
+        $this->assertEquals($this->accountId, $reply['reply']['id'], "Account ID from reply is different from the create after DELETE");
         
         // Header assertions
         $this->assertNotEmpty($reply['headers']['Cache-Control'], "Cache-Control header missing after DELETE request");

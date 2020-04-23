@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 class TrackerMetricsTest extends TestCase
 {
-    var $trackerSettings;
+    public $trackerSettings;
 
     protected function setUp() : void
     {
@@ -26,7 +26,7 @@ class TrackerMetricsTest extends TestCase
         TrackerTestUtility::tearDown();
     }
     
-    function testMetrics()
+    public function testMetrics()
     {
         $trackerManager = TrackerManager::getInstance();
         $monitor = $trackerManager->getMonitor('tracker');

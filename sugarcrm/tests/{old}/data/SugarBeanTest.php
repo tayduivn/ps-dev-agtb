@@ -1176,7 +1176,7 @@ class SugarBeanTest extends TestCase
 
 class BeanMockTestObjectName extends SugarBean
 {
-    var $table_name = "my_table";
+    public $table_name = "my_table";
 }
 
 class BeanFunctionFieldsMock extends SugarBean

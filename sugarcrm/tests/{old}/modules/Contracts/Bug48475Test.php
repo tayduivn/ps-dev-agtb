@@ -17,8 +17,8 @@ require_once 'modules/Contracts/Contract.php';
 
 class Bug48475Test extends TestCase
 {
-    var $contractType;
-    var $contract;
+    public $contractType;
+    public $contract;
 
     protected function setUp() : void
     {

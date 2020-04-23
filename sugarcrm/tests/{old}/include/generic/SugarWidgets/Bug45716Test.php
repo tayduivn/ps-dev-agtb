@@ -827,9 +827,7 @@ class Bug45716Helper
             ],
         ]; // END: selected_loaded_custom_links
 
-
-
-    function getAttribute($dontcare)
+    public function getAttribute()
     {
         return $this;
     }

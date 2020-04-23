@@ -15,8 +15,8 @@ use PHPUnit\Framework\TestCase;
 
 class Bug42097Test extends TestCase
 {
-    var $testUser;
-    
+    public $testUser;
+
     protected function setUp() : void
     {
         $this->testUser = SugarTestUserUtilities::createAnonymousUser();
@@ -27,7 +27,7 @@ class Bug42097Test extends TestCase
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         $this->testUser = null;
     }
-    
+
     
     /**
      * testRemoveUserFromTeam
@@ -44,7 +44,7 @@ class Bug42097Test extends TestCase
         } catch (Exception $ex) {
             $exceptionThrown = true;
         }
-       
+
         $this->assertTrue($exceptionThrown, 'Assert that an exception was thrown for attempting to remove user off own private team');
     }
 }

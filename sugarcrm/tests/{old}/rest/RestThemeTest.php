@@ -53,13 +53,13 @@ class RestThemeTest extends RestTestBase
         ];
 
         // TEST= GET bootstrap.css with a set of arguments
-        $restReply1 = $this->_restCall('css/preview' . $this->rawurlencode($args1));
+        $restReply1 = $this->restCall('css/preview' . $this->rawurlencode($args1));
 
         // TEST if the the response is not empty
         $this->assertNotEmpty($restReply1['replyRaw']);
 
         // TEST= GET bootstrap.css with another set of arguments
-        $restReply2 = $this->_restCall('css/preview' . $this->rawurlencode($args2));
+        $restReply2 = $this->restCall('css/preview' . $this->rawurlencode($args2));
 
         // TEST the two generated css are different
         $this->assertIsString($restReply1['replyRaw']);
@@ -73,7 +73,7 @@ class RestThemeTest extends RestTestBase
     public function testGetCustomThemeVars()
     {
         // TEST= GET theme
-        $restReply = $this->_restCall('theme?platform=' . $this->platformTest);
+        $restReply = $this->restCall('theme?platform=' . $this->platformTest);
 
         // TEST we get a hash of variables
         $this->assertEquals(['name' => 'BorderColor', 'value' => '#E61718'], $restReply['reply']['hex'][0]);
@@ -96,14 +96,14 @@ class RestThemeTest extends RestTestBase
         ];
 
         // Fake the user is an admin
-        $this->_user->is_admin = 1;
-        $this->_user->save();
+        $this->user->is_admin = 1;
+        $this->user->save();
         $GLOBALS['db']->commit();
         // TEST= POST theme
-        $restReply = $this->_restCall('theme', json_encode($args));
+        $restReply = $this->restCall('theme', json_encode($args));
 
-        $this->_user->is_admin = 0;
-        $this->_user->save();
+        $this->user->is_admin = 0;
+        $this->user->save();
         $GLOBALS['db']->commit();
 
         // TEST the css files have been created
@@ -163,15 +163,15 @@ class RestThemeTest extends RestTestBase
         ];
 
         // Fake the user is an admin
-        $this->_user->is_admin = 1;
-        $this->_user->save();
+        $this->user->is_admin = 1;
+        $this->user->save();
         $GLOBALS['db']->commit();
 
         // TEST= POST theme with reset=true
-        $this->_restCall('theme', json_encode($args));
+        $this->restCall('theme', json_encode($args));
 
-        $this->_user->is_admin = 0;
-        $this->_user->save();
+        $this->user->is_admin = 0;
+        $this->user->save();
         $GLOBALS['db']->commit();
 
         // TEST variables.less generated in the custom folder is the same as the default theme
@@ -200,7 +200,7 @@ class RestThemeTest extends RestTestBase
             'NavigationBar' => '#192c47',
             'PrimaryButton' => '#f5b30a',
         ];
-        $restReply = $this->_restCall('css/preview' . $this->rawurlencode($args));
+        $restReply = $this->restCall('css/preview' . $this->rawurlencode($args));
 
         // TEST= the CSS contains the expected baseUrl
         $this->assertContains("../../styleguide/assets", $restReply['replyRaw']);

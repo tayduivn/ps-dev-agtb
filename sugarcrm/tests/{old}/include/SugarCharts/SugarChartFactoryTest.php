@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 class SugarChartFactoryTest extends TestCase
 {
-    var $engine;
+    public $engine;
 
     protected function setUp() : void
     {

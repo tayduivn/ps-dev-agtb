@@ -14,7 +14,7 @@ require_once 'include/dir_inc.php';
 
 class SugarTestThemeUtilities
 {
-    private static $_createdThemes = [];
+    private static $createdThemes = [];
 
     private function __construct()
     {
@@ -45,7 +45,7 @@ class SugarTestThemeUtilities
         $themedef .= ");";
         sugar_file_put_contents("themes/$themename/themedef.php", $themedef);
 
-        self::$_createdThemes[] = $themename;
+        self::$createdThemes[] = $themename;
 
         SugarAutoLoader::buildCache();
         SugarThemeRegistry::buildRegistry();
@@ -78,7 +78,7 @@ class SugarTestThemeUtilities
         $themedef .= ");";
         sugar_file_put_contents("themes/$themename/themedef.php", $themedef);
 
-        self::$_createdThemes[] = $themename;
+        self::$createdThemes[] = $themename;
 
         SugarAutoLoader::buildCache();
         SugarThemeRegistry::buildRegistry();
@@ -111,7 +111,7 @@ class SugarTestThemeUtilities
         $themedef .= ");";
         sugar_file_put_contents("custom/themes/$themename/themedef.php", $themedef);
 
-        self::$_createdThemes[] = $themename;
+        self::$createdThemes[] = $themename;
 
         SugarAutoLoader::buildCache();
         SugarThemeRegistry::buildRegistry();
@@ -142,7 +142,7 @@ class SugarTestThemeUtilities
         $themedef .= ");";
         sugar_file_put_contents("themes/$themename/themedef.php", $themedef);
 
-        self::$_createdThemes[] = $themename;
+        self::$createdThemes[] = $themename;
 
         SugarAutoLoader::buildCache();
         SugarThemeRegistry::buildRegistry();
@@ -176,7 +176,7 @@ class SugarTestThemeUtilities
         $themedef .= ");";
         sugar_file_put_contents("themes/$themename/themedef.php", $themedef);
 
-        self::$_createdThemes[] = $themename;
+        self::$createdThemes[] = $themename;
 
         SugarAutoLoader::buildCache();
         SugarThemeRegistry::buildRegistry();
@@ -204,6 +204,6 @@ class SugarTestThemeUtilities
 
     public static function getCreatedThemeNames()
     {
-        return self::$_createdThemes;
+        return self::$createdThemes;
     }
 }

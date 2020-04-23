@@ -24,7 +24,7 @@ class Bug43905Test extends TestCase
      * @group 43905
      * @return void
      */
-    function testEncrypt()
+    public function testEncrypt()
     {
         $myFieldSrc = 'FieldHaveToBeEncrypted';
 

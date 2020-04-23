@@ -14,8 +14,8 @@ use PHPUnit\Framework\TestCase;
 
 class Bug48800Test extends TestCase
 {
-    var $emailTemplate;
-    var $user;
+    public $emailTemplate;
+    public $user;
 
     protected function setUp() : void
     {

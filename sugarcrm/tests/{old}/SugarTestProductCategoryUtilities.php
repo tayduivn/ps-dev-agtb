@@ -15,7 +15,7 @@
 
 class SugarTestProductCategoryUtilities
 {
-    protected static $_createdProductCategories = [];
+    private static $createdProductCategories = [];
 
     private function __construct()
     {
@@ -32,7 +32,7 @@ class SugarTestProductCategoryUtilities
             $product_category->id = $id;
         }
         $product_category->save();
-        self::$_createdProductCategories[] = $product_category;
+        self::$createdProductCategories[] = $product_category;
         return $product_category;
     }
 
@@ -41,7 +41,7 @@ class SugarTestProductCategoryUtilities
         foreach ($product_category_ids as $product_category_id) {
             $product_category_id = new ProductCategory();
             $product_category->id = $product_category_id;
-            self::$_createdProductCategories[] = $product_category;
+            self::$createdProductCategories[] = $product_category;
         }
     }
 
@@ -53,13 +53,13 @@ class SugarTestProductCategoryUtilities
             $db->query('DELETE FROM product_categories WHERE id IN (' . $conditions . ')');
         }
 
-        self::$_createdProductCategories = [];
+        self::$createdProductCategories = [];
     }
 
     public static function getCreatedProductCategoryIds()
     {
         $product_category_ids = [];
-        foreach (self::$_createdProductCategories as $product_category) {
+        foreach (self::$createdProductCategories as $product_category) {
             $product_category_ids[] = $product_category->id;
         }
         return $product_category_ids;

@@ -12,7 +12,7 @@
 
 class SugarTestQuoteUtilities
 {
-    private static $_createdQuotes = [];
+    private static $createdQuotes = [];
 
     private function __construct()
     {
@@ -31,7 +31,7 @@ class SugarTestQuoteUtilities
             $quote->id = $id;
         }
         $quote->save();
-        self::$_createdQuotes[] = $quote;
+        self::$createdQuotes[] = $quote;
         return $quote;
     }
 
@@ -40,7 +40,7 @@ class SugarTestQuoteUtilities
         foreach ($quote_ids as $quote_id) {
             $quote = new Quote();
             $quote->id = $quote_id;
-            self::$_createdQuotes[] = $quote;
+            self::$createdQuotes[] = $quote;
         } // foreach
     } // fn
 
@@ -59,7 +59,7 @@ class SugarTestQuoteUtilities
     public static function getCreatedQuoteIds()
     {
         $quote_ids = [];
-        foreach (self::$_createdQuotes as $quote) {
+        foreach (self::$createdQuotes as $quote) {
             $quote_ids[] = $quote->id;
         }
         return $quote_ids;

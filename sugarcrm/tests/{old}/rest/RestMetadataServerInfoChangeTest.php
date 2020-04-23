@@ -24,7 +24,7 @@ class RestMetadataServerInfoChangeTest extends RestTestBase
         $mm = MetaDataManager::getManager(['mobile']);
         $original_server_info = $mm->getServerInfo();
 
-        $restReply = $this->_restCall('metadata?platform=mobile');
+        $restReply = $this->restCall('metadata?platform=mobile');
         $server_info = $restReply['reply']['server_info'];
 
         $this->assertEquals($original_server_info['fts'], $server_info['fts'], "Server Info not equal");
@@ -41,7 +41,7 @@ class RestMetadataServerInfoChangeTest extends RestTestBase
         $ac->action_saveglobalsearchsettings();
         ob_end_clean();
 
-        $restReply = $this->_restCall('metadata?platform=mobile');
+        $restReply = $this->restCall('metadata?platform=mobile');
         $server_info = $restReply['reply']['server_info'];
 
         $this->assertEquals($new_server_info['fts'], $server_info['fts'], "New Server Info not equal");

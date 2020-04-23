@@ -24,7 +24,7 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug10329Test extends TestCase
 {
-    private $_parser;
+    private $parser;
      
     protected function setUp() : void
     {
@@ -32,7 +32,7 @@ class Bug10329Test extends TestCase
         $GLOBALS['beanList'] = $beanList;
         $GLOBALS['beanFiles'] = $beanFiles;
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
-        $this->_parser = ParserFactory::getParser('EditView', 'Accounts');
+        $this->parser = ParserFactory::getParser('EditView', 'Accounts');
     }
 
     protected function tearDown() : void
@@ -43,7 +43,7 @@ class Bug10329Test extends TestCase
 
     public function testTranslateLabel()
     {
-        $avail_fields = $this->_parser->getAvailableFields();
+        $avail_fields = $this->parser->getAvailableFields();
         //verify that translateLabel exists
         $this->assertArrayHasKey('translatedLabel', $avail_fields[0]);
     }

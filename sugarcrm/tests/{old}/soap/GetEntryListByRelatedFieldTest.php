@@ -38,11 +38,11 @@ class GetEntryListByRelatedFieldTest extends SOAPTestCase
         $this->contact->accounts->add($this->account);
         $GLOBALS['db']->commit();
 
-        $this->_soapURL = $GLOBALS['sugar_config']['site_url'] . '/soap.php';
+        $this->soapURL = $GLOBALS['sugar_config']['site_url'] . '/soap.php';
         parent::setUp();
 
-        self::$_user = $GLOBALS['current_user'];
-        $this->_login();
+        self::$user = $GLOBALS['current_user'];
+        $this->login();
     }
 
     protected function tearDown() : void
@@ -60,10 +60,10 @@ class GetEntryListByRelatedFieldTest extends SOAPTestCase
 
     public function testGetEntryList()
     {
-        $result = $this->_soapClient->call(
+        $result = $this->soapClient->call(
             'get_entry_list',
             [
-                'session'       => $this->_sessionId,
+                'session'       => $this->sessionId,
                 'module_name'   => 'Contacts',
                 'query'         => 'accounts.name=' . $GLOBALS['db']->quoted($this->account->name),
                 'order_by'      => '',

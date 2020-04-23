@@ -14,39 +14,37 @@ use PHPUnit\Framework\TestCase;
 
 class DropdownUpgradeTest extends TestCase
 {
-    protected $_language = 'en_us'; // Test against English
-    protected $_testCustFile = ['include' => 'tests/{old}/include/DropdownUpgradeTestCustFile.php', 'ext' => 'tests/{old}/include/Bug60008-60607TestCustomFile.php'];
-    protected $_custFile = ['include' => 'custom/include/language/en_us.lang.php', 'ext' => 'custom/application/Ext/Language/en_us.lang.ext.php'];
-    protected $_custDir = ['include' => 'custom/include/language/', 'ext' => 'custom/application/Ext/Language/'];
-    protected $_backedUp = false;
-    
+    private $language = 'en_us'; // Test against English
+    private $testCustFile = ['include' => 'tests/{old}/include/DropdownUpgradeTestCustFile.php', 'ext' => 'tests/{old}/include/Bug60008-60607TestCustomFile.php'];
+    private $custFile = ['include' => 'custom/include/language/en_us.lang.php', 'ext' => 'custom/application/Ext/Language/en_us.lang.ext.php'];
+    private $custDir = ['include' => 'custom/include/language/', 'ext' => 'custom/application/Ext/Language/'];
+
     protected function setUp() : void
     {
         // Back up existing custom app list strings if they exist
-        foreach ($this->_custFile as $custFile) {
+        foreach ($this->custFile as $custFile) {
             if (file_exists($custFile)) {
                 rename($custFile, $custFile . '-backup');
-                $this->_backedUp = true;
             }
         }
 
         // For cases in which this test runs before the custom include directory
         // is created
-        foreach ($this->_custDir as $custDir) {
+        foreach ($this->custDir as $custDir) {
             if (!is_dir($custDir)) {
                 mkdir_recursive($custDir);
             }
         }
 
-        foreach ($this->_testCustFile as $type => $testCustFile) {
+        foreach ($this->testCustFile as $type => $testCustFile) {
             // Copy our test files into place
-            copy($this->_testCustFile[$type], $this->_custFile[$type]);
+            copy($this->testCustFile[$type], $this->custFile[$type]);
         }
     }
     
     protected function tearDown() : void
     {
-        foreach ($this->_custFile as $custFile) {
+        foreach ($this->custFile as $custFile) {
             // Delete the custom file we just created
             unlink($custFile);
             
@@ -65,7 +63,7 @@ class DropdownUpgradeTest extends TestCase
      */
     public function testAppListStringsParsedEvenWhenInGlobals()
     {
-        $als = return_app_list_strings_language($this->_language);
+        $als = return_app_list_strings_language($this->language);
         
         // Assert that the indexes are found
         $this->assertArrayHasKey('aaa_test_list', $als, "First GLOBALS index not found");

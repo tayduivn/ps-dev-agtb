@@ -18,8 +18,8 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug49397Test extends TestCase
 {
-    var $user;
-    var $user2;
+    public $user;
+    public $user2;
 
     protected function setUp() : void
     {

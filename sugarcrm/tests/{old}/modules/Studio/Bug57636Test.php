@@ -52,14 +52,14 @@ class Bug57636Test extends TestCase
         // Fields that are on the layout
         $fields = $parser->getLayout();
         foreach ($this->testFields as $field) {
-            $test = $this->_fieldNameFoundInFields($field, $fields['LBL_PANEL_DEFAULT']);
+            $test = $this->fieldNameFoundInFields($field, $fields['LBL_PANEL_DEFAULT']);
             $this->assertFalse($test, "$field should not be in default edit view fields");
         }
         
         // Fields that can be added to a layout
         $fields = $parser->getAvailableFields();
         foreach ($this->testFields as $field) {
-            $test = $this->_fieldNameFoundInFields($field, $fields);
+            $test = $this->fieldNameFoundInFields($field, $fields);
             $this->assertFalse($test, "$field should not be in available edit view fields");
         }
         
@@ -69,14 +69,14 @@ class Bug57636Test extends TestCase
         // Fields that are on the layout
         $fields = $parser->getLayout();
         foreach ($this->testFields as $field) {
-            $test = $this->_fieldNameFoundInFields($field, $fields['LBL_PANEL_DEFAULT']);
+            $test = $this->fieldNameFoundInFields($field, $fields['LBL_PANEL_DEFAULT']);
             $this->assertFalse($test, "$field should not be in default detail view fields");
         }
         
         // Fields that can be added to a layout
         $fields = $parser->getAvailableFields();
         foreach ($this->testFields as $field) {
-            $test = $this->_fieldNameFoundInFields($field, $fields);
+            $test = $this->fieldNameFoundInFields($field, $fields);
             $this->assertFalse($test, "$field should not be in available in detail view fields");
         }
     }
@@ -88,28 +88,10 @@ class Bug57636Test extends TestCase
      * @param array $fields The defs to search
      * @return bool
      */
-    protected function _fieldNameFoundInFields($name, $fields)
+    private function fieldNameFoundInFields($name, $fields)
     {
         foreach ($fields as $field) {
             if (isset($field['name']) && $field['name'] == $name) {
-                return true;
-            }
-        }
-        
-        return false;
-    }
-    
-    /**
-     * Utility method to search layout defs for mobile grid layouts for a field
-     *
-     * @param string $name The field name to search for
-     * @param array $layout The defs to search
-     * @return bool
-     */
-    protected function _fieldNameFoundInLayoutFields($name, $layout)
-    {
-        foreach ($layout as $fields) {
-            if ($this->_fieldNameFoundInFields($name, $fields)) {
                 return true;
             }
         }

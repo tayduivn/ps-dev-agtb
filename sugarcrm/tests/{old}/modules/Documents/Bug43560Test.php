@@ -14,12 +14,11 @@ use PHPUnit\Framework\TestCase;
 
 class Bug43560Test extends TestCase
 {
-    var $doc = null;
-    
+    public $doc = null;
+
     protected function setUp() : void
     {
-        global $current_user, $currentModule ;
-        $mod_strings = return_module_language($GLOBALS['current_language'], "Documents");
+        global $current_user;
         $current_user = SugarTestUserUtilities::createAnonymousUser();
 
         $document = new Document();
@@ -27,7 +26,7 @@ class Bug43560Test extends TestCase
         $document->save();
         $this->doc = $document;
     }
-    
+
     protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
@@ -37,8 +36,8 @@ class Bug43560Test extends TestCase
         $GLOBALS['db']->query("DELETE FROM documents WHERE id = '{$this->doc->id}'");
         unset($this->doc);
     }
-    
-    function testRevisionSave()
+
+    public function testRevisionSave()
     {
         $ret = $GLOBALS['db']->query("SELECT COUNT(*) AS rowcount1 FROM document_revisions WHERE document_id = '{$this->doc->id}'");
         $row = $GLOBALS['db']->fetchByAssoc($ret);

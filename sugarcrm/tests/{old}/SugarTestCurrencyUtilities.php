@@ -19,7 +19,7 @@
  */
 class SugarTestCurrencyUtilities
 {
-    private static $_createdCurrencies = [];
+    private static $createdCurrencies = [];
 
     private function __construct()
     {
@@ -52,7 +52,7 @@ class SugarTestCurrencyUtilities
             $currency->created_by = $GLOBALS['current_user']->id;
         }
         $currency->save();
-        self::$_createdCurrencies[] = $currency;
+        self::$createdCurrencies[] = $currency;
         return $currency;
     }
 
@@ -80,7 +80,7 @@ class SugarTestCurrencyUtilities
      */
     public static function removeAllCreatedCurrencies()
     {
-        if (empty(self::$_createdCurrencies)) {
+        if (empty(self::$createdCurrencies)) {
             return true;
         }
         $currency_ids = self::getCreatedCurrencyIds();
@@ -90,7 +90,7 @@ class SugarTestCurrencyUtilities
                 implode("','", $currency_ids)
             )
         );
-        self::$_createdCurrencies = [];
+        self::$createdCurrencies = [];
         return true;
     }
 
@@ -104,7 +104,7 @@ class SugarTestCurrencyUtilities
     public static function getCreatedCurrencyIds()
     {
         $currency_ids = [];
-        foreach (self::$_createdCurrencies as $currency) {
+        foreach (self::$createdCurrencies as $currency) {
             $currency_ids[] = $currency->id;
         }
         return $currency_ids;

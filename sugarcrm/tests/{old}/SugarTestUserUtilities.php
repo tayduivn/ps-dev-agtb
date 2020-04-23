@@ -13,8 +13,8 @@
 
 class SugarTestUserUtilities
 {
-    private static $_createdUsers          = [];
-    private static $_createdUserSignatures = [];
+    private static $createdUsers          = [];
+    private static $createdUserSignatures = [];
 
     private function __construct()
     {
@@ -67,7 +67,7 @@ class SugarTestUserUtilities
         }
 
         $user->fill_in_additional_detail_fields();
-        self::$_createdUsers[] = $user;
+        self::$createdUsers[] = $user;
         return $user;
     }
     
@@ -86,7 +86,7 @@ class SugarTestUserUtilities
             $GLOBALS['db']->query("DELETE FROM emails_beans WHERE bean_module='Users' AND bean_id IN ({$in})");
             $GLOBALS['db']->query("DELETE FROM email_addr_bean_rel WHERE bean_module='Users' AND bean_id IN ({$in})");
         }
-        self::$_createdUsers = [];
+        self::$createdUsers = [];
     }
 
     public static function setCreatedUser($userIds)
@@ -94,14 +94,14 @@ class SugarTestUserUtilities
         foreach ($userIds as $userId) {
             $user = new User();
             $user->id = $userId;
-            self::$_createdUsers[] = $user;
+            self::$createdUsers[] = $user;
         }
     }
 
     public static function getCreatedUserIds()
     {
         $user_ids = [];
-        foreach (self::$_createdUsers as $user) {
+        foreach (self::$createdUsers as $user) {
             if (is_object($user) && $user instanceof User && $user->id != false) {
                 $user_ids[] = $user->id;
             }
@@ -127,7 +127,7 @@ class SugarTestUserUtilities
 
         $userSignature->save();
         $GLOBALS['db']->commit();
-        self::$_createdUserSignatures[] = $userSignature;
+        self::$createdUserSignatures[] = $userSignature;
 
         return $userSignature;
     }
@@ -136,7 +136,7 @@ class SugarTestUserUtilities
     {
         $signatureIds = [];
 
-        foreach (self::$_createdUserSignatures as $signature) {
+        foreach (self::$createdUserSignatures as $signature) {
             if (is_object($signature) && $signature instanceof UserSignature) {
                 $signatureIds[] = $signature->id;
             }
@@ -153,6 +153,6 @@ class SugarTestUserUtilities
             $GLOBALS["db"]->query("DELETE FROM users_signatures WHERE id IN ('" . implode("','", $ids) . "')");
         }
 
-        self::$_createdUserSignatures = [];
+        self::$createdUserSignatures = [];
     }
 }

@@ -13,7 +13,7 @@
  
 class ConnectorsTestUtility
 {
-    static function rmdirr($dirname)
+    public static function rmdirr($dirname)
     {
         // Sanity check
         if (!file_exists($dirname)) {

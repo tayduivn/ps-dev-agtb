@@ -20,30 +20,30 @@ require_once 'modules/UpgradeWizard/uw_utils.php';
 class Bug40793Test extends TestCase
 {
     const WEBALIZER_DIR_NAME = 'bug40793';
-    private $_notIncludeDir;
-    private $_includeDir;
+    private $notIncludeDir;
+    private $includeDir;
 
     protected function setUp() : void
     {
-        $this->_notIncludeDir = self::WEBALIZER_DIR_NAME . "/this_dir_should_not_include";
-        $this->_includeDir = self::WEBALIZER_DIR_NAME . "/1";
+        $this->notIncludeDir = self::WEBALIZER_DIR_NAME . "/this_dir_should_not_include";
+        $this->includeDir = self::WEBALIZER_DIR_NAME . "/1";
         mkdir(self::WEBALIZER_DIR_NAME, 0755);
-        mkdir($this->_notIncludeDir, 0755);
-        mkdir($this->_includeDir, 0755);
+        mkdir($this->notIncludeDir, 0755);
+        mkdir($this->includeDir, 0755);
     }
 
     protected function tearDown() : void
     {
-        rmdir($this->_notIncludeDir);
-        rmdir($this->_includeDir);
+        rmdir($this->notIncludeDir);
+        rmdir($this->includeDir);
         rmdir(self::WEBALIZER_DIR_NAME);
     }
 
     public function testIfDirIsNotIncluded()
     {
-        $skipDirs = [$this->_notIncludeDir];
+        $skipDirs = [$this->notIncludeDir];
         $files = uwFindAllFiles(self::WEBALIZER_DIR_NAME, [], true, $skipDirs);
-        $this->assertNotContains($this->_notIncludeDir, $files, "Directory {$this->_notIncludeDir} shouldn't been included in this list");
-        $this->assertContains($this->_includeDir, $files, "Directory {$this->_includeDir} should been included in this list");
+        $this->assertNotContains($this->notIncludeDir, $files, "Directory {$this->notIncludeDir} shouldn't been included in this list");
+        $this->assertContains($this->includeDir, $files, "Directory {$this->includeDir} should been included in this list");
     }
 }

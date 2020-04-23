@@ -14,14 +14,12 @@
  */
 class Bug47650Test extends SOAPTestCase
 {
-    public $_contactId = '';
-
     /**
      * Create test user
      */
     protected function setUp() : void
     {
-        $this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/service/v2/soap.php';
+        $this->soapURL = $GLOBALS['sugar_config']['site_url'].'/service/v2/soap.php';
         SugarTestAccountUtilities::createAccount();
         SugarTestAccountUtilities::createAccount();
         parent::setUp();
@@ -42,11 +40,11 @@ class Bug47650Test extends SOAPTestCase
 
     public function testGetEntryListWithFourFieldsFields()
     {
-        $this->_login();
-        $result = $this->_soapClient->call(
+        $this->login();
+        $result = $this->soapClient->call(
             'get_entry_list',
             [
-                 'session'=>$this->_sessionId,
+                 'session'=>$this->sessionId,
                  "module_name" => 'Accounts',
                  '',
                  '',

@@ -14,10 +14,10 @@ use PHPUnit\Framework\TestCase;
 
 class Bug58774Test extends TestCase
 {
-    protected $_originalRequest = [];
-    protected $_originalDictionary = [];
-    protected $_backedUpFiles = [];
-    protected $_tearDownFiles = [
+    private $originalRequest = [];
+    private $originalDictionary = [];
+    private $backedUpFiles = [];
+    private $tearDownFiles = [
         'custom/modules/Calls/Ext/Vardefs/vardefs.ext.php',
         'custom/modules/Calls/metadata/SearchFields.php',
         'custom/Extension/modules/Calls/Ext/Vardefs/sugarfield_duration_hours.php',
@@ -27,14 +27,14 @@ class Bug58774Test extends TestCase
     protected function setUp() : void
     {
         if (isset($GLOBALS['dictionary']['Call'])) {
-            $this->_originalDictionary = $GLOBALS['dictionary']['Call'];
+            $this->originalDictionary = $GLOBALS['dictionary']['Call'];
         }
         
         // Back up any current files we might have
-        foreach ($this->_tearDownFiles as $file) {
+        foreach ($this->tearDownFiles as $file) {
             if (file_exists($file)) {
                 rename($file, str_replace('.php', '-unittestbackup', $file));
-                $this->_backedUpFiles[] = $file;
+                $this->backedUpFiles[] = $file;
             }
         }
         
@@ -46,31 +46,31 @@ class Bug58774Test extends TestCase
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('mod_strings', ['ModuleBuilder']);
         
-        $this->_originalRequest = ['r' => $_REQUEST, 'p' => $_POST];
+        $this->originalRequest = ['r' => $_REQUEST, 'p' => $_POST];
     }
     
     protected function tearDown() : void
     {
-        $_REQUEST = $this->_originalRequest['r'];
-        $_POST = $this->_originalRequest['p'];
+        $_REQUEST = $this->originalRequest['r'];
+        $_POST = $this->originalRequest['p'];
         
         SugarTestHelper::tearDown();
         
         // Remove created files
-        foreach ($this->_tearDownFiles as $file) {
+        foreach ($this->tearDownFiles as $file) {
             if (file_exists($file)) {
                 unlink($file);
             }
         }
         
         // Restore our backups
-        foreach ($this->_backedUpFiles as $file) {
+        foreach ($this->backedUpFiles as $file) {
             rename(str_replace('.php', '-unittestbackup', $file), $file);
         }
 
         // Reset the dictionary
-        if (!empty($this->_originalDictionary)) {
-            $GLOBALS['dictionary']['Call'] = $this->_originalDictionary;
+        if (!empty($this->originalDictionary)) {
+            $GLOBALS['dictionary']['Call'] = $this->originalDictionary;
         }
     }
     
@@ -93,7 +93,7 @@ class Bug58774Test extends TestCase
         $controller = new ModuleBuilderController();
         $controller->action_saveSugarField();
         
-        $newdefs = $this->_getNewVardefFromCache();
+        $newdefs = $this->getNewVardefFromCache();
         
         // Handle assertions
         $this->assertNotEmpty($newdefs, "New vardef was not found");
@@ -104,7 +104,7 @@ class Bug58774Test extends TestCase
         $this->assertEquals(90, $newdefs['fields']['duration_minutes']['max'], "Max did not save its value properly");
     }
     
-    protected function _getNewVardefFromCache()
+    private function getNewVardefFromCache()
     {
         VardefManager::loadVardef('Calls', 'Call', true);
         return $GLOBALS['dictionary']['Call'];

@@ -24,13 +24,13 @@ class GetEntryListOppTest extends SOAPTestCase
 
     protected function setUp() : void
     {
-        $this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/soap.php';
+        $this->soapURL = $GLOBALS['sugar_config']['site_url'].'/soap.php';
 
         parent::setUp();
 
-        $this->user = self::$_user = SugarTestUserUtilities::createAnonymousUser();
+        self::$user = SugarTestUserUtilities::createAnonymousUser();
         $this->currency            = BeanFactory::newBean('Currencies');
-        $GLOBALS['current_user']   = SOAPTestCase::$_user;
+        $GLOBALS['current_user']   = self::$user;
 
         $found = $this->currency->retrieve_by_string_fields([
             'iso4217' => self::CURRENCY_CODE,
@@ -91,10 +91,10 @@ class GetEntryListOppTest extends SOAPTestCase
         $current_user->setPreference('currency', $retrieveCurrencyId);
         $current_user->savePreferencesToDB();
 
-        $this->_login();
+        $this->login();
 
         $client = [
-            'session'       => $this->_sessionId,
+            'session'       => $this->sessionId,
             'module_name'   => 'Opportunities',
             'query'         => 'opportunities.id = \'' . $opportunity->id . '\'',
             'order_by'      => '',
@@ -104,7 +104,7 @@ class GetEntryListOppTest extends SOAPTestCase
             'deleted'       => -1,
         ];
 
-        $result = $this->_soapClient->call('get_entry_list', $client);
+        $result = $this->soapClient->call('get_entry_list', $client);
 
         $this->assertEquals(0, $result['error']['number'], 'Soap failed: ' . $result['error']['description']);
         $this->assertGreaterThan(0, $result['result_count'], 'Empty result returned');

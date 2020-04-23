@@ -15,9 +15,9 @@ use PHPUnit\Framework\TestCase;
 
 class RESTAPI3_1Test extends TestCase
 {
-    protected $_user;
+    private $user;
 
-    protected $_lastRawResponse;
+    private $lastRawResponse;
 
     private static $helperObject;
 
@@ -30,11 +30,11 @@ class RESTAPI3_1Test extends TestCase
         SugarTestHelper::setUp('beanList');
         $GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], 'Accounts');
         //Create an anonymous user for login purposes/
-        $this->_user = SugarTestUserUtilities::createAnonymousUser();
-        $this->_user->status = 'Active';
-        $this->_user->is_admin = 1;
-        $this->_user->save();
-        $GLOBALS['current_user'] = $this->_user;
+        $this->user = SugarTestUserUtilities::createAnonymousUser();
+        $this->user->status = 'Active';
+        $this->user->is_admin = 1;
+        $this->user->save();
+        $GLOBALS['current_user'] = $this->user;
 
         self::$helperObject = new APIv3Helper();
     }
@@ -50,8 +50,7 @@ class RESTAPI3_1Test extends TestCase
         SugarTestHelper::tearDown();
     }
 
-
-    protected function _makeRESTCall($method, $parameters)
+    private function makeRESTCall($method, $parameters)
     {
         // specify the REST web service to interact with
         $url = $GLOBALS['sugar_config']['site_url'].'/service/v3_1/rest.php';
@@ -74,27 +73,27 @@ class RESTAPI3_1Test extends TestCase
         // Close the connection
         curl_close($curl);
 
-        $this->_lastRawResponse = $response;
+        $this->lastRawResponse = $response;
 
         // Convert the result from JSON format to a PHP array
         return json_decode($response, true);
     }
 
-    protected function _returnLastRawResponse()
+    private function returnLastRawResponse()
     {
-        return "Error in web services call. Response was: {$this->_lastRawResponse}";
+        return "Error in web services call. Response was: {$this->lastRawResponse}";
     }
 
-    protected function _login()
+    private function login()
     {
         $GLOBALS['db']->commit(); // Making sure we commit any changes before logging in
-        return $this->_makeRESTCall(
+        return $this->makeRESTCall(
             'login',
             [
                 'user_auth' =>
                     [
-                        'user_name' => $this->_user->user_name,
-                        'password' => $this->_user->user_hash,
+                        'user_name' => $this->user->user_name,
+                        'password' => $this->user->user_hash,
                         'version' => '.01',
                         ],
                 'application_name' => 'mobile',
@@ -105,18 +104,18 @@ class RESTAPI3_1Test extends TestCase
 
     public function testLogin()
     {
-        $result = $this->_login();
+        $result = $this->login();
         $this->assertTrue(isset($result['name_value_list']['available_modules']));
         $this->assertTrue(isset($result['name_value_list']['vardefs_md5']));
-        $this->assertTrue(!empty($result['id']) && $result['id'] != -1, $this->_returnLastRawResponse());
+        $this->assertTrue(!empty($result['id']) && $result['id'] != -1, $this->returnLastRawResponse());
     }
 
     public function testGetSingleModuleLanguage()
     {
-        $result = $this->_login();
+        $result = $this->login();
         $session = $result['id'];
 
-        $results = $this->_makeRESTCall(
+        $results = $this->makeRESTCall(
             'get_language_definition',
             [
                             'session' => $session,
@@ -129,10 +128,10 @@ class RESTAPI3_1Test extends TestCase
 
     public function testGetSingleModuleLanguageMD5()
     {
-        $result = $this->_login();
+        $result = $this->login();
         $session = $result['id'];
 
-        $results = $this->_makeRESTCall(
+        $results = $this->makeRESTCall(
             'get_language_definition',
             [
                            'session' => $session,
@@ -147,10 +146,10 @@ class RESTAPI3_1Test extends TestCase
 
     public function testGetMultipleModuleLanguage()
     {
-        $result = $this->_login();
+        $result = $this->login();
         $session = $result['id'];
 
-        $results = $this->_makeRESTCall(
+        $results = $this->makeRESTCall(
             'get_language_definition',
             [
                             'session' => $session,
@@ -165,10 +164,10 @@ class RESTAPI3_1Test extends TestCase
 
     public function testGetMultipleModuleLanguageAndAppStrings()
     {
-        $result = $this->_login();
+        $result = $this->login();
         $session = $result['id'];
 
-        $results = $this->_makeRESTCall(
+        $results = $this->makeRESTCall(
             'get_language_definition',
             [
                             'session' => $session,
@@ -191,10 +190,10 @@ class RESTAPI3_1Test extends TestCase
         $quote->date_quote_expected_closed = TimeDate::getInstance()->getNow()->asDbDate();
         $quote->save(false);
 
-        $result = $this->_login(); // Logging in just before the REST call as this will also commit any pending DB changes
+        $result = $this->login(); // Logging in just before the REST call as this will also commit any pending DB changes
         $session = $result['id'];
 
-        $results = $this->_makeRESTCall(
+        $results = $this->makeRESTCall(
             'get_quotes_pdf',
             [
                             'session' => $session,
@@ -206,7 +205,7 @@ class RESTAPI3_1Test extends TestCase
         $this->assertTrue(!empty($results['file_contents']));
     }
 
-    public static function _wirelessGridModuleLayoutProvider()
+    public static function wirelessGridModuleLayoutProvider()
     {
         return [
             ['module' => 'Accounts', 'view' => 'edit', 'metadatafile' => 'modules/Accounts/clients/mobile/views/edit/edit.php',],
@@ -214,31 +213,31 @@ class RESTAPI3_1Test extends TestCase
         ];
     }
 
-        /**
-         * Leaving as a provider in the event we need to extend it in the future
-         *
-         * @static
-         * @return array
-         */
-    public static function _wirelessListModuleLayoutProvider()
+    /**
+     * Leaving as a provider in the event we need to extend it in the future
+     *
+     * @static
+     * @return array
+     */
+    public static function wirelessListModuleLayoutProvider()
     {
         return [
             ['module' => 'Cases'],
         ];
     }
 
-        /**
-         * @dataProvider _wirelessListModuleLayoutProvider
-         */
+    /**
+     * @dataProvider wirelessListModuleLayoutProvider
+     */
     public function testGetWirelessListModuleLayout($module)
     {
-        $result = $this->_login();
+        $result = $this->login();
         $session = $result['id'];
 
         $type = 'wireless';
         $view = 'list';
 
-        $result = $this->_makeRESTCall(
+        $result = $this->makeRESTCall(
             'get_module_layout',
             [
                             'session' => $session,
@@ -265,16 +264,16 @@ class RESTAPI3_1Test extends TestCase
         $this->assertEquals($legacyKeys, $convertedKeys, 'Converted list def keys not the same as known list def keys');
     }
 
-        /**
-         * @dataProvider _wirelessGridModuleLayoutProvider
-         */
+    /**
+     * @dataProvider wirelessGridModuleLayoutProvider
+     */
     public function testGetWirelessGridModuleLayout($module, $view, $metadatafile)
     {
-        $result = $this->_login();
+        $result = $this->login();
         $session = $result['id'];
 
         $type = 'wireless';
-        $result = $this->_makeRESTCall(
+        $result = $this->makeRESTCall(
             'get_module_layout',
             [
                             'session' => $session,
@@ -313,9 +312,9 @@ class RESTAPI3_1Test extends TestCase
         $offset = 0;
         $returnFields = ['id','first_name'];
 
-        $result = $this->_login(); // Logging in just before the REST call as this will also commit any pending DB changes
+        $result = $this->login(); // Logging in just before the REST call as this will also commit any pending DB changes
         $session = $result['id'];
-        $result = $this->_makeRESTCall('get_entry_list', [$session, $module, $whereClause, $orderBy,$offset, $returnFields]);
+        $result = $this->makeRESTCall('get_entry_list', [$session, $module, $whereClause, $orderBy,$offset, $returnFields]);
         $this->assertNotEmpty($result, "Should have returned at least 1 record");
 
         $GLOBALS['current_user']->is_admin = 1;

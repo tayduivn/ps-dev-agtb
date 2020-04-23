@@ -16,7 +16,7 @@ require_once 'modules/Meetings/Meeting.php';
 
 class Bug46294Test extends TestCase
 {
-    var $dictionaryOptionsNotSet = ['Meeting' => [
+    public $dictionaryOptionsNotSet = ['Meeting' => [
                                     'fields' => [
                                       'type' => [
                                         'options' => '',
@@ -24,14 +24,14 @@ class Bug46294Test extends TestCase
                                     ],
                                   ],
                             ];
-    var $dictionaryOptionsEmpty = ['Meeting' => [
+    public $dictionaryOptionsEmpty = ['Meeting' => [
                                     'fields' => [
                                       'type' => [],
                                       //empty
                                     ],
                                  ],
                             ];
-    var $dictionaryOptionsSet = ['Meeting' => [
+    public $dictionaryOptionsSet = ['Meeting' => [
                                         'fields' => [
                                           'type' => [
                                             'options' => 'type_list',
@@ -39,7 +39,7 @@ class Bug46294Test extends TestCase
                                         ],
                                    ],
                                 ];
-    var $dictionaryTypeListNotExists = ['Meeting' => [
+    public $dictionaryTypeListNotExists = ['Meeting' => [
                                 'fields' => [
                                   'type' => [
                                     'options' => 'type_not_exists',
@@ -47,14 +47,14 @@ class Bug46294Test extends TestCase
                                 ],
                               ],
                         ];
-    var $appListStrings = ['type_list' => [
+    public $appListStrings = ['type_list' => [
                                     'breakfast' => 'breakfast',
                                     'lunch' => 'lunch',
                                     'dinner' => 'dinner',
                                  ],
                             ];
     
-    var $appListStringsEmpty = ['type_list' => []];
+    public $appListStringsEmpty = ['type_list' => []];
        
     /**
     * @dataProvider provider

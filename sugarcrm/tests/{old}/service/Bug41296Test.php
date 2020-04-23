@@ -17,14 +17,12 @@ require_once 'vendor/nusoap//nusoap.php';
 
 class Bug41296Test extends SOAPTestCase
 {
-    public $_soapClient = null;
-    var $_sessionId;
-    var $c = null;
-    var $c2 = null;
+    public $c = null;
+    public $c2 = null;
 
     protected function setUp() : void
     {
-        $this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/soap.php';
+        $this->soapURL = $GLOBALS['sugar_config']['site_url'].'/soap.php';
         parent::setUp();
 
         $unid = uniqid();
@@ -53,14 +51,14 @@ class Bug41296Test extends SOAPTestCase
 
     public function testCreateNewContactWithNoEmail()
     {
-        $this->_login();
+        $this->login();
 
-        $contacts_list=[ 'session'=>$this->_sessionId, 'module_name' => 'Contacts',
+        $contacts_list=[ 'session'=>$this->sessionId, 'module_name' => 'Contacts',
                    'name_value_lists' => [
                                         [['name'=>'assigned_user_id' , 'value'=>$GLOBALS['current_user']->id],['name'=>'first_name' , 'value'=>'testfirst'],['name'=>'last_name' , 'value'=>'testlast']],
                                         ]];
 
-        $result = $this->_soapClient->call('set_entries', $contacts_list);
+        $result = $this->soapClient->call('set_entries', $contacts_list);
         $this->_resultId = $result['ids'][0];
         $this->assertNotEquals($this->c->id, $result['ids'][0], "Contacts should not match");
     }

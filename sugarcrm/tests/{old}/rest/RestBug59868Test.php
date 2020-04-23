@@ -20,7 +20,7 @@ class RestBug59868Test extends RestTestBase
         parent::setUp();
 
         // Clear the metadata cache to ensure a fresh load of data
-        $this->_clearMetadataCache();
+        $this->clearMetadataCache();
     }
     
     protected function tearDown() : void
@@ -34,8 +34,8 @@ class RestBug59868Test extends RestTestBase
      */
     public function testAppListStringsConvertedCorrectlyInMetadataRequest()
     {
-        $this->_clearMetadataCache();
-        $reply = $this->_restCall('metadata');
+        $this->clearMetadataCache();
+        $reply = $this->restCall('metadata');
 
         $json = file_get_contents($GLOBALS['sugar_config']['site_url'] . '/' . $reply['reply']['labels']['en_us']);
 

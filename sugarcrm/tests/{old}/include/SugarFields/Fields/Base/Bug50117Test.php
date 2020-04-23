@@ -14,8 +14,8 @@ use PHPUnit\Framework\TestCase;
 
 class Bug50117Test extends TestCase
 {
-    private $_listViewSmartyOutput1;
-    private $_listViewSmartyOutput2;
+    private $listViewSmartyOutput1;
+    private $listViewSmartyOutput2;
     
     protected function setUp() : void
     {
@@ -47,12 +47,12 @@ class Bug50117Test extends TestCase
                         ];
         $col = 1;
         
-        $this->_listViewSmartyOutput1 = trim($enumField->getListViewSmarty($parentFieldArray, $vardef, $displayParams, $col));
+        $this->listViewSmartyOutput1 = trim($enumField->getListViewSmarty($parentFieldArray, $vardef, $displayParams, $col));
         
         $vardef['name'] = 'just_another_name';
         $parentFieldArray['JUST_ANOTHER_NAME'] = 'None';
         
-        $this->_listViewSmartyOutput2 = trim($enumField->getListViewSmarty($parentFieldArray, $vardef, $displayParams, $col));
+        $this->listViewSmartyOutput2 = trim($enumField->getListViewSmarty($parentFieldArray, $vardef, $displayParams, $col));
     }
     
      /**
@@ -60,7 +60,7 @@ class Bug50117Test extends TestCase
      */
     public function testListViewSmarty()
     {
-        $this->assertEquals("Accepted", $this->_listViewSmartyOutput1);
-        $this->assertEquals("None", $this->_listViewSmartyOutput2);
+        $this->assertEquals("Accepted", $this->listViewSmartyOutput1);
+        $this->assertEquals("None", $this->listViewSmartyOutput2);
     }
 }

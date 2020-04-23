@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 class DocumentTest extends TestCase
 {
-    var $doc = null;
+    public $doc = null;
     
     protected function setUp() : void
     {
@@ -26,7 +26,7 @@ class DocumentTest extends TestCase
         SugarTestHelper::tearDown();
     }
     
-    function testPopulateFromRow()
+    public function testPopulateFromRow()
     {
         $this->doc = BeanFactory::newBean('Documents');
 

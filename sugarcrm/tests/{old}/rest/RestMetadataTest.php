@@ -37,7 +37,7 @@ class RestMetadataTest extends RestTestBase
      */
     public function testFullMetadata()
     {
-        $restReply = $this->_restCall('metadata');
+        $restReply = $this->restCall('metadata');
 
         $this->assertTrue(isset($restReply['reply']['_hash']), 'Primary hash is missing.');
         $this->assertTrue(isset($restReply['reply']['modules']), 'Modules are missing.');
@@ -56,7 +56,7 @@ class RestMetadataTest extends RestTestBase
      */
     public function testFullMetadaNoAuth()
     {
-        $restReply = $this->_restCall('metadata/public?app_name=superAwesome&platform=portal');
+        $restReply = $this->restCall('metadata/public?app_name=superAwesome&platform=portal');
         $this->assertTrue(isset($restReply['reply']['_hash']), 'Primary hash is missing.');
         $this->assertTrue(isset($restReply['reply']['config']), 'Portal Configs are missing.');
         $this->assertTrue(isset($restReply['reply']['fields']), 'SugarFields are missing.');
@@ -85,8 +85,8 @@ class RestMetadataTest extends RestTestBase
         $langStrings = return_application_language('en_us');
         $this->assertEquals($langStrings['LBL_KEYBOARD_SHORTCUTS_HELP_TITLE'], "UnitTest", 'The override is not taking effect in the same instance, there is no hope for the rest of this test.');
         // No current user
-        $this->_clearMetadataCache();
-        $restReply = $this->_restCall('metadata/public?platform=portal&type_filter=labels');
+        $this->clearMetadataCache();
+        $restReply = $this->restCall('metadata/public?platform=portal&type_filter=labels');
 
         $this->assertArrayHasKey('en_us', $restReply['reply']['labels']);
         $fileLoc = ltrim($GLOBALS['sugar_config']['site_url'], $restReply['reply']['labels']['en_us']);
@@ -94,7 +94,7 @@ class RestMetadataTest extends RestTestBase
         $this->assertEquals($en_us['app_strings']['LBL_KEYBOARD_SHORTCUTS_HELP_TITLE'], "UnitTest");
 
         // Current user is logged in & submit language
-        $restReply = $this->_restCall('metadata');
+        $restReply = $this->restCall('metadata');
         $this->assertArrayHasKey('en_us', $restReply['reply']['labels']);
         $en_us = json_decode(file_get_contents($GLOBALS['sugar_config']['site_url'].'/'.$restReply['reply']['labels']['en_us']), true);
         $this->assertEquals($en_us['app_strings']['LBL_KEYBOARD_SHORTCUTS_HELP_TITLE'], "UnitTest");

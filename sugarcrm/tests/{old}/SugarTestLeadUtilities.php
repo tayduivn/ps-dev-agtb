@@ -13,7 +13,7 @@
 
 class SugarTestLeadUtilities
 {
-    private static $_createdLeads = [];
+    private static $createdLeads = [];
 
     private function __construct()
     {
@@ -49,7 +49,7 @@ class SugarTestLeadUtilities
 
         $lead->save();
         $GLOBALS['db']->commit();
-        self::$_createdLeads[] = $lead;
+        self::$createdLeads[] = $lead;
         return $lead;
     }
 
@@ -58,7 +58,7 @@ class SugarTestLeadUtilities
         foreach ($lead_ids as $lead_id) {
             $lead = new Lead();
             $lead->id = $lead_id;
-            self::$_createdLeads[] = $lead;
+            self::$createdLeads[] = $lead;
         } // foreach
     } // fn
     
@@ -94,7 +94,7 @@ class SugarTestLeadUtilities
     public static function getCreatedLeadIds()
     {
         $lead_ids = [];
-        foreach (self::$_createdLeads as $lead) {
+        foreach (self::$createdLeads as $lead) {
             $lead_ids[] = $lead->id;
         }
         return $lead_ids;

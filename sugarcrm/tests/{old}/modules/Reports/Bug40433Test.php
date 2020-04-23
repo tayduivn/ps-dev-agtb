@@ -53,7 +53,7 @@ class Bug40433Test extends TestCase
      * This method simulates a row/column report for the contracts module.  We are attempting to select
      * the contract_value, contract_id and contract_value_us_dollar
      */
-    function test_create_query()
+    public function test_create_query()
     {
         $this->reportInstance->select_fields = [0=>'contracts.id primaryid',
                                                      1=>'contracts.name contracts_name',
@@ -76,7 +76,7 @@ class Bug40433Test extends TestCase
      * test_create_query2
      * This is similar to test_create_query except that the [3] element has the currency_id and currency_value positions swapped
      */
-    function test_create_query2()
+    public function test_create_query2()
     {
         $this->reportInstance->select_fields = [0=>'contracts.id primaryid',
                                                      1=>'contracts.name contracts_name',

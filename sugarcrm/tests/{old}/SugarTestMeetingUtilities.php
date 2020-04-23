@@ -13,7 +13,7 @@ require_once 'modules/Meetings/Meeting.php';
 
 class SugarTestMeetingUtilities
 {
-    private static $_createdMeetings = [];
+    private static $createdMeetings = [];
 
     private function __construct()
     {
@@ -46,7 +46,7 @@ class SugarTestMeetingUtilities
             }
         }
         $meeting->save();
-        self::$_createdMeetings[] = $meeting;
+        self::$createdMeetings[] = $meeting;
         return $meeting;
     }
 
@@ -117,7 +117,7 @@ class SugarTestMeetingUtilities
     public static function getCreatedMeetingIds()
     {
         $meeting_ids = [];
-        foreach (self::$_createdMeetings as $meeting) {
+        foreach (self::$createdMeetings as $meeting) {
             $meeting_ids[] = $meeting->id;
         }
         return $meeting_ids;

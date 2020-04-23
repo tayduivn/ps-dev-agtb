@@ -94,7 +94,7 @@ class Bug46230Test extends TestCase
     /**
      * @group 54042
      */
-    function testRetrieveBeanUpdateDependentFields()
+    public function testRetrieveBeanUpdateDependentFields()
     {
         $this->account->retrieve($this->account2->id);
         $res = $this->account->get_list_view_array();
@@ -104,7 +104,7 @@ class Bug46230Test extends TestCase
     /**
      * @group 54042
      */
-    function testRetrieveByStringFieldsBeanUpdateDependentFields()
+    public function testRetrieveByStringFieldsBeanUpdateDependentFields()
     {
         $this->account->retrieve_by_string_fields(['id'=>$this->account2->id]);
         $res = $this->account->get_list_view_array();

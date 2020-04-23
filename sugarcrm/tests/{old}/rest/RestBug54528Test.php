@@ -37,7 +37,7 @@ class RestBug54528Test extends RestTestPortalBase
         $this->contact->portal_name = "liltest@unit.com";
         $this->contact->portal_active = '1';
         $this->contact->portal_password = User::getPasswordHash("unittest");
-        $this->contact->assigned_user_id = $this->_user->id;
+        $this->contact->assigned_user_id = $this->user->id;
         $this->contact->save();
 
         $GLOBALS['db']->commit();
@@ -97,12 +97,12 @@ class RestBug54528Test extends RestTestPortalBase
 
         // Prevents _restCall from automatically logging in
         $this->authToken = 'LOGGING_IN';
-        $reply = $this->_restCall('oauth2/token', json_encode($args));
+        $reply = $this->restCall('oauth2/token', json_encode($args));
 
         // flip to the portal auth
         $this->authToken = $reply['reply']['access_token'];
         // create case
-        $restReply = $this->_restCall(
+        $restReply = $this->restCall(
             "Cases/",
             json_encode(['name' => 'UNIT TEST Case']),
             'POST'
@@ -118,8 +118,8 @@ class RestBug54528Test extends RestTestPortalBase
         // load case to check teamset and user id match
         $case = BeanFactory::getBean('Cases', $this->case_id);
 
-        $this->assertEquals($this->_user->default_team, $case->team_id, "Team ID doesn't match");
-        $this->assertEquals($this->_user->default_team, $case->team_set_id, "Team Set ID doesn't match");
+        $this->assertEquals($this->user->default_team, $case->team_id, "Team ID doesn't match");
+        $this->assertEquals($this->user->default_team, $case->team_set_id, "Team Set ID doesn't match");
 
 //        $this->assertEquals($this->contact->team_id, $case->team_id, "Team ID doesn't match");
 //        $this->assertEquals($this->contact->team_set_id, $case->team_set_id, "Team Set ID doesn't match");
@@ -128,7 +128,7 @@ class RestBug54528Test extends RestTestPortalBase
 
         $restReply = null;
 
-        $restReply = $this->_restCall(
+        $restReply = $this->restCall(
             "Bugs/",
             json_encode(['name'=>'UNIT TEST Bug']),
             'POST'
@@ -143,8 +143,8 @@ class RestBug54528Test extends RestTestPortalBase
 
         $bug = BeanFactory::getBean('Bugs', $this->bug_id);
 
-        $this->assertEquals($this->_user->default_team, $bug->team_id, "Team ID doesn't match");
-        $this->assertEquals($this->_user->team_set_id, $bug->team_set_id, "Team Set ID doesn't match");
+        $this->assertEquals($this->user->default_team, $bug->team_id, "Team ID doesn't match");
+        $this->assertEquals($this->user->team_set_id, $bug->team_set_id, "Team Set ID doesn't match");
 
 //        $this->assertEquals($this->contact->team_id, $bug->team_id, "Team ID doesn't match");
 //        $this->assertEquals($this->contact->team_set_id, $bug->team_set_id, "Team Set ID doesn't match");

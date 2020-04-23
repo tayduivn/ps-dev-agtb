@@ -186,11 +186,11 @@ class RestPortalSecurityTest extends RestTestPortalBase
         $GLOBALS['db']->commit();
 
         // Negative test: Try and fetch a Contact you shouldn't be able to see
-        $restReply = $this->_restCall("Contacts/".$this->contacts[2]->id);
+        $restReply = $this->restCall("Contacts/".$this->contacts[2]->id);
         $this->assertEquals('not_found', $restReply['reply']['error']);
 
         // Positive test: Fetch a Contact that you should be able to see
-        $restReply = $this->_restCall("Contacts/".$this->contacts[1]->id);
+        $restReply = $this->restCall("Contacts/".$this->contacts[1]->id);
         $this->assertEquals($this->contacts[1]->id, $restReply['reply']['id']);
 
         // verify edit and create are no for this contact
@@ -198,17 +198,17 @@ class RestPortalSecurityTest extends RestTestPortalBase
         $this->assertEquals("no", $restReply['reply']['_acl']['create'], "Create is not no");
 
         // Positive test: Should be able to change the name of our Contact
-        $restReply = $this->_restCall("Contacts/".$this->portalGuy->id, json_encode(['last_name'=>'UnitTestMyGuy']), 'PUT');
+        $restReply = $this->restCall("Contacts/".$this->portalGuy->id, json_encode(['last_name'=>'UnitTestMyGuy']), 'PUT');
         $this->assertEquals('UnitTestMyGuy', $restReply['reply']['last_name']);
-        $restReply = $this->_restCall("Contacts/".$this->portalGuy->id);
+        $restReply = $this->restCall("Contacts/".$this->portalGuy->id);
         $this->assertEquals('UnitTestMyGuy', $restReply['reply']['last_name']);
 
         // Negative test: Should not be able to create a new Contact
-        $restReply = $this->_restCall("Contacts/", json_encode(['last_name'=>'UnitTestNew','first_name'=>'NewGuy']), 'POST');
+        $restReply = $this->restCall("Contacts/", json_encode(['last_name'=>'UnitTestNew','first_name'=>'NewGuy']), 'POST');
         $this->assertEquals('not_authorized', $restReply['reply']['error']);
 
         // Fetch contacts, make sure we can only see the correct ones.
-        $restReply = $this->_restCall("Contacts");
+        $restReply = $this->restCall("Contacts");
         
         foreach ($restReply['reply']['records'] as $record) {
             // We should be linked to accounts[1] and accounts[2]
@@ -219,22 +219,22 @@ class RestPortalSecurityTest extends RestTestPortalBase
         }
 
         // Negative test: Try and fetch a Account you shouldn't be able to see
-        $restReply = $this->_restCall("Accounts/".$this->accounts[0]->id);
+        $restReply = $this->restCall("Accounts/".$this->accounts[0]->id);
         $this->assertEquals('not_found', $restReply['reply']['error']);
 
         // Positive test: Fetch a Account that you should be able to see
-        $restReply = $this->_restCall("Accounts/".$this->accounts[1]->id);
+        $restReply = $this->restCall("Accounts/".$this->accounts[1]->id);
         $this->assertEquals($this->accounts[1]->id, $restReply['reply']['id']);
 
         // Positive test: Fetch the other Account that you should be able to see
-        $restReply = $this->_restCall("Accounts/".$this->accounts[2]->id);
+        $restReply = $this->restCall("Accounts/".$this->accounts[2]->id);
         $this->assertEquals($this->accounts[2]->id, $restReply['reply']['id']);
 
         // Negative test: Should not be able to create a new Account
-        $restReply = $this->_restCall("Accounts/", json_encode(['name'=>'UnitTestNew']), 'POST');
+        $restReply = $this->restCall("Accounts/", json_encode(['name'=>'UnitTestNew']), 'POST');
         $this->assertEquals('not_authorized', $restReply['reply']['error']);
 
-        $restReply = $this->_restCall("Accounts");
+        $restReply = $this->restCall("Accounts");
 
         foreach ($restReply['reply']['records'] as $record) {
             // We should be linked to accounts[1] and accounts[2]
@@ -245,14 +245,14 @@ class RestPortalSecurityTest extends RestTestPortalBase
         }
 
 
-        $restReply = $this->_restCall("Accounts/".$this->accounts[2]->id."/link/cases");
+        $restReply = $this->restCall("Accounts/".$this->accounts[2]->id."/link/cases");
 
         foreach ($restReply['reply']['records'] as $record) {
             // We should only get cases that have the portal_viewable flag set to true
             $this->assertEquals(true, $record['portal_viewable']);
         }
 
-        $restReply = $this->_restCall("Accounts/".$this->accounts[1]->id."/link/bugs");
+        $restReply = $this->restCall("Accounts/".$this->accounts[1]->id."/link/bugs");
 
         foreach ($restReply['reply']['records'] as $record) {
             // We should only get cases that have the portal_viewable flag set to true
@@ -260,41 +260,41 @@ class RestPortalSecurityTest extends RestTestPortalBase
         }
 
         // Negative test: We should not be able to fetch an Opportunity
-        $restReply = $this->_restCall("Opportunities/".$this->opps[1]->id);
+        $restReply = $this->restCall("Opportunities/".$this->opps[1]->id);
         $this->assertEquals('not_found', $restReply['reply']['error']);
 
         // Negative test: We should not be able to list opportunities
-        $restReply = $this->_restCall("Opportunities/");
+        $restReply = $this->restCall("Opportunities/");
         $this->assertEquals(-1, $restReply['reply']['next_offset']);
 
         // Negative test: Should not be able to create a new Opportunity
-        $restReply = $this->_restCall("Opportunities/", json_encode(['name'=>'UnitTestNew','account_id'=>$this->accounts[1]->id,'expected_close_date'=>'2012-10-11 12:00:00']), 'POST');
+        $restReply = $this->restCall("Opportunities/", json_encode(['name'=>'UnitTestNew','account_id'=>$this->accounts[1]->id,'expected_close_date'=>'2012-10-11 12:00:00']), 'POST');
         $this->assertEquals('not_authorized', $restReply['reply']['error']);
 
 
         // Negative test: Try and fetch a Case you shouldn't be able to see
-        $restReply = $this->_restCall("Cases/".$this->cases[0]->id);
+        $restReply = $this->restCall("Cases/".$this->cases[0]->id);
         $this->assertEquals('not_found', $restReply['reply']['error']);
 
         // Negative test: Fetch a Case that is related to an account you can see, but is not portal visible
-        $restReply = $this->_restCall("Cases/".$this->cases[2]->id);
+        $restReply = $this->restCall("Cases/".$this->cases[2]->id);
         $this->assertEquals('not_found', $restReply['reply']['error']);
 
         // Positive test: Fetch a Case assigned to the other account that you should be able to see
-        $restReply = $this->_restCall("Cases/".$this->cases[1]->id);
+        $restReply = $this->restCall("Cases/".$this->cases[1]->id);
         $this->assertEquals($this->cases[1]->id, $restReply['reply']['id']);
 
         // Positive test: Should be able to create a new Case
-        $restReply = $this->_restCall("Cases/", json_encode(['name'=>'UnitTestNew','account_id'=>$this->accounts[1]->id,'portal_viewable'=>1]), 'POST');
+        $restReply = $this->restCall("Cases/", json_encode(['name'=>'UnitTestNew','account_id'=>$this->accounts[1]->id,'portal_viewable'=>1]), 'POST');
         $this->assertNotEmpty($restReply['reply']['id']);
         $createdCase = BeanFactory::getBean('Cases', $restReply['reply']['id']);
         $this->cases[] = $createdCase;
 
         // Positive test: Should be able to fetch this new bean
-        $restReply = $this->_restCall("Cases/".$createdCase->id);
+        $restReply = $this->restCall("Cases/".$createdCase->id);
         $this->assertEquals($restReply['reply']['id'], $createdCase->id);
 
-        $restReply = $this->_restCall("Cases");
+        $restReply = $this->restCall("Cases");
 
         foreach ($restReply['reply']['records'] as $record) {
             // Cases should be linked to accounts[1] or accounts[2]
@@ -304,7 +304,7 @@ class RestPortalSecurityTest extends RestTestPortalBase
             $this->assertTrue($foundOne);
         }
 
-        $restReply = $this->_restCall("Cases/".$this->cases[1]->id."/link/bugs");
+        $restReply = $this->restCall("Cases/".$this->cases[1]->id."/link/bugs");
 
         foreach ($restReply['reply']['records'] as $record) {
             // We should only get cases that have the portal_viewable flag set to true
@@ -312,28 +312,28 @@ class RestPortalSecurityTest extends RestTestPortalBase
         }
 
         // Negative test: Try and fetch a Bug you shouldn't be able to see
-        $restReply = $this->_restCall("Bugs/".$this->bugs[0]->id);
+        $restReply = $this->restCall("Bugs/".$this->bugs[0]->id);
         $this->assertEquals('not_found', $restReply['reply']['error']);
 
         // Positive test: Fetch a Bug that is related to an account you can see, but is not portal visible
-        $restReply = $this->_restCall("Bugs/".$this->bugs[5]->id);
+        $restReply = $this->restCall("Bugs/".$this->bugs[5]->id);
         $this->assertEquals('not_found', $restReply['reply']['error']);
 
         // Positive test: Fetch a Bug assigned to the other account that you should be able to see
-        $restReply = $this->_restCall("Bugs/".$this->bugs[1]->id);
+        $restReply = $this->restCall("Bugs/".$this->bugs[1]->id);
         $this->assertEquals($this->bugs[1]->id, $restReply['reply']['id']);
 
         // Positive test: Should be able to create a new Bug, as long as it is related to a case.
-        $restReply = $this->_restCall("Cases/".$this->cases[1]->id."/link/bugs/", json_encode(['name'=>'UnitTestNew','portal_viewable'=>1]), 'POST');
+        $restReply = $this->restCall("Cases/".$this->cases[1]->id."/link/bugs/", json_encode(['name'=>'UnitTestNew','portal_viewable'=>1]), 'POST');
         $this->assertNotEmpty($restReply['reply']['related_record']['id']);
         $createdBug = BeanFactory::getBean('Bugs', $restReply['reply']['related_record']['id']);
         $this->bugs[] = $createdBug;
 
         // Positive test: Should be able to fetch this new bean
-        $restReply = $this->_restCall("Bugs/".$createdBug->id);
+        $restReply = $this->restCall("Bugs/".$createdBug->id);
         $this->assertEquals($restReply['reply']['id'], $createdBug->id);
 
-        $restReply = $this->_restCall("Bugs");
+        $restReply = $this->restCall("Bugs");
 
         foreach ($restReply['reply']['records'] as $record) {
             $this->assertEquals(true, $record['portal_viewable']);
@@ -355,39 +355,39 @@ class RestPortalSecurityTest extends RestTestPortalBase
         */
 
         // Note 2: no portal_flag, related to bug #2, bug not portal visible, related to account #2
-        $restReply = $this->_restCall("Notes/".$this->notes[2]->id);
+        $restReply = $this->restCall("Notes/".$this->notes[2]->id);
         $this->assertEquals('not_found', $restReply['reply']['error']);
 
         // Note 5: portal_flag, related to bug #5, bug not portal visible, related to account #0
-        $restReply = $this->_restCall("Notes/".$this->notes[5]->id);
+        $restReply = $this->restCall("Notes/".$this->notes[5]->id);
         $this->assertEquals('not_found', $restReply['reply']['error']);
 
         // Note 35: portal_flag, related to bug #11, bug portal visible, related to account #1
-        $restReply = $this->_restCall("Notes/".$this->notes[35]->id);
+        $restReply = $this->restCall("Notes/".$this->notes[35]->id);
         $this->assertEquals($this->notes[35]->id, $restReply['reply']['id']);
 
         // Note 17: portal_flag, related to bug #17, bug portal visible, related to account #0
-        $restReply = $this->_restCall("Notes/".$this->notes[17]->id);
+        $restReply = $this->restCall("Notes/".$this->notes[17]->id);
         $this->assertEquals($this->notes[17]->id, $restReply['reply']['id']);
 
         // Note 14: no portal_flag, related to bug #14, bug portal visible, related to account #2
-        $restReply = $this->_restCall("Notes/".$this->notes[14]->id);
+        $restReply = $this->restCall("Notes/".$this->notes[14]->id);
         $this->assertEquals('not_found', $restReply['reply']['error']);
 
         // Note 15: portal_flag, related to case #15, case portal visible, related to account #0
-        $restReply = $this->_restCall("Notes/".$this->notes[15]->id);
+        $restReply = $this->restCall("Notes/".$this->notes[15]->id);
         $this->assertEquals('not_found', $restReply['reply']['error']);
 
         // Note 13: portal_flag, related to case #13, case portal visible, related to account #1
-        $restReply = $this->_restCall("Notes/".$this->notes[13]->id);
+        $restReply = $this->restCall("Notes/".$this->notes[13]->id);
         $this->assertEquals($this->notes[13]->id, $restReply['reply']['id']);
 
         // Make sure we can find Note #13 through the relationship API
-        $restReply = $this->_restCall('Cases/'.$this->cases[13]->id.'/link/notes/'.$this->notes[13]->id);
+        $restReply = $this->restCall('Cases/'.$this->cases[13]->id.'/link/notes/'.$this->notes[13]->id);
         $this->assertEquals($this->notes[13]->id, $restReply['reply']['id']);
 
         // Make sure we can find Note #13 through the relationship list API
-        $restReply = $this->_restCall('Cases/'.$this->cases[13]->id.'/link/notes/');
+        $restReply = $this->restCall('Cases/'.$this->cases[13]->id.'/link/notes/');
         $foundIt = false;
         foreach ($restReply['reply']['records'] as $noteRecord) {
             if ($noteRecord['id'] == $this->notes[13]->id) {
@@ -398,20 +398,20 @@ class RestPortalSecurityTest extends RestTestPortalBase
         $this->assertTrue($foundIt);
 
         // Note 22: portal_flag, related to case #22, case not portal visible, related to account #1
-        $restReply = $this->_restCall("Notes/".$this->notes[22]->id);
+        $restReply = $this->restCall("Notes/".$this->notes[22]->id);
         $this->assertEquals('not_found', $restReply['reply']['error']);
 
         // Note 49: no portal_flag, related to case #19, case portal visible, related to account #1
-        $restReply = $this->_restCall("Notes/".$this->notes[49]->id);
+        $restReply = $this->restCall("Notes/".$this->notes[49]->id);
         $this->assertEquals('not_found', $restReply['reply']['error']);
 
         // Positive test: Should be able to create a new Note, as long as it is related to a case or a bug.
-        $restReply = $this->_restCall("Cases/".$this->cases[25]->id."/link/notes/", json_encode(['name'=>'UnitTestNew','portal_flag'=>1]), 'POST');
+        $restReply = $this->restCall("Cases/".$this->cases[25]->id."/link/notes/", json_encode(['name'=>'UnitTestNew','portal_flag'=>1]), 'POST');
         $this->assertNotEmpty($restReply['reply']['related_record']['id']);
         $createdNote = BeanFactory::getBean('Notes', $restReply['reply']['related_record']['id']);
         $this->notes[] = $createdNote;
 
-        $restReply = $this->_restCall("Bugs/".$this->bugs[20]->id."/link/notes/", json_encode(['name'=>'UnitTestNew','portal_flag'=>1]), 'POST');
+        $restReply = $this->restCall("Bugs/".$this->bugs[20]->id."/link/notes/", json_encode(['name'=>'UnitTestNew','portal_flag'=>1]), 'POST');
         $this->assertNotEmpty($restReply['reply']['related_record']['id']);
         $createdNote = BeanFactory::getBean('Notes', $restReply['reply']['related_record']['id']);
         $this->notes[] = $createdNote;
@@ -455,31 +455,31 @@ class RestPortalSecurityTest extends RestTestPortalBase
         $GLOBALS['db']->commit();
 
         // Negative test: Try and fetch a Contact you shouldn't be able to see
-        $restReply = $this->_restCall("Contacts/".$this->contacts[2]->id);
+        $restReply = $this->restCall("Contacts/".$this->contacts[2]->id);
         $this->assertEquals('not_found', $restReply['reply']['error']);
 
         // Positive test: Fetch a Contact that you should be able to see
-        $restReply = $this->_restCall("Contacts/".$this->portalGuy->id);
+        $restReply = $this->restCall("Contacts/".$this->portalGuy->id);
         $this->assertEquals($this->portalGuy->id, $restReply['reply']['id']);
 
         // Positive test: Fetch another Contact that you should be able to see
-        $restReply = $this->_restCall("Contacts/".$this->contacts[1]->id);
+        $restReply = $this->restCall("Contacts/".$this->contacts[1]->id);
         $this->assertEquals($this->contacts[1]->id, $restReply['reply']['id']);
 
         // Positive test: Should be able to change the name of our Contact
-        $restReply = $this->_restCall("Contacts/".$this->portalGuy->id, json_encode(['last_name'=>'UnitTestMyGuy']), 'PUT');
+        $restReply = $this->restCall("Contacts/".$this->portalGuy->id, json_encode(['last_name'=>'UnitTestMyGuy']), 'PUT');
         $this->assertEquals('UnitTestMyGuy', $restReply['reply']['last_name']);
-        $restReply = $this->_restCall("Contacts/".$this->portalGuy->id);
+        $restReply = $this->restCall("Contacts/".$this->portalGuy->id);
         $this->assertEquals('UnitTestMyGuy', $restReply['reply']['last_name']);
 
         // Positive test: Make sure we can see both accounts for now
-        $restReply = $this->_restCall('Accounts/');
+        $restReply = $this->restCall('Accounts/');
         foreach ($restReply['reply']['records'] as $record) {
             $this->assertNotEquals($this->accounts[0]->id, $record['id']);
         }
 
         // Positive test: Make sure we can access this account first
-        $restReply = $this->_restCall('Accounts/'.$this->accounts[1]->id);
+        $restReply = $this->restCall('Accounts/'.$this->accounts[1]->id);
         $this->assertEquals($this->accounts[1]->id, $restReply['reply']['id']);
 
         // Remove the contact from one of the accounts and make sure that
@@ -487,13 +487,13 @@ class RestPortalSecurityTest extends RestTestPortalBase
         $this->portalGuy->accounts->delete($this->portalGuy->id, $this->accounts[1]);
         $GLOBALS['db']->commit();
         // Positive test: Make sure we can only see one account now
-        $restReply = $this->_restCall('Accounts/');
+        $restReply = $this->restCall('Accounts/');
         foreach ($restReply['reply']['records'] as $record) {
             $this->assertEquals($this->accounts[2]->id, $record['id']);
         }
 
         // Negative test: Try and fetch the account we unlinked
-        $restReply = $this->_restCall("Accounts/".$this->accounts[1]->id);
+        $restReply = $this->restCall("Accounts/".$this->accounts[1]->id);
         $this->assertEquals('not_found', $restReply['reply']['error']);
     }
 
@@ -581,71 +581,71 @@ class RestPortalSecurityTest extends RestTestPortalBase
 
 
         // Negative test: Try and fetch an account we never linked
-        $restReply = $this->_restCall("Accounts/".$this->accounts[1]->id);
+        $restReply = $this->restCall("Accounts/".$this->accounts[1]->id);
         $this->assertEquals('not_found', $restReply['reply']['error']);
 
         // Negative test: Try and fetch a contact we never linked
-        $restReply = $this->_restCall("Contacts/".$this->contacts[1]->id);
+        $restReply = $this->restCall("Contacts/".$this->contacts[1]->id);
         $this->assertEquals('not_found', $restReply['reply']['error']);
 
         // Positive test: Make sure we can access this contact
-        $restReply = $this->_restCall('Contacts/'.$this->portalGuy->id);
+        $restReply = $this->restCall('Contacts/'.$this->portalGuy->id);
         $this->assertEquals($this->portalGuy->id, $restReply['reply']['id']);
 
         // Positive test: Make sure we can only see this contact in the contact list
-        $restReply = $this->_restCall('Contacts/');
+        $restReply = $this->restCall('Contacts/');
         foreach ($restReply['reply']['records'] as $record) {
             $this->assertEquals($this->portalGuy->id, $record['id']);
         }
 
         // Negative test: Should not be able to create a new Contact
-        $restReply = $this->_restCall("Contacts/", json_encode(['last_name'=>'UnitTestNew','first_name'=>'NewGuy']), 'POST');
+        $restReply = $this->restCall("Contacts/", json_encode(['last_name'=>'UnitTestNew','first_name'=>'NewGuy']), 'POST');
         $this->assertEquals('not_authorized', $restReply['reply']['error']);
 
         // Negative test: Should not be able to create a new Case
-        $restReply = $this->_restCall("Cases/", json_encode(['name'=>'UnitTestNew','description'=>'UNIT TEST SHOULD FAIL']), 'POST');
+        $restReply = $this->restCall("Cases/", json_encode(['name'=>'UnitTestNew','description'=>'UNIT TEST SHOULD FAIL']), 'POST');
         $this->assertEquals('not_authorized', $restReply['reply']['error']);
 
         // Fetch contacts, make sure we can only see the correct one.
-        $restReply = $this->_restCall("Contacts");
+        $restReply = $this->restCall("Contacts");
 
         foreach ($restReply['reply']['records'] as $record) {
             $this->assertEquals($this->portalGuy->id, $record['id']);
         }
 
         // Positive test: Make sure we can fetch a bug that is visible
-        $restReply = $this->_restCall('Bugs/'.$this->bugs[1]->id);
+        $restReply = $this->restCall('Bugs/'.$this->bugs[1]->id);
         $this->assertEquals($this->bugs[1]->id, $restReply['reply']['id']);
 
         // BEGIN SUGARCRM flav=ent ONLY
         // Negative test: Try and fetch a non-visible bug
-        $restReply = $this->_restCall("Bugs/".$this->bugs[2]->id);
+        $restReply = $this->restCall("Bugs/".$this->bugs[2]->id);
         $this->assertEquals('not_found', $restReply['reply']['error']);
         // END SUGARCRM flav=ent ONLY
 
         // Positive test: Make sure we can fetch a note that is related to a visible bug
-        $restReply = $this->_restCall('Notes/'.$this->notes[1]->id);
+        $restReply = $this->restCall('Notes/'.$this->notes[1]->id);
         $this->assertEquals($this->notes[1]->id, $restReply['reply']['id']);
 
         // BEGIN SUGARCRM flav=ent ONLY
         // Negative test: Try and fetch a non-visible note
-        $restReply = $this->_restCall("Notes/".$this->notes[0]->id);
+        $restReply = $this->restCall("Notes/".$this->notes[0]->id);
         $this->assertEquals('not_found', $restReply['reply']['error']);
         // END SUGARCRM flav=ent ONLY
 
         // Positive test: Make sure we can create a new note
-        $restReply = $this->_restCall('Notes/', json_encode(['name'=>'UNIT TEST POSTED','description'=>'This was posted by a unit test.','parent_type'=>'Bugs','parent_id'=>$this->bugs[1]->id,'portal_flag'=>true]), 'POST');
+        $restReply = $this->restCall('Notes/', json_encode(['name'=>'UNIT TEST POSTED','description'=>'This was posted by a unit test.','parent_type'=>'Bugs','parent_id'=>$this->bugs[1]->id,'portal_flag'=>true]), 'POST');
         $this->assertTrue(!empty($restReply['reply']['id']));
 
         // Add it to the list of beans so we can properly delete it.
         $this->notes[] = BeanFactory::getBean('Notes', $restReply['reply']['id']);
 
         // Negative test: Should not be able to create a new Opportunity
-        $restReply = $this->_restCall("Opportunities/", json_encode(['name'=>'UnitTestNew','account_id'=>$this->accounts[1]->id,'expected_close_date'=>'2012-10-11 12:00:00']), 'POST');
+        $restReply = $this->restCall("Opportunities/", json_encode(['name'=>'UnitTestNew','account_id'=>$this->accounts[1]->id,'expected_close_date'=>'2012-10-11 12:00:00']), 'POST');
         $this->assertEquals('not_authorized', $restReply['reply']['error']);
 
         // Negative test: Should not be able to create a new Case
-        $restReply = $this->_restCall("Cases/", json_encode(['name'=>'UnitTestNew','account_id'=>'','portal_viewable'=>1]), 'POST');
+        $restReply = $this->restCall("Cases/", json_encode(['name'=>'UnitTestNew','account_id'=>'','portal_viewable'=>1]), 'POST');
         $this->assertEquals('not_authorized', $restReply['reply']['error']);
     }
 }

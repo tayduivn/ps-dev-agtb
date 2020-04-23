@@ -17,8 +17,8 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug45683Test extends TestCase
 {
-    var $mbmod;
-    var $module_name = 'ThisModule';
+    public $mbmod;
+    public $module_name = 'ThisModule';
 
     protected function setUp() : void
     {

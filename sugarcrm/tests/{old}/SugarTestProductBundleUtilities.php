@@ -14,7 +14,7 @@
 
 class SugarTestProductBundleUtilities
 {
-    private static $_createdProductBundles = [];
+    private static $createdProductBundles = [];
 
     private function __construct()
     {
@@ -32,7 +32,7 @@ class SugarTestProductBundleUtilities
             $productbundle->id = $id;
         }
         $productbundle->save();
-        self::$_createdProductBundles[] = $productbundle;
+        self::$createdProductBundles[] = $productbundle;
         return $productbundle;
     }
 
@@ -41,7 +41,7 @@ class SugarTestProductBundleUtilities
         foreach ($productbundle_ids as $productbundle_id) {
             $productbundle = new ProductBundle();
             $productbundle->id = $productbundle_id;
-            self::$_createdProductBundles[] = $productbundle;
+            self::$createdProductBundles[] = $productbundle;
         } // foreach
     } // fn
     
@@ -56,7 +56,7 @@ class SugarTestProductBundleUtilities
     public static function getCreatedProductBundleIds()
     {
         $productbundle_ids = [];
-        foreach (self::$_createdProductBundles as $productbundle) {
+        foreach (self::$createdProductBundles as $productbundle) {
             $productbundle_ids[] = $productbundle->id;
         }
         return $productbundle_ids;

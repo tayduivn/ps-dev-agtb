@@ -44,7 +44,7 @@ class Bug46805Test extends TestCase
         unset($GLOBALS['beanList']);
         unset($GLOBALS['beanFiles']);
     }
-    function testOrderFields()
+    public function testOrderFields()
     {
         $db = new stdClass();
         $db->dbType = 'mssql';

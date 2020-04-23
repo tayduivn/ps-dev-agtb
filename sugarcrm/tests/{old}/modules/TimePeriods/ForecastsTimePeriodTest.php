@@ -1172,7 +1172,7 @@ class ForecastsTimePeriodTest extends TestCase
         $timePeriod = TimePeriod::getByType($tpType);
         $timePeriod->setStartDate($tpStartDate);
         $timePeriod->save();
-        SugarTestTimePeriodUtilities::$_createdTimePeriods[] = $timePeriod;
+        SugarTestTimePeriodUtilities::addCreatedTimePeriod($timePeriod);
         $chartLabels = $timePeriod->getChartLabels([]);
         $this->assertSameSize($expectedLabels, $chartLabels);
         foreach ($expectedLabels as $key => $expectedLabel) {
@@ -1292,7 +1292,7 @@ class ForecastsTimePeriodTest extends TestCase
         $timePeriod = TimePeriod::getByType($tpType);
         $timePeriod->setStartDate($tpStartDate);
         $timePeriod->save();
-        SugarTestTimePeriodUtilities::$_createdTimePeriods[] = $timePeriod;
+        SugarTestTimePeriodUtilities::addCreatedTimePeriod($timePeriod);
         $chartLabelKey = $timePeriod->getChartLabelsKey($dateClosed);
         $this->assertEquals($expectedKey, $chartLabelKey);
         sugar_cache_clear($timePeriod->id . ':keys');

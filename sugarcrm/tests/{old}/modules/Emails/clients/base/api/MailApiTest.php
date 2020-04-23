@@ -416,8 +416,8 @@ class MailApiTest extends TestCase
             rmdir_recursive($this->userCacheDir);
         }
         $this->mailApi->clearUserCache($this->api, []);
-        $this->_assertCacheDirCreated();
-        $this->_assertCacheDirEmpty();
+        $this->assertCacheDirCreated();
+        $this->assertCacheDirEmpty();
     }
 
     /**
@@ -427,8 +427,8 @@ class MailApiTest extends TestCase
     {
         sugar_file_put_contents($this->userCacheDir . "/test.txt", create_guid());
         $this->mailApi->clearUserCache($this->api, []);
-        $this->_assertCacheDirCreated();
-        $this->_assertCacheDirEmpty();
+        $this->assertCacheDirCreated();
+        $this->assertCacheDirEmpty();
     }
 
     /**
@@ -495,7 +495,7 @@ class MailApiTest extends TestCase
         $this->mailApi->removeAttachment($this->api, ['file_guid' => $fileGuid]);
 
         //verify it was removed
-        $this->_assertCacheDirEmpty();
+        $this->assertCacheDirEmpty();
     }
 
     /**
@@ -834,7 +834,7 @@ class MailApiTest extends TestCase
     /**
      * Check to make sure path is created
      */
-    protected function _assertCacheDirCreated()
+    private function assertCacheDirCreated()
     {
         $this->assertTrue(file_exists($this->userCacheDir), "Cache directory should exist");
     }
@@ -842,7 +842,7 @@ class MailApiTest extends TestCase
     /**
      * Check to make sure path is empty
      */
-    protected function _assertCacheDirEmpty()
+    private function assertCacheDirEmpty()
     {
         $files = findAllFiles($this->userCacheDir, []);
         $this->assertEquals(0, count($files), "Cache directory should be empty");

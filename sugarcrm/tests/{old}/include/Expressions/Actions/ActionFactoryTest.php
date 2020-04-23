@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 class ActionFactoryTest extends TestCase
 {
-    var $removeCustomDir = false;
+    public $removeCustomDir = false;
 
     protected function createCustomAction()
     {

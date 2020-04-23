@@ -16,9 +16,9 @@ require_once 'include/dir_inc.php';
 
 class Bug37692Test extends TestCase
 {
-    var $merge;
-    var $has_dir;
-    var $modules;
+    public $merge;
+    public $has_dir;
+    public $modules;
 
     protected function setUp() : void
     {
@@ -84,7 +84,7 @@ class Bug37692Test extends TestCase
         }
     }
 
-    function test_project_merge()
+    public function test_project_merge()
     {
         $sugar_merge = new SugarMerge('tests/{old}/modules/UpgradeWizard/SugarMerge/od_metadata_files/custom');
         $sugar_merge->mergeModule('Project');
