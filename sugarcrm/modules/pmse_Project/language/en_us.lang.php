@@ -202,6 +202,7 @@ $mod_strings = array (
 
     'LBL_PMSE_FORM_TITLE_ASSIGN_USER' => 'Assign User',
     'LBL_PA_FORM_LABEL_UPDATE_RECORD_OWNER' => 'Update "Assigned To" on record',
+    'LBL_PA_FORM_LABEL_SET_BY_AVAILABILITY' => 'Set "Assigned To" by availability',
 
     'LBL_PMSE_FORM_TITLE_ADD_RELATED_RECORD' => 'Add Related Record',
     'LBL_PMSE_FORM_LABEL_RELATED_MODULE' => 'Related Module',
@@ -213,6 +214,11 @@ $mod_strings = array (
 
     'LBL_PMSE_MESSAGE_ACTIVITY_NAME_EMPTY' => 'The name of activity is empty.',
     'LBL_PMSE_MESSAGE_ACTIVITY_NAME_ALREADY_EXISTS' => 'The name "%s" already exists in shape family.',
+
+    'LBL_PMSE_FORM_REQUIRED_SHIFT_AVAILABILITY' => 'Required shift availability',
+    'LBL_PMSE_FORM_LABEL_IF_NO_AVAILABLE' => 'If no users are available',
+
+    'LBL_PMSE_FORM_LABEL_BEFORE' => 'before',
 
     /**EVENTS**/
     // CONTEXT MENU

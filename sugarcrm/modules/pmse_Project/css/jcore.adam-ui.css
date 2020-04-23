@@ -382,7 +382,8 @@ a.adam-tooltip-error-off {
   line-height: 15px;
 }
 
-.required, .adam.item-container.required {
+.required, .adam.item-container.required,
+input[type="number"].required {
   border-color: rgba(127, 0, 0, 0.8);
   -moz-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(127, 0, 0, 0.6);
   -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(127, 0, 0, 0.6);
@@ -1310,4 +1311,41 @@ input.adam-team-append {
   height: 18px;
   text-align: right;
   margin-bottom: 9px;
+}
+
+.adam-decor .adam-field input[type="number"] {
+  margin-bottom: 9px;
+  -moz-appearance: textfield;
+}
+
+.adam-decor .adam-field input[type="number"]::-webkit-outer-spin-button,
+.adam-decor .adam-field input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+
+.adam-decor .adam-field input[type="checkbox"] {
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+.adam-decor .field-text-before {
+  line-height: 28px;
+  vertical-align: top;
+}
+
+.adam-decor .adam-fields-group > *:not(:last-child) {
+  margin-right: 7px;
+}
+
+.adam-decor .select2-container {
+  margin-bottom: 9px;
+}
+
+.adam-fields-group .adam-field {
+  display: inline-block;
+  padding: 0;
+}
+
+.adam-fields-group .adam-field .adam-form-label {
+  display: none;
 }

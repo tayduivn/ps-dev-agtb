@@ -771,6 +771,10 @@ class PMSECrmDataWrapper implements PMSEObservable
                 $output = $this->retrieveDateFields($args['module']);
                 $outputType = 1;
                 break;
+            case 'dateFieldsOfModule':
+                $output = $this->retrieveDateFields($args['filter'], false);
+                $outputType = 1;
+                break;
             case 'validateReclaimCase':
                 $output = $this->validateReclaimCase($args['cas_id'], $args['cas_index']);
                 $outputType = 1;
@@ -1797,7 +1801,7 @@ SQL;
      * @param $filter
      * @return object
      */
-    public function retrieveDateFields($filter)
+    public function retrieveDateFields($filter, $includeCurrent = true)
     {
         if (isset($this->beanList[$filter])) {
             $newModuleFilter = $filter;
@@ -1823,10 +1827,14 @@ SQL;
                 }
             }
         }
-        $arr_Now = array();
-        $arr_Now['value'] = 'current_date_time';
-        $arr_Now['text'] = 'Current Date Time';
-        array_unshift($output, $arr_Now);
+
+        if ($includeCurrent) {
+            $arr_Now = array();
+            $arr_Now['value'] = 'current_date_time';
+            $arr_Now['text'] = 'Current Date Time';
+            array_unshift($output, $arr_Now);
+        }
+
         $res['result'] = $output;
         return $res;
     }
