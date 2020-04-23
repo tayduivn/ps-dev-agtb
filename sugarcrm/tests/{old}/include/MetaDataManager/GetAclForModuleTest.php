@@ -208,6 +208,7 @@ class GetAclForModuleTest extends TestCase
                     'write' => 'no',
                     'create' => 'no',
                 ),
+                //BEGIN SUGARCRM flav=ent ONLY
                 'business_center_name' => [
                     'write' => 'no',
                     'create' => 'no',
@@ -223,6 +224,7 @@ class GetAclForModuleTest extends TestCase
                     'create' => 'no',
                     'license' => 'no',
                 ],
+                //END SUGARCRM flav=ent ONLY
             ),
             'admin' => 'no',
             'developer' => 'no',
@@ -250,6 +252,7 @@ class GetAclForModuleTest extends TestCase
         // user can view, list, delete, and export
         $expected_result = array(
             'fields' => array(
+                //BEGIN SUGARCRM flav=ent ONLY
                 'business_center_name' => [
                     'write' => 'no',
                     'create' => 'no',
@@ -265,6 +268,7 @@ class GetAclForModuleTest extends TestCase
                     'create' => 'no',
                     'license' => 'no',
                 ],
+                //END SUGARCRM flav=ent ONLY
             ),
             'admin' => 'no',
             'developer' => 'no',
@@ -292,6 +296,7 @@ class GetAclForModuleTest extends TestCase
         // user can view, list, delete, and export
         $expected_result = [
             'fields' => [
+                //BEGIN SUGARCRM flav=ent ONLY
                 'business_center_name' => [
                     'write' => 'no',
                     'create' => 'no',
@@ -307,6 +312,7 @@ class GetAclForModuleTest extends TestCase
                     'create' => 'no',
                     'license' => 'no',
                 ],
+                //END SUGARCRM flav=ent ONLY
             ],
             'admin' => 'no',
             'developer' => 'no',

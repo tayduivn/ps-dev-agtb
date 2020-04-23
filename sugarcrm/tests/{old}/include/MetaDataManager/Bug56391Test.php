@@ -96,8 +96,10 @@ class Bug56391Test extends TestCase
             'is_admin' => array('write' => 'no', 'create' => 'no',  ),
             'last_login' => array( 'read' => 'no', 'write' => 'no', 'create' => 'no',  ),
             'license_type' => array('write' => 'no', 'create' => 'no'),
+            //BEGIN SUGARCRM flav=ent ONLY
             'business_center_name' => ['write' => 'no', 'create' => 'no', 'license' => 'no',],
             'business_center_id' => ['write' => 'no', 'create' => 'no', 'license' => 'no',],
+            //END SUGARCRM flav=ent ONLY
         );
         $acls = $mm->getAclForModule('Users', $GLOBALS['current_user']);
         unset($acls['_hash']);
@@ -213,6 +215,7 @@ class Bug56391Test extends TestCase
                     'write' => 'no',
                     'create' => 'no',
                 ),
+                //BEGIN SUGARCRM flav=ent ONLY
                 'business_center_name' => [
                     'write' => 'no',
                     'create' => 'no',
@@ -228,6 +231,7 @@ class Bug56391Test extends TestCase
                     'create' => 'no',
                     'license' => 'no',
                 ],
+                //END SUGARCRM flav=ent ONLY
             ),
             'admin' => 'no',
             'developer' => 'no',
@@ -414,6 +418,7 @@ class Bug56391Test extends TestCase
         $modules = array('Accounts');
 
         $expected_bean_result['field_access'] = [
+            //BEGIN SUGARCRM flav=ent ONLY
             'business_center_name' => [
                 'write' => 'no',
                 'create' => 'no',
@@ -429,6 +434,7 @@ class Bug56391Test extends TestCase
                 'create' => 'no',
                 'license' => 'no',
             ],
+            //END SUGARCRM flav=ent ONLY
         ];
 
         $account = BeanFactory::newBean('Accounts');
