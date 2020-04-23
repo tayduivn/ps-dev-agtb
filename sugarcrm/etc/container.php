@@ -53,6 +53,7 @@ use Sugarcrm\Sugarcrm\Security\Subject\Formatter as SubjectFormatter;
 use Sugarcrm\Sugarcrm\Security\Subject\Formatter\BeanFormatter;
 use Sugarcrm\Sugarcrm\Security\Validator\Validator;
 use UltraLite\Container\Container;
+use Sugarcrm\Sugarcrm\Performance\Dbal\XhprofLogger;
 
 return new Container([
     SugarConfig::class => function () {
@@ -65,22 +66,28 @@ return new Container([
         $config = $container->get(SugarConfig::class);
 
         $channel = LoggerFactory::getLogger('db');
-
-        $logger = new DebugLogger($channel);
-
-        if ($config->get('dump_slow_queries')) {
-            $logger = new LoggerChain([
-                $logger,
-                new SlowQueryLogger(
-                    $channel,
-                    $config->get('slow_query_time_msec', 5000)
-                )
-            ]);
-        }
-
         DbalFormatter::wrapLogger($channel);
 
-        return $logger;
+        $loggers = [new DebugLogger($channel)];
+
+        if ($config->get('dump_slow_queries')) {
+            $loggers[] = new SlowQueryLogger(
+                $channel,
+                $config->get('slow_query_time_msec', 5000)
+            );
+        }
+
+        if (!empty($sugar_config['xhprof_config'])
+            && SugarXHprof::getInstance()->isEnabled()
+            && empty($GLOBALS['installing'])) {
+            $loggers[] = new XhprofLogger(SugarXHprof::getInstance());
+        }
+
+        if (count($loggers) == 1) {
+            return array_shift($loggers);
+        }
+
+        return new LoggerChain($loggers);
     },
     LoggerInterface::class => function () {
         return LoggerFactory::getLogger('default');
