@@ -19,7 +19,8 @@ import {seedbed} from '@sugarcrm/seedbed';
 
 export class Edit extends BaseField {
 
-    private itemSelector: String;
+    private itemSelectorQLI: String;
+    private itemSelectorOpp: String;
 
     constructor(options) {
         super(options);
@@ -28,21 +29,30 @@ export class Edit extends BaseField {
             $: '[field-name={{name}}]',
             field: {
                 selector: '',
-                button: '.btn.dropdown-toggle'
+                button: 'a',
+                flag: '.btn.dropdown-toggle',
             }
         });
 
-        this.itemSelector = '.rowaction=';
-
+        // Select item from discount dropdown when add new or edit existing QLI record
+        this.itemSelectorQLI = '.rowaction=';
+        // Select item from discount dropdown when create new opportunity record
+        this.itemSelectorOpp = '.select2-results=';
     }
 
     public async setValue(val: any): Promise<void> {
 
         await this.driver.click(this.$('field.button'));
         await this.driver.waitForApp();
-        await this.driver.click(`${this.itemSelector}${val}`);
+
+        //QLI has some extra classes under discount_select field which allows to differentiate
+        //between Opportunity and QLI record
+        let isQLI =  await this.driver.isElementExist(this.$('field.flag'));
+
+        if ( isQLI ) {
+            await this.driver.click(`${this.itemSelectorQLI}${val}`);
+        } else {
+            await this.driver.click(`${this.itemSelectorOpp}${val}`);
+        }
     }
-
 }
-
-

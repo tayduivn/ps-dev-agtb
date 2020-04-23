@@ -352,3 +352,81 @@ Feature: Generate Quote From RLI subpanel in Opportunity record view
       | amount     | $0.00 |
       | best_case  | $0.00 |
       | worst_case | $0.00 |
+
+
+  @create_quote_from_opportunity @SS-298 @SS-420 @AT-361 @pr
+  Scenario: Opportunities > Setting discount amount and percentage properly while convert opportunity to quote
+    Given Accounts records exist:
+      | *name |
+      | Acc_1 |
+    Given I open about view and login
+    When I choose Opportunities in modules menu
+    When I click Create button on #OpportunitiesList header
+    When I provide input for #OpportunitiesDrawer.HeaderView view
+      | *     | name                  |
+      | Opp_1 | CreateOpportunityTest |
+    When I provide input for #OpportunitiesDrawer.RecordView view
+      | *     | account_name |
+      | Opp_1 | Acc_1        |
+    # Provide input for the first (default) RLI
+    When I provide input for #OpportunityDrawer.RLITable view for 1 row
+      | *name | date_closed | sales_stage   | discount_amount | discount_select | likely_case |
+      | RLI_1 | 12/12/2022  | Qualification | 100             | % Percent       | 1000        |
+    # Add second RLI by clicking '+' button on the first row
+    When I choose addRLI on #OpportunityDrawer.RLITable view for 1 row
+    # Provide input for the second RLI
+    When I provide input for #OpportunityDrawer.RLITable view for 2 row
+      | *name | date_closed | sales_stage | discount_amount | discount_select | likely_case |
+      | RLI_2 | 12/12/2022  | Prospecting | 50              | $ US Dollar     | 1000        |
+    When I click Save button on #OpportunitiesDrawer header
+    When I close alert
+
+    # Verify opportunity is created properly
+    When I click on preview button on *Opp_1 in #OpportunitiesList.ListView
+    When I click show more button on #Opp_1Preview view
+    Then I verify fields on #Opp_1Preview.PreviewView
+      | fieldName    | value                 |
+      | name         | CreateOpportunityTest |
+      | amount       | $2,000.00             |
+      | date_closed  | 12/12/2022            |
+      | sales_status | In Progress           |
+
+    When I select *Opp_1 in #OpportunitiesList.ListView
+    # Generate quote from opportunity
+    When I open the revenuelineitems subpanel on #Opp_1Record view
+    When I toggleAll records in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
+    When I select GenerateQuote action in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
+
+    # Complete quote record and save
+    When I toggle Billing_and_Shipping panel on #QuotesRecord.RecordView view
+    When I provide input for #QuotesRecord.HeaderView view
+      | *      | name          |
+      | Quote1 | SugarCRM Inc. |
+    When I provide input for #QuotesRecord.RecordView view
+      | *      | date_quote_expected_closed |
+      | Quote1 | 12/12/2020                 |
+    When I click Save button on #QuotesRecord header
+    When I close alert
+
+    # Verify QLI table header info in quote record view
+    Then I verify fields on QLI total header on #QuotesRecord view
+      | fieldName | value            |
+      | deal_tot  | 52.50% $1,050.00 |
+      | new_sub   | $950.00          |
+      | tax       | $0.00            |
+      | shipping  | $0.00            |
+      | total     | $950.00          |
+
+    # Verify discount_amount in QLI_1 record view
+    When I filter for the Products record *QLI_1 named "RLI_1"
+    When I select *QLI_1 in #ProductsList.ListView
+    Then I verify fields on #QLI_1Record.RecordView
+      | fieldName       | value   |
+      | discount_amount | 100.00% |
+
+    # Verify discount_amount in QLI_2 record view
+    When I filter for the Products record *QLI_2 named "RLI_2"
+    When I select *QLI_2 in #ProductsList.ListView
+    Then I verify fields on #QLI_2Record.RecordView
+      | fieldName       | value  |
+      | discount_amount | $50.00 |
