@@ -35,7 +35,8 @@ $mod_strings = array(
     'LBL_CONSOLE_SORT_PRIMARY_DIRECTION' => 'Primary Sort Direction',
     'LBL_CONSOLE_SORTR_SECONDARY_DIRECTION' => 'Secondary Sort Direction',
     'LBL_CONSOLE_EDIT_DETAIL_DRAWER' => 'Edit Detail Drawer',
-    'LBL_CONSOLE_SEARCH' => 'Search...',
+    'LBL_CONSOLE_MULTI_ROW' => 'Multi-row',
+    'LBL_CONSOLE_MULTI_ROW_HINT' => 'Drop 2 fields here',
 
     // Directions field strings
     'LBL_CONSOLE_DIRECTIONS' => 'Directions',

@@ -11,8 +11,18 @@
  */
 --}}
 <nav>
-    <ul>
-        <li class="pill">test</li>
+    <ul class="field-list">
+        {{!-- begin test data for selected fields --}}
+        <li class="multi-field-block">
+            <ul class="multi-field">
+                <li class="list-header">Field 1/Field  2<i class="fa fa-times-circle console-field-remove"></i></li>
+                <li class="pill">Field 1<i class="fa fa-times-circle console-field-remove"></i></li>
+                <li class="pill">Field 2<i class="fa fa-times-circle console-field-remove"></i></li>
+            </ul>
+        </li>
+        <li class="pill outer">Field 3<i class="fa fa-times-circle console-field-remove"></i></li>
+        <li class="pill outer">Field 4<i class="fa fa-times-circle console-field-remove"></i></li>
+        {{!-- end test data for selected fields --}}
     </ul>
 </nav>
 

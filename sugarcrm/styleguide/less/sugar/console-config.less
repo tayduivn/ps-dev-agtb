@@ -53,13 +53,13 @@
 .config-side-pane {
   display: flex;
   border-bottom: 1px solid #ddd;
+  background-color: @grayLighter;
 }
 
 /* Create two equal columns that sits next to each other */
 .config-side-pane .column {
   flex: 50%;
   padding: 10px;
-  background-color: #f6f6f6;
 }
 
 .config-side-pane .border-right {
@@ -67,25 +67,46 @@
   margin-left: 12px;
 }
 
-.config-side-pane nav ul {
-  height: 260px;
+.config-side-pane nav ul.field-list {
   width: auto;
   overflow: hidden;
   overflow-y: scroll;
   border: 1px solid black;
   list-style-type: none;
-  padding-inline-start: 3px;
+  padding-inline-start: 5px;
   margin: 0;
-}
-
-.config-side-pane .columns nav ul {
-  height: 250px;
   padding-top: 8px;
 }
 
-.config-side-pane .fields nav ul {
+.config-side-pane .columns nav ul.multi-field {
+  height: 63px;
+  width: auto;
+  border: 1px solid grey;
+  border-radius: 16px;
+  list-style-type: none;
+  padding-inline-start: 3px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  margin-left: 0;
+  background-color: @grayMid;
+  cursor: pointer;
+}
+
+.config-side-pane .fields nav ul.field-list {
+  width: auto;
+  border: 1px solid grey;
+  list-style-type: none;
+  padding-inline-start: 3px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.config-side-pane .columns nav ul.field-list {
+  height: 480px;
+}
+
+.config-side-pane .fields nav ul.field-list {
   height: 500px;
-  padding-top: 8px;
 }
 
 .config-side-pane nav li {
@@ -94,9 +115,15 @@
 
 .config-side-pane .columns nav .pill {
   border-radius: 16px;
-  background-color: #555;
+  background-color: @gray;
   color: white;
   margin: 3px;
+  margin-bottom: 5px;
+  cursor: pointer;
+}
+
+.config-side-pane .columns nav .outer {
+  margin-left: 6px;
 }
 
 .config-side-pane .multi-field-label {
@@ -114,9 +141,58 @@
 
 .console-preview th {
   border: 1px solid black;
-  background-color: #d5dce0;
+  background-color: @grayMid;
 }
 
 .console-preview td {
   border: 1px solid black;
+}
+
+.config-side-pane .columns nav li.multi-field-block {
+  padding-left: 0;
+  height: 75px;
+  margin-bottom: 5px;
+}
+
+.config-side-pane .columns nav li.list-header {
+  padding-left: 12px;
+}
+
+.config-side-pane .columns nav i.console-field-remove {
+  float: right;
+  padding-right: 3px;
+  cursor: pointer;
+  z-index: 1;
+  margin-top: 3px;
+}
+
+.config-side-pane .columns nav .pill i.console-field-remove {
+  color: white;
+}
+
+.config-side-pane .columns nav li.list-header i.console-field-remove {
+  color: black;
+}
+
+.config-side-pane .columns nav ul.multi-field:hover li.list-header i.console-field-remove {
+  visibility: visible;
+}
+
+.config-side-pane .columns nav ul.multi-field li.list-header i.console-field-remove {
+  visibility: hidden;
+}
+
+.config-side-pane .columns li.pill:hover i {
+  visibility: visible;
+}
+
+.config-side-pane .columns li.pill i {
+  visibility: hidden;
+}
+
+.config-side-pane .columns nav li.multi-field-block div.multi-field-hint {
+  position: relative;
+  left: 20px;
+  top: 10px;
+  color: grey;
 }
