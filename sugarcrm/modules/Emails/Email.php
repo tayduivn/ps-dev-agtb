@@ -11,6 +11,7 @@
  */
 
 use Sugarcrm\Sugarcrm\Util\Uuid;
+use Doctrine\DBAL\Connection;
 
 class Email extends SugarBean {
 
@@ -4324,17 +4325,21 @@ eoq;
         $table = strtolower($table);
         $module = ucfirst($table);
 
-        $addresses = "'" . implode("','", $addresses) . "'";
-        $q = "SELECT DISTINCT a.id FROM {$table} a" .
-            " INNER JOIN email_addresses ea" .
-            " INNER JOIN email_addr_bean_rel eabr ON ea.id = eabr.email_address_id" .
-            " WHERE eabr.bean_module = '{$module}' AND email_address IN ({$addresses})" .
-            " AND eabr.bean_id = a.id AND a.deleted = 0 LIMIT 1";
+        $sql = <<<SQL
+               SELECT DISTINCT a.id FROM $table a
+               INNER JOIN email_addresses ea
+               INNER JOIN email_addr_bean_rel eabr ON ea.id = eabr.email_address_id
+               WHERE eabr.bean_module = ? AND email_address IN (?)
+               AND eabr.bean_id = a.id AND a.deleted = 0 LIMIT 1
+             SQL;
+
+        $conn = $this->db->getConnection();
+        $stmt = $conn->executeQuery($sql, [$module, $addresses], [null, Connection::PARAM_STR_ARRAY]);
 
         // Get the first bean and set parent id/name, makes little sense since it's a many-to-many relationship
-        $r = $this->db->query($q);
-        if ($a = $this->db->fetchByAssoc($r)) {
-            $parent = BeanFactory::getBean($module, $a['id']);
+        $id = $stmt->fetchColumn();
+        if ($id !== false) {
+            $parent = BeanFactory::getBean($module, $id);
             $this->parent_type = $parent->module_dir;
             $this->parent_id = $parent->id;
             if (!empty($parent->name)) {
