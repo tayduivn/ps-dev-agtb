@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@crud_modules_contacts @job1 @pr @stress-test
+@crud_modules_contacts @job1
 Feature: Contacts module verification
 
   Background:
