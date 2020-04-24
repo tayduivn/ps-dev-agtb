@@ -322,6 +322,7 @@ $dictionary['Opportunity'] = array(
             'audited' => false,
             'studio' => false,
             'importable' => false,
+            'massupdate' => false,
         ],
         'total_revenue_line_items' => array(
             'name' => 'total_revenue_line_items',
@@ -413,6 +414,7 @@ $dictionary['Opportunity'] = array(
             'audited' => false,
             'studio' => false,
             'importable' => false,
+            'massupdate' => false,
         ],
         'date_closed_cascade' => [
             'name' => 'date_closed_cascade',
@@ -423,6 +425,7 @@ $dictionary['Opportunity'] = array(
             'audited' => false,
             'studio' => false,
             'importable' => false,
+            'massupdate' => false,
         ],
         //END SUGARCRM flav=ent ONLY
         'accounts' => array(

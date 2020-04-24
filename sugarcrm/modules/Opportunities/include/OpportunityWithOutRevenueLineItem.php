@@ -58,6 +58,7 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
             'importable' => 'required',
             'required' => true,
             'massupdate' => true,
+            'hidemassupdate' => false,
         ),
         'commit_stage' => array(
             'massupdate' => true,
@@ -72,6 +73,7 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
             'reportable' => true,
             'workflow' => true,
             'importable' => 'required',
+            'hidemassupdate' => false,
         ),
         'probability' => array(
             'audited' => true,
@@ -89,6 +91,7 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
         ),
         'service_start_date' => array(
             'studio' => false,
+            'hidemassupdate' => false,
         ),
         'total_revenue_line_items' => array(
             'reportable' => false,

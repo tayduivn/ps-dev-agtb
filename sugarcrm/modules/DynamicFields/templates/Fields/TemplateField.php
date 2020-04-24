@@ -88,6 +88,7 @@ class TemplateField{
 		'type'=>'type',
 		'audited'=>'audited',
 		'massupdate'=>'massupdate',
+        'hidemassupdate' => 'hidemassupdate',
 		'options'=>'ext1',
 		'help'=>'help',
 	    'comments'=>'comment',
@@ -350,6 +351,7 @@ class TemplateField{
             'type' => $this->type,
             // This needs to be a boolean value so clients know how to handle it
             'massupdate' => $this->convertBooleanValue($this->massupdate),
+            'hidemassupdate' => (isset($this->hidemassupdate)) ? $this->hidemassupdate : false,
             'no_default' => !empty($this->no_default),
             'comments' => (isset($this->comments)) ? $this->comments : '',
             'help' => (isset($this->help)) ? $this->help : '',

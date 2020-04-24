@@ -64,7 +64,7 @@
 	</td>
 </tr>
 {* Readonly fields should not have a massupdate option *}
-{if empty($vardef.readonly)}
+{if empty($vardef.readonly) && !$vardef.hidemassupdate}
 <tr>
 	<td class='mbLBL'>{sugar_translate module="DynamicFields" label="COLUMN_TITLE_MASS_UPDATE"}:</td>
 	<td>
