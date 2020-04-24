@@ -525,13 +525,14 @@ class OpportunityTest extends TestCase
      * @dataProvider dataProviderCascade
      * @covers::cascade
      */
-    public function testCascade($sales_stage, $service_start_date)
+    public function testCascade($sales_stage, $service_start_date, $date_closed)
     {
         $opp = SugarTestOpportunityUtilities::createOpportunity();
 
         $rli1 = SugarTestRevenueLineItemUtilities::createRevenueLineItem();
         $rli1->opportunity_id = $opp->id;
         $rli1->sales_stage = 'Closed Won';
+        $rli1->date_closed = '2019-10-25';
         $rli1->service = 1;
         $rli1->service_start_date = '2019-09-25';
         $rli1->service_duration_value = 1;
@@ -542,6 +543,7 @@ class OpportunityTest extends TestCase
         $rli2 = SugarTestRevenueLineItemUtilities::createRevenueLineItem();
         $rli2->opportunity_id = $opp->id;
         $rli2->sales_stage = 'Closed Lost';
+        $rli2->date_closed = '2020-08-20';
         $rli2->service = 1;
         $rli2->service_start_date = '2021-04-28';
         $rli2->service_duration_value = 1;
@@ -552,22 +554,27 @@ class OpportunityTest extends TestCase
         $rli3 = SugarTestRevenueLineItemUtilities::createRevenueLineItem();
         $rli3->opportunity_id = $opp->id;
         $rli3->sales_stage = 'Needs Analysis';
+        $rli3->date_closed = '2020-08-08';
         $rli3->service = 1;
         $rli3->service_start_date = '2021-04-28';
         $rli3->service_duration_value = 1;
         $rli3->service_duration_unit = 'year';
+
         $opp->revenuelineitems->add($rli3);
 
         $rli4 = SugarTestRevenueLineItemUtilities::createRevenueLineItem();
         $rli4->opportunity_id = $opp->id;
         $rli4->sales_stage = 'Needs Analysis';
+        $rli4->date_closed = '2019-09-25';
         $rli4->service = 0;
         $rli4->service_start_date = null;
+
         $opp->revenuelineitems->add($rli4);
 
-        // sales stage will have been recalculated above, so reset it
+        // Opp level RLI management fields  will have been recalculated above, so reset it
         $opp->sales_stage_cascade = $sales_stage;
         $opp->service_start_date_cascade = $service_start_date;
+        $opp->date_closed_cascade = $date_closed;
         SugarTestReflection::callProtectedMethod(
             $opp,
             'cascade'
@@ -575,20 +582,27 @@ class OpportunityTest extends TestCase
 
         $this->assertSame($rli1->sales_stage, 'Closed Won');
         $this->assertSame($rli1->service_start_date, '2019-09-25');
+        $this->assertSame($rli1->date_closed, '2019-10-25');
+
         $this->assertSame($rli2->sales_stage, 'Closed Lost');
         $this->assertSame($rli2->service_start_date, '2021-04-28');
+        $this->assertSame($rli2->date_closed, '2020-08-20');
+
         $this->assertSame($rli3->sales_stage, $sales_stage);
         $this->assertSame($rli3->service_start_date, $service_start_date);
+        $this->assertSame($rli3->date_closed, $date_closed);
+
         $this->assertSame($rli4->sales_stage, $sales_stage);
         $this->assertSame($rli4->service_start_date, null);
+        $this->assertSame($rli4->date_closed, $date_closed);
     }
 
     public function dataProviderCascade()
     {
-        // $sales_stage, $service_start_date
+        // $sales_stage, $service_start_date, $date_closed
         return [
-            ['Prospecting','2020-02-20',],
-            ['Value Proposition','2020-02-20',],
+            ['Prospecting','2020-02-20','2019-08-25',],
+            ['Value Proposition','2020-02-20','2019-09-26',],
         ];
     }
 

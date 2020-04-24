@@ -171,25 +171,28 @@ $viewdefs['Opportunities']['base']['view']['record'] = array(
                         'account_id'
                     )
                 ),
+                // BEGIN SUGARCRM flav!=ent ONLY
                 array(
                     'name' => 'date_closed',
                     'related_fields' => array(
                         'date_closed_timestamp'
                     )
                 ),
-                // BEGIN SUGARCRM flav!=ent && flav!=ult ONLY
                 array(
                     'name' => 'sales_stage',
                 ),
-                // END SUGARCRM flav!=ent && flav!=ult ONLY
-                // BEGIN SUGARCRM flav=ent || flav=ult ONLY
+                // END SUGARCRM flav!=ent ONLY
+                // BEGIN SUGARCRM flav=ent ONLY
+                array(
+                    'name' => 'date_closed',
+                    'type' => 'date-cascade',
+                    'label' => 'LBL_LIST_DATE_CLOSED',
+                ),
                 [
                     'name' => 'sales_stage',
                     'type' => 'enum-cascade',
                     'label' => 'LBL_SALES_STAGE',
                 ],
-                // END SUGARCRM flav=ent || flav=ult ONLY
-                // BEGIN SUGARCRM flav=ent ONLY
                 array(
                     'name' => 'service_start_date',
                     'type' => 'date-cascade',
