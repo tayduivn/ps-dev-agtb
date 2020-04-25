@@ -260,13 +260,7 @@ class SugarEmailAddressTest extends TestCase
      */
     public function testIsValidEmail($email, $expected)
     {
-        $startTime = microtime(true);
         $this->assertEquals($expected, SugarEmailAddress::isValidEmail($email));
-        // Checking for elapsed time. I expect that evaluation takes less than a second.
-        //$timeElapsed = microtime(true) - $startTime;
-        //This is only testing the speed of Regex on this system.
-        //It is failing randomly without any obvious source.
-        //$this->assertLessThan(1.0, $timeElapsed);
     }
 
     /**

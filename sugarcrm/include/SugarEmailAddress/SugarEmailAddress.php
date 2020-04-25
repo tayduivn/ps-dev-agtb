@@ -67,7 +67,11 @@ class SugarEmailAddress extends SugarBean
      */
     public static function isValidEmail($emailAddress)
     {
-        return PHPMailerProxy::ValidateAddress(Etechnika\IdnaConvert\IdnaConvert::encodeString($emailAddress));
+        $emailAddress = implode('@', array_map(function (string $part) : string {
+            return idn_to_ascii($part, IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46);
+        }, explode('@', $emailAddress)));
+
+        return PHPMailer::validateAddress($emailAddress);
     }
 
     /**

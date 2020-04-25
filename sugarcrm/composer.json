@@ -100,7 +100,6 @@
     "require": {
         "doctrine/dbal": "^2.10.2",
         "ezyang/htmlpurifier": "^4.12",
-        "etechnika/idna-convert" : "^1.2",
         "ext-openssl": "*",
         "google/apiclient": "1.1.4",
         "league/oauth2-client": "2.2.1",
@@ -120,6 +119,7 @@
         "symfony/cache": "v3.4.16",
         "symfony/console": "v3.4.16",
         "symfony/framework-bundle": "v3.4.16",
+        "symfony/polyfill-intl-idn": "^1.15",
         "symfony/security-core": "v3.4.16",
         "symfony/security-csrf": "v3.4.16",
         "symfony/translation": "v3.4.16",

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7f861f0b725032e277044724e303a6b4",
+    "content-hash": "7ea00c1939ad84b774f507e44d9f3b64",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -2906,6 +2906,9 @@
                 "wiki": "http://support.sugarcrm.com",
                 "forum": "https://community.sugarcrm.com/sugarcrm",
                 "irc": "irc://irc.freenode.org/sugarcrm"
+            },
+            "transport-options": {
+                "relative": true
             }
         },
         {
