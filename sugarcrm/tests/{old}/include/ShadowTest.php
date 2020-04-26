@@ -54,27 +54,4 @@ class ShadowTest extends RestTestBase
             file_put_contents($filename, "This is a text of a test. And this is a test of a text.");
             $this->assertEquals("text/plain", get_file_mime_type($filename, "wront/type"));
         }
-
-        public function testRestPost()
-        {
-            $this->markTestIncomplete("ENG- This test is erroring in Stack94");
-            $this->_contact = SugarTestContactUtilities::createContact();
-            $post = array('picture' => '@include/images/badge_256.png');
-            $reply = $this->_restCall('Contacts/' . $this->_contact->id . '/file/picture', $post);
-            $this->assertArrayHasKey('picture', $reply['reply'], 'Reply is missing field name key');
-            $this->assertNotEmpty($reply['reply']['picture']['name'], 'File name not returned');
-        }
-
-        public function testRestPostCache()
-        {
-            $this->markTestIncomplete("ENG- This test is erroring in Stack94");
-            $this->_contact = SugarTestContactUtilities::createContact();
-            $filename = sugar_cached("test.png");
-            SugarTestHelper::saveFile($filename);
-            copy('include/images/badge_256.png', $filename);
-            $post = array('picture' => '@'.$filename);
-            $reply = $this->_restCall('Contacts/' . $this->_contact->id . '/file/picture', $post);
-            $this->assertArrayHasKey('picture', $reply['reply'], 'Reply is missing field name key');
-            $this->assertNotEmpty($reply['reply']['picture']['name'], 'File name not returned');
-        }
 }

@@ -19,10 +19,6 @@ class SugarFileUtilsTest extends TestCase
     private $_filename;
     private $_old_default_permissions;
     private $testDirectory;
-    private $skippedMessage = <<<SKIPIT
-There is no way this test will ever pass, since _getTestFilePermissions will always return a four character octal string
-value and decoct() will return an octal as a string but expressed in integer format (without the leading 0).
-SKIPIT;
 
     protected function setUp() : void
     {
@@ -101,31 +97,6 @@ SKIPIT;
         $this->assertEquals($atime,fileatime($this->_filename));
     }
 
-    public function testSugarChmod()
-    {
-        $this->markTestSkipped($this->skippedMessage);
-        $this->assertTrue(sugar_chmod($this->_filename));
-        $this->assertEquals($this->_getTestFilePermissions(), decoct(get_mode('file_mode')));
-    }
-
-    public function testSugarChmodWithMode()
-    {
-        $this->markTestSkipped($this->skippedMessage);
-        $mode = 0411;
-        $this->assertTrue(sugar_chmod($this->_filename, $mode));
-
-        $this->assertEquals($this->_getTestFilePermissions(),decoct($mode));
-    }
-
-    public function testSugarChmodNoDefaultMode()
-    {
-        $this->markTestSkipped($this->skippedMessage);
-        $GLOBALS['sugar_config']['default_permissions']['file_mode'] = null;
-
-        $this->assertTrue(sugar_chmod($this->_filename));
-        $this->assertEquals($this->_getTestFilePermissions(), decoct(get_mode('file_mode')));
-    }
-
     public function testSugarChmodDefaultModeNotAnInteger()
     {
         $GLOBALS['sugar_config']['default_permissions']['file_mode'] = '';
@@ -138,26 +109,6 @@ SKIPIT;
         $this->assertFalse(sugar_chmod($this->_filename));
     }
 
-    public function testSugarChmodWithModeNoDefaultMode()
-    {
-        $this->markTestSkipped($this->skippedMessage);
-        $GLOBALS['sugar_config']['default_permissions']['file_mode'] = null;
-        $mode = 0411;
-        $this->assertTrue(sugar_chmod($this->_filename, $mode));
-
-        $this->assertEquals($this->_getTestFilePermissions(),decoct($mode));
-    }
-
-    public function testSugarChmodWithModeDefaultModeNotAnInteger()
-    {
-        $this->markTestSkipped($this->skippedMessage);
-        $GLOBALS['sugar_config']['default_permissions']['file_mode'] = '';
-        $mode = 0411;
-        $this->assertTrue(sugar_chmod($this->_filename, $mode));
-
-        $this->assertEquals($this->_getTestFilePermissions(),decoct($mode));
-    }
-
     public function testSugarChown()
     {
         if ($GLOBALS['sugar_config']['default_permissions']['user'] == '')
@@ -168,12 +119,11 @@ SKIPIT;
         $this->assertEquals(fileowner($this->_filename),$this->_getCurrentUser());
     }
 
+    /**
+     * @requires function posix_getuid
+     */
     public function testSugarChownWithUser()
     {
-        if ($this->_getCurrentUser() == '')
-        {
-            $this->markTestSkipped('Can not get UID. Posix extension is required.');
-        }
         $this->assertTrue(sugar_chown($this->_filename,$this->_getCurrentUser()));
         $this->assertEquals(fileowner($this->_filename),$this->_getCurrentUser());
     }
@@ -185,13 +135,11 @@ SKIPIT;
         $this->assertFalse(sugar_chown($this->_filename));
     }
 
+    /**
+     * @requires function posix_getuid
+     */
     public function testSugarChownWithUserNoDefaultUser()
     {
-        if ($this->_getCurrentUser() == '')
-        {
-            $this->markTestSkipped('Can not get UID. Posix extension is required.');
-        }
-
         $GLOBALS['sugar_config']['default_permissions']['user'] = '';
 
         $this->assertTrue(sugar_chown($this->_filename,$this->_getCurrentUser()));

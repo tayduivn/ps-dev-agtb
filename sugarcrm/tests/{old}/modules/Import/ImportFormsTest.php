@@ -73,47 +73,6 @@ class ImportFormsTest extends TestCase
         $this->assertFalse($controller->bean);
     }
 
-    public function errorSet()
-    {
-         return array(
-            array(E_USER_WARNING,'sample E_USER_WARNING','test12.php',4),
-            array(E_WARNING,'sample E_WARNING','test4.php',2232),
-            array(E_USER_NOTICE,'sample E_USER_NOTICE','test8.php',932),
-            array(E_NOTICE,'sample E_NOTICE','12test.php',39),
-            array(E_STRICT,'sample E_STRICT','t12est.php',42),
-            array(12121212121,'sample unknown error','te43st.php',334),
-            );
-    }
-
-    /**
-     * @dataProvider errorSet
-     */
-    public function testHandleImportErrors($errno, $errstr, $errfile, $errline)
-    {
-        $this->markTestIncomplete('Outputs error to console. Need to be fixed by FRM team');
-        $old_error_reporting = error_reporting(E_ALL);
-
-        Importer::handleImportErrors($errno, $errstr, $errfile, $errline);
-
-        switch ($errno) {
-            case E_USER_WARNING:
-            case E_WARNING:
-                //$this->assertEquals("WARNING: [$errno] $errstr on line $errline in file $errfile<br />",$output);
-                break;
-            case E_USER_NOTICE:
-            case E_NOTICE:
-                //$this->assertEquals("NOTICE: [$errno] $errstr on line $errline in file $errfile<br />",$output);
-                break;
-            case E_STRICT:
-                //$this->assertEquals('',$output);
-                break;
-            default:
-                $this->expectOutputString("Unknown error type: [$errno] $errstr on line $errline in file $errfile<br />\n");
-                break;
-            }
-        error_reporting($old_error_reporting);
-    }
-
     public function testGetControlIdField()
     {
         $html = getControl('Contacts','assigned_user_id');

@@ -112,86 +112,6 @@ class RestClearMetadataCacheTest extends RestTestBase
     }
 
     /**
-     * Tests the process of clearing out metadata cache for each step along the 
-     * way of creating and editing a field, then deleting that field
-     * 
-     * @group rest
-     */
-    public function testCustomFieldChangesClearMetadataCache()
-    {
-        $this->markTestIncomplete('Migrate this to Soap UI.');
-        MetaDataManager::clearAPICache();
-        // Start by calling the metadata api to set the cache and get the first result
-        $reply = $this->_restCall('metadata?type_filter=modules&module_filter=Accounts');
-        $this->assertNotEmpty($reply['reply'], "The reply from the initial metadata request is empty");
-        if ( isset($initialMetadata['reply']['modules']['Accounts']['fields']['unit_testy_c']) ) {
-            // Some test must not have cleaned up after itself
-            $this->_teardownCustomField();
-            $reply = $this->_restCall('metadata?type_filter=modules&module_filter=Accounts');
-        }
-        $initialMetadata = $reply;
-        $this->assertFalse(isset($initialMetadata['reply']['modules']['Accounts']['fields']['unit_testy_c']), "The custom field was found in the initial request but should not have been");
-        
-        // Add a custom field
-        $_REQUEST = $this->_requestMock->createFieldRequestVars;
-        $mb = new ModuleBuilderController();
-        $mb->action_SaveField();
-
-        $testBean = BeanFactory::newBean('Accounts');
-        $this->assertArrayHasKey('unit_testy_c',$testBean->field_defs,"The Accounts module doesn't think it has a test field.");
-        
-        // Add the teardown method to the teardown stack in case of failure
-        $this->_teardowns['cf'] = '_teardownCustomField';
-        
-        // Test custom field shows in metadata request
-        $reply = $this->_restCall('metadata?type_filter=modules&module_filter=Accounts');
-        $this->assertArrayHasKey('unit_testy_c',$reply['reply']['modules']['Accounts']['fields'],"The metadata doesn't think the test field exists");
-        $this->assertNotEmpty($reply['reply']['modules']['Accounts']['fields']['unit_testy_c'], "The created custom field was not found in the metadata response");
-        
-        // Change the custom field by adding a formula
-        $_REQUEST['name'] .= '_c';
-        $_REQUEST['formula'] = 'add(1,3)';
-        $mb = new ModuleBuilderController();
-        $mb->action_SaveField();
-        
-        // Test custom field edit shows in metadata request
-        $reply = $this->_restCall('metadata?type_filter=modules&module_filter=Accounts');
-        $this->assertArrayHasKey('unit_testy_c',$reply['reply']['modules']['Accounts']['fields'],"The metadata doesn't think the test field exists #2");
-        $this->assertArrayHasKey('formula',$reply['reply']['modules']['Accounts']['fields']['unit_testy_c'],"The metadata doesn't think the test field has a formula");
-        $this->assertEquals($_REQUEST['formula'], $reply['reply']['modules']['Accounts']['fields']['unit_testy_c']['formula'], "The formula that was saved was not the formula that was passed in");
-        
-        // Change a label
-        $_REQUEST['labelValue'] = $this->_requestMock->deleteFieldRequestVars['labelValue'];
-        $mb = new ModuleBuilderController();
-        $mb->action_SaveField();
-        
-        // Test label change shows up in metadata request
-        $reply = $this->_restCall('metadata?type_filter=modules&module_filter=Accounts');
-        $this->assertNotEmpty($reply['reply']['modules']['Accounts']['fields']['unit_testy_c']['vname'], "The created custom field label id was not found in the metadata response");
-        // Set the label for use in the next test
-        $vname = $reply['reply']['modules']['Accounts']['fields']['unit_testy_c']['vname'];
-
-        // Get the app strings from the label url
-        $this->assertNotEmpty($reply['reply']['labels']['en_us'], "Label metadata entry is missing");
-        $contents = json_decode(file_get_contents($GLOBALS['sugar_config']['site_url'] . '/' . $reply['reply']['labels']['en_us']), true);
-        $this->assertNotEmpty($contents['mod_strings']['Accounts'][$vname], "The label value for the custom field label was not found");
-        $this->assertEquals($_REQUEST['labelValue'], $contents['mod_strings']['Accounts'][$vname], "The custom field label change did not reflect in the metadata response");
-        
-        // Delete the custom field and remove the teardown method from the 
-        // teardown stack since at this point out testing would have cleaned up
-        $this->_teardownCustomField();
-        unset($this->_teardowns['cf']);
-        
-        // Test custom field no longer shows in metadata
-        $reply = $this->_restCall('metadata?type_filter=modules&module_filter=Accounts');
-        $this->assertFalse(isset($reply['reply']['modules']['Accounts']['fields']['unit_testy_c']), "The created custom field was found in the metadata response and it should not have been");
-        $this->assertSameSize(
-            $initialMetadata['reply']['modules']['Accounts']['fields'],
-            $reply['reply']['modules']['Accounts']['fields']
-        );
-    }
-
-    /**
      * Tests relationship create, edit and delete reflect immediately in metadata
      * requests
      *
@@ -235,37 +155,6 @@ class RestClearMetadataCacheTest extends RestTestBase
         $this->assertFalse(isset($data['relationships'][$relName]), "The created relationship was found in the metadata response and it should not have been");
     }
 
-    /**
-     * Test the creation of a dropdown list immediately shows up in metadata
-     * requests
-     * 
-     * @group rest
-     */
-    public function testDropdownListChangesClearMetadataCache()
-    {
-        $this->markTestIncomplete('Migrate this to Soap UI.');
-        // Create a dropdown
-        $_REQUEST = $this->_requestMock->ddlFieldRequestVars;
-        $parser = new ParserDropDown();
-        $parser->saveDropDown($_REQUEST);
-        
-        // Stack it
-        $this->_teardowns['ddl'] = '_teardownDropdownList';
-        
-        // Test it 
-        $reply = $this->_restCall('metadata');
-        $this->assertNotEmpty($reply['reply']['labels']['en_us'], "Label metadata entry is missing");
-        $contents = json_decode(file_get_contents($reply['reply']['labels']['en_us']), true);
-        $this->assertArrayHasKey($_REQUEST['dropdown_name'],$contents['app_list_strings']);
-        $this->assertNotEmpty($contents['app_list_strings'][$_REQUEST['dropdown_name']], "The custom dropdown list was not found");
-        
-        // Delete the dropdown - This could be delegated to the teardown method
-        // Normally we would test removing the dropdown list, but we can't since
-        // we don't allow deleting a dropdown list
-        $this->_teardownDropdownList();
-        unset($this->_teardowns['ddl']);
-    }
-    
     protected function _teardownCustomField()
     {
         // Set the request

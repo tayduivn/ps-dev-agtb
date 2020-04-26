@@ -21,8 +21,6 @@ class Bug36845Test extends TestCase
 
     protected function setUp() : void
     {
-        //$this->markTestIncomplete('Revisit this test.  Seems to be corrupting unified search');
-
         global $beanFiles, $beanList;
         require('include/modules.php');
 

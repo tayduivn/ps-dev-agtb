@@ -61,27 +61,6 @@ class JobQueueTest extends TestCase
         $this->assertEquals($GLOBALS['current_user']->id, $job->assigned_user_id);
     }
 
-    public function testGetJob()
-    {
-        $this->markTestIncomplete('This is not working due to caching of the bean and the check_date_relationships_load method is not called. FRM team will fix');
-        $job = new SchedulersJob();
-        $job->status = SchedulersJob::JOB_STATUS_RUNNING;
-        $job->scheduler_id = 'unittest';
-        $now = $GLOBALS['timedate']->nowDb();
-        $job->name = "Unit test Job 1";
-        $job->target = "test::test";
-        $id = $this->jq->submitJob($job);
-
-        $this->assertNotEmpty($id, "Bad job ID");
-        $job = $this->jq->getJob($id);
-        $this->assertEquals(SchedulersJob::JOB_PENDING, $job->resolution, "Wrong resolution");
-        $this->assertEquals(SchedulersJob::JOB_STATUS_QUEUED, $job->status, "Wrong status");
-        $this->assertEquals($now, $job->execute_time_db, "Wrong execute time");
-
-        $job = $this->jq->getJob("nosuchjob");
-        $this->assertNull($job, "Bad return on non-existing job");
-    }
-
     public function testCleanup()
     {
         $job = new SchedulersJob();

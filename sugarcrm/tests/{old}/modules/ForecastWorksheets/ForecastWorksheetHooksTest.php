@@ -36,21 +36,6 @@ class ForecastWorksheetHooksTest extends TestCase
     /**
      * @covers ForecastWorksheetHooks::managerNotifyCommitStage
      */
-    public function testManagerNotifyCommitStageDraftBeanReturnFalse()
-    {
-        $this->markTestSkipped('Skipped for now as Notifications are not working currently');
-        $this->worksheet->draft = 1;
-
-        /* @var $hook ForecastWorksheetHooks */
-        $hook = $this->createPartialMock('ForecastWorksheetHooks', array('isForecastSetup', 'getNotificationBean'));
-        $hook::$_isForecastSetup = false;
-        $ret = $hook::managerNotifyCommitStage($this->worksheet, 'before_save', array());
-        $this->assertFalse($ret);
-    }
-
-    /**
-     * @covers ForecastWorksheetHooks::managerNotifyCommitStage
-     */
     public function testManagerNotifyCommitStageNewBeanReturnsFalse()
     {
         $this->markTestSkipped('Skipped for now as Notifications are not working currently');
@@ -60,25 +45,6 @@ class ForecastWorksheetHooksTest extends TestCase
         /* @var $hook ForecastWorksheetHooks */
         $hook = new MockForecastWorksheetHooks();
         $hook::$_isForecastSetup = false;
-        $ret = $hook::managerNotifyCommitStage($this->worksheet, 'before_save', array());
-        $this->assertFalse($ret);
-    }
-
-    /**
-     * @covers ForecastWorksheetHooks::managerNotifyCommitStage
-     */
-    public function testManagerNotifyCommitStageForecastNotSetupReturnsFalse()
-    {
-        $this->markTestSkipped('Skipped for now as Notifications are not working currently');
-        $this->worksheet->draft = 0;
-        $this->worksheet->fetched_row = array(
-            'commit_stage' => 'include'
-        );
-
-
-        $hook = new MockForecastWorksheetHooks();
-        $hook::$_isForecastSetup = false;
-        /* @var $hook ForecastWorksheetHooks */
         $ret = $hook::managerNotifyCommitStage($this->worksheet, 'before_save', array());
         $this->assertFalse($ret);
     }
@@ -107,27 +73,6 @@ class ForecastWorksheetHooksTest extends TestCase
     /**
      * @covers ForecastWorksheetHooks::managerNotifyCommitStage
      */
-    public function testManagerNotifyCommitStageFetchedCommitStageNotEqualToIncludeReturnsFalse()
-    {
-        $this->markTestSkipped('Skipped for now as Notifications are not working currently');
-        $this->worksheet->draft = 0;
-        $this->worksheet->fetched_row = array(
-            'commit_stage' => 'exclude'
-        );
-        $this->worksheet->parent_type = 'Test';
-
-
-        $hook = new MockForecastWorksheetHooks();
-        $hook::$_isForecastSetup = false;
-        /* @var $hook ForecastWorksheetHooks */
-        $hook::$settings = array('forecast_by' => 'Test');
-        $ret = $hook::managerNotifyCommitStage($this->worksheet, 'before_save', array());
-        $this->assertFalse($ret);
-    }
-
-    /**
-     * @covers ForecastWorksheetHooks::managerNotifyCommitStage
-     */
     public function testManagerNotifyCommitStageCommitStageEqualToIncludeReturnsFalse()
     {
         $this->markTestSkipped('Skipped for now as Notifications are not working currently');
@@ -145,112 +90,6 @@ class ForecastWorksheetHooksTest extends TestCase
         $hook::$settings = array('forecast_by' => 'Test');
         $ret = $hook::managerNotifyCommitStage($this->worksheet, 'before_save', array());
         $this->assertFalse($ret);
-    }
-
-    /**
-     * @covers ForecastWorksheetHooks::managerNotifyCommitStage
-     */
-    public function testManagerNotifyCommitStageWithUserWithNoReportsToReturnsFalse()
-    {
-        $this->markTestSkipped('Skipped for now as Notifications are not working currently');
-        $user = $this->createPartialMock('User', array('save'));
-        $user->id = 'test';
-
-        $link2 = $this->getMockBuilder('Link2')
-            ->disableOriginalConstructor()
-            ->setMethods(array('getBeans'))
-            ->getMock();
-
-        $link2->expects($this->once())
-            ->method('getBeans')
-            ->will($this->returnValue(array($user)));
-
-        $worksheet = $this->worksheet;
-        $worksheet->draft = 0;
-        $worksheet->fetched_row = array(
-            'commit_stage' => 'include'
-        );
-        $worksheet->commit_stage = 'exclude';
-        $worksheet->parent_type = 'Test';
-
-
-        $worksheet->expects($this->once())
-            ->method('load_relationship')
-            ->will(
-                $this->returnCallback(
-                    function ($o) use (&$worksheet, &$link2) {
-                        $worksheet->$o = $link2;
-                        return $o;
-                    }
-                )
-            );
-
-        $hook = new MockForecastWorksheetHooks();
-        /* @var $hook ForecastWorksheetHooks */
-        $hook::$settings = array('forecast_by' => 'Test');
-        $ret = $hook::managerNotifyCommitStage($this->worksheet, 'before_save', array());
-        $this->assertFalse($ret);
-    }
-
-    /**
-     * @covers ForecastWorksheetHooks::managerNotifyCommitStage
-     */
-    public function testManagerNotifyCommitStageWithUserWithReportsToCreatesNotification()
-    {
-        $this->markTestSkipped('Skipped for now as Notifications are not working currently');
-        $user = $this->createPartialMock('User', array('save'));
-        $user->id = 'test';
-        $user->reports_to_id = 'test1';
-
-        $link2 = $this->getMockBuilder('Link2')
-            ->disableOriginalConstructor()
-            ->setMethods(array('getBeans'))
-            ->getMock();
-
-        $link2->expects($this->once())
-            ->method('getBeans')
-            ->will($this->returnValue(array($user)));
-
-        $worksheet = $this->worksheet;
-        $worksheet->draft = 0;
-        $worksheet->fetched_row = array(
-            'commit_stage' => 'include'
-        );
-        $worksheet->commit_stage = 'exclude';
-        $worksheet->parent_type = 'Test';
-
-
-        $worksheet->expects($this->once())
-            ->method('load_relationship')
-            ->will(
-                $this->returnCallback(
-                    function ($o) use (&$worksheet, &$link2) {
-                        $worksheet->$o = $link2;
-                        return $o;
-                    }
-                )
-            );
-
-        $notification = $this->createPartialMock('Notifications', array('save'));
-        $notification->expects($this->once())
-            ->method('save')
-            ->will($this->returnValue(true));
-
-        $hook = new MockForecastWorksheetHooks();
-        $hook::$_notificationBean = $notification;
-        $hook::$_languageStringsMock = array(
-            'LBL_MANAGER_NOTIFY' => 'Message One',
-            'LBL_MODULE_NAME_SINGULAR' => 'Message Two'
-        );
-
-        /* @var $hook ForecastWorksheetHooks */
-        $hook::$settings = array('forecast_by' => 'Test');
-        $ret = $hook::managerNotifyCommitStage($this->worksheet, 'before_save', array());
-
-        $this->assertTrue($ret);
-        /* @var $notification Notifications */
-        $this->assertEquals('test1', $notification->assigned_user_id);
-        $this->assertEquals('Message One', $notification->name);
     }
 
     /**

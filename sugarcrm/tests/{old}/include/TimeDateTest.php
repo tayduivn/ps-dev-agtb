@@ -344,9 +344,6 @@ class TimeDateTest extends TestCase
 	 */
 	public function testGetMidnight($tf, $time)
 	{
-		if(!is_callable(array($this->time_date, "get_default_midnight"))) {
-			$this->markTestSkipped("Method is no longer public");
-		}
 		$this->_setPrefs('', $tf, "America/Los_Angeles");
 		$this->assertEquals($time,  $this->time_date->get_default_midnight(true),
 			"Bad midnight value for $time format $tf");
@@ -629,12 +626,11 @@ class TimeDateTest extends TestCase
 
 	/**
 	 * test getting GMT dates
+     *
+     * @requires function strptime
 	 */
 	public function testGetGMT()
 	{
-		if (is_windows() || !function_exists("strptime")) {
-            $this->markTestSkipped('Skipping on Windows, no strptime');
-        }
         $gmt = $this->time_date->nowDb();
 		$dt = strptime($gmt, "%Y-%m-%d %H:%M:%S");
 		$this->assertEquals($dt['tm_year']+1900, gmdate("Y"));

@@ -61,13 +61,11 @@ class IsValidCopyPathTest extends TestCase
 
     /**
      * @dataProvider isValidCopyPathFailureOnWindowsProvider
+     *
+     * @requires OSFAMILY Windows
      */
     public function testIsValidCopyPathFailureOnWindows($path)
     {
-        if (!is_windows()) {
-            $this->markTestSkipped('Only relevant for Windows');
-        }
-
         $actual = isValidCopyPath($path);
         $this->assertFalse($actual);
     }

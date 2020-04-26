@@ -53,30 +53,10 @@ class SetEntryWithAccessTest extends SOAPTestCase
     public function testSetEntryHasAccess()
     {
         $time = mt_rand();
-        $oldName = $this->testAccount->name;
-        $result = $this->_login();
+        $this->_login();
 
         $result = $this->_soapClient->call('set_entry',array('session'=> $this->_sessionId,'module_name'=>'Accounts', 'name_value_list'=>array(array('name'=>'id' , 'value'=>$this->testAccount->id),array('name'=>'name' , 'value'=>"$time Account SINGLE"))));
 
         $this->assertEquals($this->testAccount->id, $result['id'], "Did not update the Account as expected.");
-    }
-
-    public function testSetEntryNoAccess()
-    {
-        $this->markTestSkipped("Since soap api can not login with regular user, skip this.");
-        $teamSet = BeanFactory::newBean('TeamSets');
-        $teamSet->addTeams(array($this->testTeam->id));
-        $this->testAccount->team_id = $this->testTeam->id;
-        $this->testAccount->team_set_id = $teamSet->id;
-        $this->testAccount->assigned_user_id = '1';
-        $this->testAccount->save();
-
-        $this->testTeam->remove_user_from_team($this->testUser->id);
-
-        $time = mt_rand();
-        $oldName = $this->testAccount->name;
-        $this->_login();
-        $result = $this->_soapClient->call('set_entry',array('session'=> $this->_sessionId,'module_name'=>'Accounts', 'name_value_list'=>array(array('name'=>'id' , 'value'=>$this->testAccount->id),array('name'=>'name' , 'value'=>"$time Account SINGLE"))));
-        $this->assertEquals(-1, $result['id'], "Should not have updated the Account.");
     }
 }

@@ -245,45 +245,6 @@ class RestLoginTest extends RestTestBase
     /**
      * @group rest
      */
-    function testLoginFromRegularSession() {
-        $this->markTestSkipped("This is throwing PHP warnings. This test needs to be refactored.");
-        
-        // Dirty, dirty hack to make this pass without php squawking
-        //$er = error_reporting();
-        //error_reporting($er & ~E_WARNING);
-        
-        // Kill the session
-        session_regenerate_id();
-        session_start();
-
-        // We have the technology, we can rebuild it
-        $_SESSION = array();
-        $_SESSION['is_valid_session'] = true;
-        $_SESSION['ip_address'] = '127.0.0.1';
-        $_SESSION['user_id'] = $this->_user->id;
-        $_SESSION['type'] = 'user';
-        $_SESSION['authenticated_user_id'] = $this->_user->id;
-        $_SESSION['unique_key'] = $GLOBALS['sugar_config']['unique_key'];
-        
-        $generatedSession = session_id();
-        session_write_close();
-
-        // Try using a normal session as the oauth_token
-        $this->authToken = $generatedSession;
-        
-        $replyPing = $this->_restCall('ping');
-        $this->assertEquals('pong',$replyPing['reply']);
-
-        // Now try passing the oauth_token in as a GET variable
-        $this->authToken = 'LOGGING_IN';
-        $replyPing = $this->_restCall('ping?oauth_token='.$generatedSession);
-        $this->assertEquals('pong',$replyPing['reply']);
-        
-    }
-
-    /**
-     * @group rest
-     */
     function testBadLogin() {
         $args = array(
             'grant_type' => 'password',

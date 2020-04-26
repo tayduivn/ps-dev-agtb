@@ -137,43 +137,4 @@ EOQ;
         //There should have been no hover fields found
         $this->assertTrue(!$foundHover);
     }
-
-    public function testModifyDisplayChanges()
-    {
-        $this->markTestSkipped("This test needs to be turned into a unit test");
-        $module = 'Accounts';
-
-        //Now call the code that will add the mapping fields
-        $_REQUEST['display_values'] = "ext_rest_twitter:Accounts";
-        $_REQUEST['display_sources'] = "ext_rest_twitter";
-        $_REQUEST['action'] = 'SaveModifyDisplay';
-        $_REQUEST['module'] = 'Connectors';
-        $_REQUEST['from_unit_test'] = true;
-
-           $controller = new ConnectorsController();
-        $controller->action_SaveModifyDisplay();
-
-        if (file_exists("custom/modules/{$module}/metadata/detailviewdefs.php")) {
-            require("custom/modules/{$module}/metadata/detailviewdefs.php");
-            foreach ($viewdefs[$module]['DetailView']['panels'] as $panel_id => $panel) {
-                foreach ($panel as $row_id => $row) {
-                    foreach ($row as $field_id => $field) {
-                        $name = is_array($field) ? $field['name'] : $field;
-                        switch (strtolower($name)) {
-                            case "account_name":
-                                $this->assertTrue(!empty($field['displayParams']['enableConnectors']));
-                                $this->assertTrue(in_array('ext_rest_twitter', $field['displayParams']['connectors']));
-                                break;
-                        }
-                    } //foreach
-                } //foreach
-            } //foreach
-
-            // Call remove again b/c we know for sure there are now fields.
-            $this->testRemoveHoverLinksInViewDefs();
-        } else {
-            // Failed because we couldn't create the custom file.
-            $this->assertTrue(false, "No custom file found");
-        }
-    }
 }

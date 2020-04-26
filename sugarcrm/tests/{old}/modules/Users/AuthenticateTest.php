@@ -113,41 +113,4 @@ class AuthenticateTest extends TestCase
             $url
             );
     }
-
-    public function testMobileAuthenicationRedirect()
-    {
-        $this->markTestIncomplete('Failing. Need to be fixed by FRM team');
-        unset($_POST['login_module']);
-        unset($_POST['login_action']);
-        unset($_POST['login_record']);
-        $_SESSION['isMobile'] = true;
-        $GLOBALS['current_user']->setPreference('wireless_last_module','dogpoo');
-        $authController = $this->createMock('AuthenticationController');
-
-        $url = '';
-        require('modules/Users/Authenticate.php');
-
-        $this->assertEquals(
-            'Location: index.php?module=dogpoo&action=wirelessmodule&mobile=1',
-            $url
-            );
-    }
-
-    public function testMobileAuthenicationRedirectIgnorredIfLoginParameters()
-    {
-        $this->markTestIncomplete('Failing. Need to be fixed by FRM team');
-        $_POST['login_module'] = 'cat';
-        $_POST['login_action'] = 'mouse';
-        $_POST['login_record'] = '456';
-        $_SESSION['isMobile'] = true;
-        $authController = $this->createMock('AuthenticationController');
-
-        $url = '';
-        require('modules/Users/Authenticate.php');
-
-        $this->assertEquals(
-            'Location: index.php?module=cat&action=mouse&record=456&mobile=1',
-            $url
-            );
-    }
 }

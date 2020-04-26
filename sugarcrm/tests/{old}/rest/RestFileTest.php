@@ -177,41 +177,4 @@ class RestFileTest extends RestFileTestBase
         $reply = $this->_restCall('Notes/' . $this->_note_id . '/file/filename', '', 'DELETE');
         $this->assertArrayHasKey('filename', $reply['reply'], 'Reply is missing fields');
     }
-
-    /**
-     * @group rest
-     */
-    public function testSimulateFileTooLarge()
-    {
-        // We need to skip for now, IIS doesn't appreciate this level of trickery
-        $this->markTestSkipped();
-
-        // Send an empty POST request to the file endpoint leaving the request headers in place
-        $reply = $this->_restCall('Notes/' . $this->_note_id . '/file/filename', '', 'POST');
-        $this->assertArrayHasKey('error', $reply['reply'], 'No error message returned');
-        $this->assertEquals('request_too_large', $reply['reply']['error'], 'Expected error string not returned');
-
-        // One more time, this time without sending the oauth_token (simulates a clobbered body)
-        $reply = $this->_restCallNoAuthHeader('Notes/' . $this->_note_id . '/file/filename', '', 'POST');
-        $this->assertArrayHasKey('error', $reply['reply'], 'No error message returned');
-        $this->assertEquals('request_too_large', $reply['reply']['error'], 'Expected error string not returned');
-    }
-
-    /**
-     * @group rest
-     */
-    public function testNeedLoginWhenNoAuthTokenAndNotAFileRequest()
-    {
-        // We need to skip for now, IIS doesn't appreciate this level of trickery
-        $this->markTestSkipped();
-
-        // Send an empty GET and POST request to make sure we get a needs login error
-        $reply = $this->_restCallNoAuthHeader('Notes');
-        $this->assertArrayHasKey('error', $reply['reply'], 'No error message returned');
-        $this->assertEquals('need_login', $reply['reply']['error'], 'Expected error string not returned');
-
-        $reply = $this->_restCallNoAuthHeader('Notes', '', 'POST');
-        $this->assertArrayHasKey('error', $reply['reply'], 'No error message returned');
-        $this->assertEquals('need_login', $reply['reply']['error'], 'Expected error string not returned');
-    }
 }

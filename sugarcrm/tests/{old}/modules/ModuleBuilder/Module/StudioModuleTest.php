@@ -37,22 +37,6 @@ class StudioModuleTest extends TestCase
         unset($GLOBALS['app_list_strings']);
     }
 
-    /**
-     * @ticket 39407
-     */
-    public function testRemoveFieldFromLayoutsDocumentsException()
-    {
-        $this->markTestSkipped('Skip this test');
-    	$SM = new StudioModule("Documents");
-        try {
-            $SM->removeFieldFromLayouts("aFieldThatDoesntExist");
-            $this->assertTrue(true);
-        } catch (Exception $e) {
-            //Studio module threw exception
-            $this->assertTrue(true);
-        }
-    }
-
     //BEGIN SUGARCRM flav=ent ONLY
     public function testGetViewsForCasesHasRecordDashlet()
     {
@@ -104,29 +88,6 @@ class StudioModuleTest extends TestCase
     public function testGetTypeFunction($module, $type) {
         $SM = new StudioModule($module);
         $this->assertEquals($type, $SM->getType(), 'Failed asserting that module:' . $module . ' is of type:' . $type);
-    }
-
-
-    public function providerBWCHasSearch()
-    {
-        return array(
-            array('Meetings', true),
-            array('Accounts', false),
-            array('Documents', true),
-            array('Calls', false),
-        );
-    }
-    /**
-    * @dataProvider providerBWCHasSearch
-    * @bug SC-519
-    */
-    public function testBWCHasSearch($module, $isBWC)
-    {
-        $this->markTestIncomplete('Needs to be fixed by FRM team.');
-        $SM = new StudioModule($module);
-        $layouts = $SM->getLayouts();
-        $this->assertEquals($isBWC, !empty($layouts[translate('LBL_SEARCH', "ModuleBuilder")]),
-            'Failed asserting that module:' . $module . ' has a search layout when BWC');
     }
 
     /**

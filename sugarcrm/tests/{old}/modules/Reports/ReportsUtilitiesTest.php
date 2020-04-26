@@ -39,22 +39,4 @@ class ReportsUtilitiesTest extends TestCase
         $reportsUtilities = new ReportsUtilities();
         $reportsUtilities->sendNotificationOfInvalidReport($recipient, "asdf");
     }
-
-    /**
-     * @group reports
-     * @group email
-     * @group mailer
-     */
-    public function testSendNotificationOfInvalidReport_AllMethodCallsAreSuccessful_NoExceptionsThrown() {
-        self::markTestIncomplete(
-            "Not yet implemented; requires mocking MailerFactory to return a mocked Mailer with a stub for send"
-        );
-
-        $recipient = new User();
-        $recipient->email1 = null;
-        $recipient->email2 = "foo@bar.com";
-
-        $reportsUtilities = new ReportsUtilities();
-        $reportsUtilities->sendNotificationOfInvalidReport($recipient, "asdf");
-    }
 }

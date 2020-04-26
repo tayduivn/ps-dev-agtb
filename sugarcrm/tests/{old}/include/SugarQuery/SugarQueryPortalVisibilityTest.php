@@ -53,53 +53,6 @@ class SugarQueryPortalVisibilityTest extends TestCase
         unset($bean);
         unset($query);
     }
-
-    public function testQueryReturnWithAccounts()
-    {
-        $this->markTestIncomplete('[BR-3907] Testing SQL doesn\'t work with prepared statements');
-
-        $contact = new ContactsPortalVisibilityQueryMock();
-        $contact->setVisibility(new SupportPortalVisibilityQueryMock($contact));
-        $contact->id = 1;
-        $_SESSION['contact_id'] = 1;
-        $_SESSION['type'] = 'support_portal';
-        $query = new SugarQuery();
-        $query->select('*');
-        $query->from($contact);
-        $contact->addVisibilityQuery($query);
-
-        $this->assertArrayHasKey('accounts_pv', $query->join);
-        /** @var SugarQuery_Builder_Condition $condition */
-        $condition = $query->join['accounts_pv']->on['and']->conditions[2];
-        $this->assertEquals('Accounts', $condition->field->moduleName);
-        $this->assertEquals('id', $condition->field->field);
-        $this->assertEquals('IN', $condition->operator);
-        $this->assertEquals(array(1, 2, 3, 4), $condition->values);
-
-        unset($_SESSION);
-        unset($contact);
-        unset($query);
-    }
-
-    public function testQueryReturnWithoutAccounts()
-    {
-        $this->markTestIncomplete('Bug in SugarQuery Remove this when fixed: https://sugarcrm.atlassian.net/browse/BR-210');
-        $contact = new ContactsPortalVisibilityQueryMock();
-        $contact->setVisibility(new SupportPortalVisibility($contact));
-        $contact->id = 1;
-        $_SESSION['contact_id'] = 1;
-        $_SESSION['type'] = 'support_portal';
-        $query = new SugarQuery();
-        $query->from($contact);
-        $contact->addVisibilityQuery($query);
-
-        $queryShouldBe = "SELECT  * FROM contacts WHERE contacts.deleted = 0 AND  ( contacts.id = '1' )";
-
-        $this->assertEquals($queryShouldBe, $query, "The query does not match");
-        unset($_SESSION);
-        unset($contact);
-        unset($query);
-    }
 }
 
 class ContactsPortalVisibilityQueryMock extends Contact

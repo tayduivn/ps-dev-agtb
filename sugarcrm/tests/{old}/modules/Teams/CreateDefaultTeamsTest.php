@@ -40,37 +40,7 @@ class CreateDefaultTeamsTest extends TestCase
         
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }     
-    
-    public function testCreateDefaultTeamsForNewContact() 
-    {
-        $this->markTestIncomplete('Needs to be fixed by FRM team.');
-    	$_POST['first_name'] = 'Collin';
-		$_POST['last_name'] = 'Lee';
-		$_POST['action'] = 'Save';
-        $_REQUEST['action'] = 'Save';
-		
-        $query = "select t.id, t.name, t.name_2 from teams t where t.name in ('Global', 'East', 'West')";
 
-        $result = $GLOBALS['db']->query($query);
-        $count = 0;
-        $primary_team_id = '';
-        while($row = $GLOBALS['db']->fetchByAssoc($result)) {   
- 	   		if (empty($primary_team_id)) {
- 	   		   $primary_team_id = $row['id'];
- 	   		}
-			$_POST['team_name_collection_' . $count] = $row['name'] . ' ' . $row['name_2'];
-			$_POST['id_team_name_collection_' . $count] = $row['id'];
-			$count++;              
-	   	}
-        
-	   	$_POST['primary_team_name_collection'] = 0;
-		
-        $contactForm = new ContactFormBase();
-        $this->_contact = $contactForm->handleSave('', false, false);
-        $this->assertEquals($this->_contact->team_id,$primary_team_id,
-            "Contact's primary team equals the current user's primary team");
-    }
-    
     /**
      * @dataProvider providerTeamName
      */

@@ -62,39 +62,6 @@ class QuotaTest extends TestCase
         );
     }
 
-    public function testGetRollupQuota()
-    {
-        $this->markTestIncomplete('[BR-3362] Query Spy doesn\'t capture parameters in prepared statements');
-
-        SugarTestHelper::setUp('mock_db');
-
-        $test_tp_id = create_guid();
-
-        /* @var $quota Quota */
-        $quota = BeanFactory::newBean('Quotas');
-
-        $db = DBManagerFactory::getInstance();
-        $db->addQuerySpy(
-            'quota_select',
-            '/quotas.timeperiod_id = \'' . $test_tp_id . '\'/',
-            array(
-                array(
-                    'currency_id' => -99,
-                    'amount' => 10,
-                )
-            )
-        );
-
-        $this->assertEquals(
-            array(
-                'currency_id' => -99,
-                'amount' => 10,
-                'formatted_amount' => '$10.00',
-            ),
-            $quota->getRollupQuota($test_tp_id, 'test_user_id')
-        );
-    }
-
     /**
      * @covers Quota::get_summary_text
      */

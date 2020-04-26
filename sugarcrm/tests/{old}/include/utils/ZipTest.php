@@ -18,12 +18,11 @@ require_once('include/utils/zip_utils.php');
  */
 class ZipTest extends TestCase
 {
+    /**
+     * @requires extension zip
+     */
     protected function setUp() : void
     {
-        if(!class_exists('ZipArchive'))
-        {
-            $this->markTestSkipped('ZipArchive class not loaded');
-        }
         $this->testdir = sugar_cached("tests/{old}/include/utils/ziptest");
         sugar_mkdir($this->testdir.'/testarchive',null,true);
         sugar_touch($this->testdir.'/testarchive/testfile1.txt');

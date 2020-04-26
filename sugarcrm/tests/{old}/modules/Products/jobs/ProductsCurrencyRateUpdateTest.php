@@ -55,34 +55,6 @@ class ProductsCurrencyRateUpdateTest extends TestCase
         unset($this->mock);
     }
 
-    public function testDoCustomUpdateRate()
-    {
-        $this->markTestIncomplete('[BR-3362] Query Spy doesn\'t capture parameters in prepared statements');
-
-        $this->mock->expects($this->once())
-            ->method('getProductsWithNonClosedQuote')
-            ->will($this->returnValue(array('id1', 'id2')));
-
-        $this->db->addQuerySpy(
-            'get_rate',
-            array("/SELECT currencies.conversion_rate/", "/currencies.deleted = 0/", "/currencies.id = 'abc'/"),
-            array(array('1.234'))
-        );
-
-        $this->db->addQuerySpy(
-            'rate_update',
-            "/UPDATE mytable SET mycolumn = 1\.234/",
-            array(array(1))
-        );
-
-        // run our tests with mockup data
-        $result = $this->mock->doCustomUpdateRate('mytable', 'mycolumn', 'abc');
-        // make sure we get the expected result and the expected run counts
-        $this->assertEquals(true, $result);
-        $this->assertEquals(1, $this->db->getQuerySpyRunCount('get_rate'));
-        $this->assertEquals(1, $this->db->getQuerySpyRunCount('rate_update'));
-    }
-
     public function testDoCustomUpdateUsDollarRate()
     {
         $this->mock->expects($this->once())

@@ -158,67 +158,10 @@ class Bug61736Test extends TestCase
         $this->assertFileExists(self::$_vardefFile, "The custom field vardef for the new module was not found");
     }
 
-    /**
-     * @dataProvider _testFieldFileProvider
-     */
-    public function testCustomAddressFieldContainsGroupPropertyInVardef($suffix)
-    {
-        $this->markTestIncomplete('Outputs spaces in the console. Need to be fixed by FRM team');
-        // Assert that there is a fields index in the vardef
-        $vardefs = self::_getTestVardef();
-        $this->assertArrayHasKey('fields', $vardefs, "There is no fields vardef found");
-        
-        // Assert that the address field was created
-        $field = self::_getFieldName($suffix);
-        $this->assertArrayHasKey($field, $vardefs['fields'], "No vardefs found for $field");
-        
-        // Assert there is a group property
-        $this->assertNotEmpty($vardefs['fields'][$field]['group'], "Group entry for $field was empty");
-        
-        // Assert that the group property is the name of the created addres field
-        $this->assertEquals(self::$_createFieldRequestVars['name'], $vardefs['fields'][$field]['group'], "Group name is not the field name");
-    }
-    
-    public function _testFieldFileProvider()
-    {
-        return array(
-            array('suffix' => 'street'),
-            array('suffix' => 'city'),
-            array('suffix' => 'state'),
-            array('suffix' => 'postalcode'),
-            array('suffix' => 'country'),
-        );
-    }
-    
     protected static function _getFieldName($suffix)
     {
         $field = self::$_createFieldRequestVars['name'];
         $name = $field . '_' . $suffix;
         return $name;
-    }
-
-    /**
-     * Gets the newly created custom vardef. Fetches the vardef from the file 
-     * system one time and holds it for this test.
-     *
-     * @return array|null
-     */
-    protected static function _getTestVardef()
-    {
-        if (is_null(self::$_vardef)) {
-            // Set the vardef to an array first
-            self::$_vardef = array();
-            
-            // If the vardef was found, get it and set it
-            if (file_exists(self::$_vardefFile)) {
-                require self::$_vardefFile;
-                
-                if (isset($vardefs)) {
-                    self::$_vardef = $vardefs;
-                }
-            }
-        }
-        
-        return self::$_vardef;
     }
 }

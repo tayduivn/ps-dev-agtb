@@ -215,34 +215,4 @@ class SugarForecasting_Export_ManagerTest extends TestCase
 
         $this->assertMatchesRegularExpression('/\_manager\_forecast$/', $obj->getFilename());
     }
-
-    /**
-     * This is a function to test the bug 58397
-     *
-     * @group export
-     * @group forecasts
-     */
-    public function testBug58397()
-    {
-        $this->markTestIncomplete('Needs to be fixed by FRM team.');
-        $worksheet = SugarTestManagerWorksheetUtilities::getManagerWorksheetForUserAndTimePeriod(
-            self::$reportee2['user']->id,
-            self::$timeperiod->id
-        );
-
-        $worksheet->name .= "'";
-        $worksheet->save();
-
-        $args = array();
-        $args['timeperiod_id'] = self::$timeperiod->id;
-        $args['user_id'] = self::$manager2['user']->id;
-        $args['encode_to_html'] = false;
-
-        $obj = new SugarForecasting_Export_Manager($args);
-        $content = $obj->process();
-
-        $this->assertNotEmpty($content, "content empty. Rep data should have returned csv file contents.");
-        $this->assertNotContains('#039', $content);
-        $this->assertContains("'", $content);
-    }
 }

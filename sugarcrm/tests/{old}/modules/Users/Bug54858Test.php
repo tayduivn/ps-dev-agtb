@@ -40,42 +40,4 @@ class Bug54858Test extends TestCase
     {
         $this->assertNotEmpty($this->user->getPreference('calendar_publish_key'), "Publish key is not set");
     }
-
-	protected function callVcal($key)
-	{
-       $ch = curl_init($this->vcal_url."&key=" . urlencode($key));
-       curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 0);
-	   curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-       curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-	   $return = curl_exec($ch);
-	   $info = curl_getinfo($ch);
-	   $info['return'] = $return;
-	   return $info;
-	}
-
-	// test vcal service
-    public function testPublishKey()
-    {
-        $this->markTestIncomplete('Failing. Need to be fixed by FRM team');
-        $res = $this->callVcal('');
-		$this->assertEquals('401', $res['http_code']);
-
-        $res = $this->callVcal('blah');
-		$this->assertEquals('401', $res['http_code']);
-
-		$key = $this->user->getPreference('calendar_publish_key');
-        $res = $this->callVcal($key);
-		$this->assertEquals('200', $res['http_code']);
-		$this->assertContains('BEGIN:VCALENDAR', $res['return']);
-
-		// now reset the key
-        $this->user->setPreference('calendar_publish_key', '');
-        $this->user->savePreferencesToDB();
-        $GLOBALS['db']->commit();
-
-        $res = $this->callVcal('');
-		$this->assertEquals('401', $res['http_code']);
-        $res = $this->callVcal($key);
-		$this->assertEquals('401', $res['http_code']);
-	}
 }

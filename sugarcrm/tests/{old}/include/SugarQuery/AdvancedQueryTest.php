@@ -353,44 +353,6 @@ class AdvancedQueryTest extends TestCase
     }
 
     /**
-     * test conditions on related variables
-     */
-    public function testRelateConditions()
-    {
-        $this->markTestIncomplete('[BR-3362] Testing SQL doesn\'t work with prepared statements');
-
-        $contact = BeanFactory::newBean("Contacts");
-        // regular query
-        $sq = new SugarQuery();
-        $sq->select(array("id", "last_name"));
-        $sq->from($contact);
-        $sq->where()->equals('first_name','Awesome');
-        $this->assertMatchesRegularExpression('/WHERE.*contacts\.first_name\s*=\s*\'Awesome\'/s', $sq->compile()->getSQL());
-
-        $sq = new SugarQuery();
-        $sq->select(array("id", "last_name"));
-        $sq->from($contact);
-        $sq->where()->equals('contacts.last_name','Awesome');
-        $this->assertMatchesRegularExpression('/WHERE.*contacts\.last_name\s*=\s*\'Awesome\'/s', $sq->compile()->getSQL());
-
-        // with related in name
-        $sq = new SugarQuery();
-        $sq->select(array("id", "last_name", "account_name"));
-        $sq->from($contact);
-        $sq->where()->equals('account_name','Awesome');
-        $sql = $sq->compile()->getSQL();
-        $this->assertMatchesRegularExpression('/WHERE.*jt\w+\.name\s*=\s*\'Awesome\'/s', $sql);
-        $this->assertNotContains('contacts.account_name', $sql);
-
-        // without related in name
-        $sq = new SugarQuery();
-        $sq->select(array("id", "last_name"));
-        $sq->from($contact);
-        $sq->where()->equals('account_name','Awesome');
-        $this->assertMatchesRegularExpression('/WHERE.*jt\w+\.name\s*=\s*\'Awesome\'/s', $sq->compile()->getSQL());
-    }
-
-    /**
      * Test rname exists
      */
     public function testRnameExists()

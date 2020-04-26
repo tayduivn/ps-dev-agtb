@@ -106,23 +106,6 @@ class RESTAPI3_1Test extends TestCase
         $this->assertTrue(!empty($result['id']) && $result['id'] != -1,$this->_returnLastRawResponse());
     }
 
-    /**
-     * Test the available modules returned from the login call to make sure they are correct.
-     */
-    public function testLoginAvailableModulesResults()
-    {
-        $this->markTestIncomplete('modInvisList becomes corrupted, need to investigate.');
-        $result = $this->_login();
-        $this->assertTrue( isset($result['name_value_list']['available_modules']) );
-
-        $actualModuleList= $result['name_value_list']['available_modules'];
-        $sh = new SugarWebServiceUtilv3();
-        $availModules = array_keys($sh->get_user_module_list($this->_user));
-        $expectedModuleList = $sh->get_visible_mobile_modules($availModules);
-
-        $this->assertSameSize($actualModuleList, $expectedModuleList);
-    }
-
     public function testGetSingleModuleLanguage()
     {
         $result = $this->_login();
@@ -207,111 +190,6 @@ class RESTAPI3_1Test extends TestCase
 
         $this->assertTrue( !empty($results['file_contents']) );
     }
-
-    /**
-     * Test the available modules returned from the login call to make sure they are correct.
-     */
-    public function testLoginVardefsMD5Results()
-    {
-        $this->markTestIncomplete('Vardef results are still dirty even with reload global set, need to investigate further.');
-
-        $GLOBALS['reload_vardefs'] = TRUE;
-        global  $beanList, $beanFiles;
-        $result = $this->_login();
-        $this->assertTrue( isset($result['name_value_list']['vardefs_md5']) );
-
-        $a_actualMD5= $result['name_value_list']['vardefs_md5'];
-
-        $sh = new SugarWebServiceUtilv3();
-        $availModules = array_keys($sh->get_user_module_list($this->_user));
-        $expectedModuleList = $sh->get_visible_mobile_modules($availModules);
-        $soapHelper = new SugarWebServiceUtilv3();
-        foreach ($expectedModuleList as $mod)
-        {
-            $GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], $mod);
-            $actualMD5 = $a_actualMD5[$mod];
-
-            $class_name = $beanList[$mod];
-            require_once($beanFiles[$class_name]);
-            $seed = new $class_name();
-            $actualVardef = $soapHelper->get_return_module_fields($seed,$mod,'');
-            $expectedMD5 = md5(serialize($actualVardef));
-            $this->assertEquals($expectedMD5, $actualMD5);
-        }
-        $this->assertSameSize($actualModuleList, $expectedModuleList, "Could not get available modules during login");
-    }
-
-    function _aclEditViewFieldProvider()
-    {
-        return array(
-            array('Accounts','wireless','edit', 'name', 99),
-            array('Accounts','wireless','edit', 'phone_office', 99),
-            array('Accounts','wireless','edit', 'email1', 99),
-            array('Accounts','wireless','edit', 'nofield', null),
-            );
-    }
-
-
-    function _aclListViewFieldProvider()
-    {
-        return array(
-            array('Accounts','wireless','list', 'NAME', 99),
-            array('Accounts','wireless','list', 'WEBSITE', 99),
-            array('Accounts','wireless','list', 'FAKEFIELD', null),
-        );
-    }
-
-    /**
-     * @dataProvider _aclListViewFieldProvider
-     */
-    public function testMetadataListViewFieldLevelACLS($module, $view_type, $view, $field_name, $expeced_acl)
-    {
-        $this->markTestIncomplete('Should be enabled for 611 patch.');
-
-        $result = $this->_login();
-        $session = $result['id'];
-
-        $results = $this->_makeRESTCall('get_module_layout',
-            array(
-                'session' => $session,
-                'module' => array($module),
-                'type' => array($view_type),
-                'view' => array($view))
-        );
-        $this->assertEquals($expeced_acl, $results[$module][$view_type][$view][$field_name]['acl'] );
-    }
-
-    /**
-     * @dataProvider _aclEditViewFieldProvider
-     */
-    public function testMetadataEditViewFieldLevelACLS($module, $view_type, $view, $field_name, $expeced_acl)
-    {
-        $this->markTestIncomplete('Should be enabled for 611 patch.');
-        $result = $this->_login();
-        $session = $result['id'];
-
-        $results = $this->_makeRESTCall('get_module_layout',
-        array(
-            'session' => $session,
-            'module' => array($module),
-            'type' => array($view_type),
-            'view' => array($view))
-        );
-
-        $fields = $results[$module][$view_type][$view]['panels'];
-        foreach ($fields as $field_row)
-        {
-            foreach ($field_row as $field_def)
-            {
-                if($field_def['name'] == $field_name)
-                {
-                    $this->assertEquals($expeced_acl, $field_def['acl'] );
-                    break;
-                }
-            }
-        }
-    }
-
 
         public static function _wirelessGridModuleLayoutProvider()
         {

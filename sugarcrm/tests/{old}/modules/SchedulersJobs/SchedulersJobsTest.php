@@ -372,34 +372,6 @@ class SchedulersJobsTest extends TestCase
         $this->assertEquals(SchedulersJob::JOB_STATUS_DONE, $job->status, "Wrong status");
     }
 
-    public function testJobUsers()
-    {
-        $this->markTestIncomplete('Needs to be fixed by FRM team.');
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-        $user1 = SugarTestUserUtilities::createAnonymousUser();
-        $user2 = SugarTestUserUtilities::createAnonymousUser();
-        $job = $this->createJob(array("name" => "Test User 1", "status" => SchedulersJob::JOB_STATUS_RUNNING,
-        	"assigned_user_id" => $user1->id, "target" => "function::SchedulersJobsTest::staticJobFunctionAccount", "data" => "useracc1"));
-        $job->runJob();
-        $job->retrieve($job->id);
-        $this->assertEquals(SchedulersJob::JOB_SUCCESS, $job->resolution, "Wrong resolution");
-        $this->assertEquals(SchedulersJob::JOB_STATUS_DONE, $job->status, "Wrong status");
-
-        $job = $this->createJob(array("name" => "Test User 2", "status" => SchedulersJob::JOB_STATUS_RUNNING,
-        	"assigned_user_id" => $user2->id, "target" => "function::SchedulersJobsTest::staticJobFunctionAccount", "data" => "useracc2"));
-        $job->runJob();
-        $job->retrieve($job->id);
-        $this->assertEquals(SchedulersJob::JOB_SUCCESS, $job->resolution, "Wrong resolution");
-        $this->assertEquals(SchedulersJob::JOB_STATUS_DONE, $job->status, "Wrong status");
-
-        $a1 = new Account();
-        $a1->retrieve('useracc1');
-        $this->assertEquals($user1->id, $a1->created_by, "Wrong creating user ID for account 1");
-        $a2 = new Account();
-        $a2->retrieve('useracc2');
-        $this->assertEquals($user2->id, $a2->created_by, "Wrong creating user ID for account 2");
-    }
-
     public function testJobRetries()
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();

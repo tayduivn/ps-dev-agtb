@@ -91,46 +91,7 @@ class SugarApiTest extends TestCase
         $bean=$this->mock->callLoadBean($api, $args);
     }
 
-    public function testFormatBeanCallsTrackView()
-    {
-        $this->markTestIncomplete("SugarApi needs a user to pass along to other objects, and user is not getting passed along. Sending to FRM for fix.");
-
-        $apiMock = $this->createPartialMock('SugarApi', array('htmlDecodeReturn', 'trackAction'));
-        $apiMock->expects($this->any())
-                ->method('htmlDecodeReturn');
-
-        $apiMock->expects($this->once())
-                ->method('trackAction');
-
-        $fakeBean = $this->createMock('SugarBean');
-        $fakeBean->id = 'abcd';
-        $fakeBean->module_dir = 'fakeBean';
-
-        $apiMock->api = $this->createMock('RestService');
-
-        $helperMock = $this->getMockBuilder('SugarBeanApiHelper')
-            ->setMethods(array('formatForApi'))
-            ->setConstructorArgs(array($apiMock->api));
-        $helperMock->expects($this->any())
-                   ->method('formatForApi')
-                   ->will($this->returnValue(
-                       array('never gonna'=>
-                             array('give you up',
-                                   'let you down',
-                                   'run around',
-                                   'desert you'))));
-        ApiHelper::$moduleHelpers['fakeBean'] = $helperMock;
-
-        // Call it once when it should track the view
-        SugarTestReflection::callProtectedMethod($apiMock,'formatBean',array($apiMock->api,array('viewed'=>true), $fakeBean));
-
-        // And once when it shouldn't
-        SugarTestReflection::callProtectedMethod($apiMock,'formatBean',array($apiMock->api,array(), $fakeBean));
-
-        // No asserts, they are handled by the mock's ->expects()
-    }
-
-    /*
+    /**
      * @covers SugarApi::trackAction
      */
     public function testTrackAction()

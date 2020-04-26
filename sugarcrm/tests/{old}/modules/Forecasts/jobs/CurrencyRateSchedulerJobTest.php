@@ -74,51 +74,6 @@ class CurrencyRateSchedulerJobTest extends TestCase
     /**
      * @group forecasts
      */
-    public function testCurrencyRateSchedulerJob()
-    {
-        $this->markTestIncomplete('SFA Team - test fails in suite');
-        global $current_user;
-        $db = DBManagerFactory::getInstance();
-
-        $oppBaseRatePreJob = $db->getOne(sprintf("SELECT base_rate FROM opportunities WHERE id = '%s'", $this->opportunity->id));
-        $oppUsDollarPreJob = $db->getOne(sprintf("SELECT amount_usdollar FROM opportunities WHERE id = '%s'", $this->opportunity->id));
-        $oppBaseRateClosedPreJob = $db->getOne(sprintf("SELECT base_rate FROM opportunities WHERE id = '%s'", $this->opportunityClosed->id));
-        $oppUsDollarClosedPreJob = $db->getOne(sprintf("SELECT amount_usdollar FROM opportunities WHERE id = '%s'", $this->opportunityClosed->id));
-        $quotaBaseRatePreJob = $db->getOne(sprintf("SELECT base_rate FROM quotas WHERE id = '%s'", $this->quota->id));
-        $forecastBaseRatePreJob = $db->getOne(sprintf("SELECT base_rate FROM forecasts WHERE id = '%s'", $this->forecast->id));
-
-        // change the conversion rate
-        $this->currency->conversion_rate = '2.345';
-        $this->currency->save();
-
-        $job = SugarTestJobQueueUtilities::createAndRunJob(
-            'TestJobQueue',
-            'class::SugarJobUpdateCurrencyRates',
-            $this->currency->id,
-            $current_user);
-
-        //$this->assertTrue($job->runnable_ran);
-        $this->assertEquals(SchedulersJob::JOB_SUCCESS, $job->resolution, "Wrong resolution");
-        $this->assertEquals(SchedulersJob::JOB_STATUS_DONE, $job->status, "Wrong status");
-
-        $oppBaseRate = $db->getOne(sprintf("SELECT base_rate FROM opportunities WHERE id = '%s'", $this->opportunity->id));
-        $oppUsDollar = $db->getOne(sprintf("SELECT amount_usdollar FROM opportunities WHERE id = '%s'", $this->opportunity->id));
-        $oppBaseRateClosed = $db->getOne(sprintf("SELECT base_rate FROM opportunities WHERE id = '%s'", $this->opportunityClosed->id));
-        $oppUsDollarClosed = $db->getOne(sprintf("SELECT amount_usdollar FROM opportunities WHERE id = '%s'", $this->opportunityClosed->id));
-        $quotaBaseRate = $db->getOne(sprintf("SELECT base_rate FROM quotas WHERE id = '%s'", $this->quota->id));
-        $forecastBaseRate = $db->getOne(sprintf("SELECT base_rate FROM forecasts WHERE id = '%s'", $this->forecast->id));
-
-        $this->assertNotEquals($oppBaseRatePreJob, $oppBaseRate, 'opportunities.base_rate was not modified by CurrencyRateSchedulerJob');
-        $this->assertNotEquals($oppUsDollarPreJob, $oppUsDollar, 'opportunities.amount_usdollar was not modified by CurrencyRateSchedulerJob',2);
-        $this->assertEquals($oppBaseRateClosedPreJob, $oppBaseRateClosed, 'opportunities.base_rate was modified by CurrencyRateSchedulerJob');
-        $this->assertEquals($oppUsDollarClosedPreJob, $oppUsDollarClosed, 'opportunities.amount_usdollar was modified by CurrencyRateSchedulerJob for closed opportunity',2);
-        $this->assertNotEquals($quotaBaseRatePreJob, $quotaBaseRate, 'quotas.base_rate was not modified by CurrencyRateSchedulerJob');
-        $this->assertEquals($forecastBaseRatePreJob, $forecastBaseRate, 'forecasts.base_rate was modified by CurrencyRateSchedulerJob');
-    }
-
-    /**
-     * @group forecasts
-     */
     public function testCurrencyRateDefinitions()
     {
         $test = new UpdateRateTest();

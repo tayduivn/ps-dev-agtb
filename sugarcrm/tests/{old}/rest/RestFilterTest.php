@@ -81,18 +81,6 @@ class RestFilterTest extends RestTestBase
     /**
      * @group rest
      */
-    public function testSimpleJoinFilter()
-    {
-        $this->markTestIncomplete("Can't filter by multi-value");
-        $reply = $this->_restCall('Accounts/filter?filter='.urlencode('[{"notes.name":"Test 3 Note"}]').'&fields=id,name');
-        $this->assertEquals('TEST 3 Account',$reply['reply']['records'][0]['name'],'SimpleJoin: The account name is not set correctly');
-        $this->assertEquals(-1,$reply['reply']['next_offset'],'SimpleJoin: Next offset is not set correctly');
-        $this->assertEquals(1,count($reply['reply']['records']),'SimpleJoin: Returned too many results');
-    }
-
-    /**
-     * @group rest
-     */
     public function testSimpleFilterWithOffset()
     {
         $reply = $this->_restCall('Accounts/filter?filter='.urlencode('[{"name":{"$starts":"TEST 1"}}]').'&fields=id,name&max_num=5');

@@ -57,11 +57,6 @@ class Bug45181 extends TestCase
      */
     function testLogMemoryUsageOn()
     {
-        if(!function_exists('memory_get_usage') || !function_exists('memory_get_peak_usage'))
-        {
-            $this->markTestSkipped('Skipping test since memory_get_usage and memory_get_peak_usage function are unavailable');
-            return;
-        }
         global $sugar_config;
         $sugar_config['log_memory_usage'] = true;
         $output = $this->sugarView->logMemoryStatisticsTest("\n");

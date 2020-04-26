@@ -65,7 +65,7 @@ class HealthCheckCasesTest extends TestCase
 
         $this->scanner = $this->getScanner($case);
         if ($this->scanner->skip) {
-            $this->markTestIncomplete('HealthCheck code ' . $code . ' case ' . $case . ' is skipped by itself');
+            $this->markTestSkipped('HealthCheck code ' . $code . ' case ' . $case . ' is skipped by itself');
         }
 
         if (is_dir(__DIR__ . '/cases/' . $case . '/sugarcrm')) {

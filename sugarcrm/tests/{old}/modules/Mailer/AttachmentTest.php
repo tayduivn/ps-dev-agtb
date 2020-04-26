@@ -28,13 +28,4 @@ class AttachmentTest extends TestCase
         $this->expectException(MailerException::class);
         AttachmentPeer::attachmentFromSugarBean($mockAccount);
     }
-
-    /**
-     * @group email
-     * @group mailer
-     */
-    public function testFromSugarBean_BeanIsNote_ThrowsException() {
-        // needs to be able to mock out is_file() and the properities id, filename/name, and file_mime_type
-        self::markTestIncomplete("This test has not been implemented yet.");
-    }
 }

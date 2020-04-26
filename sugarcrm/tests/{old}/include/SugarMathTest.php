@@ -36,31 +36,6 @@ class SugarMathTest extends TestCase
         $this->assertInstanceOf('SugarMath', $math);
     }
 
-
-    /**
-     * test default values of new instantiation
-     *
-     * @group math
-     * @access public
-     */
-    public function testDefaultValues()
-    {
-        $this->markTestIncomplete('Needs to be fixed by FRM team.');
-        // test default instance
-        $math = new SugarMath();
-        // default value is 0
-        $this->assertEquals(0, $math->result());
-        // default scale is 2
-        $this->assertEquals(2, $math->getScale());
-
-        // test default static instance
-        $math = SugarMath::init();
-        // default value is 0
-        $this->assertEquals(0, $math->result());
-        // default scale is 2
-        $this->assertEquals(2, $math->getScale());
-    }
-
     /**
      * test __toString brings back result
      *
@@ -148,45 +123,6 @@ class SugarMathTest extends TestCase
             array('1'),
             array('100'),
             array('100000'),
-        );
-    }
-
-
-    /**
-     * test basic math operations
-     *
-     * @dataProvider basicOperationsProvider
-     * @param mixed  $initVal the value to set
-     * @param string $method the method to invoke
-     * @group math
-     * @access public
-     */
-    public function testBasicOperations($initVal,$method,$methodVal,$result)
-    {
-        $this->markTestIncomplete('Needs to be fixed by FRM team.');
-        $math = SugarMath::init($initVal)->$method($methodVal);
-        $this->assertSame($result, $math->result());
-    }
-
-    /**
-     * basic math operations data provider
-     *
-     * @group math
-     * @access public
-     */
-    public function basicOperationsProvider()
-    {
-        return array(
-            array('100','add','100','200.00'),
-            array('100.1','add','100.1','200.20'),
-            array('100','sub','50','50.00'),
-            array('100','sub','50.2','49.80'),
-            array('100','mul','100','10000.00'),
-            array('100','mul','100.1','10010.00'),
-            array('100','div','50','2.00'),
-            array('100','div','50.1','1.99'),
-            array('100','pow','2','10000.00'),
-            array('100','mod','3','1.00'),
         );
     }
 
@@ -335,25 +271,6 @@ class SugarMathTest extends TestCase
                 49,
             ),
         );
-    }
-
-
-    /**
-     * test expression engine computations
-     *
-     * @dataProvider expressionsProvider
-     * @param mixed  $result the expected result of the computation
-     * @param string $exp the expression to test
-     * @param array  $args the arguments to the expression
-     * @param int    $scale the math precision to use
-     * @group math
-     * @access public
-     */
-    public function testExpressions($result, $exp, $args, $scale)
-    {
-        $this->markTestIncomplete('Needs to be fixed by FRM team.');
-        $math = SugarMath::init(0,$scale);
-        $this->assertSame($result,$math->exp($exp,$args)->result());
     }
 
     /**

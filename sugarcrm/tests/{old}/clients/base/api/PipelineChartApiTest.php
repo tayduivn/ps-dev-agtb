@@ -133,46 +133,6 @@ class PipelineChartApiTest extends TestCase
         $this->assertStringContainsString('likely_case', $sql);
     }
 
-    public function testBuildQueryContainsAllReportingUsers()
-    {
-        global $db;
-
-        $this->markTestIncomplete('[BR-3362] Testing SQL doesn\'t work with prepared statements');
-
-        $api = $this->getMockPipelineApi(array('getReportingUsers'));
-        $api->expects($this->once())
-            ->method('getReportingUsers')
-            ->with('test')
-            ->will($this->returnValue(array('1', '2')));
-
-        $tp = $this->getMockBuilder('TimePeriod')
-            ->setMethods(array('save'))
-            ->getMock();
-        $tp->start_date_timestamp = 1;
-        $tp->end_date_timestamp = 2;
-
-        $seed = $this->getMockBuilder('RevenueLineItem')
-            ->setMethods(array('save'))
-            ->getMock();
-
-        $user = $this->getMockBuilder('User')
-            ->setMethods(array('save'))
-            ->getMock();
-        $user->id = 'test';
-
-        $this->service->user = $user;
-
-        $sq = SugarTestReflection::callProtectedMethod(
-            $api,
-            'buildQuery',
-            array($this->service, $seed, $tp, 'likely_case', 'group')
-        );
-        /* @var $sq SugarQuery */
-        $sql = $sq->compile()->getSQL();
-
-        $this->assertStringContainsString("('test','1','2')", $sql);
-    }
-
     public function testPipelineReturnsCorrectData()
     {
         $api = $this->getMockPipelineApi(array('getForecastSettings', 'buildQuery', 'loadBean', 'getTimeperiod'));

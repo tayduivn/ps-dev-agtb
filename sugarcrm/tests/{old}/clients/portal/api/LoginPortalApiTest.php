@@ -150,35 +150,6 @@ class LoginPortalApiTest extends TestCase
         self::$tokenData = $result;
     }
 
-    public function testRefreshTokenPortalUser()
-    {
-        $this->markTestSkipped('Fails for unknown reason');
-
-        $this->iniSet('error_reporting', 0);
-        $result = self::$OAuthApi->token(self::$service, [
-            'grant_type' => 'refresh_token',
-            'client_id' => 'support_portal',
-            'client_secret' => '',
-            'platform' => 'portal',
-            'refresh' => true,
-            'refresh_token' => self::$tokenData['refresh_token'],
-        ]);
- 
-        $this->assertNotEmpty($result);
-        $this->assertIsArray($result);
-        $this->assertArrayHasKey('access_token', $result);
-        $this->assertNotEmpty($result['access_token']);
-        $this->assertArrayHasKey('expires_in', $result);
-        $this->assertArrayHasKey('token_type', $result);
-        $this->assertArrayHasKey('scope', $result);
-        $this->assertArrayHasKey('refresh_token', $result);
-        $this->assertNotEmpty($result['refresh_token']);
-        $this->assertArrayHasKey('refresh_expires_in', $result);
-        $this->assertArrayHasKey('download_token', $result);
-
-        self::$tokenData = $result;
-    }
-
     public function testLogoutPortalUser()
     {
         $this->iniSet('error_reporting', 0);

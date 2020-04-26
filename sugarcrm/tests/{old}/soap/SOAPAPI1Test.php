@@ -72,15 +72,6 @@ class SOAPAPI1Test extends SOAPTestCase
 
     }
 
-    public function testSearchBy()
-    {
-        $this->markTestIncomplete('SOAP call "search" is deprecated');
-
-        $result = $this->_soapClient->call('search', array('user_name' => $GLOBALS['current_user']->user_name, 'password' => $GLOBALS['current_user']->user_hash, 'name' => $this->_contact->first_name));
-        $this->assertTrue(!empty($result) && count($result) > 0, "Incorrect number of results returned - Returned $result results. HTTP Response: ".$this->_soapClient->response);
-        $this->assertEquals($result[0]['name1'], $this->_contact->first_name, "Contact First name does not match data returnd from SOAP_test");
-    }
-
     public function testGetModifiedEntries()
     {
         $ids = array($this->_contact->id);

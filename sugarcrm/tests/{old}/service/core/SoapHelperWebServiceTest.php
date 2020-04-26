@@ -65,31 +65,8 @@ class SoapHelperWebServiceTest extends TestCase
      */
     public function testCheckQuery($errorObject, $query, $expected)
     {
-        $helper = new SoapHelperWebServices();
-        if (!method_exists($helper, 'checkQuery')) {
-         $this->markTestSkipped('Method checkQuery does not exist');
-        }
-
         $result = $helper->checkQuery($errorObject, $query);
         $this->assertEquals($expected, $result, 'SoapHelperWebService->checkQuery functions as expected');
-    }
-
-    /**
-     * test the result matches old mcrypt_decrypt
-     *
-     * @dataProvider openSslDecryptTripledesMethodProvider
-     */
-    public function testTripledesDecryptBackwordCompatible(string $data, $key)
-    {
-        if (!extension_loaded('mcrypt')) {
-            $this->markTestSkipped("mcrypt extension is not loaded, skip");
-        }
-
-        $key = substr(md5($key), 0, 24);
-        $iv = 'password';
-
-        $oldDecryptResult = rtrim(mcrypt_decrypt(MCRYPT_3DES, $key, pack("H*", $data), MCRYPT_MODE_CBC, $iv), chr(0));
-        $this->assertSame($oldDecryptResult, \SoapHelperWebServices::decrypt_tripledes($data, $key, $iv));
     }
 
     public function openSslDecryptTripledesMethodProvider()

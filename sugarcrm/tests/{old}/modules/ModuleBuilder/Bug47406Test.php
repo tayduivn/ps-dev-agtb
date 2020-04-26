@@ -67,32 +67,4 @@ class Bug47406Test extends TestCase
 
         $this->assertEquals( $expected, $this->mbvardef->vardef['fields'][$vardef['name']]['default']);
     }
-
-    public function providerSugarCurrencyFormat()
-    {
-        return array(
-            array(array('var' => ''), '', false),
-            array(array('var' => ' '), '0.00', true),
-            array(array('var' => 0), '0.00', true),
-            array(array('var' => 0.00), '0.00', true),
-            array(array('var' => '0.00'), '0.00', true),
-        );
-    }
-
-    /**
-     * @dataProvider providerSugarCurrencyFormat
-     */
-    public function testSugarCurrencyFormat($params, $expected, $as_regexp = false)
-    {
-        $this->markTestIncomplete('Needs to be fixed by FRM team.');
-        $return = smarty_function_sugar_currency_format($params, $this->smarty);
-        if ( $as_regexp )
-        {
-            $this->assertMatchesRegularExpression('/'.$expected.'$/', $return);
-        }
-        else
-        {
-            $this->assertEquals( $expected, $return);
-        }
-    }
 }

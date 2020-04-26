@@ -15,54 +15,6 @@ use PHPUnit\Framework\TestCase;
 class EmailFormatterTest extends TestCase
 {
     /**
-     * @group email
-     * @group mailer
-     */
-    public function testFormatTextBody_IncludeDisclosure_DisclosureIsAppendedToBody() {
-        self::markTestIncomplete("Not yet implemented");
-    }
-
-    /**
-     * @group email
-     * @group mailer
-     */
-    public function testFormatTextBody_DoNotIncludeDisclosure_BodyIsNotChanged() {
-        self::markTestIncomplete("Not yet implemented");
-    }
-
-    /**
-     * @group email
-     * @group mailer
-     */
-    public function testFormatHtmlBody_IncludeDisclosure_DisclosureIsAppendedToBody() {
-        self::markTestIncomplete("Not yet implemented");
-    }
-
-    /**
-     * @group email
-     * @group mailer
-     */
-    public function testFormatHtmlBody_DoNotIncludeDisclosure_BodyIsNotChanged() {
-        self::markTestIncomplete("Not yet implemented");
-    }
-
-    /**
-     * @group email
-     * @group mailer
-     */
-    public function testFormatHtmlBody_HasInlineImages_ConvertInlineImagesToEmbeddedImages_ReturnsModifiedBodyAndArrayOfEmbeddedImagesToAttach() {
-        self::markTestIncomplete("Not yet implemented");
-    }
-
-    /**
-     * @group email
-     * @group mailer
-     */
-    public function testFormatHtmlBody_DoesNotHaveInlineImages_BodyIsNotChangedAndReturnedArrayIsEmpty() {
-        self::markTestIncomplete("Not yet implemented");
-    }
-
-    /**
      * Formerly HandleBodyInHTMLformatTest::testHandleBodyInHtmlformat. This is really testing that from_html works,
      * but it's best not to lose a test and thus risk a regression.
      *

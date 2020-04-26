@@ -373,46 +373,6 @@ class Bug56391Test extends TestCase
         $this->assertEquals($expected_bean_result['access'], $acls, 'Access Failed');
     }
 
-    public function testModuleOwnerNoAccess()
-    {
-        $this->markTestIncomplete("This is causing sporadic CI failures.  Skipping for now");
-
-        $modules = array('Accounts');
-
-        $expected_bean_result['no_access'] = array(
-            'admin' => 'no',
-            'developer' => 'no',
-            'delete' => 'no',
-            'import' => 'no',
-            'massupdate' => 'no',
-            'edit' => 'no',
-            'create' => 'no',
-        );
-
-        $account = BeanFactory::newBean('Accounts');
-        $account->name = 'Unit Test ' . create_guid();
-        $account->assigned_user_id = 1;
-        $account->save();
-        $this->accounts['no_access'] = $account->id;
-
-        unset($account);
-
-        $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, array(
-            'access', 'view', 'list', 'edit', 'export', 'create'), array('edit','create'));
-
-        SugarTestACLUtilities::setupUser($role);
-        SugarTestHelper::clearACLCache();
-        $mm = MetaDataManager::getManager();
-
-        $acls = $mm->getAclForModule('Accounts', $GLOBALS['current_user'], BeanFactory::getBean('Accounts', $this->accounts['no_access']));
-
-        unset($acls['_hash']);
-        // not checking fields right now
-        unset($acls['fields']);
-
-        $this->assertEquals($expected_bean_result['no_access'], $acls, 'No Access Failed');
-    }
-
     public function testModuleFieldOwnerAccess()
     {
         $modules = array('Accounts');
@@ -461,42 +421,5 @@ class Bug56391Test extends TestCase
         $fields = $acls['fields'];
         unset($acls['fields']);
         $this->assertEquals($expected_bean_result['field_access'], $fields, 'Field Access Failed');
-    }
-
-    public function testModuleFieldOwnerNoAccess()
-    {
-        $this->markTestIncomplete('Failing. Need to be fixed by FRM team');
-        $modules = array('Accounts', );
-
-        $expected_bean_result['field_no_access'] = array(
-                'name' => array(
-                        'write' => 'no',
-                        'create' => 'no',
-                    ),
-            );
-        $account = BeanFactory::newBean('Accounts');
-        $account->name = 'Unit Test ' . create_guid();
-        $account->assigned_user_id = 1;
-        $account->save();
-        $this->accounts['no_access'] = $account->id;
-
-        unset($account);
-        $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, array(
-            'access', 'view', 'list', 'edit', 'delete', 'export'), array('edit'));
-
-        SugarTestACLUtilities::createField($role->id, 'Accounts', 'name', 60);
-
-        SugarTestACLUtilities::setupUser($role);
-        SugarTestHelper::clearACLCache();
-
-        $mm = MetaDataManager::getManager();
-
-        $acls = $mm->getAclForModule('Accounts', $GLOBALS['current_user'], BeanFactory::getBean('Accounts', $this->accounts['no_access']));
-        unset($acls['_hash']);
-
-        $fields = $acls['fields'];
-        unset($acls['fields']);
-
-        $this->assertEquals($expected_bean_result['field_no_access'], $fields, 'No Field Access Failed');
     }
 }

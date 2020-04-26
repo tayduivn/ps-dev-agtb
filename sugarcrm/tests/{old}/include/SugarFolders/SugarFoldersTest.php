@@ -174,36 +174,6 @@ class SugarFoldersTest extends TestCase
     }
 
     /**
-     * Test the addBean, getCountUnread,getCountItems functions.
-     */
-    function testAddBean()
-    {
-        $this->markTestIncomplete('Needs to be fixed by FRM team.');
-        $emailParams = array('status' => 'unread');
-        $email = $this->_createEmailObject($emailParams);
-        $this->emails[] = $email->id;
-
-        $this->_createNewSugarFolder();
-
-        $cnt = $this->folder->getCountUnread($this->folder->id);
-        $this->assertEquals(0, $cnt, "Unable to execute addBean function properly.");
-
-        $this->folder->addBean($email,$GLOBALS['current_user']);
-
-        $cnt = $this->folder->getCountUnread($this->folder->id);
-        $this->assertEquals(1, $cnt, "Unable to execute addBean function properly.");
-
-        //Create a second email obj with status read
-        $emailParams = array('status' => 'read');
-        $email = $this->_createEmailObject($emailParams);
-        $this->emails[] = $email->id;
-        $this->folder->addBean($email,$GLOBALS['current_user']);
-
-        $cnt = $this->folder->getCountItems($this->folder->id);
-        $this->assertEquals(2, $cnt, "Unable to execute getCountItems function properly.");
-    }
-
-    /**
      * Tests sugar folder methods that deal with emails.
      */
     function testFolderEmailMethods()
@@ -239,44 +209,6 @@ class SugarFoldersTest extends TestCase
         $this->folder->move($this->folder->id, $f3->id,$email->id);
         $emailExists = $f3->checkEmailExistForFolder($email->id);
         $this->assertTrue($emailExists, "Unable to move Emails bean to a different sugar folder");
-    }
-
-    /**
-     * Test retreiving a list of emails for a particular folder.
-     */
-    function testGetListItemsForEmailXML()
-    {
-        $this->markTestIncomplete('Needs to be fixed by FRM team.');
-        //Create the my Emails Folder
-        $GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], "Emails");
-        $emailUI = new EmailUI();
-        $emailUI->preflightUser($GLOBALS['current_user']);
-        $error_message = "Unable to get list items for email.";
-        $rootNode = new ExtNode('','');
-
-        $folderOpenState = "";
-        $ret = $this->folder->getUserFolders($rootNode, $folderOpenState, $GLOBALS['current_user'], true);
-
-        $this->assertEquals(1, count($ret), $error_message);
-        $folderID = $ret[0]['id'];
-
-        //Create the Email Object
-        $emailParams = array('status' => 'unread','assigned_user_id' => $GLOBALS['current_user']->id);
-        $email = $this->_createEmailObject($emailParams);
-        $this->emails[] = $email->id;
-
-        //Add Email Object to My Email Folder
-        $my_email = new SugarFolder();
-        $my_email->retrieve($folderID);
-        $my_email->addBean($email,$GLOBALS['current_user']);
-
-        //Make sure the email was added to the folder.
-        $emailExists = $my_email->checkEmailExistForFolder($email->id);
-        $this->assertTrue($emailExists, $error_message);
-        //Get the list of emails.
-        $emailList = $my_email->getListItemsForEmailXML($folderID);
-
-        $this->assertEquals($email->id,$emailList['out'][0]['uid'],$error_message );
     }
 
     //BEGIN SUGARCRM flav=ent ONLY

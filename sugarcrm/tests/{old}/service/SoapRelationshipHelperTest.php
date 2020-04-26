@@ -119,7 +119,7 @@ class SoapRelationshipHelperTest extends TestCase
     public function testRetrieveModifiedRelationships()
     {
         if($GLOBALS['db']->dbType != 'mysql' ) {
-            $this->markTestIncomplete("Currently these queries don't work on non-mysql DBs, skip until query is fixed.");
+            $this->markTestSkipped('Currently these queries don\'t work on non-mysql DBs, skip until query is fixed.');
         }
         foreach($this->testData as $data)
         {

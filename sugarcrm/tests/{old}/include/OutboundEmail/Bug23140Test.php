@@ -43,54 +43,6 @@ class Bug23140Test extends TestCase
         OutboundEmailConfigurationTestHelper::tearDown();
     }
 
-    function testSystemAccountMailSettingsChangedUserAccessToUsername()
-    {
-        $this->markTestIncomplete('To be resolved by the MAR team');
-        //User not alloweed to access system email username/password
-        $GLOBALS['db']->query("DELETE FROM config where name='allow_default_outbound' AND category='notify'");
-        $GLOBALS['db']->query("INSERT INTO config (category,name,value) VALUES ('notify','allow_default_outbound','2')");
-
-        $newSystemPort = 864;
-        $newSystemServer = "system.imap.com";
-        $newSystemUsername = "system_user_name";
-        $newSystemPassword = "SYSTEM_PASSWORD";
-
-        $userID = create_guid();
-        $ob = new OutboundEmail();
-        $ob->id = $userID;
-        $ob->new_with_id = TRUE;
-        $ob->name = 'Sugar Test 1';
-        $ob->type = 'system-override';
-        $ob->user_id = $this->_user->id;
-        $ob->mail_sendtype = "SMTP";
-        $ob->mail_smtpuser = "Test User";
-        $ob->mail_smtppass = "User Pass";
-        $ob->save();
-        $this->ob = $ob;
-
-        $system = $ob->getSystemMailerSettings();
-        $system->new_with_id = FALSE;
-        $system->mail_smtpport = $newSystemPort;
-        $system->mail_smtpserver = $newSystemServer;
-        $system->mail_smtpuser = $newSystemUsername;
-        $system->mail_smtppass = $newSystemPassword;
-
-        $system->saveSystem();
-
-        $obRetrieved = new OutboundEmail();
-        $obRetrieved->retrieve($userID);
-
-        $this->assertEquals($newSystemPort, $obRetrieved->mail_smtpport, "Could not update users port system-override accounts after system save.");
-        $this->assertEquals($newSystemServer, $obRetrieved->mail_smtpserver, "Could not update users server system-override accounts after system save.");
-        $this->assertEquals($newSystemUsername, $obRetrieved->mail_smtpuser, "Could not update users username system-override accounts after system save.");
-        $this->assertEquals(
-            $newSystemPassword,
-            Blowfish::decode(Blowfish::getKey('OutBoundEmail'), $obRetrieved->mail_smtppass),
-            "Could not update users password system-override accounts after system save."
-        );
-    }
-
-
     function testSystemAccountMailSettingsChangedNoUserAccessToUsername()
     {
         //User not alloweed to access system email username/password

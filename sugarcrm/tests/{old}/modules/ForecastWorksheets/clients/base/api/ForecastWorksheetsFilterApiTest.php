@@ -12,7 +12,7 @@
 
 use PHPUnit\Framework\TestCase;
 
-/***
+/**
  * Used to test Forecast Module endpoints from ForecastModuleApi.php
  */
 class ForecastWorksheetsFilterApiTest extends TestCase
@@ -140,140 +140,6 @@ class ForecastWorksheetsFilterApiTest extends TestCase
         SugarTestForecastUtilities::cleanUpCreatedForecastUsers();
         SugarTestForecastUtilities::tearDownForecastConfig();
     }
-
-    /**
-     * @group forecastapi
-     * @group forecasts
-     */
-    public function testForecastWorksheets()
-    {
-        $this->markTestIncomplete('Needs to be fixed by FRM team.');
-        $GLOBALS["current_user"] = self::$reportee["user"];
-
-        $response = $this->filterApi->forecastWorksheetsGet(
-            SugarTestRestUtilities::getRestServiceMock(self::$reportee['user']),
-            array('user_id' => self::$repData['id'], 'timeperiod_id' => self::$timeperiod->id, 'module' => 'ForecastWorksheets')
-        );
-
-        $this->assertNotEmpty($response["records"], "Rest reply is empty. Rep data should have been returned.");
-
-        return $response['records'][0];
-    }
-
-    /**
-     * @group forecastapi
-     * @group forecasts
-     * @depends testForecastWorksheets
-     *
-     * @param array $worksheet  The worksheet we want to work with throughout the test
-     * @return array
-     */
-    public function testForecastWorksheetSaveDraft($worksheet)
-    {
-        $this->markTestIncomplete('SFA team - check data from previous step: it consistently fails with a difference of 100');
-        $GLOBALS["current_user"] = self::$reportee["user"];
-
-        $best_case = $worksheet["best_case"] + 100;
-        $probability = $worksheet["probability"] + 10;
-
-        $postData = $worksheet;
-
-        unset($postData['date_modified']);
-        $postData['probability'] = $probability;
-        $postData['best_case'] = $best_case;
-        $postData['module'] = 'ForecastWorksheets';
-        $postData['record'] = $worksheet['id'];
-
-        $response = $this->putApi->forecastWorksheetSave(
-            SugarTestRestUtilities::getRestServiceMock(self::$reportee["user"]),
-            $postData
-        );
-
-        //check to see if the data to the Worksheet table was saved
-        $this->assertEquals($probability, $response['probability']);
-        $this->assertEquals($best_case, $response['best_case']);
-
-        // make sure we still have the draft record
-        $this->assertEquals(1, $response['draft']);
-
-        return $response;
-    }
-
-    /**
-     * @depends testForecastWorksheetSaveDraft
-     * @group forecastapi
-     * @group forecasts
-     * @param array $worksheet
-     * @return array
-     */
-    public function testForecastWorksheetManagerDoesNotSeeDraftData($worksheet)
-    {
-        $GLOBALS["current_user"] = self::$manager["user"];
-
-        $response = $this->filterApi->forecastWorksheetsGet(
-            SugarTestRestUtilities::getRestServiceMock(self::$manager['user']),
-            array('user_id' => self::$repData['id'], 'timeperiod_id' => self::$timeperiod->id, 'module' => 'ForecastWorksheets')
-        );
-
-        $this->assertEmpty($response['records']);
-
-        return $worksheet;
-    }
-
-    /**
-     * @depends testForecastWorksheetManagerDoesNotSeeDraftData
-     * @group forecastapi
-     * @group forecasts
-     * @param array $worksheet
-     * @return array
-     */
-    public function testForecastWorksheetRepCommit($worksheet)
-    {
-        /* @var $worksheetBean ForecastWorksheet */
-        $GLOBALS['current_user'] = self::$reportee['user'];
-        $worksheetBean = BeanFactory::newBean('ForecastWorksheets');
-        $commit = $worksheetBean->commitWorksheet(self::$reportee['user']->id, self::$timeperiod->id);
-
-        $this->assertTrue($commit);
-
-        return $worksheet;
-    }
-
-    /**
-     * @depends testForecastWorksheetRepCommit
-     * @group forecastapi
-     * @group forecasts
-     * @param $worksheet
-     */
-    public function testForecastWorksheetManagerSeesCommittedData($worksheet)
-    {
-        $GLOBALS["current_user"] = self::$manager["user"];
-
-        $response = $this->filterApi->forecastWorksheetsGet(
-            SugarTestRestUtilities::getRestServiceMock(self::$manager['user']),
-            array('user_id' => self::$repData['id'], 'timeperiod_id' => self::$timeperiod->id, 'module' => 'ForecastWorksheets')
-        );
-
-        $this->assertNotEmpty($response['records']);
-
-        //loop through response and pick out the rows that correspond with ops[0]->id
-        $resp_opp = array();
-        foreach ($response["records"] as $record) {
-            if ( $record["parent_id"] == $worksheet['parent_id'] && $record["parent_type"] == $worksheet['parent_type'] ) {
-                $resp_opp = $record;
-                break;
-            }
-        }
-
-        // assert that the values returned are the values that were in the original worksheet.
-        $this->assertEquals(
-            $worksheet['probability'],
-            $resp_opp['probability'],
-            "Worksheet Probability Not Committed Value"
-        );
-        $this->assertEquals($worksheet['best_case'], $resp_opp['best_case'], "Worksheet Best Case Not Committed Value");
-    }
-
 
     /**
      * @group forecastapi

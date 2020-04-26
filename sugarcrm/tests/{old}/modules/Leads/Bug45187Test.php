@@ -30,49 +30,6 @@ class Bug45187Test extends TestCase
         unset($GLOBALS['current_user']);
         unset($GLOBALS['mod_strings']);
     }
-    
-    /**
-    * @group bug45187
-    */
-    public function testActivityModuleLabel()
-    {
-        $this->markTestIncomplete('Opportunities amount is now a calculated field and we have notice on the amount field - To be fixed by MAR/SFA team');
-        global $sugar_config;
-        global $app_list_strings;
-
-        // init
-        $lead = SugarTestLeadUtilities::createLead();
-        $account = SugarTestAccountUtilities::createAccount();
-
-        // simulate module renaming
-        $org_name = $app_list_strings['moduleListSingular']['Contacts'];
-        $app_list_strings['moduleListSingular']['Contacts'] = 'People';
-
-        // set the request/post parameters before converting the lead
-        $_REQUEST['module'] = 'Leads';
-        $_REQUEST['action'] = 'ConvertLead';
-        $_REQUEST['record'] = $lead->id;
-        unset($_REQUEST['handle']);
-        $_REQUEST['selectedAccount'] = $account->id;
-        $sugar_config['lead_conv_activity_opt'] = 'move';
-
-        // call display to trigger conversion
-        $vc = new ViewConvertLead();
-        $vc->init($lead);
-        $vc->display();
-
-        // the activity options dropdown should use the renamed module label
-        $this->expectOutputRegex('/People<\/OPTION>/');
-
-        // cleanup
-        $app_list_strings['moduleListSingular']['Contacts'] = $org_name;
-        unset($_REQUEST['module']);
-        unset($_REQUEST['action']);
-        unset($_REQUEST['record']);
-        unset($_REQUEST['selectedAccount']);
-        SugarTestAccountUtilities::removeAllCreatedAccounts();
-        SugarTestLeadUtilities::removeAllCreatedLeads();
-    }
 
     /**
     * @group bug45187

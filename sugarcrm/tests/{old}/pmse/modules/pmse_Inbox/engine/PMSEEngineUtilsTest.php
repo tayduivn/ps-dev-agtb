@@ -328,18 +328,6 @@ class PMSEEngineUtilsTest extends TestCase
     }
 
     /**
-     * @covers PMSEEngineUtils::uploadPublicFile
-     * @todo   Implement testUploadPublicFile().
-     */
-    public function testUploadPublicFile()
-    {  
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-          'This test has not been implemented yet.'
-        );
-    }
-
-    /**
      * @covers PMSEEngineUtils::reservedWordsSql
      */
     public function testReservedWordsSql()
@@ -795,18 +783,6 @@ class PMSEEngineUtilsTest extends TestCase
             $result = $this->object->getEntityUid($key);
             $this->assertEquals($value, $result);
         }
-    }
-
-    /**
-     * @covers PMSEEngineUtils::getElementUid
-     * @todo   Implement testGetElementUid().
-     */
-    public function testGetElementUid()
-    {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-          'This test has not been implemented yet.'
-        );
     }
 
     /**

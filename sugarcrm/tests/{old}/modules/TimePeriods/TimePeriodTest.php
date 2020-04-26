@@ -45,25 +45,6 @@ class TimePeriodTest extends TestCase
     }
 
     /**
-     * @group timeperiods
-     */
-    public function testGetTimePeriodFromDbDateWithValidDate()
-    {
-        $this->markTestIncomplete("Marking incomplete as it fails in strict mode. SFA team.");
-        // get time period within 2009-02-15
-        $expected = SugarTestTimePeriodUtilities::createTimePeriod('2009-01-01', '2009-03-31');
-
-        $result = TimePeriod::retrieveFromDate('2009-02-15');
-        $this->assertEquals($expected->id, $result->id);
-
-        $result = TimePeriod::retrieveFromDate('2009-01-01');
-        $this->assertEquals($expected->id, $result->id);
-
-        $result = TimePeriod::retrieveFromDate('2009-03-31');
-        $this->assertEquals($expected->id, $result->id);
-    }
-
-    /**
      * check that the timestamps are generated correctly
      * @group timeperiods
      */
@@ -106,26 +87,6 @@ class TimePeriodTest extends TestCase
 
         $this->assertEquals(2, $updated);
     }
-    
-    /**
-     * @group timeperiods
-     */
-     public function testRetrieveFromDate()
-     {
-        $this->markTestIncomplete("Marking incomplete as it fails in strict mode.  SFA team.");
-        $tp1 = SugarTestTimePeriodUtilities::createTimePeriod('2013-01-01', '2013-03-31');
-        $tp2 = SugarTestTimePeriodUtilities::createTimePeriod('2013-04-01', '2013-06-30');
-        
-        //check to see if dates are in a timeperiod
-        $tp3 = TimePeriod::retrieveFromDate('2013-01-30');
-        $tp4 = TimePeriod::retrieveFromDate('2013-05-14');
-        $tp5 = TimePeriod::retrieveFromDate('2013-07-01');
-        
-        $this->assertEquals($tp1->id, $tp3->id);
-        $this->assertEquals($tp2->id, $tp4->id);
-        $this->assertEquals(false, $tp5);
-         
-     }
 
     /**
      * @dataProvider dataProviderGetGenericStartEndByDuration

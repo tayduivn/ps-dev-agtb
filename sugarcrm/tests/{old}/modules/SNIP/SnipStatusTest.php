@@ -30,36 +30,6 @@ class SnipStatusTest extends TestCase
     public function testStatusNotPurchased1() { $this->statusTest(json_encode(array('result'=>'instance not found')),'notpurchased'); }
     public function testStatusNotPurchased2() { $this->statusTest(json_encode(array('result'=>'instance not found','status'=>'fasdfkuaseyrkajsdfh udd')),'notpurchased'); }
 
-    public function testStatusDown1()
-    {
-        $this->markTestIncomplete('Failing. Need to be fixed by FRM team');
-        $this->statusTest(json_encode(array('result' => 'asdofi7aso8fdus', 'status' => 'dafso8dfuds')), 'down');
-    }
-
-    public function testStatusDown2()
-    {
-        $this->markTestIncomplete('Failing. Need to be fixed by FRM team');
-        $this->statusTest(json_encode(array('result' => 'asdofi7aso8fdus')), 'down');
-    }
-
-    public function testStatusDown3()
-    {
-        $this->markTestIncomplete('Failing. Need to be fixed by FRM team');
-        $this->statusTest('This is not valid', 'down');
-    }
-
-    public function testStatusDown4()
-    {
-        $this->markTestIncomplete('Failing. Need to be fixed by FRM team');
-        $this->statusTest('', 'down');
-    }
-
-    public function testStatusDown5()
-    {
-        $this->markTestIncomplete('Failing. Need to be fixed by FRM team');
-        $this->statusTest(NULL, 'down');
-    }
-
     public function testStatusDownShowEnableScreen() { $this->statusTest(json_encode(array('result'=>'asdofi7aso8fdus','status'=>'dafso8dfuds')),'notpurchased',null,false); }
 
     public function testStatusPurchasedError1() { $this->statusTest(json_encode(array('result'=>'ok')),'purchased_error',null); }
