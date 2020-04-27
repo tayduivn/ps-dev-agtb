@@ -221,6 +221,7 @@
         <whitelist>
             <directory>../../clients</directory>
             <directory>../../data</directory>
+            <directory>../../etc</directory>
             <directory>../../include</directory>
             <directory>../../modules</directory>
             <directory>../../src</directory>

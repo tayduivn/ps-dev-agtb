@@ -36,7 +36,6 @@ use Sugarcrm\Sugarcrm\Dbal\Logging\Formatter as DbalFormatter;
 use Sugarcrm\Sugarcrm\Dbal\Logging\SlowQueryLogger;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Command\Rebuild;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Command\StateAwareRebuild;
-use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Console\StatusCommand;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Job\RebuildJob;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener\Builder\StateAwareBuilder;
@@ -52,14 +51,15 @@ use Sugarcrm\Sugarcrm\Security\Context;
 use Sugarcrm\Sugarcrm\Security\Subject\Formatter as SubjectFormatter;
 use Sugarcrm\Sugarcrm\Security\Subject\Formatter\BeanFormatter;
 use Sugarcrm\Sugarcrm\Security\Validator\Validator;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 use UltraLite\Container\Container;
 use Sugarcrm\Sugarcrm\Performance\Dbal\XhprofLogger;
 
 return new Container([
-    SugarConfig::class => function () {
+    SugarConfig::class => function (): SugarConfig {
         return SugarConfig::getInstance();
     },
-    Connection::class => function () {
+    Connection::class => function (): Connection {
         return DBManagerFactory::getConnection();
     },
     SQLLogger::class => function (ContainerInterface $container) : SQLLogger {
@@ -89,16 +89,16 @@ return new Container([
 
         return new LoggerChain($loggers);
     },
-    LoggerInterface::class => function () {
+    LoggerInterface::class => function (): LoggerInterface {
         return LoggerFactory::getLogger('default');
     },
-    LoggerInterface::class . '-denorm' => function () {
+    LoggerInterface::class . '-denorm' => function (): LoggerInterface {
         return LoggerFactory::getLogger('denorm');
     },
-    LoggerInterface::class . '-security' => function () {
+    LoggerInterface::class . '-security' => function (): LoggerInterface {
         return LoggerFactory::getLogger('security');
     },
-    State::class => function (ContainerInterface $container) {
+    State::class => function (ContainerInterface $container): State {
         $config = $container->get(SugarConfig::class);
 
         $state = new State(
@@ -110,7 +110,7 @@ return new Container([
 
         return $state;
     },
-    Listener::class => function (ContainerInterface $container) {
+    Listener::class => function (ContainerInterface $container): Listener {
         $conn = $container->get(Connection::class);
         $state = $container->get(State::class);
         $builder = new StateAwareBuilder(
@@ -129,7 +129,7 @@ return new Container([
             new PreFetch($conn)
         );
     },
-    StateAwareRebuild::class => function (ContainerInterface $container) {
+    StateAwareRebuild::class => function (ContainerInterface $container): StateAwareRebuild {
         $logger = $container->get(LoggerInterface::class . '-denorm');
 
         return new StateAwareRebuild(
@@ -141,47 +141,42 @@ return new Container([
             $logger
         );
     },
-    StatusCommand::class => function (ContainerInterface $container) {
-        return new StatusCommand(
-            $container->get(State::class)
-        );
-    },
-    RebuildJob::class => function (ContainerInterface $container) {
+    RebuildJob::class => function (ContainerInterface $container): RebuildJob {
         return new RebuildJob(
             $container->get(StateAwareRebuild::class)
         );
     },
-    Context::class => function (ContainerInterface $container) {
+    Context::class => function (ContainerInterface $container): Context {
         return new Context(
             $container->get(LoggerInterface::class . '-security')
         );
     },
-    Localization::class => function () {
+    Localization::class => function (): Localization {
         return Localization::getObject();
     },
-    SubjectFormatter::class => function (ContainerInterface $container) {
+    SubjectFormatter::class => function (ContainerInterface $container): SubjectFormatter {
         return new BeanFormatter(
             $container->get(Localization::class)
         );
     },
-    EventRepository::class => function (ContainerInterface $container) {
+    EventRepository::class => function (ContainerInterface $container): EventRepository {
         return new EventRepository(
             $container->get(Connection::class),
             $container->get(Context::class)
         );
     },
-    Repository::class => function (ContainerInterface $container) {
+    Repository::class => function (ContainerInterface $container): Repository {
         return new Repository(
             $container->get(Connection::class)
         );
     },
-    AuditFormatter::class => function (ContainerInterface $container) {
-        $class = \SugarAutoLoader::customClass(CompositeFormatter::class);
+    AuditFormatter::class => function (ContainerInterface $container): AuditFormatter {
+        $class = SugarAutoLoader::customClass(CompositeFormatter::class);
         return new $class(
-            new \Sugarcrm\Sugarcrm\Audit\Formatter\Date(),
-            new \Sugarcrm\Sugarcrm\Audit\Formatter\Enum(),
-            new \Sugarcrm\Sugarcrm\Audit\Formatter\Email(),
-            new \Sugarcrm\Sugarcrm\Audit\Formatter\Subject($container->get(SubjectFormatter::class))
+            new AuditFormatter\Date(),
+            new AuditFormatter\Enum(),
+            new AuditFormatter\Email(),
+            new AuditFormatter\Subject($container->get(SubjectFormatter::class))
         );
     },
     Administration::class => function () : Administration {
@@ -256,10 +251,10 @@ return new Container([
             throw new ServiceUnavailable($e->getMessage(), 0, $e);
         }
     },
-    \TimeDate::class => function (): \TimeDate {
-        return \TimeDate::getInstance();
+    TimeDate::class => function (): TimeDate {
+        return TimeDate::getInstance();
     },
-    Validator::class => function () {
+    Validator::class => function (): ValidatorInterface {
         return Validator::getService();
     },
 ]);
