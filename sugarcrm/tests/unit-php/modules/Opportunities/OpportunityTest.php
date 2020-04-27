@@ -146,6 +146,22 @@ class OpportunityTest extends TestCase
         $newRliBean = $opBean->createNewRenewalRLI($rliBean);
         $this->assertEquals('2019-10-11', $newRliBean->service_start_date, 'New RLI start date is wrong');
     }
+
+    /**
+     * @covers ::setDisabledImportFields()
+     */
+    public function testSetDisabledImportFields()
+    {
+        $opBean = $this->createPartialMock('Opportunity', ['getSettings']);
+        Opportunity::$settings = ['opps_view_by' => 'RevenueLineItems'];
+        $opBean->setDisabledImportFields();
+        $this->assertEquals(['date_closed', 'sales_stage', 'service_start_date'], $opBean->disableImportFields);
+
+        $opBean = $this->createPartialMock('Opportunity', ['getSettings']);
+        Opportunity::$settings = ['opps_view_by' => 'OpportunitiesOnly'];
+        $opBean->setDisabledImportFields();
+        $this->assertEquals([], $opBean->disableImportFields);
+    }
 }
 
 class RliMock extends RevenueLineItem

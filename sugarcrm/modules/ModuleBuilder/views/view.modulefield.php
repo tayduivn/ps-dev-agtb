@@ -191,6 +191,9 @@ class ViewModulefield extends SugarView
 
             $edit_or_add = 'editField' ;
 
+            if (isset($module->disableImportFields) && in_array($vardef['name'], $module->disableImportFields)) {
+                $this->fv->ss->assign('hideImportable', true);
+            }
         } else
         {
             require_once('modules/ModuleBuilder/MB/ModuleBuilder.php');

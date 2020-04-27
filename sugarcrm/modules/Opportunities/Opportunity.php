@@ -135,6 +135,13 @@ class Opportunity extends SugarBean
         'quote_id' => 'quotes',
     );
 
+    /**
+     * Fields for which we will disable imports.
+     *
+     * @var array
+     */
+    public $disableImportFields = [];
+
 
     public function __construct()
     {
@@ -144,6 +151,12 @@ class Opportunity extends SugarBean
         if (empty($sugar_config['require_accounts'])) {
             unset($this->required_fields['account_name']);
         }
+        //BEGIN SUGARCRM flav=ent ONLY
+        if (!isset($GLOBALS['installing']) || !$GLOBALS['installing']) {
+            $this->setDisabledImportFields();
+        }
+        //END SUGARCRM flav=ent ONLY
+
     }
 
 
@@ -635,6 +648,17 @@ class Opportunity extends SugarBean
         // get licenses
         $licenses = SubscriptionManager::instance()->getSystemSubscriptionKeysInSortedValueArray();
         return $useRli && in_array('SUGAR_SELL', $licenses);
+    }
+
+    /**
+     * If we are in Opps + RLIs mode, disable importing our cascading fields..
+     */
+    public function setDisabledImportFields()
+    {
+        $settings = Opportunity::getSettings();
+        if (isset($settings['opps_view_by']) && $settings['opps_view_by'] === 'RevenueLineItems') {
+            $this->disableImportFields = array_keys(self::CASCADE_FIELD_CONDITIONS);
+        }
     }
     //END SUGARCRM flav=ent ONLY
 
