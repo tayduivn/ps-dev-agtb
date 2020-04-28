@@ -77,7 +77,7 @@ return new Container([
             );
         }
 
-        if (!empty($sugar_config['xhprof_config'])
+        if ($config->get('xhprof_config')
             && SugarXHprof::getInstance()->isEnabled()
             && empty($GLOBALS['installing'])) {
             $loggers[] = new XhprofLogger(SugarXHprof::getInstance());
