@@ -22,13 +22,10 @@ $mod_strings = [
     'LBL_END_DATE' => 'End Date',
     'LBL_END_TIME' => 'End Time',
     'LBL_ENABLED' => 'Enabled',
-    'LBL_SHIFT_ID' => 'Shift ID',
-    'LBL_SHIFT_NAME' => 'Shift Name',
     'LBL_PRIMARY_TEAM' => 'Primary Team',
     'LNK_NEW_SHIFT_EXCEPTION' => 'Create Shift Exception',
     'LNK_VIEW_SHIFT_EXCEPTIONS' => 'View Shift Exceptions',
 
     'LBL_USERS_SUBPANEL_TITLE' => 'Users',
     'LBL_SHIFT_EXCEPTION_USERS_TITLE' => 'Users',
-    'LBL_SHIFTS' => 'Shifts',
 ];

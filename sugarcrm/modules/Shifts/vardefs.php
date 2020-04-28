@@ -59,15 +59,6 @@ $dictionary['Shift'] = [
         ],
     ],
     'relationships' => [
-        'shifts_shift_exceptions' => [
-            'lhs_module' => 'Shifts',
-            'lhs_table' => 'shifts',
-            'lhs_key' => 'id',
-            'rhs_module' => 'ShiftExceptions',
-            'rhs_table' => 'shiftexceptions',
-            'rhs_key' => 'shift_id',
-            'relationship_type' => 'one-to-many',
-        ],
     ],
     'acls' => [
         'SugarACLAdminOnly' => [
