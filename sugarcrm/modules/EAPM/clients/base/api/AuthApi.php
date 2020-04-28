@@ -39,11 +39,11 @@ class AuthApi extends SugarApi
         if (!isset($args['application'])) {
             throw new SugarApiExceptionNotFound('Application not found');
         }
-        $api = $this->getExternalApi($args['application']);
-        if (empty($api)) {
+        $extApi = $this->getExternalApi($args['application']);
+        if (!$extApi) {
             throw new SugarApiExceptionNotFound('External API not found');
         }
-        $client = $api->getClient();
+        $client = $extApi->getClient();
         $authUrl = $client->createAuthUrl();
         $data = [
             'auth_url' => $authUrl,
@@ -55,9 +55,9 @@ class AuthApi extends SugarApi
      * Gets external api object for an application.
      *
      * @param string $application
-     * @return ExternalAPIBase|NULL
+     * @return ExternalAPIBase|bool
      */
-    public function getExternalApi(string $application): ?ExternalAPIBase
+    public function getExternalApi(string $application)
     {
         return ExternalAPIFactory::loadAPI($application, true);
     }

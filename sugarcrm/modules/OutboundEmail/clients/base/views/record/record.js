@@ -26,7 +26,7 @@
             app.alert.show('oe-edit', {
                 level: 'error',
                 title: '',
-                messages: [app.lang.get('LBL_PLEASE_AUTHORIZE', this.module)]
+                messages: [app.lang.get('LBL_EMAIL_PLEASE_AUTHORIZE', this.module)]
             });
         } else {
             this._super('saveClicked');

@@ -21,6 +21,43 @@ require_once('modules/EmailMan/Forms.php');
 
 class ViewConfig extends SugarView
 {
+   /**
+    * SMTP providers requiring OAuth2.
+    *
+    * @var array
+    */
+    private $oauth2Types = [
+        'google_oauth2' => [
+            'application' => 'GoogleEmail',
+            'auth_warning' => 'LBL_EMAIL_AUTH_WARNING',
+        ],
+    ];
+
+    /**
+     * Gets auth info for oauth2 providers.
+     *
+     * @return string
+     */
+    protected function getAuthInfo(): string
+    {
+        $authApi = new AuthApi();
+        $api = new RestService();
+        $authInfo = $this->oauth2Types;
+        foreach ($authInfo as $key => $value) {
+            try {
+                $info = $authApi->getAuthInfo($api, ['module' => 'EAPM', 'application' => $value['application']]);
+            } catch (SugarApiExceptionNotFound $e) {
+                $info = [];
+            }
+            $authInfo[$key] = array_merge($value, $info);
+            if ($authInfo[$key]['auth_warning']) {
+                $authInfo[$key]['auth_warning'] = translate($authInfo[$key]['auth_warning']);
+            }
+        }
+        // convert to json string
+        return json_encode($authInfo);
+    }
+
     /**
 	 * @see SugarView::_getModuleTitleParams()
 	 */
@@ -85,7 +122,8 @@ class ViewConfig extends SugarView
         );
         $this->ss->assign("notify_fromname", $focus->settings['notify_fromname']);
         $this->ss->assign("notify_allow_default_outbound_on", (!empty($focus->settings['notify_allow_default_outbound']) && $focus->settings['notify_allow_default_outbound']) ? "checked='checked'" : "");
-
+        $this->ss->assign("eapm_id", isset($focus->settings['eapm_id']) ? $focus->settings['eapm_id'] : '');
+        $this->ss->assign("authorized_account", isset($focus->settings['authorized_account']) ? $focus->settings['authorized_account'] : '');
         $this->ss->assign("mail_smtptype", $focus->settings['mail_smtptype']);
         $this->ss->assign("mail_smtpserver", $focus->settings['mail_smtpserver']);
         $this->ss->assign("mail_smtpport", $focus->settings['mail_smtpport']);
@@ -93,6 +131,7 @@ class ViewConfig extends SugarView
         $this->ss->assign("mail_smtpauth_req", ($focus->settings['mail_smtpauth_req']) ? "checked='checked'" : "");
         $this->ss->assign("mail_haspass", empty($focus->settings['mail_smtppass'])?0:1);
         $this->ss->assign("MAIL_SSL_OPTIONS", get_select_options_with_id($app_list_strings['email_settings_for_ssl'], $focus->settings['mail_smtpssl']));
+        $this->ss->assign("js_authinfo", $this->getAuthInfo());
 
         //Assign the current users email for the test send dialogue.
         $this->ss->assign("CURRENT_USER_EMAIL", $current_user->email1);

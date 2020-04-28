@@ -40,7 +40,7 @@
      * @inheritdoc
      */
     _render() {
-        this.status = app.lang.get(this.model.get('eapm_id') ? 'LBL_AUTHORIZED' : 'LBL_NOT_AUTHORIZED', this.model.module);
+        this.status = app.lang.get(this.model.get('eapm_id') ? 'LBL_EMAIL_AUTHORIZED' : 'LBL_EMAIL_NOT_AUTHORIZED');
         this._super('_render');
     }
 })

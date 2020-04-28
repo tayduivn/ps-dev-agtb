@@ -28,7 +28,7 @@
     oauth2Types: {
        google_oauth2: {
            application: 'GoogleEmail',
-           auth_warning: 'LBL_GOOGLE_AUTH_WARNING',
+           auth_warning: 'LBL_EMAIL_AUTH_WARNING',
            auth_url: null
        }
     },
@@ -72,7 +72,7 @@
         } else {
             app.alert.show('error', {
                 level: 'error',
-                messages: app.lang.get('LBL_AUTH_FAILURE', this.module)
+                messages: app.lang.get('LBL_EMAIL_AUTH_FAILURE', this.module)
             });
         }
         return true;

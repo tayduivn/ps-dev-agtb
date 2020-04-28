@@ -315,8 +315,8 @@ class Administration extends SugarBean {
 
             if ($oe->getSystemMailerSettings(false)) {
                 foreach ($oe->field_defs as $name => $value) {
-                    // Only set the value if the key starts with "mail_".
-                    if (strpos($name, 'mail_') === 0) {
+                    // Only set the value if the key starts with "mail_" or is oauth2 field.
+                    if ($name === 'eapm_id' || $name === 'authorized_account' || strpos($name, 'mail_') === 0) {
                         $this->settings[$name] = $oe->$name;
                     }
                 }
@@ -359,6 +359,8 @@ class Administration extends SugarBean {
                 $sea = new SugarEmailAddress();
                 $oe->email_address_id = $sea->getEmailGUID($val);
                 $oe->email_address = $val;
+            } elseif ($key === 'eapm_id' || $key === 'authorized_account') {
+                $oe->$key = $val;
             }
         }
 

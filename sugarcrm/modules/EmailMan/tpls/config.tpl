@@ -27,6 +27,7 @@ function change_state(radiobutton) {
 		radiobutton.form['massemailer_tracking_entities_location'].value=null;
 	}
 }
+var authInfo = {/literal}{$js_authinfo}{literal}
 -->
 </script>
 {/literal}
@@ -38,6 +39,8 @@ function change_state(radiobutton) {
 	<input type="hidden" name="return_module" value="{$RETURN_MODULE}">
 	<input type="hidden" name="return_action" value="{$RETURN_ACTION}">
 	<input type="hidden" name="source_form" value="config" />
+    <input type="hidden" name="eapm_id" id="eapm_id" value="{$eapm_id}" />
+    <input type="hidden" name="authorized_account" id="authorized_account" value="{$authorized_account}" />
 
 <table width="100%" cellpadding="0" cellspacing="0" border="0">
 	<tr>
@@ -82,16 +85,17 @@ function change_state(radiobutton) {
         <tr>
             <td colspan="4">
                 <div id="smtpButtonGroup" class="yui-buttongroup">
-                    <span id="gmail" class="yui-button yui-radio-button{if $mail_smtptype == 'gmail'} yui-button-checked{/if}">
+                    <span id="google_oauth2" class="yui-button yui-radio-button{if $mail_smtptype == 'google_oauth2'} yui-button-checked{/if}">
                         <span class="first-child">
-                            <button type="button" name="mail_smtptype" value="gmail">
-                                &nbsp;&nbsp;&nbsp;&nbsp;{$APP.LBL_SMTPTYPE_GMAIL}&nbsp;&nbsp;&nbsp;&nbsp;
+                            <button type="button" name="mail_smtptype" value="google_oauth2">
+                                &nbsp;&nbsp;&nbsp;&nbsp;{$APP.LBL_SMTPTYPE_GOOGLE_OAUTH2}&nbsp;&nbsp;&nbsp;&nbsp;
                             </button>
                         </span>
                     </span>
                     <span id="yahoomail" class="yui-button yui-radio-button{if $mail_smtptype == 'yahoomail'} yui-button-checked{/if}">
                         <span class="first-child">
                             <button type="button" name="mail_smtptype" value="yahoomail">
+                                {sugar_getimage alt=$mod_strings.LBL_YAHOO_MAIL_LOGO name="yahoomail_logo" ext=".png" other_attributes=''}
                                 &nbsp;&nbsp;&nbsp;&nbsp;{$APP.LBL_SMTPTYPE_YAHOO}&nbsp;&nbsp;&nbsp;&nbsp;
                             </button>
                         </span>
@@ -99,7 +103,16 @@ function change_state(radiobutton) {
                     <span id="exchange" class="yui-button yui-radio-button{if $mail_smtptype == 'exchange'} yui-button-checked{/if}">
                         <span class="first-child">
                             <button type="button" name="mail_smtptype" value="exchange">
+                                {sugar_getimage alt=$mod_strings.LBL_EXCHANGE_LOGO name="exchange_logo" ext=".png" other_attributes=''}
                                 &nbsp;&nbsp;&nbsp;&nbsp;{$APP.LBL_SMTPTYPE_EXCHANGE}&nbsp;&nbsp;&nbsp;&nbsp;
+                            </button>
+                        </span>
+                    </span>
+                    <span id="gmail" class="yui-button yui-radio-button{if $mail_smtptype == 'gmail'} yui-button-checked{/if}">
+                        <span class="first-child">
+                            <button type="button" name="mail_smtptype" value="gmail">
+                                {sugar_getimage alt=$mod_strings.LBL_GMAIL_LOGO name="gmail_logo" ext=".png" other_attributes=''}
+                                &nbsp;&nbsp;&nbsp;&nbsp;{$APP.LBL_SMTPTYPE_GMAIL}&nbsp;&nbsp;&nbsp;&nbsp;
                             </button>
                         </span>
                     </span>
@@ -113,10 +126,24 @@ function change_state(radiobutton) {
                 </div>
             </td>
         </tr>
+        <tr id="auth_block" style="display:none">
+            <td colspan="4">
+                <div id="auth_warning" style="background-color:rgba(255,212,208,0.4);color:#BA0F1B;font-weight:bold;padding:5px;margin:2px">
+                Placeholder
+                </div>
+                <button type="button" id="auth_button" name="auth_button" style="padding:5px;margin:10px 2px" onclick="authorize();">{$APP.LBL_EMAIL_AUTHORIZE}</button>
+            </td>
+        </tr>
 		<tr>
 			<td colspan="4">
 			     <div id="smtp_settings">
 					<table width="100%" cellpadding="0" cellspacing="0">
+                        <tr id="mailsettings0">
+                            <td width="20%" scope="row"><span id="auth_status_label">{$MOD.LBL_AUTH_STATUS}</span></td>
+                            <td width="30%" ><input type="text" id="auth_status" name="auth_status" tabindex="1" size="25" maxlength="64" value="{if !empty($eapm_id)}{$APP.LBL_EMAIL_AUTHORIZED}{/if}{if empty($eapm_id)}{$APP.LBL_EMAIL_NOT_AUTHORIZED}{/if}" disabled></td>
+                            <td width="20%" scope="row"><span id="auth_email_label">{$MOD.LBL_AUTHORIZED_ACCOUNT}</span></td>
+                            <td width="30%" ><input type="text" id="auth_email" name="auth_email" size="25" maxlength="64" value="{$authorized_account}" tabindex='1' disabled></td>
+                        </tr>
 						<tr id="mailsettings1">
 							<td width="20%" scope="row"><span id="mail_smtpserver_label">{$MOD.LBL_MAIL_SMTPSERVER}</span> <span class="required">{$APP.LBL_REQUIRED_SYMBOL}</span></td>
 							<td width="30%" ><input type="text" id="mail_smtpserver" name="mail_smtpserver" tabindex="1" size="25" maxlength="64" value="{$mail_smtpserver}"></td>
@@ -167,7 +194,7 @@ function change_state(radiobutton) {
 		</tr>
 		<tr><td colspan="4">&nbsp;</tr>
 		<tr>
-		    <td width="15%"><input type="button" class="button" value="{$APP.LBL_EMAIL_TEST_OUTBOUND_SETTINGS}" onclick="testOutboundSettings();">&nbsp;</td>
+		    <td width="15%"><input id="test_button" type="button" class="button" value="{$APP.LBL_EMAIL_TEST_OUTBOUND_SETTINGS}" onclick="testOutboundSettings();">&nbsp;</td>
 		    <td width="15%">&nbsp;</td>
             <td width="40%">&nbsp;</td>
 		    <td width="40%">&nbsp;</td>
@@ -561,13 +588,14 @@ function hideOverlay() {
 }
 
 function notify_setrequired(f) {
-
 	document.getElementById("smtp_settings").style.display = (f.mail_sendtype.value == "SMTP") ? "inline" : "none";
 	document.getElementById("smtp_settings").style.visibility = (f.mail_sendtype.value == "SMTP") ? "visible" : "hidden";
-	document.getElementById("smtp_auth1").style.display = (document.getElementById('mail_smtpauth_req').checked) ? "" : "none";
-	document.getElementById("smtp_auth1").style.visibility = (document.getElementById('mail_smtpauth_req').checked) ? "visible" : "hidden";
-	document.getElementById("smtp_auth2").style.display = (document.getElementById('mail_smtpauth_req').checked) ? "" : "none";
-	document.getElementById("smtp_auth2").style.visibility = (document.getElementById('mail_smtpauth_req').checked) ? "visible" : "hidden";
+    if (document.getElementById('EditView').mail_smtptype.value != 'google_oauth2') {
+        document.getElementById("smtp_auth1").style.display = (document.getElementById('mail_smtpauth_req').checked) ? "" : "none";
+        document.getElementById("smtp_auth1").style.visibility = (document.getElementById('mail_smtpauth_req').checked) ? "visible" : "hidden";
+        document.getElementById("smtp_auth2").style.display = (document.getElementById('mail_smtpauth_req').checked) ? "" : "none";
+        document.getElementById("smtp_auth2").style.visibility = (document.getElementById('mail_smtpauth_req').checked) ? "visible" : "hidden";
+    }
 	if( document.getElementById('mail_smtpauth_req').checked)
 	   YAHOO.util.Dom.removeClass('mail_allow_user', "yui-hidden");
 	else
@@ -615,9 +643,45 @@ function setOutlookDefault()
 }
 YAHOO.util.Event.onDOMReady(setOutlookDefault);
 notify_setrequired(document.ConfigureSettings);
-
+function authorize() {
+    var smtpType = document.getElementById('EditView').mail_smtptype.value;
+    if (authInfo[smtpType]['auth_url']) {
+        window.addEventListener('message', handleOauthComplete);
+        var height = 600;
+        var width = 600;
+        var left = (window.parent.screen.width - width) / 2;
+        var top = (window.parent.screen.height - height) / 4;
+        window.open(authInfo[smtpType]['auth_url'], '_blank', 'width=' + width + ',height=' + height + ',left=' + left + ',top=' + top + ',resizable=1');
+    }
+}
+function handleOauthComplete(e) {
+    var data = JSON.parse(e.data);
+    if (!data.dataSource || data.dataSource !== 'googleEmailRedirect') {
+        return;
+    }
+    if (data.eapmId && data.emailAddress) {
+        document.getElementById('eapm_id').value = data.eapmId;
+        document.getElementById('auth_status').value = '{/literal}{$APP.LBL_EMAIL_AUTHORIZED}{literal}';
+        document.getElementById('authorized_account').value = data.emailAddress;
+        document.getElementById('auth_email').value = data.emailAddress;
+        document.getElementById('mail_smtpuser').value = data.emailAddress;
+        document.getElementById('test_button').disabled = false;
+    } else {
+        alert('{/literal}{$APP.LBL_EMAIL_AUTH_FAILURE}{literal}');
+    }
+    window.removeEventListener('message', handleOauthComplete);
+}
 function changeEmailScreenDisplay(smtptype, clear)
 {
+    document.getElementById("auth_block").style.display = 'none';
+    document.getElementById("mailsettings0").style.display = 'none';
+    document.getElementById("smtp_auth1").style.display = '';
+    document.getElementById("smtp_auth2").style.display = '';
+    document.getElementById("smtp_auth1").style.visibility = 'visible';
+    document.getElementById("smtp_auth2").style.visibility = 'visible';
+    document.getElementById("test_button").disabled = false;
+    document.getElementById("mail_smtpauth_req").disabled = false;
+
     if(clear) {
 	    document.getElementById("mail_smtpserver").value = '';
 	    document.getElementById("mail_smtpport").value = '25';
@@ -666,6 +730,41 @@ function changeEmailScreenDisplay(smtptype, clear)
         document.getElementById("mail_smtppass_label").innerHTML = '{/literal}{$MOD.LBL_GMAIL_SMTPPASS}{literal}';
         document.getElementById("mail_smtpuser_label").innerHTML = '{/literal}{$MOD.LBL_GMAIL_SMTPUSER}{literal}';
         break;
+    case "google_oauth2":
+        document.getElementById("auth_block").style.display = '';
+        document.getElementById("mailsettings0").style.display = '';
+        document.getElementById("mail_smtpauth_req").disabled = true;
+        document.getElementById("mail_smtpauth_req").checked = true;
+        document.getElementById("mail_smtpuser").value = document.getElementById("authorized_account").value;
+        document.getElementById("auth_email").value = document.getElementById("authorized_account").value;
+        document.getElementById("mail_smtppass").value = 'not required';
+        if (!authInfo['google_oauth2']['auth_url']) {
+            document.getElementById("auth_warning").style.display = 'block';
+            document.getElementById("auth_warning").innerHTML = authInfo['google_oauth2']['auth_warning'];
+            document.getElementById("auth_button").disabled = true;
+        } else {
+            document.getElementById("auth_warning").style.display = 'none';
+            document.getElementById("auth_button").disabled = false;
+        }
+        if(document.getElementById("mail_smtpserver").value == "" || document.getElementById("mail_smtpserver").value == 'plus.smtp.mail.yahoo.com') {
+            document.getElementById("mail_smtpserver").value = 'smtp.gmail.com';
+            document.getElementById("mail_smtpport").value = '587';
+            var ssl = document.getElementById("mail_smtpssl");
+            for(var j=0;j<ssl.options.length;j++) {
+                if(ssl.options[j].text == 'TLS') {
+                    ssl.options[j].selected = true;
+                    break;
+                }
+            }
+        }
+        if (!document.getElementById('EditView').eapm_id.value) {
+            document.getElementById("test_button").disabled = true;
+        }
+        document.getElementById("smtp_auth1").style.display = 'none';
+        document.getElementById("smtp_auth2").style.display = 'none';
+        document.getElementById("smtp_auth1").style.visibility = 'hidden';
+        document.getElementById("smtp_auth2").style.visibility = 'hidden';
+        break;
     case "exchange":
         if ( document.getElementById("mail_smtpserver").value == 'plus.smtp.mail.yahoo.com'
                 || document.getElementById("mail_smtpserver").value == 'smtp.gmail.com' ) {
@@ -687,9 +786,9 @@ function changeEmailScreenDisplay(smtptype, clear)
 var oButtonGroup = new YAHOO.widget.ButtonGroup("smtpButtonGroup");
 oButtonGroup.subscribe('checkedButtonChange', function(e)
 {
+    document.getElementById('EditView').mail_smtptype.value = e.newValue.get('value');
     changeEmailScreenDisplay(e.newValue.get('value'), true);
     document.getElementById('smtp_settings').style.display = '';
-    document.getElementById('EditView').mail_smtptype.value = e.newValue.get('value');
 });
 YAHOO.widget.Button.addHiddenFieldsToForm(document.ConfigureSettings);
 if(window.addEventListener){
@@ -698,6 +797,7 @@ if(window.addEventListener){
     window.attachEvent("onload", function() { SUGAR.util.setEmailPasswordDisplay('mail_smtppass', {/literal}{$mail_haspass}{literal}); });
 }
 {/literal}{if !empty($mail_smtptype)}{literal}
+document.getElementById('EditView').mail_smtptype.value = "{/literal}{$mail_smtptype}{literal}";
 changeEmailScreenDisplay("{/literal}{$mail_smtptype}{literal}", false);
 {/literal}{/if}{literal}
 -->
