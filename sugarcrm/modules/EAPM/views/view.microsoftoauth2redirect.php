@@ -12,6 +12,14 @@
 
 class EAPMViewMicrosoftOauth2Redirect extends SugarView
 {
+    /**
+     * @var string $context the context in which this redirect URL was called
+     */
+    private $context;
+
+    /**
+     * @var ExternalAPIBase $api the API object used to communicate with Microsoft
+     */
     private $api;
 
     /**
@@ -22,20 +30,10 @@ class EAPMViewMicrosoftOauth2Redirect extends SugarView
     public function process($params = array())
     {
         global $sugar_config;
-        $authResult = $this->authenticate();
+        $this->context = $_REQUEST['state'] ?? '';
 
-        if (!empty($authResult)) {
-            $response = array(
-                'result' => true,
-                'hasRefreshToken' => !empty($authResult['token']->getRefreshToken()),
-                'eapmId' => $authResult['eapmId'],
-                'emailAddress' => $this->api->getEmailAddress($authResult['eapmId']),
-            );
-        } else {
-            $response = array(
-                'result' => false,
-            );
-        }
+        $tokenData = $this->authenticate();
+        $response = $this->buildResponse($tokenData);
 
         $this->ss->assign('response', $response);
         $this->ss->assign('siteUrl', $sugar_config['site_url']);
@@ -48,7 +46,87 @@ class EAPMViewMicrosoftOauth2Redirect extends SugarView
             return false;
         }
 
-        $this->api = new ExtAPIMicrosoftEmail();
+        switch ($this->context) {
+            case 'email':
+                $this->api = new ExtAPIMicrosoftEmail();
+                break;
+            default:
+                return false;
+        }
+
         return $this->api->authenticate($_REQUEST['code']);
+    }
+
+    /**
+     * Parses the authentication token data received from Microsoft and builds a
+     * response object that will be sent to the frontend
+     *
+     * @param $tokenData
+     * @return array
+     */
+    protected function buildResponse($tokenData) : array
+    {
+        switch ($this->context) {
+            case 'email':
+                $response = $this->buildEmailContextResponse($tokenData);
+                break;
+            default:
+                $response = $this->buildBasicResponse($tokenData);
+                break;
+        }
+        return $response;
+    }
+
+    /**
+     * Constructs a basic response object that indicates the success status of
+     * the token authentication
+     *
+     * @param string $token the token received from Microsoft
+     * @return array
+     */
+    protected function buildBasicResponse($token)
+    {
+        if (empty($token)) {
+            return array(
+                'result' => false,
+                'dataSource' => 'microsoftOauthRedirect',
+            );
+        }
+
+        // Build a basic response object indicating authentication success
+        $response = array(
+            'result' => true,
+            'hasRefreshToken' => !empty($token->getRefreshToken()),
+            'dataSource' => 'microsoftOauthRedirect',
+        );
+
+        return $response;
+    }
+
+    /**
+     * Constructs a response object that includes additional information about
+     * the EAPM bean created
+     *
+     * @param $authResult
+     * @return array
+     */
+    protected function buildEmailContextResponse($authResult)
+    {
+        $response = $this->buildBasicResponse($authResult['token'] ?? null);
+        $response['dataSource'] = 'microsoftEmailRedirect';
+        if (!empty($response['result'])) {
+            $response['eapmId'] = $authResult['eapmId'] ?? null;
+            $emailAddress = $this->api->getEmailAddress($authResult['eapmId'] ?? null);
+            if (!empty($emailAddress)) {
+                $response['emailAddress'] = $emailAddress;
+                $client = new EmailAddressesApi();
+                $emailAddressBean = $client->createBean(new RestService(), [
+                    'email_address' => $emailAddress,
+                    'module' => 'EmailAddresses',
+                ]);
+                $response['emailAddressId'] = $emailAddressBean->id;
+            }
+        }
+        return $response;
     }
 }

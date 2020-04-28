@@ -209,7 +209,7 @@ class SugarController
     * Set properties on the Controller from the $_REQUEST
     *
     */
-    protected function loadPropertiesFromRequest()
+    private function loadPropertiesFromRequest()
     {
         if (!empty($_REQUEST['action'])) {
             $this->action = $this->request->getValidInputRequest('action');

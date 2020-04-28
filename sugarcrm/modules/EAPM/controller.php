@@ -32,26 +32,6 @@ class EAPMController extends SugarController
 		parent::process();
 	}
 
-    /**
-     * Overrides parent method to allow the setting of $action from the "state"
-     * parameter. Oauth2 redirect URIs do not allow fragments, and some services
-     * also do not allow query parameters. In that case, the service can return
-     * a "state" parameter that we specify back to us so we can use that to route
-     * to the correct module/action
-     */
-    protected function loadPropertiesFromRequest()
-    {
-        // Allow loading of action from 'state' parameter. Useful for Oauth2
-        // redirect URIs where other query parameters are not permitted
-        if (!empty($_REQUEST['state'])) {
-            $state = $this->request->getValidInputRequest('state', null, '');
-            $stateParams = json_decode($state, true);
-            $this->action = $stateParams['action'] ?? $this->action;
-        }
-
-        parent::loadPropertiesFromRequest();
-    }
-
     protected function failed($error)
     {
         SugarApplication::appendErrorMessage($error);

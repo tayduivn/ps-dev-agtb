@@ -70,14 +70,8 @@ class ExtAPIMicrosoftEmail extends ExternalAPIBase
             'redirect_uri' => $config['redirect_uri'],
             'response_type' => 'code',
             'prompt' => 'select_account',
-            'response_mode' => 'form_post',
             'scope' => implode(' ', $this->scopes),
-            'state' => json_encode(
-                array(
-                    'module' => 'EAPM',
-                    'action' => 'MicrosoftOauth2Redirect',
-                )
-            ),
+            'state' => 'email',
         );
 
         return self::URL_AUTHORIZE . '?' . http_build_query($params);
@@ -133,7 +127,7 @@ class ExtAPIMicrosoftEmail extends ExternalAPIBase
      * Microsoft account's email address
      *
      * @param string $eapmId the ID of the EAPM bean storing the account's Oauth2 token
-     * @return string|bool on success, returns the email address. Otherwise, returns false
+     * @return string|bool the email address if successful; false otherwise
      */
     public function getEmailAddress($eapmId)
     {
@@ -145,7 +139,7 @@ class ExtAPIMicrosoftEmail extends ExternalAPIBase
                 ->setReturnType(Model\User::class)
                 ->execute();
             return $user->getMail() ?? $user->getUserPrincipalName();
-        } catch (exception $e) {
+        } catch (Exception $e) {
             $GLOBALS['log']->error($e->getMessage());
         }
         return false;
@@ -280,7 +274,7 @@ class ExtAPIMicrosoftEmail extends ExternalAPIBase
         $config = array();
         require SugarAutoLoader::existingCustomOne('modules/Connectors/connectors/sources/ext/eapm/microsoft/config.php');
         $config['redirect_uri'] = rtrim(SugarConfig::getInstance()->get('site_url'), '/')
-            . '/index.php';
+            . '/oauth-handler/MicrosoftOauth2Redirect';
 
         return $config;
     }

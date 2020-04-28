@@ -68,20 +68,8 @@ class SugarApplication
             $this->default_module = $sugar_config['default_module'];
         }
 
-        // Safe $_REQUEST['state']
-        $state = $this->request->getValidInputRequest('state');
-        if (!empty($state)) {
-            $stateParams = json_decode($state, true);
-        }
-
-        // Allow loading of module from 'state' parameter. Useful for Oauth2
-        // redirect URIs where other query parameters are not permitted
-        if (!empty($stateParams['module'])) {
-            $module = $stateParams['module'];
-        } else {
-            // Safe $_REQUEST['module']
-            $module = $this->request->getValidInputRequest('module', 'Assert\Mvc\ModuleName', $this->default_module);
-        }
+        // Safe $_REQUEST['module']
+        $module = $this->request->getValidInputRequest('module', 'Assert\Mvc\ModuleName', $this->default_module);
 
         insert_charset_header();
         $this->setupPrint();
