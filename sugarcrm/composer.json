@@ -131,7 +131,7 @@
         "vanderlee/php-stable-sort-functions": "2.0.2",
         "symfony/process": "v3.4.11",
         "ultra-lite/container": "6.2.0",
-        "microsoft/microsoft-graph": "^1.13"
+        "microsoft/microsoft-graph": "^1.13.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.1.4"

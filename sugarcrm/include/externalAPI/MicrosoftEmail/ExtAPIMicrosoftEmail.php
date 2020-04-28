@@ -83,7 +83,7 @@ class ExtAPIMicrosoftEmail extends ExternalAPIBase
      * to store the token information
      *
      * @param string $code the authorization code to authenticate
-     * @return array|bool the token and EAPM information iff successful; false otherwise
+     * @return array|bool the token and EAPM information if successful; false otherwise
      */
     public function authenticate($code)
     {
@@ -106,7 +106,7 @@ class ExtAPIMicrosoftEmail extends ExternalAPIBase
      * Revokes an access token for the given EAPM bean ID by deleting the bean
      *
      * @param string $eapmId the ID of the EAPM bean to revoke access tokens for
-     * @return bool true iff successful; false otherwise
+     * @return bool true if successful; false otherwise
      */
     public function revokeToken($eapmId)
     {
@@ -150,7 +150,7 @@ class ExtAPIMicrosoftEmail extends ExternalAPIBase
      * expired, will automatically refresh it.
      *
      * @param string $eapmId the ID of the EAPM bean storing the access token
-     * @return string|bool The access token string iff successful; false otherwise
+     * @return string|bool The access token string if successful; false otherwise
      */
     protected function getAccessToken($eapmId)
     {
@@ -173,7 +173,7 @@ class ExtAPIMicrosoftEmail extends ExternalAPIBase
      * Uses a refresh token to refresh the token stored in the given EAPM bean
      *
      * @param string $eapmId the ID of the EAPM bean to save the refreshed token to
-     * @return string|bool The new access token string iff successful; false otherwise
+     * @return string|bool The new access token string if successful; false otherwise
      */
     protected function refreshToken($eapmId)
     {
@@ -261,7 +261,7 @@ class ExtAPIMicrosoftEmail extends ExternalAPIBase
      */
     protected function getEAPMBean($eapmId)
     {
-        return BeanFactory::getBean('EAPM', $eapmId, false);
+        return BeanFactory::getBean('EAPM', $eapmId, ['encode' => false]);
     }
 
     /**
