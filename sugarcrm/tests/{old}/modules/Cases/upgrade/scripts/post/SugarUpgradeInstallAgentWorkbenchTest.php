@@ -15,6 +15,9 @@
 
 require_once 'modules/Cases/upgrade/scripts/post/7_InstallAgentWorkbench.php';
 
+/**
+ * @coversDefaultClass SugarUpgradeInstallAgentWorkbench
+ */
 class SugarUpgradeInstallAgentWorkbenchTest extends UpgradeTestCase
 {
     /**

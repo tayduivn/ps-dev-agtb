@@ -52,10 +52,9 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
     /**
      * When creating an archived email, any sender and recipients are allowed.
      *
-     * @covers ::createRecord
-     * @covers ::isValidStateTransition
-     * @covers ::getRelatedRecordArguments
-     * @covers ::linkRelatedRecords
+     * @covers EmailsApi::createRecord
+     * @covers ModuleApi::getRelatedRecordArguments
+     * @covers ModuleApi::linkRelatedRecords
      * @covers Email::saveEmailText
      * @covers Email::retrieveEmailText
      * @covers SugarRelationship::resaveRelatedBeans
@@ -161,10 +160,9 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
      * When creating a draft, the current user is always the sender, any recipients are allowed, and the specified
      * configuration is persisted.
      *
-     * @covers ::createRecord
-     * @covers ::isValidStateTransition
-     * @covers ::getRelatedRecordArguments
-     * @covers ::linkRelatedRecords
+     * @covers EmailsApi::createRecord
+     * @covers ModuleApi::getRelatedRecordArguments
+     * @covers ModuleApi::linkRelatedRecords
      * @covers Email::saveEmailText
      * @covers Email::retrieveEmailText
      * @covers SugarRelationship::resaveRelatedBeans
@@ -279,9 +277,8 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
      * change.
      *
      * @covers ::updateRecord
-     * @covers ::isValidStateTransition
-     * @covers ::getRelatedRecordArguments
-     * @covers ::linkRelatedRecords
+     * @covers ModuleApi::getRelatedRecordArguments
+     * @covers ModuleApi::linkRelatedRecords
      * @covers Email::saveEmailText
      * @covers Email::retrieveEmailText
      * @covers SugarRelationship::resaveRelatedBeans
@@ -454,10 +451,9 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
      * configuration may change, and the email is ultimately archived.
      *
      * @covers ::updateRecord
-     * @covers ::isValidStateTransition
-     * @covers ::getRelatedRecordArguments
-     * @covers ::linkRelatedRecords
-     * @covers ::unlinkRelatedRecords
+     * @covers ModuleApi::getRelatedRecordArguments
+     * @covers ModuleApi::linkRelatedRecords
+     * @covers ModuleApi::unlinkRelatedRecords
      * @covers ::sendEmail
      * @covers Email::sendEmail
      * @covers Email::saveEmailText
@@ -641,11 +637,9 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
      * When creating an email and immediately sending it, the current user is always the sender, any recipients are
      * allowed, the configuration that is used is persisted, and the email is ultimately archived.
      *
-     * @covers ::createRecord
-     * @covers ::isValidStateTransition
-     * @covers ::getRelatedRecordArguments
-     * @covers ::linkRelatedRecords
-     * @covers ::sendEmail
+     * @covers EmailsApi::createRecord
+     * @covers ModuleApi::getRelatedRecordArguments
+     * @covers ModuleApi::linkRelatedRecords
      * @covers Email::sendEmail
      * @covers Email::saveEmailText
      * @covers Email::retrieveEmailText
@@ -750,11 +744,10 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
      * refer to an existing Email Record in the 'Archived' state. If successfully sent, that Replied-To Email record's
      * reply_to status is set to true.
      *
-     * @covers ::createRecord
-     * @covers ::isValidStateTransition
-     * @covers ::getRelatedRecordArguments
-     * @covers ::linkRelatedRecords
-     * @covers ::sendEmail
+     * @covers EmailsApi::createRecord
+     * @covers ModuleApi::getRelatedRecordArguments
+     * @covers ModuleApi::linkRelatedRecords
+     * @covers EmailsApi::sendEmail
      * @covers Email::sendEmail
      */
     public function testCreateAndSendReplyEmail()
@@ -787,10 +780,9 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
     /**
      * An email is inbound when it is sent by a non-employee.
      *
-     * @covers ::createRecord
-     * @covers ::isValidStateTransition
-     * @covers ::getRelatedRecordArguments
-     * @covers ::linkRelatedRecords
+     * @covers EmailsApi::createRecord
+     * @covers ModuleApi::getRelatedRecordArguments
+     * @covers ModuleApi::linkRelatedRecords
      * @covers Email::saveEmailText
      * @covers Email::retrieveEmailText
      * @covers SugarRelationship::resaveRelatedBeans
@@ -895,10 +887,9 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
     /**
      * An email is internal when it is sent by an employee to only employees.
      *
-     * @covers ::createRecord
-     * @covers ::isValidStateTransition
-     * @covers ::getRelatedRecordArguments
-     * @covers ::linkRelatedRecords
+     * @covers EmailsApi::createRecord
+     * @covers ModuleApi::getRelatedRecordArguments
+     * @covers ModuleApi::linkRelatedRecords
      * @covers Email::saveEmailText
      * @covers Email::retrieveEmailText
      * @covers SugarRelationship::resaveRelatedBeans

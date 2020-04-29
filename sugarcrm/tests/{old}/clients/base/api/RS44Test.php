@@ -18,8 +18,7 @@ use PHPUnit\Framework\TestCase;
 class RS44Test extends TestCase
 {
     /**
-     * Holds the created ID for deletion
-     * @var string
+     * @var Lead
      */
     protected static $testBean;
 
@@ -38,7 +37,7 @@ class RS44Test extends TestCase
         // Delete the test bean data now
         if (static::$testBean) {
             // soft delete just in case some additional related records are left behind
-            static::$testBean->mark_deleted($id);
+            static::$testBean->mark_deleted(static::$testBean->id);
             // hard delete the record as well
             $qb = static::$testBean->db->getConnection()->createQueryBuilder();
             $qb->delete(

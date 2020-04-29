@@ -12,6 +12,9 @@
 
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @coversDefaultClass SugarWidgetFieldDateTime
+ */
 class SugarWidgetFielddatetimeTest extends TestCase
 {
     /**

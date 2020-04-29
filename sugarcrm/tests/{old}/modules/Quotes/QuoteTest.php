@@ -13,6 +13,9 @@
 
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @coversDefaultClass Quote
+ */
 class QuoteTest extends TestCase
 {
     protected function setUp() : void

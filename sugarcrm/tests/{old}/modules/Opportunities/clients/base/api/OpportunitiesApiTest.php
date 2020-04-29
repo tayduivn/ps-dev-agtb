@@ -13,6 +13,9 @@
 
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @coversDefaultClass OpportunitiesApi
+ */
 class OpportunitiesApiTest extends TestCase
 {
     /**
@@ -50,7 +53,7 @@ class OpportunitiesApiTest extends TestCase
     }
 
     /**
-     * @covers ::updateReords
+     * @covers ::updateRecord
      * @covers ::updateRevenueLineItems
      */
     public function testPutOpportunity_OppportunityMode_DoesNotUpdateRLIs()
@@ -71,7 +74,7 @@ class OpportunitiesApiTest extends TestCase
             ->method('loadBean')
             ->willReturn($opp);
 
-        $result = $api->updateRecord($this->service, $args);
+        $api->updateRecord($this->service, $args);
     }
 
     public function dataProviderPutOpportunity_OppportunityRliMode_UpdateRLIs()
@@ -115,7 +118,7 @@ class OpportunitiesApiTest extends TestCase
     /**
      * @dataProvider dataProviderPutOpportunity_OppportunityRliMode_UpdateRLIs
      *
-     * @covers ::updateReords
+     * @covers ::updateRecord
      * @covers ::updateRevenueLineItems
      */
     public function testPutOpportunity_OppportunityRliMode_UpdateRLIs($args, $expected)
@@ -136,11 +139,11 @@ class OpportunitiesApiTest extends TestCase
             ->method('loadBean')
             ->willReturn($opp);
 
-        $result = $api->updateRecord($this->service, $args);
+        $api->updateRecord($this->service, $args);
     }
 
     /**
-     * @covers ::updateReords
+     * @covers ::updateRecord
      * @covers ::updateRevenueLineItems
      */
     public function testPutOpportunity_UpdateRevenueLineItems_CalledWithCorrectArgs()
@@ -164,7 +167,7 @@ class OpportunitiesApiTest extends TestCase
             ->method('loadBean')
             ->willReturn($opp);
 
-        $result = $api->updateRecord($this->service, $args);
+        $api->updateRecord($this->service, $args);
     }
 
     public function dataProviderUpdateRevenueLineItems()

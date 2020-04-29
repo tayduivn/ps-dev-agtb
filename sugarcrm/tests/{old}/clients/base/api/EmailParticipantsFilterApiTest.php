@@ -44,7 +44,7 @@ class EmailParticipantsFilterApiTest extends TestCase
      * @covers ::addFilters
      * @covers ::addFilter
      * @covers ::addFieldFilter
-     * @covers ::addParticipantFilter
+     * @covers ::addEmailParticipantFilter
      * @covers ::runQuery
      */
     public function testAddParticipantFilter()
@@ -1726,7 +1726,7 @@ class EmailParticipantsFilterApiTest extends TestCase
     }
 
     /**
-     * @covers ::addParticipantFilter
+     * @covers ::addEmailParticipantFilter
      * @dataProvider throwsSugarApiExceptionInvalidParameterProvider
      */
     public function testAddParticipantFilter_ThrowsSugarApiExceptionInvalidParameter($def)

@@ -53,7 +53,7 @@ class StudioModuleTest extends TestCase
     //END SUGARCRM flav=ent ONLY
 
     /**
-     * @covers ::getViewsForCallsHasPreview
+     * @covers ::getViews
      */
     public function testGetViewsForCallsHasPreview()
     {

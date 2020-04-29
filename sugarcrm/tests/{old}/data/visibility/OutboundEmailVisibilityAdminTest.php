@@ -10,11 +10,10 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-use Sugarcrm\Sugarcrm\Util\Uuid;
 use PHPUnit\Framework\TestCase;
 
 /**
- * @coversDefaultClass OutboundEmailVisibilityTest
+ * @coversDefaultClass OutboundEmailVisibility
  * @group email
  */
 class OutboundEmailVisibilityAdminTest extends TestCase

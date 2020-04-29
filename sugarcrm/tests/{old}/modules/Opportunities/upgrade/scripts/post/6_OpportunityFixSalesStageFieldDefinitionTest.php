@@ -10,7 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-
+/**
+ * @coversDefaultClass SugarUpgradeOpportunityFixSalesStageFieldDefinition
+ */
 class SugarUpgradeOpportunityFixSalesStageFieldDefinitionTest extends UpgradeTestCase
 {
     protected function setUp() : void

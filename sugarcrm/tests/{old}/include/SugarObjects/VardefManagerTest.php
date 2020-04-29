@@ -12,6 +12,9 @@
 
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @coversDefaultClass VardefManager
+ */
 class VardefManagerTest extends TestCase
 {
     protected $module = 'Tests';

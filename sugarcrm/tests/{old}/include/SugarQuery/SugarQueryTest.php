@@ -14,7 +14,7 @@
 use PHPUnit\Framework\TestCase;
 
 /**
- * SugarQuery Test Cases
+ * @coversDefaultClass SugarQuery
  */
 class SugarQueryTest extends TestCase
 {

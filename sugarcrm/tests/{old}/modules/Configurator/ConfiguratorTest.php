@@ -12,6 +12,9 @@
 
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @coversDefaultClass Configurator
+ */
 class ConfiguratorTest extends TestCase
 {
     protected function tearDown() : void

@@ -11,10 +11,10 @@
  */
 
 use PHPUnit\Framework\TestCase;
-use Sugarcrm\Sugarcrm\Util\Uuid;
 
 /**
  * @group ApiTests
+ * @coversDefaultClass PortalPasswordApi
  */
 class PortalPasswordApiTest extends TestCase
 {

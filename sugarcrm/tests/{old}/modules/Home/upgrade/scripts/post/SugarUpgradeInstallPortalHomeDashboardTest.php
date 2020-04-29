@@ -12,6 +12,9 @@
 
 require_once 'modules/Home/upgrade/scripts/post/7_InstallPortalHomeDashboard.php';
 
+/**
+ * @coversDefaultClass SugarUpgradeInstallPortalHomeDashboard
+ */
 class SugarUpgradeInstallPortalHomeDashboardTest extends UpgradeTestCase
 {
     /**

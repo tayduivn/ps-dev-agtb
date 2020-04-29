@@ -70,9 +70,9 @@ class KBContentsApiHelperTest extends TestCase
     }
 
     /**
-     * @covers \KBContentsApiHelper::formatForApi
-     * @covers \Notes::hasAttachment
-     * @covers \Notes::getAttachment
+     * @covers KBContentsApiHelper::formatForApi
+     * @covers Note::hasAttachment
+     * @covers Note::getAttachment
      */
     public function testFormatForApiKbNotesAttachments()
     {

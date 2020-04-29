@@ -143,9 +143,9 @@ class CaseTest extends TestCase
 
     /**
      * Test handleSLAFields
-     * @param $followUpTime follow up time
-     * @param $assignedUserId assgined user id
-     * @covers Case::handleSLAFields
+     * @param string|null $followUpTime follow up time
+     * @param string $assignedUserId assigned user id
+     * @covers aCase::handleSLAFields
      * @dataProvider handleSLAFieldsProvider
      */
     public function testHandleSLAFields($followUpTime, $assignedUserId)
@@ -184,7 +184,7 @@ class CaseTest extends TestCase
      * @param string $actual
      * @param string $target
      * @param float $expected
-     * @covers Case::getFirstResponseVariance
+     * @covers aCase::getFirstResponseVariance
      * @dataProvider getFirstResponseVarianceProvider
      */
     public function testGetFirstResponseVariance(string $actual, string $target, float $expected)
