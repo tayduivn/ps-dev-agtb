@@ -313,6 +313,15 @@ $dictionary['Opportunity'] = array(
             'type' => 'date',
             'comment' => 'Service start date field.',
         ),
+        'service_open_revenue_line_items' => array(
+            'name' => 'service_open_revenue_line_items',
+            'vname' => 'LBL_CLOSED_RLIS',
+            'type' => 'int',
+            'studio' => false,
+            'workflow' => false,
+            'reportable' => false,
+            'importable' => false,
+        ),
         'service_start_date_cascade' => [
             'name' => 'service_start_date_cascade',
             'type' => 'date',

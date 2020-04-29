@@ -197,6 +197,10 @@ $viewdefs['Opportunities']['base']['view']['record'] = array(
                     'name' => 'service_start_date',
                     'type' => 'date-cascade',
                     'label' => 'LBL_SERVICE_START_DATE',
+                    'disable_field' => 'service_open_revenue_line_items',
+                    'related_fields' => array(
+                        'service_open_revenue_line_items',
+                    ),
                 ),
                 // END SUGARCRM flav=ent ONLY
                 'probability',

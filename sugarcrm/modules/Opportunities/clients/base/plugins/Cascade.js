@@ -54,6 +54,21 @@
                 }
 
                 this.model.on('change:' + this.baseFieldName, this.setCascadeValue, this);
+
+                if (this.options && this.options.def && this.options.def.disable_field) {
+                    let disableFieldName = this.options.def.disable_field;
+                    // Adding listeners to all the fields that tend to calculate value to disable a field
+                    // For example: we need to listen on total and closed RLI fields to calculate the open RLIs
+                    // (open RLI = total - closed RLIs)
+                    // and disable sales_stage and date_closed.
+                    if (_.isArray(disableFieldName)) {
+                        _.each(disableFieldName, function(fieldName) {
+                            this.model.on('change:' + fieldName, this.handleReadOnly, this);
+                        }, this);
+                    } else {
+                        this.model.on('change:' + disableFieldName, this.handleReadOnly, this);
+                    }
+                }
             },
 
             /**
@@ -69,7 +84,7 @@
                 }
                 var action = toTemplate || this.field.action || this.field.view.action || 'detail';
                 if (action === 'edit') {
-                    this.bindEditActions();
+                    this.handleReadOnly();
                 } else {
                     this.field.setDisabled(false, {trigger: true});
                 }
@@ -97,6 +112,31 @@
                     // it to the element that exists now.
                     self.bindEditActions();
                 });
+            },
+
+            handleReadOnly: function() {
+                if (this.options && this.options.def && this.options.def.disable_field) {
+                    let disableFieldName = this.options.def.disable_field;
+                    let calculatedValue = null;
+                    // When disableFieldName is an array, calculatedValue is fieldValue1 - fieldValue2
+                    // For example: we need to calculate all open RLIs. fieldValue1 = total, fieldValue2 = closed RLI
+                    // (open RLI = total - closed RLIs)
+                    // and disable sales_stage and date_closed.
+                    if (_.isArray(disableFieldName)) {
+                        let fieldValue1 = this.model.get(disableFieldName[0]);
+                        let fieldValue2 = this.model.get(disableFieldName[1]);
+                        calculatedValue = fieldValue1 - fieldValue2;
+                    } else if (typeof disableFieldName === 'string') {
+                        calculatedValue = this.model.get(disableFieldName);
+                    }
+
+                    if (calculatedValue !== null) {
+                        this.field.setDisabled((calculatedValue <= 0), {trigger: true});
+                        $('.' + this.baseFieldName + '_should_cascade')
+                            .prop('disabled', (calculatedValue <= 0));
+                    }
+                }
+                this.bindEditActions();
             },
 
             /**

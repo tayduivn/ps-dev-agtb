@@ -82,24 +82,25 @@ describe('Opportunities.Base.Plugins.Cascade', function() {
     });
 
     describe('handleModeChange', function() {
-        it('should bind edit listeners in edit mode', function() {
-            var setDisabled = sinon.stub();
+        var setDisabled;
+        beforeEach(function() {
+            setDisabled = sinon.stub();
             plugin.field = {setDisabled: setDisabled, $el: true};
-            sinon.collection.stub(plugin, 'bindEditActions');
-
+            sinon.collection.stub(plugin, 'handleReadOnly');
+        });
+        afterEach(function() {
+            setDisabled = null;
+        });
+        it('should bind edit listeners in edit mode', function() {
             plugin.handleModeChange('edit');
             expect(setDisabled).not.toHaveBeenCalled();
-            expect(plugin.bindEditActions).toHaveBeenCalled();
+            expect(plugin.handleReadOnly).toHaveBeenCalled();
         });
 
         it('should enable field in non-edit mode', function() {
-            var setDisabled = sinon.stub();
-            plugin.field = {setDisabled: setDisabled, $el: true};
-            sinon.collection.stub(plugin, 'bindEditActions');
-
             plugin.handleModeChange('detail');
             expect(setDisabled).toHaveBeenCalledWith(false, {trigger: true});
-            expect(plugin.bindEditActions).not.toHaveBeenCalled();
+            expect(plugin.handleReadOnly).not.toHaveBeenCalled();
         });
     });
 
@@ -117,6 +118,83 @@ describe('Opportunities.Base.Plugins.Cascade', function() {
             expect(model.getSynced).toHaveBeenCalledWith('sales_stage');
             expect(model.set).toHaveBeenCalledWith('sales_stage_cascade', '');
             expect(model.set).toHaveBeenCalledWith('sales_stage', 'beforeValue');
+        });
+    });
+
+    describe('handleReadOnly', function() {
+        var setDisabled;
+        beforeEach(function() {
+            setDisabled = sinon.stub();
+            plugin.field = {setDisabled: setDisabled, $el: true};
+            plugin.model = SugarTest.app.data.createBean(moduleName);
+            sinon.collection.stub(plugin, 'bindEditActions');
+        });
+        afterEach(function() {
+            setDisabled = null;
+        });
+        it('when disabled field is an array call setDisabled', function() {
+            plugin.options = {
+                def: {
+                    disable_field: ['test1','test2'],
+                }
+            };
+            sinon.collection.stub(plugin.model, 'get')
+                .withArgs('test1').returns('4')
+                .withArgs('test2').returns('4');
+
+            plugin.handleReadOnly();
+            expect(plugin.field.setDisabled).toHaveBeenCalledWith(true, {trigger: true});
+            expect(plugin.bindEditActions).toHaveBeenCalled();
+        });
+        it('when disabled field is an array call setDisabled', function() {
+            plugin.options = {
+                def: {
+                    disable_field: ['test1','test2'],
+                }
+            };
+            sinon.collection.stub(plugin.model, 'get')
+                .withArgs('test1').returns('4')
+                .withArgs('test2').returns('2');
+
+            plugin.handleReadOnly();
+            expect(plugin.field.setDisabled).toHaveBeenCalledWith(false, {trigger: true});
+        });
+        it('when disabled field is a string call setDisabled', function() {
+            plugin.options = {
+                def: {
+                    disable_field: 'test',
+                }
+            };
+            sinon.collection.stub(plugin.model, 'get')
+                .withArgs('test').returns('4');
+
+            plugin.handleReadOnly();
+            expect(plugin.field.setDisabled).toHaveBeenCalledWith(false, {trigger: true});
+            expect(plugin.bindEditActions).toHaveBeenCalled();
+        });
+        it('when disabled field is a string call setDisabled', function() {
+            plugin.options = {
+                def: {
+                    disable_field: 'test',
+                }
+            };
+            sinon.collection.stub(plugin.model, 'get')
+                .withArgs('test').returns('0');
+
+            plugin.handleReadOnly();
+            expect(plugin.field.setDisabled).toHaveBeenCalledWith(true, {trigger: true});
+            expect(plugin.bindEditActions).toHaveBeenCalled();
+        });
+        it('when disabled field is a not defined do not call setDisabled', function() {
+            plugin.options = {
+                def: {
+                    disable_field: null,
+                }
+            };
+
+            plugin.handleReadOnly();
+            expect(plugin.field.setDisabled).not.toHaveBeenCalled();
+            expect(plugin.bindEditActions).toHaveBeenCalled();
         });
     });
 });

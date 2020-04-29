@@ -886,6 +886,7 @@ class Opportunity extends SugarBean
                 'service_start_date' => $this->calculateOpportunityServiceStartDate(),
                 'sales_stage' => $this->calculateOpportunitySalesStage(),
                 'date_closed' => $this->calculateOpportunityExpectedCloseDate(),
+                'service_open_revenue_line_items' => $this->calculateServiceOpenRLI(),
             ];
 
             // Update the Opportunity with the calculated rollup values. If any
@@ -898,6 +899,28 @@ class Opportunity extends SugarBean
         }
 
         return $this;
+    }
+
+    /**
+     * Runs DB query to check if there are any open and marked as service RLIs for the opportunity
+     *
+     * @return int the number of open and service RLIs
+     * @throws SugarQueryException
+     */
+    private function calculateServiceOpenRLI(): int
+    {
+        $closedStages = $this->getClosedStages();
+
+        // Get the number of open and service marked RLIs
+        $q = new SugarQuery();
+        $q->from(BeanFactory::newBean('RevenueLineItems'));
+        $q->select(['id']);
+        $q->where()->queryAnd()
+            ->equals('opportunity_id', $this->id)
+            ->equals('service', 1)
+            ->notIn('sales_stage', $closedStages);
+
+        return sizeof($q->execute());
     }
 
     /**
