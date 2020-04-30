@@ -81,42 +81,6 @@ $admin_option_defs['Administration']['password_management'] = array(
 $admin_option_defs['Users']['tba_management'] = array('TbACLs', 'LBL_TBA_CONFIGURATION', 'LBL_TBA_CONFIGURATION_DESC', './index.php?module=Teams&action=tba');
 //END SUGARCRM flav=ent ONLY
 $admin_group_header[]= array('LBL_USERS_TITLE','',false,$admin_option_defs, 'LBL_USERS_DESC');
-$license_management = false;
-    if (!isset($GLOBALS['sugar_config']['hide_admin_licensing']) || !$GLOBALS['sugar_config']['hide_admin_licensing']) {
-        $license_management = array('License','LBL_MANAGE_LICENSE_TITLE','LBL_MANAGE_LICENSE','./index.php?module=Administration&action=LicenseSettings');
-    }
-
-
-//Sugar Connect
-$admin_option_defs=array();
-$license_key = 'no_key';
-
-$admin_option_defs['Administration']['license_management']= $license_management;
-$focus = Administration::getSettings();
-$license_key = $focus->settings['license_key'];
-
-$admin_option_defs['Administration']['update'] = array('sugarupdate','LBL_SUGAR_UPDATE_TITLE','LBL_SUGAR_UPDATE','./index.php?module=Administration&action=Updater');
-$admin_option_defs['Administration']['documentation']= array('OnlineDocumentation','LBL_DOCUMENTATION_TITLE','LBL_DOCUMENTATION',
-        'javascript:void window.open("index.php?module=Administration&action=SupportPortal&view=documentation&help_module=Administration&edition='.$sugar_flavor.'&key='.$server_unique_key.'&language='.$current_language.'", "helpwin","width=600,height=600,status=0,resizable=1,scrollbars=1,toolbar=0,location=0")');
-if(!empty($license->settings['license_latest_versions'])){
-	$encodedVersions = $license->settings['license_latest_versions'];
-    $versions = unserialize(base64_decode($encodedVersions), ['allowed_classes' => false]);
-	include('sugar_version.php');
-	if(!empty($versions)){
-		foreach($versions as $version){
-			if(compareVersions($version['version'], $sugar_version))
-			{
-				$admin_option_defs['Administration']['update'][] ='red';
-				if(!isset($admin_option_defs['Administration']['update']['additional_label']))$admin_option_defs['Administration']['update']['additional_label']= '('.$version['version'].')';
-
-			}
-		}
-	}
-}
-
-
-
-$admin_group_header[]= array('LBL_SUGAR_NETWORK_TITLE','',false,$admin_option_defs, 'LBL_SUGAR_NETWORK_DESC');
 
 
 //system.
@@ -161,6 +125,36 @@ if(SugarOAuthServer::enabled()) {
     $admin_option_defs['Administration']['oauth']= array('Password','LBL_OAUTH_TITLE','LBL_OAUTH','./index.php?module=OAuthKeys&action=index');
 }
 
+
+$license_management = false;
+if (!isset($GLOBALS['sugar_config']['hide_admin_licensing']) || !$GLOBALS['sugar_config']['hide_admin_licensing']) {
+    $license_management = ['License', 'LBL_MANAGE_LICENSE_TITLE', 'LBL_MANAGE_LICENSE', './index.php?module=Administration&action=LicenseSettings'];
+}
+
+$license_key = 'no_key';
+
+$admin_option_defs['Administration']['license_management'] = $license_management;
+$focus = Administration::getSettings();
+$license_key = $focus->settings['license_key'];
+
+$admin_option_defs['Administration']['update'] = ['sugarupdate', 'LBL_SUGAR_UPDATE_TITLE', 'LBL_SUGAR_UPDATE', './index.php?module=Administration&action=Updater'];
+
+if (!empty($license->settings['license_latest_versions'])) {
+    $encodedVersions = $license->settings['license_latest_versions'];
+    $versions = unserialize(base64_decode($encodedVersions), ['allowed_classes' => false]);
+    include 'sugar_version.php';
+
+    if (!empty($versions)) {
+        foreach ($versions as $version) {
+            if (compareVersions($version['version'], $sugar_version)) {
+                $admin_option_defs['Administration']['update'][] = 'red';
+                if (!isset($admin_option_defs['Administration']['update']['additional_label'])) {
+                    $admin_option_defs['Administration']['update']['additional_label'] = '(' . $version['version'] . ')';
+                }
+            }
+        }
+    }
+}
 
 $admin_group_header[]= array('LBL_ADMINISTRATION_HOME_TITLE','',false,$admin_option_defs, 'LBL_ADMINISTRATION_HOME_DESC');
 
