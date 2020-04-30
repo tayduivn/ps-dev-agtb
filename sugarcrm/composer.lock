@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a3da5299c6a331af969e366f6c0ab71a",
+    "content-hash": "b34e70a481543c2166ceb5d3133f588b",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -1406,6 +1406,69 @@
                 "sso"
             ],
             "time": "2017-04-25T14:43:14+00:00"
+        },
+        {
+            "name": "league/oauth2-google",
+            "version": "3.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/thephpleague/oauth2-google.git",
+                "reference": "837c1ee10fe9a23adcf35516a75a0e8fcffa6d56"
+            },
+            "dist": {
+                "type": "tar",
+                "url": "https://satis.sugardev.team/dist/league/oauth2-google/league-oauth2-google-3.0.2-85dcef.tar",
+                "reference": "837c1ee10fe9a23adcf35516a75a0e8fcffa6d56",
+                "shasum": "0751e5c1c2b70eda97aed4626baac95ea5bb0302"
+            },
+            "require": {
+                "league/oauth2-client": "^2.0"
+            },
+            "require-dev": {
+                "eloquent/phony-phpunit": "^2.0",
+                "php-coveralls/php-coveralls": "^2.1",
+                "phpunit/phpunit": "^6.0",
+                "squizlabs/php_codesniffer": "^2.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "League\\OAuth2\\Client\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "League\\OAuth2\\Client\\Test\\": "tests/src/"
+                }
+            },
+            "scripts": {
+                "test": [
+                    "phpunit"
+                ],
+                "check": [
+                    "phpcs src --standard=psr2 -sp"
+                ]
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Woody Gilk",
+                    "email": "woody.gilk@gmail.com",
+                    "homepage": "http://shadowhand.me"
+                }
+            ],
+            "description": "Google OAuth 2.0 Client Provider for The PHP League OAuth2-Client",
+            "keywords": [
+                "authentication",
+                "authorization",
+                "client",
+                "google",
+                "oauth",
+                "oauth2"
+            ],
+            "time": "2019-11-16T14:11:06+00:00"
         },
         {
             "name": "mdanter/ecc",

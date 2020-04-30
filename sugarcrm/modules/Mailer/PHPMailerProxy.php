@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class PHPMailerProxy extends PHPMailer
+class PHPMailerProxy extends PHPMailerOAuth
 {
     /**
      * {@inheritDoc}

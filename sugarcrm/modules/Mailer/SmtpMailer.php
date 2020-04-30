@@ -42,6 +42,14 @@ class SmtpMailer extends BaseMailer
     const MailTransmissionProtocol = "smtp";
 
     /**
+     * Maps EAPM application names to their appropriate API names for use in
+     * sending email via SMTP OAUTH
+     */
+    const ApiMap = [
+        'Google' => 'GoogleEmail',
+    ];
+
+    /**
      * Internal PHPMailer instance
      */
     protected $mailer;
@@ -154,6 +162,64 @@ class SmtpMailer extends BaseMailer
         $mailer->SMTPAuth   = $this->config->isAuthenticationRequired();
         $mailer->Username   = $this->config->getUsername();
         $mailer->Password   = from_html($this->config->getPassword()); // perform HTML character translations
+
+        // Transfer any Oauth2 credentials
+        $mailer->AuthType = $this->config->getAuthType();
+        if ($mailer->AuthType === 'XOAUTH2') {
+            $this->transferOauthConfigurations($mailer);
+        }
+    }
+
+    /**
+     * Gets the correct Oauth credentials to use with PHPMailer for the
+     * OutboundEmail account
+     *
+     * @param PHPMailer $mailer
+     */
+    protected function transferOauthConfigurations(PHPMailer &$mailer)
+    {
+        $eapmId = $this->config->getEAPMId();
+        $eapmBean = $this->getEAPMBean($eapmId);
+        if (!empty($eapmBean->id)) {
+            $api = $this->getExternalApi($eapmBean->application);
+            $oauthCredentials = $api->getPHPMailerOauthCredentials($eapmId);
+            if (!empty($oauthCredentials)) {
+                $mailer->oauthClientId = $oauthCredentials['clientId'] ?? '';
+                $mailer->oauthClientSecret = $oauthCredentials['clientSecret'] ?? '';
+                $mailer->oauthRefreshToken = $oauthCredentials['refreshToken'] ?? '';
+
+                // TODO: Right now, this assumes the "From" address is the same
+                // as the username/email address that was authenticated with the
+                // external service (Google). This will change after SS-467,
+                // when we will store the authenticated account separately from
+                // the "From" address and allow the user to specify "From" address.
+                $from = $this->config->getFrom();
+                $mailer->oauthUserEmail = $from->getEmail() ?? '';
+            }
+        }
+    }
+
+    /**
+     * Helper function to retrieve a decoded EAPM bean
+     *
+     * @param string $eapmId the ID of the EAPM bean to retrieve
+     * @return SugarBean|null
+     */
+    protected function getEAPMBean($eapmId)
+    {
+        return BeanFactory::retrieveBean('EAPM', $eapmId, ['encode' => false]);
+    }
+
+    /**
+     * Helper function to retrieve the proper API for the given application
+     *
+     * @param string $application the application name, e.g. "Google"
+     * @return ExternalAPIBase
+     */
+    protected function getExternalApi($application)
+    {
+        $application = self::ApiMap[$application] ?? '';
+        return ExternalAPIFactory::loadAPI($application, true);
     }
 
     /**

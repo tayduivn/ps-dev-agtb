@@ -152,7 +152,7 @@ class OutboundEmail extends SugarBean
         if (empty($this->mail_smtpserver)) {
             return false;
         } elseif ($this->mail_smtpauth_req) {
-            return !empty($this->mail_smtpuser) && !empty($this->mail_smtppass);
+            return (!empty($this->mail_smtpuser) && !empty($this->mail_smtppass)) || !empty($this->eapm_id);
         }
 
         return true;

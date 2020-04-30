@@ -105,6 +105,7 @@
         "ext-zip": "*",
         "google/apiclient": "1.1.4",
         "league/oauth2-client": "2.2.1",
+        "league/oauth2-google": "^3.0.2",
         "monolog/monolog": "1.22.0",
         "moontoast/math": "1.1.0",
         "nikic/php-parser": "^4.4",

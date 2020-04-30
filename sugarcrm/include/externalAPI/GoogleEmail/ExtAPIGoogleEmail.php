@@ -191,4 +191,35 @@ class ExtAPIGoogleEmail extends ExternalAPIBase
         }
         return false;
     }
+
+    /**
+     * Builds an array containing the credentials used by PHPMailer to authenticate
+     * the given account with the Google SMTP server using Oauth2
+     *
+     * @param string $eapmId the ID of the EAPM bean storing the Google Oauth2 token
+     * @return array|bool the Oauth credentials if successful; false otherwise
+     */
+    public function getPHPMailerOauthCredentials($eapmId)
+    {
+        $eapmBean = $this->getEAPMBean($eapmId);
+        if (empty($eapmBean->id) || empty($eapmBean->api_data)) {
+            return false;
+        }
+
+        try {
+            // Get the Google connector configuration
+            $config = $this->getGoogleOauth2Config();
+
+            $apiData = json_decode($eapmBean->api_data, true);
+            return [
+                'clientId' => $config['properties']['oauth2_client_id'] ?? '',
+                'clientSecret' => $config['properties']['oauth2_client_secret'] ?? '',
+                'refreshToken' => $apiData['refresh_token'] ?? '',
+            ];
+        } catch (Exception $e) {
+            $GLOBALS['log']->error($e->getMessage());
+        }
+
+        return false;
+    }
 }

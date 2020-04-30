@@ -573,4 +573,49 @@ class SmtpMailerTest extends TestCase
             'The sent MIME message should have been returned as confirmation for the send'
         );
     }
+
+    /**
+     * @covers ::transferOauthConfigurations
+     * @throws MailerException
+     */
+    public function testTransferOauthConfigurations()
+    {
+        // Mock the config object to be used by the SmtpMailer instance
+        $mockConfig = $this->createPartialMock('OutboundSmtpEmailConfiguration', []);
+        $mockConfig->setFrom('fake@email.com', 'Fake Name');
+        $mockConfig->setEAPMId('fake_eapm_id');
+
+        // Mock the external API object to be used by the SmtpMailer instance
+        $mockApi = $this->createPartialMock('ExtAPIGoogleEmail', ['getPHPMailerOauthCredentials']);
+        $mockApi->expects($this->once())
+            ->method('getPHPMailerOauthCredentials')
+            ->willReturn([
+                'clientId' => 'fake_client_id',
+                'clientSecret' => 'fake_client_secret',
+                'refreshToken' => 'fake_refresh_token',
+            ]);
+
+        // Mock the EAPM bean to be used by the SmtpMailer instance
+        $mockEAPMBean = $this->createPartialMock('EAPM', []);
+        $mockEAPMBean->id = 'fake_eapm_id';
+
+        // Mock the SmtpMailer instance
+        $mockMailer = $this->createPartialMock('SmtpMailer', ['getExternalApi', 'getEAPMBean']);
+        SugarTestReflection::setProtectedValue($mockMailer, 'config', $mockConfig);
+        $mockMailer->expects($this->once())
+            ->method('getExternalApi')
+            ->willReturn($mockApi);
+        $mockMailer->expects($this->once())
+            ->method('getEAPMBean')
+            ->willReturn($mockEAPMBean);
+
+        // Assert that transferOauthConfigurations correctly assigns the oauth
+        // values to the PHPMailer object
+        $mockPHPMailerProxy = $this->createPartialMock('PHPMailerProxy', []);
+        SugarTestReflection::callProtectedMethod($mockMailer, 'transferOauthConfigurations', [&$mockPHPMailerProxy]);
+        $this->assertEquals('fake_client_id', $mockPHPMailerProxy->oauthClientId);
+        $this->assertEquals('fake_client_secret', $mockPHPMailerProxy->oauthClientSecret);
+        $this->assertEquals('fake_refresh_token', $mockPHPMailerProxy->oauthRefreshToken);
+        $this->assertEquals('fake@email.com', $mockPHPMailerProxy->oauthUserEmail);
+    }
 }

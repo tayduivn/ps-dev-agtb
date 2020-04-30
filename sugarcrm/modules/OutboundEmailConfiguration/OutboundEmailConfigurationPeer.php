@@ -581,8 +581,13 @@ class OutboundEmailConfigurationPeer
                 if ($outboundEmail->mail_smtpauth_req) {
                     // require authentication with the SMTP server
                     $outboundEmailConfiguration->setAuthenticationRequirement(true);
-                    $outboundEmailConfiguration->setUsername($outboundEmail->mail_smtpuser);
-                    $outboundEmailConfiguration->setPassword($outboundEmail->mail_smtppass);
+                    if (!empty($outboundEmail->eapm_id)) {
+                        $outboundEmailConfiguration->setAuthType('XOAUTH2');
+                        $outboundEmailConfiguration->setEAPMId($outboundEmail->eapm_id);
+                    } else {
+                        $outboundEmailConfiguration->setUsername($outboundEmail->mail_smtpuser);
+                        $outboundEmailConfiguration->setPassword($outboundEmail->mail_smtppass);
+                    }
                 }
 
                 // determine the appropriate encryption layer for the sending strategy

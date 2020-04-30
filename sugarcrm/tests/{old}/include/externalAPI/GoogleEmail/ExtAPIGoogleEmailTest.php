@@ -15,6 +15,9 @@ use PHPUnit\Framework\TestCase;
 
 class ExtAPIGoogleEmailTest extends TestCase
 {
+    /**
+     * @covers ::getClient
+     */
     public function testGetClient()
     {
         $mockAPI = $this->getMockBuilder('ExtAPIGoogleEmail')
@@ -43,6 +46,9 @@ class ExtAPIGoogleEmailTest extends TestCase
         $this->assertContains(Google_Service_Gmail::MAIL_GOOGLE_COM, $client->getScopes());
     }
 
+    /**
+     * @covers ::authenticate
+     */
     public function testAuthenticate()
     {
         $mockAPI = $this->getMockBuilder('ExtAPIGoogleEmail')
@@ -69,6 +75,9 @@ class ExtAPIGoogleEmailTest extends TestCase
         );
     }
 
+    /**
+     * @covers ::saveToken
+     */
     public function testSaveToken()
     {
         $mockEapmBean = $this->getMockBuilder('EAPM')
@@ -87,6 +96,9 @@ class ExtAPIGoogleEmailTest extends TestCase
         $this->assertEquals('fake_access_token', $mockEapmBean->api_data);
     }
 
+    /**
+     * @covers ::revokeToken
+     */
     public function testRevokeToken()
     {
         $mockEapmBean = $this->getMockBuilder('EAPM')
@@ -111,5 +123,36 @@ class ExtAPIGoogleEmailTest extends TestCase
         $mockAPI->method('getClient')->willReturn($mockClient);
 
         $this->assertEquals(true, $mockAPI->revokeToken('fake_eapm_id'));
+    }
+
+    /**
+     * @covers ::getPHPMailerOauthCredentials
+     */
+    public function testGetPHPMailerOauthCredentials()
+    {
+        $mockEapmBean = $this->getMockBuilder('EAPM')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $mockEapmBean->id = 'fake_eapm_id';
+        $mockEapmBean->api_data = '{"access_token":"fake_access_token","refresh_token":"fake_refresh_token"}';
+
+        $mockAPI = $this->getMockBuilder('ExtAPIGoogleEmail')
+            ->disableOriginalConstructor()
+            ->onlyMethods(['getEAPMBean', 'getGoogleOauth2Config'])
+            ->getMock();
+        $mockAPI->method('getEAPMBean')->willReturn($mockEapmBean);
+        $mockAPI->method('getGoogleOauth2Config')->willReturn([
+            'properties' => [
+                'oauth2_client_id' => 'fake_client_id',
+                'oauth2_client_secret' => 'fake_client_secret'
+            ]
+        ]);
+
+        $result = $mockAPI->getPHPMailerOauthCredentials('fake_eapm_id');
+        $this->assertEquals([
+            'clientId' => 'fake_client_id',
+            'clientSecret' => 'fake_client_secret',
+            'refreshToken' => 'fake_refresh_token',
+        ], $result);
     }
 }
