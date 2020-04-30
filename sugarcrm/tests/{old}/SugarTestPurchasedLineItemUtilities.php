@@ -1,5 +1,4 @@
 <?php
-//FILE SUGARCRM flav=ent ONLY
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -15,10 +14,9 @@ class SugarTestPurchasedLineItemUtilities
 {
     protected static $createdPLIs = array();
 
-    private function __construct()
-    {
-    }
-
+    /**
+     * @return SugarBean
+     */
     public static function createPurchasedLineItem($id = ''): SugarBean
     {
         $time = mt_rand();
@@ -64,5 +62,15 @@ class SugarTestPurchasedLineItemUtilities
             $pli_ids[] = $pli->id;
         }
         return $pli_ids;
+    }
+
+    public static function removePurchasedLineItemsByID(array $ids): void
+    {
+        $db = DBManagerFactory::getInstance();
+        $conditions = implode(',', array_map(array($db, 'quoted'), $ids));
+        if (!empty($conditions)) {
+            $db->query('DELETE FROM purchased_line_items WHERE id IN (' . $conditions . ')');
+            $db->query('DELETE FROM purchased_line_items_audit WHERE parent_id IN (' . $conditions . ')');
+        }
     }
 }

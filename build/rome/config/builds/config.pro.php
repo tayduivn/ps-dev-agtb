@@ -156,8 +156,12 @@ $config['blackList']['pro'] = array(
 'sugarcrm/metadata/cases_purchasesMetaData.php' => 1,
 'sugarcrm/metadata/contacts_purchasesMetaData.php' => 1,
 'sugarcrm/metadata/documents_purchasesMetaData.php' => 1,
-'sugarcrm/modules/PurchasedLineItems' => 1,
+'sugarcrm/tests/{old}/modules/Purchases' => 1,
 'sugarcrm/metadata/documents_purchasedlineitemsMetaData.php' => 1,
+'sugarcrm/modules/PurchasedLineItems' => 1,
+'sugarcrm/include/SugarQueue/jobs/SugarJobCreatePurchasesAndPLIs.php' => 1,
+'sugarcrm/tests/{old}/include/SugarQueue/jobs/SugarJobCreatePurchasesAndPLIsTest.php' => 1,
 'sugarcrm/tests/{old}/modules/PurchasedLineItems' => 1,
 'sugarcrm/tests/{old}/SugarTestPurchasedLineItemUtilities.php' => 1,
+'sugarcrm/themes/RacerX/images/icon_PurchasedLineItems_32.png' => 1,
 );

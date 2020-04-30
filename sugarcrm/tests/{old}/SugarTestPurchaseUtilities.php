@@ -15,9 +15,10 @@ class SugarTestPurchaseUtilities
     protected static $createdPurchases = array();
 
     /**
+     * @param string $id
      * @return Purchase
      */
-    public static function createPurchase($id = '')
+    public static function createPurchase($id = ''): Purchase
     {
         $time = mt_rand();
         $timedate = TimeDate::getInstance();
@@ -37,7 +38,7 @@ class SugarTestPurchaseUtilities
         return $purchase;
     }
 
-    public static function removeAllCreatedPurchases()
+    public static function removeAllCreatedPurchases(): void
     {
         $db = DBManagerFactory::getInstance();
 
@@ -49,7 +50,17 @@ class SugarTestPurchaseUtilities
         self::$createdPurchases = array();
     }
 
-    public static function getCreatedPurchaseIds()
+    public static function removePurchasesByID(array $ids): void
+    {
+        $db = DBManagerFactory::getInstance();
+        $conditions = implode(',', array_map(array($db, 'quoted'), $ids));
+        if (!empty($conditions)) {
+            $db->query('DELETE FROM purchases WHERE id IN (' . $conditions . ')');
+            $db->query('DELETE FROM purchases_audit WHERE parent_id IN (' . $conditions . ')');
+        }
+    }
+
+    public static function getCreatedPurchaseIds(): array
     {
         $purchase_ids = array();
         foreach (self::$createdPurchases as $purchase) {

@@ -122,6 +122,31 @@ class RevenueLineItem extends SugarBean
     // This is used to retrieve related fields from form posts.
     public $additional_column_fields = array('quote_id', 'quote_name', 'related_product_id');
 
+    /** Fields to copy when generating a Purchase */
+    public $purchaseCopyFields = [
+        'account_id', 'account_name', 'acl_team_set_id', 'assigned_user_id',
+        'assigned_user_name', 'category_id', 'product_template_id',
+        'product_template_name', 'name', 'service', 'team_id', 'team_set_id',
+        'type_id',
+    ];
+
+    /** Fields to copy when generating a Purchased Line Item */
+    public $pliCopyFields = [
+        'name', 'date_closed', 'quantity', 'discount_select', 'discount_amount',
+        'discount_price', 'renewable', 'description', 'assigned_user_id',
+        'assigned_user_name', 'team_id', 'team_set_id', 'acl_team_set_id',
+        'asset_number', 'base_rate', 'vendor_part_num', 'list_price',
+        'tax_class', 'weight', 'website', 'serial_number', 'cost_price',
+        'mft_part_num', 'book_value_date', 'book_value', 'support_term',
+        'support_title', 'support_expires', 'support_starts',
+        'support_contact', 'support_desc', 'service','category_id',
+        'product_template_id', 'product_template_name',
+    ];
+
+    /** Fields to map when generating a Purchased Line Item */
+    public $pliMapFields = [
+        'likely_case' => 'revenue',
+    ];
 
     /**
      * Default Constructor
@@ -475,6 +500,211 @@ class RevenueLineItem extends SugarBean
             }
         }
         return false;
+    }
+
+    /**
+     * Copy the values from the provided array of fields from this RLI onto the
+     * provided bean.
+     *
+     * @param SugarBean $bean Bean to receive copied attributes
+     * @param array $copyFields Fields to copy
+     */
+    public function copyFieldsToBean(SugarBean $bean, array $copyFields): void
+    {
+        foreach ($copyFields as $field) {
+            $bean->$field = $this->$field;
+        }
+    }
+
+    /**
+     * Map fields represented by the keys in the array from this RLI to fields
+     * on the provided bean represented by the array's values. E.g. providing
+     * [ 'fromField' => 'toField' ]
+     * would copy $this->fromField to $bean->toField for each key/value pair.
+     *
+     * @param SugarBean $bean Bean to receive this RLI values
+     * @param array $mapFields Key/value pairs of field names to map
+     */
+    public function mapFieldsToBean(SugarBean $bean, array $mapFields): void
+    {
+        foreach ($mapFields as $rliField => $beanField) {
+            $bean->$beanField = $this->$rliField;
+        }
+    }
+
+    /**
+     * Get the ID of purchase with the same product/account link as this RLI.
+     * If none exists, return null.
+     * @return string|null
+     * @throws SugarQueryException
+     */
+    public function getMatchingPurchaseId(): ?string
+    {
+        $query = new \SugarQuery();
+        $query->from(BeanFactory::newBean('Purchases'));
+        $query->select(['id']);
+        $query->where()->queryAnd()
+            ->equals('account_id', $this->account_id)
+            ->equals('product_template_id', $this->product_template_id);
+        $result = $query->getOne();
+        return !empty($result) ? $result : null;
+    }
+
+    /**
+     * Create a new Purchase from this RLI. Purchases should inherit the fields
+     * listed in copyFields from the RLI, as well as any custom fields with
+     * an exact field name match.
+     *
+     * Method returns purchase for use in creating PLI.
+     *
+     * @return Purchase|null
+     */
+    public function generatePurchaseFromRli(): Purchase
+    {
+        $purchase = BeanFactory::newBean('Purchases');
+        $this->copyFieldsToBean($purchase, $this->purchaseCopyFields);
+        $this->copyCustomFields($purchase);
+        $purchase->save();
+        return $purchase;
+    }
+
+    /**
+     * Create a new PLI populated with values from this RLI. Relate it to the
+     * given Purchase, and this RLI.
+     * @param Purchase $purchase
+     *
+     * @return PurchasedLineItem|null
+     */
+    public function generatePliFromRli(Purchase $purchase): PurchasedLineItem
+    {
+        $pli = BeanFactory::newBean('PurchasedLineItems');
+        if ($this->service) {
+            array_push(
+                $this->pliCopyFields,
+                'service_start_date',
+                'service_end_date',
+                'service_duration_value',
+                'service_duration_unit'
+            );
+        } else {
+            $pli->service_start_date = $this->date_closed;
+            $pli->service_end_date = $this->date_closed;
+            $pli->service_duration_value = 1;
+            $pli->service_duration_unit = 'day';
+        }
+
+        $this->copyFieldsToBean($pli, $this->pliCopyFields);
+        $this->mapFieldsToBean($pli, $this->pliMapFields);
+        $this->copyCustomFields($pli);
+        $pli->save();
+
+        if ($purchase->load_relationship('purchasedlineitems')) {
+            $purchase->purchasedlineitems->add($pli);
+        }
+
+        if ($this->load_relationship('documents') &&
+            $pli->load_relationship('documents')) {
+            foreach ($this->documents->getBeans() as $document) {
+                $pli->documents->add($document);
+            }
+        }
+        return $pli;
+    }
+
+    /**
+     * Copy custom field values from this RLI
+     *
+     * @param $bean SugarBean Object to receive custom attributes
+     */
+    public function copyCustomFields(SugarBean $bean)
+    {
+        $customFields = $this->getFieldDefinitions('source', ['custom_fields']);
+        foreach (array_keys($customFields) as $field) {
+            // If a custom RLI field matches our target bean, copy it
+            if (array_key_exists($field, $bean->field_defs)) {
+                $bean->$field = $this->$field;
+            }
+        }
+    }
+
+    /**
+     * A Revenue Line Item should only generate a purchase if all of these
+     * conditions are met:
+     * 1. Its sales stage is "Closed Won", or in Forecast settings "Closed Won" stages
+     * 2. Generate Purchase set to "Yes"
+     * 3. Parent Opportunity's sales stage is "Closed Won" or in Forecast "Closed Won" stages
+     * @return bool
+     */
+    protected function shouldGeneratePurchase(): bool
+    {
+        // Check our RLI properties first so we don't retrieve Opp info we don't
+        // need
+        $closedWon = Forecast::getSettings()['sales_stage_won'] ?? [Opportunity::STAGE_CLOSED_WON];
+        if ($this->generate_purchase !== 'Yes' ||
+            !in_array($this->sales_stage, $closedWon)) {
+            return false;
+        }
+        $parentOpp = BeanFactory::retrieveBean('Opportunities', $this->opportunity_id);
+        if (!in_array($parentOpp->sales_stage, $closedWon)) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Process chunks of RLI Ids to create Purchases and Purchased Line Items as
+     * appropriate. This function assumes data comes in the form of the return
+     * from a SugarQuery->execute(); i.e.
+     * [
+     *   [ 'id' => abc,],
+     *   [ 'id' => def,],
+     * ]
+     *
+     * @see OpportunityWithRevenueLineItem::processOpportunityIds for comparison
+     * @param $data
+     */
+    public static function processRliIds(array $data): void
+    {
+        // Disable activity stream and FTS index during mass record creation
+        Activity::disable();
+        $ftsSearch = \Sugarcrm\Sugarcrm\SearchEngine\SearchEngine::getInstance();
+        $ftsSearch->setForceAsyncIndex(true);
+
+
+        foreach ($data as $row) {
+            $rli = BeanFactory::retrieveBean('RevenueLineItems', $row['id']);
+
+            // Only perform work if we have a DB match for this ID, and it
+            // meets the conditions to generate a Purchase
+            if ($rli && $rli->shouldGeneratePurchase()) {
+                $purchaseId = $rli->getMatchingPurchaseId();
+                $purchase = null;
+                if ($purchaseId) {
+                    // If we can find a matching purchase ID, retrieve that purchase
+                    // rather than making a new purchase
+                    $purchase = BeanFactory::retrieveBean('Purchases', $purchaseId);
+                }
+                // If purchase doesn't exist or bean retrieval fails, create a new one
+                if (!$purchase) {
+                    $purchase = $rli->generatePurchaseFromRli();
+                }
+
+                $pli = $rli->generatePliFromRli($purchase);
+                $rli->load_relationship('purchasedlineitem');
+                $rli->purchasedlineitem->add($pli);
+                // The relationship between PLIs and RLIs sets the "rli_id" value
+                // on the PLI, but we need to set the pli_id attribute on the RLI.
+                $rli->purchasedlineitem_id = $pli->id;
+                $rli->generate_purchase = 'Completed';
+                $rli->save();
+            }
+        }
+
+        // Reset FTS indexing and Activity Streams to their previous state
+        $ftsSearch->setForceAsyncIndex(
+            SugarConfig::getInstance()->get('search_engine.force_async_index', false)
+        );
+        Activity::restoreToPreviousState();
     }
     //END SUGARCRM flav=ent ONLY
 

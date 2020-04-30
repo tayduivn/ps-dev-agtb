@@ -295,12 +295,12 @@ $dictionary['Purchase'] = [
             'relationship_type' => 'one-to-many',
         ],
         'purchases_producttemplates' => [
-            'lhs_module' => 'Purchases',
-            'lhs_table' => 'purchases',
-            'lhs_key' => 'product_template_id',
-            'rhs_module' => 'ProductTemplates',
-            'rhs_table' => 'product_templates',
-            'rhs_key' => 'id',
+            'lhs_module' => 'ProductTemplates',
+            'lhs_table' => 'product_templates',
+            'lhs_key' => 'id',
+            'rhs_module' => 'Purchases',
+            'rhs_table' => 'purchases',
+            'rhs_key' => 'product_template_id',
             'relationship_type' => 'one-to-many',
         ],
         'purchases_types' => [

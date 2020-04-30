@@ -33,8 +33,13 @@ class RevenueLineItemTest extends TestCase
 
     protected function tearDown() : void
     {
+        SugarTestHelper::tearDownCustomFields();
+        SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestRevenueLineItemUtilities::removeAllCreatedRevenueLineItems();
+        SugarTestPurchaseUtilities::removeAllCreatedPurchases();
+        SugarTestPurchasedLineItemUtilities::removeAllCreatedPurchasedLineItems();
+        SugarTestProductTemplatesUtilities::removeAllCreatedProductTemplate();
     }
 
     /**
@@ -715,6 +720,447 @@ class RevenueLineItemTest extends TestCase
                 ],
                 '2019-01-01',
             ],
+        ];
+    }
+
+    /**
+     * @covers ::hasMatchingPurchase
+     * @dataProvider providerTestHasMatchingPurchase
+     * @param $rliAccountId
+     * @param $purchaseAccountId
+     * @param $rliProductId
+     * @param $purchaseProductId
+     * @param $expected
+     * @throws SugarQueryException
+     */
+    public function testHasMatchingPurchase(
+        $rliAccountId,
+        $purchaseAccountId,
+        $rliProductId,
+        $purchaseProductId,
+        $expected
+    ): void {
+        $rliAccount = SugarTestAccountUtilities::createAccount($rliAccountId);
+        $rliProduct = SugarTestProductTemplatesUtilities::createProductTemplate($rliProductId);
+        $purchaseAccount = BeanFactory::retrieveBean('Accounts', $purchaseAccountId);
+        if ($purchaseAccount === null) {
+            $purchaseAccount = SugarTestAccountUtilities::createAccount($purchaseAccountId);
+        }
+        $purchaseProduct = BeanFactory::retrieveBean('ProductTemplates', $purchaseProductId);
+        if ($purchaseProduct === null) {
+            $purchaseProduct = SugarTestProductTemplatesUtilities::createProductTemplate($purchaseProductId);
+        }
+
+        $rli = SugarTestRevenueLineItemUtilities::createRevenueLineItem();
+        $rli->load_relationship('account_link');
+        $rli->load_relationship('rli_templates_link');
+        $rli->account_link->add($rliAccount);
+        $rli->rli_templates_link->add($rliProduct);
+
+        $purchase = SugarTestPurchaseUtilities::createPurchase('789');
+        $purchase->load_relationship('accounts');
+        $purchase->load_relationship('product_templates');
+        $purchase->accounts->add($purchaseAccount);
+        $purchase->product_templates->add($purchaseProduct);
+        $this->assertEquals($expected, $rli->getMatchingPurchaseId());
+    }
+
+    public function providerTestHasMatchingPurchase(): array
+    {
+        return [
+            ['123', '123', '456', '456', '789'],
+            ['123', '321', '456', '456', null],
+            ['123', '123', '456', '654', null],
+            ['123', '321', '456', '654', null],
+        ];
+    }
+
+    /**
+     * @covers ::copyFieldsToBean
+     * @dataProvider providerCopyFieldsToBean
+     * @param $copyFields
+     * @param $noCopyFields
+     */
+    public function testCopyFieldsToBean($copyFields, $noCopyFields): void
+    {
+        $rli = SugarTestRevenueLineItemUtilities::createRevenueLineItem();
+        $pli = SugarTestPurchasedLineItemUtilities::createPurchasedLineItem();
+        $rli->likely_case = 123;
+        $rli->discount_amount = 100;
+        $rli->service_duration_value = 1;
+        $pli->likely_case = 125;
+        $pli->discount_amount = 105;
+        $pli->service_duration_value = 5;
+
+        $rli->copyFieldsToBean($pli, $copyFields);
+
+        foreach ($copyFields as $field) {
+            $this->assertEquals($rli->$field, $pli->$field);
+        }
+
+        foreach ($noCopyFields as $field) {
+            $this->assertNotEquals($rli->$field, $pli->$field);
+        }
+    }
+
+    public function providerCopyFieldsToBean(): array
+    {
+        return [
+            [['likely_case', 'discount_amount'], ['service_duration_value',],],
+            [['likely_case', 'discount_amount', 'service_duration_value',], [],],
+            [[], ['likely_case', 'discount_amount', 'service_duration_value',],],
+        ];
+    }
+
+    /**
+     * @covers ::mapFieldsToBean
+     */
+    public function testMapFieldsToBean(): void
+    {
+        $rli = SugarTestRevenueLineItemUtilities::createRevenueLineItem();
+        $pli = SugarTestPurchasedLineItemUtilities::createPurchasedLineItem();
+        $rli->likely_case = 123;
+        $rli->discount_amount = 100;
+        $rli->service_duration_value = 1;
+        $pli->likely_case = 125;
+        $pli->discount_amount = 105;
+        $pli->service_duration_value = 5;
+
+        $rli->mapFieldsToBean($pli, ['discount_amount' => 'service_duration_value']);
+
+        $this->assertEquals($rli->discount_amount, $pli->service_duration_value);
+        $this->assertNotEquals($rli->likely_case, $pli->likely_case);
+        $this->assertNotEquals($rli->discount_amount, $pli->discount_amount);
+    }
+
+    /**
+     * @covers ::generatePurchaseFromRli
+     * @dataProvider providerGeneratePurchase
+     */
+    public function testGeneratePurchaseFromRLI($fields): void
+    {
+        global $current_user, $timedate;
+        $current_date = '2015-08-13 18:13:00';
+        $time = $timedate->fromString($current_date);
+        $timedate->setNow($time);
+
+        $rli = SugarTestRevenueLineItemUtilities::createRevenueLineItem();
+        foreach ($fields as $field => $value) {
+            $rli->$field = $value;
+        }
+        $rli->save();
+        $purchase = $rli->generatePurchaseFromRli();
+
+        $this->assertEquals($current_user->id, $purchase->created_by);
+        $this->assertEquals($current_user->id, $purchase->modified_user_id);
+        $this->assertEquals($current_date, $purchase->date_modified);
+        $this->assertEquals($current_date, $purchase->date_entered);
+        foreach (array_keys($fields) as $field) {
+            $this->assertEquals($rli->$field, $purchase->$field);
+        }
+
+        SugarTestPurchaseUtilities::removePurchasesByID([$purchase->id]);
+    }
+
+    public function providerGeneratePurchase(): array
+    {
+        return [
+            [
+                [
+                    'name' => 'RLI Name',
+                    'category_id' => '12345',
+                    'type_id' => '54321',
+                    'service' => '1',
+                    'assigned_user_id' => 'abc1234oi',
+                    'assigned_user_name' => 'SugarTestUser9000',
+                    'team_id' => '1234lkjsdf',
+                    'team_set_id' => '1234lkjsdf',
+                    'acl_team_set_id' => '1234lkjsdf',
+                    'account_id' => 'werowiusdlkfj234',
+                    'account_name' => 'Account For Testing Purchases',
+                    'product_template_id' => '1234567890',
+                    'product_template_name' => '234890-',
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @covers ::generatePliFromRli
+     * @dataProvider providerGeneratePli
+     * @param $copyFields
+     * @param $mappedFields
+     * @param $expected
+     */
+    public function testGeneratePliFromRli($copyFields, $mappedFields, $expected): void
+    {
+        global $current_user, $timedate;
+        $current_date = '2015-08-13 18:13:00';
+        $time = $timedate->fromString($current_date);
+        $timedate->setNow($time);
+
+        $rli = SugarTestRevenueLineItemUtilities::createRevenueLineItem();
+        foreach ($copyFields as $field => $value) {
+            $rli->$field = $value;
+        }
+        foreach ($mappedFields as $field => $mapping) {
+            $rli->$field = $mapping['value'];
+        }
+        $rli->save();
+        $purchase = SugarTestPurchaseUtilities::createPurchase();
+
+        $pli = $rli->generatePliFromRli($purchase);
+        $this->assertEquals($current_user->id, $pli->created_by);
+        $this->assertEquals($current_user->id, $pli->modified_user_id);
+        $this->assertEquals($current_date, $pli->date_modified);
+        $this->assertEquals($current_date, $pli->date_entered);
+        $this->assertEquals($purchase->id, $pli->purchase_id);
+
+        foreach (array_keys($copyFields) as $field) {
+            $this->assertEquals($rli->$field, $pli->$field);
+        }
+        foreach ($mappedFields as $field => $mapping) {
+            $this->assertEquals($rli->$field, $pli->{$mapping['mappedField']});
+        }
+        foreach ($expected as $field => $value) {
+            $this->assertEquals($pli->$field, $value);
+        }
+
+        SugarTestPurchasedLineItemUtilities::removePurchasedLineItemsByID([$pli->id]);
+    }
+
+    public function providerGeneratePli(): array
+    {
+        return [
+            'nonService' => [
+                'copy' => [
+                    'name' => 'RliName',
+                    'date_closed' => '2020-08-13',
+                    'quantity' => 123,
+                    'discount_select' => 1,
+                    'discount_amount' => 10,
+                    'discount_price' => 123,
+                    'renewable' => '1',
+                    'description' => 'This RLI will become a product',
+                    'assigned_user_id' => 'abc123',
+                    'assigned_user_name' => 'Jimothy Jericho',
+                    'team_id' => '1234lkjsdf',
+                    'team_set_id' => '1234lkjsdf',
+                    'acl_team_set_id' => '1234lkjsdf',
+                    'asset_number' => '1209384',
+                    'base_rate' => 0.980000,
+                    'vendor_part_num' => '109238',
+                    'list_price' => 100.00,
+                    'tax_class' => 'Taxable',
+                    'weight' => 1.01,
+                    'website' => 'https://www.sugarcrm.com',
+                    'serial_number' => '12N658AA39PI',
+                    'cost_price' => 100.08,
+                    'mft_part_num' => '12n658aa39pi',
+                    'book_value_date' => '2020-08-13',
+                    'book_value' => 100.01,
+                    'support_term' => 'This is a text field',
+                    'support_title' => 'Another Text Field',
+                    'support_expires' => '3000-01-01',
+                    'support_starts' => '1750-07-28',
+                    'support_contact' => 'Contact is a text field',
+                    'support_desc' => 'Description of support',
+                    'service' => false,
+                ],
+                'mapped' => [
+                    'likely_case' => [
+                        'mappedField' => 'revenue',
+                        'value' => 123.01,
+                    ],
+                ],
+                'expected' => [
+                    'service_start_date' => '2020-08-13',
+                    'service_end_date' => '2020-08-13',
+                    'service_duration_unit' => 'day',
+                    'service_duration_value' => 1,
+                ],
+            ],
+            'service' => [
+                'copy' => [
+                    'name' => 'RliName',
+                    'date_closed' => '2020-08-13',
+                    'quantity' => 123,
+                    'discount_select' => 1,
+                    'discount_amount' => 10,
+                    'discount_price' => 123,
+                    'renewable' => '1',
+                    'description' => 'This RLI will become a product',
+                    'assigned_user_id' => 'abc123',
+                    'assigned_user_name' => 'Jimothy Jericho',
+                    'team_id' => '1234lkjsdf',
+                    'team_set_id' => '1234lkjsdf',
+                    'acl_team_set_id' => '1234lkjsdf',
+                    'asset_number' => '1209384',
+                    'base_rate' => 0.980000,
+                    'vendor_part_num' => '109238',
+                    'list_price' => 100.00,
+                    'tax_class' => 'Taxable',
+                    'weight' => 1.01,
+                    'website' => 'https://www.sugarcrm.com',
+                    'serial_number' => '12N658AA39PI',
+                    'cost_price' => 100.08,
+                    'mft_part_num' => '12n658aa39pi',
+                    'book_value_date' => '2020-08-13',
+                    'book_value' => 100.01,
+                    'support_term' => 'This is a text field',
+                    'support_title' => 'Another Text Field',
+                    'support_expires' => '3000-01-01',
+                    'support_starts' => '1750-07-28',
+                    'support_contact' => 'Contact is a text field',
+                    'support_desc' => 'Description of support',
+                    'service' => true,
+                    'service_start_date' => '2020-08-13',
+                    'service_end_date' => '2021-1-13',
+                    'service_duration_value' => 5,
+                    'service_duration_unit' => 'month',
+                ],
+                'mapped' => [
+                    'likely_case' => [
+                        'mappedField' => 'revenue',
+                        'value' => 123.01,
+                    ],
+                ],
+                'expected' => [
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @covers ::copyCustomFields
+     * @param $types
+     * @param $values
+     * @throws Exception
+     * @dataProvider providerTestCopyFields
+     */
+    public function testCopyCustomFields($types, $values): void
+    {
+        $ftsSearch = \Sugarcrm\Sugarcrm\SearchEngine\SearchEngine::getInstance();
+        $ftsSearch->setForceAsyncIndex(true);
+        $rli = SugarTestRevenueLineItemUtilities::createRevenueLineItem();
+        $purchase = SugarTestPurchaseUtilities::createPurchase();
+        $pli = SugarTestPurchasedLineItemUtilities::createPurchasedLineItem();
+        foreach ($types as $index => $type) {
+            $name = 'test_' . strval($index) . '_c';
+            $def = [
+                'name' => $name,
+                'type' => $type,
+                'len' => 65,
+                'source' => 'custom_fields',
+            ];
+            SugarTestHelper::setUpCustomField('RevenueLineItems', $def);
+            $rli->$name = $values[$index];
+            $rli->field_defs[$name] = $def;
+            if ($index < 1) {
+                SugarTestHelper::setUpCustomField('Purchases', $def);
+                $purchase->field_defs[$name] = $def;
+            } else {
+                SugarTestHelper::setUpCustomField('PurchasedLineItems', $def);
+                $pli->field_defs[$name] = $def;
+            }
+        }
+        $rli->copyCustomFields($purchase);
+        $rli->copyCustomFields($pli);
+        $this->assertEquals($rli->test_0_c, $purchase->test_0_c);
+        $this->assertNull($purchase->test_1_c);
+        $this->assertEquals($rli->test_1_c, $pli->test_1_c);
+        $this->assertNull($pli->test_0_c);
+    }
+
+    public function providerTestCopyFields(): array
+    {
+        return [
+            [
+                ['int', 'decimal',], [1, 1.5],
+            ],
+            [
+                ['varchar', 'enum',], ['pizza', 23,],
+            ],
+        ];
+    }
+
+    /**
+     * @covers ::processRliIds
+     * @dataProvider providerProcessRlisIds
+     * @param $hasMatchingPurchase bool
+     */
+    public function testProcessRliIdsMultipleRlis($hasMatchingPurchase): void
+    {
+        $account = SugarTestAccountUtilities::createAccount();
+        $product = SugarTestProductTemplatesUtilities::createProductTemplate();
+        $opportunity = SugarTestOpportunityUtilities::createOpportunity('', $account);
+        $opportunity->sales_stage = 'Closed Won';
+        $opportunity->save();
+
+        if ($hasMatchingPurchase) {
+            $purchase = SugarTestPurchaseUtilities::createPurchase();
+            $purchase->load_relationship('accounts');
+            $purchase->load_relationship('product_templates');
+            $purchase->accounts->add($account);
+            $purchase->product_templates->add($product);
+        }
+
+        $rlis = [];
+        $rli_ids = [];
+        for ($i = 0; $i < 5; $i++) {
+            $rli = SugarTestRevenueLineItemUtilities::createRevenueLineItem();
+            $rli->load_relationship('account_link');
+            $rli->load_relationship('rli_templates_link');
+            $rli->load_relationship('opportunities');
+            $rli->account_link->add($account);
+            $rli->rli_templates_link->add($product);
+            $rli->opportunities->add($opportunity);
+            if ($i % 2 === 0) {
+                $rli->sales_stage = 'Closed Won';
+                $rli->generate_purchase = 'Yes';
+            } else {
+                $rli->sales_stage = 'Prospecting';
+                $rli->generate_purchase = 'No';
+            }
+            $rli->save();
+            $rlis[$i] = $rli;
+            $rli_ids[] = ['id' => $rli->id];
+        }
+        // Should generate NO Purchases/PLIs, as Opp sales stage is"Prospecting"
+        RevenueLineItem::processRliIds($rli_ids);
+
+        // Close our opp so that it cascades and closes all RLIs
+        $opportunity->sales_stage_cascade = 'Closed Won';
+        $opportunity->sales_stage = 'Closed Won';
+        $opportunity->save();
+
+        // Now every even indexed RLI should have generated a Purchase/PLI
+        RevenueLineItem::processRliIds($rli_ids);
+
+        $pli_ids = [];
+        for ($i = 0; $i < 5; $i++) {
+            $rli = BeanFactory::retrieveBean('RevenueLineItems', $rlis[$i]->id);
+            if ($i % 2 === 0) {
+                $pli = BeanFactory::retrieveBean('PurchasedLineItems', $rli->purchasedlineitem_id);
+                $pli_ids[] = $pli->id;
+                if ($hasMatchingPurchase) {
+                    $this->assertEquals($purchase->id, $pli->purchase_id);
+                }
+                $this->assertEquals($pli->revenuelineitem_id, $rli->id);
+                $this->assertEquals($rli->generate_purchase, 'Completed');
+            } else {
+                $this->assertNull($rli->purchasedlineitem_id);
+                $this->assertEquals('No', $rli->generate_purchase);
+            }
+        }
+        SugarTestPurchasedLineItemUtilities::removePurchasedLineItemsByID($pli_ids);
+    }
+
+    public function providerProcessRlisIds(): array
+    {
+        return [
+            [true],
+            [false],
         ];
     }
     //END SUGARCRM flav=ent ONLY

@@ -1142,5 +1142,15 @@ class Opportunity extends SugarBean
         }
         return false;
     }
+
+    /**
+     * Util function to see if we are in Opps + RLIs mode
+     * @return bool true if in RLIs mode, false if in Opps Only mode
+     */
+    public static function usingRevenueLineItems(): bool
+    {
+        $settings = Opportunity::getSettings();
+        return isset($settings['opps_view_by']) && $settings['opps_view_by'] === 'RevenueLineItems';
+    }
     //END SUGARCRM flav=ent ONLY
 }
