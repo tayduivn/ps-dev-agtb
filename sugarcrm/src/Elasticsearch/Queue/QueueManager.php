@@ -24,9 +24,7 @@ use Sugarcrm\Sugarcrm\Elasticsearch\Container;
 class QueueManager
 {
     const FTS_QUEUE = 'fts_queue';
-    const JOB_QUEUE = 'job_queue';
     const PROCESSED_NEW = '0';
-    const PROCESSED_DONE = '1';
     const DEFAULT_BUCKET_ID = -1;
 
     /**
@@ -416,6 +414,9 @@ class QueueManager
                 $row['erased_fields'] = null;
             }
             $bean = $this->processQueryRow($module, $row);
+            if (isset($ftsIds[$bean->id])) {
+                $this->batchDeleteFromQueue($ftsIds[$bean->id], $module);
+            }
             $ftsIds[$bean->id] = $row['fts_id'];
 
             // init tags and favorites
@@ -488,7 +489,6 @@ class QueueManager
      */
     protected function insertRecord($id, $module)
     {
-        // TODO - avoid duplicate beans for performance - upsert ?
         $sql = sprintf(
             'INSERT INTO %s (id, bean_id, bean_module, date_modified, date_created)
             VALUES (%s, %s, %s, %s, %s)',
