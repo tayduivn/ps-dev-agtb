@@ -47,6 +47,7 @@ $viewdefs['Cases']['base']['view']['multi-line-list'] = [
                             'default' => true,
                             'enabled' => true,
                             'type' => 'case-status',
+                            'widget_name' => 'widget_status',
                         ],
                     ],
                 ],
@@ -62,6 +63,7 @@ $viewdefs['Cases']['base']['view']['multi-line-list'] = [
                             'enabled' => true,
                             'readonly' => true,
                             'type' => 'follow-up-datetime-colorcoded',
+                            'widget_name' => 'widget_follow_up_datetime',
                             'color_code_classes' => [
                                 'overdue' => 'expired',
                                 'in_a_day' => 'soon-expired',

@@ -25,6 +25,7 @@ $viewdefs['Opportunities']['base']['view']['multi-line-list'] = [
                             'default' => true,
                             'enabled' => true,
                             'type' => 'enum-colorcoded-fore-bkgd',
+                            'widget_name' => 'widget_sales_stage',
                         ],
                         [
                             'name' => 'sales_status',
@@ -69,7 +70,7 @@ $viewdefs['Opportunities']['base']['view']['multi-line-list'] = [
                             'default' => true,
                             'enabled' => true,
                             'type' => 'relative-date',
-
+                            'widget_name' => 'widget_date_closed',
                         ],
                         [
                             'name' => 'date_closed',
@@ -94,6 +95,7 @@ $viewdefs['Opportunities']['base']['view']['multi-line-list'] = [
                             ],
                             'enabled' => true,
                             'default' => true,
+                            'widget_name' => 'widget_amount',
                         ],
                     ],
                 ],

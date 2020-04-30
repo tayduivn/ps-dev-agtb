@@ -58,6 +58,7 @@ $viewdefs['Accounts']['base']['view']['multi-line-list'] = [
                             'default' => true,
                             'enabled' => true,
                             'type' => 'relative-date',
+                            'widget_name' => 'widget_next_renewal_date',
                         ],
                         [
                             'name' => 'next_renewal_date',
