@@ -10,9 +10,18 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use PhpParser\NodeVisitor\NameResolver;
+use PhpParser\Parser;
+use PhpParser\Error;
+use Sugarcrm\Sugarcrm\Security\ModuleScanner\Exception\Blacklisted;
+use Sugarcrm\Sugarcrm\Security\ModuleScanner\Exception\ForbiddenStatement;
 use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
 use Sugarcrm\Sugarcrm\Security\Validator\Constraints\DropdownList as ConstraintsDropdownList;
 use Sugarcrm\Sugarcrm\Security\Validator\Validator;
+use PhpParser\ParserFactory;
+use PhpParser\NodeTraverser;
+use Sugarcrm\Sugarcrm\Security\ModuleScanner\BlacklistVisitor;
+use Sugarcrm\Sugarcrm\Security\ModuleScanner\DynamicNameVisitor;
 
 class ModuleScanner{
 	private $manifestMap = array(
@@ -66,6 +75,7 @@ class ModuleScanner{
 	    'splfileinfo',
 	    'splfileobject',
 	    'pclzip',
+        'sugarautoloader',
 
     );
 	private $blackList = array(
@@ -384,6 +394,16 @@ class ModuleScanner{
 );
     private $methodsBlackList = array('setlevel', 'put' => array('sugarautoloader'), 'unlink' => array('sugarautoloader'));
 
+    /**
+     * @var Parser
+     */
+    private $parser;
+
+    /**
+     * @var NodeTraverser
+     */
+    private $traverser;
+
     protected $installdefs;
 
 	public function printToWiki(){
@@ -435,6 +455,13 @@ class ModuleScanner{
                 $this->{$param} = array_merge($this->{$param}, $value);
             }
         }
+        $this->parser = (new ParserFactory)->create(ParserFactory::PREFER_PHP7);
+        $this->traverser = new NodeTraverser;
+        $this->traverser->addVisitor(new NameResolver());
+        $this->traverser->addVisitor(new DynamicNameVisitor());
+        $classesBlackList = array_diff($this->classBlackList, $this->classBlackListExempt);
+        $functionsBlackList = array_diff($this->blackList, $this->blackListExempt);
+        $this->traverser->addVisitor(new BlacklistVisitor($classesBlackList, $functionsBlackList, $this->methodsBlackList));
 	}
 
 	private $issues = array();
@@ -678,87 +705,15 @@ class ModuleScanner{
         }
 		$contents = file_get_contents($file);
 		if(!$this->isPHPFile($contents)) return $issues;
-		$tokens = @token_get_all($contents);
-		$checkFunction = false;
-		$possibleIssue = '';
-		$lastToken = false;
-		foreach($tokens as $index=>$token){
-			if(is_string($token[0])){
-				switch($token[0]){
-					case '`':
-						$issues['backtick'] = translate('ML_INVALID_FUNCTION') . " '`'";
-					case '(':
-						if($checkFunction)$issues[] = $possibleIssue;
-						break;
-				}
-				$checkFunction = false;
-				$possibleIssue = '';
-			}else{
-				$token['_msi'] = token_name($token[0]);
-				switch($token[0]){
-                    case T_WHITESPACE:
-                    case T_COMMENT:
-                        continue 2;
-					case T_EVAL:
-						if(in_array('eval', $this->blackList) && !in_array('eval', $this->blackListExempt))
-						$issues[]= translate('ML_INVALID_FUNCTION') . ' eval()';
-						break;
-					case T_STRING:
-						$token[1] = strtolower($token[1]);
-						if($lastToken !== false && $lastToken[0] == T_NEW) {
-                            if(!in_array($token[1], $this->classBlackList))break;
-                            if(in_array($token[1], $this->classBlackListExempt))break;
-                        } elseif ($token[0] == T_DOUBLE_COLON) {
-                            if(!in_array($lastToken[1], $this->classBlackList))break;
-                            if(in_array($lastToken[1], $this->classBlackListExempt))break;
-                        } else {
-                            //if nothing else fit, lets check the last token to see if this is a possible method call
-                            if ($lastToken !== false &&
-                            ($lastToken[0] == T_OBJECT_OPERATOR ||  $lastToken[0] == T_DOUBLE_COLON))
-                            {
-                                // check static blacklist for methods
-                                if(!empty($this->methodsBlackList[$token[1]])) {
-                                    if($this->methodsBlackList[$token[1]] == '*') {
-                                        $issues[]= translate('ML_INVALID_METHOD') . ' ' .$token[1].  '()';
-                                        break;
-                                    } else {
-                                        if($lastToken[0] == T_DOUBLE_COLON && $index > 2 && $tokens[$index-2][0] == T_STRING) {
-                                            $classname = strtolower($tokens[$index-2][1]);
-                                            if(in_array($classname, $this->methodsBlackList[$token[1]])) {
-                                                $issues[]= translate('ML_INVALID_METHOD') . ' ' .$classname . '::' . $token[1]. '()';
-                                                break;
-                                            }
-                                        }
-                                    }
-                                }
-                                //this is a method call, check the black list
-                                if(in_array($token[1], $this->methodsBlackList)){
-                                    $issues[]= translate('ML_INVALID_METHOD') . ' ' .$token[1].  '()';
-                                }
-                                break;
-                            }
 
+        try {
+            $this->scanCode($contents);
+        } catch (Error $error) {
+            $issues[] = "Parse error: {$error->getMessage()}";
+        } catch (ForbiddenStatement $exception) {
+            $issues[] = translate($exception->getMessage());
+        }
 
-                            if(!in_array($token[1], $this->blackList))break;
-                            if(in_array($token[1], $this->blackListExempt))break;
-
-                        }
-					case T_VARIABLE:
-						$checkFunction = true;
-						$possibleIssue = translate('ML_INVALID_FUNCTION') . ' ' .  $token[1] . '()';
-						break;
-
-					default:
-						$checkFunction = false;
-						$possibleIssue = '';
-
-				}
-                if ($token[0] != T_WHITESPACE && $token[0] != T_COMMENT) {
-                    $lastToken = $token;
-                }
-			}
-
-		}
 		if(!empty($issues)){
 			$this->issues['file'][$file] = $issues;
 		}
@@ -1059,6 +1014,16 @@ class ModuleScanner{
 	    }
 	    return false;
 	}
+
+    /**
+     * @throws Error|ForbiddenStatement
+     * @param $code
+     */
+    public function scanCode(string $code): void
+    {
+        $stmts = $this->parser->parse($code);
+        $this->traverser->traverse($stmts);
+    }
 
 }
 

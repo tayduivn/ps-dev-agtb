@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c4ac197ecb26e6d3b0c54d2d2892668f",
+    "content-hash": "f8485e2d082a71940250ef7b2d1c7d45",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -1668,6 +1668,62 @@
             "time": "2019-12-30T18:03:34+00:00"
         },
         {
+            "name": "nikic/php-parser",
+            "version": "v4.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nikic/PHP-Parser.git",
+                "reference": "d944ca95e580e511f964a8c66c4309f8207ad156"
+            },
+            "dist": {
+                "type": "tar",
+                "url": "https://satis.sugardev.team/dist/nikic/php-parser/nikic-php-parser-v4.4.0-a99ede.tar",
+                "reference": "d944ca95e580e511f964a8c66c4309f8207ad156",
+                "shasum": "2fc5df4bf8dc5f605f7adc577317c412fa89f2e5"
+            },
+            "require": {
+                "ext-tokenizer": "*",
+                "php": ">=7.0"
+            },
+            "require-dev": {
+                "ircmaxell/php-yacc": "0.0.5",
+                "phpunit/phpunit": "^6.5 || ^7.0 || ^8.0"
+            },
+            "bin": [
+                "bin/php-parse"
+            ],
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "4.3-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "PhpParser\\": "lib/PhpParser"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "PhpParser\\": "test/PhpParser/"
+                }
+            },
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Nikita Popov"
+                }
+            ],
+            "description": "A PHP parser written in PHP",
+            "keywords": [
+                "parser",
+                "php"
+            ],
+            "time": "2020-04-10T16:34:50+00:00"
+        },
+        {
             "name": "onelogin/php-saml",
             "version": "3.1.1",
             "source": {
@@ -2906,6 +2962,9 @@
                 "wiki": "http://support.sugarcrm.com",
                 "forum": "https://community.sugarcrm.com/sugarcrm",
                 "irc": "irc://irc.freenode.org/sugarcrm"
+            },
+            "transport-options": {
+                "relative": true
             }
         },
         {

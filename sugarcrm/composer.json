@@ -105,6 +105,7 @@
         "league/oauth2-client": "2.2.1",
         "monolog/monolog": "1.22.0",
         "moontoast/math": "1.1.0",
+        "nikic/php-parser": "^4.4",
         "wikimedia/less.php": "^1.8.2",
         "parsecsv/php-parsecsv": "^1.2",
         "php": "^7.3",
