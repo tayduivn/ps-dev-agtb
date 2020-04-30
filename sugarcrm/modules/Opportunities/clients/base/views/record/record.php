@@ -187,11 +187,19 @@ $viewdefs['Opportunities']['base']['view']['record'] = array(
                     'name' => 'date_closed',
                     'type' => 'date-cascade',
                     'label' => 'LBL_LIST_DATE_CLOSED',
+                    'disable_field' => array(
+                        'total_revenue_line_items',
+                        'closed_revenue_line_items',
+                    ),
                 ),
                 [
                     'name' => 'sales_stage',
                     'type' => 'enum-cascade',
                     'label' => 'LBL_SALES_STAGE',
+                    'disable_field' => array(
+                        'total_revenue_line_items',
+                        'closed_revenue_line_items',
+                    ),
                 ],
                 array(
                     'name' => 'service_start_date',
