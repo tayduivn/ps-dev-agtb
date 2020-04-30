@@ -26,6 +26,7 @@ class QueueManager
     const FTS_QUEUE = 'fts_queue';
     const JOB_QUEUE = 'job_queue';
     const PROCESSED_NEW = '0';
+    const PROCESSED_DONE = '1';
     const DEFAULT_BUCKET_ID = -1;
 
     /**
@@ -487,34 +488,18 @@ class QueueManager
      */
     protected function insertRecord($id, $module)
     {
-        $sql = 'INSERT INTO ' . self::FTS_QUEUE .
-            ' (id, bean_id, bean_module, date_modified, date_created, processed)
-            (SELECT ' . $this->db->getGuidSQL() . ', ?, ?, ?, ?, ? ' . $this->db->getFromDummyTable() . '
-            WHERE NOT EXISTS (
-            SELECT
-                NULL
-            FROM
-                ' . self::FTS_QUEUE . '
-            WHERE
-                bean_module = ?
-                AND bean_id = ?
-                AND processed = ?
-            ))';
-        $currentDateTime = \TimeDate::getInstance()->nowDb();
-        $params = [
-            $id,
-            $module,
-            $currentDateTime,
-            $currentDateTime,
-            self::PROCESSED_NEW,
-            $module,
-            $id,
-            self::PROCESSED_NEW,
-        ];
-        $this->db->getConnection()->executeUpdate(
-            $sql,
-            $params
+        // TODO - avoid duplicate beans for performance - upsert ?
+        $sql = sprintf(
+            'INSERT INTO %s (id, bean_id, bean_module, date_modified, date_created)
+            VALUES (%s, %s, %s, %s, %s)',
+            self::FTS_QUEUE,
+            $this->db->getGuidSQL(),
+            $this->db->quoted($id),
+            $this->db->quoted($module),
+            $this->db->now(),
+            $this->db->now()
         );
+        $this->db->query($sql);
     }
 
     /**
@@ -595,11 +580,13 @@ class QueueManager
 
         // join fts_queue table
         if ($this->isDefaultBucketId($bucketId)) {
-            $bucketId = self::PROCESSED_NEW;
+            $sq->joinTable(self::FTS_QUEUE)->on()
+                ->equalsField(self::FTS_QUEUE . '.bean_id', 'id');
+        } else {
+            $sq->joinTable(self::FTS_QUEUE)->on()
+                ->equalsField(self::FTS_QUEUE . '.bean_id', 'id')
+                ->equals(self::FTS_QUEUE . '.processed', $bucketId);
         }
-        $sq->joinTable(self::FTS_QUEUE)->on()
-            ->equalsField(self::FTS_QUEUE . '.bean_id', 'id')
-            ->equals(self::FTS_QUEUE . '.processed', $bucketId);
 
         $additionalFields = array(
             array(self::FTS_QUEUE . '.id', 'fts_id'),
