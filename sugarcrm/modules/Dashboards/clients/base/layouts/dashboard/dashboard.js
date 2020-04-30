@@ -96,7 +96,14 @@
         }
 
         if (!hasDashboardModels) {
-            var model = this._getNewDashboardObject('model', context);
+            var model;
+            if (context.get('layout') === 'multi-line') {
+                // On the multi-line list view, side drawer the dashlets need
+                // the correct model context, which is set here.
+                model = options.layout.layout.model;
+            } else {
+                model = this._getNewDashboardObject('model', context);
+            }
             if (context.get('modelId')) {
                 model.set('id', context.get('modelId'), {silent: true});
             }
@@ -512,8 +519,9 @@
             };
         } else if (layout.context && layout.context.parent &&
             layout.context.parent.get('layout') === 'multi-line') {
-            // don't show headerpane for multi-line dashboards
-            headerPane = {};
+            headerPane = {
+                view: 'side-drawer-header'
+            };
         } else {
             headerPane = {
                 view: 'dashboard-headerpane',

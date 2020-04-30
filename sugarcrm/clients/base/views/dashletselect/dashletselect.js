@@ -126,6 +126,15 @@
     selectDashlet: function(metadata) {
         var model = new app.Bean();
 
+        // On the multi-line list view, side drawer the dashlets need
+        // the correct module context, which is set here.
+        var multiLineModule;
+        var contextModel = this.context.get('model');
+        if (contextModel && contextModel.get('view_name') === 'multi-line') {
+            multiLineModule = contextModel.get('dashboard_module');
+        }
+        var dashletConfigModule = metadata.config.module || metadata.module || multiLineModule;
+
         app.drawer.load({
             layout: {
                 type: 'dashletconfiguration',
@@ -135,13 +144,13 @@
                             label: app.lang.get(metadata.label, metadata.config.module),
                             type: metadata.type,
                             config: true,
-                            module: metadata.config.module || metadata.module
+                            module: dashletConfigModule
                         })
                     }
                 ]
             },
             context: {
-                module: metadata.config.module || metadata.module,
+                module: dashletConfigModule,
                 model: model,
                 forceNew: true,
                 skipFetch: true

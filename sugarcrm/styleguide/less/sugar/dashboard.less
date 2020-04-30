@@ -639,5 +639,15 @@
         max-height: ~"calc(@{workbenchDrawerDashletHeight} - 12px)";
       }
     }
+
+    .dashboard.edit .dashlets .dashlet-container {
+      height: ~"calc(@{workbenchDrawerDashletHeight} + 20px)";
+      max-height: ~"calc(@{workbenchDrawerDashletHeight} + 20px)";
+
+      > div .thumbnail.dashlet:not(.collapsed) {
+        height: ~"calc(@{workbenchDrawerDashletHeight} -20px)";
+        max-height: ~"calc(@{workbenchDrawerDashletHeight} -20px)";
+      }
+    }
   }
 }

@@ -3816,6 +3816,7 @@ Sincerely, SugarCRM',
     'LBL_DASHLET_PRODUCT_QUICK_PICKS_FAVORITES_TAB' => 'Favorites',
 
     //BEGIN SUGARCRM flav=ent ONLY
+    'LBL_DASHBOARD_CONFIG' => 'Dashboard Configuration',
     'LBL_LIST_VIEW__NAME' => 'List View',
     'LBL_PIPELINE_VIEW_NAME' => 'Tile View',
     'LBL_PIPELINE_VIEW_BTN' => 'Tile View',

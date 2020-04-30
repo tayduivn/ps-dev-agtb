@@ -110,7 +110,6 @@ $viewdefs['base']['view']['activity-timeline'] = [
                         'action' => 'removeClicked',
                         'label' => 'LBL_DASHLET_REMOVE_LABEL',
                         'name' => 'remove_button',
-                        'disallowed_layouts' => ['row-model-data'],
                     ],
                 ],
             ],

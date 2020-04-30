@@ -209,6 +209,7 @@ describe('Base.View.Dashletselect', function() {
     });
 
     describe('selectDashlet', function() {
+        var loadSpy;
         var metadata;
         beforeEach(function() {
             metadata = {
@@ -221,19 +222,42 @@ describe('Base.View.Dashletselect', function() {
             app.drawer = {
                 'load': $.noop
             };
+            loadSpy = sinon.collection.spy(app.drawer, 'load');
         });
 
         afterEach(function() {
             metadata = null;
+            view.context.get('model').set('view_name', undefined);
+            view.context.get('model').set('dashboard_module', undefined);
             delete app.drawer;
         });
 
         it('should load dashlet configurations in the drawer', function() {
-            var loadSpy = sinon.collection.spy(app.drawer, 'load');
             view.selectDashlet(metadata);
-
             expect(loadSpy.calledOnce).toBeTruthy();
             expect(loadSpy.args[0][0].layout.type).toEqual('dashletconfiguration');
+        });
+
+        it('should load the dashlet with the module from metadata', function() {
+            metadata.module = 'Accounts';
+            view.context.get('model').set('view_name', 'record');
+            view.selectDashlet(metadata);
+            expect(loadSpy.args[0][0].context.module).toEqual('Accounts');
+        });
+
+        it('should load the dashlet with the module from metadata even if we are on multi-line list view', function() {
+            metadata.module = 'Opportunities';
+            view.context.get('model').set('view_name', 'multi-line');
+            view.context.get('model').set('dashboard_module', 'Cases');
+            view.selectDashlet(metadata);
+            expect(loadSpy.args[0][0].context.module).toEqual('Opportunities');
+        });
+
+        it('should load the dashlet with the module from the active tab if it is not defined in the meta', function() {
+            view.context.get('model').set('view_name', 'multi-line');
+            view.context.get('model').set('dashboard_module', 'Cases');
+            view.selectDashlet(metadata);
+            expect(loadSpy.args[0][0].context.module).toEqual('Cases');
         });
     });
 

@@ -178,6 +178,18 @@ describe('Dashboards.Base.Layout.Dashboard', function() {
             parentModule = null;
         });
 
+        it('should set the header def for multi-line side drawer', function() {
+            layout.layout.context.parent = new SUGAR.App.Bean({layout: 'multi-line'});
+            var layoutSpy = sandbox.spy(layout.layout, 'initComponents');
+            layout.navigateLayout('fake-id-value');
+            var componentsDef = [{
+                view: 'side-drawer-header'
+            }, {
+                layout: 'dashlet-main'
+            }]
+            expect(layoutSpy.args[0][0][0].layout.components).toEqual(componentsDef);
+        });
+
         it('should fetch multi-line dashboard', function() {
             sandbox.stub(layout.context.parent, 'isDataFetched').returns(true);
             layout.navigateLayout('new-fake-id-value');
