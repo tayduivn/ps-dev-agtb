@@ -11,12 +11,21 @@ declare(strict_types=1);
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\Sugarcrm\Security\ModuleScanner\Exception;
+namespace Sugarcrm\Sugarcrm\Security\ModuleScanner\Issues;
 
-final class BlacklistedFunctionCalled extends ForbiddenStatement
+final class BlacklistedClassExtended implements Issue
 {
-    public function __construct(string $function)
+    private $class;
+    private $line;
+
+    public function __construct(string $class, int $line)
     {
-        parent::__construct(sprintf('Code attempted to call blacklisted function "%s"', $function));
+        $this->class = $class;
+        $this->line = $line;
+    }
+
+    public function getMessage(): string
+    {
+        return sprintf('Code attempted to extend blacklisted class "%s" at line %s', $this->class, $this->line);
     }
 }

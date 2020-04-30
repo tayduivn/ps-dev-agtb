@@ -10,18 +10,10 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-use PhpParser\NodeVisitor\NameResolver;
-use PhpParser\Parser;
-use PhpParser\Error;
-use Sugarcrm\Sugarcrm\Security\ModuleScanner\Exception\Blacklisted;
-use Sugarcrm\Sugarcrm\Security\ModuleScanner\Exception\ForbiddenStatement;
-use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
+use Sugarcrm\Sugarcrm\Security\ModuleScanner\CodeScanner;
 use Sugarcrm\Sugarcrm\Security\Validator\Constraints\DropdownList as ConstraintsDropdownList;
 use Sugarcrm\Sugarcrm\Security\Validator\Validator;
-use PhpParser\ParserFactory;
-use PhpParser\NodeTraverser;
-use Sugarcrm\Sugarcrm\Security\ModuleScanner\BlacklistVisitor;
-use Sugarcrm\Sugarcrm\Security\ModuleScanner\DynamicNameVisitor;
+use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
 
 class ModuleScanner{
 	private $manifestMap = array(
@@ -395,14 +387,9 @@ class ModuleScanner{
     private $methodsBlackList = array('setlevel', 'put' => array('sugarautoloader'), 'unlink' => array('sugarautoloader'));
 
     /**
-     * @var Parser
+     * @var CodeScanner
      */
-    private $parser;
-
-    /**
-     * @var NodeTraverser
-     */
-    private $traverser;
+    private $codeScanner;
 
     protected $installdefs;
 
@@ -455,13 +442,9 @@ class ModuleScanner{
                 $this->{$param} = array_merge($this->{$param}, $value);
             }
         }
-        $this->parser = (new ParserFactory)->create(ParserFactory::PREFER_PHP7);
-        $this->traverser = new NodeTraverser;
-        $this->traverser->addVisitor(new NameResolver());
-        $this->traverser->addVisitor(new DynamicNameVisitor());
         $classesBlackList = array_diff($this->classBlackList, $this->classBlackListExempt);
         $functionsBlackList = array_diff($this->blackList, $this->blackListExempt);
-        $this->traverser->addVisitor(new BlacklistVisitor($classesBlackList, $functionsBlackList, $this->methodsBlackList));
+        $this->codeScanner = new CodeScanner($classesBlackList, $functionsBlackList, $this->methodsBlackList);
 	}
 
 	private $issues = array();
@@ -597,12 +580,17 @@ class ModuleScanner{
                 $this->scanDir($next, $sugarFileAllowed);
             } else {
                 $issues = $this->scanFile($next, $sugarFileAllowed);
+
+                if (count($issues) > 0) {
+                    return false;
+                }
+
                 if ($this->isLanguageFile($next)) {
                     $this->checkLanguageFileKeysValidity($next);
                 }
 
                 // scan vardef file
-                if (empty($issues) && $this->isVardefFile($next)) {
+                if ($this->isVardefFile($next)) {
                     $this->scanVardefFile($next);
                 }
             }
@@ -651,26 +639,6 @@ class ModuleScanner{
     }
 
 	/**
-	 * Check if the file contents looks like PHP
-	 * @param string $contents File contents
-	 * @return boolean
-	 */
-	public function isPHPFile($contents)
-	{
-	    if(stripos($contents, '<?php') !== false) return true;
-	    for($tag=0;($tag = stripos($contents, '<?', $tag)) !== false;$tag++) {
-            if(strncasecmp(substr($contents, $tag, 13), '<?xml version', 13) == 0) {
-                // <?xml version is OK, skip it
-                $tag++;
-                continue;
-            }
-            // found <?, it's PHP
-            return true;
-	    }
-	    return false;
-	}
-
-	/**
 	 * Given a file it will open it's contents and check if it is a PHP file (not safe to just rely on extensions) if it finds <?php tags it will use the tokenizer to scan the file
 	 * $var()  and ` are always prevented then whatever is in the blacklist.
 	 * It will also ensure that all files are of valid extension types
@@ -704,17 +672,10 @@ class ModuleScanner{
             }
         }
 		$contents = file_get_contents($file);
-		if(!$this->isPHPFile($contents)) return $issues;
 
-        try {
-            $this->scanCode($contents);
-        } catch (Error $error) {
-            $issues[] = "Parse error: {$error->getMessage()}";
-        } catch (ForbiddenStatement $exception) {
-            $issues[] = translate($exception->getMessage());
-        }
+        $issues = $this->scanCode($contents);
 
-		if(!empty($issues)){
+        if (count($issues) > 0) {
 			$this->issues['file'][$file] = $issues;
 		}
 
@@ -760,7 +721,7 @@ class ModuleScanner{
             }
         }
 
-        if (!empty($issues)) {
+        if (count($issues) > 0) {
             $this->issues['file'][$file] = $issues;
         }
         return $issues;
@@ -873,7 +834,7 @@ class ModuleScanner{
                 $this->scanCopy($from, $to);
             }
         }
-        if (!empty($issues)) {
+        if (count($issues) > 0) {
             $this->issues['manifest'][$manifestPath] = $issues;
         }
 	}
@@ -1015,14 +976,33 @@ class ModuleScanner{
 	    return false;
 	}
 
-    /**
-     * @throws Error|ForbiddenStatement
-     * @param $code
-     */
-    public function scanCode(string $code): void
+    protected function scanCode(string $code): array
     {
-        $stmts = $this->parser->parse($code);
-        $this->traverser->traverse($stmts);
+        $issueMessages = [];
+        foreach ($this->codeScanner->scan($code) as $issue) {
+            $issueMessages[] = $issue->getMessage();
+        }
+        return $issueMessages;
+    }
+
+    public function scanArchive(string $path): void
+    {
+        $zip = new ZipArchive;
+        if ($zip->open($path) === true) {
+            for ($i = 0; $i < $zip->numFiles; $i++) {
+                $fileName = $zip->getNameIndex($i);
+                $fp = $zip->getStream($fileName);
+                if ($fp === false) {
+                    throw new RuntimeException('Failed to read data from ' . $fileName);
+                }
+                $contents = stream_get_contents($fp);
+                fclose($fp);
+                $issues = $this->scanCode($contents);
+                if (count($issues) > 0) {
+                    $this->issues['file'][$fileName] = $issues;
+                }
+            }
+        }
     }
 
 }

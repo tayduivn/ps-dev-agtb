@@ -11,9 +11,21 @@ declare(strict_types=1);
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\Sugarcrm\Security\ModuleScanner\Exception;
+namespace Sugarcrm\Sugarcrm\Security\ModuleScanner\Issues;
 
-abstract class ForbiddenStatement extends \Exception
+final class BlacklistedClassInstantiated implements Issue
 {
+    private $class;
+    private $line;
 
+    public function __construct(string $class, int $line)
+    {
+        $this->class = $class;
+        $this->line = $line;
+    }
+
+    public function getMessage(): string
+    {
+        return sprintf('Code attempted to instantiate blacklisted class "%s" at line %s', $this->class, $this->line);
+    }
 }

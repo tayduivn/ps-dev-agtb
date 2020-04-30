@@ -113,12 +113,16 @@ if ($run !== "" && empty($GLOBALS['sugar_config']['use_common_ml_dir'])) {
     			//SCAN THE MANIFEST FILE TO MAKE SURE NO COPIES OR ANYTHING ARE HAPPENING IN IT
 	    		$ms = new ModuleScanner();
 	    		$ms->lockConfig();
-		    	$fileIssues = $ms->scanFile($manifest_file);
-    			if(!empty($fileIssues)){
-    				echo '<h2>' . $mod_strings['ML_MANIFEST_ISSUE'] . '</h2><br>';
-    				$ms->displayIssues();
-    				die();
-    			}
+                if ((defined('MODULE_INSTALLER_PACKAGE_SCAN') && MODULE_INSTALLER_PACKAGE_SCAN)
+                    || !empty($GLOBALS['sugar_config']['moduleInstaller']['packageScan'])) {
+                    $ms->scanArchive(UploadFile::realpath($tempFile));
+                } else {
+                    $ms->scanFile($manifest_file);
+                }
+                if ($ms->hasIssues()) {
+                    $ms->displayIssues();
+                    die();
+                }
     			list($manifest, $installdefs) = MSLoadManifest($manifest_file);
     			if($ms->checkConfig($manifest_file)) {
     				echo '<h2>' . $mod_strings['ML_MANIFEST_ISSUE'] . '</h2><br>';

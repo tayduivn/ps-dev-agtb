@@ -11,12 +11,23 @@ declare(strict_types=1);
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\Sugarcrm\Security\ModuleScanner\Exception;
+namespace Sugarcrm\Sugarcrm\Security\ModuleScanner;
 
-final class DynamicallyNamedMethodCalled extends ForbiddenStatement
+use PhpParser\NodeVisitorAbstract;
+use Sugarcrm\Sugarcrm\Security\ModuleScanner\Issues\Issue;
+
+abstract class ForbiddenStatementVisitor extends NodeVisitorAbstract
 {
-    public function __construct()
+    /**
+     * @var Issue[]
+     */
+    protected $issues = [];
+
+    /**
+     * @return Issue[]
+     */
+    public function getIssues(): array
     {
-        parent::__construct('Code attempted dynamically-named method call');
+        return $this->issues;
     }
 }

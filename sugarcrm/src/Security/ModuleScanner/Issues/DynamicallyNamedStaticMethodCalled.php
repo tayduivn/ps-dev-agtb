@@ -11,12 +11,19 @@ declare(strict_types=1);
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\Sugarcrm\Security\ModuleScanner\Exception;
+namespace Sugarcrm\Sugarcrm\Security\ModuleScanner\Issues;
 
-final class ShellExecUsed extends ForbiddenStatement
+final class DynamicallyNamedStaticMethodCalled implements Issue
 {
-    public function __construct()
+    private $line;
+
+    public function __construct(int $line)
     {
-        parent::__construct('Code attempted to execute command via shell');
+        $this->line = $line;
+    }
+
+    public function getMessage(): string
+    {
+        return 'Code attempted dynamically-named static method call at line ' . $this->line;
     }
 }

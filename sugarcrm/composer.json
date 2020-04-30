@@ -101,6 +101,7 @@
         "doctrine/dbal": "^2.10.2",
         "ezyang/htmlpurifier": "^4.12",
         "ext-openssl": "*",
+        "ext-zip": "*",
         "google/apiclient": "1.1.4",
         "league/oauth2-client": "2.2.1",
         "monolog/monolog": "1.22.0",

@@ -11,12 +11,19 @@ declare(strict_types=1);
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\Sugarcrm\Security\ModuleScanner\Exception;
+namespace Sugarcrm\Sugarcrm\Security\ModuleScanner\Issues;
 
-final class DynamicallyNamedClassInstantiated extends ForbiddenStatement
+final class DynamicallyNamedClassInstantiated implements Issue
 {
-    public function __construct()
+    private $line;
+
+    public function __construct(int $line)
     {
-        parent::__construct('Code attempted to instantiate dynamically-named class');
+        $this->line = $line;
+    }
+
+    public function getMessage(): string
+    {
+        return 'Code attempted to instantiate dynamically-named class at line ' . $this->line;
     }
 }

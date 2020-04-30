@@ -14,37 +14,36 @@ declare(strict_types=1);
 namespace Sugarcrm\Sugarcrm\Security\ModuleScanner;
 
 use PhpParser\Node;
-use PhpParser\NodeVisitorAbstract;
-use Sugarcrm\Sugarcrm\Security\ModuleScanner\Exception\DynamicallyNamedClassUsed;
-use Sugarcrm\Sugarcrm\Security\ModuleScanner\Exception\DynamicallyNamedClassInstantiated;
-use Sugarcrm\Sugarcrm\Security\ModuleScanner\Exception\DynamicallyNamedFunctionCalled;
-use Sugarcrm\Sugarcrm\Security\ModuleScanner\Exception\DynamicallyNamedMethodCalled;
-use Sugarcrm\Sugarcrm\Security\ModuleScanner\Exception\DynamicallyNamedStaticMethodCalled;
+use Sugarcrm\Sugarcrm\Security\ModuleScanner\Issues\DynamicallyNamedClassUsed;
+use Sugarcrm\Sugarcrm\Security\ModuleScanner\Issues\DynamicallyNamedClassInstantiated;
+use Sugarcrm\Sugarcrm\Security\ModuleScanner\Issues\DynamicallyNamedFunctionCalled;
+use Sugarcrm\Sugarcrm\Security\ModuleScanner\Issues\DynamicallyNamedMethodCalled;
+use Sugarcrm\Sugarcrm\Security\ModuleScanner\Issues\DynamicallyNamedStaticMethodCalled;
 
-class DynamicNameVisitor extends NodeVisitorAbstract
+class DynamicNameVisitor extends ForbiddenStatementVisitor
 {
     public function leaveNode(Node $node)
     {
         if ($node instanceof Node\Expr\MethodCall) {
             if ($node->name instanceof Node\Expr\Variable) {
-                throw new DynamicallyNamedMethodCalled();
+                $this->issues[] =  new DynamicallyNamedMethodCalled($node->getLine());
             }
         } elseif ($node instanceof Node\Expr\FuncCall) {
             if ($node->name instanceof Node\Expr\Variable) {
-                throw new DynamicallyNamedFunctionCalled();
+                $this->issues[] =  new DynamicallyNamedFunctionCalled($node->getLine());
             }
         } elseif ($node instanceof Node\Expr\StaticCall) {
             $class = $node->class;
             $method = $node->name;
             if ($class instanceof Node\Expr\Variable) {
-                throw new DynamicallyNamedClassUsed();
+                $this->issues[] =  new DynamicallyNamedClassUsed($node->getLine());
             }
             if ($method instanceof Node\Expr\Variable) {
-                throw new DynamicallyNamedStaticMethodCalled();
+                $this->issues[] =  new DynamicallyNamedStaticMethodCalled($node->getLine());
             }
         } elseif ($node instanceof Node\Expr\New_) {
             if ($node->class instanceof Node\Expr\Variable) {
-                throw new DynamicallyNamedClassInstantiated();
+                $this->issues[] =  new DynamicallyNamedClassInstantiated($node->getLine());
             }
         }
     }

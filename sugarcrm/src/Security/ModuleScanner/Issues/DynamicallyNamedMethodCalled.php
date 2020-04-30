@@ -11,12 +11,19 @@ declare(strict_types=1);
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\Sugarcrm\Security\ModuleScanner\Exception;
+namespace Sugarcrm\Sugarcrm\Security\ModuleScanner\Issues;
 
-final class BlacklistedMethodCalled extends ForbiddenStatement
+final class DynamicallyNamedMethodCalled implements Issue
 {
-    public function __construct(string $method)
+    private $line;
+
+    public function __construct(int $line)
     {
-        parent::__construct(sprintf('Code attempted to call blacklisted method "%s"', $method));
+        $this->line = $line;
+    }
+
+    public function getMessage(): string
+    {
+        return 'Code attempted dynamically-named method call at line ' . $this->line;
     }
 }

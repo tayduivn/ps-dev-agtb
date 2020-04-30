@@ -11,12 +11,21 @@ declare(strict_types=1);
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\Sugarcrm\Security\ModuleScanner\Exception;
+namespace Sugarcrm\Sugarcrm\Security\ModuleScanner\Issues;
 
-final class CompilerHalted extends ForbiddenStatement
+final class BlacklistedStaticMethodCalled implements Issue
 {
-    public function __construct()
+    private $method;
+    private $line;
+
+    public function __construct(string $method, int $line)
     {
-        parent::__construct('Code attempted to halt compiler');
+        $this->method = $method;
+        $this->line = $line;
+    }
+
+    public function getMessage(): string
+    {
+        return sprintf('Code attempted to call blacklisted static method "%s" at line %s', $this->method, $this->line);
     }
 }
