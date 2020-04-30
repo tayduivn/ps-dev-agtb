@@ -27,6 +27,7 @@ export class Edit extends BaseField {
             $: '[field-name={{name}}]',
             field: {
                 selector: '.select2-container.select2',
+                cascadeCheckBox: '.' + this.name + '_should_cascade',
             }
         });
 
@@ -34,6 +35,11 @@ export class Edit extends BaseField {
     }
 
     public async setValue(val: any): Promise<void> {
+        let isCheckBoxExists = await this.driver.isElementExist(this.$('field.cascadeCheckBox'));
+        if(isCheckBoxExists) {
+            await this.driver.click(this.$('field.cascadeCheckBox'));
+        }
+
         await this.driver.click(this.$('field.selector'));
         await this.driver.waitForApp();
         await this.driver.click(`${this.itemSelector}${val}`);

@@ -84,7 +84,7 @@
                 }
                 var action = toTemplate || this.field.action || this.field.view.action || 'detail';
                 if (action === 'edit') {
-                    this.handleReadOnly();
+                    this.handleReadOnly(true);
                 } else {
                     this.field.setDisabled(false, {trigger: true});
                 }
@@ -101,10 +101,10 @@
                 checkbox.click(function() {
                     if (this.checked === false) {
                         self.field.setDisabled(true, {trigger: true});
-                        $('.' + self.baseFieldName + '_should_cascade').prop('checked', false);
                         self.resetModelValue();
                     } else {
                         self.field.setDisabled(false, {trigger: true});
+                        $('.' + self.baseFieldName + '_should_cascade').prop('checked', true);
                     }
                     // If the field has been enabled/disabled, it has also been
                     // re-rendered. This re-rendering removes the DOM element
@@ -114,7 +114,7 @@
                 });
             },
 
-            handleReadOnly: function() {
+            handleReadOnly: function(editClick = false) {
                 if (this.options && this.options.def && this.options.def.disable_field) {
                     let disableFieldName = this.options.def.disable_field;
                     let calculatedValue = null;
@@ -135,6 +135,11 @@
                         $('.' + this.baseFieldName + '_should_cascade')
                             .prop('disabled', (calculatedValue <= 0));
                     }
+                }
+
+                // Force to set the checkbox to false only on entering the edit mode and not during the other flow
+                if (editClick) {
+                    this.field.setDisabled(true, {trigger: true});
                 }
                 this.bindEditActions();
             },

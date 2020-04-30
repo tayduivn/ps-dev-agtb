@@ -25,12 +25,18 @@ export default class DateField extends BaseField {
         this.selectors = this.mergeSelectors({
             $: '[field-name={{name}}][field-type={{type}}]',
             field: {
-                selector: 'input'
+                selector: 'input',
+                cascadeCheckBox: '.' + this.name + '_should_cascade',
             }
         });
     }
 
     public async setValue(val: any): Promise<void> {
+        let isCheckBoxExists = await this.driver.isElementExist(this.$('field.cascadeCheckBox'));
+        if(isCheckBoxExists) {
+            await this.driver.click(this.$('field.cascadeCheckBox'));
+        }
+
         await this.driver.setValue(this.$('field.selector'), val);
         await this.driver.execSync('blurActiveElement');
     }
