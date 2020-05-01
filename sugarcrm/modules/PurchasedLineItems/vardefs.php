@@ -41,6 +41,21 @@ $dictionary['PurchasedLineItem'] = [
             'vname' => 'LBL_ANNUAL_REVENUE',
             'type' => 'currency',
             'len' => '26,6',
+            'calculated' => true,
+            'enforced' => true,
+            'formula' => 'ifElse(equal($service, "1"),
+                            ifElse(equal($service_duration_unit, "year"),
+                                currencyDivide($total_amount, $service_duration_value),
+                                ifElse(equal($service_duration_unit, "month"),
+                                    currencyMultiply(currencyDivide($total_amount, $service_duration_value), 12),
+                                    ifElse(equal($service_duration_unit, "day"),
+                                        currencyMultiply(currencyDivide($total_amount, $service_duration_value), 365),
+                                        ""
+                                    )
+                                )
+                            ),
+                            $total_amount                            
+                        )',
         ],
         'book_value_usdollar' => [
             'name' => 'book_value_usdollar',

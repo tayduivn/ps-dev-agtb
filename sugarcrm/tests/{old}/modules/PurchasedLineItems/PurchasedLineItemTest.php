@@ -63,4 +63,50 @@ class PurchasedLineItemTest extends TestCase
             ['200.00', 1, '10', '190'],
         ];
     }
+
+    /**
+     * @dataProvider dataProviderAnnualRevenueCalculation
+     * @param $revenue
+     * @param $discount_price
+     * @param $discount_amount
+     * @param $quantity
+     * @param $service
+     * @param $service_duration_unit
+     * @param $service_duration_value
+     */
+    public function testAnnualRevenueCalculation(
+        $revenue,
+        $discount_price,
+        $discount_amount,
+        $quantity,
+        $service,
+        $service_duration_unit,
+        $service_duration_value,
+        $annual_revenue
+    ): void {
+        $pli = SugarTestPurchasedLineItemUtilities::createPurchasedLineItem();
+        $pli->revenue = $revenue;
+        $pli->discount_price = $discount_price;
+        $pli->discount_amount = $discount_amount;
+        $pli->quantity = $quantity;
+        $pli->service = $service;
+        $pli->service_duration_unit = $service_duration_unit;
+        $pli->service_duration_value = $service_duration_value;
+        $pli->save();
+        $this->assertEquals($annual_revenue, round($pli->annual_revenue, 2));
+    }
+
+    public function dataProviderAnnualRevenueCalculation(): array
+    {
+        // values are revenue, discount_price, discount_amount, quantity, service, service_duration_unit,
+        // service_duration_value, annual_revenue
+        return [
+            ['1000.00', '1000.00', 0, 1, false, '', '', '1000.00'],
+            ['300.00', '300.00', 0, 1, true, 'year', '3', '100.00'],
+            ['-300.00', '-300.00', 0, 1, true, 'year', '3', '-100.00'],
+            ['100.00', '100.00', 0, 1, true, 'month', '18', '66.67'],
+            ['18.00', '18.00', 0, 1, true, 'day', '18', '365.00'],
+            ['1000.00', '1000.00', 0, 1, true, 'day', '545', '669.72'],
+        ];
+    }
 }
