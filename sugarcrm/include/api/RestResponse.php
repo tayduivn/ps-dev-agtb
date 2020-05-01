@@ -262,9 +262,7 @@ class RestResponse extends Zend_Http_Response
 
         if (isset($this->server_data["HTTP_IF_NONE_MATCH"]) && $etag == $this->server_data["HTTP_IF_NONE_MATCH"]) {
             // Same data, clean it up and return 304
-            $this->body = '';
             $this->code = 304;
-            $this->type = self::RAW;
             $this->shouldSendBody = false;
             // disable gzip so that apache won't add compression header to response body
             @ini_set('zlib.output_compression', 'Off');
@@ -334,10 +332,17 @@ class RestResponse extends Zend_Http_Response
             $this->sendFile($this->filename);
             return;
         }
-        $response = $this->processContent();
-        $this->sendHeaders();
+
+        $body = null;
+
         if ($this->shouldSendBody) {
-            echo $response;
+            $body = $this->processContent();
+        }
+
+        $this->sendHeaders();
+
+        if ($this->shouldSendBody) {
+            echo $body;
         }
     }
 
