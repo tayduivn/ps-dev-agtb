@@ -105,11 +105,7 @@ $viewdefs['OutboundEmail']['base']['view']['record'] = array(
                     ],
                     'readonly' => true
                 ],
-                array(
-                    'name' => 'email_address',
-                    'type' => 'email-address',
-                    'link' => false,
-                ),
+                'authorized_account',
                 array(
                     'name' => 'mail_smtpuser',
                     'required' => true,
@@ -123,6 +119,11 @@ $viewdefs['OutboundEmail']['base']['view']['record'] = array(
                 'mail_smtpport',
                 'mail_smtpauth_req',
                 'mail_smtpssl',
+                array(
+                    'name' => 'email_address',
+                    'type' => 'email-address',
+                    'link' => false,
+                ),
                 'reply_to_name',
                 array(
                     'name' => 'reply_to_email_address',
@@ -262,9 +263,9 @@ $viewdefs['OutboundEmail']['base']['view']['record'] = array(
                     ),
                 ),
                 array(
-                    'action' => 'ReadOnly',
+                    'action' => 'SetVisibility',
                     'params' => array(
-                        'target' => 'email_address',
+                        'target' => 'authorized_account',
                         'value' => 'equal($mail_smtptype,"google_oauth2")',
                     ),
                 ),

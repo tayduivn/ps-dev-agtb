@@ -31,8 +31,9 @@ class OutboundSmtpEmailConfiguration extends OutboundEmailConfiguration
     private $authenticate;     // true=require authentication on the SMTP server
     private $username;         // the username to use if authenticate=true
     private $password;         // the password to use if authenticate=true
-    private $authType;         // the authentication method to use when connecting to the SMTP server
+    private $smtpType;         // the type of SMTP connection (google, google_oauth2, etc)
     private $eapmId;           // the ID of the EAPM bean holding Oauth2 information to use if applicable
+    private $authAccount;      // the email account that was authenticated via Oauth2 if applicable
 
     /**
      * Extends the default configurations for this sending strategy. Adds default SMTP configurations needed to send
@@ -50,8 +51,9 @@ class OutboundSmtpEmailConfiguration extends OutboundEmailConfiguration
         $this->setAuthenticationRequirement();
         $this->setUsername();
         $this->setPassword();
-        $this->setAuthType();
+        $this->setSMTPType();
         $this->setEAPMId();
+        $this->setAuthAccount();
     }
 
     /**
@@ -240,31 +242,31 @@ class OutboundSmtpEmailConfiguration extends OutboundEmailConfiguration
     }
 
     /**
-     * Sets the authentication method to use to connect to the SMTP server
+     * Sets the type of SMTP connection this represents (google, google_oauth2, etc)
      *
-     * @param string $authType
+     * @param string $smtpType
      * @throws MailerException
      */
-    public function setAuthType($authType = '')
+    public function setSMTPType($smtpType = '')
     {
-        if (!is_string($authType) && !is_null($authType)) {
+        if (!is_string($smtpType) && !is_null($smtpType)) {
             throw new MailerException(
-                "Invalid Configuration: authType must be a string",
+                "Invalid Configuration: smtpType must be a string",
                 MailerException::InvalidConfiguration
             );
         }
 
-        $this->authType = trim($authType);
+        $this->smtpType = trim($smtpType);
     }
 
     /**
-     * Gets the authentication method used to connect to the SMTP server
+     * Gets the type of SMTP connection this represents (google, google_oauth2, etc)
      *
      * @return mixed
      */
-    public function getAuthType()
+    public function getSMTPType()
     {
-        return $this->authType;
+        return $this->smtpType;
     }
 
     /**
@@ -293,6 +295,34 @@ class OutboundSmtpEmailConfiguration extends OutboundEmailConfiguration
     public function getEAPMId()
     {
         return $this->eapmId;
+    }
+
+    /**
+     * Sets the name/ID of the email account that was authorized via Oauth2
+     *
+     * @param string $account the account name/ID (likely an email address login)
+     * @throws MailerException
+     */
+    public function setAuthAccount($account = '')
+    {
+        if (!is_string($account) && !is_null($account)) {
+            throw new MailerException(
+                "Invalid Configuration: account must be a string",
+                MailerException::InvalidConfiguration
+            );
+        }
+
+        $this->authAccount = $account;
+    }
+
+    /**
+     * Gets the name/ID of the email account that was authorized via Oauth2
+     *
+     * @return mixed
+     */
+    public function getAuthAccount()
+    {
+        return $this->authAccount;
     }
 
     /**
@@ -329,8 +359,9 @@ class OutboundSmtpEmailConfiguration extends OutboundEmailConfiguration
             "securityProtocol" => $this->getSecurityProtocol(),
             "username"     => $this->getUsername(),
             "password"     => $this->getPassword(),
-            'authType'     => $this->getAuthType(),
+            'smtpType'     => $this->getSMTPType(),
             'eapmId'       => $this->getEAPMId(),
+            'authAccount'  => $this->getAuthAccount(),
         );
         return array_merge(parent::toArray(), $fields);
     }

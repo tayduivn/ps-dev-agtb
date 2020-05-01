@@ -582,7 +582,7 @@ class SmtpMailerTest extends TestCase
     {
         // Mock the config object to be used by the SmtpMailer instance
         $mockConfig = $this->createPartialMock('OutboundSmtpEmailConfiguration', []);
-        $mockConfig->setFrom('fake@email.com', 'Fake Name');
+        $mockConfig->setAuthAccount('fake@email.com');
         $mockConfig->setEAPMId('fake_eapm_id');
 
         // Mock the external API object to be used by the SmtpMailer instance

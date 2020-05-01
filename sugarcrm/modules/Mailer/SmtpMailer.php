@@ -50,6 +50,13 @@ class SmtpMailer extends BaseMailer
     ];
 
     /**
+     * A list of all OutboundEmail SMTP types that use XOAUTH2 authentication
+     */
+    const XOAUTH2SmtpTypes = [
+        'google_oauth2',
+    ];
+
+    /**
      * Internal PHPMailer instance
      */
     protected $mailer;
@@ -163,9 +170,9 @@ class SmtpMailer extends BaseMailer
         $mailer->Username   = $this->config->getUsername();
         $mailer->Password   = from_html($this->config->getPassword()); // perform HTML character translations
 
-        // Transfer any Oauth2 credentials
-        $mailer->AuthType = $this->config->getAuthType();
-        if ($mailer->AuthType === 'XOAUTH2') {
+        // Transfer any Oauth2 credentials if applicable
+        if (in_array($this->config->getSMTPType(), self::XOAUTH2SmtpTypes)) {
+            $mailer->AuthType = 'XOAUTH2';
             $this->transferOauthConfigurations($mailer);
         }
     }
@@ -187,14 +194,7 @@ class SmtpMailer extends BaseMailer
                 $mailer->oauthClientId = $oauthCredentials['clientId'] ?? '';
                 $mailer->oauthClientSecret = $oauthCredentials['clientSecret'] ?? '';
                 $mailer->oauthRefreshToken = $oauthCredentials['refreshToken'] ?? '';
-
-                // TODO: Right now, this assumes the "From" address is the same
-                // as the username/email address that was authenticated with the
-                // external service (Google). This will change after SS-467,
-                // when we will store the authenticated account separately from
-                // the "From" address and allow the user to specify "From" address.
-                $from = $this->config->getFrom();
-                $mailer->oauthUserEmail = $from->getEmail() ?? '';
+                $mailer->oauthUserEmail = $this->config->getAuthAccount();
             }
         }
     }

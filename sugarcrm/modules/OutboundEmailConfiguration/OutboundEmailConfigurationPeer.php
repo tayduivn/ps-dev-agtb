@@ -575,19 +575,17 @@ class OutboundEmailConfigurationPeer
         switch ($mode) {
             case self::MODE_SMTP:
                 $outboundEmailConfiguration = new OutboundSmtpEmailConfiguration($user);
+                $outboundEmailConfiguration->setSMTPType($outboundEmail->mail_smtptype);
                 $outboundEmailConfiguration->setHost($outboundEmail->mail_smtpserver);
                 $outboundEmailConfiguration->setPort($outboundEmail->mail_smtpport);
 
                 if ($outboundEmail->mail_smtpauth_req) {
                     // require authentication with the SMTP server
                     $outboundEmailConfiguration->setAuthenticationRequirement(true);
-                    if (!empty($outboundEmail->eapm_id)) {
-                        $outboundEmailConfiguration->setAuthType('XOAUTH2');
-                        $outboundEmailConfiguration->setEAPMId($outboundEmail->eapm_id);
-                    } else {
-                        $outboundEmailConfiguration->setUsername($outboundEmail->mail_smtpuser);
-                        $outboundEmailConfiguration->setPassword($outboundEmail->mail_smtppass);
-                    }
+                    $outboundEmailConfiguration->setUsername($outboundEmail->mail_smtpuser);
+                    $outboundEmailConfiguration->setPassword($outboundEmail->mail_smtppass);
+                    $outboundEmailConfiguration->setEAPMId($outboundEmail->eapm_id);
+                    $outboundEmailConfiguration->setAuthAccount($outboundEmail->authorized_account);
                 }
 
                 // determine the appropriate encryption layer for the sending strategy

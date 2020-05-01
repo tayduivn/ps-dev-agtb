@@ -93,7 +93,13 @@ $dictionary['OutboundEmail'] = [
             'source' => 'non-db',
             'table' => 'email_addresses',
             'type' => 'relate',
-            'vname' => 'LBL_EMAIL_ADDRESS',
+            'vname' => 'LBL_FROM_EMAIL_ADDRESS',
+        ],
+        'authorized_account' => [
+            'name' => 'authorized_account',
+            'vname' => 'LBL_AUTHORIZED_ACCOUNT',
+            'type' => 'varchar',
+            'readonly' => true,
         ],
         'reply_to_name' => [
             'name' => 'reply_to_name',

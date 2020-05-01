@@ -54,7 +54,6 @@
         }
     },
 
-    
     /**
      * Handles the oauth completion event.
      * Note that the EAPM bean has already been saved at this point.
@@ -67,16 +66,9 @@
         if (!data.dataSource || data.dataSource !== 'googleEmailRedirect') {
             return false;
         }
-        if (data.eapmId && data.emailAddress && data.emailAddressId) {
+        if (data.eapmId && data.emailAddress) {
             this.model.set('eapm_id', data.eapmId);
-            var emailField = this.view.getField('email_address');
-            if (emailField) {
-                emailField.setValue({
-                    id: data.emailAddressId,
-                    email_address: data.emailAddress
-                });
-                emailField.render();
-            }
+            this.model.set('authorized_account', data.emailAddress);
         } else {
             app.alert.show('error', {
                 level: 'error',
@@ -86,16 +78,9 @@
         return true;
     },
 
-    /**
-     * @inheritdoc
-     */
-    bindDataChange: function() {
-        this._super('bindDataChange');
-        if (this.model) {
-            this.model.on("change:" + this.name, function(model, value) {
-                this._checkAuth(value);
-            }, this);
-        }
+    _render: function() {
+        this._checkAuth(this.model.get(this.name));
+        this._super('_render');
     },
 
     /**
@@ -138,7 +123,6 @@
             } else {
                 this.authButton = 'enabled';
             }
-            this.render();
         }
     },
 

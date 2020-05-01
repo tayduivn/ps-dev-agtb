@@ -115,16 +115,11 @@ class EAPMViewMicrosoftOauth2Redirect extends SugarView
         $response = $this->buildBasicResponse($authResult['token'] ?? null);
         $response['dataSource'] = 'microsoftEmailRedirect';
         if (!empty($response['result'])) {
-            $response['eapmId'] = $authResult['eapmId'] ?? null;
-            $emailAddress = $this->api->getEmailAddress($authResult['eapmId'] ?? null);
+            $eapmId = $authResult['eapmId'] ?? null;
+            $response['eapmId'] = $eapmId;
+            $emailAddress = $this->api->getEmailAddress($eapmId);
             if (!empty($emailAddress)) {
                 $response['emailAddress'] = $emailAddress;
-                $client = new EmailAddressesApi();
-                $emailAddressBean = $client->createBean(new RestService(), [
-                    'email_address' => $emailAddress,
-                    'module' => 'EmailAddresses',
-                ]);
-                $response['emailAddressId'] = $emailAddressBean->id;
             }
         }
         return $response;
