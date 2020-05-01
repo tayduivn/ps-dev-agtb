@@ -25,11 +25,18 @@ class SugarTestHelper
     protected static $registeredVars = array();
 
     /**
-     * @var array array of global vars. They are storing on init one time and restoring in global scope each tearDown
+     * Global variables to be restored after each test
+     *
+     * @var array<string,mixed>
      */
-    protected static $initVars = array(
-        'GLOBALS' => array()
-    );
+    private static $globals = array();
+
+    /**
+     * Global variables to be unset after each test
+     *
+     * @var array<string,null>
+     */
+    private static $unsetGlobals = array();
 
     /**
      * @var array of system preference of SugarCRM as theme etc. They are storing on init one time and restoring each tearDown
@@ -59,13 +66,6 @@ class SugarTestHelper
     }
 
     /**
-     * All methods are static because of it we disable clone
-     */
-    private function __clone()
-    {
-    }
-
-    /**
      * Initialization of main variables of SugarCRM in global scope
      */
     public static function init()
@@ -77,66 +77,25 @@ class SugarTestHelper
         SugarCache::instance()->flush();
         SugarConfig::getInstance()->clearCache();
 
-        // initialization & backup of sugar_config
-        self::$initVars['GLOBALS']['sugar_config'] = null;
-        if ($GLOBALS['sugar_config']) {
-            self::$initVars['GLOBALS']['sugar_config'] = $GLOBALS['sugar_config'];
-        }
-        if (self::$initVars['GLOBALS']['sugar_config'] == false) {
-            global $sugar_config;
-            if (is_file('config.php')) {
-                require_once 'config.php';
-            }
-            if (is_file('config_override.php')) {
-                require_once 'config_override.php';
-            }
-            self::$initVars['GLOBALS']['sugar_config'] = $GLOBALS['sugar_config'];
-        }
+        self::backupGlobal('sugar_config');
+        self::backupGlobal('current_language');
+        self::backupGlobal('current_user');
+        self::backupGlobal('reload_vardefs');
+        self::backupGlobal('locale');
+        self::backupGlobal('service_object');
+        self::backupGlobal('app_strings');
+        self::backupGlobal('moduleList');
+        self::backupGlobal('beanList');
+        self::backupGlobal('beanFiles');
+        self::backupGlobal('bwcModules');
+        self::backupGlobal('modInvisList');
+        self::backupGlobal('objectList');
+        self::backupGlobal('modules_exempt_from_availability_check');
+        self::backupGlobal('adminOnlyList');
 
-        // backup of current_language
-        self::$initVars['GLOBALS']['current_language'] = 'en_us';
-        if (isset($sugar_config['current_language'])) {
-            self::$initVars['GLOBALS']['current_language'] = $sugar_config['current_language'];
-        }
-        if (isset($GLOBALS['current_language'])) {
-            self::$initVars['GLOBALS']['current_language'] = $GLOBALS['current_language'];
-        }
-        $GLOBALS['current_language'] = self::$initVars['GLOBALS']['current_language'];
-
-        // backup of reload_vardefs
-        self::$initVars['GLOBALS']['reload_vardefs'] = null;
-        if (isset($GLOBALS['reload_vardefs'])) {
-            self::$initVars['GLOBALS']['reload_vardefs'] = $GLOBALS['reload_vardefs'];
-        }
-
-        // backup of locale
-        self::$initVars['GLOBALS']['locale'] = null;
-        if (isset($GLOBALS['locale'])) {
-            self::$initVars['GLOBALS']['locale'] = $GLOBALS['locale'];
-        }
-        if (empty(self::$initVars['GLOBALS']['locale'])) {
-            self::$initVars['GLOBALS']['locale'] = Localization::getObject();
-        }
-
-        // backup of service_object
-
-        if (isset($GLOBALS['service_object'])) {
-            self::$initVars['GLOBALS']['service_object'] = $GLOBALS['service_object'];
-        }
-
-        //Backup everything that could have been loaded in modules.php
-        include 'include/modules.php';
-        foreach(array('moduleList', 'beanList', 'beanFiles', 'bwcModules', 'modInvisList',
-                      'objectList', 'modules_exempt_from_availability_check', 'adminOnlyList'
-                     ) as $globVar)
-        {
-            $GLOBALS[$globVar] = $$globVar;
-            self::$initVars['GLOBALS'][$globVar] = $GLOBALS[$globVar];
-        }
-
-        if (isset($GLOBALS['current_user'])) {
-            self::$initVars['GLOBALS']['current_user'] = $GLOBALS['current_user'];
-        }
+        // list strings are only initialized in the MVC or API layers
+        $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
+        self::backupGlobal('app_list_strings');
 
         // backup of SugarThemeRegistry
         self::$systemVars['SugarThemeRegistry'] = SugarThemeRegistry::current();
@@ -144,16 +103,23 @@ class SugarTestHelper
         self::$isInited = true;
     }
 
-    /**
-     * Checking is there helper for variable or not
-     *
-     * @param  string    $varName name of global variable of SugarCRM
-     * @throws Exception fired when there is no implementation of helper for a variable
-     */
-    protected static function checkHelper($varName)
+    private static function backupGlobal(string $name): void
     {
-        if (method_exists(__CLASS__, 'setUp_' . $varName) == false) {
-            throw new Exception('setUp for $' . $varName . ' is not implemented. ' . __CLASS__ . '::setUp_' . $varName);
+        if (array_key_exists($name, $GLOBALS)) {
+            self::$globals[$name] = $GLOBALS[$name];
+        } else {
+            self::$unsetGlobals[$name] = null;
+        }
+    }
+
+    private static function restoreGlobals(): void
+    {
+        foreach (self::$globals as $name => $value) {
+            $GLOBALS[$name] = $value;
+        }
+
+        foreach (self::$unsetGlobals as $name => $_) {
+            unset($GLOBALS[$name]);
         }
     }
 
@@ -167,21 +133,18 @@ class SugarTestHelper
      */
     public static function setUp($varName, $params = array())
     {
-        self::init();
-        self::checkHelper($varName);
+        if (method_exists(__CLASS__, 'setUp_' . $varName) == false) {
+            throw new Exception('setUp for $' . $varName . ' is not implemented. ' . __CLASS__ . '::setUp_' . $varName);
+        }
 
         return call_user_func(__CLASS__ . '::setUp_' . $varName, $params);
     }
 
     /**
      * Clean up all registered variables and restore $initVars and $systemVars
-     * @static
-     * @return bool status of tearDown
      */
-    public static function tearDown()
+    public static function tearDown(): void
     {
-        self::init();
-
         // Handle current_user placing on the end since there are some things
         // that need current user for the clean up
         if (isset(self::$registeredVars['current_user'])) {
@@ -203,12 +166,7 @@ class SugarTestHelper
             }
         }
 
-        // Restoring of system variables
-        foreach (self::$initVars as $scope => $vars) {
-            foreach ($vars as $name => $value) {
-                $GLOBALS[$name] = $value;
-            }
-        }
+        self::restoreGlobals();
 
         // Restore the activity stream.
         Activity::restoreToPreviousState();
@@ -223,8 +181,6 @@ class SugarTestHelper
         // Clear validator constraint factory caches. This is necessary as some of
         // the validators rely on system state like SugarConfig, moduleList, etc.
         Validator::clearValidatorsCache();
-
-        return true;
     }
 
     /**
