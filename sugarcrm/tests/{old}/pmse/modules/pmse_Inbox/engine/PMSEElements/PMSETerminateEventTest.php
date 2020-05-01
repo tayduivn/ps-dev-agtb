@@ -61,7 +61,11 @@ class PMSETerminateEventTest extends TestCase
 
         $sugarQueryMock->expects($this->once())
             ->method('execute')
-            ->will($this->returnValue(array('cas_thread_index' => 1)));
+            ->will($this->returnValue(array(
+                array(
+                    'cas_thread_index' => 1,
+                ),
+            )));
 
         $this->endEvent->setCaseFlowHandler($caseFlowHandlerMock);
 

@@ -609,7 +609,11 @@ class FunctionSugarButtonTest extends TestCase
         $this->assertEquals($expected_customCode, smarty_function_sugar_button($params, $this->_smarty));
         $form = $this->_smarty->get_template_vars('form');
 
-        $this->assertEquals($expected_hidden_array, $form['hidden']);
+        if ($expected_hidden_array !== null) {
+            $this->assertEquals($expected_hidden_array, $form['hidden']);
+        } else {
+            $this->assertNull($form);
+        }
     }
 
     public function testBuildSugarHtml() {

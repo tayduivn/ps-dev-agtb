@@ -28,6 +28,7 @@ class SugarOAuth2StorageTest extends RestTestPortalBase
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('moduleList');
         SugarTestHelper::setUp('app_list_strings');
+        SugarTestHelper::setUp('mod_strings', ['ModuleBuilder']);
 
         parent::setUp();
 

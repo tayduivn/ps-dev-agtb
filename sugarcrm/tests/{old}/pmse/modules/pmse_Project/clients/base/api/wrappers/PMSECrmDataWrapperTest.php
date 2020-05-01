@@ -1020,7 +1020,7 @@ class PMSECrmDataWrapperTest extends TestCase
                 )
             ));
 
-        $this->object->expects($this->at(0))
+        $this->object->expects($this->at(2))
             ->method('retrieveFields')
             ->will($this->returnValue(
                 array(

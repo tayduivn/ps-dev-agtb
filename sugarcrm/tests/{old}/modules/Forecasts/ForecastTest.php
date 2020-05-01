@@ -329,7 +329,7 @@ class ForecastTest extends TestCase
 
         $result = $forecast->getCommitStageDropdown();
 
-        $this->assertEquals($config['buckets_dom'], $result);
+        $this->assertEquals(translate($config['buckets_dom']), $result);
     }
 
     /**
