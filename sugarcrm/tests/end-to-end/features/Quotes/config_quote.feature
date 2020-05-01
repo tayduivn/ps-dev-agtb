@@ -13,7 +13,7 @@ Feature: Quotes Configuration
   Background:
     Given I am logged in
 
-  @quote_config @pr
+  @quote_config @ci-excluded
   Scenario: Quotes > Quotes Config > Make Changes in Quote Configuration drawer
 
     # Create quote record

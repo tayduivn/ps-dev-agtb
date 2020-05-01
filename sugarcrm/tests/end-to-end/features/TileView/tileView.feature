@@ -871,9 +871,9 @@ Feature: Tile View feature
     # Verify tile is located in the correct column
     Then I verify the [*Opp_1] records are under "now" column in #OpportunitiesTileView view
     # Move tile from current month to the next month
-    When I drag *Opp_1 tile to "now + 30d" column in #OpportunitiesTileView view
+    When I drag *Opp_1 tile to "now + 31d" column in #OpportunitiesTileView view
     # Verify that tile is moved successfully
-    Then I verify the [*Opp_1] records are under "now + 30d" column in #OpportunitiesTileView view
+    Then I verify the [*Opp_1] records are under "now + 31d" column in #OpportunitiesTileView view
 
     # Open RLI subpanel in the opportunity record view and verify Expected Close Date of each RLI
     When I select *Opp_1 in #OpportunitiesTileView
