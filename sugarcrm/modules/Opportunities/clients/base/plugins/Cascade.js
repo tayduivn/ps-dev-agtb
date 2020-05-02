@@ -96,7 +96,7 @@
              * as a field on our model.
              */
             bindEditActions: function() {
-                var checkbox = this.field.$el.children('input[type=checkbox]');
+                var checkbox = this.field.$el.find('input[type=checkbox]');
                 var self = this;
                 checkbox.click(function() {
                     if (this.checked === false) {

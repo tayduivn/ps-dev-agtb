@@ -2,11 +2,6 @@
   .fieldset.detail {
     margin-bottom: 11px;
 
-    [data-type=enum],
-    [data-type=date] {
-      margin-bottom: 9px;
-    }
-
     input[type=checkbox] {
       margin-right: 7px;
     }
@@ -15,5 +10,23 @@
   .opportunities_cascade_condition::after {
     color: @grayLight;
     font-size: @baseFontSize;
+  }
+}
+
+.cascade-label {
+  font-size: @baseFontSize;
+  white-space: normal;
+  float: initial;
+  padding: 0;
+}
+
+.flex-list-view-content .select2-container.select2-container-disabled .select2-choice {
+  cursor: not-allowed;
+  color: @slate;
+  background: @grayLighter;
+  border: 1px solid @grayLighter;
+
+  .select2-arrow {
+    display: none;
   }
 }

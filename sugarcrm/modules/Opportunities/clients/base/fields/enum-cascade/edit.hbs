@@ -10,9 +10,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 --}}
-<input type="hidden" class="select2" name="{{name}}"{{#if def.tabindex}} tabindex="{{def.tabindex}}"{{/if}}>
-{{#unless hideHelp}}{{#if def.help}}<p class="help-block">{{str def.help module}}</p>{{/if}}{{/unless}}
-{{#if this.rlisEnabled}}
-    <input type="checkbox" class="{{def.name}}_should_cascade"/>
-    <span class="record-label" style="float:initial;padding:0;">{{str def.lblString}}</span>
-{{/if}}
+<div class="input-append">
+    <div>
+        <input type="hidden" class="select2" name="{{name}}"{{#if def.tabindex}} tabindex="{{def.tabindex}}"{{/if}}>
+        {{#unless hideHelp}}{{#if def.help}}<p class="help-block">{{str def.help module}}</p>{{/if}}{{/unless}}
+    </div>
+    {{#if this.rlisEnabled}}
+        <input type="checkbox" class="{{def.name}}_should_cascade"/>
+        <span class="cascade-label">{{str def.lblString}}</span>
+    {{/if}}
+</div>
+

@@ -35,18 +35,53 @@ $viewdefs['Opportunities']['base']['view']['subpanel-list'] = array(
                     'name' => 'account_name',
                     'sortable' => true,
                 ),
-                array(
-                    'name' => 'sales_stage',
-                    'label' => 'LBL_LIST_SALES_STAGE',
-                    'enabled' => true,
-                    'default' => true,
-                ),
+                // BEGIN SUGARCRM flav!=ent ONLY
                 array(
                     'name' => 'date_closed',
                     'label' => 'LBL_DATE_CLOSED',
                     'enabled' => true,
                     'default' => true,
                 ),
+                array(
+                    'name' => 'sales_stage',
+                    'label' => 'LBL_LIST_SALES_STAGE',
+                    'enabled' => true,
+                    'default' => true,
+                ),
+                // END SUGARCRM flav!=ent ONLY
+                // BEGIN SUGARCRM flav=ent ONLY
+                array(
+                    'name' => 'date_closed',
+                    'type' => 'date-cascade',
+                    'label' => 'LBL_LIST_DATE_CLOSED',
+                    'enabled' => true,
+                    'default' => true,
+                    'disable_field' => array(
+                        'total_revenue_line_items',
+                        'closed_revenue_line_items',
+                    ),
+                ),
+                array(
+                    'name' => 'sales_stage',
+                    'type' => 'enum-cascade',
+                    'label' => 'LBL_LIST_SALES_STAGE',
+                    'enabled' => true,
+                    'default' => true,
+                    'disable_field' => array(
+                        'total_revenue_line_items',
+                        'closed_revenue_line_items',
+                    ),
+                ),
+                array(
+                    'name' => 'service_start_date',
+                    'type' => 'date-cascade',
+                    'label' => 'LBL_SERVICE_START_DATE',
+                    'disable_field' => 'service_open_revenue_line_items',
+                    'related_fields' => array(
+                        'service_open_revenue_line_items',
+                    ),
+                ),
+                // END SUGARCRM flav=ent ONLY
                 array(
                     'name' => 'amount',
                     'type' => 'currency',

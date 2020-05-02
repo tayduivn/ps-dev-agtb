@@ -9,30 +9,19 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
- * @class View.Views.Base.OpportunitiesRecordlistView
- * @alias SUGAR.App.view.views.BaseOpportunitiesRecordlistView
- * @extends View.Views.Base.RecordlistView
+ * @class View.Views.Base.OpportunitiesSubpanelListView
+ * @alias SUGAR.App.view.views.BaseOpportunitiesSubpanelListView
+ * @extends View.Views.Base.SubpanelListView
  */
 ({
-    extendsFrom: 'RecordlistView',
+    extendsFrom: 'SubpanelListView',
 
     /**
      * @inheritdoc
      */
     initialize: function(options) {
         this.plugins = _.union(this.plugins || [], ['CommittedDeleteWarning']);
-        this._super("initialize", [options]);
-    },
-
-    /**
-     * @inheritdoc
-     */
-    parseFieldMetadata: function(options) {
-        options = this._super('parseFieldMetadata', [options]);
-
-        app.utils.hideForecastCommitStageField(options.meta.panels);
-
-        return options;
+        this._super('initialize', [options]);
     },
 
     /**
