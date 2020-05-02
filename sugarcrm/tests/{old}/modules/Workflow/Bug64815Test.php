@@ -68,7 +68,7 @@ class Bug64815Test extends TestCase
         $wft->parent_id = $wf->id;
         $wft->rel_module = '';
         $wft->show_past = 0;
-        $wft->eval = '(  ( !($focus->fetched_row["outlook_id"] ==  "64815" )) && (isset($focus->outlook_id) && $focus->outlook_id ==  "64815") )  ||  (  (isset($focus->outlook_id) && $focus->outlook_id ==  "64815") && !empty($_SESSION["workflow_cron"]) && $_SESSION["workflow_cron"]=="Yes" ) ';
+        $wft->eval = '((!($focus->fetched_row !== false && $focus->fetched_row["outlook_id"] == "64815")) && (isset($focus->outlook_id) && $focus->outlook_id == "64815")) || ((isset($focus->outlook_id) && $focus->outlook_id == "64815") && !empty($_SESSION["workflow_cron"]) && $_SESSION["workflow_cron"] == "Yes")';
         $wft->save();
 
         $wf->write_workflow();
