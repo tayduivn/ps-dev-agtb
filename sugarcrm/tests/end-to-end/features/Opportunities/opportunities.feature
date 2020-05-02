@@ -426,3 +426,94 @@ Feature: RLI module verification
       | fieldName   | value      |
       | date_closed | 04/19/2020 |
 
+
+  @opportunity_expected_close_date @SS-302 @SS-323 @AT-362
+  Scenario Outline: Opportunities > Record view > Editing Expected Close Date for all open RLIs in an Opportunity at once
+    Given Accounts records exist:
+      | *name     |
+      | Account_1 |
+    # Create opportunity records with linked RLIs
+    And Opportunities records exist related via opportunities link to *Account_1:
+      | *name | lead_source | opportunity_type  |
+      | Opp_1 | Cold Call   | Existing Business |
+    And RevenueLineItems records exist related via revenuelineitems link to *Opp_1:
+      | *name | date_closed               | likely_case | sales_stage         |
+      | RLI_1 | 2020-04-18T19:20:22+00:00 | 1000        | Prospecting         |
+      | RLI_2 | 2020-04-17T19:20:22+00:00 | 2000        | Qualification       |
+      | RLI_3 | 2020-04-16T19:20:22+00:00 | 3000        | Perception Analysis |
+      | RLI_4 | 2020-04-15T19:20:22+00:00 | 4000        | Closed Won          |
+      | RLI_5 | 2020-04-19T19:20:22+00:00 | 5000        | Closed Lost         |
+
+    Given I open about view and login
+
+    # Navigate to Opportunities module
+    When I choose Opportunities in modules menu
+    When I select *Opp_1 in #OpportunitiesList.ListView
+
+    # Verify value of date_closed field
+    Then I verify fields on #Opp_1Record.RecordView
+      | fieldName   | value      |
+      | date_closed | 04/18/2020 |
+
+    # Edit sales_stage field of the opportunity
+    When I click Edit button on #Opp_1Record header
+    When I provide input for #Opp_1Record.RecordView view
+      | date_closed     |
+      | <December_2020> |
+    When I click Save button on #Opp_1Record header
+    When I close alert
+
+    # Verify value of date_closed field
+    Then I verify fields on #Opp_1Record.RecordView
+      | fieldName   | value           |
+      | date_closed | <December_2020> |
+
+    # Verify value of date_close field in linked RLI records
+    When I open the revenuelineitems subpanel on #Opp_1Record view
+    Then I verify fields for *RLI_1 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
+      | fieldName   | value           |
+      | date_closed | <December_2020> |
+    Then I verify fields for *RLI_2 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
+      | fieldName   | value           |
+      | date_closed | <December_2020> |
+    Then I verify fields for *RLI_3 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
+      | fieldName   | value           |
+      | date_closed | <December_2020> |
+    Then I verify fields for *RLI_4 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
+      | fieldName   | value      |
+      | date_closed | 04/15/2020 |
+    Then I verify fields for *RLI_5 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
+      | fieldName   | value      |
+      | date_closed | 04/19/2020 |
+
+    When I choose Opportunities in modules menu
+    When I click on preview button on *Opp_1 in #OpportunitiesList.ListView
+    When I click on Edit button in #Opp_1Preview.PreviewHeaderView
+    When I provide input for #Opp_1Preview.PreviewView view
+      | date_closed    |
+      | <January_2021> |
+    When I click on Save button in #Opp_1Preview.PreviewHeaderView
+    When I close alert
+
+    When I select *Opp_1 in #OpportunitiesList.ListView
+    # Verify value of date_close field in linked RLI records
+    When I open the revenuelineitems subpanel on #Opp_1Record view
+    Then I verify fields for *RLI_1 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
+      | fieldName   | value          |
+      | date_closed | <January_2021> |
+    Then I verify fields for *RLI_2 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
+      | fieldName   | value          |
+      | date_closed | <January_2021> |
+    Then I verify fields for *RLI_3 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
+      | fieldName   | value          |
+      | date_closed | <January_2021> |
+    Then I verify fields for *RLI_4 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
+      | fieldName   | value      |
+      | date_closed | 04/15/2020 |
+    Then I verify fields for *RLI_5 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
+      | fieldName   | value      |
+      | date_closed | 04/19/2020 |
+
+    Examples:
+      | December_2020 | January_2021 |
+      | 12/12/2020    | 01/01/2021   |

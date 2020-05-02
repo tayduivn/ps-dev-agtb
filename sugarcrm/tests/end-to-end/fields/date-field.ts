@@ -25,7 +25,7 @@ export default class DateField extends BaseField {
         this.selectors = this.mergeSelectors({
             $: '[field-name={{name}}][field-type={{type}}]',
             field: {
-                selector: 'input',
+                selector: 'input.datepicker',
                 cascadeCheckBox: '.' + this.name + '_should_cascade',
             }
         });
