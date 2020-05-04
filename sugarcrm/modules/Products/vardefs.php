@@ -585,6 +585,9 @@ $dictionary['Product'] = array(
             'table' => 'campaigns',
             'module' => 'Campaigns',
             'source' => 'non-db',
+            'studio' => array(
+                'mobile' => false,
+            ),
         ),
         'campaign_products' => array(
             'name' => 'campaign_products',

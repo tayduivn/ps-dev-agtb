@@ -335,6 +335,9 @@ $dictionary['Lead'] = array(
             'source' => 'non-db',
             'additionalFields' => array('id' => 'campaign_id'),
             'massupdate' => false,
+            'studio' => array(
+                'mobile' => false,
+            ),
         ),
         'campaign_leads' => array(
             'name' => 'campaign_leads',

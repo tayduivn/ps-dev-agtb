@@ -700,6 +700,9 @@ $dictionary['RevenueLineItem'] = array(
             'table' => 'campaigns',
             'module' => 'Campaigns',
             'source' => 'non-db',
+            'studio' => array(
+                'mobile' => false,
+            ),
         ),
         'campaign_revenuelineitems' => array(
             'name' => 'campaign_revenuelineitems',

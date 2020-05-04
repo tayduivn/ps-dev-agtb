@@ -108,6 +108,9 @@ $dictionary['Opportunity'] = array(
             'table' => 'campaigns',
             'module' => 'Campaigns',
             'source' => 'non-db',
+            'studio' => array(
+                'mobile' => false,
+            ),
         ),
         'campaign_opportunities' => array(
             'name' => 'campaign_opportunities',

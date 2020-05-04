@@ -364,6 +364,9 @@ $dictionary['Account'] = array(
             'module' => 'Campaigns',
             'duplicate_merge' => 'disabled',
             'comment' => 'The first campaign name for Account (Meta-data only)',
+            'studio' => array(
+                'mobile' => false,
+            ),
         ),
         'prospect_lists' => array(
             'name' => 'prospect_lists',

@@ -646,6 +646,9 @@ $dictionary['Contact'] = array(
             'module' => 'Campaigns',
             'duplicate_merge' => 'disabled',
             'comment' => 'The first campaign name for Contact (Meta-data only)',
+            'studio' => array(
+                'mobile' => false,
+            ),
         ),
         'campaigns' => array(
             'name' => 'campaigns',
