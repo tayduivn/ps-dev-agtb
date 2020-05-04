@@ -349,6 +349,7 @@ $fieldsHidden = array(
     'product_type',
     'lead_source',
     'campaign_name',
+    'purchasedlineitem_name',
     'assigned_user_name',
     'team_name',
     array(
