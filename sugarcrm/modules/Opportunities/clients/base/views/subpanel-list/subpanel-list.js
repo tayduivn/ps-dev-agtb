@@ -32,8 +32,8 @@
      */
     editClicked: function(model, field) {
         this._super('editClicked', [model,field]);
-        $('td[data-type="date-cascade"]').css('min-width', '210px');
-        $('td[data-type="enum-cascade"]').css('min-width', '210px');
+        $('td[data-type="date-cascade"]').addClass('cascade-width');
+        $('td[data-type="enum-cascade"]').addClass('cascade-width');
     },
 
     /**
@@ -44,8 +44,8 @@
      */
     toggleRow: function(modelId, isEdit) {
         if (!isEdit) {
-            $('td[data-type="date-cascade"]').css('min-width', '');
-            $('td[data-type="enum-cascade"]').css('min-width', '');
+            $('td[data-type="date-cascade"]').removeClass('cascade-width');
+            $('td[data-type="enum-cascade"]').removeClass('cascade-width');
             this.resize();
         }
         this._super('toggleRow', [modelId,isEdit]);
