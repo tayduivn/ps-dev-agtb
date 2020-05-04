@@ -109,6 +109,11 @@ export default class extends BaseView {
                     'View Tasks': 'a[data-navbar-menu-item="LNK_TASK_LIST"]',
                     'Import Tasks': 'a[data-navbar-menu-item="LNK_IMPORT_TASKS"]',
 
+                    // Purchases
+                    'Create Purchase': 'a[data-navbar-menu-item="LNK_NEW_PURCHASE"]',
+                    'View Purchases': 'a[data-navbar-menu-item="LNK_LNK_NEW_PURCHASE_LIST"]',
+                    'View Purchase Reports': 'a[data-navbar-menu-item="LNK_PURCHASE_REPORTS"]',
+                    'Import Purchases': 'a[data-navbar-menu-item="LNK_IMPORT_PURCHASE"]',
                 },
             }
         };
