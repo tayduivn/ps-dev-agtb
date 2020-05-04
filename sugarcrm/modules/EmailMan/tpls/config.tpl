@@ -46,7 +46,7 @@ var authInfo = {/literal}{$js_authinfo}{literal}
 	<tr>
 
 		<td>
-			<input title="{$APP.LBL_SAVE_BUTTON_TITLE}" accessKey="{$APP.LBL_SAVE_BUTTON_KEY}" class="button primary" onclick="this.form.action.value='Save';return verify_data(this);" type="submit" name="button" id="btn_save" value=" {$APP.LBL_SAVE_BUTTON_LABEL} ">
+			<input title="{$APP.LBL_SAVE_BUTTON_TITLE}" accessKey="{$APP.LBL_SAVE_BUTTON_KEY}" class="button primary" onclick="this.form.action.value='Save';return save_data(this);" type="submit" name="button" id="btn_save" value=" {$APP.LBL_SAVE_BUTTON_LABEL} ">
 			<input title="{$APP.LBL_CANCEL_BUTTON_TITLE}" accessKey="{$APP.LBL_CANCEL_BUTTON_KEY}" class="button" onclick="this.form.action.value='{$RETURN_ACTION}'; this.form.module.value='{$RETURN_MODULE}';" type="submit" name="button" value=" {$APP.LBL_CANCEL_BUTTON_LABEL} ">
 		</td>
 		<td align="right" nowrap>
@@ -194,7 +194,7 @@ var authInfo = {/literal}{$js_authinfo}{literal}
 		</tr>
 		<tr><td colspan="4">&nbsp;</tr>
 		<tr>
-		    <td width="15%"><input id="test_button" type="button" class="button" value="{$APP.LBL_EMAIL_TEST_OUTBOUND_SETTINGS}" onclick="testOutboundSettings();">&nbsp;</td>
+		    <td width="15%"><input type="button" class="button" value="{$APP.LBL_EMAIL_TEST_OUTBOUND_SETTINGS}" onclick="testOutboundSettings();">&nbsp;</td>
 		    <td width="15%">&nbsp;</td>
             <td width="40%">&nbsp;</td>
 		    <td width="40%">&nbsp;</td>
@@ -438,7 +438,7 @@ var authInfo = {/literal}{$js_authinfo}{literal}
 </div>
 
 <div style="padding-top:2px;">
-			<input title="{$APP.LBL_SAVE_BUTTON_TITLE}" class="button primary" onclick="this.form.action.value='Save';return verify_data(this);" type="submit" name="button" value=" {$APP.LBL_SAVE_BUTTON_LABEL} ">
+			<input title="{$APP.LBL_SAVE_BUTTON_TITLE}" class="button primary" onclick="this.form.action.value='Save';return save_data(this);" type="submit" name="button" value=" {$APP.LBL_SAVE_BUTTON_LABEL} ">
 			<input title="{$APP.LBL_CANCEL_BUTTON_TITLE}" class="button" onclick="this.form.action.value='{$RETURN_ACTION}'; this.form.module.value='{$RETURN_MODULE}';" type="submit" name="button" value=" {$APP.LBL_CANCEL_BUTTON_LABEL} ">
 </div>
 
@@ -482,6 +482,15 @@ function testOutboundSettings() {
     var smtpPort = document.getElementById('mail_smtpport').value;
     var smtpssl  = document.getElementById('mail_smtpssl').value;
     var mailsmtpauthreq = document.getElementById('mail_smtpauth_req');
+    var smtpType = document.getElementById('EditView').mail_smtptype.value;
+    var eapmId = document.getElementById('EditView').eapm_id.value;
+    var authAccount = document.getElementById('authorized_account').value;
+
+    if(smtpType === 'google_oauth2' && (trim(eapmId) === '' || trim(authAccount) === '')) {
+        errorMessage = "{/literal}{$APP.LBL_EMAIL_PLEASE_AUTHORIZE_TESTING}{literal}" + "<br/>";
+        overlay("{/literal}{$APP.LBL_EMAIL_ACCOUNT_NOT_AUTHORIZED}{literal}", errorMessage, 'alert');
+        return false;
+    }
     if(trim(smtpServer) == '') {
         isError = true;
         errorMessage += "{/literal}{$APP.LBL_EMAIL_ACCOUNTS_SMTPSERVER}{literal}" + "<br/>";
@@ -547,12 +556,15 @@ function sendTestEmail()
     var mailsmtpauthreq = document.getElementById('mail_smtpauth_req');
     var mail_sendtype = document.getElementById('mail_sendtype').value;
     var smtppass = trim(document.getElementById('mail_smtppass').value);
+    var smtpType = document.getElementById('EditView').mail_smtptype.value;
+    var eapmId = document.getElementById('EditView').eapm_id.value;
+    var authAccount = document.getElementById('authorized_account').value;
 
     var from_name = document.getElementById('notify_fromname').value;
 	var postDataString = 'mail_type=system&mail_sendtype=' + mail_sendtype + '&mail_smtpserver=' + smtpServer + "&mail_smtpport=" + smtpPort + "&mail_smtpssl=" + smtpssl +
 	                      "&mail_smtpauth_req=" + mailsmtpauthreq.checked + "&mail_smtpuser=" + trim(document.getElementById('mail_smtpuser').value) +
 	                      "&mail_smtppass=" + encodeURIComponent(smtppass) + "&outboundtest_to_address=" + encodeURIComponent(toAddress) +
-                          "&outboundtest_from_address=" + fromAddress + "&mail_from_name=" + from_name;
+                          "&outboundtest_from_address=" + fromAddress + "&mail_from_name=" + from_name + "&mail_smtptype=" + smtpType + "&eapm_id=" + eapmId + "&authorized_account=" + authAccount;
 
 	YAHOO.util.Connect.asyncRequest("POST", "index.php?action=testOutboundEmail&module=EmailMan&to_pdf=true&sugar_body_only=true", callbackOutboundTest, postDataString);
 }
@@ -665,11 +677,22 @@ function handleOauthComplete(e) {
         document.getElementById('authorized_account').value = data.emailAddress;
         document.getElementById('auth_email').value = data.emailAddress;
         document.getElementById('mail_smtpuser').value = data.emailAddress;
-        document.getElementById('test_button').disabled = false;
     } else {
         alert('{/literal}{$APP.LBL_EMAIL_AUTH_FAILURE}{literal}');
     }
     window.removeEventListener('message', handleOauthComplete);
+}
+function save_data(form) {
+    var smtpType = document.getElementById('EditView').mail_smtptype.value;
+    var eapmId = document.getElementById('EditView').eapm_id.value;
+    var authAccount = document.getElementById('authorized_account').value;
+
+    if(smtpType === 'google_oauth2' && (trim(eapmId) === '' || trim(authAccount) === '')) {
+        errorMessage = "{/literal}{$APP.LBL_EMAIL_PLEASE_AUTHORIZE}{literal}";
+        alert(errorMessage);
+        return false;
+    }
+    return verify_data(form);
 }
 function changeEmailScreenDisplay(smtptype, clear)
 {
@@ -679,7 +702,6 @@ function changeEmailScreenDisplay(smtptype, clear)
     document.getElementById("smtp_auth2").style.display = '';
     document.getElementById("smtp_auth1").style.visibility = 'visible';
     document.getElementById("smtp_auth2").style.visibility = 'visible';
-    document.getElementById("test_button").disabled = false;
     document.getElementById("mail_smtpauth_req").disabled = false;
 
     if(clear) {
@@ -756,9 +778,6 @@ function changeEmailScreenDisplay(smtptype, clear)
                     break;
                 }
             }
-        }
-        if (!document.getElementById('EditView').eapm_id.value) {
-            document.getElementById("test_button").disabled = true;
         }
         document.getElementById("smtp_auth1").style.display = 'none';
         document.getElementById("smtp_auth2").style.display = 'none';
