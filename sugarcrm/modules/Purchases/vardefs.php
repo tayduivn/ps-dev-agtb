@@ -29,12 +29,14 @@ $dictionary['Purchase'] = [
                 'enabled' => true,
                 'searchable' => false,
             ),
+            'readonly' => true,
         ],
         'end_date' => [
             'name' => 'end_date',
             'vname' => 'LBL_END_DATE',
             'type' => 'date',
             'comment' => 'End date of the purchase',
+            'readonly' => true,
         ],
         'service' => [
             'name' => 'service',

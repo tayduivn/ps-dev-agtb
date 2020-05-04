@@ -39,6 +39,7 @@ class PurchasedLineItem extends Basic
     public $total_amount;
     public $yearly_revenue;
     // Fields for relationships
+    public $purchase_id;
     public $categories;
     public $category_id;
     public $category_name;
@@ -74,4 +75,118 @@ class PurchasedLineItem extends Basic
         }
         return false;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function save($check_notify = false)
+    {
+        $id = parent::save($check_notify);
+        $this->updateRelatedPurchase($this->purchase_id);
+
+        return $id;
+    }
+
+    /**
+     * Updates start_date and end_date on related Purchase if necessary
+     *
+     * @param string $id the ID of the Purchase to update
+     * @throws SugarQueryException
+     */
+    protected function updateRelatedPurchase($id = null)
+    {
+        $purchaseBean = BeanFactory::retrieveBean('Purchases', $id);
+        $purchaseId = $purchaseBean->id;
+        $doesUpdate = false;
+        if (!empty($purchaseId)) {
+            // Purchase fields to be updated on addition/deletion of a PLI
+            $rollupFields = [
+                'start_date' => $this->getPurchaseStartDate($purchaseId),
+                'end_date' => $this->getPurchaseEndDate($purchaseId),
+            ];
+
+            // Update the Purchase with the calculated rollup values
+            foreach ($rollupFields as $field => $calculatedValue) {
+                if ($purchaseBean->$field !== $calculatedValue) {
+                    $purchaseBean->$field = $calculatedValue;
+                    $doesUpdate = true;
+                }
+            }
+
+            // If the Purchase bean was updated then save the bean
+            if ($doesUpdate) {
+                $purchaseBean->save();
+            }
+        }
+    }
+
+    /**
+     * Gets a start date or end date for a purchase
+     *
+     * @param string $type Either start or end
+     * @param string $purchaseId the ID of the Purchase
+     * @return string The end date or start date
+     * @throws SugarQueryException
+     */
+    protected function getPurchaseDateByType(string $type, string $purchaseId) : string
+    {
+        // Get the sort order based on service start or end date
+        $sort = $type === 'start' ? 'ASC' : 'DESC';
+        $field = sprintf('service_%s_date', $type);
+
+        // Start working the query
+        $db = DBManagerFactory::getInstance();
+
+        // Get the relevant date for the related PLI
+        $q = new SugarQuery();
+        $q->from($this);
+        $q->select($field);
+        $q->where()->equals('purchase_id', $purchaseId);
+        $q->orderBy($field, $sort);
+        $date = $db->fromConvert($q->getOne(), 'date');
+        return !empty($date) ? $date : '';
+    }
+
+    /**
+     * Gets the end date for a purchase
+     *
+     * @param string $purchaseId the ID of the Purchase
+     * @return string The purchase End Date
+     * @throws SugarQueryException
+     */
+    public function getPurchaseEndDate(string $purchaseId = null): string
+    {
+        return $this->getPurchaseDateByType('end', $purchaseId);
+    }
+
+    /**
+     * Gets the start date for a purchase
+     *
+     * @param string $purchaseId the ID of the Purchase
+     * @return string The purchase Start Date
+     * @throws SugarQueryException
+     */
+    public function getPurchaseStartDate(string $purchaseId = null): string
+    {
+        return $this->getPurchaseDateByType('start', $purchaseId);
+    }
+
+    /**
+     * Override the current SugarBean functionality to make sure that when this method is called that it will also
+     * update rollup fields on the related Purchase
+     *
+     * @param string $id The ID of the record we want to delete
+     */
+    public function mark_deleted($id)
+    {
+        // Grab the IDs of the related modules as these fields are removed in the
+        // call to the parent mark_deleted
+        $purchaseId = $this->purchase_id;
+
+        parent::mark_deleted($id);
+
+        // Update rollups on parent records
+        $this->updateRelatedPurchase($purchaseId);
+    }
+
 }

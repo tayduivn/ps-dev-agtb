@@ -109,4 +109,76 @@ class PurchasedLineItemTest extends TestCase
             ['1000.00', '1000.00', 0, 1, true, 'day', '545', '669.72'],
         ];
     }
+
+    /**
+     * @covers ::updateRelatedPurchase
+     * @dataProvider providerTestUpdateRelatedPurchase
+     *
+     * @param Array $pliDataArray array of PLIs to create
+     * @param string $start_date the expected start_date of the Purchase affected
+     * @param string $end_date the expected end_date of the Purchase affected
+     */
+    public function testUpdateRelatedPurchase($pliDataArray, $start_date, $end_date)
+    {
+        // Create a purchase
+        $purchase = SugarTestPurchaseUtilities::createPurchase();
+
+        // Create PLIs that point to the account. On save, they should update
+        // that purchases's start_date and end_date fields
+        foreach ($pliDataArray as $pliData) {
+            $pli = SugarTestPurchasedLineItemUtilities::createPurchasedLineItem();
+            $pli->purchase_id = $purchase->id;
+            $pli->service = $pliData['service'];
+            $pli->service_start_date = $pliData['service_start_date'];
+            $pli->service_end_date = $pliData['service_end_date'];
+            $pli->save();
+        }
+
+        // Check that the purchase's start_date and end_date were correctly calculated
+        // on PLI save
+        $resultPurchase = BeanFactory::retrieveBean('Purchases', $purchase->id);
+        $this->assertEquals($start_date, $resultPurchase->start_date);
+        $this->assertEquals($end_date, $resultPurchase->end_date);
+    }
+
+    public function providerTestUpdateRelatedPurchase()
+    {
+        return array(
+            // No related PLIs
+            array(
+                array(
+                ),
+                '',
+                '',
+            ),
+            // 2 related service PLIs with different start and end dates
+            array(
+                array(
+                    array('service' => 1, 'service_start_date' => '2020-01-01', 'service_end_date' => '2020-11-12'),
+                    array('service' => 1, 'service_start_date' => '2020-05-01', 'service_end_date' => '2025-05-01'),
+                ),
+                '2020-01-01',
+                '2025-05-01',
+            ),
+            // 2 related goods PLIs with the same start and end dates
+            array(
+                array(
+                    array('service' => 0, 'service_start_date' => '2019-10-05', 'service_end_date' => '2019-10-05'),
+                    array('service' => 0, 'service_start_date' => '2020-08-08', 'service_end_date' => '2020-08-08'),
+                ),
+                '2019-10-05',
+                '2020-08-08',
+            ),
+            // 3 related PLIs one of which is service
+            array(
+                array(
+                    array('service' => 1, 'service_start_date' => '2017-01-31', 'service_end_date' => '2050-12-31'),
+                    array('service' => 0, 'service_start_date' => '2021-06-01', 'service_end_date' => '2021-06-01'),
+                    array('service' => 0, 'service_start_date' => '2060-10-05', 'service_end_date' => '2060-10-05'),
+                ),
+                '2017-01-31',
+                '2060-10-05',
+            ),
+        );
+    }
 }
