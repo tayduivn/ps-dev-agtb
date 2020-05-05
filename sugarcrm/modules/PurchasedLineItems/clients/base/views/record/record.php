@@ -220,7 +220,7 @@ $viewdefs['PurchasedLineItems']['base']['view']['record'] = [
                 ],
                 'renewable',
                 [
-                    'description',
+                    'name' => 'description',
                     'span' => 12,
                 ],
                 'assigned_user_name',
