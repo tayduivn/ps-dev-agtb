@@ -1346,17 +1346,118 @@ class ConfigTest extends TestCase
     public function isSpecialBeanActionProvider() : array
     {
         return [
-            ['1', null, 'Users', [], true],
-            [null, '1', 'Users', [], true],
-            [null, null, 'Users', [], false],
-            ['0', '0', 'Users', [], false],
-            [false, false, 'Users', [], false],
-            [true, true, 'Users', [], true],
-            ['1', '1', 'Calls', [], false],
-            [null, null, 'Users', ['usertype' => 'portal'], true],
-            [null, null, 'Users', ['usertype' => 'group'], true],
-            [null, null, 'Users', ['usertype' => 'foo'], false],
-            ['1', '1', 'Calls', ['usertype' => 'group'], false],
+            [
+                'isGroup' => '1',
+                'isPortal' => null,
+                'moduleName' => 'Users',
+                'request' => [],
+                'username' => 'user',
+                'result' => true,
+            ],
+            [
+                'isGroup' => null,
+                'isPortal' => '1',
+                'moduleName' => 'Users',
+                'request' => [],
+                'username' => 'user',
+                'result' => true,
+            ],
+            [
+                'isGroup' => null,
+                'isPortal' => null,
+                'moduleName' => 'Users',
+                'request' => [],
+                'username' => 'user',
+                'result' => false,
+            ],
+            [
+                'isGroup' => '0',
+                'isPortal' => '0',
+                'moduleName' => 'Users',
+                'request' => [],
+                'username' => 'user',
+                'result' => false,
+            ],
+            [
+                'isGroup' => false,
+                'isPortal' => false,
+                'moduleName' => 'Users',
+                'request' => [],
+                'username' => 'user',
+                'result' => false,
+            ],
+            [
+                'isGroup' => true,
+                'isPortal' => true,
+                'moduleName' => 'Users',
+                'request' => [],
+                'username' => 'user',
+                'result' => true,
+            ],
+            [
+                'isGroup' => '1',
+                'isPortal' => '1',
+                'moduleName' => 'Calls',
+                'request' => [],
+                'username' => 'user',
+                'result' => false,
+            ],
+            [
+                'isGroup' => null,
+                'isPortal' => null,
+                'moduleName' => 'Users',
+                'request' => ['usertype' => 'portal'],
+                'username' => 'user',
+                'result' => true,
+            ],
+            [
+                'isGroup' => null,
+                'isPortal' => null,
+                'moduleName' => 'Users',
+                'request' => ['usertype' => 'group'],
+                'username' => 'user',
+                'result' => true,
+            ],
+            [
+                'isGroup' => null,
+                'isPortal' => null,
+                'moduleName' => 'Users',
+                'request' => ['usertype' => 'foo'],
+                'username' => 'user',
+                'result' => false,
+            ],
+            [
+                'isGroup' => true,
+                'isPortal' => true,
+                'moduleName' => 'Users',
+                'request' => [],
+                'username' => 'user',
+                'result' => true,
+            ],
+            [
+                'isGroup' => '1',
+                'isPortal' => '1',
+                'moduleName' => 'Calls',
+                'request' => ['usertype' => 'group'],
+                'username' => 'user',
+                'result' => false,
+            ],
+            [
+                'isGroup' => '0',
+                'isPortal' => '0',
+                'moduleName' => 'Employees',
+                'request' => [],
+                'username' => 'user',
+                'result' => false,
+            ],
+            [
+                'isGroup' => '0',
+                'isPortal' => '0',
+                'moduleName' => 'Employees',
+                'request' => [],
+                'username' => '',
+                'result' => true,
+            ],
         ];
     }
 
@@ -1368,15 +1469,23 @@ class ConfigTest extends TestCase
      * @param mixed $isPortal
      * @param string $moduleName
      * @param array $request
+     * @param string $username
      * @param bool $result
      */
-    public function testIsSpecialBeanAction($isGroup, $isPortal, string $moduleName, array $request, bool $result)
-    {
+    public function testIsSpecialBeanAction(
+        $isGroup,
+        $isPortal,
+        string $moduleName,
+        array $request,
+        string $username,
+        bool $result
+    ): void {
         $config = new Config($this->createMock(\SugarConfig::class));
         $bean = $this->createMock(\SugarBean::class);
         $bean->is_group = $isGroup;
         $bean->portal_only = $isPortal;
         $bean->module_name = $moduleName;
+        $bean->user_name = $username;
         $this->assertEquals($result, $config->isSpecialBeanAction($bean, $request));
     }
 }

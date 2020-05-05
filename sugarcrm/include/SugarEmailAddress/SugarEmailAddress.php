@@ -1599,10 +1599,9 @@ class SugarEmailAddress extends SugarBean
  * @param string $value unused
  * @param string $view DetailView or EditView
  * @param string $tabindex
- * @param bool   $skipIdmRestrictions Optional, should we skip IDM restrictions for the field
  * @return string
  */
-function getEmailAddressWidget($focus, $field, $value, $view, $tabindex = '0', $skipIdmRestrictions = false)
+function getEmailAddressWidget($focus, $field, $value, $view, $tabindex = '0')
 {
     $sea = BeanFactory::newBean('EmailAddresses');
     $sea->setView($view);
@@ -1612,7 +1611,15 @@ function getEmailAddressWidget($focus, $field, $value, $view, $tabindex = '0', $
             $module = $focus->module_dir;
             if ($view == 'ConvertLead' && $module == "Contacts") $module = "Leads";
 
-            return $sea->getEmailAddressWidgetEditView($focus->id, $module, false, '', $tabindex, $skipIdmRestrictions);
+            $idmConfig = new IdmConfig(\SugarConfig::getInstance());
+            return $sea->getEmailAddressWidgetEditView(
+                $focus->id,
+                $module,
+                false,
+                '',
+                $tabindex,
+                !$idmConfig->isIDMModeEnabled() || $idmConfig->isSpecialBeanAction($focus, [])
+            );
         }
         elseif ($view == 'wirelessedit') {
             return $sea->getEmailAddressWidgetWirelessEdit($focus->id, $focus->module_dir, false);
