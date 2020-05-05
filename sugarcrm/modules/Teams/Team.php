@@ -289,16 +289,9 @@ class Team extends SugarBean
 		return $user_list;
 	}
 
-    public function mark_deleted($id)
+    protected function doMarkDeleted(): void
     {
-        if ($id == $this->id) {
-            $this->delete_team();
-        } else {
-            $bean = BeanFactory::getBean('Teams', $id);
-            if ($bean) {
-                $bean->delete_team();
-            }
-        }
+        $this->delete_team();
 	}
 
 	/**

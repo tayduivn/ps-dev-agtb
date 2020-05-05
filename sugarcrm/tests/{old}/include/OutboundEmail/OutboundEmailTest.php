@@ -186,22 +186,6 @@ class OutboundEmailTest extends TestCase
     }
 
     /**
-     * @covers ::mark_deleted
-     */
-    public function testMarkDeleted()
-    {
-        $bean = $this->createPartialMock('OutboundEmail', ['delete']);
-        $bean->method('delete')->willReturn(true);
-        $bean->id = Uuid::uuid1();
-
-        $actual = $bean->mark_deleted(Uuid::uuid1());
-        $this->assertFalse($actual, 'Should return false when trying to delete a different instance');
-
-        $actual = $bean->mark_deleted($bean->id);
-        $this->assertTrue($actual, 'Should return true when deleting the instance');
-    }
-
-    /**
      * @covers ::delete
      */
     public function testDelete()

@@ -831,13 +831,9 @@ class OutboundEmail extends SugarBean
      *
      * {@inheritdoc}
      */
-    public function mark_deleted($id)
+    protected function doMarkDeleted(): void
     {
-        if ($this->id !== $id) {
-            return false;
-        }
-
-        return $this->delete();
+        $this->delete();
     }
 
     /**

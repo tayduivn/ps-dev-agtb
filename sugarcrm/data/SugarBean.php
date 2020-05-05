@@ -6193,14 +6193,10 @@ class SugarBean
     }
 
     /**
-     * This function may be overridden in each module.  It marks an item as deleted.
-     *
-     * If it is not overridden, then marking this type of item is not allowed
-	 */
+     * @final This method will become strictly final in a future version
+     */
     public function mark_deleted($id)
     {
-        global $current_user;
-        $date_modified = $GLOBALS['timedate']->nowDb();
         if (isset($_SESSION['show_deleted'])) {
             $this->mark_undeleted($id);
         } else {
@@ -6211,65 +6207,83 @@ class SugarBean
             // call the custom business logic
             $custom_logic_arguments['id'] = $id;
             $this->call_custom_logic("before_delete", $custom_logic_arguments);
-            $this->deleted = 1;
 
-            if (isset($this->field_defs['team_id'])) {
-                if (empty($this->teams)) {
-                    $this->load_relationship('teams');
-                }
-
-                if (!empty($this->teams)) {
-                    $this->teams->removeTeamSetModule();
-                }
+            $backup = $this->id;
+            $this->id = $id;
+            try {
+                $this->doMarkDeleted();
+            } finally {
+                $this->id = $backup;
             }
-
-            // creator should be present after removal
-            $createdBy = null;
-            if (isset($this->field_defs['created_by'])) {
-                $createdBy = $this->created_by;
-            }
-            $this->mark_relationships_deleted($id);
-            if ($createdBy) {
-                $this->created_by = $createdBy;
-            }
-            if (isset($this->field_defs['modified_user_id'])) {
-                if (!empty($current_user)) {
-                    $this->modified_user_id = $current_user->id;
-                } else {
-                    $this->modified_user_id = 1;
-                }
-                $this->db->updateParams(
-                    $this->table_name,
-                    $this->field_defs,
-                    $this->getDeleteUpdateParams($date_modified, $this->modified_user_id),
-                    array('id' => $id)
-                );
-                if ($this->isFavoritesEnabled()) {
-                    SugarFavorites::markRecordDeletedInFavorites($id, $date_modified, $this->modified_user_id);
-                }
-            } else {
-                $this->db->updateParams(
-                    $this->table_name,
-                    $this->field_defs,
-                    $this->getDeleteUpdateParams($date_modified),
-                    array('id' => $id)
-                );
-                if ($this->isFavoritesEnabled()) {
-                    SugarFavorites::markRecordDeletedInFavorites($id, $date_modified);
-                }
-            }
-
-            // Take the item off the recently viewed lists
-            $tracker = BeanFactory::newBean('Trackers');
-            $tracker->makeInvisibleForAll($id);
-
-            SugarRelationship::resaveRelatedBeans();
 
             // call the custom business logic
             $this->call_custom_logic("after_delete", $custom_logic_arguments);
             static::leaveOperation('delete', $opflag);
             Activity::restoreToPreviousState();
         }
+    }
+
+    /**
+     * Implements soft-deletion of the bean
+     */
+    protected function doMarkDeleted(): void
+    {
+        global $current_user;
+
+        $date_modified = $GLOBALS['timedate']->nowDb();
+        $this->deleted = 1;
+
+        if (isset($this->field_defs['team_id'])) {
+            if (empty($this->teams)) {
+                $this->load_relationship('teams');
+            }
+
+            if (!empty($this->teams)) {
+                $this->teams->removeTeamSetModule();
+            }
+        }
+
+        // creator should be present after removal
+        $createdBy = null;
+        if (isset($this->field_defs['created_by'])) {
+            $createdBy = $this->created_by;
+        }
+        $this->mark_relationships_deleted($this->id);
+        if ($createdBy) {
+            $this->created_by = $createdBy;
+        }
+        if (isset($this->field_defs['modified_user_id'])) {
+            if (!empty($current_user)) {
+                $this->modified_user_id = $current_user->id;
+            } else {
+                $this->modified_user_id = 1;
+            }
+            $this->db->updateParams(
+                $this->table_name,
+                $this->field_defs,
+                $this->getDeleteUpdateParams($date_modified, $this->modified_user_id),
+                ['id' => $this->id]
+            );
+            if ($this->isFavoritesEnabled()) {
+                SugarFavorites::markRecordDeletedInFavorites($this->id, $date_modified, $this->modified_user_id);
+            }
+        } else {
+            $this->db->updateParams(
+                $this->table_name,
+                $this->field_defs,
+                $this->getDeleteUpdateParams($date_modified),
+                ['id' => $this->id]
+            );
+            if ($this->isFavoritesEnabled()) {
+                SugarFavorites::markRecordDeletedInFavorites($this->id, $date_modified);
+            }
+        }
+
+        // Take the item off the recently viewed lists
+        $tracker = BeanFactory::newBean('Trackers');
+        $tracker->makeInvisibleForAll($this->id);
+
+        SugarRelationship::resaveRelatedBeans();
     }
 
     /**

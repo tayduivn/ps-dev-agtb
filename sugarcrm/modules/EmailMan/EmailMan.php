@@ -908,11 +908,11 @@ SQL;
      * Actuall deletes the emailman record
      * @param int $id
      */
-    public function mark_deleted($id)
+    protected function doMarkDeleted(): void
     {
         $query = "DELETE FROM {$this->table_name} WHERE id = ? ";
         $conn = $this->db->getConnection();
-        $conn->executeQuery($query, array($id));
+        $conn->executeQuery($query, array($this->id));
     }
 
     /**
