@@ -136,6 +136,7 @@ $mod_strings = array(
     'LBL_EXPERT_ID' => 'Product Expert',
     'LBL_FORECAST' => 'Include in Forecast',
     'LBL_CALCULATED_LINE_ITEM_AMOUNT' => 'Calculated Amount',
+    'LBL_GENERATE_PURCHASE' => 'Generate Purchase',
     'LBL_PURCHASED_LINE_ITEM' => 'Generated Purchased Line Item',
     'LBL_PLI_NAME' => 'Generated Purchased Line Item Name',
     'LBL_PLI_ID' => 'Generated Purchased Line Item ID',

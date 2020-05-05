@@ -352,6 +352,11 @@ $app_list_strings = array (
     'T3' => 'Tier 3',
     'T4' => 'Tier 4',
   ),
+  'generate_purchase_dom' => [
+      'Yes' => 'Yes',
+      'No' => 'No',
+      'Completed' => 'Completed',
+  ],
   //END SUGARCRM flav=ent ONLY
   'lead_source_default_key' => 'Self Generated',
   'lead_source_dom' =>

@@ -498,6 +498,18 @@ $dictionary['RevenueLineItem'] = array(
             'source' => 'non-db',
         ),
         //BEGIN SUGARCRM flav=ent ONLY
+        'generate_purchase' => [
+            'name' => 'generate_purchase',
+            'vname' => 'LBL_GENERATE_PURCHASE',
+            'type' => 'enum',
+            'options' => 'generate_purchase_dom',
+            'default' => 'Yes',
+            'len' => 25,
+            'importable' => 'true',
+            'reportable' => true,
+            'massupdate' => true,
+            'comment' => 'Generate Purchase Options (ex: Yes, No, Completed)',
+        ],
         'purchasedlineitem' => [
             'name' => 'purchasedlineitem',
             'type' => 'link',
