@@ -268,7 +268,7 @@ class PMSEPreProcessorTest extends TestCase
                 'bpmn_id'=>'event_0',
                 'cas_id' => 1,
                 // Added so that subject data setter doesn't die
-                'prj_id' => 'foo',
+                'evn_id' => 'foo',
                 'pro_id' => 'bar',
                 'prj_run_order' => 1,
             ],
@@ -355,7 +355,7 @@ class PMSEPreProcessorTest extends TestCase
                 'bpmn_id'=>'event_0',
                 'cas_id' => 1,
                 // Added so that subject data setter doesn't die
-                'prj_id' => 'foo',
+                'evn_id' => 'foo',
                 'pro_id' => 'bar',
                 'prj_run_order' => 1,
             ],

@@ -266,11 +266,7 @@ class PMSEPreProcessor
                 // Massage the flow data for required elements first
                 $flowData = $this->processFlowData($flowData);
 
-                // If we've seen this flow before, we should skip it now
-                $flowId = $flowData['prj_id'];
-                if (in_array($flowId, $this->executedFlowIds, true)) {
-                    continue;
-                }
+
 
                 // Make sure we start fresh each time with validation and such
                 $request->reset();
@@ -285,6 +281,23 @@ class PMSEPreProcessor
                         // This should maybe mark the flow as completed or something
                         // since this flow will now live on in perpetuity. For now
                         // this is ok as realistically, this should never be the case
+                        continue;
+                    }
+                }
+
+                // Special Case Handling
+                // Trigger processes for
+                // 1) record imports
+                // 2) multiple start events
+                // 3) as per the run order - we need to make sure we don't revisit a process definition
+                // and trigger a process, if its run_order value is out of order,
+                // for instance, P1, P2, P3 criteria is checked and only P1 and P3 pass the criteria then
+                // we shouldn't go back and trigger P2 even if later on P3 updates
+                // the record and satisfies the criteria for P2
+
+                $eventId = $flowData['evn_id'];
+                if (isset($this->executedFlowIds[$bean->id])) {
+                    if ($flowData['evn_type'] === 'START' && in_array($eventId, $this->executedFlowIds[$bean->id])) {
                         continue;
                     }
                 }
@@ -361,7 +374,7 @@ class PMSEPreProcessor
                 // Store project id if this flow's project has its "Run Order" set, so we don't trigger this process
                 // on future save.
                 if (is_int($flowData['prj_run_order'])) {
-                    $this->executedFlowIds[] = $flowId;
+                    $this->executedFlowIds[$bean->id][] = $eventId;
                 }
             }
 
