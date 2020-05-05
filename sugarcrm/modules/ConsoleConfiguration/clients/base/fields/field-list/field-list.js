@@ -38,6 +38,43 @@
     },
 
     /**
+     * @inheritdoc
+     *
+     * Overrides the parent bindDataChange to make sure this field is re-rendered
+     * when the config is reset
+     */
+    bindDataChange: function() {
+        if (this.model) {
+            this.context.on('consoleconfig:reset:defaultmetarelay', function() {
+                // the default meta data is ready, use it to re-render
+                var defaultViewMeta = this.context.get('defaultViewMeta');
+                var moduleName = this.model.get('enabled_module');
+                if (!_.isEmpty(defaultViewMeta) && !_.isEmpty(defaultViewMeta[moduleName])) {
+                    this.mappedFields = this.getMappedFields();
+                    this.context.set('defaultViewMeta', null);
+                    this.render();
+                }
+            }, this);
+        }
+    },
+
+    /**
+     * Return the proper view metadata.
+     *
+     * @param {string} moduleName The selected module name from the available modules.
+     */
+    getViewMetaData: function(moduleName) {
+        // If defaultViewMeta exists, it means we are restoring the default settings.
+        var defaultViewMeta = this.context.get('defaultViewMeta');
+        if (!_.isEmpty(defaultViewMeta) && !_.isEmpty(defaultViewMeta[moduleName])) {
+            return this.context.get('defaultViewMeta')[moduleName];
+        }
+
+        // Not restoring defaults, use the regular view meta data
+        return app.metadata.getView(moduleName, 'multi-line-list');
+    },
+
+    /**
      * Gets the module's multi-line list fields from the model with the parent field mapping
      *
      * @return {Object} the fields
@@ -45,7 +82,7 @@
     getMappedFields: function() {
         var tabContentFields = {};
 
-        var multiLineMeta = app.metadata.getView(this.model.get('enabled_module'), 'multi-line-list');
+        var multiLineMeta = this.getViewMetaData(this.model.get('enabled_module'));
 
         _.each(multiLineMeta.panels, function(panel) {
             _.each(panel.fields, function(fieldDefs) {

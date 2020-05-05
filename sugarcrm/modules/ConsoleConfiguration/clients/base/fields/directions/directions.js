@@ -225,11 +225,27 @@
     },
 
     /**
+     * Set defaultViewMeta to context and trigger defaultmetaready.
+     *
+     * @param data
+     */
+    setViewMetaData: function(data) {
+        this.context.set('defaultViewMeta', data);
+        this.context.trigger('consoleconfig:reset:defaultmetaready');
+    },
+
+    /**
      * Sets the default values for fields on the model when the reset button is
      * clicked. Triggers an event to signal to the filter field to re-render properly
      */
     restoreClicked: function() {
         this.model.set(this.defaults);
         this.model.trigger('consoleconfig:reset:default');
+
+        var params = {modules: this.model.get('enabled_module'), type: 'view', name: 'multi-line-list'};
+        var url = app.api.buildURL('ConsoleConfiguration', 'default-metadata', {}, params);
+        app.api.call('GET', url, null, {
+            success: _.bind(this.setViewMetaData, this)
+        });
     }
 })
