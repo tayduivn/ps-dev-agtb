@@ -21,31 +21,38 @@ $listViewDefs[$module_name] = [
         'width' => '5',
         'label' => 'LBL_NUMBER',
         'link' => true,
-        'default' => true],
+        'default' => true,
+    ],
     'NAME' => [
         'width' => '32',
         'label' => 'LBL_SUBJECT',
         'default' => true,
-        'link' => true],
+        'link' => true,
+    ],
     'STATUS' => [
         'width' => '10',
         'label' => 'LBL_STATUS',
-        'default' => true],
+        'default' => true,
+    ],
     'PRIORITY' => [
         'width' => '10',
         'label' => 'LBL_PRIORITY',
-        'default' => true],
+        'default' => true,
+    ],
     'RESOLUTION' => [
         'width' => '10',
         'label' => 'LBL_RESOLUTION',
-        'default' => true],
+        'default' => true,
+    ],
     'TEAM_NAME' => [
         'width' => '9',
         'label' => 'LBL_TEAM',
-        'default' => true],
+        'default' => true,
+    ],
     'ASSIGNED_USER_NAME' => [
         'width' => '9',
         'label' => 'LBL_ASSIGNED_USER',
-        'default' => false], // Test default false, enabled true bug 57414
+        'default' => false,
+    ], // Test default false, enabled true bug 57414
 
 ];

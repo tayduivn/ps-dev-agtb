@@ -19,11 +19,11 @@
  
 $viewdefs['Accounts']['EditView'] = [
     'templateMeta' => [
-                            'maxColumns' => '1',
-                            'widths' => [
-                                ['label' => '10', 'field' => '30'],
-                            ],
-                           ],
+        'maxColumns' => '1',
+        'widths' => [
+            ['label' => '10', 'field' => '30'],
+        ],
+    ],
     'panels' => [
         [['name'=>'name', 'displayParams'=>['required'=>true,'wireless_edit_only'=>true,]],],
         ['phone_office'],
@@ -36,6 +36,5 @@ $viewdefs['Accounts']['EditView'] = [
         ['billing_address_country'],
         ['assigned_user_name'],
         ['team_name'],
-
     ],
 ];

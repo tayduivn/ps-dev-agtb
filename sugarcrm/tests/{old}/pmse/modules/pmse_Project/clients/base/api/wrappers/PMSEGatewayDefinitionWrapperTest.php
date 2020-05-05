@@ -60,13 +60,13 @@ class PMSEGatewayDefinitionWrapperTest extends TestCase
                 ->method('getSelectRows')
                 ->will($this->returnValue(
                     [
-                            "rowList" => [
-                                "1" => [
-                                   'flo_uid' => "1",
-                                   'flo_condition' => "{new condition}",
-                                ],
+                        "rowList" => [
+                            "1" => [
+                                'flo_uid' => "1",
+                                'flo_condition' => "{new condition}",
                             ],
-                        ]
+                        ],
+                    ]
                 ));
 
         $this->mocGateway->prj_id = 1;

@@ -90,10 +90,10 @@ EOQ;
         $results = $this->makeRESTCall(
             'get_module_layout',
             [
-            'session' => $session,
-            'module' => [$this->package],
-            'type' => ['wireless'],
-            'view' => ['subpanel'],
+                'session' => $session,
+                'module' => [$this->package],
+                'type' => ['wireless'],
+                'view' => ['subpanel'],
             ]
         );
 

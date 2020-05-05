@@ -153,7 +153,7 @@ class Bug51427Test extends TestCase
                     'unified_search'=>1,
                 ],
                 'options_field'=>[
-                     'unified_search'=>-1,
+                    'unified_search' => -1,
                 ],
                 'assert'=>true,
             ],

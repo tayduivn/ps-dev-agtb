@@ -35,14 +35,12 @@ class ForecastHooksTest extends TestCase
         $settings = [
             'forecast_ranges' => 'show_binary',
             'show_binary_ranges' => [
-                'include' =>
-                [
+                'include' => [
                     'min' => 70,
                     'max' => 100,
                     'in_included_total' => true,
                 ],
-                'exclude' =>
-                [
+                'exclude' => [
                     'min' => 0,
                     'max' => 69,
                 ],
@@ -67,14 +65,12 @@ class ForecastHooksTest extends TestCase
         $settings = [
             'forecast_ranges' => 'show_binary',
             'show_binary_ranges' => [
-                'include' =>
-                [
+                'include' => [
                     'min' => 70,
                     'max' => 100,
                     'in_included_total' => true,
                 ],
-                'exclude' =>
-                [
+                'exclude' => [
                     'min' => 0,
                     'max' => 69,
                 ],
@@ -99,14 +95,12 @@ class ForecastHooksTest extends TestCase
         $settings = [
             'forecast_ranges' => 'show_binary',
             'show_binary_ranges' => [
-                'include' =>
-                [
+                'include' => [
                     'min' => 70,
                     'max' => 100,
                     'in_included_total' => true,
                 ],
-                'exclude' =>
-                [
+                'exclude' => [
                     'min' => 0,
                     'max' => 69,
                 ],

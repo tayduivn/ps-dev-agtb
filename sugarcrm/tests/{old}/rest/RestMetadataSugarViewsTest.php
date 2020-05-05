@@ -59,14 +59,14 @@ class RestMetadataSugarViewsTest extends RestTestBase
         SugarTestHelper::saveFile($filesToCheck);
 
         $dirsToMake = [
-                            'clients/base/views/address',
-                            'custom/clients/base/views/address',
-                            'clients/mobile/views/address',
-                            'custom/clients/mobile/views/address',
-                            //BEGIN SUGARCRM flav=ent ONLY
-                            'clients/portal/views/address',
-                            'custom/clients/portal/views/address',
-                            //END SUGARCRM flav=ent ONLY
+            'clients/base/views/address',
+            'custom/clients/base/views/address',
+            'clients/mobile/views/address',
+            'custom/clients/mobile/views/address',
+            //BEGIN SUGARCRM flav=ent ONLY
+            'clients/portal/views/address',
+            'custom/clients/portal/views/address',
+            //END SUGARCRM flav=ent ONLY
         ];
 
         foreach ($dirsToMake as $dir) {

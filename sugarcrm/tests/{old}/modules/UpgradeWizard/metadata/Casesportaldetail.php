@@ -12,12 +12,12 @@
 
 $viewdefs['Cases']['detailview'] = [
     'templateMeta' => ['maxColumns' => '2',
-                            'widths' => [
-                                            ['label' => '10', 'field' => '30'],
-                                            ['label' => '10', 'field' => '30'],
-                                            ],
-                            'extraFields' => ['date_modified'],
-                           ],
+        'widths' => [
+            ['label' => '10', 'field' => '30'],
+            ['label' => '10', 'field' => '30'],
+        ],
+        'extraFields' => ['date_modified'],
+    ],
     'data' => [
         ['case_number', 'assigned_user_name'],
         ['created_by_name', 'date_entered'],

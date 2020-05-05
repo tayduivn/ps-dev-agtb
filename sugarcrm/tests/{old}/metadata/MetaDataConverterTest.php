@@ -262,7 +262,7 @@ class MetaDataConverterTest extends TestCase
         $testlink = [
             'attachment' => [
                 'linkinfo' => ['ATTACHMENTS' => 'client/base/views/attachments/attachments.php'],
-            'submenu' => '',
+                'submenu' => '',
             ],
         ];
         $converter = new MetaDataConverter();

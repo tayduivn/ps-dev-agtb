@@ -75,9 +75,9 @@ class RS99Test extends TestCase
     {
         $api = new AccountsApi();
         $actual = $api->opportunityStats(SugarTestRestUtilities::getRestServiceMock(), [
-                'module' => 'Accounts',
-                'record' => $this->account->id,
-            ]);
+            'module' => 'Accounts',
+            'record' => $this->account->id,
+        ]);
         $this->assertArrayHasKey('lost', $actual);
         $this->assertEquals(1, $actual['lost']['count']);
     }

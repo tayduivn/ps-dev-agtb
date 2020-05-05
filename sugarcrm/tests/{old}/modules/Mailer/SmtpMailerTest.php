@@ -85,9 +85,9 @@ class SmtpMailerTest extends TestCase
     {
         $mockMailer = $this->getMockBuilder('SmtpMailer')
             ->setMethods([
-                 'clearRecipientsTo',
-                 'clearRecipientsCc',
-                 'clearRecipientsBcc',
+                'clearRecipientsTo',
+                'clearRecipientsCc',
+                'clearRecipientsBcc',
             ])
             ->setConstructorArgs([new OutboundSmtpEmailConfiguration($GLOBALS['current_user'])])
             ->getmock();
@@ -114,12 +114,12 @@ class SmtpMailerTest extends TestCase
 
         $mockMailer = $this->getMockBuilder('SmtpMailer')
             ->setMethods([
-                 'generateMailer',
-                 'transferConfigurations',
-                 'transferHeaders',
-                 'transferRecipients',
-                 'transferBody',
-                 'transferAttachments',
+                'generateMailer',
+                'transferConfigurations',
+                'transferHeaders',
+                'transferRecipients',
+                'transferBody',
+                'transferAttachments',
             ])
             ->setConstructorArgs([new OutboundSmtpEmailConfiguration($GLOBALS['current_user'])])
             ->getmock();
@@ -248,12 +248,12 @@ class SmtpMailerTest extends TestCase
         $mockMailer = $this->getMockBuilder('SmtpMailer')
             ->setConstructorArgs([new OutboundSmtpEmailConfiguration($GLOBALS['current_user'])])
             ->setMethods([
-                 'generateMailer',
-                 'transferConfigurations',
-                 'connectToHost',
-                 'transferRecipients',
-                 'transferBody',
-                 'transferAttachments',
+                'generateMailer',
+                'transferConfigurations',
+                'connectToHost',
+                'transferRecipients',
+                'transferBody',
+                'transferAttachments',
             ])
             ->getMock();
 
@@ -309,12 +309,12 @@ class SmtpMailerTest extends TestCase
         $mockMailer = $this->getMockBuilder('SmtpMailer')
             ->setConstructorArgs([new OutboundSmtpEmailConfiguration($GLOBALS['current_user'])])
             ->setMethods([
-                 'generateMailer',
-                 'transferConfigurations',
-                 'connectToHost',
-                 'transferRecipients',
-                 'transferBody',
-                 'transferAttachments',
+                'generateMailer',
+                'transferConfigurations',
+                'connectToHost',
+                'transferRecipients',
+                'transferBody',
+                'transferAttachments',
             ])
             ->getMock();
 
@@ -365,12 +365,12 @@ class SmtpMailerTest extends TestCase
 
         $mockMailer = $this->getMockBuilder('SmtpMailer')
             ->setMethods([
-                 'generateMailer',
-                 'transferConfigurations',
-                 'connectToHost',
-                 'transferHeaders',
-                 'transferRecipients',
-                 'transferBody',
+                'generateMailer',
+                'transferConfigurations',
+                'connectToHost',
+                'transferHeaders',
+                'transferRecipients',
+                'transferBody',
             ])
             ->setConstructorArgs([$mailerConfiguration])
             ->getMock();
@@ -423,12 +423,12 @@ class SmtpMailerTest extends TestCase
         $mockMailer = $this->getMockBuilder('SmtpMailer')
             ->setConstructorArgs([$mailerConfiguration])
             ->setMethods([
-                 'generateMailer',
-                 'transferConfigurations',
-                 'connectToHost',
-                 'transferHeaders',
-                 'transferRecipients',
-                 'transferBody',
+                'generateMailer',
+                'transferConfigurations',
+                'connectToHost',
+                'transferHeaders',
+                'transferRecipients',
+                'transferBody',
             ])
             ->getMock();
 
@@ -472,13 +472,13 @@ class SmtpMailerTest extends TestCase
         $mockMailer = $this->getMockBuilder('SmtpMailer')
             ->setConstructorArgs([new OutboundSmtpEmailConfiguration($GLOBALS['current_user'])])
             ->setMethods([
-                 'generateMailer',
-                 'transferConfigurations',
-                 'connectToHost',
-                 'transferHeaders',
-                 'transferRecipients',
-                 'transferBody',
-                 'transferAttachments',
+                'generateMailer',
+                'transferConfigurations',
+                'connectToHost',
+                'transferHeaders',
+                'transferRecipients',
+                'transferBody',
+                'transferAttachments',
             ])
             ->getMock();
 
@@ -528,13 +528,13 @@ class SmtpMailerTest extends TestCase
         $mockMailer = $this->getMockBuilder('SmtpMailer')
             ->setConstructorArgs([new OutboundSmtpEmailConfiguration($GLOBALS['current_user'])])
             ->setMethods([
-                 'generateMailer',
-                 'transferConfigurations',
-                 'connectToHost',
-                 'transferHeaders',
-                 'transferRecipients',
-                 'transferBody',
-                 'transferAttachments',
+                'generateMailer',
+                'transferConfigurations',
+                'connectToHost',
+                'transferHeaders',
+                'transferRecipients',
+                'transferBody',
+                'transferAttachments',
             ])
             ->getMock();
 

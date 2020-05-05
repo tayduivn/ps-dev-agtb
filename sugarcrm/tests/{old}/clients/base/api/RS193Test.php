@@ -31,16 +31,16 @@ class RS193Test extends TestCase
     {
         $api = new FilterApi();
         $actual = $api->filterList(SugarTestRestUtilities::getRestServiceMock(), [
-                '__sugar_url' => 'v10/Accounts/filter',
-                'filter' => [
-                    [
-                        '$tracker' => '-7 DAY',
-                    ],
+            '__sugar_url' => 'v10/Accounts/filter',
+            'filter' => [
+                [
+                    '$tracker' => '-7 DAY',
                 ],
-                'fields' => 'id,name',
-                'max_num' => 3,
-                'module' => 'Accounts',
-            ]);
+            ],
+            'fields' => 'id,name',
+            'max_num' => 3,
+            'module' => 'Accounts',
+        ]);
         $this->assertArrayHasKey('records', $actual);
     }
 }

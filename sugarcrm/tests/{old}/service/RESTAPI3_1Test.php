@@ -90,15 +90,14 @@ class RESTAPI3_1Test extends TestCase
         return $this->makeRESTCall(
             'login',
             [
-                'user_auth' =>
-                    [
-                        'user_name' => $this->user->user_name,
-                        'password' => $this->user->user_hash,
-                        'version' => '.01',
-                        ],
+                'user_auth' => [
+                    'user_name' => $this->user->user_name,
+                    'password' => $this->user->user_hash,
+                    'version' => '.01',
+                ],
                 'application_name' => 'mobile',
                 'name_value_list' => [],
-                ]
+            ]
         );
     }
 
@@ -118,9 +117,9 @@ class RESTAPI3_1Test extends TestCase
         $results = $this->makeRESTCall(
             'get_language_definition',
             [
-                            'session' => $session,
-                            'modules'  => 'Accounts',
-                            'md5'   => false,
+                'session' => $session,
+                'modules'  => 'Accounts',
+                'md5'   => false,
             ]
         );
         $this->assertTrue(isset($results['Accounts']['LBL_NAME']));
@@ -134,10 +133,10 @@ class RESTAPI3_1Test extends TestCase
         $results = $this->makeRESTCall(
             'get_language_definition',
             [
-                           'session' => $session,
-                           'modules'  => 'Accounts',
-                           'md5'   => true,
-                       ]
+                'session' => $session,
+                'modules'  => 'Accounts',
+                'md5'   => true,
+            ]
         );
 
         $this->assertTrue(isset($results['Accounts']));
@@ -152,9 +151,9 @@ class RESTAPI3_1Test extends TestCase
         $results = $this->makeRESTCall(
             'get_language_definition',
             [
-                            'session' => $session,
-                            'modules'  => ['Accounts','Contacts','Leads'],
-                            'md5'   => false,
+                'session' => $session,
+                'modules'  => ['Accounts','Contacts','Leads'],
+                'md5'   => false,
             ]
         );
         $this->assertTrue(isset($results['Accounts']['LBL_NAME']), "Unable to get multiple module language for Accounts, result: " . var_export($results['Accounts'], true));
@@ -170,9 +169,9 @@ class RESTAPI3_1Test extends TestCase
         $results = $this->makeRESTCall(
             'get_language_definition',
             [
-                            'session' => $session,
-                            'modules'  => ['Accounts','Contacts','Leads','app_strings','app_list_strings'],
-                            'md5'   => false,
+                'session' => $session,
+                'modules'  => ['Accounts','Contacts','Leads','app_strings','app_list_strings'],
+                'md5'   => false,
             ]
         );
 
@@ -196,9 +195,9 @@ class RESTAPI3_1Test extends TestCase
         $results = $this->makeRESTCall(
             'get_quotes_pdf',
             [
-                            'session' => $session,
-                            'quote_id' => $quote->id,
-                            'pdf_format'   => 'Standard',
+                'session' => $session,
+                'quote_id' => $quote->id,
+                'pdf_format'   => 'Standard',
             ]
         );
 
@@ -240,10 +239,11 @@ class RESTAPI3_1Test extends TestCase
         $result = $this->makeRESTCall(
             'get_module_layout',
             [
-                            'session' => $session,
-                            'module' => [$module],
-                            'type' => [$type],
-                            'view' => [$view]]
+                'session' => $session,
+                'module' => [$module],
+                'type' => [$type],
+                'view' => [$view],
+            ]
         );
 
         // This is carried over metadata from pre-6.6 OOTB installations
@@ -276,10 +276,11 @@ class RESTAPI3_1Test extends TestCase
         $result = $this->makeRESTCall(
             'get_module_layout',
             [
-                            'session' => $session,
-                            'module' => [$module],
-                            'type' => [$type],
-                            'view' => [$view]]
+                'session' => $session,
+                'module' => [$module],
+                'type' => [$type],
+                'view' => [$view],
+            ]
         );
         require 'tests/{old}/service/metadata/' . $module . 'legacy' . $view . '.php';
 

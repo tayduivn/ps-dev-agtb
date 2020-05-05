@@ -22,8 +22,7 @@ $viewdefs['Cases']['EditView'] = [
     ],
     'panels' => [
 
-        'lbl_case_information' =>
-        [
+        'lbl_case_information' => [
             [
                 ['name' => 'case_number', 'type' => 'readonly'],
             ],
@@ -48,7 +47,6 @@ $viewdefs['Cases']['EditView'] = [
             ],
 
             [
-
                 [
                     'name' => 'description',
                     'nl2br' => true,
@@ -56,7 +54,6 @@ $viewdefs['Cases']['EditView'] = [
             ],
 
             [
-
                 [
                     'name' => 'resolution',
                     'nl2br' => true,
@@ -65,8 +62,7 @@ $viewdefs['Cases']['EditView'] = [
 
         ],
 
-        'LBL_PANEL_ASSIGNMENT' =>
-        [
+        'LBL_PANEL_ASSIGNMENT' => [
             [
                 'assigned_user_name',
                 ['name' => 'team_name', 'displayParams' => ['required' => true]],

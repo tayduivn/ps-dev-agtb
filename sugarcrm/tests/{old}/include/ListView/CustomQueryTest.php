@@ -44,15 +44,15 @@ class CustomQueryTest extends TestCase
         $bean = new Contact();
         $bean->field_defs = $this->defs;
         $bean->field_defs['testquery'] = [
-          "name" => "testquery",
-          "source" => "non-db",
-          'type' => "custom_query",
-          "query_function" => [
-                        'function_name'=>'query_func',
-                        'function_class'=>get_class($this),
-          ],
-          'reportable'=>false,
-          'duplicate_merge'=>'disabled',
+            "name" => "testquery",
+            "source" => "non-db",
+            'type' => "custom_query",
+            "query_function" => [
+                'function_name'=>'query_func',
+                'function_class'=>get_class($this),
+            ],
+            'reportable'=>false,
+            'duplicate_merge'=>'disabled',
         ];
           $result = $bean->create_new_list_query('', '');
         $this->assertStringContainsString("2+2 four /* for testquery */", $result);
@@ -63,16 +63,16 @@ class CustomQueryTest extends TestCase
         $bean = new Contact();
         $bean->field_defs = $this->defs;
         $bean->field_defs['testquery'] = [
-          "name" => "testquery",
-          "source" => "non-db",
-          'type' => "custom_query",
-          "query_function" => [
-                        'function_name'=>'query_func',
-                        'function_class'=>get_class($this),
-          ],
-          'reportable'=>false,
-          'duplicate_merge'=>'disabled',
-          ];
+            "name" => "testquery",
+            "source" => "non-db",
+            'type' => "custom_query",
+            "query_function" => [
+                'function_name'=>'query_func',
+                'function_class'=>get_class($this),
+            ],
+            'reportable'=>false,
+            'duplicate_merge'=>'disabled',
+        ];
         $result = $bean->create_new_list_query('', '', ['id', 'name']);
         $this->assertStringNotContainsString('2+2 four /* for testquery */', $result);
 

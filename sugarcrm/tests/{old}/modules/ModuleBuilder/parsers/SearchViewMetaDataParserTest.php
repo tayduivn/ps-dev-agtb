@@ -34,104 +34,87 @@ class SearchViewMetaDataParserTest extends TestCase
         //echo "begin test";
         // NOTE This is sample data from the live application used for test verification purposes
         $orgViewDefs = [
-            'templateMeta' =>
-            [
+            'templateMeta' => [
                 'maxColumns' => '3',
-                'widths' =>
-                [
+                'widths' => [
                     'label' => '10',
                     'field' => '30',
                 ],
             ],
-            'layout' =>
-            [
-                'basic_search' =>
-                [
-                    'name' =>
-                    [
+            'layout' => [
+                'basic_search' => [
+                    'name' => [
                         'name' => 'name',
                         'default' => true,
                         'width' => '10%',
                     ],
-                    'current_user_only' =>
-                    [
+                    'current_user_only' => [
                         'name' => 'current_user_only',
                         'label' => 'LBL_CURRENT_USER_FILTER',
                         'type' => 'bool',
                         'default' => true,
                         'width' => '10%',
                     ],
-                    0 =>
-                    [
+                    0 => [
                         'name' => 'favorites_only',
                         'label' => 'LBL_FAVORITES_FILTER',
                         'type' => 'bool',
                     ],
                 ],
-                'advanced_search' =>
-                [
-                    'name' =>
-                    [
+                'advanced_search' => [
+                    'name' => [
                         'name' => 'name',
                         'default' => true,
                         'width' => '10%',
                     ],
-                    'website' =>
-                    [
+                    'website' => [
                         'name' => 'website',
                         'default' => true,
                         'width' => '10%',
                     ],
-                    'phone' =>
-                    [
+                    'phone' => [
                         'name' => 'phone',
                         'label' => 'LBL_ANY_PHONE',
                         'type' => 'name',
                         'default' => true,
                         'width' => '10%',
                     ],
-                    'email' =>
-                    [
+                    'email' => [
                         'name' => 'email',
                         'label' => 'LBL_ANY_EMAIL',
                         'type' => 'name',
                         'default' => true,
                         'width' => '10%',
                     ],
-                    'address_street' =>
-                    [
+                    'address_street' => [
                         'name' => 'address_street',
                         'label' => 'LBL_ANY_ADDRESS',
                         'type' => 'name',
                         'default' => true,
                         'width' => '10%',
                     ],
-                    'address_city' =>
-                    [
+                    'address_city' => [
                         'name' => 'address_city',
                         'label' => 'LBL_CITY',
                         'type' => 'name',
                         'default' => true,
                         'width' => '10%',
                     ],
-                    'address_state' =>
-                    [
+                    'address_state' => [
                         'name' => 'address_state',
                         'label' => 'LBL_STATE',
                         'type' => 'name',
                         'default' => true,
                         'width' => '10%',
                     ],
-                    'address_postalcode' =>
-                    [
+                    'address_postalcode' => [
                         'name' => 'address_postalcode',
                         'label' => 'LBL_POSTAL_CODE',
                         'type' => 'name',
                         'default' => true,
                         'width' => '10%',
                     ],
-                    'billing_address_country' =>
-                    [
+                    'billing_address_country' => [
                         'name' => 'billing_address_country',
                         'label' => 'LBL_COUNTRY',
                         'type' => 'name',
@@ -139,36 +122,30 @@ class SearchViewMetaDataParserTest extends TestCase
                         'default' => true,
                         'width' => '10%',
                     ],
-                    'account_type' =>
-                    [
+                    'account_type' => [
                         'name' => 'account_type',
                         'default' => true,
                         'width' => '10%',
                     ],
-                    'industry' =>
-                    [
+                    'industry' => [
                         'name' => 'industry',
                         'default' => true,
                         'width' => '10%',
                     ],
-                    'assigned_user_id' =>
-                    [
+                    'assigned_user_id' => [
                         'name' => 'assigned_user_id',
                         'type' => 'enum',
                         'label' => 'LBL_ASSIGNED_TO',
-                        'function' =>
-                        [
+                        'function' => [
                             'name' => 'get_user_array',
-                            'params' =>
-                            [
+                            'params' => [
                                 0 => false,
                             ],
                         ],
                         'default' => true,
                         'width' => '10%',
                     ],
-                    0 =>
-                    [
+                    0 => [
                         'name' => 'favorites_only',
                         'label' => 'LBL_FAVORITES_FILTER',
                         'type' => 'bool',
@@ -178,68 +155,59 @@ class SearchViewMetaDataParserTest extends TestCase
         ];
 
         $expectedResult = [
-            'name' =>
-            [
+            'name' => [
                 'name' => 'name',
                 'default' => true,
                 'width' => '10%',
             ],
-            'website' =>
-            [
+            'website' => [
                 'name' => 'website',
                 'default' => true,
                 'width' => '10%',
             ],
-            'phone' =>
-            [
+            'phone' => [
                 'name' => 'phone',
                 'label' => 'LBL_ANY_PHONE',
                 'type' => 'name',
                 'default' => true,
                 'width' => '10%',
             ],
-            'email' =>
-            [
+            'email' => [
                 'name' => 'email',
                 'label' => 'LBL_ANY_EMAIL',
                 'type' => 'name',
                 'default' => true,
                 'width' => '10%',
             ],
-            'address_street' =>
-            [
+            'address_street' => [
                 'name' => 'address_street',
                 'label' => 'LBL_ANY_ADDRESS',
                 'type' => 'name',
                 'default' => true,
                 'width' => '10%',
             ],
-            'address_city' =>
-            [
+            'address_city' => [
                 'name' => 'address_city',
                 'label' => 'LBL_CITY',
                 'type' => 'name',
                 'default' => true,
                 'width' => '10%',
             ],
-            'address_state' =>
-            [
+            'address_state' => [
                 'name' => 'address_state',
                 'label' => 'LBL_STATE',
                 'type' => 'name',
                 'default' => true,
                 'width' => '10%',
             ],
-            'address_postalcode' =>
-            [
+            'address_postalcode' => [
                 'name' => 'address_postalcode',
                 'label' => 'LBL_POSTAL_CODE',
                 'type' => 'name',
                 'default' => true,
                 'width' => '10%',
             ],
-            'billing_address_country' =>
-            [
+            'billing_address_country' => [
                 'name' => 'billing_address_country',
                 'label' => 'LBL_COUNTRY',
                 'type' => 'name',
@@ -247,42 +215,35 @@ class SearchViewMetaDataParserTest extends TestCase
                 'default' => true,
                 'width' => '10%',
             ],
-            'account_type' =>
-            [
+            'account_type' => [
                 'name' => 'account_type',
                 'default' => true,
                 'width' => '10%',
             ],
-            'industry' =>
-            [
+            'industry' => [
                 'name' => 'industry',
                 'default' => true,
                 'width' => '10%',
             ],
-            'assigned_user_id' =>
-            [
+            'assigned_user_id' => [
                 'name' => 'assigned_user_id',
                 'type' => 'enum',
                 'label' => 'LBL_ASSIGNED_TO',
-                'function' =>
-                [
+                'function' => [
                     'name' => 'get_user_array',
-                    'params' =>
-                    [
+                    'params' => [
                         0 => false,
                     ],
                 ],
                 'default' => true,
                 'width' => '10%',
             ],
-            'favorites_only' =>
-            [
+            'favorites_only' => [
                 'name' => 'favorites_only',
                 'label' => 'LBL_FAVORITES_FILTER',
                 'type' => 'bool',
             ],
-            'current_user_only' =>
-            [
+            'current_user_only' => [
                 'name' => 'current_user_only',
                 'label' => 'LBL_CURRENT_USER_FILTER',
                 'type' => 'bool',

@@ -128,40 +128,31 @@ class Bug51423Test extends TestCase
          * Report defs for generating the report
          */
         $rep_defs = [
-            'display_columns' =>
-             [
-                0 =>
-                 [
+            'display_columns' => [
+                0 => [
                     'name' => 'name',
                     'label' => 'Name',
                     'table_key' => 'self',
                 ],
-                1 =>
-                 [
+                1 => [
                     'name' => 'relate_contacts_c',
                     'label' => 'relate contacts',
                     'table_key' => 'self',
                 ],
-                2 =>
-                 [
+                2 => [
                     'name' => 'name',
                     'label' => 'Name1',
                     'table_key' => 'Accounts:member_of',
                 ],
-                3 =>
-                 [
+                3 => [
                     'name' => 'relate_contacts_c',
                     'label' => 'relate contacts1',
                     'table_key' => 'Accounts:member_of',
                 ],
             ],
             'module' => 'Accounts',
-            'group_defs' =>
-             [
-            ],
-            'summary_columns' =>
-             [
-            ],
+            'group_defs' => [],
+            'summary_columns' => [],
             'report_name' => 'report #1',
             'chart_type' => 'none',
             'do_round' => 1,
@@ -169,20 +160,16 @@ class Bug51423Test extends TestCase
             'numerical_chart_column_type' => '',
             'assigned_user_id' => '1',
             'report_type' => 'tabular',
-            'full_table_list' =>
-             [
-                'self' =>
-                 [
+            'full_table_list' => [
+                'self' => [
                     'value' => 'Accounts',
                     'module' => 'Accounts',
                     'label' => 'Accounts',
                 ],
-                'Accounts:member_of' =>
-                 [
+                'Accounts:member_of' => [
                     'name' => 'Accounts  >  Member of',
                     'parent' => 'self',
-                    'link_def' =>
-                     [
+                    'link_def' => [
                         'name' => 'member_of',
                         'relationship_name' => 'member_accounts',
                         'bean_is_lhs' => false,
@@ -191,8 +178,7 @@ class Bug51423Test extends TestCase
                         'module' => 'Accounts',
                         'table_key' => 'Accounts:member_of',
                     ],
-                    'dependents' =>
-                     [
+                    'dependents' => [
                         0 => 'display_cols_row_3',
                         1 => 'display_cols_row_4',
                         2 => 'display_cols_row_3',
@@ -203,13 +189,10 @@ class Bug51423Test extends TestCase
                     'optional' => true,
                 ],
             ],
-            'filters_def' =>
-             [
-                'Filter_1' =>
-                 [
+            'filters_def' => [
+                'Filter_1' => [
                     'operator' => 'AND',
-                    0 =>
-                     [
+                    0 => [
                         'name' => 'name',
                         'table_key' => 'self',
                         'qualifier_name' => 'is',

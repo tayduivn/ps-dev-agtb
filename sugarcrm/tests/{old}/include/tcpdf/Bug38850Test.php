@@ -28,16 +28,16 @@ class Bug38850Test extends TestCase
         $dom = [
             0 => [
                 'value' => 'html',
-                ],
+            ],
             1 => [
                 'parent' => 0,
                 'value' => 'tcpdf',
                 'attribute' => [
                     'method' => 'Close',
                     'params' => serialize([");echo ('Can Interject Code'"]),
-                    ],
                 ],
-            ];
+            ],
+        ];
 
         SugarTestReflection::callProtectedMethod($pdf, 'openHTMLTagHandler', [&$dom, 1]);
 

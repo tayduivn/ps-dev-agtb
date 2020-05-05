@@ -631,8 +631,7 @@ class MailApiTest extends TestCase
             ],
             16 => [
                 [
-                    MailApi::TEAMS => [
-                    ],
+                    MailApi::TEAMS => [],
                 ],
                 'LBL_MAILAPI_INVALID_ARGUMENT_FIELD',
                 [MailApi::TEAMS, 'primary'],

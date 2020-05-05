@@ -40,9 +40,14 @@ class Bug44428Test extends TestCase
         return [
             ['quote_name', '1'],
             ['opportunity_name', ''],
-            [['name' => 'quote_num',
-                        'type' => 'readonly'], '3'],
-            ];
+            [
+                [
+                    'name' => 'quote_num',
+                    'type' => 'readonly',
+                ],
+                '3',
+            ],
+        ];
     }
     /**
      * @dataProvider providerField

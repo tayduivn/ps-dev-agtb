@@ -298,7 +298,7 @@ class ImportFileTest extends TestCase
         return [
             ['TestCharset.csv', 'UTF-8'],
             ['TestCharset2.csv', 'ISO-8859-1'],
-            ];
+        ];
     }
 
     /**
@@ -320,7 +320,7 @@ class ImportFileTest extends TestCase
             ['TestCharset.csv', 2, false],
             ['TestCharset2.csv', 11, true],
             ['TestCharset2.csv', 12, false],
-            ];
+        ];
     }
 
     /**
@@ -342,7 +342,7 @@ class ImportFileTest extends TestCase
         return [
             ['TestCharset.csv', 2],
             ['TestCharset2.csv', 5],
-            ];
+        ];
     }
 
     /**
@@ -364,7 +364,7 @@ class ImportFileTest extends TestCase
         return [
             ['TestCharset.csv', 2],
             ['TestCharset2.csv', 12],
-            ];
+        ];
     }
 
     /**
@@ -385,7 +385,7 @@ class ImportFileTest extends TestCase
         return [
             ['TestCharset.csv', 'd/m/Y'],
             ['TestCharset2.csv', 'm/d/Y'],
-            ];
+        ];
     }
 
     /**
@@ -408,7 +408,7 @@ class ImportFileTest extends TestCase
         return [
             ['TestCharset.csv', 'h:ia'],
             ['TestCharset2.csv', 'H:i'],
-            ];
+        ];
     }
 
     /**

@@ -366,47 +366,46 @@ class ForecastsConfigApiTest extends TestCase
     public function getTimePeriodSettingsData()
     {
         return [
-               [
-                   [
-                   ],
-                   false,
-               ],
-               [
-                   [
-                      'timeperiod_shown_backward' => '3',
-                   ],
-                   true,
-               ],
-               [
-                   [
-                      'timeperiod_shown_forward' => '3',
-                   ],
-                   true,
-               ],
-               [
-                   [
-                      'timeperiod_start_date' => '2013-03-01',
-                   ],
-                   true,
-               ],
-               [
-                   [
-                      'timeperiod_interval' => TimePeriod::QUARTER_TYPE,
-                   ],
-                   true,
-               ],
-               [
-                   [
-                      'timeperiod_leaf_interval' => TimePeriod::MONTH_TYPE,
-                   ],
-                   true,
-               ],
-               [
-                   [
-                      'timeperiod_type' => 'fiscal',
-                   ],
-                   true,
-               ],
+            [
+                [],
+                false,
+            ],
+            [
+                [
+                    'timeperiod_shown_backward' => '3',
+                ],
+                true,
+            ],
+            [
+                [
+                    'timeperiod_shown_forward' => '3',
+                ],
+                true,
+            ],
+            [
+                [
+                    'timeperiod_start_date' => '2013-03-01',
+                ],
+                true,
+            ],
+            [
+                [
+                    'timeperiod_interval' => TimePeriod::QUARTER_TYPE,
+                ],
+                true,
+            ],
+            [
+                [
+                    'timeperiod_leaf_interval' => TimePeriod::MONTH_TYPE,
+                ],
+                true,
+            ],
+            [
+                [
+                    'timeperiod_type' => 'fiscal',
+                ],
+                true,
+            ],
         ];
     }
 
@@ -422,13 +421,13 @@ class ForecastsConfigApiTest extends TestCase
     public function testTimePeriodSettingsChagned($changedSettings, $expectedResult)
     {
         $priorSettings = [
-                           'timeperiod_shown_backward' => '2',
-                           'timeperiod_shown_forward' => '2',
-                           'timeperiod_start_date' => '2013-01-01',
-                           'timeperiod_interval' => TimePeriod::ANNUAL_TYPE,
-                           'timeperiod_leaf_interval' => TimePeriod::QUARTER_TYPE,
-                           'timeperiod_type' => 'chronological',
-                       ];
+            'timeperiod_shown_backward' => '2',
+            'timeperiod_shown_forward' => '2',
+            'timeperiod_start_date' => '2013-01-01',
+            'timeperiod_interval' => TimePeriod::ANNUAL_TYPE,
+            'timeperiod_leaf_interval' => TimePeriod::QUARTER_TYPE,
+            'timeperiod_type' => 'chronological',
+        ];
 
         $currentSettings = array_merge($priorSettings, $changedSettings);
 

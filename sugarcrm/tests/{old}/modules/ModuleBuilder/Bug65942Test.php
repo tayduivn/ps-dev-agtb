@@ -69,14 +69,12 @@ class Bug65942Test extends TestCase
         return [
             [
                 [
-                    0 =>
-                    [
+                    0 => [
                         'module' => 'Bug65942Test',
                         'system_label' => 'LBL_65942_TEST_1',
                         'display_label' => 'Bug65942Test 1',
                     ],
-                    1 =>
-                    [
+                    1 => [
                         'module' => 'Bug65942Test',
                         'system_label' => 'LBL_65942_TEST_2',
                         'display_label' => 'Bug65942Test 2',
@@ -86,20 +84,17 @@ class Bug65942Test extends TestCase
             ],
             [
                 [
-                    0 =>
-                    [
+                    0 => [
                         'module' => '65942Test',
                         'system_label' => '65942_TEST_1',
                         'display_label' => '65942Test 1',
                     ],
-                    1 =>
-                    [
+                    1 => [
                         'module' => '65942Test',
                         'system_label' => '65942_TEST_2',
                         'display_label' => '65942Test 2',
                     ],
-                    2 =>
-                    [
+                    2 => [
                         'module' => '65942Test',
                         'system_label' => '65942_TEST_3',
                         'display_label' => '65942Test 3',

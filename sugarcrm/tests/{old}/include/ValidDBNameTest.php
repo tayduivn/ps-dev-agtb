@@ -98,7 +98,7 @@ class ValidDBNameTest extends TestCase
         return [
             ["eeeee_eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee_opportunities", "eeeee_eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee1_opportunities"],
             ["abc_auctions_abc_contactauctions", "abc_auctionsleadsources_abc_contact_auctions"],
-         ];
+        ];
     }
 
     public function testDots()

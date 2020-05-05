@@ -158,7 +158,8 @@ class SOAPAPI2Test extends SOAPTestCase
     {
         $result = $this->soapClient->call('get_entry', ['session'=>$this->sessionId,'module_name'=>'Contacts','id'=>$id,
             'select_fields'=>['last_name', 'first_name', 'do_not_call', 'lead_source', 'email1'],
-            'link_name_to_fields_array' => [['name' =>  'email_addresses', 'value' => ['id', 'email_address', 'opt_out', 'primary_address']]]]);
+            'link_name_to_fields_array' => [['name' =>  'email_addresses', 'value' => ['id', 'email_address', 'opt_out', 'primary_address']]],
+        ]);
         return $result;
     }
 
@@ -185,7 +186,9 @@ class SOAPAPI2Test extends SOAPTestCase
         $result = $this->soapClient->call('set_entry', ['session'=>$this->sessionId,'module_name'=>'Opportunities',
             'name_value_lists'=>[['name'=>'name' , 'value'=>"$name"], ['name'=>'amount' , 'value'=>"$amount"],
                 ['name'=>'probability' , 'value'=>"$probability"], ['name'=>'sales_stage' , 'value'=>"$sales_stage"],
-                ['name'=>'account_id' , 'value'=>$account->id]]]);
+                ['name'=>'account_id' , 'value'=>$account->id],
+            ],
+        ]);
         self::$opportunities[] = $result['id'];
         return $result;
     } // fn
@@ -194,7 +197,8 @@ class SOAPAPI2Test extends SOAPTestCase
     {
         $result = $this->soapClient->call('set_relationship', ['session'=>$this->sessionId,'module_name' => 'Opportunities',
             'module_id' => $id, 'link_field_name' => 'contacts',
-            'related_ids' =>[self::$contactId], 'name_value_list' => [['name' => 'contact_role', 'value' => 'testrole']], 'delete'=>0]);
+            'related_ids' =>[self::$contactId], 'name_value_list' => [['name' => 'contact_role', 'value' => 'testrole']], 'delete'=>0,
+        ]);
         return $result;
     } // fn
 
@@ -211,7 +215,7 @@ class SOAPAPI2Test extends SOAPTestCase
                 'related_fields' => ['id'],
                 'related_module_link_name_to_fields_array' => [['name' =>  'contacts', 'value' => ['id', 'first_name', 'last_name']]],
                 'deleted'=>0,
-                ]
+            ]
         );
         return $result;
     } // fn
@@ -225,7 +229,8 @@ class SOAPAPI2Test extends SOAPTestCase
                 'search_string' => 'Sugar',
                 'modules' => ['Accounts', 'Contacts', 'Opportunities'],
                 'offset' => '0',
-                'max_results' => '10']
+                'max_results' => '10',
+            ]
         );
 
         return $result;

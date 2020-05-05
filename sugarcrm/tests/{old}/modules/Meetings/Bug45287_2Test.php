@@ -56,36 +56,43 @@ class Bug45287_2Test extends TestCase
             $cnt++;
         }
 
-        $this->searchDefs = ["Meetings" => ["layout" => ["basic_search" => ["name" => ["name" => "name",
-                                                                                                                "default" => true,
-                                                                                                                "width" => "10%",
-                                                                                                               ],
-                                                                                                "date_start" => ["name" => "date_start",
-                                                                                                                      "default" => true,
-                                                                                                                      "width" => "10%",
-                                                                                                                      "type" => "datetimecombo",
-                                                                                                                     ],
-                                                                                               ],
-                                                                       ],
-                                                     ],
-                                 ];
+        $this->searchDefs = [
+            "Meetings" => [
+                "layout" => [
+                    "basic_search" => [
+                        "name" => [
+                            "name" => "name",
+                            "default" => true,
+                            "width" => "10%",
+                        ],
+                        "date_start" => ["name" => "date_start",
+                            "default" => true,
+                            "width" => "10%",
+                            "type" => "datetimecombo",
+                        ],
+                    ],
+                ],
+            ],
+        ];
 
-        $this->searchFields = ["Meetings" => ["name" => ["query_type" => "default"],
-                                                        "date_start" => ["query_type" => "default"],
-                                                        "range_date_start" => ["query_type" => "default",
-                                                                                    "enable_range_search" => 1,
-                                                                                    "is_date_field" => 1],
-                                                        "range_date_start" => ["query_type" => "default",
-                                                                                    "enable_range_search" => 1,
-                                                                                    "is_date_field" => 1],
-                                                        "start_range_date_start" => ["query_type" => "default",
-                                                                                          "enable_range_search" => 1,
-                                                                                          "is_date_field" => 1],
-                                                        "end_range_date_start" => ["query_type" => "default",
-                                                                                        "enable_range_search" => 1,
-                                                                                        "is_date_field" => 1],
-                                                       ],
-                                   ];
+        $this->searchFields = [
+            "Meetings" => [
+                "name" => ["query_type" => "default"],
+                "date_start" => ["query_type" => "default"],
+                "range_date_start" => ["query_type" => "default",
+                    "enable_range_search" => 1,
+                    "is_date_field" => 1,
+                ],
+                "start_range_date_start" => ["query_type" => "default",
+                    "enable_range_search" => 1,
+                    "is_date_field" => 1,
+                ],
+                "end_range_date_start" => ["query_type" => "default",
+                    "enable_range_search" => 1,
+                    "is_date_field" => 1,
+                ],
+            ],
+        ];
     }
 
     protected function tearDown() : void
@@ -106,19 +113,19 @@ class Bug45287_2Test extends TestCase
     public function testRetrieveByExactDate()
     {
         $_REQUEST = $_POST = ["module" => "Meetings",
-                                   "action" => "index",
-                                   "searchFormTab" => "basic_search",
-                                   "query" => "true",
-                                   "name_basic" => "",
-                                   "current_user_only_basic" => "0",
-                                   "favorites_only_basic" => "0",
-                                   "open_only_basic" => "0",
-                                   "date_start_basic_range_choice" => "=",
-                                   "range_date_start_basic" => "14/07/2011",
-                                   "start_range_date_start_basic" => "",
-                                   "end_range_date_start_basic" => "",
-                                   "button" => "Search",
-                                  ];
+            "action" => "index",
+            "searchFormTab" => "basic_search",
+            "query" => "true",
+            "name_basic" => "",
+            "current_user_only_basic" => "0",
+            "favorites_only_basic" => "0",
+            "open_only_basic" => "0",
+            "date_start_basic_range_choice" => "=",
+            "range_date_start_basic" => "14/07/2011",
+            "start_range_date_start_basic" => "",
+            "end_range_date_start_basic" => "",
+            "button" => "Search",
+        ];
 
         $srch = new SearchForm(new Meeting(), "Meetings");
         $srch->setup($this->searchDefs, $this->searchFields, "");
@@ -138,21 +145,21 @@ class Bug45287_2Test extends TestCase
 
     public function testRetrieveByDaterange()
     {
-        $_REQUEST = $_POST = ["module" => "Meetings",
-                                   "action" => "index",
-                                   "searchFormTab" => "basic_search",
-                                   "query" => "true",
-                                   "name_basic" => "",
-                                   "current_user_only_basic" => "0",
-                                   "favorites_only_basic" => "0",
-                                   "open_only_basic" => "0",
-                                   "date_start_basic_range_choice" => "between",
-                                   "range_date_start_basic" => "",
-                                   "start_range_date_start_basic" => "13/07/2011",
-                                   "end_range_date_start_basic" => "14/07/2011",
-                                   "button" => "Search",
-                                  ];
-
+        $_REQUEST = $_POST = [
+            "module" => "Meetings",
+            "action" => "index",
+            "searchFormTab" => "basic_search",
+            "query" => "true",
+            "name_basic" => "",
+            "current_user_only_basic" => "0",
+            "favorites_only_basic" => "0",
+            "open_only_basic" => "0",
+            "date_start_basic_range_choice" => "between",
+            "range_date_start_basic" => "",
+            "start_range_date_start_basic" => "13/07/2011",
+            "end_range_date_start_basic" => "14/07/2011",
+            "button" => "Search",
+        ];
 
         $srch = new SearchForm(new Meeting(), "Meetings");
         $srch->setup($this->searchDefs, $this->searchFields, "");

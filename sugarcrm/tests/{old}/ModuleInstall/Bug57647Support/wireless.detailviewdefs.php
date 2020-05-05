@@ -24,27 +24,27 @@ $viewdefs[$module_name]['DetailView'] = [
         ],
     ],
 
-    'panels' =>  [
-         [
+    'panels' => [
+        [
             $_object_name . '_number',
-         ],
-         [
+        ],
+        [
             'priority',
-         ],
-         [
+        ],
+        [
             'status',
-         ],
-         [
-             [
+        ],
+        [
+            [
                 'name'  => 'name',
                 'label' => 'LBL_SUBJECT',
-             ],
-         ],
-         [
+            ],
+        ],
+        [
             'assigned_user_name',
-         ],
-         [
+        ],
+        [
             'team_name',
-         ],
+        ],
     ],
 ];

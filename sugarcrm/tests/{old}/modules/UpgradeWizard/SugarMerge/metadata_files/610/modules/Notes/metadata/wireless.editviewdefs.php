@@ -19,11 +19,11 @@
  
 $viewdefs['Notes']['EditView'] = [
     'templateMeta' => [
-                            'maxColumns' => '1',
-                            'widths' => [
-                                ['label' => '10', 'field' => '30'],
-                            ],
-                           ],
+        'maxColumns' => '1',
+        'widths' => [
+            ['label' => '10', 'field' => '30'],
+        ],
+    ],
     'panels' => [
         [['name'=>'name', 'displayParams'=>['required'=>true,'wireless_edit_only'=>true,]],],
         ['assigned_user_name'],

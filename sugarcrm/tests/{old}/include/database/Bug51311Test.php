@@ -19,58 +19,58 @@ class Bug51311Test extends TestCase
     {
         return [
             [
-                 [
-                  'name' => 'contents',
-                  'dbType' => 'longtext',
-                  'type' => 'nvarchar',
-                  'vname' => 'LBL_DESCRIPTION',
-                  'isnull' => true,
-                 ],
-                 'max',
+                [
+                    'name' => 'contents',
+                    'dbType' => 'longtext',
+                    'type' => 'nvarchar',
+                    'vname' => 'LBL_DESCRIPTION',
+                    'isnull' => true,
+                ],
+                'max',
             ],
 
             [
-                 [
-                  'name' => 'contents',
-                  'dbType'  => 'text',
-                  'type' => 'nvarchar',
-                  'vname' => 'LBL_DESCRIPTION',
-                  'isnull' => true,
-                 ],
-                 'max',
+                [
+                    'name' => 'contents',
+                    'dbType'  => 'text',
+                    'type' => 'nvarchar',
+                    'vname' => 'LBL_DESCRIPTION',
+                    'isnull' => true,
+                ],
+                'max',
             ],
 
             [
-                 [
-                  'name' => 'contents',
-                  'dbType'  => 'image',
-                  'type' => 'image',
-                  'vname' => 'LBL_DESCRIPTION',
-                  'isnull' => true,
-                 ],
-                 '2147483647',
+                [
+                    'name' => 'contents',
+                    'dbType'  => 'image',
+                    'type' => 'image',
+                    'vname' => 'LBL_DESCRIPTION',
+                    'isnull' => true,
+                ],
+                '2147483647',
             ],
 
             [
-                 [
-                  'name' => 'contents',
-                  'dbType'  => 'ntext',
-                  'type' => 'image',
-                  'vname' => 'LBL_DESCRIPTION',
-                  'isnull' => true,
-                 ],
-                 '2147483646',
+                [
+                    'name' => 'contents',
+                    'dbType'  => 'ntext',
+                    'type' => 'image',
+                    'vname' => 'LBL_DESCRIPTION',
+                    'isnull' => true,
+                ],
+                '2147483646',
             ],
 
             [
-                 [
-                  'name' => 'contents',
-                  'dbType' => 'nvarchar',
-                  'type' => 'nvarchar',
-                  'vname' => 'LBL_DESCRIPTION',
-                  'isnull' => true,
-                 ],
-                 '255',
+                [
+                    'name' => 'contents',
+                    'dbType' => 'nvarchar',
+                    'type' => 'nvarchar',
+                    'vname' => 'LBL_DESCRIPTION',
+                    'isnull' => true,
+                ],
+                '255',
             ],
         ];
     }

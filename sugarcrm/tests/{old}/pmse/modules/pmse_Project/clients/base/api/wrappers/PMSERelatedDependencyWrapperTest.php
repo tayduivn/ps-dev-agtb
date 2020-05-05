@@ -43,10 +43,10 @@ class PMSERelatedDependencyWrapperTest extends TestCase
                 ->disableOriginalConstructor()
                 ->setMethods(
                     [
-                            'processEventCriteria',
-                            'removeRelatedDependencies',
-                            'createRelatedDependencies',
-                        ]
+                        'processEventCriteria',
+                        'removeRelatedDependencies',
+                        'createRelatedDependencies',
+                    ]
                 )
                 ->getMock();
 
@@ -77,11 +77,11 @@ class PMSERelatedDependencyWrapperTest extends TestCase
                 ->disableOriginalConstructor()
                 ->setMethods(
                     [
-                            'removeRelatedDependencies',
-                            'createRelatedDependencies',
-                            'getBean',
-                            'getRelatedElementModule',
-                        ]
+                        'removeRelatedDependencies',
+                        'createRelatedDependencies',
+                        'getBean',
+                        'getRelatedElementModule',
+                    ]
                 )
                 ->getMock();
         
@@ -126,11 +126,11 @@ class PMSERelatedDependencyWrapperTest extends TestCase
                 ->disableOriginalConstructor()
                 ->setMethods(
                     [
-                            'removeRelatedDependencies',
-                            'createRelatedDependencies',
-                            'getBean',
-                            'getRelatedElementModule',
-                        ]
+                        'removeRelatedDependencies',
+                        'createRelatedDependencies',
+                        'getBean',
+                        'getRelatedElementModule',
+                    ]
                 )
                 ->getMock();
         
@@ -184,11 +184,11 @@ class PMSERelatedDependencyWrapperTest extends TestCase
                 ->disableOriginalConstructor()
                 ->setMethods(
                     [
-                            'removeRelatedDependencies',
-                            'createRelatedDependencies',
-                            'getBean',
-                            'getRelatedElementModule',
-                        ]
+                        'removeRelatedDependencies',
+                        'createRelatedDependencies',
+                        'getBean',
+                        'getRelatedElementModule',
+                    ]
                 )
                 ->getMock();
         
@@ -229,10 +229,10 @@ class PMSERelatedDependencyWrapperTest extends TestCase
             ->disableOriginalConstructor()
             ->setMethods(
                 [
-                        'removeRelatedDependencies',
-                        'createRelatedDependencies',
-                        'getBean',
-                    ]
+                    'removeRelatedDependencies',
+                    'createRelatedDependencies',
+                    'getBean',
+                ]
             )
             ->getMock();
         
@@ -255,10 +255,10 @@ class PMSERelatedDependencyWrapperTest extends TestCase
             ->disableOriginalConstructor()
             ->setMethods(
                 [
-                        'removeRelatedDependencies',
-                        'createRelatedDependencies',
-                        'getBean',
-                    ]
+                    'removeRelatedDependencies',
+                    'createRelatedDependencies',
+                    'getBean',
+                ]
             )
             ->getMock();
         
@@ -292,9 +292,9 @@ class PMSERelatedDependencyWrapperTest extends TestCase
             ->disableOriginalConstructor()
             ->setMethods(
                 [
-                        'getRelatedDependency',
-                        'getBean',
-                    ]
+                    'getRelatedDependency',
+                    'getBean',
+                ]
             )
             ->getMock();
         
@@ -342,9 +342,9 @@ class PMSERelatedDependencyWrapperTest extends TestCase
             ->disableOriginalConstructor()
             ->setMethods(
                 [
-                        'getRelatedDependency',
-                        'getBean',
-                    ]
+                    'getRelatedDependency',
+                    'getBean',
+                ]
             )
             ->getMock();
         

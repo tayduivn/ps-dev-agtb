@@ -47,11 +47,10 @@ class IndexManagerTest extends TestCase
                         'setting_A' => 'foo',
                         'setting_B' => 'fox',
                     ],
-                    IndexManager::DEFAULT_INDEX_SETTINGS_KEY =>
-                        [
-                            'setting_A' => 'bar',
-                            'setting_C' => 'foo',
-                        ],
+                    IndexManager::DEFAULT_INDEX_SETTINGS_KEY => [
+                        'setting_A' => 'bar',
+                        'setting_C' => 'foo',
+                    ],
                     'index_bar' => [],
                 ],
                 [
@@ -65,12 +64,11 @@ class IndexManagerTest extends TestCase
             [
                 'index_foo',
                 [
-                    IndexManager::DEFAULT_INDEX_SETTINGS_KEY =>
-                        [
-                            'setting_A' => 'bar',
-                            'setting_C' => 'foo',
-                            'setting_Z' => 'nocore',
-                        ],
+                    IndexManager::DEFAULT_INDEX_SETTINGS_KEY => [
+                        'setting_A' => 'bar',
+                        'setting_C' => 'foo',
+                        'setting_Z' => 'nocore',
+                    ],
                     'index_bar' => [],
                 ],
                 [
@@ -89,7 +87,7 @@ class IndexManagerTest extends TestCase
                         AnalysisBuilder::ANALYSIS => 'quick',
                     ],
                 ],
-                 [
+                [
                     'setting_Z' => 'core',
                     'setting_A' => 'bar',
                     'setting_B' => 'fox',

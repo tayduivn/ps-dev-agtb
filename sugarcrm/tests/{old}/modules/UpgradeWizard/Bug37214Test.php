@@ -32,11 +32,11 @@ class Bug37214Test extends TestCase
         $this->current_working_dir = getcwd();
 
         $sugar_config_si = [
-        'disable_count_query' => true,
-        'external_cache_disabled_apc' => true,
-        'external_cache_disabled_zend' => true,
-        'external_cache_disabled_memcache' => true,
-        'external_cache_disabled' => true,
+            'disable_count_query' => true,
+            'external_cache_disabled_apc' => true,
+            'external_cache_disabled_zend' => true,
+            'external_cache_disabled_memcache' => true,
+            'external_cache_disabled' => true,
         ];
 
         if (file_exists('config.php')) {

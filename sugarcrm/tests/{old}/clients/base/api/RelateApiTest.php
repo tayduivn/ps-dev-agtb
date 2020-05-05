@@ -222,11 +222,14 @@ class RelateApiTest extends TestCase
         $serviceMock = new RelateApiServiceMockUp();
         $reply = $this->relateApi->filterRelated(
             $serviceMock,
-            ['module' => 'Accounts', 'record' => $account_id,
-                        'link_name' => 'contacts',
-                        'filter' => [['first_name' => ['$starts' => "RelateApi"]]],
-            'fields' => 'id,name',
-            'order_by' => 'name:ASC']
+            [
+                'module' => 'Accounts',
+                'record' => $account_id,
+                'link_name' => 'contacts',
+                'filter' => [['first_name' => ['$starts' => "RelateApi"]]],
+                'fields' => 'id,name',
+                'order_by' => 'name:ASC',
+            ]
         );
 
         $this->assertEquals(1, count($reply['records']));
@@ -242,11 +245,14 @@ class RelateApiTest extends TestCase
         $serviceMock = new RelateApiServiceMockUp();
         $reply = $this->relateApi->filterRelatedCount(
             $serviceMock,
-            ['module' => 'Accounts', 'record' => $account_id,
-                  'link_name' => 'contacts',
-                  'filter' => [['first_name' => ['$starts' => "RelateApi"]]],
-            'fields' => 'id,name',
-            'order_by' => 'name:ASC']
+            [
+                'module' => 'Accounts',
+                'record' => $account_id,
+                'link_name' => 'contacts',
+                'filter' => [['first_name' => ['$starts' => "RelateApi"]]],
+                'fields' => 'id,name',
+                'order_by' => 'name:ASC',
+            ]
         );
         $this->assertArrayHasKey('record_count', $reply);
         $this->assertSame(1, $reply['record_count']);
@@ -262,11 +268,13 @@ class RelateApiTest extends TestCase
         $serviceMock = new RelateApiServiceMockUp();
         $reply = $this->relateApi->filterRelated(
             $serviceMock,
-            ['module' => 'Opportunities',
-                  'record' => $opp_id,
-                  'link_name' => 'contacts',
-                  'fields' => 'id, name, opportunity_role',
-            'order_by' => 'opportunity_role:DESC']
+            [
+                'module' => 'Opportunities',
+                'record' => $opp_id,
+                'link_name' => 'contacts',
+                'fields' => 'id, name, opportunity_role',
+                'order_by' => 'opportunity_role:DESC',
+            ]
         );
 
         $this->assertEquals(3, count($reply['records']), 'Should return three records');

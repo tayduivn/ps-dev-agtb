@@ -62,7 +62,7 @@ class FileLocatorTest extends TestCase
             'locator_class_params' => [
                 $paths,
             ],
-            ];
+        ];
         $this->form->setOptions($options);
         $options = $this->form->getOptions();
         $this->assertEquals($paths, $options['locator_class_params'][0]);
@@ -80,7 +80,7 @@ class FileLocatorTest extends TestCase
             'locator_class_params' => [
                 $paths,
             ],
-            ];
+        ];
         $this->form = new SearchForm(new Account(), "Accounts", 'index', $options);
         $options = $this->form->getOptions();
         $this->assertEquals($paths, $options['locator_class_params'][0]);

@@ -120,7 +120,8 @@ class GetAclForModuleTest extends TestCase
         ];
 
         $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, [
-            'access', 'list', 'view'], ['list', 'view']);
+            'access', 'list', 'view',
+        ], ['list', 'view']);
 
         SugarTestACLUtilities::setupUser($role);
 
@@ -153,7 +154,8 @@ class GetAclForModuleTest extends TestCase
         ];
 
         $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, [
-            'access', 'create', 'edit', 'view'], ['edit', 'view']);
+            'access', 'create', 'edit', 'view',
+        ], ['edit', 'view']);
 
         SugarTestACLUtilities::setupUser($role);
 
@@ -179,7 +181,8 @@ class GetAclForModuleTest extends TestCase
         ];
 
         $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, [
-            'access', 'create', 'view', 'list', 'edit', 'delete', 'import', 'export', 'massupdate']);
+            'access', 'create', 'view', 'list', 'edit', 'delete', 'import', 'export', 'massupdate',
+        ]);
 
         SugarTestACLUtilities::setupUser($role);
 
@@ -202,8 +205,7 @@ class GetAclForModuleTest extends TestCase
         $modules = ['Accounts'];
         // user can view, list, delete, and export
         $expected_result = [
-            'fields' =>
-            [
+            'fields' => [
                 'website' => [
                     'write' => 'no',
                     'create' => 'no',
@@ -231,7 +233,8 @@ class GetAclForModuleTest extends TestCase
         ];
 
         $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, [
-            'access', 'create', 'view', 'list', 'edit','delete','import', 'export', 'massupdate']);
+            'access', 'create', 'view', 'list', 'edit','delete','import', 'export', 'massupdate',
+        ]);
 
         SugarTestACLUtilities::createField($role->id, 'Accounts', 'website', 50);
 
@@ -275,7 +278,8 @@ class GetAclForModuleTest extends TestCase
         ];
 
         $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, [
-            'access', 'create', 'view', 'list', 'edit','delete','import', 'export', 'massupdate']);
+            'access', 'create', 'view', 'list', 'edit','delete','import', 'export', 'massupdate',
+        ]);
 
         SugarTestACLUtilities::createField($role->id, 'Accounts', 'website', 60);
 
@@ -319,7 +323,8 @@ class GetAclForModuleTest extends TestCase
         ];
 
         $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, [
-            'access', 'create', 'view', 'list', 'edit','delete','import', 'export', 'massupdate']);
+            'access', 'create', 'view', 'list', 'edit','delete','import', 'export', 'massupdate',
+        ]);
 
         SugarTestACLUtilities::createField($role->id, 'Accounts', 'website', 40);
 

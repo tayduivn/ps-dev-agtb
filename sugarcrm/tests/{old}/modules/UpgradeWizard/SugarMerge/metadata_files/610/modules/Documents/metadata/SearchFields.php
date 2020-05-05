@@ -12,17 +12,18 @@
 
 $searchFields['Documents'] =
      [
-        'document_name' => [ 'query_type'=>'default'],
-        'category_id'=> ['query_type'=>'default', 'options' => 'document_category_dom', 'template_var' => 'CATEGORY_OPTIONS'],
-        'subcategory_id'=> ['query_type'=>'default', 'options' => 'document_subcategory_dom', 'template_var' => 'SUBCATEGORY_OPTIONS'],
-        'active_date'=> ['query_type'=>'default'],
-        'exp_date'=> ['query_type'=>'default'],
-        'favorites_only' => [
-            'query_type'=>'format',
-            'operator' => 'subquery',
-            'subquery' => 'SELECT sugarfavorites.record_id FROM sugarfavorites 
+         'document_name' => [ 'query_type'=>'default'],
+         'category_id'=> ['query_type'=>'default', 'options' => 'document_category_dom', 'template_var' => 'CATEGORY_OPTIONS'],
+         'subcategory_id'=> ['query_type'=>'default', 'options' => 'document_subcategory_dom', 'template_var' => 'SUBCATEGORY_OPTIONS'],
+         'active_date'=> ['query_type'=>'default'],
+         'exp_date'=> ['query_type'=>'default'],
+         'favorites_only' => [
+             'query_type'=>'format',
+             'operator' => 'subquery',
+             'subquery' => 'SELECT sugarfavorites.record_id FROM sugarfavorites 
 			                    WHERE sugarfavorites.deleted=0 
 			                        and sugarfavorites.module = \'Documents\' 
 			                        and sugarfavorites.assigned_user_id = \'{0}\'',
-            'db_field'=>['id']],
-    ];
+             'db_field'=>['id'],
+         ],
+     ];

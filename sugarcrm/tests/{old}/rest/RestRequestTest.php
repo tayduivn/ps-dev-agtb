@@ -101,29 +101,22 @@ class RestRequestTest extends TestCase
     {
         $headerName = 'HTTP_ACCEPT';
         return [
-            'both header and URL have version' =>
-            [
+            'both header and URL have version' => [
                 "v10/Accounts/by_country",
                 [$headerName => 'application/vnd.sugarcrm.core+xml; version=11'],
             ],
-            'neither Header nor Url has versoin' =>
-            ["/Accounts/by_country/", []],
-            'not _ in url version' =>
-            ["v42.3/Accounts/by_country?foo=bar", []],
-            'not 2-digit url version' =>
-            ["//v7/Accounts/by_country/", []],
-            '3-digit, and no URL version' =>
-            [
+            'neither Header nor Url has versoin' => ["/Accounts/by_country/", []],
+            'not _ in url version' => ["v42.3/Accounts/by_country?foo=bar", []],
+            'not 2-digit url version' => ["//v7/Accounts/by_country/", []],
+            '3-digit, and no URL version' => [
                 "/Accounts/by_country",
                 [$headerName => 'application/vnd.sugarcrm.core+xml; version=101'],
             ],
-            'header version triple digit minor version, and no URL version' =>
-            [
+            'header version triple digit minor version, and no URL version' => [
                 "/Accounts/by_country",
                 [$headerName => 'application/vnd.sugarcrm.core+xml; version=10.123'],
             ],
-            'header version has random string, and no URL version' =>
-            [
+            'header version has random string, and no URL version' => [
                 "/Accounts/by_country",
                 [$headerName => 'application/vnd.sugarcrm.core+xml; version=v10.1x'],
             ],

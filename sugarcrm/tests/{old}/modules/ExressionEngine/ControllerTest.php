@@ -52,18 +52,27 @@ class ExpressionEngine_ControllerTest extends TestCase
         return [
             'non-json-string' => ['Accounts', 'non-json-string'],
             'bad-common-field-defs' => ['Accounts', json_encode([[]])],
-            'bad-relate-field-defs' => ['Accounts', json_encode([[
-                'link' => 'foo',
-                'type' => 'related',
-            ]])],
-            'bad-rollup-field-defs' => ['Accounts', json_encode([[
-                'link' => 'foo',
-                'type' => 'rollupSum',
-            ]])],
-            'bean-not-found' => ['Accounts', json_encode([[
-                'link' => 'contacts',
-                'type' => 'count',
-            ]]), 'non-existing-id'],
+            'bad-relate-field-defs' => ['Accounts', json_encode([
+                [
+                    'link' => 'foo',
+                    'type' => 'related',
+                ],
+            ]),
+            ],
+            'bad-rollup-field-defs' => ['Accounts', json_encode([
+                [
+                    'link' => 'foo',
+                    'type' => 'rollupSum',
+                ],
+            ]),
+            ],
+            'bean-not-found' => ['Accounts', json_encode([
+                [
+                    'link' => 'contacts',
+                    'type' => 'count',
+                ],
+            ]), 'non-existing-id',
+            ],
         ];
     }
 }

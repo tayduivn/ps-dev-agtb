@@ -229,9 +229,9 @@ class RS70Test extends TestCase
         SugarTestTimePeriodUtilities::createTimePeriod('2013-05-01', '2013-10-01');
         $bean = new ForecastWorksheet();
         $actual = SugarTestReflection::callProtectedMethod($bean, 'timeperiodHasMigrated', [
-                $worksheetDate,
-                $objDate,
-            ]);
+            $worksheetDate,
+            $objDate,
+        ]);
         $this->assertEquals($expected, $actual);
     }
 
@@ -266,9 +266,9 @@ class RS70Test extends TestCase
         $account->id = 'id1';
         $account->name = 'name1';
         SugarTestReflection::callProtectedMethod($bean, 'copyValues', [
-                ['id', 'name'],
-                $account,
-            ]);
+            ['id', 'name'],
+            $account,
+        ]);
         $this->assertEquals($account->id, $bean->id);
         $this->assertEquals($account->name, $bean->name);
     }
@@ -297,7 +297,8 @@ class RS70Test extends TestCase
         // END SUGARCRM flav=ent ONLY
 
         $bean = $this->createPartialMock('ForecastWorksheet', ['createUpdateForecastWorksheetJob',
-                                                          'removeReassignedItems']);
+            'removeReassignedItems',
+        ]);
 
         $bean->expects($this->any())->method('createUpdateForecastWorksheetJob');
 
@@ -305,9 +306,9 @@ class RS70Test extends TestCase
              ->method('removeReassignedItems');
 
         $actual = SugarTestReflection::callProtectedMethod($bean, 'commitWorksheet', [
-                $GLOBALS['current_user']->id,
-                $tp->id,
-            ]);
+            $GLOBALS['current_user']->id,
+            $tp->id,
+        ]);
         $this->assertTrue($actual);
 
         SugarTestAccountUtilities::removeAllCreatedAccounts();
@@ -331,9 +332,9 @@ class RS70Test extends TestCase
         SugarTestWorksheetUtilities::setCreatedWorksheet([$bean->id]);
 
         $actual = SugarTestReflection::callProtectedMethod($bean, 'reassignForecast', [
-                $GLOBALS['current_user']->id,
-                $user->id,
-            ]);
+            $GLOBALS['current_user']->id,
+            $user->id,
+        ]);
         $this->assertNotEmpty($actual);
     }
 

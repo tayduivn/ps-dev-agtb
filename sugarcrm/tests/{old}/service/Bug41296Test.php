@@ -53,10 +53,26 @@ class Bug41296Test extends SOAPTestCase
     {
         $this->login();
 
-        $contacts_list=[ 'session'=>$this->sessionId, 'module_name' => 'Contacts',
-                   'name_value_lists' => [
-                                        [['name'=>'assigned_user_id' , 'value'=>$GLOBALS['current_user']->id],['name'=>'first_name' , 'value'=>'testfirst'],['name'=>'last_name' , 'value'=>'testlast']],
-                                        ]];
+        $contacts_list = [
+            'session' => $this->sessionId,
+            'module_name' => 'Contacts',
+            'name_value_lists' => [
+                [
+                    [
+                        'name' => 'assigned_user_id',
+                        'value' => $GLOBALS['current_user']->id,
+                    ],
+                    [
+                        'name' => 'first_name',
+                        'value' => 'testfirst',
+                    ],
+                    [
+                        'name' => 'last_name',
+                        'value' => 'testlast',
+                    ],
+                ],
+            ],
+        ];
 
         $result = $this->soapClient->call('set_entries', $contacts_list);
         $this->_resultId = $result['ids'][0];

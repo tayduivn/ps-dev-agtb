@@ -50,9 +50,9 @@ class LeadFormBaseTest extends TestCase
     public function leadsProvider()
     {
         return [
-        ['Collin', 'Lee', true],
-        ['', 'Lee', true],
-        ['Mike', 'TheSituationSorrentino', false],
+            ['Collin', 'Lee', true],
+            ['', 'Lee', true],
+            ['Mike', 'TheSituationSorrentino', false],
         ];
     }
 

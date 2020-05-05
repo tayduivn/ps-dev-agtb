@@ -225,25 +225,25 @@ class LinkTest extends TestCase
 
         //Test a custom where
         $result = $accountsLink->getBeans([
-                "where" => [
-                    'lhs_field' => 'source',
-                    'operator' => '=',
-                    'rhs_value' => 'external',
-                ],
-            ]);
+            "where" => [
+                'lhs_field' => 'source',
+                'operator' => '=',
+                'rhs_value' => 'external',
+            ],
+        ]);
         $this->assertEquals(1, sizeof($result));
         $this->assertEquals($bug3->id, $result[$bug3->id]->id);
 
         //Test offset/pagination
         $allIds = array_keys($accountsLink->getBeans([
-                    'orderby' => 'id',
-                ]));
+            'orderby' => 'id',
+        ]));
         $this->assertEquals(3, sizeof($allIds));
         $result = $accountsLink->getBeans([
-                "limit" => 1,
-                "offset" => 1,
-                'orderby' => 'id',
-            ]);
+            "limit" => 1,
+            "offset" => 1,
+            'orderby' => 'id',
+        ]);
         $this->assertEquals(1, sizeof($result));
         $this->assertArrayHasKey($allIds[1], $result);
 
@@ -335,8 +335,8 @@ class LinkTest extends TestCase
         $accountsLink->add($bug3);
 
         $result = $accountsLink->getBeans([
-                "orderby" => "name",
-            ]);
+            "orderby" => "name",
+        ]);
         $expected = [
             $bug3->id => $bug3,
             $bug2->id => $bug2,
@@ -349,8 +349,8 @@ class LinkTest extends TestCase
         }
         //test order DESC and ASC
         $result = $accountsLink->getBeans([
-                "orderby" => "name",
-            ]);
+            "orderby" => "name",
+        ]);
         $expected = [
             $bug3->id => $bug3,
             $bug2->id => $bug2,
@@ -363,8 +363,8 @@ class LinkTest extends TestCase
         }
 
         $result = $accountsLink->getBeans([
-                "orderby" => "name DESC",
-            ]);
+            "orderby" => "name DESC",
+        ]);
         $expected = [
             $bug->id => $bug,
             $bug2->id => $bug2,

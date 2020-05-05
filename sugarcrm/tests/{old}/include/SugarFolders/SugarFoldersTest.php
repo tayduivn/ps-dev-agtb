@@ -65,9 +65,12 @@ class SugarFoldersTest extends TestCase
         $this->folder->id = create_guid();
         $this->folder->new_with_id = true;
 
-        $fields = ['name' => 'TEST_FOLDER','parent_folder' => 'PRNT_FOLDER',
-                        'team_id' => create_guid(),'team_set_id' => create_guid(),
-                        ];
+        $fields = [
+            'name' => 'TEST_FOLDER',
+            'parent_folder' => 'PRNT_FOLDER',
+            'team_id' => create_guid(),
+            'team_set_id' => create_guid(),
+        ];
 
         $this->folder->setFolder($fields);
 

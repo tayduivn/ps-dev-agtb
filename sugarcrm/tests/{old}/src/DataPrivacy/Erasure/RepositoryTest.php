@@ -65,28 +65,23 @@ class RepositoryTest extends TestCase
     public static function providerTestAddGet()
     {
         return [
-            'add one field' =>
-            [
+            'add one field' => [
                 ['first_name'],
                 ['first_name'],
             ],
-            'add another field' =>
-            [
+            'add another field' => [
                 ['description'],
                 ['description', 'first_name'],
             ],
-            'add no field again' =>
-            [
+            'add no field again' => [
                 [],
                 ['description', 'first_name'],
             ],
-            'add fields (duplicated + new)' =>
-            [
+            'add fields (duplicated + new)' => [
                 ['first_name', 'last_name'],
                 ['description', 'first_name', 'last_name'],
             ],
-            'add fields (duplicated only)' =>
-            [
+            'add fields (duplicated only)' => [
                 ['description', 'last_name'],
                 ['description', 'first_name', 'last_name'],
             ],
@@ -113,31 +108,26 @@ class RepositoryTest extends TestCase
     public static function providerTestRemoveGet()
     {
         return [
-            'remove no field initially' =>
-                [
-                    [],
-                    ['description', 'first_name', 'last_name'],
-                ],
-            'remove non-existing field' =>
-                [
-                    ['last_field'],
-                    ['description', 'first_name', 'last_name'],
-                ],
-            'remove one field' =>
-                [
-                    ['first_name'],
-                    ['description', 'last_name'],
-                ],
-            'remove fields (duplicated + new]' =>
-                [
-                    ['description', 'first_name'],
-                    ['last_name'],
-                ],
-            'remove fields (duplicated]' =>
-                [
-                    ['first_name'],
-                    ['last_name'],
-                ],
+            'remove no field initially' => [
+                [],
+                ['description', 'first_name', 'last_name'],
+            ],
+            'remove non-existing field' => [
+                ['last_field'],
+                ['description', 'first_name', 'last_name'],
+            ],
+            'remove one field' => [
+                ['first_name'],
+                ['description', 'last_name'],
+            ],
+            'remove fields (duplicated + new]' => [
+                ['description', 'first_name'],
+                ['last_name'],
+            ],
+            'remove fields (duplicated]' => [
+                ['first_name'],
+                ['last_name'],
+            ],
         ];
     }
 

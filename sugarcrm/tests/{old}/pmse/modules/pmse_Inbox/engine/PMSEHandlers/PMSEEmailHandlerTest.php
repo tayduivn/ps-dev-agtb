@@ -100,8 +100,16 @@ class PMSEEmailHandlerTest extends TestCase
 
         $sugarMailerMock = $this->getMockBuilder('SmtpMailer')
             ->disableOriginalConstructor()
-            ->setMethods(['addRecipientsTo', 'addRecipientsCc', 'addRecipientsBcc', 'setHtmlBody', 'setTextBody',
-                'setSubject', 'setHeader', 'send'])
+            ->setMethods([
+                'addRecipientsTo',
+                'addRecipientsCc',
+                'addRecipientsBcc',
+                'setHtmlBody',
+                'setTextBody',
+                'setSubject',
+                'setHeader',
+                'send',
+            ])
             ->getMock();
 
         $templateMock = $this->getMockBuilder('pmse_Emails_Templates')
@@ -168,8 +176,16 @@ class PMSEEmailHandlerTest extends TestCase
 
         $sugarMailerMock = $this->getMockBuilder('SmtpMailer')
             ->disableOriginalConstructor()
-            ->setMethods(['addRecipientsTo', 'addRecipientsCc', 'addRecipientsBcc', 'setHtmlBody', 'setTextBody',
-                'setSubject', 'setHeader', 'send'])
+            ->setMethods([
+                'addRecipientsTo',
+                'addRecipientsCc',
+                'addRecipientsBcc',
+                'setHtmlBody',
+                'setTextBody',
+                'setSubject',
+                'setHeader',
+                'send',
+            ])
             ->getMock();
 
         $loggerMock = $this->getMockBuilder('PMSELogger')

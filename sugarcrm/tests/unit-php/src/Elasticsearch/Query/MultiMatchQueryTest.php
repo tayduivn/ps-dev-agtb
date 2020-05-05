@@ -148,34 +148,28 @@ class MultiMatchQueryTest extends TestCase
                 '&',
                 true,
                 ['id', 'name'],
-                 [
-                    'bool' =>
-                         [
-                            'should' =>
-                                 [
-                                     [
-                                        'bool' =>
-                                             [
-                                                'should' =>
-                                                     [
-                                                         [
-                                                            'multi_match' =>
-                                                                 [
-                                                                    'type' => 'cross_fields',
-                                                                    'query' => 'abcdef',
-                                                                    'fields' =>
-                                                                         [
-                                                                            0 => 'id',
-                                                                            1 => 'name',
-                                                                        ],
-                                                                    'tie_breaker' => 1.0,
-                                                                ],
-                                                         ],
-                                                    ],
+                [
+                    'bool' => [
+                        'should' => [
+                            [
+                                'bool' => [
+                                    'should' => [
+                                        [
+                                            'multi_match' => [
+                                                'type' => 'cross_fields',
+                                                'query' => 'abcdef',
+                                                'fields' => [
+                                                    0 => 'id',
+                                                    1 => 'name',
+                                                ],
+                                                'tie_breaker' => 1.0,
                                             ],
-                                     ],
+                                        ],
+                                    ],
                                 ],
+                            ],
                         ],
+                    ],
                 ],
             ],
             // AND Operator, default space operator is AND
@@ -184,55 +178,45 @@ class MultiMatchQueryTest extends TestCase
                 'AND',
                 true,
                 ['id', 'name'],
-                 [
-                    'bool' =>
-                         [
-                            'must' =>
-                                 [
-                                     [
-                                        'bool' =>
-                                             [
-                                                'should' =>
-                                                     [
-                                                         [
-                                                            'multi_match' =>
-                                                                 [
-                                                                    'type' => 'cross_fields',
-                                                                    'query' => 'abc',
-                                                                    'fields' =>
-                                                                         [
-                                                                            0 => 'id',
-                                                                            1 => 'name',
-                                                                        ],
-                                                                    'tie_breaker' => 1.0,
-                                                                ],
-                                                         ],
-                                                    ],
+                [
+                    'bool' => [
+                        'must' => [
+                            [
+                                'bool' => [
+                                    'should' => [
+                                        [
+                                            'multi_match' => [
+                                                'type' => 'cross_fields',
+                                                'query' => 'abc',
+                                                'fields' => [
+                                                    0 => 'id',
+                                                    1 => 'name',
+                                                ],
+                                                'tie_breaker' => 1.0,
                                             ],
-                                     ],
-                                     [
-                                        'bool' =>
-                                             [
-                                                'should' =>
-                                                     [
-                                                         [
-                                                            'multi_match' =>
-                                                                 [
-                                                                    'type' => 'cross_fields',
-                                                                    'query' => 'def',
-                                                                    'fields' =>
-                                                                         [
-                                                                            0 => 'id',
-                                                                            1 => 'name',
-                                                                        ],
-                                                                    'tie_breaker' => 1.0,
-                                                                ],
-                                                         ],
-                                                    ],
-                                            ],
-                                     ],
+                                        ],
+                                    ],
                                 ],
+                            ],
+                            [
+                                'bool' => [
+                                    'should' => [
+                                        [
+                                            'multi_match' => [
+                                                'type' => 'cross_fields',
+                                                'query' => 'def',
+                                                'fields' => [
+                                                    0 => 'id',
+                                                    1 => 'name',
+                                                ],
+                                                'tie_breaker' => 1.0,
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                            ],
                         ],
+                    ],
                 ],
             ],
             // No operator provided, default space operator is AND
@@ -241,55 +225,45 @@ class MultiMatchQueryTest extends TestCase
                 'AND',
                 true,
                 ['id', 'name'],
-                 [
-                    'bool' =>
-                         [
-                            'must' =>
-                                 [
-                                     [
-                                        'bool' =>
-                                             [
-                                                'should' =>
-                                                     [
-                                                         [
-                                                            'multi_match' =>
-                                                                 [
-                                                                    'type' => 'cross_fields',
-                                                                    'query' => 'abc',
-                                                                    'fields' =>
-                                                                         [
-                                                                            0 => 'id',
-                                                                            1 => 'name',
-                                                                        ],
-                                                                    'tie_breaker' => 1.0,
-                                                                ],
-                                                         ],
-                                                    ],
+                [
+                    'bool' => [
+                        'must' => [
+                            [
+                                'bool' => [
+                                    'should' => [
+                                        [
+                                            'multi_match' => [
+                                                'type' => 'cross_fields',
+                                                'query' => 'abc',
+                                                'fields' => [
+                                                    0 => 'id',
+                                                    1 => 'name',
+                                                ],
+                                                'tie_breaker' => 1.0,
                                             ],
-                                     ],
-                                     [
-                                        'bool' =>
-                                             [
-                                                'should' =>
-                                                     [
-                                                         [
-                                                            'multi_match' =>
-                                                                 [
-                                                                    'type' => 'cross_fields',
-                                                                    'query' => 'def',
-                                                                    'fields' =>
-                                                                         [
-                                                                            0 => 'id',
-                                                                            1 => 'name',
-                                                                        ],
-                                                                    'tie_breaker' => 1.0,
-                                                                ],
-                                                         ],
-                                                    ],
-                                            ],
-                                     ],
+                                        ],
+                                    ],
                                 ],
+                            ],
+                            [
+                                'bool' => [
+                                    'should' => [
+                                        [
+                                            'multi_match' => [
+                                                'type' => 'cross_fields',
+                                                'query' => 'def',
+                                                'fields' => [
+                                                    0 => 'id',
+                                                    1 => 'name',
+                                                ],
+                                                'tie_breaker' => 1.0,
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                            ],
                         ],
+                    ],
                 ],
             ],
             // OR operator, default space operator is AND
@@ -298,34 +272,28 @@ class MultiMatchQueryTest extends TestCase
                 '&',
                 true,
                 ['id', 'name'],
-                 [
-                    'bool' =>
-                         [
-                            'should' =>
-                                 [
-                                     [
-                                        'bool' =>
-                                             [
-                                                'should' =>
-                                                     [
-                                                         [
-                                                            'multi_match' =>
-                                                                 [
-                                                                    'type' => 'cross_fields',
-                                                                    'query' => 'abc def',
-                                                                    'fields' =>
-                                                                         [
-                                                                            0 => 'id',
-                                                                            1 => 'name',
-                                                                        ],
-                                                                    'tie_breaker' => 1.0,
-                                                                ],
-                                                         ],
-                                                    ],
+                [
+                    'bool' => [
+                        'should' => [
+                            [
+                                'bool' => [
+                                    'should' => [
+                                        [
+                                            'multi_match' => [
+                                                'type' => 'cross_fields',
+                                                'query' => 'abc def',
+                                                'fields' => [
+                                                    0 => 'id',
+                                                    1 => 'name',
+                                                ],
+                                                'tie_breaker' => 1.0,
                                             ],
-                                     ],
+                                        ],
+                                    ],
                                 ],
+                            ],
                         ],
+                    ],
                 ],
             ],
             // NOT operator
@@ -334,71 +302,57 @@ class MultiMatchQueryTest extends TestCase
                 '&',
                 true,
                 ['id', 'name'],
-                 [
-                    'bool' =>
-                         [
-                            'must' =>
-                                 [
-                                     [
-                                        'bool' =>
-                                             [
-                                                'must' =>
-                                                     [
-                                                         [
-                                                            'bool' =>
-                                                                 [
-                                                                    'should' =>
-                                                                         [
-                                                                             [
-                                                                                'multi_match' =>
-                                                                                     [
-                                                                                        'type' => 'cross_fields',
-                                                                                        'query' => 'abc',
-                                                                                        'fields' =>
-                                                                                             [
-                                                                                                0 => 'id',
-                                                                                                1 => 'name',
-                                                                                            ],
-                                                                                        'tie_breaker' => 1.0,
-                                                                                    ],
-                                                                             ],
-                                                                        ],
-                                                                ],
-                                                         ],
+                [
+                    'bool' => [
+                        'must' => [
+                            [
+                                'bool' => [
+                                    'must' => [
+                                        [
+                                            'bool' => [
+                                                'should' => [
+                                                    [
+                                                        'multi_match' => [
+                                                            'type' => 'cross_fields',
+                                                            'query' => 'abc',
+                                                            'fields' => [
+                                                                0 => 'id',
+                                                                1 => 'name',
+                                                            ],
+                                                            'tie_breaker' => 1.0,
+                                                        ],
                                                     ],
+                                                ],
                                             ],
-                                     ],
-                                     [
-                                        'bool' =>
-                                             [
-                                                'must_not' =>
-                                                     [
-                                                         [
-                                                            'bool' =>
-                                                                 [
-                                                                    'should' =>
-                                                                         [
-                                                                             [
-                                                                                'multi_match' =>
-                                                                                     [
-                                                                                        'type' => 'cross_fields',
-                                                                                        'query' => 'def',
-                                                                                        'fields' =>
-                                                                                             [
-                                                                                                0 => 'id',
-                                                                                                1 => 'name',
-                                                                                            ],
-                                                                                        'tie_breaker' => 1.0,
-                                                                                    ],
-                                                                             ],
-                                                                        ],
-                                                                ],
-                                                         ],
-                                                    ],
-                                            ],
-                                     ],
+                                        ],
+                                    ],
                                 ],
+                            ],
+                            [
+                                'bool' => [
+                                    'must_not' => [
+                                        [
+                                            'bool' => [
+                                                'should' => [
+                                                    [
+                                                        'multi_match' => [
+                                                            'type' => 'cross_fields',
+                                                            'query' => 'def',
+                                                            'fields' => [
+                                                                0 => 'id',
+                                                                1 => 'name',
+                                                            ],
+                                                            'tie_breaker' => 1.0,
+                                                        ],
+                                                    ],
+                                                ],
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                            ],
                         ],
+                    ],
                 ],
             ],
             // Single term, default space operator is 'OR'
@@ -407,34 +361,28 @@ class MultiMatchQueryTest extends TestCase
                 'OR',
                 true,
                 ['id', 'name'],
-                 [
-                    'bool' =>
-                         [
-                            'should' =>
-                                 [
-                                     [
-                                        'bool' =>
-                                             [
-                                                'should' =>
-                                                     [
-                                                         [
-                                                            'multi_match' =>
-                                                                 [
-                                                                    'type' => 'cross_fields',
-                                                                    'query' => 'abcdef',
-                                                                    'fields' =>
-                                                                         [
-                                                                            0 => 'id',
-                                                                            1 => 'name',
-                                                                        ],
-                                                                    'tie_breaker' => 1.0,
-                                                                ],
-                                                         ],
-                                                    ],
+                [
+                    'bool' => [
+                        'should' => [
+                            [
+                                'bool' => [
+                                    'should' => [
+                                        [
+                                            'multi_match' => [
+                                                'type' => 'cross_fields',
+                                                'query' => 'abcdef',
+                                                'fields' => [
+                                                    0 => 'id',
+                                                    1 => 'name',
+                                                ],
+                                                'tie_breaker' => 1.0,
                                             ],
-                                     ],
+                                        ],
+                                    ],
                                 ],
+                            ],
                         ],
+                    ],
                 ],
             ],
             // AND Operator, default space operator is 'OR'
@@ -443,55 +391,45 @@ class MultiMatchQueryTest extends TestCase
                 '|',
                 true,
                 ['id', 'name'],
-                 [
-                    'bool' =>
-                         [
-                            'must' =>
-                                 [
-                                     [
-                                        'bool' =>
-                                             [
-                                                'should' =>
-                                                     [
-                                                         [
-                                                            'multi_match' =>
-                                                                 [
-                                                                    'type' => 'cross_fields',
-                                                                    'query' => 'abc',
-                                                                    'fields' =>
-                                                                         [
-                                                                            0 => 'id',
-                                                                            1 => 'name',
-                                                                        ],
-                                                                    'tie_breaker' => 1.0,
-                                                                ],
-                                                         ],
-                                                    ],
+                [
+                    'bool' => [
+                        'must' => [
+                            [
+                                'bool' => [
+                                    'should' => [
+                                        [
+                                            'multi_match' => [
+                                                'type' => 'cross_fields',
+                                                'query' => 'abc',
+                                                'fields' => [
+                                                    0 => 'id',
+                                                    1 => 'name',
+                                                ],
+                                                'tie_breaker' => 1.0,
                                             ],
-                                     ],
-                                     [
-                                        'bool' =>
-                                             [
-                                                'should' =>
-                                                     [
-                                                         [
-                                                            'multi_match' =>
-                                                                 [
-                                                                    'type' => 'cross_fields',
-                                                                    'query' => 'def',
-                                                                    'fields' =>
-                                                                         [
-                                                                            0 => 'id',
-                                                                            1 => 'name',
-                                                                        ],
-                                                                    'tie_breaker' => 1.0,
-                                                                ],
-                                                         ],
-                                                    ],
-                                            ],
-                                     ],
+                                        ],
+                                    ],
                                 ],
+                            ],
+                            [
+                                'bool' => [
+                                    'should' => [
+                                        [
+                                            'multi_match' => [
+                                                'type' => 'cross_fields',
+                                                'query' => 'def',
+                                                'fields' => [
+                                                    0 => 'id',
+                                                    1 => 'name',
+                                                ],
+                                                'tie_breaker' => 1.0,
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                            ],
                         ],
+                    ],
                 ],
             ],
             // No operator provided, default space operator is 'OR'
@@ -500,34 +438,28 @@ class MultiMatchQueryTest extends TestCase
                 'OR',
                 true,
                 ['id', 'name'],
-                 [
-                    'bool' =>
-                         [
-                            'should' =>
-                                 [
-                                     [
-                                        'bool' =>
-                                             [
-                                                'should' =>
-                                                     [
-                                                         [
-                                                            'multi_match' =>
-                                                                 [
-                                                                    'type' => 'cross_fields',
-                                                                    'query' => 'abc def',
-                                                                    'fields' =>
-                                                                         [
-                                                                            0 => 'id',
-                                                                            1 => 'name',
-                                                                        ],
-                                                                    'tie_breaker' => 1.0,
-                                                                ],
-                                                         ],
-                                                    ],
+                [
+                    'bool' => [
+                        'should' => [
+                            [
+                                'bool' => [
+                                    'should' => [
+                                        [
+                                            'multi_match' => [
+                                                'type' => 'cross_fields',
+                                                'query' => 'abc def',
+                                                'fields' => [
+                                                    0 => 'id',
+                                                    1 => 'name',
+                                                ],
+                                                'tie_breaker' => 1.0,
                                             ],
-                                     ],
+                                        ],
+                                    ],
                                 ],
+                            ],
                         ],
+                    ],
                 ],
             ],
             // OR operator, default space operator is 'OR'
@@ -536,34 +468,28 @@ class MultiMatchQueryTest extends TestCase
                 'OZR',
                 true,
                 ['id', 'name'],
-                 [
-                    'bool' =>
-                         [
-                            'should' =>
-                                 [
-                                     [
-                                        'bool' =>
-                                             [
-                                                'should' =>
-                                                     [
-                                                         [
-                                                            'multi_match' =>
-                                                                 [
-                                                                    'type' => 'cross_fields',
-                                                                    'query' => 'abc def',
-                                                                    'fields' =>
-                                                                         [
-                                                                            0 => 'id',
-                                                                            1 => 'name',
-                                                                        ],
-                                                                    'tie_breaker' => 1.0,
-                                                                ],
-                                                         ],
-                                                    ],
+                [
+                    'bool' => [
+                        'should' => [
+                            [
+                                'bool' => [
+                                    'should' => [
+                                        [
+                                            'multi_match' => [
+                                                'type' => 'cross_fields',
+                                                'query' => 'abc def',
+                                                'fields' => [
+                                                    0 => 'id',
+                                                    1 => 'name',
+                                                ],
+                                                'tie_breaker' => 1.0,
                                             ],
-                                     ],
+                                        ],
+                                    ],
                                 ],
+                            ],
                         ],
+                    ],
                 ],
             ],
             // NOT operator, default operator is 'OR'
@@ -572,71 +498,57 @@ class MultiMatchQueryTest extends TestCase
                 'OR',
                 true,
                 ['id', 'name'],
-                 [
-                    'bool' =>
-                         [
-                            'must' =>
-                                 [
-                                     [
-                                        'bool' =>
-                                             [
-                                                'must' =>
-                                                     [
-                                                         [
-                                                            'bool' =>
-                                                                 [
-                                                                    'should' =>
-                                                                         [
-                                                                             [
-                                                                                'multi_match' =>
-                                                                                     [
-                                                                                        'type' => 'cross_fields',
-                                                                                        'query' => 'abc',
-                                                                                        'fields' =>
-                                                                                             [
-                                                                                                0 => 'id',
-                                                                                                1 => 'name',
-                                                                                            ],
-                                                                                        'tie_breaker' => 1.0,
-                                                                                    ],
-                                                                             ],
-                                                                        ],
-                                                                ],
-                                                         ],
+                [
+                    'bool' => [
+                        'must' => [
+                            [
+                                'bool' => [
+                                    'must' => [
+                                        [
+                                            'bool' => [
+                                                'should' => [
+                                                    [
+                                                        'multi_match' => [
+                                                            'type' => 'cross_fields',
+                                                            'query' => 'abc',
+                                                            'fields' => [
+                                                                0 => 'id',
+                                                                1 => 'name',
+                                                            ],
+                                                            'tie_breaker' => 1.0,
+                                                        ],
                                                     ],
+                                                ],
                                             ],
-                                     ],
-                                     [
-                                        'bool' =>
-                                             [
-                                                'must_not' =>
-                                                     [
-                                                         [
-                                                            'bool' =>
-                                                                 [
-                                                                    'should' =>
-                                                                         [
-                                                                             [
-                                                                                'multi_match' =>
-                                                                                     [
-                                                                                        'type' => 'cross_fields',
-                                                                                        'query' => 'def',
-                                                                                        'fields' =>
-                                                                                             [
-                                                                                                0 => 'id',
-                                                                                                1 => 'name',
-                                                                                            ],
-                                                                                        'tie_breaker' => 1.0,
-                                                                                    ],
-                                                                             ],
-                                                                        ],
-                                                                ],
-                                                         ],
-                                                    ],
-                                            ],
-                                     ],
+                                        ],
+                                    ],
                                 ],
+                            ],
+                            [
+                                'bool' => [
+                                    'must_not' => [
+                                        [
+                                            'bool' => [
+                                                'should' => [
+                                                    [
+                                                        'multi_match' => [
+                                                            'type' => 'cross_fields',
+                                                            'query' => 'def',
+                                                            'fields' => [
+                                                                0 => 'id',
+                                                                1 => 'name',
+                                                            ],
+                                                            'tie_breaker' => 1.0,
+                                                        ],
+                                                    ],
+                                                ],
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                            ],
                         ],
+                    ],
                 ],
             ],
             // don't use operator shortcut
@@ -646,55 +558,45 @@ class MultiMatchQueryTest extends TestCase
                 '&',
                 false,
                 ['id', 'name'],
-                 [
-                    'bool' =>
-                         [
-                            'must' =>
-                                 [
-                                     [
-                                        'bool' =>
-                                             [
-                                                'should' =>
-                                                     [
-                                                         [
-                                                            'multi_match' =>
-                                                                 [
-                                                                    'type' => 'cross_fields',
-                                                                    'query' => 'abc',
-                                                                    'fields' =>
-                                                                         [
-                                                                            0 => 'id',
-                                                                            1 => 'name',
-                                                                        ],
-                                                                    'tie_breaker' => 1.0,
-                                                                ],
-                                                         ],
-                                                    ],
+                [
+                    'bool' => [
+                        'must' => [
+                            [
+                                'bool' => [
+                                    'should' => [
+                                        [
+                                            'multi_match' => [
+                                                'type' => 'cross_fields',
+                                                'query' => 'abc',
+                                                'fields' => [
+                                                    0 => 'id',
+                                                    1 => 'name',
+                                                ],
+                                                'tie_breaker' => 1.0,
                                             ],
-                                     ],
-                                     [
-                                        'bool' =>
-                                             [
-                                                'should' =>
-                                                     [
-                                                         [
-                                                            'multi_match' =>
-                                                                 [
-                                                                    'type' => 'cross_fields',
-                                                                    'query' => 'def',
-                                                                    'fields' =>
-                                                                         [
-                                                                            0 => 'id',
-                                                                            1 => 'name',
-                                                                        ],
-                                                                    'tie_breaker' => 1.0,
-                                                                ],
-                                                         ],
-                                                    ],
-                                            ],
-                                     ],
+                                        ],
+                                    ],
                                 ],
+                            ],
+                            [
+                                'bool' => [
+                                    'should' => [
+                                        [
+                                            'multi_match' => [
+                                                'type' => 'cross_fields',
+                                                'query' => 'def',
+                                                'fields' => [
+                                                    0 => 'id',
+                                                    1 => 'name',
+                                                ],
+                                                'tie_breaker' => 1.0,
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                            ],
                         ],
+                    ],
                 ],
             ],
             // NOT operator
@@ -703,55 +605,45 @@ class MultiMatchQueryTest extends TestCase
                 '&',
                 false,
                 ['id', 'name'],
-                 [
-                    'bool' =>
-                         [
-                            'must' =>
-                                 [
-                                     [
-                                        'bool' =>
-                                             [
-                                                'should' =>
-                                                     [
-                                                         [
-                                                            'multi_match' =>
-                                                                 [
-                                                                    'type' => 'cross_fields',
-                                                                    'query' => 'abc',
-                                                                    'fields' =>
-                                                                         [
-                                                                            0 => 'id',
-                                                                            1 => 'name',
-                                                                        ],
-                                                                    'tie_breaker' => 1.0,
-                                                                ],
-                                                         ],
-                                                    ],
+                [
+                    'bool' => [
+                        'must' => [
+                            [
+                                'bool' => [
+                                    'should' => [
+                                        [
+                                            'multi_match' => [
+                                                'type' => 'cross_fields',
+                                                'query' => 'abc',
+                                                'fields' => [
+                                                    0 => 'id',
+                                                    1 => 'name',
+                                                ],
+                                                'tie_breaker' => 1.0,
                                             ],
-                                     ],
-                                     [
-                                        'bool' =>
-                                             [
-                                                'should' =>
-                                                     [
-                                                         [
-                                                            'multi_match' =>
-                                                                 [
-                                                                    'type' => 'cross_fields',
-                                                                    'query' => '-def',
-                                                                    'fields' =>
-                                                                         [
-                                                                            0 => 'id',
-                                                                            1 => 'name',
-                                                                        ],
-                                                                    'tie_breaker' => 1.0,
-                                                                ],
-                                                         ],
-                                                    ],
-                                            ],
-                                     ],
+                                        ],
+                                    ],
                                 ],
+                            ],
+                            [
+                                'bool' => [
+                                    'should' => [
+                                        [
+                                            'multi_match' => [
+                                                'type' => 'cross_fields',
+                                                'query' => '-def',
+                                                'fields' => [
+                                                    0 => 'id',
+                                                    1 => 'name',
+                                                ],
+                                                'tie_breaker' => 1.0,
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                            ],
                         ],
+                    ],
                 ],
             ],
             // Single term, default space operator is 'OR'
@@ -760,34 +652,28 @@ class MultiMatchQueryTest extends TestCase
                 'OR',
                 false,
                 ['id', 'name'],
-                 [
-                    'bool' =>
-                         [
-                            'should' =>
-                                 [
-                                     [
-                                        'bool' =>
-                                             [
-                                                'should' =>
-                                                     [
-                                                         [
-                                                            'multi_match' =>
-                                                                 [
-                                                                    'type' => 'cross_fields',
-                                                                    'query' => 'abcdef',
-                                                                    'fields' =>
-                                                                         [
-                                                                            0 => 'id',
-                                                                            1 => 'name',
-                                                                        ],
-                                                                    'tie_breaker' => 1.0,
-                                                                ],
-                                                         ],
-                                                    ],
+                [
+                    'bool' => [
+                        'should' => [
+                            [
+                                'bool' => [
+                                    'should' => [
+                                        [
+                                            'multi_match' => [
+                                                'type' => 'cross_fields',
+                                                'query' => 'abcdef',
+                                                'fields' => [
+                                                    0 => 'id',
+                                                    1 => 'name',
+                                                ],
+                                                'tie_breaker' => 1.0,
                                             ],
-                                     ],
+                                        ],
+                                    ],
                                 ],
+                            ],
                         ],
+                    ],
                 ],
             ],
             // AND Operator, default space operator is 'OR'
@@ -796,55 +682,45 @@ class MultiMatchQueryTest extends TestCase
                 '|',
                 false,
                 ['id', 'name'],
-                 [
-                    'bool' =>
-                         [
-                            'must' =>
-                                 [
-                                     [
-                                        'bool' =>
-                                             [
-                                                'should' =>
-                                                     [
-                                                         [
-                                                            'multi_match' =>
-                                                                 [
-                                                                    'type' => 'cross_fields',
-                                                                    'query' => 'abc',
-                                                                    'fields' =>
-                                                                         [
-                                                                            0 => 'id',
-                                                                            1 => 'name',
-                                                                        ],
-                                                                    'tie_breaker' => 1.0,
-                                                                ],
-                                                         ],
-                                                    ],
+                [
+                    'bool' => [
+                        'must' => [
+                            [
+                                'bool' => [
+                                    'should' => [
+                                        [
+                                            'multi_match' => [
+                                                'type' => 'cross_fields',
+                                                'query' => 'abc',
+                                                'fields' => [
+                                                    0 => 'id',
+                                                    1 => 'name',
+                                                ],
+                                                'tie_breaker' => 1.0,
                                             ],
-                                     ],
-                                     [
-                                        'bool' =>
-                                             [
-                                                'should' =>
-                                                     [
-                                                         [
-                                                            'multi_match' =>
-                                                                 [
-                                                                    'type' => 'cross_fields',
-                                                                    'query' => 'def',
-                                                                    'fields' =>
-                                                                         [
-                                                                            0 => 'id',
-                                                                            1 => 'name',
-                                                                        ],
-                                                                    'tie_breaker' => 1.0,
-                                                                ],
-                                                         ],
-                                                    ],
-                                            ],
-                                     ],
+                                        ],
+                                    ],
                                 ],
+                            ],
+                            [
+                                'bool' => [
+                                    'should' => [
+                                        [
+                                            'multi_match' => [
+                                                'type' => 'cross_fields',
+                                                'query' => 'def',
+                                                'fields' => [
+                                                    0 => 'id',
+                                                    1 => 'name',
+                                                ],
+                                                'tie_breaker' => 1.0,
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                            ],
                         ],
+                    ],
                 ],
             ],
             // No operator provided, default space operator is 'OR'
@@ -853,34 +729,28 @@ class MultiMatchQueryTest extends TestCase
                 'OR',
                 false,
                 ['id', 'name'],
-                 [
-                    'bool' =>
-                         [
-                            'should' =>
-                                 [
-                                     [
-                                        'bool' =>
-                                             [
-                                                'should' =>
-                                                     [
-                                                         [
-                                                            'multi_match' =>
-                                                                 [
-                                                                    'type' => 'cross_fields',
-                                                                    'query' => 'abc def',
-                                                                    'fields' =>
-                                                                         [
-                                                                            0 => 'id',
-                                                                            1 => 'name',
-                                                                        ],
-                                                                    'tie_breaker' => 1.0,
-                                                                ],
-                                                         ],
-                                                    ],
+                [
+                    'bool' => [
+                        'should' => [
+                            [
+                                'bool' => [
+                                    'should' => [
+                                        [
+                                            'multi_match' => [
+                                                'type' => 'cross_fields',
+                                                'query' => 'abc def',
+                                                'fields' => [
+                                                    0 => 'id',
+                                                    1 => 'name',
+                                                ],
+                                                'tie_breaker' => 1.0,
                                             ],
-                                     ],
+                                        ],
+                                    ],
                                 ],
+                            ],
                         ],
+                    ],
                 ],
             ],
             // OR operator, default space operator is 'OR'
@@ -889,34 +759,28 @@ class MultiMatchQueryTest extends TestCase
                 'OR',
                 false,
                 ['id', 'name'],
-                 [
-                    'bool' =>
-                         [
-                            'should' =>
-                                 [
-                                     [
-                                        'bool' =>
-                                             [
-                                                'should' =>
-                                                     [
-                                                         [
-                                                            'multi_match' =>
-                                                                 [
-                                                                    'type' => 'cross_fields',
-                                                                    'query' => 'abc def',
-                                                                    'fields' =>
-                                                                         [
-                                                                            0 => 'id',
-                                                                            1 => 'name',
-                                                                        ],
-                                                                    'tie_breaker' => 1.0,
-                                                                ],
-                                                         ],
-                                                    ],
+                [
+                    'bool' => [
+                        'should' => [
+                            [
+                                'bool' => [
+                                    'should' => [
+                                        [
+                                            'multi_match' => [
+                                                'type' => 'cross_fields',
+                                                'query' => 'abc def',
+                                                'fields' => [
+                                                    0 => 'id',
+                                                    1 => 'name',
+                                                ],
+                                                'tie_breaker' => 1.0,
                                             ],
-                                     ],
+                                        ],
+                                    ],
                                 ],
+                            ],
                         ],
+                    ],
                 ],
             ],
             // NOT operator, default operator is 'OR'
@@ -925,34 +789,28 @@ class MultiMatchQueryTest extends TestCase
                 'OR',
                 false,
                 ['id', 'name'],
-                 [
-                    'bool' =>
-                         [
-                            'should' =>
-                                 [
-                                     [
-                                        'bool' =>
-                                             [
-                                                'should' =>
-                                                     [
-                                                         [
-                                                            'multi_match' =>
-                                                                 [
-                                                                    'type' => 'cross_fields',
-                                                                    'query' => 'abc -def',
-                                                                    'fields' =>
-                                                                         [
-                                                                            0 => 'id',
-                                                                            1 => 'name',
-                                                                        ],
-                                                                    'tie_breaker' => 1.0,
-                                                                ],
-                                                         ],
-                                                    ],
+                [
+                    'bool' => [
+                        'should' => [
+                            [
+                                'bool' => [
+                                    'should' => [
+                                        [
+                                            'multi_match' => [
+                                                'type' => 'cross_fields',
+                                                'query' => 'abc -def',
+                                                'fields' => [
+                                                    0 => 'id',
+                                                    1 => 'name',
+                                                ],
+                                                'tie_breaker' => 1.0,
                                             ],
-                                     ],
+                                        ],
+                                    ],
                                 ],
+                            ],
                         ],
+                    ],
                 ],
             ],
         ];

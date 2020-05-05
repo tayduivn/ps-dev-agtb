@@ -22,17 +22,17 @@ class Bug43942Test extends TestCase
         $params = ['phone_work'=>'+1(800)999-2222'];
         $field = 'phone_work';
         $properties = ['name' => 'phone_work',
-                            'vname' => 'LBL_OFFICE_PHONE',
-                            'type' => 'phone',
-                            'dbType' => 'varchar',
-                            'len' => 100,
-                            'audited'=> 1,
-                            'unified_search'=> 1,
-                            'comment' => 'Work phone number of the contact',
-                            'merge_filter' => 'enabled',
-                            'calculated' => '',
-                      ];
-        
+            'vname' => 'LBL_OFFICE_PHONE',
+            'type' => 'phone',
+            'dbType' => 'varchar',
+            'len' => 100,
+            'audited' => 1,
+            'unified_search' => 1,
+            'comment' => 'Work phone number of the contact',
+            'merge_filter' => 'enabled',
+            'calculated' => '',
+        ];
+
         $sugarField->save($bean, $params, $field, $properties);
         $this->assertEquals($bean->phone_work, '+1(800)999-2222', "Assert that '+1(800)999-2222' is not formatted");
         

@@ -16,46 +16,55 @@ require_once 'modules/Meetings/Meeting.php';
 
 class Bug46294Test extends TestCase
 {
-    public $dictionaryOptionsNotSet = ['Meeting' => [
-                                    'fields' => [
-                                      'type' => [
-                                        'options' => '',
-                                      ],
-                                    ],
-                                  ],
-                            ];
-    public $dictionaryOptionsEmpty = ['Meeting' => [
-                                    'fields' => [
-                                      'type' => [],
-                                      //empty
-                                    ],
-                                 ],
-                            ];
-    public $dictionaryOptionsSet = ['Meeting' => [
-                                        'fields' => [
-                                          'type' => [
-                                            'options' => 'type_list',
-                                          ],
-                                        ],
-                                   ],
-                                ];
-    public $dictionaryTypeListNotExists = ['Meeting' => [
-                                'fields' => [
-                                  'type' => [
-                                    'options' => 'type_not_exists',
-                                  ],
-                                ],
-                              ],
-                        ];
-    public $appListStrings = ['type_list' => [
-                                    'breakfast' => 'breakfast',
-                                    'lunch' => 'lunch',
-                                    'dinner' => 'dinner',
-                                 ],
-                            ];
-    
+    public $dictionaryOptionsNotSet = [
+        'Meeting' => [
+            'fields' => [
+                'type' => [
+                    'options' => '',
+                ],
+            ],
+        ],
+    ];
+
+    public $dictionaryOptionsEmpty = [
+        'Meeting' => [
+            'fields' => [
+                'type' => [],
+                //empty
+            ],
+        ],
+    ];
+
+    public $dictionaryOptionsSet = [
+        'Meeting' => [
+            'fields' => [
+                'type' => [
+                    'options' => 'type_list',
+                ],
+            ],
+        ],
+    ];
+
+    public $dictionaryTypeListNotExists = [
+        'Meeting' => [
+            'fields' => [
+                'type' => [
+                    'options' => 'type_not_exists',
+                ],
+            ],
+        ],
+    ];
+
+    public $appListStrings = [
+        'type_list' => [
+            'breakfast' => 'breakfast',
+            'lunch' => 'lunch',
+            'dinner' => 'dinner',
+        ],
+    ];
+
     public $appListStringsEmpty = ['type_list' => []];
-       
+
     /**
     * @dataProvider provider
     */

@@ -47,8 +47,8 @@ class PMSEExporterTest extends TestCase
 
         $bean->method('getTags')
              ->willReturn([
-                $tag1->id => $tag1,
-                $tag2->id => $tag2,
+                 $tag1->id => $tag1,
+                 $tag2->id => $tag2,
              ]);
 
         return $bean;

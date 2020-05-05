@@ -53,8 +53,12 @@ class RunnableSchedulersJobsTest extends TestCase
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
 
-        $job = $this->createJob(["name" => "Test Func", "status" => SchedulersJob::JOB_STATUS_RUNNING,
-            "target" => "class::TestRunnableJob", "assigned_user_id" => $GLOBALS['current_user']->id]);
+        $job = $this->createJob([
+            "name" => "Test Func",
+            "status" => SchedulersJob::JOB_STATUS_RUNNING,
+            "target" => "class::TestRunnableJob",
+            "assigned_user_id" => $GLOBALS['current_user']->id,
+        ]);
         $job->runJob();
         $job->retrieve($job->id);
 
@@ -65,9 +69,13 @@ class RunnableSchedulersJobsTest extends TestCase
         $this->assertEquals($GLOBALS['current_user']->id, $job->user->id, "Wrong user");
 
         // function with args
-        $job = $this->createJob(["name" => "Test Func 2", "status" => SchedulersJob::JOB_STATUS_RUNNING,
-                    "target" => "class::TestRunnableJob",
-                    "data" => "function data", "assigned_user_id" => $GLOBALS['current_user']->id]);
+        $job = $this->createJob([
+            "name" => "Test Func 2",
+            "status" => SchedulersJob::JOB_STATUS_RUNNING,
+            "target" => "class::TestRunnableJob",
+            "data" => "function data",
+            "assigned_user_id" => $GLOBALS['current_user']->id,
+        ]);
         $job->runJob();
         $job->retrieve($job->id);
         $this->assertTrue($job->runnable_ran);

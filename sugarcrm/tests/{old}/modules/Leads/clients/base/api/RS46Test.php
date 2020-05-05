@@ -69,9 +69,9 @@ class RS46Test extends TestCase
     public function testCreateRecord()
     {
         $actual = $this->api->createRecord($this->service, [
-                'module' => 'Leads',
-                'name' => 'Lead ' . __CLASS__,
-            ]);
+            'module' => 'Leads',
+            'name' => 'Lead ' . __CLASS__,
+        ]);
         $this->assertArrayHasKey('id', $actual);
         $this->assertNotEmpty($actual['id']);
         $this->leads[] = $actual['id'];
@@ -94,12 +94,12 @@ class RS46Test extends TestCase
         $this->campaigns[] = $campaign->id;
 
         $actual = $this->api->createRecord($this->service, [
-                'module' => 'Leads',
-                'name' => 'Test ' . __CLASS__,
-                'relate_to' => 'Prospects',
-                'relate_id' => $prospect->id,
-                'campaign_id' => $campaign->id,
-            ]);
+            'module' => 'Leads',
+            'name' => 'Test ' . __CLASS__,
+            'relate_to' => 'Prospects',
+            'relate_id' => $prospect->id,
+            'campaign_id' => $campaign->id,
+        ]);
         $this->assertArrayHasKey('id', $actual);
         $this->assertNotEmpty($actual['id']);
         $this->leads[] = $actual['id'];
@@ -133,10 +133,10 @@ class RS46Test extends TestCase
         $this->assertEmpty($email->parent_id);
 
         $actual = $this->api->createRecord($this->service, [
-                'module' => 'Leads',
-                'name' => 'Test ' . __CLASS__,
-                'inbound_email_id' => $email->id,
-            ]);
+            'module' => 'Leads',
+            'name' => 'Test ' . __CLASS__,
+            'inbound_email_id' => $email->id,
+        ]);
         $this->assertArrayHasKey('id', $actual);
         $this->assertNotEmpty($actual['id']);
         $this->leads[] = $actual['id'];

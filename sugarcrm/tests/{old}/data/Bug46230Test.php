@@ -59,7 +59,7 @@ class Bug46230Test extends TestCase
             ['Partner', 'Banking', '1'],
             ['Analyst', 'Energy', '0'],
             ['Customer', 'Education', '0'],
-            ];
+        ];
     }
     /**
      * @dataProvider providerData

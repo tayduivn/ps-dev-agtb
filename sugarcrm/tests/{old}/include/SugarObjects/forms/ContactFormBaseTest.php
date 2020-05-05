@@ -48,9 +48,9 @@ class ContactFormBaseTest extends TestCase
     public function contactsProvider()
     {
         return [
-        ['Collin', 'Lee', true],
-        ['', 'Lee', true],
-        ['Mike', 'TheSituationSorrentino', false],
+            ['Collin', 'Lee', true],
+            ['', 'Lee', true],
+            ['Mike', 'TheSituationSorrentino', false],
         ];
     }
 

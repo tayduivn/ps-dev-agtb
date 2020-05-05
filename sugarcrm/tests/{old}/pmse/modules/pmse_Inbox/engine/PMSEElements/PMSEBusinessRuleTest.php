@@ -41,15 +41,13 @@ class PMSEBusinessRuleTest extends TestCase
     {
         $this->businessRule = $this->getMockBuilder('PMSEBusinessRule')
             ->disableOriginalConstructor()
-            ->setMethods(
-                [
-                        'prepareResponse',
-                        'retrieveDefinitionData',
-                        'getCurrentUser',
-                        'getBusinessRuleReader',
-                        'retrieveHistoryData',
-                    ]
-            )
+            ->setMethods([
+                'prepareResponse',
+                'retrieveDefinitionData',
+                'getCurrentUser',
+                'getBusinessRuleReader',
+                'retrieveHistoryData',
+            ])
             ->getMock();
 
         $this->businessRule->setLogger($this->loggerMock);
@@ -184,15 +182,13 @@ class PMSEBusinessRuleTest extends TestCase
     {
         $this->businessRule = $this->getMockBuilder('PMSEBusinessRule')
             ->disableOriginalConstructor()
-            ->setMethods(
-                [
-                        'prepareResponse',
-                        'retrieveDefinitionData',
-                        'getCurrentUser',
-                        'getBusinessRuleReader',
-                        'retrieveHistoryData',
-                    ]
-            )
+            ->setMethods([
+                'prepareResponse',
+                'retrieveDefinitionData',
+                'getCurrentUser',
+                'getBusinessRuleReader',
+                'retrieveHistoryData',
+            ])
             ->getMock();
 
         $this->businessRule->setLogger($this->loggerMock);

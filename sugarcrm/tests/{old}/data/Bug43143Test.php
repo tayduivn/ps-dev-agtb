@@ -57,7 +57,7 @@ class Bug43143Test extends TestCase
             ['first day of this month', '2011-01-01'],
             ['last day of this month', '2011-01-31'],
             ['last day of next month', '2011-02-28'],
-            ];
+        ];
     }
 
     /**

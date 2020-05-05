@@ -56,7 +56,7 @@ class MultiLevelAdminTest extends TestCase
             'display_studio_for_user',
             'display_workflow_for_user',
             'get_workflow_admin_modules_for_user',
-            ];
+        ];
 
         foreach ($_SESSION as $key => $ignore) {
             foreach ($sessionVars as $varName) {
@@ -87,8 +87,8 @@ class MultiLevelAdminTest extends TestCase
         $mlaRoles = [
             'test_for_module'=>[
                 'Accounts'=>['admin'=>ACL_ALLOW_ADMIN_DEV],
-                ],
-            ];
+            ],
+        ];
         addDefaultRoles($mlaRoles);
         
         $user->role_id = $GLOBALS['db']->getOne("SELECT id FROM acl_roles WHERE name='test_for_module'");
@@ -114,8 +114,8 @@ class MultiLevelAdminTest extends TestCase
         $mlaRoles = [
             'test_for_module'=>[
                 'Accounts'=>['admin'=>ACL_ALLOW_ADMIN],
-                ],
-            ];
+            ],
+        ];
         addDefaultRoles($mlaRoles);
         
         $user->role_id = $GLOBALS['db']->getOne("SELECT id FROM acl_roles WHERE name='test_for_module'");
@@ -138,8 +138,8 @@ class MultiLevelAdminTest extends TestCase
         $mlaRoles = [
             'test_for_module'=>[
                 'Accounts'=>['admin'=>ACL_ALLOW_DEV],
-                ],
-            ];
+            ],
+        ];
         addDefaultRoles($mlaRoles);
         
         $user->role_id = $GLOBALS['db']->getOne("SELECT id FROM acl_roles WHERE name='test_for_module'");
@@ -160,20 +160,20 @@ class MultiLevelAdminTest extends TestCase
         $user = SugarTestUserUtilities::createAnonymousUser();
         $user->is_admin = 0;
         $mlaRoles = [
-             'Sales Administrator'=>[
-                 'Accounts'=>['admin'=>ACL_ALLOW_DEV],
-                 'Contacts'=>['admin'=>ACL_ALLOW_DEV],
-                 'Forecasts'=>['admin'=>ACL_ALLOW_DEV],
-                 'Leads'=>['admin'=>ACL_ALLOW_DEV],
-                 'Opportunities'=>['admin'=>ACL_ALLOW_DEV],
-                 'Quotes'=>['admin'=>ACL_ALLOW_DEV],
-                 'TrackerPerfs'=>['admin'=>1],
-                 'TrackerQueries'=>['admin'=>1],
-                 'Trackers'=>['admin'=>1],
-                 'TrackerSessions'=>['admin'=>1],
-                 ],
-            ];
-        
+            'Sales Administrator' => [
+                'Accounts' => ['admin' => ACL_ALLOW_DEV],
+                'Contacts' => ['admin' => ACL_ALLOW_DEV],
+                'Forecasts' => ['admin' => ACL_ALLOW_DEV],
+                'Leads' => ['admin' => ACL_ALLOW_DEV],
+                'Opportunities' => ['admin' => ACL_ALLOW_DEV],
+                'Quotes' => ['admin' => ACL_ALLOW_DEV],
+                'TrackerPerfs' => ['admin' => 1],
+                'TrackerQueries' => ['admin' => 1],
+                'Trackers' => ['admin' => 1],
+                'TrackerSessions' => ['admin' => 1],
+            ],
+        ];
+
         addDefaultRoles($mlaRoles);
                  
         $user->role_id = $GLOBALS['db']->getOne("SELECT id FROM acl_roles WHERE name='Sales Administrator'");
@@ -191,20 +191,20 @@ class MultiLevelAdminTest extends TestCase
         $user = SugarTestUserUtilities::createAnonymousUser();
         $user->is_admin = 0;
         $mlaRoles = [
-             'test1'=>[
-                 'Accounts'=>['admin'=>1],
-                 'Contacts'=>['admin'=>1],
-                 'Campaigns'=>['admin'=>1],
-                 'ProspectLists'=>['admin'=>1],
-                 'Leads'=>['admin'=>1],
-                 'Prospects'=>['admin'=>1],
-                 'TrackerPerfs'=>['admin'=>1],
-                 'TrackerQueries'=>['admin'=>1],
-                 'Trackers'=>['admin'=>1],
-                 'TrackerSessions'=>['admin'=>1],
-             ],
+            'test1' => [
+                'Accounts' => ['admin' => 1],
+                'Contacts' => ['admin' => 1],
+                'Campaigns' => ['admin' => 1],
+                'ProspectLists' => ['admin' => 1],
+                'Leads' => ['admin' => 1],
+                'Prospects' => ['admin' => 1],
+                'TrackerPerfs' => ['admin' => 1],
+                'TrackerQueries' => ['admin' => 1],
+                'Trackers' => ['admin' => 1],
+                'TrackerSessions' => ['admin' => 1],
+            ],
         ];
-        
+
         addDefaultRoles($mlaRoles);
                  
         $user->role_id = $GLOBALS['db']->getOne("SELECT id FROM acl_roles WHERE name='test1'");
@@ -222,20 +222,20 @@ class MultiLevelAdminTest extends TestCase
         $user = SugarTestUserUtilities::createAnonymousUser();
         $user->is_admin = 0;
         $mlaRoles = [
-             'test4'=>[
-                 'Accounts'=>['admin'=>1],
-                 'Contacts'=>['admin'=>ACL_ALLOW_DEV],
-                 'Campaigns'=>['admin'=>1],
-                 'ProspectLists'=>['admin'=>1],
-                 'Leads'=>['admin'=>1],
-                 'Prospects'=>['admin'=>1],
-                 'TrackerPerfs'=>['admin'=>1],
-                 'TrackerQueries'=>['admin'=>1],
-                 'Trackers'=>['admin'=>1],
-                 'TrackerSessions'=>['admin'=>1],
-             ],
+            'test4' => [
+                'Accounts' => ['admin' => 1],
+                'Contacts' => ['admin' => ACL_ALLOW_DEV],
+                'Campaigns' => ['admin' => 1],
+                'ProspectLists' => ['admin' => 1],
+                'Leads' => ['admin' => 1],
+                'Prospects' => ['admin' => 1],
+                'TrackerPerfs' => ['admin' => 1],
+                'TrackerQueries' => ['admin' => 1],
+                'Trackers' => ['admin' => 1],
+                'TrackerSessions' => ['admin' => 1],
+            ],
         ];
-        
+
         addDefaultRoles($mlaRoles);
                  
         $user->role_id = $GLOBALS['db']->getOne("SELECT id FROM acl_roles WHERE name='test4'");
@@ -253,19 +253,20 @@ class MultiLevelAdminTest extends TestCase
         $user = SugarTestUserUtilities::createAnonymousUser();
         $user->is_admin = 0;
         $mlaRoles = [
-             'test5'=>[
-                 'Accounts'=>['admin'=>1],
-                 'Contacts'=>['admin'=>1],
-                 'Campaigns'=>['admin'=>1],
-                 'ProspectLists'=>['admin'=>1],
-                 'Leads'=>['admin'=>1],
-                 'Prospects'=>['admin'=>1],
-                 'TrackerPerfs'=>['admin'=>1],
-                 'TrackerQueries'=>['admin'=>1],
-                 'Trackers'=>['admin'=>1],
-                 'TrackerSessions'=>['admin'=>1],
-             ],
+            'test5' => [
+                'Accounts' => ['admin' => 1],
+                'Contacts' => ['admin' => 1],
+                'Campaigns' => ['admin' => 1],
+                'ProspectLists' => ['admin' => 1],
+                'Leads' => ['admin' => 1],
+                'Prospects' => ['admin' => 1],
+                'TrackerPerfs' => ['admin' => 1],
+                'TrackerQueries' => ['admin' => 1],
+                'Trackers' => ['admin' => 1],
+                'TrackerSessions' => ['admin' => 1],
+            ],
         ];
+
         addDefaultRoles($mlaRoles);
                  
         $user->role_id = $GLOBALS['db']->getOne("SELECT id FROM acl_roles WHERE name='test5'");
@@ -283,21 +284,22 @@ class MultiLevelAdminTest extends TestCase
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['current_user']->is_admin = 0;
         $mlaRoles = [
-             'test6'=>[
-                 'Accounts'=>['admin'=>1],
-                 'Contacts'=>['admin'=>1],
-                 'Campaigns'=>['admin'=>1],
-                 'Forecasts'=>['admin'=>1],
-                 'ForecastSchedule'=>['admin'=>ACL_ALLOW_ADMIN],
-                 'ProspectLists'=>['admin'=>1],
-                 'Leads'=>['admin'=>1],
-                 'Prospects'=>['admin'=>1],
-                 'TrackerPerfs'=>['admin'=>1],
-                 'TrackerQueries'=>['admin'=>1],
-                 'Trackers'=>['admin'=>1],
-                 'TrackerSessions'=>['admin'=>1],
-             ],
+            'test6' => [
+                'Accounts' => ['admin' => 1],
+                'Contacts' => ['admin' => 1],
+                'Campaigns' => ['admin' => 1],
+                'Forecasts' => ['admin' => 1],
+                'ForecastSchedule' => ['admin' => ACL_ALLOW_ADMIN],
+                'ProspectLists' => ['admin' => 1],
+                'Leads' => ['admin' => 1],
+                'Prospects' => ['admin' => 1],
+                'TrackerPerfs' => ['admin' => 1],
+                'TrackerQueries' => ['admin' => 1],
+                'Trackers' => ['admin' => 1],
+                'TrackerSessions' => ['admin' => 1],
+            ],
         ];
+
         addDefaultRoles($mlaRoles);
                  
         $GLOBALS['current_user']->role_id = $GLOBALS['db']->getOne("SELECT id FROM acl_roles WHERE name='test6'");
@@ -315,23 +317,24 @@ class MultiLevelAdminTest extends TestCase
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['current_user']->is_admin = 0;
         $mlaRoles = [
-             'test7'=>[
-                 'Accounts'=>['admin'=>1],
-                 'Contacts'=>['admin'=>ACL_ALLOW_DEV],
-                 'Campaigns'=>['admin'=>ACL_ALLOW_DEV],
-                 'Forecasts'=>['admin'=>1],
-                 'ForecastSchedule'=>['admin'=>ACL_ALLOW_DEV],
-                 'ProspectLists'=>['admin'=>1],
-                 'Leads'=>['admin'=>1],
-                 'Prospects'=>['admin'=>1],
-                 'TrackerPerfs'=>['admin'=>1],
-                 'TrackerQueries'=>['admin'=>1],
-                 'Trackers'=>['admin'=>1],
-                 'TrackerSessions'=>['admin'=>1],
-             ],
+            'test7' => [
+                'Accounts' => ['admin' => 1],
+                'Contacts' => ['admin' => ACL_ALLOW_DEV],
+                'Campaigns' => ['admin' => ACL_ALLOW_DEV],
+                'Forecasts' => ['admin' => 1],
+                'ForecastSchedule' => ['admin' => ACL_ALLOW_DEV],
+                'ProspectLists' => ['admin' => 1],
+                'Leads' => ['admin' => 1],
+                'Prospects' => ['admin' => 1],
+                'TrackerPerfs' => ['admin' => 1],
+                'TrackerQueries' => ['admin' => 1],
+                'Trackers' => ['admin' => 1],
+                'TrackerSessions' => ['admin' => 1],
+            ],
         ];
+
         addDefaultRoles($mlaRoles);
-                 
+
         $GLOBALS['current_user']->role_id = $GLOBALS['db']->getOne("SELECT id FROM acl_roles WHERE name='test7'");
         $GLOBALS['db']->query("INSERT into acl_roles_users(id,user_id,role_id) values('".create_guid()."','".$GLOBALS['current_user']->id."','".$GLOBALS['current_user']->role_id."')");
         $this->role_id = $GLOBALS['current_user']->role_id;

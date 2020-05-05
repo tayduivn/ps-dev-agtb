@@ -47,8 +47,7 @@ class SugarTestPortalUtilities
         'EmailAddresses',
     ];
 
-    protected static $manuallyEnabledRolesModules = [
-    ];
+    protected static $manuallyEnabledRolesModules = [];
 
     protected static $requiredEnabledRolesModules = [
         'Bugs',

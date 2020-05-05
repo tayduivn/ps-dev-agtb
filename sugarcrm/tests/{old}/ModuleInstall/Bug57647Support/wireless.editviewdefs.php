@@ -20,27 +20,27 @@ $viewdefs[$module_name]['EditView'] = [
             ['label' => '10', 'field' => '30'],
         ],
     ],
-    'panels' =>  [
-         [
+    'panels' => [
+        [
             ['name' => $_object_name . '_number','displayParams'=>['required'=>false,'wireless_detail_only'=>true,]],
-         ],
-         [
+        ],
+        [
             'priority',
-         ],
-         [
+        ],
+        [
             'status',
-         ],
-         [
-             [
+        ],
+        [
+            [
                 'name' => 'name',
                 'label' => 'LBL_SUBJECT',
-             ],
-         ],
-         [
+            ],
+        ],
+        [
             'assigned_user_name',
-         ],
-         [
+        ],
+        [
             'team_name',
-         ],
+        ],
     ],
 ];

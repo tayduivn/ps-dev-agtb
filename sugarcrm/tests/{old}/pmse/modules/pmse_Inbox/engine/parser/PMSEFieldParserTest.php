@@ -99,7 +99,8 @@ class PMSEFieldParserTest extends TestCase
                 'expLabel' => 'Account Name: == "ONE"',
                 'expToken' => '{::future::Leads::account_name::}',
                 'currentValue' => '10/10/2013',
-            ]];
+            ],
+        ];
         $this->assertEquals($postCondition[0]->currentValue, $processedCondition->currentValue);
     }
     public function testParseCriteriaNotEquals()
@@ -172,7 +173,8 @@ class PMSEFieldParserTest extends TestCase
                     'expLabel' => 'Account Name: == "ONE"',
                     'expToken' => '{::future::Leads::account_name::}',
                     'currentValue' => 'ROCKSTAR',
-                ]];
+                ],
+        ];
         $this->assertEquals($postCondition[0]->currentValue, $processedCondition->currentValue);
     }
     public function testParseCriteriaMajorEqualThan()
@@ -233,19 +235,18 @@ class PMSEFieldParserTest extends TestCase
         $this->dataParser->setEvaluatedBean($beanObject);
         $processedCondition = $this->dataParser->parseCriteria($preCondition[0]);
         $postCondition = [
-            0 =>
-                (object)
-                [
-                    'expDirection' => 'after',
-                    'expModule' => 'Leads',
-                    'expField' => 'account_name',
-                    'expOperator' => 'major_equals_than',
-                    'expValue' => 'ONE',
-                    'expType' => 'MODULE',
-                    'expLabel' => 'Account Name: == "ONE"',
-                    'expToken' => '{::future::Leads::account_name::}',
-                    'currentValue' => 'ROCKSTAR',
-                ]];
+            0 => (object) [
+                'expDirection' => 'after',
+                'expModule' => 'Leads',
+                'expField' => 'account_name',
+                'expOperator' => 'major_equals_than',
+                'expValue' => 'ONE',
+                'expType' => 'MODULE',
+                'expLabel' => 'Account Name: == "ONE"',
+                'expToken' => '{::future::Leads::account_name::}',
+                'currentValue' => 'ROCKSTAR',
+            ],
+        ];
         $this->assertEquals($postCondition[0]->currentValue, $processedCondition->currentValue);
     }
     public function testParseCriteriaMinorEqualThan()
@@ -306,19 +307,18 @@ class PMSEFieldParserTest extends TestCase
         $this->dataParser->setEvaluatedBean($beanObject);
         $processedCondition = $this->dataParser->parseCriteria($preCondition[0]);
         $postCondition = [
-            0 =>
-                (object)
-                [
-                    'expDirection' => 'after',
-                    'expModule' => 'Leads',
-                    'expField' => 'account_name',
-                    'expOperator' => 'minor_equals_than',
-                    'expValue' => 'ONE',
-                    'expType' => 'MODULE',
-                    'expLabel' => 'Account Name: == "ONE"',
-                    'expToken' => '{::future::Leads::account_name::}',
-                    'currentValue' => 'ROCKSTAR',
-                ]];
+            0 => (object) [
+                'expDirection' => 'after',
+                'expModule' => 'Leads',
+                'expField' => 'account_name',
+                'expOperator' => 'minor_equals_than',
+                'expValue' => 'ONE',
+                'expType' => 'MODULE',
+                'expLabel' => 'Account Name: == "ONE"',
+                'expToken' => '{::future::Leads::account_name::}',
+                'currentValue' => 'ROCKSTAR',
+            ],
+        ];
         $this->assertEquals($postCondition[0]->currentValue, $processedCondition->currentValue);
     }
     public function testParseCriteriaMinorThan()
@@ -379,19 +379,18 @@ class PMSEFieldParserTest extends TestCase
         $this->dataParser->setEvaluatedBean($beanObject);
         $processedCondition = $this->dataParser->parseCriteria($preCondition[0]);
         $postCondition = [
-            0 =>
-                (object)
-                [
-                    'expDirection' => 'after',
-                    'expModule' => 'Leads',
-                    'expField' => 'account_name',
-                    'expOperator' => 'minor_than',
-                    'expValue' => 'ONE',
-                    'expType' => 'MODULE',
-                    'expLabel' => 'Account Name: == "ONE"',
-                    'expToken' => '{::future::Leads::account_name::}',
-                    'currentValue' => 'ROCKSTAR',
-                ]];
+            0 => (object) [
+                'expDirection' => 'after',
+                'expModule' => 'Leads',
+                'expField' => 'account_name',
+                'expOperator' => 'minor_than',
+                'expValue' => 'ONE',
+                'expType' => 'MODULE',
+                'expLabel' => 'Account Name: == "ONE"',
+                'expToken' => '{::future::Leads::account_name::}',
+                'currentValue' => 'ROCKSTAR',
+            ],
+        ];
         $this->assertEquals($postCondition[0]->currentValue, $processedCondition->currentValue);
     }
     public function testParseCriteriaMajorThan()
@@ -452,19 +451,18 @@ class PMSEFieldParserTest extends TestCase
         $this->dataParser->setEvaluatedBean($beanObject);
         $processedCondition = $this->dataParser->parseCriteria($preCondition[0]);
         $postCondition = [
-            0 =>
-                (object)
-                [
-                    'expDirection' => 'after',
-                    'expModule' => 'Leads',
-                    'expField' => 'account_name',
-                    'expOperator' => 'major_than',
-                    'expValue' => 'ONE',
-                    'expType' => 'MODULE',
-                    'expLabel' => 'Account Name: == "ONE"',
-                    'expToken' => '{::future::Leads::account_name::}',
-                    'currentValue' => 'ROCKSTAR',
-                ]];
+            0 => (object) [
+                'expDirection' => 'after',
+                'expModule' => 'Leads',
+                'expField' => 'account_name',
+                'expOperator' => 'major_than',
+                'expValue' => 'ONE',
+                'expType' => 'MODULE',
+                'expLabel' => 'Account Name: == "ONE"',
+                'expToken' => '{::future::Leads::account_name::}',
+                'currentValue' => 'ROCKSTAR',
+            ],
+        ];
         $this->assertEquals($postCondition[0]->currentValue, $processedCondition->currentValue);
     }
 
@@ -531,9 +529,7 @@ class PMSEFieldParserTest extends TestCase
 
         $processedCondition = $this->dataParser->parseCriteria($preCondition[0]);
         $postCondition = [
-            0 =>
-            (object)
-            [
+            0 => (object) [
                 'expDirection' => 'after',
                 'expModule' => 'Leads',
                 'expField' => 'account_name',
@@ -543,7 +539,8 @@ class PMSEFieldParserTest extends TestCase
                 'expLabel' => 'Account Name: == "ONE"',
                 'expToken' => '{::future::Leads::account_name::}',
                 'currentValue' => '10/10/2013',
-            ]];
+            ],
+        ];
         $this->assertEquals($postCondition[0]->currentValue, $processedCondition->currentValue);
     }
 
@@ -605,9 +602,7 @@ class PMSEFieldParserTest extends TestCase
         $this->dataParser->setEvaluatedBean($beanObject);
         $processedCondition = $this->dataParser->parseCriteria($preCondition[0]);
         $postCondition = [
-            0 =>
-            (object)
-            [
+            0 => (object) [
                 'expDirection' => 'after',
                 'expModule' => 'Leads',
                 'expField' => 'account_name',
@@ -617,7 +612,8 @@ class PMSEFieldParserTest extends TestCase
                 'expLabel' => 'Account Name: == "ONE"',
                 'expToken' => '{::future::Leads::account_name::}',
                 'currentValue' => 'ROCKSTAR',
-            ]];
+            ],
+        ];
         $this->assertEquals($postCondition[0]->currentValue, $processedCondition->currentValue);
     }
 
@@ -679,9 +675,7 @@ class PMSEFieldParserTest extends TestCase
         $this->dataParser->setEvaluatedBean($beanObject);
         $processedCondition = $this->dataParser->parseCriteria($preCondition[0]);
         $postCondition = [
-            0 =>
-            (object)
-            [
+            0 => (object) [
                 'expDirection' => 'after',
                 'expModule' => 'Leads',
                 'expField' => 'account_name',
@@ -691,7 +685,8 @@ class PMSEFieldParserTest extends TestCase
                 'expLabel' => 'Account Name: > "ONE"',
                 'expToken' => '{::future::Leads::account_name::}',
                 'currentValue' => 'ROCKSTAR',
-            ]];
+            ],
+        ];
         $this->assertEquals($postCondition[0]->currentValue, $processedCondition->currentValue);
     }
 
@@ -754,9 +749,7 @@ class PMSEFieldParserTest extends TestCase
         $this->dataParser->setEvaluatedBean($beanObject);
         $processedCondition = $this->dataParser->parseCriteriaToken($preCondition[0]);
         $postCondition = [
-            0 =>
-            (object)
-            [
+            0 => (object) [
                 'expDirection' => 'after',
                 'expModule' => 'Leads',
                 'expField' => 'account_name',
@@ -766,7 +759,8 @@ class PMSEFieldParserTest extends TestCase
                 'expLabel' => 'Account Name: == "ONE"',
                 'expToken' => '{::future::Leads::account_name::}',
                 'currentValue' => 'ROCKSTAR',
-            ]];
+            ],
+        ];
         $this->assertEquals($postCondition[0]->currentValue, $processedCondition->currentValue);
     }
 
@@ -828,9 +822,7 @@ class PMSEFieldParserTest extends TestCase
         $this->dataParser->setEvaluatedBean($beanObject);
         $processedCondition = $this->dataParser->parseCriteria($preCondition[0]);
         $postCondition = [
-            0 =>
-            (object)
-            [
+            0 => (object) [
                 'expDirection' => 'after',
                 'expModule' => 'Leads',
                 'expField' => 'account_name',
@@ -840,7 +832,8 @@ class PMSEFieldParserTest extends TestCase
                 'expLabel' => 'Account Name: == "ONE"',
                 'expToken' => '{::future::Leads::account_name::}',
                 'currentValue' => 'ROCKSTAR',
-            ]];
+            ],
+        ];
         $this->assertEquals($postCondition[0]->currentValue, $processedCondition->currentValue);
     }
 
@@ -902,9 +895,7 @@ class PMSEFieldParserTest extends TestCase
         $this->dataParser->setEvaluatedBean($beanObject);
         $processedCondition = $this->dataParser->parseCriteria($preCondition[0]);
         $postCondition = [
-            0 =>
-            (object)
-            [
+            0 => (object) [
                 'expDirection' => 'after',
                 'expModule' => 'Leads',
                 'expField' => 'account_name',
@@ -914,7 +905,8 @@ class PMSEFieldParserTest extends TestCase
                 'expLabel' => 'Account Name: within "ONE"',
                 'expToken' => '{::future::Leads::account_name::}',
                 'currentValue' => 'ROCKSTAR',
-            ]];
+            ],
+        ];
         $this->assertEquals($postCondition[0]->currentValue, $processedCondition->currentValue);
     }
 
@@ -976,9 +968,7 @@ class PMSEFieldParserTest extends TestCase
         $this->dataParser->setEvaluatedBean($beanObject);
         $processedCondition = $this->dataParser->parseCriteria($preCondition[0]);
         $postCondition = [
-            0 =>
-            (object)
-            [
+            0 => (object) [
                 'expDirection' => 'after',
                 'expModule' => 'Leads',
                 'expField' => 'account_name',
@@ -988,7 +978,8 @@ class PMSEFieldParserTest extends TestCase
                 'expLabel' => 'Account Name: not_within "ONE"',
                 'expToken' => '{::future::Leads::account_name::}',
                 'currentValue' => 'ROCKSTAR',
-            ]];
+            ],
+        ];
         $this->assertEquals($postCondition[0]->currentValue, $processedCondition->currentValue);
     }
 
@@ -1051,9 +1042,7 @@ class PMSEFieldParserTest extends TestCase
         $this->dataParser->setEvaluatedBean($beanObject);
         $processedCondition = $this->dataParser->parseCriteria($preCondition[0]);
         $postCondition = [
-            0 =>
-            (object)
-            [
+            0 => (object) [
                 'expDirection' => 'after',
                 'expModule' => 'Leads',
                 'expField' => 'account_name',
@@ -1063,7 +1052,8 @@ class PMSEFieldParserTest extends TestCase
                 'expLabel' => 'Account Name: not_within "ONE"',
                 'expToken' => '{::future::Leads::account_name::}',
                 'currentValue' => 'ROCKSTAR',
-            ]];
+            ],
+        ];
         $this->assertEquals($postCondition[0]->currentValue, $processedCondition->currentValue);
     }
 

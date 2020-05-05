@@ -27,12 +27,12 @@ class JavascriptTest extends TestCase
             [
                 "LBL_TEST",
                 "{/literal}{sugar_translate label='LBL_TEST' module='' for_js=true}{literal}",
-                ],
+            ],
             [
                 ["LBL_TEST","LBL_TEST_2"],
                 "{/literal}{sugar_translate label='LBL_TEST' module='' for_js=true}{literal}{/literal}{sugar_translate label='LBL_TEST_2' module='' for_js=true}{literal}",
-                ],
-            ];
+            ],
+        ];
     }
 
     /**

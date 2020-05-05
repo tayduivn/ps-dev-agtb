@@ -39,20 +39,20 @@ class SugarSpotTest extends TestCase
                     [
                         'ID' => '1',
                         'NAME' => 'recordname',
-                        ],
                     ],
+                ],
                 'pageData' => [
                     'offsets' => [
                         'total' => 1,
                         'next' => 0,
-                        ],
+                    ],
                     'bean' => [
                         'moduleDir' => 'Foo',
-                        ],
                     ],
                 ],
-                'readAccess' => true,
-            ];
+            ],
+            'readAccess' => true,
+        ];
         
         $sugarSpot = $this->createPartialMock('SugarSpot', ['_performSearch']);
         $sugarSpot->expects($this->any())
@@ -82,20 +82,20 @@ class SugarSpotTest extends TestCase
                     [
                         'ID' => '1',
                         'NAME' => 'recordname',
-                        ],
                     ],
+                ],
                 'pageData' => [
                     'offsets' => [
                         'total' => 100,
                         'next' => 0,
-                        ],
+                    ],
                     'bean' => [
                         'moduleDir' => 'Foo',
-                        ],
                     ],
                 ],
-                'readAccess' => true,
-            ];
+            ],
+            'readAccess' => true,
+        ];
         
         $sugarSpot = $this->createPartialMock('SugarSpot', ['_performSearch']);
         $sugarSpot->expects($this->any())
@@ -116,30 +116,30 @@ class SugarSpotTest extends TestCase
     public function providerTestSearchType()
     {
         return [
-              ['phone', '777', true],
-              ['phone', '(777)', true],
-              ['phone', '%777', true],
-              ['phone', '77', false],
-              ['phone', '%77) 7', false],
-              ['phone', '88-88-88', false],
-              ['int', '1', true],
-              ['int', '1.0', true],
-              ['int', '.1', true],
-              ['int', 'a', false],
-              ['decimal', '1.0', true],
-              ['decimal', '1', true],
-              ['decimal', '1,000', true],
-              ['decimal', 'aaaaa', false],
-              ['float', '1.0', true],
-              ['float', '1', true],
-              ['float', '1,000', true],
-              ['float', 'aaaaa', false],
-              ['id', '1', false],
-              ['datetime', '2011-01-01 10:10:10', false],
-              ['date', '2011-01-01', false],
-              ['bool', true, false],
-              ['bool', false, false],
-              ['foo', 'foo', true],
+            ['phone', '777', true],
+            ['phone', '(777)', true],
+            ['phone', '%777', true],
+            ['phone', '77', false],
+            ['phone', '%77) 7', false],
+            ['phone', '88-88-88', false],
+            ['int', '1', true],
+            ['int', '1.0', true],
+            ['int', '.1', true],
+            ['int', 'a', false],
+            ['decimal', '1.0', true],
+            ['decimal', '1', true],
+            ['decimal', '1,000', true],
+            ['decimal', 'aaaaa', false],
+            ['float', '1.0', true],
+            ['float', '1', true],
+            ['float', '1,000', true],
+            ['float', 'aaaaa', false],
+            ['id', '1', false],
+            ['datetime', '2011-01-01 10:10:10', false],
+            ['date', '2011-01-01', false],
+            ['bool', true, false],
+            ['bool', false, false],
+            ['foo', 'foo', true],
         ];
     }
 

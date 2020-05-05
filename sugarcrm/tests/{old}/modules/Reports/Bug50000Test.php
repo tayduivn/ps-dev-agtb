@@ -52,10 +52,22 @@ class Bug50000Test extends TestCase
         $strings = return_module_language('en_us', 'Reports');
         return [
             [
-                ['group_defs' => [
-                    ['label'=> 'User Name', 'name' => 'user_name', 'table_key' => 'Opportunities:assigned_user_link', 'type'=>'user_name'],
-                    ['label'=> 'Name', 'name' => 'name', 'table_key' => 'Opportunities:accounts', 'type'=>'name'],
-                ]],
+                [
+                    'group_defs' => [
+                        [
+                            'label' => 'User Name',
+                            'name' => 'user_name',
+                            'table_key' => 'Opportunities:assigned_user_link',
+                            'type' => 'user_name',
+                        ],
+                        [
+                            'label' => 'Name',
+                            'name' => 'name',
+                            'table_key' => 'Opportunities:accounts',
+                            'type' => 'name',
+                        ],
+                    ],
+                ],
                 ['User Name', 'Account Name', 'Count'],
                 ['User Name', 'Account Name', $strings['LBL_REPORT_GRAND_TOTAL']],
             ],

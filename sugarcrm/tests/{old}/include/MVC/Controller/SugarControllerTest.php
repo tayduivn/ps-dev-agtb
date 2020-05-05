@@ -68,7 +68,7 @@ class SugarControllerTest extends TestCase
             'return_module' => 'dog1312',
             'return_action' => 'dog1212',
             'return_id' => '11212',
-            ];
+        ];
         $controller = new SugarControllerMock;
         $controller->setup();
 

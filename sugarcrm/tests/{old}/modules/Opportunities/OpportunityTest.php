@@ -27,12 +27,12 @@ class OpportunityTest extends TestCase
         SugarTestCurrencyUtilities::createCurrency('MonkeyDollars', '$', 'MOD', 2.0);
 
         SugarTestForecastUtilities::setUpForecastConfig([
-                'sales_stage_won' => ['Closed Won'],
-                'sales_stage_lost' => ['Closed Lost'],
-                //BEGIN SUGARCRM flav!=ent ONLY
-                'forecast_by' => 'opportunities',
-                //END SUGARCRM flav!=ent ONLY
-            ]);
+            'sales_stage_won' => ['Closed Won'],
+            'sales_stage_lost' => ['Closed Lost'],
+            //BEGIN SUGARCRM flav!=ent ONLY
+            'forecast_by' => 'opportunities',
+            //END SUGARCRM flav!=ent ONLY
+        ]);
     }
 
     protected function tearDown() : void

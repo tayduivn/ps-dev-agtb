@@ -32,40 +32,46 @@ class CallHelperTest extends TestCase
     public function providerGetDurationMinutesOptions()
     {
         return [
-            ['EditView',<<<EOHTML
+            [
+                'EditView',
+                <<<EOHTML
 <select id="duration_minutes" onchange="SugarWidgetScheduler.update_time();" name="duration_minutes">
 <OPTION value='0'>00</OPTION>
 <OPTION selected value='15'>15</OPTION>
 <OPTION value='30'>30</OPTION>
 <OPTION value='45'>45</OPTION></select>
 EOHTML,
-                ],
-            ['MassUpdate',<<<EOHTML
+            ],
+            [
+                'MassUpdate',
+                <<<EOHTML
 <select id="duration_minutes" name="duration_minutes">
 <OPTION value='0'>00</OPTION>
 <OPTION selected value='15'>15</OPTION>
 <OPTION value='30'>30</OPTION>
 <OPTION value='45'>45</OPTION></select>
 EOHTML,
-                ],
-            ['QuickCreate',<<<EOHTML
+            ],
+            [
+                'QuickCreate',
+                <<<EOHTML
 <select id="duration_minutes" onchange="SugarWidgetScheduler.update_time();" name="duration_minutes">
 <OPTION value='0'>00</OPTION>
 <OPTION selected value='15'>15</OPTION>
 <OPTION value='30'>30</OPTION>
 <OPTION value='45'>45</OPTION></select>
 EOHTML,
-                ],
-
-            ['wirelessedit',<<<EOHTML
+            ],
+            [
+                'wirelessedit',
+                <<<EOHTML
 <select id="duration_minutes" name="duration_minutes">
 <OPTION value='0'>00</OPTION>
 <OPTION selected value='15'>15</OPTION>
 <OPTION value='30'>30</OPTION>
 <OPTION value='45'>45</OPTION></select>
 EOHTML,
-                ],
-
+            ],
             ['DetailView','15'],
         ];
     }
@@ -126,7 +132,9 @@ EOHTML,
     public function providerGetReminderTime()
     {
         return [
-            ['EditView',<<<EOHTML
+            [
+                'EditView',
+                <<<EOHTML
 <select id="reminder_time" name="reminder_time">
 <OPTION value='60'>1 minute prior</OPTION>
 <OPTION value='300'>5 minutes prior</OPTION>
@@ -135,8 +143,10 @@ EOHTML,
 <OPTION value='1800'>30 minutes prior</OPTION>
 <OPTION value='3600'>1 hour prior</OPTION></select>
 EOHTML,
-                ],
-            ['MassUpdate',<<<EOHTML
+            ],
+            [
+                'MassUpdate',
+                <<<EOHTML
 <select id="reminder_time" name="reminder_time">
 <OPTION value='60'>1 minute prior</OPTION>
 <OPTION value='300'>5 minutes prior</OPTION>
@@ -145,8 +155,10 @@ EOHTML,
 <OPTION value='1800'>30 minutes prior</OPTION>
 <OPTION value='3600'>1 hour prior</OPTION></select>
 EOHTML,
-                ],
-            ['SubpanelCreates',<<<EOHTML
+            ],
+            [
+                'SubpanelCreates',
+                <<<EOHTML
 <select id="reminder_time" name="reminder_time">
 <OPTION value='60'>1 minute prior</OPTION>
 <OPTION value='300'>5 minutes prior</OPTION>
@@ -155,8 +167,10 @@ EOHTML,
 <OPTION value='1800'>30 minutes prior</OPTION>
 <OPTION value='3600'>1 hour prior</OPTION></select>
 EOHTML,
-                ],
-            ['QuickCreate',<<<EOHTML
+            ],
+            [
+                'QuickCreate',
+                <<<EOHTML
 <select id="reminder_time" name="reminder_time">
 <OPTION value='60'>1 minute prior</OPTION>
 <OPTION value='300'>5 minutes prior</OPTION>
@@ -165,9 +179,10 @@ EOHTML,
 <OPTION value='1800'>30 minutes prior</OPTION>
 <OPTION value='3600'>1 hour prior</OPTION></select>
 EOHTML,
-                ],
-
-            ['wirelessedit',<<<EOHTML
+            ],
+            [
+                'wirelessedit',
+                <<<EOHTML
 <select id="reminder_time" name="reminder_time">
 <OPTION value='60'>1 minute prior</OPTION>
 <OPTION value='300'>5 minutes prior</OPTION>
@@ -176,8 +191,7 @@ EOHTML,
 <OPTION value='1800'>30 minutes prior</OPTION>
 <OPTION value='3600'>1 hour prior</OPTION></select>
 EOHTML,
-                ],
-
+            ],
             ['DetailView',''],
         ];
     }

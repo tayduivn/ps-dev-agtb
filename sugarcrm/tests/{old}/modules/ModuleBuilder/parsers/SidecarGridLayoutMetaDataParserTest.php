@@ -310,24 +310,26 @@ class SidecarGridLayoutMetaDataParserTest extends TestCase
         return [
             [
                 // canonical panels
-                [[
-                    'name' => 'Default',
-                    'columns' => 2,
-                    'fields' => [
-                        [
-                            'name' => 'name',
-                            'label' => 'Name',
+                [
+                    [
+                        'name' => 'Default',
+                        'columns' => 2,
+                        'fields' => [
+                            [
+                                'name' => 'name',
+                                'label' => 'Name',
+                            ],
+                            [
+                                'name' => 'status',
+                                'label' => 'Status',
+                            ],
+                            [
+                                'name' => 'description',
+                                'label' => 'Description',
+                            ],
                         ],
-                        [
-                            'name' => 'status',
-                            'label' => 'Status',
-                        ],
-                        [
-                            'name' => 'description',
-                            'label' => 'Description',
-                        ],
-//                        ""
-                    ]]],
+                    ],
+                ],
                 // internal fieldlist
                 [
                     'name' => [
@@ -342,41 +344,41 @@ class SidecarGridLayoutMetaDataParserTest extends TestCase
                         'name' => 'description',
                         'label' => 'Description',
                     ],
-//                    "" => null,
-
                 ],
             ],
             [
                 // internal panels
-                ['Default' => [
-                    [ //row 1
-                        [
-                            'name' => 'name',
-                            'label' => 'LBL_NAME',
-                            'span' => 12,
+                [
+                    'Default' => [
+                        [ //row 1
+                            [
+                                'name' => 'name',
+                                'label' => 'LBL_NAME',
+                                'span' => 12,
+                            ],
+                            MBConstants::$EMPTY,
                         ],
-                        MBConstants::$EMPTY,
+                        [ //row 2
+                            [
+                                'name' => 'status',
+                                'label' => 'LBL_STATUS',
+                            ],
+                            [
+                                'name' => 'description',
+                                'label' => 'LBL_DESCRIPTION',
+                            ],
+                        ],
                     ],
-                    [ //row 2
-                        [
-                            'name' => 'status',
-                            'label' => 'LBL_STATUS',
-                        ],
-                        [
-                            'name' => 'description',
-                            'label' => 'LBL_DESCRIPTION',
-                        ],
-                    ],
-                ]],
+                ],
                 // field list
                 [
-                    'name' =>  [
+                    'name' => [
                         'name' => 'name',
                         'label' => 'LBL_NAME',
                         'span' => 12,
                     ],
                     '(empty)' => MBConstants::$EMPTY,
-                    'status' =>  [
+                    'status' => [
                         'name' => 'status',
                         'label' => 'LBL_STATUS',
                     ],
@@ -384,10 +386,8 @@ class SidecarGridLayoutMetaDataParserTest extends TestCase
                         'name' => 'description',
                         'label' => 'LBL_DESCRIPTION',
                     ],
-
                 ],
             ],
-
         ];
     }
 

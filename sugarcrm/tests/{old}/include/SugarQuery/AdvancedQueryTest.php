@@ -543,47 +543,45 @@ class Contact_Mock_Bug62961 extends Contact
     public function __construct()
     {
         parent::__construct();
-        $this->field_defs['bigname_c'] =
-             [
-                'calculated' => 'true',
-                'formula' => 'strToUpper($last_name)',
-                'enforced' => 'true',
-                'dependency' => '',
-                'required' => false,
-                'source' => 'custom_fields',
-                'name' => 'bigname_c',
-                'vname' => 'LBL_BIGNAME',
-                'type' => 'varchar',
-                'massupdate' => '0',
-                'default' => null,
-                'no_default' => false,
-                'importable' => 'false',
-                'duplicate_merge' => 'disabled',
-                'audited' => false,
-                'reportable' => true,
-                'unified_search' => false,
-                'merge_filter' => 'disabled',
-                'len' => '255',
-                'size' => '20',
-                'custom_module' => 'Contacts',
-                'sort_on' => 'last_name',
-            ];
-        $this->field_defs['report_to_bigname'] =
-            [
-                'name' => 'report_to_bigname',
-                'rname' => 'bigname_c',
-                'id_name' => 'reports_to_id',
-                'vname' => 'LBL_REPORTS_TO',
-                'type' => 'relate',
-                'link' => 'reports_to_link',
-                'table' => 'contacts',
-                'isnull' => 'true',
-                'module' => 'Contacts',
-                'dbType' => 'varchar',
-                'len' => 'id',
-                'reportable' => false,
-                'source' => 'non-db',
-            ];
+        $this->field_defs['bigname_c'] = [
+            'calculated' => 'true',
+            'formula' => 'strToUpper($last_name)',
+            'enforced' => 'true',
+            'dependency' => '',
+            'required' => false,
+            'source' => 'custom_fields',
+            'name' => 'bigname_c',
+            'vname' => 'LBL_BIGNAME',
+            'type' => 'varchar',
+            'massupdate' => '0',
+            'default' => null,
+            'no_default' => false,
+            'importable' => 'false',
+            'duplicate_merge' => 'disabled',
+            'audited' => false,
+            'reportable' => true,
+            'unified_search' => false,
+            'merge_filter' => 'disabled',
+            'len' => '255',
+            'size' => '20',
+            'custom_module' => 'Contacts',
+            'sort_on' => 'last_name',
+        ];
+        $this->field_defs['report_to_bigname'] = [
+            'name' => 'report_to_bigname',
+            'rname' => 'bigname_c',
+            'id_name' => 'reports_to_id',
+            'vname' => 'LBL_REPORTS_TO',
+            'type' => 'relate',
+            'link' => 'reports_to_link',
+            'table' => 'contacts',
+            'isnull' => 'true',
+            'module' => 'Contacts',
+            'dbType' => 'varchar',
+            'len' => 'id',
+            'reportable' => false,
+            'source' => 'non-db',
+        ];
     }
 
     public function hasCustomFields()

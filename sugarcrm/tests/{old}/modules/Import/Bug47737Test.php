@@ -38,7 +38,7 @@ class Bug47737Test extends TestCase
             ['1242','12*'],
             ['abdcd36','abdcd$'],
             ['1234-asdf3535353523','1234-asdf####23'],
-            ];
+        ];
     }
 
     /**

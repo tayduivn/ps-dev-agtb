@@ -128,7 +128,8 @@ class FileUtilsTests extends TestCase
             'full_text_search' =>  [
                 'enabled' => 1,
                 'searchable' =>'',
-                'boost' => 1 ],
+                'boost' => 1,
+            ],
             'merge_filter' => 'disabled',
             'autoinc_next' => '51',
             'dbType' => 'int',

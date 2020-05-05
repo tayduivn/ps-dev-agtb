@@ -75,7 +75,7 @@ class SugarFieldCurrencyTest extends TestCase
             'type' => 'currency',
             'name' => 'TOTAL',
             'vname' => 'LBL_TOTAL',
-            ];
+        ];
         $displayParams = ['labelSpan' => null, 'fieldSpan' => null];
         $col = null;
 

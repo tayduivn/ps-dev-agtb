@@ -16,87 +16,94 @@
  * just require this file into the unit test. and then use some iterator in the data provider.
  */
 $canonicals = [
-// canonical panels
-    [[
-        'fields' => [],
-        'name' => 0,
-        'label' => 0,
-        'columns' => 2,
-        'placeholders' => 1,
-    ]],
-
-    [[
-        'fields' => [
-            [
-                'name' => 'name',
-                'label' => 'LBL_NAME',
-            ],
-            [
-                'name' => 'status',
-                'label' => 'LBL_STATUS',
-                'comment' => 'Status of the lead',
-            ],
-            [
-                'name' => 'description',
-                'label' => 'LBL_DESCRIPTION',
-                'comment' => 'Full text of the note',
-            ],
-            [],
+    // canonical panels
+    [
+        [
+            'fields' => [],
+            'name' => 0,
+            'label' => 0,
+            'columns' => 2,
+            'placeholders' => 1,
         ],
-        'name' => 0,
-        'label' => '0',
-        'columns' => 2,
-        'placeholders' => 1,
-    ]],
+    ],
 
+    [
+        [
+            'fields' => [
+                [
+                    'name' => 'name',
+                    'label' => 'LBL_NAME',
+                ],
+                [
+                    'name' => 'status',
+                    'label' => 'LBL_STATUS',
+                    'comment' => 'Status of the lead',
+                ],
+                [
+                    'name' => 'description',
+                    'label' => 'LBL_DESCRIPTION',
+                    'comment' => 'Full text of the note',
+                ],
+                [],
+            ],
+            'name' => 0,
+            'label' => '0',
+            'columns' => 2,
+            'placeholders' => 1,
+        ],
+    ],
 
-    [[
-        'fields' => [
-            [
-                'name' => 'name',
-                'label' => 'LBL_NAME',
-                'span' => 12,
+    [
+        [
+            'fields' => [
+                [
+                    'name' => 'name',
+                    'label' => 'LBL_NAME',
+                    'span' => 12,
+                ],
+                [
+                    'name' => 'status',
+                    'label' => 'LBL_STATUS',
+                    'comment' => 'Status of the lead',
+                ],
+                [
+                    'name' => 'description',
+                    'label' => 'LBL_DESCRIPTION',
+                    'comment' => 'Full text of the note',
+                ],
             ],
-            [
-                'name' => 'status',
-                'label' => 'LBL_STATUS',
-                'comment' => 'Status of the lead',
-            ],
-            [
-                'name' => 'description',
-                'label' => 'LBL_DESCRIPTION',
-                'comment' => 'Full text of the note',
-            ],
-
+            'name' => 0,
+            'label' => '0',
+            'columns' => 2,
+            'placeholders' => 1,
         ],
-        'name' => 0,
-        'label' => '0',
-        'columns' => 2,
-        'placeholders' => 1,
-    ]],
-    [[
-        'fields' => [
-            'name',
-            'status',
-            [
-                'name' => 'description',
+    ],
+    [
+        [
+            'fields' => [
+                'name',
+                'status',
+                [
+                    'name' => 'description',
+                ],
+                [],
             ],
-            [],
+            'name' => 0,
+            'label' => '0',
+            'columns' => 2,
+            'placeholders' => 1,
         ],
-        'name' => 0,
-        'label' => '0',
-        'columns' => 2,
-        'placeholders' => 1,
-    ]],
-    [[
-        'fields' => [
-            [],
-            [],
+    ],
+    [
+        [
+            'fields' => [
+                [],
+                [],
+            ],
+            'name' => 0,
+            'label' => '0',
+            'columns' => 2,
+            'placeholders' => 1,
         ],
-        'name' => 0,
-        'label' => '0',
-        'columns' => 2,
-        'placeholders' => 1,
-    ]],
-// end
+    ],
 ];

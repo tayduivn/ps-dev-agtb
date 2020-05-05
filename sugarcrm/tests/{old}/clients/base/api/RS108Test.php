@@ -68,11 +68,11 @@ class RS108Test extends TestCase
         $service->expects($this->once())->method('fileResponse')->with($this->equalTo($this->file));
         $api = new FileTempApi();
         $api->getTempImage($service, [
-                'module' => 'Users',
-                'record' => $GLOBALS['current_user']->id,
-                'field' => 'image',
-                'temp_id' => basename($this->file),
-            ]);
+            'module' => 'Users',
+            'record' => $GLOBALS['current_user']->id,
+            'field' => 'image',
+            'temp_id' => basename($this->file),
+        ]);
     }
 
     /**
@@ -98,10 +98,10 @@ class RS108Test extends TestCase
 
         $api = new FileTempApi();
         $api->getTempImage($this->service, [
-                'module' => 'Users',
-                'record' => $GLOBALS['current_user']->id,
-                'field' => 'image',
-                'temp_id' => basename($this->file),
-            ]);
+            'module' => 'Users',
+            'record' => $GLOBALS['current_user']->id,
+            'field' => 'image',
+            'temp_id' => basename($this->file),
+        ]);
     }
 }

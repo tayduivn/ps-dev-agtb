@@ -225,19 +225,15 @@ class Bug61373Test extends TestCase
 
         $args =  [
             'method' => 'query',
-            'modules' =>
-             [
+            'modules' => [
                 0 => $module,
             ],
             'group' => 'or',
-            'field_list' =>
-             [
+            'field_list' => [
                 0 => $field,
             ],
-            'conditions' =>
-             [
-                0 =>
-                 [
+            'conditions' => [
+                0 => [
                     'name' => 'name',
                     'op' => 'like_custom',
                     'end' => '%',

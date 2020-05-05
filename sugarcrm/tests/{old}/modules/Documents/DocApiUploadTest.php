@@ -47,13 +47,13 @@ class DocApiUploadTest extends TestCase
         file_put_contents($this->file, create_guid());
 
         $_FILES = [
-                'filename' => [
-                        'name' => 'test.txt',
-                        'size' => filesize($this->file),
-                        'tmp_name' => $this->file,
-                        'error' => 0,
-                        '_SUGAR_API_UPLOAD' => true,
-                ],
+            'filename' => [
+                'name' => 'test.txt',
+                'size' => filesize($this->file),
+                'tmp_name' => $this->file,
+                'error' => 0,
+                '_SUGAR_API_UPLOAD' => true,
+            ],
         ];
 
 
@@ -76,13 +76,13 @@ class DocApiUploadTest extends TestCase
 
         file_put_contents($this->file, create_guid());
         $_FILES = [
-                'filename' => [
-                        'name' => 'test2.txt',
-                        'size' => filesize($this->file),
-                        'tmp_name' => $this->file,
-                        'error' => 0,
-                        '_SUGAR_API_UPLOAD' => true,
-                ],
+            'filename' => [
+                'name' => 'test2.txt',
+                'size' => filesize($this->file),
+                'tmp_name' => $this->file,
+                'error' => 0,
+                '_SUGAR_API_UPLOAD' => true,
+            ],
         ];
 
         $result = $api->saveFilePost($rest, ["module" => "Documents", "record" => $this->documents[0]->id, "field" => "filename"]);

@@ -111,9 +111,9 @@ class RecentApiTest extends TestCase
         $this->trackAction($contact, '2014-01-01 00:00:00');
 
         $response = $this->api->getRecentlyViewed($service, [
-                'module_list' => $contact->module_name,
-                'erased_fields' => true,
-            ]);
+            'module_list' => $contact->module_name,
+            'erased_fields' => true,
+        ]);
 
         $this->assertSame(['field_list'], $response['records'][0]['_erased_fields']);
     }

@@ -46,12 +46,12 @@ class PMSEImporterTest extends TestCase
             ->method('get_full_list')
 //            ->with($this->equalTo('Nombre'));
             ->will($this->returnValue([
-                    "0" => $row1,
-                    "1" => $row2,
-                    "2" => $row3,
-                    "3" => $row4,
-                    "4" => $row5,
-                ]));
+                "0" => $row1,
+                "1" => $row2,
+                "2" => $row3,
+                "3" => $row4,
+                "4" => $row5,
+            ]));
 
         $this->bean->expects($this->any())
             ->method('save')

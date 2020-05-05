@@ -11,85 +11,81 @@
  */
 
 $viewdefs['Documents']['DetailView'] = [
-'templateMeta' => ['maxColumns' => '2',
-                        'form' => ['hidden'=>['<input type="hidden" name="old_id" value="{$fields.document_revision_id.value}">']],
-                        'widths' => [
-                                        ['label' => '10', 'field' => '30'],
-                                        ['label' => '10', 'field' => '30'],
-                                        ],
-                        ],
-'panels' =>
-     [
-      'lbl_document_information' =>
-       [
-         [
-           [
-            'name' => 'filename',
-            'displayParams' =>
-             [
-              'link' => 'filename',
-              'id' => 'document_revision_id',
+    'templateMeta' => ['maxColumns' => '2',
+        'form' => ['hidden'=>['<input type="hidden" name="old_id" value="{$fields.document_revision_id.value}">']],
+        'widths' => [
+            ['label' => '10', 'field' => '30'],
+            ['label' => '10', 'field' => '30'],
+        ],
+    ],
+    'panels' => [
+        'lbl_document_information' => [
+            [
+                [
+                    'name' => 'filename',
+                    'displayParams' => [
+                        'link' => 'filename',
+                        'id' => 'document_revision_id',
+                    ],
+                ],
+                'status',
             ],
-           ],
-           'status',
-         ],
 
-         [
-           [
-            'name' => 'document_name',
-            'label' => 'LBL_DOC_NAME',
-           ],
-           [
-            'name' => 'revision',
-            'label' => 'LBL_DOC_VERSION',
-           ],
-         ],
+            [
+                [
+                    'name' => 'document_name',
+                    'label' => 'LBL_DOC_NAME',
+                ],
+                [
+                    'name' => 'revision',
+                    'label' => 'LBL_DOC_VERSION',
+                ],
+            ],
 
-         [
-           [
-            'name' => 'template_type',
-            'label' => 'LBL_DET_TEMPLATE_TYPE',
-           ],
-           [
-            'name' => 'is_template',
-            'label' => 'LBL_DET_IS_TEMPLATE',
-           ],
-         ],
+            [
+                [
+                    'name' => 'template_type',
+                    'label' => 'LBL_DET_TEMPLATE_TYPE',
+                ],
+                [
+                    'name' => 'is_template',
+                    'label' => 'LBL_DET_IS_TEMPLATE',
+                ],
+            ],
 
-         [
-          'active_date',
-          'category_id',
-         ],
+            [
+                'active_date',
+                'category_id',
+            ],
  
-         [
-          'exp_date',
-          'subcategory_id',
-         ],
+            [
+                'exp_date',
+                'subcategory_id',
+            ],
 
-         [
-           [
-            'name' => 'description',
-            'label' => 'LBL_DOC_DESCRIPTION',
-           ],
-         ],
+            [
+                [
+                    'name' => 'description',
+                    'label' => 'LBL_DOC_DESCRIPTION',
+                ],
+            ],
         
-         [
-           'related_doc_name',
-           'related_doc_rev_number',
-         ],
+            [
+                'related_doc_name',
+                'related_doc_rev_number',
+            ],
 
-         [
-          'team_name',
-         ],
+            [
+                'team_name',
+            ],
         
-      ],
-      'LBL_REVISIONS_PANEL' =>
-       [
-         [
-          0 => 'last_rev_created_name',
-          1 => 'last_rev_create_date',
-         ],
-      ],
+        ],
+        'LBL_REVISIONS_PANEL' => [
+            [
+                0 => 'last_rev_created_name',
+                1 => 'last_rev_create_date',
+            ],
+        ],
     ],
    
 ];

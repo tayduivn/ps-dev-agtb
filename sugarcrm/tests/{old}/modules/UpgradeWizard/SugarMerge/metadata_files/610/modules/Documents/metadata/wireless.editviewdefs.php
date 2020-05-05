@@ -13,28 +13,28 @@
 
 $viewdefs['Documents']['EditView'] = [
     'templateMeta' => ['maxColumns' => '1',
-                            'widths' => [
-                                            ['label' => '10', 'field' => '30'],
-                                            ],
-                            ],
+        'widths' => [
+            ['label' => '10', 'field' => '30'],
+        ],
+    ],
 
 
     'panels' =>  [
-         [
-             [
+        [
+            [
                 'name' => 'document_name',
                 'label' => 'LBL_DOC_NAME',
-             ],
-         ],
-         [
-             [
+            ],
+        ],
+        [
+            [
                 'name' => 'uploadfile',
                 'displayParams' => ['link'=>'uploadfile', 'id'=>'id'],
-             ],
-         ],
-         ['active_date'],
-         ['exp_date'],
-         ['team_name'],
+            ],
+        ],
+        ['active_date'],
+        ['exp_date'],
+        ['team_name'],
     ],
 
 ];

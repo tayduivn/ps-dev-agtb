@@ -1505,22 +1505,19 @@ class PortalStandardFunctionalityApiTest extends TestCase
                 'portal-bug-1' => [
                     'portal-note-5',
                 ],
-                'portal-bug-2' => [
-                ],
+                'portal-bug-2' => [],
             ],
             'b2b-account-1' => [
                 'portal-bug-1' => [
                     'portal-note-5',
                 ],
-                'portal-bug-2' => [
-                ],
+                'portal-bug-2' => [],
             ],
             'b2b-account-2' => [
                 'portal-bug-1' => [
                     'portal-note-5',
                 ],
-                'portal-bug-2' => [
-                ],
+                'portal-bug-2' => [],
             ],
         ];
 
@@ -1566,8 +1563,7 @@ class PortalStandardFunctionalityApiTest extends TestCase
     {
         $users = [
             'b2c' => [
-                'portal-case-3' => [
-                ],
+                'portal-case-3' => [],
                 'portal-case-5' => [
                     'portal-note-2',
                 ],
@@ -1578,10 +1574,8 @@ class PortalStandardFunctionalityApiTest extends TestCase
                 ],
             ],
             'b2b-account-2' => [
-                'portal-case-2' => [
-                ],
-                'portal-case-3' => [
-                ],
+                'portal-case-2' => [],
+                'portal-case-3' => [],
             ],
         ];
 
@@ -1627,22 +1621,19 @@ class PortalStandardFunctionalityApiTest extends TestCase
     {
         $users = [
             'b2c' => [
-                'portal-kb-1' => [
-                ],
+                'portal-kb-1' => [],
                 'portal-kb-2' => [
                     'portal-note-4',
                 ],
             ],
             'b2b-account-1' => [
-                'portal-kb-1' => [
-                ],
+                'portal-kb-1' => [],
                 'portal-kb-2' => [
                     'portal-note-4',
                 ],
             ],
             'b2b-account-2' => [
-                'portal-kb-1' => [
-                ],
+                'portal-kb-1' => [],
                 'portal-kb-2' => [
                     'portal-note-4',
                 ],

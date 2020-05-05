@@ -70,12 +70,12 @@ class RS64Test extends TestCase
 
         $api = new ModulePortalApi();
         $data = $api->createRecord($service, [
-                'module' => 'Bugs',
-                'name' => 'Test Bug',
-                'assigned_user_id' => 1,
-                'team_id' => 2,
-                'team_set_id' => 2,
-            ]);
+            'module' => 'Bugs',
+            'name' => 'Test Bug',
+            'assigned_user_id' => 1,
+            'team_id' => 2,
+            'team_set_id' => 2,
+        ]);
         $this->assertArrayHasKey('id', $data);
 
         $this->bug = BeanFactory::getBean('Bugs', $data['id']);

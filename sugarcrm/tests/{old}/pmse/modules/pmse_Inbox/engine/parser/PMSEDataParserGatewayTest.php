@@ -241,7 +241,8 @@ class PMSEDataParserGatewayTest extends TestCase
                 'expLabel' => 'Account Name: == "ONE"',
                 'currentValue' => ['10/10/2013'],
                 'expSubtype' => 'date',
-            ]];
+            ],
+        ];
         $this->assertEquals($postCondition[0], $processedCondition[0]);
     }
     

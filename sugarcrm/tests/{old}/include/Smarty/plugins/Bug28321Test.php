@@ -22,45 +22,36 @@ class Bug28321Test extends TestCase
                 'name' => 'name',
                 'comment' => 'Name of the Company',
                 'label' => 'LBL_NAME',
-                'displayParams' =>
-                    [
-                        'enableConnectors' => '1',
-                        'module' => 'Accounts',
-                        'connectors' =>
-                            [
-                                '0' => 'ext_rest_twitter',
-                            ],
-
+                'displayParams' => [
+                    'enableConnectors' => '1',
+                    'module' => 'Accounts',
+                    'connectors' => [
+                        '0' => 'ext_rest_twitter',
                     ],
+                ],
 
                 'customCodeRenderField' => '1',
                 'customCode' => '<a href="http://www.google.com?q={$fields.name.value}">Search</a>',
                 'tabindex' => '100',
             ],
 
-            'colData' =>
-            [
-                'field' =>
-                    [
-                        'name' => 'name',
-                        'comment' => 'Name of the Company',
-                        'label' => 'LBL_NAME',
-                        'displayParams' =>
-                            [
-                                'enableConnectors' => '1',
-                                'module' => 'Accounts',
-                                'connectors' =>
-                                    [
-                                        '0' => 'ext_rest_twitter',
-                                    ],
-
-                            ],
-
-                        'customCodeRenderField' => '1',
-                        'customCode' => '<a href="http://www.google.com?q={$fields.name.value}">Search</a>',
-                        'tabindex' => '100',
+            'colData' => [
+                'field' => [
+                    'name' => 'name',
+                    'comment' => 'Name of the Company',
+                    'label' => 'LBL_NAME',
+                    'displayParams' => [
+                        'enableConnectors' => '1',
+                        'module' => 'Accounts',
+                        'connectors' => [
+                            '0' => 'ext_rest_twitter',
+                        ],
                     ],
 
+                    'customCodeRenderField' => '1',
+                    'customCode' => '<a href="http://www.google.com?q={$fields.name.value}">Search</a>',
+                    'tabindex' => '100',
+                ],
             ],
         ];
 

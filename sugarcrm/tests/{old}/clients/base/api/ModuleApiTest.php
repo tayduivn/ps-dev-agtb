@@ -250,8 +250,11 @@ class ModuleApiTest extends TestCase
 
         $result = $this->moduleApi->updateRecord(
             $this->serviceMock,
-            ['module' => 'Accounts', 'record' => $this->accounts[0]->id,
-            "my_favorite" => false]
+            [
+                'module' => 'Accounts',
+                'record' => $this->accounts[0]->id,
+                "my_favorite" => false,
+            ]
         );
         $this->assertFalse((bool)$result['my_favorite'], "Was not set to False");
     }
@@ -287,10 +290,10 @@ class ModuleApiTest extends TestCase
         $moduleApi = new ModuleApiTestMock();
         $moduleApi->processAfterCreateOperationsMock(
             [
-                 'module' => 'Accounts',
-                 'after_create' => [
-                     'copy_rel_from' => $accountBean->id,
-                 ],
+                'module' => 'Accounts',
+                'after_create' => [
+                    'copy_rel_from' => $accountBean->id,
+                ],
             ],
             $newAccountBean
         );
@@ -316,10 +319,10 @@ class ModuleApiTest extends TestCase
         $moduleApi = new ModuleApiTestMock();
         $moduleApi->processAfterCreateOperationsMock(
             [
-                 'module' => 'Accounts',
-                 'after_create' => [
-                     'copy_rel_from' => $accountBean->id,
-                 ],
+                'module' => 'Accounts',
+                'after_create' => [
+                    'copy_rel_from' => $accountBean->id,
+                ],
             ],
             $newAccountBean
         );
@@ -349,7 +352,7 @@ class ModuleApiTest extends TestCase
         $moduleApi = new ModuleApiTestMock();
         $moduleApi->processAfterCreateOperationsMock(
             [
-                 'module' => 'Accounts',
+                'module' => 'Accounts',
             ],
             $newAccountBean
         );
@@ -394,8 +397,11 @@ class ModuleApiTest extends TestCase
 
         $result = $this->moduleApi->updateRecord(
             $this->serviceMock,
-            ['module' => 'Accounts', 'record' => $id, 'name' => 'Changed Account',
-                        '_headers' => ['X_TIMESTAMP' => $timedate->asIso($dm)],
+            [
+                'module' => 'Accounts',
+                'record' => $id,
+                'name' => 'Changed Account',
+                '_headers' => ['X_TIMESTAMP' => $timedate->asIso($dm)],
             ]
         );
         $this->assertArrayHasKey("id", $result);
@@ -405,7 +411,7 @@ class ModuleApiTest extends TestCase
     public function testUpdateConflict()
     {
         $result = $this->moduleApi->createRecord($this->serviceMock, ['module' => 'Accounts', 'name' => 'Test Account',
-                'assigned_user_id' => $GLOBALS['current_user']->id,
+            'assigned_user_id' => $GLOBALS['current_user']->id,
         ]);
         $this->assertNotEmpty($result);
         $this->assertArrayHasKey("id", $result);
@@ -565,10 +571,13 @@ class ModuleApiTest extends TestCase
         $data = SugarTestReflection::callProtectedMethod(
             $api,
             'getLoadedAndFormattedBean',
-            [$this->serviceMock, [
-                'module' => 'Accounts',
-                'record' => $this->accounts[0]->id,
-            ]]
+            [
+                $this->serviceMock,
+                [
+                    'module' => 'Accounts',
+                    'record' => $this->accounts[0]->id,
+                ],
+            ]
         );
 
         $this->assertIsArray($data);
@@ -741,16 +750,20 @@ class ModuleApiTest extends TestCase
         SugarTestReflection::callProtectedMethod(
             $api,
             'linkRelatedRecords',
-            [$this->serviceMock, $bean, [
-                'link1' => [
-                    'id11',
-                    [
-                        'id' => 'id12',
-                        'field12' => 'value12',
+            [
+                $this->serviceMock,
+                $bean,
+                [
+                    'link1' => [
+                        'id11',
+                        [
+                            'id' => 'id12',
+                            'field12' => 'value12',
+                        ],
                     ],
+                    'link2' => ['id21'],
                 ],
-                'link2' => ['id21'],
-            ]]
+            ]
         );
     }
 
@@ -802,10 +815,14 @@ class ModuleApiTest extends TestCase
         SugarTestReflection::callProtectedMethod(
             $api,
             'unlinkRelatedRecords',
-            [$this->serviceMock, $bean, [
-                'link1' => ['id1'],
-                'link2' => ['id2'],
-            ]]
+            [
+                $this->serviceMock,
+                $bean,
+                [
+                    'link1' => ['id1'],
+                    'link2' => ['id2'],
+                ],
+            ]
         );
     }
 
@@ -837,17 +854,21 @@ class ModuleApiTest extends TestCase
         SugarTestReflection::callProtectedMethod(
             $api,
             'createRelatedRecords',
-            [$this->serviceMock, $bean, [
-                'link1' => [
-                    ['name' => 'Underwater Mining Inc.'],
-                ],
-                'link2' => [
-                    [
-                        'first_name' => 'Latanya',
-                        'last_name' => 'Ollie',
+            [
+                $this->serviceMock,
+                $bean,
+                [
+                    'link1' => [
+                        ['name' => 'Underwater Mining Inc.'],
+                    ],
+                    'link2' => [
+                        [
+                            'first_name' => 'Latanya',
+                            'last_name' => 'Ollie',
+                        ],
                     ],
                 ],
-            ]]
+            ]
         );
     }
 

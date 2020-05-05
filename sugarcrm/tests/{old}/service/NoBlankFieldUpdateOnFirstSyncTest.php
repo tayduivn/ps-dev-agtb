@@ -85,20 +85,20 @@ class NoBlankFieldUpdateOnFirstSyncTest extends SOAPTestCase
         global $current_user;
         $this->login();
         $contacts_list=[
-                              'session'=>$this->sessionId, 'module_name' => 'Contacts',
-                              'name_value_lists' => [
-                                        [
-                                            ['name'=>'assigned_user_id' , 'value'=>"{$current_user->id}"],
-                                            ['name'=>'first_name' , 'value'=>"{$this->c->first_name}"],
-                                            ['name'=>'last_name' , 'value'=>"{$this->c->last_name}"],
-                                            ['name'=>'email1' , 'value'=>'noblankfieldupdateonfirstsync@example.com'],
-                                            ['name'=>'phone_mobile', 'value'=>''],
-                                            ['name'=>'contacts_users_id', 'value'=>"{$current_user->id}"],
-                                            ['name'=>'title', 'value'=>''],
-                                            ['name'=>'do_not_call', 'value'=>'1'],
-                                        ],
-                              ],
-                        ];
+            'session'=>$this->sessionId, 'module_name' => 'Contacts',
+            'name_value_lists' => [
+                [
+                    ['name'=>'assigned_user_id' , 'value'=>"{$current_user->id}"],
+                    ['name'=>'first_name' , 'value'=>"{$this->c->first_name}"],
+                    ['name'=>'last_name' , 'value'=>"{$this->c->last_name}"],
+                    ['name'=>'email1' , 'value'=>'noblankfieldupdateonfirstsync@example.com'],
+                    ['name'=>'phone_mobile', 'value'=>''],
+                    ['name'=>'contacts_users_id', 'value'=>"{$current_user->id}"],
+                    ['name'=>'title', 'value'=>''],
+                    ['name'=>'do_not_call', 'value'=>'1'],
+                ],
+            ],
+        ];
 
         $result = $this->soapClient->call('set_entries', $contacts_list);
         $this->resultId = $result['ids'][0];
@@ -117,20 +117,20 @@ class NoBlankFieldUpdateOnFirstSyncTest extends SOAPTestCase
         //Now sync a second time
         $this->login();
         $contacts_list=[
-                              'session'=>$this->sessionId, 'module_name' => 'Contacts',
-                              'name_value_lists' => [
-                                        [
-                                            ['name'=>'assigned_user_id' , 'value'=>"{$current_user->id}"],
-                                            ['name'=>'first_name' , 'value'=>"{$this->c->first_name}"],
-                                            ['name'=>'last_name' , 'value'=>"{$this->c->last_name}"],
-                                            ['name'=>'email1' , 'value'=>'noblankfieldupdateonfirstsync@example.com'],
-                                            ['name'=>'phone_mobile', 'value'=>'1-800-SUGARCRM'],
-                                            ['name'=>'contacts_users_id', 'value'=>"{$current_user->id}"],
-                                            ['name'=>'title', 'value'=>''],
-                                            ['name'=>'do_not_call', 'value'=>'0'],
-                                        ],
-                              ],
-                        ];
+            'session'=>$this->sessionId, 'module_name' => 'Contacts',
+            'name_value_lists' => [
+                [
+                    ['name'=>'assigned_user_id' , 'value'=>"{$current_user->id}"],
+                    ['name'=>'first_name' , 'value'=>"{$this->c->first_name}"],
+                    ['name'=>'last_name' , 'value'=>"{$this->c->last_name}"],
+                    ['name'=>'email1' , 'value'=>'noblankfieldupdateonfirstsync@example.com'],
+                    ['name'=>'phone_mobile', 'value'=>'1-800-SUGARCRM'],
+                    ['name'=>'contacts_users_id', 'value'=>"{$current_user->id}"],
+                    ['name'=>'title', 'value'=>''],
+                    ['name'=>'do_not_call', 'value'=>'0'],
+                ],
+            ],
+        ];
 
         $result = $this->soapClient->call('set_entries', $contacts_list);
         $this->resultId = $result['ids'][0];
@@ -152,20 +152,20 @@ class NoBlankFieldUpdateOnFirstSyncTest extends SOAPTestCase
         global $current_user;
         $this->login();
         $contacts_list=[
-                              'session'=>$this->sessionId, 'module_name' => 'Contacts',
-                              'name_value_lists' => [
-                                        [
-                                            ['name'=>'assigned_user_id' , 'value'=>"{$current_user->id}"],
-                                            ['name'=>'first_name' , 'value'=>"{$this->c2->first_name}"],
-                                            ['name'=>'last_name' , 'value'=>"{$this->c2->last_name}"],
-                                            ['name'=>'email1' , 'value'=>''],
-                                            ['name'=>'email2', 'value'=>''],
-                                            ['name'=>'phone_mobile', 'value'=>''],
-                                            ['name'=>'contacts_users_id', 'value'=>"{$current_user->id}"],
-                                            ['name'=>'title', 'value'=>''],
-                                        ],
-                              ],
-                        ];
+            'session'=>$this->sessionId, 'module_name' => 'Contacts',
+            'name_value_lists' => [
+                [
+                    ['name'=>'assigned_user_id' , 'value'=>"{$current_user->id}"],
+                    ['name'=>'first_name' , 'value'=>"{$this->c2->first_name}"],
+                    ['name'=>'last_name' , 'value'=>"{$this->c2->last_name}"],
+                    ['name'=>'email1' , 'value'=>''],
+                    ['name'=>'email2', 'value'=>''],
+                    ['name'=>'phone_mobile', 'value'=>''],
+                    ['name'=>'contacts_users_id', 'value'=>"{$current_user->id}"],
+                    ['name'=>'title', 'value'=>''],
+                ],
+            ],
+        ];
 
         $result = $this->soapClient->call('set_entries', $contacts_list);
         $this->resultId2 = $result['ids'][0];
@@ -183,20 +183,20 @@ class NoBlankFieldUpdateOnFirstSyncTest extends SOAPTestCase
         //Now sync a second time
         $this->login();
         $contacts_list=[
-                              'session'=>$this->sessionId, 'module_name' => 'Contacts',
-                              'name_value_lists' => [
-                                        [
-                                            ['name'=>'assigned_user_id' , 'value'=>"{$current_user->id}"],
-                                            ['name'=>'first_name' , 'value'=>"{$this->c2->first_name}"],
-                                            ['name'=>'last_name' , 'value'=>"{$this->c2->last_name}"],
-                                            ['name'=>'email1' , 'value'=>''],
-                                            ['name'=>'email2', 'value'=>''],
-                                            ['name'=>'phone_mobile', 'value'=>'1-800-SUGARCRM'],
-                                            ['name'=>'contacts_users_id', 'value'=>"{$current_user->id}"],
-                                            ['name'=>'title', 'value'=>''],
-                                        ],
-                              ],
-                        ];
+            'session'=>$this->sessionId, 'module_name' => 'Contacts',
+            'name_value_lists' => [
+                [
+                    ['name'=>'assigned_user_id' , 'value'=>"{$current_user->id}"],
+                    ['name'=>'first_name' , 'value'=>"{$this->c2->first_name}"],
+                    ['name'=>'last_name' , 'value'=>"{$this->c2->last_name}"],
+                    ['name'=>'email1' , 'value'=>''],
+                    ['name'=>'email2', 'value'=>''],
+                    ['name'=>'phone_mobile', 'value'=>'1-800-SUGARCRM'],
+                    ['name'=>'contacts_users_id', 'value'=>"{$current_user->id}"],
+                    ['name'=>'title', 'value'=>''],
+                ],
+            ],
+        ];
 
         $result = $this->soapClient->call('set_entries', $contacts_list);
 

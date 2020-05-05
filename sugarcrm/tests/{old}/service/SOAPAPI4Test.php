@@ -58,7 +58,7 @@ class SOAPAPI4Test extends SOAPTestCase
                 'max_results' => 1,
                 'deleted' => 0,
                 'favorites' => false,
-                ]
+            ]
         );
 
         $this->assertEquals(
@@ -92,7 +92,7 @@ class SOAPAPI4Test extends SOAPTestCase
                 'max_results' => 1,
                 'deleted' => 0,
                 'favorites' => true,
-                ]
+            ]
         );
 
         $this->assertEquals(
@@ -115,15 +115,16 @@ class SOAPAPI4Test extends SOAPTestCase
         $results = $this->soapClient->call(
             'search_by_module',
             [
-                            'session' => $this->sessionId,
-                            'search'  => $searchString,
-                            'modules' => $searchModules,
-                            'offset'  => $offSet,
-                            'max'     => $maxResults,
-                            'user'    => $GLOBALS['current_user']->id,
-                            'fields'  => $returnFields,
-                            'unified_only' => true,
-                            'favorites' => false]
+                'session' => $this->sessionId,
+                'search'  => $searchString,
+                'modules' => $searchModules,
+                'offset'  => $offSet,
+                'max'     => $maxResults,
+                'user'    => $GLOBALS['current_user']->id,
+                'fields'  => $returnFields,
+                'unified_only' => true,
+                'favorites' => false,
+            ]
         );
         $this->assertEquals($seedData[0]['fieldValue'], self::$helperObject->findFieldByNameFromEntryList($results['entry_list'], $seedData[0]['id'], 'Accounts', $seedData[0]['fieldName']));
         $this->assertFalse(self::$helperObject->findFieldByNameFromEntryList($results['entry_list'], $seedData[1]['id'], 'Accounts', $seedData[1]['fieldName']));
@@ -157,15 +158,16 @@ class SOAPAPI4Test extends SOAPTestCase
         $results = $this->soapClient->call(
             'search_by_module',
             [
-                            'session' => $this->sessionId,
-                            'search'  => $searchString,
-                            'modules' => $searchModules,
-                            'offset'  => $offSet,
-                            'max'     => $maxResults,
-                            'user'    => $GLOBALS['current_user']->id,
-                            'fields'  => $returnFields,
-                            'unified_only' => true,
-                            'favorites' => true]
+                'session' => $this->sessionId,
+                'search'  => $searchString,
+                'modules' => $searchModules,
+                'offset'  => $offSet,
+                'max'     => $maxResults,
+                'user'    => $GLOBALS['current_user']->id,
+                'fields'  => $returnFields,
+                'unified_only' => true,
+                'favorites' => true,
+            ]
         );
         $this->assertEquals($seedData[0]['fieldValue'], self::$helperObject->findFieldByNameFromEntryList($results['entry_list'], $seedData[0]['id'], 'Accounts', $seedData[0]['fieldName']));
         $this->assertFalse(self::$helperObject->findFieldByNameFromEntryList($results['entry_list'], $seedData[1]['id'], 'Accounts', $seedData[1]['fieldName']));
@@ -188,7 +190,7 @@ class SOAPAPI4Test extends SOAPTestCase
                 'ids' => [$contact->id],
                 'select_fields' => ['last_name', 'first_name', 'do_not_call', 'lead_source', 'email1'],
                 'link_name_to_fields_array' => [['name' =>  'email_addresses', 'value' => ['id', 'email_address', 'opt_out', 'primary_address']]],
-                ]
+            ]
         );
 
         $this->assertEquals(

@@ -17,44 +17,48 @@
 $internals = [
 // internal panels
     ['0' => []],
-
-    ['0' => [
-        [ // row 1
-            'name',
-            'status',
+    [
+        '0' => [
+            [ // row 1
+                'name',
+                'status',
+            ],
+            [ // row 2
+                'description',
+                MBConstants::$FILLER['name'],
+            ],
         ],
-        [ // row 2
-            'description',
-            MBConstants::$FILLER['name'],
+    ],
+    [
+        '0' => [
+            [ //row 1
+                'name',
+                MBConstants::$EMPTY['name'],
+            ],
+            [ //row 2
+                'status',
+                'description',
+            ],
         ],
-    ]],
-
-    ['0' => [
-        [ //row 1
-            'name',
-            MBConstants::$EMPTY['name'],
+    ],
+    [
+        '0' => [
+            [ // row 1
+                'name',
+                'status',
+            ],
+            [ // row 2
+                'description',
+                MBConstants::$FILLER['name'],
+            ],
         ],
-        [ //row 2
-            'status',
-            'description',
+    ],
+    [
+        '0' => [
+            [ // row 2
+                MBConstants::$FILLER['name'],
+                MBConstants::$FILLER['name'],
+            ],
         ],
-    ]],
-    ['0' => [
-        [ // row 1
-            'name',
-            'status',
-        ],
-        [ // row 2
-            'description',
-            MBConstants::$FILLER['name'],
-        ],
-    ]],
-    ['0' => [
-        [ // row 2
-            MBConstants::$FILLER['name'],
-            MBConstants::$FILLER['name'],
-        ],
-    ]],
-
-// - end
+    ],
 ];

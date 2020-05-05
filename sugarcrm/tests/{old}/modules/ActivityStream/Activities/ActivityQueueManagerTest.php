@@ -154,8 +154,7 @@ class ActivityQueueManagerTest extends TestCase
                 'id'     => $account1->id,
             ],
             'changes' => [
-                'parent_id' =>
-                [
+                'parent_id' => [
                     'field_name' => 'parent_id',
                     'data_type'  => 'id',
                     'before'     => '',

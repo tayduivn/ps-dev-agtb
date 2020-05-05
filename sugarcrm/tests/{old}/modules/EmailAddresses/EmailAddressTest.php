@@ -84,7 +84,7 @@ class EmailAddressTest extends TestCase
             ["\"John Doe (<doe>)\"", "John Doe (doe)", ""],
             ["John Doe <vlha>", "John Doe vlha", ""],
             ["<script>alert(1)</script>", "scriptalert(1)/script", ""],
-            ];
+        ];
     }
 
     /**

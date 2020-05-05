@@ -87,10 +87,10 @@ class RestResponseTest extends TestCase
     public function jsonProvider()
     {
         return [
-                ['', '""'],
-                ["test", '"test"'],
-                [123, '123'],
-                [["foo"=>"bar", "test"=> ['"foo"', "'<test>'"]], '{"foo":"bar","test":["\u0022foo\u0022","\u0027\u003Ctest\u003E\u0027"]}'],
+            ['', '""'],
+            ["test", '"test"'],
+            [123, '123'],
+            [["foo"=>"bar", "test"=> ['"foo"', "'<test>'"]], '{"foo":"bar","test":["\u0022foo\u0022","\u0027\u003Ctest\u003E\u0027"]}'],
         ];
     }
 

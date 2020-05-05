@@ -29,10 +29,11 @@ class UserGeneratePasswordTest extends TestCase
             $this->passwordSetting = $GLOBALS['sugar_config']['passwordsetting'];
         }
         $GLOBALS['sugar_config']['passwordsetting'] = ['onenumber'=>0,
-                                                            'onelower'=>0,
-                                                            'oneupper'=>0,
-                                                            'onespecial'=>0,
-                                                            'minpwdlength'=>6];
+            'onelower' => 0,
+            'oneupper' => 0,
+            'onespecial' => 0,
+            'minpwdlength' => 6,
+        ];
     }
 
     protected function tearDown() : void

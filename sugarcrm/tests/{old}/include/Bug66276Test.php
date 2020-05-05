@@ -19,7 +19,8 @@ class Bug66276Test extends TestCase
 {
     protected $testFiles = [
         ['dir' => 'custom/include', 'name' => 'QuickSearchDefaults.php', 'content' => '<?php class QuickSearchDefaultsCustom {}'],
-        ['dir' => 'custom/modules/Test', 'name' => 'QuickSearchDefaults.php', 'content' => '<?php class QuickSearchDefaultsModule {}']];
+        ['dir' => 'custom/modules/Test', 'name' => 'QuickSearchDefaults.php', 'content' => '<?php class QuickSearchDefaultsModule {}'],
+    ];
 
     protected function setUp() : void
     {

@@ -127,12 +127,11 @@ class RESTAPI3Test extends TestCase
         return $this->makeRESTCall(
             'login',
             [
-                'user_auth' =>
-                    [
-                        'user_name' => 'admin',
-                        'password' => md5('asdf'),
-                        'version' => '.01',
-                    ],
+                'user_auth' => [
+                    'user_name' => 'admin',
+                    'password' => md5('asdf'),
+                    'version' => '.01',
+                ],
                 'application_name' => 'SugarTestRunner',
                 'name_value_list' => [],
             ]
@@ -158,7 +157,8 @@ class RESTAPI3Test extends TestCase
                 'modules' => $searchModules,
                 'offset'  => $offSet,
                 'max'     => $maxResults,
-                'user'    => $this->user->id]
+                'user'    => $this->user->id,
+            ]
         );
 
         $this->assertTrue(self::$helperObject->findBeanIdFromEntryList($results['entry_list'], $seedData[0]['id'], 'Accounts'));
@@ -189,7 +189,8 @@ class RESTAPI3Test extends TestCase
                 'offset'  => $offSet,
                 'max'     => $maxResults,
                 'user'    => $this->user->id,
-                'selectFields' => $returnFields]
+                'selectFields' => $returnFields,
+            ]
         );
 
 
@@ -251,7 +252,8 @@ class RESTAPI3Test extends TestCase
                 'view' => ['list'],
                 'expected_file' => [
                     'Accounts' => [ 'default' => ['list' => 'modules/Accounts/metadata/listviewdefs.php']],
-                    'Contacts' => [ 'default' => ['list' => 'modules/Contacts/metadata/listviewdefs.php']]],
+                    'Contacts' => [ 'default' => ['list' => 'modules/Contacts/metadata/listviewdefs.php']],
+                ],
             ],
             [
                 'module' => ['Accounts','Contacts'],
@@ -261,12 +263,17 @@ class RESTAPI3Test extends TestCase
                     'Accounts' => [
                         'default' => [
                             'list' => 'modules/Accounts/metadata/listviewdefs.php',
-                            'detail' => 'modules/Accounts/metadata/detailviewdefs.php']],
+                            'detail' => 'modules/Accounts/metadata/detailviewdefs.php',
+                        ],
+                    ],
                     'Contacts' => [
                         'default' => [
                             'list' => 'modules/Contacts/metadata/listviewdefs.php',
-                            'detail' => 'modules/Contacts/metadata/detailviewdefs.php']],
-                ]],
+                            'detail' => 'modules/Contacts/metadata/detailviewdefs.php',
+                        ],
+                    ],
+                ],
+            ],
         ];
     }
 
@@ -284,7 +291,8 @@ class RESTAPI3Test extends TestCase
                 'session' => $session,
                 'module' => $a_module,
                 'type' => $a_type,
-                'view' => $a_view]
+                'view' => $a_view,
+            ]
         );
 
         foreach ($results as $module => $moduleResults) {
@@ -332,7 +340,8 @@ class RESTAPI3Test extends TestCase
                 'session' => $session,
                 'module' => [$module],
                 'type' => [$type],
-                'view' => [$view]]
+                'view' => [$view],
+            ]
         );
 
         if (is_file('custom'  . DIRECTORY_SEPARATOR . $expected_file)) {
@@ -371,7 +380,8 @@ class RESTAPI3Test extends TestCase
                 'session' => $session,
                 'module' => [$module],
                 'type' => [$type],
-                'view' => [$view] ]
+                'view' => [$view],
+            ]
         );
         $result = $fullResult['md5'];
         if (is_file('custom'  . DIRECTORY_SEPARATOR . $expected_file)) {
@@ -432,7 +442,8 @@ class RESTAPI3Test extends TestCase
                 'session' => $session,
                 'module' => [$module],
                 'type' => [$type],
-                'view' => [$view]]
+                'view' => [$view],
+            ]
         );
 
         $this->assertArrayHasKey('panels', $result[$module][$type][$view], 'REST call result does not have a panels array');
@@ -745,7 +756,8 @@ class RESTAPI3Test extends TestCase
                 'session' => $session,
                 'module' => [$module],
                 'type' => [$type],
-                'view' => [$view]]
+                'view' => [$view],
+            ]
         );
 
         $this->assertTrue(isset($results[$module][$type][$view]), "Unable to get subpanel defs");

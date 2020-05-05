@@ -120,12 +120,14 @@ class DateTest extends TestCase
         $tdMock->expects($this->never())
             ->method('asIso');
 
-        $rows = $rowsBeforeChange = [[
+        $rows = $rowsBeforeChange = [
+            [
                 'field_name' => 'repeat_until',
                 'data_type' => 'date',
                 'before' => '2011/10/05',
                 'after' => '2018/02/27',
-        ]];
+            ],
+        ];
 
         $dateFormatter = new Date($tdMock);
         $dateFormatter->formatRows($rows);

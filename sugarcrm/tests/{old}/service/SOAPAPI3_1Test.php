@@ -84,16 +84,16 @@ class SOAPAPI3_1Test extends SOAPTestCase
         $GLOBALS['db']->commit();
 
         $soap_data = ['session' => $this->sessionId,
-                          'module_name' => 'Contacts',
-                          'query' => "contacts.id = '$c1_id'",
-                          'order_by' => 'name',
-                          'offset' => '',
-                          'select_fields' => ['first_name','last_name'],
-                          'link_name_to_fields_array' => [['name' =>  'email_addresses', 'value' => ['id', 'email_address', 'opt_out', 'primary_address']]],
-                          'max_results' => 20,
-                          'deleted' => 0,
-                          'favorites' => 0,
-                          ];
+            'module_name' => 'Contacts',
+            'query' => "contacts.id = '$c1_id'",
+            'order_by' => 'name',
+            'offset' => '',
+            'select_fields' => ['first_name','last_name'],
+            'link_name_to_fields_array' => [['name' =>  'email_addresses', 'value' => ['id', 'email_address', 'opt_out', 'primary_address']]],
+            'max_results' => 20,
+            'deleted' => 0,
+            'favorites' => 0,
+        ];
 
         $result = $this->soapClient->call('get_entry_list', $soap_data);
         $actual = $result['relationship_list'][0]['link_list'][0]['records'][0]['link_value'][1]['value'];
@@ -146,16 +146,16 @@ class SOAPAPI3_1Test extends SOAPTestCase
         $GLOBALS['db']->commit();
 
         $soap_data = ['session' => $this->sessionId,
-                          'module_name' => 'Accounts',
-                          'query' => "accounts.name = '$account_name'",
-                          'order_by' => 'name',
-                          'offset' => '',
-                          'select_fields' => ['name'],
-                          'link_name_to_fields_array' => [],
-                          'max_results' => 20,
-                          'deleted' => 0,
-                          'favorites' => 0,
-                          ];
+            'module_name' => 'Accounts',
+            'query' => "accounts.name = '$account_name'",
+            'order_by' => 'name',
+            'offset' => '',
+            'select_fields' => ['name'],
+            'link_name_to_fields_array' => [],
+            'max_results' => 20,
+            'deleted' => 0,
+            'favorites' => 0,
+        ];
 
         $result = $this->soapClient->call('get_entry_list', $soap_data);
 
@@ -309,7 +309,7 @@ class SOAPAPI3_1Test extends SOAPTestCase
                 'related_fields' => ['id'],
                 'related_module_link_name_to_fields_array' => [['name' =>  'contacts', 'value' => ['id', 'first_name', 'last_name']]],
                 'deleted'=>0,
-                ]
+            ]
         );
         return $result;
     } // fn
@@ -323,7 +323,8 @@ class SOAPAPI3_1Test extends SOAPTestCase
                 'search_string' => 'Sugar',
                 'modules' => ['Accounts', 'Contacts', 'Opportunities'],
                 'offset' => '0',
-                'max_results' => '10']
+                'max_results' => '10',
+            ]
         );
 
         return $result;

@@ -42,7 +42,7 @@ class Bug52783Test extends TestCase
     public function orderProvider()
     {
         return [
-        0 => [
+            0 => [
                 "SELECT  contacts.id , LTRIM(RTRIM(ISNULL(contacts.first_name,'')+' '+ISNULL(contacts.last_name,''))) as name, contacts.first_name , contacts.last_name , contacts.salutation  , accounts.name account_name, jtl0.account_id account_id, contacts.title , contacts.phone_work  , LTRIM(RTRIM(ISNULL(jt1.first_name,'')+' '+ISNULL(jt1.last_name,''))) assigned_user_name , jt1.created_by assigned_user_name_owner  , 'Users' assigned_user_name_mod, contacts.date_entered , contacts.assigned_user_id  , sfav.id my_favorite  FROM contacts   LEFT JOIN  accounts_contacts jtl0 ON contacts.id=jtl0.contact_id AND jtl0.deleted=0
 				LEFT JOIN  accounts accounts ON accounts.id=jtl0.account_id AND accounts.deleted=0
 				AND accounts.deleted=0  LEFT JOIN  users jt1 ON contacts.assigned_user_id=jt1.id AND jt1.deleted=0

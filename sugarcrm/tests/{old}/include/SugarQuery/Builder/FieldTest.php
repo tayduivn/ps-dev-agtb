@@ -159,8 +159,7 @@ class FieldTest extends TestCase
         // create custom field defs
         $account->field_defs['my_field_c'] = [
             'labelValue' => 'my field',
-            'full_text_search' =>
-             [
+            'full_text_search' => [
                 'boost' => '0',
                 'enabled' => false,
             ],

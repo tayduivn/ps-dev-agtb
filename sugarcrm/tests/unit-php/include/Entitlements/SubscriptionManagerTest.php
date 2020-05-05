@@ -785,7 +785,6 @@ class SubscriptionManagerTest extends TestCase
                 '{"no subscription section": {"quantity" : "100"}}',
                 true,
             ],
-
         ];
         // @codingStandardsIgnoreEnd
     }

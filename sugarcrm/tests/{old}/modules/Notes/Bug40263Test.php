@@ -41,13 +41,13 @@ class Bug40263Test extends TestCase
                 'label' => 'LBL_LIST_SUBJECT',
                 'link' => true,
                 'default' => true,
-             ],
-             'CREATED_BY_NAME' =>  [
-                 'type' => 'relate',
-                 'label' => 'LBL_CREATED_BY',
-                 'width' => '10%',
-                 'default' => true,
-             ],
+            ],
+            'CREATED_BY_NAME' => [
+                'type' => 'relate',
+                'label' => 'LBL_CREATED_BY',
+                'width' => '10%',
+                'default' => true,
+            ],
         ];
         $lvd = new ListViewDisplay();
         $lvd->displayColumns = $displayColumns;

@@ -16,24 +16,29 @@ $viewdefs['Bugs']['listview'] = [
         //'label' => 'LBL_LIST_NUMBER',
         'label' => 'LBL_BUG_NUMBER',
         'link' => true,
-        'default' => true],
+        'default' => true,
+    ],
     'NAME' => [
         'width' => '30',
         'label' => 'LBL_LIST_SUBJECT',
         'default' => true,
-        'link' => true],
+        'link' => true,
+    ],
     'STATUS' => [
         'width' => '10',
         'label' => 'LBL_LIST_STATUS',
-        'default' => true],
+        'default' => true,
+    ],
     'TYPE' => [
         'width' => '10',
         'label' => 'LBL_LIST_TYPE',
-        'default' => true],
+        'default' => true,
+    ],
     'PRIORITY' => [
         'width' => '10',
         'label' => 'LBL_LIST_PRIORITY',
-        'default' => false],
+        'default' => false,
+    ],
 /*
     'RELEASE_NAME' => array(
         'width' => '10',
@@ -50,8 +55,9 @@ $viewdefs['Bugs']['listview'] = [
         'module' => 'Releases',
         'id' => 'FIXED_IN_RELEASE',),
 */
-        'RESOLUTION' => [
+    'RESOLUTION' => [
         'width' => '10',
         'label' => 'LBL_LIST_RESOLUTION',
-        'default' => false],
+        'default' => false,
+    ],
 ];

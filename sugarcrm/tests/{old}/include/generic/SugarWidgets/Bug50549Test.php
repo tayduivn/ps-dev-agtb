@@ -62,13 +62,12 @@ class Bug50549Test extends TestCase
     {
         return [
             '0' => [
-                 [
+                [
                     'name' => 'multi_c',
                     'table_key' => 'self',
                     'qualifier_name' => 'is_not',
                     'runtime' => 1,
-                    'input_name0' =>
-                     [
+                    'input_name0' => [
                         0 => 'B',
                     ],
                     'column_name' => 'self:multi_c',
@@ -76,17 +75,16 @@ class Bug50549Test extends TestCase
                     'table_alias' => 'cases_cstm',
                     'column_key' => 'self:multi_c',
                     'type' => 'multienum',
-                 ],
-                 "<> '^B^'",
+                ],
+                "<> '^B^'",
             ],
             '1' => [
-                 [
+                [
                     'name' => 'multi_c',
                     'table_key' => 'self',
                     'qualifier_name' => 'is',
                     'runtime' => 1,
-                    'input_name0' =>
-                     [
+                    'input_name0' => [
                         0 => 'C',
                     ],
                     'column_name' => 'self:multi_c',
@@ -94,17 +92,16 @@ class Bug50549Test extends TestCase
                     'table_alias' => 'cases_cstm',
                     'column_key' => 'self:multi_c',
                     'type' => 'multienum',
-                 ],
-                 "= '^C^'",
+                ],
+                "= '^C^'",
             ],
             '2' => [
-                 [
+                [
                     'name' => 'multi_c2',
                     'table_key' => 'self',
                     'qualifier_name' => 'is_not',
                     'runtime' => 1,
-                    'input_name0' =>
-                     [
+                    'input_name0' => [
                         0 => 'B',
                     ],
                     'column_name' => 'self:multi_c2',
@@ -112,17 +109,16 @@ class Bug50549Test extends TestCase
                     'table_alias' => 'cases_cstm',
                     'column_key' => 'self:multi_c2',
                     'type' => 'multienum',
-                 ],
-                 "<> 'B'",
+                ],
+                "<> 'B'",
             ],
             '3' => [
-                 [
+                [
                     'name' => 'multi_c2',
                     'table_key' => 'self',
                     'qualifier_name' => 'is',
                     'runtime' => 1,
-                    'input_name0' =>
-                     [
+                    'input_name0' => [
                         0 => 'C',
                     ],
                     'column_name' => 'self:multi_c2',
@@ -130,8 +126,8 @@ class Bug50549Test extends TestCase
                     'table_alias' => 'cases_cstm',
                     'column_key' => 'self:multi_c2',
                     'type' => 'multienum',
-                 ],
-                 "= 'C'",
+                ],
+                "= 'C'",
             ],
         ];
     }

@@ -11,6 +11,4 @@
  */
  
 //Workflow Triggers Meta Data Arrays
-$trigger_meta_array =  [
-
-];
+$trigger_meta_array = [];

@@ -519,8 +519,8 @@ class PMSEProjectWrapperTest extends TestCase
         $this->projectWrapper->expects($this->at(0))
             ->method('getSelectRows')
             ->will($this->returnValue(
-                ['rowList' =>
-                    [
+                [
+                    'rowList' => [
                         [
                             'act_default_flow' => '1276',
                             'bou_uid' => '123asd',
@@ -539,8 +539,8 @@ class PMSEProjectWrapperTest extends TestCase
         $this->projectWrapper->expects($this->at(2))
             ->method('getSelectRows')
             ->will($this->returnValue(
-                ['rowList' =>
-                    [
+                [
+                    'rowList' => [
                         [
                             'evn_attached_to' => '4123asd',
                             'evn_cancel_activity' => '456qwe',
@@ -556,8 +556,8 @@ class PMSEProjectWrapperTest extends TestCase
         $this->projectWrapper->expects($this->at(4))
             ->method('getSelectRows')
             ->will($this->returnValue(
-                ['rowList' =>
-                    [
+                [
+                    'rowList' => [
                         [
                             'gat_default_flow' => '789rty',
                             'bou_uid' => '123asd',
@@ -570,8 +570,8 @@ class PMSEProjectWrapperTest extends TestCase
         $this->projectWrapper->expects($this->at(6))
             ->method('getSelectRows')
             ->will($this->returnValue(
-                ['rowList' =>
-                    [
+                [
+                    'rowList' => [
                         [
                             'bou_uid' => '123asd',
                             'name' => 'some element name',
@@ -583,8 +583,8 @@ class PMSEProjectWrapperTest extends TestCase
         $this->projectWrapper->expects($this->at(8))
             ->method('getSelectRows')
             ->will($this->returnValue(
-                ['rowList' =>
-                    [
+                [
+                    'rowList' => [
                         [
                             'bou_uid' => '123asd',
                             'name' => 'some element name',
@@ -602,14 +602,14 @@ class PMSEProjectWrapperTest extends TestCase
             ->method('sanitizeKeyFields')
             ->will($this->returnValue(
                 [
-                        'bou_uid' => '123asd',
-                        'name' => 'some element name',
-                        'flo_element_origin_type' => 'bpmnEvent',
-                        'flo_element_origin' => 'event01',
-                        'flo_element_dest_type' => 'bpmnActivity',
-                        'flo_element_dest' => 'act01',
-                        'flo_state' => 'ACTIVE',
-                    ]
+                    'bou_uid' => '123asd',
+                    'name' => 'some element name',
+                    'flo_element_origin_type' => 'bpmnEvent',
+                    'flo_element_origin' => 'event01',
+                    'flo_element_dest_type' => 'bpmnActivity',
+                    'flo_element_dest' => 'act01',
+                    'flo_state' => 'ACTIVE',
+                ]
             ));
         
         
@@ -681,16 +681,16 @@ class PMSEProjectWrapperTest extends TestCase
             ->disableOriginalConstructor()
             ->setMethods(
                 [
-                        'getBean',
-                        'getClassEntity',
-                        'getEntityData',
-                        'getSelectRows',
-                        'sanitizeKeyFields',
-                        'getElementUid',
-                        'getEntityUid',
-                        'updateDiagramElements',
-                        'initWrapper',
-                    ]
+                    'getBean',
+                    'getClassEntity',
+                    'getEntityData',
+                    'getSelectRows',
+                    'sanitizeKeyFields',
+                    'getElementUid',
+                    'getEntityUid',
+                    'updateDiagramElements',
+                    'initWrapper',
+                ]
             )
             ->getMock();
 
@@ -770,16 +770,16 @@ class PMSEProjectWrapperTest extends TestCase
             ->disableOriginalConstructor()
             ->setMethods(
                 [
-                        'getBean',
-                        'getClassEntity',
-                        'getEntityData',
-                        'getSelectRows',
-                        'sanitizeKeyFields',
-                        'getElementUid',
-                        'getEntityUid',
-                        'updateDiagramElements',
-                        'initWrapper',
-                    ]
+                    'getBean',
+                    'getClassEntity',
+                    'getEntityData',
+                    'getSelectRows',
+                    'sanitizeKeyFields',
+                    'getElementUid',
+                    'getEntityUid',
+                    'updateDiagramElements',
+                    'initWrapper',
+                ]
             )
             ->getMock();
 
@@ -838,15 +838,15 @@ class PMSEProjectWrapperTest extends TestCase
             ->disableOriginalConstructor()
             ->setMethods(
                 [
-                        'getBean',
-                        'getClassEntity',
-                        'getEntityData',
-                        'getSelectRows',
-                        'sanitizeKeyFields',
-                        'getElementUid',
-                        'getEntityUid',
-                        'updateDiagramElements',
-                    ]
+                    'getBean',
+                    'getClassEntity',
+                    'getEntityData',
+                    'getSelectRows',
+                    'sanitizeKeyFields',
+                    'getElementUid',
+                    'getEntityUid',
+                    'updateDiagramElements',
+                ]
             )
             ->getMock();
 
@@ -886,15 +886,15 @@ class PMSEProjectWrapperTest extends TestCase
             ->disableOriginalConstructor()
             ->setMethods(
                 [
-                        'getBean',
-                        'getClassEntity',
-                        'getEntityData',
-                        'getSelectRows',
-                        'sanitizeKeyFields',
-                        'getElementUid',
-                        'getEntityUid',
-                        'updateDiagramElements',
-                    ]
+                    'getBean',
+                    'getClassEntity',
+                    'getEntityData',
+                    'getSelectRows',
+                    'sanitizeKeyFields',
+                    'getElementUid',
+                    'getEntityUid',
+                    'updateDiagramElements',
+                ]
             )
             ->getMock();
 
@@ -932,16 +932,16 @@ class PMSEProjectWrapperTest extends TestCase
             ->disableOriginalConstructor()
             ->setMethods(
                 [
-                        'getBean',
-                        'getClassEntity',
-                        'getEntityData',
-                        'getSelectRows',
-                        'sanitizeKeyFields',
-                        'getElementUid',
-                        'getEntityUid',
-                        'updateDiagramElements',
-                        'initWrapper',
-                    ]
+                    'getBean',
+                    'getClassEntity',
+                    'getEntityData',
+                    'getSelectRows',
+                    'sanitizeKeyFields',
+                    'getElementUid',
+                    'getEntityUid',
+                    'updateDiagramElements',
+                    'initWrapper',
+                ]
             )
             ->getMock();
 
@@ -1162,18 +1162,18 @@ class PMSEProjectWrapperTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
         
-        $rowList = ['rowList' =>
-                        [
-                            [
-                                'dyn_uid' => '2737981231',
-                                'flo_element_dest' => '123',
-                                'flo_element_origin_type' => 'bpmnActivity',
-                                'flo_element_dest_type' => 'bpmnEvent',
-                                'flo_state' => '{}',
-                                'bou_uid' => '123asd',
-                            ],
-                        ],
-                    ];
+        $rowList = [
+            'rowList' => [
+                [
+                    'dyn_uid' => '2737981231',
+                    'flo_element_dest' => '123',
+                    'flo_element_origin_type' => 'bpmnActivity',
+                    'flo_element_dest_type' => 'bpmnEvent',
+                    'flo_state' => '{}',
+                    'bou_uid' => '123asd',
+                ],
+            ],
+        ];
 
         $this->projectWrapper->expects($this->once())
                 ->method('getBean')

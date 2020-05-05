@@ -118,15 +118,14 @@ class RESTAPI4Test extends TestCase
         return $this->makeRESTCall(
             'login',
             [
-                'user_auth' =>
-                    [
-                        'user_name' => $user->user_name,
-                        'password' => $user->user_hash,
-                        'version' => '.01',
-                        ],
+                'user_auth' => [
+                    'user_name' => $user->user_name,
+                    'password' => $user->user_hash,
+                    'version' => '.01',
+                ],
                 'application_name' => 'mobile',
                 'name_value_list' => [],
-                ]
+            ]
         );
     }
 
@@ -253,9 +252,9 @@ class RESTAPI4Test extends TestCase
         $results = $this->makeRESTCall(
             'set_entries',
             [
-            'session' => $session,
-            'module' => $module,
-            'name_value_lists' => $contacts,
+                'session' => $session,
+                'module' => $module,
+                'name_value_lists' => $contacts,
             ]
         );
         $this->assertTrue(isset($results['ids']) && count($results['ids']) == 2);
@@ -263,10 +262,10 @@ class RESTAPI4Test extends TestCase
         $actual_results = $this->makeRESTCall(
             'get_entries',
             [
-            'session' => $session,
-            'module' => $module,
-            'ids' => $results['ids'],
-            'select_fields' => ['first_name','last_name'],
+                'session' => $session,
+                'module' => $module,
+                'ids' => $results['ids'],
+                'select_fields' => ['first_name','last_name'],
             ]
         );
 
@@ -310,16 +309,16 @@ class RESTAPI4Test extends TestCase
         $results = $this->makeRESTCall(
             'search_by_module',
             [
-                            'session' => $session,
-                            'search_string'  => $searchString,
-                            'modules' => $searchModules,
-                            'offset'  => $offSet,
-                            'max_results'     => $maxResults,
-                            'assigned_user_id'    => $this->user->id,
-                            'select_fields' => [],
-                            'unified_search_only' => true,
-                            'favorites' => true,
-                            ]
+                'session' => $session,
+                'search_string'  => $searchString,
+                'modules' => $searchModules,
+                'offset'  => $offSet,
+                'max_results'     => $maxResults,
+                'assigned_user_id'    => $this->user->id,
+                'select_fields' => [],
+                'unified_search_only' => true,
+                'favorites' => true,
+            ]
         );
 
         $GLOBALS['db']->query("DELETE FROM accounts WHERE name like 'Unit Test %' ");
@@ -333,7 +332,6 @@ class RESTAPI4Test extends TestCase
     public static function aclEditViewFieldProvider()
     {
         return [
-
             ['Accounts','wireless','edit', [ 'name'=> 99, 'website'=> -99, 'phone_office'=> 99, 'email1'=> 99, 'nofield'=> null ] ],
             ['Contacts','wireless','edit', ['first_name'=> 99, 'last_name'=> 99 ] ],
             ['Reports','wireless','edit', ['name'=> 99]],
@@ -341,9 +339,7 @@ class RESTAPI4Test extends TestCase
             ['Accounts','wireless','detail', ['name'=>99, 'website'=> -99, 'phone_office'=> 99, 'email1'=> 99, 'nofield'=> null ]],
             ['Contacts','wireless','detail', ['first_name'=> 99, 'last_name'=> 99 ]],
             ['Reports','wireless','detail', ['name'=> 99]],
-
-
-            ];
+        ];
     }
 
     /**
@@ -357,10 +353,11 @@ class RESTAPI4Test extends TestCase
         $results = $this->makeRESTCall(
             'get_module_layout',
             [
-            'session' => $session,
-            'module' => [$module],
-            'type' => [$view_type],
-            'view' => [$view]]
+                'session' => $session,
+                'module' => [$module],
+                'type' => [$view_type],
+                'view' => [$view],
+            ]
         );
 
         if ($view == 'list') {
@@ -385,8 +382,7 @@ class RESTAPI4Test extends TestCase
             ['Accounts','wireless', ['name' => 99,  'website' => -99, 'phone_office' => 99, 'email1' => 99 ]],
             ['Contacts','wireless', ['name' => 99,  'title' => 99 ]],
             ['Reports','wireless', ['name' => 99 ] ],
-
-            ];
+        ];
     }
 
     /**
@@ -399,10 +395,11 @@ class RESTAPI4Test extends TestCase
         $results = $this->makeRESTCall(
             'get_module_layout',
             [
-            'session' => $session,
-            'module' => [$module],
-            'type' => [$view_type],
-            'view' => ['list'] ]
+                'session' => $session,
+                'module' => [$module],
+                'type' => [$view_type],
+                'view' => ['list'],
+            ]
         );
 
         $fields = $results[$module][$view_type]['list'];
@@ -431,8 +428,8 @@ class RESTAPI4Test extends TestCase
                 'name_value_list' => [
                     ['name' => 'record_id', 'value' => $recordID],
                     ['name' => 'module', 'value' => $moduleName],
-                    ],
-                ]
+                ],
+            ]
         );
     }
 
@@ -451,8 +448,8 @@ class RESTAPI4Test extends TestCase
                 'name_value_list' => [
                     ['name' => 'name', 'value' => 'New Account'],
                     ['name' => 'description', 'value' => 'This is an account created from a REST web services call'],
-                    ],
-                ]
+                ],
+            ]
         );
 
         $this->assertTrue(!empty($result['id']) && $result['id'] != -1, $this->returnLastRawResponse());
@@ -467,8 +464,8 @@ class RESTAPI4Test extends TestCase
                 'name_value_list' => [
                     ['name' => 'last_name', 'value' => 'New Contact 1'],
                     ['name' => 'description', 'value' => 'This is a contact created from a REST web services call'],
-                    ],
-                ]
+                ],
+            ]
         );
 
         $this->assertTrue(!empty($result['id']) && $result['id'] != -1, $this->returnLastRawResponse());
@@ -483,8 +480,8 @@ class RESTAPI4Test extends TestCase
                 'name_value_list' => [
                     ['name' => 'last_name', 'value' => 'New Contact 2'],
                     ['name' => 'description', 'value' => 'This is a contact created from a REST web services call'],
-                    ],
-                ]
+                ],
+            ]
         );
 
         $this->assertTrue(!empty($result['id']) && $result['id'] != -1, $this->returnLastRawResponse());
@@ -500,7 +497,7 @@ class RESTAPI4Test extends TestCase
                 'module_id' => $accountId,
                 'link_field_name' => 'contacts',
                 'related_ids' => [$contactId1,$contactId2],
-                ]
+            ]
         );
 
         $this->assertEquals($result['created'], 1, $this->returnLastRawResponse());
@@ -517,7 +514,7 @@ class RESTAPI4Test extends TestCase
                 'related_fields' => ['last_name','description'],
                 'related_module_link_name_to_fields_array' => [],
                 'deleted' => false,
-                ]
+            ]
         );
 
         $returnedValues = [];
@@ -588,10 +585,11 @@ class RESTAPI4Test extends TestCase
         $result = $this->makeRESTCall(
             'get_module_layout',
             [
-                            'session' => $session,
-                            'module' => [$module],
-                            'type' => [$type],
-                            'view' => [$view]]
+                'session' => $session,
+                'module' => [$module],
+                'type' => [$type],
+                'view' => [$view],
+            ]
         );
         
         // This is carried over metadata from pre-6.6 OOTB installations
@@ -631,10 +629,11 @@ class RESTAPI4Test extends TestCase
         $result = $this->makeRESTCall(
             'get_module_layout',
             [
-                            'session' => $session,
-                            'module' => [$module],
-                            'type' => [$type],
-                            'view' => [$view]]
+                'session' => $session,
+                'module' => [$module],
+                'type' => [$type],
+                'view' => [$view],
+            ]
         );
         require 'tests/{old}/service/metadata/' . $module . 'legacy' . $view . '.php';
         

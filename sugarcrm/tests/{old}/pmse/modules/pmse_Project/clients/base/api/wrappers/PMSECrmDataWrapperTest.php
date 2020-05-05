@@ -351,12 +351,12 @@ class PMSECrmDataWrapperTest extends TestCase
             ->method('get_full_list')
 //            ->with($this->equalTo('bpm_dynamic_forms.pro_id=1'));
             ->will($this->returnValue([
-                    (object) ["dyn_uid" => "abcdeff", "name" => "Test DynaForm"],
-                    (object) ["dyn_uid" => "abcdefg", "name" => "Test DynaForm 01"],
-                    (object) ["dyn_uid" => "abcdefh", "name" => "Test DynaForm 02"],
-                    (object) ["dyn_uid" => "abcdefi", "name" => "Test DynaForm 03"],
-                    (object) ["dyn_uid" => "abcdefj", "name" => "Test DynaForm 04"],
-                ]));
+                (object) ["dyn_uid" => "abcdeff", "name" => "Test DynaForm"],
+                (object) ["dyn_uid" => "abcdefg", "name" => "Test DynaForm 01"],
+                (object) ["dyn_uid" => "abcdefh", "name" => "Test DynaForm 02"],
+                (object) ["dyn_uid" => "abcdefi", "name" => "Test DynaForm 03"],
+                (object) ["dyn_uid" => "abcdefj", "name" => "Test DynaForm 04"],
+            ]));
 
         $expectedResult = [
             ["value" => "abcdeff", "text" => "Test DynaForm"],
@@ -392,12 +392,12 @@ class PMSECrmDataWrapperTest extends TestCase
         $this->sugarQueryMock->expects($this->any())
             ->method('execute')
             ->will($this->returnValue([
-                    ["act_uid" => "abcdeff", "name" => "Test Activity"],
-                    ["act_uid" => "abcdefg", "name" => "Test Activity 01"],
-                    ["act_uid" => "abcdefh", "name" => "Test Activity 02"],
-                    ["act_uid" => "abcdefi", "name" => "Test Activity 03"],
-                    ["act_uid" => "abcdefj", "name" => "Test Activity 04"],
-                ]));
+                ["act_uid" => "abcdeff", "name" => "Test Activity"],
+                ["act_uid" => "abcdefg", "name" => "Test Activity 01"],
+                ["act_uid" => "abcdefh", "name" => "Test Activity 02"],
+                ["act_uid" => "abcdefi", "name" => "Test Activity 03"],
+                ["act_uid" => "abcdefj", "name" => "Test Activity 04"],
+            ]));
 
         $this->sugarQueryMock->expects($this->any())
             ->method('where')
@@ -563,12 +563,12 @@ class PMSECrmDataWrapperTest extends TestCase
         $this->sugarQueryMock->expects($this->any())
             ->method('execute')
             ->will($this->returnValue([
-                    ["id" => "abcdeff", "name" => "Test Activity"],
-                    ["id" => "abcdefg", "name" => "Test Activity 01"],
-                    ["id" => "abcdefh", "name" => "Test Activity 02"],
-                    ["id" => "abcdefi", "name" => "Test Activity 03"],
-                    ["id" => "abcdefj", "name" => "Test Activity 04"],
-                ]));
+                ["id" => "abcdeff", "name" => "Test Activity"],
+                ["id" => "abcdefg", "name" => "Test Activity 01"],
+                ["id" => "abcdefh", "name" => "Test Activity 02"],
+                ["id" => "abcdefi", "name" => "Test Activity 03"],
+                ["id" => "abcdefj", "name" => "Test Activity 04"],
+            ]));
 
         $this->sugarQueryMock->select = $selectMock;
 
@@ -784,9 +784,9 @@ class PMSECrmDataWrapperTest extends TestCase
     public function testDefaultUsersList()
     {
         $expected = [
-             ['value' => "current_user", 'text' =>"Current User"],
-             ['value' => "supervisor", 'text' => "Supervisor"],
-             ['value' => "owner", 'text' => "Record Owner"],
+            ['value' => "current_user", 'text' =>"Current User"],
+            ['value' => "supervisor", 'text' => "Supervisor"],
+            ['value' => "owner", 'text' => "Record Owner"],
         ];
 
         $result = $this->object->defaultUsersList();
@@ -922,8 +922,8 @@ class PMSECrmDataWrapperTest extends TestCase
         $this->sugarQueryMock->expects($this->any())
             ->method('execute')
             ->will($this->returnValue([
-                    ["cas_start_date" => ""],
-                ]));
+                ["cas_start_date" => ""],
+            ]));
 
         $this->sugarQueryMock->expects($this->any())
             ->method('where')
@@ -1354,14 +1354,14 @@ class PMSECrmDataWrapperTest extends TestCase
             ->disableOriginalConstructor()
             ->setMethods(
                 [
-                        'getRelationshipData',
-                        'getModuleFilter',
-                        'isValidStudioField',
-                        'fieldTodo',
-                        'returnArrayModules',
-                        'dataFieldPersonalized',
-                        'gatewayModulesMethod',
-                    ]
+                    'getRelationshipData',
+                    'getModuleFilter',
+                    'isValidStudioField',
+                    'fieldTodo',
+                    'returnArrayModules',
+                    'dataFieldPersonalized',
+                    'gatewayModulesMethod',
+                ]
             )
             ->getMock();
 
@@ -1381,13 +1381,13 @@ class PMSECrmDataWrapperTest extends TestCase
             ->disableOriginalConstructor()
             ->setMethods(
                 [
-                        'getRelationshipData',
-                        'getModuleFilter',
-                        'isValidStudioField',
-                        'fieldTodo',
-                        'returnArrayModules',
-                        'gatewayModulesMethod',
-                    ]
+                    'getRelationshipData',
+                    'getModuleFilter',
+                    'isValidStudioField',
+                    'fieldTodo',
+                    'returnArrayModules',
+                    'gatewayModulesMethod',
+                ]
             )
             ->getMock();
 
@@ -1463,14 +1463,14 @@ class PMSECrmDataWrapperTest extends TestCase
             ->disableOriginalConstructor()
             ->setMethods(
                 [
-                        'getRelationshipData',
-                        'getModuleFilter',
-                        'isValidStudioField',
-                        'fieldTodo',
-                        'returnArrayModules',
-                        'dataFieldPersonalized',
-                        'gatewayModulesMethod',
-                    ]
+                    'getRelationshipData',
+                    'getModuleFilter',
+                    'isValidStudioField',
+                    'fieldTodo',
+                    'returnArrayModules',
+                    'dataFieldPersonalized',
+                    'gatewayModulesMethod',
+                ]
             )
             ->getMock();
 
@@ -1546,8 +1546,8 @@ class PMSECrmDataWrapperTest extends TestCase
             ->disableOriginalConstructor()
             ->setMethods(
                 [
-                        'retrieveModules',
-                    ]
+                    'retrieveModules',
+                ]
             )
             ->getMock();
 
@@ -1568,8 +1568,8 @@ class PMSECrmDataWrapperTest extends TestCase
             ->disableOriginalConstructor()
             ->setMethods(
                 [
-                        'retrieveModules',
-                    ]
+                    'retrieveModules',
+                ]
             )
             ->getMock();
 

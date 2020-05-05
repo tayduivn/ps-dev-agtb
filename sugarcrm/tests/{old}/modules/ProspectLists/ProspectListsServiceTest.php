@@ -45,10 +45,10 @@ class ProspectListsServiceTest extends TestCase
         $contact3 = SugarTestContactUtilities::createContact();
 
         $recordIds = [
-                $contact1->id,
-                $contact2->id,
-                $contact3->id,
-            ];
+            $contact1->id,
+            $contact2->id,
+            $contact3->id,
+        ];
 
         $prospectListService = new ProspectListsService();
         $results = $prospectListService->addRecordsToProspectList("Contacts", $prospectList->id, $recordIds);

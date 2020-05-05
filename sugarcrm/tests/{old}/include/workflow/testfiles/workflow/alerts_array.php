@@ -11,6 +11,4 @@
  */
  
 //Workflow Alert Meta Data Arrays
-$alert_meta_array =  [
-
-];
+$alert_meta_array = [];

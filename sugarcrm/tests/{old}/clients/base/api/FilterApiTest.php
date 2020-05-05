@@ -1110,8 +1110,7 @@ class FilterApiTest extends TestCase
                     'billing_address_country',
                     'website',
                 ],
-                [
-                ],
+                [],
             ],
         ];
     }

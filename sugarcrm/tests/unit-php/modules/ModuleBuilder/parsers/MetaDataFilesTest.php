@@ -75,39 +75,48 @@ class MetaDataFilesTest extends TestCase
                     ],
                 ],
             ],
-            'expected' => ['test1' => ['meta' => ['panels' => [
-                    [
-                        'fields' => [
-                            //Field with no vardef
-                            ['name' => 'noVardef'],
-                            //Named field with display params in vardef
+            'expected' => [
+                'test1' => [
+                    'meta' => [
+                        'panels' => [
                             [
-                                'name' => 'namedField',
-                                'type' => 'fromVDP',
-                            ],
-                            //Field with display params in viewdef only
-                            [
-                                'name' => 'field3',
-                                'type' => 'aType',
-                                'more' => true,
-                            ],
-                            //Field with display params in both locations
-                            [
-                                'name' => 'field4',
-                                'type' => 'aType',
-                                'more' => false,
-                                'vd_only' => true,
-                            ],
-                            //Field with no vardef but a more complex viewdef
-                            [
-                                'name' => 'field1',
-                                'type' => 'newType',
+                                'fields' => [
+                                    //Field with no vardef
+                                    [
+                                        'name' => 'noVardef',
+                                    ],
+                                    //Named field with display params in vardef
+                                    [
+                                        'name' => 'namedField',
+                                        'type' => 'fromVDP',
+                                    ],
+                                    //Field with display params in viewdef only
+                                    [
+                                        'name' => 'field3',
+                                        'type' => 'aType',
+                                        'more' => true,
+                                    ],
+                                    //Field with display params in both locations
+                                    [
+                                        'name' => 'field4',
+                                        'type' => 'aType',
+                                        'more' => false,
+                                        'vd_only' => true,
+                                    ],
+                                    //Field with no vardef but a more complex viewdef
+                                    [
+                                        'name' => 'field1',
+                                        'type' => 'newType',
+                                    ],
+                                ],
                             ],
                         ],
                     ],
                 ],
-            ]]],
-        ]]];
+            ],
+        ],
+        ],
+        ];
     }
 
     /**

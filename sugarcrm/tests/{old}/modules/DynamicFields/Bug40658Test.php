@@ -67,15 +67,15 @@ class Bug40658Test extends TestCase
     public function testSubpanelMetaDataParser()
     {
         $subpanelMetaDataParser = new SubpanelMetaDataParserMock('Bug40658Test', 'Accounts');
-        $defs = ['m1_related_c' =>
-                     [
-                      'type' => 'relate',
-                      'default' => true,
-                      'studio' => 'visible',
-                      'vname' => 'LBL_M2_RELATED',
-                      'width' => '10%',
-                    ],
-                ];
+        $defs = [
+            'm1_related_c' => [
+                'type' => 'relate',
+                'default' => true,
+                'studio' => 'visible',
+                'vname' => 'LBL_M2_RELATED',
+                'width' => '10%',
+            ],
+        ];
         $result = $subpanelMetaDataParser->makeRelateFieldsAsLink($defs);
         $this->assertEquals('SubPanelDetailViewLink', $result['m1_related_c']['widget_class']);
         $this->assertEquals('def_M1', $result['m1_related_c']['target_module']);
@@ -93,44 +93,42 @@ class SubpanelMetaDataParserMock extends SubpanelMetaDataParser
     public function makeRelateFieldsAsLink($defs)
     {
         $this->_moduleName = 'def_M1';
-        $this->_fielddefs = ['m1_related_c' =>
-             [
-              'dependency' => '',
-              'required' => false,
-              'source' => 'non-db',
-              'name' => 'm1_related_c',
-              'vname' => 'LBL_M1_RELATED',
-              'type' => 'relate',
-              'massupdate' => '0',
-              'default' => true,
-              'comments' => '',
-              'help' => '',
-              'importable' => 'true',
-              'duplicate_merge' => 'disabled',
-              'duplicate_merge_dom_value' => '0',
-              'audited' => false,
-              'reportable' => true,
-              'calculated' => false,
-              'len' => '255',
-              'size' => '20',
-              'id_name' => 'def_m1_id_c',
-              'ext2' => 'def_M1',
-              'module' => 'def_M1',
-              'rname' => 'name',
-              'quicksearch' => 'enabled',
-              'studio' => 'visible',
-              'id' => 'def_M1m1_related_c',
-              'custom_module' => 'def_M1',
-              'label' => 'm1_related_c',
-              'width' => '10%',
-              'widget_class' => 'SubPanelDetailViewLink',
-              'target_module' => 'def_M1',
-              'target_record_key' => 'def_m1_id_c',
+        $this->_fielddefs = [
+            'm1_related_c' => [
+                'dependency' => '',
+                'required' => false,
+                'source' => 'non-db',
+                'name' => 'm1_related_c',
+                'vname' => 'LBL_M1_RELATED',
+                'type' => 'relate',
+                'massupdate' => '0',
+                'default' => true,
+                'comments' => '',
+                'help' => '',
+                'importable' => 'true',
+                'duplicate_merge' => 'disabled',
+                'duplicate_merge_dom_value' => '0',
+                'audited' => false,
+                'reportable' => true,
+                'calculated' => false,
+                'len' => '255',
+                'size' => '20',
+                'id_name' => 'def_m1_id_c',
+                'ext2' => 'def_M1',
+                'module' => 'def_M1',
+                'rname' => 'name',
+                'quicksearch' => 'enabled',
+                'studio' => 'visible',
+                'id' => 'def_M1m1_related_c',
+                'custom_module' => 'def_M1',
+                'label' => 'm1_related_c',
+                'width' => '10%',
+                'widget_class' => 'SubPanelDetailViewLink',
+                'target_module' => 'def_M1',
+                'target_record_key' => 'def_m1_id_c',
             ],
         ];
-        
 
-           
         return parent::makeRelateFieldsAsLink($defs);
     }
 }

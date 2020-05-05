@@ -731,22 +731,24 @@ class IdmProviderTest extends TestCase
     {
         $provider = $this->getMockBuilder(IdmProvider::class)
             ->enableOriginalConstructor()
-            ->setConstructorArgs([[
-                'clientId' => 'test',
-                'clientSecret' => 'testSecret',
-                'redirectUri' => '',
-                'urlAuthorize' => '',
-                'urlAccessToken' => 'http://testUrlAccessToken',
-                'urlResourceOwnerDetails' => 'http://testUrlResourceOwnerDetails',
-                'urlUserInfo' => 'http:://testUrlUserInfo',
-                'keySetId' => 'test',
-                'urlKeys' => 'http://sts.sugarcrm.local/keys/test',
-                'idpUrl' => 'http://idp.test',
-                'http_client' => [
-                    'retry_count' => 5,
-                    'delay_strategy' => 'exponential',
+            ->setConstructorArgs([
+                [
+                    'clientId' => 'test',
+                    'clientSecret' => 'testSecret',
+                    'redirectUri' => '',
+                    'urlAuthorize' => '',
+                    'urlAccessToken' => 'http://testUrlAccessToken',
+                    'urlResourceOwnerDetails' => 'http://testUrlResourceOwnerDetails',
+                    'urlUserInfo' => 'http:://testUrlUserInfo',
+                    'keySetId' => 'test',
+                    'urlKeys' => 'http://sts.sugarcrm.local/keys/test',
+                    'idpUrl' => 'http://idp.test',
+                    'http_client' => [
+                        'retry_count' => 5,
+                        'delay_strategy' => 'exponential',
+                    ],
                 ],
-            ]])
+            ])
             ->setMethods(['verifyGrant'])
             ->getMock();
 
@@ -901,18 +903,20 @@ class IdmProviderTest extends TestCase
 
         $provider = $this->getMockBuilder(IdmProvider::class)
             ->enableOriginalConstructor()
-            ->setConstructorArgs([[
-                'clientId' => 'test',
-                'clientSecret' => 'testSecret',
-                'redirectUri' => '',
-                'urlAuthorize' => '',
-                'urlAccessToken' => 'http://testUrlAccessToken',
-                'urlResourceOwnerDetails' => 'http://testUrlResourceOwnerDetails',
-                'urlUserInfo' => 'http:://testUrlUserInfo',
-                'keySetId' => 'test',
-                'urlKeys' => 'http://sts.sugarcrm.local/keys/test',
-                'idpUrl' => 'http://idp.test',
-            ]])
+            ->setConstructorArgs([
+                [
+                    'clientId' => 'test',
+                    'clientSecret' => 'testSecret',
+                    'redirectUri' => '',
+                    'urlAuthorize' => '',
+                    'urlAccessToken' => 'http://testUrlAccessToken',
+                    'urlResourceOwnerDetails' => 'http://testUrlResourceOwnerDetails',
+                    'urlUserInfo' => 'http:://testUrlUserInfo',
+                    'keySetId' => 'test',
+                    'urlKeys' => 'http://sts.sugarcrm.local/keys/test',
+                    'idpUrl' => 'http://idp.test',
+                ],
+            ])
             ->setMethods(['verifyGrant'])
             ->getMock();
 
@@ -940,18 +944,20 @@ class IdmProviderTest extends TestCase
 
         $provider = $this->getMockBuilder(IdmProvider::class)
             ->enableOriginalConstructor()
-            ->setConstructorArgs([[
-                'clientId' => 'test',
-                'clientSecret' => 'testSecret',
-                'redirectUri' => '',
-                'urlAuthorize' => '',
-                'urlAccessToken' => 'http://testUrlAccessToken',
-                'urlResourceOwnerDetails' => 'http://testUrlResourceOwnerDetails',
-                'urlUserInfo' => 'http:://testUrlUserInfo',
-                'keySetId' => 'test',
-                'urlKeys' => 'http://sts.sugarcrm.local/keys/test',
-                'idpUrl' => 'http://idp.test',
-            ]])
+            ->setConstructorArgs([
+                [
+                    'clientId' => 'test',
+                    'clientSecret' => 'testSecret',
+                    'redirectUri' => '',
+                    'urlAuthorize' => '',
+                    'urlAccessToken' => 'http://testUrlAccessToken',
+                    'urlResourceOwnerDetails' => 'http://testUrlResourceOwnerDetails',
+                    'urlUserInfo' => 'http:://testUrlUserInfo',
+                    'keySetId' => 'test',
+                    'urlKeys' => 'http://sts.sugarcrm.local/keys/test',
+                    'idpUrl' => 'http://idp.test',
+                ],
+            ])
             ->setMethods(['verifyGrant'])
             ->getMock();
 

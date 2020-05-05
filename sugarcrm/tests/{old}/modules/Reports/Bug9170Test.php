@@ -77,10 +77,10 @@ class Bug9170Test extends TestCase
         $yesterday = gmdate($timedate->get_db_date_time_format(), time() - 3600 * 24);
 
         return [
-           [$yesterday, 3600 * 24, $tomorrow],
-           [$yesterday, 3600 * 24 * 8, $nextWeek],
-           [$today, 3600 * 24, $tomorrow],
-           [$today, 3600 * 24 * 7, $nextWeek],
+            [$yesterday, 3600 * 24, $tomorrow],
+            [$yesterday, 3600 * 24 * 8, $nextWeek],
+            [$today, 3600 * 24, $tomorrow],
+            [$today, 3600 * 24 * 7, $nextWeek],
         ];
     }
 

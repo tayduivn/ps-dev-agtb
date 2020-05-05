@@ -69,7 +69,8 @@ class SOAPAPI3Test extends SOAPTestCase
                 'modules' => $searchModules,
                 'offset'  => $offSet,
                 'max'     => $maxResults,
-                'user'    => '1']
+                'user'    => '1',
+            ]
         );
 
         $this->assertTrue(self::$helperObject->findBeanIdFromEntryList($results['entry_list'], $seedData[0]['id'], 'Accounts'));
@@ -98,7 +99,8 @@ class SOAPAPI3Test extends SOAPTestCase
                 'offset'  => $offSet,
                 'max'     => $maxResults,
                 'user'    => '1',
-                'fields'  => $returnFields]
+                'fields'  => $returnFields,
+            ]
         );
 
         $this->assertEquals($seedData[0]['fieldValue'], self::$helperObject->findFieldByNameFromEntryList($results['entry_list'], $seedData[0]['id'], 'Accounts', $seedData[0]['fieldName']));

@@ -100,10 +100,9 @@ class SugarWidgetFielddatetimeTest extends TestCase
                     'table_alias' => 'opportunities',
                     'column_key' => 'self:date_entered',
                     'type' => 'datetime',
-                    'fields' =>
-                         [
-                            'OPPORTUNITIES_WEEK_DAT3634CE' => '2015-19',
-                        ],
+                    'fields' => [
+                        'OPPORTUNITIES_WEEK_DAT3634CE' => '2015-19',
+                    ],
                 ],
                 'W19 2015',
             ],

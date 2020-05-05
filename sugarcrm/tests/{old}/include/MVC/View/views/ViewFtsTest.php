@@ -20,8 +20,10 @@ class ViewFtsTest extends TestCase
         $view = new ViewFtsStub();
         $modules = ['Accounts', 'Bugs'];
         $results = $view->translateModulesList($modules);
-        $match = [0=>['module'=>'Accounts', 'label'=>'Accounts'],
-                                           1=>['module'=>'Bugs', 'label'=>'Bugs']];
+        $match = [
+            ['module' => 'Accounts', 'label' => 'Accounts'],
+            ['module' => 'Bugs', 'label' => 'Bugs'],
+        ];
         // Don't use array_diff, it doesn't compare in depth
         $this->assertEquals($match, $results, 'unexpected results');
     }

@@ -125,8 +125,8 @@ class ConfigureShortcutBarTest extends TestCase
             ->method('setQuickCreateMetadata')
             ->with(
                 [
-                     'visible' => true,
-                     'order' => 1,
+                    'visible' => true,
+                    'order' => 1,
                 ],
                 'Contacts'
             )
@@ -155,7 +155,7 @@ class ConfigureShortcutBarTest extends TestCase
             ->method('setQuickCreateMetadata')
             ->with(
                 [
-                     'visible' => false,
+                    'visible' => false,
                 ],
                 'Accounts'
             )
@@ -210,8 +210,8 @@ class ConfigureShortcutBarTest extends TestCase
             ->method('setQuickCreateMetadata')
             ->with(
                 [
-                     'visible' => true,
-                     'order' => 1,
+                    'visible' => true,
+                    'order' => 1,
                 ],
                 'Accounts'
             )
@@ -220,8 +220,8 @@ class ConfigureShortcutBarTest extends TestCase
             ->method('setQuickCreateMetadata')
             ->with(
                 [
-                     'visible' => true,
-                     'order' => 0,
+                    'visible' => true,
+                    'order' => 0,
                 ],
                 'Contacts'
             )

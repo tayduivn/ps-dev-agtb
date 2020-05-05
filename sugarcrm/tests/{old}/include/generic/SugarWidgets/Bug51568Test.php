@@ -90,7 +90,8 @@ class Bug51568Test extends TestCase
     {
         $data = [
             'fields' => [
-                '51568table_some_field_currency' => $this->currency_51568->id],
+                '51568table_some_field_currency' => $this->currency_51568->id,
+            ],
         ];
         $result = $this->getResults($data);
         $this->assertEquals('TT100.500,000', $result);
@@ -103,7 +104,8 @@ class Bug51568Test extends TestCase
     {
         $data = [
             'fields' => [
-                '51568TABLE_SOME_FIELD_CURRENCY' => $this->currency_51568->id],
+                '51568TABLE_SOME_FIELD_CURRENCY' => $this->currency_51568->id,
+            ],
         ];
         $result = $this->getResults($data);
         $this->assertEquals('TT100.500,000', $result);

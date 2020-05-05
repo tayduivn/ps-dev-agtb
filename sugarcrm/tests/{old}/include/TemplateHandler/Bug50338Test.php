@@ -22,17 +22,17 @@ class Bug50338Test extends TestCase
     {
         $this->TemplateHandler = new MockTemplateHandler();
         $this->fieldDefs = [
-                             'amount' =>  [
-                                          'calculated' => true,
-                                          'formula' => 'add($calc1_c, $calc2_c)',
-                                        ],
-                             'calc1_c' =>  [
-                                        'id' => 'Opportunitiescalc1_c',
-                                        ],
-                             'calc2_c' =>  [
-                                        'id' => 'Opportunitiescalc2_c',
-                                        ],
-                           ];
+            'amount' =>  [
+                'calculated' => true,
+                'formula' => 'add($calc1_c, $calc2_c)',
+            ],
+            'calc1_c' =>  [
+                'id' => 'Opportunitiescalc1_c',
+            ],
+            'calc2_c' =>  [
+                'id' => 'Opportunitiescalc2_c',
+            ],
+        ];
         $fieldDefs = $this->TemplateHandler->mockPrepareCalculationFields($this->fieldDefs, 'Opportunities');
         $this->assertArrayHasKey('Opportunitiesamount', $fieldDefs);
         $this->assertStringContainsString('Opportunitiescalc1_c', $fieldDefs['Opportunitiesamount']['formula']);

@@ -67,7 +67,7 @@ class FixUpFormattingTest extends TestCase
             ['off',false],
             ['yes',true],
             ['no',false],
-            ];
+        ];
     }
 
     /**
@@ -88,10 +88,10 @@ class FixUpFormattingTest extends TestCase
     {
         $bean = new SugarBean();
 
-        $bean->field_defs = ['date_field'=>['type'=>'date'],
-                                 'datetime_field'=>['type'=>'datetime'],
-                                 'time_field'=>['type'=>'time'],
-                                 'datetimecombo_field'=>['type'=>'datetimecombo'],
+        $bean->field_defs = ['date_field' => ['type' => 'date'],
+            'datetime_field' => ['type' => 'datetime'],
+            'time_field' => ['type' => 'time'],
+            'datetimecombo_field' => ['type' => 'datetimecombo'],
         ];
         $bean->date_field = 'NULL';
         $bean->datetime_field = 'NULL';

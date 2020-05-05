@@ -28,7 +28,7 @@ class ConfiguratorTest extends TestCase
             'disable_export' => 'true',
             'admin_export_only' => 'false',
             'upload_dir' => 'yummy',
-            ];
+        ];
 
         $cfg = new Configurator();
 

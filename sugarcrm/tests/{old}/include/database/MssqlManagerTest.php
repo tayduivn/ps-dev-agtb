@@ -41,94 +41,94 @@ abstract class MssqlManagerTest extends TestCase
     public function providerConvert()
     {
         $returnArray = [
-                [
-                    ['foo','today'],
-                    'GETDATE()',
-                    ],
-                [
-                    ['foo','left'],
-                    'LEFT(foo)',
-                    ],
-                [
-                    ['foo','left',['1','2','3']],
-                    'LEFT(foo,1,2,3)',
-                    ],
-                [
-                    ['foo','date_format'],
-                    'LEFT(CONVERT(varchar(10),foo,120),10)',
-                    ],
-                [
-                    ['foo','date_format',['1','2','3']],
-                    'LEFT(CONVERT(varchar(10),foo,120),10)',
-                    ],
-                [
-                    ['foo','date_format',["'%Y-%m'"]],
-                    'LEFT(CONVERT(varchar(7),foo,120),7)',
-                    ],
-                [
-                    ['foo','IFNULL'],
-                    'ISNULL(foo,\'\')',
-                    ],
-                [
-                    ['foo','IFNULL',['1','2','3']],
-                    'ISNULL(foo,1,2,3)',
-                    ],
-                [
-                    ['foo','CONCAT',['1','2','3']],
-                    'CONCAT(foo,1,2,3)',
-                    ],
-                [
-                    [['1','2','3'],'CONCAT'],
-                    'CONCAT(1,2,3)',
-                    ],
-                [
-                    [['1','2','3'],'CONCAT',['foo', 'bar']],
-                    'CONCAT(1,2,3,foo,bar)',
-                    ],
-                [
-                    ['foo','text2char'],
-                    'CAST(foo AS varchar(8000))',
-                ],
-                [
-                    ['foo','length'],
-                    "LEN(foo)",
-                ],
-                [
-                    ['foo','month'],
-                    "MONTH(foo)",
-                ],
-                [
-                    ['foo','quarter'],
-                    "DATENAME(quarter, foo)",
-                ],
-                [
-                    ['foo','add_date',[1,'day']],
-                    "DATEADD(day,1,foo)",
-                ],
-                [
-                    ['foo','add_date',[2,'week']],
-                    "DATEADD(week,2,foo)",
-                ],
-                [
-                    ['foo','add_date',[3,'month']],
-                    "DATEADD(month,3,foo)",
-                ],
-                [
-                    ['foo','add_date',[4,'quarter']],
-                    "DATEADD(quarter,4,foo)",
-                ],
-                [
-                    ['foo','add_date',[5,'year']],
-                    "DATEADD(year,5,foo)",
-                ],
-                [
-                    ['1.23','round',[6]],
-                    "round(1.23, 6)",
-                ],
-                [
-                    ['date_created', 'date_format', ['%v']],
-                    "FORMAT(datepart(isoww, date_created), '00')",
-                ],
+            [
+                ['foo','today'],
+                'GETDATE()',
+            ],
+            [
+                ['foo','left'],
+                'LEFT(foo)',
+            ],
+            [
+                ['foo','left',['1','2','3']],
+                'LEFT(foo,1,2,3)',
+            ],
+            [
+                ['foo','date_format'],
+                'LEFT(CONVERT(varchar(10),foo,120),10)',
+            ],
+            [
+                ['foo','date_format',['1','2','3']],
+                'LEFT(CONVERT(varchar(10),foo,120),10)',
+            ],
+            [
+                ['foo','date_format',["'%Y-%m'"]],
+                'LEFT(CONVERT(varchar(7),foo,120),7)',
+            ],
+            [
+                ['foo','IFNULL'],
+                'ISNULL(foo,\'\')',
+            ],
+            [
+                ['foo','IFNULL',['1','2','3']],
+                'ISNULL(foo,1,2,3)',
+            ],
+            [
+                ['foo','CONCAT',['1','2','3']],
+                'CONCAT(foo,1,2,3)',
+            ],
+            [
+                [['1','2','3'],'CONCAT'],
+                'CONCAT(1,2,3)',
+            ],
+            [
+                [['1','2','3'],'CONCAT',['foo', 'bar']],
+                'CONCAT(1,2,3,foo,bar)',
+            ],
+            [
+                ['foo','text2char'],
+                'CAST(foo AS varchar(8000))',
+            ],
+            [
+                ['foo','length'],
+                "LEN(foo)",
+            ],
+            [
+                ['foo','month'],
+                "MONTH(foo)",
+            ],
+            [
+                ['foo','quarter'],
+                "DATENAME(quarter, foo)",
+            ],
+            [
+                ['foo','add_date',[1,'day']],
+                "DATEADD(day,1,foo)",
+            ],
+            [
+                ['foo','add_date',[2,'week']],
+                "DATEADD(week,2,foo)",
+            ],
+            [
+                ['foo','add_date',[3,'month']],
+                "DATEADD(month,3,foo)",
+            ],
+            [
+                ['foo','add_date',[4,'quarter']],
+                "DATEADD(quarter,4,foo)",
+            ],
+            [
+                ['foo','add_date',[5,'year']],
+                "DATEADD(year,5,foo)",
+            ],
+            [
+                ['1.23','round',[6]],
+                "round(1.23, 6)",
+            ],
+            [
+                ['date_created', 'date_format', ['%v']],
+                "FORMAT(datepart(isoww, date_created), '00')",
+            ],
         ];
         return $returnArray;
     }
@@ -157,12 +157,12 @@ abstract class MssqlManagerTest extends TestCase
             [
                 ['foo','nothing'],
                 'foo',
-                ],
-                [
-                    ['2009-01-01 12:00:00','time'],
-                    '12:00:00',
-                    ],
-                ];
+            ],
+            [
+                ['2009-01-01 12:00:00','time'],
+                '12:00:00',
+            ],
+        ];
 
         return $returnArray;
     }

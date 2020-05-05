@@ -207,8 +207,7 @@ EOL
                                 'sort_by' => 'id',
                                 'title_key' => 'LBL',
                                 'get_subpanel_data' => 'a',
-                                'top_buttons' =>
-                                     [],
+                                'top_buttons' => [],
                             ],
                         ],
                     ],

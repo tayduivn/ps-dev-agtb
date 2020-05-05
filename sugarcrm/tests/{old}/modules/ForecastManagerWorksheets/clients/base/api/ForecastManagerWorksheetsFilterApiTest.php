@@ -110,15 +110,16 @@ class ForecastManagerWorksheetsFilterApiTest extends TestCase
         $api = $this->createPartialMock('ForecastManagerWorksheetsFilterApi', ['ForecastManagerWorksheetsGet', 'getDirectHierarchyUsers']);
         $api->expects($this->once())->method('ForecastManagerWorksheetsGet')->will($this->returnValue(['records' => []]));
         $api->expects($this->once())->method('getDirectHierarchyUsers')->will($this->returnValue(['records' => [
-                    [
-                        'id' => $GLOBALS['current_user']->id,
-                        'full_name' => $GLOBALS['current_user']->full_name,
-                    ],
-                ]]));
+            [
+                'id' => $GLOBALS['current_user']->id,
+                'full_name' => $GLOBALS['current_user']->full_name,
+            ],
+        ],
+        ]));
         $actual = $api->forecastManagerWorksheetsChartGet($this->service, [
-                'timeperiod_id' => $this->timeperiod->id,
-                'user_id' => $GLOBALS['current_user']->id,
-            ]);
+            'timeperiod_id' => $this->timeperiod->id,
+            'user_id' => $GLOBALS['current_user']->id,
+        ]);
         $this->assertNotEmpty($actual);
         $this->assertArrayHasKey('data', $actual);
         $this->assertArrayHasKey('quota', $actual);
@@ -134,8 +135,8 @@ class ForecastManagerWorksheetsFilterApiTest extends TestCase
         $api->expects($this->never())->method('ForecastManagerWorksheetsGet');
         $api->expects($this->never())->method('getDirectHierarchyUsers');
         $actual = $api->forecastManagerWorksheetsChartGet($this->service, [
-                'no_data' => 1,
-            ]);
+            'no_data' => 1,
+        ]);
         $this->assertNotEmpty($actual);
         $this->assertArrayHasKey('data', $actual);
         $this->assertArrayHasKey('quota', $actual);
@@ -151,11 +152,11 @@ class ForecastManagerWorksheetsFilterApiTest extends TestCase
         $api->expects($this->never())->method('ForecastManagerWorksheetsGet');
         $api->expects($this->never())->method('getDirectHierarchyUsers');
         $actual = $api->forecastManagerWorksheetsChartGet($this->service, [
-                'no_data' => 1,
-                'target_quota' => 1,
-                'timeperiod_id' => $this->timeperiod->id,
-                'user_id' => $GLOBALS['current_user']->id,
-            ]);
+            'no_data' => 1,
+            'target_quota' => 1,
+            'timeperiod_id' => $this->timeperiod->id,
+            'user_id' => $GLOBALS['current_user']->id,
+        ]);
         $this->assertNotEmpty($actual);
         $this->assertArrayHasKey('target_quota', $actual);
         $this->assertEquals(500, $actual['target_quota']);
@@ -174,9 +175,9 @@ class ForecastManagerWorksheetsFilterApiTest extends TestCase
 
         $api = new ForecastManagerWorksheetsFilterApi();
         $actual = SugarTestReflection::callProtectedMethod($api, 'getDirectHierarchyUsers', [
-                $this->service,
-                [],
-            ]);
+            $this->service,
+            [],
+        ]);
         $this->assertNotEmpty($actual);
         $this->assertArrayHasKey('records', $actual);
         $result = [];
@@ -198,9 +199,9 @@ class ForecastManagerWorksheetsFilterApiTest extends TestCase
 
         $this->expectException(SugarApiExceptionNotAuthorized::class);
         SugarTestReflection::callProtectedMethod($api, 'getDirectHierarchyUsers', [
-                $this->service,
-                [],
-            ]);
+            $this->service,
+            [],
+        ]);
     }
 
     /**
@@ -214,11 +215,11 @@ class ForecastManagerWorksheetsFilterApiTest extends TestCase
         $user->save();
         $api = new ForecastManagerWorksheetsFilterApi();
         $actual = SugarTestReflection::callProtectedMethod($api, 'getDirectHierarchyUsers', [
-                $this->service,
-                [
-                    'user_id' => $user->id,
-                ],
-            ]);
+            $this->service,
+            [
+                'user_id' => $user->id,
+            ],
+        ]);
         $this->assertNotEmpty($actual);
         $this->assertArrayHasKey('records', $actual);
         $record = reset($actual['records']);
@@ -241,11 +242,11 @@ class ForecastManagerWorksheetsFilterApiTest extends TestCase
 
         $this->expectException(SugarApiExceptionInvalidParameter::class);
         SugarTestReflection::callProtectedMethod($api, 'getDirectHierarchyUsers', [
-                $this->service,
-                [
-                    'user_id' => '-1',
-                ],
-            ]);
+            $this->service,
+            [
+                'user_id' => '-1',
+            ],
+        ]);
     }
 
     /**
@@ -325,10 +326,10 @@ class ForecastManagerWorksheetsFilterApiTest extends TestCase
         $user = SugarTestUserUtilities::createAnonymousUser(true, 0, $fields);
         $api = new ForecastManagerWorksheetsFilterApi();
         $actual = SugarTestReflection::callProtectedMethod($api, 'createFilter', [
-                $this->service,
-                false,
-                false,
-            ]);
+            $this->service,
+            false,
+            false,
+        ]);
         $this->assertNotEmpty($actual);
         $result = [];
         foreach ($actual as $value) {
@@ -353,10 +354,10 @@ class ForecastManagerWorksheetsFilterApiTest extends TestCase
 
         $this->expectException(SugarApiExceptionNotAuthorized::class);
         SugarTestReflection::callProtectedMethod($api, 'createFilter', [
-                $this->service,
-                false,
-                false,
-            ]);
+            $this->service,
+            false,
+            false,
+        ]);
     }
 
     /**
@@ -370,10 +371,10 @@ class ForecastManagerWorksheetsFilterApiTest extends TestCase
         $user->save();
         $api = new ForecastManagerWorksheetsFilterApi();
         $actual = SugarTestReflection::callProtectedMethod($api, 'createFilter', [
-                $this->service,
-                $user->id,
-                false,
-            ]);
+            $this->service,
+            $user->id,
+            false,
+        ]);
         $this->assertNotEmpty($actual);
         $result = [];
         foreach ($actual as $value) {
@@ -398,10 +399,10 @@ class ForecastManagerWorksheetsFilterApiTest extends TestCase
 
         $this->expectException(SugarApiExceptionInvalidParameter::class);
         SugarTestReflection::callProtectedMethod($api, 'createFilter', [
-                $this->service,
-                '-1',
-                false,
-            ]);
+            $this->service,
+            '-1',
+            false,
+        ]);
     }
 
     /**
@@ -416,10 +417,10 @@ class ForecastManagerWorksheetsFilterApiTest extends TestCase
         $user = SugarTestUserUtilities::createAnonymousUser(true, 0, $fields);
         $api = new ForecastManagerWorksheetsFilterApi();
         $actual = SugarTestReflection::callProtectedMethod($api, 'createFilter', [
-                $this->service,
-                false,
-                $this->timeperiod->id,
-            ]);
+            $this->service,
+            false,
+            $this->timeperiod->id,
+        ]);
         $this->assertNotEmpty($actual);
         $result = [];
         foreach ($actual as $value) {
@@ -444,9 +445,9 @@ class ForecastManagerWorksheetsFilterApiTest extends TestCase
 
         $this->expectException(SugarApiExceptionInvalidParameter::class);
         SugarTestReflection::callProtectedMethod($api, 'createFilter', [
-                $this->service,
-                false,
-                create_guid(),
-            ]);
+            $this->service,
+            false,
+            create_guid(),
+        ]);
     }
 }

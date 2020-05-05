@@ -31,7 +31,7 @@ class FunctionMultienumToArrayTest extends TestCase
             ["","^Cold Call^",["Cold Call"]],
             [["Employee"],"Cold Call",["Employee"]],
             [null,["Employee"],["Employee"]],
-            ];
+        ];
     }
     
     /**

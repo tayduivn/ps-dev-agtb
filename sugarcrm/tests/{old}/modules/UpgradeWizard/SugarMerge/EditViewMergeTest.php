@@ -745,7 +745,6 @@ class EditViewMergeTest extends TestCase
                                 ],
                                 'template' => '{if $fields.status.value != "Held" && $bean->aclAccess("edit")}[CONTENT]{/if}',
                             ],
-
                         ],
                         [
                             'customCode' => 'custom code 2',
@@ -762,7 +761,6 @@ class EditViewMergeTest extends TestCase
                                 ],
                                 'template' => '{if $fields.status.value != "Held" && $bean->aclAccess("edit")}[CONTENT]{/if}',
                             ],
-
                         ],
                     ],
                     'hidden' => [
@@ -810,7 +808,6 @@ class EditViewMergeTest extends TestCase
                                 ],
                                 'template' => '{if $fields.status.value != "Held" && $bean->aclAccess("edit")}[CONTENT]{/if}',
                             ],
-
                         ],
                         [
                             'customCode' => 'custom code 2',
@@ -827,7 +824,6 @@ class EditViewMergeTest extends TestCase
                                 ],
                                 'template' => '{if $fields.status.value != "Held" && $bean->aclAccess("edit")}[CONTENT]{/if}',
                             ],
-
                         ],
                     ],
                     'hidden' => [
@@ -875,7 +871,6 @@ class EditViewMergeTest extends TestCase
                                 ],
                                 'template' => '{if $fields.status.value != "Held" && $bean->aclAccess("edit")}[CONTENT]{/if}',
                             ],
-
                         ],
                         [
                             'customCode' => 'custom code 2',
@@ -892,7 +887,6 @@ class EditViewMergeTest extends TestCase
                                 ],
                                 'template' => '{if $fields.status.value != "Held" && $bean->aclAccess("edit")}[CONTENT]{/if}',
                             ],
-
                         ],
                     ],
                     'hidden' => [
@@ -940,7 +934,6 @@ class EditViewMergeTest extends TestCase
                                 ],
                                 'template' => '{if $fields.status.value != "Held" && $bean->aclAccess("edit")}[CONTENT]{/if}',
                             ],
-
                         ],
                         [
                             'customCode' => 'custom code 2',
@@ -957,7 +950,6 @@ class EditViewMergeTest extends TestCase
                                 ],
                                 'template' => '{if $fields.status.value != "Held" && $bean->aclAccess("edit")}[CONTENT]{/if}',
                             ],
-
                         ],
                     ],
                     'hidden' => [

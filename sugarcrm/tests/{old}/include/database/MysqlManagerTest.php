@@ -51,99 +51,99 @@ abstract class MysqlManagerTest extends TestCase
             [
                 ['foo','nothing'],
                 'foo',
-                ],
-                [
-                    ['foo','today'],
-                    'CURDATE()',
-                    ],
-                [
-                    ['foo','left'],
-                    'LEFT(foo)',
-                ],
-                [
-                    ['foo','left',['1','2','3']],
-                    'LEFT(foo,1,2,3)',
-                    ],
-                [
-                    ['foo','date_format'],
-                    'DATE_FORMAT(foo,\'%Y-%m-%d\')',
-                        ],
-                [
-                    ['foo','date_format',['1','2','3']],
-                    'DATE_FORMAT(foo,\'1\')',
-                    ],
-                [
-                    ['foo','date_format',["'1'","'2'","'3'"]],
-                    'DATE_FORMAT(foo,\'1\')',
-                    ],
-                    [
-                    ['foo','datetime',["'%Y-%m'"]],
-                    'foo',
-                        ],
-                [
-                    ['foo','IFNULL'],
-                    'IFNULL(foo,\'\')',
-                    ],
-                [
-                    ['foo','IFNULL',['1','2','3']],
-                    'IFNULL(foo,1,2,3)',
-                    ],
-                [
-                    ['foo','CONCAT',['1','2','3']],
-                    'CONCAT(foo,1,2,3)',
-                    ],
-                [
-                    [['1','2','3'],'CONCAT'],
-                    'CONCAT(1,2,3)',
-                    ],
-                [
-                    [['1','2','3'],'CONCAT',['foo', 'bar']],
-                    'CONCAT(1,2,3,foo,bar)',
-                    ],
-                [
-                    ['foo','text2char'],
-                    'foo',
-                ],
-                [
-                    ['foo','length'],
-                    "LENGTH(foo)",
-                ],
-                [
-                    ['foo','month'],
-                    "MONTH(foo)",
-                ],
-                [
-                    ['foo','quarter'],
-                    "QUARTER(foo)",
-                ],
-                [
-                    ['foo','add_date',[1,'day']],
-                    "DATE_ADD(foo, INTERVAL 1 day)",
-                ],
-                [
-                    ['foo','add_date',[2,'week']],
-                    "DATE_ADD(foo, INTERVAL 2 week)",
-                ],
-                [
-                    ['foo','add_date',[3,'month']],
-                    "DATE_ADD(foo, INTERVAL 3 month)",
-                ],
-                [
-                    ['foo','add_date',[4,'quarter']],
-                    "DATE_ADD(foo, INTERVAL 4 quarter)",
-                ],
-                [
-                    ['foo','add_date',[5,'year']],
-                    "DATE_ADD(foo, INTERVAL 5 year)",
-                ],
-                [
-                    ['1.23','round',[6]],
-                    "round(1.23, 6)",
-                ],
-                [
-                    ['date_created', 'date_format', ['%v']],
-                    "DATE_FORMAT(date_created,'%v')",
-                ],
+            ],
+            [
+                ['foo','today'],
+                'CURDATE()',
+            ],
+            [
+                ['foo','left'],
+                'LEFT(foo)',
+            ],
+            [
+                ['foo','left',['1','2','3']],
+                'LEFT(foo,1,2,3)',
+            ],
+            [
+                ['foo','date_format'],
+                'DATE_FORMAT(foo,\'%Y-%m-%d\')',
+            ],
+            [
+                ['foo','date_format',['1','2','3']],
+                'DATE_FORMAT(foo,\'1\')',
+            ],
+            [
+                ['foo','date_format',["'1'","'2'","'3'"]],
+                'DATE_FORMAT(foo,\'1\')',
+            ],
+            [
+                ['foo','datetime',["'%Y-%m'"]],
+                'foo',
+            ],
+            [
+                ['foo','IFNULL'],
+                'IFNULL(foo,\'\')',
+            ],
+            [
+                ['foo','IFNULL',['1','2','3']],
+                'IFNULL(foo,1,2,3)',
+            ],
+            [
+                ['foo','CONCAT',['1','2','3']],
+                'CONCAT(foo,1,2,3)',
+            ],
+            [
+                [['1','2','3'],'CONCAT'],
+                'CONCAT(1,2,3)',
+            ],
+            [
+                [['1','2','3'],'CONCAT',['foo', 'bar']],
+                'CONCAT(1,2,3,foo,bar)',
+            ],
+            [
+                ['foo','text2char'],
+                'foo',
+            ],
+            [
+                ['foo','length'],
+                "LENGTH(foo)",
+            ],
+            [
+                ['foo','month'],
+                "MONTH(foo)",
+            ],
+            [
+                ['foo','quarter'],
+                "QUARTER(foo)",
+            ],
+            [
+                ['foo','add_date',[1,'day']],
+                "DATE_ADD(foo, INTERVAL 1 day)",
+            ],
+            [
+                ['foo','add_date',[2,'week']],
+                "DATE_ADD(foo, INTERVAL 2 week)",
+            ],
+            [
+                ['foo','add_date',[3,'month']],
+                "DATE_ADD(foo, INTERVAL 3 month)",
+            ],
+            [
+                ['foo','add_date',[4,'quarter']],
+                "DATE_ADD(foo, INTERVAL 4 quarter)",
+            ],
+            [
+                ['foo','add_date',[5,'year']],
+                "DATE_ADD(foo, INTERVAL 5 year)",
+            ],
+            [
+                ['1.23','round',[6]],
+                "round(1.23, 6)",
+            ],
+            [
+                ['date_created', 'date_format', ['%v']],
+                "DATE_FORMAT(date_created,'%v')",
+            ],
         ];
         return $returnArray;
     }
@@ -172,16 +172,16 @@ abstract class MysqlManagerTest extends TestCase
             [
                 ['foo','nothing'],
                 'foo',
-                ],
-                [
-                    ['2009-01-01 12:00:00','date'],
-                    '2009-01-01 12:00:00',
-                    ],
-                [
-                    ['2009-01-01 12:00:00','time'],
-                    '2009-01-01 12:00:00',
-                    ],
-                ];
+            ],
+            [
+                ['2009-01-01 12:00:00','date'],
+                '2009-01-01 12:00:00',
+            ],
+            [
+                ['2009-01-01 12:00:00','time'],
+                '2009-01-01 12:00:00',
+            ],
+        ];
 
         return $returnArray;
     }
@@ -205,29 +205,29 @@ abstract class MysqlManagerTest extends TestCase
         $returnArray = [
             [
                 ["1970-01-01", 'date'], true,
-                ],
+            ],
             [
                 ["1970-01-01 00:00:00", 'datetime'], true,
-                ],
+            ],
             [
                 ["0000-00-00 00:00:00", 'datetime'], true,
-                ],
+            ],
             [
                 ["0000-00-00", 'date'], true,
-                ],
+            ],
             [
                 ["2013-01-01", 'date'], false,
-                ],
+            ],
             [
                 ["2013-01-01 09:04:32", 'datetime'], false,
-                ],
+            ],
             [
                 ["00:00:00", 'time'], true,
-                ],
+            ],
             [
                 ["12:32:30", 'time'], false,
-                ],
-            ];
+            ],
+        ];
 
         return $returnArray;
     }

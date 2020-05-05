@@ -33,13 +33,13 @@ class RestCurrentUserPortalTest extends RestTestPortalBase
     {
         // FIXME TY-1312: investigate why this test fails
         $allowedModules = [
-                                'Accounts' => [ 'edit' => 'no', 'create' => 'no'],
-                                'Bugs' => ['edit' => 'no', 'create' => 'yes'],
-                                'Cases' => ['edit' => 'no', 'create' => 'yes'],
-                                'Notes' => ['edit' => 'no', 'create' => 'yes'],
-                                // edit is yes because they can edit themselves
-                                'Contacts' => ['edit' => 'yes', 'create' => 'yes'],
-                            ];
+            'Accounts' => [ 'edit' => 'no', 'create' => 'no'],
+            'Bugs' => ['edit' => 'no', 'create' => 'yes'],
+            'Cases' => ['edit' => 'no', 'create' => 'yes'],
+            'Notes' => ['edit' => 'no', 'create' => 'yes'],
+            // edit is yes because they can edit themselves
+            'Contacts' => ['edit' => 'yes', 'create' => 'yes'],
+        ];
 
         $restReply = $this->restCall("me");
         $user_acls = $restReply['reply']['current_user']['acl'];

@@ -20,13 +20,13 @@ class RestTestMetadataInvalidRelationship extends RestTestBase
         $GLOBALS['current_user'] = $this->user;
         $this->restLogin($this->user->user_name, $this->user->user_name);
         $invalidRelationship = [
-                "lhs_key" => "id",
-                "lhs_module" => "badModule",
-                "lhs_tabls" => "badTable",
-                "relationship_type" => "one-to-many",
-                "rhs_key" => "badModule_id",
-                "rhs_module" => "Opportunities",
-                "rhs_table" => "opportunities",
+            "lhs_key" => "id",
+            "lhs_module" => "badModule",
+            "lhs_tabls" => "badTable",
+            "relationship_type" => "one-to-many",
+            "rhs_key" => "badModule_id",
+            "rhs_module" => "Opportunities",
+            "rhs_table" => "opportunities",
         ];
         $GLOBALS['dictionary']['Opportunity']['relationships']['opportunities_badModule'] = $invalidRelationship;
     }

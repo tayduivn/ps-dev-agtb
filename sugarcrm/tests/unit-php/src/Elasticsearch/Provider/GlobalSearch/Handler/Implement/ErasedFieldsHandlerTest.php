@@ -65,15 +65,14 @@ class ErasedFieldsHandlerTest extends TestCase
                         'type' => 'keyword',
                         'index' => false,
                         'fields' => [
-                                'erased_fields' => ['type' => 'keyword'],
-                            ],
+                            'erased_fields' => ['type' => 'keyword'],
                         ],
+                    ],
                     'erased_fields' => [
-                            'type' => 'keyword',
-                            'index' => false,
-                            'copy_to' => ['Common__erased_fields'],
-                        ],
-
+                        'type' => 'keyword',
+                        'index' => false,
+                        'copy_to' => ['Common__erased_fields'],
+                    ],
                 ],
             ],
         ];

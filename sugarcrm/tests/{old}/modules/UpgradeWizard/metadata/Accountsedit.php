@@ -11,139 +11,125 @@
  */
 $viewdefs['Accounts']['EditView'] = [
     'templateMeta' => [
-                            'form' => ['buttons'=>['SAVE', 'CANCEL']],
-                            'maxColumns' => '2',
-                            'useTabs' => true,
-                            'widths' => [
-                                            ['label' => '10', 'field' => '30'],
-                                            ['label' => '10', 'field' => '30'],
-                                            ],
-                            'includes'=> [
-                                            ['file'=>'modules/Accounts/Account.js'],
-                                         ],
-                           ],
-                           
+        'form' => ['buttons' => ['SAVE', 'CANCEL']],
+        'maxColumns' => '2',
+        'useTabs' => true,
+        'widths' => [
+            ['label' => '10', 'field' => '30'],
+            ['label' => '10', 'field' => '30'],
+        ],
+        'includes' => [
+            ['file' => 'modules/Accounts/Account.js'],
+        ],
+    ],
     'panels' => [
-    
-      'lbl_account_information' =>
-       [
-         [
-           [
-            'name' => 'name',
-            'label' => 'LBL_NAME',
-            'displayParams' =>
-             [
-              'required' => true,
+        'lbl_account_information' => [
+            [
+                [
+                    'name' => 'name',
+                    'label' => 'LBL_NAME',
+                    'displayParams' => [
+                        'required' => true,
+                    ],
+                ],
+                [
+                    'name' => 'phone_office',
+                    'label' => 'LBL_PHONE_OFFICE',
+                ],
             ],
-           ],
-           [
-            'name' => 'phone_office',
-            'label' => 'LBL_PHONE_OFFICE',
-           ],
-         ],
 
-         [
+            [
+                [
+                    'name' => 'website',
+                    'type' => 'link',
+                    'label' => 'LBL_WEBSITE',
+                ],
 
-           [
-            'name' => 'website',
-            'type' => 'link',
-            'label' => 'LBL_WEBSITE',
-           ],
-
-           [
-            'name' => 'phone_fax',
-            'label' => 'LBL_FAX',
-           ],
-         ],
-
-         [
-
-           [
-            'name' => 'billing_address_street',
-            'hideLabel' => true,
-            'type' => 'address',
-            'displayParams' =>
-             [
-              'key' => 'billing',
-              'rows' => 2,
-              'cols' => 30,
-              'maxlength' => 150,
+                [
+                    'name' => 'phone_fax',
+                    'label' => 'LBL_FAX',
+                ],
             ],
-           ],
 
-           [
-            'name' => 'shipping_address_street',
-            'hideLabel' => true,
-            'type' => 'address',
-            'displayParams' =>
-             [
-              'key' => 'shipping',
-              'copy' => 'billing',
-              'rows' => 2,
-              'cols' => 30,
-              'maxlength' => 150,
+            [
+                [
+                    'name' => 'billing_address_street',
+                    'hideLabel' => true,
+                    'type' => 'address',
+                    'displayParams' => [
+                        'key' => 'billing',
+                        'rows' => 2,
+                        'cols' => 30,
+                        'maxlength' => 150,
+                    ],
+                ],
+
+                [
+                    'name' => 'shipping_address_street',
+                    'hideLabel' => true,
+                    'type' => 'address',
+                    'displayParams' => [
+                        'key' => 'shipping',
+                        'copy' => 'billing',
+                        'rows' => 2,
+                        'cols' => 30,
+                        'maxlength' => 150,
+                    ],
+                ],
             ],
-           ],
-         ],
 
-         [
+            [
+                [
+                    'name' => 'email1',
+                    'studio' => 'false',
+                    'label' => 'LBL_EMAIL',
+                ],
+            ],
 
-           [
-            'name' => 'email1',
-            'studio' => 'false',
-            'label' => 'LBL_EMAIL',
-           ],
-         ],
+            [
+                [
+                    'name' => 'description',
+                    'label' => 'LBL_DESCRIPTION',
+                ],
+            ],
+        ],
+        'LBL_PANEL_ADVANCED' => [
+            [
+                'account_type',
+                'industry',
+            ],
 
-         [
+            [
+                'annual_revenue',
+                'employees',
+            ],
 
-           [
-            'name' => 'description',
-            'label' => 'LBL_DESCRIPTION',
-           ],
-         ],
-      ],
-      'LBL_PANEL_ADVANCED' =>
-       [
+            [
+                'sic_code',
+                'ticker_symbol',
+            ],
 
-         [
-          'account_type',
-          'industry',
-         ],
+            [
+                'parent_name',
+                'ownership',
+            ],
 
-         [
-          'annual_revenue',
-          'employees',
-         ],
-
-         [
-          'sic_code',
-          'ticker_symbol',
-         ],
-
-         [
-          'parent_name',
-          'ownership',
-         ],
-
-         [
-          'campaign_name',
-          'rating',
-         ],
-      ],
-      'LBL_PANEL_ASSIGNMENT' =>
-       [
-
-         [
-           [
-            'name' => 'assigned_user_name',
-            'label' => 'LBL_ASSIGNED_TO',
-           ],
-           [
-            'name'=>'team_name', 'displayParams'=>['display'=>true],
-           ],
-           'id', // Unit test specific
-         ],
-      ],
+            [
+                'campaign_name',
+                'rating',
+            ],
+        ],
+        'LBL_PANEL_ASSIGNMENT' => [
+            [
+                [
+                    'name' => 'assigned_user_name',
+                    'label' => 'LBL_ASSIGNED_TO',
+                ],
+                [
+                    'name'=>'team_name', 'displayParams'=>['display'=>true],
+                ],
+                'id', // Unit test specific
+            ],
+        ],
     ],
 ];

@@ -45,7 +45,8 @@ class ReportCSVExporterMatrix1x1Test extends TestCase
     ) {
         $reporter = $this->createPartialMock(
             '\Report',
-            ['run_summary_query',
+            [
+                'run_summary_query',
                 'run_summary_combo_query',
                 'run_total_query',
                 '_load_currency',
@@ -56,7 +57,8 @@ class ReportCSVExporterMatrix1x1Test extends TestCase
                 'get_summary_next_row',
                 'get_header_row',
                 'getReportType',
-                'getDataTypeForColumnsForMatrix']
+                'getDataTypeForColumnsForMatrix',
+            ]
         );
 
         $reporter->report_type = 'summary';

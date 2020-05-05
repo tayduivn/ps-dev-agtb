@@ -44,7 +44,7 @@ class ModuleScannerTest extends TestCase
             ["<?xml \n echo blah;", true],
             ["<?xml version=\"1.0\"><? blah ?></xml>", true],
             ["<?xml version=\"1.0\"><?php blah ?></xml>", true],
-            ];
+        ];
     }
 
     /**
@@ -294,35 +294,35 @@ EOQ;
 
     public function testConfigChecks()
     {
-            $isconfig = [
+        $isconfig = [
             'config.php',
             'config_override.php',
             'custom/../config_override.php',
             'custom/.././config.php',
-            ];
+        ];
 
         // Disallowed file names
-            $notconfig = [
+        $notconfig = [
             'custom/config.php',
             'custom/modules/config.php',
             'cache/config_override.php',
             'modules/Module/config.php',
-            ];
+        ];
 
         // Get our scanner
-            $ms = new ModuleScanner();
+        $ms = new ModuleScanner();
 
         // Test valid
-            foreach ($isconfig as $file) {
-                $valid = $ms->isConfigFile($file);
-                $this->assertTrue($valid, "$file should be recognized as config file");
-            }
+        foreach ($isconfig as $file) {
+            $valid = $ms->isConfigFile($file);
+            $this->assertTrue($valid, "$file should be recognized as config file");
+        }
 
         // Test not valid
-            foreach ($notconfig as $ext => $file) {
-                $valid = $ms->isConfigFile($file);
-                $this->assertFalse($valid, "$file should not be recognized as config file");
-            }
+        foreach ($notconfig as $ext => $file) {
+            $valid = $ms->isConfigFile($file);
+            $this->assertFalse($valid, "$file should not be recognized as config file");
+        }
     }
 
     /**
@@ -408,30 +408,30 @@ EOQ;
     public function scanCopyProvider()
     {
         return [
-          [
-            'copy/modules/Audit/Audit.php',
-            'copy/modules/Audit/Audit.php',
-            "modules/Audit",
-            false,
-          ],
-          [
-            'copy/modules/Audit/Audit.php',
-            'copy/modules/Audit/Audit.php',
-            "modules/Audit/Audit.php",
-            false,
-          ],
-          [
-            'copy/modules/Audit/Audit.php',
-            'copy',
-            ".",
-            false,
-          ],
-          [
-            'copy/modules/Audit/SomeFile.php',
-            'copy',
-            ".",
-            true,
-          ],
+            [
+                'copy/modules/Audit/Audit.php',
+                'copy/modules/Audit/Audit.php',
+                "modules/Audit",
+                false,
+            ],
+            [
+                'copy/modules/Audit/Audit.php',
+                'copy/modules/Audit/Audit.php',
+                "modules/Audit/Audit.php",
+                false,
+            ],
+            [
+                'copy/modules/Audit/Audit.php',
+                'copy',
+                ".",
+                false,
+            ],
+            [
+                'copy/modules/Audit/SomeFile.php',
+                'copy',
+                ".",
+                true,
+            ],
         ];
     }
 }

@@ -22,28 +22,28 @@ class FunctionSugarTranslateTest extends TestCase
             [
                 "Friend's",
                 "Friend\'s",
-                ],
+            ],
             [
                 "Friend\'s",
                 "Friend\\\\\\'s",
-                ],
+            ],
             [
                 "Friend&#39;s",
                 "Friend\'s",
-                ],
+            ],
             [
                 "Friend&#39;'s",
                 "Friend\'\'s",
-                ],
+            ],
             [
                 "Friend&#039;s",
                 "Friend\'s",
-                ],
+            ],
             [
                 "Friend&#039;'s",
                 "Friend\'\'s",
-                ],
-            ];
+            ],
+        ];
     }
 
     /**
@@ -74,19 +74,19 @@ class FunctionSugarTranslateTest extends TestCase
             [
                 "Friend:",
                 "Friend:",
-                ],
+            ],
             [
                 "Friend : ",
                 "Friend : ",
-                ],
+            ],
             [
                 ": Friend",
                 ": Friend",
-                ],
+            ],
             [
                 "Fr:iend",
                 "Fr:iend",
-                ],
+            ],
         ];
     }
 

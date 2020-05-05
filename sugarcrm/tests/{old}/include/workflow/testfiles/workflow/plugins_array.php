@@ -11,6 +11,4 @@
  */
  
 //Workflow plugins Meta Data Arrays
-$plugin_meta_array =  [
-
-];
+$plugin_meta_array = [];

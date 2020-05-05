@@ -54,11 +54,11 @@ class Bug57656Test extends SOAPTestCase
         $this->soapClient = new nusoapclient($url, false, false, false, false, false, 600, 600);
         $this->login();
         $params = [
-        ["name" => "name", "value" => "TEST"],
-        ["name" => "parent_id", "value" => "5a770071-66ca-6127-5a1a-4cb3a2c46e40"],
-        ["name" => "parent_type", "value" => "Accounts"],
-        ["name" => "from_addr", "value" => "test@test.com"],
-        ["name" => "to_addrs", "value" => "test@test.com"],
+            ["name" => "name", "value" => "TEST"],
+            ["name" => "parent_id", "value" => "5a770071-66ca-6127-5a1a-4cb3a2c46e40"],
+            ["name" => "parent_type", "value" => "Accounts"],
+            ["name" => "from_addr", "value" => "test@test.com"],
+            ["name" => "to_addrs", "value" => "test@test.com"],
         ];
         $res = $this->soapClient->call('set_entry', [$this->sessionId, 'Bugs', $params]);
         $this->assertNotEquals("-1", $res['id'], "Bad bug ID");

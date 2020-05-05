@@ -44,33 +44,28 @@ class RangeSearchTest extends TestCase
         $module = 'Opportunities';
         $this->searchForm = new SearchForm($seed, $module);
         $this->searchForm->searchFields = [
-            'range_date_closed' =>
-            [
+            'range_date_closed' => [
                 'query_type' => 'default',
                 'enable_range_search' => 1,
                 'is_date_field' => 1,
                 'value' => '[this_year]',
                 'operator' => 'this_year',
             ],
-            'start_range_date_closed' =>
-            [
+            'start_range_date_closed' => [
                 'query_type' => 'default',
                 'enable_range_search' => 1,
                 'is_date_field' => 1,
             ],
-            'end_range_date_closed' =>
-            [
+            'end_range_date_closed' => [
                 'query_type' => 'default',
                 'enable_range_search' => 1,
                 'is_date_field' => 1,
             ],
-            'range_amount' =>
-            [
+            'range_amount' => [
                 'query_type' => 'default',
                 'enable_range_search' => true,
             ],
-            'start_range_amount' =>
-            [
+            'start_range_amount' => [
                 'query_type' => 'default',
                 'enable_range_search' => true,
             ],
@@ -106,60 +101,60 @@ class RangeSearchTest extends TestCase
         $GLOBALS['db']->dbType = 'mysql';
         unset($this->searchForm->searchFields['range_date_closed']);
         $this->searchForm->searchFields['range_amount'] =  [
-                'query_type' => 'default',
-                'enable_range_search' => 1,
-                'value' => '10000',
-                'operator' => 'greater_than',
+            'query_type' => 'default',
+            'enable_range_search' => 1,
+            'value' => '10000',
+            'operator' => 'greater_than',
         ];
 
         $where_clauses = $this->searchForm->generateSearchWhere();
         $this->assertEquals("opportunities.amount > 10000", $where_clauses[0]);
 
         $this->searchForm->searchFields['range_amount'] =  [
-                'query_type' => 'default',
-                'enable_range_search' => 1,
-                'value' => '10000',
-                'operator' => 'less_than',
+            'query_type' => 'default',
+            'enable_range_search' => 1,
+            'value' => '10000',
+            'operator' => 'less_than',
         ];
 
         $where_clauses = $this->searchForm->generateSearchWhere();
         $this->assertEquals("opportunities.amount < 10000", $where_clauses[0]);
 
         $this->searchForm->searchFields['range_amount'] =  [
-                'query_type' => 'default',
-                'enable_range_search' => 1,
-                'value' => '10000',
-                'operator' => 'greater_than_equals',
+            'query_type' => 'default',
+            'enable_range_search' => 1,
+            'value' => '10000',
+            'operator' => 'greater_than_equals',
         ];
 
         $where_clauses = $this->searchForm->generateSearchWhere();
         $this->assertEquals("opportunities.amount >= 10000", $where_clauses[0]);
 
         $this->searchForm->searchFields['range_amount'] =  [
-                'query_type' => 'default',
-                'enable_range_search' => 1,
-                'value' => '10000',
-                'operator' => 'less_than_equals',
+            'query_type' => 'default',
+            'enable_range_search' => 1,
+            'value' => '10000',
+            'operator' => 'less_than_equals',
         ];
 
         $where_clauses = $this->searchForm->generateSearchWhere();
         $this->assertEquals("opportunities.amount <= 10000", $where_clauses[0]);
 
         $this->searchForm->searchFields['range_amount'] =  [
-                'query_type' => 'default',
-                'enable_range_search' => 1,
-                'value' => '10000',
-                'operator' => 'not_equal',
+            'query_type' => 'default',
+            'enable_range_search' => 1,
+            'value' => '10000',
+            'operator' => 'not_equal',
         ];
 
         $where_clauses = $this->searchForm->generateSearchWhere();
         $this->assertEquals("(opportunities.amount IS NULL OR opportunities.amount != 10000)", $where_clauses[0]);
 
         $this->searchForm->searchFields['range_amount'] =  [
-                'query_type' => 'default',
-                'enable_range_search' => 1,
-                'value' => '10000',
-                'operator' => '=',
+            'query_type' => 'default',
+            'enable_range_search' => 1,
+            'value' => '10000',
+            'operator' => '=',
 
         ];
 

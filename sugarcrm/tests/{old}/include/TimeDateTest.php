@@ -73,7 +73,7 @@ class TimeDateTest extends TestCase
             ["db" => '2005-10-25 20:00:00', "df" => 'd/m/Y', "tf" => "H",      'tz' => 'America/Los_Angeles',      "display" => '25/10/2005 13',       "dbdate" => "2005-10-25 13:00:00"],
             ["db" => '2005-10-25 07:00:00', "df" => 'd/m/Y', "tf" => "ha",     'tz' => 'America/Los_Angeles',      "display" => '25/10/2005 12am',     "dbdate" => "2005-10-25 00:00:00"],
             ["db" => '2005-10-25 19:00:00', "df" => 'd/m/Y', "tf" => "ha",     'tz' => 'America/Los_Angeles',      "display" => '25/10/2005 12pm',     "dbdate" => "2005-10-25 12:00:00"],
-            ];
+        ];
     }
 
     public static function dateTestSetNonEmptyTimeFormat()
@@ -461,7 +461,8 @@ class TimeDateTest extends TestCase
             'd-m-Y' => '23-12-2006',
             'Y/m/d' => '2006/12/23',
             'm/d/Y' => '12/23/2006',
-            'd/m/Y' => '23/12/2006'];
+            'd/m/Y' => '23/12/2006',
+        ];
 
         $new_formats_and_dates = $orig_formats_and_dates;
 
@@ -821,7 +822,7 @@ class TimeDateTest extends TestCase
             ["2009-10-04 02:00:00","2009-10-04","02:00:00"],
             ["10/04/2010 2:00pm","10/04/2010","2:00pm"],
             ["10-04-2010 2:00","10-04-2010","2:00"],
-            ];
+        ];
     }
 
     /**
@@ -872,7 +873,7 @@ class TimeDateTest extends TestCase
             ["h.iA", "03.38AM", "03:38:00"],
             ["h:ia", "03:38 am", "03:38:00"],
             ["h:iA", "03:38 AM", "03:38:00"],
-            ];
+        ];
     }
 
     /**
@@ -965,7 +966,7 @@ class TimeDateTest extends TestCase
             ["next_year", "2012-01-01 00:00:00", "2012-12-31 23:59:59"],
             ["last_year", "2010-01-01 00:00:00", "2010-12-31 23:59:59"],
             ["this_year", "2011-01-01 00:00:00", "2011-12-31 23:59:59"],
-            ];
+        ];
     }
 
     /**

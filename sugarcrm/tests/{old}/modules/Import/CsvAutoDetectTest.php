@@ -44,7 +44,7 @@ class CsvAutoDetectTest extends TestCase
             [4, ',', '"', 'Y/m/d', 'h:ia', true],
             [5, ',', "'", 'd/m/Y', 'H:i', true],
             [6, '|', '"', 'm/d/Y', 'h:ia', true],
-            ];
+        ];
     }
 
     /**

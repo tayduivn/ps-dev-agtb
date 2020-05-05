@@ -13,23 +13,23 @@
 
 
   $searchdefs['Documents'] = [
-                    'templateMeta' => ['maxColumns' => '3',
-                            'widths' => ['label' => '10', 'field' => '30'],
-                           ],
-                    'layout' => [
-                        'basic_search' => [
-                                'document_name',
+      'templateMeta' => ['maxColumns' => '3',
+          'widths' => ['label' => '10', 'field' => '30'],
+      ],
+      'layout' => [
+          'basic_search' => [
+              'document_name',
                                 
-                    ['name' => 'favorites_only','label' => 'LBL_FAVORITES_FILTER','type' => 'bool',],
-                            ],
-                        'advanced_search' => [
-                                'document_name',
-                                'category_id',
-                                'subcategory_id',
-                                'active_date',
-                                'exp_date',
+              ['name' => 'favorites_only','label' => 'LBL_FAVORITES_FILTER','type' => 'bool',],
+          ],
+          'advanced_search' => [
+              'document_name',
+              'category_id',
+              'subcategory_id',
+              'active_date',
+              'exp_date',
                                 
-                        ['name' => 'favorites_only','label' => 'LBL_FAVORITES_FILTER','type' => 'bool',],
-                        ],
-                    ],
-               ];
+              ['name' => 'favorites_only','label' => 'LBL_FAVORITES_FILTER','type' => 'bool',],
+          ],
+      ],
+  ];

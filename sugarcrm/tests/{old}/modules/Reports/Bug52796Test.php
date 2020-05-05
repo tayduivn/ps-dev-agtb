@@ -74,22 +74,19 @@ class Bug52796Test extends TestCase
         
         // Report defs
         $this->reportInstance->report_def['display_columns'] =  [
-            0 =>
-             [
+            0 => [
                 'name' => 'name',
                 'label' => 'Opportunity Name',
                 'table_key' => 'self',
                 'group_function' => '',
             ],
-            1 =>
-             [
+            1 => [
                 'name' => 'amount',
                 'label' => 'Opportunity Amount',
                 'table_key' => 'self',
                 'group_function' => '',
             ],
-            2 =>
-             [
+            2 => [
                 'name' => 'amount_usdollar',
                 'label' => 'Amount',
                 'table_key' => 'self',
@@ -99,57 +96,56 @@ class Bug52796Test extends TestCase
         
         // All fields
         $this->reportInstance->all_fields = [
-        'self:name' => [
-          'name' => 'name',
-              'vname' => 'LBL_OPPORTUNITY_NAME',
-              'type' => 'name',
-              'dbType' => 'varchar',
-              'len' => '50',
-              'unified_search' => true,
-              'comment' => 'Name of the opportunity',
-              'merge_filter' => 'selected',
-              'importable' => 'required',
-              'required' => true,
-              'module' => 'Opportunities',
-              'real_table' => 'opportunities',
-              'rep_rel_name' => 'name_0',
+            'self:name' => [
+                'name' => 'name',
+                'vname' => 'LBL_OPPORTUNITY_NAME',
+                'type' => 'name',
+                'dbType' => 'varchar',
+                'len' => '50',
+                'unified_search' => true,
+                'comment' => 'Name of the opportunity',
+                'merge_filter' => 'selected',
+                'importable' => 'required',
+                'required' => true,
+                'module' => 'Opportunities',
+                'real_table' => 'opportunities',
+                'rep_rel_name' => 'name_0',
             ],
             'self:amount' =>  [
-              'name' => 'amount',
-              'vname' => 'LBL_AMOUNT',
-              'type' => 'currency',
-              'dbType' => 'double',
-              'comment' => 'Unconverted amount of the opportunity',
-              'importable' => 'required',
-              'duplicate_merge' => '1',
-              'required' => true,
-              'options' => 'numeric_range_search_dom',
-              'enable_range_search' => true,
-              'module' => 'Opportunities',
-              'real_table' => 'opportunities',
-              'rep_rel_name' => 'amount_0',
+                'name' => 'amount',
+                'vname' => 'LBL_AMOUNT',
+                'type' => 'currency',
+                'dbType' => 'double',
+                'comment' => 'Unconverted amount of the opportunity',
+                'importable' => 'required',
+                'duplicate_merge' => '1',
+                'required' => true,
+                'options' => 'numeric_range_search_dom',
+                'enable_range_search' => true,
+                'module' => 'Opportunities',
+                'real_table' => 'opportunities',
+                'rep_rel_name' => 'amount_0',
             ],
             'self:amount_usdollar' =>  [
-              'name' => 'amount_usdollar',
-              'vname' => 'LBL_AMOUNT_USDOLLAR',
-              'type' => 'currency',
-              'group' => 'amount',
-              'dbType' => 'double',
-              'disable_num_format' => true,
-              'duplicate_merge' => '0',
-              'audited' => true,
-              'comment' => 'Formatted amount of the opportunity',
-              'studio' =>
-               [
-                'wirelesseditview' => false,
-                'wirelessdetailview' => false,
-                'editview' => false,
-                'detailview' => false,
-                'quickcreate' => false,
-              ],
-              'module' => 'Opportunities',
-              'real_table' => 'opportunities',
-              'rep_rel_name' => 'amount_usdollar_0',
+                'name' => 'amount_usdollar',
+                'vname' => 'LBL_AMOUNT_USDOLLAR',
+                'type' => 'currency',
+                'group' => 'amount',
+                'dbType' => 'double',
+                'disable_num_format' => true,
+                'duplicate_merge' => '0',
+                'audited' => true,
+                'comment' => 'Formatted amount of the opportunity',
+                'studio' => [
+                    'wirelesseditview' => false,
+                    'wirelessdetailview' => false,
+                    'editview' => false,
+                    'detailview' => false,
+                    'quickcreate' => false,
+                ],
+                'module' => 'Opportunities',
+                'real_table' => 'opportunities',
+                'rep_rel_name' => 'amount_usdollar_0',
             ],
         ];
 

@@ -47,7 +47,7 @@ class SugarACLDataPrivacyTest extends TestCase
             'action' => $action,
             'field' => $fieldToChange,
             'bean' => $dataPrivacyMock,
-            ];
+        ];
         $result = $aclClass->checkAccess('DataPrivacy', 'field', $context);
         $this->assertEquals($expected, $result);
     }

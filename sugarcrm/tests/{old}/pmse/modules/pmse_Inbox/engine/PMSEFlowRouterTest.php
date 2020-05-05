@@ -74,21 +74,20 @@ class PMSEFlowRouterTest extends TestCase
         ];
 
         $nextElements = [
-            'next_elements' =>
+            'next_elements' => [
                 [
-                    [
-                        'cas_id' => 2,
-                        'cas_index' => 4,
-                    ],
-                    [
-                        'cas_id' => 2,
-                        'cas_index' => 5,
-                    ],
-                    [
-                        'cas_id' => 2,
-                        'cas_index' => 6,
-                    ],
+                    'cas_id' => 2,
+                    'cas_index' => 4,
                 ],
+                [
+                    'cas_id' => 2,
+                    'cas_index' => 5,
+                ],
+                [
+                    'cas_id' => 2,
+                    'cas_index' => 6,
+                ],
+            ],
         ];
 
         // We need to override the execute Element since that method is not
@@ -145,21 +144,20 @@ class PMSEFlowRouterTest extends TestCase
         ];
 
         $nextElements = [
-            'next_elements' =>
+            'next_elements' => [
                 [
-                    [
-                        'cas_id' => 2,
-                        'cas_index' => 4,
-                    ],
-                    [
-                        'cas_id' => 2,
-                        'cas_index' => 5,
-                    ],
-                    [
-                        'cas_id' => 2,
-                        'cas_index' => 6,
-                    ],
+                    'cas_id' => 2,
+                    'cas_index' => 4,
                 ],
+                [
+                    'cas_id' => 2,
+                    'cas_index' => 5,
+                ],
+                [
+                    'cas_id' => 2,
+                    'cas_index' => 6,
+                ],
+            ],
         ];
 
         // We need to override the execute Element since that method is not
@@ -216,21 +214,20 @@ class PMSEFlowRouterTest extends TestCase
         ];
 
         $nextElements = [
-            'next_elements' =>
+            'next_elements' => [
                 [
-                    [
-                        'cas_id' => 2,
-                        'cas_index' => 4,
-                    ],
-                    [
-                        'cas_id' => 2,
-                        'cas_index' => 5,
-                    ],
-                    [
-                        'cas_id' => 2,
-                        'cas_index' => 6,
-                    ],
+                    'cas_id' => 2,
+                    'cas_index' => 4,
                 ],
+                [
+                    'cas_id' => 2,
+                    'cas_index' => 5,
+                ],
+                [
+                    'cas_id' => 2,
+                    'cas_index' => 6,
+                ],
+            ],
         ];
 
         // We need to override the execute Element since that method is not
@@ -288,21 +285,20 @@ class PMSEFlowRouterTest extends TestCase
         ];
 
         $nextElements = [
-            'next_elements' =>
+            'next_elements' => [
                 [
-                    [
-                        'cas_id' => 2,
-                        'cas_index' => 4,
-                    ],
-                    [
-                        'cas_id' => 2,
-                        'cas_index' => 5,
-                    ],
-                    [
-                        'cas_id' => 2,
-                        'cas_index' => 6,
-                    ],
+                    'cas_id' => 2,
+                    'cas_index' => 4,
                 ],
+                [
+                    'cas_id' => 2,
+                    'cas_index' => 5,
+                ],
+                [
+                    'cas_id' => 2,
+                    'cas_index' => 6,
+                ],
+            ],
         ];
 
         // We need to override the execute Element since that method is not

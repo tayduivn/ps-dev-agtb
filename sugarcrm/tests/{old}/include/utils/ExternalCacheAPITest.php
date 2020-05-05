@@ -27,7 +27,7 @@ class ExternalCacheAPITest extends TestCase
             'test cache value 3 key 1 '.date("YmdHis") => 'test cache value 3 value 1 '.date("YmdHis"),
             'test cache value 3 key 2 '.date("YmdHis") => 'test cache value 3 value 2 '.date("YmdHis"),
             'test cache value 3 key 3 '.date("YmdHis") => 'test cache value 3 value 3 '.date("YmdHis"),
-            ];
+        ];
     }
 
     protected function tearDown() : void

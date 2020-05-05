@@ -50,17 +50,18 @@ class Bug50780Test extends SOAPTestCase
     public function testGetRelationshipReturnAllMeetings()
     {
         $result = $this->soapClient->call('get_relationships', [
-                'session' => $this->sessionId,
-                'module_name' => 'Users',
-                'module_id' => self::$user->id,
-                'link_field_name' => 'meetings',
-                'related_module_query' => '',
-                'related_fields' => ['id', 'name'],
-                'related_module_link_name_to_fields_array' => '',
-                'deleted' => 0,
-                'order_by' => 'date_entered',
-                'offset' => 0,
-                'limit' => false]);
+            'session' => $this->sessionId,
+            'module_name' => 'Users',
+            'module_id' => self::$user->id,
+            'link_field_name' => 'meetings',
+            'related_module_query' => '',
+            'related_fields' => ['id', 'name'],
+            'related_module_link_name_to_fields_array' => '',
+            'deleted' => 0,
+            'order_by' => 'date_entered',
+            'offset' => 0,
+            'limit' => false,
+        ]);
 
         $this->assertEquals(4, count($result['entry_list']));
     }
@@ -68,17 +69,18 @@ class Bug50780Test extends SOAPTestCase
     public function testGetRelationshipReturnNothingWithOffsetSetHigh()
     {
         $result = $this->soapClient->call('get_relationships', [
-                'session' => $this->sessionId,
-                'module_name' => 'Users',
-                'module_id' => self::$user->id,
-                'link_field_name' => 'meetings',
-                'related_module_query' => '',
-                'related_fields' => ['id', 'name'],
-                'related_module_link_name_to_fields_array' => '',
-                'deleted' => 0,
-                'order_by' => 'date_entered',
-                'offset' => 5,
-                'limit' => 4]);
+            'session' => $this->sessionId,
+            'module_name' => 'Users',
+            'module_id' => self::$user->id,
+            'link_field_name' => 'meetings',
+            'related_module_query' => '',
+            'related_fields' => ['id', 'name'],
+            'related_module_link_name_to_fields_array' => '',
+            'deleted' => 0,
+            'order_by' => 'date_entered',
+            'offset' => 5,
+            'limit' => 4,
+        ]);
 
         $this->assertEquals(0, count($result['entry_list']));
     }
@@ -86,17 +88,18 @@ class Bug50780Test extends SOAPTestCase
     public function testGetRelationshipReturnThirdMeeting()
     {
         $result = $this->soapClient->call('get_relationships', [
-                'session' => $this->sessionId,
-                'module_name' => 'Users',
-                'module_id' => self::$user->id,
-                'link_field_name' => 'meetings',
-                'related_module_query' => '',
-                'related_fields' => ['id', 'name'],
-                'related_module_link_name_to_fields_array' => '',
-                'deleted' => 0,
-                'order_by' => 'date_entered',
-                'offset' => 2,
-                'limit' => 1]);
+            'session' => $this->sessionId,
+            'module_name' => 'Users',
+            'module_id' => self::$user->id,
+            'link_field_name' => 'meetings',
+            'related_module_query' => '',
+            'related_fields' => ['id', 'name'],
+            'related_module_link_name_to_fields_array' => '',
+            'deleted' => 0,
+            'order_by' => 'date_entered',
+            'offset' => 2,
+            'limit' => 1,
+        ]);
 
         $this->assertEquals(1, count($result['entry_list']));
     }
@@ -104,32 +107,34 @@ class Bug50780Test extends SOAPTestCase
     public function testGetRelationshipOffsetDoesntReturnSameRecords()
     {
         $result1 = $this->soapClient->call('get_relationships', [
-                'session' => $this->sessionId,
-                'module_name' => 'Users',
-                'module_id' => self::$user->id,
-                'link_field_name' => 'meetings',
-                'related_module_query' => '',
-                'related_fields' => ['id', 'name', 'date_entered'],
-                'related_module_link_name_to_fields_array' => '',
-                'deleted' => 0,
-                'order_by' => 'date_entered',
-                'offset' => 0,
-                'limit' => 2]);
+            'session' => $this->sessionId,
+            'module_name' => 'Users',
+            'module_id' => self::$user->id,
+            'link_field_name' => 'meetings',
+            'related_module_query' => '',
+            'related_fields' => ['id', 'name', 'date_entered'],
+            'related_module_link_name_to_fields_array' => '',
+            'deleted' => 0,
+            'order_by' => 'date_entered',
+            'offset' => 0,
+            'limit' => 2,
+        ]);
 
         $this->assertEquals(2, count($result1['entry_list']));
 
         $result2 = $this->soapClient->call('get_relationships', [
-                'session' => $this->sessionId,
-                'module_name' => 'Users',
-                'module_id' => self::$user->id,
-                'link_field_name' => 'meetings',
-                'related_module_query' => '',
-                'related_fields' => ['id', 'name', 'date_entered'],
-                'related_module_link_name_to_fields_array' => '',
-                'deleted' => 0,
-                'order_by' => 'date_entered',
-                'offset' => 2,
-                'limit' => 2]);
+            'session' => $this->sessionId,
+            'module_name' => 'Users',
+            'module_id' => self::$user->id,
+            'link_field_name' => 'meetings',
+            'related_module_query' => '',
+            'related_fields' => ['id', 'name', 'date_entered'],
+            'related_module_link_name_to_fields_array' => '',
+            'deleted' => 0,
+            'order_by' => 'date_entered',
+            'offset' => 2,
+            'limit' => 2,
+        ]);
 
         $this->assertEquals(2, count($result2['entry_list']));
     }

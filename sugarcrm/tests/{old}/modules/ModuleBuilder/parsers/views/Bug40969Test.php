@@ -29,47 +29,47 @@ class Bug40969Test extends TestCase
     protected $vardefs =
         [
             'name'         => [
-                                  'name'     => 'name',
-                                  'vname'    => 'LBL_OPPORTUNITY_NAME',
-                                  'type'     => 'name',
-                                  'dbType'   => 'varchar',
-                                  'required' => true,
-                              ],
+                'name'     => 'name',
+                'vname'    => 'LBL_OPPORTUNITY_NAME',
+                'type'     => 'name',
+                'dbType'   => 'varchar',
+                'required' => true,
+            ],
             'date_entered' => [
-                                  'name'  => 'date_entered',
-                                  'vname' => 'LBL_DATE_ENTERED',
-                                  'type'  => 'datetime',
-                              ],
+                'name'  => 'date_entered',
+                'vname' => 'LBL_DATE_ENTERED',
+                'type'  => 'datetime',
+            ],
             'parent_name'  => [
-                                  'source'        => 'non-db',
-                                  'name'          => 'parent_name',
-                                  'vname'         => 'LBL_FLEX_RELATE',
-                                  'type'          => 'parent',
-                                  'options'       => 'parent_type_display',
-                                  'type_name'     => 'parent_type',
-                                  'id_name'       => 'parent_id',
-                                  'parent_type'   => 'record_type_display',
-                                  'id'            => 'Opportunitiesparent_name',
-                                  'custom_module' => 'Opportunities',
-                              ],
+                'source'        => 'non-db',
+                'name'          => 'parent_name',
+                'vname'         => 'LBL_FLEX_RELATE',
+                'type'          => 'parent',
+                'options'       => 'parent_type_display',
+                'type_name'     => 'parent_type',
+                'id_name'       => 'parent_id',
+                'parent_type'   => 'record_type_display',
+                'id'            => 'Opportunitiesparent_name',
+                'custom_module' => 'Opportunities',
+            ],
             'parent_id'    => [
-                                  'source'        => 'custom_fields',
-                                  'name'          => 'parent_id',
-                                  'vname'         => 'LBL_PARENT_ID',
-                                  'type'          => 'id',
-                                  'id'            => 'Opportunitiesparent_id',
-                                  'custom_module' => 'Opportunities',
-                              ],
+                'source'        => 'custom_fields',
+                'name'          => 'parent_id',
+                'vname'         => 'LBL_PARENT_ID',
+                'type'          => 'id',
+                'id'            => 'Opportunitiesparent_id',
+                'custom_module' => 'Opportunities',
+            ],
             'parent_type'  => [
-                                  'required'      => false,
-                                  'source'        => 'custom_fields',
-                                  'name'          => 'parent_type',
-                                  'vname'         => 'LBL_PARENT_TYPE',
-                                  'type'          => 'parent_type',
-                                  'dbType'        => 'varchar',
-                                  'id'            => 'Opportunitiesparent_type',
-                                  'custom_module' => 'Opportunities',
-                              ],
+                'required'      => false,
+                'source'        => 'custom_fields',
+                'name'          => 'parent_type',
+                'vname'         => 'LBL_PARENT_TYPE',
+                'type'          => 'parent_type',
+                'dbType'        => 'varchar',
+                'id'            => 'Opportunitiesparent_type',
+                'custom_module' => 'Opportunities',
+            ],
         ];
 
     /**
@@ -78,23 +78,23 @@ class Bug40969Test extends TestCase
     public $originalVardefs =
         [
             'name'         => [
-                                  'width'   => 30,
-                                  'label'   => 'LBL_LIST_OPPORTUNITIES_NAME',
-                                  'link'    => true,
-                                  'default' => true,
-                              ],
+                'width'   => 30,
+                'label'   => 'LBL_LIST_OPPORTUNITIES_NAME',
+                'link'    => true,
+                'default' => true,
+            ],
             'dete_entered' => [
-                                  'width'   => 10,
-                                  'label'   => 'LBL_DATE_ENTERED',
-                                  'default' => true,
-                              ],
+                'width'   => 10,
+                'label'   => 'LBL_DATE_ENTERED',
+                'default' => true,
+            ],
         ];
 
     protected function setUp() : void
     {
         $_POST = [
-                     'group_0' => ['name', 'date_entered', 'parent_name'],
-                 ];
+            'group_0' => ['name', 'date_entered', 'parent_name'],
+        ];
     }
 
     protected function tearDown() : void

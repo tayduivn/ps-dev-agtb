@@ -442,48 +442,52 @@ class DefaultDashboardInstallerTest extends TestCase
                         // tab 1
                         [
                             'name' => 'FIRST TAB',
-                            'components' => [[
-                                'rows' => [
-                                    [
+                            'components' => [
+                                [
+                                    'rows' => [
                                         [
-                                            'width' => 4,
-                                            'context' => [
-                                                'module' => 'Cases',
-                                            ],
-                                            'view' => [
-                                                'label' => 'saved report',
-                                                'type' => 'saved-reports-chart',
-                                                'module' => 'Cases',
-                                                'saved_report_id' => 'AN-ID',
+                                            [
+                                                'width' => 4,
+                                                'context' => [
+                                                    'module' => 'Cases',
+                                                ],
+                                                'view' => [
+                                                    'label' => 'saved report',
+                                                    'type' => 'saved-reports-chart',
+                                                    'module' => 'Cases',
+                                                    'saved_report_id' => 'AN-ID',
+                                                ],
                                             ],
                                         ],
                                     ],
                                 ],
-                            ]],
+                            ],
                         ],
                         // tab 2
                         [
                             'name' => 'SECOND TAB',
-                            'components' => [[
-                                'rows' => [
-                                    [
+                            'components' => [
+                                [
+                                    'rows' => [
                                         [
-                                            'width' => 4,
-                                            'context' => [
-                                                'module' => 'Cases',
-                                            ],
-                                            'view' => [
-                                                'label' => 'saved report',
-                                                'type' => 'saved-reports-chart',
-                                                'module' => 'Cases',
-                                                'saved_report_id' => 'ANOTHER-ID',
+                                            [
+                                                'width' => 4,
+                                                'context' => [
+                                                    'module' => 'Cases',
+                                                ],
+                                                'view' => [
+                                                    'label' => 'saved report',
+                                                    'type' => 'saved-reports-chart',
+                                                    'module' => 'Cases',
+                                                    'saved_report_id' => 'ANOTHER-ID',
+                                                ],
                                             ],
                                         ],
                                     ],
                                 ],
-                            ]],
+                            ],
                         ],
-                     ],
+                    ],
                 ],
                 // expected results
                 [
@@ -491,48 +495,52 @@ class DefaultDashboardInstallerTest extends TestCase
                         // tab 1
                         [
                             'name' => 'FIRST TAB',
-                            'components' => [[
-                                'rows' => [
-                                    [
+                            'components' => [
+                                [
+                                    'rows' => [
                                         [
-                                            'width' => 4,
-                                            'context' => [
-                                                'module' => 'Cases',
-                                            ],
-                                            'view' => [
-                                                'label' => 'saved report',
-                                                'type' => 'saved-reports-chart',
-                                                'module' => 'Cases',
-                                                'saved_report_id' => 'AN-ID',
-                                                'saved_report' => 'saved report',
+                                            [
+                                                'width' => 4,
+                                                'context' => [
+                                                    'module' => 'Cases',
+                                                ],
+                                                'view' => [
+                                                    'label' => 'saved report',
+                                                    'type' => 'saved-reports-chart',
+                                                    'module' => 'Cases',
+                                                    'saved_report_id' => 'AN-ID',
+                                                    'saved_report' => 'saved report',
+                                                ],
                                             ],
                                         ],
                                     ],
                                 ],
-                            ]],
+                            ],
                         ],
                         // tab 2
                         [
                             'name' => 'SECOND TAB',
-                            'components' => [[
-                                'rows' => [
-                                    [
+                            'components' => [
+                                [
+                                    'rows' => [
                                         [
-                                            'width' => 4,
-                                            'context' => [
-                                                'module' => 'Cases',
-                                            ],
-                                            'view' => [
-                                                'label' => 'saved report',
-                                                'type' => 'saved-reports-chart',
-                                                'module' => 'Cases',
-                                                'saved_report_id' => 'ANOTHER-ID',
-                                                'saved_report' => 'saved report',
+                                            [
+                                                'width' => 4,
+                                                'context' => [
+                                                    'module' => 'Cases',
+                                                ],
+                                                'view' => [
+                                                    'label' => 'saved report',
+                                                    'type' => 'saved-reports-chart',
+                                                    'module' => 'Cases',
+                                                    'saved_report_id' => 'ANOTHER-ID',
+                                                    'saved_report' => 'saved report',
+                                                ],
                                             ],
                                         ],
                                     ],
                                 ],
-                            ]],
+                            ],
                         ],
                     ],
                 ],

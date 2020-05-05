@@ -108,9 +108,14 @@ class Bug63490Test extends TestCase
             // $suppress_table_name usage
             ['name', 'name', true],
             // $relate_field_map usage
-            ['name desc', 'first_name desc, last_name desc', false, [
-                'name' => ['first_name', 'last_name'],
-            ]],
+            [
+                'name desc',
+                'first_name desc, last_name desc',
+                false,
+                [
+                    'name' => ['first_name', 'last_name'],
+                ],
+            ],
         ];
     }
 

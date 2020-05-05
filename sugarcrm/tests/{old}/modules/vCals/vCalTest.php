@@ -123,7 +123,8 @@ class vCalTest extends TestCase
         $ical_array[] = ["SUMMARY", "Dummy Bean"];
         $ical_array[] = ["LOCATION", "Sugar, Cupertino; Sugar, EMEA"];
         $ical_array[] = ["DESCRIPTION", "Hello, this is a dummy description.\nIt contains newlines, " .
-            "backslash \ semicolon ; and commas. This line should also contain more than 75 characters."];
+            "backslash \ semicolon ; and commas. This line should also contain more than 75 characters.",
+        ];
         $ical_array[] = ["END", "VEVENT"];
         $ical_array[] = ["END", "VCALENDAR"];
 

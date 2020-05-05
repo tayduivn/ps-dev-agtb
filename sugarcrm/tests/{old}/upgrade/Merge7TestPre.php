@@ -56,12 +56,12 @@ class Merge7TestPre extends UpgradeTestCase
             ],
         ];
         $data2 = [
-                'panels' => [
-                        [
-                                'name' => 'panel_hidden',
-                                'fields' => ['email', 'fax', 'description'],
-                        ],
+            'panels' => [
+                [
+                    'name' => 'panel_hidden',
+                    'fields' => ['email', 'fax', 'description'],
                 ],
+            ],
         ];
         $data3 = [];
 

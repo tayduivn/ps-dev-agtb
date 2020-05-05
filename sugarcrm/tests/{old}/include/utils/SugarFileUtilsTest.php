@@ -29,13 +29,12 @@ class SugarFileUtilsTest extends TestCase
         $this->filename = realpath(dirname(__FILE__).'/../../../cache/').'file_utils_override'.mt_rand().'.txt';
         touch($this->filename);
         $this->oldDefaultPermissions = $GLOBALS['sugar_config']['default_permissions'];
-        $GLOBALS['sugar_config']['default_permissions'] =
-             [
-                'dir_mode' => 0777,
-                'file_mode' => 0660,
-                'user' => $this->getCurrentUser(),
-                'group' => $this->getCurrentGroup(),
-              ];
+        $GLOBALS['sugar_config']['default_permissions'] = [
+            'dir_mode' => 0777,
+            'file_mode' => 0660,
+            'user' => $this->getCurrentUser(),
+            'group' => $this->getCurrentGroup(),
+        ];
 
         $this->testDirectory = $GLOBALS['sugar_config']['cache_dir'] . md5($GLOBALS['sugar_config']['cache_dir']) . '/';
     }

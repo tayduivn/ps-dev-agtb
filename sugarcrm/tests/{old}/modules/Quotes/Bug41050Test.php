@@ -95,9 +95,8 @@ class Bug41050Test extends TestCase
             'date_quote_expected_closed_advanced' => '',
             'favorites_only_advanced' => '0',
             'button' => 'Search',
-                
-            ];
-            
+        ];
+
         //create a list of fields passed in to create the query in sugarbean, we are staying as close to the Out of Box list view as possible
         $filter =  [
             'quote_num' => 1,

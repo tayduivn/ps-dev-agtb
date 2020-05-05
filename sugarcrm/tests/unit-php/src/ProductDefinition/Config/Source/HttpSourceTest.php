@@ -52,10 +52,12 @@ class HttpSourceTest extends TestCase
         $this->logger = $this->createMock(LoggerManager::class);
 
         $this->source = $this->getMockBuilder(HttpSource::class)
-            ->setConstructorArgs([[
-                'base_uri' => 'http://localhost/',
-                'fallback_version' => '9.0.0',
-            ]])
+            ->setConstructorArgs([
+                [
+                    'base_uri' => 'http://localhost/',
+                    'fallback_version' => '9.0.0',
+                ],
+            ])
             ->setMethods(['getSugarVersion', 'getLogger'])
             ->getMock();
         $this->source->expects($this->any())->method('getSugarVersion')->willReturn('9.2.0');

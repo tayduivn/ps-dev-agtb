@@ -72,8 +72,9 @@ class PMSEValidatorTest extends TestCase
                 'concurrency' => PMSEValidationLevel::Simple,
                 'record' => PMSEValidationLevel::NoValidation,
                 'element' => PMSEValidationLevel::NoValidation,
-                'expression' => PMSEValidationLevel::NoValidation],
-            ]);
+                'expression' => PMSEValidationLevel::NoValidation,
+            ],
+        ]);
 
         $validatorMock->expects($this->once())
                 ->method('retrieveValidator')
@@ -110,8 +111,9 @@ class PMSEValidatorTest extends TestCase
                 'concurrency' => PMSEValidationLevel::Simple,
                 'record' => PMSEValidationLevel::NoValidation,
                 'element' => PMSEValidationLevel::NoValidation,
-                'expression' => PMSEValidationLevel::NoValidation],
-            ]);
+                'expression' => PMSEValidationLevel::NoValidation,
+            ],
+        ]);
 
         $validatorMock->expects($this->once())
                 ->method('retrieveValidator')

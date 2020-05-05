@@ -117,9 +117,9 @@ class SugarConfigTest extends TestCase
     {
         $random_value = 'Some Random Integer: ' . rand(1000, 2000);
         $this->addKeyValueToConfig('grandparent', [
-                'parent' => [
+            'parent' => [
                 'child' => $random_value,
-                ],
+            ],
         ]);
 
         $config = SugarConfig::getInstance();

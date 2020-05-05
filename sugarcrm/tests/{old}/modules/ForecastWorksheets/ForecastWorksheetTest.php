@@ -635,7 +635,6 @@ class ForecastWorksheetTest extends TestCase
                 ],
                 $bean,
             ],
-
         ];
     }
     /**
@@ -792,7 +791,8 @@ class ForecastWorksheetTest extends TestCase
         $sj = $this->createMock('SchedulersJob');
         $jq = $this->createPartialMock('SugarJobQueue', ['submitJob']);
         $fw = $this->createPartialMock('ForecastWorksheet', ['getBean',
-                                                        'getJobQueue']);
+            'getJobQueue',
+        ]);
 
         $jq->expects($this->once())
             ->method('submitJob')

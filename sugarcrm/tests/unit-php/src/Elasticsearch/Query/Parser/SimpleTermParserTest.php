@@ -137,9 +137,11 @@ class SimpleTermParserTest extends TestCase
                 'a OR (b AND (c OR d)',
                 'OR',
                 true,
-                ['OR' => [
-                    ['OR' => ['a']],
-                    ['AND' => ['b', ['OR' => ['c d']]]]],
+                [
+                    'OR' => [
+                        ['OR' => ['a']],
+                        ['AND' => ['b', ['OR' => ['c d']]]],
+                    ],
                 ],
             ],
             // wrong parentheses
@@ -161,8 +163,8 @@ class SimpleTermParserTest extends TestCase
                 'gmail.com (-kate OR -smith OR dean)',
                 '&',
                 true,
-                ['AND' =>
-                    [
+                [
+                    'AND' => [
                         'gmail.com',
                         [
                             'OR' => [

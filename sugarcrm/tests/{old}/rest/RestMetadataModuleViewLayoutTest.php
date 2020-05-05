@@ -43,13 +43,15 @@ class RestMetadataModuleViewLayoutTest extends RestTestBase
      */
     public function testMetadataModuleLayout()
     {
-        $filesToCheck = ['modules/Cases/clients/mobile/layouts/edit/edit.php',
-                              'custom/modules/Cases/clients/mobile/layouts/edit/edit.php',
+        $filesToCheck = [
+            'modules/Cases/clients/mobile/layouts/edit/edit.php',
+            'custom/modules/Cases/clients/mobile/layouts/edit/edit.php',
         ];
         SugarTestHelper::saveFile($filesToCheck);
 
-        $dirsToMake = ['modules/Cases/clients/mobile/layouts/edit',
-                            'custom/modules/Cases/clients/mobile/layouts/edit',
+        $dirsToMake = [
+            'modules/Cases/clients/mobile/layouts/edit',
+            'custom/modules/Cases/clients/mobile/layouts/edit',
         ];
 
         foreach ($dirsToMake as $dir) {
@@ -120,13 +122,15 @@ class RestMetadataModuleViewLayoutTest extends RestTestBase
     */
     public function testMetadataModuleViews()
     {
-        $filesToCheck = ['modules/Cases/clients/mobile/views/edit/edit.php',
-                              'custom/modules/Cases/clients/mobile/views/edit/edit.php',
+        $filesToCheck = [
+            'modules/Cases/clients/mobile/views/edit/edit.php',
+            'custom/modules/Cases/clients/mobile/views/edit/edit.php',
         ];
         SugarTestHelper::saveFile($filesToCheck);
 
-        $dirsToMake = ['modules/Cases/clients/mobile/views/edit',
-                            'custom/modules/Cases/clients/mobile/views/edit',
+        $dirsToMake = [
+            'modules/Cases/clients/mobile/views/edit',
+            'custom/modules/Cases/clients/mobile/views/edit',
         ];
 
         foreach ($dirsToMake as $dir) {

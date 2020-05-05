@@ -12,13 +12,13 @@
 
 $viewdefs['Bugs']['searchform']['basic'] = [
     'templateMeta' => ['maxColumns' => '2',
-                            'widths' => [
-                                            ['label' => '10', 'field' => '30'],
-                                            ['label' => '10', 'field' => '30'],
-                                            ],
-                            'formId' => 'BugSearchForm',
-                            'formName' => 'BugSearchForm',
-                           ],
+        'widths' => [
+            ['label' => '10', 'field' => '30'],
+            ['label' => '10', 'field' => '30'],
+        ],
+        'formId' => 'BugSearchForm',
+        'formName' => 'BugSearchForm',
+    ],
     'data' => [
         ['bug_number', 'name'],
         ['resolution', 'status'],

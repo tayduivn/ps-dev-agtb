@@ -171,7 +171,8 @@ class IndexerTest extends TestCase
                     'first_name' => 'John',
                     'last_name' => 'Joe',
                     'title' => 'sales rep',
-                    'description' => 'new member'],
+                    'description' => 'new member',
+                ],
             ],
         ];
     }

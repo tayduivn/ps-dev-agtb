@@ -15,27 +15,26 @@
 
 $GLOBALS['studioDefs']['Notes'] = [
     'LBL_DETAILVIEW'=>[
-                'template'=>'xtpl',
-                'template_file'=>'modules/Notes/DetailView.html',
-                'php_file'=>'modules/Notes/DetailView.php',
-                'type'=>'DetailView',
-                ],
+        'template'=>'xtpl',
+        'template_file'=>'modules/Notes/DetailView.html',
+        'php_file'=>'modules/Notes/DetailView.php',
+        'type'=>'DetailView',
+    ],
     'LBL_EDITVIEW'=>[
-                'template'=>'xtpl',
-                'template_file'=>'modules/Notes/EditView.html',
-                'php_file'=>'modules/Notes/EditView.php',
-                'type'=>'EditView',
-                ],
+        'template'=>'xtpl',
+        'template_file'=>'modules/Notes/EditView.html',
+        'php_file'=>'modules/Notes/EditView.php',
+        'type'=>'EditView',
+    ],
     'LBL_LISTVIEW'=>[
-                'template'=>'listview',
-                'meta_file'=>'modules/Notes/listviewdefs.php',
-                'type'=>'ListView',
-                ],
+        'template'=>'listview',
+        'meta_file'=>'modules/Notes/listviewdefs.php',
+        'type'=>'ListView',
+    ],
     'LBL_SEARCHFORM'=>[
-                'template'=>'xtpl',
-                'template_file'=>'modules/Notes/SearchForm.html',
-                'php_file'=>'modules/Notes/ListView.php',
-                'type'=>'SearchForm',
-                ],
-
+        'template'=>'xtpl',
+        'template_file'=>'modules/Notes/SearchForm.html',
+        'php_file'=>'modules/Notes/ListView.php',
+        'type'=>'SearchForm',
+    ],
 ];

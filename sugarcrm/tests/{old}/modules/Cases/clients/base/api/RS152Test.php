@@ -79,12 +79,12 @@ class RS152Test extends TestCase
     public function testCreateRecord()
     {
         $data = $this->api->createRecord($this->service, [
-                'module' => 'Cases',
-                'name' => 'Case ' . __CLASS__,
-                'assigned_user_id' => $GLOBALS['current_user']->id,
-                'team_id' => 2,
-                'team_set_id' => 2,
-            ]);
+            'module' => 'Cases',
+            'name' => 'Case ' . __CLASS__,
+            'assigned_user_id' => $GLOBALS['current_user']->id,
+            'team_id' => 2,
+            'team_set_id' => 2,
+        ]);
         $this->assertArrayHasKey('id', $data);
 
         $this->case = BeanFactory::getBean('Cases', $data['id']);

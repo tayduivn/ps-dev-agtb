@@ -49,10 +49,30 @@ class Bug25964v2Test extends SOAPTestCase
 
     public function testFindSameContact()
     {
-        $contacts_list=[ 'session'=>$this->sessionId, 'module_name' => 'Contacts',
-                   'name_value_lists' => [
-                                        [['name'=>'assigned_user_id' , 'value'=>$GLOBALS['current_user']->id],['name'=>'first_name' , 'value'=>'testfirst'],['name'=>'last_name' , 'value'=>'testlast'],['name'=>'email1' , 'value'=>'one_other@example.com']],
-                                        ]];
+        $contacts_list = [
+            'session' => $this->sessionId,
+            'module_name' => 'Contacts',
+            'name_value_lists' => [
+                [
+                    [
+                        'name' => 'assigned_user_id',
+                        'value' => $GLOBALS['current_user']->id,
+                    ],
+                    [
+                        'name' => 'first_name',
+                        'value' => 'testfirst',
+                    ],
+                    [
+                        'name' => 'last_name',
+                        'value' => 'testlast',
+                    ],
+                    [
+                        'name' => 'email1',
+                        'value' => 'one_other@example.com',
+                    ],
+                ],
+            ],
+        ];
 
         $result = $this->soapClient->call('set_entries', $contacts_list);
         $this->resultId = $result['ids'][0];
@@ -61,10 +81,30 @@ class Bug25964v2Test extends SOAPTestCase
 
     public function testDoNotFindSameContact()
     {
-        $contacts_list=[ 'session'=>$this->sessionId, 'module_name' => 'Contacts',
-                   'name_value_lists' => [
-                                        [['name'=>'assigned_user_id' , 'value'=>$GLOBALS['current_user']->id],['name'=>'first_name' , 'value'=>'testfirst'],['name'=>'last_name' , 'value'=>'testlast'],['name'=>'email1' , 'value'=>'mytest1@example.com']],
-                                        ]];
+        $contacts_list = [
+            'session' => $this->sessionId,
+            'module_name' => 'Contacts',
+            'name_value_lists' => [
+                [
+                    [
+                        'name' => 'assigned_user_id',
+                        'value' => $GLOBALS['current_user']->id,
+                    ],
+                    [
+                        'name' => 'first_name',
+                        'value' => 'testfirst',
+                    ],
+                    [
+                        'name' => 'last_name',
+                        'value' => 'testlast',
+                    ],
+                    [
+                        'name' => 'email1',
+                        'value' => 'mytest1@example.com',
+                    ],
+                ],
+            ],
+        ];
 
         $result = $this->soapClient->call('set_entries', $contacts_list);
         $this->resultId = $result['ids'][0];

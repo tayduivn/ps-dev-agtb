@@ -100,14 +100,14 @@ class Bug51617Test extends SOAPTestCase
         $result = $this->soapClient->call(
             'get_entry_list',
             [
-                 'session'=>$this->sessionId,
-                 "module_name" => 'Accounts',
-                 "accounts.id = '{$this->account->id}'",
-                 '',
-                 0,
-                 "select_fields" => ['id', 'name', 'test_custom_c'],
-                 null,
-                 'max_results' => 1,
+                'session'=>$this->sessionId,
+                "module_name" => 'Accounts',
+                "accounts.id = '{$this->account->id}'",
+                '',
+                0,
+                "select_fields" => ['id', 'name', 'test_custom_c'],
+                null,
+                'max_results' => 1,
             ]
         );
 

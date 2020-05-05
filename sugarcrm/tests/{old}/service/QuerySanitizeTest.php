@@ -47,7 +47,7 @@ class QuerySanitizeTest extends TestCase
             ["`users`.`user_name` = 'admin' and `users`.`first_name` = 'george'", "", true],
             ["`users`.`user_name` = 'admin' and `users`.`first_name` = 'george'", "`users`.`first_name`", true],
             ["`users.user_name = 'admin'`", "", false],
-            ];
+        ];
     }
 
     /**

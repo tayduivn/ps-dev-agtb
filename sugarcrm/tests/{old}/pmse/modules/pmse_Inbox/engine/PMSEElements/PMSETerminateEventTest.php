@@ -28,8 +28,15 @@ class PMSETerminateEventTest extends TestCase
             ->getMock();
 
         $caseFlowHandlerMock = $this->getMockBuilder('PMSECaseFlowHandler')
-            ->setMethods(['closeThreadByCaseIndex', 'closeCase', 'terminateCaseFlow', 'retrieveSugarQueryObject',
-                'setCloseStatusForThisThread', 'closeThreadByThreadIndex', 'retrieveBean'])
+            ->setMethods([
+                'closeThreadByCaseIndex',
+                'closeCase',
+                'terminateCaseFlow',
+                'retrieveSugarQueryObject',
+                'setCloseStatusForThisThread',
+                'closeThreadByThreadIndex',
+                'retrieveBean',
+            ])
             ->getMock();
 
         $sugarQueryMock = $this->getMockBuilder('SugarQuery')

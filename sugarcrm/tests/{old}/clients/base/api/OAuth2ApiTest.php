@@ -27,9 +27,10 @@ class OAuth2ApiTest extends TestCase
 
     public function testSudo()
     {
-        $stdArgs = ['user_name'=>'unit_test_user',
-                         'client_id'=>'sugar',
-                         'platform'=>'base',
+        $stdArgs = [
+            'user_name'=>'unit_test_user',
+            'client_id'=>'sugar',
+            'platform'=>'base',
         ];
 
         // Non-admin attempting to sudo

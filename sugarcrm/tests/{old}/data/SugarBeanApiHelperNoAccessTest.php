@@ -32,16 +32,16 @@ class SugarBeanApiHelperNoAccessTest extends TestCase
         $mock->module_name = 'Test';
         $mock->module_dir = 'Test';
         $mock->field_defs = [
-                'testInt' => [
-                    'type' => 'int',
-                ],
-                'testDecimal' => [
-                    'type' => 'decimal',
-                ],
-                'testBool' => [
-                    'type' => 'bool',
-                ],
-            ];
+            'testInt' => [
+                'type' => 'int',
+            ],
+            'testDecimal' => [
+                'type' => 'decimal',
+            ],
+            'testBool' => [
+                'type' => 'bool',
+            ],
+        ];
         $mock->expects($this->any())
              ->method('ACLFieldAccess')
              ->will($this->returnValue(false));

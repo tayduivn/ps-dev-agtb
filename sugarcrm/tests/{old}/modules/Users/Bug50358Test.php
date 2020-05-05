@@ -38,8 +38,8 @@ class Bug50358Test extends TestCase
     public function currencyDataProvider()
     {
         return  [
-             [
-                 [
+            [
+                [
                     '-99' =>  [
                         'name' => 'USD',
                         'symbol' => 'USD',
@@ -52,11 +52,11 @@ class Bug50358Test extends TestCase
                         'name' => 'AAA',
                         'symbol' => '*',
                     ],
-                 ],
-                 "currencies[0] = 'USD';\ncurrencies[1] = '*';\ncurrencies[2] = '&';",
-             ],
-             [
-                 [
+                ],
+                "currencies[0] = 'USD';\ncurrencies[1] = '*';\ncurrencies[2] = '&';",
+            ],
+            [
+                [
                     '-99' =>  [
                         'name' => 'USD',
                         'symbol' => 'USD',
@@ -69,9 +69,9 @@ class Bug50358Test extends TestCase
                         'name' => 'EUR',
                         'symbol' => '&',
                     ],
-                 ],
-                 "currencies[0] = 'USD';\ncurrencies[1] = '*';\ncurrencies[2] = '&';",
-             ],
+                ],
+                "currencies[0] = 'USD';\ncurrencies[1] = '*';\ncurrencies[2] = '&';",
+            ],
         ];
     }
 

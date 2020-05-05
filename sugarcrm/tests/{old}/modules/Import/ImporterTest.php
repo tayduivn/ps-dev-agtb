@@ -49,7 +49,7 @@ class ImporterTest extends TestCase
             [0, '2011-03-26 10:02:00', 'm/d/Y', 'h:ia'],
             [1, '2011-03-26 10:02:00', 'Y-m-d', 'h:ia'],
             [2, '2011-03-26 10:02:00', 'm.d.Y', 'H.i'],
-            ];
+        ];
     }
 
     /**
@@ -104,7 +104,7 @@ class ImporterTest extends TestCase
             ['1242','12*'],
             ['abdcd36','abdcd$'],
             ['1234-asdf3535353523','1234-asdf####23'],
-            ];
+        ];
     }
 
     /**

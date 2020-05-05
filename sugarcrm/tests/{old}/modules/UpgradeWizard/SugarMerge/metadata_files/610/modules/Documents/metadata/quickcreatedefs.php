@@ -12,71 +12,71 @@
 
 $viewdefs['Documents']['QuickCreate'] = [
     'templateMeta' => ['form' => ['enctype'=>'multipart/form-data',
-                                            'hidden'=>['<input type="hidden" name="old_id" value="{$fields.document_revision_id.value}">',
-                                                            '<input type="hidden" name="parent_id" value="{$smarty.request.parent_id}">',
-                                                            '<input type="hidden" name="parent_type" value="{$smarty.request.parent_type}">',]],
+        'hidden'=>['<input type="hidden" name="old_id" value="{$fields.document_revision_id.value}">',
+            '<input type="hidden" name="parent_id" value="{$smarty.request.parent_id}">',
+            '<input type="hidden" name="parent_type" value="{$smarty.request.parent_type}">',
+        ],
+    ],
                                             
-                            'maxColumns' => '2',
-                            'widths' => [
-                                            ['label' => '10', 'field' => '30'],
-                                            ['label' => '10', 'field' => '30'],
-                                            ],
-                            'includes' =>
-                               [
-                                ['file' => 'include/javascript/popup_parent_helper.js'],
-                                ['file' => 'modules/Documents/documents.js'],
-                              ],
+        'maxColumns' => '2',
+        'widths' => [
+            ['label' => '10', 'field' => '30'],
+            ['label' => '10', 'field' => '30'],
+        ],
+        'includes' => [
+            ['file' => 'include/javascript/popup_parent_helper.js'],
+            ['file' => 'modules/Documents/documents.js'],
+        ],
     ],
     'panels' => [
-    'default' =>
-    [
+        'default' => [
     
-     [
+            [
 
-      ['name'=>'uploadfile',
-            'customCode' => '<input type="hidden" name="escaped_document_name"><input name="uploadfile" type="file" size="30" maxlength="" onchange="setvalue(this);" value="{$fields.filename.value}">{$fields.filename.value}',
-            'displayParams'=>['required'=>true],
+                ['name'=>'uploadfile',
+                    'customCode' => '<input type="hidden" name="escaped_document_name"><input name="uploadfile" type="file" size="30" maxlength="" onchange="setvalue(this);" value="{$fields.filename.value}">{$fields.filename.value}',
+                    'displayParams'=>['required'=>true],
+                ],
+                'status_id',
             ],
-      'status_id',
-     ],
     
-     [
-      'document_name',
-      ['name'=>'revision',
-            'customCode' => '<input name="revision" type="text" value="{$fields.revision.value}">',
-           ],
-     ],
+            [
+                'document_name',
+                ['name'=>'revision',
+                    'customCode' => '<input name="revision" type="text" value="{$fields.revision.value}">',
+                ],
+            ],
     
-     [
-         [
-          'name' => 'template_type',
-          'label' => 'LBL_DET_TEMPLATE_TYPE',
-         ],
-         [
-          'name' => 'is_template',
-          'label' => 'LBL_DET_IS_TEMPLATE',
-         ],
-     ],
+            [
+                [
+                    'name' => 'template_type',
+                    'label' => 'LBL_DET_TEMPLATE_TYPE',
+                ],
+                [
+                    'name' => 'is_template',
+                    'label' => 'LBL_DET_IS_TEMPLATE',
+                ],
+            ],
     
-     [
-       ['name'=>'active_date','displayParams'=>['required'=>true]],
-       'category_id',
-     ],
+            [
+                ['name'=>'active_date','displayParams'=>['required'=>true]],
+                'category_id',
+            ],
     
-     [
-      'exp_date',
-      'subcategory_id',
-     ],
+            [
+                'exp_date',
+                'subcategory_id',
+            ],
     
-     [
-      ['name'=>'team_name','displayParams'=>['required'=>true]],
+            [
+                ['name'=>'team_name','displayParams'=>['required'=>true]],
      
-     ],
+            ],
 
-     [
-      ['name'=>'description', 'displayParams'=>['rows'=>10, 'cols'=>120]],
-     ],
-    ],
+            [
+                ['name'=>'description', 'displayParams'=>['rows'=>10, 'cols'=>120]],
+            ],
+        ],
     ],
 
 ];

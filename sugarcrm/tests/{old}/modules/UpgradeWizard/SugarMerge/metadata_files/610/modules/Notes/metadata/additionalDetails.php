@@ -34,7 +34,8 @@ function additionalDetailsNote($fields)
     }
     
     return ['fieldToAddTo' => 'NAME',
-                 'string' => $overlib_string,
-                 'editLink' => "index.php?action=EditView&module=Notes&return_module=Notes&record={$fields['ID']}",
-                 'viewLink' => "index.php?action=DetailView&module=Notes&return_module=Notes&record={$fields['ID']}"];
+        'string' => $overlib_string,
+        'editLink' => "index.php?action=EditView&module=Notes&return_module=Notes&record={$fields['ID']}",
+        'viewLink' => "index.php?action=DetailView&module=Notes&return_module=Notes&record={$fields['ID']}",
+    ];
 }

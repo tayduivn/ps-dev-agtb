@@ -57,7 +57,8 @@ class Bug67439Test extends TestCase
             ->setMethods([
                 'loadSmarty',
                 'createQuickSearchCode',
-                'createDependencyJavascript'])
+                'createDependencyJavascript',
+            ])
             ->disableOriginalConstructor()
             ->getMock();
         $templateHandler->expects($this->any())

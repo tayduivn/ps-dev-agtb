@@ -687,8 +687,7 @@ class RevenueLineItemTest extends TestCase
         return [
             // No related RLIs
             [
-                [
-                ],
+                [],
                 '',
             ],
             // 2 related RLIs, but none that fit the criteria

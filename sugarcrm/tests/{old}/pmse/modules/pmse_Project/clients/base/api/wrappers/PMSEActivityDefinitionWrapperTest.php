@@ -860,24 +860,24 @@ class PMSEActivityDefinitionWrapperTest extends TestCase
         
         $beanStub = new stdClass();
         $beanStub->field_defs = [
-             [
+            [
                 'name' => 'id',
                 'vname' => 'id',
                 'type' => 'bool',
                 'required' => false,
-             ],
-             [
+            ],
+            [
                 'name' => 'name',
                 'vname' => 'lead_name',
                 'type' => 'radioenum',
                 'required' => false,
-             ],
-             [
+            ],
+            [
                 'name' => 'last_name',
                 'vname' => 'last_name',
                 'type' => 'string',
                 'required' => false,
-             ],
+            ],
         ];
         
         $mockFactory = $this->getMockBuilder('ADAMBeanFactory')

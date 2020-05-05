@@ -23,7 +23,7 @@ class CleanStringTest extends TestCase
             ['4.2$1','STANDARD',false],
             ['abc',"NUMBER",false],
             ['date(d)','SQL_COLUMN_LIST',true],
-            ];
+        ];
     }
     
     /**

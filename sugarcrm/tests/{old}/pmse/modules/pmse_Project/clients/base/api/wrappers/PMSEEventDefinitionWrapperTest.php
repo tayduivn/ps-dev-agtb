@@ -107,9 +107,7 @@ class PMSEEventDefinitionWrapperTest extends TestCase
 
         $args = [
             'record' => 'event01',
-            'data' => [
-                
-            ],
+            'data' => [],
         ];
 
         $result = $mockEventDefinitionWrapper->_put($args);

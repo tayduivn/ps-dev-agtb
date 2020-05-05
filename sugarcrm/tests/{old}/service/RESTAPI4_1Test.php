@@ -151,15 +151,14 @@ class RESTAPI4_1Test extends TestCase
         return $this->makeRESTCall(
             'login',
             [
-                'user_auth' =>
-                    [
-                        'user_name' => $current_user->user_name,
-                        'password' => $current_user->user_hash,
-                        'version' => '.01',
-                        ],
+                'user_auth' => [
+                    'user_name' => $current_user->user_name,
+                    'password' => $current_user->user_hash,
+                    'version' => '.01',
+                ],
                 'application_name' => 'mobile',
                 'name_value_list' => [],
-                ]
+            ]
         );
     }
 

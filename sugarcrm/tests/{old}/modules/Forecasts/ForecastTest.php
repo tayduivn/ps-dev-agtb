@@ -198,15 +198,30 @@ class ForecastTest extends TestCase
     public function create_new_list_queryProvider()
     {
         return [
-            ['', '', false,
-                  'SELECT tp.name timeperiod_name, tp.start_date start_date, tp.end_date end_date, forecasts.*  FROM forecasts LEFT JOIN timeperiods tp on forecasts.timeperiod_id = tp.id    ORDER BY forecasts.date_entered desc'],
-            ['foo desc', '', false,
-                'SELECT tp.name timeperiod_name, tp.start_date start_date, tp.end_date end_date, forecasts.*  FROM forecasts LEFT JOIN timeperiods tp on forecasts.timeperiod_id = tp.id   ORDER BY foo desc'],
-            ['', '1=1', false,
-                'SELECT tp.name timeperiod_name, tp.start_date start_date, tp.end_date end_date, forecasts.*  FROM forecasts LEFT JOIN timeperiods tp on forecasts.timeperiod_id = tp.id   WHERE 1=1  ORDER BY forecasts.date_entered desc'],
-            ['', '', true,
-                json_decode('{"select":"SELECT tp.name timeperiod_name, tp.start_date start_date, tp.end_date end_date, forecasts.* ","from":" FROM forecasts LEFT JOIN timeperiods tp on forecasts.timeperiod_id = tp.id  ","where":"","order_by":"  ORDER BY forecasts.date_entered desc"}', true)],
-
+            [
+                '',
+                '',
+                false,
+                'SELECT tp.name timeperiod_name, tp.start_date start_date, tp.end_date end_date, forecasts.*  FROM forecasts LEFT JOIN timeperiods tp on forecasts.timeperiod_id = tp.id    ORDER BY forecasts.date_entered desc',
+            ],
+            [
+                'foo desc',
+                '',
+                false,
+                'SELECT tp.name timeperiod_name, tp.start_date start_date, tp.end_date end_date, forecasts.*  FROM forecasts LEFT JOIN timeperiods tp on forecasts.timeperiod_id = tp.id   ORDER BY foo desc',
+            ],
+            [
+                '',
+                '1=1',
+                false,
+                'SELECT tp.name timeperiod_name, tp.start_date start_date, tp.end_date end_date, forecasts.*  FROM forecasts LEFT JOIN timeperiods tp on forecasts.timeperiod_id = tp.id   WHERE 1=1  ORDER BY forecasts.date_entered desc',
+            ],
+            [
+                '',
+                '',
+                true,
+                json_decode('{"select":"SELECT tp.name timeperiod_name, tp.start_date start_date, tp.end_date end_date, forecasts.* ","from":" FROM forecasts LEFT JOIN timeperiods tp on forecasts.timeperiod_id = tp.id  ","where":"","order_by":"  ORDER BY forecasts.date_entered desc"}', true),
+            ],
         ];
     }
 
@@ -236,8 +251,12 @@ class ForecastTest extends TestCase
     public function get_list_view_arrayProvider()
     {
         return [
-            [100, 100, 100,
-                json_decode('{"PIPELINE_OPP_COUNT":"0","PIPELINE_AMOUNT":"0","CLOSED_AMOUNT":"0","BEST_CASE":100,"LIKELY_CASE":100,"WORST_CASE":100,"DELETED":0,"CURRENCY_ID":"-99","BASE_RATE":1}', true)],
+            [
+                100,
+                100,
+                100,
+                json_decode('{"PIPELINE_OPP_COUNT":"0","PIPELINE_AMOUNT":"0","CLOSED_AMOUNT":"0","BEST_CASE":100,"LIKELY_CASE":100,"WORST_CASE":100,"DELETED":0,"CURRENCY_ID":"-99","BASE_RATE":1}', true),
+            ],
         ];
     }
 
@@ -283,11 +302,18 @@ class ForecastTest extends TestCase
         $timeperiod_id = TimePeriod::getCurrentId();
 
         return [
-            ["user_id='user' AND forecast_type='Direct' AND timeperiod_id='{$timeperiod_id}'",
-                'user', $timeperiod_id , false],
-            ["user_id='user' AND forecast_type='Rollup' AND timeperiod_id='{$timeperiod_id}'",
-                'user', $timeperiod_id , true],
-
+            [
+                "user_id='user' AND forecast_type='Direct' AND timeperiod_id='{$timeperiod_id}'",
+                'user',
+                $timeperiod_id,
+                false,
+            ],
+            [
+                "user_id='user' AND forecast_type='Rollup' AND timeperiod_id='{$timeperiod_id}'",
+                'user',
+                $timeperiod_id,
+                true,
+            ],
         ];
     }
 

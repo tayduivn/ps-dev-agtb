@@ -227,7 +227,6 @@ class FunctionSugarButtonTest extends TestCase
                                         ],
                                     ],
                                 ],
-
                             ],
                         ],
                     ],
@@ -310,7 +309,7 @@ class FunctionSugarButtonTest extends TestCase
                 '{if $fields.status.value != "Held"}<input type="hidden" name="id1" value="true"/><input type="hidden" name="id2"/><input {if $APP.CONTAINER = true}onclick="'.$expected_onclick.'"{else}onclick="stop();"{/if} type="button" value="{$APP.LBL_CLOSE_AND_CREATE_BUTTON_TITLE}"/>{/if}',
             ],
             //set #10: empty spaces after the equal sign
-             [
+            [
                 '<input title="{$APP.LBL_SAVE_BUTTON_TITLE}" id= "SAVE" disabled onclick="SUGAR.meetings.fill_invitees();document.EditView.action.value=\'Save\'; document.EditView.return_action.value=\'DetailView\'; {if isset($smarty.request.isDuplicate) && $smarty.request.isDuplicate eq "true"}document.EditView.return_id.value=\'\'; {/if} formSubmitCheck();"type="button" name="button" value="{$APP.LBL_SAVE_BUTTON_LABEL}">',
                 [
                     'tag' => 'input',
@@ -326,7 +325,7 @@ class FunctionSugarButtonTest extends TestCase
                 '<input title="{$APP.LBL_SAVE_BUTTON_TITLE}" id="SAVE" disabled onclick="SUGAR.meetings.fill_invitees();document.EditView.action.value=\'Save\'; document.EditView.return_action.value=\'DetailView\'; {if isset($smarty.request.isDuplicate) && $smarty.request.isDuplicate eq "true"}document.EditView.return_id.value=\'\'; {/if} formSubmitCheck();" type="button" name="button" value="{$APP.LBL_SAVE_BUTTON_LABEL}"/>',
             ],
             //set #11: empty spaces before the equal sign
-             [
+            [
                 '<input title="{$APP.LBL_SAVE_BUTTON_TITLE}" id    = "SAVE" disabled onclick="SUGAR.meetings.fill_invitees();document.EditView.action.value=\'Save\'; document.EditView.return_action.value=\'DetailView\'; {if isset($smarty.request.isDuplicate) && $smarty.request.isDuplicate eq "true"}document.EditView.return_id.value=\'\'; {/if} formSubmitCheck();"type="button" name="button" value="{$APP.LBL_SAVE_BUTTON_LABEL}">',
                 [
                     'tag' => 'input',
@@ -532,8 +531,6 @@ class FunctionSugarButtonTest extends TestCase
                     .'{/nocache}'
                     .'</form>',
             ],
-
-
         ];
     }
     /**

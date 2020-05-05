@@ -11,52 +11,27 @@
  */
  
 //Workflow Action Meta Data Arrays
-$action_meta_array =  [
-
-'Accounts0_action0' =>
-
- [
-
-         'action_type' => 'update',
-         'action_module' => '',
-         'rel_module' => '',
-         'rel_module_type' => 'all',
-     'basic' =>  [
-
-         'description' => 'Hey Man!',
-         ],
-
-         'basic_ext' =>  [
-
-         ],
-
-         'advanced' =>  [
-
-         ],
-
-],
-
-'Accounts1_action0' =>
-
- [
-
-         'action_type' => 'update',
-         'action_module' => '',
-         'rel_module' => '',
-         'rel_module_type' => 'all',
-     'basic' =>  [
-
-         'team_id' => '1',
-         ],
-
-         'basic_ext' =>  [
-
-         ],
-
-         'advanced' =>  [
-
-         ],
-
-],
-
+$action_meta_array = [
+    'Accounts0_action0' => [
+        'action_type' => 'update',
+        'action_module' => '',
+        'rel_module' => '',
+        'rel_module_type' => 'all',
+        'basic' => [
+            'description' => 'Hey Man!',
+        ],
+        'basic_ext' => [],
+        'advanced' => [],
+    ],
+    'Accounts1_action0' => [
+        'action_type' => 'update',
+        'action_module' => '',
+        'rel_module' => '',
+        'rel_module_type' => 'all',
+        'basic' => [
+            'team_id' => '1',
+        ],
+        'basic_ext' => [],
+        'advanced' => [],
+    ],
 ];

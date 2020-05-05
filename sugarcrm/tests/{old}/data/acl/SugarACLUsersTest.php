@@ -54,21 +54,51 @@ class SugarACLUsersTest extends TestCase
             ['Users', 'team_security', false, [], [], true],
             // Regular user in any way should have access to export functionality
             // if both disable_export & admin_export_only are not checked
-            ['Users', 'export', false, [],
-                ['disable_export' => false, 'admin_export_only' => false], true],
+            [
+                'Users',
+                'export',
+                false,
+                [],
+                ['disable_export' => false, 'admin_export_only' => false],
+                true,
+            ],
             // Regular user should have access to export functionality in Employees module
             // if both disable_export & admin_export_only are not checked
-            ['Employees', 'export', false, [],
-                ['disable_export' => false, 'admin_export_only' => false], true],
+            [
+                'Employees',
+                'export',
+                false,
+                [],
+                ['disable_export' => false, 'admin_export_only' => false],
+                true,
+            ],
             // Regular user doesn't have access to export functionality if admin_export_only is true
-            ['Employees', 'export', false, [],
-                ['disable_export' => false, 'admin_export_only' => true], false],
+            [
+                'Employees',
+                'export',
+                false,
+                [],
+                ['disable_export' => false, 'admin_export_only' => true],
+                false,
+            ],
             // Admin user has access to export
-            ['Users', 'export', true, [],
-                ['disable_export' => false, 'admin_export_only' => true], true],
+            [
+                'Users',
+                'export',
+                true,
+                [],
+                ['disable_export' => false, 'admin_export_only' => true],
+                true,
+            ],
             // Admin user doesn't have access to export if disable_export is true
-            ['Users', 'export', true, [],
-                ['disable_export' => true, 'admin_export_only' => true], false],
+            [
+                'Users',
+                'export',
+                true,
+                [],
+                ['disable_export' => true, 'admin_export_only' => true],
+                false,
+            ],
             // This is another way to disable yourself
             ['Users', 'field', false, ['action' => 'edit', 'field' => 'status'], [], false],
             ['Users', 'field', false, ['action' => 'massupdate', 'field' => 'status'], [], false],

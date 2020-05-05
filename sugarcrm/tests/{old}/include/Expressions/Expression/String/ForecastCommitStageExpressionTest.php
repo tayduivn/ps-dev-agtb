@@ -29,52 +29,44 @@ class ForecastCommitStageExpressionTest extends TestCase
     public static function evaluateDataProvider()
     {
         $binary_values = [
-            'include' =>
-                [
-                    'min' => 70,
-                    'max' => 100,
-                ],
-            'exclude' =>
-                [
-                    'min' => 0,
-                    'max' => 69,
-                ],
+            'include' => [
+                'min' => 70,
+                'max' => 100,
+            ],
+            'exclude' => [
+                'min' => 0,
+                'max' => 69,
+            ],
         ];
 
         $buckets_values = [
-            'include' =>
-                [
-                    'min' => 85,
-                    'max' => 100,
-                ],
-            'upside' =>
-                [
-                    'min' => 70,
-                    'max' => 84,
-                ],
-            'exclude' =>
-                [
-                    'min' => 0,
-                    'max' => 69,
-                ],
+            'include' => [
+                'min' => 85,
+                'max' => 100,
+            ],
+            'upside' => [
+                'min' => 70,
+                'max' => 84,
+            ],
+            'exclude' => [
+                'min' => 0,
+                'max' => 69,
+            ],
         ];
 
         $custom_values = [
-            'include' =>
-                [
-                    'min' => 85,
-                    'max' => 100,
-                ],
-            'cstm_value' =>
-                [
-                    'min' => 70,
-                    'max' => 84,
-                ],
-            'exclude' =>
-                [
-                    'min' => 0,
-                    'max' => 69,
-                ],
+            'include' => [
+                'min' => 85,
+                'max' => 100,
+            ],
+            'cstm_value' => [
+                'min' => 70,
+                'max' => 84,
+            ],
+            'exclude' => [
+                'min' => 0,
+                'max' => 69,
+            ],
         ];
 
         return [

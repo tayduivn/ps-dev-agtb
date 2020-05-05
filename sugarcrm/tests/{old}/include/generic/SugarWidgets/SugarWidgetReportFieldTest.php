@@ -119,84 +119,66 @@ class SugarWidgetReportFieldTest extends TestCase
     public static function queryOrderByDataProvider()
     {
         $reportDef = [
-            'display_columns' =>
-                [
-                    0 =>
-                        [
-                            'name' => 'full_name',
-                            'label' => 'Full Name',
-                            'table_key' => 'Accounts:assigned_user_link',
-                        ],
-                    1 =>
-                        [
-                            'name' => 'name',
-                            'label' => 'Name',
-                            'table_key' => 'self',
-                        ],
+            'display_columns' => [
+                0 => [
+                    'name' => 'full_name',
+                    'label' => 'Full Name',
+                    'table_key' => 'Accounts:assigned_user_link',
                 ],
+                1 => [
+                    'name' => 'name',
+                    'label' => 'Name',
+                    'table_key' => 'self',
+                ],
+            ],
             'module' => 'Accounts',
-            'group_defs' =>
-                [
+            'group_defs' => [],
+            'summary_columns' => [],
+            'order_by' => [
+                0 => [
+                    'name' => 'full_name',
+                    'label' => 'Full Name',
+                    'table_key' => 'Accounts:assigned_user_link',
+                    'sort_dir' => 'd',
                 ],
-            'summary_columns' =>
-                [
-                ],
-            'order_by' =>
-                [
-                    0 =>
-                        [
-                            'name' => 'full_name',
-                            'label' => 'Full Name',
-                            'table_key' => 'Accounts:assigned_user_link',
-                            'sort_dir' => 'd',
-                        ],
-                ],
+            ],
             'report_name' => 'Test',
             'do_round' => 1,
             'numerical_chart_column' => '',
             'numerical_chart_column_type' => '',
             'assigned_user_id' => '1',
             'report_type' => 'tabular',
-            'full_table_list' =>
-                [
-                    'self' =>
-                        [
-                            'value' => 'Accounts',
-                            'module' => 'Accounts',
-                            'label' => 'Accounts',
-                            'dependents' =>
-                                [
-                                ],
-                        ],
-                    'Accounts:assigned_user_link' =>
-                        [
-                            'name' => 'Accounts  >  Assigned to User',
-                            'parent' => 'self',
-                            'link_def' =>
-                                [
-                                    'name' => 'assigned_user_link',
-                                    'relationship_name' => 'accounts_assigned_user',
-                                    'bean_is_lhs' => false,
-                                    'link_type' => 'one',
-                                    'label' => 'Assigned to User',
-                                    'module' => 'Users',
-                                    'table_key' => 'Accounts:assigned_user_link',
-                                ],
-                            'dependents' =>
-                                [
-                                    0 => 'display_cols_row_1',
-                                ],
-                            'module' => 'Users',
-                            'label' => 'Assigned to User',
-                        ],
+            'full_table_list' => [
+                'self' => [
+                    'value' => 'Accounts',
+                    'module' => 'Accounts',
+                    'label' => 'Accounts',
+                    'dependents' => [],
                 ],
-            'filters_def' =>
-                [
-                    'Filter_1' =>
-                        [
-                            'operator' => 'AND',
-                        ],
+                'Accounts:assigned_user_link' => [
+                    'name' => 'Accounts  >  Assigned to User',
+                    'parent' => 'self',
+                    'link_def' => [
+                        'name' => 'assigned_user_link',
+                        'relationship_name' => 'accounts_assigned_user',
+                        'bean_is_lhs' => false,
+                        'link_type' => 'one',
+                        'label' => 'Assigned to User',
+                        'module' => 'Users',
+                        'table_key' => 'Accounts:assigned_user_link',
+                    ],
+                    'dependents' => [
+                        0 => 'display_cols_row_1',
+                    ],
+                    'module' => 'Users',
+                    'label' => 'Assigned to User',
                 ],
+            ],
+            'filters_def' => [
+                'Filter_1' => [
+                    'operator' => 'AND',
+                ],
+            ],
             'chart_type' => 'none',
         ];
 

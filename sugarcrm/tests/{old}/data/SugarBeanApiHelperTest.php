@@ -42,16 +42,16 @@ class SugarBeanApiHelperTest extends TestCase
         $mock->module_name = 'Test';
         $mock->module_dir = 'Test';
         $mock->field_defs = [
-                'testInt' => [
-                    'type' => 'int',
-                ],
-                'testDecimal' => [
-                    'type' => 'decimal',
-                ],
-                'testBool' => [
-                    'type' => 'bool',
-                ],
-            ];
+            'testInt' => [
+                'type' => 'int',
+            ],
+            'testDecimal' => [
+                'type' => 'decimal',
+            ],
+            'testBool' => [
+                'type' => 'bool',
+            ],
+        ];
         $this->bean = $mock;
         $this->serviceMock = SugarTestRestUtilities::getRestServiceMock();
         $this->beanApiHelper = new SugarBeanApiHelper($this->serviceMock);

@@ -358,9 +358,9 @@ SQL
         );
 
         return $this->conn->executeQuery($query, [
-                $teamSet->id,
-                $user->id,
-            ])->fetch() !== false;
+            $teamSet->id,
+            $user->id,
+        ])->fetch() !== false;
     }
 
     /**

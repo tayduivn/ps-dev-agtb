@@ -52,9 +52,9 @@ class GetLinkedBeansTest extends TestCase
         $account->save();
 
         $where = [
-                 'lhs_field' => 'id',
-                 'operator' => ' LIKE ',
-                 'rhs_value' => "{$case->id}",
+            'lhs_field' => 'id',
+            'operator' => ' LIKE ',
+            'rhs_value' => "{$case->id}",
         ];
 
         $cases = $account->get_linked_beans('cases', 'Case', [], 0, 10, 0, $where);
@@ -72,9 +72,9 @@ class GetLinkedBeansTest extends TestCase
         $account->contacts->add($contact);
 
         $where = [
-                 'lhs_field' => 'id',
-                 'operator' => ' LIKE ',
-                 'rhs_value' => "{$contact->id}",
+            'lhs_field' => 'id',
+            'operator' => ' LIKE ',
+            'rhs_value' => "{$contact->id}",
         ];
 
         $contacts = $account->get_linked_beans('contacts', 'Contact', [], 0, -1, 0, $where);

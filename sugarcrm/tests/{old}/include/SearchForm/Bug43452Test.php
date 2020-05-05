@@ -39,9 +39,10 @@ class Bug43452Test extends TestCase
         //     1) From SearchForm2->generateSearchWhere, in case of 'bool' (they surround "converted = '0' or converted IS NULL")
         //     2) From PopupSmarty->_get_where_clause, when items of where's array are imploded.
 
-        $_searchFields['Leads'] =  ['first_name'=> ['value' => 'Fabio', 'query_type'=>'default'],
-                                         'converted'=> ['type'=> 'bool', 'value' => '0', 'query_type'=>'default'],
-                                        ];
+        $_searchFields['Leads'] = [
+            'first_name' => ['value' => 'Fabio', 'query_type' => 'default'],
+            'converted' => ['type' => 'bool', 'value' => '0', 'query_type' => 'default'],
+        ];
         // provides $searchdefs['Leads']
         $searchdefs = [];
         require "modules/Leads/metadata/searchdefs.php";

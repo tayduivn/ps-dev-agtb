@@ -123,8 +123,6 @@ class SetEntriesMultipleTest extends SOAPTestCase
                     ['name'=>'id','value'=>$this->cont1->id],
                     ['name'=>'account_name','value'=>$this->accnt1->name],
                     ['name'=>'account_id','value'=>$this->accnt1->id],
-
-
                 ],
                 [
                     ['name'=>'last_name','value'=>$this->cont2->last_name],
@@ -133,7 +131,6 @@ class SetEntriesMultipleTest extends SOAPTestCase
                     ['name'=>'id','value'=>$this->cont2->id],
                     ['name'=>'account_name','value'=>$this->accnt2->name],
                     ['name'=>'account_id','value'=>$this->accnt2->id],
-
                 ],
             ],
         ];

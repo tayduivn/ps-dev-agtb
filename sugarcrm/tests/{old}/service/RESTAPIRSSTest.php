@@ -67,15 +67,14 @@ class RESTAPIRSSTest extends TestCase
         return $this->makeRESTCall(
             'login',
             [
-                'user_auth' =>
-                    [
-                        'user_name' => $this->_user->user_name,
-                        'password' => $this->_user->user_hash,
-                        'version' => '.01',
-                        ],
+                'user_auth' => [
+                    'user_name' => $this->_user->user_name,
+                    'password' => $this->_user->user_hash,
+                    'version' => '.01',
+                ],
                 'application_name' => 'SugarTestRunner',
                 'name_value_list' => [],
-                ]
+            ]
         );
     }
 
@@ -87,10 +86,10 @@ class RESTAPIRSSTest extends TestCase
         $rss = $this->makeRESTCall(
             'get_entry_list',
             [
-                            'session' => $sessionId,
-                            'module' => 'Contacts',
-                            'query' => "contacts.id = '{$this->_contact->id}'",
-                            ],
+                'session' => $sessionId,
+                'module' => 'Contacts',
+                'query' => "contacts.id = '{$this->_contact->id}'",
+            ],
             'RSS'
         );
 
@@ -107,10 +106,10 @@ class RESTAPIRSSTest extends TestCase
         $rss = $this->makeRESTCall(
             'get_entry',
             [
-                            'session' => $sessionId,
-                            'module' => 'Contacts',
-                            'id' => $this->_contact->id,
-                            ],
+                'session' => $sessionId,
+                'module' => 'Contacts',
+                'id' => $this->_contact->id,
+            ],
             'RSS'
         );
 
@@ -127,10 +126,10 @@ class RESTAPIRSSTest extends TestCase
         $rss = $this->makeRESTCall(
             'get_entries',
             [
-                            'session' => $sessionId,
-                            'module' => 'Contacts',
-                            'ids' => [$this->_contact->id],
-                            ],
+                'session' => $sessionId,
+                'module' => 'Contacts',
+                'ids' => [$this->_contact->id],
+            ],
             'RSS'
         );
 

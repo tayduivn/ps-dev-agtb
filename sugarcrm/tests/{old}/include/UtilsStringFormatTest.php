@@ -33,11 +33,13 @@ class UtilsStringFormatTest extends TestCase
     {
         $output = string_format(
             "I am {feetTall} feet tall, my name is {firstName} and I like {thingILike}",
-            ['feetTall'=>7,
-                                      'firstName'=>'Hans',
-                                      'lastName'=>'Ironsmithson',
-                                      'thingILike'=>'finger puppets',
-            'thingIHate'=>'Llama licks the world']
+            [
+                'feetTall'=>7,
+                'firstName'=>'Hans',
+                'lastName'=>'Ironsmithson',
+                'thingILike'=>'finger puppets',
+                'thingIHate'=>'Llama licks the world',
+            ]
         );
         $this->assertEquals(
             'I am 7 feet tall, my name is Hans and I like finger puppets',

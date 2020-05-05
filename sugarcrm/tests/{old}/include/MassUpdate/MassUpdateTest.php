@@ -54,7 +54,7 @@ class MassUpdateTest extends TestCase
             '10' => 'ten',
             '20' => 'twenty',
             '30' => 'thirty',
-            ];
+        ];
         $result = $mass->addStatus('test_dom', 'test_dom', $options);
         preg_match_all('/value=[\'\"].*?[\'\"]/si', $result, $matches);
         $this->assertTrue($matches[0][0] == "value=''");
@@ -74,7 +74,7 @@ class MassUpdateTest extends TestCase
             '10' => 'ten',
             '20' => 'twenty',
             '30' => 'thirty',
-            ];
+        ];
         
         $result = $mass->addStatusMulti('test_dom', 'test_dom', $options);
         preg_match_all('/value=[\'\"].*?[\'\"]/si', $result, $matches);
@@ -120,214 +120,344 @@ class MassUpdateTest extends TestCase
     {
         return [
             [
-                ['test' => [
-                    'name' => 'foofield', 'type' => 'bool', 'readonly' => true]],
+                [
+                    'test' => [
+                        'name' => 'foofield', 'type' => 'bool', 'readonly' => true,
+                    ],
+                ],
                 'Foo',
-                ['test' => [
-                    'name' => 'foofield', 'type' => 'bool', 'readonly' => true, 'massupdate' => false]],
+                [
+                    'test' => [
+                        'name' => 'foofield', 'type' => 'bool', 'readonly' => true, 'massupdate' => false,
+                    ],
+                ],
             ],
             [
-                ['test' => [
-                    'name' => 'foofield', 'type' => 'bool', 'calculated' => true, 'enforced' => true]],
+                [
+                    'test' => [
+                        'name' => 'foofield', 'type' => 'bool', 'calculated' => true, 'enforced' => true,
+                    ],
+                ],
                 'Foo',
-                ['test' => [
-                    'name' => 'foofield', 'type' => 'bool', 'calculated' => true, 'enforced' => true, 'massupdate' => false]],
+                [
+                    'test' => [
+                        'name' => 'foofield', 'type' => 'bool', 'calculated' => true, 'enforced' => true, 'massupdate' => false,
+                    ],
+                ],
             ],
             [
-                ['test' => [
-                    'name' => 'foofield', 'type' => 'bool', 'calculated' => true, 'enforced' => false]],
+                [
+                    'test' => [
+                        'name' => 'foofield', 'type' => 'bool', 'calculated' => true, 'enforced' => false,
+                    ],
+                ],
                 'Foo',
-                ['test' => [
-                    'name' => 'foofield', 'type' => 'bool', 'calculated' => true, 'enforced' => false, 'massupdate' => true]],
+                [
+                    'test' => [
+                        'name' => 'foofield', 'type' => 'bool', 'calculated' => true, 'enforced' => false, 'massupdate' => true,
+                    ],
+                ],
             ],
             [
-                ['test' => [
-                    'name' => 'foofield', 'type' => 'bool', 'massupdate' => true]],
+                [
+                    'test' => [
+                        'name' => 'foofield', 'type' => 'bool', 'massupdate' => true,
+                    ],
+                ],
                 'Foo',
-                ['test' => [
-                    'name' => 'foofield', 'type' => 'bool', 'massupdate' => true],
+                [
+                    'test' => [
+                        'name' => 'foofield', 'type' => 'bool', 'massupdate' => true,
+                    ],
                 ],
             ],
             [
-                ['test' => [
-                    'name' => 'foofield', 'type' => 'bool', 'massupdate' => 'true']],
+                [
+                    'test' => [
+                        'name' => 'foofield', 'type' => 'bool', 'massupdate' => 'true',
+                    ],
+                ],
                 'Foo',
-                ['test' => [
-                    'name' => 'foofield', 'type' => 'bool', 'massupdate' => true],
+                [
+                    'test' => [
+                        'name' => 'foofield', 'type' => 'bool', 'massupdate' => true,
+                    ],
                 ],
             ],
             [
-                ['test' => [
-                    'name' => 'foofield', 'type' => 'bool', 'massupdate' => 1]],
+                [
+                    'test' => [
+                        'name' => 'foofield', 'type' => 'bool', 'massupdate' => 1,
+                    ],
+                ],
                 'Foo',
-                ['test' => [
-                    'name' => 'foofield', 'type' => 'bool', 'massupdate' => true],
+                [
+                    'test' => [
+                        'name' => 'foofield', 'type' => 'bool', 'massupdate' => true,
+                    ],
                 ],
             ],
             [
-                ['test' => [
-                    'name' => 'foofield', 'type' => 'bool', 'massupdate' => 0]],
+                [
+                    'test' => [
+                        'name' => 'foofield', 'type' => 'bool', 'massupdate' => 0,
+                    ],
+                ],
                 'Foo',
-                ['test' => [
-                    'name' => 'foofield', 'type' => 'bool', 'massupdate' => false],
+                [
+                    'test' => [
+                        'name' => 'foofield', 'type' => 'bool', 'massupdate' => false,
+                    ],
                 ],
             ],
             [
-                ['test' => [
-                    'name' => 'foofield', 'type' => 'bool', 'massupdate' => 'false']],
+                [
+                    'test' => [
+                        'name' => 'foofield', 'type' => 'bool', 'massupdate' => 'false',
+                    ],
+                ],
                 'Foo',
-                ['test' => [
-                    'name' => 'foofield', 'type' => 'bool', 'massupdate' => false],
+                [
+                    'test' => [
+                        'name' => 'foofield', 'type' => 'bool', 'massupdate' => false,
+                    ],
                 ],
             ],
             [
-                ['test' => [
-                    'name' => 'foofield', 'type' => 'date_modified']],
+                [
+                    'test' => [
+                        'name' => 'foofield', 'type' => 'date_modified',
+                    ],
+                ],
                 'Foo',
-                ['test' => [
-                    'name' => 'foofield', 'type' => 'date_modified'],
+                [
+                    'test' => [
+                        'name' => 'foofield', 'type' => 'date_modified',
+                    ],
                 ],
             ],
             [
-                ['test' => [
-                    'name' => 'foofield', 'type' => 'contact_id']],
+                [
+                    'test' => [
+                        'name' => 'foofield', 'type' => 'contact_id',
+                    ],
+                ],
                 'Foo',
-                ['test' => [
-                    'name' => 'foofield', 'type' => 'contact_id', 'massupdate' => true],
+                [
+                    'test' => [
+                        'name' => 'foofield', 'type' => 'contact_id', 'massupdate' => true,
+                    ],
                 ],
             ],
             [
-                ['test' => [
-                    'name' => 'foofield', 'type' => 'assigned_user_name']],
-                    'Foo',
-                    ['test' => [
-                        'name' => 'foofield', 'type' => 'assigned_user_name', 'massupdate' => true],
+                [
+                    'test' => [
+                        'name' => 'foofield', 'type' => 'assigned_user_name',
+                    ],
                 ],
-            ],
-            [
-                ['test' => [
-                    'name' => 'foofield', 'type' => 'account_id']],
-                    'Foo',
-                    ['test' => [
-                        'name' => 'foofield', 'type' => 'account_id', 'massupdate' => true],
-                ],
-            ],
-            [
-                ['test' => [
-                    'name' => 'foofield', 'type' => 'account_name']],
-                    'Foo',
-                    ['test' => [
-                        'name' => 'foofield', 'type' => 'account_name', 'massupdate' => true],
-                ],
-            ],
-            [
-                ['test' => [
-                    'name' => 'foofield', 'type' => 'bool']],
-                    'Foo',
-                    ['test' => [
-                        'name' => 'foofield', 'type' => 'bool', 'massupdate' => true],
-                ],
-            ],
-            [
-                ['test' => [
-                    'name' => 'foofield', 'type' => 'parent']],
-                    'Foo',
-                    ['test' => [
-                        'name' => 'foofield', 'type' => 'parent', 'massupdate' => true],
-                ],
-            ],
-            [
-                ['test' => [
-                    'name' => 'foofield', 'type' => 'enum']],
-                    'Foo',
-                    ['test' => [
-                        'name' => 'foofield', 'type' => 'enum', 'massupdate' => true],
-                ],
-            ],
-            [
-                ['test' => [
-                    'name' => 'foofield', 'type' => 'multienum']],
-                    'Foo',
-                    ['test' => [
-                        'name' => 'foofield', 'type' => 'multienum', 'massupdate' => true],
-                ],
-            ],
-            [
-                ['test' => [
-                    'name' => 'foofield', 'type' => 'radioenum']],
-                    'Foo',
-                    ['test' => [
-                        'name' => 'foofield', 'type' => 'radioenum', 'massupdate' => true],
-                ],
-            ],
-            [
-                ['test' => [
-                    'name' => 'foofield', 'type' => 'datetime']],
-                    'Foo',
-                    ['test' => [
-                        'name' => 'foofield', 'type' => 'datetime', 'massupdate' => true],
-                ],
-            ],
-            [
-                ['test' => [
-                    'name' => 'foofield', 'type' => 'date']],
-                    'Foo',
-                    ['test' => [
-                        'name' => 'foofield', 'type' => 'date', 'massupdate' => true],
-                ],
-            ],
-            [
-                ['test' => [
-                    'name' => 'foofield', 'type' => 'int', 'massupdate' => true]],
-                    'Foo',
-                    ['test' => [
-                        'name' => 'foofield', 'type' => 'int', 'massupdate' => true],
-                ],
-            ],
-            [
-                ['test' => [
-                    'name' => 'foofield', 'type' => 'int', 'auto_increment' => true]],
-                    'Foo',
-                    ['test' => [
-                        'name' => 'foofield', 'type' => 'int', 'auto_increment' => true],
-                ],
-            ],
-            [
-                ['test' => [
-                    'name' => 'foofield', 'type' => 'relate']],
                 'Foo',
-                ['test' => [
-                    'name' => 'foofield', 'type' => 'relate']],
+                [
+                    'test' => [
+                        'name' => 'foofield', 'type' => 'assigned_user_name', 'massupdate' => true,
+                    ],
+                ],
             ],
             [
-                ['test' => [
-                    'name' => 'foofield', 'type' => 'relate', 'id_name' => 'bar']],
+                [
+                    'test' => [
+                        'name' => 'foofield', 'type' => 'account_id',
+                    ],
+                ],
                 'Foo',
-                ['test' => [
-                    'name' => 'foofield', 'type' => 'relate', 'id_name' => 'bar', 'massupdate' => true]],
+                [
+                    'test' => [
+                        'name' => 'foofield', 'type' => 'account_id', 'massupdate' => true,
+                    ],
+                ],
+            ],
+            [
+                [
+                    'test' => [
+                        'name' => 'foofield', 'type' => 'account_name',
+                    ],
+                ],
+                'Foo',
+                [
+                    'test' => [
+                        'name' => 'foofield', 'type' => 'account_name', 'massupdate' => true,
+                    ],
+                ],
+            ],
+            [
+                [
+                    'test' => [
+                        'name' => 'foofield', 'type' => 'bool',
+                    ],
+                ],
+                'Foo',
+                [
+                    'test' => [
+                        'name' => 'foofield', 'type' => 'bool', 'massupdate' => true,
+                    ],
+                ],
+            ],
+            [
+                [
+                    'test' => [
+                        'name' => 'foofield', 'type' => 'parent',
+                    ],
+                ],
+                'Foo',
+                [
+                    'test' => [
+                        'name' => 'foofield', 'type' => 'parent', 'massupdate' => true,
+                    ],
+                ],
+            ],
+            [
+                [
+                    'test' => [
+                        'name' => 'foofield', 'type' => 'enum',
+                    ],
+                ],
+                'Foo',
+                [
+                    'test' => [
+                        'name' => 'foofield', 'type' => 'enum', 'massupdate' => true,
+                    ],
+                ],
+            ],
+            [
+                [
+                    'test' => [
+                        'name' => 'foofield', 'type' => 'multienum',
+                    ],
+                ],
+                'Foo',
+                [
+                    'test' => [
+                        'name' => 'foofield', 'type' => 'multienum', 'massupdate' => true,
+                    ],
+                ],
+            ],
+            [
+                [
+                    'test' => [
+                        'name' => 'foofield', 'type' => 'radioenum',
+                    ],
+                ],
+                'Foo',
+                [
+                    'test' => [
+                        'name' => 'foofield', 'type' => 'radioenum', 'massupdate' => true,
+                    ],
+                ],
+            ],
+            [
+                [
+                    'test' => [
+                        'name' => 'foofield', 'type' => 'datetime',
+                    ],
+                ],
+                'Foo',
+                [
+                    'test' => [
+                        'name' => 'foofield', 'type' => 'datetime', 'massupdate' => true,
+                    ],
+                ],
+            ],
+            [
+                [
+                    'test' => [
+                        'name' => 'foofield', 'type' => 'date',
+                    ],
+                ],
+                'Foo',
+                [
+                    'test' => [
+                        'name' => 'foofield', 'type' => 'date', 'massupdate' => true,
+                    ],
+                ],
+            ],
+            [
+                [
+                    'test' => [
+                        'name' => 'foofield', 'type' => 'int', 'massupdate' => true,
+                    ],
+                ],
+                'Foo',
+                [
+                    'test' => [
+                        'name' => 'foofield', 'type' => 'int', 'massupdate' => true,
+                    ],
+                ],
+            ],
+            [
+                [
+                    'test' => [
+                        'name' => 'foofield', 'type' => 'int', 'auto_increment' => true,
+                    ],
+                ],
+                'Foo',
+                [
+                    'test' => [
+                        'name' => 'foofield', 'type' => 'int', 'auto_increment' => true,
+                    ],
+                ],
+            ],
+            [
+                [
+                    'test' => [
+                        'name' => 'foofield', 'type' => 'relate',
+                    ],
+                ],
+                'Foo',
+                [
+                    'test' => [
+                        'name' => 'foofield', 'type' => 'relate',
+                    ],
+                ],
+            ],
+            [
+                [
+                    'test' => [
+                        'name' => 'foofield', 'type' => 'relate', 'id_name' => 'bar',
+                    ],
+                ],
+                'Foo',
+                [
+                    'test' => [
+                        'name' => 'foofield', 'type' => 'relate', 'id_name' => 'bar', 'massupdate' => true,
+                    ],
+                ],
             ],
             [
                 ['sync_contact' => []],
                 'Contacts',
-                ['sync_contact' => [
-                    'massupdate' => true],
+                [
+                    'sync_contact' => [
+                        'massupdate' => true,
+                    ],
                 ],
             ],
             [
                 ['employee_status' => []],
                 'Employees',
-                ['employee_status' => [
-                    'massupdate' => true, 'type' => 'enum', 'options' => 'employee_status_dom'],
+                [
+                    'employee_status' => [
+                        'massupdate' => true, 'type' => 'enum', 'options' => 'employee_status_dom',
+                    ],
                 ],
             ],
             [
                 ['status' => []],
                 'InboundEmail',
-                ['status' => [
-                    'massupdate' => true, 'type' => 'enum', 'options' => 'user_status_dom'],
+                [
+                    'status' => [
+                        'massupdate' => true, 'type' => 'enum', 'options' => 'user_status_dom',
+                    ],
                 ],
             ],
-
         ];
     }
 }

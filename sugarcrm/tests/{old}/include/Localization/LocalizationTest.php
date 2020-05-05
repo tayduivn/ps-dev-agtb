@@ -80,7 +80,7 @@ class LocalizationTest extends TestCase
                 'Mr.',
                 'Saler',
                 'Saler Mr. Mason Hu',
-                ],
+            ],
             [
                 'l f',
                 'Mason',
@@ -88,9 +88,8 @@ class LocalizationTest extends TestCase
                 '',
                 '',
                 'Hu Mason',
-                ],
-
-            ];
+            ],
+        ];
     }
 
     /**

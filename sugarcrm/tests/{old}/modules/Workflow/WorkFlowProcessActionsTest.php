@@ -65,8 +65,7 @@ class WorkFlowProcessActionsTest extends TestCase
                 'status' => 'Not Started',
                 'priority' => 'Medium',
             ],
-            'basic_ext' =>  [
-            ],
+            'basic_ext' =>  [],
             'advanced' =>  [
                 'team_id' =>  [
                     'value' => 'team_set_id',

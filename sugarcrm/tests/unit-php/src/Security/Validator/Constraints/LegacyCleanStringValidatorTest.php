@@ -125,8 +125,8 @@ class LegacyCleanStringValidatorTest extends AbstractConstraintValidatorTest
         $recursiveValue = [$value, [$value, $value]];
 
         $constraint = new LegacyCleanString([
-           'message' => 'testMessage',
-           'filter' => $filter,
+            'message' => 'testMessage',
+            'filter' => $filter,
         ]);
 
         $this->validator->validate($recursiveValue, $constraint);

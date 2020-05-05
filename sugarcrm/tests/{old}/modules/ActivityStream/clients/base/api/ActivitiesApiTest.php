@@ -356,12 +356,12 @@ class ActivitiesApiTest extends TestCase
         $records[] = []; // Need One Bogus Record that Formatter will POP
 
         $expectedDataChanges = [
-        'object'  => [
-            'type'   => 'Lead',
-            'module' => 'Leads',
-            'name'   => 'John Doe',
-        ],
-        'changes' => [],
+            'object'  => [
+                'type'   => 'Lead',
+                'module' => 'Leads',
+                'name'   => 'John Doe',
+            ],
+            'changes' => [],
         ];
 
         $sugarQueryMock = $this->createPartialMock('SugarQuery', ["execute"]);

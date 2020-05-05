@@ -85,18 +85,16 @@ class ArrayRecursiveValidatorTest extends AbstractConstraintValidatorTest
     {
         return [
             [
-                 [
-                    'roles' =>
-                         [
-                            'ecaf8d4e-6e58-11e7-960b-56847afe9799' => '803a36bc-6e5f-11e7-a320-a45e60e64465',
-                        ],
-                 ],
-                 [
-                    'roles' =>
-                         [
-                            'ecaf8d4e-6e58-11e7-960b-56847afe9799' => '803a36bc-6e5f-11e7-a320-a45e60e64465',
-                        ],
-                 ],
+                [
+                    'roles' => [
+                        'ecaf8d4e-6e58-11e7-960b-56847afe9799' => '803a36bc-6e5f-11e7-a320-a45e60e64465',
+                    ],
+                ],
+                [
+                    'roles' => [
+                        'ecaf8d4e-6e58-11e7-960b-56847afe9799' => '803a36bc-6e5f-11e7-a320-a45e60e64465',
+                    ],
+                ],
             ],
         ];
     }

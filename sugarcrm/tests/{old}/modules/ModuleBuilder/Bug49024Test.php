@@ -37,9 +37,9 @@ class Bug49024Test extends TestCase
         $this->objOneToOneRelationship->expects($this->any())
             ->method('getDefinition')
             ->will($this->returnValue([
-                    'lhs_module' => 'lhs_module',
-                    'rhs_module' => 'rhs_module',
-                ]));
+                'lhs_module' => 'lhs_module',
+                'rhs_module' => 'rhs_module',
+            ]));
     }
 
     protected function tearDown() : void
@@ -83,7 +83,7 @@ class Bug49024Test extends TestCase
         $objDeployedRelationships->expects($this->any())
             ->method('getRelationshipList')
             ->will($this->returnValue([
-            'lhs_module_rhs_module_1' => true, 'lhs_module_rhs_module_2' => true,
+                'lhs_module_rhs_module_1' => true, 'lhs_module_rhs_module_2' => true,
             ]));
 
         $name = $objDeployedRelationships->getUniqueNameBug49024Test($this->objOneToOneRelationship);

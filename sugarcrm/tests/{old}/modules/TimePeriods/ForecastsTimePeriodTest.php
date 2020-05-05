@@ -634,7 +634,6 @@ class ForecastsTimePeriodTest extends TestCase
             //Forward TimePeriods will be created
             [1, 2, 2, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, 1, 1, '2 year', 2, 8, 'forward'],
             [1, 2, 4, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, 1, 1, '1 year', 4, 12, 'forward'],
-
         ];
     }
 
@@ -1116,7 +1115,6 @@ class ForecastsTimePeriodTest extends TestCase
     public function getChartLabelsProvider()
     {
         return [
-
             [TimePeriod::QUARTER_TYPE, '2013-01-01', ['January 2013', 'February 2013', 'March 2013']],
             [TimePeriod::QUARTER_TYPE, '2013-10-01', ['October 2013', 'November 2013', 'December 2013']],
             [TimePeriod::QUARTER_TYPE, '2013-11-01', ['November 2013', 'December 2013', 'January 2014']],
@@ -1606,7 +1604,6 @@ class ForecastsTimePeriodTest extends TestCase
     public function buildTimePeriodsProvider()
     {
         return [
-
             [TimePeriod::QUARTER_TYPE, '2013-01-01', 4, 'forward', '2013-12-01', '2013-12-31'],
             [TimePeriod::ANNUAL_TYPE, '2013-01-01', 2, 'forward', '2014-10-01', '2014-12-31'],
             [TimePeriod::QUARTER_TYPE, '2013-01-01', 4, 'backward', '2012-06-01', '2012-06-30'],
@@ -1616,7 +1613,6 @@ class ForecastsTimePeriodTest extends TestCase
             [TimePeriod::ANNUAL_TYPE, '2013-01-31', 2, 'forward', '2014-10-31', '2015-01-30'],
             [TimePeriod::QUARTER_TYPE, '2013-01-31', 4, 'backward', '2012-06-30', '2012-07-30'],
             [TimePeriod::ANNUAL_TYPE, '2013-01-31', 2, 'backward', '2012-10-31', '2013-01-30'],
-
         ];
     }
 

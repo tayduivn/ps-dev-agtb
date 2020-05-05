@@ -56,7 +56,8 @@ class Bug50827Test extends TestCase
                     'type'      => 'varchar',
                     'function'  => [
                         'name'      => 'getEmailAddressWidget',
-                        'returns'   => 'html'],
+                        'returns'   => 'html',
+                    ],
                     'source'    => 'non-db',
                     'group'=>'email1',
                     'merge_filter' => 'enabled',

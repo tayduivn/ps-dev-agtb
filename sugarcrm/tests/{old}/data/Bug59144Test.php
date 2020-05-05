@@ -88,8 +88,8 @@ class Bug59144Test extends TestCase
         $sugar_config['disable_count_query'] = true;
         $calls = $lead->calls_parent->getBeans(
             [
-                        'enforce_teams' => true,
-                ]
+                'enforce_teams' => true,
+            ]
         );
 
         $this->assertIsArray($calls);

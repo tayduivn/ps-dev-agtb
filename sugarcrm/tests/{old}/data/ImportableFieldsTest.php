@@ -61,7 +61,7 @@ class ImportableFieldsTest extends TestCase
             'datetime_field',
             'link_field2',
             'link_field3',
-            ];
+        ];
         $this->assertEquals(
             $fields,
             array_keys($this->myBean->get_importable_fields())
@@ -75,7 +75,7 @@ class ImportableFieldsTest extends TestCase
     {
         $fields = [
             'name',
-            ];
+        ];
         $this->assertEquals(
             $fields,
             array_keys($this->myBean->get_import_required_fields())

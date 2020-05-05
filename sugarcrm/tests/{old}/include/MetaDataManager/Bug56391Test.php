@@ -208,8 +208,7 @@ class Bug56391Test extends TestCase
         $modules = ['Accounts'];
         // user can view, list, delete, and export
         $expected_result = [
-            'fields' =>
-            [
+            'fields' => [
                 'website' => [
                     'read' => 'no',
                     'write' => 'no',
@@ -239,7 +238,8 @@ class Bug56391Test extends TestCase
         ];
 
         $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, [
-            'access', 'create', 'view', 'list', 'edit', 'import', 'export', 'massupdate']);
+            'access', 'create', 'view', 'list', 'edit', 'import', 'export', 'massupdate',
+        ]);
 
         SugarTestACLUtilities::createField($role->id, 'Accounts', 'website', -99);
 
@@ -274,7 +274,8 @@ class Bug56391Test extends TestCase
         ];
 
         $this->roles[] = $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, [
-            'access', 'view', 'list', 'edit', 'delete', 'export'], ['edit', 'delete']);
+            'access', 'view', 'list', 'edit', 'delete', 'export',
+        ], ['edit', 'delete']);
 
         SugarTestACLUtilities::setupUser($role);
         SugarTestHelper::clearACLCache();
@@ -318,7 +319,8 @@ class Bug56391Test extends TestCase
 
 
         $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, [
-            'access', 'view', 'list', 'edit', 'delete', 'export'], ['create', 'edit']);
+            'access', 'view', 'list', 'edit', 'delete', 'export',
+        ], ['create', 'edit']);
 
         SugarTestACLUtilities::setupUser($role);
         SugarTestHelper::clearACLCache();
@@ -406,7 +408,8 @@ class Bug56391Test extends TestCase
         unset($account);
 
         $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, [
-            'access', 'view', 'list', 'edit', 'delete', 'export'], ['edit']);
+            'access', 'view', 'list', 'edit', 'delete', 'export',
+        ], ['edit']);
 
         SugarTestACLUtilities::createField($role->id, 'Acconts', 'name', ACL_READ_OWNER_WRITE);
 

@@ -20,7 +20,7 @@ class ApiHeaderTest extends TestCase
             'Cache-Control', 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0',
             'Expires', 'pageload + 4 hours',
             'Pragma', 'nocache',
-            ];
+        ];
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');

@@ -39,8 +39,8 @@ class SugarArrayMergeRecursiveTest extends TestCase
                 'dog2' => 'dog2',
                 'dog3' => 'dog3',
                 'dog4' => 'dog4',
-                ],
-            ];
+            ],
+        ];
         
         $array2 = [
             'dog' => [
@@ -48,8 +48,8 @@ class SugarArrayMergeRecursiveTest extends TestCase
                 'dog1' => 'dog1',
                 'dog3' => 'dog3',
                 'dog4' => 'dog4',
-                ],
-            ];
+            ],
+        ];
         
         $results = sugarArrayMergeRecursive($array1, $array2);
         

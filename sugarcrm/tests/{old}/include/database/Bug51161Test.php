@@ -100,46 +100,46 @@ class Bug51161Test extends TestCase
     public function providerBug51161()
     {
         $returnArray = [
+            [
                 [
-                    [
                     'foo' =>  [
                         'name' => 'foo',
                         'type' => 'varchar',
                         'len' => '34',
-                        ],
                     ],
-                    '/foo\s+$baseType\(34\)/i',
                 ],
+                '/foo\s+$baseType\(34\)/i',
+            ],
+            [
                 [
-                    [
                     'foo' =>  [
                         'name' => 'foo',
                         'type' => 'nvarchar',
                         'len' => '35',
-                        ],
                     ],
-                    '/foo\s+$baseType\(35\)/i',
                 ],
+                '/foo\s+$baseType\(35\)/i',
+            ],
+            [
                 [
-                    [
                     'foo' =>  [
                         'name' => 'foo',
                         'type' => 'char',
                         'len' => '23',
-                        ],
                     ],
-                    '/foo\s+$baseType\(23\)/i',
                 ],
+                '/foo\s+$baseType\(23\)/i',
+            ],
+            [
                 [
-                    [
                     'foo' =>  [
                         'name' => 'foo',
                         'type' => 'clob',
-                        ],
                     ],
-                    '/foo\s+$colType/i',
                 ],
-           ];
+                '/foo\s+$colType/i',
+            ],
+        ];
 
         return $returnArray;
     }

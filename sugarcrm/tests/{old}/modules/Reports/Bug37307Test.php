@@ -26,7 +26,7 @@ class Bug37307Test extends TestCase
             'name' => 'Dog',
             'label' => "My Dog&#039;s",
             'relationship' => 'Cat',
-            ];
+        ];
         
         $view = new ReportsViewBuildreportmoduletree();
         $output = SugarTestReflection::callProtectedMethod(

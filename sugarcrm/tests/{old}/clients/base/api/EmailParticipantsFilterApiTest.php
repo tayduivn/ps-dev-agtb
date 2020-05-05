@@ -1687,8 +1687,7 @@ class EmailParticipantsFilterApiTest extends TestCase
                 [
                     [
                         '$from' => [
-                            [
-                            ],
+                            [],
                         ],
                     ],
                 ],

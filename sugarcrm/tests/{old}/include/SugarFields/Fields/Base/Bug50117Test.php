@@ -21,30 +21,29 @@ class Bug50117Test extends TestCase
     {
         $enumField = SugarFieldHandler::getSugarField('enum');
         $parentFieldArray = [
-                                'ACCEPT_STATUS_NAME' => 'Accepted',
-                            ];
+            'ACCEPT_STATUS_NAME' => 'Accepted',
+        ];
         $vardef = [
-                        'name' => 'accept_status_name',
-                        'type' => 'enum',
-                        'source' => 'non-db',
-                        'vname' => 'LBL_LIST_ACCEPT_STATUS',
-                        'options' => 'dom_meeting_accept_status',
-                        'massupdate' => false,
-                        'studio' =>
-                            [
-                                'listview' => false,
-                                'searchview' => false,
-                            ],
-                    ];
+            'name' => 'accept_status_name',
+            'type' => 'enum',
+            'source' => 'non-db',
+            'vname' => 'LBL_LIST_ACCEPT_STATUS',
+            'options' => 'dom_meeting_accept_status',
+            'massupdate' => false,
+            'studio' => [
+                'listview' => false,
+                'searchview' => false,
+            ],
+        ];
         $displayParams = [
-                            'vname' => 'LBL_LIST_ACCEPT_STATUS',
-                            'width' => '11%',
-                            'sortable' => false,
-                            'linked_field' => 'users',
-                            'linked_field_set' => 'users',
-                            'name' => 'accept_status_name',
-                            'module' => 'Users',
-                        ];
+            'vname' => 'LBL_LIST_ACCEPT_STATUS',
+            'width' => '11%',
+            'sortable' => false,
+            'linked_field' => 'users',
+            'linked_field_set' => 'users',
+            'name' => 'accept_status_name',
+            'module' => 'Users',
+        ];
         $col = 1;
         
         $this->listViewSmartyOutput1 = trim($enumField->getListViewSmarty($parentFieldArray, $vardef, $displayParams, $col));

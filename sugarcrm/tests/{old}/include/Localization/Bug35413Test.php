@@ -46,12 +46,12 @@ class Bug35413Test extends TestCase
                 'ユーザ名',
                 'ISO-2022-JP',
             ],
-             [
+            [
                 'RnJvbTog6eXh7CD55eTt',
                 'From: יובל שוהם',
                 'ISO-8859-8',
             ],
-             [
+            [
                 'srvSqtaxytPEsMn6yMu1xNHbvqYK',
                 "不要直视陌生人的眼睛\n",
                 'GB2312',

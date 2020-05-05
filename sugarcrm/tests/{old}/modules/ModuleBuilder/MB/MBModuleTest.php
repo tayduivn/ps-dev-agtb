@@ -123,15 +123,15 @@ class MBModuleTest extends TestCase
     public function vardefProvider()
     {
         return [
-          [
+            [
                 ["name" => "testvardef", "label" => "testvardef"],
                 "testvardef",
             ],
-          [
+            [
                 ["name" => "range", "label" => "testvardef"],
                 "range_field",
             ],
-          [
+            [
                 ["name" => "hipopotomounstruosesquipedaliofobia_pentakismyriahexakisquilioletracosiohexacontapentagono", "label" => "testvardef"],
                 $GLOBALS['db']->getValidDBName('hipopotomounstruosesquipedaliofobia_pentakismyriahexakisquilioletracosiohexacontapentagono', true, 'column'),
             ],

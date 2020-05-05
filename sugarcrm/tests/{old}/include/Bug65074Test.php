@@ -73,10 +73,10 @@ EOQ;
     public function dataProviderForTestGetFunctionValue()
     {
         return [
-                [null, 'testFuncString', [], 'func string'],
-                [null, 'testFuncArgs', ['func args'], 'func args'],
-                [new testBeanParam(), 'testFuncBean', [], 'func bean'],
-                ['', ['name'=>'testFuncInclude', 'include'=>$this->customIncludeDir . '/' . $this->customIncludeFile], [], 'func include'],
+            [null, 'testFuncString', [], 'func string'],
+            [null, 'testFuncArgs', ['func args'], 'func args'],
+            [new testBeanParam(), 'testFuncBean', [], 'func bean'],
+            ['', ['name'=>'testFuncInclude', 'include'=>$this->customIncludeDir . '/' . $this->customIncludeFile], [], 'func include'],
         ];
     }
 

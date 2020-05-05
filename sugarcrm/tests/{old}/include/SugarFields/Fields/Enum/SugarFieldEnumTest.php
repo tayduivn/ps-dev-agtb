@@ -37,20 +37,20 @@ class SugarFieldEnumTest extends TestCase
                 'P1' => 'High',
                 'P2' => 'Medium',
                 'P3' => 'Low',
-                ]
+            ]
         );
         $langpack->save();
         
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
         $fieldDef =  [
-                        'name' => 'priority',
-                        'vname' => 'LBL_PRIORITY',
-                        'type' => 'enum',
-                        'options' => 'case_priority_dom',
-                        'len'=>25,
-                        'audited'=>true,
-                        'comment' => 'The priority of the case',
-                    ];
+            'name' => 'priority',
+            'vname' => 'LBL_PRIORITY',
+            'type' => 'enum',
+            'options' => 'case_priority_dom',
+            'len' => 25,
+            'audited' => true,
+            'comment' => 'The priority of the case',
+        ];
         $field_value = "P2";
 
         $sfr = SugarFieldHandler::getSugarField('enum');
@@ -66,11 +66,11 @@ class SugarFieldEnumTest extends TestCase
     {
         //vardef definition, note that function is called
         $fieldDef =  [
-                        'name' => 'type_dropdown',
-                        'vname' => 'LBL_TYPE',
-                        'type' => 'enum',
-                        'function' => 'getEnumTestDDVals',
-                    ];
+            'name' => 'type_dropdown',
+            'vname' => 'LBL_TYPE',
+            'type' => 'enum',
+            'function' => 'getEnumTestDDVals',
+        ];
         //create sugarfield of type enum and run
         $sfr = SugarFieldHandler::getSugarField('enum');
         $second = $sfr->getEmailTemplateValue('2', $fieldDef, null);

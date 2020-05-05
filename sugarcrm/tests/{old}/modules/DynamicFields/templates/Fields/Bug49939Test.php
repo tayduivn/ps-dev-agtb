@@ -32,13 +32,13 @@ class Bug49939Test extends TestCase
     public function xssFields()
     {
         return [
-        ['<script>alert(50);</script>', ''],
-        ['This is some help text', 'This is some help text'],
-        ['???', '???'],
-        ['Foo Foo<script type="text/javascript">alert(50);</script>Bar Bar', 'Foo FooBar Bar'],
-        ['I am trying to <b>Bold</b> this!', 'I am trying to &lt;b&gt;Bold&lt;/b&gt; this!'],
-        ['', ''],
-        ['ä, ö, ü, å, æ, ø, å', 'ä, ö, ü, å, æ, ø, å'],
+            ['<script>alert(50);</script>', ''],
+            ['This is some help text', 'This is some help text'],
+            ['???', '???'],
+            ['Foo Foo<script type="text/javascript">alert(50);</script>Bar Bar', 'Foo FooBar Bar'],
+            ['I am trying to <b>Bold</b> this!', 'I am trying to &lt;b&gt;Bold&lt;/b&gt; this!'],
+            ['', ''],
+            ['ä, ö, ü, å, æ, ø, å', 'ä, ö, ü, å, æ, ø, å'],
         ];
     }
 
@@ -53,7 +53,7 @@ class Bug49939Test extends TestCase
         /** @var TemplateField $tf */
         $tf = $this->createPartialMock('TemplateField', ['applyVardefRules']);
         $request = InputValidation::create([
-        'help' => $badXSS,
+            'help' => $badXSS,
         ], []);
         $tf->vardef_map = ['help'=>'help'];
         $tf->populateFromPost($request);

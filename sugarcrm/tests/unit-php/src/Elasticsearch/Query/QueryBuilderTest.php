@@ -57,10 +57,7 @@ class QueryBuilderTest extends TestCase
                     "bool" => [
                         "must" => [
                             "0" => ["term" => ["_type" => ["value" => "Accounts", "boost" => 1.0]]],
-                            "1" => ["term" => [
-                                "assigned_user_id" => ["value" => "seed_max_id", "boost" => 1.0],
-                                ],
-                            ],
+                            "1" => ["term" => ["assigned_user_id" => ["value" => "seed_max_id", "boost" => 1.0]]],
                         ],
                     ],
                 ],
@@ -277,34 +274,28 @@ class QueryBuilderTest extends TestCase
         $this->assertSame(10, $resultArray['from']);
         $this->assertSame(['_score'], $resultArray['sort']);
         $expecteQuery =  [
-             [
-                'bool' =>
-                     [
-                        'should' =>
-                             [
-                                 [
-                                    'bool' =>
-                                         [
-                                            'should' =>
-                                                 [
-                                                     [
-                                                        'multi_match' =>
-                                                             [
-                                                                'type' => 'cross_fields',
-                                                                'query' => 'abc',
-                                                                'fields' =>
-                                                                     [
-                                                                        0 => 'id',
-                                                                    ],
-                                                                'tie_breaker' => 1.0,
-                                                            ],
-                                                     ],
-                                                ],
+            [
+                'bool' => [
+                    'should' => [
+                        [
+                            'bool' => [
+                                'should' => [
+                                    [
+                                        'multi_match' => [
+                                            'type' => 'cross_fields',
+                                            'query' => 'abc',
+                                            'fields' => [
+                                                0 => 'id',
+                                            ],
+                                            'tie_breaker' => 1.0,
                                         ],
-                                 ],
+                                    ],
+                                ],
                             ],
+                        ],
                     ],
-             ],
+                ],
+            ],
         ];
 
         $this->assertSame($expecteQuery, $resultArray['query']['bool']['must']);

@@ -16,8 +16,7 @@ use PHPUnit\Framework\TestCase;
 class Bug45716Helper
 {
     public $all_fields =  [
-        'self:account_id' =>
-         [
+        'self:account_id' => [
             'name' => 'account_id',
             'vname' => 'LBL_ACCOUNT_ID',
             'type' => 'id',
@@ -25,9 +24,8 @@ class Bug45716Helper
             'audited' => true,
             'module' => 'Opportunities',
             'real_table' => 'opportunities',
-            ],
-        'self:account_id_c' =>
-         [
+        ],
+        'self:account_id_c' => [
             'required' => false,
             'source' => 'custom_fields',
             'name' => 'account_id_c',
@@ -50,9 +48,8 @@ class Bug45716Helper
             'custom_module' => 'Opportunities',
             'module' => 'Opportunities',
             'real_table' => 'opportunities_cstm',
-            ],
-        'self:account_link_c' =>
-         [
+        ],
+        'self:account_link_c' => [
             'dependency' => '',
             'required' => false,
             'source' => 'non-db',
@@ -82,9 +79,8 @@ class Bug45716Helper
             'custom_module' => 'Opportunities',
             'real_table' => 'opportunities_cstm',
             'secondary_table' => 'accounts',
-            ],
-        'self:account_name' =>
-         [
+        ],
+        'self:account_name' => [
             'name' => 'account_name',
             'rname' => 'name',
             'id_name' => 'account_id',
@@ -102,9 +98,8 @@ class Bug45716Helper
             'required' => true,
             'importable' => 'required',
             'real_table' => 'opportunities',
-            ],
-        'self:accounts' =>
-         [
+        ],
+        'self:accounts' => [
             'name' => 'accounts',
             'type' => 'link',
             'relationship' => 'accounts_opportunities',
@@ -114,9 +109,8 @@ class Bug45716Helper
             'bean_name' => 'Account',
             'vname' => 'LBL_ACCOUNTS',
             'real_table' => 'opportunities',
-            ],
-        'self:amount' =>
-         [
+        ],
+        'self:amount' => [
             'name' => 'amount',
             'vname' => 'LBL_AMOUNT',
             'type' => 'currency',
@@ -129,9 +123,8 @@ class Bug45716Helper
             'enable_range_search' => true,
             'module' => 'Opportunities',
             'real_table' => 'opportunities',
-            ],
-        'self:amount_usdollar' =>
-         [
+        ],
+        'self:amount_usdollar' => [
             'name' => 'amount_usdollar',
             'vname' => 'LBL_AMOUNT_USDOLLAR',
             'type' => 'currency',
@@ -143,9 +136,8 @@ class Bug45716Helper
             'comment' => 'Formatted amount of the opportunity',
             'module' => 'Opportunities',
             'real_table' => 'opportunities',
-            ],
-        'self:assigned_user_id' =>
-         [
+        ],
+        'self:assigned_user_id' => [
             'name' => 'assigned_user_id',
             'rname' => 'user_name',
             'id_name' => 'assigned_user_id',
@@ -161,9 +153,8 @@ class Bug45716Helper
             'comment' => 'User ID assigned to record',
             'duplicate_merge' => 'disabled',
             'real_table' => 'opportunities',
-            ],
-        'self:assigned_user_link' =>
-         [
+        ],
+        'self:assigned_user_link' => [
             'name' => 'assigned_user_link',
             'type' => 'link',
             'relationship' => 'opportunities_assigned_user',
@@ -177,9 +168,8 @@ class Bug45716Helper
             'id_name' => 'assigned_user_id',
             'table' => 'users',
             'real_table' => 'opportunities',
-            ],
-        'self:assigned_user_name' =>
-         [
+        ],
+        'self:assigned_user_name' => [
             'name' => 'assigned_user_name',
             'link' => 'assigned_user_link',
             'vname' => 'LBL_ASSIGNED_TO_NAME',
@@ -192,9 +182,8 @@ class Bug45716Helper
             'module' => 'Opportunities',
             'duplicate_merge' => 'disabled',
             'real_table' => 'opportunities',
-            ],
-        'self:calls' =>
-         [
+        ],
+        'self:calls' => [
             'name' => 'calls',
             'type' => 'link',
             'relationship' => 'opportunity_calls',
@@ -202,9 +191,8 @@ class Bug45716Helper
             'vname' => 'LBL_CALLS',
             'module' => 'Opportunities',
             'real_table' => 'opportunities',
-            ],
-        'self:campaign_id' =>
-         [
+        ],
+        'self:campaign_id' => [
             'name' => 'campaign_id',
             'comment' => 'Campaign that generated lead',
             'vname' => 'LBL_CAMPAIGN_ID',
@@ -218,9 +206,8 @@ class Bug45716Helper
             'massupdate' => false,
             'duplicate_merge' => 'disabled',
             'real_table' => 'opportunities',
-            ],
-        'self:campaign_name' =>
-         [
+        ],
+        'self:campaign_name' => [
             'name' => 'campaign_name',
             'rname' => 'name',
             'id_name' => 'campaign_id',
@@ -232,9 +219,8 @@ class Bug45716Helper
             'module' => 'Opportunities',
             'source' => 'non-db',
             'real_table' => 'opportunities',
-            ],
-        'self:campaign_opportunities' =>
-         [
+        ],
+        'self:campaign_opportunities' => [
             'name' => 'campaign_opportunities',
             'type' => 'link',
             'vname' => 'LBL_CAMPAIGN_OPPORTUNITY',
@@ -242,9 +228,8 @@ class Bug45716Helper
             'source' => 'non-db',
             'module' => 'Opportunities',
             'real_table' => 'opportunities',
-            ],
-        'self:campaigns' =>
-         [
+        ],
+        'self:campaigns' => [
             'name' => 'campaigns',
             'type' => 'link',
             'relationship' => 'campaign_opportunities',
@@ -254,28 +239,24 @@ class Bug45716Helper
             'vname' => 'LBL_CAMPAIGNS',
             'reportable' => false,
             'real_table' => 'opportunities',
-            ],
-        'self:contacts' =>
-         [
+        ],
+        'self:contacts' => [
             'name' => 'contacts',
             'type' => 'link',
             'relationship' => 'opportunities_contacts',
             'source' => 'non-db',
             'module' => 'Opportunities',
             'bean_name' => 'Contact',
-            'rel_fields' =>
-             [
-                'contact_role' =>
-                 [
+            'rel_fields' => [
+                'contact_role' => [
                     'type' => 'enum',
                     'options' => 'opportunity_relationship_type_dom',
-                    ],
                 ],
+            ],
             'vname' => 'LBL_CONTACTS',
             'real_table' => 'opportunities',
-            ],
-        'self:contracts' =>
-         [
+        ],
+        'self:contracts' => [
             'name' => 'contracts',
             'type' => 'link',
             'vname' => 'LBL_CONTRACTS',
@@ -283,9 +264,8 @@ class Bug45716Helper
             'source' => 'non-db',
             'module' => 'Opportunities',
             'real_table' => 'opportunities',
-            ],
-        'self:created_by' =>
-         [
+        ],
+        'self:created_by' => [
             'name' => 'created_by',
             'rname' => 'user_name',
             'id_name' => 'modified_user_id',
@@ -298,9 +278,8 @@ class Bug45716Helper
             'comment' => 'User who created record',
             'module' => 'Opportunities',
             'real_table' => 'opportunities',
-            ],
-        'self:created_by_link' =>
-         [
+        ],
+        'self:created_by_link' => [
             'name' => 'created_by_link',
             'type' => 'link',
             'relationship' => 'opportunities_created_by',
@@ -310,9 +289,8 @@ class Bug45716Helper
             'bean_name' => 'User',
             'source' => 'non-db',
             'real_table' => 'opportunities',
-            ],
-        'self:created_by_name' =>
-         [
+        ],
+        'self:created_by_name' => [
             'name' => 'created_by_name',
             'vname' => 'LBL_CREATED',
             'type' => 'relate',
@@ -326,9 +304,8 @@ class Bug45716Helper
             'duplicate_merge' => 'disabled',
             'importable' => 'false',
             'real_table' => 'opportunities',
-            ],
-        'self:currencies' =>
-         [
+        ],
+        'self:currencies' => [
             'name' => 'currencies',
             'type' => 'link',
             'relationship' => 'opportunity_currencies',
@@ -336,9 +313,8 @@ class Bug45716Helper
             'vname' => 'LBL_CURRENCIES',
             'module' => 'Opportunities',
             'real_table' => 'opportunities',
-            ],
-        'self:currency_id' =>
-         [
+        ],
+        'self:currency_id' => [
             'name' => 'currency_id',
             'type' => 'id',
             'group' => 'currency_id',
@@ -349,9 +325,8 @@ class Bug45716Helper
             'comment' => 'Currency used for display purposes',
             'module' => 'Opportunities',
             'real_table' => 'opportunities',
-            ],
-        'self:currency_name' =>
-         [
+        ],
+        'self:currency_name' => [
             'name' => 'currency_name',
             'rname' => 'name',
             'id_name' => 'currency_id',
@@ -366,9 +341,8 @@ class Bug45716Helper
             'studio' => 'false',
             'duplicate_merge' => 'disabled',
             'real_table' => 'opportunities',
-            ],
-        'self:currency_symbol' =>
-         [
+        ],
+        'self:currency_symbol' => [
             'name' => 'currency_symbol',
             'rname' => 'symbol',
             'id_name' => 'currency_id',
@@ -383,9 +357,8 @@ class Bug45716Helper
             'studio' => 'false',
             'duplicate_merge' => 'disabled',
             'real_table' => 'opportunities',
-            ],
-        'self:currency_target_c' =>
-         [
+        ],
+        'self:currency_target_c' => [
             'required' => false,
             'source' => 'custom_fields',
             'name' => 'currency_target_c',
@@ -409,9 +382,8 @@ class Bug45716Helper
             'custom_module' => 'Opportunities',
             'module' => 'Opportunities',
             'real_table' => 'opportunities_cstm',
-            ],
-        'self:date_closed' =>
-         [
+        ],
+        'self:date_closed' => [
             'name' => 'date_closed',
             'vname' => 'LBL_DATE_CLOSED',
             'type' => 'date',
@@ -423,9 +395,8 @@ class Bug45716Helper
             'options' => 'date_range_search_dom',
             'module' => 'Opportunities',
             'real_table' => 'opportunities',
-            ],
-        'self:date_entered' =>
-         [
+        ],
+        'self:date_entered' => [
             'name' => 'date_entered',
             'vname' => 'LBL_DATE_ENTERED',
             'type' => 'datetime',
@@ -435,9 +406,8 @@ class Bug45716Helper
             'options' => 'date_range_search_dom',
             'module' => 'Opportunities',
             'real_table' => 'opportunities',
-            ],
-        'self:date_modified' =>
-         [
+        ],
+        'self:date_modified' => [
             'name' => 'date_modified',
             'vname' => 'LBL_DATE_MODIFIED',
             'type' => 'datetime',
@@ -447,9 +417,8 @@ class Bug45716Helper
             'options' => 'date_range_search_dom',
             'module' => 'Opportunities',
             'real_table' => 'opportunities',
-            ],
-        'self:deleted' =>
-         [
+        ],
+        'self:deleted' => [
             'name' => 'deleted',
             'vname' => 'LBL_DELETED',
             'type' => 'bool',
@@ -458,9 +427,8 @@ class Bug45716Helper
             'comment' => 'Record deletion indicator',
             'module' => 'Opportunities',
             'real_table' => 'opportunities',
-            ],
-        'self:description' =>
-         [
+        ],
+        'self:description' => [
             'name' => 'description',
             'vname' => 'LBL_DESCRIPTION',
             'type' => 'text',
@@ -469,9 +437,8 @@ class Bug45716Helper
             'cols' => 80,
             'module' => 'Opportunities',
             'real_table' => 'opportunities',
-            ],
-        'self:documents' =>
-         [
+        ],
+        'self:documents' => [
             'name' => 'documents',
             'type' => 'link',
             'relationship' => 'documents_opportunities',
@@ -479,9 +446,8 @@ class Bug45716Helper
             'vname' => 'LBL_DOCUMENTS_SUBPANEL_TITLE',
             'module' => 'Opportunities',
             'real_table' => 'opportunities',
-            ],
-        'self:emails' =>
-         [
+        ],
+        'self:emails' => [
             'name' => 'emails',
             'type' => 'link',
             'relationship' => 'emails_opportunities_rel',
@@ -489,9 +455,8 @@ class Bug45716Helper
             'vname' => 'LBL_EMAILS',
             'module' => 'Opportunities',
             'real_table' => 'opportunities',
-            ],
-        'self:id' =>
-         [
+        ],
+        'self:id' => [
             'name' => 'id',
             'vname' => 'LBL_ID',
             'type' => 'id',
@@ -500,9 +465,8 @@ class Bug45716Helper
             'comment' => 'Unique identifier',
             'module' => 'Opportunities',
             'real_table' => 'opportunities',
-            ],
-        'self:lead_source' =>
-         [
+        ],
+        'self:lead_source' => [
             'name' => 'lead_source',
             'vname' => 'LBL_LEAD_SOURCE',
             'type' => 'enum',
@@ -512,9 +476,8 @@ class Bug45716Helper
             'merge_filter' => 'enabled',
             'module' => 'Opportunities',
             'real_table' => 'opportunities',
-            ],
-        'self:leads' =>
-         [
+        ],
+        'self:leads' => [
             'name' => 'leads',
             'type' => 'link',
             'relationship' => 'opportunity_leads',
@@ -522,9 +485,8 @@ class Bug45716Helper
             'vname' => 'LBL_LEADS',
             'module' => 'Opportunities',
             'real_table' => 'opportunities',
-            ],
-        'self:meetings' =>
-         [
+        ],
+        'self:meetings' => [
             'name' => 'meetings',
             'type' => 'link',
             'relationship' => 'opportunity_meetings',
@@ -532,9 +494,8 @@ class Bug45716Helper
             'vname' => 'LBL_MEETINGS',
             'module' => 'Opportunities',
             'real_table' => 'opportunities',
-            ],
-        'self:modified_by_name' =>
-         [
+        ],
+        'self:modified_by_name' => [
             'name' => 'modified_by_name',
             'vname' => 'LBL_MODIFIED_NAME',
             'type' => 'relate',
@@ -547,9 +508,8 @@ class Bug45716Helper
             'link' => 'modified_user_link',
             'duplicate_merge' => 'disabled',
             'real_table' => 'opportunities',
-            ],
-        'self:modified_user_id' =>
-         [
+        ],
+        'self:modified_user_id' => [
             'name' => 'modified_user_id',
             'rname' => 'user_name',
             'id_name' => 'modified_user_id',
@@ -563,9 +523,8 @@ class Bug45716Helper
             'comment' => 'User who last modified record',
             'module' => 'Opportunities',
             'real_table' => 'opportunities',
-            ],
-        'self:modified_user_link' =>
-         [
+        ],
+        'self:modified_user_link' => [
             'name' => 'modified_user_link',
             'type' => 'link',
             'relationship' => 'opportunities_modified_user',
@@ -575,9 +534,8 @@ class Bug45716Helper
             'bean_name' => 'User',
             'source' => 'non-db',
             'real_table' => 'opportunities',
-            ],
-        'self:name' =>
-         [
+        ],
+        'self:name' => [
             'name' => 'name',
             'vname' => 'LBL_OPPORTUNITY_NAME',
             'type' => 'name',
@@ -590,9 +548,8 @@ class Bug45716Helper
             'required' => true,
             'module' => 'Opportunities',
             'real_table' => 'opportunities',
-            ],
-        'self:next_step' =>
-         [
+        ],
+        'self:next_step' => [
             'name' => 'next_step',
             'vname' => 'LBL_NEXT_STEP',
             'type' => 'varchar',
@@ -601,9 +558,8 @@ class Bug45716Helper
             'merge_filter' => 'enabled',
             'module' => 'Opportunities',
             'real_table' => 'opportunities',
-            ],
-        'self:notes' =>
-         [
+        ],
+        'self:notes' => [
             'name' => 'notes',
             'type' => 'link',
             'relationship' => 'opportunity_notes',
@@ -611,9 +567,8 @@ class Bug45716Helper
             'vname' => 'LBL_NOTES',
             'module' => 'Opportunities',
             'real_table' => 'opportunities',
-            ],
-        'self:opportunity_type' =>
-         [
+        ],
+        'self:opportunity_type' => [
             'name' => 'opportunity_type',
             'vname' => 'LBL_TYPE',
             'type' => 'enum',
@@ -624,27 +579,24 @@ class Bug45716Helper
             'merge_filter' => 'enabled',
             'module' => 'Opportunities',
             'real_table' => 'opportunities',
-            ],
-        'self:probability' =>
-         [
+        ],
+        'self:probability' => [
             'name' => 'probability',
             'vname' => 'LBL_PROBABILITY',
             'type' => 'int',
             'dbType' => 'double',
             'audited' => true,
             'comment' => 'The probability of closure',
-            'validation' =>
-             [
+            'validation' => [
                 'type' => 'range',
                 'min' => 0,
                 'max' => 100,
-                ],
+            ],
             'merge_filter' => 'enabled',
             'module' => 'Opportunities',
             'real_table' => 'opportunities',
-            ],
-        'self:project' =>
-         [
+        ],
+        'self:project' => [
             'name' => 'project',
             'type' => 'link',
             'relationship' => 'projects_opportunities',
@@ -652,9 +604,8 @@ class Bug45716Helper
             'vname' => 'LBL_PROJECTS',
             'module' => 'Opportunities',
             'real_table' => 'opportunities',
-            ],
-        'self:quotes' =>
-         [
+        ],
+        'self:quotes' => [
             'name' => 'quotes',
             'type' => 'link',
             'relationship' => 'quotes_opportunities',
@@ -662,9 +613,8 @@ class Bug45716Helper
             'vname' => 'LBL_QUOTES',
             'module' => 'Opportunities',
             'real_table' => 'opportunities',
-            ],
-        'self:sales_stage' =>
-         [
+        ],
+        'self:sales_stage' => [
             'name' => 'sales_stage',
             'vname' => 'LBL_SALES_STAGE',
             'type' => 'enum',
@@ -677,9 +627,8 @@ class Bug45716Helper
             'required' => true,
             'module' => 'Opportunities',
             'real_table' => 'opportunities',
-            ],
-        'self:tasks' =>
-         [
+        ],
+        'self:tasks' => [
             'name' => 'tasks',
             'type' => 'link',
             'relationship' => 'opportunity_tasks',
@@ -687,9 +636,8 @@ class Bug45716Helper
             'vname' => 'LBL_TASKS',
             'module' => 'Opportunities',
             'real_table' => 'opportunities',
-            ],
-        'self:team_count' =>
-         [
+        ],
+        'self:team_count' => [
             'name' => 'team_count',
             'rname' => 'team_count',
             'id_name' => 'team_id',
@@ -710,9 +658,8 @@ class Bug45716Helper
             'studio' => 'false',
             'hideacl' => true,
             'real_table' => 'opportunities',
-            ],
-        'self:team_count_link' =>
-         [
+        ],
+        'self:team_count_link' => [
             'name' => 'team_count_link',
             'type' => 'link',
             'relationship' => 'opportunities_team_count_relationship',
@@ -724,9 +671,8 @@ class Bug45716Helper
             'reportable' => false,
             'studio' => 'false',
             'real_table' => 'opportunities',
-            ],
-        'self:team_id' =>
-         [
+        ],
+        'self:team_id' => [
             'name' => 'team_id',
             'vname' => 'LBL_TEAM_ID',
             'group' => 'team_name',
@@ -737,9 +683,8 @@ class Bug45716Helper
             'comment' => 'Team ID for the account',
             'module' => 'Opportunities',
             'real_table' => 'opportunities',
-            ],
-        'self:team_link' =>
-         [
+        ],
+        'self:team_link' => [
             'name' => 'team_link',
             'type' => 'link',
             'relationship' => 'opportunities_team',
@@ -751,15 +696,13 @@ class Bug45716Helper
             'duplicate_merge' => 'disabled',
             'studio' => 'false',
             'real_table' => 'opportunities',
-            ],
-        'self:team_name' =>
-         [
+        ],
+        'self:team_name' => [
             'name' => 'team_name',
-            'db_concat_fields' =>
-             [
+            'db_concat_fields' => [
                 0 => 'name',
                 1 => 'name_2',
-                ],
+            ],
             'sort_on' => 'tj.name',
             'join_name' => 'tj',
             'rname' => 'name',
@@ -777,9 +720,8 @@ class Bug45716Helper
             'len' => 36,
             'custom_type' => 'teamset',
             'real_table' => 'opportunities',
-            ],
-        'self:team_set_id' =>
-         [
+        ],
+        'self:team_set_id' => [
             'name' => 'team_set_id',
             'rname' => 'id',
             'id_name' => 'team_set_id',
@@ -790,9 +732,8 @@ class Bug45716Helper
             'dbType' => 'id',
             'module' => 'Opportunities',
             'real_table' => 'opportunities',
-            ],
-        'self:teams' =>
-         [
+        ],
+        'self:teams' => [
             'name' => 'teams',
             'type' => 'link',
             'relationship' => 'opportunities_teams',
@@ -806,26 +747,24 @@ class Bug45716Helper
             'reportable' => false,
             'module' => 'Opportunities',
             'real_table' => 'opportunities',
-            ],
-        ]; // END: all_fields
+        ],
+    ]; // END: all_fields
 
 
 
 
     public $selected_loaded_custom_links =  [
-        'opportunities_cstm' =>
-         [
+        'opportunities_cstm' => [
             'join_table_alias' => 'opportunities_cstm',
             'base_table' => 'opportunities',
             'real_table' => 'opportunities_cstm',
-            ],
-        'accounts_account_link_c' =>
-         [
+        ],
+        'accounts_account_link_c' => [
             'join_table_alias' => 'accounts1',
             'base_table' => 'accounts',
             'join_id' => 'opportunities_cstm.account_id_c',
-            ],
-        ]; // END: selected_loaded_custom_links
+        ],
+    ]; // END: selected_loaded_custom_links
 
     public function getAttribute()
     {
@@ -864,8 +803,7 @@ class Bug45716Test extends TestCase
             'table_alias' => 'opportunities_cstm',
             'column_key' => 'self:account_link_c',
             'type' => 'relate',
-            'fields' =>
-             [
+            'fields' => [
                 'PRIMARYID' => '10765534-ff52-52ec-5840-4f16faec901f',
                 'OPPORTUNITIES_NAME' => 'Trait Institute Inc - 1000 units',
                 'OPPORTUNITIES_AMOUNT_UBC8F31' => '52183382.29',
@@ -873,8 +811,8 @@ class Bug45716Test extends TestCase
                 'OPPORTUNITIES_AMOUNT_C9AC638' => '-99',
                 'OPPORTUNITIES_CSTM_ACCE36316' => '13ce632e-605e-93ac-c209-4f16fa14e616',
                 'ACCOUNTS1_NAME' => 'OTC Holdings',
-                ],
-            ];
+            ],
+        ];
         $fakeLayoutManager = new Bug45716Helper();
         $sugarWidget = new SugarWidgetFieldRelate($fakeLayoutManager);
         

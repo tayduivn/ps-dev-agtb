@@ -56,20 +56,15 @@ class ConnectorManagerTest extends ConnectorManager
     public function getConnectorList()
     {
         return [
-            'ValidTestingDisabledAuth' =>
-                ['id' => 'ValidTestingDisabledAuth'],
-            'ValidTestingEnabledAuth' =>
-                ['id' => 'ValidTestingEnabledAuth'],
-            'ValidTestingEnabledUnAuth' =>
-                ['id' => 'ValidTestingEnabledUnAuth'],
-            'InvalidTestFails' =>
-                ['id' => 'InvalidTestFails'],
-            'InvalidNoSource' =>
-                ['id' => 'InvalidNoSource'],
-            'ThrowsErrors' =>
-                ['id' => 'ThrowsErrors'],
+            'ValidTestingDisabledAuth' => ['id' => 'ValidTestingDisabledAuth'],
+            'ValidTestingEnabledAuth' => ['id' => 'ValidTestingEnabledAuth'],
+            'ValidTestingEnabledUnAuth' => ['id' => 'ValidTestingEnabledUnAuth'],
+            'InvalidTestFails' => ['id' => 'InvalidTestFails'],
+            'InvalidNoSource' => ['id' => 'InvalidNoSource'],
+            'ThrowsErrors' => ['id' => 'ThrowsErrors'],
         ];
     }
+
     public function getEAPMForConnector($connector)
     {
         if ($connector['id'] == 'ValidTestingDisabledAuth' || $connector['id'] == 'ValidTestingEnabledAuth') {
@@ -108,54 +103,48 @@ class ConnectorsValidTest extends TestCase
     public function testGetConnectors()
     {
         $expectedOut = [
-            'ValidTestingDisabledAuth' =>
-                [
-                    'id' => 'ValidTestingDisabledAuth',
-                    'testing_enabled' => false,
-                    'test_passed' => false,
-                    'eapm_bean' => false,
-                    'field_mapping' => [],
-                ],
-            'ValidTestingEnabledAuth' =>
-                [
-                    'id' => 'ValidTestingEnabledAuth',
-                    'testing_enabled' => true,
-                    'test_passed' => true,
-                    'eapm_bean' => false,
-                    'field_mapping' => [],
-                ],
-            'ValidTestingEnabledUnAuth' =>
-                [
-                    'id' => 'ValidTestingEnabledUnAuth',
-                    'testing_enabled' => true,
-                    'test_passed' => true,
-                    'eapm_bean' => false,
-                    'field_mapping' => [],
-                ],
-            'InvalidTestFails' =>
-                [
-                    'id' => 'InvalidTestFails',
-                    'testing_enabled' => true,
-                    'test_passed' => false,
-                    'eapm_bean' => false,
-                    'field_mapping' => [],
-                ],
-            'InvalidNoSource' =>
-                [
-                    'id' => 'InvalidNoSource',
-                    'testing_enabled' => false,
-                    'test_passed' => false,
-                    'eapm_bean' => false,
-                    'field_mapping' => [],
-                ],
-            'ThrowsErrors' =>
-                [
-                    'id' => 'ThrowsErrors',
-                    'testing_enabled' => true,
-                    'test_passed' => false,
-                    'eapm_bean' => false,
-                    'field_mapping' => [],
-                ],
+            'ValidTestingDisabledAuth' => [
+                'id' => 'ValidTestingDisabledAuth',
+                'testing_enabled' => false,
+                'test_passed' => false,
+                'eapm_bean' => false,
+                'field_mapping' => [],
+            ],
+            'ValidTestingEnabledAuth' => [
+                'id' => 'ValidTestingEnabledAuth',
+                'testing_enabled' => true,
+                'test_passed' => true,
+                'eapm_bean' => false,
+                'field_mapping' => [],
+            ],
+            'ValidTestingEnabledUnAuth' => [
+                'id' => 'ValidTestingEnabledUnAuth',
+                'testing_enabled' => true,
+                'test_passed' => true,
+                'eapm_bean' => false,
+                'field_mapping' => [],
+            ],
+            'InvalidTestFails' => [
+                'id' => 'InvalidTestFails',
+                'testing_enabled' => true,
+                'test_passed' => false,
+                'eapm_bean' => false,
+                'field_mapping' => [],
+            ],
+            'InvalidNoSource' => [
+                'id' => 'InvalidNoSource',
+                'testing_enabled' => false,
+                'test_passed' => false,
+                'eapm_bean' => false,
+                'field_mapping' => [],
+            ],
+            'ThrowsErrors' => [
+                'id' => 'ThrowsErrors',
+                'testing_enabled' => true,
+                'test_passed' => false,
+                'eapm_bean' => false,
+                'field_mapping' => [],
+            ],
         ];
 
         $connectorManager = new ConnectorManagerTest();

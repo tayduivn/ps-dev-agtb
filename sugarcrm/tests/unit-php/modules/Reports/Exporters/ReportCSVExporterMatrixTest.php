@@ -129,17 +129,19 @@ class ReportCSVExporterMatrixTest extends TestCase
     ) {
         $reporter = $this->createPartialMock(
             '\Report',
-            ['run_summary_query',
-            'run_summary_combo_query',
-            'run_total_query',
-            '_load_currency',
-            'get_summary_header_row',
-            'get_total_header_row',
-            'get_next_row',
-            'get_summary_total_row',
-            'get_summary_next_row',
-            'get_header_row',
-            'getDataTypeForColumnsForMatrix']
+            [
+                'run_summary_query',
+                'run_summary_combo_query',
+                'run_total_query',
+                '_load_currency',
+                'get_summary_header_row',
+                'get_total_header_row',
+                'get_next_row',
+                'get_summary_total_row',
+                'get_summary_next_row',
+                'get_header_row',
+                'getDataTypeForColumnsForMatrix',
+            ]
         );
 
         $reporter->report_def = [
@@ -635,8 +637,7 @@ class ReportCSVExporterMatrixTest extends TestCase
                             'Games' => [
                                 'CS:GO' => [
                                     [
-                                        'cells' =>
-                                        [
+                                        'cells' => [
                                             'Min' => '1,000',
                                             'Count' => '100',
                                             'Sum' => '1,000',

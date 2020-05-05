@@ -200,7 +200,6 @@ class SugarSearchEngineHighlighterTest extends TestCase
                     ],
                 ],
             ],
-
         ];
     }
 

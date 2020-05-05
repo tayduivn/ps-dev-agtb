@@ -23,12 +23,12 @@ class Bug46325Test extends TestCase
     {
         $this->fields = [
             'name' => [
-                    'width' => '40%',
-                    'label' => 'LBL_LIST_ACCOUNT_NAME',
-                    'link' => 1,
-                    'default' => 1,
-                    'name' => 'name',
-                ],
+                'width' => '40%',
+                'label' => 'LBL_LIST_ACCOUNT_NAME',
+                'link' => 1,
+                'default' => 1,
+                'name' => 'name',
+            ],
         ];
 
         require 'include/modules.php';

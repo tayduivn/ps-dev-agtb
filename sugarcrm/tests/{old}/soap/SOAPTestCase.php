@@ -68,11 +68,12 @@ abstract class SOAPTestCase extends TestCase
         $GLOBALS['db']->commit();
         $result = $this->soapClient->call(
             'login',
-            ['user_auth' =>
-                ['user_name' => 'admin',
-                    'password' => md5('asdf'),
-                    'version' => '.01'],
-                'application_name' => 'SoapTest', "name_value_list" => []]
+            ['user_auth' => ['user_name' => 'admin',
+                'password' => md5('asdf'),
+                'version' => '.01',
+            ],
+                'application_name' => 'SoapTest', "name_value_list" => [],
+            ]
         );
         $this->sessionId = $result['id'];
         return $result;

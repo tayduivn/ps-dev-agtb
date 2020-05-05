@@ -25,13 +25,13 @@ class DeepArrayDiffTest extends TestCase
             'value1' => true,
             'value2' => false,
             'value3' => 'yummy',
-            ];
+        ];
         
         $array2 = [
             'value1' => true,
             'value2' => true,
             'value3' => 'yummy',
-            ];
+        ];
         
         $diffs = deepArrayDiff($array1, $array2);
         

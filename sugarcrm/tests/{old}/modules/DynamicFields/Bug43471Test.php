@@ -22,17 +22,15 @@ class Bug43471Test extends TestCase
         $bean = $this->createMock(Company::class);
         $bean->table_name = 'test' . date("YmdHis");
         $bean->field_defs =  [
-              'id' =>
-               [
+            'id' => [
                 'name' => 'id',
                 'vname' => 'LBL_ID',
                 'type' => 'id',
                 'required' => true,
                 'reportable' => true,
                 'comment' => 'Unique identifier',
-              ],
-              'name' =>
-               [
+            ],
+            'name' => [
                 'name' => 'name',
                 'type' => 'name',
                 'dbType' => 'varchar',
@@ -44,9 +42,8 @@ class Bug43471Test extends TestCase
                 'required' => true,
                 'importable' => 'required',
                 'merge_filter' => 'selected',
-              ],
-              'FooBar_c' =>
-               [
+            ],
+            'FooBar_c' => [
                 'required' => false,
                 'source' => 'custom_fields',
                 'name' => 'FooBar_c',
@@ -66,8 +63,8 @@ class Bug43471Test extends TestCase
                 'size' => '20',
                 'id' => 'AccountsFooBar_c',
                 'custom_module' => 'Accounts',
-              ],
-            ];
+            ],
+        ];
 
         $df = $this->createPartialMock(DynamicField::class, ['createCustomTable']);
         $df->setup($bean);
@@ -79,10 +76,10 @@ class Bug43471Test extends TestCase
         $helper->expects($this->any())
                 ->method('get_columns')
                 ->will($this->returnValue([
-                'foobar_c' =>  [
-                    'name' => 'FooBar_c',
-                    'type' => 'varchar',
-                    'len' => '255',
+                    'foobar_c' => [
+                        'name' => 'FooBar_c',
+                        'type' => 'varchar',
+                        'len' => '255',
                     ],
                 ]));
 

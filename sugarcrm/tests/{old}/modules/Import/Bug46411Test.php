@@ -70,14 +70,14 @@ class Bug46411Test extends TestCase
         $bean->expects($this->any())
             ->method('get_importable_fields')
             ->will($this->returnValue([
-            'account_id'        => 'accounts',
-            'opportunity_id'    => 'opportunities',
-            'contact_id'        => 'contacts',
-            'case_id'           => 'cases',
-            'user_id'           => 'users',
-            'assigned_user_id'  => 'users',
-            'note_id'           => 'notes',
-            'lead_id'           => 'leads',
+                'account_id'        => 'accounts',
+                'opportunity_id'    => 'opportunities',
+                'contact_id'        => 'contacts',
+                'case_id'           => 'cases',
+                'user_id'           => 'users',
+                'assigned_user_id'  => 'users',
+                'note_id'           => 'notes',
+                'lead_id'           => 'leads',
             ]));
 
         $bean->expects($this->any())

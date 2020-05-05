@@ -70,11 +70,11 @@ class RS172Test extends TestCase
         $this->account->calls->add($this->call);
 
         $actual = $this->api->filterRelated($this->service, [
-                'module' => 'Accounts',
-                'record' => $this->account->id,
-                'link_name' => 'calls',
-                'include_child_items' => true,
-            ]);
+            'module' => 'Accounts',
+            'record' => $this->account->id,
+            'link_name' => 'calls',
+            'include_child_items' => true,
+        ]);
         $this->assertArrayHasKey('records', $actual);
         $actual = reset($actual['records']);
         $this->assertEquals($this->call->id, $actual['id']);
@@ -90,11 +90,11 @@ class RS172Test extends TestCase
         $this->account->meetings->add($this->meeting);
 
         $actual = $this->api->filterRelated($this->service, [
-                'module' => 'Accounts',
-                'record' => $this->account->id,
-                'link_name' => 'meetings',
-                'include_child_items' => true,
-            ]);
+            'module' => 'Accounts',
+            'record' => $this->account->id,
+            'link_name' => 'meetings',
+            'include_child_items' => true,
+        ]);
         $this->assertArrayHasKey('records', $actual);
         $actual = reset($actual['records']);
         $this->assertEquals($this->meeting->id, $actual['id']);

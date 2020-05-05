@@ -24,11 +24,12 @@ class Bug49896Test extends TestCase
             $this->passwordSetting = $GLOBALS['sugar_config']['passwordsetting'];
         }
         $GLOBALS['sugar_config']['passwordsetting'] = ['onenumber'=>1,
-                'onelower'=>1,
-                'oneupper'=>1,
-                'onespecial'=>1,
-                'minpwdlength'=>6,
-                'maxpwdlength'=>15];
+            'onelower' => 1,
+            'oneupper' => 1,
+            'onespecial' => 1,
+            'minpwdlength' => 6,
+            'maxpwdlength' => 15,
+        ];
         $this->currentUser = SugarTestUserUtilities::createAnonymousUser(false);
     }
 

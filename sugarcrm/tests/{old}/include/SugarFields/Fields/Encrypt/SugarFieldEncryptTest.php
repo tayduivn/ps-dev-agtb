@@ -31,7 +31,7 @@ class SugarFieldEncryptTest extends TestCase
     {
         return [
             [Blowfish::encode(Blowfish::getKey('encrypt_field'), 'Test value'), 'Test value'],
-            ];
+        ];
     }
     
     /**

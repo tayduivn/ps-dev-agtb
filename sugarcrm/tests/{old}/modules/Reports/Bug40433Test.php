@@ -55,11 +55,12 @@ class Bug40433Test extends TestCase
      */
     public function test_create_query()
     {
-        $this->reportInstance->select_fields = [0=>'contracts.id primaryid',
-                                                     1=>'contracts.name contracts_name',
-                                                     2=>'contracts.status contracts_status',
-                                                     3=>'contracts.total_contract_value CONTRACTS_TOTAL_CONTRA1E104D , contracts.currency_id CONTRACTS_TOTAL_CONTRAE75D5E',
-                                                     4=>'contracts.total_contract_value_us_dollar CONTRACTS_TOTAL_CONTRA5A324D',
+        $this->reportInstance->select_fields = [
+            0 => 'contracts.id primaryid',
+            1 => 'contracts.name contracts_name',
+            2 => 'contracts.status contracts_status',
+            3 => 'contracts.total_contract_value CONTRACTS_TOTAL_CONTRA1E104D , contracts.currency_id CONTRACTS_TOTAL_CONTRAE75D5E',
+            4 => 'contracts.total_contract_value_us_dollar CONTRACTS_TOTAL_CONTRA5A324D',
         ];
         $this->reportInstance->create_query('query', 'select_fields');
         $select = implode(",", $this->reportInstance->select_fields);
@@ -78,11 +79,12 @@ class Bug40433Test extends TestCase
      */
     public function test_create_query2()
     {
-        $this->reportInstance->select_fields = [0=>'contracts.id primaryid',
-                                                     1=>'contracts.name contracts_name',
-                                                     2=>'contracts.status contracts_status',
-                                                     3=>'contracts.currency_id CONTRACTS_TOTAL_CONTRAE75D5E, contracts.total_contract_value CONTRACTS_TOTAL_CONTRA1E104D',
-                                                     4=>'contracts.total_contract_value_us_dollar CONTRACTS_TOTAL_CONTRA5A324D',
+        $this->reportInstance->select_fields = [
+            0 => 'contracts.id primaryid',
+            1 => 'contracts.name contracts_name',
+            2 => 'contracts.status contracts_status',
+            3 => 'contracts.currency_id CONTRACTS_TOTAL_CONTRAE75D5E, contracts.total_contract_value CONTRACTS_TOTAL_CONTRA1E104D',
+            4 => 'contracts.total_contract_value_us_dollar CONTRACTS_TOTAL_CONTRA5A324D',
         ];
         $this->reportInstance->create_query('query', 'select_fields');
         $select = implode(",", $this->reportInstance->select_fields);

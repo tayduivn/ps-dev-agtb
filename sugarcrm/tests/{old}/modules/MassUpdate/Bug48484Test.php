@@ -91,32 +91,34 @@ class MassUpdateStub extends MassUpdate
 
     protected function getSearchDefs($module, $metafiles = [])
     {
-        return [$module => [
-            'layout' => [
-                'basic_search' => [
-                    $this->customFieldName => [
-                        'type' => 'date',
-                        'name' => $this->customFieldName,
+        return [
+            $module => [
+                'layout' => [
+                    'basic_search' => [
+                        $this->customFieldName => [
+                            'type' => 'date',
+                            'name' => $this->customFieldName,
+                        ],
                     ],
                 ],
             ],
-        ]];
+        ];
     }
 
     protected function getSearchFields($module, $metafiles = [])
     {
          $customFields = [
-            'range_'       . $this->customFieldName,
-            'start_range_' . $this->customFieldName,
-            'end_range_'   . $this->customFieldName,
+             'range_'       . $this->customFieldName,
+             'start_range_' . $this->customFieldName,
+             'end_range_'   . $this->customFieldName,
          ];
 
          $searchFields = [];
          foreach ($customFields as $field) {
              $searchFields[$field] = [
-                'query_type'          => 'default',
-                'enable_range_search' => true,
-                'is_date_field'       => true,
+                 'query_type'          => 'default',
+                 'enable_range_search' => true,
+                 'is_date_field'       => true,
              ];
          }
          return [$module => $searchFields];

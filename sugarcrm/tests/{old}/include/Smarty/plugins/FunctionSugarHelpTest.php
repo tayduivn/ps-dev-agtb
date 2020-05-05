@@ -38,12 +38,12 @@ class FunctionSugarHelpTest extends TestCase
             [
                 'dog "the" bounty hunter & friends are <b>cool</b>',
                 'dog &quot;the&quot; bounty hunter &amp; friends are &lt;b&gt;cool&lt;/b&gt;',
-                ],
+            ],
             [
                 "dog 'the' bounty hunter",
                 "dog \'the\' bounty hunter",
-                ],
-            ];
+            ],
+        ];
     }
     
     /**

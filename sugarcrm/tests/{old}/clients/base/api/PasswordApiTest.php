@@ -73,7 +73,7 @@ class PasswordApiTest extends TestCase
         $this->passwordApi->usr->expects($this->any())->method('sendEmailForPassword')->will(
             $this->returnValue(
                 [
-                'status' => true,
+                    'status' => true,
                 ]
             )
         );

@@ -154,8 +154,7 @@ class RestAddToProspectListTest extends TestCase
                     $prospectList->id,
                 ],
 
-                "filter" =>
-                [
+                "filter" => [
                     [
                         '$or' => [
                             ['first_name' => ['$starts' => 'V'] ],

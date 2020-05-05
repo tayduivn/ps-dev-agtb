@@ -222,9 +222,9 @@ class RestRelateRecordTest extends RestTestBase
         $restReply = $this->restCall(
             "Opportunities/".$this->opps[0]->id."/link/contacts",
             json_encode([
-                                                      'last_name'=>'TEST',
-                                                      'first_name'=>'UNIT',
-                                                      'description'=>'UNIT TEST CONTACT',
+                'last_name'=>'TEST',
+                'first_name'=>'UNIT',
+                'description'=>'UNIT TEST CONTACT',
             ]),
             'POST'
         );
@@ -272,7 +272,7 @@ class RestRelateRecordTest extends RestTestBase
         $restReply = $this->restCall(
             "Opportunities/".$this->opps[0]->id."/link/contacts/".$this->contacts[1]->id,
             json_encode([
-                                                      'last_name'=>"Test O'Chango",
+                'last_name'=>"Test O'Chango",
             ]),
             'PUT'
         );
@@ -308,10 +308,10 @@ class RestRelateRecordTest extends RestTestBase
         $restReply = $this->restCall(
             "Opportunities/".$this->opps[0]->id."/link/contacts",
             json_encode([
-                                                      'last_name'=>'TEST',
-                                                      'first_name'=>'UNIT',
-                                                      'contact_role'=>'Primary Decision Maker',
-                                                      'description'=>'UNIT TEST CONTACT',
+                'last_name'=>'TEST',
+                'first_name'=>'UNIT',
+                'contact_role'=>'Primary Decision Maker',
+                'description'=>'UNIT TEST CONTACT',
             ]),
             'POST'
         );
@@ -375,8 +375,8 @@ class RestRelateRecordTest extends RestTestBase
         $restReply = $this->restCall(
             "Opportunities/".$this->opps[0]->id."/link/contacts/".$this->contacts[1]->id,
             json_encode([
-                                                      'opportunity_role'=>'Primary Decision Maker',
-                                                      'last_name'=>"Test O Chango",
+                'opportunity_role'=>'Primary Decision Maker',
+                'last_name'=>"Test O Chango",
             ]),
             'PUT'
         );
@@ -593,12 +593,12 @@ class RestRelateRecordTest extends RestTestBase
         $this->calls[] = $call;
 
         $post = [
-                'embed_flag'        => 0,
-                'deleted'           => 0,
-                'name'              => 'Test Note',
-                'description'       => 'This is a test note',
-                'assigned_user_id'  => 1,
-            ];
+            'embed_flag'        => 0,
+            'deleted'           => 0,
+            'name'              => 'Test Note',
+            'description'       => 'This is a test note',
+            'assigned_user_id'  => 1,
+        ];
 
         $restReply = $this->restCall("Calls/{$call->id}/link/notes", $post, 'POST');
 
@@ -615,7 +615,7 @@ class RestRelateRecordTest extends RestTestBase
 
         $post = [
             'name' => 'CALL FOR LEAD ' . create_guid(),
-            ];
+        ];
 
         $restReply = $this->restCall("Leads/{$lead->id}/link/calls", $post, 'POST');
         $this->assertNotEmpty($restReply['reply']['related_record']['id'], "ID was not set for the related record");
@@ -637,12 +637,12 @@ class RestRelateRecordTest extends RestTestBase
         $this->calls[] = $call;
 
         $post = [
-                'embed_flag'        => 0,
-                'deleted'           => 0,
-                'name'              => 'Test Note',
-                'description'       => 'This is a test note',
-                'assigned_user_id'  => 1,
-            ];
+            'embed_flag'        => 0,
+            'deleted'           => 0,
+            'name'              => 'Test Note',
+            'description'       => 'This is a test note',
+            'assigned_user_id'  => 1,
+        ];
 
         $restReply = $this->restCall("Calls/{$call->id}/link/notes", $post, 'POST');
         $this->assertNotEmpty($restReply['reply']['related_record']['id'], "ID was not set for the related record");
@@ -660,7 +660,7 @@ class RestRelateRecordTest extends RestTestBase
             'name' => 'CALL FOR LEAD ' . create_guid(),
             'parent_type' => 'Leads',
             'parent_id' => $lead->id,
-            ];
+        ];
 
         $restReply = $this->restCall("Leads/{$lead->id}/link/calls", $post, 'POST');
         
@@ -682,12 +682,12 @@ class RestRelateRecordTest extends RestTestBase
         $this->calls[] = $call;
 
         $post = [
-                'embed_flag'        => 0,
-                'deleted'           => 0,
-                'name'              => 'Test Note',
-                'description'       => 'This is a test note',
-                'assigned_user_id'  => 1,
-            ];
+            'embed_flag'        => 0,
+            'deleted'           => 0,
+            'name'              => 'Test Note',
+            'description'       => 'This is a test note',
+            'assigned_user_id'  => 1,
+        ];
 
         $restReply = $this->restCall("Calls/{$call->id}/link/notes", $post, 'POST');
         $this->assertNotEmpty($restReply['reply']['related_record']['id'], "ID was not set for the related record");
@@ -705,7 +705,7 @@ class RestRelateRecordTest extends RestTestBase
             'name' => 'CALL FOR LEAD ' . create_guid(),
             'parent_id' => $lead->id,
             'parent_type' => 'Leads',
-            ];
+        ];
 
         $restReply = $this->restCall("Leads/{$lead->id}/link/calls", $post, 'POST');
         $this->assertNotEmpty($restReply['reply']['related_record']['id'], "ID was not set for the related record");
@@ -725,12 +725,12 @@ class RestRelateRecordTest extends RestTestBase
         $this->calls[] = $call;
 
         $post = [
-                'embed_flag'        => 0,
-                'deleted'           => 0,
-                'name'              => 'Test Note',
-                'description'       => 'This is a test note',
-                'assigned_user_id'  => 1,
-            ];
+            'embed_flag'        => 0,
+            'deleted'           => 0,
+            'name'              => 'Test Note',
+            'description'       => 'This is a test note',
+            'assigned_user_id'  => 1,
+        ];
 
         $restReply = $this->restCall("Calls/{$call->id}/link/notes", $post, 'POST');
         $this->assertNotEmpty($restReply['reply']['related_record']['id'], "ID was not set for the related record");
@@ -748,7 +748,7 @@ class RestRelateRecordTest extends RestTestBase
             'name' => 'CALL FOR LEAD ' . create_guid(),
             'parent_id' => $lead->id,
             'parent_type' => 'Leads',
-            ];
+        ];
 
         $restReply = $this->restCall("Leads/{$lead->id}/link/calls", $post, 'POST');
         $this->assertNotEmpty($restReply['reply']['related_record']['id'], "ID was not set for the related record");

@@ -60,7 +60,8 @@ class M2MRelationshipHooksTriggerTest extends TestCase
                 'callBeforeUpdate',
                 'callAfterUpdate',
                 'callBeforeDelete',
-                'callAfterDelete'])
+                'callAfterDelete',
+            ])
             ->setConstructorArgs([$this->def])
             ->getMock();
     }

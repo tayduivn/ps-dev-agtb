@@ -128,11 +128,9 @@ class Bug53357Test extends TestCase
                 ],
             ],
             'filters_def' =>  [
-                'Filter_1' =>
-                 [
+                'Filter_1' => [
                     'operator' => 'AND',
-                    0 =>
-                     [
+                    0 => [
                         'name' => 'id',
                         'table_key' => 'self',
                         'qualifier_name' => 'is',
@@ -157,10 +155,10 @@ class Bug53357Test extends TestCase
 
         // prepare expected substring (the formatted value of opportunity amount)
         $substring = currency_format_number($this->amount, [
-                'currency_id'     => $locale->getPrecedentPreference('currency'),
-                'convert'         => true,
-                'currency_symbol' => $locale->getPrecedentPreference('default_currency_symbol'),
-            ]);
+            'currency_id'     => $locale->getPrecedentPreference('currency'),
+            'convert'         => true,
+            'currency_symbol' => $locale->getPrecedentPreference('default_currency_symbol'),
+        ]);
 
         // Opportunity amount must appear 4 times in report output:
         // 1. The amount of opportunity itself

@@ -41,7 +41,7 @@ class SugarLoggerTest extends TestCase
             ['debug','fatal','foo5',true,'[FATAL] foo5'],
             ['debug','security','foo6',true,'[SECURITY] foo6'],
             ['fatal','warn','foo7',false,'[WARN] foo7'],
-            ];
+        ];
     }
 
     /**

@@ -80,10 +80,14 @@ class Bug53360Test extends TestCase
     private function getDummyGroupDefsInfo()
     {
         $grpDefs = [
-            ['name' => 'user_name', 'label' => 'User Name', 'table_key' => 'Opportunities:assigned_user_link',
-                'type' => 'username', 'index' => 0],
-            ['name' => 'sales_stage', 'label' => 'Sales Stage', 'table_key' => 'self', 'type' => 'enum',
-                'index' => 1],
+            [
+                'name' => 'user_name', 'label' => 'User Name', 'table_key' => 'Opportunities:assigned_user_link',
+                'type' => 'username', 'index' => 0,
+            ],
+            [
+                'name' => 'sales_stage', 'label' => 'Sales Stage', 'table_key' => 'self', 'type' => 'enum',
+                'index' => 1,
+            ],
         ];
         $grpKeys = array_map('getGroupByKey', $grpDefs);
         return array_combine($grpKeys, $grpDefs);

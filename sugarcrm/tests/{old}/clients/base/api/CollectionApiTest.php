@@ -199,17 +199,22 @@ class CollectionApiTest extends TestCase
         $actual = SugarTestReflection::callProtectedMethod(
             $api,
             'getData',
-            [$service, [
-                'offset' => [
-                    'a' => 0,
-                    'b' => -1,
-                    'c' => 1,
+            [
+                $service,
+                [
+                    'offset' => [
+                        'a' => 0,
+                        'b' => -1,
+                        'c' => 1,
+                    ],
                 ],
-            ], $definition, [
-                'a' => [],
-                'b' => [],
-                'c' => [],
-            ]]
+                $definition,
+                [
+                    'a' => [],
+                    'b' => [],
+                    'c' => [],
+                ],
+            ]
         );
 
         $this->assertEquals([
@@ -467,10 +472,14 @@ class CollectionApiTest extends TestCase
         $actual = SugarTestReflection::callProtectedMethod(
             $this->api,
             'getSourceFilter',
-            [[
-                'filter' => $apiFilter,
-                'stored_filter' => array_keys($storedFilter),
-            ], $definition, 'test-source']
+            [
+                [
+                    'filter' => $apiFilter,
+                    'stored_filter' => array_keys($storedFilter),
+                ],
+                $definition,
+                'test-source',
+            ]
         );
 
         $this->assertEquals($expected, $actual);
@@ -760,9 +769,12 @@ class CollectionApiTest extends TestCase
         SugarTestReflection::callProtectedMethod(
             $this->api,
             'normalizeStoredFilter',
-            [[
-                'stored_filter' => 'test',
-            ], $definition]
+            [
+                [
+                    'stored_filter' => 'test',
+                ],
+                $definition,
+            ]
         );
     }
 

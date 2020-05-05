@@ -79,12 +79,13 @@ class SugarApplicationTest extends TestCase
     public function testSetupPrintWithMultidimensionalArray()
     {
         $_GET['foo'] = [
-                            '0' => [
-                                   '0'=>'bar',
-                                   'a' => 'hej'],
-                            '1' => 'notMultidemensional',
-                            '2' => 'notMultidemensional',
-                           ];
+            '0' => [
+                '0' => 'bar',
+                'a' => 'hej',
+            ],
+            '1' => 'notMultidemensional',
+            '2' => 'notMultidemensional',
+        ];
         $_POST['dog'] = 'cat';
         $this->app->setupPrint();
         $this->assertEquals('foo[1]=notMultidemensional&foo[2]=notMultidemensional&dog=cat&print=true', $GLOBALS['request_string']);

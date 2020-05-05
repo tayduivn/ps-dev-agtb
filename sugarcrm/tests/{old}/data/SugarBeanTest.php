@@ -800,18 +800,20 @@ class SugarBeanTest extends TestCase
     public static function dataProviderFieldDefs()
     {
         return [
-            [[
-                'opportunity_id' => [
-                    'name' => 'opportunity_id',
+            [
+                [
+                    'opportunity_id' => [
+                        'name' => 'opportunity_id',
+                    ],
+                    'opportunity_name' => [
+                        'name' => 'opportunity_name',
+                        'id_name' => 'opportunity_id',
+                    ],
+                    'name' => [
+                        'name' => 'name',
+                    ],
                 ],
-                'opportunity_name' => [
-                    'name' => 'opportunity_name',
-                    'id_name' => 'opportunity_id',
-                ],
-                'name' => [
-                    'name' => 'name',
-                ],
-            ]],
+            ],
         ];
     }
 

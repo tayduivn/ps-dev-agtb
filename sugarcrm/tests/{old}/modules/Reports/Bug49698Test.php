@@ -28,15 +28,15 @@ class Bug49698Test extends TestCase
     {
         $view = new ReportsViewBuildreportmoduletree();
         $linked_field = [
-        'name' => 'accounts',
-        'type' => 'link',
-        'relationship' => 'accounts_opportunities',
-        'source' => 'non-db',
-        'link_type' => 'one',
-        'module' => 'Accounts',
-        'bean_name' => 'Account',
-        'vname' => 'LBL_ACCOUNTS',
-        'label' => 'Prospects', //Assume here that Accounts module label was renamed to Prospects
+            'name' => 'accounts',
+            'type' => 'link',
+            'relationship' => 'accounts_opportunities',
+            'source' => 'non-db',
+            'link_type' => 'one',
+            'module' => 'Accounts',
+            'bean_name' => 'Account',
+            'vname' => 'LBL_ACCOUNTS',
+            'label' => 'Prospects', //Assume here that Accounts module label was renamed to Prospects
         ];
         $node = SugarTestReflection::callProtectedMethod(
             $view,

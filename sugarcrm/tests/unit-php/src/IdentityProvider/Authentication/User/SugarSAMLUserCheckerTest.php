@@ -316,8 +316,8 @@ class SugarSAMLUserCheckerTest extends TestCase
         $identityValue,
         $provision,
         $attributes = [
-        'create' => [],
-        'update' => [],
+            'create' => [],
+            'update' => [],
         ],
         $sugarUser = null
     ) {

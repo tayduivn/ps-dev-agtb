@@ -44,8 +44,7 @@ class Bug46713Test extends TestCase
         $module = 'Cases';
         $this->searchForm = new SearchForm($seed, $module);
         $this->searchForm->searchFields = [
-            'range_case_number' =>
-            [
+            'range_case_number' => [
                 'query_type' => 'default',
                 'enable_range_search' => true,
             ],

@@ -37,7 +37,8 @@ class RestRegisterLeadTest extends RestTestBase
             'email' => [
                 [
                     'email_address' => 'UT@test.com',
-                ]],
+                ],
+            ],
         ];
         $restReply = $this->restCall(
             "Leads/register",
@@ -71,8 +72,7 @@ class RestRegisterLeadTest extends RestTestBase
      */
     public function testCreateEmpty()
     {
-        $leadProps = [
-        ];
+        $leadProps = [];
         $restReply = $this->restCall(
             "Leads/register",
             json_encode($leadProps),

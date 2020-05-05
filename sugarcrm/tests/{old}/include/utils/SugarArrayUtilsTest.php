@@ -138,8 +138,7 @@ class SugarArrayUtilsTest extends TestCase
                 "sugar_config",
                 "http_referer_396",
                 ['list' => [3 => 'location.com']], // structure from config_override.php
-                ['http_referer_396' =>
-                    ['list' => [0 => 'abc.com', 1 => '123.com', 2 => 'mylocation.com']]],
+                ['http_referer_396' => ['list' => [0 => 'abc.com', 1 => '123.com', 2 => 'mylocation.com']]],
                 "\$sugar_config['http_referer_396']['list'][] = 'location.com';\n",
             ],
             [ // Append: non-sequential array exists in config.php

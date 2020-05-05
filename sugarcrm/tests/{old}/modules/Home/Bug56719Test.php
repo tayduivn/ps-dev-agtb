@@ -23,12 +23,12 @@ class Bug56719Test extends TestCase
         /** @var Team[] $teams */
         $teams = [];
         foreach ([
-             'Priv1' => true,
-             'XPriv1' => true,
-             'Priv2' => true,
-             'Pub1' => false,
-             'Pub2' => false,
-            ] as $name => $private) {
+            'Priv1' => true,
+            'XPriv1' => true,
+            'Priv2' => true,
+            'Pub1' => false,
+            'Pub2' => false,
+        ] as $name => $private) {
             $teams[] = SugarTestTeamUtilities::createAnonymousTeam(
                 null,
                 [

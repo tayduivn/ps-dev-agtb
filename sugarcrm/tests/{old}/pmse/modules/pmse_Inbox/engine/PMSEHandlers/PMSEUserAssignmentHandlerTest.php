@@ -672,9 +672,7 @@ class PMSEUserAssignmentHandlerTest extends TestCase
                 ->will($this->returnValue($actList));
         
         $defList = [
-            'list'=>[
-                
-            ],
+            'list'=>[],
         ];
         
         $activityDefinitionMock = $this->getMockBuilder('pmse_BpmActivityDefinition')

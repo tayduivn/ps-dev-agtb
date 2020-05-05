@@ -101,15 +101,14 @@ abstract class RestTestCase extends TestCase
         return $this->makeRESTCall(
             'login',
             [
-                'user_auth' =>
-                    [
-                        'user_name' => 'admin',
-                        'password' => md5('asdf'),
-                        'version' => '.01',
-                        ],
+                'user_auth' => [
+                    'user_name' => 'admin',
+                    'password' => md5('asdf'),
+                    'version' => '.01',
+                ],
                 'application_name' => 'mobile',
                 'name_value_list' => [],
-                ]
+            ]
         );
     }
 }

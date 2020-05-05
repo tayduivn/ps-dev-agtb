@@ -172,19 +172,19 @@ class RestUpdateTest extends RestTestBase
 
 
         $emails = [
-                        [
-                            'email_address'=>'test@test.com',
-                            'opt_out'=>'0',
-                            'invalid_email'=>'0',
-                            'primary_address'=>'1',
-                        ],
-                        [
-                            'email_address'=>'asdf@test.com',
-                            'opt_out'=>'0',
-                            'invalid_email'=>'1',
-                            'primary_address'=>'0',
-                        ],
-                    ];
+            [
+                'email_address'=>'test@test.com',
+                'opt_out'=>'0',
+                'invalid_email'=>'0',
+                'primary_address'=>'1',
+            ],
+            [
+                'email_address'=>'asdf@test.com',
+                'opt_out'=>'0',
+                'invalid_email'=>'1',
+                'primary_address'=>'0',
+            ],
+        ];
         $restReply = $this->restCall("Contacts/{$this->contact->id}", json_encode([
             'first_name' => 'UNIT TEST - AFTER',
             'email' => $emails,

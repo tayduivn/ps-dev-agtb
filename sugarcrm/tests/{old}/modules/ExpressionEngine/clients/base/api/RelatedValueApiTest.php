@@ -234,17 +234,14 @@ class RelatedValueApiTest extends TestCase
         );
 
         $expected = [
-            'opportunities' =>
-                [
-                    'rollupSum' =>
-                        [
-                            'amount' => '100.000000',
-                            'amount_values' =>
-                                [
-                                    '' => '100.000000',
-                                ],
-                        ],
+            'opportunities' => [
+                'rollupSum' => [
+                    'amount' => '100.000000',
+                    'amount_values' => [
+                        '' => '100.000000',
+                    ],
                 ],
+            ],
         ];
 
         $this->assertEquals($expected, $actual);

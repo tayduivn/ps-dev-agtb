@@ -14,29 +14,29 @@
 //this file is temporarily moved during a unit test to test the behaviour of createdefs.php handling.
 
 $createdef['contacts@testsugar.info']['Contacts'] = [
-        'fields' => [
-            'last_name' => '{from_name}',
-            'department' => '{email_id}',
-            'date_entered' => '{date}',
-            'description' => '{description} {email_id} {message_id} {subject} {from}',
-            'lead_source' => 'Email',
-        ],
+    'fields' => [
+        'last_name' => '{from_name}',
+        'department' => '{email_id}',
+        'date_entered' => '{date}',
+        'description' => '{description} {email_id} {message_id} {subject} {from}',
+        'lead_source' => 'Email',
+    ],
 ];
 
 $createdef['cases@testsugar.info']['Cases'] = [
-        'fields' => [
-            'name' => '{from_name}',
-            'status' => '{email_id}',
-            'date_entered' => '{date}',
-            'description' => '{description} {email_id} {message_id} {subject} {from}',
-        ],
+    'fields' => [
+        'name' => '{from_name}',
+        'status' => '{email_id}',
+        'date_entered' => '{date}',
+        'description' => '{description} {email_id} {message_id} {subject} {from}',
+    ],
 ];
 
 $createdef['opp@testsugar.info']['Opportunities'] = [
-        'fields' => [
-            'name' => '{from_name}',
-            'next_step' => '{email_id}',
-            'date_entered' => '{date}',
-            'description' => '{description} {email_id} {message_id} {subject} {from}',
-        ],
+    'fields' => [
+        'name' => '{from_name}',
+        'next_step' => '{email_id}',
+        'date_entered' => '{date}',
+        'description' => '{description} {email_id} {message_id} {subject} {from}',
+    ],
 ];

@@ -245,7 +245,7 @@ class ListViewDisplayTest extends TestCase
         $data = [
             'data' => [1,2,3],
             'pageData' => ['bean' => ['moduleDir'=>'testmoduledir']],
-            ];
+        ];
         $this->lvd->process('foo', $data, 'testmetestme');
 
         $this->assertEquals(3, $this->lvd->rowCount);
@@ -391,8 +391,8 @@ class ListViewDisplayTest extends TestCase
             'field1' => [
                 'type' => 'link',
                 'relationship' => 'foobar_emailaddresses',
-                ],
-            ];
+            ],
+        ];
         $GLOBALS['dictionary']['foobar']['relationships']['foobar_emailaddresses']['rhs_module'] = 'EmailAddresses';
         $GLOBALS['current_user']->setPreference('email_link_type', 'sugar');
 
@@ -413,8 +413,8 @@ class ListViewDisplayTest extends TestCase
             'field1' => [
                 'type' => 'link',
                 'relationship' => 'foobar_emailaddresses',
-                ],
-            ];
+            ],
+        ];
         $_REQUEST['module'] = 'foo';
         
         $GLOBALS['dictionary']['foobar']['relationships']['foobar_emailaddresses']['rhs_module'] = 'EmailAddresses';
@@ -718,36 +718,48 @@ class ListViewDisplayTest extends TestCase
         return [
             [
                 true,
-                [[
-                    'default' => true,
-                    'label'   => 'LBL_TEST_TEST_KEY',
-                ]],
-                [[
-                    'default' => 'test/url/pattern/{id}',
-                    'label'   => 'LBL_TEST_TEST_KEY',
-                ]],
+                [
+                    [
+                        'default' => true,
+                        'label'   => 'LBL_TEST_TEST_KEY',
+                    ],
+                ],
+                [
+                    [
+                        'default' => 'test/url/pattern/{id}',
+                        'label'   => 'LBL_TEST_TEST_KEY',
+                    ],
+                ],
             ],
             [
                 false,
-                [[
-                    'default' => false,
-                    'label'   => 'LBL_TEST_TEST_KEY',
-                ]],
-                [[
-                    'default' => 'test/url/pattern/{id}',
-                    'label'   => 'LBL_TEST_TEST_KEY',
-                ]],
+                [
+                    [
+                        'default' => false,
+                        'label'   => 'LBL_TEST_TEST_KEY',
+                    ],
+                ],
+                [
+                    [
+                        'default' => 'test/url/pattern/{id}',
+                        'label'   => 'LBL_TEST_TEST_KEY',
+                    ],
+                ],
             ],
             [
                 false,
-                [[
-                    'default' => false,
-                    'label'   => 'LBL_TEST_TEST_KEY',
-                ]],
-                [[
-                    'default' => null,
-                    'label'   => 'LBL_TEST_TEST_KEY',
-                ]],
+                [
+                    [
+                        'default' => false,
+                        'label'   => 'LBL_TEST_TEST_KEY',
+                    ],
+                ],
+                [
+                    [
+                        'default' => null,
+                        'label'   => 'LBL_TEST_TEST_KEY',
+                    ],
+                ],
             ],
         ];
     }

@@ -101,25 +101,25 @@ class SugarFieldRelateTest extends TestCase
         $sfr = new SugarFieldRelate('relate');
         $output = $sfr->getSearchViewSmarty([], $vardef, $displayParams, 0);
         $this->assertStringContainsString('name="{$Array.assigned_user_id', $output);
-        
-        $vardef =   [
-                    'name' => 'account_name',
-                    'rname' => 'name',
-                    'id_name' => 'account_id',
-                    'vname' => 'LBL_ACCOUNT_NAME',
-                    'type' => 'relate',
-                    'table' => 'accounts',
-                    'join_name'=>'accounts',
-                    'isnull' => 'true',
-                    'module' => 'Accounts',
-                    'dbType' => 'varchar',
-                    'link'=>'accounts',
-                    'len' => '255',
-                     'source'=>'non-db',
-                     'unified_search' => true,
-                     'required' => true,
-                     'importable' => 'required',
-                  ];
+
+        $vardef = [
+            'name' => 'account_name',
+            'rname' => 'name',
+            'id_name' => 'account_id',
+            'vname' => 'LBL_ACCOUNT_NAME',
+            'type' => 'relate',
+            'table' => 'accounts',
+            'join_name' => 'accounts',
+            'isnull' => 'true',
+            'module' => 'Accounts',
+            'dbType' => 'varchar',
+            'link' => 'accounts',
+            'len' => '255',
+            'source' => 'non-db',
+            'unified_search' => true,
+            'required' => true,
+            'importable' => 'required',
+        ];
         $displayParams = [];
         $sfr = new SugarFieldRelate('relate');
         $output = $sfr->getSearchViewSmarty([], $vardef, $displayParams, 0);

@@ -333,10 +333,11 @@ class PMSEEngineUtilsTest extends TestCase
     public function testReservedWordsSql()
     {
         $reservedWordsSqlTest = ["ACCESSIBLE", "ACTION", "ADD", "ALL", "ALTER", "ANALYZE", "AND", "ANY", "AS", "ASC", "ASENSITIVE", "AUTHORIZATION", "BACKUP", "BEFORE", "BEGIN", "BETWEEN", "BIGINT", "BINARY", "BIT", "BLOB", "BOTH", "BREAK", "BROWSE", "BULK", "BY", "CALL", "CASCADE", "CASE", "CHANGE", "CHAR", "CHARACTER", "CHECK", "CHECKPOINT", "CLOSE", "CLUSTERED", "COALESCE", "COLLATE", "COLUMN", "COMMIT", "COMPUTE", "CONDITION", "CONSTRAINT", "CONTAINS", "CONTAINSTABLE", "CONTINUE", "CONVERT", "CREATE", "CROSS", "CURRENT", "CURRENT_DATE", "CURRENT_TIME", "CURRENT_TIMESTAMP", "CURRENT_USER", "CURSOR", "DATABASE", "DATABASES", "DATE", "DAY_HOUR", "DAY_MICROSECOND", "DAY_MINUTE", "DAY_SECOND", "DBCC", "DEALLOCATE", "DEC", "DECIMAL", "DECLARE", "DEFAULT", "DELAYED", "DELETE", "DENY", "DESC", "DESCRIBE", "DETERMINISTIC", "DISK", "DISTINCT", "DISTINCTROW",
-                        "DISTRIBUTED", "DIV", "DOUBLE", "DROP", "DUAL", "DUMMY", "DUMP", "EACH", "ELSE", "ELSEIF", "ENCLOSED", "END", "ENUM", "ERRLVL", "ESCAPE", "ESCAPED", "EXCEPT", "EXEC", "EXECUTE", "EXISTS", "EXIT", "EXPLAIN", "FALSE", "FETCH", "FILE", "FILLFACTOR", "FLOAT", "FLOAT4", "FLOAT8", "FOR", "FORCE", "FOREIGN", "FREETEXT", "FREETEXTTABLE", "FROM", "FULL", "FULLTEXT", "FUNCTION", "GENERAL", "GOTO", "GRANT", "GROUP", "HAVING", "HIGH_PRIORITY", "HOLDLOCK", "HOUR_MICROSECOND", "HOUR_MINUTE", "HOUR_SECOND", "IDENTITY", "IDENTITYCOL", "IDENTITY_INSERT", "IF", "IGNORE", "IGNORE_SERVER_IDS", "IN", "INDEX", "INFILE", "INNER", "INOUT", "INSENSITIVE", "INSERT", "INT", "INT1", "INT2", "INT3", "INT4", "INT8", "INTEGER", "INTERSECT", "INTERVAL", "INTO", "IS", "ITERATE", "JOIN", "KEY", "KEYS", "KILL", "LEADING", "LEAVE", "LEFT", "LIKE", "LIMIT", "LINEAR", "LINENO", "LINES",
-                        "LOAD", "LOCALTIME", "LOCALTIMESTAMP", "LOCK", "LONG", "LONGBLOB", "LONGTEXT", "LOOP", "LOW_PRIORITY", "MASTER_HEARTBEAT_PERIOD", "MASTER_SSL_VERIFY_SERVER_CERT", "MATCH", "MAXVALUE", "MEDIUMBLOB", "MEDIUMINT", "MEDIUMTEXT", "MIDDLEINT", "MINUTE_MICROSECOND", "MINUTE_SECOND", "MOD", "MODIFIES", "NATIONAL", "NATURAL", "NO", "NOCHECK", "NONCLUSTERED", "NOT", "NO_WRITE_TO_BINLOG", "NULL", "NULLIF", "NUMERIC", "OF", "OFF", "OFFSETS", "ON", "OPEN", "OPENDATASOURCE", "OPENQUERY", "OPENROWSET", "OPENXML", "OPTIMIZE", "OPTION", "OPTIONALLY", "OR", "ORDER", "OUT", "OUTER", "OUTFILE", "OVER", "PERCENT", "PLAN", "PRECISION", "PRIMARY", "PRINT", "PROC", "PROCEDURE", "PUBLIC", "PURGE", "RAISERROR", "RANGE", "READ", "READS", "READTEXT", "READ_WRITE", "REAL", "RECONFIGURE", "REFERENCES", "REGEXP", "RELEASE", "RENAME", "REPEAT", "REPLACE",
-                        "REPLICATION", "REQUIRE", "RESIGNAL", "RESTORE", "RESTRICT", "RETURN", "REVOKE", "RIGHT", "RLIKE", "ROLLBACK", "ROWCOUNT", "ROWGUIDCOL", "RULE", "SAVE", "SCHEMA", "SCHEMAS", "SECOND_MICROSECOND", "SELECT", "SENSITIVE", "SEPARATOR", "SESSION_USER", "SET", "SETUSER", "SHOW", "SHUTDOWN", "SIGNAL", "SLOW", "SMALLINT", "SOME", "SPATIAL", "SPECIFIC", "SQL", "SQLEXCEPTION", "SQLSTATE", "SQLWARNING", "SQL_BIG_RESULT", "SQL_CALC_FOUND_ROWS", "SQL_SMALL_RESULT", "SSL", "STARTING", "STATISTICS", "STRAIGHT_JOIN", "SYSTEM_USER", "TABLE", "TERMINATED", "TEXT", "TEXTSIZE", "THEN", "TIME", "TIMESTAMP", "TINYBLOB", "TINYINT", "TINYTEXT", "TO", "TOP", "TRAILING", "TRAN", "TRANSACTION", "TRIGGER", "TRUE", "TRUNCATE", "TSEQUAL", "UNDO", "UNION", "UNIQUE", "UNLOCK", "UNSIGNED", "UPDATE", "UPDATETEXT", "USAGE", "USE", "USER", "USING", "UTC_DATE", "UTC_TIME",
-                        "UTC_TIMESTAMP", "VALUES", "VARBINARY", "VARCHAR", "VARCHARACTER", "VARYING", "VIEW", "WAITFOR", "WHEN", "WHERE", "WHILE", "WITH", "WRITE", "WRITETEXT", "XOR", "YEAR_MONTH", "ZEROFILL"];
+            "DISTRIBUTED", "DIV", "DOUBLE", "DROP", "DUAL", "DUMMY", "DUMP", "EACH", "ELSE", "ELSEIF", "ENCLOSED", "END", "ENUM", "ERRLVL", "ESCAPE", "ESCAPED", "EXCEPT", "EXEC", "EXECUTE", "EXISTS", "EXIT", "EXPLAIN", "FALSE", "FETCH", "FILE", "FILLFACTOR", "FLOAT", "FLOAT4", "FLOAT8", "FOR", "FORCE", "FOREIGN", "FREETEXT", "FREETEXTTABLE", "FROM", "FULL", "FULLTEXT", "FUNCTION", "GENERAL", "GOTO", "GRANT", "GROUP", "HAVING", "HIGH_PRIORITY", "HOLDLOCK", "HOUR_MICROSECOND", "HOUR_MINUTE", "HOUR_SECOND", "IDENTITY", "IDENTITYCOL", "IDENTITY_INSERT", "IF", "IGNORE", "IGNORE_SERVER_IDS", "IN", "INDEX", "INFILE", "INNER", "INOUT", "INSENSITIVE", "INSERT", "INT", "INT1", "INT2", "INT3", "INT4", "INT8", "INTEGER", "INTERSECT", "INTERVAL", "INTO", "IS", "ITERATE", "JOIN", "KEY", "KEYS", "KILL", "LEADING", "LEAVE", "LEFT", "LIKE", "LIMIT", "LINEAR", "LINENO", "LINES",
+            "LOAD", "LOCALTIME", "LOCALTIMESTAMP", "LOCK", "LONG", "LONGBLOB", "LONGTEXT", "LOOP", "LOW_PRIORITY", "MASTER_HEARTBEAT_PERIOD", "MASTER_SSL_VERIFY_SERVER_CERT", "MATCH", "MAXVALUE", "MEDIUMBLOB", "MEDIUMINT", "MEDIUMTEXT", "MIDDLEINT", "MINUTE_MICROSECOND", "MINUTE_SECOND", "MOD", "MODIFIES", "NATIONAL", "NATURAL", "NO", "NOCHECK", "NONCLUSTERED", "NOT", "NO_WRITE_TO_BINLOG", "NULL", "NULLIF", "NUMERIC", "OF", "OFF", "OFFSETS", "ON", "OPEN", "OPENDATASOURCE", "OPENQUERY", "OPENROWSET", "OPENXML", "OPTIMIZE", "OPTION", "OPTIONALLY", "OR", "ORDER", "OUT", "OUTER", "OUTFILE", "OVER", "PERCENT", "PLAN", "PRECISION", "PRIMARY", "PRINT", "PROC", "PROCEDURE", "PUBLIC", "PURGE", "RAISERROR", "RANGE", "READ", "READS", "READTEXT", "READ_WRITE", "REAL", "RECONFIGURE", "REFERENCES", "REGEXP", "RELEASE", "RENAME", "REPEAT", "REPLACE",
+            "REPLICATION", "REQUIRE", "RESIGNAL", "RESTORE", "RESTRICT", "RETURN", "REVOKE", "RIGHT", "RLIKE", "ROLLBACK", "ROWCOUNT", "ROWGUIDCOL", "RULE", "SAVE", "SCHEMA", "SCHEMAS", "SECOND_MICROSECOND", "SELECT", "SENSITIVE", "SEPARATOR", "SESSION_USER", "SET", "SETUSER", "SHOW", "SHUTDOWN", "SIGNAL", "SLOW", "SMALLINT", "SOME", "SPATIAL", "SPECIFIC", "SQL", "SQLEXCEPTION", "SQLSTATE", "SQLWARNING", "SQL_BIG_RESULT", "SQL_CALC_FOUND_ROWS", "SQL_SMALL_RESULT", "SSL", "STARTING", "STATISTICS", "STRAIGHT_JOIN", "SYSTEM_USER", "TABLE", "TERMINATED", "TEXT", "TEXTSIZE", "THEN", "TIME", "TIMESTAMP", "TINYBLOB", "TINYINT", "TINYTEXT", "TO", "TOP", "TRAILING", "TRAN", "TRANSACTION", "TRIGGER", "TRUE", "TRUNCATE", "TSEQUAL", "UNDO", "UNION", "UNIQUE", "UNLOCK", "UNSIGNED", "UPDATE", "UPDATETEXT", "USAGE", "USE", "USER", "USING", "UTC_DATE", "UTC_TIME",
+            "UTC_TIMESTAMP", "VALUES", "VARBINARY", "VARCHAR", "VARCHARACTER", "VARYING", "VIEW", "WAITFOR", "WHEN", "WHERE", "WHILE", "WITH", "WRITE", "WRITETEXT", "XOR", "YEAR_MONTH", "ZEROFILL",
+        ];
          $getReservedWordsSqlTest = $this->object->reservedWordsSql();
          $this->assertEquals($getReservedWordsSqlTest, $reservedWordsSqlTest);
     }
@@ -390,64 +391,64 @@ class PMSEEngineUtilsTest extends TestCase
             "flo_element_origin_type" => "bpmnActivity",
         ];
          $entityRoutes_3 = [
-            "ROU_UID" => "flo_uid",
-            "PRO_UID" => "prj_uid",
-            "TAS_UID" => "flo_element_origin",
-            "ROU_NEXT_TASK" => "flo_element_dest",
-            "ROU_TO_PORT" => "flo_element_dest_port",
-            "ROU_FROM_PORT" => "flo_element_origin_port",
-            "flo_element_dest_type" => "flo_element_dest_type",
-            "flo_element_origin_type" => "flo_element_origin_type",
+             "ROU_UID" => "flo_uid",
+             "PRO_UID" => "prj_uid",
+             "TAS_UID" => "flo_element_origin",
+             "ROU_NEXT_TASK" => "flo_element_dest",
+             "ROU_TO_PORT" => "flo_element_dest_port",
+             "ROU_FROM_PORT" => "flo_element_origin_port",
+             "flo_element_dest_type" => "flo_element_dest_type",
+             "flo_element_origin_type" => "flo_element_origin_type",
          ];
          $entityRoutesTrans_3 = [
-            "flo_uid" => "flo_uid",
-            "prj_uid" => "prj_uid",
-            "flo_element_origin" => "flo_element_origin",
-            "flo_element_dest" => "flo_element_dest",
-            "flo_element_dest_port" => "flo_element_dest_port",
-            "flo_element_origin_port" => "flo_element_origin_port",
-            "flo_element_dest_type" => "bpmnActivity",
-            "flo_element_origin_type" => "bpmnActivity",
+             "flo_uid" => "flo_uid",
+             "prj_uid" => "prj_uid",
+             "flo_element_origin" => "flo_element_origin",
+             "flo_element_dest" => "flo_element_dest",
+             "flo_element_dest_port" => "flo_element_dest_port",
+             "flo_element_origin_port" => "flo_element_origin_port",
+             "flo_element_dest_type" => "bpmnActivity",
+             "flo_element_origin_type" => "bpmnActivity",
          ];
         
          $entityGateways = [
-            "GAT_UID" => "gat_uid",
-            "PRO_UID" => "prj_uid",
-            "GAT_X" => "bou_x",
-            "GAT_Y" => "bou_y",
-            "GAT_TYPE" => "gat_type",
+             "GAT_UID" => "gat_uid",
+             "PRO_UID" => "prj_uid",
+             "GAT_X" => "bou_x",
+             "GAT_Y" => "bou_y",
+             "GAT_TYPE" => "gat_type",
          ];
          $entityGatewaysTrans = [
-            "gat_uid" => "gat_uid",
-            "prj_uid" => "prj_uid",
-            "bou_x" => "bou_x",
-            "bou_y" => "bou_y",
-            "gat_type" => "PARALLEL",
+             "gat_uid" => "gat_uid",
+             "prj_uid" => "prj_uid",
+             "bou_x" => "bou_x",
+             "bou_y" => "bou_y",
+             "gat_type" => "PARALLEL",
          ];
          $entityTasks = [
-                    'PRO_UID' => 'prj_uid',
-                    'TAS_UID' => 'act_uid',
-                    'TAS_TITLE' => 'act_name',
-                    'TAS_TYPE' => 'NORMAL',
-                    'TAS_DURATION' => 'act_duration',
-                    'TAS_DURATION_TYPE' => 'act_duration_type',
-                    'TAS_POSX' => 'bou_x',
-                    'TAS_POSY' => 'bou_y',
-                    'TAS_WIDTH' => 'bou_width',
-                    'TAS_HEIGHT' => 'bou_height',
+             'PRO_UID' => 'prj_uid',
+             'TAS_UID' => 'act_uid',
+             'TAS_TITLE' => 'act_name',
+             'TAS_TYPE' => 'NORMAL',
+             'TAS_DURATION' => 'act_duration',
+             'TAS_DURATION_TYPE' => 'act_duration_type',
+             'TAS_POSX' => 'bou_x',
+             'TAS_POSY' => 'bou_y',
+             'TAS_WIDTH' => 'bou_width',
+             'TAS_HEIGHT' => 'bou_height',
          ];
          $entityTasksTrans = [
-                    'prj_uid' => 'prj_uid',
-                    'act_uid' => 'act_uid',
-                    'act_name' => 'act_name',
-                    'act_type' => 'TASK',
-                    'act_task_type' => 'USERTASK',
-                    'act_duration' => 'act_duration',
-                    'act_duration_type' => 'act_duration_type',
-                    'bou_x' => 'bou_x',
-                    'bou_y' => 'bou_y',
-                    'bou_width' => 'bou_width',
-                    'bou_height' => 'bou_height',
+             'prj_uid' => 'prj_uid',
+             'act_uid' => 'act_uid',
+             'act_name' => 'act_name',
+             'act_type' => 'TASK',
+             'act_task_type' => 'USERTASK',
+             'act_duration' => 'act_duration',
+             'act_duration_type' => 'act_duration_type',
+             'bou_x' => 'bou_x',
+             'bou_y' => 'bou_y',
+             'bou_width' => 'bou_width',
+             'bou_height' => 'bou_height',
          ];
          $resultRoutes = $this->object->transformEntity("routes", $entityRoutes);
          $this->assertEquals($entityRoutesTrans, $resultRoutes);
@@ -536,50 +537,50 @@ class PMSEEngineUtilsTest extends TestCase
             'dbType' => '',
         ];
          $array_test3 = [
-            'source' => 'custom_fields',
-            'type' => 'title',
-            'dbType' => "",
+             'source' => 'custom_fields',
+             'type' => 'title',
+             'dbType' => "",
          ];
          $array_test4 = [
-            'studio' => ['editField' => true],
-            'source' => '',
-            'type' => '',
-            'dbType' => '',
+             'studio' => ['editField' => true],
+             'source' => '',
+             'type' => '',
+             'dbType' => '',
          ];
          $array_test5 = [
-            'studio' => ['required' => true],
-            'source' => '',
-            'type' => '',
-            'dbType' => '',
+             'studio' => ['required' => true],
+             'source' => '',
+             'type' => '',
+             'dbType' => '',
          ];
          $array_test6 = [
-            'source' => 'c_f',
-            'type' => '',
-            'dbType' => '',
+             'source' => 'c_f',
+             'type' => '',
+             'dbType' => '',
          ];
          $array_test7 = [
-            'studio' => 'display',
-            'source' => '',
-            'type' => '',
-            'dbType' => '',
+             'studio' => 'display',
+             'source' => '',
+             'type' => '',
+             'dbType' => '',
          ];
          $array_test8 = [
-            'studio' => 'display',
-            'source' => 'c_f',
-            'type' => '',
-            'dbType' => '',
+             'studio' => 'display',
+             'source' => 'c_f',
+             'type' => '',
+             'dbType' => '',
          ];
          $array_test9 = [
-            'studio' => [],
-            'source' => 'c_f',
-            'type' => '',
-            'dbType' => '',
+             'studio' => [],
+             'source' => 'c_f',
+             'type' => '',
+             'dbType' => '',
          ];
          $array_test10 = [
-            'studio' => [],
-            'source' => 'db',
-            'type' => 'id',
-            'dbType' => '',
+             'studio' => [],
+             'source' => 'db',
+             'type' => 'id',
+             'dbType' => '',
          ];
 
          $result_test1 = $this->object->isValidStudioField($array_test1);
@@ -778,7 +779,7 @@ class PMSEEngineUtilsTest extends TestCase
             'bpmnData' => 'dat_uid',
             'bpmnParticipant' => 'par_uid',
             'bpmnArtifact' => 'art_uid',
-            ];
+        ];
         foreach ($arr as $key => $value) {
             $result = $this->object->getEntityUid($key);
             $this->assertEquals($value, $result);

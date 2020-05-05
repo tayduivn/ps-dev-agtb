@@ -177,15 +177,15 @@ class DBManagerTest extends TestCase
                     'name' => 'foo',
                     'type' => 'varchar',
                     'len' => '255',
-                    ],
                 ],
+            ],
             [
                 [
                     'name'   => 'idx_'. $tablename,
                     'type'   => 'index',
                     'fields' => ['foo'],
-                    ],
-                ]
+                ],
+            ]
         );
         $this->assertTrue(in_array($tablename, $this->db->getTablesArray()));
     }
@@ -193,138 +193,123 @@ class DBManagerTest extends TestCase
     public function testRepairTableNoChanges()
     {
         $tableName = 'testRTNC_' . mt_rand();
-        $params =  [
-                /* VARDEF - id -  ROW[name] => 'id'  [vname] => 'LBL_ID'  [required] => 'true'  [type] => 'char'  [reportable] => ''  [comment] => 'Unique identifier'  [dbType] => 'id'  [len] => '36'  */
-            'id' =>
-                 [
+        $params = [
+            'id' => [
                 'name' => 'id',
                 'vname' => 'LBL_ID',
                 'required'=>true,
                 'type' => 'id',
                 'reportable'=>false,
                 'comment' => 'Unique identifier',
-                ],
-            'date_entered' =>
-                 [
+            ],
+            'date_entered' => [
                 'name' => 'date_entered',
                 'vname' => 'LBL_DATE_ENTERED',
                 'type' => 'datetime',
                 'required'=>true,
                 'comment' => 'Date record created',
-                ],
-            'date_modified' =>
-                 [
-                  'name' => 'date_modified',
-                  'vname' => 'LBL_DATE_MODIFIED',
-                  'type' => 'datetime',
-                  'required'=>true,
-                  'comment' => 'Date record last modified',
-                ],
-            'modified_user_id' =>
-                 [
-                  'name' => 'modified_user_id',
-                  'rname' => 'user_name',
-                  'id_name' => 'modified_user_id',
-                  'vname' => 'LBL_MODIFIED',
-                  'type' => 'assigned_user_name',
-                  'table' => 'modified_user_id_users',
-                  'isnull' => 'false',
-                  'dbType' => 'id',
-                  'required'=> false,
-                  'len' => 36,
-                  'reportable'=>true,
-                  'comment' => 'User who last modified record',
-                ],
-            'created_by' =>
-                 [
-                  'name' => 'created_by',
-                  'rname' => 'user_name',
-                  'id_name' => 'created_by',
-                  'vname' => 'LBL_CREATED',
-                  'type' => 'assigned_user_name',
-                  'table' => 'created_by_users',
-                  'isnull' => 'false',
-                  'dbType' => 'id',
-                  'len' => 36,
-                  'comment' => 'User ID who created record',
-                ],
-            'name' =>
-                 [
-                  'name' => 'name',
-                  'type' => 'varchar',
-                  'vname' => 'LBL_NAME',
-                  'len' => 150,
-                  'comment' => 'Name of the allowable action (view, list, delete, edit)',
-                ],
-            'category' =>
-                 [
-                  'name' => 'category',
-                  'vname' => 'LBL_CATEGORY',
-                  'type' => 'varchar',
-                  'len' =>100,
-                  'reportable'=>true,
-                    'required'=>true,
-                    'isnull' => false,
-                  'comment' => 'Category of the allowable action (usually the name of a module)',
-                ],
-            'acltype' =>
-                 [
-                  'name' => 'acltype',
-                  'vname' => 'LBL_TYPE',
-                  'type' => 'varchar',
-                  'len' =>100,
-                  'reportable'=>true,
-                  'comment' => 'Specifier for Category, usually "module"',
-                ],
-            'aclaccess' =>
-                 [
-                  'name' => 'aclaccess',
-                  'vname' => 'LBL_ACCESS',
-                  'type' => 'int',
-                  'len'=>3,
-                  'reportable'=>true,
-                  'comment' => 'Number specifying access priority; highest access "wins"',
-                ],
-            'deleted' =>
-                 [
-                  'name' => 'deleted',
-                  'vname' => 'LBL_DELETED',
-                  'type' => 'bool',
-                  'reportable'=>false,
-                  'comment' => 'Record deletion indicator',
-                ],
-            'roles' =>
-                 [
-                    'name' => 'roles',
-                    'type' => 'link',
-                    'relationship' => 'acl_roles_actions',
-                    'source'=>'non-db',
-                    'vname'=>'LBL_USERS',
-                ],
-            'reverse' =>
-                 [
-                    'name' => 'reverse',
-                    'vname' => 'LBL_REVERSE',
-                    'type' => 'bool',
-                    'default' => 0,
-                ],
-            'deleted2' =>
-                 [
-                    'name' => 'deleted2',
-                    'vname' => 'LBL_DELETED2',
-                    'type' => 'bool',
-                    'reportable'=>false,
-                    'default' => '0',
-                ],
-            'primary_address_country' =>
-                 [
-                   'name' => 'primary_address_country',
-                   'vname' => 'LBL_PRIMARY_ADDRESS_COUNTRY',
-                   'type' => 'varchar',
-                   'group'=>'primary_address',
-                   'comment' => 'Country for primary address',
-                   'merge_filter' => 'enabled',
-                ],
+            ],
+            'date_modified' => [
+                'name' => 'date_modified',
+                'vname' => 'LBL_DATE_MODIFIED',
+                'type' => 'datetime',
+                'required'=>true,
+                'comment' => 'Date record last modified',
+            ],
+            'modified_user_id' => [
+                'name' => 'modified_user_id',
+                'rname' => 'user_name',
+                'id_name' => 'modified_user_id',
+                'vname' => 'LBL_MODIFIED',
+                'type' => 'assigned_user_name',
+                'table' => 'modified_user_id_users',
+                'isnull' => 'false',
+                'dbType' => 'id',
+                'required'=> false,
+                'len' => 36,
+                'reportable'=>true,
+                'comment' => 'User who last modified record',
+            ],
+            'created_by' => [
+                'name' => 'created_by',
+                'rname' => 'user_name',
+                'id_name' => 'created_by',
+                'vname' => 'LBL_CREATED',
+                'type' => 'assigned_user_name',
+                'table' => 'created_by_users',
+                'isnull' => 'false',
+                'dbType' => 'id',
+                'len' => 36,
+                'comment' => 'User ID who created record',
+            ],
+            'name' => [
+                'name' => 'name',
+                'type' => 'varchar',
+                'vname' => 'LBL_NAME',
+                'len' => 150,
+                'comment' => 'Name of the allowable action (view, list, delete, edit)',
+            ],
+            'category' => [
+                'name' => 'category',
+                'vname' => 'LBL_CATEGORY',
+                'type' => 'varchar',
+                'len' =>100,
+                'reportable'=>true,
+                'required'=>true,
+                'isnull' => false,
+                'comment' => 'Category of the allowable action (usually the name of a module)',
+            ],
+            'acltype' => [
+                'name' => 'acltype',
+                'vname' => 'LBL_TYPE',
+                'type' => 'varchar',
+                'len' =>100,
+                'reportable'=>true,
+                'comment' => 'Specifier for Category, usually "module"',
+            ],
+            'aclaccess' => [
+                'name' => 'aclaccess',
+                'vname' => 'LBL_ACCESS',
+                'type' => 'int',
+                'len'=>3,
+                'reportable'=>true,
+                'comment' => 'Number specifying access priority; highest access "wins"',
+            ],
+            'deleted' => [
+                'name' => 'deleted',
+                'vname' => 'LBL_DELETED',
+                'type' => 'bool',
+                'reportable'=>false,
+                'comment' => 'Record deletion indicator',
+            ],
+            'roles' => [
+                'name' => 'roles',
+                'type' => 'link',
+                'relationship' => 'acl_roles_actions',
+                'source'=>'non-db',
+                'vname'=>'LBL_USERS',
+            ],
+            'reverse' => [
+                'name' => 'reverse',
+                'vname' => 'LBL_REVERSE',
+                'type' => 'bool',
+                'default' => 0,
+            ],
+            'deleted2' => [
+                'name' => 'deleted2',
+                'vname' => 'LBL_DELETED2',
+                'type' => 'bool',
+                'reportable'=>false,
+                'default' => '0',
+            ],
+            'primary_address_country' => [
+                'name' => 'primary_address_country',
+                'vname' => 'LBL_PRIMARY_ADDRESS_COUNTRY',
+                'type' => 'varchar',
+                'group'=>'primary_address',
+                'comment' => 'Country for primary address',
+                'merge_filter' => 'enabled',
+            ],
             'refer_url' =>  [
                 'name' => 'refer_url',
                 'vname' => 'LBL_REFER_URL',
@@ -332,30 +317,29 @@ class DBManagerTest extends TestCase
                 'len' => '255',
                 'default' => 'http://',
                 'comment' => 'The URL referenced in the tracker URL; no longer used as of 4.2 (see campaign_trkrs)',
-                ],
+            ],
             'budget' =>  [
                 'name' => 'budget',
                 'vname' => 'LBL_CAMPAIGN_BUDGET',
                 'type' => 'currency',
                 'dbType' => 'double',
                 'comment' => 'Budgeted amount for the campaign',
-                ],
+            ],
             'time_from' =>  [
                 'name' => 'time_from',
                 'vname' => 'LBL_TIME_FROM',
                 'type' => 'time',
                 'required' => false,
                 'reportable' => false,
-                ],
-            'description' =>
-                 [
+            ],
+            'description' => [
                 'name' => 'description',
                 'vname' => 'LBL_DESCRIPTION',
                 'type' => 'text',
                 'comment' => 'Full text of the note',
                 'rows' => 6,
                 'cols' => 80,
-                ],
+            ],
             'cur_plain' =>  [
                 'name' => 'cur_plain',
                 'vname' => 'LBL_curPlain',
@@ -383,8 +367,7 @@ class DBManagerTest extends TestCase
                 'len' => '26',
                 'precision' => '6',
             ],
-            'token_ts' =>
-             [
+            'token_ts' => [
                 'name' => 'token_ts',
                 'type' => 'long',
                 'required' => true,
@@ -495,11 +478,11 @@ class DBManagerTest extends TestCase
     {
         $tableName = 'test1_' . mt_rand();
         $params =  [
-                'foo' =>  [
-                    'name' => 'foo',
-                    'type' => 'varchar',
-                    'len' => '255',
-                    ],
+            'foo' =>  [
+                'name' => 'foo',
+                'type' => 'varchar',
+                'len' => '255',
+            ],
         ];
 
         if ($this->db->tableExists($tableName)) {
@@ -508,9 +491,9 @@ class DBManagerTest extends TestCase
         $this->createTableParams($tableName, $params, []);
 
         $params['bar'] =   [
-                    'name' => 'bar',
-                    'type' => 'int',
-                    ];
+            'name' => 'bar',
+            'type' => 'int',
+        ];
         $cols = $this->db->get_columns($tableName);
         $this->assertArrayNotHasKey('bar', $cols);
 
@@ -527,17 +510,17 @@ class DBManagerTest extends TestCase
     {
         $tableName = 'test1_' . mt_rand();
         $params =  [
-                'foo' =>  [
-                    'name' => 'foo',
-                    'type' => 'varchar',
-                    'len' => '255',
-                    'isnull' => false,
-                    'required' => true,
-                    ],
-                'bar' =>  [
-                    'name' => 'bar',
-                    'type' => 'int',
-                    ],
+            'foo' =>  [
+                'name' => 'foo',
+                'type' => 'varchar',
+                'len' => '255',
+                'isnull' => false,
+                'required' => true,
+            ],
+            'bar' =>  [
+                'name' => 'bar',
+                'type' => 'int',
+            ],
         ];
         $primaryKey = $tableName . '_pk';
         $indices = [
@@ -557,8 +540,8 @@ class DBManagerTest extends TestCase
         }
         $this->createTableParams($tableName, $params, []);
         $params['bazz'] =   [
-                    'name' => 'bazz',
-                    'type' => 'int',
+            'name' => 'bazz',
+            'type' => 'int',
         ];
 
         $repair = $this->db->repairTableParams($tableName, $params, $indices, false);
@@ -590,15 +573,15 @@ class DBManagerTest extends TestCase
     {
         $tableName = 'test1_' . mt_rand();
         $params =  [
-                'foo' =>  [
-                    'name' => 'foo',
-                    'type' => 'varchar',
-                    'len' => '255',
-                    ],
-                'bar' =>  [
-                    'name' => 'bar',
-                    'type' => 'int',
-                    ],
+            'foo' =>  [
+                'name' => 'foo',
+                'type' => 'varchar',
+                'len' => '255',
+            ],
+            'bar' =>  [
+                'name' => 'bar',
+                'type' => 'int',
+            ],
         ];
         $index = [
             'name'          => 'test_index',
@@ -629,8 +612,8 @@ class DBManagerTest extends TestCase
                     'name' => 'foo',
                     'type' => 'varchar',
                     'len' => '255',
-                    ],
                 ],
+            ],
             []
         );
         $tablename2 = 'test2_' . mt_rand();
@@ -641,8 +624,8 @@ class DBManagerTest extends TestCase
                     'name' => 'foo',
                     'type' => 'varchar',
                     'len' => '255',
-                    ],
                 ],
+            ],
             []
         );
 
@@ -665,8 +648,8 @@ class DBManagerTest extends TestCase
                     'name' => 'foobar',
                     'type' => 'varchar',
                     'len' => '255',
-                    ],
                 ],
+            ],
             []
         );
         $tablename2 = 'test4_' . mt_rand();
@@ -677,8 +660,8 @@ class DBManagerTest extends TestCase
                     'name' => 'foo',
                     'type' => 'varchar',
                     'len' => '255',
-                    ],
                 ],
+            ],
             []
         );
 
@@ -700,8 +683,8 @@ class DBManagerTest extends TestCase
                     'name' => 'foo',
                     'type' => 'varchar',
                     'len' => '255',
-                    ],
                 ],
+            ],
             []
         );
         $tablename2 = 'test6_' . mt_rand();
@@ -712,8 +695,8 @@ class DBManagerTest extends TestCase
                     'name' => 'foobar',
                     'type' => 'varchar',
                     'len' => '255',
-                    ],
                 ],
+            ],
             []
         );
 
@@ -736,8 +719,8 @@ class DBManagerTest extends TestCase
                     'name' => 'foo',
                     'type' => 'varchar',
                     'len' => '255',
-                    ],
                 ],
+            ],
             []
         );
         $tablename2 = 'test8_' . mt_rand();
@@ -747,8 +730,8 @@ class DBManagerTest extends TestCase
                 'foo' =>  [
                     'name' => 'foo',
                     'type' => 'int',
-                    ],
                 ],
+            ],
             []
         );
 
@@ -829,22 +812,22 @@ class DBManagerTest extends TestCase
             ->getMock();
 
         $db_columns = [
-                'id' => [
-                    'name' => 'id',
-                    'type' => 'id',
-                ],
-                'foo' =>  [
-                    'name' => 'foo',
-                    'type' => 'int',
-                    ],
-                'bar' =>  [
-                    'name' => 'bar',
-                    'type' => 'short',
-                    ],
-                'foobar' =>  [
-                    'name' => 'foobar',
-                    'type' => 'float',
-                    ],
+            'id' => [
+                'name' => 'id',
+                'type' => 'id',
+            ],
+            'foo' =>  [
+                'name' => 'foo',
+                'type' => 'int',
+            ],
+            'bar' =>  [
+                'name' => 'bar',
+                'type' => 'short',
+            ],
+            'foobar' =>  [
+                'name' => 'foobar',
+                'type' => 'float',
+            ],
         ];
 
 
@@ -891,13 +874,13 @@ class DBManagerTest extends TestCase
                     'name' => 'foo',
                     'type' => 'varchar',
                     'len' => '255',
-                    ],
+                ],
                 'foobar' =>  [
                     'name' => 'foobar',
                     'type' => 'varchar',
                     'len' => '255',
-                    ],
                 ],
+            ],
             []
         );
         $tablename2 = 'test24_' . mt_rand();
@@ -908,8 +891,8 @@ class DBManagerTest extends TestCase
                     'name' => 'foo',
                     'type' => 'varchar',
                     'len' => '255',
-                    ],
                 ],
+            ],
             []
         );
 
@@ -928,8 +911,8 @@ class DBManagerTest extends TestCase
                     'name' => 'foobar',
                     'type' => 'varchar',
                     'len' => '255',
-                    ],
-                ]
+                ],
+            ]
         );
 
         $res = $this->db->compareFieldInTables(
@@ -1153,8 +1136,8 @@ class DBManagerTest extends TestCase
                     'name' => 'foo',
                     'type' => 'varchar',
                     'len' => '255',
-                    ],
                 ],
+            ],
             []
         );
         $this->assertTrue(in_array($tablename, $this->db->getTablesArray()));
@@ -1295,8 +1278,8 @@ SQL;
                     'name' => 'foo',
                     'type' => 'varchar',
                     'len' => '255',
-                    ],
                 ],
+            ],
             []
         );
 
@@ -1320,8 +1303,8 @@ SQL;
                     'name' => 'foo',
                     'type' => 'varchar',
                     'len' => '255',
-                    ],
                 ],
+            ],
             []
         );
 
@@ -1336,112 +1319,120 @@ SQL;
                     'name' => 'foo',
                     'type' => 'varchar',
                     'len' => '255',
-                    ],
+                ],
                 [
                     'name' => 'foo',
                     'type' => 'varchar',
                     'len' => '255',
-                    ],
-                true],
+                ],
+                true,
+            ],
             [
                 [
                     'name' => 'foo',
                     'type' => 'char',
                     'len' => '255',
-                    ],
+                ],
                 [
                     'name' => 'foo',
                     'type' => 'varchar',
                     'len' => '255',
-                    ],
-                false],
+                ],
+                false,
+            ],
             [
                 [
                     'name' => 'foo',
                     'type' => 'char',
                     'len' => '255',
-                    ],
+                ],
                 [
                     'name' => 'foo',
                     'len' => '255',
                 ],
-                false],
+                false,
+            ],
             [
                 [
                     'name' => 'foo',
                     'len' => '255',
-                    ],
+                ],
                 [
                     'name' => 'foo',
                     'type' => 'varchar',
                     'len' => '255',
-                    ],
-                true],
+                ],
+                true,
+            ],
             [
                 [
                     'name' => 'foo',
                     'type' => 'varchar',
                     'len' => '255',
-                    ],
+                ],
                 [
                     'name' => 'FOO',
                     'type' => 'varchar',
                     'len' => '255',
-                    ],
-                true],
+                ],
+                true,
+            ],
+            [
                 [
-                    [
-                        'name' => 'foo',
-                        'type' => 'decimal',
-                        'len' => '16,6',
-                        'default' => '0.000000',
-                    ],
-                    [
-                        'name' => 'foo',
-                        'type' => 'decimal',
-                        'default' => '',
-                        'no_default' => '',
-                        'len' => '16,6',
-                        'size' => '20',
-                        'precision' => '6',
-                    ],
-                    true],
-                    [
-                        [
-                            'name' => 'foo',
-                            'type' => 'decimal',
-                            'len' => '16,6',
-                            'default' => '0.000000',
-                        ],
-                        [
-                            'name' => 'foo',
-                            'type' => 'decimal',
-                            'default' => '0',
-                            'no_default' => '',
-                            'len' => '16,6',
-                            'size' => '20',
-                            'precision' => '6',
-                        ],
-                        true],
-                        [
-                            [
-                                'name' => 'solution_number',
-                                'type' => 'int',
-                                'len' => '11',
-                                'auto_increment' => '1',
-                                'required' => 'true',
-                            ],
-                            [
-                                'name' => 'solution_number',
-                                'type' => 'int',
-                                'len' => '11',
-                                'auto_increment' => 'true',
-                                'required' => 'true',
-                                'autoinc_next' => '51',
-                                'dbType' => 'int',
-                            ],
-                            true,],
-            ];
+                    'name' => 'foo',
+                    'type' => 'decimal',
+                    'len' => '16,6',
+                    'default' => '0.000000',
+                ],
+                [
+                    'name' => 'foo',
+                    'type' => 'decimal',
+                    'default' => '',
+                    'no_default' => '',
+                    'len' => '16,6',
+                    'size' => '20',
+                    'precision' => '6',
+                ],
+                true,
+            ],
+            [
+                [
+                    'name' => 'foo',
+                    'type' => 'decimal',
+                    'len' => '16,6',
+                    'default' => '0.000000',
+                ],
+                [
+                    'name' => 'foo',
+                    'type' => 'decimal',
+                    'default' => '0',
+                    'no_default' => '',
+                    'len' => '16,6',
+                    'size' => '20',
+                    'precision' => '6',
+                ],
+                true,
+            ],
+            [
+                [
+                    'name' => 'solution_number',
+                    'type' => 'int',
+                    'len' => '11',
+                    'auto_increment' => '1',
+                    'required' => 'true',
+                ],
+                [
+                    'name' => 'solution_number',
+                    'type' => 'int',
+                    'len' => '11',
+                    'auto_increment' => 'true',
+                    'required' => 'true',
+                    'autoinc_next' => '51',
+                    'dbType' => 'int',
+                ],
+                true,
+            ],
+        ];
 
         return $returnArray;
     }
@@ -1482,273 +1473,297 @@ SQL;
         $emptydatetime = $this->db->emptyValue("datetime");
 
         return [
-            ["testid",  [
-                  'id' =>
-                   [
-                    'name' => 'id',
-                    'type' => 'varchar',
-                    'required'=>true,
-                  ],
-                  ],
-                  ["id" => "test123"],
-                  ["id" => "'test123'"],
-            ],
-            ["testtext",  [
-                  'text1' =>
-                   [
-                    'name' => 'text1',
-                    'type' => 'varchar',
-                    'required'=>true,
-                  ],
-                  'text2' =>
-                   [
-                    'name' => 'text2',
-                    'type' => 'varchar',
-                  ],
-                  ],
-                  [],
-                  ["text1" => "''", "text2" => "NULL"],
-                  [],
-            ],
-            ["testtext2",  [
-                  'text1' =>
-                   [
-                    'name' => 'text1',
-                    'type' => 'varchar',
-                    'required'=>true,
-                  ],
-                  'text2' =>
-                   [
-                    'name' => 'text2',
-                    'type' => 'varchar',
-                  ],
-                  ],
-                  ['text1' => 'foo', 'text2' => 'bar'],
-                  ["text1" => "'foo'", 'text2' => "'bar'"],
-            ],
-            ["testreq",  [
-                  'id' =>
-                       [
+            [
+                "testid",
+                [
+                    'id' => [
                         'name' => 'id',
                         'type' => 'varchar',
-                        'required'=>true,
-                      ],
-                  'intval' =>
-                       [
-                        'name' => 'intval',
-                        'type' => 'int',
-                        'required'=>true,
-                      ],
-                  'floatval' =>
-                       [
-                        'name' => 'floatval',
-                        'type' => 'decimal',
-                        'required'=>true,
-                      ],
-                  'money' =>
-                       [
-                        'name' => 'money',
-                        'type' => 'currency',
-                        'required'=>true,
-                      ],
-                  'test_dtm' =>
-                       [
-                        'name' => 'test_dtm',
-                        'type' => 'datetime',
-                        'required'=>true,
-                      ],
-                  'test_dtm2' =>
-                       [
-                        'name' => 'test_dtm2',
-                        'type' => 'datetimecombo',
-                        'required'=>true,
-                      ],
-                  'test_dt' =>
-                       [
-                        'name' => 'test_dt',
-                        'type' => 'date',
-                        'required'=>true,
-                      ],
-                  'test_tm' =>
-                       [
-                        'name' => 'test_tm',
-                        'type' => 'time',
-                        'required'=>true,
-                      ],
-                  ],
-                  ["id" => "test123", 'intval' => 42, 'floatval' => 42.24,
-                        'money' => 56.78, 'test_dtm' => '2002-01-02 12:34:56', 'test_dtm2' => '2011-10-08 01:02:03',
-                        'test_dt' => '1998-10-04', 'test_tm' => '03:04:05',
-                  ],
-                  ["id" => "'test123'", 'intval' => 42, 'floatval' => 42.24,
-                        'money' => 56.78, 'test_dtm' => $this->db->convert('\'2002-01-02 12:34:56\'', "datetime"), 'test_dtm2' => $this->db->convert('\'2011-10-08 01:02:03\'', 'datetime'),
-                        'test_dt' => $this->db->convert('\'1998-10-04\'', 'date'), 'test_tm' => $this->db->convert('\'03:04:05\'', 'time'),
-                  ],
+                        'required' => true,
+                    ],
+                ],
+                ["id" => "test123"],
+                ["id" => "'test123'"],
             ],
-            ["testreqnull",  [
-                  'id' =>
-                       [
+            [
+                "testtext",
+                [
+                    'text1' => [
+                        'name' => 'text1',
+                        'type' => 'varchar',
+                        'required' => true,
+                    ],
+                    'text2' => [
+                        'name' => 'text2',
+                        'type' => 'varchar',
+                    ],
+                ],
+                [],
+                [
+                    "text1" => "''",
+                    "text2" => "NULL",
+                ],
+                [],
+            ],
+            [
+                "testtext2",
+                [
+                    'text1' => [
+                        'name' => 'text1',
+                        'type' => 'varchar',
+                        'required' => true,
+                    ],
+                    'text2' => [
+                        'name' => 'text2',
+                        'type' => 'varchar',
+                    ],
+                ],
+                ['text1' => 'foo', 'text2' => 'bar'],
+                ["text1" => "'foo'", 'text2' => "'bar'"],
+            ],
+            [
+                "testreq",
+                [
+                    'id' => [
                         'name' => 'id',
                         'type' => 'varchar',
-                        'required'=>true,
-                      ],
-                  'intval' =>
-                       [
+                        'required' => true,
+                    ],
+                    'intval' => [
                         'name' => 'intval',
                         'type' => 'int',
-                        'required'=>true,
-                      ],
-                  'floatval' =>
-                       [
+                        'required' => true,
+                    ],
+                    'floatval' => [
                         'name' => 'floatval',
                         'type' => 'decimal',
-                        'required'=>true,
-                      ],
-                  'money' =>
-                       [
+                        'required' => true,
+                    ],
+                    'money' => [
                         'name' => 'money',
                         'type' => 'currency',
-                        'required'=>true,
-                      ],
-                  'test_dtm' =>
-                       [
+                        'required' => true,
+                    ],
+                    'test_dtm' => [
                         'name' => 'test_dtm',
                         'type' => 'datetime',
-                        'required'=>true,
-                      ],
-                  'test_dtm2' =>
-                       [
+                        'required' => true,
+                    ],
+                    'test_dtm2' => [
                         'name' => 'test_dtm2',
                         'type' => 'datetimecombo',
-                        'required'=>true,
-                      ],
-                  'test_dt' =>
-                       [
+                        'required' => true,
+                    ],
+                    'test_dt' => [
                         'name' => 'test_dt',
                         'type' => 'date',
-                        'required'=>true,
-                      ],
-                  'test_tm' =>
-                       [
+                        'required' => true,
+                    ],
+                    'test_tm' => [
                         'name' => 'test_tm',
                         'type' => 'time',
-                        'required'=>true,
-                      ],
-                  ],
-                  [],
-                  ["id" => "''", 'intval' => 0, 'floatval' => 0,
-                        'money' => 0, 'test_dtm' => "$emptydatetime", 'test_dtm2' => "$emptydatetime",
-                        'test_dt' => "$emptydate", 'test_tm' => "$emptytime",
-                  ],
-                  [],
+                        'required' => true,
+                    ],
+                ],
+                [
+                    "id" => "test123",
+                    'intval' => 42,
+                    'floatval' => 42.24,
+                    'money' => 56.78,
+                    'test_dtm' => '2002-01-02 12:34:56',
+                    'test_dtm2' => '2011-10-08 01:02:03',
+                    'test_dt' => '1998-10-04', 'test_tm' => '03:04:05',
+                ],
+                [
+                    "id" => "'test123'",
+                    'intval' => 42,
+                    'floatval' => 42.24,
+                    'money' => 56.78,
+                    'test_dtm' => $this->db->convert('\'2002-01-02 12:34:56\'', "datetime"),
+                    'test_dtm2' => $this->db->convert('\'2011-10-08 01:02:03\'', 'datetime'),
+                    'test_dt' => $this->db->convert('\'1998-10-04\'', 'date'),
+                    'test_tm' => $this->db->convert('\'03:04:05\'', 'time'),
+                ],
             ],
-            ["testnull",  [
-                  'id' =>
-                       [
+            [
+                "testreqnull",
+                [
+                    'id' => [
                         'name' => 'id',
                         'type' => 'varchar',
-                      ],
-                  'intval' =>
-                       [
+                        'required' => true,
+                    ],
+                    'intval' => [
                         'name' => 'intval',
                         'type' => 'int',
-                      ],
-                  'floatval' =>
-                       [
+                        'required' => true,
+                    ],
+                    'floatval' => [
                         'name' => 'floatval',
                         'type' => 'decimal',
-                      ],
-                  'money' =>
-                       [
+                        'required' => true,
+                    ],
+                    'money' => [
                         'name' => 'money',
                         'type' => 'currency',
-                      ],
-                  'test_dtm' =>
-                       [
+                        'required' => true,
+                    ],
+                    'test_dtm' => [
                         'name' => 'test_dtm',
                         'type' => 'datetime',
-                      ],
-                  'test_dtm2' =>
-                       [
+                        'required' => true,
+                    ],
+                    'test_dtm2' => [
                         'name' => 'test_dtm2',
                         'type' => 'datetimecombo',
-                      ],
-                  'test_dt' =>
-                       [
+                        'required' => true,
+                    ],
+                    'test_dt' => [
                         'name' => 'test_dt',
                         'type' => 'date',
-                      ],
-                  'test_tm' =>
-                       [
+                        'required' => true,
+                    ],
+                    'test_tm' => [
                         'name' => 'test_tm',
                         'type' => 'time',
-                      ],
-                  ],
-                  ["id" => 123],
-                  ["id" => "'123'", 'intval' => 'NULL', 'floatval' => 'NULL',
-                        'money' => 'NULL', 'test_dtm' => 'NULL', 'test_dtm2' => 'NULL',
-                        'test_dt' => 'NULL', 'test_tm' => 'NULL'],
-                  [],
+                        'required' => true,
+                    ],
+                ],
+                [],
+                [
+                    "id" => "''",
+                    'intval' => 0,
+                    'floatval' => 0,
+                    'money' => 0,
+                    'test_dtm' => "$emptydatetime",
+                    'test_dtm2' => "$emptydatetime",
+                    'test_dt' => "$emptydate",
+                    'test_tm' => "$emptytime",
+                ],
+                [],
             ],
-            ["testempty",  [
-                  'id' =>
-                       [
+            [
+                "testnull",
+                [
+                    'id' => [
                         'name' => 'id',
                         'type' => 'varchar',
-                      ],
-                  'intval' =>
-                       [
+                    ],
+                    'intval' => [
                         'name' => 'intval',
                         'type' => 'int',
-                      ],
-                  'floatval' =>
-                       [
+                    ],
+                    'floatval' => [
                         'name' => 'floatval',
                         'type' => 'decimal',
-                      ],
-                  'money' =>
-                       [
+                    ],
+                    'money' => [
                         'name' => 'money',
                         'type' => 'currency',
-                      ],
-                  'test_dtm' =>
-                       [
+                    ],
+                    'test_dtm' => [
                         'name' => 'test_dtm',
                         'type' => 'datetime',
-                      ],
-                  'test_dtm2' =>
-                       [
+                    ],
+                    'test_dtm2' => [
                         'name' => 'test_dtm2',
                         'type' => 'datetimecombo',
-                      ],
-                  'test_dt' =>
-                       [
+                    ],
+                    'test_dt' => [
                         'name' => 'test_dt',
                         'type' => 'date',
-                      ],
-                  'test_tm' =>
-                       [
+                    ],
+                    'test_tm' => [
                         'name' => 'test_tm',
                         'type' => 'time',
-                      ],
-                   'text_txt' =>
-                       [
+                    ],
+                ],
+                [
+                    "id" => 123,
+                ],
+                [
+                    "id" => "'123'",
+                    'intval' => 'NULL',
+                    'floatval' => 'NULL',
+                    'money' => 'NULL',
+                    'test_dtm' => 'NULL',
+                    'test_dtm2' => 'NULL',
+                    'test_dt' => 'NULL',
+                    'test_tm' => 'NULL',
+                ],
+                [],
+            ],
+            [
+                "testempty",
+                [
+                    'id' => [
+                        'name' => 'id',
+                        'type' => 'varchar',
+                    ],
+                    'intval' => [
+                        'name' => 'intval',
+                        'type' => 'int',
+                    ],
+                    'floatval' => [
+                        'name' => 'floatval',
+                        'type' => 'decimal',
+                    ],
+                    'money' => [
+                        'name' => 'money',
+                        'type' => 'currency',
+                    ],
+                    'test_dtm' => [
+                        'name' => 'test_dtm',
+                        'type' => 'datetime',
+                    ],
+                    'test_dtm2' => [
+                        'name' => 'test_dtm2',
+                        'type' => 'datetimecombo',
+                    ],
+                    'test_dt' => [
+                        'name' => 'test_dt',
+                        'type' => 'date',
+                    ],
+                    'test_tm' => [
+                        'name' => 'test_tm',
+                        'type' => 'time',
+                    ],
+                    'text_txt' => [
                         'name' => 'test_txt',
                         'type' => 'varchar',
-                      ],
-                  ],
-                  ["id" => "", 'intval' => '', 'floatval' => '',
-                        'money' => '', 'test_dtm' => '', 'test_dtm2' => '',
-                        'test_dt' => '', 'test_tm' => '', 'text_txt' => null,
-                  ],
-                  ["id" => "''", 'intval' => "NULL", 'floatval' => "NULL",
-                        'money' => "NULL", 'test_dtm' => "NULL", 'test_dtm2' => "NULL",
-                        'test_dt' => "NULL", 'test_tm' => 'NULL', 'test_txt' => 'NULL',
-                  ],
-                  ['intval' => 'NULL', 'floatval' => 'NULL',
-                        'money' => 'NULL', 'test_dtm' => 'NULL', 'test_dtm2' => 'NULL',
-                        'test_dt' => 'NULL', 'test_tm' => 'NULL',
-                  ],
+                    ],
+                ],
+                [
+                    "id" => "",
+                    'intval' => '',
+                    'floatval' => '',
+                    'money' => '',
+                    'test_dtm' => '',
+                    'test_dtm2' => '',
+                    'test_dt' => '',
+                    'test_tm' => '',
+                    'text_txt' => null,
+                ],
+                [
+                    "id" => "''",
+                    'intval' => "NULL",
+                    'floatval' => "NULL",
+                    'money' => "NULL",
+                    'test_dtm' => "NULL",
+                    'test_dtm2' => "NULL",
+                    'test_dt' => "NULL",
+                    'test_tm' => 'NULL',
+                    'test_txt' => 'NULL',
+                ],
+                [
+                    'intval' => 'NULL',
+                    'floatval' => 'NULL',
+                    'money' => 'NULL',
+                    'test_dtm' => 'NULL',
+                    'test_dtm2' => 'NULL',
+                    'test_dt' => 'NULL',
+                    'test_tm' => 'NULL',
+                ],
             ],
         ];
     }
@@ -1873,17 +1888,16 @@ SQL;
     {
         $tablename = 'testConstraints';
         $fielddefs = [
-                        'id' =>
-                             [
-                            'name' => 'id',
-                            'required'=>true,
-                            'type' => 'id',
-                            ],
-                        'test' =>  [
-                            'name' => 'test',
-                            'type' => 'longtext',
-                            ],
-                        ];
+            'id' => [
+                'name' => 'id',
+                'required'=>true,
+                'type' => 'id',
+            ],
+            'test' =>  [
+                'name' => 'test',
+                'type' => 'longtext',
+            ],
+        ];
 
         $this->createTableParams($tablename, $fielddefs, []);
         unset($this->created[$tablename]); // that table is required by testRemovePrimaryKey test
@@ -1894,7 +1908,7 @@ SQL;
                 'name'   => 'testConstraints_pk',
                 'type'   => 'primary',
                 'fields' => ['id'],
-                ],
+            ],
             false
         );
 
@@ -1926,10 +1940,10 @@ SQL;
          $sql = $this->db->add_drop_constraint(
              $tablename,
              [
-                'name'   => 'testConstraints_pk',
-                'type'   => 'primary',
-                'fields' => ['id'],
-                ],
+                 'name'   => 'testConstraints_pk',
+                 'type'   => 'primary',
+                 'fields' => ['id'],
+             ],
              true
          );
 
@@ -1983,32 +1997,32 @@ SQL;
                 'name' => 'id',
                 'type' => 'id',
                 'required'=>true,
-                ],
+            ],
             'parent_id' =>  [
                 'name' => 'parent_id',
                 'type' => 'id',
-                ],
+            ],
             'name' =>  [
                 'name' => 'name',
                 'type' => 'varchar',
                 'len' => '20',
-                ],
+            ],
             'db_level' =>  [  // For verification purpose
                 'name' => 'db_level',
                 'type' => 'int',
-                ],
+            ],
         ];
         $indexes = [
             [
                 'name'   => 'idx_'. $tableName .'_id',
                 'type'   => 'primary',
                 'fields' => ['id'],
-                ],
+            ],
             [
                 'name'   => 'idx_'. $tableName .'parent_id',
                 'type'   => 'index',
                 'fields' => ['parent_id'],
-                ],
+            ],
         ];
 
         $this->createTableParams($tableName, $params, $indexes);
@@ -2667,57 +2681,57 @@ SQL;
     {
         return [
             [
-                 [
+                [
                     'name' => 'id',
                     'vname' => 'LBL_TAG_NAME',
                     'type' => 'id',
                     'len' => '36',
                     'required'=>true,
                     'reportable'=>false,
-                 ],
-                 false,
+                ],
+                false,
             ],
             [
-                 [
+                [
                     'name' => 'parent_tag_id',
                     'vname' => 'LBL_PARENT_TAG_ID',
                     'type' => 'id',
                     'len' => '36',
                     'required'=>false,
                     'reportable'=>false,
-                 ],
-                 true,
+                ],
+                true,
             ],
             [
-                 [
+                [
                     'name' => 'any_id',
                     'vname' => 'LBL_ANY_ID',
                     'dbType' => 'id',
                     'len' => '36',
                     'required'=>false,
                     'reportable'=>false,
-                 ],
-                 true,
+                ],
+                true,
             ],
             [
-                 [
+                [
                     'name' => 'any_id',
                     'vname' => 'LBL_ANY_ID',
                     'type' => 'id',
                     'len' => '36',
                     'reportable'=>false,
-                 ],
-                 true,
+                ],
+                true,
             ],
             [
-                 [
+                [
                     'name' => 'any_id',
                     'vname' => 'LBL_ANY_ID',
                     'dbType' => 'id',
                     'len' => '36',
                     'reportable'=>false,
-                 ],
-                 true,
+                ],
+                true,
             ],
         ];
     }
@@ -2768,8 +2782,10 @@ SQL;
         }
         $this->createTableParams($tableName, $params, $indexes);
 
-        return ['tableName' => $tableName,
-                     'params' => $params];
+        return [
+            'tableName' => $tableName,
+            'params' => $params,
+        ];
     }
 
     public function providerInsert()
@@ -2867,39 +2883,40 @@ SQL;
     {
         // create test table for data type testing
         $tableName = 'test_types';
-        $params =  [ 'id'                  => ['name'=>'id',                  'type'=>'id','required'=>true],
-                            'int_param'           => ['name'=>'int_param',           'type'=>'int',     'default'=>1],
-                            'double_param'        => ['name'=>'double_param',        'type'=>'double',  'default'=>1],     //len,precision
-                            'float_param'         => ['name'=>'float_param',         'type'=>'float',   'default'=>1],
-                            'uint_param'          => ['name'=>'uint_param',          'type'=>'uint',    'default'=>1],
-                            'ulong_param'         => ['name'=>'ulong_param',         'type'=>'ulong',   'default'=>1],
-                            'long_param'          => ['name'=>'long_param',          'type'=>'long',    'default'=>1],
-                            'short_param'         => ['name'=>'short_param',         'type'=>'short',   'default'=>1],
-                            'varchar_param'       => ['name'=>'varchar_param',       'type'=>'varchar', 'default'=>'test'],
-                            'text_param'          => ['name'=>'text_param',          'type'=>'text',    'default'=>'test'],
-                            'longtext_param'      => ['name'=>'longtext_param',      'type'=>'longtext','default'=>'test'],
-                          'date_param'          => ['name'=>'date_param',          'type'=>'date'],
-                            'enum_param'          => ['name'=>'enum_param',          'type'=>'enum',    'default'=>'test'],
-                            'relate_param'        => ['name'=>'relate_param',        'type'=>'relate',  'default'=>'test'],
-                            'multienum_param'     => ['name'=>'multienum_param',     'type'=>'multienum', 'default'=>'test'],
-                            'html_param'          => ['name'=>'html_param',          'type'=>'html',    'default'=>'test'],
-                            'longhtml_param'      => ['name'=>'longhtml_param',      'type'=>'longhtml','default'=>'test'],
-                          'datetime_param'      => ['name'=>'datetime_param',      'type'=>'datetime'],
-                          'datetimecombo_param' => ['name'=>'datetimecombo_param', 'type'=>'datetimecombo'],
-                          'time_param'          => ['name'=>'time_param',          'type'=>'time'],
-                          'bool_param'          => ['name'=>'bool_param',          'type'=>'bool'],
-                          'tinyint_param'       => ['name'=>'tinyint_param',       'type'=>'tinyint'],
-                            'char_param'          => ['name'=>'char_param',          'type'=>'char',    'default'=>'test'],
-                            'id_param'            => ['name'=>'id_param',            'type'=>'id',      'default'=>'test'],
-                            'blob_param'          => ['name'=>'blob_param',          'type'=>'blob',    'default'=>'test'],
-                            'longblob_param'      => ['name'=>'longblob_param',      'type'=>'longblob','default'=>'test'],
-                            'currency_param'      => ['name'=>'currency_param',      'type'=>'currency','default'=>1.11],
-                            'decimal_param'       => ['name'=>'decimal_param',       'type'=>'decimal', 'len' => 10, 'precision' => 4,    'default'=>1.11],
-                            'decimal2_param'      => ['name'=>'decimal2_param',      'type'=>'decimal2', 'len' => 10, 'precision' => 4,    'default'=>1.11],
-                            'url_param'           => ['name'=>'url_param',           'type'=>'url',     'default'=>'test'],
-                            'encrypt_param'       => ['name'=>'encrypt_param',       'type'=>'encrypt', 'default'=>'test'],
-                            'file_param'          => ['name'=>'file_param',          'type'=>'file',    'default'=>'test'],
-                        ];
+        $params =  [
+            'id'                  => ['name'=>'id',                  'type'=>'id',      'required'=>true],
+            'int_param'           => ['name'=>'int_param',           'type'=>'int',     'default'=>1],
+            'double_param'        => ['name'=>'double_param',        'type'=>'double',  'default'=>1],
+            'float_param'         => ['name'=>'float_param',         'type'=>'float',   'default'=>1],
+            'uint_param'          => ['name'=>'uint_param',          'type'=>'uint',    'default'=>1],
+            'ulong_param'         => ['name'=>'ulong_param',         'type'=>'ulong',   'default'=>1],
+            'long_param'          => ['name'=>'long_param',          'type'=>'long',    'default'=>1],
+            'short_param'         => ['name'=>'short_param',         'type'=>'short',   'default'=>1],
+            'varchar_param'       => ['name'=>'varchar_param',       'type'=>'varchar', 'default'=>'test'],
+            'text_param'          => ['name'=>'text_param',          'type'=>'text',    'default'=>'test'],
+            'longtext_param'      => ['name'=>'longtext_param',      'type'=>'longtext','default'=>'test'],
+            'date_param'          => ['name'=>'date_param',          'type'=>'date'],
+            'enum_param'          => ['name'=>'enum_param',          'type'=>'enum',    'default'=>'test'],
+            'relate_param'        => ['name'=>'relate_param',        'type'=>'relate',  'default'=>'test'],
+            'multienum_param'     => ['name'=>'multienum_param',     'type'=>'multienum', 'default'=>'test'],
+            'html_param'          => ['name'=>'html_param',          'type'=>'html',    'default'=>'test'],
+            'longhtml_param'      => ['name'=>'longhtml_param',      'type'=>'longhtml','default'=>'test'],
+            'datetime_param'      => ['name'=>'datetime_param',      'type'=>'datetime'],
+            'datetimecombo_param' => ['name'=>'datetimecombo_param', 'type'=>'datetimecombo'],
+            'time_param'          => ['name'=>'time_param',          'type'=>'time'],
+            'bool_param'          => ['name'=>'bool_param',          'type'=>'bool'],
+            'tinyint_param'       => ['name'=>'tinyint_param',       'type'=>'tinyint'],
+            'char_param'          => ['name'=>'char_param',          'type'=>'char',    'default'=>'test'],
+            'id_param'            => ['name'=>'id_param',            'type'=>'id',      'default'=>'test'],
+            'blob_param'          => ['name'=>'blob_param',          'type'=>'blob',    'default'=>'test'],
+            'longblob_param'      => ['name'=>'longblob_param',      'type'=>'longblob','default'=>'test'],
+            'currency_param'      => ['name'=>'currency_param',      'type'=>'currency','default'=>1.11],
+            'decimal_param'       => ['name'=>'decimal_param',       'type'=>'decimal', 'len' => 10, 'precision' => 4,    'default'=>1.11],
+            'decimal2_param'      => ['name'=>'decimal2_param',      'type'=>'decimal2', 'len' => 10, 'precision' => 4,    'default'=>1.11],
+            'url_param'           => ['name'=>'url_param',           'type'=>'url',     'default'=>'test'],
+            'encrypt_param'       => ['name'=>'encrypt_param',       'type'=>'encrypt', 'default'=>'test'],
+            'file_param'          => ['name'=>'file_param',          'type'=>'file',    'default'=>'test'],
+        ];
 
         $indexes = [
             [
@@ -2914,7 +2931,8 @@ SQL;
         $this->createTableParams($tableName, $params, $indexes);
 
         return ['tableName' => $tableName,
-                     'params' => $params];
+            'params' => $params,
+        ];
     }
 
 
@@ -2923,76 +2941,80 @@ SQL;
      */
     private function setupDataTypesData()
     {
-        return [[ 'id'                  => create_guid(),
-                        'int_param'           => 1,
-                        'double_param'        => 1,
-                        'float_param'         => 1.1,
-                        'uint_param'          => 1,
-                        'ulong_param'         => 1,
-                        'long_param'          => 1,
-                        'short_param'         => 1,
-                        'varchar_param'       => 'varchar',
-                        'text_param'          => 'text',
-                        'longtext_param'      => 'longtext',
-                        'date_param'          => '2012-12-31',
-                        'enum_param'          => 'enum',
-                        'relate_param'        => 'relate',
-                        'multienum_param'     => 'multienum',
-                        'html_param'          => 'html',
-                        'longhtml_param'      => 'longhtml',
-                        'datetime_param'      => '2012-12-31 01:01:01',
-                        'datetimecombo_param' => '2012-12-31 01:01:01',
-                        'time_param'          => '01:01:01',
-                        'bool_param'          => '1',
-                        'tinyint_param'       => 1,
-                        'char_param'          => 'char',
-                        'id_param'            => 'id',
-                        'blob_param'          => 'blob',
-                        'longblob_param'      => 'longblob',
-                        'currency_param'      => 123.456,
-                        'decimal_param'       => 12.34,
-                        'decimal2_param'      => 12.34,
-                        'url_param'           => 'utl',
-                        'encrypt_param'       => 'encrypt',
-                        'file_param'          => 'file',
-                          ],
-                     [ 'id'                  => create_guid(),
-                            'int_param'           => 2,
-                            'double_param'        => 2,
-                            'float_param'         => 2.2,
-                            'uint_param'          => 2,
-                            'ulong_param'         => 2,
-                            'long_param'          => 2,
-                            'short_param'         => 2,
-                            'varchar_param'       => 'varchar',
-                            'text_param'          => 'text',
-                            'longtext_param'      => 'longtext',
-                            'date_param'          => '2012-12-31',
-                            'enum_param'          => 'enum',
-                            'relate_param'        => 'relate',
-                            'multienum_param'     => 'multienum',
-                            'html_param'          => 'html',
-                            'longhtml_param'      => 'longhtml',
-                            'datetime_param'      => '2012-12-31 01:01:01',
-                            'datetimecombo_param' => '2012-12-31 01:01:01',
-                            'time_param'          => '01:01:01',
-                            'bool_param'          => '1',
-                            'tinyint_param'       => 1,
-                            'char_param'          => 'char',
-                            'id_param'            => 'id',
-                            'blob_param'          => 'blob',
-                            'longblob_param'      => 'longblob',
-                            'currency_param'      => 123.456,
-                            'decimal_param'       => 12.34,
-                            'decimal2_param'      => 12.34,
-                            'url_param'           => 'utl',
-                            'encrypt_param'       => 'encrypt',
-                            'file_param'          => 'file',
-                          ],
-                     [ 'id'                  => create_guid(),
-                            'int_param'           => 3,
-                            'double_param'        => 3,
-                        ],
+        return [
+            [
+                'id'                  => create_guid(),
+                'int_param'           => 1,
+                'double_param'        => 1,
+                'float_param'         => 1.1,
+                'uint_param'          => 1,
+                'ulong_param'         => 1,
+                'long_param'          => 1,
+                'short_param'         => 1,
+                'varchar_param'       => 'varchar',
+                'text_param'          => 'text',
+                'longtext_param'      => 'longtext',
+                'date_param'          => '2012-12-31',
+                'enum_param'          => 'enum',
+                'relate_param'        => 'relate',
+                'multienum_param'     => 'multienum',
+                'html_param'          => 'html',
+                'longhtml_param'      => 'longhtml',
+                'datetime_param'      => '2012-12-31 01:01:01',
+                'datetimecombo_param' => '2012-12-31 01:01:01',
+                'time_param'          => '01:01:01',
+                'bool_param'          => '1',
+                'tinyint_param'       => 1,
+                'char_param'          => 'char',
+                'id_param'            => 'id',
+                'blob_param'          => 'blob',
+                'longblob_param'      => 'longblob',
+                'currency_param'      => 123.456,
+                'decimal_param'       => 12.34,
+                'decimal2_param'      => 12.34,
+                'url_param'           => 'utl',
+                'encrypt_param'       => 'encrypt',
+                'file_param'          => 'file',
+            ],
+            [
+                'id'                  => create_guid(),
+                'int_param'           => 2,
+                'double_param'        => 2,
+                'float_param'         => 2.2,
+                'uint_param'          => 2,
+                'ulong_param'         => 2,
+                'long_param'          => 2,
+                'short_param'         => 2,
+                'varchar_param'       => 'varchar',
+                'text_param'          => 'text',
+                'longtext_param'      => 'longtext',
+                'date_param'          => '2012-12-31',
+                'enum_param'          => 'enum',
+                'relate_param'        => 'relate',
+                'multienum_param'     => 'multienum',
+                'html_param'          => 'html',
+                'longhtml_param'      => 'longhtml',
+                'datetime_param'      => '2012-12-31 01:01:01',
+                'datetimecombo_param' => '2012-12-31 01:01:01',
+                'time_param'          => '01:01:01',
+                'bool_param'          => '1',
+                'tinyint_param'       => 1,
+                'char_param'          => 'char',
+                'id_param'            => 'id',
+                'blob_param'          => 'blob',
+                'longblob_param'      => 'longblob',
+                'currency_param'      => 123.456,
+                'decimal_param'       => 12.34,
+                'decimal2_param'      => 12.34,
+                'url_param'           => 'utl',
+                'encrypt_param'       => 'encrypt',
+                'file_param'          => 'file',
+            ],
+            [
+                'id'                  => create_guid(),
+                'int_param'           => 3,
+                'double_param'        => 3,
+            ],
         ];
     }
 
@@ -3451,8 +3473,8 @@ SQL;
 
         $sql = $this->db->alterColumnSQL(
             'contacts',
-            ['compensation_min' =>
-                [
+            [
+                'compensation_min' => [
                     'required' => false,
                     'name' => 'compensation_min',
                     'vname' => 'LBL_COMPENSATION_MIN',
@@ -3488,8 +3510,8 @@ SQL;
 
         $sql = $this->db->alterColumnSQL(
             'contacts',
-            ['compensation_min' =>
-                [
+            [
+                'compensation_min' => [
                     'required' => false,
                     'name' => 'compensation_min',
                     'vname' => 'LBL_COMPENSATION_MIN',
@@ -3525,8 +3547,8 @@ SQL;
 
         $sql = $this->db->alterColumnSQL(
             'contacts',
-            ['compensation_min' =>
-                [
+            [
+                'compensation_min' => [
                     'required' => false,
                     'name' => 'compensation_min',
                     'vname' => 'LBL_COMPENSATION_MIN',
@@ -3565,8 +3587,8 @@ SQL;
 
         $sql = $this->db->alterColumnSQL(
             'contacts',
-            ['compensation_min' =>
-                [
+            [
+                'compensation_min' => [
                     'required' => false,
                     'name' => 'compensation_min',
                     'vname' => 'LBL_COMPENSATION_MIN',

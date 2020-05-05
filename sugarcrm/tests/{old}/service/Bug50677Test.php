@@ -63,9 +63,9 @@ class Bug50677Test extends SOAPTestCase
             'related_ids' => $this->product->id,
             'name_value_list' => [
                 ['name' => 'product_index', 'value' => 1],
-                ],
+            ],
             'deleted' => 0,
-            ]);
+        ]);
         $this->assertEquals(1, $result['created'], "Failed To Create Product Bundle -> Product Relationship");
 
         // lets make sure the row is correct since it was created

@@ -55,14 +55,15 @@ class RestBug57507Test extends RestTestBase
     {
         $reply = $this->restCall(
             "Calls/",
-            json_encode(['name' => 'Test call, empty int',
-                                                    'duration_hours' => 1,
-                                                    'duration_minutes' => 15,
-                                                    'date_start' => TimeDate::getInstance()->asIso(TimeDate::getInstance()->getNow()),
-                                                    'status' => 'Not Held',
-                                                    'direction' => 'Incoming',
-                                                    'repeat_count' => null,
-                                                  ]),
+            json_encode([
+                'name' => 'Test call, empty int',
+                'duration_hours' => 1,
+                'duration_minutes' => 15,
+                'date_start' => TimeDate::getInstance()->asIso(TimeDate::getInstance()->getNow()),
+                'status' => 'Not Held',
+                'direction' => 'Incoming',
+                'repeat_count' => null,
+            ]),
             'POST'
         );
         $this->assertTrue(!empty($reply['reply']['id']), 'Could not create a call..response was: ' . print_r($reply, true));

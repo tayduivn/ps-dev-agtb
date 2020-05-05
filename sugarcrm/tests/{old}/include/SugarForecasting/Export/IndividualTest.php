@@ -60,8 +60,8 @@ class SugarForecasting_Export_IndividualTest extends TestCase
     protected function setUp() : void
     {
         SugarTestForecastUtilities::setUpForecastConfig([
-                'forecast_by' => 'Opportunities',
-            ]);
+            'forecast_by' => 'Opportunities',
+        ]);
         $this->manager = SugarTestForecastUtilities::createForecastUser();
 
         $this->reportee = SugarTestForecastUtilities::createForecastUser(

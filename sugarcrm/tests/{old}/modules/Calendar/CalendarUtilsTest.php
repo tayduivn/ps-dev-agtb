@@ -291,7 +291,7 @@ class CalendarUtilsTest extends TestCase
                     'days' => 2,
                 ],
             ],
-         ];
+        ];
     }
 
     /**

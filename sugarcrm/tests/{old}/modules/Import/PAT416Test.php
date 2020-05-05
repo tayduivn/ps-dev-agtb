@@ -29,15 +29,15 @@ class BugPAT416Test extends TestCase
             'account_name' => [
                 'id_name' => 'account_id',
                 'type' => 'relate',
-             ],
-             'account_id' => [
+            ],
+            'account_id' => [
                 'id_name' => 'account_id',
                 'type' => 'relate',
-             ],
-             'test_field' => [
+            ],
+            'test_field' => [
                 'id_name' => 'test_field',
                 'type' => 'varchar',
-             ],
+            ],
         ];
     }
 

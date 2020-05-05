@@ -164,14 +164,16 @@ class AuditTest extends TestCase
                 'name' => 'user_c',
                 'type' => 'relate',
                 'id_name' => 'user_id_c',
-                'module' => 'Users'],
+                'module' => 'Users',
+            ],
         ];
         $bean->auditEnabledRelateFields = [
             'user_id_c' => [
                 'name' => 'user_c',
                 'type' => 'relate',
                 'id_name' => 'user_id_c',
-                'module' => 'Users'],
+                'module' => 'Users',
+            ],
         ];
         $audit = BeanFactory::newBean('Audit');
         SugarTestReflection::callProtectedMethod($audit, 'handleRelateField', [$bean, &$row]);

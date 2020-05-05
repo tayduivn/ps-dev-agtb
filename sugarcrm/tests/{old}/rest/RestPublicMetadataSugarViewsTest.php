@@ -73,14 +73,14 @@ class RestPublicMetadataSugarViewsTest extends RestTestBase
             }
         }
 
-        $dirsToMake = ['clients/mobile/views/address',
-                            'clients/portal/views/address',
-                            'clients/base/views/address',
-                            'custom/clients/mobile/views/address',
-                            'custom/clients/portal/views/address',
-                            'custom/clients/base/views/address',
-                            'clients/mobile/views/address',
-
+        $dirsToMake = [
+            'clients/mobile/views/address',
+            'clients/portal/views/address',
+            'clients/base/views/address',
+            'custom/clients/mobile/views/address',
+            'custom/clients/portal/views/address',
+            'custom/clients/base/views/address',
+            'clients/mobile/views/address',
         ];
 
         foreach ($dirsToMake as $dir) {

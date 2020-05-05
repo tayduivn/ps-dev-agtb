@@ -12,15 +12,13 @@
 
 $viewdefs ['Cases']['portal']['view']['edit'] =
     [
-        'buttons' =>
-        [
+        'buttons' => [
             [
                 'name' => 'cancel_button',
                 'type' => 'button',
                 'label' => 'LBL_CANCEL_BUTTON_LABEL',
                 'value' => 'cancel',
-                'events' =>
-                [
+                'events' => [
                     'click' => 'function(){ window.history.back(); }',
                 ],
                 'css_class' => 'btn-invisible btn-link',
@@ -33,11 +31,9 @@ $viewdefs ['Cases']['portal']['view']['edit'] =
                 'css_class' => 'btn-primary',
             ],
         ],
-        'templateMeta' =>
-        [
+        'templateMeta' => [
             'maxColumns' => '2',
-            'widths' =>
-            [
+            'widths' => [
                 [
                     'label' => '10',
                     'field' => '30',
@@ -49,15 +45,13 @@ $viewdefs ['Cases']['portal']['view']['edit'] =
             ],
             'formId' => 'CaseEditView',
             'formName' => 'CaseEditView',
-            'hiddenInputs' =>
-            [
+            'hiddenInputs' => [
                 'module' => 'Cases',
                 'returnmodule' => 'Cases',
                 'returnaction' => 'DetailView',
                 'action' => 'Save',
             ],
-            'hiddenFields' =>
-            [
+            'hiddenFields' => [
                 [
                     'name' => 'portal_viewable',
                     'operator' => '=',
@@ -66,23 +60,19 @@ $viewdefs ['Cases']['portal']['view']['edit'] =
             ],
             'useTabs' => false,
         ],
-        'panels' =>
-        [
+        'panels' => [
             [
                 'label' => 'LBL_PANEL_DEFAULT',
-                'fields' =>
-                [
+                'fields' => [
                     [
                         'name' => 'name',
-                        'displayParams' =>
-                        [
+                        'displayParams' => [
                             'colspan' => 2,
                         ],
                     ],
                     [
                         'name' => 'description',
-                        'displayParams' =>
-                        [
+                        'displayParams' => [
                             'colspan' => 2,
                         ],
                     ],

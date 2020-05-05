@@ -60,8 +60,8 @@ class ForecastWorksheetsFilterApiTest extends TestCase
         // get current settings
 
         SugarTestForecastUtilities::setUpForecastConfig([
-                'show_worksheet_worst' => 1,
-            ]);
+            'show_worksheet_worst' => 1,
+        ]);
 
         // setup the test users
         self::$manager = SugarTestForecastUtilities::createForecastUser();

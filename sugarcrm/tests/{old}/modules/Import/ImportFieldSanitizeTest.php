@@ -633,25 +633,25 @@ class ImportFieldSanitizeTest extends TestCase
 
         $focus = BeanFactory::newBean('Contacts');
         $vardef = [
-          'required' => false,
-          'source' => 'non-db',
-          'name' => 'parent_name',
-          'vname' => 'LBL_FLEX_RELATE',
-          'type' => 'parent',
-          'massupdate' => 0,
-          'comments' => '',
-          'help' => '',
-          'importable' => 'false',
-          'duplicate_merge' => 'disabled',
-          'duplicate_merge_dom_value' => '0',
-          'audited' => 0,
-          'reportable' => 0,
-          'len' => 25,
-          'options' => 'parent_type_display',
-          'studio' => 'visible',
-          'type_name' => 'parent_type',
-          'id_name' => 'parent_id',
-          'parent_type' => 'record_type_display',
+            'required' => false,
+            'source' => 'non-db',
+            'name' => 'parent_name',
+            'vname' => 'LBL_FLEX_RELATE',
+            'type' => 'parent',
+            'massupdate' => 0,
+            'comments' => '',
+            'help' => '',
+            'importable' => 'false',
+            'duplicate_merge' => 'disabled',
+            'duplicate_merge_dom_value' => '0',
+            'audited' => 0,
+            'reportable' => 0,
+            'len' => 25,
+            'options' => 'parent_type_display',
+            'studio' => 'visible',
+            'type_name' => 'parent_type',
+            'id_name' => 'parent_id',
+            'parent_type' => 'record_type_display',
         ];
         $focus->parent_name = '';
         $focus->parent_id = '';
@@ -726,7 +726,7 @@ class ImportFieldSanitizeTest extends TestCase
             'dbType' => 'varchar',
             'len' => '255',
             'source' => 'non-db',
-            ];
+        ];
 
         $this->_ifs->relate(
             $account_name,
@@ -826,7 +826,7 @@ class ImportFieldSanitizeTest extends TestCase
             'len' => '255',
             'source' => 'non-db',
             'rtype' => 'int',
-            ];
+        ];
 
         // setup
         $beanList = [];
@@ -1182,6 +1182,6 @@ class Import_Bug27046_Mock extends Account
         return [
             'name' => 'name',
             'type' => 'int',
-            ];
+        ];
     }
 }

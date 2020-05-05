@@ -52,118 +52,118 @@ class OracleManagerTest extends TestCase
     public function providerConvert()
     {
         $returnArray = [
-                [
-                    ['foo','nothing'],
-                    'foo',
-                ],
-                [
-                    ['foo','date'],
-                    "to_date(foo, 'YYYY-MM-DD')",
-                    ],
-                [
-                    ['foo','time'],
-                    "to_date(foo, 'HH24:MI:SS')",
-                    ],
-                [
-                    ['foo','datetime'],
-                    "to_date(foo, 'YYYY-MM-DD HH24:MI:SS')",
-                    ],
-                [
-                    ['foo','datetime',[1,2,3]],
-                    "to_date(foo, 'YYYY-MM-DD HH24:MI:SS',1,2,3)",
-                    ],
-                [
-                    ['foo','today'],
-                    'sysdate',
-                    ],
-                [
-                    ['foo','left'],
-                    "LTRIM(foo)",
-                    ],
-                [
-                    ['foo','left',[1,2,3]],
-                    "LTRIM(foo,1,2,3)",
-                    ],
-                [
-                    ['foo','date_format'],
-                    "TO_CHAR(foo, 'YYYY-MM-DD')",
-                    ],
-                [
-                    ['foo','date_format',["'%Y-%m'"]],
-                    "TO_CHAR(foo, 'YYYY-MM')",
-                    ],
-                [
-                    ['foo','date_format',[1,2,3]],
-                    "TO_CHAR(foo, 'YYYY-MM-DD')",
-                    ],
-                [
-                    ['foo','time_format'],
-                    "TO_CHAR(foo,'HH24:MI:SS')",
-                    ],
-                [
-                    ['foo','time_format',[1,2,3]],
-                    "TO_CHAR(foo,1,2,3)",
-                    ],
-                [
-                    ['foo','IFNULL'],
-                    "NVL(foo,'')",
-                    ],
-                [
-                    ['foo','IFNULL',[1,2,3]],
-                    "NVL(foo,1,2,3)",
-                    ],
-                [
-                    ['foo','CONCAT'],
-                    "foo",
-                    ],
-                [
-                    ['foo','CONCAT',[1,2,3]],
-                    "foo||1||2||3",
-                    ],
-                [
-                    ['foo','text2char'],
-                    "to_char(foo)",
-                    ],
-                [
-                    ['foo','length'],
-                    "LENGTH(foo)",
-                ],
-                [
-                    ['foo','month'],
-                    "TO_CHAR(foo, 'MM')",
-                ],
-                [
-                    ['foo','quarter'],
-                    "TO_CHAR(foo, 'Q')",
-                ],
-                [
-                    ['foo','add_date',[1,'day']],
-                    "(foo + 1)",
-                ],
-                [
-                    ['foo','add_date',[2,'week']],
-                    "(foo + 2*7)",
-                ],
-                [
-                    ['foo','add_date',[3,'month']],
-                    "ADD_MONTHS(foo, 3)",
-                ],
-                [
-                    ['foo','add_date',[4,'quarter']],
-                    "ADD_MONTHS(foo, 4*3)",
-                ],
-                [
-                    ['foo','add_date',[5,'year']],
-                    "ADD_MONTHS(foo, 5*12)",
-                ],
-                [
-                    ['1.23','round',[6]],
-                    "round(1.23, 6)",
-                ],
-                [
-                    ['date_created', 'date_format', ['%v']],
-                    "TO_CHAR(date_created, 'IW')",
-                ],
+            [
+                ['foo','nothing'],
+                'foo',
+            ],
+            [
+                ['foo','date'],
+                "to_date(foo, 'YYYY-MM-DD')",
+            ],
+            [
+                ['foo','time'],
+                "to_date(foo, 'HH24:MI:SS')",
+            ],
+            [
+                ['foo','datetime'],
+                "to_date(foo, 'YYYY-MM-DD HH24:MI:SS')",
+            ],
+            [
+                ['foo','datetime',[1,2,3]],
+                "to_date(foo, 'YYYY-MM-DD HH24:MI:SS',1,2,3)",
+            ],
+            [
+                ['foo','today'],
+                'sysdate',
+            ],
+            [
+                ['foo','left'],
+                "LTRIM(foo)",
+            ],
+            [
+                ['foo','left',[1,2,3]],
+                "LTRIM(foo,1,2,3)",
+            ],
+            [
+                ['foo','date_format'],
+                "TO_CHAR(foo, 'YYYY-MM-DD')",
+            ],
+            [
+                ['foo','date_format',["'%Y-%m'"]],
+                "TO_CHAR(foo, 'YYYY-MM')",
+            ],
+            [
+                ['foo','date_format',[1,2,3]],
+                "TO_CHAR(foo, 'YYYY-MM-DD')",
+            ],
+            [
+                ['foo','time_format'],
+                "TO_CHAR(foo,'HH24:MI:SS')",
+            ],
+            [
+                ['foo','time_format',[1,2,3]],
+                "TO_CHAR(foo,1,2,3)",
+            ],
+            [
+                ['foo','IFNULL'],
+                "NVL(foo,'')",
+            ],
+            [
+                ['foo','IFNULL',[1,2,3]],
+                "NVL(foo,1,2,3)",
+            ],
+            [
+                ['foo','CONCAT'],
+                "foo",
+            ],
+            [
+                ['foo','CONCAT',[1,2,3]],
+                "foo||1||2||3",
+            ],
+            [
+                ['foo','text2char'],
+                "to_char(foo)",
+            ],
+            [
+                ['foo','length'],
+                "LENGTH(foo)",
+            ],
+            [
+                ['foo','month'],
+                "TO_CHAR(foo, 'MM')",
+            ],
+            [
+                ['foo','quarter'],
+                "TO_CHAR(foo, 'Q')",
+            ],
+            [
+                ['foo','add_date',[1,'day']],
+                "(foo + 1)",
+            ],
+            [
+                ['foo','add_date',[2,'week']],
+                "(foo + 2*7)",
+            ],
+            [
+                ['foo','add_date',[3,'month']],
+                "ADD_MONTHS(foo, 3)",
+            ],
+            [
+                ['foo','add_date',[4,'quarter']],
+                "ADD_MONTHS(foo, 4*3)",
+            ],
+            [
+                ['foo','add_date',[5,'year']],
+                "ADD_MONTHS(foo, 5*12)",
+            ],
+            [
+                ['1.23','round',[6]],
+                "round(1.23, 6)",
+            ],
+            [
+                ['date_created', 'date_format', ['%v']],
+                "TO_CHAR(date_created, 'IW')",
+            ],
         ];
         return $returnArray;
     }
@@ -192,16 +192,16 @@ class OracleManagerTest extends TestCase
             [
                 ['foo','nothing'],
                 'foo',
-                ],
-                [
-                    ['2009-01-01 12:00:00','date'],
-                    '2009-01-01',
-                    ],
-                [
-                    ['2009-01-01 12:00:00','time'],
-                    '12:00:00',
-                    ],
-                ];
+            ],
+            [
+                ['2009-01-01 12:00:00','date'],
+                '2009-01-01',
+            ],
+            [
+                ['2009-01-01 12:00:00','time'],
+                '12:00:00',
+            ],
+        ];
 
         return $returnArray;
     }

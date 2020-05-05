@@ -36,18 +36,18 @@ class Bug58926Test extends TestCase
     public function testAppStringsWithSpecialChars()
     {
         $result = [
-                'app_list_strings' => [
-                        'moduleList' => [
-                                'Leads' => "Lead's Are Special",
-                            ],
-                        'moduleListSingular' => [
-                                'Leads' => "Leads' Are Special",
-                            ],
-                    ],
-                'app_strings' => [
-                        'LBL_NEXT' => "Next's Are the worst",
-                    ],
-            ];
+            'app_list_strings' => [
+                'moduleList' => [
+                    'Leads' => "Lead's Are Special",
+                ],
+                'moduleListSingular' => [
+                    'Leads' => "Leads' Are Special",
+                ],
+            ],
+            'app_strings' => [
+                'LBL_NEXT' => "Next's Are the worst",
+            ],
+        ];
 
         $mm = new MetaDataManagerBug58926();
         

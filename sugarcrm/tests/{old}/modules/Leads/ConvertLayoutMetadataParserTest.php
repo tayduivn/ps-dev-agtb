@@ -95,13 +95,13 @@ class ConvertLayoutMetadataParserTest extends TestCase
     {
         $this->mockOriginalDefinition();
         $this->parser->updateConvertDef([
-                $this->contactDef,
-                [
-                    'module' => 'Accounts',
-                    'required' => false,
-                    'copyData' => false,
-                ],
-            ]);
+            $this->contactDef,
+            [
+                'module' => 'Accounts',
+                'required' => false,
+                'copyData' => false,
+            ],
+        ]);
 
         $expectedAccountDef = $this->accountDef;
         $expectedAccountDef['required'] = false;
@@ -132,10 +132,10 @@ class ConvertLayoutMetadataParserTest extends TestCase
 
         $this->mockOriginalDefinition();
         $this->parser->updateConvertDef([
-                $this->contactDef,
-                $this->accountDef,
-                $fooDef,
-            ]);
+            $this->contactDef,
+            $this->accountDef,
+            $fooDef,
+        ]);
 
         $expectedModules = [
             'modules' => [
@@ -162,13 +162,13 @@ class ConvertLayoutMetadataParserTest extends TestCase
         ];
         $this->mockOriginalDefinition();
         $this->parser->updateConvertDef([
-                $this->contactDef,
-                [
-                    'module' => 'Accounts',
-                    'required' => false,
-                ],
-                $oppDef,
-            ]);
+            $this->contactDef,
+            [
+                'module' => 'Accounts',
+                'required' => false,
+            ],
+            $oppDef,
+        ]);
 
         $expectedAccountDef = $this->accountDef;
         $expectedAccountDef['required'] = true; //force required
