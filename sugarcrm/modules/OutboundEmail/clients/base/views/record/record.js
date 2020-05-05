@@ -22,7 +22,7 @@
      * @inheritdoc
      */
     saveClicked: function() {
-        if (this.model.get('mail_smtptype') === 'google_oauth2' && !this.model.get('eapm_id')) {
+        if (this.model.get('mail_authtype') === 'oauth2' && !this.model.get('eapm_id')) {
             app.alert.show('oe-edit', {
                 level: 'error',
                 title: '',

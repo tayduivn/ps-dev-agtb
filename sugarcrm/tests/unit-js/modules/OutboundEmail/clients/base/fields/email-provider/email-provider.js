@@ -91,6 +91,7 @@ describe('OutboundEmail.BaseEmailProviderField', function() {
                 dataSource: 'fake source'
             };
             let e = {data: JSON.stringify(data)};
+            field.value = 'google_oauth2';
             expect(field.handleOauthComplete(e)).toBeFalsy();
         });
 
@@ -98,13 +99,14 @@ describe('OutboundEmail.BaseEmailProviderField', function() {
             let data = {
                 dataSource: 'googleEmailRedirect',
                 eapmId: 'fakeId',
-                emailAddress: 'fakeEmal',
-                emailAddressId: 'fakeEmailId'
+                emailAddress: 'fakeEmail'
             };
             let e = {data: JSON.stringify(data)};
+            field.value = 'google_oauth2';
             field.model.set('eapm_id', '');
             field.handleOauthComplete(e);
             expect(field.model.get('eapm_id')).toEqual('fakeId');
+            expect(field.model.get('authorized_account')).toEqual('fakeEmail');
         });
     });
 

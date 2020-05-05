@@ -101,6 +101,14 @@ $dictionary['OutboundEmail'] = [
             'type' => 'varchar',
             'readonly' => true,
         ],
+        'mail_authtype' => [
+            'name' => 'mail_authtype',
+            'vname' => 'LBL_MAIL_AUTHTYPE',
+            'type' => 'varchar',
+            'len' => '10',
+            'mandatory_fetch' => true,
+            'readonly' => true,
+        ],
         'reply_to_name' => [
             'name' => 'reply_to_name',
             'vname' => 'LBL_REPLY_TO_NAME',

@@ -2018,9 +2018,10 @@ $app_list_strings = array (
     ),
     'mail_smtptype_options' => array(
         'google_oauth2' => 'Google',
-        'exchange' => 'Exchange',
+        'exchange_online' => 'Exchange Online',
         'outlook' => 'Outlook',
         'google' => 'Google Less Secure Apps',
+        'exchange' => 'Exchange',
         'other' => 'Other',
     ),
     'import_enclosure_options' =>
@@ -2730,7 +2731,8 @@ $app_strings = array (
     'LBL_EMAIL_AUTHORIZE'                   => 'Authorize',
     'LBL_EMAIL_AUTHORIZED'                  => 'Authorized',
     'LBL_EMAIL_NOT_AUTHORIZED'              => 'Not Authorized',
-    'LBL_EMAIL_AUTH_WARNING'                => 'An administrator must configure the Google Connector via Admin > Connectors before you can set up this account. For more information, refer to the Emails documentation.',
+    'LBL_EMAIL_GOOGLE_AUTH_WARNING'         => 'An administrator must configure the Google Connector via Admin > Connectors before you can set up this account. For more information, refer to the Emails documentation.',
+    'LBL_EMAIL_MICROSOFT_AUTH_WARNING'      => 'An administrator must configure the Microsoft Connector via Admin > Connectors before you can set up this account. For more information, refer to the Emails documentation.',
     'LBL_EMAIL_AUTH_FAILURE'                => 'Authorization failure.',
     'LBL_EMAIL_PLEASE_AUTHORIZE'            => 'Please authorize the account before saving.',
     'LBL_EMAIL_PLEASE_AUTHORIZE_TESTING'    => 'Please authorize the account before testing.',

@@ -148,8 +148,9 @@ $viewdefs['OutboundEmail']['base']['view']['record'] = array(
                         'value' =>
                             'ifElse(or(equal($mail_smtptype,"google"), equal($mail_smtptype,"google_oauth2")), "smtp.gmail.com",
                                 ifElse(equal($mail_smtptype,"exchange"), "",
-                                    ifElse(equal($mail_smtptype,"outlook"), "smtp-mail.outlook.com",
-                                        $mail_smtpserver)))',
+                                    ifElse(equal($mail_smtptype,"exchange_online"), "smtp.office365.com",
+                                        ifElse(equal($mail_smtptype,"outlook"), "smtp-mail.outlook.com",
+                                            $mail_smtpserver))))',
                     ),
                 ),
                 array(
@@ -158,7 +159,7 @@ $viewdefs['OutboundEmail']['base']['view']['record'] = array(
                         'target' => 'mail_smtpport',
                         'value' =>
                             'ifElse(or(equal($mail_smtptype,"google"), equal($mail_smtptype,"google_oauth2")), "587",
-                                ifElse(equal($mail_smtptype,"exchange"), "587",
+                                ifElse(or(equal($mail_smtptype,"exchange"), equal($mail_smtptype,"exchange_online")), "587",
                                     ifElse(equal($mail_smtptype,"outlook"), "587",
                                         $mail_smtpport)))',
                     ),
@@ -169,7 +170,7 @@ $viewdefs['OutboundEmail']['base']['view']['record'] = array(
                         'target' => 'mail_smtpssl',
                         'value' =>
                             'ifElse(or(equal($mail_smtptype,"google"), equal($mail_smtptype,"google_oauth2")), "2",
-                                ifElse(equal($mail_smtptype,"exchange"), "2",
+                                ifElse(or(equal($mail_smtptype,"exchange"), equal($mail_smtptype,"exchange_online")), "2",
                                     ifElse(equal($mail_smtptype,"outlook"), "2",
                                         $mail_smtpssl)))',
                     ),
@@ -180,7 +181,7 @@ $viewdefs['OutboundEmail']['base']['view']['record'] = array(
                         'target' => 'mail_smtpauth_req',
                         'value' =>
                             'ifElse(or(equal($mail_smtptype,"google"), equal($mail_smtptype,"google_oauth2")), "1",
-                                ifElse(equal($mail_smtptype,"exchange"), "1",
+                                ifElse(or(equal($mail_smtptype,"exchange"), equal($mail_smtptype,"exchange_online")), "1",
                                     ifElse(equal($mail_smtptype,"outlook"), "1",
                                         $mail_smtpauth_req)))',
                     ),
@@ -208,21 +209,21 @@ $viewdefs['OutboundEmail']['base']['view']['record'] = array(
         array(
             'hooks' => array('edit'),
             'trigger' => 'true',
-            'triggerFields' => array('mail_smtpauth_req', 'mail_smtptype'),
+            'triggerFields' => array('mail_smtpauth_req', 'mail_authtype'),
             'onload' => true,
             'actions' => array(
                 array(
                     'action' => 'SetRequired',
                     'params' => array(
                         'target' => 'mail_smtpuser',
-                        'value' => 'and(equal($mail_smtpauth_req, "1"), not(equal($mail_smtptype,"google_oauth2")))',
+                        'value' => 'and(equal($mail_smtpauth_req, "1"), not(equal($mail_authtype,"oauth2")))',
                     ),
                 ),
                 array(
                     'action' => 'SetRequired',
                     'params' => array(
                         'target' => 'mail_smtppass',
-                        'value' => 'and(equal($mail_smtpauth_req, "1"), not(equal($mail_smtptype,"google_oauth2")))',
+                        'value' => 'and(equal($mail_smtpauth_req, "1"), not(equal($mail_authtype,"oauth2")))',
                     ),
                 ),
             ),
@@ -230,21 +231,21 @@ $viewdefs['OutboundEmail']['base']['view']['record'] = array(
         array(
             'hooks' => array('all'),
             'trigger' => 'true',
-            'triggerFields' => array('mail_smtpauth_req', 'mail_smtptype'),
+            'triggerFields' => array('mail_smtpauth_req', 'mail_authtype'),
             'onload' => true,
             'actions' => array(
                 array(
                     'action' => 'SetVisibility',
                     'params' => array(
                         'target' => 'mail_smtpuser',
-                        'value' => 'and(equal($mail_smtpauth_req, "1"), not(equal($mail_smtptype,"google_oauth2")))',
+                        'value' => 'and(equal($mail_smtpauth_req, "1"), not(equal($mail_authtype,"oauth2")))',
                     ),
                 ),
                 array(
                     'action' => 'SetVisibility',
                     'params' => array(
                         'target' => 'mail_smtppass',
-                        'value' => 'and(equal($mail_smtpauth_req, "1"), not(equal($mail_smtptype,"google_oauth2")))',
+                        'value' => 'and(equal($mail_smtpauth_req, "1"), not(equal($mail_authtype,"oauth2")))',
                     ),
                 ),
             ),
@@ -252,28 +253,28 @@ $viewdefs['OutboundEmail']['base']['view']['record'] = array(
         array(
             'hooks' => array('all'),
             'trigger' => 'true',
-            'triggerFields' => array('mail_smtptype'),
+            'triggerFields' => array('mail_authtype'),
             'onload' => true,
             'actions' => array(
                 array(
                     'action' => 'SetVisibility',
                     'params' => array(
                         'target' => 'auth_status',
-                        'value' => 'equal($mail_smtptype,"google_oauth2")',
+                        'value' => 'equal($mail_authtype,"oauth2")',
                     ),
                 ),
                 array(
                     'action' => 'SetVisibility',
                     'params' => array(
                         'target' => 'authorized_account',
-                        'value' => 'equal($mail_smtptype,"google_oauth2")',
+                        'value' => 'equal($mail_authtype,"oauth2")',
                     ),
                 ),
                 array(
                     'action' => 'ReadOnly',
                     'params' => array(
                         'target' => 'mail_smtpauth_req',
-                        'value' => 'equal($mail_smtptype,"google_oauth2")',
+                        'value' => 'equal($mail_authtype,"oauth2")',
                     ),
                 ),
             ),

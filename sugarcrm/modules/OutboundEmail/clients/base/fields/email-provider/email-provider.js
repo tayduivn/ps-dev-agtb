@@ -26,11 +26,22 @@
      * @property {Object}
      */
     oauth2Types: {
-       google_oauth2: {
-           application: 'GoogleEmail',
-           auth_warning: 'LBL_EMAIL_AUTH_WARNING',
-           auth_url: null
-       }
+        google_oauth2: {
+            application: 'GoogleEmail',
+            auth_warning: 'LBL_EMAIL_GOOGLE_AUTH_WARNING',
+            auth_url: null,
+            eapm_id: null,
+            authorized_account: null,
+            dataSource: 'googleEmailRedirect'
+        },
+        exchange_online: {
+            application: 'MicrosoftEmail',
+            auth_warning: 'LBL_EMAIL_MICROSOFT_AUTH_WARNING',
+            auth_url: null,
+            eapm_id: null,
+            authorized_account: null,
+            dataSource: 'microsoftEmailRedirect'
+        }
     },
 
     /**
@@ -63,12 +74,17 @@
      */
     handleOauthComplete: function (e) {
         var data = JSON.parse(e.data);
-        if (!data.dataSource || data.dataSource !== 'googleEmailRedirect') {
+        if (!data.dataSource ||
+            !this.oauth2Types[this.value] ||
+            data.dataSource !== this.oauth2Types[this.value].dataSource) {
             return false;
         }
         if (data.eapmId && data.emailAddress) {
             this.model.set('eapm_id', data.eapmId);
             this.model.set('authorized_account', data.emailAddress);
+            // save data in case user switches to another email provider and back
+            this.oauth2Types[this.value].eapm_id = data.eapmId;
+            this.oauth2Types[this.value].authorized_account = data.emailAddress;
         } else {
             app.alert.show('error', {
                 level: 'error',
@@ -92,9 +108,13 @@
         var self = this;
         this.authWarning = '';
         this.authButton = false;
+        this.model.set('eapm_id', '');
+        this.model.set('authorized_account', '');
 
         if (this.oauth2Types[smtpType]) {
+            this.model.set('mail_authtype', 'oauth2');
             if (this.oauth2Types[smtpType].auth_url === null) {
+
                 var options = {
                     showAlerts: false,
                     success: _.bind(function(data) {
@@ -121,8 +141,16 @@
                 this.authWarning = this.oauth2Types[smtpType].auth_warning;
                 this.authButton = 'disabled';
             } else {
+                if (this.oauth2Types[smtpType].eapm_id) {
+                    this.model.set('eapm_id', this.oauth2Types[smtpType].eapm_id);
+                }
+                if (this.oauth2Types[smtpType].authorized_account) {
+                    this.model.set('authorized_account', this.oauth2Types[smtpType].authorized_account);
+                }
                 this.authButton = 'enabled';
             }
+        } else {
+            this.model.set('mail_authtype', '');
         }
     },
 
