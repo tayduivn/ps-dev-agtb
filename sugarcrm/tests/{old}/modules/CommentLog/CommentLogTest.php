@@ -40,7 +40,7 @@ class CommentLogTest extends TestCase
     protected function setUp() : void
     {
         $this->bean = BeanFactory::newBean('CommentLog');
-        self::$created_commentlogs = array();
+        self::$created_commentlogs = [];
     }
 
     protected function tearDown() : void
@@ -84,11 +84,11 @@ class CommentLogTest extends TestCase
     {
         $bean = BeanFactory::getBean("CommentLog");
 
-        return array(
-            array($bean, 'id'),
-            array($bean, 'date_entered'),
-            array($bean, 'entry'),
-        );
+        return [
+            [$bean, 'id'],
+            [$bean, 'date_entered'],
+            [$bean, 'entry'],
+        ];
     }
 
     /**
@@ -116,11 +116,11 @@ class CommentLogTest extends TestCase
         $db = DBManagerFactory::getInstance();
         $columns = $db->get_columns('commentlog');
 
-        return array(
-            array('id', $columns),
-            array('date_entered', $columns),
-            array('entry', $columns),
-        );
+        return [
+            ['id', $columns],
+            ['date_entered', $columns],
+            ['entry', $columns],
+        ];
     }
 
     /**
@@ -142,11 +142,11 @@ class CommentLogTest extends TestCase
 
     public function SetModuleProvider()
     {
-        return array(
-            array("Accounts", true,),
-            array("Bugs", true,),
-            array("I would be suprised If I'm a module", false,),
-        );
+        return [
+            ["Accounts", true,],
+            ["Bugs", true,],
+            ["I would be suprised If I'm a module", false,],
+        ];
     }
 
     /**
@@ -154,14 +154,14 @@ class CommentLogTest extends TestCase
      */
     public function BeanHasModuleProvider()
     {
-        return array(
-            array(
+        return [
+            [
                 "Meetings",
-                array(
+                [
                     "commentlog" => "The is a well grown bean",
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
     }
 
     /**
@@ -169,15 +169,15 @@ class CommentLogTest extends TestCase
      */
     public function ParamsHasModuleProvider()
     {
-        return array(
-            array(
+        return [
+            [
                 "Bugs",
-                array(
+                [
                     "module" => "Bugs",
                     "commentlog" => "This bean, has a weakness",
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
     }
 
     public function testgetParentRecord()
@@ -185,7 +185,7 @@ class CommentLogTest extends TestCase
         $record = SugarTestMeetingUtilities::createMeeting();
         $commentlog_field = new SugarFieldCommentLog('commentlog');
 
-        $commentlog_field->apiSave($record, array('commentlog' => 'watashigakita!!'), 'commentlog', array());
+        $commentlog_field->apiSave($record, ['commentlog' => 'watashigakita!!'], 'commentlog', []);
 
         $record->load_relationship('commentlog_link');
         $commentlog_beans = $record->commentlog_link->getBeans();

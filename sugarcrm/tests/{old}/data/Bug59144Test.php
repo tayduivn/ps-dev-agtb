@@ -54,10 +54,10 @@ class Bug59144Test extends TestCase
     protected function tearDown() : void
     {
         global $sugar_config;
-        if($this->has_disable_count_query_enabled) {
+        if ($this->has_disable_count_query_enabled) {
             $sugar_config['disable_count_query'] = true;
         } else {
-           unset($sugar_config['disable_count_query']);
+            unset($sugar_config['disable_count_query']);
         }
         SugarTestLeadUtilities::removeAllCreatedLeads();
         SugarTestCallUtilities::removeAllCreatedCalls();
@@ -74,9 +74,9 @@ class Bug59144Test extends TestCase
         $lead->retrieve($this->lead->id);
         $lead->load_relationship('calls_parent');
         $calls = $lead->calls_parent->getBeans(
-            array(
+            [
                 'enforce_teams' => true,
-            )
+            ]
         );
 
         $this->assertIsArray($calls);
@@ -87,9 +87,9 @@ class Bug59144Test extends TestCase
         // now without count query
         $sugar_config['disable_count_query'] = true;
         $calls = $lead->calls_parent->getBeans(
-                array(
+            [
                         'enforce_teams' => true,
-                )
+                ]
         );
 
         $this->assertIsArray($calls);

@@ -20,13 +20,13 @@ class Bug24095Test extends TestCase
     protected function setUp() : void
     {
         SugarTestHelper::setUp('dictionary');
-        SugarTestHelper::setUp('custom_field', array(
+        SugarTestHelper::setUp('custom_field', [
             'Accounts',
-            array(
+            [
                 'name' => 'foo',
                 'type' => 'varchar',
-            ),
-        ));
+            ],
+        ]);
 
         $GLOBALS['db']->query("INSERT INTO accounts_cstm (id_c,foo_c) VALUES ('12345','67890')");
     }

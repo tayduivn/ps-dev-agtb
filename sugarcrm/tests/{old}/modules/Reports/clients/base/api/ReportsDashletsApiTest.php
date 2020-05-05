@@ -27,7 +27,7 @@ class ReportsDashletsApiTest extends TestCase
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setUp('current_user', array(true, true));
+        SugarTestHelper::setUp('current_user', [true, true]);
         SugarTestHelper::setUp('app_list_strings');
 
         $this->service = SugarTestRestUtilities::getRestServiceMock();
@@ -44,7 +44,7 @@ class ReportsDashletsApiTest extends TestCase
      */
     public function testGetSavedReports()
     {
-        $args = array();
+        $args = [];
         $actual = $this->api->getSavedReports($this->service, $args);
         $this->assertNotEmpty($actual);
     }
@@ -54,9 +54,9 @@ class ReportsDashletsApiTest extends TestCase
      */
     public function testGetSavedReportsHasChart()
     {
-        $args = array(
+        $args = [
             'has_charts' => 'true',
-        );
+        ];
         $actual = $this->api->getSavedReports($this->service, $args);
         $this->assertNotEmpty($actual);
 
@@ -70,9 +70,9 @@ class ReportsDashletsApiTest extends TestCase
      */
     public function testGetSavedReportChartById($report)
     {
-        $args = array(
+        $args = [
             'reportId' => $report['id'],
-        );
+        ];
         $actual = $this->api->getSavedReportChartById($this->service, $args);
         $this->assertNotEmpty($actual);
         $this->assertArrayHasKey('chartData', $actual);
@@ -84,13 +84,13 @@ class ReportsDashletsApiTest extends TestCase
      */
     public function testGetSavedReports_NoContent_ReturnsEmptyArray()
     {
-        $mockSavedReport = $this->createPartialMock('SavedReport', array("ACLAccess"));
+        $mockSavedReport = $this->createPartialMock('SavedReport', ["ACLAccess"]);
         $mockSavedReport->method("ACLAccess")->will($this->returnValue(false));
 
-        $mockApiClass = $this->createPartialMock('ReportsDashletsApi', array("getSavedReportFromData"));
+        $mockApiClass = $this->createPartialMock('ReportsDashletsApi', ["getSavedReportFromData"]);
         $mockApiClass->method("getSavedReportFromData")->will($this->returnValue($mockSavedReport));
 
-        $this->assertEmpty($mockApiClass->getSavedReports($this->service, array()), "No reports should be returned");
+        $this->assertEmpty($mockApiClass->getSavedReports($this->service, []), "No reports should be returned");
     }
 
     /**
@@ -98,13 +98,13 @@ class ReportsDashletsApiTest extends TestCase
      */
     public function testGetSavedReportChartById_NoAccess_ThrowsException()
     {
-        $mockSavedReport = $this->createPartialMock('SavedReport', array("ACLAccess"));
+        $mockSavedReport = $this->createPartialMock('SavedReport', ["ACLAccess"]);
         $mockSavedReport->method("ACLAccess")->will($this->returnValue(false));
 
-        $mockApiClass =  $this->createPartialMock('ReportsDashletsApi', array("getSavedReportById"));
+        $mockApiClass =  $this->createPartialMock('ReportsDashletsApi', ["getSavedReportById"]);
         $mockApiClass->method("getSavedReportById")->will($this->returnValue($mockSavedReport));
 
         $this->expectException(SugarApiExceptionNotAuthorized::class);
-        $mockApiClass->getSavedReportChartById($this->service, array('reportId'=>'1234-4567-8888-9999'));
+        $mockApiClass->getSavedReportChartById($this->service, ['reportId'=>'1234-4567-8888-9999']);
     }
 }

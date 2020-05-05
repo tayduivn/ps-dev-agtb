@@ -25,7 +25,7 @@ class Bug54374Test extends TestCase
 
     protected function setUp() : void
     {
-        if(empty($this->_db)){
+        if (empty($this->_db)) {
             $this->_db = DBManagerFactory::getInstance();
         }
     }
@@ -38,10 +38,10 @@ class Bug54374Test extends TestCase
      */
     public function provider()
     {
-        return array(
-            array(
+        return [
+            [
                 'hello',
-                array(
+                [
                     'name' => 'name',
                     'type' => 'name',
                     'dbType' => 'varchar',
@@ -49,15 +49,15 @@ class Bug54374Test extends TestCase
                     'len' => 150,
                     'comment' => 'Name of the Company',
                     'unified_search' => true,
-                    'full_text_search' => array('enabled' => true, 'boost' => 3),
+                    'full_text_search' => ['enabled' => true, 'boost' => 3],
                     'audited' => true,
                     'required'=>true,
                     'importable' => 'required',
-                    'merge_filter' => 'selected'
-                ),
-                "'hello'"
-            )
-        );
+                    'merge_filter' => 'selected',
+                ],
+                "'hello'",
+            ],
+        ];
     }
 
     /**

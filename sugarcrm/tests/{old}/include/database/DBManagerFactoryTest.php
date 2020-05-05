@@ -30,13 +30,14 @@ class DBManagerFactoryTest extends TestCase
     {
         $db = DBManagerFactory::getInstance();
 
-        $this->assertTrue($db instanceOf DBManager,"Should return a DBManger object");
+        $this->assertTrue($db instanceof DBManager, "Should return a DBManger object");
     }
 
     public function testGetInstanceCheckMysqlDriverChoosen()
     {
-        if ( $GLOBALS['db']->dbType != 'mysql' )
+        if ($GLOBALS['db']->dbType != 'mysql') {
             $this->markTestSkipped('Only applies to MySql');
+        }
 
         $this->assertInstanceOf('MysqlManager', DBManagerFactory::getInstance());
     }
@@ -46,8 +47,9 @@ class DBManagerFactoryTest extends TestCase
      */
     public function testGetInstanceMssqlDefaultSelection()
     {
-        if ( $GLOBALS['db']->dbType != 'mssql' )
+        if ($GLOBALS['db']->dbType != 'mssql') {
             $this->markTestSkipped('Only applies to SQL Server');
+        }
 
         $this->assertInstanceOf('MssqlManager', DBManagerFactory::getInstance());
     }

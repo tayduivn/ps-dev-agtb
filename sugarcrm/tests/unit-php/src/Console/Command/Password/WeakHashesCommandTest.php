@@ -30,7 +30,7 @@ class WeakHashesCommandTest extends AbstractPasswordCommandTestCase
     public function testExecute(array $hashes, Hash $hash, $output)
     {
         $cmd = $this->getMockBuilder('Sugarcrm\Sugarcrm\Console\Command\Password\WeakHashesCommand')
-            ->setMethods(array('getHashInstance', 'getUserHashes'))
+            ->setMethods(['getHashInstance', 'getUserHashes'])
             ->getMock();
 
         $cmd->expects($this->once())
@@ -42,7 +42,7 @@ class WeakHashesCommandTest extends AbstractPasswordCommandTestCase
             ->will($this->returnValue($hash));
 
         $tester = new CommandTester($cmd);
-        $tester->execute(array());
+        $tester->execute([]);
 
         $output = self::$fixturePath . $output;
         $this->assertStringEqualsFile($output, $tester->getDisplay(true));
@@ -60,126 +60,126 @@ class WeakHashesCommandTest extends AbstractPasswordCommandTestCase
         $uHashBlowFish = '$2y$10$AYpljzARMrbr30FYluHQJ.9wIu9Ou0k0Yh1MWelAMxu64qi5dHmVy';
         $uHashMd5 = 'f561aaf6ef0bf14d4208bb46a4ccb3ad';
 
-        return array(
+        return [
 
             // No users
-            array(
-                array(),
+            [
+                [],
                 $hash1,
                 'WeakHashesCommand_0.txt',
-            ),
+            ],
 
             // Users without weak and no-rehash
-            array(
-                array(
-                    array(
+            [
+                [
+                    [
                         'id' => '123456',
                         'user_name' => 'skymeyer',
                         'user_hash' => $uHashBlowFish,
                         'first_name' => 'Jelle',
                         'last_name' => 'Vink',
                         'employee_status' => 'Active',
-                    ),
-                ),
+                    ],
+                ],
                 $hash1,
                 'WeakHashesCommand_0.txt',
-            ),
+            ],
 
             // Weak password (rehash is implied)
-            array(
-                array(
-                    array(
+            [
+                [
+                    [
                         'id' => '123456',
                         'user_name' => 'skymeyer',
                         'user_hash' => $uHashBlowFish,
                         'first_name' => 'Jelle',
                         'last_name' => 'Vink',
                         'employee_status' => 'Active',
-                    ),
-                    array(
+                    ],
+                    [
                         'id' => '456789',
                         'user_name' => 'weak',
                         'user_hash' => $uHashMd5,
                         'first_name' => 'Foo',
                         'last_name' => 'Bar',
                         'employee_status' => 'Active',
-                    ),
-                ),
+                    ],
+                ],
                 $hash1,
                 'WeakHashesCommand_2.txt',
-            ),
+            ],
 
             // Weak password (rehash disabled)
-            array(
-                array(
-                    array(
+            [
+                [
+                    [
                         'id' => '123456',
                         'user_name' => 'skymeyer',
                         'user_hash' => $uHashBlowFish,
                         'first_name' => 'Jelle',
                         'last_name' => 'Vink',
                         'employee_status' => 'Active',
-                    ),
-                    array(
+                    ],
+                    [
                         'id' => '456789',
                         'user_name' => 'weak',
                         'user_hash' => $uHashMd5,
                         'first_name' => 'Foo',
                         'last_name' => 'Bar',
                         'employee_status' => 'Active',
-                    ),
-                ),
+                    ],
+                ],
                 $hash2,
                 'WeakHashesCommand_3.txt',
-            ),
+            ],
 
             // Rehash only
-            array(
-                array(
-                    array(
+            [
+                [
+                    [
                         'id' => '123456',
                         'user_name' => 'skymeyer',
                         'user_hash' => $uHashBlowFish,
                         'first_name' => 'Jelle',
                         'last_name' => 'Vink',
                         'employee_status' => 'Active',
-                    ),
-                    array(
+                    ],
+                    [
                         'id' => '456789',
                         'user_name' => 'rehash',
                         'user_hash' => $uHashSha2,
                         'first_name' => 'Foo',
                         'last_name' => 'Bar',
                         'employee_status' => 'Active',
-                    ),
-                ),
+                    ],
+                ],
                 $hash1,
                 'WeakHashesCommand_4.txt',
-            ),
+            ],
 
             // Rehash only, but rehash disabled
-            array(
-                array(
-                    array(
+            [
+                [
+                    [
                         'id' => '123456',
                         'user_name' => 'skymeyer',
                         'user_hash' => $uHashBlowFish,
                         'first_name' => 'Jelle',
                         'last_name' => 'Vink',
                         'employee_status' => 'Active',
-                    ),
-                    array(
+                    ],
+                    [
                         'id' => '456789',
                         'user_name' => 'rehash',
                         'user_hash' => $uHashSha2,
                         'first_name' => 'Foo',
                         'last_name' => 'Bar',
                         'employee_status' => 'Active',
-                    ),
-                ),
+                    ],
+                ],
                 $hash2,
                 'WeakHashesCommand_0.txt',
-            ),
-        );
+            ],
+        ];
     }
 }

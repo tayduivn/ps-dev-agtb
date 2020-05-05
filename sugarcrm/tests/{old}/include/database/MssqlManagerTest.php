@@ -28,108 +28,108 @@ abstract class MssqlManagerTest extends TestCase
     public function testQuote()
     {
         $string = "'dog eat ";
-        $this->assertEquals($this->_db->quote($string),"''dog eat ");
+        $this->assertEquals($this->_db->quote($string), "''dog eat ");
     }
 
     public function testArrayQuote()
     {
-        $string = array("'dog eat ");
+        $string = ["'dog eat "];
         $this->_db->arrayQuote($string);
-        $this->assertEquals($string,array("''dog eat "));
+        $this->assertEquals($string, ["''dog eat "]);
     }
 
     public function providerConvert()
     {
-        $returnArray = array(
-                array(
-                    array('foo','today'),
-                    'GETDATE()'
-                    ),
-                array(
-                    array('foo','left'),
-                    'LEFT(foo)'
-                    ),
-                array(
-                    array('foo','left',array('1','2','3')),
-                    'LEFT(foo,1,2,3)'
-                    ),
-                array(
-                    array('foo','date_format'),
-                    'LEFT(CONVERT(varchar(10),foo,120),10)'
-                    ),
-                array(
-                    array('foo','date_format',array('1','2','3')),
-                    'LEFT(CONVERT(varchar(10),foo,120),10)'
-                    ),
-                array(
-                    array('foo','date_format',array("'%Y-%m'")),
-                    'LEFT(CONVERT(varchar(7),foo,120),7)'
-                    ),
-                array(
-                    array('foo','IFNULL'),
-                    'ISNULL(foo,\'\')'
-                    ),
-                array(
-                    array('foo','IFNULL',array('1','2','3')),
-                    'ISNULL(foo,1,2,3)'
-                    ),
-                array(
-                    array('foo','CONCAT',array('1','2','3')),
+        $returnArray = [
+                [
+                    ['foo','today'],
+                    'GETDATE()',
+                    ],
+                [
+                    ['foo','left'],
+                    'LEFT(foo)',
+                    ],
+                [
+                    ['foo','left',['1','2','3']],
+                    'LEFT(foo,1,2,3)',
+                    ],
+                [
+                    ['foo','date_format'],
+                    'LEFT(CONVERT(varchar(10),foo,120),10)',
+                    ],
+                [
+                    ['foo','date_format',['1','2','3']],
+                    'LEFT(CONVERT(varchar(10),foo,120),10)',
+                    ],
+                [
+                    ['foo','date_format',["'%Y-%m'"]],
+                    'LEFT(CONVERT(varchar(7),foo,120),7)',
+                    ],
+                [
+                    ['foo','IFNULL'],
+                    'ISNULL(foo,\'\')',
+                    ],
+                [
+                    ['foo','IFNULL',['1','2','3']],
+                    'ISNULL(foo,1,2,3)',
+                    ],
+                [
+                    ['foo','CONCAT',['1','2','3']],
                     'CONCAT(foo,1,2,3)',
-                    ),
-                array(
-                    array(array('1','2','3'),'CONCAT'),
+                    ],
+                [
+                    [['1','2','3'],'CONCAT'],
                     'CONCAT(1,2,3)',
-                    ),
-                array(
-                    array(array('1','2','3'),'CONCAT',array('foo', 'bar')),
+                    ],
+                [
+                    [['1','2','3'],'CONCAT',['foo', 'bar']],
                     'CONCAT(1,2,3,foo,bar)',
-                    ),
-                array(
-                    array('foo','text2char'),
-                    'CAST(foo AS varchar(8000))'
-                ),
-                array(
-                    array('foo','length'),
-                    "LEN(foo)"
-                ),
-                array(
-                    array('foo','month'),
-                    "MONTH(foo)"
-                ),
-                array(
-                    array('foo','quarter'),
-                    "DATENAME(quarter, foo)"
-                ),
-                array(
-                    array('foo','add_date',array(1,'day')),
-                    "DATEADD(day,1,foo)"
-                ),
-                array(
-                    array('foo','add_date',array(2,'week')),
-                    "DATEADD(week,2,foo)"
-                ),
-                array(
-                    array('foo','add_date',array(3,'month')),
-                    "DATEADD(month,3,foo)"
-                ),
-                array(
-                    array('foo','add_date',array(4,'quarter')),
-                    "DATEADD(quarter,4,foo)"
-                ),
-                array(
-                    array('foo','add_date',array(5,'year')),
-                    "DATEADD(year,5,foo)"
-                ),
-                array(
-                    array('1.23','round',array(6)),
-                    "round(1.23, 6)"
-                ),
-                array(
-                    array('date_created', 'date_format', array('%v')),
+                    ],
+                [
+                    ['foo','text2char'],
+                    'CAST(foo AS varchar(8000))',
+                ],
+                [
+                    ['foo','length'],
+                    "LEN(foo)",
+                ],
+                [
+                    ['foo','month'],
+                    "MONTH(foo)",
+                ],
+                [
+                    ['foo','quarter'],
+                    "DATENAME(quarter, foo)",
+                ],
+                [
+                    ['foo','add_date',[1,'day']],
+                    "DATEADD(day,1,foo)",
+                ],
+                [
+                    ['foo','add_date',[2,'week']],
+                    "DATEADD(week,2,foo)",
+                ],
+                [
+                    ['foo','add_date',[3,'month']],
+                    "DATEADD(month,3,foo)",
+                ],
+                [
+                    ['foo','add_date',[4,'quarter']],
+                    "DATEADD(quarter,4,foo)",
+                ],
+                [
+                    ['foo','add_date',[5,'year']],
+                    "DATEADD(year,5,foo)",
+                ],
+                [
+                    ['1.23','round',[6]],
+                    "round(1.23, 6)",
+                ],
+                [
+                    ['date_created', 'date_format', ['%v']],
                     "FORMAT(datepart(isoww, date_created), '00')",
-                )
-        );
+                ],
+        ];
         return $returnArray;
     }
 
@@ -139,46 +139,46 @@ abstract class MssqlManagerTest extends TestCase
      */
     public function testConvert(array $parameters, $result)
     {
-        $this->assertEquals($result, call_user_func_array(array($this->_db, "convert"), $parameters));
-     }
+        $this->assertEquals($result, call_user_func_array([$this->_db, "convert"], $parameters));
+    }
 
      /**
       * @ticket 33283
       */
-     public function testConcat()
-     {
-         $ret = $this->_db->concat('foo',array('col1','col2','col3'));
-         $this->assertEquals("LTRIM(RTRIM(CONCAT(ISNULL(foo.col1,''),' ',ISNULL(foo.col2,''),' ',ISNULL(foo.col3,''))))", $ret);
-     }
+    public function testConcat()
+    {
+        $ret = $this->_db->concat('foo', ['col1','col2','col3']);
+        $this->assertEquals("LTRIM(RTRIM(CONCAT(ISNULL(foo.col1,''),' ',ISNULL(foo.col2,''),' ',ISNULL(foo.col3,''))))", $ret);
+    }
 
-     public function providerFromConvert()
-     {
-         $returnArray = array(
-             array(
-                 array('foo','nothing'),
-                 'foo'
-                 ),
-                 array(
-                     array('2009-01-01 12:00:00','time'),
-                     '12:00:00'
-                     )
-                 );
+    public function providerFromConvert()
+    {
+        $returnArray = [
+            [
+                ['foo','nothing'],
+                'foo',
+                ],
+                [
+                    ['2009-01-01 12:00:00','time'],
+                    '12:00:00',
+                    ],
+                ];
 
-         return $returnArray;
-     }
+        return $returnArray;
+    }
 
      /**
       * @ticket 33283
       * @dataProvider providerFromConvert
       */
-     public function testFromConvert(
-         array $parameters,
-         $result
-         )
-     {
-         $this->assertEquals(
-             $this->_db->fromConvert($parameters[0],$parameters[1]),
-             $result);
+    public function testFromConvert(
+        array $parameters,
+        $result
+    ) {
+        $this->assertEquals(
+            $this->_db->fromConvert($parameters[0], $parameters[1]),
+            $result
+        );
     }
 
     /**
@@ -191,12 +191,12 @@ abstract class MssqlManagerTest extends TestCase
         }
 
         // set up a connection w/o a db_name
-        $configOptions = array(
+        $configOptions = [
             'db_host_name' => $GLOBALS['db']->connectOptions['db_host_name'],
             'db_host_instance' => $GLOBALS['db']->connectOptions['db_host_instance'],
             'db_user_name' => $GLOBALS['db']->connectOptions['db_user_name'],
             'db_password' => $GLOBALS['db']->connectOptions['db_password'],
-        );
+        ];
 
         $this->assertTrue($this->_db->connect($configOptions));
     }
@@ -225,9 +225,9 @@ abstract class MssqlManagerTest extends TestCase
      */
     public function providerIsUnionQuery()
     {
-        return array(
+        return [
             // If UNION(s) in main query and sub queries not exists then this's union query.
-            array(
+            [
                 "
                     select
                         emails1.id id,
@@ -241,10 +241,10 @@ abstract class MssqlManagerTest extends TestCase
                     where emails.deleted = 0
                     order by emails.date_modified desc
                 ",
-                true
-            ),
+                true,
+            ],
             // If UNION(s) in sub queries and not exists in main query then this's not union query.
-            array(
+            [
                 "
                     select
                           emails.id id,
@@ -275,10 +275,10 @@ abstract class MssqlManagerTest extends TestCase
                     where emails.deleted = 0
                     order by emails.date_modified desc
                 ",
-                false
-            ),
+                false,
+            ],
             // If UNION(s) in sub queries and in main query then this's union query.
-            array(
+            [
                 "
                     select
                         emails1.id id,
@@ -312,10 +312,10 @@ abstract class MssqlManagerTest extends TestCase
                     where emails.deleted = 0
                     order by emails.date_modified desc
                 ",
-                true
-            ),
+                true,
+            ],
             // Without union(s)
-            array(
+            [
                 "
                     select
                           emails.id id,
@@ -326,24 +326,24 @@ abstract class MssqlManagerTest extends TestCase
                     where emails.deleted = 0
                     order by emails.date_modified desc
                 ",
-                false
-            ),
+                false,
+            ],
             // 'union' in literal string
-            array(
+            [
                 "SELECT id
                  FROM accounts
                  WHERE name = 'UNION TEST'
                  AND deleted != 1",
-                false
-            ),
-            array(
+                false,
+            ],
+            [
                 "SELECT id_c
                  FROM accounts_cstm
                  WHERE  union_c = '''UNION''s TEST'''
                  AND deleted != 1",
-                false
-            ),
-            array(
+                false,
+            ],
+            [
                 "(SELECT id
                  FROM accounts
                  WHERE name = 'UNION TEST'
@@ -352,9 +352,9 @@ abstract class MssqlManagerTest extends TestCase
                  FROM accounts_cstm
                  WHERE union_c = '''UNION''s TEST'''
                  AND deleted != 1)",
-                true
-            ),
-        );
+                true,
+            ],
+        ];
     }
 
     /**
@@ -367,7 +367,7 @@ abstract class MssqlManagerTest extends TestCase
      */
     public function testIsUnionQuery($sql, $isUnionExpected)
     {
-        $isUnion = SugarTestReflection::callProtectedMethod($this->_db, 'isUnionQuery', array($sql));
+        $isUnion = SugarTestReflection::callProtectedMethod($this->_db, 'isUnionQuery', [$sql]);
 
         $this->assertEquals($isUnionExpected, $isUnion);
     }
@@ -379,143 +379,143 @@ abstract class MssqlManagerTest extends TestCase
      */
     public function dataProviderColumnLengthLimits()
     {
-        return array(
+        return [
             // char with length less than 8000
-            array(
-                array(
+            [
+                [
                     'name' => 'foo',
                     'type' => 'char',
                     'len' => '1024',
-                ),
+                ],
                 '/foo\s+$baseType\(1024\)/i',
-            ),
+            ],
             // char with length greater than 8000
-            array(
-                array(
+            [
+                [
                     'name' => 'foo',
                     'type' => 'char',
                     'len' => '9000',
-                ),
+                ],
                 '/foo\s+$baseType\(8000\)/i',
-            ),
+            ],
             // varchar with length less than 8000
-            array(
-                array(
+            [
+                [
                     'name' => 'foo',
                     'type' => 'varchar',
                     'len' => '1024',
-                ),
+                ],
                 '/foo\s+$baseType\(1024\)/i',
-            ),
+            ],
             // varchar with length greater than 8000
-            array(
-                array(
+            [
+                [
                     'name' => 'foo',
                     'type' => 'varchar',
                     'len' => '9000',
-                ),
+                ],
                 '/foo\s+$baseType\(max\)/i',
-            ),
+            ],
             // varchar with length max
-            array(
-                array(
+            [
+                [
                     'name' => 'foo',
                     'type' => 'varchar',
                     'len' => 'max',
-                ),
+                ],
                 '/foo\s+$baseType\(max\)/i',
-            ),
+            ],
             // binary with length less than 8000
-            array(
-                array(
+            [
+                [
                     'name' => 'foo',
                     'type' => 'binary',
                     'len' => '1024',
-                ),
+                ],
                 '/foo\s+$baseType\(1024\)/i',
-            ),
+            ],
             // binary with length greater than 8000
-            array(
-                array(
+            [
+                [
                     'name' => 'foo',
                     'type' => 'binary',
                     'len' => '9000',
-                ),
+                ],
                 '/foo\s+$baseType\(8000\)/i',
-            ),
+            ],
             // varbinary with length less than 8000
-            array(
-                array(
+            [
+                [
                     'name' => 'foo',
                     'type' => 'varbinary',
                     'len' => '1024',
-                ),
+                ],
                 '/foo\s+$baseType\(1024\)/i',
-            ),
+            ],
             // varbinary with length greater than 8000
-            array(
-                array(
+            [
+                [
                     'name' => 'foo',
                     'type' => 'varbinary',
                     'len' => '9000',
-                ),
+                ],
                 '/foo\s+$baseType\(max\)/i',
-            ),
+            ],
             // varbinary with length max
-            array(
-                array(
+            [
+                [
                     'name' => 'foo',
                     'type' => 'varbinary',
                     'len' => 'max',
-                ),
+                ],
                 '/foo\s+$baseType\(max\)/i',
-            ),
+            ],
             // nchar with length less than 4000
-            array(
-                array(
+            [
+                [
                     'name' => 'foo',
                     'type' => 'nchar',
                     'len' => '1024',
-                ),
+                ],
                 '/foo\s+$baseType\(1024\)/i',
-            ),
+            ],
             // nchar with length greater than 4000
-            array(
-                array(
+            [
+                [
                     'name' => 'foo',
                     'type' => 'nchar',
                     'len' => '9000',
-                ),
+                ],
                 '/foo\s+$baseType\(4000\)/i',
-            ),
+            ],
             // nvarchar with length less than 4000
-            array(
-                array(
+            [
+                [
                     'name' => 'foo',
                     'type' => 'nvarchar',
                     'len' => '1024',
-                ),
+                ],
                 '/foo\s+$baseType\(1024\)/i',
-            ),
+            ],
             // nvarchar with length greater than 4000
-            array(
-                array(
+            [
+                [
                     'name' => 'foo',
                     'type' => 'nvarchar',
                     'len' => '9000',
-                ),
+                ],
                 '/foo\s+$baseType\(max\)/i',
-            ),
+            ],
             // nvarchar with length max
-            array(
-                array(
+            [
+                [
                     'name' => 'foo',
                     'type' => 'nvarchar',
                     'len' => 'max',
-                ),
+                ],
                 '/foo\s+$baseType\(max\)/i',
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -530,7 +530,7 @@ abstract class MssqlManagerTest extends TestCase
             $successRegex = preg_replace('/\$baseType/', $type['baseType'], $successRegex);
         }
 
-        $result = SugarTestReflection::callProtectedMethod($this->_db, 'oneColumnSQLRep', array($fieldDef));
+        $result = SugarTestReflection::callProtectedMethod($this->_db, 'oneColumnSQLRep', [$fieldDef]);
         $this->assertEquals(1, preg_match($successRegex, $result), "Resulting statement: $result failed to match /$successRegex/");
     }
 

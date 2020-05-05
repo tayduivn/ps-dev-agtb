@@ -12,7 +12,7 @@
 
 class OutboundEmailConfigurationTestHelper
 {
-    private static $existingConfigurations = array();
+    private static $existingConfigurations = [];
     private static $existingAllowDefaultOutbound = null;
     private static $systemConfiguration;
 
@@ -36,13 +36,14 @@ class OutboundEmailConfigurationTestHelper
         $oe->resetSystemMailerCache();
     }
 
-    public static function getSystemConfiguration() {
+    public static function getSystemConfiguration()
+    {
         return self::$systemConfiguration;
     }
 
     public static function backupExistingConfigurations()
     {
-        self::$existingConfigurations = array();
+        self::$existingConfigurations = [];
 
         $sql    = "SELECT id FROM outbound_email";
         $result = $GLOBALS["db"]->query($sql);
@@ -101,7 +102,7 @@ class OutboundEmailConfigurationTestHelper
         $name = $userData['name'];
         $email = empty($userData['email']) ? "{$userId}@unit.net" : $userData['email'];
 
-        $configuration = array(
+        $configuration = [
             'name' => $name,
             'type' => 'system-override',
             'user_id' => $userId,
@@ -111,7 +112,7 @@ class OutboundEmailConfigurationTestHelper
             'team_set_id' => $user->getPrivateTeamID(),
             'reply_to_name' => $name,
             'reply_to_email_address' => "reply.{$userId}@unit.net",
-        );
+        ];
         $configuration = self::mergeOutboundEmailConfigurations($configuration);
         $outboundEmail = self::createOutboundEmail($configuration);
 
@@ -125,13 +126,13 @@ class OutboundEmailConfigurationTestHelper
         }
 
         $name   = "For User {$userId}";
-        $configuration = array(
+        $configuration = [
             "name"       => $name,
             "type"       => "user",
             "user_id"    => $userId,
             "from_email" => "{$userId}@unit.net",
             "from_name"  => $name,
-        );
+        ];
         $configuration = self::mergeOutboundEmailConfigurations($configuration);
 
         return self::createOutboundEmail($configuration);
@@ -139,29 +140,30 @@ class OutboundEmailConfigurationTestHelper
 
     public static function createUserOutboundEmailConfigurations($seedCount = 1)
     {
-        $configurations = array();
+        $configurations = [];
 
         for ($i = 0; $i < $seedCount; $i++) {
             $outboundEmail = self::createUserOutboundEmailConfiguration($GLOBALS["current_user"]->id);
 
-            $storedOptions = array(
+            $storedOptions = [
                 "from_addr"      => "{$GLOBALS["current_user"]->id}@unit.net",
                 "from_name"      => "For User {$GLOBALS["current_user"]->id}",
                 "outbound_email" => $outboundEmail->id,
-            );
+            ];
             $inboundEmail  = self::createInboundEmail($GLOBALS["current_user"]->id, $storedOptions);
 
-            $configurations[$i] = array(
+            $configurations[$i] = [
                 "inbound"  => $inboundEmail,
                 "outbound" => $outboundEmail,
-            );
+            ];
         }
 
         return $configurations;
     }
 
-    public static function mergeOutboundEmailConfigurations($configuration = array()) {
-        $defaults = array(
+    public static function mergeOutboundEmailConfigurations($configuration = [])
+    {
+        $defaults = [
             "name"              => "System",
             "type"              => "system",
             "user_id"           => "1",
@@ -177,7 +179,7 @@ class OutboundEmailConfigurationTestHelper
             "mail_smtpssl"      => "0",
             'team_id' => '1',
             'team_set_id' => '1',
-        );
+        ];
 
         return array_merge($defaults, $configuration);
     }
@@ -212,7 +214,7 @@ class OutboundEmailConfigurationTestHelper
         return $outboundEmail;
     }
 
-    public static function createInboundEmail($userId = "1", $storedOptions = array())
+    public static function createInboundEmail($userId = "1", $storedOptions = [])
     {
         if (empty($userId)) {
             $userId = $GLOBALS["current_user"]->id;

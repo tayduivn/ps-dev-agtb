@@ -966,8 +966,8 @@ class IdmProviderTest extends TestCase
 
 class MockAdministration
 {
-    static public $call = [];
-    static public $willReturn = [];
+    public static $call = [];
+    public static $willReturn = [];
 
     public $settings = [];
 

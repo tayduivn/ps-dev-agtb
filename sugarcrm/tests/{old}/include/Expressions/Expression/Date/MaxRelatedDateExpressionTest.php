@@ -23,17 +23,17 @@ class MaxRelatedDateExpressionTest extends TestCase
 
     public static function dataProviderDateFormatCheck()
     {
-        return array(
-            array('04/14/2014', 'm/d/Y'),
-            array('14/04/2014', 'd/m/Y'),
-            array('2014/04/14', 'Y/m/d'),
-            array('04.14.2014', 'm.d.Y'),
-            array('14.04.2014', 'd.m.Y'),
-            array('2014.04.14', 'Y.m.d'),
-            array('04-14-2014', 'm-d-Y'),
-            array('14-04-2014', 'd-m-Y'),
-            array('2014-04-14', 'Y-m-d'),
-        );
+        return [
+            ['04/14/2014', 'm/d/Y'],
+            ['14/04/2014', 'd/m/Y'],
+            ['2014/04/14', 'Y/m/d'],
+            ['04.14.2014', 'm.d.Y'],
+            ['14.04.2014', 'd.m.Y'],
+            ['2014.04.14', 'Y.m.d'],
+            ['04-14-2014', 'm-d-Y'],
+            ['14-04-2014', 'd-m-Y'],
+            ['2014-04-14', 'Y-m-d'],
+        ];
     }
 
     /**
@@ -45,16 +45,16 @@ class MaxRelatedDateExpressionTest extends TestCase
     public function testMaxRelatedDateEvaluate($date, $format)
     {
         $opp = $this->getMockBuilder('Opportunity')
-            ->setMethods(array('save'))
+            ->setMethods(['save'])
             ->getMock();
 
         $link2 = $this->getMockBuilder('Link2')
-            ->setConstructorArgs(array('revenuelineitems', $opp))
-            ->setMethods(array('getBeans'))
+            ->setConstructorArgs(['revenuelineitems', $opp])
+            ->setMethods(['getBeans'])
             ->getMock();
 
         $rel_bean1 = $this->getMockBuilder('RevenueLineItem')
-            ->setMethods(array('save'))
+            ->setMethods(['save'])
             ->getMock();
         $db_date = SugarDateTime::createFromFormat($format, $date)->setTime(0, 0, 0)->asDbDate();
         /* @var $rel_bean1 RevenueLineItem */
@@ -63,7 +63,7 @@ class MaxRelatedDateExpressionTest extends TestCase
 
 
         $rel_bean2 = $this->getMockBuilder('RevenueLineItem')
-            ->setMethods(array('save'))
+            ->setMethods(['save'])
             ->getMock();
 
         $db_date2 = SugarDateTime::createFromFormat($format, $date)->modify('-20 days')->setTime(0, 0, 0);
@@ -73,7 +73,7 @@ class MaxRelatedDateExpressionTest extends TestCase
 
         $link2->expects($this->any())
             ->method('getBeans')
-            ->will($this->returnValue(array($rel_bean1, $rel_bean2)));
+            ->will($this->returnValue([$rel_bean1, $rel_bean2]));
 
         /* @var $opp Opportunity */
         $opp->revenuelineitems = $link2;

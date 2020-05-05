@@ -29,7 +29,7 @@ class TestReflection
      * @param array $args Arguments to pass to the method
      * @return mixed What ever is returned from the called method
      */
-    public static function callProtectedMethod($classOrObject, $method, $args = array())
+    public static function callProtectedMethod($classOrObject, $method, $args = [])
     {
         $rm = new \ReflectionMethod($classOrObject, $method);
         $rm->setAccessible(true);

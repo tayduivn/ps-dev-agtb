@@ -32,11 +32,11 @@ class MetaDataManagerBugFixesTest extends TestCase
      */
     public function testBug59676Test()
     {
-        $defs['fields']['aaa_test_c'] = array(
+        $defs['fields']['aaa_test_c'] = [
             'type' => 'relate',
             'name' => 'aaa_test_c',
             'len' => '25',
-        );
+        ];
 
         $mm = new MetaDataHacksBugFixes($GLOBALS['current_user']);
         $newdefs = $mm->getNormalizedFielddefs($defs);

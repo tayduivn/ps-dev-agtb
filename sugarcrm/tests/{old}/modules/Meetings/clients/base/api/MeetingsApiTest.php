@@ -28,7 +28,7 @@ class MeetingsApiTest extends TestCase
         $this->api->user->id = 'foo';
         $GLOBALS['current_user'] = $this->api->user;
 
-        $this->meetingsApi = $this->createPartialMock('MeetingsApi', array("isUserInvitedToMeeting"));
+        $this->meetingsApi = $this->createPartialMock('MeetingsApi', ["isUserInvitedToMeeting"]);
     }
 
     protected function tearDown() : void
@@ -45,18 +45,18 @@ class MeetingsApiTest extends TestCase
         $this->api->user = SugarTestUserUtilities::createAnonymousUser(false, true);
         $meeting = $this->mockMeetingForGetExternalInfo();
         BeanFactory::registerBean($meeting);
-        $args = array(
+        $args = [
             'module' => 'Meetings',
             'record' => $meeting->id,
-        );
+        ];
 
         $actual = $this->meetingsApi->getExternalInfo($this->api, $args);
-        $expected = array(
+        $expected = [
             'is_host_option_allowed' => true,
             'host_url' => $meeting->host_url,
             'is_join_option_allowed' => true,
             'join_url' => $meeting->join_url,
-        );
+        ];
         $this->assertEquals($expected, $actual);
         BeanFactory::unregisterBean($meeting);
     }
@@ -64,7 +64,7 @@ class MeetingsApiTest extends TestCase
     public function testGetExternalInfo_UserIsDeveloperForMeetings_CanHostAndJoin()
     {
         //mock out user so we can return isDeveloperForModule = true
-        $this->api->user = $this->createPartialMock('User', array('isAdmin', 'isDeveloperForModule'));
+        $this->api->user = $this->createPartialMock('User', ['isAdmin', 'isDeveloperForModule']);
         $this->api->user->id = 'foo';
         $this->api->user->expects($this->any())
             ->method("isAdmin")
@@ -75,18 +75,18 @@ class MeetingsApiTest extends TestCase
 
         $meeting = $this->mockMeetingForGetExternalInfo();
         BeanFactory::registerBean($meeting);
-        $args = array(
+        $args = [
             'module' => 'Meetings',
             'record' => $meeting->id,
-        );
+        ];
 
         $actual = $this->meetingsApi->getExternalInfo($this->api, $args);
-        $expected = array(
+        $expected = [
             'is_host_option_allowed' => true,
             'host_url' => $meeting->host_url,
             'is_join_option_allowed' => true,
             'join_url' => $meeting->join_url,
-        );
+        ];
         $this->assertEquals($expected, $actual);
         BeanFactory::unregisterBean($meeting);
     }
@@ -96,18 +96,18 @@ class MeetingsApiTest extends TestCase
         $meeting = $this->mockMeetingForGetExternalInfo();
         $meeting->assigned_user_id = $this->api->user->id;
         BeanFactory::registerBean($meeting);
-        $args = array(
+        $args = [
             'module' => 'Meetings',
             'record' => $meeting->id,
-        );
+        ];
 
         $actual = $this->meetingsApi->getExternalInfo($this->api, $args);
-        $expected = array(
+        $expected = [
             'is_host_option_allowed' => true,
             'host_url' => $meeting->host_url,
             'is_join_option_allowed' => true,
             'join_url' => $meeting->join_url,
-        );
+        ];
         $this->assertEquals($expected, $actual);
         BeanFactory::unregisterBean($meeting);
     }
@@ -116,22 +116,22 @@ class MeetingsApiTest extends TestCase
     {
         $meeting = $this->mockMeetingForGetExternalInfo();
         BeanFactory::registerBean($meeting);
-        $args = array(
+        $args = [
             'module' => 'Meetings',
             'record' => $meeting->id,
-        );
+        ];
 
         $this->meetingsApi->expects($this->any())
             ->method("isUserInvitedToMeeting")
             ->will($this->returnValue(true));
 
         $actual = $this->meetingsApi->getExternalInfo($this->api, $args);
-        $expected = array(
+        $expected = [
             'is_host_option_allowed' => false,
             'host_url' => '',
             'is_join_option_allowed' => true,
             'join_url' => $meeting->join_url,
-        );
+        ];
         $this->assertEquals($expected, $actual);
         BeanFactory::unregisterBean($meeting);
     }
@@ -140,27 +140,28 @@ class MeetingsApiTest extends TestCase
     {
         $meeting = $this->mockMeetingForGetExternalInfo();
         BeanFactory::registerBean($meeting);
-        $args = array(
+        $args = [
             'module' => 'Meetings',
             'record' => $meeting->id,
-        );
+        ];
 
         $this->meetingsApi->expects($this->any())
             ->method("isUserInvitedToMeeting")
             ->will($this->returnValue(false));
 
         $actual = $this->meetingsApi->getExternalInfo($this->api, $args);
-        $expected = array(
+        $expected = [
             'is_host_option_allowed' => false,
             'host_url' => '',
             'is_join_option_allowed' => false,
             'join_url' => '',
-        );
+        ];
         $this->assertEquals($expected, $actual);
         BeanFactory::unregisterBean($meeting);
     }
 
-    protected function mockMeetingForGetExternalInfo() {
+    protected function mockMeetingForGetExternalInfo()
+    {
         $meeting = BeanFactory::newBean('Meetings');
         $meeting->id = '123';
         $meeting->host_url = 'http://hosturl';

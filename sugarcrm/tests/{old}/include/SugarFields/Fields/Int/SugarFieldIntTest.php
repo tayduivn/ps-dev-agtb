@@ -68,12 +68,12 @@ class SugarFieldIntTest extends TestCase
      */
     public static function unformatFieldProvider()
     {
-        return array(
-            array('1000', '1000'),
-            array('1.000', '1'),
-            array('1,000', '1000'),
-            array('1,000.00', '1000'),
-        );
+        return [
+            ['1000', '1000'],
+            ['1.000', '1'],
+            ['1,000', '1000'],
+            ['1,000.00', '1000'],
+        ];
     }
 
     /**
@@ -104,12 +104,12 @@ class SugarFieldIntTest extends TestCase
      */
     public static function unformatFieldProviderCommaDotFlip()
     {
-        return array(
-            array('1,000', '1'),
-            array('1000,00', '1000'),
-            array('1.000,65', '1000'),
-            array('1.065', '1065'),
-        );
+        return [
+            ['1,000', '1'],
+            ['1000,00', '1000'],
+            ['1.000,65', '1000'],
+            ['1.065', '1065'],
+        ];
     }
 
     /**
@@ -131,12 +131,12 @@ class SugarFieldIntTest extends TestCase
      */
     public static function apiUnformatFieldProvider()
     {
-        return array(
-            array('1000', '1000'),
-            array('1.000', '1.000'),
-            array('1,000', '1,000'),
-            array('1,000.00', '1,000.00'),
-        );
+        return [
+            ['1000', '1000'],
+            ['1.000', '1.000'],
+            ['1,000', '1,000'],
+            ['1,000.00', '1,000.00'],
+        ];
     }
 
     /**
@@ -150,7 +150,7 @@ class SugarFieldIntTest extends TestCase
     public function testApiValidate($bean, $name, $value, $vardef, $valid)
     {
         $field = SugarFieldHandler::getSugarField('int');
-        $this->assertEquals($valid, $field->apiValidate($bean, array($name=>$value), $name, $vardef));
+        $this->assertEquals($valid, $field->apiValidate($bean, [$name=>$value], $name, $vardef));
     }
     
     /**
@@ -160,49 +160,49 @@ class SugarFieldIntTest extends TestCase
     public function apiValidateProvider()
     {
         $bean = new SugarBean();
-        $vardef = array('name'=>'test','type'=>'int');
-        $data = array(
-            'MySQL' => array(
-                array($bean, 'test', 0, $vardef, true),
-                array($bean, 'test', -12345678901, $vardef, false),
-                array($bean, 'test', 12345678901, $vardef, false),
-            ),
-            'Oracle' => array(
-                array($bean, 'test', 0, $vardef, true),
-                array($bean, 'test', -12345678901, $vardef, false),
-                array($bean, 'test', 12345678901, $vardef, false),
-            ),
-            'IBM_DB2' => array(
-                array($bean, 'test', 0, $vardef, true),
-                array($bean, 'test', -12345678901, $vardef, false),
-                array($bean, 'test', 12345678901, $vardef, false),
-            ),
-            'SQL Server' => array(
-                array($bean, 'test', 0, $vardef, true),
-                array($bean, 'test', -12345678901, $vardef, false),
-                array($bean, 'test', 12345678901, $vardef, false),
-            ),
-        );
+        $vardef = ['name'=>'test','type'=>'int'];
+        $data = [
+            'MySQL' => [
+                [$bean, 'test', 0, $vardef, true],
+                [$bean, 'test', -12345678901, $vardef, false],
+                [$bean, 'test', 12345678901, $vardef, false],
+            ],
+            'Oracle' => [
+                [$bean, 'test', 0, $vardef, true],
+                [$bean, 'test', -12345678901, $vardef, false],
+                [$bean, 'test', 12345678901, $vardef, false],
+            ],
+            'IBM_DB2' => [
+                [$bean, 'test', 0, $vardef, true],
+                [$bean, 'test', -12345678901, $vardef, false],
+                [$bean, 'test', 12345678901, $vardef, false],
+            ],
+            'SQL Server' => [
+                [$bean, 'test', 0, $vardef, true],
+                [$bean, 'test', -12345678901, $vardef, false],
+                [$bean, 'test', 12345678901, $vardef, false],
+            ],
+        ];
 
-        $data = isset($data[$bean->db->dbName]) ? $data[$bean->db->dbName] : array();
+        $data = isset($data[$bean->db->dbName]) ? $data[$bean->db->dbName] : [];
 
         $sugarMinInt = SugarConfig::getInstance()->get('sugar_min_int');
         if (!empty($sugarMinInt)) {
-            $data[] = array($bean, 'test', $sugarMinInt - 1, $vardef, false);
-            $data[] = array($bean, 'test', $sugarMinInt, $vardef, true);
+            $data[] = [$bean, 'test', $sugarMinInt - 1, $vardef, false];
+            $data[] = [$bean, 'test', $sugarMinInt, $vardef, true];
         }
         $sugarMaxInt = SugarConfig::getInstance()->get('sugar_max_int');
         if (!empty($sugarMaxInt)) {
-            $data[] = array($bean, 'test', $sugarMaxInt + 1, $vardef, false);
-            $data[] = array($bean, 'test', $sugarMaxInt, $vardef, true);
+            $data[] = [$bean, 'test', $sugarMaxInt + 1, $vardef, false];
+            $data[] = [$bean, 'test', $sugarMaxInt, $vardef, true];
         }
 
         $vardef['min'] = -100;
-        $data[] = array($bean, 'test', $vardef['min'] - 1, $vardef, false);
-        $data[] = array($bean, 'test', $vardef['min'], $vardef, true);
+        $data[] = [$bean, 'test', $vardef['min'] - 1, $vardef, false];
+        $data[] = [$bean, 'test', $vardef['min'], $vardef, true];
         $vardef['max'] = 100;
-        $data[] = array($bean, 'test', $vardef['max'] + 1, $vardef, false);
-        $data[] = array($bean, 'test', $vardef['max'], $vardef, true);
+        $data[] = [$bean, 'test', $vardef['max'] + 1, $vardef, false];
+        $data[] = [$bean, 'test', $vardef['max'], $vardef, true];
         
         return $data;
     }

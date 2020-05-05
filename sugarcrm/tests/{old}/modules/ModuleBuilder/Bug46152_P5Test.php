@@ -12,16 +12,16 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once ('modules/DynamicFields/FieldCases.php');
+require_once 'modules/DynamicFields/FieldCases.php';
 
 class Bug46152_P5Test extends TestCase
 {
-    static private $moduleBuilder;
+    private static $moduleBuilder;
 
-    static private $packageName = 'pnb46152';
-    static private $moduleName = 'modb46152';
+    private static $packageName = 'pnb46152';
+    private static $moduleName = 'modb46152';
 
-    static private $fieldName = 'fldb46152';
+    private static $fieldName = 'fldb46152';
 
     private $field;
     private $relatedModule = 'Opportunities';
@@ -103,7 +103,7 @@ class Bug46152_P5Test extends TestCase
     {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('app_list_strings');
-        SugarTestHelper::setUp('mod_strings', array('ModuleBuilder'));
+        SugarTestHelper::setUp('mod_strings', ['ModuleBuilder']);
         SugarTestHelper::setUp('current_user');
         self::createPackage();
         self::createModule();
@@ -136,9 +136,9 @@ class Bug46152_P5Test extends TestCase
 
     public static function tearDownAfterClass(): void
     {
-        self::$moduleBuilder->getPackage(self::$packageName)->delete ();
+        self::$moduleBuilder->getPackage(self::$packageName)->delete();
 
-        $_REQUEST = array();
+        $_REQUEST = [];
         SugarTestHelper::tearDown();
     }
 }

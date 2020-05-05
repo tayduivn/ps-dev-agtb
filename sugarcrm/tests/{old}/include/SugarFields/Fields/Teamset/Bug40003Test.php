@@ -22,10 +22,10 @@ class Bug40003Test extends TestCase
 {
     public function provider()
     {
-        return array(
-            array('Global', '1', 'Team_1', '123', '1'),
-            array('Global', '1', 'Team_2', '111', '0')
-        );
+        return [
+            ['Global', '1', 'Team_1', '123', '1'],
+            ['Global', '1', 'Team_2', '111', '0'],
+        ];
     }
 
     protected function setUp() : void
@@ -34,7 +34,7 @@ class Bug40003Test extends TestCase
         SugarTestHelper::setUp('beanList');
         $_REQUEST['record'] = '';
         $_REQUEST['module'] = 'Reports';
-        $this->fields = array('team_name' => array('name' => 'team_name'));
+        $this->fields = ['team_name' => ['name' => 'team_name']];
         $this->sft = new SugarFieldTeamset('Teamset');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
@@ -43,8 +43,8 @@ class Bug40003Test extends TestCase
     
     protected function tearDown() : void
     {
-        $_REQUEST = array();
-        $_POST = array();
+        $_REQUEST = [];
+        $_POST = [];
         SugarTestHelper::tearDown();
     }
 
@@ -61,7 +61,9 @@ class Bug40003Test extends TestCase
         $_POST['id_team_name_collection_1'] = $other_team_name_id;
         $_POST['primary_team_name_collection'] = $primary_collection;
         $this->sft->initClassicView($this->fields);
-        $this->assertEquals($this->sft->getPrimaryTeamIdFromRequest($this->sft->field_name, $_POST),
-                            $this->sft->view->bean->team_set_id_values['primary']['id']);
+        $this->assertEquals(
+            $this->sft->getPrimaryTeamIdFromRequest($this->sft->field_name, $_POST),
+            $this->sft->view->bean->team_set_id_values['primary']['id']
+        );
     }
 }

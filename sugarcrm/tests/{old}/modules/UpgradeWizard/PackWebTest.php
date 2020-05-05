@@ -26,46 +26,46 @@ class PackWebTest extends TestCase
     
     public function packUpgradeWizardWebProvider()
     {
-        return array(
-            array(
-                array(
-                    'version' => '1.2.3.4'
-                ),
-                array(
+        return [
+            [
+                [
+                    'version' => '1.2.3.4',
+                ],
+                [
                     'version' => '1.2.3.4',
                     'build' => '998',
-                    'from' => array('6.5.17'),
-                ),
-            ),
-            array(
-                array(),
-                array(
+                    'from' => ['6.5.17'],
+                ],
+            ],
+            [
+                [],
+                [
                     'version' => '7.5.0.0',
                     'build' => '998',
-                    'from' => array('6.5.17'),
-                ),
-            ),
-            array(
-                array(
-                    'from' => array('1.2.3.4', '1.2.3.5')
-                ),
-                array(
+                    'from' => ['6.5.17'],
+                ],
+            ],
+            [
+                [
+                    'from' => ['1.2.3.4', '1.2.3.5'],
+                ],
+                [
                     'version' => '7.5.0.0',
                     'build' => '998',
-                    'from' => array('1.2.3.4', '1.2.3.5'),
-                ),
-            ),
-            array(
-                array(
-                    'build' => '1.2.3.4'
-                ),
-                array(
+                    'from' => ['1.2.3.4', '1.2.3.5'],
+                ],
+            ],
+            [
+                [
+                    'build' => '1.2.3.4',
+                ],
+                [
                     'version' => '7.5.0.0',
                     'build' => '1.2.3.4',
-                    'from' => array('6.5.17'),
-                ),
-            ),
-        );
+                    'from' => ['6.5.17'],
+                ],
+            ],
+        ];
     }
 
     /**
@@ -75,12 +75,12 @@ class PackWebTest extends TestCase
      */
     public function testPackUpgradeWizardWeb($params, $expect)
     {
-        $manifest = array();
+        $manifest = [];
         $zip = $this->createMock('ZipArchive');
         $versionFile = __DIR__ . '/../../../../modules/UpgradeWizard/version.json';
         $zip->expects($this->exactly(15))->method('addFile');
         $zip->expects($this->exactly(2))->method('addFromString');
-        $installdefs = array();
+        $installdefs = [];
         list($zip, $manifest, $installdefs) = packUpgradeWizardWeb($zip, $manifest, $installdefs, $params);
 
         $this->assertEquals(json_encode($expect), file_get_contents($versionFile));

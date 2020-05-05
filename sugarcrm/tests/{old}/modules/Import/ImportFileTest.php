@@ -15,10 +15,10 @@ use Sugarcrm\Sugarcrm\Security\InputValidation\Exception\ViolationException;
 
 class ImportFileTest extends TestCase
 {
-    protected $unlink = array();
+    protected $unlink = [];
 
     protected function setUp() : void
-	{
+    {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
@@ -27,36 +27,36 @@ class ImportFileTest extends TestCase
     protected function tearDown() : void
     {
         SugarTestImportUtilities::removeAllCreatedFiles();
-        foreach($this->unlink as $file) {
+        foreach ($this->unlink as $file) {
             @unlink($file);
         }
         SugarTestHelper::tearDown();
     }
 
     /**
- 	 * @ticket 23380
- 	 */
-	public function testFileImportNoEnclosers()
+     * @ticket 23380
+     */
+    public function testFileImportNoEnclosers()
     {
-    	$file = SugarTestImportUtilities::createFile(2,1);
-    	$importFile = new ImportFile($file,',','', TRUE, FALSE);
+        $file = SugarTestImportUtilities::createFile(2, 1);
+        $importFile = new ImportFile($file, ',', '', true, false);
         $row = $importFile->getNextRow();
-        $this->assertEquals($row, array('foo00'));
+        $this->assertEquals($row, ['foo00']);
         $row = $importFile->getNextRow();
-        $this->assertEquals($row,array('foo10'));
+        $this->assertEquals($row, ['foo10']);
     }
 
     public function testLoadNonExistantFile()
     {
         $this->expectException(ViolationException::class);
-        $importFile = new ImportFile(ImportCacheFiles::getImportDir().'/thisfileisntthere'.date("YmdHis").'.csv',',','"');
+        $importFile = new ImportFile(ImportCacheFiles::getImportDir().'/thisfileisntthere'.date("YmdHis").'.csv', ',', '"');
         $this->assertFalse($importFile->fileExists());
     }
 
     public function testLoadGoodFile()
     {
-        $file = SugarTestImportUtilities::createFile(2,1);
-        $importFile = new ImportFile($file,',','"', TRUE, FALSE);
+        $file = SugarTestImportUtilities::createFile(2, 1);
+        $importFile = new ImportFile($file, ',', '"', true, false);
         $this->assertTrue($importFile->fileExists());
     }
 
@@ -70,55 +70,55 @@ class ImportFileTest extends TestCase
 
         $this->assertTrue($importFile->fileExists());
         $row = $importFile->getNextRow();
-        $this->assertEquals($row,array('name','city'));
+        $this->assertEquals($row, ['name','city']);
         $row = $importFile->getNextRow();
-        $this->assertEquals($row,array('tester1','wuhan'));
+        $this->assertEquals($row, ['tester1','wuhan']);
     }
 
     public function testGetNextRow()
     {
-        $file = SugarTestImportUtilities::createFile(3,2);
-        $importFile = new ImportFile($file,',','"', TRUE, FALSE);
+        $file = SugarTestImportUtilities::createFile(3, 2);
+        $importFile = new ImportFile($file, ',', '"', true, false);
 
         $row = $importFile->getNextRow();
-        $this->assertEquals(array("foo00","foo01"),$row);
+        $this->assertEquals(["foo00","foo01"], $row);
         $row = $importFile->getNextRow();
-        $this->assertEquals(array("foo10","foo11"),$row);
+        $this->assertEquals(["foo10","foo11"], $row);
         $row = $importFile->getNextRow();
-        $this->assertEquals(array("foo20","foo21"),$row);
+        $this->assertEquals(["foo20","foo21"], $row);
     }
 
     /**
- 	 * @ticket 41361
- 	 */
+     * @ticket 41361
+     */
     public function testGetNextRowWithEOL()
     {
         $file = SugarTestImportUtilities::createFileWithEOL(1, 1);
-        $importFile = new ImportFile($file,',','"', TRUE, FALSE);
+        $importFile = new ImportFile($file, ',', '"', true, false);
         $row = $importFile->getNextRow();
         // both \r\n and \n should be properly replaced with PHP_EOL
-        $this->assertEquals(array("start0".PHP_EOL."0".PHP_EOL."end"), $row);
+        $this->assertEquals(["start0".PHP_EOL."0".PHP_EOL."end"], $row);
     }
 
     public function testLoadEmptyFile()
     {
         $emptyFile = ImportCacheFiles::getImportDir().'/empty'.date("YmdHis").'.csv';
-        file_put_contents($emptyFile,'');
+        file_put_contents($emptyFile, '');
         $this->unlink[] = $emptyFile;
 
-        $importFile = new ImportFile($emptyFile,',','"',false);
+        $importFile = new ImportFile($emptyFile, ',', '"', false);
 
         $this->assertFalse($importFile->getNextRow());
 
-        $importFile = new ImportFile($emptyFile,',','',false);
+        $importFile = new ImportFile($emptyFile, ',', '', false);
 
         $this->assertFalse($importFile->getNextRow());
     }
 
     public function testDeleteFileOnDestroy()
     {
-        $file = SugarTestImportUtilities::createFile(3,2);
-        $importFile = new ImportFile($file,',','"',true, FALSE);
+        $file = SugarTestImportUtilities::createFile(3, 2);
+        $importFile = new ImportFile($file, ',', '"', true, false);
 
         unset($importFile);
 
@@ -127,8 +127,8 @@ class ImportFileTest extends TestCase
 
     public function testNotDeleteFileOnDestroy()
     {
-        $file = SugarTestImportUtilities::createFile(3,2);
-        $importFile = new ImportFile($file,',','"',false);
+        $file = SugarTestImportUtilities::createFile(3, 2);
+        $importFile = new ImportFile($file, ',', '"', false);
 
         unset($importFile);
 
@@ -137,117 +137,117 @@ class ImportFileTest extends TestCase
 
     public function testGetFieldCount()
     {
-        $file = SugarTestImportUtilities::createFile(3,2);
-        $importFile = new ImportFile($file,',','"',TRUE, FALSE);
+        $file = SugarTestImportUtilities::createFile(3, 2);
+        $importFile = new ImportFile($file, ',', '"', true, false);
 
         $importFile->getNextRow();
-        $this->assertEquals(2,$importFile->getFieldCount());
+        $this->assertEquals(2, $importFile->getFieldCount());
     }
 
     public function testMarkRowAsDuplicate()
     {
-        $file = SugarTestImportUtilities::createFile(3,2);
-        $importFile = new ImportFile($file,',','"', TRUE, FALSE);
+        $file = SugarTestImportUtilities::createFile(3, 2);
+        $importFile = new ImportFile($file, ',', '"', true, false);
 
         $row = $importFile->getNextRow();
         $importFile->markRowAsDuplicate();
 
-        $fp = sugar_fopen(ImportCacheFiles::getDuplicateFileName(),'r');
+        $fp = sugar_fopen(ImportCacheFiles::getDuplicateFileName(), 'r');
         $duperow = fgetcsv($fp);
         fclose($fp);
 
-        $this->assertEquals($row,$duperow);
+        $this->assertEquals($row, $duperow);
     }
 
     public function testWriteError()
     {
-        $file = SugarTestImportUtilities::createFile(3,2);
-        $importFile = new ImportFile($file,',','"', TRUE, FALSE);
+        $file = SugarTestImportUtilities::createFile(3, 2);
+        $importFile = new ImportFile($file, ',', '"', true, false);
 
         $row = $importFile->getNextRow();
-        $importFile->writeError('Some Error','field1','foo');
+        $importFile->writeError('Some Error', 'field1', 'foo');
 
-        $fp = sugar_fopen(ImportCacheFiles::getErrorFileName(),'r');
+        $fp = sugar_fopen(ImportCacheFiles::getErrorFileName(), 'r');
         $errorrow = fgetcsv($fp);
         fclose($fp);
 
-        $this->assertEquals(array('Some Error','field1','foo',1),$errorrow);
+        $this->assertEquals(['Some Error','field1','foo',1], $errorrow);
 
-        $fp = sugar_fopen(ImportCacheFiles::getErrorRecordsWithoutErrorFileName(),'r');
+        $fp = sugar_fopen(ImportCacheFiles::getErrorRecordsWithoutErrorFileName(), 'r');
         $errorrecordrow = fgetcsv($fp);
         fclose($fp);
 
-        $this->assertEquals($row,$errorrecordrow);
+        $this->assertEquals($row, $errorrecordrow);
     }
 
     public function testWriteErrorRecord()
     {
-        $file = SugarTestImportUtilities::createFile(3,2);
-        $importFile = new ImportFile($file,',','"', TRUE, FALSE);
+        $file = SugarTestImportUtilities::createFile(3, 2);
+        $importFile = new ImportFile($file, ',', '"', true, false);
 
         $row = $importFile->getNextRow();
         $importFile->writeErrorRecord();
 
-        $fp = sugar_fopen(ImportCacheFiles::getErrorRecordsWithoutErrorFileName(),'r');
+        $fp = sugar_fopen(ImportCacheFiles::getErrorRecordsWithoutErrorFileName(), 'r');
         $errorrecordrow = fgetcsv($fp);
         fclose($fp);
 
-        $this->assertEquals($row,$errorrecordrow);
+        $this->assertEquals($row, $errorrecordrow);
     }
 
     public function testWriteStatus()
     {
-        $file = SugarTestImportUtilities::createFile(3,2);
-        $importFile = new ImportFile($file,',','"', TRUE, FALSE);
+        $file = SugarTestImportUtilities::createFile(3, 2);
+        $importFile = new ImportFile($file, ',', '"', true, false);
 
         $importFile->getNextRow();
-        $importFile->writeError('Some Error','field1','foo');
+        $importFile->writeError('Some Error', 'field1', 'foo');
         $importFile->getNextRow();
         $importFile->markRowAsDuplicate();
         $importFile->getNextRow();
         $importFile->markRowAsImported();
         $importFile->writeStatus();
 
-        $fp = sugar_fopen(ImportCacheFiles::getStatusFileName(),'r');
+        $fp = sugar_fopen(ImportCacheFiles::getStatusFileName(), 'r');
         $statusrow = fgetcsv($fp);
         fclose($fp);
 
-        $this->assertEquals(array(3,1,1,1,0,$file),$statusrow);
+        $this->assertEquals([3,1,1,1,0,$file], $statusrow);
     }
 
     public function testWriteStatusWithTwoErrorsInOneRow()
     {
-        $file = SugarTestImportUtilities::createFile(3,2);
-        $importFile = new ImportFile($file,',','"', TRUE, FALSE);
+        $file = SugarTestImportUtilities::createFile(3, 2);
+        $importFile = new ImportFile($file, ',', '"', true, false);
 
         $row = $importFile->getNextRow();
-        $importFile->writeError('Some Error','field1','foo');
-        $importFile->writeError('Some Error','field1','foo');
+        $importFile->writeError('Some Error', 'field1', 'foo');
+        $importFile->writeError('Some Error', 'field1', 'foo');
         $importFile->getNextRow();
         $importFile->markRowAsImported();
         $importFile->getNextRow();
         $importFile->markRowAsImported();
         $importFile->writeStatus();
 
-        $fp = sugar_fopen(ImportCacheFiles::getStatusFileName(),'r');
+        $fp = sugar_fopen(ImportCacheFiles::getStatusFileName(), 'r');
         $statusrow = fgetcsv($fp);
         fclose($fp);
 
-        $this->assertEquals(array(3,1,0,2,0,$file),$statusrow);
+        $this->assertEquals([3,1,0,2,0,$file], $statusrow);
 
-        $fp = sugar_fopen(ImportCacheFiles::getErrorRecordsWithoutErrorFileName(),'r');
+        $fp = sugar_fopen(ImportCacheFiles::getErrorRecordsWithoutErrorFileName(), 'r');
         $errorrecordrow = fgetcsv($fp);
 
-        $this->assertEquals($row,$errorrecordrow);
+        $this->assertEquals($row, $errorrecordrow);
 
-        $this->assertFalse(fgetcsv($fp),'Should be only 1 record in the csv file');
+        $this->assertFalse(fgetcsv($fp), 'Should be only 1 record in the csv file');
         fclose($fp);
     }
 
     public function testWriteStatusWithTwoUpdatedRecords()
     {
-        $file = SugarTestImportUtilities::createFile(3,2);
-        $importFile = new ImportFile($file,',','"', TRUE, FALSE);
+        $file = SugarTestImportUtilities::createFile(3, 2);
+        $importFile = new ImportFile($file, ',', '"', true, false);
 
         $row = $importFile->getNextRow();
         $importFile->markRowAsImported(false);
@@ -257,18 +257,18 @@ class ImportFileTest extends TestCase
         $importFile->markRowAsImported();
         $importFile->writeStatus();
 
-        $fp = sugar_fopen(ImportCacheFiles::getStatusFileName(),'r');
+        $fp = sugar_fopen(ImportCacheFiles::getStatusFileName(), 'r');
         $statusrow = fgetcsv($fp);
         fclose($fp);
 
-        $this->assertEquals(array(3,0,0,2,1,$file),$statusrow);
+        $this->assertEquals([3,0,0,2,1,$file], $statusrow);
     }
 
     public function testWriteRowToLastImport()
     {
-        $file = SugarTestImportUtilities::createFile(3,2);
-        $importFile = new ImportFile($file,',','"');
-        $record = $importFile->writeRowToLastImport("Tests","Test","TestRunner");
+        $file = SugarTestImportUtilities::createFile(3, 2);
+        $importFile = new ImportFile($file, ',', '"');
+        $record = $importFile->writeRowToLastImport("Tests", "Test", "TestRunner");
 
         $query = "SELECT *
                         FROM users_last_import
@@ -279,7 +279,7 @@ class ImportFileTest extends TestCase
                             AND id = '$record'
                             AND deleted=0";
 
-		$result = $GLOBALS['db']->query($query);
+        $result = $GLOBALS['db']->query($query);
 
         $this->assertNotNull($GLOBALS['db']->fetchByAssoc($result));
 
@@ -295,16 +295,17 @@ class ImportFileTest extends TestCase
 
     public function providerEncodingData()
     {
-        return array(
-            array('TestCharset.csv', 'UTF-8'),
-            array('TestCharset2.csv', 'ISO-8859-1'),
-            );
+        return [
+            ['TestCharset.csv', 'UTF-8'],
+            ['TestCharset2.csv', 'ISO-8859-1'],
+            ];
     }
 
     /**
      * @dataProvider providerEncodingData
      */
-    public function testCharsetDetection($file, $encoding) {
+    public function testCharsetDetection($file, $encoding)
+    {
         $this->uploadFile($file);
         $importFile = new ImportFile($this->getUploadedFileName($file), ",", '"', false);
 
@@ -315,17 +316,18 @@ class ImportFileTest extends TestCase
 
     public function providerRowCountData()
     {
-        return array(
-            array('TestCharset.csv', 2, false),
-            array('TestCharset2.csv', 11, true),
-            array('TestCharset2.csv', 12, false),
-            );
+        return [
+            ['TestCharset.csv', 2, false],
+            ['TestCharset2.csv', 11, true],
+            ['TestCharset2.csv', 12, false],
+            ];
     }
 
     /**
      * @dataProvider providerRowCountData
      */
-    public function testRowCount($file, $count, $hasHeader) {
+    public function testRowCount($file, $count, $hasHeader)
+    {
         $this->uploadFile($file);
         $importFile = new ImportFile($this->getUploadedFileName($file), ",", '"', false);
 
@@ -337,16 +339,17 @@ class ImportFileTest extends TestCase
 
     public function providerFieldCountData()
     {
-        return array(
-            array('TestCharset.csv', 2),
-            array('TestCharset2.csv', 5),
-            );
+        return [
+            ['TestCharset.csv', 2],
+            ['TestCharset2.csv', 5],
+            ];
     }
 
     /**
      * @dataProvider providerFieldCountData
      */
-    public function testFieldCount($file, $count) {
+    public function testFieldCount($file, $count)
+    {
         $this->uploadFile($file);
         $importFile = new ImportFile($this->getUploadedFileName($file), ",", '"', false);
 
@@ -358,16 +361,17 @@ class ImportFileTest extends TestCase
 
     public function providerLineCountData()
     {
-        return array(
-            array('TestCharset.csv', 2),
-            array('TestCharset2.csv', 12),
-            );
+        return [
+            ['TestCharset.csv', 2],
+            ['TestCharset2.csv', 12],
+            ];
     }
 
     /**
      * @dataProvider providerLineCountData
      */
-    public function testLineCount($file, $count) {
+    public function testLineCount($file, $count)
+    {
         $this->uploadFile($file);
         $importFile = new ImportFile($this->getUploadedFileName($file), ",", '"', false);
 
@@ -378,16 +382,17 @@ class ImportFileTest extends TestCase
 
     public function providerDateFormatData()
     {
-        return array(
-            array('TestCharset.csv', 'd/m/Y'),
-            array('TestCharset2.csv', 'm/d/Y'),
-            );
+        return [
+            ['TestCharset.csv', 'd/m/Y'],
+            ['TestCharset2.csv', 'm/d/Y'],
+            ];
     }
 
     /**
      * @dataProvider providerDateFormatData
      */
-    public function testDateFormat($file, $format) {
+    public function testDateFormat($file, $format)
+    {
         $this->uploadFile($file);
         $importFile = new ImportFile($this->getUploadedFileName($file), ",", '"', false);
 
@@ -400,16 +405,17 @@ class ImportFileTest extends TestCase
 
     public function providerTimeFormatData()
     {
-        return array(
-            array('TestCharset.csv', 'h:ia'),
-            array('TestCharset2.csv', 'H:i'),
-            );
+        return [
+            ['TestCharset.csv', 'h:ia'],
+            ['TestCharset2.csv', 'H:i'],
+            ];
     }
 
     /**
      * @dataProvider providerTimeFormatData
      */
-    public function testTimeFormat($file, $format) {
+    public function testTimeFormat($file, $format)
+    {
         $this->uploadFile($file);
         $importFile = new ImportFile($this->getUploadedFileName($file), ",", '"', false);
 
@@ -423,7 +429,8 @@ class ImportFileTest extends TestCase
     /**
      * @ticket 48289
      */
-    public function testTabDelimiter() {
+    public function testTabDelimiter()
+    {
         $this->uploadFile('TestCharset.csv');
 
         // use '\t' to simulate the bug

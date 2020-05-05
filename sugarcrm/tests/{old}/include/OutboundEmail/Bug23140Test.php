@@ -18,28 +18,30 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug23140Test extends TestCase
 {
-	var $outbound_id = null;
-	var $_user = null;
-	var $ob = null;
-	var $userOverideAccont = null;
+    var $outbound_id = null;
+    var $_user = null;
+    var $ob = null;
+    var $userOverideAccont = null;
 
     protected function setUp() : void
     {
         global $current_user, $currentModule ;
-		$this->_user = SugarTestUserUtilities::createAnonymousUser();
-		$current_user = $this->_user;
+        $this->_user = SugarTestUserUtilities::createAnonymousUser();
+        $current_user = $this->_user;
         OutboundEmailConfigurationTestHelper::setUp();
-	}
+    }
 
     protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         //unset($GLOBALS['current_user']);
         $GLOBALS['db']->query("DELETE FROM outbound_email WHERE user_id= '{$this->_user->id}'");
-        if ($this->ob != null)
+        if ($this->ob != null) {
             $GLOBALS['db']->query("DELETE FROM outbound_email WHERE id= '{$this->ob->id}'");
-        if ($this->userOverideAccont != null)
+        }
+        if ($this->userOverideAccont != null) {
             $GLOBALS['db']->query("DELETE FROM outbound_email WHERE id= '{$this->userOverideAccont->id}'");
+        }
         OutboundEmailConfigurationTestHelper::tearDown();
     }
 
@@ -54,7 +56,7 @@ class Bug23140Test extends TestCase
         $userID = create_guid();
         $ob = new OutboundEmail();
         $ob->id = $userID;
-        $ob->new_with_id = TRUE;
+        $ob->new_with_id = true;
         $ob->name = 'Sugar Test 2';
         $ob->type = 'system-override';
         $ob->user_id = $this->_user->id;
@@ -65,7 +67,7 @@ class Bug23140Test extends TestCase
         $this->ob = $ob;
 
         $system = $ob->getSystemMailerSettings();
-        $system->new_with_id = FALSE;
+        $system->new_with_id = false;
         $system->mail_smtpport = $newSystemPort;
         $system->mail_smtpserver = $newSystemServer;
         $system->saveSystem();
@@ -139,14 +141,14 @@ class Bug23140Test extends TestCase
 
         //System does not require auth, no user overide account.
         $system->mail_smtpauth_req = 0;
-        $system->save(FALSE);
+        $system->save(false);
 
         $notRequired = $oe->doesUserOverrideAccountRequireCredentials($this->_user->id);
         $this->assertFalse($notRequired, "Test failed for determining if user auth required.");
 
         //System does require auth, no user overide account.
         $system->mail_smtpauth_req = 1;
-        $system->save(FALSE);
+        $system->save(false);
         $notRequired = $oe->doesUserOverrideAccountRequireCredentials($this->_user->id);
         $this->assertTrue($notRequired, "Test failed for determining if user auth required.");
 
@@ -166,7 +168,7 @@ class Bug23140Test extends TestCase
         //User has provided all credentials.
         $this->userOverideAccont->mail_smtpuser = "TEST USER NAME";
         $this->userOverideAccont->mail_smtppass = "TEST PASSWORD";
-        $this->userOverideAccont->new_with_id = FALSE;
+        $this->userOverideAccont->new_with_id = false;
         $this->userOverideAccont->save();
         $notRequired = $oe->doesUserOverrideAccountRequireCredentials($this->_user->id);
         $this->assertFalse($notRequired, "Test failed for determining if user auth required.");

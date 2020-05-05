@@ -32,7 +32,7 @@ class RS64Test extends TestCase
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-        $user = SugarTestHelper::setUp('current_user', array(true, true));
+        $user = SugarTestHelper::setUp('current_user', [true, true]);
 
         $this->account = SugarTestAccountUtilities::createAccount();
         $this->account->load_relationship('contacts');
@@ -69,13 +69,13 @@ class RS64Test extends TestCase
         $service = SugarTestRestUtilities::getRestServiceMock();
 
         $api = new ModulePortalApi();
-        $data = $api->createRecord($service, array(
+        $data = $api->createRecord($service, [
                 'module' => 'Bugs',
                 'name' => 'Test Bug',
                 'assigned_user_id' => 1,
                 'team_id' => 2,
                 'team_set_id' => 2,
-            ));
+            ]);
         $this->assertArrayHasKey('id', $data);
 
         $this->bug = BeanFactory::getBean('Bugs', $data['id']);

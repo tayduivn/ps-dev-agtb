@@ -10,30 +10,30 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$viewdefs['Bugs']['listview'] = array(
-	'BUG_NUMBER' => array(
-		'width' => '5',
-		//'label' => 'LBL_LIST_NUMBER',
-		'label' => 'LBL_BUG_NUMBER',
+$viewdefs['Bugs']['listview'] = [
+    'BUG_NUMBER' => [
+        'width' => '5',
+        //'label' => 'LBL_LIST_NUMBER',
+        'label' => 'LBL_BUG_NUMBER',
         'link' => true,
-        'default' => true),
-	'NAME' => array(
-		'width' => '30',
-		'label' => 'LBL_LIST_SUBJECT',
-		'default' => true,
-        'link' => true),
-	'STATUS' => array(
-		'width' => '10',
-		'label' => 'LBL_LIST_STATUS',
-        'default' => true),
-    'TYPE' => array(
+        'default' => true],
+    'NAME' => [
+        'width' => '30',
+        'label' => 'LBL_LIST_SUBJECT',
+        'default' => true,
+        'link' => true],
+    'STATUS' => [
+        'width' => '10',
+        'label' => 'LBL_LIST_STATUS',
+        'default' => true],
+    'TYPE' => [
         'width' => '10',
         'label' => 'LBL_LIST_TYPE',
-        'default' => true),
-    'PRIORITY' => array(
+        'default' => true],
+    'PRIORITY' => [
         'width' => '10',
         'label' => 'LBL_LIST_PRIORITY',
-        'default' => false),
+        'default' => false],
 /*
     'RELEASE_NAME' => array(
         'width' => '10',
@@ -50,9 +50,8 @@ $viewdefs['Bugs']['listview'] = array(
         'module' => 'Releases',
         'id' => 'FIXED_IN_RELEASE',),
 */
-        'RESOLUTION' => array(
+        'RESOLUTION' => [
         'width' => '10',
         'label' => 'LBL_LIST_RESOLUTION',
-        'default' => false),
-);
-?>
+        'default' => false],
+];

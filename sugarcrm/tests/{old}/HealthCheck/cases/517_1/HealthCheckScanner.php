@@ -13,15 +13,15 @@
 
 class S_517_1_PackageManager extends PackageManager
 {
-    function getinstalledPackages($types = array('module', 'langpack'))
+    function getinstalledPackages($types = ['module', 'langpack'])
     {
-        return array(
-            array(
+        return [
+            [
                 'enabled' => 'DISABLED',
                 'name' => 'Zendesk',
                 'version' => '2.7',
-            ),
-        );
+            ],
+        ];
     }
 }
 

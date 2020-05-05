@@ -59,13 +59,13 @@ class SugarFieldDatetimeTest extends TestCase
 
     public function unformatDataProvider()
     {
-        return array(
-            array('Europe/Helsinki', '2013-08-05T08:15:30+02:00', '2013-08-05 06:15:30'),
-            array('America/Boise', '2013-08-05T08:15:30-07:00', '2013-08-05 15:15:30'),
-            array('America/New_York','2013-08-05T08:15:30','2013-08-05 12:15:30'),
-            array('Europe/Minsk','2013-08-05T08:15:30+03:00','2013-08-05 05:15:30'),
-            array('Antarctica/Vostok','2013-08-05T08:15:30','2013-08-05 02:15:30'),
-        );
+        return [
+            ['Europe/Helsinki', '2013-08-05T08:15:30+02:00', '2013-08-05 06:15:30'],
+            ['America/Boise', '2013-08-05T08:15:30-07:00', '2013-08-05 15:15:30'],
+            ['America/New_York','2013-08-05T08:15:30','2013-08-05 12:15:30'],
+            ['Europe/Minsk','2013-08-05T08:15:30+03:00','2013-08-05 05:15:30'],
+            ['Antarctica/Vostok','2013-08-05T08:15:30','2013-08-05 02:15:30'],
+        ];
     }
 
     /**
@@ -83,13 +83,13 @@ class SugarFieldDatetimeTest extends TestCase
 
     public function fixForFilterDataProvider()
     {
-        return array(
-            array('2013-08-29', '$equals', array('2013-08-29T00:00:00', '2013-08-29T23:59:59')),
-            array('2013-08-29', '$lt', '2013-08-28T23:59:59'),
-            array('2013-08-29', '$gt', '2013-08-30T00:00:00'),
-            array(array('2013-08-19', '2013-08-29'), '$between', array('2013-08-19T00:00:00', '2013-08-29T23:59:59')),
-            array('2013-08-29', '$daterange', '2013-08-29'),
-        );
+        return [
+            ['2013-08-29', '$equals', ['2013-08-29T00:00:00', '2013-08-29T23:59:59']],
+            ['2013-08-29', '$lt', '2013-08-28T23:59:59'],
+            ['2013-08-29', '$gt', '2013-08-30T00:00:00'],
+            [['2013-08-19', '2013-08-29'], '$between', ['2013-08-19T00:00:00', '2013-08-29T23:59:59']],
+            ['2013-08-29', '$daterange', '2013-08-29'],
+        ];
     }
 
     /**
@@ -106,10 +106,10 @@ class SugarFieldDatetimeTest extends TestCase
 
     public function providerApiSaveDateTest()
     {
-        return array(
-            array('2014-05-16T13:01:00Z'),
-            array('2014-05-16')
-        );
+        return [
+            ['2014-05-16T13:01:00Z'],
+            ['2014-05-16'],
+        ];
     }
 
     /**
@@ -118,16 +118,16 @@ class SugarFieldDatetimeTest extends TestCase
     public function testApiSaveDateTest($date)
     {
         /* @var $bean SugarBean */
-        $bean = $this->createPartialMock('Opportunity', array('save'));
+        $bean = $this->createPartialMock('Opportunity', ['save']);
 
-        $params = array(
-            'test_c' => $date
-        );
+        $params = [
+            'test_c' => $date,
+        ];
 
         /* @var $field SugarFieldDatetime */
         $field = SugarFieldHandler::getSugarField('datetime');
 
-        $field->apiSave($bean, $params, 'test_c', array('type' => 'date'));
+        $field->apiSave($bean, $params, 'test_c', ['type' => 'date']);
 
         $this->assertEquals('2014-05-16', $bean->test_c);
     }

@@ -17,8 +17,8 @@ class RestBug56791Test extends TestCase
     public function testEmptyQueryReturn()
     {
         $api = new RestService();
-        $args = array('q' => '', 'moduleList' => 'Accounts');
-        $options = array();
+        $args = ['q' => '', 'moduleList' => 'Accounts'];
+        $options = [];
 
         $usm = new UnifiedSearchApiMock();
         $result = $usm->determineSugarSearchEngine($api, $args, $options);
@@ -26,8 +26,10 @@ class RestBug56791Test extends TestCase
     }
 }
 
-class UnifiedSearchApiMock extends UnifiedSearchApi {
-    function determineSugarSearchEngine(ServiceBase $api, array $args, array $options) {
+class UnifiedSearchApiMock extends UnifiedSearchApi
+{
+    function determineSugarSearchEngine(ServiceBase $api, array $args, array $options)
+    {
         return parent::determineSugarSearchEngine($api, $args, $options);
     }
 }

@@ -18,7 +18,7 @@ use PHPUnit\Framework\TestCase;
  */
 class ConfigModuleApiTest extends TestCase
 {
-    protected $createdBeans = array();
+    protected $createdBeans = [];
 
     protected function setUp() : void
     {
@@ -43,7 +43,8 @@ class ConfigModuleApiTest extends TestCase
      * @group api
      * @covers ::configSave
      */
-    public function testCreateConfig() {
+    public function testCreateConfig()
+    {
         // Get the real data that is in the system, not the partial data we have saved
 
         $api = new RestService();
@@ -51,10 +52,10 @@ class ConfigModuleApiTest extends TestCase
         $api->user = $GLOBALS['current_user'];
 
 
-        $args = array(
+        $args = [
             "module" => "Contacts",
             "testSetting" => "My voice is my passport, verify me",
-        );
+        ];
         $apiClass = new ConfigModuleApi();
         $result = $apiClass->configSave($api, $args);
         $this->assertArrayHasKey("testSetting", $result);
@@ -74,7 +75,8 @@ class ConfigModuleApiTest extends TestCase
      * @group api
      * @covers ::config
      */
-    public function testReadConfig() {
+    public function testReadConfig()
+    {
         /* @var $admin Administration */
         $admin = BeanFactory::newBean('Administration');
         $admin->saveSetting('Contacts', 'testSetting', 'My voice is my passport, verify me', 'base');
@@ -83,9 +85,9 @@ class ConfigModuleApiTest extends TestCase
         //Fake the security
         $api->user = $GLOBALS['current_user'];
 
-        $args = array(
+        $args = [
             "module" => "Contacts",
-        );
+        ];
         $apiClass = new ConfigModuleApi();
         $result = $apiClass->config($api, $args);
         $this->assertArrayHasKey("testSetting", $result);
@@ -97,7 +99,8 @@ class ConfigModuleApiTest extends TestCase
      * @group api
      * @covers ::configSave
      */
-    public function testUpdateConfig() {
+    public function testUpdateConfig()
+    {
         $testSetting = 'My voice is my passport, verify me';
         /* @var $admin Administration */
         $admin = BeanFactory::newBean('Administration');
@@ -107,10 +110,10 @@ class ConfigModuleApiTest extends TestCase
         //Fake the security
         $api->user = $GLOBALS['current_user'];
 
-        $args = array(
+        $args = [
             "module" => "Contacts",
             "testSetting" => strrev($testSetting),
-        );
+        ];
         $apiClass = new ConfigModuleApi();
         $result = $apiClass->configSave($api, $args);
         $this->assertArrayHasKey("testSetting", $result);
@@ -129,7 +132,8 @@ class ConfigModuleApiTest extends TestCase
      * @group api
      * @covers ::configSave
      */
-    public function testCreateBadCredentialsConfig() {
+    public function testCreateBadCredentialsConfig()
+    {
         $GLOBALS['current_user']->is_admin = 0;
 
         $api = new RestService();
@@ -137,10 +141,10 @@ class ConfigModuleApiTest extends TestCase
         $api->user = $GLOBALS['current_user'];
 
 
-        $args = array(
+        $args = [
             "module" => "Contacts",
             "testSetting" => "My voice is my passport, verify me",
-        );
+        ];
         $apiClass = new ConfigModuleApi();
         $this->expectException(SugarApiExceptionNotAuthorized::class);
         $apiClass->configSave($api, $args);
@@ -174,10 +178,10 @@ class ConfigModuleApiTest extends TestCase
      */
     private function assertConfigUpdated(ConfigModuleApi $apiClass, ServiceBase $api, Administration $admin, $value)
     {
-        $args = array(
+        $args = [
             'module' => 'Contacts',
             'testSetting' => $value,
-        );
+        ];
 
         $result = $apiClass->configSave($api, $args);
         $this->assertArrayHasKey('testSetting', $result);
@@ -198,30 +202,30 @@ class ConfigModuleApiTest extends TestCase
     {
         $apiClass = new ConfigModuleApi();
 
-        $actual = SugarTestReflection::callProtectedMethod($apiClass, 'getPlatform', array($platform));
+        $actual = SugarTestReflection::callProtectedMethod($apiClass, 'getPlatform', [$platform]);
 
         $this->assertEquals($expected, $actual);
     }
 
     public static function dataProviderGetPlatform()
     {
-        return array(
-            array(
+        return [
+            [
                 'base',
                 'base',
-            ),
-            array(
+            ],
+            [
                 'mobile',
                 'mobile',
-            ),
-            array(
+            ],
+            [
                 'portal',
                 'portal',
-            ),
-            array(
+            ],
+            [
                 'my_test_platform',
                 'base',
-            ),
-        );
+            ],
+        ];
     }
 }

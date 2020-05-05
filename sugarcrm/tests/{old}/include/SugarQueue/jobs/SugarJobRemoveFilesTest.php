@@ -25,7 +25,7 @@ class SugarJobRemoveFilesTest extends TestCase
         $staleFile = $dir . '/stale-file.txt';
 
         SugarTestHelper::setUp('files');
-        SugarTestHelper::saveFile(array($freshFile, $staleFile));
+        SugarTestHelper::saveFile([$freshFile, $staleFile]);
 
         SugarTestHelper::ensureDir($dir);
         touch($freshFile);

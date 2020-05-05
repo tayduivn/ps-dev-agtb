@@ -25,8 +25,8 @@ class OpportunitySalesStageExpressionTest extends TestCase
     {
         SugarTestHelper::setUp('app_list_strings');
 
-        $GLOBALS['app_list_strings'] = array(
-            'sales_stage_dom' => array (
+        $GLOBALS['app_list_strings'] = [
+            'sales_stage_dom' =>  [
                 'Prospecting' => 'Prospecting',
                 'Qualification' => 'Qualification',
                 'Needs Analysis' => 'Needs Analysis',
@@ -37,111 +37,111 @@ class OpportunitySalesStageExpressionTest extends TestCase
                 'Negotiation/Review' => 'Negotiation/Review',
                 'Closed Won' => 'Closed Won',
                 'Closed Lost' => 'Closed Lost',
-            ),
-        );
+            ],
+        ];
     }
 
     protected function tearDown() : void
     {
-        Forecast::$settings = array();
+        Forecast::$settings = [];
         unset($GLOBALS['app_list_strings']);
         SugarTestHelper::tearDown();
     }
 
     public static function evaluateDataProvider()
     {
-        $noClosed = array(
-            array(
+        $noClosed = [
+            [
                 'sales_stage' => 'Prospecting',
-            ),
-            array(
+            ],
+            [
                 'sales_stage' => 'Proposal/Price Quote',
-            ),
-            array(
+            ],
+            [
                 'sales_stage' => 'Qualification',
-            ),
-        );
+            ],
+        ];
 
-        $oneClosedWon = array(
-            array(
+        $oneClosedWon = [
+            [
                 'sales_stage' => 'Prospecting',
-            ),
-            array(
+            ],
+            [
                 'sales_stage' => 'Closed Won',
-            ),
-            array(
+            ],
+            [
                 'sales_stage' => 'Qualification',
-            ),
-        );
+            ],
+        ];
 
-        $allClosed = array(
-            array(
+        $allClosed = [
+            [
                 'sales_stage' => 'Closed Won',
-            ),
-            array(
+            ],
+            [
                 'sales_stage' => 'Closed Lost',
-            ),
-            array(
+            ],
+            [
                 'sales_stage' => 'Closed Lost',
-            ),
-        );
+            ],
+        ];
 
-        $allCustomClosed = array(
-            array(
+        $allCustomClosed = [
+            [
                 'sales_stage' => 'Closed Test Won',
-            ),
-            array(
+            ],
+            [
                 'sales_stage' => 'Closed Lost',
-            ),
-            array(
+            ],
+            [
                 'sales_stage' => 'Closed Lost',
-            ),
-        );
+            ],
+        ];
 
-        $allClosedLost = array(
-            array(
+        $allClosedLost = [
+            [
                 'sales_stage' => 'Closed Lost',
-            ),
-            array(
+            ],
+            [
                 'sales_stage' => 'Closed Lost',
-            ),
-            array(
+            ],
+            [
                 'sales_stage' => 'Closed Lost',
-            ),
-        );
+            ],
+        ];
 
-        $oneRLI = array(
-            array(
+        $oneRLI = [
+            [
                 'sales_stage' => 'Prospecting',
-            ),
-        );
+            ],
+        ];
 
-        return array(
-            array(
+        return [
+            [
                 'Proposal/Price Quote',
                 $noClosed,
-            ),
-            array(
+            ],
+            [
                 'Qualification',
                 $oneClosedWon,
-            ),
-            array(
+            ],
+            [
                 'Closed Lost',
                 $allClosedLost,
-            ),
-            array(
+            ],
+            [
                 'Closed Test Won',
                 $allClosed,
-            ),
-            array(
+            ],
+            [
                 'Closed Test Won',
                 $allCustomClosed,
-            ),
-            array(
+            ],
+            [
                 'Prospecting',
                 $oneRLI,
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -154,29 +154,29 @@ class OpportunitySalesStageExpressionTest extends TestCase
      */
     public function testEvaluate($expected, $beanData)
     {
-        Forecast::$settings = array(
+        Forecast::$settings = [
             'is_setup' => 1,
             'sales_stage_won' => ['Closed Test Won', 'Closed Won'],
             'sales_stage_lost' => ['Closed Lost'],
-        );
+        ];
 
         $opp = $this->getMockBuilder('Opportunity')
-            ->setMethods(array('save', 'load_relationship'))
+            ->setMethods(['save', 'load_relationship'])
             ->getMock();
 
 
         $link2 = $this->getMockBuilder('Link2')
             ->disableOriginalConstructor()
-            ->setMethods(array('getBeans'))
+            ->setMethods(['getBeans'])
             ->getMock();
 
         $opp->revenuelineitems = $link2;
 
-        $rlis = array();
+        $rlis = [];
         // lets create 3 rlis which with 10 * the index, which will give us the total of 60
         for ($x = 0; $x < count($beanData); $x++) {
             $rli = $this->getMockBuilder('RevenueLineItem')
-                ->setMethods(array('save'))
+                ->setMethods(['save'])
                 ->getMock();
 
             $rli->sales_stage = $beanData[$x]['sales_stage'];

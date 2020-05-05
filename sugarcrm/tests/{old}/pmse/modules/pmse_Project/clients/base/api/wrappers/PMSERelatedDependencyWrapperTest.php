@@ -20,7 +20,7 @@ class PMSERelatedDependencyWrapperTest extends TestCase
     protected $relatedModuleMock;
 
     /**
-     * Sets up the test data, for example, 
+     * Sets up the test data, for example,
      *     opens a network connection.
      * This method is called before a test is executed.
      */
@@ -28,12 +28,12 @@ class PMSERelatedDependencyWrapperTest extends TestCase
     {
         $this->loggerMock = $this->getMockBuilder('PMSELogger')
                 ->disableOriginalConstructor()
-                ->setMethods(array('info', 'debug', 'warning', 'error'))
+                ->setMethods(['info', 'debug', 'warning', 'error'])
                 ->getMock();
 
         $this->relatedModuleMock = $this->getMockBuilder('PMSERelatedModule')
             ->disableOriginalConstructor()
-            ->setMethods(array('getRelatedModuleName'))
+            ->setMethods(['getRelatedModuleName'])
             ->getMock();
     }
 
@@ -42,12 +42,12 @@ class PMSERelatedDependencyWrapperTest extends TestCase
         $relatedDepWrapperMock = $this->getMockBuilder('PMSERelatedDependencyWrapper')
                 ->disableOriginalConstructor()
                 ->setMethods(
-                        array(
-                            'processEventCriteria', 
-                            'removeRelatedDependencies', 
-                            'createRelatedDependencies'
-                        )
-                    )
+                    [
+                            'processEventCriteria',
+                            'removeRelatedDependencies',
+                            'createRelatedDependencies',
+                        ]
+                )
                 ->getMock();
 
         $this->loggerMock->expects($this->once())
@@ -66,7 +66,7 @@ class PMSERelatedDependencyWrapperTest extends TestCase
         $relatedDepWrapperMock->setLogger($this->loggerMock);
         $relatedDepWrapperMock->setRelatedModule($this->relatedModuleMock);
 
-        $eventData = array('evn_criteria' => 'Some Criteria');
+        $eventData = ['evn_criteria' => 'Some Criteria'];
 
         $relatedDepWrapperMock->processRelatedDependencies($eventData);
     }
@@ -76,19 +76,19 @@ class PMSERelatedDependencyWrapperTest extends TestCase
         $relatedDepWrapperMock = $this->getMockBuilder('PMSERelatedDependencyWrapper')
                 ->disableOriginalConstructor()
                 ->setMethods(
-                        array(
+                    [
                             'removeRelatedDependencies',
                             'createRelatedDependencies',
                             'getBean',
-                            'getRelatedElementModule'
-                        )
-                    )
+                            'getRelatedElementModule',
+                        ]
+                )
                 ->getMock();
         
         $processDefinitionMock = $this->getMockBuilder('psme_BpmProcessDefinition')
                 ->disableAutoload()
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve_by_string_fields'))
+                ->setMethods(['retrieve_by_string_fields'])
                 ->getMock();
         
         $processDefinitionMock->pro_module = "Leads";
@@ -107,18 +107,17 @@ class PMSERelatedDependencyWrapperTest extends TestCase
 
         $eventCriteria = '[]';
 
-        $eventData = array(
+        $eventData = [
             'id' => 'event01',
             'evn_behavior' => 'CATCH',
             'pro_id' => 'pro01',
             'evn_type' => 'START_EVENT',
             'rel_element_module' => 'Notes',
-        );
+        ];
         $relatedDepWrapperMock->setLogger($this->loggerMock);
         $relatedDepWrapperMock->setRelatedModule($this->relatedModuleMock);
 
         $result = $relatedDepWrapperMock->processEventCriteria($eventCriteria, $eventData);
-        
     }
     
     public function testProcessEventCriteriaEmpty()
@@ -126,18 +125,18 @@ class PMSERelatedDependencyWrapperTest extends TestCase
         $relatedDepWrapperMock = $this->getMockBuilder('PMSERelatedDependencyWrapper')
                 ->disableOriginalConstructor()
                 ->setMethods(
-                        array(
+                    [
                             'removeRelatedDependencies',
                             'createRelatedDependencies',
                             'getBean',
-                            'getRelatedElementModule'
-                        )
-                    )
+                            'getRelatedElementModule',
+                        ]
+                )
                 ->getMock();
         
         $processDefinitionMock = $this->getMockBuilder('pmse_BpmProcessDefinition')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve_by_string_fields'))
+                ->setMethods(['retrieve_by_string_fields'])
                 ->getMock();
         
         $processDefinitionMock->pro_module = "Leads";
@@ -165,19 +164,18 @@ class PMSERelatedDependencyWrapperTest extends TestCase
                 . '}'
             . ']';
 
-        $eventData = array(
+        $eventData = [
             'id' => 'event01',
             'evn_behavior' => 'CATCH',
             'pro_id' => 'pro01',
             'evn_type' => 'START_EVENT',
             'rel_element_module' => 'Notes',
-        );
+        ];
         
         $relatedDepWrapperMock->setLogger($this->loggerMock);
         $relatedDepWrapperMock->setRelatedModule($this->relatedModuleMock);
 
         $result = $relatedDepWrapperMock->processEventCriteria($eventCriteria, $eventData);
-        
     }
 
     public function testProcessEventCriteriaThrowEvent()
@@ -185,13 +183,13 @@ class PMSERelatedDependencyWrapperTest extends TestCase
         $relatedDepWrapperMock = $this->getMockBuilder('PMSERelatedDependencyWrapper')
                 ->disableOriginalConstructor()
                 ->setMethods(
-                        array(
+                    [
                             'removeRelatedDependencies',
                             'createRelatedDependencies',
                             'getBean',
-                            'getRelatedElementModule'
-                        )
-                    )
+                            'getRelatedElementModule',
+                        ]
+                )
                 ->getMock();
         
         $this->loggerMock->expects($this->once())
@@ -210,13 +208,13 @@ class PMSERelatedDependencyWrapperTest extends TestCase
                 . '}'
             . ']';
 
-        $eventData = array(
+        $eventData = [
             'id' => 'event01',
             'evn_behavior' => 'TRHOW',
             'pro_id' => 'pro01',
             'evn_type' => 'START_EVENT',
             'rel_element_module' => 'Notes',
-        );
+        ];
 
         $relatedDepWrapperMock->setLogger($this->loggerMock);
         $relatedDepWrapperMock->setRelatedModule($this->relatedModuleMock);
@@ -230,12 +228,12 @@ class PMSERelatedDependencyWrapperTest extends TestCase
         $relatedDepWrapperMock = $this->getMockBuilder('PMSERelatedDependencyWrapper')
             ->disableOriginalConstructor()
             ->setMethods(
-                    array(
+                [
                         'removeRelatedDependencies',
                         'createRelatedDependencies',
-                        'getBean'
-                    )
-                )
+                        'getBean',
+                    ]
+            )
             ->getMock();
         
         $this->loggerMock->expects($this->once())
@@ -256,12 +254,12 @@ class PMSERelatedDependencyWrapperTest extends TestCase
         $relatedDepWrapperMock = $this->getMockBuilder('PMSERelatedDependencyWrapper')
             ->disableOriginalConstructor()
             ->setMethods(
-                    array(
+                [
                         'removeRelatedDependencies',
                         'createRelatedDependencies',
-                        'getBean'
-                    )
-                )
+                        'getBean',
+                    ]
+            )
             ->getMock();
         
         $this->loggerMock->expects($this->once())
@@ -271,7 +269,7 @@ class PMSERelatedDependencyWrapperTest extends TestCase
 
         $relationshipMock = $this->getMockBuilder('Relationship')
                 ->disableOriginalConstructor()
-                ->setMethods(array('get_other_module'))
+                ->setMethods(['get_other_module'])
                 ->getMock();
         $relationshipMock->db = new stdClass();
 
@@ -293,11 +291,11 @@ class PMSERelatedDependencyWrapperTest extends TestCase
         $relatedDepWrapperMock = $this->getMockBuilder('PMSERelatedDependencyWrapper')
             ->disableOriginalConstructor()
             ->setMethods(
-                    array(
+                [
                         'getRelatedDependency',
-                        'getBean'
-                    )
-                )
+                        'getBean',
+                    ]
+            )
             ->getMock();
         
         $this->loggerMock->expects($this->once())
@@ -305,13 +303,13 @@ class PMSERelatedDependencyWrapperTest extends TestCase
         
         $relatedDependencyMock = $this->getMockBuilder('Relationship')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve_by_string_fields'))
+                ->setMethods(['retrieve_by_string_fields'])
                 ->getMock();
         $relatedDependencyMock->db = new stdClass();
 
         $elementMock = $this->getMockBuilder('SugarBean')
                 ->disableOriginalConstructor()
-                ->setMethods(array('save'))
+                ->setMethods(['save'])
                 ->getMock();
         $elementMock->deleted = 0;
         
@@ -334,7 +332,7 @@ class PMSERelatedDependencyWrapperTest extends TestCase
         
         $relatedDepWrapperMock->setLogger($this->loggerMock);
 
-        $eventData = array('id' => 'event01', 'pro_id' => 'pro01');
+        $eventData = ['id' => 'event01', 'pro_id' => 'pro01'];
         $relatedDepWrapperMock->removeRelatedDependencies($eventData);
     }
     
@@ -343,11 +341,11 @@ class PMSERelatedDependencyWrapperTest extends TestCase
         $relatedDepWrapperMock = $this->getMockBuilder('PMSERelatedDependencyWrapper')
             ->disableOriginalConstructor()
             ->setMethods(
-                    array(
+                [
                         'getRelatedDependency',
-                        'getBean'
-                    )
-                )
+                        'getBean',
+                    ]
+            )
             ->getMock();
         
         $this->loggerMock->expects($this->once())
@@ -355,7 +353,7 @@ class PMSERelatedDependencyWrapperTest extends TestCase
         
         $relatedDependencyMock = $this->getMockBuilder('Relationship')
                 ->disableOriginalConstructor()
-                ->setMethods(array('save'))
+                ->setMethods(['save'])
                 ->getMock();
 
         $relatedDependencyMock->expects($this->atLeastOnce())
@@ -367,16 +365,16 @@ class PMSERelatedDependencyWrapperTest extends TestCase
         
         $relatedDepWrapperMock->setLogger($this->loggerMock);
 
-        $resultData = array(
-            array(
-                'id' => 'event01', 
-                'pro_id' => 'pro01'
-            ),
-            array(
-                'id' => 'event02', 
-                'pro_id' => 'pro02'
-            )
-        );
+        $resultData = [
+            [
+                'id' => 'event01',
+                'pro_id' => 'pro01',
+            ],
+            [
+                'id' => 'event02',
+                'pro_id' => 'pro02',
+            ],
+        ];
         $relatedDepWrapperMock->createRelatedDependencies($resultData);
     }
 }

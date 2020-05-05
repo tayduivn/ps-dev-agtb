@@ -105,7 +105,7 @@ class Bug55923Test extends TestCase
         $this->db->query("delete from workflow_actions where id = '$this->workFlowActionId'");
         LogicHook::refreshHooks();
 
-        $_REQUEST = array();
+        $_REQUEST = [];
         SugarTestHelper::tearDown();
     }
 

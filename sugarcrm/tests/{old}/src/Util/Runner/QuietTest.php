@@ -25,7 +25,7 @@ use Sugarcrm\Sugarcrm\Util\Uuid;
 class QuietTest extends TestCase
 {
     /** @var \SugarBean[] */
-    protected $listOfBeans = array();
+    protected $listOfBeans = [];
 
     /** @var RunnerQuiet|\MockObject */
     protected $quietRunner = null;
@@ -40,7 +40,7 @@ class QuietTest extends TestCase
     {
         $this->runnable = $this->createPartialMock(
             'Sugarcrm\Sugarcrm\Util\Runner\RunnableInterface',
-            array('getBeans', 'execute')
+            ['getBeans', 'execute']
         );
         $this->quietRunner = new RunnerQuiet($this->runnable);
 
@@ -68,9 +68,9 @@ class QuietTest extends TestCase
         $this->runnable->expects($this->exactly(count($this->listOfBeans)))
             ->method('execute')
             ->withConsecutive(
-                array($this->listOfBeans[0]),
-                array($this->listOfBeans[1]),
-                array($this->listOfBeans[2])
+                [$this->listOfBeans[0]],
+                [$this->listOfBeans[1]],
+                [$this->listOfBeans[2]]
             );
 
         $this->quietRunner->run();

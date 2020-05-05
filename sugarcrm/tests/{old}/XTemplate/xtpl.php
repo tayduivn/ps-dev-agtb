@@ -34,7 +34,7 @@ class XTemplateTest extends TestCase
 
     protected function tearDown() : void
     {
-        foreach ($this->files as $file ) {
+        foreach ($this->files as $file) {
             @unlink($file);
         }
     }

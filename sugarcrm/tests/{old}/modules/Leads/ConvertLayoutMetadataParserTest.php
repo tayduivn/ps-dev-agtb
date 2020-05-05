@@ -19,18 +19,18 @@ use PHPUnit\Framework\TestCase;
 class ConvertLayoutMetadataParserTest extends TestCase
 {
     protected $parser;
-    protected $contactDef = array(
+    protected $contactDef = [
         'module' => 'Contacts',
         'required' => true,
         'copyData' => true,
         'duplicateCheckOnStart' => true,
-    );
-    protected $accountDef = array(
+    ];
+    protected $accountDef = [
         'module' => 'Accounts',
         'required' => true,
         'copyData' => true,
         'duplicateCheckOnStart' => true,
-    );
+    ];
 
     protected $customFile = null;
 
@@ -41,12 +41,12 @@ class ConvertLayoutMetadataParserTest extends TestCase
     protected function setUp() : void
     {
         $this->parser = new TestConvertLayoutMetadataParser('Contacts');
-        $this->parser->setConvertDefs(array(
-                'modules' => array(
+        $this->parser->setConvertDefs([
+                'modules' => [
                     $this->contactDef,
                     $this->accountDef,
-                )
-            ));
+                ],
+            ]);
         // custom def
         $this->customModule = 'TestModule';
         $this->customDef = [
@@ -79,24 +79,24 @@ class ConvertLayoutMetadataParserTest extends TestCase
      */
     public function testUpdateConvertDef_WithExistingDef_UpdatesDef()
     {
-        $this->parser->updateConvertDef(array(
+        $this->parser->updateConvertDef([
                 $this->contactDef,
-                array(
+                [
                     'module' => 'Accounts',
                     'required' => false,
                     'copyData' => false,
-                ),
-            ));
+                ],
+            ]);
 
         $expectedAccountDef = $this->accountDef;
         $expectedAccountDef['required'] = false;
         $expectedAccountDef['copyData'] = false;
-        $expectedModules = array(
-            'modules' => array(
+        $expectedModules = [
+            'modules' => [
                 $this->contactDef,
-                $expectedAccountDef
-            )
-        );
+                $expectedAccountDef,
+            ],
+        ];
 
         $this->assertEquals($expectedModules, $this->parser->getConvertDefs(), 'Account def should be updated');
     }
@@ -106,25 +106,25 @@ class ConvertLayoutMetadataParserTest extends TestCase
      */
     public function testUpdateConvertDef_WithNewDef_AddsDef()
     {
-        $fooDef = array(
+        $fooDef = [
             'module' => 'Foo',
             'required' => false,
             'copyData' => false,
-        );
+        ];
 
-        $this->parser->updateConvertDef(array(
+        $this->parser->updateConvertDef([
                 $this->contactDef,
                 $this->accountDef,
                 $fooDef,
-            ));
+            ]);
 
-        $expectedModules = array(
-            'modules' => array(
+        $expectedModules = [
+            'modules' => [
                 $this->contactDef,
                 $this->accountDef,
                 $fooDef,
-            )
-        );
+            ],
+        ];
 
         $this->assertEquals($expectedModules, $this->parser->getConvertDefs(), 'Foo def should be added');
     }
@@ -134,28 +134,28 @@ class ConvertLayoutMetadataParserTest extends TestCase
      */
     public function testUpdateConvertDef_WithAccountAndOpp_ForcesAccountRequired()
     {
-        $oppDef = array(
+        $oppDef = [
             'module' => 'Opportunities',
             'required' => true,
-        );
-        $this->parser->updateConvertDef(array(
+        ];
+        $this->parser->updateConvertDef([
                 $this->contactDef,
-                array(
+                [
                     'module' => 'Accounts',
                     'required' => false,
-                ),
+                ],
                 $oppDef,
-            ));
+            ]);
 
         $expectedAccountDef = $this->accountDef;
         $expectedAccountDef['required'] = true; //force required
-        $expectedModules = array(
-            'modules' => array(
+        $expectedModules = [
+            'modules' => [
                 $this->contactDef,
                 $expectedAccountDef,
-                $oppDef
-            )
-        );
+                $oppDef,
+            ],
+        ];
 
         $this->assertEquals($expectedModules, $this->parser->getConvertDefs(), 'Account def should be forced to required');
     }
@@ -165,13 +165,13 @@ class ConvertLayoutMetadataParserTest extends TestCase
      */
     public function testApplyDependenciesAndHiddenFields_DependenciesApply_AddedToDef()
     {
-        $dependency = array('Bar' => array());
+        $dependency = ['Bar' => []];
         $this->parser->mockOriginalDef['dependentModules'] = $dependency;
-        $def = array(
+        $def = [
             'module' => 'Foo',
             'required' => true,
-        );
-        $includedModules = array('Foo', 'Bar');
+        ];
+        $includedModules = ['Foo', 'Bar'];
         $resultDef = $this->parser->applyDependenciesAndHiddenFields($def, $includedModules);
         $this->assertEquals($dependency, $resultDef['dependentModules'], 'Dependency should be set');
     }
@@ -181,13 +181,13 @@ class ConvertLayoutMetadataParserTest extends TestCase
      */
     public function testApplyDependenciesAndHiddenFields_DependencyDoesNotApply_NotAddedToDef()
     {
-        $dependency = array('Bar' => array());
+        $dependency = ['Bar' => []];
         $this->parser->mockOriginalDef['dependentModules'] = $dependency;
-        $def = array(
+        $def = [
             'module' => 'Foo',
             'required' => true,
-        );
-        $includedModules = array('Foo'); //Bar not included
+        ];
+        $includedModules = ['Foo']; //Bar not included
         $resultDef = $this->parser->applyDependenciesAndHiddenFields($def, $includedModules);
         $this->assertFalse(isset($resultDef['dependentModules']), 'Dependency should not be set');
     }
@@ -197,13 +197,13 @@ class ConvertLayoutMetadataParserTest extends TestCase
      */
     public function testApplyDependenciesAndHiddenFields_HiddenFieldsApply_AddedToDef()
     {
-        $hiddenFields = array('baz' => 'Bar');
+        $hiddenFields = ['baz' => 'Bar'];
         $this->parser->mockOriginalDef['hiddenFields'] = $hiddenFields;
-        $def = array(
+        $def = [
             'module' => 'Foo',
             'required' => true,
-        );
-        $includedModules = array('Foo', 'Bar');
+        ];
+        $includedModules = ['Foo', 'Bar'];
         $resultDef = $this->parser->applyDependenciesAndHiddenFields($def, $includedModules);
         $this->assertEquals($hiddenFields, $resultDef['hiddenFields'], 'Hidden fields should be set');
     }
@@ -213,18 +213,18 @@ class ConvertLayoutMetadataParserTest extends TestCase
      */
     public function testApplyDependenciesAndHiddenFields_ExcludedFieldsApply_AddedToDef()
     {
-        $hiddenFields = array('baz' => 'Bar');
-        $this->parser->setExcludedFields(array(
-            'Foo' => array(
+        $hiddenFields = ['baz' => 'Bar'];
+        $this->parser->setExcludedFields([
+            'Foo' => [
                 'repeat_type' => 'Bar',
-            )
-        ));
+            ],
+        ]);
         $this->parser->mockOriginalDef['hiddenFields'] = $hiddenFields;
-        $def = array(
+        $def = [
             'module' => 'Foo',
             'required' => true,
-        );
-        $includedModules = array('Foo', 'Bar');
+        ];
+        $includedModules = ['Foo', 'Bar'];
         $resultDef = $this->parser->applyDependenciesAndHiddenFields($def, $includedModules);
         $this->assertArrayHasKey('baz', $resultDef['hiddenFields'], 'Hidden fields should be set');
         $this->assertArrayHasKey('repeat_type', $resultDef['hiddenFields'], 'Hidden fields should be set');
@@ -236,11 +236,11 @@ class ConvertLayoutMetadataParserTest extends TestCase
     public function testRemoveLayout()
     {
         $this->parser->removeLayout('Accounts');
-        $expectedModules = array(
-            'modules' => array(
+        $expectedModules = [
+            'modules' => [
                 $this->contactDef,
-            ),
-        );
+            ],
+        ];
         $this->assertEquals($expectedModules, $this->parser->getConvertDefs(), 'Account def should be removed');
     }
 
@@ -267,12 +267,12 @@ class ConvertLayoutMetadataParserTest extends TestCase
      */
     public function testGetDefForModule_WithConvertDefsPassed_ReturnsCorrectModuleDef()
     {
-        $fooDef = array('module'=>'Foo');
-        $testModules = array(
-            'modules' => array(
+        $fooDef = ['module'=>'Foo'];
+        $testModules = [
+            'modules' => [
                 $fooDef,
-            ),
-        );
+            ],
+        ];
         $actualDef = $this->parser->getDefForModule('Foo', $testModules);
         $this->assertEquals($fooDef, $actualDef, 'Foo def should be returned');
     }
@@ -302,7 +302,7 @@ class ConvertLayoutMetadataParserTest extends TestCase
     {
         $actualDef = $this->parser->getDefaultDefForModule('Bar');
         $defaultSettings = $this->parser->getDefaultModuleDefSettings();
-        $expectedDef = array_merge(array('module' => 'Bar'), $defaultSettings);
+        $expectedDef = array_merge(['module' => 'Bar'], $defaultSettings);
         $this->assertEquals($expectedDef, $actualDef, 'Default settings should be returned');
     }
 
@@ -315,7 +315,7 @@ class ConvertLayoutMetadataParserTest extends TestCase
         $actualDef = $this->parser->getDefaultDefForModule('Bar');
         $defaultSettings = $this->parser->getDefaultModuleDefSettings();
         $defaultSettings['duplicateCheckOnStart'] = true;
-        $expectedDef = array_merge(array('module' => 'Bar'), $defaultSettings);
+        $expectedDef = array_merge(['module' => 'Bar'], $defaultSettings);
         $this->assertEquals($expectedDef, $actualDef, 'Default settings should be returned');
     }
 }
@@ -323,19 +323,19 @@ class ConvertLayoutMetadataParserTest extends TestCase
 class TestConvertLayoutMetadataParser extends ConvertLayoutMetadataParser
 {
     public $saveToFileCallCount = 0;
-    public $mockOriginalDef = array(
+    public $mockOriginalDef = [
         'module' => 'Foo',
         'required' => 'ohyeah',
-    );
+    ];
     public $mockDupeCheckEnabledFlag = false;
 
-    public $mockExcludedFields = array();
+    public $mockExcludedFields = [];
 
     protected function loadViewDefs()
     {
         //defer loading of the view defs for testing
-        $this->_viewdefs = array();
-        $this->_convertdefs = array();
+        $this->_viewdefs = [];
+        $this->_convertdefs = [];
     }
 
     public function deploy()
@@ -366,10 +366,10 @@ class TestConvertLayoutMetadataParser extends ConvertLayoutMetadataParser
 
     public function getOriginalViewDefs()
     {
-        $viewdefs = array();
-        $viewdefs['Leads']['base']['layout']['convert-main'] = array(
-            'modules' => array($this->mockOriginalDef),
-        );
+        $viewdefs = [];
+        $viewdefs['Leads']['base']['layout']['convert-main'] = [
+            'modules' => [$this->mockOriginalDef],
+        ];
         return $viewdefs;
     }
 
@@ -383,7 +383,8 @@ class TestConvertLayoutMetadataParser extends ConvertLayoutMetadataParser
         return $this->mockDupeCheckEnabledFlag;
     }
 
-    public function setExcludedFields($excludedFields) {
+    public function setExcludedFields($excludedFields)
+    {
         $this->excludedFields = $excludedFields;
     }
 }

@@ -19,7 +19,7 @@ class RestMetadataBadRelationshipTest extends RestTestBase
     protected function tearDown() : void
     {
         // delete file
-        foreach($this->files AS $file) {
+        foreach ($this->files as $file) {
             unlink($file);
         }
         // re-run repair and rebuild
@@ -31,7 +31,7 @@ class RestMetadataBadRelationshipTest extends RestTestBase
         // run repair and rebuild
         $_REQUEST['repair_silent']=1;
         $rc = new RepairAndClear();
-        $rc->repairAndClearAll(array("clearAll"), array("Accounts"),  false, false);
+        $rc->repairAndClearAll(["clearAll"], ["Accounts"], false, false);
 
         // switch back to the user
         $GLBOALS['current_user'] = $old_user;
@@ -41,7 +41,8 @@ class RestMetadataBadRelationshipTest extends RestTestBase
     /**
      * @group rest
      */
-    public function testBadRelationship() {
+    public function testBadRelationship()
+    {
         /**
          * For full suite runs immediately after installation (like for CI), the
          * relationship cache will have already been created. The cache needs to
@@ -57,11 +58,11 @@ $dictionary[\'Account\'][\'fields\'][\'notes\'][\'relationship\'] = "accounts_no
 
         $metadata_dir = 'custom/Extension/modules/Accounts/Ext/Vardefs';
         $metadata_file = 'accounts_notes_field.php';
-        if(!is_dir($metadata_dir)) {
+        if (!is_dir($metadata_dir)) {
             mkdir("{$metadata_dir}", 0777, true);
         }
 
-        file_put_contents( $metadata_dir . '/' . $metadata_file, $metadata );
+        file_put_contents($metadata_dir . '/' . $metadata_file, $metadata);
 
         $this->assertTrue(file_exists($metadata_dir . '/' . $metadata_file), "Did not write out the new cache file");
 
@@ -78,7 +79,7 @@ $dictionary[\'Account\'][\'fields\'][\'notes\'][\'relationship\'] = "accounts_no
         // run repair and rebuild
         $_REQUEST['repair_silent']=1;
         $rc = new RepairAndClear();
-        $rc->repairAndClearAll(array("clearAll"), array("Accounts"),  false, false);
+        $rc->repairAndClearAll(["clearAll"], ["Accounts"], false, false);
 
         // switch back to the user
         $GLBOALS['current_user'] = $old_user;
@@ -88,10 +89,10 @@ $dictionary[\'Account\'][\'fields\'][\'notes\'][\'relationship\'] = "accounts_no
         $restReply = $this->_restCall('metadata?type_filter=modules');
 
         // verify no 500 and results for the module
-        $this->assertNotEquals($restReply['info']['http_code'], 500,'HTTP Code is 500');
+        $this->assertNotEquals($restReply['info']['http_code'], 500, 'HTTP Code is 500');
 
-        $this->assertTrue(isset($restReply['reply']['modules']['Accounts']),'Account module is missing. Reply looked like: '.var_export($restReply['replyRaw'],true));
+        $this->assertTrue(isset($restReply['reply']['modules']['Accounts']), 'Account module is missing. Reply looked like: '.var_export($restReply['replyRaw'], true));
 
-        $this->assertEquals($restReply['reply']['modules']['Accounts']['fields']['notes']['relationship'], 'accounts_notes_awesome', 'Did not rewrite relationship to accounts_notes_awesome, it is: ' . $restReply['reply']['modules']['Accounts']['fields']['notes']['relationship'] );
+        $this->assertEquals($restReply['reply']['modules']['Accounts']['fields']['notes']['relationship'], 'accounts_notes_awesome', 'Did not rewrite relationship to accounts_notes_awesome, it is: ' . $restReply['reply']['modules']['Accounts']['fields']['notes']['relationship']);
     }
 }

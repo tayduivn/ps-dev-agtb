@@ -14,14 +14,14 @@ use PHPUnit\Framework\TestCase;
 
 class SugarTestThemeUtilitiesTest extends TestCase
 {
-    private $_before_snapshot = array();
+    private $_before_snapshot = [];
     
     protected function tearDown() : void
     {
         SugarTestThemeUtilities::removeAllCreatedAnonymousThemes();
     }
 
-    public function testCanCreateAnAnonymousTheme() 
+    public function testCanCreateAnAnonymousTheme()
     {
         $themename = SugarTestThemeUtilities::createAnonymousTheme();
 
@@ -29,7 +29,7 @@ class SugarTestThemeUtilitiesTest extends TestCase
         $this->assertTrue(is_file("themes/$themename/themedef.php"));
     }
 
-    public function testCanCreateAnAnonymousCustomTheme() 
+    public function testCanCreateAnAnonymousCustomTheme()
     {
         $themename = SugarTestThemeUtilities::createAnonymousCustomTheme();
 
@@ -43,7 +43,7 @@ class SugarTestThemeUtilitiesTest extends TestCase
         $this->assertTrue(is_file("custom/themes/$themename/themedef.php"));
     }
     
-    public function testCanCreateAnAnonymousChildTheme() 
+    public function testCanCreateAnAnonymousChildTheme()
     {
         $themename = SugarTestThemeUtilities::createAnonymousTheme();
         $childtheme = SugarTestThemeUtilities::createAnonymousChildTheme($themename);
@@ -51,35 +51,37 @@ class SugarTestThemeUtilitiesTest extends TestCase
         $this->assertTrue(is_dir("themes/$childtheme"));
         $this->assertTrue(is_file("themes/$childtheme/themedef.php"));
         
-        $themedef = array();
-        include("themes/$childtheme/themedef.php");
+        $themedef = [];
+        include "themes/$childtheme/themedef.php";
         
-        $this->assertEquals($themedef['parentTheme'],$themename);
+        $this->assertEquals($themedef['parentTheme'], $themename);
     }
     
-    public function testCanCreateAnAnonymousRTLTheme() 
+    public function testCanCreateAnAnonymousRTLTheme()
     {
         $themename = SugarTestThemeUtilities::createAnonymousRTLTheme();
 
         $this->assertTrue(is_dir("themes/$themename"));
         $this->assertTrue(is_file("themes/$themename/themedef.php"));
         
-        $themedef = array();
-        include("themes/$themename/themedef.php");
+        $themedef = [];
+        include "themes/$themename/themedef.php";
         
-        $this->assertEquals($themedef['directionality'],'rtl');
+        $this->assertEquals($themedef['directionality'], 'rtl');
     }
 
-    public function testCanTearDownAllCreatedAnonymousThemes() 
+    public function testCanTearDownAllCreatedAnonymousThemes()
     {
-        $themesCreated = array();
+        $themesCreated = [];
         
-        for ($i = 0; $i < 5; $i++) 
+        for ($i = 0; $i < 5; $i++) {
             $themesCreated[] = SugarTestThemeUtilities::createAnonymousTheme();
+        }
 
         SugarTestThemeUtilities::removeAllCreatedAnonymousThemes();
         
-        foreach ( $themesCreated as $themename )
+        foreach ($themesCreated as $themename) {
             $this->assertFalse(is_dir("themes/$themename"));
+        }
     }
 }

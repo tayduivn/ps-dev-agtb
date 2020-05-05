@@ -20,7 +20,7 @@ class UpgradeCustomTemplateMetaTest extends TestCase
 
     protected function setUp() : void
     {
-        SugarTestMergeUtilities::setupFiles(array('Calls', 'Meetings', 'Notes'), array('editviewdefs'), 'tests/{old}/modules/UpgradeWizard/SugarMerge/metadata_files');
+        SugarTestMergeUtilities::setupFiles(['Calls', 'Meetings', 'Notes'], ['editviewdefs'], 'tests/{old}/modules/UpgradeWizard/SugarMerge/metadata_files');
     }
 
     protected function tearDown() : void
@@ -37,7 +37,7 @@ class UpgradeCustomTemplateMetaTest extends TestCase
         $this->merge->merge('Calls', 'tests/{old}/modules/UpgradeWizard/SugarMerge/metadata_files/611/modules/Calls/metadata/editviewdefs.php', 'modules/Calls/metadata/editviewdefs.php', 'custom/modules/Calls/metadata/editviewdefs.php');
 
         //Load file
-        require('custom/modules/Calls/metadata/editviewdefs.php');
+        require 'custom/modules/Calls/metadata/editviewdefs.php';
 
         $this->assertStringNotContainsString(
             'forms[0]',
@@ -54,7 +54,7 @@ class UpgradeCustomTemplateMetaTest extends TestCase
         $this->merge->merge('Meetings', 'tests/{old}/modules/UpgradeWizard/SugarMerge/metadata_files/611/modules/Meetings/metadata/editviewdefs.php', 'modules/Meetings/metadata/editviewdefs.php', 'custom/modules/Meetings/metadata/editviewdefs.php');
 
         //Load file
-        require('custom/modules/Meetings/metadata/editviewdefs.php');
+        require 'custom/modules/Meetings/metadata/editviewdefs.php';
 
         $this->assertStringNotContainsString(
             'this.form.',
@@ -73,7 +73,7 @@ class UpgradeCustomTemplateMetaTest extends TestCase
         $this->merge->merge('Notes', 'tests/{old}/modules/UpgradeWizard/SugarMerge/metadata_files/610/modules/Notes/metadata/editviewdefs.php', 'modules/Notes/metadata/editviewdefs.php', 'custom/modules/Notes/metadata/editviewdefs.php');
 
         //Load file
-        require('custom/modules/Notes/metadata/editviewdefs.php');
+        require 'custom/modules/Notes/metadata/editviewdefs.php';
 
         //Assert that custom Buttons are not kept
         $this->assertArrayNotHasKey('buttons', $viewdefs['Notes']['EditView']['templateMeta']['form'], "Buttons array picked up from custom file");

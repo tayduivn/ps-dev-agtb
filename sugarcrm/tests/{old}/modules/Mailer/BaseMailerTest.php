@@ -37,7 +37,7 @@ class BaseMailerTest extends TestCase
         $config->setHostname($hostname);
 
         $mailer = $this->getMockBuilder('BaseMailer')
-            ->setConstructorArgs(array($config))
+            ->setConstructorArgs([$config])
             ->getMockForAbstractClass();
         $mailer->setMessageId($id);
 

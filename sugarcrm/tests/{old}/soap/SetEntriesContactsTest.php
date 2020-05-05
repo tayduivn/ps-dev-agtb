@@ -11,7 +11,7 @@
  */
 
 
-require_once('vendor/nusoap//nusoap.php');
+require_once 'vendor/nusoap//nusoap.php';
 
 
 /**
@@ -91,17 +91,19 @@ class SetEntriesContactsTest extends SOAPTestCase
         SugarTestHelper::tearDown();
     }
 
-    public function testSetEntries() {
+    public function testSetEntries()
+    {
         $this->_login();
-        $result = $this->_soapClient->call('set_entries',array('session'=>$this->_sessionId,'module_name' => 'Contacts','name_value_lists' => array(array(array('name'=>'last_name' , 'value'=>$this->c1->last_name), array('name'=>'email1' , 'value'=>$this->c1->email1), array('name'=>'first_name' , 'value'=>$this->c1->first_name), array('name'=>'account_name' , 'value'=>$this->a1->name)))));
+        $result = $this->_soapClient->call('set_entries', ['session'=>$this->_sessionId,'module_name' => 'Contacts','name_value_lists' => [[['name'=>'last_name' , 'value'=>$this->c1->last_name], ['name'=>'email1' , 'value'=>$this->c1->email1], ['name'=>'first_name' , 'value'=>$this->c1->first_name], ['name'=>'account_name' , 'value'=>$this->a1->name]]]]);
         $this->assertTrue(isset($result['ids']));
-        $this->assertEquals($result['ids'][0],$this->c1->id);
+        $this->assertEquals($result['ids'][0], $this->c1->id);
     } // fn
 
-    public function testSetEntries2() {
+    public function testSetEntries2()
+    {
         $this->_login();
-        $result = $this->_soapClient->call('set_entries',array('session'=>$this->_sessionId,'module_name' => 'Contacts','name_value_lists' => array(array(array('name'=>'last_name' , 'value'=>$this->c2->last_name), array('name'=>'email1' , 'value'=>$this->c2->email1), array('name'=>'first_name' , 'value'=>$this->c2->first_name), array('name'=>'account_name' , 'value'=>'joe pizza')))));
+        $result = $this->_soapClient->call('set_entries', ['session'=>$this->_sessionId,'module_name' => 'Contacts','name_value_lists' => [[['name'=>'last_name' , 'value'=>$this->c2->last_name], ['name'=>'email1' , 'value'=>$this->c2->email1], ['name'=>'first_name' , 'value'=>$this->c2->first_name], ['name'=>'account_name' , 'value'=>'joe pizza']]]]);
         $this->assertTrue(isset($result['ids']));
-        $this->assertNotEquals($result['ids'][0],$this->c1->id);
+        $this->assertNotEquals($result['ids'][0], $this->c1->id);
     } // fn
 }

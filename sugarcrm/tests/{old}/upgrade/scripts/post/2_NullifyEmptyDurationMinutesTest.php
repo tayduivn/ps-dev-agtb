@@ -27,7 +27,7 @@ class SugarUpgradeNullifyEmptyDurationMinutesTest extends UpgradeTestCase
     {
         $mock = $this->getUpgraderMock();
 
-        $actual = SugarTestReflection::callProtectedMethod($mock, 'columnTypeIsInt', array($type));
+        $actual = SugarTestReflection::callProtectedMethod($mock, 'columnTypeIsInt', [$type]);
         $this->assertEquals($actual, $expect);
     }
 
@@ -39,13 +39,13 @@ class SugarUpgradeNullifyEmptyDurationMinutesTest extends UpgradeTestCase
      */
     public function testGetColumnType($columns, $expect)
     {
-        $mock = $this->getUpgraderMock(array('getColumns'));
+        $mock = $this->getUpgraderMock(['getColumns']);
 
         $mock->expects($this->any())
              ->method('getColumns')
              ->will($this->returnValue($columns));
 
-        $actual = SugarTestReflection::callProtectedMethod($mock, 'getColumnType', array());
+        $actual = SugarTestReflection::callProtectedMethod($mock, 'getColumnType', []);
         $this->assertEquals($actual, $expect);
     }
 
@@ -57,13 +57,13 @@ class SugarUpgradeNullifyEmptyDurationMinutesTest extends UpgradeTestCase
      */
     public function testGetFielddefType($defs, $expect)
     {
-        $mock = $this->getUpgraderMock(array('getFielddefsFromBean'));
+        $mock = $this->getUpgraderMock(['getFielddefsFromBean']);
 
         $mock->expects($this->any())
              ->method('getFielddefsFromBean')
              ->will($this->returnValue($defs));
 
-        $actual = SugarTestReflection::callProtectedMethod($mock, 'getFielddefType', array());
+        $actual = SugarTestReflection::callProtectedMethod($mock, 'getFielddefType', []);
         $this->assertEquals($actual, $expect);
     }
 
@@ -76,7 +76,7 @@ class SugarUpgradeNullifyEmptyDurationMinutesTest extends UpgradeTestCase
      */
     public function testNeedsUpdating($columns, $defs, $expect)
     {
-        $mock = $this->getUpgraderMock(array('getColumns', 'getFielddefsFromBean'));
+        $mock = $this->getUpgraderMock(['getColumns', 'getFielddefsFromBean']);
 
         $mock->expects($this->any())
              ->method('getColumns')
@@ -86,212 +86,212 @@ class SugarUpgradeNullifyEmptyDurationMinutesTest extends UpgradeTestCase
              ->method('getFielddefsFromBean')
              ->will($this->returnValue($defs));
 
-        $actual = SugarTestReflection::callProtectedMethod($mock, 'needsUpdating', array());
+        $actual = SugarTestReflection::callProtectedMethod($mock, 'needsUpdating', []);
         $this->assertEquals($actual, $expect);
     }
 
     public function columnTypeIsIntProvider()
     {
-        return array(
+        return [
             // Tests basic expectation
-            array(
+            [
                 'type' => 'int',
                 'expect' => true,
-            ),
+            ],
             // Tests uppercase expectation
-            array(
+            [
                 'type' => 'INT',
                 'expect' => true,
-            ),
+            ],
             // Tests Oracle expectation
-            array(
+            [
                 'type' => 'number',
                 'expect' => true,
-            ),
+            ],
             // Tests Oracle UPPERCASE expectation
-            array(
+            [
                 'type' => 'NUMBER',
                 'expect' => true,
-            ),
+            ],
             // Tests IBMDB2 expectation
-            array(
+            [
                 'type' => 'integer',
                 'expect' => true,
-            ),
+            ],
             // Tests IBMDB2 UPPERCASE expectation
-            array(
+            [
                 'type' => 'INTEGER',
                 'expect' => true,
-            ),
+            ],
             // Tests non-expectation in SQL SERVER (should be int)
-            array(
+            [
                 'type' => 'NUMERIC',
                 'expect' => false,
-            ),
+            ],
             // Tests non-expectation
-            array(
+            [
                 'type' => 'enum',
                 'expect' => false,
-            ),
+            ],
             // Tests column not on table
-            array(
+            [
                 'type' => '',
                 'expect' => true,
-            ),
+            ],
             // Tests column not on table
-            array(
+            [
                 'type' => null,
                 'expect' => true,
-            ),
-        );
+            ],
+        ];
     }
 
     public function getColumnTypeProvider()
     {
-        return array(
-            array(
-                'columns' => array(
-                    'duration_minutes' => array(
+        return [
+            [
+                'columns' => [
+                    'duration_minutes' => [
                         'type' => 'int',
-                    ),
-                ),
+                    ],
+                ],
                 'expect' => 'int',
-            ),
-            array(
-                'columns' => array(
-                    'duration_minutes' => array(
+            ],
+            [
+                'columns' => [
+                    'duration_minutes' => [
                         'type' => 'char',
-                    ),
-                ),
+                    ],
+                ],
                 'expect' => 'char',
-            ),
-            array(
-                'columns' => array(
-                    'duration_minutes' => array(
+            ],
+            [
+                'columns' => [
+                    'duration_minutes' => [
                         'custom_type' => 'int',
-                    ),
-                ),
+                    ],
+                ],
                 'expect' => null,
-            ),
-        );
+            ],
+        ];
     }
 
     public function getFielddefTypeProvider()
     {
-        return array(
+        return [
             // Test type is set to something
-            array(
-                'defs' => array(
-                    'duration_minutes' => array(
+            [
+                'defs' => [
+                    'duration_minutes' => [
                         'type' => 'int',
-                    ),
-                ),
+                    ],
+                ],
                 'expect' => 'int',
-            ),
+            ],
             // Test dbType is set to something
-            array(
-                'defs' => array(
-                    'duration_minutes' => array(
+            [
+                'defs' => [
+                    'duration_minutes' => [
                         'dbType' => 'char',
-                    ),
-                ),
+                    ],
+                ],
                 'expect' => 'char',
-            ),
+            ],
             // Test field not set returns null
-            array(
-                'defs' => array(
-                    'duration' => array(
+            [
+                'defs' => [
+                    'duration' => [
                         'type' => 'int',
-                    ),
-                ),
+                    ],
+                ],
                 'expect' => null,
-            ),
+            ],
             // Test type not set returns null
-            array(
-                'defs' => array(
-                    'duration_minutes' => array(
+            [
+                'defs' => [
+                    'duration_minutes' => [
                         'len' => 20,
-                    ),
-                ),
+                    ],
+                ],
                 'expect' => null,
-            ),
-        );
+            ],
+        ];
     }
 
     public function needsUpdatingProvider()
     {
-        return array(
+        return [
             // Test colType is int returns false
-            array(
-                'columns' => array(
-                    'duration_minutes' => array(
+            [
+                'columns' => [
+                    'duration_minutes' => [
                         'type' => 'int',
-                    ),
-                ),
-                'defs' => array(
-                    'duration_minutes' => array(
+                    ],
+                ],
+                'defs' => [
+                    'duration_minutes' => [
                         'type' => 'int',
-                    ),
-                ),
+                    ],
+                ],
                 'expect' => false,
-            ),
+            ],
             // Test colType is null return false
-            array(
-                'columns' => array(
-                    'duration_minutes' => array(
+            [
+                'columns' => [
+                    'duration_minutes' => [
                         'custom_type' => 'int',
-                    ),
-                ),
-                'defs' => array(
-                    'duration_minutes' => array(
+                    ],
+                ],
+                'defs' => [
+                    'duration_minutes' => [
                         'type' => 'int',
-                    ),
-                ),
+                    ],
+                ],
                 'expect' => false,
-            ),
+            ],
             // Test fieldType is int returns true
-            array(
-                'columns' => array(
-                    'duration_minutes' => array(
+            [
+                'columns' => [
+                    'duration_minutes' => [
                         'type' => 'char',
-                    ),
-                ),
-                'defs' => array(
-                    'duration_minutes' => array(
+                    ],
+                ],
+                'defs' => [
+                    'duration_minutes' => [
                         'type' => 'int',
-                    ),
-                ),
+                    ],
+                ],
                 'expect' => true,
-            ),
+            ],
             // Test fieldType is char (not int) returns false
-            array(
-                'columns' => array(
-                    'duration_minutes' => array(
+            [
+                'columns' => [
+                    'duration_minutes' => [
                         'type' => 'char',
-                    ),
-                ),
-                'defs' => array(
-                    'duration_minutes' => array(
+                    ],
+                ],
+                'defs' => [
+                    'duration_minutes' => [
                         'type' => 'char',
-                    ),
-                ),
+                    ],
+                ],
                 'expect' => false,
-            ),
+            ],
             // Test fieldType is null (not int) returns false
-            array(
-                'columns' => array(
-                    'duration_minutes' => array(
+            [
+                'columns' => [
+                    'duration_minutes' => [
                         'type' => 'char',
-                    ),
-                ),
-                'defs' => array(
-                    'duration_minutes' => array(
+                    ],
+                ],
+                'defs' => [
+                    'duration_minutes' => [
                         'custom_type' => 'tinyint',
-                    ),
-                ),
+                    ],
+                ],
                 'expect' => false,
-            ),
-        );
+            ],
+        ];
     }
 
     public function getUpgraderMock($methods = null)

@@ -39,28 +39,28 @@ class ParserTest extends TestCase
 
     public static function dataProviderIsRelatedExpression()
     {
-        return array(
-            array(
+        return [
+            [
                 'count($revenuelineitems)',
-                array(
-                    'count' => array(
+                [
+                    'count' => [
                         'class' => 'CountRelatedExpression',
                         'src' => 'include/Expressions/Expression/Numeric/CountRelatedExpression.php',
-                    )
-                ),
-                true
-            ),
-            array(
+                    ],
+                ],
+                true,
+            ],
+            [
                 'ceil(5.53)',
-                array(
-                    'ceil' => array(
+                [
+                    'ceil' => [
                         'class' => 'CeilingExpression',
                         'src' => 'include/Expressions/Expression/Numeric/CeilingExpression.php',
-                    )
-                ),
-                false
-            )
-        );
+                    ],
+                ],
+                false,
+            ],
+        ];
     }
 
     /**
@@ -76,90 +76,90 @@ class ParserTest extends TestCase
 
     public static function dataProviderGetFormulaRelatedFields()
     {
-        return array(
-            array(
+        return [
+            [
                 'count($revenuelineitems)',
                 '',
-                array(
-                    'count' => array(
+                [
+                    'count' => [
                         'class' => 'CountRelatedExpression',
                         'src' => 'include/Expressions/Expression/Numeric/CountRelatedExpression.php',
-                    )
-                ),
-                array()
-            ),
-            array(
+                    ],
+                ],
+                [],
+            ],
+            [
                 'countConditional($revenuelineitems,"sales_stage",createList("Closed Won","Closed Lost"))',
                 '',
-                array(
-                    'countConditional' => array(
+                [
+                    'countConditional' => [
                         'class' => 'CountConditionalRelatedExpression',
                         'src' => 'include/Expressions/Expression/Numeric/CountConditionalRelatedExpression.php',
-                    ),
-                    'createList' => array(
+                    ],
+                    'createList' => [
                         'class' => 'DefineEnumExpression',
-                        'src' => 'include/Expressions/Expression/Enum/DefineEnumExpression.php'
-                    )
-                ),
-                array('sales_stage')
-            ),
+                        'src' => 'include/Expressions/Expression/Enum/DefineEnumExpression.php',
+                    ],
+                ],
+                ['sales_stage'],
+            ],
             // will return all rollup fields since we don't have a linkname specified
-            array(
+            [
                 'rollupSum($revenuelineitems, "likely_case")',
                 '',
-                array(
-                    'rollupSum' => array(
+                [
+                    'rollupSum' => [
                         'class' => 'SumRelatedExpression',
                         'src' => 'include/Expressions/Expression/Numeric/SumRelatedExpression.php',
-                    )
-                ),
-                array('likely_case')
-            ),
+                    ],
+                ],
+                ['likely_case'],
+            ],
             // will return all rollup fields since we don't have a linkname specified
-            array(
+            [
                 'add(rollupSum($revenuelineitems, "likely_case"),rollupSum($opportunities, "amount"))',
                 '',
-                array(
-                    'add' => array(
-						'class'	=>	'AddExpression',
-						'src'	=>	'include/Expressions/Expression/Numeric/AddExpression.php',
-			        ),
-                    'rollupSum' => array(
+                [
+                    'add' => [
+                        'class' =>  'AddExpression',
+                        'src'   =>  'include/Expressions/Expression/Numeric/AddExpression.php',
+                    ],
+                    'rollupSum' => [
                         'class' => 'SumRelatedExpression',
                         'src' => 'include/Expressions/Expression/Numeric/SumRelatedExpression.php',
-                    )
-                ),
-                array('likely_case', 'amount')
-            ),
+                    ],
+                ],
+                ['likely_case', 'amount'],
+            ],
             // will return only amount since linkName is opportunities
-            array(
+            [
                 'add(rollupSum($revenuelineitems, "likely_case"),rollupSum($opportunities, "amount"))',
                 'opportunities',
-                array(
-                    'add' => array(
-						'class'	=>	'AddExpression',
-						'src'	=>	'include/Expressions/Expression/Numeric/AddExpression.php',
-			        ),
-                    'rollupSum' => array(
+                [
+                    'add' => [
+                        'class' =>  'AddExpression',
+                        'src'   =>  'include/Expressions/Expression/Numeric/AddExpression.php',
+                    ],
+                    'rollupSum' => [
                         'class' => 'SumRelatedExpression',
                         'src' => 'include/Expressions/Expression/Numeric/SumRelatedExpression.php',
-                    )
-                ),
-                array('amount')
-            ),
+                    ],
+                ],
+                ['amount'],
+            ],
             // this should return an empty array since we are looking for opportunities, but we have revenuelineitems
             // in the formula
-            array(
+            [
                 'rollupSum($revenuelineitems, "amount")',
                 'opportunities',
-                array(
-                    'rollupSum' => array(
+                [
+                    'rollupSum' => [
                         'class' => 'SumRelatedExpression',
                         'src' => 'include/Expressions/Expression/Numeric/SumRelatedExpression.php',
-                    )
-                ),
-                array()
-            ),
-        );
+                    ],
+                ],
+                [],
+            ],
+        ];
     }
 }

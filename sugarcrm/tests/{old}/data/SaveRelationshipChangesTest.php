@@ -16,23 +16,23 @@ class SaveRelationshipChangesTest extends TestCase
 {
     public function setRelationshipInfoDataProvider()
     {
-        return array(
-            array(
+        return [
+            [
                 1,
                 'accounts_contacts',
-                array(1, 'contacts'),
-            ),
-            array(
+                [1, 'contacts'],
+            ],
+            [
                 1,
                 'member_accounts',
-                array(1, 'member_of'),
-            ),
-            array(
+                [1, 'member_of'],
+            ],
+            [
                 1,
                 'accounts_opportunities',
-                array(1, 'opportunities'),
-            ),
-        );
+                [1, 'opportunities'],
+            ],
+        ];
     }
 
     /**
@@ -69,13 +69,13 @@ class SaveRelationshipChangesTest extends TestCase
     public function testHandlePresetRelationshipsAdd()
     {
         $contactId = 'some_contact_id';
-        $account = $this->createPartialMock('Account', array('load_relationship'));
+        $account = $this->createPartialMock('Account', ['load_relationship']);
         $account->expects($this->once())
             ->method('load_relationship')
             ->with('contacts')
             ->willReturn(true);
 
-        $account->contacts = $this->createPartialMock('Link2', array('add'));
+        $account->contacts = $this->createPartialMock('Link2', ['add']);
         $account->contacts->expects($this->once())
             ->method('add')
             ->with($contactId)
@@ -85,7 +85,7 @@ class SaveRelationshipChangesTest extends TestCase
         $new_rel_id = SugarTestReflection::callProtectedMethod(
             $account,
             'handle_preset_relationships',
-            array($contactId, 'contacts')
+            [$contactId, 'contacts']
         );
         $this->assertFalse($new_rel_id);
     }
@@ -94,14 +94,14 @@ class SaveRelationshipChangesTest extends TestCase
     {
         $contactId = 'some_contact_id';
         $accountId = 'some_account_id';
-        $account = $this->createPartialMock('Account', array('load_relationship'));
+        $account = $this->createPartialMock('Account', ['load_relationship']);
         $account->id = $accountId;
         $account->expects($this->once())
             ->method('load_relationship')
             ->with('contacts')
             ->willReturn(true);
 
-        $account->contacts = $this->createPartialMock('Link2', array('delete'));
+        $account->contacts = $this->createPartialMock('Link2', ['delete']);
         $account->contacts->expects($this->once())
             ->method('delete')
             ->with($accountId, $contactId)
@@ -111,7 +111,7 @@ class SaveRelationshipChangesTest extends TestCase
         $new_rel_id = SugarTestReflection::callProtectedMethod(
             $account,
             'handle_preset_relationships',
-            array($contactId, 'contacts')
+            [$contactId, 'contacts']
         );
         $this->assertEquals($contactId, $new_rel_id);
     }
@@ -121,13 +121,13 @@ class SaveRelationshipChangesTest extends TestCase
         $thisId = 'this_id';
         $relateId = 'relate_id';
 
-        $account = $this->createPartialMock('Account', array('load_relationship'));
+        $account = $this->createPartialMock('Account', ['load_relationship']);
         $account->expects($this->atLeastOnce())
             ->method('load_relationship')
             ->with('relate_field_link')
             ->willReturn(true);
 
-        $account->relate_field_link = $this->createPartialMock('Link2', array('add', 'delete'));
+        $account->relate_field_link = $this->createPartialMock('Link2', ['add', 'delete']);
         $account->relate_field_link->expects($this->once())
             ->method('add')
             ->with($relateId)
@@ -137,21 +137,21 @@ class SaveRelationshipChangesTest extends TestCase
             ->with($thisId, $relateId)
             ->willReturn(true);
 
-        $account->field_defs['relate_field'] = array(
+        $account->field_defs['relate_field'] = [
             'name' => 'relate_field',
             'id_name' => 'relate_field_id',
             'type' => 'relate',
             'save' => true,
             'link' => 'relate_field_link',
-        );
-        $account->field_defs['relate_field_id'] = array(
+        ];
+        $account->field_defs['relate_field_id'] = [
             'name' => 'relate_field_id',
             'type' => 'id',
-        );
-        $account->field_defs['relate_field_link'] = array(
+        ];
+        $account->field_defs['relate_field_link'] = [
             'name' => 'relate_field_link',
             'type' => 'link',
-        );
+        ];
 
         SugarBean::clearLoadedDef('Account');
 
@@ -170,13 +170,13 @@ class SaveRelationshipChangesTest extends TestCase
     {
         $relateId = 'relate_id';
 
-        $account = $this->createPartialMock('Account', array('load_relationship'));
+        $account = $this->createPartialMock('Account', ['load_relationship']);
         $account->expects($this->any())
             ->method('load_relationship')
             ->with('member_of')
             ->willReturn(true);
 
-        $account->member_of = $this->createPartialMock('Link2', array('add', 'delete'));
+        $account->member_of = $this->createPartialMock('Link2', ['add', 'delete']);
         $account->member_of->expects($this->once())
             ->method('add')
             ->with($relateId)
@@ -185,7 +185,7 @@ class SaveRelationshipChangesTest extends TestCase
         $ret = SugarTestReflection::callProtectedMethod(
             $account,
             'handle_request_relate',
-            array($relateId, 'member_of')
+            [$relateId, 'member_of']
         );
         $this->assertTrue($ret);
     }
@@ -194,7 +194,7 @@ class SaveRelationshipChangesTest extends TestCase
     {
         $relateId = 'relate_id';
 
-        $account = $this->createPartialMock('Account', array('load_relationship'));
+        $account = $this->createPartialMock('Account', ['load_relationship']);
         $account->expects($this->at(0))
             ->method('load_relationship')
             ->with('MEMBER_OF')
@@ -205,7 +205,7 @@ class SaveRelationshipChangesTest extends TestCase
             ->with('member_of')
             ->willReturn(true);
 
-        $account->member_of = $this->createPartialMock('Link2', array('add', 'delete'));
+        $account->member_of = $this->createPartialMock('Link2', ['add', 'delete']);
         $account->member_of->expects($this->once())
             ->method('add')
             ->with($relateId)
@@ -214,7 +214,7 @@ class SaveRelationshipChangesTest extends TestCase
         $ret = SugarTestReflection::callProtectedMethod(
             $account,
             'handle_request_relate',
-            array($relateId, 'MEMBER_OF')
+            [$relateId, 'MEMBER_OF']
         );
         $this->assertTrue($ret);
     }
@@ -224,7 +224,7 @@ class SaveRelationshipChangesTest extends TestCase
         $rel_link_name = 'some_non_existing_link_name';
         $relateId = 'relate_id';
 
-        $account = $this->createPartialMock('Account', array('load_relationship'));
+        $account = $this->createPartialMock('Account', ['load_relationship']);
         $account->expects($this->any())
             ->method('load_relationship')
             ->willReturn(false);
@@ -232,7 +232,7 @@ class SaveRelationshipChangesTest extends TestCase
         $ret = SugarTestReflection::callProtectedMethod(
             $account,
             'handle_request_relate',
-            array($relateId, $rel_link_name)
+            [$relateId, $rel_link_name]
         );
         $this->assertFalse($ret);
     }

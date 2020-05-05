@@ -21,7 +21,7 @@ class ImportEmailsTest extends TestCase
     private $importObject;
     private $file;
     private $cleanId;
-    private $emails = array();
+    private $emails = [];
 
     protected function setUp() : void
     {
@@ -49,7 +49,7 @@ class ImportEmailsTest extends TestCase
         $GLOBALS['db']->query("DELETE FROM email_addresses WHERE email_address IN ('" . implode("', '", $this->emails) . "')");
         $GLOBALS['db']->query("DELETE FROM {$this->importObject->table_name} WHERE created_by = '{$GLOBALS['current_user']->id}'");
 
-        $_REQUEST = array();
+        $_REQUEST = [];
 
         SugarTestHelper::tearDown();
     }
@@ -117,39 +117,39 @@ class ImportEmailsTest extends TestCase
 
     public function providerEmailImport()
     {
-        $modules = array(
+        $modules = [
             'Account' => 'name',
             'Contact' => 'last_name',
             'Lead' => 'last_name',
             'Prospect' => 'last_name',
-        );
+        ];
 
         // keys are CSV values, values are resulting emails and their attributes
-        $emails = array(
+        $emails = [
             // attributes are explicitly specified and imported
-            '"testmail1@test.com,0,1;testmail2@test.com,1,0"' => array(
-                array('testmail1@test.com', 0, 1),
-                array('testmail2@test.com', 1, 0),
-            ),
+            '"testmail1@test.com,0,1;testmail2@test.com,1,0"' => [
+                ['testmail1@test.com', 0, 1],
+                ['testmail2@test.com', 1, 0],
+            ],
             // attributes are omitted and set to default values
-            '"testmail3@test.com;testmail4@test.com"' => array(
-                array('testmail3@test.com', 0, 0),
-                array('testmail4@test.com', 0, 0),
-            ),
-        );
+            '"testmail3@test.com;testmail4@test.com"' => [
+                ['testmail3@test.com', 0, 0],
+                ['testmail4@test.com', 0, 0],
+            ],
+        ];
 
-        $data = array();
+        $data = [];
         foreach ($modules as $module => $nameField) {
             foreach ($emails as $csvData => $expected) {
-                $data[] = array(
+                $data[] = [
                     $module,
                     $nameField,
                     'Random Guy',
-                    array(
+                    [
                         '"Random Guy",' . $csvData,
-                    ),
+                    ],
                     $expected,
-                );
+                ];
             }
         }
 
@@ -218,27 +218,27 @@ class ImportEmailsTest extends TestCase
      */
     public function providerEmailUpdate()
     {
-        $modules = array(
+        $modules = [
             'Account' => 'name',
             'Contact' => 'last_name',
             'Lead' => 'last_name',
             'Prospect' => 'last_name',
-        );
+        ];
 
-        $data = array();
+        $data = [];
         foreach ($modules as $module => $nameField) {
-            $data[] = array(
+            $data[] = [
                 $module,
                 $nameField,
                 'Random Guy',
-                array(
+                [
                     '"import_email_update","Random Guy","old.primary@email.com"',
-                ),
-                array(
+                ],
+                [
                     '"import_email_update","Random Guy","new.primary@email.com"',
-                ),
+                ],
                 'new.primary@email.com',
-            );
+            ];
         }
 
         return $data;

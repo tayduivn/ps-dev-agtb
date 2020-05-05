@@ -77,11 +77,11 @@ class CurrencyHooksTest extends TestCase
 
     public function updateCurrencyConversionProvider()
     {
-        return array(
-            array(1, ['isUpdate' => true], .5, .4),
-            array(0, ['isUpdate' => true], .5, .5),
-            array(0, ['isUpdate' => false], .5, .4),
-            array(0, ['isUpdate' => false], .5, .5),
-        );
+        return [
+            [1, ['isUpdate' => true], .5, .4],
+            [0, ['isUpdate' => true], .5, .5],
+            [0, ['isUpdate' => false], .5, .4],
+            [0, ['isUpdate' => false], .5, .5],
+        ];
     }
 }

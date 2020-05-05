@@ -23,9 +23,9 @@ class ProjectTest extends TestCase
     public function testRemoval()
     {
         $project = SugarTestProjectUtilities::createProject();
-        $task = SugarTestProjectTaskUtilities::createProjectTask(array(
+        $task = SugarTestProjectTaskUtilities::createProjectTask([
             'project_id' => $project->id,
-        ));
+        ]);
 
         $project->mark_deleted($project->id);
 

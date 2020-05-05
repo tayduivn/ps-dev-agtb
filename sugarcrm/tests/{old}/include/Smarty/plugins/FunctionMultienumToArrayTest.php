@@ -12,7 +12,7 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once('include/SugarSmarty/plugins/function.multienum_to_array.php');
+require_once 'include/SugarSmarty/plugins/function.multienum_to_array.php';
 
 class FunctionMultienumToArrayTest extends TestCase
 {
@@ -23,45 +23,44 @@ class FunctionMultienumToArrayTest extends TestCase
     
     public function providerPassedString()
     {
-        return array(
-            array("Employee^,^Boss","Cold Call",array('Employee','Boss')),
-            array("^Employee^,^Boss^","Cold Call",array('Employee','Boss')),
-            array("^Employee^","Cold Call",array('Employee')),
-            array("Employee","Cold Call",array('Employee')),
-            array("","^Cold Call^",array("Cold Call")),
-            array(array("Employee"),"Cold Call",array("Employee")),
-            array(NULL,array("Employee"),array("Employee")),
-            );
+        return [
+            ["Employee^,^Boss","Cold Call",['Employee','Boss']],
+            ["^Employee^,^Boss^","Cold Call",['Employee','Boss']],
+            ["^Employee^","Cold Call",['Employee']],
+            ["Employee","Cold Call",['Employee']],
+            ["","^Cold Call^",["Cold Call"]],
+            [["Employee"],"Cold Call",["Employee"]],
+            [null,["Employee"],["Employee"]],
+            ];
     }
     
     /**
      * @ticket 21574
      * @dataProvider providerPassedString
      */
-	public function testPassedString(
+    public function testPassedString(
         $string,
         $default,
         $result
-        )
-    {
-        $params = array();
+    ) {
+        $params = [];
         $params['string']  = $string;
         $params['default'] = $default;
         
         $this->assertEquals($result, smarty_function_multienum_to_array($params, $this->_smarty));
     }
-	
-	public function testAssignSmartyVariable()
+    
+    public function testAssignSmartyVariable()
     {
-        $params = array();
+        $params = [];
         $params['string']  = "^Employee^";
         $params['default'] = "Cold Call";
-		$params['assign'] = "multi";
-		smarty_function_multienum_to_array($params, $this->_smarty);
+        $params['assign'] = "multi";
+        smarty_function_multienum_to_array($params, $this->_smarty);
         
         $this->assertEquals(
             $this->_smarty->get_template_vars($params['assign']),
-            array("Employee")
+            ["Employee"]
         );
     }
 }

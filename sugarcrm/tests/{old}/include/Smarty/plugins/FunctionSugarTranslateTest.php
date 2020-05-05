@@ -1,4 +1,4 @@
-<?php 
+<?php
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -18,39 +18,39 @@ class FunctionSugarTranslateTest extends TestCase
 {
     public function providerJsEscapedSting()
     {
-        return array(
-            array(
+        return [
+            [
                 "Friend's",
                 "Friend\'s",
-                ),
-            array(
+                ],
+            [
                 "Friend\'s",
                 "Friend\\\\\\'s",
-                ),
-            array(
+                ],
+            [
                 "Friend&#39;s",
                 "Friend\'s",
-                ),
-            array(
+                ],
+            [
                 "Friend&#39;'s",
                 "Friend\'\'s",
-                ),
-            array(
+                ],
+            [
                 "Friend&#039;s",
                 "Friend\'s",
-                ),
-            array(
+                ],
+            [
                 "Friend&#039;'s",
                 "Friend\'\'s",
-                ),
-            );
+                ],
+            ];
     }
 
     /**
      * @dataProvider providerJsEscapedSting
      * @ticket 41983
      */
-    public function testJsEscapedSting($string, $returnedString) 
+    public function testJsEscapedSting($string, $returnedString)
     {
         $langpack = new SugarTestLangPackCreator();
         $langpack->setModString('LBL_TEST_JS_ESCAPED_STRING', $string, 'Contacts');
@@ -59,42 +59,42 @@ class FunctionSugarTranslateTest extends TestCase
         $smarty = new Sugar_Smarty;
         
         $this->assertEquals($returnedString, smarty_function_sugar_translate(
-            array(
+            [
                 'label'  => 'LBL_TEST_JS_ESCAPED_STRING',
                 'module' => 'Contacts',
                 'for_js'  =>  true,
-            ),
-            $smarty)
-        );
+            ],
+            $smarty
+        ));
     }
 
     public function providerStripColonSting()
     {
-        return array(
-            array(
+        return [
+            [
                 "Friend:",
                 "Friend:",
-                ),
-            array(
+                ],
+            [
                 "Friend : ",
                 "Friend : ",
-                ),
-            array(
+                ],
+            [
                 ": Friend",
                 ": Friend",
-                ),
-            array(
+                ],
+            [
                 "Fr:iend",
                 "Fr:iend",
-                ),
-        );
+                ],
+        ];
     }
 
     /**
      * @dataProvider providerStripColonSting
      * @ticket 41983
      */
-    public function testStripColonString($string, $returnedString) 
+    public function testStripColonString($string, $returnedString)
     {
         $langpack = new SugarTestLangPackCreator();
         $langpack->setModString('LBL_TEST_JS_ESCAPED_STRING', $string, 'Contacts');
@@ -103,13 +103,12 @@ class FunctionSugarTranslateTest extends TestCase
         $smarty = new Sugar_Smarty;
         
         $this->assertEquals($returnedString, smarty_function_sugar_translate(
-            array(
+            [
                 'label'  => 'LBL_TEST_JS_ESCAPED_STRING',
                 'module' => 'Contacts',
                 'trimColon'  =>  false,
-            ),
-            $smarty)
-        );
+            ],
+            $smarty
+        ));
     }
-    
 }

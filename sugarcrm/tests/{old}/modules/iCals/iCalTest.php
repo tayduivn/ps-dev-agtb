@@ -39,13 +39,13 @@ class iCalTest extends TestCase
 
         $this->project = SugarTestProjectUtilities::createProject();
         $projectId = $this->project->id;
-        $projectTaskData = array (
+        $projectTaskData =  [
             'project_id' => $projectId,
             'parent_task_id' => '',
             'project_task_id' => 1,
             'percent_complete' => 50,
-            'name' => 'VeryImportantProjectTask'
-        );
+            'name' => 'VeryImportantProjectTask',
+        ];
         $projectTask = SugarTestProjectTaskUtilities::createProjectTask($projectTaskData);
         $projectTask->assigned_user_id = $GLOBALS['current_user']->id;
         $projectTask->save();

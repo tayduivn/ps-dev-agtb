@@ -17,18 +17,19 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug42475Test extends TestCase
 {
-    public function testAuditingCurrency() {
+    public function testAuditingCurrency()
+    {
         // getDataChanges
         $testBean = new Bug42475TestBean();
         $dataChanges = $testBean->db->getAuditDataChanges($testBean);
 
-        $this->assertEquals(0,count($dataChanges), "New test bean shouldn't have any changes");
+        $this->assertEquals(0, count($dataChanges), "New test bean shouldn't have any changes");
 
         $testBean = new Bug42475TestBean();
         $testBean->test_field = 3829.83862;
         $dataChanges = $testBean->db->getAuditDataChanges($testBean);
 
-        $this->assertEquals(1,count($dataChanges), "Test bean should have 1 change since we added assigned new value to test_field");
+        $this->assertEquals(1, count($dataChanges), "Test bean should have 1 change since we added assigned new value to test_field");
     }
 }
 
@@ -41,15 +42,15 @@ class Bug42475TestBean extends SugarBean
         parent::__construct();
         
         // Fake a fetched row
-        $this->fetched_row = array('test_field'=>257.8300000001);
+        $this->fetched_row = ['test_field'=>257.8300000001];
         $this->test_field = 257.83;
-        $this->field_defs['test_field'] = array(
+        $this->field_defs['test_field'] = [
             'type' => 'currency',
-        );
+        ];
     }
 
     public function getAuditEnabledFieldDefinitions($includeRelateIdFields = false)
     {
-        return array('test_field'=>array('type'=>'currency'));
+        return ['test_field'=>['type'=>'currency']];
     }
 }

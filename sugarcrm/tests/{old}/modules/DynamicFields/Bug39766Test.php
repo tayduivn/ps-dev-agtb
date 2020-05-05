@@ -13,21 +13,21 @@
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 use PHPUnit\Framework\TestCase;
 
-require_once('modules/DynamicFields/FieldCases.php');
+require_once 'modules/DynamicFields/FieldCases.php';
 
 
 class Bug39766Test extends TestCase
 {
     /**
      * @group bug35265
-     */    
+     */
     public function testFloatPrecisionMapping()
     {
-        $request = InputValidation::create(array(
+        $request = InputValidation::create([
             'precision' => 2,
-        ), array());
+        ], []);
 
-        require_once ('modules/DynamicFields/FieldCases.php') ;
+        require_once 'modules/DynamicFields/FieldCases.php' ;
         $field = get_widget('float') ;
         $field->populateFromPost($request);
         

@@ -24,10 +24,10 @@ use PHPUnit\Framework\TestCase;
 
 class Bug49698Test extends TestCase
 {
-public function testModuleRenameForReportsTree()
-{
-    $mock = new ReportsViewBuildreportmoduletreeMock();
-    $linked_field = array(
+    public function testModuleRenameForReportsTree()
+    {
+        $mock = new ReportsViewBuildreportmoduletreeMock();
+        $linked_field = [
         'name' => 'accounts',
         'type' => 'link',
         'relationship' => 'accounts_opportunities',
@@ -36,11 +36,11 @@ public function testModuleRenameForReportsTree()
         'module' => 'Accounts',
         'bean_name' => 'Account',
         'vname' => 'LBL_ACCOUNTS',
-        'label' => 'Prospects' //Assume here that Accounts module label was renamed to Prospects
-    );
-    $node = $mock->_populateNodeItem('Opportunity', 'Accounts', $linked_field);
+        'label' => 'Prospects', //Assume here that Accounts module label was renamed to Prospects
+        ];
+        $node = $mock->_populateNodeItem('Opportunity', 'Accounts', $linked_field);
         $this->assertMatchesRegularExpression('/\\\'Prospects\\\'/', $node['href']);
-}
+    }
 }
 
 /**
@@ -53,8 +53,8 @@ class ReportsViewBuildreportmoduletreeMock extends ReportsViewBuildreportmodulet
     {
     }
 
-    public function _populateNodeItem($bean_name,$link_module,$linked_field)
+    public function _populateNodeItem($bean_name, $link_module, $linked_field)
     {
-        return parent::_populateNodeItem($bean_name,$link_module,$linked_field);
+        return parent::_populateNodeItem($bean_name, $link_module, $linked_field);
     }
 }

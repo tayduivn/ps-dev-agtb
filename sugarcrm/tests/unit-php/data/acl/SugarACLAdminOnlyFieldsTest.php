@@ -28,8 +28,8 @@ class SugarACLAdminOnlyFieldsTest extends TestCase
     public function testReadonlyAccess()
     {
         $aclClass = $this->getMockBuilder('SugarACLAdminOnlyFields')
-          ->setConstructorArgs(array(array()))
-          ->setMethods(array('isWriteOperation'))
+          ->setConstructorArgs([[]])
+          ->setMethods(['isWriteOperation'])
           ->getMock();
 
         $aclClass->method('isWriteOperation')
@@ -48,14 +48,14 @@ class SugarACLAdminOnlyFieldsTest extends TestCase
      */
     public function testAccessDenied()
     {
-        $currentUserMock = $this->getCurrentUserMock(array('isAdminForModule'));
+        $currentUserMock = $this->getCurrentUserMock(['isAdminForModule']);
 
         $currentUserMock->method('isAdminForModule')
             ->willReturn(false);
 
         $aclClass = $this->getMockBuilder('SugarACLAdminOnlyFields')
-            ->setConstructorArgs(array(array('non_writable_fields' => array('admin_field'))))
-            ->setMethods(array('isWriteOperation', 'getCurrentUser'))
+            ->setConstructorArgs([['non_writable_fields' => ['admin_field']]])
+            ->setMethods(['isWriteOperation', 'getCurrentUser'])
             ->getMock();
 
         $aclClass->method('isWriteOperation')
@@ -65,7 +65,7 @@ class SugarACLAdminOnlyFieldsTest extends TestCase
             ->willReturn($currentUserMock);
 
         $expected = false;
-        $result = $aclClass->checkAccess(null, 'field', array('field' => 'admin_field'));
+        $result = $aclClass->checkAccess(null, 'field', ['field' => 'admin_field']);
         $this->assertEquals($expected, $result);
     }
 
@@ -76,14 +76,14 @@ class SugarACLAdminOnlyFieldsTest extends TestCase
      */
     public function testNonFieldView()
     {
-        $currentUserMock = $this->getCurrentUserMock(array('isAdminForModule'));
+        $currentUserMock = $this->getCurrentUserMock(['isAdminForModule']);
 
         $currentUserMock->method('isAdminForModule')
             ->willReturn(false);
 
         $aclClass = $this->getMockBuilder('SugarACLAdminOnlyFields')
-            ->setConstructorArgs(array(array('non_writable_fields' => array('admin_field'))))
-            ->setMethods(array('isWriteOperation', 'getCurrentUser'))
+            ->setConstructorArgs([['non_writable_fields' => ['admin_field']]])
+            ->setMethods(['isWriteOperation', 'getCurrentUser'])
             ->getMock();
 
         $aclClass->method('isWriteOperation')
@@ -93,7 +93,7 @@ class SugarACLAdminOnlyFieldsTest extends TestCase
             ->willReturn($currentUserMock);
 
         $expected = true;
-        $result = $aclClass->checkAccess(null, 'not_field', array('field' => 'admin_field'));
+        $result = $aclClass->checkAccess(null, 'not_field', ['field' => 'admin_field']);
         $this->assertEquals($expected, $result);
     }
 
@@ -104,14 +104,14 @@ class SugarACLAdminOnlyFieldsTest extends TestCase
      */
     public function testFieldNotInAclOptions()
     {
-        $currentUserMock = $this->getCurrentUserMock(array('isAdminForModule'));
+        $currentUserMock = $this->getCurrentUserMock(['isAdminForModule']);
 
         $currentUserMock->method('isAdminForModule')
             ->willReturn(false);
 
         $aclClass = $this->getMockBuilder('SugarACLAdminOnlyFields')
-            ->setConstructorArgs(array(array('non_writable_fields' => array('admin_field'))))
-            ->setMethods(array('isWriteOperation', 'getCurrentUser'))
+            ->setConstructorArgs([['non_writable_fields' => ['admin_field']]])
+            ->setMethods(['isWriteOperation', 'getCurrentUser'])
             ->getMock();
 
         $aclClass->method('isWriteOperation')
@@ -121,7 +121,7 @@ class SugarACLAdminOnlyFieldsTest extends TestCase
             ->willReturn($currentUserMock);
 
         $expected = true;
-        $result = $aclClass->checkAccess(null, 'field', array('field' => 'not_admin_field'));
+        $result = $aclClass->checkAccess(null, 'field', ['field' => 'not_admin_field']);
         $this->assertEquals($expected, $result);
     }
 
@@ -132,14 +132,14 @@ class SugarACLAdminOnlyFieldsTest extends TestCase
      */
     public function testIsAdmin()
     {
-        $currentUserMock = $this->getCurrentUserMock(array('isAdminForModule'));
+        $currentUserMock = $this->getCurrentUserMock(['isAdminForModule']);
 
         $currentUserMock->method('isAdminForModule')
             ->willReturn(true);
 
         $aclClass = $this->getMockBuilder('SugarACLAdminOnlyFields')
-            ->setConstructorArgs(array(array('non_writable_fields' => array('admin_field'))))
-            ->setMethods(array('isWriteOperation', 'getCurrentUser'))
+            ->setConstructorArgs([['non_writable_fields' => ['admin_field']]])
+            ->setMethods(['isWriteOperation', 'getCurrentUser'])
             ->getMock();
 
         $aclClass->method('isWriteOperation')
@@ -149,7 +149,7 @@ class SugarACLAdminOnlyFieldsTest extends TestCase
             ->willReturn($currentUserMock);
 
         $expected = true;
-        $result = $aclClass->checkAccess(null, 'field', array('field' => 'admin_field'));
+        $result = $aclClass->checkAccess(null, 'field', ['field' => 'admin_field']);
         $this->assertEquals($expected, $result);
     }
 

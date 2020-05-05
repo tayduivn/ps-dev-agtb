@@ -35,7 +35,7 @@ class PMSEProjectApiAclTest extends TestCase
 
         $this->PMSEProjectApi = ProcessManager\Factory::getPMSEObject('PMSEProjectApi');
         $this->api = new RestService();
-        $this->api->getRequest()->setRoute(array('acl' => array()));
+        $this->api->getRequest()->setRoute(['acl' => []]);
     }
 
     protected function tearDown() : void
@@ -47,66 +47,66 @@ class PMSEProjectApiAclTest extends TestCase
     public function testRetrieveCustomProject()
     {
         $this->expectException(SugarApiExceptionNotAuthorized::class);
-        $this->PMSEProjectApi->retrieveCustomProject($this->api, array('module' => 'pmse_Project'));
+        $this->PMSEProjectApi->retrieveCustomProject($this->api, ['module' => 'pmse_Project']);
     }
 
     public function testUpdateCustomProject()
     {
         $this->expectException(SugarApiExceptionNotAuthorized::class);
-        $this->PMSEProjectApi->updateCustomProject($this->api, array('module' => 'pmse_Project'));
+        $this->PMSEProjectApi->updateCustomProject($this->api, ['module' => 'pmse_Project']);
     }
 
     public function testGetCrmData()
     {
         $this->expectException(SugarApiExceptionNotAuthorized::class);
-        $this->PMSEProjectApi->getCrmData($this->api, array('module' => 'pmse_Project'));
+        $this->PMSEProjectApi->getCrmData($this->api, ['module' => 'pmse_Project']);
     }
 
     public function testPutCrmData()
     {
         $this->expectException(SugarApiExceptionNotAuthorized::class);
-        $this->PMSEProjectApi->putCrmData($this->api, array('module' => 'pmse_Project'));
+        $this->PMSEProjectApi->putCrmData($this->api, ['module' => 'pmse_Project']);
     }
 
     public function testGetActivityDefinition()
     {
         $this->expectException(SugarApiExceptionNotAuthorized::class);
-        $this->PMSEProjectApi->getActivityDefinition($this->api, array('module' => 'pmse_Project'));
+        $this->PMSEProjectApi->getActivityDefinition($this->api, ['module' => 'pmse_Project']);
     }
 
     public function testPutActivityDefinition()
     {
         $this->expectException(SugarApiExceptionNotAuthorized::class);
-        $this->PMSEProjectApi->putActivityDefinition($this->api, array('module' => 'pmse_Project'));
+        $this->PMSEProjectApi->putActivityDefinition($this->api, ['module' => 'pmse_Project']);
     }
 
     public function testGetEventDefinition()
     {
         $this->expectException(SugarApiExceptionNotAuthorized::class);
-        $this->PMSEProjectApi->getEventDefinition($this->api, array('module' => 'pmse_Project'));
+        $this->PMSEProjectApi->getEventDefinition($this->api, ['module' => 'pmse_Project']);
     }
 
     public function testPutEventDefinition()
     {
         $this->expectException(SugarApiExceptionNotAuthorized::class);
-        $this->PMSEProjectApi->putEventDefinition($this->api, array('module' => 'pmse_Project'));
+        $this->PMSEProjectApi->putEventDefinition($this->api, ['module' => 'pmse_Project']);
     }
 
     public function testGetGatewayDefinition()
     {
         $this->expectException(SugarApiExceptionNotAuthorized::class);
-        $this->PMSEProjectApi->getGatewayDefinition($this->api, array('module' => 'pmse_Project'));
+        $this->PMSEProjectApi->getGatewayDefinition($this->api, ['module' => 'pmse_Project']);
     }
 
     public function testPutGatewayDefinition()
     {
         $this->expectException(SugarApiExceptionNotAuthorized::class);
-        $this->PMSEProjectApi->putGatewayDefinition($this->api, array('module' => 'pmse_Project'));
+        $this->PMSEProjectApi->putGatewayDefinition($this->api, ['module' => 'pmse_Project']);
     }
 
     public function testVerifyRunningProcess()
     {
         $this->expectException(SugarApiExceptionNotAuthorized::class);
-        $this->PMSEProjectApi->verifyRunningProcess($this->api, array('module' => 'pmse_Project'));
+        $this->PMSEProjectApi->verifyRunningProcess($this->api, ['module' => 'pmse_Project']);
     }
 }

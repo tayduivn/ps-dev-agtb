@@ -43,16 +43,16 @@ class UuidTest extends TestCase
 
     public function providerMethods()
     {
-        return array(
-            array(
+        return [
+            [
                 'uuid1',
                 '/^[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}$/i',
-            ),
-            array(
+            ],
+            [
                 'uuid4',
                 '/^[a-z0-9]{8}-[a-z0-9]{4}-4[a-z0-9]{3}-[89ab][a-z0-9]{3}-[a-z0-9]{12}$/i',
-            ),
-        );
+            ],
+        ];
     }
 
     /**

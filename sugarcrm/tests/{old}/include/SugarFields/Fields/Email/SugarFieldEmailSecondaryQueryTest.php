@@ -1,4 +1,4 @@
-<?php 
+<?php
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -19,52 +19,52 @@ class SugarFieldEmailSecondaryQueryTest extends TestCase
      */
     public function testAutoPrimary()
     {
-        $emailsArray = array(
-            array('id' => 'addr_1',
+        $emailsArray = [
+            ['id' => 'addr_1',
                   'bean_id' => 'bean_2',
                   'email_address' => 'addr_1@bean_2.com',
                   'invalid_email' => true,
                   'opt_out' => false,
-            ),
-            array('id' => 'addr_2',
+            ],
+            ['id' => 'addr_2',
                   'bean_id' => 'bean_2',
                   'email_address' => 'addr_2@bean_2.com',
                   'invalid_email' => false,
                   'opt_out' => false,
-            ),
-            array('id' => 'addr_1',
+            ],
+            ['id' => 'addr_1',
                   'bean_id' => 'bean_1',
                   'email_address' => 'addr_1@bean_1.com',
                   'invalid_email' => true,
                   'opt_out' => true,
-            ),
-            array('id' => 'addr_1',
+            ],
+            ['id' => 'addr_1',
                   'bean_id' => 'bean_3',
                   'email_address' => 'addr_1@bean_3.com',
                   'invalid_email' => false,
                   'opt_out' => false,
-            ),
-            array('id' => 'addr_2',
+            ],
+            ['id' => 'addr_2',
                   'bean_id' => 'bean_3',
                   'email_address' => 'addr_2@bean_3.com',
                   'invalid_email' => false,
                   'opt_out' => true,
-            ),
-            array('id' => 'addr_2',
+            ],
+            ['id' => 'addr_2',
                   'bean_id' => 'bean_1',
                   'email_address' => 'addr_2@bean_1.com',
                   'invalid_email' => false,
                   'opt_out' => false,
-            ),
-        );
+            ],
+        ];
 
         $queryMock = $this->getMockBuilder('SugarQuery')
-            ->setMethods(array('execute'))
+            ->setMethods(['execute'])
             ->getMock();
         $queryMock->expects($this->once())
                   ->method('execute')
                   ->will($this->returnValue($emailsArray));
-        $emailMock = $this->createPartialMock('EmailAddress', array('getEmailsQuery'));
+        $emailMock = $this->createPartialMock('EmailAddress', ['getEmailsQuery']);
         $emailMock->expects($this->once())
                   ->method('getEmailsQuery')
                   ->will($this->returnValue($queryMock));
@@ -72,7 +72,7 @@ class SugarFieldEmailSecondaryQueryTest extends TestCase
         $seed = BeanFactory::newBean('Accounts');
         $seed->emailAddress = $emailMock;
         
-        $beans = array();
+        $beans = [];
         $beans['bean_3'] = BeanFactory::newBean('Accounts');
         $beans['bean_3']->id = 'bean_3';
         $beans['bean_1'] = BeanFactory::newBean('Accounts');
@@ -89,7 +89,7 @@ class SugarFieldEmailSecondaryQueryTest extends TestCase
                     // Address 1 should always be primary
                     $this->assertTrue($addr['primary_address']==true, "Addr_1 is not primary for {$bean->id}");
                 } else {
-                    $this->assertFalse($addr['primary_address']==true, "Email {$addr['email_address']} is primary for {$bean->id}");                    
+                    $this->assertFalse($addr['primary_address']==true, "Email {$addr['email_address']} is primary for {$bean->id}");
                 }
 
                 $this->assertNotEmpty($addr['email_address_id'], 'The ID of the email address is always present');

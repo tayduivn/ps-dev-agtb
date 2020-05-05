@@ -13,7 +13,7 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once('include/workflow/action_utils.php');
+require_once 'include/workflow/action_utils.php';
 
 class Bug47403Test extends TestCase
 {
@@ -28,14 +28,14 @@ class Bug47403Test extends TestCase
 
         $this->_focus = SugarTestAccountUtilities::createAccount();
 
-        $this->_actionArray = array (
+        $this->_actionArray =  [
             'action_module' => '',
             'action_type' => 'update',
             'rel_module' => '',
             'rel_module_type' => 'all',
-            'basic_ext' => array (),
-            'advanced' => array (),
-        );
+            'basic_ext' =>  [],
+            'advanced' =>  [],
+        ];
     }
 
     protected function tearDown() : void
@@ -45,18 +45,20 @@ class Bug47403Test extends TestCase
         SugarTestHelper::tearDown();
     }
 
-    public function testWorkflowCanSetNonRequiredFieldToEmpty() {
+    public function testWorkflowCanSetNonRequiredFieldToEmpty()
+    {
         $this->_focus->assigned_user_id = $GLOBALS['current_user']->id;
-        $this->_actionArray['basic'] = array('assigned_user_id' => '');
+        $this->_actionArray['basic'] = ['assigned_user_id' => ''];
 
         $this->assertSame($GLOBALS['current_user']->id, $this->_focus->assigned_user_id);
         process_action_update($this->_focus, $this->_actionArray);
         $this->assertSame('', $this->_focus->assigned_user_id);
     }
 
-    public function testWorkflowCanNotSetRequiredFieldToEmpty() {
+    public function testWorkflowCanNotSetRequiredFieldToEmpty()
+    {
         $this->_focus->user_name = $GLOBALS['current_user']->user_name;
-        $this->_actionArray['basic'] = array('name' => '');
+        $this->_actionArray['basic'] = ['name' => ''];
 
         $this->assertSame($GLOBALS['current_user']->user_name, $this->_focus->user_name);
         process_action_update($this->_focus, $this->_actionArray);

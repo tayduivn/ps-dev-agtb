@@ -25,28 +25,28 @@ class RS46Test extends TestCase
     protected $api = null;
 
     /** @var array */
-    protected $accounts = array();
+    protected $accounts = [];
 
     /** @var array */
-    protected $leads = array();
+    protected $leads = [];
 
     /** @var array */
-    protected $prospects = array();
+    protected $prospects = [];
 
     /** @var array */
-    protected $campaigns = array();
+    protected $campaigns = [];
 
     /** @var array */
-    protected $campaignLogs = array();
+    protected $campaignLogs = [];
 
     /** @var array */
-    protected $emails = array();
+    protected $emails = [];
 
     protected function setUp() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setUp('current_user', array(true, true));
+        SugarTestHelper::setUp('current_user', [true, true]);
 
         $this->service = SugarTestRestUtilities::getRestServiceMock();
         $this->api = new LeadsApi();
@@ -68,10 +68,10 @@ class RS46Test extends TestCase
      */
     public function testCreateRecord()
     {
-        $actual = $this->api->createRecord($this->service, array(
+        $actual = $this->api->createRecord($this->service, [
                 'module' => 'Leads',
                 'name' => 'Lead ' . __CLASS__,
-            ));
+            ]);
         $this->assertArrayHasKey('id', $actual);
         $this->assertNotEmpty($actual['id']);
         $this->leads[] = $actual['id'];
@@ -93,13 +93,13 @@ class RS46Test extends TestCase
         $campaign->save();
         $this->campaigns[] = $campaign->id;
 
-        $actual = $this->api->createRecord($this->service, array(
+        $actual = $this->api->createRecord($this->service, [
                 'module' => 'Leads',
                 'name' => 'Test ' . __CLASS__,
                 'relate_to' => 'Prospects',
                 'relate_id' => $prospect->id,
                 'campaign_id' => $campaign->id,
-            ));
+            ]);
         $this->assertArrayHasKey('id', $actual);
         $this->assertNotEmpty($actual['id']);
         $this->leads[] = $actual['id'];
@@ -132,11 +132,11 @@ class RS46Test extends TestCase
         $this->assertEmpty($email->parent_type);
         $this->assertEmpty($email->parent_id);
 
-        $actual = $this->api->createRecord($this->service, array(
+        $actual = $this->api->createRecord($this->service, [
                 'module' => 'Leads',
                 'name' => 'Test ' . __CLASS__,
                 'inbound_email_id' => $email->id,
-            ));
+            ]);
         $this->assertArrayHasKey('id', $actual);
         $this->assertNotEmpty($actual['id']);
         $this->leads[] = $actual['id'];
@@ -162,7 +162,7 @@ class RS46Test extends TestCase
 
         $getAccountBean = $api->getMethod('getAccountBean');
         $getAccountBean->setAccessible(true);
-        $actual = $getAccountBean->invokeArgs($this->api, array($this->service, array(), $lead));
+        $actual = $getAccountBean->invokeArgs($this->api, [$this->service, [], $lead]);
 
         $this->assertNotEmpty($actual);
         $this->assertEquals($account->id, $actual->id);
@@ -185,7 +185,7 @@ class RS46Test extends TestCase
 
         $getAccountRelationship = $api->getMethod('getAccountRelationship');
         $getAccountRelationship->setAccessible(true);
-        $actual = $getAccountRelationship->invokeArgs($this->api, array($this->service, array(), $account, 'leads'));
+        $actual = $getAccountRelationship->invokeArgs($this->api, [$this->service, [], $account, 'leads']);
 
         $this->assertNotEmpty($actual);
         $this->assertEquals($lead->id, $actual[0]['id']);

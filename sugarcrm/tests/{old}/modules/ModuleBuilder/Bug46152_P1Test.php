@@ -16,21 +16,21 @@ class Bug46152_P1Test extends TestCase
 {
     public function getModuleAliasesData()
     {
-        return array(
-            array(
+        return [
+            [
                 'Users',
-                array('Users', 'Employees'),
-            ),
-            array(
+                ['Users', 'Employees'],
+            ],
+            [
                 'Employees',
-                array('Users', 'Employees'),
-            ),
-            array(
+                ['Users', 'Employees'],
+            ],
+            [
                 'Notes',
-                array('Notes'),
-            ),
+                ['Notes'],
+            ],
 
-        );
+        ];
     }
 
     /**
@@ -42,7 +42,7 @@ class Bug46152_P1Test extends TestCase
     public function testGetModuleAliases($module, $needAliases)
     {
         $aliases = ModuleBuilder::getModuleAliases($module);
-        foreach ($needAliases AS $needAlias) {
+        foreach ($needAliases as $needAlias) {
             $this->assertContains($needAlias, $aliases);
         }
     }

@@ -14,14 +14,14 @@ use PHPUnit\Framework\TestCase;
 
 class CronTest extends TestCase
 {
-    static public $jobCalled = false;
+    public static $jobCalled = false;
     public $cron_config;
 
     public static function setUpBeforeClass() : void
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         // clean up queue
-		$GLOBALS['db']->query("DELETE FROM job_queue WHERE status='queued'");
+        $GLOBALS['db']->query("DELETE FROM job_queue WHERE status='queued'");
     }
 
     public static function tearDownAdterClass()
@@ -33,7 +33,7 @@ class CronTest extends TestCase
     {
         $this->jq = $jobq = new SugarCronJobs();
         self::$jobCalled = false;
-        if(isset($GLOBALS['sugar_config']['cron'])) {
+        if (isset($GLOBALS['sugar_config']['cron'])) {
             $this->config_cron = $GLOBALS['sugar_config']['cron'];
         }
     }
@@ -41,7 +41,7 @@ class CronTest extends TestCase
     protected function tearDown() : void
     {
         $GLOBALS['db']->query("DELETE FROM job_queue WHERE scheduler_id='unittest'");
-        if(isset($GLOBALS['sugar_config']['cron'])) {
+        if (isset($GLOBALS['sugar_config']['cron'])) {
             $GLOBALS['sugar_config']['cron'] = $this->config_cron;
         } else {
             unset($GLOBALS['sugar_config']['cron']);
@@ -50,7 +50,7 @@ class CronTest extends TestCase
 
     public function testConfig()
     {
-        $GLOBALS['sugar_config']['cron'] = array('max_cron_jobs' => 12, 'max_cron_runtime' => 34, 'min_cron_interval' => 56);
+        $GLOBALS['sugar_config']['cron'] = ['max_cron_jobs' => 12, 'max_cron_runtime' => 34, 'min_cron_interval' => 56];
         $jobq = new SugarCronJobs();
         $this->assertEquals(12, $jobq->max_jobs, "Wrong setting for max_jobs");
         $this->assertEquals(34, $jobq->max_runtime, "Wrong setting for max_runtime");
@@ -60,9 +60,8 @@ class CronTest extends TestCase
     public function testThrottle()
     {
         //Set the min_interval to 30 if it is set to 0 for this test
-        if($this->jq->min_interval === 0)
-        {
-           $this->jq->min_interval = 30;
+        if ($this->jq->min_interval === 0) {
+            $this->jq->min_interval = 30;
         }
         $this->jq->throttle();
         $this->assertFalse($this->jq->throttle(), "Should prohibit second time");

@@ -13,7 +13,7 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once('include/workflow/plugin_utils.php');
+require_once 'include/workflow/plugin_utils.php';
 
 class Bug62487Test extends TestCase
 {
@@ -23,16 +23,16 @@ class Bug62487Test extends TestCase
     {
         $this->file = create_custom_directory($this->file);
 
-        $component_list = array(
-            'action' => array(
-                'listview' => array(
+        $component_list = [
+            'action' => [
+                'listview' => [
                     'directory' => 'Bug62487Test',
                     'file' => 'Bug62487Test',
                     'class' => 'Bug62487Test',
-                    'function' => 'bug62487test_listview'
-                ),
-            ),
-        );
+                    'function' => 'bug62487test_listview',
+                ],
+            ],
+        ];
 
         write_array_to_file('component_list', $component_list, $this->file);
     }

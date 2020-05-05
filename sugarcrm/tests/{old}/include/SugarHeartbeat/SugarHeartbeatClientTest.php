@@ -26,18 +26,18 @@ class SugarHeartbeatClientTest extends TestCase
      */
     public function testSugarHome()
     {
-        $result = array(
+        $result = [
             'key' => '12345',
-            'data' => base64_encode(serialize(array('foo' => 'bar'))),
-        );
+            'data' => base64_encode(serialize(['foo' => 'bar'])),
+        ];
         $client = $this->getMockBuilder('SugarHeartbeatClient')
             ->disableOriginalConstructor()
-            ->setMethods(array('call'))
+            ->setMethods(['call'])
             ->getMock();
         $client->expects($this->once())
             ->method('call')
             ->with($this->equalTo('sugarHome'), $this->equalTo($result));
-        $client->sugarHome('12345', array('foo' => 'bar'));
+        $client->sugarHome('12345', ['foo' => 'bar']);
     }
 
     /**
@@ -48,11 +48,11 @@ class SugarHeartbeatClientTest extends TestCase
     {
         $client = $this->getMockBuilder('SugarHeartbeatClient')
             ->disableOriginalConstructor()
-            ->setMethods(array('call'))
+            ->setMethods(['call'])
             ->getMock();
         $client->expects($this->once())
             ->method('call')
-            ->with($this->equalTo('sugarPing'), array());
+            ->with($this->equalTo('sugarPing'), []);
         $client->sugarPing();
     }
 }

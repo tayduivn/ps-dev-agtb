@@ -38,7 +38,7 @@ class RS77Test extends TestCase
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setUp('current_user', array(true, true));
+        SugarTestHelper::setUp('current_user', [true, true]);
 
         $this->subscriptionsApi = new SubscriptionsApi();
         $this->serviceMock = SugarTestRestUtilities::getRestServiceMock();
@@ -46,7 +46,7 @@ class RS77Test extends TestCase
 
     protected function tearDown() : void
     {
-        if($this->subscription) {
+        if ($this->subscription) {
             $GLOBALS['db']->query("DELETE FROM subscriptions WHERE id = '{$this->subscription}'");
         }
 
@@ -65,10 +65,10 @@ class RS77Test extends TestCase
 
         Activity::enable();
 
-        $result1 = $this->subscriptionsApi->subscribeToRecord($this->serviceMock, array(
+        $result1 = $this->subscriptionsApi->subscribeToRecord($this->serviceMock, [
             'module' => 'Accounts',
             'record' => $account->id,
-        ));
+        ]);
 
         $this->assertNotEmpty($result1);
 
@@ -80,10 +80,10 @@ class RS77Test extends TestCase
         $this->assertEquals($account->id, $subscription->parent_id);
 
         // check subscribe for already subscribed record
-        $result2 = $this->subscriptionsApi->subscribeToRecord($this->serviceMock, array(
+        $result2 = $this->subscriptionsApi->subscribeToRecord($this->serviceMock, [
             'module' => 'Accounts',
             'record' => $account->id,
-        ));
+        ]);
 
         $this->assertFalse($result2);
 
@@ -100,18 +100,18 @@ class RS77Test extends TestCase
 
         Activity::enable();
 
-        $result = $this->subscriptionsApi->unsubscribeFromRecord($this->serviceMock, array(
+        $result = $this->subscriptionsApi->unsubscribeFromRecord($this->serviceMock, [
             'module' => 'Accounts',
             'record' => $account->id,
-        ));
+        ]);
         $this->assertFalse($result);
 
         $this->subscription = Subscription::subscribeUserToRecord($this->serviceMock->user, $account);
 
-        $result = $this->subscriptionsApi->unsubscribeFromRecord($this->serviceMock, array(
+        $result = $this->subscriptionsApi->unsubscribeFromRecord($this->serviceMock, [
             'module' => 'Accounts',
             'record' => $account->id,
-        ));
+        ]);
 
         $this->assertTrue($result);
     }

@@ -23,7 +23,7 @@ class Bug53053Test extends TestCase
 
     protected function tearDown() : void
     {
-        if ( count($this->contactsToClean) > 0) {
+        if (count($this->contactsToClean) > 0) {
             $list = "'" . implode("','", $this->contactsToClean) . "'";
             $GLOBALS['db']->query("DELETE FROM contacts WHERE id IN ($list)");
             if ($GLOBALS['db']->tableExists('contacts_cstm')) {
@@ -47,9 +47,9 @@ class Bug53053Test extends TestCase
         $this->_user = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['current_user'] = $this->_user;
 
-        $this->contactsToClean = array();
+        $this->contactsToClean = [];
         $this->prefix = 'unitTest';
-        $this->fields = array('first_name' => 'contact', 'last_name' => 'unitTester');
+        $this->fields = ['first_name' => 'contact', 'last_name' => 'unitTester'];
 
         // Create seed contact
         $contact = new Contact();

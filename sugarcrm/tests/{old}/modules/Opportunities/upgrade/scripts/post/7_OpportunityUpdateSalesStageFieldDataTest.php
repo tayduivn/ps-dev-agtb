@@ -22,8 +22,8 @@ class SugarUpgradeOpportunityUpdateSalesStageFieldDataTest extends UpgradeTestCa
         $this->scriptFileName = '7_OpportunityUpdateSalesStageFieldData';
 
         SugarTestHelper::setUp('app_list_strings');
-        $GLOBALS['app_list_strings'] = array(
-            'sales_stage_dom' => array (
+        $GLOBALS['app_list_strings'] = [
+            'sales_stage_dom' =>  [
                 'Prospecting' => 'Prospecting',
                 'Qualification' => 'Qualification',
                 'Needs Analysis' => 'Needs Analysis',
@@ -34,8 +34,8 @@ class SugarUpgradeOpportunityUpdateSalesStageFieldDataTest extends UpgradeTestCa
                 'Negotiation/Review' => 'Negotiation/Review',
                 'Closed Won' => 'Closed Won',
                 'Closed Lost' => 'Closed Lost',
-            ),
-        );
+            ],
+        ];
     }
 
     protected function tearDown() : void
@@ -64,9 +64,9 @@ class SugarUpgradeOpportunityUpdateSalesStageFieldDataTest extends UpgradeTestCa
             ->setConstructorArgs([$this->upgrader])
             ->getMock();
 
-        Opportunity::$settings = array(
+        Opportunity::$settings = [
             'opps_view_by' => 'Opportunities',
-        );
+        ];
 
         $mock->expects($this->never())->method('fixSalesStageField');
         $mock->run();
@@ -77,9 +77,9 @@ class SugarUpgradeOpportunityUpdateSalesStageFieldDataTest extends UpgradeTestCa
      */
     public function testFixSalesStageField_OppsOnly_DoesNotUpgrade()
     {
-        Opportunity::$settings = array(
+        Opportunity::$settings = [
             'opps_view_by' => 'Opportunities',
-        );
+        ];
 
         $this->upgrader->setVersions('8.0.0', 'ent', '9.1.0', 'ent');
         $this->upgrader->setDb($this->db);
@@ -99,46 +99,46 @@ class SugarUpgradeOpportunityUpdateSalesStageFieldDataTest extends UpgradeTestCa
 
     public function dataProviderFixSalesStageField_StageStatusNotClosed()
     {
-        return array(
+        return [
             //one rli that is the first index of the sale_stage_dom
-            array(
-                array(
-                    array('sales_stage' => 'Prospecting', 'date_closed' => '2019-01-01'),
-                ),
+            [
+                [
+                    ['sales_stage' => 'Prospecting', 'date_closed' => '2019-01-01'],
+                ],
                 'Prospecting',
-            ),
-            array(
-                array(
-                    array('sales_stage' => 'Closed Won', 'date_closed' => '2019-06-01'),
-                    array('sales_stage' => 'Closed Won', 'date_closed' => '2019-01-01'),
-                    array('sales_stage' => 'Closed Lost', 'date_closed' => '2019-01-01'),
-                    array('sales_stage' => 'Closed Lost', 'date_closed' => '2019-10-31'),
-                    array('sales_stage' => 'Qualification', 'date_closed' => '2019-08-01'),
-                    array('sales_stage' => 'Perception Analysis', 'date_closed' => '2019-08-01'),
-                    array('sales_stage' => 'Value Proposition', 'date_closed' => '2019-08-01'),
-                    array('sales_stage' => 'Id. Decision Makers', 'date_closed' => '2019-08-01'),
-                    array('sales_stage' => 'Id. Decision Makers', 'date_closed' => '2019-08-01'),
-                    array('sales_stage' => 'Negotiation/Review', 'date_closed' => '2019-03-01'),
-                    array('sales_stage' => 'Negotiation/Review', 'date_closed' => '2019-03-01'),
-                    array('sales_stage' => 'Negotiation/Review', 'date_closed' => '2019-03-01'),
-                    array('sales_stage' => 'Negotiation/Review', 'date_closed' => '2019-03-01'),
-                ),
+            ],
+            [
+                [
+                    ['sales_stage' => 'Closed Won', 'date_closed' => '2019-06-01'],
+                    ['sales_stage' => 'Closed Won', 'date_closed' => '2019-01-01'],
+                    ['sales_stage' => 'Closed Lost', 'date_closed' => '2019-01-01'],
+                    ['sales_stage' => 'Closed Lost', 'date_closed' => '2019-10-31'],
+                    ['sales_stage' => 'Qualification', 'date_closed' => '2019-08-01'],
+                    ['sales_stage' => 'Perception Analysis', 'date_closed' => '2019-08-01'],
+                    ['sales_stage' => 'Value Proposition', 'date_closed' => '2019-08-01'],
+                    ['sales_stage' => 'Id. Decision Makers', 'date_closed' => '2019-08-01'],
+                    ['sales_stage' => 'Id. Decision Makers', 'date_closed' => '2019-08-01'],
+                    ['sales_stage' => 'Negotiation/Review', 'date_closed' => '2019-03-01'],
+                    ['sales_stage' => 'Negotiation/Review', 'date_closed' => '2019-03-01'],
+                    ['sales_stage' => 'Negotiation/Review', 'date_closed' => '2019-03-01'],
+                    ['sales_stage' => 'Negotiation/Review', 'date_closed' => '2019-03-01'],
+                ],
                 'Negotiation/Review',
 
-            ),
-            array(
-                array(
-                    array('sales_stage' => 'Closed Won', 'date_closed' => '2019-06-01'),
-                    array('sales_stage' => 'Closed Won', 'date_closed' => '2019-01-01'),
-                    array('sales_stage' => 'Closed Lost', 'date_closed' => '2019-01-01'),
-                    array('sales_stage' => 'Closed Lost', 'date_closed' => '2019-10-31'),
-                    array('sales_stage' => 'Qualification', 'date_closed' => '2019-05-01'),
-                    array('sales_stage' => 'Qualifications', 'date_closed' => '2019-03-01'),
-                    array('sales_stage' => 'Prospecting', 'date_closed' => '2019-10-01'),
-                ),
+            ],
+            [
+                [
+                    ['sales_stage' => 'Closed Won', 'date_closed' => '2019-06-01'],
+                    ['sales_stage' => 'Closed Won', 'date_closed' => '2019-01-01'],
+                    ['sales_stage' => 'Closed Lost', 'date_closed' => '2019-01-01'],
+                    ['sales_stage' => 'Closed Lost', 'date_closed' => '2019-10-31'],
+                    ['sales_stage' => 'Qualification', 'date_closed' => '2019-05-01'],
+                    ['sales_stage' => 'Qualifications', 'date_closed' => '2019-03-01'],
+                    ['sales_stage' => 'Prospecting', 'date_closed' => '2019-10-01'],
+                ],
                 'Qualification',
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -161,15 +161,15 @@ class SugarUpgradeOpportunityUpdateSalesStageFieldDataTest extends UpgradeTestCa
 
         //Need to set sales status back to In Progess because sales_status is a
         //calculated field
-        Opportunity::$settings = array(
+        Opportunity::$settings = [
             'opps_view_by' => 'Opportunities',
-        );
+        ];
         $opp1->sales_status = 'In Progress';
         $opp1->save();
 
-        Opportunity::$settings = array(
+        Opportunity::$settings = [
             'opps_view_by' => 'RevenueLineItems',
-        );
+        ];
 
         $this->upgrader->setVersions('8.0.0', 'ent', '9.1.0', 'ent');
         $this->upgrader->setDb($this->db);
@@ -180,7 +180,7 @@ class SugarUpgradeOpportunityUpdateSalesStageFieldDataTest extends UpgradeTestCa
             'fixSalesStageField'
         );
 
-        $results = BeanFactory::retrieveBean($opp1->module_name, $opp1->id, array('use_cache' => false));
+        $results = BeanFactory::retrieveBean($opp1->module_name, $opp1->id, ['use_cache' => false]);
         $this->assertSame($expected, $results->sales_stage);
     }
 
@@ -190,9 +190,9 @@ class SugarUpgradeOpportunityUpdateSalesStageFieldDataTest extends UpgradeTestCa
     public function testFixSalesStageField_OppSalesStatusClosed_UpgradesData()
     {
         //Need to set to Opps view so that the Sales Status field doesn't calculate
-        Opportunity::$settings = array(
+        Opportunity::$settings = [
             'opps_view_by' => 'Opportunities',
-        );
+        ];
 
         $salesStageInProgress = 'In Progress';
         $salesStageOption ='Prospecting';

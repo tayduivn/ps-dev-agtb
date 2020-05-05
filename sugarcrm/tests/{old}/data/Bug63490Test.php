@@ -26,10 +26,10 @@ class Bug63490Test extends TestCase
     {
         self::$bean = new SugarBean();
         self::$bean->table_name = 'bean';
-        self::$bean->field_defs = array(
-            'id' => array(),
-            'name' => array(),
-        );
+        self::$bean->field_defs = [
+            'id' => [],
+            'name' => [],
+        ];
     }
 
     /**
@@ -44,7 +44,7 @@ class Bug63490Test extends TestCase
         $input,
         $expected,
         $suppress_table_name = false,
-        $field_map = array()
+        $field_map = []
     ) {
         $actual = self::$bean->process_order_by(
             $input,
@@ -90,48 +90,48 @@ class Bug63490Test extends TestCase
 
     public static function correctProvider()
     {
-        return array(
+        return [
             // contains table anme
-            array('bean.name DESC', 'bean.name DESC'),
+            ['bean.name DESC', 'bean.name DESC'],
             // existing field is accepted
-            array('name', 'bean.name'),
+            ['name', 'bean.name'],
             // valid order is accepted
-            array('name asc', 'bean.name asc'),
+            ['name asc', 'bean.name asc'],
             // order is case-insensitive
-            array('name DeSc', 'bean.name DeSc'),
+            ['name DeSc', 'bean.name DeSc'],
             // any white spaces are accepted
-            array("\tname\t\nASC\n\r", 'bean.name ASC'),
+            ["\tname\t\nASC\n\r", 'bean.name ASC'],
             // invalid order is ignored
-            array('name somehow', 'bean.name'),
+            ['name somehow', 'bean.name'],
             // everything after the first white space considered order
-            array('name desc asc', 'bean.name'),
+            ['name desc asc', 'bean.name'],
             // $suppress_table_name usage
-            array('name', 'name', true),
+            ['name', 'name', true],
             // $relate_field_map usage
-            array('name desc', 'first_name desc, last_name desc', false, array(
-                'name' => array('first_name', 'last_name'),
-            )),
-        );
+            ['name desc', 'first_name desc, last_name desc', false, [
+                'name' => ['first_name', 'last_name'],
+            ]],
+        ];
     }
 
     public static function incorrectProvider()
     {
-        return array(
+        return [
             // non-existing field is removed
-            array('title'),
+            ['title'],
             // non-existing field is removed together with order
-            array('title asc'),
+            ['title asc'],
             // non-existing field with table name is removed
-            array('bean.title')
-        );
+            ['bean.title'],
+        ];
     }
 
     public static function duplicateProvider()
     {
-        return array(
-            array('id'),
-            array('id asc'),
-            array('id desc'),
-        );
+        return [
+            ['id'],
+            ['id asc'],
+            ['id desc'],
+        ];
     }
 }

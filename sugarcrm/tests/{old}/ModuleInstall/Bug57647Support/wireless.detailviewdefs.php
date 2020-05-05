@@ -12,40 +12,39 @@
 
 $module_name = 'f0001_bango';
 $_object_name = 'f0001_bango';
-$viewdefs[$module_name]['DetailView'] = array(
-	'templateMeta' => array(
-        'form' => array(
-            'buttons'=>array('EDIT', 'DUPLICATE', 'DELETE',)
-        ),
+$viewdefs[$module_name]['DetailView'] = [
+    'templateMeta' => [
+        'form' => [
+            'buttons'=>['EDIT', 'DUPLICATE', 'DELETE',],
+        ],
         'maxColumns' => '1',
-        'widths' => array(
-            array('label' => '10', 'field' => '30'),
-            array('label' => '10', 'field' => '30')
-        ),
-    ),
+        'widths' => [
+            ['label' => '10', 'field' => '30'],
+            ['label' => '10', 'field' => '30'],
+        ],
+    ],
 
-	'panels' => array (
-    	array (
-			$_object_name . '_number',
-		),
-		array (
-			'priority'
-		),
-		array (
-			'status',
-		),
-		array (
-			array (
-				'name' 	=> 'name',
-				'label' => 'LBL_SUBJECT',
-			),
-		),
-		array (
-			'assigned_user_name',
-		),
-		array (
-			'team_name',
-		),
-	)
-);
-?>
+    'panels' =>  [
+         [
+            $_object_name . '_number',
+         ],
+         [
+            'priority',
+         ],
+         [
+            'status',
+         ],
+         [
+             [
+                'name'  => 'name',
+                'label' => 'LBL_SUBJECT',
+             ],
+         ],
+         [
+            'assigned_user_name',
+         ],
+         [
+            'team_name',
+         ],
+    ],
+];

@@ -33,7 +33,7 @@ class RestExportTest extends RestTestBase
         parent::tearDown();
 
         $this->_cleanUpRecords();
-        $this->accounts = array();
+        $this->accounts = [];
     }
 
     public function testExportWithFilter()
@@ -42,11 +42,10 @@ class RestExportTest extends RestTestBase
         $chosenIndex = 13;
         // this filter should retrieve only one account.
         $reply = $this->_restCall($this->massRestPath.'?filter='.urlencode('[{"name":"'.$this->accounts[$chosenIndex]->name.'"}]'));
-        foreach($this->accounts as $i => $account) {
+        foreach ($this->accounts as $i => $account) {
             if ($i == $chosenIndex) {
                 $this->assertContains($account->name, $reply['replyRaw'], 'Reply does not contain chosen account '.$i.' '.$account->name);
-            }
-            else {
+            } else {
                 $this->assertNotContains($account->name, $reply['replyRaw'], 'Reply contains non-chosen account '.$i.' '.$account->name);
             }
         }
@@ -58,7 +57,7 @@ class RestExportTest extends RestTestBase
         $reply = $this->_restCall($this->massRestPath);
 
         // we want them all.
-        foreach($this->accounts as $i => $account) {
+        foreach ($this->accounts as $i => $account) {
             $this->assertContains($account->name, $reply['replyRaw'], 'Reply does not contain account '.$i.' '.$account->name);
         }
     }
@@ -80,11 +79,10 @@ class RestExportTest extends RestTestBase
         // single uid as array
         $chosenIndex = 17;
         $reply = $this->_restCall($this->massRestPath.'?uid[]='.$this->accounts[$chosenIndex]->id);
-        foreach($this->accounts as $i => $account) {
+        foreach ($this->accounts as $i => $account) {
             if ($i == $chosenIndex) {
                 $this->assertContains($account->name, $reply['replyRaw'], 'Reply does not contain chosen account '.$i.' '.$account->name);
-            }
-            else {
+            } else {
                 $this->assertNotContains($account->name, $reply['replyRaw'], 'Reply contains non-chosen account '.$i.' '.$account->name);
             }
         }
@@ -94,17 +92,16 @@ class RestExportTest extends RestTestBase
         // http://api.jquery.com/jQuery.param/
         // we only want to retrieve accounts 0..$chosen_index-1 -- guard against case where all accounts are retrieved indiscriminately
         $accountString = '';
-        for($i=0; $i < $chosenIndex; $i++) {
+        for ($i=0; $i < $chosenIndex; $i++) {
             $accountString .= 'uid[]='.urlencode($this->accounts[$i]->id).'&';
         }
-        $accountString = rtrim($accountString,'&');
+        $accountString = rtrim($accountString, '&');
 
         $reply = $this->_restCall($this->massRestPath.'?'.$accountString);
         foreach ($this->accounts as $i => $account) {
             if ($i < $chosenIndex) {
                 $this->assertContains($account->name, $reply['replyRaw'], 'Reply does not contain chosen account '.$i.' '.$account->name);
-            }
-            else {
+            } else {
                 $this->assertNotContains($account->name, $reply['replyRaw'], 'Reply contains non-chosen account '.$i.' '.$account->name);
             }
         }

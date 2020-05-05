@@ -34,59 +34,59 @@ class LeadConvertTest extends TestCase
         $this->lead = SugarTestLeadUtilities::createLead();
         $this->leadId = $this->lead->id;
 
-        $this->contactsDef = array(
+        $this->contactsDef = [
             'module' => 'Contacts',
             'required' => true,
             'duplicateCheck' => true,
-            'fieldMapping' => array()
-        );
+            'fieldMapping' => [],
+        ];
 
-        $this->accountsDef = array(
+        $this->accountsDef = [
             'module' => 'Accounts',
             'required' => true,
             'duplicateCheck' => true,
             'contactRelateField' => 'account_name',
-            'fieldMapping' => array()
-        );
+            'fieldMapping' => [],
+        ];
 
-        $this->opportunitiesDef = array(
+        $this->opportunitiesDef = [
             'module' => 'Opportunities',
             'required' => false,
             'duplicateCheck' => true,
-            'fieldMapping' => array(),
-            'dependentModules' => array(
+            'fieldMapping' => [],
+            'dependentModules' => [
                 'Contacts',
-                'Accounts'
-            )
-        );
+                'Accounts',
+            ],
+        ];
 
-        $this->tasksDef = array(
+        $this->tasksDef = [
             'module' => 'Tasks',
             'required' => false,
             'duplicateCheck' => true,
-            'fieldMapping' => array()
-        );
+            'fieldMapping' => [],
+        ];
 
-        $this->rliDef = array(
+        $this->rliDef = [
             'module' => 'RevenueLineItems',
             'required' => false,
             'duplicateCheck' => true,
-            'dependentModules' => array(
-                'Opportunities' => array(
-                    'fieldMapping' => array(
+            'dependentModules' => [
+                'Opportunities' => [
+                    'fieldMapping' => [
                         'opportunity_id' => 'id',
-                    ),
-                ),
-            ),
-        );
+                    ],
+                ],
+            ],
+        ];
 
-        $this->modulesDef = array(
+        $this->modulesDef = [
             $this->contactsDef,
             $this->accountsDef,
             $this->opportunitiesDef,
             $this->tasksDef,
             $this->rliDef,
-        );
+        ];
 
         SugarTestHelper::setUp('dictionary');
     }
@@ -112,8 +112,8 @@ class LeadConvertTest extends TestCase
     public function testInitialize_Successful()
     {
         $leadConvert = $this->getMockBuilder('LeadConvert')
-            ->setMethods(array('getVarDefs'))
-            ->setConstructorArgs(array($this->leadId))
+            ->setMethods(['getVarDefs'])
+            ->setConstructorArgs([$this->leadId])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -130,8 +130,8 @@ class LeadConvertTest extends TestCase
     public function testInitialize_InvalidLeadId_ThrowsException()
     {
         $leadConvert = $this->getMockBuilder('LeadConvert')
-            ->setMethods(array('getVarDefs'))
-            ->setConstructorArgs(array($this->leadId))
+            ->setMethods(['getVarDefs'])
+            ->setConstructorArgs([$this->leadId])
             ->disableOriginalConstructor()
             ->getMock();
         $leadConvert->expects($this->any())
@@ -151,8 +151,8 @@ class LeadConvertTest extends TestCase
     public function testAddLogForContactInCampaign_LogsProperlyWhenCorrectDataSet($hasCampaign, $hasContact, $expected)
     {
         $leadConvert = $this->getMockBuilder('LeadConvert')
-            ->setMethods(array('getVarDefs', 'addCampaignLog'))
-            ->setConstructorArgs(array($this->leadId))
+            ->setMethods(['getVarDefs', 'addCampaignLog'])
+            ->setConstructorArgs([$this->leadId])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -182,19 +182,19 @@ class LeadConvertTest extends TestCase
      */
     public function providerDataAddLogForContactInCampaign()
     {
-        return array(
-            array(true, true, 1),
-            array(true, false, 0),
-            array(false, false, 0),
-            array(false, true, 0)
-        );
+        return [
+            [true, true, 1],
+            [true, false, 0],
+            [false, false, 0],
+            [false, true, 0],
+        ];
     }
 
     public function testSetRelationshipForModulesToLeads_OneToManyRelationship_RelationshipIsStoredOnlead()
     {
         $leadConvert = $this->getMockBuilder('LeadConvert')
-            ->setMethods(array('getVarDefs'))
-            ->setConstructorArgs(array($this->leadId))
+            ->setMethods(['getVarDefs'])
+            ->setConstructorArgs([$this->leadId])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -205,7 +205,7 @@ class LeadConvertTest extends TestCase
         $leadConvert->initialize($this->leadId);
 
         $account = SugarTestAccountUtilities::createAccount();
-        $leadConvert->setModules(array('Accounts' => $account));
+        $leadConvert->setModules(['Accounts' => $account]);
 
         $lead = $leadConvert->getLead();
         $this->assertNull($lead->account_id);
@@ -222,8 +222,8 @@ class LeadConvertTest extends TestCase
     public function testSetRelationshipForModulesToLeads_NotOneToManyRelationship_RelationshipIsAddedToModule_NotLead()
     {
         $leadConvert = $this->getMockBuilder('LeadConvert')
-            ->setMethods(array('getVarDefs'))
-            ->setConstructorArgs(array($this->leadId))
+            ->setMethods(['getVarDefs'])
+            ->setConstructorArgs([$this->leadId])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -233,14 +233,14 @@ class LeadConvertTest extends TestCase
 
         $leadConvert->initialize($this->leadId);
 
-        $meetingDef = array(
+        $meetingDef = [
             'module' => 'Meetings',
             'required' => true,
             'duplicateCheck' => true,
-            'fieldMapping' => array()
-        );
+            'fieldMapping' => [],
+        ];
         $meeting = SugarTestMeetingUtilities::createMeeting();
-        $leadConvert->setModules(array('Meetings' => $meeting));
+        $leadConvert->setModules(['Meetings' => $meeting]);
 
         $leadConvert->setRelationshipForModulesToLeads($meetingDef);
 
@@ -258,8 +258,8 @@ class LeadConvertTest extends TestCase
     public function testSetRelationshipsForModulesToContacts_ContactRelatedFieldInVarDef_FieldOnContactSet()
     {
         $leadConvert = $this->getMockBuilder('LeadConvert')
-            ->setMethods(array('getVarDefs'))
-            ->setConstructorArgs(array($this->leadId))
+            ->setMethods(['getVarDefs'])
+            ->setConstructorArgs([$this->leadId])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -273,10 +273,10 @@ class LeadConvertTest extends TestCase
         $contact = SugarTestContactUtilities::createContact();
 
         $leadConvert->setModules(
-            array(
+            [
                 'Accounts' => $account,
-                'Contacts' => $contact
-            )
+                'Contacts' => $contact,
+            ]
         );
         $leadConvert->setContact($contact);
 
@@ -299,8 +299,8 @@ class LeadConvertTest extends TestCase
     public function testSetRelationshipsForModulesToContacts_ManyToManyRelationship_RelationshipIsAddToContact()
     {
         $leadConvert = $this->getMockBuilder('LeadConvert')
-            ->setMethods(array('getVarDefs'))
-            ->setConstructorArgs(array($this->leadId))
+            ->setMethods(['getVarDefs'])
+            ->setConstructorArgs([$this->leadId])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -314,10 +314,10 @@ class LeadConvertTest extends TestCase
         $contact = SugarTestContactUtilities::createContact();
 
         $leadConvert->setModules(
-            array(
+            [
                 'Opportunities' => $opp,
-                'Contacts' => $contact
-            )
+                'Contacts' => $contact,
+            ]
         );
         $leadConvert->setContact($contact);
 
@@ -338,8 +338,8 @@ class LeadConvertTest extends TestCase
     public function testSetRelationshipsForModulesToContacts_OneToManyRelationship_RelationshipAdded_FieldOnContactSet()
     {
         $leadConvert = $this->getMockBuilder('LeadConvert')
-            ->setMethods(array('getVarDefs'))
-            ->setConstructorArgs(array($this->leadId))
+            ->setMethods(['getVarDefs'])
+            ->setConstructorArgs([$this->leadId])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -353,10 +353,10 @@ class LeadConvertTest extends TestCase
         $contact = SugarTestContactUtilities::createContact();
 
         $leadConvert->setModules(
-            array(
+            [
                 'Tasks' => $task,
-                'Contacts' => $contact
-            )
+                'Contacts' => $contact,
+            ]
         );
         $leadConvert->setContact($contact);
 
@@ -382,22 +382,22 @@ class LeadConvertTest extends TestCase
         $contact = SugarTestContactUtilities::createContact();
         $account = SugarTestAccountUtilities::createAccount();
 
-        $modules = array(
+        $modules = [
             'Tasks' => $task,
             'Contacts' => $contact,
-            'Accounts' => $account
-        );
+            'Accounts' => $account,
+        ];
 
         $leadConvert = $this->getMockBuilder('LeadConvert')
-            ->setMethods(array(
+            ->setMethods([
                 'getVarDefs',
                 'setRelationshipsForModulesToContacts',
                 'setAssignedForModulesToLeads',
                 'setRelationshipForModulesToLeads',
                 'addLogForContactInCampaign',
-                'updateOpportunityWithAccountInformation'
-            ))
-            ->setConstructorArgs(array($this->leadId))
+                'updateOpportunityWithAccountInformation',
+            ])
+            ->setConstructorArgs([$this->leadId])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -437,12 +437,12 @@ class LeadConvertTest extends TestCase
         $rli = SugarTestRevenueLineItemUtilities::createRevenueLineItem();
         $rli->opportunity_id = null;
         $opp = SugarTestOpportunityUtilities::createOpportunity();
-        $leadConvert = $this->createPartialMock('LeadConvert', array('initialize'));
-        $leadConvert->setModules(array(
+        $leadConvert = $this->createPartialMock('LeadConvert', ['initialize']);
+        $leadConvert->setModules([
             'RevenueLineItems' => $rli,
             'Opportunities' => $opp,
-        ));
-        SugarTestReflection::callProtectedMethod($leadConvert, 'copyDependentData', array($this->rliDef));
+        ]);
+        SugarTestReflection::callProtectedMethod($leadConvert, 'copyDependentData', [$this->rliDef]);
         $this->assertEquals($opp->id, $rli->opportunity_id, 'Opp id should be copied to opportunity_id in rli');
     }
 
@@ -459,15 +459,15 @@ class LeadConvertTest extends TestCase
         $this->lead = SugarTestLeadUtilities::createLead();
         $this->leadId = $this->lead->id;
 
-        $modules = array(
+        $modules = [
             'Contacts' => $contact,
             'Accounts' => $account,
-            'Opportunities' => $opp
-        );
+            'Opportunities' => $opp,
+        ];
 
         $leadConvert = $this->getMockBuilder('LeadConvert')
-            ->setMethods(array('getVarDefs'))
-            ->setConstructorArgs(array($this->leadId))
+            ->setMethods(['getVarDefs'])
+            ->setConstructorArgs([$this->leadId])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -505,8 +505,8 @@ class LeadConvertTest extends TestCase
     public function testCopyActivities_CopyTaskToAccountAndContact_SuccessFullyCopied()
     {
         $leadConvert = $this->getMockBuilder('LeadConvert')
-            ->setMethods(array('getVarDefs'))
-            ->setConstructorArgs(array($this->leadId))
+            ->setMethods(['getVarDefs'])
+            ->setConstructorArgs([$this->leadId])
             ->disableOriginalConstructor()
             ->getMock();
         $leadConvert->expects($this->any())
@@ -517,16 +517,16 @@ class LeadConvertTest extends TestCase
         $account = SugarTestAccountUtilities::createAccount();
         $contact = SugarTestContactUtilities::createContact();
         $task = SugarTestTaskUtilities::createTask();
-        $modules = array(
+        $modules = [
             "Accounts" => $account,
             "Contacts" => $contact,
             "Tasks" => $task,
-        );
+        ];
 
-        $transferActivitiesModules = array(
+        $transferActivitiesModules = [
             'Contacts',
-            'Accounts'
-        );
+            'Accounts',
+        ];
 
         $leadConvert->setModules($modules);
         $lead = $leadConvert->getLead();
@@ -563,8 +563,8 @@ class LeadConvertTest extends TestCase
     public function testMoveActivitiesToContact_MovedSuccessFully()
     {
         $leadConvert = $this->getMockBuilder('LeadConvert')
-            ->setMethods(array('getVarDefs', 'getActivitySetting'))
-            ->setConstructorArgs(array($this->leadId))
+            ->setMethods(['getVarDefs', 'getActivitySetting'])
+            ->setConstructorArgs([$this->leadId])
             ->disableOriginalConstructor()
             ->getMock();
         $leadConvert->expects($this->any())
@@ -579,11 +579,11 @@ class LeadConvertTest extends TestCase
         $account = SugarTestAccountUtilities::createAccount();
         $contact = SugarTestContactUtilities::createContact();
         $task = SugarTestTaskUtilities::createTask();
-        $modules = array(
+        $modules = [
             "Accounts" => $account,
             "Contacts" => $contact,
             "Tasks" => $task,
-        );
+        ];
 
         $leadConvert->setModules($modules);
         $leadConvert->setContact($contact);
@@ -595,7 +595,7 @@ class LeadConvertTest extends TestCase
         $this->assertEquals(1, count($linkedTasks), "Expected 1 Task to Be Linked to Lead");
 
         /*--- Move the Activities to the Contact ---*/
-        $leadConvert->performLeadActivitiesTransfer('move', array());
+        $leadConvert->performLeadActivitiesTransfer('move', []);
 
         unset($lead->tasks);
         /*-- Verify Task Has been Unlinked from Lead --*/
@@ -615,19 +615,19 @@ class LeadConvertTest extends TestCase
         $contact = SugarTestContactUtilities::createContact();
         $account = SugarTestAccountUtilities::createAccount();
 
-        $modules = array(
+        $modules = [
             'Tasks' => $task,
             'Contacts' => $contact,
-            'Accounts' => $account
-        );
+            'Accounts' => $account,
+        ];
 
         $leadConvert = $this->getMockBuilder('LeadConvert')
-            ->setMethods(array(
+            ->setMethods([
                 'getVarDefs',
                 'copyActivities',
-                'getActivitySetting'
-            ))
-            ->setConstructorArgs(array($this->leadId))
+                'getActivitySetting',
+            ])
+            ->setConstructorArgs([$this->leadId])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -643,7 +643,7 @@ class LeadConvertTest extends TestCase
             ->will($this->returnValue('donothing'));
 
         $leadConvert->initialize($this->leadId);
-        $leadConvert->convertLead($modules, 'donothing', array('Accounts', 'Contacts'));
+        $leadConvert->convertLead($modules, 'donothing', ['Accounts', 'Contacts']);
 
         $lead = BeanFactory::getBean('Leads', $this->leadId);
 

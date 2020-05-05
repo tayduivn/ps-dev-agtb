@@ -10,10 +10,10 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$subpanel_layout = array(
-    'list_fields' => array(
-        'fake' => array(
+$subpanel_layout = [
+    'list_fields' => [
+        'fake' => [
             'widget_class' => 'fake',
-        ),
-    ),
-);
+        ],
+    ],
+];

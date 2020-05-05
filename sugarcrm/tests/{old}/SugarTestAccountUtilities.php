@@ -13,25 +13,27 @@
 
 class SugarTestAccountUtilities
 {
-    private static $_createdAccounts = array();
+    private static $_createdAccounts = [];
 
-    private function __construct() {}
+    private function __construct()
+    {
+    }
 
     /**
      * @return Account
      */
-    public static function createAccount($id = '', $accountValues = array())
+    public static function createAccount($id = '', $accountValues = [])
     {
         global $current_user;
 
         $time = mt_rand();
         $account = BeanFactory::newBean('Accounts');
 
-        $accountValues = array_merge(array(
+        $accountValues = array_merge([
             'name' => 'SugarAccount' . $time,
             'email' => 'account@'. $time. 'sugar.com',
             'assigned_user_id' => $current_user->id,
-        ), $accountValues);
+        ], $accountValues);
 
         // for backward compatibility with existing tests
         $accountValues['email1'] = $accountValues['email'];
@@ -41,8 +43,7 @@ class SugarTestAccountUtilities
             $account->$property = $value;
         }
 
-        if(!empty($id))
-        {
+        if (!empty($id)) {
             $account->new_with_id = true;
             $account->id = $id;
         }
@@ -52,12 +53,13 @@ class SugarTestAccountUtilities
         return $account;
     }
 
-    public static function setCreatedAccount($account_ids) {
-    	foreach($account_ids as $account_id) {
-    		$account = BeanFactory::newBean('Accounts');
-    		$account->id = $account_id;
-        	self::$_createdAccounts[] = $account;
-    	} // foreach
+    public static function setCreatedAccount($account_ids)
+    {
+        foreach ($account_ids as $account_id) {
+            $account = BeanFactory::newBean('Accounts');
+            $account->id = $account_id;
+            self::$_createdAccounts[] = $account;
+        } // foreach
     } // fn
 
     public static function removeAllCreatedAccounts()
@@ -92,7 +94,7 @@ class SugarTestAccountUtilities
 
     public static function getCreatedAccountIds()
     {
-        $account_ids = array();
+        $account_ids = [];
         foreach (self::$_createdAccounts as $account) {
             $account_ids[] = $account->id;
         }

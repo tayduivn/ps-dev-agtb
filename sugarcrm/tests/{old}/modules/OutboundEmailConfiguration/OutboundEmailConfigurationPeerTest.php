@@ -78,18 +78,18 @@ class OutboundEmailConfigurationPeerTest extends TestCase
     {
         $userConfigurations = OutboundEmailConfigurationTestHelper::createUserOutboundEmailConfigurations(2);
 
-        $expected = array(
+        $expected = [
             $this->systemOverrideConfiguration->id => $this->systemOverrideConfiguration->type,
             $userConfigurations[0]["outbound"]->id => $userConfigurations[0]["outbound"]->type,
             $userConfigurations[1]["outbound"]->id => $userConfigurations[1]["outbound"]->type,
-        );
+        ];
 
         $this->setUpMockOutboundEmailConfigurationPeer(false);
 
         $configurations = MockOutboundEmailConfigurationPeer::listMailConfigurations($GLOBALS["current_user"]);
-        $actual         = array();
+        $actual         = [];
 
-        foreach ($configurations AS $configuration) {
+        foreach ($configurations as $configuration) {
             $actual[$configuration->getConfigId()] = $configuration->getConfigType();
         }
 
@@ -101,18 +101,18 @@ class OutboundEmailConfigurationPeerTest extends TestCase
         $userConfigurations  = OutboundEmailConfigurationTestHelper::createUserOutboundEmailConfigurations(2);
         $systemConfiguration = OutboundEmailConfigurationTestHelper::getSystemConfiguration();
 
-        $expected = array(
+        $expected = [
             $systemConfiguration->id               => $systemConfiguration->type,
             $userConfigurations[0]["outbound"]->id => $userConfigurations[0]["outbound"]->type,
             $userConfigurations[1]["outbound"]->id => $userConfigurations[0]["outbound"]->type,
-        );
+        ];
 
         $this->setUpMockOutboundEmailConfigurationPeer(true);
 
         $configurations = MockOutboundEmailConfigurationPeer::listMailConfigurations($GLOBALS["current_user"]);
-        $actual         = array();
+        $actual         = [];
 
-        foreach ($configurations AS $configuration) {
+        foreach ($configurations as $configuration) {
             $actual[$configuration->getConfigId()] = $configuration->getConfigType();
         }
 
@@ -156,7 +156,7 @@ class OutboundEmailConfigurationPeerTest extends TestCase
     {
         OutboundEmailConfigurationTestHelper::removeAllCreatedEmailRecords();
 
-        $configuration = array(
+        $configuration = [
             "name"              => "System",
             "type"              => "system",
             "user_id"           => "1",
@@ -170,7 +170,7 @@ class OutboundEmailConfigurationPeerTest extends TestCase
             "mail_smtppass"     => "foobar",
             "mail_smtpauth_req" => "1",
             "mail_smtpssl"      => "0",
-        );
+        ];
         OutboundEmailConfigurationTestHelper::createOutboundEmail($configuration);
 
         $this->setUpMockOutboundEmailConfigurationPeer(true);
@@ -191,7 +191,7 @@ class OutboundEmailConfigurationPeerTest extends TestCase
     {
         OutboundEmailConfigurationTestHelper::removeAllCreatedEmailRecords();
 
-        $configuration = array(
+        $configuration = [
             "name"              => "System Override",
             "type"              => "system-override",
             "user_id"           => $GLOBALS["current_user"]->id,
@@ -205,7 +205,7 @@ class OutboundEmailConfigurationPeerTest extends TestCase
             "mail_smtppass"     => "foobar",
             "mail_smtpauth_req" => "1",
             "mail_smtpssl"      => "0",
-        );
+        ];
         OutboundEmailConfigurationTestHelper::createOutboundEmail($configuration);
 
         $this->setUpMockOutboundEmailConfigurationPeer(false);
@@ -218,7 +218,7 @@ class OutboundEmailConfigurationPeerTest extends TestCase
     {
         OutboundEmailConfigurationTestHelper::removeAllCreatedEmailRecords();
 
-        $configuration = array(
+        $configuration = [
             "name"              => "System Override",
             "type"              => "system-override",
             "user_id"           => $GLOBALS["current_user"]->id,
@@ -232,7 +232,7 @@ class OutboundEmailConfigurationPeerTest extends TestCase
             "mail_smtppass"     => "",
             "mail_smtpauth_req" => "1",
             "mail_smtpssl"      => "0",
-        );
+        ];
         OutboundEmailConfigurationTestHelper::createOutboundEmail($configuration);
 
         $this->setUpMockOutboundEmailConfigurationPeer(false);
@@ -246,7 +246,7 @@ class OutboundEmailConfigurationPeerTest extends TestCase
     {
         OutboundEmailConfigurationTestHelper::removeAllCreatedEmailRecords();
 
-        $configuration = array(
+        $configuration = [
             "name"              => "System Override",
             "type"              => "system-override",
             "user_id"           => $GLOBALS["current_user"]->id,
@@ -260,7 +260,7 @@ class OutboundEmailConfigurationPeerTest extends TestCase
             "mail_smtppass"     => "",
             "mail_smtpauth_req" => "0",
             "mail_smtpssl"      => "0",
-        );
+        ];
         OutboundEmailConfigurationTestHelper::createOutboundEmail($configuration);
 
         $this->setUpMockOutboundEmailConfigurationPeer(false);
@@ -274,7 +274,7 @@ class OutboundEmailConfigurationPeerTest extends TestCase
     {
         OutboundEmailConfigurationTestHelper::removeAllCreatedEmailRecords();
 
-        $configuration = array(
+        $configuration = [
             "name"              => "System Override",
             "type"              => "system-override",
             "user_id"           => $GLOBALS["current_user"]->id,
@@ -288,7 +288,7 @@ class OutboundEmailConfigurationPeerTest extends TestCase
             "mail_smtppass"     => "mouse",
             "mail_smtpauth_req" => "1",
             "mail_smtpssl"      => "0",
-        );
+        ];
         OutboundEmailConfigurationTestHelper::createOutboundEmail($configuration);
 
         $this->setUpMockOutboundEmailConfigurationPeer(false);
@@ -306,13 +306,13 @@ class OutboundEmailConfigurationPeerTest extends TestCase
         $configuration->mail_smtpserver = '';
         $configuration->save();
 
-        $mockOutboundEmail = $this->createPartialMock('OutboundEmail', array("isAllowUserAccessToSystemDefaultOutbound", "getSystemMailerSettings"));
+        $mockOutboundEmail = $this->createPartialMock('OutboundEmail', ["isAllowUserAccessToSystemDefaultOutbound", "getSystemMailerSettings"]);
         $mockOutboundEmail->expects($this->any())
             ->method("isAllowUserAccessToSystemDefaultOutbound")
             ->will($this->returnValue(false));
         $mockOutboundEmail->expects($this->any())
             ->method("getSystemMailerSettings")
-            ->will($this->returnValue(array()));
+            ->will($this->returnValue([]));
 
         MockOutboundEmailConfigurationPeer::$outboundEmail = $mockOutboundEmail;
         $status = MockOutboundEmailConfigurationPeer::getMailConfigurationStatusForUser($GLOBALS["current_user"]);
@@ -365,7 +365,7 @@ class OutboundEmailConfigurationPeerTest extends TestCase
     {
         $outboundEmailConfiguration = new OutboundSmtpEmailConfiguration($GLOBALS["current_user"]);
         $mockOutboundEmail = $this->getMockBuilder('OutboundEmail')
-            ->setMethods(array("isAllowUserAccessToSystemDefaultOutbound"))
+            ->setMethods(["isAllowUserAccessToSystemDefaultOutbound"])
             ->getMock();
         $mockOutboundEmail->expects($this->any())
             ->method("isAllowUserAccessToSystemDefaultOutbound")
@@ -399,7 +399,7 @@ class OutboundEmailConfigurationPeerTest extends TestCase
     private function setUpMockOutboundEmailConfigurationPeer($isAllowUserAccessToSystemDefaultOutbound)
     {
         $mockOutboundEmail = $this->getMockBuilder('OutboundEmail')
-            ->setMethods(array("isAllowUserAccessToSystemDefaultOutbound"))
+            ->setMethods(["isAllowUserAccessToSystemDefaultOutbound"])
             ->getMock();
         $mockOutboundEmail->expects($this->any())
             ->method("isAllowUserAccessToSystemDefaultOutbound")

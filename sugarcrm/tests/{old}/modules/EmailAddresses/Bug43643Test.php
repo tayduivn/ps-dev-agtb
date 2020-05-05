@@ -22,7 +22,7 @@ class Bug43643Test extends TestCase
     {
         global $current_user, $beanList, $beanFiles;
         $current_user = SugarTestUserUtilities::createAnonymousUser();
-        require('include/modules.php');
+        require 'include/modules.php';
     }
 
     protected function tearDown() : void
@@ -58,9 +58,9 @@ class Bug43643Test extends TestCase
         SugarTestEmailAddressUtilities::addAddressToPerson(
             $current_user,
             $reply_to_value,
-            array(
+            [
                 'reply_to_address' => true,
-            )
+            ]
         );
 
         // ensure that reply-to address is returned

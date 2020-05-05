@@ -89,7 +89,7 @@ class ForecastsCommittedApiTest extends TestCase
 
         $response = $this->api->forecastsCommitted(
             SugarTestRestUtilities::getRestServiceMock(self::$manager['user']),
-            array('module' => 'Forecasts', 'timeperiod_id' => self::$timeperiod->id)
+            ['module' => 'Forecasts', 'timeperiod_id' => self::$timeperiod->id]
         );
 
         $this->assertNotEmpty($response["records"], "Rest reply is empty. Rep data should have been returned.");
@@ -106,7 +106,7 @@ class ForecastsCommittedApiTest extends TestCase
         $this->expectException(SugarApiExceptionNotAuthorized::class);
         $this->api->forecastsCommitted(
             SugarTestRestUtilities::getRestServiceMock(self::$reportee),
-            array('module' => 'Forecasts', 'user_id' => self::$manager['user']->id)
+            ['module' => 'Forecasts', 'user_id' => self::$manager['user']->id]
         );
     }
 
@@ -119,7 +119,7 @@ class ForecastsCommittedApiTest extends TestCase
         $GLOBALS["current_user"] = self::$reportee;
         $return = $this->api->forecastsCommitted(
             SugarTestRestUtilities::getRestServiceMock(self::$reportee),
-            array('module' => 'Forecasts', 'user_id' => self::$reportee->id, 'timeperiod_id' => self::$timeperiod->id)
+            ['module' => 'Forecasts', 'user_id' => self::$reportee->id, 'timeperiod_id' => self::$timeperiod->id]
         );
 
         $this->assertIsArray($return);
@@ -136,7 +136,7 @@ class ForecastsCommittedApiTest extends TestCase
         $this->expectException(SugarApiExceptionInvalidParameter::class);
         $this->api->forecastsCommitted(
             SugarTestRestUtilities::getRestServiceMock(self::$manager['user']),
-            array('module' => 'Forecasts', 'user_id' => 'im_not_valid')
+            ['module' => 'Forecasts', 'user_id' => 'im_not_valid']
         );
     }
 
@@ -151,7 +151,7 @@ class ForecastsCommittedApiTest extends TestCase
         $this->expectException(SugarApiExceptionInvalidParameter::class);
         $this->api->forecastsCommitted(
             SugarTestRestUtilities::getRestServiceMock(self::$reportee),
-            array('module' => 'Forecasts', 'timeperiod_id' => 'im_not_valid')
+            ['module' => 'Forecasts', 'timeperiod_id' => 'im_not_valid']
         );
     }
 
@@ -167,13 +167,13 @@ class ForecastsCommittedApiTest extends TestCase
         $stub->expects($this->any())
              ->method('filterList')
              ->will($this->returnValue(
-                    array("next_offset" => -1,"records" => array())
-                ));
+                 ["next_offset" => -1,"records" => []]
+             ));
 
         $this->expectException(SugarApiExceptionInvalidParameter::class);
         $this->api->forecastsCommitted(
             SugarTestRestUtilities::getRestServiceMock(self::$reportee),
-            array('module' => 'Forecasts', 'timeperiod_id' => self::$timeperiod->id, 'forecast_type' => 'invalid_type')
+            ['module' => 'Forecasts', 'timeperiod_id' => self::$timeperiod->id, 'forecast_type' => 'invalid_type']
         );
     }
 
@@ -190,26 +190,26 @@ class ForecastsCommittedApiTest extends TestCase
         $stub->expects($this->any())
              ->method('filterList')
              ->will($this->returnValue(
-                    array("next_offset" => -1,"records" => array())
-                ));
+                 ["next_offset" => -1,"records" => []]
+             ));
 
 
         $return = $this->api->forecastsCommitted(
             SugarTestRestUtilities::getRestServiceMock(self::$reportee),
-            array('module' => 'Forecasts', 'timeperiod_id' => self::$timeperiod->id, 'forecast_type' => $forecast_type)
+            ['module' => 'Forecasts', 'timeperiod_id' => self::$timeperiod->id, 'forecast_type' => $forecast_type]
         );
 
-        $this->assertSame(array("next_offset" => -1,"records" => array()), $return);
+        $this->assertSame(["next_offset" => -1,"records" => []], $return);
     }
 
     public static function forecastTypesDataProvider()
     {
-        return array(
-            array('direct'),
-            array('Direct'),
-            array('rollup'),
-            array('Rollup')
-        );
+        return [
+            ['direct'],
+            ['Direct'],
+            ['rollup'],
+            ['Rollup'],
+        ];
     }
 }
 

@@ -12,12 +12,12 @@
  */
 
 /**
- * SugarTestTagUtilities is a unit test class to test Tags 
+ * SugarTestTagUtilities is a unit test class to test Tags
  **/
 class SugarTestTagUtilities
 {
-    private static $createdTagIds = array();
-    private static $newTagNames = array();
+    private static $createdTagIds = [];
+    private static $newTagNames = [];
 
     private function __construct()
     {
@@ -30,13 +30,13 @@ class SugarTestTagUtilities
      *
      * @return SugarBean tag
      */
-    public static function createTag($values = array())
+    public static function createTag($values = [])
     {
         $num = mt_rand();
         $defaults =
-            array(
+            [
                 'name' => 'SugarTag' . $num,
-            );
+            ];
         $values = array_merge($defaults, $values);
         $tag = BeanFactory::newBean('Tags');
         $tag->populateFromRow($values);

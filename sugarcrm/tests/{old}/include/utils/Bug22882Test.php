@@ -24,7 +24,7 @@ class Bug22882Test extends AppListStringsTest
         $resulten = return_app_list_strings_language('en_us');
         $resultfr = array_keys($resultfr['account_type_dom']);
         $resulten = array_keys($resulten['account_type_dom']);
-        $this->assertTrue( $this->isEqual($resultfr, $resulten) );
+        $this->assertTrue($this->isEqual($resultfr, $resulten));
     }
 
     public function testMultiLanguagesDeletedValueFrOnly()
@@ -44,9 +44,9 @@ class Bug22882Test extends AppListStringsTest
         $resulten = return_app_list_strings_language('en_us');
         $resultfr = array_keys($resultfr['account_type_dom']);
         $resulten = array_keys($resulten['account_type_dom']);
-        $this->assertNotEquals(count($resultfr),count($resulten));
-        $this->assertFalse(in_array('Customer',$resulten));
-        $this->assertTrue(in_array('Customer',$resultfr));
+        $this->assertNotEquals(count($resultfr), count($resulten));
+        $this->assertFalse(in_array('Customer', $resulten));
+        $this->assertTrue(in_array('Customer', $resultfr));
     }
 
     public function testMultiLanguagesAddedValue()
@@ -74,7 +74,8 @@ class Bug22882Test extends AppListStringsTest
     }
 
 
-    public function loadFilesDeletedValue(){
+    public function loadFilesDeletedValue()
+    {
             $file_fr = <<<FRFR
 <?php
 \$app_list_strings['account_type_dom']=array (
@@ -110,7 +111,8 @@ ENEN;
         $this->safe_create('custom/include/language/en_us.lang.php', $file_en);
     }
 
-    public function loadFilesDeletedValueFrOnly(){
+    public function loadFilesDeletedValueFrOnly()
+    {
             $file_fr = <<<FRFR
 <?php
 \$app_list_strings['account_type_dom']=array (
@@ -146,7 +148,8 @@ ENEN;
         $this->safe_create('custom/include/language/en_us.lang.php', $file_en);
     }
 
-    public function loadFilesDeletedValueEnOnly(){
+    public function loadFilesDeletedValueEnOnly()
+    {
             $file_fr = <<<FRFR
 <?php
 \$app_list_strings['account_type_dom']=array (
@@ -182,7 +185,8 @@ ENEN;
         $this->safe_create('custom/include/language/en_us.lang.php', $file_en);
     }
 
-    public function loadFilesAddedValueEn(){
+    public function loadFilesAddedValueEn()
+    {
             $file_fr = <<<FRFR
 <?php
 \$app_list_strings['account_type_dom']=array (
@@ -220,7 +224,8 @@ ENEN;
     }
 
 
-    public function loadFilesAddedCustomValueEnOnly(){
+    public function loadFilesAddedCustomValueEnOnly()
+    {
         $file_en = <<<ENEN
 <?php
 \$app_list_strings['account_type_dom']['Analyst'] = 'Test';

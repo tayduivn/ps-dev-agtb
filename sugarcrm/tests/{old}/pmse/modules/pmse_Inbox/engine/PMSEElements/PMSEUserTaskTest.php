@@ -47,53 +47,53 @@ class PMSEUserTaskTest extends TestCase
     public function testRunAssignment()
     {
         $this->userTask = $this->getMockBuilder('PMSEUserTask')
-            ->setMethods(array('prepareResponse', 'retrieveBean'))
+            ->setMethods(['prepareResponse', 'retrieveBean'])
             ->disableOriginalConstructor()
             ->getMock();
 
         $userAssignment = $this->getMockBuilder('PMSEUserAssignmentHandler')
             ->disableOriginalConstructor()
-            ->setMethods(array('taskAssignment'))
+            ->setMethods(['taskAssignment'])
             ->getMock();
 
         $activityDefinition = $this->getMockBuilder('pmse_BpmActivityDefinition')
             ->disableOriginalConstructor()
-            ->setMethods(array('prepareResponse'))
+            ->setMethods(['prepareResponse'])
             ->getMock();
         $activityDefinition->act_response_buttons = 'ROUTE';
         $activityDefinition->act_assignment_method = 'static';
 
         $bean = new stdClass();
         $externalAction = '';
-        $flowData = array(
+        $flowData = [
             'cas_user_id' => 1,
             'cas_index' => 1,
             'id' => 5,
             'bpmn_id' => 'c5189a2e-1cff-e214-3e86-55664fcc93e6',
-        );
+        ];
 
-        $expectedFlowData = array(
+        $expectedFlowData = [
             'cas_user_id' => 2,
             'cas_index' => 1,
             'id' => 5,
             'cas_flow_status' => 'FORM',
             'assigned_user_id' => 2,
-            'cas_adhoc_actions' => json_encode(array('link_cancel', 'route', 'edit', 'continue')),
+            'cas_adhoc_actions' => json_encode(['link_cancel', 'route', 'edit', 'continue']),
             'bpmn_id' => 'c5189a2e-1cff-e214-3e86-55664fcc93e6',
             'cas_assignment_method' => 'static',
-        );
+        ];
 
-        $expectedResult = array(
+        $expectedResult = [
             'route_action' => 'WAIT',
             'flow_action' => 'CREATE',
-            'flow_data' => array (
+            'flow_data' =>  [
                 'cas_user_id' => 2,
                 'cas_index' => 1,
                 'id' => 5,
                 'cas_flow_status' => 'FORM',
-            ),
-            'flow_id' => $flowData['id']
-        );
+            ],
+            'flow_id' => $flowData['id'],
+        ];
 
         $this->userTask->expects($this->exactly(1))
             ->method('prepareResponse')
@@ -118,53 +118,53 @@ class PMSEUserTaskTest extends TestCase
     public function testRunAssignmentForm()
     {
         $this->userTask = $this->getMockBuilder('PMSEUserTask')
-            ->setMethods(array('prepareResponse', 'retrieveBean'))
+            ->setMethods(['prepareResponse', 'retrieveBean'])
             ->disableOriginalConstructor()
             ->getMock();
 
         $userAssignment = $this->getMockBuilder('PMSEUserAssignmentHandler')
             ->disableOriginalConstructor()
-            ->setMethods(array('taskAssignment'))
+            ->setMethods(['taskAssignment'])
             ->getMock();
 
         $activityDefinition = $this->getMockBuilder('pmse_BpmActivityDefinition')
             ->disableOriginalConstructor()
-            ->setMethods(array('prepareResponse'))
+            ->setMethods(['prepareResponse'])
             ->getMock();
         $activityDefinition->act_response_buttons = 'FORM';
         $activityDefinition->act_assignment_method = 'static';
 
         $bean = new stdClass();
         $externalAction = '';
-        $flowData = array(
+        $flowData = [
             'cas_user_id' => 1,
             'cas_index' => 1,
             'id' => 5,
             'bpmn_id' => 'c5189a2e-1cff-e214-3e86-55664fcc93e6',
-        );
+        ];
 
-        $expectedFlowData = array(
+        $expectedFlowData = [
             'cas_user_id' => 2,
             'cas_index' => 1,
             'id' => 5,
             'cas_flow_status' => 'FORM',
             'assigned_user_id' => 2,
-            'cas_adhoc_actions' => json_encode(array('link_cancel', 'approve', 'reject', 'edit')),
+            'cas_adhoc_actions' => json_encode(['link_cancel', 'approve', 'reject', 'edit']),
             'bpmn_id' => 'c5189a2e-1cff-e214-3e86-55664fcc93e6',
             'cas_assignment_method' => 'static',
-        );
+        ];
 
-        $expectedResult = array(
+        $expectedResult = [
             'route_action' => 'WAIT',
             'flow_action' => 'CREATE',
-            'flow_data' => array (
+            'flow_data' =>  [
                 'cas_user_id' => 2,
                 'cas_index' => 1,
                 'id' => 5,
                 'cas_flow_status' => 'FORM',
-            ),
-            'flow_id' => $flowData['id']
-        );
+            ],
+            'flow_id' => $flowData['id'],
+        ];
 
         $this->userTask->expects($this->exactly(1))
             ->method('prepareResponse')
@@ -189,44 +189,44 @@ class PMSEUserTaskTest extends TestCase
     public function testRunRoundTrip()
     {
         $this->userTask = $this->getMockBuilder('PMSEUserTask')
-            ->setMethods(array(
+            ->setMethods([
                 'prepareResponse',
                 'processAction',
                 'checkIfUsesAnEventBasedGateway',
                 'checkIfExistEventBased',
-            ))
+            ])
             ->disableOriginalConstructor()
             ->getMock();
 
         $userAssignment = $this->getMockBuilder('PMSEUserAssignmentHandler')
             ->disableOriginalConstructor()
-            ->setMethods(array('roundTripReassign'))
+            ->setMethods(['roundTripReassign'])
             ->getMock();
 
         $bean = new stdClass();
         $externalAction = 'ROUND_TRIP';
-        $flowData = array(
+        $flowData = [
             'cas_id' => 1,
             'cas_user_id' => 1,
             'cas_index' => 2,
-            'id' => 5
-        );
+            'id' => 5,
+        ];
 
-        $expectedResult = array(
+        $expectedResult = [
             'route_action' => 'WAIT',
             'flow_action' => 'CLOSE',
-            'flow_data' => array ('cas_flow_status' => 'FORM'),
-            'flow_id' => $flowData['id']
-        );
+            'flow_data' =>  ['cas_flow_status' => 'FORM'],
+            'flow_id' => $flowData['id'],
+        ];
 
-        $expectedFlowData = array(
+        $expectedFlowData = [
             'cas_id' => 1,
             'cas_user_id' => 1,
             'cas_index' => 2,
             'id' => 5,
             'cas_flow_status' => 'FORM',
-            'assigned_user_id' => 1
-        );
+            'assigned_user_id' => 1,
+        ];
 
         $this->userTask->expects($this->exactly(1))
             ->method('prepareResponse')
@@ -253,45 +253,45 @@ class PMSEUserTaskTest extends TestCase
     public function testRunOneWay()
     {
         $this->userTask = $this->getMockBuilder('PMSEUserTask')
-            ->setMethods(array(
+            ->setMethods([
                 'prepareResponse',
                 'processAction',
                 'checkIfUsesAnEventBasedGateway',
                 'checkIfExistEventBased',
-            ))
+            ])
             ->disableOriginalConstructor()
             ->getMock();
 
 
         $userAssignment = $this->getMockBuilder('PMSEUserAssignmentHandler')
             ->disableOriginalConstructor()
-            ->setMethods(array('oneWayReassign'))
+            ->setMethods(['oneWayReassign'])
             ->getMock();
 
         $bean = new stdClass();
         $externalAction = 'ONE_WAY';
-        $flowData = array(
+        $flowData = [
             'cas_id' => 1,
             'cas_user_id' => 1,
             'cas_index' => 1,
-            'id' => 5
-        );
+            'id' => 5,
+        ];
 
-        $expectedResult = array(
+        $expectedResult = [
             'route_action' => 'WAIT',
             'flow_action' => 'CLOSE',
-            'flow_data' => array ('cas_flow_status' => 'FORM'),
-            'flow_id' => $flowData['id']
-        );
+            'flow_data' =>  ['cas_flow_status' => 'FORM'],
+            'flow_id' => $flowData['id'],
+        ];
 
-        $expectedFlowData = array(
+        $expectedFlowData = [
             'cas_id' => 1,
             'cas_user_id' => 1,
             'cas_index' => 1,
             'id' => 5,
             'cas_flow_status' => 'FORM',
-            'assigned_user_id' => 1
-        );
+            'assigned_user_id' => 1,
+        ];
 
         $this->userTask->expects($this->exactly(1))
             ->method('prepareResponse')
@@ -318,48 +318,48 @@ class PMSEUserTaskTest extends TestCase
     public function testRunRouteWithArguments()
     {
         $this->userTask = $this->getMockBuilder('PMSEUserTask')
-            ->setMethods(array(
+            ->setMethods([
                 'lockFlowRoute',
                 'saveBeanData',
                 'prepareResponse',
                 'processAction',
                 'checkIfUsesAnEventBasedGateway',
                 'checkIfExistEventBased',
-            ))
+            ])
             ->disableOriginalConstructor()
             ->getMock();
 
         $bean = new stdClass();
         $externalAction = 'SOME_ACTION';
-        $flowData = array(
+        $flowData = [
             'cas_id' => 1,
             'cas_user_id' => 1,
             'cas_index' => 2,
-            'id' => 5
-        );
+            'id' => 5,
+        ];
 
-        $expectedResult = array(
+        $expectedResult = [
             'route_action' => 'ROUTE',
             'flow_action' => 'UPDATE',
-            'flow_data' => array (
+            'flow_data' =>  [
                 'cas_user_id' => 1,
                 'cas_index' => 2,
                 'id' => 5,
                 'cas_flow_status' => 'FORM',
-                'assigned_user_id' => 1
-            ),
+                'assigned_user_id' => 1,
+            ],
             'flow_id' => $flowData['id'],
-            'flow_filters' => array()
-        );
+            'flow_filters' => [],
+        ];
 
-        $expectedFlowData = array(
+        $expectedFlowData = [
             'cas_id' => 1,
             'cas_user_id' => 1,
             'cas_index' => 2,
             'id' => 5,
             'cas_flow_status' => 'FORM',
-            'assigned_user_id' => 1
-        );
+            'assigned_user_id' => 1,
+        ];
 
         $this->userTask->expects($this->exactly(1))
             ->method('prepareResponse')
@@ -377,7 +377,7 @@ class PMSEUserTaskTest extends TestCase
             ->with($flowData)
             ->will($this->returnValue('ROUTE'));
 
-        $arguments = array('idFlow'=>'abc123');
+        $arguments = ['idFlow'=>'abc123'];
         $result = $this->userTask->run($flowData, $bean, $externalAction, $arguments);
         $this->assertEquals($expectedResult, $result);
     }
@@ -390,22 +390,22 @@ class PMSEUserTaskTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $flowData = array(
+        $flowData = [
             'cas_user_id' => 1,
             'cas_index' => 1,
-            'id' => 5
-        );
+            'id' => 5,
+        ];
 
         $userAssignment = $this->getMockBuilder('PMSEUserAssignmentHandler')
             ->disableOriginalConstructor()
-            ->setMethods(array('isRoundTrip'))
+            ->setMethods(['isRoundTrip'])
             ->getMock();
 
-        $paramFlowData = array(
+        $paramFlowData = [
             'cas_user_id' => 1,
             'cas_index' => 1,
-            'id' => 5
-        );
+            'id' => 5,
+        ];
 
         $userAssignment->expects($this->once())
             ->method('isRoundTrip')
@@ -422,11 +422,11 @@ class PMSEUserTaskTest extends TestCase
 
     public function testProcessUserActionOW()
     {
-        $flowData = array(
+        $flowData = [
             'cas_user_id' => 1,
             'cas_index' => 1,
-            'id' => 5
-        );
+            'id' => 5,
+        ];
 
         $this->userTask = $this->getMockBuilder('PMSEUserTask')
             ->setMethods(null)
@@ -435,14 +435,14 @@ class PMSEUserTaskTest extends TestCase
 
         $userAssignment = $this->getMockBuilder('PMSEUserAssignmentHandler')
             ->disableOriginalConstructor()
-            ->setMethods(array('isRoundTrip', 'isOneWay', 'previousIsNormal'))
+            ->setMethods(['isRoundTrip', 'isOneWay', 'previousIsNormal'])
             ->getMock();
 
-        $paramFlowData = array(
+        $paramFlowData = [
             'cas_user_id' => 1,
             'cas_index' => 1,
-            'id' => 5
-        );
+            'id' => 5,
+        ];
 
         $userAssignment->expects($this->exactly(1))
             ->method('isRoundTrip')
@@ -474,22 +474,22 @@ class PMSEUserTaskTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $flowData = array(
+        $flowData = [
             'cas_user_id' => 1,
             'cas_index' => 1,
-            'id' => 5
-        );
+            'id' => 5,
+        ];
 
         $userAssignment = $this->getMockBuilder('PMSEUserAssignmentHandler')
             ->disableOriginalConstructor()
-            ->setMethods(array('isRoundTrip', 'isOneWay', 'previousIsNormal'))
+            ->setMethods(['isRoundTrip', 'isOneWay', 'previousIsNormal'])
             ->getMock();
 
-        $paramFlowData = array(
+        $paramFlowData = [
             'cas_user_id' => 1,
             'cas_index' => 1,
-            'id' => 5
-        );
+            'id' => 5,
+        ];
 
         $userAssignment->expects($this->exactly(1))
             ->method('isRoundTrip')

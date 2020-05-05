@@ -18,17 +18,17 @@ class ActivitiesApiHelperTest extends TestCase
     {
         $emptyAccount = BeanFactory::newBean('Accounts');
         $emptyLead = BeanFactory::newBean('Leads');
-        return array(
-            array('post', null, 'Accounts', '123'),
-            array('post', $emptyAccount, 'Accounts', '123'),
-            array('post', $emptyLead, 'Accounts', '123'),
-            array('link', null, 'Accounts', '123'),
-            array('link', $emptyAccount, 'Leads', '456'),
-            array('link', $emptyLead, 'Accounts', '123'),
-            array('unlink', null, 'Accounts', '123'),
-            array('unlink', $emptyAccount, 'Leads', '456'),
-            array('unlink', $emptyLead, 'Accounts', '123'),
-        );
+        return [
+            ['post', null, 'Accounts', '123'],
+            ['post', $emptyAccount, 'Accounts', '123'],
+            ['post', $emptyLead, 'Accounts', '123'],
+            ['link', null, 'Accounts', '123'],
+            ['link', $emptyAccount, 'Leads', '456'],
+            ['link', $emptyLead, 'Accounts', '123'],
+            ['unlink', null, 'Accounts', '123'],
+            ['unlink', $emptyAccount, 'Leads', '456'],
+            ['unlink', $emptyLead, 'Accounts', '123'],
+        ];
     }
 
     /**
@@ -37,20 +37,20 @@ class ActivitiesApiHelperTest extends TestCase
      */
     public function testGetDisplayModule($activity_type, $contextBean, $expected_module, $expected_id)
     {
-        $record = array(
+        $record = [
             'parent_type' => 'Accounts',
             'parent_id' => '123',
             'activity_type' => $activity_type,
-            'data' => array(
-                'subject' => array(
+            'data' => [
+                'subject' => [
                     'module' => 'Leads',
                     'id' => '456',
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
 
         $helper = new ActivitiesApiHelper(new ActivitiesServiceMockup());
-        $result = SugarTestReflection::callProtectedMethod($helper, 'getDisplayModule', array($record, $contextBean));
+        $result = SugarTestReflection::callProtectedMethod($helper, 'getDisplayModule', [$record, $contextBean]);
 
         $this->assertEquals($expected_module, $result['module']);
         $this->assertEquals($expected_id, $result['id']);

@@ -60,7 +60,7 @@ class TeamBasedACLVisibilityTest extends TestCase
 
     protected function setUp() : void
     {
-        SugarTestHelper::setUp('current_user', array(true, true));
+        SugarTestHelper::setUp('current_user', [true, true]);
         $this->tbaConfig = new TeamBasedACLConfigurator();
         $this->tbaGlobal = $this->tbaConfig->isEnabledGlobally();
         $this->tbaModule = $this->tbaConfig->isEnabledForModule($this->module);
@@ -70,7 +70,7 @@ class TeamBasedACLVisibilityTest extends TestCase
 
         $this->team = SugarTestTeamUtilities::createAnonymousTeam();
         $this->teamSet = BeanFactory::newBean('TeamSets');
-        $this->teamSet->addTeams(array($this->team->id));
+        $this->teamSet->addTeams([$this->team->id]);
 
         $this->user = SugarTestUserUtilities::createAnonymousUser();
         $this->bean = SugarTestAccountUtilities::createAccount();
@@ -125,7 +125,7 @@ class TeamBasedACLVisibilityTest extends TestCase
     {
         $newUser = SugarTestUserUtilities::createAnonymousUser();
         $privateTeamSet = BeanFactory::newBean('TeamSets');
-        $this->bean->acl_team_set_id = $privateTeamSet->addTeams(array($newUser->getPrivateTeamID()));
+        $this->bean->acl_team_set_id = $privateTeamSet->addTeams([$newUser->getPrivateTeamID()]);
         $this->bean->save();
 
         $this->assertFalse($this->isBeanAvailableUsingFrom());
@@ -147,7 +147,7 @@ class TeamBasedACLVisibilityTest extends TestCase
     public function testIsolatedTeamSecurity($visibilities, $inTeam, $isVisible)
     {
         $this->bean = $this->getMockBuilder('Account')
-            ->setMethods(array('loadVisibility'))
+            ->setMethods(['loadVisibility'])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -162,7 +162,7 @@ class TeamBasedACLVisibilityTest extends TestCase
         $this->bean->team_set_id = $this->teamSet->id;
         $this->bean->acl_team_set_id = $this->teamSet->id;
         $this->bean->save();
-        SugarTestAccountUtilities::setCreatedAccount(array($this->bean->id));
+        SugarTestAccountUtilities::setCreatedAccount([$this->bean->id]);
 
         if ($inTeam) {
             $this->team->add_user_to_team($this->user->id);
@@ -178,17 +178,17 @@ class TeamBasedACLVisibilityTest extends TestCase
 
     public function teamVisibilityProvider()
     {
-        return array(
+        return [
             // List of Visibilities.
             // Is a current user in bean's teams.
             // Is a record visible.
-            array(array('TeamSecurity' => true), true, true),
-            array(array('TeamSecurity' => true), false, false),
-            array(array('TeamBasedACLVisibility' => true), true, true),
-            array(array('TeamBasedACLVisibility' => true), false, false),
-            array(array(), true, true),
-            array(array(), false, true),
-        );
+            [['TeamSecurity' => true], true, true],
+            [['TeamSecurity' => true], false, false],
+            [['TeamBasedACLVisibility' => true], true, true],
+            [['TeamBasedACLVisibility' => true], false, false],
+            [[], true, true],
+            [[], false, true],
+        ];
     }
 
     /**
@@ -215,10 +215,10 @@ class TeamBasedACLVisibilityTest extends TestCase
 
     public function accessProvider()
     {
-        return array(
-            array(ACL_ALLOW_ADMIN),
-            array(ACL_ALLOW_ADMIN_DEV),
-        );
+        return [
+            [ACL_ALLOW_ADMIN],
+            [ACL_ALLOW_ADMIN_DEV],
+        ];
     }
 
     /**
@@ -231,7 +231,7 @@ class TeamBasedACLVisibilityTest extends TestCase
         $GLOBALS['current_user'] = $this->user;
 
         $sq = new SugarQuery();
-        $sq->select(array('id'));
+        $sq->select(['id']);
         $sq->from($this->bean);
         $sq->where()->equals('id', $this->bean->id);
         $result = $sq->execute();

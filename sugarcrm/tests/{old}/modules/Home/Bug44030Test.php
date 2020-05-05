@@ -14,27 +14,26 @@ use PHPUnit\Framework\TestCase;
 
 class Bug44030Test extends TestCase
 {
-	var $unified_search_modules_file;
+    var $unified_search_modules_file;
 
     protected function setUp() : void
     {
-	    global $beanList, $beanFiles, $dictionary;
+        global $beanList, $beanFiles, $dictionary;
 
-	    //Add entries to simulate custom module
-	    $beanList['Bug44030_TestPerson'] = 'Bug44030_TestPerson';
-	    $beanFiles['Bug44030_TestPerson'] = 'modules/Bug44030_TestPerson/Bug44030_TestPerson.php';
+        //Add entries to simulate custom module
+        $beanList['Bug44030_TestPerson'] = 'Bug44030_TestPerson';
+        $beanFiles['Bug44030_TestPerson'] = 'modules/Bug44030_TestPerson/Bug44030_TestPerson.php';
 
-	    VardefManager::loadVardef('Contacts', 'Contact');
-	    $dictionary['Bug44030_TestPerson'] = $dictionary['Contact'];
+        VardefManager::loadVardef('Contacts', 'Contact');
+        $dictionary['Bug44030_TestPerson'] = $dictionary['Contact'];
 
-	    //Copy over custom SearchFields.php file
-        if(!file_exists('custom/modules/Bug44030_TestPerson/metadata')) {
-       		mkdir_recursive('custom/modules/Bug44030_TestPerson/metadata');
-    	}
+        //Copy over custom SearchFields.php file
+        if (!file_exists('custom/modules/Bug44030_TestPerson/metadata')) {
+            mkdir_recursive('custom/modules/Bug44030_TestPerson/metadata');
+        }
 
-    if( $fh = @fopen('custom/modules/Bug44030_TestPerson/metadata/SearchFields.php', 'w+') )
-    {
-$string = <<<EOQ
+        if ($fh = @fopen('custom/modules/Bug44030_TestPerson/metadata/SearchFields.php', 'w+')) {
+            $string = <<<EOQ
 <?php
 \$searchFields['Bug44030_TestPerson']['email'] = array(
 'query_type' => 'default',
@@ -45,49 +44,46 @@ $string = <<<EOQ
 );
 ?>
 EOQ;
-       fputs( $fh, $string);
-       fclose( $fh );
-    }
+            fputs($fh, $string);
+            fclose($fh);
+        }
 
-	    //Remove the cached unified_search_modules.php file
-	    $this->unified_search_modules_file = $GLOBALS['sugar_config']['cache_dir'] . 'modules/unified_search_modules.php';
-    	if(file_exists($this->unified_search_modules_file))
-		{
-			copy($this->unified_search_modules_file, $this->unified_search_modules_file.'.bak');
-			unlink($this->unified_search_modules_file);
-		}
+        //Remove the cached unified_search_modules.php file
+        $this->unified_search_modules_file = $GLOBALS['sugar_config']['cache_dir'] . 'modules/unified_search_modules.php';
+        if (file_exists($this->unified_search_modules_file)) {
+            copy($this->unified_search_modules_file, $this->unified_search_modules_file.'.bak');
+            unlink($this->unified_search_modules_file);
+        }
     }
 
     protected function tearDown() : void
     {
-	    global $beanList, $beanFiles, $dictionary;
+        global $beanList, $beanFiles, $dictionary;
 
-		if(file_exists($this->unified_search_modules_file . '.bak'))
-		{
-			copy($this->unified_search_modules_file . '.bak', $this->unified_search_modules_file);
-			unlink($this->unified_search_modules_file . '.bak');
-		}
+        if (file_exists($this->unified_search_modules_file . '.bak')) {
+            copy($this->unified_search_modules_file . '.bak', $this->unified_search_modules_file);
+            unlink($this->unified_search_modules_file . '.bak');
+        }
 
-		if(file_exists('custom/modules/Bug44030_TestPerson/metadata/SearchFields.php'))
-		{
-			unlink('custom/modules/Bug44030_TestPerson/metadata/SearchFields.php');
-			rmdir_recursive('custom/modules/Bug44030_TestPerson');
-		}
-		unset($beanFiles['Bug44030_TestPerson']);
-		unset($beanList['Bug44030_TestPerson']);
-		unset($dictionary['Bug44030_TestPerson']);
+        if (file_exists('custom/modules/Bug44030_TestPerson/metadata/SearchFields.php')) {
+            unlink('custom/modules/Bug44030_TestPerson/metadata/SearchFields.php');
+            rmdir_recursive('custom/modules/Bug44030_TestPerson');
+        }
+        unset($beanFiles['Bug44030_TestPerson']);
+        unset($beanList['Bug44030_TestPerson']);
+        unset($dictionary['Bug44030_TestPerson']);
     }
 
-	public function testUnifiedSearchAdvancedBuildCache()
-	{
-		$usa = new UnifiedSearchAdvanced();
-		$usa->buildCache();
+    public function testUnifiedSearchAdvancedBuildCache()
+    {
+        $usa = new UnifiedSearchAdvanced();
+        $usa->buildCache();
 
-		//Assert we could build the file without problems
-		$this->assertTrue(file_exists($this->unified_search_modules_file), "Assert {$this->unified_search_modules_file} file was created");
+        //Assert we could build the file without problems
+        $this->assertTrue(file_exists($this->unified_search_modules_file), "Assert {$this->unified_search_modules_file} file was created");
 
-	    include($this->unified_search_modules_file);
-	    $this->assertTrue(isset($unified_search_modules['Bug44030_TestPerson']), "Assert that we have the custom module set in unified_search_modules.php file");
-	    $this->assertTrue(isset($unified_search_modules['Bug44030_TestPerson']['fields']['email']), "Assert that the email field was set for the custom module");
-	}
+        include $this->unified_search_modules_file;
+        $this->assertTrue(isset($unified_search_modules['Bug44030_TestPerson']), "Assert that we have the custom module set in unified_search_modules.php file");
+        $this->assertTrue(isset($unified_search_modules['Bug44030_TestPerson']['fields']['email']), "Assert that the email field was set for the custom module");
+    }
 }

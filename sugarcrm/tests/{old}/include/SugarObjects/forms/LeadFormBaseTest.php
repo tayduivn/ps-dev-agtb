@@ -14,48 +14,47 @@ use PHPUnit\Framework\TestCase;
 
 class LeadFormBaseTest extends TestCase
 {
-var $form;
-var $lead1;
+    var $form;
+    var $lead1;
 
     protected function setUp() : void
     {
-    $GLOBALS['db']->query("DELETE FROM leads WHERE first_name = 'Mike' AND last_name = 'TheSituationSorrentino'");
-    $this->form = new LeadFormBase();
-    $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-    $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
-    $GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], 'Leads');
+        $GLOBALS['db']->query("DELETE FROM leads WHERE first_name = 'Mike' AND last_name = 'TheSituationSorrentino'");
+        $this->form = new LeadFormBase();
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
+        $GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], 'Leads');
 
     //Create a test Lead
-    $this->lead1 = SugarTestLeadUtilities::createLead();
-    $this->lead1->first_name = 'Collin';
-    $this->lead1->last_name = 'Lee';
-    $this->lead1->save();
-    $this->lead1->emailAddress->addAddress('clee@sugarcrm.com', true, false);
-    $this->lead1->emailAddress->save($this->lead1->id, $this->lead1->module_dir);
-}
+        $this->lead1 = SugarTestLeadUtilities::createLead();
+        $this->lead1->first_name = 'Collin';
+        $this->lead1->last_name = 'Lee';
+        $this->lead1->save();
+        $this->lead1->emailAddress->addAddress('clee@sugarcrm.com', true, false);
+        $this->lead1->emailAddress->save($this->lead1->id, $this->lead1->module_dir);
+    }
 
     protected function tearDown() : void
     {
-    SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-    SugarTestLeadUtilities::removeAllCreatedLeads();
-    SugarTestLeadUtilities::removeCreatedLeadsEmailAddresses();
-    unset($this->form);
-    unset($this->lead1);
-}
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        SugarTestLeadUtilities::removeAllCreatedLeads();
+        SugarTestLeadUtilities::removeCreatedLeadsEmailAddresses();
+        unset($this->form);
+        unset($this->lead1);
+    }
 
 
 /**
  * leadsProvider
  */
-public function leadsProvider()
-{
-    return array(
-        array('Collin', 'Lee', true),
-        array('', 'Lee', true),
-        array('Mike', 'TheSituationSorrentino', false)
-    );
-    
-}
+    public function leadsProvider()
+    {
+        return [
+        ['Collin', 'Lee', true],
+        ['', 'Lee', true],
+        ['Mike', 'TheSituationSorrentino', false],
+        ];
+    }
 
 
 /**
@@ -63,22 +62,21 @@ public function leadsProvider()
  *
  * @dataProvider leadsProvider
  */
-public function testCreatingDuplicateLead($first_name, $last_name, $hasDuplicate)
-{
-    $_POST['first_name'] = $first_name;
-    $_POST['last_name'] = $last_name;
-    $_POST['Leads0emailAddresss0'] = 'clee@sugarcrm.com';
-
-    $rows = $this->form->checkForDuplicates();
-
-    if($hasDuplicate)
+    public function testCreatingDuplicateLead($first_name, $last_name, $hasDuplicate)
     {
-        $this->assertTrue(count($rows) > 0, 'Assert that checkForDuplicates returned matches');
-        $this->assertEquals($rows[0]['last_name'], $last_name, 'Assert duplicate row entry last_name is ' . $last_name);
-        $output = $this->form->buildTableForm($rows);
+        $_POST['first_name'] = $first_name;
+        $_POST['last_name'] = $last_name;
+        $_POST['Leads0emailAddresss0'] = 'clee@sugarcrm.com';
+
+        $rows = $this->form->checkForDuplicates();
+
+        if ($hasDuplicate) {
+            $this->assertTrue(count($rows) > 0, 'Assert that checkForDuplicates returned matches');
+            $this->assertEquals($rows[0]['last_name'], $last_name, 'Assert duplicate row entry last_name is ' . $last_name);
+            $output = $this->form->buildTableForm($rows);
             $this->assertMatchesRegularExpression('/\&action\=DetailView\&record/', $output);
-    } else {
-        $this->assertTrue(empty($rows), 'Assert that checkForDuplicates returned no matches');
+        } else {
+            $this->assertTrue(empty($rows), 'Assert that checkForDuplicates returned no matches');
+        }
     }
-}
 }

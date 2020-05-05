@@ -34,7 +34,7 @@ class Merge7TestPre extends UpgradeTestCase
     protected function createView($viewname, $data, $prefix = '')
     {
         $filename = "modules/Accounts/clients/test/views/$viewname/$viewname.php";
-        if($prefix) {
+        if ($prefix) {
             $filename = "$prefix/$filename";
         }
         mkdir_recursive(dirname($filename));
@@ -47,23 +47,23 @@ class Merge7TestPre extends UpgradeTestCase
      */
     public function testMerge7Pre()
     {
-        $data = array(
-            'panels' => array(
-                array(
+        $data = [
+            'panels' => [
+                [
                     'name' => 'panel_hidden',
-                    'fields' => array('email', 'phone', 'fax')
-                )
-            )
-        );
-        $data2 = array(
-                'panels' => array(
-                        array(
+                    'fields' => ['email', 'phone', 'fax'],
+                ],
+            ],
+        ];
+        $data2 = [
+                'panels' => [
+                        [
                                 'name' => 'panel_hidden',
-                                'fields' => array('email', 'fax', 'description')
-                        )
-                )
-        );
-        $data3 = array();
+                                'fields' => ['email', 'fax', 'description'],
+                        ],
+                ],
+        ];
+        $data3 = [];
 
         // no custom, no update
         $this->createView("test1", $data);
@@ -93,6 +93,6 @@ class Merge7TestPre extends UpgradeTestCase
         $script = $this->upgrader->getScript("pre", "Merge7");
         $script->run();
 
-        $this->assertEquals(array("modules/Accounts/clients/test/views/test3/test3.php"), array_keys($this->upgrader->state['for_merge']));
+        $this->assertEquals(["modules/Accounts/clients/test/views/test3/test3.php"], array_keys($this->upgrader->state['for_merge']));
     }
 }

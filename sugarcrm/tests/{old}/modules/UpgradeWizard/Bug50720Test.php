@@ -12,7 +12,7 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once('modules/UpgradeWizard/uw_utils.php');
+require_once 'modules/UpgradeWizard/uw_utils.php';
 
 /**
  * Bug50720Test.php
@@ -28,8 +28,7 @@ class Bug50720Test extends TestCase
     protected function setUp() : void
     {
         SugarTestHelper::setup('app_list_strings');
-        if(file_exists($this->file))
-        {
+        if (file_exists($this->file)) {
             $this->customConnectors = file_get_contents($this->file);
         } else {
             mkdir_recursive('custom/modules/Connectors/metadata');
@@ -40,10 +39,9 @@ class Bug50720Test extends TestCase
     protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
-        if(!empty($this->customConnectors))
-        {
+        if (!empty($this->customConnectors)) {
             file_put_contents($this->file, $this->customConnectors);
-        } else if(file_exists($this->file)) {
+        } elseif (file_exists($this->file)) {
             unlink($this->file);
         }
     }
@@ -53,7 +51,8 @@ class Bug50720Test extends TestCase
      *
      * This method calls upgrade_connectors and checks to make sure we have deleted the custom connectors.php file
      */
-    public function testUpgradeConnectors() {
+    public function testUpgradeConnectors()
+    {
         upgrade_connectors();
         $this->assertTrue(!file_exists($this->file), 'upgrade_connectors did not remove file ' . $this->file);
     }

@@ -46,16 +46,16 @@ class DownloadFileTest extends TestCase
      */
     public function testGetFileNamesForArchive($data, $expected)
     {
-        $map = array();
-        $beans = array();
+        $map = [];
+        $beans = [];
         foreach ($data as $info) {
             $bean = BeanFactory::newBean('Accounts');
             $bean->name = $info['name'];
             array_push($beans, $bean);
-            array_push($map, array($bean, 'somefield', $info));
+            array_push($map, [$bean, 'somefield', $info]);
         }
 
-        $df = $this->createPartialMock('DownloadFile', array('validateBeanAndField', 'getFileInfo'));
+        $df = $this->createPartialMock('DownloadFile', ['validateBeanAndField', 'getFileInfo']);
         $df->expects($this->any())
             ->method('validateBeanAndField')
             ->willReturn(true);
@@ -73,43 +73,43 @@ class DownloadFileTest extends TestCase
      */
     public function getData()
     {
-        return array(
-            array(
-                array(
-                    array(
+        return [
+            [
+                [
+                    [
                         'name' => 'file1',
                         'path' => 'path1',
-                    ),
-                    array(
+                    ],
+                    [
                         'name' => 'file1',
                         'path' => 'path2',
-                    ),
-                    array(
+                    ],
+                    [
                         'name' => 'file2.jpg',
                         'path' => 'path3',
-                    ),
-                    array(
+                    ],
+                    [
                         'name' => 'file2.jpg',
                         'path' => 'path4',
-                    ),
-                    array(
+                    ],
+                    [
                         'name' => 'file3.jpg',
                         'path' => 'path5',
-                    ),
-                    array(
+                    ],
+                    [
                         'name' => 'file4',
                         'path' => 'path6',
-                    ),
-                ),
-                array(
+                    ],
+                ],
+                [
                     'file1_0' => 'path1',
                     'file1_1' => 'path2',
                     'file2_0.jpg' => 'path3',
                     'file2_1.jpg' => 'path4',
                     'file3.jpg' => 'path5',
                     'file4' => 'path6',
-                ),
-            )
-        );
+                ],
+            ],
+        ];
     }
 }

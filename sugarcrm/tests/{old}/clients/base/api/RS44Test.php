@@ -27,7 +27,7 @@ class RS44Test extends TestCase
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setUp('current_user', array(true, false));
+        SugarTestHelper::setUp('current_user', [true, false]);
     }
 
     public static function tearDownAfterClass(): void

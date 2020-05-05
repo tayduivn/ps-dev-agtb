@@ -14,25 +14,27 @@ use Doctrine\DBAL\Connection;
 
 class SugarTestContactUtilities
 {
-    private static $_createdContacts = array();
+    private static $_createdContacts = [];
 
-    private function __construct() {}
+    private function __construct()
+    {
+    }
 
     /**
      * @param string $id
      * @param array $contactValues
      * @return Contact
      */
-    public static function createContact($id = '', $contactValues = array(), $class = 'Contact')
+    public static function createContact($id = '', $contactValues = [], $class = 'Contact')
     {
         $time = mt_rand();
         $contact = new $class();
 
-        $contactValues = array_merge(array(
+        $contactValues = array_merge([
             'first_name' => 'SugarContactFirst' . $time,
             'last_name' => 'SugarContactLast' . $time,
             'email' => 'contact@'. $time. 'sugar.com',
-        ), $contactValues);
+        ], $contactValues);
 
         // for backward compatibility with existing tests
         $contactValues['email1'] = $contactValues['email'];
@@ -42,8 +44,7 @@ class SugarTestContactUtilities
             $contact->$property = $value;
         }
 
-        if(!empty($id))
-        {
+        if (!empty($id)) {
             $contact->new_with_id = true;
             $contact->id = $id;
         }
@@ -53,12 +54,13 @@ class SugarTestContactUtilities
         return $contact;
     }
 
-    public static function setCreatedContact($contact_ids) {
-    	foreach($contact_ids as $contact_id) {
-    		$contact = new Contact();
-    		$contact->id = $contact_id;
-        	self::$_createdContacts[] = $contact;
-    	} // foreach
+    public static function setCreatedContact($contact_ids)
+    {
+        foreach ($contact_ids as $contact_id) {
+            $contact = new Contact();
+            $contact->id = $contact_id;
+            self::$_createdContacts[] = $contact;
+        } // foreach
     } // fn
 
     public static function removeAllCreatedContacts()
@@ -113,7 +115,7 @@ class SugarTestContactUtilities
 
     public static function getCreatedContactIds()
     {
-        $contact_ids = array();
+        $contact_ids = [];
         foreach (self::$_createdContacts as $contact) {
             $contact_ids[] = $contact->id;
         }

@@ -13,7 +13,7 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once('install/install_utils.php');
+require_once 'install/install_utils.php';
 
 class InstallUtilsTest extends TestCase
 {
@@ -21,26 +21,26 @@ class InstallUtilsTest extends TestCase
 
     public static function setUpBeforeClass() : void
     {
-        if(file_exists('config.js')) {
-           self::$configJSContents = file_get_contents('config.js');
-           unlink('config.js');
+        if (file_exists('config.js')) {
+            self::$configJSContents = file_get_contents('config.js');
+            unlink('config.js');
         }
     }
 
     public static function tearDownAfterClass(): void
     {
         //If we had existing config.js content, copy it back in
-        if(!empty(self::$configJSContents)) {
+        if (!empty(self::$configJSContents)) {
             file_put_contents('config.js', self::$configJSContents);
         }
     }
 
-	public function testParseAcceptLanguage()
-	{
-		$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'en-US,en;q=0.8';
-       	$lang = parseAcceptLanguage();
-       	$this->assertEquals('en_us,en', $lang, 'parse_accept_language did not return proper values');
-	}
+    public function testParseAcceptLanguage()
+    {
+        $_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'en-US,en;q=0.8';
+        $lang = parseAcceptLanguage();
+        $this->assertEquals('en_us,en', $lang, 'parse_accept_language did not return proper values');
+    }
 
     /**
      * This is a test to check the creation of the config.js file used by the sidecar framework beginning in the 6.7 release.

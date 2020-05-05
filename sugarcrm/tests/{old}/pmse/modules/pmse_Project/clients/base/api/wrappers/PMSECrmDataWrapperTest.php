@@ -66,7 +66,7 @@ class PMSECrmDataWrapperTest extends TestCase
     protected $beanList;
     protected $db;
 
-    protected $originals = array();
+    protected $originals = [];
 
     /**
      * Sets up the fixture, for example, opens a network connection.
@@ -85,7 +85,7 @@ class PMSECrmDataWrapperTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->beanList = array(
+        $this->beanList = [
             'ACLRoles' => 'ACLRole',
             'ACLActions' => 'ACLAction',
             'ACLFields' => 'ACLField',
@@ -197,76 +197,76 @@ class PMSECrmDataWrapperTest extends TestCase
             'SugarFavorites' => 'SugarFavorites',
             'PdfManager' => 'PdfManager',
             'ProcessMaker' => 'BpmnProject',
-        );
+        ];
 
         $this->beanFactory = $this->getMockBuilder("BeanFactory")
-                ->setMethods(array('getBean'))
+                ->setMethods(['getBean'])
                 ->getMock();
         $this->teams = $this->getMockBuilder('Teams')
                 ->disableAutoload()
                 ->disableOriginalConstructor()
-                ->setMethods(array('teamsAreSupported', 'getList', 'getDisplayName'))
+                ->setMethods(['teamsAreSupported', 'getList', 'getDisplayName'])
                 ->getMock();
         $this->users = $this->getMockBuilder('Users')
                 ->disableAutoload()
                 ->disableOriginalConstructor()
-                ->setMethods(array('get_full_list'))
+                ->setMethods(['get_full_list'])
                 ->getMock();
         $this->processDefinitionBean = $this->getMockBuilder('pmse_BpmProcessDefinition')
                 ->disableAutoload()
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve_by_string_fields', 'getSelectRows', 'retrieve'))
+                ->setMethods(['retrieve_by_string_fields', 'getSelectRows', 'retrieve'])
                 ->getMock();
         $this->activityDefinitionBean = $this->getMockBuilder('SugarBean')
                 ->disableAutoload()
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve_by_string_fields', 'getSelectRows'))
+                ->setMethods(['retrieve_by_string_fields', 'getSelectRows'])
                 ->getMock();
         $this->dynaformBean = $this->getMockBuilder('pmse_BpmDynaForm')
                 ->disableAutoload()
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve_by_string_fields', 'getSelectRows', 'get_full_list'))
+                ->setMethods(['retrieve_by_string_fields', 'getSelectRows', 'get_full_list'])
                 ->getMock();
         $this->projectBean = $this->getMockBuilder('pmse_BpmnProject')
                 ->disableAutoload()
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve_by_string_fields', 'getSelectRows', 'retrieve'))
+                ->setMethods(['retrieve_by_string_fields', 'getSelectRows', 'retrieve'])
                 ->getMock();
         $this->processBean = $this->getMockBuilder('pmse_BpmnProcess')
                 ->disableAutoload()
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve_by_string_fields', 'getSelectRows'))
+                ->setMethods(['retrieve_by_string_fields', 'getSelectRows'])
                 ->getMock();
         $this->ruleSetBean = $this->getMockBuilder('pmse_BpmRuleSet')
                 ->disableAutoload()
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve_by_string_fields', 'getSelectRows', 'get_full_list'))
+                ->setMethods(['retrieve_by_string_fields', 'getSelectRows', 'get_full_list'])
                 ->getMock();
         $this->emailTemplateBean = $this->getMockBuilder('pmse_BpmEmailTemplate')
                 ->disableAutoload()
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve_by_string_fields', 'getSelectRows', 'get_full_list'))
+                ->setMethods(['retrieve_by_string_fields', 'getSelectRows', 'get_full_list'])
                 ->getMock();
         $this->inboxBean = $this->getMockBuilder('pmse_BpmInbox')
                 ->disableAutoload()
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve_by_string_fields', 'getSelectRows'))
+                ->setMethods(['retrieve_by_string_fields', 'getSelectRows'])
                 ->getMock();
         $this->teamsBean = $this->getMockBuilder('Teams')
                 ->disableAutoload()
                 ->disableORiginalConstructor()
-                ->setMethods(array('get_full_list'))
+                ->setMethods(['get_full_list'])
                 ->getMock();
         $this->usersBean = $this->getMockBuilder('Users')
                 ->disableAutoload()
                 ->disableOriginalConstructor()
-                ->setMethods(array('get_full_list'))
+                ->setMethods(['get_full_list'])
                 ->getMock();
         $this->sugarQueryMock = $this->getMockBuilder('SugarQuery')
             ->disableAutoload()
             ->disableOriginalConstructor()
             ->setMethods(
-                array('select', 'from', 'joinTable', 'on', 'equalsField', 'where', 'execute', 'equals')
+                ['select', 'from', 'joinTable', 'on', 'equalsField', 'where', 'execute', 'equals']
             )
             ->getMock();
         $this->sugarQueryMock->expects($this->any())
@@ -302,7 +302,7 @@ class PMSECrmDataWrapperTest extends TestCase
         $db->query($sql);
 
         // Reset variables
-        foreach($this->originals as $varname => $value) {
+        foreach ($this->originals as $varname => $value) {
             $GLOBALS[$varname] = $value;
         }
     }
@@ -315,7 +315,7 @@ class PMSECrmDataWrapperTest extends TestCase
     {
 //        $this->object = new PMSECrmDataWrapper();
 
-        $expected = array('success' => false, 'message' => 'Invalid Request');
+        $expected = ['success' => false, 'message' => 'Invalid Request'];
         $result = $this->object->invalidRequest();
         $this->assertEquals($expected, $result);
     }
@@ -324,10 +324,11 @@ class PMSECrmDataWrapperTest extends TestCase
      * @covers PMSECrmDataWrapper::retrieveEmails
      * @todo   Implement testAddRelatedRecord().
      */
-    public function testRetrieveEmailsWithEmptyFilter() {
+    public function testRetrieveEmailsWithEmptyFilter()
+    {
 //        $this->object = new PMSECrmDataWrapper();
 
-        $expectedResult = array('success' => false, 'message' => 'Invalid Request');
+        $expectedResult = ['success' => false, 'message' => 'Invalid Request'];
 
         $result = $this->object->retrieveEmails('');
         $this->assertEquals($expectedResult, $result);
@@ -349,22 +350,21 @@ class PMSECrmDataWrapperTest extends TestCase
         $this->dynaformBean->expects($this->any())
             ->method('get_full_list')
 //            ->with($this->equalTo('bpm_dynamic_forms.pro_id=1'));
-            ->will($this->returnValue(array(
-                    (object) array("dyn_uid" => "abcdeff", "name" => "Test DynaForm"),
-                    (object) array("dyn_uid" => "abcdefg", "name" => "Test DynaForm 01"),
-                    (object) array("dyn_uid" => "abcdefh", "name" => "Test DynaForm 02"),
-                    (object) array("dyn_uid" => "abcdefi", "name" => "Test DynaForm 03"),
-                    (object) array("dyn_uid" => "abcdefj", "name" => "Test DynaForm 04"),
-                )
-            ));
+            ->will($this->returnValue([
+                    (object) ["dyn_uid" => "abcdeff", "name" => "Test DynaForm"],
+                    (object) ["dyn_uid" => "abcdefg", "name" => "Test DynaForm 01"],
+                    (object) ["dyn_uid" => "abcdefh", "name" => "Test DynaForm 02"],
+                    (object) ["dyn_uid" => "abcdefi", "name" => "Test DynaForm 03"],
+                    (object) ["dyn_uid" => "abcdefj", "name" => "Test DynaForm 04"],
+                ]));
 
-        $expectedResult = array(
-            array("value" => "abcdeff", "text" => "Test DynaForm"),
-            array("value" => "abcdefg", "text" => "Test DynaForm 01"),
-            array("value" => "abcdefh", "text" => "Test DynaForm 02"),
-            array("value" => "abcdefi", "text" => "Test DynaForm 03"),
-            array("value" => "abcdefj", "text" => "Test DynaForm 04"),
-        );
+        $expectedResult = [
+            ["value" => "abcdeff", "text" => "Test DynaForm"],
+            ["value" => "abcdefg", "text" => "Test DynaForm 01"],
+            ["value" => "abcdefh", "text" => "Test DynaForm 02"],
+            ["value" => "abcdefi", "text" => "Test DynaForm 03"],
+            ["value" => "abcdefj", "text" => "Test DynaForm 04"],
+        ];
 
         $this->projectBean->id = '1';
         $this->processBean->id = '1';
@@ -391,30 +391,28 @@ class PMSECrmDataWrapperTest extends TestCase
 
         $this->sugarQueryMock->expects($this->any())
             ->method('execute')
-            ->will($this->returnValue(array(
-                    array("act_uid" => "abcdeff", "name" => "Test Activity"),
-                    array("act_uid" => "abcdefg", "name" => "Test Activity 01"),
-                    array("act_uid" => "abcdefh", "name" => "Test Activity 02"),
-                    array("act_uid" => "abcdefi", "name" => "Test Activity 03"),
-                    array("act_uid" => "abcdefj", "name" => "Test Activity 04"),
-                ))
-            );
+            ->will($this->returnValue([
+                    ["act_uid" => "abcdeff", "name" => "Test Activity"],
+                    ["act_uid" => "abcdefg", "name" => "Test Activity 01"],
+                    ["act_uid" => "abcdefh", "name" => "Test Activity 02"],
+                    ["act_uid" => "abcdefi", "name" => "Test Activity 03"],
+                    ["act_uid" => "abcdefj", "name" => "Test Activity 04"],
+                ]));
 
         $this->sugarQueryMock->expects($this->any())
             ->method('where')
-            ->will($this->returnValue($whereMock)
-        );
+            ->will($this->returnValue($whereMock));
 
-        $expectedResult = array(
-            array("value" => "abcdeff", "text" => "Test Activity"),
-            array("value" => "abcdefg", "text" => "Test Activity 01"),
-            array("value" => "abcdefh", "text" => "Test Activity 02"),
-            array("value" => "abcdefi", "text" => "Test Activity 03"),
-            array("value" => "abcdefj", "text" => "Test Activity 04")
-        );
+        $expectedResult = [
+            ["value" => "abcdeff", "text" => "Test Activity"],
+            ["value" => "abcdefg", "text" => "Test Activity 01"],
+            ["value" => "abcdefh", "text" => "Test Activity 02"],
+            ["value" => "abcdefi", "text" => "Test Activity 03"],
+            ["value" => "abcdefj", "text" => "Test Activity 04"],
+        ];
         $activityBeanMock = $this->getMockBuilder('SugarBean')
                 ->disableOriginalConstructor()
-                ->setMethods(NULL)
+                ->setMethods(null)
                 ->getMock();
         $this->object->setActivityBean($activityBeanMock);
         $result = $this->object->retrieveActivities();
@@ -564,29 +562,27 @@ class PMSECrmDataWrapperTest extends TestCase
 
         $this->sugarQueryMock->expects($this->any())
             ->method('execute')
-            ->will($this->returnValue(array(
-                    array("id" => "abcdeff", "name" => "Test Activity"),
-                    array("id" => "abcdefg", "name" => "Test Activity 01"),
-                    array("id" => "abcdefh", "name" => "Test Activity 02"),
-                    array("id" => "abcdefi", "name" => "Test Activity 03"),
-                    array("id" => "abcdefj", "name" => "Test Activity 04")
-                ))
-            );
+            ->will($this->returnValue([
+                    ["id" => "abcdeff", "name" => "Test Activity"],
+                    ["id" => "abcdefg", "name" => "Test Activity 01"],
+                    ["id" => "abcdefh", "name" => "Test Activity 02"],
+                    ["id" => "abcdefi", "name" => "Test Activity 03"],
+                    ["id" => "abcdefj", "name" => "Test Activity 04"],
+                ]));
 
         $this->sugarQueryMock->select = $selectMock;
 
         $this->sugarQueryMock->expects($this->any())
             ->method('where')
-            ->will($this->returnValue($whereMock)
-        );
+            ->will($this->returnValue($whereMock));
 
-        $expected = array(
-            array("value" => "abcdeff", "text" => "Test Activity"),
-            array("value" => "abcdefg", "text" => "Test Activity 01"),
-            array("value" => "abcdefh", "text" => "Test Activity 02"),
-            array("value" => "abcdefi", "text" => "Test Activity 03"),
-            array("value" => "abcdefj", "text" => "Test Activity 04"),
-        );
+        $expected = [
+            ["value" => "abcdeff", "text" => "Test Activity"],
+            ["value" => "abcdefg", "text" => "Test Activity 01"],
+            ["value" => "abcdefh", "text" => "Test Activity 02"],
+            ["value" => "abcdefi", "text" => "Test Activity 03"],
+            ["value" => "abcdefj", "text" => "Test Activity 04"],
+        ];
 
         $this->projectBean->expects($this->any())
             ->method('retrieve')
@@ -676,7 +672,7 @@ class PMSECrmDataWrapperTest extends TestCase
 //        var_dump($result);
         $this->assertEquals('Accounts', $result);
 
-        $this->beanList = array('Leads' => 'Leads');
+        $this->beanList = ['Leads' => 'Leads'];
         $this->object->setBeanList($this->beanList);
         $result = $this->object->getBeanModuleName('Leads');
 //        var_dump($result);
@@ -694,7 +690,7 @@ class PMSECrmDataWrapperTest extends TestCase
 
         $this->object->setProjectBean($this->projectBean);
 
-        $expected = array('result'=>true, 'success'=>true);
+        $expected = ['result'=>true, 'success'=>true];
         $result = $this->object->validateProjectName('Test Lead');
 
         $this->assertEquals($expected, $result);
@@ -713,7 +709,7 @@ class PMSECrmDataWrapperTest extends TestCase
 
         $this->object->setProjectBean($this->projectBean);
 
-        $expected = array('result'=>false, 'success'=>true, 'message' => 'LBL_PMSE_MESSAGE_THEPROCESSNAMEALREADYEXISTS');
+        $expected = ['result'=>false, 'success'=>true, 'message' => 'LBL_PMSE_MESSAGE_THEPROCESSNAMEALREADYEXISTS'];
         $result = $this->object->validateProjectName('Test Lead');
 
         $this->assertEquals($expected, $result);
@@ -737,13 +733,13 @@ class PMSECrmDataWrapperTest extends TestCase
         $this->emailTemplateBean->expects($this->any())
             ->method('get_full_list')
             ->will($this->returnValue(
-                array(
-                    "rowList" => array(
-                        array("pro_id" => "abcdeff", "pro_name" => "Test Project Name"),
-                    ),
+                [
+                    "rowList" => [
+                        ["pro_id" => "abcdeff", "pro_name" => "Test Project Name"],
+                    ],
                     "totalRows" => 1,
-                    "currentOffset" => 0
-                )
+                    "currentOffset" => 0,
+                ]
             ));
         $res->message = 'LBL_PMSE_MESSAGE_THEEMAILTEMPLATENAMEALREADYEXISTS';
         $res->result = false;
@@ -757,19 +753,19 @@ class PMSECrmDataWrapperTest extends TestCase
      */
     public function testValidateBusinessRuleName()
     {
-        $res = array();
+        $res = [];
         $res['success'] = true;
 
         $this->ruleSetBean->expects($this->any())
             ->method('get_full_list')
             ->will($this->returnValue(
-                array(
-                    "rowList" => array(
-                        array("pro_id" => "abcdeff", "pro_name" => "Test Project Name"),
-                    ),
+                [
+                    "rowList" => [
+                        ["pro_id" => "abcdeff", "pro_name" => "Test Project Name"],
+                    ],
                     "totalRows" => 1,
-                    "currentOffset" => 0
-                )
+                    "currentOffset" => 0,
+                ]
             ));
 
         $this->object->setRuleSetBean($this->ruleSetBean);
@@ -787,11 +783,11 @@ class PMSECrmDataWrapperTest extends TestCase
      */
     public function testDefaultUsersList()
     {
-        $expected = array(
-            array ('value' => "current_user", 'text' =>"Current User"),
-            array ('value' => "supervisor", 'text' => "Supervisor"),
-            array ('value' => "owner", 'text' => "Record Owner"),
-        );
+        $expected = [
+             ['value' => "current_user", 'text' =>"Current User"],
+             ['value' => "supervisor", 'text' => "Supervisor"],
+             ['value' => "owner", 'text' => "Record Owner"],
+        ];
 
         $result = $this->object->defaultUsersList();
         $this->assertEquals($expected, $result);
@@ -814,33 +810,33 @@ class PMSECrmDataWrapperTest extends TestCase
      */
     public function testRetrieveDateFields()
     {
-        $res = array();
+        $res = [];
         $res['name'] = 'Leads';
         $res['search'] = 'Leads';
         $res['success']= true;
-        $res['result'] = array(
-            array('value' => 'current_date_time', 'text' => 'Current Date Time'),
-            array('value' => 'field', 'text' => 'some_field')
-        );
+        $res['result'] = [
+            ['value' => 'current_date_time', 'text' => 'Current Date Time'],
+            ['value' => 'field', 'text' => 'some_field'],
+        ];
 
         $this->object = $this->getMockBuilder('PMSECrmDataWrapper')
                 ->disableOriginalConstructor()
                 ->setMethods(
-                    array(
+                    [
                         'getModuleFilter',
                         'getRelationshipData',
-                    )
+                    ]
                 )
                 ->getMock();
 
         $moduleFilter = new stdClass();
-        $moduleFilter->field_defs = array(
-            array(
+        $moduleFilter->field_defs = [
+            [
                 'vname' => 'some_field',
                 'name' => 'field',
-                'type' => 'date'
-            )
-        );
+                'type' => 'date',
+            ],
+        ];
 
         $this->object->expects($this->once())
                 ->method('getModuleFilter')
@@ -858,45 +854,45 @@ class PMSECrmDataWrapperTest extends TestCase
      */
     public function testRetrieveDateFieldsRelatedBean()
     {
-        $res = array();
+        $res = [];
         $res['name'] = 'Leads';
         $res['search'] = 'Leads';
         $res['success']= true;
-        $res['result'] = array(
-            array('value' => 'current_date_time', 'text' => 'Current Date Time'),
-            array('value' => 'field', 'text' => 'some_field')
-        );
+        $res['result'] = [
+            ['value' => 'current_date_time', 'text' => 'Current Date Time'],
+            ['value' => 'field', 'text' => 'some_field'],
+        ];
 
 
 
         $this->object = $this->getMockBuilder('PMSECrmDataWrapper')
                 ->disableOriginalConstructor()
                 ->setMethods(
-                    array(
+                    [
                         'getModuleFilter',
                         'getRelationshipData',
-                    )
+                    ]
                 )
                 ->getMock();
 
-        $this->object->setBeanList(array(
-            'Meetings' => 'Meetings'
-        ));
+        $this->object->setBeanList([
+            'Meetings' => 'Meetings',
+        ]);
 
         $moduleFilter = new stdClass();
-        $moduleFilter->field_defs = array(
-            array(
+        $moduleFilter->field_defs = [
+            [
                 'vname' => 'some_field',
                 'name' => 'field',
-                'type' => 'date'
-            )
-        );
+                'type' => 'date',
+            ],
+        ];
 
         $this->object->expects($this->once())
                 ->method('getModuleFilter')
                 ->will($this->returnValue($moduleFilter));
 
-        $relatioship = array('rhs_module' => 'Leads');
+        $relatioship = ['rhs_module' => 'Leads'];
 
         $this->object->expects($this->once())
                 ->method('getRelationshipData')
@@ -925,15 +921,13 @@ class PMSECrmDataWrapperTest extends TestCase
 
         $this->sugarQueryMock->expects($this->any())
             ->method('execute')
-            ->will($this->returnValue(array(
-                    array("cas_start_date" => "")
-                ))
-            );
+            ->will($this->returnValue([
+                    ["cas_start_date" => ""],
+                ]));
 
         $this->sugarQueryMock->expects($this->any())
             ->method('where')
-            ->will($this->returnValue($whereMock)
-        );
+            ->will($this->returnValue($whereMock));
 
         $casId = 1;
         $casIndex = 1;
@@ -942,7 +936,7 @@ class PMSECrmDataWrapperTest extends TestCase
         $inboxBeanMock = $this->getMockBuilder('SugarBean')
                 ->disableAutoload()
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve'))
+                ->setMethods(['retrieve'])
                 ->getMock();
         $this->object->setInboxBean($inboxBeanMock);
         $result = $this->object->validateReclaimCase($casId, $casIndex);
@@ -953,10 +947,10 @@ class PMSECrmDataWrapperTest extends TestCase
 
     public function retrieveTeamsDataProvider()
     {
-        return array(
-            array('public'),
-            array('private'),
-        );
+        return [
+            ['public'],
+            ['private'],
+        ];
     }
 
     /**
@@ -966,7 +960,7 @@ class PMSECrmDataWrapperTest extends TestCase
     {
         $this->object = $this->getMockBuilder('PMSECrmDataWrapper')
             ->disableOriginalConstructor()
-            ->setMethods(NULL)
+            ->setMethods(null)
             ->getMock();
         $this->object->setSugarQueryObject($this->sugarQueryMock);
         $this->sugarQueryMock->expects($this->any())
@@ -983,7 +977,7 @@ class PMSECrmDataWrapperTest extends TestCase
 
         $this->sugarQueryMock->expects($this->once())
             ->method('execute')
-            ->will($this->returnValue(array(array('id' => 'team01', 'name' => 'Team #1'))));
+            ->will($this->returnValue([['id' => 'team01', 'name' => 'Team #1']]));
 
         $this->object->setTeamsBean($teamMock);
         $result = $this->object->retrieveTeams($filter);
@@ -994,39 +988,39 @@ class PMSECrmDataWrapperTest extends TestCase
     {
         $this->object = $this->getMockBuilder('PMSECrmDataWrapper')
             ->disableOriginalConstructor()
-            ->setMethods(array('retrieveFields','retrieveRelatedBeans'))
+            ->setMethods(['retrieveFields','retrieveRelatedBeans'])
             ->getMock();
 
         $this->object->expects($this->at(0))
             ->method('retrieveFields')
             ->will($this->returnValue(
-                array(
+                [
                     'success' => true,
-                    'result' => array('fields')
-                )
+                    'result' => ['fields'],
+                ]
             ));
 
         $this->object->expects($this->once())
             ->method('retrieveRelatedBeans')
             ->will($this->returnValue(
-                array(
+                [
                     'success' => true,
-                    'result' => array(
-                        array(
+                    'result' => [
+                        [
                             'value' => 'some value',
-                            'fields' => array()
-                        )
-                    )
-                )
+                            'fields' => [],
+                        ],
+                    ],
+                ]
             ));
 
         $this->object->expects($this->at(2))
             ->method('retrieveFields')
             ->will($this->returnValue(
-                array(
+                [
                     'success' => true,
-                    'result' => array('fields')
-                )
+                    'result' => ['fields'],
+                ]
             ));
 
         $filter = 'some filter';
@@ -1038,32 +1032,32 @@ class PMSECrmDataWrapperTest extends TestCase
     {
         $this->object = $this->getMockBuilder('PMSECrmDataWrapper')
             ->disableOriginalConstructor()
-            ->setMethods(array('retrieveFields','retrieveRelatedBeans'))
+            ->setMethods(['retrieveFields','retrieveRelatedBeans'])
             ->getMock();
 
         $this->object->expects($this->at(0))
             ->method('retrieveFields')
             ->will($this->returnValue(
-                array(
-                    'success' => false
-                )
+                [
+                    'success' => false,
+                ]
             ));
 
         $this->object->expects($this->once())
             ->method('retrieveRelatedBeans')
             ->will($this->returnValue(
-                array(
+                [
                     'success' => false,
-                )
+                ]
             ));
 
         $this->object->expects($this->at(0))
             ->method('retrieveFields')
             ->will($this->returnValue(
-                array(
+                [
                     'success' => true,
-                    'result' => array('fields')
-                )
+                    'result' => ['fields'],
+                ]
             ));
 
         $filter = 'some filter';
@@ -1076,16 +1070,16 @@ class PMSECrmDataWrapperTest extends TestCase
         $relationshipMock = $this->getMockBuilder('Relationship')
             ->disableAutoload()
             ->disableOriginalConstructor()
-            ->setMethods(array('getRelationshipList', 'get', 'getDefinition'))
+            ->setMethods(['getRelationshipList', 'get', 'getDefinition'])
             ->getMock();
 
-        $relList = array(
+        $relList = [
             'leads_notes',
             'leads_meetings',
             'leads_tasks',
             'leads_opportunities',
             'leads_cases',
-        );
+        ];
 
         $relationshipMock->expects($this->once())
             ->method('getRelationshipList')
@@ -1095,66 +1089,66 @@ class PMSECrmDataWrapperTest extends TestCase
             ->method('get')
             ->will($this->returnSelf());
 
-        $def01 = array(
+        $def01 = [
             'lhs_module' => 'leads',
             'rhs_module' => 'notes',
             'relationship_type' => 'one-to-one',
             'relationship_type_render' => '',
             'is_custom' => false,
             'from_studio' => false,
-        );
+        ];
 
         $relationshipMock->expects($this->at(2))
             ->method('getDefinition')
             ->will($this->returnValue($def01));
 
-        $def02 = array(
+        $def02 = [
             'lhs_module' => 'leads',
             'rhs_module' => 'meetings',
             'relationship_type' => 'one-to-many',
             'relationship_type_render' => '',
             'is_custom' => false,
             'from_studio' => false,
-        );
+        ];
 
         $relationshipMock->expects($this->at(4))
             ->method('getDefinition')
             ->will($this->returnValue($def02));
 
-        $def03 = array(
+        $def03 = [
             'lhs_module' => 'leads',
             'rhs_module' => 'tasks',
             'relationship_type' => 'many-to-one',
             'relationship_type_render' => '',
             'is_custom' => false,
             'from_studio' => false,
-        );
+        ];
 
         $relationshipMock->expects($this->at(6))
             ->method('getDefinition')
             ->will($this->returnValue($def03));
 
-        $def04 = array(
+        $def04 = [
             'lhs_module' => 'leads',
             'rhs_module' => 'opportunities',
             'relationship_type' => 'many-to-many',
             'relationship_type_render' => '',
             'is_custom' => true,
             'from_studio' => true,
-        );
+        ];
 
         $relationshipMock->expects($this->at(8))
             ->method('getDefinition')
             ->will($this->returnValue($def04));
 
-        $def05 = array(
+        $def05 = [
             'lhs_module' => 'leads',
             'rhs_module' => 'cases',
             'relationship_type' => 'another-type',
             'relationship_type_render' => '',
             'is_custom' => true,
             'from_studio' => true,
-        );
+        ];
 
         $relationshipMock->expects($this->at(10))
             ->method('getDefinition')
@@ -1162,7 +1156,7 @@ class PMSECrmDataWrapperTest extends TestCase
 
         $this->object = $this->getMockBuilder('PMSECrmDataWrapper')
             ->disableOriginalConstructor()
-            ->setMethods(array('retrieveFields','retrieveRelatedBeans'))
+            ->setMethods(['retrieveFields','retrieveRelatedBeans'])
             ->getMock();
 
         $this->object->getAjaxRelationships($relationshipMock);
@@ -1173,7 +1167,7 @@ class PMSECrmDataWrapperTest extends TestCase
     {
         $this->object = $this->getMockBuilder('PMSECrmDataWrapper')
             ->disableOriginalConstructor()
-            ->setMethods(array('retrieveFields', 'getModuleFilter', 'getAjaxRelationships'))
+            ->setMethods(['retrieveFields', 'getModuleFilter', 'getAjaxRelationships'])
             ->getMock();
 
         $moduleObj = new stdClass();
@@ -1182,32 +1176,32 @@ class PMSECrmDataWrapperTest extends TestCase
             ->method('getModuleFilter')
             ->will($this->returnValue($moduleObj));
 
-        $ajaxRelationships = array(
-            array(
+        $ajaxRelationships = [
+            [
                 'lhs_module' => 'Project Tasks',
                 'rhs_module' => 'Leads',
                 'lhs_table' => 'project_tasks',
                 'relationship_type' => 'one-to-many',
                 'relationship_name' => 'project_project_tasks',
-                'name' => 'some relationship'
-            ),
-            array(
+                'name' => 'some relationship',
+            ],
+            [
                 'lhs_module' => 'Project Tasks',
                 'rhs_module' => 'Meetings',
                 'lhs_table' => 'project_tasks',
                 'relationship_type' => 'one-to-one',
                 'relationship_name' => 'meetings_project_tasks',
-                'name' => 'some relationship'
-            ),
-            array(
+                'name' => 'some relationship',
+            ],
+            [
                 'lhs_module' => 'Project Tasks',
                 'rhs_module' => 'Opportunities',
                 'lhs_table' => 'project_tasks',
                 'relationship_type' => 'one-to-one',
                 'relationship_name' => 'opportunities_project_tasks',
-                'name' => 'some relationship'
-            )
-        );
+                'name' => 'some relationship',
+            ],
+        ];
 
         $this->object->expects($this->once())
             ->method('getAjaxRelationships')
@@ -1228,7 +1222,7 @@ class PMSECrmDataWrapperTest extends TestCase
     {
         $this->object = $this->getMockBuilder('PMSECrmDataWrapper')
             ->disableOriginalConstructor()
-            ->setMethods(array('retrieveFields', 'getModuleFilter', 'getAjaxRelationships'))
+            ->setMethods(['retrieveFields', 'getModuleFilter', 'getAjaxRelationships'])
             ->getMock();
 
         $moduleObj = new stdClass();
@@ -1237,29 +1231,29 @@ class PMSECrmDataWrapperTest extends TestCase
             ->method('getModuleFilter')
             ->will($this->returnValue($moduleObj));
 
-        $ajaxRelationships = array(
-            array(
+        $ajaxRelationships = [
+            [
                 'lhs_module' => 'Project Tasks',
                 'rhs_module' => 'Leads',
                 'lhs_table' => 'project_tasks',
                 'relationship_type' => 'one-to-many',
-                'name' => 'some relationship'
-            ),
-            array(
+                'name' => 'some relationship',
+            ],
+            [
                 'lhs_module' => 'Project Tasks',
                 'rhs_module' => 'Meetings',
                 'lhs_table' => 'project_tasks',
                 'relationship_type' => 'one-to-one',
-                'name' => 'some relationship'
-            ),
-            array(
+                'name' => 'some relationship',
+            ],
+            [
                 'lhs_module' => 'Project Tasks',
                 'rhs_module' => 'Opportunities',
                 'lhs_table' => 'project_tasks',
                 'relationship_type' => 'one-to-one',
-                'name' => 'some relationship'
-            )
-        );
+                'name' => 'some relationship',
+            ],
+        ];
 
         $this->object->expects($this->once())
             ->method('getAjaxRelationships')
@@ -1279,14 +1273,14 @@ class PMSECrmDataWrapperTest extends TestCase
     {
         $this->object = $this->getMockBuilder('PMSECrmDataWrapper')
             ->disableOriginalConstructor()
-            ->setMethods(array('getProcessDefinition', 'getProjectBean', 'getProcessBean'))
+            ->setMethods(['getProcessDefinition', 'getProjectBean', 'getProcessBean'])
             ->getMock();
 
-        $this->object->setObservers(array());
+        $this->object->setObservers([]);
 
         $dynaformMock = $this->getMockBuilder('PMSEDynaForm')
             ->disableOriginalConstructor()
-            ->setMethods(array('generateDefaultDynaform'))
+            ->setMethods(['generateDefaultDynaform'])
             ->getMock();
 
         $this->object->setDefaultDynaform($dynaformMock);
@@ -1294,7 +1288,7 @@ class PMSECrmDataWrapperTest extends TestCase
         $processDefMock = $this->getMockBuilder('pmse_BpmProcessDefinition')
                 ->disableAutoload()
             ->disableOriginalConstructor()
-            ->setMethods(array('save', 'retrieve_by_string_fields'))
+            ->setMethods(['save', 'retrieve_by_string_fields'])
             ->getMock();
 
         $processDefMock->expects($this->once())
@@ -1312,7 +1306,7 @@ class PMSECrmDataWrapperTest extends TestCase
         $processMock = $this->getMockBuilder('pmse_bpmProcess')
                 ->disableAutoload()
             ->disableOriginalConstructor()
-            ->setMethods(array('save', 'retrieve_by_string_fields'))
+            ->setMethods(['save', 'retrieve_by_string_fields'])
             ->getMock();
 
         $processMock->expects($this->once())
@@ -1329,7 +1323,7 @@ class PMSECrmDataWrapperTest extends TestCase
         $projectMock = $this->getMockBuilder('pmse_bpmProject')
                 ->disableAutoload()
             ->disableOriginalConstructor()
-            ->setMethods(array('save', 'retrieve'))
+            ->setMethods(['save', 'retrieve'])
             ->getMock();
 
         $projectMock->expects($this->once())
@@ -1343,14 +1337,14 @@ class PMSECrmDataWrapperTest extends TestCase
             ->method('getProjectBean')
             ->will($this->returnValue($projectMock));
 
-        $args = array(
+        $args = [
             'filter' => 'Leads',
             'name' => 'Some Name',
             'description' => 'Some Description',
             'pro_module' => 'Leads',
             'pro_locked_variables' => '[]',
-            'pro_terminate_variables' => '[]'
-        );
+            'pro_terminate_variables' => '[]',
+        ];
         $this->object->updateProcessDefinitions($args);
     }
 
@@ -1359,23 +1353,23 @@ class PMSECrmDataWrapperTest extends TestCase
         $this->object = $this->getMockBuilder('PMSECrmDataWrapper')
             ->disableOriginalConstructor()
             ->setMethods(
-                    array(
+                [
                         'getRelationshipData',
                         'getModuleFilter',
                         'isValidStudioField',
                         'fieldTodo',
                         'returnArrayModules',
                         'dataFieldPersonalized',
-                        'gatewayModulesMethod'
-                    )
-                )
+                        'gatewayModulesMethod',
+                    ]
+            )
             ->getMock();
 
         $this->object->expects($this->once())
             ->method('getRelationshipData')
-            ->will($this->returnValue(array(
-                'rhs_module' => 'All'
-            )));
+            ->will($this->returnValue([
+                'rhs_module' => 'All',
+            ]));
 
         $this->object->setBeanList([]);
         $this->object->addRelatedRecord("Leads");
@@ -1386,53 +1380,53 @@ class PMSECrmDataWrapperTest extends TestCase
         $this->object = $this->getMockBuilder('PMSECrmDataWrapper')
             ->disableOriginalConstructor()
             ->setMethods(
-                    array(
+                [
                         'getRelationshipData',
                         'getModuleFilter',
                         'isValidStudioField',
                         'fieldTodo',
                         'returnArrayModules',
-                        'gatewayModulesMethod'
-                    )
-                )
+                        'gatewayModulesMethod',
+                    ]
+            )
             ->getMock();
 
         $moduleBeanMock = $this->getMockBuilder('ModuleBean')
             ->disableOriginalConstructor()
-            ->setMethods(NULL)
+            ->setMethods(null)
             ->getMock();
 
-        $moduleBeanMock->field_defs = array(
-            array(
+        $moduleBeanMock->field_defs = [
+            [
                 'name' => 'id',
                 'vname' => 'id',
                 'type' => 'string',
                 'required' => true,
-                'len' => 32
-            ),
-            array(
+                'len' => 32,
+            ],
+            [
                 'name' => 'name',
                 'vname' => 'name',
                 'type' => 'string',
                 'required' => true,
-                'len' => 32
-            ),
-            array(
+                'len' => 32,
+            ],
+            [
                 'name' => 'list',
                 'vname' => 'list',
                 'type' => 'enum',
                 'options' => 'listOptions',
                 'required' => true,
-                'len' => 32
-            ),
-            array(
+                'len' => 32,
+            ],
+            [
                 'name' => 'list2',
                 'vname' => 'list2',
                 'type' => 'enum',
                 'required' => true,
-                'len' => 32
-            ),
-        );
+                'len' => 32,
+            ],
+        ];
 
         $this->object->expects($this->once())
             ->method('getModuleFilter')
@@ -1452,13 +1446,13 @@ class PMSECrmDataWrapperTest extends TestCase
             'Notes' => [],
         ]);
 
-        $app_list_strings = array(
-            'listOptions' => array()
-        );
+        $app_list_strings = [
+            'listOptions' => [],
+        ];
 
-        $args = array(
-            'retrieveId' => true
-        );
+        $args = [
+            'retrieveId' => true,
+        ];
 
         $this->object->addRelatedRecord("Notes", $args);
     }
@@ -1468,54 +1462,54 @@ class PMSECrmDataWrapperTest extends TestCase
         $this->object = $this->getMockBuilder('PMSECrmDataWrapper')
             ->disableOriginalConstructor()
             ->setMethods(
-                    array(
+                [
                         'getRelationshipData',
                         'getModuleFilter',
                         'isValidStudioField',
                         'fieldTodo',
                         'returnArrayModules',
                         'dataFieldPersonalized',
-                        'gatewayModulesMethod'
-                    )
-                )
+                        'gatewayModulesMethod',
+                    ]
+            )
             ->getMock();
 
         $moduleBeanMock = $this->getMockBuilder('ModuleBean')
             ->disableOriginalConstructor()
-            ->setMethods(NULL)
+            ->setMethods(null)
             ->getMock();
 
-        $moduleBeanMock->field_defs = array(
-            array(
+        $moduleBeanMock->field_defs = [
+            [
                 'name' => 'id',
                 'vname' => 'id',
                 'type' => 'string',
                 'required' => true,
-                'len' => 32
-            ),
-            array(
+                'len' => 32,
+            ],
+            [
                 'name' => 'name',
                 'vname' => 'name',
                 'type' => 'string',
                 'required' => true,
-                'len' => 32
-            ),
-            array(
+                'len' => 32,
+            ],
+            [
                 'name' => 'list',
                 'vname' => 'list',
                 'type' => 'enum',
                 'options' => 'listOptions',
                 'required' => true,
-                'len' => 32
-            ),
-            array(
+                'len' => 32,
+            ],
+            [
                 'name' => 'list2',
                 'vname' => 'list2',
                 'type' => 'enum',
                 'required' => true,
-                'len' => 32
-            ),
-        );
+                'len' => 32,
+            ],
+        ];
 
         $this->object->expects($this->once())
             ->method('getModuleFilter')
@@ -1535,13 +1529,13 @@ class PMSECrmDataWrapperTest extends TestCase
             'Notes' => [],
         ]);
 
-        $app_list_strings = array(
-            'listOptions' => array()
-        );
+        $app_list_strings = [
+            'listOptions' => [],
+        ];
 
-        $args = array(
-            'retrieveId' => true
-        );
+        $args = [
+            'retrieveId' => true,
+        ];
 
         $this->object->addRelatedRecord("Notes", $args);
     }
@@ -1551,10 +1545,10 @@ class PMSECrmDataWrapperTest extends TestCase
         $this->object = $this->getMockBuilder('PMSECrmDataWrapper')
             ->disableOriginalConstructor()
             ->setMethods(
-                    array(
+                [
                         'retrieveModules',
-                    )
-                )
+                    ]
+            )
             ->getMock();
 
         $this->object->expects($this->once())
@@ -1562,7 +1556,7 @@ class PMSECrmDataWrapperTest extends TestCase
             ->will($this->returnValue('SomeResponse'));
 
         $filter = 'modules';
-        $args = array();
+        $args = [];
 
         $result = $this->object->getRelatedSearch($filter, $args);
         $this->assertEquals('SomeResponse', $result);
@@ -1573,17 +1567,17 @@ class PMSECrmDataWrapperTest extends TestCase
         $this->object = $this->getMockBuilder('PMSECrmDataWrapper')
             ->disableOriginalConstructor()
             ->setMethods(
-                    array(
+                [
                         'retrieveModules',
-                    )
-                )
+                    ]
+            )
             ->getMock();
 
         $filter = 'fields';
-        $args = array();
+        $args = [];
 
         $result = $this->object->getRelatedSearch($filter, $args);
-        $this->assertEquals(array(), $result);
+        $this->assertEquals([], $result);
     }
 
     /**
@@ -1601,8 +1595,8 @@ class PMSECrmDataWrapperTest extends TestCase
             ->setMethods(null)
             ->getMock();
 
-        $GLOBALS['app_list_strings']['moduleList'] = array();
-        $this->object->setBeanList(array('Emails' => 'Email'));
+        $GLOBALS['app_list_strings']['moduleList'] = [];
+        $this->object->setBeanList(['Emails' => 'Email']);
 
         $output = $this->object->retrieveFields('Emails', null, $action, 'Emails');
         $fields = $this->getOutputFields($output['result']);
@@ -1699,7 +1693,7 @@ class PMSECrmDataWrapperTest extends TestCase
      */
     protected function getOutputFields($result)
     {
-        $fields = array();
+        $fields = [];
         if (!empty($result)) {
             foreach ($result as $field) {
                 $fields[] = $field['value'];

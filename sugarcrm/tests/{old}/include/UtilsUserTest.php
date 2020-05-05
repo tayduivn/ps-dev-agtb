@@ -21,38 +21,38 @@ class UtilsUserTest extends TestCase
         SugarTestUserUtilities::createAnonymousUser(
             true,
             0,
-            array(
+            [
                 'user_name' => 'Utils A',
                 'first_name' => 'Utils B',
                 'last_name' => 'Utils C',
-            )
+            ]
         );
         SugarTestUserUtilities::createAnonymousUser(
             true,
             0,
-            array(
+            [
                 'user_name' => 'Utils C',
                 'first_name' => 'Utils A',
                 'last_name' => 'Utils B',
-            )
+            ]
         );
         SugarTestUserUtilities::createAnonymousUser(
             true,
             0,
-            array(
+            [
                 'user_name' => 'Utils B',
                 'first_name' => 'Utils C',
                 'last_name' => 'Utils A',
-            )
+            ]
         );
         SugarTestUserUtilities::createAnonymousUser(
             true,
             0,
-            array(
+            [
                 'user_name' => 'Utils D',
                 'first_name' => 'Utils Ba',
                 'last_name' => 'Utils Ab',
-            )
+            ]
         );
     }
 
@@ -78,77 +78,77 @@ class UtilsUserTest extends TestCase
 
     public function getUserArrayData()
     {
-        return array(
-            array(
-                array(array('user_name', 'ASC')), // Test order by user_name
+        return [
+            [
+                [['user_name', 'ASC']], // Test order by user_name
                 'Utils',
-                array(
+                [
                     'Utils B Utils C',
                     'Utils C Utils A',
                     'Utils A Utils B',
                     'Utils Ba Utils Ab',
-                )
-            ),
-            array(
-                array(array('', 'ASC')), // Test empty order, defaults to user_name
+                ],
+            ],
+            [
+                [['', 'ASC']], // Test empty order, defaults to user_name
                 'Utils',
-                array(
+                [
                     'Utils B Utils C',
                     'Utils C Utils A',
                     'Utils A Utils B',
                     'Utils Ba Utils Ab',
-                )
-            ),
-            array(
-                array(array('gibberish', 'ASC')), // Test non-existing field, defaults to user_name
+                ],
+            ],
+            [
+                [['gibberish', 'ASC']], // Test non-existing field, defaults to user_name
                 'Utils',
-                array(
+                [
                     'Utils B Utils C',
                     'Utils C Utils A',
                     'Utils A Utils B',
                     'Utils Ba Utils Ab',
-                )
-            ),
-            array(
-                array(array('first_name', 'ASC')), // Test first_name
+                ],
+            ],
+            [
+                [['first_name', 'ASC']], // Test first_name
                 'Utils',
-                array(
+                [
                     'Utils A Utils B',
                     'Utils B Utils C',
                     'Utils Ba Utils Ab',
                     'Utils C Utils A',
-                )
-            ),
-            array(
-                array(array('last_name', 'ASC')), // Test last_name
+                ],
+            ],
+            [
+                [['last_name', 'ASC']], // Test last_name
                 'Utils',
-                array(
+                [
                     'Utils C Utils A',
                     'Utils Ba Utils Ab',
                     'Utils A Utils B',
                     'Utils B Utils C',
-                )
-            ),
-            array(
-                array(array('last_name', 'ASC'), array('first_name', 'ASC')), // Test last_name, first_name
+                ],
+            ],
+            [
+                [['last_name', 'ASC'], ['first_name', 'ASC']], // Test last_name, first_name
                 'Utils',
-                array(
+                [
                     'Utils C Utils A',
                     'Utils Ba Utils Ab',
                     'Utils A Utils B',
                     'Utils B Utils C',
-                )
-            ),
-            array(
-                array(array('last_name', 'ASC'), array('first_name', 'DESC')), // Test last_name, first_name
+                ],
+            ],
+            [
+                [['last_name', 'ASC'], ['first_name', 'DESC']], // Test last_name, first_name
                 'Utils',
-                array(
+                [
                     'Utils C Utils A',
                     'Utils Ba Utils Ab',
                     'Utils A Utils B',
                     'Utils B Utils C',
-                )
-            ),
-        );
+                ],
+            ],
+        ];
     }
 }

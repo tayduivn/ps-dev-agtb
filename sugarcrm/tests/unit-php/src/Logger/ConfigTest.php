@@ -47,294 +47,294 @@ class ConfigTest extends TestCase
 
     public static function getChannelConfigProvider()
     {
-        return array(
-            'default' => array(
-                array(),
+        return [
+            'default' => [
+                [],
                 'default',
-                array(
-                    'handlers' => array(
-                        array(
+                [
+                    'handlers' => [
+                        [
                             'type' => 'file',
                             'level' => Logger::ALERT,
-                            'params' => array(),
-                        ),
-                    ),
-                    'processors' => array(),
-                ),
-            ),
-            'default-params' => array(
-                array(
-                    'logger' => array(
+                            'params' => [],
+                        ],
+                    ],
+                    'processors' => [],
+                ],
+            ],
+            'default-params' => [
+                [
+                    'logger' => [
                         'handler' => 'gelf',
                         'level' => 'debug',
-                    ),
-                ),
+                    ],
+                ],
                 'default',
-                array(
-                    'handlers' => array(
-                        array(
+                [
+                    'handlers' => [
+                        [
                             'type' => 'gelf',
                             'level' => Logger::DEBUG,
-                            'params' => array(),
-                        ),
-                    ),
-                    'processors' => array(),
-                ),
-            ),
-            'handler-params' => array(
-                array(
-                    'logger' => array(
-                        'handlers' => array(
-                            'file' => array(
+                            'params' => [],
+                        ],
+                    ],
+                    'processors' => [],
+                ],
+            ],
+            'handler-params' => [
+                [
+                    'logger' => [
+                        'handlers' => [
+                            'file' => [
                                 'dir' => '/var/log/sugar',
-                            ),
-                        ),
-                    ),
-                ),
+                            ],
+                        ],
+                    ],
+                ],
                 'default',
-                array(
-                    'handlers' => array(
-                        array(
+                [
+                    'handlers' => [
+                        [
                             'type' => 'file',
                             'level' => Logger::ALERT,
-                            'params' => array(
+                            'params' => [
                                 'dir' => '/var/log/sugar',
-                            ),
-                        ),
-                    ),
-                    'processors' => array(),
-                ),
-            ),
-            'channel-params' => array(
-                array(
-                    'logger' => array(
-                        'channels' => array(
-                            'elastica' => array(
-                                'handlers' => array(
-                                    'chrome' => array(
+                            ],
+                        ],
+                    ],
+                    'processors' => [],
+                ],
+            ],
+            'channel-params' => [
+                [
+                    'logger' => [
+                        'channels' => [
+                            'elastica' => [
+                                'handlers' => [
+                                    'chrome' => [
                                         'level' => 'debug',
-                                    ),
-                                    'file' => array(
+                                    ],
+                                    'file' => [
                                         'level' => 'debug',
                                         'name' => 'elastica',
-                                    ),
-                                ),
-                            ),
-                        ),
-                    ),
-                ),
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
                 'elastica',
-                array(
-                    'handlers' => array(
-                        array(
+                [
+                    'handlers' => [
+                        [
                             'type' => 'chrome',
                             'level' => Logger::DEBUG,
-                            'params' => array(),
-                        ),
-                        array(
+                            'params' => [],
+                        ],
+                        [
                             'type' => 'file',
                             'level' => Logger::DEBUG,
-                            'params' => array(
+                            'params' => [
                                 'name' => 'elastica',
-                            ),
-                        ),
-                    ),
-                    'processors' => array(),
-                ),
-            ),
-            'handlers-as-string' => array(
-                array(
-                    'logger' => array(
-                        'channels' => array(
-                            'channel-1' => array(
+                            ],
+                        ],
+                    ],
+                    'processors' => [],
+                ],
+            ],
+            'handlers-as-string' => [
+                [
+                    'logger' => [
+                        'channels' => [
+                            'channel-1' => [
                                 'handlers' => 'handler-1',
-                            ),
-                        ),
-                    ),
-                ),
+                            ],
+                        ],
+                    ],
+                ],
                 'channel-1',
-                array(
-                    'handlers' => array(
-                        array(
+                [
+                    'handlers' => [
+                        [
                             'type' => 'handler-1',
                             'level' => Logger::ALERT,
-                            'params' => array(),
-                        ),
-                    ),
-                    'processors' => array(),
-                ),
-            ),
-            'handlers-as-array-of-types' => array(
-                array(
-                    'logger' => array(
-                        'channels' => array(
-                            'channel-1' => array(
-                                'handlers' => array('handler-1', 'handler-2'),
-                            ),
-                        ),
-                    ),
-                ),
+                            'params' => [],
+                        ],
+                    ],
+                    'processors' => [],
+                ],
+            ],
+            'handlers-as-array-of-types' => [
+                [
+                    'logger' => [
+                        'channels' => [
+                            'channel-1' => [
+                                'handlers' => ['handler-1', 'handler-2'],
+                            ],
+                        ],
+                    ],
+                ],
                 'channel-1',
-                array(
-                    'handlers' => array(
-                        array(
+                [
+                    'handlers' => [
+                        [
                             'type' => 'handler-1',
                             'level' => Logger::ALERT,
-                            'params' => array(),
-                        ),
-                        array(
+                            'params' => [],
+                        ],
+                        [
                             'type' => 'handler-2',
                             'level' => Logger::ALERT,
-                            'params' => array(),
-                        ),
-                    ),
-                    'processors' => array(),
-                ),
-            ),
-            'handlers-as-numeric-array' => array(
-                array(
-                    'logger' => array(
-                        'channels' => array(
-                            'channel-1' => array(
-                                'handlers' => array(
-                                    array(
+                            'params' => [],
+                        ],
+                    ],
+                    'processors' => [],
+                ],
+            ],
+            'handlers-as-numeric-array' => [
+                [
+                    'logger' => [
+                        'channels' => [
+                            'channel-1' => [
+                                'handlers' => [
+                                    [
                                         'type' => 'handler-1',
-                                    ),
-                                ),
-                            ),
-                        ),
-                    ),
-                ),
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
                 'channel-1',
-                array(
-                    'handlers' => array(
-                        array(
+                [
+                    'handlers' => [
+                        [
                             'type' => 'handler-1',
                             'level' => Logger::ALERT,
-                            'params' => array(),
-                        ),
-                    ),
-                    'processors' => array(),
-                ),
-            ),
-            'handlers-as-assoc-array' => array(
-                array(
-                    'logger' => array(
-                        'channels' => array(
-                            'channel-1' => array(
-                                'handlers' => array(
-                                    'handler-1' => array(),
-                                ),
-                            ),
-                        ),
-                    ),
-                ),
+                            'params' => [],
+                        ],
+                    ],
+                    'processors' => [],
+                ],
+            ],
+            'handlers-as-assoc-array' => [
+                [
+                    'logger' => [
+                        'channels' => [
+                            'channel-1' => [
+                                'handlers' => [
+                                    'handler-1' => [],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
                 'channel-1',
-                array(
-                    'handlers' => array(
-                        array(
+                [
+                    'handlers' => [
+                        [
                             'type' => 'handler-1',
                             'level' => Logger::ALERT,
-                            'params' => array(),
-                        ),
-                    ),
-                    'processors' => array(),
-                ),
-            ),
-            'legacy-config' => array(
-                array(
+                            'params' => [],
+                        ],
+                    ],
+                    'processors' => [],
+                ],
+            ],
+            'legacy-config' => [
+                [
                     'log_dir' => '.',
-                    'logger' => array(
-                        'file' => array(
+                    'logger' => [
+                        'file' => [
                             'name' => 'sugarcrm',
                             'dateFormat' => '%c',
                             'suffix' => '%Y_%m_%d',
-                        ),
-                    ),
-                ),
+                        ],
+                    ],
+                ],
                 'default',
-                array(
-                    'handlers' => array(
-                        array(
+                [
+                    'handlers' => [
+                        [
                             'type' => 'file',
                             'level' => Logger::ALERT,
-                            'params' => array(
+                            'params' => [
                                 'name' => 'sugarcrm',
                                 'dateFormat' => '%c',
                                 'suffix' => '%Y_%m_%d',
-                            ),
-                        ),
-                    ),
-                    'processors' => array(),
-                ),
-            ),
-            'handler-level-from-channel-handler' => array(
-                array(
-                    'logger' => array(
-                        'channels' => array(
-                            'channel-3' => array(
-                                'handlers' => array(
-                                    'handler-3' => array(
+                            ],
+                        ],
+                    ],
+                    'processors' => [],
+                ],
+            ],
+            'handler-level-from-channel-handler' => [
+                [
+                    'logger' => [
+                        'channels' => [
+                            'channel-3' => [
+                                'handlers' => [
+                                    'handler-3' => [
                                         'level' => 'info',
-                                    ),
-                                ),
-                            ),
-                        ),
-                    ),
-                ),
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
                 'channel-3',
-                array(
-                    'handlers' => array(
-                        array(
+                [
+                    'handlers' => [
+                        [
                             'type' => 'handler-3',
                             'level' => Logger::INFO,
-                            'params' => array(),
-                        ),
-                    ),
-                    'processors' => array(),
-                ),
-            ),
-            'handler-level-from-channel' => array(
-                array(
-                    'logger' => array(
-                        'channels' => array(
-                            'channel-4' => array(
+                            'params' => [],
+                        ],
+                    ],
+                    'processors' => [],
+                ],
+            ],
+            'handler-level-from-channel' => [
+                [
+                    'logger' => [
+                        'channels' => [
+                            'channel-4' => [
                                 'level' => 'warning',
                                 'handlers' => 'handler-4',
-                            ),
-                        ),
-                    ),
-                ),
+                            ],
+                        ],
+                    ],
+                ],
                 'channel-4',
-                array(
-                    'handlers' => array(
-                        array(
+                [
+                    'handlers' => [
+                        [
                             'type' => 'handler-4',
                             'level' => Logger::WARNING,
-                            'params' => array(),
-                        ),
-                    ),
-                    'processors' => array(),
-                ),
-            ),
-            'logger-off' => array(
-                array(
-                    'logger' => array(
+                            'params' => [],
+                        ],
+                    ],
+                    'processors' => [],
+                ],
+            ],
+            'logger-off' => [
+                [
+                    'logger' => [
                         'level' => 'off',
-                    ),
-                ),
+                    ],
+                ],
                 'default',
-                array(
-                    'handlers' => array(
-                        array(
+                [
+                    'handlers' => [
+                        [
                             'type' => 'file',
                             'level' => 0,
-                            'params' => array(),
-                        ),
-                    ),
-                    'processors' => array(),
-                ),
-            ),
-        );
+                            'params' => [],
+                        ],
+                    ],
+                    'processors' => [],
+                ],
+            ],
+        ];
     }
 }

@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
@@ -18,7 +18,7 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug33905Test extends TestCase
 {
-	public $folder = null;
+    public $folder = null;
     public $_user = null;
     public $_team = null;
     public $_ie = null;
@@ -31,12 +31,12 @@ class Bug33905Test extends TestCase
         $this->_team = SugarTestTeamUtilities::createAnonymousTeam();
         $this->_user->default_team=$this->_team->id;
         $this->_team->add_user_to_team($this->_user->id);
-		$this->_user->save();
+        $this->_user->save();
         $current_user = $this->_user;
-		$ieID = $this->_createInboundAccount();
-		$ie = new InboundEmail();
-		$this->_ie = $ie->retrieve($ieID);
-	}
+        $ieID = $this->_createInboundAccount();
+        $ie = new InboundEmail();
+        $this->_ie = $ie->retrieve($ieID);
+    }
 
     protected function tearDown() : void
     {
@@ -48,10 +48,10 @@ class Bug33905Test extends TestCase
         $GLOBALS['db']->query("DELETE FROM inbound_email WHERE id='{$this->_ie->id}'");
     }
     
-    function _createInboundAccount() 
+    function _createInboundAccount()
     {
         global $inbound_account_id, $current_user;
-        $stored_options = array();
+        $stored_options = [];
         $stored_options['from_name'] = "UnitTest";
         $stored_options['from_addr'] = "UT@sugarcrm.com";
         $stored_options['reply_to_name'] = "UnitTest";
@@ -81,15 +81,15 @@ class Bug33905Test extends TestCase
         return $focus->save();
     }
     
-	function testCreateSubscriptions(){
+    function testCreateSubscriptions()
+    {
         global $current_user;
 
         $this->assertInstanceOf("InboundEmail", $this->_ie);
 
-	    $this->_ie->createUserSubscriptionsForGroupAccount();
+        $this->_ie->createUserSubscriptionsForGroupAccount();
 
-	    $subs = unserialize(base64_decode($current_user->getPreference('showFolders', 'Emails')));
+        $subs = unserialize(base64_decode($current_user->getPreference('showFolders', 'Emails')));
         $this->assertEquals($this->_ie->id, $subs[0], "Unable to create subscriptions for IE Group Account (Import not enabled)");
-        
     }
 }

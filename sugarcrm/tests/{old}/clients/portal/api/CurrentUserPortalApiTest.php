@@ -54,14 +54,14 @@ class CurrentUserPortalApiTest extends TestCase
 
         self::$contact = SugarTestContactUtilities::createContact(
             '',
-            array(
+            [
                 'first_name' => 'testfirst',
                 'last_name' => 'testlast',
                 'picture' => 'testpicture',
                 'portal_active' => 1,
                 'portal_name' => 'testportal',
                 'disable_custom_fields' => true,
-            )
+            ]
         );
 
         $_SESSION['contact_id'] = self::$contact->id;
@@ -91,7 +91,7 @@ class CurrentUserPortalApiTest extends TestCase
      */
     public function testRetrieveCurrentUser()
     {
-        $result = self::$currentUserApi->retrieveCurrentUser(self::$service, array());
+        $result = self::$currentUserApi->retrieveCurrentUser(self::$service, []);
 
         $this->assertNotEmpty($result);
         $this->assertIsArray($result);
@@ -113,27 +113,27 @@ class CurrentUserPortalApiTest extends TestCase
      */
     public function updateCurrentUserDataProvider()
     {
-        return array(
+        return [
             // portal name
-            array(
-                array(
+            [
+                [
                     'portal_name' => 'TEST_ME',
-                ),
-                array(
+                ],
+                [
                     'portal_name' => 'TEST_ME',
-                ),
-            ),
+                ],
+            ],
             // first/last names
-            array(
-                array(
+            [
+                [
                     'first_name' => 'test first name',
                     'last_name' => 'test last name',
-                ),
-                array(
+                ],
+                [
                     'full_name' => 'test first name test last name',
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
     }
 
     /**
@@ -170,7 +170,7 @@ class CurrentUserPortalApiTest extends TestCase
      */
     public function testContactPicture()
     {
-        $result = self::$currentUserApi->retrieveCurrentUser(self::$service, array());
+        $result = self::$currentUserApi->retrieveCurrentUser(self::$service, []);
 
         $this->assertArrayHasKey('picture', $result['current_user']);
         $this->assertNotEmpty($result['current_user']['picture']);

@@ -63,11 +63,11 @@ class IssueTest extends TestCase
     public function providerIsNewlyResolved(): array
     {
         return [
-            [false, 'New', array('status' => 'Irrelevant'), false],
-            [true, 'Closed', array('status' => 'Closed'), false],
-            [true, 'Closed', array('status' => 'Rejected'), false],
-            [true, 'Closed', array('status' => 'New'), true],
-            [true, 'Closed', array(), true],
+            [false, 'New', ['status' => 'Irrelevant'], false],
+            [true, 'Closed', ['status' => 'Closed'], false],
+            [true, 'Closed', ['status' => 'Rejected'], false],
+            [true, 'Closed', ['status' => 'New'], true],
+            [true, 'Closed', [], true],
             [true, 'Closed', null, true],
         ];
     }

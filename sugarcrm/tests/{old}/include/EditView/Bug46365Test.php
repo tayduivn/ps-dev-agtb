@@ -21,56 +21,56 @@ class Bug46365Test extends TestCase
     protected function setUp() : void
     {
         $this->_o = $this->getMockBuilder('EditView')
-            ->setMethods(array('requiredFirst'))
+            ->setMethods(['requiredFirst'])
             ->disableOriginalConstructor()
             ->getMock();
     }
 
     public function provider()
     {
-        return array(
+        return [
             // 1 row, 1 element, 2 columns
-            array(
-                array(
-                    'templateMeta' => array(
+            [
+                [
+                    'templateMeta' => [
                         'maxColumns' => '2',
-                        'widths' => array(
-                            array('label' => '10', 'field' => '30'),
-                            array('label' => '10', 'field' => '30'),
-                        ),
-                    ),
-                    'panels' => array(
-                        'panel1' => array(
-                            array(
-                                array('name' => 'name1',),
-                            ),
-                        ),
-                    ),
-                ),
-            ),
+                        'widths' => [
+                            ['label' => '10', 'field' => '30'],
+                            ['label' => '10', 'field' => '30'],
+                        ],
+                    ],
+                    'panels' => [
+                        'panel1' => [
+                            [
+                                ['name' => 'name1',],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
 
             // 1 row, 2 elements, 3 columns
-            array(
-                array(
-                    'templateMeta' => array(
+            [
+                [
+                    'templateMeta' => [
                         'maxColumns' => '3',
-                        'widths' => array(
-                            array('label' => '10', 'field' => '30'),
-                            array('label' => '10', 'field' => '30'),
-                            array('label' => '10', 'field' => '30'),
-                        ),
-                    ),
-                    'panels' => array(
-                        'panel1' => array(
-                            array(
-                                array('name' => 'name1',),
-                                array('name' => 'name2',),
-                            ),
-                        ),
-                    ),
-                ),
-            ),
-        );
+                        'widths' => [
+                            ['label' => '10', 'field' => '30'],
+                            ['label' => '10', 'field' => '30'],
+                            ['label' => '10', 'field' => '30'],
+                        ],
+                    ],
+                    'panels' => [
+                        'panel1' => [
+                            [
+                                ['name' => 'name1',],
+                                ['name' => 'name2',],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
     }
 
     /**

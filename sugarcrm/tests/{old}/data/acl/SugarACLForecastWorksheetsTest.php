@@ -19,7 +19,7 @@ class SugarACLForecastWorksheetsTest extends TestCase
      */
     public function testCheckAccessWithViewEqualToField()
     {
-        $beanMock = $this->createPartialMock('Product', array('ACLFieldAccess'));
+        $beanMock = $this->createPartialMock('Product', ['ACLFieldAccess']);
         $beanMock->expects($this->once())
             ->method('ACLFieldAccess')
             ->will($this->returnValue(true));
@@ -27,12 +27,12 @@ class SugarACLForecastWorksheetsTest extends TestCase
         $userMock = $this->createMock('User');
         $userMock->id = 'test_user_id';
 
-        $acl_class = $this->createPartialMock('SugarACLForecastWorksheets', array('getForecastByBean'));
+        $acl_class = $this->createPartialMock('SugarACLForecastWorksheets', ['getForecastByBean']);
         $acl_class->expects($this->once())
             ->method('getForecastByBean')
             ->will($this->returnValue($beanMock));
 
-        $context = array('field' => 'test_field', 'action' => 'write', 'user' => $userMock);
+        $context = ['field' => 'test_field', 'action' => 'write', 'user' => $userMock];
 
         $ret = $acl_class->checkAccess('ForecastWorksheets', 'field', $context);
 
@@ -44,19 +44,19 @@ class SugarACLForecastWorksheetsTest extends TestCase
      */
     public function testCheckAccessWithViewNotEqualToField()
     {
-        $beanMock = $this->createPartialMock('Product', array('ACLFieldAccess'));
+        $beanMock = $this->createPartialMock('Product', ['ACLFieldAccess']);
         $beanMock->expects($this->never())
             ->method('ACLFieldAccess');
 
         $userMock = $this->createMock('User');
         $userMock->id = 'test_user_id';
 
-        $acl_class = $this->createPartialMock('SugarACLForecastWorksheets', array('getForecastByBean'));
+        $acl_class = $this->createPartialMock('SugarACLForecastWorksheets', ['getForecastByBean']);
         $acl_class->expects($this->once())
             ->method('getForecastByBean')
             ->will($this->returnValue($beanMock));
 
-        $context = array('field' => 'test_field', 'action' => 'write', 'user' => $userMock);
+        $context = ['field' => 'test_field', 'action' => 'write', 'user' => $userMock];
 
         $ret = $acl_class->checkAccess('ForecastWorksheets', 'view', $context);
 

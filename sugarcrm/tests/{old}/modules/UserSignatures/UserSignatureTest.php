@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
 
 class UserSignatureTest extends TestCase
 {
-    private static $createdSignatures = array();
+    private static $createdSignatures = [];
 
     public static function setUpBeforeClass() : void
     {

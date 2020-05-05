@@ -44,11 +44,11 @@ class BeanAssigneeNotificationTest extends TestCase
 
         $this->assertStringStartsWith('bwc/', $components['path']);
 
-        $expectedQuery = array(
+        $expectedQuery = [
             'module' => $bean->module_dir,
             'action' => 'DetailView',
             'record' => $bean->id,
-        );
+        ];
 
         parse_str($components['query'], $query);
 
@@ -69,7 +69,7 @@ class BeanAssigneeNotificationTest extends TestCase
         $template = SugarTestReflection::callProtectedMethod(
             $bean,
             'createNotificationEmailTemplate',
-            array($templateName)
+            [$templateName]
         );
 
         $url = $template->VARS['URL'];

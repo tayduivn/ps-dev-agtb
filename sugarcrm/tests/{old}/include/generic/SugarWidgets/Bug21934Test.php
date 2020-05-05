@@ -59,7 +59,7 @@ class Bug21934Test extends TestCase
 
         /** @var SugarWidgetFieldDate|MockObject $widget */
         $widget = $this->getMockBuilder('SugarWidgetFieldDate')
-            ->setMethods(array('now', 'get_start_end_date_filter'))
+            ->setMethods(['now', 'get_start_end_date_filter'])
             ->disableOriginalConstructor()
             ->getMock();
         $widget->expects($this->any())
@@ -70,14 +70,14 @@ class Bug21934Test extends TestCase
             ->with($this->anything(), $start, $end);
 
         $current_user->setPreference('timezone', $timezone);
-        $widget->queryFilterTP_last_month(array());
+        $widget->queryFilterTP_last_month([]);
     }
 
     public static function queryMonthProvider()
     {
-        return array(
-            array('Pacific/Tongatapu'),
-            array('Pacific/Midway'),
-        );
+        return [
+            ['Pacific/Tongatapu'],
+            ['Pacific/Midway'],
+        ];
     }
 }

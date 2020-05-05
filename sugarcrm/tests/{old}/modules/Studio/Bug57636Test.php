@@ -17,20 +17,20 @@ use PHPUnit\Framework\TestCase;
  * Bug 57636
  *
  * For meetings module, in mobile edit and detail, duration hours and duration_minutes
- * should not be on any layout. 
+ * should not be on any layout.
  */
 
 class Bug57636Test extends TestCase
 {
     protected $testModule = 'Meetings';
-    protected $testFields  = array('duration_hours', 'duration_minutes');
+    protected $testFields  = ['duration_hours', 'duration_minutes'];
     
     protected function setUp() : void
     {
         SugarTestHelper::setup('beanList');
         SugarTestHelper::setup('beanFiles');
         SugarTestHelper::setup('app_list_strings');
-        SugarTestHelper::setup('mod_strings', array($this->testModule));
+        SugarTestHelper::setup('mod_strings', [$this->testModule]);
     }
     
     protected function tearDown() : void
@@ -88,7 +88,8 @@ class Bug57636Test extends TestCase
      * @param array $fields The defs to search
      * @return bool
      */
-    protected function _fieldNameFoundInFields($name, $fields) {
+    protected function _fieldNameFoundInFields($name, $fields)
+    {
         foreach ($fields as $field) {
             if (isset($field['name']) && $field['name'] == $name) {
                 return true;
@@ -105,7 +106,8 @@ class Bug57636Test extends TestCase
      * @param array $layout The defs to search
      * @return bool
      */
-    protected function _fieldNameFoundInLayoutFields($name, $layout) {
+    protected function _fieldNameFoundInLayoutFields($name, $layout)
+    {
         foreach ($layout as $fields) {
             if ($this->_fieldNameFoundInFields($name, $fields)) {
                 return true;

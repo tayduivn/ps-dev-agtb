@@ -31,12 +31,12 @@ class RS176Test extends TestCase
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setUp('current_user', array(true, true));
+        SugarTestHelper::setUp('current_user', [true, true]);
 
         $this->listApi = new ListApi();
         $this->serviceMock = SugarTestRestUtilities::getRestServiceMock();
 
-        for($i = 0; $i < 5; $i++) {
+        for ($i = 0; $i < 5; $i++) {
             SugarTestAccountUtilities::createAccount();
         }
     }
@@ -54,24 +54,24 @@ class RS176Test extends TestCase
      */
     public function listModuleDataProvider()
     {
-        return array(
-            array(
-                array(
+        return [
+            [
+                [
                     'module' => 'Accounts',
-                ),
+                ],
                 'Accounts',
-            ),
-            array(
-                array(
+            ],
+            [
+                [
                     'module' => 'Accounts',
                     'max_num' => '3',
-                ),
+                ],
                 'Accounts',
                 3,
                 true,
                 true,
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -87,14 +87,14 @@ class RS176Test extends TestCase
         $this->assertArrayHasKey('next_offset', $result);
         $this->assertNotEmpty($result['records']);
 
-        if(null !== $count) {
+        if (null !== $count) {
             $this->assertEquals($count, count($result['records']), 'Returned too many results');
         }
-        foreach($result['records'] as $record) {
+        foreach ($result['records'] as $record) {
             $this->assertArrayHasKey('id', $record);
             $this->assertArrayHasKey('_module', $record);
             $this->assertEquals($moduleName, $record['_module']);
-            if($checkCreatedIds) {
+            if ($checkCreatedIds) {
                 $this->assertTrue(in_array($record['id'], SugarTestAccountUtilities::getCreatedAccountIds()));
             }
         }

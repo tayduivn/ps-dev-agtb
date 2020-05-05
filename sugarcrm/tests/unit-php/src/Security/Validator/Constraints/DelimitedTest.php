@@ -27,10 +27,10 @@ class DelimitedTest extends TestCase
     public function testRejectNonStringDelimiter()
     {
         $this->expectException(ConstraintDefinitionException::class);
-        new Delimited(array(
-            'constraints' => array(),
+        new Delimited([
+            'constraints' => [],
             'delimiter' => true,
-        ));
+        ]);
     }
 
     /**
@@ -39,9 +39,9 @@ class DelimitedTest extends TestCase
     public function testRejectEmptyStringDelimiter()
     {
         $this->expectException(ConstraintDefinitionException::class);
-        new Delimited(array(
-            'constraints' => array(),
+        new Delimited([
+            'constraints' => [],
             'delimiter' => '',
-        ));
+        ]);
     }
 }

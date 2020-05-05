@@ -29,7 +29,7 @@ class SessionTest extends TestCase
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setUp('current_user', array(true, true)); // admin
+        SugarTestHelper::setUp('current_user', [true, true]); // admin
     }
 
     public static function tearDownAfterClass() : void

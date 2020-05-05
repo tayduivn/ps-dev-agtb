@@ -40,7 +40,7 @@ class KBContentsTest extends TestCase
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('moduleList');
-        SugarTestHelper::setUp('current_user', array(true, true));
+        SugarTestHelper::setUp('current_user', [true, true]);
         $this->bean = SugarTestKBContentUtilities::createBean();
 
         $apiClass = new ConfigModuleApi();
@@ -99,10 +99,10 @@ class KBContentsTest extends TestCase
 
     public function testPrimaryLanguage()
     {
-        $this->assertEquals(array(
+        $this->assertEquals([
             'label' => 'English',
-            'key' => 'en'
-        ), $this->bean->getPrimaryLanguage());
+            'key' => 'en',
+        ], $this->bean->getPrimaryLanguage());
     }
 
     public function testDocumentRelationship()
@@ -148,11 +148,11 @@ class KBContentsTest extends TestCase
      */
     public function testActiveRevision()
     {
-        $revisionData = array(
+        $revisionData = [
             'kbarticle_id' => $this->bean->kbarticle_id,
             'kbdocument_id' => $this->bean->kbdocument_id,
             'language' => $this->bean->language,
-        );
+        ];
 
         $revision1 = SugarTestKBContentUtilities::createBean($revisionData);
         $this->assertEquals($this->bean->active_rev, 0);
@@ -170,11 +170,11 @@ class KBContentsTest extends TestCase
     public function testPublishedRevisionIsActive()
     {
         $publishStatuses = $this->bean->getPublishedStatuses();
-        $revisionData = array(
+        $revisionData = [
             'kbarticle_id' => $this->bean->kbarticle_id,
             'kbdocument_id' => $this->bean->kbdocument_id,
             'language' => $this->bean->language,
-        );
+        ];
 
         $this->bean->active_rev = 1;
         $this->bean->status = $publishStatuses[0];
@@ -185,9 +185,9 @@ class KBContentsTest extends TestCase
         $this->assertEquals($draftRevision->active_rev, 0);
 
         $publishedRevision = SugarTestKBContentUtilities::createBean(
-            $revisionData + array(
+            $revisionData + [
                 'status' => $publishStatuses[0],
-            )
+            ]
         );
         $this->assertEquals($this->bean->active_rev, 0);
         $this->assertEquals($draftRevision->active_rev, 0);
@@ -200,11 +200,11 @@ class KBContentsTest extends TestCase
     public function testPublishedBeanIsActive()
     {
         $publishStatuses = $this->bean->getPublishedStatuses();
-        $revisionData = array(
+        $revisionData = [
             'kbarticle_id' => $this->bean->kbarticle_id,
             'kbdocument_id' => $this->bean->kbdocument_id,
             'language' => $this->bean->language,
-        );
+        ];
 
         $this->bean->active_rev = 1;
         $this->bean->save();
@@ -231,9 +231,9 @@ class KBContentsTest extends TestCase
         $this->bean->category_id = $subnode->id;
         $this->bean->save();
 
-        $categoryBean = BeanFactory::retrieveBean('Categories', $subnode->id, array(
+        $categoryBean = BeanFactory::retrieveBean('Categories', $subnode->id, [
             'use_cache' => false,
-        ));
+        ]);
 
         $this->assertEquals(0, $categoryBean->is_external);
 
@@ -241,9 +241,9 @@ class KBContentsTest extends TestCase
         $this->bean->is_external = 1;
         $this->bean->save();
 
-        $categoryBean = BeanFactory::retrieveBean('Categories', $subnode->id, array(
+        $categoryBean = BeanFactory::retrieveBean('Categories', $subnode->id, [
             'use_cache' => false,
-        ));
+        ]);
 
         $this->assertEquals(0, $categoryBean->is_external);
 
@@ -251,17 +251,17 @@ class KBContentsTest extends TestCase
         $this->bean->status = KBContent::ST_PUBLISHED;
         $this->bean->save();
 
-        $categoryBean = BeanFactory::retrieveBean('Categories', $subnode->id, array(
+        $categoryBean = BeanFactory::retrieveBean('Categories', $subnode->id, [
             'use_cache' => false,
-        ));
+        ]);
 
         $this->assertEquals(1, $categoryBean->is_external);
 
         // Scenario 2: Delete document. Expected result: category is not external
         $this->bean->mark_deleted($this->bean->id);
-        $categoryBean = BeanFactory::retrieveBean('Categories', $subnode->id, array(
+        $categoryBean = BeanFactory::retrieveBean('Categories', $subnode->id, [
             'use_cache' => false,
-        ));
+        ]);
 
         $this->assertEquals(0, $categoryBean->is_external);
     }
@@ -343,7 +343,7 @@ class KBContentsTest extends TestCase
      */
     public function testSavingNewBeanOmitUsefulness()
     {
-        $bean = SugarTestKBContentUtilities::createBean(array('useful' => 1), false);
+        $bean = SugarTestKBContentUtilities::createBean(['useful' => 1], false);
         $bean->new_with_id = true;
         SugarTestKBContentUtilities::saveBean($bean);
         $this->assertEquals('0', $bean->useful);
@@ -415,7 +415,7 @@ class KBContentsTest extends TestCase
 
     public function testNextAvailableLanguageTakenWhenSavingNewLocalization()
     {
-        $bean = SugarTestKBContentUtilities::createBean(array(), false);
+        $bean = SugarTestKBContentUtilities::createBean([], false);
 
         $bean->language = '';
         SugarTestKBContentUtilities::saveBean($bean);
@@ -433,7 +433,7 @@ class KBContentsTest extends TestCase
         }, $filtered);
 
         foreach ($nonPrimaryLanguages as $language) {
-            $newLocalization = SugarTestKBContentUtilities::createBean(array(), false);
+            $newLocalization = SugarTestKBContentUtilities::createBean([], false);
             $newLocalization->kbdocument_id = $bean->kbdocument_id;
             $newLocalization->language = '';
             SugarTestKBContentUtilities::saveBean($newLocalization);
@@ -445,7 +445,7 @@ class KBContentsTest extends TestCase
 
     public function testExceptionGeneratedIfNoAvailableLocalizationLanguage()
     {
-        $bean = SugarTestKBContentUtilities::createBean(array(), false);
+        $bean = SugarTestKBContentUtilities::createBean([], false);
         $bean->language = '';
         $bean->save();
         SugarTestKBContentUtilities::saveBean($bean);
@@ -462,13 +462,13 @@ class KBContentsTest extends TestCase
         foreach ($nonPrimaryLanguages as $language) {
             $keys = array_keys($language);
             $languageKey = reset($keys);
-            $newLocalization = SugarTestKBContentUtilities::createBean(array(), false);
+            $newLocalization = SugarTestKBContentUtilities::createBean([], false);
             $newLocalization->kbdocument_id = $bean->kbdocument_id;
             $newLocalization->language = $languageKey;
             SugarTestKBContentUtilities::saveBean($newLocalization);
         }
 
-        $newLocalization = SugarTestKBContentUtilities::createBean(array(), false);
+        $newLocalization = SugarTestKBContentUtilities::createBean([], false);
         $newLocalization->kbdocument_id = $bean->kbdocument_id;
         $newLocalization->language = '';
 
@@ -499,11 +499,11 @@ class KBContentsTest extends TestCase
         SugarTestKBContentUtilities::createBean($localizationData);
 
         //create revision
-        $revisionData = array(
+        $revisionData = [
             'kbarticle_id' => $this->bean->kbarticle_id,
             'kbdocument_id' => $this->bean->kbdocument_id,
             'language' => $this->bean->language,
-        );
+        ];
         SugarTestKBContentUtilities::createBean($revisionData);
 
         $relateApi = new RelateApi();

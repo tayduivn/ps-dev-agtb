@@ -21,7 +21,7 @@ class Bug41569Test extends TestCase
      * Contains created prospect lists' ids
      * @var Array
      */
-    protected static $_createdProspectListsIds = array();
+    protected static $_createdProspectListsIds = [];
 
     /**
      * Instance of ProspectList
@@ -33,7 +33,7 @@ class Bug41569Test extends TestCase
      * Contacts array
      * @var Array
      */
-    protected $_contacts = array();
+    protected $_contacts = [];
 
     /**
      * Create contact instance (with account)
@@ -71,7 +71,7 @@ class Bug41569Test extends TestCase
     public static function attachContactToProspectList($prospectList, $contact)
     {
         $prospectList->load_relationship('contacts');
-        $prospectList->contacts->add($contact->id,array());
+        $prospectList->contacts->add($contact->id, []);
     }
 
     /**
@@ -80,11 +80,12 @@ class Bug41569Test extends TestCase
     protected function setUp() : void
     {
         global $current_user;
-        $current_user = SugarTestUserUtilities::createAnonymousUser();;
+        $current_user = SugarTestUserUtilities::createAnonymousUser();
+        ;
 
-        $beanList = array();
-        $beanFiles = array();
-        require('include/modules.php');
+        $beanList = [];
+        $beanFiles = [];
+        require 'include/modules.php';
         $GLOBALS['beanList'] = $beanList;
         $GLOBALS['beanFiles'] = $beanFiles;
 
@@ -92,9 +93,9 @@ class Bug41569Test extends TestCase
         $this->_contacts[] = self::createContact();
         $this->_prospectList = self::createProspectList($this->_contacts[0]);
         self::attachContactToProspectList($this->_prospectList, $this->_contacts[1]);
-        $beanList = array();
-        $beanFiles = array();
-        require('include/modules.php');
+        $beanList = [];
+        $beanFiles = [];
+        require 'include/modules.php';
         $GLOBALS['beanList'] = $beanList;
         $GLOBALS['beanFiles'] = $beanFiles;
     }

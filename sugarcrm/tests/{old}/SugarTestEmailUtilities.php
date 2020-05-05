@@ -13,29 +13,29 @@
 
 class SugarTestEmailUtilities
 {
-    private static $_createdEmails = array();
+    private static $_createdEmails = [];
 
-    private function __construct() {}
+    private function __construct()
+    {
+    }
 
-    public static function createEmail($id = '', $override = array(), $save = true)
+    public static function createEmail($id = '', $override = [], $save = true)
     {
         global $timedate;
         
         $time = mt_rand();
-    	$name = 'SugarEmail';
-    	$email = new Email();
+        $name = 'SugarEmail';
+        $email = new Email();
         $email->name = $name . $time;
         $email->type = 'out';
         $email->status = 'sent';
         // Two days ago
         $email->date_sent = $timedate->to_display_date_time(gmdate("Y-m-d H:i:s", (time() - (3600 * 24 * 2))));
-        if(!empty($id))
-        {
+        if (!empty($id)) {
             $email->new_with_id = true;
             $email->id = $id;
         }
-        foreach($override as $key => $value)
-        {
+        foreach ($override as $key => $value) {
             $email->$key = $value;
         }
 
@@ -43,15 +43,14 @@ class SugarTestEmailUtilities
             $email->save();
         }
 
-        if(!empty($override['parent_id']) && !empty($override['parent_type']))
-        {
+        if (!empty($override['parent_id']) && !empty($override['parent_type'])) {
             self::createEmailsBeansRelationship($email->id, $override['parent_type'], $override['parent_id']);
         }
         self::$_createdEmails[] = $email;
         return $email;
     }
 
-    public static function removeAllCreatedEmails() 
+    public static function removeAllCreatedEmails()
     {
         $email_ids = self::getCreatedEmailIds();
         $emailIdsSql = "'" . implode("','", $email_ids) . "'";
@@ -60,18 +59,19 @@ class SugarTestEmailUtilities
         $GLOBALS['db']->query("DELETE FROM emails_email_addr_rel WHERE email_id IN ({$emailIdsSql})");
         self::removeCreatedEmailBeansRelationships();
         static::removeCreatedEmailsAttachments();
-        self::$_createdEmails = array();
+        self::$_createdEmails = [];
     }
     
     private static function createEmailsBeansRelationship($email_id, $parent_type, $parent_id)
     {
         $unique_id = create_guid();
         $GLOBALS['db']->query("INSERT INTO emails_beans ( id, email_id, bean_id, bean_module, date_modified, deleted ) ".
-							  "VALUES ( '{$unique_id}', '{$email_id}', '{$parent_id}', '{$parent_type}', '".gmdate('Y-m-d H:i:s')."', 0)");
+                              "VALUES ( '{$unique_id}', '{$email_id}', '{$parent_id}', '{$parent_type}', '".gmdate('Y-m-d H:i:s')."', 0)");
     }
     
-    private static function removeCreatedEmailBeansRelationships(){
-    	$email_ids = self::getCreatedEmailIds();
+    private static function removeCreatedEmailBeansRelationships()
+    {
+        $email_ids = self::getCreatedEmailIds();
         $GLOBALS['db']->query('DELETE FROM emails_beans WHERE email_id IN (\'' . implode("', '", $email_ids) . '\')');
     }
 
@@ -84,7 +84,7 @@ class SugarTestEmailUtilities
         $result = $GLOBALS['db']->query("SELECT id FROM notes WHERE email_id IN ('" . implode("','", $emailIds) . "')");
 
         while ($result && $row = $GLOBALS['db']->fetchByAssoc($result)) {
-            foreach (array('', 'tmp/') as $loc) {
+            foreach (['', 'tmp/'] as $loc) {
                 $file = "upload://{$loc}{$row['id']}";
 
                 if (file_exists($file)) {
@@ -97,9 +97,9 @@ class SugarTestEmailUtilities
         $GLOBALS['db']->query("DELETE FROM notes WHERE email_id IN ('" . implode("','", $emailIds) . "')");
     }
     
-    public static function getCreatedEmailIds() 
+    public static function getCreatedEmailIds()
     {
-        $email_ids = array();
+        $email_ids = [];
         foreach (self::$_createdEmails as $email) {
             $email_ids[] = $email->id;
         }
@@ -108,9 +108,8 @@ class SugarTestEmailUtilities
 
     public static function setCreatedEmail($ids)
     {
-        $ids = is_array($ids) ? $ids : array($ids);
-        foreach ( $ids as $id )
-        {
+        $ids = is_array($ids) ? $ids : [$ids];
+        foreach ($ids as $id) {
             $email = new Email();
             $email->id = $id;
             self::$_createdEmails[] = $email;

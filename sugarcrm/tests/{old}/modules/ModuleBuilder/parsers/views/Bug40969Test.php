@@ -27,20 +27,20 @@ class Bug40969Test extends TestCase
      * @var array
      */
     protected $vardefs =
-        array(
-            'name'         => array(
+        [
+            'name'         => [
                                   'name'     => 'name',
                                   'vname'    => 'LBL_OPPORTUNITY_NAME',
                                   'type'     => 'name',
                                   'dbType'   => 'varchar',
                                   'required' => true,
-                              ),
-            'date_entered' => array(
+                              ],
+            'date_entered' => [
                                   'name'  => 'date_entered',
                                   'vname' => 'LBL_DATE_ENTERED',
                                   'type'  => 'datetime',
-                              ),
-            'parent_name'  => array(
+                              ],
+            'parent_name'  => [
                                   'source'        => 'non-db',
                                   'name'          => 'parent_name',
                                   'vname'         => 'LBL_FLEX_RELATE',
@@ -51,16 +51,16 @@ class Bug40969Test extends TestCase
                                   'parent_type'   => 'record_type_display',
                                   'id'            => 'Opportunitiesparent_name',
                                   'custom_module' => 'Opportunities',
-                              ),
-            'parent_id'    => array(
+                              ],
+            'parent_id'    => [
                                   'source'        => 'custom_fields',
                                   'name'          => 'parent_id',
                                   'vname'         => 'LBL_PARENT_ID',
                                   'type'          => 'id',
                                   'id'            => 'Opportunitiesparent_id',
                                   'custom_module' => 'Opportunities',
-                              ),
-            'parent_type'  => array(
+                              ],
+            'parent_type'  => [
                                   'required'      => false,
                                   'source'        => 'custom_fields',
                                   'name'          => 'parent_type',
@@ -69,42 +69,42 @@ class Bug40969Test extends TestCase
                                   'dbType'        => 'varchar',
                                   'id'            => 'Opportunitiesparent_type',
                                   'custom_module' => 'Opportunities',
-                              ),
-        );
+                              ],
+        ];
 
     /**
      * @var array
      */
     public $originalVardefs =
-        array(
-            'name'         => array(
+        [
+            'name'         => [
                                   'width'   => 30,
                                   'label'   => 'LBL_LIST_OPPORTUNITIES_NAME',
                                   'link'    => true,
                                   'default' => true,
-                              ),
-            'dete_entered' => array(
+                              ],
+            'dete_entered' => [
                                   'width'   => 10,
                                   'label'   => 'LBL_DATE_ENTERED',
                                   'default' => true,
-                              ),
-        );
+                              ],
+        ];
 
     protected function setUp() : void
     {
-        $_POST = array(
-                     'group_0' => array('name', 'date_entered', 'parent_name'),
-                 );
+        $_POST = [
+                     'group_0' => ['name', 'date_entered', 'parent_name'],
+                 ];
     }
 
     protected function tearDown() : void
     {
-        $_POST = array();
+        $_POST = [];
     }
 
     public function testCustomFlexFieldListViewDefs()
     {
-        $methods = array('getFielddefs', 'getOriginalViewdefs', 'getViewdefs');
+        $methods = ['getFielddefs', 'getOriginalViewdefs', 'getViewdefs'];
 
         // Mock ListLayoutMetaDataParser Meta Implementation and make it return test values
         $implementation = $this->createPartialMock('DeployedMetaDataImplementation', $methods);
@@ -124,7 +124,7 @@ class Bug40969Test extends TestCase
         $this->assertArrayHasKey('link', $metaParser->_viewdefs['parent_name']);
         $this->assertTrue($metaParser->_viewdefs['parent_name']['link']);
         $this->assertArrayHasKey('related_fields', $metaParser->_viewdefs['parent_name']);
-        $this->assertEquals(array('parent_id', 'parent_type'), $metaParser->_viewdefs['parent_name']['related_fields']);
+        $this->assertEquals(['parent_id', 'parent_type'], $metaParser->_viewdefs['parent_name']['related_fields']);
     }
 }
 

@@ -23,17 +23,17 @@ class IsForecastClosedExpressionTest extends TestCase
 
     protected function tearDown() : void
     {
-        Forecast::$settings = array();
+        Forecast::$settings = [];
     }
 
 
     public static function dataProviderCheckStatus()
     {
-        return array(
-            array('test stage 1', 'false'),
-            array('Closed Won', 'true'),
-            array('Closed Lost', 'true'),
-        );
+        return [
+            ['test stage 1', 'false'],
+            ['Closed Won', 'true'],
+            ['Closed Lost', 'true'],
+        ];
     }
 
     /**
@@ -45,15 +45,15 @@ class IsForecastClosedExpressionTest extends TestCase
      */
     public function testIsForecastClosedEvaluate($status, $expected)
     {
-        Forecast::$settings = array(
+        Forecast::$settings = [
             'is_setup' => 1,
-            'sales_stage_won' => array('Closed Won'),
-            'sales_stage_lost' => array('Closed Lost'),
-        );
+            'sales_stage_won' => ['Closed Won'],
+            'sales_stage_lost' => ['Closed Lost'],
+        ];
 
         /* @var $rli RevenueLineItem */
         $rli = $this->getMockBuilder('RevenueLineItem')
-            ->setMethods(array('save'))
+            ->setMethods(['save'])
             ->getMock();
 
         $rli->sales_stage = $status;

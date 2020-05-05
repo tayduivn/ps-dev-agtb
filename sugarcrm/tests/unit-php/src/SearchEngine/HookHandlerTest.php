@@ -29,7 +29,7 @@ class HookHandlerTest extends TestCase
     public function testIndexBean($bean, $count)
     {
         $hook = $this->getMockBuilder('Sugarcrm\Sugarcrm\SearchEngine\HookHandler')
-            ->setMethods(array('getSearchEngine', 'getLogger'))
+            ->setMethods(['getSearchEngine', 'getLogger'])
             ->getMock();
 
         $hook->expects($this->exactly($count))
@@ -43,21 +43,21 @@ class HookHandlerTest extends TestCase
             ->method('getLogger')
             ->will($this->returnValue($logger));
 
-        $hook->indexBean($bean, 'event', array());
+        $hook->indexBean($bean, 'event', []);
     }
 
     public function dataProviderTestIndexBean()
     {
-        return array(
-            array(
+        return [
+            [
                 $this->getSugarBeanMock(),
                 1,
-            ),
-            array(
+            ],
+            [
                 null,
                 0,
-            ),
-        );
+            ],
+        ];
     }
 
     /**

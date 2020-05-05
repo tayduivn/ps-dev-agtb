@@ -22,24 +22,20 @@ class Bug36845Test extends TestCase
     protected function setUp() : void
     {
         global $beanFiles, $beanList;
-        require('include/modules.php');
+        require 'include/modules.php';
 
-        if(file_exists(sugar_cached('modules/unified_search_modules.php')))
-
-        {
+        if (file_exists(sugar_cached('modules/unified_search_modules.php'))) {
             $this->has_custom_unified_search_modules = true;
             copy(sugar_cached('modules/unified_search_modules.php'), sugar_cached('modules/unified_search_modules.php.bak'));
         }
 
-        if(file_exists('custom/modules/unified_search_modules_display.php'))
-        {
+        if (file_exists('custom/modules/unified_search_modules_display.php')) {
             $this->has_custom_unified_search_modules_display = true;
             copy('custom/modules/unified_search_modules_display.php', 'custom/modules/unified_search_modules_display.php.bak');
         }
 
-        if(file_exists($this->module_dir))
-        {
-           rmdir_recursive($this->module_dir);
+        if (file_exists($this->module_dir)) {
+            rmdir_recursive($this->module_dir);
         }
 
         mkdir_recursive($this->module_dir . '/metadata');
@@ -80,8 +76,8 @@ class Bug36845Test extends TestCase
 EOQ;
 
         $fp = sugar_fopen($this->module_dir . '/metadata/SearchFields.php', "w");
-        fwrite( $fp, $the_string );
-        fclose( $fp );
+        fwrite($fp, $the_string);
+        fclose($fp);
         $table_name = strtolower($this->module);
         $the_string = <<<EOQ
 <?php
@@ -101,8 +97,8 @@ VardefManager::createVardef("{$this->module}","{$this->module}", array('basic','
 EOQ;
 
         $fp = sugar_fopen($this->module_dir . '/vardefs.php', "w");
-        fwrite( $fp, $the_string );
-        fclose( $fp );
+        fwrite($fp, $the_string);
+        fclose($fp);
 
         $the_string = <<<EOQ
 <?php
@@ -112,9 +108,9 @@ class clabc_Bug36845Test extends Basic
 ?>
 EOQ;
         $fp = sugar_fopen($this->module_dir . '/clabc_Bug36845Test.php', "w");
-        fwrite( $fp, $the_string );
-        fclose( $fp );
-        require('include/modules.php');
+        fwrite($fp, $the_string);
+        fclose($fp);
+        require 'include/modules.php';
         global $beanFiles, $beanList;
 
         $beanFiles['clabc_Bug36845Test'] = 'modules/clabc_Bug36845Test/clabc_Bug36845Test.php';
@@ -127,33 +123,28 @@ EOQ;
         unset($GLOBALS['beanList']['clabc_Bug36845Test']);
         unset($GLOBALS['beanFiles']['clabc_Bug36845Test']);
 
-        if(file_exists(sugar_cached('modules/unified_search_modules.php')))
-        {
+        if (file_exists(sugar_cached('modules/unified_search_modules.php'))) {
             unlink(sugar_cached('modules/unified_search_modules.php'));
         }
 
-        if($this->has_custom_unified_search_modules)
-        {
+        if ($this->has_custom_unified_search_modules) {
             copy(sugar_cached('modules/unified_search_modules.php.bak'), sugar_cached('modules/unified_search_modules.php'));
             unlink(sugar_cached('modules/unified_search_modules.php.bak'));
         }
 
-        if($this->has_custom_unified_search_modules_display)
-        {
+        if ($this->has_custom_unified_search_modules_display) {
             copy('custom/modules/unified_search_modules_display.php.bak', 'custom/modules/unified_search_modules_display.php');
             unlink('custom/modules/unified_search_modules_display.php.bak');
         } else {
             unlink('custom/modules/unified_search_modules_display.php');
         }
 
-        if(file_exists("custom/{$this->module_dir}/metadata"))
-        {
+        if (file_exists("custom/{$this->module_dir}/metadata")) {
             rmdir_recursive("custom/{$this->module_dir}/metadata");
         }
 
-        if(file_exists($this->module_dir))
-        {
-           rmdir_recursive($this->module_dir);
+        if (file_exists($this->module_dir)) {
+            rmdir_recursive($this->module_dir);
         }
     }
 
@@ -161,41 +152,40 @@ EOQ;
     {
         $this->assertTrue(file_exists("{$this->module_dir}/metadata/SearchFields.php"), 'Assert that we have a SearchFields.php file');
         $this->assertTrue(file_exists("{$this->module_dir}/vardefs.php"), 'Assert that we have a vardefs.php file');
-        require_once('modules/UpgradeWizard/uw_utils.php');
+        require_once 'modules/UpgradeWizard/uw_utils.php';
         add_unified_search_to_custom_modules_vardefs();
         $usa = new UnifiedSearchAdvanced();
         $usa->buildCache();
         $this->assertTrue(file_exists(sugar_cached('modules/unified_search_modules.php')), 'Assert that we have a unified_search_modules.php file');
-        include(sugar_cached('modules/unified_search_modules.php'));
+        include sugar_cached('modules/unified_search_modules.php');
         $this->assertTrue(isset($unified_search_modules['clabc_Bug36845Test']), 'Assert that the custom module was added to unified_search_modules.php');
-    	$this->assertEquals(false, $unified_search_modules['clabc_Bug36845Test']['default'], 'Assert that the custom module was set to not be searched on by default');
+        $this->assertEquals(false, $unified_search_modules['clabc_Bug36845Test']['default'], 'Assert that the custom module was set to not be searched on by default');
     }
 
 
     public function test_update_custom_vardefs_without_searchfields()
     {
-    	unlink("{$this->module_dir}/metadata/SearchFields.php");
+        unlink("{$this->module_dir}/metadata/SearchFields.php");
         $this->assertTrue(!file_exists("{$this->module_dir}/metadata/SearchFields.php"), 'Assert that we have a SearchFields.php file');
         $this->assertTrue(file_exists("{$this->module_dir}/vardefs.php"), 'Assert that we have a vardefs.php file');
-        require_once('modules/UpgradeWizard/uw_utils.php');
+        require_once 'modules/UpgradeWizard/uw_utils.php';
         add_unified_search_to_custom_modules_vardefs();
         $usa = new UnifiedSearchAdvanced();
         $usa->buildCache();
 
         $this->assertTrue(file_exists(sugar_cached('modules/unified_search_modules.php')), 'Assert that we have a unified_search_modules.php file');
-        include(sugar_cached('modules/unified_search_modules.php'));
+        include sugar_cached('modules/unified_search_modules.php');
         $this->assertTrue(empty($unified_search_modules['clabc_Bug36845Test']), 'Assert that the custom module was not added to unified_search_modules.php');
     }
 
 
     public function test_create_unified_search_modules_display()
     {
-        if(file_exists('custom/modules/unified_search_modules_display.php'))
-        {
+        if (file_exists('custom/modules/unified_search_modules_display.php')) {
             unlink('custom/modules/unified_search_modules_display.php');
         }
 
-        require_once('modules/UpgradeWizard/uw_utils.php');
+        require_once 'modules/UpgradeWizard/uw_utils.php';
         $usa = new UnifiedSearchAdvanced();
         $_REQUEST['enabled_modules'] = 'Accounts,Bug36845Test';
         $usa->saveGlobalSearchSettings();

@@ -12,7 +12,7 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once('modules/ACLFields/actiondefs.php');
+require_once 'modules/ACLFields/actiondefs.php';
 
 /**
  * Bug #62906 unit test
@@ -37,7 +37,7 @@ class Bug62906Test extends TestCase
     protected function tearDown() : void
     {
         unset($_SESSION['ACL']);
-        ACLField::$acl_fields = array();
+        ACLField::$acl_fields = [];
 
         SugarTestHelper::tearDown();
 
@@ -52,11 +52,11 @@ class Bug62906Test extends TestCase
     public function permissionDataProvider()
     {
         // should be false if either one is read only
-        return array(
-            array(ACL_READ_WRITE, ACL_READ_WRITE, true),
-            array(ACL_READ_ONLY, ACL_READ_WRITE, false),
-            array(ACL_READ_WRITE, ACL_READ_ONLY, false),
-        );
+        return [
+            [ACL_READ_WRITE, ACL_READ_WRITE, true],
+            [ACL_READ_ONLY, ACL_READ_WRITE, false],
+            [ACL_READ_WRITE, ACL_READ_ONLY, false],
+        ];
     }
 
     /**
@@ -87,7 +87,8 @@ class Bug62906Test extends TestCase
 
 class ListViewMock extends ListView
 {
-    public function checkUnlinkPermission($linked_field, $aItem, $parentBean) {
+    public function checkUnlinkPermission($linked_field, $aItem, $parentBean)
+    {
         return parent::checkUnlinkPermission($linked_field, $aItem, $parentBean);
     }
 }

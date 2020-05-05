@@ -11,31 +11,30 @@
  */
 
 
-class SugarTestObjectUtilities 
+class SugarTestObjectUtilities
 {
-	protected static $_createdInstances = array();
+    protected static $_createdInstances = [];
 
-	private function __construct() 
-	{
-	}
+    private function __construct()
+    {
+    }
 
-	public static function pushObject($project) 
-	{
-		self::$_createdInstances[] = $project;
-	}
+    public static function pushObject($project)
+    {
+        self::$_createdInstances[] = $project;
+    }
 
-	public static function removeAllCreatedObjects($tablename) 
-	{		
-		$GLOBALS['db']->query('DELETE FROM ' . $tablename . ' WHERE id IN (\'' . implode("', '", self::getCreatedObjectIds()) . '\')');
-	}
+    public static function removeAllCreatedObjects($tablename)
+    {
+        $GLOBALS['db']->query('DELETE FROM ' . $tablename . ' WHERE id IN (\'' . implode("', '", self::getCreatedObjectIds()) . '\')');
+    }
 
-	public static function getCreatedObjectIds() 
-	{
-		$ids = array();
-		foreach (self::$_createdInstances as $value) 
-		{
-			$ids[] = $value->id;
-		}
-		return $ids;
-	}
+    public static function getCreatedObjectIds()
+    {
+        $ids = [];
+        foreach (self::$_createdInstances as $value) {
+            $ids[] = $value->id;
+        }
+        return $ids;
+    }
 }

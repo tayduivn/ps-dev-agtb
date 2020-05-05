@@ -20,7 +20,7 @@ class Bug52584Test extends TestCase
     private $shell_object;
     private $focus;
     private $field;
-    private $toClean = array();
+    private $toClean = [];
 
     protected function setUp() : void
     {

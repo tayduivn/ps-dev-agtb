@@ -31,17 +31,17 @@ class SugarBeanApiHelperNoAccessTest extends TestCase
         $mock->favorite = false;
         $mock->module_name = 'Test';
         $mock->module_dir = 'Test';
-        $mock->field_defs = array(
-                'testInt' => array(
+        $mock->field_defs = [
+                'testInt' => [
                     'type' => 'int',
-                ),
-                'testDecimal' => array(
-                    'type' => 'decimal'
-                ),
-                'testBool' => array(
-                    'type' => 'bool'
-                ),
-            );
+                ],
+                'testDecimal' => [
+                    'type' => 'decimal',
+                ],
+                'testBool' => [
+                    'type' => 'bool',
+                ],
+            ];
         $mock->expects($this->any())
              ->method('ACLFieldAccess')
              ->will($this->returnValue(false));
@@ -60,19 +60,19 @@ class SugarBeanApiHelperNoAccessTest extends TestCase
 
     public function testNoEmail1FieldAccess()
     {
-        $this->bean->field_defs['email'] = array('type' => 'email');
-        $this->bean->field_defs['email1'] = array('type' => 'varchar');
-        $this->bean->emailAddress = array();
+        $this->bean->field_defs['email'] = ['type' => 'email'];
+        $this->bean->field_defs['email1'] = ['type' => 'varchar'];
+        $this->bean->emailAddress = [];
         $_SESSION['ACL'][$GLOBALS['current_user']->id]['Test']['fields']['email1'] = SugarACL::ACL_NO_ACCESS;
-        $this->beanApiHelper->formatForApi($this->bean, array('email', 'email1'));
+        $this->beanApiHelper->formatForApi($this->bean, ['email', 'email1']);
         $this->assertTrue(!isset($data['email']));
     }
 
     public function testNoEmail1FieldAccessSave()
     {
-        $this->bean->field_defs['email'] = array('type' => 'email');
-        $this->bean->field_defs['email1'] = array('type' => 'varchar');
-        $this->bean->emailAddress = array();
+        $this->bean->field_defs['email'] = ['type' => 'email'];
+        $this->bean->field_defs['email1'] = ['type' => 'varchar'];
+        $this->bean->emailAddress = [];
         $_SESSION['ACL'][$GLOBALS['current_user']->id]['Test']['fields']['email1'] = SugarACL::ACL_NO_ACCESS;
         $data['email'] = 'test@test.com';
         $data['module'] = 'Test';
@@ -120,11 +120,11 @@ class SugarBeanApiHelperNoAccessTest extends TestCase
 
 class SugarBeanApiHelperNoAccessTest_ServiceMockup extends ServiceBase
 {
-    public function execute() 
+    public function execute()
     {
     }
 
-    protected function handleException(Exception $exception) 
+    protected function handleException(Exception $exception)
     {
     }
 }

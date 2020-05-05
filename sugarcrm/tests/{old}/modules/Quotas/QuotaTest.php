@@ -19,7 +19,7 @@ class QuotaTest extends TestCase
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
-        SugarTestCurrencyUtilities::createCurrency('MonkeyDollars','$','MOD',2.0);
+        SugarTestCurrencyUtilities::createCurrency('MonkeyDollars', '$', 'MOD', 2.0);
     }
 
     protected function tearDown() : void
@@ -41,23 +41,23 @@ class QuotaTest extends TestCase
         $quota->currency_id = $currency->id;
         $quota->save();
         $this->assertEquals(
-            sprintf('%.6f',$quota->base_rate),
-            sprintf('%.6f',$currency->conversion_rate)
+            sprintf('%.6f', $quota->base_rate),
+            sprintf('%.6f', $currency->conversion_rate)
         );
     }
 
     public function testGetRollupQuotaReturnsArrayForEmptyQuota()
     {
         $quota = SugarTestQuotaUtilities::createQuota();
-        $quota->db = $this->getMockForAbstractClass('DBManager', array('fetchByAssoc'));
+        $quota->db = $this->getMockForAbstractClass('DBManager', ['fetchByAssoc']);
         $quota->db->expects($this->any())->method('limitQuery')->will($this->returnValue('foo'));
         $quota->db->expects($this->any())->method('fetchByAssoc')->will($this->returnValue(false));
         $this->assertEquals(
-            array(
+            [
                 'currency_id' => -99,
                 'amount' => 0,
                 'formatted_amount' => '$0.00',
-            ),
+            ],
             $quota->getRollupQuota(1)
         );
     }

@@ -22,14 +22,14 @@ class PanelVisibilityActionTest extends TestCase
 
     protected function setUp() : void
     {
-        $this->action = new PanelVisibilityAction(array('target' => 'a', 'value' => 'b'));
+        $this->action = new PanelVisibilityAction(['target' => 'a', 'value' => 'b']);
     }
 
     public function testGetDefinition()
     {
         $this->assertEquals(
             $this->action->getDefinition(),
-            array('action' => 'SetPanelVisibility', 'params' => array('target' => 'a', 'value' => 'b'))
+            ['action' => 'SetPanelVisibility', 'params' => ['target' => 'a', 'value' => 'b']]
         );
     }
 

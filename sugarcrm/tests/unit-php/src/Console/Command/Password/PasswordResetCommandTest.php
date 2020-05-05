@@ -32,7 +32,7 @@ class PasswordResetCommandTest extends AbstractPasswordCommandTestCase
     public function testExecute(array $input, $output, User $user = null, $compliant = true, HelperSet $hs = null)
     {
         $cmd = $this->getMockBuilder('Sugarcrm\Sugarcrm\Console\Command\Password\PasswordResetCommand')
-            ->setMethods(array('loadUserBean', 'isPasswordCompliant'))
+            ->setMethods(['loadUserBean', 'isPasswordCompliant'])
             ->getMock();
 
         $cmd->expects($this->any())
@@ -56,37 +56,37 @@ class PasswordResetCommandTest extends AbstractPasswordCommandTestCase
 
     public function providerTestExecute()
     {
-        return array(
+        return [
             // valid user, matching passwords, invalid rules, but skip
-            array(
-                array('userid' => '123456', '--skip-rules' => true),
+            [
+                ['userid' => '123456', '--skip-rules' => true],
                 'PasswordResetCommand_0.txt',
-                $this->getUserBean(array(
+                $this->getUserBean([
                     'id' => '123456',
                     'user_name' => 'userx',
                     'first_name' => 'First test',
                     'last_name' => 'Last test',
                     'employee_status' => 'Active',
-                )),
+                ]),
                 false,
                 $this->getQuestionHelperMock('newpass', 'newpass'),
-            ),
+            ],
 
             // valid user, matching passwords, valid rules
-            array(
-                array('userid' => '123456'),
+            [
+                ['userid' => '123456'],
                 'PasswordResetCommand_0.txt',
-                $this->getUserBean(array(
+                $this->getUserBean([
                     'id' => '123456',
                     'user_name' => 'userx',
                     'first_name' => 'First test',
                     'last_name' => 'Last test',
                     'employee_status' => 'Active',
-                )),
+                ]),
                 true,
                 $this->getQuestionHelperMock('newpass', 'newpass'),
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -102,7 +102,7 @@ class PasswordResetCommandTest extends AbstractPasswordCommandTestCase
         $this->expectExceptionMessage($exception);
 
         $cmd = $this->getMockBuilder('Sugarcrm\Sugarcrm\Console\Command\Password\PasswordResetCommand')
-            ->setMethods(array('loadUserBean', 'isPasswordCompliant'))
+            ->setMethods(['loadUserBean', 'isPasswordCompliant'])
             ->getMock();
 
         $cmd->expects($this->any())
@@ -123,78 +123,78 @@ class PasswordResetCommandTest extends AbstractPasswordCommandTestCase
 
     public function providerTestExecuteFailure()
     {
-        return array(
+        return [
             // invalid user id
-            array(
-                array('userid' => '123456'),
+            [
+                ['userid' => '123456'],
                 'User not found',
-            ),
+            ],
 
             // valid user id, but external auth only
-            array(
-                array('userid' => '123456'),
+            [
+                ['userid' => '123456'],
                 'Cannot set password for external authenticated users',
-                $this->getUserBean(array(
+                $this->getUserBean([
                     'id' => '123456',
                     'external_auth_only' => 1,
-                )),
-            ),
+                ]),
+            ],
 
             // valid user id, but is_group
-            array(
-                array('userid' => '123456'),
+            [
+                ['userid' => '123456'],
                 'Cannot set password for group users',
-                $this->getUserBean(array(
+                $this->getUserBean([
                     'id' => '123456',
                     'is_group' => 1,
-                )),
-            ),
+                ]),
+            ],
 
             // valid user, non matching passwords
-            array(
-                array('userid' => '123456'),
+            [
+                ['userid' => '123456'],
                 'Passwords do not match',
-                $this->getUserBean(array(
+                $this->getUserBean([
                     'id' => '123456',
                     'user_name' => 'userx',
                     'first_name' => 'First test',
                     'last_name' => 'Last test',
                     'employee_status' => 'Active',
-                )),
+                ]),
                 true,
                 $this->getQuestionHelperMock('newpass', 'doesnotmatch'),
-            ),
+            ],
 
             // valid user, empty password
-            array(
-                array('userid' => '123456'),
+            [
+                ['userid' => '123456'],
                 'Password cannot be empty',
-                $this->getUserBean(array(
+                $this->getUserBean([
                     'id' => '123456',
                     'user_name' => 'userx',
                     'first_name' => 'First test',
                     'last_name' => 'Last test',
                     'employee_status' => 'Active',
-                )),
+                ]),
                 true,
                 $this->getQuestionHelperMock('', 'doesnotmatch'),
-            ),
+            ],
 
             // valid user, matching passwords, invalid rules
-            array(
-                array('userid' => '123456'),
+            [
+                ['userid' => '123456'],
                 "Password doesn't meet complexity criteria",
-                $this->getUserBean(array(
+                $this->getUserBean([
                     'id' => '123456',
                     'user_name' => 'userx',
                     'first_name' => 'First test',
                     'last_name' => 'Last test',
                     'employee_status' => 'Active',
-                )),
+                ]),
                 false,
                 $this->getQuestionHelperMock('newpass', 'newpass'),
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -202,11 +202,11 @@ class PasswordResetCommandTest extends AbstractPasswordCommandTestCase
      * @param array $data
      * @return User
      */
-    protected function getUserBean(array $data = array())
+    protected function getUserBean(array $data = [])
     {
         $user = $this->getMockBuilder('User')
             ->disableOriginalConstructor()
-            ->setMethods(array('setNewPassword'))
+            ->setMethods(['setNewPassword'])
             ->getMock();
 
         foreach ($data as $prop => $value) {
@@ -225,7 +225,7 @@ class PasswordResetCommandTest extends AbstractPasswordCommandTestCase
     protected function getQuestionHelperMock($pwd1, $pwd2)
     {
         $qh = $this->getMockBuilder('Symfony\Component\Console\Helper\QuestionHelper')
-            ->setMethods(array('ask'))
+            ->setMethods(['ask'])
             ->getMock();
 
         $qh->expects($this->at(0))

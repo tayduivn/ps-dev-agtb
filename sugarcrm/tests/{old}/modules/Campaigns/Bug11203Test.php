@@ -35,7 +35,7 @@ class Bug11203Test extends TestCase
 
         //build request the way WizardEmailSetupSave.php would
         //Make sure that the credentials will not pass!  We want to test a failed optimums result during inboundEmail save.
-        $_REQUEST = array(
+        $_REQUEST = [
               'module' => 'Campaigns',
               'action' =>' WizardEmailSetupSave',
               'mailbox' => 'INBOX',
@@ -68,10 +68,11 @@ class Bug11203Test extends TestCase
               'filter_domain' =>'somedomain.com',
               'email_num_autoreplies_24_hours' =>'10',
 
-          );
-	}
+          ];
+    }
     protected function tearDown() : void
-    {   global $current_user;
+    {
+        global $current_user;
         $GLOBALS['db']->query("DELETE FROM user_preferences WHERE assigned_user_id='{$current_user->id}'");
         $current_user = $this->_user;
         $GLOBALS['db']->query("DELETE FROM inbound_email WHERE name='UnitTest_Mailbox11203'");
@@ -82,7 +83,7 @@ class Bug11203Test extends TestCase
     function test_CampaignEmailSetupFailure()
     {
         //include the save file like WizardEmailSetupSave.php does
-         require_once('modules/InboundEmail/Save.php');
+         require_once 'modules/InboundEmail/Save.php';
 
         //Test that the failure was returned.
         $this->assertTrue($_REQUEST['error'], 'Request did not have the error flag set to true after failed Inbound Email Save, this means that the campaign wizard will not display an error as it should have.');

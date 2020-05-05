@@ -22,9 +22,9 @@ class Bug49397Test extends TestCase
     var $user2;
 
     protected function setUp() : void
-	{
-       $this->user = SugarTestUserUtilities::createAnonymousUser();
-       $this->user2 = SugarTestUserUtilities::createAnonymousUser();
+    {
+        $this->user = SugarTestUserUtilities::createAnonymousUser();
+        $this->user2 = SugarTestUserUtilities::createAnonymousUser();
     }
 
     protected function tearDown() : void

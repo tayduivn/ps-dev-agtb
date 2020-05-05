@@ -25,8 +25,8 @@ class StringLengthExpressionTest extends TestCase
 
     public function dataProviderTestEvaluate()
     {
-        return array(
-            array('strlen("Hello")', '5'),
-        );
+        return [
+            ['strlen("Hello")', '5'],
+        ];
     }
 }

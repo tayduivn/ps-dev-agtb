@@ -14,11 +14,13 @@ require_once 'include/SugarEmailAddress/SugarEmailAddress.php';
 
 class SugarTestSugarEmailAddressUtilities
 {
-    private static $_createdEmailAddresses = array();
+    private static $_createdEmailAddresses = [];
 
     private static $_createdContact = null;
 
-    private function __construct() {} // not an instantiated class.
+    private function __construct()
+    {
+    } // not an instantiated class.
 
     /**
      * creates a Parent Bean to hang Emails from
@@ -27,8 +29,7 @@ class SugarTestSugarEmailAddressUtilities
      */
     private static function createContact($time)
     {
-        if (self::$_createdContact === null)
-        {
+        if (self::$_createdContact === null) {
             $name = 'SugarEmailAddressContact';
             $lname = 'LastName';
             $contact = new Contact();
@@ -50,20 +51,26 @@ class SugarTestSugarEmailAddressUtilities
      * @param $override
      * @return SugarEmailAddress
      */
-    private static function _createEmailAddress($contact,$time,$id,$override)
+    private static function _createEmailAddress($contact, $time, $id, $override)
     {
         $params['email_address'] = 'semailaddress@'. $time. 'sugar.com';
         $params['primary'] = true;
         $params['reply_to'] = false;
         $params['invalid'] = false;
         $params['opt_out'] = false;
-        foreach($override as $key => $value) {
+        foreach ($override as $key => $value) {
             $params[$key] = $value;
         }
 
 
-        $contact->emailAddress->addAddress($params['email_address'], $params['primary'], $params['reply_to'],
-                                           $params['invalid'], $params['opt_out'], $id);
+        $contact->emailAddress->addAddress(
+            $params['email_address'],
+            $params['primary'],
+            $params['reply_to'],
+            $params['invalid'],
+            $params['opt_out'],
+            $id
+        );
         $contact->emailAddress->save($contact->id, $contact->module_dir);
         self::$_createdEmailAddresses[] = $contact->emailAddress;
         return $contact->emailAddress;
@@ -79,7 +86,7 @@ class SugarTestSugarEmailAddressUtilities
      * @param array $override - pass key => value array of parameters to override the defaults
      * @return SugarEmailAddress
      */
-    public static function createEmailAddress($address=null,$id = '', $override = array())
+    public static function createEmailAddress($address = null, $id = '', $override = [])
     {
         $time = mt_rand();
         $contact = self::createContact($time);
@@ -104,7 +111,8 @@ class SugarTestSugarEmailAddressUtilities
      * clean up the related bean and the relationship table
      * @access public
      */
-    public static function removeCreatedContactAndRelationships(){
+    public static function removeCreatedContactAndRelationships()
+    {
         if (self::$_createdContact === null) {
             return;
         }
@@ -122,7 +130,7 @@ class SugarTestSugarEmailAddressUtilities
      */
     public static function getCreatedEmailAddressIds()
     {
-        $address_ids = array();
+        $address_ids = [];
         foreach (self::$_createdEmailAddresses as $address) {
             $address_ids[] = $address->id;
         }
@@ -134,15 +142,15 @@ class SugarTestSugarEmailAddressUtilities
      * @param $address - email address
      * @return string|null UUID of bean for email address.
      */
-    public static function fetchEmailIdByAddress($address) {
+    public static function fetchEmailIdByAddress($address)
+    {
         $email_caps = strtoupper(trim($address));
         $rs = $GLOBALS['db']->query("SELECT id from email_addresses where email_address_caps='$email_caps'");
         $a = $GLOBALS['db']->fetchByAssoc($rs);
 
         if (!empty($a['id'])) {
             return $a['id'];
-        }
-        else {
+        } else {
             return null;
         }
     }
@@ -151,7 +159,8 @@ class SugarTestSugarEmailAddressUtilities
      * get our parent bean
      * @return Contact|null
      */
-    public static function getContact() {
+    public static function getContact()
+    {
         return self::createContact(mt_rand());
     }
 }

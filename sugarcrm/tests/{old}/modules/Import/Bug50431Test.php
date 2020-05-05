@@ -27,8 +27,7 @@ class Bug50431Test extends TestCase
 
     protected function setUp() : void
     {
-        if (!is_dir('custom/modules/Import/maps'))
-        {
+        if (!is_dir('custom/modules/Import/maps')) {
             mkdir_recursive('custom/modules/Import/maps');
         }
 
@@ -40,23 +39,19 @@ class Bug50431Test extends TestCase
 
     protected function tearDown() : void
     {
-        if(file_exists($this->customMappingFile))
-        {
+        if (file_exists($this->customMappingFile)) {
             unlink($this->customMappingFile);
         }
 
-        if(file_exists($this->customMappingFile2))
-        {
+        if (file_exists($this->customMappingFile2)) {
             unlink($this->customMappingFile2);
         }
 
-        if(file_exists($this->customMappingFile3))
-        {
+        if (file_exists($this->customMappingFile3)) {
             unlink($this->customMappingFile3);
         }
 
-        if(file_exists($this->outOfBoxTestFile))
-        {
+        if (file_exists($this->outOfBoxTestFile)) {
             unlink($this->outOfBoxTestFile);
         }
     }

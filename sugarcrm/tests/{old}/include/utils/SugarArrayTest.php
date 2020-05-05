@@ -16,69 +16,69 @@ require_once 'include/utils/array_utils.php';
 
 class SugarArrayTest extends TestCase
 {
-    public function testCanFindValueUsingDotNotation() 
+    public function testCanFindValueUsingDotNotation()
     {
         $random = rand(100, 200);
-        $array = array(
-            'foo' => array(
-                $random => array(
+        $array = [
+            'foo' => [
+                $random => [
                     'bar' => $random,
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
 
         $array = new SugarArray($array);
         $this->assertEquals($array->get("foo.{$random}.bar"), $random);
     }
 
-    public function testReturnsDefaultValueWhenDoesNotContainRequestedValue() 
+    public function testReturnsDefaultValueWhenDoesNotContainRequestedValue()
     {
         $random = rand(100, 200);
-        $array = new SugarArray(array());
+        $array = new SugarArray([]);
         $this->assertEquals($array->get('unknown', $random), $random);
     }
     
-    public function testImplementsArrayAccess() 
+    public function testImplementsArrayAccess()
     {
         $reflection = new ReflectionClass('SugarArray');
         $this->assertTrue($reflection->implementsInterface('ArrayAccess'));
     }
 
-    public function testImplementsCountable() 
+    public function testImplementsCountable()
     {
         $reflection = new ReflectionClass('SugarArray');
         $this->assertTrue($reflection->implementsInterface('Countable'));
     }
 
-    public function testStaticMethodCanTraverseProvidedArray() 
+    public function testStaticMethodCanTraverseProvidedArray()
     {
         $random = rand(100, 200);
-        $array = array(
-            'foo' => array(
-                $random => array(
+        $array = [
+            'foo' => [
+                $random => [
                     'bar' => $random,
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
 
         $this->assertEquals(SugarArray::staticGet($array, "foo.{$random}.bar"), $random);
     }
 
-    public function testStaticMethodCanReturnDefaultOnUnknownValue() 
+    public function testStaticMethodCanReturnDefaultOnUnknownValue()
     {
         $random = rand(100, 200);
-        $this->assertEquals(SugarArray::staticGet(array(123, 321), 'unknown', $random), $random);
+        $this->assertEquals(SugarArray::staticGet([123, 321], 'unknown', $random), $random);
     }
     
     public function testAdd_blank_option()
     {
-    	$options = 'noneArray';
-    	$expectedArray = array(''=>'');
-    	$result = add_blank_option($options);
-    	$this->assertEquals($result[''], $expectedArray['']);
-    	$options2 = array('mason'=>'unittest');
-    	$expectedArray2 = array(''=>'','mason'=>'unittest');
-    	$result2 = add_blank_option($options2);
-    	$this->assertEquals($result2, $expectedArray2);
+        $options = 'noneArray';
+        $expectedArray = [''=>''];
+        $result = add_blank_option($options);
+        $this->assertEquals($result[''], $expectedArray['']);
+        $options2 = ['mason'=>'unittest'];
+        $expectedArray2 = [''=>'','mason'=>'unittest'];
+        $result2 = add_blank_option($options2);
+        $this->assertEquals($result2, $expectedArray2);
     }
 }

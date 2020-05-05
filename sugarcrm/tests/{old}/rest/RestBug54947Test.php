@@ -11,14 +11,14 @@
  */
 
 
-class RestBug54947Test extends RestTestBase {
-    public $createdFiles = array();
+class RestBug54947Test extends RestTestBase
+{
+    public $createdFiles = [];
 
     protected function tearDown() : void
     {
         // Cleanup
-        foreach($this->createdFiles as $file)
-        {
+        foreach ($this->createdFiles as $file) {
             if (is_file($file)) {
                 unlink($file);
             }
@@ -29,7 +29,8 @@ class RestBug54947Test extends RestTestBase {
     /**
      * @group rest
      */
-    public function testModuleNameSingular() {
+    public function testModuleNameSingular()
+    {
         $restReply = $this->_restCall('metadata?type_filter=mod_strings&platform=mobile');
         foreach (SugarAutoLoader::existingCustom('include/MVC/Controller/wireless_module_registry.php') as $file) {
             require $file;
@@ -38,8 +39,8 @@ class RestBug54947Test extends RestTestBase {
         // $wireless_module_registry is defined in the file loaded above
         $enabledMobile = array_keys($wireless_module_registry);
         
-        foreach($enabledMobile AS $module) {
-            if(isset($restReply['reply']['mod_strings'][$module])) {
+        foreach ($enabledMobile as $module) {
+            if (isset($restReply['reply']['mod_strings'][$module])) {
                 $this->assertTrue(array_key_exists('LBL_MODULE_NAME_SINGULAR', $restReply['reply']['mod_strings'][$module]), "{$module} didn't have LBL_MODULE_NAME_SINGULAR it has: " . print_r($restReply['reply']['mod_strings'][$module], true));
             }
         }

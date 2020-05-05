@@ -28,7 +28,7 @@ class QueryBuilderTest extends TestCase
         /** @var \Sugarcrm\Sugarcrm\Dbal\Query\QueryBuilder|MockObject $q1 */
         $q1 = $this->getMockBuilder('\Sugarcrm\Sugarcrm\Dbal\Query\QueryBuilder')
             ->disableOriginalConstructor()
-            ->setMethods(array('getSQL'))
+            ->setMethods(['getSQL'])
             ->getMock();
         $q1->expects($this->once())
             ->method('getSQL')
@@ -45,14 +45,14 @@ class QueryBuilderTest extends TestCase
 
         $q2->createPositionalParameter('y', \PDO::PARAM_BOOL);
 
-        $this->assertSame(array(
+        $this->assertSame([
             1 => 'x',
             2 => 'y',
-        ), $q2->getParameters());
+        ], $q2->getParameters());
 
-        $this->assertSame(array(
+        $this->assertSame([
             1 => \PDO::PARAM_INT,
             2 => \PDO::PARAM_BOOL,
-        ), $q2->getParameterTypes());
+        ], $q2->getParameterTypes());
     }
 }

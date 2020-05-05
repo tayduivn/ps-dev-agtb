@@ -11,7 +11,8 @@
  */
 
 
-class RestVersionTest extends RestTestBase {
+class RestVersionTest extends RestTestBase
+{
     /**
      * @group rest
      */

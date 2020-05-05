@@ -14,9 +14,11 @@
 
 class SugarTestTeamUtilities
 {
-    public static  $_createdTeams = array();
+    public static $_createdTeams = [];
 
-    private function __construct() {}
+    private function __construct()
+    {
+    }
 
     public function __destruct()
     {
@@ -26,12 +28,11 @@ class SugarTestTeamUtilities
     /**
      * @return Team
      */
-    public static function createAnonymousTeam($id = '', array $attributes = array())
+    public static function createAnonymousTeam($id = '', array $attributes = [])
     {
         $team = BeanFactory::newBean('Teams');
         $team->name = 'Test Team - ' . mt_rand();
-        if(!empty($id))
-        {
+        if (!empty($id)) {
             $team->new_with_id = true;
             $team->id = $id;
         }
@@ -45,19 +46,19 @@ class SugarTestTeamUtilities
         return $team;
     }
 
-    public static function removeAllCreatedAnonymousTeams() 
+    public static function removeAllCreatedAnonymousTeams()
     {
         $team_ids = self::getCreatedTeamIds();
         $GLOBALS['db']->query('DELETE FROM teams WHERE id IN (\'' . implode("', '", $team_ids) . '\')');
     }
     
-    public static function getCreatedTeamIds() 
+    public static function getCreatedTeamIds()
     {
-        $team_ids = array();
-        foreach (self::$_createdTeams as $team)
+        $team_ids = [];
+        foreach (self::$_createdTeams as $team) {
             $team_ids[] = $team->id;
+        }
         
         return $team_ids;
     }
 }
-

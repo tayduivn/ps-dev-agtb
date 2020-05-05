@@ -21,18 +21,18 @@ class SidecarListLayoutMetaDataParserTest extends TestCase
 
     protected function setUp() : void
     {
-        $this->parser = $this->createPartialMock('SidecarListLayoutMetaDataParser', array('handleSave'));
+        $this->parser = $this->createPartialMock('SidecarListLayoutMetaDataParser', ['handleSave']);
 
         $implementation = $this->createPartialMock(
             'DeployedMetaDataImplementation',
-            array('getPanelDefsPath')
+            ['getPanelDefsPath']
         );
 
         $implementation->expects($this->any())
             ->method('getPanelDefsPath')
             ->will(
                 $this->returnValue(
-                    array('unittest', 'view', 'test')
+                    ['unittest', 'view', 'test']
                 )
             );
 
@@ -60,15 +60,15 @@ class SidecarListLayoutMetaDataParserTest extends TestCase
      */
     public function testGetPanelReturnsFalseWhenViewDefsAreDefinedButEmpty()
     {
-        $this->parser->_viewdefs = array(
-            'unittest' => array(
-                'view' => array(
-                    'test' => array(
-                        'panels' => array()
-                    )
-                )
-            )
-        );
+        $this->parser->_viewdefs = [
+            'unittest' => [
+                'view' => [
+                    'test' => [
+                        'panels' => [],
+                    ],
+                ],
+            ],
+        ];
 
         $this->assertFalse(SugarTestReflection::callProtectedMethod($this->parser, 'getPanel'));
     }
@@ -78,21 +78,21 @@ class SidecarListLayoutMetaDataParserTest extends TestCase
      */
     public function testGetPanelReturnsArrayWhenPanelIsDefined()
     {
-        $this->parser->_viewdefs = array(
-            'unittest' => array(
-                'view' => array(
-                    'test' => array(
-                        'panels' => array(
-                            array(
-                                'unit' => 'test'
-                            )
-                        )
-                    )
-                )
-            )
-        );
+        $this->parser->_viewdefs = [
+            'unittest' => [
+                'view' => [
+                    'test' => [
+                        'panels' => [
+                            [
+                                'unit' => 'test',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
 
-        $expected = array(array('unit' => 'test'));
+        $expected = [['unit' => 'test']];
 
         $this->assertSame($expected, SugarTestReflection::callProtectedMethod($this->parser, 'getPanel'));
     }
@@ -102,26 +102,26 @@ class SidecarListLayoutMetaDataParserTest extends TestCase
      */
     public function testGetPanelReturnsSpecificPanelIfItExists()
     {
-        $this->parser->_viewdefs = array(
-            'unittest' => array(
-                'view' => array(
-                    'test' => array(
-                        'panels' => array(
-                            array(
-                                'dummy' => 'panel'
-                            ),
-                            array(
-                                'unit' => 'test'
-                            )
-                        )
-                    )
-                )
-            )
-        );
+        $this->parser->_viewdefs = [
+            'unittest' => [
+                'view' => [
+                    'test' => [
+                        'panels' => [
+                            [
+                                'dummy' => 'panel',
+                            ],
+                            [
+                                'unit' => 'test',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
 
-        $expected = array('unit' => 'test');
+        $expected = ['unit' => 'test'];
 
-        $this->assertSame($expected, SugarTestReflection::callProtectedMethod($this->parser, 'getPanel', array(1)));
+        $this->assertSame($expected, SugarTestReflection::callProtectedMethod($this->parser, 'getPanel', [1]));
     }
 
     /**
@@ -129,33 +129,33 @@ class SidecarListLayoutMetaDataParserTest extends TestCase
      */
     public function testGetPanelReturnsAllPanelsIfSpecificPanelDoesNotExists()
     {
-        $this->parser->_viewdefs = array(
-            'unittest' => array(
-                'view' => array(
-                    'test' => array(
-                        'panels' => array(
-                            array(
-                                'dummy' => 'panel'
-                            ),
-                            array(
-                                'unit' => 'test'
-                            )
-                        )
-                    )
-                )
-            )
-        );
+        $this->parser->_viewdefs = [
+            'unittest' => [
+                'view' => [
+                    'test' => [
+                        'panels' => [
+                            [
+                                'dummy' => 'panel',
+                            ],
+                            [
+                                'unit' => 'test',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
 
-        $expected = array(
-            array(
-                'dummy' => 'panel'
-            ),
-            array(
-                'unit' => 'test'
-            )
-        );
+        $expected = [
+            [
+                'dummy' => 'panel',
+            ],
+            [
+                'unit' => 'test',
+            ],
+        ];
 
-        $this->assertSame($expected, SugarTestReflection::callProtectedMethod($this->parser, 'getPanel', array(2)));
+        $this->assertSame($expected, SugarTestReflection::callProtectedMethod($this->parser, 'getPanel', [2]));
     }
 
     /**
@@ -163,32 +163,32 @@ class SidecarListLayoutMetaDataParserTest extends TestCase
      */
     public function testAddFieldAddsToEndOfPanel()
     {
-        $this->parser->_viewdefs = array(
-            'unittest' => array(
-                'view' => array(
-                    'test' => array(
-                        'panels' => array(
-                            array(
-                                'fields' => array(
-                                    array(
+        $this->parser->_viewdefs = [
+            'unittest' => [
+                'view' => [
+                    'test' => [
+                        'panels' => [
+                            [
+                                'fields' => [
+                                    [
                                         'name' => 'name',
                                         'enabled' => true,
                                         'default' => true,
-                                    ),
-                                )
-                            ),
-                        )
-                    )
-                )
-            )
-        );
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
 
-        $this->parser->_fielddefs = array(
-            'test_field' => array(
+        $this->parser->_fielddefs = [
+            'test_field' => [
                 'label' => 'LBL_FIELD',
-                'type' => 'text'
-            )
-        );
+                'type' => 'text',
+            ],
+        ];
 
         $this->parser->addField('test_field');
 
@@ -196,13 +196,13 @@ class SidecarListLayoutMetaDataParserTest extends TestCase
 
         $this->assertEquals(2, count($panel[0]['fields']));
 
-        $expected = array(
+        $expected = [
             'name' => 'test_field',
             'label' => 'LBL_FIELD',
             'enabled' => true,
             'default' => true,
-            'sortable' => false
-        );
+            'sortable' => false,
+        ];
         $this->assertSame($expected, array_pop($panel[0]['fields']));
     }
 
@@ -211,46 +211,46 @@ class SidecarListLayoutMetaDataParserTest extends TestCase
      */
     public function testAddFieldToStartOfPanel()
     {
-        $this->parser->_viewdefs = array(
-            'unittest' => array(
-                'view' => array(
-                    'test' => array(
-                        'panels' => array(
-                            array(
-                                'fields' => array(
-                                    array(
+        $this->parser->_viewdefs = [
+            'unittest' => [
+                'view' => [
+                    'test' => [
+                        'panels' => [
+                            [
+                                'fields' => [
+                                    [
                                         'name' => 'name',
                                         'enabled' => true,
                                         'default' => true,
-                                    ),
-                                )
-                            ),
-                        )
-                    )
-                )
-            )
-        );
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
 
-        $this->parser->_fielddefs = array(
-            'test_field' => array(
+        $this->parser->_fielddefs = [
+            'test_field' => [
                 'label' => 'LBL_FIELD',
-                'type' => 'text'
-            )
-        );
+                'type' => 'text',
+            ],
+        ];
 
-        $this->parser->addField('test_field', array(), 0, 0);
+        $this->parser->addField('test_field', [], 0, 0);
 
         $panel = SugarTestReflection::callProtectedMethod($this->parser, 'getPanel');
 
         $this->assertEquals(2, count($panel[0]['fields']));
 
-        $expected = array(
+        $expected = [
             'name' => 'test_field',
             'label' => 'LBL_FIELD',
             'enabled' => true,
             'default' => true,
-            'sortable' => false
-        );
+            'sortable' => false,
+        ];
         $this->assertSame($expected, array_shift($panel[0]['fields']));
     }
 
@@ -259,51 +259,51 @@ class SidecarListLayoutMetaDataParserTest extends TestCase
      */
     public function testAddFieldAddsToMiddleOfPanel()
     {
-        $this->parser->_viewdefs = array(
-            'unittest' => array(
-                'view' => array(
-                    'test' => array(
-                        'panels' => array(
-                            array(
-                                'fields' => array(
-                                    array(
+        $this->parser->_viewdefs = [
+            'unittest' => [
+                'view' => [
+                    'test' => [
+                        'panels' => [
+                            [
+                                'fields' => [
+                                    [
                                         'name' => 'name',
                                         'enabled' => true,
                                         'default' => true,
-                                    ),
-                                    array(
+                                    ],
+                                    [
                                         'name' => 'address',
                                         'enabled' => true,
                                         'default' => true,
-                                    ),
-                                )
-                            ),
-                        )
-                    )
-                )
-            )
-        );
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
 
-        $this->parser->_fielddefs = array(
-            'test_field' => array(
+        $this->parser->_fielddefs = [
+            'test_field' => [
                 'label' => 'LBL_FIELD',
-                'type' => 'text'
-            )
-        );
+                'type' => 'text',
+            ],
+        ];
 
-        $this->parser->addField('test_field', array(), 1, 0);
+        $this->parser->addField('test_field', [], 1, 0);
 
         $panel = SugarTestReflection::callProtectedMethod($this->parser, 'getPanel');
 
         $this->assertEquals(3, count($panel[0]['fields']));
 
-        $expected = array(
+        $expected = [
             'name' => 'test_field',
             'label' => 'LBL_FIELD',
             'enabled' => true,
             'default' => true,
-            'sortable' => false
-        );
+            'sortable' => false,
+        ];
         $addedField = array_splice($panel[0]['fields'], 1, 1);
         $this->assertSame($expected, reset($addedField));
     }
@@ -313,30 +313,30 @@ class SidecarListLayoutMetaDataParserTest extends TestCase
      */
     public function testResetPanelFieldsRemovesAllFields()
     {
-        $this->parser->_viewdefs = array(
-            'unittest' => array(
-                'view' => array(
-                    'test' => array(
-                        'panels' => array(
-                            array(
-                                'fields' => array(
-                                    array(
+        $this->parser->_viewdefs = [
+            'unittest' => [
+                'view' => [
+                    'test' => [
+                        'panels' => [
+                            [
+                                'fields' => [
+                                    [
                                         'name' => 'name',
                                         'enabled' => true,
                                         'default' => true,
-                                    ),
-                                    array(
+                                    ],
+                                    [
                                         'name' => 'address',
                                         'enabled' => true,
                                         'default' => true,
-                                    ),
-                                )
-                            ),
-                        )
-                    )
-                )
-            )
-        );
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
 
         $this->parser->resetPanelFields();
 
@@ -360,10 +360,10 @@ class SidecarListLayoutMetaDataParserTest extends TestCase
 
     public function readonlyPropTestProvider()
     {
-        return array(
-            array('defs' => array('name' => 'test1', 'vname' => 'LBL_TEST1', 'readonly' => true), 'expectation' => true),
-            array('defs' => array('name' => 'test2', 'vname' => 'LBL_TEST2'), 'expectation' => false),
-        );
+        return [
+            ['defs' => ['name' => 'test1', 'vname' => 'LBL_TEST1', 'readonly' => true], 'expectation' => true],
+            ['defs' => ['name' => 'test2', 'vname' => 'LBL_TEST2'], 'expectation' => false],
+        ];
     }
     //END SUGARCRM flav=ent ONLY
 
@@ -372,42 +372,42 @@ class SidecarListLayoutMetaDataParserTest extends TestCase
      */
     public function testIsDefaultField(array $field, $expected)
     {
-        $actual = SugarTestReflection::callProtectedMethod($this->parser, 'isDefaultField', array($field));
+        $actual = SugarTestReflection::callProtectedMethod($this->parser, 'isDefaultField', [$field]);
         $this->assertEquals($expected, $actual);
     }
 
     public static function isDefaultFieldProvider()
     {
-        return array(
-            'true-by-default' => array(
-                array(),
+        return [
+            'true-by-default' => [
+                [],
                 true,
-            ),
-            'must-be-enabled' => array(
-                array(
+            ],
+            'must-be-enabled' => [
+                [
                     'enabled' => false,
-                ),
+                ],
                 false,
-            ),
-            'must-be-default' => array(
-                array(
+            ],
+            'must-be-default' => [
+                [
                     'default' => false,
-                ),
+                ],
                 false,
-            ),
-            'must-be-enabled-for-studio' => array(
-                array(
+            ],
+            'must-be-enabled-for-studio' => [
+                [
                     'studio' => false,
-                ),
+                ],
                 false,
-            ),
-            'studio-with-visible-value' => array(
-                array(
+            ],
+            'studio-with-visible-value' => [
+                [
                     'studio' => 'visible',
-                ),
+                ],
                 true,
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -415,31 +415,31 @@ class SidecarListLayoutMetaDataParserTest extends TestCase
      */
     public function testIsAdditionalField(array $field, $expected)
     {
-        $actual = SugarTestReflection::callProtectedMethod($this->parser, 'isAdditionalField', array($field));
+        $actual = SugarTestReflection::callProtectedMethod($this->parser, 'isAdditionalField', [$field]);
         $this->assertEquals($expected, $actual);
     }
 
     public static function isAdditionalFieldProvider()
     {
-        return array(
-            'false-by-default' => array(
-                array(),
+        return [
+            'false-by-default' => [
+                [],
                 false,
-            ),
-            'must-be-non-default' => array(
-                array(
+            ],
+            'must-be-non-default' => [
+                [
                     'default' => false,
-                ),
+                ],
                 true,
-            ),
-            'must-be-enabled' => array(
-                array(
+            ],
+            'must-be-enabled' => [
+                [
                     'default' => false,
                     'enabled' => false,
-                ),
+                ],
                 false,
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -447,9 +447,9 @@ class SidecarListLayoutMetaDataParserTest extends TestCase
      */
     public function testSetDefSortable($field_data, $expected)
     {
-        $this->parser->_fielddefs = array(
-            'test_field' => $field_data
-        );
+        $this->parser->_fielddefs = [
+            'test_field' => $field_data,
+        ];
 
         $results = $this->parser->setDefSortable('test_field', $field_data);
 
@@ -463,37 +463,37 @@ class SidecarListLayoutMetaDataParserTest extends TestCase
 
     public static function dataProviderSetDefSortable()
     {
-        return array(
-            array(
-                array(
+        return [
+            [
+                [
                     'type' => 'parent',
-                ),
-                false
-            ),
-            array(
+                ],
+                false,
+            ],
+            [
                 // relate with no sort_on or rname field
-                array(
+                [
                     'type' => 'relate',
-                ),
-                false
-            ),
-            array(
+                ],
+                false,
+            ],
+            [
                 // relate with sort_on field
-                array(
+                [
                     'type' => 'relate',
-                    'sort_on' => array('name')
-                ),
-                true
-            ),
-            array(
+                    'sort_on' => ['name'],
+                ],
+                true,
+            ],
+            [
                 // relate with just rname field should not be sortable
-                array(
+                [
                     'type' => 'relate',
                     'rname' => 'name',
-                ),
-                false
-            ),
-        );
+                ],
+                false,
+            ],
+        ];
     }
 
     /**
@@ -502,9 +502,9 @@ class SidecarListLayoutMetaDataParserTest extends TestCase
      */
     public function testSetDefSortableKeepSortableSet($field_data)
     {
-        $this->parser->_fielddefs = array(
-            'test_field' => $field_data
-        );
+        $this->parser->_fielddefs = [
+            'test_field' => $field_data,
+        ];
 
         $results = $this->parser->setDefSortable('test_field', $field_data);
 
@@ -513,28 +513,28 @@ class SidecarListLayoutMetaDataParserTest extends TestCase
 
     public static function dataProviderSetDefSortableKeepSortableSet()
     {
-        return array(
-            array(
+        return [
+            [
                 // invalid type should still keep the sortable flag
-                array(
+                [
                     'type' => 'parent',
-                    'sortable' => true
-                ),
-            ),
-            array(
-                array(
+                    'sortable' => true,
+                ],
+            ],
+            [
+                [
                     'type' => 'relate',
-                    'sort_on' => array('name'),
-                    'sortable' => false
-                ),
-            ),
-            array(
-                array(
+                    'sort_on' => ['name'],
+                    'sortable' => false,
+                ],
+            ],
+            [
+                [
                     'type' => 'relate',
                     'rname' => 'name',
                     'sortable' => true,
-                )
-            ),
-        );
+                ],
+            ],
+        ];
     }
 }

@@ -16,7 +16,7 @@ class SugarTestDashboardUtilities
     /**
      * @var array List of previously created dashboard records.
      */
-    private static $_createdDashboards = array();
+    private static $_createdDashboards = [];
 
     private function __construct()
     {
@@ -35,15 +35,15 @@ class SugarTestDashboardUtilities
      *
      * @return Dashboard New dashboard record.
      */
-    public static function createDashboard($id = '', $properties = array())
+    public static function createDashboard($id = '', $properties = [])
     {
         $random = mt_rand();
         $dashboard = BeanFactory::newBean('Dashboards');
 
-        $properties = array_merge(array(
+        $properties = array_merge([
             'name' => 'SugarDashboard' . $random,
             'dashboard_module' => 'Home',
-        ), $properties);
+        ], $properties);
 
         foreach ($properties as $property => $value) {
             $dashboard->$property = $value;
@@ -80,7 +80,7 @@ class SugarTestDashboardUtilities
      */
     public static function getCreatedDashboardIds()
     {
-        $dashboardIds = array();
+        $dashboardIds = [];
         foreach (self::$_createdDashboards as $dashboard) {
             $dashboardIds[] = $dashboard->id;
         }

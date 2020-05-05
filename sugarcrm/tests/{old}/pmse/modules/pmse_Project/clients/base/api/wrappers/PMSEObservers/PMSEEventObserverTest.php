@@ -19,37 +19,37 @@ class PMSEEventObserverTest extends TestCase
     {
         $eventObserverMock = $this->getMockBuilder('PMSEEventObserver')
                 ->disableOriginalConstructor()
-                ->setMethods(NULL)
+                ->setMethods(null)
                 ->getMock();
         
         $loggerMock = $this->getMockBuilder('PMSELogger')
                 ->disableOriginalConstructor()
-                ->setMethods(array('info', 'debug', 'error'))
+                ->setMethods(['info', 'debug', 'error'])
                 ->getMock();
         
         $subjectMock = $this->getMockBuilder('PMSESubject')
                 ->disableOriginalConstructor()
-                ->setMethods(array('getEvent', 'getEventDefinition', 'getProcessDefinition'))
+                ->setMethods(['getEvent', 'getEventDefinition', 'getProcessDefinition'])
                 ->getMock();
         
         $eventMock = $this->getMockBuilder('PMSEEvent')
                 ->disableOriginalConstructor()
-                ->setMethods(NULL)
+                ->setMethods(null)
                 ->getMock();
-        $eventMock->fetched_row = array();
+        $eventMock->fetched_row = [];
         
         $eventDefMock = $this->getMockBuilder('PMSEEventDefinition')
                 ->disableOriginalConstructor()
-                ->setMethods(NULL)
+                ->setMethods(null)
                 ->getMock();
-        $eventDefMock->fetched_row = array();
+        $eventDefMock->fetched_row = [];
         
         $processDefMock = $this->getMockBuilder('PMSEProcessDefinition')
                 ->disableOriginalConstructor()
-                ->setMethods(NULL)
+                ->setMethods(null)
                 ->getMock();
         
-        $processDefMock->fetched_row = array();
+        $processDefMock->fetched_row = [];
         
         $subjectMock->expects($this->once())
                 ->method('getEvent')
@@ -67,7 +67,7 @@ class PMSEEventObserverTest extends TestCase
         
         $relatedDepenedencyMock = $this->getMockBuilder('PMSERelatedDependencyWrapper')
                 ->disableOriginalConstructor()
-                ->setMethods(array('processRelatedDependencies'))
+                ->setMethods(['processRelatedDependencies'])
                 ->getMock();
         
         $eventObserverMock->setRelatedDependency($relatedDepenedencyMock);

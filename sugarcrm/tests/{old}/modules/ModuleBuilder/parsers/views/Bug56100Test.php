@@ -29,7 +29,8 @@ class Bug56100Test extends TestCase
         SugarTestHelper::tearDown();
     }
 
-    public function testSubpanelParserHasViewPropertySet() {
+    public function testSubpanelParserHasViewPropertySet()
+    {
         $parser = new SubpanelMetaDataParser('documents', 'Accounts');
         $test = property_exists($parser, 'view');
         $this->assertTrue($test, '$view does not exist in the Subpanel Meta Data Parser');

@@ -22,36 +22,36 @@ class ShadowTest extends RestTestBase
                 $this->dir = getcwd();
                 chdir(sugar_root_dir());
                 parent::setUp();
-        }
+    }
 
     protected function tearDown() : void
     {
                 chdir($this->dir);
                 SugarTestContactUtilities::removeAllCreatedContacts();
                 parent::tearDown();
-        }
+    }
 
-        public function testZipDir()
-        {
-                $arch = "upload://test.zip";
-                $dir = "upload://import";
-                $testfile = "$dir/shadowtest-file.txt";
-                SugarTestHelper::saveFile($testfile);
-                SugarTestHelper::saveFile($arch);
-                file_put_contents($testfile, "test");
-                @unlink($arch);
-                zip_dir($dir, $arch);
-                $this->assertTrue(file_exists($arch));
-        }
+    public function testZipDir()
+    {
+            $arch = "upload://test.zip";
+            $dir = "upload://import";
+            $testfile = "$dir/shadowtest-file.txt";
+            SugarTestHelper::saveFile($testfile);
+            SugarTestHelper::saveFile($arch);
+            file_put_contents($testfile, "test");
+            @unlink($arch);
+            zip_dir($dir, $arch);
+            $this->assertTrue(file_exists($arch));
+    }
 
-        public function testFileMime()
-        {
-            if(!mime_is_detectable()) {
-                $this->markTestSkipped('Requires functions to detect mime type');
-            }
-            $filename = sugar_cached("test.txt");
-            SugarTestHelper::saveFile($filename);
-            file_put_contents($filename, "This is a text of a test. And this is a test of a text.");
-            $this->assertEquals("text/plain", get_file_mime_type($filename, "wront/type"));
+    public function testFileMime()
+    {
+        if (!mime_is_detectable()) {
+            $this->markTestSkipped('Requires functions to detect mime type');
         }
+        $filename = sugar_cached("test.txt");
+        SugarTestHelper::saveFile($filename);
+        file_put_contents($filename, "This is a text of a test. And this is a test of a text.");
+        $this->assertEquals("text/plain", get_file_mime_type($filename, "wront/type"));
+    }
 }

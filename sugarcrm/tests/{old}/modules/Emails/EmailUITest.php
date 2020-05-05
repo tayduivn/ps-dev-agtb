@@ -20,7 +20,7 @@ class EmailUITest extends TestCase
     {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
-        SugarTestHelper::setUp('mod_strings', array('Emails'));
+        SugarTestHelper::setUp('mod_strings', ['Emails']);
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('current_user');
@@ -28,7 +28,7 @@ class EmailUITest extends TestCase
         $this->_user->is_admin = 1;
         $GLOBALS['current_user'] = $this->_user;
         $this->eui = new EmailUIMock();
-        $this->_folders = array();
+        $this->_folders = [];
     }
 
     protected function tearDown() : void
@@ -55,7 +55,7 @@ class EmailUITest extends TestCase
     public function testSaveNewFolder()
     {
         $newFolderName = "UNIT_TEST";
-        $rs = $this->eui->saveNewFolder($newFolderName,'Home',0);
+        $rs = $this->eui->saveNewFolder($newFolderName, 'Home', 0);
         $newFolderID = $rs['id'];
         $this->_folders[] = $newFolderID;
 
@@ -73,7 +73,7 @@ class EmailUITest extends TestCase
         $folderName = "UNIT_TEST";
         $sortBy = 'last_name';
         $dir = "DESC";
-        $rs = $this->eui->saveListViewSortOrder($tmpId,$folderName,$sortBy,$dir);
+        $rs = $this->eui->saveListViewSortOrder($tmpId, $folderName, $sortBy, $dir);
 
         //Check against the saved preferences.
         $prefs = unserialize($GLOBALS['current_user']->getPreference('folderSortOrder', 'Emails'));
@@ -82,36 +82,36 @@ class EmailUITest extends TestCase
     }
     public function testGetRelatedEmail()
     {
-    	$account = new Account();
-    	$account->name = "emailTestAccount";
-    	$account->save(false);
+        $account = new Account();
+        $account->name = "emailTestAccount";
+        $account->save(false);
 
-    	$relatedBeanInfo = array('related_bean_id' => $account->id,  "related_bean_type" => "Accounts");
+        $relatedBeanInfo = ['related_bean_id' => $account->id,  "related_bean_type" => "Accounts"];
 
-    	//First pass should return a blank query as are no related items
-    	$qArray = $this->eui->getRelatedEmail("LBL_DROPDOWN_LIST_ALL", array(), $relatedBeanInfo);
-    	$this->assertEquals("", $qArray['query']);
+        //First pass should return a blank query as are no related items
+        $qArray = $this->eui->getRelatedEmail("LBL_DROPDOWN_LIST_ALL", [], $relatedBeanInfo);
+        $this->assertEquals("", $qArray['query']);
 
-    	//Now create a related Contact
-    	$contact = new Contact();
-    	$contact->name = "emailTestContact";
-    	$contact->account_id = $account->id;
-    	$contact->account_name = $account->name;
-    	$contact->email1 = "test@test.com";
-    	$contact->save(false);
+        //Now create a related Contact
+        $contact = new Contact();
+        $contact->name = "emailTestContact";
+        $contact->account_id = $account->id;
+        $contact->account_name = $account->name;
+        $contact->email1 = "test@test.com";
+        $contact->save(false);
 
-    	//Now we should get a result
-        $qArray = $this->eui->getRelatedEmail("LBL_DROPDOWN_LIST_ALL", array(), $relatedBeanInfo);
+        //Now we should get a result
+        $qArray = $this->eui->getRelatedEmail("LBL_DROPDOWN_LIST_ALL", [], $relatedBeanInfo);
         $r = $account->db->limitQuery($qArray['query'], 0, 25, true);
-        $person = array();
+        $person = [];
         $a = $account->db->fetchByAssoc($r);
         $person['bean_id'] = $a['id'];
         $person['bean_module'] = $a['module'];
         $person['email'] = $a['email_address'];
 
         //Cleanup
-    	$GLOBALS['db']->query("DELETE FROM accounts WHERE id= '{$account->id}'");
-    	$GLOBALS['db']->query("DELETE FROM contacts WHERE id= '{$contact->id}'");
+        $GLOBALS['db']->query("DELETE FROM accounts WHERE id= '{$account->id}'");
+        $GLOBALS['db']->query("DELETE FROM contacts WHERE id= '{$contact->id}'");
 
         $this->assertEquals("test@test.com", $person['email']);
     }
@@ -123,7 +123,7 @@ class EmailUITest extends TestCase
     {
         $qArray = $this->eui->_loadQuickCreateModules();
 
-        $this->assertEquals(array('Bugs','Cases','Contacts', 'Opportunities', 'Leads', 'Tasks'), $qArray);
+        $this->assertEquals(['Bugs','Cases','Contacts', 'Opportunities', 'Leads', 'Tasks'], $qArray);
     }
 
     /**
@@ -132,25 +132,24 @@ class EmailUITest extends TestCase
     public function testLoadCustomQuickCreateModulesCanMergeModules()
     {
         if (file_exists('custom/modules/Emails/metadata/qcmodulesdefs.php')) {
-            copy('custom/modules/Emails/metadata/qcmodulesdefs.php','custom/modules/Emails/metadata/qcmodulesdefs.php.test.bak');
+            copy('custom/modules/Emails/metadata/qcmodulesdefs.php', 'custom/modules/Emails/metadata/qcmodulesdefs.php.test.bak');
         }
-        sugar_mkdir("custom/modules/Emails/metadata/",null,true);
+        sugar_mkdir("custom/modules/Emails/metadata/", null, true);
         file_put_contents(
             'custom/modules/Emails/metadata/qcmodulesdefs.php',
             '<?php $QCModules[] = "Users"; ?>'
-            );
+        );
 
         $qArray = $this->eui->_loadQuickCreateModules();
 
         if (file_exists('custom/modules/Emails/metadata/qcmodulesdefs.php.test.bak')) {
-            copy('custom/modules/Emails/metadata/qcmodulesdefs.php.test.bak','custom/modules/Emails/metadata/qcmodulesdefs.php');
+            copy('custom/modules/Emails/metadata/qcmodulesdefs.php.test.bak', 'custom/modules/Emails/metadata/qcmodulesdefs.php');
             unlink('custom/modules/Emails/metadata/qcmodulesdefs.php.test.bak');
-        }
-        else {
+        } else {
             unlink('custom/modules/Emails/metadata/qcmodulesdefs.php');
         }
 
-        $this->assertEquals(array('Bugs','Cases','Contacts', 'Opportunities','Leads', 'Tasks', 'Users'), $qArray);
+        $this->assertEquals(['Bugs','Cases','Contacts', 'Opportunities','Leads', 'Tasks', 'Users'], $qArray);
     }
 
     /**
@@ -159,25 +158,24 @@ class EmailUITest extends TestCase
     public function testLoadQuickCreateModulesInvalidModule()
     {
         if (file_exists('custom/modules/Emails/metadata/qcmodulesdefs.php')) {
-            copy('custom/modules/Emails/metadata/qcmodulesdefs.php','custom/modules/Emails/metadata/qcmodulesdefs.php.test.bak');
+            copy('custom/modules/Emails/metadata/qcmodulesdefs.php', 'custom/modules/Emails/metadata/qcmodulesdefs.php.test.bak');
         }
-        sugar_mkdir("custom/modules/Emails/metadata/",null,true);
+        sugar_mkdir("custom/modules/Emails/metadata/", null, true);
         file_put_contents(
             'custom/modules/Emails/metadata/qcmodulesdefs.php',
             '<?php $QCModules[] = "EmailUIUnitTest"; ?>'
-            );
+        );
 
         $qArray = $this->eui->_loadQuickCreateModules();
 
         if (file_exists('custom/modules/Emails/metadata/qcmodulesdefs.php.test.bak')) {
-            copy('custom/modules/Emails/metadata/qcmodulesdefs.php.test.bak','custom/modules/Emails/metadata/qcmodulesdefs.php');
+            copy('custom/modules/Emails/metadata/qcmodulesdefs.php.test.bak', 'custom/modules/Emails/metadata/qcmodulesdefs.php');
             unlink('custom/modules/Emails/metadata/qcmodulesdefs.php.test.bak');
-        }
-        else {
+        } else {
             unlink('custom/modules/Emails/metadata/qcmodulesdefs.php');
         }
 
-        $this->assertEquals(array('Bugs','Cases','Contacts', 'Opportunities', 'Leads', 'Tasks'), $qArray);
+        $this->assertEquals(['Bugs','Cases','Contacts', 'Opportunities', 'Leads', 'Tasks'], $qArray);
     }
 
     /**
@@ -186,25 +184,24 @@ class EmailUITest extends TestCase
     public function testLoadQuickCreateModulesCanOverrideDefaultModules()
     {
         if (file_exists('custom/modules/Emails/metadata/qcmodulesdefs.php')) {
-            copy('custom/modules/Emails/metadata/qcmodulesdefs.php','custom/modules/Emails/metadata/qcmodulesdefs.php.test.bak');
+            copy('custom/modules/Emails/metadata/qcmodulesdefs.php', 'custom/modules/Emails/metadata/qcmodulesdefs.php.test.bak');
         }
-        sugar_mkdir("custom/modules/Emails/metadata/",null,true);
+        sugar_mkdir("custom/modules/Emails/metadata/", null, true);
         file_put_contents(
             'custom/modules/Emails/metadata/qcmodulesdefs.php',
             '<?php $QCModules = array("Users"); ?>'
-            );
+        );
 
         $qArray = $this->eui->_loadQuickCreateModules();
 
         if (file_exists('custom/modules/Emails/metadata/qcmodulesdefs.php.test.bak')) {
-            copy('custom/modules/Emails/metadata/qcmodulesdefs.php.test.bak','custom/modules/Emails/metadata/qcmodulesdefs.php');
+            copy('custom/modules/Emails/metadata/qcmodulesdefs.php.test.bak', 'custom/modules/Emails/metadata/qcmodulesdefs.php');
             unlink('custom/modules/Emails/metadata/qcmodulesdefs.php.test.bak');
-        }
-        else {
+        } else {
             unlink('custom/modules/Emails/metadata/qcmodulesdefs.php');
         }
 
-        $this->assertEquals(array("Users"), $qArray);
+        $this->assertEquals(["Users"], $qArray);
     }
 
     /**
@@ -214,14 +211,14 @@ class EmailUITest extends TestCase
      */
     public function loadQuickCreateFormDataProvider()
     {
-        return array(
-            array('Bugs', 'modules/Bugs/metadata/editviewdefs.php', false),
-            array('Cases', 'modules/Cases/metadata/editviewdefs.php', false),
-            array('Contacts', 'modules/Contacts/metadata/editviewdefs.php', true),
-            array('Opportunities', 'modules/Opportunities/metadata/editviewdefs.php', false),
-            array('Leads', 'modules/Leads/metadata/editviewdefs.php', true),
-            array('Tasks', 'modules/Tasks/metadata/editviewdefs.php', false)
-        );
+        return [
+            ['Bugs', 'modules/Bugs/metadata/editviewdefs.php', false],
+            ['Cases', 'modules/Cases/metadata/editviewdefs.php', false],
+            ['Contacts', 'modules/Contacts/metadata/editviewdefs.php', true],
+            ['Opportunities', 'modules/Opportunities/metadata/editviewdefs.php', false],
+            ['Leads', 'modules/Leads/metadata/editviewdefs.php', true],
+            ['Tasks', 'modules/Tasks/metadata/editviewdefs.php', false],
+        ];
     }
 
     /**
@@ -243,35 +240,30 @@ class EmailUITest extends TestCase
 
         //Stuff $_REQUEST parameter
         $_REQUEST['qc_module'] = $module;
-        $output = $this->eui->getQuickCreateForm(array(), $email);
+        $output = $this->eui->getQuickCreateForm([], $email);
         $this->assertNotEmpty($output['html']);
-        if($hasEmail)
-        {
+        if ($hasEmail) {
             $this->assertNotEmpty($output['emailAddress']);
         }
 
         $createdCustomFile = false;
 
-        if(!file_exists("custom/{$file}"))
-        {
-           $moduleDir = dirname("custom/{$file}");
-           if(!file_exists($moduleDir))
-           {
-               mkdir_recursive($moduleDir);
-           }
-           file_put_contents("custom/{$file}", file_get_contents($file));
-           $createdCustomFile = true;
+        if (!file_exists("custom/{$file}")) {
+            $moduleDir = dirname("custom/{$file}");
+            if (!file_exists($moduleDir)) {
+                mkdir_recursive($moduleDir);
+            }
+            file_put_contents("custom/{$file}", file_get_contents($file));
+            $createdCustomFile = true;
         }
 
-        $output = $this->eui->getQuickCreateForm(array(), $email);
+        $output = $this->eui->getQuickCreateForm([], $email);
         $this->assertNotEmpty($output['html']);
-        if($hasEmail)
-        {
+        if ($hasEmail) {
             $this->assertNotEmpty($output['emailAddress']);
         }
 
-        if($createdCustomFile)
-        {
+        if ($createdCustomFile) {
             //Delete the custom file created for testing
             unlink("custom/{$file}");
         }
@@ -283,7 +275,8 @@ class EmailUITest extends TestCase
 /**
  * This is a mock object to simulate the email object
  */
-class Bug56711Mock {
+class Bug56711Mock
+{
     public $name;
     public $from_name;
     public $from_addr;

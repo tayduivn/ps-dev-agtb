@@ -21,12 +21,12 @@ abstract class RestTestBase extends TestCase
     protected $consumerId = "sugar";
     protected $version = '10';
     protected $_platform = 'base';
-    protected $accounts = array();
-    protected $contacts = array();
-    protected $opps = array();
-    protected $cases = array();
-    protected $bugs = array();
-    protected $notes = array();
+    protected $accounts = [];
+    protected $contacts = [];
+    protected $opps = [];
+    protected $cases = [];
+    protected $bugs = [];
+    protected $notes = [];
 
     protected function setUp() : void
     {
@@ -57,11 +57,11 @@ abstract class RestTestBase extends TestCase
         // Cleaning up after ourselves, but only if there is cleanup to do
         // Accounts clean up
         if (count($this->accounts)) {
-            $accountIds = array();
+            $accountIds = [];
             foreach ($this->accounts as $account) {
                 $accountIds[] = $account->id;
             }
-            $accountIds = "('".implode("','",$accountIds)."')";
+            $accountIds = "('".implode("','", $accountIds)."')";
             $GLOBALS['db']->query("DELETE FROM accounts WHERE id IN {$accountIds}");
             if ($GLOBALS['db']->tableExists('accounts_cstm')) {
                 $GLOBALS['db']->query("DELETE FROM accounts_cstm WHERE id_c IN {$accountIds}");
@@ -70,11 +70,11 @@ abstract class RestTestBase extends TestCase
 
         // Opportunities clean up
         if (count($this->opps)) {
-            $oppIds = array();
+            $oppIds = [];
             foreach ($this->opps as $opp) {
                 $oppIds[] = $opp->id;
             }
-            $oppIds = "('".implode("','",$oppIds)."')";
+            $oppIds = "('".implode("','", $oppIds)."')";
             $GLOBALS['db']->query("DELETE FROM opportunities WHERE id IN {$oppIds}");
             $GLOBALS['db']->query("DELETE FROM accounts_opportunities WHERE opportunity_id IN {$oppIds}");
             $GLOBALS['db']->query("DELETE FROM opportunities_contacts WHERE opportunity_id IN {$oppIds}");
@@ -85,11 +85,11 @@ abstract class RestTestBase extends TestCase
 
         // Contacts cleanup
         if (count($this->contacts)) {
-            $contactIds = array();
+            $contactIds = [];
             foreach ($this->contacts as $contact) {
                 $contactIds[] = $contact->id;
             }
-            $contactIds = "('".implode("','",$contactIds)."')";
+            $contactIds = "('".implode("','", $contactIds)."')";
 
             $GLOBALS['db']->query("DELETE FROM contacts WHERE id IN {$contactIds}");
             $GLOBALS['db']->query("DELETE FROM accounts_contacts WHERE contact_id IN {$contactIds}");
@@ -100,11 +100,11 @@ abstract class RestTestBase extends TestCase
 
         // Cases cleanup
         if (count($this->cases)) {
-            $caseIds = array();
+            $caseIds = [];
             foreach ($this->cases as $aCase) {
                 $caseIds[] = $aCase->id;
             }
-            $caseIds = "('".implode("','",$caseIds)."')";
+            $caseIds = "('".implode("','", $caseIds)."')";
 
             $GLOBALS['db']->query("DELETE FROM cases WHERE id IN {$caseIds}");
             $GLOBALS['db']->query("DELETE FROM accounts_cases WHERE case_id IN {$caseIds}");
@@ -115,11 +115,11 @@ abstract class RestTestBase extends TestCase
 
         // Bugs cleanup
         if (count($this->bugs)) {
-            $bugIds = array();
-            foreach ($this->bugs AS $bug) {
+            $bugIds = [];
+            foreach ($this->bugs as $bug) {
                 $bugIds[] = $bug->id;
             }
-            $bugIds = "('" . implode( "','", $bugIds) . "')";
+            $bugIds = "('" . implode("','", $bugIds) . "')";
             $GLOBALS['db']->query("DELETE FROM bugs WHERE id IN {$bugIds}");
             if ($GLOBALS['db']->tableExists('bugs_cstm')) {
                 $GLOBALS['db']->query("DELETE FROM bugs_cstm WHERE id_c IN {$bugIds}");
@@ -128,11 +128,11 @@ abstract class RestTestBase extends TestCase
 
         // Notes cleanup
         if (count($this->notes)) {
-            $noteIds = array();
+            $noteIds = [];
             foreach ($this->notes as $note) {
                 $noteIds[] = $note->id;
             }
-            $noteIds = "('".implode("','",$noteIds)."')";
+            $noteIds = "('".implode("','", $noteIds)."')";
 
             $GLOBALS['db']->query("DELETE FROM notes WHERE id IN {$noteIds}");
             if ($GLOBALS['db']->tableExists('notes_cstm')) {
@@ -143,7 +143,7 @@ abstract class RestTestBase extends TestCase
 
     protected function _restLogin($username = '', $password = '', $platform = 'base')
     {
-        if ( empty($username) && empty($password) ) {
+        if (empty($username) && empty($password)) {
             $username = $this->_user->user_name;
             // Let's assume test users have a password the same as their username
             $password = $this->_user->user_name;
@@ -152,20 +152,20 @@ abstract class RestTestBase extends TestCase
         // Save the platform for reauth
         $this->_platform = $platform;
 
-        $args = array(
+        $args = [
             'grant_type' => 'password',
             'username' => $username,
             'password' => $password,
             'client_id' => $this->consumerId,
             'client_secret' => '',
             'platform' => $platform,
-        );
+        ];
 
         // Prevent an infinite loop, put a fake authtoken in here.
         $this->authToken = 'LOGGING_IN';
 
-        $reply = $this->_restCall('oauth2/token',json_encode($args));
-        if ( empty($reply['reply']['access_token']) ) {
+        $reply = $this->_restCall('oauth2/token', json_encode($args));
+        if (empty($reply['reply']['access_token'])) {
             self::fail("Rest authentication failed, message looked like: ".$reply['replyRaw']);
         }
         $this->authToken = $reply['reply']['access_token'];
@@ -175,17 +175,17 @@ abstract class RestTestBase extends TestCase
     protected function _restReauth()
     {
         if ($this->refreshToken) {
-            $args = array(
+            $args = [
                 'grant_type' => 'refresh_token',
                 'refresh_token' => $this->refreshToken,
                 'client_id' => $this->consumerId,
                 'client_secret' => '',
                 'platform' => $this->_platform,
-            );
+            ];
 
             // Prevents _restCall from automatically logging in
             $this->authToken = 'LOGGING_IN';
-            $reply = $this->_restCall('oauth2/token',json_encode($args));
+            $reply = $this->_restCall('oauth2/token', json_encode($args));
             if (empty($reply['reply']['access_token'])) {
                 self::fail("Rest re-authentication failed, message looked like: ".$reply['replyRaw']);
             }
@@ -196,16 +196,16 @@ abstract class RestTestBase extends TestCase
         }
     }
 
-    protected function _restCall($urlPart,$postBody='',$httpAction='', $addedOpts = array(), $addedHeaders = array())
+    protected function _restCall($urlPart, $postBody = '', $httpAction = '', $addedOpts = [], $addedHeaders = [])
     {
         // Hold state in case we need to reauth
-        $funcArgs = array(
+        $funcArgs = [
             $urlPart,
             $postBody,
             $httpAction,
             $addedOpts,
-            $addedHeaders
-        );
+            $addedHeaders,
+        ];
 
         // Since this is going in to a new DB connection, we have to commit anything we have
         // lying around in an open transaction.
@@ -213,7 +213,7 @@ abstract class RestTestBase extends TestCase
 
         $urlBase = $GLOBALS['sugar_config']['site_url'].'/api/rest.php/v' . $this->version . '/';
 
-        if ( empty($this->authToken) ) {
+        if (empty($this->authToken)) {
             $this->_restLogin();
         }
 
@@ -255,14 +255,14 @@ abstract class RestTestBase extends TestCase
             }
         }
 
-        if ( !empty($this->authToken) && $this->authToken != 'LOGGING_IN' ) {
+        if (!empty($this->authToken) && $this->authToken != 'LOGGING_IN') {
             $addedHeaders[] = 'OAuth-Token: ' . $this->authToken;
         }
 
         // Only set a custom request for not POST with a body
         // This affects the server and how it sets its superglobals
         if (empty($requestMethodSet)) {
-            if ($httpAction == 'PUT' && empty($postBody) ) {
+            if ($httpAction == 'PUT' && empty($postBody)) {
                 curl_setopt($ch, CURLOPT_PUT, 1);
             } else {
                 curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $httpAction);
@@ -301,7 +301,7 @@ abstract class RestTestBase extends TestCase
         // Get just the body for parsing the reply
         $httpReply = substr($httpReply, $headerLen);
 
-        return array('info' => $httpInfo, 'reply' => json_decode($httpReply,true), 'replyRaw' => $httpReply, 'error' => $httpError, 'headers' => $httpHeaders);
+        return ['info' => $httpInfo, 'reply' => json_decode($httpReply, true), 'replyRaw' => $httpReply, 'error' => $httpError, 'headers' => $httpHeaders];
     }
 
     /**
@@ -321,7 +321,7 @@ abstract class RestTestBase extends TestCase
         Warning::$enabled = false;
 
         // Auth check early to prevent work when not needed
-        if ( empty($this->authToken) ) {
+        if (empty($this->authToken)) {
             $this->_restLogin();
         }
 
@@ -336,13 +336,13 @@ abstract class RestTestBase extends TestCase
         $filedata = file_get_contents($args['filename']);
 
         $auth = "oauth_token: $this->authToken\r\n";
-        $options = array(
-            'http' => array(
+        $options = [
+            'http' => [
                 'method' => 'PUT',
                 'header' => "{$auth}Content-Type: $args[type]\r\nfilename: $filename\r\n",
                 'content' => $filedata,
-            ),
-        );
+            ],
+        ];
 
         $context = stream_context_create($options);
 
@@ -354,15 +354,15 @@ abstract class RestTestBase extends TestCase
         if (empty($response) && !empty($http_response_header)) {
             // There was a response that was NOT a 200. These are mapped to API
             // exception codes where possible
-            $responses = array(
-                400 => array('label' => 'unknown_exception', 'description' => "An unknown exception happened."),
-                401 => array('label' => 'need_login', 'description' => "The user needs to be logged in to perform this action"),
-                403 => array('label' => 'not_authorized', 'description' => "This action is not authorized for the current user."),
-                404 => array('label' => 'no_method_or_not_found', 'description' => "Could not find a method or handler for this path."),
-                412 => array('label' => 'missing_or_invalid_parameter', 'description' => "A required parameter for this request is missing or invalid."),
-                413 => array('label' => 'request_too_large', 'description' => "The request is too large to process."),
-                500 => array('label' => 'fatal_error', 'description' => "A fatal error happened."),
-            );
+            $responses = [
+                400 => ['label' => 'unknown_exception', 'description' => "An unknown exception happened."],
+                401 => ['label' => 'need_login', 'description' => "The user needs to be logged in to perform this action"],
+                403 => ['label' => 'not_authorized', 'description' => "This action is not authorized for the current user."],
+                404 => ['label' => 'no_method_or_not_found', 'description' => "Could not find a method or handler for this path."],
+                412 => ['label' => 'missing_or_invalid_parameter', 'description' => "A required parameter for this request is missing or invalid."],
+                413 => ['label' => 'request_too_large', 'description' => "The request is too large to process."],
+                500 => ['label' => 'fatal_error', 'description' => "A fatal error happened."],
+            ];
 
             // Set a reasonable default response code
             $code = 400;
@@ -384,7 +384,7 @@ abstract class RestTestBase extends TestCase
             }
 
             // Mock an exception response from the API
-            $reply = array('error' => $responses[$code]['label'], 'error_description' => $responses[$code]['description']);
+            $reply = ['error' => $responses[$code]['label'], 'error_description' => $responses[$code]['description']];
         } else {
             $reply = json_decode($response, true);
         }
@@ -392,7 +392,7 @@ abstract class RestTestBase extends TestCase
         // Set back the error handler setting
         Warning::$enabled = true;
 
-        return array('info' => array(), 'reply' => $reply, 'replyRaw' => $response, 'error' => null);
+        return ['info' => [], 'reply' => $reply, 'replyRaw' => $response, 'error' => null];
     }
 
     protected function _clearMetadataCache()
@@ -400,7 +400,7 @@ abstract class RestTestBase extends TestCase
         MetaDataFiles::clearModuleClientCache();
 
         $metadataFiles = glob(sugar_cached('api/metadata/').'*');
-        if ( is_array($metadataFiles) ) {
+        if (is_array($metadataFiles)) {
             foreach ($metadataFiles as $metadataFile) {
                 @unlink($metadataFile);
             }
@@ -416,7 +416,7 @@ abstract class RestTestBase extends TestCase
     protected function _parseHeaderString($header)
     {
         $lines = explode("\n", rtrim($header));
-        $headers = array();
+        $headers = [];
         foreach ($lines as $line) {
             $parts = explode(": ", rtrim($line));
             if (count($parts) == 1) {

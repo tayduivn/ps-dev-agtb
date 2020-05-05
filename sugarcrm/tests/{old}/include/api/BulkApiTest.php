@@ -24,7 +24,7 @@ class BulkApiTest extends TestCase
 
     protected function tearDown() : void
     {
-        while ( ob_get_level() > 1 ) {
+        while (ob_get_level() > 1) {
             ob_end_flush();
         }
     }
@@ -33,38 +33,38 @@ class BulkApiTest extends TestCase
     {
         $api = new RestService();
         $api->user = $GLOBALS['current_user'];
-        $requests = array(
-            array('url' => '/v10/me', 'method' => 'GET'),
-            array('url' => '/v10/lang/en_us', 'method' => 'GET'),
-            array('url' => '/v10/404', 'method' => 'GET'), // no such route
-            array('url' => '/v10/Accounts/x123-456x', 'method' => 'PUT'), // no such record
-            array('url' => "/v10/Users/{$GLOBALS['current_user']->id}?test=1"), // implied GET
-            array('url' => "/v10/Users/{$GLOBALS['current_user']->id}/link"), // missing param
-            array('url' => "/v10/Users", "method" => 'POST', 'data' => "b;ah"), // bad JSON
-            array('url' => "/v10/Users", "method" => 'POST', 'data' => json_encode(array("id" => $GLOBALS['current_user']->id, "name" => "test"))), // unauthorized
+        $requests = [
+            ['url' => '/v10/me', 'method' => 'GET'],
+            ['url' => '/v10/lang/en_us', 'method' => 'GET'],
+            ['url' => '/v10/404', 'method' => 'GET'], // no such route
+            ['url' => '/v10/Accounts/x123-456x', 'method' => 'PUT'], // no such record
+            ['url' => "/v10/Users/{$GLOBALS['current_user']->id}?test=1"], // implied GET
+            ['url' => "/v10/Users/{$GLOBALS['current_user']->id}/link"], // missing param
+            ['url' => "/v10/Users", "method" => 'POST', 'data' => "b;ah"], // bad JSON
+            ['url' => "/v10/Users", "method" => 'POST', 'data' => json_encode(["id" => $GLOBALS['current_user']->id, "name" => "test"])], // unauthorized
             // queries
-            array('url' => "/v10/Users?fields=name,date_modified,id&filter=[{\"id\":\"{$GLOBALS['current_user']->id}\"}]", "method" => "GET"),
-            array('url' => "/v07/me"), // bad version format
-            array('url' => "/v11.7/me"), // bad version format
-            array('url' => '/me', 'method' => 'GET'), // no version in url
-            array('url' => '/lang/en_us', 'method' => 'GET'), // no version in url
+            ['url' => "/v10/Users?fields=name,date_modified,id&filter=[{\"id\":\"{$GLOBALS['current_user']->id}\"}]", "method" => "GET"],
+            ['url' => "/v07/me"], // bad version format
+            ['url' => "/v11.7/me"], // bad version format
+            ['url' => '/me', 'method' => 'GET'], // no version in url
+            ['url' => '/lang/en_us', 'method' => 'GET'], // no version in url
             // invalid, both Header and url have version
-            array(
+            [
                 'url' => "/v10/me",
-                'headers' => array('ACCEPT' => 'application/vnd.sugarcrm.core; version=10'),
-            ),
+                'headers' => ['ACCEPT' => 'application/vnd.sugarcrm.core; version=10'],
+            ],
             // valid, header version but no url version
-            array(
+            [
                 'url' => "/me",
-                'headers' => array('ACCEPT' => 'application/vnd.sugarcrm.core+xml; version=10'),
-            ),
-        );
+                'headers' => ['ACCEPT' => 'application/vnd.sugarcrm.core+xml; version=10'],
+            ],
+        ];
         $apiClass = new BulkApi();
-        $args = array("requests" => $requests);
+        $args = ["requests" => $requests];
         $result = $apiClass->bulkCall($api, $args);
 
         $this->assertSameSize($requests, $result);
-        foreach($result as $i => $item) {
+        foreach ($result as $i => $item) {
             $this->assertArrayHasKey("contents", $result[$i], "Missing contents for response $i");
             $this->assertArrayHasKey("status", $result[$i], "Missing status for response $i");
         }
@@ -109,11 +109,11 @@ class BulkApiTest extends TestCase
     {
         $api = new RestService();
         $api->user = $GLOBALS['current_user'];
-        $requests = array(
-            array('Xurl' => '/v10/me', 'method' => 'GET'),
-        );
+        $requests = [
+            ['Xurl' => '/v10/me', 'method' => 'GET'],
+        ];
         $apiClass = new BulkApi();
-        $args = array("requests" => $requests);
+        $args = ["requests" => $requests];
 
         $this->expectException(SugarApiExceptionMissingParameter::class);
         $apiClass->bulkCall($api, $args);

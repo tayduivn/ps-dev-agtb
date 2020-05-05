@@ -32,7 +32,7 @@ class RS164Test extends TestCase
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setUp('current_user', array(true, false));
+        SugarTestHelper::setUp('current_user', [true, false]);
         self::$rest = SugarTestRestUtilities::getRestServiceMock();
     }
 
@@ -51,7 +51,7 @@ class RS164Test extends TestCase
     {
         $result = $this->api->getCSSURLs(
             self::$rest,
-            array()
+            []
         );
         $this->assertArrayHasKey('url', $result);
     }
@@ -61,7 +61,7 @@ class RS164Test extends TestCase
         $this->expectOutputRegex('/padding|margin/');
         $this->api->previewCSS(
             self::$rest,
-            array()
+            []
         );
     }
 
@@ -69,7 +69,7 @@ class RS164Test extends TestCase
     {
         $result = $this->api->getCustomThemeVars(
             self::$rest,
-            array()
+            []
         );
         $this->assertNotEmpty($result);
     }
@@ -79,7 +79,7 @@ class RS164Test extends TestCase
         $this->expectException(SugarApiExceptionNotAuthorized::class);
         $this->api->updateCustomTheme(
             self::$rest,
-            array()
+            []
         );
     }
 
@@ -89,7 +89,7 @@ class RS164Test extends TestCase
         $rest = SugarTestRestUtilities::getRestServiceMock($admin);
         $result = $this->api->updateCustomTheme(
             $rest,
-            array('Border' => '#AAAAAA')
+            ['Border' => '#AAAAAA']
         );
         $this->assertNotEmpty($result);
     }

@@ -15,18 +15,19 @@
 
 class SugarTestProductCategoryUtilities
 {
-    protected static $_createdProductCategories = array();
+    protected static $_createdProductCategories = [];
 
-    private function __construct() {}
+    private function __construct()
+    {
+    }
 
-    public static function createProductCategory($id = '') 
+    public static function createProductCategory($id = '')
     {
         $time = mt_rand();
         $name = 'SugarProductCategory';
         $product_category = new ProductCategory();
         $product_category->name = $name . $time;
-        if(!empty($id))
-        {
+        if (!empty($id)) {
             $product_category->new_with_id = true;
             $product_category->id = $id;
         }
@@ -37,30 +38,28 @@ class SugarTestProductCategoryUtilities
 
     public static function setCreatedProductCategory($product_category_ids)
     {
-        foreach($product_category_ids as $product_category_id)
-        {
+        foreach ($product_category_ids as $product_category_id) {
             $product_category_id = new ProductCategory();
             $product_category->id = $product_category_id;
             self::$_createdProductCategories[] = $product_category;
         }
     }
 
-    public static function removeAllCreatedProductCategories() 
+    public static function removeAllCreatedProductCategories()
     {
         $db = DBManagerFactory::getInstance();
-        $conditions = implode(',', array_map(array($db, 'quoted'), self::getCreatedProductCategoryIds()));
+        $conditions = implode(',', array_map([$db, 'quoted'], self::getCreatedProductCategoryIds()));
         if (!empty($conditions)) {
             $db->query('DELETE FROM product_categories WHERE id IN (' . $conditions . ')');
         }
 
-        self::$_createdProductCategories = array();
+        self::$_createdProductCategories = [];
     }
 
-    public static function getCreatedProductCategoryIds() 
+    public static function getCreatedProductCategoryIds()
     {
-        $product_category_ids = array();
-        foreach (self::$_createdProductCategories as $product_category)
-        {
+        $product_category_ids = [];
+        foreach (self::$_createdProductCategories as $product_category) {
             $product_category_ids[] = $product_category->id;
         }
         return $product_category_ids;

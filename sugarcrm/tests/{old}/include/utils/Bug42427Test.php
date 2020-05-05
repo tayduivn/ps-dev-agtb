@@ -63,6 +63,6 @@ class Bug42427Test extends TestCase
 
         $strings = return_app_list_strings_language('de_test');
 
-        $this->assertArrayHasKey('lead_source_default_key',$strings);
+        $this->assertArrayHasKey('lead_source_default_key', $strings);
     }
 }

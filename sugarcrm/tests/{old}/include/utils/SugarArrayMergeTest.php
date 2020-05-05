@@ -19,64 +19,64 @@ class SugarArrayMergeTest extends TestCase
     /**
      * @ticket 17142
      */
-    public function testSubArrayOrderIsPreserved() 
+    public function testSubArrayOrderIsPreserved()
     {
-        $array1 = array(
-            'dog' => array(
+        $array1 = [
+            'dog' => [
                 'dog1' => 'dog1',
                 'dog2' => 'dog2',
                 'dog3' => 'dog3',
                 'dog4' => 'dog4',
-                )
-            );
+                ],
+            ];
         
-        $array2 = array(
-            'dog' => array(
+        $array2 = [
+            'dog' => [
                 'dog2' => 'dog2',
                 'dog1' => 'dog1',
                 'dog3' => 'dog3',
                 'dog4' => 'dog4',
-                )
-            );
+                ],
+            ];
         
-        $results = sugarArrayMerge($array1,$array2);
+        $results = sugarArrayMerge($array1, $array2);
         
         $keys1 = array_keys($results['dog']);
         $keys2 = array_keys($array2['dog']);
         
-        for ( $i = 0; $i < 4; $i++ ) {
-            $this->assertEquals($keys1[$i],$keys2[$i]);
+        for ($i = 0; $i < 4; $i++) {
+            $this->assertEquals($keys1[$i], $keys2[$i]);
         }
     }
     
     public function testSugarArrayMergeMergesTwoArraysWithLikeKeysOverwritingExistingKeys()
     {
-        $foo = array(
+        $foo = [
             'one' => 123,
             'two' => 123,
-            'foo' => array(
+            'foo' => [
                 'int' => 123,
                 'foo' => 'bar',
-            ),
-        );
-        $bar = array(
+            ],
+        ];
+        $bar = [
             'one' => 123,
             'two' => 321,
-            'foo' => array(
+            'foo' => [
                 'int' => 123,
                 'bar' => 'foo',
-            ),
-        );
+            ],
+        ];
         
-        $expected = array(
-            'one' => 123, 
+        $expected = [
+            'one' => 123,
             'two' => 321,
-            'foo' => array(
+            'foo' => [
                 'int' => 123,
                 'foo' => 'bar',
                 'bar' => 'foo',
-            ),
-        );
+            ],
+        ];
         $this->assertEquals(sugarArrayMerge($foo, $bar), $expected);
         // insure that internal functions can't duplicate behavior
         $this->assertNotEquals(array_merge($foo, $bar), $expected);

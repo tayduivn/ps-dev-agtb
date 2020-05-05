@@ -13,10 +13,12 @@
 
 class SugarTestUserUtilities
 {
-    private static $_createdUsers          = array();
-    private static $_createdUserSignatures = array();
+    private static $_createdUsers          = [];
+    private static $_createdUserSignatures = [];
 
-    private function __construct() {}
+    private function __construct()
+    {
+    }
 
     /**
      * Create an anonymous User.
@@ -26,15 +28,15 @@ class SugarTestUserUtilities
      * @param array $fields Fields to assign to the User bean.
      * @return User The created user.
      */
-    public static function createAnonymousUser($save = true, $is_admin=0, $fields=array())
+    public static function createAnonymousUser($save = true, $is_admin = 0, $fields = [])
     {
-        if (isset($_REQUEST['action'])) { 
-        unset($_REQUEST['action']);
+        if (isset($_REQUEST['action'])) {
+            unset($_REQUEST['action']);
         }
         
         $time = mt_rand();
-    	$userId = 'SugarUser';
-    	$user = BeanFactory::newBean("Users");
+        $userId = 'SugarUser';
+        $user = BeanFactory::newBean("Users");
         $user->user_name = $userId . $time;
         $user->user_hash = md5($userId.$time);
         $user->first_name = $userId;
@@ -60,7 +62,7 @@ class SugarTestUserUtilities
 
         $user->default_team = '1'; //Set Default Team to Global
         $user->team_id = '1';
-        if ( $save ) {
+        if ($save) {
             $user->save();
         }
 
@@ -72,7 +74,7 @@ class SugarTestUserUtilities
     public static function removeAllCreatedAnonymousUsers()
     {
         $user_ids = self::getCreatedUserIds();
-        if ( count($user_ids) > 0 ) {
+        if (count($user_ids) > 0) {
             $in = "'" . implode("', '", $user_ids) . "'";
             $GLOBALS['db']->query("DELETE FROM users WHERE id IN ({$in})");
             $GLOBALS['db']->query("DELETE FROM user_preferences WHERE assigned_user_id IN ({$in})");
@@ -84,7 +86,7 @@ class SugarTestUserUtilities
             $GLOBALS['db']->query("DELETE FROM emails_beans WHERE bean_module='Users' AND bean_id IN ({$in})");
             $GLOBALS['db']->query("DELETE FROM email_addr_bean_rel WHERE bean_module='Users' AND bean_id IN ({$in})");
         }
-        self::$_createdUsers = array();
+        self::$_createdUsers = [];
     }
 
     public static function setCreatedUser($userIds)
@@ -96,11 +98,11 @@ class SugarTestUserUtilities
         }
     }
 
-    public static function getCreatedUserIds() 
+    public static function getCreatedUserIds()
     {
-        $user_ids = array();
+        $user_ids = [];
         foreach (self::$_createdUsers as $user) {
-            if ( is_object($user) && $user instanceOf User && $user->id != false) {
+            if (is_object($user) && $user instanceof User && $user->id != false) {
                 $user_ids[] = $user->id;
             }
         }
@@ -132,10 +134,10 @@ class SugarTestUserUtilities
 
     public static function getCreatedUserSignatureIds()
     {
-        $signatureIds = array();
+        $signatureIds = [];
 
         foreach (self::$_createdUserSignatures as $signature) {
-            if (is_object($signature) && $signature instanceOf UserSignature) {
+            if (is_object($signature) && $signature instanceof UserSignature) {
                 $signatureIds[] = $signature->id;
             }
         }
@@ -151,6 +153,6 @@ class SugarTestUserUtilities
             $GLOBALS["db"]->query("DELETE FROM users_signatures WHERE id IN ('" . implode("','", $ids) . "')");
         }
 
-        self::$_createdUserSignatures = array();
+        self::$_createdUserSignatures = [];
     }
 }

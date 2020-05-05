@@ -11,7 +11,8 @@
  */
 
 
-class RestServerInfoTest extends RestTestBase {
+class RestServerInfoTest extends RestTestBase
+{
     protected function setUp() : void
     {
         parent::setUp();
@@ -25,9 +26,10 @@ class RestServerInfoTest extends RestTestBase {
     /**
      * @group rest
      */
-    public function testServerInfo() {
+    public function testServerInfo()
+    {
         // Test Server Fetch
-        // SIDECAR-14 - Changed endpoint of the test to be consistent with moving 
+        // SIDECAR-14 - Changed endpoint of the test to be consistent with moving
         // server info into the metadata api
         $restReply = $this->_restCall("metadata?type_filter=server_info");
 

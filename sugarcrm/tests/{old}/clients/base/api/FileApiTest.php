@@ -30,7 +30,7 @@ class FileApiTest extends TestCase
         SugarTestHelper::setUp("current_user");
         SugarTestHelper::setUp("ACLStatic");
         // load up the unifiedSearchApi for good times ahead
-        $this->fileApi = $this->createPartialMock('FileApi', array('getDownloadFileApi'));
+        $this->fileApi = $this->createPartialMock('FileApi', ['getDownloadFileApi']);
         $this->fileApi
             ->expects($this->any())
             ->method('getDownloadFileApi')
@@ -52,7 +52,7 @@ class FileApiTest extends TestCase
             @unlink($this->tempFileTo);
         }
 
-        foreach($this->documents AS $document) {
+        foreach ($this->documents as $document) {
             $document->mark_deleted($document->id);
         }
 
@@ -63,55 +63,55 @@ class FileApiTest extends TestCase
     {
         $this->denyDocumentView();
         $this->expectException(SugarApiExceptionNotAuthorized::class);
-        $this->fileApi->saveFilePost(SugarTestRestUtilities::getRestServiceMock(), array(
+        $this->fileApi->saveFilePost(SugarTestRestUtilities::getRestServiceMock(), [
             'module' => 'Documents',
             'record' => $this->documents[0]->id,
             'field' => 'filename',
-        ));
+        ]);
     }
 
     public function testGetFileList()
     {
         $this->denyDocumentView();
         $this->expectException(SugarApiExceptionNotAuthorized::class);
-        $this->fileApi->getFileList(SugarTestRestUtilities::getRestServiceMock(), array(
+        $this->fileApi->getFileList(SugarTestRestUtilities::getRestServiceMock(), [
             'module' => 'Documents',
             'record' => $this->documents[0]->id,
             'field' => 'filename',
-        ));
+        ]);
     }
 
     private function denyDocumentView()
     {
         global $current_user;
 
-        ACLAction::setACLData($current_user->id, 'Documents', array(
-            'module' => array(
-                'view' => array(
+        ACLAction::setACLData($current_user->id, 'Documents', [
+            'module' => [
+                'view' => [
                     'aclaccess' => ACL_ALLOW_NONE,
-                ),
-            ),
-        ));
+                ],
+            ],
+        ]);
     }
 
     public function testCreateTempFileFromInput()
     {
         // Tests checking encoding requests
-        $encoded = SugarTestReflection::callProtectedMethod($this->fileApi, 'isFileEncoded', array(
+        $encoded = SugarTestReflection::callProtectedMethod($this->fileApi, 'isFileEncoded', [
             SugarTestRestUtilities::getRestServiceMock(),
-            array(
+            [
                 'content_transfer_encoding' => 'base64',
-            ),
-        ));
+            ],
+        ]);
         $this->assertTrue($encoded, "Encoded request check failed");
 
         // Handle our test of file encoding
         $this->tempFileTo = $this->fileApi->getTempFileName();
-        SugarTestReflection::callProtectedMethod($this->fileApi, 'createTempFileFromInput', array(
+        SugarTestReflection::callProtectedMethod($this->fileApi, 'createTempFileFromInput', [
             $this->tempFileTo,
             $this->tempFileFrom,
             $encoded,
-        ));
+        ]);
 
         // Test that the temporary file was created
         $this->assertFileExists($this->tempFileTo, "Temp file was not created");
@@ -125,19 +125,19 @@ class FileApiTest extends TestCase
     public function testCreateTempFileFromInputNoEncoding()
     {
         // Tests checking encoding requests
-        $encoded = SugarTestReflection::callProtectedMethod($this->fileApi, 'isFileEncoded', array(
+        $encoded = SugarTestReflection::callProtectedMethod($this->fileApi, 'isFileEncoded', [
             SugarTestRestUtilities::getRestServiceMock(),
-            array(),
-        ));
+            [],
+        ]);
         $this->assertFalse($encoded, "Second encoded request check failed");
 
         // Handle our test of file encoding
         $this->tempFileTo = $this->fileApi->getTempFileName();
-        SugarTestReflection::callProtectedMethod($this->fileApi, 'createTempFileFromInput', array(
+        SugarTestReflection::callProtectedMethod($this->fileApi, 'createTempFileFromInput', [
             $this->tempFileTo,
             $this->tempFileFrom,
             $encoded,
-        ));
+        ]);
 
         // Test that the temporary file was created
         $this->assertFileExists($this->tempFileTo, "Temp file was not created");
@@ -153,9 +153,9 @@ class FileApiTest extends TestCase
      */
     public function testGetDownloadFileApi()
     {
-        $result = SugarTestReflection::callProtectedMethod(new FileApi(), 'getDownloadFileApi', array(
+        $result = SugarTestReflection::callProtectedMethod(new FileApi(), 'getDownloadFileApi', [
             SugarTestRestUtilities::getRestServiceMock(),
-        ));
+        ]);
 
         $this->assertInstanceOf('DownloadFileApi', $result);
     }

@@ -24,7 +24,7 @@ class Bug48901Test extends TestCase
     private $_timeperiod;
     protected function setUp() : void
     {
-        SugarTestHelper::setUp('current_user', array(true));
+        SugarTestHelper::setUp('current_user', [true]);
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -57,14 +57,14 @@ class Bug48901Test extends TestCase
         $bean->committed = 0;
         $bean->save();
 
-        SugarTestQuotaUtilities::setCreatedQuota(array($bean->id));
+        SugarTestQuotaUtilities::setCreatedQuota([$bean->id]);
 
         $amount2 = $focus->getGroupQuota($this->_timeperiod->id, false);
 
         $this->assertEquals($amount2 - $amount, $ammount_diff);
-        $data = SugarTestReflection::callProtectedMethod($bean, 'getUserManagedSelectData', array(
+        $data = SugarTestReflection::callProtectedMethod($bean, 'getUserManagedSelectData', [
             $this->_timeperiod->id,
-        ));
+        ]);
         $this->assertContains($user->id, $this->getUsersArray($data));
 
         $user->mark_deleted($user->id);
@@ -72,17 +72,16 @@ class Bug48901Test extends TestCase
         $amount2 = $focus->getGroupQuota($this->_timeperiod->id, false);
 
         $this->assertEquals($amount, $amount2);
-        $data = SugarTestReflection::callProtectedMethod($bean, 'getUserManagedSelectData', array(
+        $data = SugarTestReflection::callProtectedMethod($bean, 'getUserManagedSelectData', [
             $this->_timeperiod->id,
-        ));
+        ]);
         $this->assertNotContains($user->id, $this->getUsersArray($data));
     }
 
     private function getUsersArray($data)
     {
-        $result = array();
-        foreach($data as $k => $v)
-        {
+        $result = [];
+        foreach ($data as $k => $v) {
             array_push($result, $v['user_id']);
         }
         return $result;

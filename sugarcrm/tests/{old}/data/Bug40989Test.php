@@ -18,27 +18,27 @@ class Bug40989Test extends TestCase
     protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user');
-	}
+    }
 
     protected function tearDown() : void
-	{
+    {
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestHelper::tearDown();
-	}
+    }
 
     /*
      * @group bug40989
      */
     public function testRetrieveByStringFieldsFetchedRow()
     {
-        $contact = SugarTestContactUtilities::createContact(null, array(
+        $contact = SugarTestContactUtilities::createContact(null, [
             'last_name' => 'Bug40989Test',
-        ));
+        ]);
 
         $loadedContact = BeanFactory::newBean('Contacts');
-        $loadedContact = $loadedContact->retrieve_by_string_fields(array(
+        $loadedContact = $loadedContact->retrieve_by_string_fields([
             'last_name' => $contact->last_name,
-        ));
+        ]);
         $this->assertEquals($contact->last_name, $loadedContact->fetched_row['last_name']);
     }
 
@@ -47,7 +47,7 @@ class Bug40989Test extends TestCase
         $loadedContact = SugarTestContactUtilities::createContact();
         $loadedContact->disable_row_level_security = true;
         $contactList = $loadedContact->get_full_list();
-        $exampleContact = array_pop($contactList);	
+        $exampleContact = array_pop($contactList);
         $this->assertNotNull($exampleContact->fetched_row['id']);
     }
 }

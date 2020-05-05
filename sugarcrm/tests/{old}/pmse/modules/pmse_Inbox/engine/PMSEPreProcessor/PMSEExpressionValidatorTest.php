@@ -30,7 +30,7 @@ class PMSEExpressionValidatorTest extends TestCase
     {
         $this->loggerMock = $this->getMockBuilder('PMSELogger')
             ->disableOriginalConstructor()
-            ->setMethods(array('info', 'debug'))
+            ->setMethods(['info', 'debug'])
             ->getMock();
     }
 
@@ -38,20 +38,20 @@ class PMSEExpressionValidatorTest extends TestCase
     {
         $expressionValidatorMock = $this->getMockBuilder('PMSEExpressionValidator')
             ->disableOriginalConstructor()
-            ->setMethods(array('validateExpression', 'validateParamsRelated'))
+            ->setMethods(['validateExpression', 'validateParamsRelated'])
             ->getMock();
 
         $expressionValidatorMock->setLogger($this->loggerMock);
 
         $request = ProcessManager\Factory::getPMSEObject('PMSERequest');
-        $request->setFlowData(array('evn_id' => 'NO_TERMINATE'));
+        $request->setFlowData(['evn_id' => 'NO_TERMINATE']);
         $request->setBean(new stdClass());
 
         $expressionValidatorMock->expects($this->once())
             ->method('validateExpression');
         $expressionValidatorMock->expects($this->once())
             ->method('validateParamsRelated')
-            ->will($this->returnValue(array()));
+            ->will($this->returnValue([]));
 
         $expressionValidatorMock->validateRequest($request);
     }
@@ -59,7 +59,7 @@ class PMSEExpressionValidatorTest extends TestCase
     public function testValidateExpressionEmpty()
     {
         $request = ProcessManager\Factory::getPMSEObject('PMSERequest');
-        $flowDataMock = array('evn_criteria' => '[]');
+        $flowDataMock = ['evn_criteria' => '[]'];
         $beanMock = new stdClass();
 
         $expressionValidatorMock = $this->getMockBuilder('PMSEExpressionValidator')
@@ -72,7 +72,7 @@ class PMSEExpressionValidatorTest extends TestCase
 
         $expressionEvaluatorMock = $this->getMockBuilder('PMSEEvaluator')
             ->disableOriginalConstructor()
-            ->setMethods(array('evaluateExpression', 'condition'))
+            ->setMethods(['evaluateExpression', 'condition'])
             ->getMock();
 
         $expressionValidatorMock->expects($this->any())
@@ -87,7 +87,7 @@ class PMSEExpressionValidatorTest extends TestCase
     public function testValidateExpressionWithConditionTrue()
     {
         $request = ProcessManager\Factory::getPMSEObject('PMSERequest');
-        $flowDataMock = array('evn_criteria' => '[{1==1}]');
+        $flowDataMock = ['evn_criteria' => '[{1==1}]'];
         $beanMock = new stdClass();
 
         $expressionValidatorMock = $this->getMockBuilder('PMSEExpressionValidator')
@@ -97,7 +97,7 @@ class PMSEExpressionValidatorTest extends TestCase
         $expressionValidatorMock->setLevel(1);
         $expressionEvaluatorMock = $this->getMockBuilder('PMSEEvaluator')
             ->disableOriginalConstructor()
-            ->setMethods(array('evaluateExpression', 'condition'))
+            ->setMethods(['evaluateExpression', 'condition'])
             ->getMock();
 
         $expressionEvaluatorMock->expects($this->once())
@@ -114,7 +114,7 @@ class PMSEExpressionValidatorTest extends TestCase
     public function testValidateExpressionWithConditionFalse()
     {
         $request = ProcessManager\Factory::getPMSEObject('PMSERequest');
-        $flowDataMock = array('evn_criteria' => '[{1==1}]');
+        $flowDataMock = ['evn_criteria' => '[{1==1}]'];
         $beanMock = new stdClass();
 
         $expressionValidatorMock = $this->getMockBuilder('PMSEExpressionValidator')
@@ -125,7 +125,7 @@ class PMSEExpressionValidatorTest extends TestCase
 
         $expressionEvaluatorMock = $this->getMockBuilder('PMSEEvaluator')
             ->disableOriginalConstructor()
-            ->setMethods(array('evaluateExpression', 'condition'))
+            ->setMethods(['evaluateExpression', 'condition'])
             ->getMock();
 
         $expressionEvaluatorMock->expects($this->once())
@@ -143,26 +143,26 @@ class PMSEExpressionValidatorTest extends TestCase
     {
         $request = ProcessManager\Factory::getPMSEObject('PMSERequest');
         $request->setExternalAction('EVALUATE_MAIN_MODULE');
-        $flowDataMock = array('evn_criteria' => '[{1==1}]', 'cas_sugar_module'=>'Leads', 'cas_sugar_object_id' => 'id');
+        $flowDataMock = ['evn_criteria' => '[{1==1}]', 'cas_sugar_module'=>'Leads', 'cas_sugar_object_id' => 'id'];
         $beanMock = new stdClass();
         $beanMock->id = "id";
         $beanMock->module_name = "Leads";
 
         $expressionValidatorMock = $this->getMockBuilder('PMSEExpressionValidator')
             ->disableOriginalConstructor()
-            ->setMethods(NULL)
+            ->setMethods(null)
             ->getMock();
 
         $expressionValidatorMock->setLogger($this->loggerMock);
         $result = $expressionValidatorMock->validateParamsRelated($beanMock, $flowDataMock, $request);
-        $this->assertEquals(array(), $result);
+        $this->assertEquals([], $result);
     }
 
     public function testValidateParamsRelatedWithRelationship()
     {
         $request = ProcessManager\Factory::getPMSEObject('PMSERequest');
         $request->setExternalAction('EVALUATE_RELATED_MODULE');
-        $flowDataMock = array('evn_criteria' => '[{1==1}]');
+        $flowDataMock = ['evn_criteria' => '[{1==1}]'];
         $flowDataMock['rel_process_module'] = 'PARENT_MODULE';
         $flowDataMock['cas_sugar_object_id'] = 'PARENT_ID';
         $flowDataMock['rel_element_relationship'] = 'MODULE_RELATIONSHIP';
@@ -171,22 +171,22 @@ class PMSEExpressionValidatorTest extends TestCase
 
         $beanMock = $this->getMockBuilder('SugarBean')
             ->disableOriginalConstructor()
-            ->setMethods(array('load_relationships'))
+            ->setMethods(['load_relationships'])
             ->getMock();
 
         $expressionValidatorMock = $this->getMockBuilder('PMSEExpressionValidator')
             ->disableOriginalConstructor()
-            ->setMethods(array('hasValidRelationship'))
+            ->setMethods(['hasValidRelationship'])
             ->getMock();
         $expressionValidatorMock->expects($this->any())
             ->method('hasValidRelationship')
             ->will($this->returnValue(true));
 
-        $paramsResult = array(
-            'replace_fields' => array(
-                'MODULE_RELATIONSHIP' => 'MODULE_ELEMENT'
-            )
-        );
+        $paramsResult = [
+            'replace_fields' => [
+                'MODULE_RELATIONSHIP' => 'MODULE_ELEMENT',
+            ],
+        ];
 
         $expressionValidatorMock->setLogger($this->loggerMock);
         $result = $expressionValidatorMock->validateParamsRelated($beanMock, $flowDataMock, $request);
@@ -197,7 +197,7 @@ class PMSEExpressionValidatorTest extends TestCase
     {
         $request = ProcessManager\Factory::getPMSEObject('PMSERequest');
         $request->setExternalAction('EVALUATE_RELATED_MODULE');
-        $flowDataMock = array('evn_criteria' => '[{1==1}]');
+        $flowDataMock = ['evn_criteria' => '[{1==1}]'];
         $flowDataMock['rel_process_module'] = 'PARENT_MODULE';
         $flowDataMock['cas_sugar_object_id'] = 'PARENT_ID';
         $flowDataMock['rel_element_relationship'] = 'MODULE_RELATIONSHIP';
@@ -206,18 +206,18 @@ class PMSEExpressionValidatorTest extends TestCase
 
         $beanMock = $this->getMockBuilder('SugarBean')
             ->disableOriginalConstructor()
-            ->setMethods(array('load_relationships'))
+            ->setMethods(['load_relationships'])
             ->getMock();
 
         $expressionValidatorMock = $this->getMockBuilder('PMSEExpressionValidator')
             ->disableOriginalConstructor()
-            ->setMethods(array('hasValidRelationship'))
+            ->setMethods(['hasValidRelationship'])
             ->getMock();
         $expressionValidatorMock->expects($this->any())
             ->method('hasValidRelationship')
             ->will($this->returnValue(false));
 
-        $paramsResult = array();
+        $paramsResult = [];
 
         $expressionValidatorMock->setLogger($this->loggerMock);
         $result = $expressionValidatorMock->validateParamsRelated($beanMock, $flowDataMock, $request);

@@ -59,18 +59,18 @@ class SugarForecasting_Export_IndividualTest extends TestCase
 
     protected function setUp() : void
     {
-        SugarTestForecastUtilities::setUpForecastConfig(array(
-                'forecast_by' => 'Opportunities'
-            ));
+        SugarTestForecastUtilities::setUpForecastConfig([
+                'forecast_by' => 'Opportunities',
+            ]);
         $this->manager = SugarTestForecastUtilities::createForecastUser();
 
         $this->reportee = SugarTestForecastUtilities::createForecastUser(
-            array('user' => array('reports_to' => $this->manager['user']->id))
+            ['user' => ['reports_to' => $this->manager['user']->id]]
         );
 
         $this->timeperiod = SugarTestForecastUtilities::getCreatedTimePeriod();
 
-        $this->managerData = array(
+        $this->managerData = [
             "amount" => $this->manager['opportunities_total'],
             "quota" => $this->manager['quota']->amount,
             "quota_id" => $this->manager['quota']->id,
@@ -89,10 +89,10 @@ class SugarForecasting_Export_IndividualTest extends TestCase
             "id" => $this->manager['user']->id,
             "name" => 'Opportunities (' . $this->manager['user']->first_name . ' ' . $this->manager['user']->last_name . ')',
             "user_id" => $this->manager['user']->id,
-            "timeperiod_id" => $this->timeperiod->id
-        );
+            "timeperiod_id" => $this->timeperiod->id,
+        ];
 
-        $this->repData = array(
+        $this->repData = [
             "amount" => $this->reportee['opportunities_total'],
             "quota" => $this->reportee['quota']->amount,
             "quota_id" => $this->reportee['quota']->id,
@@ -111,8 +111,8 @@ class SugarForecasting_Export_IndividualTest extends TestCase
             "id" => $this->reportee['user']->id,
             "name" => $this->reportee['user']->first_name . ' ' . $this->reportee['user']->last_name,
             "user_id" => $this->reportee['user']->id,
-            "timeperiod_id" => $this->timeperiod->id
-        );
+            "timeperiod_id" => $this->timeperiod->id,
+        ];
     }
 
     protected function tearDown() : void
@@ -128,15 +128,15 @@ class SugarForecasting_Export_IndividualTest extends TestCase
      */
     public function exportForecastWorksheetProvider()
     {
-        return array
-        (
-            array('show_worksheet_best', '1', 'assertMatchesRegularExpression', '/Best/'),
-            array('show_worksheet_best', '0', 'assertDoesNotMatchRegularExpression', '/Best/'),
-            array('show_worksheet_likely', '1', 'assertMatchesRegularExpression', '/Likely/'),
-            array('show_worksheet_likely', '0', 'assertDoesNotMatchRegularExpression', '/Likely/'),
-            array('show_worksheet_worst', '1', 'assertMatchesRegularExpression', '/Worst/'),
-            array('show_worksheet_worst', '0', 'assertDoesNotMatchRegularExpression', '/Worst/'),
-        );
+        return
+        [
+            ['show_worksheet_best', '1', 'assertMatchesRegularExpression', '/Best/'],
+            ['show_worksheet_best', '0', 'assertDoesNotMatchRegularExpression', '/Best/'],
+            ['show_worksheet_likely', '1', 'assertMatchesRegularExpression', '/Likely/'],
+            ['show_worksheet_likely', '0', 'assertDoesNotMatchRegularExpression', '/Likely/'],
+            ['show_worksheet_worst', '1', 'assertMatchesRegularExpression', '/Worst/'],
+            ['show_worksheet_worst', '0', 'assertDoesNotMatchRegularExpression', '/Worst/'],
+        ];
     }
 
     /**
@@ -153,10 +153,10 @@ class SugarForecasting_Export_IndividualTest extends TestCase
     {
         global $current_user;
         $current_user = $this->reportee['user'];
-        $args = array();
+        $args = [];
         $args['timeperiod_id'] = $this->timeperiod->id;
         $args['user_id'] = $this->repData['id'];
-        $args['filters'] = array('include');
+        $args['filters'] = ['include'];
 
         //hide/show any columns
         SugarTestConfigUtilities::setConfig('Forecasts', $hide, $value);
@@ -178,7 +178,7 @@ class SugarForecasting_Export_IndividualTest extends TestCase
      */
     public function testGetFilename()
     {
-        $args = array();
+        $args = [];
         $args['timeperiod_id'] = $this->timeperiod->id;
         $args['user_id'] = $this->repData['id'];
         $obj = new SugarForecasting_Export_Individual($args);

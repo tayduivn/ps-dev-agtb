@@ -18,7 +18,7 @@ class SugarACLUsersTest extends TestCase
     /**
      * @var array
      */
-    private $sugarConfigBackup = array();
+    private $sugarConfigBackup = [];
 
     /**
      * {@inheritdoc}
@@ -47,33 +47,33 @@ class SugarACLUsersTest extends TestCase
      */
     public static function checkAccessDataProvider()
     {
-        return array(
+        return [
             // We can get it only from Users/Employees module
-            array('Accounts', 'view', false, array(), array(), false),
+            ['Accounts', 'view', false, [], [], false],
             // Let the other modules decide about acl access
-            array('Users', 'team_security', false, array(), array(), true),
+            ['Users', 'team_security', false, [], [], true],
             // Regular user in any way should have access to export functionality
             // if both disable_export & admin_export_only are not checked
-            array('Users', 'export', false, array(),
-                array('disable_export' => false, 'admin_export_only' => false), true),
+            ['Users', 'export', false, [],
+                ['disable_export' => false, 'admin_export_only' => false], true],
             // Regular user should have access to export functionality in Employees module
             // if both disable_export & admin_export_only are not checked
-            array('Employees', 'export', false, array(),
-                array('disable_export' => false, 'admin_export_only' => false), true),
+            ['Employees', 'export', false, [],
+                ['disable_export' => false, 'admin_export_only' => false], true],
             // Regular user doesn't have access to export functionality if admin_export_only is true
-            array('Employees', 'export', false, array(),
-                array('disable_export' => false, 'admin_export_only' => true), false),
+            ['Employees', 'export', false, [],
+                ['disable_export' => false, 'admin_export_only' => true], false],
             // Admin user has access to export
-            array('Users', 'export', true, array(),
-                array('disable_export' => false, 'admin_export_only' => true), true),
+            ['Users', 'export', true, [],
+                ['disable_export' => false, 'admin_export_only' => true], true],
             // Admin user doesn't have access to export if disable_export is true
-            array('Users', 'export', true, array(),
-                array('disable_export' => true, 'admin_export_only' => true), false),
+            ['Users', 'export', true, [],
+                ['disable_export' => true, 'admin_export_only' => true], false],
             // This is another way to disable yourself
-            array('Users', 'field', false, array('action' => 'edit', 'field' => 'status'), array(), false),
-            array('Users', 'field', false, array('action' => 'massupdate', 'field' => 'status'), array(), false),
-            array('Users', 'field', false, array('action' => 'delete', 'field' => 'status'), array(), false),
-        );
+            ['Users', 'field', false, ['action' => 'edit', 'field' => 'status'], [], false],
+            ['Users', 'field', false, ['action' => 'massupdate', 'field' => 'status'], [], false],
+            ['Users', 'field', false, ['action' => 'delete', 'field' => 'status'], [], false],
+        ];
     }
 
     /**
@@ -90,7 +90,7 @@ class SugarACLUsersTest extends TestCase
      */
     public function testCheckAccess($module, $view, $isAdmin, $context, $config, $expected)
     {
-        SugarTestHelper::setUp('current_user', array(true, $isAdmin));
+        SugarTestHelper::setUp('current_user', [true, $isAdmin]);
         global $current_user;
         $context['bean'] = $current_user;
 
@@ -142,7 +142,7 @@ class SugarACLUsersTest extends TestCase
      */
     public function testAccessToDelete($isAdmin, $isMyself, $anotherAdmins, $expected)
     {
-        SugarTestHelper::setup('current_user', array(true, $isAdmin));
+        SugarTestHelper::setup('current_user', [true, $isAdmin]);
         global $current_user;
 
         /** @var SugarACLUsers|MockObject $acl */
@@ -165,7 +165,7 @@ class SugarACLUsersTest extends TestCase
      */
     public static function accessToEditDataProvider()
     {
-        return array(
+        return [
             // You can edit youself
             [false, true, true],
             // You can not edit somebody if you are not admin
@@ -174,7 +174,7 @@ class SugarACLUsersTest extends TestCase
             [true, false, true],
             // You can edit user profile if you are admin
             [true, true, true],
-        );
+        ];
     }
 
     /**
@@ -188,7 +188,7 @@ class SugarACLUsersTest extends TestCase
      */
     public function testAccessToEditYourself($isAdmin, $isMyself, $expected)
     {
-        SugarTestHelper::setup('current_user', array(true, $isAdmin));
+        SugarTestHelper::setup('current_user', [true, $isAdmin]);
         global $current_user;
 
         /** @var SugarACLUsers|MockObject $acl */
@@ -208,7 +208,7 @@ class SugarACLUsersTest extends TestCase
      */
     public function testMyselfCheck()
     {
-        $current_user = SugarTestHelper::setup('current_user', array(true, false));
+        $current_user = SugarTestHelper::setup('current_user', [true, false]);
 
         $acl = new SugarACLUsers();
 
@@ -231,14 +231,14 @@ class SugarACLUsersTest extends TestCase
      */
     public static function checkFieldListDataProvider()
     {
-        return array(
+        return [
             // no_access_fields && no_edit_fields have already been checked in testAccessToFields
-            array(false, 'Users', array('status', 'employee_status'), 'edit', array(), true, array(false, false)),
-            array(false, 'Users', array('status', 'employee_status'), 'massupdate', array(), true, array(false, false)),
-            array(false, 'User', array('status', 'employee_status'), 'delete', array(), true, array(false, false)),
-            array(true, 'Users', array('user_hash', 'password'), 'field', array(), false, array(true, true)),
-            array(false, 'Users', array('user_hash', 'password'), 'field', array(), false, array(false, false)),
-        );
+            [false, 'Users', ['status', 'employee_status'], 'edit', [], true, [false, false]],
+            [false, 'Users', ['status', 'employee_status'], 'massupdate', [], true, [false, false]],
+            [false, 'User', ['status', 'employee_status'], 'delete', [], true, [false, false]],
+            [true, 'Users', ['user_hash', 'password'], 'field', [], false, [true, true]],
+            [false, 'Users', ['user_hash', 'password'], 'field', [], false, [false, false]],
+        ];
     }
 
     /**
@@ -255,10 +255,10 @@ class SugarACLUsersTest extends TestCase
      * */
     public function testCheckFieldList($isAdmin, $module, $field_list, $action, $context, $isMyself, $expected)
     {
-        SugarTestHelper::setup('current_user', array(true, $isAdmin));
+        SugarTestHelper::setup('current_user', [true, $isAdmin]);
 
         /** @var SugarACLUsers|MockObject $acl_class */
-        $acl_class = $this->createPartialMock('SugarACLUsers', array('myselfCheck'));
+        $acl_class = $this->createPartialMock('SugarACLUsers', ['myselfCheck']);
         $acl_class->expects($this->once())
             ->method('myselfCheck')
             ->will($this->returnValue($isMyself));

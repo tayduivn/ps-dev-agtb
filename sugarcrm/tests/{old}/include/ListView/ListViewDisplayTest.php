@@ -33,8 +33,7 @@ class ListViewDisplayTest extends TestCase
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
         global $sugar_config;
-        if(isset($sugar_config['save_query']))
-        {
+        if (isset($sugar_config['save_query'])) {
             $this->save_query = $sugar_config['save_query'];
         }
     }
@@ -42,26 +41,25 @@ class ListViewDisplayTest extends TestCase
     protected function tearDown() : void
     {
         global $sugar_config;
-        if(!empty($this->save_query))
-        {
+        if (!empty($this->save_query)) {
             $sugar_config['save_query'] = $this->save_query;
         }
-    	SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-    	unset($GLOBALS['current_user']);
-    	unset($GLOBALS['app_strings']);
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        unset($GLOBALS['current_user']);
+        unset($GLOBALS['app_strings']);
 
         SugarTestHelper::tearDown();
     }
 
     public function testConstructor()
     {
-        $this->assertInstanceOf('ListViewData',$this->_lvd->lvd);
+        $this->assertInstanceOf('ListViewData', $this->_lvd->lvd);
         $this->assertIsArray($this->_lvd->searchColumns);
     }
 
     public function testShouldProcessWhenConfigSaveQueryIsNotSet()
     {
-        if ( isset($GLOBALS['sugar_config']['save_query']) ) {
+        if (isset($GLOBALS['sugar_config']['save_query'])) {
             $oldsavequery = $GLOBALS['sugar_config']['save_query'];
         }
         $GLOBALS['sugar_config']['save_query'] = null;
@@ -69,14 +67,14 @@ class ListViewDisplayTest extends TestCase
         $this->assertTrue($this->_lvd->shouldProcess('foo'));
         $this->assertTrue($this->_lvd->should_process);
 
-        if ( isset($oldsavequery) ) {
+        if (isset($oldsavequery)) {
             $GLOBALS['sugar_config']['save_query'] = $oldsavequery;
         }
     }
 
     public function testShouldProcessWhenConfigSaveQueryIsNotPopulateOnly()
     {
-        if ( isset($GLOBALS['sugar_config']['save_query']) ) {
+        if (isset($GLOBALS['sugar_config']['save_query'])) {
             $oldsavequery = $GLOBALS['sugar_config']['save_query'];
         }
         $GLOBALS['sugar_config']['save_query'] = 'populate_always';
@@ -84,14 +82,14 @@ class ListViewDisplayTest extends TestCase
         $this->assertTrue($this->_lvd->shouldProcess('foo'));
         $this->assertTrue($this->_lvd->should_process);
 
-        if ( isset($oldsavequery) ) {
+        if (isset($oldsavequery)) {
             $GLOBALS['sugar_config']['save_query'] = $oldsavequery;
         }
     }
 
     public function testShouldProcessWhenGlobalDisplayListViewIsTrue()
     {
-        if ( isset($GLOBALS['sugar_config']['save_query']) ) {
+        if (isset($GLOBALS['sugar_config']['save_query'])) {
             $oldsavequery = $GLOBALS['sugar_config']['save_query'];
         }
         $GLOBALS['sugar_config']['save_query'] = 'populate_only';
@@ -100,14 +98,14 @@ class ListViewDisplayTest extends TestCase
         $this->assertTrue($this->_lvd->shouldProcess('foo'));
         $this->assertTrue($this->_lvd->should_process);
 
-        if ( isset($oldsavequery) ) {
+        if (isset($oldsavequery)) {
             $GLOBALS['sugar_config']['save_query'] = $oldsavequery;
         }
     }
 
     public function testShouldProcessWhenGlobalDisplayListViewIsFalseAndRequestClearQueryIsTrue()
     {
-        if ( isset($GLOBALS['sugar_config']['save_query']) ) {
+        if (isset($GLOBALS['sugar_config']['save_query'])) {
             $oldsavequery = $GLOBALS['sugar_config']['save_query'];
         }
         $GLOBALS['sugar_config']['save_query'] = 'populate_only';
@@ -118,14 +116,14 @@ class ListViewDisplayTest extends TestCase
         $this->assertFalse($this->_lvd->shouldProcess('foo'));
         $this->assertFalse($this->_lvd->should_process);
 
-        if ( isset($oldsavequery) ) {
+        if (isset($oldsavequery)) {
             $GLOBALS['sugar_config']['save_query'] = $oldsavequery;
         }
     }
 
     public function testShouldProcessWhenGlobalDisplayListViewIsFalseAndRequestClearQueryIsFalseAndModulesDoNotEqual()
     {
-        if ( isset($GLOBALS['sugar_config']['save_query']) ) {
+        if (isset($GLOBALS['sugar_config']['save_query'])) {
             $oldsavequery = $GLOBALS['sugar_config']['save_query'];
         }
         $GLOBALS['sugar_config']['save_query'] = 'populate_only';
@@ -136,14 +134,14 @@ class ListViewDisplayTest extends TestCase
         $this->assertTrue($this->_lvd->shouldProcess('foo'));
         $this->assertTrue($this->_lvd->should_process);
 
-        if ( isset($oldsavequery) ) {
+        if (isset($oldsavequery)) {
             $GLOBALS['sugar_config']['save_query'] = $oldsavequery;
         }
     }
 
     public function testShouldProcessWhenGlobalDisplayListViewIsFalseAndRequestClearQueryIsFalseAndModulesDoEqualAndQueryIsEmpty()
     {
-        if ( isset($GLOBALS['sugar_config']['save_query']) ) {
+        if (isset($GLOBALS['sugar_config']['save_query'])) {
             $oldsavequery = $GLOBALS['sugar_config']['save_query'];
         }
         $GLOBALS['sugar_config']['save_query'] = 'populate_only';
@@ -156,14 +154,14 @@ class ListViewDisplayTest extends TestCase
         $this->assertFalse($this->_lvd->shouldProcess('foo'));
         $this->assertFalse($this->_lvd->should_process);
 
-        if ( isset($oldsavequery) ) {
+        if (isset($oldsavequery)) {
             $GLOBALS['sugar_config']['save_query'] = $oldsavequery;
         }
     }
 
     public function testShouldProcessWhenGlobalDisplayListViewIsFalseAndRequestClearQueryIsFalseAndModulesDoEqualAndQueryEqualsMsi()
     {
-        if ( isset($GLOBALS['sugar_config']['save_query']) ) {
+        if (isset($GLOBALS['sugar_config']['save_query'])) {
             $oldsavequery = $GLOBALS['sugar_config']['save_query'];
         }
         $GLOBALS['sugar_config']['save_query'] = 'populate_only';
@@ -176,14 +174,14 @@ class ListViewDisplayTest extends TestCase
         $this->assertFalse($this->_lvd->shouldProcess('foo'));
         $this->assertFalse($this->_lvd->should_process);
 
-        if ( isset($oldsavequery) ) {
+        if (isset($oldsavequery)) {
             $GLOBALS['sugar_config']['save_query'] = $oldsavequery;
         }
     }
 
     public function testShouldProcessWhenGlobalDisplayListViewIsFalseAndRequestClearQueryIsFalseAndModulesDoNotEqualAndQueryDoesNotEqualsMsi()
     {
-        if ( isset($GLOBALS['sugar_config']['save_query']) ) {
+        if (isset($GLOBALS['sugar_config']['save_query'])) {
             $oldsavequery = $GLOBALS['sugar_config']['save_query'];
         }
         $GLOBALS['sugar_config']['save_query'] = 'populate_only';
@@ -196,14 +194,14 @@ class ListViewDisplayTest extends TestCase
         $this->assertTrue($this->_lvd->shouldProcess('foo'));
         $this->assertTrue($this->_lvd->should_process);
 
-        if ( isset($oldsavequery) ) {
+        if (isset($oldsavequery)) {
             $GLOBALS['sugar_config']['save_query'] = $oldsavequery;
         }
     }
 
     public function testShouldProcessWhenGlobalDisplayListViewIsFalseAndRequestClearQueryIsFalseAndModulesDoEqualAndLastSearchModEqualsModule()
     {
-        if ( isset($GLOBALS['sugar_config']['save_query']) ) {
+        if (isset($GLOBALS['sugar_config']['save_query'])) {
             $oldsavequery = $GLOBALS['sugar_config']['save_query'];
         }
         $GLOBALS['sugar_config']['save_query'] = 'populate_only';
@@ -217,14 +215,14 @@ class ListViewDisplayTest extends TestCase
         $this->assertFalse($this->_lvd->shouldProcess('foo'), 'Assert that ListViewDisplay->shouldProcess is false even if module is the same because no query was specified');
         $this->assertFalse($this->_lvd->should_process, 'Assert that ListViewDisplay->shouldProcess class variable is false');
 
-        if ( isset($oldsavequery) ) {
+        if (isset($oldsavequery)) {
             $GLOBALS['sugar_config']['save_query'] = $oldsavequery;
         }
     }
 
     public function testShouldProcessWhenGlobalDisplayListViewIsFalseAndRequestClearQueryIsFalseAndModulesDoEqualAndLastSearchModDoesNotEqualsModule()
     {
-        if ( isset($GLOBALS['sugar_config']['save_query']) ) {
+        if (isset($GLOBALS['sugar_config']['save_query'])) {
             $oldsavequery = $GLOBALS['sugar_config']['save_query'];
         }
         $GLOBALS['sugar_config']['save_query'] = 'populate_only';
@@ -237,21 +235,21 @@ class ListViewDisplayTest extends TestCase
         $this->assertFalse($this->_lvd->shouldProcess('foo'));
         $this->assertFalse($this->_lvd->should_process);
 
-        if ( isset($oldsavequery) ) {
+        if (isset($oldsavequery)) {
             $GLOBALS['sugar_config']['save_query'] = $oldsavequery;
         }
     }
 
     public function testProcess()
     {
-        $data = array(
-            'data' => array(1,2,3),
-            'pageData' => array('bean' => array('moduleDir'=>'testmoduledir'))
-            );
-        $this->_lvd->process('foo',$data,'testmetestme');
+        $data = [
+            'data' => [1,2,3],
+            'pageData' => ['bean' => ['moduleDir'=>'testmoduledir']],
+            ];
+        $this->_lvd->process('foo', $data, 'testmetestme');
 
-        $this->assertEquals(3,$this->_lvd->rowCount);
-        $this->assertEquals('testmoduledir2_TESTMETESTME_offset',$this->_lvd->moduleString);
+        $this->assertEquals(3, $this->_lvd->rowCount);
+        $this->assertEquals('testmoduledir2_TESTMETESTME_offset', $this->_lvd->moduleString);
     }
 
     public function testDisplayIfShouldNotProcess()
@@ -291,7 +289,7 @@ class ListViewDisplayTest extends TestCase
                          ->method('getMassUpdateFormHeader')
                          ->will($this->returnValue('bar'));
 
-        $this->assertEquals('foobar',$this->_lvd->display());
+        $this->assertEquals('foobar', $this->_lvd->display());
     }
 
     public function testBuildSelectLink()
@@ -311,7 +309,7 @@ class ListViewDisplayTest extends TestCase
 
     public function testBuildSelectLinkWithParameters()
     {
-        $output = $this->_lvd->buildSelectLink('testtest',1,2);
+        $output = $this->_lvd->buildSelectLink('testtest', 1, 2);
         $output = implode('', $output['buttons']);
         $this->assertStringContainsString("<a id='testtest'", $output);
         $this->assertStringContainsString(
@@ -326,7 +324,7 @@ class ListViewDisplayTest extends TestCase
 
     public function testBuildSelectLinkWithPageTotalLessThanZero()
     {
-        $output = $this->_lvd->buildSelectLink('testtest',1,-1);
+        $output = $this->_lvd->buildSelectLink('testtest', 1, -1);
         $output = implode('', $output['buttons']);
         $this->assertStringContainsString("<a id='testtest'", $output);
         $this->assertStringContainsString(
@@ -360,17 +358,17 @@ class ListViewDisplayTest extends TestCase
 
     public function composeEmailEmptyDataProvider()
     {
-        return array(
-            array(false),
-            array(array()),
-            array(
-                array(
-                    'field1' => array(
+        return [
+            [false],
+            [[]],
+            [
+                [
+                    'field1' => [
                         'type' => 'text',
-                    ),
-                )
-            )
-        );
+                    ],
+                ],
+            ],
+        ];
     }
 
     /**
@@ -381,7 +379,7 @@ class ListViewDisplayTest extends TestCase
         $this->_lvd->seed = new stdClass;
         $this->_lvd->seed->field_defs = $fieldDefs;
         
-        $this->assertEmpty(SugarTestReflection::callProtectedMethod($this->_lvd, 'buildComposeEmailLink', array(0)));
+        $this->assertEmpty(SugarTestReflection::callProtectedMethod($this->_lvd, 'buildComposeEmailLink', [0]));
     }
 
     public function testComposeEmailIfFieldDefsIfUsingSugarEmailClient()
@@ -389,16 +387,16 @@ class ListViewDisplayTest extends TestCase
         $this->_lvd->seed = new stdClass;
         $this->_lvd->seed->object_name = 'foobar';
         $this->_lvd->seed->module_dir = 'foobarfoobar';
-        $this->_lvd->seed->field_defs = array(
-            'field1' => array(
+        $this->_lvd->seed->field_defs = [
+            'field1' => [
                 'type' => 'link',
                 'relationship' => 'foobar_emailaddresses',
-                ),
-            );
+                ],
+            ];
         $GLOBALS['dictionary']['foobar']['relationships']['foobar_emailaddresses']['rhs_module'] = 'EmailAddresses';
-        $GLOBALS['current_user']->setPreference('email_link_type','sugar');
+        $GLOBALS['current_user']->setPreference('email_link_type', 'sugar');
 
-        $output = SugarTestReflection::callProtectedMethod($this->_lvd, 'buildComposeEmailLink', array(5));
+        $output = SugarTestReflection::callProtectedMethod($this->_lvd, 'buildComposeEmailLink', [5]);
 
         $this->assertStringContainsString(", 'foobarfoobar', '5', ", $output);
 
@@ -411,18 +409,18 @@ class ListViewDisplayTest extends TestCase
         $this->_lvd->seed->object_name = 'foobar';
         $this->_lvd->seed->module_dir = 'foobarfoobar';
         $_REQUEST['module'] = 'foobarfoobar';
-        $this->_lvd->seed->field_defs = array(
-            'field1' => array(
+        $this->_lvd->seed->field_defs = [
+            'field1' => [
                 'type' => 'link',
                 'relationship' => 'foobar_emailaddresses',
-                ),
-            );
+                ],
+            ];
         $_REQUEST['module'] = 'foo';
         
         $GLOBALS['dictionary']['foobar']['relationships']['foobar_emailaddresses']['rhs_module'] = 'EmailAddresses';
-        $GLOBALS['current_user']->setPreference('email_link_type','mailto');
+        $GLOBALS['current_user']->setPreference('email_link_type', 'mailto');
 
-        $output = SugarTestReflection::callProtectedMethod($this->_lvd, 'buildComposeEmailLink', array(5));
+        $output = SugarTestReflection::callProtectedMethod($this->_lvd, 'buildComposeEmailLink', [5]);
 
         $this->assertStringContainsString('sListView.use_external_mail_client', $output);
 
@@ -439,7 +437,7 @@ class ListViewDisplayTest extends TestCase
 
     public function testBuildSelectedObjectsSpan()
     {
-        $output = $this->_lvd->buildSelectedObjectsSpan(1,1);
+        $output = $this->_lvd->buildSelectedObjectsSpan(1, 1);
 
         $this->assertStringContainsString(
             "<input  style='border: 0px; background: transparent; font-size: inherit; color: inherit' type='text' id='selectCountTop' readonly name='selectCount[]' value='1' />",
@@ -479,11 +477,11 @@ class ListViewDisplayTest extends TestCase
         $GLOBALS['dictionary']['foobar']['duplicate_merge'] = true;
         $GLOBALS['current_user']->is_admin = 1;
 
-        $request = InputValidation::create(array(
+        $request = InputValidation::create([
             'module' => 'Accounts',
             'action' => 'bar',
             'record' => '1',
-        ), array());
+        ], []);
         SugarTestReflection::setProtectedValue($this->_lvd, 'request', $request);
 
         $output = SugarTestReflection::callProtectedMethod($this->_lvd, 'buildMergeDuplicatesLink');
@@ -498,7 +496,7 @@ class ListViewDisplayTest extends TestCase
     {
         $this->_lvd->seed = new stdClass;
         $this->_lvd->seed->module_dir = 'foobarfoobar';
-        $GLOBALS['current_user']->setPreference('mailmerge_on','off');
+        $GLOBALS['current_user']->setPreference('mailmerge_on', 'off');
 
         $this->assertEmpty(SugarTestReflection::callProtectedMethod($this->_lvd, 'buildMergeLink'));
     }
@@ -508,14 +506,14 @@ class ListViewDisplayTest extends TestCase
         $this->_lvd->seed = new stdClass;
         $this->_lvd->seed->module_dir = 'foobarfoobar';
 
-        $GLOBALS['current_user']->setPreference('mailmerge_on','on');
+        $GLOBALS['current_user']->setPreference('mailmerge_on', 'on');
 
         $settings_cache = sugar_cache_retrieve('admin_settings_cache');
-        if ( empty($settings_cache) ) {
-            $settings_cache = array();
+        if (empty($settings_cache)) {
+            $settings_cache = [];
         }
         $settings_cache['system_mailmerge_on'] = false;
-        sugar_cache_put('admin_settings_cache',$settings_cache);
+        sugar_cache_put('admin_settings_cache', $settings_cache);
 
         $this->assertEmpty(SugarTestReflection::callProtectedMethod($this->_lvd, 'buildMergeLink'));
 
@@ -527,17 +525,17 @@ class ListViewDisplayTest extends TestCase
         $this->_lvd->seed = new stdClass;
         $this->_lvd->seed->module_dir = 'foobarfoobar';
 
-        $GLOBALS['current_user']->setPreference('mailmerge_on','on');
+        $GLOBALS['current_user']->setPreference('mailmerge_on', 'on');
 
         $settings_cache = sugar_cache_retrieve('admin_settings_cache');
-        if ( empty($settings_cache) ) {
-            $settings_cache = array();
+        if (empty($settings_cache)) {
+            $settings_cache = [];
         }
         $settings_cache['system_mailmerge_on'] = true;
-        sugar_cache_put('admin_settings_cache',$settings_cache);
+        sugar_cache_put('admin_settings_cache', $settings_cache);
 
         $this->assertEmpty(
-            SugarTestReflection::callProtectedMethod($this->_lvd, 'buildMergeLink', array(array('foobar' => 'foobar')))
+            SugarTestReflection::callProtectedMethod($this->_lvd, 'buildMergeLink', [['foobar' => 'foobar']])
         );
 
         sugar_cache_clear('admin_settings_cache');
@@ -548,16 +546,16 @@ class ListViewDisplayTest extends TestCase
         $this->_lvd->seed = new stdClass;
         $this->_lvd->seed->module_dir = 'foobarfoobar';
 
-        $GLOBALS['current_user']->setPreference('mailmerge_on','on');
+        $GLOBALS['current_user']->setPreference('mailmerge_on', 'on');
 
         $settings_cache = sugar_cache_retrieve('admin_settings_cache');
-        if ( empty($settings_cache) ) {
-            $settings_cache = array();
+        if (empty($settings_cache)) {
+            $settings_cache = [];
         }
         $settings_cache['system_mailmerge_on'] = true;
-        sugar_cache_put('admin_settings_cache',$settings_cache);
+        sugar_cache_put('admin_settings_cache', $settings_cache);
 
-        $output = SugarTestReflection::callProtectedMethod($this->_lvd, 'buildMergeLink', array(array('foobarfoobar' => 'foobarfoobar')));
+        $output = SugarTestReflection::callProtectedMethod($this->_lvd, 'buildMergeLink', [['foobarfoobar' => 'foobarfoobar']]);
         $this->assertStringContainsString('index.php?action=index&module=MailMerge&entire=true', $output);
 
         sugar_cache_clear('admin_settings_cache');
@@ -593,7 +591,7 @@ class ListViewDisplayTest extends TestCase
                          ->method('endMassUpdateForm')
                          ->will($this->returnValue('bar'));
 
-        $this->assertEquals('foobar',$this->_lvd->displayEnd());
+        $this->assertEquals('foobar', $this->_lvd->displayEnd());
     }
 
     public function testGetMultiSelectData()
@@ -603,10 +601,10 @@ class ListViewDisplayTest extends TestCase
         $output = $this->_lvd->getMultiSelectData();
 
         $this->assertEquals($output, "<script>YAHOO.util.Event.addListener(window, \"load\", sListView.check_boxes);</script>\n".
-				"<textarea style='display: none' name='uid'></textarea>\n" .
-				"<input type='hidden' name='select_entire_list' value='0'>\n".
-				"<input type='hidden' name='foobar' value='0'>\n".
-                "<input type='hidden' name='show_plus' value=''>\n",$output);
+                "<textarea style='display: none' name='uid'></textarea>\n" .
+                "<input type='hidden' name='select_entire_list' value='0'>\n".
+                "<input type='hidden' name='foobar' value='0'>\n".
+                "<input type='hidden' name='show_plus' value=''>\n", $output);
     }
 
     public function testGetMultiSelectDataWithRequestParameterUidSet()
@@ -617,10 +615,10 @@ class ListViewDisplayTest extends TestCase
         $output = $this->_lvd->getMultiSelectData();
 
         $this->assertEquals("<script>YAHOO.util.Event.addListener(window, \"load\", sListView.check_boxes);</script>\n".
-				"<textarea style='display: none' name='uid'>1234</textarea>\n" .
-				"<input type='hidden' name='select_entire_list' value='0'>\n".
-				"<input type='hidden' name='foobar' value='0'>\n" .
-                "<input type='hidden' name='show_plus' value=''>\n",$output);        
+                "<textarea style='display: none' name='uid'>1234</textarea>\n" .
+                "<input type='hidden' name='select_entire_list' value='0'>\n".
+                "<input type='hidden' name='foobar' value='0'>\n" .
+                "<input type='hidden' name='show_plus' value=''>\n", $output);
     }
 
     public function testGetMultiSelectDataWithRequestParameterSelectEntireListSet()
@@ -631,10 +629,10 @@ class ListViewDisplayTest extends TestCase
         $output = $this->_lvd->getMultiSelectData();
 
         $this->assertEquals("<script>YAHOO.util.Event.addListener(window, \"load\", sListView.check_boxes);</script>\n".
-				"<textarea style='display: none' name='uid'></textarea>\n" .
-				"<input type='hidden' name='select_entire_list' value='1234'>\n".
-				"<input type='hidden' name='foobar' value='0'>\n" .
-                "<input type='hidden' name='show_plus' value=''>\n",$output);        
+                "<textarea style='display: none' name='uid'></textarea>\n" .
+                "<input type='hidden' name='select_entire_list' value='1234'>\n".
+                "<input type='hidden' name='foobar' value='0'>\n" .
+                "<input type='hidden' name='show_plus' value=''>\n", $output);
     }
 
     public function testGetMultiSelectDataWithRequestParameterMassupdateSet()
@@ -647,10 +645,10 @@ class ListViewDisplayTest extends TestCase
         $output = $this->_lvd->getMultiSelectData();
 
         $this->assertEquals("<script>YAHOO.util.Event.addListener(window, \"load\", sListView.check_boxes);</script>\n".
-				"<textarea style='display: none' name='uid'></textarea>\n" .
-				"<input type='hidden' name='select_entire_list' value='0'>\n".
-				"<input type='hidden' name='foobar' value='0'>\n".
-                "<input type='hidden' name='show_plus' value=''>\n",$output);        
+                "<textarea style='display: none' name='uid'></textarea>\n" .
+                "<input type='hidden' name='select_entire_list' value='0'>\n".
+                "<input type='hidden' name='foobar' value='0'>\n".
+                "<input type='hidden' name='show_plus' value=''>\n", $output);
     }
 
     /**
@@ -670,31 +668,31 @@ class ListViewDisplayTest extends TestCase
         $this->_lvd->seed->custom_fields->bean = new stdClass;
         $this->_lvd->seed->custom_fields->bean->test_c = $displayColumns[$field]['default'];
 
-        $data = array(
-            'data' => array(
-                0 => array(),
-            ),
-        );
+        $data = [
+            'data' => [
+                0 => [],
+            ],
+        ];
 
-        $data = SugarTestReflection::callProtectedMethod($this->_lvd, 'setupHTMLFields', array($data));
+        $data = SugarTestReflection::callProtectedMethod($this->_lvd, 'setupHTMLFields', [$data]);
 
         $this->assertEquals($expected, $data['data'][0][$field], 'HTML Field value not set');
     }
 
     public static function setupHTMLFieldsDataProvider()
     {
-        return array(
-            array(
+        return [
+            [
                 '<p>test</p>',
                 'test_c',
-                array(
-                    'test_c' => array(
+                [
+                    'test_c' => [
                         'type' => 'html',
                         'default' => '<p>test</p>',
-                    )
-                ),
-            ),
-        );
+                    ],
+                ],
+            ],
+        ];
     }
 
     /**
@@ -717,40 +715,40 @@ class ListViewDisplayTest extends TestCase
 
     public static function defaultSeedDefValuesProvider()
     {
-        return array(
-            array(
+        return [
+            [
                 true,
-                array(array(
+                [[
                     'default' => true,
-                    'label'   => 'LBL_TEST_TEST_KEY'
-                )),
-                array(array(
+                    'label'   => 'LBL_TEST_TEST_KEY',
+                ]],
+                [[
                     'default' => 'test/url/pattern/{id}',
-                    'label'   => 'LBL_TEST_TEST_KEY'
-                ))
-            ),
-            array(
+                    'label'   => 'LBL_TEST_TEST_KEY',
+                ]],
+            ],
+            [
                 false,
-                array(array(
+                [[
                     'default' => false,
-                    'label'   => 'LBL_TEST_TEST_KEY'
-                )),
-                array(array(
+                    'label'   => 'LBL_TEST_TEST_KEY',
+                ]],
+                [[
                     'default' => 'test/url/pattern/{id}',
-                    'label'   => 'LBL_TEST_TEST_KEY'
-                ))
-            ),
-            array(
+                    'label'   => 'LBL_TEST_TEST_KEY',
+                ]],
+            ],
+            [
                 false,
-                array(array(
+                [[
                     'default' => false,
-                    'label'   => 'LBL_TEST_TEST_KEY'
-                )),
-                array(array(
+                    'label'   => 'LBL_TEST_TEST_KEY',
+                ]],
+                [[
                     'default' => null,
-                    'label'   => 'LBL_TEST_TEST_KEY'
-                ))
-            ),
-        );
+                    'label'   => 'LBL_TEST_TEST_KEY',
+                ]],
+            ],
+        ];
     }
 }

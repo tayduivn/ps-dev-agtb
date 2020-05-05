@@ -25,9 +25,9 @@ class MedianExpressionTest extends TestCase
 
     public function dataProviderTestEvaluate()
     {
-        return array(
-            array('median(4, 5, 5, 6, 7)', '5'),
-            array('median("4", "5", "5", "6", "7")', '5')
-        );
+        return [
+            ['median(4, 5, 5, 6, 7)', '5'],
+            ['median("4", "5", "5", "6", "7")', '5'],
+        ];
     }
 }

@@ -24,7 +24,7 @@ class RS219Test extends TestCase
     {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
-        SugarTestHelper::setUp('current_user', array(true));
+        SugarTestHelper::setUp('current_user', [true]);
     }
 
     protected function tearDown() : void
@@ -45,51 +45,51 @@ class RS219Test extends TestCase
     public function testCreateNewListQuery($beanName, $filter, $needed)
     {
         $bean = BeanFactory::newBean($beanName);
-        $query = $bean->create_new_list_query('', '', $filter, array(), 0, '', true);
+        $query = $bean->create_new_list_query('', '', $filter, [], 0, '', true);
         $this->assertEquals(substr_count($query['select'], $needed), 1);
     }
 
     public function getTestsData()
     {
-        return array(
+        return [
             /**
              * Need 2 relate fields with same link.
              * Relationship's `rel_key` value should be named like one of selected field.
              */
-            array(
+            [
                 'Contacts',
-                array('account_name', 'account_id'),
-                'account_id'
-            ),
-            array(
+                ['account_name', 'account_id'],
+                'account_id',
+            ],
+            [
                 'Contacts',
-                array('account_name'),
-                'account_id'
-            ),
-            array(
+                ['account_name'],
+                'account_id',
+            ],
+            [
                 'Contacts',
-                array('account_id'),
-                'account_id'
-            ),
+                ['account_id'],
+                'account_id',
+            ],
             /**
              * Need 2 relate fields with same link.
              * One of them need to have another one in `additional_fields`.
              */
-            array(
+            [
                 'Leads',
-                array('campaign_name', 'campaign_id'),
-                'campaign_id'
-            ),
-            array(
+                ['campaign_name', 'campaign_id'],
+                'campaign_id',
+            ],
+            [
                 'Leads',
-                array('campaign_name'),
-                'campaign_id'
-            ),
-            array(
+                ['campaign_name'],
+                'campaign_id',
+            ],
+            [
                 'Leads',
-                array('campaign_id'),
-                'campaign_id'
-            ),
-        );
+                ['campaign_id'],
+                'campaign_id',
+            ],
+        ];
     }
 }

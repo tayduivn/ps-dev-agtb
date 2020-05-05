@@ -18,9 +18,9 @@ class Bug46923Test extends TestCase
     protected function setUp() : void
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser(true, 1);
-        $beanList = array();
-        $beanFiles = array();
-        require('include/modules.php');
+        $beanList = [];
+        $beanFiles = [];
+        require 'include/modules.php';
         $GLOBALS['beanList'] = $beanList;
         $GLOBALS['beanFiles'] = $beanFiles;
     }
@@ -50,9 +50,9 @@ class Bug46923Test extends TestCase
         $GLOBALS['action'] = 'index';
         $GLOBALS['module'] = 'Employees';
 
-        $request = InputValidation::create(array(
+        $request = InputValidation::create([
             'module' => 'Employees',
-        ), array());
+        ], []);
         SugarTestReflection::setProtectedValue($view, 'request', $request);
 
         $view->init($user);

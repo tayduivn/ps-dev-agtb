@@ -42,7 +42,7 @@ class RefreshQueueTest extends TestCase
             $this->queue->enqueue($category, $item, $params);
         }
 
-        $output = array();
+        $output = [];
         while ($task = $this->queue->dequeue()) {
             $output[] = $task;
         }
@@ -52,104 +52,104 @@ class RefreshQueueTest extends TestCase
 
     public static function queueProvider()
     {
-        $rebuildAccountsBase = array('rebuild',
-            array('Accounts'),
-            array(
-                'platforms' => array('base'),
-            ),
-        );
+        $rebuildAccountsBase = ['rebuild',
+            ['Accounts'],
+            [
+                'platforms' => ['base'],
+            ],
+        ];
 
-        $rebuildContactsMobile = array('rebuild',
-            array('Contacts'),
-            array(
-                'platforms' => array('mobile'),
-            ),
-        );
+        $rebuildContactsMobile = ['rebuild',
+            ['Contacts'],
+            [
+                'platforms' => ['mobile'],
+            ],
+        ];
 
-        $rebuildAccountsAll = array('rebuild',
-            array('Accounts'),
-            array(),
-        );
+        $rebuildAccountsAll = ['rebuild',
+            ['Accounts'],
+            [],
+        ];
 
-        $rebuildAccountsAndContactsMobile = array('rebuild',
-            array('Accounts', 'Contacts'),
-            array(
-                'platforms' => array('mobile'),
-            ),
-        );
+        $rebuildAccountsAndContactsMobile = ['rebuild',
+            ['Accounts', 'Contacts'],
+            [
+                'platforms' => ['mobile'],
+            ],
+        ];
 
-        $rebuildContactsAndCasesAll = array('rebuild',
-            array('Contacts', 'Cases'),
-            array(),
-        );
+        $rebuildContactsAndCasesAll = ['rebuild',
+            ['Contacts', 'Cases'],
+            [],
+        ];
 
-        return array(
-            'one-task-returned-as-is' => array(
-                array(
+        return [
+            'one-task-returned-as-is' => [
+                [
                     $rebuildAccountsBase,
-                ),
-                array(
+                ],
+                [
                     $rebuildAccountsBase,
-                ),
-            ),
-            'merge-params-some-and-all' => array(
-                array(
+                ],
+            ],
+            'merge-params-some-and-all' => [
+                [
                     $rebuildAccountsBase,
                     $rebuildAccountsAll,
-                ),
-                array(
+                ],
+                [
                     $rebuildAccountsAll,
-                ),
-            ),
-            'merge-params-all-and-some' => array(
-                array(
+                ],
+            ],
+            'merge-params-all-and-some' => [
+                [
                     $rebuildAccountsAll,
                     $rebuildAccountsBase,
-                ),
-                array(
+                ],
+                [
                     $rebuildAccountsAll,
-                ),
-            ),
-            'merge-items' => array(
-                array(
+                ],
+            ],
+            'merge-items' => [
+                [
                     $rebuildAccountsAll,
                     $rebuildContactsAndCasesAll,
-                ),
-                array(
-                    array('rebuild',
-                        array('Accounts', 'Contacts', 'Cases'),
-                        array(),
-                    ),
-                ),
-            ),
-            'extract-item-from-sub-scope' => array(
-                array(
+                ],
+                [
+                    ['rebuild',
+                        ['Accounts', 'Contacts', 'Cases'],
+                        [],
+                    ],
+                ],
+            ],
+            'extract-item-from-sub-scope' => [
+                [
                     $rebuildAccountsAndContactsMobile,
                     $rebuildContactsAndCasesAll,
-                ),
-                array(
-                    array('rebuild',
-                        array('Accounts'),
-                        array(
-                            'platforms' => array('mobile'),
-                        ),
-                    ),
-                    array('rebuild',
-                        array('Contacts', 'Cases'),
-                        array(),
-                    ),
-                ),
-            ),
-            'no-intersection' => array(
-                array(
+                ],
+                [
+                    ['rebuild',
+                        ['Accounts'],
+                        [
+                            'platforms' => ['mobile'],
+                        ],
+                    ],
+                    ['rebuild',
+                        ['Contacts', 'Cases'],
+                        [],
+                    ],
+                ],
+            ],
+            'no-intersection' => [
+                [
                     $rebuildAccountsBase,
                     $rebuildContactsMobile,
-                ),
-                array(
+                ],
+                [
                     $rebuildAccountsBase,
                     $rebuildContactsMobile,
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
     }
 }

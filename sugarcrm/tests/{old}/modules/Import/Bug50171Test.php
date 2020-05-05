@@ -14,19 +14,22 @@ use PHPUnit\Framework\TestCase;
 
 class Bug50171Test extends TestCase
 {
-public function testGetJSMock() {
-    global $mod_strings;
-    $mod_strings = return_module_language($GLOBALS['current_language'], 'Import');
-    $mock = new Bug50171ImportViewStep3Mock();
-    $required = array("It's A Bug!");
-    $output = $mock->_getJSMock($required);
+    public function testGetJSMock()
+    {
+        global $mod_strings;
+        $mod_strings = return_module_language($GLOBALS['current_language'], 'Import');
+        $mock = new Bug50171ImportViewStep3Mock();
+        $required = ["It's A Bug!"];
+        $output = $mock->_getJSMock($required);
         $this->assertMatchesRegularExpression('/required\[\'0\'\] = \'It\&\#039\;s A Bug\!/', $output);
-}
+    }
 }
 
 
-class Bug50171ImportViewStep3Mock extends ImportViewStep3 {
-public function _getJSMock($required) {
-    return $this->_getJS($required);
-}
+class Bug50171ImportViewStep3Mock extends ImportViewStep3
+{
+    public function _getJSMock($required)
+    {
+        return $this->_getJS($required);
+    }
 }

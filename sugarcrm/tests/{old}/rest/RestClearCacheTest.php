@@ -11,7 +11,8 @@
  */
 
 
-class RestClearCacheTest extends RestTestBase {
+class RestClearCacheTest extends RestTestBase
+{
     protected $_customFile = 'custom/clients/base/api/PongApi.php';
     protected $_customDirMade = false;
 
@@ -25,12 +26,13 @@ class RestClearCacheTest extends RestTestBase {
     /**
      * @group rest
      */
-    public function testCache() {
+    public function testCache()
+    {
         // This needs to be called before the custom dir is made
         $replyPing = $this->_restCall('ping');
-        $this->assertEquals('pong',$replyPing['reply']);
+        $this->assertEquals('pong', $replyPing['reply']);
 
-        if(!is_dir('custom/clients/base/api')) {
+        if (!is_dir('custom/clients/base/api')) {
             $this->_customDirMade = true;
             SugarAutoLoader::ensureDir('custom/clients/base/api');
         }

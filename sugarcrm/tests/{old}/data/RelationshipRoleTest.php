@@ -15,8 +15,8 @@ use PHPUnit\Framework\TestCase;
 
 class RelationshipRoleTest extends TestCase
 {
-    protected $createdBeans = array();
-    protected $createdFiles = array();
+    protected $createdBeans = [];
+    protected $createdFiles = [];
 
     public static function setUpBeforeClass() : void
     {
@@ -24,9 +24,9 @@ class RelationshipRoleTest extends TestCase
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
         $GLOBALS['current_user']->setPreference('timezone', "America/Los_Angeles");
-	    $GLOBALS['current_user']->setPreference('datef', "m/d/Y");
-		$GLOBALS['current_user']->setPreference('timef', "h.iA");
-	}
+        $GLOBALS['current_user']->setPreference('datef', "m/d/Y");
+        $GLOBALS['current_user']->setPreference('timef', "h.iA");
+    }
 
     public static function tearDownAfterClass(): void
     {
@@ -34,28 +34,26 @@ class RelationshipRoleTest extends TestCase
     }
 
     protected function tearDown() : void
-	{
-	    SugarTestQuoteUtilities::removeAllCreatedQuotes();
+    {
+        SugarTestQuoteUtilities::removeAllCreatedQuotes();
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
         SugarTestTaskUtilities::removeAllCreatedTasks();
 
-        foreach($this->createdFiles as $file)
-        {
-            if (is_file($file))
-            {
+        foreach ($this->createdFiles as $file) {
+            if (is_file($file)) {
                 unlink($file);
             }
         }
-	}
+    }
 
     /**
      * Create a new account and bug, then link them.
      * @return void
      */
-	public function testQuoteAccountsRole()
-	{
-	    $account = SugarTestAccountUtilities::createAccount();
+    public function testQuoteAccountsRole()
+    {
+        $account = SugarTestAccountUtilities::createAccount();
         $account->name = "RoleTestAccount";
         $account->save();
 

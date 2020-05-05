@@ -19,7 +19,7 @@ class PMSEValidatorTest extends TestCase
     protected $loggerMock;
 
     /**
-     * Sets up the test data, for example, 
+     * Sets up the test data, for example,
      *     opens a network connection.
      * This method is called before a test is executed.
      */
@@ -27,7 +27,7 @@ class PMSEValidatorTest extends TestCase
     {
         $this->loggerMock = $this->getMockBuilder("PSMELogger")
                 ->disableOriginalConstructor()
-                ->setMethods(array('info', 'debug'))
+                ->setMethods(['info', 'debug'])
                 ->getMock();
     }
 
@@ -35,7 +35,7 @@ class PMSEValidatorTest extends TestCase
     {
         $validatorMock = $this->getMockBuilder('PMSEValidator')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieveValidator'))
+                ->setMethods(['retrieveValidator'])
                 ->getMock();
 
         $request = ProcessManager\Factory::getPMSEObject('PMSERequest');
@@ -55,7 +55,7 @@ class PMSEValidatorTest extends TestCase
 
         $validatorElementMock = $this->getMockBuilder('PMSEValidate')
                 ->disableOriginalConstructor()
-                ->setMethods(array('validateRequest'))
+                ->setMethods(['validateRequest'])
                 ->getMock();
 
         $validatorElementMock->expects($this->once())
@@ -64,17 +64,16 @@ class PMSEValidatorTest extends TestCase
 
         $validatorMock = $this->getMockBuilder('PMSEValidator')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieveValidator'))
+                ->setMethods(['retrieveValidator'])
                 ->getMock();
         
-        $validatorMock->setValidators(array(
-            'direct' => array(
+        $validatorMock->setValidators([
+            'direct' => [
                 'concurrency' => PMSEValidationLevel::Simple,
                 'record' => PMSEValidationLevel::NoValidation,
                 'element' => PMSEValidationLevel::NoValidation,
-                'expression' => PMSEValidationLevel::NoValidation)
-            )
-        );
+                'expression' => PMSEValidationLevel::NoValidation],
+            ]);
 
         $validatorMock->expects($this->once())
                 ->method('retrieveValidator')
@@ -94,7 +93,7 @@ class PMSEValidatorTest extends TestCase
 
         $validatorElementMock = $this->getMockBuilder('PMSEValidate')
                 ->disableOriginalConstructor()
-                ->setMethods(array('validateRequest'))
+                ->setMethods(['validateRequest'])
                 ->getMock();
 
         $validatorElementMock->expects($this->once())
@@ -103,17 +102,16 @@ class PMSEValidatorTest extends TestCase
 
         $validatorMock = $this->getMockBuilder('PMSEValidator')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieveValidator'))
+                ->setMethods(['retrieveValidator'])
                 ->getMock();
         
-        $validatorMock->setValidators(array(
-            'direct' => array(
+        $validatorMock->setValidators([
+            'direct' => [
                 'concurrency' => PMSEValidationLevel::Simple,
                 'record' => PMSEValidationLevel::NoValidation,
                 'element' => PMSEValidationLevel::NoValidation,
-                'expression' => PMSEValidationLevel::NoValidation)
-            )
-        );
+                'expression' => PMSEValidationLevel::NoValidation],
+            ]);
 
         $validatorMock->expects($this->once())
                 ->method('retrieveValidator')

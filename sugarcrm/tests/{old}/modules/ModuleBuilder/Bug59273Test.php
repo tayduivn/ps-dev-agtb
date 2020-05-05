@@ -19,15 +19,15 @@ use PHPUnit\Framework\TestCase;
 class Bug59273Test extends TestCase
 {
     protected $_viewFile = 'custom/modulebuilder/packages/test/modules/test/clients/mobile/views/list/list.php';
-    protected $_request = array();
+    protected $_request = [];
     protected $_mbc;
     
     protected function setUp() : void
     {
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('app_strings');
-        SugarTestHelper::setUp('current_user', array(true, true));
-        SugarTestHelper::setUp('mod_strings', array('ModuleBuilder'));
+        SugarTestHelper::setUp('current_user', [true, true]);
+        SugarTestHelper::setUp('mod_strings', ['ModuleBuilder']);
         
         $this->_request = $_REQUEST;
 

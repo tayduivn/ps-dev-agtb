@@ -37,10 +37,10 @@ class CampaignEmailPropertiesTest extends TestCase
 
     public function optoutDataProvider()
     {
-        return array(
+        return [
             [true],
             [false],
-        );
+        ];
     }
 
     /**
@@ -69,7 +69,7 @@ class CampaignEmailPropertiesTest extends TestCase
     {
         $sea = BeanFactory::newBean('EmailAddresses');
         $q = new SugarQuery();
-        $q->select(array('*'));
+        $q->select(['*']);
         $q->from($sea);
         $q->where()->queryAnd()
             ->equals('email_address_caps', strtoupper($emailAddress))

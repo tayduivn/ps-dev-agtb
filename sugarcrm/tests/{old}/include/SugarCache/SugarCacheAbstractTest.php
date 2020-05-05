@@ -40,11 +40,11 @@ abstract class SugarCacheAbstractTest extends TestCase
         $this->assertNull($reader->get('key2'));
         $this->assertNull($reader->get('key3'));
 
-        $writer->set('key1', array('key' => 'value'));
+        $writer->set('key1', ['key' => 'value']);
         $writer->set('key2', 'Hello, World!');
         $writer->set('key3', 1024);
 
-        $this->assertSame(array('key' => 'value'), $reader->get('key1'));
+        $this->assertSame(['key' => 'value'], $reader->get('key1'));
         $this->assertSame('Hello, World!', $reader->get('key2'));
 
         // some extensions (I'm pointing at you, memcache) are too lazy to serialize integers

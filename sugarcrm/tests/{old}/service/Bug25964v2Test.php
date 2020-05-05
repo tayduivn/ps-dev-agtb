@@ -11,7 +11,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('vendor/nusoap//nusoap.php');
+require_once 'vendor/nusoap//nusoap.php';
 
 
 class Bug25964v2Test extends SOAPTestCase
@@ -25,11 +25,11 @@ class Bug25964v2Test extends SOAPTestCase
         $this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/service/v2_1/soap.php';
         parent::setUp();
 
-		$unid = uniqid();
-		$time = date('Y-m-d H:i:s');
+        $unid = uniqid();
+        $time = date('Y-m-d H:i:s');
 
         $contact = new Contact();
-		$contact->id = 'c_'.$unid;
+        $contact->id = 'c_'.$unid;
         $contact->first_name = 'testfirst';
         $contact->last_name = 'testlast';
         $contact->email1 = 'one@example.com';
@@ -51,24 +51,24 @@ class Bug25964v2Test extends SOAPTestCase
 
     public function testFindSameContact()
     {
-        $contacts_list=array( 'session'=>$this->_sessionId, 'module_name' => 'Contacts',
-				   'name_value_lists' => array(
-                                        array(array('name'=>'assigned_user_id' , 'value'=>$GLOBALS['current_user']->id),array('name'=>'first_name' , 'value'=>'testfirst'),array('name'=>'last_name' , 'value'=>'testlast'),array('name'=>'email1' , 'value'=>'one_other@example.com'))
-                                        ));
+        $contacts_list=[ 'session'=>$this->_sessionId, 'module_name' => 'Contacts',
+                   'name_value_lists' => [
+                                        [['name'=>'assigned_user_id' , 'value'=>$GLOBALS['current_user']->id],['name'=>'first_name' , 'value'=>'testfirst'],['name'=>'last_name' , 'value'=>'testlast'],['name'=>'email1' , 'value'=>'one_other@example.com']],
+                                        ]];
 
-        $result = $this->_soapClient->call('set_entries',$contacts_list);
+        $result = $this->_soapClient->call('set_entries', $contacts_list);
         $this->_resultId = $result['ids'][0];
         $this->assertEquals($this->c->id, $result['ids'][0], "did not match contacts");
     }
 
     public function testDoNotFindSameContact()
     {
-        $contacts_list=array( 'session'=>$this->_sessionId, 'module_name' => 'Contacts',
-				   'name_value_lists' => array(
-                                        array(array('name'=>'assigned_user_id' , 'value'=>$GLOBALS['current_user']->id),array('name'=>'first_name' , 'value'=>'testfirst'),array('name'=>'last_name' , 'value'=>'testlast'),array('name'=>'email1' , 'value'=>'mytest1@example.com'))
-                                        ));
+        $contacts_list=[ 'session'=>$this->_sessionId, 'module_name' => 'Contacts',
+                   'name_value_lists' => [
+                                        [['name'=>'assigned_user_id' , 'value'=>$GLOBALS['current_user']->id],['name'=>'first_name' , 'value'=>'testfirst'],['name'=>'last_name' , 'value'=>'testlast'],['name'=>'email1' , 'value'=>'mytest1@example.com']],
+                                        ]];
 
-        $result = $this->_soapClient->call('set_entries',$contacts_list);
+        $result = $this->_soapClient->call('set_entries', $contacts_list);
         $this->_resultId = $result['ids'][0];
         $this->assertNotEquals($this->c->id, $result['ids'][0], "did not match contacts");
     }

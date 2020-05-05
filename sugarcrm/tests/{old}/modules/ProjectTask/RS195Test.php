@@ -24,7 +24,7 @@ class RS195Test extends TestCase
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setUp('current_user', array(true, false));
+        SugarTestHelper::setUp('current_user', [true, false]);
     }
 
     public static function tearDownAfterClass(): void
@@ -38,13 +38,13 @@ class RS195Test extends TestCase
     {
         $project = SugarTestProjectUtilities::createProject();
         $bean = SugarTestProjectTaskUtilities::createProjectTask(
-            array(
+            [
                 'project_id' => $project->id,
                 'parent_task_id' => 0,
                 'project_task_id' => 1,
                 'percent_complete' => '30',
                 'name' => 'RS195Task_1',
-            )
+            ]
         );
         $res = $bean->_get_project_name($project->id);
         $this->assertEquals($project->name, $res);
@@ -52,7 +52,7 @@ class RS195Test extends TestCase
         $this->assertEquals($project->name, $res);
         $res = $bean->getResourceName();
         $this->assertEmpty($res);
-        $res = SugarTestReflection::callProtectedMethod($bean, 'getNumberOfTasksInProject', array($project->id));
+        $res = SugarTestReflection::callProtectedMethod($bean, 'getNumberOfTasksInProject', [$project->id]);
         $this->assertEquals(1, $res);
     }
 
@@ -60,22 +60,22 @@ class RS195Test extends TestCase
     {
         $project = SugarTestProjectUtilities::createProject();
         $bean = SugarTestProjectTaskUtilities::createProjectTask(
-            array(
+            [
                 'project_id' => $project->id,
                 'parent_task_id' => 0,
                 'project_task_id' => 1,
                 'percent_complete' => '30',
                 'name' => 'RS195Task_1',
-            )
+            ]
         );
         $bean2 = SugarTestProjectTaskUtilities::createProjectTask(
-            array(
+            [
                 'project_id' => $project->id,
                 'parent_task_id' => 1,
                 'project_task_id' => 2,
                 'percent_complete' => '30',
                 'name' => 'RS195Task_2',
-            )
+            ]
         );
         $res = $bean2->_get_depends_on_name($bean->id);
         $this->assertEquals('RS195Task_1', $res);

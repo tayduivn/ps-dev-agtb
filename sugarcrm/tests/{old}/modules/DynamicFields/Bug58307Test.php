@@ -34,14 +34,14 @@ class Bug58307Test extends TestCase
     
     public function testPhoneFieldGetsCorrectFieldForm()
     {
-        $vardef = array(
+        $vardef = [
             'type' => 'phone',
             'len' => 30,
-        );
+        ];
         
         $layout = $this->_fv->getLayout($vardef);
         
-        // Inspect the layout for things we expect. Yes, this is kinda not 
+        // Inspect the layout for things we expect. Yes, this is kinda not
         // scientific but to support varies builds this needs to happen this way.
         $this->assertStringContainsString('function forceRange(', $layout);
         $this->assertStringContainsString(

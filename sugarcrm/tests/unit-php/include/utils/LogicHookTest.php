@@ -24,7 +24,7 @@ class LogicHookTest extends TestCase
     /**
      * @var array List of files/directories to cleanup
      */
-    protected $toDelete = array();
+    protected $toDelete = [];
 
     /**
      * {@inheritDoc}
@@ -36,7 +36,7 @@ class LogicHookTest extends TestCase
             $this->trigger = $GLOBALS['trigger'];
         }
 
-        $this->toDelete = array();
+        $this->toDelete = [];
     }
 
     /**
@@ -72,7 +72,7 @@ class LogicHookTest extends TestCase
     public function testProcessHooks($file, $contents, array $hookArray, $useBean)
     {
         // Global variable to track logic hook trigger
-        $GLOBALS['trigger'] = array();
+        $GLOBALS['trigger'] = [];
 
         // Create test file
         $this->createFile($file, $contents);
@@ -92,11 +92,11 @@ class LogicHookTest extends TestCase
 
         // Process logic hook
         $random = md5(microtime());
-        $hookArray = array('after_save' => array($hookArray));
-        $lh->process_hooks($hookArray, 'after_save', array($random));
+        $hookArray = ['after_save' => [$hookArray]];
+        $lh->process_hooks($hookArray, 'after_save', [$random]);
 
         // Setup expectations and test results
-        $expected = array('after_save', array($random));
+        $expected = ['after_save', [$random]];
         if ($useBean) {
             array_unshift($expected, $bean);
         }
@@ -105,9 +105,9 @@ class LogicHookTest extends TestCase
 
     public function dataProviderTestProcessHooks()
     {
-        return array(
+        return [
             // Hook class = Hook function without bean context
-            array(
+            [
                 'Trigger1.php',
                 $this->getClassContent(
                     'MyLogicHook1',
@@ -116,17 +116,17 @@ class LogicHookTest extends TestCase
                         $GLOBALS["trigger"] = array($event, $args);
                     }'
                 ),
-                array(
+                [
                     0 => 1,
                     1 => 'doStuff1',
                     2 => 'Trigger1.php',
                     3 => 'MyLogicHook1',
                     4 => 'MyLogicHook1',
-                ),
+                ],
                 false,
-            ),
+            ],
             // Hook class = Hook function with bean context
-            array(
+            [
                 'Trigger2.php',
                 $this->getClassContent(
                     'MyLogicHook2',
@@ -135,17 +135,17 @@ class LogicHookTest extends TestCase
                         $GLOBALS["trigger"] = array($bean, $event, $args);
                     }'
                 ),
-                array(
+                [
                     0 => 1,
                     1 => 'doStuff2',
                     2 => 'Trigger2.php',
                     3 => 'MyLogicHook2',
                     4 => 'MyLogicHook2',
-                ),
+                ],
                 true,
-            ),
+            ],
             // Hook class <> Hook function without bean context
-            array(
+            [
                 'Trigger3.php',
                 $this->getClassContent(
                     'MyLogicHook3',
@@ -154,17 +154,17 @@ class LogicHookTest extends TestCase
                         $GLOBALS["trigger"] = array($event, $args);
                     }'
                 ),
-                array(
+                [
                     0 => 1,
                     1 => 'doStuff3',
                     2 => 'Trigger3.php',
                     3 => 'MyLogicHook3',
                     4 => 'callMe',
-                ),
+                ],
                 false,
-            ),
+            ],
             // Hook class <> Hook function with bean context
-            array(
+            [
                 'Trigger4.php',
                 $this->getClassContent(
                     'MyLogicHook4',
@@ -173,16 +173,16 @@ class LogicHookTest extends TestCase
                         $GLOBALS["trigger"] = array($bean, $event, $args);
                     }'
                 ),
-                array(
+                [
                     0 => 1,
                     1 => 'doStuff4',
                     2 => 'Trigger4.php',
                     3 => 'MyLogicHook4',
                     4 => 'callMe',
-                ),
+                ],
                 true,
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -195,67 +195,67 @@ class LogicHookTest extends TestCase
     public function testGetProcessOrder(array $hookArray, array $expected)
     {
         $lh = new \LogicHook();
-        $result = TestReflection::callProtectedMethod($lh, 'getProcessOrder', array($hookArray));
+        $result = TestReflection::callProtectedMethod($lh, 'getProcessOrder', [$hookArray]);
         $this->assertSame($expected, $result);
     }
 
     public function dataProviderTestGetProcessOrder()
     {
-        return array(
+        return [
             // Empty check
-            array(
-                array(),
-                array(),
-            ),
+            [
+                [],
+                [],
+            ],
             // Full example
-            array(
-                array(
-                    0 => array(
+            [
+                [
+                    0 => [
                         0 => 1,
                         1 => 'activitystream',
                         2 => 'modules/ActivityStream/Activities/ActivityQueueManager.php',
                         3 => 'ActivityQueueManager',
                         4 => 'eventDispatcher',
-                    ),
-                    1 => array(
+                    ],
+                    1 => [
                         0 => 3,
                         1 => 'fts',
                         2 => 'modules/pmse_Inbox/engine/PMSELogicHook.php',
                         3 => 'PMSELogicHook',
                         4 => 'after_save',
-                    ),
-                    2 => array(
+                    ],
+                    2 => [
                         0 => 2,
                         1 => 'fts',
                         2 => null,
                         3 => '\\Sugarcrm\\Sugarcrm\\SearchEngine\\HookHandler',
                         4 => 'indexBean',
-                    ),
-                ),
-                array(
+                    ],
+                ],
+                [
                     0 => 0,
                     1 => 2,
                     2 => 1,
-                ),
-            ),
+                ],
+            ],
             // Additional short tests
-            array(
-                array(
-                    0 => array(4),
-                    1 => array(1),
-                    2 => array(3),
-                    3 => array(2),
-                    4 => array(5),
-                ),
-                array(
+            [
+                [
+                    0 => [4],
+                    1 => [1],
+                    2 => [3],
+                    3 => [2],
+                    4 => [5],
+                ],
+                [
                     0 => 1,
                     1 => 3,
                     2 => 2,
                     3 => 0,
                     4 => 4,
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
     }
 
     /**
@@ -272,7 +272,7 @@ class LogicHookTest extends TestCase
         }
 
         $lh = new \LogicHook();
-        $valid = TestReflection::callProtectedMethod($lh, 'loadHookClass', array($class, $file));
+        $valid = TestReflection::callProtectedMethod($lh, 'loadHookClass', [$class, $file]);
         $this->assertSame($expected, $valid);
 
         if ($valid) {
@@ -283,56 +283,56 @@ class LogicHookTest extends TestCase
 
     public function dataProviderTestLoadHookClass()
     {
-        return array(
+        return [
             // Invalid class and file name - should fail
-            array(
+            [
                 'UnknownClass',
                 'include/not/valid/file.php',
                 false,
                 null,
                 null,
-            ),
+            ],
             // Only supply class name namespaced - should pass
-            array(
+            [
                 'Sugarcrm\\Sugarcrm\\inc\\Sweet',
                 '',
                 true,
                 'include/Sweet.php',
                 $this->getClassContent('Sweet', 'Sugarcrm\\Sugarcrm\\inc'),
-            ),
+            ],
             // Class name namespaced with bogus filename - should pass
-            array(
+            [
                 'Sugarcrm\\Sugarcrm\\inc\\Sweeter',
                 'this/will/be/ignored.php',
                 true,
                 'include/Sweeter.php',
                 $this->getClassContent('Sweeter', 'Sugarcrm\\Sugarcrm\\inc'),
-            ),
+            ],
             // Only supply class name non namespaced - should fail
-            array(
+            [
                 'BadNews',
                 '',
                 false,
                 'BadNews.php',
                 $this->getClassContent('BadNews'),
-            ),
+            ],
             // Only supply class name non namespaced, but in autoloader include - should pass
-            array(
+            [
                 'GoodNews',
                 '',
                 true,
                 'include/GoodNews.php',
                 $this->getClassContent('GoodNews'),
-            ),
+            ],
             // Legacy loading non namespace with file location - should pass
-            array(
+            [
                 'LegacyHookClass',
                 'MyLegacyHookFile.php',
                 true,
                 'MyLegacyHookFile.php',
                 $this->getClassContent('LegacyHookClass'),
-            ),
-        );
+            ],
+        ];
     }
 
     /**

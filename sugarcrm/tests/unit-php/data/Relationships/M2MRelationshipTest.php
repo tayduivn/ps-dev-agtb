@@ -42,7 +42,6 @@ class M2MRelationshipTest extends TestCase
             'lhs_module' => 'LeftModule',
             'rhs_module' => 'RightModule',
         ];
-
     }
 
     protected function tearDown() : void

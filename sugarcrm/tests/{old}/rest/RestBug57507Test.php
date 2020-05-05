@@ -19,8 +19,8 @@ class RestBug57507Test extends RestTestBase
     {
         parent::setUp();
 
-        if ( !isset($this->accounts) ) {
-            $this->accounts = array();
+        if (!isset($this->accounts)) {
+            $this->accounts = [];
         }
         $account = BeanFactory::newBean('Accounts');
         $account->name = "Bug 57507 Test Account";
@@ -29,20 +29,20 @@ class RestBug57507Test extends RestTestBase
         $account->save();
         $this->accounts[] = $account;
 
-        $this->opps = array();
-        $this->calls = array();
+        $this->opps = [];
+        $this->calls = [];
     }
 
     protected function tearDown() : void
     {
         // Transition this to _cleanUpRecords() when it is available
-        foreach ( $this->opps as $opp ) {
+        foreach ($this->opps as $opp) {
             $opp->mark_deleted($opp->id);
         }
-        foreach ( $this->calls as $call ) {
+        foreach ($this->calls as $call) {
             $call->mark_deleted($call->id);
         }
-        foreach ( $this->accounts as $account ) {
+        foreach ($this->accounts as $account) {
             $account->mark_deleted($account->id);
         }
         parent::tearDown();
@@ -53,23 +53,24 @@ class RestBug57507Test extends RestTestBase
      */
     public function testEmptySaveInt()
     {
-        $reply = $this->_restCall("Calls/",
-                                  json_encode(array('name' => 'Test call, empty int',
+        $reply = $this->_restCall(
+            "Calls/",
+            json_encode(['name' => 'Test call, empty int',
                                                     'duration_hours' => 1,
                                                     'duration_minutes' => 15,
                                                     'date_start' => TimeDate::getInstance()->asIso(TimeDate::getInstance()->getNow()),
                                                     'status' => 'Not Held',
                                                     'direction' => 'Incoming',
                                                     'repeat_count' => null,
-                                                  )),
-                                  'POST');
-        $this->assertTrue(!empty($reply['reply']['id']),'Could not create a call..response was: ' . print_r($reply, true));
-        $call = BeanFactory::getBean('Calls',$reply['reply']['id']);
+                                                  ]),
+            'POST'
+        );
+        $this->assertTrue(!empty($reply['reply']['id']), 'Could not create a call..response was: ' . print_r($reply, true));
+        $call = BeanFactory::getBean('Calls', $reply['reply']['id']);
         $this->calls[] = $call;
 
         // because of a change to SugarFieldInt this should return null
-        $this->assertTrue($call->repeat_count == 0,"The repeat count has a value.");
-        
+        $this->assertTrue($call->repeat_count == 0, "The repeat count has a value.");
     }
 
     /**
@@ -90,6 +91,6 @@ class RestBug57507Test extends RestTestBase
         
         $reply = $this->_restCall("Calls/".$call->id);
 
-        $this->assertNull($reply['reply']['repeat_count'],'Repeat count is different from null');
+        $this->assertNull($reply['reply']['repeat_count'], 'Repeat count is different from null');
     }
 }

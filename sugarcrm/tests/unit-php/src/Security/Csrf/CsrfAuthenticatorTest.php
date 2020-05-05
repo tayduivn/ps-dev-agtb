@@ -66,44 +66,44 @@ class CsrfAuthenticatorTest extends TestCase
 
     public function providerTestIsFormTokenValid()
     {
-        return array(
-            array(
+        return [
+            [
                 false,  // no soft fail
-                array(),// no data, always fails
+                [],// no data, always fails
                 false,  // token test result
                 false,  // expected
-            ),
-            array(
+            ],
+            [
                 false,  // no soft fail
-                array(),// no data, always fails
+                [],// no data, always fails
                 true,   // token test result
                 false,  // expected
-            ),
-            array(
+            ],
+            [
                 false,  // no soft fail
-                array('csrf_token' => '1234567890'),
+                ['csrf_token' => '1234567890'],
                 true,  // token test result
                 true,  // expected
-            ),
-            array(
+            ],
+            [
                 false,  // no soft fail
-                array('csrf_token' => '1234567890'),
+                ['csrf_token' => '1234567890'],
                 false,  // token test result
                 false,  // expected
-            ),
-            array(
+            ],
+            [
                 true,  // soft fail
-                array('csrf_token' => '1234567890'),
+                ['csrf_token' => '1234567890'],
                 false,  // token test result
                 true,  // expected
-            ),
-            array(
+            ],
+            [
                 false,  // no soft fail
-                array('wrong_csrf' => '1234567890'),
+                ['wrong_csrf' => '1234567890'],
                 true,  // token test result - has no influence on this test
                 false,  // expected
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -116,7 +116,7 @@ class CsrfAuthenticatorTest extends TestCase
 
         // SugarConfig stubbing get to always return default
         $config = $this->getMockBuilder('SugarConfig')
-            ->setMethods(array('get'))
+            ->setMethods(['get'])
             ->getMock();
 
         $config->expects($this->any())
@@ -127,7 +127,7 @@ class CsrfAuthenticatorTest extends TestCase
             }));
 
         return $this->getMockBuilder('Sugarcrm\Sugarcrm\Security\Csrf\CsrfAuthenticator')
-            ->setConstructorArgs(array($manager, $logger, $config))
+            ->setConstructorArgs([$manager, $logger, $config])
             ->setMethods($methods)
             ->getMock();
     }

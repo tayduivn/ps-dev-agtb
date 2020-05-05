@@ -23,33 +23,33 @@ class SugarEmailAddressTest extends TestCase
     /** @var SugarEmailAddress */
     private $ea;
 
-    private $primary1 = array(
+    private $primary1 = [
         'primary_address' => true,
         'email_address'   => 'p1@example.com',
         'opt_out'         => true,
         'invalid_email'   => true,
-    );
+    ];
 
-    private $primary2 = array(
+    private $primary2 = [
         'primary_address' => true,
         'email_address'   => 'p2@example.com',
         'opt_out'         => false,
         'invalid_email'   => false,
-    );
+    ];
 
-    private $alternate1 = array(
+    private $alternate1 = [
         'primary_address' => false,
         'email_address'   => 'a1@example.com',
         'opt_out'         => false,
         'invalid_email'   => false,
-    );
+    ];
 
-    private $alternate2 = array(
+    private $alternate2 = [
         'primary_address' => false,
         'email_address'   => 'a2@example.com',
         'opt_out'         => false,
         'invalid_email'   => false,
-    );
+    ];
 
     public static function setUpBeforeClass() : void
     {
@@ -70,43 +70,43 @@ class SugarEmailAddressTest extends TestCase
 
     public function isValidEmailProvider()
     {
-        return array(
-            array('john@john.com', true),
-            array('----!john.com', false),
-            array('john', false),
+        return [
+            ['john@john.com', true],
+            ['----!john.com', false],
+            ['john', false],
             // bugs: SI40068, SI44338
-            array('jo&hn@john.com', true),
-            array('joh#n@john.com.br', true),
-            array('&#john@john.com', true),
+            ['jo&hn@john.com', true],
+            ['joh#n@john.com.br', true],
+            ['&#john@john.com', true],
             // bugs: SI40068, SI39186
             // note: a dot at the beginning or end of the local part are not allowed by RFC2822
-            array('atendimento-hd.@uol.com.br', false),
+            ['atendimento-hd.@uol.com.br', false],
             // bugs: SI13765
-            array('st.-annen-stift@t-online.de', true),
+            ['st.-annen-stift@t-online.de', true],
             // bugs: SI39186
-            array('qfflats-@uol.com.br', true),
+            ['qfflats-@uol.com.br', true],
             // bugs: SI44338
-            array('atendimento-hd.?uol.com.br', false),
-            array('atendimento-hd.?uol.com.br;aaa@com.it', false),
-            array('f.grande@pokerspa.it', true),
-            array('fabio.grande@softwareontheroad.it', true),
-            array('fabio$grande@softwareontheroad.it', true),
+            ['atendimento-hd.?uol.com.br', false],
+            ['atendimento-hd.?uol.com.br;aaa@com.it', false],
+            ['f.grande@pokerspa.it', true],
+            ['fabio.grande@softwareontheroad.it', true],
+            ['fabio$grande@softwareontheroad.it', true],
             // bugs: SI44473
             // note: with MAR-1894 the infinite loop bug is no longer a problem, so this email address can pass
             // validation
-            array('ettingshallprimaryschool@wolverhampton.gov.u', true),
+            ['ettingshallprimaryschool@wolverhampton.gov.u', true],
             // bugs: SI13018
-            array('Ert.F.Suu.-PA@pumpaudio.com', true),
+            ['Ert.F.Suu.-PA@pumpaudio.com', true],
             // bugs: SI23202
-            array('test--user@example.com', true),
+            ['test--user@example.com', true],
             // bugs: SI42403
-            array('test@t--est.com', true),
+            ['test@t--est.com', true],
             // bugs: SI42404
-            array('t.-est@test.com', true),
+            ['t.-est@test.com', true],
             // bugs: MAR-1894
-            array("o'hara@email.com", true),
-            array("用户@例子.广告", true),
-        );
+            ["o'hara@email.com", true],
+            ["用户@例子.广告", true],
+        ];
     }
 
     /**
@@ -167,12 +167,12 @@ class SugarEmailAddressTest extends TestCase
      */
     public function testSavedEmailsPersistAfterSave()
     {
-        $addresses = array(
-            array('email_address' => 'a@a.com', 'primary_address' => true),
-            array('email_address' => 'b@b.com'),
-            array('email_address' => 'c@c.com'),
-            array('email_address' => 'd@d.com'),
-        );
+        $addresses = [
+            ['email_address' => 'a@a.com', 'primary_address' => true],
+            ['email_address' => 'b@b.com'],
+            ['email_address' => 'c@c.com'],
+            ['email_address' => 'd@d.com'],
+        ];
         $bean = BeanFactory::newBean('Accounts');
         $bean->email = $addresses;
         $this->ea->handleLegacySave($bean);
@@ -194,50 +194,50 @@ class SugarEmailAddressTest extends TestCase
     public function testSaveUsesCorrectValues()
     {
         // Set values on the email address object for testing
-        $test = array(
-            array(
+        $test = [
+            [
                 'email_address' => 'a@a.com',
                 'email_address_id' => null,
                 'primary_address' => true,
                 'invalid_email' => false,
                 'opt_out' => false,
                 'reply_to_address' => false,
-            ),
-            array(
+            ],
+            [
                 'email_address' => 'b@b.com',
                 'email_address_id' => null,
                 'primary_address' => false,
                 'invalid_email' => false,
                 'opt_out' => false,
                 'reply_to_address' => false,
-            ),
-            array(
+            ],
+            [
                 'email_address' => 'c@c.com',
                 'email_address_id' => null,
                 'primary_address' => false,
                 'invalid_email' => false,
                 'opt_out' => false,
                 'reply_to_address' => false,
-            ),
-            array(
+            ],
+            [
                 'email_address' => 'd@d.com',
                 'email_address_id' => null,
                 'primary_address' => false,
                 'invalid_email' => false,
                 'opt_out' => false,
                 'reply_to_address' => false,
-            ),
-        );
+            ],
+        ];
 
-        $expect = array(
-            array(
+        $expect = [
+            [
                 'email_address' => 'z@z.com',
                 'primary_address' => true,
                 'reply_to_address' => false,
                 'invalid_email' => false,
                 'opt_out' => false,
-            ),
-        );
+            ],
+        ];
 
         // Setup the test case
         $this->ea->fetchedAddresses = $this->ea->addresses = $test;
@@ -271,10 +271,10 @@ class SugarEmailAddressTest extends TestCase
     public function testPrimaryAttributeConsidered()
     {
         $bean = new SugarBean();
-        $this->ea->addresses = array(
+        $this->ea->addresses = [
             $this->alternate1,
             $this->primary1,
-        );
+        ];
 
         $this->ea->populateLegacyFields($bean);
 
@@ -293,10 +293,10 @@ class SugarEmailAddressTest extends TestCase
     public function testMultiplePrimaryAddresses()
     {
         $bean = new SugarBean();
-        $this->ea->addresses = array(
+        $this->ea->addresses = [
             $this->primary1,
             $this->primary2,
-        );
+        ];
 
         $this->ea->populateLegacyFields($bean);
 
@@ -313,10 +313,10 @@ class SugarEmailAddressTest extends TestCase
     public function testNoPrimaryAddress()
     {
         $bean = new SugarBean();
-        $this->ea->addresses = array(
+        $this->ea->addresses = [
             $this->alternate1,
             $this->alternate2,
-        );
+        ];
 
         $this->ea->populateLegacyFields($bean);
 
@@ -332,12 +332,12 @@ class SugarEmailAddressTest extends TestCase
     public function testAllPropertiesArePopulated()
     {
         $bean = new SugarBean();
-        $this->ea->addresses = array(
+        $this->ea->addresses = [
             $this->primary1,
             $this->primary2,
             $this->alternate1,
             $this->alternate2,
-        );
+        ];
 
         $this->ea->populateLegacyFields($bean);
 

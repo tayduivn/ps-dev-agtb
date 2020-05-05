@@ -18,9 +18,11 @@
 class SugarTestJobQueueUtilities
 {
     private static $_jobQueue;
-    private static $_createdJobs = array();
+    private static $_createdJobs = [];
 
-    private function __construct() {}
+    private function __construct()
+    {
+    }
 
     /**
      * createAndRunJob
@@ -57,14 +59,17 @@ class SugarTestJobQueueUtilities
      */
     public static function removeAllCreatedJobs()
     {
-        if(empty(self::$_createdJobs))
+        if (empty(self::$_createdJobs)) {
             return true;
+        }
         $jobIds = self::getCreatedJobIds();
         $GLOBALS['db']->query(
-            sprintf("DELETE FROM job_queue WHERE id IN ('%s')",
-                implode("','", $jobIds))
+            sprintf(
+                "DELETE FROM job_queue WHERE id IN ('%s')",
+                implode("','", $jobIds)
+            )
         );
-        self::$_createdJobs = array();
+        self::$_createdJobs = [];
         return true;
     }
 
@@ -77,7 +82,7 @@ class SugarTestJobQueueUtilities
      */
     public static function getCreatedJobIds()
     {
-        $jobIds = array();
+        $jobIds = [];
         foreach (self::$_createdJobs as $job) {
             // handle the use case where $job could be an array
             if ($job instanceof SchedulersJob) {

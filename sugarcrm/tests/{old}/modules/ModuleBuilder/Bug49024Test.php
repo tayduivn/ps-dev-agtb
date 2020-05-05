@@ -21,9 +21,9 @@ class Bug49024Test extends TestCase
 
     protected function setUp() : void
     {
-        $beanList = array();
-        $beanFiles = array();
-        require('include/modules.php');
+        $beanList = [];
+        $beanFiles = [];
+        require 'include/modules.php';
         $GLOBALS['beanList'] = $beanList;
         $GLOBALS['beanFiles'] = $beanFiles;
 
@@ -31,15 +31,15 @@ class Bug49024Test extends TestCase
 
         $this->objOneToOneRelationship = $this->getMockBuilder('OneToOneRelationship')
             ->disableOriginalConstructor()
-            ->setMethods(array('getDefinition'))
+            ->setMethods(['getDefinition'])
             ->getMock();
 
         $this->objOneToOneRelationship->expects($this->any())
             ->method('getDefinition')
-            ->will($this->returnValue(array(
+            ->will($this->returnValue([
                     'lhs_module' => 'lhs_module',
-                    'rhs_module' => 'rhs_module'
-                )));
+                    'rhs_module' => 'rhs_module',
+                ]));
     }
 
     protected function tearDown() : void
@@ -59,12 +59,12 @@ class Bug49024Test extends TestCase
     {
         $objDeployedRelationships = $this->getMockBuilder('DeployedRelationshipsBug49024Test')
             ->disableOriginalConstructor()
-            ->setMethods(array('load', 'getRelationshipList'))
+            ->setMethods(['load', 'getRelationshipList'])
             ->getMock();
 
         $objDeployedRelationships->expects($this->any())
             ->method('getRelationshipList')
-            ->will($this->returnValue(array()));
+            ->will($this->returnValue([]));
 
         $name = $objDeployedRelationships->getUniqueNameBug49024Test($this->objOneToOneRelationship);
         $this->assertEquals('lhs_module_rhs_module_1', $name);
@@ -77,14 +77,14 @@ class Bug49024Test extends TestCase
     {
         $objDeployedRelationships = $this->getMockBuilder('DeployedRelationshipsBug49024Test')
             ->disableOriginalConstructor()
-            ->setMethods(array('load', 'getRelationshipList'))
+            ->setMethods(['load', 'getRelationshipList'])
             ->getMock();
 
         $objDeployedRelationships->expects($this->any())
             ->method('getRelationshipList')
-            ->will($this->returnValue(array(
-            'lhs_module_rhs_module_1' => true, 'lhs_module_rhs_module_2' => true
-        )));
+            ->will($this->returnValue([
+            'lhs_module_rhs_module_1' => true, 'lhs_module_rhs_module_2' => true,
+            ]));
 
         $name = $objDeployedRelationships->getUniqueNameBug49024Test($this->objOneToOneRelationship);
         $this->assertEquals('lhs_module_rhs_module_3', $name);
@@ -97,12 +97,12 @@ class Bug49024Test extends TestCase
     {
         $objUndeployedRelationships = $this->getMockBuilder('UndeployedRelationshipsBug49024Test')
             ->disableOriginalConstructor()
-            ->setMethods(array('load', 'getRelationshipList'))
+            ->setMethods(['load', 'getRelationshipList'])
             ->getMock();
 
         $objUndeployedRelationships->expects($this->any())
             ->method('getRelationshipList')
-            ->will($this->returnValue(array()));
+            ->will($this->returnValue([]));
 
         $name = $objUndeployedRelationships->getUniqueNameBug49024Test($this->objOneToOneRelationship);
         $this->assertEquals('lhs_module_rhs_module', $name);
@@ -115,14 +115,14 @@ class Bug49024Test extends TestCase
     {
         $objUndeployedRelationships = $this->getMockBuilder('UndeployedRelationshipsBug49024Test')
             ->disableOriginalConstructor()
-            ->setMethods(array('load', 'getRelationshipList'))
+            ->setMethods(['load', 'getRelationshipList'])
             ->getMock();
 
         $objUndeployedRelationships->expects($this->any())
             ->method('getRelationshipList')
-            ->will($this->returnValue(array(
-                'lhs_module_rhs_module' => true, 'lhs_module_rhs_module_1' => true, 'lhs_module_rhs_module_2' => true
-            )));
+            ->will($this->returnValue([
+                'lhs_module_rhs_module' => true, 'lhs_module_rhs_module_1' => true, 'lhs_module_rhs_module_2' => true,
+            ]));
 
         $name = $objUndeployedRelationships->getUniqueNameBug49024Test($this->objOneToOneRelationship);
         $this->assertEquals('lhs_module_rhs_module_3', $name);
@@ -131,7 +131,7 @@ class Bug49024Test extends TestCase
 
 class DeployedRelationshipsBug49024Test extends DeployedRelationships
 {
-    public function getUniqueNameBug49024Test ($relationship)
+    public function getUniqueNameBug49024Test($relationship)
     {
         return $this->getUniqueName($relationship);
     }
@@ -139,7 +139,7 @@ class DeployedRelationshipsBug49024Test extends DeployedRelationships
 
 class UndeployedRelationshipsBug49024Test extends UndeployedRelationships
 {
-    public function getUniqueNameBug49024Test ($relationship)
+    public function getUniqueNameBug49024Test($relationship)
     {
         return $this->getUniqueName($relationship);
     }

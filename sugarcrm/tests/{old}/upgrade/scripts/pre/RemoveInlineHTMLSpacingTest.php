@@ -27,7 +27,7 @@ class RemoveInlineHTMLSpacingTest extends TestCase
     {
         SugarTestHelper::setUp('files');
         $this->upgradeDriver = $this->getMockForAbstractClass('UpgradeDriver');
-        $this->upgradeDriver->context = array();
+        $this->upgradeDriver->context = [];
     }
 
     protected function tearDown() : void
@@ -73,40 +73,40 @@ class RemoveInlineHTMLSpacingTest extends TestCase
      */
     public static function getContents()
     {
-        return array(
-            array(
+        return [
+            [
                 "<?php ?>",
                 "<?php ?>",
-            ),
-            array(
+            ],
+            [
                 "<?php ?>\n",
                 "<?php ?>\n",
-            ),
-            array(
+            ],
+            [
                 "<?php ?> ",
                 "<?php ?>",
-            ),
+            ],
 
-            array(
+            [
                 "<?php ?> \n\r\t\n\r\n",
                 "<?php ?>",
-            ),
-            array(
+            ],
+            [
                 "<?php \n\r\t\n\r",
                 "<?php \n\r\t\n\r",
-            ),
-            array(
+            ],
+            [
                 "\n\n<?php ?> ",
                 "<?php ?>",
-            ),
-            array(
+            ],
+            [
                 "\r\n\r\n\t\t\t<?php ?>\n",
                 "<?php ?>\n",
-            ),
-            array(
+            ],
+            [
                 "\r\n\r\n\t\t\t<?php ?>\n\n\n\n\n\r",
                 "<?php ?>",
-            ),
-        );
+            ],
+        ];
     }
 }

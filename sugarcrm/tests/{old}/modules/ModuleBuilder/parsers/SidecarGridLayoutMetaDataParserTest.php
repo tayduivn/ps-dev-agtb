@@ -27,7 +27,7 @@ class SidecarGridLayoutMetaDataParserTest extends TestCase
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['current_user']->is_admin = true;
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
-        $GLOBALS['mod_strings'] = array();
+        $GLOBALS['mod_strings'] = [];
 
         $implementation = $this->getMockForAbstractClass('AbstractMetaDataImplementation');
         $this->_parser = new SidecarGridLayoutMetaDataParserTestDerivative(
@@ -46,8 +46,9 @@ class SidecarGridLayoutMetaDataParserTest extends TestCase
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }
 
-    protected function getMockRequestArray() {
-        return array(
+    protected function getMockRequestArray()
+    {
+        return [
             'PORTAL' => '1',
             'action' => 'saveLayout',
             'module' => 'ModuleBuilder',
@@ -102,19 +103,20 @@ class SidecarGridLayoutMetaDataParserTest extends TestCase
             'to_pdf' => '1',
             'view' => 'EditView',
             'view_module' => 'Leads',
-        );
+        ];
     }
 
     /*
     * data provider for testing converting to and from canonical form
     */
-    public function canonicalAndInternalForms() {
+    public function canonicalAndInternalForms()
+    {
         // pull in our arrays
         require __DIR__ . '/canonical_panel_test.php';
         require __DIR__ . '/internal_panel_test.php';
 
         // this is php shorthand for returning an array( array($a[0],$b[0]), ...)
-        return array_map(null,$canonicals,$internals);
+        return array_map(null, $canonicals, $internals);
     }
 
     /**
@@ -124,165 +126,165 @@ class SidecarGridLayoutMetaDataParserTest extends TestCase
     {
         $tests = $this->canonicalAndInternalForms();
         // PAT-1934: restore defaults
-        $tests[] = array(
-            array(
-                array(
+        $tests[] = [
+            [
+                [
                     'name' => 'PANEL_BODY',
                     'label' => 'PANEL_BODY',
                     'columns' => 2,
                     'placeholders' => 1,
-                    'fields' => array(
-                        array(
+                    'fields' => [
+                        [
                             'name' => 'duration',
                             'span' => 9,
-                        ),
-                        array(
+                        ],
+                        [
                             'name' => 'repeat_type',
                             'span' => 3,
-                        ),
-                    ),
-                ),
-            ),
-            array(
-                'panel_body' => array(
-                    array(
+                        ],
+                    ],
+                ],
+            ],
+            [
+                'panel_body' => [
+                    [
                         'duration',
                         'repeat_type',
-                    ),
-                ),
-            ),
-            array(
-                'duration' => array(
+                    ],
+                ],
+            ],
+            [
+                'duration' => [
                     'name' => 'duration',
                     'span' => 9,
-                ),
-                'repeat_type' => array(
+                ],
+                'repeat_type' => [
                     'name' => 'repeat_type',
                     'span' => 3,
-                ),
-            ),
-            array(
-                'panels' => array(
-                    array(
+                ],
+            ],
+            [
+                'panels' => [
+                    [
                         'name' => 'panel_body',
-                        'fields' => array(
-                            array(
+                        'fields' => [
+                            [
                                 'name' => 'repeat_type',
                                 'span' => 12,
-                            ),
-                        ),
-                    ),
-                ),
-            ),
-            array(
-                'duration' => array(
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            [
+                'duration' => [
                     'name' => 'duration',
                     'span' => 9,
-                ),
-                'repeat_type' => array(
+                ],
+                'repeat_type' => [
                     'name' => 'repeat_type',
                     'span' => 3,
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
 
         // PAT-1837, 1611: re-calculate spans from previous view defs
-        $tests[] = array(
-            array(
-                array(
+        $tests[] = [
+            [
+                [
                     'name' => 'PANEL_BODY',
                     'label' => 'PANEL_BODY',
                     'columns' => 2,
                     'placeholders' => 1,
-                    'fields' => array(
-                        array(
+                    'fields' => [
+                        [
                             'name' => 'account_name',
-                        ),
-                        array(
+                        ],
+                        [
                             'name' => 'email',
-                        ),
-                    ),
-                ),
-            ),
-            array(
-                'panel_body' => array(
-                    array(
+                        ],
+                    ],
+                ],
+            ],
+            [
+                'panel_body' => [
+                    [
                         'account_name',
                         'email',
-                    ),
-                ),
-            ),
-            array(
+                    ],
+                ],
+            ],
+            [
                 'account_name',
                 'email',
-            ),
+            ],
             // previous view defs
-            array(
-                'panels' => array(
-                    array(
+            [
+                'panels' => [
+                    [
                         'name' => 'panel_body',
-                        'fields' => array(
-                            array(
+                        'fields' => [
+                            [
                                 'name' => 'account_name',
                                 'span' => 12,
-                            ),
-                            array(
+                            ],
+                            [
                                 'name' => 'email',
                                 'span' => 12,
-                            ),
-                        ),
-                    ),
-                ),
-            ),
-        );
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
 
         // PAT-2410: field with base def is single unit on end column
-        $tests[] = array(
-            array(
-                array(
+        $tests[] = [
+            [
+                [
                     'name' => 'PANEL_BODY',
                     'label' => 'PANEL_BODY',
                     'columns' => 2,
                     'placeholders' => 1,
-                    'fields' => array(
+                    'fields' => [
                         '',
-                        array(
+                        [
                             'name' => 'description',
-                        ),
-                    ),
-                ),
-            ),
-            array(
-                'panel_body' => array(
-                    array(
+                        ],
+                    ],
+                ],
+            ],
+            [
+                'panel_body' => [
+                    [
                         '',
                         'description',
-                    ),
-                ),
-            ),
-            array(
+                    ],
+                ],
+            ],
+            [
                 'description',
-            ),
-            array(
-                'panels' => array(
-                    array(
+            ],
+            [
+                'panels' => [
+                    [
                         'name' => 'panel_body',
-                        'fields' => array(
-                            array(
+                        'fields' => [
+                            [
                                 'name' => 'description',
                                 'span' => 12,
-                            ),
-                        ),
-                    ),
-                ),
-            ),
-            array(
-                'description' => array(
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            [
+                'description' => [
                     'name' => 'description',
                     'span' => 12,
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
 
         return $tests;
     }
@@ -305,88 +307,88 @@ class SidecarGridLayoutMetaDataParserTest extends TestCase
 
     public function canonicalAndInternalFieldList()
     {
-        return array(
-            array(
+        return [
+            [
                 // canonical panels
-                array(array(
+                [[
                     'name' => 'Default',
                     'columns' => 2,
-                    'fields' => array(
-                        array(
+                    'fields' => [
+                        [
                             'name' => 'name',
                             'label' => 'Name',
-                        ),
-                        array(
+                        ],
+                        [
                             'name' => 'status',
                             'label' => 'Status',
-                        ),
-                        array(
+                        ],
+                        [
                             'name' => 'description',
                             'label' => 'Description',
-                        ),
+                        ],
 //                        ""
-                ))),
+                    ]]],
                 // internal fieldlist
-                array(
-                    'name' => array(
+                [
+                    'name' => [
                         'name' => 'name',
                         'label' => 'Name',
-                    ),
-                    'status' => array(
+                    ],
+                    'status' => [
                         'name' => 'status',
                         'label' => 'Status',
-                    ),
-                    'description' => array(
+                    ],
+                    'description' => [
                         'name' => 'description',
                         'label' => 'Description',
-                    ),
+                    ],
 //                    "" => null,
 
-                )
-            ),
-            array(
+                ],
+            ],
+            [
                 // internal panels
-                array('Default' => array(
-                    array( //row 1
-                        array(
+                ['Default' => [
+                    [ //row 1
+                        [
                             'name' => 'name',
                             'label' => 'LBL_NAME',
-                            'span' => 12
-                        ),
-                        MBConstants::$EMPTY
-                    ),
-                    array( //row 2
-                        array(
+                            'span' => 12,
+                        ],
+                        MBConstants::$EMPTY,
+                    ],
+                    [ //row 2
+                        [
                             'name' => 'status',
                             'label' => 'LBL_STATUS',
-                        ),
-                        array(
+                        ],
+                        [
                             'name' => 'description',
                             'label' => 'LBL_DESCRIPTION',
-                        ),
-                    ),
-                )),
+                        ],
+                    ],
+                ]],
                 // field list
-                array(
-                    'name' =>  array(
+                [
+                    'name' =>  [
                         'name' => 'name',
                         'label' => 'LBL_NAME',
-                        'span' => 12
-                    ),
+                        'span' => 12,
+                    ],
                     '(empty)' => MBConstants::$EMPTY,
-                    'status' =>  array(
+                    'status' =>  [
                         'name' => 'status',
                         'label' => 'LBL_STATUS',
-                    ),
-                    'description' => array(
+                    ],
+                    'description' => [
                         'name' => 'description',
                         'label' => 'LBL_DESCRIPTION',
-                    ),
+                    ],
 
-                )
-            ),
+                ],
+            ],
 
-        );
+        ];
     }
 
     /**
@@ -396,7 +398,7 @@ class SidecarGridLayoutMetaDataParserTest extends TestCase
      */
     public function testGetFieldsFromLayout($input, $expected)
     {
-        $output = $this->_parser->testGetFieldsFromLayout(array('panels' => $input));
+        $output = $this->_parser->testGetFieldsFromLayout(['panels' => $input]);
         $this->assertEquals($expected, $output);
     }
 
@@ -424,9 +426,9 @@ class SidecarGridLayoutMetaDataParserTest extends TestCase
     public function testConvertToCanonicalForm($expected, $panels, $fieldDef = null, $previousViewDef = null, $baseViewDef = null)
     {
         // need this to prime our viewdefs
-        $this->_parser->testInstallOriginalViewdefs(array(
-            'panels' => $expected
-        ));
+        $this->_parser->testInstallOriginalViewdefs([
+            'panels' => $expected,
+        ]);
 
         if ($previousViewDef) {
             $implementation = $this->_parser->getImplementation();
@@ -471,18 +473,18 @@ class SidecarGridLayoutMetaDataParserTest extends TestCase
      */
     public function panelDefsLabelsProvider()
     {
-        return array(
+        return [
             // Tests a set label in the defs
-            array('panel' => array(array('label' => 'Super Awesome Label', 'fields' => array())), 'expectation' => 'Super Awesome Label'),
+            ['panel' => [['label' => 'Super Awesome Label', 'fields' => []]], 'expectation' => 'Super Awesome Label'],
 
             // Tests no label set but a panel name set
-            array('panel' => array(array('name' => 'panel_hidden', 'fields' => array())), 'expectation' => 'LBL_RECORD_SHOWMORE'),
-            array('panel' => array(array('name' => 'panel_header', 'fields' => array())), 'expectation' => 'LBL_RECORD_HEADER'),
-            array('panel' => array(array('name' => 'panel_body', 'fields' => array())), 'expectation' => 'LBL_RECORD_BODY'),
+            ['panel' => [['name' => 'panel_hidden', 'fields' => []]], 'expectation' => 'LBL_RECORD_SHOWMORE'],
+            ['panel' => [['name' => 'panel_header', 'fields' => []]], 'expectation' => 'LBL_RECORD_HEADER'],
+            ['panel' => [['name' => 'panel_body', 'fields' => []]], 'expectation' => 'LBL_RECORD_BODY'],
 
             // Tests no label or name so uses the array key as the label
-            array('panel' => array(array('foo' => 'bar', 'fields' => array())), 'expectation' => 0),
-        );
+            ['panel' => [['foo' => 'bar', 'fields' => []]], 'expectation' => 0],
+        ];
     }
 
     /**
@@ -501,10 +503,10 @@ class SidecarGridLayoutMetaDataParserTest extends TestCase
 
     public function readonlyPropTestProvider()
     {
-        return array(
-            array('defs' => array('name' => 'test1', 'vname' => 'LBL_TEST1', 'readonly' => true), 'expectation' => true),
-            array('defs' => array('name' => 'test2', 'vname' => 'LBL_TEST2'), 'expectation' => false),
-        );
+        return [
+            ['defs' => ['name' => 'test1', 'vname' => 'LBL_TEST1', 'readonly' => true], 'expectation' => true],
+            ['defs' => ['name' => 'test2', 'vname' => 'LBL_TEST2'], 'expectation' => false],
+        ];
     }
 
     /**
@@ -535,91 +537,91 @@ class SidecarGridLayoutMetaDataParserTest extends TestCase
     {
         // maxSpan on the parser is 12 by default
         // maxCols on the parser is 2 by default
-        return array(
+        return [
             // Test no handling for single field rows
-            array(
+            [
                 'fieldCount' => 1,
                 'lastField' => null,
-                'baseSpans' => array(),
+                'baseSpans' => [],
                 'singleSpanUnit' => 6,
-                'expectResult' => array('span' => 12),
-                'expectBaseSpans' => array(),
-            ),
+                'expectResult' => ['span' => 12],
+                'expectBaseSpans' => [],
+            ],
             // Test OOTB behavior
-            array(
+            [
                 'fieldCount' => 2,
-                'lastField' => array('name' => 'test'),
-                'baseSpans' => array('test' => 12),
+                'lastField' => ['name' => 'test'],
+                'baseSpans' => ['test' => 12],
                 'singleSpanUnit' => 6,
-                'expectResult' => array('span' => 6),
-                'expectBaseSpans' => array(
-                    'test' => array(
+                'expectResult' => ['span' => 6],
+                'expectBaseSpans' => [
+                    'test' => [
                         'span' => 6,
                         'adjustment' => 6,
-                    ),
-                ),
-            ),
+                    ],
+                ],
+            ],
             // Test oddball single span behavior
-            array(
+            [
                 'fieldCount' => 2,
-                'lastField' => array('name' => 'test'),
-                'baseSpans' => array('test' => 12),
+                'lastField' => ['name' => 'test'],
+                'baseSpans' => ['test' => 12],
                 'singleSpanUnit' => 4,
-                'expectResult' => array('span' => 4),
-                'expectBaseSpans' => array(
-                    'test' => array(
+                'expectResult' => ['span' => 4],
+                'expectBaseSpans' => [
+                    'test' => [
                         'span' => 8,
                         'adjustment' => 4,
-                    ),
-                ),
-            ),
+                    ],
+                ],
+            ],
             // Test no changing of the lastField from baseSpans
-            array(
+            [
                 'fieldCount' => 2,
-                'lastField' => array('name' => 'test'),
-                'baseSpans' => array('test' => 9),
+                'lastField' => ['name' => 'test'],
+                'baseSpans' => ['test' => 9],
                 'singleSpanUnit' => 6,
-                'expectResult' => array('span' => 3),
-                'expectBaseSpans' => array(
-                    'test' => array(
+                'expectResult' => ['span' => 3],
+                'expectBaseSpans' => [
+                    'test' => [
                         'span' => 9,
                         'adjustment' => 0,
-                    ),
-                ),
-            ),
+                    ],
+                ],
+            ],
             // Test no handling if no lastField name
-            array(
+            [
                 'fieldCount' => 2,
-                'lastField' => array(),
-                'baseSpans' => array('test' => 6, 'test1' => 12),
+                'lastField' => [],
+                'baseSpans' => ['test' => 6, 'test1' => 12],
                 'singleSpanUnit' => 6,
-                'expectResult' => array(),
-                'expectBaseSpans' => array(
-                    'test' => array(
+                'expectResult' => [],
+                'expectBaseSpans' => [
+                    'test' => [
                         'span' => 6,
                         'adjustment' => 0,
-                    ),
-                    'test1' => array(
+                    ],
+                    'test1' => [
                         'span' => 12,
                         'adjustment' => 0,
-                    ),
-                ),
-            ),
+                    ],
+                ],
+            ],
             // Test no handling if no baseSpans of the field name
-            array(
+            [
                 'fieldCount' => 2,
-                'lastField' => array('name' => 'test'),
-                'baseSpans' => array('test1' => 12),
+                'lastField' => ['name' => 'test'],
+                'baseSpans' => ['test1' => 12],
                 'singleSpanUnit' => 6,
-                'expectResult' => array(),
-                'expectBaseSpans' => array(
-                    'test1' => array(
+                'expectResult' => [],
+                'expectBaseSpans' => [
+                    'test1' => [
                         'span' => 12,
                         'adjustment' => 0,
-                    ),
-                ),
-            ),
-        );
+                    ],
+                ],
+            ],
+        ];
     }
 
     /**
@@ -627,32 +629,32 @@ class SidecarGridLayoutMetaDataParserTest extends TestCase
      */
     public function testRemoveFieldRemovesField()
     {
-        $panel = array(
-            'LBL_RECORD_BODY' => array(
-                array(
+        $panel = [
+            'LBL_RECORD_BODY' => [
+                [
                     0 => 'account_name',
                     1 => 'date_closed',
-                ),
-                array(
+                ],
+                [
                     0 => 'amount',
                     1 => '(empty)',
-                ),
-                array(
+                ],
+                [
                     0 => 'best_case',
                     1 => 'worst_case',
-                ),
-                array(
+                ],
+                [
                     0 => 'sales_status',
                     1 => '(filler)',
-                ),
-            )
-        );
+                ],
+            ],
+        ];
 
         $this->_parser->_viewdefs['panels'] = $panel;
 
         $this->_parser->removeField('sales_status');
 
-        foreach ( $this->_parser->_viewdefs [ 'panels' ] as $panelID => $panel ) {
+        foreach ($this->_parser->_viewdefs [ 'panels' ] as $panelID => $panel) {
             foreach ($panel as $rowIndex => $row) {
                 if (is_array($row)) {
                     foreach ($row as $fieldIndex => $field) {
@@ -668,26 +670,26 @@ class SidecarGridLayoutMetaDataParserTest extends TestCase
      */
     public function testRemoveFieldRemovesRowWithEmptyAndFiller()
     {
-        $panel = array(
-            'LBL_RECORD_BODY' => array(
-                array(
+        $panel = [
+            'LBL_RECORD_BODY' => [
+                [
                     0 => 'account_name',
                     1 => 'date_closed',
-                ),
-                array(
+                ],
+                [
                     0 => 'amount',
                     1 => '(empty)',
-                ),
-                array(
+                ],
+                [
                     0 => 'best_case',
                     1 => 'worst_case',
-                ),
-                array(
+                ],
+                [
                     0 => 'sales_status',
                     1 => '(filler)',
-                ),
-            )
-        );
+                ],
+            ],
+        ];
 
         $this->_parser->_viewdefs['panels'] = $panel;
 
@@ -701,30 +703,30 @@ class SidecarGridLayoutMetaDataParserTest extends TestCase
      */
     public function testRemoveFieldRemovesEmptyPanel()
     {
-        $panels = array(
-            'LBL_PANEL_1' => array(
-                array(
+        $panels = [
+            'LBL_PANEL_1' => [
+                [
                     'field_1',
-                ),
-            ),
-            'LBL_PANEL_2' => array(
-                array(
+                ],
+            ],
+            'LBL_PANEL_2' => [
+                [
                     'field_2',
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
 
         $this->_parser->_viewdefs['panels'] = $panels;
 
         $this->_parser->removeField('field_1');
 
-        $this->assertSame(array(
-            'LBL_PANEL_2' => array(
-                array(
+        $this->assertSame([
+            'LBL_PANEL_2' => [
+                [
                     'field_2',
-                ),
-            ),
-        ), $this->_parser->_viewdefs['panels']);
+                ],
+            ],
+        ], $this->_parser->_viewdefs['panels']);
     }
 }
 
@@ -741,17 +743,17 @@ class SidecarGridLayoutMetaDataParserTestDerivative extends SidecarGridLayoutMet
     // dummy constructor for now
     public function __construct($view, $moduleName, $implementation)
     {
-        $view = strtolower ( $view ) ;
+        $view = strtolower($view) ;
 
-        $this->FILLER = array ( 'name' => MBConstants::$FILLER['name'] , 'label' => translate ( MBConstants::$FILLER['label'] ) ) ;
+        $this->FILLER =  [ 'name' => MBConstants::$FILLER['name'] , 'label' => translate(MBConstants::$FILLER['label']) ] ;
 
         $this->_moduleName = $moduleName ;
         $this->_view = $view ;
 
-        $module = StudioModuleFactory::getStudioModule( $moduleName ) ;
+        $module = StudioModuleFactory::getStudioModule($moduleName) ;
         $this->module_dir = $module->seed->module_dir;
         $this->_fielddefs = $module->getFields();
-        $this->_standardizeFieldLabels( $this->_fielddefs );
+        $this->_standardizeFieldLabels($this->_fielddefs);
         $this->implementation = $implementation;
     }
 
@@ -765,14 +767,14 @@ class SidecarGridLayoutMetaDataParserTestDerivative extends SidecarGridLayoutMet
         $this->_originalViewDef = $this->getFieldsFromLayout($viewdefs);
     }
 
-    public function testInstallBaseViewFields($fields = array())
+    public function testInstallBaseViewFields($fields = [])
     {
         $this->baseViewFields = $fields;
     }
 
-    public function testConvertToCanonicalForm($panels, $fielddefs=null) {
-        if ($fielddefs==null)
-        {
+    public function testConvertToCanonicalForm($panels, $fielddefs = null)
+    {
+        if ($fielddefs==null) {
             $fielddefs = $this->_fielddefs;
         }
 
@@ -782,11 +784,13 @@ class SidecarGridLayoutMetaDataParserTestDerivative extends SidecarGridLayoutMet
         return $this->_convertToCanonicalForm($panels, $fielddefs);
     }
 
-    public function testPopulateFromRequest(&$fielddefs) {
+    public function testPopulateFromRequest(&$fielddefs)
+    {
         // ??
     }
 
-    public function testGetFieldsFromLayout($viewdef) {
+    public function testGetFieldsFromLayout($viewdef)
+    {
         return $this->getFieldsFromLayout($viewdef);
     }
 

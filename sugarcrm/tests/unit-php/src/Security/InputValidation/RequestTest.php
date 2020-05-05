@@ -53,7 +53,8 @@ class RequestTest extends TestCase
         // setup ConstraintBuilder with additional fixture namespaces
         $this->constraintBuilder = $builder = new ConstraintBuilder();
         $builder->setNamespaces(array_merge(
-            $builder->getNamespaces(), array('Symfony\Component\Validator\Tests\Fixtures')
+            $builder->getNamespaces(),
+            ['Symfony\Component\Validator\Tests\Fixtures']
         ));
     }
 
@@ -73,94 +74,94 @@ class RequestTest extends TestCase
 
     public function providerTestGetValidInput()
     {
-        return array(
+        return [
             // $_GET test
-            array(
-                array('foo' => 'VALID'),
-                array(),
+            [
+                ['foo' => 'VALID'],
+                [],
                 'foo',
                 'getValidInputGet',
-                array(
-                    'Assert\EqualTo' => array(
+                [
+                    'Assert\EqualTo' => [
                         'value' => 'VALID',
-                    ),
-                ),
+                    ],
+                ],
                 null,
                 'VALID',
-            ),
+            ],
             // $_POST test
-            array(
-                array(),
-                array('foo' => 'VALID'),
+            [
+                [],
+                ['foo' => 'VALID'],
                 'foo',
                 'getValidInputPost',
-                array(
-                    'Assert\EqualTo' => array(
+                [
+                    'Assert\EqualTo' => [
                         'value' => 'VALID',
-                    ),
-                ),
+                    ],
+                ],
                 null,
                 'VALID',
-            ),
+            ],
             // $_REQUEST test
-            array(
-                array('foo' => 'INVALID'),
-                array('foo' => 'VALID'),
+            [
+                ['foo' => 'INVALID'],
+                ['foo' => 'VALID'],
                 'foo',
                 'getValidInputRequest',
-                array(
-                    'Assert\EqualTo' => array(
+                [
+                    'Assert\EqualTo' => [
                         'value' => 'VALID',
-                    ),
-                ),
+                    ],
+                ],
                 null,
                 'VALID',
-            ),
+            ],
             // Test without null constraint
-            array(
-                array('foo' => 'VALID'),
-                array(),
+            [
+                ['foo' => 'VALID'],
+                [],
                 'foo',
                 'getValidInputGet',
                 null,
                 null,
                 'VALID',
-            ),
+            ],
             // Test default
-            array(
-                array(),
-                array(),
+            [
+                [],
+                [],
                 'foo',
                 'getValidInputGet',
                 null,
                 'default',
                 'default',
-            ),
+            ],
             // Some actual tests
-            array(
-                array('bwcFrame' => '1'),
-                array(),
+            [
+                ['bwcFrame' => '1'],
+                [],
                 'bwcFrame',
                 'getValidInputGet',
-                array(
-                    'Assert\Type' => array('type' => 'numeric'),
-                    'Assert\Range' => array('min' => 0, 'max' => 1),
-                ),
+                [
+                    'Assert\Type' => ['type' => 'numeric'],
+                    'Assert\Range' => ['min' => 0, 'max' => 1],
+                ],
                 null,
                 '1',
-            ),
-            array(
-                array('bwcFrame' => '0'),
-                array(),
+            ],
+            [
+                ['bwcFrame' => '0'],
+                [],
                 'bwcFrame',
                 'getValidInputGet',
-                array(
-                    'Assert\Type' => array('type' => 'numeric'),
-                    'Assert\Range' => array('min' => 0, 'max' => 1),
-                ),
+                [
+                    'Assert\Type' => ['type' => 'numeric'],
+                    'Assert\Range' => ['min' => 0, 'max' => 1],
+                ],
                 null,
                 '0',
-            ),
+            ],
             /* Test relies on global state - skipping for now
             array(
                 array('module' => 'Accounts'),
@@ -171,92 +172,92 @@ class RequestTest extends TestCase
                 null,
                 'Accounts',
             ),*/
-            array(
-                array('current_page_by_query' => 'a:1:{s:3:"foo";s:3:"bar";}'),
-                array(),
+            [
+                ['current_page_by_query' => 'a:1:{s:3:"foo";s:3:"bar";}'],
+                [],
                 'current_page_by_query',
                 'getValidInputRequest',
                 'Assert\PhpSerialized',
                 null,
-                array('foo' => 'bar'),
-            ),
-            array(
-                array('current_page_by_query' => 'YToxOntzOjM6ImZvbyI7czozOiJiYXIiO30='),
-                array(),
+                ['foo' => 'bar'],
+            ],
+            [
+                ['current_page_by_query' => 'YToxOntzOjM6ImZvbyI7czozOiJiYXIiO30='],
+                [],
                 'current_page_by_query',
                 'getValidInputRequest',
-                array('Assert\PhpSerialized' => array('base64Encoded' => true)),
+                ['Assert\PhpSerialized' => ['base64Encoded' => true]],
                 null,
-                array('foo' => 'bar'),
-            ),
-            array(
-                array('lvso' => 'DESC'),
-                array(),
+                ['foo' => 'bar'],
+            ],
+            [
+                ['lvso' => 'DESC'],
+                [],
                 'lvso',
                 'getValidInputRequest',
                 'Assert\Sql\OrderDirection',
                 null,
                 'DESC',
-            ),
-            array(
-                array('lvso' => 'ASC'),
-                array(),
+            ],
+            [
+                ['lvso' => 'ASC'],
+                [],
                 'lvso',
                 'getValidInputRequest',
                 'Assert\Sql\OrderDirection',
                 null,
                 'ASC',
-            ),
-            array(
-                array('record' => '40a30045-2ab7-9c96-766d-563a3bb0d7ef'),
-                array(),
+            ],
+            [
+                ['record' => '40a30045-2ab7-9c96-766d-563a3bb0d7ef'],
+                [],
                 'record',
                 'getValidInputRequest',
                 'Assert\Guid',
                 null,
                 '40a30045-2ab7-9c96-766d-563a3bb0d7ef',
-            ),
-            array(
-                array('column' => 'foobar'),
-                array(),
+            ],
+            [
+                ['column' => 'foobar'],
+                [],
                 'column',
                 'getValidInputRequest',
                 'Assert\ComponentName',
                 null,
                 'foobar',
-            ),
-            array(
-                array('ids' => '12345,67890'),
-                array(),
+            ],
+            [
+                ['ids' => '12345,67890'],
+                [],
                 'ids',
                 'getValidInputRequest',
-                array(
+                [
                     'Assert\Delimited',
-                ),
+                ],
                 null,
-                array(
+                [
                     '12345',
                     '67890',
-                ),
-            ),
-            array(
-                array('records' => '40a30045-2ab7,9c96-766d-563a3bb0d7ef'),
-                array(),
+                ],
+            ],
+            [
+                ['records' => '40a30045-2ab7,9c96-766d-563a3bb0d7ef'],
+                [],
                 'records',
                 'getValidInputRequest',
-                array(
-                    'Assert\Delimited' => array(
+                [
+                    'Assert\Delimited' => [
                         'Assert\NotBlank',
                         'Assert\Guid',
-                    ),
-                ),
+                    ],
+                ],
                 null,
-                array(
+                [
                     '40a30045-2ab7',
                     '9c96-766d-563a3bb0d7ef',
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
     }
 
     /**
@@ -265,7 +266,7 @@ class RequestTest extends TestCase
      */
     public function testGetInvalidInput($data, $constraint)
     {
-        $superglobals = new Superglobals(array('data' => $data), array(), $this->logger);
+        $superglobals = new Superglobals(['data' => $data], [], $this->logger);
         $request = new Request($superglobals, $this->validator, $this->constraintBuilder, $this->logger);
 
         $this->expectException(ViolationException::class);
@@ -274,16 +275,16 @@ class RequestTest extends TestCase
 
     public function providerTestGetInvalidInput()
     {
-        return array(
-            array(
+        return [
+            [
                 'xxx' . chr(0),
-                null
-            ),
-            array(
-                array('xxx' . chr(0)),
-                null
-            ),
-        );
+                null,
+            ],
+            [
+                ['xxx' . chr(0)],
+                null,
+            ],
+        ];
     }
 
     /**
@@ -291,7 +292,7 @@ class RequestTest extends TestCase
      */
     public function testGetValidInputViolationException()
     {
-        $superglobals = new Superglobals(array('foo' => 'bar'), array(), $this->logger);
+        $superglobals = new Superglobals(['foo' => 'bar'], [], $this->logger);
         $request = new Request($superglobals, $this->validator, $this->constraintBuilder, $this->logger);
 
         $this->expectException(ViolationException::class);
@@ -304,7 +305,7 @@ class RequestTest extends TestCase
     public function testGetValidInputSuperglobalException()
     {
         $this->expectException(SuperglobalException::class);
-        $superglobals = new Superglobals(array(), array(), $this->logger);
+        $superglobals = new Superglobals([], [], $this->logger);
         $request = new Request($superglobals, $this->validator, $this->constraintBuilder, $this->logger);
         $request->getValidInput('foo', 'bar');
     }
@@ -314,16 +315,16 @@ class RequestTest extends TestCase
      */
     public function testSoftFailNoException()
     {
-        $superglobals = new Superglobals(array('foo' => 'VALID'), array(), $this->logger);
+        $superglobals = new Superglobals(['foo' => 'VALID'], [], $this->logger);
         $request = new Request($superglobals, $this->validator, $this->constraintBuilder, $this->logger);
         $request->setSoftFail(true);
-        $request->getValidInput(Superglobals::GET, 'foo', array(
+        $request->getValidInput(Superglobals::GET, 'foo', [
             'Assert\FailingConstraint',
-            'Assert\EqualTo' => array(
+            'Assert\EqualTo' => [
                 'value' => 'VALID',
-            ),
+            ],
             'Assert\FailingConstraint',
-        ));
+        ]);
         $request->setSoftFail(false);
 
         $this->assertEquals(2, count($request->getViolations()));

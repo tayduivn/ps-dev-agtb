@@ -25,19 +25,19 @@ class Bug60780Test extends TestCase
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('current_user');
         $this->has_disable_count_query_enabled = !empty($sugar_config['disable_count_query']);
-        if(!$this->has_disable_count_query_enabled) {
-           $sugar_config['disable_count_query'] = true;
+        if (!$this->has_disable_count_query_enabled) {
+            $sugar_config['disable_count_query'] = true;
         }
     }
 
     protected function tearDown() : void
     {
         global $sugar_config;
-        if(!empty($this->bugid)) {
+        if (!empty($this->bugid)) {
             $GLOBALS['db']->query("DELETE FROM bugs WHERE id='{$this->bugid}'");
         }
-        if(!$this->has_disable_count_query_enabled) {
-           unset($sugar_config['disable_count_query']);
+        if (!$this->has_disable_count_query_enabled) {
+            unset($sugar_config['disable_count_query']);
         }
         SugarTestHelper::tearDown();
     }
@@ -63,7 +63,7 @@ class Bug60780Test extends TestCase
                                         AND team_memberships.deleted=0 group by tst.team_set_id) accounts_tf on accounts_tf.team_set_id  = accounts.team_set_id LEFT JOIN users
                                         ON accounts.assigned_user_id=users.id  LEFT JOIN  team_sets ts ON accounts.team_set_id=ts.id  AND ts.deleted=0
                 LEFT JOIN  teams teams ON teams.id=ts.id AND teams.deleted=0 AND teams.deleted=0";
-        SugarTestReflection::callProtectedMethod($GLOBALS['db'], 'addDistinctClause', array(&$query));
+        SugarTestReflection::callProtectedMethod($GLOBALS['db'], 'addDistinctClause', [&$query]);
         $this->assertStringContainsString(
             'INNER JOIN team_sets_teams tst ON tst.team_set_id = accounts.team_set_id',
             $query

@@ -19,18 +19,18 @@ class Bug41893Test extends TestCase
 
     protected function setUp() : void
     {
-       if(!isset($GLOBALS['current_user'])) {
-       	  $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-       	  $this->created_anonymous_user = true;
-       }
+        if (!isset($GLOBALS['current_user'])) {
+            $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+            $this->created_anonymous_user = true;
+        }
     }
 
     protected function tearDown() : void
     {
-       if($this->created_anonymous_user) {
-       	  SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-          unset($GLOBALS['current_user']);
-       }
+        if ($this->created_anonymous_user) {
+            SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+            unset($GLOBALS['current_user']);
+        }
     }
 
 

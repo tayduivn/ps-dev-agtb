@@ -15,7 +15,7 @@ class RestTestPortalBase extends RestTestBase
 {
     protected $currentPortalBean = null;
     protected $testConsumer = null;
-    protected $originalSetting = array();
+    protected $originalSetting = [];
 
     /**
      * @var Contact
@@ -41,7 +41,7 @@ class RestTestPortalBase extends RestTestBase
         $this->_user->portal_only = '1';
         $this->_user->save();
 
-        // Reset the support portal user id to the newly created user id        
+        // Reset the support portal user id to the newly created user id
         $system_config->saveSetting('supportPortal', 'RegCreatedBy', $this->_user->id);
 
         $portalConfig = new ParserModifyPortalConfig();
@@ -99,8 +99,8 @@ class RestTestPortalBase extends RestTestBase
     {
         global $db;
         // Re-enable the old portal users
-        if ( isset($this->oldPortal) ) {
-            $portalIds = "('".implode("','",$this->oldPortal)."')";
+        if (isset($this->oldPortal)) {
+            $portalIds = "('".implode("','", $this->oldPortal)."')";
             $db->query("UPDATE users SET deleted = '0' WHERE id IN {$portalIds}");
         }
 
@@ -111,7 +111,7 @@ class RestTestPortalBase extends RestTestBase
         $this->_cleanUpRecords();
 
         // Add back original support_portal user
-        if(!empty($this->currentPortalBean->id)) {
+        if (!empty($this->currentPortalBean->id)) {
             $this->currentPortalBean->save();
         }
         
@@ -130,19 +130,19 @@ class RestTestPortalBase extends RestTestBase
 
     protected function _restLogin($username = '', $password = '', $platform = 'base')
     {
-        $args = array(
+        $args = [
             'grant_type' => 'password',
             'username' => 'unittestportal',
             'password' => 'unittest',
             'client_id' => 'support_portal',
             'client_secret' => '',
             'platform' => 'portal',
-        );
+        ];
 
         // Prevent an infinite loop, put a fake authtoken in here.
         $this->authToken = 'LOGGING_IN';
 
-        $reply = $this->_restCall('oauth2/token',json_encode($args));
+        $reply = $this->_restCall('oauth2/token', json_encode($args));
 
         $this->assertNotEmpty(
             $reply['reply']['access_token'],
@@ -156,12 +156,12 @@ class RestTestPortalBase extends RestTestBase
     protected function _restLogout()
     {
         if (!empty($this->authToken) && !empty($this->refreshToken)) {
-            $args = array(
+            $args = [
                 'token' => $this->authToken,
-            );
+            ];
 
-            $reply = $this->_restCall('oauth2/logout',json_encode($args));
-            if ( !isset($reply['reply']['success']) ) {
+            $reply = $this->_restCall('oauth2/logout', json_encode($args));
+            if (!isset($reply['reply']['success'])) {
                 throw new Exception("Rest logout failed, message looked like: ".$reply['replyRaw']);
             }
         }

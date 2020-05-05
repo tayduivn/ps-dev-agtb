@@ -24,7 +24,7 @@ class ActivityErasureTest extends TestCase
     protected function setUp() : void
     {
         $GLOBALS['current_user'] = $GLOBALS['current_user']->getSystemUser();
-        $this->dp = array();
+        $this->dp = [];
         $GLOBALS['db']->query('DELETE FROM activities');
         $GLOBALS['db']->query('DELETE FROM comments');
     }
@@ -36,20 +36,20 @@ class ActivityErasureTest extends TestCase
         if (!empty($this->dp)) {
             $GLOBALS['db']->query("DELETE FROM data_privacy WHERE id IN ('" . implode("','", $this->dp) . "')");
         }
-        $this->dp = array();
+        $this->dp = [];
     }
 
     public function testEraseActivities_Successful()
     {
         Activity::enable();
 
-        $contactValues = array(
+        $contactValues = [
             'first_name' => 'Foo',
             'last_name' => 'Bar',
             'primary_address_street' => '123 Main Street',
             'primary_address_city' => 'Milwaukee',
             'primary_address_state' => 'Wisconsin',
-        );
+        ];
 
         $contact = SugarTestContactUtilities::createContact('', $contactValues);
 
@@ -65,7 +65,7 @@ class ActivityErasureTest extends TestCase
 
         Activity::restoreToPreviousState();
         $activityErasure = new ActivityErasure();
-        $result = $activityErasure->process(array($dp->id));
+        $result = $activityErasure->process([$dp->id]);
 
         $this->assertSame(
             0,
@@ -171,7 +171,7 @@ class ActivityErasureTest extends TestCase
         $module = BeanFactory::getModuleName($bean);
         $linkName = strtolower($module);
         $dp->load_relationship($linkName);
-        $dp->$linkName->add(array($bean));
+        $dp->$linkName->add([$bean]);
 
         $options = ['use_cache' => false, 'encode' => false, 'disable_row_level_security' => true];
         $dp = BeanFactory::retrieveBean('DataPrivacy', $dp->id, $options);

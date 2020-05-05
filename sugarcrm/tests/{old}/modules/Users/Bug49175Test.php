@@ -28,21 +28,21 @@ class Bug49175Test extends TestCase
 
     public function userTypes()
     {
-        return array(
-            array('is_admin' => '1', 'is_group' => '0', 'portal_only' => '0', 'type' => 'Administrator'),
-            array('is_admin' => '0', 'is_group' => '1', 'portal_only' => '0', 'type' => 'GROUP'),
+        return [
+            ['is_admin' => '1', 'is_group' => '0', 'portal_only' => '0', 'type' => 'Administrator'],
+            ['is_admin' => '0', 'is_group' => '1', 'portal_only' => '0', 'type' => 'GROUP'],
             //BEGIN SUGARCRM flav=ent ONLY
-            array('is_admin' => '0', 'is_group' => '0', 'portal_only' => '1', 'type' => 'PORTAL_ONLY'),
+            ['is_admin' => '0', 'is_group' => '0', 'portal_only' => '1', 'type' => 'PORTAL_ONLY'],
             //END SUGARCRM flav=ent ONLY
-            array('is_admin' => '0', 'is_group' => '0', 'portal_only' => '0', 'type' => 'RegularUser')
-        );
+            ['is_admin' => '0', 'is_group' => '0', 'portal_only' => '0', 'type' => 'RegularUser'],
+        ];
     }
 
     /**
      * @group 49175
      * @dataProvider userTypes
      */
-    public function testGetUserType($is_admin, $is_group, $portal_only=0, $type)
+    public function testGetUserType($is_admin, $is_group, $portal_only = 0, $type)
     {
         $this->user->is_admin = $is_admin;
         $this->user->is_group = $is_group;
@@ -55,8 +55,10 @@ class Bug49175Test extends TestCase
     }
 }
 
-class MockUserViewHelper extends UserViewHelper {
+class MockUserViewHelper extends UserViewHelper
+{
     //override the constructor, don't bother passing Smarty instance, etc.
-    public function __construct() {
+    public function __construct()
+    {
     }
 }

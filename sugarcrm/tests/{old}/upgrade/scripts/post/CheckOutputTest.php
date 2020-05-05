@@ -29,7 +29,7 @@ class CheckOutputTest extends TestCase
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('files');
         $this->upgradeDriver = $this->getMockForAbstractClass('UpgradeDriver');
-        $this->upgradeDriver->context = array();
+        $this->upgradeDriver->context = [];
     }
 
     protected function tearDown() : void
@@ -62,9 +62,9 @@ class CheckOutputTest extends TestCase
             $script->expects($this->atLeastOnce())->method('backupFile')->with($this->equalTo($file));
         }
         foreach ($healthcheck as $k => $v) {
-            $healthcheck[$k]['params'] = array(
+            $healthcheck[$k]['params'] = [
                 $file,
-            );
+            ];
         }
         $this->upgradeDriver->state['healthcheck'] = $healthcheck;
         $script->run();
@@ -103,182 +103,182 @@ class CheckOutputTest extends TestCase
      */
     public static function getContents()
     {
-        return array(
-            array(
+        return [
+            [
                 "<?php \n print_r('data');\n?>",
                 "<?php \n sugar_upgrade_print_r('data');\n?>",
-                array(
-                    array(
+                [
+                    [
                         'report' => 'foundPrintR',
-                    ),
-                ),
-            ),
-            array(
+                    ],
+                ],
+            ],
+            [
                 "<?php \n print_r('data', true);\n?>",
                 "<?php \n print_r('data', true);\n?>",
-                array(
-                    array(
+                [
+                    [
                         'report' => 'foundPrintR',
-                    ),
-                ),
-            ),
-            array(
+                    ],
+                ],
+            ],
+            [
                 "<?php \n print_r('data', true);\n print_r('data');\n?>",
                 "<?php \n print_r('data', true);\n sugar_upgrade_print_r('data');\n?>",
-                array(
-                    array(
+                [
+                    [
                         'report' => 'foundPrintR',
-                    ),
-                ),
-            ),
-            array(
+                    ],
+                ],
+            ],
+            [
                 "<?php \n sugar_upgrade_print_r('text');\n?>",
                 "<?php \n sugar_upgrade_print_r('text');\n?>",
-                array(
-                    array(
+                [
+                    [
                         'report' => 'foundPrintR',
-                    ),
-                ),
-            ),
-            array(
+                    ],
+                ],
+            ],
+            [
                 "<?php print_r_('text');",
                 "<?php print_r_('text');",
-                array(
-                    array(
+                [
+                    [
                         'report' => 'foundPrintR',
-                    ),
-                ),
-            ),
-            array(
+                    ],
+                ],
+            ],
+            [
                 "<?php \n var_dump('data');\n?>",
                 "<?php \n sugar_upgrade_var_dump('data');\n?>",
-                array(
-                    array(
+                [
+                    [
                         'report' => 'foundVarDump',
-                    ),
-                ),
-            ),
-            array(
+                    ],
+                ],
+            ],
+            [
                 "<?php \n sugar_upgrade_var_dump('text');\n?>",
                 "<?php \n sugar_upgrade_var_dump('text');\n?>",
-                array(
-                    array(
+                [
+                    [
                         'report' => 'foundVarDump',
-                    ),
-                ),
-            ),
+                    ],
+                ],
+            ],
 
-            array(
+            [
                 "<?php \n exit('data');\n?>",
                 "<?php \n sugar_upgrade_exit('data');\n?>",
-                array(
-                    array(
+                [
+                    [
                         'report' => 'foundDieExit',
-                    ),
-                ),
-            ),
-            array(
+                    ],
+                ],
+            ],
+            [
                 "<?php \n sugar_upgrade_exit();\n?>",
                 "<?php \n sugar_upgrade_exit();\n?>",
-                array(
-                    array(
+                [
+                    [
                         'report' => 'foundDieExit',
-                    ),
-                ),
-            ),
-            array(
+                    ],
+                ],
+            ],
+            [
                 "<?php exit;",
                 "<?php sugar_upgrade_exit;",
-                array(
-                    array(
+                [
+                    [
                         'report' => 'foundDieExit',
-                    ),
-                ),
-            ),
+                    ],
+                ],
+            ],
 
-            array(
+            [
                 "<?php \n died('data');\n?>",
                 "<?php \n died('data');\n?>",
-                array(
-                    array(
+                [
+                    [
                         'report' => 'foundDieExit',
-                    ),
-                ),
-            ),
-            array(
+                    ],
+                ],
+            ],
+            [
                 "<?php \n die('data');\n?>",
                 "<?php \n sugar_upgrade_die('data');\n?>",
-                array(
-                    array(
+                [
+                    [
                         'report' => 'foundDieExit',
-                    ),
-                ),
-            ),
-            array(
+                    ],
+                ],
+            ],
+            [
                 "<?php \n sugar_upgrade_die();\n?>",
                 "<?php \n sugar_upgrade_die();\n?>",
-                array(
-                    array(
+                [
+                    [
                         'report' => 'foundDieExit',
-                    ),
-                ),
-            ),
+                    ],
+                ],
+            ],
 
-            array(
+            [
                 "<?php \n die('data');\n array('AIHODYN6' => 'DIems');\n?>",
                 "<?php \n sugar_upgrade_die('data');\n array('AIHODYN6' => 'DIems');\n?>",
-                array(
-                    array(
+                [
+                    [
                         'report' => 'foundDieExit',
-                    ),
-                ),
-            ),
-            array(
+                    ],
+                ],
+            ],
+            [
                 "<?php \n if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');\n die('data');",
                 "<?php \n if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');\n sugar_upgrade_die('data');",
-                array(
-                    array(
+                [
+                    [
                         'report' => 'foundDieExit',
-                    ),
-                ),
-            ),
+                    ],
+                ],
+            ],
             // Custom message in entryPoint check
-            array(
+            [
                 "<?php \n if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point - Custom test message');\n die('data');",
                 "<?php \n if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point - Custom test message');\n sugar_upgrade_die('data');",
-                array(
-                    array(
+                [
+                    [
                         'report' => 'foundDieExit',
-                    ),
-                ),
-            ),
+                    ],
+                ],
+            ],
             // Custom entryPoint check should be changed according to common replacement
-            array(
+            [
                 "<?php \n if(empty(\$GLOBALS['sugarEntry'])) die('Not A Valid Entry Point - FIL TESTING');\n",
                 "<?php \n if(empty(\$GLOBALS['sugarEntry'])) sugar_upgrade_die('Not A Valid Entry Point - FIL TESTING');\n",
-                array(
-                    array(
+                [
+                    [
                         'report' => 'foundDieExit',
-                    ),
-                ),
-            ),
+                    ],
+                ],
+            ],
             // Complex replace test
-            array(
+            [
                 "<?php \n if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point'); \n print_r('data'); \n print_r('data', true); \n print_r('data', true); \n print_r('data'); \n sugar_upgrade_print_r('text'); \n print_r_('text'); \n var_dump('data'); \n sugar_upgrade_var_dump('text'); \n exit('data'); \n sugar_upgrade_exit(); \n exit; \n died('data'); \n die('data'); \n sugar_upgrade_die(); \n die('data'); \n array('AIHODYN6' => 'DIems');",
                 "<?php \n if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point'); \n sugar_upgrade_print_r('data'); \n print_r('data', true); \n print_r('data', true); \n sugar_upgrade_print_r('data'); \n sugar_upgrade_print_r('text'); \n print_r_('text'); \n sugar_upgrade_var_dump('data'); \n sugar_upgrade_var_dump('text'); \n sugar_upgrade_exit('data'); \n sugar_upgrade_exit(); \n sugar_upgrade_exit; \n died('data'); \n sugar_upgrade_die('data'); \n sugar_upgrade_die(); \n sugar_upgrade_die('data'); \n array('AIHODYN6' => 'DIems');",
-                array(
-                    array(
+                [
+                    [
                         'report' => 'foundDieExit',
-                    ),
-                    array(
+                    ],
+                    [
                         'report' => 'foundPrintR',
-                    ),
-                    array(
+                    ],
+                    [
                         'report' => 'foundVarDump',
-                    ),
-                ),
-            ),
-        );
+                    ],
+                ],
+            ],
+        ];
     }
 
     /**
@@ -288,11 +288,11 @@ class CheckOutputTest extends TestCase
      */
     public static function getContentsFail()
     {
-        return array(
-            array(
+        return [
+            [
                 "<?php \n print_r('data');\n?>",
                 "<?php \n print_r('data');\n?>",
-            ),
-        );
+            ],
+        ];
     }
 }

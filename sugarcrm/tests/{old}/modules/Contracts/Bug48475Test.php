@@ -13,7 +13,7 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once('modules/Contracts/Contract.php');
+require_once 'modules/Contracts/Contract.php';
 
 class Bug48475Test extends TestCase
 {
@@ -21,21 +21,21 @@ class Bug48475Test extends TestCase
     var $contract;
 
     protected function setUp() : void
-	{
-		include('include/modules.php');
-	    $GLOBALS['beanList'] = $beanList;
-	    $GLOBALS['beanFiles'] = $beanFiles;
-	    $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+    {
+        include 'include/modules.php';
+        $GLOBALS['beanList'] = $beanList;
+        $GLOBALS['beanFiles'] = $beanFiles;
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['current_user']->is_admin = 1;
-	}
+    }
 
     protected function tearDown() : void
-	{
-		SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-	}
+    {
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+    }
 
-	public function testContractCreateNewListQuery()
-	{
+    public function testContractCreateNewListQuery()
+    {
         $this->contract = new Contract();
         $sql = $this->contract->create_new_list_query('', '');
         $results = $GLOBALS['db']->query($sql, false);

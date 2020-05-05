@@ -33,7 +33,7 @@ class PMSEDivergingGatewayTest extends TestCase
     {
         $this->loggerMock = $this->getMockBuilder('PMSELogger')
                 ->disableOriginalConstructor()
-                ->setMethods(array('info', 'debug', 'warning'))
+                ->setMethods(['info', 'debug', 'warning'])
                 ->getMock();
     }
 
@@ -47,16 +47,16 @@ class PMSEDivergingGatewayTest extends TestCase
         $this->divergingGateway->setLogger($this->loggerMock);
 
         $mockBean = $this->getMockBuilder('SugarBean')
-                ->setMethods(array('fetchFromQuery'))
+                ->setMethods(['fetchFromQuery'])
                 ->disableOriginalConstructor()
                 ->getMock();
 
         $mockBean->expects($this->once())
                 ->method('fetchFromQuery')
-                ->will($this->returnValue(array()));
+                ->will($this->returnValue([]));
 
         $caseFlowHandler = $this->getMockBuilder('PMSECaseFlowHandler')
-                ->setMethods(array('retrieveBean'))
+                ->setMethods(['retrieveBean'])
                 ->disableOriginalConstructor()
                 ->getMock();
 
@@ -66,9 +66,9 @@ class PMSEDivergingGatewayTest extends TestCase
 
         $this->divergingGateway->setCaseFlowHandler($caseFlowHandler);
 
-        $flowData = array(
-            'bpmn_id' => '1234567890'
-        );
+        $flowData = [
+            'bpmn_id' => '1234567890',
+        ];
 
         $this->divergingGateway->retrieveFollowingFlows($flowData);
     }
@@ -76,7 +76,7 @@ class PMSEDivergingGatewayTest extends TestCase
     public function testEvaluateFlowDefault()
     {
         $this->divergingGateway = $this->getMockBuilder('PMSEDivergingGateway')
-                ->setMethods(array('getDbHandler'))
+                ->setMethods(['getDbHandler'])
                 ->disableOriginalConstructor()
                 ->getMock();
         
@@ -94,9 +94,9 @@ class PMSEDivergingGatewayTest extends TestCase
                 ->disableOriginalConstructor()
                 ->getMock();
 
-        $flowData = array(
-            'bpmn_id' => '1234567890'
-        );
+        $flowData = [
+            'bpmn_id' => '1234567890',
+        ];
 
         $result = $this->divergingGateway->evaluateFlow($mockFlow, $mockBean, $flowData);
         $this->assertEquals(true, $result);
@@ -105,7 +105,7 @@ class PMSEDivergingGatewayTest extends TestCase
     public function testEvaluateFlowWithoutCondition()
     {
         $this->divergingGateway = $this->getMockBuilder('PMSEDivergingGateway')
-                ->setMethods(array('getDbHandler'))
+                ->setMethods(['getDbHandler'])
                 ->disableOriginalConstructor()
                 ->getMock();
         
@@ -124,9 +124,9 @@ class PMSEDivergingGatewayTest extends TestCase
                 ->disableOriginalConstructor()
                 ->getMock();
 
-        $flowData = array(
-            'bpmn_id' => '1234567890'
-        );
+        $flowData = [
+            'bpmn_id' => '1234567890',
+        ];
 
         $result = $this->divergingGateway->evaluateFlow($mockFlow, $mockBean, $flowData);
         $this->assertEquals(false, $result);
@@ -135,7 +135,7 @@ class PMSEDivergingGatewayTest extends TestCase
     public function testEvaluateFlowWithCondition()
     {
         $this->divergingGateway = $this->getMockBuilder('PMSEDivergingGateway')
-                ->setMethods(array('getDbHandler'))
+                ->setMethods(['getDbHandler'])
                 ->disableOriginalConstructor()
                 ->getMock();
         
@@ -150,7 +150,7 @@ class PMSEDivergingGatewayTest extends TestCase
         $mockFlow->flo_condition = '(a === 1)';
 
         $expressionEvaluator = $this->getMockBuilder('PMSEExpressionEvaluator')
-                ->setMethods(array('evaluateExpression'))
+                ->setMethods(['evaluateExpression'])
                 ->disableOriginalConstructor()
                 ->getMock();
 
@@ -165,10 +165,10 @@ class PMSEDivergingGatewayTest extends TestCase
                 ->disableOriginalConstructor()
                 ->getMock();
 
-        $flowData = array(
+        $flowData = [
             'bpmn_id' => '1234567890',
-            'cas_id' => 'abc12349123'
-        );
+            'cas_id' => 'abc12349123',
+        ];
 
         $result = $this->divergingGateway->evaluateFlow($mockFlow, $mockBean, $flowData);
         $this->assertEquals(true, $result);
@@ -177,7 +177,7 @@ class PMSEDivergingGatewayTest extends TestCase
     public function testFilterFlowsSingle()
     {
         $this->divergingGateway = $this->getMockBuilder('PMSEDivergingGateway')
-                ->setMethods(array('evaluateFlow'))
+                ->setMethods(['evaluateFlow'])
                 ->disableOriginalConstructor()
                 ->getMock();
         
@@ -192,10 +192,10 @@ class PMSEDivergingGatewayTest extends TestCase
                 ->disableOriginalConstructor()
                 ->getMock();
 
-        $flowData = array(
+        $flowData = [
             'bpmn_id' => '1234567890',
-            'cas_id' => 'abc12349123'
-        );
+            'cas_id' => 'abc12349123',
+        ];
 
         $firstFlow = new stdClass();
         $firstFlow->id = 'first_flow';
@@ -203,10 +203,10 @@ class PMSEDivergingGatewayTest extends TestCase
         $secondFlow = new stdClass();
         $secondFlow->id = 'second_flow';
 
-        $flows = array(
+        $flows = [
             $firstFlow,
-            $secondFlow
-        );
+            $secondFlow,
+        ];
 
         $type = 'SINGLE';
 
@@ -218,7 +218,7 @@ class PMSEDivergingGatewayTest extends TestCase
     public function testFilterFlowsAll()
     {
         $this->divergingGateway = $this->getMockBuilder('PMSEDivergingGateway')
-                ->setMethods(array('evaluateFlow'))
+                ->setMethods(['evaluateFlow'])
                 ->disableOriginalConstructor()
                 ->getMock();
         
@@ -237,10 +237,10 @@ class PMSEDivergingGatewayTest extends TestCase
                 ->disableOriginalConstructor()
                 ->getMock();
 
-        $flowData = array(
+        $flowData = [
             'bpmn_id' => '1234567890',
-            'cas_id' => 'abc12349123'
-        );
+            'cas_id' => 'abc12349123',
+        ];
 
         $firstFlow = new stdClass();
         $firstFlow->id = 'first_flow';
@@ -248,10 +248,10 @@ class PMSEDivergingGatewayTest extends TestCase
         $secondFlow = new stdClass();
         $secondFlow->id = 'second_flow';
 
-        $flows = array(
+        $flows = [
             $firstFlow,
-            $secondFlow
-        );
+            $secondFlow,
+        ];
 
         $type = 'ALL';
 

@@ -17,7 +17,7 @@ class One2OneBeanRelationshipTest extends TestCase
 {
     public function testbuildJoinSugarQuery()
     {
-        $relDef = array(
+        $relDef = [
             'name' => 'products_revenuelineitems',
             'lhs_module' => 'Products',
             'lhs_table' => 'products',
@@ -26,15 +26,15 @@ class One2OneBeanRelationshipTest extends TestCase
             'rhs_table' => 'revenue_line_items',
             'rhs_key' => 'id',
             'relationship_type' => 'one-to-one',
-        );
+        ];
         $rel = new One2OneBeanRelationship($relDef);
 
         /* @var $product Product */
-        $product = $this->createPartialMock('Product', array('save'));
+        $product = $this->createPartialMock('Product', ['save']);
         $product->id = 'unit_test_id';
 
         $link2 = $this->getMockBuilder('Link2')
-            ->setMethods(array('getSide', 'getRelatedModuleName', 'getFocus'))
+            ->setMethods(['getSide', 'getRelatedModuleName', 'getFocus'])
             ->disableOriginalConstructor()
             ->getMock();
         $link2->expects($this->any())
@@ -47,7 +47,7 @@ class One2OneBeanRelationshipTest extends TestCase
         $sq->from(BeanFactory::newBean('RevenueLineItems'));
 
         /** @var Link2 $link2 */
-        $ret = $rel->buildJoinSugarQuery($link2, $sq, array('ignoreRole' => true));
+        $ret = $rel->buildJoinSugarQuery($link2, $sq, ['ignoreRole' => true]);
 
         /** @var SugarQuery_Builder_Join $ret */
         $condition = $ret->on->conditions[0];

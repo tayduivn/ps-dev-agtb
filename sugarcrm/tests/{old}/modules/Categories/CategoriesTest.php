@@ -25,7 +25,7 @@ class CategoriesTest extends TestCase
      *
      * @var array
      */
-    public static $beanIds = array();
+    public static $beanIds = [];
 
     /**
      * Root node
@@ -42,7 +42,7 @@ class CategoriesTest extends TestCase
 
     protected function setUp() : void
     {
-        SugarTestHelper::setUp('current_user', array(true, true));
+        SugarTestHelper::setUp('current_user', [true, true]);
         $root = SugarTestCategoryUtilities::createRootBean();
         self::$root = $root;
     }
@@ -83,16 +83,16 @@ class CategoriesTest extends TestCase
         SugarTestReflection::callProtectedMethod(
             self::$root,
             'update',
-            array(
-                array('name = ?'),
+            [
+                ['name = ?'],
                 ' id = ? ',
-                array($expected, self::$root->id),
-            )
+                [$expected, self::$root->id],
+            ]
         );
 
-        $root = BeanFactory::retrieveBean('Categories', self::$root->id, array(
+        $root = BeanFactory::retrieveBean('Categories', self::$root->id, [
             'use_cache' => false,
-        ));
+        ]);
 
         $this->assertEquals($expected, $root->name);
     }
@@ -134,12 +134,13 @@ class CategoriesTest extends TestCase
         SugarTestCategoryUtilities::addCreatedBean($bean->saveAsRoot());
 
         $bean->shiftLeftRightMock(2, 2);
-        $bean = BeanFactory::retrieveBean('Categories', $bean->id, array(
+        $bean = BeanFactory::retrieveBean('Categories', $bean->id, [
             'use_cache' => false,
-        ));
+        ]);
 
         $this->assertEquals(
-            array('1', '4'), array($bean->lft, $bean->rgt)
+            ['1', '4'],
+            [$bean->lft, $bean->rgt]
         );
     }
 
@@ -236,13 +237,13 @@ class CategoriesTest extends TestCase
         $subnode2->name = 'SugarCategory' . mt_rand();
         SugarTestCategoryUtilities::addCreatedBean(self::$root->addNodeMock($subnode2, 2, 1));
 
-        $subnode = BeanFactory::retrieveBean('Categories', $subnode->id, array(
+        $subnode = BeanFactory::retrieveBean('Categories', $subnode->id, [
             'use_cache' => false,
-        ));
+        ]);
 
-        $subnode2 = BeanFactory::retrieveBean('Categories', $subnode2->id, array(
+        $subnode2 = BeanFactory::retrieveBean('Categories', $subnode2->id, [
             'use_cache' => false,
-        ));
+        ]);
 
         $result = $subnode2->getNextSibling();
         $this->assertNotEmpty($result);
@@ -265,13 +266,13 @@ class CategoriesTest extends TestCase
         $subnode2->name = 'SugarCategory' . mt_rand();
         SugarTestCategoryUtilities::addCreatedBean(self::$root->addNodeMock($subnode2, 2, 1));
 
-        $subnode = BeanFactory::retrieveBean('Categories', $subnode->id, array(
+        $subnode = BeanFactory::retrieveBean('Categories', $subnode->id, [
             'use_cache' => false,
-        ));
+        ]);
 
-        $subnode2 = BeanFactory::retrieveBean('Categories', $subnode2->id, array(
+        $subnode2 = BeanFactory::retrieveBean('Categories', $subnode2->id, [
             'use_cache' => false,
-        ));
+        ]);
 
         $result = $subnode->getPrevSibling();
         $this->assertNotEmpty($result);
@@ -297,9 +298,9 @@ class CategoriesTest extends TestCase
         $subnode->name = 'SugarCategory' . mt_rand();
         SugarTestCategoryUtilities::addCreatedBean(self::$root->addNodeMock($subnode, 2, 1));
 
-        $root = BeanFactory::retrieveBean('Categories', self::$root->id, array(
+        $root = BeanFactory::retrieveBean('Categories', self::$root->id, [
             'use_cache' => false,
-        ));
+        ]);
 
         $this->assertTrue($subnode->isDescendantOf($root));
         $this->assertFalse($root->isDescendantOf($subnode));
@@ -315,9 +316,9 @@ class CategoriesTest extends TestCase
         SugarTestCategoryUtilities::addCreatedBean(self::$root->addNodeMock($subnode, 2, 1));
 
         $subnode->moveNodeMock(self::$root, 2, 1);
-        $root = BeanFactory::retrieveBean('Categories', self::$root->id, array(
+        $root = BeanFactory::retrieveBean('Categories', self::$root->id, [
             'use_cache' => false,
-        ));
+        ]);
 
         $this->assertEquals($root->id, $subnode->root);
         $this->assertEquals($root->lft + 1, $subnode->lft);

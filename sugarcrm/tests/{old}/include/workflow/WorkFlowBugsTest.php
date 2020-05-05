@@ -17,38 +17,34 @@ class WorkFlowBugsTest extends TestCase
 {
     private static $has_workflow_directory;
     private static $has_logic_hooks_file;
-    private static $wf_files = array('actions_array.php', 'alerts_array.php', 'plugins_array.php', 'triggers_array.php', 'workflow.php');
+    private static $wf_files = ['actions_array.php', 'alerts_array.php', 'plugins_array.php', 'triggers_array.php', 'workflow.php'];
     private $test_account;
     private $test_team1;
     private $test_team2;
 
     public static function setUpBeforeClass() : void
     {
-        if(file_exists('custom/modules/Accounts/workflow'))
-        {
-           self::$has_workflow_directory = true;
+        if (file_exists('custom/modules/Accounts/workflow')) {
+            self::$has_workflow_directory = true;
         } else {
-           mkdir_recursive('custom/modules/Accounts/workflow');
+            mkdir_recursive('custom/modules/Accounts/workflow');
         }
 
-        foreach(self::$wf_files as $file) {
+        foreach (self::$wf_files as $file) {
              $target_file = 'custom/modules/Accounts/workflow/' . $file;
-             if(file_exists($target_file))
-             {
-             		copy($target_file, $target_file . '.bak');
-             }
+            if (file_exists($target_file)) {
+                   copy($target_file, $target_file . '.bak');
+            }
 
              $test_file = 'tests/{old}/include/workflow/testfiles/workflow/' . $file;
-             if(file_exists($test_file))
-             {
-           		copy($test_file, $target_file);
-             }
+            if (file_exists($test_file)) {
+                copy($test_file, $target_file);
+            }
         }
 
-        if(file_exists('custom/modules/Accounts/logic_hooks.php'))
-        {
-        	self::$has_logic_hooks_file = true;
-        	copy('custom/modules/Accounts/logic_hooks.php', 'custom/modules/Accounts/logic_hooks.php.bak');
+        if (file_exists('custom/modules/Accounts/logic_hooks.php')) {
+            self::$has_logic_hooks_file = true;
+            copy('custom/modules/Accounts/logic_hooks.php', 'custom/modules/Accounts/logic_hooks.php.bak');
         }
         copy('tests/{old}/include/workflow/testfiles/logic_hooks.php', 'custom/modules/Accounts/logic_hooks.php');
         LogicHook::refreshHooks();
@@ -70,9 +66,9 @@ class WorkFlowBugsTest extends TestCase
 
         $sql = "INSERT INTO workflow(id, deleted, date_entered, date_modified, modified_user_id, created_by, name, base_module, status, type, fire_order, record_type, list_order_y)
         VALUES ('436cfc81-1926-5ba6-cfec-4c72d7b861c4', 0, '2010-08-23 20:18:04', '2010-08-23 20:18:04', '1', '1', 'Yo Yo!', 'Accounts', 1, 'Normal', 'alerts_actions', 'All', 0)";
-		$GLOBALS['db']->query($sql);
+        $GLOBALS['db']->query($sql);
 
-      	$sql = "INSERT INTO workflow(id, deleted, date_entered, date_modified, modified_user_id, created_by, name, base_module, status, type, fire_order, record_type, list_order_y)
+        $sql = "INSERT INTO workflow(id, deleted, date_entered, date_modified, modified_user_id, created_by, name, base_module, status, type, fire_order, record_type, list_order_y)
         VALUES ('43406320-49b6-6503-0074-4c73532a4325', 0, '2010-08-23 20:18:04', '2010-08-23 20:18:04', '1', '1', 'Bug', 'Accounts', 1, 'Normal', 'alerts_actions', 'All', 1)";
         $GLOBALS['db']->query($sql);
 
@@ -100,51 +96,48 @@ class WorkFlowBugsTest extends TestCase
         VALUES ('88809b43-e3fb-17fc-c311-4c735359cebe', 0, '2010-08-23 20:18:04', '2010-08-23 20:18:04', '1', '1', 'name', 'compare_specific', 'Primary', '( !(\$focus->fetched_row[''name''] ==  ''Sugar'' )) && (isset(\$focus->name) && \$focus->name ==  ''Sugar'')', '43406320-49b6-6503-0074-4c73532a4325', 0, 'any')";
         $GLOBALS['db']->query($sql);
 
-    	$beanList = array();
-    	$beanFiles = array();
-		require('include/modules.php');
-		$GLOBALS['beanList'] = $beanList;
-		$GLOBALS['beanFiles'] = $beanFiles;
+        $beanList = [];
+        $beanFiles = [];
+        require 'include/modules.php';
+        $GLOBALS['beanList'] = $beanList;
+        $GLOBALS['beanFiles'] = $beanFiles;
 
-		$GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
 
-    	unset($GLOBALS['triggeredWorkflows']);
+        unset($GLOBALS['triggeredWorkflows']);
     }
 
     protected function setUp() : void
     {
-    	$this->test_team1 = SugarTestTeamUtilities::createAnonymousTeam();
+        $this->test_team1 = SugarTestTeamUtilities::createAnonymousTeam();
         $this->test_team2 = SugarTestTeamUtilities::createAnonymousTeam();
 
         $this->test_account = new Account();
-    	$this->test_account->name = 'bug_32738_test';
-    	$this->test_account->team_id = $this->test_team1->id;
-    	$this->test_account->team_set_id = $this->test_team1->id;
-    	$this->test_account->save();
+        $this->test_account->name = 'bug_32738_test';
+        $this->test_account->team_id = $this->test_team1->id;
+        $this->test_account->team_set_id = $this->test_team1->id;
+        $this->test_account->save();
     }
 
     public static function tearDownAfterClass(): void
     {
-        if(self::$has_workflow_directory)
-        {
-           foreach(self::$wf_files as $file) {
-           	   $target_file = 'custom/modules/Accounts/workflow/' . $file;
-          	   if(file_exists($target_file . '.bak'))
-          	   {
-          	   		copy($target_file . '.bak', $target_file);
-          	   		unlink($target_file . '.bak');
-          	   } else {
+        if (self::$has_workflow_directory) {
+            foreach (self::$wf_files as $file) {
+                $target_file = 'custom/modules/Accounts/workflow/' . $file;
+                if (file_exists($target_file . '.bak')) {
+                    copy($target_file . '.bak', $target_file);
+                    unlink($target_file . '.bak');
+                } else {
                     unlink($target_file);
-          	   }
-           }
+                }
+            }
         } else {
-           rmdir_recursive('custom/modules/Accounts/workflow');
+            rmdir_recursive('custom/modules/Accounts/workflow');
         }
 
-        if(self::$has_logic_hooks_file)
-        {
-        	copy('custom/modules/Accounts/logic_hooks.php.bak', 'custom/modules/Accounts/logic_hooks.php');
-        	unlink('custom/modules/Accounts/logic_hooks.php.bak');
+        if (self::$has_logic_hooks_file) {
+            copy('custom/modules/Accounts/logic_hooks.php.bak', 'custom/modules/Accounts/logic_hooks.php');
+            unlink('custom/modules/Accounts/logic_hooks.php.bak');
         } else {
             unlink('custom/modules/Accounts/logic_hooks.php');
         }
@@ -181,9 +174,9 @@ class WorkFlowBugsTest extends TestCase
      */
     public function testBug32738()
     {
-    	$this->test_account->name = 'Sugar';
-    	$this->test_account->save();
-    	$this->assertEquals('1', $this->test_account->team_id);
+        $this->test_account->name = 'Sugar';
+        $this->test_account->save();
+        $this->assertEquals('1', $this->test_account->team_id);
     }
 
     /**
@@ -191,15 +184,15 @@ class WorkFlowBugsTest extends TestCase
      */
     public function testBug38859()
     {
-    	$this->test_account->description = 'Hey Lady!';
-    	$this->test_account->team_id = $this->test_team2->id;
-    	$this->test_account->team_set_id = $this->test_team2->id;
-    	$this->test_account->save();
-    	//Assert that the description was changed by the workflow
-    	$this->assertEquals('Hey Man!', $this->test_account->description);
-    	//Assert that the team_id change was preserved
-    	$this->assertEquals($this->test_team2->id, $this->test_account->team_id);
-    	//Assert that the team_set_id change was preserved
-    	$this->assertEquals($this->test_team2->id, $this->test_account->team_set_id);
+        $this->test_account->description = 'Hey Lady!';
+        $this->test_account->team_id = $this->test_team2->id;
+        $this->test_account->team_set_id = $this->test_team2->id;
+        $this->test_account->save();
+        //Assert that the description was changed by the workflow
+        $this->assertEquals('Hey Man!', $this->test_account->description);
+        //Assert that the team_id change was preserved
+        $this->assertEquals($this->test_team2->id, $this->test_account->team_id);
+        //Assert that the team_set_id change was preserved
+        $this->assertEquals($this->test_team2->id, $this->test_account->team_set_id);
     }
 }

@@ -13,23 +13,24 @@
 
 class SugarTestCampaignUtilities
 {
-    private static $_createdCampaigns    = array();
-    private static $_createdCampaignLogs = array();
-    private static $_createdCampaignTrackers = array();
+    private static $_createdCampaigns    = [];
+    private static $_createdCampaignLogs = [];
+    private static $_createdCampaignTrackers = [];
 
-    private function __construct() {}
+    private function __construct()
+    {
+    }
 
-    public static function createCampaign($id = '', $class='Campaign')
+    public static function createCampaign($id = '', $class = 'Campaign')
     {
         $time = mt_rand();
-    	$name = 'SugarCampaign';
-    	$campaign = new $class();
+        $name = 'SugarCampaign';
+        $campaign = new $class();
         $campaign->name = $name . $time;
         $campaign->status = 'Active';
         $campaign->campaign_type = 'Email';
         $campaign->end_date = '2010-11-08';
-        if(!empty($id))
-        {
+        if (!empty($id)) {
             $campaign->new_with_id = true;
             $campaign->id = $id;
         }
@@ -38,7 +39,7 @@ class SugarTestCampaignUtilities
         return $campaign;
     }
 
-    public static function removeAllCreatedCampaigns() 
+    public static function removeAllCreatedCampaigns()
     {
         $campaignIds = static::getCreatedCampaignIds();
         $campaignIds = implode("', '", $campaignIds);
@@ -47,9 +48,9 @@ class SugarTestCampaignUtilities
         $GLOBALS['db']->query("DELETE FROM campaign_trkrs WHERE campaign_id IN ('{$campaignIds}')");
     }
     
-    public static function getCreatedCampaignIds() 
+    public static function getCreatedCampaignIds()
     {
-        $campaign_ids = array();
+        $campaign_ids = [];
         foreach (self::$_createdCampaigns as $campaign) {
             $campaign_ids[] = $campaign->id;
         }
@@ -58,16 +59,15 @@ class SugarTestCampaignUtilities
 
     public static function setCreatedCampaign($ids)
     {
-        $ids = is_array($ids) ? $ids : array($ids);
-        foreach ( $ids as $id )
-        {
+        $ids = is_array($ids) ? $ids : [$ids];
+        foreach ($ids as $id) {
             $campaign = new Campaign();
             $campaign->id = $id;
             self::$_createdCampaigns[] = $campaign;
         }
     }
 
-    public static function createCampaignLog($campaignId, $activityType, $relatedBean, $extraData = array())
+    public static function createCampaignLog($campaignId, $activityType, $relatedBean, $extraData = [])
     {
         $campaignLog                = BeanFactory::newBean("CampaignLog");
         $campaignLog->campaign_id   = $campaignId;
@@ -96,7 +96,7 @@ class SugarTestCampaignUtilities
 
     public static function getCreatedCampaignLogsIds()
     {
-        $campaignLogIds = array();
+        $campaignLogIds = [];
 
         foreach (self::$_createdCampaignLogs as $campaignLog) {
             $campaignLogIds[] = $campaignLog->id;
@@ -134,7 +134,7 @@ class SugarTestCampaignUtilities
 
     public static function getCreatedCampaignTrackerIds()
     {
-        $campaignTrackerIds = array();
+        $campaignTrackerIds = [];
 
         foreach (self::$_createdCampaignTrackers as $campaignTracker) {
             $campaignTrackerIds[] = $campaignTracker->id;

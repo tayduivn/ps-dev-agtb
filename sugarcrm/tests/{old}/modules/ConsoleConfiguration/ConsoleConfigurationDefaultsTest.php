@@ -57,13 +57,13 @@ class ConsoleConfigurationDefaultsTest extends TestCase
      */
     public function testSetupConsoleConfigurationSettings_IsSetup_ValuesNotChanged()
     {
-        $testValue = array(
-            'fake_console_id' => array('Accounts', 'Opportunities'),
-        );
-        $setupConfig = array(
+        $testValue = [
+            'fake_console_id' => ['Accounts', 'Opportunities'],
+        ];
+        $setupConfig = [
             'is_setup' => 1,
             'enabled_modules' => $testValue,
-        );
+        ];
 
         $this->saveConfig($setupConfig);
         $defaultConfig = ConsoleConfigurationDefaults::getDefaults();
@@ -108,10 +108,10 @@ class ConsoleConfigurationDefaultsTest extends TestCase
      */
     public function testSetupConsoleConfigurationSettings_IsNotSetup_ConfigOverridden()
     {
-        $setupConfig = array(
+        $setupConfig = [
             'is_setup' => 0,
-            'enabled_modules' => array('not a real module'),
-        );
+            'enabled_modules' => ['not a real module'],
+        ];
 
         $this->saveConfig($setupConfig);
 

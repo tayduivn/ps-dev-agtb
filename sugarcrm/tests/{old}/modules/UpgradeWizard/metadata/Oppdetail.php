@@ -9,60 +9,60 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-$viewdefs['Opportunities']['DetailView'] = array(
-    'templateMeta' => array(
+$viewdefs['Opportunities']['DetailView'] = [
+    'templateMeta' => [
         'maxColumns' => '2',
         'useTabs' => true,
-        'tabDefs' => array(
-            'LBL_OPPORTUNITY_INFORMATION' => array(
+        'tabDefs' => [
+            'LBL_OPPORTUNITY_INFORMATION' => [
                 'newTab' => true,
                 'panelDefault' => 'expanded',
-            ),
-            'LBL_PANEL_ADVANCED' => array(
+            ],
+            'LBL_PANEL_ADVANCED' => [
                 'newTab' => true,
                 'panelDefault' => 'expanded',
-            ),
-            'LBL_PANEL_ASSIGNMENT' => array(
+            ],
+            'LBL_PANEL_ASSIGNMENT' => [
                 'newTab' => true,
                 'panelDefault' => 'expanded',
-            ),
-        ),
-    ),
-    'panels' => array(
-        'LBL_OPPORTUNITY_INFORMATION' => array(
-            array(
-                array(
+            ],
+        ],
+    ],
+    'panels' => [
+        'LBL_OPPORTUNITY_INFORMATION' => [
+            [
+                [
                     'name' => 'assigned_user_name',
                     'label' => 'LBL_ASSIGNED_TO',
-                ),
-                array(
+                ],
+                [
                     'name' => 'date_modified',
                     'label' => 'LBL_DATE_MODIFIED',
                     'customCode' => '{$fields.date_modified.value} {$APP.LBL_BY} {$fields.modified_by_name.value}',
-                ),
-            ),
-        ),
-        'LBL_PANEL_ADVANCED' => array(
-            array(
-                array(
+                ],
+            ],
+        ],
+        'LBL_PANEL_ADVANCED' => [
+            [
+                [
                     'name' => 'date_entered',
                     'label' => 'LBL_DATE_ENTERED',
                     'customCode' => '{$fields.date_entered.value} {$APP.LBL_BY} {$fields.created_by_name.value}',
-                ),
+                ],
                 'description',
-            ),
-        ),
-        'LBL_PANEL_ASSIGNMENT' => array(
-            array(
+            ],
+        ],
+        'LBL_PANEL_ASSIGNMENT' => [
+            [
                 'id',
                 'opportunity_type',
-            ),
-        ),
-        'LBL_PANEL_HIDDEN' => array(
-            array(
+            ],
+        ],
+        'LBL_PANEL_HIDDEN' => [
+            [
                 'mycustom_c',
                 'myother_custom_c',
-            )
-        ),
-    ),
-);
+            ],
+        ],
+    ],
+];

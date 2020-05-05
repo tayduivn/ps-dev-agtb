@@ -47,12 +47,13 @@ class RESTAPI4FieldACLsTest extends TestCase
      * @param $module
      * @param $metadatafile
      */
-    public function testAddFieldLevelACLsToWirelessList($module, $metadatafile) {
+    public function testAddFieldLevelACLsToWirelessList($module, $metadatafile)
+    {
         $defs = $this->v4->get_module_view_defs($module, 'wireless', 'list');
         
         // $defs should be converted and ACLed at this point
         // find the name field
-        foreach($defs AS $def) {
+        foreach ($defs as $def) {
             $this->assertArrayHasKey('name', $def, "No name index");
         }
 
@@ -71,7 +72,8 @@ class RESTAPI4FieldACLsTest extends TestCase
      * @param $module
      * @param $view
      */
-    public function testAddFieldLevelACLsToWirelessGrid($module, $view, $metadatafile) {
+    public function testAddFieldLevelACLsToWirelessGrid($module, $view, $metadatafile)
+    {
         $defs = $this->v4->get_module_view_defs($module, 'wireless', $view);
         
         // $defs should be converted and ACLed at this point
@@ -87,25 +89,27 @@ class RESTAPI4FieldACLsTest extends TestCase
     /**
      * ANY ENTRY MADE TO THIS RETURN SHOULD HAVE A CORRESPONDING LEGACY METADATA
      * FILE SAVED IN tests/service/metadata AND NAMED $module . 'legacy' . $view . '.php'
-     * 
+     *
      * @return array
      */
-    public function _wirelessGridProvider() {
-        return array(
-            array('module' => 'Accounts', 'view' => 'edit', 'metadatafile' => 'modules/Accounts/clients/mobile/views/edit/edit.php',),
-            array('module' => 'Accounts', 'view' => 'detail', 'metadatafile' => 'modules/Accounts/clients/mobile/views/detail/detail.php',),
-        );
+    public function _wirelessGridProvider()
+    {
+        return [
+            ['module' => 'Accounts', 'view' => 'edit', 'metadatafile' => 'modules/Accounts/clients/mobile/views/edit/edit.php',],
+            ['module' => 'Accounts', 'view' => 'detail', 'metadatafile' => 'modules/Accounts/clients/mobile/views/detail/detail.php',],
+        ];
     }
     
     /**
      * ANY ENTRY MADE TO THIS RETURN SHOULD HAVE A CORRESPONDING LEGACY METADATA
      * FILE SAVED IN tests/service/metadata AND NAMED $module . 'legacy' . $view . '.php'
-     * 
+     *
      * @return array
      */
-    public function _wirelessListProvider() {
-        return array(
-            array('module' => 'Cases', 'metadatafile' => 'modules/Cases/clients/mobile/views/list/list.php',),
-        );
+    public function _wirelessListProvider()
+    {
+        return [
+            ['module' => 'Cases', 'metadatafile' => 'modules/Cases/clients/mobile/views/list/list.php',],
+        ];
     }
 }

@@ -28,7 +28,7 @@ class Bug54507Test extends TestCase
     {
         global $app_list_strings;
         $app_list_strings = return_app_list_strings_language($GLOBALS['current_language']);
-        require('include/modules.php');
+        require 'include/modules.php';
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('app_list_strings');

@@ -18,10 +18,10 @@ class ViewFtsTest extends TestCase
     public function testTranslateModulesList()
     {
         $view = new ViewFtsStub();
-        $modules = array('Accounts', 'Bugs');
+        $modules = ['Accounts', 'Bugs'];
         $results = $view->translateModulesList($modules);
-        $match = array(0=>array('module'=>'Accounts', 'label'=>'Accounts'),
-                                           1=>array('module'=>'Bugs', 'label'=>'Bugs'));
+        $match = [0=>['module'=>'Accounts', 'label'=>'Accounts'],
+                                           1=>['module'=>'Bugs', 'label'=>'Bugs']];
         // Don't use array_diff, it doesn't compare in depth
         $this->assertEquals($match, $results, 'unexpected results');
     }
@@ -31,7 +31,7 @@ class ViewFtsTest extends TestCase
         $view = new ViewFtsStub();
         $testString = 'test string';
         $result = $view->sendOutput($testString, true, true);
-        $expected = json_encode(array('results' => $testString));
+        $expected = json_encode(['results' => $testString]);
         $this->assertEquals($expected, $result, "string not encoded correctly");
     }
 }

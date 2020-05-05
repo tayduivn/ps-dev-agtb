@@ -13,44 +13,43 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once('install/install_utils.php');
-require_once('modules/TimePeriods/TimePeriod.php');
+require_once 'install/install_utils.php';
+require_once 'modules/TimePeriods/TimePeriod.php';
 
 class PopulateOppSeedDataTest extends TestCase
 {
-private $createdOpportunities;
+    private $createdOpportunities;
 
     protected function setUp() : void
     {
-    SugarTestHelper::setUp('beanFiles');
-    SugarTestHelper::setUp('beanList');
-    SugarTestHelper::setUp('app_list_strings');
-    global $current_user;
-    SugarTestHelper::setUp('current_user');
-    $current_user->is_admin = 1;
-    $current_user->save();
-    $GLOBALS['db']->query("UPDATE opportunities SET deleted = 1");
-}
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('app_list_strings');
+        global $current_user;
+        SugarTestHelper::setUp('current_user');
+        $current_user->is_admin = 1;
+        $current_user->save();
+        $GLOBALS['db']->query("UPDATE opportunities SET deleted = 1");
+    }
 
     protected function tearDown() : void
     {
-    SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-    SugarTestAccountUtilities::removeAllCreatedAccounts();
-    SugarTestProductUtilities::removeAllCreatedProducts();
-    $GLOBALS['db']->query("UPDATE opportunities SET deleted = 0");
-    if ( $this->createdOpportunities )
-    {
-        $ids = "('" . implode("','", $this->createdOpportunities) . "')";
-        $GLOBALS['db']->query("DELETE FROM opportunities WHERE id IN $ids");
-        $GLOBALS['db']->query("DELETE FROM products WHERE opportunity_id IN $ids");
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        SugarTestAccountUtilities::removeAllCreatedAccounts();
+        SugarTestProductUtilities::removeAllCreatedProducts();
+        $GLOBALS['db']->query("UPDATE opportunities SET deleted = 0");
+        if ($this->createdOpportunities) {
+            $ids = "('" . implode("','", $this->createdOpportunities) . "')";
+            $GLOBALS['db']->query("DELETE FROM opportunities WHERE id IN $ids");
+            $GLOBALS['db']->query("DELETE FROM products WHERE opportunity_id IN $ids");
+        }
     }
-}
 
     public static function dataProviderMonthDelta()
     {
-        $return = array();
+        $return = [];
         for ($m = 0; $m < 24; $m++) {
-            $return[] = array($m);
+            $return[] = [$m];
         }
 
         return $return;

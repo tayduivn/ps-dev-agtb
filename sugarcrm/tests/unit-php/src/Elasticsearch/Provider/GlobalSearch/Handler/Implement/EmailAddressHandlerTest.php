@@ -30,12 +30,12 @@ class EmailAddressHandlerTest extends TestCase
     public function testRequiredInterfaces()
     {
         $nsPrefix = 'Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler';
-        $interfaces = array(
+        $interfaces = [
             $nsPrefix . '\AnalysisHandlerInterface',
             $nsPrefix . '\MappingHandlerInterface',
             $nsPrefix . '\SearchFieldsHandlerInterface',
             $nsPrefix . '\ProcessDocumentHandlerInterface',
-        );
+        ];
         $implements = class_implements($nsPrefix . '\Implement\EmailAddressHandler');
         $this->assertEquals($interfaces, array_values(array_intersect($implements, $interfaces)));
     }
@@ -65,38 +65,38 @@ class EmailAddressHandlerTest extends TestCase
 
     public function providerTestSetProvider()
     {
-        return array(
-            array(
+        return [
+            [
                 null,
-                array(),
+                [],
                 'addSupportedTypes',
-                array('email'),
-            ),
-            array(
+                ['email'],
+            ],
+            [
                 'highlighterFields',
-                array('stuff'),
+                ['stuff'],
                 'addHighlighterFields',
-                array('stuff'),
-            ),
-            array(
+                ['stuff'],
+            ],
+            [
                 'weightedBoost',
-                array('morestuff'),
+                ['morestuff'],
                 'addWeightedBoosts',
-                array('morestuff'),
-            ),
-            array(
+                ['morestuff'],
+            ],
+            [
                 null,
-                array(),
+                [],
                 'addFieldRemap',
-                array('email_search' => 'email'),
-            ),
-            array(
+                ['email_search' => 'email'],
+            ],
+            [
                 null,
-                array(),
+                [],
                 'addSkipTypesFromQueue',
-                array('email'),
-            ),
-        );
+                ['email'],
+            ],
+        ];
     }
 
     /**
@@ -109,30 +109,30 @@ class EmailAddressHandlerTest extends TestCase
         $sut = $this->getEmailAddressHandlerMock();
         $sut->buildAnalysis($analysisBuilder);
 
-        $expected = array(
-            'analysis' => array(
-                'analyzer' => array(
-                    'gs_analyzer_email' => array(
+        $expected = [
+            'analysis' => [
+                'analyzer' => [
+                    'gs_analyzer_email' => [
                         'tokenizer' => 'whitespace',
-                        'filter' => array(
+                        'filter' => [
                             'lowercase',
-                        ),
+                        ],
                         'type' => 'custom',
-                    ),
-                    'gs_analyzer_email_ngram' => array(
+                    ],
+                    'gs_analyzer_email_ngram' => [
                         'tokenizer' => 'whitespace',
-                        'filter' => array(
+                        'filter' => [
                             'lowercase',
                             'gs_filter_ngram_1_15',
-                        ),
+                        ],
                         'type' => 'custom',
-                    ),
-                ),
-                'tokenizer' => array(),
-                'filter' => array(),
-                'char_filter' => array(),
-            ),
-        );
+                    ],
+                ],
+                'tokenizer' => [],
+                'filter' => [],
+                'char_filter' => [],
+            ],
+        ];
 
         $this->assertEquals($expected, $analysisBuilder->compile());
     }
@@ -151,99 +151,99 @@ class EmailAddressHandlerTest extends TestCase
 
     public function providerTestBuildMapping()
     {
-        return array(
+        return [
             // test 'email' type for 'email' field
-            array(
+            [
                 'testModule',
                 'email',
-                array(
+                [
                     'name' => 'email',
                     'type' => 'email',
-                ),
-                array(
-                    'testModule__email_search' => array(
+                ],
+                [
+                    'testModule__email_search' => [
                         'type' => 'object',
                         'dynamic' => false,
                         'enabled' => true,
-                        'properties' => array(
-                            'primary' => array(
+                        'properties' => [
+                            'primary' => [
                                 'type' => 'keyword',
                                 'index' => false,
-                                'fields' => array(
-                                    'gs_email' => array(
+                                'fields' => [
+                                    'gs_email' => [
                                         'type' => 'text',
                                         'index' => true,
                                         'analyzer' => 'gs_analyzer_email',
                                         'store' => true,
-                                    ),
-                                    'gs_email_wildcard' => array(
+                                    ],
+                                    'gs_email_wildcard' => [
                                         'type' => 'text',
                                         'index' => true,
                                         'analyzer' => 'gs_analyzer_email_ngram',
                                         'search_analyzer' => 'gs_analyzer_email',
                                         'store' => true,
-                                    ),
-                                ),
-                            ),
-                            'secondary' => array(
+                                    ],
+                                ],
+                            ],
+                            'secondary' => [
                                 'type' => 'keyword',
                                 'index' => false,
-                                'fields' => array(
-                                    'gs_email' => array(
+                                'fields' => [
+                                    'gs_email' => [
                                         'type' => 'text',
                                         'index' => true,
                                         'analyzer' => 'gs_analyzer_email',
                                         'store' => true,
-                                    ),
-                                    'gs_email_wildcard' => array(
+                                    ],
+                                    'gs_email_wildcard' => [
                                         'type' => 'text',
                                         'index' => true,
                                         'analyzer' => 'gs_analyzer_email_ngram',
                                         'search_analyzer' => 'gs_analyzer_email',
                                         'store' => true,
-                                    ),
-                                ),
-                            ),
-                        ),
-                    ),
-                    'testModule__email' => array(
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                    'testModule__email' => [
                         'type' => 'object',
                         'dynamic' => false,
                         'enabled' => false,
-                    ),
-                ),
-            ),
+                    ],
+                ],
+            ],
             // test 'email' type for non 'email' field
-            array(
+            [
                 'Accounts',
                 'other_email',
-                array(
+                [
                     'name' => 'other_email',
                     'type' => 'email',
-                ),
-                array(),
-            ),
+                ],
+                [],
+            ],
             // test non 'email' type for 'email' field
-            array(
+            [
                 'Contacts',
                 'email',
-                array(
+                [
                     'name' => 'email',
                     'type' => 'non_email',
-                ),
-                array(),
-            ),
+                ],
+                [],
+            ],
             // test non 'email' type for non 'email' field
-            array(
+            [
                 'Leads',
                 'other_email',
-                array(
+                [
                     'name' => 'other_email',
                     'type' => 'non_email',
-                ),
-                array(),
-            ),
-        );
+                ],
+                [],
+            ],
+        ];
     }
 
     /**
@@ -265,53 +265,53 @@ class EmailAddressHandlerTest extends TestCase
 
     public function providerTestBuildSearchFields()
     {
-        return array(
+        return [
             // email field
-            array(
+            [
                 'Contacts',
                 'email',
-                array(
+                [
                     'name' => 'email',
                     'type' => 'email',
-                ),
-                array(
+                ],
+                [
                     'Contacts__email_search.primary.gs_email',
                     'Contacts__email_search.primary.gs_email_wildcard',
                     'Contacts__email_search.secondary.gs_email',
                     'Contacts__email_search.secondary.gs_email_wildcard',
-                ),
-            ),
+                ],
+            ],
             // non email type/field
-            array(
+            [
                 'Contacts',
                 'first_name',
-                array(
+                [
                     'name' => 'first_name',
                     'type' => 'varchar',
-                ),
-                array(),
-            ),
+                ],
+                [],
+            ],
             // email field, non email type
-            array(
+            [
                 'Contacts',
                 'email',
-                array(
+                [
                     'name' => 'email',
                     'type' => 'varchar',
-                ),
-                array(),
-            ),
+                ],
+                [],
+            ],
             // non email field, email type
-            array(
+            [
                 'Contacts',
                 'other_email',
-                array(
+                [
                     'name' => 'other_email',
                     'type' => 'email',
-                ),
-                array(),
-            ),
-        );
+                ],
+                [],
+            ],
+        ];
     }
 
     /**
@@ -322,7 +322,7 @@ class EmailAddressHandlerTest extends TestCase
     public function testProcessDocumentPreIndex($module, array $beanFields, $fetch, array $expected)
     {
         $bean = $this->getSugarBeanMock($beanFields);
-        $sut = $this->getEmailAddressHandlerMock(array('fetchEmailAddressesFromDatabase'));
+        $sut = $this->getEmailAddressHandlerMock(['fetchEmailAddressesFromDatabase']);
 
         // stub db fetch
         if ($fetch === null) {
@@ -343,219 +343,219 @@ class EmailAddressHandlerTest extends TestCase
 
     public function providerTestProcessDocumentPreIndex()
     {
-        return array(
+        return [
             // missing email field in bean field_defs
-            array(
+            [
                 'Contacts',
-                array(
+                [
                     'first_name' => 'Jelle',
                     'last_name' => 'Vink',
-                    'field_defs' => array(
+                    'field_defs' => [
                         'name',
-                    ),
-                ),
+                    ],
+                ],
                 null,
-                array(),
-            ),
+                [],
+            ],
             // no emailAddress object means no fetch and empty result
-            array(
+            [
                 'Accounts',
-                array(
+                [
                     'name' => 'SugarCRM',
                     'email' => 'foobar',
-                    'field_defs' => array(
-                        'email' => array('name' => 'email', 'type' => 'email'),
-                    ),
-                ),
+                    'field_defs' => [
+                        'email' => ['name' => 'email', 'type' => 'email'],
+                    ],
+                ],
                 null,
-                array(
-                    'Accounts__email' => array(),
-                    'Accounts__email_search' => array(
+                [
+                    'Accounts__email' => [],
+                    'Accounts__email_search' => [
                         'primary' => '',
-                        'secondary' => array(),
-                    ),
-                ),
-            ),
+                        'secondary' => [],
+                    ],
+                ],
+            ],
             // emailAddress present but not correct object
-            array(
+            [
                 'Accounts',
-                array(
+                [
                     'name' => 'SugarCRM',
                     'email' => 'foobar',
                     'emailAddress' => '',
-                    'field_defs' => array(
-                        'email' => array('name' => 'email', 'type' => 'email'),
-                    ),
-                ),
+                    'field_defs' => [
+                        'email' => ['name' => 'email', 'type' => 'email'],
+                    ],
+                ],
                 null,
-                array(
-                    'Accounts__email' => array(),
-                    'Accounts__email_search' => array(
+                [
+                    'Accounts__email' => [],
+                    'Accounts__email_search' => [
                         'primary' => '',
-                        'secondary' => array(),
-                    ),
-                ),
-            ),
+                        'secondary' => [],
+                    ],
+                ],
+            ],
             // emailAddress present and fetched
-            array(
+            [
                 'Leads',
-                array(
+                [
                     'name' => 'SugarCRM',
                     'email' => 'foobar',
                     'emailAddress' => $this->getSugarEmailAddressFixture(
                         true,
                         false,
-                        array('first@gmail.com', 'second@sugarcrm.com', 'ok@more.co.uk')
+                        ['first@gmail.com', 'second@sugarcrm.com', 'ok@more.co.uk']
                     ),
-                    'field_defs' => array(
-                        'email' => array('name' => 'email', 'type' => 'email'),
-                    ),
-                ),
+                    'field_defs' => [
+                        'email' => ['name' => 'email', 'type' => 'email'],
+                    ],
+                ],
                 null,
-                array(
-                    'Leads__email' => array(
-                        array(
+                [
+                    'Leads__email' => [
+                        [
                             'email_address' => 'first@gmail.com',
                             'primary_address' => true,
                             'reply_to_address' => false,
                             'invalid_email' => false,
                             'opt_out' => false,
-                        ),
-                        array(
+                        ],
+                        [
                             'email_address' => 'second@sugarcrm.com',
                             'primary_address' => false,
                             'reply_to_address' => false,
                             'invalid_email' => false,
                             'opt_out' => false,
-                        ),
-                        array(
+                        ],
+                        [
                             'email_address' => 'ok@more.co.uk',
                             'primary_address' => false,
                             'reply_to_address' => false,
                             'invalid_email' => false,
                             'opt_out' => false,
-                        ),
-                    ),
-                    'Leads__email_search' => array(
+                        ],
+                    ],
+                    'Leads__email_search' => [
                         'primary' => 'first@gmail.com',
-                        'secondary' => array('second@sugarcrm.com', 'ok@more.co.uk'),
-                    ),
-                ),
-            ),
+                        'secondary' => ['second@sugarcrm.com', 'ok@more.co.uk'],
+                    ],
+                ],
+            ],
             // emailAddress present with fetched and dontLegacySave
-            array(
+            [
                 'Leads',
-                array(
+                [
                     'name' => 'SugarCRM',
                     'email' => 'foobar',
                     'emailAddress' => $this->getSugarEmailAddressFixture(
                         true,
                         true,
-                        array('first@gmail.com', 'second@sugarcrm.com')
+                        ['first@gmail.com', 'second@sugarcrm.com']
                     ),
-                    'field_defs' => array(
-                        'email' => array('name' => 'email', 'type' => 'email'),
-                    ),
-                ),
+                    'field_defs' => [
+                        'email' => ['name' => 'email', 'type' => 'email'],
+                    ],
+                ],
                 null,
-                array(
-                    'Leads__email' => array(
-                        array(
+                [
+                    'Leads__email' => [
+                        [
                             'email_address' => 'first@gmail.com',
                             'primary_address' => true,
                             'reply_to_address' => false,
                             'invalid_email' => false,
                             'opt_out' => false,
-                        ),
-                        array(
+                        ],
+                        [
                             'email_address' => 'second@sugarcrm.com',
                             'primary_address' => false,
                             'reply_to_address' => false,
                             'invalid_email' => false,
                             'opt_out' => false,
-                        ),
-                    ),
-                    'Leads__email_search' => array(
+                        ],
+                    ],
+                    'Leads__email_search' => [
                         'primary' => 'first@gmail.com',
-                        'secondary' => array('second@sugarcrm.com'),
-                    ),
-                ),
-            ),
+                        'secondary' => ['second@sugarcrm.com'],
+                    ],
+                ],
+            ],
             // emailAddress present with fetched and dontLegacySave
-            array(
+            [
                 'Accounts',
-                array(
+                [
                     'name' => 'SugarCRM',
                     'email' => 'foobar',
                     'emailAddress' => $this->getSugarEmailAddressFixture(
                         true,
                         true,
-                        array('first@gmail.com')
+                        ['first@gmail.com']
                     ),
-                    'field_defs' => array(
-                        'email' => array('name' => 'email', 'type' => 'email'),
-                    ),
-                ),
+                    'field_defs' => [
+                        'email' => ['name' => 'email', 'type' => 'email'],
+                    ],
+                ],
                 null,
-                array(
-                    'Accounts__email' => array(
-                        array(
+                [
+                    'Accounts__email' => [
+                        [
                             'email_address' => 'first@gmail.com',
                             'primary_address' => true,
                             'reply_to_address' => false,
                             'invalid_email' => false,
                             'opt_out' => false,
-                        ),
-                    ),
-                    'Accounts__email_search' => array(
+                        ],
+                    ],
+                    'Accounts__email_search' => [
                         'primary' => 'first@gmail.com',
-                        'secondary' => array(),
-                    ),
-                ),
-            ),
+                        'secondary' => [],
+                    ],
+                ],
+            ],
             // emailAddress present with fetch from database
-            array(
+            [
                 'Leads',
-                array(
+                [
                     'name' => 'SugarCRM',
                     'email' => 'foobar',
                     'emailAddress' => $this->getSugarEmailAddressFixture(false, false),
-                    'field_defs' => array(
-                        'email' => array('name' => 'email', 'type' => 'email'),
-                    ),
-                ),
-                $this->getEmailsFixture(array('first@gmail.com', 'second@sugarcrm.com', 'ok@more.co.uk')),
-                array(
-                    'Leads__email' => array(
-                        array(
+                    'field_defs' => [
+                        'email' => ['name' => 'email', 'type' => 'email'],
+                    ],
+                ],
+                $this->getEmailsFixture(['first@gmail.com', 'second@sugarcrm.com', 'ok@more.co.uk']),
+                [
+                    'Leads__email' => [
+                        [
                             'email_address' => 'first@gmail.com',
                             'primary_address' => true,
                             'reply_to_address' => false,
                             'invalid_email' => false,
                             'opt_out' => false,
-                        ),
-                        array(
+                        ],
+                        [
                             'email_address' => 'second@sugarcrm.com',
                             'primary_address' => false,
                             'reply_to_address' => false,
                             'invalid_email' => false,
                             'opt_out' => false,
-                        ),
-                        array(
+                        ],
+                        [
                             'email_address' => 'ok@more.co.uk',
                             'primary_address' => false,
                             'reply_to_address' => false,
                             'invalid_email' => false,
                             'opt_out' => false,
-                        ),
-                    ),
-                    'Leads__email_search' => array(
+                        ],
+                    ],
+                    'Leads__email_search' => [
                         'primary' => 'first@gmail.com',
-                        'secondary' => array('second@sugarcrm.com', 'ok@more.co.uk'),
-                    ),
-                ),
-            ),
-        );
+                        'secondary' => ['second@sugarcrm.com', 'ok@more.co.uk'],
+                    ],
+                ],
+            ],
+        ];
     }
 
     /**
@@ -581,7 +581,7 @@ class EmailAddressHandlerTest extends TestCase
     {
         $email = $this->getMockBuilder('SugarEmailAddress')
             ->disableOriginalConstructor()
-            ->setMethods(array())
+            ->setMethods([])
             ->getMock();
 
         $email->hasFetched = $hasFetched;
@@ -601,15 +601,15 @@ class EmailAddressHandlerTest extends TestCase
      */
     protected function getEmailsFixture(array $values)
     {
-        $fixture = array();
+        $fixture = [];
         foreach ($values as $email) {
-            $fixture[] = array(
+            $fixture[] = [
                 'email_address' => $email,
                 'primary_address' => empty($fixture) ? true : false,
                 'reply_to_address' => false,
                 'invalid_email' => false,
                 'opt_out' => false,
-            );
+            ];
         }
         return $fixture;
     }

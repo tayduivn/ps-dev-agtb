@@ -65,7 +65,7 @@ class JSONValidatorTest extends AbstractConstraintValidatorTest
      */
     public function testValidValues($value, $htmlDecode, $assoc, $expectedValue)
     {
-        $options = array();
+        $options = [];
         if ($htmlDecode !== null) {
             $options['htmlDecode'] = $htmlDecode;
         }
@@ -84,23 +84,23 @@ class JSONValidatorTest extends AbstractConstraintValidatorTest
 
     public function providerTestValidValues()
     {
-        return array(
+        return [
             //Basic JSON array
-            array('["a", "b", "c"]', null, null, array("a", "b", "c")),
+            ['["a", "b", "c"]', null, null, ["a", "b", "c"]],
             //Associated JSON array
-            array('{"a":"foo", "b":1, "c":true}', null, null, array("a" => "foo", "b" => 1, "c" => true)),
+            ['{"a":"foo", "b":1, "c":true}', null, null, ["a" => "foo", "b" => 1, "c" => true]],
             //Associated JSON array with assoc false
-            array('{"a":"foo", "b":1, "c":true}', null, false, (object) array("a" => "foo", "b" => 1, "c" => true)),
+            ['{"a":"foo", "b":1, "c":true}', null, false, (object) ["a" => "foo", "b" => 1, "c" => true]],
             //HTML encoded
-            array('[&quot;a&quot;, &quot;b&quot;, &quot;c&quot;]', true, null, array("a", "b", "c")),
+            ['[&quot;a&quot;, &quot;b&quot;, &quot;c&quot;]', true, null, ["a", "b", "c"]],
             //HTML encoded AND not assoc
-            array(
+            [
                 '{&quot;a&quot;:&quot;foo&quot;, &quot;b&quot;:1, &quot;c&quot;:true}',
                 true,
                 false,
-                (object) array("a" => "foo", "b" => 1, "c" => true)
-            ),
-        );
+                (object) ["a" => "foo", "b" => 1, "c" => true],
+            ],
+        ];
     }
 
     /**
@@ -109,9 +109,9 @@ class JSONValidatorTest extends AbstractConstraintValidatorTest
      */
     public function testInvalidValues($value, $code, $msg)
     {
-        $constraint = new JSON(array(
+        $constraint = new JSON([
             'message' => 'testMessage',
-        ));
+        ]);
 
         $this->validator->validate($value, $constraint);
 
@@ -124,12 +124,12 @@ class JSONValidatorTest extends AbstractConstraintValidatorTest
 
     public function providerTestInvalidValues()
     {
-        return array(
-            array(
+        return [
+            [
                 "This isn't json....",
                 JSON::ERROR_JSON_DECODE,
                 'json_decode error',
-            ),
-        );
+            ],
+        ];
     }
 }

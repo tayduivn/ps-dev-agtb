@@ -42,10 +42,10 @@ class PAT2702Test extends TestCase
         $layoutManager = new LayoutManager();
         $layoutManager->setAttribute('reporter', new Report());
         $swfdtMock = new SugarWidgetFielddatetimePAT2702Test($layoutManager);
-        $layoutDef = array(
+        $layoutDef = [
             'qualifier_name' => 'quarter',
             'type' => 'datetime',
-        );
+        ];
         foreach ($currentDates as $currentDate) {
             $result = $swfdtMock->getFiscalYearFilter($layoutDef, '', '+3 month', $currentDate);
             $this->assertContains($expectedStart, $result, 'Greater than part of query generated incorrectly.');
@@ -56,67 +56,67 @@ class PAT2702Test extends TestCase
     {
         $db = DBManagerFactory::getInstance();
         // Tests when the month of the start fiscal date is at the lower bound
-        $monthLowerBound = array(
+        $monthLowerBound = [
             // Q1 Tests
-            array(
+            [
                 '2015-01-01',
-                array('2016-01-01', '2016-02-01', '2016-03-01'),
+                ['2016-01-01', '2016-02-01', '2016-03-01'],
                 ">= {$db->convert($db->quoted('2016-01-01 00:00:00'), 'datetime')}",
                 "<= {$db->convert($db->quoted('2016-03-31 23:59:59'), 'datetime')}",
-            ),
+            ],
             // Q2 Tests
-            array(
+            [
                 '2015-01-01',
-                array('2016-04-01', '2016-05-01', '2016-06-01'),
+                ['2016-04-01', '2016-05-01', '2016-06-01'],
                 ">= {$db->convert($db->quoted('2016-04-01 00:00:00'), 'datetime')}",
                 "<= {$db->convert($db->quoted('2016-06-30 23:59:59'), 'datetime')}",
-            ),
+            ],
             // Q3 Tests
-            array(
+            [
                 '2015-01-01',
-                array('2016-07-01', '2016-08-01', '2016-09-01'),
+                ['2016-07-01', '2016-08-01', '2016-09-01'],
                 ">= {$db->convert($db->quoted('2016-07-01 00:00:00'), 'datetime')}",
                 "<= {$db->convert($db->quoted('2016-09-30 23:59:59'), 'datetime')}",
-            ),
+            ],
             // Q4 Tests
-            array(
+            [
                 '2015-01-01',
-                array('2016-10-01', '2016-11-01', '2016-12-01'),
+                ['2016-10-01', '2016-11-01', '2016-12-01'],
                 ">= {$db->convert($db->quoted('2016-10-01 00:00:00'), 'datetime')}",
                 "<= {$db->convert($db->quoted('2016-12-31 23:59:59'), 'datetime')}",
-            ),
-        );
+            ],
+        ];
         // Tests when the month of the start fiscal date is at the upper bound
-        $monthUpperBound = array(
+        $monthUpperBound = [
             // Q1 Tests
-            array(
+            [
                 '2015-12-01',
-                array('2015-12-31', '2016-01-01', '2016-02-01'),
+                ['2015-12-31', '2016-01-01', '2016-02-01'],
                 ">= {$db->convert($db->quoted('2015-12-01 00:00:00'), 'datetime')}",
                 "<= {$db->convert($db->quoted('2016-02-29 23:59:59'), 'datetime')}",
-            ),
+            ],
             // Q2 Tests
-            array(
+            [
                 '2015-12-01',
-                array('2016-03-01', '2016-04-01', '2016-05-01'),
+                ['2016-03-01', '2016-04-01', '2016-05-01'],
                 ">= {$db->convert($db->quoted('2016-03-01 00:00:00'), 'datetime')}",
                 "<= {$db->convert($db->quoted('2016-05-31 23:59:59'), 'datetime')}",
-            ),
+            ],
             // Q3 Tests
-            array(
+            [
                 '2015-12-01',
-                array('2016-06-01', '2016-07-01', '2016-08-01'),
+                ['2016-06-01', '2016-07-01', '2016-08-01'],
                 ">= {$db->convert($db->quoted('2016-06-01 00:00:00'), 'datetime')}",
                 "<= {$db->convert($db->quoted('2016-08-31 23:59:59'), 'datetime')}",
-            ),
+            ],
             // Q4 Tests
-            array(
+            [
                 '2015-12-01',
-                array('2016-09-01', '2016-10-01', '2016-11-01'),
+                ['2016-09-01', '2016-10-01', '2016-11-01'],
                 ">= {$db->convert($db->quoted('2016-09-01 00:00:00'), 'datetime')}",
                 "<= {$db->convert($db->quoted('2016-11-30 23:59:59'), 'datetime')}",
-            ),
-        );
+            ],
+        ];
         return array_merge($monthLowerBound, $monthUpperBound);
     }
 }

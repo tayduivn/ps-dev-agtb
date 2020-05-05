@@ -17,7 +17,7 @@ require_once 'include/SearchForm/SearchForm2.php';
 class FileLocatorTest extends TestCase
 {
     protected $form;
-    protected $tempfiles = array();
+    protected $tempfiles = [];
 
     protected function setUp() : void
     {
@@ -32,8 +32,8 @@ class FileLocatorTest extends TestCase
         unset($GLOBALS['app_strings']);
         unset($GLOBALS['current_user']);
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        if(!empty($this->tempfiles)) {
-            foreach($this->tempfiles as $file) {
+        if (!empty($this->tempfiles)) {
+            foreach ($this->tempfiles as $file) {
                 @unlink($file);
             }
         }
@@ -55,14 +55,14 @@ class FileLocatorTest extends TestCase
      */
     public function testFileLocatorSetOptions()
     {
-        $paths = array('a', 'b', 'c');
+        $paths = ['a', 'b', 'c'];
 
-        $options = array(
+        $options = [
             'locator_class' => 'FileLocator',
-            'locator_class_params' => array(
-                $paths
-            )
-            );
+            'locator_class_params' => [
+                $paths,
+            ],
+            ];
         $this->form->setOptions($options);
         $options = $this->form->getOptions();
         $this->assertEquals($paths, $options['locator_class_params'][0]);
@@ -73,14 +73,14 @@ class FileLocatorTest extends TestCase
      */
     public function testFileLocatorOptionsCtor()
     {
-        $paths = array('a', 'b', 'c');
+        $paths = ['a', 'b', 'c'];
 
-        $options = array(
+        $options = [
             'locator_class' => 'FileLocator',
-            'locator_class_params' => array(
-                $paths
-            )
-            );
+            'locator_class_params' => [
+                $paths,
+            ],
+            ];
         $this->form = new SearchForm(new Account(), "Accounts", 'index', $options);
         $options = $this->form->getOptions();
         $this->assertEquals($paths, $options['locator_class_params'][0]);
@@ -88,10 +88,11 @@ class FileLocatorTest extends TestCase
 
     public function testFileLocatorFindSystemFile()
     {
-        $this->assertEquals("include/SearchForm/tpls/SearchFormGenericAdvanced.tpl",
+        $this->assertEquals(
+            "include/SearchForm/tpls/SearchFormGenericAdvanced.tpl",
             $this->form->locateFile('SearchFormGenericAdvanced.tpl'),
             "Wrong file location"
-            );
+        );
     }
 
     public function testFileLocatorFindCustomFile()
@@ -100,17 +101,19 @@ class FileLocatorTest extends TestCase
         sugar_mkdir('custom/modules/Accounts/tpls/SearchForm', 0755, true);
         $this->tempfiles[]= 'custom/include/SearchForm/tpls/FileLocatorTest.tpl';
         file_put_contents('custom/include/SearchForm/tpls/FileLocatorTest.tpl', "unittest");
-        $this->assertEquals("custom/include/SearchForm/tpls/FileLocatorTest.tpl",
+        $this->assertEquals(
+            "custom/include/SearchForm/tpls/FileLocatorTest.tpl",
             $this->form->locateFile('FileLocatorTest.tpl'),
             "Wrong file location"
-            );
+        );
 
         $this->tempfiles[] = "custom/modules/Accounts/tpls/SearchForm/FileLocatorTest.tpl";
         file_put_contents('custom/modules/Accounts/tpls/SearchForm/FileLocatorTest.tpl', "unittest");
-        $this->assertEquals("custom/modules/Accounts/tpls/SearchForm/FileLocatorTest.tpl",
+        $this->assertEquals(
+            "custom/modules/Accounts/tpls/SearchForm/FileLocatorTest.tpl",
             $this->form->locateFile('FileLocatorTest.tpl'),
             "Wrong file location"
-            );
+        );
     }
 }
 

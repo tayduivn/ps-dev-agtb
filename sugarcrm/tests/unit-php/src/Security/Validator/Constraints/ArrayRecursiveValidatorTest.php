@@ -35,9 +35,9 @@ class ArrayRecursiveValidatorTest extends AbstractConstraintValidatorTest
      */
     public function testNullIsValid()
     {
-        $constraint = new ArrayRecursive(array(
-            'constraints' => array(new NotBlank()),
-        ));
+        $constraint = new ArrayRecursive([
+            'constraints' => [new NotBlank()],
+        ]);
         $this->validator->validate(null, $constraint);
         $this->assertNoViolation();
     }
@@ -47,9 +47,9 @@ class ArrayRecursiveValidatorTest extends AbstractConstraintValidatorTest
      */
     public function testEmptyArrayIsValid()
     {
-        $constraint = new ArrayRecursive(array(
-            'constraints' => array(new NotBlank()),
-        ));
+        $constraint = new ArrayRecursive([
+            'constraints' => [new NotBlank()],
+        ]);
         $this->validator->validate('', $constraint);
         $this->assertNoViolation();
     }
@@ -59,9 +59,9 @@ class ArrayRecursiveValidatorTest extends AbstractConstraintValidatorTest
      */
     public function testExpectsArrayType()
     {
-        $constraint = new ArrayRecursive(array(
+        $constraint = new ArrayRecursive([
             'constraints' => new NotBlank(),
-        ));
+        ]);
 
         $this->expectException(UnexpectedTypeException::class);
         $this->validator->validate(new \stdClass(), $constraint);
@@ -73,9 +73,9 @@ class ArrayRecursiveValidatorTest extends AbstractConstraintValidatorTest
      */
     public function testArrayIsValid($value, $expected)
     {
-        $constraint = new ArrayRecursive(array(
-            'constraints' => array(new NotBlank()),
-        ));
+        $constraint = new ArrayRecursive([
+            'constraints' => [new NotBlank()],
+        ]);
         $this->validator->validate($value, $constraint);
         $this->assertNoViolation();
         $this->assertSame($expected, $constraint->getFormattedReturnValue());
@@ -83,21 +83,21 @@ class ArrayRecursiveValidatorTest extends AbstractConstraintValidatorTest
 
     public function providerTestArrayIsValid()
     {
-        return array(
-            array(
-                array (
+        return [
+            [
+                 [
                     'roles' =>
-                        array (
+                         [
                             'ecaf8d4e-6e58-11e7-960b-56847afe9799' => '803a36bc-6e5f-11e7-a320-a45e60e64465',
-                        ),
-                ),
-            array (
+                        ],
+                 ],
+                 [
                     'roles' =>
-                        array (
+                         [
                             'ecaf8d4e-6e58-11e7-960b-56847afe9799' => '803a36bc-6e5f-11e7-a320-a45e60e64465',
-                        ),
-                ),
-            ),
-        );
+                        ],
+                 ],
+            ],
+        ];
     }
 }

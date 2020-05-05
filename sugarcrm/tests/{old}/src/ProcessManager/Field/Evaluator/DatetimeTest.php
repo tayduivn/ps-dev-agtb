@@ -50,23 +50,23 @@ class DatetimeTest extends TestCase
         $bean = \BeanFactory::newBean('Bugs');
 
         // Create a mock set of vardefs for this bean
-        $defs = array(
-            'test1' => array(
+        $defs = [
+            'test1' => [
                 'type' => 'date',
-            ),
-            'test2' => array(
+            ],
+            'test2' => [
                 'type' => 'time',
-            ),
-            'test3' => array(
+            ],
+            'test3' => [
                 'type' => 'datetimecombo',
-            ),
-            'test4' => array(
+            ],
+            'test4' => [
                 'type' => 'datetime',
-            ),
-            'test5' => array(
+            ],
+            'test5' => [
                 'custom_type' => 'datetime',
-            ),
-        );
+            ],
+        ];
         $bean->field_defs = array_merge($bean->field_defs, $defs);
 
         // Create a mock set of values on the bean for the mock fields
@@ -93,53 +93,53 @@ class DatetimeTest extends TestCase
     {
         $bean = $this->getPreparedBean();
 
-        return array(
+        return [
             // Tests no data value given
-            array(
+            [
                 'bean' => $bean,
                 'name' => 'test1',
-                'data' => array(),
+                'data' => [],
                 'expect' => false,
-            ),
+            ],
             // Tests no bean property set
-            array(
+            [
                 'bean' => $bean,
                 'name' => 'test7',
-                'data' => array('test7' => '2016-04-02 12:27'),
+                'data' => ['test7' => '2016-04-02 12:27'],
                 'expect' => false,
-            ),
+            ],
             // Tests no change of data
-            array(
+            [
                 'bean' => $bean,
                 'name' => 'test1',
-                'data' => array('test1' => '2016-04-02'),
+                'data' => ['test1' => '2016-04-02'],
                 'expect' => false,
-            ),
-            array(
+            ],
+            [
                 'bean' => $bean,
                 'name' => 'test2',
-                'data' => array('test2' => '12:27:00-0700'),
+                'data' => ['test2' => '12:27:00-0700'],
                 'expect' => false,
-            ),
-            array(
+            ],
+            [
                 'bean' => $bean,
                 'name' => 'test3',
-                'data' => array('test3' => '2016-04-02T12:27:00-0700'),
+                'data' => ['test3' => '2016-04-02T12:27:00-0700'],
                 'expect' => false,
-            ),
+            ],
             // Tests value change
-            array(
+            [
                 'bean' => $bean,
                 'name' => 'test4',
-                'data' => array('test4' => '2016-04-03T12:27:00-0700'),
+                'data' => ['test4' => '2016-04-03T12:27:00-0700'],
                 'expect' => true,
-            ),
-            array(
+            ],
+            [
                 'bean' => $bean,
                 'name' => 'test5',
-                'data' => array('test5' => '2016-04-02T15:27:00-0700'),
+                'data' => ['test5' => '2016-04-02T15:27:00-0700'],
                 'expect' => true,
-            ),
-        );
+            ],
+        ];
     }
 }

@@ -13,11 +13,13 @@ require_once 'modules/Meetings/Meeting.php';
 
 class SugarTestMeetingUtilities
 {
-    private static $_createdMeetings = array();
+    private static $_createdMeetings = [];
 
-    private function __construct() {}
+    private function __construct()
+    {
+    }
 
-    public static function createMeeting($id = '', User $user = null, array $meetingData = array())
+    public static function createMeeting($id = '', User $user = null, array $meetingData = [])
     {
         global $current_user;
         $time = mt_rand();
@@ -27,8 +29,7 @@ class SugarTestMeetingUtilities
         $meeting->duration_hours = '0';
         $meeting->duration_minutes = '15';
         $meeting->date_start = TimeDate::getInstance()->getNow()->asDb();
-        if(!empty($id))
-        {
+        if (!empty($id)) {
             $meeting->new_with_id = true;
             $meeting->id = $id;
         }
@@ -49,7 +50,7 @@ class SugarTestMeetingUtilities
         return $meeting;
     }
 
-    public static function removeAllCreatedMeetings() 
+    public static function removeAllCreatedMeetings()
     {
         $meeting_ids = self::getCreatedMeetingIds();
         $GLOBALS['db']->query(sprintf("DELETE FROM meetings WHERE id IN ('%s')", implode("', '", $meeting_ids)));
@@ -69,19 +70,22 @@ class SugarTestMeetingUtilities
         $GLOBALS['db']->query(sprintf("DELETE FROM meetings_contacts WHERE meeting_id IN ('%s')", implode("', '", $meeting_ids)));
     }
 
-    public static function addMeetingLeadRelation($meeting_id, $lead_id) {
+    public static function addMeetingLeadRelation($meeting_id, $lead_id)
+    {
         $id = create_guid();
         $GLOBALS['db']->query("INSERT INTO meetings_leads (id, meeting_id, lead_id) values ('{$id}', '{$meeting_id}', '{$lead_id}')");
         return $id;
     }
 
-    public static function addMeetingUserRelation($meeting_id, $user_id) {
+    public static function addMeetingUserRelation($meeting_id, $user_id)
+    {
         $id = create_guid();
         $GLOBALS['db']->query("INSERT INTO meetings_users (id, meeting_id, user_id) values ('{$id}', '{$meeting_id}', '{$user_id}')");
         return $id;
     }
 
-    public static function addMeetingContactRelation($meeting_id, $contact_id) {
+    public static function addMeetingContactRelation($meeting_id, $contact_id)
+    {
         $result = $GLOBALS['db']->query("SELECT id FROM meetings_contacts WHERE meeting_id='{$meeting_id}' AND contact_id='{$contact_id}'");
         $result = $GLOBALS['db']->fetchByAssoc($result);
         if (empty($result)) {
@@ -93,11 +97,13 @@ class SugarTestMeetingUtilities
         return $id;
     }
 
-    public static function deleteMeetingLeadRelation($id) {
+    public static function deleteMeetingLeadRelation($id)
+    {
         $GLOBALS['db']->query("delete from meetings_leads where id='{$id}'");
     }
 
-    public static function addMeetingParent($meeting_id, $lead_id) {
+    public static function addMeetingParent($meeting_id, $lead_id)
+    {
         $sql = "update meetings set parent_type='Leads', parent_id='{$lead_id}' where id='{$meeting_id}'";
         $GLOBALS['db']->query($sql);
     }
@@ -110,9 +116,8 @@ class SugarTestMeetingUtilities
 
     public static function getCreatedMeetingIds()
     {
-        $meeting_ids = array();
-        foreach (self::$_createdMeetings as $meeting)
-        {
+        $meeting_ids = [];
+        foreach (self::$_createdMeetings as $meeting) {
             $meeting_ids[] = $meeting->id;
         }
         return $meeting_ids;
@@ -121,7 +126,8 @@ class SugarTestMeetingUtilities
 
 class MeetingMock extends Meeting
 {
-    public function set_notification_body($xtpl, &$meeting) {
+    public function set_notification_body($xtpl, &$meeting)
+    {
         return $xtpl;
     }
 

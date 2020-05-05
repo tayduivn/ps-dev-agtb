@@ -21,32 +21,30 @@ class Bug46325Test extends TestCase
 
     protected function setUp() : void
     {
-        $this->fields = Array(
-            'name' => Array(
+        $this->fields = [
+            'name' => [
                     'width' => '40%',
                     'label' => 'LBL_LIST_ACCOUNT_NAME',
                     'link' => 1,
                     'default' => 1,
                     'name' => 'name',
-                ),
-        );
+                ],
+        ];
 
-        require('include/modules.php');
-		$GLOBALS['beanList'] = $beanList;
-		$GLOBALS['beanFiles'] = $beanFiles;
-    	$GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
+        require 'include/modules.php';
+        $GLOBALS['beanList'] = $beanList;
+        $GLOBALS['beanFiles'] = $beanFiles;
+        $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
         $this->accountsFile = 'custom/modules/Accounts/metadata/popupdefs.php';
         $this->prospectsFile = 'custom/modules/Prospects/metadata/popupdefs.php'; // Add in base/views when ready
     }
 
     protected function tearDown() : void
     {
-        if (is_file($this->accountsFile))
-        {
+        if (is_file($this->accountsFile)) {
             unlink($this->accountsFile);
         }
-        if (is_file($this->prospectsFile))
-        {
+        if (is_file($this->prospectsFile)) {
             unlink($this->prospectsFile);
         }
         unset($GLOBALS['beanList']);

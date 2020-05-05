@@ -22,15 +22,15 @@ class SugarModuleTest extends TestCase
     
     public function testLoadBean()
     {
-        $beanList = array('Accounts'=>'Account');
-        $beanFiles = array('Account'=>'modules/Accounts/Account.php');
-        $bean = SugarModule::get('Accounts')->loadBean($beanList,$beanFiles,false);
+        $beanList = ['Accounts'=>'Account'];
+        $beanFiles = ['Account'=>'modules/Accounts/Account.php'];
+        $bean = SugarModule::get('Accounts')->loadBean($beanList, $beanFiles, false);
         $this->assertInstanceOf('Account', $bean, "Expecting Account bean");
     }
     
     public function testLoadBeanInvalidBean()
     {
-        $bean = SugarModule::get('JohnIsACoolGuy')->loadBean(array(),array(),false);
+        $bean = SugarModule::get('JohnIsACoolGuy')->loadBean([], [], false);
         $this->assertTrue(is_null($bean), "Invalid Module to loadBean - expecting NULL");
     }
     

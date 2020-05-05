@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 class BR1176Test extends TestCase
 {
-    public function testModules() 
+    public function testModules()
     {
         $file = "TEST";
         include 'include/modules.php';

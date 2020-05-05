@@ -11,13 +11,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class RestMetadataModuleListMobileTest extends RestTestBase {
-    public $unitTestFiles = array();
+class RestMetadataModuleListMobileTest extends RestTestBase
+{
+    public $unitTestFiles = [];
 
     // Need to set the platform to something else
     protected function _restLogin($username = '', $password = '', $platform = 'mobile')
     {
-        return parent::_restLogin($username,$password,$platform);
+        return parent::_restLogin($username, $password, $platform);
     }
 
     protected function setUp() : void
@@ -27,8 +28,8 @@ class RestMetadataModuleListMobileTest extends RestTestBase {
     }
     protected function tearDown() : void
     {
-        foreach($this->unitTestFiles as $unitTestFile ) {
-            if ( file_exists($unitTestFile) ) {
+        foreach ($this->unitTestFiles as $unitTestFile) {
+            if (file_exists($unitTestFile)) {
                 // Ignore the warning on this, the file stat cache causes the file_exist to trigger even when it's not really there
                 unlink($unitTestFile);
             }
@@ -38,7 +39,8 @@ class RestMetadataModuleListMobileTest extends RestTestBase {
     /**
      * @group rest
      */
-    public function testMetadataGetModuleListMobile() {
+    public function testMetadataGetModuleListMobile()
+    {
         $this->_clearMetadataCache();
         $restReply = $this->_restCall('me');
 
@@ -51,15 +53,15 @@ class RestMetadataModuleListMobileTest extends RestTestBase {
         $enabledMobile = array_keys($wireless_module_registry);
 
         $users_key = array_search('Users', $enabledMobile);
-        if(!empty($users_key)) {
-            unset($enabledMobile[$users_key]);    
+        if (!empty($users_key)) {
+            unset($enabledMobile[$users_key]);
         }
 
-        $this->assertTrue(isset($restReply['reply']['current_user']['module_list']),'There is no mobile module list');
+        $this->assertTrue(isset($restReply['reply']['current_user']['module_list']), 'There is no mobile module list');
         $restModules = $restReply['reply']['current_user']['module_list'];
         unset($restModules['_hash']);
-        foreach ( $enabledMobile as $module ) {
-            $this->assertTrue(in_array($module,$restModules),'Module '.$module.' missing from the mobile module list.');
+        foreach ($enabledMobile as $module) {
+            $this->assertTrue(in_array($module, $restModules), 'Module '.$module.' missing from the mobile module list.');
         }
         $this->assertSameSize($enabledMobile, $restModules);
 
@@ -71,19 +73,20 @@ class RestMetadataModuleListMobileTest extends RestTestBase {
                 .'"Contacts"=>"Contacts","Opportunities"=>"Opportunities");'
         );
 
-        $enabledMobile = array('Accounts','Contacts','Opportunities',  );
+        $enabledMobile = ['Accounts','Contacts','Opportunities',  ];
 
         $this->_clearMetadataCache();
         $restReply = $this->_restCall('me');
-        $this->assertTrue(isset($restReply['reply']['current_user']['module_list']),'There is no mobile module list on the second pass');
+        $this->assertTrue(isset($restReply['reply']['current_user']['module_list']), 'There is no mobile module list on the second pass');
         $restModules = $restReply['reply']['current_user']['module_list'];
-        foreach ( $enabledMobile as $module ) {
-            $this->assertTrue(in_array($module,$restModules),'Module '.$module.' missing from the mobile module list on the second pass');
+        foreach ($enabledMobile as $module) {
+            $this->assertTrue(in_array($module, $restModules), 'Module '.$module.' missing from the mobile module list on the second pass');
         }
         $this->assertSameSize($enabledMobile, $restModules);
     }
 
-    public function testMetadataMobileUsers() {
+    public function testMetadataMobileUsers()
+    {
         $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata');
         $this->assertTrue(!empty($restReply['reply']['modules']['Users']), 'Users does not exist in the metadata list.');

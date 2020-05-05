@@ -24,13 +24,13 @@ class StatementTest extends TestCase
     public static function setUpBeforeClass() : void
     {
         $table = new Table('type_conversion');
-        $table->addColumn('id', 'string', array(
+        $table->addColumn('id', 'string', [
             'length' => 36,
-        ));
+        ]);
         $table->addColumn('name', 'string');
-        $table->addColumn('deptno', 'integer', array(
+        $table->addColumn('deptno', 'integer', [
             'notnull' => false,
-        ));
+        ]);
 
         $conn = \DBManagerFactory::getConnection();
         $sm = $conn->getSchemaManager();
@@ -48,37 +48,37 @@ class StatementTest extends TestCase
     {
         $conn = \DBManagerFactory::getConnection();
 
-        $conn->insert('type_conversion', array(
+        $conn->insert('type_conversion', [
             'id' => Uuid::uuid1(),
             'name' => 'Alice',
-        ));
-        $conn->insert('type_conversion', array(
+        ]);
+        $conn->insert('type_conversion', [
             'id' => 1,
             'name' => 'Bob',
-        ));
+        ]);
 
-        $stmt = $conn->executeQuery('SELECT name FROM type_conversion WHERE id = ?', array(1));
+        $stmt = $conn->executeQuery('SELECT name FROM type_conversion WHERE id = ?', [1]);
 
-        $this->assertEquals(array('Bob'), $stmt->fetchAll(\PDO::FETCH_COLUMN));
+        $this->assertEquals(['Bob'], $stmt->fetchAll(\PDO::FETCH_COLUMN));
     }
 
     public function testIntegerAsString()
     {
         $conn = \DBManagerFactory::getConnection();
 
-        $conn->insert('type_conversion', array(
+        $conn->insert('type_conversion', [
             'id' => Uuid::uuid1(),
             'name' => 'Alice',
             'deptno' => '7',
-        ));
-        $conn->insert('type_conversion', array(
+        ]);
+        $conn->insert('type_conversion', [
             'id' => Uuid::uuid1(),
             'name' => 'Bob',
             'deptno' => 12,
-        ));
+        ]);
 
-        $stmt = $conn->executeQuery('SELECT name FROM type_conversion WHERE deptno = ?', array('7'));
+        $stmt = $conn->executeQuery('SELECT name FROM type_conversion WHERE deptno = ?', ['7']);
 
-        $this->assertEquals(array('Alice'), $stmt->fetchAll(\PDO::FETCH_COLUMN));
+        $this->assertEquals(['Alice'], $stmt->fetchAll(\PDO::FETCH_COLUMN));
     }
 }

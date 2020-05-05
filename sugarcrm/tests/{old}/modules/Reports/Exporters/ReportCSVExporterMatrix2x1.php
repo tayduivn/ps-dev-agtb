@@ -60,15 +60,15 @@ class ReportCSVExporterMatrix1x1Test extends TestCase
         );
 
         $reporter->report_type = 'summary';
-        $reporter->report_def = array(
+        $reporter->report_def = [
             'layout_options' => $layoutOption,
             'group_defs' => $groupDefs,
-        );
+        ];
 
         $reporter->method('getDataTypeForColumnsForMatrix')
             ->willReturn($detailHeaders);
 
-        $headers = array();
+        $headers = [];
         foreach ($detailHeaders as $detail_header) {
             $headers[] = $detail_header['label'];
         }
@@ -103,84 +103,84 @@ class ReportCSVExporterMatrix1x1Test extends TestCase
         // 2x1 matrix
         $layoutOption1 = '2x1';
 
-        $detailHeaders1 = array(
-            'Area' => array(
+        $detailHeaders1 = [
+            'Area' => [
                 'label' => 'Area',
                 'type' => 'nothing',
-            ),
-            'Time' => array(
+            ],
+            'Time' => [
                 'label' => 'Time',
                 'type' => 'nothing',
-            ),
-            'Games' => array(
+            ],
+            'Games' => [
                 'label' => 'Games',
                 'type' => 'nothing',
-            ),
-            'Min' => array(
+            ],
+            'Min' => [
                 'group_function' => 'min',
                 'label' => 'Min',
                 'type' => 'nothing',
-            ),
-            'Count' => array(
+            ],
+            'Count' => [
                 'group_function' => 'count',
                 'label' => 'Count',
                 'type' => 'nothing',
-            ),
-            'Sum' => array(
+            ],
+            'Sum' => [
                 'group_function' => 'sum',
                 'label' => 'Sum',
                 'type' => 'nothing',
-            ),
-            'AVG' => array(
+            ],
+            'AVG' => [
                 'group_function' => 'avg',
                 'label' => 'AVG',
                 'type' => 'nothing',
-            ),
-            'Max' => array(
+            ],
+            'Max' => [
                 'group_function' => 'max',
                 'label' => 'Max',
                 'type' => 'nothing',
-            ),
-        );
+            ],
+        ];
 
-        $groupDefs1 = array(
-            array(
+        $groupDefs1 = [
+            [
                 'label' => 'Area',
-            ),
-            array(
+            ],
+            [
                 'label' => 'Time',
-            ),
-            array(
+            ],
+            [
                 'label' => 'Games',
-            ),
-        );
+            ],
+        ];
 
-        $dataRows1 = array(
-            array(
+        $dataRows1 = [
+            [
                 'cells' => ['Asia', 'Day', 'CS:GO', '1,000', '100', '1,000', '10', '10,000'],
                 'count' => 1,
-            ),
-            array(
+            ],
+            [
                 'cells' => ['Asia', 'Night', 'CS:GO', '1,000', '100', '1,000', '10', '10,000'],
                 'count' => 1,
-            ),
-            array(
+            ],
+            [
                 'cells' => ['Europe', 'Day', 'CS:GO', '1,000', '100', '1,000', '10', '10,000'],
                 'count' => 1,
-            ),
-            array(
+            ],
+            [
                 'cells' => ['Europe', 'Night', 'CS:GO', '1,000', '100', '1,000', '10', '10,000'],
                 'count' => 1,
-            ),
-            array(
+            ],
+            [
                 'cells' => ['America', 'Day', 'CS:GO', '1,000', '100', '1,000', '10', '10,000'],
                 'count' => 2,
-            ),
-            array(
+            ],
+            [
                 'cells' => ['America', 'Night', 'CS:GO', '1,000', '100', '1,000', '10', '10,000'],
                 'count' => 2,
-            ),
-        );
+            ],
+        ];
 
         $expected1 = "\"\",\"\",\"Games\",\"\"\r\n"
             . "\"Area\",\"Time\",\"CS:GO\",\"Grand Total\"\r\n"
@@ -235,8 +235,8 @@ class ReportCSVExporterMatrix1x1Test extends TestCase
             . "\"\",\"\",\"10\",\"10\"\r\n"
             . "\"\",\"\",\"10000\",\"10000\"\r\n";
 
-        return array(
-            array($layoutOption1, $detailHeaders1, $groupDefs1, $dataRows1, $expected1),
-        );
+        return [
+            [$layoutOption1, $detailHeaders1, $groupDefs1, $dataRows1, $expected1],
+        ];
     }
 }

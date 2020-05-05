@@ -21,7 +21,7 @@ class PMSEUserRoleParserTest extends TestCase
     {
         $this->dataParser = $this->getMockBuilder('PMSEUserRoleParser')
                 ->disableOriginalConstructor()
-                ->setMethods(NULL)
+                ->setMethods(null)
                 ->getMock();
     }
 
@@ -35,14 +35,14 @@ class PMSEUserRoleParserTest extends TestCase
 
         $userBeanMock = $this->getMockBuilder('User')
                 ->disableOriginalConstructor()
-                ->setMethods(NULL)
+                ->setMethods(null)
                 ->getMock();
         
         $userBeanMock->is_admin = 1;
 
         $currentUserMock = $this->getMockBuilder('User')
                 ->disableOriginalConstructor()
-                ->setMethods(NULL)
+                ->setMethods(null)
                 ->getMock();
 
         $currentUserMock->is_admin = 1;
@@ -84,7 +84,7 @@ class PMSEUserRoleParserTest extends TestCase
 
         $userBeanMock = $this->getMockBuilder('User')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve'))
+                ->setMethods(['retrieve'])
                 ->getMock();
         $userBeanMock->expects($this->exactly(1))
             ->method('retrieve')
@@ -128,7 +128,7 @@ class PMSEUserRoleParserTest extends TestCase
         
         $userBeanMock = $this->getMockBuilder('User')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve'))
+                ->setMethods(['retrieve'])
                 ->getMock();
 
         $userBeanMock->expects($this->exactly(1))
@@ -139,7 +139,7 @@ class PMSEUserRoleParserTest extends TestCase
 
         $currentUserMock = $this->getMockBuilder('User')
                 ->disableOriginalConstructor()
-                ->setMethods(NULL)
+                ->setMethods(null)
                 ->getMock();
         
         $currentUserMock->reports_to_id = "1";
@@ -182,7 +182,7 @@ class PMSEUserRoleParserTest extends TestCase
 
         $userBeanMock = $this->getMockBuilder('User')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve'))
+                ->setMethods(['retrieve'])
                 ->getMock();
 
         $userBeanMock->expects($this->exactly(1))
@@ -192,7 +192,7 @@ class PMSEUserRoleParserTest extends TestCase
 
         $currentUserMock = $this->getMockBuilder('User')
                 ->disableOriginalConstructor()
-                ->setMethods(NULL)
+                ->setMethods(null)
                 ->getMock();
 
         $currentUserMock->reports_to_id = "1";
@@ -210,7 +210,7 @@ class PMSEUserRoleParserTest extends TestCase
         $this->dataParser->setUserBean($userBeanMock);
         $this->dataParser->setEvaluatedBean($evaluatedBeanMock);
         $resultCriteriaObject = $this->dataParser->parseCriteriaToken($criteriaToken);
-        $this->assertEquals(array(''), $resultCriteriaObject->currentValue);
+        $this->assertEquals([''], $resultCriteriaObject->currentValue);
     }
     
     public function testParseCriteriaTokenCurrentUserHasRoleAdmin()
@@ -223,28 +223,28 @@ class PMSEUserRoleParserTest extends TestCase
 
         $supervisorUserMock = $this->getMockBuilder('User')
                 ->disableOriginalConstructor()
-                ->setMethods(NULL)
+                ->setMethods(null)
                 ->getMock();
 
         $supervisorUserMock->is_admin=1;
         
         $userBeanMock = $this->getMockBuilder('User')
                 ->disableOriginalConstructor()
-                ->setMethods(NULL)
+                ->setMethods(null)
                 ->getMock();
 
         $userBeanMock->is_admin = 1;
 
         $currentUserMock = $this->getMockBuilder('User')
                 ->disableOriginalConstructor()
-                ->setMethods(NULL)
+                ->setMethods(null)
                 ->getMock();
 
         $currentUserMock->reports_to_id = "1";
         $currentUserMock->is_admin = 1;
 
         $dbHandlerMock = $this->getMockBuilder('db')
-            ->setMethods(array('query'))
+            ->setMethods(['query'])
             ->getMock();
 
         $criteriaToken = json_decode('{
@@ -285,21 +285,21 @@ class PMSEUserRoleParserTest extends TestCase
 
         $supervisorUserMock = $this->getMockBuilder('User')
                 ->disableOriginalConstructor()
-                ->setMethods(NULL)
+                ->setMethods(null)
                 ->getMock();
 
         $supervisorUserMock->is_admin=1;
         
         $userBeanMock = $this->getMockBuilder('User')
                 ->disableOriginalConstructor()
-                ->setMethods(NULL)
+                ->setMethods(null)
                 ->getMock();
 
         $userBeanMock->is_admin = 1;
 
         $currentUserMock = $this->getMockBuilder('User')
                 ->disableOriginalConstructor()
-                ->setMethods(NULL)
+                ->setMethods(null)
                 ->getMock();
 
         $currentUserMock->id = "1";
@@ -307,14 +307,14 @@ class PMSEUserRoleParserTest extends TestCase
         $currentUserMock->is_admin = 1;
 
         $dbHandlerMock = $this->getMockBuilder('db')
-            ->setMethods(array('query', 'fetchByAssoc'))
+            ->setMethods(['query', 'fetchByAssoc'])
             ->getMock();
         $dbHandlerMock->expects($this->exactly(1))
             ->method('query')
             ->with($this->isType('string'));
         $dbHandlerMock->expects($this->any())
             ->method('fetchByAssoc')
-            ->willReturn(array('id' => 'abc'));
+            ->willReturn(['id' => 'abc']);
 
         $criteriaToken = json_decode('{
             "expModule": null,
@@ -354,7 +354,7 @@ class PMSEUserRoleParserTest extends TestCase
         
         $userBeanMock = $this->getMockBuilder('User')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve'))
+                ->setMethods(['retrieve'])
                 ->getMock();
 
         $userBeanMock->is_admin = 1;
@@ -362,14 +362,14 @@ class PMSEUserRoleParserTest extends TestCase
 
         $currentUserMock = $this->getMockBuilder('User')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve'))
+                ->setMethods(['retrieve'])
                 ->getMock();
 
         $currentUserMock->reports_to_id = "1";
         $currentUserMock->is_admin = 1;
 
         $dbHandlerMock = $this->getMockBuilder('db')
-            ->setMethods(array('query', 'fetchByAssoc'))
+            ->setMethods(['query', 'fetchByAssoc'])
             ->getMock();
         $dbHandlerMock->expects($this->exactly(1))
             ->method('query')
@@ -377,7 +377,7 @@ class PMSEUserRoleParserTest extends TestCase
 
         $dbHandlerMock->expects($this->any())
             ->method('fetchByAssoc')
-            ->willReturn(array('id' => 'abc'));
+            ->willReturn(['id' => 'abc']);
 
         $criteriaToken = json_decode('{
             "expModule": null,
@@ -417,14 +417,14 @@ class PMSEUserRoleParserTest extends TestCase
 
         $supervisorUserMock = $this->getMockBuilder('User')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve'))
+                ->setMethods(['retrieve'])
                 ->getMock();
 
         $supervisorUserMock->is_admin=1;
         
         $userBeanMock = $this->getMockBuilder('User')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve'))
+                ->setMethods(['retrieve'])
                 ->getMock();
 
         $userBeanMock->is_admin = 1;
@@ -432,7 +432,7 @@ class PMSEUserRoleParserTest extends TestCase
 
         $currentUserMock = $this->getMockBuilder('User')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve'))
+                ->setMethods(['retrieve'])
                 ->getMock();
 
         $currentUserMock->reports_to_id = "1";
@@ -450,7 +450,7 @@ class PMSEUserRoleParserTest extends TestCase
         $this->dataParser->setUserBean($userBeanMock);
         $this->dataParser->setEvaluatedBean($evaluatedBeanMock);
         $resultCriteriaObject = $this->dataParser->parseCriteriaToken($criteriaToken);
-        $this->assertEquals(array('is_admin'), $resultCriteriaObject->currentValue);
+        $this->assertEquals(['is_admin'], $resultCriteriaObject->currentValue);
     }
     
     public function testParseCriteriaTokenOwnerHasRoleAdmin()
@@ -463,21 +463,21 @@ class PMSEUserRoleParserTest extends TestCase
 
         $supervisorUserMock = $this->getMockBuilder('User')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve'))
+                ->setMethods(['retrieve'])
                 ->getMock();
 
         $supervisorUserMock->is_admin=1;
         
         $userBeanMock = $this->getMockBuilder('User')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve'))
+                ->setMethods(['retrieve'])
                 ->getMock();
         
         $userBeanMock->is_admin = 1;
 
         $currentUserMock = $this->getMockBuilder('User')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve'))
+                ->setMethods(['retrieve'])
                 ->getMock();
         
         $currentUserMock->reports_to_id = "1";
@@ -485,7 +485,7 @@ class PMSEUserRoleParserTest extends TestCase
         $currentUserMock->id = "1";
 
         $dbHandlerMock = $this->getMockBuilder('db')
-            ->setMethods(array('query'))
+            ->setMethods(['query'])
             ->getMock();
 
         $criteriaToken = json_decode('{
@@ -526,7 +526,7 @@ class PMSEUserRoleParserTest extends TestCase
         
         $userBeanMock = $this->getMockBuilder('User')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve'))
+                ->setMethods(['retrieve'])
                 ->getMock();
 
         $userBeanMock->expects($this->exactly(1))
@@ -537,13 +537,13 @@ class PMSEUserRoleParserTest extends TestCase
 
         $currentUserMock = $this->getMockBuilder('User')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve'))
+                ->setMethods(['retrieve'])
                 ->getMock();
         $currentUserMock->reports_to_id = "1";
         $currentUserMock->is_admin = 1;
 
         $dbHandlerMock = $this->getMockBuilder('db')
-            ->setMethods(array('query', 'fetchByAssoc'))
+            ->setMethods(['query', 'fetchByAssoc'])
             ->getMock();
         
         $dbHandlerMock->expects($this->exactly(1))
@@ -552,7 +552,7 @@ class PMSEUserRoleParserTest extends TestCase
 
         $dbHandlerMock->expects($this->any())
             ->method('fetchByAssoc')
-            ->willReturn(array('id' => 'abc'));
+            ->willReturn(['id' => 'abc']);
 
         $criteriaToken = json_decode('{
             "expModule": null,
@@ -592,7 +592,7 @@ class PMSEUserRoleParserTest extends TestCase
 
         $userBeanMock = $this->getMockBuilder('User')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve'))
+                ->setMethods(['retrieve'])
                 ->getMock();
 
         $userBeanMock->expects($this->any())
@@ -603,7 +603,7 @@ class PMSEUserRoleParserTest extends TestCase
 
         $currentUserMock = $this->getMockBuilder('User')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve'))
+                ->setMethods(['retrieve'])
                 ->getMock();
         $currentUserMock->reports_to_id = "1";
         $currentUserMock->is_admin = 1;
@@ -619,7 +619,7 @@ class PMSEUserRoleParserTest extends TestCase
         $this->dataParser->setUserBean($userBeanMock);
         $this->dataParser->setEvaluatedBean($evaluatedBeanMock);
         $resultCriteriaObject = $this->dataParser->parseCriteriaToken($criteriaToken);
-        $this->assertEquals(array('is_admin'), $resultCriteriaObject->currentValue);
+        $this->assertEquals(['is_admin'], $resultCriteriaObject->currentValue);
     }
     
     public function testParseCriteriaTokenCurrentUserHasIdentity()
@@ -632,20 +632,20 @@ class PMSEUserRoleParserTest extends TestCase
 
         $supervisorUserMock = $this->getMockBuilder('User')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve'))
+                ->setMethods(['retrieve'])
                 ->getMock();
         $supervisorUserMock->is_admin=1;
         $supervisorUserMock->id="1";
         
         $userBeanMock = $this->getMockBuilder('User')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve'))
+                ->setMethods(['retrieve'])
                 ->getMock();
         $userBeanMock->is_admin = 1;
 
         $currentUserMock = $this->getMockBuilder('User')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve'))
+                ->setMethods(['retrieve'])
                 ->getMock();
         $currentUserMock->reports_to_id = "1";
         $currentUserMock->is_admin = 1;
@@ -688,21 +688,21 @@ class PMSEUserRoleParserTest extends TestCase
 
         $supervisorUserMock = $this->getMockBuilder('User')
                 ->disableOriginalConstructor()
-                ->setMethods(NULL)
+                ->setMethods(null)
                 ->getMock();
         $supervisorUserMock->is_admin=1;
         $supervisorUserMock->id="1";
         
         $userBeanMock = $this->getMockBuilder('User')
                 ->disableOriginalConstructor()
-                ->setMethods(NULL)
+                ->setMethods(null)
                 ->getMock();
         $userBeanMock->is_admin = 1;
         $userBeanMock->id = "1";
 
         $currentUserMock = $this->getMockBuilder('User')
                 ->disableOriginalConstructor()
-                ->setMethods(NULL)
+                ->setMethods(null)
                 ->getMock();
         $currentUserMock->reports_to_id = "1";
         $currentUserMock->is_admin = 1;
@@ -744,20 +744,20 @@ class PMSEUserRoleParserTest extends TestCase
 
         $supervisorUserMock = $this->getMockBuilder('User')
                 ->disableOriginalConstructor()
-                ->setMethods(NULL)
+                ->setMethods(null)
                 ->getMock();
         $supervisorUserMock->is_admin=1;
         $supervisorUserMock->id="1";
         
         $userBeanMock = $this->getMockBuilder('User')
                 ->disableOriginalConstructor()
-                ->setMethods(NULL)
+                ->setMethods(null)
                 ->getMock();
         $userBeanMock->is_admin = 1;
 
         $currentUserMock = $this->getMockBuilder('User')
                 ->disableOriginalConstructor()
-                ->setMethods(NULL)
+                ->setMethods(null)
                 ->getMock();
         $currentUserMock->reports_to_id = "1";
         $currentUserMock->is_admin = 1;
@@ -800,21 +800,21 @@ class PMSEUserRoleParserTest extends TestCase
 
         $supervisorUserMock = $this->getMockBuilder('User')
                 ->disableOriginalConstructor()
-                ->setMethods(NULL)
+                ->setMethods(null)
                 ->getMock();
         $supervisorUserMock->is_admin=1;
         $supervisorUserMock->id="1";
         
         $userBeanMock = $this->getMockBuilder('User')
                 ->disableOriginalConstructor()
-                ->setMethods(NULL)
+                ->setMethods(null)
                 ->getMock();
         $userBeanMock->is_admin = 1;
         $userBeanMock->id = "1";
 
         $currentUserMock = $this->getMockBuilder('User')
                 ->disableOriginalConstructor()
-                ->setMethods(NULL)
+                ->setMethods(null)
                 ->getMock();
         $currentUserMock->reports_to_id = '1';
         $currentUserMock->is_admin = 1;
@@ -831,7 +831,7 @@ class PMSEUserRoleParserTest extends TestCase
         $this->dataParser->setUserBean($userBeanMock);
         $this->dataParser->setEvaluatedBean($evaluatedBeanMock);
         $resultCriteriaObject = $this->dataParser->parseCriteriaToken($criteriaToken);
-        $this->assertEquals(array('false'), $resultCriteriaObject->currentValue);
+        $this->assertEquals(['false'], $resultCriteriaObject->currentValue);
     }
     
     public function testParseCriteriaTokenSupervisorHasIdentityNull()
@@ -844,20 +844,20 @@ class PMSEUserRoleParserTest extends TestCase
 
         $supervisorUserMock = $this->getMockBuilder('User')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve'))
+                ->setMethods(['retrieve'])
                 ->getMock();
         $supervisorUserMock->is_admin=1;
         $supervisorUserMock->id="1";
         
         $userBeanMock = $this->getMockBuilder('User')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve'))
+                ->setMethods(['retrieve'])
                 ->getMock();
         $userBeanMock->is_admin = 1;
 
         $currentUserMock = $this->getMockBuilder('User')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve'))
+                ->setMethods(['retrieve'])
                 ->getMock();
         $currentUserMock->reports_to_id = null;
         $currentUserMock->is_admin = 1;
@@ -875,7 +875,7 @@ class PMSEUserRoleParserTest extends TestCase
         $this->dataParser->setUserBean($userBeanMock);
         $this->dataParser->setEvaluatedBean($evaluatedBeanMock);
         $resultCriteriaObject = $this->dataParser->parseCriteriaToken($criteriaToken);
-        $this->assertEquals(array('false'), $resultCriteriaObject->currentValue);
+        $this->assertEquals(['false'], $resultCriteriaObject->currentValue);
     }
     
     public function testDecomposeToken()

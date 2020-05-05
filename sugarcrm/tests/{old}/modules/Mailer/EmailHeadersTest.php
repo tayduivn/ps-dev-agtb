@@ -18,7 +18,8 @@ class EmailHeadersTest extends TestCase
      * @group email
      * @group mailer
      */
-    public function testSetPriority_ThroughSetHeader_PassInInteger_PriorityIsUpdated() {
+    public function testSetPriority_ThroughSetHeader_PassInInteger_PriorityIsUpdated()
+    {
         $expected = 5;
         $headers  = new EmailHeaders();
         $headers->setHeader(EmailHeaders::Priority, $expected);
@@ -30,7 +31,8 @@ class EmailHeadersTest extends TestCase
      * @group email
      * @group mailer
      */
-    public function testSetPriority_ThroughSetHeader_PassInString_PriorityIsNotUpdated() {
+    public function testSetPriority_ThroughSetHeader_PassInString_PriorityIsNotUpdated()
+    {
         $invalidPriority = "5";
         $headers         = new EmailHeaders();
         $expected        = $headers->getPriority();
@@ -43,7 +45,8 @@ class EmailHeadersTest extends TestCase
      * @group email
      * @group mailer
      */
-    public function testSetRequestConfirmation_ThroughSetHeader_PassInBoolean_RequestConfirmationIsUpdated() {
+    public function testSetRequestConfirmation_ThroughSetHeader_PassInBoolean_RequestConfirmationIsUpdated()
+    {
         $expected = true;
         $headers  = new EmailHeaders();
         $headers->setHeader(EmailHeaders::DispositionNotificationTo, $expected);
@@ -55,7 +58,8 @@ class EmailHeadersTest extends TestCase
      * @group email
      * @group mailer
      */
-    public function testSetRequestConfirmation_ThroughSetHeader_PassInInteger_RequestConfirmationIsNotUpdated() {
+    public function testSetRequestConfirmation_ThroughSetHeader_PassInInteger_RequestConfirmationIsNotUpdated()
+    {
         $invalidRequestConfirmation = 1;
         $headers                    = new EmailHeaders();
         $headers->setHeader(EmailHeaders::DispositionNotificationTo, $invalidRequestConfirmation);
@@ -67,7 +71,8 @@ class EmailHeadersTest extends TestCase
      * @group email
      * @group mailer
      */
-    public function testSetSubject_ThroughSetHeader_PassInString_SubjectIsUpdated() {
+    public function testSetSubject_ThroughSetHeader_PassInString_SubjectIsUpdated()
+    {
         $expected = "this is a subject";
         $headers  = new EmailHeaders();
         $headers->setHeader(EmailHeaders::Subject, $expected);
@@ -79,7 +84,8 @@ class EmailHeadersTest extends TestCase
      * @group email
      * @group mailer
      */
-    public function testSetSubject_ThroughSetHeader_PassInInteger_MailerExceptionIsThrown() {
+    public function testSetSubject_ThroughSetHeader_PassInInteger_MailerExceptionIsThrown()
+    {
         $this->expectException(MailerException::class);
         $invalidSubject = 1;
         $headers        = new EmailHeaders();
@@ -91,7 +97,8 @@ class EmailHeadersTest extends TestCase
      * @group email
      * @group mailer
      */
-    public function testAddCustomHeader_ThroughSetHeader_PassInStrings_CustomHeaderIsAdded() {
+    public function testAddCustomHeader_ThroughSetHeader_PassInStrings_CustomHeaderIsAdded()
+    {
         $key      = "X-CUSTOM-HEADER";
         $expected = "custom header value";
         $headers  = new EmailHeaders();
@@ -104,7 +111,8 @@ class EmailHeadersTest extends TestCase
      * @group email
      * @group mailer
      */
-    public function testAddCustomHeader_ThroughSetHeader_UpdateExistingCustomHeader() {
+    public function testAddCustomHeader_ThroughSetHeader_UpdateExistingCustomHeader()
+    {
         $headers = new EmailHeaders();
 
         // first set the custom header to something
@@ -124,7 +132,8 @@ class EmailHeadersTest extends TestCase
      * @group email
      * @group mailer
      */
-    public function testAddCustomHeader_ThroughSetHeader_PassInValidKeyAndInvalidValue_MailerExceptionIsThrown() {
+    public function testAddCustomHeader_ThroughSetHeader_PassInValidKeyAndInvalidValue_MailerExceptionIsThrown()
+    {
         $this->expectException(MailerException::class);
         $headers      = new EmailHeaders();
         $key          = "X-CUSTOM-HEADER";
@@ -143,14 +152,15 @@ class EmailHeadersTest extends TestCase
      * @group email
      * @group mailer
      */
-    public function testBuildFromArray_ResultIsSuccessful() {
+    public function testBuildFromArray_ResultIsSuccessful()
+    {
         $from            = new EmailIdentity("foo@bar.com");
         $customHeaderKey = "X-CUSTOM-HEADER";
-        $expected        = array(
+        $expected        = [
             EmailHeaders::From    => $from,
             EmailHeaders::Subject => "this is a subject",
             $customHeaderKey      => "custom header value",
-        );
+        ];
 
         $headers = new EmailHeaders();
         $headers->buildFromArray($expected);
@@ -173,13 +183,14 @@ class EmailHeadersTest extends TestCase
      * @group email
      * @group mailer
      */
-    public function testPackageHeaders_ResultIsSuccessful() {
+    public function testPackageHeaders_ResultIsSuccessful()
+    {
         $from            = new EmailIdentity("foo@bar.com");
         $customHeaderKey = "X-CUSTOM-HEADER";
-        $expected        = array(
+        $expected        = [
             EmailHeaders::From    => $from,
             $customHeaderKey      => "custom header value",
-        );
+        ];
 
         $headers = new EmailHeaders();
         $headers->buildFromArray($expected);
@@ -193,7 +204,8 @@ class EmailHeadersTest extends TestCase
      * @group email
      * @group mailer
      */
-    public function testPackageHeaders_NoFromHeaderCausesAMailerExceptionToBeThrown() {
+    public function testPackageHeaders_NoFromHeaderCausesAMailerExceptionToBeThrown()
+    {
         $headers = new EmailHeaders();
 
         $this->expectException(MailerException::class);

@@ -41,12 +41,12 @@ class SugarWidgetReportFieldmultienumTest extends TestCase
      */
     public function testGetColumnSelect()
     {
-        $def = array(
-            'name' => 'test'
-        );
+        $def = [
+            'name' => 'test',
+        ];
         $report = $this->createMock('Report');
         $db = DBManagerFactory::getInstance();
-        $dbMock = $this->createPartialMock(get_class($db), array('convert'));
+        $dbMock = $this->createPartialMock(get_class($db), ['convert']);
         $dbMock->expects($this->once())
             ->method('convert')
             ->with($this->equalTo('test'), $this->equalTo('text2char'));

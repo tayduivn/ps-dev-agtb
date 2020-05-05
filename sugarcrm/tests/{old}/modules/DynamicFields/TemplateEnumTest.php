@@ -13,7 +13,7 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once('modules/DynamicFields/FieldCases.php');
+require_once 'modules/DynamicFields/FieldCases.php';
 
 class TemplateEnumTest extends TestCase
 {
@@ -32,14 +32,14 @@ class TemplateEnumTest extends TestCase
     
     public function testPopulateDependencyFromDependencyField()
     {
-       $fieldDef = $this->field->get_field_def();
-       $this->assertEquals('equal(strlen($name),5)', $fieldDef['dependency'], 'The dependency was not populated correctly.');
+        $fieldDef = $this->field->get_field_def();
+        $this->assertEquals('equal(strlen($name),5)', $fieldDef['dependency'], 'The dependency was not populated correctly.');
     }
 
     public function testPopulateDependencyFromExt4()
     {
         unset($this->field->dependency);
-       $fieldDef = $this->field->get_field_def();
-       $this->assertEquals('fred', $fieldDef['dependency'], 'The dependency was not populated correctly.');
+        $fieldDef = $this->field->get_field_def();
+        $this->assertEquals('fred', $fieldDef['dependency'], 'The dependency was not populated correctly.');
     }
 }

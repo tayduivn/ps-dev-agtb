@@ -16,7 +16,7 @@ class SugarApiTest extends TestCase
 {
     protected $mock;
 
-    static public $monitorList;
+    public static $monitorList;
 
     public static function setUpBeforeClass() : void
     {
@@ -29,10 +29,10 @@ class SugarApiTest extends TestCase
 
     public static function tearDownAfterClass(): void
     {
-        ApiHelper::$moduleHelpers = array();
+        ApiHelper::$moduleHelpers = [];
         TrackerManager::getInstance()->setDisabledMonitors(self::$monitorList);
 
-        $_FILES = array();
+        $_FILES = [];
         unset($_SERVER['CONTENT_LENGTH']);
 
         SugarTestHelper::tearDown();
@@ -43,7 +43,7 @@ class SugarApiTest extends TestCase
         $this->mock = new SugarApiMock();
         $this->contact = SugarTestContactUtilities::createContact();
         // We can override the module helpers with mocks.
-        ApiHelper::$moduleHelpers = array();
+        ApiHelper::$moduleHelpers = [];
     }
 
     protected function tearDown() : void
@@ -51,40 +51,43 @@ class SugarApiTest extends TestCase
         SugarTestContactUtilities::removeAllCreatedContacts();
     }
 
-    public function testLoadBeanById_BeanExists_Success() {
+    public function testLoadBeanById_BeanExists_Success()
+    {
         $this->mock = new SugarApiMock();
 
-        $args = array(
+        $args = [
             'module' => 'Contacts',
-            'record' => $this->contact->id
-        );
+            'record' => $this->contact->id,
+        ];
 
-       $api = new SugarApiTestServiceMock();
-       $bean=$this->mock->callLoadBean($api, $args);
+        $api = new SugarApiTestServiceMock();
+        $bean=$this->mock->callLoadBean($api, $args);
 
-       $this->assertTrue($bean instanceof Contact);
-       $this->assertEquals($this->contact->id, $bean->id, "Unexpected Contact Loaded");
+        $this->assertTrue($bean instanceof Contact);
+        $this->assertEquals($this->contact->id, $bean->id, "Unexpected Contact Loaded");
     }
 
-    public function testLoadBeanById_BeanNotExists_NotFound() {
+    public function testLoadBeanById_BeanNotExists_NotFound()
+    {
         $this->mock = new SugarApiMock();
 
-        $args = array(
+        $args = [
             'module' => 'Contacts',
-            'record' => '12345'
-        );
+            'record' => '12345',
+        ];
 
         $api = new SugarApiTestServiceMock();
         $this->expectException(SugarApiExceptionNotFound::class);
         $bean=$this->mock->callLoadBean($api, $args);
     }
 
-    public function testLoadBean_CreateTempBean_Success() {
+    public function testLoadBean_CreateTempBean_Success()
+    {
         $this->mock = new SugarApiMock();
 
-        $args = array( /* Note: No "record" element */
+        $args = [ /* Note: No "record" element */
             'module' => 'Contacts',
-        );
+        ];
 
         $api = new SugarApiTestServiceMock();
         $this->expectException(SugarApiExceptionMissingParameter::class);
@@ -98,31 +101,31 @@ class SugarApiTest extends TestCase
     {
         $monitorMock = $this->getMockBuilder('Monitor')
             ->disableOriginalConstructor()
-            ->getMock(array('setValue'));
+            ->getMock(['setValue']);
         $monitorMock
             ->expects($this->any())
             ->method('setValue');
 
         $managerMock = $this->getMockBuilder('TrackerManager')
             ->disableOriginalConstructor()
-            ->getMock(array('getMonitor','saveMonitor'));
+            ->getMock(['getMonitor','saveMonitor']);
         $managerMock
             ->expects($this->once())
             ->method('saveMonitor');
 
-        $sugarApi = $this->createPartialMock('SugarApi', array('getTrackerManager'));
+        $sugarApi = $this->createPartialMock('SugarApi', ['getTrackerManager']);
         $sugarApi
             ->expects($this->any())
             ->method('getTrackerManager')
             ->will($this->returnValue($managerMock));
 
         $sugarApi->api = $this->createMock('RestService');
-        $sugarApi->api->user = $this->createPartialMock('User', array('getPrivateTeamID'));
+        $sugarApi->api->user = $this->createPartialMock('User', ['getPrivateTeamID']);
         $sugarApi->api->user
             ->expects($this->any())
             ->method('getPrivateTeamID')
             ->will($this->returnValue('1'));
-        $fakeBean = $this->createPartialMock('SugarBean', array('get_summary_text'));
+        $fakeBean = $this->createPartialMock('SugarBean', ['get_summary_text']);
         $fakeBean->id = 'abcd';
         $fakeBean->module_dir = 'fakeBean';
         $fakeBean->expects($this->any())
@@ -136,7 +139,7 @@ class SugarApiTest extends TestCase
         $managerMock
             ->expects($this->any())
             ->method('getMonitor')
-            ->will($this->onConsecutiveCalls(null,$monitorMock,$monitorMock,$monitorMock,$monitorMock));
+            ->will($this->onConsecutiveCalls(null, $monitorMock, $monitorMock, $monitorMock, $monitorMock));
 
         $sugarApi->trackAction($fakeBean);
 
@@ -166,22 +169,22 @@ class SugarApiTest extends TestCase
 
     public function lotsOData()
     {
-        return array(
-            array(array("bool" => true), array("bool" => true), "True came out wrong"),
-            array(array("bool" => false), array("bool" => false), "False came out wrong"),
-            array(array("string" => 'Test'), array("string" => 'Test'), "String came out wrong"),
-            array(array("number" => 12345), array("number" => 12345), "Number came out wrong"),
-            array(
-                array("html" => htmlentities("I'll \"walk\" the <b>dog</b> now")),
-                array("html" => "I'll \"walk\" the <b>dog</b> now"),
-                "HTML came out wrong"
-            ),
-            array(
-                array("html" => array("nested_result" => array("data" => "def &lt; abc &gt; xyz"))),
-                array("html" => array("nested_result" => array("data" => "def < abc > xyz"))),
-                "HTML came out wrong"
-            ),
-        );
+        return [
+            [["bool" => true], ["bool" => true], "True came out wrong"],
+            [["bool" => false], ["bool" => false], "False came out wrong"],
+            [["string" => 'Test'], ["string" => 'Test'], "String came out wrong"],
+            [["number" => 12345], ["number" => 12345], "Number came out wrong"],
+            [
+                ["html" => htmlentities("I'll \"walk\" the <b>dog</b> now")],
+                ["html" => "I'll \"walk\" the <b>dog</b> now"],
+                "HTML came out wrong",
+            ],
+            [
+                ["html" => ["nested_result" => ["data" => "def &lt; abc &gt; xyz"]]],
+                ["html" => ["nested_result" => ["data" => "def < abc > xyz"]]],
+                "HTML came out wrong",
+            ],
+        ];
     }
 
     /**
@@ -190,13 +193,13 @@ class SugarApiTest extends TestCase
     public function testCheckPostRequestBody($contentLength, $postMaxSize, $expectedException)
     {
         $api = $this->getMockBuilder('SugarApi')
-            ->setMethods(array('getPostMaxSize'))
+            ->setMethods(['getPostMaxSize'])
             ->getMock();
         $api->expects($this->any())
             ->method('getPostMaxSize')
             ->will($this->returnValue($postMaxSize));
 
-        $_FILES = array();
+        $_FILES = [];
         $_SERVER['CONTENT_LENGTH'] = $contentLength;
         $this->expectException($expectedException);
         SugarTestReflection::callProtectedMethod($api, 'checkPostRequestBody');
@@ -204,10 +207,10 @@ class SugarApiTest extends TestCase
 
     public static function checkPostRequestBodyProvider()
     {
-        return array(
-            array(null, null, SugarApiExceptionMissingParameter::class),
-            array(1024, 1023, SugarApiExceptionRequestTooLarge::class),
-        );
+        return [
+            [null, null, SugarApiExceptionMissingParameter::class],
+            [1024, 1023, SugarApiExceptionRequestTooLarge::class],
+        ];
     }
 
     /**
@@ -219,15 +222,15 @@ class SugarApiTest extends TestCase
 
         $_SERVER['CONTENT_LENGTH'] = $contentLength;
         $this->expectException($expectedException);
-        SugarTestReflection::callProtectedMethod($api, 'checkPutRequestBody', array($length));
+        SugarTestReflection::callProtectedMethod($api, 'checkPutRequestBody', [$length]);
     }
 
     public static function checkPutRequestBodyProvider()
     {
-        return array(
-            array(0, null, SugarApiExceptionMissingParameter::class),
-            array(1023, 1024, SugarApiExceptionRequestTooLarge::class),
-        );
+        return [
+            [0, null, SugarApiExceptionMissingParameter::class],
+            [1023, 1024, SugarApiExceptionRequestTooLarge::class],
+        ];
     }
 
     /**
@@ -250,12 +253,12 @@ class SugarApiTest extends TestCase
         $service = new SugarApiTestServiceMock();
 
         $sugarApi = $this->getMockBuilder('SugarApiMock')
-            ->setMethods(array('getMetaDataManager'))
+            ->setMethods(['getMetaDataManager'])
             ->getMock();
 
         $mm = $this->getMockBuilder('MetaDataManager')
             ->disableOriginalConstructor()
-            ->setMethods(array())
+            ->setMethods([])
             ->getMock();
 
         $mm->expects($this->any())
@@ -274,122 +277,122 @@ class SugarApiTest extends TestCase
 
     public function providerTestGetFieldsFromArgs()
     {
-        return array(
+        return [
 
             // fields argument only
-            array(
+            [
                 'Accounts',
-                array(), // field defs
-                array(), // view def
-                array(   // arguments
+                [], // field defs
+                [], // view def
+                [   // arguments
                     'fields' => 'name,website',
-                ),
+                ],
                 'view',  // view
-                array(   // expected
+                [   // expected
                     'name',
                     'website',
-                ),
-            ),
+                ],
+            ],
 
             // view argument only
-            array(
+            [
                 'Accounts',
-                array(), // field defs
-                array( // view def
+                [], // field defs
+                [ // view def
                     'name',
                     'website',
-                ),
-                array( // arguments
+                ],
+                [ // arguments
                     'xxx' => 'record',
-                ),
+                ],
                 'xxx', // view
-                array( // expected
+                [ // expected
                     'name',
                     'website',
-                ),
-            ),
+                ],
+            ],
 
             // fields/view argument merge
-            array(
+            [
                 'Accounts',
-                array(), // field defs
-                array( // view def
+                [], // field defs
+                [ // view def
                     'phone',
                     'fax',
-                ),
-                array( // arguments
+                ],
+                [ // arguments
                     'fields' => 'name,website',
                     'view' => 'record',
-                ),
+                ],
                 'view', // view
-                array(  // expected
+                [  // expected
                     'name',
                     'website',
                     'phone',
                     'fax',
-                ),
-            ),
+                ],
+            ],
 
             // nothing ...
-            array(
+            [
                 'Accounts',
-                array(), // field defs
-                array(), // view def
-                array(), // arguments
+                [], // field defs
+                [], // view def
+                [], // arguments
                 null,    // view
-                array(), // expected
-            ),
+                [], // expected
+            ],
 
             // fields/view with invalid module
-            array(
+            [
                 null,
-                array(), // field defs
-                array( // view def
+                [], // field defs
+                [ // view def
                     'bogus',
-                ),
-                array(   // arguments
+                ],
+                [   // arguments
                     'fields' => 'name,website',
                     'view' => 'record',
-                ),
+                ],
                 'view', // view
-                array(  // expected
+                [  // expected
                     'name',
                     'website',
-                ),
-            ),
+                ],
+            ],
 
             // relate and parent field
-            array(
+            [
                 'Accounts',
-                array(  // field defs
-                    'case_name' => array(
+                [  // field defs
+                    'case_name' => [
                         'name' => 'case_name',
                         'type' => 'relate',
                         'id_name' => 'case_id',
-                    ),
-                    'parent_name' => array(
+                    ],
+                    'parent_name' => [
                         'name' => 'parent_name',
                         'type' => 'parent',
                         'id_name' => 'parent_id',
                         'type_name' => 'parent_type',
-                    ),
-                    'website' => array(
+                    ],
+                    'website' => [
                         'name' => 'website',
                         'type' => 'varchar',
-                    ),
-                ),
-                array(  // view def
+                    ],
+                ],
+                [  // view def
                     'name',
                     'case_name',
                     'parent_name',
                     'website',
-                ),
-                array(  // arguments
+                ],
+                [  // arguments
                     'view' => 'record',
                     'fields' => 'phone,fax',
-                ),
+                ],
                 'view', // view
-                array(  // expected
+                [  // expected
                     'phone',
                     'fax',
                     'name',
@@ -399,37 +402,37 @@ class SugarApiTest extends TestCase
                     'case_id',
                     'parent_id',
                     'parent_type',
-                ),
-            ),
+                ],
+            ],
             // url field
-            array(
+            [
                 'Leads',
-                array(  // field defs
-                    'name' => array(
+                [  // field defs
+                    'name' => [
                         'name' => 'name',
                         'type' => 'fullname',
-                    ),
-                    'url_c' => array(
+                    ],
+                    'url_c' => [
                         'name' => 'url_c',
                         'type' => 'url',
-                        'default' => 'test/{name}'
-                    ),
-                ),
-                array(), // view def
-                array( // arguments
+                        'default' => 'test/{name}',
+                    ],
+                ],
+                [], // view def
+                [ // arguments
                     'fields' => 'my_favorite,converted,url_c',
                     'view' => 'list',
-                ),
+                ],
                 'view', // view
-                array(  // expected
+                [  // expected
                     'my_favorite',
                     'converted',
                     'url_c',
                     'name',
-                ),
-            ),
+                ],
+            ],
 
-        );
+        ];
     }
 
     /**
@@ -443,23 +446,23 @@ class SugarApiTest extends TestCase
 
     public static function getOrderByFromArgsSuccessProvider()
     {
-        return array(
-            'not-specified' => array(
-                array(),
-                array(),
-            ),
-            'specified' => array(
-                array(
+        return [
+            'not-specified' => [
+                [],
+                [],
+            ],
+            'specified' => [
+                [
                     'order_by' => 'a:asc,b:desc,c,d:whatever',
-                ),
-                array(
+                ],
+                [
                     'a' => true,
                     'b' => false,
                     'c' => true,
                     'd' => true,
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
     }
 
     /**
@@ -470,12 +473,12 @@ class SugarApiTest extends TestCase
         /** @var SugarBean|MockObject $bean */
         $bean = $this->getMockBuilder('SugarBean')
             ->disableOriginalConstructor()
-            ->setMethods(array())
+            ->setMethods([])
             ->getMock();
         $bean->expects($this->any())
             ->method('ACLFieldAccess')
             ->will($this->returnValue(false));
-        $bean->field_defs = array('name' => array());
+        $bean->field_defs = ['name' => []];
 
         $this->expectException($expectedException);
         $this->getOrderByFromArgs($args, $bean);
@@ -483,26 +486,26 @@ class SugarApiTest extends TestCase
 
     public static function getOrderByFromArgsFailureProvider()
     {
-        return array(
-            'field-not-found' => array(
-                array(
+        return [
+            'field-not-found' => [
+                [
                     'order_by' => 'not-existing-field',
-                ),
+                ],
                 SugarApiExceptionInvalidParameter::class,
-            ),
-            'field-no-access' => array(
-                array(
+            ],
+            'field-no-access' => [
+                [
                     'order_by' => 'name',
-                ),
+                ],
                 SugarApiExceptionNotAuthorized::class,
-            ),
-        );
+            ],
+        ];
     }
 
     private function getOrderByFromArgs(array $args, SugarBean $bean = null)
     {
         $api = $this->getMockForAbstractClass('SugarApi');
-        return SugarTestReflection::callProtectedMethod($api, 'getOrderByFromArgs', array($args, $bean));
+        return SugarTestReflection::callProtectedMethod($api, 'getOrderByFromArgs', [$args, $bean]);
     }
 
     /**
@@ -517,44 +520,44 @@ class SugarApiTest extends TestCase
 
     public static function normalizeFieldsSuccessProvider()
     {
-        return array(
-            'from-string' => array(
+        return [
+            'from-string' => [
                 'id,name',
-                array('id', 'name'),
-                array(),
-            ),
-            'from-array' => array(
-                array('first_name', 'last_name'),
-                array('first_name', 'last_name'),
-                array(),
-            ),
-            'from-string-with-display-params' => array(
+                ['id', 'name'],
+                [],
+            ],
+            'from-array' => [
+                ['first_name', 'last_name'],
+                ['first_name', 'last_name'],
+                [],
+            ],
+            'from-string-with-display-params' => [
                 'id,{"name":"opportunities","fields":["id","name","sales_status"],"order_by":"date_closed:desc"}',
-                array('id', 'opportunities'),
-                array(
-                    'opportunities' => array(
-                        'fields' => array('id', 'name', 'sales_status'),
+                ['id', 'opportunities'],
+                [
+                    'opportunities' => [
+                        'fields' => ['id', 'name', 'sales_status'],
                         'order_by' => 'date_closed:desc',
-                    ),
-                ),
-            ),
-            'from-array-with-display-params' => array(
-                array(
-                    'id', array(
+                    ],
+                ],
+            ],
+            'from-array-with-display-params' => [
+                [
+                    'id', [
                         'name' => 'contacts',
-                        'fields' => array('first_name', 'last_name'),
+                        'fields' => ['first_name', 'last_name'],
                         'order_by' => 'last_name',
-                    ),
-                ),
-                array('id', 'contacts'),
-                array(
-                    'contacts' => array(
-                        'fields' => array('first_name', 'last_name'),
+                    ],
+                ],
+                ['id', 'contacts'],
+                [
+                    'contacts' => [
+                        'fields' => ['first_name', 'last_name'],
                         'order_by' => 'last_name',
-                    ),
-                ),
-            ),
-        );
+                    ],
+                ],
+            ],
+        ];
     }
 
     /**
@@ -568,20 +571,20 @@ class SugarApiTest extends TestCase
 
     public static function normalizeFieldsFailureProvider()
     {
-        return array(
-            'non-array-or-string' => array(false),
-            'name-not-specified' => array(
-                array(
-                    array('order_by' => 'name'),
-                ),
-            ),
-        );
+        return [
+            'non-array-or-string' => [false],
+            'name-not-specified' => [
+                [
+                    ['order_by' => 'name'],
+                ],
+            ],
+        ];
     }
 
     private function normalizeFields($fields, &$displayParams)
     {
         $api = $this->getMockForAbstractClass('SugarApi');
-        return SugarTestReflection::callProtectedMethod($api, 'normalizeFields', array($fields, &$displayParams));
+        return SugarTestReflection::callProtectedMethod($api, 'normalizeFields', [$fields, &$displayParams]);
     }
 
     /**
@@ -595,22 +598,22 @@ class SugarApiTest extends TestCase
 
     public static function parseFieldsSuccessProvider()
     {
-        return array(
-            'normal' => array(
+        return [
+            'normal' => [
                 'name,{"name":"opportunities","fields":["id","name","sales_status"]}',
-                array(
+                [
                     'name',
-                    array(
+                    [
                         'name' => 'opportunities',
-                        'fields' => array('id', 'name', 'sales_status'),
-                    ),
-                ),
-            ),
-            'whitespaces' => array(
+                        'fields' => ['id', 'name', 'sales_status'],
+                    ],
+                ],
+            ],
+            'whitespaces' => [
                 'id , name',
-                array('id', 'name'),
-            ),
-        );
+                ['id', 'name'],
+            ],
+        ];
     }
 
     /**
@@ -625,17 +628,17 @@ class SugarApiTest extends TestCase
 
     public static function parseFieldsFailureProvider()
     {
-        return array(
-            'invalid-json' => array(
+        return [
+            'invalid-json' => [
                 '{"name":',
-            ),
-        );
+            ],
+        ];
     }
 
     private function parseFields($fields)
     {
         $api = $this->getMockForAbstractClass('SugarApi');
-        return SugarTestReflection::callProtectedMethod($api, 'parseFields', array($fields));
+        return SugarTestReflection::callProtectedMethod($api, 'parseFields', [$fields]);
     }
 }
 
@@ -659,7 +662,7 @@ class SugarApiMock extends SugarApi
         array $args,
         SugarBean $bean = null,
         $viewName = 'view',
-        &$displayParams = array()
+        &$displayParams = []
     ) {
         return parent::getFieldsFromArgs($api, $args, $bean, $viewName, $displayParams);
     }
@@ -667,7 +670,11 @@ class SugarApiMock extends SugarApi
 
 class SugarApiTestServiceMock extends ServiceBase
 {
-    public function execute() {}
+    public function execute()
+    {
+    }
 
-    protected function handleException(Exception $exception) {}
+    protected function handleException(Exception $exception)
+    {
+    }
 }

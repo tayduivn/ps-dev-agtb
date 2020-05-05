@@ -14,11 +14,11 @@
 require_once 'modules/ProjectTask/ProjectTask.php';
 class SugarTestProjectTaskUtilities extends SugarTestObjectUtilities
 {
-	public static $tableName = "project_task";
+    public static $tableName = "project_task";
 
-	private function __construct()
-	{
-	}
+    private function __construct()
+    {
+    }
 
     public static function createProjectTask(array $properties)
     {
@@ -34,13 +34,13 @@ class SugarTestProjectTaskUtilities extends SugarTestObjectUtilities
         return $task;
     }
 
-	public static function pushProject($project)
-	{
-		parent::pushObject($project);
-	}
+    public static function pushProject($project)
+    {
+        parent::pushObject($project);
+    }
 
-	public static function removeAllCreatedProjectTasks()
-	{
-		parent::removeAllCreatedObjects(self::$tableName);
-	}
+    public static function removeAllCreatedProjectTasks()
+    {
+        parent::removeAllCreatedObjects(self::$tableName);
+    }
 }

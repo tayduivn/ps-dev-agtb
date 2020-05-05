@@ -38,7 +38,7 @@ class ForecastsApiTest extends TestCase
      */
     public function testCompareConfigsThrowsException()
     {
-        $adm = $this->getMockBuilder('Administration')->setMethods(array('save'))->getMock();
+        $adm = $this->getMockBuilder('Administration')->setMethods(['save'])->getMock();
         $adm->expects($this->any())
             ->method('save');
 
@@ -48,7 +48,7 @@ class ForecastsApiTest extends TestCase
         SugarTestReflection::callProtectedMethod(
             $obj,
             'compareSettingsToDefaults',
-            array($adm, array('two' => 'one'), $this->api)
+            [$adm, ['two' => 'one'], $this->api]
         );
     }
 
@@ -57,7 +57,7 @@ class ForecastsApiTest extends TestCase
      */
     public function testCompareConfigsDoestThrowsException()
     {
-        $adm = $this->getMockBuilder('Administration')->setMethods(array('save'))->getMock();
+        $adm = $this->getMockBuilder('Administration')->setMethods(['save'])->getMock();
         $adm->expects($this->any())
             ->method('save');
 
@@ -66,7 +66,7 @@ class ForecastsApiTest extends TestCase
         SugarTestReflection::callProtectedMethod(
             $obj,
             'compareSettingsToDefaults',
-            array($adm, ForecastsDefaults::getDefaults(), $this->api)
+            [$adm, ForecastsDefaults::getDefaults(), $this->api]
         );
 
         $this->assertTrue(true);
@@ -79,9 +79,9 @@ class ForecastsApiTest extends TestCase
     {
         $obj = new ForecastsApi();
 
-        $return = $obj->returnEmptySet($this->api, array());
+        $return = $obj->returnEmptySet($this->api, []);
 
-        $expected = array('next_offset' => -1, 'records' => array());
+        $expected = ['next_offset' => -1, 'records' => []];
 
         $this->assertSame($expected, $return);
     }
@@ -92,7 +92,7 @@ class ForecastsApiTest extends TestCase
     public function testRetrieveSelectedUser()
     {
         $user = $this->getMockBuilder('User')
-            ->setMethods(array('save'))
+            ->setMethods(['save'])
             ->getMock();
 
         $user->id = 'test-id';
@@ -107,9 +107,9 @@ class ForecastsApiTest extends TestCase
 
         $obj = new ForecastsApi();
 
-        $return = $obj->retrieveSelectedUser($this->api, array('user_id' => 'test-id'));
+        $return = $obj->retrieveSelectedUser($this->api, ['user_id' => 'test-id']);
 
-        $expected = Array(
+        $expected = [
             'id' => 'test-id',
             'user_name' => 'testuser',
             'full_name' => 'Test User',
@@ -118,8 +118,8 @@ class ForecastsApiTest extends TestCase
             'reports_to_id' => 'test-manager-user',
             'reports_to_name' => ' Manager User',
             'is_manager' => false,
-            'is_top_level_manager' => false
-        );
+            'is_top_level_manager' => false,
+        ];
 
         $this->assertSame($expected, $return);
 
@@ -132,7 +132,7 @@ class ForecastsApiTest extends TestCase
     public function testGetTimeperiodFilterClass()
     {
         $api = new ForecastsApi();
-        $klass = SugarTestReflection::callProtectedMethod($api, 'getTimeperiodFilterClass', array(array()));
+        $klass = SugarTestReflection::callProtectedMethod($api, 'getTimeperiodFilterClass', [[]]);
         $this->assertInstanceOf('SugarForecasting_Filter_TimePeriodFilter', $klass);
     }
 
@@ -148,7 +148,7 @@ class CustomSugarForecasting_Filter_TimePeriodFilter {}
 FILE;
         sugar_file_put_contents('custom/include/SugarForecasting/Filter/TimePeriodFilter.php', $file);
         $api = new ForecastsApi();
-        $klass = SugarTestReflection::callProtectedMethod($api, 'getTimeperiodFilterClass', array(array()));
+        $klass = SugarTestReflection::callProtectedMethod($api, 'getTimeperiodFilterClass', [[]]);
         $this->assertInstanceOf('CustomSugarForecasting_Filter_TimePeriodFilter', $klass);
         unlink('custom/include/SugarForecasting/Filter/TimePeriodFilter.php');
     }
@@ -161,17 +161,17 @@ FILE;
         SugarAutoLoader::load('include/SugarForecasting/Filter/TimePeriodFilter.php');
         $class = $this->getMockBuilder('SugarForecasting_Filter_TimePeriodFilter')
             ->disableOriginalConstructor()
-            ->setMethods(array('process'))
+            ->setMethods(['process'])
             ->getMock();
         $class->expects($this->once())
             ->method('process');
         $fw_api = $this->getMockBuilder('ForecastsApi')
-            ->setMethods(array('getTimeperiodFilterClass'))
+            ->setMethods(['getTimeperiodFilterClass'])
             ->getMock();
         $fw_api->expects($this->once())
             ->method('getTimeperiodFilterClass')
             ->willReturn($class);
-        $fw_api->timeperiod($this->api, array());
+        $fw_api->timeperiod($this->api, []);
     }
 
     /**
@@ -180,16 +180,16 @@ FILE;
     public function testGetQuota()
     {
         $quota = $this->getMockBuilder('Quota')
-            ->setMethods(array('getRollupQuota'))
+            ->setMethods(['getRollupQuota'])
             ->getMock();
 
         $quota->expects($this->once())
             ->method('getRollupQuota')
             ->with('test-timeperiod', 'test-user-id', false)
-            ->willReturn(array('quota' => '500'));
+            ->willReturn(['quota' => '500']);
 
         $fw = $this->getMockBuilder('ForecastsApi')
-            ->setMethods(array('getBean'))
+            ->setMethods(['getBean'])
             ->getMock();
         $fw->expects($this->once())
             ->method('getBean')
@@ -198,18 +198,18 @@ FILE;
 
         $return = $fw->getQuota(
             $this->api,
-            array(
+            [
                 'quota_type' => 'direct',
                 'timeperiod_id' => 'test-timeperiod',
-                'user_id' => 'test-user-id'
-            )
+                'user_id' => 'test-user-id',
+            ]
         );
 
         $this->assertSame(
-            array(
+            [
                 'quota' => '500',
-                'is_top_level_manager' => false
-            ),
+                'is_top_level_manager' => false,
+            ],
             $return
         );
     }
@@ -221,22 +221,22 @@ FILE;
     {
         SugarTestHelper::setUp('current_user');
         $admin = $this->getMockBuilder('Administration')
-            ->setMethods(array('getConfigForModule'))
+            ->setMethods(['getConfigForModule'])
             ->getMock();
 
         $admin->expects($this->once())
             ->method('getConfigForModule')
             ->with('Forecasts', 'base', true)
             ->willReturn(
-                array(
+                [
                     'is_setup' => 1,
-                    'commit_stages_included' => array('include'),
-                    'timeperiod_leaf_interval' => 'Quarter'
-                )
+                    'commit_stages_included' => ['include'],
+                    'timeperiod_leaf_interval' => 'Quarter',
+                ]
             );
 
         $fw = $this->getMockBuilder('ForecastsApi')
-            ->setMethods(array('getBean', 'compareSettingsToDefaults'))
+            ->setMethods(['getBean', 'compareSettingsToDefaults'])
             ->getMock();
         $fw->expects($this->once())
             ->method('getBean')
@@ -245,34 +245,34 @@ FILE;
 
         $GLOBALS['current_user']->last_name = 'Unit';
 
-        $ret = $fw->forecastsInitialization($this->api, array());
+        $ret = $fw->forecastsInitialization($this->api, []);
 
-        $expected = Array(
-            'initData' => Array(
-                'userData' => Array(
+        $expected = [
+            'initData' => [
+                'userData' => [
                     'showOpps' => false,
                     'first_name' => 'SugarUser',
                     'last_name' => 'Unit',
-                ),
-                'forecasts_setup' => 1
-            ),
-            'defaultSelections' => Array(
-                'timeperiod_id' => Array(
+                ],
+                'forecasts_setup' => 1,
+            ],
+            'defaultSelections' => [
+                'timeperiod_id' => [
                     'id' => '',
                     'label' => '',
                     'start' => '',
                     'end' => '',
-                ),
-                'ranges' => Array(
-                    0 => 'include'
-                ),
+                ],
+                'ranges' => [
+                    0 => 'include',
+                ],
                 'group_by' => 'forecast',
                 'dataset' => 'likely',
-            )
-        );
+            ],
+        ];
 
         $this->assertSame($expected, $ret);
 
-        Forecast::$settings = array();
+        Forecast::$settings = [];
     }
 }

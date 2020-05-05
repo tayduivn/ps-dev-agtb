@@ -40,7 +40,7 @@ class SugarACLModuleTest extends TestCase
     public function getAclAction()
     {
         static $aclAction;
-        if ( !isset($aclAction) ) {
+        if (!isset($aclAction)) {
             $aclAction = BeanFactory::newBean('ACLActions');
         }
         return $aclAction;
@@ -48,33 +48,33 @@ class SugarACLModuleTest extends TestCase
 
     public function moduleAccessTestSet()
     {
-        return array(
+        return [
             // Normal users will have full access to the Accounts module, so this is just checking we didn't mess that up.
-            array('module'=>'Accounts',         'view'=>'any'  ,'edit'=>'any'  ,'delete'=>'any'  ),
-            array('module'=>'ACLActions',       'view'=>'admin','edit'=>'admin','delete'=>'admin','acl_module'=>'Users'),
-            array('module'=>'ACLFields',        'view'=>'admin','edit'=>'admin','delete'=>'admin','acl_module'=>'Users'),
-            array('module'=>'ACLRoles',         'view'=>'admin','edit'=>'admin','delete'=>'admin','acl_module'=>'Users'),
-            array('module'=>'ContractTypes',    'view'=>'admin','edit'=>'admin','delete'=>'admin','acl_module'=>'Contracts'),
-            array('module'=>'Currencies',       'view'=>'any'  ,'edit'=>'admin','delete'=>'admin'),
+            ['module'=>'Accounts',         'view'=>'any'  ,'edit'=>'any'  ,'delete'=>'any'  ],
+            ['module'=>'ACLActions',       'view'=>'admin','edit'=>'admin','delete'=>'admin','acl_module'=>'Users'],
+            ['module'=>'ACLFields',        'view'=>'admin','edit'=>'admin','delete'=>'admin','acl_module'=>'Users'],
+            ['module'=>'ACLRoles',         'view'=>'admin','edit'=>'admin','delete'=>'admin','acl_module'=>'Users'],
+            ['module'=>'ContractTypes',    'view'=>'admin','edit'=>'admin','delete'=>'admin','acl_module'=>'Contracts'],
+            ['module'=>'Currencies',       'view'=>'any'  ,'edit'=>'admin','delete'=>'admin'],
             //BEGIN SUGARCRM flav=ent ONLY
-            array('module'=>'CustomQueries',    'view'=>'any'  ,'edit'=>'admin','delete'=>'admin'),
-            array('module'=>'DataSets',         'view'=>'any'  ,'edit'=>'admin','delete'=>'admin'),
+            ['module'=>'CustomQueries',    'view'=>'any'  ,'edit'=>'admin','delete'=>'admin'],
+            ['module'=>'DataSets',         'view'=>'any'  ,'edit'=>'admin','delete'=>'admin'],
             //END SUGARCRM flav=ent ONLY
-            array('module'=>'Expressions',      'view'=>'dev'  ,'edit'=>'dev'  ,'delete'=>'dev'),
-            array('module'=>'Holidays',         'view'=>'any'  ,'edit'=>'admin','delete'=>'admin','acl_module'=>'Users'),
-            array('module'=>'ProductTemplates', 'view'=>'any', 'edit'=>'any', 'delete'=>'any'),
+            ['module'=>'Expressions',      'view'=>'dev'  ,'edit'=>'dev'  ,'delete'=>'dev'],
+            ['module'=>'Holidays',         'view'=>'any'  ,'edit'=>'admin','delete'=>'admin','acl_module'=>'Users'],
+            ['module'=>'ProductTemplates', 'view'=>'any', 'edit'=>'any', 'delete'=>'any'],
             // Manufacturers won't be showing on acl-role edit panel, user can't view/edit/delete it
             // array('module'=>'Manufacturers',    'view'=>'any'  ,'edit'=>'admin','delete'=>'admin','acl_module'=>'Products'),
-            array('module'=>'OAuthKeys',        'view'=>'admin','edit'=>'admin','delete'=>'admin'),
-            array('module'=>'Releases',         'view'=>'any'  ,'edit'=>'admin','delete'=>'admin','acl_module'=>'Bugs'),
-            array('module'=>'Roles',            'view'=>'any'  ,'edit'=>'admin','delete'=>'admin','acl_module'=>'Users'),
-            array('module'=>'Schedulers',       'view'=>'admin','edit'=>'admin','delete'=>'admin'),
-            array('module'=>'SchedulersJobs',   'view'=>'admin','edit'=>'admin','delete'=>'admin'),
-            array('module'=>'Shippers',         'view'=>'any'  ,'edit'=>'admin','delete'=>'admin','acl_module'=>'Products'),
-            array('module'=>'TaxRates',         'view'=>'any'  ,'edit'=>'admin','delete'=>'admin','acl_module'=>'Quotes'),
-            array('module'=>'Teams',            'view'=>'any'  ,'edit'=>'admin','delete'=>'admin','acl_module'=>'Users'),
-            array('module'=>'TimePeriods',      'view'=>'any'  ,'edit'=>'admin','delete'=>'admin','acl_module'=>'Forecasts'),
-        );
+            ['module'=>'OAuthKeys',        'view'=>'admin','edit'=>'admin','delete'=>'admin'],
+            ['module'=>'Releases',         'view'=>'any'  ,'edit'=>'admin','delete'=>'admin','acl_module'=>'Bugs'],
+            ['module'=>'Roles',            'view'=>'any'  ,'edit'=>'admin','delete'=>'admin','acl_module'=>'Users'],
+            ['module'=>'Schedulers',       'view'=>'admin','edit'=>'admin','delete'=>'admin'],
+            ['module'=>'SchedulersJobs',   'view'=>'admin','edit'=>'admin','delete'=>'admin'],
+            ['module'=>'Shippers',         'view'=>'any'  ,'edit'=>'admin','delete'=>'admin','acl_module'=>'Products'],
+            ['module'=>'TaxRates',         'view'=>'any'  ,'edit'=>'admin','delete'=>'admin','acl_module'=>'Quotes'],
+            ['module'=>'Teams',            'view'=>'any'  ,'edit'=>'admin','delete'=>'admin','acl_module'=>'Users'],
+            ['module'=>'TimePeriods',      'view'=>'any'  ,'edit'=>'admin','delete'=>'admin','acl_module'=>'Forecasts'],
+        ];
     }
 
     /**
@@ -83,55 +83,55 @@ class SugarACLModuleTest extends TestCase
      */
     public function testAcl($module, $view, $edit, $delete, $acl_module = '')
     {
-        if ( empty($acl_module) ) {
+        if (empty($acl_module)) {
             $acl_module = $module;
         }
         $testBean = BeanFactory::newBean($module);
 
         // First, no admin, no module admin, no developer for any.
         $canView = $testBean->ACLAccess('view');
-        if ( $view == 'any' ) {
-            $this->assertTrue($canView,"Any user should be able to view.");
+        if ($view == 'any') {
+            $this->assertTrue($canView, "Any user should be able to view.");
         } else {
-            $this->assertFalse($canView,"Only admins should be able to view.");
+            $this->assertFalse($canView, "Only admins should be able to view.");
         }
 
         $canEdit = $testBean->ACLAccess('edit');
-        if ( $edit == 'any' ) {
-            $this->assertTrue($canEdit,"Any user should be able to edit.");
+        if ($edit == 'any') {
+            $this->assertTrue($canEdit, "Any user should be able to edit.");
         } else {
-            $this->assertFalse($canEdit,"Only admins should be able to edit.");
+            $this->assertFalse($canEdit, "Only admins should be able to edit.");
         }
 
         $canDelete = $testBean->ACLAccess('delete');
-        if ( $delete == 'any' ) {
-            $this->assertTrue($canDelete,"Any user should be able to delete.");
+        if ($delete == 'any') {
+            $this->assertTrue($canDelete, "Any user should be able to delete.");
         } else {
-            $this->assertFalse($canDelete,"Only admins should be able to delete.");
+            $this->assertFalse($canDelete, "Only admins should be able to delete.");
         }
 
         // Second, is admin, not module admin specifically
         $GLOBALS['current_user']->is_admin = 1;
         $this->getAclAction()->clearACLCache();
         $canView = $testBean->ACLAccess('view');
-        if ( $view == 'any' || $view == 'admin' ) {
-            $this->assertTrue($canView,"I am a system admin and I should be able to view.");
+        if ($view == 'any' || $view == 'admin') {
+            $this->assertTrue($canView, "I am a system admin and I should be able to view.");
         } else {
-            $this->assertFalse($canView,"A system admin was denied the abilitiy to view.");
+            $this->assertFalse($canView, "A system admin was denied the abilitiy to view.");
         }
 
         $canEdit = $testBean->ACLAccess('edit');
-        if ( $edit == 'any' || $edit == 'admin' ) {
-            $this->assertTrue($canEdit,"I am a system admin and I should be able to edit.");
+        if ($edit == 'any' || $edit == 'admin') {
+            $this->assertTrue($canEdit, "I am a system admin and I should be able to edit.");
         } else {
-            $this->assertFalse($canEdit,"A system admin was denied the abilitiy to edit.");
+            $this->assertFalse($canEdit, "A system admin was denied the abilitiy to edit.");
         }
 
         $canDelete = $testBean->ACLAccess('delete');
-        if ( $delete == 'any' || $delete == 'admin' ) {
-            $this->assertTrue($canDelete,"I am a system admin and I should be able to delete.");
+        if ($delete == 'any' || $delete == 'admin') {
+            $this->assertTrue($canDelete, "I am a system admin and I should be able to delete.");
         } else {
-            $this->assertFalse($canDelete,"A system admin was denied the abilitiy to delete.");
+            $this->assertFalse($canDelete, "A system admin was denied the abilitiy to delete.");
         }
 
         // Third, not system admin, but module admin
@@ -140,24 +140,24 @@ class SugarACLModuleTest extends TestCase
         $this->getAclAction()->clearACLCache();
 
         $canView = $testBean->ACLAccess('view');
-        if ( $view == 'any' || $view == 'admin' ) {
-            $this->assertTrue($canView,"I am a module admin and I should be able to view.");
+        if ($view == 'any' || $view == 'admin') {
+            $this->assertTrue($canView, "I am a module admin and I should be able to view.");
         } else {
-            $this->assertFalse($canView,"A module admin was denied the abilitiy to view.");
+            $this->assertFalse($canView, "A module admin was denied the abilitiy to view.");
         }
 
         $canEdit = $testBean->ACLAccess('edit');
-        if ( $edit == 'any' || $edit == 'admin' ) {
-            $this->assertTrue($canEdit,"I am a module admin and I should be able to edit.");
+        if ($edit == 'any' || $edit == 'admin') {
+            $this->assertTrue($canEdit, "I am a module admin and I should be able to edit.");
         } else {
-            $this->assertFalse($canEdit,"A module admin was denied the abilitiy to edit.");
+            $this->assertFalse($canEdit, "A module admin was denied the abilitiy to edit.");
         }
 
         $canDelete = $testBean->ACLAccess('delete');
-        if ( $delete == 'any' || $delete == 'admin' ) {
-            $this->assertTrue($canDelete,"I am a module admin and I should be able to delete.");
+        if ($delete == 'any' || $delete == 'admin') {
+            $this->assertTrue($canDelete, "I am a module admin and I should be able to delete.");
         } else {
-            $this->assertFalse($canDelete,"A module admin was denied the abilitiy to delete.");
+            $this->assertFalse($canDelete, "A module admin was denied the abilitiy to delete.");
         }
 
         $GLOBALS['current_user']->clearAdminForAllModules();
@@ -201,12 +201,12 @@ class SugarACLModuleTest extends TestCase
 
 class SugarBeanAclModuleUserMock extends User
 {
-    protected $adminForModules = array();
+    protected $adminForModules = [];
     protected $isDeveloperForAny = false;
 
     public function clearAdminForAllModules()
     {
-        $this->adminForModules = array();
+        $this->adminForModules = [];
     }
 
     public function setAdminForModule($module)
@@ -216,26 +216,29 @@ class SugarBeanAclModuleUserMock extends User
 
     public function isAdminForModule($module)
     {
-        if ( $this->isAdmin() ) {
+        if ($this->isAdmin()) {
             return true;
         }
 
-        if ( isset($this->adminForModules[$module]) && $this->adminForModules[$module] ) {
+        if (isset($this->adminForModules[$module]) && $this->adminForModules[$module]) {
             return true;
         } else {
             return false;
         }
     }
 
-    public function getAdminModules() {
+    public function getAdminModules()
+    {
         return array_keys($this->adminForModules);
     }
 
-    public function setDeveloperForAny($status) {
+    public function setDeveloperForAny($status)
+    {
         $this->isDeveloperForAny = $status;
     }
 
-    public function isDeveloperForAnyModule() {
+    public function isDeveloperForAnyModule()
+    {
         return $this->isDeveloperForAny;
     }
 }

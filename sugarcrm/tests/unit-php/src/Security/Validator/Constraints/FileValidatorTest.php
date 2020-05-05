@@ -81,7 +81,7 @@ class FileValidatorTest extends AbstractConstraintValidatorTest
     public function testExpectsBaseDirsToBeSet()
     {
         $constraint = new File();
-        $constraint->baseDirs = array();
+        $constraint->baseDirs = [];
 
         $this->expectException(ConstraintDefinitionException::class);
         $this->validator->validate('xxx', $constraint);
@@ -93,9 +93,9 @@ class FileValidatorTest extends AbstractConstraintValidatorTest
      */
     public function testValidValues($value, array $baseDirs, $expected)
     {
-        $constraint = new File(array(
+        $constraint = new File([
             'baseDirs' => $baseDirs,
-        ));
+        ]);
         $this->validator->validate($value, $constraint);
         $this->assertNoViolation();
         $this->assertSame($expected, $constraint->getFormattedReturnValue());
@@ -103,23 +103,23 @@ class FileValidatorTest extends AbstractConstraintValidatorTest
 
     public function providerTestValidValues()
     {
-        return array(
-            array(
+        return [
+            [
                 __DIR__ . '/Fixtures/basedir1/exists.txt',
-                array(
+                [
                     __DIR__ . '/Fixtures/basedir1',
-                ),
+                ],
                 __DIR__ . '/Fixtures/basedir1/exists.txt',
-            ),
-            array(
+            ],
+            [
                 __DIR__ . '/Fixtures/basedir2/exists.txt',
-                array(
+                [
                     __DIR__ . '/Fixtures/basedir1',
                     __DIR__ . '/Fixtures/basedir2',
-                ),
+                ],
                 __DIR__ . '/Fixtures/basedir2/exists.txt',
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -128,10 +128,10 @@ class FileValidatorTest extends AbstractConstraintValidatorTest
      */
     public function testInvalidValues($value, array $baseDirs, $code, $msg)
     {
-        $constraint = new File(array(
+        $constraint = new File([
             'message' => 'testMessage',
             'baseDirs' => $baseDirs,
-        ));
+        ]);
 
         $this->validator->validate($value, $constraint);
 
@@ -144,33 +144,33 @@ class FileValidatorTest extends AbstractConstraintValidatorTest
 
     public function providerTestInvalidValues()
     {
-        return array(
-            array(
+        return [
+            [
                 'doesnotexist.php',
-                array(
+                [
                     __DIR__ . '/Fixtures/basedir1',
-                ),
+                ],
                 File::ERROR_FILE_NOT_FOUND,
                 'file not found',
-            ),
-            array(
+            ],
+            [
                 'modules/Accounts/vardefs.php' . chr(0) . '.gif',
-                array(
+                [
                     __DIR__ . '/Fixtures/basedir1',
                     __DIR__ . '/Fixtures/basedir2',
-                ),
+                ],
                 File::ERROR_NULL_BYTES,
                 'null bytes detected',
-            ),
-            array(
+            ],
+            [
                 __DIR__ . '/Fixtures/basedir1/exists2.txt',
-                array(
+                [
                     __DIR__ . '/Fixtures/basedir2',
-                ),
+                ],
                 File::ERROR_OUTSIDE_BASEDIR,
                 'file outside basedir',
-            ),
-        );
+            ],
+        ];
     }
 
     /**

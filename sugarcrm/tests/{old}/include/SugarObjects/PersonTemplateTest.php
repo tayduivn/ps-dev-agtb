@@ -20,7 +20,7 @@ class PersonTemplateTest extends TestCase
     {
         // Can't use Person since Localization needs actual bean
         $this->_bean = $this->getMockBuilder('Contact')
-            ->setMethods(array('getVCalData'))
+            ->setMethods(['getVCalData'])
             ->getMock();
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('files');
@@ -84,7 +84,7 @@ class PersonTemplateTest extends TestCase
         $sugarDateTime = $timedate->fromIso($expectedEndTime);
         $vcalEndTime   = $sugarDateTime->format($vcalFormat);
 
-        $vcalData = array(
+        $vcalData = [
             'BEGIN:VCALENDAR',
             'VERSION:2.0',
             'PRODID:-//SugarCRM//SugarCRM Calendar//EN',
@@ -95,8 +95,8 @@ class PersonTemplateTest extends TestCase
             "FREEBUSY:{$vcalStartTime}/{$vcalEndTime}",
             'DTSTAMP:2014-08-12 20:34:26',
             'END:VFREEBUSY',
-            'END:VCALENDAR'
-        );
+            'END:VCALENDAR',
+        ];
 
         $this->_bean->expects($this->once())
             ->method('getVCalData')

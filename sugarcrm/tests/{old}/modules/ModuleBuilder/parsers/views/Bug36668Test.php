@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Bug #36668
- * Name field is no longer a hyperlink after moving the field from Default to Hidden back to Default 
+ * Name field is no longer a hyperlink after moving the field from Default to Hidden back to Default
  * in the Studio subpanel definition for custom module
  * @ticket 36668
  */
@@ -26,9 +26,9 @@ class LinkFieldTest extends SubpanelMetaDataParser
      *
      * @var array
      */
-    public $_fielddefs = array(
-        'name' => array('module' => 'test', 'id_name' => 'test'),
-    );
+    public $_fielddefs = [
+        'name' => ['module' => 'test', 'id_name' => 'test'],
+    ];
     
     function __construct()
     {
@@ -45,11 +45,11 @@ class Bug36668Test extends TestCase
 {
     function fieldDefProvider()
     {
-        return array(
-            array(true, 'relate', '0'),
-            array(true, 'name', '1'),
-            array(false, 'name', '0'),
-        );
+        return [
+            [true, 'relate', '0'],
+            [true, 'name', '1'],
+            [false, 'name', '0'],
+        ];
     }
 
     /**
@@ -58,7 +58,7 @@ class Bug36668Test extends TestCase
      */
     public function testMakeRelateFieldsAsLink($flag, $type, $link)
     {
-        $defs = array('name' => array('type' => $type, 'link' => $link));
+        $defs = ['name' => ['type' => $type, 'link' => $link]];
         
         $lt = new LinkFieldTest();
         $newDefs = $lt->makeFieldsAsLink($defs);

@@ -27,12 +27,12 @@ class PMSEEndEventTest extends TestCase
     public function testRunCloseCase()
     {
         $this->endEvent = $this->getMockBuilder('PMSEEndEvent')
-            ->setMethods(array('hasMultipleOpenThreads'))
+            ->setMethods(['hasMultipleOpenThreads'])
             ->disableOriginalConstructor()
             ->getMock();
 
         $caseFlowHandlerMock = $this->getMockBuilder('PMSECaseFlowHandler')
-            ->setMethods(array('closeThreadByCaseIndex', 'closeCase'))
+            ->setMethods(['closeThreadByCaseIndex', 'closeCase'])
             ->getMock();
 
         $this->endEvent->expects($this->once())
@@ -46,28 +46,28 @@ class PMSEEndEventTest extends TestCase
 
         $this->endEvent->setCaseFlowHandler($caseFlowHandlerMock);
 
-        $flowData = array(
+        $flowData = [
             'cas_id' => 1,
             'cas_index' => 2,
-            'cas_previous' => 1
-        );
+            'cas_previous' => 1,
+        ];
 
         $this->endEvent->run($flowData, $bean, '');
     }
     
     /**
-     * Test the end event run method if there is at least one open thread so 
+     * Test the end event run method if there is at least one open thread so
      * the action should be to close the current flow and thread.
      */
     public function testRunCloseThread()
     {
         $this->endEvent = $this->getMockBuilder('PMSEEndEvent')
-            ->setMethods(array('hasMultipleOpenThreads'))
+            ->setMethods(['hasMultipleOpenThreads'])
             ->disableOriginalConstructor()
             ->getMock();
 
         $caseFlowHandlerMock = $this->getMockBuilder('PMSECaseFlowHandler')
-            ->setMethods(array('closeThreadByCaseIndex', 'closeCase'))
+            ->setMethods(['closeThreadByCaseIndex', 'closeCase'])
             ->getMock();
 
         $this->endEvent->expects($this->once())
@@ -81,11 +81,11 @@ class PMSEEndEventTest extends TestCase
 
         $this->endEvent->setCaseFlowHandler($caseFlowHandlerMock);
 
-        $flowData = array(
+        $flowData = [
             'cas_id' => 1,
             'cas_index' => 2,
-            'cas_previous' => 1
-        );
+            'cas_previous' => 1,
+        ];
 
         $this->endEvent->run($flowData, $bean, '');
     }

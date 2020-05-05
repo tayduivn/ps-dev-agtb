@@ -50,11 +50,11 @@ class TeamBasedACLImportTest extends TestCase
 
     protected function setUp() : void
     {
-        SugarTestHelper::setUp('current_user', array(true, false));
+        SugarTestHelper::setUp('current_user', [true, false]);
 
         $team = SugarTestTeamUtilities::createAnonymousTeam();
         $this->teamSet = BeanFactory::newBean('TeamSets');
-        $this->teamSet->addTeams(array($team->id));
+        $this->teamSet->addTeams([$team->id]);
 
         $this->beanToExport = SugarTestAccountUtilities::createAccount();
         $this->beanToExport->acl_team_set_id = $this->teamSet->id;
@@ -65,7 +65,7 @@ class TeamBasedACLImportTest extends TestCase
         $this->beanToExport->save();
 
         $this->importer = $this->getMockBuilder('Importer')
-            ->setMethods(array('getImportColumns'))
+            ->setMethods(['getImportColumns'])
             ->disableOriginalConstructor()
             ->getMock();
     }
@@ -84,11 +84,11 @@ class TeamBasedACLImportTest extends TestCase
      */
     public function testImporttTBA()
     {
-        $importedRecordId = $this->prepareImporter(array(
+        $importedRecordId = $this->prepareImporter([
             'team_id' => $this->beanToExport->team_id,
             'acl_team_set_id' => $this->beanToExport->acl_team_set_id,
             'acl_team_names' => $this->beanToExport->acl_team_names,
-        ));
+        ]);
         $this->importer->import();
         $importedBean = BeanFactory::getBean($this->module, $importedRecordId);
 
@@ -104,11 +104,11 @@ class TeamBasedACLImportTest extends TestCase
 
         $this->beanToExport->acl_team_set_id = null;
         $this->beanToExport->save();
-        $importedRecordId = $this->prepareImporter(array(
+        $importedRecordId = $this->prepareImporter([
             'team_id' => $this->beanToExport->team_id,
             // The "acl_team_set_id" is not specified.
             'acl_team_names' => $this->beanToExport->acl_team_names,
-        ));
+        ]);
         $this->importer->import();
         $importedBean = BeanFactory::getBean($this->module, $importedRecordId);
 
@@ -127,12 +127,12 @@ class TeamBasedACLImportTest extends TestCase
         $_REQUEST['default_value_team_name'] = 'default_value_team_name';
         $_REQUEST['default_value_acl_team_names'] = 'default_value_acl_team_names';
 
-        $importedRecordId = $this->prepareImporter(array(
+        $importedRecordId = $this->prepareImporter([
             // Matched to "team_set_id".
             'team_name' => TeamSetManager::getCommaDelimitedTeams($this->teamSet->id),
             // Matched to "acl_team_set_id".
             'acl_team_names' => '',
-        ));
+        ]);
         $this->importer->import();
         $importedBean = BeanFactory::getBean($this->module, $importedRecordId);
 
@@ -152,7 +152,7 @@ class TeamBasedACLImportTest extends TestCase
     {
         $id = create_guid();
         $exportStr = '';
-        $importColumns = array();
+        $importColumns = [];
 
         $importColumns[] = 'id';
         $exportStr .= $this->enclosure . $id . $this->enclosure . $this->delimiter;
@@ -160,7 +160,7 @@ class TeamBasedACLImportTest extends TestCase
             $importColumns[] = $key;
             $exportStr .= $this->enclosure . $val . $this->enclosure . $this->delimiter;
         }
-        SugarTestAccountUtilities::setCreatedAccount(array($id));
+        SugarTestAccountUtilities::setCreatedAccount([$id]);
 
         $file = SugarTestImportUtilities::createFile();
         file_put_contents($file, $exportStr);

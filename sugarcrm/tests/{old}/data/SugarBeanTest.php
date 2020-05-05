@@ -43,7 +43,7 @@ class SugarBeanTest extends TestCase
 
     public function testAuditLogForBeanCreate()
     {
-        $contact = SugarTestContactUtilities::createContact(null, array('phone_mobile' => '(111) 111-1111'));
+        $contact = SugarTestContactUtilities::createContact(null, ['phone_mobile' => '(111) 111-1111']);
         $auditLog = $this->getFieldAuditRecords($contact, 'phone_mobile');
         $this->assertCount(1, $auditLog, 'Audit log not created for create action.');
     }
@@ -72,12 +72,14 @@ class SugarBeanTest extends TestCase
         $this->assertCount(2, $auditLog, 'Audit log not created for create or erasure.');
     }
 
-    public function testGetObjectName(){
+    public function testGetObjectName()
+    {
         $bean = new BeanMockTestObjectName();
         $this->assertEquals($bean->getObjectName(), 'my_table', "SugarBean->getObjectName() is not returning the table name when object_name is empty.");
     }
 
-    public function testGetAuditTableName(){
+    public function testGetAuditTableName()
+    {
         $bean = new BeanMockTestObjectName();
         $this->assertEquals($bean->get_audit_table_name(), 'my_table_audit', "SugarBean->get_audit_table_name() is not returning the correct audit table name.");
     }
@@ -101,11 +103,11 @@ class SugarBeanTest extends TestCase
 
         $bean = new BeanMockTestObjectName();
         $bean->db = $db;
-        $where = $bean->get_where(array(
+        $where = $bean->get_where([
             'test1' => 'bad\'string',
             'evil\'key' => 'data',
             'tricky-(select * from config)' => 'test',
-        ));
+        ]);
 
         $this->assertStringNotContainsString('bad\'string', $where);
         $this->assertStringContainsString('quoted string', $where);
@@ -172,51 +174,51 @@ class SugarBeanTest extends TestCase
 
     public static function isRelateFieldProvider()
     {
-        return array(
+        return [
             // test for on a non-existing field
-            array(
-                array(), 'dummy', false,
-            ),
+            [
+                [], 'dummy', false,
+            ],
             // test for non-specified field type
-            array(
-                array(
-                    'my_field' => array(),
-                ), 'my_field', false,
-            ),
+            [
+                [
+                    'my_field' => [],
+                ], 'my_field', false,
+            ],
             // test on a non-relate field type
-            array(
-                array(
-                    'my_field' => array(
+            [
+                [
+                    'my_field' => [
                         'type' => 'varchar',
-                    ),
-                ), 'my_field', false,
-            ),
+                    ],
+                ], 'my_field', false,
+            ],
             // test on a relate field type but link not specified
-            array(
-                array(
-                    'my_field' => array(
+            [
+                [
+                    'my_field' => [
                         'type' => 'relate',
-                    ),
-                ), 'my_field', false,
-            ),
+                    ],
+                ], 'my_field', false,
+            ],
             // test when only link is specified
-            array(
-                array(
-                    'my_field' => array(
+            [
+                [
+                    'my_field' => [
                         'link' => 'my_link',
-                    ),
-                ), 'my_field', false,
-            ),
+                    ],
+                ], 'my_field', false,
+            ],
             // test on a relate field type
-            array(
-                array(
-                    'my_field' => array(
+            [
+                [
+                    'my_field' => [
                         'type' => 'relate',
                         'link' => 'my_link',
-                    ),
-                ), 'my_field', true,
-            ),
-        );
+                    ],
+                ], 'my_field', true,
+            ],
+        ];
     }
 
     /**
@@ -229,11 +231,11 @@ class SugarBeanTest extends TestCase
     {
         $mock = new SugarBean();
         $mock->id = 'SugarBeanMockStringTest';
-        $mock->field_defs = array(
-            'testDecimal' => array(
-                'type' => $type
-            ),
-        );
+        $mock->field_defs = [
+            'testDecimal' => [
+                'type' => $type,
+            ],
+        ];
 
         $mock->testDecimal = $actual;
         $mock->fixUpFormatting();
@@ -242,14 +244,14 @@ class SugarBeanTest extends TestCase
 
     public function provideCurrencyFieldStringValues()
     {
-        return array(
-            array('decimal', '500.01', '500.01'),
-            array('decimal', 500.01, '500.01'),
-            array('decimal', '-500.01', '-500.01'),
-            array('currency', '500.01', '500.01'),
-            array('currency', 500.01, '500.01'),
-            array('currency', '-500.01', '-500.01'),
-        );
+        return [
+            ['decimal', '500.01', '500.01'],
+            ['decimal', 500.01, '500.01'],
+            ['decimal', '-500.01', '-500.01'],
+            ['currency', '500.01', '500.01'],
+            ['currency', 500.01, '500.01'],
+            ['currency', '-500.01', '-500.01'],
+        ];
     }
 
     /**
@@ -294,7 +296,7 @@ class SugarBeanTest extends TestCase
 
         $ret = $mock->get_notification_recipients();
 
-        $this->assertEquals('1',$ret[0]->id);
+        $this->assertEquals('1', $ret[0]->id);
     }
     /**
      * Check that the decryption is not called until the actual value is used
@@ -304,12 +306,12 @@ class SugarBeanTest extends TestCase
     {
         $oSugarBean = new BeanMockTestObjectName();
 
-        $oSugarBean->field_defs = array(
-            'test_field' => array(
+        $oSugarBean->field_defs = [
+            'test_field' => [
                 'name' => 'test_field',
                 'type' => 'encrypt',
-            ),
-        );
+            ],
+        ];
 
         // must be a valid base64-encoded string
         $original_encrypted_value = $encrypted_value = base64_encode('smth');
@@ -359,92 +361,92 @@ class SugarBeanTest extends TestCase
 
         $child->field_defs = $fn_field_defs;
 
-        $parent->processFunctionFields($child, array('fn_field' => $fn_field_defs));
+        $parent->processFunctionFields($child, ['fn_field' => $fn_field_defs]);
 
         $this->assertEquals($expected, $child->fn_field);
     }
 
     public static function functionFieldProvider()
     {
-        $parent_data = array('foo' => 'bar');
-        $child_data = array('baz' => 'quux');
+        $parent_data = ['foo' => 'bar'];
+        $child_data = ['baz' => 'quux'];
 
-        return array(
+        return [
             // source is parent bean, function is global function
-            array(
+            [
                 $parent_data,
                 $child_data,
-                array(
-                    'function_params' => array('foo'),
+                [
+                    'function_params' => ['foo'],
                     'function_name' => 'strlen',
-                ),
+                ],
                 3,
-            ),
+            ],
             // source is child bean, function is static function of a class
-            array(
+            [
                 $parent_data,
                 $child_data,
-                array(
-                    'function_params' => array('baz'),
+                [
+                    'function_params' => ['baz'],
                     'function_params_source' => 'this',
                     'function_class' => 'BeanFunctionFieldsMock',
                     'function_name' => 'toUpper',
-                ),
+                ],
                 'QUUX',
-            ),
+            ],
             // function declaration is in external file
-            array(
+            [
                 $parent_data,
                 $child_data,
-                array(
-                    'function_params' => array('foo'),
+                [
+                    'function_params' => ['foo'],
                     'function_name' => 'SugarBeanTest_external_function',
                     'function_require' => dirname(__FILE__) . '/SugarBeanTest/external_function.php',
-                ),
+                ],
                 'bar',
-            ),
+            ],
             // argument is $this
-            array(
+            [
                 $parent_data,
-                array(),
-                array(
-                    'function_params' => array('$this'),
+                [],
+                [
+                    'function_params' => ['$this'],
                     'function_name' => 'get_class',
-                ),
+                ],
                 'BeanFunctionFieldsMock',
-            ),
+            ],
             // param source is wrong
-            array(
+            [
                 $parent_data,
                 $child_data,
-                array(
-                    'function_params' => array('foo'),
+                [
+                    'function_params' => ['foo'],
                     'function_params_source' => 'unknown',
                     'function_name' => 'strlen',
-                ),
+                ],
                 null,
-            ),
+            ],
             // function doesn't exist
-            array(
+            [
                 $parent_data,
                 $child_data,
-                array(
-                    'function_params' => array('foo'),
+                [
+                    'function_params' => ['foo'],
                     'function_name' => 'SugarBeanTest_unknown',
-                ),
+                ],
                 null,
-            ),
+            ],
             // source field is not set
-            array(
+            [
                 $parent_data,
                 $child_data,
-                array(
-                    'function_params' => array('bar'),
+                [
+                    'function_params' => ['bar'],
                     'function_name' => 'strlen',
-                ),
+                ],
                 null,
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -458,7 +460,7 @@ class SugarBeanTest extends TestCase
 
         $account = AccountHelper::createAccount(
             null,
-            array('team_id' => $owner->id,'team_set_id' => $owner->id,)
+            ['team_id' => $owner->id,'team_set_id' => $owner->id,]
         );
         $current_user = UserHelper::createAnonymousUser();
         $this->assertFalse($account->checkUserAccess($current_user));
@@ -472,7 +474,7 @@ class SugarBeanTest extends TestCase
     {
         $user = UserHelper::createAnonymousUser();
         $account = $this->getMockBuilder('Account')
-            ->setMethods(array('ACLAccess'))
+            ->setMethods(['ACLAccess'])
             ->getMock();
         $account->expects($this->any())
             ->method('ACLAccess')
@@ -522,7 +524,7 @@ class SugarBeanTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $methodArgs = array($sqlRows, $beans);
+        $methodArgs = [$sqlRows, $beans];
         $this->assertEquals(
             $expected,
             SugarTestReflection::callProtectedMethod($bean, 'logDistinctMismatch', $methodArgs),
@@ -532,58 +534,58 @@ class SugarBeanTest extends TestCase
 
     public function providerTestLogDistinctMismatch()
     {
-        return array(
+        return [
 
             // matching sqlRows vs beanSet
-            array(
-                array(
-                    0 => array('id' => 'a1', 'name' => 'record1'),
-                    1 => array('id' => 'a2', 'name' => 'record2'),
-                    2 => array('id' => 'a3', 'name' => 'record3'),
-                ),
-                array(
-                    'a1' => array('id' => 'a1', 'name' => 'record1'),
-                    'a2' => array('id' => 'a2', 'name' => 'record2'),
-                    'a3' => array('id' => 'a3', 'name' => 'record3'),
-                ),
+            [
+                [
+                    0 => ['id' => 'a1', 'name' => 'record1'],
+                    1 => ['id' => 'a2', 'name' => 'record2'],
+                    2 => ['id' => 'a3', 'name' => 'record3'],
+                ],
+                [
+                    'a1' => ['id' => 'a1', 'name' => 'record1'],
+                    'a2' => ['id' => 'a2', 'name' => 'record2'],
+                    'a3' => ['id' => 'a3', 'name' => 'record3'],
+                ],
                 'debug',
-                array(),
-            ),
+                [],
+            ],
 
             // duplicate sqlRows
-            array(
-                array(
-                    0 => array('id' => 'a1', 'name' => 'record1'),
-                    1 => array('id' => 'a1', 'name' => 'record1'),
-                    2 => array('id' => 'a2', 'name' => 'record2'),
-                    3 => array('id' => 'a3', 'name' => 'record3'),
-                ),
-                array(
-                    'a1' => array('id' => 'a1', 'name' => 'record1'),
-                    'a2' => array('id' => 'a2', 'name' => 'record2'),
-                    'a3' => array('id' => 'a3', 'name' => 'record3'),
-                ),
+            [
+                [
+                    0 => ['id' => 'a1', 'name' => 'record1'],
+                    1 => ['id' => 'a1', 'name' => 'record1'],
+                    2 => ['id' => 'a2', 'name' => 'record2'],
+                    3 => ['id' => 'a3', 'name' => 'record3'],
+                ],
+                [
+                    'a1' => ['id' => 'a1', 'name' => 'record1'],
+                    'a2' => ['id' => 'a2', 'name' => 'record2'],
+                    'a3' => ['id' => 'a3', 'name' => 'record3'],
+                ],
                 'debug',
-                array('a1' => 2),
-            ),
+                ['a1' => 2],
+            ],
 
             // duplicate sqlRows, no detailed logging (not enabled by default)
-            array(
-                array(
-                    0 => array('id' => 'a1', 'name' => 'record1'),
-                    1 => array('id' => 'a1', 'name' => 'record1'),
-                    2 => array('id' => 'a2', 'name' => 'record2'),
-                    3 => array('id' => 'a3', 'name' => 'record3'),
-                ),
-                array(
-                    'a1' => array('id' => 'a1', 'name' => 'record1'),
-                    'a2' => array('id' => 'a2', 'name' => 'record2'),
-                    'a3' => array('id' => 'a3', 'name' => 'record3'),
-                ),
+            [
+                [
+                    0 => ['id' => 'a1', 'name' => 'record1'],
+                    1 => ['id' => 'a1', 'name' => 'record1'],
+                    2 => ['id' => 'a2', 'name' => 'record2'],
+                    3 => ['id' => 'a3', 'name' => 'record3'],
+                ],
+                [
+                    'a1' => ['id' => 'a1', 'name' => 'record1'],
+                    'a2' => ['id' => 'a2', 'name' => 'record2'],
+                    'a3' => ['id' => 'a3', 'name' => 'record3'],
+                ],
                 'fatal',
-                array(),
-            ),
-        );
+                [],
+            ],
+        ];
     }
 
     /**
@@ -598,7 +600,7 @@ class SugarBeanTest extends TestCase
     {
         // prepare SugarQuery
         $query = $this->getMockBuilder('SugarQuery')
-            ->setMethods(array('execute'))
+            ->setMethods(['execute'])
             ->getMock();
 
         $query->expects($this->once())
@@ -607,19 +609,21 @@ class SugarBeanTest extends TestCase
 
         // sut
         $bean = $this->getMockBuilder('SugarBean')
-            ->setMethods(array('call_custom_logic', 'logDistinctMismatch', 'getCleanCopy'))
+            ->setMethods(['call_custom_logic', 'logDistinctMismatch', 'getCleanCopy'])
             ->getMock();
-        $bean->field_defs = array(
-            'id' => array(
+        $bean->field_defs = [
+            'id' => [
                 'type' => 'id',
-            ),
-            'name' => array(
+            ],
+            'name' => [
                 'type' => 'name',
-            ),
-        );
+            ],
+        ];
         //Setup the beans returned by cleanCopy to be clones of the mock rather than real beans
         $bean->method('getCleanCopy')->will($this->returnCallback(
-            function () use ($bean) { return clone $bean; }
+            function () use ($bean) {
+                return clone $bean;
+            }
         ));
 
         if ($compensation) {
@@ -628,8 +632,8 @@ class SugarBeanTest extends TestCase
         }
 
         // execute fetch
-        $options = array('compensateDistinct' => true);
-        $results = $bean->fetchFromQuery($query, array(), $options);
+        $options = ['compensateDistinct' => true];
+        $results = $bean->fetchFromQuery($query, [], $options);
 
         // tests
         $this->assertArrayHasKey(
@@ -657,63 +661,63 @@ class SugarBeanTest extends TestCase
 
     public function providerTestFetchFromQueryWithDistinctCompensation()
     {
-        return array(
+        return [
 
             // matching sqlRows vs beanSet
-            array(
-                array(
-                    0 => array('id' => 'a1', 'name' => 'record1'),
-                    1 => array('id' => 'a2', 'name' => 'record2'),
-                    2 => array('id' => 'a3', 'name' => 'record3'),
-                ),
-                array(
-                    'a1' => array('id' => 'a1', 'name' => 'record1'),
-                    'a2' => array('id' => 'a2', 'name' => 'record2'),
-                    'a3' => array('id' => 'a3', 'name' => 'record3'),
-                ),
+            [
+                [
+                    0 => ['id' => 'a1', 'name' => 'record1'],
+                    1 => ['id' => 'a2', 'name' => 'record2'],
+                    2 => ['id' => 'a3', 'name' => 'record3'],
+                ],
+                [
+                    'a1' => ['id' => 'a1', 'name' => 'record1'],
+                    'a2' => ['id' => 'a2', 'name' => 'record2'],
+                    'a3' => ['id' => 'a3', 'name' => 'record3'],
+                ],
                 0,
-            ),
+            ],
 
             // one duplicate sqlRows
-            array(
-                array(
-                    0 => array('id' => 'a1', 'name' => 'record1'),
-                    1 => array('id' => 'a1', 'name' => 'record1'),
-                    2 => array('id' => 'a2', 'name' => 'record2'),
-                    3 => array('id' => 'a3', 'name' => 'record3'),
-                ),
-                array(
-                    'a1' => array('id' => 'a1', 'name' => 'record1'),
-                    'a2' => array('id' => 'a2', 'name' => 'record2'),
-                    'a3' => array('id' => 'a3', 'name' => 'record3'),
-                ),
+            [
+                [
+                    0 => ['id' => 'a1', 'name' => 'record1'],
+                    1 => ['id' => 'a1', 'name' => 'record1'],
+                    2 => ['id' => 'a2', 'name' => 'record2'],
+                    3 => ['id' => 'a3', 'name' => 'record3'],
+                ],
+                [
+                    'a1' => ['id' => 'a1', 'name' => 'record1'],
+                    'a2' => ['id' => 'a2', 'name' => 'record2'],
+                    'a3' => ['id' => 'a3', 'name' => 'record3'],
+                ],
                 1,
-            ),
+            ],
 
             // multiple duplicate sqlRows with different records
-            array(
-                array(
-                    0 => array('id' => 'a1', 'name' => 'record1'),
-                    1 => array('id' => 'a1', 'name' => 'record1'),
-                    2 => array('id' => 'a2', 'name' => 'record2'),
-                    3 => array('id' => 'a3', 'name' => 'record3'),
-                    4 => array('id' => 'a3', 'name' => 'record3'),
-                    5 => array('id' => 'a3', 'name' => 'record3'),
-                    6 => array('id' => 'a4', 'name' => 'record4'),
-                    7 => array('id' => 'a5', 'name' => 'record5'),
-                    8 => array('id' => 'a5', 'name' => 'record5'),
-                    9 => array('id' => 'a1', 'name' => 'record1'),
-                ),
-                array(
-                    'a1' => array('id' => 'a1', 'name' => 'record1'),
-                    'a2' => array('id' => 'a2', 'name' => 'record2'),
-                    'a3' => array('id' => 'a3', 'name' => 'record3'),
-                    'a4' => array('id' => 'a4', 'name' => 'record4'),
-                    'a5' => array('id' => 'a5', 'name' => 'record5'),
-                ),
+            [
+                [
+                    0 => ['id' => 'a1', 'name' => 'record1'],
+                    1 => ['id' => 'a1', 'name' => 'record1'],
+                    2 => ['id' => 'a2', 'name' => 'record2'],
+                    3 => ['id' => 'a3', 'name' => 'record3'],
+                    4 => ['id' => 'a3', 'name' => 'record3'],
+                    5 => ['id' => 'a3', 'name' => 'record3'],
+                    6 => ['id' => 'a4', 'name' => 'record4'],
+                    7 => ['id' => 'a5', 'name' => 'record5'],
+                    8 => ['id' => 'a5', 'name' => 'record5'],
+                    9 => ['id' => 'a1', 'name' => 'record1'],
+                ],
+                [
+                    'a1' => ['id' => 'a1', 'name' => 'record1'],
+                    'a2' => ['id' => 'a2', 'name' => 'record2'],
+                    'a3' => ['id' => 'a3', 'name' => 'record3'],
+                    'a4' => ['id' => 'a4', 'name' => 'record4'],
+                    'a5' => ['id' => 'a5', 'name' => 'record5'],
+                ],
                 5,
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -723,39 +727,39 @@ class SugarBeanTest extends TestCase
     public function testCreateNewListQuery()
     {
         $bean = BeanFactory::newBean("Contacts");
-        $filter = array(
+        $filter = [
             "account_id",
             "opportunity_role_fields",
             "opportunity_role_id",
-            "opportunity_role"
-        );
-        $params = array(
+            "opportunity_role",
+        ];
+        $params = [
             "distinct" => false,
-            "joined_tables" => array(0 => "opportunities_contacts"),
+            "joined_tables" => [0 => "opportunities_contacts"],
             "include_custom_fields" => true,
-            "collection_list" => null
-        );
+            "collection_list" => null,
+        ];
         $query = $bean->create_new_list_query("", "", $filter, $params, 0, "", true);
 
         $this->assertStringNotContainsString('opportunity_role_fields', $query['secondary_select']);
         $this->assertStringContainsString('opportunity_role_id', $query['secondary_select']);
 
         $bean = BeanFactory::newBean("Contacts");
-        $filter = array(
+        $filter = [
             "account_name",
-            "account_id"
-        );
-        $params = array(
+            "account_id",
+        ];
+        $params = [
             "join_type" => "LEFT JOIN",
             "join_table_alias" => "accounts",
-            "join_table_link_alias" => "jtl0"
-        );
+            "join_table_link_alias" => "jtl0",
+        ];
         $query = $bean->create_new_list_query("", "", $filter, $params, 0, "", true);
 
         $this->assertEquals(1, substr_count($query["secondary_select"], " account_id"), "secondary_select should not contain duplicate alias names.");
 
         $bean = BeanFactory::newBean('Calls');
-        $query = $bean->create_new_list_query('', '', array('contact_name', 'contact_id'), array(), 0, '', true);
+        $query = $bean->create_new_list_query('', '', ['contact_name', 'contact_id'], [], 0, '', true);
 
         $this->assertStringContainsString('contact_id', $query['secondary_select']);
     }
@@ -787,7 +791,7 @@ class SugarBeanTest extends TestCase
 
         $bean->field_defs = $defs;
 
-        $actual = $bean->getFieldDefinitions('id_name', array('opportunity_id'));
+        $actual = $bean->getFieldDefinitions('id_name', ['opportunity_id']);
         $this->assertCount(1, $actual);
         $this->assertArrayHasKey('id_name', $actual['opportunity_name']);
     }
@@ -795,20 +799,20 @@ class SugarBeanTest extends TestCase
 
     public static function dataProviderFieldDefs()
     {
-        return array(
-            array(array(
-                'opportunity_id' => array(
-                    'name' => 'opportunity_id'
-                ),
-                'opportunity_name' => array(
+        return [
+            [[
+                'opportunity_id' => [
+                    'name' => 'opportunity_id',
+                ],
+                'opportunity_name' => [
                     'name' => 'opportunity_name',
-                    'id_name' => 'opportunity_id'
-                ),
-                'name' => array(
-                    'name' => 'name'
-                ),
-            ))
-        );
+                    'id_name' => 'opportunity_id',
+                ],
+                'name' => [
+                    'name' => 'name',
+                ],
+            ]],
+        ];
     }
 
     /**
@@ -818,16 +822,16 @@ class SugarBeanTest extends TestCase
     {
         $bean = $this->getMockBuilder('SugarBean')
             ->disableOriginalConstructor()
-            ->setMethods(array('load_relationship'))
+            ->setMethods(['load_relationship'])
             ->getMock();
 
         $bean->id = 'unit_test_id';
         $bean->opportunity_id = 'new_unit_test_id';
 
-        $bean->rel_fields_before_value = array('opportunity_id' => 'old_unit_test_id');
+        $bean->rel_fields_before_value = ['opportunity_id' => 'old_unit_test_id'];
 
         $link2 = $this->getMockBuilder('Link2')
-            ->setMethods(array('add', 'delete', 'resetLoaded'))
+            ->setMethods(['add', 'delete', 'resetLoaded'])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -850,23 +854,23 @@ class SugarBeanTest extends TestCase
             ->willReturn(true);
 
         $bean->opportunities = $link2;
-        $bean->field_defs = array(
-            'opportunity_id' => array(
+        $bean->field_defs = [
+            'opportunity_id' => [
                 'name' => 'opportunity_id',
-                'type' => 'id'
-            ),
-            'opportunity_name' => array(
+                'type' => 'id',
+            ],
+            'opportunity_name' => [
                 'name' => 'opportunity_name',
                 'id_name' => 'opportunity_id',
                 'link' => 'opportunities',
                 'save' => true,
-                'type' => 'relate'
-            ),
-            'opportunities' => array(
+                'type' => 'relate',
+            ],
+            'opportunities' => [
                 'name' => 'opportunities',
                 'type' => 'link',
-            )
-        );
+            ],
+        ];
 
         $actual = SugarTestReflection::callProtectedMethod($bean, 'handle_remaining_relate_fields');
 
@@ -881,16 +885,16 @@ class SugarBeanTest extends TestCase
     {
         $bean = $this->getMockBuilder('SugarBean')
             ->disableOriginalConstructor()
-            ->setMethods(array('load_relationship'))
+            ->setMethods(['load_relationship'])
             ->getMock();
 
         $bean->id = 'unit_test_id';
         $bean->opportunity_id = 'new_unit_test_id';
 
-        $bean->rel_fields_before_value = array();
+        $bean->rel_fields_before_value = [];
 
         $link2 = $this->getMockBuilder('Link2')
-            ->setMethods(array('add', 'delete', 'resetLoaded'))
+            ->setMethods(['add', 'delete', 'resetLoaded'])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -911,23 +915,23 @@ class SugarBeanTest extends TestCase
             ->willReturn(true);
 
         $bean->opportunities = $link2;
-        $bean->field_defs = array(
-            'opportunity_id' => array(
+        $bean->field_defs = [
+            'opportunity_id' => [
                 'name' => 'opportunity_id',
-                'type' => 'id'
-            ),
-            'opportunity_name' => array(
+                'type' => 'id',
+            ],
+            'opportunity_name' => [
                 'name' => 'opportunity_name',
                 'id_name' => 'opportunity_id',
                 'link' => 'opportunities',
                 'save' => true,
-                'type' => 'relate'
-            ),
-            'opportunities' => array(
+                'type' => 'relate',
+            ],
+            'opportunities' => [
                 'name' => 'opportunities',
                 'type' => 'link',
-            )
-        );
+            ],
+        ];
 
         $actual = SugarTestReflection::callProtectedMethod($bean, 'handle_remaining_relate_fields');
 
@@ -942,16 +946,16 @@ class SugarBeanTest extends TestCase
     {
         $bean = $this->getMockBuilder('SugarBean')
             ->disableOriginalConstructor()
-            ->setMethods(array('load_relationship'))
+            ->setMethods(['load_relationship'])
             ->getMock();
 
         $bean->id = 'unit_test_id';
         $bean->opportunity_id = '';
 
-        $bean->rel_fields_before_value = array('opportunity_id' => 'old_unit_test_id');
+        $bean->rel_fields_before_value = ['opportunity_id' => 'old_unit_test_id'];
 
         $link2 = $this->getMockBuilder('Link2')
-            ->setMethods(array('add', 'delete', 'resetLoaded'))
+            ->setMethods(['add', 'delete', 'resetLoaded'])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -972,23 +976,23 @@ class SugarBeanTest extends TestCase
             ->willReturn(true);
 
         $bean->opportunities = $link2;
-        $bean->field_defs = array(
-            'opportunity_id' => array(
+        $bean->field_defs = [
+            'opportunity_id' => [
                 'name' => 'opportunity_id',
-                'type' => 'id'
-            ),
-            'opportunity_name' => array(
+                'type' => 'id',
+            ],
+            'opportunity_name' => [
                 'name' => 'opportunity_name',
                 'id_name' => 'opportunity_id',
                 'link' => 'opportunities',
                 'save' => true,
-                'type' => 'relate'
-            ),
-            'opportunities' => array(
+                'type' => 'relate',
+            ],
+            'opportunities' => [
                 'name' => 'opportunities',
                 'type' => 'link',
-            )
-        );
+            ],
+        ];
 
         $actual = SugarTestReflection::callProtectedMethod($bean, 'handle_remaining_relate_fields');
 
@@ -1000,7 +1004,7 @@ class SugarBeanTest extends TestCase
     {
         /** @var DBManager|MockObject $db */
         $db = $this->getMockBuilder('DBManager')
-            ->setMethods(array('checkError'))
+            ->setMethods(['checkError'])
             ->getMockForAbstractClass();
         $db->expects($this->any())
             ->method('fromConvert')

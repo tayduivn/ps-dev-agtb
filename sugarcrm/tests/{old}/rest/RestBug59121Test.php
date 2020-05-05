@@ -16,7 +16,7 @@ class RestBug59121Test extends RestTestBase
 {
     protected $_backedUp = false;
     protected $_customFile = 'custom/include/MVC/Controller/wireless_module_registry.php';
-    protected $_request = array();
+    protected $_request = [];
 
     protected function setUp() : void
     {

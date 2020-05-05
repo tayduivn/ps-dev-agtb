@@ -23,7 +23,7 @@ class Bug54639Test extends TestCase
     protected function setUp() : void
     {
         $this->contact = new Contact();
-        $this->contact->field_defs["as_tetrispe_accounts_name"] = array (
+        $this->contact->field_defs["as_tetrispe_accounts_name"] =  [
             'name' => 'as_tetrispe_accounts_name',
             'type' => 'relate',
             'source' => 'non-db',
@@ -34,9 +34,9 @@ class Bug54639Test extends TestCase
             'table' => 'accounts',
             'module' => 'Accounts',
             'rname' => 'name',
-        );
+        ];
 
-        $this->contact->field_defs["as_tetrispac95ccounts_ida"] = array (
+        $this->contact->field_defs["as_tetrispac95ccounts_ida"] =  [
             'name' => 'as_tetrispac95ccounts_ida',
             'type' => 'link',
             'relationship' => 'as_tetrisperson_accounts',
@@ -44,7 +44,7 @@ class Bug54639Test extends TestCase
             'reportable' => false,
             'side' => 'right',
             'vname' => 'LBL_AS_TETRISPERSON_ACCOUNTS_FROM_AS_TETRISPERSON_TITLE',
-        );
+        ];
     }
 
     /**

@@ -28,7 +28,7 @@ class CallTest extends TestCase
         $contact->first_name = 'CallTest';
         $contact->last_name = 'Contact';
         $contact->save();
-        $this->contact = $contact;        
+        $this->contact = $contact;
     }
 
     protected function tearDown() : void
@@ -38,16 +38,16 @@ class CallTest extends TestCase
         SugarTestCallUtilities::removeAllCreatedCalls();
         SugarTestContactUtilities::removeAllCreatedContacts();
 
-        if(!empty($this->callid)) {
+        if (!empty($this->callid)) {
             $GLOBALS['db']->query("DELETE FROM calls WHERE id='{$this->callid}'");
             $GLOBALS['db']->query("DELETE FROM vcals WHERE user_id='{$GLOBALS['current_user']->id}'");
         }
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset( $GLOBALS['current_user']);
-        unset( $GLOBALS['mod_strings']);
+        unset($GLOBALS['current_user']);
+        unset($GLOBALS['mod_strings']);
 
         $GLOBALS['db']->query("DELETE FROM contacts WHERE id = '{$this->contact->id}'");
-        unset($this->contact);        
+        unset($this->contact);
     }
 
     /**
@@ -95,9 +95,9 @@ class CallTest extends TestCase
     {
         global $current_user;
         $langpack = new SugarTestLangPackCreator();
-        $langpack->setModString('LBL_DEFAULT_STATUS','FAILED!','Calls');
+        $langpack->setModString('LBL_DEFAULT_STATUS', 'FAILED!', 'Calls');
         $langpack->save();
-        $GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], 'Calls');         
+        $GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], 'Calls');
         
          $call = new Call();
          $this->callid = $call->id = create_guid();
@@ -119,9 +119,9 @@ class CallTest extends TestCase
     {
         global $db;
          $langpack = new SugarTestLangPackCreator();
-         $langpack->setModString('LBL_DEFAULT_STATUS','FAILED!','Calls');
+         $langpack->setModString('LBL_DEFAULT_STATUS', 'FAILED!', 'Calls');
          $langpack->save();
-         $GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], 'Calls');         
+         $GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], 'Calls');
         
          $call = new Call();
          $this->callid = $call->id = create_guid();
@@ -137,7 +137,7 @@ class CallTest extends TestCase
         $q = "SELECT cu.accept_status FROM calls_users cu WHERE cu.call_id = '{$this->callid}' AND user_id = '{$GLOBALS['current_user']->id}'";
         $r = $db->query($q);
         $a = $db->fetchByAssoc($r);
-        $this->assertEquals('accept', $a['accept_status'], "Call wasn't accepted by the User");         
+        $this->assertEquals('accept', $a['accept_status'], "Call wasn't accepted by the User");
     }
 
     public function testLoadFromRow()
@@ -147,10 +147,10 @@ class CallTest extends TestCase
         $this->assertEmpty($call->reminder_checked);
         $this->assertEmpty($call->email_reminder_checked);
 
-        $call->loadFromRow(array(
+        $call->loadFromRow([
             'reminder_time' => 30,
             'email_reminder_time' => 30,
-        ));
+        ]);
 
         $this->assertTrue($call->reminder_checked);
         $this->assertTrue($call->email_reminder_checked);
@@ -158,14 +158,14 @@ class CallTest extends TestCase
 
     public function testGetNotificationRecipients_RecipientsAreAlreadyLoaded_ReturnsRecipients()
     {
-        $contacts = array(
+        $contacts = [
             SugarTestContactUtilities::createContact(),
             SugarTestContactUtilities::createContact(),
-        );
+        ];
 
         $call = BeanFactory::newBean('Calls');
-        $call->users_arr = array($GLOBALS['current_user']->id);
-        $call->contacts_arr = array($contacts[0]->id, $contacts[1]->id);
+        $call->users_arr = [$GLOBALS['current_user']->id];
+        $call->contacts_arr = [$contacts[0]->id, $contacts[1]->id];
 
         $actual = $call->get_notification_recipients();
         $this->assertArrayHasKey($GLOBALS['current_user']->id, $actual, 'The current user should be in the list.');
@@ -175,10 +175,10 @@ class CallTest extends TestCase
 
     public function testGetNotificationRecipients_RecipientsAreNotAlreadyLoaded_ReturnsEmptyRecipients()
     {
-        $contacts = array(
+        $contacts = [
             SugarTestContactUtilities::createContact(),
             SugarTestContactUtilities::createContact(),
-        );
+        ];
 
         $call = SugarTestCallUtilities::createCall();
         SugarTestCallUtilities::addCallUserRelation($call->id, $GLOBALS['current_user']->id);

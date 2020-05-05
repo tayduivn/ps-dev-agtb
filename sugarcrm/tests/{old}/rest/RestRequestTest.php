@@ -19,8 +19,8 @@ class RestRequestTest extends TestCase
      */
     public function testVersion($req, $header, $expUrlVersion, $expVersion)
     {
-        $service = array_merge(array('REQUEST_METHOD' => 'GET'), $header);
-        $restRequest = new RestRequest($service, array('__sugar_url' => $req));
+        $service = array_merge(['REQUEST_METHOD' => 'GET'], $header);
+        $restRequest = new RestRequest($service, ['__sugar_url' => $req]);
         $version = $restRequest->getVersion();
         $urlVersion = $restRequest->getUrlVersion();
         $this->assertSame($expUrlVersion, $urlVersion);
@@ -30,59 +30,59 @@ class RestRequestTest extends TestCase
     public function versionProvider()
     {
         $headerName = 'HTTP_ACCEPT';
-        return array(
+        return [
             // no header, only URL
-            array("v10/Accounts/by_country", array(), 'v10', '10'),
+            ["v10/Accounts/by_country", [], 'v10', '10'],
             // no header, only URL with minor version
-            array("v12_1/Accounts/by_country", array(), 'v12_1', '12.1'),
+            ["v12_1/Accounts/by_country", [], 'v12_1', '12.1'],
             // double path
-            array("//v99/Accounts/by_country/", array(), 'v99', '99'),
+            ["//v99/Accounts/by_country/", [], 'v99', '99'],
             // Accept header has version
-            array(
+            [
                 "/Accounts/by_country",
-                array($headerName => 'application/vnd.sugarcrm.core+xml; version=11'),
+                [$headerName => 'application/vnd.sugarcrm.core+xml; version=11'],
                 'v11',
                 '11',
-            ),
+            ],
             // Accept header has version with minor version
-            array(
+            [
                 "/Accounts/by_country",
-                array($headerName => 'application/vnd.sugarcrm.core+xml; version=11.2'),
+                [$headerName => 'application/vnd.sugarcrm.core+xml; version=11.2'],
                 'v11_2',
                 '11.2',
-            ),
+            ],
             // only Accept header has version, with no response type
-            array(
+            [
                 "/Accounts/by_country",
-                array($headerName => 'application/vnd.sugarcrm.core; version=10'),
+                [$headerName => 'application/vnd.sugarcrm.core; version=10'],
                 'v10',
                 '10',
-            ),
+            ],
             // only Accept header has MAJOR.MINOR version, with no response type
-            array(
+            [
                 "/Accounts/by_country",
-                array($headerName => 'application/vnd.sugarcrm.core; version=10.2'),
+                [$headerName => 'application/vnd.sugarcrm.core; version=10.2'],
                 'v10_2',
                 '10.2',
-            ),
+            ],
             // Header with qualifier indicator
-            array(
+            [
                 "/Accounts/by_country",
-                array($headerName =>
+                [$headerName =>
                     'application/vnd.sugarcrm.core+xml; version=11;
                     q=0.5, application/vnd.sugarcrm.core+json; version=11',
-                ),
+                ],
                 'v11',
                 '11',
-            ),
+            ],
             // url version not with _, will not be detected and header version will be used
-            array(
+            [
                 "v10.1/Accounts/by_country",
-                array($headerName => 'application/vnd.sugarcrm.core+xml; version=11.2'),
+                [$headerName => 'application/vnd.sugarcrm.core+xml; version=11.2'],
                 'v11_2',
                 '11.2',
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -90,8 +90,8 @@ class RestRequestTest extends TestCase
      */
     public function testVersionException($req, $header)
     {
-        $service = array_merge(array('REQUEST_METHOD' => 'GET'), $header);
-        $restRequest = new RestRequest($service, array('__sugar_url' => $req));
+        $service = array_merge(['REQUEST_METHOD' => 'GET'], $header);
+        $restRequest = new RestRequest($service, ['__sugar_url' => $req]);
 
         $this->expectException(SugarApiExceptionIncorrectVersion::class);
         $restRequest->getVersion();
@@ -100,44 +100,44 @@ class RestRequestTest extends TestCase
     public function versionExceptionProvider()
     {
         $headerName = 'HTTP_ACCEPT';
-        return array(
+        return [
             'both header and URL have version' =>
-            array(
+            [
                 "v10/Accounts/by_country",
-                array($headerName => 'application/vnd.sugarcrm.core+xml; version=11'),
-            ),
+                [$headerName => 'application/vnd.sugarcrm.core+xml; version=11'],
+            ],
             'neither Header nor Url has versoin' =>
-            array("/Accounts/by_country/", array()),
+            ["/Accounts/by_country/", []],
             'not _ in url version' =>
-            array("v42.3/Accounts/by_country?foo=bar", array()),
+            ["v42.3/Accounts/by_country?foo=bar", []],
             'not 2-digit url version' =>
-            array("//v7/Accounts/by_country/", array()),
+            ["//v7/Accounts/by_country/", []],
             '3-digit, and no URL version' =>
-            array(
+            [
                 "/Accounts/by_country",
-                array($headerName => 'application/vnd.sugarcrm.core+xml; version=101'),
-            ),
+                [$headerName => 'application/vnd.sugarcrm.core+xml; version=101'],
+            ],
             'header version triple digit minor version, and no URL version' =>
-            array(
+            [
                 "/Accounts/by_country",
-                array($headerName => 'application/vnd.sugarcrm.core+xml; version=10.123'),
-            ),
+                [$headerName => 'application/vnd.sugarcrm.core+xml; version=10.123'],
+            ],
             'header version has random string, and no URL version' =>
-            array(
+            [
                 "/Accounts/by_country",
-                array($headerName => 'application/vnd.sugarcrm.core+xml; version=v10.1x'),
-            ),
-        );
+                [$headerName => 'application/vnd.sugarcrm.core+xml; version=v10.1x'],
+            ],
+        ];
     }
 
     public function testMethod()
     {
-        $serv = array('REQUEST_METHOD' => 'GET');
-        $r = new RestRequest($serv, array());
+        $serv = ['REQUEST_METHOD' => 'GET'];
+        $r = new RestRequest($serv, []);
         $this->assertEquals("GET", $r->getMethod());
 
-        $serv = array('REQUEST_METHOD' => 'POST');
-        $r = new RestRequest($serv, array());
+        $serv = ['REQUEST_METHOD' => 'POST'];
+        $r = new RestRequest($serv, []);
         $this->assertEquals("POST", $r->getMethod());
     }
 
@@ -148,19 +148,19 @@ class RestRequestTest extends TestCase
      */
     public function testParsePath($path, $parsedpath)
     {
-        $r = new RestRequest(array('REQUEST_METHOD' => 'GET'), array('__sugar_url' => $path));
+        $r = new RestRequest(['REQUEST_METHOD' => 'GET'], ['__sugar_url' => $path]);
         $this->assertEquals($r->path, $parsedpath);
     }
 
     public function pathProvider()
     {
-        return array(
-            array("v10/metadata/public", array('metadata', 'public')),
-            array("//v10/metadata/public//", array('metadata', 'public')),
-            array("v42/metadata/123/", array('metadata', '123')),
-            array("blah/metadata/123/", array('blah','metadata', '123')),
-            array("/v12/metadata/../public/", array('metadata', '..', 'public')),
-        );
+        return [
+            ["v10/metadata/public", ['metadata', 'public']],
+            ["//v10/metadata/public//", ['metadata', 'public']],
+            ["v42/metadata/123/", ['metadata', '123']],
+            ["blah/metadata/123/", ['blah','metadata', '123']],
+            ["/v12/metadata/../public/", ['metadata', '..', 'public']],
+        ];
     }
 
     /**
@@ -168,18 +168,18 @@ class RestRequestTest extends TestCase
      */
     public function testGetPathVars($path, $route, $vars)
     {
-        $r = new RestRequest(array('REQUEST_METHOD' => 'GET'), array('__sugar_url' => $path));
+        $r = new RestRequest(['REQUEST_METHOD' => 'GET'], ['__sugar_url' => $path]);
         $this->assertEquals($r->getPathVars($route), $vars);
     }
 
     public function pathVarsProvider()
     {
-        return array(
-            array('v10/metadata/public', array(), array()),
-            array('v10/metadata/public', array("pathVars" => array('foo')), array('foo' => 'metadata')),
-            array('v10/metadata/public', array("pathVars" => array('', 'foo')), array('foo' => 'public')),
-            array('v10/metadata/public', array("pathVars" => array('', '', 'foo')), array()),
-        );
+        return [
+            ['v10/metadata/public', [], []],
+            ['v10/metadata/public', ["pathVars" => ['foo']], ['foo' => 'metadata']],
+            ['v10/metadata/public', ["pathVars" => ['', 'foo']], ['foo' => 'public']],
+            ['v10/metadata/public', ["pathVars" => ['', '', 'foo']], []],
+        ];
     }
 
     /**
@@ -188,8 +188,8 @@ class RestRequestTest extends TestCase
     public function testGetRequestHeaders($serv, $header, $value)
     {
         $serv['REQUEST_METHOD'] = 'GET';
-        $r = new RestRequest($serv, array('__sugar_url' => 'v10/metadata/public'));
-        if(empty($value)) {
+        $r = new RestRequest($serv, ['__sugar_url' => 'v10/metadata/public']);
+        if (empty($value)) {
             $this->assertArrayNotHasKey($header, $r->getRequestHeaders());
         } else {
             $this->assertEquals($value, $r->getHeader($header));
@@ -198,22 +198,22 @@ class RestRequestTest extends TestCase
 
     public function headersProvider()
     {
-        return array(
-            array(array("HTTP_HOST" => 'foo'), 'HOST', 'foo'),
-            array(array("HTTP_PORT" => '123'), 'HOST', null),
-            array(array("HTTP_PORT_NUMBER" => '123'), 'PORT_NUMBER', '123'),
-        );
+        return [
+            [["HTTP_HOST" => 'foo'], 'HOST', 'foo'],
+            [["HTTP_PORT" => '123'], 'HOST', null],
+            [["HTTP_PORT_NUMBER" => '123'], 'PORT_NUMBER', '123'],
+        ];
     }
 
 
     public function testGetResourceURIBase()
     {
-        $r = new RestRequest(array(
+        $r = new RestRequest([
             'REQUEST_METHOD' => 'GET',
             'QUERY_STRING' => '__sugar_url=v10/metadata/public&type_filter=&module_filter=&platform=base&_hash=688d8896f98ff0d0db7fca1aad465809',
             'REQUEST_URI' => '/sugar7/rest/v10/metadata/public?type_filter=&module_filter=&platform=base&_hash=688d8896f98ff0d0db7fca1aad465809',
             'SCRIPT_NAME' => '/sugar7/api/rest.php',
-        ), array('__sugar_url' => 'v10/metadata/public'));
+        ], ['__sugar_url' => 'v10/metadata/public']);
 
         $this->assertEquals($GLOBALS['sugar_config']['site_url']."/rest/v10/", $r->getResourceURIBase('v10'));
     }
@@ -225,12 +225,12 @@ class RestRequestTest extends TestCase
      */
     public function testGetRawPath($req, $path)
     {
-        $serv = array('REQUEST_METHOD' => 'GET');
+        $serv = ['REQUEST_METHOD' => 'GET'];
         $r = new RestRequest($serv, $req);
 
         $this->assertEquals($path, $r->getRawPath());
 
-        if(!empty($req['__sugar_url'])) {
+        if (!empty($req['__sugar_url'])) {
             $serv['PATH_INFO'] = $req['__sugar_url'];
             unset($req['__sugar_url']);
             $r = new RestRequest($serv, $req);
@@ -241,13 +241,13 @@ class RestRequestTest extends TestCase
 
     public function rawPathProvider()
     {
-        return array(
-            array(array(), '/'),
-            array(array('' => "/foo"), '/'),
-            array(array('__sugar_url' => "/foo"), '/foo'),
-            array(array('PATH_INFO' => '/foo'), '/'),
-            array(array('__sugar_url' => "//foo//../bar"), '//foo//../bar'),
-            array(null, '/'),
-        );
+        return [
+            [[], '/'],
+            [['' => "/foo"], '/'],
+            [['__sugar_url' => "/foo"], '/foo'],
+            [['PATH_INFO' => '/foo'], '/'],
+            [['__sugar_url' => "//foo//../bar"], '//foo//../bar'],
+            [null, '/'],
+        ];
     }
 }

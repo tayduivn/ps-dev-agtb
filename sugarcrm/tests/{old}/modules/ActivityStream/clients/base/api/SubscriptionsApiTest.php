@@ -44,16 +44,16 @@ class SubscriptionsApiTest extends TestCase
         $this->expectException(SugarApiExceptionNotFound::class);
         $this->subscriptionApi->subscribeToRecord(
             $this->api,
-            array(
+            [
                 'module' => 'Leads',
                 'record' => create_guid(),
-            )
+            ]
         );
     }
 
     public function testSubscribeToRecord_NoAccess_ThrowsException()
     {
-        $mockLead = $this->getMockBuilder('Lead')->setMethods(array('ACLAccess'))->getMock();
+        $mockLead = $this->getMockBuilder('Lead')->setMethods(['ACLAccess'])->getMock();
         $mockLead->expects($this->any())
             ->method('ACLAccess')
             ->will($this->returnValue(false));
@@ -68,10 +68,10 @@ class SubscriptionsApiTest extends TestCase
         $this->expectException(SugarApiExceptionNotAuthorized::class);
         $this->subscriptionApi->subscribeToRecord(
             $this->api,
-            array(
+            [
                 'module' => 'Leads',
                 'record' => $mockLead->id,
-            )
+            ]
         );
     }
 
@@ -85,16 +85,16 @@ class SubscriptionsApiTest extends TestCase
         $this->expectException(SugarApiExceptionNotFound::class);
         $this->subscriptionApi->unsubscribeFromRecord(
             $this->api,
-            array(
+            [
                 'module' => 'Leads',
                 'record' => $lead->id,
-            )
+            ]
         );
     }
 
     public function testUnSubscribeFromRecord_NoAccess_ThrowsException()
     {
-        $mockLead = $this->getMockBuilder('Lead')->setMethods(array('ACLAccess'))->getMock();
+        $mockLead = $this->getMockBuilder('Lead')->setMethods(['ACLAccess'])->getMock();
         $mockLead->expects($this->any())
             ->method('ACLAccess')
             ->will($this->returnValue(false));
@@ -109,10 +109,10 @@ class SubscriptionsApiTest extends TestCase
         $this->expectException(SugarApiExceptionNotAuthorized::class);
         $this->subscriptionApi->unsubscribeFromRecord(
             $this->api,
-            array(
+            [
                 'module' => 'Leads',
                 'record' => $mockLead->id,
-            )
+            ]
         );
     }
 }

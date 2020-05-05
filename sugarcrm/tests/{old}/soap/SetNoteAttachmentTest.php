@@ -50,11 +50,11 @@ class SetNoteAttachmentTest extends SOAPTestCase
 
         $contents = base64_encode(file_get_contents(__FILE__));
 
-        $set_note_attachment_parameters = array(
+        $set_note_attachment_parameters = [
             //session id
             'session' => $this->_sessionId,
             //The attachment details
-            'note' => array(
+            'note' => [
                 //The ID of the parent document.
                 'id' => $note_id,
                 //The binary contents of the file.
@@ -62,8 +62,8 @@ class SetNoteAttachmentTest extends SOAPTestCase
                 //The name of the file
                 'filename' => 'example_note.txt',
                 //The revision number
-            ),
-        );
+            ],
+        ];
 
         $set_note_attachment_result = $this->_soapClient->call(
             'set_note_attachment',

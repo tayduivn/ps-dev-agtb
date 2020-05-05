@@ -28,9 +28,10 @@ class MeetingBug57478Test extends TestCase
         SugarTestHelper::tearDown();
     }
 
-    public function testSendInvites() {
-        $fields = array(
-                      'name'=>'UNIT TEST - Meeting with parent contact', 
+    public function testSendInvites()
+    {
+        $fields = [
+                      'name'=>'UNIT TEST - Meeting with parent contact',
                       "deleted" => "0",
                       "status" => "Planned",
                       "reminder_time" => -1,
@@ -45,16 +46,16 @@ class MeetingBug57478Test extends TestCase
                       "parent_type" => "Contacts",
                       "send_invites" => true,
                       "parent_id" => 1,
-                      );
+                      ];
         $meeting = new MeetingBug57478TestMock();
-        foreach($fields AS $k => $v) {
+        foreach ($fields as $k => $v) {
             $meeting->$k = $v;
         }
         $userInvitees[] = $GLOBALS['current_user']->id;
         $meeting->users_arr = $userInvitees;
         $meeting->setUserInvitees($userInvitees);
 
-        $expected = array( $GLOBALS['current_user']->id );
+        $expected = [ $GLOBALS['current_user']->id ];
 
         $meeting->save();
 
@@ -62,9 +63,11 @@ class MeetingBug57478Test extends TestCase
     }
 }
 
-class MeetingBug57478TestMock extends Meeting {
-    public $notified_users = array();
-    public function send_assignment_notifications($notify_user, $admin) {
+class MeetingBug57478TestMock extends Meeting
+{
+    public $notified_users = [];
+    public function send_assignment_notifications($notify_user, $admin)
+    {
         $this->notified_users[] = $notify_user->id;
     }
 }

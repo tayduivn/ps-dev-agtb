@@ -34,10 +34,10 @@ class vCardTest extends TestCase
 
     public function vCardsWithSalutations()
     {
-        return array(
-            array('MAR-1510a.vcf'),
-            array('MAR-1510b.vcf'),
-        );
+        return [
+            ['MAR-1510a.vcf'],
+            ['MAR-1510b.vcf'],
+        ];
     }
 
     // test cases
@@ -60,31 +60,31 @@ class vCardTest extends TestCase
 
     public static function vCardsWithoutRequiredFields()
     {
-        return array(
-            array(
+        return [
+            [
                 'VCardWithoutAllRequired.vcf', // vCard without last_name
-                'Contacts'
-            ),
-            array(
+                'Contacts',
+            ],
+            [
                 'VCardEmpty.vcf', // Empty vCard
-                'Leads'
-            ),
-        );
+                'Leads',
+            ],
+        ];
     }
 
     /**
      * @ticket 10419
      */
-	public function testImportedVcardWithDifferentCharsetIsTranslatedToTheDefaultCharset()
+    public function testImportedVcardWithDifferentCharsetIsTranslatedToTheDefaultCharset()
     {
         $filename  = dirname(__FILE__)."/vcf/ISO88591SampleFile.vcf";
         
         $personMock = $this->getMockBuilder('Person')
-            ->setMethods(array('save'))
+            ->setMethods(['save'])
             ->getMock();
 
         $vcard = $this->getMockBuilder('vCard')
-            ->setMethods(array('getBean'))
+            ->setMethods(['getBean'])
             ->getMock();
         $vcard->expects($this->once())
             ->method('getBean')
@@ -99,10 +99,10 @@ class vCardTest extends TestCase
         $filename  = dirname(__FILE__)."/vcf/UTF8SampleFile.vcf";
 
         $personMock = $this->getMockBuilder('Person')
-            ->setMethods(array('save'))
+            ->setMethods(['save'])
             ->getMock();
         $vcard = $this->getMockBuilder('vCard')
-            ->setMethods(array('getBean'))
+            ->setMethods(['getBean'])
             ->getMock();
         $vcard->expects($this->once())
             ->method('getBean')
@@ -119,10 +119,10 @@ class vCardTest extends TestCase
     {
         $filename = dirname(__FILE__) . "/vcf/{$vcard}";
         $personMock = $this->getMockBuilder('Person')
-            ->setMethods(array('save'))
+            ->setMethods(['save'])
             ->getMock();
         $vcard = $this->getMockBuilder('vCard')
-            ->setMethods(array('getBean'))
+            ->setMethods(['getBean'])
             ->getMock();
         $vcard->expects($this->once())
             ->method('getBean')
@@ -135,21 +135,21 @@ class vCardTest extends TestCase
 
     public function vCardNames()
     {
-        return array(
-            array('', "Last Name"),
-            array('First Name', "Last Name"),
-            array("Иван", "Č, Ć ŐŐŐ Lastname"),
-        );
+        return [
+            ['', "Last Name"],
+            ['First Name', "Last Name"],
+            ["Иван", "Č, Ć ŐŐŐ Lastname"],
+        ];
     }
 
     /**
      * @ticket 24487
-	 * @dataProvider vCardNames
+     * @dataProvider vCardNames
      */
     public function testExportVcard($fname, $lname)
     {
         $vcard = $this->getMockBuilder('vCard')
-            ->setMethods(array('getBean'))
+            ->setMethods(['getBean'])
             ->getMock();
 
         $data = $this->createMock('Person');
@@ -170,7 +170,7 @@ class vCardTest extends TestCase
     public function testClear()
     {
         $vcard = new vCard();
-        $vcard->setProperty('dog','cat');
+        $vcard->setProperty('dog', 'cat');
         $vcard->clear();
         
         $this->assertNull($vcard->getProperty('dog'));
@@ -179,9 +179,9 @@ class vCardTest extends TestCase
     public function testSetProperty()
     {
         $vcard = new vCard();
-        $vcard->setProperty('dog','cat');
+        $vcard->setProperty('dog', 'cat');
         
-        $this->assertEquals('cat',$vcard->getProperty('dog'));
+        $this->assertEquals('cat', $vcard->getProperty('dog'));
     }
     
     public function testGetPropertyThatDoesNotExist()
@@ -196,14 +196,14 @@ class vCardTest extends TestCase
         $vcard = new vCard();
         $vcard->setTitle('cat');
         
-        $this->assertEquals('cat',$vcard->getProperty('TITLE'));
+        $this->assertEquals('cat', $vcard->getProperty('TITLE'));
     }
     
     public function testSetORG()
     {
         $vcard = new vCard();
-        $vcard->setORG('foo','bar');
+        $vcard->setORG('foo', 'bar');
         
-        $this->assertEquals('foo;bar',$vcard->getProperty('ORG'));
+        $this->assertEquals('foo;bar', $vcard->getProperty('ORG'));
     }
 }

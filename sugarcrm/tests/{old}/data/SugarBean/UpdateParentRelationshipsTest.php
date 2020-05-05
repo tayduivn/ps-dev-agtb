@@ -50,19 +50,19 @@ class UpdateParentRelationshipsTest extends TestCase
     public function testUpdateParentRelationships()
     {
         /** @var Call $call */
-        $call = BeanFactory::getBean('Calls', self::$call->id, array(
+        $call = BeanFactory::getBean('Calls', self::$call->id, [
             'use_cache' => false,
-        ));
+        ]);
 
         $call->load_relationship('accounts');
         $def = SugarRelationshipFactory::getInstance()->getRelationshipDef('account_calls');
 
         $relationship = $this->getMockBuilder('One2MBeanRelationship')
-            ->setConstructorArgs(array($def))
-            ->setMethods(array('callAfterAdd', 'callAfterDelete'))
+            ->setConstructorArgs([$def])
+            ->setMethods(['callAfterAdd', 'callAfterDelete'])
             ->getMock();
 
-        $linked = $unlinked = array();
+        $linked = $unlinked = [];
         $this->collectInvocations($relationship, 'callAfterAdd', $linked);
         $this->collectInvocations($relationship, 'callAfterDelete', $unlinked);
 
@@ -73,30 +73,30 @@ class UpdateParentRelationshipsTest extends TestCase
         $call->save();
 
         // make sure unlink from old account is tracked from both sides
-        $this->assertContains(array(
+        $this->assertContains([
             self::$call->id,
             self::$account1->id,
             'accounts',
-        ), $unlinked);
+        ], $unlinked);
 
-        $this->assertContains(array(
+        $this->assertContains([
             self::$account1->id,
             self::$call->id,
             'calls',
-        ), $unlinked);
+        ], $unlinked);
 
         // make sure link to new account is tracked from both sides
-        $this->assertContains(array(
+        $this->assertContains([
             self::$call->id,
             self::$account2->id,
             'accounts',
-        ), $linked);
+        ], $linked);
 
-        $this->assertContains(array(
+        $this->assertContains([
             self::$account2->id,
             self::$call->id,
             'calls',
-        ), $linked);
+        ], $linked);
     }
 
     public function testUpdateParentRelationshipsResetsParentFields()
@@ -136,7 +136,7 @@ class UpdateParentRelationshipsTest extends TestCase
         $mock->expects($this->any())
             ->method($method)
             ->will($this->returnCallback(function (SugarBean $focus, SugarBean $related, $link) use (&$result) {
-                $result[] = array($focus->id, $related->id, $link);
+                $result[] = [$focus->id, $related->id, $link];
             }));
     }
 }

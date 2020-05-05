@@ -14,14 +14,14 @@
 
 class SugarTestProductTemplatesUtilities
 {
-    protected static $createdProductTemplates = array();
+    protected static $createdProductTemplates = [];
 
     /**
      * @param string $id
      * @param array $fields         A key value pair to set field values on the created product template
      * @return ProductTemplate
      */
-    public static function createProductTemplate($id = '', $fields = array())
+    public static function createProductTemplate($id = '', $fields = [])
     {
         $time = mt_rand();
         $name = 'SugarProductTemplate';
@@ -43,7 +43,7 @@ class SugarTestProductTemplatesUtilities
     public static function setCreatedProductTemplate($ids)
     {
         if (!is_array($ids)) {
-            $ids = array($ids);
+            $ids = [$ids];
         }
         foreach ($ids as $id) {
             self::$createdProductTemplates[] = $id;
@@ -53,12 +53,12 @@ class SugarTestProductTemplatesUtilities
     public static function removeAllCreatedProductTemplate()
     {
         $db = DBManagerFactory::getInstance();
-        $conditions = implode(',', array_map(array($db, 'quoted'), self::getCreatedProductTemplateIds()));
+        $conditions = implode(',', array_map([$db, 'quoted'], self::getCreatedProductTemplateIds()));
         if (!empty($conditions)) {
             $db->query('DELETE FROM product_templates WHERE id IN (' . $conditions . ')');
         }
 
-        self::$createdProductTemplates = array();
+        self::$createdProductTemplates = [];
     }
 
     public static function getCreatedProductTemplateIds()

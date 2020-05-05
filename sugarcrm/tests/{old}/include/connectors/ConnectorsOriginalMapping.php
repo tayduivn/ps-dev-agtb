@@ -18,7 +18,7 @@ class ConnectorsOriginalMapping extends Sugar_Connectors_TestCase
     protected function setUp() : void
     {
         $this->customMappingFile = 'custom/modules/Connectors/connectors/sources/ext/rest/twitter/mapping.php';
-        $mapping = array();
+        $mapping = [];
         write_array_to_file('mapping', $mapping, $this->customMappingFile);
     }
     protected function tearDown() : void
@@ -31,7 +31,7 @@ class ConnectorsOriginalMapping extends Sugar_Connectors_TestCase
         $originalMapping = $source->getOriginalMapping();
 
         // Sets $mapping
-        require('modules/Connectors/connectors/sources/ext/rest/twitter/mapping.php');
+        require 'modules/Connectors/connectors/sources/ext/rest/twitter/mapping.php';
 
         $this->assertEquals($mapping, $originalMapping);
     }

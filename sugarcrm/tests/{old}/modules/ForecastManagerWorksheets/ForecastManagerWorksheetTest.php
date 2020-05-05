@@ -144,12 +144,12 @@ class ForecastManagerWorksheetTest extends TestCase
         $worksheet = BeanFactory::newBean('ForecastManagerWorksheets');
 
         $ret = $worksheet->retrieve_by_string_fields(
-            array(
+            [
                 'assigned_user_id' => self::$manager->id,
                 'user_id' => self::$user->id,
                 'draft' => 1,
                 'deleted' => 0,
-            )
+            ]
         );
 
         return $ret;
@@ -165,12 +165,12 @@ class ForecastManagerWorksheetTest extends TestCase
         $worksheet->commitManagerForecast(self::$manager, self::$timeperiod->id);
 
         $ret = $worksheet->retrieve_by_string_fields(
-            array(
+            [
                 'assigned_user_id' => self::$manager->id,
                 'user_id' => self::$user->id,
                 'draft' => 0,
                 'deleted' => 0,
-            )
+            ]
         );
 
         return $ret;
@@ -190,12 +190,12 @@ class ForecastManagerWorksheetTest extends TestCase
         $this->assertTrue($ret);
 
         $ret = $worksheet->retrieve_by_string_fields(
-            array(
+            [
                 'assigned_user_id' => self::$manager->id,
                 'user_id' => self::$user->id,
                 'draft' => 1,
-                'deleted' => 0
-            )
+                'deleted' => 0,
+            ]
         );
 
         $this->assertNotNull($ret, 'User Draft Forecast Manager Worksheet Not Found');
@@ -235,12 +235,12 @@ class ForecastManagerWorksheetTest extends TestCase
         $this->assertTrue($ret);
 
         $ret = $worksheet->retrieve_by_string_fields(
-            array(
+            [
                 'assigned_user_id' => self::$manager->id,
                 'user_id' => self::$user->id,
                 'draft' => 0,
-                'deleted' => 0
-            )
+                'deleted' => 0,
+            ]
         );
 
         $this->assertNull($ret);
@@ -256,12 +256,12 @@ class ForecastManagerWorksheetTest extends TestCase
         /* @var $worksheet ForecastManagerWorksheet */
         $worksheet = BeanFactory::newBean('ForecastManagerWorksheets');
         $worksheet->retrieve_by_string_fields(
-            array(
+            [
                 'assigned_user_id' => self::$manager->id,
                 'user_id' => self::$user->id,
                 'draft' => 1,
-                'deleted' => 0
-            )
+                'deleted' => 0,
+            ]
         );
 
         $this->assertEquals($worksheet->$field, $worksheet->$adjusted_field, 0, 2);
@@ -269,11 +269,11 @@ class ForecastManagerWorksheetTest extends TestCase
 
     public static function caseFieldsDataProvider()
     {
-        return array(
-            array('likely_case', 'likely_case_adjusted'),
-            array('best_case', 'best_case_adjusted'),
-            array('worst_case', 'worst_case_adjusted'),
-        );
+        return [
+            ['likely_case', 'likely_case_adjusted'],
+            ['best_case', 'best_case_adjusted'],
+            ['worst_case', 'worst_case_adjusted'],
+        ];
     }
 
     /**
@@ -285,12 +285,12 @@ class ForecastManagerWorksheetTest extends TestCase
         /* @var $worksheet ForecastManagerWorksheet */
         $worksheet = BeanFactory::newBean('ForecastManagerWorksheets');
         $worksheet->retrieve_by_string_fields(
-            array(
+            [
                 'assigned_user_id' => self::$manager->id,
                 'user_id' => self::$user->id,
                 'draft' => 1,
-                'deleted' => 0
-            )
+                'deleted' => 0,
+            ]
         );
 
         $this->assertEquals(600, $worksheet->quota, '', 2);
@@ -309,12 +309,12 @@ class ForecastManagerWorksheetTest extends TestCase
 
 
         $ret = $worksheet->retrieve_by_string_fields(
-            array(
+            [
                 'assigned_user_id' => self::$manager->id,
                 'user_id' => self::$user->id,
                 'draft' => 0,
-                'deleted' => 0
-            )
+                'deleted' => 0,
+            ]
         );
 
         $this->assertNotNull($ret, 'User Committed Forecast Manager Worksheet Not Found');
@@ -335,13 +335,13 @@ class ForecastManagerWorksheetTest extends TestCase
         /* @var $quota Quota */
         $quota = BeanFactory::newBean('Quotas');
         $quota->retrieve_by_string_fields(
-            array(
+            [
                 'timeperiod_id' => self::$timeperiod->id,
                 'user_id' => self::$manager->id,
                 'committed' => 1,
                 'quota_type' => 'Direct',
-                'deleted' => 0
-            )
+                'deleted' => 0,
+            ]
         );
 
         $this->assertEquals(1400, $quota->amount);
@@ -367,12 +367,12 @@ class ForecastManagerWorksheetTest extends TestCase
         $this->assertTrue($ret);
 
         $worksheet->retrieve_by_string_fields(
-            array(
+            [
                 'assigned_user_id' => self::$manager->id,
                 'user_id' => self::$user->id,
                 'draft' => 0,
-                'deleted' => 0
-            )
+                'deleted' => 0,
+            ]
         );
 
         // just make sure that the best case on the committed version still equals the original value
@@ -394,12 +394,12 @@ class ForecastManagerWorksheetTest extends TestCase
         /* @var $worksheet ForecastManagerWorksheet */
         $worksheet = BeanFactory::newBean('ForecastManagerWorksheets');
         $worksheet->retrieve_by_string_fields(
-            array(
+            [
                 'assigned_user_id' => $GLOBALS['current_user']->id,
                 'user_id' => self::$user->id,
                 'draft' => 1,
-                'deleted' => 0
-            )
+                'deleted' => 0,
+            ]
         );
 
         $this->assertEquals(1, $worksheet->show_history_log);
@@ -421,12 +421,12 @@ class ForecastManagerWorksheetTest extends TestCase
         /* @var $worksheet ForecastManagerWorksheet */
         $worksheet = BeanFactory::newBean('ForecastManagerWorksheets');
         $worksheet->retrieve_by_string_fields(
-            array(
+            [
                 'assigned_user_id' => self::$manager->id,
                 'user_id' => self::$user->id,
                 'draft' => 1,
-                'deleted' => 0
-            )
+                'deleted' => 0,
+            ]
         );
 
         $worksheet->likely_case_adjusted = SugarMath::init($worksheet->likely_case_adjusted)->add(100)->result();
@@ -437,12 +437,12 @@ class ForecastManagerWorksheetTest extends TestCase
         /* @var $worksheet ForecastManagerWorksheet */
         $worksheet = BeanFactory::newBean('ForecastManagerWorksheets');
         $worksheet->retrieve_by_string_fields(
-            array(
+            [
                 'assigned_user_id' => self::$manager->id,
                 'user_id' => self::$user->id,
                 'draft' => 1,
-                'deleted' => 0
-            )
+                'deleted' => 0,
+            ]
         );
         // make sure that we are not showing the history log
         $this->assertEquals(0, $worksheet->show_history_log);
@@ -474,10 +474,10 @@ class ForecastManagerWorksheetTest extends TestCase
         $new_mgr_quota = SugarTestReflection::callProtectedMethod(
             $worksheet,
             'recalcUserQuota',
-            array(
+            [
                 self::$manager->id,
-                self::$timeperiod->id
-            )
+                self::$timeperiod->id,
+            ]
         );
 
         $this->assertEquals(1400, $new_mgr_quota, '', 2);
@@ -498,10 +498,10 @@ class ForecastManagerWorksheetTest extends TestCase
         $new_mgr_quota = SugarTestReflection::callProtectedMethod(
             $worksheet,
             'recalcUserQuota',
-            array(
+            [
                 self::$manager->id,
-                self::$timeperiod->id
-            )
+                self::$timeperiod->id,
+            ]
         );
 
         $this->assertEquals(4000, $new_mgr_quota, '', 2);
@@ -513,20 +513,20 @@ class ForecastManagerWorksheetTest extends TestCase
     public function testGetQuota()
     {
         $worksheet = $this->getMockBuilder('ForecastManagerWorksheet')
-            ->setMethods(array('getBean', 'save'))
+            ->setMethods(['getBean', 'save'])
             ->getMock();
 
         $quota = $this->getMockBuilder('Quota')
-            ->setMethods(array('save', 'retrieve_by_string_fields'))
+            ->setMethods(['save', 'retrieve_by_string_fields'])
             ->getMock();
 
-        $params = array(
+        $params = [
             'timeperiod_id' => 'test_timeperiod',
             'user_id' => 'test_user_id',
             'committed' => 1,
             'quota_type' => 'test_quota_type',
-            'deleted' => 0
-        );
+            'deleted' => 0,
+        ];
 
         $quota->expects($this->once())
             ->method('retrieve_by_string_fields')
@@ -539,11 +539,11 @@ class ForecastManagerWorksheetTest extends TestCase
         SugarTestReflection::callProtectedMethod(
             $worksheet,
             'getQuota',
-            array(
+            [
                 $params['user_id'],
                 $params['timeperiod_id'],
-                $params['quota_type']
-            )
+                $params['quota_type'],
+            ]
         );
     }
 
@@ -553,11 +553,11 @@ class ForecastManagerWorksheetTest extends TestCase
     public function testCommitQuota()
     {
         $worksheet = $this->getMockBuilder('ForecastManagerWorksheet')
-            ->setMethods(array('getQuota', 'save'))
+            ->setMethods(['getQuota', 'save'])
             ->getMock();
 
         $quota = $this->getMockBuilder('Quota')
-            ->setMethods(array('save'))
+            ->setMethods(['save'])
             ->getMock();
 
         $quota->expects($this->once())
@@ -571,12 +571,12 @@ class ForecastManagerWorksheetTest extends TestCase
         $quota = SugarTestReflection::callProtectedMethod(
             $worksheet,
             'commitQuota',
-            array(
+            [
                 '50000.000000',
                 'test_user_id',
                 'test_timeperiod_id',
-                'test_quota_type'
-            )
+                'test_quota_type',
+            ]
         );
 
         $this->assertEquals('50000.000000', $quota->amount);
@@ -589,31 +589,31 @@ class ForecastManagerWorksheetTest extends TestCase
     public function testRollupDraftToCommittedWorksheetReturnFalse()
     {
         $mockManagerWorksheetOne = $this->getMockBuilder('ForecastManagerWorksheet')
-            ->setMethods(array('save', 'toArray'))
+            ->setMethods(['save', 'toArray'])
             ->getMock();
         $mockManagerWorksheetOne->user_id = 'test_user_id';
         $mockManagerWorksheetOne->assigned_user_id = 'test_user_id';
         $mockManagerWorksheetOne->timeperiod_id = 'test_timeperiod_id';
 
         $mgrWorksheetBean = $this->getMockBuilder('ForecastManagerWorksheet')
-            ->setMethods(array('save', 'retrieve_by_string_fields'))
+            ->setMethods(['save', 'retrieve_by_string_fields'])
             ->getMock();
 
         $mgrWorksheetBean->expects($this->once())
             ->method('retrieve_by_string_fields')
             ->with(
-                array(
+                [
                     'user_id' => 'test_user_id',
                     'assigned_user_id' => 'test_user_id',
                     'timeperiod_id' => 'test_timeperiod_id',
                     'draft' => 0,
-                    'deleted' => 0
-                )
+                    'deleted' => 0,
+                ]
             )
             ->willReturn(false);
 
         $worksheet = $this->getMockBuilder('ForecastManagerWorksheet')
-            ->setMethods(array('getBean', 'save'))
+            ->setMethods(['getBean', 'save'])
             ->getMock();
 
         $worksheet->expects($this->once())
@@ -623,10 +623,10 @@ class ForecastManagerWorksheetTest extends TestCase
         $actual = SugarTestReflection::callProtectedMethod(
             $worksheet,
             'rollupDraftToCommittedWorksheet',
-            array(
+            [
                 $mockManagerWorksheetOne,
-                array()
-            )
+                [],
+            ]
         );
 
         $this->assertFalse($actual);
@@ -634,22 +634,22 @@ class ForecastManagerWorksheetTest extends TestCase
 
     public static function dataProviderRollupDraftToCommittedWorksheet()
     {
-        return array(
-            array(
-                array(),
-                array(
+        return [
+            [
+                [],
+                [
                     'likely_case',
                     'best_case',
-                    'worst_case'
-                )
-            ),
-            array(
-                array('likely_case'),
-                array(
-                    'likely_case'
-                )
-            )
-        );
+                    'worst_case',
+                ],
+            ],
+            [
+                ['likely_case'],
+                [
+                    'likely_case',
+                ],
+            ],
+        ];
     }
 
     /**
@@ -659,7 +659,7 @@ class ForecastManagerWorksheetTest extends TestCase
     public function testRollupDraftToCommittedWorksheet($copyMap, $copyMapExpected)
     {
         $mockManagerWorksheetOne = $this->getMockBuilder('ForecastManagerWorksheet')
-            ->setMethods(array('save', 'toArray'))
+            ->setMethods(['save', 'toArray'])
             ->getMock();
         $mockManagerWorksheetOne->user_id = 'test_user_id';
         $mockManagerWorksheetOne->assigned_user_id = 'test_user_id';
@@ -667,10 +667,10 @@ class ForecastManagerWorksheetTest extends TestCase
 
         $mockManagerWorksheetOne->expects($this->once())
             ->method('toArray')
-            ->willReturn(array());
+            ->willReturn([]);
 
         $mgrWorksheetBean = $this->getMockBuilder('ForecastManagerWorksheet')
-            ->setMethods(array('save', 'retrieve_by_string_fields'))
+            ->setMethods(['save', 'retrieve_by_string_fields'])
             ->getMock();
 
         $mgrWorksheetBean->expects($this->once())
@@ -681,19 +681,19 @@ class ForecastManagerWorksheetTest extends TestCase
         $mgrWorksheetBean->expects($this->once())
             ->method('retrieve_by_string_fields')
             ->with(
-                array(
+                [
                     'user_id' => 'test_user_id',
                     'assigned_user_id' => 'test_user_id',
                     'timeperiod_id' => 'test_timeperiod_id',
                     'draft' => 0,
-                    'deleted' => 0
-                )
+                    'deleted' => 0,
+                ]
             )
             ->willReturn($mgrWorksheetBean);
 
 
         $worksheet = $this->getMockBuilder('ForecastManagerWorksheet')
-            ->setMethods(array('getBean', 'save', 'copyValues'))
+            ->setMethods(['getBean', 'save', 'copyValues'])
             ->getMock();
 
         $worksheet->expects($this->once())
@@ -702,15 +702,15 @@ class ForecastManagerWorksheetTest extends TestCase
 
         $worksheet->expects($this->once())
             ->method('copyValues')
-            ->with($copyMapExpected, array(), $mgrWorksheetBean);
+            ->with($copyMapExpected, [], $mgrWorksheetBean);
 
         $actual = SugarTestReflection::callProtectedMethod(
             $worksheet,
             'rollupDraftToCommittedWorksheet',
-            array(
+            [
                 $mockManagerWorksheetOne,
-                $copyMap
-            )
+                $copyMap,
+            ]
         );
 
         $this->assertTrue($actual);
@@ -718,24 +718,24 @@ class ForecastManagerWorksheetTest extends TestCase
 
     public function dataProviderCopyValues()
     {
-        return array(
-            array(
-                array(
-                    array('likely_case' => 'amount')
-                ),
-                array(
-                    'amount' => '50.000000'
-                )
-            ),
-            array(
-                array(
-                    'likely_case'
-                ),
-                array(
-                    'likely_case' => '50.000000'
-                )
-            )
-        );
+        return [
+            [
+                [
+                    ['likely_case' => 'amount'],
+                ],
+                [
+                    'amount' => '50.000000',
+                ],
+            ],
+            [
+                [
+                    'likely_case',
+                ],
+                [
+                    'likely_case' => '50.000000',
+                ],
+            ],
+        ];
     }
 
     /**
@@ -745,16 +745,16 @@ class ForecastManagerWorksheetTest extends TestCase
     public function testCopyValues($fields, $values)
     {
         $worksheet = $this->getMockBuilder('ForecastManagerWorksheet')
-            ->setMethods(array('save'))
+            ->setMethods(['save'])
             ->getMock();
 
         SugarTestReflection::callProtectedMethod(
             $worksheet,
             'copyValues',
-            array(
+            [
                 $fields,
-                $values
-            )
+                $values,
+            ]
         );
 
         $this->assertEquals('50.000000', $worksheet->likely_case);
@@ -766,7 +766,7 @@ class ForecastManagerWorksheetTest extends TestCase
     public function testAssignQuotaReturnFalseWhenUserIsNotManager()
     {
         $worksheet = $this->getMockBuilder('ForecastManagerWorksheet')
-            ->setMethods(array('save', 'isUserManager'))
+            ->setMethods(['save', 'isUserManager'])
             ->getMock();
 
         $worksheet->expects($this->once())
@@ -785,15 +785,15 @@ class ForecastManagerWorksheetTest extends TestCase
     public function testAssignQuota()
     {
         $worksheet = $this->getMockBuilder('ForecastManagerWorksheet')
-            ->setMethods(array(
+            ->setMethods([
                 'save',
                 'getBean',
                 'isUserManager',
                 'getSugarQuery',
                 'fixTopLevelManagerQuotaRollup',
                 '_assignQuota',
-                'rollupDraftToCommittedWorksheet'
-            ))
+                'rollupDraftToCommittedWorksheet',
+            ])
             ->getMock();
 
         $worksheet->expects($this->once())
@@ -806,29 +806,29 @@ class ForecastManagerWorksheetTest extends TestCase
             ->with('test_user_id', 'test_timeperiod_id');
 
         $sqOne = $this->getMockBuilder('SugarQuery')
-            ->setMethods(array('execute'))
+            ->setMethods(['execute'])
             ->getMock();
         $sqTwo = $this->getMockBuilder('SugarQuery')
-            ->setMethods(array('execute'))
+            ->setMethods(['execute'])
             ->getMock();
         $sqExecute = $this->getMockBuilder('SugarQuery')
-            ->setMethods(array('execute', 'union', 'addQuery'))
+            ->setMethods(['execute', 'union', 'addQuery'])
             ->getMock();
 
         $sqExecute->expects($this->once())
             ->method('execute')
-            ->willReturn(array(
-                array(
+            ->willReturn([
+                [
                     'id' => 'test_worksheet_id1',
                     'user_id' => 'test_user_id1',
-                    'quota' => '500.000000'
-                ),
-                array(
+                    'quota' => '500.000000',
+                ],
+                [
                     'id' => 'test_worksheet_id2',
                     'user_id' => 'test_user_id',
-                    'quota' => '1500.000000'
-                )
-            ));
+                    'quota' => '1500.000000',
+                ],
+            ]);
 
         $sqExecute->expects($this->once())
             ->method('union')
@@ -850,18 +850,18 @@ class ForecastManagerWorksheetTest extends TestCase
         $worksheet->expects($this->exactly(2))
             ->method('_assignQuota')
             ->withConsecutive(
-                array('500.000000', 'Rollup', 'test_user_id1', 'test_timeperiod_id', false),
-                array('1500.000000', 'Direct', 'test_user_id', 'test_timeperiod_id', true)
+                ['500.000000', 'Rollup', 'test_user_id1', 'test_timeperiod_id', false],
+                ['1500.000000', 'Direct', 'test_user_id', 'test_timeperiod_id', true]
             );
 
-        $mockWorksheetOne = $this->createPartialMock('ForecastManagerWorksheet', array('save'));
-        $mockWorksheetTwo = $this->createPartialMock('ForecastManagerWorksheet', array('save'));
+        $mockWorksheetOne = $this->createPartialMock('ForecastManagerWorksheet', ['save']);
+        $mockWorksheetTwo = $this->createPartialMock('ForecastManagerWorksheet', ['save']);
 
         $worksheet->expects($this->exactly(2))
             ->method('getBean')
             ->withConsecutive(
-                array('ForecastManagerWorksheets', 'test_worksheet_id1'),
-                array('ForecastManagerWorksheets', 'test_worksheet_id2')
+                ['ForecastManagerWorksheets', 'test_worksheet_id1'],
+                ['ForecastManagerWorksheets', 'test_worksheet_id2']
             )
             ->willReturnOnConsecutiveCalls(
                 $mockWorksheetOne,
@@ -872,8 +872,8 @@ class ForecastManagerWorksheetTest extends TestCase
         $worksheet->expects($this->exactly(2))
             ->method('rollupDraftToCommittedWorksheet')
             ->withConsecutive(
-                array($mockWorksheetOne, array('quota')),
-                array($mockWorksheetTwo, array('quota'))
+                [$mockWorksheetOne, ['quota']],
+                [$mockWorksheetTwo, ['quota']]
             );
 
 
@@ -888,12 +888,12 @@ class ForecastManagerWorksheetTest extends TestCase
     public function test_AssignQuotaDoesNotUseActivityStreams()
     {
         $worksheet = $this->getMockBuilder('ForecastManagerWorksheet')
-            ->setMethods(array(
+            ->setMethods([
                 'save',
                 'commitQuota',
                 'recalcQuotas',
                 'getActivityQueueManager',
-            ))
+            ])
             ->getMock();
 
         $worksheet->expects($this->never())
@@ -910,55 +910,55 @@ class ForecastManagerWorksheetTest extends TestCase
         SugarTestReflection::callProtectedMethod(
             $worksheet,
             '_assignQuota',
-            array(
+            [
                 '5000.000000',
                 'test_type',
                 'test_user_id',
                 'test_timeperiod_id',
-                false
-            )
+                false,
+            ]
         );
     }
 
     public static function dataProvider_assignQuota()
     {
-        return array(
-            array(
+        return [
+            [
                 '50.000000',
                 '60.000000',
-                array(
+                [
                     'isUpdate' => true,
-                    'dataChanges' => array(
-                        'amount' => array(
+                    'dataChanges' => [
+                        'amount' => [
                             'field_name' => 'amount',
                             'field_type' => 'currency',
                             'before' => '50.000000',
-                            'after' => '60.000000'
-                        )
-                    )
-                )
-            ),
-            array(
+                            'after' => '60.000000',
+                        ],
+                    ],
+                ],
+            ],
+            [
                 '',
                 '60.000000',
-                array(
+                [
                     'isUpdate' => false,
-                    'dataChanges' => array(
-                        'amount' => array(
+                    'dataChanges' => [
+                        'amount' => [
                             'field_name' => 'amount',
                             'field_type' => 'currency',
                             'before' => '',
-                            'after' => '60.000000'
-                        )
-                    )
-                )
-            ),
-            array(
+                            'after' => '60.000000',
+                        ],
+                    ],
+                ],
+            ],
+            [
                 '50.000000',
                 '50.000000',
-                array()
-            )
-        );
+                [],
+            ],
+        ];
     }
 
     /**
@@ -972,17 +972,17 @@ class ForecastManagerWorksheetTest extends TestCase
     {
         SugarAutoLoader::load('modules/ActivityStream/Activities/ActivityQueueManager.php');
         $worksheet = $this->getMockBuilder('ForecastManagerWorksheet')
-            ->setMethods(array(
+            ->setMethods([
                 'save',
                 'getQuota',
                 'commitQuota',
                 'recalcQuotas',
                 'getActivityQueueManager',
-            ))
+            ])
             ->getMock();
 
         $currentQuotaBean = $this->getMockBuilder('Quota')
-            ->setMethods(array('save'))
+            ->setMethods(['save'])
             ->getMock();
         $currentQuotaBean->amount = $current_quota;
 
@@ -992,7 +992,7 @@ class ForecastManagerWorksheetTest extends TestCase
             ->willReturn($currentQuotaBean);
 
         $commitQuotaBean = $this->getMockBuilder('Quota')
-            ->setMethods(array('save'))
+            ->setMethods(['save'])
             ->getMock();
 
         $worksheet->expects($this->once())
@@ -1007,7 +1007,7 @@ class ForecastManagerWorksheetTest extends TestCase
 
         if (!empty($expectedActivityMessage)) {
             $mockAQM = $this->getMockBuilder('ActivityQueueManager')
-                ->setMethods(array('eventDispatcher'))
+                ->setMethods(['eventDispatcher'])
                 ->getMock();
 
             $mockAQM->expects($this->once())
@@ -1025,13 +1025,13 @@ class ForecastManagerWorksheetTest extends TestCase
         SugarTestReflection::callProtectedMethod(
             $worksheet,
             '_assignQuota',
-            array(
+            [
                 $new_quota,
                 'test_type',
                 'test_user_id',
                 'test_timeperiod_id',
-                true
-            )
+                true,
+            ]
         );
     }
 
@@ -1041,14 +1041,14 @@ class ForecastManagerWorksheetTest extends TestCase
     public function testWorksheetTotalsReturnFalseWithInvalidTimeperiod()
     {
         $worksheet = $this->getMockBuilder('ForecastManagerWorksheet')
-            ->setMethods(array(
+            ->setMethods([
                 'save',
-                'getBean'
-            ))
+                'getBean',
+            ])
             ->getMock();
 
 
-        $tpMock = $this->createPartialMock('TimePeriod', array('save'));
+        $tpMock = $this->createPartialMock('TimePeriod', ['save']);
 
         $worksheet->expects($this->once())
             ->method('getBean')
@@ -1060,10 +1060,10 @@ class ForecastManagerWorksheetTest extends TestCase
 
     public static function dataProviderWorksheetTotals()
     {
-        return array(
-            array(
-                array(),
-                array(
+        return [
+            [
+                [],
+                [
                     'quota' => '0',
                     'best_case' => '0',
                     'best_adjusted' => '0',
@@ -1074,12 +1074,12 @@ class ForecastManagerWorksheetTest extends TestCase
                     'included_opp_count' => 0,
                     'pipeline_opp_count' => 0,
                     'pipeline_amount' => '0',
-                    'closed_amount' => '0'
-                )
-            ),
-            array(
-                array(
-                    array(
+                    'closed_amount' => '0',
+                ],
+            ],
+            [
+                [
+                    [
                         'base_rate' => '1.000000',
                         'quota' => '5.000000',
                         'best_case' => '5.000000',
@@ -1093,9 +1093,9 @@ class ForecastManagerWorksheetTest extends TestCase
                         'pipeline_opp_count' => 1,
                         'pipeline_amount' => '5.000000',
                         'closed_amount' => '0.000000',
-                    )
-                ),
-                array(
+                    ],
+                ],
+                [
                     'quota' => '5.000000',
                     'best_case' => '5.000000',
                     'best_adjusted' => '5.000000',
@@ -1106,10 +1106,10 @@ class ForecastManagerWorksheetTest extends TestCase
                     'included_opp_count' => 1,
                     'pipeline_opp_count' => 1,
                     'pipeline_amount' => '5.000000',
-                    'closed_amount' => '0.000000'
-                )
-            )
-        );
+                    'closed_amount' => '0.000000',
+                ],
+            ],
+        ];
     }
 
     /**
@@ -1121,19 +1121,19 @@ class ForecastManagerWorksheetTest extends TestCase
     public function testWorksheetTotals($queryReturn, $expected)
     {
         $worksheet = $this->getMockBuilder('ForecastManagerWorksheet')
-            ->setMethods(array(
+            ->setMethods([
                 'save',
                 'getBean',
-                'getSugarQuery'
-            ))
+                'getSugarQuery',
+            ])
             ->getMock();
 
 
-        $tpMock = $this->createPartialMock('TimePeriod', array('save'));
+        $tpMock = $this->createPartialMock('TimePeriod', ['save']);
         $tpMock->id = 'test_timeperiod_id';
 
         $mockSQ = $this->getMockBuilder('SugarQuery')
-            ->setMethods(array('execute'))
+            ->setMethods(['execute'])
             ->getMock();
 
         $mockSQ->expects($this->once())
@@ -1147,8 +1147,8 @@ class ForecastManagerWorksheetTest extends TestCase
         $worksheet->expects($this->exactly(2))
             ->method('getBean')
             ->withConsecutive(
-                array('TimePeriods', 'test_timeperiod_id'),
-                array('ForecastManagerWorksheets')
+                ['TimePeriods', 'test_timeperiod_id'],
+                ['ForecastManagerWorksheets']
             )
             ->willReturnOnConsecutiveCalls(
                 $tpMock,
@@ -1166,10 +1166,10 @@ class ForecastManagerWorksheetTest extends TestCase
     public function testUpdateManagerWorksheetQuotaReturnFalseIfUserIsNotManager()
     {
         $worksheet = $this->getMockBuilder('ForecastManagerWorksheet')
-            ->setMethods(array(
+            ->setMethods([
                 'save',
                 'isUserManager',
-            ))
+            ])
             ->getMock();
 
         $worksheet->expects($this->once())
@@ -1180,12 +1180,12 @@ class ForecastManagerWorksheetTest extends TestCase
         $actual = SugarTestReflection::callProtectedMethod(
             $worksheet,
             'updateManagerWorksheetQuota',
-            array(
+            [
                 'test_user_id',
                 'test_timeperiod_id',
                 '50.000000',
-                false
-            )
+                false,
+            ]
         );
 
         $this->assertFalse($actual);
@@ -1193,39 +1193,39 @@ class ForecastManagerWorksheetTest extends TestCase
 
     public static function dataProviderUpdateManagerWorksheetQuota()
     {
-        return array(
-            array(
+        return [
+            [
                 null,
                 true,
                 '50.000000',
                 '60.000000',
-                true
-            ),
+                true,
+            ],
             // committed row found, but quota is the same
-            array(
+            [
                 true,
                 false,
                 '50.000000',
                 '50.000000',
-                false
-            ),
+                false,
+            ],
             // committed row found
-            array(
+            [
                 true,
                 false,
                 '50.000000',
                 '60.000000',
-                true
-            ),
+                true,
+            ],
             // committed row not found
-            array(
+            [
                 null,
                 false,
                 '50.000000',
                 '60.000000',
-                false
-            )
-        );
+                false,
+            ],
+        ];
     }
 
     /**
@@ -1235,15 +1235,15 @@ class ForecastManagerWorksheetTest extends TestCase
     public function testUpdateManagerWorksheetQuota($retrieve_return, $isDraft, $worksheetQuota, $quota, $expected)
     {
         $worksheet = $this->getMockBuilder('ForecastManagerWorksheet')
-            ->setMethods(array(
+            ->setMethods([
                 'save',
                 'isUserManager',
                 'getBean',
-                'retrieve_by_string_fields'
-            ))
+                'retrieve_by_string_fields',
+            ])
             ->getMock();
 
-        $userBean = $this->createPartialMock('User', array('save'));
+        $userBean = $this->createPartialMock('User', ['save']);
 
         $worksheet->expects($this->once())
             ->method('isUserManager')
@@ -1253,8 +1253,8 @@ class ForecastManagerWorksheetTest extends TestCase
         $worksheet->expects($this->atLeastOnce())
             ->method('getBean')
             ->withConsecutive(
-                array('ForecastManagerWorksheets'),
-                array('Users', 'test_user_id')
+                ['ForecastManagerWorksheets'],
+                ['Users', 'test_user_id']
             )
             ->willReturnOnConsecutiveCalls(
                 $worksheet,
@@ -1265,7 +1265,7 @@ class ForecastManagerWorksheetTest extends TestCase
             ->method('retrieve_by_string_fields')
             ->willReturn($retrieve_return);
 
-        if($expected === true) {
+        if ($expected === true) {
             $worksheet->expects($this->once())
                 ->method('save');
         }
@@ -1275,12 +1275,12 @@ class ForecastManagerWorksheetTest extends TestCase
         $actual = SugarTestReflection::callProtectedMethod(
             $worksheet,
             'updateManagerWorksheetQuota',
-            array(
+            [
                 'test_user_id',
                 'test_timeperiod_id',
                 $quota,
-                $isDraft
-            )
+                $isDraft,
+            ]
         );
 
         $this->assertSame($expected, $actual);
@@ -1293,48 +1293,48 @@ class ForecastManagerWorksheetTest extends TestCase
     {
         $db = new SugarTestDatabaseMock();
         $worksheet = $this->getMockBuilder('ForecastManagerWorksheet')
-            ->setMethods(array(
+            ->setMethods([
                 'save',
-            ))
+            ])
             ->getMock();
 
-        $db->addQuerySpy('get_manager_quota', '/union all/', array(
-            array('amount' => '50.00', 'id' => 'test_id_1'),
-        ));
+        $db->addQuerySpy('get_manager_quota', '/union all/', [
+            ['amount' => '50.00', 'id' => 'test_id_1'],
+        ]);
 
         $worksheet->db = $db;
 
         $actual = SugarTestReflection::callProtectedMethod(
             $worksheet,
             'getManagerQuota',
-            array(
+            [
                 'test_user_id',
-                'test_timeperiod_id'
-            )
+                'test_timeperiod_id',
+            ]
         );
 
-        $expected = array(
+        $expected = [
             'amount' => '50.00',
-            'id' => 'test_id_1'
-        );
+            'id' => 'test_id_1',
+        ];
 
         $this->assertSame($expected, $actual);
     }
 
     public static function dataProviderGetQuotaSum()
     {
-        return array(
-            array(
-                array(
-                    array('amount' => '50.00')
-                ),
-                '50.00'
-            ),
-            array(
-                array(),
-                0
-            ),
-        );
+        return [
+            [
+                [
+                    ['amount' => '50.00'],
+                ],
+                '50.00',
+            ],
+            [
+                [],
+                0,
+            ],
+        ];
     }
 
     /**
@@ -1345,9 +1345,9 @@ class ForecastManagerWorksheetTest extends TestCase
     {
         $db = new SugarTestDatabaseMock();
         $worksheet = $this->getMockBuilder('ForecastManagerWorksheet')
-            ->setMethods(array(
+            ->setMethods([
                 'save',
-            ))
+            ])
             ->getMock();
 
         $db->addQuerySpy('get_quota_sum', '/sum\(q\.amount\)/', $rows);
@@ -1357,10 +1357,10 @@ class ForecastManagerWorksheetTest extends TestCase
         $actual = SugarTestReflection::callProtectedMethod(
             $worksheet,
             'getQuotaSum',
-            array(
+            [
                 'test_user_id',
-                'test_timeperiod_id'
-            )
+                'test_timeperiod_id',
+            ]
         );
 
         $this->assertSame($expected, $actual);
@@ -1371,22 +1371,22 @@ class ForecastManagerWorksheetTest extends TestCase
      */
     public function testSetWorksheetArgs()
     {
-        $args = array(
+        $args = [
             'likely_case' => '50.00',
             'best_case' => '50.00',
-        );
+        ];
 
         $worksheet = $this->getMockBuilder('ForecastManagerWorksheet')
-            ->setMethods(array(
+            ->setMethods([
                 'save',
-            ))
+            ])
             ->getMock();
 
         $worksheet->setWorksheetArgs($args);
 
         $this->assertSame($args, $worksheet->args);
 
-        foreach($args as $key => $val) {
+        foreach ($args as $key => $val) {
             $this->assertSame($val, $worksheet->$key);
         }
     }
@@ -1397,16 +1397,16 @@ class ForecastManagerWorksheetTest extends TestCase
     public function testFixTopLevelManagerQuotaRollup()
     {
         $worksheet = $this->getMockBuilder('ForecastManagerWorksheet')
-            ->setMethods(array(
+            ->setMethods([
                 'save',
                 'isTopLevelManager',
                 'getSugarQuery',
-                'commitQuota'
-            ))
+                'commitQuota',
+            ])
             ->getMock();
 
         $sq = $this->getMockBuilder('SugarQuery')
-            ->setMethods(array('getOne'))
+            ->setMethods(['getOne'])
             ->getMock();
         $sq->expects($this->once())
             ->method('getOne')
@@ -1427,10 +1427,10 @@ class ForecastManagerWorksheetTest extends TestCase
         SugarTestReflection::callProtectedMethod(
             $worksheet,
             'fixTopLevelManagerQuotaRollup',
-            array(
+            [
                 'test_user_id',
-                'test_timeperiod_id'
-            )
+                'test_timeperiod_id',
+            ]
         );
     }
 }

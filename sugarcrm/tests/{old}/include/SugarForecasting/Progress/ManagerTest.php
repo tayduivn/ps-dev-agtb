@@ -18,12 +18,12 @@ class SugarForecasting_Progress_ManagerTest extends TestCase
     /**
      * @var array args to be passed onto methods
      */
-    protected static $args = array();
+    protected static $args = [];
 
     /**
      * @var array array of users used throughout class
      */
-    protected static $users = array();
+    protected static $users = [];
 
     /**
      * @var Currency
@@ -36,7 +36,7 @@ class SugarForecasting_Progress_ManagerTest extends TestCase
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setup('mod_strings', array('manager', 'Forecasts'));
+        SugarTestHelper::setup('mod_strings', ['manager', 'Forecasts']);
         SugarTestHelper::setup('current_user');
         SugarTestForecastUtilities::setUpForecastConfig();
 
@@ -44,23 +44,23 @@ class SugarForecasting_Progress_ManagerTest extends TestCase
 
         self::$args['timeperiod_id'] = $timeperiod->id;
 
-        self::$currency = SugarTestCurrencyUtilities::createCurrency('Yen','¥','YEN',78.87);
+        self::$currency = SugarTestCurrencyUtilities::createCurrency('Yen', '¥', 'YEN', 78.87);
 
         SugarTestForecastUtilities::setTimePeriod($timeperiod);
 
-        self::$users['top_manager'] = SugarTestForecastUtilities::createForecastUser(array(
+        self::$users['top_manager'] = SugarTestForecastUtilities::createForecastUser([
                 'timeperiod_id' => $timeperiod->id,
                 'currency_id' => self::$currency->id,
-                'quota' => array('amount' => 30000)
-            ));
+                'quota' => ['amount' => 30000],
+            ]);
 
-        self::$users['manager'] = SugarTestForecastUtilities::createForecastUser(array(
+        self::$users['manager'] = SugarTestForecastUtilities::createForecastUser([
                 'timeperiod_id' => $timeperiod->id,
                 'currency_id' => self::$currency->id,
-                'quota' => array('amount' => 50000),
+                'quota' => ['amount' => 50000],
                 'user' =>
-                array('manager', 'reports_to' => self::$users['top_manager']['user']->id)
-            ));
+                ['manager', 'reports_to' => self::$users['top_manager']['user']->id],
+            ]);
 
         global $current_user;
 
@@ -70,13 +70,13 @@ class SugarForecasting_Progress_ManagerTest extends TestCase
 
         $current_user = self::$users['manager']['user'];
 
-        $config = array(
+        $config = [
             'timeperiod_id' => $timeperiod->id,
             'currency_id' => self::$currency->id,
             'user' =>
-            array('manager', 'reports_to' => self::$users['manager']['user']->id),
-            'quota' => array('amount' => 27000)
-        );
+            ['manager', 'reports_to' => self::$users['manager']['user']->id],
+            'quota' => ['amount' => 27000],
+        ];
         self::$users['reportee'] = SugarTestForecastUtilities::createForecastUser($config);
     }
 
@@ -120,9 +120,9 @@ class SugarForecasting_Progress_ManagerTest extends TestCase
      */
     protected function calculatePipelineAmount($manager, $user)
     {
-        $returnArray = array("amount" => 0, "closed" => 0);
+        $returnArray = ["amount" => 0, "closed" => 0];
 
-        $users = array($user);
+        $users = [$user];
 
         $numargs = func_num_args();
         if ($numargs > 2) {
@@ -131,15 +131,15 @@ class SugarForecasting_Progress_ManagerTest extends TestCase
             }
         }
 
-        foreach($manager["opportunities"] as $opp){
-            if($opp->sales_stage != Opportunity::STAGE_CLOSED_WON || $opp->sales_stage != Opportunity::STAGE_CLOSED_LOST){
+        foreach ($manager["opportunities"] as $opp) {
+            if ($opp->sales_stage != Opportunity::STAGE_CLOSED_WON || $opp->sales_stage != Opportunity::STAGE_CLOSED_LOST) {
                 $returnArray["amount"] += $opp->amount;
-            } else if($opp->sales_stage == Opportunity::STAGE_CLOSED_WON){
+            } elseif ($opp->sales_stage == Opportunity::STAGE_CLOSED_WON) {
                 $returnArray["closed"] += $opp->closed;
             }
         }
 
-        foreach($users as $user){
+        foreach ($users as $user) {
             $returnArray["amount"] += ($user["forecast"]->pipeline_amount);
             $returnArray["closed"] += ($user["forecast"]->closed_amount);
         }
@@ -149,30 +149,30 @@ class SugarForecasting_Progress_ManagerTest extends TestCase
 
     public function testManagerWithSubManagerAndReps_multisave_withOnlyCloseWon()
     {
-        $manager = SugarTestForecastUtilities::createForecastUser(array(
-                'opportunities' => array(
+        $manager = SugarTestForecastUtilities::createForecastUser([
+                'opportunities' => [
                     'total' => 1,
-                    'include_in_forecast' => 0
-                )
-            ));
-        $subManager1 = SugarTestForecastUtilities::createForecastUser(array(
-                'user' => array(
-                    'reports_to' => $manager["user"]->id
-                ),
-                'opportunities' => array(
+                    'include_in_forecast' => 0,
+                ],
+            ]);
+        $subManager1 = SugarTestForecastUtilities::createForecastUser([
+                'user' => [
+                    'reports_to' => $manager["user"]->id,
+                ],
+                'opportunities' => [
                     'total' => 1,
-                    'include_in_forecast' => 0
-                ),
-            ));
-        $reportee1 = SugarTestForecastUtilities::createForecastUser(array(
-                'user' => array(
-                    'reports_to' => $subManager1["user"]->id
-                ),
-                'opportunities' => array(
+                    'include_in_forecast' => 0,
+                ],
+            ]);
+        $reportee1 = SugarTestForecastUtilities::createForecastUser([
+                'user' => [
+                    'reports_to' => $subManager1["user"]->id,
+                ],
+                'opportunities' => [
                     'total' => 1,
-                    'include_in_forecast' => 1
-                ),
-            ));
+                    'include_in_forecast' => 1,
+                ],
+            ]);
 
 
         //now we want to change the stage to close lost/close won of a few opps, commit, and make sure they are excluded
@@ -191,10 +191,10 @@ class SugarForecasting_Progress_ManagerTest extends TestCase
         $amount = $totals["amount"];
         $closed = $totals["closed"];
 
-        $obj = new SugarForecasting_Progress_Manager(array(
+        $obj = new SugarForecasting_Progress_Manager([
             "timeperiod_id" => SugarTestForecastUtilities::getCreatedTimePeriod()->id,
-            "user_id" => $manager["user"]->id
-        ));
+            "user_id" => $manager["user"]->id,
+        ]);
 
         $data = $obj->process();
 
@@ -213,11 +213,11 @@ class SugarForecasting_Progress_ManagerTest extends TestCase
         // 1 -> quota amount
         // 2 -> quota currency id
 
-        return array(
-            array(false, false, 0, 0, -99),
-            array(true, false, 15000, 0, -99),
-            array(false, true, 0, 30000, -99),
-            array(true, true, 15000, 30000, -99),
-        );
+        return [
+            [false, false, 0, 0, -99],
+            [true, false, 15000, 0, -99],
+            [false, true, 0, 30000, -99],
+            [true, true, 15000, 30000, -99],
+        ];
     }
 }

@@ -25,18 +25,18 @@ class SugarQueryAclFieldTest extends TestCase
         SugarTestHelper::setUp('current_user');
         self::$otherUser = SugarTestUserUtilities::createAnonymousUser();
 
-        ACLField::$acl_fields[$current_user->id]['Accounts'] = array(
+        ACLField::$acl_fields[$current_user->id]['Accounts'] = [
             'name' => ACL_OWNER_READ_WRITE,
 
             // check that access level of the owner fields doesn't cause infinite recursion
             'assigned_user_id' => ACL_OWNER_READ_WRITE,
             'created_by' => ACL_OWNER_READ_WRITE,
-        );
+        ];
     }
 
     public static function tearDownAfterClass(): void
     {
-        ACLField::$acl_fields = array();
+        ACLField::$acl_fields = [];
         SugarTestHelper::tearDown();
     }
 
@@ -69,11 +69,11 @@ class SugarQueryAclFieldTest extends TestCase
 
     private function createAndFetchBean($assignedTo, $createdBy)
     {
-        $account = SugarTestAccountUtilities::createAccount(null, array(
+        $account = SugarTestAccountUtilities::createAccount(null, [
             'assigned_user_id' => $assignedTo,
             'created_by' => $createdBy,
             'set_created_by' => false,
-        ));
+        ]);
 
         $query = new SugarQuery();
         $query->from($account);

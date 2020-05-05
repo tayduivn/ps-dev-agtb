@@ -31,13 +31,13 @@ class PostUpgradeAccessTest extends UpgradeTestCase
         $this->original_site_url = $sugar_config['site_url'];
         $sugar_config['site_url'] = $this->test_site_url;
         if (empty($this->upgrader->config)) {
-            $this->upgrader->config = array();
+            $this->upgrader->config = [];
         }
         $this->upgrader->config['site_url'] = $this->test_site_url;
         $this->upgradeAccess = new SugarUpgradeUpgradeAccessTest($this->upgrader);
-        $this->upgradeAccess->context = array(
+        $this->upgradeAccess->context = [
             "source_dir" => dirname($this->testHtacessPath),
-        );
+        ];
         $htaccessContent = <<<EOQ
 # old mod headers
 <FilesMatch "\.(jpg|png|gif|js|css|ico)$">
@@ -144,7 +144,8 @@ EOQ;
     }
 }
 
-class SugarUpgradeUpgradeAccessTest extends SugarUpgradeUpgradeAccess {
+class SugarUpgradeUpgradeAccessTest extends SugarUpgradeUpgradeAccess
+{
     public function testhandleHtaccess()
     {
         $this->handleHtaccess();

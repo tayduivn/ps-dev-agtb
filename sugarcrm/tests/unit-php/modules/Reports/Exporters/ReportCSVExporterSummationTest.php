@@ -22,7 +22,7 @@ use Sugarcrm\SugarcrmTestsUnit\TestReflection;
  */
 class ReportCSVExporterSummationTest extends TestCase
 {
-    static protected $IdxToPass = 4;
+    protected static $IdxToPass = 4;
 
     protected function setUp() : void
     {
@@ -31,10 +31,10 @@ class ReportCSVExporterSummationTest extends TestCase
         // to setup Delimiter
         $current_user = $this->createPartialMock('User', ['getPreference']);
 
-        $preferenceMap = array(
-            array('export_delimiter', ','),
-            array('currency', '-99'),
-        );
+        $preferenceMap = [
+            ['export_delimiter', ','],
+            ['currency', '-99'],
+        ];
 
         $current_user->expects($this->any())
             ->method('getPreference')
@@ -107,25 +107,25 @@ class ReportCSVExporterSummationTest extends TestCase
 
     public function summationExportProvider()
     {
-        $headerRow1 = array("Name", "Universe", "Total Property Owned");
-        $dataRows1 = array(
-            array(
+        $headerRow1 = ["Name", "Universe", "Total Property Owned"];
+        $dataRows1 = [
+            [
                 'cells' => ["Iron Man", "Marvel", "$12,400,000,000"],
-            ),
-            array(
+            ],
+            [
                 'cells' => ["Batman", "DC", "$9,200,000,000"],
-            ),
-            array(
+            ],
+            [
                 'cells' => ["Superman", "DC", "$2,400,000"],
-            ),
-        );
+            ],
+        ];
 
-        $totalHeaderRow1 = array('', 'Count');
-        $totalData1 = array(
-            array(
+        $totalHeaderRow1 = ['', 'Count'];
+        $totalData1 = [
+            [
                 'cells' => ['', '3'],
-            ),
-        );
+            ],
+        ];
 
         $expected1 = "\"Name\",\"Universe\",\"Total Property Owned\"\r\n" .
             "\"Iron Man\",\"Marvel\",\"$12,400,000,000\"\r\n" .
@@ -135,14 +135,14 @@ class ReportCSVExporterSummationTest extends TestCase
             "Grand Total\r\n" .
             "The Grand Total Goes Here";
 
-        return array(
-            array($headerRow1, $dataRows1, $totalHeaderRow1, $totalData1, $expected1),
-        );
+        return [
+            [$headerRow1, $dataRows1, $totalHeaderRow1, $totalData1, $expected1],
+        ];
     }
 
     public function createMockExporter(\Report $reporter)
     {
-        $mockExporter = $this->createPartialMock(ReportCSVExporterSummation::class, array('getGrandTotal'));
+        $mockExporter = $this->createPartialMock(ReportCSVExporterSummation::class, ['getGrandTotal']);
         TestReflection::setProtectedValue($mockExporter, 'reporter', $reporter);
         return $mockExporter;
     }

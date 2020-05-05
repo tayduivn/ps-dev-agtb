@@ -11,15 +11,17 @@
  */
 
 
-class RestMetadataServerInfoChangeTest extends RestTestBase {
+class RestMetadataServerInfoChangeTest extends RestTestBase
+{
     /**
      * @group rest
-     */    
-    public function testServerInfoChangeTest() {
+     */
+    public function testServerInfoChangeTest()
+    {
         $GLOBALS['current_user']->is_admin = 1;
         $GLOBALS['current_user']->save();
 
-        $mm = MetaDataManager::getManager(array('mobile'));
+        $mm = MetaDataManager::getManager(['mobile']);
         $original_server_info = $mm->getServerInfo();
 
         $restReply = $this->_restCall('metadata?platform=mobile');
@@ -28,7 +30,7 @@ class RestMetadataServerInfoChangeTest extends RestTestBase {
         $this->assertEquals($original_server_info['fts'], $server_info['fts'], "Server Info not equal");
 
         $new_server_info = $original_server_info;
-        $new_server_info['fts']= array('enabled' => true, 'type' => 'Elastic');
+        $new_server_info['fts']= ['enabled' => true, 'type' => 'Elastic'];
 
         $ac = new AdministrationController();
         $_REQUEST['type'] = 'Elastic';

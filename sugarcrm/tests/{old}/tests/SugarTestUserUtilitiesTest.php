@@ -17,7 +17,7 @@ use PHPUnit\Framework\TestCase;
  */
 class SugarTestUserUtilitiesTest extends TestCase
 {
-    private $_before_snapshot = array();
+    private $_before_snapshot = [];
     
     protected function setUp() : void
     {
@@ -30,9 +30,9 @@ class SugarTestUserUtilitiesTest extends TestCase
         SugarTestUserUtilities::removeAllCreatedUserSignatures();
     }
 
-    public function _takeUserDBSnapshot() 
+    public function _takeUserDBSnapshot()
     {
-        $snapshot = array();
+        $snapshot = [];
         $query = 'SELECT * FROM users';
         $result = $GLOBALS['db']->query($query);
         while ($row = $GLOBALS['db']->fetchByAssoc($result)) {
@@ -41,9 +41,9 @@ class SugarTestUserUtilitiesTest extends TestCase
         return $snapshot;
     }
 
-    public function _takeTeamDBSnapshot() 
+    public function _takeTeamDBSnapshot()
     {
-        $snapshot = array();
+        $snapshot = [];
         $query = 'SELECT * FROM teams';
         $result = $GLOBALS['db']->query($query);
         while ($row = $GLOBALS['db']->fetchByAssoc($result)) {
@@ -54,7 +54,7 @@ class SugarTestUserUtilitiesTest extends TestCase
 
     public function _takeSignatureDBSnapshot()
     {
-        $snapshot = array();
+        $snapshot = [];
         $query    = "SELECT * FROM users_signatures";
         $result   = $GLOBALS["db"]->query($query);
 
@@ -65,51 +65,66 @@ class SugarTestUserUtilitiesTest extends TestCase
         return $snapshot;
     }
 
-    public function testCanCreateAnAnonymousUser() 
+    public function testCanCreateAnAnonymousUser()
     {
         $user = SugarTestUserUtilities::createAnonymousUser();
 
         $this->assertInstanceOf('User', $user);
 
         $after_snapshot = $this->_takeUserDBSnapshot();
-        $this->assertNotEquals($this->_before_snapshot, $after_snapshot, 
-            "Simply insure that something was added");
+        $this->assertNotEquals(
+            $this->_before_snapshot,
+            $after_snapshot,
+            "Simply insure that something was added"
+        );
     }
     
-    public function testCanCreateAnAnonymousUserButDoNotSaveIt() 
+    public function testCanCreateAnAnonymousUserButDoNotSaveIt()
     {
         $user = SugarTestUserUtilities::createAnonymousUser(false);
 
         $this->assertInstanceOf('User', $user);
 
         $after_snapshot = $this->_takeUserDBSnapshot();
-        $this->assertEquals($this->_before_snapshot, $after_snapshot, 
-            "Simply insure that something was added");
+        $this->assertEquals(
+            $this->_before_snapshot,
+            $after_snapshot,
+            "Simply insure that something was added"
+        );
     }
 
-    public function testAnonymousUserHasARandomUserName() 
+    public function testAnonymousUserHasARandomUserName()
     {
         $first_user = SugarTestUserUtilities::createAnonymousUser();
         $this->assertTrue(!empty($first_user->user_name), 'team name should not be empty');
 
         $second_user = SugarTestUserUtilities::createAnonymousUser();
-        $this->assertNotEquals($first_user->user_name, $second_user->user_name,
-            'each user should have a unique name property');
+        $this->assertNotEquals(
+            $first_user->user_name,
+            $second_user->user_name,
+            'each user should have a unique name property'
+        );
     }
 
-    public function testCanTearDownAllCreatedAnonymousUsers() 
+    public function testCanTearDownAllCreatedAnonymousUsers()
     {
-        $userIds = array();
+        $userIds = [];
         $before_snapshot_teams = $this->_takeTeamDBSnapshot();
         for ($i = 0; $i < 5; $i++) {
             $userIds[] = SugarTestUserUtilities::createAnonymousUser()->id;
         }
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         
-        $this->assertEquals($this->_before_snapshot, $this->_takeUserDBSnapshot(),
-            'SugarTest_UserUtilities::removeAllCreatedAnonymousUsers() should have removed the users it added');
-        $this->assertEquals($before_snapshot_teams, $this->_takeTeamDBSnapshot(),
-            'SugarTest_UserUtilities::removeAllCreatedAnonymousUsers() should have removed the teams it added');
+        $this->assertEquals(
+            $this->_before_snapshot,
+            $this->_takeUserDBSnapshot(),
+            'SugarTest_UserUtilities::removeAllCreatedAnonymousUsers() should have removed the users it added'
+        );
+        $this->assertEquals(
+            $before_snapshot_teams,
+            $this->_takeTeamDBSnapshot(),
+            'SugarTest_UserUtilities::removeAllCreatedAnonymousUsers() should have removed the teams it added'
+        );
 
         $count = function ($table, $where) {
             $num = 0;
@@ -121,11 +136,11 @@ class SugarTestUserUtilitiesTest extends TestCase
         };
 
         $in = "'" . implode("', '", $userIds) . "'";
-        $sqls = array(
+        $sqls = [
             'email_addresses' => "id IN (SELECT DISTINCT email_address_id FROM email_addr_bean_rel WHERE bean_module ='Users' AND bean_id IN ({$in}))",
             'emails_beans' => "bean_module='Users' AND bean_id IN ({$in})",
             'email_addr_bean_rel' => "bean_module='Users' AND bean_id IN ({$in})",
-        );
+        ];
         foreach ($sqls as $table => $where) {
             $this->assertEquals(
                 0,
@@ -151,10 +166,10 @@ class SugarTestUserUtilitiesTest extends TestCase
         $signature1 = SugarTestUserUtilities::createUserSignature();
         $signature2 = SugarTestUserUtilities::createUserSignature();
 
-        $expected = array(
+        $expected = [
             $signature1->id,
             $signature2->id,
-        );
+        ];
         $actual    = SugarTestUserUtilities::getCreatedUserSignatureIds();
         $this->assertEquals($expected, $actual, "The wrong user signature IDs were returned");
     }

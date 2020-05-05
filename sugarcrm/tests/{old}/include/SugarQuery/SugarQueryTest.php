@@ -35,18 +35,18 @@ class SugarQueryTest extends TestCase
         $linkName = 'bogus_link';
         $tableName = 'dummy';
 
-        $joinParams = array(
+        $joinParams = [
             'joinTableAlias' => $joinAlias,
             'joinType' => 'INNER',
             'ignoreRole' => false,
             'reverse' => true,
             'includeCustom' => true,
-        );
+        ];
 
         // Link2 mock
         $link = $this->getMockBuilder('Link2')
             ->disableOriginalConstructor()
-            ->setMethods(array('buildJoinSugarQuery'))
+            ->setMethods(['buildJoinSugarQuery'])
             ->getMock();
 
         $link->expects($this->once())
@@ -56,7 +56,7 @@ class SugarQueryTest extends TestCase
         // SugarBean mock
         $bean = $this->getMockBuilder('SugarBean')
             ->disableOriginalConstructor()
-            ->setMethods(array('load_relationship'))
+            ->setMethods(['load_relationship'])
             ->getMock();
 
         $bean->expects($this->any())
@@ -69,7 +69,7 @@ class SugarQueryTest extends TestCase
         // SugarQuery mock
         $query = $this->getMockBuilder('SugarQuery')
             ->disableOriginalConstructor()
-            ->setMethods(array('getJoinTableAlias'))
+            ->setMethods(['getJoinTableAlias'])
             ->getMock();
 
         $query->expects($this->once())
@@ -86,7 +86,7 @@ class SugarQueryTest extends TestCase
         $query->join[$joinAlias] = $join;
 
         // Execute tests
-        $query->joinSubPanel($bean, $linkName, array());
+        $query->joinSubPanel($bean, $linkName, []);
     }
 
     /**
@@ -104,7 +104,7 @@ class SugarQueryTest extends TestCase
 
         $link2 = $this->getMockBuilder('Link2')
             ->disableOriginalConstructor()
-            ->setMethods(array('getRelationshipObject', 'getSide'))
+            ->setMethods(['getRelationshipObject', 'getSide'])
             ->getMock();
 
         $rel = $this->getMockBuilder('M2MRelationship')
@@ -112,10 +112,10 @@ class SugarQueryTest extends TestCase
             ->setMethods(null)
             ->getMock();
 
-        SugarTestReflection::setProtectedValue($rel, 'def', array(
+        SugarTestReflection::setProtectedValue($rel, 'def', [
             'join_key_rhs' => 'right_hand_side_id',
-            'join_key_lhs' => 'left_hand_side_id'
-        ));
+            'join_key_lhs' => 'left_hand_side_id',
+        ]);
 
         $link2->expects($this->once())
             ->method('getRelationshipObject')
@@ -127,7 +127,7 @@ class SugarQueryTest extends TestCase
 
         $bean = $this->getMockBuilder('SugarBean')
             ->disableOriginalConstructor()
-            ->setMethods(array('load_relationship'))
+            ->setMethods(['load_relationship'])
             ->getMock();
 
         $bean->expects($this->once())
@@ -138,17 +138,17 @@ class SugarQueryTest extends TestCase
 
         $q->from = $bean;
 
-        $actual = SugarTestReflection::callProtectedMethod($q, 'getJoinOnField', array('test_link'));
+        $actual = SugarTestReflection::callProtectedMethod($q, 'getJoinOnField', ['test_link']);
 
         $this->assertEquals($expected, $actual);
     }
 
     public static function dataProviderGetJoinOnField()
     {
-        return array(
-            array('RHS', 'left_hand_side_id'),
-            array('LHS', 'right_hand_side_id')
-        );
+        return [
+            ['RHS', 'left_hand_side_id'],
+            ['LHS', 'right_hand_side_id'],
+        ];
     }
 
     /**

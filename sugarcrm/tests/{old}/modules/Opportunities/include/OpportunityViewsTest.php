@@ -30,26 +30,26 @@ class OpportunityViewsTest extends TestCase
     {
         $impl = $this->getMockBuilder('DeployedMetaDataImplementation')
             ->disableOriginalConstructor()
-            ->setMethods(array('getPanelDefsPath'))
+            ->setMethods(['getPanelDefsPath'])
             ->getMock();
 
         $impl->expects($this->any())
             ->method('getPanelDefsPath')
-            ->willReturn(array('base', 'view', 'list'));
+            ->willReturn(['base', 'view', 'list']);
 
         $parser = $this->getMockBuilder('SidecarListLayoutMetaDataParser')
             ->disableOriginalConstructor()
-            ->setMethods(array('handleSave', 'generateFieldDef'))
+            ->setMethods(['handleSave', 'generateFieldDef'])
             ->getMock();
 
         $parser->client = 'base';
         SugarTestReflection::setProtectedValue($parser, 'implementation', $impl);
 
         // Create a map of arguments to return values.
-        $map = array(
-            array('test_2', array('name' => 'test_2')),
-            array('test_4', array('name' => 'test_4'))
-        );
+        $map = [
+            ['test_2', ['name' => 'test_2']],
+            ['test_4', ['name' => 'test_4']],
+        ];
 
         $parser->expects($this->any())
             ->method('generateFieldDef')
@@ -60,7 +60,7 @@ class OpportunityViewsTest extends TestCase
             ->getMockForAbstractClass();
 
         $bean = $this->getMockBuilder('Opportunity')
-            ->setMethods(array('getFieldDefinition'))
+            ->setMethods(['getFieldDefinition'])
             ->getMock();
 
         $bean->expects($this->any())
@@ -69,31 +69,31 @@ class OpportunityViewsTest extends TestCase
 
         SugarTestReflection::setProtectedValue($opp_setup, 'bean', $bean);
 
-        $panel = array(
-            array(
-                'fields' => array(
-                    'test_1' => array(
-                        'name' => 'test_1'
-                    ),
-                    'test_3' => array(
-                        'name' => 'test_3'
-                    )
-                )
-            )
-        );
+        $panel = [
+            [
+                'fields' => [
+                    'test_1' => [
+                        'name' => 'test_1',
+                    ],
+                    'test_3' => [
+                        'name' => 'test_3',
+                    ],
+                ],
+            ],
+        ];
 
 
-        $parser->_viewdefs = array('base' => array('view' => array('list' => array('panels' => $panel))));
+        $parser->_viewdefs = ['base' => ['view' => ['list' => ['panels' => $panel]]]];
 
-        $args = array(
-            array(
+        $args = [
+            [
                 'test_1' => 'test_2',  // test switch field
                 'test_3' => false, // test remove field
                 'test_4' => true, // test add field
-            ),
+            ],
             $panel,
-            $parser
-        );
+            $parser,
+        ];
 
         SugarTestReflection::callProtectedMethod($opp_setup, 'processList', $args);
 
@@ -107,23 +107,23 @@ class OpportunityViewsTest extends TestCase
         SugarAutoLoader::load('modules/ModuleBuilder/parsers/views/SubpanelMetaDataParser.php');
         $parser = $this->getMockBuilder('SubpanelMetaDataParser')
             ->disableOriginalConstructor()
-            ->setMethods(array('handleSave', 'generateFieldDef'))
+            ->setMethods(['handleSave', 'generateFieldDef'])
             ->getMock();
 
         $opp_setup = $this->getMockBuilder('OpportunityViews')
             ->disableOriginalConstructor()
-            ->setMethods(array('processBWCList'))
+            ->setMethods(['processBWCList'])
             ->getMock();
 
-        $args = array(
-            array(
+        $args = [
+            [
                 'test_1' => 'test_2',  // test switch field
                 'test_3' => false, // test remove field
                 'test_4' => true, // test add field
-            ),
-            array(),
-            $parser
-        );
+            ],
+            [],
+            $parser,
+        ];
 
         $opp_setup->expects($this->once())
             ->method('processBWCList')
@@ -139,16 +139,16 @@ class OpportunityViewsTest extends TestCase
     {
         $impl = $this->getMockBuilder('DeployedMetaDataImplementation')
             ->disableOriginalConstructor()
-            ->setMethods(array('getPanelDefsPath'))
+            ->setMethods(['getPanelDefsPath'])
             ->getMock();
 
         $impl->expects($this->any())
             ->method('getPanelDefsPath')
-            ->willReturn(array('base', 'view', 'list'));
+            ->willReturn(['base', 'view', 'list']);
 
         $parser = $this->getMockBuilder('ListLayoutMetaDataParser')
             ->disableOriginalConstructor()
-            ->setMethods(array('handleSave', 'generateFieldDef'))
+            ->setMethods(['handleSave', 'generateFieldDef'])
             ->getMock();
 
         $opp_setup = $this->getMockBuilder('OpportunityViews')
@@ -156,7 +156,7 @@ class OpportunityViewsTest extends TestCase
             ->getMockForAbstractClass();
 
         $bean = $this->getMockBuilder('Opportunity')
-            ->setMethods(array('getFieldDefinition'))
+            ->setMethods(['getFieldDefinition'])
             ->getMock();
 
         $bean->expects($this->any())
@@ -166,14 +166,14 @@ class OpportunityViewsTest extends TestCase
         $parser->client = 'base';
         SugarTestReflection::setProtectedValue($parser, 'implementation', $impl);
 
-        $args = array(
-            array(
+        $args = [
+            [
                 'test_1' => 'test_2',  // test switch field
                 'test_3' => false, // test remove field
                 'test_4' => true, // test add field
-            ),
-            $parser
-        );
+            ],
+            $parser,
+        ];
 
         $ret = SugarTestReflection::callProtectedMethod($opp_setup, 'processBWCList', $args);
 
@@ -187,16 +187,16 @@ class OpportunityViewsTest extends TestCase
     {
         $impl = $this->getMockBuilder('DeployedMetaDataImplementation')
             ->disableOriginalConstructor()
-            ->setMethods(array('getPanelDefsPath'))
+            ->setMethods(['getPanelDefsPath'])
             ->getMock();
 
         $impl->expects($this->any())
             ->method('getPanelDefsPath')
-            ->willReturn(array('base', 'view', 'list'));
+            ->willReturn(['base', 'view', 'list']);
 
         $parser = $this->getMockBuilder('ListLayoutMetaDataParser')
             ->disableOriginalConstructor()
-            ->setMethods(array('handleSave', 'generateFieldDef', 'getModuleName'))
+            ->setMethods(['handleSave', 'generateFieldDef', 'getModuleName'])
             ->getMock();
 
         $opp_setup = $this->getMockBuilder('OpportunityViews')
@@ -204,7 +204,7 @@ class OpportunityViewsTest extends TestCase
             ->getMockForAbstractClass();
 
         $bean = $this->getMockBuilder('Opportunity')
-            ->setMethods(array('getFieldDefinition'))
+            ->setMethods(['getFieldDefinition'])
             ->getMock();
 
         $bean->expects($this->any())
@@ -216,19 +216,19 @@ class OpportunityViewsTest extends TestCase
         $parser->client = 'base';
         SugarTestReflection::setProtectedValue($parser, 'implementation', $impl);
 
-        $parser->_viewdefs = array(
-            'test_1' => array(),
-            'test_3' => array(),
-        );
+        $parser->_viewdefs = [
+            'test_1' => [],
+            'test_3' => [],
+        ];
 
-        $args = array(
-            array(
+        $args = [
+            [
                 'test_1' => 'test_2',  // test switch field
                 'test_3' => false, // test remove field
                 'test_4' => true, // test add field
-            ),
-            $parser
-        );
+            ],
+            $parser,
+        ];
 
         $parser->expects($this->once())
             ->method('handleSave');
@@ -238,13 +238,13 @@ class OpportunityViewsTest extends TestCase
 
         $ret = SugarTestReflection::callProtectedMethod($opp_setup, 'processBWCList', $args);
 
-        $expected = array(
+        $expected = [
             'view_module' => 'Contracts',
-            'group_0' => array(
+            'group_0' => [
                 0 => 'test_2',
-                1 => 'test_4'
-            )
-        );
+                1 => 'test_4',
+            ],
+        ];
 
         $this->assertSame($expected, $ret);
     }

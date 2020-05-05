@@ -40,7 +40,7 @@ class LoggerApiTest extends TestCase
 
     public function testLogMessage()
     {
-        $result = $this->api->logMessage($this->serviceMock, array('level' => 'fatal', 'message' => 'Unit Test'));
+        $result = $this->api->logMessage($this->serviceMock, ['level' => 'fatal', 'message' => 'Unit Test']);
 
         $this->assertNotEmpty($result);
         $this->assertIsArray($result);

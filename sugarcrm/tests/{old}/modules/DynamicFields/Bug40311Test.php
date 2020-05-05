@@ -29,19 +29,19 @@ class Bug40311Test extends TestCase
     {
         $this->db = SugarTestHelper::setUp('mock_db');
 
-        $this->accountMockBean = $this->getMockBuilder('Account')->setMethods(array('hasCustomFields'))->getMock();
+        $this->accountMockBean = $this->getMockBuilder('Account')->setMethods(['hasCustomFields'])->getMock();
         $this->_tablename = 'test' . date("YmdHis");
-        if ( isset($GLOBALS['installing']) )
+        if (isset($GLOBALS['installing'])) {
             $this->_old_installing = $GLOBALS['installing'];
+        }
         $GLOBALS['installing'] = true;
     }
 
     protected function tearDown() : void
     {
-        if ( isset($this->_old_installing) ) {
+        if (isset($this->_old_installing)) {
             $GLOBALS['installing'] = $this->_old_installing;
-        }
-        else {
+        } else {
             unset($GLOBALS['installing']);
         }
         SugarTestHelper::tearDown();
@@ -52,12 +52,12 @@ class Bug40311Test extends TestCase
         $this->db->addQuerySpy(
             'dynamic_field',
             '/' . $this->_tablename . '_cstm\.\*/',
-            array(
-                array(
+            [
+                [
                     'id_c' => '12345',
-                    'foo_c' => NULL
-                )
-            )
+                    'foo_c' => null,
+                ],
+            ]
         );
 
 
@@ -70,6 +70,6 @@ class Bug40311Test extends TestCase
         $bean->table_name = $this->_tablename;
         $bean->id = '12345';
         $bean->custom_fields->retrieve();
-        $this->assertEquals($bean->foo_c, NULL);
+        $this->assertEquals($bean->foo_c, null);
     }
 }

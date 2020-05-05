@@ -10,22 +10,21 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$viewdefs['Cases']['detailview'] = array(
-    'templateMeta' => array('maxColumns' => '2',
-                            'widths' => array(
-                                            array('label' => '10', 'field' => '30'),
-                                            array('label' => '10', 'field' => '30')
-                                            ),
-                            'extraFields' => array('date_modified'),
-                           ),
-    'data' => array(
-        array('case_number', 'assigned_user_name'),
-        array('created_by_name', 'date_entered'),
-        array('modified_by_name', 'date_modified'),
-        array('priority', 'status'),
-        array('name'),
-        array(array('field' => 'description', 'nl2br' => true)),
-        array('resolution'),
-    )
-);
-?>
+$viewdefs['Cases']['detailview'] = [
+    'templateMeta' => ['maxColumns' => '2',
+                            'widths' => [
+                                            ['label' => '10', 'field' => '30'],
+                                            ['label' => '10', 'field' => '30'],
+                                            ],
+                            'extraFields' => ['date_modified'],
+                           ],
+    'data' => [
+        ['case_number', 'assigned_user_name'],
+        ['created_by_name', 'date_entered'],
+        ['modified_by_name', 'date_modified'],
+        ['priority', 'status'],
+        ['name'],
+        [['field' => 'description', 'nl2br' => true]],
+        ['resolution'],
+    ],
+];

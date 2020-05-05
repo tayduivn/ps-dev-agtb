@@ -18,7 +18,7 @@ class Bug62094Test extends SOAPTestCase
 
     protected function setUp() : void
     {
-        $this->definition = Array(
+        $this->definition = [
             'id' => 'a3468352-8fd0-ec13-708a-517087f79ada',
             'relationship_name' => 'accounts_meetings_1',
             'lhs_module' => 'Accounts',
@@ -39,8 +39,8 @@ class Bug62094Test extends SOAPTestCase
             'rhs_subpanel' => '',
             'lhs_subpanel' => '',
             'from_studio' => 1,
-            'is_custom' => 1
-        );
+            'is_custom' => 1,
+        ];
 
         parent::setUp();
     }
@@ -62,7 +62,7 @@ class Bug62094Test extends SOAPTestCase
         $vardef = SugarTestReflection::callProtectedMethod(
             $relationship,
             'getLinkFieldDefinition',
-            array('Meetings', 'accounts_meetings_1')
+            ['Meetings', 'accounts_meetings_1']
         );
 
         $this->assertNotEmpty($vardef['module'], 'get_module_fields failed: empty module returned');
@@ -70,7 +70,8 @@ class Bug62094Test extends SOAPTestCase
     }
 }
 
-class AbstractRelationship62094 extends AbstractRelationship {
+class AbstractRelationship62094 extends AbstractRelationship
+{
     public function getLinkFieldDefinition(
         $sourceModule,
         $relationshipName,
@@ -78,6 +79,6 @@ class AbstractRelationship62094 extends AbstractRelationship {
         $vname = '',
         $id_name = false
     ) {
-        return parent::getLinkFieldDefinition($sourceModule , $relationshipName);
+        return parent::getLinkFieldDefinition($sourceModule, $relationshipName);
     }
 }

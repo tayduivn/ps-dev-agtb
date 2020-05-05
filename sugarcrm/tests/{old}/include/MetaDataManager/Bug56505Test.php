@@ -36,12 +36,12 @@ class Bug56505Test extends TestCase
      */
     public function testMultiselectDefaultFieldValueIsClean()
     {
-        $defs['fields']['aaa_test_c'] = array(
+        $defs['fields']['aaa_test_c'] = [
             'type' => 'multienum',
             'name' => 'aaa_test_c',
             'options' => 'aaa_list',
             'default' => '^bobby^,^billy^',
-        );
+        ];
 
         $mm = new MetaDataHacksBug56505($GLOBALS['current_user']);
         $newdefs = $mm->getNormalizedFielddefs($defs);

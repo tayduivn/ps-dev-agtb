@@ -32,7 +32,7 @@ class PMSEHistoryDataTest extends TestCase
     public function testSavePredata()
     {
         $value['before_data'][1] = 'Ok';
-        $this->object->savePredata(1,'Ok');
+        $this->object->savePredata(1, 'Ok');
         $logData = $this->object->getLog();
         $this->assertEquals($value['before_data'], $logData['before_data']);
     }
@@ -40,7 +40,7 @@ class PMSEHistoryDataTest extends TestCase
     public function testSavePostData()
     {
         $value['after_data'][1] = 'Ok';
-        $this->object->savePostData(1,'Ok');
+        $this->object->savePostData(1, 'Ok');
         $logData = $this->object->getLog();
         $this->assertEquals($value['after_data'], $logData['after_data']);
     }
@@ -48,7 +48,7 @@ class PMSEHistoryDataTest extends TestCase
     public function testVerifyRepeated()
     {
         $value['after_data'][1] = 'Ok';
-        $this->object->verifyRepeated('Ok','Ok');
+        $this->object->verifyRepeated('Ok', 'Ok');
 
         $this->assertTrue(SugarTestReflection::getProtectedValue($this->object, 'repeated'));
     }

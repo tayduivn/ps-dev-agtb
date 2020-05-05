@@ -27,11 +27,11 @@ class ComponentNameValidatorTest extends AbstractConstraintValidatorTest
      */
     protected function createValidator()
     {
-        return new ComponentNameValidator(array(
+        return new ComponentNameValidator([
             'SELECT' => true,
             'UPDATE' => true,
             'DELETE' => true,
-        ));
+        ]);
     }
 
     /**
@@ -73,12 +73,12 @@ class ComponentNameValidatorTest extends AbstractConstraintValidatorTest
 
     public function providerTestValidValues()
     {
-        return array(
-            array('id'),
-            array('known_module'),
-            array('this-is-it'),
-            array('view8'),
-        );
+        return [
+            ['id'],
+            ['known_module'],
+            ['this-is-it'],
+            ['view8'],
+        ];
     }
 
     /**
@@ -87,10 +87,10 @@ class ComponentNameValidatorTest extends AbstractConstraintValidatorTest
      */
     public function testInvalidValues($value, $code, $msg, $allowReservedSqlKeywords)
     {
-        $constraint = new ComponentName(array(
+        $constraint = new ComponentName([
             'message' => 'testMessage',
             'allowReservedSqlKeywords' => $allowReservedSqlKeywords,
-        ));
+        ]);
 
         $this->validator->validate($value, $constraint);
 
@@ -103,19 +103,19 @@ class ComponentNameValidatorTest extends AbstractConstraintValidatorTest
 
     public function providerTestInvalidValues()
     {
-        return array(
-            array(
+        return [
+            [
                 'invalid+chars',
                 ComponentName::ERROR_INVALID_COMPONENT_NAME,
                 'must start with a letter and may only consist of letters, numbers, hyphens and underscores.',
                 true,
-            ),
-            array(
+            ],
+            [
                 'SELECT',
                 ComponentName::ERROR_RESERVED_KEYWORD,
                 'reserved SQL keyword not allowed',
                 false,
-            ),
-        );
+            ],
+        ];
     }
 }

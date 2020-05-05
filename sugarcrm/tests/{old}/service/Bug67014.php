@@ -19,7 +19,7 @@ class Bug67014Test extends TestCase
 {
     protected function tearDown() : void
     {
-        $_GET = array();
+        $_GET = [];
     }
 
     public function testNoException()

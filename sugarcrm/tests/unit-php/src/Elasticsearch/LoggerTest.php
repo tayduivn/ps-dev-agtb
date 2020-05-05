@@ -35,22 +35,22 @@ class LoggerTest extends TestCase
             ->disableOriginalConstructor()
             ->setMethods(null)
             ->getMock();
-        $encoded = TestReflection::callProtectedMethod($logger, 'encodeData', array($inputData));
+        $encoded = TestReflection::callProtectedMethod($logger, 'encodeData', [$inputData]);
         $this->assertEquals($outputData, $encoded);
     }
 
     public function providerEncodeData()
     {
-        return array(
-            array(
+        return [
+            [
                 "Hello world",
                 "Hello world",
-            ),
-            array(
-                array("1" => "Hello", "2" => "world"),
+            ],
+            [
+                ["1" => "Hello", "2" => "world"],
                 '{"1":"Hello","2":"world"}',
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -76,27 +76,27 @@ class LoggerTest extends TestCase
 
     public function providerIsDeleteMissingIndexRequest()
     {
-        return array(
-            array(
+        return [
+            [
                 '{"error":{"reason":"no such index","index":"0e787f44_shared"},"status":404}',
                 "0e787f44_shared/",
                 "DELETE",
                 true,
-            ),
+            ],
             // not 'DELETE' method
-            array(
+            [
                 '{"error":{"reason":"no such index","index":"0e787f44_shared"},"status":404}',
                 "0e787f44_shared/",
                 "GET",
                 false,
-            ),
+            ],
             // not 'no such index' error
-            array(
+            [
                 '{"error":{"reason":"unknown reason","index":"0e787f44_shared"},"status":404}',
                 "0e787f44_shared/",
                 "DELETE",
                 false,
-            )
-        );
+            ],
+        ];
     }
 }

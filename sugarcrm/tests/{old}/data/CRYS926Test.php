@@ -32,7 +32,7 @@ class CRYS926 extends TestCase
      */
     protected function setUp() : void
     {
-        SugarTestHelper::setUp('current_user', array(true, true));
+        SugarTestHelper::setUp('current_user', [true, true]);
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
 
@@ -40,29 +40,29 @@ class CRYS926 extends TestCase
         // The "field_defs" is a reference that is stored in static variable, which means should be
         // restored in the tearDown.
         $this->fieldDefs = $this->account->field_defs;
-        $this->account->field_defs = array(
-            'id' => array(
+        $this->account->field_defs = [
+            'id' => [
                 'name' => 'id',
                 'vname' => 'LBL_ID',
                 'type' => 'id',
                 'required' => true,
-            ),
-            'name' => array(
+            ],
+            'name' => [
                 'name' => 'name',
                 'type' => 'name',
                 'dbType' => 'varchar',
                 'vname' => 'LBL_NAME',
                 'len' => '100',
                 'required' => true,
-            ),
-            'custom_id_c' => array(
+            ],
+            'custom_id_c' => [
                 'required' => false,
                 'name' => 'custom_id_c',
                 'vname' => '',
                 'type' => 'id',
                 'len' => 36,
-            ),
-            'custom_relate' => array(
+            ],
+            'custom_relate' => [
                 'required' => true,
                 'source' => 'non-db',
                 'name' => 'custom_relate',
@@ -74,8 +74,8 @@ class CRYS926 extends TestCase
                 // Required keys.
                 'ext2' => 'Accounts',
                 'module' => 'Accounts',
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -96,8 +96,8 @@ class CRYS926 extends TestCase
         $queryArray = $this->account->create_new_list_query(
             'custom_relate',
             '',
-            array('custom_relate'),
-            array(),
+            ['custom_relate'],
+            [],
             0,
             '',
             true

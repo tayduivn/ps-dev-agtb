@@ -52,64 +52,64 @@ class Bug56425Test extends TestCase
      */
     public function getDefinitions()
     {
-        return array(
-            array(
-                array(
+        return [
+            [
+                [
                     'rhs_label' => 'Activities',
                     'rhs_module' => 'Users',
                     'lhs_module' => 'Contacts',
-                    'relationship_name' => 'users_contacts_relationship'
-                ),
-                array(
+                    'relationship_name' => 'users_contacts_relationship',
+                ],
+                [
                     'Contacts' => 'Users',
-                    'Users' => 'Contacts'
-                )
-            ),
-            array(
-                array(
+                    'Users' => 'Contacts',
+                ],
+            ],
+            [
+                [
                     'rhs_label' => 'Activities 123',
                     'rhs_module' => 'Users',
                     'lhs_module' => 'Contacts',
-                    'relationship_name' => 'users_contacts_relationship'
-                ),
-                array(
+                    'relationship_name' => 'users_contacts_relationship',
+                ],
+                [
                     'Contacts' => 'Users',
-                    'Users' => 'Contacts'
-                )
-            ),
-            array(
-                array(
+                    'Users' => 'Contacts',
+                ],
+            ],
+            [
+                [
                     'rhs_module' => 'Users',
                     'lhs_module' => 'Contacts',
-                    'relationship_name' => 'users_contacts_relationship'
-                ),
-                array(
+                    'relationship_name' => 'users_contacts_relationship',
+                ],
+                [
                     'Contacts' => 'Users',
-                    'Users' => 'Contacts'
-                )
-            ),
-            array(
-                array(
+                    'Users' => 'Contacts',
+                ],
+            ],
+            [
+                [
                     'lhs_module' => 'lhs_module',
                     'lhs_label' => 'lhs_label',
                     'rhs_module' => 'rhs_module',
                     'rhs_label' => 'rhs_label',
-                ),
-                array(
+                ],
+                [
                     'lhs_module' => 'rhs_module',
-                    'rhs_module' => 'lhs_module'
-                )
-            )
-        );
+                    'rhs_module' => 'lhs_module',
+                ],
+            ],
+        ];
     }
 }
 
 class ActivitiesRelationship56425 extends ActivitiesRelationship
 {
-    static public function reset($module)
+    public static function reset($module)
     {
-        self::$labelsAdded = array(
-            $module => true
-        );
+        self::$labelsAdded = [
+            $module => true,
+        ];
     }
 }

@@ -21,7 +21,7 @@ class Bug50000Test extends TestCase
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['mod_strings'] = return_module_language('en_us', 'Reports');
-        require_once('modules/Reports/templates/templates_reports.php');
+        require_once 'modules/Reports/templates/templates_reports.php';
         $this->reporter = new Bug50000MockReporter();
     }
 
@@ -36,7 +36,8 @@ class Bug50000Test extends TestCase
     /**
      * @dataProvider bug50000DataProvider
      */
-    public function testColumnLabelsAreCorrectForMatrixReport($report_def, $header_row, $expected) {
+    public function testColumnLabelsAreCorrectForMatrixReport($report_def, $header_row, $expected)
+    {
         $this->reporter->report_def = $report_def;
 
         $this->assertSame($expected, getHeaderColumnNamesForMatrix($this->reporter, $header_row, ''));
@@ -46,23 +47,25 @@ class Bug50000Test extends TestCase
      * Data provider for testColumnLabelsAreCorrectForMatrixReport()
      * @return array report_def, header_row, expected
      */
-    public function bug50000DataProvider() {
+    public function bug50000DataProvider()
+    {
         $strings = return_module_language('en_us', 'Reports');
-        return array(
-            array(
-                array('group_defs' => array(
-                    array('label'=> 'User Name', 'name' => 'user_name', 'table_key' => 'Opportunities:assigned_user_link', 'type'=>'user_name'),
-                    array('label'=> 'Name', 'name' => 'name', 'table_key' => 'Opportunities:accounts', 'type'=>'name'),
-                )),
-                array('User Name', 'Account Name', 'Count'),
-                array('User Name', 'Account Name', $strings['LBL_REPORT_GRAND_TOTAL']),
-            ),
-        );
+        return [
+            [
+                ['group_defs' => [
+                    ['label'=> 'User Name', 'name' => 'user_name', 'table_key' => 'Opportunities:assigned_user_link', 'type'=>'user_name'],
+                    ['label'=> 'Name', 'name' => 'name', 'table_key' => 'Opportunities:accounts', 'type'=>'name'],
+                ]],
+                ['User Name', 'Account Name', 'Count'],
+                ['User Name', 'Account Name', $strings['LBL_REPORT_GRAND_TOTAL']],
+            ],
+        ];
     }
 }
 
 
-class Bug50000MockReporter {
+class Bug50000MockReporter
+{
     var $report_def;
     var $group_defs_Info;
 }

@@ -1,4 +1,4 @@
-<?php 
+<?php
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -17,17 +17,17 @@ use PHPUnit\Framework\TestCase;
  */
 class ComposePackageTest extends TestCase
 {
-	var $c = null;
-	var $a = null;
-	var $ac_id = null;
-	
+    var $c = null;
+    var $a = null;
+    var $ac_id = null;
+    
     protected function setUp() : void
     {
         global $current_user, $currentModule ;
         $mod_strings = return_module_language($GLOBALS['current_language'], "Contacts");
-        $beanList = array();
-        $beanFiles = array();
-        require('include/modules.php');
+        $beanList = [];
+        $beanFiles = [];
+        require 'include/modules.php';
         $GLOBALS['beanList'] = $beanList;
         $GLOBALS['beanFiles'] = $beanFiles;
         $current_user = SugarTestUserUtilities::createAnonymousUser();
@@ -35,13 +35,13 @@ class ComposePackageTest extends TestCase
         $time = date('Y-m-d H:i:s');
 
         $this->c = SugarTestContactUtilities::createContact();
-		
-		$beanList = array();
-		$beanFiles = array();
-		require('include/modules.php');
-		$GLOBALS['beanList'] = $beanList;
-		$GLOBALS['beanFiles'] = $beanFiles;
-	}
+        
+        $beanList = [];
+        $beanFiles = [];
+        require 'include/modules.php';
+        $GLOBALS['beanList'] = $beanList;
+        $GLOBALS['beanFiles'] = $beanFiles;
+    }
 
     protected function tearDown() : void
     {
@@ -55,33 +55,33 @@ class ComposePackageTest extends TestCase
 
         unset($GLOBALS['mod_strings']);
         unset($GLOBALS['beanList']);
-		unset($GLOBALS['beanFiles']);
+        unset($GLOBALS['beanFiles']);
         unset($this->c);
     }
 
-	public function testComposeFromMethodCallNoData()
-	{    
-	    $_REQUEST['forQuickCreate'] = true;
-	    require_once('modules/Emails/Compose.php');
-	    $data = array();
-	    $compose_data = generateComposeDataPackage($data,FALSE);
-	    
-		$this->assertEquals('', $compose_data['to_email_addrs']);
+    public function testComposeFromMethodCallNoData()
+    {
+        $_REQUEST['forQuickCreate'] = true;
+        require_once 'modules/Emails/Compose.php';
+        $data = [];
+        $compose_data = generateComposeDataPackage($data, false);
+        
+        $this->assertEquals('', $compose_data['to_email_addrs']);
     }
     
     public function testComposeFromMethodCallForContact()
-    {    
-	    $_REQUEST['forQuickCreate'] = true;
-	    require_once('modules/Emails/Compose.php');
-	    $data = array();
-	    $data['parent_type'] = 'Contacts';
-	    $data['parent_id'] = $this->c->id;
-	    
-	    $compose_data = generateComposeDataPackage($data,FALSE);
+    {
+        $_REQUEST['forQuickCreate'] = true;
+        require_once 'modules/Emails/Compose.php';
+        $data = [];
+        $data['parent_type'] = 'Contacts';
+        $data['parent_id'] = $this->c->id;
+        
+        $compose_data = generateComposeDataPackage($data, false);
 
-		$this->assertEquals('Contacts', $compose_data['parent_type']);
-		$this->assertEquals($this->c->id, $compose_data['parent_id']);
-		$this->assertEquals($this->c->name, $compose_data['parent_name']);
+        $this->assertEquals('Contacts', $compose_data['parent_type']);
+        $this->assertEquals($this->c->id, $compose_data['parent_id']);
+        $this->assertEquals($this->c->name, $compose_data['parent_name']);
     }
 
     public function testGenerateComposeDataPackage_SingleEmailAddressWithoutName()

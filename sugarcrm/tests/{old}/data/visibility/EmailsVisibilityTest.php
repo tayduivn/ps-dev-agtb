@@ -26,25 +26,25 @@ class EmailsVisibilityTest extends TestCase
 
         static::$subject = 'subject: ' . Uuid::uuid1();
 
-        $data = array(
+        $data = [
             'name' => static::$subject,
             'state' => Email::STATE_DRAFT,
             'assigned_user_id' => $GLOBALS['current_user']->id,
-        );
+        ];
         SugarTestEmailUtilities::createEmail('', $data);
 
-        $data = array(
+        $data = [
             'name' => static::$subject,
             'state' => Email::STATE_ARCHIVED,
             'assigned_user_id' => $GLOBALS['current_user']->id,
-        );
+        ];
         SugarTestEmailUtilities::createEmail('', $data);
 
-        $data = array(
+        $data = [
             'name' => static::$subject,
             'state' => Email::STATE_ARCHIVED,
             'assigned_user_id' => Uuid::uuid1(),
-        );
+        ];
         SugarTestEmailUtilities::createEmail('', $data);
     }
 

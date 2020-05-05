@@ -33,8 +33,7 @@ class Bug52396Test extends TestCase
 
     protected function setUp() : void
     {
-        if ($GLOBALS['db']->dbType != 'oci8')
-        {
+        if ($GLOBALS['db']->dbType != 'oci8') {
             $this->markTestSkipped('Oracle is required');
         }
 
@@ -45,8 +44,7 @@ class Bug52396Test extends TestCase
 
     protected function tearDown() : void
     {
-        if ($GLOBALS['db'] instanceof Bug52396OracleManager)
-        {
+        if ($GLOBALS['db'] instanceof Bug52396OracleManager) {
             unset($GLOBALS['db']);
             $GLOBALS['db'] = $this->original_db;
             unset($GLOBALS['mod_strings']);
@@ -55,28 +53,28 @@ class Bug52396Test extends TestCase
 
     public function provideVersions()
     {
-        return array(
-            array('8.0.0', false),
-            array('8.0.9', false),
-            array('8.0.10', false),
-            array('8.0.11', false),
-            array('9.0.0', true),
-            array('9.0.9', true),
-            array('9.0.10', true),
-            array('9.0.11', true),
-            array('10.0.0', true),
-            array('10.0.9', true),
-            array('10.0.10', true),
-            array('10.0.11', true),
-            array('11.0.0', true),
-            array('11.0.9', true),
-            array('11.0.10', true),
-            array('11.0.11', true),
-            array('12.0.0', true),
-            array('12.0.9', true),
-            array('12.0.10', true),
-            array('12.0.11', true)
-        );
+        return [
+            ['8.0.0', false],
+            ['8.0.9', false],
+            ['8.0.10', false],
+            ['8.0.11', false],
+            ['9.0.0', true],
+            ['9.0.9', true],
+            ['9.0.10', true],
+            ['9.0.11', true],
+            ['10.0.0', true],
+            ['10.0.9', true],
+            ['10.0.10', true],
+            ['10.0.11', true],
+            ['11.0.0', true],
+            ['11.0.9', true],
+            ['11.0.10', true],
+            ['11.0.11', true],
+            ['12.0.0', true],
+            ['12.0.9', true],
+            ['12.0.10', true],
+            ['12.0.11', true],
+        ];
     }
 
     /**
@@ -90,12 +88,9 @@ class Bug52396Test extends TestCase
     {
         $GLOBALS['db']->version = $version;
         $result = checkSystemCompliance();
-        if ($isValid == true)
-        {
+        if ($isValid == true) {
             $this->assertArrayNotHasKey('dbVersion', $result, 'Version of oracle is valid but not passed');
-        }
-        else
-        {
+        } else {
             $this->assertArrayHasKey('dbVersion', $result, 'Version of oracle is not valid but passed');
         }
     }

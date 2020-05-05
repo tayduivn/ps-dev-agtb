@@ -20,9 +20,9 @@ class StudioModuleTest extends TestCase
 {
     public static function setUpBeforeClass() : void
     {
-        $beanList = array();
-        $beanFiles = array();
-        require('include/modules.php');
+        $beanList = [];
+        $beanFiles = [];
+        require 'include/modules.php';
         $GLOBALS['beanList'] = $beanList;
         $GLOBALS['beanFiles'] = $beanFiles;
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
@@ -70,14 +70,14 @@ class StudioModuleTest extends TestCase
 
     public function providerGetType()
     {
-        return array(
-            array('Meetings', 'basic'),
-            array('Calls', 'basic'),
-            array('Accounts', 'company'),
-            array('Contacts', 'person'),
-            array('Leads', 'person'),
-            array('Cases', 'issue'),
-        );
+        return [
+            ['Meetings', 'basic'],
+            ['Calls', 'basic'],
+            ['Accounts', 'company'],
+            ['Contacts', 'person'],
+            ['Leads', 'person'],
+            ['Cases', 'issue'],
+        ];
     }
 
     /**
@@ -85,7 +85,8 @@ class StudioModuleTest extends TestCase
      *
      * @dataProvider providerGetType
      */
-    public function testGetTypeFunction($module, $type) {
+    public function testGetTypeFunction($module, $type)
+    {
         $SM = new StudioModule($module);
         $this->assertEquals($type, $SM->getType(), 'Failed asserting that module:' . $module . ' is of type:' . $type);
     }
@@ -101,7 +102,7 @@ class StudioModuleTest extends TestCase
         $result = SugarTestReflection::callProtectedMethod(
             $stub,
             'getModuleSubpanels',
-            array($defs, $sourceModule)
+            [$defs, $sourceModule]
         );
 
         $this->assertEquals($result, $expected);
@@ -109,28 +110,28 @@ class StudioModuleTest extends TestCase
 
     public function providerGetModuleSubpanels()
     {
-        return array(
-            array(
-                array(
-                    "accounts_meetings_1" => array("module" => "Accounts"),
-                    "notes_meetings_1" => array("module" => "Notes"),
-                ),
+        return [
+            [
+                [
+                    "accounts_meetings_1" => ["module" => "Accounts"],
+                    "notes_meetings_1" => ["module" => "Notes"],
+                ],
                 "Accounts",
-                array('accounts_meetings_1'),
-            ),
-            array(
-                array(
-                    "notes" => array("module" => "Notes")
-                ),
+                ['accounts_meetings_1'],
+            ],
+            [
+                [
+                    "notes" => ["module" => "Notes"],
+                ],
                 "Accounts",
-                array(),
-            ),
-            array(
-                array(),
+                [],
+            ],
+            [
+                [],
                 "Accounts",
-                array(),
-            ),
-        );
+                [],
+            ],
+        ];
     }
 
     /**

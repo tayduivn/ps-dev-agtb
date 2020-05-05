@@ -21,15 +21,15 @@ class Bug40739Test extends TestCase
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $this->contact = SugarTestContactUtilities::createContact();
-	}
-	
+    }
+    
     protected function tearDown() : void
-	{
-	    SugarTestContactUtilities::removeAllCreatedContacts();
-	    SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+    {
+        SugarTestContactUtilities::removeAllCreatedContacts();
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
-	}
-	
+    }
+    
     /*
      * @group bug40739
      */

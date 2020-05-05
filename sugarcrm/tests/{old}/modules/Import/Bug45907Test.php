@@ -18,7 +18,7 @@ class Bug45907Test extends TestCase
     {
         // if beanList got unset, set it back
         if (!isset($GLOBALS['beanList'])) {
-            require('include/modules.php');
+            require 'include/modules.php';
             $GLOBALS['beanList'] = $beanList;
         }
     }

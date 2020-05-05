@@ -12,15 +12,15 @@
 
 class S_540_3_PackageManager extends PackageManager
 {
-    function getinstalledPackages($types = array('module', 'langpack'))
+    function getinstalledPackages($types = ['module', 'langpack'])
     {
-        return array(
-            array(
+        return [
+            [
                 'enabled' => 'DISABLED',
                 'name' => 'ProcessMaker',
                 'version' => '2.7',
-            ),
-        );
+            ],
+        ];
     }
 }
 

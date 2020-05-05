@@ -22,15 +22,15 @@ class UpdaterUtilsTest extends TestCase
         $GLOBALS['license'] = new UpdateUtilsSettingMock();
         $this->settings = $GLOBALS['license'];
 
-        $this->fakeLicense = array(
+        $this->fakeLicense = [
             'license_users' => 50,
             'license_num_portal_users' => 500,
             'license_validation_key' => 'abcdefgh',
-            'license_vk_end_date' => gmdate('Y-m-d',gmmktime(1,2,3,4,5,gmdate('Y')+2)),
-            'license_expire_date' => gmdate('Y-m-d',gmmktime(1,2,3,4,5,gmdate('Y')+2)),
+            'license_vk_end_date' => gmdate('Y-m-d', gmmktime(1, 2, 3, 4, 5, gmdate('Y')+2)),
+            'license_expire_date' => gmdate('Y-m-d', gmmktime(1, 2, 3, 4, 5, gmdate('Y')+2)),
             'enforce_portal_user_limit' => 1,
             'enforce_user_limit' => 1,
-        );
+        ];
     }
 
     protected function tearDown() : void
@@ -43,22 +43,22 @@ class UpdaterUtilsTest extends TestCase
         $fakeLicenseData = $this->fakeLicense;
         
         checkDownloadKey($fakeLicenseData);
-        $this->assertTrue((bool)$this->settings->savedSettings['license']['enforce_portal_user_limit'],"Not enforcing portal user limit when we should be.");
+        $this->assertTrue((bool)$this->settings->savedSettings['license']['enforce_portal_user_limit'], "Not enforcing portal user limit when we should be.");
 
         $GLOBALS['license'] = $this->settings;
-        $this->settings->savedSettings = array();
+        $this->settings->savedSettings = [];
         $fakeLicenseData['enforce_portal_user_limit'] = '0';
         checkDownloadKey($fakeLicenseData);
-        $this->assertFalse((bool)$this->settings->savedSettings['license']['enforce_portal_user_limit'],"Enforcing portal user limit when we shouldn't be.");
-        
+        $this->assertFalse((bool)$this->settings->savedSettings['license']['enforce_portal_user_limit'], "Enforcing portal user limit when we shouldn't be.");
     }
 }
 
 class UpdateUtilsSettingMock
 {
-    public $savedSettings = array();
+    public $savedSettings = [];
 
-    public function saveSetting($section, $key, $data) {
+    public function saveSetting($section, $key, $data)
+    {
         $this->savedSettings[$section][$key] = $data;
     }
 }

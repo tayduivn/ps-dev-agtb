@@ -32,7 +32,7 @@ class RS189Test extends TestCase
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setUp('current_user', array(true, false));
+        SugarTestHelper::setUp('current_user', [true, false]);
         self::$rest = SugarTestRestUtilities::getRestServiceMock();
     }
 
@@ -50,7 +50,7 @@ class RS189Test extends TestCase
     public function testDeleteException()
     {
         $this->expectException(SugarApiExceptionMissingParameter::class);
-        $this->api->massDelete(self::$rest, array());
+        $this->api->massDelete(self::$rest, []);
     }
 
     public function testEmptyDelete()
@@ -58,7 +58,7 @@ class RS189Test extends TestCase
         $this->expectException(SugarApiExceptionMissingParameter::class);
         $this->api->massDelete(
             self::$rest,
-            array('massupdate_params' => array(), 'module' => 'Accounts')
+            ['massupdate_params' => [], 'module' => 'Accounts']
         );
     }
 
@@ -68,10 +68,10 @@ class RS189Test extends TestCase
         $account = SugarTestAccountUtilities::createAccount($id);
         $result = $this->api->massDelete(
             self::$rest,
-            array(
-                'massupdate_params' => array('uid' => array($id)),
-                'module' => 'Accounts'
-            )
+            [
+                'massupdate_params' => ['uid' => [$id]],
+                'module' => 'Accounts',
+            ]
         );
         $this->assertEquals('done', $result['status']);
         $account = BeanFactory::newBean('Accounts');
@@ -84,10 +84,10 @@ class RS189Test extends TestCase
         $account = SugarTestAccountUtilities::createAccount();
         $result = $this->api->massUpdate(
             self::$rest,
-            array(
-                'massupdate_params' => array('uid' => array($account->id), 'name' => 'RS189Test'),
-                'module' => 'Accounts'
-            )
+            [
+                'massupdate_params' => ['uid' => [$account->id], 'name' => 'RS189Test'],
+                'module' => 'Accounts',
+            ]
         );
         $this->assertEquals('done', $result['status']);
         $account = BeanFactory::getBean('Accounts', $account->id);

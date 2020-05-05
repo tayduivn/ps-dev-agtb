@@ -53,10 +53,10 @@ class LeadConvertTest extends TestCase
         $lead->dp_consent_last_updated = '2018-01-01';
         $lead->expects($this->once())
             ->method('get_linked_beans')
-            ->will($this->returnValue(array($dpr)));
+            ->will($this->returnValue([$dpr]));
         TestReflection::setProtectedValue($leadConvert, 'lead', $lead);
         TestReflection::setProtectedValue($leadConvert, 'contact', $contact);
-        TestReflection::setProtectedValue($leadConvert, 'modules', array('Contacts' => $contact));
+        TestReflection::setProtectedValue($leadConvert, 'modules', ['Contacts' => $contact]);
         $leadConvert->performDataPrivacyTransfer();
     }
 }

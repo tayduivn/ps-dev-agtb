@@ -26,14 +26,14 @@ class SugarTestDatabaseMock extends DBManager
      *
      * @var array
      */
-    protected $query_spies = array();
+    protected $query_spies = [];
 
     /**
      * Any matching rows are placed here
      *
      * @var array
      */
-    public $rows = array();
+    public $rows = [];
 
     /**
      * Add a Query Spy
@@ -55,12 +55,12 @@ class SugarTestDatabaseMock extends DBManager
     public function addQuerySpy($id, $match, $rows = false)
     {
         if (!is_array($match)) {
-            $match = array($match);
+            $match = [$match];
         }
-        $this->query_spies[$id] = array(
+        $this->query_spies[$id] = [
             'match' => $match,
-            'rows' => $rows
-        );
+            'rows' => $rows,
+        ];
 
         return $this;
     }
@@ -116,7 +116,7 @@ class SugarTestDatabaseMock extends DBManager
     public function query($sql, $dieOnError = false, $msg = '', $suppress = false, $keepResult = false)
     {
         $sql = preg_replace('/\s\s+/', ' ', $sql);
-        $matches = array();
+        $matches = [];
         foreach ($this->query_spies as $responseKey => $possibleResponse) {
             $isMatched = true;
             foreach ($possibleResponse['match'] as $regExp) {
@@ -133,7 +133,7 @@ class SugarTestDatabaseMock extends DBManager
 
         if (!isset($response)) {
             $GLOBALS['log']->fatal(__CLASS__ . " came across a query it wasn't expecting: $sql");
-            $this->rows = array();
+            $this->rows = [];
             return false;
         } else {
             if (isset($this->query_spies[$responseKey]['runCount'])) {
@@ -246,35 +246,102 @@ class SugarTestDatabaseMock extends DBManager
     /**
      * Everything from here on out is just so we are a DBManager, just stubs
      */
-    protected function freeDbResult($dbResult) {}
-    public function quote($string) {return addslashes($string);}
-    public function convert($string, $type, array $additional_parameters = array()) {return $string;}
-    public function fromConvert($string, $type) {return $string;}
-    public function renameColumnSQL($tablename, $column, $newname) {}
-    public function get_indices($tablename) {return array();}
-    public function get_columns($tablename) {return array();}
-    public function add_drop_constraint($table, $definition, $drop = false) {}
-    public function getFieldsArray($result, $make_lower_case = false) {}
-    public function getTablesArray() {}
-    public function version() {}
-    public function tableExists($tableName) {}
-    public function connect(array $configOptions = null, $dieOnError = false) {}
-    public function createTableSQLParams($tablename, $fieldDefs, $indices) {}
-    protected function changeColumnSQL($tablename, $fieldDefs, $action, $ignoreRequired = false) {}
-    public function disconnect() {}
-    public function lastDbError() {}
-    public function validateQuery($query) { return true; }
-    public function valid() { return true; }
-    public function dbExists($dbname) { return true; }
-    public function tablesLike($like) {}
-    public function createDatabase($dbname) {}
-    public function dropDatabase($dbname) {}
-    public function getDbInfo() {}
-    public function userExists($username) { return true; }
-    public function createDbUser($database_name, $host_name, $user, $password) {}
-    public function installConfig() {}
-    public function getFromDummyTable() {}
-    public function getGuidSQL() {}
+    protected function freeDbResult($dbResult)
+    {
+    }
+    public function quote($string)
+    {
+        return addslashes($string);
+    }
+    public function convert($string, $type, array $additional_parameters = [])
+    {
+        return $string;
+    }
+    public function fromConvert($string, $type)
+    {
+        return $string;
+    }
+    public function renameColumnSQL($tablename, $column, $newname)
+    {
+    }
+    public function get_indices($tablename)
+    {
+        return [];
+    }
+    public function get_columns($tablename)
+    {
+        return [];
+    }
+    public function add_drop_constraint($table, $definition, $drop = false)
+    {
+    }
+    public function getFieldsArray($result, $make_lower_case = false)
+    {
+    }
+    public function getTablesArray()
+    {
+    }
+    public function version()
+    {
+    }
+    public function tableExists($tableName)
+    {
+    }
+    public function connect(array $configOptions = null, $dieOnError = false)
+    {
+    }
+    public function createTableSQLParams($tablename, $fieldDefs, $indices)
+    {
+    }
+    protected function changeColumnSQL($tablename, $fieldDefs, $action, $ignoreRequired = false)
+    {
+    }
+    public function disconnect()
+    {
+    }
+    public function lastDbError()
+    {
+    }
+    public function validateQuery($query)
+    {
+        return true;
+    }
+    public function valid()
+    {
+        return true;
+    }
+    public function dbExists($dbname)
+    {
+        return true;
+    }
+    public function tablesLike($like)
+    {
+    }
+    public function createDatabase($dbname)
+    {
+    }
+    public function dropDatabase($dbname)
+    {
+    }
+    public function getDbInfo()
+    {
+    }
+    public function userExists($username)
+    {
+        return true;
+    }
+    public function createDbUser($database_name, $host_name, $user, $password)
+    {
+    }
+    public function installConfig()
+    {
+    }
+    public function getFromDummyTable()
+    {
+    }
+    public function getGuidSQL()
+    {
+    }
     public function fetchOneOffset($sql, $offset, $dieOnError = false, $msg = '', $encode = true)
     {
         $response = $this->query($sql, $dieOnError, $msg);
@@ -290,6 +357,6 @@ class SugarTestDatabaseMock extends DBManager
     /** {@inheritDoc} */
     protected function get_index_data($table_name = null, $index_name = null)
     {
-        return array();
+        return [];
     }
 }

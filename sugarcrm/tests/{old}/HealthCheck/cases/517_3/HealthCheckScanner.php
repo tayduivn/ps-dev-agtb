@@ -12,14 +12,14 @@
 
 class S_517_3_PackageManager extends PackageManager
 {
-    public function getinstalledPackages($types = array('module', 'langpack'))
+    public function getinstalledPackages($types = ['module', 'langpack'])
     {
-        return array(
-            array(
+        return [
+            [
                 'name' => 'Map to Lead',
                 'version' => '2.7.0.0',
-            ),
-        );
+            ],
+        ];
     }
 }
 

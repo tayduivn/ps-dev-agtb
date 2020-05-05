@@ -558,10 +558,10 @@ class OutboundEmailTest extends TestCase
         $ea = $this->createPartialMock('\\EmailAddress', ['getEmailGUID', 'getReplyToAddress']);
         $ea->method('getEmailGUID')->will($this->returnCallback(
             function ($email) use ($primary, $primaryId, $replyTo, $replyToId) {
-                $emailGUIDs = array(
+                $emailGUIDs = [
                     $primary => $primaryId,
                     $replyTo => $replyToId,
-                );
+                ];
                 return $emailGUIDs[$email];
             }
         ));

@@ -11,7 +11,8 @@
  */
 
 
-class RestMetadataPartialTest extends RestTestBase {
+class RestMetadataPartialTest extends RestTestBase
+{
     protected function setUp() : void
     {
         parent::setUp();
@@ -25,37 +26,38 @@ class RestMetadataPartialTest extends RestTestBase {
     /**
      * @group rest
      */
-    public function testMetadataGetHashes() {
+    public function testMetadataGetHashes()
+    {
         $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata?only_hash=true');
 
-        $this->assertTrue(isset($restReply['reply']['modules']['Accounts']['_hash']),'Account module hash is missing. Reply looked like: '.var_export($restReply['replyRaw'],true));
-        $this->assertFalse(isset($restReply['reply']['modules']['Accounts']['fields']),'Account module has fields.');
+        $this->assertTrue(isset($restReply['reply']['modules']['Accounts']['_hash']), 'Account module hash is missing. Reply looked like: '.var_export($restReply['replyRaw'], true));
+        $this->assertFalse(isset($restReply['reply']['modules']['Accounts']['fields']), 'Account module has fields.');
     }
     
     /**
      * @group rest
      */
-    public function testMetadataPartialGetModules() {
+    public function testMetadataPartialGetModules()
+    {
         // Fetch just the hashes
         $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata?only_hash=true&type_filter=modules&module_filter=Accounts');
         
-        $this->assertTrue(isset($restReply['reply']['modules']['Accounts']['_hash']),'Account module only hash is missing.');
+        $this->assertTrue(isset($restReply['reply']['modules']['Accounts']['_hash']), 'Account module only hash is missing.');
         
         // Call with the same set of hashes that we were sent
-        $goodHashes = array('modules' => array('Accounts'=>$restReply['reply']['modules']['Accounts']['_hash']));
-        $restReply2 = $this->_restCall('metadata?type_filter=modules&module_filter=Accounts',json_encode($goodHashes));
+        $goodHashes = ['modules' => ['Accounts'=>$restReply['reply']['modules']['Accounts']['_hash']]];
+        $restReply2 = $this->_restCall('metadata?type_filter=modules&module_filter=Accounts', json_encode($goodHashes));
         
-        $this->assertFalse(isset($restReply2['reply']['modules']['Accounts']['fields']),'Account module fields were returned when the hashes matched.');
+        $this->assertFalse(isset($restReply2['reply']['modules']['Accounts']['fields']), 'Account module fields were returned when the hashes matched.');
         
         // Mess up the hashes
-        $badHashes = array('modules' => array('Accounts'=>'BAD HASH, NO SOUP FOR YOU'));
+        $badHashes = ['modules' => ['Accounts'=>'BAD HASH, NO SOUP FOR YOU']];
 
         $this->_clearMetadataCache();
-        $restReply3 = $this->_restCall('metadata?type_filter=modules&module_filter=Accounts',json_encode($badHashes));
+        $restReply3 = $this->_restCall('metadata?type_filter=modules&module_filter=Accounts', json_encode($badHashes));
         
-        $this->assertTrue(isset($restReply3['reply']['modules']['Accounts']['fields']),'Account module fields were not returned when the hashes didn\'t match.');
-        
+        $this->assertTrue(isset($restReply3['reply']['modules']['Accounts']['fields']), 'Account module fields were not returned when the hashes didn\'t match.');
     }
 }

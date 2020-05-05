@@ -49,7 +49,7 @@ class RS192Test extends TestCase
         SugarTestHelper::setUp('beanList');
         self::$encode = DBManagerFactory::getInstance()->getEncode();
         DBManagerFactory::getInstance()->setEncode(false);
-        SugarTestHelper::setUp('current_user', array(true, false));
+        SugarTestHelper::setUp('current_user', [true, false]);
     }
 
     public static function tearDownAfterClass(): void
@@ -62,7 +62,7 @@ class RS192Test extends TestCase
     {
         $this->api = new ExportApi();
         $this->recordList = new RecordListApi();
-        $this->records = array();
+        $this->records = [];
         $account = SugarTestAccountUtilities::createAccount();
         array_push($this->records, $account->id);
         $account = SugarTestAccountUtilities::createAccount();
@@ -74,7 +74,7 @@ class RS192Test extends TestCase
     {
         $this->recordList->recordListDelete(
             SugarTestRestUtilities::getRestServiceMock(),
-            array('module' => 'Accounts', 'record_list_id' => $this->listId)
+            ['module' => 'Accounts', 'record_list_id' => $this->listId]
         );
         SugarTestAccountUtilities::removeAllCreatedAccounts();
     }
@@ -83,7 +83,7 @@ class RS192Test extends TestCase
     {
         $result = $this->recordList->recordListCreate(
             SugarTestRestUtilities::getRestServiceMock(),
-            array('module' => 'Accounts', 'records' => $this->records)
+            ['module' => 'Accounts', 'records' => $this->records]
         );
         $this->listId = $result['id'];
         $strCount = $this->getExportStringCount($this->listId);
@@ -94,7 +94,7 @@ class RS192Test extends TestCase
     {
         $result = $this->recordList->recordListCreate(
             SugarTestRestUtilities::getRestServiceMock(),
-            array('module' => 'Accounts', 'records' => array())
+            ['module' => 'Accounts', 'records' => []]
         );
         $this->listId = $result['id'];
         $strCount = $this->getExportStringCount($this->listId);
@@ -105,7 +105,7 @@ class RS192Test extends TestCase
     {
         $result = $this->api->export(
             SugarTestRestUtilities::getRestServiceMock(),
-            array('module' => 'Accounts', 'record_list_id' => $listId)
+            ['module' => 'Accounts', 'record_list_id' => $listId]
         );
         $cnt = 0;
         foreach (explode("\r\n", $result) as $str) {

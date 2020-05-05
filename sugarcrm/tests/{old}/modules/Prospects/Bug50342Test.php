@@ -40,27 +40,28 @@ class Bug50342Test extends TestCase
     protected function setUp() : void
     {
         global $current_user, $beanList, $beanFiles;
-        $beanList = array();
-		$beanFiles = array();
-		require('include/modules.php');
-        $current_user = SugarTestUserUtilities::createAnonymousUser();;
+        $beanList = [];
+        $beanFiles = [];
+        require 'include/modules.php';
+        $current_user = SugarTestUserUtilities::createAnonymousUser();
+        ;
         $this->prospect = SugarTestProspectUtilities::createProspect();
         $this->prospectList = new ProspectList();
         $this->prospectList->name = 'Bug50342Test';
         $this->prospectList->save();
         $this->prospectList->load_relationship('prospects');
-        $this->prospectList->prospects->add($this->prospect->id,array());
+        $this->prospectList->prospects->add($this->prospect->id, []);
 
         $this->campaign = new Campaign();
-       	$this->campaign->name = 'Bug50342Test';
-       	$this->campaign->campaign_type = 'Email';
-       	$this->campaign->status = 'Active';
-       	$timeDate = new TimeDate();
-       	$this->campaign->end_date = $timeDate->to_display_date(date('Y')+1 .'-01-01');
-       	$this->campaign->assigned_id = $current_user->id;
-       	$this->campaign->team_id = '1';
-       	$this->campaign->team_set_id = '1';
-       	$this->campaign->save();
+        $this->campaign->name = 'Bug50342Test';
+        $this->campaign->campaign_type = 'Email';
+        $this->campaign->status = 'Active';
+        $timeDate = new TimeDate();
+        $this->campaign->end_date = $timeDate->to_display_date(date('Y')+1 .'-01-01');
+        $this->campaign->assigned_id = $current_user->id;
+        $this->campaign->team_id = '1';
+        $this->campaign->team_set_id = '1';
+        $this->campaign->save();
 
         $this->campaign->load_relationship('prospectlists');
         $this->campaign->prospectlists->add($this->prospectList->id);
@@ -85,9 +86,9 @@ class Bug50342Test extends TestCase
     public function testRetrieveTargetList()
     {
         $query = '';
-        $select_fields = array(
-            'id', 'first_name', 'last_name'
-        );
+        $select_fields = [
+            'id', 'first_name', 'last_name',
+        ];
         $result = $this->prospect->retrieveTargetList($query, $select_fields);
         $this->assertNotEmpty($result['list'], 'Unable to get target lists data from prospect');
     }
@@ -99,16 +100,16 @@ class Bug50342Test extends TestCase
      */
     public function getEntryListQueries()
     {
-        return array(
-            array("campaigns.id = '99353e9e-7887-b513-bb6d-4f381fb938d1' AND related_type = #contacts# campaignprospects.last_name ASC", 'contacts'),
-            array("campaigns.id = '99353e9e-7887-b513-bb6d-4f381fb938d1' AND related_type = #users# campaignprospects.last_name ASC", 'users'),
-            array("campaigns.id = '99353e9e-7887-b513-bb6d-4f381fb938d1' AND related_type = #prospects# campaignprospects.last_name ASC", 'prospects'),
-            array("campaigns.id = '99353e9e-7887-b513-bb6d-4f381fb938d1' AND related_type = #leads# campaignprospects.last_name ASC", 'leads'),
-            array("campaigns.id = '99353e9e-7887-b513-bb6d-4f381fb938d1' AND related_type = 'contacts' campaignprospects.last_name ASC", 'contacts'),
-            array("campaigns.id = '99353e9e-7887-b513-bb6d-4f381fb938d1' AND related_type = 'users' campaignprospects.last_name ASC", 'users'),
-            array("campaigns.id = '99353e9e-7887-b513-bb6d-4f381fb938d1' AND related_type = 'prospects' campaignprospects.last_name ASC", 'prospects'),
-            array("campaigns.id = '99353e9e-7887-b513-bb6d-4f381fb938d1' AND related_type = 'leads' campaignprospects.last_name ASC", 'leads')
-        );
+        return [
+            ["campaigns.id = '99353e9e-7887-b513-bb6d-4f381fb938d1' AND related_type = #contacts# campaignprospects.last_name ASC", 'contacts'],
+            ["campaigns.id = '99353e9e-7887-b513-bb6d-4f381fb938d1' AND related_type = #users# campaignprospects.last_name ASC", 'users'],
+            ["campaigns.id = '99353e9e-7887-b513-bb6d-4f381fb938d1' AND related_type = #prospects# campaignprospects.last_name ASC", 'prospects'],
+            ["campaigns.id = '99353e9e-7887-b513-bb6d-4f381fb938d1' AND related_type = #leads# campaignprospects.last_name ASC", 'leads'],
+            ["campaigns.id = '99353e9e-7887-b513-bb6d-4f381fb938d1' AND related_type = 'contacts' campaignprospects.last_name ASC", 'contacts'],
+            ["campaigns.id = '99353e9e-7887-b513-bb6d-4f381fb938d1' AND related_type = 'users' campaignprospects.last_name ASC", 'users'],
+            ["campaigns.id = '99353e9e-7887-b513-bb6d-4f381fb938d1' AND related_type = 'prospects' campaignprospects.last_name ASC", 'prospects'],
+            ["campaigns.id = '99353e9e-7887-b513-bb6d-4f381fb938d1' AND related_type = 'leads' campaignprospects.last_name ASC", 'leads'],
+        ];
     }
 
     /**
@@ -125,16 +126,16 @@ class Bug50342Test extends TestCase
      */
     public function testSoapSugarUsersGetEntryListValidateQuery($sql, $tableName)
     {
-       	$valid = new SugarSQLValidate();
+        $valid = new SugarSQLValidate();
         $this->assertTrue($valid->validateQueryClauses($sql), "SugarSQLValidate found Bad query: {$sql}");
 
         $mock = $this->getMockBuilder('Prospect')
-            ->setMethods(array('process_list_query'))
+            ->setMethods(['process_list_query'])
             ->getMock();
         $mock->expects($this->once())
             ->method('process_list_query')
             ->will($this->returnArgument(0));
-        $select = $mock->retrieveTargetList($sql, array('id', 'first_name', 'last_name'));
+        $select = $mock->retrieveTargetList($sql, ['id', 'first_name', 'last_name']);
         $this->assertMatchesRegularExpression("/from\s+{$tableName}/i", $select, 'Incorrect from SQL clause: ' . $select);
     }
 }

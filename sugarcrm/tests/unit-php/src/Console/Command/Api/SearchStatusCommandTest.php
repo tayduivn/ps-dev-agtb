@@ -32,25 +32,25 @@ class SearchStatusCommandTest extends AbstractApiCommandTestCase
      */
     public function providerTestExecuteCommand()
     {
-        return array(
-            array(
-                array(
+        return [
+            [
+                [
                     'available' => true,
-                    'enabled_modules' => array('Accounts', 'Contacts'),
-                ),
-                array(),
+                    'enabled_modules' => ['Accounts', 'Contacts'],
+                ],
+                [],
                 'SearchStatusCommand_0.txt',
                 0,
-            ),
-            array(
-                array(
+            ],
+            [
+                [
                     'available' => false,
-                    'enabled_modules' => array('Accounts'),
-                ),
-                array(),
+                    'enabled_modules' => ['Accounts'],
+                ],
+                [],
                 'SearchStatusCommand_1.txt',
                 1,
-            ),
-        );
+            ],
+        ];
     }
 }

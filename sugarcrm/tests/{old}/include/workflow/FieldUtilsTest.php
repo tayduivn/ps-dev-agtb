@@ -30,11 +30,11 @@ class FieldUtilsTest extends TestCase
     {
         $bean = BeanFactory::newBean('Accounts');
 
-        $metaArray = array(
+        $metaArray = [
             'adv_type' => 'value_calc',
             'ext1' => $operation,
             'value' => $operationValue,
-        );
+        ];
 
         $bean->$field = $fieldValue;
 
@@ -44,11 +44,11 @@ class FieldUtilsTest extends TestCase
 
     public static function dataProviderAdvancedActionValueCalc()
     {
-        return array(
-            array('+', 1, 'test', 1, 2),
-            array('-', 1, 'test', 3, 2),
-            array('*', 1, 'test', 3, 3),
-            array('/', 3, 'test', 3, 1),
-        );
+        return [
+            ['+', 1, 'test', 1, 2],
+            ['-', 1, 'test', 3, 2],
+            ['*', 1, 'test', 3, 3],
+            ['/', 3, 'test', 3, 1],
+        ];
     }
 }

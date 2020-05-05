@@ -55,7 +55,7 @@ DEFS;
     public function testHtmlInSavedReports()
     {
         $rep = new SavedReport();
-        $rep->save_report(-1, $GLOBALS['current_user']->id, "<s>".to_html("<s>TEST</s>")."</s>", "Accounts","summary",$this->reportDefs, 0, 1);
+        $rep->save_report(-1, $GLOBALS['current_user']->id, "<s>".to_html("<s>TEST</s>")."</s>", "Accounts", "summary", $this->reportDefs, 0, 1);
         $id = $rep->id;
         $rep = new SavedReport();
         $rep->retrieve($id);

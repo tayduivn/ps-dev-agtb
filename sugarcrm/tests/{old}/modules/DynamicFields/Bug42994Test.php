@@ -33,9 +33,9 @@ class Bug42994Test extends TestCase
         unset($this->_lang_manager);
     }
 
-    public function testSetLanguageStringDependant() 
+    public function testSetLanguageStringDependant()
     {
-        $this->_lang_manager->setModString('LBL_DEPENDENT','XXDependentXX','DynamicFields');
+        $this->_lang_manager->setModString('LBL_DEPENDENT', 'XXDependentXX', 'DynamicFields');
         $this->_lang_manager->save();
         $GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], 'DynamicFields');
         $output = $this->_smarty->fetch('modules/DynamicFields/templates/Fields/Forms/coreDependent.tpl');
@@ -43,9 +43,9 @@ class Bug42994Test extends TestCase
         $this->assertStringContainsString('XXDependentXX', $output);
     }
 
-    public function testSetLanguageStringVisible() 
+    public function testSetLanguageStringVisible()
     {
-        $this->_lang_manager->setModString('LBL_VISIBLE_IF','XXVisible ifXX','DynamicFields');
+        $this->_lang_manager->setModString('LBL_VISIBLE_IF', 'XXVisible ifXX', 'DynamicFields');
         $this->_lang_manager->save();
         $output = $this->_smarty->fetch('modules/DynamicFields/templates/Fields/Forms/coreDependent.tpl');
 

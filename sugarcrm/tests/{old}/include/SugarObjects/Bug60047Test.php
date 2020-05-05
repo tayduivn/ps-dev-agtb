@@ -23,7 +23,7 @@ class Bug60047Test extends TestCase
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
 
-        // Force a vardef refresh forcefully because some tests in the suite 
+        // Force a vardef refresh forcefully because some tests in the suite
         // actively destroy some globals. This will have an effect on getBean
         // for the duration of this test
         $GLOBALS['reload_vardefs'] = true;
@@ -45,9 +45,9 @@ class Bug60047Test extends TestCase
 
     public function get_beans()
     {
-        return array(
-            array('ForecastOpportunities'),
-        );
+        return [
+            ['ForecastOpportunities'],
+        ];
     }
 
     /**
@@ -56,7 +56,7 @@ class Bug60047Test extends TestCase
     public function testForecastSubordinateBean($module)
     {
         // drop forecasting vardefs
-        foreach(glob("cache/modules/Forecasts/*vardefs.php") as $file) {
+        foreach (glob("cache/modules/Forecasts/*vardefs.php") as $file) {
             @unlink($file);
         }
         $bean = BeanFactory::newBean($module);

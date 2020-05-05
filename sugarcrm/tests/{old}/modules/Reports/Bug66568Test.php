@@ -13,7 +13,7 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once('modules/Reports/templates/templates_reports.php');
+require_once 'modules/Reports/templates/templates_reports.php';
 
 /**
  * Test all cases if user is allowed to export a report
@@ -23,22 +23,22 @@ require_once('modules/Reports/templates/templates_reports.php');
 class Bug66568Test extends TestCase
 {
     private $args;
-    private $reportDef = array(
-        'display_columns' => array(),
-        'summary_columns' => array(),
-        'group_defs' => array(),
-        'filters_def' => array(),
+    private $reportDef = [
+        'display_columns' => [],
+        'summary_columns' => [],
+        'group_defs' => [],
+        'filters_def' => [],
         'module' => 'Accounts',
         'assigned_user_id' => '1',
         'report_type' => 'tabular',
-        'full_table_list' => array(
-            'self' => array(
+        'full_table_list' => [
+            'self' => [
                 'value' => 'Accounts',
                 'module' => 'Accounts',
                 'label' => 'Accounts',
-            ),
-        ),
-    );
+            ],
+        ],
+    ];
 
     protected function setUp() : void
     {
@@ -56,9 +56,9 @@ class Bug66568Test extends TestCase
         $this->role->load_relationship('users');
         $this->role->users->add($GLOBALS['current_user']);
 
-        $this->args = $args = array(
-            'reporter' => new Report(json_encode($this->reportDef))
-        );
+        $this->args = $args = [
+            'reporter' => new Report(json_encode($this->reportDef)),
+        ];
     }
 
     protected function tearDown() : void
@@ -124,7 +124,7 @@ class Bug66568Test extends TestCase
         $sugar_config['admin_export_only'] = true;
         $this->assertEquals(false, hasExportAccess($this->args), "User is not admin, shouldn't allow exports");
 
-        SugarTestHelper::setUp('current_user', array(true, 1));
+        SugarTestHelper::setUp('current_user', [true, 1]);
         $this->assertEquals(true, hasExportAccess($this->args), "User is admin, should allow exports");
     }
 }

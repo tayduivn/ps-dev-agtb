@@ -53,11 +53,11 @@ class SetDocRevisionTest extends SOAPTestCase
 
         $contents = base64_encode(file_get_contents(__FILE__));
 
-        $set_document_revision_parameters = array(
+        $set_document_revision_parameters = [
             //session id
             'session' => $this->_sessionId,
             //The attachment details
-            'note' => array(
+            'note' => [
                 //The ID of the parent document.
                 'id' => $document_id,
                 //The binary contents of the file.
@@ -66,8 +66,8 @@ class SetDocRevisionTest extends SOAPTestCase
                 'filename' => 'example_document.txt',
                 //The revision number
                 'revision' => '1',
-            ),
-        );
+            ],
+        ];
 
         $set_document_revision_result = $this->_soapClient->call(
             'set_document_revision',

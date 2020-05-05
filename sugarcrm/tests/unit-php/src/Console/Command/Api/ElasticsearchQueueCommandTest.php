@@ -32,25 +32,25 @@ class ElasticsearchQueueCommandTest extends AbstractApiCommandTestCase
      */
     public function providerTestExecuteCommand()
     {
-        return array(
-            array(
-                array(),
-                array(),
+        return [
+            [
+                [],
+                [],
                 'ElasticsearchQueueCommand_0.txt',
                 0,
-            ),
-            array(
-                array(
-                    'queued' => array(
+            ],
+            [
+                [
+                    'queued' => [
                         'accounts' => 73,
                         'contacts' => 27,
-                    ),
+                    ],
                     'total' => 100,
-                ),
-                array(),
+                ],
+                [],
                 'ElasticsearchQueueCommand_1.txt',
                 1,
-            ),
-        );
+            ],
+        ];
     }
 }

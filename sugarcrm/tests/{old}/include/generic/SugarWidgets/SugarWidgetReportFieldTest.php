@@ -27,7 +27,7 @@ class SugarWidgetReportFieldTest extends TestCase
      * Definition of layout for SugarWidget.
      * @var array
      */
-    protected $layoutDef = array();
+    protected $layoutDef = [];
 
     /**
      * @inheritdoc
@@ -35,19 +35,19 @@ class SugarWidgetReportFieldTest extends TestCase
     protected function setUp() : void
     {
         SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setUp('current_user', array(true, false));
+        SugarTestHelper::setUp('current_user', [true, false]);
 
         $this->bean = BeanFactory::newBean('Contacts');
         $this->bean->id = create_guid();
         $this->bean->new_with_id = true;
         $this->bean->save();
 
-        $this->layoutDef = array(
+        $this->layoutDef = [
             'table' => $this->bean->table_name,
             'table_alias' => $this->bean->table_name,
-            'input_name0' => array(),
+            'input_name0' => [],
             'name' => 'first_name',
-        );
+        ];
     }
 
     /**
@@ -118,39 +118,39 @@ class SugarWidgetReportFieldTest extends TestCase
 
     public static function queryOrderByDataProvider()
     {
-        $reportDef = array(
+        $reportDef = [
             'display_columns' =>
-                array(
+                [
                     0 =>
-                        array(
+                        [
                             'name' => 'full_name',
                             'label' => 'Full Name',
                             'table_key' => 'Accounts:assigned_user_link',
-                        ),
+                        ],
                     1 =>
-                        array(
+                        [
                             'name' => 'name',
                             'label' => 'Name',
                             'table_key' => 'self',
-                        ),
-                ),
+                        ],
+                ],
             'module' => 'Accounts',
             'group_defs' =>
-                array(
-                ),
+                [
+                ],
             'summary_columns' =>
-                array(
-                ),
+                [
+                ],
             'order_by' =>
-                array(
+                [
                     0 =>
-                        array(
+                        [
                             'name' => 'full_name',
                             'label' => 'Full Name',
                             'table_key' => 'Accounts:assigned_user_link',
                             'sort_dir' => 'd',
-                        ),
-                ),
+                        ],
+                ],
             'report_name' => 'Test',
             'do_round' => 1,
             'numerical_chart_column' => '',
@@ -158,22 +158,22 @@ class SugarWidgetReportFieldTest extends TestCase
             'assigned_user_id' => '1',
             'report_type' => 'tabular',
             'full_table_list' =>
-                array(
+                [
                     'self' =>
-                        array(
+                        [
                             'value' => 'Accounts',
                             'module' => 'Accounts',
                             'label' => 'Accounts',
                             'dependents' =>
-                                array(
-                                ),
-                        ),
+                                [
+                                ],
+                        ],
                     'Accounts:assigned_user_link' =>
-                        array(
+                        [
                             'name' => 'Accounts  >  Assigned to User',
                             'parent' => 'self',
                             'link_def' =>
-                                array(
+                                [
                                     'name' => 'assigned_user_link',
                                     'relationship_name' => 'accounts_assigned_user',
                                     'bean_is_lhs' => false,
@@ -181,28 +181,28 @@ class SugarWidgetReportFieldTest extends TestCase
                                     'label' => 'Assigned to User',
                                     'module' => 'Users',
                                     'table_key' => 'Accounts:assigned_user_link',
-                                ),
+                                ],
                             'dependents' =>
-                                array(
+                                [
                                     0 => 'display_cols_row_1',
-                                ),
+                                ],
                             'module' => 'Users',
                             'label' => 'Assigned to User',
-                        ),
-                ),
+                        ],
+                ],
             'filters_def' =>
-                array(
+                [
                     'Filter_1' =>
-                        array(
+                        [
                             'operator' => 'AND',
-                        ),
-                ),
+                        ],
+                ],
             'chart_type' => 'none',
-        );
+        ];
 
-        return array(
-            array(
-                array(
+        return [
+            [
+                [
                     'name' => 'full_name',
                     'label' => 'Full Name',
                     'table_key' => 'Accounts:assigned_user_link',
@@ -210,12 +210,12 @@ class SugarWidgetReportFieldTest extends TestCase
                     'table_alias' => 'l1',
                     'column_key' => 'Accounts:assigned_user_link:full_name',
                     'type' => 'fullname',
-                ),
+                ],
                 $reportDef,
                 'l1.last_name DESC, l1.first_name DESC',
-            ),
-            array(
-                array(
+            ],
+            [
+                [
                     'name' => 'name',
                     'label' => 'Name',
                     'table_key' => 'self',
@@ -223,11 +223,11 @@ class SugarWidgetReportFieldTest extends TestCase
                     'table_alias' => 'accounts',
                     'column_key' => 'self:name',
                     'type' => 'name',
-                ),
+                ],
                 $reportDef,
                 'accounts_name ASC',
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -236,7 +236,7 @@ class SugarWidgetReportFieldTest extends TestCase
     protected function getQueryObject()
     {
         $query = new SugarQuery();
-        $query->select(array('id'));
+        $query->select(['id']);
         $query->from($this->bean)
             ->whereRaw("id = '{$this->bean->id}'");
         return $query;

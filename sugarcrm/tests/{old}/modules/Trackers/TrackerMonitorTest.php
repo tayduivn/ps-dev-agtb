@@ -16,7 +16,7 @@ class TrackerMonitorTest extends TestCase
 {
     protected function setUp() : void
     {
-    	$trackerManager = TrackerManager::getInstance();
+        $trackerManager = TrackerManager::getInstance();
         $trackerManager->unsetMonitors();
         $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
     }
@@ -26,37 +26,40 @@ class TrackerMonitorTest extends TestCase
         unset($GLOBALS['app_strings']);
     }
     
-    function testValidMonitors() {
+    function testValidMonitors()
+    {
         $trackerManager = TrackerManager::getInstance();
         $exceptionThrown = false;
         try {
-	        $monitor = $trackerManager->getMonitor('tracker');
-	        $monitor2 = $trackerManager->getMonitor('tracker_queries');
-	        $monitor3 = $trackerManager->getMonitor('tracker_perf');
-	        $monitor4 = $trackerManager->getMonitor('tracker_sessions');
-	        $monitor5 = $trackerManager->getMonitor('tracker_tracker_queries');	
+            $monitor = $trackerManager->getMonitor('tracker');
+            $monitor2 = $trackerManager->getMonitor('tracker_queries');
+            $monitor3 = $trackerManager->getMonitor('tracker_perf');
+            $monitor4 = $trackerManager->getMonitor('tracker_sessions');
+            $monitor5 = $trackerManager->getMonitor('tracker_tracker_queries');
         } catch (Exception $ex) {
-        	$exceptionThrown = true;
+            $exceptionThrown = true;
         }
         $this->assertFalse($exceptionThrown);
     }
 
-    function testInvalidMonitors() {
+    function testInvalidMonitors()
+    {
         $trackerManager = TrackerManager::getInstance();
         $exceptionThrown = false;
-	    $monitor = $trackerManager->getMonitor('invalid_tracker');
-	    $this->assertTrue(get_class($monitor) == 'BlankMonitor');
+        $monitor = $trackerManager->getMonitor('invalid_tracker');
+        $this->assertTrue(get_class($monitor) == 'BlankMonitor');
     }
             
-    function testInvalidValue() {        
+    function testInvalidValue()
+    {
         $trackerManager = TrackerManager::getInstance();
         $monitor = $trackerManager->getMonitor('tracker');
         $exceptionThrown = false;
         try {
-          $monitor->setValue('invalid_column', 'foo');
+            $monitor->setValue('invalid_column', 'foo');
         } catch (Exception $exception) {
-          $exceptionThrown = true;
+            $exceptionThrown = true;
         }
         $this->assertTrue($exceptionThrown);
-    } 
+    }
 }

@@ -62,16 +62,16 @@ class GetEntryListByRelatedFieldTest extends SOAPTestCase
     {
         $result = $this->_soapClient->call(
             'get_entry_list',
-            array(
+            [
                 'session'       => $this->_sessionId,
                 'module_name'   => 'Contacts',
                 'query'         => 'accounts.name=' . $GLOBALS['db']->quoted($this->account->name),
                 'order_by'      => '',
                 'offset'        => 0,
-                'select_fields' => array('id', 'account_name'),
+                'select_fields' => ['id', 'account_name'],
                 'max_results'   => -1,
                 'deleted'       => -1,
-            )
+            ]
         );
 
         $this->assertArrayHasKey('entry_list', $result, 'Result doesn\'t contain entry list');

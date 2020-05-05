@@ -54,56 +54,56 @@ class ContactsApiTest extends TestCase
         $uuid = Uuid::uuid1();
         $email = "foo_{$uuid}@bar.biz";
 
-        return array(
-            array(
+        return [
+            [
                 $email,
                 true,
                 false,
                 false,
-            ),
-            array(
+            ],
+            [
                 $email,
                 true,
                 true,
                 false,
-            ),
-            array(
+            ],
+            [
                 $email,
                 true,
                 false,
                 true,
-            ),
-            array(
+            ],
+            [
                 $email,
                 true,
                 true,
                 true,
-            ),
-            array(
+            ],
+            [
                 $email,
                 false,
                 false,
                 false,
-            ),
-            array(
+            ],
+            [
                 $email,
                 false,
                 true,
                 false,
-            ),
-            array(
+            ],
+            [
                 $email,
                 false,
                 false,
                 true,
-            ),
-            array(
+            ],
+            [
                 $email,
                 false,
                 true,
                 true,
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -117,19 +117,19 @@ class ContactsApiTest extends TestCase
      */
     public function testCreateContact_EmailPropertiesSupplied($email, $primary, $optOut, $invalidEmail)
     {
-        $args = array(
+        $args = [
             'module' => 'Contacts',
             'first_name' => 'John',
             'last_name' => 'Doe',
-            'email' => array(
-                array(
+            'email' => [
+                [
                     'email_address' => $email,
                     'primary_address' => $primary,
                     'opt_out' => $optOut,
                     'invalid_email' => $invalidEmail,
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
 
         $result = $this->contactsApi->createRecord($this->api, $args);
         SugarTestContactUtilities::setCreatedContact([$result['id']]);
@@ -143,10 +143,10 @@ class ContactsApiTest extends TestCase
 
     public function optoutDataProvider()
     {
-        return array(
+        return [
             [true],
             [false],
-        );
+        ];
     }
 
     /**
@@ -160,16 +160,16 @@ class ContactsApiTest extends TestCase
         $GLOBALS['sugar_config']['new_email_addresses_opted_out'] = $defaultOptout;
 
         $email =  'email_' . Uuid::uuid1() . '@bar.biz';
-        $args = array(
+        $args = [
             'module' => 'Contacts',
             'first_name' => 'John',
             'last_name' => 'Doe',
-            'email' => array(
-                array(
+            'email' => [
+                [
                     'email_address' =>  $email,
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
         $result = $this->contactsApi->createRecord($this->api, $args);
         SugarTestContactUtilities::setCreatedContact([$result['id']]);
 

@@ -28,7 +28,7 @@ class GlobalSearchApiTest extends TestCase
     public function testParseArguments(array $args, $moduleList, $q, $limit, $offset)
     {
         $sut = $this->getGlobalSearchApiMock();
-        TestReflection::callProtectedMethod($sut, 'parseArguments', array($args));
+        TestReflection::callProtectedMethod($sut, 'parseArguments', [$args]);
 
         $this->assertSame($moduleList, TestReflection::getProtectedValue($sut, 'moduleList'));
         $this->assertSame($q, TestReflection::getProtectedValue($sut, 'term'));
@@ -38,45 +38,45 @@ class GlobalSearchApiTest extends TestCase
 
     public function providerTestParseArguments()
     {
-        return array(
+        return [
 
             // defaults
-            array(
-                array(),
-                array(),
+            [
+                [],
+                [],
                 '',
                 20,
                 0,
-            ),
+            ],
 
             // valid settings
-            array(
-                array(
+            [
+                [
                     'module_list' => 'Accounts,Contacts',
                     'q' => 'swaffelen',
                     'max_num' => 50,
                     'offset' => 100,
-                ),
-                array('Accounts', 'Contacts'),
+                ],
+                ['Accounts', 'Contacts'],
                 'swaffelen',
                 50,
                 100,
-            ),
+            ],
 
             // cast integers
-            array(
-                array(
+            [
+                [
                     'module_list' => 'Leads',
                     'q' => 'more stuff',
                     'max_num' => "invalid",
                     'offset' => 5.30,
-                ),
-                array('Leads'),
+                ],
+                ['Leads'],
                 'more stuff',
                 0,
                 5,
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -86,7 +86,7 @@ class GlobalSearchApiTest extends TestCase
     {
         $engine = $this->createMock('Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\GlobalSearchCapable');
 
-        $expectedCalls = array(
+        $expectedCalls = [
             'from',
             'getTags',
             'setTagLimit',
@@ -96,7 +96,7 @@ class GlobalSearchApiTest extends TestCase
             'offset',
             'fieldBoost',
             'highlighter',
-        );
+        ];
 
         foreach ($expectedCalls as $callMe) {
             $engine->expects($this->once())
@@ -105,7 +105,7 @@ class GlobalSearchApiTest extends TestCase
         }
 
         $sut = $this->getGlobalSearchApiMock();
-        TestReflection::callProtectedMethod($sut, 'executeGlobalSearch', array($engine));
+        TestReflection::callProtectedMethod($sut, 'executeGlobalSearch', [$engine]);
     }
 
     /**
@@ -114,140 +114,140 @@ class GlobalSearchApiTest extends TestCase
      */
     public function testFormatResults(array $hits, array $expected)
     {
-        $api = $this->getRestServiceMock(array());
+        $api = $this->getRestServiceMock([]);
         $resultSet = $this->getFormatResultsFixture($hits);
 
-        $sut = $this->getGlobalSearchApiMock(array('formatBeanFromResult'));
+        $sut = $this->getGlobalSearchApiMock(['formatBeanFromResult']);
         $sut->expects($this->exactly(count($hits)))
             ->method('formatBeanFromResult')
-            ->will($this->returnCallback(array($this, 'formatBeanFromResult')));
+            ->will($this->returnCallback([$this, 'formatBeanFromResult']));
 
-        $actual = TestReflection::callProtectedMethod($sut, 'formatResults', array($api, [], $resultSet));
+        $actual = TestReflection::callProtectedMethod($sut, 'formatResults', [$api, [], $resultSet]);
         $this->assertEquals($expected, $actual);
     }
 
     public function providerTestFormatResults()
     {
-        return array(
+        return [
 
             // no score or highlights available
-            array(
-                array(
-                    array(
+            [
+                [
+                    [
                         '_id' => '123',
                         '_type' => 'Accounts',
-                        '_source' => array(
+                        '_source' => [
                             'id' => '123',
                             'name' => 'SugarCRM',
-                        ),
-                    ),
-                    array(
+                        ],
+                    ],
+                    [
                         '_id' => '456',
                         '_type' => 'Contacts',
-                        '_source' => array(
+                        '_source' => [
                             'id' => '456',
                             'first_name' => 'skymeyer',
-                        ),
-                    ),
-                ),
-                array(
-                    array(
+                        ],
+                    ],
+                ],
+                [
+                    [
                         'id' => '123',
                         'name' => 'SugarCRM',
                         '_module' => 'Accounts',
-                    ),
-                    array(
+                    ],
+                    [
                         'id' => '456',
                         'first_name' => 'skymeyer',
                         '_module' => 'Contacts',
-                    ),
-                ),
-            ),
+                    ],
+                ],
+            ],
 
             // score and highlights on one entry
-            array(
-                array(
-                    array(
+            [
+                [
+                    [
                         '_id' => '123',
                         '_type' => 'Accounts',
-                        '_source' => array(
+                        '_source' => [
                             'id' => '123',
                             'name' => 'SugarCRM',
-                        ),
+                        ],
                         '_score' => 1.80,
-                        'highlight' => array(
-                            'name' => array('hl1', 'hl2'),
-                        ),
-                    ),
-                    array(
+                        'highlight' => [
+                            'name' => ['hl1', 'hl2'],
+                        ],
+                    ],
+                    [
                         '_id' => '456',
                         '_type' => 'Contacts',
-                        '_source' => array(
+                        '_source' => [
                             'id' => '456',
                             'first_name' => 'skymeyer',
-                        ),
-                    ),
-                ),
-                array(
-                    array(
+                        ],
+                    ],
+                ],
+                [
+                    [
                         'id' => '123',
                         'name' => 'SugarCRM',
                         '_module' => 'Accounts',
                         '_score' => 1.80,
-                        '_highlights' => array(
-                            'name' => array('hl1', 'hl2'),
-                        ),
-                    ),
-                    array(
+                        '_highlights' => [
+                            'name' => ['hl1', 'hl2'],
+                        ],
+                    ],
+                    [
                         'id' => '456',
                         'first_name' => 'skymeyer',
                         '_module' => 'Contacts',
-                    ),
-                ),
-            ),
+                    ],
+                ],
+            ],
 
             // score and highlights mixed
-            array(
-                array(
-                    array(
+            [
+                [
+                    [
                         '_id' => '123',
                         '_type' => 'Accounts',
-                        '_source' => array(
+                        '_source' => [
                             'id' => '123',
                             'name' => 'SugarCRM',
-                        ),
-                        'highlight' => array(
-                            'name' => array('hl1', 'hl2'),
-                        ),
-                    ),
-                    array(
+                        ],
+                        'highlight' => [
+                            'name' => ['hl1', 'hl2'],
+                        ],
+                    ],
+                    [
                         '_id' => '456',
                         '_type' => 'Contacts',
-                        '_source' => array(
+                        '_source' => [
                             'id' => '456',
                             'first_name' => 'skymeyer',
-                        ),
+                        ],
                         '_score' => 1.50,
-                    ),
-                ),
-                array(
-                    array(
+                    ],
+                ],
+                [
+                    [
                         'id' => '123',
                         'name' => 'SugarCRM',
                         '_module' => 'Accounts',
-                        '_highlights' => array(
-                            'name' => array('hl1', 'hl2'),
-                        ),
-                    ),
-                    array(
+                        '_highlights' => [
+                            'name' => ['hl1', 'hl2'],
+                        ],
+                    ],
+                    [
                         'id' => '456',
                         'first_name' => 'skymeyer',
                         '_module' => 'Contacts',
                         '_score' => 1.50,
-                    ),
-                ),
-            ),
-        );
+                    ],
+                ],
+            ],
+        ];
     }
 
     /**
@@ -293,7 +293,7 @@ class GlobalSearchApiTest extends TestCase
      */
     protected function getFormatResultsFixture(array $hits)
     {
-        $elasticaResults = array();
+        $elasticaResults = [];
 
         foreach ($hits as $hit) {
             $elasticaResults[] = new \Elastica\Result($hit);
@@ -302,7 +302,7 @@ class GlobalSearchApiTest extends TestCase
         $response = $this->createMock('\Elastica\Response');
         $query = $this->createMock('\Elastica\Query');
         $elasticaResultSet =  $this->getMockBuilder('\Elastica\ResultSet')
-            ->setConstructorArgs(array($response, $query, $elasticaResults))->setMethods(null)->getMock();
+            ->setConstructorArgs([$response, $query, $elasticaResults])->setMethods(null)->getMock();
 
         $resultSet = new ResultSet($elasticaResultSet);
         return $resultSet;

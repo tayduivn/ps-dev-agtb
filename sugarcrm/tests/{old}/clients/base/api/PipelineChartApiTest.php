@@ -54,7 +54,7 @@ class PipelineChartApiTest extends TestCase
     {
         $this->service = $this->createPartialMock(
             'ServiceBase',
-            array('execute', 'handleException')
+            ['execute', 'handleException']
         );
     }
 
@@ -64,7 +64,7 @@ class PipelineChartApiTest extends TestCase
      * @param Array $methods
      * @return PipelineChartApi
      */
-    protected function getMockPipelineApi(array $methods = array('loadBean'))
+    protected function getMockPipelineApi(array $methods = ['loadBean'])
     {
         $api = $this->getMockBuilder('PipelineChartApi')
             ->setMethods($methods)
@@ -78,15 +78,15 @@ class PipelineChartApiTest extends TestCase
         $api = $this->getMockPipelineApi();
 
         $this->expectException(SugarApiExceptionNotFound::class);
-        $api->pipeline($this->service, array('module' => 'MyInvalidModule'));
+        $api->pipeline($this->service, ['module' => 'MyInvalidModule']);
     }
 
     public function testNotAuthorizedThrownWhenACLAccessDenied()
     {
-        $api = $this->getMockPipelineApi(array('loadBean'));
+        $api = $this->getMockPipelineApi(['loadBean']);
 
         $rli = $this->getMockBuilder('RevenueLineItem')
-            ->setMethods(array('save', 'ACLAccess'))
+            ->setMethods(['save', 'ACLAccess'])
             ->getMock();
 
         $rli->expects($this->once())
@@ -99,24 +99,24 @@ class PipelineChartApiTest extends TestCase
             ->will($this->returnValue($rli));
 
         $this->expectException(SugarApiExceptionNotAuthorized::class);
-        $api->pipeline($this->service, array('module' => 'RevenueLineItems'));
+        $api->pipeline($this->service, ['module' => 'RevenueLineItems']);
     }
 
     public function testBuildQueryContainsAmountField()
     {
         $api = $this->getMockPipelineApi();
         $tp = $this->getMockBuilder('TimePeriod')
-            ->setMethods(array('save'))
+            ->setMethods(['save'])
             ->getMock();
         $tp->start_date_timestamp = 1;
         $tp->end_date_timestamp = 2;
 
         $seed = $this->getMockBuilder('RevenueLineItem')
-            ->setMethods(array('save'))
+            ->setMethods(['save'])
             ->getMock();
 
         $user = $this->getMockBuilder('User')
-            ->setMethods(array('save'))
+            ->setMethods(['save'])
             ->getMock();
         $user->id = 'test';
 
@@ -125,7 +125,7 @@ class PipelineChartApiTest extends TestCase
         $sq = SugarTestReflection::callProtectedMethod(
             $api,
             'buildQuery',
-            array($this->service, $seed, $tp, 'likely_case', 'user')
+            [$this->service, $seed, $tp, 'likely_case', 'user']
         );
         /* @var $sq SugarQuery */
         $sql = $sq->compile()->getSQL();
@@ -135,9 +135,9 @@ class PipelineChartApiTest extends TestCase
 
     public function testPipelineReturnsCorrectData()
     {
-        $api = $this->getMockPipelineApi(array('getForecastSettings', 'buildQuery', 'loadBean', 'getTimeperiod'));
+        $api = $this->getMockPipelineApi(['getForecastSettings', 'buildQuery', 'loadBean', 'getTimeperiod']);
         $rli = $this->getMockBuilder('RevenueLineItem')
-            ->setMethods(array('save', 'ACLAccess'))
+            ->setMethods(['save', 'ACLAccess'])
             ->getMock();
 
         $rli->expects($this->once())
@@ -156,11 +156,11 @@ class PipelineChartApiTest extends TestCase
             ->method('getForecastSettings')
             ->will(
                 $this->returnValue(
-                    array(
-                        'sales_stage_won' => array('Closed Won'),
-                        'sales_stage_lost' => array('Closed Lost'),
-                        'is_setup' => 0
-                    )
+                    [
+                        'sales_stage_won' => ['Closed Won'],
+                        'sales_stage_lost' => ['Closed Lost'],
+                        'is_setup' => 0,
+                    ]
                 )
             );
 
@@ -169,36 +169,36 @@ class PipelineChartApiTest extends TestCase
          * 'Qualification' => 'Qualification',
          */
 
-        $data = array(
-            array(
+        $data = [
+            [
                 'id' => 'test1',
                 'sales_stage' => 'Prospecting',
                 'likely_case' => '100.00',
-                'base_rate' => '1.0'
-            ),
-            array(
+                'base_rate' => '1.0',
+            ],
+            [
                 'id' => 'test2',
                 'sales_stage' => 'Prospecting',
                 'likely_case' => '150.00',
-                'base_rate' => '1.0'
-            ),
-            array(
+                'base_rate' => '1.0',
+            ],
+            [
                 'id' => 'test3',
                 'sales_stage' => 'Qualification',
                 'likely_case' => '100.00',
-                'base_rate' => '1.0'
-            ),
-            array(
+                'base_rate' => '1.0',
+            ],
+            [
                 'id' => 'test4',
                 'sales_stage' => 'Qualification',
                 'likely_case' => '150.00',
-                'base_rate' => '1.0'
-            )
-        );
+                'base_rate' => '1.0',
+            ],
+        ];
 
 
         $sq = $this->getMockBuilder('SugarQuery')
-            ->setMethods(array('execute'))
+            ->setMethods(['execute'])
             ->getMock();
         $sq->expects($this->once())
             ->method('execute')
@@ -214,10 +214,10 @@ class PipelineChartApiTest extends TestCase
 
         $data = $api->pipeline(
             $this->service,
-            array(
+            [
                 'module' => 'RevenueLineItems',
                 'timeperiod_id' => '',
-            )
+            ]
         );
 
         // check the properties

@@ -48,11 +48,11 @@ class Bug56938Test extends TestCase
         // Attempt to reuse the same email_address_id, but change email_address.
         $address = $original->emailAddress->addresses[0];
         $address['email_address'] = 'bug-56938-changed@example.com';
-        $_REQUEST = array(
+        $_REQUEST = [
             'Users_email_widget_id' => '1',
             'Users1emailAddress0'   => $address['email_address'],
             'Users1emailAddressId0' => $address['email_address_id'],
-        );
+        ];
 
         // create a duplicate and retrieve it from database as well
         $duplicate = $this->duplicate = new User();
@@ -85,11 +85,10 @@ class Bug56938Test extends TestCase
      */
     protected function tearDown() : void
     {
-        $_REQUEST = array();
+        $_REQUEST = [];
         SugarTestEmailAddressUtilities::removeAllCreatedAddresses();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        if ($this->duplicate)
-        {
+        if ($this->duplicate) {
             $this->duplicate->mark_deleted($this->duplicate->id);
         }
     }

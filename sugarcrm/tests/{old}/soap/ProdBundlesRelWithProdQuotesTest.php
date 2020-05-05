@@ -59,56 +59,56 @@ class ProdBundlesRelWithProdQuotesTest extends SOAPTestCase
 
         $this->_soapClient->call(
             'set_relationship',
-            array(
+            [
                 'session' => $this->_sessionId,
                 'module_name' => 'ProductBundles',
                 'module_id' => $this->prodBundle->id,
                 'link_field_name' => 'products',
-                'related_ids' => array($this->product->id),
-                'name_value_list' => array(),
-                'deleted' => 0
-            )
+                'related_ids' => [$this->product->id],
+                'name_value_list' => [],
+                'deleted' => 0,
+            ]
         );
 
         $this->_soapClient->call(
             'set_relationship',
-            array(
+            [
                 'session' => $this->_sessionId,
                 'module_name' => 'ProductBundles',
                 'module_id' => $this->prodBundle->id,
                 'link_field_name' => 'quotes',
-                'related_ids' => array($this->quote->id),
-                'name_value_list' => array(),
-                'deleted' => 0
-            )
+                'related_ids' => [$this->quote->id],
+                'name_value_list' => [],
+                'deleted' => 0,
+            ]
         );
 
         $assertProductsRel = $this->_soapClient->call(
             'get_relationships',
-            array(
+            [
                 'session' => $this->_sessionId,
                 'module_name' => 'ProductBundles',
                 'module_id' => $this->prodBundle->id,
                 'link_field_name' => 'products',
                 'related_module_query' => '',
-                'related_fields' => array('id'),
-                'related_module_link_name_to_fields_array' => array(),
+                'related_fields' => ['id'],
+                'related_module_link_name_to_fields_array' => [],
                 'deleted' => 0,
-            )
+            ]
         );
 
         $assertQuoteRel = $this->_soapClient->call(
             'get_relationships',
-            array(
+            [
                 'session' => $this->_sessionId,
                 'module_name' => 'ProductBundles',
                 'module_id' => $this->prodBundle->id,
                 'link_field_name' => 'quotes',
                 'related_module_query' => '',
-                'related_fields' => array('id'),
-                'related_module_link_name_to_fields_array' => array(),
+                'related_fields' => ['id'],
+                'related_module_link_name_to_fields_array' => [],
                 'deleted' => 0,
-            )
+            ]
         );
 
         $this->assertEquals($this->product->id, $assertProductsRel['entry_list'][0]['id']);

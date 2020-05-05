@@ -52,21 +52,23 @@ class RestPortalCreateTest extends RestTestPortalBase
     {
         // we need to be an admin to get at the relationship data
         $GLOBALS['current_user']->is_admin = 1;
-        $args = array(
+        $args = [
             'grant_type' => 'password',
             'username' => $this->contact->portal_name,
             'password' => 'unittest',
             'client_id' => 'support_portal',
             'client_secret' => '',
             'platform' => 'portal',
-        );
+        ];
         $GLOBALS['db']->commit();
 
         // create case
-        $caseReply = $this->_restCall("Cases/",
-                                      json_encode(array('name' => 'UNIT TEST Case','portal_visible'=>true)),
-            'POST');
-        $this->assertEquals(200,$caseReply['info']['http_code'],"HTTP Code was not a 200 - #1");
+        $caseReply = $this->_restCall(
+            "Cases/",
+            json_encode(['name' => 'UNIT TEST Case','portal_visible'=>true]),
+            'POST'
+        );
+        $this->assertEquals(200, $caseReply['info']['http_code'], "HTTP Code was not a 200 - #1");
         $this->assertEquals($caseReply['reply']['account_id'], $this->account->id, "Case create did not contain account id of creator");
         $GLOBALS['db']->commit();
         $this->case = new aCase();
@@ -77,10 +79,12 @@ class RestPortalCreateTest extends RestTestPortalBase
         // Make sure new case is cleaned up
         $this->cases[] = $this->case;
         // create bug
-        $bugReply = $this->_restCall("Bugs/",
-            json_encode(array('name' => 'UNIT TEST Bug')),
-            'POST');
-        $this->assertEquals(200,$bugReply['info']['http_code'],"HTTP Code was not a 200 - #2");
+        $bugReply = $this->_restCall(
+            "Bugs/",
+            json_encode(['name' => 'UNIT TEST Bug']),
+            'POST'
+        );
+        $this->assertEquals(200, $bugReply['info']['http_code'], "HTTP Code was not a 200 - #2");
         $GLOBALS['db']->commit();
         $this->bug = new Bug();
         $this->bug->retrieve($bugReply['reply']['id']);
@@ -102,7 +106,7 @@ class RestPortalCreateTest extends RestTestPortalBase
         // we need to be an admin to get at the relationship data
         $GLOBALS['current_user']->is_admin = 1;
         $GLOBALS['db']->commit();
-        $this->_restLogin($this->contact->portal_name,'unittest');
+        $this->_restLogin($this->contact->portal_name, 'unittest');
 
         // Remove the Account from Contact so this Contact can no longer create Cases
         if (isset($this->account->id)) {
@@ -111,14 +115,16 @@ class RestPortalCreateTest extends RestTestPortalBase
 
         // create case
         $GLOBALS['db']->commit();
-        $caseReply = $this->_restCall("Cases/",
-            json_encode(array('name' => 'UNIT TEST Case')),
-            'POST');
+        $caseReply = $this->_restCall(
+            "Cases/",
+            json_encode(['name' => 'UNIT TEST Case']),
+            'POST'
+        );
 
-        $this->assertEquals("not_authorized",$caseReply['reply']['error']);
-        $this->assertEquals(403,$caseReply['info']['http_code'],"HTTP Status");
+        $this->assertEquals("not_authorized", $caseReply['reply']['error']);
+        $this->assertEquals(403, $caseReply['info']['http_code'], "HTTP Status");
         // Error message should mention the module name
-        $this->assertContains('Cases',$caseReply['reply']['error_message'], "The error message should mention the module name.");
+        $this->assertContains('Cases', $caseReply['reply']['error_message'], "The error message should mention the module name.");
     }
 
 //BEGIN SUGARCRM flav=ent ONLY
@@ -130,11 +136,11 @@ class RestPortalCreateTest extends RestTestPortalBase
     {
         $bugReply = $this->_restCall(
             "Bugs/",
-            json_encode(array(
+            json_encode([
                 'name' => 'UNIT TEST CREATE BUG PORTAL USER',
                 'portal_viewable' => '1',
-                'team_id' => '1'
-            )),
+                'team_id' => '1',
+            ]),
             'POST'
         );
 
@@ -143,10 +149,10 @@ class RestPortalCreateTest extends RestTestPortalBase
         // Create a note on the bug without an attachment
         $bugNoteReply = $this->_restCall(
             "Bugs/{$this->bugId}/link/notes",
-            json_encode(array(
+            json_encode([
                 'name' => 'UNIT TEST BUG NOTE PORTAL USER',
-                'portal_flag' => '1'
-            )),
+                'portal_flag' => '1',
+            ]),
             'POST'
         );
 

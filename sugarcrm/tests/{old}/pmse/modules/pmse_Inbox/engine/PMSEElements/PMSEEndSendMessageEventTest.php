@@ -23,7 +23,7 @@ class PMSEEndSendMessageEventTest extends TestCase
     public function testRun()
     {
         $this->endSendMessageEvent = $this->getMockBuilder('PMSEEndSendMessageEvent')
-            ->setMethods(array('prepareResponse', 'closeCase', 'hasMultipleOpenThreads'))
+            ->setMethods(['prepareResponse', 'closeCase', 'hasMultipleOpenThreads'])
             ->disableOriginalConstructor()
             ->getMock();
         
@@ -37,7 +37,7 @@ class PMSEEndSendMessageEventTest extends TestCase
             ->getMock();
         
         $caseFlowHandlerMock = $this->getMockBuilder('PMSECaseFlowHandler')
-            ->setMethods(array('closeThreadByCaseIndex', 'closeCase'))
+            ->setMethods(['closeThreadByCaseIndex', 'closeCase'])
             ->getMock();
 
         $emailHandler->expects($this->once())
@@ -47,14 +47,14 @@ class PMSEEndSendMessageEventTest extends TestCase
         $this->endSendMessageEvent->setCaseFlowHandler($caseFlowHandlerMock);
         $this->endSendMessageEvent->setEmailHandler($emailHandler);
 
-        $flowData = array(
+        $flowData = [
             'cas_id' => 1,
             'cas_index' => 2,
             'cas_previous' => 1,
             'bpmn_id' => 'deuh823dj23',
             'cas_sugar_module' => 'Leads',
-            'cas_sugar_object_id' => 'ajsdioajodisa2'
-        );
+            'cas_sugar_object_id' => 'ajsdioajodisa2',
+        ];
 
         $this->endSendMessageEvent->run($flowData, $bean, '');
     }

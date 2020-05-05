@@ -22,10 +22,10 @@ class ValidMetadataHashTest extends TestCase
 
     public function testHashValid()
     {
-        $hashes = array(
+        $hashes = [
             'meta:hash:base' => $this->baseHash,
             'meta:hash:portal,base' => $this->portalHash,
-        );
+        ];
 
         // Get the base metadata manager
         $mm = new ValidMetadataHashMetadataManager();
@@ -41,7 +41,7 @@ class ValidMetadataHashTest extends TestCase
         );
 
         // Get the portal metadata manager
-        $mm = new ValidMetadataHashMetadataManager(array('portal'));
+        $mm = new ValidMetadataHashMetadataManager(['portal']);
         $this->assertTrue(
             $mm->isMetadataHashValid($this->portalHash, "portal"),
             "Portal metadata hash should have been valid but was not"

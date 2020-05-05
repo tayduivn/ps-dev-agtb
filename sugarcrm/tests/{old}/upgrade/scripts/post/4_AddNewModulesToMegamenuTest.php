@@ -88,117 +88,117 @@ class SugarUpgradeAddNewModulesToMegamenuTest extends UpgradeTestCase
     public function newModuleDefProvider(): array
     {
         return [
-            array(
-                'def' => array(
+            [
+                'def' => [
                     'name' => 'PMSE Modules',
                     'toFlavor' => 'ent',
-                    'fromVersion' => array('7.6.0', '<'),
-                    'modules' => array(
+                    'fromVersion' => ['7.6.0', '<'],
+                    'modules' => [
                         'pmse_Project',
                         'pmse_Inbox',
                         'pmse_Business_Rules',
                         'pmse_Emails_Templates',
-                    ),
-                    'setupVersions' => array(
+                    ],
+                    'setupVersions' => [
                         'from_version' => '6.7.23',
                         'from_flavor' => 'corp',
                         'to_version' => '7.6.1',
                         'to_flavor' => 'ent',
-                    ),
+                    ],
                     'expectCheck' => true,
                     'expectMsg' => 'Megamenu module list updated with PMSE Modules',
-                ),
-            ),
-            array(
-                'def' => array(
+                ],
+            ],
+            [
+                'def' => [
                     'name' => 'Tags Module',
-                    'fromVersion' => array('7.7.0', '<'),
-                    'modules' => array(
+                    'fromVersion' => ['7.7.0', '<'],
+                    'modules' => [
                         'Tags',
-                    ),
-                    'setupVersions' => array(
+                    ],
+                    'setupVersions' => [
                         'from_version' => '7.6.1',
                         'from_flavor' => 'ent',
                         'to_version' => '7.7.0',
                         'to_flavor' => 'ent',
-                    ),
+                    ],
                     'expectCheck' => true,
                     'expectMsg' => 'Megamenu module list updated with Tags Module',
-                ),
-            ),
-            array(
-                'def' => array(
+                ],
+            ],
+            [
+                'def' => [
                     'toFlavor' => 'ult',
-                    'modules' => array(
+                    'modules' => [
                         'Test1',
-                    ),
-                    'setupVersions' => array(
+                    ],
+                    'setupVersions' => [
                         'from_version' => '6.7.23',
                         'from_flavor' => 'ent',
                         'to_version' => '7.6.1',
                         'to_flavor' => 'ent',
-                    ),
+                    ],
                     'expectCheck' => false,
                     'expectMsg' => 'Megamenu module list updated',
-                ),
-            ),
-            array(
-                'def' => array(
-                    'fromVersion' => array('7.6.1', '<'),
-                    'toVersion' => array('7.6.2', '>='),
-                    'modules' => array(
+                ],
+            ],
+            [
+                'def' => [
+                    'fromVersion' => ['7.6.1', '<'],
+                    'toVersion' => ['7.6.2', '>='],
+                    'modules' => [
                         'Test2',
-                    ),
-                    'setupVersions' => array(
+                    ],
+                    'setupVersions' => [
                         'from_version' => '7.6.1',
                         'from_flavor' => 'ent',
                         'to_version' => '7.6.2',
                         'to_flavor' => 'ent',
-                    ),
+                    ],
                     'expectCheck' => false,
                     'expectMsg' => 'Megamenu module list updated',
-                ),
-            ),
-            array(
-                'def' => array(
-                    'fromVersion' => array('7.6.1', '<='),
-                    'toVersion' => array('7.6.2', '>='),
-                    'modules' => array(
+                ],
+            ],
+            [
+                'def' => [
+                    'fromVersion' => ['7.6.1', '<='],
+                    'toVersion' => ['7.6.2', '>='],
+                    'modules' => [
                         'Test2',
-                    ),
-                    'setupVersions' => array(
+                    ],
+                    'setupVersions' => [
                         'from_version' => '7.6.1',
                         'from_flavor' => 'ent',
                         'to_version' => '7.6.2',
                         'to_flavor' => 'ent',
-                    ),
+                    ],
                     'expectCheck' => true,
                     'expectMsg' => 'Megamenu module list updated',
-                ),
-            ),
+                ],
+            ],
             // Tests flavor conversion on 7.7+
-            array(
-                'def' => array(
+            [
+                'def' => [
                     'name' => 'PMSE Modules Converted',
                     'fromFlavor' => 'pro',
-                    'toFlavor' => array('ent', 'ult'),
-                    'fromVersion' => array('7.7', '>='),
-                    'modules' => array(
+                    'toFlavor' => ['ent', 'ult'],
+                    'fromVersion' => ['7.7', '>='],
+                    'modules' => [
                         'pmse_Project',
                         'pmse_Inbox',
                         'pmse_Business_Rules',
                         'pmse_Emails_Templates',
-                    ),
-                    'setupVersions' => array(
+                    ],
+                    'setupVersions' => [
                         'from_version' => '7.7.0.0',
                         'from_flavor' => 'pro',
                         'to_version' => '7.7.0.0',
                         'to_flavor' => 'ult',
-                    ),
+                    ],
                     'expectCheck' => true,
                     'expectMsg' => 'Megamenu module list updated with PMSE Modules Converted',
-                ),
-            ),
+                ],
+            ],
             // Business Centers module added (pre-9.1.0 -> 9.1.0)
             [
                 'def' => [
@@ -239,49 +239,49 @@ class SugarUpgradeAddNewModulesToMegamenuTest extends UpgradeTestCase
     public function moduleDefDataProvider(): array
     {
         return [
-            array(
-                'def' => array(
-                    'modules' => array(
+            [
+                'def' => [
+                    'modules' => [
                         'Voldemort',
                         'Gandalf',
                         'Palpatine',
-                    ),
-                ),
-                'expect' => array(
-                    '0' => array(
+                    ],
+                ],
+                'expect' => [
+                    '0' => [
                         'Accounts' => 'Accounts',
                         'Bugs' => 'Bugs',
                         'Contacts' => 'Contacts',
                         'Voldemort' => 'Voldemort',
                         'Gandalf' => 'Gandalf',
                         'Palpatine' => 'Palpatine',
-                    ),
+                    ],
                     '1' => [
                         'Products' => 'Products',
                     ],
-                ),
-            ),
-            array(
-                'def' => array(
-                    'modules' => array(
+                ],
+            ],
+            [
+                'def' => [
+                    'modules' => [
                         'Accounts',
                         'Azog',
                         'Hammerhead',
-                    ),
-                ),
-                'expect' => array(
-                    '0' => array(
+                    ],
+                ],
+                'expect' => [
+                    '0' => [
                         'Accounts' => 'Accounts',
                         'Bugs' => 'Bugs',
                         'Contacts' => 'Contacts',
                         'Azog' => 'Azog',
                         'Hammerhead' => 'Hammerhead',
-                    ),
+                    ],
                     '1' => [
                         'Products' => 'Products',
                     ],
-                ),
-            ),
+                ],
+            ],
             [
                 'def' => [
                     'modules' => [

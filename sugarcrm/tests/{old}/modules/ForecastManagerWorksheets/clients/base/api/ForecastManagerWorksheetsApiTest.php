@@ -25,7 +25,7 @@ class ForecastManagerWorksheetsApiTest extends TestCase
     {
         $api = new ForecastManagerWorksheetsApi();
 
-        $this->assertInstanceOf('Quota', SugarTestReflection::callProtectedMethod($api, 'getBean', array('Quotas')));
+        $this->assertInstanceOf('Quota', SugarTestReflection::callProtectedMethod($api, 'getBean', ['Quotas']));
     }
 
     /**
@@ -34,11 +34,11 @@ class ForecastManagerWorksheetsApiTest extends TestCase
     public function testAssignQuota()
     {
         $api = $this->getMockBuilder('ForecastManagerWorksheetsApi')
-            ->setMethods(array('getBean'))
+            ->setMethods(['getBean'])
             ->getMock();
 
         $worksheet = $this->getMockBuilder('ForecastManagerWorksheet')
-            ->setMethods(array('save', 'assignQuota'))
+            ->setMethods(['save', 'assignQuota'])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -52,14 +52,14 @@ class ForecastManagerWorksheetsApiTest extends TestCase
             ->with('ForecastManagerWorksheets')
             ->willReturn($worksheet);
 
-        $args = array(
+        $args = [
             'module' => 'ForecastManagerWorksheets',
             'user_id' => 'test-user-id',
-            'timeperiod_id' => 'test-timeperiod-id'
-        );
+            'timeperiod_id' => 'test-timeperiod-id',
+        ];
 
         $actual = $api->assignQuota(SugarTestRestUtilities::getRestServiceMock(), $args);
 
-        $this->assertSame(array('success' => true), $actual);
+        $this->assertSame(['success' => true], $actual);
     }
 }

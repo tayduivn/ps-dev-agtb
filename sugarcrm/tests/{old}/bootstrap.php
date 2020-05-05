@@ -44,12 +44,12 @@ $current_language = $sugar_config['default_language'];
 // disable the SugarLogger
 $sugar_config['logger']['level'] = 'fatal';
 
-$GLOBALS['sugar_config']['default_permissions'] = array(
+$GLOBALS['sugar_config']['default_permissions'] = [
     'dir_mode' => 02770,
     'file_mode' => 0777,
     'chown' => '',
     'chgrp' => '',
-);
+];
 
 $GLOBALS['js_version_key'] = 'testrunner';
 
@@ -58,7 +58,7 @@ $_SESSION['VALIDATION_EXPIRES_IN'] = 'valid';
 
 // clean out the cache directory
 $repair = new RepairAndClear();
-$repair->module_list = array();
+$repair->module_list = [];
 $repair->show_output = false;
 $repair->clearJsLangFiles();
 $repair->clearJsFiles();

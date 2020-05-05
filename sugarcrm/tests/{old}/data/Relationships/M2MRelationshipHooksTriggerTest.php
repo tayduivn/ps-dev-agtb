@@ -43,7 +43,7 @@ class M2MRelationshipHooksTriggerTest extends TestCase
         $this->call = SugarTestCallUtilities::createCall();
         $this->user = SugarTestUserUtilities::createAnonymousUser();
 
-        $this->def = array(
+        $this->def = [
             'table' => 'calls_users',
             'join_table' => 'calls_users',
             'name' => 'calls_users',
@@ -52,7 +52,7 @@ class M2MRelationshipHooksTriggerTest extends TestCase
             'relationship_type' => 'many-to-many',
             'join_key_lhs' => 'call_id',
             'join_key_rhs' => 'user_id',
-        );
+        ];
 
         $this->relationship = $this->getMockBuilder('M2MRelationship')
             ->setMethods(['callBeforeAdd',
@@ -107,7 +107,7 @@ class M2MRelationshipHooksTriggerTest extends TestCase
         $this->relationship->expects($this->never())->method('callBeforeDelete');
         $this->relationship->expects($this->never())->method('callAfterDelete');
 
-        $this->relationship->add($this->call, $this->user, array('accept_status' => 'tentative'));
+        $this->relationship->add($this->call, $this->user, ['accept_status' => 'tentative']);
     }
 
     /**

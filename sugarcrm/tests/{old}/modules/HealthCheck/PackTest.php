@@ -18,46 +18,46 @@ class PackTest extends TestCase
 {
     public function healthCheckPackProvider()
     {
-        return array(
-            array(
-                array(
-                    'version' => '1.2.3.4'
-                ),
-                array(
+        return [
+            [
+                [
+                    'version' => '1.2.3.4',
+                ],
+                [
                     'version' => '1.2.3.4',
                     'build' => '998',
                     'from' => '6.5.17',
-                ),
-            ),
-            array(
-                array(),
-                array(
+                ],
+            ],
+            [
+                [],
+                [
                     'version' => '7.5.0.0',
                     'build' => '998',
                     'from' => '6.5.17',
-                ),
-            ),
-            array(
-                array(
-                    'from' => '1.2.3.4'
-                ),
-                array(
+                ],
+            ],
+            [
+                [
+                    'from' => '1.2.3.4',
+                ],
+                [
                     'version' => '7.5.0.0',
                     'build' => '998',
                     'from' => '1.2.3.4',
-                ),
-            ),
-            array(
-                array(
-                    'build' => '1.2.3.4'
-                ),
-                array(
+                ],
+            ],
+            [
+                [
+                    'build' => '1.2.3.4',
+                ],
+                [
                     'version' => '7.5.0.0',
                     'build' => '1.2.3.4',
                     'from' => '6.5.17',
-                ),
-            )
-        );
+                ],
+            ],
+        ];
     }
 
     /**
@@ -67,19 +67,19 @@ class PackTest extends TestCase
      */
     public function testHealthCheckPack($params, $expect)
     {
-        $manifest = array();
+        $manifest = [];
         $zip = $this->createMock('ZipArchive');
         $versionFile = __DIR__ . '/../../../modules/HealthCheck/Scanner/version.json';
         $zip->expects($this->exactly(22))->method('addFile');
         $zip->expects($this->exactly(3))->method('addFromString');
-        $installdefs = array();
+        $installdefs = [];
         list($zip, $manifest, $installdefs) = packHealthCheck($zip, $manifest, $installdefs, $params);
 
         $this->assertEquals(json_encode($expect), file_get_contents($versionFile));
         $this->assertArrayHasKey('version', $manifest);
         $this->assertEquals($expect['version'], $manifest['version']);
         $this->assertArrayHasKey('acceptable_sugar_versions', $manifest);
-        $this->assertEquals(array($expect['from']), $manifest['acceptable_sugar_versions']);
+        $this->assertEquals([$expect['from']], $manifest['acceptable_sugar_versions']);
         $this->assertArrayHasKey('copy', $installdefs);
         $this->assertArrayHasKey('beans', $installdefs);
         $this->assertArrayHasKey(0, $installdefs['copy']);

@@ -26,15 +26,15 @@ class SugarThemeTest extends TestCase
 
     protected function setUp() : void
     {
-        $themedef = array();
-        include('themes/'.SugarTestThemeUtilities::createAnonymousTheme().'/themedef.php');
+        $themedef = [];
+        include 'themes/'.SugarTestThemeUtilities::createAnonymousTheme().'/themedef.php';
 
         $this->_themeDef = $themedef;
         SugarThemeRegistry::add($this->_themeDef);
         $this->_themeObject = SugarThemeRegistry::get($this->_themeDef['dirName']);
 
-        $themedef = array();
-        include('themes/'.SugarTestThemeUtilities::createAnonymousChildTheme($this->_themeObject->__toString()).'/themedef.php');
+        $themedef = [];
+        include 'themes/'.SugarTestThemeUtilities::createAnonymousChildTheme($this->_themeObject->__toString()).'/themedef.php';
 
         $this->_themeDefChild = $themedef;
         SugarThemeRegistry::add($this->_themeDefChild);
@@ -102,32 +102,39 @@ class SugarThemeTest extends TestCase
 
     public function testCreateInstance()
     {
-        foreach ( $this->_themeDef as $key => $value )
-            $this->assertEquals($this->_themeObject->$key,$value);
+        foreach ($this->_themeDef as $key => $value) {
+            $this->assertEquals($this->_themeObject->$key, $value);
+        }
     }
 
     public function testGetFilePath()
     {
-        $this->assertEquals($this->_themeObject->getFilePath(),
-            'themes/'.$this->_themeDef['name']);
+        $this->assertEquals(
+            $this->_themeObject->getFilePath(),
+            'themes/'.$this->_themeDef['name']
+        );
     }
 
     public function testGetImagePath()
     {
-        $this->assertEquals($this->_themeObject->getImagePath(),
-            'themes/'.$this->_themeDef['name'].'/images');
+        $this->assertEquals(
+            $this->_themeObject->getImagePath(),
+            'themes/'.$this->_themeDef['name'].'/images'
+        );
     }
 
     public function testGetCSSPath()
     {
-        $this->assertEquals($this->_themeObject->getCSSPath(),
-            'themes/'.$this->_themeDef['name'].'/css');
+        $this->assertEquals(
+            $this->_themeObject->getCSSPath(),
+            'themes/'.$this->_themeDef['name'].'/css'
+        );
     }
 
     public function testGetCSS()
     {
-        $matches = array();
-        preg_match_all('/href="([^"]+)"/',$this->_themeObject->getCSS(),$matches);
+        $matches = [];
+        preg_match_all('/href="([^"]+)"/', $this->_themeObject->getCSS(), $matches);
         $i = 0;
         $this->assertMatchesRegularExpression(
             '/themes\/' . $this->_themeObject->__toString() . '\/css\/yui.css/',
@@ -152,8 +159,8 @@ class SugarThemeTest extends TestCase
 
     public function testGetCSSWithParams()
     {
-        $matches = array();
-        preg_match_all('/href="([^"]+)"/',$this->_themeObject->getCSS('blue','small'),$matches);
+        $matches = [];
+        preg_match_all('/href="([^"]+)"/', $this->_themeObject->getCSS('blue', 'small'), $matches);
         $i = 0;
         $this->assertMatchesRegularExpression(
             '/themes\/' . $this->_themeObject->__toString() . '\/css\/yui.css/',
@@ -179,10 +186,10 @@ class SugarThemeTest extends TestCase
     public function testGetCSSWithCustomStyleCSS()
     {
         create_custom_directory('themes/'.$this->_themeObject->__toString().'/css/');
-        sugar_file_put_contents('custom/themes/'.$this->_themeObject->__toString().'/css/style.css','h3 { color: red; }');
+        sugar_file_put_contents('custom/themes/'.$this->_themeObject->__toString().'/css/style.css', 'h3 { color: red; }');
 
-        $matches = array();
-        preg_match_all('/href="([^"]+)"/',$this->_themeObject->getCSS(),$matches);
+        $matches = [];
+        preg_match_all('/href="([^"]+)"/', $this->_themeObject->getCSS(), $matches);
         $i = 0;
 
         $this->assertMatchesRegularExpression(
@@ -208,8 +215,8 @@ class SugarThemeTest extends TestCase
 
     public function testGetCSSWithParentTheme()
     {
-        $matches = array();
-        preg_match_all('/href="([^"]+)"/',$this->_themeObjectChild->getCSS(),$matches);
+        $matches = [];
+        preg_match_all('/href="([^"]+)"/', $this->_themeObjectChild->getCSS(), $matches);
         $i = 0;
 
         $this->assertMatchesRegularExpression(
@@ -261,8 +268,8 @@ class SugarThemeTest extends TestCase
 
     public function testGetJS()
     {
-        $matches = array();
-        preg_match_all('/src="([^"]+)"/',$this->_themeObject->getJS(),$matches);
+        $matches = [];
+        preg_match_all('/src="([^"]+)"/', $this->_themeObject->getJS(), $matches);
         $i = 0;
 
         $this->assertMatchesRegularExpression(
@@ -279,8 +286,8 @@ class SugarThemeTest extends TestCase
         create_custom_directory('themes/'.$this->_themeObject->__toString().'/js/');
         file_put_contents('custom/themes/'.$this->_themeObject->__toString().'/js/style.js', 'var x = 1;');
 
-        $matches = array();
-        preg_match_all('/src="([^"]+)"/',$this->_themeObject->getJS(),$matches);
+        $matches = [];
+        preg_match_all('/src="([^"]+)"/', $this->_themeObject->getJS(), $matches);
         $i = 0;
 
         $this->assertMatchesRegularExpression(
@@ -295,8 +302,8 @@ class SugarThemeTest extends TestCase
 
     public function testGetJSWithParentTheme()
     {
-        $matches = array();
-        preg_match_all('/src="([^"]+)"/',$this->_themeObjectChild->getJS(),$matches);
+        $matches = [];
+        preg_match_all('/src="([^"]+)"/', $this->_themeObjectChild->getJS(), $matches);
         $i = 0;
 
         $this->assertMatchesRegularExpression(
@@ -336,8 +343,10 @@ class SugarThemeTest extends TestCase
 
     public function testGetImageURL()
     {
-        $this->assertEquals('themes/'.$this->_themeObject->__toString().'/images/Accounts.gif',
-            $this->_themeObject->getImageURL('Accounts.gif',false));
+        $this->assertEquals(
+            'themes/'.$this->_themeObject->__toString().'/images/Accounts.gif',
+            $this->_themeObject->getImageURL('Accounts.gif', false)
+        );
     }
 
     public function testGetImageURLWithInvalidFileSpecifed()
@@ -350,21 +359,25 @@ class SugarThemeTest extends TestCase
         create_custom_directory('themes/'.$this->_themeObject->__toString().'/images/');
         sugar_touch('custom/themes/'.$this->_themeObject->__toString().'/images/Accounts.gif');
 
-        $this->assertEquals('custom/themes/'.$this->_themeObject->__toString().'/images/Accounts.gif',
-            $this->_themeObject->getImageURL('Accounts.gif',false));
+        $this->assertEquals(
+            'custom/themes/'.$this->_themeObject->__toString().'/images/Accounts.gif',
+            $this->_themeObject->getImageURL('Accounts.gif', false)
+        );
     }
 
     public function testGetImageURLCustomDifferentExtension()
     {
         create_custom_directory('themes/'.$this->_themeObject->__toString().'/images/');
         sugar_touch('custom/themes/'.$this->_themeObject->__toString().'/images/Accounts.png');
-        $this->assertEquals('custom/themes/'.$this->_themeObject->__toString().'/images/Accounts.png',
-            $this->_themeObject->getImageURL('Accounts.gif',false));
+        $this->assertEquals(
+            'custom/themes/'.$this->_themeObject->__toString().'/images/Accounts.png',
+            $this->_themeObject->getImageURL('Accounts.gif', false)
+        );
     }
 
     public function testGetImageURLDefault()
     {
-        $this->assertEquals('themes/default/images/Emails.gif',$this->_themeObject->getImageURL('Emails.gif',false));
+        $this->assertEquals('themes/default/images/Emails.gif', $this->_themeObject->getImageURL('Emails.gif', false));
     }
 
     public function testGetImageURLDefaultCustom()
@@ -372,15 +385,17 @@ class SugarThemeTest extends TestCase
         create_custom_directory('themes/default/images/');
         sugar_touch('custom/themes/default/images/Emails.gif');
 
-        $this->assertEquals('custom/themes/default/images/Emails.gif',
-            $this->_themeObject->getImageURL('Emails.gif',false));
+        $this->assertEquals(
+            'custom/themes/default/images/Emails.gif',
+            $this->_themeObject->getImageURL('Emails.gif', false)
+        );
 
         unlink('custom/themes/default/images/Emails.gif');
     }
 
     public function testGetImageURLNotFound()
     {
-        $this->assertEquals('',$this->_themeObject->getImageURL('NoImageByThisName.gif',false));
+        $this->assertEquals('', $this->_themeObject->getImageURL('NoImageByThisName.gif', false));
     }
 
     public function testGetImageURLAddsJsPathIfSpecified()
@@ -406,14 +421,18 @@ class SugarThemeTest extends TestCase
 
     public function testGetImageURLWithParentTheme()
     {
-        $this->assertEquals('themes/'.$this->_themeObject->__toString().'/images/Accounts.gif',
-            $this->_themeObjectChild->getImageURL('Accounts.gif',false));
+        $this->assertEquals(
+            'themes/'.$this->_themeObject->__toString().'/images/Accounts.gif',
+            $this->_themeObjectChild->getImageURL('Accounts.gif', false)
+        );
     }
 
     public function testGetTemplate()
     {
-        $this->assertEquals('themes/'.$this->_themeObject->__toString().'/tpls/header.tpl',
-            $this->_themeObject->getTemplate('header.tpl'));
+        $this->assertEquals(
+            'themes/'.$this->_themeObject->__toString().'/tpls/header.tpl',
+            $this->_themeObject->getTemplate('header.tpl')
+        );
     }
 
     public function testGetTemplateCustom()
@@ -421,8 +440,10 @@ class SugarThemeTest extends TestCase
         create_custom_directory('themes/'.$this->_themeObject->__toString().'/tpls/');
         sugar_touch('custom/themes/'.$this->_themeObject->__toString().'/tpls/header.tpl');
 
-        $this->assertEquals('custom/themes/'.$this->_themeObject->__toString().'/tpls/header.tpl',
-            $this->_themeObject->getTemplate('header.tpl'));
+        $this->assertEquals(
+            'custom/themes/'.$this->_themeObject->__toString().'/tpls/header.tpl',
+            $this->_themeObject->getTemplate('header.tpl')
+        );
     }
 
     public function testGetTemplateDefaultCustom()
@@ -430,16 +451,20 @@ class SugarThemeTest extends TestCase
         create_custom_directory('themes/default/tpls/');
         sugar_touch('custom/themes/default/tpls/SomeDefaultTemplate.tpl');
 
-        $this->assertEquals('custom/themes/default/tpls/SomeDefaultTemplate.tpl',
-            $this->_themeObject->getTemplate('SomeDefaultTemplate.tpl'));
+        $this->assertEquals(
+            'custom/themes/default/tpls/SomeDefaultTemplate.tpl',
+            $this->_themeObject->getTemplate('SomeDefaultTemplate.tpl')
+        );
 
         unlink('custom/themes/default/tpls/SomeDefaultTemplate.tpl');
     }
 
     public function testGetTemplateWithParentTheme()
     {
-        $this->assertEquals('themes/'.$this->_themeObject->__toString().'/tpls/header.tpl',
-            $this->_themeObjectChild->getTemplate('header.tpl'));
+        $this->assertEquals(
+            'themes/'.$this->_themeObject->__toString().'/tpls/header.tpl',
+            $this->_themeObjectChild->getTemplate('header.tpl')
+        );
     }
 
     public function testGetTemplateNotFound()
@@ -452,8 +477,9 @@ class SugarThemeTest extends TestCase
         $images = $this->_themeObject->getAllImages();
 
         $this->assertEquals(
-            $this->_themeObject->getImageURL('Emails.gif',false),
-            $images['Emails.gif']);
+            $this->_themeObject->getImageURL('Emails.gif', false),
+            $images['Emails.gif']
+        );
     }
 
     public function testGetAllImagesWhenImageIsInParentTheme()
@@ -461,8 +487,9 @@ class SugarThemeTest extends TestCase
         $images = $this->_themeObjectChild->getAllImages();
 
         $this->assertEquals(
-            $this->_themeObjectChild->getImageURL('Accounts.gif',false),
-            $images['Accounts.gif']);
+            $this->_themeObjectChild->getImageURL('Accounts.gif', false),
+            $images['Accounts.gif']
+        );
 
         $this->assertStringContainsString(
             $this->_themeObject->getImagePath(),
@@ -473,15 +500,15 @@ class SugarThemeTest extends TestCase
     public function testGetImageSpecifyingWidthAndHeightAndOtherAttributes()
     {
         $this->assertEquals(
-            $this->_themeObject->getImage('Emails','',20,30,'.gif',"Emails"),
+            $this->_themeObject->getImage('Emails', '', 20, 30, '.gif', "Emails"),
             "<img src=\"". $this->_themeObject->getImageURL('Emails.gif') ."\"  width=\"20\" height=\"30\"  alt=\"Emails\" />"
-            );
+        );
 
         // check again to see if caching of the image size works as expected
         $this->assertEquals(
-            $this->_themeObject->getImage('Emails','',30,40,'.gif',"Emails"),
+            $this->_themeObject->getImage('Emails', '', 30, 40, '.gif', "Emails"),
             "<img src=\"". $this->_themeObject->getImageURL('Emails.gif') ."\"  width=\"30\" height=\"40\"  alt=\"Emails\" />"
-            );
+        );
     }
 
     public function testGetImageWithInvalidImage()

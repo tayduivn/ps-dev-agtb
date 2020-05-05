@@ -24,7 +24,7 @@ class S_503_HealthCheckScannerCasesTestMock extends HealthCheckScannerCasesTestM
 
     protected function getModuleList()
     {
-        return array('503Module');
+        return ['503Module'];
     }
 
     public function tearDown()

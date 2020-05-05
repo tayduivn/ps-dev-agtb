@@ -21,29 +21,29 @@ class PMSEFormResponseParserTest extends TestCase
     protected function setUp() : void
     {
         $this->dataParser = ProcessManager\Factory::getPMSEObject('PMSEFormResponseParser');
-        $this->resultArray = array(
-            array(
+        $this->resultArray = [
+            [
                 'act_uid' => 'fjhsd892ddsdsjxd9891221',
                 'act_id' => 13,
-                'frm_action' => 'APPROVE'
-            ),
-            array(
+                'frm_action' => 'APPROVE',
+            ],
+            [
                 'act_uid' => 'as7yed2839jh9828988912a',
                 'act_id' => 14,
-                'frm_action' => 'REJECT'
-            ),
-            array(
+                'frm_action' => 'REJECT',
+            ],
+            [
                 'act_uid' => 'hjhsd892dj9821j8988912j',
                 'act_id' => 12,
-                'frm_action' => 'ROUTE'
-            )
-        );
+                'frm_action' => 'ROUTE',
+            ],
+        ];
     }
 
     public function testParseCriteriaTokenRoute()
     {
         $dbMock = $this->getMockBuilder('db')
-            ->setMethods(array('Query', 'fetchByAssoc'))
+            ->setMethods(['Query', 'fetchByAssoc'])
             ->getMock();
 
         $dbMock->resultArray = $this->resultArray;
@@ -69,7 +69,7 @@ class PMSEFormResponseParserTest extends TestCase
         $expectedToken = new stdClass();
         $expectedToken->expLabel = '{::_form_::hjhsd892dj9821j8988912j::} == "ROUTE"';
         $expectedToken->expToken = '{::_form_::hjhsd892dj9821j8988912j::}';
-        $expectedToken->currentValue = array('ROUTE');
+        $expectedToken->currentValue = ['ROUTE'];
 
         $resultCriteriaToken = $this->dataParser->parseCriteriaToken($criteriaToken, $args);
         $this->assertEquals($expectedToken->currentValue, $resultCriteriaToken->currentValue);
@@ -78,7 +78,7 @@ class PMSEFormResponseParserTest extends TestCase
     public function testParseCriteriaTokenApprove()
     {
         $dbMock = $this->getMockBuilder('db')
-            ->setMethods(array('Query', 'fetchByAssoc'))
+            ->setMethods(['Query', 'fetchByAssoc'])
             ->getMock();
 
         $dbMock->resultArray = $this->resultArray;
@@ -103,7 +103,7 @@ class PMSEFormResponseParserTest extends TestCase
         $expectedToken = new stdClass();
         $expectedToken->expLabel = '{::_form_::fjhsd892ddsdsjxd9891221::} == "APPROVE"';
         $expectedToken->expToken = '{::_form_::fjhsd892ddsdsjxd9891221::}';
-        $expectedToken->currentValue = array('APPROVE');
+        $expectedToken->currentValue = ['APPROVE'];
 
         $resultCriteriaToken = $this->dataParser->parseCriteriaToken($criteriaToken, $args);
         $this->assertEquals($expectedToken->currentValue, $resultCriteriaToken->currentValue);
@@ -112,7 +112,7 @@ class PMSEFormResponseParserTest extends TestCase
     public function testParseCriteriaTokenReject()
     {
         $dbMock = $this->getMockBuilder('db')
-            ->setMethods(array('Query', 'fetchByAssoc'))
+            ->setMethods(['Query', 'fetchByAssoc'])
             ->getMock();
 
         $dbMock->resultArray = $this->resultArray;
@@ -140,7 +140,7 @@ class PMSEFormResponseParserTest extends TestCase
         $expectedToken = new stdClass();
         $expectedToken->expLabel = '{::_form_::as7yed2839jh9828988912a::} == "REJECT"';
         $expectedToken->expToken = '{::_form_::as7yed2839jh9828988912a::}';
-        $expectedToken->currentValue = array('REJECT');
+        $expectedToken->currentValue = ['REJECT'];
 
         $resultCriteriaToken = $this->dataParser->parseCriteriaToken($criteriaToken, $args);
         $this->assertEquals($expectedToken->currentValue, $resultCriteriaToken->currentValue);
@@ -149,7 +149,7 @@ class PMSEFormResponseParserTest extends TestCase
     public function testParseCriteriaTokens()
     {
         $dbMock = $this->getMockBuilder('db')
-            ->setMethods(array('Query', 'fetchByAssoc'))
+            ->setMethods(['Query', 'fetchByAssoc'])
             ->getMock();
 
         $dbMock->resultArray = $this->resultArray;
@@ -177,9 +177,9 @@ class PMSEFormResponseParserTest extends TestCase
         $expectedToken = new stdClass();
         $expectedToken->expLabel = '{::_form_::as7yed2839jh9828988912a::} == "REJECT"';
         $expectedToken->expToken = '{::_form_::as7yed2839jh9828988912a::}';
-        $expectedToken->currentValue = array('REJECT');
+        $expectedToken->currentValue = ['REJECT'];
         
         $resultCriteriaToken = $this->dataParser->parseCriteriaToken($criteriaToken, $args);
-        $this->assertEquals(array(''), $resultCriteriaToken->currentValue);
+        $this->assertEquals([''], $resultCriteriaToken->currentValue);
     }
 }

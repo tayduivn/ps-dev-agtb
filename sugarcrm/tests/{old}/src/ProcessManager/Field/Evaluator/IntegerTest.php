@@ -52,41 +52,41 @@ class IntegerTest extends TestCase
         $bean->test4 = '955200595';
         $bean->test5 = '8361';
 
-        return array(
+        return [
             // Tests no data value given
-            array(
+            [
                 'bean' => $bean,
                 'name' => 'test1',
-                'data' => array(),
+                'data' => [],
                 'expect' => false,
-            ),
+            ],
             // Tests no bean property set
-            array(
+            [
                 'bean' => $bean,
                 'name' => 'test2',
-                'data' => array('test2' => 335),
+                'data' => ['test2' => 335],
                 'expect' => false,
-            ),
+            ],
             // Tests no change
-            array(
+            [
                 'bean' => $bean,
                 'name' => 'test3',
-                'data' => array('test3' => 12025),
+                'data' => ['test3' => 12025],
                 'expect' => false,
-            ),
+            ],
             // Tests value change
-            array(
+            [
                 'bean' => $bean,
                 'name' => 'test4',
-                'data' => array('test4' => 955200495),
+                'data' => ['test4' => 955200495],
                 'expect' => true,
-            ),
-            array(
+            ],
+            [
                 'bean' => $bean,
                 'name' => 'test5',
-                'data' => array('test5' => 0),
+                'data' => ['test5' => 0],
                 'expect' => true,
-            ),
-        );
+            ],
+        ];
     }
 }

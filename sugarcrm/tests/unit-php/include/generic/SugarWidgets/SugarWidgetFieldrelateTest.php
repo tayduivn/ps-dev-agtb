@@ -27,7 +27,7 @@ class SugarWidgetFieldrelateTest extends TestCase
     public function testQueryFilterEquals()
     {
         $expected = "cases_cstm.user_id_c IN ('seed_sarah_id')";
-        $layoutDef =  array(
+        $layoutDef =  [
             "adhoc" => 1,
             "name" => "user_id_c",
             "table_key" => "self",
@@ -36,9 +36,9 @@ class SugarWidgetFieldrelateTest extends TestCase
             "table_alias" => "cases_cstm",
             "column_key" => "self:owner_c",
             "type" => "relate",
-        );
+        ];
         $reporter = new \stdClass();
-        $reporter->all_fields["self:owner_c"] = array(
+        $reporter->all_fields["self:owner_c"] = [
             "name" => "owner_c",
             "vname" => "LBL_OWNER",
             "type" => "relate",
@@ -51,7 +51,7 @@ class SugarWidgetFieldrelateTest extends TestCase
             "real_table" => "cases_cstm",
             "secondary_table" => "users",
             "rep_rel_name" => "owner_c_0",
-        );
+        ];
         $lm = $this->createPartialMock('LayoutManager', []);
         $lm->setAttributePtr('reporter', $reporter);
         $widgetField = $this->getMockBuilder('SugarWidgetFieldRelate')
@@ -60,7 +60,7 @@ class SugarWidgetFieldrelateTest extends TestCase
             ->getMock();
         $widgetField->expects($this->once())
             ->method('getRelateIds')
-            ->will($this->returnValue(array('seed_sarah_id')));
+            ->will($this->returnValue(['seed_sarah_id']));
         $filter = $widgetField->queryFilterEquals($layoutDef);
         $this->assertEquals($expected, $filter);
     }

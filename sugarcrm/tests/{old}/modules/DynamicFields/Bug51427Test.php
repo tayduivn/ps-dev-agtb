@@ -12,7 +12,7 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once("modules/DynamicFields/FieldCases.php");
+require_once "modules/DynamicFields/FieldCases.php";
 
 
 /**
@@ -37,7 +37,7 @@ class Bug51427Test extends TestCase
         $this->old_dictionary=$dictionary;
         $this->old_bean_list=$bean_list;
         $this->test_standart_field = $this->getMockBuilder('StandardField')
-            ->setMethods(array('loadCustomDef', 'writeVardefExtension'))
+            ->setMethods(['loadCustomDef', 'writeVardefExtension'])
             ->getMock();
         $this->test_standart_field->module='Accounts';
         loadBean($this->test_standart_field->module);
@@ -66,8 +66,10 @@ class Bug51427Test extends TestCase
         $this->test_field->unified_search=false;
         $this->setOptions($opt_common, $opt_field);
         $this->test_standart_field->addFieldObject($this->test_field);
-        $this->assertEquals($assert,(boolean)$this->test_field->unified_search,
-                "\r\n"
+        $this->assertEquals(
+            $assert,
+            (boolean)$this->test_field->unified_search,
+            "\r\n"
                 .'Assertion error: field->unified_search should be `'.($assert ? 'true' : 'false').'` with the following vardef options:'
 
                 ."\r\nvardef[<module>][unified_search_default_enabled] "
@@ -84,128 +86,118 @@ class Bug51427Test extends TestCase
 
     public function providerUnifiedSearchOptions()
     {
-        return array(
-            array(
-                'options_common'=>array(
+        return [
+            [
+                'options_common'=>[
                     'unified_search_default_enabled'=>1,
                     'unified_search'=>1,
-                ),
-                'options_field'=>array(
+                ],
+                'options_field'=>[
                     'unified_search'=>1,
-                ),
+                ],
                 'assert'=>true,
-            ),
-            array(
-                'options_common'=>array(
+            ],
+            [
+                'options_common'=>[
                     'unified_search_default_enabled'=>0,
                     'unified_search'=>1,
-                ),
-                'options_field'=>array(
+                ],
+                'options_field'=>[
                     'unified_search'=>1,
-                ),
+                ],
                 'assert'=>false,
-            ),
-            array(
-                'options_common'=>array(
+            ],
+            [
+                'options_common'=>[
                     'unified_search_default_enabled'=>0,
                     'unified_search'=>0,
-                ),
-                'options_field'=>array(
+                ],
+                'options_field'=>[
                     'unified_search'=>1,
-                ),
+                ],
                 'assert'=>false,
-            ),
-            array(
-                'options_common'=>array(
+            ],
+            [
+                'options_common'=>[
                     'unified_search_default_enabled'=>0,
                     'unified_search'=>0,
-                ),
-                'options_field'=>array(
+                ],
+                'options_field'=>[
                     'unified_search'=>0,
-                ),
+                ],
                 'assert'=>false,
-            ),
-            array(
-                'options_common'=>array(
+            ],
+            [
+                'options_common'=>[
                     'unified_search_default_enabled'=>0,
                     'unified_search'=>1,
-                ),
-                'options_field'=>array(
+                ],
+                'options_field'=>[
                     'unified_search'=>0,
-                ),
+                ],
                 'assert'=>false,
-            ),
-            array(
-                'options_common'=>array(
+            ],
+            [
+                'options_common'=>[
                     'unified_search_default_enabled'=>0,
                     'unified_search'=>0,
-                ),
-                'options_field'=>array(
+                ],
+                'options_field'=>[
                     'unified_search'=>1,
-                ),
+                ],
                 'assert'=>false,
-            ),
-            array(
-                'options_common'=>array(
+            ],
+            [
+                'options_common'=>[
                     'unified_search_default_enabled'=>1,
                     'unified_search'=>1,
-                ),
-                'options_field'=>array(
+                ],
+                'options_field'=>[
                      'unified_search'=>-1,
-                ),
+                ],
                 'assert'=>true,
-            ),
-            array(
-                'options_common'=>array(
+            ],
+            [
+                'options_common'=>[
                     'unified_search_default_enabled'=>1,
                     'unified_search'=>-1,
-                ),
-                'options_field'=>array(
+                ],
+                'options_field'=>[
                     'unified_search'=>1,
-                ),
+                ],
                 'assert'=>false,
-            ),
-            array(
-                'options_common'=>array(
+            ],
+            [
+                'options_common'=>[
                     'unified_search_default_enabled'=>-1,
                     'unified_search'=>1,
-                ),
-                'options_field'=>array(
+                ],
+                'options_field'=>[
                     'unified_search'=>1,
-                ),
+                ],
                 'assert'=>false,
-            ),
-        );
+            ],
+        ];
     }
 
     private function setOptions(array $opt_common, array $opt_field)
     {
         global $dictionary;
         $dictionary=$this->old_dictionary;
-        if(!empty($opt_common))
-        {
-            foreach($opt_common as $k=>$v)
-            {
-                if($v===-1)
-                {
+        if (!empty($opt_common)) {
+            foreach ($opt_common as $k => $v) {
+                if ($v===-1) {
                     unset($dictionary[$this->bean_name][$k]);
-                }
-                else
-                {
+                } else {
                     $dictionary[$this->bean_name][$k]=$v;
                 }
             }
         }
-        if(!empty($opt_field))
-        {
-            foreach($opt_field as $k=>$v)
-            {
-                if($v===-1)
-                {
+        if (!empty($opt_field)) {
+            foreach ($opt_field as $k => $v) {
+                if ($v===-1) {
                     unset($dictionary[$this->bean_name]['fields'][$this->test_field->name][$k]);
-                }
-                else
-                {
+                } else {
                     $dictionary[$this->bean_name]['fields'][$this->test_field->name][$k]=$v;
                 }
             }

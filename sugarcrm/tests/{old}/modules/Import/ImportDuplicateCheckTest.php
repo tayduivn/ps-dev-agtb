@@ -16,14 +16,14 @@ class ImportDuplicateCheckTest extends TestCase
 {
     protected function setUp() : void
     {
-        $beanList = array();
-        $beanFiles = array();
-        require('include/modules.php');
+        $beanList = [];
+        $beanFiles = [];
+        require 'include/modules.php';
         $GLOBALS['beanList'] = $beanList;
         $GLOBALS['beanFiles'] = $beanFiles;
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-        $app_strings = array();
-        require('include/language/en_us.lang.php');
+        $app_strings = [];
+        require 'include/language/en_us.lang.php';
         $GLOBALS['app_strings'] = $app_strings;
     }
     
@@ -47,13 +47,13 @@ class ImportDuplicateCheckTest extends TestCase
 
         //Ensure we can't import users with existing user_names
         $idc = new ImportDuplicateCheck($duplicatedFocus);
-        $this->assertTrue($idc->isADuplicateRecord(array('idx_user_name')));
+        $this->assertTrue($idc->isADuplicateRecord(['idx_user_name']));
 
         //Ensure we can still import users with valid user names
         $notDuplicatedFocus = BeanFactory::newBean('Users');
         $notDuplicatedFocus->user_name = 'new_user_name_ '.mt_rand();
         $idcNonDupe     = new ImportDuplicateCheck($notDuplicatedFocus);
-        $this->assertFalse($idcNonDupe->isADuplicateRecord(array('idx_user_name')));
+        $this->assertFalse($idcNonDupe->isADuplicateRecord(['idx_user_name']));
     }
 
     public function testGetDuplicateCheckIndexesWithEmail()
@@ -62,14 +62,14 @@ class ImportDuplicateCheckTest extends TestCase
         
         $idc     = new ImportDuplicateCheck($focus);
         $indexes = $idc->getDuplicateCheckIndexes();
-        foreach ($focus->getIndices() AS $key => $index) {
+        foreach ($focus->getIndices() as $key => $index) {
             $moduleIndexes[$index['name']] = true;
         }
-        foreach ($indexes AS $name => $fields) {
+        foreach ($indexes as $name => $fields) {
             if (stristr($name, 'special')) {
                 continue;
             }
-            $this->assertArrayHasKey($name, $moduleIndexes, "Couldn't find index by: {$name}");    
+            $this->assertArrayHasKey($name, $moduleIndexes, "Couldn't find index by: {$name}");
         }
 
 
@@ -83,14 +83,14 @@ class ImportDuplicateCheckTest extends TestCase
         
         $idc     = new ImportDuplicateCheck($focus);
         $indexes = $idc->getDuplicateCheckIndexes();
-        foreach ($focus->getIndices() AS $key => $index) {
+        foreach ($focus->getIndices() as $key => $index) {
             $moduleIndexes[$index['name']] = true;
         }
-        foreach ($indexes AS $name => $fields) {
+        foreach ($indexes as $name => $fields) {
             if (stristr($name, 'special')) {
                 continue;
             }
-            $this->assertArrayHasKey($name, $moduleIndexes, "Couldn't find index by: {$name}");    
+            $this->assertArrayHasKey($name, $moduleIndexes, "Couldn't find index by: {$name}");
         }
 
         $this->assertFalse(isset($indexes['special_idx_email1']));
@@ -111,7 +111,7 @@ class ImportDuplicateCheckTest extends TestCase
         
         $idc = new ImportDuplicateCheck($focus);
         
-        $this->assertTrue($idc->isADuplicateRecord(array('idx_contacts_del_last::last_name')));
+        $this->assertTrue($idc->isADuplicateRecord(['idx_contacts_del_last::last_name']));
         
         $focus->mark_deleted($id);
     }
@@ -129,7 +129,7 @@ class ImportDuplicateCheckTest extends TestCase
         
         $idc = new ImportDuplicateCheck($focus);
         
-        $this->assertTrue($idc->isADuplicateRecord(array('special_idx_email')));
+        $this->assertTrue($idc->isADuplicateRecord(['special_idx_email']));
         
         $focus->mark_deleted($id);
     }
@@ -143,7 +143,7 @@ class ImportDuplicateCheckTest extends TestCase
         
         $idc = new ImportDuplicateCheck($focus);
         
-        $this->assertFalse($idc->isADuplicateRecord(array('idx_contacts_del_last::'.$last_name)));
+        $this->assertFalse($idc->isADuplicateRecord(['idx_contacts_del_last::'.$last_name]));
     }
     
     public function testIsADuplicateRecordEmailNotFound()
@@ -155,7 +155,7 @@ class ImportDuplicateCheckTest extends TestCase
         
         $idc = new ImportDuplicateCheck($focus);
         
-        $this->assertFalse($idc->isADuplicateRecord(array('special_idx_email1')));
+        $this->assertFalse($idc->isADuplicateRecord(['special_idx_email1']));
     }
 
     //make sure exclusion array is respected when displaying the list of available indexes for dupe checking
@@ -172,9 +172,9 @@ class ImportDuplicateCheckTest extends TestCase
 
 
         //grab any custom indexes if they exist
-        if($focus->hasCustomFields()){
+        if ($focus->hasCustomFields()) {
             $custmIndexes = $focus->db->helper->get_indices($focus->table_name.'_cstm');
-            $indexes = array_merge($custmIndexes,$indexes);
+            $indexes = array_merge($custmIndexes, $indexes);
         }
 
         //get list indexes to be displayed
@@ -208,12 +208,12 @@ class ImportDuplicateCheckTest extends TestCase
         $msg .= 'failed  (returned false instead of true).';
         //lets do a straight dupe check with the same bean on first name, should return true
         $this->assertTrue(
-            $idc->isADuplicateRecord(array('idx_contacts_last_first::first_name')),
+            $idc->isADuplicateRecord(['idx_contacts_last_first::first_name']),
             $msg
         );
 
         //now lets test on full name index should also return true
-        $this->assertTrue($idc->isADuplicateRecord(array('full_name::full_name')),'first simulated check against full name index (full_name::full_name) failed (returned false instead of true).  This check means BOTH first AND last name must match.');
+        $this->assertTrue($idc->isADuplicateRecord(['full_name::full_name']), 'first simulated check against full name index (full_name::full_name) failed (returned false instead of true).  This check means BOTH first AND last name must match.');
 
         //now lets remove the first name and redo the check, should return false
         $focus->first_name = '';
@@ -222,18 +222,18 @@ class ImportDuplicateCheckTest extends TestCase
         $msg .= 'failed (returned true instead of false).  This is wrong because ';
         $msg .= 'we removed the first name so there should be no match.';
         $this->assertFalse(
-            $idc->isADuplicateRecord(array('idx_contacts_last_first::first_name')),
+            $idc->isADuplicateRecord(['idx_contacts_last_first::first_name']),
             $msg
         );
 
         //lets retest on full name index should return false now as first AND last do not match the original
-        $this->assertFalse($idc->isADuplicateRecord(array('full_name::full_name')),'second simulated check against full name index (full_name::full_name) failed (returned true instead of false).  This check means BOTH first AND last name must match and is wrong because we removed the first name so there should be no match.');
+        $this->assertFalse($idc->isADuplicateRecord(['full_name::full_name']), 'second simulated check against full name index (full_name::full_name) failed (returned true instead of false).  This check means BOTH first AND last name must match and is wrong because we removed the first name so there should be no match.');
 
         //now lets rename the contact and test on assigned user, should return true
         $focus->first_name = 'first '.date("YmdHis");
         $focus->last_name = 'last '.date("YmdHis");
         $idc = new ImportDuplicateCheck($focus);
-        $this->assertTrue($idc->isADuplicateRecord(array('idx_del_id_user::assigned_user_id')),'simulated check against assigned user index (idx_del_id_user::assigned_user_id) failed (returned false instead of true).  This is wrong because we have not changed this field and it should remain a duplicate');
+        $this->assertTrue($idc->isADuplicateRecord(['idx_del_id_user::assigned_user_id']), 'simulated check against assigned user index (idx_del_id_user::assigned_user_id) failed (returned false instead of true).  This is wrong because we have not changed this field and it should remain a duplicate');
 
         //we're done, lets delete the focus bean now
         $focus->mark_deleted($focus->id);

@@ -34,13 +34,13 @@ class OAuthKeysAclTest extends TestCase
         $testBean = BeanFactory::newBean('OAuthKeys');
         
         $canCreate = $testBean->ACLAccess('create');
-        $this->assertTrue($canCreate,"Should be able to create a new record.");
+        $this->assertTrue($canCreate, "Should be able to create a new record.");
 
-        $canCreateType = $testBean->ACLFieldAccess('oauth_type','create');
-        $this->assertTrue($canCreateType,"Should be able to create oauth_type");
+        $canCreateType = $testBean->ACLFieldAccess('oauth_type', 'create');
+        $this->assertTrue($canCreateType, "Should be able to create oauth_type");
 
-        $canCreateName = $testBean->ACLFieldAccess('name','create');
-        $this->assertTrue($canCreateName,"Should be able to create name");
+        $canCreateName = $testBean->ACLFieldAccess('name', 'create');
+        $this->assertTrue($canCreateName, "Should be able to create name");
     }
 
     public function testEdit()
@@ -51,13 +51,13 @@ class OAuthKeysAclTest extends TestCase
         $testBean->c_key = "midnight_train";
         
         $canEdit = $testBean->ACLAccess('edit');
-        $this->assertTrue($canEdit,"Should be able to edit an existing record.");
+        $this->assertTrue($canEdit, "Should be able to edit an existing record.");
 
-        $canEditType = $testBean->ACLFieldAccess('oauth_type','edit');
-        $this->assertFalse($canEditType,"Should not be able to edit oauth_type");
+        $canEditType = $testBean->ACLFieldAccess('oauth_type', 'edit');
+        $this->assertFalse($canEditType, "Should not be able to edit oauth_type");
 
-        $canEditName = $testBean->ACLFieldAccess('name','edit');
-        $this->assertTrue($canEditName,"Should be able to edit name");
+        $canEditName = $testBean->ACLFieldAccess('name', 'edit');
+        $this->assertTrue($canEditName, "Should be able to edit name");
     }
  
     public function testSpecialCKey()
@@ -68,6 +68,6 @@ class OAuthKeysAclTest extends TestCase
         $testBean->c_key = "sugar";
         
         $canEdit = $testBean->ACLAccess('edit');
-        $this->assertFalse($canEdit,"Should not be able to edit a record with a c_key of 'sugar'");
+        $this->assertFalse($canEdit, "Should not be able to edit a record with a c_key of 'sugar'");
     }
 }

@@ -22,7 +22,7 @@ class SugarThemeRegistryTest extends TestCase
     protected function setUp() : void
     {
         $this->_themeName = SugarTestThemeUtilities::createAnonymousTheme();
-        if ( isset($GLOBALS['sugar_config']['default_theme']) ) {
+        if (isset($GLOBALS['sugar_config']['default_theme'])) {
             $this->_oldDefaultTheme = $GLOBALS['sugar_config']['default_theme'];
         }
         $GLOBALS['sugar_config']['default_theme'] = $this->_themeName;
@@ -32,7 +32,7 @@ class SugarThemeRegistryTest extends TestCase
     protected function tearDown() : void
     {
         SugarTestThemeUtilities::removeAllCreatedAnonymousThemes();
-        if ( isset($this->_oldDefaultTheme) ) {
+        if (isset($this->_oldDefaultTheme)) {
             $GLOBALS['sugar_config']['default_theme'] = $this->_oldDefaultTheme;
             SugarThemeRegistry::set($GLOBALS['sugar_config']['default_theme']);
         }
@@ -47,8 +47,8 @@ class SugarThemeRegistryTest extends TestCase
     {
         $object = SugarThemeRegistry::get($this->_themeName);
 
-        $this->assertInstanceOf('SugarTheme',$object);
-        $this->assertEquals($object->__toString(),$this->_themeName);
+        $this->assertInstanceOf('SugarTheme', $object);
+        $this->assertEquals($object->__toString(), $this->_themeName);
     }
 
     /**
@@ -60,8 +60,8 @@ class SugarThemeRegistryTest extends TestCase
 
         $object = SugarThemeRegistry::getDefault();
 
-        $this->assertInstanceOf('SugarTheme',$object);
-        $this->assertEquals($object->__toString(),$this->_themeName);
+        $this->assertInstanceOf('SugarTheme', $object);
+        $this->assertEquals($object->__toString(), $this->_themeName);
     }
 
     /**
@@ -69,7 +69,7 @@ class SugarThemeRegistryTest extends TestCase
      */
     public function testGetDefaultDisabledThemeObject()
     {
-        if ( isset($GLOBALS['sugar_config']['disabled_themes']) ) {
+        if (isset($GLOBALS['sugar_config']['disabled_themes'])) {
             $disabled_themes = $GLOBALS['sugar_config']['disabled_themes'];
             unset($GLOBALS['sugar_config']['disabled_themes']);
         }
@@ -78,9 +78,9 @@ class SugarThemeRegistryTest extends TestCase
         $GLOBALS['sugar_config']['default_theme'] = $this->_themeName;
 
         $object = SugarThemeRegistry::getDefault();
-        $this->assertNotEquals($object->__toString(),$this->_themeName);
+        $this->assertNotEquals($object->__toString(), $this->_themeName);
 
-        if ( isset($disabled_themes) ) {
+        if (isset($disabled_themes)) {
             $GLOBALS['sugar_config']['disabled_themes'] = $disabled_themes;
         }
     }
@@ -96,21 +96,21 @@ class SugarThemeRegistryTest extends TestCase
 
         $object = SugarThemeRegistry::getDefault();
 
-        $this->assertInstanceOf('SugarTheme',$object);
-        $this->assertEquals($object->__toString(),$themename);
+        $this->assertInstanceOf('SugarTheme', $object);
+        $this->assertEquals($object->__toString(), $themename);
     }
 
     public function testSetCurrentTheme()
     {
         SugarThemeRegistry::set($this->_themeName);
 
-        $this->assertInstanceOf('SugarTheme',SugarThemeRegistry::current());
-        $this->assertEquals(SugarThemeRegistry::current()->__toString(),$this->_themeName);
+        $this->assertInstanceOf('SugarTheme', SugarThemeRegistry::current());
+        $this->assertEquals(SugarThemeRegistry::current()->__toString(), $this->_themeName);
     }
 
     public function testInListOfAvailableThemes()
     {
-        if ( isset($GLOBALS['sugar_config']['disabled_themes']) ) {
+        if (isset($GLOBALS['sugar_config']['disabled_themes'])) {
             $disabled_themes = $GLOBALS['sugar_config']['disabled_themes'];
             unset($GLOBALS['sugar_config']['disabled_themes']);
         }
@@ -122,14 +122,14 @@ class SugarThemeRegistryTest extends TestCase
         $themes = SugarThemeRegistry::allThemes();
         $this->assertTrue(isset($themes[$this->_themeName]));
 
-        if ( isset($disabled_themes) ) {
+        if (isset($disabled_themes)) {
             $GLOBALS['sugar_config']['disabled_themes'] = $disabled_themes;
         }
     }
 
     public function testDisabledThemeNotInListOfAvailableThemes()
     {
-        if ( isset($GLOBALS['sugar_config']['disabled_themes']) ) {
+        if (isset($GLOBALS['sugar_config']['disabled_themes'])) {
             $disabled_themes = $GLOBALS['sugar_config']['disabled_themes'];
             unset($GLOBALS['sugar_config']['disabled_themes']);
         }
@@ -143,8 +143,9 @@ class SugarThemeRegistryTest extends TestCase
         $themes = SugarThemeRegistry::allThemes();
         $this->assertTrue(isset($themes[$this->_themeName]));
 
-        if ( isset($disabled_themes) )
+        if (isset($disabled_themes)) {
             $GLOBALS['sugar_config']['disabled_themes'] = $disabled_themes;
+        }
     }
 
     public function testCustomThemeLoaded()
@@ -156,20 +157,20 @@ class SugarThemeRegistryTest extends TestCase
         $this->assertEquals(
             SugarThemeRegistry::get($customTheme)->name,
             'custom ' . $customTheme
-            );
+        );
     }
 
     public function testDefaultThemedefFileHandled()
     {
         create_custom_directory('themes/default/');
-        sugar_file_put_contents('custom/themes/default/themedef.php','<?php $themedef = array("group_tabs" => false);');
+        sugar_file_put_contents('custom/themes/default/themedef.php', '<?php $themedef = array("group_tabs" => false);');
 
         SugarThemeRegistry::buildRegistry();
 
         $this->assertEquals(
             SugarThemeRegistry::get($this->_themeName)->group_tabs,
             false
-            );
+        );
 
         unlink('custom/themes/default/themedef.php');
     }
@@ -177,14 +178,18 @@ class SugarThemeRegistryTest extends TestCase
     public function testClearCacheAllThemes()
     {
         SugarThemeRegistry::get($this->_themeName)->getCSSURL('style.css');
-        $this->assertTrue(isset(SugarThemeRegistry::get($this->_themeName)->_cssCache['style.css']),
-                            'File style.css should exist in cache');
+        $this->assertTrue(
+            isset(SugarThemeRegistry::get($this->_themeName)->_cssCache['style.css']),
+            'File style.css should exist in cache'
+        );
 
         SugarThemeRegistry::clearAllCaches();
         SugarThemeRegistry::buildRegistry();
 
-        $this->assertFalse(isset(SugarThemeRegistry::get($this->_themeName)->_cssCache['style.css']),
-                            'File style.css shouldn\'t exist in cache');
+        $this->assertFalse(
+            isset(SugarThemeRegistry::get($this->_themeName)->_cssCache['style.css']),
+            'File style.css shouldn\'t exist in cache'
+        );
     }
 
     /**

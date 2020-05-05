@@ -19,20 +19,20 @@ class QuotesApiHelperTest extends TestCase
      */
     protected $helper;
 
-    private $_address_fields = array(
+    private $_address_fields = [
         'address_street',
         'address_city',
         'address_state',
         'address_street',
-        'address_street'
-    );
+        'address_street',
+    ];
 
     protected function setUp() : void
     {
         $mock_service = new QuotesServiceMock();
         $mock_service->user = SugarTestHelper::setUp('current_user');
 
-        $this->helper = $this->getMockBuilder('QuotesApiHelper')->setMethods(array('execute'))->setConstructorArgs(array($mock_service))->getMock();
+        $this->helper = $this->getMockBuilder('QuotesApiHelper')->setMethods(['execute'])->setConstructorArgs([$mock_service])->getMock();
     }
 
     protected function tearDown() : void
@@ -49,15 +49,15 @@ class QuotesApiHelperTest extends TestCase
 
         /* @var $bean Quote */
         $bean = $this->getMockBuilder('Quote')
-            ->setMethods(array('save'))
+            ->setMethods(['save'])
             ->getMock();
 
-        $data = array(
+        $data = [
             "name" => 'test_quote' . time(),
             "assigned_user_id" => $GLOBALS['current_user']->id,
             "date_quote_expected_closed" => TimeDate::getInstance()->getNow()->asDbDate(),
-            'billing_account_id' => $account->id
-        );
+            'billing_account_id' => $account->id,
+        ];
 
         $this->helper->populateFromApi($bean, $data);
 
@@ -74,15 +74,15 @@ class QuotesApiHelperTest extends TestCase
 
         /* @var $bean Quote */
         $bean = $this->getMockBuilder('Quote')
-            ->setMethods(array('save'))
+            ->setMethods(['save'])
             ->getMock();
 
-        $data = array(
+        $data = [
             "name" => 'test_quote' . time(),
             "assigned_user_id" => $GLOBALS['current_user']->id,
             "date_quote_expected_closed" => TimeDate::getInstance()->getNow()->asDbDate(),
-            'billing_account_id' => $account->id
-        );
+            'billing_account_id' => $account->id,
+        ];
 
         $this->helper->populateFromApi($bean, $data);
 
@@ -103,15 +103,15 @@ class QuotesApiHelperTest extends TestCase
 
         /* @var $bean Quote */
         $bean = $this->getMockBuilder('Quote')
-            ->setMethods(array('save'))
+            ->setMethods(['save'])
             ->getMock();
 
-        $data = array(
+        $data = [
             "name" => 'test_quote' . time(),
             "assigned_user_id" => $GLOBALS['current_user']->id,
             "date_quote_expected_closed" => TimeDate::getInstance()->getNow()->asDbDate(),
             'billing_account_id' => $account->id,
-        );
+        ];
 
         $this->helper->populateFromApi($bean, $data);
 
@@ -135,10 +135,10 @@ class QuotesApiHelperTest extends TestCase
 
         /* @var $bean Quote */
         $bean = $this->getMockBuilder('Quote')
-            ->setMethods(array('save'))
+            ->setMethods(['save'])
             ->getMock();
 
-        $data = array(
+        $data = [
             "name" => 'test_quote' . time(),
             "assigned_user_id" => $GLOBALS['current_user']->id,
             "date_quote_expected_closed" => TimeDate::getInstance()->getNow()->asDbDate(),
@@ -146,7 +146,7 @@ class QuotesApiHelperTest extends TestCase
             'billing_contact_id' => $contact->id,
             'shipping_account_id' => $account->id,
             'shipping_contact_id' => $contact->id,
-        );
+        ];
 
         $this->helper->populateFromApi($bean, $data);
 
@@ -166,7 +166,7 @@ class QuotesApiHelperTest extends TestCase
 
     private function fillAddressForAccount($account, $address = 'billing')
     {
-        $address = in_array($address, array('billing', 'shipping')) ? $address : 'billing';
+        $address = in_array($address, ['billing', 'shipping']) ? $address : 'billing';
         $time = time();
         foreach ($this->_address_fields as $_field) {
             $_field = $address . '_' . $_field;
@@ -177,7 +177,7 @@ class QuotesApiHelperTest extends TestCase
 
     private function fillAddressForContact($contact, $address = 'primary')
     {
-        $address = in_array($address, array('primary', 'alt')) ? $address : 'primary';
+        $address = in_array($address, ['primary', 'alt']) ? $address : 'primary';
         $time = time();
         foreach ($this->_address_fields as $_field) {
             $_field = $address . '_' . $_field;

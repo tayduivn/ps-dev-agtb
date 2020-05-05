@@ -27,22 +27,22 @@ class BugPAT667Test extends TestCase
     /**
      * @var array
      */
-    private static $custom_field_def = array(
+    private static $custom_field_def = [
         'name'        => 'test_bugpat667',
         'type'        => 'multienum',
         'module'      => 'ModuleBuilder',
         'view_module' => 'Accounts',
         'options'     => 'aaa_list',
         'default'     => '^Consultants^,^International Consultants^',
-    );
+    ];
 
     /**
      * @inheritDoc
      */
     protected function setUp() : void
     {
-        SugarTestHelper::setUp('current_user', array(true, 1));
-        SugarTestHelper::setUp('custom_field', array('Accounts', static::$custom_field_def));
+        SugarTestHelper::setUp('current_user', [true, 1]);
+        SugarTestHelper::setUp('custom_field', ['Accounts', static::$custom_field_def]);
 
         $this->report = new Report();
         $this->report->layout_manager->setAttribute("context", "Filter");
@@ -62,15 +62,15 @@ class BugPAT667Test extends TestCase
     public function testReportsFilterMultienum()
     {
         $res = '';
-        $data = array(
+        $data = [
             "operator" => "AND",
-            0 => array(
+            0 => [
                 "name" => self::$custom_field_def['name'] . '_c',
                 "table_key" => "self",
                 "qualifier_name" => "one_of",
-                "input_name0" => array("Consultants")
-            )
-        );
+                "input_name0" => ["Consultants"],
+            ],
+        ];
 
         $expected = "LIKE '%^Consultants^%'";
         $this->report->filtersIterate($data, $res);

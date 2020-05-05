@@ -22,7 +22,7 @@ class Bug32797Test extends TestCase
     protected function setUp() : void
     {
         $this->_old_sugar_config = $GLOBALS['sugar_config'];
-        $GLOBALS['sugar_config'] = array('require_accounts' => false);
+        $GLOBALS['sugar_config'] = ['require_accounts' => false];
     }
 
     protected function tearDown() : void
@@ -34,36 +34,36 @@ class Bug32797Test extends TestCase
 
     public function vardefProvider()
     {
-        return array(
-            array(
-                array('fields' => array('account_name' => array('type'=> 'relate', 'required' => true))),
-                array('fields' => array('account_name' => array('type'=> 'relate', 'required' => false)))
-            ),
-            array(
-                array('fields' => array('account_name' => array('type'=> 'relate', 'required' => false))),
-                array('fields' => array('account_name' => array('type'=> 'relate', 'required' => false)))
-            ),
-            array(
-                array('fields' => array('account_name' => array('type'=> 'relate', 'required' => null))),
-                array('fields' => array('account_name' => array('type'=> 'relate', 'required' => false)))
-            ),
-            array(
-                array('fields' => array('account_name' => array('type'=> 'varchar', 'required' => true))),
-                array('fields' => array('account_name' => array('type'=> 'varchar', 'required' => true)))
-            ),
-            array(
-                array('fields' => array('account_name' => array('type'=> 'varchar', 'required' => false))),
-                array('fields' => array('account_name' => array('type'=> 'varchar', 'required' => false)))
-            ),
-            array(
-                array('fields' => array('account_name' => array())),
-                array('fields' => array('account_name' => array()))
-            ),
-            array(
-                array('fields' => array()),
-                array('fields' => array())
-            )
-        );
+        return [
+            [
+                ['fields' => ['account_name' => ['type'=> 'relate', 'required' => true]]],
+                ['fields' => ['account_name' => ['type'=> 'relate', 'required' => false]]],
+            ],
+            [
+                ['fields' => ['account_name' => ['type'=> 'relate', 'required' => false]]],
+                ['fields' => ['account_name' => ['type'=> 'relate', 'required' => false]]],
+            ],
+            [
+                ['fields' => ['account_name' => ['type'=> 'relate', 'required' => null]]],
+                ['fields' => ['account_name' => ['type'=> 'relate', 'required' => false]]],
+            ],
+            [
+                ['fields' => ['account_name' => ['type'=> 'varchar', 'required' => true]]],
+                ['fields' => ['account_name' => ['type'=> 'varchar', 'required' => true]]],
+            ],
+            [
+                ['fields' => ['account_name' => ['type'=> 'varchar', 'required' => false]]],
+                ['fields' => ['account_name' => ['type'=> 'varchar', 'required' => false]]],
+            ],
+            [
+                ['fields' => ['account_name' => []]],
+                ['fields' => ['account_name' => []]],
+            ],
+            [
+                ['fields' => []],
+                ['fields' => []],
+            ],
+        ];
     }
 
     /**
@@ -76,24 +76,24 @@ class Bug32797Test extends TestCase
 
     public function vardefProvider1()
     {
-        return array(
-            array(
-                array('fields' => array('account_name' => array('type'=> 'relate', 'required' => true))),
-                array('fields' => array('account_name' => array('type'=> 'relate', 'required' => true)))
-            ),
-            array(
-                array('fields' => array('account_name' => array('type'=> 'relate', 'required' => false))),
-                array('fields' => array('account_name' => array('type'=> 'relate', 'required' => true)))
-            ),
-            array(
-                array('fields' => array('account_name' => array('type'=> 'varchar', 'required' => true))),
-                array('fields' => array('account_name' => array('type'=> 'varchar', 'required' => true)))
-            ),
-            array(
-                array('fields' => array('account_name' => array('type'=> 'varchar', 'required' => false))),
-                array('fields' => array('account_name' => array('type'=> 'varchar', 'required' => false)))
-            )
-        );
+        return [
+            [
+                ['fields' => ['account_name' => ['type'=> 'relate', 'required' => true]]],
+                ['fields' => ['account_name' => ['type'=> 'relate', 'required' => true]]],
+            ],
+            [
+                ['fields' => ['account_name' => ['type'=> 'relate', 'required' => false]]],
+                ['fields' => ['account_name' => ['type'=> 'relate', 'required' => true]]],
+            ],
+            [
+                ['fields' => ['account_name' => ['type'=> 'varchar', 'required' => true]]],
+                ['fields' => ['account_name' => ['type'=> 'varchar', 'required' => true]]],
+            ],
+            [
+                ['fields' => ['account_name' => ['type'=> 'varchar', 'required' => false]]],
+                ['fields' => ['account_name' => ['type'=> 'varchar', 'required' => false]]],
+            ],
+        ];
     }
 
     /**
@@ -107,24 +107,24 @@ class Bug32797Test extends TestCase
 
     public function vardefProvider2()
     {
-        return array(
-            array(
-                array('fields' => array('account_name' => array('type'=> 'relate', 'required' => true))),
-                array('fields' => array('account_name' => array('type'=> 'relate', 'required' => true)))
-            ),
-            array(
-                array('fields' => array('account_name' => array('type'=> 'relate', 'required' => false))),
-                array('fields' => array('account_name' => array('type'=> 'relate', 'required' => false)))
-            ),
-            array(
-                array('fields' => array('account_name' => array('type'=> 'varchar', 'required' => false))),
-                array('fields' => array('account_name' => array('type'=> 'varchar', 'required' => false)))
-            ),
-            array(
-                array('fields' => array('account_name' => array('type'=> 'varchar', 'required' => true))),
-                array('fields' => array('account_name' => array('type'=> 'varchar', 'required' => true)))
-            )
-        );
+        return [
+            [
+                ['fields' => ['account_name' => ['type'=> 'relate', 'required' => true]]],
+                ['fields' => ['account_name' => ['type'=> 'relate', 'required' => true]]],
+            ],
+            [
+                ['fields' => ['account_name' => ['type'=> 'relate', 'required' => false]]],
+                ['fields' => ['account_name' => ['type'=> 'relate', 'required' => false]]],
+            ],
+            [
+                ['fields' => ['account_name' => ['type'=> 'varchar', 'required' => false]]],
+                ['fields' => ['account_name' => ['type'=> 'varchar', 'required' => false]]],
+            ],
+            [
+                ['fields' => ['account_name' => ['type'=> 'varchar', 'required' => true]]],
+                ['fields' => ['account_name' => ['type'=> 'varchar', 'required' => true]]],
+            ],
+        ];
     }
 
     /**

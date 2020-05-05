@@ -38,7 +38,7 @@ class Bug43683Test extends TestCase
     }
 
     /**
-     * @group	bug43683
+     * @group   bug43683
      */
     public function testAddUserToTeamWithManagers()
     {

@@ -54,9 +54,9 @@ class InputParameterValidatorTest extends AbstractConstraintValidatorTest
      */
     public function testExpectValidInputType()
     {
-        $constraint = new InputParameters(array(
+        $constraint = new InputParameters([
             'inputType' => 'foobar',
-        ));
+        ]);
 
         $this->expectException(ConstraintDefinitionException::class);
         $this->validator->validate('xyz', $constraint);
@@ -69,9 +69,9 @@ class InputParameterValidatorTest extends AbstractConstraintValidatorTest
      */
     public function testValidValues($type, $value)
     {
-        $constraint = new InputParameters(array(
+        $constraint = new InputParameters([
             'inputType' => $type,
-        ));
+        ]);
 
         $this->validator->validate($value, $constraint);
         $this->assertNoViolation();
@@ -79,11 +79,11 @@ class InputParameterValidatorTest extends AbstractConstraintValidatorTest
 
     public function providerTestValidValues()
     {
-        return array(
-            array(Superglobals::GET, 'helloworld'),
-            array(Superglobals::POST, array('foo', 'bar')),
-            array(Superglobals::REQUEST, array(array('foo', 'bar'))),
-        );
+        return [
+            [Superglobals::GET, 'helloworld'],
+            [Superglobals::POST, ['foo', 'bar']],
+            [Superglobals::REQUEST, [['foo', 'bar']]],
+        ];
     }
 
     /**
@@ -94,15 +94,14 @@ class InputParameterValidatorTest extends AbstractConstraintValidatorTest
      */
     public function testInvalidValues($type, $code, $value, $msg, array $expectedViolations)
     {
-        $constraint = new InputParameters(array(
+        $constraint = new InputParameters([
             $msg => 'testMessage',
             'inputType' => $type,
-        ));
+        ]);
 
         $this->validator->validate($value, $constraint);
 
         foreach ($expectedViolations as $expectedViolation) {
-
             if (empty($violations)) {
                 $violations = $this->buildViolation('testMessage')
                     ->setCode($code)
@@ -121,39 +120,39 @@ class InputParameterValidatorTest extends AbstractConstraintValidatorTest
 
     public function providerTestInvalidValues()
     {
-        return array(
+        return [
 
             // generic non-scalar tests
-            array(
+            [
                 Superglobals::GET,
                 InputParameters::ERROR_GET,
                 new \stdClass(),
                 'msgGeneric',
-                array(new \stdClass()),
-            ),
+                [new \stdClass()],
+            ],
 
             // null byte tests
-            array(
+            [
                 Superglobals::GET,
                 InputParameters::ERROR_GET,
                 'test.php' . chr(0) . '.gif',
                 'msgNullBytes',
-                array('test.php' . chr(0) . '.gif'),
-            ),
-            array(
+                ['test.php' . chr(0) . '.gif'],
+            ],
+            [
                 Superglobals::POST,
                 InputParameters::ERROR_POST,
                 chr(0) . '.gif',
                 'msgNullBytes',
-                array(chr(0) . '.gif'),
-            ),
-            array(
+                [chr(0) . '.gif'],
+            ],
+            [
                 Superglobals::REQUEST,
                 InputParameters::ERROR_REQUEST,
                 'test.php' . chr(0),
                 'msgNullBytes',
-                array('test.php' . chr(0)),
-            ),
-        );
+                ['test.php' . chr(0)],
+            ],
+        ];
     }
 }

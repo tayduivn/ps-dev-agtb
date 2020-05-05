@@ -130,7 +130,7 @@ class AuditTest extends TestCase
     {
         $userBeforeMock = $this->getMockBuilder('User')
             ->disableOriginalConstructor()
-            ->setMethods(array('get_summary_text'))
+            ->setMethods(['get_summary_text'])
             ->getMock();
         $userBeforeMock->module_name = 'Users';
         $userBeforeMock->id = create_guid();
@@ -140,7 +140,7 @@ class AuditTest extends TestCase
         $this->registerBean($userBeforeMock);
         $userAfterMock = $this->getMockBuilder('User')
             ->disableOriginalConstructor()
-            ->setMethods(array('get_summary_text'))
+            ->setMethods(['get_summary_text'])
             ->getMock();
         $userAfterMock->module_name = 'Users';
         $userAfterMock->id = create_guid();
@@ -148,33 +148,33 @@ class AuditTest extends TestCase
             ->method('get_summary_text')
             ->will($this->returnValue('Sally Bronsen'));
         $this->registerBean($userAfterMock);
-        $row = array(
+        $row = [
             'field_name' => 'user_id_c',
             'before_value_string' => $userBeforeMock->id,
             'after_value_string' => $userAfterMock->id,
-        );
-        $expected = array(
+        ];
+        $expected = [
             'field_name' => 'user_c',
             'after' => 'Sally Bronsen',
-            'before' => 'Jim Brennan'
-        );
+            'before' => 'Jim Brennan',
+        ];
         $bean = new SugarBean();
-        $bean->audit_enabled_fields = array(
-            'user_c' => array(
+        $bean->audit_enabled_fields = [
+            'user_c' => [
                 'name' => 'user_c',
                 'type' => 'relate',
                 'id_name' => 'user_id_c',
-                'module' => 'Users')
-        );
-        $bean->auditEnabledRelateFields = array(
-            'user_id_c' => array(
+                'module' => 'Users'],
+        ];
+        $bean->auditEnabledRelateFields = [
+            'user_id_c' => [
                 'name' => 'user_c',
                 'type' => 'relate',
                 'id_name' => 'user_id_c',
-                'module' => 'Users')
-        );
+                'module' => 'Users'],
+        ];
         $audit = BeanFactory::newBean('Audit');
-        SugarTestReflection::callProtectedMethod($audit, 'handleRelateField', array($bean, &$row));
+        SugarTestReflection::callProtectedMethod($audit, 'handleRelateField', [$bean, &$row]);
         $this->assertEquals($expected, $row, "Expected Result was incorrect for relate field");
     }
 }

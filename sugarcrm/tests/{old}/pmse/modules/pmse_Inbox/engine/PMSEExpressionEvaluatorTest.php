@@ -39,7 +39,7 @@ class PMSEExpressionEvaluatorTest extends TestCase
             ->getMock();
 
         $bcMock = $this->getMockBuilder('SugarBean')
-            ->setMethods(array('getIncrementedBusinessDatetime'))
+            ->setMethods(['getIncrementedBusinessDatetime'])
             ->getMock();
 
         $now = new DateTime();
@@ -107,7 +107,7 @@ class PMSEExpressionEvaluatorTest extends TestCase
         $expectedToken->expSubtype = "number";
         $expectedToken->expType = "CONSTANT";
 
-        $expectedResult = array($expectedToken);
+        $expectedResult = [$expectedToken];
 
         $result = $expressionEvaluatorMock->evaluateExpression($expression);
         $this->assertEquals($expectedResult, $result);
@@ -137,7 +137,7 @@ class PMSEExpressionEvaluatorTest extends TestCase
         $expectedToken->expSubtype = "number";
         $expectedToken->expType = "CONSTANT";
 
-        $expectedResult = array($expectedToken);
+        $expectedResult = [$expectedToken];
 
         $result = $expressionEvaluatorMock->evaluateExpression($expression);
         $this->assertEquals($expectedResult, $result);
@@ -178,7 +178,7 @@ class PMSEExpressionEvaluatorTest extends TestCase
         $expectedToken->expSubtype = "number";
         $expectedToken->expType = "CONSTANT";
 
-        $expectedResult = array($expectedToken);
+        $expectedResult = [$expectedToken];
 
         $result = $expressionEvaluatorMock->evaluateExpression($expression);
         $this->assertEquals($expectedResult, $result);
@@ -219,7 +219,7 @@ class PMSEExpressionEvaluatorTest extends TestCase
         $expectedToken->expSubtype = "number";
         $expectedToken->expType = "CONSTANT";
 
-        $expectedResult = array($expectedToken);
+        $expectedResult = [$expectedToken];
 
         $result = $expressionEvaluatorMock->evaluateExpression($expression);
         $this->assertEquals($expectedResult, $result);
@@ -262,7 +262,7 @@ class PMSEExpressionEvaluatorTest extends TestCase
         $expectedToken->expSubtype = "number";
         $expectedToken->expType = "CONSTANT";
 
-        $expectedResult = array($expectedToken);
+        $expectedResult = [$expectedToken];
 
         $result = $expressionEvaluatorMock->evaluateExpression($expression);
         $this->assertEquals($expectedResult, $result);
@@ -303,7 +303,7 @@ class PMSEExpressionEvaluatorTest extends TestCase
         $expectedToken->expSubtype = "number";
         $expectedToken->expType = "CONSTANT";
 
-        $expectedResult = array($expectedToken);
+        $expectedResult = [$expectedToken];
 
         $result = $expressionEvaluatorMock->evaluateExpression($expression);
         $this->assertEquals($expectedResult, $result);
@@ -355,7 +355,7 @@ class PMSEExpressionEvaluatorTest extends TestCase
         $expectedToken->expSubtype = "number";
         $expectedToken->expType = "CONSTANT";
 
-        $expectedResult = array($expectedToken);
+        $expectedResult = [$expectedToken];
 
         $result = $expressionEvaluatorMock->evaluateExpression($expression);
         $this->assertEquals($expectedResult, $result);
@@ -407,7 +407,7 @@ class PMSEExpressionEvaluatorTest extends TestCase
         $expectedToken->expSubtype = "number";
         $expectedToken->expType = "CONSTANT";
 
-        $expectedResult = array($expectedToken);
+        $expectedResult = [$expectedToken];
 
         $result = $expressionEvaluatorMock->evaluateExpression($expression);
         $this->assertEquals($expectedResult, $result);
@@ -469,7 +469,7 @@ class PMSEExpressionEvaluatorTest extends TestCase
         $expectedToken->expSubtype = "number";
         $expectedToken->expType = "CONSTANT";
 
-        $expectedResult = array($expectedToken);
+        $expectedResult = [$expectedToken];
 
         $result = $expressionEvaluatorMock->processExpression($expression);
         $this->assertEquals($expectedResult, $result);
@@ -552,7 +552,7 @@ class PMSEExpressionEvaluatorTest extends TestCase
         $expectedToken->expSubtype = "number";
         $expectedToken->expType = "CONSTANT";
 
-        $expectedResult = array($expectedToken);
+        $expectedResult = [$expectedToken];
         $result = $expressionEvaluatorMock->processExpression($expression);
         $this->assertEquals($expectedResult, $result);
     }
@@ -646,7 +646,7 @@ class PMSEExpressionEvaluatorTest extends TestCase
         $expectedToken->expSubtype = "number";
         $expectedToken->expType = "CONSTANT";
 
-        $expectedResult = array($expectedToken);
+        $expectedResult = [$expectedToken];
         $result = $expressionEvaluatorMock->processExpression($expression);
         $this->assertEquals($expectedResult, $result);
     }
@@ -750,7 +750,7 @@ class PMSEExpressionEvaluatorTest extends TestCase
         $expectedToken->expSubtype = "boolean";
         $expectedToken->expType = "CONSTANT";
 
-        $expectedResult = array($expectedToken);
+        $expectedResult = [$expectedToken];
         $result = $expressionEvaluatorMock->processExpression($expression);
         $this->assertEquals($expectedResult, $result);
     }
@@ -854,7 +854,7 @@ class PMSEExpressionEvaluatorTest extends TestCase
         $expectedToken->expSubtype = "boolean";
         $expectedToken->expType = "CONSTANT";
 
-        $expectedResult = array($expectedToken);
+        $expectedResult = [$expectedToken];
         $result = $expressionEvaluatorMock->processExpression($expression);
         $this->assertEquals($expectedResult, $result);
     }
@@ -928,7 +928,7 @@ class PMSEExpressionEvaluatorTest extends TestCase
         $expectedToken->expSubtype = "number";
         $expectedToken->expType = "CONSTANT";
 
-        $expectedResult = array($expectedToken);
+        $expectedResult = [$expectedToken];
         $result = $expressionEvaluatorMock->processExpression($expression);
         $this->assertEquals($expectedResult, $result);
     }
@@ -1003,7 +1003,7 @@ class PMSEExpressionEvaluatorTest extends TestCase
         $expectedToken->expSubtype = "number";
         $expectedToken->expType = "CONSTANT";
 
-        $expectedResult = array($expectedToken);
+        $expectedResult = [$expectedToken];
         $result = $expressionEvaluatorMock->processExpression($expression);
         $this->assertEquals($expectedResult, $result);
     }
@@ -1046,7 +1046,7 @@ class PMSEExpressionEvaluatorTest extends TestCase
         $expectedToken->expSubtype = "boolean";
         $expectedToken->expType = "CONSTANT";
 
-        $expectedResult = array($expectedToken);
+        $expectedResult = [$expectedToken];
         $result = $expressionEvaluatorMock->processExpression($expression);
         $this->assertEquals($expectedResult, $result);
     }
@@ -1089,7 +1089,7 @@ class PMSEExpressionEvaluatorTest extends TestCase
         $expectedToken->expSubtype = "boolean";
         $expectedToken->expType = "CONSTANT";
 
-        $expectedResult = array($expectedToken);
+        $expectedResult = [$expectedToken];
         $result = $expressionEvaluatorMock->processExpression($expression);
         $this->assertEquals($expectedResult, $result);
     }
@@ -1154,7 +1154,7 @@ class PMSEExpressionEvaluatorTest extends TestCase
         $expectedToken->expSubtype = "boolean";
         $expectedToken->expType = "CONSTANT";
 
-        $expectedResult = array($expectedToken);
+        $expectedResult = [$expectedToken];
         $result = $expressionEvaluatorMock->processExpression($expression);
         $this->assertEquals($expectedResult, $result);
     }
@@ -1219,7 +1219,7 @@ class PMSEExpressionEvaluatorTest extends TestCase
         $expectedToken->expSubtype = "boolean";
         $expectedToken->expType = "CONSTANT";
 
-        $expectedResult = array($expectedToken);
+        $expectedResult = [$expectedToken];
         $result = $expressionEvaluatorMock->processExpression($expression);
         $this->assertEquals($expectedResult, $result);
     }
@@ -1284,7 +1284,7 @@ class PMSEExpressionEvaluatorTest extends TestCase
         $expectedToken->expSubtype = "boolean";
         $expectedToken->expType = "CONSTANT";
 
-        $expectedResult = array($expectedToken);
+        $expectedResult = [$expectedToken];
         $result = $expressionEvaluatorMock->processExpression($expression);
         $this->assertEquals($expectedResult, $result);
     }
@@ -1343,7 +1343,7 @@ class PMSEExpressionEvaluatorTest extends TestCase
         $expectedToken->expSubtype = "boolean";
         $expectedToken->expType = "CONSTANT";
 
-        $expectedResult = array($expectedToken);
+        $expectedResult = [$expectedToken];
         $result = $expressionEvaluatorMock->processExpression($expression);
         $this->assertEquals($expectedResult, $result);
     }
@@ -1397,7 +1397,7 @@ class PMSEExpressionEvaluatorTest extends TestCase
         $expectedToken->expSubtype = "boolean";
         $expectedToken->expType = "CONSTANT";
 
-        $expectedResult = array($expectedToken);
+        $expectedResult = [$expectedToken];
         $result = $expressionEvaluatorMock->processExpression($expression);
         $this->assertEquals($expectedResult, $result);
     }
@@ -1440,7 +1440,7 @@ class PMSEExpressionEvaluatorTest extends TestCase
         $expectedToken->expSubtype = "date";
         $expectedToken->expType = "CONSTANT";
 
-        $expectedResult = array($expectedToken);
+        $expectedResult = [$expectedToken];
         $result = $expressionEvaluatorMock->processExpression($expression);
         $this->assertEquals($expectedResult, $result);
     }
@@ -1483,7 +1483,7 @@ class PMSEExpressionEvaluatorTest extends TestCase
         $expectedToken->expSubtype = "date";
         $expectedToken->expType = "CONSTANT";
 
-        $expectedResult = array($expectedToken);
+        $expectedResult = [$expectedToken];
         $result = $expressionEvaluatorMock->processExpression($expression);
         $this->assertEquals($expectedResult, $result);
     }
@@ -1580,7 +1580,7 @@ class PMSEExpressionEvaluatorTest extends TestCase
         $expectedToken->expLabel = "2014-10-20 03:15:00";
         $expectedToken->expSubtype = "date";
 
-        $expectedResult = array($expectedToken);
+        $expectedResult = [$expectedToken];
         $result = $expressionEvaluatorMock->processExpression($expression);
         $this->assertEquals($expectedResult, $result);
     }
@@ -1678,7 +1678,7 @@ class PMSEExpressionEvaluatorTest extends TestCase
         $expectedToken->expLabel = "2014-10-20 03:15:00";
         $expectedToken->expSubtype = "date";
 
-        $expectedResult = array($expectedToken);
+        $expectedResult = [$expectedToken];
         $result = $expressionEvaluatorMock->processExpression($expression);
         $this->assertEquals($expectedResult, $result);
     }
@@ -1807,7 +1807,7 @@ class PMSEExpressionEvaluatorTest extends TestCase
         $expectedToken->expSubtype = "boolean";
         $expectedToken->expType = "CONSTANT";
 
-        $expectedResult = array($expectedToken);
+        $expectedResult = [$expectedToken];
         $result = $expressionEvaluatorMock->processExpression($expression);
         $this->assertEquals($expectedResult, $result);
     }
@@ -1931,7 +1931,7 @@ class PMSEExpressionEvaluatorTest extends TestCase
         $expectedToken->expSubtype = "boolean";
         $expectedToken->expType = "CONSTANT";
 
-        $expectedResult = array($expectedToken);
+        $expectedResult = [$expectedToken];
         $result = $expressionEvaluatorMock->processExpression($expression);
 
         $this->assertEquals($expectedResult, $result);
@@ -2031,32 +2031,32 @@ class PMSEExpressionEvaluatorTest extends TestCase
             ->getMock();
 
         // Compare two identical arrays
-        $arr1 = array(1, 2, 3, 4, 5, 6);
-        $arr2 = array(1, 2, 3, 4, 5, 6);
+        $arr1 = [1, 2, 3, 4, 5, 6];
+        $arr2 = [1, 2, 3, 4, 5, 6];
         $result = $expressionEvaluatorMock->evalEqualArrays($arr1, $arr2);
         $this->assertTrue($result);
 
         // Compare two arrays with same content but different content order
-        $arr1 = array(1, 2, 3, 4, 5, 6);
-        $arr2 = array(6, 2, 3, 1, 5, 4);
+        $arr1 = [1, 2, 3, 4, 5, 6];
+        $arr2 = [6, 2, 3, 1, 5, 4];
         $result = $expressionEvaluatorMock->evalEqualArrays($arr1, $arr2);
         $this->assertTrue($result);
 
         //Compare two arrays with some values in both of them
-        $arr1 = array(1, 2, 3, 4, 5, 6);
-        $arr2 = array(2, 4, 6, 8, 10);
+        $arr1 = [1, 2, 3, 4, 5, 6];
+        $arr2 = [2, 4, 6, 8, 10];
         $result = $expressionEvaluatorMock->evalEqualArrays($arr1, $arr2);
         $this->assertFalse($result);
 
         // Compare two different arrays same length
-        $arr1 = array(1, 2, 3, 4, 5);
-        $arr2 = array(6, 7, 8, 9, 0);
+        $arr1 = [1, 2, 3, 4, 5];
+        $arr2 = [6, 7, 8, 9, 0];
         $result = $expressionEvaluatorMock->evalEqualArrays($arr1, $arr2);
         $this->assertFalse($result);
 
         //Compare two different arrays, different length
-        $arr1 = array(1, 2, 3, 4, 5);
-        $arr2 = array(6, 7, 8);
+        $arr1 = [1, 2, 3, 4, 5];
+        $arr2 = [6, 7, 8];
         $result = $expressionEvaluatorMock->evalEqualArrays($arr1, $arr2);
         $this->assertFalse($result);
     }

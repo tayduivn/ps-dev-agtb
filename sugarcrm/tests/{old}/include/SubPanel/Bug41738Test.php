@@ -13,58 +13,59 @@
 use PHPUnit\Framework\TestCase;
 
 class Bug41738Test extends TestCase
-{   	
+{
+       
     protected $bean;
 
     protected function setUp() : void
-	{
-	    global $moduleList, $beanList, $beanFiles;
-        require('include/modules.php');
+    {
+        global $moduleList, $beanList, $beanFiles;
+        require 'include/modules.php';
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['modListHeader'] = query_module_access_list($GLOBALS['current_user']);
         $GLOBALS['modules_exempt_from_availability_check']['Calls']='Calls';
         $GLOBALS['modules_exempt_from_availability_check']['Meetings']='Meetings';
         $this->bean = new Opportunity();
-	}
+    }
 
     protected function tearDown() : void
-	{
-	    SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+    {
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
-	}
+    }
 
     public function testSubpanelCollectionWithSpecificQuery()
     {
-        $subpanel = array(
-			'order' => 20,
-			'sort_order' => 'desc',
-			'sort_by' => 'date_entered',
-			'type' => 'collection',
-			'subpanel_name' => 'history',   //this values is not associated with a physical file.
-			'top_buttons' => array(),
-			'collection_list' => array(
-				'meetings' => array(
-					'module' => 'Meetings',
-					'subpanel_name' => 'ForHistory',
+        $subpanel = [
+            'order' => 20,
+            'sort_order' => 'desc',
+            'sort_by' => 'date_entered',
+            'type' => 'collection',
+            'subpanel_name' => 'history',   //this values is not associated with a physical file.
+            'top_buttons' => [],
+            'collection_list' => [
+                'meetings' => [
+                    'module' => 'Meetings',
+                    'subpanel_name' => 'ForHistory',
                     'get_subpanel_data' => 'function:subpanelCollectionWithSpecificQueryMeetings',
                     'generate_select'=>false,
-                    'function_parameters' => array(
+                    'function_parameters' => [
                         'bean_id'=>$this->bean->id,
-                        'import_function_file' => __FILE__
-                    ),
-				),
-				'tasks' => array(
-					'module' => 'Tasks',
-					'subpanel_name' => 'ForHistory',
+                        'import_function_file' => __FILE__,
+                    ],
+                ],
+                'tasks' => [
+                    'module' => 'Tasks',
+                    'subpanel_name' => 'ForHistory',
                     'get_subpanel_data' => 'function:subpanelCollectionWithSpecificQueryTasks',
                     'generate_select'=>false,
-                    'function_parameters' => array(
+                    'function_parameters' => [
                         'bean_id'=>$this->bean->id,
-                        'import_function_file' => __FILE__
-                    ),
-				),
-			)
-        );
+                        'import_function_file' => __FILE__,
+                    ],
+                ],
+            ],
+        ];
         $subpanel_def = new aSubPanel("testpanel", $subpanel, $this->bean);
         $query = $this->bean->get_union_related_list($this->bean, "", '', "", 0, 5, -1, 0, $subpanel_def);
         $result = $this->bean->db->query($query["query"]);
@@ -75,7 +76,7 @@ class Bug41738Test extends TestCase
 
 function subpanelCollectionWithSpecificQueryMeetings($params)
 {
-		$query = "SELECT meetings.id , meetings.name , meetings.status , 0 reply_to_status , ' ' contact_name , ' ' contact_id , ' ' contact_name_owner , ' ' contact_name_mod , meetings.parent_id , meetings.parent_type , meetings.date_modified , jt1.user_name assigned_user_name , jt1.created_by assigned_user_name_owner , 'Users' assigned_user_name_mod, ' ' filename , meetings.assigned_user_id , 'meetings' panel_name 
+        $query = "SELECT meetings.id , meetings.name , meetings.status , 0 reply_to_status , ' ' contact_name , ' ' contact_id , ' ' contact_name_owner , ' ' contact_name_mod , meetings.parent_id , meetings.parent_type , meetings.date_modified , jt1.user_name assigned_user_name , jt1.created_by assigned_user_name_owner , 'Users' assigned_user_name_mod, ' ' filename , meetings.assigned_user_id , 'meetings' panel_name 
 			FROM meetings 
 			LEFT JOIN users jt1 ON jt1.id= meetings.assigned_user_id AND jt1.deleted=0 AND jt1.deleted=0 
 			WHERE ( meetings.parent_type = 'Opportunities'
@@ -88,12 +89,12 @@ function subpanelCollectionWithSpecificQueryMeetings($params)
 											AND oc.contact_id = '".$params['bean_id']."')
 							)";
 
-		return $query ;
+        return $query ;
 }
 
 function subpanelCollectionWithSpecificQueryTasks($params)
 {
-		$query = "SELECT tasks.id , tasks.name , tasks.status , 0 reply_to_status , ' ' contact_name , ' ' contact_id , ' ' contact_name_owner , ' ' contact_name_mod , tasks.parent_id , tasks.parent_type , tasks.date_modified , jt1.user_name assigned_user_name , jt1.created_by assigned_user_name_owner , 'Users' assigned_user_name_mod, ' ' filename , tasks.assigned_user_id , 'tasks' panel_name 
+        $query = "SELECT tasks.id , tasks.name , tasks.status , 0 reply_to_status , ' ' contact_name , ' ' contact_id , ' ' contact_name_owner , ' ' contact_name_mod , tasks.parent_id , tasks.parent_type , tasks.date_modified , jt1.user_name assigned_user_name , jt1.created_by assigned_user_name_owner , 'Users' assigned_user_name_mod, ' ' filename , tasks.assigned_user_id , 'tasks' panel_name 
 			FROM tasks 
 			LEFT JOIN users jt1 ON jt1.id= tasks.assigned_user_id AND jt1.deleted=0 AND jt1.deleted=0 
 			WHERE ( tasks.parent_type = 'Opportunities'
@@ -106,5 +107,5 @@ function subpanelCollectionWithSpecificQueryTasks($params)
 											AND oc.contact_id = '".$params['bean_id']."')
 							)";
 
-		return $query ;
+        return $query ;
 }

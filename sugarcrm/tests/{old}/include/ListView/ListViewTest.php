@@ -24,37 +24,37 @@ class ListViewTest extends TestCase
     protected function tearDown() : void
     {
         unset($this->_lv);
-    	SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-    	unset($GLOBALS['current_user']);
-    	unset($GLOBALS['app_strings']);
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        unset($GLOBALS['current_user']);
+        unset($GLOBALS['app_strings']);
     }
 
     public function sortOrderProvider()
     {
         // test data in order (request,session,subpaneldefs,default,expected return)
-        return array (
-            array('asc' ,'desc' ,'desc' ,'desc' ,'asc'),
-            array('desc','asc'  ,'asc'  ,'asc'  ,'desc'),
-            array(null  ,'asc'  ,'desc' ,'desc' ,'asc'),
-            array(null  ,'desc' ,'asc'  ,'asc'  ,'desc'),
-            array(null  ,null   ,'asc'  ,'desc' ,'asc'),
-            array(null  ,null   ,'desc' ,'asc'  ,'desc'),
-            array(null  ,null   ,null   ,'asc'  ,'asc'),
-            array(null  ,null   ,null   ,'desc' ,'desc')
-        ) ;
+        return  [
+            ['asc' ,'desc' ,'desc' ,'desc' ,'asc'],
+            ['desc','asc'  ,'asc'  ,'asc'  ,'desc'],
+            [null  ,'asc'  ,'desc' ,'desc' ,'asc'],
+            [null  ,'desc' ,'asc'  ,'asc'  ,'desc'],
+            [null  ,null   ,'asc'  ,'desc' ,'asc'],
+            [null  ,null   ,'desc' ,'asc'  ,'desc'],
+            [null  ,null   ,null   ,'asc'  ,'asc'],
+            [null  ,null   ,null   ,'desc' ,'desc'],
+        ] ;
     }
     /**
      * @group bug48665
      * @dataProvider sortOrderProvider
      */
-    public function testCalculateSortOrder($req,$sess,$subpdefs,$default,$expected)
+    public function testCalculateSortOrder($req, $sess, $subpdefs, $default, $expected)
     {
-        $sortOrder = array(
+        $sortOrder = [
             'request' => $req,
             'session' => $sess,
             'subpaneldefs' => $subpdefs,
             'default' => $default,
-        );
+        ];
         $actual = $this->_lv->calculateSortOrder($sortOrder);
         $this->assertEquals($expected, $actual, 'Sort order is wrong');
     }

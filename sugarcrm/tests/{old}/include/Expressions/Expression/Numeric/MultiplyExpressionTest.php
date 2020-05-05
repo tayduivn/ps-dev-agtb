@@ -25,9 +25,9 @@ class MultiplyExpressionTest extends TestCase
 
     public function dataProviderTestEvaluate()
     {
-        return array(
-            array('multiply(8, "2")', '16.000000'),
-            array('multiply("33.333333", "0.90")', '29.999999'),
-        );
+        return [
+            ['multiply(8, "2")', '16.000000'],
+            ['multiply("33.333333", "0.90")', '29.999999'],
+        ];
     }
 }

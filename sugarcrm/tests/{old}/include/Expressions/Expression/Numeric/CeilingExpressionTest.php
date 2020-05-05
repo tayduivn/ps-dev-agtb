@@ -25,8 +25,8 @@ class CeilingExpressionTest extends TestCase
 
     public function dataProviderTestEvaluate()
     {
-        return array(
-            array('ceil(5.12)', '6')
-        );
+        return [
+            ['ceil(5.12)', '6'],
+        ];
     }
 }

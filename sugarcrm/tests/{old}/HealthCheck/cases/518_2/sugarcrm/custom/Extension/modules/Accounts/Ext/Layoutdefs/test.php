@@ -10,6 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$layout_defs = array(
+$layout_defs = [
     'customCode' => 'customCode',
-);
+];

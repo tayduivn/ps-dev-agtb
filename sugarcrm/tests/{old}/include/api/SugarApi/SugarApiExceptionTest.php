@@ -24,12 +24,13 @@ class SugarApiExceptionTest extends TestCase
         unset($GLOBALS['app_strings']);
     }
 
-    public function testTranslatedExceptionMessages() {
+    public function testTranslatedExceptionMessages()
+    {
         global $app_strings;
         $ex = new SugarApiException();
-        $this->assertEquals($ex->getMessage(), $app_strings['EXCEPTION_UNKNOWN_EXCEPTION'],"Default error message");
+        $this->assertEquals($ex->getMessage(), $app_strings['EXCEPTION_UNKNOWN_EXCEPTION'], "Default error message");
         $app_strings['EXCEPTION_TEST'] = "Hey {0}, How you doing?";
-        $ex = new SugarApiException('EXCEPTION_TEST', array('Matt'));
-        $this->assertEquals($ex->getMessage(), 'Hey Matt, How you doing?',"String formatting");
+        $ex = new SugarApiException('EXCEPTION_TEST', ['Matt']);
+        $this->assertEquals($ex->getMessage(), 'Hey Matt, How you doing?', "String formatting");
     }
 }

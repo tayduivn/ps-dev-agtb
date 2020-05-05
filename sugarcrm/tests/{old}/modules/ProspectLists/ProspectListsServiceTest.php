@@ -44,11 +44,11 @@ class ProspectListsServiceTest extends TestCase
         $contact2 = SugarTestContactUtilities::createContact();
         $contact3 = SugarTestContactUtilities::createContact();
 
-        $recordIds = array(
+        $recordIds = [
                 $contact1->id,
                 $contact2->id,
-                $contact3->id
-            );
+                $contact3->id,
+            ];
 
         $prospectListService = new ProspectListsService();
         $results = $prospectListService->addRecordsToProspectList("Contacts", $prospectList->id, $recordIds);
@@ -67,9 +67,9 @@ class ProspectListsServiceTest extends TestCase
         $prospectList = SugarTestProspectListsUtilities::createProspectLists();
         $contactId = '111-9999';
 
-        $recordIds = array(
-            $contactId
-        );
+        $recordIds = [
+            $contactId,
+        ];
 
         $prospectListService = new ProspectListsService();
         $results = $prospectListService->addRecordsToProspectList("Contacts", $prospectList->id, $recordIds);

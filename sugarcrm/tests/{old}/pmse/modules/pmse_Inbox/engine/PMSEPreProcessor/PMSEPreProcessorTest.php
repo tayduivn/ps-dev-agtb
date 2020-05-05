@@ -43,7 +43,7 @@ class PMSEPreProcessorTest extends TestCase
     {
         $this->loggerMock = $this->getMockBuilder("PSMELogger")
                 ->disableOriginalConstructor()
-                ->setMethods(array('info', 'debug'))
+                ->setMethods(['info', 'debug'])
                 ->getMock();
     }
 
@@ -61,81 +61,81 @@ class PMSEPreProcessorTest extends TestCase
     public function testGetFlowDataListDirect()
     {
         $request = ProcessManager\Factory::getPMSEObject('PMSERequest');
-        $arguments = array('idFlow' => '282', 'id' => '676', 'cas_id'=> '191');
+        $arguments = ['idFlow' => '282', 'id' => '676', 'cas_id'=> '191'];
         $request->setType('direct');
         $request->setArguments($arguments);
 
         $preProcessorMock = $this->getMockBuilder('PMSEPreProcessor')
                 ->disableOriginalConstructor()
-                ->setMethods(array('getFlowById'))
+                ->setMethods(['getFlowById'])
                 ->getMock();
 
         $preProcessorMock->expects($this->once())
                 ->method('getFlowById')
-                ->will($this->returnValue(array(true)));
+                ->will($this->returnValue([true]));
 
         $result = $preProcessorMock->getFlowDataList($request);
 
-        $this->assertEquals(array(true), $result);
+        $this->assertEquals([true], $result);
     }
 
     public function testGetFlowDataListQueue()
     {
         $request = ProcessManager\Factory::getPMSEObject('PMSERequest');
-        $arguments = array('idFlow' => '282', 'id' => '676', 'cas_id'=> '191');
+        $arguments = ['idFlow' => '282', 'id' => '676', 'cas_id'=> '191'];
         $request->setArguments($arguments);
         $request->setType('queue');
 
         $preProcessorMock = $this->getMockBuilder('PMSEPreProcessor')
                 ->disableOriginalConstructor()
-                ->setMethods(array('getFlowById'))
+                ->setMethods(['getFlowById'])
                 ->getMock();
 
         $preProcessorMock->expects($this->once())
                 ->method('getFlowById')
-                ->will($this->returnValue(array(true)));
+                ->will($this->returnValue([true]));
 
         $result = $preProcessorMock->getFlowDataList($request);
 
-        $this->assertEquals(array(true), $result);
+        $this->assertEquals([true], $result);
     }
 
     public function testGetFlowDataListEngine()
     {
         $request = ProcessManager\Factory::getPMSEObject('PMSERequest');
-        $arguments = array('idFlow' => '282', 'id' => '676', 'cas_id'=> '191');
+        $arguments = ['idFlow' => '282', 'id' => '676', 'cas_id'=> '191'];
         $request->setArguments($arguments);
         $request->setType('engine');
 
         $preProcessorMock = $this->getMockBuilder('PMSEPreProcessor')
                 ->disableOriginalConstructor()
-                ->setMethods(array('getFlowsByCasId'))
+                ->setMethods(['getFlowsByCasId'])
                 ->getMock();
 
         $preProcessorMock->expects($this->once())
                 ->method('getFlowsByCasId')
-                ->will($this->returnValue(array(true)));
+                ->will($this->returnValue([true]));
 
         $result = $preProcessorMock->getFlowDataList($request);
 
-        $this->assertEquals(array(true), $result);
+        $this->assertEquals([true], $result);
     }
 
     public function testGetFlowDataListInvalid()
     {
         $request = ProcessManager\Factory::getPMSEObject('PMSERequest');
-        $arguments = array('idFlow' => '282', 'id' => '676', 'cas_id'=> '191');
+        $arguments = ['idFlow' => '282', 'id' => '676', 'cas_id'=> '191'];
         $request->setArguments($arguments);
         $request->setType('invalid_type');
 
         $preProcessorMock = $this->getMockBuilder('PMSEPreProcessor')
                 ->disableOriginalConstructor()
-                ->setMethods(NULL)
+                ->setMethods(null)
                 ->getMock();
 
         $result = $preProcessorMock->getFlowDataList($request);
 
-        $this->assertEquals(array(), $result);
+        $this->assertEquals([], $result);
     }
 
     public function testGetAllEvents()
@@ -295,7 +295,7 @@ class PMSEPreProcessorTest extends TestCase
 
         $validatorMock = $this->getMockBuilder('PMSEValidator')
                 ->disableOriginalConstructor()
-                ->setMethods(array('validateRequest'))
+                ->setMethods(['validateRequest'])
                 ->getMock();
 
         $validatorMock->expects($this->once())
@@ -304,7 +304,7 @@ class PMSEPreProcessorTest extends TestCase
 
         $executerMock = $this->getMockBuilder('PMSEExecuter')
                 ->disableOriginalConstructor()
-                ->setMethods(array('runEngine'))
+                ->setMethods(['runEngine'])
                 ->getMock();
 
         $executerMock->expects($this->once())
@@ -377,7 +377,7 @@ class PMSEPreProcessorTest extends TestCase
 
         $validatorMock = $this->getMockBuilder('PMSEValidator')
                 ->disableOriginalConstructor()
-                ->setMethods(array('validateRequest'))
+                ->setMethods(['validateRequest'])
                 ->getMock();
 
         $validatorMock->expects($this->once())
@@ -386,7 +386,7 @@ class PMSEPreProcessorTest extends TestCase
 
         $executerMock = $this->getMockBuilder('PMSEExecuter')
                 ->disableOriginalConstructor()
-                ->setMethods(array('runEngine'))
+                ->setMethods(['runEngine'])
                 ->getMock();
 
         $preProcessorMock->setExecuter($executerMock);

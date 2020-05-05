@@ -11,11 +11,13 @@
  */
 
 
-class RestMetadataMobileLanguageTest extends RestTestBase {
+class RestMetadataMobileLanguageTest extends RestTestBase
+{
     /**
      * @group rest
-     */    
-    public function testMobileMetadataLanguageFiles() {
+     */
+    public function testMobileMetadataLanguageFiles()
+    {
         $restReply = $this->_restCall('metadata?platform=mobile');
         $labels = $restReply['reply']['labels'];
 
@@ -23,11 +25,11 @@ class RestMetadataMobileLanguageTest extends RestTestBase {
         $default = $labels['default'];
         unset($labels['default']);
 
-        $output = array();
+        $output = [];
 
-        foreach($labels AS $lang => $location) {
+        foreach ($labels as $lang => $location) {
             $lang_file = json_decode(file_get_contents($GLOBALS['sugar_config']['site_url'] . '/' . $location));
             $this->assertNotEmpty($lang_file, "Language File is empty");
         }
-    }    
+    }
 }

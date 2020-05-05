@@ -18,7 +18,7 @@
  */
 class Bug58087Test extends SubPanelTestBase
 {
-    protected $_modListHeaderGlobal = array();
+    protected $_modListHeaderGlobal = [];
     protected $_sugarConfig;
     protected $_testModule = 'Accounts';
     
@@ -27,7 +27,7 @@ class Bug58087Test extends SubPanelTestBase
         parent::setUp();
         
         // Set up our test defs - borrowed from Accounts subpaneldefs
-        $this->_testDefs = array(
+        $this->_testDefs = [
             'order' => 10,
             'sort_order' => 'desc',
             'sort_by' => 'date_start',
@@ -36,30 +36,30 @@ class Bug58087Test extends SubPanelTestBase
             'subpanel_name' => 'activities',   //this values is not associated with a physical file.
             'header_definition_from_subpanel'=> 'meetings',
             'module'=>'Activities',
-            'top_buttons' => array(
-                array('widget_class' => 'SubPanelTopCreateTaskButton'),
-                array('widget_class' => 'SubPanelTopScheduleMeetingButton'),
-                array('widget_class' => 'SubPanelTopScheduleCallButton'),
-                array('widget_class' => 'SubPanelTopComposeEmailButton'),
-            ),
-            'collection_list' => array(
-                'tasks' => array(
+            'top_buttons' => [
+                ['widget_class' => 'SubPanelTopCreateTaskButton'],
+                ['widget_class' => 'SubPanelTopScheduleMeetingButton'],
+                ['widget_class' => 'SubPanelTopScheduleCallButton'],
+                ['widget_class' => 'SubPanelTopComposeEmailButton'],
+            ],
+            'collection_list' => [
+                'tasks' => [
                     'module' => 'Tasks',
                     'subpanel_name' => 'ForActivities',
                     'get_subpanel_data' => 'tasks',
-                ),
-                'meetings' => array(
+                ],
+                'meetings' => [
                     'module' => 'Meetings',
                     'subpanel_name' => 'ForActivities',
                     'get_subpanel_data' => 'meetings',
-                ),
-                'calls' => array(
+                ],
+                'calls' => [
                     'module' => 'Calls',
                     'subpanel_name' => 'ForActivities',
                     'get_subpanel_data' => 'calls',
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
         
         // This test requires modListHeader
         if (!empty($GLOBALS['modListHeader'])) {
@@ -100,7 +100,7 @@ class Bug58087Test extends SubPanelTestBase
      * @param array $buttons
      * @return bool
      */
-    protected function _hasEmailAction($buttons) 
+    protected function _hasEmailAction($buttons)
     {
         foreach ($buttons as $button) {
             if (isset($button['widget_class']) && $button['widget_class'] == 'SubPanelTopComposeEmailButton') {

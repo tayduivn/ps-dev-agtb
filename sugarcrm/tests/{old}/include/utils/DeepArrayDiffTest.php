@@ -21,26 +21,26 @@ class DeepArrayDiffTest extends TestCase
      */
     public function testdeepArrayDiffWithBooleanFalse()
     {
-        $array1 = array(
+        $array1 = [
             'value1' => true,
             'value2' => false,
-            'value3' => 'yummy'
-            );
+            'value3' => 'yummy',
+            ];
         
-        $array2 = array(
+        $array2 = [
             'value1' => true,
             'value2' => true,
-            'value3' => 'yummy'
-            );
+            'value3' => 'yummy',
+            ];
         
-    	$diffs = deepArrayDiff($array1,$array2);
+        $diffs = deepArrayDiff($array1, $array2);
         
         $this->assertEquals($diffs['value2'], false);
         $this->assertFalse(isset($diffs['value1']));
         $this->assertFalse(isset($diffs['value3']));
         
         
-        $diffs = deepArrayDiff($array2,$array1);
+        $diffs = deepArrayDiff($array2, $array1);
         
         $this->assertEquals($diffs['value2'], true);
         $this->assertFalse(isset($diffs['value1']));

@@ -27,10 +27,10 @@ class LanguageValidatorTest extends AbstractConstraintValidatorTest
      */
     protected function createValidator()
     {
-        return new LanguageValidator(array(
+        return new LanguageValidator([
             'en_US' => 'English (US)',
             'cs_CZ' => ' Czech language',
-        ));
+        ]);
     }
 
     /**
@@ -73,14 +73,14 @@ class LanguageValidatorTest extends AbstractConstraintValidatorTest
 
     public function providerTestValidValues()
     {
-        return array(
-            array(
+        return [
+            [
                 'en_US',
-            ),
-            array(
+            ],
+            [
                 'cs_CZ',
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -89,9 +89,9 @@ class LanguageValidatorTest extends AbstractConstraintValidatorTest
      */
     public function testInvalidValues($value, $code, $msg)
     {
-        $constraint = new Language(array(
+        $constraint = new Language([
             'message' => 'testMessage',
-        ));
+        ]);
 
         $this->validator->validate($value, $constraint);
 
@@ -104,22 +104,22 @@ class LanguageValidatorTest extends AbstractConstraintValidatorTest
 
     public function providerTestInvalidValues()
     {
-        return array(
-            array(
+        return [
+            [
                 'en-US',
                 Language::ERROR_LANGUAGE_NOT_FOUND,
                 'language not found',
-            ),
-            array(
+            ],
+            [
                 'en-us',
                 Language::ERROR_LANGUAGE_NOT_FOUND,
                 'language not found',
-            ),
-            array(
+            ],
+            [
                 "en_us",
                 Language::ERROR_LANGUAGE_NOT_FOUND,
                 'language not found',
-            ),
-        );
+            ],
+        ];
     }
 }

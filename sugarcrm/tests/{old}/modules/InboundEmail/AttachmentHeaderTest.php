@@ -27,16 +27,16 @@ class AttachmentHeaderTest extends TestCase
      * @param $v -> value
      * @return stdClass:  $obj->attribute = $a, $obj->value = $v
      */
-    protected function _convertToObject($param,$a,$v)
+    protected function _convertToObject($param, $a, $v)
     {
         $obj = new stdClass;
         $obj->attribute = $a;
         $obj->value = $v;
 
         $outer = new stdClass;
-        $outer->parameters = ($param == 'parameters') ? array($obj) : array();
+        $outer->parameters = ($param == 'parameters') ? [$obj] : [];
         $outer->isparameters = !empty($outer->parameters);
-        $outer->dparameters = ($param == 'dparameters') ? array($obj) : array();
+        $outer->dparameters = ($param == 'dparameters') ? [$obj] : [];
         $outer->isdparameters = !empty($outer->dparameters);
 
         return $outer;
@@ -44,19 +44,19 @@ class AttachmentHeaderTest extends TestCase
 
     public function contentParameterProvider()
     {
-        return array(
+        return [
             // pretty standard dparameters
-            array(
-                $this->_convertToObject('dparameters','filename','test.txt'),
-                'test.txt'
-            ),
+            [
+                $this->_convertToObject('dparameters', 'filename', 'test.txt'),
+                'test.txt',
+            ],
 
             // how about a regular parameter set
-            array(
-                $this->_convertToObject('parameters','name','bonus.txt'),
-                'bonus.txt'
-            )
-        );
+            [
+                $this->_convertToObject('parameters', 'name', 'bonus.txt'),
+                'bonus.txt',
+            ],
+        ];
     }
 
     /**
@@ -67,6 +67,6 @@ class AttachmentHeaderTest extends TestCase
      */
     public function testRetrieveAttachmentNameFromStructure($in, $expected)
     {
-        $this->assertEquals($expected, $this->ie->retrieveAttachmentNameFromStructure($in),  'We did not get the attachmentName');
+        $this->assertEquals($expected, $this->ie->retrieveAttachmentNameFromStructure($in), 'We did not get the attachmentName');
     }
 }

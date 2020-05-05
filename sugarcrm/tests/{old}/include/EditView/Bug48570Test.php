@@ -27,12 +27,12 @@ class Bug48570Test extends TestCase
     {
         global $current_user;
         $current_user = SugarTestUserUtilities::createAnonymousUser();
-	}
+    }
 
     protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-	}
+    }
 
 
     /**

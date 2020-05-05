@@ -20,23 +20,21 @@ class Bug49896Test extends TestCase
 
     protected function setUp() : void
     {
-        if(isset($GLOBALS['sugar_config']['passwordsetting']))
-        {
+        if (isset($GLOBALS['sugar_config']['passwordsetting'])) {
             $this->_passwordSetting = $GLOBALS['sugar_config']['passwordsetting'];
         }
-        $GLOBALS['sugar_config']['passwordsetting'] = array('onenumber'=>1,
+        $GLOBALS['sugar_config']['passwordsetting'] = ['onenumber'=>1,
                 'onelower'=>1,
                 'oneupper'=>1,
                 'onespecial'=>1,
                 'minpwdlength'=>6,
-                'maxpwdlength'=>15);
-        $this->_currentUser = SugarTestUserUtilities::createAnonymousUser(false);        
+                'maxpwdlength'=>15];
+        $this->_currentUser = SugarTestUserUtilities::createAnonymousUser(false);
     }
 
     protected function tearDown() : void
     {
-        if(!empty($this->_passwordSetting))
-        {
+        if (!empty($this->_passwordSetting)) {
             $GLOBALS['sugar_config']['passwordsetting'] = $this->_passwordSetting;
         }
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
@@ -70,24 +68,24 @@ class Bug49896Test extends TestCase
     {
         $result = $this->_currentUser->check_password_rules('tester1!');
         $this->assertEquals(false, $result, 'Assert that one upper rule is checked');
-    } 
+    }
     
     public function testOneSpecial()
     {
         $result = $this->_currentUser->check_password_rules('Tester1');
         $this->assertEquals(false, $result, 'Assert that one special rule is checked');
-    }  
+    }
     
     public function testCustomRegex()
     {
         $GLOBALS['sugar_config']['passwordsetting']['customregex'] = '/^T/';
         $result = $this->_currentUser->check_password_rules('tester1!');
         $this->assertEquals(false, $result, 'Assert that custom regex is checked');
-    } 
+    }
 
     public function testAllCombinations()
     {
         $result = $this->_currentUser->check_password_rules('Tester1!');
         $this->assertEquals(true, $result, 'Assert that all rules are checked and passed');
-    }    
+    }
 }

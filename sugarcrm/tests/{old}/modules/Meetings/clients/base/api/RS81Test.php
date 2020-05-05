@@ -29,7 +29,7 @@ class RS81Test extends TestCase
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setUp('current_user', array(true, true));
+        SugarTestHelper::setUp('current_user', [true, true]);
 
         $this->service = SugarTestRestUtilities::getRestServiceMock();
 
@@ -48,7 +48,7 @@ class RS81Test extends TestCase
      */
     public function testGetAgenda()
     {
-        $actual = $this->api->getAgenda($this->service, array());
+        $actual = $this->api->getAgenda($this->service, []);
         $this->assertArrayHasKey('today', $actual);
         $this->assertArrayHasKey('tomorrow', $actual);
         $this->assertArrayHasKey('upcoming', $actual);

@@ -34,10 +34,10 @@ class Bug61011Test extends TestCase
     protected function tearDown() : void
     {
         global $sugar_config;
-        if($this->has_disable_count_query_enabled) {
+        if ($this->has_disable_count_query_enabled) {
             $sugar_config['disable_count_query'] = true;
         } else {
-           unset($sugar_config['disable_count_query']);
+            unset($sugar_config['disable_count_query']);
         }
         SugarTestHelper::tearDown();
     }
@@ -53,7 +53,7 @@ FROM t6_test61011
  WHERE ((((t6_test61011.name IS NOT NULL AND t6_test61011.name <> ''))))
 AND  t6_test61011.deleted=0
 END;
-        SugarTestReflection::callProtectedMethod($GLOBALS['db'], 'addDistinctClause', array(&$query));
+        SugarTestReflection::callProtectedMethod($GLOBALS['db'], 'addDistinctClause', [&$query]);
         $this->assertStringContainsString('SELECT sum(', $query);
         $this->assertStringContainsString('group by tst.team_set_id', $query);
     }

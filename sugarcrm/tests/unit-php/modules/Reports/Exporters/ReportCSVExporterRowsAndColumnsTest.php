@@ -21,7 +21,7 @@ use Sugarcrm\Sugarcrm\modules\Reports\Exporters\ReportCSVExporterRowsAndColumns;
  */
 class ReportCSVExporterRowsAndColumnsTest extends TestCase
 {
-    static protected $IdxToPass = 3;
+    protected static $IdxToPass = 3;
 
     protected function setUp() : void
     {
@@ -30,10 +30,10 @@ class ReportCSVExporterRowsAndColumnsTest extends TestCase
         // to setup Delimiter
         $current_user = $this->createPartialMock('User', ['getPreference']);
 
-        $preferenceMap = array(
-            array('export_delimiter', ','),
-            array('currency', '-99'),
-        );
+        $preferenceMap = [
+            ['export_delimiter', ','],
+            ['currency', '-99'],
+        ];
 
         $current_user->expects($this->any())
             ->method('getPreference')
@@ -98,26 +98,26 @@ class ReportCSVExporterRowsAndColumnsTest extends TestCase
 
     public function rowsAndColumnsExportProvider()
     {
-        $headerRow1 = array('Name', 'Universe', 'Total Property Owned');
-        $dataRows1 = array(
-            array(
+        $headerRow1 = ['Name', 'Universe', 'Total Property Owned'];
+        $dataRows1 = [
+            [
                 'cells' => ['Iron Man', 'Marvel', '$12,400,000,000'],
-            ),
-            array(
+            ],
+            [
                 'cells' => ['Bat Man', 'DC', '$9,200,000,000'],
-            ),
-            array(
+            ],
+            [
                 'cells' => ['Superman', 'DC', '$2,400,000'],
-            ),
-        );
+            ],
+        ];
 
         $expected1 = "\"Name\",\"Universe\",\"Total Property Owned\"\r\n" .
             "\"Iron Man\",\"Marvel\",\"$12,400,000,000\"\r\n" .
             "\"Bat Man\",\"DC\",\"$9,200,000,000\"\r\n" .
             "\"Superman\",\"DC\",\"$2,400,000\"\r\n";
 
-        return array(
-            array($headerRow1, $dataRows1, $expected1),
-        );
+        return [
+            [$headerRow1, $dataRows1, $expected1],
+        ];
     }
 }

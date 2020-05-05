@@ -91,7 +91,7 @@ class IndexPoolTest extends TestCase
         $staticStrategy = $this->getStaticStrategyMock();
         $staticStrategy->setIdentifier($loadedId);
 
-        $loaded = array($loadedId => $staticStrategy);
+        $loaded = [$loadedId => $staticStrategy];
         TestReflection::setProtectedValue($indexPool, 'loaded', $loaded);
         TestReflection::callProtectedMethod($indexPool, 'registerStrategies');
         $class = $indexPool->getStrategy($module);
@@ -157,5 +157,4 @@ class IndexPoolTest extends TestCase
             ->setMethods($methods)
             ->getMock();
     }
-
 }

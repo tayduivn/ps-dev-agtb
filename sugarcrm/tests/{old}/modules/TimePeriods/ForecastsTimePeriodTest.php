@@ -13,44 +13,44 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once('modules/TimePeriods/TimePeriod.php');
+require_once 'modules/TimePeriods/TimePeriod.php';
 
 class ForecastsTimePeriodTest extends TestCase
 {
-    private $preTestIds = array();
+    private $preTestIds = [];
     private static $configDateFormat;
     private static $currentDate;
     private static $currentYear;
 
     //These are the default forecast configuration settings we will use to test
-    private static $forecastConfigSettings = array(
-        array(
+    private static $forecastConfigSettings = [
+        [
             'name' => 'timeperiod_type',
             'value' => 'chronological',
             'platform' => 'base',
             'category' => 'Forecasts',
-        ),
-        array(
+        ],
+        [
             'name' => 'timeperiod_interval',
             'value' => TimePeriod::ANNUAL_TYPE,
             'platform' => 'base',
             'category' => 'Forecasts',
-        ),
-        array(
+        ],
+        [
             'name' => 'timeperiod_leaf_interval',
             'value' => TimePeriod::QUARTER_TYPE,
             'platform' => 'base',
             'category' => 'Forecasts',
-        ),
-        array(
+        ],
+        [
             'name' => 'timeperiod_start_date',
             'value' => '2013-01-01',
             'platform' => 'base',
             'category' => 'Forecasts',
-        ),
-        array('name' => 'timeperiod_shown_forward', 'value' => '2', 'platform' => 'base', 'category' => 'Forecasts'),
-        array('name' => 'timeperiod_shown_backward', 'value' => '2', 'platform' => 'base', 'category' => 'Forecasts'),
-    );
+        ],
+        ['name' => 'timeperiod_shown_forward', 'value' => '2', 'platform' => 'base', 'category' => 'Forecasts'],
+        ['name' => 'timeperiod_shown_backward', 'value' => '2', 'platform' => 'base', 'category' => 'Forecasts'],
+    ];
 
     /**
      * Setup global variables
@@ -105,11 +105,11 @@ class ForecastsTimePeriodTest extends TestCase
         $timePeriod = TimePeriod::getByType(TimePeriod::ANNUAL_TYPE);
 
         $currentForecastSettings = $admin->getConfigForModule('Forecasts', 'base');
-        $timePeriod->rebuildForecastingTimePeriods(array(), $currentForecastSettings);
+        $timePeriod->rebuildForecastingTimePeriods([], $currentForecastSettings);
 
         //add all of the newly created timePeriods to the test utils
         $result = $db->query('SELECT id, start_date, end_date, type FROM timeperiods WHERE deleted = 0');
-        $createdTimePeriods = array();
+        $createdTimePeriods = [];
 
         while ($row = $db->fetchByAssoc($result)) {
             $createdTimePeriods[] = TimePeriod::getBean($row['id']);
@@ -169,14 +169,14 @@ class ForecastsTimePeriodTest extends TestCase
      */
     public function getShownDifferenceProvider()
     {
-        return array(
-            array(1, 2, 'timeperiod_shown_forward', 1),
-            array(2, 2, 'timeperiod_shown_forward', 0),
-            array(2, 1, 'timeperiod_shown_forward', -1),
-            array(1, 2, 'timeperiod_shown_backward', 1),
-            array(2, 2, 'timeperiod_shown_backward', 0),
-            array(2, 1, 'timeperiod_shown_backward', -1),
-        );
+        return [
+            [1, 2, 'timeperiod_shown_forward', 1],
+            [2, 2, 'timeperiod_shown_forward', 0],
+            [2, 1, 'timeperiod_shown_forward', -1],
+            [1, 2, 'timeperiod_shown_backward', 1],
+            [2, 2, 'timeperiod_shown_backward', 0],
+            [2, 1, 'timeperiod_shown_backward', -1],
+        ];
     }
 
 
@@ -253,7 +253,7 @@ class ForecastsTimePeriodTest extends TestCase
 
         //Check if there were no previous settings
         $this->assertTrue(
-            $timeperiod->isTargetDateDifferentFromPrevious($targetStartDate, array()),
+            $timeperiod->isTargetDateDifferentFromPrevious($targetStartDate, []),
             sprintf("Failed asserting that %s is different target start date", $timeDate->asDbDate($targetStartDate))
         );
     }
@@ -276,7 +276,7 @@ class ForecastsTimePeriodTest extends TestCase
         $this->assertFalse($timeperiod->isTargetIntervalDifferent($priorForecastSettings, $currentForecastSettings));
 
         //Check if prior settings are empty
-        $this->assertTrue($timeperiod->isTargetIntervalDifferent(array(), $currentForecastSettings));
+        $this->assertTrue($timeperiod->isTargetIntervalDifferent([], $currentForecastSettings));
 
         //Check if timeperiod_interval chagnes
         $currentForecastSettings['timeperiod_interval'] = TimePeriod::QUARTER_TYPE;
@@ -299,11 +299,11 @@ class ForecastsTimePeriodTest extends TestCase
      */
     public function getByTypeDataProvider()
     {
-        return array(
-            array(TimePeriod::ANNUAL_TYPE),
-            array(TimePeriod::QUARTER_TYPE),
-            array(TimePeriod::MONTH_TYPE),
-        );
+        return [
+            [TimePeriod::ANNUAL_TYPE],
+            [TimePeriod::QUARTER_TYPE],
+            [TimePeriod::MONTH_TYPE],
+        ];
     }
 
     /**
@@ -329,52 +329,52 @@ class ForecastsTimePeriodTest extends TestCase
      */
     public function getTimePeriodNameProvider()
     {
-        return array(
-            array('m/d/Y', TimePeriod::ANNUAL_TYPE, '2012-07-01', 1, 'Year 2012'),
-            array('m/d/Y', TimePeriod::ANNUAL_TYPE, '2012-12-31', 2, 'Year 2012'),
-            array('m/d/Y', TimePeriod::ANNUAL_TYPE, '2013-01-01', 1, 'Year 2013'),
+        return [
+            ['m/d/Y', TimePeriod::ANNUAL_TYPE, '2012-07-01', 1, 'Year 2012'],
+            ['m/d/Y', TimePeriod::ANNUAL_TYPE, '2012-12-31', 2, 'Year 2012'],
+            ['m/d/Y', TimePeriod::ANNUAL_TYPE, '2013-01-01', 1, 'Year 2013'],
 
-            array('m/d/Y', TimePeriod::QUARTER_TYPE, '2012-07-01', 1, '2012 Q1'),
-            array('m/d/Y', TimePeriod::QUARTER_TYPE, '2012-10-01', 2, '2012 Q2'),
-            array('m/d/Y', TimePeriod::QUARTER_TYPE, '2013-01-01', 3, '2013 Q3'),
-            array('m/d/Y', TimePeriod::QUARTER_TYPE, '2013-04-01', 4, '2013 Q4'),
+            ['m/d/Y', TimePeriod::QUARTER_TYPE, '2012-07-01', 1, '2012 Q1'],
+            ['m/d/Y', TimePeriod::QUARTER_TYPE, '2012-10-01', 2, '2012 Q2'],
+            ['m/d/Y', TimePeriod::QUARTER_TYPE, '2013-01-01', 3, '2013 Q3'],
+            ['m/d/Y', TimePeriod::QUARTER_TYPE, '2013-04-01', 4, '2013 Q4'],
 
-            array('m/d/Y', TimePeriod::MONTH_TYPE, '2012-07-01', 1, 'July 2012'),
-            array('m/d/Y', TimePeriod::MONTH_TYPE, '2012-08-01', 2, 'August 2012'),
-            array('m/d/Y', TimePeriod::MONTH_TYPE, '2012-09-01', 3, 'September 2012'),
-            array('m/d/Y', TimePeriod::MONTH_TYPE, '2012-10-01', 4, 'October 2012'),
-            array('m/d/Y', TimePeriod::MONTH_TYPE, '2012-11-01', 5, 'November 2012'),
-            array('m/d/Y', TimePeriod::MONTH_TYPE, '2012-12-01', 6, 'December 2012'),
-            array('m/d/Y', TimePeriod::MONTH_TYPE, '2012-01-01', 7, 'January 2012'),
-            array('m/d/Y', TimePeriod::MONTH_TYPE, '2012-02-01', 8, 'February 2012'),
-            array('m/d/Y', TimePeriod::MONTH_TYPE, '2012-03-01', 9, 'March 2012'),
-            array('m/d/Y', TimePeriod::MONTH_TYPE, '2012-04-01', 10, 'April 2012'),
-            array('m/d/Y', TimePeriod::MONTH_TYPE, '2012-05-01', 11, 'May 2012'),
-            array('m/d/Y', TimePeriod::MONTH_TYPE, '2012-06-01', 12, 'June 2012'),
+            ['m/d/Y', TimePeriod::MONTH_TYPE, '2012-07-01', 1, 'July 2012'],
+            ['m/d/Y', TimePeriod::MONTH_TYPE, '2012-08-01', 2, 'August 2012'],
+            ['m/d/Y', TimePeriod::MONTH_TYPE, '2012-09-01', 3, 'September 2012'],
+            ['m/d/Y', TimePeriod::MONTH_TYPE, '2012-10-01', 4, 'October 2012'],
+            ['m/d/Y', TimePeriod::MONTH_TYPE, '2012-11-01', 5, 'November 2012'],
+            ['m/d/Y', TimePeriod::MONTH_TYPE, '2012-12-01', 6, 'December 2012'],
+            ['m/d/Y', TimePeriod::MONTH_TYPE, '2012-01-01', 7, 'January 2012'],
+            ['m/d/Y', TimePeriod::MONTH_TYPE, '2012-02-01', 8, 'February 2012'],
+            ['m/d/Y', TimePeriod::MONTH_TYPE, '2012-03-01', 9, 'March 2012'],
+            ['m/d/Y', TimePeriod::MONTH_TYPE, '2012-04-01', 10, 'April 2012'],
+            ['m/d/Y', TimePeriod::MONTH_TYPE, '2012-05-01', 11, 'May 2012'],
+            ['m/d/Y', TimePeriod::MONTH_TYPE, '2012-06-01', 12, 'June 2012'],
 
             //Test with a different date format
-            array('m.d.Y', TimePeriod::ANNUAL_TYPE, '2012-07-01', 1, 'Year 2012'),
-            array('m.d.Y', TimePeriod::ANNUAL_TYPE, '2012-12-31', 2, 'Year 2012'),
-            array('m.d.Y', TimePeriod::ANNUAL_TYPE, '2013-01-01', 1, 'Year 2013'),
+            ['m.d.Y', TimePeriod::ANNUAL_TYPE, '2012-07-01', 1, 'Year 2012'],
+            ['m.d.Y', TimePeriod::ANNUAL_TYPE, '2012-12-31', 2, 'Year 2012'],
+            ['m.d.Y', TimePeriod::ANNUAL_TYPE, '2013-01-01', 1, 'Year 2013'],
 
-            array('m.d.Y', TimePeriod::QUARTER_TYPE, '2012-07-01', 1, '2012 Q1'),
-            array('m.d.Y', TimePeriod::QUARTER_TYPE, '2012-10-01', 2, '2012 Q2'),
-            array('m.d.Y', TimePeriod::QUARTER_TYPE, '2013-01-01', 3, '2013 Q3'),
-            array('m.d.Y', TimePeriod::QUARTER_TYPE, '2013-04-01', 4, '2013 Q4'),
+            ['m.d.Y', TimePeriod::QUARTER_TYPE, '2012-07-01', 1, '2012 Q1'],
+            ['m.d.Y', TimePeriod::QUARTER_TYPE, '2012-10-01', 2, '2012 Q2'],
+            ['m.d.Y', TimePeriod::QUARTER_TYPE, '2013-01-01', 3, '2013 Q3'],
+            ['m.d.Y', TimePeriod::QUARTER_TYPE, '2013-04-01', 4, '2013 Q4'],
 
-            array('m.d.Y', TimePeriod::MONTH_TYPE, '2012-07-01', 1, 'July 2012'),
-            array('m.d.Y', TimePeriod::MONTH_TYPE, '2012-08-01', 2, 'August 2012'),
-            array('m.d.Y', TimePeriod::MONTH_TYPE, '2012-09-01', 3, 'September 2012'),
-            array('m.d.Y', TimePeriod::MONTH_TYPE, '2012-10-01', 4, 'October 2012'),
-            array('m.d.Y', TimePeriod::MONTH_TYPE, '2012-11-01', 5, 'November 2012'),
-            array('m.d.Y', TimePeriod::MONTH_TYPE, '2012-12-01', 6, 'December 2012'),
-            array('m.d.Y', TimePeriod::MONTH_TYPE, '2012-01-01', 7, 'January 2012'),
-            array('m.d.Y', TimePeriod::MONTH_TYPE, '2012-02-01', 8, 'February 2012'),
-            array('m.d.Y', TimePeriod::MONTH_TYPE, '2012-03-01', 9, 'March 2012'),
-            array('m.d.Y', TimePeriod::MONTH_TYPE, '2012-04-01', 10, 'April 2012'),
-            array('m.d.Y', TimePeriod::MONTH_TYPE, '2012-05-01', 11, 'May 2012'),
-            array('m.d.Y', TimePeriod::MONTH_TYPE, '2012-06-01', 12, 'June 2012'),
-        );
+            ['m.d.Y', TimePeriod::MONTH_TYPE, '2012-07-01', 1, 'July 2012'],
+            ['m.d.Y', TimePeriod::MONTH_TYPE, '2012-08-01', 2, 'August 2012'],
+            ['m.d.Y', TimePeriod::MONTH_TYPE, '2012-09-01', 3, 'September 2012'],
+            ['m.d.Y', TimePeriod::MONTH_TYPE, '2012-10-01', 4, 'October 2012'],
+            ['m.d.Y', TimePeriod::MONTH_TYPE, '2012-11-01', 5, 'November 2012'],
+            ['m.d.Y', TimePeriod::MONTH_TYPE, '2012-12-01', 6, 'December 2012'],
+            ['m.d.Y', TimePeriod::MONTH_TYPE, '2012-01-01', 7, 'January 2012'],
+            ['m.d.Y', TimePeriod::MONTH_TYPE, '2012-02-01', 8, 'February 2012'],
+            ['m.d.Y', TimePeriod::MONTH_TYPE, '2012-03-01', 9, 'March 2012'],
+            ['m.d.Y', TimePeriod::MONTH_TYPE, '2012-04-01', 10, 'April 2012'],
+            ['m.d.Y', TimePeriod::MONTH_TYPE, '2012-05-01', 11, 'May 2012'],
+            ['m.d.Y', TimePeriod::MONTH_TYPE, '2012-06-01', 12, 'June 2012'],
+        ];
     }
 
     /**
@@ -480,22 +480,22 @@ class ForecastsTimePeriodTest extends TestCase
      */
     public function rebuildForecastingTimePeriodsProvider()
     {
-        return array
-        (
+        return
+        [
             //Going from 2 to 4 creates 2 additional annual timeperiods backwards (2 annual, 8 quarters)
 
-            array(0, 2, 4, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, 1, 1, '-1 year', 2, 8, 'backward'),
+            [0, 2, 4, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, 1, 1, '-1 year', 2, 8, 'backward'],
 
-            array(0, 2, 4, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, 7, 1, '-1 year', 2, 8, 'backward'),
+            [0, 2, 4, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, 7, 1, '-1 year', 2, 8, 'backward'],
 
             //Going from 4 to 6 creates 2 annual timeperiods backwards (2 annual, 8 quarters)
-            array(0, 4, 6, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, 1, 1, '-1 year', 2, 8, 'backward'),
+            [0, 4, 6, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, 1, 1, '-1 year', 2, 8, 'backward'],
 
             //Going from 6 to 2 should not create anything
-            array(0, 6, 2, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, 1, 1, '0 year', 0, 0, 'backward'),
+            [0, 6, 2, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, 1, 1, '0 year', 0, 0, 'backward'],
 
             //Going from 2 to 4 creates 2 annual timeperiods forward (2 annual, 8 quarters)
-            array(
+            [
                 0,
                 2,
                 4,
@@ -511,10 +511,10 @@ class ForecastsTimePeriodTest extends TestCase
                 1,
                 10,
                 1,
-            ),
+            ],
 
             //Going from 2 to 4 creates 2 annual timeperiods forward (2 annual, 8 quarters)
-            array(
+            [
                 0,
                 2,
                 4,
@@ -530,10 +530,10 @@ class ForecastsTimePeriodTest extends TestCase
                 1,
                 10,
                 1,
-            ),
+            ],
 
             //Going from 4 to 6 creates 2 annual timeperiods forward (2 annual, 8 quarters)
-            array(
+            [
                 0,
                 4,
                 6,
@@ -549,10 +549,10 @@ class ForecastsTimePeriodTest extends TestCase
                 1,
                 10,
                 1,
-            ),
+            ],
 
             //Going from 6 to 2 should not create anything
-            array(
+            [
                 0,
                 6,
                 2,
@@ -568,18 +568,18 @@ class ForecastsTimePeriodTest extends TestCase
                 1,
                 10,
                 1,
-            ),
+            ],
 
             //Create 4 quarters going backward.  Earliest quarter and month should be -1 year from timeperiod
-            array(0, 0, 4, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, 1, 1, '0 year', 4, 12, 'backward'),
+            [0, 0, 4, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, 1, 1, '0 year', 4, 12, 'backward'],
 
             //Create 8 quarters going backward.  Earliest quarter and month should be -2 years from timeperiod
-            array(0, 4, 12, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, 1, 1, '-1 year', 8, 24, 'backward'),
+            [0, 4, 12, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, 1, 1, '-1 year', 8, 24, 'backward'],
 
             //Going from 12 to 6 should not create anything
-            array(0, 12, 6, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, 1, 1, '0 year', 0, 0, 'backward'),
+            [0, 12, 6, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, 1, 1, '0 year', 0, 0, 'backward'],
 
-            array(
+            [
                 0,
                 0,
                 4,
@@ -595,8 +595,8 @@ class ForecastsTimePeriodTest extends TestCase
                 1,
                 12,
                 1,
-            ),
-            array(
+            ],
+            [
                 0,
                 4,
                 12,
@@ -612,8 +612,8 @@ class ForecastsTimePeriodTest extends TestCase
                 1,
                 12,
                 1,
-            ),
-            array(
+            ],
+            [
                 0,
                 12,
                 6,
@@ -629,13 +629,13 @@ class ForecastsTimePeriodTest extends TestCase
                 1,
                 12,
                 1,
-            ),
+            ],
 
             //Forward TimePeriods will be created
-            array(1, 2, 2, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, 1, 1, '2 year', 2, 8, 'forward'),
-            array(1, 2, 4, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, 1, 1, '1 year', 4, 12, 'forward'),
+            [1, 2, 2, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, 1, 1, '2 year', 2, 8, 'forward'],
+            [1, 2, 4, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, 1, 1, '1 year', 4, 12, 'forward'],
 
-        );
+        ];
     }
 
     /**
@@ -644,11 +644,11 @@ class ForecastsTimePeriodTest extends TestCase
     public function createTimePeriodsForUpgradeProvider()
     {
 
-        return array(
+        return [
 
             //This data set simulates case where the start date specified is the same as current date
 
-            array(
+            [
                 1,
                 TimePeriod::ANNUAL_TYPE,
                 TimePeriod::QUARTER_TYPE,
@@ -658,8 +658,8 @@ class ForecastsTimePeriodTest extends TestCase
                 15,
                 TimeDate::getInstance()->getNow()->setDate(date('Y'), 10, 1),
                 TimeDate::getInstance()->getNow()->setDate(date('Y'), 12, 31),
-            ),
-            array(
+            ],
+            [
                 1,
                 TimePeriod::ANNUAL_TYPE,
                 TimePeriod::QUARTER_TYPE,
@@ -669,8 +669,8 @@ class ForecastsTimePeriodTest extends TestCase
                 25,
                 TimeDate::getInstance()->getNow()->setDate(date('Y'), 10, 1),
                 TimeDate::getInstance()->getNow()->setDate(date('Y'), 12, 31),
-            ),
-            array(
+            ],
+            [
                 1,
                 TimePeriod::QUARTER_TYPE,
                 TimePeriod::MONTH_TYPE,
@@ -680,8 +680,8 @@ class ForecastsTimePeriodTest extends TestCase
                 10,
                 TimeDate::getInstance()->getNow()->setDate(date('Y'), 1, 1),
                 TimeDate::getInstance()->getNow()->setDate(date('Y'), 3, 31),
-            ),
-            array(
+            ],
+            [
                 1,
                 TimePeriod::QUARTER_TYPE,
                 TimePeriod::MONTH_TYPE,
@@ -691,8 +691,8 @@ class ForecastsTimePeriodTest extends TestCase
                 18,
                 TimeDate::getInstance()->getNow()->setDate(date('Y'), 1, 1),
                 TimeDate::getInstance()->getNow()->setDate(date('Y'), 3, 31),
-            ),
-            array(
+            ],
+            [
                 9,
                 TimePeriod::QUARTER_TYPE,
                 TimePeriod::MONTH_TYPE,
@@ -702,9 +702,9 @@ class ForecastsTimePeriodTest extends TestCase
                 10,
                 TimeDate::getInstance()->getNow()->setDate(date('Y'), 9, 1),
                 TimeDate::getInstance()->getNow()->setDate(date('Y'), 9, 30),
-            ),
+            ],
 
-            array(
+            [
                 17,
                 TimePeriod::QUARTER_TYPE,
                 TimePeriod::MONTH_TYPE,
@@ -714,10 +714,10 @@ class ForecastsTimePeriodTest extends TestCase
                 18,
                 TimeDate::getInstance()->getNow()->setDate(date('Y') + 1, 3, 1),
                 TimeDate::getInstance()->getNow()->setDate(date('Y') + 1, 3, 31),
-            ),
+            ],
 
             //This data set simulates case where the start date specified is before the current date
-            array(
+            [
                 1,
                 TimePeriod::ANNUAL_TYPE,
                 TimePeriod::QUARTER_TYPE,
@@ -727,9 +727,9 @@ class ForecastsTimePeriodTest extends TestCase
                 15,
                 TimeDate::getInstance()->getNow()->setDate(date('Y'), 11, 1),
                 TimeDate::getInstance()->getNow()->setDate(date('Y') + 1, 1, 31),
-            ),
+            ],
 
-            array(
+            [
                 1,
                 TimePeriod::ANNUAL_TYPE,
                 TimePeriod::QUARTER_TYPE,
@@ -739,8 +739,8 @@ class ForecastsTimePeriodTest extends TestCase
                 25,
                 TimeDate::getInstance()->getNow()->setDate(date('Y'), 11, 1),
                 TimeDate::getInstance()->getNow()->setDate(date('Y') + 1, 1, 31),
-            ),
-            array(
+            ],
+            [
                 1,
                 TimePeriod::QUARTER_TYPE,
                 TimePeriod::MONTH_TYPE,
@@ -750,8 +750,8 @@ class ForecastsTimePeriodTest extends TestCase
                 11,
                 TimeDate::getInstance()->getNow()->setDate(date('Y'), 4, 1),
                 TimeDate::getInstance()->getNow()->setDate(date('Y'), 4, 30),
-            ),
-            array(
+            ],
+            [
                 1,
                 TimePeriod::QUARTER_TYPE,
                 TimePeriod::MONTH_TYPE,
@@ -761,8 +761,8 @@ class ForecastsTimePeriodTest extends TestCase
                 19,
                 TimeDate::getInstance()->getNow()->setDate(date('Y'), 4, 1),
                 TimeDate::getInstance()->getNow()->setDate(date('Y'), 4, 30),
-            ),
-            array(
+            ],
+            [
                 14,
                 TimePeriod::ANNUAL_TYPE,
                 TimePeriod::QUARTER_TYPE,
@@ -772,8 +772,8 @@ class ForecastsTimePeriodTest extends TestCase
                 15,
                 TimeDate::getInstance()->getNow()->setDate(date('Y') + 2, 11, 1),
                 TimeDate::getInstance()->getNow()->setDate(date('Y') + 3, 1, 31),
-            ),
-            array(
+            ],
+            [
                 24,
                 TimePeriod::ANNUAL_TYPE,
                 TimePeriod::QUARTER_TYPE,
@@ -783,10 +783,10 @@ class ForecastsTimePeriodTest extends TestCase
                 25,
                 TimeDate::getInstance()->getNow()->setDate(date('Y') + 4, 11, 1),
                 TimeDate::getInstance()->getNow()->setDate(date('Y') + 5, 1, 31),
-            ),
+            ],
 
             //This data set simulates case where the start date specified is after the current date
-            array(
+            [
                 1,
                 TimePeriod::ANNUAL_TYPE,
                 TimePeriod::QUARTER_TYPE,
@@ -796,8 +796,8 @@ class ForecastsTimePeriodTest extends TestCase
                 15,
                 TimeDate::getInstance()->getNow()->setDate(date('Y'), 12, 1),
                 TimeDate::getInstance()->getNow()->setDate(date('Y') + 1, 2, 28),
-            ),
-            array(
+            ],
+            [
                 1,
                 TimePeriod::ANNUAL_TYPE,
                 TimePeriod::QUARTER_TYPE,
@@ -807,8 +807,8 @@ class ForecastsTimePeriodTest extends TestCase
                 25,
                 TimeDate::getInstance()->getNow()->setDate(date('Y'), 12, 1),
                 TimeDate::getInstance()->getNow()->setDate(date('Y') + 1, 2, 28),
-            ),
-            array(
+            ],
+            [
                 1,
                 TimePeriod::QUARTER_TYPE,
                 TimePeriod::MONTH_TYPE,
@@ -818,8 +818,8 @@ class ForecastsTimePeriodTest extends TestCase
                 12,
                 TimeDate::getInstance()->getNow()->setDate(date('Y'), 5, 1),
                 TimeDate::getInstance()->getNow()->setDate(date('Y'), 5, 31),
-            ),
-            array(
+            ],
+            [
                 1,
                 TimePeriod::QUARTER_TYPE,
                 TimePeriod::MONTH_TYPE,
@@ -829,8 +829,8 @@ class ForecastsTimePeriodTest extends TestCase
                 20,
                 TimeDate::getInstance()->getNow()->setDate(date('Y'), 5, 1),
                 TimeDate::getInstance()->getNow()->setDate(date('Y'), 5, 31),
-            ),
-            array(
+            ],
+            [
                 11,
                 TimePeriod::QUARTER_TYPE,
                 TimePeriod::MONTH_TYPE,
@@ -840,8 +840,8 @@ class ForecastsTimePeriodTest extends TestCase
                 12,
                 TimeDate::getInstance()->getNow()->setDate(date('Y'), 11, 1),
                 TimeDate::getInstance()->getNow()->setDate(date('Y'), 11, 30),
-            ),
-            array(
+            ],
+            [
                 19,
                 TimePeriod::QUARTER_TYPE,
                 TimePeriod::MONTH_TYPE,
@@ -851,10 +851,10 @@ class ForecastsTimePeriodTest extends TestCase
                 20,
                 TimeDate::getInstance()->getNow()->setDate(date('Y') + 1, 5, 1),
                 TimeDate::getInstance()->getNow()->setDate(date('Y') + 1, 5, 31),
-            ),
+            ],
 
             //This data set simulates case where the start date specified is before current date and there are no existing current TimePeriods for the current date
-            array(
+            [
                 1,
                 TimePeriod::ANNUAL_TYPE,
                 TimePeriod::QUARTER_TYPE,
@@ -864,10 +864,10 @@ class ForecastsTimePeriodTest extends TestCase
                 15,
                 TimeDate::getInstance()->getNow()->setDate(date('Y') + 2, 10, 1),
                 TimeDate::getInstance()->getNow()->setDate(date('Y') + 2, 12, 31),
-            ),
+            ],
 
             //This data set simulates upgrades using variable TimePeriods so that we are not bound to the TimePeriods created in the setUp method
-            array(
+            [
                 1,
                 TimePeriod::ANNUAL_TYPE,
                 TimePeriod::QUARTER_TYPE,
@@ -877,15 +877,15 @@ class ForecastsTimePeriodTest extends TestCase
                 15,
                 TimeDate::getInstance()->fromDbDate('2013-10-01'),
                 TimeDate::getInstance()->fromDbDate('2013-12-31'),
-                array(
+                [
                     "INSERT into timeperiods (id, name, start_date, end_date, parent_id, deleted) values ('abc1', '2013 Q4', '2013-10-01', '2013-12-31', 'abc5', 0)",
                     "INSERT into timeperiods (id, name, start_date, end_date, parent_id, deleted) values ('abc2', '2013 Q3', '2013-07-01', '2013-09-30', 'abc5', 0)",
                     "INSERT into timeperiods (id, name, start_date, end_date, parent_id, deleted) values ('abc3', '2013 Q2', '2013-04-01', '2013-06-30', 'abc5', 0)",
                     "INSERT into timeperiods (id, name, start_date, end_date, deleted) values ('abc5', 'Year 2013', '2013-10-01', '2013-12-31', 0)",
                     "INSERT into timeperiods (id, name, start_date, end_date, parent_id, deleted) values ('abc4', '2013 Q1', '2013-01-01', '2013-03-31', 'abc5', 0)",
-                ),
-            ),
-            array(
+                ],
+            ],
+            [
                 1,
                 TimePeriod::ANNUAL_TYPE,
                 TimePeriod::QUARTER_TYPE,
@@ -895,7 +895,7 @@ class ForecastsTimePeriodTest extends TestCase
                 12,
                 TimeDate::getInstance()->fromDbDate('2012-10-01'),
                 TimeDate::getInstance()->fromDbDate('2012-12-31'),
-                array(
+                [
                     "INSERT INTO timeperiods (id, name, parent_id, start_date, end_date, deleted) VALUES ('103b91cc-f7a3-d597-0b73-501a8ce616ff','13 Weeks (From Oct. 1st)','40b1de01-d7cf-3031-89e1-4ffeecd30fa8','2012-10-01','2012-12-30',0)",
                     "INSERT INTO timeperiods (id, name, parent_id, start_date, end_date, deleted) VALUES ('2d3c752b-c36b-bd0a-2f23-501a8c5e754e','13 Weeks (From Sep. 24th)','40b1de01-d7cf-3031-89e1-4ffeecd30fa8','2012-09-24','2012-12-23',0)",
                     "INSERT INTO timeperiods (id, name, parent_id, start_date, end_date, deleted) VALUES ('32a04171-977c-fd45-3fbf-4ffeedcca0a9','Q4-2012','40b1de01-d7cf-3031-89e1-4ffeecd30fa8','2012-10-01','2012-12-31',1)",
@@ -912,12 +912,12 @@ class ForecastsTimePeriodTest extends TestCase
                     "INSERT INTO timeperiods (id, name, parent_id, start_date, end_date, deleted) VALUES ('ca574889-868f-909b-247f-501a8b63d48e','13 Weeks (From Sep. 10th)','40b1de01-d7cf-3031-89e1-4ffeecd30fa8','2012-09-10','2012-12-09',0)",
                     "INSERT INTO timeperiods (id, name, parent_id, start_date, end_date, deleted) VALUES ('e4623e91-6b0e-a514-b68c-4ff5b1a5c100','2012',NULL,'2012-01-01','2012-12-31',1)",
                     "INSERT INTO timeperiods (id, name, parent_id, start_date, end_date, deleted) VALUES ('e5446401-af4d-abf2-7969-4ffeed400cdf','Q3-2012','40b1de01-d7cf-3031-89e1-4ffeecd30fa8','2012-07-01','2012-09-30',1)",
-                ),
-            ),
+                ],
+            ],
 
             //The fifth created TimePeriod is where things could potentially fall out of sync since 2013-01-31 ->modify('+3 months') = 2013-05-01, but we are adjusting this to be 2013-04-29 so that the next TimePeriod
             //starts on the last day of the month 2013-04-30 and likewise ends the day before the last day of the month for that TimePeriod 2013-07-30
-            array(
+            [
                 4,
                 TimePeriod::ANNUAL_TYPE,
                 TimePeriod::QUARTER_TYPE,
@@ -927,7 +927,7 @@ class ForecastsTimePeriodTest extends TestCase
                 12,
                 TimeDate::getInstance()->fromDbDate('2013-04-30'),
                 TimeDate::getInstance()->fromDbDate('2013-07-30'),
-                array(
+                [
                     "INSERT INTO timeperiods (id, name, parent_id, start_date, end_date, deleted) VALUES ('103b91cc-f7a3-d597-0b73-501a8ce616ff','13 Weeks (From Oct. 1st)','40b1de01-d7cf-3031-89e1-4ffeecd30fa8','2012-10-01','2012-12-30',0)",
                     "INSERT INTO timeperiods (id, name, parent_id, start_date, end_date, deleted) VALUES ('2d3c752b-c36b-bd0a-2f23-501a8c5e754e','13 Weeks (From Sep. 24th)','40b1de01-d7cf-3031-89e1-4ffeecd30fa8','2012-09-24','2012-12-23',0)",
                     "INSERT INTO timeperiods (id, name, parent_id, start_date, end_date, deleted) VALUES ('32a04171-977c-fd45-3fbf-4ffeedcca0a9','Q4-2012','40b1de01-d7cf-3031-89e1-4ffeecd30fa8','2012-10-01','2012-12-31',1)",
@@ -944,10 +944,9 @@ class ForecastsTimePeriodTest extends TestCase
                     "INSERT INTO timeperiods (id, name, parent_id, start_date, end_date, deleted) VALUES ('ca574889-868f-909b-247f-501a8b63d48e','13 Weeks (From Sep. 10th)','40b1de01-d7cf-3031-89e1-4ffeecd30fa8','2012-09-10','2012-12-09',0)",
                     "INSERT INTO timeperiods (id, name, parent_id, start_date, end_date, deleted) VALUES ('e4623e91-6b0e-a514-b68c-4ff5b1a5c100','2012',NULL,'2012-01-01','2012-12-31',1)",
                     "INSERT INTO timeperiods (id, name, parent_id, start_date, end_date, deleted) VALUES ('e5446401-af4d-abf2-7969-4ffeed400cdf','Q3-2012','40b1de01-d7cf-3031-89e1-4ffeecd30fa8','2012-07-01','2012-09-30',1)",
-                ),
-            ),
-        );
-
+                ],
+            ],
+        ];
     }
 
     /**
@@ -980,7 +979,7 @@ class ForecastsTimePeriodTest extends TestCase
         $expectedTimePeriods,
         $startDateFirstCreated,
         $endDateFirstCreated,
-        $overrideEntries = array()
+        $overrideEntries = []
     ) {
         $this->markTestSkipped('SFA Team - This test breaks when run with the test suite on stack 165');
 
@@ -1000,7 +999,7 @@ class ForecastsTimePeriodTest extends TestCase
 
         $backward = ($startDateYr < $todaysDateYr) ? ($todaysDateYr - $startDateYr) : 0;
 
-        $currentSettings = array();
+        $currentSettings = [];
         $currentSettings['timeperiod_interval'] = $interval;
         $currentSettings['timeperiod_leaf_interval'] = $leafInterval;
         $currentSettings['timeperiod_start_date'] = $startDate->asDbDate(false);
@@ -1035,7 +1034,7 @@ class ForecastsTimePeriodTest extends TestCase
             'Failed asserting that the end date of first backward timeperiod is ' . $firstTimePeriod->end_date
         );
 
-        $klass = new SugarForecasting_Filter_TimePeriodFilter(array());
+        $klass = new SugarForecasting_Filter_TimePeriodFilter([]);
         $timePeriods = $klass->process();
         $this->assertNotEmpty($timePeriods);
     }
@@ -1057,7 +1056,7 @@ class ForecastsTimePeriodTest extends TestCase
 
         $expectedAnnualTimePeriodName = string_format(
             $app_strings['LBL_ANNUAL_TIMEPERIOD_FORMAT'],
-            array($queryDate)
+            [$queryDate]
         );
         $this->assertEquals($expectedAnnualTimePeriodName, $currentAnnualTimePeriod->name);
 
@@ -1095,7 +1094,7 @@ class ForecastsTimePeriodTest extends TestCase
 
         $expectedQuarterTimePeriodName = string_format(
             $app_strings['LBL_QUARTER_TIMEPERIOD_FORMAT'],
-            array($currentId, $year, $end)
+            [$currentId, $year, $end]
         );
         $this->assertEquals($expectedQuarterTimePeriodName, $currentQuarterTimePeriod->name);
 
@@ -1116,47 +1115,47 @@ class ForecastsTimePeriodTest extends TestCase
      */
     public function getChartLabelsProvider()
     {
-        return array(
+        return [
 
-            array(TimePeriod::QUARTER_TYPE, '2013-01-01', array('January 2013', 'February 2013', 'March 2013')),
-            array(TimePeriod::QUARTER_TYPE, '2013-10-01', array('October 2013', 'November 2013', 'December 2013')),
-            array(TimePeriod::QUARTER_TYPE, '2013-11-01', array('November 2013', 'December 2013', 'January 2014')),
+            [TimePeriod::QUARTER_TYPE, '2013-01-01', ['January 2013', 'February 2013', 'March 2013']],
+            [TimePeriod::QUARTER_TYPE, '2013-10-01', ['October 2013', 'November 2013', 'December 2013']],
+            [TimePeriod::QUARTER_TYPE, '2013-11-01', ['November 2013', 'December 2013', 'January 2014']],
 
-            array(TimePeriod::QUARTER_TYPE, '2012-01-15', array('January 2012', 'February 2012', 'March 2012')),
-            array(TimePeriod::QUARTER_TYPE, '2013-01-15', array('January 2013', 'February 2013', 'March 2013')),
+            [TimePeriod::QUARTER_TYPE, '2012-01-15', ['January 2012', 'February 2012', 'March 2012']],
+            [TimePeriod::QUARTER_TYPE, '2013-01-15', ['January 2013', 'February 2013', 'March 2013']],
 
-            array(TimePeriod::QUARTER_TYPE, '2011-12-31', array('December 2011', 'January 2012', 'February 2012')),
-            array(TimePeriod::QUARTER_TYPE, '2011-12-30', array('December 2011', 'January 2012', 'February 2012')),
-            array(TimePeriod::QUARTER_TYPE, '2011-12-29', array('December 2011', 'January 2012', 'February 2012')),
-            array(TimePeriod::QUARTER_TYPE, '2011-12-28', array('December 2011', 'January 2012', 'February 2012')),
+            [TimePeriod::QUARTER_TYPE, '2011-12-31', ['December 2011', 'January 2012', 'February 2012']],
+            [TimePeriod::QUARTER_TYPE, '2011-12-30', ['December 2011', 'January 2012', 'February 2012']],
+            [TimePeriod::QUARTER_TYPE, '2011-12-29', ['December 2011', 'January 2012', 'February 2012']],
+            [TimePeriod::QUARTER_TYPE, '2011-12-28', ['December 2011', 'January 2012', 'February 2012']],
 
-            array(TimePeriod::QUARTER_TYPE, '2012-12-31', array('December 2012', 'January 2013', 'February 2013')),
-            array(TimePeriod::QUARTER_TYPE, '2012-12-30', array('December 2012', 'January 2013', 'February 2013')),
-            array(TimePeriod::QUARTER_TYPE, '2012-12-29', array('December 2012', 'January 2013', 'February 2013')),
-            array(TimePeriod::QUARTER_TYPE, '2012-12-28', array('December 2012', 'January 2013', 'February 2013')),
+            [TimePeriod::QUARTER_TYPE, '2012-12-31', ['December 2012', 'January 2013', 'February 2013']],
+            [TimePeriod::QUARTER_TYPE, '2012-12-30', ['December 2012', 'January 2013', 'February 2013']],
+            [TimePeriod::QUARTER_TYPE, '2012-12-29', ['December 2012', 'January 2013', 'February 2013']],
+            [TimePeriod::QUARTER_TYPE, '2012-12-28', ['December 2012', 'January 2013', 'February 2013']],
 
-            array(
+            [
                 TimePeriod::MONTH_TYPE,
                 '2013-01-01',
-                array('1/1-1/7', '1/8-1/14', '1/15-1/21', '1/22-1/28', '1/29-1/31'),
-            ),
-            array(TimePeriod::MONTH_TYPE, '2013-02-01', array('2/1-2/7', '2/8-2/14', '2/15-2/21', '2/22-2/28')),
-            array(
+                ['1/1-1/7', '1/8-1/14', '1/15-1/21', '1/22-1/28', '1/29-1/31'],
+            ],
+            [TimePeriod::MONTH_TYPE, '2013-02-01', ['2/1-2/7', '2/8-2/14', '2/15-2/21', '2/22-2/28']],
+            [
                 TimePeriod::MONTH_TYPE,
                 '2012-02-01',
-                array('2/1-2/7', '2/8-2/14', '2/15-2/21', '2/22-2/28', '2/29-2/29'),
-            ),
-            array(
+                ['2/1-2/7', '2/8-2/14', '2/15-2/21', '2/22-2/28', '2/29-2/29'],
+            ],
+            [
                 TimePeriod::MONTH_TYPE,
                 '2013-04-10',
-                array('4/10-4/16', '4/17-4/23', '4/24-4/30', '5/1-5/7', '5/8-5/9'),
-            ),
-            array(
+                ['4/10-4/16', '4/17-4/23', '4/24-4/30', '5/1-5/7', '5/8-5/9'],
+            ],
+            [
                 TimePeriod::MONTH_TYPE,
                 '2013-12-10',
-                array('12/10-12/16', '12/17-12/23', '12/24-12/30', '12/31-1/6', '1/7-1/9'),
-            ),
-        );
+                ['12/10-12/16', '12/17-12/23', '12/24-12/30', '12/31-1/6', '1/7-1/9'],
+            ],
+        ];
     }
 
 
@@ -1174,7 +1173,7 @@ class ForecastsTimePeriodTest extends TestCase
         $timePeriod->setStartDate($tpStartDate);
         $timePeriod->save();
         SugarTestTimePeriodUtilities::$_createdTimePeriods[] = $timePeriod;
-        $chartLabels = $timePeriod->getChartLabels(array());
+        $chartLabels = $timePeriod->getChartLabels([]);
         $this->assertSameSize($expectedLabels, $chartLabels);
         foreach ($expectedLabels as $key => $expectedLabel) {
             $this->assertEquals($expectedLabel, $chartLabels[$key]['label']);
@@ -1195,88 +1194,88 @@ class ForecastsTimePeriodTest extends TestCase
      */
     public function getChartLabelsKeyProvider()
     {
-        return array(
-            array(TimePeriod::QUARTER_TYPE, '2013-01-01', '2013-01-01', 0),
-            array(TimePeriod::QUARTER_TYPE, '2013-01-01', '2013-01-31', 0),
-            array(TimePeriod::QUARTER_TYPE, '2013-01-01', '2013-02-01', 1),
-            array(TimePeriod::QUARTER_TYPE, '2013-01-01', '2013-02-28', 1),
-            array(TimePeriod::QUARTER_TYPE, '2013-01-01', '2013-03-01', 2),
-            array(TimePeriod::QUARTER_TYPE, '2013-01-01', '2013-03-31', 2),
+        return [
+            [TimePeriod::QUARTER_TYPE, '2013-01-01', '2013-01-01', 0],
+            [TimePeriod::QUARTER_TYPE, '2013-01-01', '2013-01-31', 0],
+            [TimePeriod::QUARTER_TYPE, '2013-01-01', '2013-02-01', 1],
+            [TimePeriod::QUARTER_TYPE, '2013-01-01', '2013-02-28', 1],
+            [TimePeriod::QUARTER_TYPE, '2013-01-01', '2013-03-01', 2],
+            [TimePeriod::QUARTER_TYPE, '2013-01-01', '2013-03-31', 2],
 
-            array(TimePeriod::QUARTER_TYPE, '2013-01-15', '2013-01-15', 0),
-            array(TimePeriod::QUARTER_TYPE, '2013-01-15', '2013-01-31', 0),
-            array(TimePeriod::QUARTER_TYPE, '2013-01-15', '2013-02-14', 0),
-            array(TimePeriod::QUARTER_TYPE, '2013-01-15', '2013-02-15', 1),
-            array(TimePeriod::QUARTER_TYPE, '2013-01-15', '2013-02-28', 1),
-            array(TimePeriod::QUARTER_TYPE, '2013-01-15', '2013-03-15', 2),
-            array(TimePeriod::QUARTER_TYPE, '2013-01-15', '2013-03-15', 2),
-            array(TimePeriod::QUARTER_TYPE, '2013-01-15', '2013-04-14', 2),
+            [TimePeriod::QUARTER_TYPE, '2013-01-15', '2013-01-15', 0],
+            [TimePeriod::QUARTER_TYPE, '2013-01-15', '2013-01-31', 0],
+            [TimePeriod::QUARTER_TYPE, '2013-01-15', '2013-02-14', 0],
+            [TimePeriod::QUARTER_TYPE, '2013-01-15', '2013-02-15', 1],
+            [TimePeriod::QUARTER_TYPE, '2013-01-15', '2013-02-28', 1],
+            [TimePeriod::QUARTER_TYPE, '2013-01-15', '2013-03-15', 2],
+            [TimePeriod::QUARTER_TYPE, '2013-01-15', '2013-03-15', 2],
+            [TimePeriod::QUARTER_TYPE, '2013-01-15', '2013-04-14', 2],
 
-            array(TimePeriod::QUARTER_TYPE, '2012-12-27', '2013-01-26', 0),
-            array(TimePeriod::QUARTER_TYPE, '2012-12-27', '2013-01-27', 1),
-            array(TimePeriod::QUARTER_TYPE, '2012-12-27', '2013-02-26', 1),
-            array(TimePeriod::QUARTER_TYPE, '2012-12-27', '2013-02-27', 2),
+            [TimePeriod::QUARTER_TYPE, '2012-12-27', '2013-01-26', 0],
+            [TimePeriod::QUARTER_TYPE, '2012-12-27', '2013-01-27', 1],
+            [TimePeriod::QUARTER_TYPE, '2012-12-27', '2013-02-26', 1],
+            [TimePeriod::QUARTER_TYPE, '2012-12-27', '2013-02-27', 2],
 
-            array(TimePeriod::QUARTER_TYPE, '2012-12-28', '2013-02-27', 1),
-            array(TimePeriod::QUARTER_TYPE, '2012-12-29', '2013-02-27', 1),
-            array(TimePeriod::QUARTER_TYPE, '2012-12-30', '2013-02-27', 1),
-            array(TimePeriod::QUARTER_TYPE, '2012-12-31', '2013-02-27', 1),
-            array(TimePeriod::QUARTER_TYPE, '2012-12-28', '2013-02-28', 2),
-            array(TimePeriod::QUARTER_TYPE, '2012-12-29', '2013-02-28', 2),
-            array(TimePeriod::QUARTER_TYPE, '2012-12-30', '2013-02-28', 2),
-            array(TimePeriod::QUARTER_TYPE, '2012-12-31', '2013-02-28', 2),
+            [TimePeriod::QUARTER_TYPE, '2012-12-28', '2013-02-27', 1],
+            [TimePeriod::QUARTER_TYPE, '2012-12-29', '2013-02-27', 1],
+            [TimePeriod::QUARTER_TYPE, '2012-12-30', '2013-02-27', 1],
+            [TimePeriod::QUARTER_TYPE, '2012-12-31', '2013-02-27', 1],
+            [TimePeriod::QUARTER_TYPE, '2012-12-28', '2013-02-28', 2],
+            [TimePeriod::QUARTER_TYPE, '2012-12-29', '2013-02-28', 2],
+            [TimePeriod::QUARTER_TYPE, '2012-12-30', '2013-02-28', 2],
+            [TimePeriod::QUARTER_TYPE, '2012-12-31', '2013-02-28', 2],
 
-            array(TimePeriod::QUARTER_TYPE, '2011-12-28', '2012-02-27', 1),
-            array(TimePeriod::QUARTER_TYPE, '2011-12-29', '2012-02-27', 1),
-            array(TimePeriod::QUARTER_TYPE, '2011-12-30', '2012-02-27', 1),
-            array(TimePeriod::QUARTER_TYPE, '2011-12-31', '2012-02-27', 1),
-            array(TimePeriod::QUARTER_TYPE, '2011-12-28', '2012-02-29', 2),
-            array(TimePeriod::QUARTER_TYPE, '2011-12-29', '2012-02-29', 2),
-            array(TimePeriod::QUARTER_TYPE, '2011-12-30', '2012-02-29', 2),
-            array(TimePeriod::QUARTER_TYPE, '2011-12-31', '2012-02-29', 2),
-            array(TimePeriod::QUARTER_TYPE, '2012-01-01', '2012-02-29', 1),
-            array(TimePeriod::QUARTER_TYPE, '2011-12-01', '2012-02-29', 2),
-            array(TimePeriod::QUARTER_TYPE, '2012-02-01', '2012-02-29', 0),
-            array(TimePeriod::QUARTER_TYPE, '2012-02-29', '2012-02-29', 0),
+            [TimePeriod::QUARTER_TYPE, '2011-12-28', '2012-02-27', 1],
+            [TimePeriod::QUARTER_TYPE, '2011-12-29', '2012-02-27', 1],
+            [TimePeriod::QUARTER_TYPE, '2011-12-30', '2012-02-27', 1],
+            [TimePeriod::QUARTER_TYPE, '2011-12-31', '2012-02-27', 1],
+            [TimePeriod::QUARTER_TYPE, '2011-12-28', '2012-02-29', 2],
+            [TimePeriod::QUARTER_TYPE, '2011-12-29', '2012-02-29', 2],
+            [TimePeriod::QUARTER_TYPE, '2011-12-30', '2012-02-29', 2],
+            [TimePeriod::QUARTER_TYPE, '2011-12-31', '2012-02-29', 2],
+            [TimePeriod::QUARTER_TYPE, '2012-01-01', '2012-02-29', 1],
+            [TimePeriod::QUARTER_TYPE, '2011-12-01', '2012-02-29', 2],
+            [TimePeriod::QUARTER_TYPE, '2012-02-01', '2012-02-29', 0],
+            [TimePeriod::QUARTER_TYPE, '2012-02-29', '2012-02-29', 0],
 
-            array(TimePeriod::MONTH_TYPE, '2013-01-01', '2013-01-01', 0),
-            array(TimePeriod::MONTH_TYPE, '2013-01-01', '2013-01-07', 0),
-            array(TimePeriod::MONTH_TYPE, '2013-01-01', '2013-01-08', 1),
-            array(TimePeriod::MONTH_TYPE, '2013-01-01', '2013-01-14', 1),
-            array(TimePeriod::MONTH_TYPE, '2013-01-01', '2013-01-15', 2),
-            array(TimePeriod::MONTH_TYPE, '2013-01-01', '2013-01-21', 2),
-            array(TimePeriod::MONTH_TYPE, '2013-01-01', '2013-01-22', 3),
-            array(TimePeriod::MONTH_TYPE, '2013-01-01', '2013-01-23', 3),
-            array(TimePeriod::MONTH_TYPE, '2013-01-01', '2013-01-29', 4),
-            array(TimePeriod::MONTH_TYPE, '2013-01-01', '2013-01-31', 4),
+            [TimePeriod::MONTH_TYPE, '2013-01-01', '2013-01-01', 0],
+            [TimePeriod::MONTH_TYPE, '2013-01-01', '2013-01-07', 0],
+            [TimePeriod::MONTH_TYPE, '2013-01-01', '2013-01-08', 1],
+            [TimePeriod::MONTH_TYPE, '2013-01-01', '2013-01-14', 1],
+            [TimePeriod::MONTH_TYPE, '2013-01-01', '2013-01-15', 2],
+            [TimePeriod::MONTH_TYPE, '2013-01-01', '2013-01-21', 2],
+            [TimePeriod::MONTH_TYPE, '2013-01-01', '2013-01-22', 3],
+            [TimePeriod::MONTH_TYPE, '2013-01-01', '2013-01-23', 3],
+            [TimePeriod::MONTH_TYPE, '2013-01-01', '2013-01-29', 4],
+            [TimePeriod::MONTH_TYPE, '2013-01-01', '2013-01-31', 4],
 
-            array(TimePeriod::MONTH_TYPE, '2013-04-10', '2013-04-10', 0),
-            array(TimePeriod::MONTH_TYPE, '2013-04-10', '2013-04-16', 0),
-            array(TimePeriod::MONTH_TYPE, '2013-04-10', '2013-04-17', 1),
-            array(TimePeriod::MONTH_TYPE, '2013-04-10', '2013-04-23', 1),
-            array(TimePeriod::MONTH_TYPE, '2013-04-10', '2013-04-24', 2),
-            array(TimePeriod::MONTH_TYPE, '2013-04-10', '2013-04-30', 2),
-            array(TimePeriod::MONTH_TYPE, '2013-04-10', '2013-05-01', 3),
-            array(TimePeriod::MONTH_TYPE, '2013-04-10', '2013-05-07', 3),
-            array(TimePeriod::MONTH_TYPE, '2013-04-10', '2013-05-08', 4),
-            array(TimePeriod::MONTH_TYPE, '2013-04-10', '2013-05-10', 4),
+            [TimePeriod::MONTH_TYPE, '2013-04-10', '2013-04-10', 0],
+            [TimePeriod::MONTH_TYPE, '2013-04-10', '2013-04-16', 0],
+            [TimePeriod::MONTH_TYPE, '2013-04-10', '2013-04-17', 1],
+            [TimePeriod::MONTH_TYPE, '2013-04-10', '2013-04-23', 1],
+            [TimePeriod::MONTH_TYPE, '2013-04-10', '2013-04-24', 2],
+            [TimePeriod::MONTH_TYPE, '2013-04-10', '2013-04-30', 2],
+            [TimePeriod::MONTH_TYPE, '2013-04-10', '2013-05-01', 3],
+            [TimePeriod::MONTH_TYPE, '2013-04-10', '2013-05-07', 3],
+            [TimePeriod::MONTH_TYPE, '2013-04-10', '2013-05-08', 4],
+            [TimePeriod::MONTH_TYPE, '2013-04-10', '2013-05-10', 4],
 
-            array(TimePeriod::MONTH_TYPE, '2012-12-31', '2012-12-31', 0),
-            array(TimePeriod::MONTH_TYPE, '2012-12-31', '2013-01-06', 0),
-            array(TimePeriod::MONTH_TYPE, '2012-12-31', '2013-01-07', 1),
-            array(TimePeriod::MONTH_TYPE, '2012-12-31', '2013-01-13', 1),
-            array(TimePeriod::MONTH_TYPE, '2012-12-31', '2013-01-14', 2),
-            array(TimePeriod::MONTH_TYPE, '2012-12-31', '2013-01-20', 2),
-            array(TimePeriod::MONTH_TYPE, '2012-12-31', '2013-01-21', 3),
-            array(TimePeriod::MONTH_TYPE, '2012-12-31', '2013-01-22', 3),
-            array(TimePeriod::MONTH_TYPE, '2012-12-31', '2013-01-28', 4),
-            array(TimePeriod::MONTH_TYPE, '2012-12-31', '2013-01-30', 4),
+            [TimePeriod::MONTH_TYPE, '2012-12-31', '2012-12-31', 0],
+            [TimePeriod::MONTH_TYPE, '2012-12-31', '2013-01-06', 0],
+            [TimePeriod::MONTH_TYPE, '2012-12-31', '2013-01-07', 1],
+            [TimePeriod::MONTH_TYPE, '2012-12-31', '2013-01-13', 1],
+            [TimePeriod::MONTH_TYPE, '2012-12-31', '2013-01-14', 2],
+            [TimePeriod::MONTH_TYPE, '2012-12-31', '2013-01-20', 2],
+            [TimePeriod::MONTH_TYPE, '2012-12-31', '2013-01-21', 3],
+            [TimePeriod::MONTH_TYPE, '2012-12-31', '2013-01-22', 3],
+            [TimePeriod::MONTH_TYPE, '2012-12-31', '2013-01-28', 4],
+            [TimePeriod::MONTH_TYPE, '2012-12-31', '2013-01-30', 4],
 
-            array(TimePeriod::MONTH_TYPE, '2012-02-01', '2012-02-01', 0),
-            array(TimePeriod::MONTH_TYPE, '2012-02-01', '2012-02-29', 4),
-            array(TimePeriod::MONTH_TYPE, '2012-02-29', '2012-02-29', 0),
-            array(TimePeriod::MONTH_TYPE, '2012-02-29', '2012-03-31', 4),
-        );
+            [TimePeriod::MONTH_TYPE, '2012-02-01', '2012-02-01', 0],
+            [TimePeriod::MONTH_TYPE, '2012-02-01', '2012-02-29', 4],
+            [TimePeriod::MONTH_TYPE, '2012-02-29', '2012-02-29', 0],
+            [TimePeriod::MONTH_TYPE, '2012-02-29', '2012-03-31', 4],
+        ];
     }
 
     /**
@@ -1330,13 +1329,13 @@ class ForecastsTimePeriodTest extends TestCase
 
         //rebuild time periods
         $timePeriod = TimePeriod::getByType(TimePeriod::ANNUAL_TYPE);
-        $timePeriod->rebuildForecastingTimePeriods(array(), $currentForecastSettings);
+        $timePeriod->rebuildForecastingTimePeriods([], $currentForecastSettings);
 
         //add all of the newly created timePeriods to the test utils
         $result = $db->query(
             'SELECT id, name, start_date, end_date, type FROM timeperiods WHERE deleted = 0 and parent_id  is not null order by start_date asc'
         );
-        $createdTimePeriods = array();
+        $createdTimePeriods = [];
 
         while ($row = $db->fetchByAssoc($result)) {
             $createdTimePeriods[] = TimePeriod::getBean($row['id']);
@@ -1370,149 +1369,149 @@ class ForecastsTimePeriodTest extends TestCase
      */
     public function getOddEdgeCasesProvider()
     {
-        return array(
-            array(
+        return [
+            [
                 TimePeriod::ANNUAL_TYPE,
                 TimePeriod::QUARTER_TYPE,
                 '2012-11-30',
                 '2013-11-29',
-                array(
-                    array('expectedStartDate' => '2012-11-30', 'expectedEndDate' => '2013-02-27'),
-                    array('expectedStartDate' => '2013-02-28', 'expectedEndDate' => '2013-05-30'),
-                    array('expectedStartDate' => '2013-05-31', 'expectedEndDate' => '2013-08-30'),
-                    array('expectedStartDate' => '2013-08-31', 'expectedEndDate' => '2013-11-29'),
-                ),
+                [
+                    ['expectedStartDate' => '2012-11-30', 'expectedEndDate' => '2013-02-27'],
+                    ['expectedStartDate' => '2013-02-28', 'expectedEndDate' => '2013-05-30'],
+                    ['expectedStartDate' => '2013-05-31', 'expectedEndDate' => '2013-08-30'],
+                    ['expectedStartDate' => '2013-08-31', 'expectedEndDate' => '2013-11-29'],
+                ],
                 '2013-01-29',
-            ),
-            array(
+            ],
+            [
                 TimePeriod::ANNUAL_TYPE,
                 TimePeriod::QUARTER_TYPE,
                 '2011-11-30',
                 '2012-11-29',
-                array(
-                    array('expectedStartDate' => '2011-11-30', 'expectedEndDate' => '2012-02-28'),
-                    array('expectedStartDate' => '2012-02-29', 'expectedEndDate' => '2012-05-30'),
-                    array('expectedStartDate' => '2012-05-31', 'expectedEndDate' => '2012-08-30'),
-                    array('expectedStartDate' => '2012-08-31', 'expectedEndDate' => '2012-11-29'),
-                ),
+                [
+                    ['expectedStartDate' => '2011-11-30', 'expectedEndDate' => '2012-02-28'],
+                    ['expectedStartDate' => '2012-02-29', 'expectedEndDate' => '2012-05-30'],
+                    ['expectedStartDate' => '2012-05-31', 'expectedEndDate' => '2012-08-30'],
+                    ['expectedStartDate' => '2012-08-31', 'expectedEndDate' => '2012-11-29'],
+                ],
                 '2012-01-29',
-            ),
-            array(
+            ],
+            [
                 TimePeriod::ANNUAL_TYPE,
                 TimePeriod::QUARTER_TYPE,
                 '2013-01-31',
                 '2014-01-30',
-                array(
-                    array('expectedStartDate' => '2013-01-31', 'expectedEndDate' => '2013-04-29'),
-                    array('expectedStartDate' => '2013-04-30', 'expectedEndDate' => '2013-07-30'),
-                    array('expectedStartDate' => '2013-07-31', 'expectedEndDate' => '2013-10-30'),
-                    array('expectedStartDate' => '2013-10-31', 'expectedEndDate' => '2014-01-30'),
-                ),
+                [
+                    ['expectedStartDate' => '2013-01-31', 'expectedEndDate' => '2013-04-29'],
+                    ['expectedStartDate' => '2013-04-30', 'expectedEndDate' => '2013-07-30'],
+                    ['expectedStartDate' => '2013-07-31', 'expectedEndDate' => '2013-10-30'],
+                    ['expectedStartDate' => '2013-10-31', 'expectedEndDate' => '2014-01-30'],
+                ],
                 '2013-02-27',
-            ),
-            array(
+            ],
+            [
                 TimePeriod::ANNUAL_TYPE,
                 TimePeriod::QUARTER_TYPE,
                 '2013-02-28',
                 '2014-02-27',
-                array(
-                    array('expectedStartDate' => '2013-02-28', 'expectedEndDate' => '2013-05-30'),
-                    array('expectedStartDate' => '2013-05-31', 'expectedEndDate' => '2013-08-30'),
-                    array('expectedStartDate' => '2013-08-31', 'expectedEndDate' => '2013-11-29'),
-                    array('expectedStartDate' => '2013-11-30', 'expectedEndDate' => '2014-02-27'),
-                ),
+                [
+                    ['expectedStartDate' => '2013-02-28', 'expectedEndDate' => '2013-05-30'],
+                    ['expectedStartDate' => '2013-05-31', 'expectedEndDate' => '2013-08-30'],
+                    ['expectedStartDate' => '2013-08-31', 'expectedEndDate' => '2013-11-29'],
+                    ['expectedStartDate' => '2013-11-30', 'expectedEndDate' => '2014-02-27'],
+                ],
                 '2013-03-05',
-            ),
-            array(
+            ],
+            [
                 TimePeriod::ANNUAL_TYPE,
                 TimePeriod::QUARTER_TYPE,
                 '2012-03-31',
                 '2013-03-30',
-                array(
-                    array('expectedStartDate' => '2012-03-31', 'expectedEndDate' => '2012-06-29'),
-                    array('expectedStartDate' => '2012-06-30', 'expectedEndDate' => '2012-09-29'),
-                    array('expectedStartDate' => '2012-09-30', 'expectedEndDate' => '2012-12-30'),
-                    array('expectedStartDate' => '2012-12-31', 'expectedEndDate' => '2013-03-30'),
-                ),
+                [
+                    ['expectedStartDate' => '2012-03-31', 'expectedEndDate' => '2012-06-29'],
+                    ['expectedStartDate' => '2012-06-30', 'expectedEndDate' => '2012-09-29'],
+                    ['expectedStartDate' => '2012-09-30', 'expectedEndDate' => '2012-12-30'],
+                    ['expectedStartDate' => '2012-12-31', 'expectedEndDate' => '2013-03-30'],
+                ],
                 '2013-01-29',
-            ),
-            array(
+            ],
+            [
                 TimePeriod::ANNUAL_TYPE,
                 TimePeriod::QUARTER_TYPE,
                 '2012-04-30',
                 '2013-04-29',
-                array(
-                    array('expectedStartDate' => '2012-04-30', 'expectedEndDate' => '2012-07-30'),
-                    array('expectedStartDate' => '2012-07-31', 'expectedEndDate' => '2012-10-30'),
-                    array('expectedStartDate' => '2012-10-31', 'expectedEndDate' => '2013-01-30'),
-                    array('expectedStartDate' => '2013-01-31', 'expectedEndDate' => '2013-04-29'),
-                ),
+                [
+                    ['expectedStartDate' => '2012-04-30', 'expectedEndDate' => '2012-07-30'],
+                    ['expectedStartDate' => '2012-07-31', 'expectedEndDate' => '2012-10-30'],
+                    ['expectedStartDate' => '2012-10-31', 'expectedEndDate' => '2013-01-30'],
+                    ['expectedStartDate' => '2013-01-31', 'expectedEndDate' => '2013-04-29'],
+                ],
                 '2013-01-29',
-            ),
-            array(
+            ],
+            [
                 TimePeriod::ANNUAL_TYPE,
                 TimePeriod::QUARTER_TYPE,
                 '2012-05-31',
                 '2013-05-30',
-                array(
-                    array('expectedStartDate' => '2012-05-31', 'expectedEndDate' => '2012-08-30'),
-                    array('expectedStartDate' => '2012-08-31', 'expectedEndDate' => '2012-11-29'),
-                    array('expectedStartDate' => '2012-11-30', 'expectedEndDate' => '2013-02-27'),
-                    array('expectedStartDate' => '2013-02-28', 'expectedEndDate' => '2013-05-30'),
-                ),
+                [
+                    ['expectedStartDate' => '2012-05-31', 'expectedEndDate' => '2012-08-30'],
+                    ['expectedStartDate' => '2012-08-31', 'expectedEndDate' => '2012-11-29'],
+                    ['expectedStartDate' => '2012-11-30', 'expectedEndDate' => '2013-02-27'],
+                    ['expectedStartDate' => '2013-02-28', 'expectedEndDate' => '2013-05-30'],
+                ],
                 '2013-01-29',
-            ),
-            array(
+            ],
+            [
                 TimePeriod::ANNUAL_TYPE,
                 TimePeriod::QUARTER_TYPE,
                 '2012-09-30',
                 '2013-09-29',
-                array(
-                    array('expectedStartDate' => '2012-09-30', 'expectedEndDate' => '2012-12-30'),
-                    array('expectedStartDate' => '2012-12-31', 'expectedEndDate' => '2013-03-30'),
-                    array('expectedStartDate' => '2013-03-31', 'expectedEndDate' => '2013-06-29'),
-                    array('expectedStartDate' => '2013-06-30', 'expectedEndDate' => '2013-09-29'),
-                ),
+                [
+                    ['expectedStartDate' => '2012-09-30', 'expectedEndDate' => '2012-12-30'],
+                    ['expectedStartDate' => '2012-12-31', 'expectedEndDate' => '2013-03-30'],
+                    ['expectedStartDate' => '2013-03-31', 'expectedEndDate' => '2013-06-29'],
+                    ['expectedStartDate' => '2013-06-30', 'expectedEndDate' => '2013-09-29'],
+                ],
                 '2013-01-29',
-            ),
-            array(
+            ],
+            [
                 TimePeriod::ANNUAL_TYPE,
                 TimePeriod::QUARTER_TYPE,
                 '2012-11-28',
                 '2013-11-27',
-                array(
-                    array('expectedStartDate' => '2012-11-28', 'expectedEndDate' => '2013-02-27'),
-                    array('expectedStartDate' => '2013-02-28', 'expectedEndDate' => '2013-05-27'),
-                    array('expectedStartDate' => '2013-05-28', 'expectedEndDate' => '2013-08-27'),
-                    array('expectedStartDate' => '2013-08-28', 'expectedEndDate' => '2013-11-27'),
-                ),
+                [
+                    ['expectedStartDate' => '2012-11-28', 'expectedEndDate' => '2013-02-27'],
+                    ['expectedStartDate' => '2013-02-28', 'expectedEndDate' => '2013-05-27'],
+                    ['expectedStartDate' => '2013-05-28', 'expectedEndDate' => '2013-08-27'],
+                    ['expectedStartDate' => '2013-08-28', 'expectedEndDate' => '2013-11-27'],
+                ],
                 '2013-01-29',
-            ),
-            array(
+            ],
+            [
                 TimePeriod::QUARTER_TYPE,
                 TimePeriod::MONTH_TYPE,
                 '2013-01-01',
                 '2013-03-31',
-                array(
-                    array('expectedStartDate' => '2013-01-01', 'expectedEndDate' => '2013-01-31'),
-                    array('expectedStartDate' => '2013-02-01', 'expectedEndDate' => '2013-02-28'),
-                    array('expectedStartDate' => '2013-03-01', 'expectedEndDate' => '2013-03-31'),
-                ),
+                [
+                    ['expectedStartDate' => '2013-01-01', 'expectedEndDate' => '2013-01-31'],
+                    ['expectedStartDate' => '2013-02-01', 'expectedEndDate' => '2013-02-28'],
+                    ['expectedStartDate' => '2013-03-01', 'expectedEndDate' => '2013-03-31'],
+                ],
                 '2013-01-29',
-            ),
-            array(
+            ],
+            [
                 TimePeriod::QUARTER_TYPE,
                 TimePeriod::MONTH_TYPE,
                 '2013-01-31',
                 '2013-04-29',
-                array(
-                    array('expectedStartDate' => '2013-01-31', 'expectedEndDate' => '2013-02-27'),
-                    array('expectedStartDate' => '2013-02-28', 'expectedEndDate' => '2013-03-30'),
-                    array('expectedStartDate' => '2013-03-31', 'expectedEndDate' => '2013-04-29'),
-                ),
+                [
+                    ['expectedStartDate' => '2013-01-31', 'expectedEndDate' => '2013-02-27'],
+                    ['expectedStartDate' => '2013-02-28', 'expectedEndDate' => '2013-03-30'],
+                    ['expectedStartDate' => '2013-03-31', 'expectedEndDate' => '2013-04-29'],
+                ],
                 '2013-02-23',
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -1555,13 +1554,13 @@ class ForecastsTimePeriodTest extends TestCase
         $timeDate->allow_cache = true;
         $timeDate->clearCache();
         $timeDate->setNow($timeDate->fromDbDate($currentDate));
-        $timePeriod->rebuildForecastingTimePeriods(array(), $currentForecastSettings);
+        $timePeriod->rebuildForecastingTimePeriods([], $currentForecastSettings);
 
         //add all of the newly created timePeriods to the test utils
         $result = $db->query(
             'SELECT id, name, start_date, end_date, type FROM timeperiods WHERE deleted = 0 and parent_id  is not null order by start_date asc'
         );
-        $createdTimePeriods = array();
+        $createdTimePeriods = [];
 
         while ($row = $db->fetchByAssoc($result)) {
             $createdTimePeriods[] = TimePeriod::getBean($row['id']);
@@ -1606,19 +1605,19 @@ class ForecastsTimePeriodTest extends TestCase
      */
     public function buildTimePeriodsProvider()
     {
-        return array(
+        return [
 
-            array(TimePeriod::QUARTER_TYPE, '2013-01-01', 4, 'forward', '2013-12-01', '2013-12-31'),
-            array(TimePeriod::ANNUAL_TYPE, '2013-01-01', 2, 'forward', '2014-10-01', '2014-12-31'),
-            array(TimePeriod::QUARTER_TYPE, '2013-01-01', 4, 'backward', '2012-06-01', '2012-06-30'),
-            array(TimePeriod::ANNUAL_TYPE, '2013-01-01', 2, 'backward', '2012-10-01', '2012-12-31'),
+            [TimePeriod::QUARTER_TYPE, '2013-01-01', 4, 'forward', '2013-12-01', '2013-12-31'],
+            [TimePeriod::ANNUAL_TYPE, '2013-01-01', 2, 'forward', '2014-10-01', '2014-12-31'],
+            [TimePeriod::QUARTER_TYPE, '2013-01-01', 4, 'backward', '2012-06-01', '2012-06-30'],
+            [TimePeriod::ANNUAL_TYPE, '2013-01-01', 2, 'backward', '2012-10-01', '2012-12-31'],
 
-            array(TimePeriod::QUARTER_TYPE, '2013-01-31', 4, 'forward', '2013-12-31', '2014-01-30'),
-            array(TimePeriod::ANNUAL_TYPE, '2013-01-31', 2, 'forward', '2014-10-31', '2015-01-30'),
-            array(TimePeriod::QUARTER_TYPE, '2013-01-31', 4, 'backward', '2012-06-30', '2012-07-30'),
-            array(TimePeriod::ANNUAL_TYPE, '2013-01-31', 2, 'backward', '2012-10-31', '2013-01-30'),
+            [TimePeriod::QUARTER_TYPE, '2013-01-31', 4, 'forward', '2013-12-31', '2014-01-30'],
+            [TimePeriod::ANNUAL_TYPE, '2013-01-31', 2, 'forward', '2014-10-31', '2015-01-30'],
+            [TimePeriod::QUARTER_TYPE, '2013-01-31', 4, 'backward', '2012-06-30', '2012-07-30'],
+            [TimePeriod::ANNUAL_TYPE, '2013-01-31', 2, 'backward', '2012-10-31', '2013-01-30'],
 
-        );
+        ];
     }
 
     /**
@@ -1648,72 +1647,72 @@ class ForecastsTimePeriodTest extends TestCase
      */
     public function createTimePeriodsProvider()
     {
-        return array(
+        return [
             //Standard Quarter/Month test with January 1st start date
-            array(
+            [
                 TimePeriod::QUARTER_TYPE,
-                array(),
-                array(
+                [],
+                [
                     'timeperiod_start_date' => '2013-01-01',
                     'timeperiod_interval' => TimePeriod::QUARTER_TYPE,
                     'timeperiod_leaf_interval' => TimePeriod::MONTH_TYPE,
                     'timeperiod_shown_backward' => 2,
                     'timeperiod_shown_forward' => 2,
-                ),
+                ],
                 '2013-01-01',
                 15,
                 '2012-07-01',
                 '2013-09-01',
-            ),
+            ],
             //Test Quarter/Month with future date
-            array(
+            [
                 TimePeriod::QUARTER_TYPE,
-                array(),
-                array(
+                [],
+                [
                     'timeperiod_start_date' => '2013-09-05',
                     'timeperiod_interval' => TimePeriod::QUARTER_TYPE,
                     'timeperiod_leaf_interval' => TimePeriod::MONTH_TYPE,
                     'timeperiod_shown_backward' => 2,
                     'timeperiod_shown_forward' => 2,
-                ),
+                ],
                 '2013-02-22',
                 15,
                 '2012-06-05',
                 '2013-08-05',
-            ),
+            ],
             //Test Quarter/Month with past date
-            array(
+            [
                 TimePeriod::QUARTER_TYPE,
-                array(),
-                array(
+                [],
+                [
                     'timeperiod_start_date' => '2013-02-22',
                     'timeperiod_interval' => TimePeriod::QUARTER_TYPE,
                     'timeperiod_leaf_interval' => TimePeriod::MONTH_TYPE,
                     'timeperiod_shown_backward' => 2,
                     'timeperiod_shown_forward' => 2,
-                ),
+                ],
                 '2013-09-02',
                 15,
                 '2013-02-22',
                 '2014-04-22',
-            ),
+            ],
             //Standard Annual/Quarter test with January 1st start date
-            array(
+            [
                 TimePeriod::ANNUAL_TYPE,
-                array(),
-                array(
+                [],
+                [
                     'timeperiod_start_date' => '2013-01-01',
                     'timeperiod_interval' => TimePeriod::ANNUAL_TYPE,
                     'timeperiod_leaf_interval' => TimePeriod::QUARTER_TYPE,
                     'timeperiod_shown_backward' => 2,
                     'timeperiod_shown_forward' => 2,
-                ),
+                ],
                 '2013-01-01',
                 20,
                 '2011-01-01',
                 '2015-10-01',
-            ),
-        );
+            ],
+        ];
     }
 
 
@@ -1735,14 +1734,14 @@ class ForecastsTimePeriodTest extends TestCase
         $tp = TimePeriod::getByType($timePeriodType);
         $currentDate = TimeDate::getInstance()->fromDbDate($currentDate);
         $created = $tp->createTimePeriods($priorSettings, $currentSettings, $currentDate);
-        $leafTimePeriods = array();
+        $leafTimePeriods = [];
         foreach ($created as $t) {
             if ($t->type != $timePeriodType) {
                 $leafTimePeriods[] = $t;
             }
         }
 
-        usort($leafTimePeriods, array("ForecastsTimePeriodTest", "sortTimePeriods"));
+        usort($leafTimePeriods, ["ForecastsTimePeriodTest", "sortTimePeriods"]);
         $total = count($leafTimePeriods);
         /*
         foreach($leafTimePeriods as $t) {

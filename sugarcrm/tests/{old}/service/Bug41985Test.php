@@ -33,14 +33,14 @@ class Bug41985Test extends TestCase
         $this->field->id = 'Accountstest_custom_c';
         $this->field->name = 'test_custom_c';
         $this->field->vanme = 'LBL_TEST_CUSTOM_C';
-        $this->field->comments = NULL;
-        $this->field->help = NULL;
+        $this->field->comments = null;
+        $this->field->help = null;
         $this->field->custom_module = 'Accounts';
         $this->field->type = 'varchar';
         $this->field->label = 'LBL_TEST_CUSTOM_C';
         $this->field->len = 255;
         $this->field->required = 0;
-        $this->field->default_value = NULL;
+        $this->field->default_value = null;
         $this->field->date_modified = '2009-09-14 02:23:23';
         $this->field->deleted = 0;
         $this->field->audited = 0;
@@ -48,10 +48,10 @@ class Bug41985Test extends TestCase
         $this->field->duplicate_merge = 0;
         $this->field->reportable = 1;
         $this->field->importable = 'true';
-        $this->field->ext1 = NULL;
-        $this->field->ext2 = NULL;
-        $this->field->ext3 = NULL;
-        $this->field->ext4 = NULL;
+        $this->field->ext1 = null;
+        $this->field->ext2 = null;
+        $this->field->ext3 = null;
+        $this->field->ext4 = null;
 
         $this->df = new DynamicField('Accounts');
         $this->mod = new Account();
@@ -92,7 +92,7 @@ class Bug41985Test extends TestCase
     {
         $web_service_util = new SugarWebServiceUtilv4();
 
-        $result = $web_service_util->getRelationshipResults($this->_contact, 'accounts', array('id', 'name', 'test_custom_c'));
+        $result = $web_service_util->getRelationshipResults($this->_contact, 'accounts', ['id', 'name', 'test_custom_c']);
 
         $this->assertTrue(isset($result['rows'][0]));
         $this->assertTrue(isset($result['rows'][0]['test_custom_c']));

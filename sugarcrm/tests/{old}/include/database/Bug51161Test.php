@@ -21,125 +21,125 @@ class Bug51161Test extends TestCase
 
     protected function setUp() : void
     {
-	    $this->_db = DBManagerFactory::getInstance();
-	}
+        $this->_db = DBManagerFactory::getInstance();
+    }
 
     public function providerClobsNonOracle()
     {
-        return array(
-            array(
-                array(
-                    'foo' => array(
+        return [
+            [
+                [
+                    'foo' => [
                         'name' => 'foo',
                         'type' => 'clob',
                         'len' => '1024',
-                    ),
-                ),
+                    ],
+                ],
                 '/foo\s+$baseType\(1024\)/i',
-            ),
-            array(
-                array(
-                    'foo' => array (
+            ],
+            [
+                [
+                    'foo' =>  [
                         'name' => 'foo',
                         'type' => 'blob',
                         'len' => '1024',
-                    ),
-                ),
+                    ],
+                ],
                 '/foo\s+$baseType\(1024\)/i',
-            ),
-            array(
-                array(
-                    'foo' => array (
+            ],
+            [
+                [
+                    'foo' =>  [
                         'name' => 'foo',
                         'type' => 'text',
                         'len' => '1024',
-                    ),
-                ),
+                    ],
+                ],
                 '/foo\s+$baseType\(1024\)/i',
-            ),
-        );
+            ],
+        ];
     }
 
     public function providerClobsOracle()
     {
-        return array(
-            array(
-                array(
-                    'foo' => array(
+        return [
+            [
+                [
+                    'foo' => [
                         'name' => 'foo',
                         'type' => 'clob',
                         'len' => '1024',
-                    ),
-                ),
+                    ],
+                ],
                 '/foo\s+$baseType/i',
-            ),
-            array(
-                array(
-                    'foo' => array (
+            ],
+            [
+                [
+                    'foo' =>  [
                         'name' => 'foo',
                         'type' => 'blob',
                         'len' => '1024',
-                    ),
-                ),
+                    ],
+                ],
                 '/foo\s+$baseType/i',
-            ),
-            array(
-                array(
-                    'foo' => array (
+            ],
+            [
+                [
+                    'foo' =>  [
                         'name' => 'foo',
                         'type' => 'text',
                         'len' => '1024',
-                    ),
-                ),
+                    ],
+                ],
                 '/foo\s+$baseType/i',
-            ),
-        );
+            ],
+        ];
     }
 
 
-	public function providerBug51161()
+    public function providerBug51161()
     {
-        $returnArray = array(
-				array(
-					array(
-					'foo' => array (
-						'name' => 'foo',
-						'type' => 'varchar',
-						'len' => '34',
-						),
-					),
-					'/foo\s+$baseType\(34\)/i',
-				),
-				array(
-					array(
-					'foo' => array (
-						'name' => 'foo',
-						'type' => 'nvarchar',
-						'len' => '35',
-						),
-					),
-					'/foo\s+$baseType\(35\)/i',
-				),
-				array(
-					array(
-					'foo' => array (
-						'name' => 'foo',
-						'type' => 'char',
-						'len' => '23',
-						),
-					),
-					'/foo\s+$baseType\(23\)/i',
-				),
-				array(
-					array(
-					'foo' => array (
-						'name' => 'foo',
-						'type' => 'clob',
-						),
-					),
-					'/foo\s+$colType/i',
-				),
-           );
+        $returnArray = [
+                [
+                    [
+                    'foo' =>  [
+                        'name' => 'foo',
+                        'type' => 'varchar',
+                        'len' => '34',
+                        ],
+                    ],
+                    '/foo\s+$baseType\(34\)/i',
+                ],
+                [
+                    [
+                    'foo' =>  [
+                        'name' => 'foo',
+                        'type' => 'nvarchar',
+                        'len' => '35',
+                        ],
+                    ],
+                    '/foo\s+$baseType\(35\)/i',
+                ],
+                [
+                    [
+                    'foo' =>  [
+                        'name' => 'foo',
+                        'type' => 'char',
+                        'len' => '23',
+                        ],
+                    ],
+                    '/foo\s+$baseType\(23\)/i',
+                ],
+                [
+                    [
+                    'foo' =>  [
+                        'name' => 'foo',
+                        'type' => 'clob',
+                        ],
+                    ],
+                    '/foo\s+$colType/i',
+                ],
+           ];
 
         return $returnArray;
     }
@@ -202,16 +202,20 @@ class Bug51161Test extends TestCase
         $ftype = $this->_db->getFieldType($fieldDef['foo']);
         $colType = $this->_db->getColumnType($ftype);
         $successRegex = preg_replace('/\$colType/', $colType, $successRegex);
-        if($type = $this->_db->getTypeParts($colType)){
-            if(isset($type['baseType']))
+        if ($type = $this->_db->getTypeParts($colType)) {
+            if (isset($type['baseType'])) {
                 $successRegex = preg_replace('/\$baseType/', $type['baseType'], $successRegex);
-            if(isset($type['len']))
+            }
+            if (isset($type['len'])) {
                 $successRegex = preg_replace('/\$len/', $type['len'], $successRegex);
-            if(isset($type['scale']))
+            }
+            if (isset($type['scale'])) {
                 $successRegex = preg_replace('/\$scale/', $type['scale'], $successRegex);
-            if(isset($type['arg']))
+            }
+            if (isset($type['arg'])) {
                 $successRegex = preg_replace('/\$arg/', $type['arg'], $successRegex);
+            }
         }
-        return array($this->_db->createTableSQLParams('test', $fieldDef, array()), $successRegex);
+        return [$this->_db->createTableSQLParams('test', $fieldDef, []), $successRegex];
     }
 }

@@ -38,20 +38,20 @@ class MultiMatchQueryTest extends TestCase
 
     public function providerSetOperatorTest()
     {
-        return array(
-            array('AND', 'AND'),
-            array('OR', 'OR'),
-            array('NOT', 'NOT'),
-            array('|', 'OR'),
-            array('&', 'AND'),
-            array('-', 'NOT'),
+        return [
+            ['AND', 'AND'],
+            ['OR', 'OR'],
+            ['NOT', 'NOT'],
+            ['|', 'OR'],
+            ['&', 'AND'],
+            ['-', 'NOT'],
             // empty string
-            array('', false),
+            ['', false],
             // operator is case-sensitive
-            array('and', false),
-            array('or', false),
-            array('not', false),
-        );
+            ['and', false],
+            ['or', false],
+            ['not', false],
+        ];
     }
 
     /**
@@ -70,15 +70,15 @@ class MultiMatchQueryTest extends TestCase
 
     public function providerSetTermsTest()
     {
-        return array(
-            array('abc AND def', 'abc AND def'),
-            array('abc OR def', 'abc OR def'),
-            array('abc NOT def', 'abc NOT def'),
-            array('abc | def', 'abc | def'),
-            array('abc & def', 'abc & def'),
-            array('abc -def', 'abc -def'),
-            array('abc def', 'abc def'),
-        );
+        return [
+            ['abc AND def', 'abc AND def'],
+            ['abc OR def', 'abc OR def'],
+            ['abc NOT def', 'abc NOT def'],
+            ['abc | def', 'abc | def'],
+            ['abc & def', 'abc & def'],
+            ['abc -def', 'abc -def'],
+            ['abc def', 'abc def'],
+        ];
     }
 
     /**
@@ -140,822 +140,822 @@ class MultiMatchQueryTest extends TestCase
 
     public function providerTestBuild()
     {
-        return array(
+        return [
             // using operator shortcut
             // Single term, default space operator is AND, use operator shortcut
-            array(
+            [
                 'abcdef',
                 '&',
                 true,
-                array('id', 'name'),
-                array (
+                ['id', 'name'],
+                 [
                     'bool' =>
-                        array (
+                         [
                             'should' =>
-                                array (
-                                    array (
+                                 [
+                                     [
                                         'bool' =>
-                                            array (
+                                             [
                                                 'should' =>
-                                                    array (
-                                                        array (
+                                                     [
+                                                         [
                                                             'multi_match' =>
-                                                                array (
+                                                                 [
                                                                     'type' => 'cross_fields',
                                                                     'query' => 'abcdef',
                                                                     'fields' =>
-                                                                        array (
+                                                                         [
                                                                             0 => 'id',
                                                                             1 => 'name',
-                                                                        ),
+                                                                        ],
                                                                     'tie_breaker' => 1.0,
-                                                                ),
-                                                        ),
-                                                    ),
-                                            ),
-                                    ),
-                                ),
-                        ),
-                ),
-            ),
+                                                                ],
+                                                         ],
+                                                    ],
+                                            ],
+                                     ],
+                                ],
+                        ],
+                ],
+            ],
             // AND Operator, default space operator is AND
-            array(
+            [
                 'abc AND def',
                 'AND',
                 true,
-                array('id', 'name'),
-                array (
+                ['id', 'name'],
+                 [
                     'bool' =>
-                        array (
+                         [
                             'must' =>
-                                array (
-                                    array (
+                                 [
+                                     [
                                         'bool' =>
-                                            array (
+                                             [
                                                 'should' =>
-                                                    array (
-                                                        array (
+                                                     [
+                                                         [
                                                             'multi_match' =>
-                                                                array (
+                                                                 [
                                                                     'type' => 'cross_fields',
                                                                     'query' => 'abc',
                                                                     'fields' =>
-                                                                        array (
+                                                                         [
                                                                             0 => 'id',
                                                                             1 => 'name',
-                                                                        ),
+                                                                        ],
                                                                     'tie_breaker' => 1.0,
-                                                                ),
-                                                        ),
-                                                    ),
-                                            ),
-                                    ),
-                                    array (
+                                                                ],
+                                                         ],
+                                                    ],
+                                            ],
+                                     ],
+                                     [
                                         'bool' =>
-                                            array (
+                                             [
                                                 'should' =>
-                                                    array (
-                                                        array (
+                                                     [
+                                                         [
                                                             'multi_match' =>
-                                                                array (
+                                                                 [
                                                                     'type' => 'cross_fields',
                                                                     'query' => 'def',
                                                                     'fields' =>
-                                                                        array (
+                                                                         [
                                                                             0 => 'id',
                                                                             1 => 'name',
-                                                                        ),
+                                                                        ],
                                                                     'tie_breaker' => 1.0,
-                                                                ),
-                                                        ),
-                                                    ),
-                                            ),
-                                    ),
-                                ),
-                        ),
-                ),
-            ),
+                                                                ],
+                                                         ],
+                                                    ],
+                                            ],
+                                     ],
+                                ],
+                        ],
+                ],
+            ],
             // No operator provided, default space operator is AND
-            array(
+            [
                 'abc def',
                 'AND',
                 true,
-                array('id', 'name'),
-                array (
+                ['id', 'name'],
+                 [
                     'bool' =>
-                        array (
+                         [
                             'must' =>
-                                array (
-                                    array (
+                                 [
+                                     [
                                         'bool' =>
-                                            array (
+                                             [
                                                 'should' =>
-                                                    array (
-                                                        array (
+                                                     [
+                                                         [
                                                             'multi_match' =>
-                                                                array (
+                                                                 [
                                                                     'type' => 'cross_fields',
                                                                     'query' => 'abc',
                                                                     'fields' =>
-                                                                        array (
+                                                                         [
                                                                             0 => 'id',
                                                                             1 => 'name',
-                                                                        ),
+                                                                        ],
                                                                     'tie_breaker' => 1.0,
-                                                                ),
-                                                        ),
-                                                    ),
-                                            ),
-                                    ),
-                                    array (
+                                                                ],
+                                                         ],
+                                                    ],
+                                            ],
+                                     ],
+                                     [
                                         'bool' =>
-                                            array (
+                                             [
                                                 'should' =>
-                                                    array (
-                                                        array (
+                                                     [
+                                                         [
                                                             'multi_match' =>
-                                                                array (
+                                                                 [
                                                                     'type' => 'cross_fields',
                                                                     'query' => 'def',
                                                                     'fields' =>
-                                                                        array (
+                                                                         [
                                                                             0 => 'id',
                                                                             1 => 'name',
-                                                                        ),
+                                                                        ],
                                                                     'tie_breaker' => 1.0,
-                                                                ),
-                                                        ),
-                                                    ),
-                                            ),
-                                    ),
-                                ),
-                        ),
-                ),
-            ),
+                                                                ],
+                                                         ],
+                                                    ],
+                                            ],
+                                     ],
+                                ],
+                        ],
+                ],
+            ],
             // OR operator, default space operator is AND
-            array(
+            [
                 'abc | def',
                 '&',
                 true,
-                array('id', 'name'),
-                array (
+                ['id', 'name'],
+                 [
                     'bool' =>
-                        array (
+                         [
                             'should' =>
-                                array (
-                                    array (
+                                 [
+                                     [
                                         'bool' =>
-                                            array (
+                                             [
                                                 'should' =>
-                                                    array (
-                                                        array (
+                                                     [
+                                                         [
                                                             'multi_match' =>
-                                                                array (
+                                                                 [
                                                                     'type' => 'cross_fields',
                                                                     'query' => 'abc def',
                                                                     'fields' =>
-                                                                        array (
+                                                                         [
                                                                             0 => 'id',
                                                                             1 => 'name',
-                                                                        ),
+                                                                        ],
                                                                     'tie_breaker' => 1.0,
-                                                                ),
-                                                        ),
-                                                    ),
-                                            ),
-                                    ),
-                                ),
-                        ),
-                ),
-            ),
+                                                                ],
+                                                         ],
+                                                    ],
+                                            ],
+                                     ],
+                                ],
+                        ],
+                ],
+            ],
             // NOT operator
-            array(
+            [
                 'abc -def',
                 '&',
                 true,
-                array('id', 'name'),
-                array (
+                ['id', 'name'],
+                 [
                     'bool' =>
-                        array (
+                         [
                             'must' =>
-                                array (
-                                    array (
+                                 [
+                                     [
                                         'bool' =>
-                                            array (
+                                             [
                                                 'must' =>
-                                                    array (
-                                                        array (
+                                                     [
+                                                         [
                                                             'bool' =>
-                                                                array (
+                                                                 [
                                                                     'should' =>
-                                                                        array (
-                                                                            array (
+                                                                         [
+                                                                             [
                                                                                 'multi_match' =>
-                                                                                    array (
+                                                                                     [
                                                                                         'type' => 'cross_fields',
                                                                                         'query' => 'abc',
                                                                                         'fields' =>
-                                                                                            array (
+                                                                                             [
                                                                                                 0 => 'id',
                                                                                                 1 => 'name',
-                                                                                            ),
+                                                                                            ],
                                                                                         'tie_breaker' => 1.0,
-                                                                                    ),
-                                                                            ),
-                                                                        ),
-                                                                ),
-                                                        ),
-                                                    ),
-                                            ),
-                                    ),
-                                    array (
+                                                                                    ],
+                                                                             ],
+                                                                        ],
+                                                                ],
+                                                         ],
+                                                    ],
+                                            ],
+                                     ],
+                                     [
                                         'bool' =>
-                                            array (
+                                             [
                                                 'must_not' =>
-                                                    array (
-                                                        array (
+                                                     [
+                                                         [
                                                             'bool' =>
-                                                                array (
+                                                                 [
                                                                     'should' =>
-                                                                        array (
-                                                                            array (
+                                                                         [
+                                                                             [
                                                                                 'multi_match' =>
-                                                                                    array (
+                                                                                     [
                                                                                         'type' => 'cross_fields',
                                                                                         'query' => 'def',
                                                                                         'fields' =>
-                                                                                            array (
+                                                                                             [
                                                                                                 0 => 'id',
                                                                                                 1 => 'name',
-                                                                                            ),
+                                                                                            ],
                                                                                         'tie_breaker' => 1.0,
-                                                                                    ),
-                                                                            ),
-                                                                        ),
-                                                                ),
-                                                        ),
-                                                    ),
-                                            ),
-                                    ),
-                                ),
-                        ),
-                ),
-            ),
+                                                                                    ],
+                                                                             ],
+                                                                        ],
+                                                                ],
+                                                         ],
+                                                    ],
+                                            ],
+                                     ],
+                                ],
+                        ],
+                ],
+            ],
             // Single term, default space operator is 'OR'
-            array(
+            [
                 'abcdef',
                 'OR',
                 true,
-                array('id', 'name'),
-                array (
+                ['id', 'name'],
+                 [
                     'bool' =>
-                        array (
+                         [
                             'should' =>
-                                array (
-                                    array (
+                                 [
+                                     [
                                         'bool' =>
-                                            array (
+                                             [
                                                 'should' =>
-                                                    array (
-                                                        array (
+                                                     [
+                                                         [
                                                             'multi_match' =>
-                                                                array (
+                                                                 [
                                                                     'type' => 'cross_fields',
                                                                     'query' => 'abcdef',
                                                                     'fields' =>
-                                                                        array (
+                                                                         [
                                                                             0 => 'id',
                                                                             1 => 'name',
-                                                                        ),
+                                                                        ],
                                                                     'tie_breaker' => 1.0,
-                                                                ),
-                                                        ),
-                                                    ),
-                                            ),
-                                    ),
-                                ),
-                        ),
-                ),
-            ),
+                                                                ],
+                                                         ],
+                                                    ],
+                                            ],
+                                     ],
+                                ],
+                        ],
+                ],
+            ],
             // AND Operator, default space operator is 'OR'
-            array(
+            [
                 'abc AND def',
                 '|',
                 true,
-                array('id', 'name'),
-                array (
+                ['id', 'name'],
+                 [
                     'bool' =>
-                        array (
+                         [
                             'must' =>
-                                array (
-                                    array (
+                                 [
+                                     [
                                         'bool' =>
-                                            array (
+                                             [
                                                 'should' =>
-                                                    array (
-                                                        array (
+                                                     [
+                                                         [
                                                             'multi_match' =>
-                                                                array (
+                                                                 [
                                                                     'type' => 'cross_fields',
                                                                     'query' => 'abc',
                                                                     'fields' =>
-                                                                        array (
+                                                                         [
                                                                             0 => 'id',
                                                                             1 => 'name',
-                                                                        ),
+                                                                        ],
                                                                     'tie_breaker' => 1.0,
-                                                                ),
-                                                        ),
-                                                    ),
-                                            ),
-                                    ),
-                                    array (
+                                                                ],
+                                                         ],
+                                                    ],
+                                            ],
+                                     ],
+                                     [
                                         'bool' =>
-                                            array (
+                                             [
                                                 'should' =>
-                                                    array (
-                                                        array (
+                                                     [
+                                                         [
                                                             'multi_match' =>
-                                                                array (
+                                                                 [
                                                                     'type' => 'cross_fields',
                                                                     'query' => 'def',
                                                                     'fields' =>
-                                                                        array (
+                                                                         [
                                                                             0 => 'id',
                                                                             1 => 'name',
-                                                                        ),
+                                                                        ],
                                                                     'tie_breaker' => 1.0,
-                                                                ),
-                                                        ),
-                                                    ),
-                                            ),
-                                    ),
-                                ),
-                        ),
-                ),
-            ),
+                                                                ],
+                                                         ],
+                                                    ],
+                                            ],
+                                     ],
+                                ],
+                        ],
+                ],
+            ],
             // No operator provided, default space operator is 'OR'
-            array(
+            [
                 'abc def',
                 'OR',
                 true,
-                array('id', 'name'),
-                array (
+                ['id', 'name'],
+                 [
                     'bool' =>
-                        array (
+                         [
                             'should' =>
-                                array (
-                                    array (
+                                 [
+                                     [
                                         'bool' =>
-                                            array (
+                                             [
                                                 'should' =>
-                                                    array (
-                                                        array (
+                                                     [
+                                                         [
                                                             'multi_match' =>
-                                                                array (
+                                                                 [
                                                                     'type' => 'cross_fields',
                                                                     'query' => 'abc def',
                                                                     'fields' =>
-                                                                        array (
+                                                                         [
                                                                             0 => 'id',
                                                                             1 => 'name',
-                                                                        ),
+                                                                        ],
                                                                     'tie_breaker' => 1.0,
-                                                                ),
-                                                        ),
-                                                    ),
-                                            ),
-                                    ),
-                                ),
-                        ),
-                ),
-            ),
+                                                                ],
+                                                         ],
+                                                    ],
+                                            ],
+                                     ],
+                                ],
+                        ],
+                ],
+            ],
             // OR operator, default space operator is 'OR'
-            array(
+            [
                 'abc | def',
                 'OZR',
                 true,
-                array('id', 'name'),
-                array (
+                ['id', 'name'],
+                 [
                     'bool' =>
-                        array (
+                         [
                             'should' =>
-                                array (
-                                    array (
+                                 [
+                                     [
                                         'bool' =>
-                                            array (
+                                             [
                                                 'should' =>
-                                                    array (
-                                                        array (
+                                                     [
+                                                         [
                                                             'multi_match' =>
-                                                                array (
+                                                                 [
                                                                     'type' => 'cross_fields',
                                                                     'query' => 'abc def',
                                                                     'fields' =>
-                                                                        array (
+                                                                         [
                                                                             0 => 'id',
                                                                             1 => 'name',
-                                                                        ),
+                                                                        ],
                                                                     'tie_breaker' => 1.0,
-                                                                ),
-                                                        ),
-                                                    ),
-                                            ),
-                                    ),
-                                ),
-                        ),
-                ),
-            ),
+                                                                ],
+                                                         ],
+                                                    ],
+                                            ],
+                                     ],
+                                ],
+                        ],
+                ],
+            ],
             // NOT operator, default operator is 'OR'
-            array(
+            [
                 'abc -def',
                 'OR',
                 true,
-                array('id', 'name'),
-                array (
+                ['id', 'name'],
+                 [
                     'bool' =>
-                        array (
+                         [
                             'must' =>
-                                array (
-                                    array (
+                                 [
+                                     [
                                         'bool' =>
-                                            array (
+                                             [
                                                 'must' =>
-                                                    array (
-                                                        array (
+                                                     [
+                                                         [
                                                             'bool' =>
-                                                                array (
+                                                                 [
                                                                     'should' =>
-                                                                        array (
-                                                                            array (
+                                                                         [
+                                                                             [
                                                                                 'multi_match' =>
-                                                                                    array (
+                                                                                     [
                                                                                         'type' => 'cross_fields',
                                                                                         'query' => 'abc',
                                                                                         'fields' =>
-                                                                                            array (
+                                                                                             [
                                                                                                 0 => 'id',
                                                                                                 1 => 'name',
-                                                                                            ),
+                                                                                            ],
                                                                                         'tie_breaker' => 1.0,
-                                                                                    ),
-                                                                            ),
-                                                                        ),
-                                                                ),
-                                                        ),
-                                                    ),
-                                            ),
-                                    ),
-                                    array (
+                                                                                    ],
+                                                                             ],
+                                                                        ],
+                                                                ],
+                                                         ],
+                                                    ],
+                                            ],
+                                     ],
+                                     [
                                         'bool' =>
-                                            array (
+                                             [
                                                 'must_not' =>
-                                                    array (
-                                                        array (
+                                                     [
+                                                         [
                                                             'bool' =>
-                                                                array (
+                                                                 [
                                                                     'should' =>
-                                                                        array (
-                                                                            array (
+                                                                         [
+                                                                             [
                                                                                 'multi_match' =>
-                                                                                    array (
+                                                                                     [
                                                                                         'type' => 'cross_fields',
                                                                                         'query' => 'def',
                                                                                         'fields' =>
-                                                                                            array (
+                                                                                             [
                                                                                                 0 => 'id',
                                                                                                 1 => 'name',
-                                                                                            ),
+                                                                                            ],
                                                                                         'tie_breaker' => 1.0,
-                                                                                    ),
-                                                                            ),
-                                                                        ),
-                                                                ),
-                                                        ),
-                                                    ),
-                                            ),
-                                    ),
-                                ),
-                        ),
-                ),
-            ),
+                                                                                    ],
+                                                                             ],
+                                                                        ],
+                                                                ],
+                                                         ],
+                                                    ],
+                                            ],
+                                     ],
+                                ],
+                        ],
+                ],
+            ],
             // don't use operator shortcut
             // OR operator, default space operator is AND
-            array(
+            [
                 'abc | def',
                 '&',
                 false,
-                array('id', 'name'),
-                array (
+                ['id', 'name'],
+                 [
                     'bool' =>
-                        array (
+                         [
                             'must' =>
-                                array (
-                                    array (
+                                 [
+                                     [
                                         'bool' =>
-                                            array (
+                                             [
                                                 'should' =>
-                                                    array (
-                                                        array (
+                                                     [
+                                                         [
                                                             'multi_match' =>
-                                                                array (
+                                                                 [
                                                                     'type' => 'cross_fields',
                                                                     'query' => 'abc',
                                                                     'fields' =>
-                                                                        array (
+                                                                         [
                                                                             0 => 'id',
                                                                             1 => 'name',
-                                                                        ),
+                                                                        ],
                                                                     'tie_breaker' => 1.0,
-                                                                ),
-                                                        ),
-                                                    ),
-                                            ),
-                                    ),
-                                    array (
+                                                                ],
+                                                         ],
+                                                    ],
+                                            ],
+                                     ],
+                                     [
                                         'bool' =>
-                                            array (
+                                             [
                                                 'should' =>
-                                                    array (
-                                                        array (
+                                                     [
+                                                         [
                                                             'multi_match' =>
-                                                                array (
+                                                                 [
                                                                     'type' => 'cross_fields',
                                                                     'query' => 'def',
                                                                     'fields' =>
-                                                                        array (
+                                                                         [
                                                                             0 => 'id',
                                                                             1 => 'name',
-                                                                        ),
+                                                                        ],
                                                                     'tie_breaker' => 1.0,
-                                                                ),
-                                                        ),
-                                                    ),
-                                            ),
-                                    ),
-                                ),
-                        ),
-                ),
-            ),
+                                                                ],
+                                                         ],
+                                                    ],
+                                            ],
+                                     ],
+                                ],
+                        ],
+                ],
+            ],
             // NOT operator
-            array(
+            [
                 'abc -def',
                 '&',
                 false,
-                array('id', 'name'),
-                array (
+                ['id', 'name'],
+                 [
                     'bool' =>
-                        array (
+                         [
                             'must' =>
-                                array (
-                                    array (
+                                 [
+                                     [
                                         'bool' =>
-                                            array (
+                                             [
                                                 'should' =>
-                                                    array (
-                                                        array (
+                                                     [
+                                                         [
                                                             'multi_match' =>
-                                                                array (
+                                                                 [
                                                                     'type' => 'cross_fields',
                                                                     'query' => 'abc',
                                                                     'fields' =>
-                                                                        array (
+                                                                         [
                                                                             0 => 'id',
                                                                             1 => 'name',
-                                                                        ),
+                                                                        ],
                                                                     'tie_breaker' => 1.0,
-                                                                ),
-                                                        ),
-                                                    ),
-                                            ),
-                                    ),
-                                    array (
+                                                                ],
+                                                         ],
+                                                    ],
+                                            ],
+                                     ],
+                                     [
                                         'bool' =>
-                                            array (
+                                             [
                                                 'should' =>
-                                                    array (
-                                                        array (
+                                                     [
+                                                         [
                                                             'multi_match' =>
-                                                                array (
+                                                                 [
                                                                     'type' => 'cross_fields',
                                                                     'query' => '-def',
                                                                     'fields' =>
-                                                                        array (
+                                                                         [
                                                                             0 => 'id',
                                                                             1 => 'name',
-                                                                        ),
+                                                                        ],
                                                                     'tie_breaker' => 1.0,
-                                                                ),
-                                                        ),
-                                                    ),
-                                            ),
-                                    ),
-                                ),
-                        ),
-                ),
-            ),
+                                                                ],
+                                                         ],
+                                                    ],
+                                            ],
+                                     ],
+                                ],
+                        ],
+                ],
+            ],
             // Single term, default space operator is 'OR'
-            array(
+            [
                 'abcdef',
                 'OR',
                 false,
-                array('id', 'name'),
-                array (
+                ['id', 'name'],
+                 [
                     'bool' =>
-                        array (
+                         [
                             'should' =>
-                                array (
-                                    array (
+                                 [
+                                     [
                                         'bool' =>
-                                            array (
+                                             [
                                                 'should' =>
-                                                    array (
-                                                        array (
+                                                     [
+                                                         [
                                                             'multi_match' =>
-                                                                array (
+                                                                 [
                                                                     'type' => 'cross_fields',
                                                                     'query' => 'abcdef',
                                                                     'fields' =>
-                                                                        array (
+                                                                         [
                                                                             0 => 'id',
                                                                             1 => 'name',
-                                                                        ),
+                                                                        ],
                                                                     'tie_breaker' => 1.0,
-                                                                ),
-                                                        ),
-                                                    ),
-                                            ),
-                                    ),
-                                ),
-                        ),
-                ),
-            ),
+                                                                ],
+                                                         ],
+                                                    ],
+                                            ],
+                                     ],
+                                ],
+                        ],
+                ],
+            ],
             // AND Operator, default space operator is 'OR'
-            array(
+            [
                 'abc AND def',
                 '|',
                 false,
-                array('id', 'name'),
-                array (
+                ['id', 'name'],
+                 [
                     'bool' =>
-                        array (
+                         [
                             'must' =>
-                                array (
-                                    array (
+                                 [
+                                     [
                                         'bool' =>
-                                            array (
+                                             [
                                                 'should' =>
-                                                    array (
-                                                        array (
+                                                     [
+                                                         [
                                                             'multi_match' =>
-                                                                array (
+                                                                 [
                                                                     'type' => 'cross_fields',
                                                                     'query' => 'abc',
                                                                     'fields' =>
-                                                                        array (
+                                                                         [
                                                                             0 => 'id',
                                                                             1 => 'name',
-                                                                        ),
+                                                                        ],
                                                                     'tie_breaker' => 1.0,
-                                                                ),
-                                                        ),
-                                                    ),
-                                            ),
-                                    ),
-                                    array (
+                                                                ],
+                                                         ],
+                                                    ],
+                                            ],
+                                     ],
+                                     [
                                         'bool' =>
-                                            array (
+                                             [
                                                 'should' =>
-                                                    array (
-                                                        array (
+                                                     [
+                                                         [
                                                             'multi_match' =>
-                                                                array (
+                                                                 [
                                                                     'type' => 'cross_fields',
                                                                     'query' => 'def',
                                                                     'fields' =>
-                                                                        array (
+                                                                         [
                                                                             0 => 'id',
                                                                             1 => 'name',
-                                                                        ),
+                                                                        ],
                                                                     'tie_breaker' => 1.0,
-                                                                ),
-                                                        ),
-                                                    ),
-                                            ),
-                                    ),
-                                ),
-                        ),
-                ),
-            ),
+                                                                ],
+                                                         ],
+                                                    ],
+                                            ],
+                                     ],
+                                ],
+                        ],
+                ],
+            ],
             // No operator provided, default space operator is 'OR'
-            array(
+            [
                 'abc def',
                 'OR',
                 false,
-                array('id', 'name'),
-                array (
+                ['id', 'name'],
+                 [
                     'bool' =>
-                        array (
+                         [
                             'should' =>
-                                array (
-                                    array (
+                                 [
+                                     [
                                         'bool' =>
-                                            array (
+                                             [
                                                 'should' =>
-                                                    array (
-                                                        array (
+                                                     [
+                                                         [
                                                             'multi_match' =>
-                                                                array (
+                                                                 [
                                                                     'type' => 'cross_fields',
                                                                     'query' => 'abc def',
                                                                     'fields' =>
-                                                                        array (
+                                                                         [
                                                                             0 => 'id',
                                                                             1 => 'name',
-                                                                        ),
+                                                                        ],
                                                                     'tie_breaker' => 1.0,
-                                                                ),
-                                                        ),
-                                                    ),
-                                            ),
-                                    ),
-                                ),
-                        ),
-                ),
-            ),
+                                                                ],
+                                                         ],
+                                                    ],
+                                            ],
+                                     ],
+                                ],
+                        ],
+                ],
+            ],
             // OR operator, default space operator is 'OR'
-            array(
+            [
                 'abc | def',
                 'OR',
                 false,
-                array('id', 'name'),
-                array (
+                ['id', 'name'],
+                 [
                     'bool' =>
-                        array (
+                         [
                             'should' =>
-                                array (
-                                    array (
+                                 [
+                                     [
                                         'bool' =>
-                                            array (
+                                             [
                                                 'should' =>
-                                                    array (
-                                                        array (
+                                                     [
+                                                         [
                                                             'multi_match' =>
-                                                                array (
+                                                                 [
                                                                     'type' => 'cross_fields',
                                                                     'query' => 'abc def',
                                                                     'fields' =>
-                                                                        array (
+                                                                         [
                                                                             0 => 'id',
                                                                             1 => 'name',
-                                                                        ),
+                                                                        ],
                                                                     'tie_breaker' => 1.0,
-                                                                ),
-                                                        ),
-                                                    ),
-                                            ),
-                                    ),
-                                ),
-                        ),
-                ),
-            ),
+                                                                ],
+                                                         ],
+                                                    ],
+                                            ],
+                                     ],
+                                ],
+                        ],
+                ],
+            ],
             // NOT operator, default operator is 'OR'
-            array(
+            [
                 'abc -def',
                 'OR',
                 false,
-                array('id', 'name'),
-                array (
+                ['id', 'name'],
+                 [
                     'bool' =>
-                        array (
+                         [
                             'should' =>
-                                array (
-                                    array (
+                                 [
+                                     [
                                         'bool' =>
-                                            array (
+                                             [
                                                 'should' =>
-                                                    array (
-                                                        array (
+                                                     [
+                                                         [
                                                             'multi_match' =>
-                                                                array (
+                                                                 [
                                                                     'type' => 'cross_fields',
                                                                     'query' => 'abc -def',
                                                                     'fields' =>
-                                                                        array (
+                                                                         [
                                                                             0 => 'id',
                                                                             1 => 'name',
-                                                                        ),
+                                                                        ],
                                                                     'tie_breaker' => 1.0,
-                                                                ),
-                                                        ),
-                                                    ),
-                                            ),
-                                    ),
-                                ),
-                        ),
-                ),
-            ),
-        );
+                                                                ],
+                                                         ],
+                                                    ],
+                                            ],
+                                     ],
+                                ],
+                        ],
+                ],
+            ],
+        ];
     }
 
     /**

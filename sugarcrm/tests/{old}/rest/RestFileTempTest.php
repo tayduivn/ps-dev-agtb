@@ -19,7 +19,7 @@ class RestFileTempTest extends RestFileTestBase
     public function testPostUploadImageTempToContact()
     {
         // Upload a temporary file
-        $post = array('picture' => '@include/images/badge_256.png');
+        $post = ['picture' => '@include/images/badge_256.png'];
         $reply = $this->_restCall('Contacts/temp/file/picture', $post);
         $this->assertArrayHasKey('picture', $reply['reply'], 'Reply is missing field name key');
         $this->assertNotEmpty($reply['reply']['picture']['guid'], 'File guid not returned');

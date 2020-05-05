@@ -34,12 +34,12 @@ class CommentLogApiTest extends TestCase
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setUp('current_user', array(true, true));
+        SugarTestHelper::setUp('current_user', [true, true]);
         SugarTestHelper::setUp('app_list_strings');
 
         $this->service = SugarTestRestUtilities::getRestServiceMock();
         $this->api = new CommentLogApi();
-        self::$created_commentlog = array();
+        self::$created_commentlog = [];
     }
 
     protected function tearDown() : void
@@ -58,7 +58,7 @@ class CommentLogApiTest extends TestCase
     public function testAccessBlocker()
     {
         $this->expectException(SugarApiExceptionNoMethod::class);
-        $this->api->accessBlocker($this->service, array());
+        $this->api->accessBlocker($this->service, []);
     }
 
     /**
@@ -70,7 +70,7 @@ class CommentLogApiTest extends TestCase
         $commentlog_entry = "hakuna matata";
         $commentlog_field = new SugarFieldCommentLog('commentlog');
 
-        $commentlog_field->apiSave($meeting, array('commentlog' => $commentlog_entry), array(), array());
+        $commentlog_field->apiSave($meeting, ['commentlog' => $commentlog_entry], [], []);
 
         $meeting->load_relationship('commentlog_link');
         $commentlog_beans = $meeting->commentlog_link->getBeans();
@@ -78,10 +78,10 @@ class CommentLogApiTest extends TestCase
         self::$created_commentlog[] = array_keys($commentlog_beans)[0];
 
         // start testing
-        $actual = $this->api->retrieveRecord($this->service, array(
+        $actual = $this->api->retrieveRecord($this->service, [
             'module' => 'commentlog',
             'record' => array_keys($commentlog_beans)[0],
-        ));
+        ]);
 
         $this->assertSame($actual['id'], $meeting->id);
     }

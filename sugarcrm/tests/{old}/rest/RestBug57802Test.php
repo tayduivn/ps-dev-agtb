@@ -41,8 +41,8 @@ class RestBug57802Test extends RestTestBase
      */
     public function testMetaDataManagerReturnsProperLenType()
     {
-        $fielddef = array(
-            'test_field_c' => array(
+        $fielddef = [
+            'test_field_c' => [
                 'source' => "custom_fields",
                 'name' => "test_field_c",
                 'vname' => "LBL_AAA_TEST",
@@ -51,8 +51,8 @@ class RestBug57802Test extends RestTestBase
                 'size' => '20', // Same here
                 'id' => "Accountstest_field_c",
                 'custom_module' => "Accounts",
-            ),
-            'test_field1_c' => array(
+            ],
+            'test_field1_c' => [
                 'source' => "custom_fields",
                 'name' => "test_field1_c",
                 'vname' => "LBL_AAA1_TEST",
@@ -61,8 +61,8 @@ class RestBug57802Test extends RestTestBase
                 'size' => '90', // Same here
                 'id' => "Accountstest_field1_c",
                 'custom_module' => "Accounts",
-            ),
-        );
+            ],
+        ];
         
         $mm = new RestBug57802MetaDataHacks();
         $cleaned = $mm->getNormalizedFields($fielddef);
@@ -84,7 +84,8 @@ class RestBug57802Test extends RestTestBase
  */
 class RestBug57802MetaDataHacks extends MetaDataHacks
 {
-    public function getNormalizedFields($fielddef) {
+    public function getNormalizedFields($fielddef)
+    {
         return $this->normalizeFielddefs($fielddef);
     }
 }

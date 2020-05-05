@@ -70,14 +70,14 @@ class RestBug58174Test extends RestTestBase
     public function testHtmlEntitiesAreConvertedInMetaDataManager()
     {
         $mm = new RestBug58174MetaDataManager($this->_user);
-        $data = array(
+        $data = [
             'TEST_LBL_1' => 'Test&#039;s Label',
-            'TEST_LBL_GRP_1' => array(
+            'TEST_LBL_GRP_1' => [
                 'TEST_LBL_GRP_A' => 'Nothing',
-                'TEST_LBL_GRP_B' => 'Billy&#039;s'
-            ),
+                'TEST_LBL_GRP_B' => 'Billy&#039;s',
+            ],
             'TEST_LBL_2' => 'Nothing Else',
-        );
+        ];
         
         $values = $mm->getDecodedStrings($data);
         
@@ -113,7 +113,8 @@ class RestBug58174Test extends RestTestBase
 
 class RestBug58174MetaDataManager extends MetaDataManager
 {
-    public function getDecodedStrings($source) {
+    public function getDecodedStrings($source)
+    {
         return $this->decodeStrings($source);
     }
 }

@@ -53,52 +53,52 @@ class CommandRegistryTest extends TestCase
 
     public function providerTestAddCommands()
     {
-        return array(
-            array(
+        return [
+            [
                 CommandRegistry::MODE_INSTANCE,
-                array(new InstanceCommandA('1'), new InstanceCommandA('2')),
-                array(new InstanceCommandA('1'), new InstanceCommandA('2')),
-            ),
-            array(
+                [new InstanceCommandA('1'), new InstanceCommandA('2')],
+                [new InstanceCommandA('1'), new InstanceCommandA('2')],
+            ],
+            [
                 CommandRegistry::MODE_STANDALONE,
-                array(new StandaloneCommandA('1'), new StandaloneCommandA('2')),
-                array(new StandaloneCommandA('1'), new StandaloneCommandA('2')),
-            ),
-            array(
+                [new StandaloneCommandA('1'), new StandaloneCommandA('2')],
+                [new StandaloneCommandA('1'), new StandaloneCommandA('2')],
+            ],
+            [
                 CommandRegistry::MODE_INSTANCE,
-                array(new InstanceCommandA('1'), new StandaloneCommandA('2')),
-                array(new InstanceCommandA('1')),
-            ),
-            array(
+                [new InstanceCommandA('1'), new StandaloneCommandA('2')],
+                [new InstanceCommandA('1')],
+            ],
+            [
                 CommandRegistry::MODE_STANDALONE,
-                array(new InstanceCommandA('1'), new StandaloneCommandA('2')),
-                array(new StandaloneCommandA('2')),
-            ),
-            array(
+                [new InstanceCommandA('1'), new StandaloneCommandA('2')],
+                [new StandaloneCommandA('2')],
+            ],
+            [
                 CommandRegistry::MODE_INSTANCE,
-                array(
+                [
                     new InstanceCommandA('1'),
                     new StandaloneCommandA('2'),
                     new InstanceStandaloneCommandA('3'),
-                ),
-                array(
+                ],
+                [
                     new InstanceCommandA('1'),
-                    new InstanceStandaloneCommandA('3')
-                ),
-            ),
-            array(
+                    new InstanceStandaloneCommandA('3'),
+                ],
+            ],
+            [
                 CommandRegistry::MODE_STANDALONE,
-                array(
+                [
                     new InstanceCommandA('1'),
                     new StandaloneCommandA('2'),
                     new InstanceStandaloneCommandA('3'),
-                ),
-                array(
+                ],
+                [
                     new StandaloneCommandA('2'),
-                    new InstanceStandaloneCommandA('3')
-                ),
-            ),
-        );
+                    new InstanceStandaloneCommandA('3'),
+                ],
+            ],
+        ];
     }
 
     /**
@@ -114,24 +114,24 @@ class CommandRegistryTest extends TestCase
         $this->registry
             ->addSymfonyCommand($commandA, CommandRegistry::MODE_INSTANCE)
             ->addSymfonyCommand($commandB, CommandRegistry::MODE_STANDALONE)
-            ->addSymfonyCommand($commandC, array(
-                CommandRegistry::MODE_INSTANCE, CommandRegistry::MODE_STANDALONE
-            ))
+            ->addSymfonyCommand($commandC, [
+                CommandRegistry::MODE_INSTANCE, CommandRegistry::MODE_STANDALONE,
+            ])
         ;
 
-        $expected = array($commandA, $commandC);
+        $expected = [$commandA, $commandC];
         $this->assertSame($expected, $this->registry->getCommands(CommandRegistry::MODE_INSTANCE));
 
-        $expected = array($commandB, $commandC);
+        $expected = [$commandB, $commandC];
         $this->assertSame($expected, $this->registry->getCommands(CommandRegistry::MODE_STANDALONE));
     }
 
     public function providerValidModes()
     {
-        return array(
-            array(CommandRegistry::MODE_INSTANCE),
-            array(CommandRegistry::MODE_STANDALONE),
-        );
+        return [
+            [CommandRegistry::MODE_INSTANCE],
+            [CommandRegistry::MODE_STANDALONE],
+        ];
     }
 
     /**
@@ -153,7 +153,7 @@ class CommandRegistryTest extends TestCase
         $adapter = TestReflection::callProtectedMethod(
             $this->registry,
             'createAdapter',
-            array($command, $mode)
+            [$command, $mode]
         );
 
         $this->assertInstanceOf(
@@ -189,7 +189,7 @@ class CommandRegistryTest extends TestCase
         TestReflection::callProtectedMethod(
             $this->registry,
             'createAdapter',
-            array(new SymfonyCommandA('test'), 'foobar')
+            [new SymfonyCommandA('test'), 'foobar']
         );
     }
 }

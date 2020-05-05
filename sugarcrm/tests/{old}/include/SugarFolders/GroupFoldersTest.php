@@ -18,18 +18,18 @@ use PHPUnit\Framework\TestCase;
  */
 class GroupFoldersTest extends TestCase
 {
-	protected $_user = null;
-	
+    protected $_user = null;
+    
     /**
      * Create test user
      */
     protected function setUp() : void
-	{
-    	global $groupfolder_id;
-    	if (empty($groupfolder_id)) {
-        	$this->_setupTestUser();
-    	} // IF
-    	$GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], "Emails");
+    {
+        global $groupfolder_id;
+        if (empty($groupfolder_id)) {
+            $this->_setupTestUser();
+        } // IF
+        $GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], "Emails");
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
     }
     
@@ -45,33 +45,33 @@ class GroupFoldersTest extends TestCase
     }
 
     /**
-	 * Create a group folder
-	 */
-    public function testCreateGroupFolder() 
-    { 
-		global $current_user, $groupfolder_id, $teamObject;
-		$sugarFolder = new SugarFolder();
-		$sugarFolder->name = "UnitTestGroupFolder";
-		$sugarFolder->parent_folder = "";
-		$sugarFolder->has_child = 0;
-		$sugarFolder->is_group = 1;
-		$sugarFolder->assign_to_id = $current_user->id;
-		$teamObject = SugarTestTeamUtilities::createAnonymousTeam();
-		$sugarFolder->team_id = $teamObject->id;
-		$sugarFolder->team_set_id = $teamObject->id;
-		$status = $sugarFolder->save();
-		$groupfolder_id = $sugarFolder->id;
-    	$this->assertTrue($status,"group Folder can not be created");
+     * Create a group folder
+     */
+    public function testCreateGroupFolder()
+    {
+        global $current_user, $groupfolder_id, $teamObject;
+        $sugarFolder = new SugarFolder();
+        $sugarFolder->name = "UnitTestGroupFolder";
+        $sugarFolder->parent_folder = "";
+        $sugarFolder->has_child = 0;
+        $sugarFolder->is_group = 1;
+        $sugarFolder->assign_to_id = $current_user->id;
+        $teamObject = SugarTestTeamUtilities::createAnonymousTeam();
+        $sugarFolder->team_id = $teamObject->id;
+        $sugarFolder->team_set_id = $teamObject->id;
+        $status = $sugarFolder->save();
+        $groupfolder_id = $sugarFolder->id;
+        $this->assertTrue($status, "group Folder can not be created");
     } // fn
     
     /**
      * Create an Email
      */
-    public function testCreateEmail() 
+    public function testCreateEmail()
     {
         global $current_user, $teamObject, $email_id;
 
-        $data = array(
+        $data = [
             'name' => 'Unittest',
             'description' => 'Unittest',
             'description_html' => '<b>Unittest</b>',
@@ -88,7 +88,7 @@ class GroupFoldersTest extends TestCase
             'team_id' => $teamObject->id,
             'team_set_id' => $teamObject->id,
             'assigned_user_id' => $current_user->id,
-        );
+        ];
         $email = SugarTestEmailUtilities::createEmail('', $data);
         $email_id = $email->id;
 
@@ -98,82 +98,82 @@ class GroupFoldersTest extends TestCase
     /**
      * Assign this email to group folder
      */
-    public function testAssignEmailToGroupFolder() 
+    public function testAssignEmailToGroupFolder()
     {
-    	global $current_user, $groupfolder_id, $teamObject, $email_id;
-    	$email = new Email();
-    	$email->retrieve($email_id);
-		$toSugarFolder = new SugarFolder();
-		$toSugarFolder->retrieve($groupfolder_id);
-		$status = $toSugarFolder->addBean($email);
-    	$this->assertTrue($status,"testAssignEmailToGroupFolder failed");
+        global $current_user, $groupfolder_id, $teamObject, $email_id;
+        $email = new Email();
+        $email->retrieve($email_id);
+        $toSugarFolder = new SugarFolder();
+        $toSugarFolder->retrieve($groupfolder_id);
+        $status = $toSugarFolder->addBean($email);
+        $this->assertTrue($status, "testAssignEmailToGroupFolder failed");
     }
     
     /**
      * Retrieve Email for this folder
      */
-    public function retrieveEmailForGroupFolder() 
+    public function retrieveEmailForGroupFolder()
     {
-    	global $current_user, $groupfolder_id, $teamObject, $email_id;
-		$toSugarFolder = new SugarFolder();
-		$result = $toSugarFolder->getListItemsForEmailXML($groupfolder_id);
-    	$this->assertTrue(($result['out'].length == 1),"retrieveEmailForGroupFolder failed");
+        global $current_user, $groupfolder_id, $teamObject, $email_id;
+        $toSugarFolder = new SugarFolder();
+        $result = $toSugarFolder->getListItemsForEmailXML($groupfolder_id);
+        $this->assertTrue(($result['out'].length == 1), "retrieveEmailForGroupFolder failed");
     }
     
     /**
      * Delete this email
      */
-    public function testDeleteEmailForGroupFolder() 
+    public function testDeleteEmailForGroupFolder()
     {
-    	global $current_user, $groupfolder_id, $teamObject, $email_id;
-    	$email = new Email();
-    	$email->delete($email_id);
+        global $current_user, $groupfolder_id, $teamObject, $email_id;
+        $email = new Email();
+        $email->delete($email_id);
 
         $this->assertNull($email->retrieve($email_id));
     }
-	
+    
     /**
-	 * Delete a folder
-	 */
-    public function testDeleteGroupFolder() 
+     * Delete a folder
+     */
+    public function testDeleteGroupFolder()
     {
-    	global $groupfolder_id;
-		$focus = $this->_retrieveGroupFolder();
-		$status = $focus->delete();
-    	if ($status) {
-    		$this->_tearDownGroupFolder();
-        	$this->_tearDownTestUser();
-        	unset($groupfolder_id);
-    	}
-    	$this->assertTrue($status,"UnitTestGroupFolder can not be deleted");
+        global $groupfolder_id;
+        $focus = $this->_retrieveGroupFolder();
+        $status = $focus->delete();
+        if ($status) {
+            $this->_tearDownGroupFolder();
+            $this->_tearDownTestUser();
+            unset($groupfolder_id);
+        }
+        $this->assertTrue($status, "UnitTestGroupFolder can not be deleted");
     }
     
-	/**
-	 * retrieve a group folder
-	 */
-    protected function _retrieveGroupFolder() 
+    /**
+     * retrieve a group folder
+     */
+    protected function _retrieveGroupFolder()
     {
-    	global $groupfolder_id;
-		$focus = new SugarFolder();
-		$focus->retrieve($groupfolder_id);
-		return $focus;
+        global $groupfolder_id;
+        $focus = new SugarFolder();
+        $focus->retrieve($groupfolder_id);
+        return $focus;
     } // fn
         
     /**
-	 * Delete this inbound account.
-	 */
-    protected function _tearDownGroupFolder() 
+     * Delete this inbound account.
+     */
+    protected function _tearDownGroupFolder()
     {
-    	global $groupfolder_id;
-		$GLOBALS['db']->query("delete from folders WHERE id = '{$groupfolder_id}'");
+        global $groupfolder_id;
+        $GLOBALS['db']->query("delete from folders WHERE id = '{$groupfolder_id}'");
     }
     
     /**
      * Create a test user
      */
-	protected function _setupTestUser() 
-	{
-		global $current_user;
+    protected function _setupTestUser()
+    {
+        global $current_user;
         $this->_user = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['current_user'] = $this->_user;
         $current_user = $this->_user;
@@ -185,9 +185,9 @@ class GroupFoldersTest extends TestCase
     /**
      * Remove user created for test
      */
-	protected function _tearDownTestUser() 
-	{
-       SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-       unset($GLOBALS['current_user']);
+    protected function _tearDownTestUser()
+    {
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        unset($GLOBALS['current_user']);
     }
 }

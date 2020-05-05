@@ -51,31 +51,32 @@ class SOAPAPI1Test extends SOAPTestCase
     public function testCanLogin()
     {
         $result = $this->_login();
-        $this->assertTrue(!empty($result['id']) && $result['id'] != -1,
-            'SOAP Session not created. Error ('.$result['error']['number'].'): '.$result['error']['name'].': '.$result['error']['description'].'. HTTP Response: '.$this->_soapClient->response);
+        $this->assertTrue(
+            !empty($result['id']) && $result['id'] != -1,
+            'SOAP Session not created. Error ('.$result['error']['number'].'): '.$result['error']['name'].': '.$result['error']['description'].'. HTTP Response: '.$this->_soapClient->response
+        );
     }
 
     public function testSearchContactByEmail()
     {
-        $result = $this->_soapClient->call('contact_by_email', array('user_name' => 'admin', 'password' => md5('asdf'), 'email_address' => $this->_contact->email1));
+        $result = $this->_soapClient->call('contact_by_email', ['user_name' => 'admin', 'password' => md5('asdf'), 'email_address' => $this->_contact->email1]);
         $this->assertTrue(!empty($result) && count($result) > 0, 'Incorrect number of results returned. HTTP Response: '.$this->_soapClient->response);
         $this->assertEquals($result[0]['name1'], $this->_contact->first_name, 'Incorrect result found');
     }
 
     public function testSearchByModule()
     {
-        $modules = array('Contacts');
-        $result = $this->_soapClient->call('search_by_module', array('user_name' => 'admin', 'password' => md5('asdf'), 'search_string' => $this->_contact->email1, 'modules' => $modules, 'offset' => 0, 'max_results' => 10));
+        $modules = ['Contacts'];
+        $result = $this->_soapClient->call('search_by_module', ['user_name' => 'admin', 'password' => md5('asdf'), 'search_string' => $this->_contact->email1, 'modules' => $modules, 'offset' => 0, 'max_results' => 10]);
         $this->assertTrue(!empty($result) && count($result['entry_list']) > 0, 'Incorrect number of results returned. HTTP Response: '.$this->_soapClient->response);
         $this->assertEquals('first_name', $result['entry_list'][0]['name_value_list'][1]['name'], 'Incorrect field returned');
         $this->assertEquals($this->_contact->first_name, $result['entry_list'][0]['name_value_list'][1]['value'], 'Incorrect result returned');
-
     }
 
     public function testGetModifiedEntries()
     {
-        $ids = array($this->_contact->id);
-        $result = $this->_soapClient->call('get_modified_entries', array('session' => $this->_sessionId, 'module_name' => 'Contacts', 'ids' => $ids, 'select_fields' => array()));
+        $ids = [$this->_contact->id];
+        $result = $this->_soapClient->call('get_modified_entries', ['session' => $this->_sessionId, 'module_name' => 'Contacts', 'ids' => $ids, 'select_fields' => []]);
         $decoded = base64_decode($result['result']);
         $decoded = simplexml_load_string($decoded);
         $this->assertEquals($this->_contact->id, $decoded->item->id, 'Incorrect entry returned.');
@@ -86,7 +87,7 @@ class SOAPAPI1Test extends SOAPTestCase
         $this->_meeting->load_relationship('contacts');
         $this->_meeting->contacts->add($this->_contact->id);
         $GLOBALS['db']->commit();
-        $result = $this->_soapClient->call('get_attendee_list', array('session' => $this->_sessionId, 'module_name' => 'Meetings', 'id' => $this->_meeting->id));
+        $result = $this->_soapClient->call('get_attendee_list', ['session' => $this->_sessionId, 'module_name' => 'Meetings', 'id' => $this->_meeting->id]);
         $decoded = base64_decode($result['result']);
         $decoded = simplexml_load_string($decoded);
         $this->assertTrue(!empty($result['result']), 'Results not returned. HTTP Response: '.$this->_soapClient->response);
@@ -95,14 +96,14 @@ class SOAPAPI1Test extends SOAPTestCase
 
     public function testSyncGetModifiedRelationships()
     {
-        $ids = array($this->_contact->id);
+        $ids = [$this->_contact->id];
         $yesterday = date('Y-m-d', strtotime('last year'));
-        $tomorrow = date('Y-m-d', mktime(0, 0, 0, date("m") , date("d") + 1, date("Y")));
-        $result = $this->_soapClient->call('sync_get_modified_relationships', array('session' => $this->_sessionId, 'module_name' => 'Users', 'related_module' => 'Contacts', 'from_date' => $yesterday, 'to_date' => $tomorrow, 'offset' => 0, 'max_results' => 10, 'deleted' => 0, 'module_id' => $GLOBALS['current_user']->id, 'select_fields'=> array(), 'ids' => $ids, 'relationship_name' => 'contacts_users', 'deletion_date' => $yesterday, 'php_serialize' => 0));
+        $tomorrow = date('Y-m-d', mktime(0, 0, 0, date("m"), date("d") + 1, date("Y")));
+        $result = $this->_soapClient->call('sync_get_modified_relationships', ['session' => $this->_sessionId, 'module_name' => 'Users', 'related_module' => 'Contacts', 'from_date' => $yesterday, 'to_date' => $tomorrow, 'offset' => 0, 'max_results' => 10, 'deleted' => 0, 'module_id' => $GLOBALS['current_user']->id, 'select_fields'=> [], 'ids' => $ids, 'relationship_name' => 'contacts_users', 'deletion_date' => $yesterday, 'php_serialize' => 0]);
         $this->assertTrue(!empty($result['entry_list']), 'Results not returned. HTTP Response: '.$this->_soapClient->response);
         $decoded = base64_decode($result['entry_list']);
         $decoded = simplexml_load_string($decoded);
-        if (isset($decoded->item[0]) ) {
+        if (isset($decoded->item[0])) {
             $this->assertEquals(urlencode($decoded->item->name_value_list->name_value[1]->name), 'contact_id', "testSyncGetModifiedRelationships - could not retrieve contact_id column name");
             $this->assertEquals(urlencode($decoded->item->name_value_list->name_value[1]->value), $this->_contact->id, "vlue of contact id is not same as returned via SOAP");
         }
@@ -111,7 +112,8 @@ class SOAPAPI1Test extends SOAPTestCase
     /**********************************
      * HELPER PUBLIC FUNCTIONS
      **********************************/
-    private function _setupTestContact() {
+    private function _setupTestContact()
+    {
         $this->_contact = SugarTestContactUtilities::createContact();
         $this->_contact->contacts_users_id = $GLOBALS['current_user']->id;
         $this->_contact->save();

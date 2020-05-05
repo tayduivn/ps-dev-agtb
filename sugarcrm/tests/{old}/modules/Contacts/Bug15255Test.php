@@ -14,29 +14,29 @@ use PHPUnit\Framework\TestCase;
 
 class Bug15255Test extends TestCase
 {
-	var $c = null;
-	var $a = null;
-	var $ac_id = null;
+    var $c = null;
+    var $a = null;
+    var $ac_id = null;
 
     protected function setUp() : void
     {
         global $current_user, $currentModule ;
-		$mod_strings = return_module_language($GLOBALS['current_language'], "Contacts");
-		$current_user = SugarTestUserUtilities::createAnonymousUser();
-		$unid = uniqid();
-		$time = date('Y-m-d H:i:s');
+        $mod_strings = return_module_language($GLOBALS['current_language'], "Contacts");
+        $current_user = SugarTestUserUtilities::createAnonymousUser();
+        $unid = uniqid();
+        $time = date('Y-m-d H:i:s');
 
-		$contact = new Contact();
-		$contact->id = 'c_'.$unid;
+        $contact = new Contact();
+        $contact->id = 'c_'.$unid;
         $contact->first_name = 'testfirst';
         $contact->last_name = 'testlast';
         $contact->new_with_id = true;
         $contact->disable_custom_fields = true;
         $contact->save();
-		$this->c = $contact;
+        $this->c = $contact;
 
-		$account = new Account();
-		$account->id = 'a_'.$unid;
+        $account = new Account();
+        $account->id = 'a_'.$unid;
         $account->first_name = 'testfirst';
         $account->last_name = 'testlast';
         $account->assigned_user_id = 'SugarUser';
@@ -47,8 +47,8 @@ class Bug15255Test extends TestCase
 
         $ac_id = 'ac_'.$unid;
         $this->ac_id = $ac_id;
-		$GLOBALS['db']->query("insert into accounts_contacts (id , contact_id, account_id, date_modified, deleted) values ('{$ac_id}', '{$contact->id}', '{$account->id}', '$time', 0)");
-	}
+        $GLOBALS['db']->query("insert into accounts_contacts (id , contact_id, account_id, date_modified, deleted) values ('{$ac_id}', '{$contact->id}', '{$account->id}', '$time', 0)");
+    }
 
     protected function tearDown() : void
     {
@@ -65,11 +65,12 @@ class Bug15255Test extends TestCase
         unset($this->ac_id);
     }
 
-	function testFill_in_additional_detail_fields(){
-		$locale = Localization::getObject();
-    	$this->c->fill_in_additional_detail_fields();
-    	$localName = $locale->getLocaleFormattedName('testfirst', 'testlast');
-    	$this->assertEquals($this->c->name, $localName);
-    	//$this->assertEquals($this->c->name, 'testfirst testlast');
+    function testFill_in_additional_detail_fields()
+    {
+        $locale = Localization::getObject();
+        $this->c->fill_in_additional_detail_fields();
+        $localName = $locale->getLocaleFormattedName('testfirst', 'testlast');
+        $this->assertEquals($this->c->name, $localName);
+        //$this->assertEquals($this->c->name, 'testfirst testlast');
     }
 }

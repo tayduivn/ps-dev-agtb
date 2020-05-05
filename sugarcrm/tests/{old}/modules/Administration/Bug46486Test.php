@@ -24,20 +24,18 @@ class Bug46486Test extends TestCase
         $admin = new Administration();
         $admin->retrieveSettings('license');
 
-        if(!isset($admin->settings['license_num_portal_users']))
-        {
-           $admin->settings['license_num_portal_users'] = 0;
-           $admin->saveSetting('license', 'num_portal_users', '0');
+        if (!isset($admin->settings['license_num_portal_users'])) {
+            $admin->settings['license_num_portal_users'] = 0;
+            $admin->saveSetting('license', 'num_portal_users', '0');
         }
 
         $this->sm = new SessionManager();
         $this->defaultPortalUsersCount = $this->sm->getNumPortalUsers();
 
         $admin->retrieveSettings('system');
-        if(!isset($admin->settings['system_session_timeout']))
-        {
-           $session_timeout = abs(ini_get('session.gc_maxlifetime'));
-           $admin->saveSetting('system', 'session_timeout', $session_timeout);
+        if (!isset($admin->settings['system_session_timeout'])) {
+            $session_timeout = abs(ini_get('session.gc_maxlifetime'));
+            $admin->saveSetting('system', 'session_timeout', $session_timeout);
         }
         $admin->retrieveSettings('license');
         $this->enforce =  !empty($admin->settings['license_enforce_portal_user_limit']);
@@ -61,50 +59,48 @@ class Bug46486Test extends TestCase
 
     function testGetActiveSessionCount()
     {
-        $totalSessions = rand(0,10);
+        $totalSessions = rand(0, 10);
         $this->createFakeSessions($totalSessions);
-        $this->assertEquals($totalSessions, $this->sm->getNumActiveSessions($totalSessions) );
+        $this->assertEquals($totalSessions, $this->sm->getNumActiveSessions($totalSessions));
     }
 
     function testGetNumPortalUsers()
     {
-        $fakeCounts = array(200,5,398,102,234);
-        foreach($fakeCounts as $count)
-        {
+        $fakeCounts = [200,5,398,102,234];
+        foreach ($fakeCounts as $count) {
             $admin = new Administration();
             $admin->saveSetting('license', 'num_portal_users', $count);
-            $this->assertEquals($count, $this->sm->getNumPortalUsers() );
+            $this->assertEquals($count, $this->sm->getNumPortalUsers());
         }
     }
 
     private function createFakeSessions($totalSessionsToCreate)
     {
-        for($i=0; $i<$totalSessionsToCreate; $i++)
-        {
+        for ($i=0; $i<$totalSessionsToCreate; $i++) {
             $sm = new SessionManager();
             $sm->session_id = uniqid();
-            $sm->save(FALSE);
+            $sm->save(false);
         }
     }
 
 
     function providerPortalSessionLoginCount()
     {
-        return array(
+        return [
             //Valid
-            array(1, 0, TRUE),
-            array(2, 2, TRUE),
-            array(3, 0, TRUE),
-            array(5, 5, TRUE),
-            array(10, 6, TRUE),
-            array(100, 119, TRUE),
+            [1, 0, true],
+            [2, 2, true],
+            [3, 0, true],
+            [5, 5, true],
+            [10, 6, true],
+            [100, 119, true],
             //Invalid
-            array(0,0, FALSE),
-            array(0,1, FALSE),
-            array(5,6, FALSE),
-            array(100,120, FALSE),
-            array(500,600, FALSE),
-        );
+            [0,0, false],
+            [0,1, false],
+            [5,6, false],
+            [100,120, false],
+            [500,600, false],
+        ];
     }
 
     /**

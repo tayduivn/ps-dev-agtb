@@ -29,7 +29,7 @@ class Bug50438Test extends TestCase
         global $currentModule ;
         SugarTestHelper::setUp('app_list_strings');
         $this->call_id = create_guid();
-		$mod_strings = return_module_language($GLOBALS['current_language'], "Contacts");
+        $mod_strings = return_module_language($GLOBALS['current_language'], "Contacts");
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
 
         //create a contact
@@ -40,9 +40,9 @@ class Bug50438Test extends TestCase
         $this->contact->save();
 
         //create array to output as import file using the new contact as the related parent
-        $this->fileArr = array(
-            0=> "\"{$this->call_id}\",\"Call for Unit Test 50438\",\"Planned\", \"{$this->contact->module_dir}\",\"{$this->contact->id}\""
-        );
+        $this->fileArr = [
+            0=> "\"{$this->call_id}\",\"Call for Unit Test 50438\",\"Planned\", \"{$this->contact->module_dir}\",\"{$this->contact->id}\"",
+        ];
     }
 
     protected function tearDown() : void
@@ -53,8 +53,8 @@ class Bug50438Test extends TestCase
         unset($this->call_id);
         unset($this->contact);
         unset($this->fileArr);
-        unset( $GLOBALS['current_user']);
-        unset( $GLOBALS['mod_strings']);
+        unset($GLOBALS['current_user']);
+        unset($GLOBALS['mod_strings']);
     }
 
     public function testParentsAreRelatedDuringImport()
@@ -63,7 +63,7 @@ class Bug50438Test extends TestCase
         // suspect it has to do with the colnum_2 being 'status'
         $file = 'upload://test50438.csv';
         $ret = file_put_contents($file, $this->fileArr);
-        $this->assertGreaterThan(0, $ret, 'Failed to write to '.$file .' for content '.var_export($this->fileArr,true));
+        $this->assertGreaterThan(0, $ret, 'Failed to write to '.$file .' for content '.var_export($this->fileArr, true));
 
         $importSource = new ImportFile($file, ',', '"');
 
@@ -98,7 +98,7 @@ class Bug50438Test extends TestCase
         $related_contacts = $call->contacts->get();
 
         //test that the contact id is in the array of related contacts.
-        $this->assertContains($this->contact->id, $related_contacts,' Contact was not related during simulated import despite being set in related parent id');
+        $this->assertContains($this->contact->id, $related_contacts, ' Contact was not related during simulated import despite being set in related parent id');
         unset($call);
 
         /*

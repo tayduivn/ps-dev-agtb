@@ -32,7 +32,7 @@ class CustomOneToManyTest extends TestCase
 
     public function testSelfReferencing()
     {
-        $definition = array(
+        $definition = [
             'rhs_label' => 'Opportunities',
             'lhs_label' => 'Opportunities',
             'rhs_subpanel' => 'default',
@@ -46,7 +46,7 @@ class CustomOneToManyTest extends TestCase
             'is_custom' => false,
             'from_studio' => false,
             'relationship_name' => 'opportunities_opportunities_2',
-        );
+        ];
 
         $testRel = new OneToManyRelationship($definition);
         $vardefs = $testRel->buildVardefs();
@@ -54,18 +54,18 @@ class CustomOneToManyTest extends TestCase
         $relData = $testRel->buildRelationshipMetaData();
 
         // print_r($vardefs);
-        $this->assertEquals(4,count($vardefs['Opportunities']),"Doesn't have all four entries (link, link2, id, name)");
+        $this->assertEquals(4, count($vardefs['Opportunities']), "Doesn't have all four entries (link, link2, id, name)");
 
-        $sortedDefs = array();
-        foreach($vardefs['Opportunities'] as $def ) {
-            if ( $def['type'] == 'link' ) {
-                if ( isset($def['side']) && $def['side'] == 'right' ) {
+        $sortedDefs = [];
+        foreach ($vardefs['Opportunities'] as $def) {
+            if ($def['type'] == 'link') {
+                if (isset($def['side']) && $def['side'] == 'right') {
                     $sortedDefs['link2'] = $def;
                 } else {
                     $sortedDefs['link'] = $def;
                 }
             } else {
-                if ( isset($def['rname']) && $def['rname'] == 'id' ) {
+                if (isset($def['rname']) && $def['rname'] == 'id') {
                     $sortedDefs['id'] = $def;
                 } else {
                     $sortedDefs['name'] = $def;
@@ -73,21 +73,21 @@ class CustomOneToManyTest extends TestCase
             }
         }
 
-        $this->assertEquals(4,count($sortedDefs),"Couldn't sort out the four entries only found: ".print_r(array_keys($sortedDefs),true));
+        $this->assertEquals(4, count($sortedDefs), "Couldn't sort out the four entries only found: ".print_r(array_keys($sortedDefs), true));
 
-        $this->assertEquals($sortedDefs['id']['name'],$sortedDefs['id']['id_name'],"ID's id_name is wrong!");
-        $this->assertEquals($sortedDefs['id']['name'],$sortedDefs['link2']['id_name'],"Link2's id_name is wrong!");
-        $this->assertEquals($sortedDefs['id']['name'],$sortedDefs['name']['id_name'],"Name's id_name is wrong!");
-        $this->assertNotEquals($sortedDefs['id']['name'],$sortedDefs['link']['id_name'],"Link's id_name is the same as the right side id_name");
+        $this->assertEquals($sortedDefs['id']['name'], $sortedDefs['id']['id_name'], "ID's id_name is wrong!");
+        $this->assertEquals($sortedDefs['id']['name'], $sortedDefs['link2']['id_name'], "Link2's id_name is wrong!");
+        $this->assertEquals($sortedDefs['id']['name'], $sortedDefs['name']['id_name'], "Name's id_name is wrong!");
+        $this->assertNotEquals($sortedDefs['id']['name'], $sortedDefs['link']['id_name'], "Link's id_name is the same as the right side id_name");
 
         // print_r($subPanel);
-        $this->assertEquals($sortedDefs['link']['name'],$subPanel['Opportunities'][0]['get_subpanel_data'],"Subpanel is using the incorrect link");
+        $this->assertEquals($sortedDefs['link']['name'], $subPanel['Opportunities'][0]['get_subpanel_data'], "Subpanel is using the incorrect link");
         // print_r($relData);
     }
 
     public function testNormal()
     {
-        $definition = array(
+        $definition = [
             'rhs_label' => 'Opportunities',
             'lhs_label' => 'Person Module',
             'rhs_subpanel' => 'default',
@@ -101,7 +101,7 @@ class CustomOneToManyTest extends TestCase
             'is_custom' => false,
             'from_studio' => false,
             'relationship_name' => 'opportunities_bugs',
-        );
+        ];
 
         $testRel = new OneToManyRelationship($definition);
         $vardefs = $testRel->buildVardefs();
@@ -109,19 +109,19 @@ class CustomOneToManyTest extends TestCase
         $relData = $testRel->buildRelationshipMetaData();
 
         // print_r($vardefs);
-        $this->assertEquals(3,count($vardefs['bugs']),"Doesn't have the three right entries (link2, id, name)");
-        $this->assertEquals(1,count($vardefs['Opportunities']),"Doesn't have just one left entry)");
+        $this->assertEquals(3, count($vardefs['bugs']), "Doesn't have the three right entries (link2, id, name)");
+        $this->assertEquals(1, count($vardefs['Opportunities']), "Doesn't have just one left entry)");
 
-        $sortedDefs = array();
-        foreach($vardefs['bugs'] as $def ) {
-            if ( $def['type'] == 'link' ) {
-                if ( isset($def['side']) && $def['side'] == 'right' ) {
+        $sortedDefs = [];
+        foreach ($vardefs['bugs'] as $def) {
+            if ($def['type'] == 'link') {
+                if (isset($def['side']) && $def['side'] == 'right') {
                     $sortedDefs['link2'] = $def;
                 } else {
-                    $this->assertFalse(true,"The right hand side has a left-handed link field.");
+                    $this->assertFalse(true, "The right hand side has a left-handed link field.");
                 }
             } else {
-                if ( isset($def['rname']) && $def['rname'] == 'id' ) {
+                if (isset($def['rname']) && $def['rname'] == 'id') {
                     $sortedDefs['id'] = $def;
                 } else {
                     $sortedDefs['name'] = $def;
@@ -130,14 +130,14 @@ class CustomOneToManyTest extends TestCase
         }
         $sortedDefs['link'] = $vardefs['Opportunities'][0];
 
-        $this->assertEquals(4,count($sortedDefs),"Couldn't sort out the four entries only found: ".print_r(array_keys($sortedDefs),true));
+        $this->assertEquals(4, count($sortedDefs), "Couldn't sort out the four entries only found: ".print_r(array_keys($sortedDefs), true));
 
-        $this->assertEquals($sortedDefs['id']['name'],$sortedDefs['id']['id_name'],"ID's id_name is wrong!");
-        $this->assertEquals($sortedDefs['id']['name'],$sortedDefs['link2']['id_name'],"Link2's id_name is wrong!");
-        $this->assertEquals($sortedDefs['id']['name'],$sortedDefs['name']['id_name'],"Name's id_name is wrong!");
+        $this->assertEquals($sortedDefs['id']['name'], $sortedDefs['id']['id_name'], "ID's id_name is wrong!");
+        $this->assertEquals($sortedDefs['id']['name'], $sortedDefs['link2']['id_name'], "Link2's id_name is wrong!");
+        $this->assertEquals($sortedDefs['id']['name'], $sortedDefs['name']['id_name'], "Name's id_name is wrong!");
 
         // print_r($subPanel);
-        $this->assertEquals($sortedDefs['link']['name'],$subPanel['Opportunities'][0]['get_subpanel_data'],"Subpanel is using the incorrect link");
+        $this->assertEquals($sortedDefs['link']['name'], $subPanel['Opportunities'][0]['get_subpanel_data'], "Subpanel is using the incorrect link");
         // print_r($relData);
     }
 }

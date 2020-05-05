@@ -59,7 +59,7 @@ class SugarFieldDatetimeTest extends TestCase
     {
         $fieldMock = $this->createPartialMock('\SugarFieldDatetime', ['evaluateVariable']);
         $fieldMock->method('evaluateVariable')->will($this->returnCallback($callback));
-        TestReflection::callProtectedMethod($fieldMock, 'parseVariable', array(&$value));
+        TestReflection::callProtectedMethod($fieldMock, 'parseVariable', [&$value]);
         $this->assertEquals($expected, $value, 'Variables should have been converted to datetime strings');
     }
 }

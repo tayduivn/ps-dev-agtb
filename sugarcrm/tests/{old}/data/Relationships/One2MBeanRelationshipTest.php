@@ -21,9 +21,9 @@ class One2MBeanRelationshipTest extends TestCase
 
     public function testProperRhsFieldIsSet()
     {
-        $primaryBean = SugarTestKBContentUtilities::createBean(array(
+        $primaryBean = SugarTestKBContentUtilities::createBean([
             'kbdocument_id' => create_guid(),
-        ));
+        ]);
         $relatedBean = SugarTestKBContentUtilities::createBean();
 
         $primaryBean->load_relationship('localizations');

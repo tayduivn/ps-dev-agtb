@@ -31,10 +31,10 @@ class OpportunitiesApiTest extends TestCase
 
     public static function setUpBeforeClass() : void
     {
-        SugarTestForecastUtilities::setUpForecastConfig(array(
-            'sales_stage_won' => array('Closed Won'),
-            'sales_stage_lost' => array('Closed Lost'),
-        ));
+        SugarTestForecastUtilities::setUpForecastConfig([
+            'sales_stage_won' => ['Closed Won'],
+            'sales_stage_lost' => ['Closed Lost'],
+        ]);
     }
 
     public static function tearDownAfterClass(): void
@@ -49,7 +49,7 @@ class OpportunitiesApiTest extends TestCase
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestRevenueLineItemUtilities::removeAllCreatedRevenueLineItems();
 
-        Opportunity::$settings = array();
+        Opportunity::$settings = [];
     }
 
     /**
@@ -58,16 +58,16 @@ class OpportunitiesApiTest extends TestCase
      */
     public function testPutOpportunity_OppportunityMode_DoesNotUpdateRLIs()
     {
-        Opportunity::$settings = array(
+        Opportunity::$settings = [
             'opps_view_by' => 'Opportunities',
-        );
+        ];
 
         $opp = SugarTestOpportunityUtilities::createOpportunity();
 
         $args['module'] = 'Opportunities';
         $args['record'] = $opp->id;
 
-        $api = $this->createPartialMock('OpportunitiesApi', array('updateRevenueLineItems', 'loadBean'));
+        $api = $this->createPartialMock('OpportunitiesApi', ['updateRevenueLineItems', 'loadBean']);
         $api->expects($this->never())
             ->method('updateRevenueLineItems');
         $api->expects($this->any())
@@ -79,40 +79,40 @@ class OpportunitiesApiTest extends TestCase
 
     public function dataProviderPutOpportunity_OppportunityRliMode_UpdateRLIs()
     {
-        return array(
+        return [
             // sales stage, date closed
-            array(
-                array(
+            [
+                [
                     'sales_stage' => 'Proposed',
                     'date_closed' => '2019-01-01',
                     'other_field' => 'test',
-                ),
+                ],
                 0,
-            ),
+            ],
             // sales stage
-            array(
-                array(
+            [
+                [
                     'sales_stage' => 'Proposed',
                     'other_field' => 'test',
-                ),
+                ],
                 0,
-            ),
+            ],
             // date closed
-            array(
-                array(
+            [
+                [
                     'date_closed' => '2019-01-01',
                     'other_field' => 'test',
-                ),
+                ],
                 0,
-            ),
+            ],
             // other fields
-            array(
-                array(
+            [
+                [
                     'other_field' => 'test',
-                ),
+                ],
                 0,
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -128,11 +128,11 @@ class OpportunitiesApiTest extends TestCase
         $args['module'] = 'Opportunities';
         $args['record'] = $opp->id;
 
-        Opportunity::$settings = array(
+        Opportunity::$settings = [
             'opps_view_by' => 'RevenueLineItems',
-        );
+        ];
 
-        $api = $this->createPartialMock('OpportunitiesApi', array('updateRevenueLineItems', 'loadBean'));
+        $api = $this->createPartialMock('OpportunitiesApi', ['updateRevenueLineItems', 'loadBean']);
         $api->expects($this->exactly($expected))
             ->method('updateRevenueLineItems');
         $api->expects($this->any())
@@ -156,11 +156,11 @@ class OpportunitiesApiTest extends TestCase
         $args['sales_stage'] = 'Prospecting';
         $args['date_closed'] = '2019-01-01';
 
-        Opportunity::$settings = array(
+        Opportunity::$settings = [
             'opps_view_by' => 'RevenueLineItems',
-        );
+        ];
 
-        $api = $this->createPartialMock('OpportunitiesApi', array('updateRevenueLineItems', 'loadBean'));
+        $api = $this->createPartialMock('OpportunitiesApi', ['updateRevenueLineItems', 'loadBean']);
         $api->expects($this->never())
             ->method('updateRevenueLineItems');
         $api->expects($this->any())
@@ -212,10 +212,10 @@ class OpportunitiesApiTest extends TestCase
         SugarTestReflection::callProtectedMethod(
             $this->api,
             'updateRevenueLineItems',
-            array(
+            [
                 $opp,
                 $data,
-            )
+            ]
         );
 
         $rli = BeanFactory::retrieveBean('RevenueLineItems', $rli->id);

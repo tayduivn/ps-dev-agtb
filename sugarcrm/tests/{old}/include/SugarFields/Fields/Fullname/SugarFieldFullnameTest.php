@@ -32,35 +32,35 @@ class SugarFieldFullnameTest extends TestCase
         global $locale;
 
         $locale = $this->getMockBuilder('Localization')
-            ->setMethods(array('getNameFormatFields'))
+            ->setMethods(['getNameFormatFields'])
             ->disableOriginalConstructor()
             ->getMock();
         $locale->expects($this->once())
             ->method('getNameFormatFields')
             ->with('TheModule')
-            ->willReturn(array('foo', 'bar'));
+            ->willReturn(['foo', 'bar']);
 
         /** @var ViewIterator|MockObject $it */
         $it = $this->getMockBuilder('ViewIterator')
             ->disableOriginalConstructor()
-            ->setMethods(array('dummy'))
+            ->setMethods(['dummy'])
             ->getMock();
 
-        $fields = array();
+        $fields = [];
         $this->sf->setModule('TheModule');
-        $this->sf->iterateViewField($it, array(
+        $this->sf->iterateViewField($it, [
             'name' => 'full_name',
-        ), function ($field) use (&$fields) {
+        ], function ($field) use (&$fields) {
             $fields[] = $field;
         });
 
-        $this->assertEquals(array(
-            array(
+        $this->assertEquals([
+            [
                 'name' => 'foo',
-            ),
-            array(
+            ],
+            [
                 'name' => 'bar',
-            ),
-        ), $fields);
+            ],
+        ], $fields);
     }
 }

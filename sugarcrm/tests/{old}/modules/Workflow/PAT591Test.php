@@ -12,7 +12,7 @@
 
 use PHPUnit\Framework\TestCase;
 
-include_once('include/workflow/alert_utils.php');
+include_once 'include/workflow/alert_utils.php';
 
 /**
  * PAT-591
@@ -61,8 +61,8 @@ class BugPAT591Test extends TestCase
      */
     public function alertUserArrayProvider()
     {
-        $alert_user_arr1 = array(
-            array(
+        $alert_user_arr1 = [
+            [
                 'user_type' => 'rel_user_custom',
                 'address_type' => 'to',
                 'array_type' => 'future',
@@ -75,17 +75,17 @@ class BugPAT591Test extends TestCase
                 'rel_module2_type' => 'all',
                 'rel_email_value' => 'email1',
                 'user_display_type' => '',
-                'expression' => array(
+                'expression' => [
                     'lhs_module' => 'Contacts',
                     'lhs_field' => 'name',
                     'operator' => 'Equals',
                     'rhs_value' => 'BugPAT591Test A',
-                ),
-            )
-        );
+                ],
+            ],
+        ];
 
-        $alert_user_arr2 = array(
-            array(
+        $alert_user_arr2 = [
+            [
                 'user_type' => 'rel_user_custom',
                 'address_type' => 'to',
                 'array_type' => 'future',
@@ -98,19 +98,19 @@ class BugPAT591Test extends TestCase
                 'rel_module2_type' => 'all',
                 'rel_email_value' => 'email1',
                 'user_display_type' => '',
-                'expression' => array(
+                'expression' => [
                     'lhs_module' => 'Contacts',
                     'lhs_field' => 'name',
                     'operator' => 'Equals',
                     'rhs_value' => 'BugPAT591Test B',
-                ),
-            )
-        );
+                ],
+            ],
+        ];
 
-        return array(
-            array($alert_user_arr1, 'BugPAT591Test A'),
-            array($alert_user_arr2, 'BugPAT591Test B'),
-        );
+        return [
+            [$alert_user_arr1, 'BugPAT591Test A'],
+            [$alert_user_arr2, 'BugPAT591Test B'],
+        ];
     }
 
     /**
@@ -122,16 +122,16 @@ class BugPAT591Test extends TestCase
     {
         $target_body = '{::future::Opportunities::contacts::full_name::}';
 
-        $component_array = array(
-            'Opportunities' => array(),
-            'contacts' => array(
-                'full_name' => array(
+        $component_array = [
+            'Opportunities' => [],
+            'contacts' => [
+                'full_name' => [
                     'name' => 'full_name',
                     'value_type' => 'future',
                     'original' => '{::future::Opportunities::contacts::full_name::}',
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
 
         $res = reconstruct_target_body($this->opportunity, $target_body, $component_array, '', $alert_user_array);
         $this->assertEquals($name, $res);

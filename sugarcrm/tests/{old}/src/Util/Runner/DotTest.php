@@ -25,7 +25,7 @@ use Sugarcrm\Sugarcrm\Util\Uuid;
 class DotTest extends TestCase
 {
     /** @var \SugarBean[] */
-    protected $listOfBeans = array();
+    protected $listOfBeans = [];
 
     /** @var RunnerDot|\MockObject */
     protected $dotRunner = null;
@@ -40,7 +40,7 @@ class DotTest extends TestCase
     {
         $this->runnable = $this->createPartialMock(
             'Sugarcrm\Sugarcrm\Util\Runner\RunnableInterface',
-            array('getBeans', 'execute')
+            ['getBeans', 'execute']
         );
         $this->dotRunner = new RunnerDot($this->runnable);
 
@@ -67,9 +67,9 @@ class DotTest extends TestCase
         $this->runnable->expects($this->exactly(count($this->listOfBeans)))
             ->method('execute')
             ->withConsecutive(
-                array($this->listOfBeans[0]),
-                array($this->listOfBeans[1]),
-                array($this->listOfBeans[2])
+                [$this->listOfBeans[0]],
+                [$this->listOfBeans[1]],
+                [$this->listOfBeans[2]]
             );
 
         $this->expectOutputString(str_repeat('. ', count($this->listOfBeans)));

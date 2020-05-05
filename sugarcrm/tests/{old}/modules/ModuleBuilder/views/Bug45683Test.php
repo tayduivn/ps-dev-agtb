@@ -42,7 +42,8 @@ class Bug45683Test extends TestCase
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }
 
-    public function testModuleNameDoesNotGetOverwrittenOnDisplay() {
+    public function testModuleNameDoesNotGetOverwrittenOnDisplay()
+    {
         $view = new ViewDropdown();
         $smarty = $view->generateSmarty($_REQUEST);
         

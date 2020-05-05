@@ -20,59 +20,59 @@ class GetNamePlusEmailAddressesForComposeTest extends TestCase
     protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user');
-	}
+    }
 
     protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
-	    SugarTestAccountUtilities::removeAllCreatedAccounts();
+        SugarTestAccountUtilities::removeAllCreatedAccounts();
     }
 
     public function testGetNamePlusEmailAddressesForCompose()
-	{
-	    $account = SugarTestAccountUtilities::createAccount();
+    {
+        $account = SugarTestAccountUtilities::createAccount();
 
-	    $email = BeanFactory::newBean('Emails');
-	    $this->assertEquals(
-	        "{$account->name} <{$account->email1}>",
-	        $email->getNamePlusEmailAddressesForCompose('Accounts',array($account->id))
-	        );
+        $email = BeanFactory::newBean('Emails');
+        $this->assertEquals(
+            "{$account->name} <{$account->email1}>",
+            $email->getNamePlusEmailAddressesForCompose('Accounts', [$account->id])
+        );
     }
 
     public function testGetNamePlusEmailAddressesForComposeMultipleIds()
-	{
-	    $account1 = SugarTestAccountUtilities::createAccount();
-	    $account2 = SugarTestAccountUtilities::createAccount();
-	    $account3 = SugarTestAccountUtilities::createAccount();
+    {
+        $account1 = SugarTestAccountUtilities::createAccount();
+        $account2 = SugarTestAccountUtilities::createAccount();
+        $account3 = SugarTestAccountUtilities::createAccount();
 
-	    $email = BeanFactory::newBean('Emails');
-	    $addressString = $email->getNamePlusEmailAddressesForCompose('Accounts',array($account1->id,$account2->id,$account3->id));
+        $email = BeanFactory::newBean('Emails');
+        $addressString = $email->getNamePlusEmailAddressesForCompose('Accounts', [$account1->id,$account2->id,$account3->id]);
         $this->assertStringContainsString("{$account1->name} <{$account1->email1}>", $addressString);
         $this->assertStringContainsString("{$account2->name} <{$account2->email1}>", $addressString);
         $this->assertStringContainsString("{$account3->name} <{$account3->email1}>", $addressString);
     }
 
-	public function testGetNamePlusEmailAddressesForComposePersonModule()
-	{
-	    $contact = SugarTestContactUtilities::createContact();
+    public function testGetNamePlusEmailAddressesForComposePersonModule()
+    {
+        $contact = SugarTestContactUtilities::createContact();
 
-	    $email = BeanFactory::newBean('Emails');
-	    $this->assertEquals(
-	        $GLOBALS['locale']->formatName($contact) . " <{$contact->email1}>",
-	        $email->getNamePlusEmailAddressesForCompose('Contacts',array($contact->id))
-	        );
+        $email = BeanFactory::newBean('Emails');
+        $this->assertEquals(
+            $GLOBALS['locale']->formatName($contact) . " <{$contact->email1}>",
+            $email->getNamePlusEmailAddressesForCompose('Contacts', [$contact->id])
+        );
     }
 
     public function testGetNamePlusEmailAddressesForComposeUser()
-	{
-	    $user = SugarTestUserUtilities::createAnonymousUser(false);
-	    $user->email1 = 'foo@bar.com';
-	    $user->save();
+    {
+        $user = SugarTestUserUtilities::createAnonymousUser(false);
+        $user->email1 = 'foo@bar.com';
+        $user->save();
 
-	    $email = BeanFactory::newBean('Emails');
-	    $this->assertEquals(
-	        $GLOBALS['locale']->formatName($user) . " <{$user->email1}>",
-	        $email->getNamePlusEmailAddressesForCompose('Users',array($user->id))
-	        );
+        $email = BeanFactory::newBean('Emails');
+        $this->assertEquals(
+            $GLOBALS['locale']->formatName($user) . " <{$user->email1}>",
+            $email->getNamePlusEmailAddressesForCompose('Users', [$user->id])
+        );
     }
 }

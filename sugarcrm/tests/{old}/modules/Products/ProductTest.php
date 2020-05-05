@@ -42,7 +42,7 @@ class ProductTest extends TestCase
     public function testConvertProductToRLI($amount, $quantity, $discount, $discount_select, $likely_expected)
     {
         /* @var $product Product */
-        $product = $this->getMockBuilder('Product')->setMethods(array('save'))->getMock();
+        $product = $this->getMockBuilder('Product')->setMethods(['save'])->getMock();
 
         $product->expects($this->any())
             ->method('save')
@@ -51,9 +51,9 @@ class ProductTest extends TestCase
         $discount_amount = $discount;
 
         if ($discount_select === 1) {
-            $product->total_amount = SugarMath::init()->exp('(?*?)-((?*?)*(?/100))', array($amount, $quantity, $amount, $quantity, $discount_amount))->result();
+            $product->total_amount = SugarMath::init()->exp('(?*?)-((?*?)*(?/100))', [$amount, $quantity, $amount, $quantity, $discount_amount])->result();
         } else {
-            $product->total_amount = SugarMath::init()->exp('((?*?)-?)', array($amount, $quantity, $discount_amount))->result();
+            $product->total_amount = SugarMath::init()->exp('((?*?)-?)', [$amount, $quantity, $discount_amount])->result();
         }
 
         $product->name = 'Hello World';
@@ -61,7 +61,7 @@ class ProductTest extends TestCase
         $product->quantity = $quantity;
         $product->discount_amount = $discount;
         $product->discount_select = $discount_select;
-        $product->fetched_row = array();
+        $product->fetched_row = [];
 
         foreach ($product->getFieldDefinitions() as $field) {
             $product->fetched_row[$field['name']] = $product->{$field['name']};
@@ -92,16 +92,16 @@ class ProductTest extends TestCase
     public function productDataProvider()
     {
         // $amount, $quantity, $discount, $discount_select, $likely_expected
-        return array(
-            array('100.00', '1', '0', null, '100.000000'),
-            array('1000.00', '10', '0', null, '10000.000000'),
-            array('100.00', '10', '1', null, '999.000000'),
-            array('100.00', '1', '0', 1, '100.000000'),
-            array('100.00', '1', '10', 1, '90.000000'),
-            array('100.00', '2', '20', 1, '160.000000'),
-            array('0.13', '1000', '10', 1, '117.000000'),
-            array('0.25', '89765', '21456.00', null, '985.250000'),
-        );
+        return [
+            ['100.00', '1', '0', null, '100.000000'],
+            ['1000.00', '10', '0', null, '10000.000000'],
+            ['100.00', '10', '1', null, '999.000000'],
+            ['100.00', '1', '0', 1, '100.000000'],
+            ['100.00', '1', '10', 1, '90.000000'],
+            ['100.00', '2', '20', 1, '160.000000'],
+            ['0.13', '1000', '10', 1, '117.000000'],
+            ['0.25', '89765', '21456.00', null, '985.250000'],
+        ];
     }
 
     /**
@@ -112,13 +112,13 @@ class ProductTest extends TestCase
      */
     public function testUpdateCurrencyBaseRate($stage, $expected)
     {
-        $product = $this->createPartialMock('Product', array('save', 'load_relationship'));
+        $product = $this->createPartialMock('Product', ['save', 'load_relationship']);
         $product->expects($this->once())
             ->method('load_relationship')
             ->with('product_bundles')
             ->willReturn(true);
 
-        $bundle = $this->createPartialMock('ProductBundle', array('save', 'load_relationship'));
+        $bundle = $this->createPartialMock('ProductBundle', ['save', 'load_relationship']);
 
         $bundle->expects($this->once())
             ->method('load_relationship')
@@ -126,21 +126,21 @@ class ProductTest extends TestCase
             ->willReturn(true);
 
         /* @var $quote Quote */
-        $quote = $this->createPartialMock('Quote', array('save'));
+        $quote = $this->createPartialMock('Quote', ['save']);
 
         $quote->quote_stage = $stage;
 
         $quote_link2 = $this->getMockBuilder('Link2')
             ->disableOriginalConstructor()
-            ->setMethods(array('getBeans'))
+            ->setMethods(['getBeans'])
             ->getMock();
 
         $quote_link2->expects($this->once())
             ->method('getBeans')
             ->willReturn(
-                array(
-                    $quote
-                )
+                [
+                    $quote,
+                ]
             );
 
         /* @var $product Product */
@@ -148,15 +148,15 @@ class ProductTest extends TestCase
 
         $bundle_link2 = $this->getMockBuilder('Link2')
             ->disableOriginalConstructor()
-            ->setMethods(array('getBeans'))
+            ->setMethods(['getBeans'])
             ->getMock();
 
         $bundle_link2->expects($this->once())
             ->method('getBeans')
             ->willReturn(
-                array(
-                    $bundle
-                )
+                [
+                    $bundle,
+                ]
             );
 
         /* @var $product Product */
@@ -167,16 +167,16 @@ class ProductTest extends TestCase
 
     public function dataProviderUpdateCurrencyBaseRate()
     {
-        return array(
-            array('Draft', true),
-            array('Negotiation', true),
-            array('Delivered', true),
-            array('On Hold', true),
-            array('Confirmed', true),
-            array('Closed Accepted', false),
-            array('Closed Lost', false),
-            array('Closed Dead', false)
-        );
+        return [
+            ['Draft', true],
+            ['Negotiation', true],
+            ['Delivered', true],
+            ['On Hold', true],
+            ['Confirmed', true],
+            ['Closed Accepted', false],
+            ['Closed Lost', false],
+            ['Closed Dead', false],
+        ];
     }
 
     /**
@@ -215,12 +215,12 @@ class ProductTest extends TestCase
     public function totalAmountDataProvider()
     {
         // $quantity, $discount_price, $discount_amount, $discount_select, $total_amount
-        return array(
-            array('-2', '100.000000', '10.000000', '0', '-190.000000'),
-            array('-2', '100.000000', '10.000000', '1', '-180.000000'),
-            array('2', '100.000000', '10.000000', '0', '190.000000'),
-            array('2', '100.000000', '10.000000', '1', '180.000000'),
-        );
+        return [
+            ['-2', '100.000000', '10.000000', '0', '-190.000000'],
+            ['-2', '100.000000', '10.000000', '1', '-180.000000'],
+            ['2', '100.000000', '10.000000', '0', '190.000000'],
+            ['2', '100.000000', '10.000000', '1', '180.000000'],
+        ];
     }
 
     /**
@@ -228,7 +228,7 @@ class ProductTest extends TestCase
      */
     public function testUpdateCurrencyBaseRateWithNotQuoteReturnTrue()
     {
-        $product = $this->createPartialMock('Product', array('save', 'load_relationship'));
+        $product = $this->createPartialMock('Product', ['save', 'load_relationship']);
         $product->expects($this->once())
             ->method('load_relationship')
             ->with('product_bundles')
@@ -236,13 +236,13 @@ class ProductTest extends TestCase
 
         $link2 = $this->getMockBuilder('Link2')
             ->disableOriginalConstructor()
-            ->setMethods(array('getBeans'))
+            ->setMethods(['getBeans'])
             ->getMock();
 
         $link2->expects($this->once())
             ->method('getBeans')
             ->willReturn(
-                array()
+                []
             );
 
         /* @var $product Product */
@@ -256,7 +256,7 @@ class ProductTest extends TestCase
      */
     public function testGetSummaryText()
     {
-        $product = $this->createPartialMock('Product', array('save', 'load_relationship'));
+        $product = $this->createPartialMock('Product', ['save', 'load_relationship']);
         $product->name = 'test';
 
         $this->assertEquals('test', $product->get_summary_text());
@@ -264,18 +264,18 @@ class ProductTest extends TestCase
 
     public static function dataProviderSetAccountIdForOpportunity()
     {
-        return array(
-            array(
-                array(
-                    'test_account_id'
-                ),
-                true
-            ),
-            array(
-                array(),
-                false
-            )
-        );
+        return [
+            [
+                [
+                    'test_account_id',
+                ],
+                true,
+            ],
+            [
+                [],
+                false,
+            ],
+        ];
     }
 
     /**
@@ -284,10 +284,10 @@ class ProductTest extends TestCase
      */
     public function testSetAccountIdForOpportunity($accounts, $expected)
     {
-        $product = $this->createPartialMock('Product', array('save', 'load_relationship'));
+        $product = $this->createPartialMock('Product', ['save', 'load_relationship']);
 
         $opp = $this->getMockBuilder('Opportunity')
-            ->setMethods(array('save', 'load_relationship'))
+            ->setMethods(['save', 'load_relationship'])
             ->getMock();
 
         $opp->id = 'test_opp_id';
@@ -298,7 +298,7 @@ class ProductTest extends TestCase
             ->willReturn(true);
 
         $link2 = $this->getMockBuilder('Link2')
-            ->setMethods(array('get'))
+            ->setMethods(['get'])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -311,7 +311,7 @@ class ProductTest extends TestCase
 
         BeanFactory::registerBean($opp);
 
-        $actual = SugarTestReflection::callProtectedMethod($product, 'setAccountIdForOpportunity', array($opp->id));
+        $actual = SugarTestReflection::callProtectedMethod($product, 'setAccountIdForOpportunity', [$opp->id]);
 
         $this->assertEquals($expected, $actual);
 
@@ -320,10 +320,10 @@ class ProductTest extends TestCase
 
     public static function dataProviderPopulateFromTemplateWillReturnFalse()
     {
-        return array(
-            array(null),
-            array('one_id')
-        );
+        return [
+            [null],
+            ['one_id'],
+        ];
     }
 
     /**
@@ -333,12 +333,12 @@ class ProductTest extends TestCase
      */
     public function testPopulateFromTemplateWillReturnFalse($template_id)
     {
-        $product = $this->createPartialMock('Product', array('save'));
+        $product = $this->createPartialMock('Product', ['save']);
 
         $product->product_template_id = $template_id;
-        $product->fetched_row = array(
-            'product_template_id' => $template_id
-        );
+        $product->fetched_row = [
+            'product_template_id' => $template_id,
+        ];
 
         $actual = SugarTestReflection::callProtectedMethod($product, 'populateFromTemplate');
 
@@ -350,20 +350,20 @@ class ProductTest extends TestCase
      */
     public function testCalculateDiscountPriceDoesNotRunIfFieldEmpty()
     {
-        $fields = array(
+        $fields = [
             'pricing_formula',
             'cost_price',
             'list_price',
             'discount_price',
-            'pricing_factor'
-        );
+            'pricing_factor',
+        ];
 
-        $product = $this->createPartialMock('Product', array('save', 'getPriceFormula'));
+        $product = $this->createPartialMock('Product', ['save', 'getPriceFormula']);
 
         $product->expects($this->never())
             ->method('getPriceFormula');
 
-        foreach($fields as $field) {
+        foreach ($fields as $field) {
             $product->$field = null;
         }
 
@@ -375,7 +375,7 @@ class ProductTest extends TestCase
      */
     public function testCalculateDiscountPrice()
     {
-        $product = $this->createPartialMock('Product', array('save', 'getPriceFormula'));
+        $product = $this->createPartialMock('Product', ['save', 'getPriceFormula']);
         $product->pricing_formula = 'PercentageDiscount';
         $product->cost_price = '100.000000';
         $product->list_price = '150.000000';
@@ -386,7 +386,7 @@ class ProductTest extends TestCase
         SugarAutoLoader::load('modules/ProductTemplates/formulas/price_list_discount.php');
 
         $formula = $this->getMockBuilder('PercentageDiscount')
-            ->setMethods(array('calculate_price'))
+            ->setMethods(['calculate_price'])
             ->getMock();
 
         $formula->expects($this->once())
@@ -407,13 +407,13 @@ class ProductTest extends TestCase
 
     public function dataProviderGetPriceFormula()
     {
-        return array(
-            array('Fixed'),
-            array('ProfitMargin'),
-            array('PercentageMarkup'),
-            array('PercentageDiscount'),
-            array('IsList')
-        );
+        return [
+            ['Fixed'],
+            ['ProfitMargin'],
+            ['PercentageMarkup'],
+            ['PercentageDiscount'],
+            ['IsList'],
+        ];
     }
 
     /**
@@ -423,9 +423,9 @@ class ProductTest extends TestCase
      */
     public function testGetPriceFormula($formula)
     {
-        $product = $this->createPartialMock('Product', array('save'));
+        $product = $this->createPartialMock('Product', ['save']);
 
-        $actual = SugarTestReflection::callProtectedMethod($product, 'getPriceFormula', array($formula));
+        $actual = SugarTestReflection::callProtectedMethod($product, 'getPriceFormula', [$formula]);
 
         $this->assertInstanceOf($formula, $actual);
 
@@ -441,7 +441,7 @@ class ProductTest extends TestCase
     public function testQuantityNotDefaulted($actual, $expected)
     {
         $product = $this->getMockBuilder('Product')
-            ->setMethods(array('save'))
+            ->setMethods(['save'])
             ->getMock();
 
         $product->quantity = $actual;
@@ -453,13 +453,13 @@ class ProductTest extends TestCase
 
     public static function dataProviderCheckQuantity()
     {
-        return array(
-            array('', 0),
-            array(null, 0),
-            array(0, 0),
-            array(1, 1),
-            array(42,42),
-        );
+        return [
+            ['', 0],
+            [null, 0],
+            [0, 0],
+            [1, 1],
+            [42,42],
+        ];
     }
 
     /**
@@ -472,7 +472,7 @@ class ProductTest extends TestCase
         global $dictionary;
 
         $product = $this->getMockBuilder('Product')
-            ->setMethods(array('save'))
+            ->setMethods(['save'])
             ->getMock();
 
         $initialState = $dictionary['Product']['related_calc_fields'];

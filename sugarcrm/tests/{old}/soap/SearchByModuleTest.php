@@ -37,15 +37,15 @@ class SearchByModuleTest extends SOAPTestCase
         $account->save();
 
         $this->_login();
-        $params = array(
+        $params = [
             'session' => $this->_sessionId,
             'search_string' => '%4192Test%',
-            'modules' => array(
-                'Accounts'
-            ),
+            'modules' => [
+                'Accounts',
+            ],
             'offset' => 0,
-            'max_results' => 30
-        );
+            'max_results' => 30,
+        ];
 
         $actual = $this->_soapClient->call('search_by_module', $params);
 
@@ -53,7 +53,10 @@ class SearchByModuleTest extends SOAPTestCase
 
         $this->assertGreaterThan(0, count($actual['entry_list']), 'Call must return one bean minimum');
         $this->assertEquals('Accounts', $actual['entry_list'][0]['name'], 'Bean must be account');
-        $this->assertEquals($account->id, $actual['entry_list'][0]['records'][0][2]['value'],
-            'Bean id must be same as id of created account');
+        $this->assertEquals(
+            $account->id,
+            $actual['entry_list'][0]['records'][0][2]['value'],
+            'Bean id must be same as id of created account'
+        );
     }
 }

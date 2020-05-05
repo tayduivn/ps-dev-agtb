@@ -33,7 +33,7 @@ class CalendarApiTest extends TestCase
         $GLOBALS['current_user'] = $this->api->user;
 
         $this->calendarApi = new CalendarApi();
-        $this->dp = array();
+        $this->dp = [];
     }
 
     protected function tearDown() : void
@@ -44,32 +44,32 @@ class CalendarApiTest extends TestCase
             $GLOBALS['db']->query('DELETE FROM data_privacy WHERE id IN (\'' . implode("', '", $this->dp) . '\')');
         }
 
-        $this->dp = array();
+        $this->dp = [];
     }
 
     public function testTransformInvitee_DPEnabled_NameIsErased()
     {
-        $args = array(
+        $args = [
             'q' => 'bar',
             'fields' => 'first_name,last_name',
             'search_fields' => 'first_name,last_name',
             'erased_fields' => true,
-        );
+        ];
 
-        $contactValues = array(
+        $contactValues = [
             '_module' => 'Contacts',
             'first_name' => 'Foo',
             'last_name' => 'Bar',
-        );
+        ];
         $contact = SugarTestContactUtilities::createContact('', $contactValues);
 
-        $searchResults = array(
-            'result' => array(
-                'list' => array(
-                    array('bean' => $contact),
-                ),
-            ),
-        );
+        $searchResults = [
+            'result' => [
+                'list' => [
+                    ['bean' => $contact],
+                ],
+            ],
+        ];
 
         $this->createDpErasureRecord($contact, ['first_name', 'last_name']);
         $calendarApi = new \CalendarApi();
@@ -77,7 +77,7 @@ class CalendarApiTest extends TestCase
         $result = SugarTestReflection::callProtectedMethod(
             $calendarApi,
             'transformInvitees',
-            array($this->api, $args, $searchResults)
+            [$this->api, $args, $searchResults]
         );
 
         $this->assertNotEmpty($result['records'], 'Api Result Contains No Records');
@@ -94,44 +94,44 @@ class CalendarApiTest extends TestCase
 
     public function testBuildSearchParams_ConvertsRestArgsToLegacyParams()
     {
-        $args = array(
+        $args = [
             'q' => 'woo',
             'module_list' => 'Foo,Bar',
             'search_fields' => 'foo_search_field,bar_search_field',
             'fields' => 'foo_field,bar_field',
-        );
+        ];
 
-        $expectedParams = array(
-            array(
-                'modules' => array('Foo', 'Bar'),
+        $expectedParams = [
+            [
+                'modules' => ['Foo', 'Bar'],
                 'group' => 'or',
-                'field_list' => array(
+                'field_list' => [
                     'foo_field',
                     'bar_field',
                     'foo_search_field',
                     'bar_search_field',
-                ),
-                'conditions' => array(
-                    array(
+                ],
+                'conditions' => [
+                    [
                         'name' => 'foo_search_field',
                         'op' => 'starts_with',
                         'value' => 'woo',
-                    ),
-                    array(
+                    ],
+                    [
                         'name' => 'bar_search_field',
                         'op' => 'starts_with',
                         'value' => 'woo',
-                    ),
-                ),
-            ),
-        );
+                    ],
+                ],
+            ],
+        ];
 
         $this->assertEquals(
             $expectedParams,
             SugarTestReflection::callProtectedMethod(
                 $this->calendarApi,
                 'buildSearchParams',
-                array($args)
+                [$args]
             ),
             'Rest API args should be transformed correctly into legacy query params'
         );
@@ -139,65 +139,66 @@ class CalendarApiTest extends TestCase
 
     public function testTransformInvitees_ConvertsLegacyResultsToUnifiedSearchForm()
     {
-        $args = array(
+        $args = [
             'q' => 'bar',
             'fields' => 'first_name,last_name,email,account_name',
             'search_fields' => 'first_name,last_name,email,account_name',
-        );
+        ];
 
         $bean = new SugarBean(); //dummy, mocking out formatBean anyway
-        $formattedBean = array(
+        $formattedBean = [
             '_module' => 'Contacts',
             'first_name' => 'Foo',
             'last_name' => 'Bar',
             'account_name' => 'Baz Inc',
-            'email' => array(
-                array('email_address' => 'foo@baz.com'),
-                array('email_address' => 'bar@baz.com'),
-            ),
-        );
+            'email' => [
+                ['email_address' => 'foo@baz.com'],
+                ['email_address' => 'bar@baz.com'],
+            ],
+        ];
 
         $this->calendarApi = $this->createPartialMock(
             'CalendarApi',
-            array('formatBean')
+            ['formatBean']
         );
         $this->calendarApi->expects($this->once())
             ->method('formatBean')
             ->will($this->returnValue($formattedBean));
 
-        $searchResults = array(
-            'result' => array(
-                'list' => array(
-                    array('bean' => $bean)
-                ),
-            ),
-        );
+        $searchResults = [
+            'result' => [
+                'list' => [
+                    ['bean' => $bean],
+                ],
+            ],
+        ];
 
-        $expectedInvitee = array_merge($formattedBean, array(
-            '_search' => array(
-                'highlighted' => array(
-                    'last_name' => array(
+        $expectedInvitee = array_merge($formattedBean, [
+            '_search' => [
+                'highlighted' => [
+                    'last_name' => [
                         'text' => 'Bar',
                         'module' => 'Contacts',
                         'label' => 'LBL_LAST_NAME',
-                    ),
-                ),
-            ),
-        ));
+                    ],
+                ],
+            ],
+        ]);
 
-        $expectedInvitees = array(
+        $expectedInvitees = [
             'next_offset' => -1,
-            'records' => array(
-                $expectedInvitee
-            ),
-        );;
+            'records' => [
+                $expectedInvitee,
+            ],
+        ];
+        ;
 
         $this->assertEquals(
             $expectedInvitees,
             SugarTestReflection::callProtectedMethod(
                 $this->calendarApi,
                 'transformInvitees',
-                array($this->api, $args, $searchResults)
+                [$this->api, $args, $searchResults]
             ),
             'Legacy search results should be transformed correctly into unified search format'
         );
@@ -205,36 +206,36 @@ class CalendarApiTest extends TestCase
 
     public function testGetMatchedFields_MatchesRegularFieldsCorrectly()
     {
-        $args = array(
+        $args = [
             'q' => 'foo',
             'search_fields' => 'first_name,last_name,email,account_name',
-        );
+        ];
 
-        $record = array(
+        $record = [
             '_module' => 'Contacts',
             'first_name' => 'Foo',
             'last_name' => 'Bar',
             'account_name' => 'Baz Inc',
-            'email' => array(
-                array('email_address' => 'woo@baz.com'),
-                array('email_address' => 'bar@baz.com'),
-            ),
-        );
+            'email' => [
+                ['email_address' => 'woo@baz.com'],
+                ['email_address' => 'bar@baz.com'],
+            ],
+        ];
 
-        $expectedMatchedFields = array(
-            'first_name' => array(
+        $expectedMatchedFields = [
+            'first_name' => [
                 'text' => 'Foo',
                 'module' => 'Contacts',
                 'label' => 'LBL_FIRST_NAME',
-            ),
-        );
+            ],
+        ];
 
         $this->assertEquals(
             $expectedMatchedFields,
             SugarTestReflection::callProtectedMethod(
                 $this->calendarApi,
                 'getMatchedFields',
-                array($args, $record, 1)
+                [$args, $record, 1]
             ),
             'Should match search query to field containing search text'
         );
@@ -242,36 +243,36 @@ class CalendarApiTest extends TestCase
 
     public function testGetMatchedFields_MatchesEmailFieldCorrectly()
     {
-        $args = array(
+        $args = [
             'q' => 'woo',
             'search_fields' => 'first_name,last_name,email,account_name',
-        );
+        ];
 
-        $record = array(
+        $record = [
             '_module' => 'Contacts',
             'first_name' => 'Foo',
             'last_name' => 'Bar',
             'account_name' => 'Baz Inc',
-            'email' => array(
-                array('email_address' => 'woo@baz.com'),
-                array('email_address' => 'bar@baz.com'),
-            ),
-        );
+            'email' => [
+                ['email_address' => 'woo@baz.com'],
+                ['email_address' => 'bar@baz.com'],
+            ],
+        ];
 
-        $expectedMatchedFields = array(
-            'email' => array(
+        $expectedMatchedFields = [
+            'email' => [
                 'text' => 'woo@baz.com',
                 'module' => 'Contacts',
                 'label' => 'LBL_EMAIL_ADDRESS',
-            ),
-        );
+            ],
+        ];
 
         $this->assertEquals(
             $expectedMatchedFields,
             SugarTestReflection::callProtectedMethod(
                 $this->calendarApi,
                 'getMatchedFields',
-                array($args, $record, 1)
+                [$args, $record, 1]
             ),
             'Should match search query to field containing search text'
         );
@@ -292,7 +293,7 @@ class CalendarApiTest extends TestCase
         $module = 'Contacts';
         $linkName = strtolower($module);
         $dp->load_relationship($linkName);
-        $dp->$linkName->add(array($contact));
+        $dp->$linkName->add([$contact]);
 
         $options = ['use_cache' => false, 'encode' => false];
         $dp = BeanFactory::retrieveBean('DataPrivacy', $dp->id, $options);

@@ -12,18 +12,18 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once('include/utils.php');
+require_once 'include/utils.php';
 /**
  * Bug47277Test.php
  * This test founds out, if function string_format returns '', and not empty space, which causes an error, e.g. IN ()
  */
 class Bug47277Test extends TestCase
 {
-    public function testStringFormatDontReturnsEmptyValue() 
+    public function testStringFormatDontReturnsEmptyValue()
     {
         $sourceString = "SELECT accounts.name FROM accounts WHERE id IN";
         $string = "{$sourceString} ({0})";
-        $args = array ('');
+        $args =  [''];
         $this->assertEquals("{$sourceString} ('')", string_format($string, $args));
     }
 }

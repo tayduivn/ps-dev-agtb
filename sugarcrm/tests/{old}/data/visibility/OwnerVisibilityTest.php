@@ -21,13 +21,13 @@ class OwnerVisibilityTest extends TestCase
         /** @var User $user */
         $user = SugarTestHelper::setUp('current_user');
 
-        $this->account = SugarTestAccountUtilities::createAccount(null, array(
+        $this->account = SugarTestAccountUtilities::createAccount(null, [
             'assigned_user_id' => $user->id,
-        ));
+        ]);
 
-        SugarTestAccountUtilities::createAccount(null, array(
+        SugarTestAccountUtilities::createAccount(null, [
             'assigned_user_id' => create_guid(),
-        ));
+        ]);
     }
 
     protected function tearDown() : void
@@ -38,9 +38,9 @@ class OwnerVisibilityTest extends TestCase
     public function testSugarQuery()
     {
         $query = new SugarQuery();
-        $query->from($this->account, array(
+        $query->from($this->account, [
             'team_security' => false,
-        ));
+        ]);
         $query->select('id');
 
         $visibility = new OwnerVisibility($this->account);

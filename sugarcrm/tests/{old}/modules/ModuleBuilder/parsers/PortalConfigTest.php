@@ -16,17 +16,17 @@ use PHPUnit\Framework\TestCase;
 
 class PortalConfigParserTest extends TestCase
 {
-    private $requestVars = array(
+    private $requestVars = [
         'appName' => 'testApp',
         'serverUrl' => 'testURL',
-        'maxQueryResult' => '5'
-    );
+        'maxQueryResult' => '5',
+    ];
 
     protected function setUp() : void
     {
         global $app_list_strings;
         $app_list_strings = return_app_list_strings_language($GLOBALS['current_language']);
-        SugarTestHelper::setUp('mod_strings', array('ModuleBuilder'));
+        SugarTestHelper::setUp('mod_strings', ['ModuleBuilder']);
     }
 
     protected function tearDown() : void
@@ -55,7 +55,7 @@ class PortalConfigParserTest extends TestCase
             ->willReturn(true);
 
         $parser = $this->getMockBuilder('ParserModifyPortalConfig')
-            ->setMethods(array('getAdministrationBean', 'refreshCache'))
+            ->setMethods(['getAdministrationBean', 'refreshCache'])
             ->getMock();
 
         $parser->expects($this->once())
@@ -66,7 +66,7 @@ class PortalConfigParserTest extends TestCase
                ->willReturn($admin);
 
         $parser->setUpPortal($this->requestVars);
-}
+    }
 
     public function test_PortalConfigUnsetConfig()
     {
@@ -84,7 +84,7 @@ class PortalConfigParserTest extends TestCase
             ->willReturn(true);
 
         $parser = $this->getMockBuilder('ParserModifyPortalConfig')
-            ->setMethods(array('getAdministrationBean', 'removeOAuthForPortalUser'))
+            ->setMethods(['getAdministrationBean', 'removeOAuthForPortalUser'])
             ->getMock();
 
         $parser->expects($this->atLeastOnce())

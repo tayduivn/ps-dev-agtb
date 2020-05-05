@@ -29,7 +29,7 @@ class BasicTemplateTest extends TestCase
     public function testNameIsReturnedAsSummaryText()
     {
         $this->_bean->name = 'teststring';
-        $this->assertEquals($this->_bean->get_summary_text(),$this->_bean->name);
+        $this->assertEquals($this->_bean->get_summary_text(), $this->_bean->name);
     }
     
     /**
@@ -38,8 +38,10 @@ class BasicTemplateTest extends TestCase
     public function testSettingImportableFieldDefAttributeTrueAsAString()
     {
         $this->_bean->field_defs['date_entered']['importable'] = 'true';
-        $this->assertTrue(array_key_exists('date_entered',$this->_bean->get_importable_fields()),
-            'Field date_entered should be importable');
+        $this->assertTrue(
+            array_key_exists('date_entered', $this->_bean->get_importable_fields()),
+            'Field date_entered should be importable'
+        );
     }
     
     /**
@@ -48,8 +50,10 @@ class BasicTemplateTest extends TestCase
     public function testSettingImportableFieldDefAttributeTrueAsABoolean()
     {
         $this->_bean->field_defs['date_entered']['importable'] = true;
-        $this->assertTrue(array_key_exists('date_entered',$this->_bean->get_importable_fields()),
-            'Field date_entered should be importable');
+        $this->assertTrue(
+            array_key_exists('date_entered', $this->_bean->get_importable_fields()),
+            'Field date_entered should be importable'
+        );
     }
     
     /**
@@ -58,8 +62,10 @@ class BasicTemplateTest extends TestCase
     public function testSettingImportableFieldDefAttributeFalseAsAString()
     {
         $this->_bean->field_defs['date_entered']['importable'] = 'false';
-        $this->assertFalse(array_key_exists('date_entered',$this->_bean->get_importable_fields()),
-            'Field date_entered should not be importable');
+        $this->assertFalse(
+            array_key_exists('date_entered', $this->_bean->get_importable_fields()),
+            'Field date_entered should not be importable'
+        );
     }
     
     /**
@@ -68,15 +74,17 @@ class BasicTemplateTest extends TestCase
     public function testSettingImportableFieldDefAttributeFalseAsABoolean()
     {
         $this->_bean->field_defs['date_entered']['importable'] = false;
-        $this->assertFalse(array_key_exists('date_entered',$this->_bean->get_importable_fields()),
-            'Field date_entered should not be importable');
+        $this->assertFalse(
+            array_key_exists('date_entered', $this->_bean->get_importable_fields()),
+            'Field date_entered should not be importable'
+        );
     }
     
     public function testGetBeanFieldsAsAnArray()
     {
-        $this->_bean->field_defs['date_entered'] = array();
+        $this->_bean->field_defs['date_entered'] = [];
         $this->_bean->date_entered = '2009-01-01 12:00:00';
         $array = $this->_bean->toArray();
-        $this->assertEquals($array['date_entered'],$this->_bean->date_entered);
+        $this->assertEquals($array['date_entered'], $this->_bean->date_entered);
     }
 }

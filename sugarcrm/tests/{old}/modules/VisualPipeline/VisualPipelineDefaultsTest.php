@@ -60,10 +60,10 @@ class VisualPipelineDefaultsTest extends TestCase
      */
     public function testSetupPipelineSettings_IsNotSetup_ConfigOverridden()
     {
-        $setupConfig = array(
+        $setupConfig = [
             'is_setup' => 0,
-            'table_header' => array(),
-        );
+            'table_header' => [],
+        ];
 
         $this->saveConfig($setupConfig);
 
@@ -89,11 +89,11 @@ class VisualPipelineDefaultsTest extends TestCase
     public function testSetupVisualPipelineSettings_IsSetup_ValuesNotChanged()
     {
         $testValue = 'visualPipelineTest';
-        $setupConfig = array(
+        $setupConfig = [
             'is_setup' => 1,
             'table_header' => $testValue,
 
-        );
+        ];
 
         $this->saveConfig($setupConfig);
 

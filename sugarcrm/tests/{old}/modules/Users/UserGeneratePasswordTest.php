@@ -25,21 +25,19 @@ class UserGeneratePasswordTest extends TestCase
 
     protected function setUp() : void
     {
-        if(isset($GLOBALS['sugar_config']['passwordsetting']))
-        {
+        if (isset($GLOBALS['sugar_config']['passwordsetting'])) {
             $this->_passwordSetting = $GLOBALS['sugar_config']['passwordsetting'];
         }
-        $GLOBALS['sugar_config']['passwordsetting'] = array('onenumber'=>0,
+        $GLOBALS['sugar_config']['passwordsetting'] = ['onenumber'=>0,
                                                             'onelower'=>0,
                                                             'oneupper'=>0,
                                                             'onespecial'=>0,
-                                                            'minpwdlength'=>6);
+                                                            'minpwdlength'=>6];
     }
 
     protected function tearDown() : void
     {
-        if(!empty($this->_passwordSetting))
-        {
+        if (!empty($this->_passwordSetting)) {
             $GLOBALS['sugar_config']['passwordsetting'] = $this->_passwordSetting;
         }
     }
@@ -85,13 +83,13 @@ class UserGeneratePasswordTest extends TestCase
 
     public function testAllCombinationsEnabled()
     {
-        $GLOBALS['sugar_config']['passwordsetting'] = array(
+        $GLOBALS['sugar_config']['passwordsetting'] = [
             'onenumber' => '1',
             'onelower' => '1',
             'oneupper' => '1',
             'onespecial' => '1',
             'minpwdlength' => 10,
-        );
+        ];
 
         $password = User::generatePassword();
         $this->assertMatchesRegularExpression('/\d/', $password, 'Assert that we have at least one number in the generated password');

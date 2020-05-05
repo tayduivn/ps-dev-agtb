@@ -31,7 +31,7 @@ class SugarJobKBContentUpdateArticlesTest extends TestCase
 
     protected function setUp() : void
     {
-        SugarTestHelper::setUp('current_user', array(true, 1));
+        SugarTestHelper::setUp('current_user', [true, 1]);
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
 
@@ -183,10 +183,10 @@ class SugarJobKBContentUpdateArticlesTest extends TestCase
 
     public function providerPublishingStatuses()
     {
-        return array(
-            array(
+        return [
+            [
                 KBContent::ST_PUBLISHED,
-            ),
-        );
+            ],
+        ];
     }
 }

@@ -59,13 +59,13 @@ class CommentLogTest extends TestCase
 
     public function SetEntryProvider()
     {
-        return array(
-            array("Ur the god of thunder, not the god of hammer."),
-            array("     "),
-            array(''),
-            array('<scr' . 'ipt>console.log("Vicious matters");</scr' . 'ipt>'),
-            array('<p>I have a big head</p>'),
-        );
+        return [
+            ["Ur the god of thunder, not the god of hammer."],
+            ["     "],
+            [''],
+            ['<scr' . 'ipt>console.log("Vicious matters");</scr' . 'ipt>'],
+            ['<p>I have a big head</p>'],
+        ];
     }
 
     /**

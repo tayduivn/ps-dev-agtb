@@ -17,58 +17,60 @@ class LoadMenuTest extends TestCase
     protected $_moduleName;
 
     protected function setUp() : void
-	{
-		global $mod_strings, $app_strings;
-		$mod_strings = return_module_language($GLOBALS['current_language'], 'Accounts');
-		$app_strings = return_application_language($GLOBALS['current_language']);
-
-		$GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-
-		// create a dummy module directory
-		$this->_moduleName = 'TestModule'.mt_rand();
+    {
+        global $mod_strings, $app_strings;
+        $mod_strings = return_module_language($GLOBALS['current_language'], 'Accounts');
+        $app_strings = return_application_language($GLOBALS['current_language']);
 
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
 
-        sugar_mkdir("modules/{$this->_moduleName}",null,true);
-	}
+        // create a dummy module directory
+        $this->_moduleName = 'TestModule'.mt_rand();
+
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+
+        sugar_mkdir("modules/{$this->_moduleName}", null, true);
+    }
 
     protected function tearDown() : void
-	{
-		unset($GLOBALS['mod_strings']);
-		unset($GLOBALS['app_strings']);
+    {
+        unset($GLOBALS['mod_strings']);
+        unset($GLOBALS['app_strings']);
 
-		SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-		unset($GLOBALS['current_user']);
-        if(!empty($this->_moduleName)) {
-    		if ( is_dir("modules/{$this->_moduleName}") )
-    		    rmdir_recursive("modules/{$this->_moduleName}");
-    		if ( is_dir("custom/modules/{$this->_moduleName}") )
-    		    rmdir_recursive("custom/modules/{$this->_moduleName}");
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        unset($GLOBALS['current_user']);
+        if (!empty($this->_moduleName)) {
+            if (is_dir("modules/{$this->_moduleName}")) {
+                rmdir_recursive("modules/{$this->_moduleName}");
+            }
+            if (is_dir("custom/modules/{$this->_moduleName}")) {
+                rmdir_recursive("custom/modules/{$this->_moduleName}");
+            }
         }
-		unset($GLOBALS['current_user']);
-	}
+        unset($GLOBALS['current_user']);
+    }
 
-	public function testMenuDoesNotExists()
-	{
+    public function testMenuDoesNotExists()
+    {
         $view = new SugarView;
         $module_menu = $view->getMenu($this->_moduleName);
-        $this->assertTrue(empty($module_menu),'Assert the module menu array is empty');
-	}
+        $this->assertTrue(empty($module_menu), 'Assert the module menu array is empty');
+    }
 
-	/**
-	 * @ticket 43497
-	 */
-	public function testMenuExistsCanFindModuleMenu()
-	{
-	    // Create module menu
-        if( $fh = @fopen("modules/{$this->_moduleName}/Menu.php", 'w+') ) {
-	        $string = <<<EOQ
+    /**
+     * @ticket 43497
+     */
+    public function testMenuExistsCanFindModuleMenu()
+    {
+        // Create module menu
+        if ($fh = @fopen("modules/{$this->_moduleName}/Menu.php", 'w+')) {
+            $string = <<<EOQ
 <?php
 \$module_menu[]=Array("index.php?module=Import&action=bar&import_module=Accounts&return_module=Accounts&return_action=index","Foo","Foo", 'Accounts');
 ?>
 EOQ;
-            fputs( $fh, $string);
-            fclose( $fh );
+            fputs($fh, $string);
+            fclose($fh);
         }
 
         $view = new SugarView;
@@ -76,19 +78,19 @@ EOQ;
         $found_menu = false;
         $found_menu_twice = false;
         foreach ($module_menu as $menu_entry) {
-        	foreach ($menu_entry as $menu_item) {
-        		if (preg_match('/action=bar/', $menu_item)) {
-        		    if ( $found_menu ) {
-        		        $found_menu_twice = true;
-        		    }
-        		    $found_menu = true;
-        		}
-        	}
+            foreach ($menu_entry as $menu_item) {
+                if (preg_match('/action=bar/', $menu_item)) {
+                    if ($found_menu) {
+                        $found_menu_twice = true;
+                    }
+                    $found_menu = true;
+                }
+            }
         }
 
         $this->assertTrue($found_menu, "Assert that menu was detected");
         $this->assertFalse($found_menu_twice, "Assert that menu item wasn't listed twice");
-	}
+    }
 
     /**
      * @ticket 29114
@@ -97,15 +99,15 @@ EOQ;
     public function testMenuExistsCanFindModuleExtMenu()
     {
         // Create module ext menu
-        sugar_mkdir("custom/modules/{$this->_moduleName}/Ext/Menus/",null,true);
-        if( $fh = @fopen("custom/modules/{$this->_moduleName}/Ext/Menus/menu.ext.php", 'w+') ) {
-	        $string = <<<EOQ
+        sugar_mkdir("custom/modules/{$this->_moduleName}/Ext/Menus/", null, true);
+        if ($fh = @fopen("custom/modules/{$this->_moduleName}/Ext/Menus/menu.ext.php", 'w+')) {
+            $string = <<<EOQ
 <?php
 \$module_menu[]=Array("index.php?module=Import&action=foo&import_module=Accounts&return_module=Accounts&return_action=index","Foo","Foo", 'Accounts');
 ?>
 EOQ;
-            fputs( $fh, $string);
-            fclose( $fh );
+            fputs($fh, $string);
+            fclose($fh);
         }
 
         $view = new SugarView;
@@ -113,14 +115,14 @@ EOQ;
         $found_custom_menu = false;
         $found_custom_menu_twice = false;
         foreach ($module_menu as $key => $menu_entry) {
-        	foreach ($menu_entry as $id => $menu_item) {
-        		if (preg_match('/action=foo/', $menu_item)) {
-        		    if ( $found_custom_menu ) {
-        		        $found_custom_menu_twice = true;
-        		    }
-        		    $found_custom_menu = true;
-        		}
-        	}
+            foreach ($menu_entry as $id => $menu_item) {
+                if (preg_match('/action=foo/', $menu_item)) {
+                    if ($found_custom_menu) {
+                        $found_custom_menu_twice = true;
+                    }
+                    $found_custom_menu = true;
+                }
+            }
         }
         $this->assertTrue($found_custom_menu, "Assert that custom menu was detected");
         $this->assertFalse($found_custom_menu_twice, "Assert that custom menu item wasn't listed twice");
@@ -133,16 +135,16 @@ EOQ;
     public function testMenuExistsCanFindModuleExtMenuWhenModuleMenuDefinedGlobal()
     {
         // Create module ext menu
-        sugar_mkdir("custom/modules/{$this->_moduleName}/Ext/Menus/",null,true);
-        if( $fh = @fopen("custom/modules/{$this->_moduleName}/Ext/Menus/menu.ext.php", 'w+') ) {
-	        $string = <<<EOQ
+        sugar_mkdir("custom/modules/{$this->_moduleName}/Ext/Menus/", null, true);
+        if ($fh = @fopen("custom/modules/{$this->_moduleName}/Ext/Menus/menu.ext.php", 'w+')) {
+            $string = <<<EOQ
 <?php
 global \$module_menu;
 \$module_menu[]=Array("index.php?module=Import&action=foo&import_module=Accounts&return_module=Accounts&return_action=index","Foo","Foo", 'Accounts');
 ?>
 EOQ;
-            fputs( $fh, $string);
-            fclose( $fh );
+            fputs($fh, $string);
+            fclose($fh);
         }
 
         $view = new SugarView;
@@ -150,14 +152,14 @@ EOQ;
         $found_custom_menu = false;
         $found_custom_menu_twice = false;
         foreach ($module_menu as $key => $menu_entry) {
-        	foreach ($menu_entry as $id => $menu_item) {
-        		if (preg_match('/action=foo/', $menu_item)) {
-        		    if ( $found_custom_menu ) {
-        		        $found_custom_menu_twice = true;
-        		    }
-        		    $found_custom_menu = true;
-        		}
-        	}
+            foreach ($menu_entry as $id => $menu_item) {
+                if (preg_match('/action=foo/', $menu_item)) {
+                    if ($found_custom_menu) {
+                        $found_custom_menu_twice = true;
+                    }
+                    $found_custom_menu = true;
+                }
+            }
         }
 
         $this->assertTrue($found_custom_menu, "Assert that custom menu was detected");
@@ -168,24 +170,25 @@ EOQ;
      * @ticket 43497
      */
     public function testMenuExistsCanFindApplicationExtMenu()
-	{
-	    // Create module ext menu
-	    $backupCustomMenu = false;
-	    if ( !is_dir("custom/application/Ext/Menus/") )
-	        sugar_mkdir("custom/application/Ext/Menus/",null,true);
+    {
+        // Create module ext menu
+        $backupCustomMenu = false;
+        if (!is_dir("custom/application/Ext/Menus/")) {
+            sugar_mkdir("custom/application/Ext/Menus/", null, true);
+        }
         if (file_exists('custom/application/Ext/Menus/menu.ext.php')) {
-	        copy('custom/application/Ext/Menus/menu.ext.php', 'custom/application/Ext/Menus/menu.ext.php.backup');
-	        $backupCustomMenu = true;
-	    }
+            copy('custom/application/Ext/Menus/menu.ext.php', 'custom/application/Ext/Menus/menu.ext.php.backup');
+            $backupCustomMenu = true;
+        }
 
-        if ( $fh = @fopen("custom/application/Ext/Menus/menu.ext.php", 'w+') ) {
-	        $string = <<<EOQ
+        if ($fh = @fopen("custom/application/Ext/Menus/menu.ext.php", 'w+')) {
+            $string = <<<EOQ
 <?php
 \$module_menu[]=Array("index.php?module=Import&action=foobar&import_module=Accounts&return_module=Accounts&return_action=index","Foo","Foo", 'Accounts');
 ?>
 EOQ;
-            fputs( $fh, $string);
-            fclose( $fh );
+            fputs($fh, $string);
+            fclose($fh);
         }
 
         $view = new SugarView;
@@ -193,54 +196,53 @@ EOQ;
         $found_application_custom_menu = false;
         $found_application_custom_menu_twice = false;
         foreach ($module_menu as $key => $menu_entry) {
-        	foreach ($menu_entry as $id => $menu_item) {
-        		if (preg_match('/action=foobar/', $menu_item)) {
-        		    if ( $found_application_custom_menu ) {
-        		        $found_application_custom_menu_twice = true;
-        		    }
-        		    $found_application_custom_menu = true;
-        		}
-        	}
+            foreach ($menu_entry as $id => $menu_item) {
+                if (preg_match('/action=foobar/', $menu_item)) {
+                    if ($found_application_custom_menu) {
+                        $found_application_custom_menu_twice = true;
+                    }
+                    $found_application_custom_menu = true;
+                }
+            }
         }
 
         $this->assertTrue($found_application_custom_menu, "Assert that application custom menu was detected");
         $this->assertFalse($found_application_custom_menu_twice, "Assert that application custom menu item wasn't duplicated");
 
-        if($backupCustomMenu) {
+        if ($backupCustomMenu) {
             copy('custom/application/Ext/Menus/menu.ext.php.backup', 'custom/application/Ext/Menus/menu.ext.php');
             unlink('custom/application/Ext/Menus/menu.ext.php.backup');
-        }
-        else {
+        } else {
             unlink('custom/application/Ext/Menus/menu.ext.php');
         }
-	}
+    }
 
-	/**
-	 * @ticket 43497
-	 */
-	public function testMenuExistsCanFindModuleMenuAndModuleExtMenu()
-	{
-	    // Create module menu
-        if( $fh = @fopen("modules/{$this->_moduleName}/Menu.php", 'w+') ) {
-	        $string = <<<EOQ
+    /**
+     * @ticket 43497
+     */
+    public function testMenuExistsCanFindModuleMenuAndModuleExtMenu()
+    {
+        // Create module menu
+        if ($fh = @fopen("modules/{$this->_moduleName}/Menu.php", 'w+')) {
+            $string = <<<EOQ
 <?php
 \$module_menu[]=Array("index.php?module=Import&action=foo&import_module=Accounts&return_module=Accounts&return_action=index","Foo","Foo", 'Accounts');
 ?>
 EOQ;
-            fputs( $fh, $string);
-            fclose( $fh );
+            fputs($fh, $string);
+            fclose($fh);
         }
 
         // Create module ext menu
-        sugar_mkdir("custom/modules/{$this->_moduleName}/Ext/Menus/",null,true);
-        if( $fh = @fopen("custom/modules/{$this->_moduleName}/Ext/Menus/menu.ext.php", 'w+') ) {
-	        $string = <<<EOQ
+        sugar_mkdir("custom/modules/{$this->_moduleName}/Ext/Menus/", null, true);
+        if ($fh = @fopen("custom/modules/{$this->_moduleName}/Ext/Menus/menu.ext.php", 'w+')) {
+            $string = <<<EOQ
 <?php
 \$module_menu[]=Array("index.php?module=Import&action=bar&import_module=Accounts&return_module=Accounts&return_action=index","Foo","Foo", 'Accounts');
 ?>
 EOQ;
-            fputs( $fh, $string);
-            fclose( $fh );
+            fputs($fh, $string);
+            fclose($fh);
         }
 
         $view = new SugarView;
@@ -250,34 +252,33 @@ EOQ;
         $found_menu = false;
         $found_menu_twice = false;
         foreach ($module_menu as $key => $menu_entry) {
-        	foreach ($menu_entry as $id => $menu_item) {
-        		if (preg_match('/action=foo/', $menu_item)) {
-        		    if ( $found_menu ) {
-        		        $found_menu_twice = true;
-        		    }
-        		    $found_menu = true;
-        		}
-        		if (preg_match('/action=bar/', $menu_item)) {
-        		    if ( $found_custom_menu ) {
-        		        $found_custom_menu_twice = true;
-        		    }
-        		    $found_custom_menu = true;
-        		}
-        	}
+            foreach ($menu_entry as $id => $menu_item) {
+                if (preg_match('/action=foo/', $menu_item)) {
+                    if ($found_menu) {
+                        $found_menu_twice = true;
+                    }
+                    $found_menu = true;
+                }
+                if (preg_match('/action=bar/', $menu_item)) {
+                    if ($found_custom_menu) {
+                        $found_custom_menu_twice = true;
+                    }
+                    $found_custom_menu = true;
+                }
+            }
         }
         $this->assertTrue($found_menu, "Assert that menu was detected");
         $this->assertFalse($found_menu_twice, "Assert that menu item wasn't duplicated");
         $this->assertTrue($found_custom_menu, "Assert that custom menu was detected");
         $this->assertFalse($found_custom_menu_twice, "Assert that custom menu item wasn't duplicated");
-	}
+    }
 }
 
 class ViewLoadMenuTest extends SugarView
 {
     public function menuExists(
         $module
-        )
-    {
+    ) {
         return $this->_menuExists($module);
     }
 }

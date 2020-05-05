@@ -24,7 +24,7 @@ class CsrfTokenStorageTest extends TestCase
 {
     protected function setUp() : void
     {
-        $_SESSION = array();
+        $_SESSION = [];
     }
 
     protected function tearDown() : void
@@ -62,16 +62,16 @@ class CsrfTokenStorageTest extends TestCase
 
     public function providerTestTokenStorage()
     {
-        return array(
-            array(
+        return [
+            [
                 'csrf_tokens',
-                '1234567890'
-            ),
-            array(
+                '1234567890',
+            ],
+            [
                 'randomstuff',
                 '0987654321',
-            ),
-        );
+            ],
+        ];
     }
 
     /**

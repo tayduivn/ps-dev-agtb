@@ -18,12 +18,12 @@ use PHPUnit\Framework\TestCase;
 class Bug41557Test extends TestCase
 {
     public function providerGetPrimaryAddress()
-        {
-            return array(
-                array('old1@test.com', 'new1@test.com', false, 2),
-                array('old2@test.com', 'new2@test.com', true, 1),
-            );
-        }
+    {
+            return [
+                ['old1@test.com', 'new1@test.com', false, 2],
+                ['old2@test.com', 'new2@test.com', true, 1],
+            ];
+    }
 
     /**
      * @group bug41557
@@ -35,7 +35,7 @@ class Bug41557Test extends TestCase
             $_REQUEST['action'] = 'ConvertLead';
         }
 
-        $user = SugarTestUserUtilities::createAnonymousUser(true, 0, array('email' => $oldemail));
+        $user = SugarTestUserUtilities::createAnonymousUser(true, 0, ['email' => $oldemail]);
 
         $this->assertEquals($oldemail, $user->emailAddress->getPrimaryAddress($user), 'Primary email should be '.$oldemail);
 

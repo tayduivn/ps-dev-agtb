@@ -30,11 +30,11 @@ class CommentLogHandlerTest extends TestCase
     public function testRequiredInterfaces()
     {
         $nsPrefix = 'Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler';
-        $interfaces = array(
+        $interfaces = [
             $nsPrefix . '\MappingHandlerInterface',
             $nsPrefix . '\SearchFieldsHandlerInterface',
             $nsPrefix . '\ProcessDocumentHandlerInterface',
-        );
+        ];
         $implements = class_implements($nsPrefix . '\Implement\CommentLogHandler');
         $this->assertEquals($interfaces, array_values(array_intersect($implements, $interfaces)));
     }
@@ -64,38 +64,38 @@ class CommentLogHandlerTest extends TestCase
 
     public function providerTestSetProvider()
     {
-        return array(
-            array(
+        return [
+            [
                 null,
-                array(),
+                [],
                 'addSupportedTypes',
-                array('commentlog'),
-            ),
-            array(
+                ['commentlog'],
+            ],
+            [
                 'highlighterFields',
-                array('stuff'),
+                ['stuff'],
                 'addHighlighterFields',
-                array('stuff'),
-            ),
-            array(
+                ['stuff'],
+            ],
+            [
                 'weightedBoost',
-                array('morestuff'),
+                ['morestuff'],
                 'addWeightedBoosts',
-                array('morestuff'),
-            ),
-            array(
+                ['morestuff'],
+            ],
+            [
                 null,
-                array(),
+                [],
                 'addFieldRemap',
-                array('commentlog_search' => 'commentlog'),
-            ),
-            array(
+                ['commentlog_search' => 'commentlog'],
+            ],
+            [
                 null,
-                array(),
+                [],
                 'addSkipTypesFromQueue',
-                array('commentlog'),
-            ),
-        );
+                ['commentlog'],
+            ],
+        ];
     }
 
     /**
@@ -112,50 +112,50 @@ class CommentLogHandlerTest extends TestCase
 
     public function providerTestBuildMapping()
     {
-        return array(
+        return [
             // test 'commentlog' type for 'commentlog' field
-            array(
+            [
                 'testModule',
                 'commentlog',
-                array(
+                [
                     'name' => 'commentlog',
                     'type' => 'commentlog',
-                ),
-                array(
-                    'testModule__commentlog_search' => array(
+                ],
+                [
+                    'testModule__commentlog_search' => [
                         'type' => 'object',
                         'dynamic' => false,
                         'enabled' => true,
-                        'properties' => array(
-                            'commentlog_entry' => array(
+                        'properties' => [
+                            'commentlog_entry' => [
                                 'type' => 'keyword',
                                 'index' => false,
-                                'fields' => array(
-                                    'gs_string' => array(
+                                'fields' => [
+                                    'gs_string' => [
                                         'type' => 'text',
                                         'index' => true,
                                         'analyzer' => 'gs_analyzer_string',
                                         'store' => true,
-                                    ),
-                                    'gs_string_wildcard' => array(
+                                    ],
+                                    'gs_string_wildcard' => [
                                         'type' => 'text',
                                         'index' => true,
                                         'analyzer' => 'gs_analyzer_string_ngram',
                                         'search_analyzer' => 'gs_analyzer_string',
                                         'store' => true,
-                                    ),
-                                ),
-                            ),
-                        ),
-                    ),
-                    'testModule__commentlog' => array(
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                    'testModule__commentlog' => [
                         'type' => 'object',
                         'dynamic' => false,
                         'enabled' => false,
-                    ),
-                ),
-            ),
-        );
+                    ],
+                ],
+            ],
+        ];
     }
 
     /**
@@ -177,41 +177,41 @@ class CommentLogHandlerTest extends TestCase
 
     public function providerTestBuildSearchFields()
     {
-        return array(
+        return [
             // commentlog field
-            array(
+            [
                 'Contacts',
                 'commentlog',
-                array(
+                [
                     'name' => 'commentlog',
                     'type' => 'commentlog',
-                ),
-                array(
+                ],
+                [
                     'Contacts__commentlog_search.commentlog_entry.gs_string',
                     'Contacts__commentlog_search.commentlog_entry.gs_string_wildcard',
-                ),
-            ),
+                ],
+            ],
             // non commentlog type/field
-            array(
+            [
                 'Contacts',
                 'first_name',
-                array(
+                [
                     'name' => 'first_name',
                     'type' => 'varchar',
-                ),
-                array(),
-            ),
+                ],
+                [],
+            ],
             // non commentlog field, commentlog type
-            array(
+            [
                 'Contacts',
                 'other_commentlog',
-                array(
+                [
                     'name' => 'other_commentlog',
                     'type' => 'commentlog',
-                ),
-                array(),
-            ),
-        );
+                ],
+                [],
+            ],
+        ];
     }
     /**
      * Get CommentLogHandler Mock

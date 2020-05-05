@@ -22,7 +22,7 @@ class Bugs39819_39820Test extends TestCase
     protected function setUp() : void
     {
         SugarAutoLoader::ensureDir("custom/modules/Accounts/language"); // Creating nested directories at a glance
-        SugarTestHelper::setUp('mod_strings', array('Administration'));
+        SugarTestHelper::setUp('mod_strings', ['Administration']);
     }
 
     protected function tearDown() : void

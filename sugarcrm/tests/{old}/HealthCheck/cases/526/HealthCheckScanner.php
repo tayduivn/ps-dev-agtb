@@ -12,17 +12,17 @@
 
 class S_526_HealthCheckScannerCasesTestMock extends HealthCheckScannerCasesTestMock
 {
-    public $md5_files = array(
-        './modules/Accounts/Account.php' => 'fakeMD5'
-    );
+    public $md5_files = [
+        './modules/Accounts/Account.php' => 'fakeMD5',
+    ];
 
     public function init()
     {
         if (parent::init()) {
             $this->tearDown();
-            $GLOBALS['app_list_strings']['fake'] = array(
+            $GLOBALS['app_list_strings']['fake'] = [
                 'opti, bad | on' => 'value',
-            );
+            ];
             return true;
         }
         return false;

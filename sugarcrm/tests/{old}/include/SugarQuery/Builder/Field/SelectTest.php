@@ -19,26 +19,26 @@ class SugarQuery_Builder_Field_SelectTest extends TestCase
 {
     public function expandFieldRelateOwnerDataProvider()
     {
-        return array(
-            array(
-                array(
+        return [
+            [
+                [
                     'name' => 'account_name',
                     'type' => 'relate',
                     'source' => 'non-db',
                     'rname' => 'name',
                     'module' => 'Accounts',
-                ),
-            ),
-            array(
-                array(
+                ],
+            ],
+            [
+                [
                     'name' => 'account_id',
                     'type' => 'relate',
                     'source' => 'non-db',
                     'rname' => 'id',
                     'module' => 'Accounts',
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
     }
 
     /**
@@ -49,14 +49,14 @@ class SugarQuery_Builder_Field_SelectTest extends TestCase
     {
         $select = $this->getMockBuilder('SugarQuery_Builder_Field_Select')
             ->disableOriginalConstructor()
-            ->setMethods(array('checkCustomField', 'addToSelect'))
+            ->setMethods(['checkCustomField', 'addToSelect'])
             ->getMock();
         $select->def = $def;
         $select->jta = 'join_table_alias';
         $select->query = $this->createMock('SugarQuery');
         $select->query->select = $this->getMockBuilder('SugarQuery_Builder_Select')
             ->disableOriginalConstructor()
-            ->setMethods(array('addField'))
+            ->setMethods(['addField'])
             ->getMock();
         $select->query->select->expects($this->once())
             ->method('addField')

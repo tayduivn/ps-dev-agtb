@@ -16,81 +16,82 @@ use PHPUnit\Framework\TestCase;
  * @itr 27836
  */
 class ITR27836Test extends TestCase
-{   	
+{
+       
     protected $bean;
 
     protected function setUp() : void
-	{
-	    global $moduleList, $beanList, $beanFiles;
-        require('include/modules.php');
-	    $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+    {
+        global $moduleList, $beanList, $beanFiles;
+        require 'include/modules.php';
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $this->bean = new Contact();
-	}
+    }
 
     protected function tearDown() : void
-	{
-		SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+    {
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
 
-  		require_once('ModuleInstall/ModuleInstaller.php');
-  		$moduleInstaller = new ModuleInstaller();
-  		$moduleInstaller->silent = true; // make sure that the ModuleInstaller->log() function doesn't echo while rebuilding the layoutdefs
-  		$moduleInstaller->rebuild_layoutdefs();
-	}
+        require_once 'ModuleInstall/ModuleInstaller.php';
+        $moduleInstaller = new ModuleInstaller();
+        $moduleInstaller->silent = true; // make sure that the ModuleInstaller->log() function doesn't echo while rebuilding the layoutdefs
+        $moduleInstaller->rebuild_layoutdefs();
+    }
 
 
     public function subpanelProvider()
     {
-        return array(
+        return [
             //Hidden set to true
 
-            array(
-                'data' => array(
-                    'testpanel' => array(
+            [
+                'data' => [
+                    'testpanel' => [
                         'order' => 20,
                         'sort_order' => 'desc',
                         'sort_by' => 'date_entered',
                         'type' => 'collection',
-                        'top_buttons' => array(),
-                    ),
+                        'top_buttons' => [],
+                    ],
                     'default_hidden' => true,
                     'subpanel_name' => 'history',
-                    'module' => 'Contacts'
-                ),
-            ),
+                    'module' => 'Contacts',
+                ],
+            ],
 
             //Hidden set to false
-            array
-            (
-                'data' => array(
-                    'testpanel' => array(
+            
+            [
+                'data' => [
+                    'testpanel' => [
                         'order' => 20,
                         'sort_order' => 'desc',
                         'sort_by' => 'date_entered',
                         'type' => 'collection',
-                        'top_buttons' => array(),
-                    ),
+                        'top_buttons' => [],
+                    ],
                     'default_hidden' => false,
                     'subpanel_name' => 'history',
-                    'module' => 'Contacts'
-                ),
-            ),
+                    'module' => 'Contacts',
+                ],
+            ],
 
             //Hidden not set
-            array(
-                'data' => array(
-                    'testpanel' => array(
+            [
+                'data' => [
+                    'testpanel' => [
                         'order' => 20,
                         'sort_order' => 'desc',
                         'sort_by' => 'date_entered',
                         'type' => 'collection',
-                        'top_buttons' => array(),
-                    ),
+                        'top_buttons' => [],
+                    ],
                     'subpanel_name' => 'history',
-                    'module' => 'Contacts'
-                ),
-            ),
-        );
+                    'module' => 'Contacts',
+                ],
+            ],
+        ];
     }
     
     /**
@@ -102,8 +103,7 @@ class ITR27836Test extends TestCase
     {
         $subpanel_def = new aSubPanel("testpanel", $subpanel, $this->bean);
 
-        if(isset($subpanel['default_hidden']) && $subpanel['default_hidden'] === true)
-        {
+        if (isset($subpanel['default_hidden']) && $subpanel['default_hidden'] === true) {
             $this->assertTrue($subpanel_def->isDefaultHidden());
         } else {
             $this->assertFalse($subpanel_def->isDefaultHidden());

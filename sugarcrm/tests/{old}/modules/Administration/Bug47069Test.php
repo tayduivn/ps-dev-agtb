@@ -20,7 +20,7 @@ class Bug47069Test extends TestCase
         $GLOBALS['module'] = 'Administration';
         $GLOBALS['app_strings'] = return_application_language('en_us');
         $GLOBALS['app_list_strings'] = return_app_list_strings_language('en_us');
-        $GLOBALS['mod_strings'] = return_module_language('en_us','Administration');
+        $GLOBALS['mod_strings'] = return_module_language('en_us', 'Administration');
         $GLOBALS['db'] = DBManagerFactory::getInstance();
         $GLOBALS['current_user'] = new User();
         $GLOBALS['current_user']->retrieve('1');
@@ -35,8 +35,7 @@ class Bug47069Test extends TestCase
         unset($_REQUEST);
         $GLOBALS['db']->query("DELETE FROM notes WHERE id IN ('".$this->note1->id."','".$this->note2->id."')");
         // Just in case there is a custom table here
-        if($GLOBALS['db']->tableExists('notes_cstm'))
-        {
+        if ($GLOBALS['db']->tableExists('notes_cstm')) {
             $GLOBALS['db']->query("DELETE FROM notes_cstm WHERE id_c IN ('".$this->note1->id."','".$this->note2->id."')");
         }
     }
@@ -61,24 +60,24 @@ class Bug47069Test extends TestCase
         ob_start();
         $_REQUEST['adminAction'] = 'refreshEstimate';
         $_REQUEST['bean'] = 'Notes';
-        require_once('modules/Administration/Async.php');
+        require_once 'modules/Administration/Async.php';
         $firstEstimate = $out;
         ob_end_clean();
 
         ob_start();
         $_REQUEST['adminAction'] = 'repairXssExecute';
         $_REQUEST['bean'] = 'Notes';
-        $_REQUEST['id'] = json_encode(array($this->note1->id,$this->note2->id));
-        require_once('modules/Administration/Async.php');
+        $_REQUEST['id'] = json_encode([$this->note1->id,$this->note2->id]);
+        require_once 'modules/Administration/Async.php';
         ob_end_clean();
 
         ob_start();
         $_REQUEST['adminAction'] = 'refreshEstimate';
         $_REQUEST['bean'] = 'Notes';
-        require_once('modules/Administration/Async.php');
+        require_once 'modules/Administration/Async.php';
         $secondEstimate = $out;
         ob_end_clean();
 
-        $this->assertEquals($firstEstimate['count'],$secondEstimate['count'], 'The record count should not increase after a repair XSS');
+        $this->assertEquals($firstEstimate['count'], $secondEstimate['count'], 'The record count should not increase after a repair XSS');
     }
 }

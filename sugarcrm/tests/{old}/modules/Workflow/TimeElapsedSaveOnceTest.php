@@ -36,13 +36,13 @@ class TimeElapsedSaveOnceTest extends TestCase
     public function testUniqueSaveOnce()
     {
         // Initialize the mock
-        $bean = $this->getMockBuilder('Account')->setMethods(array('save'))->getMock();
+        $bean = $this->getMockBuilder('Account')->setMethods(['save'])->getMock();
         // We expect save() to run on this bean only once
         $bean->expects($this->once())->method('save');
         $bean->id = $this->beanId;
-        $bean->fetched_row = array(
-            'deleted' => 0
-        );
+        $bean->fetched_row = [
+            'deleted' => 0,
+        ];
         // Need to register the mock, to be reused in process_scheduled
         BeanFactory::registerBean($bean);
 

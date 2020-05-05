@@ -64,7 +64,7 @@ class ACLFieldTest extends TestCase
     {
         global $current_user;
 
-        $role = SugarTestACLUtilities::createRole(create_guid(), array($module), array());
+        $role = SugarTestACLUtilities::createRole(create_guid(), [$module], []);
         SugarTestACLUtilities::createField($role->id, $module, $field, ACL_READ_ONLY);
         SugarTestACLUtilities::setupUser($role);
         ACLField::loadUserFields($module, $object, $current_user->id, true);

@@ -26,30 +26,30 @@ class DeployedMetaDataImplementationTest extends TestCase
      */
     public function testGetDefsFromRecordForPreview()
     {
-        $fields = array(
+        $fields = [
             'name',
-            array(
+            [
                 'name' => 'desc',
                 'type' => 'name',
-            ),
-        );
-        $defs['base']['view']['record'] = array(
-            'panels' => array(
-                array(
-                    'fields' => array(
+            ],
+        ];
+        $defs['base']['view']['record'] = [
+            'panels' => [
+                [
+                    'fields' => [
                         'name',
-                        array(
+                        [
                             'name' => 'favorite',
                             'type' => 'favorite',
-                        ),
-                        array(
+                        ],
+                        [
                             'name' => 'desc',
                             'type' => 'name',
-                        ),
-                    ),
-                ),
-            ),
-        );
+                        ],
+                    ],
+                ],
+            ],
+        ];
         $impl = $this->getMockBuilder('DeployedMetaDataImplementation')
             ->disableOriginalConstructor()->setMethods(null)->getMock();
         $defs = SugarTestReflection::callProtectedMethod($impl, 'getDefsFromRecord', [$defs, 'preview']);

@@ -15,24 +15,24 @@ use PHPUnit\Framework\TestCase;
 
 class PopulateTimePeriodsSeedDataTest extends TestCase
 {
-private $createdTimePeriods;
+    private $createdTimePeriods;
 
     protected function setUp() : void
     {
-    $GLOBALS['db']->query("UPDATE timeperiods SET deleted = 1");
-}
+        $GLOBALS['db']->query("UPDATE timeperiods SET deleted = 1");
+    }
 
     protected function tearDown() : void
     {
-    $GLOBALS['db']->query("DELETE FROM timeperiods WHERE deleted = 0");
-    $GLOBALS['db']->query("UPDATE timeperiods SET deleted = 0");
-}
+        $GLOBALS['db']->query("DELETE FROM timeperiods WHERE deleted = 0");
+        $GLOBALS['db']->query("UPDATE timeperiods SET deleted = 0");
+    }
 
-function testPopulateSeedData()
-{
-    $this->createdTimePeriods = TimePeriodsSeedData::populateSeedData();
-    $this->assertEquals(20, count($this->createdTimePeriods));
-    $total = $GLOBALS['db']->getOne("SELECT count(id) as total FROM timeperiods WHERE deleted = 0");
-    $this->assertEquals(25, $total);
-}
+    function testPopulateSeedData()
+    {
+        $this->createdTimePeriods = TimePeriodsSeedData::populateSeedData();
+        $this->assertEquals(20, count($this->createdTimePeriods));
+        $total = $GLOBALS['db']->getOne("SELECT count(id) as total FROM timeperiods WHERE deleted = 0");
+        $this->assertEquals(25, $total);
+    }
 }

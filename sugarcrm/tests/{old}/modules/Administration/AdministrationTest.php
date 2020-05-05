@@ -17,11 +17,11 @@ use PHPUnit\Framework\TestCase;
  */
 class AdministrationTest extends TestCase
 {
-    protected $configs = array(
-        array('name' => 'AdministrationTest', 'value' => 'Base', 'platform' => 'base', 'category' => 'Forecasts'),
-        array('name' => 'AdministrationTest', 'value' => 'Portal', 'platform' => 'portal', 'category' => 'Forecasts'),
-        array('name' => 'AdministrationTest', 'value' => '["Portal"]', 'platform' => 'json', 'category' => 'Forecasts'),
-    );
+    protected $configs = [
+        ['name' => 'AdministrationTest', 'value' => 'Base', 'platform' => 'base', 'category' => 'Forecasts'],
+        ['name' => 'AdministrationTest', 'value' => 'Portal', 'platform' => 'portal', 'category' => 'Forecasts'],
+        ['name' => 'AdministrationTest', 'value' => '["Portal"]', 'platform' => 'json', 'category' => 'Forecasts'],
+    ];
 
     public static function setUpBeforeClass() : void
     {
@@ -36,7 +36,7 @@ class AdministrationTest extends TestCase
         $db->query("DELETE FROM config where name = 'AdministrationTest'");
         /* @var $admin Administration */
         $admin = BeanFactory::newBean('Administration');
-        foreach($this->configs as $config){
+        foreach ($this->configs as $config) {
             $admin->saveSetting($config['category'], $config['name'], $config['value'], $config['platform']);
         }
     }
@@ -117,7 +117,7 @@ class AdministrationTest extends TestCase
 
         $results = $admin->getConfigForModule('Forecasts', 'json');
 
-        $this->assertEquals(array("Portal"), $results['AdministrationTest']);
+        $this->assertEquals(["Portal"], $results['AdministrationTest']);
     }
 
     /**
@@ -137,18 +137,18 @@ class AdministrationTest extends TestCase
      */
     public function configValueIntegrityProvider()
     {
-        return array(
-            array('A', 'A'), // simple string
-            array('A\\B', 'A\\B'), // slashes
-            array('Русский', 'Русский'), // unicode
-            array('7.0', '7.0'), // simple number
-            array('7.0.0', '7.0.0'),
-            array(7, 7),      // integer
-            array(array('portal'), array('portal')), // indexed array
-            array(array('foo' => 'bar'), array('foo' => 'bar')), // associative array
-            array('"value1"', '"value1"'), // quoted string
-            array(array(2 => '"val"ue2'), array(2 => '"val"ue2')), // array with quoted string
-        );
+        return [
+            ['A', 'A'], // simple string
+            ['A\\B', 'A\\B'], // slashes
+            ['Русский', 'Русский'], // unicode
+            ['7.0', '7.0'], // simple number
+            ['7.0.0', '7.0.0'],
+            [7, 7],      // integer
+            [['portal'], ['portal']], // indexed array
+            [['foo' => 'bar'], ['foo' => 'bar']], // associative array
+            ['"value1"', '"value1"'], // quoted string
+            [[2 => '"val"ue2'], [2 => '"val"ue2']], // array with quoted string
+        ];
     }
 
     /**

@@ -10,17 +10,17 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$listViewDefs ['Notes'] = 
-array (
-  'NAME' => 
-  array (
+$listViewDefs ['Notes'] =
+ [
+  'NAME' =>
+   [
     'width' => '40%',
     'label' => 'LBL_LIST_SUBJECT',
     'link' => true,
     'default' => true,
-  ),
-  'CONTACT_NAME' => 
-  array (
+  ],
+  'CONTACT_NAME' =>
+   [
     'width' => '20%',
     'label' => 'LBL_LIST_CONTACT',
     'link' => true,
@@ -28,13 +28,13 @@ array (
     'module' => 'Contacts',
     'default' => true,
     'ACLTag' => 'CONTACT',
-    'related_fields' => 
-    array (
+    'related_fields' =>
+     [
       0 => 'contact_id',
-    ),
-  ),
-  'PARENT_NAME' => 
-  array (
+    ],
+  ],
+  'PARENT_NAME' =>
+   [
     'width' => '20%',
     'label' => 'LBL_LIST_RELATED_TO',
     'dynamic_module' => 'PARENT_TYPE',
@@ -43,51 +43,50 @@ array (
     'default' => true,
     'sortable' => false,
     'ACLTag' => 'PARENT',
-    'related_fields' => 
-    array (
+    'related_fields' =>
+     [
       0 => 'parent_id',
       1 => 'parent_type',
-    ),
-  ),
-  'FILENAME' => 
-  array (
+    ],
+  ],
+  'FILENAME' =>
+   [
     'width' => '20%',
     'label' => 'LBL_LIST_FILENAME',
     'link' => false,
     'default' => true,
-    'related_fields' => 
-    array (
+    'related_fields' =>
+     [
       0 => 'file_url',
       1 => 'id',
-    ),
+    ],
     'customCode' => '<a href="index.php?entryPoint=download&id={$ID}&type=Notes" >{$FILENAME}</a>',
-  ),
-  'CREATED_BY_NAME' => 
-  array (
+  ],
+  'CREATED_BY_NAME' =>
+   [
     'type' => 'relate',
     'label' => 'LBL_CREATED_BY',
     'width' => '10%',
     'default' => true,
-	'related_fields' =>  array ( 'created_by' ),
-  ),
-  'DATE_ENTERED' => 
-  array (
+    'related_fields' =>   [ 'created_by' ],
+  ],
+  'DATE_ENTERED' =>
+   [
     'type' => 'datetime',
     'label' => 'LBL_DATE_ENTERED',
     'width' => '10%',
     'default' => false,
-  ),
-  'DATE_MODIFIED' => 
-  array (
+  ],
+  'DATE_MODIFIED' =>
+   [
     'width' => '20%',
     'label' => 'LBL_DATE_MODIFIED',
     'link' => false,
     'default' => false,
-  ),
-  'TEAM_NAME' => array(
-    'width' => '2', 
+  ],
+  'TEAM_NAME' => [
+    'width' => '2',
     'label' => 'LBL_LIST_TEAM',
-    'default' => false
-  ),        
-);
-?>
+    'default' => false,
+  ],
+];

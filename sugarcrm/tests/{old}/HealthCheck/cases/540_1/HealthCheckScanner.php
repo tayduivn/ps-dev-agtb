@@ -12,15 +12,15 @@
 
 class S_540_1_PackageManager extends PackageManager
 {
-    function getinstalledPackages($types = array('module', 'langpack'))
+    function getinstalledPackages($types = ['module', 'langpack'])
     {
-        return array(
-            array(
+        return [
+            [
                 'enabled' => 'ENABLED',
                 'name' => 'Process Author',
                 'version' => '2.7',
-            ),
-        );
+            ],
+        ];
     }
 }
 

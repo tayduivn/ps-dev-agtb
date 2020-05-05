@@ -32,26 +32,26 @@ class Bug52757Test extends TestCase
      */
     protected function setUp() : void
     {
-        $beanList = array();
-        $beanFiles = array();
-        require('include/modules.php');
+        $beanList = [];
+        $beanFiles = [];
+        require 'include/modules.php';
         $GLOBALS['beanList'] = $beanList;
         $GLOBALS['beanFiles'] = $beanFiles;
 
         $this->report = new Report();
-        $this->report->report_def['full_table_list'] = array(
-            'self' => array(
-                'module' => 'Accounts'
-            ),
-            'Accounts:calls' => array(
+        $this->report->report_def['full_table_list'] = [
+            'self' => [
+                'module' => 'Accounts',
+            ],
+            'Accounts:calls' => [
                 'module' => 'Calls',
-                'parent' => 'self'
-            ),
-            'Accounts:calls:assigned_user_link' => array(
+                'parent' => 'self',
+            ],
+            'Accounts:calls:assigned_user_link' => [
                 'module' => 'Users',
-                'parent' => 'Accounts:calls'
-            )
-        );
+                'parent' => 'Accounts:calls',
+            ],
+        ];
     }
 
     /**
@@ -69,48 +69,48 @@ class Bug52757Test extends TestCase
      */
     function testReportValidationAllDataArePresent()
     {
-        $this->report->report_def['display_columns'] = array(
-            array(
+        $this->report->report_def['display_columns'] = [
+            [
                 'name' => 'id',
-                'table_key' => 'self'
-            ),
-            array(
+                'table_key' => 'self',
+            ],
+            [
                 'name' => 'id',
-                'table_key' => 'Accounts:calls'
-            ),
-            array(
+                'table_key' => 'Accounts:calls',
+            ],
+            [
                 'name' => 'id',
-                'table_key' => 'Accounts:calls:assigned_user_link'
-            )
-        );
+                'table_key' => 'Accounts:calls:assigned_user_link',
+            ],
+        ];
         $this->report->report_def['group_defs'] = $this->report->report_def['display_columns'];
         $this->report->report_def['summary_columns'] = $this->report->report_def['display_columns'];
 
-        $this->report->report_def['filters_def'] = array(
-            'Filter_1' => array(
-                array(
+        $this->report->report_def['filters_def'] = [
+            'Filter_1' => [
+                [
                     'name' => 'id',
-                    'table_key' => 'self'
-                ),
-                array(
+                    'table_key' => 'self',
+                ],
+                [
                     'name' => 'id',
-                    'table_key' => 'Accounts:calls'
-                ),
-                array(
+                    'table_key' => 'Accounts:calls',
+                ],
+                [
                     'name' => 'id',
-                    'table_key' => 'Accounts:calls:assigned_user_link'
-                ),
-                'operator' => 'AND'
-            )
-        );
+                    'table_key' => 'Accounts:calls:assigned_user_link',
+                ],
+                'operator' => 'AND',
+            ],
+        ];
 
         $this->report->fixReportDefs();
         $actual = array_keys($this->report->report_def['full_table_list']);
-        $expected = array(
+        $expected = [
             'self',
             'Accounts:calls',
-            'Accounts:calls:assigned_user_link'
-        );
+            'Accounts:calls:assigned_user_link',
+        ];
 
         $this->assertEquals($expected, $actual, 'List of tables is incorrect');
     }
@@ -120,39 +120,39 @@ class Bug52757Test extends TestCase
      */
     function testReportValidationAssignedUserIsNotPresent()
     {
-        $this->report->report_def['display_columns'] = array(
-            array(
+        $this->report->report_def['display_columns'] = [
+            [
                 'name' => 'id',
-                'table_key' => 'self'
-            ),
-            array(
+                'table_key' => 'self',
+            ],
+            [
                 'name' => 'id',
-                'table_key' => 'Accounts:calls'
-            )
-        );
+                'table_key' => 'Accounts:calls',
+            ],
+        ];
         $this->report->report_def['group_defs'] = $this->report->report_def['display_columns'];
         $this->report->report_def['summary_columns'] = $this->report->report_def['display_columns'];
 
-        $this->report->report_def['filters_def'] = array(
-            'Filter_1' => array(
-                array(
+        $this->report->report_def['filters_def'] = [
+            'Filter_1' => [
+                [
                     'name' => 'id',
-                    'table_key' => 'self'
-                ),
-                array(
+                    'table_key' => 'self',
+                ],
+                [
                     'name' => 'id',
-                    'table_key' => 'Accounts:calls'
-                ),
-                'operator' => 'AND'
-            )
-        );
+                    'table_key' => 'Accounts:calls',
+                ],
+                'operator' => 'AND',
+            ],
+        ];
 
         $this->report->fixReportDefs();
         $actual = array_keys($this->report->report_def['full_table_list']);
-        $expected = array(
+        $expected = [
             'self',
-            'Accounts:calls'
-        );
+            'Accounts:calls',
+        ];
 
         $this->assertEquals($expected, $actual, 'List of tables is incorrect');
     }
@@ -163,40 +163,40 @@ class Bug52757Test extends TestCase
      */
     function testReportValidationCallIsNotPresent()
     {
-        $this->report->report_def['display_columns'] = array(
-            array(
+        $this->report->report_def['display_columns'] = [
+            [
                 'name' => 'id',
-                'table_key' => 'self'
-            ),
-            array(
+                'table_key' => 'self',
+            ],
+            [
                 'name' => 'id',
-                'table_key' => 'Accounts:calls:assigned_user_link'
-            )
-        );
+                'table_key' => 'Accounts:calls:assigned_user_link',
+            ],
+        ];
         $this->report->report_def['group_defs'] = $this->report->report_def['display_columns'];
         $this->report->report_def['summary_columns'] = $this->report->report_def['display_columns'];
 
-        $this->report->report_def['filters_def'] = array(
-            'Filter_1' => array(
-                array(
+        $this->report->report_def['filters_def'] = [
+            'Filter_1' => [
+                [
                     'name' => 'id',
-                    'table_key' => 'self'
-                ),
-                array(
+                    'table_key' => 'self',
+                ],
+                [
                     'name' => 'id',
-                    'table_key' => 'Accounts:calls:assigned_user_link'
-                ),
-                'operator' => 'AND'
-            )
-        );
+                    'table_key' => 'Accounts:calls:assigned_user_link',
+                ],
+                'operator' => 'AND',
+            ],
+        ];
 
         $this->report->fixReportDefs();
         $actual = array_keys($this->report->report_def['full_table_list']);
-        $expected = array(
+        $expected = [
             'self',
             'Accounts:calls',
-            'Accounts:calls:assigned_user_link'
-        );
+            'Accounts:calls:assigned_user_link',
+        ];
 
         $this->assertEquals($expected, $actual, 'List of tables is incorrect');
     }
@@ -207,32 +207,32 @@ class Bug52757Test extends TestCase
      */
     function testReportValidationOnlyAssignedUserIsPresent()
     {
-        $this->report->report_def['display_columns'] = array(
-            array(
+        $this->report->report_def['display_columns'] = [
+            [
                 'name' => 'id',
-                'table_key' => 'Accounts:calls:assigned_user_link'
-            )
-        );
+                'table_key' => 'Accounts:calls:assigned_user_link',
+            ],
+        ];
         $this->report->report_def['group_defs'] = $this->report->report_def['display_columns'];
         $this->report->report_def['summary_columns'] = $this->report->report_def['display_columns'];
 
-        $this->report->report_def['filters_def'] = array(
-            'Filter_1' => array(
-                array(
+        $this->report->report_def['filters_def'] = [
+            'Filter_1' => [
+                [
                     'name' => 'id',
-                    'table_key' => 'Accounts:calls:assigned_user_link'
-                ),
-                'operator' => 'AND'
-            )
-        );
+                    'table_key' => 'Accounts:calls:assigned_user_link',
+                ],
+                'operator' => 'AND',
+            ],
+        ];
 
         $this->report->fixReportDefs();
         $actual = array_keys($this->report->report_def['full_table_list']);
-        $expected = array(
+        $expected = [
             'self',
             'Accounts:calls',
-            'Accounts:calls:assigned_user_link'
-        );
+            'Accounts:calls:assigned_user_link',
+        ];
 
         $this->assertEquals($expected, $actual, 'List of tables is incorrect');
     }
@@ -242,30 +242,30 @@ class Bug52757Test extends TestCase
      */
     function testReportValidationOnlyAccountIsPresent()
     {
-        $this->report->report_def['display_columns'] = array(
-            array(
+        $this->report->report_def['display_columns'] = [
+            [
                 'name' => 'id',
-                'table_key' => 'self'
-            )
-        );
+                'table_key' => 'self',
+            ],
+        ];
         $this->report->report_def['group_defs'] = $this->report->report_def['display_columns'];
         $this->report->report_def['summary_columns'] = $this->report->report_def['display_columns'];
 
-        $this->report->report_def['filters_def'] = array(
-            'Filter_1' => array(
-                array(
+        $this->report->report_def['filters_def'] = [
+            'Filter_1' => [
+                [
                     'name' => 'id',
-                    'table_key' => 'self'
-                ),
-                'operator' => 'AND'
-            )
-        );
+                    'table_key' => 'self',
+                ],
+                'operator' => 'AND',
+            ],
+        ];
 
         $this->report->fixReportDefs();
         $actual = array_keys($this->report->report_def['full_table_list']);
-        $expected = array(
-            'self'
-        );
+        $expected = [
+            'self',
+        ];
 
         $this->assertEquals($expected, $actual, 'List of tables is incorrect');
     }

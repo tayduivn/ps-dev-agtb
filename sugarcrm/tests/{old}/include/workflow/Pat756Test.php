@@ -12,7 +12,7 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once('include/workflow/action_utils.php');
+require_once 'include/workflow/action_utils.php';
 
 class Pat756Test extends TestCase
 {
@@ -37,17 +37,17 @@ class Pat756Test extends TestCase
 
     function testProcessActionNewAssnUserId()
     {
-        $action_array = array(
+        $action_array = [
             'action_type' => 'new',
             'action_module' => 'notes',
             'rel_module' => '',
             'rel_module_type' => 'all',
-            'basic' => array(
+            'basic' => [
                 'name' => 'note756',
-            ),
-            'basic_ext' => array(),
-            'advanced' => array(),
-        );
+            ],
+            'basic_ext' => [],
+            'advanced' => [],
+        ];
 
         process_action_new($this->task, $action_array);
 

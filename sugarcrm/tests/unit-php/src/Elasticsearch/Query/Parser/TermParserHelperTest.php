@@ -31,23 +31,23 @@ class TermParserHelperTest extends TestCase
 
     public function providerIsOperatorTest()
     {
-        return array(
-            array('AND', true),
-            array('OR', true),
-            array('NOT', true),
-            array('|', true),
-            array('&', true),
-            array('-', true),
-            array('', false),
-            array('notor', false),
-            array('and', false),
-            array('or', false),
-            array('not', false),
-            array('And', false),
-            array('Or', false),
-            array('Not', false),
-            array(array('a'), false),
-        );
+        return [
+            ['AND', true],
+            ['OR', true],
+            ['NOT', true],
+            ['|', true],
+            ['&', true],
+            ['-', true],
+            ['', false],
+            ['notor', false],
+            ['and', false],
+            ['or', false],
+            ['not', false],
+            ['And', false],
+            ['Or', false],
+            ['Not', false],
+            [['a'], false],
+        ];
     }
 
     /**
@@ -61,15 +61,15 @@ class TermParserHelperTest extends TestCase
 
     public function providerIsAndOperatorTest()
     {
-        return array(
-            array('AND', true),
-            array('OR', false),
-            array('NOT', false),
-            array('|', false),
-            array('&', true),
-            array('-', false),
-            array('', false),
-        );
+        return [
+            ['AND', true],
+            ['OR', false],
+            ['NOT', false],
+            ['|', false],
+            ['&', true],
+            ['-', false],
+            ['', false],
+        ];
     }
 
     /**
@@ -83,15 +83,15 @@ class TermParserHelperTest extends TestCase
 
     public function providerIsOrOperatorTest()
     {
-        return array(
-            array('AND', false),
-            array('OR', true),
-            array('NOT', false),
-            array('|', true),
-            array('&', false),
-            array('-', false),
-            array('', false),
-        );
+        return [
+            ['AND', false],
+            ['OR', true],
+            ['NOT', false],
+            ['|', true],
+            ['&', false],
+            ['-', false],
+            ['', false],
+        ];
     }
 
     /**
@@ -105,15 +105,15 @@ class TermParserHelperTest extends TestCase
 
     public function providerIsNotOperatorTest()
     {
-        return array(
-            array('AND', false),
-            array('OR', false),
-            array('NOT', true),
-            array('|', false),
-            array('&', false),
-            array('-', true),
-            array('', false),
-        );
+        return [
+            ['AND', false],
+            ['OR', false],
+            ['NOT', true],
+            ['|', false],
+            ['&', false],
+            ['-', true],
+            ['', false],
+        ];
     }
 
     /**
@@ -127,19 +127,19 @@ class TermParserHelperTest extends TestCase
 
     public function providerGetOperatorTest()
     {
-        return array(
-            array('AND', 'AND'),
-            array('OR', 'OR'),
-            array('NOT', 'NOT'),
-            array('|', 'OR'),
-            array('&', 'AND'),
-            array('-', 'NOT'),
+        return [
+            ['AND', 'AND'],
+            ['OR', 'OR'],
+            ['NOT', 'NOT'],
+            ['|', 'OR'],
+            ['&', 'AND'],
+            ['-', 'NOT'],
             // empty string
-            array('', false),
+            ['', false],
             // operator is case-sensitive
-            array('and', false),
-            array('or', false),
-            array('not', false),
-        );
+            ['and', false],
+            ['or', false],
+            ['not', false],
+        ];
     }
 }

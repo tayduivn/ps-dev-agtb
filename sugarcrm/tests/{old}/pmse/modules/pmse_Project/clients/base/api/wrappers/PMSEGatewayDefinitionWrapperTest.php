@@ -27,70 +27,69 @@ class PMSEGatewayDefinitionWrapperTest extends TestCase
         $this->mocGateway = $this->getMockBuilder("pmse_BpmnGateway")
                 ->disableAutoload()
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve_by_string_fields'))
+                ->setMethods(['retrieve_by_string_fields'])
                 ->getMock();
         
         $this->mocGateway->id = 1;
         $this->mocGatewayDefinition = $this->getMockBuilder("pmse_BpmGatewayDefinition")
                 ->disableAutoload()
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve_by_string_fields'))
+                ->setMethods(['retrieve_by_string_fields'])
                 ->getMock();
         $this->mocGatewayDefinition->id = 1;
         $this->mocFlow = $this->getMockBuilder("pmse_BpmnFlow")
                 ->disableAutoload()
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve_by_string_fields', 'save', 'process_order_by', 'get_full_list'))
+                ->setMethods(['retrieve_by_string_fields', 'save', 'process_order_by', 'get_full_list'])
                 ->getMock();
         $this->mocFlow->id = 1;
         $this->mocFlow->table_name = 'some_table';
         $this->gatDefWrapper = $this->getMockBuilder('PMSEGatewayDefinitionWrapper')
                 ->disableOriginalConstructor()
-                ->setMethods(array('getSelectRows'))
+                ->setMethods(['getSelectRows'])
                 ->getMock();
         $this->gatDefWrapper->setGateway($this->mocGateway);
         $this->gatDefWrapper->setGatewayDefinition($this->mocGatewayDefinition);
         $this->gatDefWrapper->setFlowBean($this->mocFlow);
 
-        $this->arguments = array ( 'id' => '1', 'record' => 1, 'data' => array('flo_uid' => '1', 'flo_condition'=>'a>0'));
+        $this->arguments =  [ 'id' => '1', 'record' => 1, 'data' => ['flo_uid' => '1', 'flo_condition'=>'a>0']];
     }
     public function testGet()
     {
         $this->gatDefWrapper->expects($this->any())
                 ->method('getSelectRows')
                 ->will($this->returnValue(
-                        array(
-                            "rowList" => array(
-                                "1" => array(
+                    [
+                            "rowList" => [
+                                "1" => [
                                    'flo_uid' => "1",
-                                   'flo_condition' => "{new condition}"
-                                )
-                            )
-                        )
-                    ));
+                                   'flo_condition' => "{new condition}",
+                                ],
+                            ],
+                        ]
+                ));
 
         $this->mocGateway->prj_id = 1;
         $this->mocGateway->prj_uid = '2193798123';
-        $this->mocGateway->fetched_row = array(
+        $this->mocGateway->fetched_row = [
             'gat_id' => 1,
-        );
+        ];
         $this->mocGateway->expects($this->exactly(1))
             ->method("retrieve_by_string_fields")
             ->with($this->isType('array'))
-            ->will($this->returnValue($this->mocGateway)
-            );
+            ->will($this->returnValue($this->mocGateway));
         $this->mocGateway->gat_id = '1234';
 
-        $resultArray = array(
-            (object) array(
+        $resultArray = [
+            (object) [
                 'flo_uid' => 'flo01',
-                'flo_condition' => 'something == some_other_thing'
-            ),
-            (object) array(
+                'flo_condition' => 'something == some_other_thing',
+            ],
+            (object) [
                 'flo_uid' => 'flo02',
-                'flo_condition' => 'something == some_other_thing_again'
-            )
-        );
+                'flo_condition' => 'something == some_other_thing_again',
+            ],
+        ];
         
         $this->mocFlow->expects($this->once())
                 ->method('get_full_list')
@@ -105,22 +104,21 @@ class PMSEGatewayDefinitionWrapperTest extends TestCase
         $this->assertArrayHasKey('data', $result);
         $this->assertEquals(true, $result['success']);
     }
-    public function testPut ()
+    public function testPut()
     {
         $this->mocGateway->expects($this->exactly(1))
             ->method("retrieve_by_string_fields")
             ->with($this->isType('array'))
-            ->will($this->returnValue($this->mocGateway)
-            );
+            ->will($this->returnValue($this->mocGateway));
 
         $this->mocGateway->prj_id = 1;
         $this->mocGateway->prj_uid = '2193798123';
-        $this->mocGateway->fetched_row = array(
+        $this->mocGateway->fetched_row = [
             'gat_id' => 1,
-            'prj_uid' => '2193798123'
-        );
+            'prj_uid' => '2193798123',
+        ];
 
-        $arguments = array ( 'id' => '1', 'record' => 1, 'data' => array(array('flo_uid' => '1', 'flo_condition'=>'a>0')));
+        $arguments =  [ 'id' => '1', 'record' => 1, 'data' => [['flo_uid' => '1', 'flo_condition'=>'a>0']]];
         
         $result = $this->gatDefWrapper->_put($arguments);
         $this->assertIsArray($result);
@@ -130,11 +128,11 @@ class PMSEGatewayDefinitionWrapperTest extends TestCase
     
     public function testPost()
     {
-        $someArgs = array();
+        $someArgs = [];
         $result = $this->gatDefWrapper->_post($someArgs);
-        $expectedResult = array(
-            "success" => false
-        );        
+        $expectedResult = [
+            "success" => false,
+        ];
         $this->assertIsArray($result);
         $this->assertEquals($expectedResult, $result);
     }

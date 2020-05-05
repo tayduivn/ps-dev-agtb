@@ -33,7 +33,7 @@ class PMSESendMessageEventTest extends TestCase
     {
         $this->loggerMock = $this->getMockBuilder('PMSELogger')
             ->disableOriginalConstructor()
-            ->setMethods(array('info', 'debug', 'warning', 'error'))
+            ->setMethods(['info', 'debug', 'warning', 'error'])
             ->getMock();
     }
 
@@ -41,7 +41,7 @@ class PMSESendMessageEventTest extends TestCase
     {
         $this->sendMessageEvent = $this->getMockBuilder('PMSESendMessageEvent')
             ->disableOriginalConstructor()
-            ->setMethods(array('prepareResponse', 'sendEmail'))
+            ->setMethods(['prepareResponse', 'sendEmail'])
             ->getMock();
 
         $this->sendMessageEvent->expects($this->once())
@@ -50,7 +50,7 @@ class PMSESendMessageEventTest extends TestCase
         $this->sendMessageEvent->expects($this->once())
             ->method('sendEmail');
 
-        $flowData = array();
+        $flowData = [];
         $bean = new stdClass();
 
         $this->sendMessageEvent->run($flowData, $bean, 'RESUME_EXECUTION');
@@ -60,7 +60,7 @@ class PMSESendMessageEventTest extends TestCase
     {
         $this->sendMessageEvent = $this->getMockBuilder('PMSESendMessageEvent')
             ->disableOriginalConstructor()
-            ->setMethods(array('prepareResponse', 'sendEmail'))
+            ->setMethods(['prepareResponse', 'sendEmail'])
             ->getMock();
 
         $emailHandler = $this->getMockBuilder('PMSEEmailHandler')
@@ -76,7 +76,7 @@ class PMSESendMessageEventTest extends TestCase
         $this->sendMessageEvent->getEmailHandler()->expects($this->once())
             ->method('queueEmail');
 
-        $flowData = array();
+        $flowData = [];
         $bean = new stdClass();
 
         $this->sendMessageEvent->run($flowData, $bean, '');
@@ -86,27 +86,27 @@ class PMSESendMessageEventTest extends TestCase
     {
         $this->sendMessageEvent = $this->getMockBuilder('PMSESendMessageEvent')
             ->disableOriginalConstructor()
-            ->setMethods(array('retrieveBean', 'getCachedEmail'))
+            ->setMethods(['retrieveBean', 'getCachedEmail'])
             ->getMock();
 
         $eventDefinition = $this->getMockBuilder('PMSEEventDefinition')
             ->disableOriginalConstructor()
-            ->setMethods(array('retrieve'))
+            ->setMethods(['retrieve'])
             ->getMock();
 
-        $eventDefinition->evn_criteria = array();
-        $eventDefinition->evn_params = json_encode(array());
+        $eventDefinition->evn_criteria = [];
+        $eventDefinition->evn_params = json_encode([]);
 
         $this->sendMessageEvent->setEventDefinitionBean($eventDefinition);
 
         $caseHandler = $this->getMockBuilder('PMSECaseFlowHandler')
             ->disableOriginalConstructor()
-            ->setMethods(array('retrieveBean'))
+            ->setMethods(['retrieveBean'])
             ->getMock();
         
         $emailHandler = $this->getMockBuilder('PMSEEmailHandler')
             ->disableOriginalConstructor()
-            ->setMethods(array('processEmailsFromJson', 'sendTemplateEmail'))
+            ->setMethods(['processEmailsFromJson', 'sendTemplateEmail'])
             ->getMock();
 
         $emailHandler->expects($this->exactly(1))
@@ -114,19 +114,19 @@ class PMSESendMessageEventTest extends TestCase
 
         $emailHandler->expects($this->exactly(1))
             ->method('sendTemplateEmail')
-            ->will($this->returnValue(array(
-                'result'=>array('successful sending'), 
-            )));
+            ->will($this->returnValue([
+                'result'=>['successful sending'],
+            ]));
 
         $this->sendMessageEvent->setCaseFlowHandler($caseHandler);
         $this->sendMessageEvent->setEmailHandler($emailHandler);
 
-        $flowData = array (
+        $flowData =  [
             'cas_sugar_module' => 'Leads',
             'cas_sugar_object_id' => 'anc7832jd2387hd23',
             'bpmn_id' => 'aosijdi9qwdj',
-            'id' => 'caseidja9823ju89d'
-        );
+            'id' => 'caseidja9823ju89d',
+        ];
         
         $this->sendMessageEvent->sendEmail($flowData);
     }
@@ -135,26 +135,26 @@ class PMSESendMessageEventTest extends TestCase
     {
         $this->sendMessageEvent = $this->getMockBuilder('PMSESendMessageEvent')
             ->disableOriginalConstructor()
-            ->setMethods(array('retrieveBean'))
+            ->setMethods(['retrieveBean'])
             ->getMock();
 
         $eventDefinition = $this->getMockBuilder('PMSEEventDefinition')
             ->disableOriginalConstructor()
-            ->setMethods(array('retrieve'))
+            ->setMethods(['retrieve'])
             ->getMock();
 
-        $eventDefinition->evn_criteria = array();
-        $eventDefinition->evn_params = json_encode(array());
+        $eventDefinition->evn_criteria = [];
+        $eventDefinition->evn_params = json_encode([]);
 
         $this->sendMessageEvent->setEventDefinitionBean($eventDefinition);
 
         $caseHandler = $this->getMockBuilder('PMSECaseFlowHandler')
             ->disableOriginalConstructor()
-            ->setMethods(array('retrieveBean'))
+            ->setMethods(['retrieveBean'])
             ->getMock();
         $emailHandler = $this->getMockBuilder('PMSEEmailHandler')
             ->disableOriginalConstructor()
-            ->setMethods(array('processEmailsFromJson', 'sendTemplateEmail'))
+            ->setMethods(['processEmailsFromJson', 'sendTemplateEmail'])
             ->getMock();
 
         $emailHandler->expects($this->exactly(1))
@@ -162,20 +162,20 @@ class PMSESendMessageEventTest extends TestCase
 
         $emailHandler->expects($this->exactly(1))
             ->method('sendTemplateEmail')
-            ->will($this->returnValue(array(
-                'result'=>array(), 
-                'ErrorInfo' => 'Some Error happened'
-            )));
+            ->will($this->returnValue([
+                'result'=>[],
+                'ErrorInfo' => 'Some Error happened',
+            ]));
 
         $this->sendMessageEvent->setCaseFlowHandler($caseHandler);
         $this->sendMessageEvent->setEmailHandler($emailHandler);
 
-        $flowData = array (
+        $flowData =  [
             'cas_sugar_module' => 'Leads',
             'cas_sugar_object_id' => 'anc7832jd2387hd23',
             'bpmn_id' => 'aosijdi9qwdj',
-            'id' => 'caseidja9823ju89d'
-        );
+            'id' => 'caseidja9823ju89d',
+        ];
 
         $this->sendMessageEvent->setLogger($this->loggerMock);
         
@@ -186,27 +186,27 @@ class PMSESendMessageEventTest extends TestCase
     {
         $this->sendMessageEvent = $this->getMockBuilder('PMSESendMessageEvent')
             ->disableOriginalConstructor()
-            ->setMethods(array('retrieveBean'))
+            ->setMethods(['retrieveBean'])
             ->getMock();
 
         $eventDefinition = $this->getMockBuilder('PMSEEventDefinition')
             ->disableOriginalConstructor()
-            ->setMethods(array('retrieve'))
+            ->setMethods(['retrieve'])
             ->getMock();
 
-        $eventDefinition->evn_criteria = array();
-        $eventDefinition->evn_params = json_encode(array());
+        $eventDefinition->evn_criteria = [];
+        $eventDefinition->evn_params = json_encode([]);
 
         $this->sendMessageEvent->setEventDefinitionBean($eventDefinition);
 
         $caseHandler = $this->getMockBuilder('PMSECaseFlowHandler')
             ->disableOriginalConstructor()
-            ->setMethods(array('retrieveBean'))
+            ->setMethods(['retrieveBean'])
             ->getMock();
         
         $emailHandler = $this->getMockBuilder('PMSEEmailHandler')
             ->disableOriginalConstructor()
-            ->setMethods(array('processEmailsFromJson', 'sendTemplateEmail'))
+            ->setMethods(['processEmailsFromJson', 'sendTemplateEmail'])
             ->getMock();
 
         $emailHandler->expects($this->exactly(1))
@@ -214,20 +214,20 @@ class PMSESendMessageEventTest extends TestCase
 
         $emailHandler->expects($this->exactly(1))
             ->method('sendTemplateEmail')
-            ->will($this->returnValue(array(
-                'result'=>array('something'), 
-                'ErrorMessage' => 'Some Error happened again'
-            )));
+            ->will($this->returnValue([
+                'result'=>['something'],
+                'ErrorMessage' => 'Some Error happened again',
+            ]));
 
         $this->sendMessageEvent->setCaseFlowHandler($caseHandler);
         $this->sendMessageEvent->setEmailHandler($emailHandler);
 
-        $flowData = array (
+        $flowData =  [
             'cas_sugar_module' => 'Leads',
             'cas_sugar_object_id' => 'anc7832jd2387hd23',
             'bpmn_id' => 'aosijdi9qwdj',
-            'id' => 'caseidja9823ju89d'
-        );
+            'id' => 'caseidja9823ju89d',
+        ];
 
         $this->sendMessageEvent->setLogger($this->loggerMock);
         

@@ -122,8 +122,7 @@ class TeamSecurityTest extends TestCase
         ];
 
         foreach ($expected as $userName => $data) {
-            foreach (self::configurationProvider() as
-                     $configName => list($useDenorm, $useWhere, $prefetchForRetrieve)) {
+            foreach (self::configurationProvider() as $configName => list($useDenorm, $useWhere, $prefetchForRetrieve)) {
                 yield sprintf('%s, %s', $userName, $configName) => [
                     $useDenorm,
                     $useWhere,
@@ -152,7 +151,7 @@ class TeamSecurityTest extends TestCase
         $query = new SugarQuery();
         $query->from(BeanFactory::newBean('Contacts'));
         $query->select('last_name');
-        $join = $query->join('accounts', array('joinType' => 'LEFT'));
+        $join = $query->join('accounts', ['joinType' => 'LEFT']);
         $query->where()
             ->equals('created_by', self::$admin->id)
             ->equals($join->joinName() . '.id', $account->id);
@@ -177,8 +176,7 @@ class TeamSecurityTest extends TestCase
         ];
 
         foreach ($expected as $userName => $data) {
-            foreach (self::configurationProvider() as
-                     $configName => list($useDenorm, $useWhere, $prefetchForRetrieve)) {
+            foreach (self::configurationProvider() as $configName => list($useDenorm, $useWhere, $prefetchForRetrieve)) {
                 yield sprintf('%s, %s', $userName, $configName) => array_merge(
                     [$useDenorm, $useWhere, $prefetchForRetrieve],
                     $data
@@ -281,8 +279,7 @@ class TeamSecurityTest extends TestCase
         ];
 
         foreach ($expected as $userName => $data) {
-            foreach (self::configurationProvider() as
-                     $configName => list($useDenorm, $useWhere, $prefetchForRetrieve)) {
+            foreach (self::configurationProvider() as $configName => list($useDenorm, $useWhere, $prefetchForRetrieve)) {
                 yield sprintf('%s, %s', $userName, $configName) => [
                     $useDenorm,
                     $useWhere,
@@ -402,8 +399,7 @@ class TeamSecurityTest extends TestCase
         ];
 
         foreach ($expected as $userName => $data) {
-            foreach (self::configurationProvider() as
-                     $configName => list($useDenorm, $useWhere, $prefetchForRetrieve)) {
+            foreach (self::configurationProvider() as $configName => list($useDenorm, $useWhere, $prefetchForRetrieve)) {
                 yield sprintf('%s, %s', $userName, $configName) => [
                     $useDenorm,
                     $useWhere,

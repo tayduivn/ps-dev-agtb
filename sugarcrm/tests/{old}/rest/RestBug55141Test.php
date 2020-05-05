@@ -12,7 +12,8 @@
 
 
 
-class RestBug55141Test extends RestTestBase {
+class RestBug55141Test extends RestTestBase
+{
     protected function setUp() : void
     {
         parent::setUp();
@@ -29,7 +30,8 @@ class RestBug55141Test extends RestTestBase {
     /**
      * @group rest
      */
-    public function testCache() {
+    public function testCache()
+    {
         // Get the manager to clear the metadata
         $mm = MetaDataManager::getManager();
         

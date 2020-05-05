@@ -20,47 +20,40 @@ class Bug48571Test extends TestCase
 
     protected function setUp() : void
     {
-        if(isset($GLOBALS['sugar_config']['default_theme']))
-        {
+        if (isset($GLOBALS['sugar_config']['default_theme'])) {
             $this->globalDefaultTheme = $GLOBALS['sugar_config']['default_theme'];
             unset($GLOBALS['sugar_config']['default_theme']);
         }
 
-        if(isset($GLOBALS['sugar_config']['disabled_themes']))
-        {
+        if (isset($GLOBALS['sugar_config']['disabled_themes'])) {
             $this->unavailableThemes = $GLOBALS['sugar_config']['disabled_themes'];
             unset($GLOBALS['sugar_config']['disabled_themes']);
         }
 
-        if(file_exists('custom/themes/default/themedef.php'))
-        {
+        if (file_exists('custom/themes/default/themedef.php')) {
             $this->customThemeDef = file_get_contents('custom/themes/default/themedef.php');
             unlink('custom/themes/default/themedef.php');
         }
 
         //Blowout all existing cache/themes that may not have been cleaned up
-        if(file_exists('cache/themes'))
-        {
+        if (file_exists('cache/themes')) {
             rmdir_recursive('cache/themes');
         }
     }
 
     protected function tearDown() : void
     {
-        if(!empty($this->globalDefaultTheme))
-        {
+        if (!empty($this->globalDefaultTheme)) {
             $GLOBALS['sugar_config']['default_theme'] = $this->globalDefaultTheme;
             unset($this->globalDefaultTheme);
         }
 
-        if(!empty($this->unavailableThemes))
-        {
+        if (!empty($this->unavailableThemes)) {
             $GLOBALS['sugar_config']['disabled_themes'] = $this->unavailableThemes;
             unset($this->unavailableThemes);
         }
 
-        if(!empty($this->customThemeDef))
-        {
+        if (!empty($this->customThemeDef)) {
             file_put_contents('custom/themes/default/themedef.php', $this->customThemeDef);
         }
     }

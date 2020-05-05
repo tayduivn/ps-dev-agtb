@@ -54,56 +54,56 @@ class MultienumTest extends TestCase
         $bean->test6 = '^Test2^,^Test6^,^Test4^';
         $bean->test7 = '^Test1^,^Test7^,^Test5^';
 
-        return array(
+        return [
             // Tests no data value given
-            array(
+            [
                 'bean' => $bean,
                 'name' => 'test1',
-                'data' => array(),
+                'data' => [],
                 'expect' => false,
-            ),
+            ],
             // Tests no bean property set
-            array(
+            [
                 'bean' => $bean,
                 'name' => 'test2',
-                'data' => array('test2' => array('Test1')),
+                'data' => ['test2' => ['Test1']],
                 'expect' => false,
-            ),
+            ],
             // Tests no change of data values or order
-            array(
+            [
                 'bean' => $bean,
                 'name' => 'test3',
-                'data' => array('test3' => array('Test1', 'Test2', 'Test4')),
+                'data' => ['test3' => ['Test1', 'Test2', 'Test4']],
                 'expect' => false,
-            ),
+            ],
             // Tests no change of data values with different order
-            array(
+            [
                 'bean' => $bean,
                 'name' => 'test4',
-                'data' => array('test4' => array('Test7', 'Test3', 'Test9')),
+                'data' => ['test4' => ['Test7', 'Test3', 'Test9']],
                 'expect' => false,
-            ),
+            ],
             // Tests value change by adding more
-            array(
+            [
                 'bean' => $bean,
                 'name' => 'test5',
-                'data' => array('test5' => array('Test5', 'Test3', 'Test1', 'Test7')),
+                'data' => ['test5' => ['Test5', 'Test3', 'Test1', 'Test7']],
                 'expect' => true,
-            ),
+            ],
             // Tests value change by removing
-            array(
+            [
                 'bean' => $bean,
                 'name' => 'test6',
-                'data' => array('test6' => array('Test2', 'Test6')),
+                'data' => ['test6' => ['Test2', 'Test6']],
                 'expect' => true,
-            ),
+            ],
             // Tests value change
-            array(
+            [
                 'bean' => $bean,
                 'name' => 'test7',
-                'data' => array('test7' => array('Test8', 'Test6', 'Test4')),
+                'data' => ['test7' => ['Test8', 'Test6', 'Test4']],
                 'expect' => true,
-            ),
-        );
+            ],
+        ];
     }
 }

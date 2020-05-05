@@ -10,11 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
  
-//Workflow plugins Meta Data Arrays 
-$plugin_meta_array = array ( 
+//Workflow plugins Meta Data Arrays
+$plugin_meta_array =  [
 
-); 
-
- 
-
-?>
+];

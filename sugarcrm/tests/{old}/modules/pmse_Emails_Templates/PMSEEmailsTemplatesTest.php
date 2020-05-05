@@ -30,8 +30,8 @@ class PMSEEmailsTemplatesTest extends TestCase
             ->setMethods(null)
             ->getMock();
 
-        $GLOBALS['app_list_strings']['moduleList'] = array();
-        $this->object->beanList = array('Emails' => 'Email');
+        $GLOBALS['app_list_strings']['moduleList'] = [];
+        $this->object->beanList = ['Emails' => 'Email'];
 
         $output = $this->object->retrieveFields('Emails', null, 20, 0, 'Emails');
         $fields = $this->getOutputFields($output['records']);
@@ -47,7 +47,7 @@ class PMSEEmailsTemplatesTest extends TestCase
      */
     protected function getOutputFields($result)
     {
-        $fields = array();
+        $fields = [];
         if (!empty($result)) {
             foreach ($result as $field) {
                 $fields[] = $field['id'];

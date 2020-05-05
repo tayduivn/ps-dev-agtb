@@ -17,26 +17,25 @@
  * Contributor(s): ______________________________________..
  ********************************************************************************/
  
-$viewdefs['Accounts']['DetailView'] = array(
-	'templateMeta' => array(
-                            'maxColumns' => '1', 
-                            'widths' => array(
-								array('label' => '10', 'field' => '30'), 
-                            ),                                  
-                           ),
-    'panels' => array(
-    	array(array('name'=>'name', 'displayParams'=>array('required'=>true,'wireless_edit_only'=>true,)),),
-	    array('phone_office'),
-		array(array('name'=>'website', 'displayParams'=>array('type'=>'link'))),
-		array('email1'),
-		array('billing_address_street'),
-		array('billing_address_city'),
-		array('billing_address_state'),
-		array('billing_address_postalcode'),
-		array('billing_address_country'),
-		array('assigned_user_name'),
-		array('team_name'),
+$viewdefs['Accounts']['DetailView'] = [
+    'templateMeta' => [
+                            'maxColumns' => '1',
+                            'widths' => [
+                                ['label' => '10', 'field' => '30'],
+                            ],
+                           ],
+    'panels' => [
+        [['name'=>'name', 'displayParams'=>['required'=>true,'wireless_edit_only'=>true,]],],
+        ['phone_office'],
+        [['name'=>'website', 'displayParams'=>['type'=>'link']]],
+        ['email1'],
+        ['billing_address_street'],
+        ['billing_address_city'],
+        ['billing_address_state'],
+        ['billing_address_postalcode'],
+        ['billing_address_country'],
+        ['assigned_user_name'],
+        ['team_name'],
 
-	),
-);
-?>
+    ],
+];

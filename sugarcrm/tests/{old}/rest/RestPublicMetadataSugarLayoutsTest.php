@@ -11,19 +11,20 @@
  */
 
 
-class RestPublicMetadataSugarLayoutsTest extends RestTestBase {
-    protected $_testPaths = array(
+class RestPublicMetadataSugarLayoutsTest extends RestTestBase
+{
+    protected $_testPaths = [
         'wiggle' => 'clients/base/layouts/wiggle/wiggle.php',
         'woggle' => 'custom/clients/base/layouts/woggle/woggle.php',
         'bizzle' => 'clients/portal/layouts/bizzle/bizzle.php',
         'bozzle' => 'custom/clients/portal/layouts/bozzle/bozzle.php',
         'pizzle' => 'clients/mobile/layouts/dizzle/dazzle.php', // Tests improperly named metadata files
         'pozzle' => 'custom/clients/mobile/layouts/pozzle/pozzle.php',
-    );
+    ];
 
-    protected $_testFilesCreated = array();
+    protected $_testFilesCreated = [];
 
-    protected $_oldFileContents = array();
+    protected $_oldFileContents = [];
 
     protected function setUp() : void
     {
@@ -62,7 +63,8 @@ class RestPublicMetadataSugarLayoutsTest extends RestTestBase {
     /**
      * @group rest
      */
-    public function testBaseLayoutRequestAll() {
+    public function testBaseLayoutRequestAll()
+    {
         $reply = $this->_restCall('metadata/public');
         $this->assertNotEmpty($reply['reply']['layouts'], 'Layouts return data is missing');
         $this->assertTrue(isset($reply['reply']['layouts']['_hash']), 'Layout hash is missing.');
@@ -71,7 +73,8 @@ class RestPublicMetadataSugarLayoutsTest extends RestTestBase {
     /**
      * @group rest
      */
-    public function testBaseLayoutRequestLayoutsOnly() {
+    public function testBaseLayoutRequestLayoutsOnly()
+    {
         $reply = $this->_restCall('metadata/public?type_filter=layouts');
         $this->assertNotEmpty($reply['reply']['layouts'], 'Layouts return data is missing');
         $this->assertTrue(isset($reply['reply']['layouts']['_hash']), 'Layout hash is missing.');
@@ -80,7 +83,8 @@ class RestPublicMetadataSugarLayoutsTest extends RestTestBase {
     /**
      * @group rest
      */
-    public function testPortalLayoutRequestAll() {
+    public function testPortalLayoutRequestAll()
+    {
         $reply = $this->_restCall('metadata/public?platform=portal');
         $this->assertNotEmpty($reply['reply']['layouts'], 'Layouts return data is missing');
         $this->assertTrue(isset($reply['reply']['layouts']['_hash']), 'Layout hash is missing.');
@@ -89,7 +93,8 @@ class RestPublicMetadataSugarLayoutsTest extends RestTestBase {
     /**
      * @group rest
      */
-    public function testPortalLayoutRequestLayoutsOnly() {
+    public function testPortalLayoutRequestLayoutsOnly()
+    {
         $reply = $this->_restCall('metadata/public?type_filter=layouts&platform=portal');
         $this->assertNotEmpty($reply['reply']['layouts'], 'Layouts return data is missing');
         $this->assertTrue(isset($reply['reply']['layouts']['_hash']), 'Layout hash is missing.');
@@ -98,7 +103,8 @@ class RestPublicMetadataSugarLayoutsTest extends RestTestBase {
     /**
      * @group rest
      */
-    public function testMobileLayoutRequestAll() {
+    public function testMobileLayoutRequestAll()
+    {
         $reply = $this->_restCall('metadata/public?platform=mobile');
         $this->assertNotEmpty($reply['reply']['layouts'], 'Layouts return data is missing');
         $this->assertTrue(isset($reply['reply']['layouts']['_hash']), 'Layout hash is missing.');
@@ -107,7 +113,8 @@ class RestPublicMetadataSugarLayoutsTest extends RestTestBase {
     /**
      * @group rest
      */
-    public function testMobileLayoutRequestLayoutsOnly() {
+    public function testMobileLayoutRequestLayoutsOnly()
+    {
         $reply = $this->_restCall('metadata/public?type_filter=layouts&platform=mobile');
         $replyBase = $this->_restCall('metadata/public?type_filter=layouts&platform=base');
         $this->assertNotEmpty($reply['reply']['layouts'], 'Layouts return data is missing');

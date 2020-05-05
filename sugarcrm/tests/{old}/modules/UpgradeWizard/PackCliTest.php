@@ -26,33 +26,33 @@ class PackCliTest extends TestCase
 
     public function packUpgradeWizardCliProvider()
     {
-        return array(
-            array(
-                array(
-                    'version' => '1.2.3.4'
-                ),
-                array(
+        return [
+            [
+                [
                     'version' => '1.2.3.4',
-                    'build' => '998'
-                ),
-            ),
-            array(
-                array(),
-                array(
+                ],
+                [
+                    'version' => '1.2.3.4',
+                    'build' => '998',
+                ],
+            ],
+            [
+                [],
+                [
                     'version' => '7.6.1.0',
-                    'build' => '998'
-                ),
-            ),
-            array(
-                array(
-                    'build' => '1.2.3.4'
-                ),
-                array(
+                    'build' => '998',
+                ],
+            ],
+            [
+                [
+                    'build' => '1.2.3.4',
+                ],
+                [
                     'version' => '7.6.1.0',
-                    'build' => '1.2.3.4'
-                ),
-            )
-        );
+                    'build' => '1.2.3.4',
+                ],
+            ],
+        ];
     }
 
     /**

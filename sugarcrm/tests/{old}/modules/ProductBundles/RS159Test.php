@@ -21,14 +21,14 @@ class RS159Test extends TestCase
     protected $productBundle = null;
 
     /** @var array */
-    protected $remove = array();
+    protected $remove = [];
 
     protected function setUp() : void
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
-        $this->remove = array();
+        $this->remove = [];
         $this->productBundle = new ProductBundle();
     }
 

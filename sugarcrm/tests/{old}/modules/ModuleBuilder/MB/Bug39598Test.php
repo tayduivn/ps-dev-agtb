@@ -73,7 +73,7 @@ class Bug39598Test extends TestCase
         $mbModule = new MBModule('NewMod', $this->relationshipFileDir, 'test', 'test');
         $expectedNewName = 'test_NewMod';
         $mbModule->renameRelationships($this->relationshipFileDir, 'Pk8_Mod11', $expectedNewName);
-        $relationships = array();
+        $relationships = [];
         include $this->relationshipFilePath;
 
         // check many-to-many lhs module name and relationship name change

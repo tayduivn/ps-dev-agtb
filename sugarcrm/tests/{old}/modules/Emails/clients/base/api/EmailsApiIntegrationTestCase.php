@@ -83,7 +83,7 @@ class EmailsApiIntegrationTestCase extends TestCase
      * @param array $args
      * @return array The API response from deleting the Emails record.
      */
-    protected function deleteRecord($id, $args = array())
+    protected function deleteRecord($id, $args = [])
     {
         $args['module'] = 'Emails';
         $args['record'] = $id;
@@ -173,16 +173,16 @@ class EmailsApiIntegrationTestCase extends TestCase
      */
     protected function getCollection($id, $collection)
     {
-        $args = array(
+        $args = [
             'module' => 'Emails',
             'record' => $id,
             'collection_name' => $collection,
-            'fields' => array(
+            'fields' => [
                 'parent_name',
                 'email_address_id',
                 'email_address',
-            ),
-        );
+            ],
+        ];
         $api = new RelateCollectionApi();
         return $api->getCollection($this->service, $args);
     }
@@ -197,11 +197,11 @@ class EmailsApiIntegrationTestCase extends TestCase
      */
     protected function getRelatedRecords($id, $link)
     {
-        $args = array(
+        $args = [
             'module' => 'Emails',
             'record' => $id,
             'link_name' => $link,
-        );
+        ];
         $api = new RelateApi();
         return $api->filterRelated($this->service, $args);
     }

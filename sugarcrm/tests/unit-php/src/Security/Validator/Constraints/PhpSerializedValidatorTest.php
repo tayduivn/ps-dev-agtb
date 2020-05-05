@@ -75,73 +75,73 @@ class PhpSerializedValidatorTest extends AbstractConstraintValidatorTest
 
     public function providerTestValidValues()
     {
-        return array(
+        return [
 
             // plain serialized strings
-            array('N;', false, false, null),
-            array('b:0;', false, false, false),
-            array('b:1;', false, false, true),
-            array('i:10;', false, false, 10),
-            array('d:12.199999999999999;', false, false, 12.2),
-            array('s:6:"String";', false, false, 'String'),
-            array('a:1:{s:3:"foo";s:3:"bar";}', false, false, array('foo' => 'bar')),
+            ['N;', false, false, null],
+            ['b:0;', false, false, false],
+            ['b:1;', false, false, true],
+            ['i:10;', false, false, 10],
+            ['d:12.199999999999999;', false, false, 12.2],
+            ['s:6:"String";', false, false, 'String'],
+            ['a:1:{s:3:"foo";s:3:"bar";}', false, false, ['foo' => 'bar']],
 
             // base64 encoded tests
-            array(
+            [
                 'Tjs=',
                 true,
                 false,
                 null,
-            ),
-            array(
+            ],
+            [
                 'YjowOw==',
                 true,
                 false,
                 false,
-            ),
-            array(
+            ],
+            [
                 'YjoxOw==',
                 true,
                 false,
                 true,
-            ),
-            array(
+            ],
+            [
                 'aToxMDs=',
                 true,
                 false,
                 10,
-            ),
-            array(
+            ],
+            [
                 'ZDoxMi4xOTk5OTk5OTk5OTk5OTk7',
                 true,
                 false,
                 12.2,
-            ),
-            array(
+            ],
+            [
                 'czo2OiJTdHJpbmciOw==',
                 true,
                 false,
                 'String',
-            ),
-            array(
+            ],
+            [
                 'YToxOntzOjM6ImZvbyI7czozOiJiYXIiO30=',
                 true,
                 false,
-                array('foo' => 'bar'),
-            ),
-            array(
+                ['foo' => 'bar'],
+            ],
+            [
                 's:28:&quot;&lt;div class=&quot;link&quot;&gt;Link&lt;/div&gt;&quot;;',
                 false,
                 true,
                 '<div class="link">Link</div>',
-            ),
-            array(
+            ],
+            [
                 'czoyODomcXVvdDsmbHQ7ZGl2IGNsYXNzPSZxdW90O2xpbmsmcXVvdDsmZ3Q7TGluayZsdDsvZGl2Jmd0OyZxdW90Ozs=',
                 true,
                 true,
                 '<div class="link">Link</div>',
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -150,9 +150,9 @@ class PhpSerializedValidatorTest extends AbstractConstraintValidatorTest
      */
     public function testInvalidValues($value, $code, $msg)
     {
-        $constraint = new PhpSerialized(array(
+        $constraint = new PhpSerialized([
             'message' => 'testMessage',
-        ));
+        ]);
 
         $this->validator->validate($value, $constraint);
 
@@ -165,42 +165,42 @@ class PhpSerializedValidatorTest extends AbstractConstraintValidatorTest
 
     public function providerTestInvalidValues()
     {
-        return array(
-            array(
+        return [
+            [
                 'O:8:"stdClass":1:{s:3:"foo";s:3:"bar";}',
                 PhpSerialized::ERROR_OBJECT_NOT_ALLOWED,
                 'object(s) not allowed',
-            ),
-            array(
+            ],
+            [
                 'a:2:{s:3:"foo";s:3:"bar";s:3:"baz";O:8:"stdClass":1:{s:3:"foo";s:3:"bar";}}',
                 PhpSerialized::ERROR_OBJECT_NOT_ALLOWED,
                 'object(s) not allowed',
-            ),
-            array(
+            ],
+            [
                 'O:8:',
                 PhpSerialized::ERROR_OBJECT_NOT_ALLOWED,
                 'object(s) not allowed',
-            ),
-            array(
+            ],
+            [
                 'mambojambo',
                 PhpSerialized::ERROR_UNSERIALIZE,
                 'unserialize error',
-            ),
-            array(
+            ],
+            [
                 'C:6:"FooBar":3:{baz}',
                 PhpSerialized::ERROR_OBJECT_NOT_ALLOWED,
                 'object(s) not allowed',
-            ),
-            array(
+            ],
+            [
                 'a:2:{s:3:"foo";s:3:"bar";s:3:"baz";r:4;}',
                 PhpSerialized::ERROR_REFERENCE_NOT_ALLOWED,
                 'reference(s) not allowed',
-            ),
-            array(
+            ],
+            [
                 'a:2:{s:3:"foo";s:3:"bar";s:3:"baz";R:1;}',
                 PhpSerialized::ERROR_REFERENCE_NOT_ALLOWED,
                 'reference(s) not allowed',
-            ),
-        );
+            ],
+        ];
     }
 }

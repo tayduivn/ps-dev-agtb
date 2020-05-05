@@ -23,9 +23,9 @@ class Bug63125Test extends TestCase
     public function testValidDef($studio, $expected)
     {
         $actual = AbstractMetaDataParser::validField(
-            array(
+            [
                 'studio' => $studio,
-            )
+            ]
         );
 
         $this->assertEquals($expected, $actual);
@@ -33,13 +33,13 @@ class Bug63125Test extends TestCase
 
     public static function provider()
     {
-        return array(
-            array(true, true),
-            array('true', true),
-            array(false, false),
-            array('false', false),
-            array('hidden', false),
-            array('any-unknown-value', true),
-        );
+        return [
+            [true, true],
+            ['true', true],
+            [false, false],
+            ['false', false],
+            ['hidden', false],
+            ['any-unknown-value', true],
+        ];
     }
 }

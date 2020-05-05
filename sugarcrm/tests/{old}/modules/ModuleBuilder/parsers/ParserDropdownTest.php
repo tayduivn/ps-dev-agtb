@@ -60,7 +60,7 @@ class ParserDropdownTest extends TestCase
         // Reload app_list_strings
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
         
-        $_REQUEST = array();
+        $_REQUEST = [];
         
         SugarTestHelper::tearDown();
     }
@@ -68,13 +68,13 @@ class ParserDropdownTest extends TestCase
     public function testSavingEmptyLabels()
     {
         $_REQUEST['view_package'] = 'studio';
-        $params = array(
+        $params = [
             'dropdown_name' => 'moduleList',
             'list_value' => '',
             'skipSaveExemptDropdowns' => true,
-        );
+        ];
 
-        $parser = $this->createPartialMock('ParserDropDown', array('saveExemptDropdowns', 'synchDropDown', 'saveContents', 'finalize'));
+        $parser = $this->createPartialMock('ParserDropDown', ['saveExemptDropdowns', 'synchDropDown', 'saveContents', 'finalize']);
         $parser->expects($this->never())->method('saveExemptDropdowns');
         $parser->saveDropDown($params);
     }
@@ -115,69 +115,69 @@ class ParserDropdownTest extends TestCase
 
     public static function providerTestSaveExemptDropdowns()
     {
-        return array(
+        return [
             // Check if non-exempt dropdowns are just passed through
-            array(
-                array(
+            [
+                [
                     0 => 'test 0',
-                ),
+                ],
                 'test',
-                array(
-                    'test' => array(
+                [
+                    'test' => [
                         0 => 'test 0',
                         1 => 'test 1',
-                    ),
-                ),
+                    ],
+                ],
                 "",
-                array(
+                [
                     0 => 'test 0',
-                ),
-            ),
+                ],
+            ],
             // Check if deleted exempt dropdown values are NULL
-            array(
-                array(
+            [
+                [
                     0 => 'test 0',
-                ),
+                ],
                 'parent_type_display',
-                array(
-                    'parent_type_display' => array(
+                [
+                    'parent_type_display' => [
                         0 => 'test 0',
                         1 => 'test 1',
-                    ),
-                ),
+                    ],
+                ],
                 "",
-                array(
+                [
                     0 => 'test 0',
                     1 => null,
-                ),
-            ),
+                ],
+            ],
             // Check if NULL values from custom/include/language file are copied over so we don't loose the keys
-            array(
-                array(
+            [
+                [
                     0 => 'test 0',
-                ),
+                ],
                 'parent_type_display',
-                array(
-                    'parent_type_display' => array(
+                [
+                    'parent_type_display' => [
                         0 => 'test 0',
                         1 => 'test 1',
                         2 => 'test 2',
-                    ),
-                ),
+                    ],
+                ],
                 "<?php
                     \$app_list_strings['parent_type_display'] = array(
                         'ProjectTask' => 'Project Task',
                         'Prospects' => null,
                     );
                 ",
-                array(
+                [
                     0 => 'test 0',
                     1 => null,
                     2 => null,
                     'Prospects' => null,
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
     }
 
 
@@ -205,7 +205,7 @@ class ParserDropdownTest extends TestCase
 
         $parser = $this->getMockBuilder('ParserDropDown')
             ->disableOriginalConstructor()
-            ->setMethods(array('finalize'))
+            ->setMethods(['finalize'])
             ->getMock();
 
         $parser->saveDropDown($params);
@@ -213,8 +213,8 @@ class ParserDropdownTest extends TestCase
         if (!empty($expected)) {
             $this->assertFileExists($this->customFile);
 
-            $app_list_strings = array();
-            include($this->customFile);
+            $app_list_strings = [];
+            include $this->customFile;
 
             $this->assertSame($expected, $app_list_strings, 'Save Dropdown not working properly.');
         } else {
@@ -226,74 +226,72 @@ class ParserDropdownTest extends TestCase
     public static function saveDropdownProvider()
     {
         $app_list_strings = return_app_list_strings_language($GLOBALS['current_language']);
-        return array(
+        return [
             //Add a new module with no existing customization
-            array(
+            [
                 //Params
-                array(
+                [
                     'dropdown_name' => 'moduleList',
                     'list_value' => static::encodeList(array_merge(
                         $app_list_strings['moduleList'],
-                        array('NewModule' => 'New Module'))
-                    ),
+                        ['NewModule' => 'New Module']
+                    )),
                     'view_package' => 'studio',
                     'use_push' => true,
-                ),
+                ],
                 '',
-                array('moduleList' => array('NewModule' => 'New Module'))
-            ),
+                ['moduleList' => ['NewModule' => 'New Module']],
+            ],
             //Rename existing module
-            array(
+            [
                 //Params
-                array(
+                [
                     'dropdown_name' => 'moduleList',
                     'list_value' => static::encodeList(array_merge(
-                            $app_list_strings['moduleList'],
-                            array('Accounts' => 'New Accounts')
-                        )
-                    ),
+                        $app_list_strings['moduleList'],
+                        ['Accounts' => 'New Accounts']
+                    )),
                     'view_package' => 'studio',
                     'use_push' => true,
-                ),
+                ],
                 '',
-                array('moduleList' => array('Accounts' => 'New Accounts'))
-            ),
+                ['moduleList' => ['Accounts' => 'New Accounts']],
+            ],
             //No change
-            array(
+            [
                 //Params
-                array(
+                [
                     'dropdown_name' => 'moduleList',
                     'list_value' => static::encodeList($app_list_strings['moduleList']),
                     'view_package' => 'studio',
                     'use_push' => true,
-                ),
+                ],
                 '',
-                false
-            ),
+                false,
+            ],
             //Keep existing customization
-            array(
+            [
                 //Params
-                array(
+                [
                     'dropdown_name' => 'moduleList',
                     'list_value' => static::encodeList(array_merge(
-                            $app_list_strings['moduleList'],
-                            array('NewModule' => 'New Module')
-                        )
-                    ),
+                        $app_list_strings['moduleList'],
+                        ['NewModule' => 'New Module']
+                    )),
                     'view_package' => 'studio',
                     'use_push' => true,
-                ),
+                ],
                 '<?php $app_list_strings[\'moduleList\'][\'foo\']=\'bar\';',
-                array('moduleList' => array('foo' => 'bar', 'NewModule' => 'New Module'))
-            )
-        );
+                ['moduleList' => ['foo' => 'bar', 'NewModule' => 'New Module']],
+            ],
+        ];
     }
 
     protected static function encodeList(Array $list)
     {
-        $new_list = array();
+        $new_list = [];
         foreach ($list as $k => $v) {
-            $new_list[] = array($k, $v);
+            $new_list[] = [$k, $v];
         }
 
         return json_encode($new_list);

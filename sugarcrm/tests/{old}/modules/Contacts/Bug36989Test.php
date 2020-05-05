@@ -28,25 +28,25 @@ class Bug36989Test extends TestCase
           SugarTestHelper::setUp('app_strings');
 
           SugarTestHelper::saveFile('custom/modules/Contacts/metadata/SearchFields.php');
-          if(file_exists('custom/modules/Contacts/metadata/SearchFields.php'))
-          {
-              unlink('custom/modules/Contacts/metadata/SearchFields.php');
-          }
+        if (file_exists('custom/modules/Contacts/metadata/SearchFields.php')) {
+            unlink('custom/modules/Contacts/metadata/SearchFields.php');
+        }
 
           SugarTestHelper::saveFile('modules/Contacts/metadata/SearchFields.php');
           file_put_contents('modules/Contacts/metadata/SearchFields.php', '<?php $searchFields[\'Contacts\'] = array(\'test\' => array());');
-     }
+    }
 
     protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
     }
 
-     function testOverrideSearchFields() {
-          $list = new ViewList();
-          $list->module = "Contacts";
-          $list->seed = new Contact();
-          $list->prepareSearchForm();
-          $this->assertTrue(isset($list->searchForm->searchFields['test']));
+    function testOverrideSearchFields()
+    {
+         $list = new ViewList();
+         $list->module = "Contacts";
+         $list->seed = new Contact();
+         $list->prepareSearchForm();
+         $this->assertTrue(isset($list->searchForm->searchFields['test']));
     }
 }

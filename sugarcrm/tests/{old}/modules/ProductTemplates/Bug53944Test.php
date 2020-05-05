@@ -57,39 +57,38 @@ class Bug53944Test extends TestCase
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setUp('current_user', array(true, 1));
+        SugarTestHelper::setUp('current_user', [true, 1]);
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('app_list_strings');
-        SugarTestHelper::setUp('mod_strings', array('ProductTemplates'));
+        SugarTestHelper::setUp('mod_strings', ['ProductTemplates']);
 
         //Adding relationship between module Accounts and new module
         $this->lhs_module='Accounts';
         $this->rhs_module='ProductTemplates';
 
         $this->relationships = new DeployedRelationships($this->lhs_module);
-        $definition = array(
+        $definition = [
             'lhs_module' => $this->lhs_module,
             'lhs_label'=> $this->lhs_module,
             'relationship_type' => 'one-to-one',
             'rhs_module' => $this->rhs_module,
             'rhs_label' => $this->rhs_module,
             'rhs_subpanel' => 'default',
-        );
+        ];
         $this->relationship = RelationshipFactory::newRelationship($definition);
         $this->relationships->add($this->relationship);
         $this->relationships->save();
         $this->relationships->build();
-        SugarTestHelper::setUp('relation', array(
+        SugarTestHelper::setUp('relation', [
             $this->lhs_module,
-            $this->rhs_module
-        ));
+            $this->rhs_module,
+        ]);
     }
 
     protected function tearDown() : void
     {
         SugarTestAccountUtilities::removeAllCreatedAccounts();
-        if ($this->pt)
-        {
+        if ($this->pt) {
             $this->pt->mark_deleted($this->pt->id);
         }
 

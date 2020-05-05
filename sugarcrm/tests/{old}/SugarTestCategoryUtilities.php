@@ -15,15 +15,17 @@ include_once 'modules/Categories/Category.php';
 class SugarTestCategoryUtilities
 {
     protected static $_rootBean;
-    protected static $_createdBeans = array();
+    protected static $_createdBeans = [];
 
-    private function __construct() {}
-
-    public static function createRootBean($values = array())
+    private function __construct()
     {
-        $defaults = array(
+    }
+
+    public static function createRootBean($values = [])
+    {
+        $defaults = [
             'name' => 'SugarCategoryRoot' . time(),
-        );
+        ];
         $values = array_merge($defaults, $values);
         $bean = new CategoryMock();
         $bean->populateFromRow($values);
@@ -33,15 +35,15 @@ class SugarTestCategoryUtilities
         return $bean;
     }
 
-    public static function createBean($values = array())
+    public static function createBean($values = [])
     {
         if (!isset(self::$_rootBean)) {
             self::createRootBean();
         }
-        $defaults = array(
+        $defaults = [
             'name' => 'SugarCategory' . time(),
-            'root' => self::$_rootBean->id
-        );
+            'root' => self::$_rootBean->id,
+        ];
 
         $values = array_merge($defaults, $values);
         $bean = new CategoryMock();
@@ -57,9 +59,9 @@ class SugarTestCategoryUtilities
         $db = DBManagerFactory::getInstance();
         $ids = self::getCreatedBeanIds();
         if (count($ids) > 0) {
-            $conditions = implode(',', array_map(array($db, 'quoted'), $ids));
+            $conditions = implode(',', array_map([$db, 'quoted'], $ids));
             $db->query('DELETE FROM categories WHERE id IN (' . $conditions . ')');
-            self::$_createdBeans = array();
+            self::$_createdBeans = [];
         }
         if (isset(self::$_rootBean)) {
             $db->query('DELETE FROM categories WHERE id = ' . $db->quoted(self::$_rootBean->id));
@@ -69,7 +71,7 @@ class SugarTestCategoryUtilities
 
     public static function getCreatedBeanIds()
     {
-        $ids = array();
+        $ids = [];
         foreach (self::$_createdBeans as $bean) {
             $ids[] = $bean->id;
         }
@@ -78,9 +80,9 @@ class SugarTestCategoryUtilities
 
     public static function addCreatedBean($id)
     {
-        $category = BeanFactory::retrieveBean('Categories', $id, array(
+        $category = BeanFactory::retrieveBean('Categories', $id, [
             'use_cache' => false,
-        ));
+        ]);
         if ($category instanceof Category) {
             self::$_createdBeans[] = $category;
         }

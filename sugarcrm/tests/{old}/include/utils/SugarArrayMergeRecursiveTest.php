@@ -21,37 +21,37 @@ class SugarArrayMergeRecursiveTest extends TestCase
      */
     public function testDeepArrayMerge()
     {
-	$array1 = array("one" => array("two" => array("three" => array("some" => "stuff"))));
-	$array2 = array("one" => array("two" => array("three" => array("more" => "stuff"))));
-	$expected = array("one" => array("two" => array("three" => array("more" => "stuff", "some" => "stuff"))));
-        $results = sugarArrayMergeRecursive($array1,$array2);
+        $array1 = ["one" => ["two" => ["three" => ["some" => "stuff"]]]];
+        $array2 = ["one" => ["two" => ["three" => ["more" => "stuff"]]]];
+        $expected = ["one" => ["two" => ["three" => ["more" => "stuff", "some" => "stuff"]]]];
+        $results = sugarArrayMergeRecursive($array1, $array2);
         $this->assertEquals($results, $expected);
     }
 
     /**
      * this one won't preserve order
      */
-    public function testSubArrayKeysArePreserved() 
+    public function testSubArrayKeysArePreserved()
     {
-        $array1 = array(
-            'dog' => array(
+        $array1 = [
+            'dog' => [
                 'dog1' => 'dog1',
                 'dog2' => 'dog2',
                 'dog3' => 'dog3',
                 'dog4' => 'dog4',
-                )
-            );
+                ],
+            ];
         
-        $array2 = array(
-            'dog' => array(
+        $array2 = [
+            'dog' => [
                 'dog2' => 'dog2',
                 'dog1' => 'dog1',
                 'dog3' => 'dog3',
                 'dog4' => 'dog4',
-                )
-            );
+                ],
+            ];
         
-        $results = sugarArrayMergeRecursive($array1,$array2);
+        $results = sugarArrayMergeRecursive($array1, $array2);
         
         $resultsKeys = array_keys($results['dog']);
         sort($resultsKeys);
@@ -63,32 +63,32 @@ class SugarArrayMergeRecursiveTest extends TestCase
     
     public function testSugarArrayMergeMergesTwoArraysWithLikeKeysOverwritingExistingKeys()
     {
-        $foo = array(
+        $foo = [
             'one' => 123,
             'two' => 123,
-            'foo' => array(
+            'foo' => [
                 'int' => 123,
                 'foo' => 'bar',
-            ),
-        );
-        $bar = array(
+            ],
+        ];
+        $bar = [
             'one' => 123,
             'two' => 321,
-            'foo' => array(
+            'foo' => [
                 'int' => 123,
                 'bar' => 'foo',
-            ),
-        );
+            ],
+        ];
         
-        $expected = array(
-            'one' => 123, 
+        $expected = [
+            'one' => 123,
             'two' => 321,
-            'foo' => array(
+            'foo' => [
                 'int' => 123,
                 'foo' => 'bar',
                 'bar' => 'foo',
-            ),
-        );
+            ],
+        ];
         $this->assertEquals(sugarArrayMergeRecursive($foo, $bar), $expected);
         // insure that internal functions can't duplicate behavior
         $this->assertNotEquals(array_merge($foo, $bar), $expected);

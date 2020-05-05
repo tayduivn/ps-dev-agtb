@@ -27,7 +27,7 @@ class CRYS408Test extends TestCase
     /**
      * @var array Request for creating/deleting currency field for Accounts module
      */
-    private $request = array(
+    private $request = [
         'comments' => '',
         'default' => '',
         'dependency' => '',
@@ -50,7 +50,7 @@ class CRYS408Test extends TestCase
         'to_pdf' => true,
         'type' => 'currency',
         'view_module' => 'Accounts',
-    );
+    ];
 
     protected function setUp() : void
     {
@@ -63,7 +63,7 @@ class CRYS408Test extends TestCase
         $GLOBALS['current_user'] = $this->user;
 
         $this->request['action'] = 'saveField';
-        $request = InputValidation::create($this->request, array());
+        $request = InputValidation::create($this->request, []);
         $mb = new ModuleBuilderController($request);
         $mb->action_SaveField();
 
@@ -77,7 +77,7 @@ class CRYS408Test extends TestCase
     {
         $this->request['action'] = 'DeleteField';
         $this->request['name'] = 'cur_crys408_c';
-        $request = InputValidation::create($this->request, array());
+        $request = InputValidation::create($this->request, []);
         $mb = new ModuleBuilderController($request);
         $mb->action_DeleteField();
 
@@ -94,22 +94,22 @@ class CRYS408Test extends TestCase
         /**
          * Report defs for generating the report
          */
-        $rep_defs = array(
-            'display_columns' => array(
-                0 => array(
+        $rep_defs = [
+            'display_columns' => [
+                0 => [
                     'name' => 'name',
                     'label' => 'Name',
                     'table_key' => 'self',
-                ),
-                1 => array(
+                ],
+                1 => [
                     'name' => 'cur_crys408_c',
                     'label' => 'cur_crys408',
                     'table_key' => 'self',
-                ),
-            ),
+                ],
+            ],
             'module' => 'Accounts',
-            'group_defs' => array(),
-            'summary_columns' => array(),
+            'group_defs' => [],
+            'summary_columns' => [],
             'report_name' => 'CRYS408Report',
             'chart_type' => 'none',
             'do_round' => 1,
@@ -117,17 +117,17 @@ class CRYS408Test extends TestCase
             'numerical_chart_column_type' => '',
             'assigned_user_id' => '1',
             'report_type' => 'tabular',
-            'full_table_list' => array(
-                'self' => array(
+            'full_table_list' => [
+                'self' => [
                     'value' => 'Accounts',
                     'module' => 'Accounts',
                     'label' => 'Accounts',
-                    'dependents' => array(),
-                ),
-            ),
-            'filters_def' => array(
-                'Filter_1' => array(
-                    0 => array(
+                    'dependents' => [],
+                ],
+            ],
+            'filters_def' => [
+                'Filter_1' => [
+                    0 => [
                         'name' => 'name',
                         'table_key' => 'self',
                         'qualifier_name' => 'is',
@@ -135,11 +135,11 @@ class CRYS408Test extends TestCase
                         'input_name1' => '',
                         'column_name' => 'self:name',
                         'id' => 'rowid0',
-                    ),
+                    ],
                     'operator' => 'AND',
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
 
         $rep_defs['filters_def']['Filter_1']['0']['input_name0'] = $this->account->id;
         $rep_defs['filters_def']['Filter_1']['0']['input_name1'] = $this->account->name;

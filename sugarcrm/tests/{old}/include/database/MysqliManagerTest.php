@@ -12,7 +12,7 @@
 
 class MysqliManagerTest extends MysqlManagerTest
 {
-    protected $configOptions = array();
+    protected $configOptions = [];
 
     protected function setUp() : void
     {
@@ -20,14 +20,14 @@ class MysqliManagerTest extends MysqlManagerTest
 
         $this->db = new MysqliManager();
 
-        $this->configOptions = array(
+        $this->configOptions = [
             'db_host_name' => $GLOBALS['db']->connectOptions['db_host_name'],
             'db_host_instance' => $GLOBALS['db']->connectOptions['db_host_instance'],
             'db_user_name' => $GLOBALS['db']->connectOptions['db_user_name'],
             'db_password' => $GLOBALS['db']->connectOptions['db_password'],
-        );
+        ];
         
-        $this->db->setOptions(array());
+        $this->db->setOptions([]);
     }
 
     protected function tearDown() : void
@@ -44,9 +44,9 @@ class MysqliManagerTest extends MysqlManagerTest
      */
     public function testSetupSSLSimple()
     {
-        $this->db->setOptions(array(
-            'ssl' => true
-        ));
+        $this->db->setOptions([
+            'ssl' => true,
+        ]);
 
         $this->db->connect($this->configOptions, false);
         $dbInstanceOptions = SugarTestReflection::getProtectedValue($this->db, 'connectOptions');
@@ -59,12 +59,12 @@ class MysqliManagerTest extends MysqlManagerTest
      */
     public function testSetupSSLAdvanced()
     {
-        $this->db->setOptions(array(
+        $this->db->setOptions([
             'ssl' => true,
-            'ssl_options' => array(
-                'ssl_ca' => 'test'
-            )
-        ));
+            'ssl_options' => [
+                'ssl_ca' => 'test',
+            ],
+        ]);
 
         $this->db->connect($this->configOptions, false);
         $dbInstanceOptions = SugarTestReflection::getProtectedValue($this->db, 'connectOptions');
@@ -77,10 +77,10 @@ class MysqliManagerTest extends MysqlManagerTest
      */
     public function supportsProvider()
     {
-        return array(
-            array('recursive_query', true),
-            array('fix:report_as_condition', true),
-        );
+        return [
+            ['recursive_query', true],
+            ['fix:report_as_condition', true],
+        ];
     }
 
     /**

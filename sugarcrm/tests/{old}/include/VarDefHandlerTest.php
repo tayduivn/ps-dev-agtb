@@ -26,13 +26,13 @@ class VarDefHandlerTest extends TestCase
         $varDefHandler = new VarDefHandler($module, 'template_filter');
 
         $module->module_dir = 'Account';
-        $module->field_defs = array(
-            'bug_field_c' => array(
+        $module->field_defs = [
+            'bug_field_c' => [
                 'name' => 'bug_field_c',
                 'source' => 'non-db',
                 'type' => 'relate',
-            )
-        );
+            ],
+        ];
 
         $this->assertArrayHasKey('bug_field_c', $varDefHandler->get_vardef_array(true), 'Related field is not exist!');
     }

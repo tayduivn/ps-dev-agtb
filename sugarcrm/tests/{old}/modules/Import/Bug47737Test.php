@@ -17,7 +17,7 @@ class Bug47737Test extends TestCase
     protected function setUp() : void
     {
         global $beanList, $beanFiles;
-        require('include/modules.php');
+        require 'include/modules.php';
     }
 
     protected function tearDown() : void
@@ -27,18 +27,18 @@ class Bug47737Test extends TestCase
 
     public function providerIdData()
     {
-        return array(
+        return [
             //Valid ids
-            array('12345','12345'),
-            array('12345-6789-1258','12345-6789-1258'),
-            array('aaaBBB12AA122cccD','aaaBBB12AA122cccD'),
-            array('aaa-BBB-12AA122-cccD','aaa-BBB-12AA122-cccD'),
-            array('aaa_BBB_12AA122_cccD','aaa_BBB_12AA122_cccD'),
+            ['12345','12345'],
+            ['12345-6789-1258','12345-6789-1258'],
+            ['aaaBBB12AA122cccD','aaaBBB12AA122cccD'],
+            ['aaa-BBB-12AA122-cccD','aaa-BBB-12AA122-cccD'],
+            ['aaa_BBB_12AA122_cccD','aaa_BBB_12AA122_cccD'],
             //Invalid
-            array('1242','12*'),
-            array('abdcd36','abdcd$'),
-            array('1234-asdf3535353523','1234-asdf####23'),
-            );
+            ['1242','12*'],
+            ['abdcd36','abdcd$'],
+            ['1234-asdf3535353523','1234-asdf####23'],
+            ];
     }
 
     /**
@@ -48,7 +48,7 @@ class Bug47737Test extends TestCase
     public function testConvertID($expected, $dirty)
     {
         $c = new Contact();
-        $importer = new ImporterStub('UNIT TEST',$c);
+        $importer = new ImporterStub('UNIT TEST', $c);
         $actual = $importer->convertID($dirty);
 
         $this->assertEquals($expected, $actual, "Error converting id during import process $actual , expected: $expected, before conversion: $dirty");

@@ -70,14 +70,14 @@ class OrderDirectionValidatorTest extends AbstractConstraintValidatorTest
 
     public function providerTestValidValues()
     {
-        return array(
-            array('ASC'),
-            array('asc'),
-            array('AsC'),
-            array('desc'),
-            array('DESC'),
-            array('DesC'),
-        );
+        return [
+            ['ASC'],
+            ['asc'],
+            ['AsC'],
+            ['desc'],
+            ['DESC'],
+            ['DesC'],
+        ];
     }
 
     /**
@@ -86,9 +86,9 @@ class OrderDirectionValidatorTest extends AbstractConstraintValidatorTest
      */
     public function testInvalidValues($value, $code)
     {
-        $constraint = new OrderDirection(array(
+        $constraint = new OrderDirection([
             'message' => 'testMessage',
-        ));
+        ]);
 
         $this->validator->validate($value, $constraint);
 
@@ -100,11 +100,11 @@ class OrderDirectionValidatorTest extends AbstractConstraintValidatorTest
 
     public function providerTestInvalidValues()
     {
-        return array(
-            array(
+        return [
+            [
                 'foobar',
                 OrderDirection::ERROR_ILLEGAL_FORMAT,
-            ),
-        );
+            ],
+        ];
     }
 }

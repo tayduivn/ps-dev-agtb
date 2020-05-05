@@ -24,7 +24,7 @@ class NumericExpressionTest extends TestCase
     {
         /* @var $bean Opportunity|MockObject */
         $bean = $this->getMockBuilder('Opportunity')
-            ->setMethods(array('save', 'getFieldDefinition'))
+            ->setMethods(['save', 'getFieldDefinition'])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -39,10 +39,10 @@ class NumericExpressionTest extends TestCase
         $return = SugarTestReflection::callProtectedMethod(
             $numeric_expression,
             'isCurrencyField',
-            array(
+            [
                 $bean,
                 'test_field',
-            )
+            ]
         );
 
         $this->assertEquals($expected, $return);
@@ -50,49 +50,49 @@ class NumericExpressionTest extends TestCase
 
     public static function dataProviderTestIsCurrencyField()
     {
-        return array(
-            array(
-                array(
+        return [
+            [
+                [
                     'type' => 'decimal',
                     'dbType' => 'decimal',
-                    'custom_type' => 'currency'
-                ),
-                true
-            ),
-            array(
-                array(
+                    'custom_type' => 'currency',
+                ],
+                true,
+            ],
+            [
+                [
                     'type' => 'decimal',
                     'dbType' => 'currency',
-                ),
-                true
-            ),
-            array(
-                array(
+                ],
+                true,
+            ],
+            [
+                [
                     'type' => 'currency',
-                ),
-                true
-            ),
-            array(
-                array(
+                ],
+                true,
+            ],
+            [
+                [
                     'type' => 'decimal',
                     'dbType' => 'decimal',
-                    'custom_type' => 'decimal'
-                ),
-                false
-            ),
-            array(
-                array(
+                    'custom_type' => 'decimal',
+                ],
+                false,
+            ],
+            [
+                [
                     'type' => 'decimal',
                     'dbType' => 'decimal',
-                ),
-                false
-            ),
-            array(
-                array(
+                ],
+                false,
+            ],
+            [
+                [
                     'type' => 'decimal',
-                ),
-                false
-            ),
-        );
+                ],
+                false,
+            ],
+        ];
     }
 }

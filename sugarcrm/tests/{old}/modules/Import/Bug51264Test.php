@@ -24,9 +24,9 @@ class Bug51264Test extends TestCase
 
     protected function setUp() : void
     {
-        $beanList = array();
-        $beanFiles = array();
-        require('include/modules.php');
+        $beanList = [];
+        $beanFiles = [];
+        require 'include/modules.php';
         $GLOBALS['beanList'] = $beanList;
         $GLOBALS['beanFiles'] = $beanFiles;
 
@@ -50,7 +50,7 @@ class Bug51264Test extends TestCase
     public function testIsADuplicateRecordWithID()
     {
         $idc = new ImportDuplicateCheck($this->contact);
-        $result = $idc->isADuplicateRecord(array('special_idx_email1::email1'));
+        $result = $idc->isADuplicateRecord(['special_idx_email1::email1']);
         $this->assertFalse($result);
     }
 
@@ -63,7 +63,7 @@ class Bug51264Test extends TestCase
         $contact->id = '0000000000000000';
         $contact->email = $this->contact->email1;
         $idc = new ImportDuplicateCheck($contact);
-        $result = $idc->isADuplicateRecord(array('special_idx_email::email'));
+        $result = $idc->isADuplicateRecord(['special_idx_email::email']);
         $this->assertTrue($result);
     }
 
@@ -76,7 +76,7 @@ class Bug51264Test extends TestCase
         $contact->id = '0000000000000000';
         $contact->email1 = 'Bug51264Test@Bug51264Test.com';
         $idc = new ImportDuplicateCheck($contact);
-        $result = $idc->isADuplicateRecord(array('special_idx_email1::email1'));
+        $result = $idc->isADuplicateRecord(['special_idx_email1::email1']);
         $this->assertFalse($result);
     }
 
@@ -88,7 +88,7 @@ class Bug51264Test extends TestCase
         $contact = new Contact();
         $contact->email = $this->contact->email1;
         $idc = new ImportDuplicateCheck($contact);
-        $result = $idc->isADuplicateRecord(array('special_idx_email::email'));
+        $result = $idc->isADuplicateRecord(['special_idx_email::email']);
         $this->assertTrue($result);
     }
 }

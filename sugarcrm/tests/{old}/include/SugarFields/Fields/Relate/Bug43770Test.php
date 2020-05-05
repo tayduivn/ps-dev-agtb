@@ -19,18 +19,18 @@ class Bug43770Test extends TestCase
     protected function setUp() : void
     {
         $sfr = new SugarFieldRelate('relate');
-        $vardef = array(
+        $vardef = [
             'name' => 'assigned_user_name',
             'id_name' => 'assigned_user_id',
-            'module' => 'Users'
-        );
-        $displayParams = array(
-            'idName' => 'Contactsassigned_user_name'
-        );
-        $this->_fieldOutput = $sfr->getEditViewSmarty(array(), $vardef, $displayParams, 1);
+            'module' => 'Users',
+        ];
+        $displayParams = [
+            'idName' => 'Contactsassigned_user_name',
+        ];
+        $this->_fieldOutput = $sfr->getEditViewSmarty([], $vardef, $displayParams, 1);
     }
     /**
-     * @group	bug43770
+     * @group   bug43770
      */
     public function testCustomIdName()
     {

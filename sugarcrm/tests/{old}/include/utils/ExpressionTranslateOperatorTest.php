@@ -32,19 +32,19 @@ class ExpressionTranslateOperatorTest extends TestCase
 
     public static function operatorDataset()
     {
-        return array(
-            array('Equals', 'php', '=='),
-            array('Is empty', 'php', '=='),
-            array('Less Than', 'php', '<'),
-            array('More Than', 'php', '>'),
-            array('Does not Equal', 'php', '!='),
-            array('Is not empty', 'php', '!='),
-            array('Equals', 'sql', '='),
-            array('Is empty', 'sql', '='),
-            array('Less Than', 'sql', '<'),
-            array('More Than', 'sql', '>'),
-            array('Does not Equal', 'sql', '!='),
-            array('Is not empty', 'sql', '!='),
-        );
+        return [
+            ['Equals', 'php', '=='],
+            ['Is empty', 'php', '=='],
+            ['Less Than', 'php', '<'],
+            ['More Than', 'php', '>'],
+            ['Does not Equal', 'php', '!='],
+            ['Is not empty', 'php', '!='],
+            ['Equals', 'sql', '='],
+            ['Is empty', 'sql', '='],
+            ['Less Than', 'sql', '<'],
+            ['More Than', 'sql', '>'],
+            ['Does not Equal', 'sql', '!='],
+            ['Is not empty', 'sql', '!='],
+        ];
     }
 }

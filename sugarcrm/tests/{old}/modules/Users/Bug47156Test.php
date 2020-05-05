@@ -30,10 +30,10 @@ class Bug47156Test extends TestCase
      */
     public function testCorrectUserListOutput()
     {
-        $activeUser = SugarTestUserUtilities::createAnonymousUser(true, 0, array('status' => 'Active'));
-        $inactiveUser = SugarTestUserUtilities::createAnonymousUser(true, 0, array('status' => 'Inactive'));
+        $activeUser = SugarTestUserUtilities::createAnonymousUser(true, 0, ['status' => 'Active']);
+        $inactiveUser = SugarTestUserUtilities::createAnonymousUser(true, 0, ['status' => 'Inactive']);
 
-        $allUsers = User::getAllUsers(); 
+        $allUsers = User::getAllUsers();
 
         $this->assertArrayHasKey($activeUser->id, $allUsers);
         $this->assertArrayHasKey($inactiveUser->id, $allUsers);

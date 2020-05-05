@@ -15,8 +15,8 @@ use PHPUnit\Framework\TestCase;
 
 class DocumentRevisionTest extends TestCase
 {
-    private static $docs = array();
-    private static $files = array();
+    private static $docs = [];
+    private static $files = [];
 
     public static function tearDownAfterClass(): void
     {
@@ -58,18 +58,18 @@ class DocumentRevisionTest extends TestCase
 
     public function markDeletedProvider()
     {
-        return array(
-            array(
-                array(
+        return [
+            [
+                [
                     'upload_id' => '123',
-                ),
+                ],
                 true,
-            ),
-            array(
-                array(),
+            ],
+            [
+                [],
                 false,
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -90,7 +90,7 @@ class DocumentRevisionTest extends TestCase
         $db->addQuerySpy(
             'upload_id',
             "/SELECT upload_id FROM notes WHERE upload_id='{$doc->id}' LIMIT 0,1/",
-            array($rows)
+            [$rows]
         );
 
         $doc->mark_deleted($doc->id);

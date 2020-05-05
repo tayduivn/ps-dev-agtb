@@ -27,7 +27,7 @@ class CsrfTokenGeneratorTest extends TestCase
      */
     public function testGenerateToken($size, $token, $expected)
     {
-        $csprng = $this->getCSPRNGMock(array('generate'));
+        $csprng = $this->getCSPRNGMock(['generate']);
         $csprng->expects($this->once())
             ->method('generate')
             ->with($this->equalTo($size), $this->equalTo(true))
@@ -41,18 +41,18 @@ class CsrfTokenGeneratorTest extends TestCase
 
     public function providerTestGenerateToken()
     {
-        return array(
-            array(
+        return [
+            [
                 10,
                 '1234567890',
                 '1234567890',
-            ),
-            array(
+            ],
+            [
                 32,
                 '12+/3+4/56',
                 '12-_3-4_56',
-            ),
-        );
+            ],
+        ];
     }
 
     /**

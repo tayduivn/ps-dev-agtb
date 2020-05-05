@@ -18,13 +18,13 @@ use PHPUnit\Framework\TestCase;
 class CalendarEventsTest extends TestCase
 {
     protected $calendarEventsService;
-    protected $meetingIds = array();
+    protected $meetingIds = [];
 
     protected function setUp() : void
     {
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
         $this->calendarEventsService = new CalendarEvents();
-        $this->meetingIds = array();
+        $this->meetingIds = [];
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['current_user']->setPreference('datef', 'Y-m-d');
         $GLOBALS['current_user']->setPreference('timef', 'H:i');
@@ -36,7 +36,7 @@ class CalendarEventsTest extends TestCase
             $ids = implode("','", $this->meetingIds);
             $GLOBALS['db']->query("DELETE FROM meetings_users WHERE meeting_id IN ('" . $ids . "')");
             $GLOBALS['db']->query("DELETE FROM meetings WHERE id IN ('" . $ids . "')");
-            $this->meetingIds = array();
+            $this->meetingIds = [];
         }
         SugarTestMeetingUtilities::removeMeetingUsers();
         SugarTestMeetingUtilities::removeAllCreatedMeetings();
@@ -120,7 +120,7 @@ class CalendarEventsTest extends TestCase
 
         $datetimeStart = SugarDateTime::createFromFormat($format, $meeting->date_start, $timezone);
         $datetimeEnd = SugarDateTime::createFromFormat($format, $meeting->date_end, $timezone);
-        $meetingInterval = date_diff ($datetimeStart, $datetimeEnd);
+        $meetingInterval = date_diff($datetimeStart, $datetimeEnd);
 
         $this->assertEquals($meeting->date_start, '2015-01-01 12:00:00');
         $this->assertEquals('', $meeting->recurrence_id);
@@ -177,7 +177,7 @@ class CalendarEventsTest extends TestCase
         $calEvents->saveRecurringEvents($meeting);
 
         $eventsCreated = $calEvents->getEventsCreated();
-        foreach($eventsCreated as $eventCreated) {
+        foreach ($eventsCreated as $eventCreated) {
             $this->meetingIds[] = $eventCreated['id'];
         }
         $this->assertEquals($args['repeat_count'], count($eventsCreated) + 1, "Unexpected Number of Recurring Meetings Created");
@@ -203,16 +203,16 @@ class CalendarEventsTest extends TestCase
         $calEvents->saveRecurringEvents($meeting);
 
         $eventsCreated = $calEvents->getEventsCreated();
-        foreach($eventsCreated as $eventCreated) {
+        foreach ($eventsCreated as $eventCreated) {
             $this->meetingIds[] = $eventCreated['id'];
             $meeting = BeanFactory::getBean('Meetings', $eventCreated['id']);
             $meeting->load_relationship('tag_link');
             $tags = $meeting->tag_link->get();
-            $tagIds = array();
-            foreach($tags AS $tagId) {
+            $tagIds = [];
+            foreach ($tags as $tagId) {
                 $tagIds[$tagId] = true;
             }
-            foreach($parentTags as $parentTag) {
+            foreach ($parentTags as $parentTag) {
                 $this->assertTrue(isset($tagIds[$parentTag->id]), "Child Meeting Missing Tag On Parent");
                 unset($tagIds[$parentTag->id]);
             }
@@ -241,7 +241,7 @@ class CalendarEventsTest extends TestCase
         $calEvents->saveRecurringEvents($meeting);
 
         $eventsCreated = $calEvents->getEventsCreated();
-        foreach($eventsCreated as $eventCreated) {
+        foreach ($eventsCreated as $eventCreated) {
             $this->meetingIds[] = $eventCreated['id'];
         }
 
@@ -269,11 +269,11 @@ class CalendarEventsTest extends TestCase
         $contact = SugarTestContactUtilities::createContact();
 
         $this->calendarEventsService->inviteParent($meeting, 'Contacts', $contact->id);
-        $this->assertEquals(array($contact->id), $meeting->contacts->get(), 'should be linked to the one contact');
+        $this->assertEquals([$contact->id], $meeting->contacts->get(), 'should be linked to the one contact');
 
         // try inviting again
         $this->calendarEventsService->inviteParent($meeting, 'Contacts', $contact->id);
-        $this->assertEquals(array($contact->id), $meeting->contacts->get(), 'should only have one link to the contact');
+        $this->assertEquals([$contact->id], $meeting->contacts->get(), 'should only have one link to the contact');
 
         SugarTestMeetingUtilities::removeMeetingContacts();
         SugarTestContactUtilities::removeAllCreatedContacts();
@@ -288,10 +288,10 @@ class CalendarEventsTest extends TestCase
 
     public function updateAcceptStatusForInviteePrimaryEventStatusProvider()
     {
-        return array(
-            array('Held'),
-            array('Not Held'),
-        );
+        return [
+            ['Held'],
+            ['Not Held'],
+        ];
     }
 
     /**
@@ -307,7 +307,7 @@ class CalendarEventsTest extends TestCase
         $meeting1 = $this->getMockBuilder('Meeting')
             ->disableOriginalConstructor()
             ->setMockClassName('MockMeeting')
-            ->setMethods(array('set_accept_status'))
+            ->setMethods(['set_accept_status'])
             ->getMock();
         $meeting1->id = create_guid();
         $meeting1->module_name = 'Meetings';
@@ -318,26 +318,26 @@ class CalendarEventsTest extends TestCase
         $meeting2 = $this->getMockBuilder('Meeting')
             ->disableOriginalConstructor()
             ->setMockClassName('MockMeeting')
-            ->setMethods(array('set_accept_status'))
+            ->setMethods(['set_accept_status'])
             ->getMock();
         $meeting2->id = create_guid();
         $meeting2->module_name = 'Meetings';
         $meeting2->expects($this->once())->method('set_accept_status');
         BeanFactory::registerBean($meeting2);
 
-        $meetings = array(
-            array('id' => $meeting2->id),
-        );
+        $meetings = [
+            ['id' => $meeting2->id],
+        ];
 
         $q = $this->getMockBuilder('SugarQuery')
             ->disableOriginalConstructor()
-            ->setMethods(array('execute'))
+            ->setMethods(['execute'])
             ->getMock();
         $q->expects($this->once())->method('execute')->willReturn($meetings);
 
         $events = $this->getMockBuilder('CalendarEvents')
             ->disableOriginalConstructor()
-            ->setMethods(array('getChildrenQuery', 'isEventRecurring'))
+            ->setMethods(['getChildrenQuery', 'isEventRecurring'])
             ->getMock();
         $events->expects($this->once())->method('isEventRecurring')->willReturn(true);
         $events->expects($this->once())->method('getChildrenQuery')->willReturn($q);
@@ -347,7 +347,7 @@ class CalendarEventsTest extends TestCase
             $meeting1,
             $invitee,
             'tentative',
-            array('disable_row_level_security' => true)
+            ['disable_row_level_security' => true]
         );
 
         $this->assertTrue($updated);
@@ -364,7 +364,7 @@ class CalendarEventsTest extends TestCase
         $meeting = $this->getMockBuilder('Meeting')
             ->disableOriginalConstructor()
             ->setMockClassName('MockMeeting')
-            ->setMethods(array('set_accept_status'))
+            ->setMethods(['set_accept_status'])
             ->getMock();
         $meeting->id = create_guid();
         $meeting->module_name = 'Meetings';
@@ -373,7 +373,7 @@ class CalendarEventsTest extends TestCase
 
         $events = $this->getMockBuilder('CalendarEvents')
             ->disableOriginalConstructor()
-            ->setMethods(array('getChildrenQuery', 'isEventRecurring'))
+            ->setMethods(['getChildrenQuery', 'isEventRecurring'])
             ->getMock();
         $events->expects($this->once())->method('isEventRecurring')->willReturn(false);
         $events->expects($this->never())->method('getChildrenQuery');
@@ -394,7 +394,7 @@ class CalendarEventsTest extends TestCase
         $meeting1 = $this->getMockBuilder('Meeting')
             ->disableOriginalConstructor()
             ->setMockClassName('MockMeeting')
-            ->setMethods(array('set_accept_status'))
+            ->setMethods(['set_accept_status'])
             ->getMock();
         $meeting1->id = create_guid();
         $meeting1->module_name = 'Meetings';
@@ -404,7 +404,7 @@ class CalendarEventsTest extends TestCase
         $meeting2 = $this->getMockBuilder('Meeting')
             ->disableOriginalConstructor()
             ->setMockClassName('MockMeeting')
-            ->setMethods(array('set_accept_status'))
+            ->setMethods(['set_accept_status'])
             ->getMock();
         $meeting2->id = create_guid();
         $meeting2->module_name = 'Meetings';
@@ -414,27 +414,27 @@ class CalendarEventsTest extends TestCase
         $meeting3 = $this->getMockBuilder('Meeting')
             ->disableOriginalConstructor()
             ->setMockClassName('MockMeeting')
-            ->setMethods(array('set_accept_status'))
+            ->setMethods(['set_accept_status'])
             ->getMock();
         $meeting3->id = create_guid();
         $meeting3->module_name = 'Meetings';
         $meeting3->expects($this->once())->method('set_accept_status');
         BeanFactory::registerBean($meeting3);
 
-        $meetings = array(
-            array('id' => $meeting2->id),
-            array('id' => $meeting3->id),
-        );
+        $meetings = [
+            ['id' => $meeting2->id],
+            ['id' => $meeting3->id],
+        ];
 
         $q = $this->getMockBuilder('SugarQuery')
             ->disableOriginalConstructor()
-            ->setMethods(array('execute'))
+            ->setMethods(['execute'])
             ->getMock();
         $q->expects($this->once())->method('execute')->willReturn($meetings);
 
         $events = $this->getMockBuilder('CalendarEvents')
             ->disableOriginalConstructor()
-            ->setMethods(array('getChildrenQuery', 'isEventRecurring'))
+            ->setMethods(['getChildrenQuery', 'isEventRecurring'])
             ->getMock();
         $events->expects($this->once())->method('isEventRecurring')->willReturn(true);
         $events->expects($this->once())->method('getChildrenQuery')->willReturn($q);
@@ -444,7 +444,7 @@ class CalendarEventsTest extends TestCase
             $meeting1,
             $invitee,
             'tentative',
-            array('disable_row_level_security' => true)
+            ['disable_row_level_security' => true]
         );
 
         $this->assertTrue($updated);
@@ -462,7 +462,7 @@ class CalendarEventsTest extends TestCase
         $meeting1 = $this->getMockBuilder('Meeting')
             ->disableOriginalConstructor()
             ->setMockClassName('MockMeeting')
-            ->setMethods(array('set_accept_status'))
+            ->setMethods(['set_accept_status'])
             ->getMock();
         $meeting1->id = create_guid();
         $meeting1->module_name = 'Meetings';
@@ -472,13 +472,13 @@ class CalendarEventsTest extends TestCase
 
         $q = $this->getMockBuilder('SugarQuery')
             ->disableOriginalConstructor()
-            ->setMethods(array('execute'))
+            ->setMethods(['execute'])
             ->getMock();
-        $q->expects($this->once())->method('execute')->willReturn(array());
+        $q->expects($this->once())->method('execute')->willReturn([]);
 
         $events = $this->getMockBuilder('CalendarEvents')
             ->disableOriginalConstructor()
-            ->setMethods(array('getChildrenQuery', 'isEventRecurring'))
+            ->setMethods(['getChildrenQuery', 'isEventRecurring'])
             ->getMock();
         $events->expects($this->once())->method('isEventRecurring')->willReturn(true);
         $events->expects($this->once())->method('getChildrenQuery')->willReturn($q);
@@ -488,7 +488,7 @@ class CalendarEventsTest extends TestCase
             $meeting1,
             $invitee,
             'tentative',
-            array('disable_row_level_security' => true)
+            ['disable_row_level_security' => true]
         );
 
         $this->assertFalse($updated);
@@ -499,262 +499,262 @@ class CalendarEventsTest extends TestCase
 
     public function dataProviderForBuildRecurringSequenceTests()
     {
-        return array(
-            array(
+        return [
+            [
                 '2015-12-15',
-                array(
+                [
                     'type'  => 'Daily',
                     'count' => 3,
-                ),
+                ],
                 3,
                 '2015-12-15 00:00',
                 '2015-12-17 00:00',
-            ),
-            array(
+            ],
+            [
                 '2015-12-15',
-                array(
+                [
                     'type'  => 'Daily',
                     'count' => 3,
                     'interval' => 3,
-                ),
+                ],
                 3,
                 '2015-12-15 00:00',
                 '2015-12-21 00:00',
-            ),
-            array(
+            ],
+            [
                 '2015-12-15',
-                array(
+                [
                     'type'  => 'Daily',
                     'until' => '2015-12-30',
                     'interval' => 2,
-                ),
+                ],
                 8,
                 '2015-12-15 00:00',
                 '2015-12-29 00:00',
-            ),
-            array(
+            ],
+            [
                 '2015-12-15',
-                array(
+                [
                     'type'  => 'Weekly',
                     'dow' => '35',
                     'count' => 4,
-                ),
+                ],
                 4,
                 '2015-12-16 00:00',
                 '2015-12-25 00:00',
-            ),
-            array(
+            ],
+            [
                 '2015-12-15',
-                array(
+                [
                     'type'  => 'Weekly',
                     'dow' => '246',
                     'count' => 5,
                     'interval' => 4,
-                ),
+                ],
                 5,
                 '2015-12-15 00:00',
                 '2016-01-14 00:00',
-            ),
-            array(
+            ],
+            [
                 '2015-12-15',
-                array(
+                [
                     'type'  => 'Weekly',
                     'dow' => '15',
                     'until' => '2016-01-06',
                     'interval' => 3,
-                ),
+                ],
                 2,
                 '2015-12-18 00:00',
                 '2016-01-04 00:00',
-            ),
-            array(
+            ],
+            [
                 '2015-12-15',
-                array(
+                [
                     'type'  => 'Monthly',
                     'count' => 2,
-                ),
+                ],
                 2,
                 '2015-12-15 00:00',
                 '2016-01-15 00:00',
-            ),
-            array(
+            ],
+            [
                 '2015-12-15',
-                array(
+                [
                     'type'  => 'Monthly',
                     'count' => 3,
                     'interval' => 5,
-                ),
+                ],
                 3,
                 '2015-12-15 00:00',
                 '2016-10-15 00:00',
-            ),
-            array(
+            ],
+            [
                 '2015-12-15',
-                array(
+                [
                     'type'  => 'Monthly',
                     'until' => '2018-06-30',
                     'interval' => 4,
-                ),
+                ],
                 8,
                 '2015-12-15 00:00',
                 '2018-04-15 00:00',
-            ),
-            array(
+            ],
+            [
                 '2015-12-15',
-                array(
+                [
                     'type'  => 'Monthly',
                     'count' => 5,
                     'selector' => 'Each',
                     'interval' => 2,
                     'days' => '8,17,26',
-                ),
+                ],
                 5,
                 '2015-12-17 00:00',
                 '2016-02-26 00:00',
-            ),
-            array(
+            ],
+            [
                 '2015-12-15',
-                array(
+                [
                     'type'  => 'Monthly',
                     'count' => 3,
                     'selector' => 'Each',
                     'interval' => 7,
                     'days' => '31',
-                ),
+                ],
                 3,
                 '2015-12-31 00:00',
                 '2020-01-31 00:00',
-            ),
-            array(
+            ],
+            [
                 '2015-12-15',
-                array(
+                [
                     'type'  => 'Monthly',
                     'until' => '2033-08-14',
                     'selector' => 'Each',
                     'interval' => 5,
                     'days' => '31',
-                ),
+                ],
                 27,
                 '2015-12-31 00:00',
                 '2033-01-31 00:00',
-            ),
-            array(
+            ],
+            [
                 '2015-12-15',
-                array(
+                [
                     'type'  => 'Monthly',
                     'count' => 5,
                     'selector' => 'On',
                     'interval' => 2,
                     'ordinal' => 'first',
                     'unit' => 'Day',
-                ),
+                ],
                 5,
                 '2016-02-01 00:00',
                 '2016-10-01 00:00',
-            ),
-            array(
+            ],
+            [
                 '2015-12-15',
-                array(
+                [
                     'type'  => 'Monthly',
                     'count' => 9,
                     'selector' => 'On',
                     'interval' => 2,
                     'ordinal' => 'last',
                     'unit' => 'WD',
-                ),
+                ],
                 9,
                 '2015-12-31 00:00',
                 '2017-04-28 00:00',
-            ),
-            array(
+            ],
+            [
                 '2015-12-15',
-                array(
+                [
                     'type'  => 'Monthly',
                     'until' => '2025-06-11',
                     'selector' => 'On',
                     'interval' => 4,
                     'ordinal' => 'fifth',
                     'unit' => 'WE',
-                ),
+                ],
                 29,
                 '2015-12-19 00:00',
                 '2025-04-19 00:00',
-            ),
-            array(
+            ],
+            [
                 '2015-12-15',
-                array(
+                [
                     'type'  => 'Yearly',
                     'count' => 4,
-                ),
+                ],
                 4,
                 '2015-12-15 00:00',
                 '2018-12-15 00:00',
-            ),
-            array(
+            ],
+            [
                 '2015-12-15',
-                array(
+                [
                     'type'  => 'Yearly',
                     'count' => 2,
                     'interval' => 5,
-                ),
+                ],
                 2,
                 '2015-12-15 00:00',
                 '2020-12-15 00:00',
-            ),
-            array(
+            ],
+            [
                 '2015-12-15',
-                array(
+                [
                     'type'  => 'Yearly',
                     'until' => '2025-03-14',
                     'interval' => 3,
-                ),
+                ],
                 4,
                 '2015-12-15 00:00',
                 '2024-12-15 00:00',
-            ),
-            array(
+            ],
+            [
                 '2015-12-15',
-                array(
+                [
                     'type'  => 'Yearly',
                     'count' => 5,
                     'selector' => 'On',
                     'interval' => 2,
                     'ordinal' => 'fifth',
                     'unit' => 'Wed',
-                ),
+                ],
                 5,
                 '2015-12-30 00:00',
                 '2024-01-03 00:00',
-            ),
-            array(
+            ],
+            [
                 '2015-12-15',
-                array(
+                [
                     'type'  => 'Yearly',
                     'count' => 9,
                     'selector' => 'On',
                     'interval' => 2,
                     'ordinal' => 'last',
                     'unit' => 'Mon',
-                ),
+                ],
                 9,
                 '2016-12-26 00:00',
                 '2032-12-27 00:00',
-            ),
-            array(
+            ],
+            [
                 '2015-12-15',
-                array(
+                [
                     'type'  => 'Yearly',
                     'until' => '2025-06-11',
                     'selector' => 'On',
                     'interval' => 4,
                     'ordinal' => 'second',
                     'unit' => 'WE',
-                ),
+                ],
                 2,
                 '2019-01-06 00:00',
                 '2023-01-07 00:00',
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -805,12 +805,12 @@ class CalendarEventsTest extends TestCase
      * @param array $args assign field values to newly created meeting
      * @return Meeting
      */
-    protected function newMeeting($id = '', $args=array())
+    protected function newMeeting($id = '', $args = [])
     {
         global $current_user;
         $meeting = SugarTestMeetingUtilities::createMeeting($id, $current_user);
         if (!empty($args)) {
-            foreach ($args AS $k => $v) {
+            foreach ($args as $k => $v) {
                 $meeting->$k = $v;
             }
             $meeting->save();
@@ -820,8 +820,8 @@ class CalendarEventsTest extends TestCase
 
     protected function newTags($numTags = 1)
     {
-        $tags = array();
-        while(count($tags) < $numTags) {
+        $tags = [];
+        while (count($tags) < $numTags) {
             $tags[] = SugarTestTagUtilities::createTag();
         }
         return $tags;
@@ -831,7 +831,7 @@ class CalendarEventsTest extends TestCase
     {
         $tags = $this->newTags($numTags);
         $bean->load_relationship('tag_link');
-        foreach($tags as $tag) {
+        foreach ($tags as $tag) {
             $bean->tag_link->add($tag);
         }
         $tags = $bean->tag_link->getBeans();
@@ -842,7 +842,7 @@ class CalendarEventsTest extends TestCase
     {
         $bean->load_relationship('tag_link');
         $tags = $bean->tag_link->getBeans();
-        foreach($tags as $tag) {
+        foreach ($tags as $tag) {
             $bean->tag_link->delete($bean->id, $tag);
         }
     }
@@ -851,7 +851,7 @@ class CalendarEventsTest extends TestCase
 
 class CalendarEventsTest_CalendarEvents extends CalendarEvents
 {
-    protected $eventsCreated = array();
+    protected $eventsCreated = [];
 
     public function getEventsCreated()
     {

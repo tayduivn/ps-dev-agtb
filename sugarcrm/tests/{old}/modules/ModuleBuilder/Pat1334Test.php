@@ -19,16 +19,16 @@ use PHPUnit\Framework\TestCase;
 class PAT1334Test extends TestCase
 {
     protected function setUp() : void
-    {        
-        VardefManager::loadVardef('Contacts', 'Contact');        
+    {
+        VardefManager::loadVardef('Contacts', 'Contact');
     }
 
     /**
-     * Check email/email1 field for mobile client     
+     * Check email/email1 field for mobile client
      */
     public function testEmailFieldsForMobileClient()
     {
-        global $dictionary;        
+        global $dictionary;
 
         $def = $dictionary['Contact']['fields']['email'];
         $this->assertTrue(AbstractMetaDataParser::validField($def, 'edit', 'mobile'));
@@ -42,11 +42,11 @@ class PAT1334Test extends TestCase
     }
 
     /**
-     * Check email/email1 field for mobile client     
+     * Check email/email1 field for mobile client
      */
     public function testEmailFieldsForBaseClient()
     {
-        global $dictionary;        
+        global $dictionary;
 
         $def = $dictionary['Contact']['fields']['email'];
         $this->assertTrue(AbstractMetaDataParser::validField($def, 'edit', 'base'));

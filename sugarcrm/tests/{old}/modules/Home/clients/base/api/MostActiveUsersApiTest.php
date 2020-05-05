@@ -56,7 +56,7 @@ class MostActiveUsersApiTest extends TestCase
     protected function setUp() : void
     {
         SugarTestHelper::setUp('app_list_strings');
-        SugarTestHelper::setUp('current_user', array(true, 1));
+        SugarTestHelper::setUp('current_user', [true, 1]);
 
         $this->api = new MostActiveUsersApi();
 
@@ -98,14 +98,14 @@ class MostActiveUsersApiTest extends TestCase
      */
     public function testReturnsSpecificSet()
     {
-        $expected = array(
+        $expected = [
             'user_id' => $this->user->id,
             'count' => '1',
             'first_name' => $this->user->first_name,
-            'last_name' => $this->user->last_name
-        );
+            'last_name' => $this->user->last_name,
+        ];
 
-        $actual = $this->api->getMostActiveUsers(new RestService(), array());
+        $actual = $this->api->getMostActiveUsers(new RestService(), []);
 
         $this->assertEquals($expected, $actual['meetings']);
         $this->assertEquals($expected, $actual['calls']);
@@ -129,14 +129,14 @@ class MostActiveUsersApiTest extends TestCase
         $meeting3->assigned_user_id = $this->additionalUser->id;
         $meeting3->save();
 
-        $expected = array(
+        $expected = [
             'user_id' => $this->user->id,
             'count' => '2',
             'first_name' => $this->user->first_name,
-            'last_name' => $this->user->last_name
-        );
+            'last_name' => $this->user->last_name,
+        ];
 
-        $actual = $this->api->getMostActiveUsers(new RestService(), array());
+        $actual = $this->api->getMostActiveUsers(new RestService(), []);
 
         $this->assertEquals($expected, $actual['meetings']);
     }
@@ -164,14 +164,14 @@ class MostActiveUsersApiTest extends TestCase
         $outboundEmail3->update_date_entered = true;
         $outboundEmail3->save();
 
-        $expected = array(
+        $expected = [
             'user_id' => $this->user->id,
             'count' => '1',
             'first_name' => $this->user->first_name,
-            'last_name' => $this->user->last_name
-        );
+            'last_name' => $this->user->last_name,
+        ];
 
-        $actual = $this->api->getMostActiveUsers(new RestService(), array('days' => 10));
+        $actual = $this->api->getMostActiveUsers(new RestService(), ['days' => 10]);
 
         $this->assertEquals($expected, $actual['outbound_emails']);
     }

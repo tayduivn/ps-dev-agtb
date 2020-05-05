@@ -32,13 +32,12 @@ class PMSECriteriaEvaluatorTest extends TestCase
 
         $criteriaEvaluatorMock = $this->getMockBuilder('PMSECriteriaEvaluator')
                 ->disableOriginalConstructor()
-                ->setMethods(NULL)
+                ->setMethods(null)
                 ->getMock();
 
         $result = $criteriaEvaluatorMock->isCriteriaToken(array_pop($expression));
         $expected = true;
         $this->assertEquals($expected, $result);
-
     }
 
     public function testIsCriteriaTokenFALSE()
@@ -56,7 +55,7 @@ class PMSECriteriaEvaluatorTest extends TestCase
 
         $criteriaEvaluatorMock = $this->getMockBuilder('PMSECriteriaEvaluator')
                 ->disableOriginalConstructor()
-                ->setMethods(NULL)
+                ->setMethods(null)
                 ->getMock();
 
         $result = $criteriaEvaluatorMock->isCriteriaToken(array_pop($expression));
@@ -81,7 +80,7 @@ class PMSECriteriaEvaluatorTest extends TestCase
         $expression = json_decode($fixture);
 
         $criteriaEvaluatorMock = $this->getMockBuilder('PMSECriteriaEvaluator')
-                ->setMethods(NULL)
+                ->setMethods(null)
                 ->getMock();
 
         $expectedToken = new stdClass();
@@ -111,8 +110,8 @@ class PMSECriteriaEvaluatorTest extends TestCase
 
         $expression = json_decode($fixture);
 
-        $criteriaEvaluatorMock = $this->getMockBuilder('PMSECriteriaEvaluator')                
-                ->setMethods(NULL)
+        $criteriaEvaluatorMock = $this->getMockBuilder('PMSECriteriaEvaluator')
+                ->setMethods(null)
                 ->getMock();
 
         $expectedToken = new stdClass();
@@ -136,7 +135,7 @@ class PMSECriteriaEvaluatorTest extends TestCase
         $criteriaToken->expModule = "Cases";
         $criteriaToken->expField = "status";
         $criteriaToken->isUpdate = true;
-        $criteriaToken->currentValue = array(0 => null);
+        $criteriaToken->currentValue = [0 => null];
 
         $result = $criteriaEvaluatorMock->evaluateCriteriaToken($criteriaToken);
 
@@ -196,8 +195,8 @@ class PMSECriteriaEvaluatorTest extends TestCase
 
         $expression = json_decode($fixture);
 
-        $criteriaEvaluatorMock = $this->getMockBuilder('PMSECriteriaEvaluator')                
-                ->setMethods(NULL)
+        $criteriaEvaluatorMock = $this->getMockBuilder('PMSECriteriaEvaluator')
+                ->setMethods(null)
                 ->getMock();
 
         $expectedList = '[

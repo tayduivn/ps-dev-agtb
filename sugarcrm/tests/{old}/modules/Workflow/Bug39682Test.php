@@ -12,7 +12,7 @@
 
 use PHPUnit\Framework\TestCase;
 
-include_once('include/workflow/alert_utils.php');
+include_once 'include/workflow/alert_utils.php';
 
 /**
  * Bug #39682
@@ -25,33 +25,33 @@ class Bug39682Test extends TestCase
      * Test tries to get string from multiselect values and asserts that string doesn't contains ^
      * @group 39682
      */
-	public function testMultienumFieldsDecode()
-	{
+    public function testMultienumFieldsDecode()
+    {
         $aCase = new aCase();
-        $aCase->field_defs['new_field_here_c'] = array(
+        $aCase->field_defs['new_field_here_c'] = [
             'type' => 'multienum',
-            'name' => 'new_field_here_c'
-        );
+            'name' => 'new_field_here_c',
+        ];
         $targetBody = '&lt;p&gt;{::future::Cases::new_field_here_c::}&lt;/p&gt;
                        &lt;p&gt;{::past::Cases::new_field_here_c::}&lt;/p&gt;
                        &lt;p&gt;{::future::Cases::new_field_here_c::}&lt;/p&gt;';
-        $componentArray = array (
-            'Cases' => array(
-                'new_field_here_c_future' => array(
+        $componentArray =  [
+            'Cases' => [
+                'new_field_here_c_future' => [
                     'name' => 'new_field_here_c',
                     'value_type' => 'future',
                     'original' => '{::future::Cases::new_field_here_c::}',
-                ),
-                'new_field_here_c_past' => array(
+                ],
+                'new_field_here_c_past' => [
                     'name' => 'new_field_here_c',
                     'value_type' => 'past',
                     'original' => '{::past::Cases::new_field_here_c::}',
-                ),
-            )
-        );
+                ],
+            ],
+        ];
         $aCase->new_field_here_c = "^Analyst^,^Competitor^,^Customer^,^Integrator^";
         $resultBody = reconstruct_target_body($aCase, $targetBody, $componentArray);
 
         $this->assertStringNotContainsString('^,^', $resultBody);
-	}
+    }
 }

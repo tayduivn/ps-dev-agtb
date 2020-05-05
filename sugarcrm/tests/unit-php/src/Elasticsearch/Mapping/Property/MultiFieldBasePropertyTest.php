@@ -26,10 +26,10 @@ class MultiFieldBasePropertyTest extends TestCase
      * Default mapping
      * @var array
      */
-    protected $defaultMapping = array(
+    protected $defaultMapping = [
         'type' => 'keyword',
         'index' => false,
-    );
+    ];
 
     /**
      * @covers ::getMapping
@@ -56,44 +56,44 @@ class MultiFieldBasePropertyTest extends TestCase
 
     public function providerTestAddField()
     {
-        return array(
+        return [
 
             // one field
-            array(
-                array(
+            [
+                [
                     'name' => new MultiFieldProperty(),
-                ),
-                array(
+                ],
+                [
                     'type' => 'keyword',
                     'index' => false,
-                    'fields' => array(
-                        'name' => array(
+                    'fields' => [
+                        'name' => [
                             'type' => 'text',
-                        ),
-                    ),
-                ),
-            ),
+                        ],
+                    ],
+                ],
+            ],
 
             // multiple fields
-            array(
-                array(
+            [
+                [
                     'name' => new MultiFieldProperty(),
                     'descr' => new MultiFieldProperty(),
-                ),
-                array(
+                ],
+                [
                     'type' => 'keyword',
                     'index' => false,
-                    'fields' => array(
-                        'name' => array(
+                    'fields' => [
+                        'name' => [
                             'type' => 'text',
-                        ),
-                        'descr' => array(
+                        ],
+                        'descr' => [
                             'type' => 'text',
-                        ),
-                    ),
-                ),
-            ),
-        );
+                        ],
+                    ],
+                ],
+            ],
+        ];
     }
 
     /**

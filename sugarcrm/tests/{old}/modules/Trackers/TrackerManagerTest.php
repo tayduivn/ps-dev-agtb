@@ -17,22 +17,23 @@ class TrackerManagerTest extends TestCase
 {
     protected function setUp() : void
     {
-		$user = new User();
-		$user->retrieve('1');
-		$GLOBALS['current_user'] = $user;
-	}
+        $user = new User();
+        $user->retrieve('1');
+        $GLOBALS['current_user'] = $user;
+    }
 
     protected function tearDown() : void
     {
-    	$trackerManager = TrackerManager::getInstance();
-    	$trackerManager->unPause();
-    	
-		$user = new User();
-		$user->retrieve('1');
-		$GLOBALS['current_user'] = $user;    	
+        $trackerManager = TrackerManager::getInstance();
+        $trackerManager->unPause();
+        
+        $user = new User();
+        $user->retrieve('1');
+        $GLOBALS['current_user'] = $user;
     }
     
-    function testPausing() {
+    function testPausing()
+    {
         $trackerManager = TrackerManager::getInstance();
         $trackerManager->unPause();
         $this->assertFalse($trackerManager->isPaused());
@@ -40,18 +41,19 @@ class TrackerManagerTest extends TestCase
         $this->assertTrue($trackerManager->isPaused());
     }
     
-    function testPausing2() {
+    function testPausing2()
+    {
         $query = "select count(id) as total from tracker";
-    	$result = $GLOBALS['db']->query($query);
-    	$count1 = 0;
-		while($row = $GLOBALS['db']->fetchByAssoc($result)){
-		      $count1 = $row['total'];
-		}
+        $result = $GLOBALS['db']->query($query);
+        $count1 = 0;
+        while ($row = $GLOBALS['db']->fetchByAssoc($result)) {
+              $count1 = $row['total'];
+        }
 
-		$trackerManager = TrackerManager::getInstance();
-		$trackerManager->pause();
-		
-        $monitor = $trackerManager->getMonitor('tracker');         
+        $trackerManager = TrackerManager::getInstance();
+        $trackerManager->pause();
+        
+        $monitor = $trackerManager->getMonitor('tracker');
         $monitor->setValue('module_name', 'Contacts');
         $monitor->setValue('item_id', '10909d69-2b55-094d-ba89-47b23d3121dd');
         $monitor->setValue('item_summary', 'Foo');
@@ -65,38 +67,39 @@ class TrackerManagerTest extends TestCase
         
         $count2 = 0;
         $query = "select count(id) as total from tracker";
-    	$result = $GLOBALS['db']->query($query);        
-    	while($row = $GLOBALS['db']->fetchByAssoc($result)){
-		      $count2 = $row['total'];
-		}
-		$this->assertEquals($count1, $count2);		
+        $result = $GLOBALS['db']->query($query);
+        while ($row = $GLOBALS['db']->fetchByAssoc($result)) {
+              $count2 = $row['total'];
+        }
+        $this->assertEquals($count1, $count2);
     }
     
 
-    function testPausing3() {
-    	$query = "select count(id) as total from tracker_queries";
-    	$result = $GLOBALS['db']->query($query);
-    	$count1 = 0;
-		while($row = $GLOBALS['db']->fetchByAssoc($result)){
-		      $count1 = $row['total'];
-		}
+    function testPausing3()
+    {
+        $query = "select count(id) as total from tracker_queries";
+        $result = $GLOBALS['db']->query($query);
+        $count1 = 0;
+        while ($row = $GLOBALS['db']->fetchByAssoc($result)) {
+              $count1 = $row['total'];
+        }
 
-    	$dumpSlowQuery = $GLOBALS['sugar_config']['dump_slow_queries'];
-    	$slowQueryTime = $GLOBALS['sugar_config']['slow_query_time_msec'];
-    	$GLOBALS['sugar_config']['dump_slow_queries'] = true;
-    	$GLOBALS['sugar_config']['slow_query_time_msec'] = 0;
+        $dumpSlowQuery = $GLOBALS['sugar_config']['dump_slow_queries'];
+        $slowQueryTime = $GLOBALS['sugar_config']['slow_query_time_msec'];
+        $GLOBALS['sugar_config']['dump_slow_queries'] = true;
+        $GLOBALS['sugar_config']['slow_query_time_msec'] = 0;
 
         $trackerManager = TrackerManager::getInstance();
-		$trackerManager->pause();	
-		
+        $trackerManager->pause();
+        
         $count2 = 0;
         $query = "select count(id) as total from tracker_queries";
-    	$result = $GLOBALS['db']->query($query);        
-    	while($row = $GLOBALS['db']->fetchByAssoc($result)){
-		      $count2 = $row['total'];
-		}
-		$this->assertEquals($count1, $count2);
-		$GLOBALS['sugar_config']['dump_slow_queries'] = $dumpSlowQuery;
-    	$GLOBALS['sugar_config']['slow_query_time_msec'] = $slowQueryTime;
+        $result = $GLOBALS['db']->query($query);
+        while ($row = $GLOBALS['db']->fetchByAssoc($result)) {
+              $count2 = $row['total'];
+        }
+        $this->assertEquals($count1, $count2);
+        $GLOBALS['sugar_config']['dump_slow_queries'] = $dumpSlowQuery;
+        $GLOBALS['sugar_config']['slow_query_time_msec'] = $slowQueryTime;
     }
 }

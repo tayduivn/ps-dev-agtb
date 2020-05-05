@@ -31,7 +31,7 @@ class ReassignUserRecordsTest extends TestCase
 
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('app_strings');
-        SugarTestHelper::setUp('mod_strings', array('Users'));
+        SugarTestHelper::setUp('mod_strings', ['Users']);
 
         //Create another user for testing
         $this->user1 = SugarTestUserUtilities::createAnonymousUser();
@@ -65,19 +65,19 @@ class ReassignUserRecordsTest extends TestCase
     public function testReassignRecordForNotifications()
     {
         //simulate selecting notification module for reassignment
-        $_SESSION['reassignRecords']['assignedModuleListCache'] = array('Notifications' => 'Notifications');
-        $_SESSION['reassignRecords']['assignedModuleListCacheDisp'] = array ('Notifications' => 'Notifications');
+        $_SESSION['reassignRecords']['assignedModuleListCache'] = ['Notifications' => 'Notifications'];
+        $_SESSION['reassignRecords']['assignedModuleListCacheDisp'] =  ['Notifications' => 'Notifications'];
 
         $_POST['module'] = 'Users';
         $_POST['action'] = 'reassignUserRecords';
         $_POST['fromuser'] = $this->user1->id;
         $_POST['touser'] = $GLOBALS['current_user']->id;
-        $_POST['modules'] = array('Notifications');
+        $_POST['modules'] = ['Notifications'];
         $_POST['steponesubmit'] = 'Next';
 
         global $app_list_strings, $beanFiles, $beanList, $current_user, $mod_strings, $app_strings;
         //Include the reassignUserRecords.php file to run it
-        include('modules/Users/reassignUserRecords.php');
+        include 'modules/Users/reassignUserRecords.php';
 
         $notificationBean = BeanFactory::getBean('Notifications', $this->bean->id);
         $this->assertEquals($this->user2->id, $notificationBean->assigned_user_id);

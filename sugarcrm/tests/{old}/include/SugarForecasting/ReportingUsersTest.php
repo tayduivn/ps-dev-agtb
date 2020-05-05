@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
 
 class SugarForecasting_ReportingUsersTest extends TestCase
 {
-    protected static $users = array();
+    protected static $users = [];
 
     /**
      * @var SugarForecasting_ReportingUsers
@@ -56,7 +56,7 @@ class SugarForecasting_ReportingUsersTest extends TestCase
         self::$users['rep4']->reports_to_id = self::$users['mgr3']->id;
         self::$users['rep4']->save();
 
-        self::$cls = new SugarForecasting_ReportingUsers(array('user_id' => self::$users['mgr']->id));
+        self::$cls = new SugarForecasting_ReportingUsers(['user_id' => self::$users['mgr']->id]);
     }
 
     public static function tearDownAfterClass(): void

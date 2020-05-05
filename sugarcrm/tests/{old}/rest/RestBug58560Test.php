@@ -17,24 +17,24 @@ class Bug58560Test extends RestTestBase
 {
     /**
      * Module Builder Controller
-     * 
+     *
      * @var ModuleBuilderController
      */
     protected static $_mb;
 
     /**
      * Holder for the current request array
-     * 
+     *
      * @var array
      */
-    protected static $_request = array();
+    protected static $_request = [];
 
     /**
      * Mock request for creating a field
-     * 
+     *
      * @var array
      */
-    protected static $_createFieldRequestVars = array(
+    protected static $_createFieldRequestVars = [
         "action" => "saveField",
         "comments" => "",
         "default" => "",
@@ -57,14 +57,14 @@ class Bug58560Test extends RestTestBase
         "name" => "test_address",
         "module" => "ModuleBuilder",
         "view_module" => "Accounts",
-    );
+    ];
 
     /**
      * Mock request for deleting a field
-     * 
+     *
      * @var array
      */
-    protected static $_deleteFieldRequestVars = array(
+    protected static $_deleteFieldRequestVars = [
         "action" => "DeleteField",
         "labelValue" => "Test Address",
         "label" => "LBL_TEST_ADDRESS",
@@ -73,16 +73,16 @@ class Bug58560Test extends RestTestBase
         "name" => "test_address_c",
         "module" => "ModuleBuilder",
         "view_module" => "Accounts",
-    );
+    ];
     
     public static function setUpBeforeClass() : void
     {
         // Basic setup of the environment
-        SugarTestHelper::setUp('current_user', array(true, true));
+        SugarTestHelper::setUp('current_user', [true, true]);
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('app_list_strings');
-        SugarTestHelper::setUp('mod_strings', array('ModuleBuilder'));
+        SugarTestHelper::setUp('mod_strings', ['ModuleBuilder']);
         
         // Back up and reset the REQUEST
         self::$_request = $_REQUEST;
@@ -100,7 +100,7 @@ class Bug58560Test extends RestTestBase
         $_REQUEST = self::$_deleteFieldRequestVars;
         
         // Loop through the created fields and wipe them out
-        $suffixes = array('street', 'city', 'state', 'postalcode', 'country');
+        $suffixes = ['street', 'city', 'state', 'postalcode', 'country'];
         foreach ($suffixes as $suffix) {
             $_REQUEST['name'] = self::_getFieldName($suffix);
             self::$_mb->metadataApiCacheCleared = false;
@@ -167,7 +167,7 @@ class Bug58560Test extends RestTestBase
         // This is kinda dirty, but it saves us from making 5 rest calls
         foreach ($this->_testFieldFileProvider() as $params) {
             $name = self::_getFieldName($params['suffix']);
-            $this->assertArrayHasKey($name,$fields, "The field $name is missing");
+            $this->assertArrayHasKey($name, $fields, "The field $name is missing");
             $this->assertNotEmpty($fields[$name]['group'], "Group index of the fields metadata for $name is not set");
             $this->assertEquals($fields[$name]['group'], $field, "Field group {$fields[$name]['group']} did not match the known field name $field");
         }
@@ -175,13 +175,13 @@ class Bug58560Test extends RestTestBase
     
     public function _testFieldFileProvider()
     {
-        return array(
-            array('suffix' => 'street'),
-            array('suffix' => 'city'),
-            array('suffix' => 'state'),
-            array('suffix' => 'postalcode'),
-            array('suffix' => 'country'),
-        );
+        return [
+            ['suffix' => 'street'],
+            ['suffix' => 'city'],
+            ['suffix' => 'state'],
+            ['suffix' => 'postalcode'],
+            ['suffix' => 'country'],
+        ];
     }
     
     protected static function _getFieldName($suffix)

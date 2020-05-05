@@ -27,14 +27,14 @@ class ExtAPILotusLiveMock extends ExtAPILotusLive
     function __construct()
     {
         parent::__construct();
-        $this->api_data = array();
+        $this->api_data = [];
         $this->api_data['subscriberId'] = '';
     }
 
     /**
      * This method overrides a protected method
      */
-    public function getErrorStringFromCode($error='')
+    public function getErrorStringFromCode($error = '')
     {
         return parent::getErrorStringFromCode($error);
     }

@@ -33,9 +33,9 @@ class ClearSubpanelsTest extends TestCase
         global $beanList;
         SugarTestHelper::setUp('files');
         SugarTestHelper::setUp('beanList');
-        $beanList = array(
+        $beanList = [
             $this->module => 'Account',
-        );
+        ];
     }
 
     /**
@@ -55,7 +55,7 @@ class ClearSubpanelsTest extends TestCase
      *
      * @dataProvider provider
      */
-    public function testRun($def, $layout, $file, $expectedLayout, $state = array())
+    public function testRun($def, $layout, $file, $expectedLayout, $state = [])
     {
         $path = sugar_cached(__CLASS__);
         SugarAutoLoader::ensureDir($path . DIRECTORY_SEPARATOR . 'custom');
@@ -65,14 +65,14 @@ class ClearSubpanelsTest extends TestCase
 
 
         $upgradeDriver = $this->getMockForAbstractClass('UpgradeDriver');
-        $upgradeDriver->context = array(
-            'source_dir' => $path
-        );
+        $upgradeDriver->context = [
+            'source_dir' => $path,
+        ];
         $upgradeDriver->state = $state;
 
         $script = $this->getMockBuilder('SugarUpgradeClearSubpanels')
-            ->setMethods(array('getDefFiles', 'updateFile', 'getBeanDefs', 'rebuildExtensions'))
-            ->setConstructorArgs(array($upgradeDriver))
+            ->setMethods(['getDefFiles', 'updateFile', 'getBeanDefs', 'rebuildExtensions'])
+            ->setConstructorArgs([$upgradeDriver])
             ->getMock();
 
         $script->expects($this->any())
@@ -80,7 +80,7 @@ class ClearSubpanelsTest extends TestCase
             ->will($this->returnValue($def));
         $script->expects($this->any())
             ->method('getDefFiles')
-            ->will($this->returnValue(array($fpath)));
+            ->will($this->returnValue([$fpath]));
         $script->expects($this->once())
             ->method('rebuildExtensions');
         $script->expects($this->once())
@@ -91,18 +91,18 @@ class ClearSubpanelsTest extends TestCase
 
     public function provider()
     {
-        return array(
-            array(
-                array(
-                    'a' => array(
+        return [
+            [
+                [
+                    'a' => [
                         'name' => 'a',
-                        'type' => 'text'
-                    ),
-                    'b' => array(
+                        'type' => 'text',
+                    ],
+                    'b' => [
                         'name' => 'b',
-                        'type' => 'text'
-                    ),
-                ),
+                        'type' => 'text',
+                    ],
+                ],
                 <<<EOL
 <?php
 \$subpanel_layout = array (
@@ -135,51 +135,51 @@ class ClearSubpanelsTest extends TestCase
 EOL
             ,
                 'tst.php',
-                array(
-                    'top_buttons' => array(),
+                [
+                    'top_buttons' => [],
                     'where' => '',
-                    'list_fields' => array(
-                        'a' => array (
+                    'list_fields' => [
+                        'a' =>  [
                             'vname' => 'a',
-                        ),
-                        'b' => array (
+                        ],
+                        'b' =>  [
                             'vname' => 'b',
-                        ),
-                        'c' => array (
+                        ],
+                        'c' =>  [
                             'vname' => 'c',
                             'widget_class' => 'SubPanelDetailViewLink',
-                        ),
-                        'd' => array (
+                        ],
+                        'd' =>  [
                             'vname' => 'd',
-                            'usage' => 'SomeUsage'
-                        ),
-                        'edit_button' => array(
+                            'usage' => 'SomeUsage',
+                        ],
+                        'edit_button' => [
                             'vname' => 'edit_button',
-                            'widget_class' => 'SubPanelEditButton'
-                        )
-                    )
-                )
-            ),
-            array(
-                array(
-                    'a' => array(
+                            'widget_class' => 'SubPanelEditButton',
+                        ],
+                    ],
+                ],
+            ],
+            [
+                [
+                    'a' => [
                         'name' => 'a',
                         'type' => 'link',
                         'relationship' => 'd',
-                    ),
-                    'b' => array(
+                    ],
+                    'b' => [
                         'name' => 'b',
                         'type' => 'relate',
                         'id_name' => 'c',
                         'relationship' => 'd',
                         'link' => 'a',
-                    ),
-                    'c' => array(
+                    ],
+                    'c' => [
                         'name' => 'c',
                         'type' => 'id',
                         'relationship' => 'd',
-                    )
-                ),
+                    ],
+                ],
                 <<<EOL
 <?php
 \$layout_defs["{$this->module}"]["subpanel_setup"]["c"] = array (
@@ -196,10 +196,10 @@ EOL
 EOL
             ,
                 'tst2.php',
-                array(
-                    $this->module => array(
-                        'subpanel_setup' => array (
-                            'a' => array (
+                [
+                    $this->module => [
+                        'subpanel_setup' =>  [
+                            'a' =>  [
                                 'order' => 100,
                                 'module' => $this->module,
                                 'subpanel_name' => 'default',
@@ -208,23 +208,23 @@ EOL
                                 'title_key' => 'LBL',
                                 'get_subpanel_data' => 'a',
                                 'top_buttons' =>
-                                    array (),
-                            )
-                        ),
-                    )
-                ),
-            ),
-            array(
-                array(
-                    'a' => array(
+                                     [],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            [
+                [
+                    'a' => [
                         'name' => 'a',
                         'type' => 'text',
-                    ),
-                    'b' => array(
+                    ],
+                    'b' => [
                         'name' => 'b',
                         'type' => 'text',
-                    ),
-                ),
+                    ],
+                ],
                 <<<EOL
 <?php
 \$subpanel_layout = array(
@@ -241,26 +241,26 @@ EOL
 EOL
             ,
                 'tst3.php',
-                array(
-                    'list_fields' => array(
-                        'a' => array(
+                [
+                    'list_fields' => [
+                        'a' => [
                             'vname' => 'a',
-                        ),
-                    ),
-                ),
-                array(
-                    'healthcheck' => array(
-                        array(
+                        ],
+                    ],
+                ],
+                [
+                    'healthcheck' => [
+                        [
                             'report' => 'unknownWidgetClass',
-                            'params' => array(
+                            'params' => [
                                 'WrongWidgetClass',
                                 'b',
                                 $this->module,
-                            ),
-                        ),
-                    ),
-                ),
-            ),
-        );
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
     }
 }

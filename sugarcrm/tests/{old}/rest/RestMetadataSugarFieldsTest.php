@@ -11,32 +11,35 @@
  */
 
 
-class RestMetadataSugarFieldsTest extends RestTestBase {
+class RestMetadataSugarFieldsTest extends RestTestBase
+{
     protected function setUp() : void
     {
         parent::setUp();
-        $this->oldFiles = array();
+        $this->oldFiles = [];
 
-        $this->_restLogin('','','mobile');
+        $this->_restLogin('', '', 'mobile');
         $this->mobileAuthToken = $this->authToken;
-        $this->_restLogin('','','base');
+        $this->_restLogin('', '', 'base');
         $this->baseAuthToken = $this->authToken;
     }
 
     /**
      * @group rest
      */
-    public function testMetadataSugarFields() {
+    public function testMetadataSugarFields()
+    {
         $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata?type_filter=fields');
-        $this->assertTrue(isset($restReply['reply']['fields']['_hash']),'SugarField hash is missing.');
+        $this->assertTrue(isset($restReply['reply']['fields']['_hash']), 'SugarField hash is missing.');
     }
 
     /**
      * @group rest
      */
-    public function testMetadataSugarFieldsTemplates() {
-        $filesToCheck = array(
+    public function testMetadataSugarFieldsTemplates()
+    {
+        $filesToCheck = [
             'clients/mobile/fields/address/editView.hbs',
             'clients/mobile/fields/address/detailView.hbs',
             'clients/base/fields/address/editView.hbs',
@@ -45,17 +48,17 @@ class RestMetadataSugarFieldsTest extends RestTestBase {
             'custom/clients/mobile/fields/address/detailView.hbs',
             'custom/clients/base/fields/address/editView.hbs',
             'custom/clients/base/fields/address/detailView.hbs',
-        );
+        ];
         SugarTestHelper::saveFile($filesToCheck);
 
-        $dirsToMake = array(
+        $dirsToMake = [
             'clients/mobile/fields/address',
             'clients/base/fields/address',
             'custom/clients/mobile/fields/address',
             'custom/clients/base/fields/address',
-        );
+        ];
 
-        foreach ($dirsToMake as $dir ) {
+        foreach ($dirsToMake as $dir) {
             SugarAutoLoader::ensureDir($dir);
         }
 
@@ -70,26 +73,26 @@ class RestMetadataSugarFieldsTest extends RestTestBase {
         $this->_clearMetadataCache();
         $this->authToken = $this->mobileAuthToken;
         $restReply = $this->_restCall('metadata/?type_filter=fields');
-        $this->assertEquals('MOBILE EDITVIEW',$restReply['reply']['fields']['address']['templates']['editView'],"Didn't get mobile code when that was the direct option");
+        $this->assertEquals('MOBILE EDITVIEW', $restReply['reply']['fields']['address']['templates']['editView'], "Didn't get mobile code when that was the direct option");
 
         // Make sure we get it when we ask for mobile, even though there is base code there
         $this->_clearMetadataCache();
         $this->authToken = $this->mobileAuthToken;
         $restReply = $this->_restCall('metadata/?type_filter=fields');
-        $this->assertEquals('MOBILE EDITVIEW',$restReply['reply']['fields']['address']['templates']['editView'],"Didn't get mobile code when base code was there.");
+        $this->assertEquals('MOBILE EDITVIEW', $restReply['reply']['fields']['address']['templates']['editView'], "Didn't get mobile code when base code was there.");
 
         // Make sure we get the base code when we ask for it.
         $this->_clearMetadataCache();
         $this->authToken = $this->baseAuthToken;
         $restReply = $this->_restCall('metadata/?type_filter=fields');
-        $this->assertEquals('BASE EDITVIEW',$restReply['reply']['fields']['address']['templates']['editView'],"Didn't get base code when it was the direct option");
+        $this->assertEquals('BASE EDITVIEW', $restReply['reply']['fields']['address']['templates']['editView'], "Didn't get base code when it was the direct option");
 
         // Delete the mobile address and make sure it falls back to base
         unlink('clients/mobile/fields/address/editView.hbs');
         $this->_clearMetadataCache();
         $this->authToken = $this->mobileAuthToken;
         $restReply = $this->_restCall('metadata/?type_filter=fields');
-        $this->assertEquals('BASE EDITVIEW',$restReply['reply']['fields']['address']['templates']['editView'],"Didn't fall back to base code when mobile code wasn't there.");
+        $this->assertEquals('BASE EDITVIEW', $restReply['reply']['fields']['address']['templates']['editView'], "Didn't fall back to base code when mobile code wasn't there.");
 
 
         // Make sure the mobile code is loaded before the non-custom base code
@@ -97,13 +100,13 @@ class RestMetadataSugarFieldsTest extends RestTestBase {
         $this->_clearMetadataCache();
         $this->authToken = $this->mobileAuthToken;
         $restReply = $this->_restCall('metadata/?type_filter=fields');
-        $this->assertEquals('CUSTOM MOBILE EDITVIEW',$restReply['reply']['fields']['address']['templates']['editView'],"Didn't use the custom mobile code.");
+        $this->assertEquals('CUSTOM MOBILE EDITVIEW', $restReply['reply']['fields']['address']['templates']['editView'], "Didn't use the custom mobile code.");
 
         // Make sure custom base code works
         file_put_contents('custom/clients/base/fields/address/editView.hbs', 'CUSTOM BASE EDITVIEW');
         $this->_clearMetadataCache();
         $this->authToken = $this->baseAuthToken;
         $restReply = $this->_restCall('metadata/?type_filter=fields');
-        $this->assertEquals('CUSTOM BASE EDITVIEW',$restReply['reply']['fields']['address']['templates']['editView'],"Didn't use the custom base code.");
+        $this->assertEquals('CUSTOM BASE EDITVIEW', $restReply['reply']['fields']['address']['templates']['editView'], "Didn't use the custom base code.");
     }
 }

@@ -92,11 +92,11 @@ final class LogicHookTest extends TestCase
         SugarTestHelper::saveFile($targetFile);
 
         SugarAutoLoader::ensureDir(dirname($targetFile));
-        write_array_to_file('hook_array', array(
-            'test_event' => array(
-                array(0, null, __FILE__, $class, $method),
-            ),
-        ), $targetFile);
+        write_array_to_file('hook_array', [
+            'test_event' => [
+                [0, null, __FILE__, $class, $method],
+            ],
+        ], $targetFile);
 
         LogicHook::refreshHooks();
     }

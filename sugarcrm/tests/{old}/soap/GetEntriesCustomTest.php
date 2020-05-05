@@ -19,13 +19,13 @@
  */
 class GetEntriesCustomTest extends SOAPTestCase
 {
-    private $_module = NULL;
+    private $_module = null;
     private $_moduleName = 'Contacts';
     private $_customFieldName = 'test_custom_c';
     private $_field = null;
     private $_df = null;
 
-    protected $session = array();
+    protected $session = [];
 
     protected function setUp() : void
     {
@@ -41,8 +41,8 @@ class GetEntriesCustomTest extends SOAPTestCase
         $this->_field->id = $this->_moduleName . $this->_customFieldName;
         $this->_field->name = $this->_customFieldName;
         $this->_field->vanme = 'LBL_' . strtoupper($this->_customFieldName);
-        $this->_field->comments = NULL;
-        $this->_field->help = NULL;
+        $this->_field->comments = null;
+        $this->_field->help = null;
         $this->_field->custom_module = $this->_moduleName;
         $this->_field->type = 'varchar';
         $this->_field->label = 'LBL_' . strtoupper($this->_customFieldName);
@@ -56,15 +56,15 @@ class GetEntriesCustomTest extends SOAPTestCase
         $this->_field->duplicate_merge = 0;
         $this->_field->reportable = 1;
         $this->_field->importable = 'true';
-        $this->_field->ext1 = NULL;
-        $this->_field->ext2 = NULL;
-        $this->_field->ext3 = NULL;
-        $this->_field->ext4 = NULL;
+        $this->_field->ext1 = null;
+        $this->_field->ext2 = null;
+        $this->_field->ext3 = null;
+        $this->_field->ext4 = null;
 
         global $beanList, $beanFiles;
 
         $className = $beanList[$this->_moduleName];
-        require_once($beanFiles[$className]);
+        require_once $beanFiles[$className];
         $this->_module = new $className();
 
         $this->_df = new DynamicField($this->_moduleName);
@@ -81,15 +81,15 @@ class GetEntriesCustomTest extends SOAPTestCase
     public function testGetEntriesCountFromBasicSoap()
     {
         $this->_login();
-        $params = array(
+        $params = [
             'session' => $this->_sessionId,
             'module_name' => $this->_moduleName,
             'query' => $this->_customFieldName . ' LIKE \'\'',
-            'deleted' => 0
-        );
+            'deleted' => 0,
+        ];
         $actual = $this->_soapClient->call('get_entries_count', $params);
 
-        $this->assertNotSame(NULL, $actual['result_count'], 'Null value returned by get_entries_count.');
+        $this->assertNotSame(null, $actual['result_count'], 'Null value returned by get_entries_count.');
     }
 
     protected function tearDown() : void

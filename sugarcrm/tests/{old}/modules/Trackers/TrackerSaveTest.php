@@ -14,13 +14,14 @@ use PHPUnit\Framework\TestCase;
 
 class TrackerSaveTest extends TestCase
 {
-    function testSaveObject() {
+    function testSaveObject()
+    {
         $trackerManager = TrackerManager::getInstance();
-	    $monitor = $trackerManager->getMonitor('tracker');
-	    $monitor->setEnabled(true);
+        $monitor = $trackerManager->getMonitor('tracker');
+        $monitor->setEnabled(true);
         // Test to see how it handles saving an Array
         $user = new User();
-		$monitor->setValue('module_name', $user);
-		$this->assertTrue($monitor->module_name == "User");
+        $monitor->setValue('module_name', $user);
+        $this->assertTrue($monitor->module_name == "User");
     }
 }

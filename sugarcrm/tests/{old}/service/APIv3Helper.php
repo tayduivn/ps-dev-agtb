@@ -15,54 +15,54 @@ class APIv3Helper
 {
     function populateSeedDataForSearchTest($user_id)
     {
-        $results = array();
+        $results = [];
         $a1_id = create_guid();
         $a1 = new Account();
         $a1->id = $a1_id;
-        $a1->new_with_id = TRUE;
+        $a1->new_with_id = true;
         $a1->name = "UNIT TEST $a1_id";
         $a1->assigned_user_id = $user_id;
         $a1->save();
-        $results[] = array('id' => $a1_id, 'fieldName' => 'name', 'fieldValue' => "UNIT TEST $a1_id");
+        $results[] = ['id' => $a1_id, 'fieldName' => 'name', 'fieldValue' => "UNIT TEST $a1_id"];
 
         $a2_id = create_guid();
         $a2 = new Account();
-        $a2->new_with_id = TRUE;
+        $a2->new_with_id = true;
         $a2->id = $a2_id;
         $a2->name = "UNIT TEST $a2_id";
         $a2->assigned_user_id = 'unittest';
         $a2->save();
-        $results[] = array('id' => $a2_id, 'fieldName' => 'name', 'fieldValue' => "UNIT TEST $a2_id");
+        $results[] = ['id' => $a2_id, 'fieldName' => 'name', 'fieldValue' => "UNIT TEST $a2_id"];
 
         $c1_id = create_guid();
         $c1 = new Contact();
         $c1->id = $c1_id;
-        $c1->new_with_id = TRUE;
+        $c1->new_with_id = true;
         $c1->first_name = "UNIT TEST";
         $c1->last_name = "UNIT_TEST";
         $c1->assigned_user_id = $user_id;
         $c1->save();
-        $results[] = array('id' => $c1_id, 'fieldName' => 'name', 'fieldValue' => $c1->first_name .' ' . $c1->last_name);
+        $results[] = ['id' => $c1_id, 'fieldName' => 'name', 'fieldValue' => $c1->first_name .' ' . $c1->last_name];
 
         $op1_id = create_guid();
         $op1 = new Opportunity();
-        $op1->new_with_id = TRUE;
+        $op1->new_with_id = true;
         $op1->id = $op1_id;
         $op1->name = "UNIT TEST $op1_id";
         $op1->assigned_user_id = $user_id;
         $op1->date_closed = TimeDate::getInstance()->getNow()->asDbDate();
         $op1->save();
-        $results[] = array('id' => $op1_id, 'fieldName' => 'name', 'fieldValue' => "UNIT TEST $op1_id");
+        $results[] = ['id' => $op1_id, 'fieldName' => 'name', 'fieldValue' => "UNIT TEST $op1_id"];
 
         $op2_id = create_guid();
         $op2 = new Opportunity();
-        $op2->new_with_id = TRUE;
+        $op2->new_with_id = true;
         $op2->id = $op2_id;
         $op2->name = "UNIT TEST $op2_id";
         $op2->assigned_user_id = 'unittest';
         $op2->date_closed = TimeDate::getInstance()->getNow()->asDbDate();
         $op2->save();
-        $results[] = array('id' => $op2_id, 'fieldName' => 'name', 'fieldValue' => "UNIT TEST $op2_id");
+        $results[] = ['id' => $op2_id, 'fieldName' => 'name', 'fieldValue' => "UNIT TEST $op2_id"];
         $GLOBALS['db']->commit();
         return $results;
     }
@@ -73,19 +73,16 @@ class APIv3Helper
      * @param array $list
      * @param string $bean_id
      */
-    function findBeanIdFromEntryList($list,$bean_id,$module)
+    function findBeanIdFromEntryList($list, $bean_id, $module)
     {
-        $found = FALSE;
-        foreach ($list as $moduleEntry)
-        {
-            if($moduleEntry['name'] == $module)
-            {
-                foreach ($moduleEntry['records'] as $entry)
-                {
-                    foreach ($entry as $fieldEntry)
-                    {
-                        if($fieldEntry['name'] == 'id' && $fieldEntry['value'] == $bean_id )
-                            return TRUE;
+        $found = false;
+        foreach ($list as $moduleEntry) {
+            if ($moduleEntry['name'] == $module) {
+                foreach ($moduleEntry['records'] as $entry) {
+                    foreach ($entry as $fieldEntry) {
+                        if ($fieldEntry['name'] == 'id' && $fieldEntry['value'] == $bean_id) {
+                            return true;
+                        }
                     }
                 }
             }
@@ -100,19 +97,17 @@ class APIv3Helper
      * @param array $list
      * @param string $bean_id
      */
-    function findFieldByNameFromEntryList($list,$bean_id,$module,$fieldName)
+    function findFieldByNameFromEntryList($list, $bean_id, $module, $fieldName)
     {
-        $found = FALSE;
+        $found = false;
 
-        foreach ($list as $moduleEntry)
-        {
-            if($moduleEntry['name'] == $module)
-            {
-                foreach ($moduleEntry['records'] as $entry)
-                {
-                    $value = $this->_retrieveFieldValueByFieldName($entry, $fieldName,$bean_id);
-                    if($value !== FALSE)
+        foreach ($list as $moduleEntry) {
+            if ($moduleEntry['name'] == $module) {
+                foreach ($moduleEntry['records'] as $entry) {
+                    $value = $this->_retrieveFieldValueByFieldName($entry, $fieldName, $bean_id);
+                    if ($value !== false) {
                         return $value;
+                    }
                 }
             }
         }
@@ -122,20 +117,22 @@ class APIv3Helper
 
     function _retrieveFieldValueByFieldName($entry, $fieldName, $beanId)
     {
-        $found = FALSE;
-        $fieldValue = FALSE;
-        foreach ($entry as $fieldEntry)
-        {
-            if($fieldEntry['name'] == 'id' && $fieldEntry['value'] == $beanId )
-                $found = TRUE;
+        $found = false;
+        $fieldValue = false;
+        foreach ($entry as $fieldEntry) {
+            if ($fieldEntry['name'] == 'id' && $fieldEntry['value'] == $beanId) {
+                $found = true;
+            }
 
-            if($fieldEntry['name'] == $fieldName )
+            if ($fieldEntry['name'] == $fieldName) {
                 $fieldValue = $fieldEntry['value'];
+            }
         }
 
-        if($found)
+        if ($found) {
             return $fieldValue;
-        else
-            return FALSE;
+        } else {
+            return false;
+        }
     }
 }

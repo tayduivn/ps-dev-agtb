@@ -13,7 +13,7 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once('include/generic/SugarWidgets/SugarWidgetReportField.php');
+require_once 'include/generic/SugarWidgets/SugarWidgetReportField.php';
 
 /**
  * Bug #43506
@@ -25,9 +25,9 @@ class Bug43506Test extends TestCase
 {
     protected function setUp() : void
     {
-        $beanList = array();
-        $beanFiles = array();
-        require('include/modules.php');
+        $beanList = [];
+        $beanFiles = [];
+        require 'include/modules.php';
         $GLOBALS['beanList'] = $beanList;
         $GLOBALS['beanFiles'] = $beanFiles;
 
@@ -58,49 +58,46 @@ class Bug43506Test extends TestCase
 
     private function createDef($objBean, $def)
     {
-        $defs = array(
+        $defs = [
             'name' => $def['name'],
             'label' => 'Parent Type',
             'table_key' => 'self',
             'type' => $def['type'],
             'table_alias' => $objBean->table_name,
-            'column_key' => 'self:'.$def['name']
-        );
+            'column_key' => 'self:'.$def['name'],
+        ];
         return $defs;
     }
 
     public function providerData()
     {
-        $data = array();
+        $data = [];
 
         /**
          * find beans that have field with type 'parent_type'
          */
-        foreach ( $GLOBALS['beanList'] as $module => $bean_name )
-        {
-            if ( isset($GLOBALS['beanFiles'][$bean_name]) )
-            {
-                require_once($GLOBALS['beanFiles'][$bean_name]);
+        foreach ($GLOBALS['beanList'] as $module => $bean_name) {
+            if (isset($GLOBALS['beanFiles'][$bean_name])) {
+                require_once $GLOBALS['beanFiles'][$bean_name];
                 $objBean = new $bean_name();
                 $found = false;
 
-                if ( !isset($objBean->field_defs) || empty($objBean->field_defs) ) continue;
+                if (!isset($objBean->field_defs) || empty($objBean->field_defs)) {
+                    continue;
+                }
 
-                foreach ( $objBean->field_defs as $field_name => $defs )
-                {
-                    if ( $defs['type'] == 'parent_type' )
-                    {
+                foreach ($objBean->field_defs as $field_name => $defs) {
+                    if ($defs['type'] == 'parent_type') {
                         $found = $field_name;
                     }
                 }
-                if ( $found !== false )
-                {
-                    $data[] = array(
+                if ($found !== false) {
+                    $data[] = [
                         $objBean,
                         $found,
                         $this->createContent($module, $objBean->field_defs[$found]),
-                        $this->createDef($objBean, $objBean->field_defs[$found])
-                    );
+                        $this->createDef($objBean, $objBean->field_defs[$found]),
+                    ];
                 }
             }
         }
@@ -118,8 +115,7 @@ class Bug43506Test extends TestCase
      */
     public function testQueryOrderBy($objBean, $field_name, $content, $def)
     {
-        if ( !isset($objBean->field_defs[$field_name]['options']) || empty($objBean->field_defs[$field_name]['options']) )
-        {
+        if (!isset($objBean->field_defs[$field_name]['options']) || empty($objBean->field_defs[$field_name]['options'])) {
             $this->fail('Field with type = "parent_type" must have options params.');
         }
 

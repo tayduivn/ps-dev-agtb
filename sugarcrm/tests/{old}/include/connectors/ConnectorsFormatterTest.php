@@ -54,7 +54,7 @@ EOQ;
         VardefManager::loadVardef('Accounts', 'Account', true);
         require_once 'cache/modules/Accounts/Accountvardefs.php';
         $this->vardef = $GLOBALS['dictionary']['Account']['fields']['name'];
-        $this->displayParams = array('sources'=>array('ext_rest_twitter'));
+        $this->displayParams = ['sources'=>['ext_rest_twitter']];
         $this->tabindex = 0;
         $this->ss = new Sugar_Smarty();
         $this->ss->assign('parentFieldArray', $this->parentFieldArray);
@@ -74,8 +74,8 @@ EOQ;
         $controller = new ConnectorsController();
         $controller->action_SaveModifyMapping();
 
-        FormatterFactory::$formatter_map = array();
-        ConnectorFactory::$source_map = array();
+        FormatterFactory::$formatter_map = [];
+        ConnectorFactory::$source_map = [];
     }
 
     protected function tearDown() : void
@@ -90,8 +90,8 @@ EOQ;
     public function testHoverLinkForAccounts()
     {
         $enabled_sources = ConnectorUtils::getModuleConnectors('Accounts');
-        $hover_sources = array();
-        $displayParams = array();
+        $hover_sources = [];
+        $displayParams = [];
         $displayParams['module'] = 'Accounts';
         $displayParams['enableConnectors'] = true;
 
@@ -114,9 +114,9 @@ EOQ;
         $module = 'Accounts';
 
         if (file_exists("custom/modules/{$module}/metadata/detailviewdefs.php")) {
-            require("custom/modules/{$module}/metadata/detailviewdefs.php");
+            require "custom/modules/{$module}/metadata/detailviewdefs.php";
         } elseif (file_exists("modules/{$module}/metadata/detailviewdefs.php")) {
-            require("modules/{$module}/metadata/detailviewdefs.php");
+            require "modules/{$module}/metadata/detailviewdefs.php";
         }
 
         $this->assertTrue(!empty($viewdefs));

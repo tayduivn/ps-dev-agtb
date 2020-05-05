@@ -19,10 +19,10 @@ class Bug38424CurrencyTest extends TestCase
     protected function setUp() : void
     {
         $sfr = new SugarFieldCurrency('currency');
-        $vardef = array(
+        $vardef = [
             'len' => '10',
-        );
-        $this->_fieldOutput = $sfr->getEditViewSmarty(array(), $vardef, array(), 1);
+        ];
+        $this->_fieldOutput = $sfr->getEditViewSmarty([], $vardef, [], 1);
     }
     
     public function testMaxLength()

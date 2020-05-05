@@ -21,11 +21,11 @@ class SugarFieldParentTest extends TestCase
 {
     public function sugarFieldParentDataProvider()
     {
-        return array(
-            array(
-                array(), array(), 'Custom', array(), array(), $this->createMock('ServiceBase'),
-            )
-        );
+        return [
+            [
+                [], [], 'Custom', [], [], $this->createMock('ServiceBase'),
+            ],
+        ];
     }
     /**
      * @dataProvider sugarFieldParentDataProvider
@@ -33,7 +33,7 @@ class SugarFieldParentTest extends TestCase
     public function testFormatFieldNonExistingParentType($data, $args, $fieldName, $properties, $fieldList, $service)
     {
         $sugarField = $this->getMockBuilder('SugarFieldParent')
-            ->setMethods(array('ensureApiFormatFieldArguments'))
+            ->setMethods(['ensureApiFormatFieldArguments'])
             ->disableOriginalConstructor()
             ->getMock();
         $bean = $this->createMock('SugarBean');
@@ -42,6 +42,6 @@ class SugarFieldParentTest extends TestCase
             ->method('ensureApiFormatFieldArguments')
             ->with($fieldList, $service);
         $sugarField->apiFormatField($data, $bean, $args, $fieldName, $properties, $fieldList, $service);
-        static::assertEquals(array(), $data['parent']);
+        static::assertEquals([], $data['parent']);
     }
 }

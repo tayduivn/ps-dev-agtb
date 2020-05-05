@@ -25,9 +25,9 @@ class NaturalLogExpressionTest extends TestCase
 
     public function dataProviderTestEvaluate()
     {
-        return array(
-            array('ln(100)', '4.6051701859881'),
-            array('ln("100")', '4.6051701859881')
-        );
+        return [
+            ['ln(100)', '4.6051701859881'],
+            ['ln("100")', '4.6051701859881'],
+        ];
     }
 }

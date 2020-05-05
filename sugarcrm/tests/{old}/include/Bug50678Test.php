@@ -22,11 +22,11 @@ class Bug50678Test extends TestCase
 
         $this->_backupConfig = $sugar_config;
 
-        if(!empty($sugar_config['custom_help_url'])) {
-            unset ($sugar_config['custom_help_url']);
+        if (!empty($sugar_config['custom_help_url'])) {
+            unset($sugar_config['custom_help_url']);
         }
-        if(!empty($sugar_config['custom_help_base_url'])) {
-            unset ($sugar_config['custom_help_base_url']);
+        if (!empty($sugar_config['custom_help_base_url'])) {
+            unset($sugar_config['custom_help_base_url']);
         }
     }
 
@@ -36,16 +36,22 @@ class Bug50678Test extends TestCase
         $sugar_config = $this->_backupConfig;
     }
 
-    public function testGetDefaultHelpURL() {
+    public function testGetDefaultHelpURL()
+    {
         global $sugar_config;
 
-        $this->assertSame('http://www.sugarcrm.com/crm/product_doc.php?edition=arg0&version=arg1&lang=arg2&module=arg3&help_action=arg4&status=arg5&key=arg6',
-            get_help_url('arg0', 'arg1', 'arg2', 'arg3', 'arg4', 'arg5', 'arg6'));
-        $this->assertSame('http://www.sugarcrm.com/crm/product_doc.php?edition=arg0&version=arg1&lang=arg2&module=arg3&help_action=arg4&status=arg5&key=arg6&anchor=arg7',
-            get_help_url('arg0', 'arg1', 'arg2', 'arg3', 'arg4', 'arg5', 'arg6', 'arg7'));
+        $this->assertSame(
+            'http://www.sugarcrm.com/crm/product_doc.php?edition=arg0&version=arg1&lang=arg2&module=arg3&help_action=arg4&status=arg5&key=arg6',
+            get_help_url('arg0', 'arg1', 'arg2', 'arg3', 'arg4', 'arg5', 'arg6')
+        );
+        $this->assertSame(
+            'http://www.sugarcrm.com/crm/product_doc.php?edition=arg0&version=arg1&lang=arg2&module=arg3&help_action=arg4&status=arg5&key=arg6&anchor=arg7',
+            get_help_url('arg0', 'arg1', 'arg2', 'arg3', 'arg4', 'arg5', 'arg6', 'arg7')
+        );
     }
 
-    public function testGetCustomHelpURL() {
+    public function testGetCustomHelpURL()
+    {
         global $sugar_config;
 
         $url = 'http://example.com';
@@ -57,16 +63,21 @@ class Bug50678Test extends TestCase
         $this->assertSame($url, get_help_url('arg0', 'arg1', 'arg2', 'arg3', 'arg4', 'arg5', 'arg6', 'arg7'));
     }
 
-    public function testGetCustomBaseHelpURL() {
+    public function testGetCustomBaseHelpURL()
+    {
         global $sugar_config;
 
         $url = 'http://example.com';
 
         $sugar_config['custom_help_base_url'] = $url;
 
-        $this->assertSame($url."?edition=arg0&version=arg1&lang=arg2&module=arg3&help_action=arg4&status=arg5&key=arg6",
-            get_help_url('arg0', 'arg1', 'arg2', 'arg3', 'arg4', 'arg5', 'arg6'));
-        $this->assertSame($url."?edition=arg0&version=arg1&lang=arg2&module=arg3&help_action=arg4&status=arg5&key=arg6&anchor=arg7",
-            get_help_url('arg0', 'arg1', 'arg2', 'arg3', 'arg4', 'arg5', 'arg6', 'arg7'));
+        $this->assertSame(
+            $url."?edition=arg0&version=arg1&lang=arg2&module=arg3&help_action=arg4&status=arg5&key=arg6",
+            get_help_url('arg0', 'arg1', 'arg2', 'arg3', 'arg4', 'arg5', 'arg6')
+        );
+        $this->assertSame(
+            $url."?edition=arg0&version=arg1&lang=arg2&module=arg3&help_action=arg4&status=arg5&key=arg6&anchor=arg7",
+            get_help_url('arg0', 'arg1', 'arg2', 'arg3', 'arg4', 'arg5', 'arg6', 'arg7')
+        );
     }
 }

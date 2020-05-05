@@ -19,11 +19,11 @@ require_once 'include/utils.php';
  */
 class UtilsLanguageTest extends TestCase
 {
-    private $backup = array(
+    private $backup = [
         'default_language',
         'disabled_languages',
-        'languages'
-    );
+        'languages',
+    ];
 
     protected function setUp() : void
     {
@@ -37,7 +37,7 @@ class UtilsLanguageTest extends TestCase
 
         $sugar_config['default_language'] = 'fr_FR';
         $sugar_config['disabled_languages'] = 'es_ES,fr_FR';
-        $sugar_config['languages'] = array(
+        $sugar_config['languages'] = [
             'en_us' => 'English (US)',
             'bg_BG' => 'Български',
             'cs_CZ' => 'Česky',
@@ -46,7 +46,7 @@ class UtilsLanguageTest extends TestCase
             'el_EL' => 'Ελληνικά',
             'es_ES' => 'Español',
             'fr_FR' => 'Français',
-        );
+        ];
     }
 
     protected function tearDown() : void

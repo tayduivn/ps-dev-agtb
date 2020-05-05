@@ -26,13 +26,13 @@ class RestLoginTest extends RestTestBase
 
         $GLOBALS['db']->query("DELETE FROM oauth_consumer WHERE id LIKE 'UNIT%'");
         $GLOBALS['db']->query("DELETE FROM oauth_tokens WHERE consumer LIKE '_unit_%'");
-        if ( isset($this->contact->id) ) {
+        if (isset($this->contact->id)) {
             $GLOBALS['db']->query("DELETE FROM contacts WHERE id = '".$this->contact->id."'");
             if ($GLOBALS['db']->tableExists('contacts_cstm')) {
                 $GLOBALS['db']->query("DELETE FROM contacts_cstm WHERE id_c = '".$this->contact->id."'");
             }
         }
-        if ( isset($this->apiuser->id) ) {
+        if (isset($this->apiuser->id)) {
             $GLOBALS['db']->query("DELETE FROM users WHERE id = '".$this->apiuser->id."'");
             if ($GLOBALS['db']->tableExists('users_cstm')) {
                 $GLOBALS['db']->query("DELETE FROM users_cstm WHERE id_c = '".$this->apiuser->id."'");
@@ -51,24 +51,24 @@ class RestLoginTest extends RestTestBase
      */
     public function testRestLoginUser()
     {
-        $args = array(
+        $args = [
             'grant_type' => 'password',
             'username' => $this->_user->user_name,
             'password' => $this->_user->user_name,
             'client_id' => 'sugar',
             'client_secret' => '',
             'platform' => 'base',
-        );
+        ];
 
-        $reply = $this->_restCall('oauth2/token',json_encode($args));
+        $reply = $this->_restCall('oauth2/token', json_encode($args));
         $this->assertNotEmpty($reply['reply']['access_token']);
         $this->assertNotEmpty($reply['reply']['refresh_token']);
-        $this->assertNotEquals($reply['reply']['access_token'],$reply['reply']['refresh_token']);
-        $this->assertEquals('bearer',$reply['reply']['token_type']);
+        $this->assertNotEquals($reply['reply']['access_token'], $reply['reply']['refresh_token']);
+        $this->assertEquals('bearer', $reply['reply']['token_type']);
         
         $this->authToken = $reply['reply']['access_token'];
         $replyPing = $this->_restCall('ping');
-        $this->assertEquals('pong',$replyPing['reply']);
+        $this->assertEquals('pong', $replyPing['reply']);
     }
 
     /**
@@ -76,20 +76,20 @@ class RestLoginTest extends RestTestBase
      */
     public function testRestLoginUserInvalidGrant()
     {
-        $args = array(
+        $args = [
             'grant_type' => 'password',
             'username' => $this->_user->user_name,
             'password' => $this->_user->user_name,
             'client_id' => 'sugar',
             'client_secret' => '',
             'platform' => 'base',
-        );
+        ];
 
-        $reply = $this->_restCall('oauth2/token',json_encode($args));
+        $reply = $this->_restCall('oauth2/token', json_encode($args));
         $this->assertNotEmpty($reply['reply']['access_token']);
         $this->assertNotEmpty($reply['reply']['refresh_token']);
-        $this->assertNotEquals($reply['reply']['access_token'],$reply['reply']['refresh_token']);
-        $this->assertEquals('bearer',$reply['reply']['token_type']);
+        $this->assertNotEquals($reply['reply']['access_token'], $reply['reply']['refresh_token']);
+        $this->assertEquals('bearer', $reply['reply']['token_type']);
         
         $this->authToken = 'this-is-not-a-token';
         $replyPing = $this->_restCall('ping');
@@ -102,28 +102,28 @@ class RestLoginTest extends RestTestBase
      */
     public function testRestOauthViaGet()
     {
-        $args = array(
+        $args = [
             'grant_type' => 'password',
             'username' => $this->_user->user_name,
             'password' => $this->_user->user_name,
             'client_id' => 'sugar',
             'client_secret' => '',
             'platform' => 'base',
-        );
+        ];
 
-        $reply = $this->_restCall('oauth2/token',json_encode($args));
+        $reply = $this->_restCall('oauth2/token', json_encode($args));
         $this->assertNotEmpty($reply['reply']['access_token']);
         $this->assertNotEmpty($reply['reply']['refresh_token']);
-        $this->assertNotEquals($reply['reply']['access_token'],$reply['reply']['refresh_token']);
-        $this->assertEquals('bearer',$reply['reply']['token_type']);
+        $this->assertNotEquals($reply['reply']['access_token'], $reply['reply']['refresh_token']);
+        $this->assertEquals('bearer', $reply['reply']['token_type']);
         
         $this->authToken = $reply['reply']['access_token'];
         $replyPing = $this->_restCall('ping');
-        $this->assertEquals('pong',$replyPing['reply']);
+        $this->assertEquals('pong', $replyPing['reply']);
 
         $this->authToken = 'LOGGING_IN';
         $replyPing2 = $this->_restCall('ping?oauth_token='.$reply['reply']['access_token']);
-        $this->assertEquals('pong',$replyPing2['reply']);
+        $this->assertEquals('pong', $replyPing2['reply']);
     }
 
 
@@ -134,23 +134,23 @@ class RestLoginTest extends RestTestBase
     {
         $GLOBALS['db']->query("DELETE FROM oauth_consumer WHERE c_key = 'sugar'");
         $GLOBALS['db']->commit();
-        $args = array(
+        $args = [
             'grant_type' => 'password',
             'username' => $this->_user->user_name,
             'password' => $this->_user->user_name,
             'client_id' => 'sugar',
             'client_secret' => '',
-        );
+        ];
         
-        $reply = $this->_restCall('oauth2/token',json_encode($args));
+        $reply = $this->_restCall('oauth2/token', json_encode($args));
         $this->assertNotEmpty($reply['reply']['access_token']);
         $this->assertNotEmpty($reply['reply']['refresh_token']);
-        $this->assertNotEquals($reply['reply']['access_token'],$reply['reply']['refresh_token']);
-        $this->assertEquals('bearer',$reply['reply']['token_type']);
+        $this->assertNotEquals($reply['reply']['access_token'], $reply['reply']['refresh_token']);
+        $this->assertEquals('bearer', $reply['reply']['token_type']);
         
         $this->authToken = $reply['reply']['access_token'];
         $replyPing = $this->_restCall('ping');
-        $this->assertEquals('pong',$replyPing['reply']);
+        $this->assertEquals('pong', $replyPing['reply']);
     }
 
 
@@ -171,24 +171,24 @@ class RestLoginTest extends RestTestBase
         
         $GLOBALS['db']->commit();
         
-        $args = array(
+        $args = [
             'grant_type' => 'password',
             'username' => $this->_user->user_name,
             'password' => $this->_user->user_name,
             'client_id' => $consumer->c_key,
             'client_secret' => '',
             'platform' => 'base',
-        );
+        ];
         
-        $reply = $this->_restCall('oauth2/token',json_encode($args));
+        $reply = $this->_restCall('oauth2/token', json_encode($args));
         $this->assertNotEmpty($reply['reply']['access_token']);
         $this->assertNotEmpty($reply['reply']['refresh_token']);
-        $this->assertNotEquals($reply['reply']['access_token'],$reply['reply']['refresh_token']);
-        $this->assertEquals('bearer',$reply['reply']['token_type']);
+        $this->assertNotEquals($reply['reply']['access_token'], $reply['reply']['refresh_token']);
+        $this->assertEquals('bearer', $reply['reply']['token_type']);
         
         $this->authToken = $reply['reply']['access_token'];
         $replyPing = $this->_restCall('ping');
-        $this->assertEquals('pong',$replyPing['reply']);
+        $this->assertEquals('pong', $replyPing['reply']);
     }
 
     /**
@@ -196,67 +196,68 @@ class RestLoginTest extends RestTestBase
      */
     public function testRestLoginRefresh()
     {
-        $args = array(
+        $args = [
             'grant_type' => 'password',
             'username' => $this->_user->user_name,
             'password' => $this->_user->user_name,
             'client_id' => 'sugar',
             'client_secret' => '',
             'platform' => 'base',
-        );
+        ];
         
-        $reply = $this->_restCall('oauth2/token',json_encode($args));
+        $reply = $this->_restCall('oauth2/token', json_encode($args));
         $this->assertNotEmpty($reply['reply']['access_token']);
         $this->assertNotEmpty($reply['reply']['refresh_token']);
-        $this->assertNotEquals($reply['reply']['access_token'],$reply['reply']['refresh_token']);
-        $this->assertEquals('bearer',$reply['reply']['token_type']);
+        $this->assertNotEquals($reply['reply']['access_token'], $reply['reply']['refresh_token']);
+        $this->assertEquals('bearer', $reply['reply']['token_type']);
         
         $this->authToken = $reply['reply']['access_token'];
         $replyPing = $this->_restCall('ping');
-        $this->assertEquals('pong',$replyPing['reply']);
+        $this->assertEquals('pong', $replyPing['reply']);
 
         $refreshToken = $reply['reply']['refresh_token'];
 
         
-        $args = array(
+        $args = [
             'grant_type' => 'refresh_token',
             'refresh_token' => $refreshToken,
             'client_id' => 'sugar',
             'client_secret' => '',
             'platform' => 'base',
-        );
+        ];
         
         // Prevents _restCall from automatically logging in
         $this->authToken = 'LOGGING_IN';
-        $reply2 = $this->_restCall('oauth2/token',json_encode($args));
+        $reply2 = $this->_restCall('oauth2/token', json_encode($args));
         // if ( empty($reply2['reply']['access_token']) ) { print_r($reply2); }
         $this->assertNotEmpty($reply2['reply']['access_token']);
         $this->assertNotEmpty($reply2['reply']['refresh_token']);
-        $this->assertNotEquals($reply2['reply']['access_token'],$reply2['reply']['refresh_token']);
-        $this->assertNotEquals($reply['reply']['access_token'],$reply2['reply']['access_token']);
-        $this->assertNotEquals($reply['reply']['refresh_token'],$reply2['reply']['refresh_token']);
-        $this->assertEquals('bearer',$reply2['reply']['token_type']);
+        $this->assertNotEquals($reply2['reply']['access_token'], $reply2['reply']['refresh_token']);
+        $this->assertNotEquals($reply['reply']['access_token'], $reply2['reply']['access_token']);
+        $this->assertNotEquals($reply['reply']['refresh_token'], $reply2['reply']['refresh_token']);
+        $this->assertEquals('bearer', $reply2['reply']['token_type']);
         
         $this->authToken = $reply2['reply']['access_token'];
         $replyPing = $this->_restCall('ping');
-        $this->assertEquals('pong',$replyPing['reply']);
+        $this->assertEquals('pong', $replyPing['reply']);
     }
 
     /**
      * @group rest
      */
-    function testBadLogin() {
-        $args = array(
+    function testBadLogin()
+    {
+        $args = [
             'grant_type' => 'password',
             'username' => $this->_user->user_name,
             'password' => 'this is not the correct password',
             'client_id' => 'sugar',
             'client_secret' => '',
             'platform' => 'base',
-        );
+        ];
 
-        $reply = $this->_restCall('oauth2/token',json_encode($args));
+        $reply = $this->_restCall('oauth2/token', json_encode($args));
         $this->assertNotEmpty($reply['reply']['error']);
-        $this->assertEquals('need_login',$reply['reply']['error']);
+        $this->assertEquals('need_login', $reply['reply']['error']);
     }
 }

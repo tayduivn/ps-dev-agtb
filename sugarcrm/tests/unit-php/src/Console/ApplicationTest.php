@@ -50,17 +50,17 @@ class ApplicationTest extends TestCase
     public function providerTestAvailableStockCommands()
     {
         $ns = 'Sugarcrm\Sugarcrm\Console\Command';
-        return array(
-            array(
+        return [
+            [
                 CommandRegistry::MODE_STANDALONE,
-                array(
+                [
                     'help' => 'Symfony\Component\Console\Command\HelpCommand',
                     'list' => 'Symfony\Component\Console\Command\ListCommand',
-                ),
-            ),
-            array(
+                ],
+            ],
+            [
                 CommandRegistry::MODE_INSTANCE,
-                array(
+                [
                     'help' => 'Symfony\Component\Console\Command\HelpCommand',
                     'list' => 'Symfony\Component\Console\Command\ListCommand',
                     'elastic:indices' => $ns . '\Api\ElasticsearchIndicesCommand',
@@ -85,9 +85,9 @@ class ApplicationTest extends TestCase
                     'team-security:rebuild' => RebuildCommand::class,
                     'team-security:status' => StatusCommand::class,
                     'idm-mode:manage' => IdmModeManageCommand::class,
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
     }
 
     /**
@@ -114,14 +114,14 @@ class ApplicationTest extends TestCase
         $tester = new ApplicationTester($app);
 
         // regular execution
-        $tester->run(array('command' => 'apptest:A'));
+        $tester->run(['command' => 'apptest:A']);
         $this->assertEquals(
             'Success Application Test A' . PHP_EOL,
             $tester->getDisplay()
         );
 
         // execution with profiling
-        $tester->run(array('command' => 'apptest:A', '--profile' => true));
+        $tester->run(['command' => 'apptest:A', '--profile' => true]);
         $this->assertMatchesRegularExpression(
             '/^Success Application Test A\n\nMemory usage: (.*) MB \(peak: (.*) MB\), time: (.*)s\n$/',
             $tester->getDisplay()

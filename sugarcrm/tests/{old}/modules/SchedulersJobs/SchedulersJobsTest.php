@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 class SchedulersJobsTest extends TestCase
 {
-    public $jobs = array();
+    public $jobs = [];
     public $scheduler;
 
     protected function setUp() : void
@@ -24,17 +24,17 @@ class SchedulersJobsTest extends TestCase
 
     protected function tearDown() : void
     {
-        if(!empty($this->jobs)) {
+        if (!empty($this->jobs)) {
             $jobs = implode("','", $this->jobs);
             $this->db->query("DELETE FROM job_queue WHERE id IN ('$jobs')");
         }
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         $ids = SugarTestAccountUtilities::getCreatedAccountIds();
-        if(!empty($ids)) {
+        if (!empty($ids)) {
             SugarTestAccountUtilities::removeAllCreatedAccounts();
         }
-        if(!empty($this->scheduler)) {
-           $this->db->query("DELETE FROM schedulers where id = '{$this->scheduler->id}'");
+        if (!empty($this->scheduler)) {
+            $this->db->query("DELETE FROM schedulers where id = '{$this->scheduler->id}'");
         }
     }
 
@@ -45,7 +45,7 @@ class SchedulersJobsTest extends TestCase
         return $job;
     }
 
-    protected function createJobMock(array $data, array $methodsToBeMocked = array())
+    protected function createJobMock(array $data, array $methodsToBeMocked = [])
     {
         $jobMock = $this->getMockBuilder('TestSchedulersJob')->setMethods($methodsToBeMocked)->getMock();
         $this->prepareJob($jobMock, $data);
@@ -55,7 +55,7 @@ class SchedulersJobsTest extends TestCase
     protected function prepareJob(SchedulersJob $job, array $data)
     {
         $job->status = SchedulersJob::JOB_STATUS_QUEUED;
-        foreach($data as $key => $val) {
+        foreach ($data as $key => $val) {
             $job->$key = $val;
         }
         $job->execute_time = empty($job->execute_time) ? TimeDate::getInstance()->getNow()->asDb() : $job->execute_time;
@@ -65,7 +65,7 @@ class SchedulersJobsTest extends TestCase
 
     public function testJobCreate()
     {
-        $job = $this->createJob(array("name" => "TestCreate"));
+        $job = $this->createJob(["name" => "TestCreate"]);
         $job->status = SchedulersJob::JOB_STATUS_DONE;
         $job->save();
         $this->assertNotEmpty($job->id);
@@ -76,14 +76,14 @@ class SchedulersJobsTest extends TestCase
 
     public function testJobSuccess()
     {
-        $job = $this->createJob(array("name" => "Test Success"));
+        $job = $this->createJob(["name" => "Test Success"]);
         $job->succeedJob();
 
         $job->retrieve($job->id);
         $this->assertEquals(SchedulersJob::JOB_SUCCESS, $job->resolution, "Wrong resolution");
         $this->assertEquals(SchedulersJob::JOB_STATUS_DONE, $job->status, "Wrong status");
 
-        $job = $this->createJob(array("name" => "Test Success 2"));
+        $job = $this->createJob(["name" => "Test Success 2"]);
         $job->succeedJob("very good!");
         $job->db->commit();
         $job->retrieve($job->id);
@@ -95,7 +95,7 @@ class SchedulersJobsTest extends TestCase
 
     public function testJobFailure()
     {
-        $job = $this->createJob(array("name" => "Test Fail"));
+        $job = $this->createJob(["name" => "Test Fail"]);
         $job->failJob();
 
         $job->retrieve($job->id);
@@ -104,7 +104,7 @@ class SchedulersJobsTest extends TestCase
         $this->assertEquals(1, $job->failure_count, "Wrong failure count");
 
 
-        $job = $this->createJob(array("name" => "Test Fail 2"));
+        $job = $this->createJob(["name" => "Test Fail 2"]);
         $job->failJob("very bad!");
         $job->db->commit();
         $job->retrieve($job->id);
@@ -117,7 +117,7 @@ class SchedulersJobsTest extends TestCase
     {
         global $timedate;
         $now = $timedate->getNow();
-        $job = $this->createJob(array("name" => "Test Later", "job_delay" => 57));
+        $job = $this->createJob(["name" => "Test Later", "job_delay" => 57]);
         $job->postponeJob();
 
         $job->retrieve($job->id);
@@ -126,7 +126,7 @@ class SchedulersJobsTest extends TestCase
         $date = $timedate->fromDb($job->execute_time_db);
         $this->assertEquals($now->ts+57, $date->ts);
 
-        $job = $this->createJob(array("name" => "Test Later 2", "job_delay" => 42));
+        $job = $this->createJob(["name" => "Test Later 2", "job_delay" => 42]);
         $job->postponeJob("who knows?");
         $job->db->commit();
         $job->retrieve($job->id);
@@ -140,33 +140,33 @@ class SchedulersJobsTest extends TestCase
         $this->assertEquals(SchedulersJob::JOB_STATUS_DONE, $job->status, "Wrong status");
     }
 
-    static public function staticJobFunction1($job, $data = null)
+    public static function staticJobFunction1($job, $data = null)
     {
          global $testJobFunction1Args;
          $testJobFunction1Args = func_get_args();
          return $data != "failme";
     }
 
-    static private function staticJobFunctionPrivate($job, $data = null)
+    private static function staticJobFunctionPrivate($job, $data = null)
     {
          global $testJobFunction1Args;
          $testJobFunction1Args = func_get_args();
          return $data != "failme";
     }
 
-    static public function staticJobFunctionErrors($job, $data = null)
+    public static function staticJobFunctionErrors($job, $data = null)
     {
         trigger_error("User Warning", E_USER_WARNING);
         $fp = fopen("/nosuchfile", "r"); // generate warning
          return $data != "failme";
     }
 
-    static public function staticJobFunctionInternal($job, $data = null)
+    public static function staticJobFunctionInternal($job, $data = null)
     {
-        if($data == "errors") {
+        if ($data == "errors") {
             trigger_error("User Warning", E_USER_WARNING);
         }
-        if($data == "failme") {
+        if ($data == "failme") {
             $job->failJob("Job Failed");
             return true;
         } else {
@@ -175,7 +175,7 @@ class SchedulersJobsTest extends TestCase
         }
     }
 
-    static public function staticJobFunctionAccount($job, $data = null)
+    public static function staticJobFunctionAccount($job, $data = null)
     {
         SugarTestAccountUtilities::createAccount($data);
         return $data != "failme";
@@ -185,9 +185,9 @@ class SchedulersJobsTest extends TestCase
     {
         global $testJobFunction1Args;
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-        $testJobFunction1Args = array();
-        $job = $this->createJob(array("name" => "Test Func", "status" => SchedulersJob::JOB_STATUS_RUNNING,
-        	"target" => "function::testJobFunction1", "assigned_user_id" => $GLOBALS['current_user']->id));
+        $testJobFunction1Args = [];
+        $job = $this->createJob(["name" => "Test Func", "status" => SchedulersJob::JOB_STATUS_RUNNING,
+            "target" => "function::testJobFunction1", "assigned_user_id" => $GLOBALS['current_user']->id]);
         $job->runJob();
         $job->retrieve($job->id);
         $this->assertEquals(SchedulersJob::JOB_SUCCESS, $job->resolution, "Wrong resolution");
@@ -196,9 +196,9 @@ class SchedulersJobsTest extends TestCase
         $this->assertInstanceOf(get_class($job), $testJobFunction1Args[0], "Wrong type of arg 1");
         $this->assertEquals($testJobFunction1Args[0]->id, $job->id, "Argument 1 ID doesn't match");
         // function with args
-        $job = $this->createJob(array("name" => "Test Func 2", "status" => SchedulersJob::JOB_STATUS_RUNNING,
-        	"target" => "function::testJobFunction1",
-        	"data" => "function data", "assigned_user_id" => $GLOBALS['current_user']->id));
+        $job = $this->createJob(["name" => "Test Func 2", "status" => SchedulersJob::JOB_STATUS_RUNNING,
+            "target" => "function::testJobFunction1",
+            "data" => "function data", "assigned_user_id" => $GLOBALS['current_user']->id]);
         $job->runJob();
         $job->retrieve($job->id);
         $this->assertEquals(SchedulersJob::JOB_SUCCESS, $job->resolution, "Wrong resolution");
@@ -206,18 +206,18 @@ class SchedulersJobsTest extends TestCase
         $this->assertEquals(2, count($testJobFunction1Args), "Wrong number of args to function");
         $this->assertEquals($testJobFunction1Args[1], "function data", "Argument 2 doesn't match");
         // function returns failure
-        $job = $this->createJob(array("name" => "Test Func 2", "status" => SchedulersJob::JOB_STATUS_RUNNING,
-        	"target" => "function::testJobFunction1",
-        	"data" => "failme", "assigned_user_id" => $GLOBALS['current_user']->id));
+        $job = $this->createJob(["name" => "Test Func 2", "status" => SchedulersJob::JOB_STATUS_RUNNING,
+            "target" => "function::testJobFunction1",
+            "data" => "failme", "assigned_user_id" => $GLOBALS['current_user']->id]);
         $job->runJob();
         $job->retrieve($job->id);
         $this->assertEquals(SchedulersJob::JOB_FAILURE, $job->resolution, "Wrong resolution");
         $this->assertEquals(SchedulersJob::JOB_STATUS_DONE, $job->status, "Wrong status");
         $this->assertEquals(2, count($testJobFunction1Args), "Wrong number of args to function");
         // static function
-        $testJobFunction1Args = array();
-        $job = $this->createJob(array("name" => "Test Func 3", "status" => SchedulersJob::JOB_STATUS_RUNNING,
-        	"target" => "function::SchedulersJobsTest::staticJobFunction1", "assigned_user_id" => $GLOBALS['current_user']->id));
+        $testJobFunction1Args = [];
+        $job = $this->createJob(["name" => "Test Func 3", "status" => SchedulersJob::JOB_STATUS_RUNNING,
+            "target" => "function::SchedulersJobsTest::staticJobFunction1", "assigned_user_id" => $GLOBALS['current_user']->id]);
         $job->runJob();
         $job->retrieve($job->id);
         $this->assertEquals(SchedulersJob::JOB_SUCCESS, $job->resolution, "Wrong resolution");
@@ -228,44 +228,44 @@ class SchedulersJobsTest extends TestCase
     public function testJobRunBadFunc()
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-        $testJobFunction1Args = array();
+        $testJobFunction1Args = [];
         // unknown function
-        $job = $this->createJob(array("name" => "Test Bad Func", "status" => SchedulersJob::JOB_STATUS_RUNNING,
-        	"target" => "function::nosuchfunctionblahblah", "assigned_user_id" => $GLOBALS['current_user']->id));
+        $job = $this->createJob(["name" => "Test Bad Func", "status" => SchedulersJob::JOB_STATUS_RUNNING,
+            "target" => "function::nosuchfunctionblahblah", "assigned_user_id" => $GLOBALS['current_user']->id]);
         $job->runJob();
         $job->retrieve($job->id);
         $this->assertEquals(SchedulersJob::JOB_FAILURE, $job->resolution, "Wrong resolution");
         $this->assertEquals(SchedulersJob::JOB_STATUS_DONE, $job->status, "Wrong status");
         $this->assertStringContainsString('nosuchfun', $job->message);
         // No user
-        $job = $this->createJob(array("name" => "Test Bad Func 2", "status" => SchedulersJob::JOB_STATUS_RUNNING,
-        	"target" => "function::testJobFunction1"));
+        $job = $this->createJob(["name" => "Test Bad Func 2", "status" => SchedulersJob::JOB_STATUS_RUNNING,
+            "target" => "function::testJobFunction1"]);
         $job->runJob();
         $job->retrieve($job->id);
         $this->assertEquals(SchedulersJob::JOB_FAILURE, $job->resolution, "Wrong resolution");
         $this->assertEquals(SchedulersJob::JOB_STATUS_DONE, $job->status, "Wrong status");
         $this->assertStringContainsString('No User ID', $job->message);
         // Bad user ID
-        $job = $this->createJob(array("name" => "Test Bad Func 3", "status" => SchedulersJob::JOB_STATUS_RUNNING,
-        	"target" => "function::testJobFunction1", "assigned_user_id" => "Unexisting User"));
+        $job = $this->createJob(["name" => "Test Bad Func 3", "status" => SchedulersJob::JOB_STATUS_RUNNING,
+            "target" => "function::testJobFunction1", "assigned_user_id" => "Unexisting User"]);
         $job->runJob();
         $job->retrieve($job->id);
         $this->assertEquals(SchedulersJob::JOB_FAILURE, $job->resolution, "Wrong resolution");
         $this->assertEquals(SchedulersJob::JOB_STATUS_DONE, $job->status, "Wrong status");
         $this->assertStringContainsString('Unexisting User', $job->message);
         // Private function
-        $testJobFunction1Args = array();
-        $job = $this->createJob(array("name" => "Test Bad Func 4", "status" => SchedulersJob::JOB_STATUS_RUNNING,
-        	"target" => "function::SchedulersJobsTest::staticJobFunctionPrivate", "assigned_user_id" => $GLOBALS['current_user']->id));
+        $testJobFunction1Args = [];
+        $job = $this->createJob(["name" => "Test Bad Func 4", "status" => SchedulersJob::JOB_STATUS_RUNNING,
+            "target" => "function::SchedulersJobsTest::staticJobFunctionPrivate", "assigned_user_id" => $GLOBALS['current_user']->id]);
         $job->runJob();
         $job->retrieve($job->id);
         $this->assertEquals(SchedulersJob::JOB_FAILURE, $job->resolution, "Wrong resolution");
         $this->assertEquals(SchedulersJob::JOB_STATUS_DONE, $job->status, "Wrong status");
         $this->assertStringContainsString('staticJobFunctionPrivate', $job->message);
         // Bad target type
-        $testJobFunction1Args = array();
-        $job = $this->createJob(array("name" => "Test Bad Func 5", "status" => SchedulersJob::JOB_STATUS_RUNNING,
-        	"target" => "whatever::SchedulersJobsTest::staticJobFunctionPrivate", "assigned_user_id" => $GLOBALS['current_user']->id));
+        $testJobFunction1Args = [];
+        $job = $this->createJob(["name" => "Test Bad Func 5", "status" => SchedulersJob::JOB_STATUS_RUNNING,
+            "target" => "whatever::SchedulersJobsTest::staticJobFunctionPrivate", "assigned_user_id" => $GLOBALS['current_user']->id]);
         $job->runJob();
         $job->retrieve($job->id);
         $this->assertEquals(SchedulersJob::JOB_FAILURE, $job->resolution, "Wrong resolution");
@@ -276,8 +276,8 @@ class SchedulersJobsTest extends TestCase
     public function testJobErrors()
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-        $job = $this->createJob(array("name" => "Test Func Errors", "status" => SchedulersJob::JOB_STATUS_RUNNING,
-        	"target" => "function::SchedulersJobsTest::staticJobFunctionErrors", "assigned_user_id" => $GLOBALS['current_user']->id));
+        $job = $this->createJob(["name" => "Test Func Errors", "status" => SchedulersJob::JOB_STATUS_RUNNING,
+            "target" => "function::SchedulersJobsTest::staticJobFunctionErrors", "assigned_user_id" => $GLOBALS['current_user']->id]);
         $job->runJob();
         $job->retrieve($job->id);
         $this->assertEquals(SchedulersJob::JOB_SUCCESS, $job->resolution, "Wrong resolution");
@@ -285,8 +285,8 @@ class SchedulersJobsTest extends TestCase
         $this->assertStringContainsString('User Warning', $job->message);
         $this->assertStringContainsString('nosuchfile', $job->message);
         // failing
-        $job = $this->createJob(array("name" => "Test Func Errors", "status" => SchedulersJob::JOB_STATUS_RUNNING,
-        	"target" => "function::SchedulersJobsTest::staticJobFunctionErrors", "data" => "failme", "assigned_user_id" => $GLOBALS['current_user']->id));
+        $job = $this->createJob(["name" => "Test Func Errors", "status" => SchedulersJob::JOB_STATUS_RUNNING,
+            "target" => "function::SchedulersJobsTest::staticJobFunctionErrors", "data" => "failme", "assigned_user_id" => $GLOBALS['current_user']->id]);
         $job->runJob();
         $job->retrieve($job->id);
         $this->assertEquals(SchedulersJob::JOB_FAILURE, $job->resolution, "Wrong resolution");
@@ -298,25 +298,25 @@ class SchedulersJobsTest extends TestCase
     public function testJobResolution()
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-        $job = $this->createJob(array("name" => "Test Func Errors", "status" => SchedulersJob::JOB_STATUS_RUNNING,
-        	"target" => "function::SchedulersJobsTest::staticJobFunctionInternal","assigned_user_id" => $GLOBALS['current_user']->id));
+        $job = $this->createJob(["name" => "Test Func Errors", "status" => SchedulersJob::JOB_STATUS_RUNNING,
+            "target" => "function::SchedulersJobsTest::staticJobFunctionInternal","assigned_user_id" => $GLOBALS['current_user']->id]);
         $job->runJob();
         $job->retrieve($job->id);
         $this->assertEquals(SchedulersJob::JOB_SUCCESS, $job->resolution, "Wrong resolution");
         $this->assertEquals(SchedulersJob::JOB_STATUS_DONE, $job->status, "Wrong status");
         $this->assertStringContainsString('Job OK', $job->message);
         // failing
-        $job = $this->createJob(array("name" => "Test Func Errors 2", "status" => SchedulersJob::JOB_STATUS_RUNNING,
-        	"target" => "function::SchedulersJobsTest::staticJobFunctionInternal", "data" => "failme", "assigned_user_id" => $GLOBALS['current_user']->id));
+        $job = $this->createJob(["name" => "Test Func Errors 2", "status" => SchedulersJob::JOB_STATUS_RUNNING,
+            "target" => "function::SchedulersJobsTest::staticJobFunctionInternal", "data" => "failme", "assigned_user_id" => $GLOBALS['current_user']->id]);
         $job->runJob();
         $job->retrieve($job->id);
         $this->assertEquals(SchedulersJob::JOB_FAILURE, $job->resolution, "Wrong resolution");
         $this->assertEquals(SchedulersJob::JOB_STATUS_DONE, $job->status, "Wrong status");
         $this->assertStringContainsString('Job Failed', $job->message);
         // errors
-        $job = $this->createJob(array("name" => "Test Func Errors", "status" => SchedulersJob::JOB_STATUS_RUNNING,
-        	"target" => "function::SchedulersJobsTest::staticJobFunctionInternal", "data" => "errors",
-             "assigned_user_id" => $GLOBALS['current_user']->id));
+        $job = $this->createJob(["name" => "Test Func Errors", "status" => SchedulersJob::JOB_STATUS_RUNNING,
+            "target" => "function::SchedulersJobsTest::staticJobFunctionInternal", "data" => "errors",
+             "assigned_user_id" => $GLOBALS['current_user']->id]);
         $job->runJob();
         $job->retrieve($job->id);
         $this->assertEquals(SchedulersJob::JOB_SUCCESS, $job->resolution, "Wrong resolution");
@@ -328,9 +328,9 @@ class SchedulersJobsTest extends TestCase
     public function testJobClients()
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-        $job = $this->createJob(array("name" => "Test Func Clients", "status" => SchedulersJob::JOB_STATUS_RUNNING,
-        	"target" => "function::SchedulersJobsTest::staticJobFunctionInternal", "client" => "UnitTests",
-        	"assigned_user_id" => $GLOBALS['current_user']->id));
+        $job = $this->createJob(["name" => "Test Func Clients", "status" => SchedulersJob::JOB_STATUS_RUNNING,
+            "target" => "function::SchedulersJobsTest::staticJobFunctionInternal", "client" => "UnitTests",
+            "assigned_user_id" => $GLOBALS['current_user']->id]);
         $res = SchedulersJob::runJobId($job->id, "UnitTests");
         $job->retrieve($job->id);
         $this->assertTrue($res, "Bad result from runJobId");
@@ -338,9 +338,9 @@ class SchedulersJobsTest extends TestCase
         $this->assertEquals(SchedulersJob::JOB_STATUS_DONE, $job->status, "Wrong status");
         $this->assertStringContainsString('Job OK', $job->message);
         // wrong client
-        $job = $this->createJob(array("name" => "Test Func Clients 2", "status" => SchedulersJob::JOB_STATUS_RUNNING,
-        	"target" => "function::SchedulersJobsTest::staticJobFunctionInternal", "client" => "UnitTests",
-        	"assigned_user_id" => $GLOBALS['current_user']->id));
+        $job = $this->createJob(["name" => "Test Func Clients 2", "status" => SchedulersJob::JOB_STATUS_RUNNING,
+            "target" => "function::SchedulersJobsTest::staticJobFunctionInternal", "client" => "UnitTests",
+            "assigned_user_id" => $GLOBALS['current_user']->id]);
         $res = SchedulersJob::runJobId($job->id, "UnitTests2");
         $this->assertFalse($res === true, "Bad result from runJobId");
         // wrong ID
@@ -351,8 +351,8 @@ class SchedulersJobsTest extends TestCase
     public function testJobURLSuccess()
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-        $job = $this->createJobMock(array("name" => "Test Url", "status" => SchedulersJob::JOB_STATUS_RUNNING,
-            "target" => "url::www.example.com"), array('fireUrl'));
+        $job = $this->createJobMock(["name" => "Test Url", "status" => SchedulersJob::JOB_STATUS_RUNNING,
+            "target" => "url::www.example.com"], ['fireUrl']);
         $job->expects($this->any())->method('fireUrl')->will($this->returnValue(true));
         $job->runJob();
         $job->retrieve($job->id);
@@ -363,8 +363,8 @@ class SchedulersJobsTest extends TestCase
     public function testJobURLFailure()
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-        $job = $this->createJobMock(array("name" => "Test Url 2", "status" => SchedulersJob::JOB_STATUS_RUNNING,
-            "target" => "url::www.example.com"), array('fireUrl'));
+        $job = $this->createJobMock(["name" => "Test Url 2", "status" => SchedulersJob::JOB_STATUS_RUNNING,
+            "target" => "url::www.example.com"], ['fireUrl']);
         $job->expects($this->any())->method('fireUrl')->will($this->returnValue(false));
         $job->runJob();
         $job->retrieve($job->id);
@@ -380,9 +380,9 @@ class SchedulersJobsTest extends TestCase
         global $timedate;
         $now = $timedate->getNow();
 
-        $job = $this->createJob(array("name" => "Test User 1", "status" => SchedulersJob::JOB_STATUS_RUNNING,
-        	"assigned_user_id" => $user1->id, "target" => "function::nosuchfunction",
-        	"requeue" => true, "retry_count" => 2, "job_delay" => 1, "min_interval" => 242));
+        $job = $this->createJob(["name" => "Test User 1", "status" => SchedulersJob::JOB_STATUS_RUNNING,
+            "assigned_user_id" => $user1->id, "target" => "function::nosuchfunction",
+            "requeue" => true, "retry_count" => 2, "job_delay" => 1, "min_interval" => 242]);
         $job->runJob();
         $this->assertTrue($job->onFailureCalled, "onFailure wasn't called");
         $this->assertEmpty($job->onFinalFailureCalled, "onFinalFailure was called prematurely");
@@ -420,7 +420,7 @@ class SchedulersJobsTest extends TestCase
 
     public function testJobDelete()
     {
-        $job = $this->createJob(array("name" => "TestCreate"));
+        $job = $this->createJob(["name" => "TestCreate"]);
         $job->status = SchedulersJob::JOB_STATUS_DONE;
         $job->save();
         $this->assertNotEmpty($job->id);
@@ -445,10 +445,10 @@ class SchedulersJobsTest extends TestCase
         $this->scheduler->last_run = null;
         $this->scheduler->save();
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-        $testJobFunction1Args = array();
-        $job = $this->createJob(array("name" => "Test Func", "status" => SchedulersJob::JOB_STATUS_RUNNING,
-        	"target" => "function::testJobFunction1", "assigned_user_id" => $GLOBALS['current_user']->id,
-        	"scheduler_id" => $this->scheduler->id));
+        $testJobFunction1Args = [];
+        $job = $this->createJob(["name" => "Test Func", "status" => SchedulersJob::JOB_STATUS_RUNNING,
+            "target" => "function::testJobFunction1", "assigned_user_id" => $GLOBALS['current_user']->id,
+            "scheduler_id" => $this->scheduler->id]);
         $job->runJob();
         $job->retrieve($job->id);
         $this->assertEquals(SchedulersJob::JOB_SUCCESS, $job->resolution, "Wrong resolution");
@@ -462,25 +462,25 @@ class SchedulersJobsTest extends TestCase
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $this->scheduler = new Scheduler(false);
         $this->scheduler->id = create_guid();
-        $newjob = $this->createJob(array("name" => "Test Func", "status" => SchedulersJob::JOB_STATUS_DONE,
-        		"target" => "function::testJobFunction1", "assigned_user_id" => $GLOBALS['current_user']->id,
-        		"scheduler_id" => $this->scheduler->id));
-        $oldjob = $this->createJob(array("name" => "Test Func", "status" => SchedulersJob::JOB_STATUS_DONE,
-        		"target" => "function::testJobFunction1", "assigned_user_id" => $GLOBALS['current_user']->id,
-        		"scheduler_id" => $this->scheduler->id, 'update_date_modified' => false,
-                'date_modified' => TimeDate::getInstance()->getNow()->modify("-10 days")->asDB()));
-        $oldestjob = $this->createJob(array("name" => "Test Func", "status" => SchedulersJob::JOB_STATUS_DONE,
-        		"target" => "function::testJobFunction1", "assigned_user_id" => $GLOBALS['current_user']->id,
-        		"scheduler_id" => $this->scheduler->id, 'update_date_modified' => false,
-                'date_modified' => TimeDate::getInstance()->getNow()->modify("-100 days")->asDb()));
+        $newjob = $this->createJob(["name" => "Test Func", "status" => SchedulersJob::JOB_STATUS_DONE,
+                "target" => "function::testJobFunction1", "assigned_user_id" => $GLOBALS['current_user']->id,
+                "scheduler_id" => $this->scheduler->id]);
+        $oldjob = $this->createJob(["name" => "Test Func", "status" => SchedulersJob::JOB_STATUS_DONE,
+                "target" => "function::testJobFunction1", "assigned_user_id" => $GLOBALS['current_user']->id,
+                "scheduler_id" => $this->scheduler->id, 'update_date_modified' => false,
+                'date_modified' => TimeDate::getInstance()->getNow()->modify("-10 days")->asDB()]);
+        $oldestjob = $this->createJob(["name" => "Test Func", "status" => SchedulersJob::JOB_STATUS_DONE,
+                "target" => "function::testJobFunction1", "assigned_user_id" => $GLOBALS['current_user']->id,
+                "scheduler_id" => $this->scheduler->id, 'update_date_modified' => false,
+                'date_modified' => TimeDate::getInstance()->getNow()->modify("-100 days")->asDb()]);
 
         $this->assertNotEmpty($newjob->id);
         $this->assertNotEmpty($oldjob->id);
         $this->assertNotEmpty($oldestjob->id);
 
-        $cleanjob = $this->createJob(array("name" => "Test Func", "status" => SchedulersJob::JOB_STATUS_RUNNING,
-        		"target" => "function::cleanJobQueue", "assigned_user_id" => $GLOBALS['current_user']->id,
-        		"scheduler_id" => $this->scheduler->id));
+        $cleanjob = $this->createJob(["name" => "Test Func", "status" => SchedulersJob::JOB_STATUS_RUNNING,
+                "target" => "function::cleanJobQueue", "assigned_user_id" => $GLOBALS['current_user']->id,
+                "scheduler_id" => $this->scheduler->id]);
         $cleanjob->runJob();
         // new job should be still there
         $job = new SchedulersJob();

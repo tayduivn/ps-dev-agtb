@@ -33,16 +33,17 @@ class Bug53963Test extends TestCase
         $this->bean->table_name = 'Bug53963Test';
         $this->audit_table_name = $this->bean->get_audit_table_name();
         $this->cleanUpAuditTable();
-	}
+    }
 
     protected function tearDown() : void
-	{
+    {
         $this->cleanUpAuditTable();
-	}
+    }
 
     public function testAuditTablePrimaryKeyCreation()
     {
-        function findPK($previous, $index){
+        function findPK($previous, $index)
+        {
             return $previous || ($index['type'] == 'primary');
         }
         $this->bean->create_audit_table();

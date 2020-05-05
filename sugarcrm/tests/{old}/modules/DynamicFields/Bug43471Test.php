@@ -21,18 +21,18 @@ class Bug43471Test extends TestCase
     {
         $bean = $this->createMock(Company::class);
         $bean->table_name = 'test' . date("YmdHis");
-        $bean->field_defs = array (
+        $bean->field_defs =  [
               'id' =>
-              array (
+               [
                 'name' => 'id',
                 'vname' => 'LBL_ID',
                 'type' => 'id',
                 'required' => true,
                 'reportable' => true,
                 'comment' => 'Unique identifier',
-              ),
+              ],
               'name' =>
-              array (
+               [
                 'name' => 'name',
                 'type' => 'name',
                 'dbType' => 'varchar',
@@ -44,16 +44,16 @@ class Bug43471Test extends TestCase
                 'required' => true,
                 'importable' => 'required',
                 'merge_filter' => 'selected',
-              ),
+              ],
               'FooBar_c' =>
-              array (
+               [
                 'required' => false,
                 'source' => 'custom_fields',
                 'name' => 'FooBar_c',
                 'vname' => 'LBL_FOOBAR',
                 'type' => 'varchar',
                 'massupdate' => '0',
-                'default' => NULL,
+                'default' => null,
                 'comments' => 'LBL_FOOBAR_COMMENT',
                 'help' => 'LBL_FOOBAR_HELP',
                 'importable' => 'true',
@@ -66,8 +66,8 @@ class Bug43471Test extends TestCase
                 'size' => '20',
                 'id' => 'AccountsFooBar_c',
                 'custom_module' => 'Accounts',
-              ),
-            );
+              ],
+            ];
 
         $df = $this->createPartialMock(DynamicField::class, ['createCustomTable']);
         $df->setup($bean);
@@ -75,16 +75,16 @@ class Bug43471Test extends TestCase
                 ->method('createCustomTable')
                 ->will($this->returnValue(null));
 
-        $helper = $this->createPartialMock('MysqliManager', array('get_columns'));
+        $helper = $this->createPartialMock('MysqliManager', ['get_columns']);
         $helper->expects($this->any())
                 ->method('get_columns')
-                ->will($this->returnValue(array(
-                'foobar_c' => array (
+                ->will($this->returnValue([
+                'foobar_c' =>  [
                     'name' => 'FooBar_c',
                     'type' => 'varchar',
                     'len' => '255',
-                    ),
-                )));
+                    ],
+                ]));
 
         SugarTestHelper::setUp('mock_db', $helper);
 

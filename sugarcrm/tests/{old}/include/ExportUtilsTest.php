@@ -25,11 +25,11 @@ class ExportUtilsTest extends TestCase
      */
     public function testGetFieldOrderMappingHasLowercaseKeys()
     {
-        $fields = array(
+        $fields = [
             'Uppercase Field' => 'Uppercase Field',
             'BLOCK_CAPS_FIELD' => 'Block Capital Field',
             'all lowercase field' => 'Lowercase Field',
-        );
+        ];
         $result = get_field_order_mapping('contacts', $fields);
         $expectedResult = array_change_key_case($fields, CASE_LOWER);
         $this->assertEquals($expectedResult, $result, 'get_field_order_mapping did not convert keys to lowercase!');

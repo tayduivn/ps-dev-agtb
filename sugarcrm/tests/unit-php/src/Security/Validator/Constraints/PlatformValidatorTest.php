@@ -27,12 +27,12 @@ class PlatformValidatorTest extends AbstractConstraintValidatorTest
      */
     protected function createValidator()
     {
-        return new PlatformValidator(array(
+        return new PlatformValidator([
             'base' => 0,
             'mobile' => 1,
             'portal' => 2,
             'custom' => 3,
-        ));
+        ]);
     }
 
     /**
@@ -74,12 +74,12 @@ class PlatformValidatorTest extends AbstractConstraintValidatorTest
 
     public function providerTestValidValues()
     {
-        return array(
-            array('base'),
-            array('mobile'),
-            array('portal'),
-            array('custom'),
-        );
+        return [
+            ['base'],
+            ['mobile'],
+            ['portal'],
+            ['custom'],
+        ];
     }
 
     /**
@@ -88,9 +88,9 @@ class PlatformValidatorTest extends AbstractConstraintValidatorTest
      */
     public function testInvalidFormat($value, $reason)
     {
-        $constraint = new Platform(array(
+        $constraint = new Platform([
             'message' => 'testMessage',
-        ));
+        ]);
 
         $this->validator->validate($value, $constraint);
 
@@ -98,29 +98,29 @@ class PlatformValidatorTest extends AbstractConstraintValidatorTest
             ->buildViolation('testMessage')
             ->setCode(Platform::ERROR_INVALID_PLATFORM_FORMAT)
             ->setInvalidValue($value)
-            ->setParameters(array('%platform%' => $value, '%reason%' => $reason))
+            ->setParameters(['%platform%' => $value, '%reason%' => $reason])
 
             // we will always hit unknown platforms
             ->buildNextViolation('testMessage')
             ->setCode(Platform::ERROR_INVALID_PLATFORM)
             ->setInvalidValue($value)
-            ->setParameters(array('%platform%' => $value, '%reason%' => 'unknown platform'))
+            ->setParameters(['%platform%' => $value, '%reason%' => 'unknown platform'])
 
             ->assertRaised();
     }
 
     public function providerTestInvalidFormat()
     {
-        return array(
-            array(
+        return [
+            [
                 str_repeat('x', 128),
                 'maximum length of 127 characters exceeded',
-            ),
-            array(
+            ],
+            [
                 'abc-123-ABC_890$',
                 'invalid characters (a-z, 0-9, dash and underscore allowed)',
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -129,9 +129,9 @@ class PlatformValidatorTest extends AbstractConstraintValidatorTest
      */
     public function testUnknownPlatform($value)
     {
-        $constraint = new Platform(array(
+        $constraint = new Platform([
             'message' => 'testMessage',
-        ));
+        ]);
 
         $this->validator->validate($value, $constraint);
 
@@ -139,15 +139,15 @@ class PlatformValidatorTest extends AbstractConstraintValidatorTest
             ->buildViolation('testMessage')
             ->setCode(Platform::ERROR_INVALID_PLATFORM)
             ->setInvalidValue($value)
-            ->setParameters(array('%platform%' => $value, '%reason%' => 'unknown platform'))
+            ->setParameters(['%platform%' => $value, '%reason%' => 'unknown platform'])
             ->assertRaised();
     }
 
     public function providerTestUnknownPlatform()
     {
-        return array(
-            array('foo'),
-            array('bar'),
-        );
+        return [
+            ['foo'],
+            ['bar'],
+        ];
     }
 }

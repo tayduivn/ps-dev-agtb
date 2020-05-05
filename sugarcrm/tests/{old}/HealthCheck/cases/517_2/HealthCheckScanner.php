@@ -12,14 +12,14 @@
 
 class S_517_2_PackageManager extends PackageManager
 {
-    public function getinstalledPackages($types = array('module', 'langpack'))
+    public function getinstalledPackages($types = ['module', 'langpack'])
     {
-        return array(
-            array(
+        return [
+            [
                 'name' => 'SugarChimp',
                 'version' => '7.6',
-            ),
-        );
+            ],
+        ];
     }
 }
 

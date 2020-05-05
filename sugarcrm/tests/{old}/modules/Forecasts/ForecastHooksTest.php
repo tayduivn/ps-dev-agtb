@@ -19,7 +19,7 @@ class ForecastHooksTest extends TestCase
         $hook = new MockForecastHooks();
 
         /* @var $bean Opportunity */
-        $bean = $this->createPartialMock('Opportunity', array('save'));
+        $bean = $this->createPartialMock('Opportunity', ['save']);
         $bean->probability = 90;
 
         /* @var $hook ForecastHooks */
@@ -32,25 +32,25 @@ class ForecastHooksTest extends TestCase
     {
         $hook = new MockForecastHooks();
 
-        $settings = array(
+        $settings = [
             'forecast_ranges' => 'show_binary',
-            'show_binary_ranges' => array(
+            'show_binary_ranges' => [
                 'include' =>
-                array(
+                [
                     'min' => 70,
                     'max' => 100,
                     'in_included_total' => true,
-                ),
+                ],
                 'exclude' =>
-                array(
+                [
                     'min' => 0,
                     'max' => 69,
-                ),
-            )
-        );
+                ],
+            ],
+        ];
 
         /* @var $bean Opportunity */
-        $bean = $this->createPartialMock('Opportunity', array('save'));
+        $bean = $this->createPartialMock('Opportunity', ['save']);
         $bean->probability = 90;
 
         /* @var $hook ForecastHooks */
@@ -64,25 +64,25 @@ class ForecastHooksTest extends TestCase
     {
         $hook = new MockForecastHooks();
 
-        $settings = array(
+        $settings = [
             'forecast_ranges' => 'show_binary',
-            'show_binary_ranges' => array(
+            'show_binary_ranges' => [
                 'include' =>
-                array(
+                [
                     'min' => 70,
                     'max' => 100,
                     'in_included_total' => true,
-                ),
+                ],
                 'exclude' =>
-                array(
+                [
                     'min' => 0,
                     'max' => 69,
-                ),
-            )
-        );
+                ],
+            ],
+        ];
 
         /* @var $bean Opportunity */
-        $bean = $this->createPartialMock('Opportunity', array('save'));
+        $bean = $this->createPartialMock('Opportunity', ['save']);
         $bean->probability = 50;
 
         /* @var $hook ForecastHooks */
@@ -96,25 +96,25 @@ class ForecastHooksTest extends TestCase
     {
         $hook = new MockForecastHooks();
 
-        $settings = array(
+        $settings = [
             'forecast_ranges' => 'show_binary',
-            'show_binary_ranges' => array(
+            'show_binary_ranges' => [
                 'include' =>
-                array(
+                [
                     'min' => 70,
                     'max' => 100,
                     'in_included_total' => true,
-                ),
+                ],
                 'exclude' =>
-                array(
+                [
                     'min' => 0,
                     'max' => 69,
-                ),
-            )
-        );
+                ],
+            ],
+        ];
 
         /* @var $bean Opportunity */
-        $bean = $this->createPartialMock('Opportunity', array('save'));
+        $bean = $this->createPartialMock('Opportunity', ['save']);
         $bean->probability = 50;
         $bean->commit_stage = 'include';
 
@@ -130,7 +130,7 @@ class ForecastHooksTest extends TestCase
         $hook = new MockForecastHooks();
 
         /** @var Opportunity $bean */
-        $bean = $this->createPartialMock('Opportunity', array('save'));
+        $bean = $this->createPartialMock('Opportunity', ['save']);
         $bean->amount = 500;
         $bean->best_case = 600;
         $bean->worst_case = 400;
@@ -148,7 +148,7 @@ class ForecastHooksTest extends TestCase
         $hook = new MockForecastHooks();
 
         /** @var Opportunity $bean */
-        $bean = $this->createPartialMock('Opportunity', array('save'));
+        $bean = $this->createPartialMock('Opportunity', ['save']);
         $bean->amount = 500;
         $bean->best_case = 600;
         $bean->worst_case = 400;
@@ -171,6 +171,6 @@ class MockForecastHooks extends ForecastHooks
 
     public static function getForecastClosedStages()
     {
-        return array('Closed Won');
+        return ['Closed Won'];
     }
 }

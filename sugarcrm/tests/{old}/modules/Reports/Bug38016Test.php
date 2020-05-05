@@ -27,8 +27,8 @@ class Bug38016Test extends TestCase
 
     protected function setUp() : void
     {
-        $beanList = array();
-        $beanFiles = array();
+        $beanList = [];
+        $beanFiles = [];
         require 'include/modules.php';
         $GLOBALS['beanList'] = $beanList;
         $GLOBALS['beanFiles'] = $beanFiles;

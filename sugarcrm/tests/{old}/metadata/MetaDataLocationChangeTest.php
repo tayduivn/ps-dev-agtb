@@ -16,12 +16,12 @@ use PHPUnit\Framework\TestCase;
 class MetaDataLocationChangeTest extends TestCase
 {
     //BEGIN SUGARCRM flav=ent ONLY
-    protected $_expectedPortalModules = array(
+    protected $_expectedPortalModules = [
         'Bugs' => 'Bugs',
         'Cases' => 'Cases',
         'Contacts' => 'Contacts',
         'KBContents' => 'KBContents',
-    );
+    ];
     //END SUGARCRM flav=ent ONLY
     
     protected function setUp() : void
@@ -68,7 +68,7 @@ class MetaDataLocationChangeTest extends TestCase
      */
     public function testMetaDataManagerReturnsCorrectPlatformResults($platform)
     {
-        $mm = MetaDataManager::getManager(array($platform));
+        $mm = MetaDataManager::getManager([$platform]);
         $data = $mm->getModuleViews('Bugs');
         $this->assertTrue(isset($data['list']['meta']['panels']), "Panels meta array for list not set for $platform platform of Bugs module");
         $this->assertTrue(isset($data['record']['meta']['panels']), "Panels meta array for record not set for $platform platform of Bugs module");
@@ -96,34 +96,34 @@ class MetaDataLocationChangeTest extends TestCase
     
     public function _mobileMetaDataFilesExistsProvider()
     {
-        return array(
-            array('module' => 'Accounts', 'view' => 'edit', 'filepath' => 'modules/Accounts/clients/mobile/views/edit/edit.php'),
-            array('module' => 'Cases', 'view' => 'detail', 'filepath' => 'modules/Cases/clients/mobile/views/detail/detail.php'),
-            array('module' => 'Contacts', 'view' => 'edit', 'filepath' => 'modules/Contacts/clients/mobile/views/edit/edit.php'),
-            array('module' => 'Employees', 'view' => 'list', 'filepath' => 'modules/Employees/clients/mobile/views/list/list.php'),
-            array('module' => 'Meetings', 'view' => 'detail', 'filepath' => 'modules/Meetings/clients/mobile/views/detail/detail.php'),
-        );
+        return [
+            ['module' => 'Accounts', 'view' => 'edit', 'filepath' => 'modules/Accounts/clients/mobile/views/edit/edit.php'],
+            ['module' => 'Cases', 'view' => 'detail', 'filepath' => 'modules/Cases/clients/mobile/views/detail/detail.php'],
+            ['module' => 'Contacts', 'view' => 'edit', 'filepath' => 'modules/Contacts/clients/mobile/views/edit/edit.php'],
+            ['module' => 'Employees', 'view' => 'list', 'filepath' => 'modules/Employees/clients/mobile/views/list/list.php'],
+            ['module' => 'Meetings', 'view' => 'detail', 'filepath' => 'modules/Meetings/clients/mobile/views/detail/detail.php'],
+        ];
     }
     
     //BEGIN SUGARCRM flav=ent ONLY
     public function _portalMetaDataFilesExistsProvider()
     {
-        return array(
-            array('module' => 'Bugs', 'view' => 'record', 'filepath' => 'modules/Bugs/clients/portal/views/record/record.php'),
-            array('module' => 'Cases', 'view' => 'list', 'filepath' => 'modules/Cases/clients/portal/views/list/list.php'),
-            array('module' => 'Contacts', 'view' => 'record', 'filepath' => 'modules/Contacts/clients/portal/views/record/record.php'),
-        );
+        return [
+            ['module' => 'Bugs', 'view' => 'record', 'filepath' => 'modules/Bugs/clients/portal/views/record/record.php'],
+            ['module' => 'Cases', 'view' => 'list', 'filepath' => 'modules/Cases/clients/portal/views/list/list.php'],
+            ['module' => 'Contacts', 'view' => 'record', 'filepath' => 'modules/Contacts/clients/portal/views/record/record.php'],
+        ];
     }
     //END SUGARCRM flav=ent ONLY
     
     public function _platformList()
     {
-        return array(
+        return [
             //BEGIN SUGARCRM flav=ent ONLY
-            array('platform' => 'portal'),
+            ['platform' => 'portal'],
             //END SUGARCRM flav=ent ONLY
-            array('platform' => 'mobile'),
-        );
+            ['platform' => 'mobile'],
+        ];
     }
     
     //BEGIN SUGARCRM flav=ent ONLY

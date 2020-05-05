@@ -22,7 +22,7 @@ class EmbedLinkServiceTest extends TestCase
     public function testGet_OneLinkInTextButNothingReturnedFromFetch_ReturnsNoEmbedData()
     {
         $url = 'http://www.sugarcrm.com';
-        $mock = $this->createPartialMock('EmbedLinkService', array('fetch'));
+        $mock = $this->createPartialMock('EmbedLinkService', ['fetch']);
         $mock->expects($this->once())->method('fetch')->will($this->returnValue(''));
         $actual = $mock->get($url);
         $this->assertEquals(0, count($actual['embeds']), 'Should not return any embed data');
@@ -34,7 +34,7 @@ class EmbedLinkServiceTest extends TestCase
     public function testGet_OneLinkInTextButGetsErrorFromFetch_ReturnsNoEmbedData()
     {
         $url = 'http://www.sugarcrm.com';
-        $mock = $this->createPartialMock('EmbedLinkService', array('fetch'));
+        $mock = $this->createPartialMock('EmbedLinkService', ['fetch']);
         $mock->expects($this->once())->method('fetch')->will($this->returnValue(false));
         $actual = $mock->get($url);
         $this->assertEquals(0, count($actual['embeds']), 'Should not return any embed data');
@@ -79,7 +79,7 @@ class EmbedLinkServiceTest extends TestCase
     {
         $json = '{"type":"video","html":"' . $this->embedSrc . '","width":200,"height":100}';
         $oEmbedHtml = '<html><head><link type="application/json+oembed" href="http://www.foo.com"/></head></html>';
-        $mock = $this->createPartialMock('EmbedLinkService', array('fetch', 'cleanHtml'));
+        $mock = $this->createPartialMock('EmbedLinkService', ['fetch', 'cleanHtml']);
         $mock->expects($this->at(0))
             ->method('fetch')
             ->with('http://www.sugarcrm.com')
@@ -101,7 +101,7 @@ class EmbedLinkServiceTest extends TestCase
     {
         $json = '{"type":"rich","html":"' . $this->embedSrc . '","width":200,"height":100}';
         $oEmbedHtml = '<html><head><link type="application/json+oembed" href="http://www.foo.com"/></head></html>';
-        $mock = $this->createPartialMock('EmbedLinkService', array('fetch', 'cleanHtml'));
+        $mock = $this->createPartialMock('EmbedLinkService', ['fetch', 'cleanHtml']);
         $mock->expects($this->at(0))
             ->method('fetch')
             ->with('http://www.sugarcrm.com')
@@ -124,7 +124,7 @@ class EmbedLinkServiceTest extends TestCase
         $html = '<oembed><type>video</type><html>&lt;embed src=www.foo.com&gt;</html><width>200</width><height>100'
             . '</height></oembed>';
         $oEmbedHtml = '<html><head><link type="text/xml+oembed" href="http://www.foo.com"/></head></html>';
-        $mock = $this->createPartialMock('EmbedLinkService', array('fetch', 'cleanHtml'));
+        $mock = $this->createPartialMock('EmbedLinkService', ['fetch', 'cleanHtml']);
         $mock->expects($this->at(0))
             ->method('fetch')
             ->with('http://www.sugarcrm.com')
@@ -144,7 +144,7 @@ class EmbedLinkServiceTest extends TestCase
      */
     public function testGet_OneLinkInTextButNoEmbedLinks_ReturnsNoEmbedData()
     {
-        $mock = $this->createPartialMock('EmbedLinkService', array('fetch'));
+        $mock = $this->createPartialMock('EmbedLinkService', ['fetch']);
         $mock->expects($this->once())
             ->method('fetch')
             ->with('http://www.sugarcrm.com')
@@ -159,7 +159,7 @@ class EmbedLinkServiceTest extends TestCase
     public function testGet_OneLinkWithVideoJsonEmbedLinkButGetsErrorFromFetch_ReturnsNoEmbedData()
     {
         $oEmbedHtml = '<html><head><link type="application/json+oembed" href="http://www.foo.com"/></head></html>';
-        $mock = $this->createPartialMock('EmbedLinkService', array('fetch'));
+        $mock = $this->createPartialMock('EmbedLinkService', ['fetch']);
         $mock->expects($this->at(0))
             ->method('fetch')
             ->with('http://www.sugarcrm.com')
@@ -175,7 +175,7 @@ class EmbedLinkServiceTest extends TestCase
     public function testGet_OneLinkWithVideoXmlEmbedLinkButGetsErrorFromFetch_ReturnsNoEmbedData()
     {
         $oEmbedHtml = '<html><head><link type="text/xml+oembed" href="http://www.foo.com"/></head></html>';
-        $mock = $this->createPartialMock('EmbedLinkService', array('fetch'));
+        $mock = $this->createPartialMock('EmbedLinkService', ['fetch']);
         $mock->expects($this->at(0))
             ->method('fetch')
             ->with('http://www.sugarcrm.com')
@@ -192,7 +192,7 @@ class EmbedLinkServiceTest extends TestCase
     {
         $json = '{"type":"video","html":"' . $this->embedSrc . '","width":200,"height":100}';
         $oEmbedHtml = '<html><head><link type="application/json+oembed" href="http://www.foo.com"/></head></html>';
-        $mock = $this->createPartialMock('EmbedLinkService', array('fetch', 'cleanHtml'));
+        $mock = $this->createPartialMock('EmbedLinkService', ['fetch', 'cleanHtml']);
         $mock->expects($this->at(0))
             ->method('fetch')
             ->with('http://www.sugarcrm.com')
@@ -210,7 +210,7 @@ class EmbedLinkServiceTest extends TestCase
     {
         $json = '{"type":"video","html":"' . $this->embedSrc . '","width":200,"height":100}';
         $oEmbedHtml = '<html><head><link type="application/json+oembed" href="http://www.foo.com"/></head></html>';
-        $mock = $this->createPartialMock('EmbedLinkService', array('fetch', 'cleanHtml'));
+        $mock = $this->createPartialMock('EmbedLinkService', ['fetch', 'cleanHtml']);
         $mock->expects($this->at(0))
             ->method('fetch')
             ->with('http://www.sugarcrm.com')
@@ -239,20 +239,20 @@ class EmbedLinkServiceTest extends TestCase
      */
     public function findAllUrls_DataProvider()
     {
-        return array(
-            array('input' => 'http://www.foobar.com', 'count' => 1),
-            array('input' => 'foo bar', 'count' => 0),
-            array('input' => 'foo www.foobar.com bar', 'count' => 1),
-            array('input' => 'foo www.bar.com:8888/123/test?q=fdfad&i=fdafdas bar', 'count' => 1),
-            array('input' => 'foo https://www.bar.com/123/test?q=fdfad&i=fdafdas bar', 'count' => 1),
-            array('input' => 'foo https://www.bar.com bar http://www.foo.uk.co/', 'count' => 2),
-            array('input' => 'foo.com', 'count' => 0),
-            array('input' => 'foo@bar.com', 'count' => 0),
-            array('input' => 'foo.bar.com', 'count' => 0),
-            array('input' => 'http://test.foobar.com', 'count' => 1),
-            array('input' => 'https://WWW.FOOBAR.COM/', 'count' => 1),
-            array('input' => 'http://www.youtube.com/watch?v=N2u44-zZYdo&list=PL37ZVnwpeshF7AHpbZt33aW0brYJyNftx http://www.youtube.com/watch?v=BY0-AI1Sxy0&list=PL37ZVnwpeshF7AHpbZt33aW0brYJyNftx', 'count' => 2),
-        );
+        return [
+            ['input' => 'http://www.foobar.com', 'count' => 1],
+            ['input' => 'foo bar', 'count' => 0],
+            ['input' => 'foo www.foobar.com bar', 'count' => 1],
+            ['input' => 'foo www.bar.com:8888/123/test?q=fdfad&i=fdafdas bar', 'count' => 1],
+            ['input' => 'foo https://www.bar.com/123/test?q=fdfad&i=fdafdas bar', 'count' => 1],
+            ['input' => 'foo https://www.bar.com bar http://www.foo.uk.co/', 'count' => 2],
+            ['input' => 'foo.com', 'count' => 0],
+            ['input' => 'foo@bar.com', 'count' => 0],
+            ['input' => 'foo.bar.com', 'count' => 0],
+            ['input' => 'http://test.foobar.com', 'count' => 1],
+            ['input' => 'https://WWW.FOOBAR.COM/', 'count' => 1],
+            ['input' => 'http://www.youtube.com/watch?v=N2u44-zZYdo&list=PL37ZVnwpeshF7AHpbZt33aW0brYJyNftx http://www.youtube.com/watch?v=BY0-AI1Sxy0&list=PL37ZVnwpeshF7AHpbZt33aW0brYJyNftx', 'count' => 2],
+        ];
     }
 }
 
@@ -260,6 +260,6 @@ class EmbedLinkTestServiceProxy extends EmbedLinkService
 {
     public function __call($name, $args)
     {
-        return call_user_func_array(array($this, $name), $args);
+        return call_user_func_array([$this, $name], $args);
     }
 }

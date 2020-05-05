@@ -31,14 +31,14 @@ class RS173Test extends TestCase
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setUp('current_user', array(true, true));
+        SugarTestHelper::setUp('current_user', [true, true]);
 
         $this->dashboardListApi = new DashboardListApi();
         $this->serviceMock = SugarTestRestUtilities::getRestServiceMock();
 
-        for($i = 0; $i < 5; $i++) {
-            SugarTestDashboardUtilities::createDashboard('', array('name' => 'SugarDashboardHome'));
-            SugarTestDashboardUtilities::createDashboard('', array('dashboard_module' => 'Accounts', 'name' => 'SugarDashboardAccounts'));
+        for ($i = 0; $i < 5; $i++) {
+            SugarTestDashboardUtilities::createDashboard('', ['name' => 'SugarDashboardHome']);
+            SugarTestDashboardUtilities::createDashboard('', ['dashboard_module' => 'Accounts', 'name' => 'SugarDashboardAccounts']);
         }
     }
 
@@ -54,16 +54,16 @@ class RS173Test extends TestCase
      */
     public function testGetDashboardsForModule()
     {
-        $result = $this->dashboardListApi->getDashboards($this->serviceMock, array(
+        $result = $this->dashboardListApi->getDashboards($this->serviceMock, [
             'module' => 'Accounts',
             'max_num' => '3',
-        ));
+        ]);
         $this->assertNotEmpty($result);
         $this->assertArrayHasKey('records', $result);
         $this->assertArrayHasKey('next_offset', $result);
         $this->assertEquals(3, count($result['records']), 'Returned too many results');
 
-        foreach($result['records'] as $record) {
+        foreach ($result['records'] as $record) {
             $this->assertEquals('SugarDashboardAccounts', $record['name']);
         }
     }
@@ -73,15 +73,15 @@ class RS173Test extends TestCase
      */
     public function testGetDashboardsForHome()
     {
-        $result = $this->dashboardListApi->getDashboards($this->serviceMock, array(
+        $result = $this->dashboardListApi->getDashboards($this->serviceMock, [
             'max_num' => '3',
-        ));
+        ]);
         $this->assertNotEmpty($result);
         $this->assertArrayHasKey('records', $result);
         $this->assertArrayHasKey('next_offset', $result);
         $this->assertEquals(3, count($result['records']), 'Returned too many results');
 
-        foreach($result['records'] as $record) {
+        foreach ($result['records'] as $record) {
             $this->assertEquals('SugarDashboardHome', $record['name']);
         }
     }

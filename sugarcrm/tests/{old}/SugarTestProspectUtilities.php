@@ -13,23 +13,25 @@
 
 
 class SugarTestProspectUtilities
-	{
-    private static $_createdProspects = array();
+{
+    private static $_createdProspects = [];
 
-    private function __construct() {}
+    private function __construct()
+    {
+    }
 
-    public static function createProspect($id = '', $prospectValues = array())
+    public static function createProspect($id = '', $prospectValues = [])
     {
         $time = mt_rand();
         $prospect = BeanFactory::newBean('Prospects');
 
         $prospectValues = array_merge(
-            array(
+            [
                 'first_name' => "SugarProspectFirst{$time}",
                 'last_name' => 'SugarProspectLast',
                 'title' => 'Test prospect title',
                 'email' => "prospect@{$time}sugar.com",
-            ),
+            ],
             $prospectValues
         );
 
@@ -41,8 +43,7 @@ class SugarTestProspectUtilities
             $prospect->$property = $value;
         }
 
-        if(!empty($id))
-        {
+        if (!empty($id)) {
             $prospect->new_with_id = true;
             $prospect->id = $id;
         }
@@ -52,7 +53,7 @@ class SugarTestProspectUtilities
     }
 
         
-    public static function removeAllCreatedProspects() 
+    public static function removeAllCreatedProspects()
     {
         $prospect_ids = self::getCreatedProspectIds();
         $GLOBALS['db']->query('DELETE FROM prospects WHERE id IN (\'' . implode("', '", $prospect_ids) . '\')');
@@ -82,13 +83,12 @@ class SugarTestProspectUtilities
         }
     }
 
-   public static function getCreatedProspectIds() 
+    public static function getCreatedProspectIds()
     {
-        $prospect_ids = array();
+        $prospect_ids = [];
         foreach (self::$_createdProspects as $prospect) {
             $prospect_ids[] = $prospect->id;
         }
         return $prospect_ids;
     }
-   
 }

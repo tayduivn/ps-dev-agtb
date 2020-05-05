@@ -53,42 +53,42 @@ class CurrencyTest extends TestCase
         $bean->test4 = '879.000000';
         $bean->test5 = '879.000000';
 
-        return array(
+        return [
             // Tests no data value given
-            array(
+            [
                 'bean' => $bean,
                 'name' => 'test1',
-                'data' => array(),
+                'data' => [],
                 'expect' => false,
-            ),
+            ],
             // Tests no bean property set
-            array(
+            [
                 'bean' => $bean,
                 'name' => 'test2',
-                'data' => array('test2' => '12.000000', 'currency_id' => 'test_currency_id'),
+                'data' => ['test2' => '12.000000', 'currency_id' => 'test_currency_id'],
                 'expect' => false,
-            ),
+            ],
             // Tests no change of data
-            array(
+            [
                 'bean' => $bean,
                 'name' => 'test3',
-                'data' => array('test3' => '321.000000', 'currency_id' => 'test_currency_id'),
+                'data' => ['test3' => '321.000000', 'currency_id' => 'test_currency_id'],
                 'expect' => false,
-            ),
+            ],
             // Tests value change
-            array(
+            [
                 'bean' => $bean,
                 'name' => 'test4',
-                'data' => array('test4' => '213.000000', 'currency_id' => 'test_currency_id'),
+                'data' => ['test4' => '213.000000', 'currency_id' => 'test_currency_id'],
                 'expect' => true,
-            ),
+            ],
             // Test id change
-            array(
+            [
                 'bean' => $bean,
                 'name' => 'test5',
-                'data' => array('test5' => '879.000000', 'currency_id' => 'new_currency_id'),
+                'data' => ['test5' => '879.000000', 'currency_id' => 'new_currency_id'],
                 'expect' => true,
-            ),
-        );
+            ],
+        ];
     }
 }

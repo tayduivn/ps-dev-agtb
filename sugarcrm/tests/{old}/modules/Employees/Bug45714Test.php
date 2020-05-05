@@ -15,60 +15,61 @@ use PHPUnit\Framework\TestCase;
 class Bug45714Test extends TestCase
 {
     protected function setUp() : void
-	{
-		 $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-		 //$this->useOutputBuffering = true;
-	}	
-	
+    {
+         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+         //$this->useOutputBuffering = true;
+    }
+    
     protected function tearDown() : void
-	{
-		 SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-	}
-	
-	public function testViewAsAdminUser()
-	{
-		$GLOBALS['current_user']->is_admin = true;
-		$output = $this->getEmployeeListViewOutput();
+    {
+         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+    }
+    
+    public function testViewAsAdminUser()
+    {
+        $GLOBALS['current_user']->is_admin = true;
+        $output = $this->getEmployeeListViewOutput();
         $this->assertMatchesRegularExpression('/utilsLink/', $output);
-		$output = $this->getEmployeeListViewOutput();
+        $output = $this->getEmployeeListViewOutput();
         $this->assertMatchesRegularExpression('/utilsLink/', $output);
-	}
-	
-	public function testViewAsNonAdminUser()
-	{
-		$output = $this->getEmployeeListViewOutput();
+    }
+    
+    public function testViewAsNonAdminUser()
+    {
+        $output = $this->getEmployeeListViewOutput();
         $this->assertDoesNotMatchRegularExpression('/utilsLink/', $output);
-		$output = $this->getEmployeeDetailViewOutput();
+        $output = $this->getEmployeeDetailViewOutput();
         $this->assertDoesNotMatchRegularExpression('/utilsLink/', $output);
-	}
-	
-	public function testViewAsModuleAdmin()
-	{
-		$GLOBALS['current_user'] = new Bug45714UserMock();
-		$output = $this->getEmployeeListViewOutput();
+    }
+    
+    public function testViewAsModuleAdmin()
+    {
+        $GLOBALS['current_user'] = new Bug45714UserMock();
+        $output = $this->getEmployeeListViewOutput();
         $this->assertMatchesRegularExpression('/utilsLink/', $output);
-		$output = $this->getEmployeeDetailViewOutput();
+        $output = $this->getEmployeeDetailViewOutput();
         $this->assertMatchesRegularExpression('/utilsLink/', $output);
-	}
-	
-	private function getEmployeeListViewOutput()
-	{
-		$employeeViewList = new EmployeesViewList();
-		$employeeViewList->module = 'Employees';
-		return $employeeViewList->getModuleTitle(true);
-	}
-	
-	private function getEmployeeDetailViewOutput()
-	{
-		$employeeViewDetail = new EmployeesViewDetail();
-		$employeeViewDetail->module = 'Employees';
-		return $employeeViewDetail->getModuleTitle(true);
-	}	
+    }
+    
+    private function getEmployeeListViewOutput()
+    {
+        $employeeViewList = new EmployeesViewList();
+        $employeeViewList->module = 'Employees';
+        return $employeeViewList->getModuleTitle(true);
+    }
+    
+    private function getEmployeeDetailViewOutput()
+    {
+        $employeeViewDetail = new EmployeesViewDetail();
+        $employeeViewDetail->module = 'Employees';
+        return $employeeViewDetail->getModuleTitle(true);
+    }
 }
 
 class Bug45714UserMock extends User
 {
-    public function isDeveloperForModule($module) {
-		return true;
+    public function isDeveloperForModule($module)
+    {
+        return true;
     }
 }

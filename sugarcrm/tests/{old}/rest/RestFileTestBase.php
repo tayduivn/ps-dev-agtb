@@ -11,7 +11,8 @@
  */
 
 
-class RestFileTestBase extends RestTestBase {
+class RestFileTestBase extends RestTestBase
+{
     protected $_note;
     protected $_note_id;
     protected $_contact;
@@ -58,7 +59,7 @@ class RestFileTestBase extends RestTestBase {
         $GLOBALS['db']->commit();
     }
 
-    protected function _restCallNoAuthHeader($urlPart,$postBody='',$httpAction='', $addedOpts = array(), $addedHeaders = array())
+    protected function _restCallNoAuthHeader($urlPart, $postBody = '', $httpAction = '', $addedOpts = [], $addedHeaders = [])
     {
         $urlBase = $GLOBALS['sugar_config']['site_url'].'/api/rest.php/v6/';
         $ch = curl_init($urlBase.$urlPart);
@@ -79,7 +80,7 @@ class RestFileTestBase extends RestTestBase {
         // Only set a custom request for not POST with a body
         // This affects the server and how it sets its superglobals
         if (empty($requestMethodSet)) {
-            if ($httpAction == 'PUT' && empty($postBody) ) {
+            if ($httpAction == 'PUT' && empty($postBody)) {
                 curl_setopt($ch, CURLOPT_PUT, 1);
             } else {
                 curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $httpAction);
@@ -101,6 +102,6 @@ class RestFileTestBase extends RestTestBase {
         $httpInfo = curl_getinfo($ch);
         $httpError = $httpReply === false ? curl_error($ch) : null;
 
-        return array('info' => $httpInfo, 'reply' => json_decode($httpReply,true), 'replyRaw' => $httpReply, 'error' => $httpError);
+        return ['info' => $httpInfo, 'reply' => json_decode($httpReply, true), 'replyRaw' => $httpReply, 'error' => $httpError];
     }
 }

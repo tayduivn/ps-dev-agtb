@@ -61,48 +61,48 @@ class Bug56573Test extends TestCase
 
     public static function provider()
     {
-        return array(
-            array(
+        return [
+            [
                 'Success',
                 implode(
                     ',',
-                    array(
+                    [
                         'status' =>  SchedulersJob::JOB_STATUS_RUNNING,
                         'resolution' => SchedulersJob::JOB_SUCCESS,
-                        'return' => true
-                    )
+                        'return' => true,
+                    ]
                 ),
                 SchedulersJob::JOB_STATUS_DONE,
-                SchedulersJob::JOB_SUCCESS
-            ),
-            array(
+                SchedulersJob::JOB_SUCCESS,
+            ],
+            [
                 'Failure',
                 implode(
                     ',',
-                    array(
+                    [
                         'status' => SchedulersJob::JOB_STATUS_RUNNING,
                         'resolution' => SchedulersJob::JOB_FAILURE,
-                        'return' => false
-                    )
+                        'return' => false,
+                    ]
                 ),
                 SchedulersJob::JOB_STATUS_DONE,
-                SchedulersJob::JOB_FAILURE
+                SchedulersJob::JOB_FAILURE,
 
-            ),
-            array(
+            ],
+            [
                 'Queue',
                 implode(
                     ',',
-                    array(
+                    [
                         'status' => SchedulersJob::JOB_STATUS_QUEUED,
                         'resolution' => SchedulersJob::JOB_PARTIAL,
-                        'return' => false
-                    )
+                        'return' => false,
+                    ]
                 ),
                 SchedulersJob::JOB_STATUS_QUEUED,
-                SchedulersJob::JOB_PARTIAL
-            ),
-        );
+                SchedulersJob::JOB_PARTIAL,
+            ],
+        ];
     }
 
     /**

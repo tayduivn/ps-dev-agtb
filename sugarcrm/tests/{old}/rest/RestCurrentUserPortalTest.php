@@ -12,36 +12,39 @@
  */
 
 
-class RestCurrentUserPortalTest extends RestTestPortalBase {
+class RestCurrentUserPortalTest extends RestTestPortalBase
+{
     /**
      * @group rest
      */
-    public function testRetrieve() {
+    public function testRetrieve()
+    {
         $restReply = $this->_restCall("me");
         $this->assertNotEmpty($restReply['reply']['current_user']['id']);
-        $this->assertEquals($this->portalGuy->id,$restReply['reply']['current_user']['id']);
-        $this->assertEquals($this->_user->id,$restReply['reply']['current_user']['user_id']);
-        $this->assertEquals('support_portal',$restReply['reply']['current_user']['type']);
+        $this->assertEquals($this->portalGuy->id, $restReply['reply']['current_user']['id']);
+        $this->assertEquals($this->_user->id, $restReply['reply']['current_user']['user_id']);
+        $this->assertEquals('support_portal', $restReply['reply']['current_user']['type']);
     }
 
     /**
      * @group rest
      */
-    public function testAcls() {
+    public function testAcls()
+    {
         // FIXME TY-1312: investigate why this test fails
-        $allowedModules = array(
-                                'Accounts' => array( 'edit' => 'no', 'create' => 'no'),
-                                'Bugs' => array('edit' => 'no', 'create' => 'yes'), 
-                                'Cases' => array('edit' => 'no', 'create' => 'yes'), 
-                                'Notes' => array('edit' => 'no', 'create' => 'yes'), 
+        $allowedModules = [
+                                'Accounts' => [ 'edit' => 'no', 'create' => 'no'],
+                                'Bugs' => ['edit' => 'no', 'create' => 'yes'],
+                                'Cases' => ['edit' => 'no', 'create' => 'yes'],
+                                'Notes' => ['edit' => 'no', 'create' => 'yes'],
                                 // edit is yes because they can edit themselves
-                                'Contacts' => array('edit' => 'yes', 'create' => 'yes'),
-                            );
+                                'Contacts' => ['edit' => 'yes', 'create' => 'yes'],
+                            ];
 
         $restReply = $this->_restCall("me");
         $user_acls = $restReply['reply']['current_user']['acl'];
-        foreach($allowedModules AS $module => $acls) {
-            foreach($acls AS $action => $access) {
+        foreach ($allowedModules as $module => $acls) {
+            foreach ($acls as $action => $access) {
                 $this->assertEquals($user_acls[$module][$action], $access, "{$module} - {$action} Did not have the correct access");
             }
         }
@@ -50,45 +53,58 @@ class RestCurrentUserPortalTest extends RestTestPortalBase {
     /**
      * @group rest
      */
-    public function testUpdate() {
+    public function testUpdate()
+    {
         // FIXME TY-1312: investigate why this test fails
-        $restReply = $this->_restCall("me", json_encode(array('first_name' => 'UNIT TEST - AFTER')), "PUT");
+        $restReply = $this->_restCall("me", json_encode(['first_name' => 'UNIT TEST - AFTER']), "PUT");
         $this->assertNotEquals(stripos($restReply['reply']['current_user']['full_name'], 'UNIT TEST - AFTER'), false);
     }
 
     /**
      * @group rest
      */
-    public function testPasswordUpdate() {
+    public function testPasswordUpdate()
+    {
         $this->_restLogin();
         // Change password twice to be sure working as expected
-        $reply = $this->_restCall("me/password",
-            json_encode(array('new_password' => 'fubar', 'old_password' => 'unittest')),
-            'PUT');
+        $reply = $this->_restCall(
+            "me/password",
+            json_encode(['new_password' => 'fubar', 'old_password' => 'unittest']),
+            'PUT'
+        );
         
         $this->assertEquals($reply['reply']['valid'], true, "Part One");
-        $reply = $this->_restCall("me/password",
-            json_encode(array('new_password' => 'newernew', 'old_password' => 'fubar')),
-            'PUT');
+        $reply = $this->_restCall(
+            "me/password",
+            json_encode(['new_password' => 'newernew', 'old_password' => 'fubar']),
+            'PUT'
+        );
         $this->assertEquals($reply['reply']['valid'], true, "Part Deux");
         // Now use an incorrect old_password .. this should return valid:false
-        $reply = $this->_restCall("me/password",
-            json_encode(array('new_password' => 'hello', 'old_password' => 'nope')),
-            'PUT');
+        $reply = $this->_restCall(
+            "me/password",
+            json_encode(['new_password' => 'hello', 'old_password' => 'nope']),
+            'PUT'
+        );
         $this->assertEquals($reply['reply']['valid'], false, "Part Three - With a Vengence");
     }
 
     /**
      * @group rest
      */
-    public function testPasswordVerification() {
-        $reply = $this->_restCall("me/password",
-            json_encode(array('password_to_verify' => 'unittest')),
-            'POST');
+    public function testPasswordVerification()
+    {
+        $reply = $this->_restCall(
+            "me/password",
+            json_encode(['password_to_verify' => 'unittest']),
+            'POST'
+        );
         $this->assertEquals($reply['reply']['valid'], true);
-        $reply = $this->_restCall("me/password",
-            json_encode(array('password_to_verify' => 'noway')),
-            'POST');
+        $reply = $this->_restCall(
+            "me/password",
+            json_encode(['password_to_verify' => 'noway']),
+            'POST'
+        );
         $this->assertEquals($reply['reply']['valid'], false);
     }
 }

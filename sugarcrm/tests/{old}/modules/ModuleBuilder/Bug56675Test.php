@@ -25,7 +25,7 @@ class Bug56675Test extends TestCase
         $GLOBALS['current_user']->is_admin = true;
         SugarTestHelper::setUp('app_list_strings');
         // Cannot use the SugarTestHelper because it requires a module name
-        $GLOBALS['mod_strings'] = array();
+        $GLOBALS['mod_strings'] = [];
 
         $_REQUEST['name'] = 'test';
         $_REQUEST['view'] = 'advanced_search';
@@ -71,18 +71,19 @@ class Bug56675Test extends TestCase
         SugarTestHelper::tearDown();
     }
 
-	/**
+    /**
      * @group Bug56675
      *
      * Tests that a clients directory and metadata files for clients exist after
      * creating a custom module
      */
-    public function testClientsDirectoryCreatedWhenCustomModuleSaved() {
+    public function testClientsDirectoryCreatedWhenCustomModuleSaved()
+    {
         // Make sure the clients directory is there
         $this->assertFileExists($this->dirname, "$this->dirname was not created when the custom module was saved.");
 
         // Make sure the child directories and files are there for mobile
-        $types = array('list', 'edit', 'detail');
+        $types = ['list', 'edit', 'detail'];
         foreach ($types as $type) {
             $dir = $this->dirname . 'mobile/views/' . $type;
             $this->assertFileExists($dir, "$dir directory was not created when the module was saved");

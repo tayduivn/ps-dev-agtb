@@ -23,25 +23,25 @@ class Bug47522Test extends TestCase
 {
     var $orig_ini_encoding_val;
     protected function setUp() : void
-	{
+    {
         $this->orig_ini_encoding_val = ini_get('mbstring.encoding_translation');
 
         //set http translation on
-        ini_set('mbstring.encoding_translation',1);
+        ini_set('mbstring.encoding_translation', 1);
     }
 
     protected function tearDown() : void
     {
         //set back value of ini setting
-        ini_set('mbstring.encoding_translation',$this->orig_ini_encoding_val);
+        ini_set('mbstring.encoding_translation', $this->orig_ini_encoding_val);
 
         unset($this->orig_ini_encoding_val);
     }
 
     public function testEncodedKeyCleaning()
     {
-	//continue this test only if encoding_translation is turned on.
-        if(ini_get('mbstring.encoding_translation')==='1'){
+    //continue this test only if encoding_translation is turned on.
+        if (ini_get('mbstring.encoding_translation')==='1') {
             //inject bad string into request
             $key = "'you'shall'not'pass!";
             $val = ' must.. not.. die..';
@@ -52,13 +52,13 @@ class Bug47522Test extends TestCase
 
             //clean the string, it should fail but since encoding translation is on, it should only remove the
             //key from request object
-            securexsskey($key,false);
+            securexsskey($key, false);
 
             //assert the key is no longer in request
-            $this->assertNotContains($key,$_REQUEST,'Key should not hav passed xss security check, but still exists in request, this is wrong.');
-        }else{
+            $this->assertNotContains($key, $_REQUEST, 'Key should not hav passed xss security check, but still exists in request, this is wrong.');
+        } else {
             //encoding_translation is turned off, this test will not work, so let's skip it
-    	    $this->markTestSkipped('mbstring.encoding_translation is turned off, mark as skipped for now.');
+            $this->markTestSkipped('mbstring.encoding_translation is turned off, mark as skipped for now.');
         }
     }
 }

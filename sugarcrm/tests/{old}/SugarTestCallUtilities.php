@@ -13,16 +13,18 @@
 
 class SugarTestCallUtilities
 {
-    private static $_createdCalls = array();
+    private static $_createdCalls = [];
 
-    private function __construct() {}
+    private function __construct()
+    {
+    }
 
-    public static function createCall() 
+    public static function createCall()
     {
         global $current_user;
         $time = mt_rand();
-    	$name = 'Call';
-    	$call = new Call();
+        $name = 'Call';
+        $call = new Call();
         $call->name = $name . $time;
         $call->date_start = TimeDate::getInstance()->getNow()->asDb();
         $call->assigned_user_id = $current_user->id;
@@ -31,27 +33,29 @@ class SugarTestCallUtilities
         return $call;
     }
 
-    public static function removeAllCreatedCalls() 
+    public static function removeAllCreatedCalls()
     {
         $call_ids = self::getCreatedCallIds();
         $GLOBALS['db']->query('DELETE FROM calls WHERE id IN (\'' . implode("', '", $call_ids) . '\')');
     }
     
-    public static function removeCallContacts(){
-    	$call_ids = self::getCreatedCallIds();
+    public static function removeCallContacts()
+    {
+        $call_ids = self::getCreatedCallIds();
         $GLOBALS['db']->query('DELETE FROM calls_contacts WHERE call_id IN (\'' . implode("', '", $call_ids) . '\')');
     }
     
-    public static function getCreatedCallIds() 
+    public static function getCreatedCallIds()
     {
-        $call_ids = array();
+        $call_ids = [];
         foreach (self::$_createdCalls as $call) {
             $call_ids[] = $call->id;
         }
         return $call_ids;
     }
 
-    public static function addCallUserRelation($call_id, $user_id) {
+    public static function addCallUserRelation($call_id, $user_id)
+    {
         $id = create_guid();
         $GLOBALS['db']->query("INSERT INTO calls_users (id, call_id, user_id) values ('{$id}', '{$call_id}', '{$user_id}')");
         return $id;

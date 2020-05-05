@@ -52,10 +52,10 @@ class SugarCurrencyTest extends TestCase
         $current_user->setPreference('default_currency_significant_digits', 2);
 
         // setup test currencies
-        self::$currencySGD = SugarTestCurrencyUtilities::createCurrency('Singapore','$','SGD',1.246171,'currency-sgd');
+        self::$currencySGD = SugarTestCurrencyUtilities::createCurrency('Singapore', '$', 'SGD', 1.246171, 'currency-sgd');
         self::$currencyPHP = SugarTestCurrencyUtilities::createCurrency('Philippines', '₱', 'PHP', 41.82982, 'currency-php');
-        self::$currencyYEN = SugarTestCurrencyUtilities::createCurrency('Yen','¥','YEN',78.87,'currency-yen');
-        self::$currencyBase = BeanFactory::getBean('Currencies','-99');
+        self::$currencyYEN = SugarTestCurrencyUtilities::createCurrency('Yen', '¥', 'YEN', 78.87, 'currency-yen');
+        self::$currencyBase = BeanFactory::getBean('Currencies', '-99');
     }
 
     /**
@@ -76,9 +76,9 @@ class SugarCurrencyTest extends TestCase
     public function testBaseCurrency()
     {
         $currency = SugarCurrency::getBaseCurrency();
-        $this->assertInstanceOf('Currency',$currency);
+        $this->assertInstanceOf('Currency', $currency);
         // base currency is always a rate of 1.0
-        $this->assertEquals(1.0,$currency->conversion_rate);
+        $this->assertEquals(1.0, $currency->conversion_rate);
     }
 
     /**
@@ -92,9 +92,9 @@ class SugarCurrencyTest extends TestCase
         $currencyId = 'currency-php';
         // now fetch by currency id
         $currency = SugarCurrency::getCurrencyByID($currencyId);
-        $this->assertInstanceOf('Currency',$currency);
+        $this->assertInstanceOf('Currency', $currency);
         // test they are the same currency
-        $this->assertEquals($currencyId,$currency->id);
+        $this->assertEquals($currencyId, $currency->id);
     }
 
     /**
@@ -105,8 +105,8 @@ class SugarCurrencyTest extends TestCase
     public function testCurrencyGetByISO()
     {
         $currency = SugarCurrency::getCurrencyByISO('PHP');
-        $this->assertInstanceOf('Currency',$currency);
-        $this->assertEquals('PHP',$currency->iso4217);
+        $this->assertInstanceOf('Currency', $currency);
+        $this->assertEquals('PHP', $currency->iso4217);
         $this->assertEquals(41.82982, $currency->conversion_rate);
     }
 
@@ -118,7 +118,7 @@ class SugarCurrencyTest extends TestCase
     public function testGetUserLocaleCurrency()
     {
         $currency = SugarCurrency::getUserLocaleCurrency();
-        $this->assertInstanceOf('Currency',$currency);
+        $this->assertInstanceOf('Currency', $currency);
     }
 
     /**
@@ -128,8 +128,8 @@ class SugarCurrencyTest extends TestCase
      */
     public function testConvertAmountToBase()
     {
-        $amount = SugarCurrency::convertAmountToBase('1000.00',self::$currencySGD->id);
-        $this->assertEquals('802.458090',$amount);
+        $amount = SugarCurrency::convertAmountToBase('1000.00', self::$currencySGD->id);
+        $this->assertEquals('802.458090', $amount);
     }
 
     /**
@@ -139,7 +139,7 @@ class SugarCurrencyTest extends TestCase
      */
     public function testConvertAmountFromBase()
     {
-        $amount = SugarCurrency::convertAmountFromBase('1000.00',self::$currencySGD->id);
+        $amount = SugarCurrency::convertAmountFromBase('1000.00', self::$currencySGD->id);
         $this->assertEquals('1246.171000', $amount);
     }
 
@@ -166,7 +166,7 @@ class SugarCurrencyTest extends TestCase
      */
     public function testConvertWithRate($amount, $rate, $result)
     {
-        $this->assertEquals($result,SugarCurrency::convertWithRate($amount, $rate));
+        $this->assertEquals($result, SugarCurrency::convertWithRate($amount, $rate));
     }
 
     /**
@@ -175,14 +175,15 @@ class SugarCurrencyTest extends TestCase
      * @group math
      * @access public
      */
-    public static function dataProviderConvertWithRateProvider() {
-        return array(
-            array(1000,0.5,2000),
-            array(1000,2.0,500),
-            array('1000','0.5','2000.000000'),
-            array('1000','2.0','500.000000'),
-            array('', '2.0', '0')
-        );
+    public static function dataProviderConvertWithRateProvider()
+    {
+        return [
+            [1000,0.5,2000],
+            [1000,2.0,500],
+            ['1000','0.5','2000.000000'],
+            ['1000','2.0','500.000000'],
+            ['', '2.0', '0'],
+        ];
     }
 
     /**
@@ -206,15 +207,16 @@ class SugarCurrencyTest extends TestCase
      * @group math
      * @access public
      */
-    public static function dataProviderFormatAmountUserLocaleProvider() {
+    public static function dataProviderFormatAmountUserLocaleProvider()
+    {
         $currencyId = 'currency-php';
         $currencySymbol = '₱';
-        return array(
-            array('1000', $currencyId, $currencySymbol . '1,000.00'),
-            array('1000.0', $currencyId, $currencySymbol . '1,000.00'),
-            array('1000.00', $currencyId, $currencySymbol . '1,000.00'),
-            array('1000.000', $currencyId, $currencySymbol . '1,000.00'),
-        );
+        return [
+            ['1000', $currencyId, $currencySymbol . '1,000.00'],
+            ['1000.0', $currencyId, $currencySymbol . '1,000.00'],
+            ['1000.00', $currencyId, $currencySymbol . '1,000.00'],
+            ['1000.000', $currencyId, $currencySymbol . '1,000.00'],
+        ];
     }
 
     /**
@@ -243,41 +245,42 @@ class SugarCurrencyTest extends TestCase
      * @group math
      * @access public
      */
-    public static function dataProviderFormatAmountProvider() {
+    public static function dataProviderFormatAmountProvider()
+    {
         $currencyId = 'currency-php';
         $currencySymbol = '₱';
-        return array(
-            array('1000', $currencyId, 2, '.', ',', true, '', $currencySymbol . '1,000.00'),
-            array('1000', $currencyId, 2, '.', ',', true, '&nbsp;', $currencySymbol . '&nbsp;1,000.00'),
-            array('1000', $currencyId, 2, ',', '.', true, '', $currencySymbol . '1.000,00'),
-            array('1000', $currencyId, 3, '.', ',', true, '', $currencySymbol . '1,000.000'),
-            array('1000', $currencyId, 3, '.', '', true, '', $currencySymbol . '1000.000'),
-            array('1000', $currencyId, 3, ',', '.', true, '', $currencySymbol . '1.000,000'),
-            array('-1000', $currencyId, 2, '.', ',', true, '', $currencySymbol . '-1,000.00'),
-            array('-1000', $currencyId, 2, '.', ',', true, '&nbsp;', $currencySymbol . '&nbsp;-1,000.00'),
-            array('-1000', $currencyId, 2, ',', '.', true, '', $currencySymbol . '-1.000,00'),
-            array('-1000', $currencyId, 3, '.', ',', true, '', $currencySymbol . '-1,000.000'),
-            array('-1000', $currencyId, 3, '.', '', true, '', $currencySymbol . '-1000.000'),
-            array('-1000', $currencyId, 3, ',', '.', true, '', $currencySymbol . '-1.000,000'),
-            array('10000', $currencyId, 2, '.', ',', true, '', $currencySymbol . '10,000.00'),
-            array('100000', $currencyId, 2, '.', ',', true, '', $currencySymbol . '100,000.00'),
-            array('1000000', $currencyId, 2, '.', ',', true, '', $currencySymbol . '1,000,000.00'),
-            array('10000000', $currencyId, 2, '.', ',', true, '', $currencySymbol . '10,000,000.00'),
-            array('100000000', $currencyId, 2, '.', ',', true, '', $currencySymbol . '100,000,000.00'),
-            array('1000000000', $currencyId, 2, '.', ',', true, '', $currencySymbol . '1,000,000,000.00'),
-            array('-10000', $currencyId, 2, '.', ',', true, '', $currencySymbol . '-10,000.00'),
-            array('-100000', $currencyId, 2, '.', ',', true, '', $currencySymbol . '-100,000.00'),
-            array('-1000000', $currencyId, 2, '.', ',', true, '', $currencySymbol . '-1,000,000.00'),
-            array('-10000000', $currencyId, 2, '.', ',', true, '', $currencySymbol . '-10,000,000.00'),
-            array('-100000000', $currencyId, 2, '.', ',', true, '', $currencySymbol . '-100,000,000.00'),
-            array('-1000000000', $currencyId, 2, '.', ',', true, '', $currencySymbol . '-1,000,000,000.00'),
-            array('0.9', $currencyId, 2, '.', ',', true, '', $currencySymbol . '0.90'),
-            array('0.09', $currencyId, 2, '.', ',', true, '', $currencySymbol . '0.09'),
-            array('0.099', $currencyId, 2, '.', ',', true, '', $currencySymbol . '0.10'),
-            array('0.094', $currencyId, 2, '.', ',', true, '', $currencySymbol . '0.09'),
-            array('0.09499999', $currencyId, 2, '.', ',', true, '', $currencySymbol . '0.09'),
-            array('0.09499999', $currencyId, 6, '.', ',', true, '', $currencySymbol . '0.095000'),
-        );
+        return [
+            ['1000', $currencyId, 2, '.', ',', true, '', $currencySymbol . '1,000.00'],
+            ['1000', $currencyId, 2, '.', ',', true, '&nbsp;', $currencySymbol . '&nbsp;1,000.00'],
+            ['1000', $currencyId, 2, ',', '.', true, '', $currencySymbol . '1.000,00'],
+            ['1000', $currencyId, 3, '.', ',', true, '', $currencySymbol . '1,000.000'],
+            ['1000', $currencyId, 3, '.', '', true, '', $currencySymbol . '1000.000'],
+            ['1000', $currencyId, 3, ',', '.', true, '', $currencySymbol . '1.000,000'],
+            ['-1000', $currencyId, 2, '.', ',', true, '', $currencySymbol . '-1,000.00'],
+            ['-1000', $currencyId, 2, '.', ',', true, '&nbsp;', $currencySymbol . '&nbsp;-1,000.00'],
+            ['-1000', $currencyId, 2, ',', '.', true, '', $currencySymbol . '-1.000,00'],
+            ['-1000', $currencyId, 3, '.', ',', true, '', $currencySymbol . '-1,000.000'],
+            ['-1000', $currencyId, 3, '.', '', true, '', $currencySymbol . '-1000.000'],
+            ['-1000', $currencyId, 3, ',', '.', true, '', $currencySymbol . '-1.000,000'],
+            ['10000', $currencyId, 2, '.', ',', true, '', $currencySymbol . '10,000.00'],
+            ['100000', $currencyId, 2, '.', ',', true, '', $currencySymbol . '100,000.00'],
+            ['1000000', $currencyId, 2, '.', ',', true, '', $currencySymbol . '1,000,000.00'],
+            ['10000000', $currencyId, 2, '.', ',', true, '', $currencySymbol . '10,000,000.00'],
+            ['100000000', $currencyId, 2, '.', ',', true, '', $currencySymbol . '100,000,000.00'],
+            ['1000000000', $currencyId, 2, '.', ',', true, '', $currencySymbol . '1,000,000,000.00'],
+            ['-10000', $currencyId, 2, '.', ',', true, '', $currencySymbol . '-10,000.00'],
+            ['-100000', $currencyId, 2, '.', ',', true, '', $currencySymbol . '-100,000.00'],
+            ['-1000000', $currencyId, 2, '.', ',', true, '', $currencySymbol . '-1,000,000.00'],
+            ['-10000000', $currencyId, 2, '.', ',', true, '', $currencySymbol . '-10,000,000.00'],
+            ['-100000000', $currencyId, 2, '.', ',', true, '', $currencySymbol . '-100,000,000.00'],
+            ['-1000000000', $currencyId, 2, '.', ',', true, '', $currencySymbol . '-1,000,000,000.00'],
+            ['0.9', $currencyId, 2, '.', ',', true, '', $currencySymbol . '0.90'],
+            ['0.09', $currencyId, 2, '.', ',', true, '', $currencySymbol . '0.09'],
+            ['0.099', $currencyId, 2, '.', ',', true, '', $currencySymbol . '0.10'],
+            ['0.094', $currencyId, 2, '.', ',', true, '', $currencySymbol . '0.09'],
+            ['0.09499999', $currencyId, 2, '.', ',', true, '', $currencySymbol . '0.09'],
+            ['0.09499999', $currencyId, 6, '.', ',', true, '', $currencySymbol . '0.095000'],
+        ];
     }
 
     public function testFormatNotNumber()
@@ -317,19 +320,20 @@ class SugarCurrencyTest extends TestCase
      * @group math
      * @access public
      */
-    public static function dataProviderBaseCurrencyChangeProvider() {
-        return array(
-            array('1000.00', 'currency-sgd', 'currency-php', '33566.677446'),
-            array('1000.00', 'currency-php', 'currency-yen', '1885.496997'),
-            array('1000.00', 'currency-yen', '-99', '12.679092'),
-            array('1000.00', '-99', 'currency-sgd', '1246.171000'),
-        );
+    public static function dataProviderBaseCurrencyChangeProvider()
+    {
+        return [
+            ['1000.00', 'currency-sgd', 'currency-php', '33566.677446'],
+            ['1000.00', 'currency-php', 'currency-yen', '1885.496997'],
+            ['1000.00', 'currency-yen', '-99', '12.679092'],
+            ['1000.00', '-99', 'currency-sgd', '1246.171000'],
+        ];
     }
 
     public function testSetBaseRateWhenNotSet()
     {
         $bean = $this->getMockBuilder('SugarBean')
-            ->setMethods(array('save', 'getFieldDefinition'))
+            ->setMethods(['save', 'getFieldDefinition'])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -339,7 +343,7 @@ class SugarCurrencyTest extends TestCase
 
         /** @var Currency $currency */
         $currency = $this->getMockBuilder('Currency')
-            ->setMethods(array('save'))
+            ->setMethods(['save'])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -361,7 +365,7 @@ class SugarCurrencyTest extends TestCase
     public function testBaseRatesChangeToCurrentBaseRate()
     {
         $bean = $this->getMockBuilder('SugarBean')
-            ->setMethods(array('save', 'getFieldDefinition'))
+            ->setMethods(['save', 'getFieldDefinition'])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -371,7 +375,7 @@ class SugarCurrencyTest extends TestCase
 
         /** @var Currency $currency */
         $currency = $this->getMockBuilder('Currency')
-            ->setMethods(array('save'))
+            ->setMethods(['save'])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -394,7 +398,7 @@ class SugarCurrencyTest extends TestCase
     public function testSaveChangesBaseRateIfCurrencyIdChanged()
     {
         $bean = $this->getMockBuilder('SugarBean')
-            ->setMethods(array('save', 'getFieldDefinition'))
+            ->setMethods(['save', 'getFieldDefinition'])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -404,7 +408,7 @@ class SugarCurrencyTest extends TestCase
 
         /** @var Currency $currency */
         $currency = $this->getMockBuilder('Currency')
-            ->setMethods(array('save'))
+            ->setMethods(['save'])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -428,10 +432,10 @@ class SugarCurrencyTest extends TestCase
 
     public static function dataProviderBeanMethod()
     {
-        return array(
-            array('1.1', true),
-            array('1.2', false),
-        );
+        return [
+            ['1.1', true],
+            ['1.2', false],
+        ];
     }
     /**
      * @dataProvider dataProviderBeanMethod
@@ -439,7 +443,7 @@ class SugarCurrencyTest extends TestCase
     public function testSaveWithBeanUpdateCurrencyBaseRateMethod($expected, $method_return)
     {
         $bean = $this->getMockBuilder('SugarBean')
-            ->setMethods(array('save', 'updateCurrencyBaseRate', 'getFieldDefinition'))
+            ->setMethods(['save', 'updateCurrencyBaseRate', 'getFieldDefinition'])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -449,7 +453,7 @@ class SugarCurrencyTest extends TestCase
 
         /** @var Currency $currency */
         $currency = $this->getMockBuilder('Currency')
-            ->setMethods(array('save'))
+            ->setMethods(['save'])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -476,11 +480,11 @@ class SugarCurrencyTest extends TestCase
 
     public static function dataProviderHadCurrencyIdChanged()
     {
-        return array(
-            array('test_1', 'test_1', false),
-            array('test_1', '', true),
-            array('', 'test_1', true),
-        );
+        return [
+            ['test_1', 'test_1', false],
+            ['test_1', '', true],
+            ['', 'test_1', true],
+        ];
     }
 
     /**
@@ -489,11 +493,11 @@ class SugarCurrencyTest extends TestCase
     public function testHasCurrencyIdChanged($fetched_value, $bean_value, $expected)
     {
         $field = $this->getMockBuilder('SugarCurrency')
-            ->setMethods(array('getCurrency'))
+            ->setMethods(['getCurrency'])
             ->getMock();
 
         $bean = $this->getMockBuilder('SugarBean')
-            ->setMethods(array('save'))
+            ->setMethods(['save'])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -502,7 +506,7 @@ class SugarCurrencyTest extends TestCase
 
         $this->assertEquals(
             $expected,
-            SugarTestReflection::callProtectedMethod($field, 'hasCurrencyIdChanged', array($bean))
+            SugarTestReflection::callProtectedMethod($field, 'hasCurrencyIdChanged', [$bean])
         );
     }
 }

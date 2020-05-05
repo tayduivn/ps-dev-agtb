@@ -38,10 +38,10 @@ class Bug44372Test extends TestCase
      */
     public function testViewModule()
     {
-    	$_REQUEST = array(
+        $_REQUEST = [
             "view_package"=>"",
-    	    "module"=>""
-        );
+            "module"=>"",
+        ];
         $view = new ViewModule();
         $view->display();
         $this->assertTrue(is_string($view->module), "Assert that view class variable module is not an object");

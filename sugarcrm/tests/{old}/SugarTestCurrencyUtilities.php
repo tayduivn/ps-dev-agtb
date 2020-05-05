@@ -19,9 +19,11 @@
  */
 class SugarTestCurrencyUtilities
 {
-    private static $_createdCurrencies = array();
+    private static $_createdCurrencies = [];
 
-    private function __construct() {}
+    private function __construct()
+    {
+    }
 
     /**
      * createCurrency
@@ -43,8 +45,7 @@ class SugarTestCurrencyUtilities
         $currency->iso4217 = $iso4217;
         $currency->conversion_rate = $conversion_rate;
         $currency->status = 'Active';
-        if(!empty($id))
-        {
+        if (!empty($id)) {
             $currency->new_with_id = true;
             $currency->id = $id;
         } else {
@@ -79,14 +80,17 @@ class SugarTestCurrencyUtilities
      */
     public static function removeAllCreatedCurrencies()
     {
-        if(empty(self::$_createdCurrencies))
+        if (empty(self::$_createdCurrencies)) {
             return true;
+        }
         $currency_ids = self::getCreatedCurrencyIds();
         $GLOBALS['db']->query(
-            sprintf("DELETE FROM currencies WHERE id IN ('%s')",
-            implode("','", $currency_ids))
+            sprintf(
+                "DELETE FROM currencies WHERE id IN ('%s')",
+                implode("','", $currency_ids)
+            )
         );
-        self::$_createdCurrencies = array();
+        self::$_createdCurrencies = [];
         return true;
     }
 
@@ -99,11 +103,10 @@ class SugarTestCurrencyUtilities
      */
     public static function getCreatedCurrencyIds()
     {
-        $currency_ids = array();
+        $currency_ids = [];
         foreach (self::$_createdCurrencies as $currency) {
             $currency_ids[] = $currency->id;
         }
         return $currency_ids;
     }
 }
-?>

@@ -22,20 +22,18 @@ class Bug46122Test extends TestCase
     protected function setUp() : void
     {
         //Setup mock logic hook files
-        if(file_exists($this->modulesHookFile))
-        {
+        if (file_exists($this->modulesHookFile)) {
             $this->hasCustomModulesLogicHookFile = true;
             copy($this->modulesHookFile, $this->modulesHookFile.'.bak');
         } else {
-            write_array_to_file("test", array(), $this->modulesHookFile);
+            write_array_to_file("test", [], $this->modulesHookFile);
         }
 
-        if(file_exists($this->contactsHookFile))
-        {
+        if (file_exists($this->contactsHookFile)) {
             $this->hasCustomContactLogicHookFile = true;
             copy($this->contactsHookFile, $this->contactsHookFile.'.bak');
         } else {
-            write_array_to_file("test", array(), $this->contactsHookFile);
+            write_array_to_file("test", [], $this->contactsHookFile);
         }
 
         LogicHook::refreshHooks();
@@ -44,19 +42,17 @@ class Bug46122Test extends TestCase
     protected function tearDown() : void
     {
         //Remove the custom logic hook files
-        if($this->hasCustomModulesLogicHookFile && file_exists($this->modulesHookFile.'.bak'))
-        {
+        if ($this->hasCustomModulesLogicHookFile && file_exists($this->modulesHookFile.'.bak')) {
             copy($this->modulesHookFile.'.bak', $this->modulesHookFile);
             unlink($this->modulesHookFile.'.bak');
-        } else if(file_exists($this->modulesHookFile)) {
+        } elseif (file_exists($this->modulesHookFile)) {
             unlink($this->modulesHookFile);
         }
 
-        if($this->hasCustomContactLogicHookFile && file_exists($this->contactsHookFile.'.bak'))
-        {
+        if ($this->hasCustomContactLogicHookFile && file_exists($this->contactsHookFile.'.bak')) {
             copy($this->contactsHookFile.'.bak', $this->contactsHookFile);
             unlink($this->contactsHookFile.'.bak');
-        } else if(file_exists($this->contactsHookFile)) {
+        } elseif (file_exists($this->contactsHookFile)) {
             unlink($this->contactsHookFile);
         }
         unset($GLOBALS['logic_hook']);
@@ -88,9 +84,9 @@ class Bug46122Test extends TestCase
     protected function getSugarViewMock()
     {
         $mock = $this->getMockBuilder('SugarView')
-            ->setMethods(array('_trackView', 'renderJavascript', '_buildModuleList', 'preDisplay', 'displayErrors', 'display'))
+            ->setMethods(['_trackView', 'renderJavascript', '_buildModuleList', 'preDisplay', 'displayErrors', 'display'])
             ->getMock();
-        $mock->options = array();
+        $mock->options = [];
         return $mock;
     }
 }
@@ -101,9 +97,8 @@ class LogicHookMock extends LogicHook
 
     function process_hooks($hook_array, $event, $arguments)
     {
-        if(!empty($hook_array[$event])){
-            if($event == 'after_ui_frame')
-            {
+        if (!empty($hook_array[$event])) {
+            if ($event == 'after_ui_frame') {
                 $this->hookRunCount++;
             }
         }

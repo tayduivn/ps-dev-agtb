@@ -51,110 +51,110 @@ class ConstraintBuilderTest extends TestCase
 
     public function providerTestValidBuild()
     {
-        return array(
+        return [
 
             // empty/null constraints
-            array(
+            [
                 '',
-                array(),
-            ),
-            array(
+                [],
+            ],
+            [
                 null,
-                array(),
-            ),
+                [],
+            ],
 
             // basic constraint as string
-            array(
+            [
                 'Assert\NotBlank',
-                array(
+                [
                     new AssertBasic\NotBlank(),
-                ),
-            ),
+                ],
+            ],
 
             // single constraint with options
-            array(
-                array(
-                    'Assert\Range' => array(
+            [
+                [
+                    'Assert\Range' => [
                         'min' => 5,
                         'max' => 6,
-                    ),
-                ),
-                array(
-                    new AssertBasic\Range(array(
+                    ],
+                ],
+                [
+                    new AssertBasic\Range([
                         'min' => 5,
                         'max' => 6,
-                    )),
-                ),
-            ),
+                    ]),
+                ],
+            ],
 
             // sugar constraint as string
-            array(
+            [
                 'Assert\Mvc\ModuleName',
-                array(
+                [
                     new Assert\Mvc\ModuleName(),
-                ),
-            ),
+                ],
+            ],
 
             // multiple constraints with/without options
-            array(
-                array(
+            [
+                [
                     'Assert\NotBlank',
-                    'Assert\Type' => array(
+                    'Assert\Type' => [
                         'type' => 'string',
-                    ),
-                ),
-                array(
+                    ],
+                ],
+                [
                     new AssertBasic\NotBlank(),
-                    new AssertBasic\Type(array('type' => 'string')),
-                )
-            ),
+                    new AssertBasic\Type(['type' => 'string']),
+                ],
+            ],
 
             // full mix including collection
-            array(
-                array(
-                    'Assert\Collection' => array(
-                        'fields' => array(
-                            'email' => array(
+            [
+                [
+                    'Assert\Collection' => [
+                        'fields' => [
+                            'email' => [
                                 'Assert\NotBlank',
-                                'Assert\Email' => array(
+                                'Assert\Email' => [
                                     'message' => 'foo',
-                                ),
-                            ),
+                                ],
+                            ],
                             'username' => 'Assert\Mvc\ModuleName',
-                            'personal' => array(
-                                'Assert\Required' => array(
+                            'personal' => [
+                                'Assert\Required' => [
                                     'Assert\NotBlank',
-                                    'Assert\Email' => array(
+                                    'Assert\Email' => [
                                         'message' => 'bar',
-                                    ),
-                                ),
-                            ),
-                        ),
+                                    ],
+                                ],
+                            ],
+                        ],
                         'allowMissingFields' => true,
-                    ),
-                ),
-                array(
-                    new AssertBasic\Collection(array(
-                        'fields' => array(
-                            'email' => array(
+                    ],
+                ],
+                [
+                    new AssertBasic\Collection([
+                        'fields' => [
+                            'email' => [
                                 new AssertBasic\NotBlank(),
-                                new AssertBasic\Email(array('message' => 'foo')),
-                            ),
-                            'username' => array(
+                                new AssertBasic\Email(['message' => 'foo']),
+                            ],
+                            'username' => [
                                 new Assert\Mvc\ModuleName(),
-                            ),
-                            'personal' => array(
-                                new AssertBasic\Required(array(
+                            ],
+                            'personal' => [
+                                new AssertBasic\Required([
                                     new AssertBasic\NotBlank(),
-                                    new AssertBasic\Email(array('message' => 'bar')),
-                                )),
-                            ),
-                        ),
+                                    new AssertBasic\Email(['message' => 'bar']),
+                                ]),
+                            ],
+                        ],
                         'allowMissingFields' => true,
-                    )),
-                ),
-            ),
-        );
+                    ]),
+                ],
+            ],
+        ];
     }
 
     /**
@@ -173,27 +173,27 @@ class ConstraintBuilderTest extends TestCase
 
     public function providerTestInvalidBuild()
     {
-        return array(
-            array(
+        return [
+            [
                 'Assert\Foobar',
                 'Cannot find class for assert "Assert\Foobar"',
-            ),
-            array(
-                array('Assert\Foobar', 'foobar'),
+            ],
+            [
+                ['Assert\Foobar', 'foobar'],
                 'Cannot find class for assert "Assert\Foobar"',
-            ),
-            array(
+            ],
+            [
                 'Assertxxx\Foobar',
                 'Invalid constraint "Assertxxx\Foobar", should start with "Assert\"',
-            ),
-            array(
-                array('Assertxxx\Foobar' => array()),
+            ],
+            [
+                ['Assertxxx\Foobar' => []],
                 'Invalid constraint "Assertxxx\Foobar", should start with "Assert\"',
-            ),
-            array(
-                array('Assert\Range' => true),
+            ],
+            [
+                ['Assert\Range' => true],
                 'Assert options expected to be an array, boolean given',
-            ),
-        );
+            ],
+        ];
     }
 }

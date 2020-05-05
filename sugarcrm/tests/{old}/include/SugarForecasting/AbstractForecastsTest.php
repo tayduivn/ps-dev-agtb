@@ -24,7 +24,7 @@ class SugarForecasting_AbstractForecastTest extends TestCase
     {
         SugarTestHelper::setUp('timedate');
         SugarTestHelper::setUp('current_user');
-        self::$obj = new MockSugarForecasting_Abstract(array());
+        self::$obj = new MockSugarForecasting_Abstract([]);
 
         global $current_user;
         $reportee = SugarTestUserUtilities::createAnonymousUser();
@@ -57,11 +57,10 @@ class SugarForecasting_AbstractForecastTest extends TestCase
         $current_user->savePreferencesToDB();
         $timedate = TimeDate::getInstance();
 
-        return array(
-            array('2012-10-15 14:38:42', $timedate->asIso($timedate->fromDb('2012-10-15 14:38:42'), $current_user)), // db format
-        );
+        return [
+            ['2012-10-15 14:38:42', $timedate->asIso($timedate->fromDb('2012-10-15 14:38:42'), $current_user)], // db format
+        ];
     }
-
 }
 
 class MockSugarForecasting_Abstract extends SugarForecasting_AbstractForecast

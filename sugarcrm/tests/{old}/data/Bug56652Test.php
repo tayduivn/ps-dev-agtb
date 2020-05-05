@@ -23,9 +23,9 @@ class Bug56652Test extends TestCase
      *
      * @var array
      */
-    protected $account_names = array(
-        'E', 'G', 'A', 'D', 'B', 'H', 'F', 'C'
-    );
+    protected $account_names = [
+        'E', 'G', 'A', 'D', 'B', 'H', 'F', 'C',
+    ];
 
     /**
      * Sets up the fixture, for example, open a network connection.
@@ -39,8 +39,7 @@ class Bug56652Test extends TestCase
 
         $this->contact = SugarTestContactUtilities::createContact();
         $this->contact->load_relationship('opportunities');
-        foreach ($this->account_names as $account_name)
-        {
+        foreach ($this->account_names as $account_name) {
             $account = SugarTestAccountUtilities::createAccount();
             $account->name = $account_name;
             $account->save(false);
@@ -71,24 +70,31 @@ class Bug56652Test extends TestCase
     public function testSubPanelDataIsSorted($order, $function)
     {
         // create a minimum required subpanel definition
-        $subPanel = new aSubPanel(null, array(
+        $subPanel = new aSubPanel(null, [
             'module'            => 'Opportunities',
             'subpanel_name'     => null,
             'get_subpanel_data' => 'opportunities',
-        ), $this->contact);
+        ], $this->contact);
 
         // fetch subpanel data
         $response = SugarBean::get_union_related_list(
-            $this->contact, 'account_name', $order, '', 0, -1, -1, 0, $subPanel
+            $this->contact,
+            'account_name',
+            $order,
+            '',
+            0,
+            -1,
+            -1,
+            0,
+            $subPanel
         );
 
         $this->assertArrayHasKey('list', $response);
 
-        $account_names = array();
+        $account_names = [];
 
         /** @var Opportunity $opportunity */
-        foreach ($response['list'] as $opportunity)
-        {
+        foreach ($response['list'] as $opportunity) {
             $account_names[] = $opportunity->account_name;
         }
 
@@ -104,9 +110,9 @@ class Bug56652Test extends TestCase
      */
     public static function getOrders()
     {
-        return array(
-            array('asc',  'sort'),
-            array('desc', 'rsort'),
-        );
+        return [
+            ['asc',  'sort'],
+            ['desc', 'rsort'],
+        ];
     }
 }

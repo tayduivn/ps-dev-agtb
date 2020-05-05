@@ -29,7 +29,7 @@ class Bug55050Test extends TestCase
     private $emailman;
     private $list_max_entries_per_subpanel;
 
-    protected function create_campaign_log($campaign, $target, $marketing, $prospectlist, $activity_type, $target_tracker_key='')
+    protected function create_campaign_log($campaign, $target, $marketing, $prospectlist, $activity_type, $target_tracker_key = '')
     {
         global $timedate;
         $campaign_log = new CampaignLog();
@@ -53,7 +53,7 @@ class Bug55050Test extends TestCase
 
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
-        SugarTestHelper::setUp('current_user', array(true, 1));
+        SugarTestHelper::setUp('current_user', [true, 1]);
 
         $this->campaign = new Campaign();
         $this->campaign->name = 'Bug55050TestCampaign ' . mt_rand();
@@ -81,16 +81,14 @@ class Bug55050Test extends TestCase
 
         $query = 'SELECT id FROM inbound_email WHERE deleted=0';
         $result = $GLOBALS['db']->query($query);
-        while($row = $GLOBALS['db']->fetchByAssoc($result))
-        {
+        while ($row = $GLOBALS['db']->fetchByAssoc($result)) {
             $this->emailmarketing->inbound_email_id = $row['id'];
             break;
         }
 
         $query = 'SELECT id FROM email_templates WHERE deleted=0';
         $result = $GLOBALS['db']->query($query);
-        while($row = $GLOBALS['db']->fetchByAssoc($result))
-        {
+        while ($row = $GLOBALS['db']->fetchByAssoc($result)) {
             $this->emailmarketing->template_id = $row['id'];
             break;
         }
@@ -122,32 +120,29 @@ class Bug55050Test extends TestCase
         $this->emailman->list_id = $this->prospectlist->id;
         $this->emailman->save();
 
-        for($i=0; $i < 2; $i++)
-        {
+        for ($i=0; $i < 2; $i++) {
             $contact = SugarTestContactUtilities::createContact();
             $contact->campaign_id = $this->campaign->id;
             $contact->email2 = 'contact'. mt_rand() . '@sugar.com'; //Simulate a secondary email
             $contact->save();
             $contact->load_relationship('prospect_lists');
             $contact->prospect_lists->add($this->prospectlist->id);
-            SugarTestContactUtilities::setCreatedContact(array($contact->id));
+            SugarTestContactUtilities::setCreatedContact([$contact->id]);
             $this->create_campaign_log($this->campaign, $contact, $this->emailmarketing, $this->prospectlist, 'targeted');
         }
 
-        for($i=0; $i < 2; $i++)
-        {
+        for ($i=0; $i < 2; $i++) {
             $lead = SugarTestLeadUtilities::createLead();
             $lead->campaign_id = $this->campaign->id;
             $lead->email2 = 'lead2' . mt_rand() . '@sugar.com'; //Simulate a secondary email
             $lead->save();
             $lead->load_relationship('prospect_lists');
             $lead->prospect_lists->add($this->prospectlist->id);
-            SugarTestLeadUtilities::setCreatedLead(array($lead->id));
+            SugarTestLeadUtilities::setCreatedLead([$lead->id]);
             $this->create_campaign_log($this->campaign, $lead, $this->emailmarketing, $this->prospectlist, 'targeted');
         }
 
-        for($i=0; $i < 2; $i++)
-        {
+        for ($i=0; $i < 2; $i++) {
             $prospect = SugarTestProspectUtilities::createProspect();
             $this->create_campaign_log($this->campaign, $prospect, $this->emailmarketing, $this->prospectlist, 'targeted');
         }
@@ -170,7 +165,7 @@ class Bug55050Test extends TestCase
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestProspectUtilities::removeAllCreatedProspects();
         SugarTestCampaignUtilities::removeAllCreatedCampaigns();
-        SugarTestProspectListsUtilities::removeProspectLists(array($this->prospectlist->id, $this->prospectlist2->id));
+        SugarTestProspectListsUtilities::removeProspectLists([$this->prospectlist->id, $this->prospectlist2->id]);
         SugarTestEmailUtilities::removeAllCreatedEmails();
 
         $sql = 'DELETE FROM email_marketing WHERE campaign_id = \'' . $this->campaign->id . '\'';
@@ -190,7 +185,7 @@ class Bug55050Test extends TestCase
     public function testAddToProspectList()
     {
         global $beanList, $beanFiles;
-        require_once('include/formbase.php');
+        require_once 'include/formbase.php';
         add_to_prospect_list('targeted', 'ProspectLists', 'ProspectList', $this->prospectlist2->id, 'target_id', 'target_type', 'polymorphic', $this->campaign);
 
         $this->prospectlist2->retrieve($this->prospectlist2->id);

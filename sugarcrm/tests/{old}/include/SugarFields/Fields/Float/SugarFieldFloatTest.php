@@ -68,12 +68,12 @@ class SugarFieldFloatTest extends TestCase
      */
     public static function unformatFieldProvider()
     {
-        return array(
-            array('1000', '1000'),
-            array('1.000', '1.000'),
-            array('1,000', '1000'),
-            array('1,000.00', '1000.00'),
-        );
+        return [
+            ['1000', '1000'],
+            ['1.000', '1.000'],
+            ['1,000', '1000'],
+            ['1,000.00', '1000.00'],
+        ];
     }
 
     /**
@@ -104,12 +104,12 @@ class SugarFieldFloatTest extends TestCase
      */
     public static function unformatFieldProviderCommaDotFlip()
     {
-        return array(
-            array('1,000', '1'),
-            array('1000,00', '1000'),
-            array('1.000,65', '1000.65'),
-            array('1.065', '1065'),
-        );
+        return [
+            ['1,000', '1'],
+            ['1000,00', '1000'],
+            ['1.000,65', '1000.65'],
+            ['1.065', '1065'],
+        ];
     }
 
     /**
@@ -131,25 +131,25 @@ class SugarFieldFloatTest extends TestCase
      */
     public static function apiUnformatFieldProvider()
     {
-        return array(
-            array('1000', '1000'),
-            array('1.000', '1.000'),
-            array('1,000', '1,000'),
-            array('1,000.00', '1,000.00'),
-        );
+        return [
+            ['1000', '1000'],
+            ['1.000', '1.000'],
+            ['1,000', '1,000'],
+            ['1,000.00', '1,000.00'],
+        ];
     }
 
     public function dataProviderFixForForFloats()
     {
-        return array(
-            array('$equals', 10.69, '='),
-            array('$not_equals', 10.69, '!='),
-            array('$between', array(10.69, 100.69), 'BETWEEN'),
-            array('$lt', 10.69, '<'),
-            array('$lte', 10.69, '<='),
-            array('$gt', 10.69, '>'),
-            array('$gte', 10.69, '>='),
-        );
+        return [
+            ['$equals', 10.69, '='],
+            ['$not_equals', 10.69, '!='],
+            ['$between', [10.69, 100.69], 'BETWEEN'],
+            ['$lt', 10.69, '<'],
+            ['$lte', 10.69, '<='],
+            ['$gt', 10.69, '>'],
+            ['$gte', 10.69, '>='],
+        ];
     }
 
     /**

@@ -10,12 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$dictionary['ProspectList'] = array(
-    'fields' => array(
-        'test' => array(
+$dictionary['ProspectList'] = [
+    'fields' => [
+        'test' => [
             'name' => 'test1',
             'type' => 'relate',
             'link' => 'broken',
-        ),
-    ),
-);
+        ],
+    ],
+];

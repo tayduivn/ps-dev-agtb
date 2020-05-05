@@ -31,11 +31,11 @@ class MappingTest extends TestCase
     public function testExcludeFromSource()
     {
         $mapping = new Mapping('FooBar');
-        $this->assertSame(array(), $mapping->getSourceExcludes());
+        $this->assertSame([], $mapping->getSourceExcludes());
         $mapping->excludeFromSource('field1');
         $mapping->excludeFromSource('field2');
         $mapping->excludeFromSource('field1');
-        $this->assertSame(array('field1', 'field2'), $mapping->getSourceExcludes());
+        $this->assertSame(['field1', 'field2'], $mapping->getSourceExcludes());
     }
 
     /**
@@ -140,64 +140,64 @@ class MappingTest extends TestCase
         // add field1, no copyTo
         $mapping->addNotAnalyzedField('field1');
         $this->assertTrue($mapping->hasProperty('field1'));
-        $this->assertSame(array(
-            'field1' => array(
+        $this->assertSame([
+            'field1' => [
                 'type' => 'keyword',
                 'index' => true,
-            ),
-        ), $mapping->compile());
+            ],
+        ], $mapping->compile());
 
         // add same field again, with one copyTo
-        $mapping->addNotAnalyzedField('field1', array('field1_copy1'));
-        $this->assertSame(array(
-            'field1' => array(
+        $mapping->addNotAnalyzedField('field1', ['field1_copy1']);
+        $this->assertSame([
+            'field1' => [
                 'type' => 'keyword',
                 'index' => true,
-                'copy_to' => array(
+                'copy_to' => [
                     'field1_copy1',
-                )
-            ),
-        ), $mapping->compile());
+                ],
+            ],
+        ], $mapping->compile());
 
         // add new field, with one copyTo
-        $mapping->addNotAnalyzedField('field2', array('field2_copy1'));
+        $mapping->addNotAnalyzedField('field2', ['field2_copy1']);
         $this->assertTrue($mapping->hasProperty('field2'));
-        $this->assertSame(array(
-            'field1' => array(
+        $this->assertSame([
+            'field1' => [
                 'type' => 'keyword',
                 'index' => true,
-                'copy_to' => array(
+                'copy_to' => [
                     'field1_copy1',
-                )
-            ),
-            'field2' => array(
+                ],
+            ],
+            'field2' => [
                 'type' => 'keyword',
                 'index' => true,
-                'copy_to' => array(
+                'copy_to' => [
                     'field2_copy1',
-                )
-            ),
-        ), $mapping->compile());
+                ],
+            ],
+        ], $mapping->compile());
 
         // add field1 again, with one more copyTo
-        $mapping->addNotAnalyzedField('field1', array('field1_copy2'));
-        $this->assertSame(array(
-            'field1' => array(
+        $mapping->addNotAnalyzedField('field1', ['field1_copy2']);
+        $this->assertSame([
+            'field1' => [
                 'type' => 'keyword',
                 'index' => true,
-                'copy_to' => array(
+                'copy_to' => [
                     'field1_copy1',
                     'field1_copy2',
-                )
-            ),
-            'field2' => array(
+                ],
+            ],
+            'field2' => [
                 'type' => 'keyword',
                 'index' => true,
-                'copy_to' => array(
+                'copy_to' => [
                     'field2_copy1',
-                )
-            ),
-        ), $mapping->compile());
+                ],
+            ],
+        ], $mapping->compile());
     }
 
     /**
@@ -214,64 +214,64 @@ class MappingTest extends TestCase
         // add field1, no copyTo
         $mapping->addNotIndexedField('field1');
         $this->assertTrue($mapping->hasProperty('field1'));
-        $this->assertSame(array(
-            'field1' => array(
+        $this->assertSame([
+            'field1' => [
                 'type' => 'keyword',
                 'index' => false,
-            ),
-        ), $mapping->compile());
+            ],
+        ], $mapping->compile());
 
         // add same field again, with one copyTo
-        $mapping->addNotIndexedField('field1', array('field1_copy1'));
-        $this->assertSame(array(
-            'field1' => array(
+        $mapping->addNotIndexedField('field1', ['field1_copy1']);
+        $this->assertSame([
+            'field1' => [
                 'type' => 'keyword',
                 'index' => false,
-                'copy_to' => array(
+                'copy_to' => [
                     'field1_copy1',
-                )
-            ),
-        ), $mapping->compile());
+                ],
+            ],
+        ], $mapping->compile());
 
         // add new field, with one copyTo
-        $mapping->addNotIndexedField('field2', array('field2_copy1'));
+        $mapping->addNotIndexedField('field2', ['field2_copy1']);
         $this->assertTrue($mapping->hasProperty('field2'));
-        $this->assertSame(array(
-            'field1' => array(
+        $this->assertSame([
+            'field1' => [
                 'type' => 'keyword',
                 'index' => false,
-                'copy_to' => array(
+                'copy_to' => [
                     'field1_copy1',
-                )
-            ),
-            'field2' => array(
+                ],
+            ],
+            'field2' => [
                 'type' => 'keyword',
                 'index' => false,
-                'copy_to' => array(
+                'copy_to' => [
                     'field2_copy1',
-                )
-            ),
-        ), $mapping->compile());
+                ],
+            ],
+        ], $mapping->compile());
 
         // add field1 again, with one more copyTo
-        $mapping->addNotIndexedField('field1', array('field1_copy2'));
-        $this->assertSame(array(
-            'field1' => array(
+        $mapping->addNotIndexedField('field1', ['field1_copy2']);
+        $this->assertSame([
+            'field1' => [
                 'type' => 'keyword',
                 'index' => false,
-                'copy_to' => array(
+                'copy_to' => [
                     'field1_copy1',
                     'field1_copy2',
-                )
-            ),
-            'field2' => array(
+                ],
+            ],
+            'field2' => [
                 'type' => 'keyword',
                 'index' => false,
-                'copy_to' => array(
+                'copy_to' => [
                     'field2_copy1',
-                )
-            ),
-        ), $mapping->compile());
+                ],
+            ],
+        ], $mapping->compile());
     }
 
     /**
@@ -288,28 +288,28 @@ class MappingTest extends TestCase
         // add base1.field1
         $mapping->addMultiField('base1', 'field1', new MultiFieldProperty());
         $this->assertTrue($mapping->hasProperty('base1'));
-        $this->assertSame(array(
-            'base1' => array(
+        $this->assertSame([
+            'base1' => [
                 'type' => 'keyword',
                 'index' => true,
-                'fields' => array(
-                    'field1' => array('type' => 'text'),
-                ),
-            ),
-        ), $mapping->compile());
+                'fields' => [
+                    'field1' => ['type' => 'text'],
+                ],
+            ],
+        ], $mapping->compile());
 
         // add base1.field2
         $mapping->addMultiField('base1', 'field2', new MultiFieldProperty());
-        $this->assertSame(array(
-            'base1' => array(
+        $this->assertSame([
+            'base1' => [
                 'type' => 'keyword',
                 'index' => true,
-                'fields' => array(
-                    'field1' => array('type' => 'text'),
-                    'field2' => array('type' => 'text'),
-                ),
-            ),
-        ), $mapping->compile());
+                'fields' => [
+                    'field1' => ['type' => 'text'],
+                    'field2' => ['type' => 'text'],
+                ],
+            ],
+        ], $mapping->compile());
     }
 
     /**
@@ -354,7 +354,7 @@ class MappingTest extends TestCase
         $mapping = new Mapping('FooBar');
 
         // create base field
-        call_user_func(array($mapping, $baseMethod), 'base');
+        call_user_func([$mapping, $baseMethod], 'base');
 
         // add base.field1
         $mapping->addMultiField('base', 'field1', new MultiFieldProperty());
@@ -364,31 +364,31 @@ class MappingTest extends TestCase
 
     public function providerTestAddMultiFieldCombination()
     {
-        return array(
-            array(
+        return [
+            [
                 'addNotIndexedField',
-                array(
-                    'base' => array(
+                [
+                    'base' => [
                         'type' => 'keyword',
                         'index' => false,
-                        'fields' => array(
-                            'field1' => array('type' => 'text'),
-                        ),
-                    ),
-                ),
-            ),
-            array(
+                        'fields' => [
+                            'field1' => ['type' => 'text'],
+                        ],
+                    ],
+                ],
+            ],
+            [
                 'addNotAnalyzedField',
-                array(
-                    'base' => array(
+                [
+                    'base' => [
                         'type' => 'keyword',
                         'index' => true,
-                        'fields' => array(
-                            'field1' => array('type' => 'text'),
-                        ),
-                    ),
-                ),
-            ),
-        );
+                        'fields' => [
+                            'field1' => ['type' => 'text'],
+                        ],
+                    ],
+                ],
+            ],
+        ];
     }
 }

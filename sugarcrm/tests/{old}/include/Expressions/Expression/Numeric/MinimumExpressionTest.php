@@ -25,9 +25,9 @@ class MinimumExpressionTest extends TestCase
 
     public function dataProviderTestEvaluate()
     {
-        return array(
-            array('min(-4, 2, 3)', '-4'),
-            array('min("-4", "2", "3")', '-4')
-        );
+        return [
+            ['min(-4, 2, 3)', '-4'],
+            ['min("-4", "2", "3")', '-4'],
+        ];
     }
 }

@@ -60,21 +60,21 @@ class PMSEExporterTest extends TestCase
     public function testGetProject()
     {
         $exporter = $this->getMockBuilder('PMSEExporter')
-            ->setMethods(array('retrieveBean', 'getMetadata', 'getBean'))
+            ->setMethods(['retrieveBean', 'getMetadata', 'getBean'])
             ->disableOriginalConstructor()
             ->getMock();
 
         $exporter->method('getBean')
                  ->will($this->returnValue($this->getBeanForTags()));
 
-        $result = $exporter->getProject(array('id'=>'1234'));
+        $result = $exporter->getProject(['id'=>'1234']);
         $this->assertArrayHasKey('metadata', $result);
         $this->assertArrayHasKey('project', $result);
         $this->assertArrayHasKey('tag', $result['project']);
         $this->assertArrayHasKey('tag 1', $result['project']['tag']);
         $this->assertSame($result['project']['tag']['tag 1'], 'Tag 1');
 
-        $result = $exporter->getProject(array('id' => '1234', 'project_only' => true));
+        $result = $exporter->getProject(['id' => '1234', 'project_only' => true]);
         $this->assertArrayNotHasKey('metadata', $result);
         $this->assertArrayHasKey('project', $result);
         $this->assertArrayHasKey('tag', $result['project']);

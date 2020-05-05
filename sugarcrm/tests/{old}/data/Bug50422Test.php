@@ -34,22 +34,22 @@ class Bug50422Test extends TestCase
     {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
-        SugarTestHelper::setUp('current_user', array(true, 1));
+        SugarTestHelper::setUp('current_user', [true, 1]);
         SugarTestHelper::setUp('moduleList');
         SugarTestHelper::setUp('app_list_strings');
 
         $this->relationships = new DeployedRelationships('Contacts');
-        $definition = array(
+        $definition = [
             'lhs_module' => 'Contacts',
             'relationship_type' => 'one-to-many',
-            'rhs_module' => 'Calls'
-        );
+            'rhs_module' => 'Calls',
+        ];
 
         $this->relationship = RelationshipFactory::newRelationship($definition);
         $this->relationships->add($this->relationship);
         $this->relationships->save();
         $this->relationships->build();
-        SugarTestHelper::setUp('relation', array('Contacts', 'Calls'));
+        SugarTestHelper::setUp('relation', ['Contacts', 'Calls']);
 
         $this->call = SugarTestCallUtilities::createCall();
         $contact = $this->contact = SugarTestContactUtilities::createContact();
@@ -93,7 +93,7 @@ class Bug50422Test extends TestCase
             'calls.id = ' . $call->db->quoted($call->id),
             -1,
             -1,
-            array($relateFieldName)
+            [$relateFieldName]
         );
 
         $this->assertArrayHasKey('data', $response, 'Response doesn\'t contain data');

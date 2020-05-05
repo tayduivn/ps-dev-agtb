@@ -26,7 +26,7 @@ class RS78Test extends TestCase
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setUp('current_user', array(true, false));
+        SugarTestHelper::setUp('current_user', [true, false]);
 
         $this->bean = BeanFactory::newBean('TeamNotices');
         $this->bean->name = 'RS78Test';

@@ -11,17 +11,18 @@
  */
 
 
-class RestMetadataSugarLayoutsTest extends RestTestBase {
-    protected $_testPaths = array(
+class RestMetadataSugarLayoutsTest extends RestTestBase
+{
+    protected $_testPaths = [
         'wiggle' => 'clients/base/layouts/wiggle/wiggle.php',
         'woggle' => 'custom/clients/base/layouts/woggle/woggle.php',
         'pizzle' => 'clients/mobile/layouts/dizzle/dazzle.php', // Tests improperly named metadata files
         'pozzle' => 'custom/clients/mobile/layouts/pozzle/pozzle.php',
-    );
+    ];
 
-    protected $_testFilesCreated = array();
+    protected $_testFilesCreated = [];
 
-    protected $_oldFileContents = array();
+    protected $_oldFileContents = [];
 
     protected function setUp() : void
     {
@@ -42,9 +43,9 @@ class RestMetadataSugarLayoutsTest extends RestTestBase {
             file_put_contents($file, $contents);
         }
 
-        $this->_restLogin('','','mobile');
+        $this->_restLogin('', '', 'mobile');
         $this->mobileAuthToken = $this->authToken;
-        $this->_restLogin('','','base');
+        $this->_restLogin('', '', 'base');
         $this->baseAuthToken = $this->authToken;
         $this->_clearMetadataCache();
     }
@@ -64,7 +65,8 @@ class RestMetadataSugarLayoutsTest extends RestTestBase {
     /**
      * @group rest
      */
-    public function testBaseLayoutRequestAll() {
+    public function testBaseLayoutRequestAll()
+    {
         $this->_clearMetadataCache();
         $reply = $this->_restCall('metadata');
         $this->assertNotEmpty($reply['reply']['layouts'], 'Layouts return data is missing');
@@ -74,7 +76,8 @@ class RestMetadataSugarLayoutsTest extends RestTestBase {
     /**
      * @group rest
      */
-    public function testBaseLayoutRequestLayoutsOnly() {
+    public function testBaseLayoutRequestLayoutsOnly()
+    {
         $this->_clearMetadataCache();
         $reply = $this->_restCall('metadata?type_filter=layouts');
         $this->assertNotEmpty($reply['reply']['layouts'], 'Layouts return data is missing');
@@ -84,7 +87,8 @@ class RestMetadataSugarLayoutsTest extends RestTestBase {
     /**
      * @group rest
      */
-    public function testMobileLayoutRequestAll() {
+    public function testMobileLayoutRequestAll()
+    {
         $this->authToken = $this->mobileAuthToken;
         $this->_clearMetadataCache();
         $reply = $this->_restCall('metadata');
@@ -95,7 +99,8 @@ class RestMetadataSugarLayoutsTest extends RestTestBase {
     /**
      * @group rest
      */
-    public function testMobileLayoutRequestLayoutsOnly() {
+    public function testMobileLayoutRequestLayoutsOnly()
+    {
         $this->authToken = $this->mobileAuthToken;
         $this->_clearMetadataCache();
         $reply = $this->_restCall('metadata?type_filter=layouts');

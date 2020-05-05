@@ -100,7 +100,7 @@ class FixupEmailAddressDuplicationTest extends UpgradeTestCase
             $comparator = $match ? '=' : '<>';
             $sql .= " AND {$columnName} {$comparator} '{$columnValue}'";
         }
-        $records = array();
+        $records = [];
         $stmt = DBManagerFactory::getConnection()->executeQuery($sql);
         while ($row = $stmt->fetch()) {
             $records[] = $row;

@@ -23,7 +23,7 @@ class Bug44428Test extends TestCase
     protected function setUp() : void
     {
         global $beanList, $beanFiles;
-        require('include/modules.php');
+        require 'include/modules.php';
 
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['sugar_config']['default_language']);
     }
@@ -37,15 +37,15 @@ class Bug44428Test extends TestCase
 
     public function providerField()
     {
-        return array(
-            array('quote_name', '1'),
-            array('opportunity_name', ''),
-            array(array('name' => 'quote_num', 
-                        'type' => 'readonly'), '3'),
-            ); 
+        return [
+            ['quote_name', '1'],
+            ['opportunity_name', ''],
+            [['name' => 'quote_num',
+                        'type' => 'readonly'], '3'],
+            ];
     }
     /**
-     * @dataProvider providerField 
+     * @dataProvider providerField
      * @group 44428
      */
     public function testGetNewRowItem($name, $tabindex)
@@ -56,18 +56,12 @@ class Bug44428Test extends TestCase
         $glmdp = new GridLayoutMetaDataParser('editview', 'Quotes');
         $result = $glmdp->getNewRowItem($source, $fielddef);
         
-        if (is_array($name))
-        {
+        if (is_array($name)) {
             $this->assertEquals($result['name'], $name['name']);
-        }
-        else
-        {
-            if (empty($tabindex))
-            {
+        } else {
+            if (empty($tabindex)) {
                 $this->assertEquals($result, $name);
-            }
-            else
-            {
+            } else {
                 $this->assertEquals($result['name'], $name);
             }
         }

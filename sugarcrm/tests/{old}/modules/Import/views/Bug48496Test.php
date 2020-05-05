@@ -43,34 +43,37 @@ class Bug48496Test extends TestCase
         unset($_REQUEST['has_header']);
     }
 
-    public function testQueryDoesNotContainDuplicateUsersLastImportClauses() {
+    public function testQueryDoesNotContainDuplicateUsersLastImportClauses()
+    {
         global $current_user;
 
-        $params = array(
+        $params = [
             'custom_from' => ', users_last_import',
             'custom_where' => " AND users_last_import.assigned_user_id = '{$current_user->id}'
                 AND users_last_import.bean_type = 'Account'
                 AND users_last_import.bean_id = accounts.id
                 AND users_last_import.deleted = 0
                 AND accounts.deleted = 0",
-        );
+        ];
 
         $seed = BeanFactory::newBean('Accounts');
 
-        $lvfMock = $this->getMockBuilder('ListViewFacade')->setMethods(array('setup', 'display'))->setConstructorArgs(array($seed, 'Accounts'))->getMock();
+        $lvfMock = $this->getMockBuilder('ListViewFacade')->setMethods(['setup', 'display'])->setConstructorArgs([$seed, 'Accounts'])->getMock();
 
         $lvfMock->expects($this->once())
             ->method('setup')
-            ->with($this->anything(),
-            '',
-            $params,
-            $this->anything(),
-            $this->anything(),
-            $this->anything(),
-            $this->anything(),
-            $this->anything(),
-            $this->anything(),
-            $this->anything());
+            ->with(
+                $this->anything(),
+                '',
+                $params,
+                $this->anything(),
+                $this->anything(),
+                $this->anything(),
+                $this->anything(),
+                $this->anything(),
+                $this->anything(),
+                $this->anything()
+            );
 
         $viewLast = new ImportViewLast();
         $viewLast->init($seed);

@@ -60,5 +60,4 @@ class Bug45960 extends TestCase
         $count = $GLOBALS['db']->fetchByAssoc($result);
         $this->assertEquals(1, $count['cnt'], 'Incorrect emails_beans count');
     }
-    
 }

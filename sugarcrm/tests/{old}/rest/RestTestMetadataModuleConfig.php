@@ -11,10 +11,11 @@
  */
 
 
-class RestTestMetadataModuleConfig extends RestTestBase {
-    protected $configs = array(
-        array('name' => 'hello', 'value' => 'world', 'platform' => 'base', 'category' => 'Forecasts'),
-    );
+class RestTestMetadataModuleConfig extends RestTestBase
+{
+    protected $configs = [
+        ['name' => 'hello', 'value' => 'world', 'platform' => 'base', 'category' => 'Forecasts'],
+    ];
 
     protected function setUp() : void
     {
@@ -22,7 +23,7 @@ class RestTestMetadataModuleConfig extends RestTestBase {
 
         /* @var $admin Administration */
         $admin = BeanFactory::newBean('Administration');
-        foreach($this->configs as $config){
+        foreach ($this->configs as $config) {
             $admin->saveSetting($config['category'], $config['name'], $config['value'], $config['platform']);
         }
 

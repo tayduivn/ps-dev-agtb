@@ -26,8 +26,7 @@ class Bug50910Test extends TestCase
     protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        if(!empty($this->emailAddress))
-        {
+        if (!empty($this->emailAddress)) {
             $GLOBALS['db']->query("DELETE FROM emails WHERE id='{$this->emailAddress->id}'");
             $GLOBALS['db']->query("DELETE FROM emails_beans WHERE email_id='{$this->emailAddress->id}'");
             $GLOBALS['db']->query("DELETE FROM emails_email_addr_rel WHERE email_id='{$this->emailAddress->id}'");
@@ -45,7 +44,7 @@ class Bug50910Test extends TestCase
         // create relation between user and email address with empty additional data to test if the addRow function
         // properly handles empty values with not generating incorrect SQL
         $current_user->load_relationship('email_addresses');
-        $current_user->email_addresses->add(array($this->emailAddress), array());
+        $current_user->email_addresses->add([$this->emailAddress], []);
         $this->assertNotEmpty($current_user->email_addresses);
     }
 }

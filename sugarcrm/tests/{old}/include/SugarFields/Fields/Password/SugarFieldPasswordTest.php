@@ -38,7 +38,7 @@ class SugarFieldPasswordTest extends TestCase
 
         $this->assertTrue(User::checkPassword(
             'test value',
-            $this->fieldObj->importSanitize('test value',array(),null,$settings)
+            $this->fieldObj->importSanitize('test value', [], null, $settings)
         ));
     }
 
@@ -47,16 +47,16 @@ class SugarFieldPasswordTest extends TestCase
      */
     public function testApiFormatField()
     {
-        $data = array(
+        $data = [
             'id' => 'awesome',
             'user_hash' => 'this-is-my-password',
-        );
+        ];
 
         $bean = BeanFactory::newBean('Users');
-        $args = array();
+        $args = [];
         $fieldName = 'user_hash';
-        $properties = array();
-        $fieldList = array($fieldName);
+        $properties = [];
+        $fieldList = [$fieldName];
         $service = SugarTestRestUtilities::getRestServiceMock();
         // no bean password set, so it returns empty string
         $this->fieldObj->apiFormatField($data, $bean, $args, $fieldName, $properties, $fieldList, $service);
@@ -81,15 +81,15 @@ class SugarFieldPasswordTest extends TestCase
 
         // dataProvider is not working when you need to check class vars
         // test password not change
-        $this->fieldObj->apiSave($contactBean, array('portal_password' => true), 'portal_password', array());
+        $this->fieldObj->apiSave($contactBean, ['portal_password' => true], 'portal_password', []);
         $this->assertEquals($currentPassword, $contactBean->portal_password, "Password should not have changed");
 
         // test password being unset
-        $this->fieldObj->apiSave($contactBean, array('portal_password' => ''), 'portal_password', array());
+        $this->fieldObj->apiSave($contactBean, ['portal_password' => ''], 'portal_password', []);
         $this->assertEquals(null, $contactBean->portal_password, "Password should be null");
 
         // test changing password
-        $this->fieldObj->apiSave($contactBean, array('portal_password' => '1234'), 'portal_password', array());
+        $this->fieldObj->apiSave($contactBean, ['portal_password' => '1234'], 'portal_password', []);
         $this->assertTrue(User::checkPassword('1234', $contactBean->portal_password), "The password didn't change");
     }
 }

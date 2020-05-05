@@ -37,7 +37,7 @@ class Bug48616Test extends TestCase
         $layoutManager = new LayoutManager();
         $widget = new SugarWidgetFieldDateTime($layoutManager);
 
-        $result = SugarTestReflection::callProtectedMethod($widget, 'expandDate', array('Today'));
+        $result = SugarTestReflection::callProtectedMethod($widget, 'expandDate', ['Today']);
 
         $this->assertStringContainsString(
             $timedate->asDbDate($timedate->getNow(true)),

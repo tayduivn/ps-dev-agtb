@@ -76,13 +76,13 @@ class MinDateConditionalRelatedExpressionTest extends TestCase
     {
         // Create an account as the base module
         $account = $this->getMockBuilder('Account')
-            ->setMethods(array('save'))
+            ->setMethods(['save'])
             ->getMock();
 
         // Mock the revenuelineitems link of the account
         $link2 = $this->getMockBuilder('Link2')
-            ->setConstructorArgs(array('revenuelineitems', $account))
-            ->setMethods(array('getBeans'))
+            ->setConstructorArgs(['revenuelineitems', $account])
+            ->setMethods(['getBeans'])
             ->getMock();
         $account->revenuelineitems = $link2;
 
@@ -117,7 +117,7 @@ class MinDateConditionalRelatedExpressionTest extends TestCase
     private function createRelatedRLI($rliData)
     {
         $rli = $this->getMockBuilder('RevenueLineItem')
-            ->setMethods(array('save'))
+            ->setMethods(['save'])
             ->getMock();
         $rli->date_closed = $rliData[0];
         $rli->product_type = $rliData[1];

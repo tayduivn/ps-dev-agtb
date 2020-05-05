@@ -20,9 +20,9 @@ use Sugarcrm\Sugarcrm\MetaData\ViewdefManager;
  */
 class QuotesConfigApiTest extends TestCase
 {
-    protected $oldConfig = array();
-    protected $moduleList = array();
-    protected $oldStrings = array();
+    protected $oldConfig = [];
+    protected $moduleList = [];
+    protected $oldStrings = [];
 
     protected function setUp() : void
     {
@@ -43,7 +43,7 @@ class QuotesConfigApiTest extends TestCase
         }
 
         $GLOBALS['sugar_config'] = $sugar_config;
-        $GLOBALS['moduleList'] = array();
+        $GLOBALS['moduleList'] = [];
         $GLOBALS['app_strings'] = $app_strings;
     }
 
@@ -70,7 +70,7 @@ class QuotesConfigApiTest extends TestCase
             ->will($this->returnValue(true));
         
         $api->user = $userMock;
-        $args = array(
+        $args = [
             'module' => 'Quotes',
             'foo' => 'bar',
             'worksheet_columns' => [],
@@ -79,10 +79,10 @@ class QuotesConfigApiTest extends TestCase
             'summary_columns_related_fields' => [],
             'footer_rows' => [],
             'footer_rows_related_fields' => [],
-        );
+        ];
 
         $mock = $this->getMockBuilder('\QuotesConfigApi')
-            ->setMethods(array('applyWorksheetColumnsConfig'))
+            ->setMethods(['applyWorksheetColumnsConfig'])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -105,13 +105,13 @@ class QuotesConfigApiTest extends TestCase
      */
     public function testApplyWorksheetColumnsConfig($settings, $expectException)
     {
-        $quotesViewdef = array();
-        $quotesViewdef['panels'][0]['fields'][1]['related_fields'][0]['fields'] = array(
+        $quotesViewdef = [];
+        $quotesViewdef['panels'][0]['fields'][1]['related_fields'][0]['fields'] = [
             'name' => 'product_bundle_items',
-            'fields' => array(),
-        );
+            'fields' => [],
+        ];
         $viewdefManagerMock = $this->getMockBuilder(ViewdefManager::class)
-            ->setMethods(array('loadViewdef', 'saveViewdef'))
+            ->setMethods(['loadViewdef', 'saveViewdef'])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -120,7 +120,7 @@ class QuotesConfigApiTest extends TestCase
             ->will($this->returnValue($quotesViewdef));
         
         $mock = $this->getMockBuilder('\QuotesConfigApi')
-        ->setMethods(array('getViewdefManager', 'getSettings'))
+        ->setMethods(['getViewdefManager', 'getSettings'])
         ->disableOriginalConstructor()
         ->getMock();
 
@@ -144,35 +144,35 @@ class QuotesConfigApiTest extends TestCase
 
     public function applyConfigProvider()
     {
-        return array(
-            array(
-                array(
-                    'worksheet_columns_related_fields' => array(),
-                ), true,
-            ),
-            array(
-                array(
+        return [
+            [
+                [
+                    'worksheet_columns_related_fields' => [],
+                ], true,
+            ],
+            [
+                [
                     'worksheet_columns' => '',
-                    'worksheet_columns_related_fields' => array(),
-                ), true,
-            ),
-            array(
-                array(
-                    'worksheet_columns' => array(),
-                    'worksheet_columns_related_fields' => array(),
-                ), false,
-            ),
-            array(
-                array(
-                    'worksheet_columns' => array(),
-                ), true,
-            ),
-            array(
-                array(
-                    'worksheet_columns' => array(),
+                    'worksheet_columns_related_fields' => [],
+                ], true,
+            ],
+            [
+                [
+                    'worksheet_columns' => [],
+                    'worksheet_columns_related_fields' => [],
+                ], false,
+            ],
+            [
+                [
+                    'worksheet_columns' => [],
+                ], true,
+            ],
+            [
+                [
+                    'worksheet_columns' => [],
                     'worksheet_columns_related_fields' => '',
-                ), true,
-            ),
-        );
+                ], true,
+            ],
+        ];
     }
 }

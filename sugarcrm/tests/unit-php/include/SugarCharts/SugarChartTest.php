@@ -31,10 +31,10 @@ class SugarChartTest extends TestCase
 
     public function processDataGroupProvider()
     {
-        return array(
-            array('137734.745309', true, '137.73', '137.73K'),
-            array('137734.745309', false, '137734.74530973', '137734.745309'),
-        );
+        return [
+            ['137734.745309', true, '137.73', '137.73K'],
+            ['137734.745309', false, '137734.74530973', '137734.745309'],
+        ];
     }
 
     /**

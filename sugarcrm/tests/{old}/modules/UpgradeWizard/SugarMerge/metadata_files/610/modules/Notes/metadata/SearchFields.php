@@ -10,18 +10,17 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$searchFields['Notes'] = 
-	array (
-		'name' => array( 'query_type'=>'default'),
-        'contact_name' => array( 'query_type'=>'default','db_field'=>array('contacts.first_name','contacts.last_name')),  
+$searchFields['Notes'] =
+     [
+        'name' => [ 'query_type'=>'default'],
+        'contact_name' => [ 'query_type'=>'default','db_field'=>['contacts.first_name','contacts.last_name']],
         
-		'favorites_only' => array(
+        'favorites_only' => [
             'query_type'=>'format',
-			'operator' => 'subquery',
-			'subquery' => 'SELECT sugarfavorites.record_id FROM sugarfavorites 
+            'operator' => 'subquery',
+            'subquery' => 'SELECT sugarfavorites.record_id FROM sugarfavorites 
 			                    WHERE sugarfavorites.deleted=0 
 			                        and sugarfavorites.module = \'Notes\' 
 			                        and sugarfavorites.assigned_user_id = \'{0}\'',
-			'db_field'=>array('id')),
-	);
-?>
+            'db_field'=>['id']],
+    ];

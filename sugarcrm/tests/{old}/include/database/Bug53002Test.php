@@ -18,7 +18,7 @@ class Bug53002Test extends TestCase
 
     protected function setUp() : void
     {
-        if(empty($this->_db)){
+        if (empty($this->_db)) {
             $this->_db = DBManagerFactory::getInstance();
         }
     }

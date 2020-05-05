@@ -12,20 +12,21 @@
 
 class SugarTestQuoteUtilities
 {
-    private static $_createdQuotes = array();
+    private static $_createdQuotes = [];
 
-    private function __construct() {}
+    private function __construct()
+    {
+    }
 
-    public static function createQuote($id = '') 
+    public static function createQuote($id = '')
     {
         $time = mt_rand();
-    	$name = 'SugarQuote';
-    	$quote = new Quote();
+        $name = 'SugarQuote';
+        $quote = new Quote();
         $quote->name = $name . $time;
         $quote->quote_stage = 'Draft';
         $quote->date_quote_expected_closed = $GLOBALS['timedate']->to_display_date(gmdate('Y-m-d'));
-        if(!empty($id))
-        {
+        if (!empty($id)) {
             $quote->new_with_id = true;
             $quote->id = $id;
         }
@@ -34,12 +35,13 @@ class SugarTestQuoteUtilities
         return $quote;
     }
 
-    public static function setCreatedQuote($quote_ids) {
-    	foreach($quote_ids as $quote_id) {
-    		$quote = new Quote();
-    		$quote->id = $quote_id;
-        	self::$_createdQuotes[] = $quote;
-    	} // foreach
+    public static function setCreatedQuote($quote_ids)
+    {
+        foreach ($quote_ids as $quote_id) {
+            $quote = new Quote();
+            $quote->id = $quote_id;
+            self::$_createdQuotes[] = $quote;
+        } // foreach
     } // fn
 
     public static function removeAllCreatedQuotes()
@@ -56,7 +58,7 @@ class SugarTestQuoteUtilities
         
     public static function getCreatedQuoteIds()
     {
-        $quote_ids = array();
+        $quote_ids = [];
         foreach (self::$_createdQuotes as $quote) {
             $quote_ids[] = $quote->id;
         }

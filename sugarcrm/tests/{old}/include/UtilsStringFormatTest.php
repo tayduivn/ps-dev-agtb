@@ -12,27 +12,37 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once("include/utils.php");
+require_once "include/utils.php";
 
 class UtilsStringFormatTest extends TestCase
 {
-    public function testArrayStringFormat() {
-        $output = string_format("I am {0} feet tall, my name is {1} and I like {2}",
-                                array(7,'Hans','finger puppets','Llama licks the world'));
-        $this->assertEquals('I am 7 feet tall, my name is Hans and I like finger puppets',
-                            $output,
-                            "String format failed to replace some variables.");
+    public function testArrayStringFormat()
+    {
+        $output = string_format(
+            "I am {0} feet tall, my name is {1} and I like {2}",
+            [7,'Hans','finger puppets','Llama licks the world']
+        );
+        $this->assertEquals(
+            'I am 7 feet tall, my name is Hans and I like finger puppets',
+            $output,
+            "String format failed to replace some variables."
+        );
     }
 
-    public function testAssocStringFormat() {
-        $output = string_format("I am {feetTall} feet tall, my name is {firstName} and I like {thingILike}",
-                                array('feetTall'=>7,
+    public function testAssocStringFormat()
+    {
+        $output = string_format(
+            "I am {feetTall} feet tall, my name is {firstName} and I like {thingILike}",
+            ['feetTall'=>7,
                                       'firstName'=>'Hans',
                                       'lastName'=>'Ironsmithson',
                                       'thingILike'=>'finger puppets',
-                                      'thingIHate'=>'Llama licks the world'));
-        $this->assertEquals('I am 7 feet tall, my name is Hans and I like finger puppets',
-                            $output,
-                            "String format failed to replace some variables from an associative array");
+            'thingIHate'=>'Llama licks the world']
+        );
+        $this->assertEquals(
+            'I am 7 feet tall, my name is Hans and I like finger puppets',
+            $output,
+            "String format failed to replace some variables from an associative array"
+        );
     }
 }

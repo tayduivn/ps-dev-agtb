@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
 class Bug42727Test extends TestCase
 {
     protected $_opportunity;
-    protected $_opportunityIds = array();
+    protected $_opportunityIds = [];
 
     protected function setUp() : void
     {
@@ -23,7 +23,7 @@ class Bug42727Test extends TestCase
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
         $this->_opportunity = $this->getMockBuilder('Opportunity')
-            ->setMethods(array('send_assignment_notifications'))
+            ->setMethods(['send_assignment_notifications'])
             ->getMock();
         $this->_opportunity->mailWasSent = false;
         $this->_opportunity->notify_inworkflow = true;
@@ -39,7 +39,7 @@ class Bug42727Test extends TestCase
     }
 
     
-    public function testSentMail() 
+    public function testSentMail()
     {
         $this->_opportunity->created_by = $this->_opportunity->assigned_user_id = SugarTestUserUtilities::createAnonymousUser()->id;
         $this->_opportunity->expects($this->never())
@@ -48,7 +48,7 @@ class Bug42727Test extends TestCase
         $this->assertTrue($this->_opportunity->isOwner($this->_opportunity->created_by));
     }
     
-    public function testNotSentMail() 
+    public function testNotSentMail()
     {
         $this->_opportunity->created_by = SugarTestUserUtilities::createAnonymousUser()->id;
         $this->_opportunity->assigned_user_id = SugarTestUserUtilities::createAnonymousUser()->id;

@@ -9,224 +9,223 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-$viewdefs['Leads']['DetailView'] = array (
-  'templateMeta' => 
-  array (
-    'form' => 
-    array (
-      'buttons' => 
-      array (
+$viewdefs['Leads']['DetailView'] =  [
+  'templateMeta' =>
+   [
+    'form' =>
+     [
+      'buttons' =>
+       [
         0 => 'EDIT',
         1 => 'DUPLICATE',
         2 => 'DELETE',
-        3 => 
-        array (
+        3 =>
+         [
           'customCode' => '<input title="{$MOD.LBL_CONVERTLEAD_TITLE}" accessKey="{$MOD.LBL_CONVERTLEAD_BUTTON_KEY}" type="button" class="button" onClick="document.location=\'index.php?module=Leads&action=ConvertLead&record={$fields.id.value}\'" name="convert" value="{$MOD.LBL_CONVERTLEAD}">',
-        ),
-        4 => 
-        array (
+        ],
+        4 =>
+         [
           'customCode' => '<input title="{$APP.LBL_DUP_MERGE}" accessKey="M" class="button" onclick="this.form.return_module.value=\'Leads\'; this.form.return_action.value=\'DetailView\';this.form.return_id.value=\'{$fields.id.value}\'; this.form.action.value=\'Step1\'; this.form.module.value=\'MergeRecords\';" type="submit" name="Merge" value="{$APP.LBL_DUP_MERGE}">',
-        ),
-        5 => 
-        array (
+        ],
+        5 =>
+         [
           'customCode' => '<input title="{$APP.LBL_MANAGE_SUBSCRIPTIONS}" class="button" onclick="this.form.return_module.value=\'Leads\'; this.form.return_action.value=\'DetailView\';this.form.return_id.value=\'{$fields.id.value}\'; this.form.action.value=\'Subscriptions\'; this.form.module.value=\'Campaigns\'; this.form.module_tab.value=\'Leads\';" type="submit" name="Manage Subscriptions" value="{$APP.LBL_MANAGE_SUBSCRIPTIONS}">',
-        ),
-      ),
+        ],
+      ],
       'headerTpl' => 'modules/Leads/tpls/DetailViewHeader.tpl',
-    ),
+    ],
     'maxColumns' => '2',
-    'widths' => 
-    array (
-      0 => 
-      array (
+    'widths' =>
+     [
+      0 =>
+       [
         'label' => '10',
         'field' => '30',
-      ),
-      1 => 
-      array (
+      ],
+      1 =>
+       [
         'label' => '10',
         'field' => '30',
-      ),
-    ),
-    'includes' => 
-    array (
-      0 => 
-      array (
+      ],
+    ],
+    'includes' =>
+     [
+      0 =>
+       [
         'file' => 'modules/Leads/Lead.js',
-      ),
-    ),
-  ),
-  'panels' => 
-  array (
-    'default' => 
-    array (
-      0 => 
-      array (
-        0 => 
-        array (
+      ],
+    ],
+  ],
+  'panels' =>
+   [
+    'default' =>
+     [
+      0 =>
+       [
+        0 =>
+         [
           'name' => 'full_name',
           'label' => 'LBL_NAME',
-        ),
-        1 => 
-        array (
+        ],
+        1 =>
+         [
           'name' => 'account_name',
           'label' => 'LBL_ACCOUNT_NAME',
-        ),
-      ),
-      1 => 
-      array (
-        0 => 
-        array (
+        ],
+      ],
+      1 =>
+       [
+        0 =>
+         [
           'name' => 'title',
           'label' => 'LBL_TITLE',
-        ),
-        1 => 
-        array (
+        ],
+        1 =>
+         [
           'name' => 'phone_work',
           'label' => 'LBL_OFFICE_PHONE',
-        ),
-      ),
-      2 => 
-      array (
-        0 => 
-        array (
+        ],
+      ],
+      2 =>
+       [
+        0 =>
+         [
           'name' => 'phone_other',
           'label' => 'LBL_OTHER_PHONE',
-        ),
-        1 => 
-        array (
+        ],
+        1 =>
+         [
           'name' => 'phone_fax',
           'label' => 'LBL_FAX_PHONE',
-        ),
-      ),
-      3 => 
-      array (
-        0 => 
-        array (
+        ],
+      ],
+      3 =>
+       [
+        0 =>
+         [
           'name' => 'lead_source',
           'label' => 'LBL_LEAD_SOURCE',
-        ),
-        1 => 
-        array (
+        ],
+        1 =>
+         [
           'name' => 'lead_source_description',
           'label' => 'LBL_LEAD_SOURCE_DESCRIPTION',
-        ),
-      ),
-      4 => 
-      array (
-        0 => 
-        array (
+        ],
+      ],
+      4 =>
+       [
+        0 =>
+         [
           'name' => 'status',
           'label' => 'LBL_STATUS',
-        ),
-        1 => 
-        array (
+        ],
+        1 =>
+         [
           'name' => 'manufacturers_c',
           'label' => 'LBL_MANUFACTURERS',
-        ),
-      ),
-      5 => 
-      array (
-        0 => 
-        array (
+        ],
+      ],
+      5 =>
+       [
+        0 =>
+         [
           'name' => 'email1',
           'label' => 'LBL_EMAIL_ADDRESS',
-        ),
-        1 => 
-        array (
+        ],
+        1 =>
+         [
           'name' => 'oe_dealer_code_c',
           'label' => 'LBL_OE_DEALER_CODE',
-        ),
-      ),
-      6 => 
-      array (
-        0 => 
-        array (
+        ],
+      ],
+      6 =>
+       [
+        0 =>
+         [
           'name' => 'refered_by',
           'label' => 'LBL_REFERED_BY',
-        ),
-        1 => 
-        array (
+        ],
+        1 =>
+         [
           'name' => 'regions_c',
           'label' => 'LBL_REGIONS',
-        ),
-      ),
-      7 => 
-      array (
-        0 => 
-        array (
+        ],
+      ],
+      7 =>
+       [
+        0 =>
+         [
           'name' => 'campaign_name',
           'label' => 'LBL_CAMPAIGN',
-        ),
-        1 => 
-        array (
+        ],
+        1 =>
+         [
           'name' => 'department',
           'label' => 'LBL_DEPARTMENT',
-        ),
-      ),
-      8 => 
-      array (
-        0 => 
-        array (
+        ],
+      ],
+      8 =>
+       [
+        0 =>
+         [
           'name' => 'do_not_call',
           'label' => 'LBL_DO_NOT_CALL',
-        ),
-        1 => 
-        array (
+        ],
+        1 =>
+         [
           'name' => 'team_name',
           'label' => 'LBL_TEAM',
-        ),
-      ),
-      9 => 
-      array (
-        0 => 
-        array (
+        ],
+      ],
+      9 =>
+       [
+        0 =>
+         [
           'name' => 'date_modified',
           'label' => 'LBL_DATE_MODIFIED',
           'customCode' => '{$fields.date_modified.value} {$APP.LBL_BY} {$fields.modified_by_name.value}',
-        ),
-        1 => 
-        array (
+        ],
+        1 =>
+         [
           'name' => 'assigned_user_name',
           'label' => 'LBL_ASSIGNED_TO',
-        ),
-      ),
-      10 => 
-      array (
-        0 => 
-        array (
+        ],
+      ],
+      10 =>
+       [
+        0 =>
+         [
           'name' => 'created_by',
           'customCode' => '{$fields.date_entered.value} {$APP.LBL_BY} {$fields.created_by_name.value}&nbsp;',
           'label' => 'LBL_DATE_ENTERED',
-        ),
+        ],
         1 => 'opportunity_amount',
-      ),
-      11 => 
-      array (
+      ],
+      11 =>
+       [
         0 => 'birthdate',
-      ),
-      12 => 
-      array (
-        0 => 
-        array (
+      ],
+      12 =>
+       [
+        0 =>
+         [
           'name' => 'primary_address_street',
           'label' => 'LBL_PRIMARY_ADDRESS',
           'type' => 'address',
-          'displayParams' => 
-          array (
+          'displayParams' =>
+           [
             'key' => 'primary',
-          ),
-        ),
-      ),
-      13 => 
-      array (
-        0 => 
-        array (
+          ],
+        ],
+      ],
+      13 =>
+       [
+        0 =>
+         [
           'name' => 'description',
           'label' => 'LBL_DESCRIPTION',
-        ),
-      ),
-    ),
-  ),
-);
-?>
+        ],
+      ],
+    ],
+  ],
+];

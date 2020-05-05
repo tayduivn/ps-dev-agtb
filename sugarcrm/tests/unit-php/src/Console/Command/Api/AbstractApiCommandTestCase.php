@@ -67,7 +67,7 @@ abstract class AbstractApiCommandTestCase extends TestCase
     {
         $api = $this->getApiMock($this->apiClass, $this->apiMethod, $data);
         $command = $this->getApiCommandMock($this->commandClass, $api);
-        $input = array_merge(array('command' => $command->getName()), $options);
+        $input = array_merge(['command' => $command->getName()], $options);
 
         $tester = new CommandTester($command);
         $tester->execute($input);
@@ -103,7 +103,7 @@ abstract class AbstractApiCommandTestCase extends TestCase
             ->getMock();
 
         $cmd = $this->getMockBuilder($className)
-            ->setMethods(array('getService', 'getApi'))
+            ->setMethods(['getService', 'getApi'])
             ->getMock();
 
         $cmd->expects($this->any())
@@ -130,7 +130,7 @@ abstract class AbstractApiCommandTestCase extends TestCase
     {
         $api = $this->getMockBuilder($className)
             ->disableOriginalConstructor()
-            ->setMethods(array($method))
+            ->setMethods([$method])
             ->getMock();
 
         $api->expects($this->any())

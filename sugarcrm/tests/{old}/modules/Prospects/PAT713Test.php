@@ -22,10 +22,10 @@ class BugPAT713Test extends TestCase
 {
     public function modules()
     {
-        return array(
-            array('Cases'),
-            array('Contacts'),
-        );
+        return [
+            ['Cases'],
+            ['Contacts'],
+        ];
     }
 
     /**
@@ -34,7 +34,7 @@ class BugPAT713Test extends TestCase
      */
     public function testLinkFieldRname($relatedModule)
     {
-        $relationship = new OneToManyRelationship(array(
+        $relationship = new OneToManyRelationship([
             'rhs_label' => $relatedModule,
             'lhs_label' => 'Targets',
             'rhs_subpanel' => 'default',
@@ -48,7 +48,7 @@ class BugPAT713Test extends TestCase
             'is_custom' => false,
             'from_studio' => true,
             'relationship_name' => 'prospects_25478',
-        ));
+        ]);
         $vardefs   = $relationship->buildVardefs();
 
         if (isset($vardefs[$relatedModule][1]) &&

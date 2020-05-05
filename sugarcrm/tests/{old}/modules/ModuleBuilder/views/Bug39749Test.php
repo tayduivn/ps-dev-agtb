@@ -24,15 +24,15 @@ class Bug39749Test extends TestCase
 {
     public function editModules()
     {
-        return array(
-            array('module' => 'ProjectTask', 'get_quick_create' => '0'),
-            array('module' => 'Campaigns', 'get_quick_create' => '0'),
-            array('module' => 'ProductTemplates', 'get_quick_create' => '0'),
-            array('module' => 'Accounts', 'get_quick_create' => '0'),
-            array('module' => 'Quotes', 'get_quick_create' => '0'),
+        return [
+            ['module' => 'ProjectTask', 'get_quick_create' => '0'],
+            ['module' => 'Campaigns', 'get_quick_create' => '0'],
+            ['module' => 'ProductTemplates', 'get_quick_create' => '0'],
+            ['module' => 'Accounts', 'get_quick_create' => '0'],
+            ['module' => 'Quotes', 'get_quick_create' => '0'],
             // Documents is in BWC but not in the exclude list above
-            array('module' => 'Documents', 'get_quick_create' => '1'),
-        );
+            ['module' => 'Documents', 'get_quick_create' => '1'],
+        ];
     }
 
     /**

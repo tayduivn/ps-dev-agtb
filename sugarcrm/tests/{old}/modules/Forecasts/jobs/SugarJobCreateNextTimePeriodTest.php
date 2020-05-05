@@ -16,21 +16,21 @@ use PHPUnit\Framework\TestCase;
 
 class SugarJobCreateNextTimePeriodTest extends TestCase
 {
-    private $preTestIds = array();
+    private $preTestIds = [];
 
     //These are the default forecast configuration settings we will use to test
-    protected $forecastConfigSettings = array (
+    protected $forecastConfigSettings =  [
         'timeperiod_type' => 'chronological',
         'timeperiod_interval' => TimePeriod::ANNUAL_TYPE,
         'timeperiod_leaf_interval' => TimePeriod::QUARTER_TYPE,
         'timeperiod_start_date' => '2012-01-01',
         'timeperiod_shown_forward' => '2',
-        'timeperiod_shown_backward' => '2'
-    );
+        'timeperiod_shown_backward' => '2',
+    ];
 
     public static function setUpBeforeClass() : void
     {
-        SugarTestHelper::setUp('current_user', array(true, 1));
+        SugarTestHelper::setUp('current_user', [true, 1]);
     }
 
     public static function tearDownAfterClass(): void
@@ -52,7 +52,7 @@ class SugarJobCreateNextTimePeriodTest extends TestCase
         $this->postSetUp();
     }
 
-    protected function postSetUp($timePeriodType=TimePeriod::ANNUAL_TYPE)
+    protected function postSetUp($timePeriodType = TimePeriod::ANNUAL_TYPE)
     {
         SugarTestForecastUtilities::setUpForecastConfig($this->forecastConfigSettings);
 
@@ -61,7 +61,7 @@ class SugarJobCreateNextTimePeriodTest extends TestCase
         $admin = BeanFactory::newBean('Administration');
         $currentForecastSettings = $admin->getConfigForModule('Forecasts', 'base');
 
-        $timePeriod->rebuildForecastingTimePeriods(array(), $currentForecastSettings);
+        $timePeriod->rebuildForecastingTimePeriods([], $currentForecastSettings);
     }
 
     protected function tearDown() : void
@@ -108,7 +108,7 @@ class SugarJobCreateNextTimePeriodTest extends TestCase
         $shownForward = $config['timeperiod_shown_forward'];
 
         //Move the current start date forward by the leaf period amounts
-        for($x=0; $x < $shownForward; $x++) {
+        for ($x=0; $x < $shownForward; $x++) {
             $correctStartDate->modify($parentTimePeriod->next_date_modifier);
         }
 
@@ -118,7 +118,8 @@ class SugarJobCreateNextTimePeriodTest extends TestCase
             'SugarJobCreateNextTimePeriod',
             'class::SugarJobCreateNextTimePeriod',
             '',
-            $current_user);
+            $current_user
+        );
 
         $this->assertEquals(SchedulersJob::JOB_SUCCESS, $job->resolution, "Wrong resolution");
         $this->assertEquals(SchedulersJob::JOB_STATUS_DONE, $job->status, "Wrong status");
@@ -134,7 +135,8 @@ class SugarJobCreateNextTimePeriodTest extends TestCase
             'SugarJobCreateNextTimePeriod',
             'class::SugarJobCreateNextTimePeriod',
             '',
-            $current_user);
+            $current_user
+        );
 
         $this->assertEquals(SchedulersJob::JOB_SUCCESS, $job->resolution, "Wrong resolution");
         $this->assertEquals(SchedulersJob::JOB_STATUS_DONE, $job->status, "Wrong status");
@@ -154,15 +156,15 @@ class SugarJobCreateNextTimePeriodTest extends TestCase
 
         $db->query('UPDATE timeperiods set deleted = 1');
 
-        $this->forecastConfigSettings = array (
+        $this->forecastConfigSettings =  [
             'timeperiod_type' => 'chronological',
             'timeperiod_interval' => TimePeriod::QUARTER_TYPE,
             'timeperiod_leaf_interval' => TimePeriod::MONTH_TYPE,
             'timeperiod_start_month' => '1',
             'timeperiod_start_day' => '1',
             'timeperiod_shown_forward' => '8',
-            'timeperiod_shown_backward' => '8'
-        );
+            'timeperiod_shown_backward' => '8',
+        ];
 
         $this->postSetUp(TimePeriod::QUARTER_TYPE);
         global $current_user;
@@ -182,7 +184,7 @@ class SugarJobCreateNextTimePeriodTest extends TestCase
 
         $shownForward = 8;
         //Move the current start date forward by the leaf period amounts
-        for($x=0; $x < $shownForward; $x++) {
+        for ($x=0; $x < $shownForward; $x++) {
             $correctStartDate->modify($parentTimePeriod->next_date_modifier);
         }
 
@@ -192,7 +194,8 @@ class SugarJobCreateNextTimePeriodTest extends TestCase
             'SugarJobCreateNextTimePeriod',
             'class::SugarJobCreateNextTimePeriod',
             '',
-            $current_user);
+            $current_user
+        );
 
         $this->assertEquals(SchedulersJob::JOB_SUCCESS, $job->resolution, "Wrong resolution");
         $this->assertEquals(SchedulersJob::JOB_STATUS_DONE, $job->status, "Wrong status");
@@ -208,7 +211,8 @@ class SugarJobCreateNextTimePeriodTest extends TestCase
             'SugarJobCreateNextTimePeriod',
             'class::SugarJobCreateNextTimePeriod',
             '',
-            $current_user);
+            $current_user
+        );
 
         $this->assertEquals(SchedulersJob::JOB_SUCCESS, $job->resolution, "Wrong resolution");
         $this->assertEquals(SchedulersJob::JOB_STATUS_DONE, $job->status, "Wrong status");

@@ -14,57 +14,57 @@ use PHPUnit\Framework\TestCase;
 
 class SugarAutoLoaderTest extends TestCase
 {
-    protected $todelete = array();
+    protected $todelete = [];
 
     public static function tearDownAfterClass(): void
     {
-		// rebuild the map JIC
-		SugarAutoLoader::buildCache();
-	}
+        // rebuild the map JIC
+        SugarAutoLoader::buildCache();
+    }
 
     protected function tearDown() : void
-	{
-	    foreach($this->todelete as $file) {
-	        if(is_dir($file)) {
+    {
+        foreach ($this->todelete as $file) {
+            if (is_dir($file)) {
                 rmdir_recursive($file);
                 continue;
-	        }
+            }
             @unlink($file);
-	    }
-	    $this->todelete = array();
-	}
+        }
+        $this->todelete = [];
+    }
 
-	protected function touch($file)
-	{
-	    $this->todelete[] = $file;
+    protected function touch($file)
+    {
+        $this->todelete[] = $file;
         sugar_touch($file);
-	}
+    }
 
-	protected function put($file, $data)
-	{
-		$this->todelete[] = $file;
+    protected function put($file, $data)
+    {
+        $this->todelete[] = $file;
         file_put_contents($file, $data);
-	}
+    }
 
-	public function testFileExists()
-	{
+    public function testFileExists()
+    {
         $this->assertTrue(file_exists("index.php"));
         $this->assertTrue(file_exists("custom///modules"));
-	}
+    }
 
-	public function testExisting()
-	{
-	     $this->assertEquals(array('index.php'), SugarAutoLoader::existing("index.php", "index-foo.php"));
-	}
+    public function testExisting()
+    {
+         $this->assertEquals(['index.php'], SugarAutoLoader::existing("index.php", "index-foo.php"));
+    }
 
-	public function testNotExisting()
-	{
-		$this->assertEmpty(SugarAutoLoader::existing("nosuchfile.test1"));
-	}
+    public function testNotExisting()
+    {
+        $this->assertEmpty(SugarAutoLoader::existing("nosuchfile.test1"));
+    }
 
-	// load
-	public function testLoad()
-	{
+    // load
+    public function testLoad()
+    {
         $res = SugarAutoLoader::load("include/JSON.php");
         $this->assertTrue($res);
         // test second time still returns true
@@ -73,7 +73,7 @@ class SugarAutoLoaderTest extends TestCase
         // not existing
         $res = SugarAutoLoader::load("nosuchfile.php");
         $this->assertFalse($res);
-	}
+    }
 
     // requireWithCustom
     public function testRequireWithCustom()
@@ -94,23 +94,24 @@ class SugarAutoLoaderTest extends TestCase
         $this->touch("custom/index.php");
         $this->touch("custom/index2.php");
         $this->assertEquals(
-            array('index.php', "custom/index.php", "custom/index2.php"),
-            SugarAutoLoader::existingCustom("index.php", "index2.php", "index-foo.php"));
+            ['index.php', "custom/index.php", "custom/index2.php"],
+            SugarAutoLoader::existingCustom("index.php", "index2.php", "index-foo.php")
+        );
     }
 
     // existingCustomOne
     public function testExistingCustomOne()
     {
         // none
-        $this->assertEmpty( SugarAutoLoader::existingCustomOne("index-foo.php", "blah.php"));
+        $this->assertEmpty(SugarAutoLoader::existingCustomOne("index-foo.php", "blah.php"));
         // only root
-        $this->assertEquals("index.php",  SugarAutoLoader::existingCustomOne("index.php", "index2.php", "index-foo.php"));
+        $this->assertEquals("index.php", SugarAutoLoader::existingCustomOne("index.php", "index2.php", "index-foo.php"));
         // only custom
         $this->touch("custom/index2.php");
-        $this->assertEquals("custom/index2.php",  SugarAutoLoader::existingCustomOne("index.php", "index2.php", "index-foo.php"));
+        $this->assertEquals("custom/index2.php", SugarAutoLoader::existingCustomOne("index.php", "index2.php", "index-foo.php"));
         // custom & root
         $this->touch("index2.php");
-        $this->assertEquals("custom/index2.php",  SugarAutoLoader::existingCustomOne("index.php", "index2.php", "index-foo.php"));
+        $this->assertEquals("custom/index2.php", SugarAutoLoader::existingCustomOne("index.php", "index2.php", "index-foo.php"));
     }
 
     // getDirFiles
@@ -131,13 +132,13 @@ class SugarAutoLoaderTest extends TestCase
     // getDirFilesExt
     public function testGetDirFilesExt()
     {
-    	$this->touch("custom/blah1.php");
+        $this->touch("custom/blah1.php");
         $this->touch("custom/blah2.js");
-    	$this->touch("custom/blah3.php");
-    	$res = SugarAutoLoader::getDirFiles("custom", false, ".php");
-    	$this->assertContains("custom/blah1.php", $res);
+        $this->touch("custom/blah3.php");
+        $res = SugarAutoLoader::getDirFiles("custom", false, ".php");
+        $this->assertContains("custom/blah1.php", $res);
         $this->assertNotContains("custom/blah2.js", $res);
-    	$this->assertContains("custom/blah3.php", $res);
+        $this->assertContains("custom/blah3.php", $res);
         $res = SugarAutoLoader::getDirFiles("custom", false, "js");
         $this->assertContains("custom/blah2.js", $res);
     }
@@ -145,23 +146,23 @@ class SugarAutoLoaderTest extends TestCase
     // getFilesCustom
     public function testGetFilesCustom()
     {
-    	$this->touch("custom/include/blah1.php");
-    	$this->touch("include/blah2.php");
-    	$this->touch("include/blah3.php");
-    	$this->touch("custom/include/blah3.php");
-    	$res = SugarAutoLoader::getFilesCustom("include");
+        $this->touch("custom/include/blah1.php");
+        $this->touch("include/blah2.php");
+        $this->touch("include/blah3.php");
+        $this->touch("custom/include/blah3.php");
+        $res = SugarAutoLoader::getFilesCustom("include");
 
-    	$this->assertContains("custom/include/blah1.php", $res);
-    	$this->assertContains("include/blah2.php", $res);
-    	$this->assertContains("include/blah3.php", $res);
-    	$this->assertContains("custom/include/blah3.php", $res);
+        $this->assertContains("custom/include/blah1.php", $res);
+        $this->assertContains("include/blah2.php", $res);
+        $this->assertContains("include/blah3.php", $res);
+        $this->assertContains("custom/include/blah3.php", $res);
         // directories
-        if(!is_dir("custom/include/language")) {
+        if (!is_dir("custom/include/language")) {
             mkdir_recursive("custom/include/language");
         }
-    	$res = SugarAutoLoader::getFilesCustom("include", true);
-    	$this->assertContains("include/utils", $res);
-    	$this->assertContains("custom/include/language", $res);
+        $res = SugarAutoLoader::getFilesCustom("include", true);
+        $this->assertContains("include/utils", $res);
+        $this->assertContains("custom/include/language", $res);
     }
 
     // customClass
@@ -178,11 +179,11 @@ class SugarAutoLoaderTest extends TestCase
     public function testLookupFile()
     {
         $this->touch("custom/include/blah1.php");
-        $this->assertEquals("custom/include/blah1.php", SugarAutoLoader::lookupFile(array("modules", "include", "Zend"), "blah1.php"));
+        $this->assertEquals("custom/include/blah1.php", SugarAutoLoader::lookupFile(["modules", "include", "Zend"], "blah1.php"));
         $this->touch("include/blah2.php");
-        $this->assertEquals("include/blah2.php", SugarAutoLoader::lookupFile(array("modules", "include", "Zend"), "blah2.php"));
+        $this->assertEquals("include/blah2.php", SugarAutoLoader::lookupFile(["modules", "include", "Zend"], "blah2.php"));
         $this->touch("custom/include/blah2.php");
-        $this->assertEquals("custom/include/blah2.php", SugarAutoLoader::lookupFile(array("modules", "include", "Zend"), "blah2.php"));
+        $this->assertEquals("custom/include/blah2.php", SugarAutoLoader::lookupFile(["modules", "include", "Zend"], "blah2.php"));
     }
 
     // touch & unlink
@@ -220,12 +221,12 @@ class SugarAutoLoaderTest extends TestCase
         $this->todelete[] = "custom/modules/AutoLoaderTest/";
         $this->assertEquals("custom/modules/AutoLoaderTest/Ext/Layoutdefs/layoutdefs.ext.php", SugarAutoLoader::loadExtension("layoutdefs", "AutoLoaderTest"));
         $this->assertEmpty(SugarAutoLoader::loadExtension("vardefs", "AutoLoaderTest"));
-        if(!file_exists("custom/application/Ext/Layoutdefs/layoutdefs.ext.php")) {
+        if (!file_exists("custom/application/Ext/Layoutdefs/layoutdefs.ext.php")) {
             mkdir_recursive("custom/application/Ext/Layoutdefs/");
             $this->touch("custom/application/Ext/Layoutdefs/layoutdefs.ext.php");
         }
         $this->assertEquals("custom/application/Ext/Layoutdefs/layoutdefs.ext.php", SugarAutoLoader::loadExtension("layoutdefs"));
-        if(!file_exists("custom/modules/Schedulers/Ext/ScheduledTasks/scheduledtasks.ext.php")) {
+        if (!file_exists("custom/modules/Schedulers/Ext/ScheduledTasks/scheduledtasks.ext.php")) {
             mkdir_recursive("custom/modules/Schedulers/Ext/ScheduledTasks/");
             $this->touch("custom/modules/Schedulers/Ext/ScheduledTasks/scheduledtasks.ext.php");
         }
@@ -253,24 +254,32 @@ class SugarAutoLoaderTest extends TestCase
         $this->assertEmpty(SugarAutoLoader::loadWithMetafiles("AutoLoaderTest", "editviewdefsblah", "editviewdefs"));
 
         // metafiles
-        $metafiles['AutoLoaderTest'] = array("editviewdefs" => "modules/AutoLoaderTest/metadata/meta-editviewdefs.php");
+        $metafiles['AutoLoaderTest'] = ["editviewdefs" => "modules/AutoLoaderTest/metadata/meta-editviewdefs.php"];
         $this->put("modules/AutoLoaderTest/metadata/metafiles.php", "<?php \$metafiles = ".var_export($metafiles, true).";");
-        $this->assertEquals("modules/AutoLoaderTest/metadata/editviewdefs.php",
-        SugarAutoLoader::loadWithMetafiles("AutoLoaderTest", "editviewdefs"));
+        $this->assertEquals(
+            "modules/AutoLoaderTest/metadata/editviewdefs.php",
+            SugarAutoLoader::loadWithMetafiles("AutoLoaderTest", "editviewdefs")
+        );
         $this->assertEmpty(SugarAutoLoader::loadWithMetafiles("AutoLoaderTest", "editviewdefsblah", "editviewdefs"));
         // now create meta-defs
         $this->touch("modules/AutoLoaderTest/metadata/meta-editviewdefs.php");
-        $this->assertEquals("modules/AutoLoaderTest/metadata/meta-editviewdefs.php",
-        SugarAutoLoader::loadWithMetafiles("AutoLoaderTest", "editviewdefs"));
+        $this->assertEquals(
+            "modules/AutoLoaderTest/metadata/meta-editviewdefs.php",
+            SugarAutoLoader::loadWithMetafiles("AutoLoaderTest", "editviewdefs")
+        );
 
         // now custom
         $this->touch("custom/modules/AutoLoaderTest/metadata/editviewdefs.php");
-        $this->assertEquals("custom/modules/AutoLoaderTest/metadata/editviewdefs.php",
-        SugarAutoLoader::loadWithMetafiles("AutoLoaderTest", "editviewdefs"));
+        $this->assertEquals(
+            "custom/modules/AutoLoaderTest/metadata/editviewdefs.php",
+            SugarAutoLoader::loadWithMetafiles("AutoLoaderTest", "editviewdefs")
+        );
         // other def
         $this->touch("modules/AutoLoaderTest/metadata/detailviewdefs.php");
-        $this->assertEquals("modules/AutoLoaderTest/metadata/detailviewdefs.php",
-        SugarAutoLoader::loadWithMetafiles("AutoLoaderTest", "detailviewdefs"));
+        $this->assertEquals(
+            "modules/AutoLoaderTest/metadata/detailviewdefs.php",
+            SugarAutoLoader::loadWithMetafiles("AutoLoaderTest", "detailviewdefs")
+        );
     }
 
     // loadPopupMeta
@@ -308,7 +317,7 @@ class SugarAutoLoaderTest extends TestCase
         $baseDirsOriginal = SugarAutoLoaderMock::getBaseDirs();
         SugarAutoLoaderMock::setDs($ds);
 
-        SugarAutoLoaderMock::setBaseDirs(array($baseDir));
+        SugarAutoLoaderMock::setBaseDirs([$baseDir]);
         $path = SugarAutoLoaderMock::normalizeFilePath($fileName);
 
         // Should convert absolute path to relative
@@ -320,30 +329,30 @@ class SugarAutoLoaderTest extends TestCase
 
     public function providerPaths()
     {
-        return array(
+        return [
             // Windows network path
-            array(
+            [
                 // All slashes are converted to forward slashes, due to entryPoint.php
                 "//VMSTACK127/WWWROOT/SugarPro-Full-7.6.1.0",
                 "\\\\VMSTACK127\\WWWROOT\\SugarPro-Full-7.6.1.0/include",
                 "\\",
-                "include"
-            ),
+                "include",
+            ],
             // Windows local path
-            array(
+            [
                 "C:/inetpub/wwwroot/SugarPro-Full-7.6.1.0",
                 "C:\\inetpub\\wwwroot/SugarPro-Full-7.6.1.0/include",
                 "\\",
-                "include"
-            ),
+                "include",
+            ],
             // Linux/UNIX path
-            array(
+            [
                 "/Users/boro/dev/www/sugar1.com",
                 "/Users/boro/dev/www/sugar1.com/include",
                 "/",
-                "include"
-            )
-        );
+                "include",
+            ],
+        ];
     }
 }
 

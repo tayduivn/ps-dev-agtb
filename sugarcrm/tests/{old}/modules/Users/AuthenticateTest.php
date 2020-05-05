@@ -14,25 +14,25 @@ use PHPUnit\Framework\TestCase;
 
 class AuthenticateTest extends TestCase
 {
-	protected $_user = null;
+    protected $_user = null;
 
     protected function setUp() : void
     {
         $GLOBALS['app'] = new SugarApplication();
-    	$GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-    	$this->sugar_config_old = $GLOBALS['sugar_config'];
-    	$_POST['user_name'] = 'foo';
-    	$_POST['user_password'] = 'bar';
-    	$_SESSION['authenticated_user_id'] = true;
-    	$_SESSION['hasExpiredPassword'] = false;
-    	$_SESSION['isMobile'] = null;
-	}
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        $this->sugar_config_old = $GLOBALS['sugar_config'];
+        $_POST['user_name'] = 'foo';
+        $_POST['user_password'] = 'bar';
+        $_SESSION['authenticated_user_id'] = true;
+        $_SESSION['hasExpiredPassword'] = false;
+        $_SESSION['isMobile'] = null;
+    }
 
     protected function tearDown() : void
-	{
-	    unset($GLOBALS['current_user']);
-	    $GLOBALS['sugar_config'] = $this->sugar_config_old;
-	    unset($_REQUEST['login_module']);
+    {
+        unset($GLOBALS['current_user']);
+        $GLOBALS['sugar_config'] = $this->sugar_config_old;
+        unset($_REQUEST['login_module']);
         unset($_REQUEST['login_action']);
         unset($_REQUEST['login_record']);
         unset($_REQUEST['user_name']);
@@ -40,24 +40,24 @@ class AuthenticateTest extends TestCase
         unset($_SESSION['authenticated_user_id']);
         unset($_SESSION['hasExpiredPassword']);
         unset($_SESSION['isMobile']);
-	}
+    }
 
-	public function testLoginRedirectIfAuthenicationFails()
-	{
-	    $_SESSION['authenticated_user_id'] = null;
+    public function testLoginRedirectIfAuthenicationFails()
+    {
+        $_SESSION['authenticated_user_id'] = null;
 
         $authController = $this->createMock('AuthenticationController');
 
-	    $url = '';
-        require('modules/Users/Authenticate.php');
+        $url = '';
+        require 'modules/Users/Authenticate.php';
 
         $this->assertEquals(
             'Location: index.php?module=Users&action=Login',
             $url
-            );
-	}
+        );
+    }
 
-	public function testDefaultAuthenicationRedirect()
+    public function testDefaultAuthenicationRedirect()
     {
         unset($GLOBALS['sugar_config']['default_module']);
         unset($GLOBALS['sugar_config']['default_action']);
@@ -68,12 +68,12 @@ class AuthenticateTest extends TestCase
         $authController = $this->createMock('AuthenticationController');
 
         $url = '';
-        require('modules/Users/Authenticate.php');
+        require 'modules/Users/Authenticate.php';
 
         $this->assertEquals(
             'Location: index.php?module=Home&action=index',
             $url
-            );
+        );
     }
 
     public function testDefaultAuthenicationRedirectGivenLoginParameters()
@@ -87,12 +87,12 @@ class AuthenticateTest extends TestCase
         $authController = $this->createMock('AuthenticationController');
 
         $url = '';
-        require('modules/Users/Authenticate.php');
+        require 'modules/Users/Authenticate.php';
 
         $this->assertEquals(
             'Location: index.php?module=foo&action=bar&record=123',
             $url
-            );
+        );
     }
 
     public function testDefaultAuthenicationRedirectGivenDefaultSettings()
@@ -106,11 +106,11 @@ class AuthenticateTest extends TestCase
         $authController = $this->createMock('AuthenticationController');
 
         $url = '';
-        require('modules/Users/Authenticate.php');
+        require 'modules/Users/Authenticate.php';
 
         $this->assertEquals(
             'Location: index.php?module=dog&action=cat',
             $url
-            );
+        );
     }
 }

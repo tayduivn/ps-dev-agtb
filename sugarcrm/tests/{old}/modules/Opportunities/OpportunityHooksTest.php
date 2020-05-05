@@ -16,10 +16,10 @@ class OpportunityHooksTest extends TestCase
 {
     public static function setUpBeforeClass() : void
     {
-        SugarTestForecastUtilities::setUpForecastConfig(array(
-            'sales_stage_won' => array('Closed Won'),
-            'sales_stage_lost' => array('Closed Lost')
-        ));
+        SugarTestForecastUtilities::setUpForecastConfig([
+            'sales_stage_won' => ['Closed Won'],
+            'sales_stage_lost' => ['Closed Lost'],
+        ]);
     }
 
     protected function tearDown() : void
@@ -37,26 +37,26 @@ class OpportunityHooksTest extends TestCase
     {
         // utility method to to return an array
         $count_to_array = function ($count) {
-            return array_pad(array(), $count, '-');
+            return array_pad([], $count, '-');
         };
 
         // # of won, # of lost, #total, #status
-        return array(
+        return [
             // all closed_won
-            array($count_to_array(2), $count_to_array(0), $count_to_array(2), Opportunity::STATUS_CLOSED_WON),
+            [$count_to_array(2), $count_to_array(0), $count_to_array(2), Opportunity::STATUS_CLOSED_WON],
             // closed won and closed lost
-            array($count_to_array(2), $count_to_array(2), $count_to_array(4), Opportunity::STATUS_CLOSED_WON),
+            [$count_to_array(2), $count_to_array(2), $count_to_array(4), Opportunity::STATUS_CLOSED_WON],
             // all closed lost
-            array($count_to_array(0), $count_to_array(2), $count_to_array(2), Opportunity::STATUS_CLOSED_LOST),
+            [$count_to_array(0), $count_to_array(2), $count_to_array(2), Opportunity::STATUS_CLOSED_LOST],
             // only closed lost but higher total
-            array($count_to_array(0), $count_to_array(2), $count_to_array(4), Opportunity::STATUS_IN_PROGRESS),
+            [$count_to_array(0), $count_to_array(2), $count_to_array(4), Opportunity::STATUS_IN_PROGRESS],
             // only cosed won but higher total
-            array($count_to_array(2), $count_to_array(0), $count_to_array(4), Opportunity::STATUS_IN_PROGRESS),
+            [$count_to_array(2), $count_to_array(0), $count_to_array(4), Opportunity::STATUS_IN_PROGRESS],
             // no closed won or lost but still a total
-            array($count_to_array(0), $count_to_array(0), $count_to_array(4), Opportunity::STATUS_IN_PROGRESS),
+            [$count_to_array(0), $count_to_array(0), $count_to_array(4), Opportunity::STATUS_IN_PROGRESS],
             // no closed won, closed lost and total
-            array($count_to_array(0), $count_to_array(0), $count_to_array(0), Opportunity::STATUS_NEW),
-        );
+            [$count_to_array(0), $count_to_array(0), $count_to_array(0), Opportunity::STATUS_NEW],
+        ];
     }
 
     /**
@@ -64,7 +64,7 @@ class OpportunityHooksTest extends TestCase
      */
     public function testSetOpportunitySalesStatusOnNewOpp()
     {
-        $oppMock = $this->createPartialMock('Opportunity', array('get_linked_beans', 'save', 'retrieve'));
+        $oppMock = $this->createPartialMock('Opportunity', ['get_linked_beans', 'save', 'retrieve']);
         $oppMock->expects($this->any())
             ->method('get_linked_beans')
             ->willReturn([]);
@@ -73,7 +73,7 @@ class OpportunityHooksTest extends TestCase
         $hookMock = new MockOpportunityHooks();
         $hookMock::$useRevenueLineItems = true;
 
-        $hookMock::setSalesStatus($oppMock, 'before_save', array());
+        $hookMock::setSalesStatus($oppMock, 'before_save', []);
 
         // assert the status is what it should be
         $this->assertEquals($oppMock->sales_status, Opportunity::STATUS_NEW);
@@ -86,13 +86,13 @@ class OpportunityHooksTest extends TestCase
      */
     public function testSetOpportunitySalesStatusWithAccess($won_count, $lost_count, $total_count, $status)
     {
-        $oppMock = $this->createPartialMock('Opportunity', array(
+        $oppMock = $this->createPartialMock('Opportunity', [
             'get_linked_beans',
             'save',
             'retrieve',
             'ACLFieldAccess',
             'retrieveSalesStatus',
-        ));
+        ]);
         $oppMock->id = 'test';
         $oppMock->fetched_row['id'] = 'test';
 
@@ -100,53 +100,53 @@ class OpportunityHooksTest extends TestCase
         $hookMock = new MockOpportunityHooks();
         $hookMock::$useRevenueLineItems = true;
 
-        $closed_won = array('won');
-        $closed_lost = array('lost');
+        $closed_won = ['won'];
+        $closed_lost = ['lost'];
 
         $hr = new ReflectionClass($hookMock);
         $hr->setStaticPropertyValue(
             'settings',
-            array(
+            [
                 'is_setup' => 1,
                 'sales_stage_won' => $closed_won,
-                'sales_stage_lost' => $closed_lost
-            )
+                'sales_stage_lost' => $closed_lost,
+            ]
         );
 
         // generate a map for the get_linked_beans call, the first 7 params are for the method call
         // the final param, it what gets returned  this is used below
-        $map = array(
-            array(
+        $map = [
+            [
                 'revenuelineitems',
                 'RevenueLineItems',
-                array(),
+                [],
                 0,
                 -1,
                 0,
                 "sales_stage in ('" . join("', '", $closed_won) . "')",
-                $won_count
-            ),
-            array(
+                $won_count,
+            ],
+            [
                 'revenuelineitems',
                 'RevenueLineItems',
-                array(),
+                [],
                 0,
                 -1,
                 0,
                 "sales_stage in ('" . join("', '", $closed_lost) . "')",
-                $lost_count
-            ),
-            array(
+                $lost_count,
+            ],
+            [
                 'revenuelineitems',
                 'RevenueLineItems',
-                array(),
+                [],
                 0,
                 -1,
                 0,
                 '',
-                $total_count
-            )
-        );
+                $total_count,
+            ],
+        ];
 
         // we want to run get_linked_bean 3 times. each time will iterate though the $map and return the lats param
         // this is the magic of ->will($this->returnValueMap($map));
@@ -158,7 +158,7 @@ class OpportunityHooksTest extends TestCase
             ->method('ACLFieldAccess')
             ->will($this->returnValue(true));
 
-        $hookMock::setSalesStatus($oppMock, 'before_save', array());
+        $hookMock::setSalesStatus($oppMock, 'before_save', []);
 
         // assert the status is what it should be
         $this->assertEquals($oppMock->sales_status, $status);
@@ -166,22 +166,22 @@ class OpportunityHooksTest extends TestCase
 
     public function testSetOpportunitySalesStatusWithoutAccess()
     {
-        $oppMock = $this->createPartialMock('Opportunity', array('get_linked_beans', 'save', 'retrieve', 'ACLFieldAccess'));
+        $oppMock = $this->createPartialMock('Opportunity', ['get_linked_beans', 'save', 'retrieve', 'ACLFieldAccess']);
 
         /* @var $hookMock OpportunityHooks */
         $hookMock = new MockOpportunityHooks();
 
-        $closed_won = array('won');
-        $closed_lost = array('lost');
+        $closed_won = ['won'];
+        $closed_lost = ['lost'];
 
         $hr = new ReflectionClass($hookMock);
         $hr->setStaticPropertyValue(
             'settings',
-            array(
+            [
                 'is_setup' => 1,
                 'sales_stage_won' => $closed_won,
-                'sales_stage_lost' => $closed_lost
-            )
+                'sales_stage_lost' => $closed_lost,
+            ]
         );
 
         $oppMock->expects($this->any())
@@ -190,7 +190,7 @@ class OpportunityHooksTest extends TestCase
 
         $oppMock->sales_status = 'testing1';
 
-        $hookMock::setSalesStatus($oppMock, 'before_save', array());
+        $hookMock::setSalesStatus($oppMock, 'before_save', []);
 
         // assert the status is what it should be
         $this->assertEquals('testing1', $oppMock->sales_status);
@@ -214,10 +214,10 @@ class OpportunityHooksTest extends TestCase
 
     public function beforeSaveIncludedCheckProvider()
     {
-        return array(
-            array('Closed Won', 'exclude', 100, 'include'),
-            array('Closed Lost', 'include', 0, 'exclude')
-        );
+        return [
+            ['Closed Won', 'exclude', 100, 'include'],
+            ['Closed Lost', 'include', 0, 'exclude'],
+        ];
     }
 
     /**
@@ -238,24 +238,24 @@ class OpportunityHooksTest extends TestCase
 
     public function fixWorksheetAccountAssignmentProvider()
     {
-        return array(
-            array(false, true, array('relationship' => 'accounts_opportunities', 'related_id' => 'foo'), true),
-            array(true, true, array('relationship' => 'accounts_opportunities'), false),
-            array(true, false, array('relationship' => 'accounts_opportunities'), false),
-            array(false, false, array('relationship' => 'accounts_opportunities'), false),
-            array(true, true, array('relationship' => 'foo'), false),
-            array(false, true, array('relationship' => 'foo'), false),
-            array(true, false, array('relationship' => 'foo'), false),
-            array(false, false, array('relationship' => 'foo'), false),
-            array(true, true, array(), false),
-            array(false, true, array(), false),
-            array(true, false, array(), false),
-            array(false, false, array(), false),
-            array(true, true, null, false),
-            array(false, true, null, false),
-            array(true, false, null, false),
-            array(false, false, null, false),
-        );
+        return [
+            [false, true, ['relationship' => 'accounts_opportunities', 'related_id' => 'foo'], true],
+            [true, true, ['relationship' => 'accounts_opportunities'], false],
+            [true, false, ['relationship' => 'accounts_opportunities'], false],
+            [false, false, ['relationship' => 'accounts_opportunities'], false],
+            [true, true, ['relationship' => 'foo'], false],
+            [false, true, ['relationship' => 'foo'], false],
+            [true, false, ['relationship' => 'foo'], false],
+            [false, false, ['relationship' => 'foo'], false],
+            [true, true, [], false],
+            [false, true, [], false],
+            [true, false, [], false],
+            [false, false, [], false],
+            [true, true, null, false],
+            [false, true, null, false],
+            [true, false, null, false],
+            [false, false, null, false],
+        ];
     }
 }
 

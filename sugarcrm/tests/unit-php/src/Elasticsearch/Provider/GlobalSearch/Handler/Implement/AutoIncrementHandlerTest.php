@@ -26,9 +26,9 @@ class AutoIncrementHandlerTest extends TestCase
     public function testRequiredInterfaces()
     {
         $nsPrefix = 'Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler';
-        $interfaces = array(
+        $interfaces = [
             $nsPrefix . '\ProcessDocumentHandlerInterface',
-        );
+        ];
         $implements = class_implements($nsPrefix . '\Implement\AutoIncrementHandler');
         $this->assertEquals($interfaces, array_values(array_intersect($implements, $interfaces)));
     }
@@ -43,7 +43,7 @@ class AutoIncrementHandlerTest extends TestCase
 
         $sut = $this->getMockBuilder('Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\Implement\AutoIncrementHandler')
             ->disableOriginalConstructor()
-            ->setMethods(array('getFtsAutoIncrementFields', 'retrieveFieldByQuery'))
+            ->setMethods(['getFtsAutoIncrementFields', 'retrieveFieldByQuery'])
             ->getMock();
 
         // stub fts fields
@@ -65,40 +65,40 @@ class AutoIncrementHandlerTest extends TestCase
 
     public function providerTestProcessDocumentPreIndex()
     {
-        return array(
+        return [
             // no fts fields
-            array(
-                array(),
-                array('name' => 'hello'),
+            [
+                [],
+                ['name' => 'hello'],
                 null,
                 null,
-                array(),
-            ),
+                [],
+            ],
             // auto increment already set
-            array(
-                array('case_number'),
-                array('case_number' => 1),
+            [
+                ['case_number'],
+                ['case_number' => 1],
                 null,
                 null,
-                array(),
-            ),
+                [],
+            ],
             // auto increment not set and available from db
-            array(
-                array('case_number'),
-                array(),
+            [
+                ['case_number'],
+                [],
                 true,
                 '2',
-                array('case_number' => 2),
-            ),
+                ['case_number' => 2],
+            ],
             // auto increment not set and not available from db
-            array(
-                array('case_number'),
-                array(),
+            [
+                ['case_number'],
+                [],
                 true,
                 '',
-                array(),
-            ),
-        );
+                [],
+            ],
+        ];
     }
 
     /**

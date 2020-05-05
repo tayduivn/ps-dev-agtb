@@ -85,7 +85,7 @@ class AccessConfiguratorTest extends TestCase
             [    'RECORDS',
                 [
                     [
-                        'Dashboards' => ['c108bb4a-775a-11e9-b570-f218983a1c3e' => 'SUGAR_SERVE']
+                        'Dashboards' => ['c108bb4a-775a-11e9-b570-f218983a1c3e' => 'SUGAR_SERVE'],
                     ],
                     [
                         'Reports' => [
@@ -97,7 +97,7 @@ class AccessConfiguratorTest extends TestCase
             ],
             [
                 'NOT_EXIST',
-                []
+                [],
             ],
         ];
     }

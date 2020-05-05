@@ -14,14 +14,15 @@ use Sugarcrm\Sugarcrm\Util\Uuid;
 
 class SugarTestEmailAddressUtilities
 {
-    private static $createdAddresses = array();
+    private static $createdAddresses = [];
 
-    private function __construct() {}
+    private function __construct()
+    {
+    }
 
     public static function createEmailAddress($address = null)
     {
-        if (null === $address)
-        {
+        if (null === $address) {
             $address = 'address-' . Uuid::uuid1() . '@example.com';
         }
 
@@ -43,28 +44,25 @@ class SugarTestEmailAddressUtilities
      * @return boolean|EmailAddress
      * @throws InvalidArgumentException
      */
-    public static function addAddressToPerson(SugarBean $person, $address, array $additional_values = array())
+    public static function addAddressToPerson(SugarBean $person, $address, array $additional_values = [])
     {
-        if (is_string($address))
-        {
+        if (is_string($address)) {
             $address = self::createEmailAddress($address);
         }
 
-        if (!$address instanceof EmailAddress)
-        {
+        if (!$address instanceof EmailAddress) {
             throw new InvalidArgumentException(
                 'Address must be a string or an instance of EmailAddress, '
                     . gettype($address) . ' given'
             );
         }
 
-        if (!$person->load_relationship('email_addresses'))
-        {
+        if (!$person->load_relationship('email_addresses')) {
             return false;
         }
 
         // create relation between user and email address
-        $person->email_addresses->add(array($address), $additional_values);
+        $person->email_addresses->add([$address], $additional_values);
         $GLOBALS['db']->commit();
         return $address;
     }
@@ -72,18 +70,16 @@ class SugarTestEmailAddressUtilities
     public static function removeAllCreatedAddresses()
     {
         $ids = self::getCreatedEmailAddressIds();
-        if (count($ids) > 0)
-        {
+        if (count($ids) > 0) {
             $GLOBALS['db']->query('DELETE FROM email_addresses WHERE id IN (\'' . implode("', '", $ids) . '\')');
         }
-        self::$createdAddresses = array();
+        self::$createdAddresses = [];
     }
 
     public static function getCreatedEmailAddressIds()
     {
-        $ids = array();
-        foreach (self::$createdAddresses as $address)
-        {
+        $ids = [];
+        foreach (self::$createdAddresses as $address) {
             $ids[] = $address->id;
         }
         return $ids;
@@ -96,7 +92,7 @@ class SugarTestEmailAddressUtilities
      */
     public static function setCreatedEmailAddress($ids)
     {
-        $ids = is_array($ids) ? $ids : array($ids);
+        $ids = is_array($ids) ? $ids : [$ids];
 
         foreach ($ids as $id) {
             $email = new EmailAddress();

@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 class SugarViewTest extends TestCase
 {
-    private $_backup = array();
+    private $_backup = [];
 
     /**
      * @var SugarViewTestMock
@@ -28,7 +28,7 @@ class SugarViewTest extends TestCase
         SugarTestHelper::setUp('moduleList');
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('app_strings');
-        SugarTestHelper::setUp('mod_strings', array('Users'));
+        SugarTestHelper::setUp('mod_strings', ['Users']);
         $this->_view = new SugarViewTestMock();
         $this->dir = getcwd();
     }
@@ -49,7 +49,7 @@ class SugarViewTest extends TestCase
     public function testGetMetaDataFile()
     {
         // backup custom file if it already exists
-        if(file_exists('custom/modules/Contacts/metadata/listviewdefs.php')){
+        if (file_exists('custom/modules/Contacts/metadata/listviewdefs.php')) {
             copy('custom/modules/Contacts/metadata/listviewdefs.php', 'custom/modules/Contacts/metadata/listviewdefs.php.bak');
             unlink('custom/modules/Contacts/metadata/listviewdefs.php');
         }
@@ -59,19 +59,18 @@ class SugarViewTest extends TestCase
         $this->assertEquals('modules/Contacts/metadata/listviewdefs.php', $metaDataFile, 'Did not load the correct metadata file');
 
         //test custom file
-        if(!file_exists('custom/modules/Contacts/metadata/')){
+        if (!file_exists('custom/modules/Contacts/metadata/')) {
             sugar_mkdir('custom/modules/Contacts/metadata/', null, true);
         }
         $customFile = 'custom/modules/Contacts/metadata/listviewdefs.php';
-        if(!file_exists($customFile))
-        {
+        if (!file_exists($customFile)) {
             sugar_touch($customFile);
             $customMetaDataFile = $this->_view->getMetaDataFile();
             $this->assertEquals($customFile, $customMetaDataFile, 'Did not load the correct custom metadata file');
             unlink($customFile);
         }
         // Restore custom file if we backed it up
-        if(file_exists('custom/modules/Contacts/metadata/listviewdefs.php.bak')){
+        if (file_exists('custom/modules/Contacts/metadata/listviewdefs.php.bak')) {
             rename('custom/modules/Contacts/metadata/listviewdefs.php.bak', 'custom/modules/Contacts/metadata/listviewdefs.php');
         }
     }
@@ -79,17 +78,17 @@ class SugarViewTest extends TestCase
     public function testInit()
     {
         $bean = new SugarBean;
-        $view_object_map = array('foo'=>'bar');
+        $view_object_map = ['foo'=>'bar'];
         $GLOBALS['action'] = 'barbar';
         $GLOBALS['module'] = 'foofoo';
 
-        $this->_view->init($bean,$view_object_map);
+        $this->_view->init($bean, $view_object_map);
 
-        $this->assertInstanceOf('SugarBean',$this->_view->bean);
-        $this->assertEquals($view_object_map,$this->_view->view_object_map);
-        $this->assertEquals($GLOBALS['action'],$this->_view->action);
-        $this->assertEquals($GLOBALS['module'],$this->_view->module);
-        $this->assertInstanceOf('Sugar_Smarty',$this->_view->ss);
+        $this->assertInstanceOf('SugarBean', $this->_view->bean);
+        $this->assertEquals($view_object_map, $this->_view->view_object_map);
+        $this->assertEquals($GLOBALS['action'], $this->_view->action);
+        $this->assertEquals($GLOBALS['module'], $this->_view->module);
+        $this->assertInstanceOf('Sugar_Smarty', $this->_view->ss);
     }
 
     public function testInitNoParameters()
@@ -100,19 +99,19 @@ class SugarViewTest extends TestCase
         $this->_view->init();
 
         $this->assertNull($this->_view->bean);
-        $this->assertEquals(array(),$this->_view->view_object_map);
-        $this->assertEquals($GLOBALS['action'],$this->_view->action);
-        $this->assertEquals($GLOBALS['module'],$this->_view->module);
-        $this->assertInstanceOf('Sugar_Smarty',$this->_view->ss);
+        $this->assertEquals([], $this->_view->view_object_map);
+        $this->assertEquals($GLOBALS['action'], $this->_view->action);
+        $this->assertEquals($GLOBALS['module'], $this->_view->module);
+        $this->assertInstanceOf('Sugar_Smarty', $this->_view->ss);
     }
 
     public function testInitSmarty()
     {
         $this->_view->initSmarty();
 
-        $this->assertInstanceOf('Sugar_Smarty',$this->_view->ss);
-        $this->assertEquals($this->_view->ss->get_template_vars('MOD'),$GLOBALS['mod_strings']);
-        $this->assertEquals($this->_view->ss->get_template_vars('APP'),$GLOBALS['app_strings']);
+        $this->assertInstanceOf('Sugar_Smarty', $this->_view->ss);
+        $this->assertEquals($this->_view->ss->get_template_vars('MOD'), $GLOBALS['mod_strings']);
+        $this->assertEquals($this->_view->ss->get_template_vars('APP'), $GLOBALS['app_strings']);
     }
 
     /**
@@ -120,13 +119,13 @@ class SugarViewTest extends TestCase
      */
     public function testDisplayErrors()
     {
-        $this->_view->errors = array('error1','error2');
+        $this->_view->errors = ['error1','error2'];
         $this->_view->suppressDisplayErrors = true;
 
         $this->assertEquals(
             '<span class="error">error1</span><br><span class="error">error2</span><br>',
             $this->_view->displayErrors()
-            );
+        );
     }
 
     /**
@@ -134,7 +133,7 @@ class SugarViewTest extends TestCase
      */
     public function testDisplayErrorsDoNotSupressOutput()
     {
-        $this->_view->errors = array('error1','error2');
+        $this->_view->errors = ['error1','error2'];
         $this->_view->suppressDisplayErrors = false;
 
         $this->expectOutputString('<span class="error">error1</span><br><span class="error">error2</span><br>');
@@ -143,15 +142,15 @@ class SugarViewTest extends TestCase
 
     public function testGetBrowserTitle()
     {
-        $viewMock = $this->createPartialMock('SugarViewTestMock', array('_getModuleTitleParams'));
+        $viewMock = $this->createPartialMock('SugarViewTestMock', ['_getModuleTitleParams']);
         $viewMock->expects($this->any())
                  ->method('_getModuleTitleParams')
-                 ->will($this->returnValue(array('foo','bar')));
+                 ->will($this->returnValue(['foo','bar']));
 
         $this->assertEquals(
             "bar &raquo; foo &raquo; {$GLOBALS['app_strings']['LBL_BROWSER_TITLE']}",
             $viewMock->getBrowserTitle()
-            );
+        );
     }
 
     public function testGetBrowserTitleUserLogin()
@@ -162,7 +161,7 @@ class SugarViewTest extends TestCase
         $this->assertEquals(
             "{$GLOBALS['app_strings']['LBL_BROWSER_TITLE']}",
             $this->_view->getBrowserTitle()
-            );
+        );
     }
 
     public function testGetBreadCrumbSymbolForLTRTheme()
@@ -174,7 +173,7 @@ class SugarViewTest extends TestCase
         $this->assertEquals(
             "<span class='breadCrumbSymbol'>&raquo;</span>",
             $this->_view->getBreadCrumbSymbol()
-            );
+        );
     }
 
     public function testGetBreadCrumbSymbolForRTLTheme()
@@ -186,14 +185,14 @@ class SugarViewTest extends TestCase
         $this->assertEquals(
             "<span class='breadCrumbSymbol'>&laquo;</span>",
             $this->_view->getBreadCrumbSymbol()
-            );
+        );
     }
 
     public function testGetSugarConfigJS()
     {
         global $sugar_config;
 
-        $sugar_config['js_available'] = array('default_action');
+        $sugar_config['js_available'] = ['default_action'];
 
         $js_array = $this->_view->getSugarConfigJS();
         $this->assertContains('SUGAR.config.default_action = "index";', $js_array);

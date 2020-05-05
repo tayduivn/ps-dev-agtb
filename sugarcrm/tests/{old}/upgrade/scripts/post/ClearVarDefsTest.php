@@ -29,75 +29,75 @@ class ClearVarDefsTest extends TestCase
         SugarTestHelper::setUp('files');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('dictionary');
-        SugarTestHelper::setUp('current_user', array(false, true));
-        $beanList = array(
+        SugarTestHelper::setUp('current_user', [false, true]);
+        $beanList = [
             self::MODULE => 'PreScriptBean',
             'Users' => get_class($user),
-        );
-        $dictionary[self::MODULE] = array(
-            'relationships' => array(
+        ];
+        $dictionary[self::MODULE] = [
+            'relationships' => [
                 //need to be fixed with correct module name
-                'b' => array(
+                'b' => [
                     'lhs_module' => 'Users',
                     'rhs_module' => 'prescript',
                     'relationship_type' => 'one-to-many',
-                ),
-            ),
-            'fields' => array(
+                ],
+            ],
+            'fields' => [
                 //bad relationship
-                'a' => array(
+                'a' => [
                     'type' => 'link',
                     'name' => 'a',
-                    'relationship' => 'b1'
-                ),
+                    'relationship' => 'b1',
+                ],
                 //relate type with wrong link
-                'c' => array(
+                'c' => [
                     'name' => 'c',
                     'type' => 'relate',
                     'link' => 'a',
-                ),
+                ],
                 //fields contains wrong field
-                'd' => array(
+                'd' => [
                     'name' => 'd',
                     'type' => 'text',
-                    'fields' => array('e', 'g'),
-                    'db_concat_fields' => array('e', 'g'),
-                ),
+                    'fields' => ['e', 'g'],
+                    'db_concat_fields' => ['e', 'g'],
+                ],
                 //normal field
-                'e' => array(
+                'e' => [
                     'name' => 'e',
-                    'type' => 'bool'
-                ),
+                    'type' => 'bool',
+                ],
                 //field with no type
-                'g' => array(
+                'g' => [
                     'name' => 'g',
-                ),
+                ],
                 //good relate field
-                'h' => array(
+                'h' => [
                     'name' => 'f',
                     'relationship' => 'b',
                     'id_name' => 'i',
                     'type' => 'relate',
                     'link' => 'link',
-                ),
+                ],
                 //field type should be `id`
-                'i' => array(
+                'i' => [
                     'name' => 'i',
                     'relationship' => 'b',
-                    'type' => 'link'
-                ),
+                    'type' => 'link',
+                ],
                 //good link
-                'link' => array(
+                'link' => [
                     'name' => 'link',
                     'type' => 'link',
                     'relationship' => 'b',
                     'side' => 'RHS',
-                )
-            )
-        );
+                ],
+            ],
+        ];
         SugarRelationshipFactory::deleteCache();
         SugarRelationshipFactory::rebuildCache();
-        VardefManager::$linkFields = array();
+        VardefManager::$linkFields = [];
     }
 
     protected function tearDown() : void
@@ -117,20 +117,20 @@ class ClearVarDefsTest extends TestCase
         global $current_user;
         $path = sugar_cached(__CLASS__);
         $upgradeDriver = new TestUpgrader($current_user);
-        $upgradeDriver->context = array(
-            'source_dir' => $path
-        );
+        $upgradeDriver->context = [
+            'source_dir' => $path,
+        ];
 
         $script = $this->getMockBuilder('SugarUpgradeClearVarDefs')
-            ->setMethods(array(
+            ->setMethods([
                 'cleanCache',
                 'deleteFieldFile',
                 'deleteRelationshipFiles',
                 'writeDef',
                 'updateLinks',
-                'updateRelationshipDefinition'
-            ))
-            ->setConstructorArgs(array($upgradeDriver))
+                'updateRelationshipDefinition',
+            ])
+            ->setConstructorArgs([$upgradeDriver])
             ->getMock();
 
         $script->expects($this->once())
@@ -146,17 +146,17 @@ class ClearVarDefsTest extends TestCase
 
         $script->expects($this->once())
             ->method('updateLinks')
-            ->with(array('i' => 1), $this->isInstanceOf('PreScriptBean'));
+            ->with(['i' => 1], $this->isInstanceOf('PreScriptBean'));
 
         $script->expects($this->once())
             ->method('writeDef')
             ->with(
-                array(
-                    'fields' => array('e'),
-                    'db_concat_fields' => array('e'),
+                [
+                    'fields' => ['e'],
+                    'db_concat_fields' => ['e'],
                     'name' => 'd',
-                    'type' => 'text'
-                ),
+                    'type' => 'text',
+                ],
                 ''
             );
 
@@ -164,12 +164,12 @@ class ClearVarDefsTest extends TestCase
             ->method('updateRelationshipDefinition')
             ->with(
                 $this->isInstanceOf('PreScriptBean'),
-                array(
+                [
                     'lhs_module' => 'Users',
                     'rhs_module' => 'PreScript',
                     'relationship_type' => 'one-to-many',
                     'name' => 'b',
-                )
+                ]
             );
 
         $script->run();
@@ -177,7 +177,7 @@ class ClearVarDefsTest extends TestCase
         $bean = SugarTestReflection::callProtectedMethod(
             $script,
             'getBean',
-            array(strtolower((self::MODULE)))
+            [strtolower((self::MODULE))]
         );
         $this->assertEquals('PreScriptBean', get_class($bean));
     }

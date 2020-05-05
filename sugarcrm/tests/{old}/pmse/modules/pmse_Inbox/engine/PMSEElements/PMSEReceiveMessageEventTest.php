@@ -24,13 +24,13 @@ class PMSEReceiveMessageEventTest extends TestCase
     {
         $this->receiveMessageEvent = $this->getMockBuilder('PMSEReceiveMessageEvent')
             ->disableOriginalConstructor()
-            ->setMethods(array('prepareResponse'))
+            ->setMethods(['prepareResponse'])
             ->getMock();
 
         $this->receiveMessageEvent->expects($this->exactly(2))
             ->method('prepareResponse');
 
-        $flowData = array();
+        $flowData = [];
 
         $bean = new stdClass();
 
@@ -41,18 +41,18 @@ class PMSEReceiveMessageEventTest extends TestCase
     {
         $this->receiveMessageEvent = $this->getMockBuilder('PMSEReceiveMessageEvent')
             ->disableOriginalConstructor()
-            ->setMethods(array('prepareResponse', 'checkIfUsesAnEventBasedGateway', 'checkIfExistEventBased'))
+            ->setMethods(['prepareResponse', 'checkIfUsesAnEventBasedGateway', 'checkIfExistEventBased'])
             ->getMock();
 
         $caseHandlerMock = $this->getMockBuilder('PMSECaseFlowHandler')
             ->disableOriginalConstructor()
-            ->setMethods(array('retrieveBean'))
+            ->setMethods(['retrieveBean'])
             ->getMock();
 
         $this->receiveMessageEvent->expects($this->exactly(1))
             ->method('prepareResponse');
 
-        $flowData = array(
+        $flowData = [
             "cas_id" => 1,
             "cas_index" => 2,
             "cas_previous" => 2,
@@ -61,11 +61,11 @@ class PMSEReceiveMessageEventTest extends TestCase
             "rel_process_module" => 'Leads',
             "rel_element_module" => 'Leads',
             "cas_sugar_object_id" => "893u2d89qj2398d",
-            "rel_element_relationship" => "Some related module"
-        );
+            "rel_element_relationship" => "Some related module",
+        ];
 
         $bean = $this->getMockBuilder('SugarBean')
-            ->setMethods(array('load_relationships'))
+            ->setMethods(['load_relationships'])
             ->getMock();
         $bean->parent_type = 'Leads';
         $bean->parent_id = '893u2d89qj2398d';
@@ -81,12 +81,12 @@ class PMSEReceiveMessageEventTest extends TestCase
     {
         $this->receiveMessageEvent = $this->getMockBuilder('PMSEReceiveMessageEvent')
             ->disableOriginalConstructor()
-            ->setMethods(array('prepareResponse', 'checkIfUsesAnEventBasedGateway', 'checkIfExistEventBased'))
+            ->setMethods(['prepareResponse', 'checkIfUsesAnEventBasedGateway', 'checkIfExistEventBased'])
             ->getMock();
 
         $caseHandlerMock = $this->getMockBuilder('PMSECaseFlowHandler')
             ->disableOriginalConstructor()
-            ->setMethods(array('retrieveBean'))
+            ->setMethods(['retrieveBean'])
             ->getMock();
 
         $this->receiveMessageEvent->expects($this->once())
@@ -98,7 +98,7 @@ class PMSEReceiveMessageEventTest extends TestCase
         $this->receiveMessageEvent->expects($this->once())
             ->method('checkIfExistEventBased');
 
-        $flowData = array(
+        $flowData = [
             "cas_id" => 1,
             "cas_index" => 2,
             "cas_previous" => 2,
@@ -108,10 +108,10 @@ class PMSEReceiveMessageEventTest extends TestCase
             "rel_element_module" => 'Leads',
             "cas_sugar_object_id" => "893u2d89qj2398d",
             "rel_element_relationship" => "Some related module",
-        );
+        ];
 
         $bean = $this->getMockBuilder('SugarBean')
-            ->setMethods(array('load_relationships'))
+            ->setMethods(['load_relationships'])
             ->getMock();
 
         $bean->parent_type = 'Leads';
@@ -127,7 +127,7 @@ class PMSEReceiveMessageEventTest extends TestCase
     {
         $this->receiveMessageEvent = $this->getMockBuilder('PMSEReceiveMessageEvent')
             ->disableOriginalConstructor()
-            ->setMethods(array('prepareResponse', 'checkIfUsesAnEventBasedGateway', 'checkIfExistEventBased', 'getProcessBean'))
+            ->setMethods(['prepareResponse', 'checkIfUsesAnEventBasedGateway', 'checkIfExistEventBased', 'getProcessBean'])
             ->getMock();
 
         // Set our expectation
@@ -136,7 +136,7 @@ class PMSEReceiveMessageEventTest extends TestCase
 
         $caseHandlerMock = $this->getMockBuilder('PMSECaseFlowHandler')
             ->disableOriginalConstructor()
-            ->setMethods(array('retrieveBean'))
+            ->setMethods(['retrieveBean'])
             ->getMock();
 
         $this->receiveMessageEvent->expects($this->exactly(2))
@@ -151,7 +151,7 @@ class PMSEReceiveMessageEventTest extends TestCase
         $this->receiveMessageEvent->expects($this->once())
             ->method('getProcessBean');
 
-        $flowData = array(
+        $flowData = [
             "cas_id" => 1,
             "cas_index" => 2,
             "cas_previous" => 2,
@@ -160,11 +160,11 @@ class PMSEReceiveMessageEventTest extends TestCase
             "rel_process_module" => 'Leads',
             "rel_element_module" => 'Leads',
             "cas_sugar_object_id" => "893u2d89qj2398d",
-            "rel_element_relationship" => "Some related module"
-        );
+            "rel_element_relationship" => "Some related module",
+        ];
 
         $bean = $this->getMockBuilder('SugarBean')
-            ->setMethods(array('load_relationships'))
+            ->setMethods(['load_relationships'])
             ->getMock();
 
         $bean->parent_type = 'Leads';

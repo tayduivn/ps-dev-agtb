@@ -20,12 +20,12 @@ class PMSERecordValidatorTest extends TestCase
     {
         $loggerMock = $this->getMockBuilder('PMSELogger')
                 ->disableOriginalConstructor()
-                ->setMethods(array('info', 'debug'))
+                ->setMethods(['info', 'debug'])
                 ->getMock();
         
         $recordValidatorMock = $this->getMockBuilder('PMSERecordValidator')
                 ->disableOriginalConstructor()
-                ->setMethods(NULL)
+                ->setMethods(null)
                 ->getMock();
         $request = ProcessManager\Factory::getPMSEObject('PMSERequest');
         $recordValidatorMock->setLogger($loggerMock);

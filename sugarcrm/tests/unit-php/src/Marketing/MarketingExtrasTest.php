@@ -27,9 +27,9 @@ class MarketingExtrasTest extends TestCase
     public function testGetMarketingContentUrl()
     {
         $marketingExtras = $this->getMarketingExtrasMock(
-            array(
+            [
                 'areMarketingExtrasEnabled',
-            )
+            ]
         );
 
         $oldBuild = $GLOBALS['sugar_build'] ?? null;

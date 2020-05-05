@@ -26,13 +26,13 @@ class OpportunityTest extends TestCase
         SugarTestHelper::setUp('beanList');
         SugarTestCurrencyUtilities::createCurrency('MonkeyDollars', '$', 'MOD', 2.0);
 
-        SugarTestForecastUtilities::setUpForecastConfig(array(
-                'sales_stage_won' => array('Closed Won'),
-                'sales_stage_lost' => array('Closed Lost'),
+        SugarTestForecastUtilities::setUpForecastConfig([
+                'sales_stage_won' => ['Closed Won'],
+                'sales_stage_lost' => ['Closed Lost'],
                 //BEGIN SUGARCRM flav!=ent ONLY
                 'forecast_by' => 'opportunities',
                 //END SUGARCRM flav!=ent ONLY
-            ));
+            ]);
     }
 
     protected function tearDown() : void
@@ -53,7 +53,7 @@ class OpportunityTest extends TestCase
 
     public function dataProviderCaseFieldEqualsAmountWhenCaseFieldEmpty()
     {
-        return array(array('best_case'), array('worst_case'));
+        return [['best_case'], ['worst_case']];
     }
 
     /**
@@ -182,7 +182,7 @@ class OpportunityTest extends TestCase
     public function testGetClosedStages()
     {
         $opp = $this->getMockBuilder('Opportunity')
-            ->setMethods(array('save'))
+            ->setMethods(['save'])
             ->disableOriginalConstructor()
             ->getMock();
         $closedStages = $opp->getClosedStages();
@@ -199,7 +199,7 @@ class OpportunityTest extends TestCase
     public function testMapProbabilityFromSalesStage($sales_stage, $probability)
     {
         /* @var $oppMock Opportunity */
-        $oppMock = $this->createPartialMock('Opportunity', array('save'));
+        $oppMock = $this->createPartialMock('Opportunity', ['save']);
         $oppMock->sales_stage = $sales_stage;
         // use the Reflection Helper to call the Protected Method
         SugarTestReflection::callProtectedMethod($oppMock, 'mapProbabilityFromSalesStage');
@@ -209,18 +209,18 @@ class OpportunityTest extends TestCase
 
     public static function dataProviderMapProbabilityFromSalesStage()
     {
-        return array(
-            array('Prospecting', '10'),
-            array('Qualification', '20'),
-            array('Needs Analysis', '25'),
-            array('Value Proposition', '30'),
-            array('Id. Decision Makers', '40'),
-            array('Perception Analysis', '50'),
-            array('Proposal/Price Quote', '65'),
-            array('Negotiation/Review', '80'),
-            array('Closed Won', '100'),
-            array('Closed Lost', '0')
-        );
+        return [
+            ['Prospecting', '10'],
+            ['Qualification', '20'],
+            ['Needs Analysis', '25'],
+            ['Value Proposition', '30'],
+            ['Id. Decision Makers', '40'],
+            ['Perception Analysis', '50'],
+            ['Proposal/Price Quote', '65'],
+            ['Negotiation/Review', '80'],
+            ['Closed Won', '100'],
+            ['Closed Lost', '0'],
+        ];
     }
 
     /**
@@ -233,13 +233,13 @@ class OpportunityTest extends TestCase
     public function testIsCurrencyIdChanged($currency_id, $fetched_row_id, $expected)
     {
         $opp = $this->getMockBuilder('Opportunity')
-            ->setMethods(array('save'))
+            ->setMethods(['save'])
             ->disableOriginalConstructor()
             ->getMock();
 
         $opp->currency_id = $currency_id;
         if (!is_null($fetched_row_id)) {
-            $opp->fetched_row = array('currency_id' => $fetched_row_id);
+            $opp->fetched_row = ['currency_id' => $fetched_row_id];
         }
 
         $actual = SugarTestReflection::callProtectedMethod($opp, 'isCurrencyIdChanged');
@@ -249,28 +249,28 @@ class OpportunityTest extends TestCase
 
     public static function dataProviderIsCurrencyIdChanged()
     {
-        return array(
-            array(
+        return [
+            [
                 'test_currency_id',
                 'test_currency_id',
-                false
-            ),
-            array(
+                false,
+            ],
+            [
                 'test_currency_id',
                 'test-currency-id',
-                true
-            ),
-            array(
+                true,
+            ],
+            [
                 null,
                 'test-currency-id',
-                true
-            ),
-            array(
+                true,
+            ],
+            [
                 'test_currency_id',
                 null,
-                true
-            ),
-        );
+                true,
+            ],
+        ];
     }
 
     /**
@@ -283,7 +283,7 @@ class OpportunityTest extends TestCase
     public function testUpdateCurrencyBaseRate($sales_stage, $closed_stages, $expected)
     {
         $opp = $this->getMockBuilder('Opportunity')
-            ->setMethods(array('save', 'getClosedStages'))
+            ->setMethods(['save', 'getClosedStages'])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -299,29 +299,29 @@ class OpportunityTest extends TestCase
 
     public static function dataProviderUpdateCurrencyBaseRate()
     {
-        return array(
-            array(
+        return [
+            [
                 'test_not_in_array',
-                array(
-                    'test_1',
-                    'test_2',
-                    'test_3',
-                    'test_4'
-                ),
-                true
-            ),
-            array(
-                'test_in_array',
-                array(
+                [
                     'test_1',
                     'test_2',
                     'test_3',
                     'test_4',
-                    'test_in_array'
-                ),
-                false
-            )
-        );
+                ],
+                true,
+            ],
+            [
+                'test_in_array',
+                [
+                    'test_1',
+                    'test_2',
+                    'test_3',
+                    'test_4',
+                    'test_in_array',
+                ],
+                false,
+            ],
+        ];
     }
 
     /**
@@ -331,15 +331,15 @@ class OpportunityTest extends TestCase
     {
         $opp = $this->getMockBuilder('Opportunity')
             ->setMethods(
-                array(
+                [
                     'set_opportunity_contact_relationship',
                     'set_relationship_info',
                     'handle_preset_relationships',
                     'handle_remaining_relate_fields',
                     'update_parent_relationships',
                     'handle_request_relate',
-                    'load_relationship'
-                )
+                    'load_relationship',
+                ]
             )
             ->disableOriginalConstructor()
             ->getMock();
@@ -350,7 +350,7 @@ class OpportunityTest extends TestCase
 
         $linkAccounts = $this->getMockBuilder('Link2')
             ->disableOriginalConstructor()
-            ->setMethods(array('delete'))
+            ->setMethods(['delete'])
             ->getMock();
 
         $linkAccounts->expects($this->once())
@@ -361,11 +361,11 @@ class OpportunityTest extends TestCase
 
         $linkProducts = $this->getMockBuilder('Link2')
             ->disableOriginalConstructor()
-            ->setMethods(array('getBeans'))
+            ->setMethods(['getBeans'])
             ->getMock();
 
         $mockProduct = $this->getMockBuilder('Product')
-            ->setMethods(array('save'))
+            ->setMethods(['save'])
             ->getMock();
 
         $mockProduct->expects($this->once())
@@ -373,17 +373,17 @@ class OpportunityTest extends TestCase
 
         $linkProducts->expects($this->once())
             ->method('getBeans')
-            ->willReturn(array($mockProduct));
+            ->willReturn([$mockProduct]);
 
         $opp->products = $linkProducts;
 
         $linkRLIs = $this->getMockBuilder('Link2')
             ->disableOriginalConstructor()
-            ->setMethods(array('getBeans'))
+            ->setMethods(['getBeans'])
             ->getMock();
 
         $mockRLI = $this->getMockBuilder('RevenueLineItem')
-            ->setMethods(array('save'))
+            ->setMethods(['save'])
             ->getMock();
 
         $mockRLI->expects($this->once())
@@ -391,7 +391,7 @@ class OpportunityTest extends TestCase
 
         $linkRLIs->expects($this->once())
             ->method('getBeans')
-            ->willReturn(array($mockRLI));
+            ->willReturn([$mockRLI]);
 
         $opp->revenuelineitems = $linkRLIs;
 
@@ -412,7 +412,7 @@ class OpportunityTest extends TestCase
     public function testBuildGenericWhereClause()
     {
         $opp = $this->getMockBuilder('Opportunity')
-            ->setMethods(array('save'))
+            ->setMethods(['save'])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -427,25 +427,25 @@ class OpportunityTest extends TestCase
     public function testSetOpportunityContactRelationship()
     {
         $opp = $this->getMockBuilder('Opportunity')
-            ->setMethods(array('load_relationship'))
+            ->setMethods(['load_relationship'])
             ->disableOriginalConstructor()
             ->getMock();
 
         $opp->contacts = $this->getMockBuilder('Link2')
             ->disableOriginalConstructor()
-            ->setMethods(array('add'))
+            ->setMethods(['add'])
             ->getMock();
 
         $opp->contacts->expects($this->once())
             ->method('add')
-            ->with('test_contact_id', array('contact_role' => 'default'));
+            ->with('test_contact_id', ['contact_role' => 'default']);
 
         $opp->expects($this->once())
             ->method('load_relationship');
 
-        $GLOBALS['app_list_strings'] = array(
-            'opportunity_relationship_type_default_key' => 'default'
-        );
+        $GLOBALS['app_list_strings'] = [
+            'opportunity_relationship_type_default_key' => 'default',
+        ];
 
         $opp->set_opportunity_contact_relationship('test_contact_id');
     }
@@ -491,34 +491,34 @@ class OpportunityTest extends TestCase
 
     public function providerTestUpdateRLIRollupFields()
     {
-        return array(
-            array(
-                array(),
-                array('service_start_date' => '', 'sales_stage' => '', 'date_closed' => ''),
-            ),
-            array(
-                array(
-                    array('sales_stage' => 'Prospecting', 'service' => 1, 'service_start_date' => '2020-04-01', 'date_closed' => '2020-03-15'),
-                ),
-                array('service_start_date' => '2020-04-01', 'sales_stage' => 'Prospecting', 'date_closed' => '2020-03-15'),
-            ),
-            array(
-                array(
-                    array('sales_stage' => 'Closed Won', 'service' => 1, 'service_start_date' => '2019-01-01', 'date_closed' => '2019-10-15'),
-                    array('sales_stage' => 'Closed Lost', 'service' => 1, 'service_start_date' => '2020-01-01', 'date_closed' => '2020-01-10'),
-                ),
-                array('service_start_date' => '2019-01-01', 'sales_stage' => 'Closed Won', 'date_closed' => '2019-10-15'),
-            ),
-            array(
-                array(
-                    array('sales_stage' => 'Closed Won', 'service' => 1, 'service_start_date' => '2020-01-01', 'date_closed' => '2020-03-15'),
-                    array('sales_stage' => 'Qualification', 'service' => 1, 'service_start_date' => '2019-01-01', 'date_closed' => '2020-01-20'),
-                    array('sales_stage' => 'Prospecting', 'service' => 1, 'service_start_date' => '2019-06-01', 'date_closed' => '2020-03-05'),
-                    array('sales_stage' => 'Closed Lost', 'service' => 1, 'service_start_date' => '2018-01-01', 'date_closed' => '2020-03-15'),
-                ),
-                array('service_start_date' => '2019-01-01', 'sales_stage' => 'Qualification', 'date_closed' => '2020-03-05'),
-            ),
-        );
+        return [
+            [
+                [],
+                ['service_start_date' => '', 'sales_stage' => '', 'date_closed' => ''],
+            ],
+            [
+                [
+                    ['sales_stage' => 'Prospecting', 'service' => 1, 'service_start_date' => '2020-04-01', 'date_closed' => '2020-03-15'],
+                ],
+                ['service_start_date' => '2020-04-01', 'sales_stage' => 'Prospecting', 'date_closed' => '2020-03-15'],
+            ],
+            [
+                [
+                    ['sales_stage' => 'Closed Won', 'service' => 1, 'service_start_date' => '2019-01-01', 'date_closed' => '2019-10-15'],
+                    ['sales_stage' => 'Closed Lost', 'service' => 1, 'service_start_date' => '2020-01-01', 'date_closed' => '2020-01-10'],
+                ],
+                ['service_start_date' => '2019-01-01', 'sales_stage' => 'Closed Won', 'date_closed' => '2019-10-15'],
+            ],
+            [
+                [
+                    ['sales_stage' => 'Closed Won', 'service' => 1, 'service_start_date' => '2020-01-01', 'date_closed' => '2020-03-15'],
+                    ['sales_stage' => 'Qualification', 'service' => 1, 'service_start_date' => '2019-01-01', 'date_closed' => '2020-01-20'],
+                    ['sales_stage' => 'Prospecting', 'service' => 1, 'service_start_date' => '2019-06-01', 'date_closed' => '2020-03-05'],
+                    ['sales_stage' => 'Closed Lost', 'service' => 1, 'service_start_date' => '2018-01-01', 'date_closed' => '2020-03-15'],
+                ],
+                ['service_start_date' => '2019-01-01', 'sales_stage' => 'Qualification', 'date_closed' => '2020-03-05'],
+            ],
+        ];
     }
 
     /**

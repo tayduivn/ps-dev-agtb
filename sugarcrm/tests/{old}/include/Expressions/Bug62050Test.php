@@ -20,17 +20,16 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug62050Test extends TestCase
 {
-    private $files = array();
+    private $files = [];
 
     protected function setUp() : void
     {
-        $this->files = array();
+        $this->files = [];
     }
 
     protected function tearDown() : void
     {
-        foreach ($this->files as $file)
-        {
+        foreach ($this->files as $file) {
             unlink($file);
         }
     }
@@ -43,8 +42,7 @@ class Bug62050Test extends TestCase
      */
     public function testDetailViewFilterFunction($module, $action, $view, $path, $data, $allowedActions, $bannedActions)
     {
-        if (!is_dir($path))
-        {
+        if (!is_dir($path)) {
             mkdir($path, 0777, true);
         }
 
@@ -60,28 +58,26 @@ class Bug62050Test extends TestCase
         $def = $dependencies[0]->getDefinition();
 
         // Pull out the filtered actions
-        $filteredActions = array();
-        foreach ($def['actions'] as $action)
-        {
+        $filteredActions = [];
+        foreach ($def['actions'] as $action) {
             $filteredActions[] = $action['action'];
         }
 
         // Check if all the allowed actions are there
-        foreach ($allowedActions as $action)
-        {
+        foreach ($allowedActions as $action) {
             $this->assertContains($action, $filteredActions);
         }
 
         // Check if the disallowed were removed
-        foreach ($bannedActions as $action)
-        {
+        foreach ($bannedActions as $action) {
             $this->assertNotContains($action, $filteredActions);
         }
     }
 
-    public function dataProvider() {
-        return array(
-            array(
+    public function dataProvider()
+    {
+        return [
+            [
                 // Module
                 "Opportunities",
                 // Action
@@ -134,16 +130,16 @@ class Bug62050Test extends TestCase
                     );
                 ",
                 // Allowed Expression Actions
-                array(
+                [
                     'SetValue',
                     'Style',
-                    'SetPanelVisibility'
-                ),
+                    'SetPanelVisibility',
+                ],
                 // Banned Expression Actions
-                array(
+                [
                     'SetRequired',
-                )
-            )
-        );
+                ],
+            ],
+        ];
     }
 }

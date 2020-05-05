@@ -17,8 +17,8 @@ class Bug44712Test extends TestCase
 {
     public function testTranslateLabel()
     {
-        $activitiesRelationship = new ActivitiesRelationship(array());
-        $vardef = SugarTestReflection::callProtectedMethod($activitiesRelationship, 'getLinkFieldDefinition', array('Tasks', 'abc_MyCustomBasic_Activities_Tasks'));
+        $activitiesRelationship = new ActivitiesRelationship([]);
+        $vardef = SugarTestReflection::callProtectedMethod($activitiesRelationship, 'getLinkFieldDefinition', ['Tasks', 'abc_MyCustomBasic_Activities_Tasks']);
         $this->assertEquals('LBL_ABC_MYCUSTOMBASIC_ACTIVITIES_TASKS_FROM_TASKS_TITLE', $vardef['vname'], "Assert that vardef['vname'] is set to LBL_ABC_MYCUSTOMBASIC_ACTIVITIES_FROM_TASKS_TITLE");
     }
 }

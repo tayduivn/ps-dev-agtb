@@ -24,7 +24,7 @@ class Bug59196Test extends TestCase
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('moduleList');
-        SugarTestHelper::setUp('current_user', array(true, true)); // Admin
+        SugarTestHelper::setUp('current_user', [true, true]); // Admin
 
         // Backup the custom file if there is one
         if (file_exists($this->_customFile)) {
@@ -33,7 +33,7 @@ class Bug59196Test extends TestCase
         }
 
         // Backup the request
-        if(!empty($_REQUEST)) {
+        if (!empty($_REQUEST)) {
             $this->_request = $_REQUEST;
         }
     }

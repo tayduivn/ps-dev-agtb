@@ -38,12 +38,12 @@ class DelimitedValidatorTest extends AbstractConstraintValidatorTest
      */
     public function testNullIsValid()
     {
-        $constraint = new Delimited(array(
-            'constraints' => array(new NotBlank()),
-        ));
+        $constraint = new Delimited([
+            'constraints' => [new NotBlank()],
+        ]);
         $this->validator->validate(null, $constraint);
         $this->assertNoViolation();
-        $this->assertSame(array(), $constraint->getFormattedReturnValue());
+        $this->assertSame([], $constraint->getFormattedReturnValue());
     }
 
     /**
@@ -51,12 +51,12 @@ class DelimitedValidatorTest extends AbstractConstraintValidatorTest
      */
     public function testEmptyStringIsValid()
     {
-        $constraint = new Delimited(array(
-            'constraints' => array(new NotBlank()),
-        ));
+        $constraint = new Delimited([
+            'constraints' => [new NotBlank()],
+        ]);
         $this->validator->validate('', $constraint);
         $this->assertNoViolation();
-        $this->assertSame(array(), $constraint->getFormattedReturnValue());
+        $this->assertSame([], $constraint->getFormattedReturnValue());
     }
 
     /**
@@ -65,9 +65,9 @@ class DelimitedValidatorTest extends AbstractConstraintValidatorTest
     public function testExpectsStringCompatibleType()
     {
         $this->expectException(UnexpectedTypeException::class);
-        $constraint = new Delimited(array(
+        $constraint = new Delimited([
             'constraints' => new NotBlank(),
-        ));
+        ]);
         $this->validator->validate(new \stdClass(), $constraint);
     }
 
@@ -77,16 +77,16 @@ class DelimitedValidatorTest extends AbstractConstraintValidatorTest
      */
     public function testWalkConstraints($value, $delimiter, array $expected)
     {
-        $constraints = array(
+        $constraints = [
             new NotNull(),
             new NotBlank(),
-            new Range(array('min' => 1)),
-        );
+            new Range(['min' => 1]),
+        ];
 
-        $delimited = new Delimited(array(
+        $delimited = new Delimited([
             'constraints' => $constraints,
             'delimiter' => $delimiter,
-        ));
+        ]);
 
         $i = 0;
         foreach (explode($delimiter, $value) as $k => $v) {
@@ -100,38 +100,38 @@ class DelimitedValidatorTest extends AbstractConstraintValidatorTest
 
     public function providerTestWalkConstraints()
     {
-        return array(
-            array(
+        return [
+            [
                 'test',
                 ',',
-                array(
+                [
                     'test',
-                ),
-            ),
-            array(
+                ],
+            ],
+            [
                 'test1,test2',
                 ',',
-                array(
+                [
                     'test1',
                     'test2',
-                ),
-            ),
-            array(
+                ],
+            ],
+            [
                 'test1;test2',
                 ';',
-                array(
+                [
                     'test1',
                     'test2',
-                ),
-            ),
-            array(
+                ],
+            ],
+            [
                 'test1::test2',
                 '::',
-                array(
+                [
                     'test1',
                     'test2',
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
     }
 }

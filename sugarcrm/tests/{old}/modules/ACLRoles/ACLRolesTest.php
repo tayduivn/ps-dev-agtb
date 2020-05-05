@@ -41,7 +41,7 @@ class ACLRolesTest extends TestCase
 
         $this->user = SugarTestUserUtilities::createAnonymousUser();
 
-        $this->role = SugarTestACLUtilities::createRole('test-role', array('Accounts'), array('access'));
+        $this->role = SugarTestACLUtilities::createRole('test-role', ['Accounts'], ['access']);
         $this->role->load_relationship('users');
         $this->role->users->add($this->user->id);
         $this->role->save();

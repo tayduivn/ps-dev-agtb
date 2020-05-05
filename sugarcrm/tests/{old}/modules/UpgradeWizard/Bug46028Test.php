@@ -19,7 +19,7 @@ use PHPUnit\Framework\TestCase;
  * to correctly handle range searching for date fields.
  */
 
-require_once('modules/UpgradeWizard/uw_utils.php');
+require_once 'modules/UpgradeWizard/uw_utils.php';
 
 class Bug46028Test extends TestCase
 {

@@ -20,7 +20,8 @@ class ViewEditTest extends TestCase
         $this->assertEquals('edit', $view->type);
     }
 
-    public function testSubclasses() {
+    public function testSubclasses()
+    {
         $view = new MockViewEditDirect();
         $this->assertEquals('edit', $view->type);
 

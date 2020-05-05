@@ -13,44 +13,45 @@
 use PHPUnit\Framework\TestCase;
 
 class Bug49614Test extends TestCase
-{	
+{
+   
     private $package;
     private $orgSoftFail;
     
     protected function setUp() : void
-	{
+    {
         $this->package = new MBPackage('SugarTestPackage');
         $GLOBALS['sugar_config']['validation']['soft_fail'] = false;
-	}
-	
+    }
+    
     protected function tearDown() : void
-	{
+    {
         unset($this->package);
-	}
+    }
 
     public function testPopulateFromPostKeyValueWithInvalidChars()
     {
-        $_REQUEST = array(
+        $_REQUEST = [
             'description' => '',
             'author' => 'Sugar CRM',
             'key' => ' keys$$',
-            'readme' => ''
-        );
+            'readme' => '',
+        ];
 
         $this->expectException('Sugarcrm\Sugarcrm\Security\InputValidation\Exception\ViolationException');
         $this->package->populateFromPost();
-	}
+    }
     
-	public function testPopulateFromPostKeyValueWithoutSpaces()
-	{
-        $_REQUEST = array(
+    public function testPopulateFromPostKeyValueWithoutSpaces()
+    {
+        $_REQUEST = [
             'description' => '',
             'author' => 'Sugar CRM',
             'key' => 'key',
-            'readme' => ''
-        );
+            'readme' => '',
+        ];
         
         $this->package->populateFromPost();
         $this->assertEquals('key', $this->package->key);
-	}
+    }
 }

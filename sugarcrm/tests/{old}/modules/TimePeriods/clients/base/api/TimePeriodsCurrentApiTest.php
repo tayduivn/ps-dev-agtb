@@ -20,14 +20,14 @@ class TimePeriodsCurrentApiTest extends TestCase
     protected $api;
 
     //These are the default forecast configuration settings we will use to test
-    private static $forecastConfigSettings = array (
-        array('name' => 'timeperiod_type', 'value' => 'chronological', 'platform' => 'base', 'category' => 'Forecasts'),
-        array('name' => 'timeperiod_interval', 'value' => TimePeriod::ANNUAL_TYPE, 'platform' => 'base', 'category' => 'Forecasts'),
-        array('name' => 'timeperiod_leaf_interval', 'value' => TimePeriod::QUARTER_TYPE, 'platform' => 'base', 'category' => 'Forecasts'),
-        array('name' => 'timeperiod_start_date', 'value' => '2013-01-01', 'platform' => 'base', 'category' => 'Forecasts'),
-        array('name' => 'timeperiod_shown_forward', 'value' => '2', 'platform' => 'base', 'category' => 'Forecasts'),
-        array('name' => 'timeperiod_shown_backward', 'value' => '2', 'platform' => 'base', 'category' => 'Forecasts')
-    );
+    private static $forecastConfigSettings =  [
+        ['name' => 'timeperiod_type', 'value' => 'chronological', 'platform' => 'base', 'category' => 'Forecasts'],
+        ['name' => 'timeperiod_interval', 'value' => TimePeriod::ANNUAL_TYPE, 'platform' => 'base', 'category' => 'Forecasts'],
+        ['name' => 'timeperiod_leaf_interval', 'value' => TimePeriod::QUARTER_TYPE, 'platform' => 'base', 'category' => 'Forecasts'],
+        ['name' => 'timeperiod_start_date', 'value' => '2013-01-01', 'platform' => 'base', 'category' => 'Forecasts'],
+        ['name' => 'timeperiod_shown_forward', 'value' => '2', 'platform' => 'base', 'category' => 'Forecasts'],
+        ['name' => 'timeperiod_shown_backward', 'value' => '2', 'platform' => 'base', 'category' => 'Forecasts'],
+    ];
 
 
     public static function setUpBeforeClass() : void
@@ -46,8 +46,7 @@ class TimePeriodsCurrentApiTest extends TestCase
         $admin = BeanFactory::newBean('Administration');
 
         self::$forecastConfigSettings[3]['timeperiod_start_date']['value'] = TimeDate::getInstance()->getNow()->setDate(date('Y'), 1, 1)->asDbDate(false);
-        foreach(self::$forecastConfigSettings as $config)
-        {
+        foreach (self::$forecastConfigSettings as $config) {
             $admin->saveSetting($config['category'], $config['name'], $config['value'], $config['platform']);
         }
     }
@@ -77,7 +76,7 @@ class TimePeriodsCurrentApiTest extends TestCase
         $restService = SugarTestRestUtilities::getRestServiceMock();
 
         $this->expectException(SugarApiExceptionNotFound::class);
-        $this->api->getCurrentTimePeriod($restService, array());
+        $this->api->getCurrentTimePeriod($restService, []);
     }
 
     /**
@@ -88,7 +87,7 @@ class TimePeriodsCurrentApiTest extends TestCase
         $tp = SugarTestTimePeriodUtilities::createTimePeriod();
 
         $restService = SugarTestRestUtilities::getRestServiceMock();
-        $return = $this->api->getCurrentTimePeriod($restService, array());
+        $return = $this->api->getCurrentTimePeriod($restService, []);
 
         $this->assertEquals($tp->id, $return['id']);
     }
@@ -113,7 +112,7 @@ class TimePeriodsCurrentApiTest extends TestCase
     public function testGetTimePeriodByDateNoDate()
     {
         SugarTestTimePeriodUtilities::createTimePeriod();
-        $args = array();
+        $args = [];
 
         $restService = SugarTestRestUtilities::getRestServiceMock();
 

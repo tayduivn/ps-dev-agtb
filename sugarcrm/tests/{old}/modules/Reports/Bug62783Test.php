@@ -20,29 +20,29 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug62783Test extends TestCase
 {
-    private static $reportDef = array(
-        'display_columns' => array(),
+    private static $reportDef = [
+        'display_columns' => [],
         'module' => 'Opportunities',
         'assigned_user_id' => '1',
         'report_type' => 'summary',
-        'full_table_list' => array(
-            'self' => array(
+        'full_table_list' => [
+            'self' => [
                 'value' => 'Opportunities',
                 'module' => 'Opportunities',
                 'label' => 'Opportunities',
-            ),
-        ),
-        'filters_def' => array(
-            'Filter_1' => array(
+            ],
+        ],
+        'filters_def' => [
+            'Filter_1' => [
                 'operator' => 'AND',
-                array(
+                [
                     'name' => 'id',
                     'table_key' => 'self',
                     'qualifier_name' => 'is',
-                ),
-            ),
-        ),
-    );
+                ],
+            ],
+        ],
+    ];
 
     protected function setUp() : void
     {
@@ -100,10 +100,10 @@ class Bug62783Test extends TestCase
         $layoutManager = new LayoutManager();
         $layoutManager->setAttribute('reporter', new Report());
         $SWFDT = new $class($layoutManager);
-        $layoutDef = array(
+        $layoutDef = [
             'qualifier_name' => $qualifier,
-            'type' => $type
-        );
+            'type' => $type,
+        ];
 
         $result = $SWFDT->getFiscalYearFilter($layoutDef, $modifyStart, $modifyEnd, $date);
 
@@ -196,63 +196,63 @@ class Bug62783Test extends TestCase
         $reportDefQuarter = Bug62783Test::$reportDef;
 
         $reportDefYear['group_defs'] = $reportDefYear['summary_columns'] =
-            array(
-                array(
+            [
+                [
                     'name' => 'date_modified',
                     'column_function' => 'fiscalYear',
                     'qualifier' => 'fiscalYear',
                     'table_key' => 'self',
-                ),
-            );
+                ],
+            ];
 
         $reportDefQuarter['group_defs'] = $reportDefQuarter['summary_columns'] =
-            array(
-                array(
+            [
+                [
                     'name' => 'date_modified',
                     'column_function' => 'fiscalQuarter',
                     'qualifier' => 'fiscalQuarter',
                     'table_key' => 'self',
-                ),
-            );
+                ],
+            ];
 
-        return array(
-            array(
+        return [
+            [
                 '2013-05-05',
                 'America/Los_Angeles',
                 '2012',
-                $reportDefYear
-            ),
-            array(
+                $reportDefYear,
+            ],
+            [
                 '2013-05-05',
                 'UTC',
                 '2013',
-                $reportDefYear
-            ),
-            array(
+                $reportDefYear,
+            ],
+            [
                 '2013-05-05',
                 'Europe/Helsinki',
                 '2013',
-                $reportDefYear
-            ),
-            array(
+                $reportDefYear,
+            ],
+            [
                 '2013-12-05',
                 'America/Los_Angeles',
                 'Q4 2012',
-                $reportDefQuarter
-            ),
-            array(
+                $reportDefQuarter,
+            ],
+            [
                 '2013-05-05',
                 'UTC',
                 'Q1 2013',
-                $reportDefQuarter
-            ),
-            array(
+                $reportDefQuarter,
+            ],
+            [
                 '2013-05-05',
                 'Europe/Helsinki',
                 'Q1 2013',
-                $reportDefQuarter
-            ),
-        );
+                $reportDefQuarter,
+            ],
+        ];
     }
 
     public static function groupDateDataProvider()
@@ -261,70 +261,70 @@ class Bug62783Test extends TestCase
         $reportDefQuarter = Bug62783Test::$reportDef;
 
         $reportDefYear['group_defs'] = $reportDefYear['summary_columns'] =
-            array(
-                array(
+            [
+                [
                     'name' => 'date_closed',
                     'column_function' => 'fiscalYear',
                     'qualifier' => 'fiscalYear',
                     'table_key' => 'self',
-                ),
-            );
+                ],
+            ];
 
         $reportDefQuarter['group_defs'] = $reportDefQuarter['summary_columns'] =
-            array(
-                array(
+            [
+                [
                     'name' => 'date_closed',
                     'column_function' => 'fiscalQuarter',
                     'qualifier' => 'fiscalQuarter',
                     'table_key' => 'self',
-                ),
-            );
+                ],
+            ];
 
-        return array(
-            array(
+        return [
+            [
                 '2013-05-05',
                 'America/Los_Angeles',
                 '2013',
-                $reportDefYear
-            ),
-            array(
+                $reportDefYear,
+            ],
+            [
                 '2013-05-05',
                 'UTC',
                 '2013',
-                $reportDefYear
-            ),
-            array(
+                $reportDefYear,
+            ],
+            [
                 '2013-05-05',
                 'Europe/Helsinki',
                 '2013',
-                $reportDefYear
-            ),
-            array(
+                $reportDefYear,
+            ],
+            [
                 '2013-05-05',
                 'America/Los_Angeles',
                 'Q1 2013',
-                $reportDefQuarter
-            ),
-            array(
+                $reportDefQuarter,
+            ],
+            [
                 '2013-01-05',
                 'UTC',
                 'Q1 2013',
-                $reportDefQuarter
-            ),
-            array(
+                $reportDefQuarter,
+            ],
+            [
                 '2013-01-05',
                 'Europe/Helsinki',
                 'Q1 2013',
-                $reportDefQuarter
-            ),
-        );
+                $reportDefQuarter,
+            ],
+        ];
     }
 
     public static function filterDataProvider()
     {
         $db = DBManagerFactory::getInstance();
-        return array(
-            array(
+        return [
+            [
                 'quarter',
                 'datetime',
                 'SugarWidgetFielddatetime62783Test',
@@ -334,9 +334,9 @@ class Bug62783Test extends TestCase
                 '+3 month',
                 ">= {$db->convert($db->quoted('2013-04-01 07:00:00'), 'datetime')}",
                 "<= {$db->convert($db->quoted('2013-07-01 06:59:59'), 'datetime')}",
-                'America/Los_Angeles'
-            ),
-            array(
+                'America/Los_Angeles',
+            ],
+            [
                 'year',
                 'datetime',
                 'SugarWidgetFielddatetime62783Test',
@@ -346,9 +346,9 @@ class Bug62783Test extends TestCase
                 '+2 year',
                 ">= {$db->convert($db->quoted('2013-12-31 22:00:00'), 'datetime')}",
                 "<= {$db->convert($db->quoted('2014-12-31 21:59:59'), 'datetime')}",
-                'Europe/Helsinki'
-            ),
-            array(
+                'Europe/Helsinki',
+            ],
+            [
                 'quarter',
                 'date',
                 'SugarWidgetFielddate62783Test',
@@ -358,9 +358,9 @@ class Bug62783Test extends TestCase
                 '+3 month',
                 ">= {$db->convert($db->quoted('2013-04-01'), 'date')}",
                 "<= {$db->convert($db->quoted('2013-06-30'), 'date')}",
-                'America/Los_Angeles'
-            ),
-            array(
+                'America/Los_Angeles',
+            ],
+            [
                 'year',
                 'date',
                 'SugarWidgetFielddate62783Test',
@@ -370,9 +370,9 @@ class Bug62783Test extends TestCase
                 '+2 year',
                 ">= {$db->convert($db->quoted('2014-01-01'), 'date')}",
                 "<= {$db->convert($db->quoted('2014-12-31'), 'date')}",
-                'Europe/Helsinki'
-            ),
-            array(
+                'Europe/Helsinki',
+            ],
+            [
                 'quarter',
                 'datetime',
                 'SugarWidgetFielddatetime62783Test',
@@ -382,9 +382,9 @@ class Bug62783Test extends TestCase
                 '',
                 ">= {$db->convert($db->quoted('2013-01-01 00:00:00'), 'datetime')}",
                 "<= {$db->convert($db->quoted('2013-03-31 23:59:59'), 'datetime')}",
-                'UTC'
-            ),
-            array(
+                'UTC',
+            ],
+            [
                 'year',
                 'datetime',
                 'SugarWidgetFielddatetime62783Test',
@@ -394,9 +394,9 @@ class Bug62783Test extends TestCase
                 '+2 year',
                 ">= {$db->convert($db->quoted('2014-01-01 00:00:00'), 'datetime')}",
                 "<= {$db->convert($db->quoted('2014-12-31 23:59:59'), 'datetime')}",
-                'UTC'
-            ),
-            array(
+                'UTC',
+            ],
+            [
                 'quarter',
                 'datetime',
                 'SugarWidgetFielddatetime62783Test',
@@ -406,9 +406,9 @@ class Bug62783Test extends TestCase
                 '+3 month',
                 ">= {$db->convert($db->quoted('2013-05-01 07:00:00'), 'datetime')}",
                 "<= {$db->convert($db->quoted('2013-08-01 06:59:59'), 'datetime')}",
-                'America/Los_Angeles'
-            ),
-            array(
+                'America/Los_Angeles',
+            ],
+            [
                 'year',
                 'datetime',
                 'SugarWidgetFielddatetime62783Test',
@@ -418,9 +418,9 @@ class Bug62783Test extends TestCase
                 '+2 year',
                 ">= {$db->convert($db->quoted('2014-04-30 21:00:00'), 'datetime')}",
                 "<= {$db->convert($db->quoted('2015-04-30 20:59:59'), 'datetime')}",
-                'Europe/Helsinki'
-            ),
-            array(
+                'Europe/Helsinki',
+            ],
+            [
                 'quarter',
                 'date',
                 'SugarWidgetFielddate62783Test',
@@ -430,9 +430,9 @@ class Bug62783Test extends TestCase
                 '+3 month',
                 ">= {$db->convert($db->quoted('2013-05-01'), 'date')}",
                 "<= {$db->convert($db->quoted('2013-07-31'), 'date')}",
-                'America/Los_Angeles'
-            ),
-            array(
+                'America/Los_Angeles',
+            ],
+            [
                 'year',
                 'date',
                 'SugarWidgetFielddate62783Test',
@@ -442,9 +442,9 @@ class Bug62783Test extends TestCase
                 '+2 year',
                 ">= {$db->convert($db->quoted('2014-05-01'), 'date')}",
                 "<= {$db->convert($db->quoted('2015-04-30'), 'date')}",
-                'Europe/Helsinki'
-            ),
-            array(
+                'Europe/Helsinki',
+            ],
+            [
                 'quarter',
                 'datetime',
                 'SugarWidgetFielddatetime62783Test',
@@ -454,9 +454,9 @@ class Bug62783Test extends TestCase
                 '',
                 ">= {$db->convert($db->quoted('2013-02-01 00:00:00'), 'datetime')}",
                 "<= {$db->convert($db->quoted('2013-04-30 23:59:59'), 'datetime')}",
-                'UTC'
-            ),
-            array(
+                'UTC',
+            ],
+            [
                 'year',
                 'datetime',
                 'SugarWidgetFielddatetime62783Test',
@@ -466,9 +466,9 @@ class Bug62783Test extends TestCase
                 '+2 year',
                 ">= {$db->convert($db->quoted('2014-05-01 00:00:00'), 'datetime')}",
                 "<= {$db->convert($db->quoted('2015-04-30 23:59:59'), 'datetime')}",
-                'UTC'
-            ),
-        );
+                'UTC',
+            ],
+        ];
     }
 }
 

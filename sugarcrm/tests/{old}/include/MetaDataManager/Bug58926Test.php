@@ -13,7 +13,7 @@
 use PHPUnit\Framework\TestCase;
 
 /**
- * Bug 58926 
+ * Bug 58926
  */
 class Bug58926Test extends TestCase
 {
@@ -35,19 +35,19 @@ class Bug58926Test extends TestCase
      */
     public function testAppStringsWithSpecialChars()
     {
-        $result = array(
-                'app_list_strings' => array(
-                        'moduleList' => array(
+        $result = [
+                'app_list_strings' => [
+                        'moduleList' => [
                                 'Leads' => "Lead's Are Special",
-                            ),
-                        'moduleListSingular' => array(
+                            ],
+                        'moduleListSingular' => [
                                 'Leads' => "Leads' Are Special",
-                            ),
-                    ),
-                'app_strings' => array(
+                            ],
+                    ],
+                'app_strings' => [
                         'LBL_NEXT' => "Next's Are the worst",
-                    ),
-            );
+                    ],
+            ];
 
         $mm = new MetaDataManagerBug58926();
         

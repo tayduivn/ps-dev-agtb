@@ -41,20 +41,25 @@ class EmailRelationshipsTest extends TestCase
 
     public function testContact()
     {
-        $cont = SugarTestContactUtilities::createContact('',
-            array("email" => "testcontact@test.com"));
+        $cont = SugarTestContactUtilities::createContact(
+            '',
+            ["email" => "testcontact@test.com"]
+        );
         // test direct link
-        $email1 = SugarTestEmailUtilities::createEmail('',
-            array("parent_id" => $cont->id, "parent_type" => 'Contacts',
-                'from_addr' => "unit@test.com", "name" => "Test email 1")
+        $email1 = SugarTestEmailUtilities::createEmail(
+            '',
+            ["parent_id" => $cont->id, "parent_type" => 'Contacts',
+                'from_addr' => "unit@test.com", "name" => "Test email 1"]
         );
         // test link by email
-        $email2 = SugarTestEmailUtilities::createEmail('',
-            array('from_addr' => "testcontact@test.com", "name" => "Test email 2")
+        $email2 = SugarTestEmailUtilities::createEmail(
+            '',
+            ['from_addr' => "testcontact@test.com", "name" => "Test email 2"]
         );
-        $email3 = SugarTestEmailUtilities::createEmail('',
-            array('from_addr' => "unit@test.com",
-                "to_addrs" => "unit@test.com,testcontact@test.com", "name" => "Test email 3")
+        $email3 = SugarTestEmailUtilities::createEmail(
+            '',
+            ['from_addr' => "unit@test.com",
+                "to_addrs" => "unit@test.com,testcontact@test.com", "name" => "Test email 3"]
         );
 
         $newcont = $cont->getCleanCopy();
@@ -72,29 +77,35 @@ class EmailRelationshipsTest extends TestCase
 
     public function testAccount()
     {
-        $acct = SugarTestAccountUtilities::createAccount('', array("email" => "testacct@test.com"));
-        $cont = SugarTestContactUtilities::createContact('',
-            array("email" => "testcontact@test.com", "account_id" => $acct->id));
+        $acct = SugarTestAccountUtilities::createAccount('', ["email" => "testacct@test.com"]);
+        $cont = SugarTestContactUtilities::createContact(
+            '',
+            ["email" => "testcontact@test.com", "account_id" => $acct->id]
+        );
         $acct->load_relationship("contacts");
         $acct->contacts->add($cont);
         // test direct link
-        $email1 = SugarTestEmailUtilities::createEmail('',
-            array("parent_id" => $acct->id, "parent_type" => 'Accounts',
-                'from_addr' => "unit@test.com", "name" => "Test email 1")
+        $email1 = SugarTestEmailUtilities::createEmail(
+            '',
+            ["parent_id" => $acct->id, "parent_type" => 'Accounts',
+                'from_addr' => "unit@test.com", "name" => "Test email 1"]
         );
         // test link by email
-        $email2 = SugarTestEmailUtilities::createEmail('',
-            array('from_addr' => "testacct@test.com", "name" => "Test email 2")
+        $email2 = SugarTestEmailUtilities::createEmail(
+            '',
+            ['from_addr' => "testacct@test.com", "name" => "Test email 2"]
         );
         // test link direct by contact
-        $email3 = SugarTestEmailUtilities::createEmail('',
-            array("parent_id" => $cont->id, "parent_type" => 'Contacts',
-                'from_addr' => "unit@test.com", "name" => "Test email 3")
+        $email3 = SugarTestEmailUtilities::createEmail(
+            '',
+            ["parent_id" => $cont->id, "parent_type" => 'Contacts',
+                'from_addr' => "unit@test.com", "name" => "Test email 3"]
         );
         // test link by contact email
-        $email4 = SugarTestEmailUtilities::createEmail('',
-            array('from_addr' => "unit@test.com",
-                "to_addrs" => "unit@test.com,testcontact@test.com", "name" => "Test email 4")
+        $email4 = SugarTestEmailUtilities::createEmail(
+            '',
+            ['from_addr' => "unit@test.com",
+                "to_addrs" => "unit@test.com,testcontact@test.com", "name" => "Test email 4"]
         );
 
         $newacc = $acct->getCleanCopy();
@@ -116,36 +127,43 @@ class EmailRelationshipsTest extends TestCase
     {
         $case = SugarTestCaseUtilities::createCase();
         $case->retrieve($case->id);
-        $cont = SugarTestContactUtilities::createContact('',
-            array("email" => "testcontact@test.com"));
+        $cont = SugarTestContactUtilities::createContact(
+            '',
+            ["email" => "testcontact@test.com"]
+        );
         $case->load_relationship("contacts");
         $case->contacts->add($cont);
         // test direct link
-        $email1 = SugarTestEmailUtilities::createEmail('',
-            array("parent_id" => $case->id, "parent_type" => 'Cases',
-                'from_addr' => "unit@test.com", "name" => "Test email 1")
+        $email1 = SugarTestEmailUtilities::createEmail(
+            '',
+            ["parent_id" => $case->id, "parent_type" => 'Cases',
+                'from_addr' => "unit@test.com", "name" => "Test email 1"]
         );
         // test link direct by contact
-        $email2 = SugarTestEmailUtilities::createEmail('',
-            array("parent_id" => $cont->id, "parent_type" => 'Contacts',
-                'from_addr' => "unit@test.com", "name" => "Test email 2")
+        $email2 = SugarTestEmailUtilities::createEmail(
+            '',
+            ["parent_id" => $cont->id, "parent_type" => 'Contacts',
+                'from_addr' => "unit@test.com", "name" => "Test email 2"]
         );
         // test link direct by contact - right subject
-        $email3 = SugarTestEmailUtilities::createEmail('',
-            array("parent_id" => $cont->id, "parent_type" => 'Contacts',
+        $email3 = SugarTestEmailUtilities::createEmail(
+            '',
+            ["parent_id" => $cont->id, "parent_type" => 'Contacts',
                 'from_addr' => "unit@test.com",
-                "name" => "[CASE=>{$case->case_number}] Test email 3")
+                "name" => "[CASE=>{$case->case_number}] Test email 3"]
         );
         // test link by contact email
-        $email4 = SugarTestEmailUtilities::createEmail('',
-            array('from_addr' => "unit@test.com",
-                "to_addrs" => "unit@test.com,testcontact@test.com", "name" => "Test email 4")
+        $email4 = SugarTestEmailUtilities::createEmail(
+            '',
+            ['from_addr' => "unit@test.com",
+                "to_addrs" => "unit@test.com,testcontact@test.com", "name" => "Test email 4"]
         );
         // test link by contact email - - right subject
-        $email5 = SugarTestEmailUtilities::createEmail('',
-            array('from_addr' => "unit@test.com",
+        $email5 = SugarTestEmailUtilities::createEmail(
+            '',
+            ['from_addr' => "unit@test.com",
                 "cc_addrs" => "unit@test.com,testcontact@test.com",
-                "name" => "Re: [CASE=>{$case->case_number}] Test email 5")
+                "name" => "Re: [CASE=>{$case->case_number}] Test email 5"]
         );
 
         $newcase = $case->getCleanCopy();
@@ -172,24 +190,29 @@ class EmailRelationshipsTest extends TestCase
         $acct = SugarTestAccountUtilities::createAccount();
         $opp = SugarTestOpportunityUtilities::createOpportunity('', $acct);
         $opp->retrieve($opp->id);
-        $cont = SugarTestContactUtilities::createContact('',
-            array("email" => "testcontact@test.com"));
+        $cont = SugarTestContactUtilities::createContact(
+            '',
+            ["email" => "testcontact@test.com"]
+        );
         $opp->load_relationship("contacts");
         $opp->contacts->add($cont);
         // test direct link
-        $email1 = SugarTestEmailUtilities::createEmail('',
-            array("parent_id" => $opp->id, "parent_type" => 'Opportunities',
-                'from_addr' => "unit@test.com", "name" => "Test email 1")
+        $email1 = SugarTestEmailUtilities::createEmail(
+            '',
+            ["parent_id" => $opp->id, "parent_type" => 'Opportunities',
+                'from_addr' => "unit@test.com", "name" => "Test email 1"]
         );
         // test link direct by contact
-        $email2 = SugarTestEmailUtilities::createEmail('',
-            array("parent_id" => $cont->id, "parent_type" => 'Contacts',
-                'from_addr' => "unit@test.com", "name" => "Test email 2")
+        $email2 = SugarTestEmailUtilities::createEmail(
+            '',
+            ["parent_id" => $cont->id, "parent_type" => 'Contacts',
+                'from_addr' => "unit@test.com", "name" => "Test email 2"]
         );
         // test link by contact email
-        $email3 = SugarTestEmailUtilities::createEmail('',
-            array('from_addr' => "unit@test.com",
-                "to_addrs" => "unit@test.com,testcontact@test.com", "name" => "Test email 4")
+        $email3 = SugarTestEmailUtilities::createEmail(
+            '',
+            ['from_addr' => "unit@test.com",
+                "to_addrs" => "unit@test.com,testcontact@test.com", "name" => "Test email 4"]
         );
 
         $newopp = $opp->getCleanCopy();

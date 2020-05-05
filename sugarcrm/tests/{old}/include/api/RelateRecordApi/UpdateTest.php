@@ -49,13 +49,13 @@ class RelateRecordApiUpdateTest extends TestCase
 
         $api = new RelateRecordApi();
         $service = SugarTestRestUtilities::getRestServiceMock();
-        $response = $api->updateRelatedLink($service, array(
+        $response = $api->updateRelatedLink($service, [
             'module' => $account->module_name,
             'record' => $account->id,
             'link_name' => 'contacts',
             'remote_id' => $contact->id,
             'assigned_user_id' => $this->user2->id,
-        ));
+        ]);
 
         $this->assertEquals($this->user2->name, $response['related_record']['assigned_user_name']);
     }

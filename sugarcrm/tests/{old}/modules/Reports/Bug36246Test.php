@@ -17,16 +17,16 @@ require_once "include/generic/SugarWidgets/SugarWidgetReportField.php";
 class Bug36246Test extends TestCase
 {
     public function testIfWidgetFieldUrlReturnsALink()
-	{
+    {
         $layoutManager = new LayoutManager();
         $fieldurl = $this->getMockBuilder('SugarWidgetFieldURL')
-            ->setConstructorArgs(array(&$layoutManager))
-            ->setMethods(array('_get_list_value'))
+            ->setConstructorArgs([&$layoutManager])
+            ->setMethods(['_get_list_value'])
             ->getMock();
         $fieldurl->expects($this->any())
             ->method('_get_list_value')
             ->will($this->returnValue('sugarcrm.com'));
-        $link = $fieldurl->displayList(array());
+        $link = $fieldurl->displayList([]);
         $this->assertMatchesRegularExpression("|<a([^>]*)href=\"sugarcrm.com\"([^>]*)>sugarcrm.com<\/a>|", $link, 'SugarWidgetFieldurl should return a link');
-	}
+    }
 }

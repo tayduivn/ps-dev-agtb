@@ -14,12 +14,12 @@ use PHPUnit\Framework\TestCase;
 
 class Bug61859_p2Test extends TestCase
 {
-    static private $module = 'Leads';
+    private static $module = 'Leads';
     private $object = 'Lead';
     private $relatedModule = 'Contacts';
 
-    static private $field;
-    static private $dynamicField;
+    private static $field;
+    private static $dynamicField;
 
     /**
      * @group 61859
@@ -71,8 +71,8 @@ class Bug61859_p2Test extends TestCase
     public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('app_list_strings');
-        SugarTestHelper::setUp('mod_strings', array(self::$module));
-        SugarTestHelper::setUp('mod_strings', array('ModuleBuilder'));
+        SugarTestHelper::setUp('mod_strings', [self::$module]);
+        SugarTestHelper::setUp('mod_strings', ['ModuleBuilder']);
 
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');

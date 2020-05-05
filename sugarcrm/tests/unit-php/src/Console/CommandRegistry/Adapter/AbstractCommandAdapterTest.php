@@ -28,7 +28,7 @@ class AbstractCommandAdapterTest extends TestCase
     {
         $command = new SymfonyCommandA('test');
         $adapter = $this->getMockBuilder('Sugarcrm\Sugarcrm\Console\CommandRegistry\Adapter\AbstractCommandAdapter')
-            ->setConstructorArgs(array($command))
+            ->setConstructorArgs([$command])
             ->getMockForAbstractClass();
 
         $this->assertSame($command, $adapter->getCommand());
@@ -41,7 +41,7 @@ class AbstractCommandAdapterTest extends TestCase
     {
         $command = new SymfonyCommandA('foobar');
         $adapter = $this->getMockBuilder('Sugarcrm\Sugarcrm\Console\CommandRegistry\Adapter\AbstractCommandAdapter')
-            ->setConstructorArgs(array($command))
+            ->setConstructorArgs([$command])
             ->getMockForAbstractClass();
 
         $this->assertEquals('foobar', $adapter->getName());

@@ -20,11 +20,11 @@ class FiltersTest extends TestCase
      *
      * @var array The list of generated files.
      */
-    public static $generatedOperatorsFile = array(
+    public static $generatedOperatorsFile = [
         'custom/clients/base/filters/operators/operators.php',
         'clients/latrop/filters/operators/operators.php',
-        'custom/clients/latrop/filters/operators/operators.php'
-    );
+        'custom/clients/latrop/filters/operators/operators.php',
+    ];
 
     public static function setUpBeforeClass() : void
     {

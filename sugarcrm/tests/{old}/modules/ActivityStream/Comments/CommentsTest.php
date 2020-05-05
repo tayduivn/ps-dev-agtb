@@ -77,10 +77,10 @@ class CommentsTest extends TestCase
         $comment = BeanFactory::newBean('Comments');
         $comment->data = '{}';
 
-        $activity = $this->createPartialMock('Activity', array('processTags'));
+        $activity = $this->createPartialMock('Activity', ['processTags']);
         $activity->expects($this->never())->method('processTags');
 
-        SugarTestReflection::callProtectedMethod($comment, 'processCommentTags', array($activity));
+        SugarTestReflection::callProtectedMethod($comment, 'processCommentTags', [$activity]);
     }
 
     /**
@@ -91,9 +91,9 @@ class CommentsTest extends TestCase
         $comment = BeanFactory::newBean('Comments');
         $comment->data = '{"tags":[{"module":"Foo","id":"123"}]}';
 
-        $activity = $this->createPartialMock('Activity', array('processTags'));
+        $activity = $this->createPartialMock('Activity', ['processTags']);
         $activity->expects($this->once())->method('processTags');
 
-        SugarTestReflection::callProtectedMethod($comment, 'processCommentTags', array($activity));
+        SugarTestReflection::callProtectedMethod($comment, 'processCommentTags', [$activity]);
     }
 }

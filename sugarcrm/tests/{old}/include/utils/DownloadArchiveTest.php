@@ -25,7 +25,7 @@ class DownloadArchiveTest extends TestCase
      *
      * @var array
      */
-    public $notes = array();
+    public $notes = [];
 
     protected function setUp() : void
     {
@@ -38,7 +38,7 @@ class DownloadArchiveTest extends TestCase
         // Notes cleanup
         if (count($this->notes)) {
             $download = new DownloadFile();
-            $noteIds = array();
+            $noteIds = [];
             foreach ($this->notes as $note) {
                 if (false !== $fileInfo = $download->getFileInfo($note, 'filename')) {
                     if (file_exists($fileInfo['path'])) {
@@ -50,7 +50,7 @@ class DownloadArchiveTest extends TestCase
             $noteIds = "('" . implode("','", $noteIds) . "')";
             $GLOBALS['db']->query("DELETE FROM notes WHERE id IN {$noteIds}");
         }
-        $this->notes = array();
+        $this->notes = [];
 
         SugarTestHelper::tearDown();
     }
@@ -62,33 +62,33 @@ class DownloadArchiveTest extends TestCase
      */
     public function dataProviderGetArchive()
     {
-        return array(
-            '4 files, force download, name: testarchive' => array(
+        return [
+            '4 files, force download, name: testarchive' => [
                 4,
                 'testarchive',
                 'testarchive.zip',
-            ),
-            '2 files, force download, name: someother.zip' => array(
+            ],
+            '2 files, force download, name: someother.zip' => [
                 2,
                 'someother.zip',
                 'someother.zip',
-            ),
-            '3 files, not force download, name: three.zip' => array(
+            ],
+            '3 files, not force download, name: three.zip' => [
                 3,
                 'three',
                 'three.zip',
-            ),
-            '4 files, force download, name:empty' => array(
+            ],
+            '4 files, force download, name:empty' => [
                 4,
                 '', // empty
                 'archive.zip',
-            ),
-            '5 files, not force download, name:empty' => array(
+            ],
+            '5 files, not force download, name:empty' => [
                 5,
                 '', // empty
                 'archive.zip',
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -104,7 +104,7 @@ class DownloadArchiveTest extends TestCase
         /* @var $sf SugarFieldFile */
         $sf = $sfh->getSugarField($def['type']);
 
-        $notes = array();
+        $notes = [];
 
         for ($i = 0; $i < $fileCounts; $i++) {
             $tmpFile = tempnam(sys_get_temp_dir(), 'DownloadArchiveTest' . $i);
@@ -113,15 +113,15 @@ class DownloadArchiveTest extends TestCase
             $note = BeanFactory::newBean('Notes');
             $note->name = 'DownloadArchiveTest' . uniqid();
 
-            $_FILES['uploadfile'] = array(
+            $_FILES['uploadfile'] = [
                 'name' => 'DownloadArchiveTest' . $i . '.txt',
                 'tmp_name' => $tmpFile,
                 'size' => filesize($tmpFile),
                 'error' => 0,
                 '_SUGAR_API_UPLOAD' => true,
-            );
+            ];
 
-            $sf->save($note, array(), 'filename', $def, 'DownloadArchiveTest_');
+            $sf->save($note, [], 'filename', $def, 'DownloadArchiveTest_');
 
             $this->notes[] = $note;
             $notes[] = $note;
@@ -129,7 +129,7 @@ class DownloadArchiveTest extends TestCase
 
         $unit = $this;
 
-        $downloadMock = $this->createPartialMock('DownloadFile', array('outputFile'));
+        $downloadMock = $this->createPartialMock('DownloadFile', ['outputFile']);
         $downloadMock->expects($this->once())->method('outputFile')
                      ->with(
                          $this->logicalAnd($this->isType('bool'), $this->isTrue()),
@@ -158,7 +158,7 @@ class DownloadArchiveTest extends TestCase
                             $zip->close();
 
                             $unit->assertEquals($fileCounts, $numFiles, 'Invalid file counts in archive');
-                      }));
+                     }));
 
         // get archived files
         $downloadMock->getArchive($notes, 'filename', $outputName);
@@ -169,8 +169,8 @@ class DownloadArchiveTest extends TestCase
      */
     public function testGetArchiveEmptyBeanList()
     {
-        $downloadMock = $this->createPartialMock('DownloadFile', array('outputFile'));
+        $downloadMock = $this->createPartialMock('DownloadFile', ['outputFile']);
         $this->expectExceptionMessage('Files could not be retrieved for this record');
-        $downloadMock->getArchive(array(), 'filename');
+        $downloadMock->getArchive([], 'filename');
     }
 }

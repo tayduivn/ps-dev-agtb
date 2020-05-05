@@ -23,98 +23,98 @@ class ForecastCommitStageExpressionTest extends TestCase
 
     protected function tearDown() : void
     {
-        Forecast::$settings = array();
+        Forecast::$settings = [];
     }
 
     public static function evaluateDataProvider()
     {
-        $binary_values = array(
+        $binary_values = [
             'include' =>
-                array(
+                [
                     'min' => 70,
                     'max' => 100,
-                ),
+                ],
             'exclude' =>
-                array(
+                [
                     'min' => 0,
                     'max' => 69,
-                )
-        );
+                ],
+        ];
 
-        $buckets_values = array(
+        $buckets_values = [
             'include' =>
-                array(
+                [
                     'min' => 85,
                     'max' => 100,
-                ),
+                ],
             'upside' =>
-                array(
+                [
                     'min' => 70,
                     'max' => 84,
-                ),
+                ],
             'exclude' =>
-                array(
+                [
                     'min' => 0,
                     'max' => 69,
-                ),
-        );
+                ],
+        ];
 
-        $custom_values = array(
+        $custom_values = [
             'include' =>
-                array(
+                [
                     'min' => 85,
                     'max' => 100,
-                ),
+                ],
             'cstm_value' =>
-                array(
+                [
                     'min' => 70,
                     'max' => 84,
-                ),
+                ],
             'exclude' =>
-                array(
+                [
                     'min' => 0,
                     'max' => 69,
-                ),
-        );
+                ],
+        ];
 
-        return array(
-            array(
+        return [
+            [
                 50,
                 'exclude',
                 'show_binary',
-                $binary_values
-            ),
-            array(
+                $binary_values,
+            ],
+            [
                 72,
                 'include',
                 'show_binary',
-                $binary_values
-            ),
-            array(
+                $binary_values,
+            ],
+            [
                 85,
                 'include',
                 'show_buckets',
-                $buckets_values
-            ),
-            array(
+                $buckets_values,
+            ],
+            [
                 72,
                 'upside',
                 'show_buckets',
-                $buckets_values
-            ),
-            array(
+                $buckets_values,
+            ],
+            [
                 50,
                 'exclude',
                 'show_buckets',
-                $buckets_values
-            ),
-            array(
+                $buckets_values,
+            ],
+            [
                 74,
                 'cstm_value',
                 'show_custom_buckets',
-                $custom_values
-            ),
-        );
+                $custom_values,
+            ],
+        ];
     }
 
 
@@ -128,11 +128,11 @@ class ForecastCommitStageExpressionTest extends TestCase
      */
     public function testEvaluate($probability, $expected, $range_type, array $ranges)
     {
-        Forecast::$settings = array(
+        Forecast::$settings = [
             'is_setup' => 1,
             'forecast_ranges' => $range_type,
             "${range_type}_ranges" => $ranges,
-        );
+        ];
 
         $expr = "forecastCommitStage($probability)";
         $result = Parser::evaluate($expr)->evaluate();

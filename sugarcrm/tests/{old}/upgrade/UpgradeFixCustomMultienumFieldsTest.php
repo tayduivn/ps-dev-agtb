@@ -33,7 +33,7 @@ class UpgradeFixCustomMultienumFieldsTest extends UpgradeTestCase
     {
         parent::setUp();
 
-        SugarTestHelper::setUp('current_user', array(true, 1));
+        SugarTestHelper::setUp('current_user', [true, 1]);
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
 
@@ -49,16 +49,16 @@ EOQ;
         $this->upgrader->setVersions(6.7, 'ent', 7.5, 'ent');
 
         $this->script = $this->getMockBuilder('SugarUpgradeFixCustomMultienumFields')
-            ->setConstructorArgs(array($this->upgrader))
-            ->setMethods(array('getCustomFieldFiles'))
+            ->setConstructorArgs([$this->upgrader])
+            ->setMethods(['getCustomFieldFiles'])
             ->getMock();
 
         $this->script->expects($this->any())->method('getCustomFieldFiles')
             ->will(
                 $this->returnValue(
-                    array(
+                    [
                         $this->metaFolder . $this->metaFileName,
-                    )
+                    ]
                 )
             );
     }
@@ -74,7 +74,7 @@ EOQ;
     {
         $this->script->run();
 
-        $dictionary = array();
+        $dictionary = [];
         require $this->metaFolder . $this->metaFileName;
 
         $this->assertTrue($dictionary['Accounts']['fields']['test_multienum_field']['isMultiSelect']);

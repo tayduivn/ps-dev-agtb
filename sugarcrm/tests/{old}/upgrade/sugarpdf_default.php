@@ -13,7 +13,7 @@
  * This array define the default value to use for the sugarpdf settings.
  * The order is DB (user or system) -> custom sugarpdf_default -> OOB sugarpdf_default
  */
-$sugarpdf_default = array(
+$sugarpdf_default = [
     "K_PATH_MAIN"=>"include/tcpdf/",
     "K_PATH_URL"=>"customized/include/tcpdf/",
     "K_PATH_FONTS"=>"include/tcpdf/fonts/",
@@ -24,4 +24,4 @@ $sugarpdf_default = array(
     "K_PATH_IMAGES"=>"themes/default/images/",
     "K_BLANK_IMAGE"=>"themes/default/images/_blank.png",
     "PDF_PAGE_FORMAT"=>"LETTER",
-);
+];

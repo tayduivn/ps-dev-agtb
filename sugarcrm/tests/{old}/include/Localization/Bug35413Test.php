@@ -30,32 +30,32 @@ class Bug35413Test extends TestCase
 
     function stringsProvider()
     {
-        return array(
-            array(
+        return [
+            [
                 '7cvU3iDI5d7L7O3TIOUg1cfU7N0g3c4g5ezR1NPd5eHU3csg287a',
                 'يثشق بهقثىيس ه صاشىف فخ هىرشسفهلشفث غخع',
-                'windows-1256'
-            ),
-            array(
+                'windows-1256',
+            ],
+            [
                 '7cjT7cjU0+3IwcbExNE=',
                 'يبسيبشسيبءئؤؤر',
-                'windows-1256'
-            ),
-            array( // params related to 45059 ticket
+                'windows-1256',
+            ],
+            [ // params related to 45059 ticket
                 'GyRCJWYhPCU2TD4bKEI=',
                 'ユーザ名',
-                'ISO-2022-JP'
-            ),
-            array (
+                'ISO-2022-JP',
+            ],
+             [
                 'RnJvbTog6eXh7CD55eTt',
                 'From: יובל שוהם',
-                'ISO-8859-8'
-            ),
-            array (
+                'ISO-8859-8',
+            ],
+             [
                 'srvSqtaxytPEsMn6yMu1xNHbvqYK',
                 "不要直视陌生人的眼睛\n",
-                'GB2312'
-            ),
+                'GB2312',
+            ],
             //Not a good test case
             /*
             array ( // what happens when we post a dummy charset?
@@ -64,7 +64,7 @@ class Bug35413Test extends TestCase
                 " "
             )
             */
-        );
+        ];
     }
 
     /**

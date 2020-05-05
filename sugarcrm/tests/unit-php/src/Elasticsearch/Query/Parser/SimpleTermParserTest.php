@@ -46,244 +46,244 @@ class SimpleTermParserTest extends TestCase
 
     public function providerParseTest()
     {
-        return array(
+        return [
             // empty term always returns BasicTerm with 'OR'
-            array('', 'OR', true, array('OR' => array(' '))),
-            array('', '&', true, array('OR' => array(' '))),
+            ['', 'OR', true, ['OR' => [' ']]],
+            ['', '&', true, ['OR' => [' ']]],
             // to treat '-' as char if it is NOT leading by space
-            array('a b-c d', 'OR', true, array('OR' => array('a b-c d'))),
+            ['a b-c d', 'OR', true, ['OR' => ['a b-c d']]],
             // leading 'NOT' operator
-            array('-a b c', 'OR', true, array('OR' => array(array('NOT' => array('a')), 'b c'))),
+            ['-a b c', 'OR', true, ['OR' => [['NOT' => ['a']], 'b c']]],
             // combined cases without bracket
-            array('a b OR c', 'OR', true, array('OR' => array('a b c'))),
-            array('a b|c', 'OR', true, array('OR' => array('a b c'))),
-            array('a b AND c', '&', true, array('AND' => array('a', 'b', 'c'))),
-            array('a b&c', '&', true, array('AND' => array('a', 'b', 'c'))),
-            array(
+            ['a b OR c', 'OR', true, ['OR' => ['a b c']]],
+            ['a b|c', 'OR', true, ['OR' => ['a b c']]],
+            ['a b AND c', '&', true, ['AND' => ['a', 'b', 'c']]],
+            ['a b&c', '&', true, ['AND' => ['a', 'b', 'c']]],
+            [
                 'a b NOT c',
                 'OR',
                 true,
-                array(
-                    'OR' => array(array('AND' => array(array('AND' => array('b')), array('NOT' => array('c')))), 'a'),
-                ),
-            ),
-            array(
+                [
+                    'OR' => [['AND' => [['AND' => ['b']], ['NOT' => ['c']]]], 'a'],
+                ],
+            ],
+            [
                 'a b -c',
                 'OR',
                 true,
-                array(
-                    'OR' => array(array('AND' => array(array('AND' => array('b')), array('NOT' => array('c')))), 'a'),
-                ),
-            ),
-            array(
+                [
+                    'OR' => [['AND' => [['AND' => ['b']], ['NOT' => ['c']]]], 'a'],
+                ],
+            ],
+            [
                 'a b OR c d',
                 '&',
                 true,
-                array('OR' => array(array('AND' => array('a', 'b')), array('AND' => array('c', 'd')))),
-            ),
-            array(
+                ['OR' => [['AND' => ['a', 'b']], ['AND' => ['c', 'd']]]],
+            ],
+            [
                 'a AND b OR c & d',
                 '|',
                 true,
-                array('OR' => array(array('AND' => array('a', 'b')), array('AND' => array('c', 'd')))),
-            ),
-            array(
+                ['OR' => [['AND' => ['a', 'b']], ['AND' => ['c', 'd']]]],
+            ],
+            [
                 'a b NOT c',
                 'AND',
                 true,
-                array('AND' => array(array('AND' => array('a', 'b')), array('NOT' => array('c')))),
-            ),
+                ['AND' => [['AND' => ['a', 'b']], ['NOT' => ['c']]]],
+            ],
             // expression with brackets
-            array('(a b OR c)', 'OR', true, array('OR' => array('a b c'))),
-            array(
+            ['(a b OR c)', 'OR', true, ['OR' => ['a b c']]],
+            [
                 'a (b OR c) AND d',
                 'OR',
                 true,
-                array('OR' => array(array('AND' => array(array('OR' => array('b c')), 'd')), 'a')),
-            ),
-            array(
+                ['OR' => [['AND' => [['OR' => ['b c']], 'd']], 'a']],
+            ],
+            [
                 'a (b OR c) AND d',
                 '&',
                 true,
-                array('AND' => array('a', array('OR' => array('b c')), 'd')),
-            ),
-            array(
+                ['AND' => ['a', ['OR' => ['b c']], 'd']],
+            ],
+            [
                 '(a OR b) AND (c OR d)',
                 'OR',
                 true,
-                array('AND' => array(array('OR' => array('a b')), array('OR' => array('c d')))),
-            ),
+                ['AND' => [['OR' => ['a b']], ['OR' => ['c d']]]],
+            ],
             // nested structure
-            array(
+            [
                 'a OR (b AND (c OR d))',
                 'OR',
                 true,
-                array('OR' => array(array('AND' => array('b', array('OR' => array('c d')))), 'a')),
-            ),
+                ['OR' => [['AND' => ['b', ['OR' => ['c d']]]], 'a']],
+            ],
             // Not terms as a group
-            array(
+            [
                 'a -(b c)',
                 'OR',
                 true,
-                array(
-                    'AND' => array(
-                        array('AND' => array('a')),
-                        array('NOT' => array(array('OR' => array('b c')))),
-                    ),
-                ),
-            ),
+                [
+                    'AND' => [
+                        ['AND' => ['a']],
+                        ['NOT' => [['OR' => ['b c']]]],
+                    ],
+                ],
+            ],
             // unbalanced braces, make a best guess
-            array(
+            [
                 'a OR (b AND (c OR d)',
                 'OR',
                 true,
-                array('OR' => array(
-                    array('OR' => array('a')),
-                    array('AND' => array('b', array('OR' => array('c d'))))),
-                ),
-            ),
+                ['OR' => [
+                    ['OR' => ['a']],
+                    ['AND' => ['b', ['OR' => ['c d']]]]],
+                ],
+            ],
             // wrong parentheses
-            array('a (b', 'OR', true, array('OR' => array(array('OR' => array('a')), 'b'))),
-            array('a b) c', 'OR', true, array('OR' => array(array('OR' => array('a b')), 'c'))),
-            array('a b &) c', 'OR', true, array('OR' => array(array('OR' => array('a b')), 'c'))),
-            array('Johnson &) johnson', 'AND', true, array('AND' => array(array('OR' => array('Johnson')), 'johnson'))),
-            array('Johnson & (johnson', 'AND', true, array('AND' => array(array('OR' => array('Johnson')), 'johnson'))),
+            ['a (b', 'OR', true, ['OR' => [['OR' => ['a']], 'b']]],
+            ['a b) c', 'OR', true, ['OR' => [['OR' => ['a b']], 'c']]],
+            ['a b &) c', 'OR', true, ['OR' => [['OR' => ['a b']], 'c']]],
+            ['Johnson &) johnson', 'AND', true, ['AND' => [['OR' => ['Johnson']], 'johnson']]],
+            ['Johnson & (johnson', 'AND', true, ['AND' => [['OR' => ['Johnson']], 'johnson']]],
             // end with operators
-            array('a b c & AND OR | ', 'OR', true, array('OR' => array('a b c'))),
+            ['a b c & AND OR | ', 'OR', true, ['OR' => ['a b c']]],
             // duplicated operators
-            array('a b OR AND OR c &', 'OR', true, array('OR' => array('a b c'))),
+            ['a b OR AND OR c &', 'OR', true, ['OR' => ['a b c']]],
             // phone number
-            array('(128) 123-7944 text', 'OR', true, array('OR' => array(array('OR' => array('128')), '123-7944 text'))),
-            array('(128) 123-7944 text', 'AND', true, array('AND' => array(array('OR' => array('128')), '123-7944', 'text'))),
+            ['(128) 123-7944 text', 'OR', true, ['OR' => [['OR' => ['128']], '123-7944 text']]],
+            ['(128) 123-7944 text', 'AND', true, ['AND' => [['OR' => ['128']], '123-7944', 'text']]],
             // using default operator
-            array('(128) 123-7944 text', 'nt', true, array('AND' => array(array('OR' => array('128')), '123-7944', 'text'))),
-            array(
+            ['(128) 123-7944 text', 'nt', true, ['AND' => [['OR' => ['128']], '123-7944', 'text']]],
+            [
                 'gmail.com (-kate OR -smith OR dean)',
                 '&',
                 true,
-                array('AND' =>
-                    array(
+                ['AND' =>
+                    [
                         'gmail.com',
-                        array(
-                            'OR' => array(
-                                array('NOT' => array('kate')),
-                                array('NOT' => array('smith')),
+                        [
+                            'OR' => [
+                                ['NOT' => ['kate']],
+                                ['NOT' => ['smith']],
                                 'dean',
-                            ),
-                        ),
-                    ),
-                ),
-            ),
+                            ],
+                        ],
+                    ],
+                ],
+            ],
             // test lower case 'and', 'or' and 'or', which are not operators
-            array('a and b or c not d', 'OR', true, array('OR' => array('a and b or c not d'))),
-            array('a Or AND and', '&', true, array('AND' => array('a', 'Or', 'and'))),
+            ['a and b or c not d', 'OR', true, ['OR' => ['a and b or c not d']]],
+            ['a Or AND and', '&', true, ['AND' => ['a', 'Or', 'and']]],
             // terms with spaces
-            array('a   b   AND    and', '&', true, array('AND' => array('a', 'b', 'and'))),
-            array('        ', '&', true, array('OR' => array(' '))),
-            array('   AND     ', '&', true, array('OR' => array(' '))),
+            ['a   b   AND    and', '&', true, ['AND' => ['a', 'b', 'and']]],
+            ['        ', '&', true, ['OR' => [' ']]],
+            ['   AND     ', '&', true, ['OR' => [' ']]],
             // large terms, 'AND'
-            array(
+            [
                 '111111111111111222222222222222333333333 AND 4444444444444445555555555555551',
                 'AND',
                 true,
-                array(
-                    'AND' => array(
-                        array(
-                            'AND' => array(
+                [
+                    'AND' => [
+                        [
+                            'AND' => [
                                 '111111111111111',
                                 '222222222222222',
                                 '333333333',
-                            ),
-                        ),
-                        array(
-                            'AND' => array(
+                            ],
+                        ],
+                        [
+                            'AND' => [
                                 '444444444444444',
                                 '555555555555555',
                                 '1',
-                            ),
-                        ),
-                    ),
-                ),
-            ),
+                            ],
+                        ],
+                    ],
+                ],
+            ],
             // large terms, 'OR'
-            array(
+            [
                 '111111111111111222222222222222333333333 444',
                 'OR',
                 true,
-                array(
-                    'OR' => array(
-                        array(
-                            'AND' => array(
+                [
+                    'OR' => [
+                        [
+                            'AND' => [
                                 '111111111111111',
                                 '222222222222222',
                                 '333333333',
-                            ),
-                        ),
+                            ],
+                        ],
                         '444',
-                    ),
-                ),
-            ),
-            array(
+                    ],
+                ],
+            ],
+            [
                 '111111111111111222222222222222333333333 NOT 444',
                 'NOT',
                 true,
-                array(
-                    'AND' => array(
-                        array(
-                            'AND' => array(
+                [
+                    'AND' => [
+                        [
+                            'AND' => [
                                 '111111111111111',
                                 '222222222222222',
                                 '333333333',
-                            ),
-                        ),
-                        array(
-                            'NOT' => array('444'),
-                        ),
-                    ),
-                ),
-            ),
+                            ],
+                        ],
+                        [
+                            'NOT' => ['444'],
+                        ],
+                    ],
+                ],
+            ],
 
             // don't use shortcut
             // empty term always returns BasicTerm with 'OR'
-            array('', 'OR', false, array('OR' => array(' '))),
-            array('', '&', false, array('OR' => array(' '))),
+            ['', 'OR', false, ['OR' => [' ']]],
+            ['', '&', false, ['OR' => [' ']]],
             // to treat '-' as char if it is NOT leading by space
-            array('a b-c d', 'OR', false, array('OR' => array('a b-c d'))),
+            ['a b-c d', 'OR', false, ['OR' => ['a b-c d']]],
             // leading 'NOT' operator
-            array('-a b c', 'OR', false, array('OR' => array('-a b c'))),
+            ['-a b c', 'OR', false, ['OR' => ['-a b c']]],
             // combined cases without bracket
-            array('a b OR c', 'OR', false, array('OR' => array('a b c'))),
-            array('a b|c', 'OR', false, array('OR' => array('a b|c'))),
-            array('a b AND c', '&', false, array('AND' => array('a', 'b', 'c'))),
-            array('a b&c', '&', false, array('AND' => array('a', 'b&c'))),
-            array(
+            ['a b OR c', 'OR', false, ['OR' => ['a b c']]],
+            ['a b|c', 'OR', false, ['OR' => ['a b|c']]],
+            ['a b AND c', '&', false, ['AND' => ['a', 'b', 'c']]],
+            ['a b&c', '&', false, ['AND' => ['a', 'b&c']]],
+            [
                 'a b NOT c',
                 'OR',
                 false,
-                array(
-                    'OR' => array(array('AND' => array(array('AND' => array('b')), array('NOT' => array('c')))), 'a'),
-                ),
-            ),
-            array(
+                [
+                    'OR' => [['AND' => [['AND' => ['b']], ['NOT' => ['c']]]], 'a'],
+                ],
+            ],
+            [
                 'a b -c',
                 'OR',
                 false,
-                array(
-                    'OR' => array('a b -c'),
-                ),
-            ),
-            array(
+                [
+                    'OR' => ['a b -c'],
+                ],
+            ],
+            [
                 'a b OR c d',
                 '&',
                 false,
-                array('OR' => array(array('AND' => array('a', 'b')), array('AND' => array('c', 'd')))),
-            ),
+                ['OR' => [['AND' => ['a', 'b']], ['AND' => ['c', 'd']]]],
+            ],
             // special chars
-            array('a !@#$ d', 'OR', true, array('OR' => array('a d'))),
-            array('a !@#$ d', 'AND', true, array('AND' => array('a', 'd'))),
-            array('a !@#$ d', 'OR', false, array('OR' => array('a d'))),
-            array('a !@#$ d', 'AND', false, array('AND' => array('a', 'd'))),
-            array("a ' d", 'AND', true, array('AND' => array('a', 'd'))),
-        );
+            ['a !@#$ d', 'OR', true, ['OR' => ['a d']]],
+            ['a !@#$ d', 'AND', true, ['AND' => ['a', 'd']]],
+            ['a !@#$ d', 'OR', false, ['OR' => ['a d']]],
+            ['a !@#$ d', 'AND', false, ['AND' => ['a', 'd']]],
+            ["a ' d", 'AND', true, ['AND' => ['a', 'd']]],
+        ];
     }
 }

@@ -12,11 +12,11 @@
  */
 
 /**
- * Bug 55655 
- * 
+ * Bug 55655
+ *
  * Portal user could not add an attachment to an existing note. This tests
  * being able to add an attachment to an existing note but not being able
- * to edit that attachment. 
+ * to edit that attachment.
  */
 class RestBug55655Test extends RestTestPortalBase
 {
@@ -46,11 +46,11 @@ class RestBug55655Test extends RestTestPortalBase
     {
         $bugReply = $this->_restCall(
             "Bugs/",
-            json_encode(array(
-                'name' => 'UNIT TEST CREATE BUG PORTAL USER', 
-                'portal_viewable' => '1', 
-                'team_id' => '1'
-            )),
+            json_encode([
+                'name' => 'UNIT TEST CREATE BUG PORTAL USER',
+                'portal_viewable' => '1',
+                'team_id' => '1',
+            ]),
             'POST'
         );
         
@@ -59,17 +59,17 @@ class RestBug55655Test extends RestTestPortalBase
         // Create a note on the bug without an attachment
         $bugNoteReply = $this->_restCall(
             "Bugs/{$this->bugId}/link/notes",
-            json_encode(array(
+            json_encode([
                 'name' => 'UNIT TEST BUG NOTE PORTAL USER',
-                'portal_flag' => '1'
-            )),
+                'portal_flag' => '1',
+            ]),
             'POST'
         );
         
         $this->noteId = $bugNoteReply['reply']['related_record']['id'];
                 
         // Create the attachment
-        $post = array('filename' => '@' . $this->_testfile1);
+        $post = ['filename' => '@' . $this->_testfile1];
         $restReply = $this->_restCall('Notes/' . $this->noteId . '/file/filename', $post);
         $this->assertArrayHasKey('filename', $restReply['reply'], 'Reply is missing file name key');
         $this->assertNotEmpty($restReply['reply']['filename']['name'], 'File name returned empty');
@@ -81,7 +81,7 @@ class RestBug55655Test extends RestTestPortalBase
         $this->assertEquals($restReply['reply']['filename']['name'], $fetch['reply']['filename']);
         
         // Now edit this attachment
-        $params = array('filename' => $this->_testfile2, 'type' => 'text/plain');
+        $params = ['filename' => $this->_testfile2, 'type' => 'text/plain'];
         $restReply = $this->_restCallFilePut('Notes/' . $this->noteId . '/file/filename', $params);
         // This should fail like a savage
         $this->assertArrayHasKey('error', $restReply['reply'], 'There is no error reply in the response');

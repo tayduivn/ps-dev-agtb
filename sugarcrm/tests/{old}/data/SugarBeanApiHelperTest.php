@@ -23,7 +23,7 @@ class SugarBeanApiHelperTest extends TestCase
     public $oldDate;
     public $oldTime;
 
-    public $roles = array();
+    public $roles = [];
     public $serviceMock;
 
     protected function setUp() : void
@@ -41,17 +41,17 @@ class SugarBeanApiHelperTest extends TestCase
         $mock->favorite = false;
         $mock->module_name = 'Test';
         $mock->module_dir = 'Test';
-        $mock->field_defs = array(
-                'testInt' => array(
+        $mock->field_defs = [
+                'testInt' => [
                     'type' => 'int',
-                ),
-                'testDecimal' => array(
-                    'type' => 'decimal'
-                ),
-                'testBool' => array(
-                    'type' => 'bool'
-                ),                
-            );
+                ],
+                'testDecimal' => [
+                    'type' => 'decimal',
+                ],
+                'testBool' => [
+                    'type' => 'bool',
+                ],
+            ];
         $this->bean = $mock;
         $this->serviceMock = SugarTestRestUtilities::getRestServiceMock();
         $this->beanApiHelper = new SugarBeanApiHelper($this->serviceMock);
@@ -81,24 +81,24 @@ class SugarBeanApiHelperTest extends TestCase
 
     public function providerFunction()
     {
-        return array(
-            array('testInt', '', null, 'Bug 57507 regression: expected formatted value for a null int type to be NULL'),
-            array('testDecimal', '', null, 'Bug 59692 regression: expected formatted value for a null decimal type to be NULL'),
-            array('testInt', '1', 1, "Int type conversion of '1' failed"),
-            array('testDecimal', '1', 1.0, "Decimal type conversion of '1' failed"),
-            array('testInt', 1.0, 1, "Int type conversion of 1.0 failed"),
-            array('testDecimal', 1, 1.0, "Decimal type conversion of 1 failed"),
-            array('testInt', '0', 0, "Int type conversion of '0' failed"),
-            array('testDecimal', '0', 0.0, "Decimal type conversion of '0' failed"),
-            array('testInt', 0.0, 0, "Int type conversion of 0.0 failed"),
-            array('testDecimal', 0, 0.0, "Decimal type conversion of 0 failed"),
-            array('testBool', 1, true, "1 should be true"),
-            array('testBool', 0, false, "0 should be false"),
-            array('testBool', true, true, "true should be true"),
-            array('testBool', false, false, "false should be false"),
-            array('testBool', 'true',true , "true string should be true"),
-            array('testBool', 'false', false, "false string should be false"),
-        );
+        return [
+            ['testInt', '', null, 'Bug 57507 regression: expected formatted value for a null int type to be NULL'],
+            ['testDecimal', '', null, 'Bug 59692 regression: expected formatted value for a null decimal type to be NULL'],
+            ['testInt', '1', 1, "Int type conversion of '1' failed"],
+            ['testDecimal', '1', 1.0, "Decimal type conversion of '1' failed"],
+            ['testInt', 1.0, 1, "Int type conversion of 1.0 failed"],
+            ['testDecimal', 1, 1.0, "Decimal type conversion of 1 failed"],
+            ['testInt', '0', 0, "Int type conversion of '0' failed"],
+            ['testDecimal', '0', 0.0, "Decimal type conversion of '0' failed"],
+            ['testInt', 0.0, 0, "Int type conversion of 0.0 failed"],
+            ['testDecimal', 0, 0.0, "Decimal type conversion of 0 failed"],
+            ['testBool', 1, true, "1 should be true"],
+            ['testBool', 0, false, "0 should be false"],
+            ['testBool', true, true, "true should be true"],
+            ['testBool', false, false, "false should be false"],
+            ['testBool', 'true',true , "true string should be true"],
+            ['testBool', 'false', false, "false string should be false"],
+        ];
     }
 
     public function testFormatForApiDeleted()
@@ -109,26 +109,26 @@ class SugarBeanApiHelperTest extends TestCase
         $bean->name = "Mr. Toad";
         $bean->assigned_user_id = "seed_toad_id";
         
-        $data = $this->beanApiHelper->formatForApi($bean,array('name','deleted'));
+        $data = $this->beanApiHelper->formatForApi($bean, ['name','deleted']);
 
-        $this->assertArrayNotHasKey('name',$data,"Did not strip name from a deleted record");
-        $this->assertArrayNotHasKey('assigned_user_id',$data,"Did not strip assigned_user_id from a deleted record when we didn't request it");
-        $this->assertArrayHasKey('deleted',$data,"Did not add the deleted flag to a deleted record");
+        $this->assertArrayNotHasKey('name', $data, "Did not strip name from a deleted record");
+        $this->assertArrayNotHasKey('assigned_user_id', $data, "Did not strip assigned_user_id from a deleted record when we didn't request it");
+        $this->assertArrayHasKey('deleted', $data, "Did not add the deleted flag to a deleted record");
 
 
         $this->serviceMock->user->is_admin = true;
-        $data = $this->beanApiHelper->formatForApi($bean,array('name','deleted','assigned_user_id'));
+        $data = $this->beanApiHelper->formatForApi($bean, ['name','deleted','assigned_user_id']);
 
-        $this->assertArrayNotHasKey('name',$data,"Did not strip name from a deleted record");
-        $this->assertArrayHasKey('assigned_user_id',$data,"Did not fill in assigned_user_id from a deleted record when we did request it");
-        $this->assertArrayHasKey('deleted',$data,"Did not add the deleted flag to a deleted record");
+        $this->assertArrayNotHasKey('name', $data, "Did not strip name from a deleted record");
+        $this->assertArrayHasKey('assigned_user_id', $data, "Did not fill in assigned_user_id from a deleted record when we did request it");
+        $this->assertArrayHasKey('deleted', $data, "Did not add the deleted flag to a deleted record");
 
         $this->serviceMock->user->is_admin = false;
-        $data = $this->beanApiHelper->formatForApi($bean,array('name','deleted','assigned_user_id'));
+        $data = $this->beanApiHelper->formatForApi($bean, ['name','deleted','assigned_user_id']);
 
-        $this->assertArrayNotHasKey('name',$data,"Did not strip name from a deleted record");
-        $this->assertArrayNotHasKey('assigned_user_id',$data,"Did not strip the assigned_user_id from a deleted record when requested by a non-admin");
-        $this->assertArrayHasKey('deleted',$data,"Did not add the deleted flag to a deleted record");
+        $this->assertArrayNotHasKey('name', $data, "Did not strip name from a deleted record");
+        $this->assertArrayNotHasKey('assigned_user_id', $data, "Did not strip the assigned_user_id from a deleted record when requested by a non-admin");
+        $this->assertArrayHasKey('deleted', $data, "Did not add the deleted flag to a deleted record");
     }
 
     public function testJsonFieldSave()
@@ -136,9 +136,9 @@ class SugarBeanApiHelperTest extends TestCase
         $userPrefs = BeanFactory::newBean('UserPreferences');
         $userPrefs->field_defs['contents']['custom_type'] = 'json';
 
-        $submittedData = array(
-            'contents' => array('abcd' => '1234', 'cdef' => 5678),
-        );
+        $submittedData = [
+            'contents' => ['abcd' => '1234', 'cdef' => 5678],
+        ];
 
         $this->beanApiHelper->populateFromApi($userPrefs, $submittedData);
 
@@ -148,7 +148,7 @@ class SugarBeanApiHelperTest extends TestCase
     public function testListWithOwnerAccess()
     {
         // create role that is all fields read only
-        $role = SugarTestACLUtilities::createRole('SUGARBEANAPIHELPER - UNIT TEST ' . create_guid(), array('Meetings'), array('access', 'list', 'view'), array('view'));
+        $role = SugarTestACLUtilities::createRole('SUGARBEANAPIHELPER - UNIT TEST ' . create_guid(), ['Meetings'], ['access', 'list', 'view'], ['view']);
 
         SugarTestACLUtilities::setupUser($role);
 
@@ -166,7 +166,7 @@ class SugarBeanApiHelperTest extends TestCase
     public function testListCertainFieldsNoAccess()
     {
         // create role that is all fields read only
-        $this->roles[] = $role = SugarTestACLUtilities::createRole('SUGARBEANAPIHELPER - UNIT TEST ' . create_guid(), array('Accounts'), array('access', 'list', 'view'), array('view'));
+        $this->roles[] = $role = SugarTestACLUtilities::createRole('SUGARBEANAPIHELPER - UNIT TEST ' . create_guid(), ['Accounts'], ['access', 'list', 'view'], ['view']);
 
         if (!($GLOBALS['current_user']->check_role_membership($role->name))) {
             $GLOBALS['current_user']->load_relationship('aclroles');
@@ -182,7 +182,7 @@ class SugarBeanApiHelperTest extends TestCase
 
         unset($_SESSION['ACL']);
 
-        ACLField::loadUserFields('Accounts', 'Account', $GLOBALS['current_user']->id, true );
+        ACLField::loadUserFields('Accounts', 'Account', $GLOBALS['current_user']->id, true);
 
         // create a meeting not owned by current user
         $account = BeanFactory::newBean('Accounts');
@@ -190,7 +190,7 @@ class SugarBeanApiHelperTest extends TestCase
         $account->assigned_user_id = 1;
         $account->id = create_guid();
 
-        $data = $this->beanApiHelper->formatForApi($account, array('id', 'name', 'website'), array('action' => 'view'));
+        $data = $this->beanApiHelper->formatForApi($account, ['id', 'name', 'website'], ['action' => 'view']);
 
         $this->assertNotEmpty($data['id'], "no id was passed back");
     }
@@ -206,7 +206,7 @@ class SugarBeanApiHelperTest extends TestCase
         $this->assertEquals($this->bean->assigned_user_id, 'not_me');
     }
 
-    protected function createRole($name, $allowedModules, $allowedActions, $ownerActions = array())
+    protected function createRole($name, $allowedModules, $allowedActions, $ownerActions = [])
     {
         $role = new ACLRole();
         $role->name = $name;

@@ -46,7 +46,7 @@ class Bug45966 extends TestCase
         $this->form = new SearchForm($this->seed, $this->module, $this->action);
         $this->form->setup($searchdefs, $searchFields, 'include/SearchForm/tpls/SearchFormGeneric.tpl', "advanced_search", $listViewDefs);
 
-        $this->array = array(
+        $this->array = [
             'module'=>$this->module,
             'action'=>$this->action,
             'searchFormTab'=>'advanced_search',
@@ -55,7 +55,7 @@ class Bug45966 extends TestCase
             'range_date_entered_advanced' => '',
             'start_range_date_entered_advanced' => '',
             'end_range_date_entered_advanced' => '',
-        );
+        ];
         $GLOBALS['current_user']->setPreference('datef', 'm/d/Y');
         $GLOBALS['current_user']->setPreference('timef', 'H:i:s');
         $GLOBALS['current_user']->setPreference('timezone', $this->timezone);
@@ -72,7 +72,8 @@ class Bug45966 extends TestCase
         SugarTestHelper::tearDown();
     }
 
-    public function testSearchDateEqualsAdjustsForTimeZone() {
+    public function testSearchDateEqualsAdjustsForTimeZone()
+    {
         global $timedate, $current_user;
 
         $testDate = '12/31/2011';
@@ -85,7 +86,8 @@ class Bug45966 extends TestCase
         $this->assertResultQuery($expected, '=', $testDate);
     }
 
-    public function testSearchNotOnDateAdjustsForTimeZone() {
+    public function testSearchNotOnDateAdjustsForTimeZone()
+    {
         global $timedate, $current_user;
 
         $testDate = '12/31/2011';
@@ -99,7 +101,8 @@ class Bug45966 extends TestCase
         $this->assertResultQuery($expected, 'not_equal', $testDate);
     }
 
-    public function testSearchAfterDateAdjustsForTimeZone() {
+    public function testSearchAfterDateAdjustsForTimeZone()
+    {
         global $timedate, $current_user;
 
         $testDate = '12/31/2011';
@@ -111,7 +114,8 @@ class Bug45966 extends TestCase
         $this->assertResultQuery($expected, 'greater_than', $testDate);
     }
 
-    public function testSearchBeforeDateAdjustsForTimeZone() {
+    public function testSearchBeforeDateAdjustsForTimeZone()
+    {
         global $timedate, $current_user;
 
         $testDate = '01/01/2011';
@@ -141,7 +145,7 @@ class Bug45966 extends TestCase
         $today = $timedate->getNow(true);
         $endDate = $timedate->getNow(true);
 
-        if(strpos($adjust, '-') === 0) {
+        if (strpos($adjust, '-') === 0) {
             $today = $today->get($adjust);
         } else {
             $endDate = $endDate->get($adjust);
@@ -166,27 +170,28 @@ class Bug45966 extends TestCase
 
     public static function dataProviderSearchAdjustsForTimeZone()
     {
-        return array(
-            array(
+        return [
+            [
                 'last_7_days',
-                '-6 days'
-            ),
-            array(
+                '-6 days',
+            ],
+            [
                 'next_7_days',
-                '+6 days'
-            ),
-            array(
+                '+6 days',
+            ],
+            [
                 'last_30_days',
-                '-29 days'
-            ),
-            array(
+                '-29 days',
+            ],
+            [
                 'next_30_days',
-                '+29 days'
-            ),
-        );
+                '+29 days',
+            ],
+        ];
     }
 
-    public function testSearchLastMonthAdjustsForTimeZone() {
+    public function testSearchLastMonthAdjustsForTimeZone()
+    {
         global $timedate, $current_user;
 
         $testDate = 'last_month';
@@ -208,7 +213,8 @@ class Bug45966 extends TestCase
         $this->assertResultQuery($expected, $testDate, "[{$testDate}]");
     }
 
-    public function testSearchThisMonthAdjustsForTimeZone() {
+    public function testSearchThisMonthAdjustsForTimeZone()
+    {
         global $timedate, $current_user;
 
         $testDate = 'this_month';
@@ -226,7 +232,8 @@ class Bug45966 extends TestCase
         $this->assertResultQuery($expected, $testDate, "[{$testDate}]");
     }
 
-    public function testSearchNextMonthAdjustsForTimeZone() {
+    public function testSearchNextMonthAdjustsForTimeZone()
+    {
         global $timedate, $current_user;
 
         $testDate = 'next_month';
@@ -245,7 +252,8 @@ class Bug45966 extends TestCase
         $this->assertResultQuery($expected, $testDate, "[{$testDate}]");
     }
 
-    public function testSearchLastYearAdjustsForTimeZone() {
+    public function testSearchLastYearAdjustsForTimeZone()
+    {
         global $timedate, $current_user;
 
         $testDate = 'last_year';
@@ -261,7 +269,8 @@ class Bug45966 extends TestCase
         $this->assertResultQuery($expected, $testDate, "[{$testDate}]");
     }
 
-    public function testSearchThisYearAdjustsForTimeZone() {
+    public function testSearchThisYearAdjustsForTimeZone()
+    {
         global $timedate, $current_user;
 
         $testDate = 'this_year';
@@ -276,7 +285,8 @@ class Bug45966 extends TestCase
         $this->assertResultQuery($expected, $testDate, "[{$testDate}]");
     }
 
-    public function testSearchNextYearAdjustsForTimeZone() {
+    public function testSearchNextYearAdjustsForTimeZone()
+    {
         global $timedate, $current_user;
 
         $testDate = 'next_year';
@@ -292,7 +302,8 @@ class Bug45966 extends TestCase
         $this->assertResultQuery($expected, $testDate, "[{$testDate}]");
     }
 
-    public function testSearchDateIsBetweenAdjustsForTimeZone() {
+    public function testSearchDateIsBetweenAdjustsForTimeZone()
+    {
         global $timedate, $current_user;
 
         $testStartDate = '01/01/2011';

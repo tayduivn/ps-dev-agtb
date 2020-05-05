@@ -12,11 +12,13 @@
 
 class SugarTestACLUtilities
 {
-    public static $_createdRoles = array();
-    public static $_modules = array();
+    public static $_createdRoles = [];
+    public static $_modules = [];
     public static $objects = [];
 
-    private function __construct() {}
+    private function __construct()
+    {
+    }
 
     /**
      * Create a Role for use in a Unit Test.
@@ -144,7 +146,7 @@ class SugarTestACLUtilities
             BeanFactory::newBean('ACLFields')->clearACLCache();
         }
 
-        foreach (self::$_modules AS $module) {
+        foreach (self::$_modules as $module) {
             $object = self::$objects[$module] ?? $module;
             ACLField::loadUserFields($module, $object, $current_user->id, true);
         }
@@ -160,12 +162,12 @@ class SugarTestACLUtilities
      */
     public static function tearDown()
     {
-        foreach (self::$_createdRoles AS $role) {
+        foreach (self::$_createdRoles as $role) {
             $role->mark_deleted($role->id);
             $role->mark_relationships_deleted($role->id);
             $GLOBALS['db']->query("DELETE FROM acl_fields WHERE role_id = '{$role->id}'");
         }
-        self::$_createdRoles = array();
+        self::$_createdRoles = [];
         BeanFactory::newBean('ACLFields')->clearACLCache();
         SugarACL::resetACLs();
     }

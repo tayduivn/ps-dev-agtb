@@ -14,16 +14,17 @@
 
 class SugarTestProductTypesUtilities
 {
-    protected static $_createdTypes = array();
+    protected static $_createdTypes = [];
 
-    private function __construct() {}
-
-    public static function createType($id = '', $name = "") 
+    private function __construct()
     {
-    	$type = new ProductType();
+    }
+
+    public static function createType($id = '', $name = "")
+    {
+        $type = new ProductType();
         $type->name = $name;
-        if(!empty($id))
-        {
+        if (!empty($id)) {
             $type->new_with_id = true;
             $type->id = $id;
         }
@@ -32,19 +33,18 @@ class SugarTestProductTypesUtilities
         return $type;
     }
 
-    public static function removeAllCreatedtypes() 
+    public static function removeAllCreatedtypes()
     {
         $type_ids = self::getCreatedTypeIds();
         $GLOBALS['db']->query('DELETE FROM product_types WHERE id IN (\'' . implode("', '", $type_ids) . '\')');
     }
         
-    public static function getCreatedTypeIds() 
+    public static function getCreatedTypeIds()
     {
-        $type_ids = array();
+        $type_ids = [];
         foreach (self::$_createdTypes as $type) {
             $type_ids[] = $type->id;
         }
         return $type_ids;
     }
 }
-?>

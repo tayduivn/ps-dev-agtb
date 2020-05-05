@@ -23,10 +23,10 @@ class ReportTest extends TestCase
 {
     public function providerTestGetRecordWhere()
     {
-        return array(
-            array('getRecordCount'),
-            array('getRecordIds'),
-        );
+        return [
+            ['getRecordCount'],
+            ['getRecordIds'],
+        ];
     }
 
     /**
@@ -59,36 +59,36 @@ class ReportTest extends TestCase
      */
     public function providerTestFixGroupLabels()
     {
-        return array(
-            array(
-                array(
-                    'group_defs' => array(0 => array('name' => 'phone_alternate', 'label' => 'Alternate Phone')),
-                    'summary_columns' => array(0 => array('name' => 'phone_alternate', 'label' => 'XYZ')),
-                ),
+        return [
+            [
+                [
+                    'group_defs' => [0 => ['name' => 'phone_alternate', 'label' => 'Alternate Phone']],
+                    'summary_columns' => [0 => ['name' => 'phone_alternate', 'label' => 'XYZ']],
+                ],
                 'XYZ',
-            ),
-            array(
-                array(
-                    'group_defs' => array(0 => array('name' => 'phone_alternate', 'label' => 'Alternate Phone', 'qualifier' => 'a')),
-                    'summary_columns' => array(0 => array('name' => 'phone_alternate', 'label' => 'XYZ')),
-                ),
+            ],
+            [
+                [
+                    'group_defs' => [0 => ['name' => 'phone_alternate', 'label' => 'Alternate Phone', 'qualifier' => 'a']],
+                    'summary_columns' => [0 => ['name' => 'phone_alternate', 'label' => 'XYZ']],
+                ],
                 'Alternate Phone',
-            ),
-            array(
-                array(
-                    'group_defs' => array(0 => array('name' => 'phone_alternate', 'label' => 'Alternate Phone', 'qualifier' => 'a')),
-                    'summary_columns' => array(0 => array('name' => 'phone_alternate', 'label' => 'XYZ', 'qualifier' => 'a')),
-                ),
+            ],
+            [
+                [
+                    'group_defs' => [0 => ['name' => 'phone_alternate', 'label' => 'Alternate Phone', 'qualifier' => 'a']],
+                    'summary_columns' => [0 => ['name' => 'phone_alternate', 'label' => 'XYZ', 'qualifier' => 'a']],
+                ],
                 'XYZ',
-            ),
-            array(
-                array(
-                    'group_defs' => array(0 => array('name' => 'phone_alternate', 'label' => 'Alternate Phone', 'qualifier' => 'a')),
-                    'summary_columns' => array(0 => array('name' => 'phone_alternate', 'label' => 'XYZ', 'qualifier' => 'b')),
-                ),
+            ],
+            [
+                [
+                    'group_defs' => [0 => ['name' => 'phone_alternate', 'label' => 'Alternate Phone', 'qualifier' => 'a']],
+                    'summary_columns' => [0 => ['name' => 'phone_alternate', 'label' => 'XYZ', 'qualifier' => 'b']],
+                ],
                 'Alternate Phone',
-            ),
-        );
+            ],
+        ];
     }
 
     /**

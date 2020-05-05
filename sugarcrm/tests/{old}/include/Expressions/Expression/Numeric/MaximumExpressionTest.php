@@ -25,9 +25,9 @@ class MaximumExpressionTest extends TestCase
 
     public function dataProviderTestEvaluate()
     {
-        return array(
-            array('max(-4, 2, 3)', '3'),
-            array('max("-4", "2", "3")', '3')
-        );
+        return [
+            ['max(-4, 2, 3)', '3'],
+            ['max("-4", "2", "3")', '3'],
+        ];
     }
 }

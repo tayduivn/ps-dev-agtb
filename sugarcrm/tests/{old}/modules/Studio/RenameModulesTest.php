@@ -23,11 +23,9 @@ class RenameModulesTest extends TestCase
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
-        $mods = array('Accounts', 'Contacts', 'Campaigns');
-        foreach($mods as $mod)
-        {
-            if(file_exists("custom/modules/{$mod}/language/en_us.lang.php"))
-            {
+        $mods = ['Accounts', 'Contacts', 'Campaigns'];
+        foreach ($mods as $mod) {
+            if (file_exists("custom/modules/{$mod}/language/en_us.lang.php")) {
                 $this->language_contents[$mod] = file_get_contents("custom/modules/{$mod}/language/en_us.lang.php");
                 unlink("custom/modules/{$mod}/language/en_us.lang.php");
             }
@@ -42,20 +40,18 @@ class RenameModulesTest extends TestCase
     protected function tearDown() : void
     {
         $this->removeCustomAppStrings();
-        $this->removeModuleStrings(array('Accounts'));
+        $this->removeModuleStrings(['Accounts']);
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
 
         SugarCache::$isCacheReset = false;
 
-        if(!empty($this->language_contents))
-        {
-            foreach($this->language_contents as $key=>$contents)
-            {
+        if (!empty($this->language_contents)) {
+            foreach ($this->language_contents as $key => $contents) {
                 file_put_contents("custom/modules/{$key}/language/en_us.lang.php", $contents);
             }
         }
 
-        if(!empty($this->global_language_contents)) {
+        if (!empty($this->global_language_contents)) {
             file_put_contents(
                 "custom/include/language/" . $this->language . ".lang.php",
                 $this->global_language_contents
@@ -67,25 +63,22 @@ class RenameModulesTest extends TestCase
     public function testGetRenamedModules()
     {
         $rm = new RenameModules();
-        $this->assertEquals(0, count($rm->getRenamedModules()) );
+        $this->assertEquals(0, count($rm->getRenamedModules()));
     }
 
     private function removeCustomAppStrings()
     {
         $fileName = 'custom/include/language/' . $this->language . '.lang.php';
-        if( file_exists($fileName) )
-        {
+        if (file_exists($fileName)) {
             @unlink($fileName);
         }
     }
 
     private function removeModuleStrings($modules)
     {
-        foreach($modules as $module => $v)
-        {
+        foreach ($modules as $module => $v) {
             $fileName = 'custom/modules/' . $module . '/language/' . $this->language . '.lang.php';
-            if( file_exists($fileName) )
-            {
+            if (file_exists($fileName)) {
                 @unlink($fileName);
             }
         }
@@ -98,38 +91,38 @@ class RenameModulesTest extends TestCase
      */
     public function fieldNameProvider()
     {
-        return array(
+        return [
             // Test empty label.
-            array('', array('prev_singular' => 'Account', 'prev_plural' => 'Accounts', 'singular' => 'Client', 'plural' => 'Clients'), '', ''),
+            ['', ['prev_singular' => 'Account', 'prev_plural' => 'Accounts', 'singular' => 'Client', 'plural' => 'Clients'], '', ''],
             // Test whole words.
-            array('Account', array('prev_singular' => 'Account', 'prev_plural' => 'Accounts', 'singular' => 'Client', 'plural' => 'Clients'), 'Client', 'Client'),
-            array('Accounts', array('prev_singular' => 'Account', 'prev_plural' => 'Accounts', 'singular' => 'Client', 'plural' => 'Clients'), 'Clients', 'Clients'),
+            ['Account', ['prev_singular' => 'Account', 'prev_plural' => 'Accounts', 'singular' => 'Client', 'plural' => 'Clients'], 'Client', 'Client'],
+            ['Accounts', ['prev_singular' => 'Account', 'prev_plural' => 'Accounts', 'singular' => 'Client', 'plural' => 'Clients'], 'Clients', 'Clients'],
             // Test empty field values.
-            array('Contacts', array('prev_singular' => '', 'prev_plural' => '', 'singular' => '', 'plural' => ''), 'Contacts', 'Contacts'),
-            array('Contact', array('prev_singular' => 'Contact', 'prev_plural' => '', 'singular' => 'Client', 'plural' => 'Clients'), 'Contact', 'Contact'),
-            array('Contacts', array('prev_singular' => '', 'prev_plural' => 'Contacts', 'singular' => 'Client', 'plural' => 'Clients'), 'Contacts', 'Contacts'),
-            array('Contact', array('prev_singular' => 'Contact', 'prev_plural' => 'Contacts', 'singular' => '', 'plural' => 'Clients'), 'Contact', 'Contact'),
-            array('Contacts', array('prev_singular' => 'Contact', 'prev_plural' => 'Contacts', 'singular' => 'Client', 'plural' => ''), 'Contacts', 'Contacts'),
-            array('Contacts', array('prev_singular' => 'Contact', 'prev_plural' => 'Contacts', 'singular' => '', 'plural' => 'Clients'), 'Contacts', 'Clients'),
-            array('Contact', array('prev_singular' => 'Contact', 'prev_plural' => 'Contacts', 'singular' => 'Client', 'plural' => ''), 'Client', 'Contact'),
+            ['Contacts', ['prev_singular' => '', 'prev_plural' => '', 'singular' => '', 'plural' => ''], 'Contacts', 'Contacts'],
+            ['Contact', ['prev_singular' => 'Contact', 'prev_plural' => '', 'singular' => 'Client', 'plural' => 'Clients'], 'Contact', 'Contact'],
+            ['Contacts', ['prev_singular' => '', 'prev_plural' => 'Contacts', 'singular' => 'Client', 'plural' => 'Clients'], 'Contacts', 'Contacts'],
+            ['Contact', ['prev_singular' => 'Contact', 'prev_plural' => 'Contacts', 'singular' => '', 'plural' => 'Clients'], 'Contact', 'Contact'],
+            ['Contacts', ['prev_singular' => 'Contact', 'prev_plural' => 'Contacts', 'singular' => 'Client', 'plural' => ''], 'Contacts', 'Contacts'],
+            ['Contacts', ['prev_singular' => 'Contact', 'prev_plural' => 'Contacts', 'singular' => '', 'plural' => 'Clients'], 'Contacts', 'Clients'],
+            ['Contact', ['prev_singular' => 'Contact', 'prev_plural' => 'Contacts', 'singular' => 'Client', 'plural' => ''], 'Client', 'Contact'],
             // Test multiple words in labels.
-            array('My Account:', array('prev_singular' => 'Account', 'prev_plural' => 'Accounts', 'singular' => 'Client', 'plural' => 'Clients'), 'My Client:', 'My Client:'),
-            array('View Accounts Module', array('prev_singular' => 'Account', 'prev_plural' => 'Accounts', 'singular' => 'Client', 'plural' => 'Clients'), 'View Clients Module', 'View Clients Module'),
+            ['My Account:', ['prev_singular' => 'Account', 'prev_plural' => 'Accounts', 'singular' => 'Client', 'plural' => 'Clients'], 'My Client:', 'My Client:'],
+            ['View Accounts Module', ['prev_singular' => 'Account', 'prev_plural' => 'Accounts', 'singular' => 'Client', 'plural' => 'Clients'], 'View Clients Module', 'View Clients Module'],
             // Test labels without previous values.
-            array('View Module', array('prev_singular' => 'Account', 'prev_plural' => 'Accounts', 'singular' => 'Client', 'plural' => 'Clients'), 'View Module', 'View Module'),
-            array('Settings', array('prev_singular' => 'Account', 'prev_plural' => 'Accounts', 'singular' => 'Client', 'plural' => 'Clients'), 'Settings', 'Settings'),
+            ['View Module', ['prev_singular' => 'Account', 'prev_plural' => 'Accounts', 'singular' => 'Client', 'plural' => 'Clients'], 'View Module', 'View Module'],
+            ['Settings', ['prev_singular' => 'Account', 'prev_plural' => 'Accounts', 'singular' => 'Client', 'plural' => 'Clients'], 'Settings', 'Settings'],
             // Test multiple replacements.
-            array('Account Accounts', array('prev_singular' => 'Account', 'prev_plural' => 'Accounts', 'singular' => 'Client', 'plural' => 'Clients'), 'Client Clients', 'Client Clients'),
-            array('Account Accounts Account', array('prev_singular' => 'Account', 'prev_plural' => 'Accounts', 'singular' => 'Client', 'plural' => 'Clients'), 'Client Clients Client', 'Client Clients Client'),
+            ['Account Accounts', ['prev_singular' => 'Account', 'prev_plural' => 'Accounts', 'singular' => 'Client', 'plural' => 'Clients'], 'Client Clients', 'Client Clients'],
+            ['Account Accounts Account', ['prev_singular' => 'Account', 'prev_plural' => 'Accounts', 'singular' => 'Client', 'plural' => 'Clients'], 'Client Clients Client', 'Client Clients Client'],
             // Test labels with same previous values.
-            array('Account', array('prev_singular' => 'Account', 'prev_plural' => 'Account', 'singular' => 'Client', 'plural' => 'Clients'), 'Client', 'Clients'),
-            array('Account Accounts', array('prev_singular' => 'Account', 'prev_plural' => 'Account', 'singular' => 'Client', 'plural' => 'Clients'), 'Client Accounts', 'Clients Accounts'),
+            ['Account', ['prev_singular' => 'Account', 'prev_plural' => 'Account', 'singular' => 'Client', 'plural' => 'Clients'], 'Client', 'Clients'],
+            ['Account Accounts', ['prev_singular' => 'Account', 'prev_plural' => 'Account', 'singular' => 'Client', 'plural' => 'Clients'], 'Client Accounts', 'Clients Accounts'],
             // Test fields with special characters.
-            array('Account', array('prev_singular' => 'Account', 'prev_plural' => 'Account', 'singular' => '<script>alert("hello");</script>', 'plural' => ''), 'alert(&quot;hello&quot;);', 'Account'),
-            array('Account', array('prev_singular' => 'Account', 'prev_plural' => 'Account', 'singular' => '', 'plural' => '<script>alert("hello");</script>'), 'Account', 'alert(&quot;hello&quot;);'),
+            ['Account', ['prev_singular' => 'Account', 'prev_plural' => 'Account', 'singular' => '<script>alert("hello");</script>', 'plural' => ''], 'alert(&quot;hello&quot;);', 'Account'],
+            ['Account', ['prev_singular' => 'Account', 'prev_plural' => 'Account', 'singular' => '', 'plural' => '<script>alert("hello");</script>'], 'Account', 'alert(&quot;hello&quot;);'],
             // Test fields with only spaces.
-            array('Account', array('prev_singular' => 'Account', 'prev_plural' => 'Account', 'singular' => ' ', 'plural' => ' '), 'Account', 'Account')
-        );
+            ['Account', ['prev_singular' => 'Account', 'prev_plural' => 'Account', 'singular' => ' ', 'plural' => ' '], 'Account', 'Account'],
+        ];
     }
 
     /**

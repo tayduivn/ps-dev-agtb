@@ -17,18 +17,17 @@
  * Contributor(s): ______________________________________..
  ********************************************************************************/
  
-$viewdefs['Notes']['EditView'] = array(
-	'templateMeta' => array(
-                            'maxColumns' => '1', 
-                            'widths' => array(
-								array('label' => '10', 'field' => '30'), 
-                            ),                                  
-                           ),
-    'panels' => array(
-        array(array('name'=>'name', 'displayParams'=>array('required'=>true,'wireless_edit_only'=>true,)),),		
-		array('assigned_user_name'),
-		array('team_name'),
-		array('description'),
-	),
-);
-?>
+$viewdefs['Notes']['EditView'] = [
+    'templateMeta' => [
+                            'maxColumns' => '1',
+                            'widths' => [
+                                ['label' => '10', 'field' => '30'],
+                            ],
+                           ],
+    'panels' => [
+        [['name'=>'name', 'displayParams'=>['required'=>true,'wireless_edit_only'=>true,]],],
+        ['assigned_user_name'],
+        ['team_name'],
+        ['description'],
+    ],
+];

@@ -24,18 +24,17 @@ class SugarACLTest extends TestCase
      */
     public function aclProvider()
     {
-        return array(
-            array(1, array('SugarACLStatic'), array('SugarACLStatic' => true)), //ACL
-            array(0, array(), array('SugarACLStatic' => false)),
-            array(0, array(), array()), //nothing
-        );
+        return [
+            [1, ['SugarACLStatic'], ['SugarACLStatic' => true]], //ACL
+            [0, [], ['SugarACLStatic' => false]],
+            [0, [], []], //nothing
+        ];
     }
 
     protected function setUp() : void
     {
         SugarACL::resetACLs();
-        if(!$this->bean)
-        {
+        if (!$this->bean) {
             $this->bean = $this->getTestMock();
         }
         SugarTestHelper::setUp('beanList');
@@ -48,7 +47,7 @@ class SugarACLTest extends TestCase
     protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
-        $GLOBALS['dictionary'][$this->bean->object_name]['acls'] = array();
+        $GLOBALS['dictionary'][$this->bean->object_name]['acls'] = [];
         SugarACL::resetACLs();
     }
 
@@ -74,14 +73,13 @@ class SugarACLTest extends TestCase
     {
         $GLOBALS['dictionary'][$this->bean->object_name]['acls'] = $config;
         SugarACL::resetACLs();
-        $acls = SugarACL::loadACLs($this->bean->object_name, array("bean" => $this->bean));
+        $acls = SugarACL::loadACLs($this->bean->object_name, ["bean" => $this->bean]);
 
         $this->assertEquals($count, count($acls));
 
         sort($acls);
         sort($classes);
-        foreach($classes as $key => $class)
-        {
+        foreach ($classes as $key => $class) {
             $this->assertInstanceOf($class, $acls[$key]);
         }
     }
@@ -91,7 +89,7 @@ class SugarACLTest extends TestCase
      */
     public function testModuleSupportsACL()
     {
-        SugarACL::$acls = array('test' => true);
+        SugarACL::$acls = ['test' => true];
         $this->assertTrue(SugarACL::moduleSupportsACL('test'));
     }
 
@@ -102,21 +100,21 @@ class SugarACLTest extends TestCase
     {
         $acl1 = $this->createMock('SugarACLStatic');
         $acl1->expects($this->exactly(3))->method('checkAccess')->with('test', 'test2')->will($this->returnValue(false));
-        SugarACL::$acls['test'] = array($acl1);
+        SugarACL::$acls['test'] = [$acl1];
 
         $this->assertFalse(SugarACL::checkAccess('test', 'test2'));
 
         $acl2 = $this->createMock('SugarACLStatic');
         $acl2->expects($this->exactly(2))->method('checkAccess')->with('test', 'test2')->will($this->returnValue(true));
-        SugarACL::$acls['test'] = array($acl2);
+        SugarACL::$acls['test'] = [$acl2];
 
         $this->assertTrue(SugarACL::checkAccess('test', 'test2'));
 
-        SugarACL::$acls['test'] = array($acl1, $acl2);
+        SugarACL::$acls['test'] = [$acl1, $acl2];
 
         $this->assertFalse(SugarACL::checkAccess('test', 'test2'));
 
-        SugarACL::$acls['test'] = array($acl2, $acl1);
+        SugarACL::$acls['test'] = [$acl2, $acl1];
 
         $this->assertFalse(SugarACL::checkAccess('test', 'test2'));
     }
@@ -128,24 +126,24 @@ class SugarACLTest extends TestCase
     {
         $acl1 = $this->createMock('SugarACLStatic');
         $acl1->expects($this->exactly(2))->method('checkAccess')->will($this->returnValue(false));
-        SugarACL::$acls['test1'] = array($acl1);
+        SugarACL::$acls['test1'] = [$acl1];
 
         $acl2 = $this->createMock('SugarACLStatic');
         $acl2->expects($this->exactly(2))->method('checkAccess')->will($this->returnValue(true));
-        SugarACL::$acls['test2'] = array($acl2);
+        SugarACL::$acls['test2'] = [$acl2];
 
-        $this->assertEquals(array(), SugarACL::disabledModuleList(array('test1', 'test2'),'test'));
+        $this->assertEquals([], SugarACL::disabledModuleList(['test1', 'test2'], 'test'));
 
-        $this->assertEquals(array('test1' => 'test1'), SugarACL::disabledModuleList(array('test1', 'test2'), 'test', true));
+        $this->assertEquals(['test1' => 'test1'], SugarACL::disabledModuleList(['test1', 'test2'], 'test', true));
 
-        $this->assertEquals(array('test1' => 'test1'), SugarACL::disabledModuleList(array('test1' => 'test1', 'test2' => 'test2'), 'test'));
+        $this->assertEquals(['test1' => 'test1'], SugarACL::disabledModuleList(['test1' => 'test1', 'test2' => 'test2'], 'test'));
     }
 
     public function testCheckField()
     {
         $acl2 = $this->createMock('SugarACLStatic');
-        $acl2->expects($this->exactly(1))->method('checkAccess')->with('test', 'field', array('field' => 'myfield', 'action' => 'myaction'))->will($this->returnValue(true));
-        SugarACL::$acls['test'] = array($acl2);
+        $acl2->expects($this->exactly(1))->method('checkAccess')->with('test', 'field', ['field' => 'myfield', 'action' => 'myaction'])->will($this->returnValue(true));
+        SugarACL::$acls['test'] = [$acl2];
 
         $this->assertTrue(SugarACL::checkField('test', 'myfield', 'myaction'));
     }
@@ -157,17 +155,17 @@ class SugarACLTest extends TestCase
     {
         $acl1 = $this->createMock('SugarACLStatic');
         $acl1->expects($this->exactly(2))->method('checkAccess')->will($this->returnValue(true));
-        SugarACL::$acls['test1'] = array($acl1);
+        SugarACL::$acls['test1'] = [$acl1];
 
         $acl2 = $this->createMock('SugarACLStatic');
         $acl2->expects($this->exactly(2))->method('checkAccess')->will($this->returnValue(false));
-        SugarACL::$acls['test2'] = array($acl2);
+        SugarACL::$acls['test2'] = [$acl2];
 
-        $this->assertEquals(array('test1', 'test2'), SugarACL::filterModuleList(array('test1', 'test2'),'test'));
+        $this->assertEquals(['test1', 'test2'], SugarACL::filterModuleList(['test1', 'test2'], 'test'));
 
-        $this->assertEquals(array('test1'), SugarACL::filterModuleList(array('test1', 'test2'), 'test', true));
+        $this->assertEquals(['test1'], SugarACL::filterModuleList(['test1', 'test2'], 'test', true));
 
-        $this->assertEquals(array('test1' => 'test1'), SugarACL::filterModuleList(array('test1' => 'test1', 'test2' => 'test2'), 'test'));
+        $this->assertEquals(['test1' => 'test1'], SugarACL::filterModuleList(['test1' => 'test1', 'test2' => 'test2'], 'test'));
     }
 
     /**
@@ -175,11 +173,11 @@ class SugarACLTest extends TestCase
      */
     public function testListFilter()
     {
-        $list = array();
+        $list = [];
 
         $this->assertNull(SugarACL::listFilter('test', $list));
 
-        $list = array('test1', 'test2', 'test3', 'prefix_test4');
+        $list = ['test1', 'test2', 'test3', 'prefix_test4'];
 
         $this->assertEmpty(SugarACL::listFilter('test', $list));
     }
@@ -191,7 +189,7 @@ class SugarACLTest extends TestCase
 
         $rejectacl = $this->createMock('SugarACLStatic');
         $rejectacl->expects($this->any())->method('checkAccess')->will($this->returnValue(false));
-        SugarACL::setACL('Accounts', array($rejectacl));
+        SugarACL::setACL('Accounts', [$rejectacl]);
         $this->assertFalse($acct->ACLAccess('edit'));
     }
 
@@ -211,34 +209,34 @@ class SugarACLTest extends TestCase
 
     public static function massUpdateProvider()
     {
-        return array(
-            array(
-                array(
+        return [
+            [
+                [
                     'massupdate' => false,
-                ),
+                ],
                 false,
-            ),
-            array(
-                array(
+            ],
+            [
+                [
                     'massupdate' => true,
-                ),
+                ],
                 true,
-            ),
-            array(
-                array(
+            ],
+            [
+                [
                     'massupdate' => true,
                     'edit' => true,
-                ),
+                ],
                 true,
-            ),
-            array(
-                array(
+            ],
+            [
+                [
                     'massupdate' => true,
                     'edit' => false,
-                ),
+                ],
                 false,
-            ),
-        );
+            ],
+        ];
     }
 }
 

@@ -19,19 +19,19 @@ class ReportGroupingTest extends TestCase
 {
     public static function setUpBeforeClass() : void
     {
-        SugarTestHelper::setUp('current_user', array(true, true));
+        SugarTestHelper::setUp('current_user', [true, true]);
 
         // create account before custom field is created
         SugarTestAccountUtilities::createAccount();
 
         SugarTestHelper::setUp('dictionary');
-        SugarTestHelper::setUp('custom_field', array(
+        SugarTestHelper::setUp('custom_field', [
             'Accounts',
-            array(
+            [
                 'name' => 'checkbox',
                 'type' => 'bool',
-            ),
-        ));
+            ],
+        ]);
 
         // create account after custom field is created
         SugarTestAccountUtilities::createAccount();
@@ -47,46 +47,46 @@ class ReportGroupingTest extends TestCase
     {
         global $current_user;
 
-        $definition = array(
-            'display_columns' => array(),
+        $definition = [
+            'display_columns' => [],
             'module' => 'Accounts',
-            'group_defs' => array(
-                array(
+            'group_defs' => [
+                [
                     'name' => 'checkbox_c',
                     'table_key' => 'self',
-                ),
-            ),
-            'summary_columns' => array(),
+                ],
+            ],
+            'summary_columns' => [],
             'report_type' => 'summary',
-            'full_table_list' => array(
-                'self' => array(
+            'full_table_list' => [
+                'self' => [
                     'module' => 'Accounts',
-                ),
-                'Accounts:created_by_link' => array(
+                ],
+                'Accounts:created_by_link' => [
                     'parent' => 'self',
-                    'link_def' => array(
+                    'link_def' => [
                         'name' => 'created_by_link',
                         'relationship_name' => 'accounts_created_by',
                         'bean_is_lhs' => false,
                         'link_type' => 'one',
                         'module' => 'Users',
                         'table_key' => 'Accounts:created_by_link',
-                    ),
+                    ],
                     'module' => 'Users',
-                ),
-            ),
-            'filters_def' => array(
-                array(
+                ],
+            ],
+            'filters_def' => [
+                [
                     'operator' => 'AND',
-                    array(
+                    [
                         'name' => 'id',
                         'table_key' => 'Accounts:created_by_link',
                         'qualifier_name' => 'is',
                         'input_name0' => $current_user->id,
-                    ),
-                ),
-            ),
-        );
+                    ],
+                ],
+            ],
+        ];
 
         $report = new Report(json_encode($definition));
         $report->run_summary_query();

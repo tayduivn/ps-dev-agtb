@@ -35,7 +35,7 @@ class CheckUpgraderTest extends UpgradeTestCase
      */
     public function testRun($content, $expected)
     {
-        $this->upgrader->context['versionInfo'] = array($content, '1000');
+        $this->upgrader->context['versionInfo'] = [$content, '1000'];
         $result = $this->script->run();
         $this->assertEquals($result, $expected);
     }
@@ -47,27 +47,27 @@ class CheckUpgraderTest extends UpgradeTestCase
      */
     public static function getVersions()
     {
-        return array(
-            array(
+        return [
+            [
                 "",
                 false,
-            ),
-            array(
+            ],
+            [
                 '6.5.20',
                 false,
-            ),
-            array(
+            ],
+            [
                 '7.6.0.0',
                 false,
-            ),
-            array(
+            ],
+            [
                 '7.7.0.0',
                 true,
-            ),
-            array(
+            ],
+            [
                 '7.8.0.0',
                 true,
-            ),
-        );
+            ],
+        ];
     }
 }

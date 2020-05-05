@@ -28,11 +28,11 @@ class FixCustomLabelsForCoreModulesTest extends UpgradeTestCase
         $this->script = $this->upgrader->getScript('post', '7_FixCustomLabelsForCoreModules');
 
         $GLOBALS['sugar_config']['languages'] =
-            array(
+            [
                 'en_us'       => 'English (US)',
                 'test_test'   => 'Test',
                 'test2_test2' => 'Test 2',
-            );
+            ];
         SugarConfig::getInstance()->clearCache('languages');
 
         // Setup subpanels
@@ -100,12 +100,12 @@ END;
 );
 END;
 
-        $subpanelPaths = array(
+        $subpanelPaths = [
             "custom/modules/TestModule1/clients/base/views/subpanel-for-TestModule2/subpanel-for-TestModule2.php" => $dataViewdefs,
-            "custom/modules/TestModule1/metadata/subpanels/TestModule1_subpanel_TestModule2.php" => $dataSubpanelLayout
-        );
+            "custom/modules/TestModule1/metadata/subpanels/TestModule1_subpanel_TestModule2.php" => $dataSubpanelLayout,
+        ];
 
-        foreach($subpanelPaths as $subpanelPath => $subpanelContent) {
+        foreach ($subpanelPaths as $subpanelPath => $subpanelContent) {
             mkdir_recursive(dirname($subpanelPath));
             SugarTestHelper::saveFile($subpanelPath);
             sugar_file_put_contents($subpanelPath, $subpanelContent);
@@ -157,7 +157,7 @@ END;
      */
     public function testUpgradeModuleLabels($module, $language, $customLabels, $labelsToChange, $expected)
     {
-        $this->script->upgradeLabels = array($module => $labelsToChange);
+        $this->script->upgradeLabels = [$module => $labelsToChange];
 
         // Prepare language files with customizations
         $path = 'custom/modules/' . $module . '/language/' . $language. '.lang.php';
@@ -166,7 +166,7 @@ END;
         write_array_to_file('mod_strings', $customLabels, $path);
 
         $this->script->upgradeModuleLabels($module, $language);
-        $mod_strings = array();
+        $mod_strings = [];
         include $path;
 
         $this->assertEquals($expected, $mod_strings);
@@ -185,13 +185,13 @@ END;
      */
     public function testUpgradeSubpanelModuleLabels($module, $labelsToChange, $expectedViewdefs, $expectedLayout, $viewFile, $metaFile)
     {
-        $this->script->upgradeLabels = array($module => $labelsToChange);
+        $this->script->upgradeLabels = [$module => $labelsToChange];
         $this->script->upgradeSubpanelModuleLabels($module);
 
         $this->assertFileExists($viewFile);
         $this->assertFileExists($metaFile);
 
-        $viewdefs = array();
+        $viewdefs = [];
         include $viewFile;
 
         foreach ($expectedViewdefs as $expected) {
@@ -204,7 +204,7 @@ END;
         }
         unset($viewdefs);
 
-        $subpanel_layout = array();
+        $subpanel_layout = [];
         include $metaFile;
 
         foreach ($expectedLayout as $expected) {
@@ -223,13 +223,13 @@ END;
      */
     public function testUpgradeListViewModuleLabels()
     {
-        $this->script->upgradeLabels = array('TestModule1' => array('LBL_OLD_1' => 'LBL_NEW_1'));
+        $this->script->upgradeLabels = ['TestModule1' => ['LBL_OLD_1' => 'LBL_NEW_1']];
         $this->script->upgradeListViewModuleLabels('TestModule1');
 
         $viewFile = 'custom/modules/TestModule1/clients/base/views/list/list.php';
         $this->assertFileExists($viewFile);
 
-        $viewdefs = array();
+        $viewdefs = [];
         include $viewFile;
 
         $this->assertNotEmpty($viewdefs);
@@ -245,18 +245,18 @@ END;
      */
     public function providerDataForUpgradeSubpanelLabels()
     {
-        return array(
-            array(
+        return [
+            [
                 'TestModule1',
-                array(
+                [
                     'LBL_OLD_1' => 'LBL_NEW_1',
                     'LBL_OLD_2' => 'LBL_NEW_2',
                     'LBL_OLD_3' => 'LBL_NEW_3',
                     'LBL_PANEL_1' => 'LBL_PANEL_NEW_1',
-                ),
-                array(
-                    array(
-                        'path' => array(
+                ],
+                [
+                    [
+                        'path' => [
                             'TestModule1',
                             'base',
                             'view',
@@ -264,11 +264,11 @@ END;
                             'panels',
                             0,
                             'label',
-                        ),
+                        ],
                         'value' => 'LBL_PANEL_NEW_1',
-                    ),
-                    array(
-                        'path' => array(
+                    ],
+                    [
+                        'path' => [
                             'TestModule1',
                             'base',
                             'view',
@@ -278,142 +278,142 @@ END;
                             'fields',
                             0,
                             'label',
-                        ),
+                        ],
                         'value' => 'LBL_NEW_1',
-                    )
-                ),
-                array(
-                    array(
-                        'path' => array(
+                    ],
+                ],
+                [
+                    [
+                        'path' => [
                             'list_fields',
                             'name',
                             'vname',
-                        ),
+                        ],
                         'value' => 'LBL_NEW_1',
-                    ),
-                    array(
-                        'path' => array(
+                    ],
+                    [
+                        'path' => [
                             'list_fields',
                             'billing_address_city',
                             'vname',
-                        ),
+                        ],
                         'value' => 'LBL_NEW_1',
-                    ),
-                    array(
-                        'path' => array(
+                    ],
+                    [
+                        'path' => [
                             'list_fields',
                             'phone_office',
                             'vname',
-                        ),
+                        ],
                         'value' => 'LBL_NEW_2',
-                    ),
-                    array(
-                        'path' => array(
+                    ],
+                    [
+                        'path' => [
                             'list_fields',
                             'edit_button',
                             'vname',
-                        ),
+                        ],
                         'value' => 'LBL_NEW_3',
-                    ),
-                    array(
-                        'path' => array(
+                    ],
+                    [
+                        'path' => [
                             'list_fields',
                             'remove_button',
                             'vname',
-                        ),
+                        ],
                         'value' => 'LBL_NEW_1',
-                    ),
-                ),
+                    ],
+                ],
                 'custom/modules/TestModule1/clients/base/views/subpanel-for-TestModule2/subpanel-for-TestModule2.php',
                 'custom/modules/TestModule1/metadata/subpanels/TestModule1_subpanel_TestModule2.php',
-            ),
-        );
+            ],
+        ];
     }
 
     public function providerDataForUpgradeLabels()
     {
         return
-            array(
-                array(
+            [
+                [
                     'TestModule1',
                     'en_us',
-                    array(
+                    [
                         'LBL_MODULE_NAME' => 'TestModule1',
                         'LBL_OLD_1' => 'OLD_VALUE_1',
                         'LBL_OLD_2' => 'OLD_VALUE_2',
-                    ),
-                    array(
+                    ],
+                    [
                         'LBL_OLD_1' => 'LBL_NEW_1',
                         'LBL_OLD_2' => 'LBL_NEW_2',
-                    ),
-                    array(
+                    ],
+                    [
                         'LBL_MODULE_NAME' => 'TestModule1',
                         'LBL_OLD_1' => 'OLD_VALUE_1',
                         'LBL_OLD_2' => 'OLD_VALUE_2',
                         'LBL_NEW_1' => 'OLD_VALUE_1',
                         'LBL_NEW_2' => 'OLD_VALUE_2',
-                    ),
-                ), // Generic behavior
-                array(
+                    ],
+                ], // Generic behavior
+                [
                     'TestModule1',
                     'test_test',
-                    array(
+                    [
                         'LBL_MODULE_NAME' => 'TestModule1',
                         'LBL_OLD_1' => 'OLD_VALUE_1',
                         'LBL_OLD_2' => 'OLD_VALUE_2',
-                    ),
-                    array(
+                    ],
+                    [
                         'LBL_OLD_1' => 'LBL_NEW_1',
                         'LBL_OLD_2' => 'LBL_NEW_2',
-                    ),
-                    array(
+                    ],
+                    [
                         'LBL_MODULE_NAME' => 'TestModule1',
                         'LBL_OLD_1' => 'OLD_VALUE_1',
                         'LBL_OLD_2' => 'OLD_VALUE_2',
                         'LBL_NEW_1' => 'OLD_VALUE_1',
                         'LBL_NEW_2' => 'OLD_VALUE_2',
-                    )
-                ), // Not default language
-                array(
+                    ],
+                ], // Not default language
+                [
                     'TestModule1',
                     'test_test',
-                    array(
+                    [
                         'LBL_MODULE_NAME' => 'TestModule1',
                         'LBL_OLD_1' => 'OLD_VALUE_1',
                         'LBL_OLD_2' => 'OLD_VALUE_2',
-                    ),
-                    array(
+                    ],
+                    [
                         'LBL_OLD_ANOTHER_1' => 'LBL_NEW_1',
                         'LBL_OLD_ANOTHER_2' => 'LBL_NEW_2',
-                    ),
-                    array(
+                    ],
+                    [
                         'LBL_MODULE_NAME' => 'TestModule1',
                         'LBL_OLD_1' => 'OLD_VALUE_1',
                         'LBL_OLD_2' => 'OLD_VALUE_2',
-                    )
-                ), // No customizations were done for required labels, so file should not be modified
-            );
+                    ],
+                ], // No customizations were done for required labels, so file should not be modified
+            ];
     }
 
     public function testRun()
     {
-        $this->script->upgradeLabels = array(
-            'TestModule1' => array(
+        $this->script->upgradeLabels = [
+            'TestModule1' => [
                 'LBL_OLD_1' => 'LBL_NEW_1',
                 'LBL_OLD_2' => 'LBL_NEW_2',
-            ),
-        );
+            ],
+        ];
 
         // Prepare language files with customizations
-        $languages = array(
+        $languages = [
             'en_us'     => 'en_us',
             'test_test' => 'test_test',
-        );
-        $customLabels = array(
+        ];
+        $customLabels = [
             'LBL_MODULE_NAME' => 'TestModule1',
             'LBL_OLD_1'       => 'OLD_VALUE_1',
             'LBL_OLD_2'       => 'OLD_VALUE_2',
-        );
+        ];
 
         foreach ($languages as $key => $value) {
             $path = 'custom/modules/TestModule1/language/' . $key. '.lang.php';
@@ -422,10 +422,10 @@ END;
             write_array_to_file('mod_strings', $customLabels, $path);
         }
 
-        $moduleInstaller = $this->createPartialMock('ModuleInstaller', array('rebuild_languages'));
+        $moduleInstaller = $this->createPartialMock('ModuleInstaller', ['rebuild_languages']);
         $moduleInstaller->expects($this->once())
             ->method('rebuild_languages')
-            ->with($languages, array('TestModule1'));
+            ->with($languages, ['TestModule1']);
 
         $this->script->mi = $moduleInstaller;
         $this->script->run();
@@ -436,23 +436,23 @@ END;
      */
     public function testRunNoCustomization()
     {
-        $this->script->upgradeLabels = array(
-            'TestModule1' => array(
+        $this->script->upgradeLabels = [
+            'TestModule1' => [
                 'LBL_OLD_1' => 'LBL_NEW_1',
                 'LBL_OLD_2' => 'LBL_NEW_2',
-            ),
-        );
+            ],
+        ];
 
         // Prepare language files with customizations
-        $languages = array(
+        $languages = [
             'en_us'     => 'en_us',
             'test_test' => 'test_test',
-        );
-        $customLabels = array(
+        ];
+        $customLabels = [
             'LBL_MODULE_NAME'   => 'TestModule1',
             'LBL_ANOTHER_KEY_1' => 'VALUE_1',
             'LBL_ANOTHER_KEY_2' => 'VALUE_2',
-        );
+        ];
 
         foreach ($languages as $key => $value) {
             $path = 'custom/modules/TestModule1/language/' . $key. '.lang.php';
@@ -462,7 +462,7 @@ END;
         }
 
         // Rebuild should never be called cause there are no customizations for test labels in test module
-        $moduleInstaller = $this->createPartialMock('ModuleInstaller', array('rebuild_languages'));
+        $moduleInstaller = $this->createPartialMock('ModuleInstaller', ['rebuild_languages']);
         $moduleInstaller->expects($this->never())
             ->method('rebuild_languages');
 

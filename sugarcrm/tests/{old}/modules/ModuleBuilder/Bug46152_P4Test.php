@@ -27,7 +27,7 @@ class Bug46152_P4Test extends TestCase
     {
         $fieldName = 'test' . time();
         $field = $this->addField($fieldName);
-        SugarTestHelper::setUp('mod_strings', array($this->module));
+        SugarTestHelper::setUp('mod_strings', [$this->module]);
 
 
         $idName = $GLOBALS['dictionary'][$this->object]['fields'][$field->name]['id_name'];
@@ -35,7 +35,7 @@ class Bug46152_P4Test extends TestCase
 
         $field->delete($this->dynamicField);
 
-        SugarTestHelper::setUp('mod_strings', array($this->module));
+        SugarTestHelper::setUp('mod_strings', [$this->module]);
 
         $this->assertArrayNotHasKey($field->name, $GLOBALS['dictionary'][$this->object]['fields']);
         $this->assertArrayNotHasKey($idName, $GLOBALS['dictionary'][$this->object]['fields']);
@@ -62,8 +62,8 @@ class Bug46152_P4Test extends TestCase
     protected function setUp() : void
     {
         SugarTestHelper::setUp('app_list_strings');
-        SugarTestHelper::setUp('mod_strings', array($this->module));
-        SugarTestHelper::setUp('mod_strings', array('ModuleBuilder'));
+        SugarTestHelper::setUp('mod_strings', [$this->module]);
+        SugarTestHelper::setUp('mod_strings', ['ModuleBuilder']);
 
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');

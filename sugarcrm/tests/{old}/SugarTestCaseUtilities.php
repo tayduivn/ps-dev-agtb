@@ -13,10 +13,11 @@
 
 class SugarTestCaseUtilities
 {
-    private static $_createdCases = array();
+    private static $_createdCases = [];
 
     private function __construct()
-    {}
+    {
+    }
 
     /**
      * Create and save a new aCase bean.
@@ -68,7 +69,7 @@ class SugarTestCaseUtilities
 
     public static function getCreatedCaseIds()
     {
-        $case_ids = array();
+        $case_ids = [];
         foreach (self::$_createdCases as $case) {
             $case_ids[] = $case->id;
         }

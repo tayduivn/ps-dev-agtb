@@ -13,17 +13,19 @@
 
 class SugarTestKBContentUtilities
 {
-    protected static $_createdKbContentIds = array();
-    protected static $_createdKbDocumentIds = array();
-    protected static $_createdKbArticleIds = array();
+    protected static $_createdKbContentIds = [];
+    protected static $_createdKbDocumentIds = [];
+    protected static $_createdKbArticleIds = [];
 
-    private function __construct() {}
-
-    public static function createBean($values = array(), $save = true)
+    private function __construct()
     {
-        $defaults = array(
+    }
+
+    public static function createBean($values = [], $save = true)
+    {
+        $defaults = [
             'name' => 'SugarKBContent' . time(),
-        );
+        ];
 
         $values = array_merge($defaults, $values);
         $bean = new KBContentMock();
@@ -57,7 +59,7 @@ class SugarTestKBContentUtilities
                 . static::getPreparedIdsString(self::$_createdKbDocumentIds)
                 . ')');
 
-            self::$_createdKbDocumentIds = array();
+            self::$_createdKbDocumentIds = [];
         }
 
         if (self::$_createdKbArticleIds) {
@@ -65,7 +67,7 @@ class SugarTestKBContentUtilities
                 . static::getPreparedIdsString(self::$_createdKbArticleIds)
                 . ')');
 
-            self::$_createdKbArticleIds = array();
+            self::$_createdKbArticleIds = [];
         }
 
         if (self::$_createdKbContentIds) {
@@ -73,7 +75,7 @@ class SugarTestKBContentUtilities
             $db->query('DELETE FROM kbcontents WHERE id IN (' . $conditions . ')');
             $db->query('DELETE FROM kbcontents_audit WHERE parent_id IN (' . $conditions . ')');
 
-            self::$_createdKbContentIds = array();
+            self::$_createdKbContentIds = [];
         }
     }
 
@@ -87,13 +89,13 @@ class SugarTestKBContentUtilities
     protected static function getPreparedIdsString(array $ids)
     {
         $db = DBManagerFactory::getInstance();
-        return implode(',', array_map(array($db, 'quoted'), array_unique($ids)));
+        return implode(',', array_map([$db, 'quoted'], array_unique($ids)));
     }
 }
 
 class KBContentMock extends KBContent
 {
-    public $updatedCategories = array();
+    public $updatedCategories = [];
 
     public function resetActiveRevision()
     {

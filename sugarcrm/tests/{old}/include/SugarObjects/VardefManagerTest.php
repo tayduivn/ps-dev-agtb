@@ -107,7 +107,7 @@ class VardefManagerTest extends TestCase
 
     public function testGetCoreTemplates()
     {
-        $expect = array(
+        $expect = [
             'default',
             'basic',
             'company',
@@ -115,7 +115,7 @@ class VardefManagerTest extends TestCase
             'issue',
             'person',
             'sale',
-        );
+        ];
 
         $actual = VardefManager::getCoreTemplates();
         $this->assertEquals($expect, $actual);
@@ -123,26 +123,26 @@ class VardefManagerTest extends TestCase
 
     public function providerGetTemplates()
     {
-        return array(
+        return [
             // Tests handling of Person template
-            array(
+            [
                 'module' => $this->module,
                 'object' => $this->object,
                 'template' => 'person',
                 'object_name' => $this->objectName,
-                'expect' => array(
+                'expect' => [
                     'person',
                     'email_address',
                     'taggable',
-                ),
-            ),
+                ],
+            ],
             // Tests handling of 'default' template
-            array(
+            [
                 'module' => $this->module,
                 'object' => $this->object,
                 'template' => 'default',
                 'object_name' => $this->objectName,
-                'expect' => array(
+                'expect' => [
                     'basic',
                     'following',
                     'favorite',
@@ -151,76 +151,76 @@ class VardefManagerTest extends TestCase
                     //BEGIN SUGARCRM flav=ent ONLY
                     'lockable_fields',
                     //END SUGARCRM flav=ent ONLY
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
     }
 
     public function providerGetObjectName()
     {
-        return array(
+        return [
             // Tests passing in of object name with mutation
-            array(
+            [
                 'object' => $this->module,
                 'name' => $this->object,
                 'nameOnly' => false,
                 'expect' => $this->objectName,
-            ),
+            ],
             // Tests passing in of object name with no mutation
-            array(
+            [
                 'object' => $this->module,
                 'name' => $this->object,
                 'nameOnly' => true,
                 'expect' => $this->object,
-            ),
+            ],
             // Tests not passing in of object name with mutation
-            array(
+            [
                 'object' => $this->module,
                 'name' => '',
                 'nameOnly' => false,
                 'expect' => 'tests',
-            ),
+            ],
             // Tests not passing in of object name with NO mutation
-            array(
+            [
                 'object' => $this->module,
                 'name' => '',
                 'nameOnly' => true,
                 'expect' => $this->module,
-            ),
-        );
+            ],
+        ];
     }
 
     public function providerGetTableName()
     {
-        return array(
+        return [
             // Tests no vardef defined
-            array(
+            [
                 'module' => 'Hucksters',
                 'object' => 'Huckster',
                 'expect' => 'hucksters',
-            ),
+            ],
             // Tests vardef defined
-            array(
+            [
                 'module' => 'Womprats',
                 'object' => 'Hillbilly',
                 'expect' => 'hillbillies',
-            ),
-        );
+            ],
+        ];
     }
 
     public function providerLoadableTemplates()
     {
-        return array(
-            array(
-                'templates' => array(
+        return [
+            [
+                'templates' => [
                     'default',
                     'assignable',
                     'team_security',
                     'company',
-                ),
+                ],
                 'module' => 'Accounts',
                 'object' => 'Account',
-                'expect' => array(
+                'expect' => [
                     'company',
                     'basic',
                     'following',
@@ -233,29 +233,29 @@ class VardefManagerTest extends TestCase
                     'assignable',
                     'team_security',
                     'email_address',
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
     }
 
     public function providerAccountTemplates()
     {
-        return array(
-            array(
-                'templates' => array(
+        return [
+            [
+                'templates' => [
                     'default',
                     'assignable',
                     'team_security',
                     'company',
-                ),
+                ],
                 'module' => 'Accounts',
                 'object' => 'Account',
-                'expect' => array(
-                    'core' => array(
+                'expect' => [
+                    'core' => [
                         'company',
                         'basic',
-                    ),
-                    'impl' => array(
+                    ],
+                    'impl' => [
                         'following',
                         'favorite',
                         'taggable',
@@ -263,10 +263,10 @@ class VardefManagerTest extends TestCase
                         'team_security',
                         'email_address',
                         'commentlog',
-                    ),
-                ),
-            ),
-        );
+                    ],
+                ],
+            ],
+        ];
     }
 
     /**
@@ -274,11 +274,11 @@ class VardefManagerTest extends TestCase
      */
     public function testGetLinkFieldsForCollection()
     {
-        $expected = array(
+        $expected = [
             'contacts',
             'leads',
             'users',
-        );
+        ];
         $actual = VardefManager::getLinkFieldsForCollection('Meetings', 'Meeting', 'invitees');
         $this->assertEquals($expected, $actual);
     }

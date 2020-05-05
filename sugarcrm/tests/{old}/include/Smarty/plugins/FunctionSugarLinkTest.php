@@ -67,13 +67,13 @@ class FunctionSugarLinkTest extends TestCase
      */
     public function testReturnLinkWhenPassingData()
     {
-        $data = array(
+        $data = [
             '63edeacd-6ba5-b658-5e2a-4af9a5d682be',
             'http://localhost',
             'all',
             'iFrames',
             'Foo',
-            );
+            ];
 
         $this->assertStringContainsString(
             'index.php?module=iFrames&action=index&record=63edeacd-6ba5-b658-5e2a-4af9a5d682be&tab=true',

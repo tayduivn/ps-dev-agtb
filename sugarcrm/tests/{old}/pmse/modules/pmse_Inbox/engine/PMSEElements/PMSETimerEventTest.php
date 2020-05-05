@@ -21,8 +21,8 @@ class PMSETimerEventTest extends TestCase
     protected $timerEvent;
 
     /**
-     * In this test the method tries to wake up a timer event before 
-     * their due date passed, the condition is set to not wake up the flow 
+     * In this test the method tries to wake up a timer event before
+     * their due date passed, the condition is set to not wake up the flow
      * in this case
      */
     public function testRunTryWakeUpBeforeTime()
@@ -30,12 +30,12 @@ class PMSETimerEventTest extends TestCase
         $this->timerEvent = $this->getMockBuilder('PMSETimerEvent')
                 ->disableOriginalConstructor()
                 ->setMethods(
-                    array(
-                        'prepareResponse', 
-                        'checkIfUsesAnEventBasedGateway', 
+                    [
+                        'prepareResponse',
+                        'checkIfUsesAnEventBasedGateway',
                         'checkIfExistEventBased',
-                        'getCurrentTime'
-                    )
+                        'getCurrentTime',
+                    ]
                 )
                 ->getMock();
         
@@ -46,12 +46,12 @@ class PMSETimerEventTest extends TestCase
                 ->method('getCurrentTime')
                 ->will($this->returnValue($date));
         
-        $flowData = array(
+        $flowData = [
             'cas_due_date' => '2014-05-28 16:26:38',
             'cas_id' => 1,
             'cas_index' => 3,
-            'cas_previous' => 2
-        );
+            'cas_previous' => 2,
+        ];
         $bean = new stdClass();
 
         $this->timerEvent->expects($this->exactly(1))
@@ -62,8 +62,8 @@ class PMSETimerEventTest extends TestCase
     }
     
     /**
-     * In this test the method tries to wake up a timer event after 
-     * their due date passed, the condition is set to wake up the flow 
+     * In this test the method tries to wake up a timer event after
+     * their due date passed, the condition is set to wake up the flow
      * in this case
      */
     public function testRunTryWakeUpAfterTime()
@@ -71,12 +71,12 @@ class PMSETimerEventTest extends TestCase
         $this->timerEvent = $this->getMockBuilder('PMSETimerEvent')
                 ->disableOriginalConstructor()
                 ->setMethods(
-                    array(
-                        'prepareResponse', 
-                        'checkIfUsesAnEventBasedGateway', 
+                    [
+                        'prepareResponse',
+                        'checkIfUsesAnEventBasedGateway',
                         'checkIfExistEventBased',
-                        'getCurrentTime'
-                    )
+                        'getCurrentTime',
+                    ]
                 )
                 ->getMock();
         
@@ -87,12 +87,12 @@ class PMSETimerEventTest extends TestCase
                 ->method('getCurrentTime')
                 ->will($this->returnValue($date));
         
-        $flowData = array(
+        $flowData = [
             'cas_due_date' => '2014-05-28 16:26:38',
             'cas_id' => 1,
             'cas_index' => 3,
-            'cas_previous' => 2
-        );
+            'cas_previous' => 2,
+        ];
         $bean = new stdClass();
 
         $this->timerEvent->expects($this->exactly(1))
@@ -107,33 +107,33 @@ class PMSETimerEventTest extends TestCase
         $this->timerEvent = $this->getMockBuilder('PMSETimerEvent')
                 ->disableOriginalConstructor()
                 ->setMethods(
-                    array(
-                        'prepareResponse', 
-                        'checkIfUsesAnEventBasedGateway', 
+                    [
+                        'prepareResponse',
+                        'checkIfUsesAnEventBasedGateway',
                         'checkIfExistEventBased',
                         'getCurrentTime',
-                        'retrieveDefinitionData'
-                    )
+                        'retrieveDefinitionData',
+                    ]
                 )
                 ->getMock();
         
-        $definition = array(
+        $definition = [
             'evn_criteria' => '5',
-            'evn_params' => 'minute'
-        );
+            'evn_params' => 'minute',
+        ];
         
         $this->timerEvent->expects($this->once())
                 ->method('retrieveDefinitionData')
                 ->will($this->returnValue($definition));
         
-        $flowData = array(
+        $flowData = [
             'cas_due_date' => '2014-05-28 16:26:38',
             'cas_id' => 1,
             'cas_index' => 3,
             'cas_previous' => 2,
             'bpmn_id' => '198273498jh9238j1s23',
-            'id' => '2918379e8921uj98s12'
-        );
+            'id' => '2918379e8921uj98s12',
+        ];
         $bean = new stdClass();
 
         $this->timerEvent->expects($this->exactly(1))
@@ -147,23 +147,23 @@ class PMSETimerEventTest extends TestCase
         $this->timerEvent = $this->getMockBuilder('PMSETimerEvent')
                 ->disableOriginalConstructor()
                 ->setMethods(
-                    array(
-                        'prepareResponse', 
-                        'checkIfUsesAnEventBasedGateway', 
+                    [
+                        'prepareResponse',
+                        'checkIfUsesAnEventBasedGateway',
                         'checkIfExistEventBased',
                         'getCurrentTime',
-                        'retrieveDefinitionData'
-                    )
+                        'retrieveDefinitionData',
+                    ]
                 )
                 ->getMock();
         
-        $definition = array(
+        $definition = [
             'evn_criteria' => '[]',
-        );
+        ];
         
         $evaluatorMock = $this->getMockBuilder('PMSEEvaluator')
                 ->disableOriginalConstructor()
-                ->setMethods(array('evaluateExpression'))
+                ->setMethods(['evaluateExpression'])
                 ->getMock();
         
         $evaluatorMock->expects($this->any())
@@ -178,7 +178,7 @@ class PMSETimerEventTest extends TestCase
         
         $caseFlowHandler = $this->getMockBuilder('PMSECaseFlowHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieveBean'))
+                ->setMethods(['retrieveBean'])
                 ->getMock();
         
         $caseFlowHandler->expects($this->exactly(1))
@@ -186,7 +186,7 @@ class PMSETimerEventTest extends TestCase
         
         $beanHandler = $this->getMockBuilder('PMSEBeanHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('calculateDueDate'))
+                ->setMethods(['calculateDueDate'])
                 ->getMock();
         
         $beanHandler->expects($this->exactly(0))
@@ -196,7 +196,7 @@ class PMSETimerEventTest extends TestCase
         $this->timerEvent->setBeanHandler($beanHandler);
         $this->timerEvent->setCaseFlowHandler($caseFlowHandler);
         
-        $flowData = array(
+        $flowData = [
             'cas_due_date' => '2014-05-28 16:26:38',
             'cas_id' => 1,
             'cas_index' => 3,
@@ -204,8 +204,8 @@ class PMSETimerEventTest extends TestCase
             'cas_sugar_module' => 'Leads',
             'cas_sugar_object_id' => 'ciweun9823jd238jd',
             'bpmn_id' => '198273498jh9238j1s23',
-            'id' => '2918379e8921uj98s12'
-        );
+            'id' => '2918379e8921uj98s12',
+        ];
         $bean = new stdClass();
 
         $this->timerEvent->expects($this->exactly(1))

@@ -52,9 +52,13 @@ class Bug49543Test extends TestCase
         $mailbox = 'trash';
         $time = mt_rand();
         $subj = 'test ' . $time;
-        $GLOBALS['db']->query(sprintf("INSERT INTO email_cache (ie_id, mbox, subject, fromaddr, toaddr, imap_uid) 
-                                VALUES ('%s', '%s', '%s', 'from@test.com', 'to@test.com', '11')", 
-                                $ie_id, $mailbox, $subj));
+        $GLOBALS['db']->query(sprintf(
+            "INSERT INTO email_cache (ie_id, mbox, subject, fromaddr, toaddr, imap_uid) 
+                                VALUES ('%s', '%s', '%s', 'from@test.com', 'to@test.com', '11')",
+            $ie_id,
+            $mailbox,
+            $subj
+        ));
         
         //deleted item from inbox which will be inserted in trash
         $insert[0] = $this->createMail($subj.'_new', 'from@test.com', 'to@test.com', '12', '2012-11-11 11:11:11', '12');

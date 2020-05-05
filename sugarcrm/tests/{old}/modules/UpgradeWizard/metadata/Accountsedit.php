@@ -9,141 +9,141 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-$viewdefs['Accounts']['EditView'] = array(
-    'templateMeta' => array(
-                            'form' => array('buttons'=>array('SAVE', 'CANCEL')),
-                            'maxColumns' => '2', 
+$viewdefs['Accounts']['EditView'] = [
+    'templateMeta' => [
+                            'form' => ['buttons'=>['SAVE', 'CANCEL']],
+                            'maxColumns' => '2',
                             'useTabs' => true,
-                            'widths' => array(
-                                            array('label' => '10', 'field' => '30'),
-                                            array('label' => '10', 'field' => '30'),
-                                            ),
-                            'includes'=> array(
-                                            array('file'=>'modules/Accounts/Account.js'),
-                                         ),
-                           ),
+                            'widths' => [
+                                            ['label' => '10', 'field' => '30'],
+                                            ['label' => '10', 'field' => '30'],
+                                            ],
+                            'includes'=> [
+                                            ['file'=>'modules/Accounts/Account.js'],
+                                         ],
+                           ],
                            
-    'panels' => array(
+    'panels' => [
     
-      'lbl_account_information' => 
-      array (
-        array (
-          array (
+      'lbl_account_information' =>
+       [
+         [
+           [
             'name' => 'name',
             'label' => 'LBL_NAME',
-            'displayParams' => 
-            array (
+            'displayParams' =>
+             [
               'required' => true,
-            ),
-          ),
-          array (
+            ],
+           ],
+           [
             'name' => 'phone_office',
             'label' => 'LBL_PHONE_OFFICE',
-          ),
-        ),
+           ],
+         ],
 
-        array (
+         [
 
-          array (
+           [
             'name' => 'website',
             'type' => 'link',
             'label' => 'LBL_WEBSITE',
-          ),
+           ],
 
-          array (
+           [
             'name' => 'phone_fax',
             'label' => 'LBL_FAX',
-          ),
-        ),
+           ],
+         ],
 
-        array (
+         [
 
-          array (
+           [
             'name' => 'billing_address_street',
             'hideLabel' => true,
             'type' => 'address',
-            'displayParams' => 
-            array (
+            'displayParams' =>
+             [
               'key' => 'billing',
               'rows' => 2,
               'cols' => 30,
               'maxlength' => 150,
-            ),
-          ),
+            ],
+           ],
 
-          array (
+           [
             'name' => 'shipping_address_street',
             'hideLabel' => true,
             'type' => 'address',
-            'displayParams' => 
-            array (
+            'displayParams' =>
+             [
               'key' => 'shipping',
               'copy' => 'billing',
               'rows' => 2,
               'cols' => 30,
               'maxlength' => 150,
-            ),
-          ),
-        ),
+            ],
+           ],
+         ],
 
-        array (
+         [
 
-          array (
+           [
             'name' => 'email1',
             'studio' => 'false',
             'label' => 'LBL_EMAIL',
-          ),
-        ),
+           ],
+         ],
 
-        array (
+         [
 
-          array (
+           [
             'name' => 'description',
             'label' => 'LBL_DESCRIPTION',
-          ),
-        ),
-      ),
-      'LBL_PANEL_ADVANCED' => 
-      array (
+           ],
+         ],
+      ],
+      'LBL_PANEL_ADVANCED' =>
+       [
 
-        array (
+         [
           'account_type',
-          'industry'
-        ),
+          'industry',
+         ],
 
-        array (
+         [
           'annual_revenue',
-          'employees'
-        ),
+          'employees',
+         ],
 
-        array (
+         [
           'sic_code',
-          'ticker_symbol'
-        ),
+          'ticker_symbol',
+         ],
 
-        array (
+         [
           'parent_name',
-          'ownership'
-        ),
+          'ownership',
+         ],
 
-        array (
+         [
           'campaign_name',
-          'rating'
-        ),
-      ),
-      'LBL_PANEL_ASSIGNMENT' => 
-      array (
+          'rating',
+         ],
+      ],
+      'LBL_PANEL_ASSIGNMENT' =>
+       [
 
-        array (
-          array (
+         [
+           [
             'name' => 'assigned_user_name',
             'label' => 'LBL_ASSIGNED_TO',
-          ),
-          array (
-            'name'=>'team_name', 'displayParams'=>array('display'=>true),
-          ),
-          'id', // Unit test specific
-        ),
-      ),
-    )
-);
+           ],
+           [
+            'name'=>'team_name', 'displayParams'=>['display'=>true],
+           ],
+           'id', // Unit test specific
+         ],
+      ],
+    ],
+];

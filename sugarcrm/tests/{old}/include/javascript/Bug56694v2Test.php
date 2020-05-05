@@ -83,7 +83,7 @@ class Bug56694v2Test extends TestCase
         $this->assertNotEmpty($this->javascript->getData(), 'Validator is not added');
 
         $actual = $this->javascript->getData();
-        $this->assertSame(array(false, false), $actual, 'Values are incorrect');
+        $this->assertSame([false, false], $actual, 'Values are incorrect');
     }
 
     /**
@@ -100,7 +100,7 @@ class Bug56694v2Test extends TestCase
         $this->assertNotEmpty($this->javascript->getData(), 'Validator is not added');
 
         $actual = $this->javascript->getData();
-        $this->assertSame(array($this->templateInt->min,false), $actual, 'Values are incorrect');
+        $this->assertSame([$this->templateInt->min,false], $actual, 'Values are incorrect');
     }
 
     /**
@@ -117,7 +117,7 @@ class Bug56694v2Test extends TestCase
         $this->assertNotEmpty($this->javascript->getData(), 'Validator is not added');
 
         $actual = $this->javascript->getData();
-        $this->assertSame(array(false, $this->templateInt->max), $actual, 'Values are incorrect');
+        $this->assertSame([false, $this->templateInt->max], $actual, 'Values are incorrect');
     }
 
     /**
@@ -134,7 +134,7 @@ class Bug56694v2Test extends TestCase
 
         $this->assertNotEmpty($this->javascript->getData(), 'Validator is not added');
         $actual = $this->javascript->getData();
-        $this->assertEquals(array($this->templateInt->min, $this->templateInt->max), $actual, 'Values are incorrect');
+        $this->assertEquals([$this->templateInt->min, $this->templateInt->max], $actual, 'Values are incorrect');
     }
 
     /**
@@ -151,7 +151,7 @@ class Bug56694v2Test extends TestCase
 
         $this->assertNotEmpty($this->javascript->getData(), 'Validator is not added');
         $actual = $this->javascript->getData();
-        $this->assertSame(array($this->templateInt->min, $this->templateInt->min), $actual, 'Min value is incorrect');
+        $this->assertSame([$this->templateInt->min, $this->templateInt->min], $actual, 'Min value is incorrect');
     }
 }
 
@@ -163,7 +163,7 @@ class javascript56694 extends javascript
     /**
      * @var array
      */
-    protected $data = array();
+    protected $data = [];
 
     /**
      * @return array
@@ -175,6 +175,6 @@ class javascript56694 extends javascript
 
     public function addFieldRange($field, $type, $displayName, $required, $prefix = '', $min, $max)
     {
-        $this->data = array($min, $max);
+        $this->data = [$min, $max];
     }
 }

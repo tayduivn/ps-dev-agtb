@@ -131,7 +131,7 @@ class PMSEImporterTest extends TestCase
     public function testImportDependencies()
     {
         $importerMock = $this->getMockBuilder('PMSEImporter')
-            ->setMethods(array(
+            ->setMethods([
                 'getBean',
                 'unsetCommonFields',
                 'getNameWithSuffix',
@@ -142,12 +142,12 @@ class PMSEImporterTest extends TestCase
                 'saveProjectFlowsData',
                 'processDefaultFlows',
                 'processImport',
-            ))
+            ])
             ->getMock();
-        $importerMock->method('processImport')->willReturn(array('id' => 'newId1'));
-        $dependencies = array(
-            'business_rule' => array(array('id' => 'oldId1', 'name' => 'br1')),
-        );
+        $importerMock->method('processImport')->willReturn(['id' => 'newId1']);
+        $dependencies = [
+            'business_rule' => [['id' => 'oldId1', 'name' => 'br1']],
+        ];
         $selectedIds = ['oldId1'];
         $importerMock->importDependencies($dependencies, $selectedIds);
         $dependencyKeys = $importerMock->getDependencyKeys();

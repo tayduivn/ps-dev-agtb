@@ -17,7 +17,7 @@ class TasksTest extends TestCase
     public static function setUpBeforeClass() : void
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-	}
+    }
 
     public static function tearDownAfterClass(): void
     {
@@ -33,7 +33,7 @@ class TasksTest extends TestCase
     protected function tearDown() : void
     {
         unset($_REQUEST['module']);
-        if(!empty($this->taskid)) {
+        if (!empty($this->taskid)) {
             $GLOBALS['db']->query("DELETE FROM tasks WHERE id='{$this->taskid}'");
         }
     }

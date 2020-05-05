@@ -46,6 +46,6 @@ class ReportScheduleTest extends TestCase
         $schedule = $this->createMock(ReportSchedule::class);
         $schedule->db = $this->createMock(DBManager::class);
 
-        return TestReflection::callProtectedMethod($schedule, 'getQuery', array('test_id', $scheduleType));
+        return TestReflection::callProtectedMethod($schedule, 'getQuery', ['test_id', $scheduleType]);
     }
 }

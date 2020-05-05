@@ -86,18 +86,18 @@ class PAT189Test extends TestCase
     {
         $result = $this->api->filterRelated(
             $this->serviceMock,
-            array(
+            [
                 'module' => 'Accounts',
                 'record' => $account->id,
                 'link_name' => 'calls',
                 'include_child_items' => true,
-            )
+            ]
         );
 
         $this->assertArrayHasKey('records', $result, 'Filter result doesn\'t have "records" key');
         $this->assertIsArray($result['records'], 'Filter result "records" is not an array');
 
-        $calls = array();
+        $calls = [];
         foreach ($result['records'] as $record) {
             $this->assertArrayHasKey('id', $record, 'Record doesn\'t have "id" key');
             $calls[] = $record['id'];

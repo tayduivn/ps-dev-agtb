@@ -71,9 +71,9 @@ class HtmlEncodingTest extends TestCase
      */
     private function retrieveBean($encode)
     {
-        return BeanFactory::getBean(self::$bean->module_name, self::$bean->id, array(
+        return BeanFactory::getBean(self::$bean->module_name, self::$bean->id, [
             'use_cache' => false,
             'encode' => $encode,
-        ));
+        ]);
     }
 }

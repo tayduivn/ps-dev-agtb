@@ -23,17 +23,17 @@ class BeanExtendTest extends TestCase
 
     public static function tearDownAfterClass(): void
     {
-	    SugarTestHelper::tearDown();
-	}
+        SugarTestHelper::tearDown();
+    }
 
-	public function testBeans()
-	{
-	    for($i=1;$i<=8;$i++) {
-	        $name = "TestBean$i";
-	        $bean = new $name;
-	        $this->assertTrue($bean->ok);
-	    }
-	}
+    public function testBeans()
+    {
+        for ($i=1; $i<=8; $i++) {
+            $name = "TestBean$i";
+            $bean = new $name;
+            $this->assertTrue($bean->ok);
+        }
+    }
 }
 
 class TestBean1 extends SugarBean
@@ -41,9 +41,9 @@ class TestBean1 extends SugarBean
     public $ok;
     public function __construct()
     {
-		parent::__construct();
-		$this->ok = true;
-	}
+        parent::__construct();
+        $this->ok = true;
+    }
 }
 
 class TestBean2 extends SugarBean
@@ -52,14 +52,15 @@ class TestBean2 extends SugarBean
     public function __construct()
     {
         parent::__construct();
-		$this->ok = true;
+        $this->ok = true;
     }
 }
 
 class TestBean3 extends SugarBean
 {
     public $ok;
-    function __construct() {
+    function __construct()
+    {
         parent::__construct();
         $this->ok = true;
     }
@@ -68,7 +69,8 @@ class TestBean3 extends SugarBean
 class TestBean4 extends SugarBean
 {
     public $ok;
-    function __construct() {
+    function __construct()
+    {
         parent::__construct();
         $this->ok = true;
     }
@@ -97,7 +99,8 @@ class TestBean6 extends Basic
 class TestBean7 extends Basic
 {
     public $ok;
-    function __construct() {
+    function __construct()
+    {
         parent::__construct();
         $this->ok = true;
     }
@@ -106,7 +109,8 @@ class TestBean7 extends Basic
 class TestBean8 extends Basic
 {
     public $ok;
-    function __construct() {
+    function __construct()
+    {
         parent::__construct();
         $this->ok = true;
     }
@@ -116,7 +120,8 @@ class TestBean9 extends Basic
 {
     public $ok;
 
-    function __construct() {
+    function __construct()
+    {
         parent::__construct();
         $this->ok = true;
     }
@@ -126,7 +131,8 @@ class TestBean10 extends TestBean9
 {
     public $ok;
 
-    function __construct() {
+    function __construct()
+    {
         parent::__construct();
         $this->ok = true;
     }

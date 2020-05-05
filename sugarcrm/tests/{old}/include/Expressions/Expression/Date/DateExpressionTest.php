@@ -15,113 +15,112 @@ use PHPUnit\Framework\TestCase;
 
 class DateExpressionTest extends TestCase
 {
-    static $createdBeans = array();
+    static $createdBeans = [];
 
     public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp("current_user");
         $GLOBALS['current_user']->setPreference('timezone', "America/Los_Angeles");
-	    $GLOBALS['current_user']->setPreference('datef', "m/d/Y");
-		$GLOBALS['current_user']->setPreference('timef', "h.iA");
-		unset($GLOBALS['disable_date_format']);
-	}
+        $GLOBALS['current_user']->setPreference('datef', "m/d/Y");
+        $GLOBALS['current_user']->setPreference('timef', "h.iA");
+        unset($GLOBALS['disable_date_format']);
+    }
 
     public static function tearDownAfterClass(): void
     {
-	    foreach(self::$createdBeans as $bean)
-        {
+        foreach (self::$createdBeans as $bean) {
             $bean->mark_deleted($bean->id);
         }
-	}
+    }
 
-	public function testAddDays()
-	{
-	    $task = new Task();
-	    $task->date_due = '2001-01-01 11:45:00';
+    public function testAddDays()
+    {
+        $task = new Task();
+        $task->date_due = '2001-01-01 11:45:00';
         $expr = 'addDays($date_due, 7)';
         $result = Parser::evaluate($expr, $task)->evaluate();
-	    $this->assertInstanceOf("DateTime", $result);
-	    $expect = TimeDate::getInstance()->fromDb('2001-01-01 11:45:00')->get('+ 7 days')->asDb();
+        $this->assertInstanceOf("DateTime", $result);
+        $expect = TimeDate::getInstance()->fromDb('2001-01-01 11:45:00')->get('+ 7 days')->asDb();
         $this->assertEquals($expect, TimeDate::getInstance()->asDb($result));
-	}
+    }
 
-	public function testDayOfWeek()
-	{
-	    $task = new Task();
-	    $task->date_due = '2011-01-10 01:00:00'; // this is Monday in GMT but Sunday in PST
-	    $expr = 'dayofweek($date_due)';
-	    $result = Parser::evaluate($expr, $task)->evaluate();
+    public function testDayOfWeek()
+    {
+        $task = new Task();
+        $task->date_due = '2011-01-10 01:00:00'; // this is Monday in GMT but Sunday in PST
+        $expr = 'dayofweek($date_due)';
+        $result = Parser::evaluate($expr, $task)->evaluate();
         $this->assertEquals(0, $result);
 
         $task->date_due = '2011-01-10 21:00:00'; // this is Monday in both timezones
-	    $expr = 'dayofweek($date_due)';
-	    $result = Parser::evaluate($expr, $task)->evaluate();
+        $expr = 'dayofweek($date_due)';
+        $result = Parser::evaluate($expr, $task)->evaluate();
         $this->assertEquals(1, $result);
-	}
+    }
 
-	public function testMonthOfYear()
-	{
-	    $task = new Task();
-	    $task->date_due = '2011-01-09 21:00:00';
-	    $expr = 'monthofyear($date_due)';
-	    $result = Parser::evaluate($expr, $task)->evaluate();
+    public function testMonthOfYear()
+    {
+        $task = new Task();
+        $task->date_due = '2011-01-09 21:00:00';
+        $expr = 'monthofyear($date_due)';
+        $result = Parser::evaluate($expr, $task)->evaluate();
         $this->assertEquals(1, $result);
 
         $task->date_due = '2011-03-01 01:00:00'; // this is February in PST
-	    $result = Parser::evaluate($expr, $task)->evaluate();
+        $result = Parser::evaluate($expr, $task)->evaluate();
         $this->assertEquals(2, $result);
-	}
+    }
 
-	public function testDefineDate()
-	{
-	    $task = new Task();
-	    $expr = 'date($name)';
-	    $timedate = TimeDate::getInstance();
+    public function testDefineDate()
+    {
+        $task = new Task();
+        $expr = 'date($name)';
+        $timedate = TimeDate::getInstance();
 
-	    $task->name = '3/18/2011';
-	    $result = Parser::evaluate($expr, $task)->evaluate();
-	    $this->assertInstanceOf("DateTime", $result);
-	    $this->assertEquals($timedate->asUserDate($timedate->fromUserDate('3/18/2011')), $timedate->asUserDate($result));
-	}
+        $task->name = '3/18/2011';
+        $result = Parser::evaluate($expr, $task)->evaluate();
+        $this->assertInstanceOf("DateTime", $result);
+        $this->assertEquals($timedate->asUserDate($timedate->fromUserDate('3/18/2011')), $timedate->asUserDate($result));
+    }
 
-	public function testNow()
-	{
-	    $task = new Task();
-	    $expr = 'now()';
-	    $result = Parser::evaluate($expr, $task)->evaluate();
-	    $this->assertInstanceOf("DateTime", $result);
-	    $this->assertEquals(TimeDate::getInstance()->getNow(true)->format('r'), $result->format('r'));
-	}
+    public function testNow()
+    {
+        $task = new Task();
+        $expr = 'now()';
+        $result = Parser::evaluate($expr, $task)->evaluate();
+        $this->assertInstanceOf("DateTime", $result);
+        $this->assertEquals(TimeDate::getInstance()->getNow(true)->format('r'), $result->format('r'));
+    }
 
-	public function testToday()
-	{
-	    $task = new Task();
-	    $expr = 'today()';
-	    $result = Parser::evaluate($expr, $task)->evaluate();
-	    $this->assertInstanceOf("DateTime", $result);
-	    $this->assertEquals(TimeDate::getInstance()->getNow(true)->format('Y-m-d'), $result->format('Y-m-d'));
-	}
+    public function testToday()
+    {
+        $task = new Task();
+        $expr = 'today()';
+        $result = Parser::evaluate($expr, $task)->evaluate();
+        $this->assertInstanceOf("DateTime", $result);
+        $this->assertEquals(TimeDate::getInstance()->getNow(true)->format('Y-m-d'), $result->format('Y-m-d'));
+    }
 
     public function daysUntilGenerator()
     {
-        $test_cases = array(
-            array("+5 days",5),
-            array("-1 day",-1),
-            array("yesterday",-1), // trigger a 1 day change and set the time to be midnight yesterday
-            array("yesterday -1 minute",-2), // corner case - trigger a 2 day change to be 11:59:00
-            array("+1 day",1),
-            array("tomorrow",1), // trigger a 1 day change and set the time to be midnight tomorrow
-            array("tomorrow -1 minute",0), // corner case - trigger a day change back to today
-            array("-5 days",-5),
-        );
+        $test_cases = [
+            ["+5 days",5],
+            ["-1 day",-1],
+            ["yesterday",-1], // trigger a 1 day change and set the time to be midnight yesterday
+            ["yesterday -1 minute",-2], // corner case - trigger a 2 day change to be 11:59:00
+            ["+1 day",1],
+            ["tomorrow",1], // trigger a 1 day change and set the time to be midnight tomorrow
+            ["tomorrow -1 minute",0], // corner case - trigger a day change back to today
+            ["-5 days",-5],
+        ];
 
         $hours = range(0, 23, 1);
 
-        $results = array();
+        $results = [];
 
-        foreach($hours as $hour) {
-            foreach($test_cases as $test) {
-                $results[] = array_merge($test, array('hour' => $hour));
+        foreach ($hours as $hour) {
+            foreach ($test_cases as $test) {
+                $results[] = array_merge($test, ['hour' => $hour]);
             }
         }
 
@@ -132,7 +131,7 @@ class DateExpressionTest extends TestCase
      * @dataProvider daysUntilGenerator
      */
     public function testDaysUntil($input, $expected, $hour)
-	{
+    {
         $task = new Task();
         $timedate = TimeDate::getInstance();
 
@@ -142,7 +141,7 @@ class DateExpressionTest extends TestCase
         $expr = 'daysUntil($date_due)';
         $result = Parser::evaluate($expr, $task)->evaluate();
         $this->assertEquals($expected, $result);
-	}
+    }
 
 
     /**
@@ -158,8 +157,8 @@ class DateExpressionTest extends TestCase
         // manually convert string to object in order to avoid dependency
         // on user-preferred date format
         $date = $timedate->fromString($date);
-        $params = new StringLiteralExpression(array($date));
-        $expr = new HoursUntilExpression(array($params));
+        $params = new StringLiteralExpression([$date]);
+        $expr = new HoursUntilExpression([$params]);
         $actual = $expr->evaluate();
 
         $this->assertEquals($expected, $actual);
@@ -167,35 +166,35 @@ class DateExpressionTest extends TestCase
 
     public static function hoursUntilProvider()
     {
-        return array(
+        return [
             // one hour difference
-            array(
+            [
                 '2014-06-10 14:17:45',
                 '2014-06-10 13:17:45',
-                1
-            ),
+                1,
+            ],
             // value is rounded down
-            array(
+            [
                 '2014-06-10 16:17:00',
                 '2014-06-10 13:17:45',
-                2
-            ),
+                2,
+            ],
             // value is rounded down by modulus
-            array(
+            [
                 '2014-06-10 13:17:45',
                 '2014-06-10 16:17:00',
-                -2
-            ),
-        );
+                -2,
+            ],
+        ];
     }
 
-	public function testBeforeAfter()
-	{
-	    $task = new Task();
-	    $task->date_start = '2011-01-01 21:00:00';
-	    $task->date_due = '2011-01-09 01:00:00';
+    public function testBeforeAfter()
+    {
+        $task = new Task();
+        $task->date_start = '2011-01-01 21:00:00';
+        $task->date_due = '2011-01-09 01:00:00';
 
-	    $expr = 'isBefore($date_start, $date_due)';
+        $expr = 'isBefore($date_start, $date_due)';
         $result = Parser::evaluate($expr, $task)->evaluate();
         $this->assertEquals($result, "true");
 
@@ -210,32 +209,32 @@ class DateExpressionTest extends TestCase
         $expr = 'isAfter($date_due, $date_start)';
         $result = Parser::evaluate($expr, $task)->evaluate();
         $this->assertEquals($result, "true");
-	}
+    }
 
-	public function testIsValidDate()
-	{
-	    $task = new Task();
-	    $timedate = TimeDate::getInstance();
-	    $task->name = $timedate->to_display_date_time('2011-01-01 21:00:00');
-	    $expr = 'isValidDate($name)';
+    public function testIsValidDate()
+    {
+        $task = new Task();
+        $timedate = TimeDate::getInstance();
+        $task->name = $timedate->to_display_date_time('2011-01-01 21:00:00');
+        $expr = 'isValidDate($name)';
         $result = Parser::evaluate($expr, $task)->evaluate();
         $this->assertEquals($result, "true");
 
         $task->name = '42';
-	    $expr = 'isValidDate($name)';
+        $expr = 'isValidDate($name)';
         $result = Parser::evaluate($expr, $task)->evaluate();
         $this->assertEquals($result, "false");
 
         $task->name = 'Chuck Norris';
-	    $expr = 'isValidDate($name)';
+        $expr = 'isValidDate($name)';
         $result = Parser::evaluate($expr, $task)->evaluate();
         $this->assertEquals($result, "false");
 
         $task->name = '2011-01-01 21:00:00';
-	    $expr = 'isValidDate($name)';
+        $expr = 'isValidDate($name)';
         $result = Parser::evaluate($expr, $task)->evaluate();
         $this->assertEquals($result, "false");
-	}
+    }
 
     public function testInvalidDateValue() : void
     {
@@ -247,33 +246,33 @@ class DateExpressionTest extends TestCase
         Parser::evaluate($expr, $task)->evaluate();
     }
 
-	public function testBadDates()
-	{
-	    $task = new Task();
+    public function testBadDates()
+    {
+        $task = new Task();
         $task->date_due = 'Chuck Norris';
-	    $expr = 'addDays($date_due, 3)';
+        $expr = 'addDays($date_due, 3)';
         $result = Parser::evaluate($expr, $task)->evaluate();
         $this->assertFalse($result, "Incorrecty converted '{$task->date_due }' to date $result");
 
-	    $expr = 'addDays($date_start, 3)'; // not setting the value
+        $expr = 'addDays($date_start, 3)'; // not setting the value
         $result = Parser::evaluate($expr, $task)->evaluate();
         $this->assertFalse($result, "Incorrecty converted empty string to date $result");
-	}
+    }
 
-	/**
-	 * Test autoconverting strings to dates
-	 */
-	public function testConvert()
-	{
-	    $task = new Task();
-	    $timedate = TimeDate::getInstance();
-	    $now = $timedate->getNow();
-	    $task->name = $timedate->asUser($now);
-	    $expr = 'addDays($name, 3)';
-	    $result = Parser::evaluate($expr, $task)->evaluate();
-	    $this->assertInstanceOf("DateTime", $result);
-	    $this->assertEquals($timedate->asUser($timedate->getNow(true)->get("+3 days")), $timedate->asUser($result));
-	}
+    /**
+     * Test autoconverting strings to dates
+     */
+    public function testConvert()
+    {
+        $task = new Task();
+        $timedate = TimeDate::getInstance();
+        $now = $timedate->getNow();
+        $task->name = $timedate->asUser($now);
+        $expr = 'addDays($name, 3)';
+        $result = Parser::evaluate($expr, $task)->evaluate();
+        $this->assertInstanceOf("DateTime", $result);
+        $this->assertEquals($timedate->asUser($timedate->getNow(true)->get("+3 days")), $timedate->asUser($result));
+    }
 
     /**
      * @group bug57900
@@ -281,12 +280,12 @@ class DateExpressionTest extends TestCase
      */
     public function providerUserDateExpressions()
     {
-        return array(
-            array('$date_entered'),
+        return [
+            ['$date_entered'],
             // this doesn't give the correct date at all times, due to implicit interpretation of date() as UTC, which when converted to
             // local timezone could give a date +-1 day from now.
             //array('date(subStr(toString($date_entered),0,10))')
-        );
+        ];
     }
 
     /**
@@ -304,12 +303,10 @@ class DateExpressionTest extends TestCase
 
         try {
             $result = Parser::evaluate($expr, $opp)->evaluate();
-        }
-        catch (Exception $e)
-        {
+        } catch (Exception $e) {
             $this->fail('Failed to evaluate user datetime - threw exception');
         }
-        $this->assertInstanceOf("DateTime",$result,'Evaluation did not return a DateTime object');
+        $this->assertInstanceOf("DateTime", $result, 'Evaluation did not return a DateTime object');
         $this->assertEquals($now, $timedate->asUser($result), 'The time is not what expected');
     }
 
@@ -327,12 +324,12 @@ class DateExpressionTest extends TestCase
 
     public function roundTimeProvider()
     {
-        return array(
-            array(0, '00:00'),
-            array(8, '00:15'),
-            array(23, '00:30'),
-            array(38, '00:45'),
-            array(53, '01:00'),
-        );
+        return [
+            [0, '00:00'],
+            [8, '00:15'],
+            [23, '00:30'],
+            [38, '00:45'],
+            [53, '01:00'],
+        ];
     }
 }

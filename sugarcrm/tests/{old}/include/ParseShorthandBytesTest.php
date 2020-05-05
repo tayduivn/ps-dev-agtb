@@ -28,14 +28,14 @@ class ParseShorthandBytesTest extends TestCase
 
     public static function shorthandBytesProvider()
     {
-        return array(
-            array('1048576', 1048576),
-            array('100K', 102400),
-            array('8m', 8388608),
-            array('1G', 1073741824),
-            array('20X', 20),
-            array('-1', null),
-            array('-1K', null),
-        );
+        return [
+            ['1048576', 1048576],
+            ['100K', 102400],
+            ['8m', 8388608],
+            ['1G', 1073741824],
+            ['20X', 20],
+            ['-1', null],
+            ['-1K', null],
+        ];
     }
 }

@@ -20,7 +20,7 @@ class EmployeesViewListTest extends TestCase
     /**
      * @var array
      */
-    private $sugarConfigBackup = array();
+    private $sugarConfigBackup = [];
 
     /**
      * {@inheritdoc}
@@ -48,19 +48,19 @@ class EmployeesViewListTest extends TestCase
      */
     public static function listViewExportButtonsDataProvider()
     {
-        return array(
+        return [
             // Admin user will see template with export options if admin_export_only is checked
-            array(true, array('disable_export' => false, 'admin_export_only' => true), true),
+            [true, ['disable_export' => false, 'admin_export_only' => true], true],
             // Admin user will not see template with export options if disable_export is checked
-            array(true, array('disable_export' => true, 'admin_export_only' => true), false),
+            [true, ['disable_export' => true, 'admin_export_only' => true], false],
             // Regular user will not see template with export options if admin_export_only is checked
-            array(false, array('disable_export' => false, 'admin_export_only' => true), false),
+            [false, ['disable_export' => false, 'admin_export_only' => true], false],
             // Regular user shouldn't see template with export options if disable_export is checked
-            array(false, array('disable_export' => true, 'admin_export_only' => false), false),
+            [false, ['disable_export' => true, 'admin_export_only' => false], false],
             // Regular user will see template with export options
             // if disable_export is not checked and admin_export_only is not checked
-            array(false, array('disable_export' => false, 'admin_export_only' => false), true),
-        );
+            [false, ['disable_export' => false, 'admin_export_only' => false], true],
+        ];
     }
 
     /**
@@ -74,7 +74,7 @@ class EmployeesViewListTest extends TestCase
      */
     public function testListViewExportButtons($isAdmin, $config, $expected)
     {
-        SugarTestHelper::setUp('current_user', array(true, $isAdmin));
+        SugarTestHelper::setUp('current_user', [true, $isAdmin]);
 
         // Set config parameters
         global $sugar_config;
@@ -86,17 +86,17 @@ class EmployeesViewListTest extends TestCase
         $searchForm = new SearchForm($bean, 'Employees');
 
         /** @var ListViewSmarty|MockObject $lvMock */
-        $lvMock = $this->getMockBuilder('ListViewSmarty')->setMethods(array('display'))->getMock();
+        $lvMock = $this->getMockBuilder('ListViewSmarty')->setMethods(['display'])->getMock();
 
         /** @var EmployeesViewList|MockObject $employeesListViewMock */
-        $employeesListViewMock = $this->createPartialMock('EmployeesViewList', array('processSearchForm'));
+        $employeesListViewMock = $this->createPartialMock('EmployeesViewList', ['processSearchForm']);
         $employeesListViewMock->searchForm = $searchForm;
         $employeesListViewMock->headers = true;
         $employeesListViewMock->seed = $bean;
 
         $employeesListViewMock->preDisplay();
         $employeesListViewMock->lv = $lvMock;
-        $employeesListViewMock->lv->displayColumns = array();
+        $employeesListViewMock->lv->displayColumns = [];
 
         $employeesListViewMock->listViewProcess();
 

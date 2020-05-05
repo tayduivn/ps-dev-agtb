@@ -34,7 +34,7 @@ class Sha2Test extends TestCase
         $crypt->setOptions($options);
 
         // mock salt generator
-        $saltMock = $this->getSaltMock(array('generate'));
+        $saltMock = $this->getSaltMock(['generate']);
 
         $saltMock->expects($this->once())
             ->method('generate')
@@ -47,40 +47,40 @@ class Sha2Test extends TestCase
 
     public function providerTestHashPredictable()
     {
-        return array(
-            array(
+        return [
+            [
                 'CRYPT_SHA256',
-                array(),
+                [],
                 '1234567890123456',
                 16,
                 'password3',
                 '$5$rounds=5000$1234567890123456$P55jK.CUi8upfSiEdRr9iaThMhV/ay/L0XI3r/IZf.1',
-            ),
-            array(
+            ],
+            [
                 'CRYPT_SHA256',
-                array('rounds' => 4000),
+                ['rounds' => 4000],
                 '1234567890123456',
                 16,
                 'password3',
                 '$5$rounds=4000$1234567890123456$c8hKbhADxFiVymele2/EEUOXpJtg6ieQRVwsCbvNm40',
-            ),
-            array(
+            ],
+            [
                 'CRYPT_SHA512',
-                array(),
+                [],
                 '1234567890123456',
                 16,
                 'password4',
                 '$6$rounds=5000$1234567890123456$Z7ph2lhVPUfxzW4XtWJdISuEHTxMlaqYTJiK8FMxnG0Sa14NEMJaGJIEEJZB5R32bCqgKNtBugLr466CxtkTg/',
-            ),
-            array(
+            ],
+            [
                 'CRYPT_SHA512',
-                array('rounds' => '4000'),
+                ['rounds' => '4000'],
                 '1234567890123456',
                 16,
                 'password4',
                 '$6$rounds=4000$1234567890123456$uRd4b1Im0ng8PbPHQnSYn/EcY/1W4X5RqxRUriv/orzo20tHcjgTchhEfEbJA.sY7823DMT.quElNWKTh./qH0',
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -103,32 +103,32 @@ class Sha2Test extends TestCase
 
     public function providerTestHash()
     {
-        return array(
-            array(
+        return [
+            [
                 'CRYPT_SHA256',
-                array(),
+                [],
                 'password3',
                 '#^\$5\$rounds=5000+\$[A-Za-z0-9+/]{16}\$[./A-Za-z0-9]{43}$#D',
-            ),
-            array(
+            ],
+            [
                 'CRYPT_SHA256',
-                array('rounds' => 4000),
+                ['rounds' => 4000],
                 'password3',
                 '#^\$5\$rounds=4000+\$[A-Za-z0-9+/]{16}\$[./A-Za-z0-9]{43}$#D',
-            ),
-            array(
+            ],
+            [
                 'CRYPT_SHA512',
-                array(),
+                [],
                 'password4',
                 '#^\$6\$rounds=5000+\$[A-Za-z0-9+/]{16}\$[./A-Za-z0-9]{86}$#D',
-            ),
-            array(
+            ],
+            [
                 'CRYPT_SHA512',
-                array('rounds' => '4000'),
+                ['rounds' => '4000'],
                 'password4',
                 '#^\$6\$rounds=4000+\$[A-Za-z0-9+/]{16}\$[./A-Za-z0-9]{86}$#D',
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -143,32 +143,32 @@ class Sha2Test extends TestCase
 
     public function providerTestVerify()
     {
-        return array(
-            array(
+        return [
+            [
                 'CRYPT_SHA256',
                 '31435008693ce6976f45dedc5532e2c1',
                 '$5$rounds=5000$1234567890123456$c5PoOfE/uqUoVcX5JnakJmrcR2VFEHZmQ.KaLEtUlR4',
                 true,
-            ),
-            array(
+            ],
+            [
                 'CRYPT_SHA256',
                 'invalid',
                 '$5$rounds=5000$1234567890123456$c5PoOfE/uqUoVcX5JnakJmrcR2VFEHZmQ.KaLEtUlR4',
                 false,
-            ),
-            array(
+            ],
+            [
                 'CRYPT_SHA512',
                 '31435008693ce6976f45dedc5532e2c1',
                 '$6$rounds=5000$1234567890123456$QX1ndnRVi1/AxK0fPVQ4ZIQO.ThxS5VmQptu8AgQcjMCkETlLRDh4geJNhMtGvTWdQc.pFQ3l.TCeG/yvbukG.',
                 true,
-            ),
-            array(
+            ],
+            [
                 'CRYPT_SHA512',
                 'invalid',
                 '$6$rounds=5000$1234567890123456$QX1ndnRVi1/AxK0fPVQ4ZIQO.ThxS5VmQptu8AgQcjMCkETlLRDh4geJNhMtGvTWdQc.pFQ3l.TCeG/yvbukG.',
                 false,
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -185,64 +185,64 @@ class Sha2Test extends TestCase
 
     public function providerTestNeedsRehash()
     {
-        return array(
+        return [
 
             // BOGUS source
-            array(
+            [
                 'CRYPT_SHA256',
-                array(),
+                [],
                 'foobar',
                 true,
-            ),
+            ],
 
             // EMPTY source
-            array(
+            [
                 'CRYPT_SHA256',
-                array(),
+                [],
                 '',
                 true,
-            ),
+            ],
 
             // PASSWORD_BCRYPT source
-            array(
+            [
                 'CRYPT_SHA256',
-                array(),
+                [],
                 '$2y$10$duE5hc9IAC7JMBKxIZqXHu95QDpLtp1zk2SXjwZb9Sp2p0WDMCoSW',
                 true,
-            ),
+            ],
 
             // CRYPT_SHA256 source - same rounds
-            array(
+            [
                 'CRYPT_SHA256',
-                array('rounds' => 5000),
+                ['rounds' => 5000],
                 '$5$rounds=5000$1234567890123456$c5PoOfE/uqUoVcX5JnakJmrcR2VFEHZmQ.KaLEtUlR4',
                 false,
-            ),
+            ],
 
             // CRYPT_SHA256 source - diff rounds
-            array(
+            [
                 'CRYPT_SHA256',
-                array('rounds' => 4000),
+                ['rounds' => 4000],
                 '$5$rounds=5000$1234567890123456$c5PoOfE/uqUoVcX5JnakJmrcR2VFEHZmQ.KaLEtUlR4',
                 true,
-            ),
+            ],
 
             // CRYPT_SHA512 source
-            array(
+            [
                 'CRYPT_SHA512',
-                array('rounds' => 5000),
+                ['rounds' => 5000],
                 '$6$rounds=5000$1234567890123456$QX1ndnRVi1/AxK0fPVQ4ZIQO.ThxS5VmQptu8AgQcjMCkETlLRDh4geJNhMtGvTWdQc.pFQ3l.TCeG/yvbukG.',
                 false,
-            ),
+            ],
 
             // CRYPT_SHA512 source
-            array(
+            [
                 'CRYPT_SHA512',
-                array('rounds' => 4000),
+                ['rounds' => 4000],
                 '$6$rounds=5000$1234567890123456$QX1ndnRVi1/AxK0fPVQ4ZIQO.ThxS5VmQptu8AgQcjMCkETlLRDh4geJNhMtGvTWdQc.pFQ3l.TCeG/yvbukG.',
                 true,
-            ),
-        );
+            ],
+        ];
     }
 
     /**

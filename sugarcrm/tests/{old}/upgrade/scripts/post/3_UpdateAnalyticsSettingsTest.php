@@ -34,11 +34,11 @@ class SugarUpgradeUpdateAnalyticsSettingsTest extends UpgradeTestCase
         $script = new SugarUpgradeUpdateAnalyticsSettings($this->upgrader);
         $script->from_version = '8.0.0';
         $config = new Configurator();
-        $config->config['analytics'] = array(
+        $config->config['analytics'] = [
             'enabled' => true,
             'connector' => 'GoogleAnalytics',
             'id' => 'GID',
-        );
+        ];
         $config->saveConfig();
         $script->run();
         $actual = Container::getInstance()->get(SugarConfig::class)->get('analytics');

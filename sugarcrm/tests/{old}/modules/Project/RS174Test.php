@@ -22,7 +22,7 @@ class RS174Test extends TestCase
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setUp('current_user', array(true, false));
+        SugarTestHelper::setUp('current_user', [true, false]);
     }
 
     public static function tearDownAfterClass(): void
@@ -45,13 +45,13 @@ class RS174Test extends TestCase
     {
         $bean = SugarTestProjectUtilities::createProject();
         SugarTestProjectTaskUtilities::createProjectTask(
-            array(
+            [
                 'project_id' => $bean->id,
                 'parent_task_id' => 0,
                 'project_task_id' => create_guid(),
                 'percent_complete' => '30',
                 'name' => 'RS174Task',
-            )
+            ]
         );
         $res = $bean->getAllProjectTasks();
         $this->assertCount(1, $res);

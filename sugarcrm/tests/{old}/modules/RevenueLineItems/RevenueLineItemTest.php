@@ -23,7 +23,7 @@ class RevenueLineItemTest extends TestCase
     {
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('app_list_strings');
-        SugarTestHelper::setUp('mod_strings', array('RevenueLineItems'));
+        SugarTestHelper::setUp('mod_strings', ['RevenueLineItems']);
     }
 
     public static function tearDownAfterClass(): void
@@ -44,7 +44,7 @@ class RevenueLineItemTest extends TestCase
     public function testConvertToQuotedLineItemWithDiscountPriceSet()
     {
         /* @var $rli RevenueLineItem */
-        $rli = $this->getMockBuilder('RevenueLineItem')->setMethods(array('save'))->getMock();
+        $rli = $this->getMockBuilder('RevenueLineItem')->setMethods(['save'])->getMock();
         $rli->likely_case = '100.00';
         $rli->discount_price = '200.00';
         $rli->sales_stage = 'Test';
@@ -62,7 +62,7 @@ class RevenueLineItemTest extends TestCase
     public function testConvertToQuotedLineItemWithoutDiscountPriceSet()
     {
         /* @var $rli RevenueLineItem */
-        $rli = $this->getMockBuilder('RevenueLineItem')->setMethods(array('save'))->getMock();
+        $rli = $this->getMockBuilder('RevenueLineItem')->setMethods(['save'])->getMock();
         $rli->likely_case = '100.00';
         $rli->discount_price = '';
         $rli->sales_stage = 'Test';
@@ -80,7 +80,7 @@ class RevenueLineItemTest extends TestCase
     public function testConvertToQuoteLineItemsSetsCorrectDiscountAmount()
     {
         /* @var $rli RevenueLineItem */
-        $rli = $this->getMockBuilder('RevenueLineItem')->setMethods(array('save'))->getMock();
+        $rli = $this->getMockBuilder('RevenueLineItem')->setMethods(['save'])->getMock();
         $rli->discount_amount = '25.00';
         $rli->quantity = '50';
         $rli->discount_price = '1.00';
@@ -96,7 +96,7 @@ class RevenueLineItemTest extends TestCase
     public function testConvertToQuoteLineItemsSetCorrectDiscountAmountWhenPercent()
     {
         /* @var $rli RevenueLineItem */
-        $rli = $this->getMockBuilder('RevenueLineItem')->setMethods(array('save'))->getMock();
+        $rli = $this->getMockBuilder('RevenueLineItem')->setMethods(['save'])->getMock();
         $rli->discount_amount = '25.00';
         $rli->quantity = '50';
         $rli->discount_price = '1.00';
@@ -118,7 +118,7 @@ class RevenueLineItemTest extends TestCase
     public function testSetDiscountPrice($likely, $quantity, $discount_price, $expected_discount)
     {
         /* @var $rli RevenueLineItem */
-        $rli = $this->getMockBuilder('RevenueLineItem')->setMethods(array('save'))->getMock();
+        $rli = $this->getMockBuilder('RevenueLineItem')->setMethods(['save'])->getMock();
         $rli->likely_case = $likely;
         $rli->quantity = $quantity;
         $rli->discount_price = $discount_price;
@@ -131,11 +131,11 @@ class RevenueLineItemTest extends TestCase
     public function dataProviderSetDiscountPrice()
     {
         // values are likely, quantity, discount_price, expected_discount_price
-        return array(
-            array('100.00', '1', '', '100.000000'),
-            array('100.00', '1', '0.00', '0.00'),
-            array('100.00', '1', '150.000000', '150.000000'),
-        );
+        return [
+            ['100.00', '1', '', '100.000000'],
+            ['100.00', '1', '0.00', '0.00'],
+            ['100.00', '1', '150.000000', '150.000000'],
+        ];
     }
 
     /**
@@ -175,12 +175,12 @@ class RevenueLineItemTest extends TestCase
     public function totalAmountDataProvider()
     {
         // $quantity, $discount_price, $discount_amount, $discount_select, $total_amount
-        return array(
-            array('-2', '100.000000', '10.000000', '0', '-190.000000'),
-            array('-2', '100.000000', '10.000000', '1', '-180.000000'),
-            array('2', '100.000000', '10.000000', '0', '190.000000'),
-            array('2', '100.000000', '10.000000', '1', '180.000000'),
-        );
+        return [
+            ['-2', '100.000000', '10.000000', '0', '-190.000000'],
+            ['-2', '100.000000', '10.000000', '1', '-180.000000'],
+            ['2', '100.000000', '10.000000', '0', '190.000000'],
+            ['2', '100.000000', '10.000000', '1', '180.000000'],
+        ];
     }
 
     //BEGIN SUGARCRM flav=ent ONLY
@@ -189,15 +189,15 @@ class RevenueLineItemTest extends TestCase
      */
     public function testSaveProductWorksheetReturnsFalse()
     {
-        Forecast::$settings = array(
-            'is_setup' => 0
-        );
+        Forecast::$settings = [
+            'is_setup' => 0,
+        ];
         $mock = $this->getMockBuilder('RevenueLineItem')
             ->getMock();
 
         $actual = SugarTestReflection::callProtectedMethod($mock, 'saveProductWorksheet');
         $this->assertFalse($actual);
-        Forecast::$settings = array();
+        Forecast::$settings = [];
     }
 
     //END SUGARCRM flav=ent ONLY
@@ -207,9 +207,9 @@ class RevenueLineItemTest extends TestCase
      */
     public function testMapFieldsProductTemplate()
     {
-        $rli = $this->getMockBuilder('RevenueLineItem')->setMethods(array('save'))->getMock();
+        $rli = $this->getMockBuilder('RevenueLineItem')->setMethods(['save'])->getMock();
 
-        $arrExpected = array(
+        $arrExpected = [
             'category_id' => 'test_category_id',
             'mft_part_num' => 'test_mft_part_num',
             'list_price' => 'test_list_price',
@@ -220,14 +220,14 @@ class RevenueLineItemTest extends TestCase
             'discount_usdollar' => 'test_discount_usdollar',
             'tax_class' => 'test_tax_class',
             'weight' => 'test_weight',
-        );
+        ];
 
         $pt = $this->getMockBuilder('ProductTemplate')
-            ->setMethods(array('save'))
+            ->setMethods(['save'])
             ->getMock();
 
         $pt->id = 'test_pt_id';
-        foreach($arrExpected as $key => $val) {
+        foreach ($arrExpected as $key => $val) {
             $pt->$key = $val;
         }
 
@@ -236,7 +236,7 @@ class RevenueLineItemTest extends TestCase
 
         SugarTestReflection::callProtectedMethod($rli, 'mapFieldsFromProductTemplate');
 
-        foreach($arrExpected as $key => $expected) {
+        foreach ($arrExpected as $key => $expected) {
             $this->assertEquals($expected, $rli->$key);
         }
 
@@ -245,18 +245,18 @@ class RevenueLineItemTest extends TestCase
 
     public static function dataProviderSetAccountIdForOpportunity()
     {
-        return array(
-            array(
-                array(
-                    'test_account_id'
-                ),
-                true
-            ),
-            array(
-                array(),
-                false
-            )
-        );
+        return [
+            [
+                [
+                    'test_account_id',
+                ],
+                true,
+            ],
+            [
+                [],
+                false,
+            ],
+        ];
     }
 
     /**
@@ -265,10 +265,10 @@ class RevenueLineItemTest extends TestCase
      */
     public function testSetAccountIdForOpportunity($accounts, $expected)
     {
-        $product = $this->createPartialMock('Product', array('save', 'load_relationship'));
+        $product = $this->createPartialMock('Product', ['save', 'load_relationship']);
 
         $opp = $this->getMockBuilder('Opportunity')
-            ->setMethods(array('save', 'load_relationship'))
+            ->setMethods(['save', 'load_relationship'])
             ->getMock();
 
         $opp->id = 'test_opp_id';
@@ -279,7 +279,7 @@ class RevenueLineItemTest extends TestCase
             ->willReturn(true);
 
         $link2 = $this->getMockBuilder('Link2')
-            ->setMethods(array('get'))
+            ->setMethods(['get'])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -292,7 +292,7 @@ class RevenueLineItemTest extends TestCase
 
         BeanFactory::registerBean($opp);
 
-        $actual = SugarTestReflection::callProtectedMethod($product, 'setAccountIdForOpportunity', array($opp->id));
+        $actual = SugarTestReflection::callProtectedMethod($product, 'setAccountIdForOpportunity', [$opp->id]);
 
         $this->assertEquals($expected, $actual);
 
@@ -304,10 +304,10 @@ class RevenueLineItemTest extends TestCase
      */
     public function testMapFieldsFromOpportunity()
     {
-        $product = $this->createPartialMock('Product', array('save'));
+        $product = $this->createPartialMock('Product', ['save']);
 
         $opp = $this->getMockBuilder('Opportunity')
-            ->setMethods(array('save'))
+            ->setMethods(['save'])
             ->getMock();
 
         $opp->id = 'test_opp_id';
@@ -330,7 +330,7 @@ class RevenueLineItemTest extends TestCase
     public function testSetBestWorstFromLikelyDoesNotChangeBecauseOfAcl()
     {
         $rli = $this->getMockBuilder('RevenueLineItem')
-            ->setMethods(array('ACLFieldAccess'))
+            ->setMethods(['ACLFieldAccess'])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -357,7 +357,7 @@ class RevenueLineItemTest extends TestCase
     public function testBestWorstAutoFill($value, $likely, $expected)
     {
         $rli = $this->getMockBuilder('RevenueLineItem')
-            ->setMethods(array('ACLFieldAccess'))
+            ->setMethods(['ACLFieldAccess'])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -378,33 +378,33 @@ class RevenueLineItemTest extends TestCase
 
     public function dataProviderBestWorstAutoFill()
     {
-        return array(
-            array(
+        return [
+            [
                 '',
                 '100',
-                '100'
-            ),
-            array(
+                '100',
+            ],
+            [
                 null,
                 '100',
-                '100'
-            ),
-            array(
+                '100',
+            ],
+            [
                 '42',
                 '100',
-                '42'
-            ),
-            array(
+                '42',
+            ],
+            [
                 '0',
                 '100',
-                '0'
-            ),
-            array(
+                '0',
+            ],
+            [
                 '0',
                 100,
-                '0'
-            )
-        );
+                '0',
+            ],
+        ];
     }
 
     /**
@@ -417,7 +417,7 @@ class RevenueLineItemTest extends TestCase
     public function testQuantityNotDefaulted($actual, $expected)
     {
         $rli = $this->getMockBuilder('RevenueLineItem')
-            ->setMethods(array('save'))
+            ->setMethods(['save'])
             ->getMock();
 
         $rli->quantity = $actual;
@@ -430,15 +430,15 @@ class RevenueLineItemTest extends TestCase
 
     public static function dataProviderCheckQuantity()
     {
-        return array(
-            array('', 0),
-            array(null, 0),
-            array(0, 0),
-            array(1, 1),
-            array(42,42),
-            array(-1, -1),
-            array(-42,-42),
-        );
+        return [
+            ['', 0],
+            [null, 0],
+            [0, 0],
+            [1, 1],
+            [42,42],
+            [-1, -1],
+            [-42,-42],
+        ];
     }
 
     /**
@@ -458,18 +458,18 @@ class RevenueLineItemTest extends TestCase
 
     public static function dataProviderMapProbabilityFromSalesStage()
     {
-        return array(
-            array('Prospecting', '10'),
-            array('Qualification', '20'),
-            array('Needs Analysis', '25'),
-            array('Value Proposition', '30'),
-            array('Id. Decision Makers', '40'),
-            array('Perception Analysis', '50'),
-            array('Proposal/Price Quote', '65'),
-            array('Negotiation/Review', '80'),
-            array('Closed Won', '100'),
-            array('Closed Lost', '0')
-        );
+        return [
+            ['Prospecting', '10'],
+            ['Qualification', '20'],
+            ['Needs Analysis', '25'],
+            ['Value Proposition', '30'],
+            ['Id. Decision Makers', '40'],
+            ['Perception Analysis', '50'],
+            ['Proposal/Price Quote', '65'],
+            ['Negotiation/Review', '80'],
+            ['Closed Won', '100'],
+            ['Closed Lost', '0'],
+        ];
     }
 
     /**
@@ -500,26 +500,26 @@ class RevenueLineItemTest extends TestCase
 
     public static function dataProviderCanConvertToQuote()
     {
-        return array(
-            array(
-                array(
+        return [
+            [
+                [
                     'category_id' => 'test_cat_id',
-                ),
+                ],
                 false,
-            ),
-            array(
-                array(
+            ],
+            [
+                [
                     'quote_id' => 'test_quote_id',
-                ),
+                ],
                 false,
-            ),
-            array(
-                array(
+            ],
+            [
+                [
                     'id' => 'test',
-                ),
+                ],
                 true,
-            ),
-        );
+            ],
+        ];
     }
 
     //BEGIN SUGARCRM flav=ent ONLY
@@ -684,39 +684,39 @@ class RevenueLineItemTest extends TestCase
 
     public function providerTestUpdateRelatedAccount()
     {
-        return array(
+        return [
             // No related RLIs
-            array(
-                array(
-                ),
+            [
+                [
+                ],
                 '',
-            ),
+            ],
             // 2 related RLIs, but none that fit the criteria
-            array(
-                array(
-                    array('product_type' => 'New Business', 'renewable' => 1, 'date_closed' => '2020-01-01'),
-                    array('product_type' => 'Existing Business', 'renewable' => 0, 'date_closed' => '2019-01-01'),
-                ),
+            [
+                [
+                    ['product_type' => 'New Business', 'renewable' => 1, 'date_closed' => '2020-01-01'],
+                    ['product_type' => 'Existing Business', 'renewable' => 0, 'date_closed' => '2019-01-01'],
+                ],
                 '',
-            ),
+            ],
             // 2 related RLIs, only one of which fits the criteria
-            array(
-                array(
-                    array('product_type' => 'Existing Business', 'renewable' => 1, 'date_closed' => '2020-01-01'),
-                    array('product_type' => 'New Business', 'renewable' => 1, 'date_closed' => '2019-01-01'),
-                ),
+            [
+                [
+                    ['product_type' => 'Existing Business', 'renewable' => 1, 'date_closed' => '2020-01-01'],
+                    ['product_type' => 'New Business', 'renewable' => 1, 'date_closed' => '2019-01-01'],
+                ],
                 '2020-01-01',
-            ),
+            ],
             // 3 related RLIs, all of which fit the criteria but with different close dates
-            array(
-                array(
-                    array('product_type' => 'Existing Business', 'renewable' => 1, 'date_closed' => '2020-01-01'),
-                    array('product_type' => 'Existing Business', 'renewable' => 1, 'date_closed' => '2019-01-01'),
-                    array('product_type' => 'Existing Business', 'renewable' => 1, 'date_closed' => '2021-01-01'),
-                ),
+            [
+                [
+                    ['product_type' => 'Existing Business', 'renewable' => 1, 'date_closed' => '2020-01-01'],
+                    ['product_type' => 'Existing Business', 'renewable' => 1, 'date_closed' => '2019-01-01'],
+                    ['product_type' => 'Existing Business', 'renewable' => 1, 'date_closed' => '2021-01-01'],
+                ],
                 '2019-01-01',
-            ),
-        );
+            ],
+        ];
     }
     //END SUGARCRM flav=ent ONLY
 }

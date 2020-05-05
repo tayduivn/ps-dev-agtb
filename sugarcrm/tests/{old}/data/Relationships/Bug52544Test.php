@@ -38,11 +38,11 @@ class Bug52544Test extends TestCase
     public function testGetSubpanelQueryReturnsArray()
     {
         // Load up the relationship
-        if ( ! $this->user1->load_relationship('reportees') ) {
+        if (! $this->user1->load_relationship('reportees')) {
             // The relationship did not load, I'm guessing it doesn't exist
             $this->fail('Could not find a relationship named: reportees');
         }
-        $linkQueryParts = $this->user1->reportees->getSubpanelQuery(array('return_as_array'=>true));
+        $linkQueryParts = $this->user1->reportees->getSubpanelQuery(['return_as_array'=>true]);
 
         $this->assertTrue(is_array($linkQueryParts));
     }

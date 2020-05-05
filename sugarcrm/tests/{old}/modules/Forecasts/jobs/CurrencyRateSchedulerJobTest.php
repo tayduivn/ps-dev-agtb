@@ -77,32 +77,33 @@ class CurrencyRateSchedulerJobTest extends TestCase
     public function testCurrencyRateDefinitions()
     {
         $test = new UpdateRateTest();
-        $test->addRateColumnDefinition('foo','bar');
-        $test->addRateColumnDefinition('foo','baz');
-        $test->addRateColumnDefinition('foo','biz');
+        $test->addRateColumnDefinition('foo', 'bar');
+        $test->addRateColumnDefinition('foo', 'baz');
+        $test->addRateColumnDefinition('foo', 'biz');
         $rates = $test->getRateColumnDefinitions('foo');
-        $this->assertEquals(array('bar','baz','biz'),$rates);
-        $test->removeRateColumnDefinition('foo','baz');
+        $this->assertEquals(['bar','baz','biz'], $rates);
+        $test->removeRateColumnDefinition('foo', 'baz');
         $rates = $test->getRateColumnDefinitions('foo');
-        $this->assertEquals(array('bar','biz'),$rates);
+        $this->assertEquals(['bar','biz'], $rates);
 
-        $test->addUsDollarColumnDefinition('foo','bar','bar_usdollar');
-        $test->addUsDollarColumnDefinition('foo','baz','baz_usdollar');
-        $test->addUsDollarColumnDefinition('foo','biz','biz_usdollar');
+        $test->addUsDollarColumnDefinition('foo', 'bar', 'bar_usdollar');
+        $test->addUsDollarColumnDefinition('foo', 'baz', 'baz_usdollar');
+        $test->addUsDollarColumnDefinition('foo', 'biz', 'biz_usdollar');
         $rates = $test->getUsDollarColumnDefinitions('foo');
-        $this->assertEquals(array(
+        $this->assertEquals([
             'bar'=>'bar_usdollar',
             'baz'=>'baz_usdollar',
-            'biz'=>'biz_usdollar'
-        ),$rates);
-        $test->removeUsDollarColumnDefinition('foo','baz');
+            'biz'=>'biz_usdollar',
+        ], $rates);
+        $test->removeUsDollarColumnDefinition('foo', 'baz');
         $rates = $test->getUsDollarColumnDefinitions('foo');
-        $this->assertEquals(array(
+        $this->assertEquals([
             'bar'=>'bar_usdollar',
-            'biz'=>'biz_usdollar'
-        ),$rates);
+            'biz'=>'biz_usdollar',
+        ], $rates);
     }
 }
 
-class UpdateRateTest extends CurrencyRateUpdateAbstract {
+class UpdateRateTest extends CurrencyRateUpdateAbstract
+{
 }

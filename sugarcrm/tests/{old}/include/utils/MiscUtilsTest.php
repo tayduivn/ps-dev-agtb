@@ -18,133 +18,130 @@ class MiscUtilsTest extends TestCase
 {
     public static function setUpBeforeClass() : void
     {
-        $_REQUEST = array();
+        $_REQUEST = [];
     }
 
-	public function providerIsGuid()
-	{
-		return array(
-            array('yuckyuck',false),
-            array('1d6a784b-e082-8522-9b1c-4d48e25c5e03',true),
-            array('1d6a784b-e082-8522-9b1c-4d48e2c5e03',false),
-        );
+    public function providerIsGuid()
+    {
+        return [
+            ['yuckyuck',false],
+            ['1d6a784b-e082-8522-9b1c-4d48e25c5e03',true],
+            ['1d6a784b-e082-8522-9b1c-4d48e2c5e03',false],
+        ];
     }
     
-	/**
+    /**
      * @dataProvider providerIsGuid
      */
-	public function testIsGuid(
-	    $guid, 
-	    $expectedResult
-	    )
-	{
-	    $this->assertEquals($expectedResult,is_guid($guid));
-	}
-	
-	public function testGenerateWhereStatement()
-	{
-		$where = array("dog = '1'","cat = '3'");
-		
-		$this->assertEquals("dog = '1' and cat = '3'",generate_where_statement($where));
+    public function testIsGuid(
+        $guid,
+        $expectedResult
+    ) {
+        $this->assertEquals($expectedResult, is_guid($guid));
+    }
+    
+    public function testGenerateWhereStatement()
+    {
+        $where = ["dog = '1'","cat = '3'"];
+        
+        $this->assertEquals("dog = '1' and cat = '3'", generate_where_statement($where));
     }
     
     public function testAppendWhereClause()
     {
-        $where = array();
+        $where = [];
         $_REQUEST['dog'] = 'yuck';
         
-        append_where_clause($where,'dog');
+        append_where_clause($where, 'dog');
         
         unset($_REQUEST['dog']);
         
-        $this->assertEquals("dog like 'yuck%'",$where[0]);
+        $this->assertEquals("dog like 'yuck%'", $where[0]);
     }
     
     public function testAppendWhereClauseDifferentColumnName()
     {
-        $where = array();
+        $where = [];
         $_REQUEST['dog'] = 'yuck';
         
-        append_where_clause($where,'dog','cat');
+        append_where_clause($where, 'dog', 'cat');
         
         unset($_REQUEST['dog']);
         
-        $this->assertEquals("cat like 'yuck%'",$where[0]);
+        $this->assertEquals("cat like 'yuck%'", $where[0]);
     }
     
     public function testReturnSessionOrDefaultWhenSessionSet()
     {
         $_SESSION['yellow'] = 'blue';
         
-        $result = return_session_value_or_default('yellow','red');
+        $result = return_session_value_or_default('yellow', 'red');
         
         unset($_SESSION['yellow']);
         
-        $this->assertEquals('blue',$result);
+        $this->assertEquals('blue', $result);
     }
     
     public function testReturnSessionOrDefaultWhenSessionIsNotSet()
     {
-        $result = return_session_value_or_default('yellow','red');
+        $result = return_session_value_or_default('yellow', 'red');
         
-        $this->assertEquals('red',$result);
+        $this->assertEquals('red', $result);
     }
     
     public function testGetVariableFromQueryString()
     {
-        $this->assertEquals('123',getVariableFromQueryString('great','ok=12&great=123&bad=234'));
+        $this->assertEquals('123', getVariableFromQueryString('great', 'ok=12&great=123&bad=234'));
     }
     
     public function testGetVariableFromQueryStringWhenNoVariableFound()
     {
-        $this->assertFalse(getVariableFromQueryString('horrible','ok=12&great=123&bad=234'));
+        $this->assertFalse(getVariableFromQueryString('horrible', 'ok=12&great=123&bad=234'));
     }
     
     public function testSugarUcfirst()
     {
-        $this->assertEquals('John',sugar_ucfirst('John'));
+        $this->assertEquals('John', sugar_ucfirst('John'));
     }
     
     public function testFilterInboundEmailPopSelection()
     {
-        $protocals = array('pop3' => 'POP3','imap' => 'IMAP');
+        $protocals = ['pop3' => 'POP3','imap' => 'IMAP'];
         
-        if ( isset($GLOBALS['sugar_config']['allow_pop_inbound']) ) {
+        if (isset($GLOBALS['sugar_config']['allow_pop_inbound'])) {
             $oldsetting = $GLOBALS['sugar_config']['allow_pop_inbound'];
         }
         $GLOBALS['sugar_config']['allow_pop_inbound'] = false;
         
         $protocals = filterInboundEmailPopSelection($protocals);
         
-        if ( isset($oldsetting) ) {
+        if (isset($oldsetting)) {
             $GLOBALS['sugar_config']['allow_pop_inbound'] = $oldsetting;
-        }
-        else {
+        } else {
             unset($GLOBALS['sugar_config']['allow_pop_inbound']);
         }
         
-        $this->assertEquals(array('imap' => 'IMAP'),$protocals);
+        $this->assertEquals(['imap' => 'IMAP'], $protocals);
     }
     
     public function testFilterInboundEmailPopSelectionWhenItShouldBethere()
     {
-        $protocals = array('imap' => 'IMAP');
+        $protocals = ['imap' => 'IMAP'];
         
-        if ( isset($GLOBALS['sugar_config']['allow_pop_inbound']) ) {
+        if (isset($GLOBALS['sugar_config']['allow_pop_inbound'])) {
             $oldsetting = $GLOBALS['sugar_config']['allow_pop_inbound'];
         }
         $GLOBALS['sugar_config']['allow_pop_inbound'] = true;
         
         $protocals = filterInboundEmailPopSelection($protocals);
         
-        if ( isset($oldsetting) ) {
+        if (isset($oldsetting)) {
             $GLOBALS['sugar_config']['allow_pop_inbound'] = $oldsetting;
-        }
-        else {
+        } else {
             unset($GLOBALS['sugar_config']['allow_pop_inbound']);
         }
         
-        $this->assertEquals(array('imap' => 'IMAP','pop3' => 'POP3',),$protocals);
+        $this->assertEquals(['imap' => 'IMAP','pop3' => 'POP3',], $protocals);
     }
     
     public function testIsTouchScreenReturnsTrueIfCookieSet()
@@ -182,7 +179,7 @@ class MiscUtilsTest extends TestCase
 
     public function testValuesToKeys()
     {
-        $arr = array('apples', 'oranges', 'lemons', 'strawberries');
+        $arr = ['apples', 'oranges', 'lemons', 'strawberries'];
         $newArr = values_to_keys($arr);
         $this->assertArrayHasKey('lemons', $newArr, 'The conversion to hash did not work properly');
     }
@@ -218,43 +215,45 @@ class MiscUtilsTest extends TestCase
      *
      * @dataProvider replaceSugarVarsProvider
      */
-    public function testReplaceSugarVars($subject, $fields, $use_curly, $expected) {
+    public function testReplaceSugarVars($subject, $fields, $use_curly, $expected)
+    {
         $this->assertEquals($expected, replace_sugar_vars($subject, $fields, $use_curly));
     }
 
-    public function replaceSugarVarsProvider(){
-        return array(
-            array(
+    public function replaceSugarVarsProvider()
+    {
+        return [
+            [
                 "subject" => "",
-                "fields" => array(),
+                "fields" => [],
                 "use_curly" => null,
                 "expected" => "",
-            ),
-            array(
+            ],
+            [
                 "subject" => "test/[foo]/cool[bars]",
-                "fields" => array(
-                    "foo" => "123"
-                ),
+                "fields" => [
+                    "foo" => "123",
+                ],
                 "use_curly" => false,
                 "expected" => "test/123/cool[bars]",
-            ),
+            ],
 
-            array(
+            [
                 "subject" => "test/[foo]/cool[bars]",
-                "fields" => array(
-                    "foo" => "123"
-                ),
+                "fields" => [
+                    "foo" => "123",
+                ],
                 "use_curly" => true,
                 "expected" => "test/[foo]/cool[bars]",
-            ),
-            array(
+            ],
+            [
                 "subject" => "test/{foo}/cool{bars}",
-                "fields" => array(
-                    "foo" => "123"
-                ),
+                "fields" => [
+                    "foo" => "123",
+                ],
                 "use_curly" => true,
                 "expected" => "test/123/cool{bars}",
-            )
-        );
+            ],
+        ];
     }
 }

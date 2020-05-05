@@ -16,11 +16,11 @@ class ApiHeaderTest extends TestCase
 {
     protected function setUp() : void
     {
-        $this->headers = array(
+        $this->headers = [
             'Cache-Control', 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0',
             'Expires', 'pageload + 4 hours',
             'Pragma', 'nocache',
-            );
+            ];
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
@@ -33,21 +33,23 @@ class ApiHeaderTest extends TestCase
         SugarTestHelper::tearDown();
     }
 
-    public function testSetHeaders() {
+    public function testSetHeaders()
+    {
         $api = new RestServiceMock();
 
-        foreach($this->headers AS $header => $info) {
+        foreach ($this->headers as $header => $info) {
             $api->setHeader($header, $info);
         }
 
         $this->assertEquals($this->headers, $api->getResponseHeaders(), "The Headers Do Not Match");
     }
 
-    public function testSendHeaders() {
+    public function testSendHeaders()
+    {
         $api = new RestServiceMock();
 
         $expected_return = '';
-        foreach($this->headers AS $header => $info) {
+        foreach ($this->headers as $header => $info) {
             $api->setHeader($header, $info);
             $expected_return = "{$header}:{$info}\r\n";
         }
@@ -57,7 +59,8 @@ class ApiHeaderTest extends TestCase
         $this->assertEquals($expected_return, $return, "The Headers Sent were incorrect");
     }
 
-    public function testRequestHeaders() {
+    public function testRequestHeaders()
+    {
         $api = new RestServiceMock();
 
         $headers = $api->getRequest()->getRequestHeaders();
@@ -70,16 +73,18 @@ class RestServiceMock extends RestService
 {
     public function __construct()
     {
-        $this->response = new RestResponse(array());
+        $this->response = new RestResponse([]);
     }
 
-    public function getResponseHeaders() {
+    public function getResponseHeaders()
+    {
         return $this->response->getHeaders();
     }
     // overloading to return the headers it would send as a string to verify it working
-    public function sendHeaders() {
+    public function sendHeaders()
+    {
         $return = '';
-        foreach($this->getResponseHeaders() AS $header => $info) {
+        foreach ($this->getResponseHeaders() as $header => $info) {
             $return = "{$header}:{$info}\r\n";
         }
         return $return;

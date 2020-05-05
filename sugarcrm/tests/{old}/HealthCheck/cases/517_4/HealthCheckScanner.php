@@ -12,14 +12,14 @@
 
 class S_517_4_PackageManager extends PackageManager
 {
-    public function getinstalledPackages($types = array('module', 'langpack'))
+    public function getinstalledPackages($types = ['module', 'langpack'])
     {
-        return array(
-            array(
+        return [
+            [
                 'name' => 'SynoDashboardTemplates',
                 'version' => '20160916',
-            ),
-        );
+            ],
+        ];
     }
 }
 

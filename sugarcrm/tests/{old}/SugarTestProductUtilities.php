@@ -13,16 +13,18 @@
 
 class SugarTestProductUtilities
 {
-    protected static $_createdProducts = array();
+    protected static $_createdProducts = [];
 
-    private function __construct() {}
+    private function __construct()
+    {
+    }
 
-    public static function createProduct($id = '', $values = array())
+    public static function createProduct($id = '', $values = [])
     {
         $time = mt_rand();
         $product = BeanFactory::newBean('Products');
 
-        $values = array_merge(array(
+        $values = array_merge([
             'currency_id' => '-99',
             'name' => 'SugarProduct' . $time,
             'tax_class' => 'Taxable',
@@ -35,14 +37,13 @@ class SugarTestProductUtilities
             'likely_case' => '80.00',
             'worst_case' => '50.00',
 //END SUGARCRM flav=ent ONLY
-        ), $values);
+        ], $values);
 
         foreach ($values as $property => $value) {
             $product->$property = $value;
         }
 
-        if(!empty($id))
-        {
+        if (!empty($id)) {
             $product->new_with_id = true;
             $product->id = $id;
         }
@@ -51,15 +52,16 @@ class SugarTestProductUtilities
         return $product;
     }
 
-    public static function setCreatedProduct($product_ids) {
-    	foreach($product_ids as $product_id) {
-    		$product = new Product();
-    		$product->id = $product_id;
-        	self::$_createdProducts[] = $product;
-    	} // foreach
+    public static function setCreatedProduct($product_ids)
+    {
+        foreach ($product_ids as $product_id) {
+            $product = new Product();
+            $product->id = $product_id;
+            self::$_createdProducts[] = $product;
+        } // foreach
     } // fn
     
-    public static function removeAllCreatedProducts() 
+    public static function removeAllCreatedProducts()
     {
         $db = DBManagerFactory::getInstance();
         $product_ids = self::getCreatedProductIds();
@@ -68,9 +70,9 @@ class SugarTestProductUtilities
         $db->query("DELETE FROM forecast_worksheets WHERE parent_type = 'Products' and parent_id IN ('" . implode("', '", $product_ids) . "')");
     }
         
-    public static function getCreatedProductIds() 
+    public static function getCreatedProductIds()
     {
-        $product_ids = array();
+        $product_ids = [];
         foreach (self::$_createdProducts as $product) {
             $product_ids[] = $product->id;
         }

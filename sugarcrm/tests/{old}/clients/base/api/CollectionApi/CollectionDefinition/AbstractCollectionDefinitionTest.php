@@ -37,7 +37,7 @@ class AbstractCollectionDefinitionTest extends TestCase
         $actual = SugarTestReflection::callProtectedMethod(
             $this->definition,
             'normalizeSources',
-            array($sources, null, null)
+            [$sources, null, null]
         );
 
         $this->assertEquals($expected, $actual);
@@ -45,25 +45,25 @@ class AbstractCollectionDefinitionTest extends TestCase
 
     public static function normalizeSourcesSuccessProvider()
     {
-        return array(
-            array(
-                array(
+        return [
+            [
+                [
                     'a',
-                    array('name' => 'b'),
-                    array(
+                    ['name' => 'b'],
+                    [
                         'name' => 'c',
-                        'field_map' => array(),
-                    ),
-                ),
-                array(
-                    'a' => array(),
-                    'b' => array(),
-                    'c' => array(
-                        'field_map' => array(),
-                    ),
-                ),
-            ),
-        );
+                        'field_map' => [],
+                    ],
+                ],
+                [
+                    'a' => [],
+                    'b' => [],
+                    'c' => [
+                        'field_map' => [],
+                    ],
+                ],
+            ],
+        ];
     }
 
     /**
@@ -75,22 +75,22 @@ class AbstractCollectionDefinitionTest extends TestCase
         SugarTestReflection::callProtectedMethod(
             $this->definition,
             'normalizeSources',
-            array($sources, null, null)
+            [$sources, null, null]
         );
     }
 
     public static function normalizeSourcesFailureProvider()
     {
-        return array(
-            'non-array-sources' => array(null),
-            'non-string-or-array-source' => array(
-                array(null),
-            ),
-            'no-name' => array(
-                array(
-                    array(),
-                ),
-            ),
-        );
+        return [
+            'non-array-sources' => [null],
+            'non-string-or-array-source' => [
+                [null],
+            ],
+            'no-name' => [
+                [
+                    [],
+                ],
+            ],
+        ];
     }
 }

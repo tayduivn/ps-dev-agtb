@@ -27,32 +27,31 @@ class MappingManagerTest extends TestCase
     public function testBuildMapping($modules, $mapping1, $mapping2)
     {
         $numCalls = count($modules);
-        $provider1 = $this->getProviderMock(array('buildMapping'));
+        $provider1 = $this->getProviderMock(['buildMapping']);
         $provider1->expects($this->exactly($numCalls))
             ->method('buildMapping')
             ->will($this->returnValue($mapping1));
 
-        $provider2 = $this->getProviderMock(array('buildMapping'));
+        $provider2 = $this->getProviderMock(['buildMapping']);
         $provider2->expects($this->exactly($numCalls))
             ->method('buildMapping')
             ->will($this->returnValue($mapping2));
 
-        $providers = new ProviderCollection($this->getContainerMock(), array($provider1, $provider2));
+        $providers = new ProviderCollection($this->getContainerMock(), [$provider1, $provider2]);
 
         $mappingManager = $this->getMappingManagerMock();
         $mappingManager->buildMapping($providers, $modules);
-
     }
 
     public function providerTestBuildMapping()
     {
-        return array(
-            array(
-                array('Accounts', 'Contacts', 'Leads'),
-                array('mapping1' => array('type' => 'string')),
-                array('mapping2' => array('type' => 'text')),
-            ),
-        );
+        return [
+            [
+                ['Accounts', 'Contacts', 'Leads'],
+                ['mapping1' => ['type' => 'string']],
+                ['mapping2' => ['type' => 'text']],
+            ],
+        ];
     }
 
     /**

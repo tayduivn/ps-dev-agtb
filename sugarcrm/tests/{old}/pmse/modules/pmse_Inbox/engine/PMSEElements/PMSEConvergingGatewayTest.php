@@ -23,23 +23,23 @@ class PMSEConvergingGatewayTest extends TestCase
     public function testRetrievePreviousFlowsALL()
     {
         $this->convergingGateway = $this->getMockBuilder('PMSEConvergingGateway')
-            ->setMethods(array('retrieveSugarQueryObject'))
+            ->setMethods(['retrieveSugarQueryObject'])
             ->disableOriginalConstructor()
             ->getMock();
 
         $caseFlowHandler = $this->getMockBuilder('PMSECaseFlowHandler')
-            ->setMethods(array('retrieveBean'))
+            ->setMethods(['retrieveBean'])
             ->disableOriginalConstructor()
             ->getMock();
         
         $sugarBeanMock = $this->getMockBuilder('SugarBean')
             ->disableOriginalConstructor()
-            ->setMethods(NULL)
+            ->setMethods(null)
             ->getMock();
         
         $sugarQuery = $this->getMockBuilder('SugarQuery')
             ->setMethods(
-                array(
+                [
                     'select',
                     'from',
                     'where',
@@ -50,7 +50,7 @@ class PMSEConvergingGatewayTest extends TestCase
                     'addRaw',
                     'execute',
                     'fieldRaw',
-                )
+                ]
             )
             ->disableOriginalConstructor()
             ->getMock();
@@ -77,7 +77,7 @@ class PMSEConvergingGatewayTest extends TestCase
         
         $sugarQuery->expects($this->exactly(1))
             ->method('execute')
-            ->will($this->returnValue(array(array('id'=>'abc123'))));
+            ->will($this->returnValue([['id'=>'abc123']]));
         $sugarQuery->expects($this->any())
             ->method('joinTable')
             ->will($this->returnSelf());
@@ -91,30 +91,29 @@ class PMSEConvergingGatewayTest extends TestCase
         $elementId = '29018301923132';
         
         $this->convergingGateway->retrievePreviousFlows($type, $elementId);
-        
     }
     
     public function testRetrievePreviousFlowsPASSED()
     {
         $this->convergingGateway = $this->getMockBuilder('PMSEConvergingGateway')
-            ->setMethods(array('retrieveSugarQueryObject'))
+            ->setMethods(['retrieveSugarQueryObject'])
             ->disableOriginalConstructor()
             ->getMock();
 
         $caseFlowHandler = $this->getMockBuilder('PMSECaseFlowHandler')
-            ->setMethods(array('retrieveBean'))
+            ->setMethods(['retrieveBean'])
             ->disableOriginalConstructor()
             ->getMock();
         
         $sugarBeanMock = $this->getMockBuilder('SugarBean')
             ->disableOriginalConstructor()
-            ->setMethods(NULL)
+            ->setMethods(null)
             ->getMock();
         
         $sugarQuery = $this->getMockBuilder('SugarQuery')
             ->disableOriginalConstructor()
             ->setMethods(
-                array(
+                [
                     'select',
                     'from',
                     'where',
@@ -125,7 +124,7 @@ class PMSEConvergingGatewayTest extends TestCase
                     'addRaw',
                     'execute',
                     'fieldRaw',
-                )
+                ]
             )
             ->getMock();
         
@@ -151,7 +150,7 @@ class PMSEConvergingGatewayTest extends TestCase
         
         $sugarQuery->expects($this->exactly(1))
             ->method('execute')
-            ->will($this->returnValue(array(array('id'=>'abc123'))));
+            ->will($this->returnValue([['id'=>'abc123']]));
         $sugarQuery->expects($this->any())
             ->method('joinTable')
             ->willReturnSelf();

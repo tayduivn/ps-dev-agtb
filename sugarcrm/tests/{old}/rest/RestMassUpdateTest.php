@@ -36,7 +36,8 @@ class RestMassUpdateTest extends TestCase
      * This function simulates job queue to call SugarJobMassUpdate::run().
      * @return Boolean false when error occurs, otherwise true
      */
-    protected function runJob($id) {
+    protected function runJob($id)
+    {
         $schedulerJob = new SchedulersJob();
         $schedulerJob->retrieve($id);
 
@@ -69,26 +70,24 @@ class RestMassUpdateTest extends TestCase
         $api = new RestService();
         $api->user = $GLOBALS['current_user'];
 
-        $args = array(
-            'massupdate_params' => array(
-                'uid' => array($contact1->id, $contact2->id),
-            ),
+        $args = [
+            'massupdate_params' => [
+                'uid' => [$contact1->id, $contact2->id],
+            ],
             'module' => 'Contacts',
-        );
+        ];
 
         $apiClass = new MassUpdateApi();
         $apiClass->massDelete($api, $args);
 
         global $db;
         $rec = $db->query("select deleted from contacts where id='{$contact1->id}'");
-        if ($row = $db->fetchByAssoc($rec))
-        {
+        if ($row = $db->fetchByAssoc($rec)) {
             $this->assertEquals(1, $row['deleted'], 'deleted should be set to 1');
         }
 
         $rec = $db->query("select deleted from contacts where id='{$contact2->id}'");
-        if ($row = $db->fetchByAssoc($rec))
-        {
+        if ($row = $db->fetchByAssoc($rec)) {
             $this->assertEquals(1, $row['deleted'], 'deleted should be set to 1');
         }
     }
@@ -112,12 +111,12 @@ class RestMassUpdateTest extends TestCase
         $api = new RestService();
         $api->user = $GLOBALS['current_user'];
 
-        $args = array(
-            'massupdate_params' => array(
-                'uid' => array($contact1->id, $contact2->id),
-            ),
+        $args = [
+            'massupdate_params' => [
+                'uid' => [$contact1->id, $contact2->id],
+            ],
             'module' => 'Contacts',
-        );
+        ];
 
         $apiClass = new MassUpdateApi();
         $apiClass->massDelete($api, $args);
@@ -133,14 +132,12 @@ class RestMassUpdateTest extends TestCase
 
         global $db;
         $rec = $db->query("select deleted from contacts where id='{$contact1->id}'");
-        if ($row = $db->fetchByAssoc($rec))
-        {
+        if ($row = $db->fetchByAssoc($rec)) {
             $this->assertEquals(1, $row['deleted'], 'deleted should be set to 1');
         }
 
         $rec = $db->query("select deleted from contacts where id='{$contact2->id}'");
-        if ($row = $db->fetchByAssoc($rec))
-        {
+        if ($row = $db->fetchByAssoc($rec)) {
             $this->assertEquals(1, $row['deleted'], 'deleted should be set to 1');
         }
     }
@@ -162,12 +159,12 @@ class RestMassUpdateTest extends TestCase
         $api = new RestService();
         $api->user = $GLOBALS['current_user'];
 
-        $args = array(
-            'massupdate_params' => array(
+        $args = [
+            'massupdate_params' => [
                 'entire' => true, // entire selected list
-            ),
+            ],
             'module' => 'Contacts',
-        );
+        ];
 
         $apiClass = new MassUpdateApi();
         $apiClass->massDelete($api, $args);
@@ -176,14 +173,12 @@ class RestMassUpdateTest extends TestCase
 
         global $db;
         $rec = $db->query("select deleted from contacts where id='{$contact1->id}'");
-        if ($row = $db->fetchByAssoc($rec))
-        {
+        if ($row = $db->fetchByAssoc($rec)) {
             $this->assertEquals(1, $row['deleted'], 'deleted should be set to 1');
         }
 
         $rec = $db->query("select deleted from contacts where id='{$contact2->id}'");
-        if ($row = $db->fetchByAssoc($rec))
-        {
+        if ($row = $db->fetchByAssoc($rec)) {
             $this->assertEquals(1, $row['deleted'], 'deleted should be set to 1');
         }
     }
@@ -212,13 +207,13 @@ class RestMassUpdateTest extends TestCase
         $api = new RestService();
         $api->user = $GLOBALS['current_user'];
 
-        $args = array(
-            'massupdate_params' => array(
+        $args = [
+            'massupdate_params' => [
                 'entire' => true, // entire selected list
-                'filter' => array(array('first_name'=>'Airline')),
-            ),
+                'filter' => [['first_name'=>'Airline']],
+            ],
             'module' => 'Contacts',
-        );
+        ];
 
         $apiClass = new MassUpdateApi();
         $apiClass->massDelete($api, $args);
@@ -228,22 +223,19 @@ class RestMassUpdateTest extends TestCase
         global $db;
         // this should be deleted since the contact's first_name matches
         $rec = $db->query("select deleted from contacts where id='{$contact1->id}'");
-        if ($row = $db->fetchByAssoc($rec))
-        {
+        if ($row = $db->fetchByAssoc($rec)) {
             $this->assertEquals(1, $row['deleted'], 'deleted should be set to 1');
         }
 
         // this should be deleted since the contact's first_name matches
         $rec = $db->query("select deleted from contacts where id='{$contact2->id}'");
-        if ($row = $db->fetchByAssoc($rec))
-        {
+        if ($row = $db->fetchByAssoc($rec)) {
             $this->assertEquals(1, $row['deleted'], 'deleted should be set to 1');
         }
 
         // this should not be deleted since the contact's first_name does not match
         $rec = $db->query("select deleted from contacts where id='{$contact3->id}'");
-        if ($row = $db->fetchByAssoc($rec))
-        {
+        if ($row = $db->fetchByAssoc($rec)) {
             $this->assertEquals(0, $row['deleted'], 'deleted should remain 0');
         }
     }
@@ -261,27 +253,25 @@ class RestMassUpdateTest extends TestCase
         $api = new RestService();
         $api->user = $GLOBALS['current_user'];
 
-        $args = array(
-            'massupdate_params' => array(
-                'uid' => array($contact1->id, $contact2->id),
+        $args = [
+            'massupdate_params' => [
+                'uid' => [$contact1->id, $contact2->id],
                 'do_not_call' => 1,
-            ),
+            ],
             'module' => 'Contacts',
-        );
+        ];
 
         $apiClass = new MassUpdateApi();
         $apiClass->massUpdate($api, $args);
 
         global $db;
         $rec = $db->query("select do_not_call from contacts where id='{$contact1->id}'");
-        if ($row = $db->fetchByAssoc($rec))
-        {
+        if ($row = $db->fetchByAssoc($rec)) {
             $this->assertEquals(1, $row['do_not_call'], 'do_not_call should be set to 1');
         }
 
         $rec = $db->query("select do_not_call from contacts where id='{$contact2->id}'");
-        if ($row = $db->fetchByAssoc($rec))
-        {
+        if ($row = $db->fetchByAssoc($rec)) {
             $this->assertEquals(1, $row['do_not_call'], 'do_not_call should be set to 1');
         }
     }
@@ -298,21 +288,20 @@ class RestMassUpdateTest extends TestCase
         $api = new RestService();
         $api->user = $GLOBALS['current_user'];
 
-        $args = array(
-            'massupdate_params' => array(
-                'uid' => array($contact1->id),
+        $args = [
+            'massupdate_params' => [
+                'uid' => [$contact1->id],
                 'sync_contact' => true,
-            ),
+            ],
             'module' => 'Contacts',
-        );
+        ];
 
         $apiClass = new MassUpdateApi();
         $apiClass->massUpdate($api, $args);
 
         global $db;
         $rec = $db->query("select count(*) AS cnt from contact_users where contact_id='{$contact1->id}' and deleted=0");
-        if ($row = $db->fetchByAssoc($rec))
-        {
+        if ($row = $db->fetchByAssoc($rec)) {
             $this->assertEquals(1, $row['cnt'], 'should be 1');
         }
     }
@@ -336,13 +325,13 @@ class RestMassUpdateTest extends TestCase
         $api = new RestService();
         $api->user = $GLOBALS['current_user'];
 
-        $args = array(
-            'massupdate_params' => array(
-                'uid' => array($contact1->id, $contact2->id),
+        $args = [
+            'massupdate_params' => [
+                'uid' => [$contact1->id, $contact2->id],
                 'do_not_call' => 1,
-            ),
+            ],
             'module' => 'Contacts',
-        );
+        ];
 
         $apiClass = new MassUpdateApi();
         $apiClass->massUpdate($api, $args);
@@ -358,14 +347,12 @@ class RestMassUpdateTest extends TestCase
 
         global $db;
         $rec = $db->query("select do_not_call from contacts where id='{$contact1->id}'");
-        if ($row = $db->fetchByAssoc($rec))
-        {
+        if ($row = $db->fetchByAssoc($rec)) {
             $this->assertEquals(1, $row['do_not_call'], 'do_not_call should be set to 1');
         }
 
         $rec = $db->query("select do_not_call from contacts where id='{$contact2->id}'");
-        if ($row = $db->fetchByAssoc($rec))
-        {
+        if ($row = $db->fetchByAssoc($rec)) {
             $this->assertEquals(1, $row['do_not_call'], 'do_not_call should be set to 1');
         }
     }
@@ -388,26 +375,26 @@ class RestMassUpdateTest extends TestCase
 
         $api = new RestService();
         $api->user = $GLOBALS['current_user'];
-        $args = array(
-            'massupdate_params' => array(
-                'uid' => array($contact1->id),
+        $args = [
+            'massupdate_params' => [
+                'uid' => [$contact1->id],
                 'do_not_call' => 1,
-            ),
+            ],
             'module' => 'Contacts',
-        );
+        ];
 
         $apiClass = new MassUpdateApi();
         $apiClass->massUpdate($api, $args);
 
         $api2 = new RestService();
         $api2->user = $GLOBALS['current_user'];
-        $args2 = array(
-            'massupdate_params' => array(
-                'uid' => array($contact2->id),
+        $args2 = [
+            'massupdate_params' => [
+                'uid' => [$contact2->id],
                 'do_not_call' => 1,
-            ),
+            ],
             'module' => 'Contacts',
-        );
+        ];
 
         $apiClass2 = new MassUpdateApi();
         $apiClass2->massUpdate($api2, $args2);
@@ -424,14 +411,12 @@ class RestMassUpdateTest extends TestCase
 
         global $db;
         $rec = $db->query("select do_not_call from contacts where id='{$contact1->id}'");
-        if ($row = $db->fetchByAssoc($rec))
-        {
+        if ($row = $db->fetchByAssoc($rec)) {
             $this->assertEquals(1, $row['do_not_call'], 'do_not_call should be set to 1');
         }
 
         $rec = $db->query("select do_not_call from contacts where id='{$contact2->id}'");
-        if ($row = $db->fetchByAssoc($rec))
-        {
+        if ($row = $db->fetchByAssoc($rec)) {
             $this->assertEquals(1, $row['do_not_call'], 'do_not_call should be set to 1');
         }
     }
@@ -450,30 +435,28 @@ class RestMassUpdateTest extends TestCase
         $api = new RestService();
         $api->user = $GLOBALS['current_user'];
 
-        $args = array(
-            'massupdate_params' => array(
-                'uid' => array($contact1->id, $contact2->id),
-                'team_name' => array(
-                    0 => array('id' => $team->id, 'primary' => true),
-                ),
+        $args = [
+            'massupdate_params' => [
+                'uid' => [$contact1->id, $contact2->id],
+                'team_name' => [
+                    0 => ['id' => $team->id, 'primary' => true],
+                ],
                 'team_name_type' => 'replace',
-            ),
+            ],
             'module' => 'Contacts',
-        );
+        ];
 
         $apiClass = new MassUpdateApi();
         $apiClass->massUpdate($api, $args);
 
         global $db;
         $rec = $db->query("select team_id from contacts where id='{$contact1->id}'");
-        if ($row = $db->fetchByAssoc($rec))
-        {
+        if ($row = $db->fetchByAssoc($rec)) {
             $this->assertEquals($team->id, $row['team_id'], 'team_id not updated properly for contact1');
         }
 
         $rec = $db->query("select team_id from contacts where id='{$contact2->id}'");
-        if ($row = $db->fetchByAssoc($rec))
-        {
+        if ($row = $db->fetchByAssoc($rec)) {
             $this->assertEquals($team->id, $row['team_id'], 'team_id not updated properly for contact2');
         }
     }
@@ -498,16 +481,16 @@ class RestMassUpdateTest extends TestCase
         $api = new RestService();
         $api->user = $GLOBALS['current_user'];
 
-        $args = array(
-            'massupdate_params' => array(
-                'uid' => array($contact1->id, $contact2->id),
-                'team_name' => array(
-                    0 => array('id' => $team->id, 'primary' => true),
-                ),
+        $args = [
+            'massupdate_params' => [
+                'uid' => [$contact1->id, $contact2->id],
+                'team_name' => [
+                    0 => ['id' => $team->id, 'primary' => true],
+                ],
                 'team_name_type' => 'replace',
-            ),
+            ],
             'module' => 'Contacts',
-        );
+        ];
 
         $apiClass = new MassUpdateApi();
         $apiClass->massUpdate($api, $args);
@@ -523,14 +506,12 @@ class RestMassUpdateTest extends TestCase
 
         global $db;
         $rec = $db->query("select team_id from contacts where id='{$contact1->id}'");
-        if ($row = $db->fetchByAssoc($rec))
-        {
+        if ($row = $db->fetchByAssoc($rec)) {
             $this->assertEquals($team->id, $row['team_id'], 'team_id not updated properly for contact1');
         }
 
         $rec = $db->query("select team_id from contacts where id='{$contact2->id}'");
-        if ($row = $db->fetchByAssoc($rec))
-        {
+        if ($row = $db->fetchByAssoc($rec)) {
             $this->assertEquals($team->id, $row['team_id'], 'team_id not updated properly for contact2');
         }
     }
@@ -550,31 +531,29 @@ class RestMassUpdateTest extends TestCase
         $api = new RestService();
         $api->user = $GLOBALS['current_user'];
 
-        $args = array(
-            'massupdate_params' => array(
-                'uid' => array($contact1->id),
-                'team_name' => array(
-                    0 => array('id' => $team1->id, 'primary' => true),
-                    1 => array('id' => $team2->id, 'primary' => false),
-                ),
+        $args = [
+            'massupdate_params' => [
+                'uid' => [$contact1->id],
+                'team_name' => [
+                    0 => ['id' => $team1->id, 'primary' => true],
+                    1 => ['id' => $team2->id, 'primary' => false],
+                ],
                 'team_name_type' => 'replace',
-            ),
+            ],
             'module' => 'Contacts',
-        );
+        ];
 
         $apiClass = new MassUpdateApi();
         $apiClass->massUpdate($api, $args);
 
         global $db;
         $rec = $db->query("select team_set_id from contacts where id='{$contact1->id}'");
-        if ($row = $db->fetchByAssoc($rec))
-        {
+        if ($row = $db->fetchByAssoc($rec)) {
             $team_set_id = $row['team_set_id'];
-            $expectedTeamIDs = array($team1->id, $team2->id);
-            $actualTeamIDs = array();
+            $expectedTeamIDs = [$team1->id, $team2->id];
+            $actualTeamIDs = [];
             $rec = $db->query("select team_id from team_sets_teams where team_set_id='{$team_set_id}'");
-            while ($row = $db->fetchByAssoc($rec))
-            {
+            while ($row = $db->fetchByAssoc($rec)) {
                 $actualTeamIDs[] = $row['team_id'];
             }
             $this->assertEmpty(array_diff($expectedTeamIDs, $actualTeamIDs), 'team_set_id not updated properly for contact1');
@@ -604,17 +583,17 @@ class RestMassUpdateTest extends TestCase
         $api = new RestService();
         $api->user = $GLOBALS['current_user'];
 
-        $args = array(
-            'massupdate_params' => array(
-                'uid' => array($contact1->id),
-                'team_name' => array(
-                    0 => array('id' => $team1->id, 'primary' => true),
-                    1 => array('id' => $team2->id, 'primary' => false),
-                ),
+        $args = [
+            'massupdate_params' => [
+                'uid' => [$contact1->id],
+                'team_name' => [
+                    0 => ['id' => $team1->id, 'primary' => true],
+                    1 => ['id' => $team2->id, 'primary' => false],
+                ],
                 'team_name_type' => 'replace',
-            ),
+            ],
             'module' => 'Contacts',
-        );
+        ];
 
         $apiClass = new MassUpdateApi();
         $apiClass->massUpdate($api, $args);
@@ -630,14 +609,12 @@ class RestMassUpdateTest extends TestCase
 
         global $db;
         $rec = $db->query("select team_set_id from contacts where id='{$contact1->id}'");
-        if ($row = $db->fetchByAssoc($rec))
-        {
+        if ($row = $db->fetchByAssoc($rec)) {
             $team_set_id = $row['team_set_id'];
-            $expectedTeamIDs = array($team1->id, $team2->id);
-            $actualTeamIDs = array();
+            $expectedTeamIDs = [$team1->id, $team2->id];
+            $actualTeamIDs = [];
             $rec = $db->query("select team_id from team_sets_teams where team_set_id='{$team_set_id}'");
-            while ($row = $db->fetchByAssoc($rec))
-            {
+            while ($row = $db->fetchByAssoc($rec)) {
                 $actualTeamIDs[] = $row['team_id'];
             }
             $this->assertEmpty(array_diff($expectedTeamIDs, $actualTeamIDs), 'team_set_id not updated properly for contact1');
@@ -663,13 +640,13 @@ class RestMassUpdateTest extends TestCase
         $api = new RestService();
         $api->user = $GLOBALS['current_user'];
 
-        $args = array(
-            'massupdate_params' => array(
+        $args = [
+            'massupdate_params' => [
                 'do_not_call' => 1, // the field to update
                 'entire' => true, // entire selected list
-            ),
+            ],
             'module' => 'Contacts',
-        );
+        ];
 
         $apiClass = new MassUpdateApi();
         $apiClass->massUpdate($api, $args);
@@ -678,14 +655,12 @@ class RestMassUpdateTest extends TestCase
 
         global $db;
         $rec = $db->query("select do_not_call from contacts where id='{$contact1->id}'");
-        if ($row = $db->fetchByAssoc($rec))
-        {
+        if ($row = $db->fetchByAssoc($rec)) {
             $this->assertEquals(1, $row['do_not_call'], 'do_not_call should be set to 1');
         }
 
         $rec = $db->query("select do_not_call from contacts where id='{$contact2->id}'");
-        if ($row = $db->fetchByAssoc($rec))
-        {
+        if ($row = $db->fetchByAssoc($rec)) {
             $this->assertEquals(1, $row['do_not_call'], 'do_not_call should be set to 1');
         }
     }
@@ -707,14 +682,14 @@ class RestMassUpdateTest extends TestCase
         $api = new RestService();
         $api->user = $GLOBALS['current_user'];
 
-        $args = array(
-            'massupdate_params' => array(
+        $args = [
+            'massupdate_params' => [
                 'description' => 'test', // the field to update
                 'entire' => true, // entire selected list
-                'filter' => array(array('name'=>$account1->name)),
-            ),
+                'filter' => [['name'=>$account1->name]],
+            ],
             'module' => 'Accounts',
-        );
+        ];
 
         $apiClass = new MassUpdateApi();
         $apiClass->massUpdate($api, $args);
@@ -723,14 +698,12 @@ class RestMassUpdateTest extends TestCase
 
         global $db;
         $rec = $db->query("select description from accounts where id='{$account1->id}'");
-        if ($row = $db->fetchByAssoc($rec))
-        {
+        if ($row = $db->fetchByAssoc($rec)) {
             $this->assertEquals('test', $row['description'], 'description should be set to test');
         }
 
         $rec = $db->query("select description from accounts where id='{$account2->id}'");
-        if ($row = $db->fetchByAssoc($rec))
-        {
+        if ($row = $db->fetchByAssoc($rec)) {
             $this->assertNotEquals('test', $row['description'], 'description should not be set to test');
         }
     }
@@ -749,17 +722,17 @@ class RestMassUpdateTest extends TestCase
         $api = new RestService();
         $api->user = $GLOBALS['current_user'];
 
-        $args = array(
-            'massupdate_params' => array(
-                'uid' => array($contact->id),
-            ),
+        $args = [
+            'massupdate_params' => [
+                'uid' => [$contact->id],
+            ],
             'module' => 'Contacts',
-        );
+        ];
         $apiClass = new MassUpdateApi();
 
-        $args['massupdate_params']['team_name'] = array(
-            array('id' => $team1->id, 'primary' => true, 'selected' => true),
-        );
+        $args['massupdate_params']['team_name'] = [
+            ['id' => $team1->id, 'primary' => true, 'selected' => true],
+        ];
         $args['massupdate_params']['team_name_type'] = '0'; // Replace.
         $apiClass->massUpdate($api, $args); // Replace mode.
 
@@ -767,20 +740,20 @@ class RestMassUpdateTest extends TestCase
         $resultTeam = TeamSetManager::getTeamsFromSet($contact->acl_team_set_id);
         $this->assertEquals($team1->id, $resultTeam[0]['id']);
 
-        $args['massupdate_params']['team_name'] = array(
-            array('id' => $team2->id, 'primary' => false, 'selected' => true),
-        );
+        $args['massupdate_params']['team_name'] = [
+            ['id' => $team2->id, 'primary' => false, 'selected' => true],
+        ];
         $args['massupdate_params']['team_name_type'] = '1'; // Add.
         $apiClass->massUpdate($api, $args);
 
         $contact->retrieve();
         $resultTeam = TeamSetManager::getTeamsFromSet($contact->acl_team_set_id);
-        $this->assertContains($team1->id, array($resultTeam[0]['id'], $resultTeam[1]['id']));
-        $this->assertContains($team2->id, array($resultTeam[0]['id'], $resultTeam[1]['id']));
+        $this->assertContains($team1->id, [$resultTeam[0]['id'], $resultTeam[1]['id']]);
+        $this->assertContains($team2->id, [$resultTeam[0]['id'], $resultTeam[1]['id']]);
 
-        $args['massupdate_params']['team_name'] = array(
-            array('id' => $team2->id, 'primary' => false, 'selected' => true),
-        );
+        $args['massupdate_params']['team_name'] = [
+            ['id' => $team2->id, 'primary' => false, 'selected' => true],
+        ];
         $args['massupdate_params']['team_name_type'] = '0'; // Replace.
         $apiClass->massUpdate($api, $args);
 

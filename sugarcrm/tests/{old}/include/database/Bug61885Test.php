@@ -44,46 +44,46 @@ class Bug61885 extends TestCase
     public function testDefect61885()
     {
         $tableName = 'test1_' . mt_rand();
-        $params =  array(
-            'foo' => array (
+        $params =  [
+            'foo' =>  [
                 'name' => 'foo',
                 'type' => 'varchar',
                 'len' => '36',
-            ),
-            'bar' => array (
+            ],
+            'bar' =>  [
                 'name' => 'bar',
                 'type' => 'varchar',
                 'len' => '36',
-            ),
-        );
+            ],
+        ];
 
-        $index = array(
-            'name'			=> 'test_index',
-            'type'			=> 'index',
-            'fields'		=> array('foo', 'bar'),
-        );
+        $index = [
+            'name'          => 'test_index',
+            'type'          => 'index',
+            'fields'        => ['foo', 'bar'],
+        ];
 
-        $indexT1 = array(
-            'name'			=> 'test_index',
-            'type'			=> 'index',
-            'fields'		=> array('FOO', 'BAR'),
-        );
-        $indexT2 = array(
-            'name'			=> 'TEST_INDEX',
-            'type'			=> 'index',
-            'fields'		=> array('foo', 'bar'),
-        );
+        $indexT1 = [
+            'name'          => 'test_index',
+            'type'          => 'index',
+            'fields'        => ['FOO', 'BAR'],
+        ];
+        $indexT2 = [
+            'name'          => 'TEST_INDEX',
+            'type'          => 'index',
+            'fields'        => ['foo', 'bar'],
+        ];
 
         if ($this->db->tableExists($tableName)) {
             $this->db->dropTableName($tableName);
         }
         $this->createTableParams($tableName, $params, $index);
 
-        $repair = $this->db->repairTableParams($tableName, $params, array($indexT1), false);
+        $repair = $this->db->repairTableParams($tableName, $params, [$indexT1], false);
 
         $this->assertEmpty($repair, "Failed on uppercase field names");
 
-        $repair = $this->db->repairTableParams($tableName, $params, array($indexT2), false);
+        $repair = $this->db->repairTableParams($tableName, $params, [$indexT2], false);
 
         $this->assertEmpty($repair, "Failed on uppercase index name");
     }
@@ -126,35 +126,35 @@ class Bug61885 extends TestCase
     public function testSkipIndexRebuildConfig()
     {
         $tableName = 'test1_' . mt_rand();
-        $params =  array(
-            'foo' => array (
+        $params =  [
+            'foo' =>  [
                 'name' => 'foo',
                 'type' => 'varchar',
                 'len' => '36',
-            ),
-            'bar' => array (
+            ],
+            'bar' =>  [
                 'name' => 'bar',
                 'type' => 'varchar',
                 'len' => '36',
-            ),
-            'mota' => array (
+            ],
+            'mota' =>  [
                 'name' => 'mota',
                 'type' => 'varchar',
                 'len' => '43',
-            ),
-        );
+            ],
+        ];
 
-        $index = array(
-            'name'			=> 'test_index',
-            'type'			=> 'index',
-            'fields'		=> array('foo', 'bar'),
-        );
+        $index = [
+            'name'          => 'test_index',
+            'type'          => 'index',
+            'fields'        => ['foo', 'bar'],
+        ];
 
-        $indexChange = array(
-            'name'			=> 'test_index',
-            'type'			=> 'index',
-            'fields'		=> array('foo', 'mota'),
-        );
+        $indexChange = [
+            'name'          => 'test_index',
+            'type'          => 'index',
+            'fields'        => ['foo', 'mota'],
+        ];
 
         if ($this->db->tableExists($tableName)) {
             $this->db->dropTableName($tableName);
@@ -167,7 +167,7 @@ class Bug61885 extends TestCase
         $dbOptions['skip_index_rebuild'] = true;
         $this->db->setOptions($dbOptions);
 
-        $repair = $this->db->repairTableParams($tableName, $params, array($indexChange), false);
+        $repair = $this->db->repairTableParams($tableName, $params, [$indexChange], false);
         $this->assertEmpty($repair, "Failed on skip_index_rebuild config flag turned on");
        
 
@@ -176,7 +176,7 @@ class Bug61885 extends TestCase
         $dbOptions['skip_index_rebuild'] = false;
         $this->db->setOptions($dbOptions);
 
-        $repair = $this->db->repairTableParams($tableName, $params, array($indexChange), false);
+        $repair = $this->db->repairTableParams($tableName, $params, [$indexChange], false);
         $this->assertNotEmpty($repair, "Failed on skip_index_rebuild config flag turned off");
 
         
@@ -185,7 +185,7 @@ class Bug61885 extends TestCase
         unset($dbOptions['skip_index_rebuild']);
         $this->db->setOptions($dbOptions);
 
-        $repair = $this->db->repairTableParams($tableName, $params, array($indexChange), false);
+        $repair = $this->db->repairTableParams($tableName, $params, [$indexChange], false);
         $this->assertNotEmpty($repair, "Failed on skip_index_rebuild config flag not present");
     }
 }

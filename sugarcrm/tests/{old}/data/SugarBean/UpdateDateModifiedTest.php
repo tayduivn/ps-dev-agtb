@@ -14,11 +14,11 @@ use PHPUnit\Framework\TestCase;
 
 class UpdateDateModifiedTest extends TestCase
 {
-    private static $hook = array(
+    private static $hook = [
         'Accounts',
         'before_save',
-        array(1, 'Accounts::before_save', __FILE__, 'UpdateDateModifiedTestHook', 'beforeSave')
-    );
+        [1, 'Accounts::before_save', __FILE__, 'UpdateDateModifiedTestHook', 'beforeSave'],
+    ];
 
     public static function setUpBeforeClass() : void
     {
@@ -64,7 +64,7 @@ class UpdateDateModifiedTest extends TestCase
         $account->update_date_modified = false;
         $account->save();
 
-        $account = BeanFactory::getBean('Accounts', $account->id, array('use_cache' => false));
+        $account = BeanFactory::getBean('Accounts', $account->id, ['use_cache' => false]);
         self::setUpHook();
         $account->save();
         $this->assertEquals(
@@ -73,7 +73,7 @@ class UpdateDateModifiedTest extends TestCase
             'Logic hook should have been called with the current date'
         );
 
-        $account = BeanFactory::getBean('Accounts', $account->id, array('use_cache' => false));
+        $account = BeanFactory::getBean('Accounts', $account->id, ['use_cache' => false]);
         $this->assertEquals(
             $original_date,
             $account->date_modified,

@@ -1,4 +1,4 @@
-<?php 
+<?php
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -27,12 +27,12 @@ class Bug40527Test extends TestCase
         $this->contact = SugarTestContactUtilities::createContact();
         $this->account = SugarTestAccountUtilities::createAccount();
         
-        $override_data = array(
+        $override_data = [
             'parent_type' => 'Accounts',
             'parent_id' => $this->account->id,
-        );
+        ];
         $this->email   = SugarTestEmailUtilities::createEmail('', $override_data);
-	}
+    }
 
     protected function tearDown() : void
     {

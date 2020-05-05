@@ -13,11 +13,11 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once('modules/TimePeriods/TimePeriod.php');
+require_once 'modules/TimePeriods/TimePeriod.php';
 
 class TimePeriodTest extends TestCase
 {
-    private $preTestIds = array();
+    private $preTestIds = [];
 
     protected function setUp() : void
     {
@@ -55,11 +55,11 @@ class TimePeriodTest extends TestCase
         $timedate = TimeDate::getInstance();
 
         $start_date_timestamp = $timedate->fromDbDate('2009-01-01');
-        $start_date_timestamp->setTime(0,0,0);
+        $start_date_timestamp->setTime(0, 0, 0);
         $start_date_timestamp = $start_date_timestamp->getTimestamp();
 
         $end_date_timestamp = $timedate->fromDbDate('2009-03-31');
-        $end_date_timestamp->setTime(23,59,59);
+        $end_date_timestamp->setTime(23, 59, 59);
         $end_date_timestamp = $end_date_timestamp->getTimestamp();
 
         $this->assertEquals($start_date_timestamp, $tp->start_date_timestamp, "start time stamps do not match");
@@ -108,16 +108,16 @@ class TimePeriodTest extends TestCase
 
     public function dataProviderGetGenericStartEndByDuration()
     {
-        return array(
-            array(0, '2014-07-01', '2014-09-30'),
-            array(3, '2014-10-01', '2014-12-31'),
-            array(12, '2014-01-01', '2014-12-31'),
-            array('0', '2014-07-01', '2014-09-30'),
-            array('3', '2014-10-01', '2014-12-31'),
-            array('12', '2014-01-01', '2014-12-31'),
-            array('current', '2014-07-01', '2014-09-30'),
-            array('next', '2014-10-01', '2014-12-31'),
-            array('year', '2014-01-01', '2014-12-31')
-        );
+        return [
+            [0, '2014-07-01', '2014-09-30'],
+            [3, '2014-10-01', '2014-12-31'],
+            [12, '2014-01-01', '2014-12-31'],
+            ['0', '2014-07-01', '2014-09-30'],
+            ['3', '2014-10-01', '2014-12-31'],
+            ['12', '2014-01-01', '2014-12-31'],
+            ['current', '2014-07-01', '2014-09-30'],
+            ['next', '2014-10-01', '2014-12-31'],
+            ['year', '2014-01-01', '2014-12-31'],
+        ];
     }
 }

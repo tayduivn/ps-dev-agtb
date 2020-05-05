@@ -12,7 +12,7 @@
 
 class SugarTestOpportunityUtilities
 {
-    private static $_createdOpportunities = array();
+    private static $_createdOpportunities = [];
 
     private static $_createdAccount = null;
 
@@ -94,7 +94,7 @@ class SugarTestOpportunityUtilities
         $opp_ids = self::getCreatedOpportunityIds();
         $db = DBManagerFactory::getInstance();
         
-        if (!empty($opp_ids)) {            
+        if (!empty($opp_ids)) {
             $db->query("DELETE FROM products_audit WHERE parent_id IN (SELECT id FROM products WHERE opportunity_id IN ('" . implode("', '", $opp_ids) . "'))");
             $db->query("DELETE FROM products WHERE opportunity_id IN ('" . implode("', '", $opp_ids) . "')");
             $db->query("DELETE FROM opportunities WHERE id IN ('" . implode("', '", $opp_ids) . "')");
@@ -106,12 +106,12 @@ class SugarTestOpportunityUtilities
         if (self::$_createdAccount !== null && self::$_createdAccount->id) {
             $db->query("DELETE FROM accounts WHERE id = '" . self::$_createdAccount->id . "'");
         }
-        self::$_createdOpportunities = array();
+        self::$_createdOpportunities = [];
     }
 
     public static function getCreatedOpportunityIds()
     {
-        $opportunity_ids = array();
+        $opportunity_ids = [];
 
         foreach (self::$_createdOpportunities as $opportunity) {
             $opportunity_ids[] = $opportunity->id;

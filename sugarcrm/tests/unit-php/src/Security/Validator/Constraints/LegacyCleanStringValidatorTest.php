@@ -35,9 +35,9 @@ class LegacyCleanStringValidatorTest extends AbstractConstraintValidatorTest
      */
     public function testExpectValidFilter()
     {
-        $constraint = new LegacyCleanString(array(
+        $constraint = new LegacyCleanString([
             'filter' => 'foobar',
-        ));
+        ]);
 
         $this->expectException(ConstraintDefinitionException::class);
         $this->validator->validate('xyz', $constraint);
@@ -50,9 +50,9 @@ class LegacyCleanStringValidatorTest extends AbstractConstraintValidatorTest
      */
     public function testValidValues($filter, $value)
     {
-        $constraint = new LegacyCleanString(array(
+        $constraint = new LegacyCleanString([
             'filter' => $filter,
-        ));
+        ]);
 
         $this->validator->validate($value, $constraint);
         $this->assertNoViolation();
@@ -65,11 +65,11 @@ class LegacyCleanStringValidatorTest extends AbstractConstraintValidatorTest
      */
     public function testValidValuesRecursive($filter, $value)
     {
-        $recursiveValue = array($value, array($value, $value));
+        $recursiveValue = [$value, [$value, $value]];
 
-        $constraint = new LegacyCleanString(array(
+        $constraint = new LegacyCleanString([
             'filter' => $filter,
-        ));
+        ]);
 
         $this->validator->validate($recursiveValue, $constraint);
         $this->assertNoViolation();
@@ -77,20 +77,20 @@ class LegacyCleanStringValidatorTest extends AbstractConstraintValidatorTest
 
     public function providerTestValidValues()
     {
-        return array(
-            array(LegacyCleanString::STANDARD, 'teststring'),
-            array(LegacyCleanString::STANDARD, 'foo_bar@sugar-crm.com'),
-            array(LegacyCleanString::STANDARD, '4.2.1'),
-            array(LegacyCleanString::STANDARDSPACE, 'more foo_bar@sugar-crm.com'),
-            array(LegacyCleanString::FILE, 'FileName-v1.0_latest.zip'),
-            array(LegacyCleanString::NUMBER, '987654'),
-            array(LegacyCleanString::NUMBER, '-987654'),
-            array(LegacyCleanString::NUMBER, '98-7654'),
-            array(LegacyCleanString::SQL_COLUMN_LIST, 'date(d),now_time.x'),
-            array(LegacyCleanString::PATH_NO_URL, '/etc/passwd'),
-            array(LegacyCleanString::PATH_NO_URL, '../../etc/passwd'),
+        return [
+            [LegacyCleanString::STANDARD, 'teststring'],
+            [LegacyCleanString::STANDARD, 'foo_bar@sugar-crm.com'],
+            [LegacyCleanString::STANDARD, '4.2.1'],
+            [LegacyCleanString::STANDARDSPACE, 'more foo_bar@sugar-crm.com'],
+            [LegacyCleanString::FILE, 'FileName-v1.0_latest.zip'],
+            [LegacyCleanString::NUMBER, '987654'],
+            [LegacyCleanString::NUMBER, '-987654'],
+            [LegacyCleanString::NUMBER, '98-7654'],
+            [LegacyCleanString::SQL_COLUMN_LIST, 'date(d),now_time.x'],
+            [LegacyCleanString::PATH_NO_URL, '/etc/passwd'],
+            [LegacyCleanString::PATH_NO_URL, '../../etc/passwd'],
             // TODO .. to be completed
-        );
+        ];
     }
 
     /**
@@ -100,10 +100,10 @@ class LegacyCleanStringValidatorTest extends AbstractConstraintValidatorTest
      */
     public function testInvalidValues($filter, $value)
     {
-        $constraint = new LegacyCleanString(array(
+        $constraint = new LegacyCleanString([
             'message' => 'testMessage',
             'filter' => $filter,
-        ));
+        ]);
 
         $this->validator->validate($value, $constraint);
 
@@ -122,16 +122,16 @@ class LegacyCleanStringValidatorTest extends AbstractConstraintValidatorTest
      */
     public function testInvalidValuesRecursive($filter, $value)
     {
-       $recursiveValue = array($value, array($value, $value));
+        $recursiveValue = [$value, [$value, $value]];
 
-       $constraint = new LegacyCleanString(array(
+        $constraint = new LegacyCleanString([
            'message' => 'testMessage',
            'filter' => $filter,
-       ));
+        ]);
 
-       $this->validator->validate($recursiveValue, $constraint);
+        $this->validator->validate($recursiveValue, $constraint);
 
-       $this->buildViolation('testMessage')
+        $this->buildViolation('testMessage')
            ->setCode(LegacyCleanString::FILTER_ERROR)
            ->setParameter('%filter%', $filter)
            ->setCause($filter)
@@ -153,28 +153,28 @@ class LegacyCleanStringValidatorTest extends AbstractConstraintValidatorTest
 
     public function providerTestInvalidValues()
     {
-        return array(
+        return [
             // non strings should always fail regardless the filter
-            array(LegacyCleanString::STANDARD, null),
-            array(LegacyCleanString::STANDARD, new \stdClass()),
-            array(LegacyCleanString::STANDARD, 17),
-            array(LegacyCleanString::STANDARD, 23.69),
+            [LegacyCleanString::STANDARD, null],
+            [LegacyCleanString::STANDARD, new \stdClass()],
+            [LegacyCleanString::STANDARD, 17],
+            [LegacyCleanString::STANDARD, 23.69],
 
             // filter specific failures
-            array(LegacyCleanString::STANDARD, 'teststring!'),
-            array(LegacyCleanString::STANDARD, 'teststring!'),
-            array(LegacyCleanString::STANDARD, 'test string'),
-            array(LegacyCleanString::STANDARD, '4.2$1'),
-            array(LegacyCleanString::STANDARDSPACE, 'test, string'),
-            array(LegacyCleanString::FILE, '/etc/passwd'),
-            array(LegacyCleanString::FILE, '../goback.php'),
-            array(LegacyCleanString::NUMBER, '987654.123'),
-            array(LegacyCleanString::NUMBER, '987654,123'),
-            array(LegacyCleanString::NUMBER, 'abc'),
-            array(LegacyCleanString::SQL_COLUMN_LIST, 'date(d)"'),
-            array(LegacyCleanString::PATH_NO_URL, 'https://www.google.com'),
-            array(LegacyCleanString::PATH_NO_URL, 'file:///etc/passwd'),
+            [LegacyCleanString::STANDARD, 'teststring!'],
+            [LegacyCleanString::STANDARD, 'teststring!'],
+            [LegacyCleanString::STANDARD, 'test string'],
+            [LegacyCleanString::STANDARD, '4.2$1'],
+            [LegacyCleanString::STANDARDSPACE, 'test, string'],
+            [LegacyCleanString::FILE, '/etc/passwd'],
+            [LegacyCleanString::FILE, '../goback.php'],
+            [LegacyCleanString::NUMBER, '987654.123'],
+            [LegacyCleanString::NUMBER, '987654,123'],
+            [LegacyCleanString::NUMBER, 'abc'],
+            [LegacyCleanString::SQL_COLUMN_LIST, 'date(d)"'],
+            [LegacyCleanString::PATH_NO_URL, 'https://www.google.com'],
+            [LegacyCleanString::PATH_NO_URL, 'file:///etc/passwd'],
             // TODO .. to be completed
-        );
+        ];
     }
 }

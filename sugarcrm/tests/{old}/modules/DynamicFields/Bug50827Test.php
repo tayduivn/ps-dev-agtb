@@ -27,79 +27,79 @@ class Bug50827Test extends TestCase
         unset($this->_smarty);
     }
 
-	/**
+    /**
      * @dataProvider bug50827DataProvider
      */
-    public function testCalculatedVisible($vardef, $expected) 
+    public function testCalculatedVisible($vardef, $expected)
     {
-    	$this->_smarty->assign("vardef", $vardef);
-    	$output = $this->_smarty->fetch('modules/DynamicFields/templates/Fields/Forms/coreDependent.tpl');
+        $this->_smarty->assign("vardef", $vardef);
+        $output = $this->_smarty->fetch('modules/DynamicFields/templates/Fields/Forms/coreDependent.tpl');
         
         if ($expected) {
             $this->assertStringContainsString('name="calculated" id="calculated"', $output);
-		} else {
+        } else {
             $this->assertStringNotContainsString('name="calculated" id="calculated"', $output);
-		}
+        }
     }
     
     /**
      * Data provider for testCalculatedVisible()
      * @return array vardef, expected
      */
-    public function bug50827DataProvider() {
-        return array(
-        	0 => array(
-        		array(
-        			'name'		=> 'email1',
-					'vname'		=> 'LBL_EMAIL_ADDRESS',
-					'type'		=> 'varchar',
-					'function'	=> array(
-						'name'		=> 'getEmailAddressWidget',
-						'returns'	=> 'html'),
-					'source'	=> 'non-db',
-					'group'=>'email1',
-		            'merge_filter' => 'enabled',
-				    'studio' => array('editField' => true, 'searchview' => false, 'popupsearch' => false),
-        		),
-        		false
-        	), 
-        	1 => array(
-        		array(
-        			'name'		=> 'email1',
-					'vname'		=> 'LBL_EMAIL_ADDRESS',
-					'type'		=> 'varchar',
-					'source'	=> 'non-db',
-					'group'=>'email1',
-		            'merge_filter' => 'enabled',
-				    'studio' => array('editField' => true, 'searchview' => false, 'popupsearch' => false, 'calculated' => true),
-        		),
-        		true
-        	), 
-        	2 => array(
-        		array(
-        			'name'		=> 'email1',
-					'vname'		=> 'LBL_EMAIL_ADDRESS',
-					'type'		=> 'varchar',
-					'source'	=> 'non-db',
-					'group'=>'email1',
-		            'merge_filter' => 'enabled',
-				    'studio' => array('editField' => true, 'searchview' => false, 'popupsearch' => false, 'calculated' => false),
-        		),
-        		false
-        	), 
-        	3 => array(
-        		array(
-        			'name'		=> 'email1',
-					'vname'		=> 'LBL_EMAIL_ADDRESS',
-					'type'		=> 'varchar',
-					'source'	=> 'non-db',
-					'group'=>'email1',
-		            'merge_filter' => 'enabled',
-				    'studio' => array('editField' => true, 'searchview' => false, 'popupsearch' => false),
-        		),
-        		true
-        	), 
-        );
+    public function bug50827DataProvider()
+    {
+        return [
+            0 => [
+                [
+                    'name'      => 'email1',
+                    'vname'     => 'LBL_EMAIL_ADDRESS',
+                    'type'      => 'varchar',
+                    'function'  => [
+                        'name'      => 'getEmailAddressWidget',
+                        'returns'   => 'html'],
+                    'source'    => 'non-db',
+                    'group'=>'email1',
+                    'merge_filter' => 'enabled',
+                    'studio' => ['editField' => true, 'searchview' => false, 'popupsearch' => false],
+                ],
+                false,
+            ],
+            1 => [
+                [
+                    'name'      => 'email1',
+                    'vname'     => 'LBL_EMAIL_ADDRESS',
+                    'type'      => 'varchar',
+                    'source'    => 'non-db',
+                    'group'=>'email1',
+                    'merge_filter' => 'enabled',
+                    'studio' => ['editField' => true, 'searchview' => false, 'popupsearch' => false, 'calculated' => true],
+                ],
+                true,
+            ],
+            2 => [
+                [
+                    'name'      => 'email1',
+                    'vname'     => 'LBL_EMAIL_ADDRESS',
+                    'type'      => 'varchar',
+                    'source'    => 'non-db',
+                    'group'=>'email1',
+                    'merge_filter' => 'enabled',
+                    'studio' => ['editField' => true, 'searchview' => false, 'popupsearch' => false, 'calculated' => false],
+                ],
+                false,
+            ],
+            3 => [
+                [
+                    'name'      => 'email1',
+                    'vname'     => 'LBL_EMAIL_ADDRESS',
+                    'type'      => 'varchar',
+                    'source'    => 'non-db',
+                    'group'=>'email1',
+                    'merge_filter' => 'enabled',
+                    'studio' => ['editField' => true, 'searchview' => false, 'popupsearch' => false],
+                ],
+                true,
+            ],
+        ];
     }
-    
 }

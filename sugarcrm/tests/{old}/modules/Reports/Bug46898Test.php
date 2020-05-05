@@ -13,7 +13,7 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once('modules/Reports/SavedReport.php');
+require_once 'modules/Reports/SavedReport.php';
 
 /**
  * Bug #46898
@@ -41,9 +41,8 @@ class Bug46898Test extends TestCase
 
         $actual = $reportSchedule->get_reports_to_email('', 'bug');
 
-        $ids = array();
-        foreach ($actual as $item)
-        {
+        $ids = [];
+        foreach ($actual as $item) {
             $ids[] = $item['user_id'];
         }
 

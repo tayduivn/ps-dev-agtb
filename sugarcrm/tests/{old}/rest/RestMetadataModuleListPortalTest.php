@@ -11,16 +11,17 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class RestMetadataModuleListPortalTest extends RestTestPortalBase {
+class RestMetadataModuleListPortalTest extends RestTestPortalBase
+{
     public $createdStudioFile = false;
-    public $unitTestFiles = array();
+    public $unitTestFiles = [];
     public $oppTestPath ='modules/Accounts/clients/portal/views/list/list.php';
 
     protected function setUp() : void
     {
         parent::setUp();
         // Portal test needs this one, tear down happens in parent
-        SugarTestHelper::setup('mod_strings', array('ModuleBuilder'));
+        SugarTestHelper::setup('mod_strings', ['ModuleBuilder']);
 
         $this->unitTestFiles[] = $this->oppTestPath;
         if (!file_exists('modules/Accounts/metadata/studio.php')) {
@@ -35,8 +36,8 @@ class RestMetadataModuleListPortalTest extends RestTestPortalBase {
             unlink('modules/Accounts/metadata/studio.php');
         }
 
-        foreach($this->unitTestFiles as $unitTestFile ) {
-            if ( file_exists($unitTestFile) ) {
+        foreach ($this->unitTestFiles as $unitTestFile) {
+            if (file_exists($unitTestFile)) {
                 // Ignore the warning on this, the file stat cache causes the file_exist to trigger even when it's not really there
                 unlink($unitTestFile);
             }
@@ -46,7 +47,7 @@ class RestMetadataModuleListPortalTest extends RestTestPortalBase {
             unlink($this->oppTestPath);
         }
         // Set the tabs back to what they were
-        if ( isset($this->defaultTabs[0]) ) {
+        if (isset($this->defaultTabs[0])) {
             $tabs = new TabController();
 
             $tabs->set_system_tabs($this->defaultTabs[0]);
@@ -59,12 +60,13 @@ class RestMetadataModuleListPortalTest extends RestTestPortalBase {
     // Need to set the platform to something else
     protected function _restLogin($username = '', $password = '', $platform = 'portal')
     {
-        return parent::_restLogin($username,$password,$platform);
+        return parent::_restLogin($username, $password, $platform);
     }
     /**
      * @group rest
      */
-    public function testMetadataGetModuleListPortal() {
+    public function testMetadataGetModuleListPortal()
+    {
         // Setup the tab controller here and get the default tabs for setting and resetting
         $tabs = new TabController();
         $this->defaultTabs = $tabs->get_tabs_system();
@@ -72,25 +74,25 @@ class RestMetadataModuleListPortalTest extends RestTestPortalBase {
         $this->_clearMetadataCache();
         $restReply = $this->_restCall('me');
 
-        $this->assertTrue(isset($restReply['reply']['current_user']['module_list']),'There is no portal module list');
+        $this->assertTrue(isset($restReply['reply']['current_user']['module_list']), 'There is no portal module list');
         // There should only be the following modules by default: Bugs, Cases, KBOLDDocuments, Leads
-        $enabledPortal = array('Cases','Contacts');
+        $enabledPortal = ['Cases','Contacts'];
         $restModules = $restReply['reply']['current_user']['module_list'];
 
         unset($restModules['_hash']);
-        foreach ( $enabledPortal as $module ) {
-            $this->assertTrue(in_array($module,$restModules),'Module '.$module.' missing from the portal module list.');
+        foreach ($enabledPortal as $module) {
+            $this->assertTrue(in_array($module, $restModules), 'Module '.$module.' missing from the portal module list.');
         }
         // Bugs and KBOLDDocuments are sometimes enabled, and they are fine, just not in the normal list
-        $idx = array_search('Bugs',$restModules);
-        if ( is_int($idx) ) {
+        $idx = array_search('Bugs', $restModules);
+        if (is_int($idx)) {
             unset($restModules[$idx]);
         }
         // Although there are 4 OOTB portal modules, only 2 are enabled by default
-        $this->assertEquals(2,count($restModules),'There are extra modules in the portal module list');
+        $this->assertEquals(2, count($restModules), 'There are extra modules in the portal module list');
         // add module
 
-        $newModuleList = array('Home','Accounts','Contacts','Opportunities','Bugs','Leads','Calendar','Reports','Quotes','Documents','Emails','Campaigns','Calls','Meetings','Tasks','Notes','Forecasts','Cases','Prospects','ProspectLists');
+        $newModuleList = ['Home','Accounts','Contacts','Opportunities','Bugs','Leads','Calendar','Reports','Quotes','Documents','Emails','Campaigns','Calls','Meetings','Tasks','Notes','Forecasts','Cases','Prospects','ProspectLists'];
 
         $tabs->set_system_tabs($newModuleList);
         $GLOBALS['db']->commit();
@@ -99,20 +101,20 @@ class RestMetadataModuleListPortalTest extends RestTestPortalBase {
         $this->_clearMetadataCache();
         $restReply = $this->_restCall('me');
 
-        $this->assertTrue(isset($restReply['reply']['current_user']['module_list']),'There is no portal module list');
+        $this->assertTrue(isset($restReply['reply']['current_user']['module_list']), 'There is no portal module list');
         // There should only be the following modules by default: Bugs, Cases, KBOLDDocuments, Contacts
         // And now 3 are enabled
-        $enabledPortal = array('Cases','Contacts', 'Bugs');
+        $enabledPortal = ['Cases','Contacts', 'Bugs'];
         $restModules = $restReply['reply']['current_user']['module_list'];
 
         unset($restModules['_hash']);
-        foreach ( $enabledPortal as $module ) {
-            $this->assertTrue(in_array($module,$restModules),'Module '.$module.' missing from the portal module list.');
+        foreach ($enabledPortal as $module) {
+            $this->assertTrue(in_array($module, $restModules), 'Module '.$module.' missing from the portal module list.');
         }
-        $this->assertEquals(3,count($restModules),'There are extra modules in the portal module list');
+        $this->assertEquals(3, count($restModules), 'There are extra modules in the portal module list');
 
         // Set to include Opportunities
-        $newModuleList = array('Home','Accounts','Contacts','Opportunities','Leads','Calendar','Reports','Quotes','Documents','Emails','Campaigns','Calls','Meetings','Tasks','Notes','Forecasts','Cases','Prospects','ProspectLists');
+        $newModuleList = ['Home','Accounts','Contacts','Opportunities','Leads','Calendar','Reports','Quotes','Documents','Emails','Campaigns','Calls','Meetings','Tasks','Notes','Forecasts','Cases','Prospects','ProspectLists'];
 
         $tabs->set_system_tabs($newModuleList);
         $GLOBALS['db']->commit();
@@ -129,7 +131,7 @@ class RestMetadataModuleListPortalTest extends RestTestPortalBase {
         $this->_clearMetadataCache();
         $restReply = $this->_restCall('me');
 
-        $this->assertTrue(in_array('Accounts',$restReply['reply']['current_user']['module_list']),'The new Accounts module did not appear in the portal list');
+        $this->assertTrue(in_array('Accounts', $restReply['reply']['current_user']['module_list']), 'The new Accounts module did not appear in the portal list');
     }
 
     /**

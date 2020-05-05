@@ -21,7 +21,7 @@ class RS36Test extends TestCase
     protected $contact = null;
 
     /** @var array */
-    protected $beans = array();
+    protected $beans = [];
 
     protected function setUp() : void
     {

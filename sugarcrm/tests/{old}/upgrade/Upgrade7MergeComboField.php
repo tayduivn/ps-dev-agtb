@@ -27,7 +27,8 @@ class testComboFieldMerge extends UpgradeTestCase
         parent::tearDown();
     }
 
-    public function test7MergeComboFields() {
+    public function test7MergeComboFields()
+    {
         //Load up upgrader params necessary for script to run
         include 'tests/{old}/upgrade/7_Merge7Templates/notes_example2.php';
         $this->upgrader->state['for_merge']['modules/Notes/clients/base/views/record/record.php']
@@ -43,7 +44,7 @@ class testComboFieldMerge extends UpgradeTestCase
         $record = $viewdefs['Notes']['base']['view']['record'];
 
         //Ensure combo fields that shouldn't have been added were not added
-        $search = array('date_entered_by', 'date_modified_by');
+        $search = ['date_entered_by', 'date_modified_by'];
         $this->assertFalse($this->searchRecord($record, $search));
     }
 
@@ -52,12 +53,13 @@ class testComboFieldMerge extends UpgradeTestCase
      * @param array $record - Haystack
      * @param array $needle_list - Needles
      */
-    public function searchRecord($record, $needle_list) {
-        foreach($record['panels'] as $panel) {
-            foreach($panel['fields'] as $field) {
+    public function searchRecord($record, $needle_list)
+    {
+        foreach ($record['panels'] as $panel) {
+            foreach ($panel['fields'] as $field) {
                 if (is_array($field) && !empty($field['name']) && in_array($field['name'], $needle_list)) {
                     return true;
-                } else if (is_string($field) && in_array($field, $needle_list)) {
+                } elseif (is_string($field) && in_array($field, $needle_list)) {
                     return true;
                 }
             }

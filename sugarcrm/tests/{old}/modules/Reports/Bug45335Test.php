@@ -25,7 +25,7 @@ class Bug45335Test extends TestCase
     protected function setUp() : void
     {
         global $beanList, $beanFiles;
-        require('include/modules.php');
+        require 'include/modules.php';
     }
 
     /**
@@ -53,15 +53,15 @@ class Bug45335Test extends TestCase
     public function testValidationPassed()
     {
         $json = getJSONobj();
-        $report_def = array(
-            'display_columns' => array(
-                array(
+        $report_def = [
+            'display_columns' => [
+                [
                     'name' => 'id',
                     'table_key' => 'self',
-                ),
-            ),
-            'filters_def' => array(),
-        );
+                ],
+            ],
+            'filters_def' => [],
+        ];
 
         $report = new Report($json->encode($report_def));
         $this->assertTrue($report->is_definition_valid());
@@ -75,26 +75,26 @@ class Bug45335Test extends TestCase
         $field_name = 'some_non_existing_field';
 
         $json = getJSONobj();
-        $report_def = array(
-            'display_columns' => array(
-                array(
+        $report_def = [
+            'display_columns' => [
+                [
                     'name' => $field_name,
                     'table_key' => 'self',
-                ),
+                ],
 
                 // specify one field twice to insure that there will be no
                 // duplicates in invalid fields array
-                array(
+                [
                     'name' => $field_name,
                     'table_key' => 'self',
-                ),
-            ),
-            'filters_def' => array(),
-        );
+                ],
+            ],
+            'filters_def' => [],
+        ];
 
         $report = new Report($json->encode($report_def));
         $this->assertFalse($report->is_definition_valid());
 
-        $this->assertEquals(array($field_name), $report->get_invalid_fields());
+        $this->assertEquals([$field_name], $report->get_invalid_fields());
     }
 }

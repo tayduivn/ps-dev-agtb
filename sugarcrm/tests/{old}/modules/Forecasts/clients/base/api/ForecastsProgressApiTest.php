@@ -71,10 +71,10 @@ class ForecastsProgressApiTest extends TestCase
     {
         $user = SugarTestUserUtilities::createAnonymousUser();
 
-        $result = $this->api->progressRep($this->service, array(
+        $result = $this->api->progressRep($this->service, [
             'user_id' => $user->id,
             'timeperiod_id' => self::$timeperiod->id,
-        ));
+        ]);
         $this->assertNotEmpty($result);
 
         $this->assertArrayHasKey('quota_amount', $result);
@@ -115,10 +115,10 @@ class ForecastsProgressApiTest extends TestCase
     {
         $user = SugarTestUserUtilities::createAnonymousUser();
 
-        $result = $this->api->progressManager($this->service, array(
+        $result = $this->api->progressManager($this->service, [
             'user_id' => $user->id,
             'timeperiod_id' => self::$timeperiod->id,
-        ));
+        ]);
         $this->assertNotEmpty($result);
 
         $this->assertArrayHasKey('best_case', $result);

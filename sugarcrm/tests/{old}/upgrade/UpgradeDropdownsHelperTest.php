@@ -22,24 +22,24 @@ class UpgradeDropdownsHelperTest extends TestCase
      */
     public function testGetDropdowns_ReturnsCoreDropDowns()
     {
-        $mockHelper = $this->createPartialMock('UpgradeDropdownsHelper', array('getAppListStringsFromFile'));
+        $mockHelper = $this->createPartialMock('UpgradeDropdownsHelper', ['getAppListStringsFromFile']);
         $mockHelper->expects($this->once())
             ->method('getAppListStringsFromFile')
-            ->willReturn(array(
+            ->willReturn([
                 'sales_stage_default_key' => 'Prospecting',
-                'activity_dom' => array(
+                'activity_dom' => [
                     'Call' => 'Call',
                     'Meeting' => 'Meeting',
                     'Task' => 'Task',
                     'Email' => 'Email',
                     'Note' => 'Note',
-                ),
-                'meeting_status_dom' => array(
+                ],
+                'meeting_status_dom' => [
                     'Planned' => 'Planned',
                     'Held' => 'Held',
                     'Not Held' => 'Not Held',
-                ),
-            ));
+                ],
+            ]);
 
         $actual = $mockHelper->getDropdowns('include/language/en_us.lang.php');
 
@@ -50,23 +50,23 @@ class UpgradeDropdownsHelperTest extends TestCase
 
     public function getDropDownsRestrictedDropDownsAreIgnoredProvider()
     {
-        return array(
-            array('eapm_list'),
-            array('eapm_list_documents'),
-            array('eapm_list_import'),
-            array('extapi_meeting_password'),
-            array('Elastic_boost_options'),
-            array('commit_stage_dom'),
-            array('commit_stage_custom_dom'),
-            array('commit_stage_binary_dom'),
-            array('forecasts_config_ranges_options_dom'),
-            array('forecasts_timeperiod_types_dom'),
-            array('forecasts_chart_options_group'),
-            array('forecasts_config_worksheet_layout_forecast_by_options_dom'),
-            array('forecasts_timeperiod_options_dom'),
-            array('generic_timeperiod_options'),
-            array('sweetspot_theme_options'),
-        );
+        return [
+            ['eapm_list'],
+            ['eapm_list_documents'],
+            ['eapm_list_import'],
+            ['extapi_meeting_password'],
+            ['Elastic_boost_options'],
+            ['commit_stage_dom'],
+            ['commit_stage_custom_dom'],
+            ['commit_stage_binary_dom'],
+            ['forecasts_config_ranges_options_dom'],
+            ['forecasts_timeperiod_types_dom'],
+            ['forecasts_chart_options_group'],
+            ['forecasts_config_worksheet_layout_forecast_by_options_dom'],
+            ['forecasts_timeperiod_options_dom'],
+            ['generic_timeperiod_options'],
+            ['sweetspot_theme_options'],
+        ];
     }
 
     /**
@@ -76,18 +76,18 @@ class UpgradeDropdownsHelperTest extends TestCase
      */
     public function testGetDropdowns_RestrictedDropDownsAreIgnored($dropdown)
     {
-        $mockHelper = $this->createPartialMock('UpgradeDropdownsHelper', array('getAppListStringsFromFile'));
+        $mockHelper = $this->createPartialMock('UpgradeDropdownsHelper', ['getAppListStringsFromFile']);
         $mockHelper->expects($this->once())
             ->method('getAppListStringsFromFile')
             ->willReturn(
-                array(
-                    $dropdown => array(
+                [
+                    $dropdown => [
                         'Foo' => 'foo',
                         'Bar' => 'bar',
                         'Biz' => 'biz',
                         'Baz' => 'baz',
-                    ),
-                )
+                    ],
+                ]
             );
 
         $actual = $mockHelper->getDropdowns('include/language/en_us.lang.php');

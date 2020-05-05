@@ -46,11 +46,11 @@ class SugarMathTest extends TestCase
     {
         // test __toString brings back value.
         $math = new SugarMath(100);
-        $this->assertEquals(100,sprintf("%s",$math));
+        $this->assertEquals(100, sprintf("%s", $math));
 
         // test static instance
         $math = SugarMath::init(100);
-        $this->assertEquals(100,sprintf("%s",$math));
+        $this->assertEquals(100, sprintf("%s", $math));
     }
 
     /**
@@ -76,21 +76,21 @@ class SugarMathTest extends TestCase
      */
     public function setGetValueProvider()
     {
-        return array(
-            array('100','100',0),
-            array('100.011','100.011',3),
-            array('100.0000000000000001','100.0000000000000001',16),
-            array('-100','-100',0),
-            array('-100.011','-100.011',3),
-            array('-100.0000000000000001','-100.0000000000000001',16),
+        return [
+            ['100','100',0],
+            ['100.011','100.011',3],
+            ['100.0000000000000001','100.0000000000000001',16],
+            ['-100','-100',0],
+            ['-100.011','-100.011',3],
+            ['-100.0000000000000001','-100.0000000000000001',16],
             // strings or numbers should work the same,
             // so long as precision isn't
             // outside the range of a double
-            array('100',100,0),
-            array('100.011',100.011,3),
-            array('-100',-100,0),
-            array('-100.011',-100.011,3),
-        );
+            ['100',100,0],
+            ['100.011',100.011,3],
+            ['-100',-100,0],
+            ['-100.011',-100.011,3],
+        ];
     }
 
     /**
@@ -103,7 +103,7 @@ class SugarMathTest extends TestCase
      */
     public function testSetGetScale($setVal)
     {
-        $this->assertEquals($setVal, SugarMath::init(0,$setVal)->getScale());
+        $this->assertEquals($setVal, SugarMath::init(0, $setVal)->getScale());
     }
 
     /**
@@ -114,16 +114,16 @@ class SugarMathTest extends TestCase
      */
     public function setGetScaleProvider()
     {
-        return array(
-            array(0),
-            array(1),
-            array(100),
-            array(100000),
-            array('0'),
-            array('1'),
-            array('100'),
-            array('100000'),
-        );
+        return [
+            [0],
+            [1],
+            [100],
+            [100000],
+            ['0'],
+            ['1'],
+            ['100'],
+            ['100000'],
+        ];
     }
 
     /**
@@ -132,12 +132,13 @@ class SugarMathTest extends TestCase
      * @group math
      * @access public
      */
-    public function testChainedOperations() {
+    public function testChainedOperations()
+    {
         $math = SugarMath::init(10)->pow(2)->mod(3);
         $this->assertEquals(1, $math->result());
         // common test where PHP fails from rounding error
-        $this->assertEquals(8,floor(SugarMath::init(0.1)->add(0.7)->mul(10)->result()));
-        $this->assertEquals(1,SugarMath::init(10)->add(5)->sub(5)->mul(10)->div(10)->pow(2)->mod(3)->result());
+        $this->assertEquals(8, floor(SugarMath::init(0.1)->add(0.7)->mul(10)->result()));
+        $this->assertEquals(1, SugarMath::init(10)->add(5)->sub(5)->mul(10)->div(10)->pow(2)->mod(3)->result());
     }
 
     /**
@@ -146,8 +147,9 @@ class SugarMathTest extends TestCase
      * @group math
      * @access public
      */
-    public function testPowModOperations() {
-        $math = SugarMath::init(10,0)->powmod(2,3);
+    public function testPowModOperations()
+    {
+        $math = SugarMath::init(10, 0)->powmod(2, 3);
         $this->assertEquals(1, $math->result());
     }
 
@@ -161,8 +163,9 @@ class SugarMathTest extends TestCase
      * @group math
      * @access public
      */
-    public function testSqrtOperations($result,$initVal,$scale) {
-        $math = SugarMath::init($initVal,$scale)->sqrt();
+    public function testSqrtOperations($result, $initVal, $scale)
+    {
+        $math = SugarMath::init($initVal, $scale)->sqrt();
         $this->assertEquals($result, $math->result());
     }
 
@@ -172,12 +175,13 @@ class SugarMathTest extends TestCase
      * @group math
      * @access public
      */
-    public static function sqrtOperationsProvider() {
-        return array(
-            array(3,9,0),
-            array(9.1651,84,4),
-            array(10,100,0),
-        );
+    public static function sqrtOperationsProvider()
+    {
+        return [
+            [3,9,0],
+            [9.1651,84,4],
+            [10,100,0],
+        ];
     }
 
 
@@ -191,7 +195,8 @@ class SugarMathTest extends TestCase
      * @group math
      * @access public
      */
-    public function testCompOperations($initVal,$compVal,$result) {
+    public function testCompOperations($initVal, $compVal, $result)
+    {
         $math = SugarMath::init($initVal);
         $this->assertEquals($result, $math->comp($compVal));
     }
@@ -202,12 +207,13 @@ class SugarMathTest extends TestCase
      * @group math
      * @access public
      */
-    public static function compOperationsProvider() {
-        return array(
-            array(100,100,0),
-            array(100,99,1),
-            array(100,101,-1)
-         );
+    public static function compOperationsProvider()
+    {
+        return [
+            [100,100,0],
+            [100,99,1],
+            [100,101,-1],
+         ];
     }
 
     /**
@@ -235,7 +241,7 @@ class SugarMathTest extends TestCase
      * @group math
      * @access public
      */
-    public function testLongPrecisionOperations($initVal,$method,$opVal,$result,$scale)
+    public function testLongPrecisionOperations($initVal, $method, $opVal, $result, $scale)
     {
         // 50 digits, 50 decimals, adding
         $math = SugarMath::init($initVal, $scale)->$method($opVal);
@@ -248,29 +254,30 @@ class SugarMathTest extends TestCase
      * @group math
      * @access public
      */
-    public static function longPrecisionOperationsProvider() {
-        return array(
-            array(
+    public static function longPrecisionOperationsProvider()
+    {
+        return [
+            [
                 '99999999999999999999999999999999999999999999999999',
                 'add',
                 '100000000000000000000000000000000000000000000000000.99999999999999999999999999999999999999999999999991',
                 '199999999999999999999999999999999999999999999999999.99999999999999999999999999999999999999999999999991',
-                50),
-            array(
+                50],
+            [
                 '99999999999999999999999999999999999999999999999999',
                 'add',
                 '100000000000000000000000000000000000000000000000000.99999999999999999999999999999999999999999999999991',
                 '199999999999999999999999999999999999999999999999999.9999999999999999999999999999999999999999999999999',
                 49,
-            ),
-            array(
+            ],
+            [
                 '99999999999999999999999999999999999999999999999999',
                 'add',
                 '100000000000000000000000000000000000000000000000000.99999999999999999999999999999999999999999999999999',
                 '199999999999999999999999999999999999999999999999999.9999999999999999999999999999999999999999999999999',
                 49,
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -279,32 +286,33 @@ class SugarMathTest extends TestCase
      * @group math
      * @access public
      */
-    public static function expressionsProvider() {
-        return array(
-            array('3.00','1+2',null,null),
-            array('11.00','1+2*3+4',null,null),
-            array('13.00','(1+2)*3+4',null,null),
-            array('21.00','(1+2)*(3+4)',null,null),
-            array('147.00','(1+2)*(3+4)^2',null,null),
-            array('441.00','((1+2)*(3+4))^2',null,null),
-            array('30.25','(3 * 2 - (4 / 8)) ^ 2',null,null),
-            array('3.33','10/3',null,2),
-            array('3.3333','10/3',null,4),
-            array('3.3333333333333333333333333','10/3',null,25),
-            array('3.33','10/?',array(3),2),
-            array('3.33','?/?',array(10,3),2),
-            array('200.00','(?+?)*10',array(10,10),null),
-            array('1.00','10%3',null,null),
-            array('2','?/?',array(10,6),0),
-            array('1.7','?/?',array(10,6),1),
-            array('1.67','?/?',array(10,6),2),
-            array('1.667','?/?',array(10,6),3),
-            array('1.6667','?/?',array(10,6),4),
-            array('1.66667','?/?',array(10,6),5),
-            array('1.666667','?/?',array(10,6),6),
-            array('1.6666667','?/?',array(10,6),7),
-            array('802.458090','?/?*?',array('1000','1.246171','1.0'),6),
-        );
+    public static function expressionsProvider()
+    {
+        return [
+            ['3.00','1+2',null,null],
+            ['11.00','1+2*3+4',null,null],
+            ['13.00','(1+2)*3+4',null,null],
+            ['21.00','(1+2)*(3+4)',null,null],
+            ['147.00','(1+2)*(3+4)^2',null,null],
+            ['441.00','((1+2)*(3+4))^2',null,null],
+            ['30.25','(3 * 2 - (4 / 8)) ^ 2',null,null],
+            ['3.33','10/3',null,2],
+            ['3.3333','10/3',null,4],
+            ['3.3333333333333333333333333','10/3',null,25],
+            ['3.33','10/?',[3],2],
+            ['3.33','?/?',[10,3],2],
+            ['200.00','(?+?)*10',[10,10],null],
+            ['1.00','10%3',null,null],
+            ['2','?/?',[10,6],0],
+            ['1.7','?/?',[10,6],1],
+            ['1.67','?/?',[10,6],2],
+            ['1.667','?/?',[10,6],3],
+            ['1.6667','?/?',[10,6],4],
+            ['1.66667','?/?',[10,6],5],
+            ['1.666667','?/?',[10,6],6],
+            ['1.6666667','?/?',[10,6],7],
+            ['802.458090','?/?*?',['1000','1.246171','1.0'],6],
+        ];
     }
 
     /**
@@ -319,8 +327,8 @@ class SugarMathTest extends TestCase
      */
     public function testRound($result, $value, $scale)
     {
-        $math = SugarMath::init(0,$scale);
-        $this->assertSame($result,$math->round($value));
+        $math = SugarMath::init(0, $scale);
+        $this->assertSame($result, $math->round($value));
     }
 
     /**
@@ -330,19 +338,19 @@ class SugarMathTest extends TestCase
      */
     public static function roundProvider()
     {
-        return array(
-            array('-500.000000', '-500.0000000',6),
-            array('3.354999999','3.354999999',9),
-            array('3.35500000','3.354999999',8),
-            array('3.3550000','3.354999999',7),
-            array('3.355000','3.354999999',6),
-            array('3.35500','3.354999999',5),
-            array('3.3550','3.354999999',4),
-            array('3.355','3.354999999',3),
-            array('3.35','3.354999999',2),
-            array('3.4','3.354999999',1),
-            array('3','3.354999999',0),
-        );
+        return [
+            ['-500.000000', '-500.0000000',6],
+            ['3.354999999','3.354999999',9],
+            ['3.35500000','3.354999999',8],
+            ['3.3550000','3.354999999',7],
+            ['3.355000','3.354999999',6],
+            ['3.35500','3.354999999',5],
+            ['3.3550','3.354999999',4],
+            ['3.355','3.354999999',3],
+            ['3.35','3.354999999',2],
+            ['3.4','3.354999999',1],
+            ['3','3.354999999',0],
+        ];
     }
 
 
@@ -372,13 +380,13 @@ class SugarMathTest extends TestCase
      */
     public function setValueExceptionsProvider()
     {
-        return array(
-            array('foo'),
-            array('10,00.30'),
-            array('10.20.30'),
-            array('$10'),
-            array('10,00'),
-        );
+        return [
+            ['foo'],
+            ['10,00.30'],
+            ['10.20.30'],
+            ['$10'],
+            ['10,00'],
+        ];
     }
 
     /**
@@ -407,11 +415,11 @@ class SugarMathTest extends TestCase
      */
     public function setScaleExceptionsProvider()
     {
-        return array(
-            array(10.44),
-            array(-10.44),
-            array(-2),
-        );
+        return [
+            [10.44],
+            [-10.44],
+            [-2],
+        ];
     }
 
 
@@ -426,13 +434,13 @@ class SugarMathTest extends TestCase
      * @group math
      * @access public
      */
-    public function testNonStringExpressionExceptions($exp,$args,$scale)
+    public function testNonStringExpressionExceptions($exp, $args, $scale)
     {
-        $math = new SugarMath(0,$scale);
+        $math = new SugarMath(0, $scale);
 
         $this->expectException(SugarMath_Exception::class);
         $this->expectExceptionMessage('expression must be a string');
-        $math->exp($exp,$args)->result();
+        $math->exp($exp, $args)->result();
     }
 
     /**
@@ -441,10 +449,11 @@ class SugarMathTest extends TestCase
      * @group math
      * @access public
      */
-    public static function nonStringExpressionExceptionsProvider() {
-        return array(
-            array(100,null,null),
-        );
+    public static function nonStringExpressionExceptionsProvider()
+    {
+        return [
+            [100,null,null],
+        ];
     }
 
     /**
@@ -458,13 +467,13 @@ class SugarMathTest extends TestCase
      * @group math
      * @access public
      */
-    public function testNonArrayArgsExceptions($exp,$args,$scale)
+    public function testNonArrayArgsExceptions($exp, $args, $scale)
     {
-        $math = new SugarMath(0,$scale);
+        $math = new SugarMath(0, $scale);
 
         $this->expectException(SugarMath_Exception::class);
         $this->expectExceptionMessage('expression args must be an array');
-        $math->exp($exp,$args)->result();
+        $math->exp($exp, $args)->result();
     }
 
     /**
@@ -473,10 +482,11 @@ class SugarMathTest extends TestCase
      * @group math
      * @access public
      */
-    public static function nonArrayArgsExceptionsProvider() {
-        return array(
-            array('1+2',100,null,'non-array args should be caught'),
-        );
+    public static function nonArrayArgsExceptionsProvider()
+    {
+        return [
+            ['1+2',100,null,'non-array args should be caught'],
+        ];
     }
 
     /**
@@ -502,10 +512,11 @@ class SugarMathTest extends TestCase
      * @group math
      * @access public
      */
-    public static function scaleExceptionsProvider() {
-        return array(
-            array(-99),
-        );
+    public static function scaleExceptionsProvider()
+    {
+        return [
+            [-99],
+        ];
     }
 
     /**
@@ -519,13 +530,13 @@ class SugarMathTest extends TestCase
      * @group math
      * @access public
      */
-    public function testNonMatchingParenthesisExceptions($exp,$args,$scale)
+    public function testNonMatchingParenthesisExceptions($exp, $args, $scale)
     {
-        $math = new SugarMath(0,$scale);
+        $math = new SugarMath(0, $scale);
 
         $this->expectException(SugarMath_Exception::class);
         $this->expectExceptionMessage('parenthesis mismatch');
-        $math->exp($exp,$args)->result();
+        $math->exp($exp, $args)->result();
     }
 
     /**
@@ -534,11 +545,12 @@ class SugarMathTest extends TestCase
      * @group math
      * @access public
      */
-    public static function nonMatchingParenthesisExceptionsProvider() {
-        return array(
-            array('((1+2)',null,null),
-            array('(1+2))',null,null),
-        );
+    public static function nonMatchingParenthesisExceptionsProvider()
+    {
+        return [
+            ['((1+2)',null,null],
+            ['(1+2))',null,null],
+        ];
     }
 
     /**
@@ -552,13 +564,13 @@ class SugarMathTest extends TestCase
      * @group math
      * @access public
      */
-    public function testNonNumericArgsExceptions($exp,$args,$scale)
+    public function testNonNumericArgsExceptions($exp, $args, $scale)
     {
-        $math = new SugarMath(0,$scale);
+        $math = new SugarMath(0, $scale);
 
         $this->expectException(SugarMath_Exception::class);
         $this->expectExceptionMessage('arguments must be numeric');
-        $math->exp($exp,$args)->result();
+        $math->exp($exp, $args)->result();
     }
 
     /**
@@ -567,11 +579,12 @@ class SugarMathTest extends TestCase
      * @group math
      * @access public
      */
-    public static function nonNumericArgsExceptionsProvider() {
-        return array(
-            array('1+?',array('abc'),null),
-            array('1+?',array('abc'),null),
-        );
+    public static function nonNumericArgsExceptionsProvider()
+    {
+        return [
+            ['1+?',['abc'],null],
+            ['1+?',['abc'],null],
+        ];
     }
 
     /**
@@ -585,13 +598,13 @@ class SugarMathTest extends TestCase
      * @group math
      * @access public
      */
-    public function testInvalidExpressionsExceptions($exp,$args,$scale)
+    public function testInvalidExpressionsExceptions($exp, $args, $scale)
     {
-        $math = new SugarMath(0,$scale);
+        $math = new SugarMath(0, $scale);
 
         $this->expectException(SugarMath_Exception::class);
         $this->expectExceptionMessage('invalid expression syntax');
-        $math->exp($exp,$args)->result();
+        $math->exp($exp, $args)->result();
     }
 
     /**
@@ -600,10 +613,11 @@ class SugarMathTest extends TestCase
      * @group math
      * @access public
      */
-    public static function nonInvalidExpressionsExceptionsProvider() {
-        return array(
-            array('1+2* abc(3+4)',null,null),
-        );
+    public static function nonInvalidExpressionsExceptionsProvider()
+    {
+        return [
+            ['1+2* abc(3+4)',null,null],
+        ];
     }
 
     /**
@@ -617,13 +631,13 @@ class SugarMathTest extends TestCase
      * @group math
      * @access public
      */
-    public function testGroupedOperatorsExpressionExceptions($exp,$args,$scale)
+    public function testGroupedOperatorsExpressionExceptions($exp, $args, $scale)
     {
-        $math = new SugarMath(0,$scale);
+        $math = new SugarMath(0, $scale);
 
         $this->expectException(SugarMath_Exception::class);
         $this->expectExceptionMessage('grouped operators error');
-        $math->exp($exp,$args)->result();
+        $math->exp($exp, $args)->result();
     }
 
     /**
@@ -632,9 +646,10 @@ class SugarMathTest extends TestCase
      * @group math
      * @access public
      */
-    public static function nonGroupedOperatorsExpressionsExceptionsProvider() {
-        return array(
-            array('1+*2',null,null),
-        );
+    public static function nonGroupedOperatorsExpressionsExceptionsProvider()
+    {
+        return [
+            ['1+*2',null,null],
+        ];
     }
 }

@@ -84,30 +84,30 @@ class PMSEEventTest extends TestCase
         $this->flowMock = $this->getMockBuilder('pmse_BpmnFlow')
                 ->disableAutoload()
                 ->disableOriginalConstructor()
-                ->setMethods(array('get_list', 'retrieve_by_string_fields'))
+                ->setMethods(['get_list', 'retrieve_by_string_fields'])
                 ->getMock();
         
         $this->caseFlowMock = $this->getMockBuilder('pmse_BpmFlow')
                 ->disableAutoload()
                 ->disableOriginalConstructor()
-                ->setMethods(array('get_list', 'retrieve_by_string_fields'))
+                ->setMethods(['get_list', 'retrieve_by_string_fields'])
                 ->getMock();
 
         $this->caseFlowHandlerMock = $this->getMockBuilder('PMSECaseFlowHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('closeThreadByThreadIndex', 'retrieveBean', 'closeFlow'))
+                ->setMethods(['closeThreadByThreadIndex', 'retrieveBean', 'closeFlow'])
                 ->getMock();
         
         $this->gatewayMock = $this->getMockBuilder('pmse_BpmnGateway')
                 ->disableAutoload()
-                ->setMethods(array('retrieve_by_string_fields', 'get_list'))
+                ->setMethods(['retrieve_by_string_fields', 'get_list'])
                 ->getMock();
     }
 
     public function testCheckIfUsesAnEventBasedGatewayIfFound()
     {
         $this->event = $this->getMockBuilder('PMSEEvent')
-            ->setMethods(array('retrieveBean'))
+            ->setMethods(['retrieveBean'])
             ->disableOriginalConstructor()
             ->getMock();
         
@@ -117,11 +117,11 @@ class PMSEEventTest extends TestCase
         $beanCase->bpmn_type = 'bpmnFlow';
         $beanCase->bpmn_id = 'j89s239s823d';
 
-        $resultCaseMock = array(
-            'list' => array(
-                $beanCase
-            )
-        );
+        $resultCaseMock = [
+            'list' => [
+                $beanCase,
+            ],
+        ];
 
         $this->caseFlowMock->expects($this->any())
                 ->method('get_list')
@@ -130,11 +130,11 @@ class PMSEEventTest extends TestCase
         $flowBean = new stdClass();
         $flowBean->flo_element_origin_type = 'bpmnGateway';
         $flowBean->flo_element_origin = 'abc890';
-        $resultFlowMock = array(
-            'list' => array(
-                $flowBean
-            )
-        );
+        $resultFlowMock = [
+            'list' => [
+                $flowBean,
+            ],
+        ];
 
         $this->flowMock->expects($this->any())
                 ->method('get_list')
@@ -152,7 +152,7 @@ class PMSEEventTest extends TestCase
         $this->caseFlowHandlerMock->expects($this->at(1))
                 ->method('retrieveBean')
                 ->with('pmse_BpmnFlow')
-                ->will($this->returnValue($this->flowMock));        
+                ->will($this->returnValue($this->flowMock));
 
         $this->caseFlowHandlerMock->expects($this->at(2))
                 ->method('retrieveBean')
@@ -173,7 +173,7 @@ class PMSEEventTest extends TestCase
     public function testCheckIfUsesAnEventBasedGatewayIfNotFound()
     {
         $this->event = $this->getMockBuilder('PMSEEvent')
-            ->setMethods(array('retrieveBean'))
+            ->setMethods(['retrieveBean'])
             ->disableOriginalConstructor()
             ->getMock();
         
@@ -183,11 +183,11 @@ class PMSEEventTest extends TestCase
         $beanCase->bpmn_type = 'bpmnFlow';
         $beanCase->bpmn_id = 'j89s239s823d';
 
-        $resultCaseMock = array(
-            'list' => array(
-                $beanCase
-            )
-        );
+        $resultCaseMock = [
+            'list' => [
+                $beanCase,
+            ],
+        ];
 
         $this->caseFlowMock->expects($this->any())
                 ->method('get_list')
@@ -196,11 +196,11 @@ class PMSEEventTest extends TestCase
         $flowBean = new stdClass();
         $flowBean->flo_element_origin_type = 'bpmnGateway';
         $flowBean->flo_element_origin = 'abc890';
-        $resultFlowMock = array(
-            'list' => array(
-                $flowBean
-            )
-        );
+        $resultFlowMock = [
+            'list' => [
+                $flowBean,
+            ],
+        ];
 
         $this->flowMock->expects($this->any())
                 ->method('get_list')
@@ -218,7 +218,7 @@ class PMSEEventTest extends TestCase
         $this->caseFlowHandlerMock->expects($this->at(1))
                 ->method('retrieveBean')
                 ->with('pmse_BpmnFlow')
-                ->will($this->returnValue($this->flowMock));        
+                ->will($this->returnValue($this->flowMock));
 
         $this->caseFlowHandlerMock->expects($this->at(2))
                 ->method('retrieveBean')
@@ -235,11 +235,11 @@ class PMSEEventTest extends TestCase
 
         $this->assertEquals($expected, $result);
     }
-//    
+//
     public function testCheckIfExistEventBased()
     {
         $this->event = $this->getMockBuilder('PMSEEvent')
-            ->setMethods(NULL)
+            ->setMethods(null)
             ->disableOriginalConstructor()
             ->getMock();
         
@@ -250,11 +250,11 @@ class PMSEEventTest extends TestCase
         $beanCase->bpmn_type = 'bpmnFlow';
         $beanCase->bpmn_id = 'j89s239s823d';
 
-        $resultCaseMock = array(
-            'list' => array(
-                $beanCase
-            )
-        );
+        $resultCaseMock = [
+            'list' => [
+                $beanCase,
+            ],
+        ];
 
         $this->caseFlowMock->expects($this->atLeastOnce())
                 ->method('get_list')
@@ -275,7 +275,7 @@ class PMSEEventTest extends TestCase
             ->will($this->returnValue($this->caseFlowMock));
         
         $dbHandlerMock = $this->getMockBuilder('DBHandler')
-            ->setMethods(array('quoted', 'getConnection'))
+            ->setMethods(['quoted', 'getConnection'])
             ->getMock();
 
         $this->caseFlowHandlerMock->expects($this->exactly(2))
@@ -299,7 +299,6 @@ class PMSEEventTest extends TestCase
 
         $expected = true;
         $result = $this->event->checkIfExistEventBased($casId, $casIndex, $isEventBased);
-        $this->assertEquals ($expected, $result);        
+        $this->assertEquals($expected, $result);
     }
-    
 }

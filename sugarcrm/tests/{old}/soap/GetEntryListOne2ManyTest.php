@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-require_once('vendor/nusoap//nusoap.php');
+require_once 'vendor/nusoap//nusoap.php';
 
 /**
  * @group bug43196
@@ -27,7 +27,7 @@ class GetEntryListOne2ManyTest extends SOAPTestCase
 
     protected function tearDown() : void
     {
-        foreach ( SugarTestContactUtilities::getCreatedContactIds() as $id ) {
+        foreach (SugarTestContactUtilities::getCreatedContactIds() as $id) {
             $GLOBALS['db']->query("DELETE FROM accounts_contacts WHERE contact_id = '{$id}'");
         }
         SugarTestContactUtilities::removeAllCreatedContacts();
@@ -47,22 +47,22 @@ class GetEntryListOne2ManyTest extends SOAPTestCase
 
         $this->_login();
 
-        $parameters = array(
+        $parameters = [
             'session' => $this->_sessionId,
             'module_name' => 'Accounts',
             'query' => "accounts.id = '{$account->id}'",
             'order_by' => '',
             'offset' => 0,
-            'select_fields' => array('id', 'contact_id', 'contact_name'),
-            'link_name_to_fields_array' => array(array('name' =>  'contacts', 'value' => array('id', 'name'))),
+            'select_fields' => ['id', 'contact_id', 'contact_name'],
+            'link_name_to_fields_array' => [['name' =>  'contacts', 'value' => ['id', 'name']]],
             'max_results' => 250,
             'deleted' => 0,
-        );
+        ];
 
-        $result = $this->_soapClient->call('get_entry_list',$parameters);
+        $result = $this->_soapClient->call('get_entry_list', $parameters);
 
-        $contact_names = array($contact1->name, $contact2->name);
-        $contact_ids = array($contact1->id, $contact2->id);
+        $contact_names = [$contact1->name, $contact2->name];
+        $contact_ids = [$contact1->id, $contact2->id];
 
         $actualContact1Name = $result["relationship_list"][0]["link_list"][0]["records"][0]["link_value"][1]["value"];
         $actualContact2Name = $result["relationship_list"][0]["link_list"][0]["records"][1]["link_value"][1]["value"];

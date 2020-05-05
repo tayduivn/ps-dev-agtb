@@ -17,7 +17,7 @@ class SugarMinifyUtilsTest extends TestCase
 {
     /**
      * The file that is built by this process
-     * 
+     *
      * @var string
      */
     protected $builtFile = 'include/javascript/unit_test_built.min.js';
@@ -36,16 +36,16 @@ class SugarMinifyUtilsTest extends TestCase
 
         /** @var SugarMinifyUtils|MockObject $minifier */
         $minifier = $this->getMockBuilder('SugarMinifyUtils')
-            ->setMethods(array('getJSGroupings'))
+            ->setMethods(['getJSGroupings'])
             ->getMock();
         $minifier->expects($this->any())
             ->method('getJSGroupings')
-            ->willReturn(array(
-                array(
+            ->willReturn([
+                [
                     'jssource/minify/test/var.js' => $this->builtFile,
                     'jssource/minify/test/if.js' => $this->builtFile,
-                ),
-            ));
+                ],
+            ]);
 
         $minifier->ConcatenateFiles('tests/{old}');
 

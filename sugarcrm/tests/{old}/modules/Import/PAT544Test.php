@@ -28,8 +28,8 @@ class BugPAT544Test extends TestCase
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
 
-        $this->account1 = SugarTestAccountUtilities::createAccount("", array("name" => "AÜLLER"));
-        $this->account2 = SugarTestAccountUtilities::createAccount("", array("name" => "ESPAÑA"));
+        $this->account1 = SugarTestAccountUtilities::createAccount("", ["name" => "AÜLLER"]);
+        $this->account2 = SugarTestAccountUtilities::createAccount("", ["name" => "ESPAÑA"]);
 
         $this->file = "\"{$this->account1->id}\",\"A�LLER\"\n\"{$this->account2->id}\",\"ESPA�A\"";
     }

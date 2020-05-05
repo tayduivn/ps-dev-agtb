@@ -30,109 +30,109 @@ class Bug43466 extends TestCase
      */
     public function testMatchingIndexDoesNotGenerateSql($indices)
     {
-        $sql = $this->_db->repairTableParams('calls', array(
-            'name' => array(),
-        ), $indices, false);
+        $sql = $this->_db->repairTableParams('calls', [
+            'name' => [],
+        ], $indices, false);
 
         $this->assertEquals('', $sql);
     }
 
     public static function matchingIndexProvider()
     {
-        return array(
-            array(
-                array(
-                    array(
+        return [
+            [
+                [
+                    [
                         'name' => 'idx_call_name',
                         'type' => 'index',
-                        'fields'=> array(
+                        'fields'=> [
                             'deleted',
                             'name',
                             'date_modified',
-                        ),
-                    ),
-                    array(
+                        ],
+                    ],
+                    [
                         'name' => 'idx_status',
                         'type' => 'index',
-                        'fields'=> array('status'),
-                    ),
-                    array(
+                        'fields'=> ['status'],
+                    ],
+                    [
                         'name' => 'idx_CALLS_date_Start',
                         'type' => 'index',
-                        'fields' => array('date_start'),
-                    ),
-                ),
-            ),
-            array(
-                array(
-                    array(
+                        'fields' => ['date_start'],
+                    ],
+                ],
+            ],
+            [
+                [
+                    [
                         'name' => 'idx_call_name2',
                         'type' => 'index',
-                        'fields'=> array(
+                        'fields'=> [
                             'deleted',
                             'name',
                             'date_modified',
-                        ),
-                    ),
-                    array(
+                        ],
+                    ],
+                    [
                         'name' => 'idx_status',
                         'type' => 'index',
-                        'fields' => array('status'),
-                    ),
-                    array(
+                        'fields' => ['status'],
+                    ],
+                    [
                         'name' => 'idx_CALLS_date_Start',
                         'type' => 'index',
-                        'fields' => array('date_start'),
-                    ),
-                ),
-            ),
-            array(
-                array(
-                    array(
+                        'fields' => ['date_start'],
+                    ],
+                ],
+            ],
+            [
+                [
+                    [
                         'name' => 'iDX_cAll_NAMe',
                         'type' => 'index',
-                        'fields'=> array(
+                        'fields'=> [
                             'deleted',
                             'name',
                             'date_modified',
-                        ),
-                    ),
-                    array(
+                        ],
+                    ],
+                    [
                         'name' => 'idx_STAtus',
                         'type' => 'index',
-                        'fields' => array('status'),
-                    ),
-                    array(
+                        'fields' => ['status'],
+                    ],
+                    [
                         'name' => 'idx_CALLS_date_Start',
                         'type' => 'index',
-                        'fields' => array('date_start'),
-                    ),
-                ),
-            ),
-            array(
-                array(
-                    array(
+                        'fields' => ['date_start'],
+                    ],
+                ],
+            ],
+            [
+                [
+                    [
                         'name' => 'idx_call_name',
                         'type' => 'index',
-                        'fields'=> array(
+                        'fields'=> [
                             'deleted',
                             'name',
                             'date_modified',
-                        ),
-                    ),
-                    array(
+                        ],
+                    ],
+                    [
                         'name' => 'idx_status',
                         'type' => 'index',
-                        'fields' => array('status'),
-                    ),
-                    array(
+                        'fields' => ['status'],
+                    ],
+                    [
                         'name' => 'idx_calls_date_start2',
                         'type' => 'index',
-                        'fields' => array('date_start'),
-                    ),
-                ),
-            ),
-        );
+                        'fields' => ['date_start'],
+                    ],
+                ],
+            ],
+        ];
     }
 
     /**
@@ -140,36 +140,36 @@ class Bug43466 extends TestCase
      */
     public function testNonMatchingIndexGeneratesSql($indices)
     {
-        $sql = $this->_db->repairTableParams('calls', array(
-            'name' => array(),
-        ), $indices, false);
+        $sql = $this->_db->repairTableParams('calls', [
+            'name' => [],
+        ], $indices, false);
 
         $this->assertNotEquals('', $sql);
     }
 
     public static function nonMatchingIndexProvider()
     {
-        return array(
-            array(
-                array(
-                    array(
+        return [
+            [
+                [
+                    [
                         'name' => 'idx_call_name2',
                         'type' => 'index',
-                        'fields'=> array('name', 'status'),
-                    ),
-                    array(
+                        'fields'=> ['name', 'status'],
+                    ],
+                    [
                         'name' => 'idx_status',
                         'type' => 'index',
-                        'fields'=> array('status'),
-                    ),
-                    array(
+                        'fields'=> ['status'],
+                    ],
+                    [
                         'name' => 'idx_calls_date_start',
                         'type' => 'index',
-                        'fields' => array('date_start'),
-                    ),
-                ),
-            ),
-        );
+                        'fields' => ['date_start'],
+                    ],
+                ],
+            ],
+        ];
     }
 
     /**
@@ -182,44 +182,44 @@ class Bug43466 extends TestCase
 
     public static function matchingVarDefProvider()
     {
-        return array(
-            array(
-                array(
+        return [
+            [
+                [
                     'name' => 'foo',
                     'type' => 'varchar',
                     'len' => '255',
-                ),
-                array(
+                ],
+                [
                     'name' => 'foo',
                     'type' => 'varchar',
                     'len' => '255',
-                ),
-            ),
-            array(
-                array(
+                ],
+            ],
+            [
+                [
                     'name' => 'foo',
                     'type' => 'varchar',
                     'len' => '255',
-                ),
-                array(
+                ],
+                [
                     'name' => 'Foo',
                     'type' => 'varchar',
                     'len' => '255',
-                ),
-            ),
-            array(
-                array(
+                ],
+            ],
+            [
+                [
                     'name' => 'foo',
                     'type' => 'varchar',
                     'len' => '255',
-                ),
-                array(
+                ],
+                [
                     'name' => 'foo',
                     'type' => 'varchar',
                     'len' => '123',
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
     }
 
     /**
@@ -232,31 +232,31 @@ class Bug43466 extends TestCase
 
     public static function nonMatchingVarDefProvider()
     {
-        return array(
-            array(
-                array(
+        return [
+            [
+                [
                     'name' => 'foo',
                     'type' => 'varchar',
                     'len' => '255',
-                ),
-                array(
+                ],
+                [
                     'name' => 'foo2',
                     'type' => 'varchar',
                     'len' => '255',
-                ),
-            ),
-            array(
-                array(
+                ],
+            ],
+            [
+                [
                     'name' => 'foo',
                     'type' => 'varchar',
                     'len' => '123',
-                ),
-                array(
+                ],
+                [
                     'name' => 'Foo',
                     'type' => 'varchar',
                     'len' => '255',
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
     }
 }

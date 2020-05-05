@@ -22,7 +22,7 @@ class RS162Test extends TestCase
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setUp('current_user', array(true, false));
+        SugarTestHelper::setUp('current_user', [true, false]);
     }
 
     public static function tearDownAfterClass(): void
@@ -36,7 +36,7 @@ class RS162Test extends TestCase
         $rest = SugarTestRestUtilities::getRestServiceMock();
         $result = $api->parseArguments(
             $rest,
-            array()
+            []
         );
         $this->assertArrayHasKey('limit', $result);
         $this->assertArrayHasKey('offset', $result);
@@ -47,7 +47,7 @@ class RS162Test extends TestCase
     public function testConvertOrderByToSql()
     {
         $api = $this->getMockForAbstractClass('SugarListApi');
-        $result = $api->convertOrderByToSql(array('date' => 'ASC', 'name' => 'DESC'));
+        $result = $api->convertOrderByToSql(['date' => 'ASC', 'name' => 'DESC']);
         $this->assertEquals('date ASC,name DESC', $result);
     }
 }

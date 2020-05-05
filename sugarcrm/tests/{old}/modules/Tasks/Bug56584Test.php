@@ -29,13 +29,13 @@ class Bug56584Test extends TestCase
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('app_strings');
-        SugarTestHelper::setUp('mod_strings', array('Import'));
+        SugarTestHelper::setUp('mod_strings', ['Import']);
         SugarTestHelper::setUp('app_list_strings');
-        SugarTestHelper::setUp('current_user', array(true, 1));
+        SugarTestHelper::setUp('current_user', [true, 1]);
 
         $this->testFile = 'tests/{old}/modules/Tasks/Bug56584Test.csv';
 
-        $_REQUEST = array(
+        $_REQUEST = [
             'colnum_0'    => 'contact_name',
             'colnum_1'    => 'name',
             'colnum_2'    => 'status',
@@ -50,7 +50,7 @@ class Bug56584Test extends TestCase
             'importlocale_timeformat' => 'H:i',
             'importlocale_timezone' => 'Europe/Helsinki',
             'import_module' => 'Tasks',
-        );
+        ];
     }
 
     protected function tearDown() : void
@@ -73,7 +73,7 @@ class Bug56584Test extends TestCase
         $importSource = new ImportFile($this->testFile, ',', '', false);
         $importer     = new Importer($importSource, $taskBean);
         $contactBean  = new Contact();
-        $contacts     = array();
+        $contacts     = [];
 
         $importer->import();
 
@@ -81,18 +81,16 @@ class Bug56584Test extends TestCase
                              "FROM $contactBean->table_name " .
                              "WHERE created_by='$current_user->id'");
 
-        while ($row = $db->fetchRow($result))
-        {
+        while ($row = $db->fetchRow($result)) {
             $contacts[] = $row;
         }
 
         $this->assertEquals(1, count($contacts), 'Invalid number of contacts created.');
 
-        foreach ($contacts as $record)
-        {
-            $taskBean->retrieve_by_string_fields(array(
+        foreach ($contacts as $record) {
+            $taskBean->retrieve_by_string_fields([
                 'contact_id' => $record['id'],
-            ));
+            ]);
 
             $this->assertNotEmpty($record['first_name'], 'First name of contact "' . $record['id'] . '" is empty.');
             $this->assertNotEmpty($record['last_name'], 'Last name of contact "' . $record['id'] . '" is empty.');
@@ -102,11 +100,11 @@ class Bug56584Test extends TestCase
 
     public function contactParams()
     {
-        return array(
-            array('John Doe', 'John', 'Doe'),
-            array('John Doe Jr.', 'John', 'Doe Jr.'),
-            array('Doe', '', 'Doe'),
-        );
+        return [
+            ['John Doe', 'John', 'Doe'],
+            ['John Doe Jr.', 'John', 'Doe Jr.'],
+            ['Doe', '', 'Doe'],
+        ];
     }
 
     /**
@@ -128,11 +126,11 @@ class Bug56584Test extends TestCase
 
     public function teamParams()
     {
-        return array(
-            array('Big Team', 'Big', 'Team'),
-            array('Very Big Team', 'Very', 'Big Team'),
-            array('Team', 'Team', ''),
-        );
+        return [
+            ['Big Team', 'Big', 'Team'],
+            ['Very Big Team', 'Very', 'Big Team'],
+            ['Team', 'Team', ''],
+        ];
     }
 
     /**

@@ -33,11 +33,11 @@ class SugarJobActivityStreamPurgerTest extends TestCase
 
     public function testRunPurger_RemoveActivitiesThatHaveBeenSoftDeleted()
     {
-        $vars = array(
+        $vars = [
             'activity_type' => 'create',
             'parent_type' => 'Meetings',
             'deleted' => 1,
-        );
+        ];
         $deletedActivity = SugarTestActivityUtilities::createActivity('', $vars);
 
         $this->assertTrue(
@@ -62,25 +62,25 @@ class SugarJobActivityStreamPurgerTest extends TestCase
         $GLOBALS['sugar_config']['activitystreamcleaner']['keep_all_relationships_activities'] = false;
         $GLOBALS['sugar_config']['activitystreamcleaner']['months_to_keep'] = 15;
 
-        $vars = array(
+        $vars = [
             'date_entered' => date('Y-m-d H:i:s', strtotime('-14 months')),
             'activity_type' => 'create',
             'parent_type' => 'Meetings',
-        );
+        ];
         $activityLessThanConfiguredMonths = SugarTestActivityUtilities::createActivity('', $vars);
 
-        $vars = array(
+        $vars = [
             'date_entered' => date('Y-m-d H:i:s', strtotime('-16 months')),
             'activity_type' => 'create',
             'parent_type' => 'Calls',
-        );
+        ];
         $createActivityGreaterThanConfiguredMonths = SugarTestActivityUtilities::createActivity('', $vars);
 
-        $vars = array(
+        $vars = [
             'date_entered' => date('Y-m-d H:i:s', strtotime('-23 months')),
             'activity_type' => 'link',
             'parent_type' => 'Contacts',
-        );
+        ];
         $linkActivityGreaterThanConfiguredMonths = SugarTestActivityUtilities::createActivity('', $vars);
 
         $job = new SugarJobActivityStreamPurger();
@@ -108,11 +108,11 @@ class SugarJobActivityStreamPurgerTest extends TestCase
         $GLOBALS['sugar_config']['activitystreamcleaner']['keep_all_relationships_activities'] = true;
         $GLOBALS['sugar_config']['activitystreamcleaner']['months_to_keep'] = 10;
 
-        $vars = array(
+        $vars = [
             'date_entered' => date('Y-m-d H:i:s', strtotime('-12 months')),
             'activity_type' => 'link',
             'parent_type' => 'Contact',
-        );
+        ];
         $linkActivityGreaterThanConfiguredMonths = SugarTestActivityUtilities::createActivity('', $vars);
 
         $job = new SugarJobActivityStreamPurger();

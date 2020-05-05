@@ -12,7 +12,7 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once('modules/UpgradeWizard/uw_utils.php');
+require_once 'modules/UpgradeWizard/uw_utils.php';
 
 /**
  * @ticket 40793
@@ -41,8 +41,8 @@ class Bug40793Test extends TestCase
 
     public function testIfDirIsNotIncluded()
     {
-        $skipDirs = array($this->_notIncludeDir);
-        $files = uwFindAllFiles( self::WEBALIZER_DIR_NAME, array(), true, $skipDirs);
+        $skipDirs = [$this->_notIncludeDir];
+        $files = uwFindAllFiles(self::WEBALIZER_DIR_NAME, [], true, $skipDirs);
         $this->assertNotContains($this->_notIncludeDir, $files, "Directory {$this->_notIncludeDir} shouldn't been included in this list");
         $this->assertContains($this->_includeDir, $files, "Directory {$this->_includeDir} should been included in this list");
     }

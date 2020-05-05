@@ -18,8 +18,8 @@ class Bug42683Test extends SOAPTestCase
 {
     protected function setUp() : void
     {
-    	$this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/service/v2/soap.php';
-		parent::setUp();
+        $this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/service/v2/soap.php';
+        parent::setUp();
     }
 
     protected function tearDown() : void
@@ -35,29 +35,29 @@ class Bug42683Test extends SOAPTestCase
         $this->_login();
         $result = $this->_soapClient->call(
             'get_entry_list',
-            array(
+            [
                 'session' => $this->_sessionId,
                 "module_name" => 'Leads',
                 "query" => "leads.id = '{$lead->id}'",
                 'order_by' => '',
                 'offset' => 0,
-                'select_fields' => array(
-                    'name'
-                ),
-                'link_name_to_fields_array' => array(
-                    array(
+                'select_fields' => [
+                    'name',
+                ],
+                'link_name_to_fields_array' => [
+                    [
                         'name' => 'email_addresses',
-                        'value' => array(
+                        'value' => [
                             'id',
                             'email_address',
                             'opt_out',
-                            'primary_address'
-                        )
-                    )
-                ),
+                            'primary_address',
+                        ],
+                    ],
+                ],
                 'max_results' => 1,
-                'deleted' => 0
-            )
+                'deleted' => 0,
+            ]
         );
 
         $this->assertEquals('primary_address', $result['relationship_list'][0][0]['records'][0][3]['name']);

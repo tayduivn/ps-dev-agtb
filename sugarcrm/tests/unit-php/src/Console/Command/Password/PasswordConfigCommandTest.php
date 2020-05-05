@@ -33,7 +33,7 @@ class PasswordConfigCommandTest extends AbstractPasswordCommandTestCase
     public function testExecute(array $config, Hash $hash, $output, $exit)
     {
         $cmd = $this->getMockBuilder('Sugarcrm\Sugarcrm\Console\Command\Password\PasswordConfigCommand')
-            ->setMethods(array('getHashInstance', 'getConfig'))
+            ->setMethods(['getHashInstance', 'getConfig'])
             ->getMock();
 
         $cmd->expects($this->once())
@@ -45,12 +45,11 @@ class PasswordConfigCommandTest extends AbstractPasswordCommandTestCase
             ->will($this->returnValue($hash));
 
         $tester = new CommandTester($cmd);
-        $tester->execute(array());
+        $tester->execute([]);
 
         $output = self::$fixturePath . $output;
         $this->assertStringEqualsFile($output, $tester->getDisplay(true));
         $this->assertSame($exit, $tester->getStatusCode());
-
     }
 
     public function providerTestExecute()
@@ -64,11 +63,11 @@ class PasswordConfigCommandTest extends AbstractPasswordCommandTestCase
         $hash2->setRehash(false);
         $hash2->setAllowLegacy(true);
 
-        return array(
+        return [
 
             // OOTB configuration
-            array(
-                array(
+            [
+                [
                     'minpwdlength' => 6,
                     'maxpwdlength' => '',
                     'oneupper' => true,
@@ -76,23 +75,23 @@ class PasswordConfigCommandTest extends AbstractPasswordCommandTestCase
                     'onenumber' => true,
                     'onespecial' => '',
                     'customregex' => '',
-                ),
+                ],
                 $hash1,
                 'PasswordConfigCommand_0.txt',
                 0,
-            ),
+            ],
 
             // Missing configuration
-            array(
-                array(),
+            [
+                [],
                 $hash1,
                 'PasswordConfigCommand_1.txt',
                 0,
-            ),
+            ],
 
             // SHA2 backend using SHA-512
-            array(
-                array(
+            [
+                [
                     'minpwdlength' => 4,
                     'maxpwdlength' => '8',
                     'oneupper' => false,
@@ -100,11 +99,11 @@ class PasswordConfigCommandTest extends AbstractPasswordCommandTestCase
                     'onenumber' => false,
                     'onespecial' => true,
                     'customregex' => 'foobar',
-                ),
+                ],
                 $hash2,
                 'PasswordConfigCommand_2.txt',
                 0,
-            ),
-        );
+            ],
+        ];
     }
 }

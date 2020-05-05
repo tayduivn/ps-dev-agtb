@@ -22,7 +22,7 @@ class RS41Test extends TestCase
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setUp('current_user', array(true, false));
+        SugarTestHelper::setUp('current_user', [true, false]);
     }
 
     public static function tearDownAfterClass(): void
@@ -37,7 +37,7 @@ class RS41Test extends TestCase
         $rest->loadServiceDictionary('ServiceDictionaryRest');
         $result = $api->getHelp(
             $rest,
-            array()
+            []
         );
         $this->assertStringContainsString('API Help', $result);
     }

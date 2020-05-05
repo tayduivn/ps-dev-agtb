@@ -12,7 +12,7 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once('modules/DynamicFields/FieldCases.php');
+require_once 'modules/DynamicFields/FieldCases.php';
 
 /**
  * @group DynamicFieldsCurrencyTests
@@ -29,18 +29,18 @@ class DynamicFieldsCurrencyTest extends TestCase
         // Set Original Global dbType
         $this->_originaldbType = $GLOBALS['db']->dbType;
         
-    	$this->field = get_widget('currency');
+        $this->field = get_widget('currency');
         $this->field->id = $this->_modulename.'foofighter_c';
         $this->field->name = 'foofighter_c';
         $this->field->vanme = 'LBL_Foo';
-        $this->field->comments = NULL;
-        $this->field->help = NULL;
+        $this->field->comments = null;
+        $this->field->help = null;
         $this->field->custom_module = $this->_modulename;
         $this->field->type = 'currency';
         $this->field->len = 18;
         $this->field->precision = 6;
         $this->field->required = 0;
-        $this->field->default_value = NULL;
+        $this->field->default_value = null;
         $this->field->date_modified = '2010-12-22 01:01:01';
         $this->field->deleted = 0;
         $this->field->audited = 0;
@@ -48,10 +48,10 @@ class DynamicFieldsCurrencyTest extends TestCase
         $this->field->duplicate_merge = 0;
         $this->field->reportable = 1;
         $this->field->importable = 'true';
-        $this->field->ext1 = NULL;
-        $this->field->ext2 = NULL;
-        $this->field->ext3 = NULL;
-        $this->field->ext4 = NULL;
+        $this->field->ext1 = null;
+        $this->field->ext2 = null;
+        $this->field->ext3 = null;
+        $this->field->ext4 = null;
     }
     
     protected function tearDown() : void
@@ -64,12 +64,11 @@ class DynamicFieldsCurrencyTest extends TestCase
     {
         $type = 'decimal';
         //BEGIN SUGARCRM flav=ent ONLY
-        if ($GLOBALS['db']->dbType == 'oci8')
-        {
+        if ($GLOBALS['db']->dbType == 'oci8') {
             $type = 'number';
         }
         //END SUGARCRM flav=ent ONLY
-        $this->field->len = NULL;
+        $this->field->len = null;
         $dbTypeString = $this->field->get_db_type();
         $this->assertMatchesRegularExpression('/' . $type . ' *\(/', $dbTypeString);
         $dbTypeString = $this->field->get_db_type();

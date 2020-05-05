@@ -347,10 +347,10 @@ class UserTest extends TestCase
 
     public function datProviderForTestGetEmailClientPreference()
     {
-        return array(
-            array("sugar", "foo", "sugar"),
-            array("", "foo", "foo"),
-        );
+        return [
+            ["sugar", "foo", "sugar"],
+            ["", "foo", "foo"],
+        ];
     }
 
     /**
@@ -496,7 +496,7 @@ class UserTest extends TestCase
     {
         /** @var User|MockObject $user */
         $user = $this->getMockBuilder('User')
-            ->setMethods(array($getModules, 'isWorkFlowModule'))
+            ->setMethods([$getModules, 'isWorkFlowModule'])
             ->disableOriginalConstructor()
             ->getMock();
         $user->id = 'TEST';
@@ -528,26 +528,26 @@ class UserTest extends TestCase
 
     public function isAdminOrDeveloperForModuleProvider()
     {
-        return array(
+        return [
             // current module is a workflow module, but there are no developer or admin modules
-            array(
+            [
                 true,
-                array(),
+                [],
                 false,
-            ),
+            ],
             // there are developer or admin modules, but current module is not a workflow module
-            array(
+            [
                 false,
-                array('Accounts'),
+                ['Accounts'],
                 false,
-            ),
+            ],
             // current module is a workflow module, and there are developer or admin modules
-            array(
+            [
                 true,
-                array('Accounts'),
+                ['Accounts'],
                 true,
-            ),
-        );
+            ],
+        ];
     }
 
     private function backUpConfig($name)

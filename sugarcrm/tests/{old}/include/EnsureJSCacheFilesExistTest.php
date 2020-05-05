@@ -12,15 +12,15 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once("include/utils.php");
+require_once "include/utils.php";
 
 class EnsureJSCacheFilesExistTest extends TestCase
 {
     protected $testFile = "cache/include/javascript/sugar_sidecar.min.js";
-    protected $testFiles = array(
+    protected $testFiles = [
         "cache/include/javascript/sugar_grp1.js",
         "cache/include/javascript/sugar_grp1_jquery.js",
-    );
+    ];
 
     protected function setUp() : void
     {

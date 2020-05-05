@@ -23,16 +23,16 @@ class PMSEEmailHandlerTest extends TestCase
             "bcc": ["joane.gill@gmail.com"]
         }';
         
-        $flowData = array(
+        $flowData = [
             "cas_id" => 1,
-            "cas_index" => 1
-        );
+            "cas_index" => 1,
+        ];
         
         $bean = new stdClass();
         
         $emailHandlerMock = $this->getMockBuilder('PMSEEmailHandler')
             ->disableOriginalConstructor()
-            ->setMethods(array('processEmailsAndExpand'))
+            ->setMethods(['processEmailsAndExpand'])
             ->getMock();
 
         $emailHandlerMock->expects($this->at(0))
@@ -59,13 +59,13 @@ class PMSEEmailHandlerTest extends TestCase
         // The mock object to be tested
         $emailHandlerMock = $this->getMockBuilder('PMSEEmailHandler')
             ->disableOriginalConstructor()
-            ->setMethods(array('getLogger'))
+            ->setMethods(['getLogger'])
             ->getMock();
 
         // The logger mock, needed because no addresses means a log write
         $loggerMock = $this->getMockBuilder('PMSELogger')
             ->disableOriginalConstructor()
-            ->setMethods(array('alert'))
+            ->setMethods(['alert'])
             ->getMock();
 
         // The log should write an alert, one time
@@ -84,30 +84,30 @@ class PMSEEmailHandlerTest extends TestCase
     {
         $emailHandlerMock = $this->getMockBuilder('PMSEEmailHandler')
             ->disableOriginalConstructor()
-            ->setMethods(array('addRecipients', 'retrieveBean', 'retrieveMailer'))
+            ->setMethods(['addRecipients', 'retrieveBean', 'retrieveMailer'])
             ->getMock();
 
 
         $loggerMock = $this->getMockBuilder('PMSELogger')
             ->disableOriginalConstructor()
-            ->setMethods(array('warning'))
+            ->setMethods(['warning'])
             ->getMock();
 
         $beanUtilsMock = $this->getMockBuilder('PMSEBeanHandler')
             ->disableOriginalConstructor()
-            ->setMethods(array('mergeBeanInTemplate'))
+            ->setMethods(['mergeBeanInTemplate'])
             ->getMock();
 
         $sugarMailerMock = $this->getMockBuilder('SmtpMailer')
             ->disableOriginalConstructor()
-            ->setMethods(array('addRecipientsTo', 'addRecipientsCc', 'addRecipientsBcc', 'setHtmlBody', 'setTextBody',
-                'setSubject', 'setHeader', 'send'))
+            ->setMethods(['addRecipientsTo', 'addRecipientsCc', 'addRecipientsBcc', 'setHtmlBody', 'setTextBody',
+                'setSubject', 'setHeader', 'send'])
             ->getMock();
 
         $templateMock = $this->getMockBuilder('pmse_Emails_Templates')
             ->disableAutoload()
             ->disableOriginalConstructor()
-            ->setMethods(array('retrieve'))
+            ->setMethods(['retrieve'])
             ->getMock();
 
         $beanMock = new stdClass();
@@ -140,20 +140,20 @@ class PMSEEmailHandlerTest extends TestCase
 
         $beanId = 'bean01';
 
-        $addresses = (object)array (
-            "to" => array(
-                (object)array("name" => "user01", "address" => "user01@mail.com"),
-                (object)array("name" => "user02", "address" => "user02@mail.com")
-            ),
-            "cc" => array(
-                (object)array("name" => "user03", "address" => "user03@mail.com"),
-                (object)array("name" => "user04", "address" => "user04@mail.com")
-            ),
-            "bcc" => array(
-                (object)array("name" => "user05", "address" => "user05@mail.com"),
-                (object)array("name" => "user06", "address" => "user06@mail.com")
-            )
-        );
+        $addresses = (object) [
+            "to" => [
+                (object)["name" => "user01", "address" => "user01@mail.com"],
+                (object)["name" => "user02", "address" => "user02@mail.com"],
+            ],
+            "cc" => [
+                (object)["name" => "user03", "address" => "user03@mail.com"],
+                (object)["name" => "user04", "address" => "user04@mail.com"],
+            ],
+            "bcc" => [
+                (object)["name" => "user05", "address" => "user05@mail.com"],
+                (object)["name" => "user06", "address" => "user06@mail.com"],
+            ],
+        ];
 
         $templateId = 'template01';
         $emailHandlerMock->sendTemplateEmail($moduleName, $beanId, $addresses, $templateId);
@@ -163,28 +163,28 @@ class PMSEEmailHandlerTest extends TestCase
     {
         $emailHandlerMock = $this->getMockBuilder('PMSEEmailHandler')
             ->disableOriginalConstructor()
-            ->setMethods(array('retrieveMailer', 'retrieveBean', 'addRecipients'))
+            ->setMethods(['retrieveMailer', 'retrieveBean', 'addRecipients'])
             ->getMock();
 
         $sugarMailerMock = $this->getMockBuilder('SmtpMailer')
             ->disableOriginalConstructor()
-            ->setMethods(array('addRecipientsTo', 'addRecipientsCc', 'addRecipientsBcc', 'setHtmlBody', 'setTextBody',
-                'setSubject', 'setHeader', 'send'))
+            ->setMethods(['addRecipientsTo', 'addRecipientsCc', 'addRecipientsBcc', 'setHtmlBody', 'setTextBody',
+                'setSubject', 'setHeader', 'send'])
             ->getMock();
 
         $loggerMock = $this->getMockBuilder('PMSELogger')
             ->disableOriginalConstructor()
-            ->setMethods(array('warning'))
+            ->setMethods(['warning'])
             ->getMock();
         
         $beanUtilsMock = $this->getMockBuilder('PMSEBeanHandler')
             ->disableOriginalConstructor()
-            ->setMethods(array('mergeBeanInTemplate'))
+            ->setMethods(['mergeBeanInTemplate'])
             ->getMock();
 
         $templateObjectMock = $this->getMockBuilder('pmse_Emails_Templates')
             ->disableOriginalConstructor()
-            ->setMethods(array('retrieve'))
+            ->setMethods(['retrieve'])
             ->getMock();
 
         $beanMock = new stdClass();
@@ -217,20 +217,20 @@ class PMSEEmailHandlerTest extends TestCase
 
         $beanId = 'bean01';
 
-        $addresses = (object)array (
-            "to" => array(
-                (object) array("name" => "user01", "address" => "user01@mail.com"),
-                (object) array("name" => "user02", "address" => "user02@mail.com")
-            ),
-            "cc" => array(
-                (object) array("name" => "user03", "address" => "user03@mail.com"),
-                (object) array("name" => "user04", "address" => "user04@mail.com")
-            ),
-            "bcc" => array(
-                (object) array("name" => "user05", "address" => "user05@mail.com"),
-                (object) array("name" => "user06", "address" => "user06@mail.com")
-            )
-        );
+        $addresses = (object) [
+            "to" => [
+                (object) ["name" => "user01", "address" => "user01@mail.com"],
+                (object) ["name" => "user02", "address" => "user02@mail.com"],
+            ],
+            "cc" => [
+                (object) ["name" => "user03", "address" => "user03@mail.com"],
+                (object) ["name" => "user04", "address" => "user04@mail.com"],
+            ],
+            "bcc" => [
+                (object) ["name" => "user05", "address" => "user05@mail.com"],
+                (object) ["name" => "user06", "address" => "user06@mail.com"],
+            ],
+        ];
 
         $templateId = '';
         $emailHandlerMock->sendTemplateEmail($moduleName, $beanId, $addresses, $templateId);
@@ -247,17 +247,17 @@ class PMSEEmailHandlerTest extends TestCase
         $bean->module_dir = 'Leads';
         $bean->emailAddress = $addressMock = $this->getMockBuilder('EmailAddress')
                 ->disableOriginalConstructor()
-                ->setMethods(array('getPrimaryAddress'))
+                ->setMethods(['getPrimaryAddress'])
                 ->getMock();
 
         $historyDataMock = $this->getMockBuilder('PMSEHistoryData')
                 ->disableOriginalConstructor()
-                ->setMethods(array('savePredata'))
+                ->setMethods(['savePredata'])
                 ->getMock();
         
         $emailHandlerMock = $this->getMockBuilder('PMSEEmailHandler')
             ->disableOriginalConstructor()
-            ->setMethods(array('getPrimaryEmailKeyFromREQUEST', 'updateEmails'))
+            ->setMethods(['getPrimaryEmailKeyFromREQUEST', 'updateEmails'])
             ->getMock();
         
         $emailHandlerMock->expects($this->once())
@@ -282,7 +282,7 @@ class PMSEEmailHandlerTest extends TestCase
         $bean->module_dir = 'Leads';
         $bean->emailAddress = $this->getMockBuilder('EmailAddress')
                 ->disableOriginalConstructor()
-                ->setMethods(array('getPrimaryAddress'))
+                ->setMethods(['getPrimaryAddress'])
                 ->getMock();
 
         $bean->emailAddress->expects($this->once())
@@ -291,13 +291,13 @@ class PMSEEmailHandlerTest extends TestCase
         
         $historyDataMock = $this->getMockBuilder('PMSEHistoryData')
                 ->disableOriginalConstructor()
-                ->setMethods(array('savePredata'))
+                ->setMethods(['savePredata'])
                 ->getMock();
         
         $emailHandlerMock = $this->getMockBuilder('PMSEEmailHandler')
             ->disableOriginalConstructor()
-            ->setMethods(array('getPrimaryEmailKeyFromREQUEST', 'updateEmails'))
-            ->getMock();                
+            ->setMethods(['getPrimaryEmailKeyFromREQUEST', 'updateEmails'])
+            ->getMock();
         
         $_REQUEST['someKey'] = '';
         $result = $emailHandlerMock->doesPrimaryEmailExists($field, $bean, $historyDataMock);
@@ -318,8 +318,8 @@ class PMSEEmailHandlerTest extends TestCase
         
         $emailHandlerMock = $this->getMockBuilder('PMSEEmailHandler')
             ->disableOriginalConstructor()
-            ->setMethods(array('getPrimaryEmailKeyFromREQUEST', 'updateEmails'))
-            ->getMock();                
+            ->setMethods(['getPrimaryEmailKeyFromREQUEST', 'updateEmails'])
+            ->getMock();
         
         $result = $emailHandlerMock->doesPrimaryEmailExists($field, $bean, $historyDataMock);
         
@@ -333,7 +333,7 @@ class PMSEEmailHandlerTest extends TestCase
         
         $emailHandlerMock = $this->getMockBuilder('PMSEEmailHandler')
             ->disableOriginalConstructor()
-            ->setMethods(array('updateEmails'))
+            ->setMethods(['updateEmails'])
             ->getMock();
 
         $_REQUEST['emailAddress'] = 'admin@mail.com';
@@ -350,7 +350,7 @@ class PMSEEmailHandlerTest extends TestCase
         
         $emailHandlerMock = $this->getMockBuilder('PMSEEmailHandler')
             ->disableOriginalConstructor()
-            ->setMethods(array('updateEmails'))
+            ->setMethods(['updateEmails'])
             ->getMock();
 
         $_REQUEST['Leads_email_widget_id'] = 1;
@@ -369,7 +369,7 @@ class PMSEEmailHandlerTest extends TestCase
         
         $emailHandlerMock = $this->getMockBuilder('PMSEEmailHandler')
             ->disableOriginalConstructor()
-            ->setMethods(array('updateEmails'))
+            ->setMethods(['updateEmails'])
             ->getMock();
 
         $_REQUEST['Leads_email_widget_id'] = 1;
@@ -389,7 +389,7 @@ class PMSEEmailHandlerTest extends TestCase
         
         $emailHandlerMock = $this->getMockBuilder('PMSEEmailHandler')
             ->disableOriginalConstructor()
-            ->setMethods(array('updateEmails'))
+            ->setMethods(['updateEmails'])
             ->getMock();
 
         $_REQUEST['Leads_email_widget_id'] = 1;
@@ -408,7 +408,7 @@ class PMSEEmailHandlerTest extends TestCase
         
         $emailHandlerMock = $this->getMockBuilder('PMSEEmailHandler')
             ->disableOriginalConstructor()
-            ->setMethods(array('updateEmails'))
+            ->setMethods(['updateEmails'])
             ->getMock();
 
         $_REQUEST['Leads_email_widget_id'] = 1;
@@ -426,16 +426,16 @@ class PMSEEmailHandlerTest extends TestCase
         $bean->id = 'bean01';
         $bean->emailAddress = $this->getMockBuilder('EmailAddress')
                 ->disableOriginalConstructor()
-                ->setMethods(array('getAddressesByGUID'))
+                ->setMethods(['getAddressesByGUID'])
                 ->getMock();
         
-        $addresses = array(
-            'address' => array(
+        $addresses = [
+            'address' => [
                 'primary_address' => 'address@mail.com',
                 'email_address' => 'address@mail.com',
-                'email_address_id' => 'address@mail.com'
-            ),
-        );
+                'email_address_id' => 'address@mail.com',
+            ],
+        ];
         
         $bean->emailAddress->expects($this->once())
                 ->method('getAddressesByGUID')
@@ -443,12 +443,12 @@ class PMSEEmailHandlerTest extends TestCase
         
         $loggerMock = $this->getMockBuilder('PMSELogger')
             ->disableOriginalConstructor()
-            ->setMethods(array('error', 'debug', 'info', 'warning'))
+            ->setMethods(['error', 'debug', 'info', 'warning'])
             ->getMock();
         
         $emailHandlerMock = $this->getMockBuilder('PMSEEmailHandler')
             ->disableOriginalConstructor()
-            ->setMethods(NULL)
+            ->setMethods(null)
             ->getMock();
 
         $_REQUEST['Leads_email_widget_id'] = 1;
@@ -467,16 +467,16 @@ class PMSEEmailHandlerTest extends TestCase
         $bean->id = 'bean01';
         $bean->emailAddress = $this->getMockBuilder('EmailAddress')
                 ->disableOriginalConstructor()
-                ->setMethods(array('getAddressesByGUID'))
+                ->setMethods(['getAddressesByGUID'])
                 ->getMock();
         
-        $addresses = array(
-            'address' => array(
+        $addresses = [
+            'address' => [
                 'primary_address' => 1,
                 'email_address' => 'address@mail.com',
-                'email_address_id' => 'address@mail.com'
-            ),
-        );
+                'email_address_id' => 'address@mail.com',
+            ],
+        ];
         
         $bean->emailAddress->expects($this->once())
                 ->method('getAddressesByGUID')
@@ -484,12 +484,12 @@ class PMSEEmailHandlerTest extends TestCase
         
         $loggerMock = $this->getMockBuilder('PMSELogger')
             ->disableOriginalConstructor()
-            ->setMethods(array('error', 'debug', 'info', 'warning'))
+            ->setMethods(['error', 'debug', 'info', 'warning'])
             ->getMock();
         
         $emailHandlerMock = $this->getMockBuilder('PMSEEmailHandler')
             ->disableOriginalConstructor()
-            ->setMethods(NULL)
+            ->setMethods(null)
             ->getMock();
 
         $_REQUEST['Leads_email_widget_id'] = 1;
@@ -508,15 +508,15 @@ class PMSEEmailHandlerTest extends TestCase
         $bean->id = 'bean01';
         $bean->emailAddress = $this->getMockBuilder('EmailAddress')
                 ->disableOriginalConstructor()
-                ->setMethods(array('getAddressesByGUID'))
+                ->setMethods(['getAddressesByGUID'])
                 ->getMock();
         
-        $addresses = array(
-            'address' => array(
+        $addresses = [
+            'address' => [
                 'email_address' => 'address@mail.com',
-                'email_address_id' => 'address@mail.com'
-            ),
-        );
+                'email_address_id' => 'address@mail.com',
+            ],
+        ];
         
         $bean->emailAddress->expects($this->once())
                 ->method('getAddressesByGUID')
@@ -524,12 +524,12 @@ class PMSEEmailHandlerTest extends TestCase
         
         $loggerMock = $this->getMockBuilder('PMSELogger')
             ->disableOriginalConstructor()
-            ->setMethods(array('error', 'debug', 'info', 'warning'))
+            ->setMethods(['error', 'debug', 'info', 'warning'])
             ->getMock();
         
         $emailHandlerMock = $this->getMockBuilder('PMSEEmailHandler')
             ->disableOriginalConstructor()
-            ->setMethods(NULL)
+            ->setMethods(null)
             ->getMock();
 
         $_REQUEST['Leads_email_widget_id'] = 1;
@@ -540,6 +540,4 @@ class PMSEEmailHandlerTest extends TestCase
         $newEmailAddress = "new@mail.com";
         $emailHandlerMock->updateEmails($bean, $newEmailAddress);
     }
-    
-    
 }

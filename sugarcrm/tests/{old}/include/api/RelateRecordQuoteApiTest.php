@@ -27,27 +27,27 @@ class RelateRecordQuoteApiTest extends TestCase
     private $_args;
     private $_quoteName;
     private $_apiClass;
-    private $_address_fields = array('address_street', 'address_city', 'address_state', 'address_street', 'address_street');
+    private $_address_fields = ['address_street', 'address_city', 'address_state', 'address_street', 'address_street'];
 
     protected function setUp() : void
     {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
-        SugarTestHelper::setUp('current_user', array(true, 1));
+        SugarTestHelper::setUp('current_user', [true, 1]);
 
         $this->_contact = SugarTestContactUtilities::createContact();
         $this->_api = new RestService();
         $this->_api->user = $GLOBALS['current_user'];
 
         $this->_quoteName = 'RelateRecordQuoteApiTestQuote'.time();
-        $this->_args = array(
+        $this->_args = [
             "module" => "Contacts",
             "record" => $this->_contact->id,
             "link_name" => "quotes",
             "name" => $this->_quoteName,
             "assigned_user_id" => $GLOBALS['current_user']->id,
             "date_quote_expected_closed" => TimeDate::getInstance()->getNow()->asDbDate(),
-        );
+        ];
 
         $this->_apiClass = new RelateRecordApi();
     }
@@ -59,18 +59,16 @@ class RelateRecordQuoteApiTest extends TestCase
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestHelper::tearDown();
 
-        unset( $this->_api,  $this->_contact, $this->_account, $this->_args, $this->_quoteName, $this->_apiClass);
+        unset($this->_api, $this->_contact, $this->_account, $this->_args, $this->_quoteName, $this->_apiClass);
     }
 
     private function fillAddressArgs()
     {
-        $address_types = array('shipping', 'billing');
+        $address_types = ['shipping', 'billing'];
         $time = time();
 
-        foreach ( $address_types as $_type )
-        {
-            foreach ( $this->_address_fields as $_field )
-            {
+        foreach ($address_types as $_type) {
+            foreach ($this->_address_fields as $_field) {
                 $this->_args[$_type.'_'.$_field] = $_type.'_'.$_field.$time;
             }
         }
@@ -78,10 +76,9 @@ class RelateRecordQuoteApiTest extends TestCase
 
     private function fillAddressForContact($address = 'primary')
     {
-        $address = in_array($address, array('primary', 'alt')) ? $address : 'primary';
+        $address = in_array($address, ['primary', 'alt']) ? $address : 'primary';
         $time = time();
-        foreach ( $this->_address_fields as $_field )
-        {
+        foreach ($this->_address_fields as $_field) {
             $_field = $address.'_'.$_field;
             $this->_contact->$_field = $_field.$time;
         }
@@ -90,10 +87,9 @@ class RelateRecordQuoteApiTest extends TestCase
 
     private function fillAddressForAccount($address = 'billing')
     {
-        $address = in_array($address, array('billing', 'shipping')) ? $address : 'billing';
+        $address = in_array($address, ['billing', 'shipping']) ? $address : 'billing';
         $time = time();
-        foreach ($this->_address_fields as $_field)
-        {
+        foreach ($this->_address_fields as $_field) {
             $_field = $address.'_'.$_field;
             $this->_account->$_field = $_field.$time;
         }
@@ -115,7 +111,7 @@ class RelateRecordQuoteApiTest extends TestCase
 
         $quote = new Quote();
         $quote->retrieve($result['related_record']['id']);
-        SugarTestQuoteUtilities::setCreatedQuote(array($result['related_record']['id']));
+        SugarTestQuoteUtilities::setCreatedQuote([$result['related_record']['id']]);
 
         $this->_contact->load_relationship("quotes");
         $relatedIds = $this->_contact->quotes->get();
@@ -137,11 +133,9 @@ class RelateRecordQuoteApiTest extends TestCase
         $this->assertRelatedItemExists($result);
 
         // contact has not address and there are not request data to populate - all address fields should be empty
-        $address_types = array('shipping', 'billing');
-        foreach ( $address_types as $_type )
-        {
-            foreach ( $this->_address_fields as $_field )
-            {
+        $address_types = ['shipping', 'billing'];
+        foreach ($address_types as $_type) {
+            foreach ($this->_address_fields as $_field) {
                 $_field = $_type.'_'.$_field;
                 $this->assertArrayHasKey($_field, $result['related_record']);
                 $this->assertEquals('', $result['related_record'][$_field]);
@@ -160,11 +154,9 @@ class RelateRecordQuoteApiTest extends TestCase
         $this->assertRelatedItemExists($result);
 
         // contact has not address but there are request data to populate - all address fields should be populated form request
-        $address_types = array('shipping', 'billing');
-        foreach ( $address_types as $_type )
-        {
-            foreach ( $this->_address_fields as $_field )
-            {
+        $address_types = ['shipping', 'billing'];
+        foreach ($address_types as $_type) {
+            foreach ($this->_address_fields as $_field) {
                 $_field = $_type.'_'.$_field;
                 $this->assertArrayHasKey($_field, $result['related_record']);
                 $this->assertEquals($this->_args[$_field], $result['related_record'][$_field]);
@@ -185,11 +177,9 @@ class RelateRecordQuoteApiTest extends TestCase
 
         // billing address is populated when contact has account only
         // shipping address is populated from primary address of contact
-        $address_types = array('shipping');
-        foreach ( $address_types as $_type )
-        {
-            foreach ( $this->_address_fields as $_field )
-            {
+        $address_types = ['shipping'];
+        foreach ($address_types as $_type) {
+            foreach ($this->_address_fields as $_field) {
                 $_field_to_check = 'primary_'.$_field;
                 $_field = $_type.'_'.$_field;
                 $this->assertArrayHasKey($_field, $result['related_record']);
@@ -211,11 +201,9 @@ class RelateRecordQuoteApiTest extends TestCase
 
         // billing address is populated when contact has account only
         // shipping address is populated from request
-        $address_types = array('shipping');
-        foreach ( $address_types as $_type )
-        {
-            foreach ( $this->_address_fields as $_field )
-            {
+        $address_types = ['shipping'];
+        foreach ($address_types as $_type) {
+            foreach ($this->_address_fields as $_field) {
                 $_field = $_type.'_'.$_field;
                 $this->assertArrayHasKey($_field, $result['related_record']);
                 $this->assertEquals($this->_args[$_field], $result['related_record'][$_field]);
@@ -235,11 +223,9 @@ class RelateRecordQuoteApiTest extends TestCase
 
         // billing address is populated when contact has account only
         // shipping address is populated from alt address of contact
-        $address_types = array('shipping');
-        foreach ( $address_types as $_type )
-        {
-            foreach ( $this->_address_fields as $_field )
-            {
+        $address_types = ['shipping'];
+        foreach ($address_types as $_type) {
+            foreach ($this->_address_fields as $_field) {
                 $_field_to_check = 'alt_'.$_field;
                 $_field = $_type.'_'.$_field;
                 $this->assertArrayHasKey($_field, $result['related_record']);
@@ -261,11 +247,9 @@ class RelateRecordQuoteApiTest extends TestCase
 
         // billing address is populated when contact has account only
         // shipping address is populated from request
-        $address_types = array('shipping');
-        foreach ( $address_types as $_type )
-        {
-            foreach ( $this->_address_fields as $_field )
-            {
+        $address_types = ['shipping'];
+        foreach ($address_types as $_type) {
+            foreach ($this->_address_fields as $_field) {
                 $_field = $_type.'_'.$_field;
                 $this->assertArrayHasKey($_field, $result['related_record']);
                 $this->assertEquals($this->_args[$_field], $result['related_record'][$_field]);
@@ -299,13 +283,11 @@ class RelateRecordQuoteApiTest extends TestCase
         
         // contact has account and billing address should be populated
         // shipping and billing address are populated from primary address of contact
-        $address_types = array('shipping', 'billing');
-        foreach ( $address_types as $_type )
-        {
+        $address_types = ['shipping', 'billing'];
+        foreach ($address_types as $_type) {
             $bean = ($_type === 'billing') ? $this->_account : $this->_contact;
             $field_type = ($_type === 'billing') ? 'billing' : 'primary';
-            foreach ( $this->_address_fields as $_field )
-            {
+            foreach ($this->_address_fields as $_field) {
                 $_field_to_check = $field_type . '_'.$_field;
                 $_field = $_type.'_'.$_field;
                 $this->assertArrayHasKey($_field, $result['related_record']);
@@ -339,11 +321,9 @@ class RelateRecordQuoteApiTest extends TestCase
 
         // contact has account and billing address should be populated
         // shipping and billing address are populated from request
-        $address_types = array('shipping', 'billing');
-        foreach ( $address_types as $_type )
-        {
-            foreach ( $this->_address_fields as $_field )
-            {
+        $address_types = ['shipping', 'billing'];
+        foreach ($address_types as $_type) {
+            foreach ($this->_address_fields as $_field) {
                 $_field = $_type.'_'.$_field;
                 $this->assertArrayHasKey($_field, $result['related_record']);
                 $this->assertEquals($this->_args[$_field], $result['related_record'][$_field]);
@@ -356,24 +336,22 @@ class RelateRecordQuoteApiTest extends TestCase
         $this->_account = SugarTestAccountUtilities::createAccount();
         $this->fillAddressForAccount();
         $this->fillAddressForAccount('shipping');
-        $this->_args = array(
+        $this->_args = [
             "module" => "Accounts",
             "record" => $this->_account->id,
             "link_name" => "quotes",
             "name" => $this->_quoteName,
             "assigned_user_id" => $GLOBALS['current_user']->id,
             "date_quote_expected_closed" => TimeDate::getInstance()->getNow()->asDbDate(),
-        );
+        ];
 
         $result = $this->_apiClass->createRelatedRecord($this->_api, $this->_args);
 
         // contact has account and billing address should be populated
         // shipping and billing address are populated from primary address of contact
-        $address_types = array('shipping', 'billing');
-        foreach ( $address_types as $_type )
-        {
-            foreach ( $this->_address_fields as $_field )
-            {
+        $address_types = ['shipping', 'billing'];
+        foreach ($address_types as $_type) {
+            foreach ($this->_address_fields as $_field) {
                 $_field_to_check =  $_type.'_'.$_field;
                 $_field = $_type.'_'.$_field;
                 $this->assertArrayHasKey($_field, $result['related_record']);

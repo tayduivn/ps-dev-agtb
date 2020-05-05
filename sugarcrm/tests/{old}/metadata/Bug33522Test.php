@@ -19,7 +19,7 @@ class Bug33522Test extends TestCase
 {
     public function testCheckMetadataRelationshipNames()
     {
-        $dictionary = array();
+        $dictionary = [];
         $ar = new TestAbstractRelationships();
         $errMsg = "Relationship key discrepancy exists with key not being in AbstractRelationships->specialCaseBaseNames.";
 
@@ -27,20 +27,20 @@ class Bug33522Test extends TestCase
 
         // load all files from metadata/ that could potentially have
         // relationships in them
-        foreach( glob( "metadata/*.php" ) as $filename )  {
+        foreach (glob("metadata/*.php") as $filename) {
             include $filename;
         }
 
         // load all relationships into AbstractRelationships->relationships
-        foreach( $dictionary as $key => $val)  {
-            if( isset($dictionary[ $key ][ 'relationships' ]) )  {
+        foreach ($dictionary as $key => $val) {
+            if (isset($dictionary[ $key ][ 'relationships' ])) {
                 $relationships = $dictionary[ $key ][ 'relationships' ];
-                foreach( $relationships as $relKey => $relVal )  {
+                foreach ($relationships as $relKey => $relVal) {
                     // if our key and relationship key are not equal
                     // check to make sure the key is in the special list
                     // otherwise we may have relationship naming issues down the road
-                    if( $key !== $relKey )  {
-                        $this->assertContains( $key , $specialCaseBaseNames , $errMsg );
+                    if ($key !== $relKey) {
+                        $this->assertContains($key, $specialCaseBaseNames, $errMsg);
                     }
                 }
             }
@@ -48,8 +48,10 @@ class Bug33522Test extends TestCase
     }
 }
 
-class TestAbstractRelationships extends AbstractRelationships  {
-    public function getSpecialCaseBaseNames()  {
+class TestAbstractRelationships extends AbstractRelationships
+{
+    public function getSpecialCaseBaseNames()
+    {
         return $this->specialCaseBaseNames;
     }
 }

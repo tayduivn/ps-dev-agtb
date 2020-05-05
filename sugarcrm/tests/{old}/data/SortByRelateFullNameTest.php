@@ -20,7 +20,7 @@ class SortByRelateFullNameTest extends TestCase
     public function testSortByRelateFullName()
     {
         $contact = BeanFactory::newBean('Notes');
-        $query = $contact->create_new_list_query('contact_name', null, array(), array(), 0, '', true);
+        $query = $contact->create_new_list_query('contact_name', null, [], [], 0, '', true);
 
         $order_by = $query['order_by'];
 

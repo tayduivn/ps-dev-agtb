@@ -12,7 +12,7 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once('include/generic/SugarWidgets/SugarWidgetReportField.php');
+require_once 'include/generic/SugarWidgets/SugarWidgetReportField.php';
 
 /**
  * Bug #57902
@@ -25,19 +25,19 @@ class Bug57902Test extends TestCase
 {
     public static function dataProvider()
     {
-        return array(
-            array(
-                array(
+        return [
+            [
+                [
                     'column_key' => 'self',
                     'group_function' => 'count',
                     'sort_dir' => 'a',
                     'table_alias' => 'calls',
-                    'table_key' => 'self'
-                ),
-                'calls__count ASC'
-            ),
-            array(
-                array(
+                    'table_key' => 'self',
+                ],
+                'calls__count ASC',
+            ],
+            [
+                [
                     'column_function' => 'avg',
                     'column_key' => 'self:duration_hours',
                     'group_function' => 'avg',
@@ -45,12 +45,12 @@ class Bug57902Test extends TestCase
                     'sort_dir' => 'a',
                     'table_alias' => 'calls',
                     'table_key' => 'self',
-                    'type' => 'int'
-                ),
-                'calls_avg_duration_hours ASC'
-            ),
-            array(
-                array(
+                    'type' => 'int',
+                ],
+                'calls_avg_duration_hours ASC',
+            ],
+            [
+                [
                     'column_function' => 'max',
                     'column_key' => 'self:duration_hours',
                     'group_function' => 'max',
@@ -58,12 +58,12 @@ class Bug57902Test extends TestCase
                     'sort_dir' => 'a',
                     'table_alias' => 'calls',
                     'table_key' => 'self',
-                    'type' => 'int'
-                ),
-                'calls_max_duration_hours ASC'
-            ),
-            array(
-                array(
+                    'type' => 'int',
+                ],
+                'calls_max_duration_hours ASC',
+            ],
+            [
+                [
                     'column_function' => 'min',
                     'column_key' => 'self:duration_hours',
                     'group_function' => 'min',
@@ -71,12 +71,12 @@ class Bug57902Test extends TestCase
                     'sort_dir' => 'a',
                     'table_alias' => 'calls',
                     'table_key' => 'self',
-                    'type' => 'int'
-                ),
-                'calls_min_duration_hours ASC'
-            ),
-            array(
-                array(
+                    'type' => 'int',
+                ],
+                'calls_min_duration_hours ASC',
+            ],
+            [
+                [
                     'column_function' => 'sum',
                     'column_key' => 'self:duration_hours',
                     'group_function' => 'sum',
@@ -84,11 +84,11 @@ class Bug57902Test extends TestCase
                     'sort_dir' => 'a',
                     'table_alias' => 'calls',
                     'table_key' => 'self',
-                    'type' => 'int'
-                ),
-                'calls_sum_duration_hours ASC'
-            )
-        );
+                    'type' => 'int',
+                ],
+                'calls_sum_duration_hours ASC',
+            ],
+        ];
     }
 
     /**

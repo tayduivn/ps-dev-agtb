@@ -28,18 +28,18 @@ class SugarBeanApiHelper_FormatRelateTest extends TestCase
         /** @var User $user */
         $user = SugarTestHelper::setUp('current_user');
 
-        $account = self::$account = SugarTestAccountUtilities::createAccount(null, array(
+        $account = self::$account = SugarTestAccountUtilities::createAccount(null, [
             'assigned_user_id' => $user->id,
-        ));
+        ]);
 
-        $contact = self::$contact = SugarTestContactUtilities::createContact(null, array(
+        $contact = self::$contact = SugarTestContactUtilities::createContact(null, [
             'assigned_user_id' => $user->id,
-        ));
+        ]);
 
-        $task = self::$task = SugarTestTaskUtilities::createTask(null, array(
+        $task = self::$task = SugarTestTaskUtilities::createTask(null, [
             'parent_type' => $account->module_name,
             'parent_id' => $account->id,
-        ));
+        ]);
 
         // link relate record
         $task->load_relationship('contacts');
@@ -56,9 +56,9 @@ class SugarBeanApiHelper_FormatRelateTest extends TestCase
     public function testRetrieval()
     {
         /** @var Task $task */
-        $task = BeanFactory::retrieveBean(self::$task->module_name, self::$task->id, array(
+        $task = BeanFactory::retrieveBean(self::$task->module_name, self::$task->id, [
             'use_cache' => false,
-        ));
+        ]);
         $this->assertFormat($task);
     }
 

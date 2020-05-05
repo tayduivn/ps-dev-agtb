@@ -53,7 +53,7 @@ class TeamBasedACLModuleTest extends TestCase
      */
     protected $bean;
 
-    protected $defaultAccessList = array(
+    protected $defaultAccessList = [
         'access' => true,
         'view' => true,
         'list' => true,
@@ -62,11 +62,11 @@ class TeamBasedACLModuleTest extends TestCase
         'import' => true,
         'export' => true,
         'massupdate' => true,
-    );
+    ];
 
     protected function setUp() : void
     {
-        SugarTestHelper::setUp('current_user', array(true, true));
+        SugarTestHelper::setUp('current_user', [true, true]);
 
         $this->acl = new SugarACLTeamBased();
 
@@ -74,13 +74,13 @@ class TeamBasedACLModuleTest extends TestCase
         $team2 = SugarTestTeamUtilities::createAnonymousTeam();
 
         $this->teamSetT1 = BeanFactory::newBean('TeamSets');
-        $this->teamSetT1->addTeams(array($team1->id));
+        $this->teamSetT1->addTeams([$team1->id]);
 
         $this->teamSetT2 = BeanFactory::newBean('TeamSets');
-        $this->teamSetT2->addTeams(array($team2->id));
+        $this->teamSetT2->addTeams([$team2->id]);
 
         $this->teamSetT1T2 = BeanFactory::newBean('TeamSets');
-        $this->teamSetT1T2->addTeams(array($team1->id, $team2->id));
+        $this->teamSetT1T2->addTeams([$team1->id, $team2->id]);
 
         $this->user = SugarTestUserUtilities::createAnonymousUser();
         $team1->add_user_to_team($this->user->id);
@@ -109,7 +109,7 @@ class TeamBasedACLModuleTest extends TestCase
         $actualList = $this->acl->getUserAccess(
             $this->module,
             $this->defaultAccessList,
-            array('user' => $this->user)
+            ['user' => $this->user]
         );
         $this->assertEquals($this->defaultAccessList, $actualList, '', 0.0, 10, true);
     }
@@ -121,7 +121,7 @@ class TeamBasedACLModuleTest extends TestCase
     public function testTBANoBeanOwner()
     {
         $action = 'view';
-        $context = array();
+        $context = [];
         // The user is in the TeamSetT1.
         $this->bean->acl_team_set_id = $this->teamSetT1T2->id;
         $this->bean->save();
@@ -129,7 +129,7 @@ class TeamBasedACLModuleTest extends TestCase
         $aclData['module'][$action]['aclaccess'] = ACL_ALLOW_SELECTED_TEAMS;
         ACLAction::setACLData($this->user->id, $this->module, $aclData);
 
-        $acl = $this->createPartialMock('SugarACLTeamBased', array('getCurrentUser'));
+        $acl = $this->createPartialMock('SugarACLTeamBased', ['getCurrentUser']);
         $acl->expects($this->any())->method('getCurrentUser')->will($this->returnValue($this->user));
 
         $actualAccess = $acl->checkAccess($this->module, $action, $context);
@@ -153,11 +153,11 @@ class TeamBasedACLModuleTest extends TestCase
 
         $aclData['module'][$action]['aclaccess'] = $access;
         ACLAction::setACLData($this->user->id, $this->module, $aclData);
-        $context = array('bean' => $this->bean, 'user' => $this->user);
+        $context = ['bean' => $this->bean, 'user' => $this->user];
 
         $actualUserAccess = $this->acl->getUserAccess(
             $this->module,
-            array($action => true),
+            [$action => true],
             $context
         );
         $actualAccess = $this->acl->checkAccess($this->module, $action, $context);
@@ -172,7 +172,7 @@ class TeamBasedACLModuleTest extends TestCase
     public function testCacheByDateModified()
     {
         $action = 'edit';
-        $context = array('bean' => $this->bean);
+        $context = ['bean' => $this->bean];
         // Give access.
         $this->bean->acl_team_set_id = $this->teamSetT1T2->id;
         $this->bean->save();
@@ -180,7 +180,7 @@ class TeamBasedACLModuleTest extends TestCase
         $aclData['module'][$action]['aclaccess'] = ACL_ALLOW_SELECTED_TEAMS;
         ACLAction::setACLData($this->user->id, $this->module, $aclData);
 
-        $acl = $this->createPartialMock('SugarACLTeamBased', array('getCurrentUser'));
+        $acl = $this->createPartialMock('SugarACLTeamBased', ['getCurrentUser']);
         $acl->expects($this->any())->method('getCurrentUser')->will($this->returnValue($this->user));
 
         $actualAccess = $acl->checkAccess($this->module, $action, $context);
@@ -203,24 +203,24 @@ class TeamBasedACLModuleTest extends TestCase
          * @var boolean $inSelectedTeams
          * @var boolean $permissions
          */
-        return array(
-            array(ACL_ALLOW_SELECTED_TEAMS, 'view', false, false),
-            array(ACL_ALLOW_SELECTED_TEAMS, 'view', true, true),
-            array(ACL_ALLOW_SELECTED_TEAMS, 'delete', false, false),
-            array(ACL_ALLOW_SELECTED_TEAMS, 'delete', true, true),
-            array(ACL_ALLOW_SELECTED_TEAMS, 'export', false, false),
-            array(ACL_ALLOW_SELECTED_TEAMS, 'export', true, true),
-            array(ACL_ALLOW_SELECTED_TEAMS, 'list', false, false),
-            array(ACL_ALLOW_SELECTED_TEAMS, 'list', true, true),
-            array(ACL_ALLOW_SELECTED_TEAMS, 'edit', false, false),
-            array(ACL_ALLOW_SELECTED_TEAMS, 'edit', true, true),
+        return [
+            [ACL_ALLOW_SELECTED_TEAMS, 'view', false, false],
+            [ACL_ALLOW_SELECTED_TEAMS, 'view', true, true],
+            [ACL_ALLOW_SELECTED_TEAMS, 'delete', false, false],
+            [ACL_ALLOW_SELECTED_TEAMS, 'delete', true, true],
+            [ACL_ALLOW_SELECTED_TEAMS, 'export', false, false],
+            [ACL_ALLOW_SELECTED_TEAMS, 'export', true, true],
+            [ACL_ALLOW_SELECTED_TEAMS, 'list', false, false],
+            [ACL_ALLOW_SELECTED_TEAMS, 'list', true, true],
+            [ACL_ALLOW_SELECTED_TEAMS, 'edit', false, false],
+            [ACL_ALLOW_SELECTED_TEAMS, 'edit', true, true],
             // Do not appear in role management, might be needed in future.
-            array(ACL_ALLOW_SELECTED_TEAMS, 'access', false, false),
-            array(ACL_ALLOW_SELECTED_TEAMS, 'import', false, false),
-            array(ACL_ALLOW_SELECTED_TEAMS, 'massupdate', false, false),
+            [ACL_ALLOW_SELECTED_TEAMS, 'access', false, false],
+            [ACL_ALLOW_SELECTED_TEAMS, 'import', false, false],
+            [ACL_ALLOW_SELECTED_TEAMS, 'massupdate', false, false],
             // Should not handle the rest roles.
-            array(ACL_ALLOW_OWNER, 'view', false, true),
-            array(ACL_ALLOW_NONE, 'view', false, true),
-        );
+            [ACL_ALLOW_OWNER, 'view', false, true],
+            [ACL_ALLOW_NONE, 'view', false, true],
+        ];
     }
 }

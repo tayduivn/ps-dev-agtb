@@ -25,11 +25,11 @@ class IndexOfExpressionTest extends TestCase
 
     public function dataProviderTestEvaluate()
     {
-        return array(
-            array('indexOf("a", createList("a", "b", "c"))', 0),
-            array('indexOf("b", createList("a", "b", "c"))', 1),
-            array('indexOf("c", createList("a", "b", "c"))', 2),
-            array('indexOf("foo", createList("a", "b", "c"))', -1)
-        );
+        return [
+            ['indexOf("a", createList("a", "b", "c"))', 0],
+            ['indexOf("b", createList("a", "b", "c"))', 1],
+            ['indexOf("c", createList("a", "b", "c"))', 2],
+            ['indexOf("foo", createList("a", "b", "c"))', -1],
+        ];
     }
 }

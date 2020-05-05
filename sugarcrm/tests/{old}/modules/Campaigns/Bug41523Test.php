@@ -45,7 +45,7 @@ class Bug41523Test extends TestCase
     protected function tearDown() : void
     {
         unset($_SERVER['REQUEST_METHOD']);
-        $_REQUEST = array();
+        $_REQUEST = [];
 
         SugarTestCampaignUtilities::removeAllCreatedCampaigns();
         SugarTestCampaignUtilities::removeAllCreatedCampaignLogs();
@@ -61,11 +61,11 @@ class Bug41523Test extends TestCase
     public function testDeletedLeadsOnCampaignStatusPage()
     {
         // create a few leads
-        $leads = array(
+        $leads = [
             $this->createLeadFromWebForm('User1:' . create_guid()),
             $this->createLeadFromWebForm('User2:' . create_guid()),
             $this->createLeadFromWebForm('User3:' . create_guid()),
-        );
+        ];
 
         // delete one lead
         $leads[0]->mark_deleted($leads[0]->id);
@@ -97,7 +97,7 @@ class Bug41523Test extends TestCase
      */
     private function createLeadFromWebForm($lastName)
     {
-        $lead = SugarTestLeadUtilities::createLead("", array("last_name" => $lastName));
+        $lead = SugarTestLeadUtilities::createLead("", ["last_name" => $lastName]);
 
         if (!empty($lead)) {
             $campaignLog = SugarTestCampaignUtilities::createCampaignLog($this->campaign->id, "lead", $lead);

@@ -37,25 +37,25 @@ class Bug66034Test extends TestCase
         SugarTestHelper::tearDown();
     }
 
-    public function aclAccessData() 
+    public function aclAccessData()
     {
-        return array(
-                array('ContractTypes', 'Contracts', 'list', 'Developer', true, 'Developer should be able to access ContractTypes'),
-                array('ContractTypes', 'Contracts', 'list', 'Admin', true, 'Admin should be able to access ContractTypes'),
-                array('ContractTypes', 'Contracts', 'list', '', false, 'Regular user should not be able to access ContractTypes'),
-                array('Releases', 'Bugs', 'edit', 'Developer', true, 'Developer should be able to edit Releases'),
-                array('Releases', 'Bugs', 'edit', 'Admin', true, 'Admin should be able to edit Releases'),
-                array('Releases', 'Bugs', 'edit', '', false, 'Regular user should not be able to edit Releases'),
-                array('ACLRoles', 'Users', 'list', 'Developer', true, 'Developer should be able to list ACLRoles'),
-                array('ACLRoles', 'Users', 'list', 'Admin', true, 'Admin should be able to list ACLRoles'),
-                array('ACLRoles', 'Users', 'list', '', false, 'Regular user should not be able to list ACLRoles'),
-                array('Shippers', 'Products', 'edit', 'Developer', true, 'Developer should be able to edit Shippers'),
-                array('Shippers', 'Products', 'edit', 'Admin', true, 'Admin should be able to edit Shippers'),
-                array('Shippers', 'Products', 'edit', '', false, 'Regular user should not be able to edit Shippers'),
-                array('TaxRates', 'Quotes', 'edit', 'Developer', true, 'Developer should be able to edit TaxRates'),
-                array('TaxRates', 'Quotes', 'edit', 'Admin', true, 'Admin should be able to edit TaxRates'),
-                array('TaxRates', 'Quotes', 'edit', '', false, 'Regular user should not be able to edit TaxRates'),
-                );
+        return [
+                ['ContractTypes', 'Contracts', 'list', 'Developer', true, 'Developer should be able to access ContractTypes'],
+                ['ContractTypes', 'Contracts', 'list', 'Admin', true, 'Admin should be able to access ContractTypes'],
+                ['ContractTypes', 'Contracts', 'list', '', false, 'Regular user should not be able to access ContractTypes'],
+                ['Releases', 'Bugs', 'edit', 'Developer', true, 'Developer should be able to edit Releases'],
+                ['Releases', 'Bugs', 'edit', 'Admin', true, 'Admin should be able to edit Releases'],
+                ['Releases', 'Bugs', 'edit', '', false, 'Regular user should not be able to edit Releases'],
+                ['ACLRoles', 'Users', 'list', 'Developer', true, 'Developer should be able to list ACLRoles'],
+                ['ACLRoles', 'Users', 'list', 'Admin', true, 'Admin should be able to list ACLRoles'],
+                ['ACLRoles', 'Users', 'list', '', false, 'Regular user should not be able to list ACLRoles'],
+                ['Shippers', 'Products', 'edit', 'Developer', true, 'Developer should be able to edit Shippers'],
+                ['Shippers', 'Products', 'edit', 'Admin', true, 'Admin should be able to edit Shippers'],
+                ['Shippers', 'Products', 'edit', '', false, 'Regular user should not be able to edit Shippers'],
+                ['TaxRates', 'Quotes', 'edit', 'Developer', true, 'Developer should be able to edit TaxRates'],
+                ['TaxRates', 'Quotes', 'edit', 'Admin', true, 'Admin should be able to edit TaxRates'],
+                ['TaxRates', 'Quotes', 'edit', '', false, 'Regular user should not be able to edit TaxRates'],
+                ];
     }
 
     /**
@@ -77,8 +77,8 @@ class Bug66034Test extends TestCase
 
 class SugarACLDeveloperOrAdminUserMock extends User
 {
-    protected $developerForModules = array();
-    protected $adminForModules = array();
+    protected $developerForModules = [];
+    protected $adminForModules = [];
 
     public function setDeveloperForModule($module)
     {

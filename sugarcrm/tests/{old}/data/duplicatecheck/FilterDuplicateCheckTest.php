@@ -18,67 +18,68 @@ class FilterDuplicateCheckTest extends TestCase
 
     protected function setUp() : void
     {
-        $this->metadata = array(
-            'filter_template' => array(
-                array(
-                    '$and' => array(
-                        array(
-                            '$or' => array(
-                                array(
-                                    'status' => array(
+        $this->metadata = [
+            'filter_template' => [
+                [
+                    '$and' => [
+                        [
+                            '$or' => [
+                                [
+                                    'status' => [
                                         '$not_equals' => 'Converted',
-                                    ),
-                                ),
-                                array(
-                                    'status' => array(
+                                    ],
+                                ],
+                                [
+                                    'status' => [
                                         '$is_null' => '',
-                                    ),
-                                ),
-                            ),
-                        ),
-                        array(
-                            '$or' => array(
-                                array(
-                                    '$and' => array(
-                                        array(
-                                            'first_name' => array(
+                                    ],
+                                ],
+                            ],
+                        ],
+                        [
+                            '$or' => [
+                                [
+                                    '$and' => [
+                                        [
+                                            'first_name' => [
                                                 '$starts' => '$first_name',
-                                            ),
-                                        ),
-                                        array(
-                                            'last_name' => array(
+                                            ],
+                                        ],
+                                        [
+                                            'last_name' => [
                                                 '$starts' => '$last_name',
-                                            ),
-                                        ),
-                                    ),
-                                ),
-                            ),
-                        ),
-                        array(
-                            'account_name' => array(
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                        [
+                            'account_name' => [
                                 '$equals' => '$account_name',
-                            ),
-                        ),
-                    ),
-                ),
-            ),
-            'ranking_fields'  => array(
-                array(
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            'ranking_fields'  => [
+                [
                     'in_field_name'   => 'last_name',
                     'dupe_field_name' => 'last_name',
-                ),
-                array(
+                ],
+                [
                     'in_field_name'   => 'first_name',
                     'dupe_field_name' => 'first_name',
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
     }
 
     /**
      * @group duplicatecheck
      */
-    public function testFindDuplicates_NoBeanId_AddFilterForEditsIsNotCalled() {
+    public function testFindDuplicates_NoBeanId_AddFilterForEditsIsNotCalled()
+    {
         $bean = $this->createMock(Lead::class);
         $bean->expects(self::any())
             ->method('ACLFieldAccess')
@@ -117,7 +118,8 @@ class FilterDuplicateCheckTest extends TestCase
     /**
      * @group duplicatecheck
      */
-    public function testFindDuplicates_HasBeanId_AddFilterForEditsIsCalled() {
+    public function testFindDuplicates_HasBeanId_AddFilterForEditsIsCalled()
+    {
         $bean = $this->createMock(Lead::class);
         $bean->expects(self::any())
             ->method('ACLFieldAccess')
@@ -157,7 +159,8 @@ class FilterDuplicateCheckTest extends TestCase
     /**
      * @group duplicatecheck
      */
-    public function testFindDuplicates_RankAndSortDuplicatesReordersTheResults() {
+    public function testFindDuplicates_RankAndSortDuplicatesReordersTheResults()
+    {
         $bean = $this->createMock(Lead::class);
         $bean->expects(self::any())
             ->method('ACLFieldAccess')
@@ -174,49 +177,52 @@ class FilterDuplicateCheckTest extends TestCase
                 $this->metadata,
             ])->getMock();
 
-        $duplicate1 = array(
+        $duplicate1 = [
             "id"           => "1",
             "last_name"    => "Griffin",
             "first_name"   => "Peter",
             "status"       => "New",
             "account_name" => "Petoria",
-        );
+        ];
 
-        $duplicate2 = array(
+        $duplicate2 = [
             "id"           => "2",
             "last_name"    => "Griffin",
             "first_name"   => "Pete",
             "status"       => "",
             "account_name" => "Petoria",
-        );
+        ];
 
-        $results = array(
-            "records" => array(
+        $results = [
+            "records" => [
                 $duplicate1,
                 $duplicate2,
-            ),
-        );
+            ],
+        ];
 
         $filterDuplicateCheckMock->expects(self::once())
             ->method("callFilterApi")
             ->will(self::returnValue($results));
 
-        $expected = array(
-            "records" => array(
+        $expected = [
+            "records" => [
                 $duplicate2,
                 $duplicate1,
-            ),
-        );
+            ],
+        ];
         $actual   = $filterDuplicateCheckMock->findDuplicates();
-        self::assertEquals($expected["records"][0]["id"],
-                           $actual["records"][0]["id"],
-                           "The duplicate records should have swapped places based on their duplicate_check_rank values.");
+        self::assertEquals(
+            $expected["records"][0]["id"],
+            $actual["records"][0]["id"],
+            "The duplicate records should have swapped places based on their duplicate_check_rank values."
+        );
     }
 
     /**
      * @group duplicatecheck
      */
-    public function testBuildDupeCheckFilter_ReplacesFirstName_ReplacesLastName_RemovesAccountName() {
+    public function testBuildDupeCheckFilter_ReplacesFirstName_ReplacesLastName_RemovesAccountName()
+    {
         $bean             = $this->createMock(Lead::class);
         $bean->expects(self::any())
             ->method('ACLFieldAccess')
@@ -225,94 +231,100 @@ class FilterDuplicateCheckTest extends TestCase
         $bean->first_name = "Peter";
         $filterDuplicateCheckCaller = new FilterDuplicateCheckCaller($bean, $this->metadata);
 
-        $expected = array(
-            array(
-                '$and' => array(
-                    array(
-                        '$or' => array(
-                            array(
-                                'status' => array(
+        $expected = [
+            [
+                '$and' => [
+                    [
+                        '$or' => [
+                            [
+                                'status' => [
                                     '$not_equals' => 'Converted',
-                                ),
-                            ),
-                            array(
-                                'status' => array(
+                                ],
+                            ],
+                            [
+                                'status' => [
                                     '$is_null' => '',
-                                ),
-                            ),
-                        ),
-                    ),
-                    array(
-                        '$or' => array(
-                            array(
-                                '$and' => array(
-                                    array(
-                                        'first_name' => array(
+                                ],
+                            ],
+                        ],
+                    ],
+                    [
+                        '$or' => [
+                            [
+                                '$and' => [
+                                    [
+                                        'first_name' => [
                                             '$starts' => $bean->first_name,
-                                        ),
-                                    ),
-                                    array(
-                                        'last_name' => array(
+                                        ],
+                                    ],
+                                    [
+                                        'last_name' => [
                                             '$starts' => $bean->last_name,
-                                        ),
-                                    ),
-                                ),
-                            ),
-                        ),
-                    ),
-                ),
-            ),
-        );
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
         $actual   = $filterDuplicateCheckCaller->buildDupeCheckFilterCaller();
 
         // compare the complete arrays
-        self::assertEquals($expected,
+        self::assertEquals(
+            $expected,
             $actual,
-            "The original filters were lost or the new filter is not constructed properly.");
+            "The original filters were lost or the new filter is not constructed properly."
+        );
     }
 
     /**
      * @group duplicatecheck
      */
-    public function testBuildDupeCheckFilter_NoDataForAllFieldsInSection_RemovesWholeSection() {
+    public function testBuildDupeCheckFilter_NoDataForAllFieldsInSection_RemovesWholeSection()
+    {
         $bean             = $this->createMock(Lead::class);
         $bean->expects(self::any())
             ->method('ACLFieldAccess')
             ->will(self::returnValue(true));
         $filterDuplicateCheckCaller = new FilterDuplicateCheckCaller($bean, $this->metadata);
 
-        $expected = array(
-            array(
-                '$and' => array(
-                    array(
-                        '$or' => array(
-                            array(
-                                'status' => array(
+        $expected = [
+            [
+                '$and' => [
+                    [
+                        '$or' => [
+                            [
+                                'status' => [
                                     '$not_equals' => 'Converted',
-                                ),
-                            ),
-                            array(
-                                'status' => array(
+                                ],
+                            ],
+                            [
+                                'status' => [
                                     '$is_null' => '',
-                                ),
-                            ),
-                        ),
-                    ),
-                ),
-            ),
-        );
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
         $actual   = $filterDuplicateCheckCaller->buildDupeCheckFilterCaller();
 
         // compare the complete arrays
-        self::assertEquals($expected,
+        self::assertEquals(
+            $expected,
             $actual,
-            "The original filters were lost or the new filter is not constructed properly.");
+            "The original filters were lost or the new filter is not constructed properly."
+        );
     }
 
     /**
      * @group duplicatecheck
      */
-    public function testAddFilterForEdits_AddsANotEqualsFilterToTheFilterArrayToPreventMatchesOnTheSpecifiedId() {
+    public function testAddFilterForEdits_AddsANotEqualsFilterToTheFilterArrayToPreventMatchesOnTheSpecifiedId()
+    {
         $bean                       = $this->createMock(Lead::class);
         $bean->expects(self::any())
             ->method('ACLFieldAccess')
@@ -321,29 +333,33 @@ class FilterDuplicateCheckTest extends TestCase
         $filterDuplicateCheckCaller = new FilterDuplicateCheckCaller($bean, $this->metadata);
         $filter                     = $filterDuplicateCheckCaller->buildDupeCheckFilterCaller(); // need to build the filter first
 
-        $expected = array(
-            array(
-                '$and' => array(
-                    array(
-                        'id' => array(
+        $expected = [
+            [
+                '$and' => [
+                    [
+                        'id' => [
                             '$not_equals' => $bean->id,
-                        ),
-                    ),
+                        ],
+                    ],
                     $filter,
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
         $actual   = $filterDuplicateCheckCaller->addFilterForEditsCaller($filter, $bean->id);
 
         // compare the complete arrays
-        self::assertEquals($expected,
-                           $actual,
-                           "The original filters were lost or the new filter is not constructed properly.");
+        self::assertEquals(
+            $expected,
+            $actual,
+            "The original filters were lost or the new filter is not constructed properly."
+        );
 
         // make sure the id filter was added
-        self::assertEquals($expected[0]['$and'][0]["id"]['$not_equals'],
-                           $actual[0]['$and'][0]["id"]['$not_equals'],
-                           "The additional not-equals filter was not added.");
+        self::assertEquals(
+            $expected[0]['$and'][0]["id"]['$not_equals'],
+            $actual[0]['$and'][0]["id"]['$not_equals'],
+            "The additional not-equals filter was not added."
+        );
     }
 
     public function testBuildDupeCheckFilterCallerRemovesFieldsUserDoesntHaveAccessTo()
@@ -356,16 +372,16 @@ class FilterDuplicateCheckTest extends TestCase
             );
         $bean->name = 'Fred';
 
-        $metadata = array(
-            'filter_template' => array(
-                array(
-                    '$and' => array(
-                        array('name' => array('$starts' => '$name')),
-                        array('sales_status' => array('$not_equals' => 'Closed Lost'))
-                    )
-                ),
-            )
-        );
+        $metadata = [
+            'filter_template' => [
+                [
+                    '$and' => [
+                        ['name' => ['$starts' => '$name']],
+                        ['sales_status' => ['$not_equals' => 'Closed Lost']],
+                    ],
+                ],
+            ],
+        ];
 
         $filterDuplicateCheckCaller = new FilterDuplicateCheck($bean, $metadata);
 
@@ -373,7 +389,7 @@ class FilterDuplicateCheckTest extends TestCase
         $filter = SugarTestReflection::callProtectedMethod(
             $filterDuplicateCheckCaller,
             'buildDupeCheckFilter',
-            array($metadata['filter_template'])
+            [$metadata['filter_template']]
         );
 
         $this->assertEquals(1, count($filter));
@@ -384,11 +400,13 @@ class FilterDuplicateCheckTest extends TestCase
 
 class FilterDuplicateCheckCaller extends FilterDuplicateCheck
 {
-    public function buildDupeCheckFilterCaller() {
+    public function buildDupeCheckFilterCaller()
+    {
         return $this->buildDupeCheckFilter($this->filterTemplate);
     }
 
-    public function addFilterForEditsCaller($filter, $id) {
+    public function addFilterForEditsCaller($filter, $id)
+    {
         return $this->addFilterForEdits($filter, $id);
     }
 }

@@ -15,20 +15,20 @@ use PHPUnit\Framework\TestCase;
 
 class Bug48555Test extends TestCase
 {
-	protected $_user = null;
+    protected $_user = null;
 
     protected function setUp() : void
     {
-    	$this->_user = SugarTestUserUtilities::createAnonymousUser();
-    	$GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-    	$GLOBALS['current_user']->setPreference('default_locale_name_format', 'l f s');
-	}
-	
+        $this->_user = SugarTestUserUtilities::createAnonymousUser();
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        $GLOBALS['current_user']->setPreference('default_locale_name_format', 'l f s');
+    }
+    
     protected function tearDown() : void
-	{
-	    unset($GLOBALS['current_user']);
-	    SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-	}
+    {
+        unset($GLOBALS['current_user']);
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+    }
         
     public function testgetListViewData()
     {
@@ -36,18 +36,18 @@ class Bug48555Test extends TestCase
         $this->_user->last_name = "LAST-NAME";
         $test_array =  $this->_user->get_list_view_data();
         
-        $this->assertEquals('LAST-NAME FIRST-NAME',$test_array['NAME']);
-        $this->assertEquals('LAST-NAME FIRST-NAME',$test_array['FULL_NAME']);
+        $this->assertEquals('LAST-NAME FIRST-NAME', $test_array['NAME']);
+        $this->assertEquals('LAST-NAME FIRST-NAME', $test_array['FULL_NAME']);
     }
     
-	public function testgetUsersNameAndEmail() 
+    public function testgetUsersNameAndEmail()
     {
         $this->_user->first_name = "FIRST-NAME";
         $this->_user->last_name = "LAST-NAME";
         $address = $this->_user->emailAddress->getPrimaryAddress($this->_user);
 
         $test_array = $this->_user->getUsersNameAndEmail();
-        $this->assertEquals('LAST-NAME FIRST-NAME',$test_array['name']);
+        $this->assertEquals('LAST-NAME FIRST-NAME', $test_array['name']);
         $this->assertEquals($address, $test_array['email']);
     }
     
@@ -61,7 +61,7 @@ class Bug48555Test extends TestCase
         $this->_contact->object_name = 'Contact';
         $this->_contact->module_dir = 'module_dir';
         $this->_contact->createLocaleFormattedName = true;
-        $test = $this->_user->getEmailLink2('test@test.test',$this->_contact);
+        $test = $this->_user->getEmailLink2('test@test.test', $this->_contact);
         
         $pattern = "/.*\"to_email_addrs\":\"LAST-NAME FIRST-NAME \\\\u003Ctest@test.test\\\\u003E\".*/";
         
@@ -80,7 +80,7 @@ class Bug48555Test extends TestCase
         $this->_contact->module_dir = 'module_dir';
         $this->_contact->createLocaleFormattedName = true;
         
-        $test = $this->_user->getEmailLink("email1",$this->_contact);
+        $test = $this->_user->getEmailLink("email1", $this->_contact);
         
         $pattern = "/.*\"to_email_addrs\":\"LAST-NAME FIRST-NAME \\\\u003Ctest@test.test\\\\u003E\".*/";
         

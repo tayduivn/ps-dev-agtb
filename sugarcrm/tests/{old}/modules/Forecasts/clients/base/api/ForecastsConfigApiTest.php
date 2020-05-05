@@ -18,7 +18,7 @@ use PHPUnit\Framework\TestCase;
  */
 class ForecastsConfigApiTest extends TestCase
 {
-    protected $createdBeans = array();
+    protected $createdBeans = [];
 
     protected function setUp() : void
     {
@@ -27,9 +27,9 @@ class ForecastsConfigApiTest extends TestCase
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
 
         SugarTestForecastUtilities::setUpForecastConfig(
-            array(
-                'worksheet_columns' => array(),
-            )
+            [
+                'worksheet_columns' => [],
+            ]
         );
 
         $GLOBALS['current_user']->is_admin = 1;
@@ -51,7 +51,8 @@ class ForecastsConfigApiTest extends TestCase
      * @group forecasts
      * @covers ::forecastsConfigSave
      */
-    public function testCreateConfig() {
+    public function testCreateConfig()
+    {
         // Get the real data that is in the system, not the partial data we have saved
 
         $api = new RestService();
@@ -59,13 +60,13 @@ class ForecastsConfigApiTest extends TestCase
         $api->user = $GLOBALS['current_user'];
 
 
-        $args = array(
+        $args = [
             "module" => "Forecasts",
             "testSetting" => "testValue",
-            'worksheet_columns' => array(),
+            'worksheet_columns' => [],
             'show_worksheet_best' => 1,
-            'show_worksheet_worst' => 0
-        );
+            'show_worksheet_worst' => 0,
+        ];
         /* @var ForecastsConfigApi $apiClass */
         $apiClass = $this->createPartialMock('ForecastsConfigApi', [
             'timePeriodSettingsChanged',
@@ -104,7 +105,7 @@ class ForecastsConfigApiTest extends TestCase
     public function testRefreshForecastByMetadata()
     {
         SugarAutoLoader::load('modules/Opportunities/include/OpportunityWithRevenueLineItem.php');
-        $apiClass = $this->createPartialMock('ForecastsConfigApi', array('getOpportunityConfigObject'));
+        $apiClass = $this->createPartialMock('ForecastsConfigApi', ['getOpportunityConfigObject']);
         $oppClass = $this->getMockBuilder('OpportunityWithRevenueLineItem')->getMock();
 
         $oppClass->expects($this->once())
@@ -132,10 +133,10 @@ class ForecastsConfigApiTest extends TestCase
 
     public function getOpportunityConfigObjectProvider()
     {
-        return array(
-            array('RevenueLineItems', 'OpportunityWithRevenueLineItem'),
-            array('Opportunities', 'OpportunityWithOutRevenueLineItem'),
-        );
+        return [
+            ['RevenueLineItems', 'OpportunityWithRevenueLineItem'],
+            ['Opportunities', 'OpportunityWithOutRevenueLineItem'],
+        ];
     }
 
     public function testGetRepairAndClear()
@@ -150,7 +151,7 @@ class ForecastsConfigApiTest extends TestCase
     {
         $module = 'foo';
         SugarAutoLoader::load('modules/Administration/QuickRepairAndRebuild.php');
-        $apiClass = $this->createPartialMock('ForecastsConfigApi', array('getRepairAndClear'));
+        $apiClass = $this->createPartialMock('ForecastsConfigApi', ['getRepairAndClear']);
         $repairClass = $this->getMockBuilder('RepairAndClear')->getMock();
 
         $apiClass->expects($this->once())
@@ -162,7 +163,7 @@ class ForecastsConfigApiTest extends TestCase
 
         $repairClass->expects($this->once())
             ->method('rebuildExtensions')
-            ->with(array($module));
+            ->with([$module]);
 
         $apiClass->rebuildExtensions($module);
     }
@@ -173,7 +174,8 @@ class ForecastsConfigApiTest extends TestCase
      * @group forecasts
      * @covers ::config
      */
-    public function testReadConfig() {
+    public function testReadConfig()
+    {
         /* @var $admin Administration */
         $admin = BeanFactory::newBean('Administration');
         $admin->saveSetting('Forecasts', 'testSetting', 'testValue', 'base');
@@ -182,9 +184,9 @@ class ForecastsConfigApiTest extends TestCase
         //Fake the security
         $api->user = $GLOBALS['current_user'];
 
-        $args = array(
+        $args = [
             "module" => "Forecasts",
-        );
+        ];
         $apiClass = new ForecastsConfigApi();
         $result = $apiClass->config($api, $args);
         $this->assertArrayHasKey("testSetting", $result);
@@ -196,7 +198,8 @@ class ForecastsConfigApiTest extends TestCase
      * @group forecasts
      * @covers ::forecastsConfigSave
      */
-    public function testUpdateConfig() {
+    public function testUpdateConfig()
+    {
         $testSetting = 'testValue';
         /* @var $admin Administration */
         $admin = BeanFactory::newBean('Administration');
@@ -206,13 +209,13 @@ class ForecastsConfigApiTest extends TestCase
         //Fake the security
         $api->user = $GLOBALS['current_user'];
 
-        $args = array(
+        $args = [
             "module" => "Forecasts",
             "testSetting" => strrev($testSetting),
-            'worksheet_columns' => array(),
+            'worksheet_columns' => [],
             'show_worksheet_best' => 1,
-            'show_worksheet_worst' => 0
-        );
+            'show_worksheet_worst' => 0,
+        ];
         $apiClass = $this->createPartialMock('ForecastsConfigApi', [
             'timePeriodSettingsChanged',
             //BEGIN SUGARCRM flav=ent ONLY
@@ -248,12 +251,12 @@ class ForecastsConfigApiTest extends TestCase
         //Fake the security
         $api->user = $GLOBALS['current_user'];
 
-        $args = array(
+        $args = [
             "module" => "Forecasts",
-            'worksheet_columns' => array(),
+            'worksheet_columns' => [],
             'show_worksheet_best' => 1,
-            'show_worksheet_worst' => 0
-        );
+            'show_worksheet_worst' => 0,
+        ];
         $apiClass = $this->createPartialMock('ForecastsConfigApi', [
             'timePeriodSettingsChanged',
             'setWorksheetColumns',
@@ -281,7 +284,8 @@ class ForecastsConfigApiTest extends TestCase
      * @group forecasts
      * @covers ::forecastsConfigSave
      */
-    public function testCreateBadCredentialsConfig() {
+    public function testCreateBadCredentialsConfig()
+    {
         $GLOBALS['current_user']->is_admin = 0;
 
         $api = new RestService();
@@ -289,10 +293,10 @@ class ForecastsConfigApiTest extends TestCase
         $api->user = $GLOBALS['current_user'];
 
 
-        $args = array(
+        $args = [
             "module" => "Forecasts",
             "testSetting" => "testValue",
-        );
+        ];
         $apiClass = $this->createPartialMock('ForecastsConfigApi', [
             //BEGIN SUGARCRM flav=ent ONLY
             'refreshForecastByMetadata',
@@ -309,7 +313,8 @@ class ForecastsConfigApiTest extends TestCase
      * @group forecasts
      * @covers ::forecastsConfigSave
      */
-    public function testSaveConfigTimePeriodSettingsChangedCalled() {
+    public function testSaveConfigTimePeriodSettingsChangedCalled()
+    {
         $testSetting = 'testValue';
         /* @var $admin Administration */
         $admin = BeanFactory::newBean('Administration');
@@ -318,20 +323,20 @@ class ForecastsConfigApiTest extends TestCase
         $priorSettings = $admin->getConfigForModule('Forecasts', 'base');
         $currentSettings = $admin->getConfigForModule('Forecasts', 'base');
 
-        $currentSettings['worksheet_columns'] = array(
+        $currentSettings['worksheet_columns'] = [
             0 => 'commit_stage',
             1 => 'parent_name',
             2 => 'likely_case',
-            3 => 'best_case'
-        );
+            3 => 'best_case',
+        ];
 
         $api = new RestService();
         //Fake the security
         $api->user = $GLOBALS['current_user'];
 
-        $args = array(
+        $args = [
             "module" => "Forecasts",
-        );
+        ];
 
         $args = array_merge($args, $priorSettings);
 
@@ -343,7 +348,7 @@ class ForecastsConfigApiTest extends TestCase
             //END SUGARCRM flav=ent ONLY
         ]);
 
-        if(empty($priorSettings['is_setup'])) {
+        if (empty($priorSettings['is_setup'])) {
             $priorSettings['timeperiod_shown_forward'] = 0;
             $priorSettings['timeperiod_shown_backward'] = 0;
         }
@@ -356,54 +361,54 @@ class ForecastsConfigApiTest extends TestCase
     }
 
     /**
-   	 * @return array asserting data with the key data points changed to test each conditional
-   	 */
-   	public function getTimePeriodSettingsData()
-   	{
-   		return array(
-               array(
-                   array(
-                  ),
-                  false
-               ),
-               array(
-                   array(
+     * @return array asserting data with the key data points changed to test each conditional
+     */
+    public function getTimePeriodSettingsData()
+    {
+        return [
+               [
+                   [
+                   ],
+                   false,
+               ],
+               [
+                   [
                       'timeperiod_shown_backward' => '3',
-                  ),
-                  true
-               ),
-               array(
-                   array(
+                   ],
+                   true,
+               ],
+               [
+                   [
                       'timeperiod_shown_forward' => '3',
-                  ),
-                  true
-               ),
-               array(
-                   array(
+                   ],
+                   true,
+               ],
+               [
+                   [
                       'timeperiod_start_date' => '2013-03-01',
-                  ),
-                  true
-               ),
-               array(
-                   array(
+                   ],
+                   true,
+               ],
+               [
+                   [
                       'timeperiod_interval' => TimePeriod::QUARTER_TYPE,
-                  ),
-                  true
-               ),
-               array(
-                   array(
+                   ],
+                   true,
+               ],
+               [
+                   [
                       'timeperiod_leaf_interval' => TimePeriod::MONTH_TYPE,
-                  ),
-                  true
-               ),
-               array(
-                   array(
+                   ],
+                   true,
+               ],
+               [
+                   [
                       'timeperiod_type' => 'fiscal',
-                  ),
-                  true
-               ),
-   		);
-   	}
+                   ],
+                   true,
+               ],
+        ];
+    }
 
     /**
      * check the conditionals and that they return expected values for the timePeriodSettingsChanged function
@@ -415,21 +420,21 @@ class ForecastsConfigApiTest extends TestCase
      * @covers ::timePeriodSettingsChanged
      */
     public function testTimePeriodSettingsChagned($changedSettings, $expectedResult)
-   	{
-        $priorSettings = array(
+    {
+        $priorSettings = [
                            'timeperiod_shown_backward' => '2',
                            'timeperiod_shown_forward' => '2',
                            'timeperiod_start_date' => '2013-01-01',
                            'timeperiod_interval' => TimePeriod::ANNUAL_TYPE,
                            'timeperiod_leaf_interval' => TimePeriod::QUARTER_TYPE,
                            'timeperiod_type' => 'chronological',
-                       );
+                       ];
 
         $currentSettings = array_merge($priorSettings, $changedSettings);
 
         $apiClass = new ForecastsConfigApi();
         $result = $apiClass->timePeriodSettingsChanged($priorSettings, $currentSettings);
 
-        $this->assertEquals($expectedResult, $result, "TimePeriod Setting check failed for given parameters. Prior Settings: " . print_r($priorSettings,1) . " Current Settings: " . print_r($currentSettings, 1) . " result: " . print_r($result,1));
+        $this->assertEquals($expectedResult, $result, "TimePeriod Setting check failed for given parameters. Prior Settings: " . print_r($priorSettings, 1) . " Current Settings: " . print_r($currentSettings, 1) . " result: " . print_r($result, 1));
     }
 }

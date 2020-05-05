@@ -36,7 +36,7 @@ class Bug47537Test extends TestCase
         $this->form = new SearchForm($this->seed, $this->module, $this->action);
         $this->form->setup($searchdefs, $searchFields, 'include/SearchForm/tpls/SearchFormGeneric.tpl', "advanced_search", $listViewDefs);
 
-        $this->array = array(
+        $this->array = [
             'module'=>$this->module,
             'action'=>$this->action,
             'searchFormTab'=>'advanced_search',
@@ -45,7 +45,7 @@ class Bug47537Test extends TestCase
             'range_quote_num_advanced' => '',
             'start_quote_num_entered_advanced' => '',
             'end_quote_num_entered_advanced' => '',
-        );
+        ];
     }
 
     protected function tearDown() : void
@@ -60,15 +60,16 @@ class Bug47537Test extends TestCase
      * Data provider for single integer range searches
      * @return array data for tests
      */
-    function singleIntRangeProvider() {
-        return array(
-            array("=", "1", array(strtolower($this->module).".quote_num = 1")),
-            array("not_equal", "1", array("(". strtolower($this->module).".quote_num IS NULL OR " . strtolower($this->module) . ".quote_num != 1)")),
-            array("greater_than", "1", array(strtolower($this->module).".quote_num > 1")),
-            array("greater_than_equals", "1", array(strtolower($this->module).".quote_num >= 1")),
-            array("less_than", "1", array(strtolower($this->module).".quote_num < 1")),
-            array("less_than_equals", "1", array(strtolower($this->module).".quote_num <= 1")),
-        );
+    function singleIntRangeProvider()
+    {
+        return [
+            ["=", "1", [strtolower($this->module).".quote_num = 1"]],
+            ["not_equal", "1", ["(". strtolower($this->module).".quote_num IS NULL OR " . strtolower($this->module) . ".quote_num != 1)"]],
+            ["greater_than", "1", [strtolower($this->module).".quote_num > 1"]],
+            ["greater_than_equals", "1", [strtolower($this->module).".quote_num >= 1"]],
+            ["less_than", "1", [strtolower($this->module).".quote_num < 1"]],
+            ["less_than_equals", "1", [strtolower($this->module).".quote_num <= 1"]],
+        ];
     }
 
     /**
@@ -78,7 +79,8 @@ class Bug47537Test extends TestCase
      * @param $val values from dataProvider
      * @param $expected expected result from dataProvider
      */
-    public function testAdvancedSearchForInt($op, $val, $expected) {
+    public function testAdvancedSearchForInt($op, $val, $expected)
+    {
         $this->array['quote_num_advanced_range_choice'] = $op;
         $this->array['range_quote_num_advanced'] = $val;
 
@@ -88,11 +90,12 @@ class Bug47537Test extends TestCase
     }
 
 
-    public function testAdvancedSearchForIntBetween() {
+    public function testAdvancedSearchForIntBetween()
+    {
         $this->array['quote_num_advanced_range_choice'] = 'between';
         $this->array['start_range_quote_num_advanced'] = '1';
         $this->array['end_range_quote_num_advanced'] = '3';
-        $expected = array("(". strtolower($this->module).".quote_num >= 1 AND ".strtolower($this->module).".quote_num <= 3)");
+        $expected = ["(". strtolower($this->module).".quote_num >= 1 AND ".strtolower($this->module).".quote_num <= 3)"];
 
         $this->form->populateFromArray($this->array);
         $query = $this->form->generateSearchWhere($this->seed, $this->module);

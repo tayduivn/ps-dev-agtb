@@ -11,18 +11,17 @@
  */
 
 
-$searchdefs['Bugs'] = array(
-	'templateMeta' => array(
-		'maxColumns' => '1',
-		'widths' => array('label' => '10', 'field' => '30'),
-	),
-	'layout' => array(
-		'basic_search' => array(
-			'name',
-		),
-		'advanced_search' => array(
-			'name',
-		),
-	),
-);
-?>
+$searchdefs['Bugs'] = [
+    'templateMeta' => [
+        'maxColumns' => '1',
+        'widths' => ['label' => '10', 'field' => '30'],
+    ],
+    'layout' => [
+        'basic_search' => [
+            'name',
+        ],
+        'advanced_search' => [
+            'name',
+        ],
+    ],
+];

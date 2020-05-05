@@ -15,23 +15,23 @@ use PHPUnit\Framework\TestCase;
 
 class Bug41050Test extends TestCase
 {
-	var $quote;
-	var $account;
+    var $quote;
+    var $account;
     
     protected function setUp() : void
     {
         global $current_user, $currentModule ;
-		 
-        $beanList = array();
-        $beanFiles = array();
-        require('include/modules.php');
+         
+        $beanList = [];
+        $beanFiles = [];
+        require 'include/modules.php';
         $GLOBALS['beanList'] = $beanList;
         $GLOBALS['beanFiles'] = $beanFiles;
         
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['current_user']->is_admin = '1';
         $GLOBALS['current_user']->save();
-		 
+         
         $time = date('Y-m-d H:i:s');
         //for the purpose of this test, we need to create an account and quote object and relate them
 
@@ -48,11 +48,12 @@ class Bug41050Test extends TestCase
         $quote = new Quote();
         $quote->name = 'quote test ' . time();
         $quote->quote_stage = 'Draft';
-        $quote->date_quote_expected_closed = $timeDate->to_display_date(date('Y')+1 .'-01-01');;
+        $quote->date_quote_expected_closed = $timeDate->to_display_date(date('Y')+1 .'-01-01');
+        ;
         $quote->assigned_id = $current_user->id;
-        $quote->save();		
+        $quote->save();
         $this->quote = $quote;
-		
+        
         //relate the two with different roles on relationship
         $GLOBALS['db']->query("insert into quotes_accounts ( id, quote_id, account_id, account_role, date_modified, deleted) values ( 'quo_acc_".uniqid()."', '{$quote->id}', '{$account->id}', 'Bill To', '$time', 0)");
         $GLOBALS['db']->query("insert into quotes_accounts ( id, quote_id, account_id, account_role, date_modified, deleted) values ( 'quo_acc_".uniqid()."', '{$quote->id}', '{$account->id}', 'Ship To', '$time', 0)");
@@ -71,35 +72,35 @@ class Bug41050Test extends TestCase
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
     }
-	
+    
 
-	public function testRetrieveQuoteByAccountName()
-	{
-		global $current_user;
-		
-		//We are going to mimic searching for the quotes by account name using the same api the list views do.
-		$lvd = new ListViewData();
+    public function testRetrieveQuoteByAccountName()
+    {
+        global $current_user;
+        
+        //We are going to mimic searching for the quotes by account name using the same api the list views do.
+        $lvd = new ListViewData();
 
-		//create a fake post/request object	used by listview	
-		$_REQUEST = $_POST = array (
-		    'module' => 'Quotes',
-		    'action' => 'index',
-		    'sugar_user_theme' => 'Sugar',
-			'query' => 'true',
-		    'searchFormTab' => 'advanced_search',
-		    'name_advanced' => '',
-		    'quote_num_advanced' => '',
-		    'account_name_advanced' => $this->account->name,
-		    'total_usdollar_advanced' => '',
-		    'date_quote_expected_closed_advanced' => '',
-		    'favorites_only_advanced' => '0',
-		    'button' => 'Search',
-				
-			);
-			
-		//create a list of fields passed in to create the query in sugarbean, we are staying as close to the Out of Box list view as possible	
-		$filter =  array(
-			'quote_num' => 1,
+        //create a fake post/request object used by listview
+        $_REQUEST = $_POST =  [
+            'module' => 'Quotes',
+            'action' => 'index',
+            'sugar_user_theme' => 'Sugar',
+            'query' => 'true',
+            'searchFormTab' => 'advanced_search',
+            'name_advanced' => '',
+            'quote_num_advanced' => '',
+            'account_name_advanced' => $this->account->name,
+            'total_usdollar_advanced' => '',
+            'date_quote_expected_closed_advanced' => '',
+            'favorites_only_advanced' => '0',
+            'button' => 'Search',
+                
+            ];
+            
+        //create a list of fields passed in to create the query in sugarbean, we are staying as close to the Out of Box list view as possible
+        $filter =  [
+            'quote_num' => 1,
             'name' => 1,
             'billing_account_name' => 1,
             'quote_stage' => 1,
@@ -108,13 +109,13 @@ class Bug41050Test extends TestCase
             'date_quote_expected_closed' => 1,
             'assigned_user_name' => 1,
             'account_name' => 1,
-            'favorites_only' => 1
-        );
-		
+            'favorites_only' => 1,
+        ];
+        
         //mimic querying for the listview
-		$listResults = $lvd->getListViewData(new Quote(), "(jt0.name like '".$this->account->name."%')",-1, -1, $filter );
+        $listResults = $lvd->getListViewData(new Quote(), "(jt0.name like '".$this->account->name."%')", -1, -1, $filter);
 
-		//if there is no data returned, then an error occurred
-		$this->assertFalse(empty($listResults['data']), 'List view query failed to retrieve the quote by the account name.');
-	}
+        //if there is no data returned, then an error occurred
+        $this->assertFalse(empty($listResults['data']), 'List view query failed to retrieve the quote by the account name.');
+    }
 }

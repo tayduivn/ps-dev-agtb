@@ -13,10 +13,10 @@
 
 class SugarTestProspectListsUtilities
 {
-    private static $_aCreatedProspectLists = array();
-    private static $_aCreatedProspectListsIds = array();
+    private static $_aCreatedProspectLists = [];
+    private static $_aCreatedProspectListsIds = [];
 
-    private static $_createdProspectLists = array();
+    private static $_createdProspectLists = [];
 
     /**
      * @static Creates a test prospectList
@@ -29,8 +29,7 @@ class SugarTestProspectListsUtilities
         $prospectList = new ProspectList();
         $prospectList->name = $name;
 
-        if(!empty($id))
-        {
+        if (!empty($id)) {
             $prospectList->new_with_id = true;
             $prospectList->id = $id;
         }
@@ -77,26 +76,23 @@ class SugarTestProspectListsUtilities
      */
     public static function getCreatedProspectListIds()
     {
-        $prospectListIds = array();
+        $prospectListIds = [];
         foreach (self::$_createdProspectLists as $prospectList) {
             $prospectListIds[] = $prospectList->id;
         }
         return $prospectListIds;
     }
 
-    public static function createProspectList($id = '', $aParams = array())
+    public static function createProspectList($id = '', $aParams = [])
     {
         $time = mt_rand();
         $oProspectList = new ProspectList();
         $oProspectList->name = 'ProspectList' . $time;
-        if (!empty($id))
-        {
+        if (!empty($id)) {
             $oProspectList->id = $id;
         }
-        if (!empty($aParams))
-        {
-            foreach ($aParams as $key => $val)
-            {
+        if (!empty($aParams)) {
+            foreach ($aParams as $key => $val) {
                 $oProspectList->$key = $val;
             }
         }
@@ -112,12 +108,9 @@ class SugarTestProspectListsUtilities
      */
     public static function removeCreatedProspectLists($id = '')
     {
-        if (!empty($id))
-        {
+        if (!empty($id)) {
             $GLOBALS['db']->query("DELETE FROM prospect_lists WHERE id = '{$id}'");
-        }
-        elseif (!empty(self::$_aCreatedProspectLists))
-        {
+        } elseif (!empty(self::$_aCreatedProspectLists)) {
             $GLOBALS['db']->query("DELETE FROM prospect_lists WHERE id IN ('" . implode("','", self::$_aCreatedProspectListsIds) . "')");
         }
     }

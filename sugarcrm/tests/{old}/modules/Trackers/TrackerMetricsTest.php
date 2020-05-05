@@ -14,28 +14,29 @@ use PHPUnit\Framework\TestCase;
 
 class TrackerMetricsTest extends TestCase
 {
-	var $trackerSettings;
+    var $trackerSettings;
 
     protected function setUp() : void
     {
-		TrackerTestUtility::setUp(); 		
-	}
+        TrackerTestUtility::setUp();
+    }
 
     protected function tearDown() : void
     {
-    	TrackerTestUtility::tearDown();
+        TrackerTestUtility::tearDown();
     }
     
-    function testMetrics() {
+    function testMetrics()
+    {
         $trackerManager = TrackerManager::getInstance();
-	    $monitor = $trackerManager->getMonitor('tracker');
+        $monitor = $trackerManager->getMonitor('tracker');
         $metrics = $monitor->getMetrics();
-        foreach($metrics as $metric) {
-           if($metric->name() == 'monitor_id') {
-           	  $this->assertFalse($metric->isMutable(), "Test that {$metric->name()} is not mutable");
-           } else {
-           	  $this->assertTrue($metric->isMutable(), "Test that {$metric->name()} is mutable");
-           }
+        foreach ($metrics as $metric) {
+            if ($metric->name() == 'monitor_id') {
+                $this->assertFalse($metric->isMutable(), "Test that {$metric->name()} is not mutable");
+            } else {
+                $this->assertTrue($metric->isMutable(), "Test that {$metric->name()} is mutable");
+            }
         }
     }
 }

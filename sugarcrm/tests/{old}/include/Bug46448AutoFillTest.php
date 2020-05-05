@@ -16,8 +16,8 @@ use PHPUnit\Framework\TestCase;
 class Bug46448AutoFillTest extends TestCase
 {
     private $user;
-    private $aclRolesIds = array();
-    private $aclRoles2Users = array();
+    private $aclRolesIds = [];
+    private $aclRoles2Users = [];
 
     public function testAutoFill()
     {
@@ -31,14 +31,14 @@ class Bug46448AutoFillTest extends TestCase
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         require_once 'include/formbase.php';
-        SugarTestHelper::setUp('current_user', array(true));
+        SugarTestHelper::setUp('current_user', [true]);
         $user = $GLOBALS['current_user'];
         $this->user = $user;
 
-        $aclFields = array(
-            array('module' => 'Accounts', 'name' => 'assigned_user_name', 'access' => ACL_READ_ONLY),
-            array('module' => 'Accounts', 'name' => 'team_name', 'access' => ACL_READ_ONLY),
-        );
+        $aclFields = [
+            ['module' => 'Accounts', 'name' => 'assigned_user_name', 'access' => ACL_READ_ONLY],
+            ['module' => 'Accounts', 'name' => 'team_name', 'access' => ACL_READ_ONLY],
+        ];
         $role = $this->createAclRole($aclFields);
         $this->connectAclRoles2Users($role, $user);
     }
@@ -50,7 +50,7 @@ class Bug46448AutoFillTest extends TestCase
         $this->removeAllConnectAclRoles2Users();
     }
 
-    private function createAclRole($fields = array())
+    private function createAclRole($fields = [])
     {
         $AclRole = new ACLRole();
 
@@ -67,7 +67,7 @@ class Bug46448AutoFillTest extends TestCase
 
         $this->aclRolesIds[] = $AclRole->id;
 
-        foreach ($fields AS $fld) {
+        foreach ($fields as $fld) {
             ACLField::setAccessControl($fld['module'], $AclRole->id, $fld['name'], $fld['access']);
         }
 

@@ -17,9 +17,10 @@ class BeanDuplicateCheckTest extends TestCase
     /**
      * @group duplicatecheck
      */
-    public function testConstructor_MetadataCountIsZero_TheStrategyRemainsFalse() {
+    public function testConstructor_MetadataCountIsZero_TheStrategyRemainsFalse()
+    {
         $bean               = $this->createMock(Lead::class);
-        $metadata           = array();
+        $metadata           = [];
         $beanDuplicateCheck = new BeanDuplicateCheck($bean, $metadata);
 
         $actual = $beanDuplicateCheck->getStrategy();
@@ -29,40 +30,41 @@ class BeanDuplicateCheckTest extends TestCase
     /**
      * @group duplicatecheck
      */
-    public function testConstructor_MetadataCountIsTwo_TheStrategyRemainsFalse() {
+    public function testConstructor_MetadataCountIsTwo_TheStrategyRemainsFalse()
+    {
         $bean               = $this->createMock(Lead::class);
-        $metadata           = array(
-            'FilterDuplicateCheck' => array(
-                'filter_template' => array(
-                    array(
-                        'account_name' => array(
+        $metadata           = [
+            'FilterDuplicateCheck' => [
+                'filter_template' => [
+                    [
+                        'account_name' => [
                             '$starts' => '$account_name',
-                        ),
-                    ),
-                ),
-                'ranking_fields'  => array(
-                    array(
+                        ],
+                    ],
+                ],
+                'ranking_fields'  => [
+                    [
                         'in_field_name'   => 'account_name',
                         'dupe_field_name' => 'account_name',
-                    ),
-                ),
-            ),
-            'ExtraDuplicateCheck'  => array(
-                'filter_template' => array(
-                    array(
-                        'account_name' => array(
+                    ],
+                ],
+            ],
+            'ExtraDuplicateCheck'  => [
+                'filter_template' => [
+                    [
+                        'account_name' => [
                             '$starts' => '$account_name',
-                        ),
-                    ),
-                ),
-                'ranking_fields'  => array(
-                    array(
+                        ],
+                    ],
+                ],
+                'ranking_fields'  => [
+                    [
                         'in_field_name'   => 'account_name',
                         'dupe_field_name' => 'account_name',
-                    ),
-                ),
-            ),
-        );
+                    ],
+                ],
+            ],
+        ];
         $beanDuplicateCheck = new BeanDuplicateCheck($bean, $metadata);
 
         $actual = $beanDuplicateCheck->getStrategy();
@@ -72,25 +74,26 @@ class BeanDuplicateCheckTest extends TestCase
     /**
      * @group duplicatecheck
      */
-    public function testConstructor_TheStrategyDefinedInTheMetadataIsInvalid_TheStrategyRemainsFalse() {
+    public function testConstructor_TheStrategyDefinedInTheMetadataIsInvalid_TheStrategyRemainsFalse()
+    {
         $bean               = $this->createMock(Lead::class);
-        $metadata           = array(
-            'Foobar' => array(
-                'filter_template' => array(
-                    array(
-                        'account_name' => array(
+        $metadata           = [
+            'Foobar' => [
+                'filter_template' => [
+                    [
+                        'account_name' => [
                             '$starts' => '$account_name',
-                        ),
-                    ),
-                ),
-                'ranking_fields'  => array(
-                    array(
+                        ],
+                    ],
+                ],
+                'ranking_fields'  => [
+                    [
                         'in_field_name'   => 'account_name',
                         'dupe_field_name' => 'account_name',
-                    ),
-                ),
-            ),
-        );
+                    ],
+                ],
+            ],
+        ];
         $beanDuplicateCheck = new BeanDuplicateCheck($bean, $metadata);
 
         $actual = $beanDuplicateCheck->getStrategy();
@@ -100,40 +103,44 @@ class BeanDuplicateCheckTest extends TestCase
     /**
      * @group duplicatecheck
      */
-    public function testConstructor_MetadataCountIsOne_TheStrategyIsInitializedToTheStrategyDefinedInTheMetadata() {
+    public function testConstructor_MetadataCountIsOne_TheStrategyIsInitializedToTheStrategyDefinedInTheMetadata()
+    {
         $bean               = $this->createMock(Lead::class);
-        $metadata           = array(
-            'FilterDuplicateCheck' => array(
-                'filter_template' => array(
-                    array(
-                        'account_name' => array(
+        $metadata           = [
+            'FilterDuplicateCheck' => [
+                'filter_template' => [
+                    [
+                        'account_name' => [
                             '$starts' => '$account_name',
-                        ),
-                    ),
-                ),
-                'ranking_fields'  => array(
-                    array(
+                        ],
+                    ],
+                ],
+                'ranking_fields'  => [
+                    [
                         'in_field_name'   => 'account_name',
                         'dupe_field_name' => 'account_name',
-                    ),
-                ),
-            ),
-        );
+                    ],
+                ],
+            ],
+        ];
         $beanDuplicateCheck = new BeanDuplicateCheck($bean, $metadata);
 
         $expected = "FilterDuplicateCheck";
         $actual   = $beanDuplicateCheck->getStrategy();
-        self::assertInstanceOf($expected,
-                               $actual,
-                               "The strategy should have been changed to an instance of '{$expected}'");
+        self::assertInstanceOf(
+            $expected,
+            $actual,
+            "The strategy should have been changed to an instance of '{$expected}'"
+        );
     }
 
     /**
      * @group duplicatecheck
      */
-    public function testFindDuplicates_TheStrategyIsFalse_ReturnsNull() {
+    public function testFindDuplicates_TheStrategyIsFalse_ReturnsNull()
+    {
         $bean               = $this->createMock(Lead::class);
-        $metadata           = array(); // invalid metadata forces the strategy to remain false
+        $metadata           = []; // invalid metadata forces the strategy to remain false
         $beanDuplicateCheck = new BeanDuplicateCheck($bean, $metadata);
 
         $actual = $beanDuplicateCheck->findDuplicates();
@@ -143,25 +150,26 @@ class BeanDuplicateCheckTest extends TestCase
     /**
      * @group duplicatecheck
      */
-    public function testFindDuplicates_TheStrategyIsValid_TheFindDuplicatesMethodOnTheStrategyIsCalled() {
+    public function testFindDuplicates_TheStrategyIsValid_TheFindDuplicatesMethodOnTheStrategyIsCalled()
+    {
         $bean               = $this->createMock(Lead::class);
-        $metadata           = array(
-            'DuplicateCheckMock' => array(
-                'filter_template' => array(
-                    array(
-                        'account_name' => array(
+        $metadata           = [
+            'DuplicateCheckMock' => [
+                'filter_template' => [
+                    [
+                        'account_name' => [
                             '$starts' => '$account_name',
-                        ),
-                    ),
-                ),
-                'ranking_fields'  => array(
-                    array(
+                        ],
+                    ],
+                ],
+                'ranking_fields'  => [
+                    [
                         'in_field_name'   => 'account_name',
                         'dupe_field_name' => 'account_name',
-                    ),
-                ),
-            ),
-        );
+                    ],
+                ],
+            ],
+        ];
         $beanDuplicateCheck = new BeanDuplicateCheck($bean, $metadata);
 
         $actual = $beanDuplicateCheck->findDuplicates();
@@ -176,9 +184,12 @@ class BeanDuplicateCheckTest extends TestCase
  */
 class DuplicateCheckMock extends DuplicateCheckStrategy
 {
-    protected function setMetadata($metadata) {}
+    protected function setMetadata($metadata)
+    {
+    }
 
-    public function findDuplicates() {
+    public function findDuplicates()
+    {
         return true;
     }
 }

@@ -10,4 +10,4 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$hook_array['before_save'][] = Array(1, 'go', 'custom/modules/Accounts/go.php','Go', 'Go');
+$hook_array['before_save'][] = [1, 'go', 'custom/modules/Accounts/go.php','Go', 'Go'];

@@ -23,43 +23,42 @@ use PHPUnit\Framework\TestCase;
 
 class Bug49991Test extends TestCase
 {
-var $mock;
-var $sourceBackup;
+    var $mock;
+    var $sourceBackup;
 
     protected function setUp() : void
     {
-    $this->mock = new Bug49991SugarViewMock();
-    mkdir_recursive('custom/modules/Connectors/tpls');
-    if(file_exists('custom/modules/Connectors/tpls/source_properties.tpl'))
-    {
-        $this->sourceBackup = file_get_contents('custom/modules/Connectors/tpls/source_properties.tpl');
+        $this->mock = new Bug49991SugarViewMock();
+        mkdir_recursive('custom/modules/Connectors/tpls');
+        if (file_exists('custom/modules/Connectors/tpls/source_properties.tpl')) {
+            $this->sourceBackup = file_get_contents('custom/modules/Connectors/tpls/source_properties.tpl');
+        }
+        copy('modules/Connectors/tpls/source_properties.tpl', 'custom/modules/Connectors/tpls/source_properties.tpl');
     }
-    copy('modules/Connectors/tpls/source_properties.tpl', 'custom/modules/Connectors/tpls/source_properties.tpl');
-}
 
     protected function tearDown() : void
     {
-    if(!empty($this->sourceBackup))
-    {
-        file_put_contents('custom/modules/Connectors/tpls/source_properties.tpl', $this->sourceBackup);
-    } else {
-        unlink('custom/modules/Connectors/tpls/source_properties.tpl');
+        if (!empty($this->sourceBackup)) {
+            file_put_contents('custom/modules/Connectors/tpls/source_properties.tpl', $this->sourceBackup);
+        } else {
+            unlink('custom/modules/Connectors/tpls/source_properties.tpl');
+        }
+        unset($this->mock);
     }
-    unset($this->mock);
-}
 
 /**
  * testGetCustomFilePathIfExists
  *
  * Simple test just to assert that we have found the custom file
  */
-public function testGetCustomFilePathIfExists()
-{
-    $this->assertEquals('custom/modules/Connectors/tpls/source_properties.tpl', $this->mock->getCustomFilePathIfExistsTest('modules/Connectors/tpls/source_properties.tpl'), 'Could not find the custom tpl file');
-}
+    public function testGetCustomFilePathIfExists()
+    {
+        $this->assertEquals('custom/modules/Connectors/tpls/source_properties.tpl', $this->mock->getCustomFilePathIfExistsTest('modules/Connectors/tpls/source_properties.tpl'), 'Could not find the custom tpl file');
+    }
 }
 
-class Bug49991SugarViewMock extends SugarView {
+class Bug49991SugarViewMock extends SugarView
+{
     public function getCustomFilePathIfExistsTest($file)
     {
         return $this->getCustomFilePathIfExists($file);

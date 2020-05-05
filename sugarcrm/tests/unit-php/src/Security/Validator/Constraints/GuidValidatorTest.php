@@ -69,10 +69,10 @@ class GuidValidatorTest extends AbstractConstraintValidatorTest
 
     public function providerTestValidValues()
     {
-        return array(
-            array('40a30045-2ab7-9c96-766d-563a3bb0d7ef'),
-            array('seed_will_id'),
-        );
+        return [
+            ['40a30045-2ab7-9c96-766d-563a3bb0d7ef'],
+            ['seed_will_id'],
+        ];
     }
 
     /**
@@ -81,9 +81,9 @@ class GuidValidatorTest extends AbstractConstraintValidatorTest
      */
     public function testInvalidValues($value, $code, $msg)
     {
-        $constraint = new Guid(array(
+        $constraint = new Guid([
             'message' => 'testMessage',
-        ));
+        ]);
 
         $this->validator->validate($value, $constraint);
 
@@ -96,12 +96,12 @@ class GuidValidatorTest extends AbstractConstraintValidatorTest
 
     public function providerTestInvalidValues()
     {
-        return array(
-            array(
+        return [
+            [
                 '40a30045+2ab7+9c96-766d-563a3bb0d7ef',
                 Guid::ERROR_INVALID_FORMAT,
                 'invalid format',
-            ),
-        );
+            ],
+        ];
     }
 }

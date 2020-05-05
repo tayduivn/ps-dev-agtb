@@ -48,7 +48,7 @@ class TeamBasedACLConfiguratorTest extends TestCase
         SugarTestHelper::setUp('current_user');
         $this->tbaConfig = $this->createPartialMock(
             'TeamBasedACLConfigurator',
-            array('applyTBA', 'restoreTBA', 'fallbackTBA', 'applyFallback')
+            ['applyTBA', 'restoreTBA', 'fallbackTBA', 'applyFallback']
         );
         $this->globalTBA = $GLOBALS['sugar_config'][TeamBasedACLConfigurator::CONFIG_KEY]['enabled'];
 
@@ -104,7 +104,7 @@ class TeamBasedACLConfiguratorTest extends TestCase
     public function testModuleListConfig()
     {
         $extraModule = 'Bugs';
-        $moduleList = array($this->module, $extraModule);
+        $moduleList = [$this->module, $extraModule];
         $this->tbaConfig->setForModule($extraModule, true);
 
         $this->tbaConfig->setForModulesList($moduleList, false);
@@ -125,7 +125,7 @@ class TeamBasedACLConfiguratorTest extends TestCase
      */
     public function testFallbackAndRestore($module, $field)
     {
-        $this->tbaConfig = $this->createPartialMock('TeamBasedACLConfigurator', array('applyTBA'));
+        $this->tbaConfig = $this->createPartialMock('TeamBasedACLConfigurator', ['applyTBA']);
         $this->tbaConfig->setForModule($module, true);
         $action = 'view';
         $aclType = BeanFactory::newBean($module)->acltype;
@@ -192,12 +192,12 @@ class TeamBasedACLConfiguratorTest extends TestCase
 
     public function moduleProvider()
     {
-        return array(
+        return [
             // Module, Field.
-            array($this->module, 'name'),
+            [$this->module, 'name'],
             // Different ACL type.
-            array('TrackerQueries', 'run_count'),
-        );
+            ['TrackerQueries', 'run_count'],
+        ];
     }
 
     /**
@@ -205,7 +205,7 @@ class TeamBasedACLConfiguratorTest extends TestCase
      */
     public function testRestoreDisabledModules()
     {
-        $this->tbaConfig = $this->createPartialMock('TeamBasedACLConfigurator', array('applyTBA'));
+        $this->tbaConfig = $this->createPartialMock('TeamBasedACLConfigurator', ['applyTBA']);
         $action = 'view';
         $roleActions = $this->role->getRoleActions($this->role->id);
         $fallbackModuleAccess = $this->tbaConfig->getFallbackByAccess(constant('ACL_ALLOW_SELECTED_TEAMS'));
@@ -228,7 +228,7 @@ class TeamBasedACLConfiguratorTest extends TestCase
      */
     public function testFallbackDisabledModules()
     {
-        $this->tbaConfig = $this->createPartialMock('TeamBasedACLConfigurator', array('applyTBA'));
+        $this->tbaConfig = $this->createPartialMock('TeamBasedACLConfigurator', ['applyTBA']);
         $action = 'view';
         $extraModule = 'Bugs';
         $roleActions = $this->role->getRoleActions($this->role->id);
@@ -245,7 +245,7 @@ class TeamBasedACLConfiguratorTest extends TestCase
         $this->role->setAction($this->role->id, $actionId, ACL_ALLOW_SELECTED_TEAMS);
 
         // Fallback.
-        $this->tbaConfig->setForModulesList(array($extraModule), false);
+        $this->tbaConfig->setForModulesList([$extraModule], false);
 
         $actualActions = $this->role->getRoleActions($this->role->id);
 
@@ -261,12 +261,12 @@ class TeamBasedACLConfiguratorTest extends TestCase
      */
     public static function removeTBAValuesFromBeanDataProvider()
     {
-        return array(
+        return [
             // Versions module doesn't implement tba, so call removeAllTBAValuesFromTable only for accounts table
-            array(array('Versions' => 'Version', 'Accounts' => 'Account',), 'accounts'),
+            [['Versions' => 'Version', 'Accounts' => 'Account',], 'accounts'],
             // Users module implements tba, but exists in alwaysEnabledModules list
-            array(array('Accounts' => 'Account', 'Users' => 'User'), 'accounts'),
-        );
+            [['Accounts' => 'Account', 'Users' => 'User'], 'accounts'],
+        ];
     }
 
     /**
@@ -281,7 +281,7 @@ class TeamBasedACLConfiguratorTest extends TestCase
     public function testRemoveTBAValuesFromBean($beanList, $expectedTableName)
     {
         $this->tbaConfig = $this->getMockBuilder('TeamBasedACLConfigurator')
-            ->setMethods(array('removeAllTBAValuesFromTable'))
+            ->setMethods(['removeAllTBAValuesFromTable'])
             ->getMock();
         $this->tbaConfig
             ->expects($this->once())

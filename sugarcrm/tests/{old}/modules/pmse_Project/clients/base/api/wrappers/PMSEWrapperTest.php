@@ -42,44 +42,44 @@ class PMSEWrapperTest extends TestCase
         $bean->nope = '';
 
         // Make db quoted versions of these vars
-        foreach (array('id', 'foo', 'baz', 'mck', 'nope') as $var) {
+        foreach (['id', 'foo', 'baz', 'mck', 'nope'] as $var) {
             $dbvar = 'db_' . $var;
             $$dbvar = $db->quoted($bean->$var);
         }
 
         // return what is needed for the provider
-        return array(
+        return [
             // Test all keys are on bean
-            array(
+            [
                 'bean' => $bean,
-                'keys' => array('id', 'foo', 'baz', 'mck',),
+                'keys' => ['id', 'foo', 'baz', 'mck',],
                 'expect' => " id = $db_id AND foo = $db_foo AND baz = $db_baz AND mck = $db_mck",
-            ),
+            ],
             // Test some keys are on bean
-            array(
+            [
                 'bean' => $bean,
-                'keys' => array('id', 'baz',),
+                'keys' => ['id', 'baz',],
                 'expect' => " id = $db_id AND baz = $db_baz",
-            ),
+            ],
             // Test keys that might not be on bean
-            array(
+            [
                 'bean' => $bean,
-                'keys' => array('id', 'bol', 'mck',),
+                'keys' => ['id', 'bol', 'mck',],
                 'expect' => " id = $db_id AND mck = $db_mck",
-            ),
+            ],
             // Test one key
-            array(
+            [
                 'bean' => $bean,
-                'keys' => array('id'),
+                'keys' => ['id'],
                 'expect' => " id = $db_id",
-            ),
+            ],
             // Test no keys
-            array(
+            [
                 'bean' => $bean,
-                'keys' => array('bel', 'biv', 'bax',),
+                'keys' => ['bel', 'biv', 'bax',],
                 'expect' => "",
-            ),
-        );
+            ],
+        ];
     }
 }
 

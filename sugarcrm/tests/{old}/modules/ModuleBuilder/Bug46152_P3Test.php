@@ -34,7 +34,7 @@ class Bug46152_P3Test extends TestCase
 
         $field->saveIdLabel($this->idLabelName, $this->dynamicField);
 
-        SugarTestHelper::setUp('mod_strings', array($this->module));
+        SugarTestHelper::setUp('mod_strings', [$this->module]);
 
         $this->assertArrayHasKey($this->idLabelName, $GLOBALS['mod_strings']);
     }
@@ -44,7 +44,7 @@ class Bug46152_P3Test extends TestCase
     {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('app_list_strings');
-        SugarTestHelper::setUp('mod_strings', array('ModuleBuilder'));
+        SugarTestHelper::setUp('mod_strings', ['ModuleBuilder']);
         SugarTestHelper::setUp('current_user');
 
         $this->dynamicField = new DynamicField($this->module);

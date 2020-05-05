@@ -37,7 +37,7 @@ class Bug55003Test extends TestCase
         SugarTestHelper::setUp('app_list_strings');
         
         // Mod strings is required for Portal Browser, must use ModuleBuilder
-        SugarTestHelper::setUp('mod_strings', array('ModuleBuilder'));
+        SugarTestHelper::setUp('mod_strings', ['ModuleBuilder']);
     }
     
     protected function tearDown() : void
@@ -74,11 +74,11 @@ class Bug55003Test extends TestCase
      */
     public function getKnownPortalModules()
     {
-        return array(
-            array('module' => 'Bugs'),
-            array('module' => 'Cases'),
-            array('module' => 'Contacts'),
-            array('module' => 'KBContents'),
-        );
+        return [
+            ['module' => 'Bugs'],
+            ['module' => 'Cases'],
+            ['module' => 'Contacts'],
+            ['module' => 'KBContents'],
+        ];
     }
 }

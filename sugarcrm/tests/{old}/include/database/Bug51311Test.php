@@ -15,64 +15,64 @@ use PHPUnit\Framework\TestCase;
 
 class Bug51311Test extends TestCase
 {
-	public function providerBug51311()
+    public function providerBug51311()
     {
-        return array(
-            array(
-                array (
+        return [
+            [
+                 [
                   'name' => 'contents',
                   'dbType' => 'longtext',
                   'type' => 'nvarchar',
                   'vname' => 'LBL_DESCRIPTION',
                   'isnull' => true,
-                ),
-                'max'
-            ),
+                 ],
+                 'max',
+            ],
 
-            array(
-                array (
+            [
+                 [
                   'name' => 'contents',
                   'dbType'  => 'text',
                   'type' => 'nvarchar',
                   'vname' => 'LBL_DESCRIPTION',
                   'isnull' => true,
-                ),
-                'max'
-            ),
+                 ],
+                 'max',
+            ],
 
-            array(
-                array (
+            [
+                 [
                   'name' => 'contents',
                   'dbType'  => 'image',
                   'type' => 'image',
                   'vname' => 'LBL_DESCRIPTION',
                   'isnull' => true,
-                ),
-                '2147483647'
-            ),
+                 ],
+                 '2147483647',
+            ],
 
-            array(
-                array (
+            [
+                 [
                   'name' => 'contents',
                   'dbType'  => 'ntext',
                   'type' => 'image',
                   'vname' => 'LBL_DESCRIPTION',
                   'isnull' => true,
-                ),
-                '2147483646'
-            ),
+                 ],
+                 '2147483646',
+            ],
 
-            array(
-                array (
+            [
+                 [
                   'name' => 'contents',
                   'dbType' => 'nvarchar',
                   'type' => 'nvarchar',
                   'vname' => 'LBL_DESCRIPTION',
                   'isnull' => true,
-                ),
-                '255'
-            ),
-        );
+                 ],
+                 '255',
+            ],
+        ];
     }
 
     /**

@@ -16,7 +16,7 @@ class SubPanelTestBase extends TestCase
 {
     protected $_tabController;
     protected $_currentTabs;
-    protected $_currentSubpanels = array('hidden' => array(), 'shown' => array());
+    protected $_currentSubpanels = ['hidden' => [], 'shown' => []];
     protected $_modListGlobal;
     protected $_subPanelDefinitions;
     protected $_testDefs;
@@ -34,7 +34,7 @@ class SubPanelTestBase extends TestCase
         SugarTestHelper::setUp('current_user');
         
         // @hack - Projects totally overrides the exempt module list in its subpanel
-        // viewdefs, so to run this test effectively, Projects needs to be 
+        // viewdefs, so to run this test effectively, Projects needs to be
         // disabled if it is enabled. - rgonzalez
         $this->_modListGlobal = $GLOBALS['moduleList'];
         $key = array_search('Project', $GLOBALS['moduleList']);
@@ -60,7 +60,7 @@ class SubPanelTestBase extends TestCase
         // Handle exempt modules, since this global gets set in other places in
         // the code base and is causing the last unit test to fail because of the
         // override that happens in the Project module subpaneldefs.php file.
-        $this->_exemptModules = empty($GLOBALS['modules_exempt_from_availability_check']) ? array() : $GLOBALS['modules_exempt_from_availability_check'];
+        $this->_exemptModules = empty($GLOBALS['modules_exempt_from_availability_check']) ? [] : $GLOBALS['modules_exempt_from_availability_check'];
         unset($GLOBALS['modules_exempt_from_availability_check']);
         
         // Copied from include/utils/security_utils.php

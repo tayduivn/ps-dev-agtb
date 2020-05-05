@@ -32,7 +32,7 @@ class MetaDataHelperTest extends TestCase
      */
     public function testGetFtsFields($module, array $vardef, $override, array $result)
     {
-        $helper = $this->getMetaDataHelperMock(array('getModuleVardefs'));
+        $helper = $this->getMetaDataHelperMock(['getModuleVardefs']);
         $helper->disableCache(true);
 
         $helper->expects($this->any())
@@ -45,91 +45,91 @@ class MetaDataHelperTest extends TestCase
 
     public function providerGetFtsFields()
     {
-        return array(
-            array(
+        return [
+            [
                 'Tasks',
-                array(
-                    'fields' => array(
-                        'name' => array(
+                [
+                    'fields' => [
+                        'name' => [
                             'name' => 'name',
                             'type' => 'name',
-                            'full_text_search' => array('enabled' => true, 'searchable' => true),
-                        ),
-                        'description' => array(
+                            'full_text_search' => ['enabled' => true, 'searchable' => true],
+                        ],
+                        'description' => [
                             'name' => 'description',
                             'type' => 'text',
-                        ),
-                        'work_log' => array(
+                        ],
+                        'work_log' => [
                             'name' => 'work_log',
                             'type' => 'text',
-                            'full_text_search' => array('enabled' => false),
-                        ),
-                        'date_modified' => array(
+                            'full_text_search' => ['enabled' => false],
+                        ],
+                        'date_modified' => [
                             'name' => 'date_modified',
                             'type' => 'datetime',
-                            'full_text_search' => array('enabled' => true, 'searchable' => false, 'type' => 'varchar'),
-                        ),
-                    ),
-                    'indices' => array(),
-                    'relationship' => array(),
-                ),
+                            'full_text_search' => ['enabled' => true, 'searchable' => false, 'type' => 'varchar'],
+                        ],
+                    ],
+                    'indices' => [],
+                    'relationship' => [],
+                ],
                 true,
-                array(
-                    'name' => array(
+                [
+                    'name' => [
                         'name' => 'name',
                         'type' => 'name',
-                        'full_text_search' => array('enabled' => true, 'searchable' => true),
-                    ),
-                    'date_modified' => array(
+                        'full_text_search' => ['enabled' => true, 'searchable' => true],
+                    ],
+                    'date_modified' => [
                         'name' => 'date_modified',
                         'type' => 'varchar',
-                        'full_text_search' => array('enabled' => true, 'searchable' => false, 'type' => 'varchar'),
-                    ),
-                ),
-            ),
+                        'full_text_search' => ['enabled' => true, 'searchable' => false, 'type' => 'varchar'],
+                    ],
+                ],
+            ],
             // No type override
-            array(
+            [
                 'Tasks',
-                array(
-                    'fields' => array(
-                        'name' => array(
+                [
+                    'fields' => [
+                        'name' => [
                             'name' => 'name',
                             'type' => 'name',
-                            'full_text_search' => array('enabled' => true, 'searchable' => true),
-                        ),
-                        'description' => array(
+                            'full_text_search' => ['enabled' => true, 'searchable' => true],
+                        ],
+                        'description' => [
                             'name' => 'description',
                             'type' => 'text',
-                        ),
-                        'work_log' => array(
+                        ],
+                        'work_log' => [
                             'name' => 'work_log',
                             'type' => 'text',
-                            'full_text_search' => array('enabled' => false),
-                        ),
-                        'date_modified' => array(
+                            'full_text_search' => ['enabled' => false],
+                        ],
+                        'date_modified' => [
                             'name' => 'date_modified',
                             'type' => 'datetime',
-                            'full_text_search' => array('enabled' => true, 'searchable' => false, 'type' => 'varchar'),
-                        ),
-                    ),
-                    'indices' => array(),
-                    'relationship' => array(),
-                ),
+                            'full_text_search' => ['enabled' => true, 'searchable' => false, 'type' => 'varchar'],
+                        ],
+                    ],
+                    'indices' => [],
+                    'relationship' => [],
+                ],
                 false,
-                array(
-                    'name' => array(
+                [
+                    'name' => [
                         'name' => 'name',
                         'type' => 'name',
-                        'full_text_search' => array('enabled' => true, 'searchable' => true),
-                    ),
-                    'date_modified' => array(
+                        'full_text_search' => ['enabled' => true, 'searchable' => true],
+                    ],
+                    'date_modified' => [
                         'name' => 'date_modified',
                         'type' => 'datetime',
-                        'full_text_search' => array('enabled' => true, 'searchable' => false, 'type' => 'varchar'),
-                    ),
-                ),
-            ),
-        );
+                        'full_text_search' => ['enabled' => true, 'searchable' => false, 'type' => 'varchar'],
+                    ],
+                ],
+            ],
+        ];
     }
 
 
@@ -145,7 +145,7 @@ class MetaDataHelperTest extends TestCase
     public function testGetAllAggDefsModule($module, array $vardef, array $result)
     {
         $helper = $this->getMetaDataHelperMock(
-            array('getFtsFields')
+            ['getFtsFields']
         );
         $helper->disableCache(true);
 
@@ -153,139 +153,139 @@ class MetaDataHelperTest extends TestCase
             ->method('getFtsFields')
             ->will($this->returnValue($vardef));
 
-        $fields = TestReflection::callProtectedMethod($helper, 'getAllAggDefsModule', array($module));
+        $fields = TestReflection::callProtectedMethod($helper, 'getAllAggDefsModule', [$module]);
         $this->assertEquals($result, $fields);
     }
 
     public function providerGetModuleAggregations()
     {
-        return array(
-            array(
+        return [
+            [
                 'Tasks',
-                array(
-                    'name' => array(
+                [
+                    'name' => [
                         'name' => 'name',
                         'type' => 'name',
-                        'full_text_search' => array('enabled' => true, 'searchable' => true),
-                    ),
+                        'full_text_search' => ['enabled' => true, 'searchable' => true],
+                    ],
                     // module specific aggregation, no options
-                    'description' => array(
+                    'description' => [
                         'name' => 'description',
                         'type' => 'text',
-                        'full_text_search' => array(
+                        'full_text_search' => [
                             'enabled' => true,
                             'searchable' => true,
-                            'aggregations' => array(
-                                'agg1' => array(
-                                    'type' => 'term'
-                                ),
-                            )
-                        ),
-                    ),
+                            'aggregations' => [
+                                'agg1' => [
+                                    'type' => 'term',
+                                ],
+                            ],
+                        ],
+                    ],
                     // module specific aggregation, with options
-                    'work_log' => array(
+                    'work_log' => [
                         'name' => 'work_log',
                         'type' => 'text',
-                        'full_text_search' => array(
+                        'full_text_search' => [
                             'enabled' => true,
                             'searchable' => true,
-                            'aggregations' => array(
-                                'agg2' => array(
+                            'aggregations' => [
+                                'agg2' => [
                                     'type' => 'term',
-                                    'options' => array('size' => 21, 'order' => 'desc'),
-                                ),
-                            ),
-                        ),
-                    ),
+                                    'options' => ['size' => 21, 'order' => 'desc'],
+                                ],
+                            ],
+                        ],
+                    ],
                     // cross module aggregation, no options
-                    'date_entered' => array(
+                    'date_entered' => [
                         'name' => 'date_entered',
                         'type' => 'datetime',
-                        'full_text_search' => array(
+                        'full_text_search' => [
                             'enabled' => true,
                             'searchable' => true,
-                            'aggregations' => array(
-                                'date_entered' => array(
+                            'aggregations' => [
+                                'date_entered' => [
                                     'type' => 'date_range',
-                                ),
-                            ),
-                        ),
-                    ),
+                                ],
+                            ],
+                        ],
+                    ],
                     // cross module aggregation, with options
-                    'date_modified' => array(
+                    'date_modified' => [
                         'name' => 'date_modified',
                         'type' => 'datetime',
-                        'full_text_search' => array(
+                        'full_text_search' => [
                             'enabled' => true,
                             'searchable' => true,
-                            'aggregations' => array(
-                                'date_modified' => array(
+                            'aggregations' => [
+                                'date_modified' => [
                                     'type' => 'date_range',
-                                    'options' => array('from' => 'foo', 'to' => 'bar'),
-                                ),
-                            ),
-                        ),
-                    ),
+                                    'options' => ['from' => 'foo', 'to' => 'bar'],
+                                ],
+                            ],
+                        ],
+                    ],
                     // mix of cross and module specific aggregations
-                    'status' => array(
+                    'status' => [
                         'name' => 'status',
                         'type' => 'enum',
-                        'full_text_search' => array(
+                        'full_text_search' => [
                             'enabled' => true,
                             'searchable' => true,
-                            'aggregations' => array(
-                                'status_types' => array(
+                            'aggregations' => [
+                                'status_types' => [
                                     'type' => 'term',
-                                    'options' => array('foo' => 'bar1'),
-                                ),
-                                'status' => array(
+                                    'options' => ['foo' => 'bar1'],
+                                ],
+                                'status' => [
                                     'type' => 'dropdown',
-                                    'options' => array('foo' => 'bar2'),
-                                ),
-                                'status_something' => array(
+                                    'options' => ['foo' => 'bar2'],
+                                ],
+                                'status_something' => [
                                     'type' => 'myStatus',
-                                    'options' => array('foo' => 'bar3'),
-                                ),
-                            ),
-                        ),
-                    ),
-                ),
-                array(
-                    'cross' => array(
-                        'date_entered' => array(
+                                    'options' => ['foo' => 'bar3'],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                [
+                    'cross' => [
+                        'date_entered' => [
                             'type' => 'date_range',
-                            'options' => array(),
-                        ),
-                        'date_modified' => array(
+                            'options' => [],
+                        ],
+                        'date_modified' => [
                             'type' => 'date_range',
-                            'options' => array('from' => 'foo', 'to' => 'bar'),
-                        ),
-                        'status' => array(
+                            'options' => ['from' => 'foo', 'to' => 'bar'],
+                        ],
+                        'status' => [
                             'type' => 'dropdown',
-                            'options' => array('foo' => 'bar2'),
-                        ),
-                    ),
-                    'module' => array(
-                        'description.agg1' => array(
+                            'options' => ['foo' => 'bar2'],
+                        ],
+                    ],
+                    'module' => [
+                        'description.agg1' => [
                             'type' => 'term',
-                            'options' => array()
-                        ),
-                        'work_log.agg2' => array(
+                            'options' => [],
+                        ],
+                        'work_log.agg2' => [
                             'type' => 'term',
-                            'options' => array('size' => 21, 'order' => 'desc'),
-                        ),
-                        'status.status_types' => array(
+                            'options' => ['size' => 21, 'order' => 'desc'],
+                        ],
+                        'status.status_types' => [
                             'type' => 'term',
-                            'options' => array('foo' => 'bar1'),
-                        ),
-                        'status.status_something' => array(
+                            'options' => ['foo' => 'bar1'],
+                        ],
+                        'status.status_something' => [
                             'type' => 'myStatus',
-                            'options' => array('foo' => 'bar3'),
-                        ),
-                    ),
-                ),
-            ),
-        );
+                            'options' => ['foo' => 'bar3'],
+                        ],
+                    ],
+                ],
+            ],
+        ];
     }
 
     /**
@@ -303,43 +303,43 @@ class MetaDataHelperTest extends TestCase
 
     public function dataProviderIsFieldSearchable()
     {
-        return array(
-            array(
-                array(
+        return [
+            [
+                [
                     'name' => 'foo1',
-                    'full_text_search' => array('enabled' => true, 'searchable' => false),
-                ),
+                    'full_text_search' => ['enabled' => true, 'searchable' => false],
+                ],
                 false,
-            ),
-            array(
-                array(
+            ],
+            [
+                [
                     'name' => 'foo2',
-                    'full_text_search' => array('enabled' => true, 'searchable' => true),
-                ),
+                    'full_text_search' => ['enabled' => true, 'searchable' => true],
+                ],
                 true,
-            ),
-            array(
-                array(
+            ],
+            [
+                [
                     'name' => 'foo3',
-                    'full_text_search' => array('enabled' => true, 'boost' => 1),
-                ),
+                    'full_text_search' => ['enabled' => true, 'boost' => 1],
+                ],
                 true,
-            ),
-            array(
-                array(
+            ],
+            [
+                [
                     'name' => 'foo4',
-                    'full_text_search' => array('enabled' => true, 'boost' => 3, 'searchable' => true),
-                ),
+                    'full_text_search' => ['enabled' => true, 'boost' => 3, 'searchable' => true],
+                ],
                 true,
-            ),
-            array(
-                array(
+            ],
+            [
+                [
                     'name' => 'foo5',
-                    'full_text_search' => array('enabled' => true),
-                ),
+                    'full_text_search' => ['enabled' => true],
+                ],
                 false,
-            ),
-        );
+            ],
+        ];
     }
 
 
@@ -352,7 +352,7 @@ class MetaDataHelperTest extends TestCase
     {
 
         $helper = $this->getMetaDataHelperMock(
-            array('getRealCacheKey', 'isRealCacheDisabled', 'getRealCache', 'setRealCache')
+            ['getRealCacheKey', 'isRealCacheDisabled', 'getRealCache', 'setRealCache']
         );
         $helper->expects($this->any())
             ->method('getRealCacheKey')
@@ -369,47 +369,46 @@ class MetaDataHelperTest extends TestCase
 
 
         TestReflection::setProtectedValue($helper, 'disableCache', $isCacheDisabled);
-        TestReflection::setProtectedValue($helper, 'inMemoryCache', array());
+        TestReflection::setProtectedValue($helper, 'inMemoryCache', []);
 
-        TestReflection::callProtectedMethod($helper, 'setCache', array($key, $value));
-        $result = TestReflection::callProtectedMethod($helper, 'getCache', array($key));
+        TestReflection::callProtectedMethod($helper, 'setCache', [$key, $value]);
+        $result = TestReflection::callProtectedMethod($helper, 'getCache', [$key]);
 
         $this->assertSame($result, $expected);
-
     }
 
     public function providerTestInMemoryCache()
     {
-        return array(
-            array(
+        return [
+            [
                 "enabled_modules",
-                array("Accounts", "Contacts"),
+                ["Accounts", "Contacts"],
                 false,
                 false,
-                array("Accounts", "Contacts"),
-            ),
-            array(
+                ["Accounts", "Contacts"],
+            ],
+            [
                 "enabled_modules",
-                array("Accounts", "Contacts"),
+                ["Accounts", "Contacts"],
                 true,
                 true,
-                array("Accounts", "Contacts"),
-            ),
-            array(
+                ["Accounts", "Contacts"],
+            ],
+            [
                 "enabled_modules",
-                array("Accounts", "Contacts"),
+                ["Accounts", "Contacts"],
                 true,
                 false,
                 null,
-            ),
-            array(
+            ],
+            [
                 "enabled_modules",
-                array("Accounts", "Contacts"),
+                ["Accounts", "Contacts"],
                 false,
                 true,
-                array("Accounts", "Contacts"),
-            ),
-        );
+                ["Accounts", "Contacts"],
+            ],
+        ];
     }
 
     /**

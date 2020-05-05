@@ -32,8 +32,6 @@ class RepairDatabaseTest extends TestCase
             $this->db->query($sql4);
             $this->db->commit();
         }
-
-
     }
 
     protected function tearDown() : void
@@ -52,31 +50,31 @@ class RepairDatabaseTest extends TestCase
         }
     }
 
-public function testRepairTableParams()
-{
+    public function testRepairTableParams()
+    {
         if ($this->db->dbType != 'mysql') {
-	       $this->markTestSkipped('Skip if not mysql db');
-	       return;	
-	    }
-	
-	    $bean = new Meeting();
-	    $result = $this->getRepairTableParamsResult($bean);
+            $this->markTestSkipped('Skip if not mysql db');
+            return;
+        }
+    
+        $bean = new Meeting();
+        $result = $this->getRepairTableParamsResult($bean);
         $this->assertMatchesRegularExpression(
             '/ALTER TABLE meetings\s+?modify column status varchar\(100\)  DEFAULT \'Planned\' NULL/i',
             $result
         );
 
-	    $bean = new Call();
-	    $result = $this->getRepairTableParamsResult($bean);
-	    $this->assertTrue(!empty($result));
+        $bean = new Call();
+        $result = $this->getRepairTableParamsResult($bean);
+        $this->assertTrue(!empty($result));
         $this->assertMatchesRegularExpression(
             '/ALTER TABLE calls\s+?modify column status varchar\(100\)  DEFAULT \'Planned\' NULL/i',
             $result
         );
 
-	    $bean = new Task();
-	    $result = $this->getRepairTableParamsResult($bean);
-	    $this->assertTrue(!empty($result));	    
+        $bean = new Task();
+        $result = $this->getRepairTableParamsResult($bean);
+        $this->assertTrue(!empty($result));
         $this->assertMatchesRegularExpression(
             '/ALTER TABLE tasks\s+?modify column status varchar\(100\)  DEFAULT \'Not Started\' NULL/i',
             $result
@@ -85,32 +83,30 @@ public function testRepairTableParams()
         $def = $GLOBALS['dictionary']['email_addr_bean_rel'];
         $result = $this->db->repairTableParams($def['table'], $def['fields'], $def['indices'], false, $defs['engine'] ?? null);
         $this->assertMatchesRegularExpression('/ALTER TABLE email_addr_bean_rel\s+ADD INDEX idx_email_address_id \(email_address_id\)/i', $result);
-}
+    }
 
-private function getRepairTableParamsResult($bean)
-{
+    private function getRepairTableParamsResult($bean)
+    {
         $indices   = $bean->getIndices();
         $fielddefs = $bean->getFieldDefinitions();
         $tablename = $bean->getTableName();
 
-		//Clean the indicies to prevent duplicate definitions
-		$new_indices = array();
-		foreach($indices as $ind_def)
-		{
-			$new_indices[$ind_def['name']] = $ind_def;
-		}
-		
+        //Clean the indicies to prevent duplicate definitions
+        $new_indices = [];
+        foreach ($indices as $ind_def) {
+            $new_indices[$ind_def['name']] = $ind_def;
+        }
+        
         global $dictionary;
         $engine=null;
-        if (isset($dictionary[$bean->getObjectName()]['engine']) && !empty($dictionary[$bean->getObjectName()]['engine']) )
-        {
-            $engine = $dictionary[$bean->getObjectName()]['engine'];	
+        if (isset($dictionary[$bean->getObjectName()]['engine']) && !empty($dictionary[$bean->getObjectName()]['engine'])) {
+            $engine = $dictionary[$bean->getObjectName()]['engine'];
         }
         
         
         $result = $this->db->repairTableParams($tablename, $fielddefs, $new_indices, false, $engine);
-	    return $result;	
-}
+        return $result;
+    }
 
     /**
      * @dataProvider typeProvider()

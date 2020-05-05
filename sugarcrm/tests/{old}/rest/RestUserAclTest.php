@@ -11,7 +11,8 @@
  */
 
 
-class RestUserAclTest extends RestTestBase {
+class RestUserAclTest extends RestTestBase
+{
     protected function tearDown() : void
     {
         $GLOBALS['db']->query("DELETE FROM users WHERE id = '{$this->new_user_id}'");
@@ -22,18 +23,26 @@ class RestUserAclTest extends RestTestBase {
     /**
      * @group rest
      */
-    public function testAcls() {
-        $restReply = $this->_restCall("Users/",
-            json_encode(array('first_name'=>'UNIT TEST', 'last_name' => '- AFTER')),
-            'POST');
+    public function testAcls()
+    {
+        $restReply = $this->_restCall(
+            "Users/",
+            json_encode(['first_name'=>'UNIT TEST', 'last_name' => '- AFTER']),
+            'POST'
+        );
 
-        $this->assertTrue(!isset($restReply['reply']['id']),
-            "An user was created");
+        $this->assertTrue(
+            !isset($restReply['reply']['id']),
+            "An user was created"
+        );
 
-        $this->assertEquals($restReply['reply']['error'], 'not_authorized',
-            "An user was created");
+        $this->assertEquals(
+            $restReply['reply']['error'],
+            'not_authorized',
+            "An user was created"
+        );
 
-        $restReply = $this->_restCall("/me", json_encode(array('first_name' => 'Awesome')), 'PUT');
+        $restReply = $this->_restCall("/me", json_encode(['first_name' => 'Awesome']), 'PUT');
 
         $this->assertEquals($restReply['reply']['current_user']['full_name'], 'Awesome ' . $GLOBALS['current_user']->last_name, 'Did not change my first name');
 
@@ -50,35 +59,48 @@ class RestUserAclTest extends RestTestBase {
         $this->_restLogin($user->user_name, 'awesome');
 
         // make sure he can't delete himself..that would be silly
-        $restReply = $this->_restCall("Users/{$user->id}", array(), "DELETE");
+        $restReply = $this->_restCall("Users/{$user->id}", [], "DELETE");
 
-        $this->assertEquals($restReply['reply']['error'], 'not_authorized',
-            "You just deleted yourself..");
+        $this->assertEquals(
+            $restReply['reply']['error'],
+            'not_authorized',
+            "You just deleted yourself.."
+        );
 
-        $restReply = $this->_restCall("Users/",
-            json_encode(array('first_name'=>'UNIT TEST', 'last_name' => '- AFTER', 'is_admin' => true)),
-            'POST');
+        $restReply = $this->_restCall(
+            "Users/",
+            json_encode(['first_name'=>'UNIT TEST', 'last_name' => '- AFTER', 'is_admin' => true]),
+            'POST'
+        );
 
-        $this->assertTrue(isset($restReply['reply']['id']),
-            "An user was not created");
+        $this->assertTrue(
+            isset($restReply['reply']['id']),
+            "An user was not created"
+        );
 
         $this->assertEquals($restReply['reply']['is_admin'], true, "Is admin was not set");
 
         $this->new_user_id = $restReply['reply']['id'];
 
-        $restReply = $this->_restCall("Users/{$this->new_user_id}", array(), "DELETE");
+        $restReply = $this->_restCall("Users/{$this->new_user_id}", [], "DELETE");
 
-        $this->assertTrue(isset($restReply['reply']['id']),
-            "An user was not deleted");
+        $this->assertTrue(
+            isset($restReply['reply']['id']),
+            "An user was not deleted"
+        );
 
         $this->deleted_user_id = $this->new_user_id;
 
-        $restReply = $this->_restCall("Users/",
-            json_encode(array('first_name'=>'UNIT TEST', 'last_name' => '- AFTER', 'is_admin' => true)),
-            'POST');
+        $restReply = $this->_restCall(
+            "Users/",
+            json_encode(['first_name'=>'UNIT TEST', 'last_name' => '- AFTER', 'is_admin' => true]),
+            'POST'
+        );
 
-        $this->assertTrue(isset($restReply['reply']['id']),
-            "An user was not created");
+        $this->assertTrue(
+            isset($restReply['reply']['id']),
+            "An user was not created"
+        );
 
         $this->new_user_id = $restReply['reply']['id'];
 
@@ -86,19 +108,25 @@ class RestUserAclTest extends RestTestBase {
         // test is_admin set with original user
         $this->_restLogin();
 
-        $restReply = $this->_restCall("Users/{$this->new_user_id}", json_encode(array("is_admin" => false)), "PUT");
+        $restReply = $this->_restCall("Users/{$this->new_user_id}", json_encode(["is_admin" => false]), "PUT");
 
-        $this->assertEquals($restReply['reply']['error'], 'not_authorized',
-            "An user was created");
+        $this->assertEquals(
+            $restReply['reply']['error'],
+            'not_authorized',
+            "An user was created"
+        );
 
         // test delete with original user
-        $restReply = $this->_restCall("Users/{$this->new_user_id}", array(), "DELETE");
+        $restReply = $this->_restCall("Users/{$this->new_user_id}", [], "DELETE");
 
-        $this->assertEquals($restReply['reply']['error'], 'not_authorized',
-            "An user was deleted");
+        $this->assertEquals(
+            $restReply['reply']['error'],
+            'not_authorized',
+            "An user was deleted"
+        );
 
         //test getting picture file of another user
-        $restReply = $this->_restCall("Users/1/file/picture", array());
+        $restReply = $this->_restCall("Users/1/file/picture", []);
 
         $this->assertEmpty($restReply['reply']['error'], "An error was thrown it was: " . print_r($restReply['reply']['error'], true));
 

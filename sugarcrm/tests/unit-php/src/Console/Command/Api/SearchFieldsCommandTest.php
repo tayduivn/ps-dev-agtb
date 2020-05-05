@@ -38,65 +38,65 @@ class SearchFieldsCommandTest extends AbstractApiCommandTestCase
         // - search_only
         // - order_by_boost
 
-        $test0 = array(
-            'Accounts' => array(
-                'name' => array(
+        $test0 = [
+            'Accounts' => [
+                'name' => [
                     'name' => 'name',
                     'type' => 'name',
                     'searchable' => true,
                     'boost' => 1.9099999999999999,
-                ),
-                'date_entered' => array(
+                ],
+                'date_entered' => [
                     'name' => 'date_entered',
                     'type' => 'datetime',
                     'searchable' => false,
-                ),
-                'description' => array(
+                ],
+                'description' => [
                     'name' => 'description',
                     'type' => 'text',
                     'searchable' => true,
                     'boost' => 0.71999999999999997,
-                ),
-                'phone_fax' => array(
+                ],
+                'phone_fax' => [
                     'name' => 'phone_fax',
                     'type' => 'phone',
                     'searchable' => true,
                     'boost' => 1.04,
-                ),
-            ),
-            'Contracts' => array(
-                'name' => array(
+                ],
+            ],
+            'Contracts' => [
+                'name' => [
                     'name' => 'name',
                     'type' => 'name',
                     'searchable' => true,
                     'boost' => 1.5900000000000001,
-                ),
-                'date_entered' => array(
+                ],
+                'date_entered' => [
                     'name' => 'date_entered',
                     'type' => 'datetime',
                     'searchable' => false,
-                ),
-                'modified_user_id' => array(
+                ],
+                'modified_user_id' => [
                     'name' => 'modified_user_id',
                     'type' => 'id',
                     'searchable' => false,
-                ),
-                'description' => array(
+                ],
+                'description' => [
                     'name' => 'description',
                     'type' => 'text',
                     'searchable' => true,
                     'boost' => 0.63,
-                ),
-                'reference_code' => array(
+                ],
+                'reference_code' => [
                     'name' => 'reference_code',
                     'type' => 'varchar',
                     'searchable' => true,
                     'boost' => 0.62,
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
 
-        $test1 = array (
+        $test1 =  [
             'Contacts.first_name' => 1.99,
             'Contacts.last_name' => 1.97,
             'Contacts.email' => 1.95,
@@ -106,21 +106,21 @@ class SearchFieldsCommandTest extends AbstractApiCommandTestCase
             'Leads.first_name' => 1.8700000000000001,
             'Leads.last_name' => 1.8500000000000001,
             'Leads.email' => 1.8300000000000001,
-        );
+        ];
 
-        return array(
-            array(
+        return [
+            [
                 $test0,
-                array(),
+                [],
                 'SearchFieldsCommand_0.txt',
                 0,
-            ),
-            array(
+            ],
+            [
                 $test1,
-                array('--byBoost' => true),
+                ['--byBoost' => true],
                 'SearchFieldsCommand_1.txt',
                 0,
-            ),
-        );
+            ],
+        ];
     }
 }

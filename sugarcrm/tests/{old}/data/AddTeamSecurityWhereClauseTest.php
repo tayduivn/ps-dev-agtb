@@ -17,19 +17,19 @@ use PHPUnit\Framework\MockObject\MockObject;
 class AddTeamSecurityWhereClauseTest extends TestCase
 {
     protected function setUp() : void
-	{
+    {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
-	}
+    }
 
     protected function tearDown() : void
-	{
+    {
         SugarTestHelper::tearDown();
-	}
+    }
 
-	public function testAddTeamSecurityWhereClauseForRegularUser()
-	{
+    public function testAddTeamSecurityWhereClauseForRegularUser()
+    {
         $bean = new SugarBean();
         $bean->module_dir = 'Foo';
         $bean->table_name = 'foo';
@@ -44,11 +44,11 @@ class AddTeamSecurityWhereClauseTest extends TestCase
         $this->assertStringContainsString(
             "INNER JOIN (select tst.team_set_id from team_sets_teams tst INNER JOIN team_memberships team_memberships ON tst.team_id = team_memberships.team_id AND team_memberships.user_id = '{$GLOBALS['current_user']->id}' AND team_memberships.deleted=0 group by tst.team_set_id) foo_tf on foo_tf.team_set_id = foo.team_set_id ",
             $query
-            );
+        );
     }
 
     public function testAddTeamSecurityWhereClauseForRegularUserSpecifyTableAlias()
-	{
+    {
         $bean = new SugarBean();
         $bean->module_dir = 'Foo';
         $bean->table_name = 'foo';
@@ -65,11 +65,11 @@ class AddTeamSecurityWhereClauseTest extends TestCase
         $this->assertStringContainsString(
             "INNER JOIN (select tst.team_set_id from team_sets_teams tst INNER JOIN team_memberships team_membershipsmyfoo ON tst.team_id = team_membershipsmyfoo.team_id AND team_membershipsmyfoo.user_id = '{$GLOBALS['current_user']->id}' AND team_membershipsmyfoo.deleted=0 group by tst.team_set_id) myfoo_tf on myfoo_tf.team_set_id = myfoo.team_set_id ",
             $query
-            );
+        );
     }
 
     public function testAddTeamSecurityWhereClauseForRegularUserWithJoinTeamsParameterTrue()
-	{
+    {
         $bean = new SugarBean();
         $bean->module_dir = 'Foo';
         $bean->table_name = 'foo';
@@ -90,8 +90,8 @@ class AddTeamSecurityWhereClauseTest extends TestCase
     }
 
     public function testAddTeamSecurityWhereClauseWhenRowLevelSecurityIsDisabled()
-	{
-	    $bean = new SugarBean();
+    {
+        $bean = new SugarBean();
         $bean->module_dir = 'Foo';
         $bean->table_name = 'foo';
         $bean->disable_row_level_security = true;
@@ -103,12 +103,12 @@ class AddTeamSecurityWhereClauseTest extends TestCase
         $this->assertEquals(
             '',
             $query
-            );
+        );
     }
 
     public function testAddTeamSecurityWhereClauseWhenModuleIsWorkflow()
-	{
-	    $bean = new SugarBean();
+    {
+        $bean = new SugarBean();
         $bean->module_dir = 'WorkFlow';
         $bean->table_name = 'workflow';
         $bean->addVisibilityStrategy('TeamSecurity');
@@ -119,12 +119,12 @@ class AddTeamSecurityWhereClauseTest extends TestCase
         $this->assertEquals(
             '',
             $query
-            );
+        );
     }
 
     public function testAddTeamSecurityWhereClauseForAdmin()
-	{
-	    $GLOBALS['current_user']->is_admin = 1;
+    {
+        $GLOBALS['current_user']->is_admin = 1;
 
         $bean = new SugarBean();
         $bean->module_dir = 'Foo';
@@ -137,18 +137,18 @@ class AddTeamSecurityWhereClauseTest extends TestCase
         $this->assertEquals(
             '',
             $query
-            );
+        );
     }
 
     /**
      * @ticket 26772
      */
-	public function testAddTeamSecurityWhereClauseForAdminForModule()
-	{
+    public function testAddTeamSecurityWhereClauseForAdminForModule()
+    {
         global $current_user;
 
         /** @var User|MockObject $current_user */
-        $current_user = $this->createPartialMock('User', array('isAdminForModule'));
+        $current_user = $this->createPartialMock('User', ['isAdminForModule']);
         $current_user->expects($this->atLeastOnce())
             ->method('isAdminForModule')
             ->with('Foo')

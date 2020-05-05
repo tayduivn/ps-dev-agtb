@@ -11,17 +11,18 @@
  */
 
 
-class BugEmptyFieldsListTest extends RestTestBase {
+class BugEmptyFieldsListTest extends RestTestBase
+{
     protected function setUp() : void
     {
         parent::setUp();
 
-        $this->accounts = array();
+        $this->accounts = [];
     }
     
     protected function tearDown() : void
     {
-        foreach ( $this->accounts as $account ) {
+        foreach ($this->accounts as $account) {
             $GLOBALS['db']->query("DELETE FROM accounts WHERE id = '{$account->id}'");
             if ($GLOBALS['db']->tableExists('accounts_cstm')) {
                 $GLOBALS['db']->query("DELETE FROM accounts_cstm WHERE id_c = '{$account->id}'");
@@ -34,17 +35,18 @@ class BugEmptyFieldsListTest extends RestTestBase {
     /**
      * @group rest
      */
-    public function testList() {
+    public function testList()
+    {
         // Make sure there is at least one page of accounts
-        for ( $i = 0 ; $i < 40 ; $i++ ) {
+        for ($i = 0; $i < 40; $i++) {
             $account = new Account();
             $account->name = "UNIT TEST ".count($this->accounts)." - ".create_guid();
-            $account->billing_address_postalcode = sprintf("%08d",count($this->accounts));
+            $account->billing_address_postalcode = sprintf("%08d", count($this->accounts));
             $account->save();
             $this->accounts[] = $account;
         }
         $GLOBALS['db']->commit();
         $restReply = $this->_restCall("Accounts?fields=");
-        $this->assertNotEquals($restReply['replyRaw'],"ERROR: No access to view field:  in module: Accounts");
+        $this->assertNotEquals($restReply['replyRaw'], "ERROR: No access to view field:  in module: Accounts");
     }
 }

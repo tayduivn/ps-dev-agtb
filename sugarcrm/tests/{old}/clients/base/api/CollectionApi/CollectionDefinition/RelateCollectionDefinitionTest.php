@@ -27,16 +27,16 @@ class RelateCollectionDefinitionTest extends TestCase
     {
         $this->definition = $this->getMockBuilder('RelateCollectionDefinition')
             ->disableOriginalConstructor()
-            ->setMethods(array('dummy'))
+            ->setMethods(['dummy'])
             ->getMockForAbstractClass();
     }
 
     public function testLoadDefinitionSuccess()
     {
-        $fieldDef = array(
+        $fieldDef = [
             'type' => 'collection',
-            'links' => array(),
-        );
+            'links' => [],
+        ];
 
         $actual = $this->loadDefinition('test', $fieldDef);
         $this->assertEquals($fieldDef, $actual);
@@ -53,16 +53,16 @@ class RelateCollectionDefinitionTest extends TestCase
 
     public static function loadDefinitionFailureProvider()
     {
-        return array(
-            'non-array' => array(
+        return [
+            'non-array' => [
                 null,
-                'SugarApiExceptionNotFound'
-            ),
-            'non-collection' => array(
-                array('type' => 'varchar'),
-                'SugarApiExceptionNotFound'
-            ),
-        );
+                'SugarApiExceptionNotFound',
+            ],
+            'non-collection' => [
+                ['type' => 'varchar'],
+                'SugarApiExceptionNotFound',
+            ],
+        ];
     }
 
     /**
@@ -73,7 +73,7 @@ class RelateCollectionDefinitionTest extends TestCase
         /** @var SugarBean|MockObject $bean */
         $bean = $this->getMockBuilder('SugarBean')
             ->disableOriginalConstructor()
-            ->setMethods(array('getFieldDefinition'))
+            ->setMethods(['getFieldDefinition'])
             ->getMock();
         $bean->expects($this->once())
             ->method('getFieldDefinition')

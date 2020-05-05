@@ -19,7 +19,7 @@
  * offset and limit support to the get_relationships call is one such approach.
  */
 
-require_once('vendor/nusoap//nusoap.php');
+require_once 'vendor/nusoap//nusoap.php';
 
 class Bug50780Test extends SOAPTestCase
 {
@@ -49,92 +49,87 @@ class Bug50780Test extends SOAPTestCase
 
     public function testGetRelationshipReturnAllMeetings()
     {
-        $result = $this->_soapClient->call('get_relationships', array(
+        $result = $this->_soapClient->call('get_relationships', [
                 'session' => $this->_sessionId,
                 'module_name' => 'Users',
                 'module_id' => self::$_user->id,
                 'link_field_name' => 'meetings',
                 'related_module_query' => '',
-                'related_fields' => array('id', 'name'),
+                'related_fields' => ['id', 'name'],
                 'related_module_link_name_to_fields_array' => '',
                 'deleted' => 0,
                 'order_by' => 'date_entered',
                 'offset' => 0,
-                'limit' => false)
-        );
+                'limit' => false]);
 
         $this->assertEquals(4, count($result['entry_list']));
     }
 
     public function testGetRelationshipReturnNothingWithOffsetSetHigh()
     {
-        $result = $this->_soapClient->call('get_relationships', array(
+        $result = $this->_soapClient->call('get_relationships', [
                 'session' => $this->_sessionId,
                 'module_name' => 'Users',
                 'module_id' => self::$_user->id,
                 'link_field_name' => 'meetings',
                 'related_module_query' => '',
-                'related_fields' => array('id', 'name'),
+                'related_fields' => ['id', 'name'],
                 'related_module_link_name_to_fields_array' => '',
                 'deleted' => 0,
                 'order_by' => 'date_entered',
                 'offset' => 5,
-                'limit' => 4)
-        );
+                'limit' => 4]);
 
         $this->assertEquals(0, count($result['entry_list']));
     }
 
     public function testGetRelationshipReturnThirdMeeting()
     {
-        $result = $this->_soapClient->call('get_relationships', array(
+        $result = $this->_soapClient->call('get_relationships', [
                 'session' => $this->_sessionId,
                 'module_name' => 'Users',
                 'module_id' => self::$_user->id,
                 'link_field_name' => 'meetings',
                 'related_module_query' => '',
-                'related_fields' => array('id', 'name'),
+                'related_fields' => ['id', 'name'],
                 'related_module_link_name_to_fields_array' => '',
                 'deleted' => 0,
                 'order_by' => 'date_entered',
                 'offset' => 2,
-                'limit' => 1)
-        );
+                'limit' => 1]);
 
         $this->assertEquals(1, count($result['entry_list']));
     }
 
     public function testGetRelationshipOffsetDoesntReturnSameRecords()
     {
-        $result1 = $this->_soapClient->call('get_relationships', array(
+        $result1 = $this->_soapClient->call('get_relationships', [
                 'session' => $this->_sessionId,
                 'module_name' => 'Users',
                 'module_id' => self::$_user->id,
                 'link_field_name' => 'meetings',
                 'related_module_query' => '',
-                'related_fields' => array('id', 'name', 'date_entered'),
+                'related_fields' => ['id', 'name', 'date_entered'],
                 'related_module_link_name_to_fields_array' => '',
                 'deleted' => 0,
                 'order_by' => 'date_entered',
                 'offset' => 0,
-                'limit' => 2)
-        );
+                'limit' => 2]);
 
         $this->assertEquals(2, count($result1['entry_list']));
 
-        $result2 = $this->_soapClient->call('get_relationships', array(
+        $result2 = $this->_soapClient->call('get_relationships', [
                 'session' => $this->_sessionId,
                 'module_name' => 'Users',
                 'module_id' => self::$_user->id,
                 'link_field_name' => 'meetings',
                 'related_module_query' => '',
-                'related_fields' => array('id', 'name', 'date_entered'),
+                'related_fields' => ['id', 'name', 'date_entered'],
                 'related_module_link_name_to_fields_array' => '',
                 'deleted' => 0,
                 'order_by' => 'date_entered',
                 'offset' => 2,
-                'limit' => 2)
-        );
+                'limit' => 2]);
 
         $this->assertEquals(2, count($result2['entry_list']));
     }

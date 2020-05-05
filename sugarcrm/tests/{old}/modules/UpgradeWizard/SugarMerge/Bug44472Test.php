@@ -18,80 +18,80 @@ class Bug44472Test extends TestCase
 {
     protected function setUp() : void
     {
-   SugarTestMergeUtilities::setupFiles(array('Cases'), array('editviewdefs'), 'tests/{old}/modules/UpgradeWizard/SugarMerge/od_metadata_files/610');
-}
+        SugarTestMergeUtilities::setupFiles(['Cases'], ['editviewdefs'], 'tests/{old}/modules/UpgradeWizard/SugarMerge/od_metadata_files/610');
+    }
 
     protected function tearDown() : void
     {
-   SugarTestMergeUtilities::teardownFiles();
-}
+        SugarTestMergeUtilities::teardownFiles();
+    }
 
 
-function test620TemplateMetaMergeOnCases() 
-{		
-   $this->merge = new EditViewMerge();	
-   $this->merge->merge('Cases', 'tests/{old}/modules/UpgradeWizard/SugarMerge/od_metadata_files/610/oob/modules/Cases/metadata/editviewdefs.php', 'modules/Cases/metadata/editviewdefs.php', 'custom/modules/Cases/metadata/editviewdefs.php');
-   $this->assertTrue(file_exists('custom/modules/Cases/metadata/editviewdefs.php.suback.php'));
-   require('custom/modules/Cases/metadata/editviewdefs.php');
-   $this->assertFalse(isset($viewdefs['Cases']['EditView']['templateMeta']['form']), 'Assert that the templateMeta is pulled from the upgraded view rather than the customized view');
-}
+    function test620TemplateMetaMergeOnCases()
+    {
+        $this->merge = new EditViewMerge();
+        $this->merge->merge('Cases', 'tests/{old}/modules/UpgradeWizard/SugarMerge/od_metadata_files/610/oob/modules/Cases/metadata/editviewdefs.php', 'modules/Cases/metadata/editviewdefs.php', 'custom/modules/Cases/metadata/editviewdefs.php');
+        $this->assertTrue(file_exists('custom/modules/Cases/metadata/editviewdefs.php.suback.php'));
+        require 'custom/modules/Cases/metadata/editviewdefs.php';
+        $this->assertFalse(isset($viewdefs['Cases']['EditView']['templateMeta']['form']), 'Assert that the templateMeta is pulled from the upgraded view rather than the customized view');
+    }
 
-function test620TemplateMetaMergeOnMeetings() 
-{		
-   $this->merge = new EditViewMergeMock();	
-   $this->merge->setModule('Meetings');
-   $data = array();
-   $data['Meetings'] = array('EditView'=>array('templateMeta'=>array('form')));
-   $this->merge->setCustomData($data);
-   $newData = array();
-   $newData['Meetings'] = array('EditView'=>array('templateMeta'=>array()));
-   $this->merge->setNewData($newData);
-   $this->merge->testMergeTemplateMeta();
-   $newData = $this->merge->getNewData();   
-   $this->assertTrue(!isset($newData['Meetings']['EditView']['templateMeta']['form']), 'Assert that we do not take customized templateMeta section for Meetings');
-}
+    function test620TemplateMetaMergeOnMeetings()
+    {
+        $this->merge = new EditViewMergeMock();
+        $this->merge->setModule('Meetings');
+        $data = [];
+        $data['Meetings'] = ['EditView'=>['templateMeta'=>['form']]];
+        $this->merge->setCustomData($data);
+        $newData = [];
+        $newData['Meetings'] = ['EditView'=>['templateMeta'=>[]]];
+        $this->merge->setNewData($newData);
+        $this->merge->testMergeTemplateMeta();
+        $newData = $this->merge->getNewData();
+        $this->assertTrue(!isset($newData['Meetings']['EditView']['templateMeta']['form']), 'Assert that we do not take customized templateMeta section for Meetings');
+    }
 
-function test620TemplateMetaMergeOnCalls() 
-{		
-   $this->merge = new EditViewMergeMock();	
-   $this->merge->setModule('Calls');
-   $data = array();
-   $data['Calls'] = array('EditView'=>array('templateMeta'=>array('form')));
-   $this->merge->setCustomData($data);   
-   $newData = array();
-   $newData['Calls'] = array('EditView'=>array('templateMeta'=>array()));
-   $this->merge->setNewData($newData);
-   $this->merge->testMergeTemplateMeta();
+    function test620TemplateMetaMergeOnCalls()
+    {
+        $this->merge = new EditViewMergeMock();
+        $this->merge->setModule('Calls');
+        $data = [];
+        $data['Calls'] = ['EditView'=>['templateMeta'=>['form']]];
+        $this->merge->setCustomData($data);
+        $newData = [];
+        $newData['Calls'] = ['EditView'=>['templateMeta'=>[]]];
+        $this->merge->setNewData($newData);
+        $this->merge->testMergeTemplateMeta();
    
-   $newData = $this->merge->getNewData();
-   $this->assertTrue(!isset($newData['Calls']['EditView']['templateMeta']['form']), 'Assert that we do not take customized templateMeta section for Calls');
-}
+        $newData = $this->merge->getNewData();
+        $this->assertTrue(!isset($newData['Calls']['EditView']['templateMeta']['form']), 'Assert that we do not take customized templateMeta section for Calls');
+    }
 }
 
 class EditViewMergeMock extends EditViewMerge
 {
     function setModule($module)
     {
-    	$this->module = $module;
+        $this->module = $module;
     }
     
     function setCustomData($data)
     {
-        $this->customData = $data;	
+        $this->customData = $data;
     }
     
     function setNewData($data)
     {
-    	$this->newData = $data;
+        $this->newData = $data;
     }
     
     function getNewData()
     {
-    	return $this->newData;
+        return $this->newData;
     }
     
     function testMergeTemplateMeta()
     {
-    	$this->mergeTemplateMeta();
+        $this->mergeTemplateMeta();
     }
 }

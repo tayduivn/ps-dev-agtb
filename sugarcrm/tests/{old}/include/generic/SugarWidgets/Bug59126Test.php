@@ -18,12 +18,12 @@ class Bug59126Test extends TestCase
 
     public function testLastName()
     {
-        $layoutDef = array(
+        $layoutDef = [
             'table' => $this->contact->table_name,
-            'input_name0' => array(),
+            'input_name0' => [],
             'name' => 'contacts',
             'rname' => 'last_name',
-        );
+        ];
         $html = $this->getSugarWidgetFieldRelate()->displayInput($layoutDef);
         $regExpPattern =$this->getAssertRegExp($this->contact->id, "{$this->contact->last_name}");
         $this->assertMatchesRegularExpression($regExpPattern, $html);
@@ -31,13 +31,13 @@ class Bug59126Test extends TestCase
 
     public function testFirstLastName()
     {
-        $layoutDef = array(
+        $layoutDef = [
             'table' => $this->contact->table_name,
-            'input_name0' => array(),
+            'input_name0' => [],
             'name' => 'contacts',
             'rname' => 'last_name',
-            'db_concat_fields' => array('first_name', 'last_name'),
-        );
+            'db_concat_fields' => ['first_name', 'last_name'],
+        ];
         $html = $this->getSugarWidgetFieldRelate()->displayInput($layoutDef);
         $regExpPattern = $this->getAssertRegExp(
             $this->contact->id,
@@ -48,14 +48,14 @@ class Bug59126Test extends TestCase
 
     public function testCustomField()
     {
-        $layoutDef = array(
+        $layoutDef = [
             'table' => $this->contact->table_name,
             'module' => $this->contact->module_name,
             'custom_module' => 'Contacts',
-            'input_name0' => array(),
+            'input_name0' => [],
             'name' => 'customField',
             'rname' => 'name',
-        );
+        ];
         $html = $this->getSugarWidgetFieldRelate()->displayInput($layoutDef);
         $regExpPattern = $this->getAssertRegExp(
             $this->contact->id,
@@ -64,7 +64,7 @@ class Bug59126Test extends TestCase
         $this->assertMatchesRegularExpression($regExpPattern, $html);
     }
 
-    private function  getAssertRegExp($value, $text)
+    private function getAssertRegExp($value, $text)
     {
         $pattern = '/\<option.+value="' . $value . '".*\>' . $text . '\<\/option\>/i';
         return $pattern;
@@ -73,7 +73,7 @@ class Bug59126Test extends TestCase
     private function getSugarWidgetFieldRelate()
     {
         $LayoutManager = new LayoutManager();
-        $temp = (object)array('db' => $GLOBALS['db'], 'report_def_str' => '');
+        $temp = (object)['db' => $GLOBALS['db'], 'report_def_str' => ''];
         $LayoutManager->setAttributePtr('reporter', $temp);
         $Widget = new SugarWidgetFieldRelate($LayoutManager);
         return $Widget;

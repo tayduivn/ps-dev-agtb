@@ -30,28 +30,21 @@ class SugarSearchEngineMetadataHelperTest extends TestCase
         $this->_cacheFile = sugar_cached('modules/ftsModulesCache.php');
         $this->_backupCacheFile = sugar_cached('modules/ftsModulesCache.php').'.save';
 
-        if (file_exists($this->_cacheFile))
-        {
+        if (file_exists($this->_cacheFile)) {
             $this->_cacheRenamed = true;
             rename($this->_cacheFile, $this->_backupCacheFile);
-        }
-        else
-        {
+        } else {
             $this->_cacheRenamed = false;
         }
     }
 
     protected function tearDown() : void
     {
-        if ($this->_cacheRenamed)
-        {
-            if (file_exists($this->_backupCacheFile))
-            {
+        if ($this->_cacheRenamed) {
+            if (file_exists($this->_backupCacheFile)) {
                 rename($this->_backupCacheFile, $this->_cacheFile);
             }
-        }
-        else if (file_exists($this->_cacheFile))
-        {
+        } elseif (file_exists($this->_cacheFile)) {
             unlink($this->_cacheFile);
         }
         SugarTestHelper::tearDown();
@@ -80,17 +73,17 @@ class SugarSearchEngineMetadataHelperTest extends TestCase
 
     public function isModuleEnabledProvider()
     {
-        return array(
-            array('Contacts', true),
-            array('BadModule', false),
-            array('Notifications', false),
-        );
+        return [
+            ['Contacts', true],
+            ['BadModule', false],
+            ['Notifications', false],
+        ];
     }
 
     /**
      * @dataProvider isModuleEnabledProvider
      */
-    public function testIsModuleFtsEnabled($module,$actualResult)
+    public function testIsModuleFtsEnabled($module, $actualResult)
     {
         $expected = SugarSearchEngineMetadataHelper::isModuleFtsEnabled($module);
         $this->assertEquals($expected, $actualResult);
@@ -103,7 +96,7 @@ class SugarSearchEngineMetadataHelperTest extends TestCase
         // due to us clearing the cache, let's preserve the cache values for
         // every key we're going to clear, and then restore them when we're
         // done.
-        $preTestCacheValues = array();
+        $preTestCacheValues = [];
         SugarSearchEngineMetadataHelper::getUserEnabledFTSModules(); // populates the cache.
         $usa = new UnifiedSearchAdvanced();
         $list = $usa->retrieveEnabledAndDisabledModules();

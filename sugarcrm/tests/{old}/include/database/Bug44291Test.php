@@ -16,14 +16,13 @@ class Bug44291Test extends TestCase
 {
     public function testGetColumnType()
     {
-        switch($GLOBALS['db']->dbType)
-        {
+        switch ($GLOBALS['db']->dbType) {
             //BEGIN SUGARCRM flav=ent ONLY
-            case 'oci8' :
+            case 'oci8':
                 $this->assertEquals("number(26,6)", $GLOBALS['db']->getColumnType("currency"));
                 break;
             //END SUGARCRM flav=ent ONLY
-            default :
+            default:
                 $this->assertEquals("decimal(26,6)", $GLOBALS['db']->getColumnType("currency"));
         }
         $this->assertEquals("Unknown", $GLOBALS['db']->getColumnType("Unknown"));

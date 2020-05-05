@@ -21,7 +21,7 @@ class PersonFilterApiTest extends TestCase
 
     protected function setUp() : void
     {
-        SugarTestHelper::setUp("current_user");        
+        SugarTestHelper::setUp("current_user");
         $this->personFilterApi = new PersonFilterApi();
     }
 
@@ -31,44 +31,47 @@ class PersonFilterApiTest extends TestCase
     }
 
     // @Bug 61073
-    public function testNoPortalUserReturned() {
+    public function testNoPortalUserReturned()
+    {
         $GLOBALS['current_user']->portal_only = 1;
         $GLOBALS['current_user']->save();
-        $args = array('module_list' => 'Users',);
+        $args = ['module_list' => 'Users',];
         $list = $this->personFilterApi->globalSearch(new PersonFilterApiMockUp(), $args);
         $list = $list['records'];
-        $expected = array();
-        foreach($list AS $record) {
+        $expected = [];
+        foreach ($list as $record) {
             $expected[] = $record['id'];
         }
 
         $this->assertTrue(!in_array($GLOBALS['current_user']->id, $expected));
     }
 
-    public function testNoShowOnEmployees() {
+    public function testNoShowOnEmployees()
+    {
         $GLOBALS['current_user']->show_on_employees = 0;
         $GLOBALS['current_user']->employee_status = 'Active';
         $GLOBALS['current_user']->save();
-        $args = array('module_list' => 'Employees',);
+        $args = ['module_list' => 'Employees',];
         $list = $this->personFilterApi->globalSearch(new PersonFilterApiMockUp(), $args);
         $list = $list['records'];
-        $expected = array();
-        foreach($list AS $record) {
+        $expected = [];
+        foreach ($list as $record) {
             $expected[] = $record['id'];
         }
 
         $this->assertTrue(!in_array($GLOBALS['current_user']->id, $expected));
     }
 
-    public function testShowOnEmployees() {
+    public function testShowOnEmployees()
+    {
         $GLOBALS['current_user']->show_on_employees = 1;
         $GLOBALS['current_user']->employee_status = 'Active';
         $GLOBALS['current_user']->save();
-        $args = array('module_list' => 'Employees',);
+        $args = ['module_list' => 'Employees',];
         $list = $this->personFilterApi->globalSearch(new PersonFilterApiMockUp(), $args);
         $list = $list['records'];
-        $expected = array();
-        foreach($list AS $record) {
+        $expected = [];
+        foreach ($list as $record) {
             $expected[] = $record['id'];
         }
 
@@ -78,7 +81,14 @@ class PersonFilterApiTest extends TestCase
 
 class PersonFilterApiMockUp extends RestService
 {
-    public function __construct() {$this->user = $GLOBALS['current_user'];}
-    public function execute() {}
-    protected function handleException(Exception $exception) {}
+    public function __construct()
+    {
+        $this->user = $GLOBALS['current_user'];
+    }
+    public function execute()
+    {
+    }
+    protected function handleException(Exception $exception)
+    {
+    }
 }

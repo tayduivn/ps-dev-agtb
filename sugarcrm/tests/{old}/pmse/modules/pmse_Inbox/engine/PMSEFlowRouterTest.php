@@ -30,10 +30,10 @@ class PMSEFlowRouterTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $flowData = array('cas_id' => 1, 'cas_index' => 2);
+        $flowData = ['cas_id' => 1, 'cas_index' => 2];
         $mockCaseFlowHandler = $this->getMockBuilder('PMSECaseFlowHandler')
             ->disableOriginalConstructor()
-            ->setMethods(array('retrieveElementByType'))
+            ->setMethods(['retrieveElementByType'])
             ->getMock();
 
         $testPmseObject = new stdClass();
@@ -49,59 +49,59 @@ class PMSEFlowRouterTest extends TestCase
 
     public function testRouteFlowActionCreate()
     {
-        $flowData = array(
+        $flowData = [
             'id' => '837278dh2837e',
             'cas_id' => 2,
             'cas_index' => 3,
             'bpmn_type' => 'bpmnActivity',
-            'bpmn_id' => 'aiuj2d8931'
-        );
+            'bpmn_id' => 'aiuj2d8931',
+        ];
 
-        $previousFlowData = array(
+        $previousFlowData = [
             'id' => '2189su9128sda',
             'cas_id' => 2,
             'cas_index' => 2,
             'bpmn_type' => 'bpmnActivity',
-            'bpmn_id' => 'nsiojqwd98'
-        );
+            'bpmn_id' => 'nsiojqwd98',
+        ];
 
-        $executionResult = array(
+        $executionResult = [
             'route_action' => 'ROUTE',
             'flow_action' => 'CREATE',
-            'flow_filters' => array(),
+            'flow_filters' => [],
             'flow_data' => $flowData,
-            'flow_id' => $flowData['id']
-        );
+            'flow_id' => $flowData['id'],
+        ];
 
-        $nextElements = array(
+        $nextElements = [
             'next_elements' =>
-                array(
-                    array(
+                [
+                    [
                         'cas_id' => 2,
-                        'cas_index' => 4
-                    ),
-                    array(
+                        'cas_index' => 4,
+                    ],
+                    [
                         'cas_id' => 2,
-                        'cas_index' => 5
-                    ),
-                    array(
+                        'cas_index' => 5,
+                    ],
+                    [
                         'cas_id' => 2,
-                        'cas_index' => 6
-                    )
-                )
-        );
+                        'cas_index' => 6,
+                    ],
+                ],
+        ];
 
-        // We need to override the execute Element since that method is not 
+        // We need to override the execute Element since that method is not
         // evaluated in this test but is called inside the routeFlow method
         $this->flowRouterObject = $this->getMockBuilder('PMSEFlowRouter')
-            ->setMethods(array('processElement', 'retrieveFollowingElements'))
+            ->setMethods(['processElement', 'retrieveFollowingElements'])
             ->disableOriginalConstructor()
             ->getMock();
 
         // preparing the case flow handler mock
         $mockCaseFlowHandler = $this->getMockBuilder('PMSECaseFlowHandler')
             ->disableOriginalConstructor()
-            ->setMethods(array('closePreviousFlow', 'prepareFlowData', 'saveFlowData'))
+            ->setMethods(['closePreviousFlow', 'prepareFlowData', 'saveFlowData'])
             ->getMock();
 
         $mockCaseFlowHandler->expects($this->exactly(1))
@@ -120,59 +120,59 @@ class PMSEFlowRouterTest extends TestCase
 
     public function testRouteFlowActionUpdate()
     {
-        $flowData = array(
+        $flowData = [
             'id' => '837278dh2837e',
             'cas_id' => 2,
             'cas_index' => 3,
             'bpmn_type' => 'bpmnActivity',
-            'bpmn_id' => 'aiuj2d8931'
-        );
+            'bpmn_id' => 'aiuj2d8931',
+        ];
 
-        $previousFlowData = array(
+        $previousFlowData = [
             'id' => '2189su9128sda',
             'cas_id' => 2,
             'cas_index' => 2,
             'bpmn_type' => 'bpmnActivity',
-            'bpmn_id' => 'nsiojqwd98'
-        );
+            'bpmn_id' => 'nsiojqwd98',
+        ];
 
-        $executionResult = array(
+        $executionResult = [
             'route_action' => 'ROUTE',
             'flow_action' => 'UPDATE',
-            'flow_filters' => array(),
+            'flow_filters' => [],
             'flow_data' => $flowData,
-            'flow_id' => $flowData['id']
-        );
+            'flow_id' => $flowData['id'],
+        ];
 
-        $nextElements = array(
+        $nextElements = [
             'next_elements' =>
-                array(
-                    array(
+                [
+                    [
                         'cas_id' => 2,
-                        'cas_index' => 4
-                    ),
-                    array(
+                        'cas_index' => 4,
+                    ],
+                    [
                         'cas_id' => 2,
-                        'cas_index' => 5
-                    ),
-                    array(
+                        'cas_index' => 5,
+                    ],
+                    [
                         'cas_id' => 2,
-                        'cas_index' => 6
-                    )
-                )
-        );
+                        'cas_index' => 6,
+                    ],
+                ],
+        ];
 
-        // We need to override the execute Element since that method is not 
+        // We need to override the execute Element since that method is not
         // evaluated in this test but is called inside the routeFlow method
         $this->flowRouterObject = $this->getMockBuilder('PMSEFlowRouter')
-            ->setMethods(array('processElement', 'retrieveFollowingElements'))
+            ->setMethods(['processElement', 'retrieveFollowingElements'])
             ->disableOriginalConstructor()
             ->getMock();
 
         // preparing the case flow handler mock
         $mockCaseFlowHandler = $this->getMockBuilder('PMSECaseFlowHandler')
             ->disableOriginalConstructor()
-            ->setMethods(array('closePreviousFlow', 'prepareFlowData', 'saveFlowData'))
+            ->setMethods(['closePreviousFlow', 'prepareFlowData', 'saveFlowData'])
             ->getMock();
 
         $mockCaseFlowHandler->expects($this->exactly(0))
@@ -191,59 +191,59 @@ class PMSEFlowRouterTest extends TestCase
 
     public function testRouteFlowActionNone()
     {
-        $flowData = array(
+        $flowData = [
             'id' => '837278dh2837e',
             'cas_id' => 2,
             'cas_index' => 3,
             'bpmn_type' => 'bpmnActivity',
-            'bpmn_id' => 'aiuj2d8931'
-        );
+            'bpmn_id' => 'aiuj2d8931',
+        ];
 
-        $previousFlowData = array(
+        $previousFlowData = [
             'id' => '2189su9128sda',
             'cas_id' => 2,
             'cas_index' => 2,
             'bpmn_type' => 'bpmnActivity',
-            'bpmn_id' => 'nsiojqwd98'
-        );
+            'bpmn_id' => 'nsiojqwd98',
+        ];
 
-        $executionResult = array(
+        $executionResult = [
             'route_action' => 'ROUTE',
             'flow_action' => 'NONE',
-            'flow_filters' => array(),
+            'flow_filters' => [],
             'flow_data' => $flowData,
-            'flow_id' => $flowData['id']
-        );
+            'flow_id' => $flowData['id'],
+        ];
 
-        $nextElements = array(
+        $nextElements = [
             'next_elements' =>
-                array(
-                    array(
+                [
+                    [
                         'cas_id' => 2,
-                        'cas_index' => 4
-                    ),
-                    array(
+                        'cas_index' => 4,
+                    ],
+                    [
                         'cas_id' => 2,
-                        'cas_index' => 5
-                    ),
-                    array(
+                        'cas_index' => 5,
+                    ],
+                    [
                         'cas_id' => 2,
-                        'cas_index' => 6
-                    )
-                )
-        );
+                        'cas_index' => 6,
+                    ],
+                ],
+        ];
 
-        // We need to override the execute Element since that method is not 
+        // We need to override the execute Element since that method is not
         // evaluated in this test but is called inside the routeFlow method
         $this->flowRouterObject = $this->getMockBuilder('PMSEFlowRouter')
-            ->setMethods(array('processElement', 'retrieveFollowingElements'))
+            ->setMethods(['processElement', 'retrieveFollowingElements'])
             ->disableOriginalConstructor()
             ->getMock();
 
         // preparing the case flow handler mock
         $mockCaseFlowHandler = $this->getMockBuilder('PMSECaseFlowHandler')
             ->disableOriginalConstructor()
-            ->setMethods(array('closePreviousFlow', 'prepareFlowData', 'saveFlowData'))
+            ->setMethods(['closePreviousFlow', 'prepareFlowData', 'saveFlowData'])
             ->getMock();
 
         $mockCaseFlowHandler->expects($this->exactly(0))
@@ -262,60 +262,60 @@ class PMSEFlowRouterTest extends TestCase
 
     public function testRouteFlowActionClose()
     {
-        $flowData = array(
+        $flowData = [
             'id' => '837278dh2837e',
             'cas_id' => 2,
             'cas_index' => 3,
             'bpmn_type' => 'bpmnActivity',
-            'bpmn_id' => 'aiuj2d8931'
-        );
+            'bpmn_id' => 'aiuj2d8931',
+        ];
 
-        $previousFlowData = array(
+        $previousFlowData = [
             'id' => '2189su9128sda',
             'cas_id' => 2,
             'cas_index' => 2,
             'bpmn_type' => 'bpmnActivity',
-            'bpmn_id' => 'nsiojqwd98'
-        );
+            'bpmn_id' => 'nsiojqwd98',
+        ];
 
-        $executionResult = array(
-            'processed_flow' => array(),
+        $executionResult = [
+            'processed_flow' => [],
             'route_action' => 'WAIT',
             'flow_action' => 'CLOSE',
-            'flow_filters' => array(),
+            'flow_filters' => [],
             'flow_data' => $flowData,
-            'flow_id' => $flowData['id']
-        );
+            'flow_id' => $flowData['id'],
+        ];
 
-        $nextElements = array(
+        $nextElements = [
             'next_elements' =>
-                array(
-                    array(
+                [
+                    [
                         'cas_id' => 2,
-                        'cas_index' => 4
-                    ),
-                    array(
+                        'cas_index' => 4,
+                    ],
+                    [
                         'cas_id' => 2,
-                        'cas_index' => 5
-                    ),
-                    array(
+                        'cas_index' => 5,
+                    ],
+                    [
                         'cas_id' => 2,
-                        'cas_index' => 6
-                    )
-                )
-        );
+                        'cas_index' => 6,
+                    ],
+                ],
+        ];
 
-        // We need to override the execute Element since that method is not 
+        // We need to override the execute Element since that method is not
         // evaluated in this test but is called inside the routeFlow method
         $this->flowRouterObject = $this->getMockBuilder('PMSEFlowRouter')
-            ->setMethods(array('processElement', 'retrieveFollowingElements'))
+            ->setMethods(['processElement', 'retrieveFollowingElements'])
             ->disableOriginalConstructor()
             ->getMock();
 
         // preparing the case flow handler mock
         $mockCaseFlowHandler = $this->getMockBuilder('PMSECaseFlowHandler')
             ->disableOriginalConstructor()
-            ->setMethods(array('closePreviousFlow', 'prepareFlowData', 'saveFlowData'))
+            ->setMethods(['closePreviousFlow', 'prepareFlowData', 'saveFlowData'])
             ->getMock();
 
         $mockCaseFlowHandler->expects($this->exactly(1))
@@ -334,18 +334,18 @@ class PMSEFlowRouterTest extends TestCase
 
     public function testRetrieveFollowingElementsRoute()
     {
-        $executionResult = array(
+        $executionResult = [
             'route_action' => 'ROUTE',
-            'flow_filters' => array()
-        );
+            'flow_filters' => [],
+        ];
 
-        $flowData = array(
+        $flowData = [
             'cas_id' => 2,
-            'cas_index' => 3
-        );
+            'cas_index' => 3,
+        ];
 
         $this->flowRouterObject = $this->getMockBuilder('PMSEFlowRouter')
-            ->setMethods(array('filterFlows'))
+            ->setMethods(['filterFlows'])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -354,7 +354,7 @@ class PMSEFlowRouterTest extends TestCase
 
         $mockCaseFlowHandler = $this->getMockBuilder('PMSECaseFlowHandler')
             ->disableOriginalConstructor()
-            ->setMethods(array('retrieveFollowingElements'))
+            ->setMethods(['retrieveFollowingElements'])
             ->getMock();
 
         $mockCaseFlowHandler->expects($this->exactly(1))
@@ -366,39 +366,39 @@ class PMSEFlowRouterTest extends TestCase
 
     public function testRetrieveFollowingElementsQueue()
     {
-        $executionResult = array('route_action' => 'QUEUE', 'flow_filters' => array());
-        $flowData = array(
+        $executionResult = ['route_action' => 'QUEUE', 'flow_filters' => []];
+        $flowData = [
             'cas_id' => 2,
-            'cas_index' => 3
-        );
+            'cas_index' => 3,
+        ];
 
         $this->flowRouterObject = $this->getMockBuilder('PMSEFlowRouter')
-            ->setMethods(array('queueJob'))
+            ->setMethods(['queueJob'])
             ->disableOriginalConstructor()
             ->getMock();
 
         $mockCaseFlowHandler = $this->getMockBuilder('PMSECaseFlowHandler')
             ->disableOriginalConstructor()
-            ->setMethods(array('retrieveFollowingElements'))
+            ->setMethods(['retrieveFollowingElements'])
             ->getMock();
 
         $mockCaseFlowHandler->expects($this->exactly(1))
             ->method('retrieveFollowingElements')
-            ->will($this->returnValue(array()));
+            ->will($this->returnValue([]));
 
         $this->flowRouterObject->setCaseFlowHandler($mockCaseFlowHandler);
 
-        $expectedResult = array();
+        $expectedResult = [];
         $result = $this->flowRouterObject->retrieveFollowingElements($executionResult, $flowData);
         $this->assertEquals($expectedResult, $result);
     }
 
     public function testQueueJob()
     {
-        $flowData = array(
+        $flowData = [
             'cas_id' => 2,
-            'cas_index' => 3
-        );
+            'cas_index' => 3,
+        ];
 
         $this->flowRouterObject = $this->getMockBuilder('PMSEFlowRouter')
             ->setMethods(null)
@@ -406,7 +406,7 @@ class PMSEFlowRouterTest extends TestCase
             ->getMock();
 
         $mockJobQueueHandler = $this->getMockBuilder('PMSEJobQueueHandler')
-            ->setMethods(array('submitPMSEJob'))
+            ->setMethods(['submitPMSEJob'])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -428,21 +428,21 @@ class PMSEFlowRouterTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $nextElements = array(
-            array('bpmn_id' => 'first_id'),
-            array('bpmn_id' => 'second_id'),
-            array('bpmn_id' => 'third_id'),
-            array('bpmn_id' => 'fourth_id')
-        );
+        $nextElements = [
+            ['bpmn_id' => 'first_id'],
+            ['bpmn_id' => 'second_id'],
+            ['bpmn_id' => 'third_id'],
+            ['bpmn_id' => 'fourth_id'],
+        ];
 
-        $flowFilters = array(
-            'first_id', 'third_id'
-        );
+        $flowFilters = [
+            'first_id', 'third_id',
+        ];
 
-        $expectedResult = array(
-            array('bpmn_id' => 'first_id'),
-            array('bpmn_id' => 'third_id')
-        );
+        $expectedResult = [
+            ['bpmn_id' => 'first_id'],
+            ['bpmn_id' => 'third_id'],
+        ];
 
         $result = $this->flowRouterObject->filterFlows($nextElements, $flowFilters);
         $this->assertEquals($expectedResult, $result);

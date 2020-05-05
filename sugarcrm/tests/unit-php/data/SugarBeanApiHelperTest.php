@@ -73,7 +73,7 @@ class SugarBeanApiHelperTest extends TestCase
             ->method('getBeanAcl')
             ->willReturn($beanAcl);
 
-        $actual = $apiHelper->formatForApi($bean, array_keys($fieldAccessMap), array('action' => $action));
+        $actual = $apiHelper->formatForApi($bean, array_keys($fieldAccessMap), ['action' => $action]);
         $this->assertEquals($expected, $actual);
     }
 
@@ -84,28 +84,28 @@ class SugarBeanApiHelperTest extends TestCase
             [
                 'list',
                 true,
-                array(
-                    'myfield' => array(
+                [
+                    'myfield' => [
                         'name' => 'myfield',
                         'type' => 'varchar',
-                    ),
-                ),
-                array(
+                    ],
+                ],
+                [
                     'myfield' => 'myvalue',
-                ),
-                array(
+                ],
+                [
                     'myfield' => true,
-                ),
-                array(
+                ],
+                [
                     'fields' => (object) [],
-                ),
+                ],
                 // expected results
-                array(
+                [
                     'myfield' => 'myvalue',
-                    '_acl' => array(
+                    '_acl' => [
                         'fields' => (object) [],
-                    ),
-                ),
+                    ],
+                ],
             ],
         ];
     }

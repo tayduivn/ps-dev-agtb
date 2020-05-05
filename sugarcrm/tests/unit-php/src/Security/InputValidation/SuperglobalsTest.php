@@ -37,19 +37,19 @@ class SuperglobalsTest extends TestCase
      * Fixture $_GET values
      * @var array
      */
-    protected $inputGet = array(
+    protected $inputGet = [
         'batman' => 'robin',
-        'superman' => array('fly' => 'away'),
-    );
+        'superman' => ['fly' => 'away'],
+    ];
 
     /**
      * Fixture $_POST values
      * @var array
      */
-    protected $inputPost = array(
+    protected $inputPost = [
         'batman' => 'catwoman',
-        'green' => array('lantarn' => 'man'),
-    );
+        'green' => ['lantarn' => 'man'],
+    ];
 
     /**
      * {@inheritdoc}
@@ -66,9 +66,9 @@ class SuperglobalsTest extends TestCase
     protected function tearDown() : void
     {
         // reset superglobals
-        $_GET = array();
-        $_POST = array();
-        $_REQUEST = array();
+        $_GET = [];
+        $_POST = [];
+        $_REQUEST = [];
     }
 
     /**
@@ -143,19 +143,19 @@ class SuperglobalsTest extends TestCase
     public function testCompatLayer()
     {
         // Setup test data
-        $_GET = array(
+        $_GET = [
             'foo' => 'javascript:alert("module")',
             'bar' => '<p>123-456-789</p>',
             'good' => '123-456-789',
-        );
+        ];
 
-        $_POST = array(
+        $_POST = [
             'sub' => 'javascript:alert("sub")',
-            'pub' => array(
+            'pub' => [
                 'javascript:alert("more")',
-                'javascript:alert("beer")'
-            ),
-        );
+                'javascript:alert("beer")',
+            ],
+        ];
 
         $_REQUEST = array_merge($_GET, $_POST);
 
@@ -227,6 +227,6 @@ class SuperglobalsTest extends TestCase
     public function testRejectInvalidType()
     {
         $this->expectException(SuperglobalException::class);
-        TestReflection::callProtectedMethod($this->globals, 'getCompatValue', array('XXX', 'test'));
+        TestReflection::callProtectedMethod($this->globals, 'getCompatValue', ['XXX', 'test']);
     }
 }

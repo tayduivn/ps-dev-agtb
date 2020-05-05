@@ -15,40 +15,40 @@ use PHPUnit\Framework\TestCase;
 
 class Bug42085Test extends TestCase
 {
-	var $meeting;
-	//var $listLayoutMetaDataParser;
-	
+    var $meeting;
+    //var $listLayoutMetaDataParser;
+    
     protected function setUp() : void
-	{
-	    $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-		$this->meeting = SugarTestMeetingUtilities::createMeeting();	
-		//$this->listLayoutMetaDataParser = new ListLayoutMetaDataParser(MB_LISTVIEW, 'Meetings');
-	}
-	
+    {
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        $this->meeting = SugarTestMeetingUtilities::createMeeting();
+        //$this->listLayoutMetaDataParser = new ListLayoutMetaDataParser(MB_LISTVIEW, 'Meetings');
+    }
+    
     protected function tearDown() : void
-	{
-		SugarTestMeetingUtilities::removeAllCreatedMeetings();
-		SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-		unset($GLOBALS['current_user']);
-	}
-	
+    {
+        SugarTestMeetingUtilities::removeAllCreatedMeetings();
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        unset($GLOBALS['current_user']);
+    }
+    
     public function testHideMeetingType()
     {
-    	$validDef = $this->meeting->field_defs['type'];
-		$this->assertFalse(AbstractMetaDataParser::validField($validDef, 'wireless_basic_search'));
+        $validDef = $this->meeting->field_defs['type'];
+        $this->assertFalse(AbstractMetaDataParser::validField($validDef, 'wireless_basic_search'));
     }
 
     public function testHideMeetingPassword()
     {
-    	$validDef = $this->meeting->field_defs['password'];
-		$this->assertFalse(AbstractMetaDataParser::validField($validDef, 'wirelesseditview'));
-		$this->assertFalse(AbstractMetaDataParser::validField($validDef, 'wirelessdetailview'));
-    } 
+        $validDef = $this->meeting->field_defs['password'];
+        $this->assertFalse(AbstractMetaDataParser::validField($validDef, 'wirelesseditview'));
+        $this->assertFalse(AbstractMetaDataParser::validField($validDef, 'wirelessdetailview'));
+    }
 
     public function testHideMeetingDisplayedURL()
     {
-    	$validDef = $this->meeting->field_defs['displayed_url'];
-		$this->assertFalse(AbstractMetaDataParser::validField($validDef, 'wirelesseditview'));
-		$this->assertFalse(AbstractMetaDataParser::validField($validDef, 'wirelessdetailview'));
-    }       
+        $validDef = $this->meeting->field_defs['displayed_url'];
+        $this->assertFalse(AbstractMetaDataParser::validField($validDef, 'wirelesseditview'));
+        $this->assertFalse(AbstractMetaDataParser::validField($validDef, 'wirelessdetailview'));
+    }
 }

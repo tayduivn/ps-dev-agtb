@@ -39,14 +39,14 @@ class SidecarFilterLayoutMetaDataParserTest extends TestCase
     {
         /** @var SidecarFilterLayoutMetaDataParser $parser */
         $parser = $this->getMockBuilder('SidecarFilterLayoutMetaDataParser')
-            ->setMethods(array('dummy'))
+            ->setMethods(['dummy'])
             ->disableOriginalConstructor()
             ->getMock();
-        $parser->_viewdefs = array(
-            'fields' => array(
-                'field1' => array(),
-            ),
-        );
+        $parser->_viewdefs = [
+            'fields' => [
+                'field1' => [],
+            ],
+        ];
 
         return $parser;
     }

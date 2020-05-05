@@ -14,31 +14,31 @@ use PHPUnit\Framework\TestCase;
 
 class SugarFieldRadioenumTest extends TestCase
 {
-	protected $_testingArray = array (
-		"key" => "value"
-	);
-	protected $_testKey = "key";
-	protected $_testValue = "value";
-	protected $_testingArrayName = "new_radio_list";
-	protected $_testingFieldType = "Radioenum";
-	
+    protected $_testingArray =  [
+        "key" => "value",
+    ];
+    protected $_testKey = "key";
+    protected $_testValue = "value";
+    protected $_testingArrayName = "new_radio_list";
+    protected $_testingFieldType = "Radioenum";
+    
     protected function setUp() : void
-	{
-		global $app_list_strings;
-		$app_list_strings[$this->_testingArrayName] = $this->_testingArray;
-	}
+    {
+        global $app_list_strings;
+        $app_list_strings[$this->_testingArrayName] = $this->_testingArray;
+    }
     
     protected function tearDown() : void
-	{
-		if (!empty($app_list_strings[$this->_testingArrayName])) {
-			unset($app_list_strings[$this->_testingArrayName]);
-		}
-	}
+    {
+        if (!empty($app_list_strings[$this->_testingArrayName])) {
+            unset($app_list_strings[$this->_testingArrayName]);
+        }
+    }
     
-	public function testEmailTemplateFormat()
-	{
-		$radioEnumClass = new SugarFieldRadioenum($this->_testingFieldType);
-		$actualResult = $radioEnumClass->getEmailTemplateValue($this->_testKey, array ("options" => $this->_testingArrayName));
-		$this->assertEquals($this->_testValue, $actualResult);
-	}
+    public function testEmailTemplateFormat()
+    {
+        $radioEnumClass = new SugarFieldRadioenum($this->_testingFieldType);
+        $actualResult = $radioEnumClass->getEmailTemplateValue($this->_testKey, ["options" => $this->_testingArrayName]);
+        $this->assertEquals($this->_testValue, $actualResult);
+    }
 }

@@ -12,7 +12,7 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once('ModuleInstall/ModuleInstaller.php');
+require_once 'ModuleInstall/ModuleInstaller.php';
 
 class ExtTest extends TestCase
 {
@@ -32,41 +32,41 @@ class ExtTest extends TestCase
     }
 
     protected function setUp() : void
-	{
+    {
         $this->module_installer = new ModuleInstaller();
         $this->module_installer->silent = true;
         $this->module_installer->base_dir = "cache/ExtTest";
         $this->module_installer->id_name = 'ExtFrameworkTest';
         $this->testvalue = uniqid("ext", true);
         file_put_contents($this->module_installer->base_dir."/test.ext.php", "<?php \$testvalue = '$this->testvalue';");
-	}
+    }
 
     protected function tearDown() : void
-	{
-	    if($this->module_installer) {
-	        $this->module_installer->uninstall_extensions();
-	    }
-	    if(file_exists($this->module_installer->base_dir."/test.ext.php")) {
-	        @unlink($this->module_installer->base_dir."/test.ext.php");
-	    }
-	    SugarCache::$isCacheReset = false;
-	}
+    {
+        if ($this->module_installer) {
+            $this->module_installer->uninstall_extensions();
+        }
+        if (file_exists($this->module_installer->base_dir."/test.ext.php")) {
+            @unlink($this->module_installer->base_dir."/test.ext.php");
+        }
+        SugarCache::$isCacheReset = false;
+    }
 
     public static function tearDownAfterClass() : void
     {
         SugarTestHelper::tearDown();
-        if(file_exists("cache/ExtTest/test.ext.php")) {
-	        @unlink("cache/ExtTest/test.ext.php");
-	    }
+        if (file_exists("cache/ExtTest/test.ext.php")) {
+            @unlink("cache/ExtTest/test.ext.php");
+        }
         rmdir_recursive("cache/ExtTest");
-	}
+    }
 
     public function getExt()
     {
-        $extensions = array();
+        $extensions = [];
         include 'ModuleInstall/extensions.php';
 
-        foreach($extensions as $name => $ext) {
+        foreach ($extensions as $name => $ext) {
             if (empty($ext['section'])) {
                 continue;
             }
@@ -77,13 +77,13 @@ class ExtTest extends TestCase
                 case 'dropdown_filters':
                     break;
                 default:
-                    yield array(
+                    yield [
                         $name,
                         $ext['section'],
                         $ext['extdir'],
                         $ext['file'],
-                        isset($ext['module']) ? $ext['module'] : 'application'
-                    );
+                        isset($ext['module']) ? $ext['module'] : 'application',
+                    ];
                     break;
             }
         }
@@ -99,18 +99,18 @@ class ExtTest extends TestCase
      */
     public function testExtFramework($extname, $section, $extdir, $file, $module)
     {
-        $this->module_installer->installdefs[$section] = array(
-            array("from" => '<basepath>/test.ext.php', 'to_module' => $module)
-        );
+        $this->module_installer->installdefs[$section] = [
+            ["from" => '<basepath>/test.ext.php', 'to_module' => $module],
+        ];
         $prefix = '';
         $srcFileName = "test.ext.php";
-        if($extname == 'languages') {
+        if ($extname == 'languages') {
             $this->module_installer->installdefs[$section][0]['language'] = 'en_us';
             $prefix = 'en_us.';
             $file = 'lang.ext.php';
             $srcFileName = "ExtFrameworkTest.php";
         }
-	    if($module == 'application') {
+        if ($module == 'application') {
             $srcfile = "custom/Extension/application/Ext/$extdir/{$prefix}{$srcFileName}";
             $dstfile = "custom/application/Ext/$extdir/{$prefix}$file";
         } else {
@@ -122,35 +122,39 @@ class ExtTest extends TestCase
         $this->assertFileExists($srcfile);
         $testvalue = null;
         // check it works
-        include($dstfile);
+        include $dstfile;
         $this->assertEquals($this->testvalue, $testvalue);
         $testvalue = null;
         // check disable
         $this->module_installer->disable_extensions();
-        if(file_exists($dstfile)) include($dstfile);
+        if (file_exists($dstfile)) {
+            include $dstfile;
+        }
         $this->assertNull($testvalue);
         // check enable
         $this->module_installer->enable_extensions();
         $this->assertFileExists($srcfile);
-        include($dstfile);
+        include $dstfile;
         $this->assertEquals($this->testvalue, $testvalue);
         $testvalue = null;
         // check uninstall
         $this->module_installer->uninstall_extensions();
-        if(file_exists($dstfile)) include($dstfile);
+        if (file_exists($dstfile)) {
+            include $dstfile;
+        }
         $this->assertNull($testvalue);
     }
 
     public function testExtModules()
     {
-        $this->module_installer->installdefs['beans'] = array(
-            array(
+        $this->module_installer->installdefs['beans'] = [
+            [
                 'module' => 'ExtFrameworkTest',
                 'class' =>  'ExtFrameworkTest',
                 'path' =>  'ExtFrameworkTest',
-                'tab' => true
-            )
-        );
+                'tab' => true,
+            ],
+        ];
         $srcfile = "custom/Extension/application/Ext/Include/ExtFrameworkTest.php";
         $dstfile = "custom/application/Ext/Include/modules.ext.php";
         $this->module_installer->install_extensions();
@@ -158,23 +162,27 @@ class ExtTest extends TestCase
         $this->assertFileExists($srcfile);
         $beanList = null;
         // check it works
-        include($dstfile);
+        include $dstfile;
         $this->assertEquals('ExtFrameworkTest', $beanList['ExtFrameworkTest']);
         // check disable
         $this->module_installer->disable_extensions();
-        $beanList = array();
-        if(file_exists($dstfile)) include($dstfile);
+        $beanList = [];
+        if (file_exists($dstfile)) {
+            include $dstfile;
+        }
         $this->assertArrayNotHasKey('ExtFrameworkTest', $beanList);
         // check enable
-        $beanList = array();
+        $beanList = [];
         $this->module_installer->enable_extensions();
         $this->assertFileExists($srcfile);
-        include($dstfile);
+        include $dstfile;
         $this->assertEquals('ExtFrameworkTest', $beanList['ExtFrameworkTest']);
-        $beanList = array();
+        $beanList = [];
         // check uninstall
         $this->module_installer->uninstall_extensions();
-        if(file_exists($dstfile)) include($dstfile);
+        if (file_exists($dstfile)) {
+            include $dstfile;
+        }
         $this->assertArrayNotHasKey('ExtFrameworkTest', $beanList);
     }
 }

@@ -24,8 +24,8 @@ class Bug67170Test extends TestCase
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('app_list_strings');
-        SugarTestHelper::setUp('mod_strings', array('Contacts'));
-        SugarTestHelper::setUp('current_user', array(true, 1));
+        SugarTestHelper::setUp('mod_strings', ['Contacts']);
+        SugarTestHelper::setUp('current_user', [true, 1]);
     }
 
     protected function tearDown() : void

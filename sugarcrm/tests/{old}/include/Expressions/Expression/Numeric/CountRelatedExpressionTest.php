@@ -17,21 +17,21 @@ class CountRelatedExpressionTest extends TestCase
     public function testCountRelated()
     {
         $opp = $this->getMockBuilder('Opportunity')
-            ->setMethods(array('save', 'load_relationship'))
+            ->setMethods(['save', 'load_relationship'])
             ->getMock();
 
 
         $link2 = $this->getMockBuilder('Link2')
             ->disableOriginalConstructor()
-            ->setMethods(array('getBeans'))
+            ->setMethods(['getBeans'])
             ->getMock();
 
         $opp->revenuelineitems = $link2;
 
-        $rlis = array();
+        $rlis = [];
         for ($x = 1; $x <= 3; $x++) {
             $rli = $this->getMockBuilder('RevenueLineItem')
-                ->setMethods(array('save'))
+                ->setMethods(['save'])
                 ->getMock();
 
             $rlis[] = $rli;

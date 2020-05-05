@@ -76,9 +76,9 @@ class Bug63989Test extends TestCase
 
     public function shouldNotQueryProvider()
     {
-        return array(
-            array('An arbitrary subject'),
-            array('[CASE:THE-CASE-NUMBER]'),
-        );
+        return [
+            ['An arbitrary subject'],
+            ['[CASE:THE-CASE-NUMBER]'],
+        ];
     }
 }

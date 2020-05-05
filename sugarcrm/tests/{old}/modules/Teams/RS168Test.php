@@ -22,7 +22,7 @@ class RS168Test extends TestCase
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setUp('current_user', array(true, false));
+        SugarTestHelper::setUp('current_user', [true, false]);
     }
 
     public static function tearDownAfterClass(): void
@@ -64,7 +64,7 @@ class RS168Test extends TestCase
     {
         $team1 = SugarTestTeamUtilities::createAnonymousTeam();
         $team2 = SugarTestTeamUtilities::createAnonymousTeam();
-        $team2->reassign_team_records(array($team1->id));
+        $team2->reassign_team_records([$team1->id]);
         $team = BeanFactory::newBean('Teams');
         $team->retrieve($team1->id, true, false);
         $this->assertEquals(1, $team->deleted);

@@ -34,7 +34,7 @@ class RS187Test extends TestCase
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setUp('current_user', array(true, true));
+        SugarTestHelper::setUp('current_user', [true, true]);
 
         $this->dashboardApi = new DashboardApi();
         $this->serviceMock = SugarTestRestUtilities::getRestServiceMock();
@@ -52,10 +52,10 @@ class RS187Test extends TestCase
      */
     public function testCreateDashboardForModule()
     {
-        $result = $this->dashboardApi->createDashboard($this->serviceMock, array(
+        $result = $this->dashboardApi->createDashboard($this->serviceMock, [
             'module' => 'Accounts',
-            'name' => 'Test Dashboard'
-        ));
+            'name' => 'Test Dashboard',
+        ]);
 
         $this->assertNotEmpty($result);
         $this->assertArrayHasKey('id', $result);
@@ -75,9 +75,9 @@ class RS187Test extends TestCase
      */
     public function testCreateDashboardForHome()
     {
-        $result = $this->dashboardApi->createDashboard($this->serviceMock, array(
-            'name' => 'Test Dashboard'
-        ));
+        $result = $this->dashboardApi->createDashboard($this->serviceMock, [
+            'name' => 'Test Dashboard',
+        ]);
 
         $this->assertNotEmpty($result);
         $this->assertArrayHasKey('id', $result);

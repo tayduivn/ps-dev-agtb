@@ -26,7 +26,7 @@ class ProductTemplatesTest extends TestCase
      */
     public function testCalculateDiscountPrice()
     {
-        $productTemplate = $this->createPartialMock('Product', array('save', 'getPriceFormula'));
+        $productTemplate = $this->createPartialMock('Product', ['save', 'getPriceFormula']);
         $productTemplate->pricing_formula = 'isList';
         $productTemplate->cost_price = '100.000000';
         $productTemplate->list_price = '150.000000';
@@ -35,7 +35,7 @@ class ProductTemplatesTest extends TestCase
 
 
         $formula = $this->getMockBuilder('PercentageDiscount')
-            ->setMethods(array('calculate_price'))
+            ->setMethods(['calculate_price'])
             ->getMock();
 
         $formula->expects($this->once())

@@ -42,7 +42,7 @@ class SugarWidgetFieldEnumTest extends TestCase
     public function testQueryFilterEmpty()
     {
         $expected = "(coalesce(LENGTH(IFNULL(accounts.industry, 0)),0) = 0 OR IFNULL(accounts.industry, 0) = '^^')";
-        $layoutDef = $layoutDef =  array(
+        $layoutDef = $layoutDef =  [
             'name' => 'industry',
             'table_key' => 'self',
             'qualifier_name' => 'empty',
@@ -51,7 +51,7 @@ class SugarWidgetFieldEnumTest extends TestCase
             'table_alias' => 'accounts',
             'column_key' => 'self:industry',
             'type' => 'enum',
-        );
+        ];
         $this->reporter->db->expects($this->at(0))
             ->method('convert')
             ->with($this->equalTo('accounts.industry'), $this->equalTo('IFNULL'))
@@ -76,7 +76,7 @@ class SugarWidgetFieldEnumTest extends TestCase
         $expected = "(coalesce(LENGTH(IFNULL(accounts.industry, 0)),0) > 0 AND IFNULL(accounts.industry, 0) != '^^' )";
         $expected .= "\n";
 
-        $layoutDef = $layoutDef =  array(
+        $layoutDef = $layoutDef =  [
             'name' => 'industry',
             'table_key' => 'self',
             'qualifier_name' => 'not_empty',
@@ -85,7 +85,7 @@ class SugarWidgetFieldEnumTest extends TestCase
             'table_alias' => 'accounts',
             'column_key' => 'self:industry',
             'type' => 'enum',
-        );
+        ];
         $this->reporter->db->expects($this->at(0))
             ->method('convert')
             ->with($this->equalTo('accounts.industry'), $this->equalTo('IFNULL'))
@@ -109,7 +109,7 @@ class SugarWidgetFieldEnumTest extends TestCase
     public function testQueryFilterIs()
     {
         $expected = "accounts.industry = \"Banking\"\n";
-        $layoutDef = $layoutDef =  array(
+        $layoutDef = $layoutDef =  [
             'name' => 'industry',
             'table_key' => 'self',
             'qualifier_name' => 'is',
@@ -117,7 +117,7 @@ class SugarWidgetFieldEnumTest extends TestCase
             'input_name0' => ['Banking'],
             'column_key' => 'self:industry',
             'type' => 'enum',
-        );
+        ];
         $this->widgetField->expects($this->once())
             ->method('getInputValue')
             ->willReturnCallback(function ($def) {
@@ -138,7 +138,7 @@ class SugarWidgetFieldEnumTest extends TestCase
     public function testQueryFilterIsNot()
     {
         $expected = 'accounts.industry <> "Banking" OR (accounts.industry IS NULL AND "Banking" IS NOT NULL)';
-        $layoutDef = $layoutDef =  array(
+        $layoutDef = $layoutDef =  [
             'name' => 'industry',
             'table_key' => 'self',
             'qualifier_name' => 'is_not',
@@ -146,7 +146,7 @@ class SugarWidgetFieldEnumTest extends TestCase
             'input_name0' => ['Banking'],
             'column_key' => 'self:industry',
             'type' => 'enum',
-        );
+        ];
         $this->widgetField->expects($this->once())
             ->method('getInputValue')
             ->willReturnCallback(function ($def) {
@@ -177,7 +177,7 @@ class SugarWidgetFieldEnumTest extends TestCase
     public function testQueryFilterOneOf()
     {
         $expected = "accounts.industry IN (\"Banking\",\"Technology\")\n";
-        $layoutDef = $layoutDef =  array(
+        $layoutDef = $layoutDef =  [
             'name' => 'industry',
             'table_key' => 'self',
             'qualifier_name' => 'one_of',
@@ -185,7 +185,7 @@ class SugarWidgetFieldEnumTest extends TestCase
             'input_name0' => ['Banking', 'Technology'],
             'column_key' => 'self:industry',
             'type' => 'enum',
-        );
+        ];
         $this->reporter->db->expects($this->exactly(2))
             ->method('quoted')
             ->willReturnCallback(function ($str) {
@@ -201,7 +201,7 @@ class SugarWidgetFieldEnumTest extends TestCase
     public function testQueryFilterNotOneOf()
     {
         $expected = "accounts.industry NOT IN (\"Banking\",\"Technology\") OR accounts.industry IS NULL\n";
-        $layoutDef = $layoutDef =  array(
+        $layoutDef = $layoutDef =  [
             'name' => 'industry',
             'table_key' => 'self',
             'qualifier_name' => 'not_one_of',
@@ -209,7 +209,7 @@ class SugarWidgetFieldEnumTest extends TestCase
             'input_name0' => ['Banking', 'Technology'],
             'column_key' => 'self:industry',
             'type' => 'enum',
-        );
+        ];
         $this->reporter->db->expects($this->exactly(2))
             ->method('quoted')
             ->willReturnCallback(function ($str) {

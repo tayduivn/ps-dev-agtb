@@ -38,31 +38,31 @@ class UsersApiHelperTest extends TestCase
 
     public function testFormatForApi_HasAccessArgumentsPassed_ReturnsHasAccessResult()
     {
-        $options = array(
-            'args' => array(
+        $options = [
+            'args' => [
                 'has_access_module' => 'Foo',
-                'has_access_record' => '123'
-            ),
-        );
+                'has_access_record' => '123',
+            ],
+        ];
 
         $this->helper->expects($this->once())
             ->method('checkUserAccess')
             ->will($this->returnValue(true));
 
-        $data = $this->helper->formatForApi($this->bean, array(), $options);
+        $data = $this->helper->formatForApi($this->bean, [], $options);
         $this->assertEquals($data['has_access'], true, "Has Access should be true");
     }
 
     public function testFormatForApi_NoHasAccessArgumentsPassed_DoesNotReturnHasAccessResult()
     {
-        $options = array(
-            'args' => array(),
-        );
+        $options = [
+            'args' => [],
+        ];
 
         $this->helper->expects($this->never())
             ->method('checkUserAccess');
 
-        $data = $this->helper->formatForApi($this->bean, array(), $options);
+        $data = $this->helper->formatForApi($this->bean, [], $options);
         $this->assertEquals(array_key_exists('has_access', $data), false, "Has Access data should not exist");
     }
 
@@ -74,19 +74,26 @@ class UsersApiHelperTest extends TestCase
 
         $this->expectException(SugarApiExceptionMissingParameter::class);
 
-        $this->helper->populateFromApi($user, array(), array());
+        $this->helper->populateFromApi($user, [], []);
     }
 
     public function testPopulateFromApi_updateBean()
     {
-        $test = $this->helper->populateFromApi($GLOBALS['current_user'], array(), array());
+        $test = $this->helper->populateFromApi($GLOBALS['current_user'], [], []);
         $this->assertTrue($test);
     }
 }
 
 class UsersServiceMockup extends ServiceBase
 {
-    public function __construct() {$this->user = $GLOBALS['current_user'];}
-    public function execute() {}
-    protected function handleException(Exception $exception) {}
+    public function __construct()
+    {
+        $this->user = $GLOBALS['current_user'];
+    }
+    public function execute()
+    {
+    }
+    protected function handleException(Exception $exception)
+    {
+    }
 }

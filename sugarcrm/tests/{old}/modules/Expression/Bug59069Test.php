@@ -26,11 +26,11 @@ class Bug59069Test extends TestCase
     public function testNoExceptionThrown($type)
     {
         $context = new stdClass();
-        $context->field_defs = array(
-            'test' => array(
+        $context->field_defs = [
+            'test' => [
                 'type' => $type,
-            ),
-        );
+            ],
+        ];
 
         $expr = new SugarFieldExpression('test');
         $expr->context = $context;
@@ -44,11 +44,11 @@ class Bug59069Test extends TestCase
 
     public static function provider()
     {
-        return array(
-            array('datetime'),
-            array('datetimecombo'),
-            array('date'),
-            array('time'),
-        );
+        return [
+            ['datetime'],
+            ['datetimecombo'],
+            ['date'],
+            ['time'],
+        ];
     }
 }

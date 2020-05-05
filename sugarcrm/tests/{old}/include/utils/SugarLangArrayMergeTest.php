@@ -18,16 +18,16 @@ class SugarLangArrayMergeTest extends TestCase
 {
     public function testSugarLangArrayMerge()
     {
-        $target = array();
+        $target = [];
         $target['LBL_TO_BE_CHANGED'] = 'Good';
         $target['LBL_UNCHANGED'] = 'Blah';
         $target['LBL_UNCHANGED_TOO'] = 'foo';
-        $target['LBL_DOM'] = array('LBL_ONE' => 'One', 'LBL_TWO' => 'Two', 'LBL_THREE' => 'Three');
+        $target['LBL_DOM'] = ['LBL_ONE' => 'One', 'LBL_TWO' => 'Two', 'LBL_THREE' => 'Three'];
 
-        $source = array();
+        $source = [];
         $source['LBL_TO_BE_CHANGED'] = 'Better';
         $source['LBL_UNCHANGED_TOO'] = '';
-        $source['LBL_DOM'] = array('LBL_ONE' => '', 'LBL_TWO' => 'Deux', 'LBL_FOUR' => 'Quatre');
+        $source['LBL_DOM'] = ['LBL_ONE' => '', 'LBL_TWO' => 'Deux', 'LBL_FOUR' => 'Quatre'];
 
         $merged = sugarLangArrayMerge($target, $source);
         $this->assertEquals(
@@ -42,7 +42,7 @@ class SugarLangArrayMergeTest extends TestCase
             'Source string should not have been changed to empty string.'
         );
         $this->assertEquals(
-            array('LBL_ONE' => 'One', 'LBL_TWO' => 'Deux', 'LBL_THREE' => 'Three', 'LBL_FOUR' => 'Quatre'),
+            ['LBL_ONE' => 'One', 'LBL_TWO' => 'Deux', 'LBL_THREE' => 'Three', 'LBL_FOUR' => 'Quatre'],
             $merged['LBL_DOM'],
             'Should merge subarrays too'
         );

@@ -31,18 +31,18 @@ class DashboardTest extends TestCase
     {
          $dashboard = SugarTestDashboardUtilities::createDashboard(
              '',
-             array(
+             [
                  'dashboard_module' => 'test_module',
                  'view_name' => 'test_view',
-             )
+             ]
          );
 
          $dashboards = $dashboard->getDashboardsForUser(
              $GLOBALS['current_user'],
-             array(
+             [
                  'dashboard_module' => 'test_module',
                  'view_name' => 'test_view',
-             )
+             ]
          );
 
          $this->assertEquals(1, count($dashboards['records']));
@@ -59,19 +59,19 @@ class DashboardTest extends TestCase
     {
         $expected = SugarTestDashboardUtilities::createDashboard(
             '',
-            array(
+            [
                 'assigned_user_id' => $GLOBALS['current_user']->id,
                 'dashboard_module' => 'test_module',
                 'view_name' => 'test_view',
-            )
+            ]
         );
 
         $actual = $expected->getDashboardsForUser(
             $GLOBALS['current_user'],
-            array(
+            [
                 'dashboard_module' => 'test_module',
                 'view' => 'test_view',
-            )
+            ]
         );
 
         $this->assertNotEmpty($actual);
@@ -85,11 +85,11 @@ class DashboardTest extends TestCase
     {
         $dashboard = SugarTestDashboardUtilities::createDashboard(
             '',
-            array(
+            [
                 'name' => 'Test',
                 'dashboard_module' => 'test_module',
                 'view_name' => 'test_list',
-            )
+            ]
         );
         $this->assertEquals($GLOBALS['current_user']->id, $dashboard->assigned_user_id);
         $this->assertEquals($GLOBALS['current_user']->getPrivateTeamID(), $dashboard->team_id);

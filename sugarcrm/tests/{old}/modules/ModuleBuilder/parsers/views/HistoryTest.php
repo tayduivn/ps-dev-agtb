@@ -95,5 +95,4 @@ class HistoryTest extends TestCase
     {
         return dirname($this->_path);
     }
-    
 }

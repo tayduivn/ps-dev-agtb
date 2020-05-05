@@ -62,7 +62,7 @@ class MarketingExtrasApiTest extends TestCase
 
             $api->expects($this->once())
                 ->method('parseArgs')
-                ->willReturn(array('language' => $selectedLang));
+                ->willReturn(['language' => $selectedLang]);
 
             if ($marketingException) {
                 $getMarketingUrl->will($this->throwException(new \Exception()));
@@ -80,7 +80,7 @@ class MarketingExtrasApiTest extends TestCase
             }
         }
 
-        $marketingContent = $api->getMarketingExtras($this->getRestServiceMock(), array($selectedLang));
+        $marketingContent = $api->getMarketingExtras($this->getRestServiceMock(), [$selectedLang]);
 
         $this->assertEquals(['content_url' => $marketingUrl, 'image_url' => $imageUrl], $marketingContent);
     }

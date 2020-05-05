@@ -20,19 +20,20 @@ class RecipientsCollectionTest extends TestCase
      * @group email
      * @group mailer
      */
-    public function testClearAll_ResultIsSuccessful() {
+    public function testClearAll_ResultIsSuccessful()
+    {
         $recipientsCollection = new RecipientsCollection();
 
-        $to = array(
+        $to = [
             new EmailIdentity("foo@bar.com", "Foo Bar"),
             new EmailIdentity("qux@baz.net"),
-        );
+        ];
         $recipientsCollection->addRecipients($to);
 
-        $bcc = array(
+        $bcc = [
             new EmailIdentity("abc@123.com"),
             new EmailIdentity("tester@test.org"),
-        );
+        ];
         $recipientsCollection->addRecipients($bcc, RecipientsCollection::FunctionAddBcc);
 
         // make sure the recipients have been added
@@ -53,9 +54,10 @@ class RecipientsCollectionTest extends TestCase
      * @group email
      * @group mailer
      */
-    public function testAddRecipients_CallInvalidMethod_ThrowsException() {
+    public function testAddRecipients_CallInvalidMethod_ThrowsException()
+    {
         $recipientCollection = new RecipientsCollection();
-        $recipients          = array(); // the recipients don't matter for this test case
+        $recipients          = []; // the recipients don't matter for this test case
         $function            = "asdf";  // some asinine value that wouldn't actually be used
 
         $this->expectException(MailerException::class);
@@ -68,7 +70,8 @@ class RecipientsCollectionTest extends TestCase
      * @group email
      * @group mailer
      */
-    public function testAddRecipients_UseAddTo_PassInAnEmailIdentity_RecipientIsValidSoRecipientIsAdded() {
+    public function testAddRecipients_UseAddTo_PassInAnEmailIdentity_RecipientIsValidSoRecipientIsAdded()
+    {
         $recipientsCollection = new RecipientsCollection();
         $recipient            = new EmailIdentity("foo@bar.com", "Foo Bar");
 
@@ -88,12 +91,13 @@ class RecipientsCollectionTest extends TestCase
      * @group email
      * @group mailer
      */
-    public function testAddRecipients_UseAddCc_PassInAnArrayOfEmailIdentityObjects_NoInvalidRecipientsSoAllAreAdded() {
+    public function testAddRecipients_UseAddCc_PassInAnArrayOfEmailIdentityObjects_NoInvalidRecipientsSoAllAreAdded()
+    {
         $recipientsCollection = new RecipientsCollection();
-        $recipients           = array(
+        $recipients           = [
             new EmailIdentity("foo@bar.com", "Foo Bar"),
             new EmailIdentity("qux@baz.net"),
-        );
+        ];
 
         $recipientsCollection->addRecipients($recipients, RecipientsCollection::FunctionAddCc);
 
@@ -111,23 +115,24 @@ class RecipientsCollectionTest extends TestCase
      * @group email
      * @group mailer
      */
-    public function testGetAll_HasRecipients_ReturnsNonEmptyArrays() {
+    public function testGetAll_HasRecipients_ReturnsNonEmptyArrays()
+    {
         $recipientsCollection = new RecipientsCollection();
 
-        $to = array(
+        $to = [
             new EmailIdentity("foo@bar.com", "Foo Bar"),
             new EmailIdentity("qux@baz.net"),
-        );
+        ];
         $recipientsCollection->addRecipients($to);
 
-        $cc = array(
+        $cc = [
             new EmailIdentity("abc@123.com"),
-        );
+        ];
         $recipientsCollection->addRecipients($cc, RecipientsCollection::FunctionAddCc);
 
-        $bcc = array(
+        $bcc = [
             new EmailIdentity("tester@test.org"),
-        );
+        ];
         $recipientsCollection->addRecipients($bcc, RecipientsCollection::FunctionAddBcc);
 
         $expected      = 4;
@@ -154,7 +159,8 @@ class RecipientsCollectionTest extends TestCase
      * @group email
      * @group mailer
      */
-    public function testGetAll_HasNoRecipients_ReturnsEmptyArrays() {
+    public function testGetAll_HasNoRecipients_ReturnsEmptyArrays()
+    {
         $recipientsCollection = new RecipientsCollection();
 
         $expected      = 0;

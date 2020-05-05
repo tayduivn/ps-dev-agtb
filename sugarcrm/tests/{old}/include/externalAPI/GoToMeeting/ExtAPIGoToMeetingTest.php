@@ -61,27 +61,27 @@ class ExtAPIGoToMeetingTest extends TestCase
 
     public static function createDataProvider()
     {
-        return array(
-            array(
+        return [
+            [
                 200,
-                array(
+                [
                     'hostURL' => 'url',
-                    0 => array(
+                    0 => [
                         'meetingid' => 'meetingid',
                         'joinURL' => 'joinURL',
-                        'uniqueMeetingId' => 'uniqueMeetingId'
-                    )
-                ),
+                        'uniqueMeetingId' => 'uniqueMeetingId',
+                    ],
+                ],
                 true,
-                'The POST call returned 200, test should pass'
-            ),
-            array(
+                'The POST call returned 200, test should pass',
+            ],
+            [
                 404,
-                array(),
+                [],
                 false,
-                'The POST call returned 404, test should fail'
-            ),
-        );
+                'The POST call returned 404, test should fail',
+            ],
+        ];
     }
 
     /**
@@ -106,18 +106,18 @@ class ExtAPIGoToMeetingTest extends TestCase
 
     public static function updateDataProvider()
     {
-        return array(
-            array(
+        return [
+            [
                 204,
                 true,
-                'The PUT call returned 204, test should pass'
-            ),
-            array(
+                'The PUT call returned 204, test should pass',
+            ],
+            [
                 404,
                 false,
-                'The PUT call returned 404, test should fail'
-            ),
-        );
+                'The PUT call returned 404, test should fail',
+            ],
+        ];
     }
 
     /**
@@ -141,10 +141,10 @@ class ExtAPIGoToMeetingTest extends TestCase
 
     public static function deleteDataProvider()
     {
-        return array(
-            array(204, true, 'The DELETE call returned 204, test should pass'),
-            array(404, false, 'The DELETE call returned 404, test should fail'),
-        );
+        return [
+            [204, true, 'The DELETE call returned 204, test should pass'],
+            [404, false, 'The DELETE call returned 404, test should fail'],
+        ];
     }
 
     /**
@@ -157,12 +157,12 @@ class ExtAPIGoToMeetingTest extends TestCase
      *
      * @return MockObject
      */
-    private function getAPI($code, $body = array())
+    private function getAPI($code, $body = [])
     {
-        $headers = array();
+        $headers = [];
 
         $this->assertTrue(is_array($body), '$body should be an array()');
-        $goToMeetingAPI = $this->createPartialMock('ExtAPIGoToMeeting', array('makeRequest'));
+        $goToMeetingAPI = $this->createPartialMock('ExtAPIGoToMeeting', ['makeRequest']);
         $goToMeetingAPI->expects($this->any())
             ->method('makeRequest')
             ->will(

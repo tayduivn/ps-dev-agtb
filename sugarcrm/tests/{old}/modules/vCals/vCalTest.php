@@ -81,8 +81,8 @@ class vCalTest extends TestCase
     {
         // this field should not be added by fold_ical_lines
         // and it is already checked because $icalstring does not contain it
-        $icalarray = array();
-        $icalarray[] = array("TESTLINEBREAKS", "------------------------75characters------------------------0");
+        $icalarray = [];
+        $icalarray[] = ["TESTLINEBREAKS", "------------------------75characters------------------------0"];
         $res = vCal::create_ical_string_from_array($icalarray);
 
         $icalstring = "TESTLINEBREAKS:------------------------75characters------------------------\r\n\t0\r\n";
@@ -113,19 +113,19 @@ class vCalTest extends TestCase
 
     public function iCalProvider()
     {
-        $ical_array = array();
-        $ical_array[] = array("BEGIN", "VCALENDAR");
-        $ical_array[] = array("VERSION", "2.0");
-        $ical_array[] = array("PRODID", "-//SugarCRM//SugarCRM Calendar//EN");
-        $ical_array[] = array("BEGIN", "VEVENT");
-        $ical_array[] = array("UID", "123");
-        $ical_array[] = array("ORGANIZED;CN=Boro Sitnikovski", "bsitnikovski@sugarcrm.com");
-        $ical_array[] = array("SUMMARY", "Dummy Bean");
-        $ical_array[] = array("LOCATION", "Sugar, Cupertino; Sugar, EMEA");
-        $ical_array[] = array("DESCRIPTION", "Hello, this is a dummy description.\nIt contains newlines, " .
-            "backslash \ semicolon ; and commas. This line should also contain more than 75 characters.");
-        $ical_array[] = array("END", "VEVENT");
-        $ical_array[] = array("END", "VCALENDAR");
+        $ical_array = [];
+        $ical_array[] = ["BEGIN", "VCALENDAR"];
+        $ical_array[] = ["VERSION", "2.0"];
+        $ical_array[] = ["PRODID", "-//SugarCRM//SugarCRM Calendar//EN"];
+        $ical_array[] = ["BEGIN", "VEVENT"];
+        $ical_array[] = ["UID", "123"];
+        $ical_array[] = ["ORGANIZED;CN=Boro Sitnikovski", "bsitnikovski@sugarcrm.com"];
+        $ical_array[] = ["SUMMARY", "Dummy Bean"];
+        $ical_array[] = ["LOCATION", "Sugar, Cupertino; Sugar, EMEA"];
+        $ical_array[] = ["DESCRIPTION", "Hello, this is a dummy description.\nIt contains newlines, " .
+            "backslash \ semicolon ; and commas. This line should also contain more than 75 characters."];
+        $ical_array[] = ["END", "VEVENT"];
+        $ical_array[] = ["END", "VCALENDAR"];
 
         $ical_string = "BEGIN:VCALENDAR\r\n" .
             "VERSION:2.0\r\n" .
@@ -141,6 +141,6 @@ class vCalTest extends TestCase
             "END:VEVENT\r\n" .
             "END:VCALENDAR\r\n";
 
-        return array(array($ical_array, $ical_string));
+        return [[$ical_array, $ical_string]];
     }
 }

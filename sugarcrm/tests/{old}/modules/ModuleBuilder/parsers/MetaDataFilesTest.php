@@ -21,22 +21,22 @@ class MetaDataFilesTest extends TestCase
 {
     protected function setUp() : void
     {
-        $this->createdFiles = array();
-        $this->createdDirs = array();
+        $this->createdFiles = [];
+        $this->createdDirs = [];
         SugarTestHelper::setUp('app_list_strings');
     }
 
     protected function tearDown() : void
     {
-        foreach ( $this->createdFiles as $file ) {
+        foreach ($this->createdFiles as $file) {
             unlink($file);
         }
-        foreach ( $this->createdDirs as $dir ) {
+        foreach ($this->createdDirs as $dir) {
             rmdir_recursive($dir);
         }
     }
 
-    public $fileFullPaths = array(
+    public $fileFullPaths = [
         'Accountsmobilelistviewbase'   => 'modules/Accounts/clients/mobile/views/list/list.php',
         'Accountsmobilelistviewcustom' => 'custom/modules/Accounts/clients/mobile/views/list/list.php',
         //BEGIN SUGARCRM flav=ent ONLY
@@ -45,9 +45,9 @@ class MetaDataFilesTest extends TestCase
         //END SUGARCRM flav=ent ONLY
         'Bugsmobilesearchviewbase'     => 'modules/Bugs/clients/mobile/views/search/search.php',
         'Callsbasesearchviewbase'      => 'modules/Calls/clients/base/views/search/search.php',
-    );
+    ];
 
-    public $deployedFileNames = array(
+    public $deployedFileNames = [
         'Accountslistviewbase' => 'modules/Accounts/metadata/listviewdefs.php',
         'Leadswirelesseditviewcustommobile' => 'custom/modules/Leads/clients/mobile/views/edit/edit.php',
         //BEGIN SUGARCRM flav=ent ONLY
@@ -56,16 +56,16 @@ class MetaDataFilesTest extends TestCase
         'Quotesadvanced_searchhistory' => 'custom/history/modules/Quotes/metadata/searchdefs.php',
         'Meetingsbasic_searchbase'  => 'modules/Meetings/metadata/searchdefs.php',
         'Bugswireless_advanced_searchbasemobile' => 'modules/Bugs/clients/mobile/views/search/search.php',
-    );
+    ];
 
-    public $undeployedFileNames = array(
+    public $undeployedFileNames = [
         'Accountslistviewbase' => 'custom/modulebuilder/packages/LZWYZ/modules/Accounts/metadata/listviewdefs.php',
         'Leadswirelesseditviewcustommobile' => 'custom/modulebuilder/packages/LZWYZ/modules/Leads/clients/mobile/views/edit/edit.php',
         //BEGIN SUGARCRM flav=ent ONLY
         'Notesportalrecordviewworkingportal' => 'custom/modulebuilder/packages/LZWYZ/modules/Notes/clients/portal/views/record/record.php',
         //END SUGARCRM flav=ent ONLY
         'Quotesadvanced_searchhistory' => 'custom/working/modulebuilder/packages/LZWYZ/modules/Quotes/metadata/searchdefs.php',
-    );
+    ];
 
     /**
      * @dataProvider MetaDataFileFullPathProvider
@@ -75,7 +75,8 @@ class MetaDataFilesTest extends TestCase
      * @param string $client
      * @param string $component
      */
-    public function testMetaDataFileFullPath($module, $viewtype, $location, $client, $component) {
+    public function testMetaDataFileFullPath($module, $viewtype, $location, $client, $component)
+    {
         $filepath = MetaDataFiles::getModuleFileName($module, $viewtype, $location, $client, $component);
         $known = $this->fileFullPaths[$module.$client.$viewtype.$component.$location];
 
@@ -89,7 +90,8 @@ class MetaDataFilesTest extends TestCase
      * @param string $location
      * @param string $client
      */
-    public function testDeployedFileName($view, $module, $location, $client) {
+    public function testDeployedFileName($view, $module, $location, $client)
+    {
         $name = MetaDataFiles::getDeployedFileName($view, $module, $location, $client);
         $known = $this->deployedFileNames[$module.$view.$location.$client];
         $this->assertEquals($known, $name, 'Filename mismatch: ' . $name . ' <-> ' . $known);
@@ -103,50 +105,55 @@ class MetaDataFilesTest extends TestCase
      * @param string $location
      * @param string $client
      */
-    public function testUndeployedFileName($view, $module, $package, $location, $client) {
+    public function testUndeployedFileName($view, $module, $package, $location, $client)
+    {
         $name = MetaDataFiles::getUndeployedFileName($view, $module, $package, $location, $client);
         $known = $this->undeployedFileNames[$module.$view.$location.$client];
         $this->assertEquals($known, $name, 'Filename mismatch: ' . $name . ' <-> ' . $known);
     }
 
-    public function MetaDataFileFullPathProvider() {
-        return array(
-            array('Accounts', 'list', MB_BASEMETADATALOCATION, MB_WIRELESS, 'view'),
-            array('Accounts', 'list', MB_CUSTOMMETADATALOCATION, MB_WIRELESS, 'view'),
-            array('Bugs', 'search', MB_BASEMETADATALOCATION, MB_WIRELESS, 'view'),
+    public function MetaDataFileFullPathProvider()
+    {
+        return [
+            ['Accounts', 'list', MB_BASEMETADATALOCATION, MB_WIRELESS, 'view'],
+            ['Accounts', 'list', MB_CUSTOMMETADATALOCATION, MB_WIRELESS, 'view'],
+            ['Bugs', 'search', MB_BASEMETADATALOCATION, MB_WIRELESS, 'view'],
         //BEGIN SUGARCRM flav=ent ONLY
-            array('Bugs', 'record', MB_WORKINGMETADATALOCATION, MB_PORTAL, 'view'),
-            array('Cases', 'record', MB_HISTORYMETADATALOCATION, MB_PORTAL, 'view'),
+            ['Bugs', 'record', MB_WORKINGMETADATALOCATION, MB_PORTAL, 'view'],
+            ['Cases', 'record', MB_HISTORYMETADATALOCATION, MB_PORTAL, 'view'],
         //END SUGARCRM flav=ent ONLY
-            array('Calls', 'search', MB_BASEMETADATALOCATION, 'base', 'view'),
-        );
+            ['Calls', 'search', MB_BASEMETADATALOCATION, 'base', 'view'],
+        ];
     }
 
-    public function DeployedFileNameProvider() {
-        return array(
-            array(MB_LISTVIEW, 'Accounts', MB_BASEMETADATALOCATION, ''),
-            array(MB_WIRELESSEDITVIEW, 'Leads', MB_CUSTOMMETADATALOCATION, MB_WIRELESS),
+    public function DeployedFileNameProvider()
+    {
+        return [
+            [MB_LISTVIEW, 'Accounts', MB_BASEMETADATALOCATION, ''],
+            [MB_WIRELESSEDITVIEW, 'Leads', MB_CUSTOMMETADATALOCATION, MB_WIRELESS],
             //BEGIN SUGARCRM flav=ent ONLY
-            array(MB_PORTALRECORDVIEW, 'Notes', MB_WORKINGMETADATALOCATION, MB_PORTAL),
+            [MB_PORTALRECORDVIEW, 'Notes', MB_WORKINGMETADATALOCATION, MB_PORTAL],
             //END SUGARCRM flav=ent ONLY
-            array(MB_ADVANCEDSEARCH, 'Quotes', MB_HISTORYMETADATALOCATION, ''),
-            array(MB_BASICSEARCH, 'Meetings', MB_BASEMETADATALOCATION, ''),
-            array(MB_WIRELESSADVANCEDSEARCH, 'Bugs', MB_BASEMETADATALOCATION, MB_WIRELESS),
-        );
+            [MB_ADVANCEDSEARCH, 'Quotes', MB_HISTORYMETADATALOCATION, ''],
+            [MB_BASICSEARCH, 'Meetings', MB_BASEMETADATALOCATION, ''],
+            [MB_WIRELESSADVANCEDSEARCH, 'Bugs', MB_BASEMETADATALOCATION, MB_WIRELESS],
+        ];
     }
 
-    public function UndeployedFileNameProvider() {
-        return array(
-            array(MB_LISTVIEW, 'Accounts', 'LZWYZ', MB_BASEMETADATALOCATION, ''),
-            array(MB_WIRELESSEDITVIEW, 'Leads', 'LZWYZ', MB_CUSTOMMETADATALOCATION, MB_WIRELESS),
+    public function UndeployedFileNameProvider()
+    {
+        return [
+            [MB_LISTVIEW, 'Accounts', 'LZWYZ', MB_BASEMETADATALOCATION, ''],
+            [MB_WIRELESSEDITVIEW, 'Leads', 'LZWYZ', MB_CUSTOMMETADATALOCATION, MB_WIRELESS],
             //BEGIN SUGARCRM flav=ent ONLY
-            array(MB_PORTALRECORDVIEW, 'Notes', 'LZWYZ', MB_WORKINGMETADATALOCATION, MB_PORTAL),
+            [MB_PORTALRECORDVIEW, 'Notes', 'LZWYZ', MB_WORKINGMETADATALOCATION, MB_PORTAL],
             //END SUGARCRM flav=ent ONLY
-            array(MB_ADVANCEDSEARCH, 'Quotes', 'LZWYZ', MB_HISTORYMETADATALOCATION, ''),
-        );
+            [MB_ADVANCEDSEARCH, 'Quotes', 'LZWYZ', MB_HISTORYMETADATALOCATION, ''],
+        ];
     }
 
-    public function testLoadingExtFiles() {
+    public function testLoadingExtFiles()
+    {
         //Start with base app extensions
         $baseFilePath = 'custom/clients/base/views/fo/fo.php';
         $this->createdFiles[] = $baseFilePath;
@@ -164,7 +171,7 @@ class MetaDataFilesTest extends TestCase
         $baseExtMetaContents = '<?php' . "\n" . '$viewdefs["base"]["view"]["fo"]["ext"] = "baseByExt";';
         file_put_contents($extFilePath, $baseExtMetaContents);
 
-        $baseFileList = MetaDataFiles::getClientFiles(array('base'),'view');
+        $baseFileList = MetaDataFiles::getClientFiles(['base'], 'view');
 
         $this->assertArrayHasKey($baseFilePath, $baseFileList, "Didn't find the fo section.");
         $this->assertArrayHasKey($extFilePath, $baseFileList, "Didn't find the fo extension");
@@ -177,7 +184,8 @@ class MetaDataFilesTest extends TestCase
     }
 
 
-    public function testLoadingModuleExtFiles() {
+    public function testLoadingModuleExtFiles()
+    {
         //Check module specific extensions
 
         $baseFilePath = 'modules/Accounts/clients/base/views/fo/fo.php';
@@ -194,7 +202,7 @@ class MetaDataFilesTest extends TestCase
         $acctExtMetaContents = '<?php' . "\n" . '$viewdefs["Accounts"]["base"]["view"]["fo"]["ext"] = "baseAcctByExt";';
         file_put_contents($extFilePath, $acctExtMetaContents);
 
-        $accountFileList = MetaDataFiles::getClientFiles(array('base'),'view','Accounts');
+        $accountFileList = MetaDataFiles::getClientFiles(['base'], 'view', 'Accounts');
 
         $this->assertArrayHasKey($baseFilePath, $accountFileList, "Didn't find the Accounts fo section.");
         $this->assertArrayHasKey($extFilePath, $accountFileList, "Didn't find the Accounts fo extension");
@@ -229,7 +237,7 @@ class MetaDataFilesTest extends TestCase
         $caseExtMetaContents = '<?php'."\n".'$viewdefs["Cases"]["base"]["layout"]["fo"]["ext"] = "baseCaseByExt";';
         file_put_contents($extFilePath, $caseExtMetaContents);
 
-        $caseFileList = MetaDataFiles::getClientFiles(array('base'), 'layout', 'Cases');
+        $caseFileList = MetaDataFiles::getClientFiles(['base'], 'layout', 'Cases');
         $this->assertArrayHasKey($extFilePath, $caseFileList, "Didn't find the Cases fo extension");
 
         $results  = MetaDataFiles::getClientFileContents($caseFileList, "layout", "Cases");
@@ -266,7 +274,7 @@ class MetaDataFilesTest extends TestCase
         $caseExtMetaContents = '<?php'."\n".'$viewdefs["Cases"]["base"]["view"]["fo"]["ext"] = "baseCaseByExt";';
         file_put_contents($extFilePath, $caseExtMetaContents);
 
-        $caseFileList = MetaDataFiles::getClientFiles(array('base'), 'view', 'Cases');
+        $caseFileList = MetaDataFiles::getClientFiles(['base'], 'view', 'Cases');
         $this->assertArrayHasKey($templateFilePath, $caseFileList, "Didn't find the template fo section.");
         $this->assertArrayHasKey($extFilePath, $caseFileList, "Didn't find the Cases fo extension");
 

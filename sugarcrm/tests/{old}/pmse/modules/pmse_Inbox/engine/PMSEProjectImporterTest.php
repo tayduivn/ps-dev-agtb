@@ -39,7 +39,7 @@ class PMSEProjectImporterTest extends TestCase
         // Remove the following lines when you implement this test.
         $projectImporterMock = $this->getMockBuilder('PMSEProjectImporter')
                 ->disableOriginalConstructor()
-                ->setMethods(array(
+                ->setMethods([
                     'getBean',
                     'unsetCommonFields',
                     'getNameWithSuffix',
@@ -48,20 +48,20 @@ class PMSEProjectImporterTest extends TestCase
                     'saveProjectGatewaysData',
                     'saveProjectElementsData',
                     'saveProjectFlowsData',
-                    'processDefaultFlows'
-                ))
+                    'processDefaultFlows',
+                ])
                 ->getMock();
 
         global $current_user;
         $current_user = $this->getMockBuilder('User')
                 ->disableOriginalConstructor()
-                ->setMethods(NULL)
+                ->setMethods(null)
                 ->getMock();
         $current_user->id = 'user01';
 
         $projectMock = $this->getMockBuilder('pmse_BpmProject')
                 ->disableOriginalConstructor()
-                ->setMethods(array('save'))
+                ->setMethods(['save'])
                 ->getMock();
 
         $projectMock->object_name = 'Project';
@@ -70,30 +70,30 @@ class PMSEProjectImporterTest extends TestCase
                 ->method('getBean')
                 ->will($this->returnValue($projectMock));
 
-        $projectData = array(
+        $projectData = [
             'prj_test' => 'Some Name',
             'prj_uid' => 'SomeStringChainOf32CharactersLng',
             'prj_name' => 'Project Name',
-            'definition' => array(
-                'prj_name' => 'Project Name'
-            ),
-            'diagram' => array(
-                array(
-                    'activities' => array(),
-                    'events' => array(),
-                    'gateways' => array(),
-                    'documentation' => array(),
-                    'extension' => array(),
-                    'pools' => array(),
-                    'lanes' => array(),
-                    'participants' => array(),
-                    'artifacts' => array(),
-                    'data' => array(),
-                    'flows' => array()
-                )
-            ),
-            'dynaforms' => array()
-        );
+            'definition' => [
+                'prj_name' => 'Project Name',
+            ],
+            'diagram' => [
+                [
+                    'activities' => [],
+                    'events' => [],
+                    'gateways' => [],
+                    'documentation' => [],
+                    'extension' => [],
+                    'pools' => [],
+                    'lanes' => [],
+                    'participants' => [],
+                    'artifacts' => [],
+                    'data' => [],
+                    'flows' => [],
+                ],
+            ],
+            'dynaforms' => [],
+        ];
 
         $projectImporterMock->setName('prj_test');
         $projectImporterMock->saveProjectData($projectData);
@@ -104,7 +104,7 @@ class PMSEProjectImporterTest extends TestCase
         // Remove the following lines when you implement this test.
         $projectImporterMock = $this->getMockBuilder('PMSEProjectImporter')
                 ->disableOriginalConstructor()
-                ->setMethods(array(
+                ->setMethods([
                     'getBean',
                     'unsetCommonFields',
                     'getNameWithSuffix',
@@ -113,21 +113,21 @@ class PMSEProjectImporterTest extends TestCase
                     'saveProjectGatewaysData',
                     'saveProjectElementsData',
                     'saveProjectFlowsData',
-                    'processDefaultFlows'
-                ))
+                    'processDefaultFlows',
+                ])
                 ->getMock();
 
         global $current_user;
         $current_user = $this->getMockBuilder('User')
                 ->disableOriginalConstructor()
-                ->setMethods(NULL)
+                ->setMethods(null)
                 ->getMock();
 
         $current_user->id = 'user01';
 
         $projectMock = $this->getMockBuilder('pmse_BpmProject')
                 ->disableOriginalConstructor()
-                ->setMethods(array('save'))
+                ->setMethods(['save'])
                 ->getMock();
 
         $projectMock->object_name = 'Project';
@@ -136,30 +136,30 @@ class PMSEProjectImporterTest extends TestCase
                 ->method('getBean')
                 ->will($this->returnValue($projectMock));
 
-        $projectData = array(
+        $projectData = [
             'prj_test' => 'Some Name',
             'prj_uid' => 'SomeStringChainOf32CharactersLng',
             'prj_name' => '',
-            'definition' => array(
-                'prj_description' => 'Some Description'
-            ),
-            'diagram' => array(
-                array(
-                    'activities' => array(),
-                    'events' => array(),
-                    'gateways' => array(),
-                    'documentation' => array(),
-                    'extension' => array(),
-                    'pools' => array(),
-                    'lanes' => array(),
-                    'participants' => array(),
-                    'artifacts' => array(),
-                    'data' => array(),
-                    'flows' => array()
-                )
-            ),
-            'dynaforms' => array()
-        );
+            'definition' => [
+                'prj_description' => 'Some Description',
+            ],
+            'diagram' => [
+                [
+                    'activities' => [],
+                    'events' => [],
+                    'gateways' => [],
+                    'documentation' => [],
+                    'extension' => [],
+                    'pools' => [],
+                    'lanes' => [],
+                    'participants' => [],
+                    'artifacts' => [],
+                    'data' => [],
+                    'flows' => [],
+                ],
+            ],
+            'dynaforms' => [],
+        ];
 
         $projectImporterMock->setName('prj_test');
         $projectImporterMock->saveProjectData($projectData);
@@ -174,53 +174,53 @@ class PMSEProjectImporterTest extends TestCase
         // Remove the following lines when you implement this test.
         $projectImporterMock = $this->getMockBuilder('PMSEProjectImporter')
                 ->disableOriginalConstructor()
-                ->setMethods(NULL)
+                ->setMethods(null)
                 ->getMock();
         
-        $activities = array(
-            array(
+        $activities = [
+            [
                 'act_name' => 'act01',
                 'act_type' => 'TASK',
                 'act_task_type' => 'USER',
                 'act_description' => 'Some Description',
-                'act_default_flow' => 'some flow'
-            ),
-            array(
+                'act_default_flow' => 'some flow',
+            ],
+            [
                 'act_name' => 'act01',
                 'act_type' => 'TASK',
                 'act_task_type' => 'USER',
                 'act_description' => 'Some Description',
-                'act_default_flow' => 'some flow'
-            ),
-            array(
+                'act_default_flow' => 'some flow',
+            ],
+            [
                 'act_name' => 'act02',
                 'act_type' => 'TASK',
                 'act_task_type' => 'SCRIPTTASK',
                 'act_script_type' => 'ASSIGN',
                 'act_description' => 'Some Description',
-                'act_default_flow' => 'some flow'
-            ),
-            array(
+                'act_default_flow' => 'some flow',
+            ],
+            [
                 'act_name' => 'act03',
                 'act_type' => 'TASK',
                 'act_task_type' => 'SCRIPTTASK',
                 'act_script_type' => 'BUSINESS_RULE',
                 'act_fields' => 'some_field',
                 'act_description' => 'Some Description',
-                'act_default_flow' => 'some flow'
-            ),
-            array(
+                'act_default_flow' => 'some flow',
+            ],
+            [
                 'act_name' => 'act04',
                 'act_type' => 'TASK',
                 'act_task_type' => 'SCRIPTTASK',
                 'act_script_type' => 'ASSIGN',
                 'act_description' => 'Some Description',
-                'act_default_flow' => 'some flow'
-            )
-        );
+                'act_default_flow' => 'some flow',
+            ],
+        ];
 
-        $arrayKeys = array('prj_id' => 'prj01', 'pro_id' => 'pro01', 'dia_id' => 'dia01');
-        $projectImporterMock->setSavedElements(array('BpmRuleSet'=>array('some_field' => 'fieldValue')));
+        $arrayKeys = ['prj_id' => 'prj01', 'pro_id' => 'pro01', 'dia_id' => 'dia01'];
+        $projectImporterMock->setSavedElements(['BpmRuleSet'=>['some_field' => 'fieldValue']]);
         $projectImporterMock->saveProjectActivitiesData($activities, $arrayKeys);
     }
 
@@ -233,44 +233,44 @@ class PMSEProjectImporterTest extends TestCase
                 // Remove the following lines when you implement this test.
         $projectImporterMock = $this->getMockBuilder('PMSEProjectImporter')
                 ->disableOriginalConstructor()
-                ->setMethods(NULL)
+                ->setMethods(null)
                 ->getMock();
         
-        $events = array(
-            array(
+        $events = [
+            [
                 'evn_name' => 'evn01',
                 'evn_message' => 'Some Message',
-                'evn_default_flow' => 'some flow'
-            ),
-            array(
+                'evn_default_flow' => 'some flow',
+            ],
+            [
                 'evn_name' => 'evn01',
                 'evn_message' => 'Some Message',
-                'evn_default_flow' => 'some flow'
-            ),
-            array(
+                'evn_default_flow' => 'some flow',
+            ],
+            [
                 'evn_name' => 'evn02',
                 'evn_type' => 'TASK',
                 'evn_message' => 'Some Message',
-                'evn_default_flow' => 'some flow'
-            ),
-            array(
+                'evn_default_flow' => 'some flow',
+            ],
+            [
                 'evn_name' => 'evn03',
                 'evn_type' => 'TASK',
                 'evn_fields' => 'some_field',
                 'evn_message' => 'Some Message',
-                'evn_default_flow' => 'some flow'
-            ),
-            array(
+                'evn_default_flow' => 'some flow',
+            ],
+            [
                 'evn_name' => 'evn04',
                 'evn_type' => 'TASK',
                 'evn_message' => 'Some Message',
-                'evn_default_flow' => 'some flow'
-            )
-        );
+                'evn_default_flow' => 'some flow',
+            ],
+        ];
 
         $relatedDependenciesMock = $this->getMockBuilder('PMSERelatedDependencyWrapper')
                 ->disableOriginalConstructor()
-                ->setMethods(array('processRelatedDependencies'))
+                ->setMethods(['processRelatedDependencies'])
                 ->getMock();
 
         $relatedDependenciesMock->expects($this->exactly(5))
@@ -278,8 +278,8 @@ class PMSEProjectImporterTest extends TestCase
 
         $projectImporterMock->setDependenciesWrapper($relatedDependenciesMock);
         
-        $arrayKeys = array('prj_id' => 'prj01', 'pro_id' => 'pro01', 'dia_id' => 'dia01');
-        $projectImporterMock->setSavedElements(array('BpmRuleSet'=>array('some_field' => 'fieldValue')));
+        $arrayKeys = ['prj_id' => 'prj01', 'pro_id' => 'pro01', 'dia_id' => 'dia01'];
+        $projectImporterMock->setSavedElements(['BpmRuleSet'=>['some_field' => 'fieldValue']]);
         $projectImporterMock->saveProjectEventsData($events, $arrayKeys);
     }
 
@@ -292,43 +292,43 @@ class PMSEProjectImporterTest extends TestCase
         // Remove the following lines when you implement this test.
         $projectImporterMock = $this->getMockBuilder('PMSEProjectImporter')
                 ->disableOriginalConstructor()
-                ->setMethods(NULL)
+                ->setMethods(null)
                 ->getMock();
         
-        $gateways = array(
-            array(
+        $gateways = [
+            [
                 'gat_name' => 'gat01',
                 'gat_message' => 'Some Message',
-                'gat_default_flow' => 'some flow'
-            ),
-            array(
+                'gat_default_flow' => 'some flow',
+            ],
+            [
                 'gat_name' => 'gat01',
                 'gat_message' => 'Some Message',
-                'gat_default_flow' => 'some flow'
-            ),
-            array(
+                'gat_default_flow' => 'some flow',
+            ],
+            [
                 'gat_name' => 'gat02',
                 'gat_type' => 'TASK',
                 'gat_message' => 'Some Message',
-                'gat_default_flow' => 'some flow'
-            ),
-            array(
+                'gat_default_flow' => 'some flow',
+            ],
+            [
                 'gat_name' => 'gat03',
                 'gat_type' => 'TASK',
                 'gat_fields' => 'some_field',
                 'gat_message' => 'Some Message',
-                'gat_default_flow' => 'some flow'
-            ),
-            array(
+                'gat_default_flow' => 'some flow',
+            ],
+            [
                 'gat_name' => 'gat04',
                 'gat_type' => 'TASK',
                 'gat_message' => 'Some Message',
-                'gat_default_flow' => 'some flow'
-            )
-        );
+                'gat_default_flow' => 'some flow',
+            ],
+        ];
 
-        $arrayKeys = array('prj_id' => 'prj01', 'pro_id' => 'pro01', 'dia_id' => 'dia01');
-        $projectImporterMock->setSavedElements(array('BpmRuleSet'=>array('some_field' => 'fieldValue')));
+        $arrayKeys = ['prj_id' => 'prj01', 'pro_id' => 'pro01', 'dia_id' => 'dia01'];
+        $projectImporterMock->setSavedElements(['BpmRuleSet'=>['some_field' => 'fieldValue']]);
         $projectImporterMock->saveProjectGatewaysData($gateways, $arrayKeys);
     }
 
@@ -341,12 +341,12 @@ class PMSEProjectImporterTest extends TestCase
         // Remove the following lines when you implement this test.
         $projectImporterMock = $this->getMockBuilder('PMSEProjectImporter')
                 ->disableOriginalConstructor()
-                ->setMethods(array('changedUidElements'))
+                ->setMethods(['changedUidElements'])
                 ->getMock();
         
-        $gateways = array(
+        $gateways = [
             
-            array(
+            [
                 'flo_uid' => '01',
                 'flo_name' => 'flo01',
                 'flo_state' => 'CLOSED',
@@ -354,9 +354,9 @@ class PMSEProjectImporterTest extends TestCase
                 'flo_element_origin_type' => 'Activity',
                 'flo_element_dest' => 'eleB1',
                 'flo_element_dest_type' => 'Event',
-                'flo_default_flow' => 'some flow'
-            ),
-            array(
+                'flo_default_flow' => 'some flow',
+            ],
+            [
                 'flo_uid' => '02',
                 'flo_name' => 'flo02',
                 'flo_state' => 'CLOSED',
@@ -364,9 +364,9 @@ class PMSEProjectImporterTest extends TestCase
                 'flo_element_origin_type' => 'Activity',
                 'flo_element_dest' => 'eleB2',
                 'flo_element_dest_type' => 'Gateway',
-                'flo_default_flow' => 'some flow'
-            ),
-            array(
+                'flo_default_flow' => 'some flow',
+            ],
+            [
                 'flo_uid' => '03',
                 'flo_name' => 'flo03',
                 'flo_state' => 'CLOSED',
@@ -374,9 +374,9 @@ class PMSEProjectImporterTest extends TestCase
                 'flo_element_origin_type' => 'Activity',
                 'flo_element_dest' => 'eleB3',
                 'flo_element_dest_type' => 'Event',
-                'flo_default_flow' => 'some flow'
-            ),
-            array(
+                'flo_default_flow' => 'some flow',
+            ],
+            [
                 'flo_uid' => '04',
                 'flo_name' => 'flo04',
                 'flo_state' => 'CLOSED',
@@ -384,9 +384,9 @@ class PMSEProjectImporterTest extends TestCase
                 'flo_element_origin_type' => 'Gateway',
                 'flo_element_dest' => 'eleB4',
                 'flo_element_dest_type' => 'Event',
-                'flo_default_flow' => 'some flow'
-            ),
-            array(
+                'flo_default_flow' => 'some flow',
+            ],
+            [
                 'flo_uid' => '05',
                 'flo_name' => 'flo05',
                 'flo_state' => 'CLOSED',
@@ -396,38 +396,38 @@ class PMSEProjectImporterTest extends TestCase
                 'flo_element_dest_type' => 'Gateway',
                 'flo_default_flow' => 'some flow',
                 'flo_condition' => '',
-                'flo_is_inmediate' => true
-            )
-        );
+                'flo_is_inmediate' => true,
+            ],
+        ];
 
-        $savedElements = array(
-            'BpmRuleSet' => array(
-                'some_field' => 'fieldValue'
-            ), 
-            'Activity'=> array(
-                'eleA1' => array('eleUidA1'),
-                'eleA2' => array('eleUidA2'),
-                'eleA3' => array('eleUidA3')
-            ),            
-            'Event'=> array(
-                'eleB1' => array('eleUidB2'),
-                'eleB3' => array('eleUidB3'),
-                'eleB4' => array('eleUidB4')
-            ),
-            'Gateway'=> array(
-                'eleA4' => array('eleUidA4'),
-                'eleA5' => array('eleUidA5'),
-                'eleB2' => array('eleUidB2'),
-                'eleB5' => array('eleUidB5'),
-            ),
-        );
+        $savedElements = [
+            'BpmRuleSet' => [
+                'some_field' => 'fieldValue',
+            ],
+            'Activity'=> [
+                'eleA1' => ['eleUidA1'],
+                'eleA2' => ['eleUidA2'],
+                'eleA3' => ['eleUidA3'],
+            ],
+            'Event'=> [
+                'eleB1' => ['eleUidB2'],
+                'eleB3' => ['eleUidB3'],
+                'eleB4' => ['eleUidB4'],
+            ],
+            'Gateway'=> [
+                'eleA4' => ['eleUidA4'],
+                'eleA5' => ['eleUidA5'],
+                'eleB2' => ['eleUidB2'],
+                'eleB5' => ['eleUidB5'],
+            ],
+        ];
         
-        $defaultFlowList = array(
-            '01' => array(),
-            '02' => array()
-        );
+        $defaultFlowList = [
+            '01' => [],
+            '02' => [],
+        ];
         
-        $arrayKeys = array('prj_id' => 'prj01', 'pro_id' => 'pro01', 'dia_id' => 'dia01');
+        $arrayKeys = ['prj_id' => 'prj01', 'pro_id' => 'pro01', 'dia_id' => 'dia01'];
         
         $projectImporterMock->setSavedElements($savedElements);
         $projectImporterMock->setDefaultFlowList($defaultFlowList);
@@ -443,12 +443,12 @@ class PMSEProjectImporterTest extends TestCase
         // Remove the following lines when you implement this test.
         $projectImporterMock = $this->getMockBuilder('PMSEProjectImporter')
                 ->disableOriginalConstructor()
-                ->setMethods(NULL)
+                ->setMethods(null)
                 ->getMock();
         
-        $gateways = array(
+        $gateways = [
             
-            array(
+            [
                 'flo_uid' => '01',
                 'flo_name' => 'flo01',
                 'flo_state' => 'CLOSED',
@@ -456,9 +456,9 @@ class PMSEProjectImporterTest extends TestCase
                 'flo_element_origin_type' => 'Activity',
                 'flo_element_dest' => 'eleB1',
                 'flo_element_dest_type' => 'Event',
-                'flo_default_flow' => 'some flow'
-            ),
-            array(
+                'flo_default_flow' => 'some flow',
+            ],
+            [
                 'flo_uid' => '02',
                 'flo_name' => 'flo02',
                 'flo_state' => 'CLOSED',
@@ -466,9 +466,9 @@ class PMSEProjectImporterTest extends TestCase
                 'flo_element_origin_type' => 'Activity',
                 'flo_element_dest' => 'eleB2',
                 'flo_element_dest_type' => 'Gateway',
-                'flo_default_flow' => 'some flow'
-            ),
-            array(
+                'flo_default_flow' => 'some flow',
+            ],
+            [
                 'flo_uid' => '03',
                 'flo_name' => 'flo03',
                 'flo_state' => 'CLOSED',
@@ -476,9 +476,9 @@ class PMSEProjectImporterTest extends TestCase
                 'flo_element_origin_type' => 'Activity',
                 'flo_element_dest' => 'eleB3',
                 'flo_element_dest_type' => 'Event',
-                'flo_default_flow' => 'some flow'
-            ),
-            array(
+                'flo_default_flow' => 'some flow',
+            ],
+            [
                 'flo_uid' => '04',
                 'flo_name' => 'flo04',
                 'flo_state' => 'CLOSED',
@@ -486,9 +486,9 @@ class PMSEProjectImporterTest extends TestCase
                 'flo_element_origin_type' => 'Gateway',
                 'flo_element_dest' => 'eleB4',
                 'flo_element_dest_type' => 'Event',
-                'flo_default_flow' => 'some flow'
-            ),
-            array(
+                'flo_default_flow' => 'some flow',
+            ],
+            [
                 'flo_uid' => '05',
                 'flo_name' => 'flo05',
                 'flo_state' => 'CLOSED',
@@ -498,49 +498,49 @@ class PMSEProjectImporterTest extends TestCase
                 'flo_element_dest_type' => 'Gateway',
                 'flo_default_flow' => 'some flow',
                 'flo_condition' => '',
-                'flo_is_inmediate' => true
-            )
-        );
+                'flo_is_inmediate' => true,
+            ],
+        ];
 
-        $savedElements = array(
-            'BpmRuleSet' => array(
-                'some_field' => 'fieldValue'
-            ), 
-            'Activity'=> array(
-                'eleA1' => array('eleUidA1'),
-                'eleA2' => array('eleUidA2'),
-                'eleAB2' => array('eleUidAB2'),
-                'eleA3' => array('eleUidA3'),
-                'eleAB3' => array('eleUidAB3')
-            ),            
-            'Event'=> array(
-                'eleB1' => array('eleUidB2'),
-                'eleB3' => array('eleUidB3'),
-                'eleBC3' => array('eleUidBC3'),
-                'eleB4' => array('eleUidB4')
-            ),
-            'Gateway'=> array(
-                'eleA4' => array('eleUidA4'),
-                'eleA5' => array('eleUidA5'),
-                'eleB2' => array('eleUidB2'),
-                'eleBC2' => array('eleUidBC2'),
-                'eleB5' => array('eleUidB5'),
-            )
-        );
+        $savedElements = [
+            'BpmRuleSet' => [
+                'some_field' => 'fieldValue',
+            ],
+            'Activity'=> [
+                'eleA1' => ['eleUidA1'],
+                'eleA2' => ['eleUidA2'],
+                'eleAB2' => ['eleUidAB2'],
+                'eleA3' => ['eleUidA3'],
+                'eleAB3' => ['eleUidAB3'],
+            ],
+            'Event'=> [
+                'eleB1' => ['eleUidB2'],
+                'eleB3' => ['eleUidB3'],
+                'eleBC3' => ['eleUidBC3'],
+                'eleB4' => ['eleUidB4'],
+            ],
+            'Gateway'=> [
+                'eleA4' => ['eleUidA4'],
+                'eleA5' => ['eleUidA5'],
+                'eleB2' => ['eleUidB2'],
+                'eleBC2' => ['eleUidBC2'],
+                'eleB5' => ['eleUidB5'],
+            ],
+        ];
         
-        $defaultFlowList = array(
-            '01' => array(),
-            '02' => array()
-        );
+        $defaultFlowList = [
+            '01' => [],
+            '02' => [],
+        ];
         
-        $changedUidElements = array(
-            'eleA2' => array('new_uid' => 'eleAB2'),
-            'eleA3' => array('new_uid' => 'eleAB3'),
-            'eleB2' => array('new_uid' => 'eleBC2'),
-            'eleB3' => array('new_uid' => 'eleBC3')
-        );
+        $changedUidElements = [
+            'eleA2' => ['new_uid' => 'eleAB2'],
+            'eleA3' => ['new_uid' => 'eleAB3'],
+            'eleB2' => ['new_uid' => 'eleBC2'],
+            'eleB3' => ['new_uid' => 'eleBC3'],
+        ];
         
-        $arrayKeys = array('prj_id' => 'prj01', 'pro_id' => 'pro01', 'dia_id' => 'dia01');
+        $arrayKeys = ['prj_id' => 'prj01', 'pro_id' => 'pro01', 'dia_id' => 'dia01'];
         
         $projectImporterMock->setChangedUidElements($changedUidElements);
         $projectImporterMock->setSavedElements($savedElements);
@@ -555,12 +555,12 @@ class PMSEProjectImporterTest extends TestCase
     {
         $projectImporterMock = $this->getMockBuilder('PMSEProjectImporter')
                 ->disableOriginalConstructor()
-                ->setMethods(NULL)
+                ->setMethods(null)
                 ->getMock();
         
-        $gateways = array(
+        $gateways = [
             
-            array(
+            [
                 'flo_uid' => '01',
                 'flo_name' => 'flo01',
                 'flo_state' => 'CLOSED',
@@ -568,9 +568,9 @@ class PMSEProjectImporterTest extends TestCase
                 'flo_element_origin_type' => 'Activity',
                 'flo_element_dest' => 'eleB1',
                 'flo_element_dest_type' => 'Event',
-                'flo_default_flow' => 'some flow'
-            ),
-            array(
+                'flo_default_flow' => 'some flow',
+            ],
+            [
                 'flo_uid' => '02',
                 'flo_name' => 'flo02',
                 'flo_state' => 'CLOSED',
@@ -578,9 +578,9 @@ class PMSEProjectImporterTest extends TestCase
                 'flo_element_origin_type' => 'Activity',
                 'flo_element_dest' => 'eleB2',
                 'flo_element_dest_type' => 'Gateway',
-                'flo_default_flow' => 'some flow'
-            ),
-            array(
+                'flo_default_flow' => 'some flow',
+            ],
+            [
                 'flo_uid' => '03',
                 'flo_name' => 'flo03',
                 'flo_state' => 'CLOSED',
@@ -588,49 +588,49 @@ class PMSEProjectImporterTest extends TestCase
                 'flo_element_origin_type' => 'Activity',
                 'flo_element_dest' => 'eleB3',
                 'flo_element_dest_type' => 'Event',
-                'flo_default_flow' => 'some flow'
-            )
-        );
+                'flo_default_flow' => 'some flow',
+            ],
+        ];
 
-        $savedElements = array(
-            'BpmRuleSet' => array(
-                'some_field' => 'fieldValue'
-            ), 
-            'Activity'=> array(
-                'eleA1' => array('eleUidA1'),
-                'eleA2' => array('eleUidA2'),
-                'eleAB2' => array('eleUidAB2'),
-                'eleA3' => array('eleUidA3'),
-                'eleAB3' => array('eleUidAB3')
-            ),            
-            'Event'=> array(
-                'eleB1' => array('eleUidB2'),
-                'eleB3' => array('eleUidB3'),
-                'eleBC3' => array('eleUidBC3'),
-                'eleB4' => array('eleUidB4')
-            ),
-            'Gateway'=> array(
-                'eleA4' => array('eleUidA4'),
-                'eleA5' => array('eleUidA5'),
-                'eleB2' => array('eleUidB2'),
-                'eleBC2' => array('eleUidBC2'),
-                'eleB5' => array('eleUidB5'),
-            )
-        );
+        $savedElements = [
+            'BpmRuleSet' => [
+                'some_field' => 'fieldValue',
+            ],
+            'Activity'=> [
+                'eleA1' => ['eleUidA1'],
+                'eleA2' => ['eleUidA2'],
+                'eleAB2' => ['eleUidAB2'],
+                'eleA3' => ['eleUidA3'],
+                'eleAB3' => ['eleUidAB3'],
+            ],
+            'Event'=> [
+                'eleB1' => ['eleUidB2'],
+                'eleB3' => ['eleUidB3'],
+                'eleBC3' => ['eleUidBC3'],
+                'eleB4' => ['eleUidB4'],
+            ],
+            'Gateway'=> [
+                'eleA4' => ['eleUidA4'],
+                'eleA5' => ['eleUidA5'],
+                'eleB2' => ['eleUidB2'],
+                'eleBC2' => ['eleUidBC2'],
+                'eleB5' => ['eleUidB5'],
+            ],
+        ];
         
-        $defaultFlowList = array(
-            '01' => array(),
-            '02' => array()
-        );
+        $defaultFlowList = [
+            '01' => [],
+            '02' => [],
+        ];
         
-        $changedUidElements = array(
-            'eleA2' => array('new_uid' => 'eleAB2'),
-            'eleA3' => array('new_uid' => 'eleAB3'),
-            'eleB2' => array('new_uid' => 'eleBC2'),
-            'eleB3' => array('new_uid' => 'eleBC3')
-        );
+        $changedUidElements = [
+            'eleA2' => ['new_uid' => 'eleAB2'],
+            'eleA3' => ['new_uid' => 'eleAB3'],
+            'eleB2' => ['new_uid' => 'eleBC2'],
+            'eleB3' => ['new_uid' => 'eleBC3'],
+        ];
         
-        $arrayKeys = array('prj_id' => 'prj01', 'pro_id' => 'pro01', 'dia_id' => 'dia01');
+        $arrayKeys = ['prj_id' => 'prj01', 'pro_id' => 'pro01', 'dia_id' => 'dia01'];
         
         $projectImporterMock->setChangedUidElements($changedUidElements);
         $projectImporterMock->setSavedElements($savedElements);
@@ -645,12 +645,12 @@ class PMSEProjectImporterTest extends TestCase
     {
         $projectImporterMock = $this->getMockBuilder('PMSEProjectImporter')
                 ->disableOriginalConstructor()
-                ->setMethods(NULL)
+                ->setMethods(null)
                 ->getMock();
         
-        $gateways = array(
+        $gateways = [
             
-            array(
+            [
                 'flo_uid' => '01',
                 'flo_name' => 'flo01',
                 'flo_state' => 'CLOSED',
@@ -658,9 +658,9 @@ class PMSEProjectImporterTest extends TestCase
                 'flo_element_origin_type' => 'Activity',
                 'flo_element_dest' => 'eleB1',
                 'flo_element_dest_type' => 'Event',
-                'flo_default_flow' => 'some flow'
-            ),
-            array(
+                'flo_default_flow' => 'some flow',
+            ],
+            [
                 'flo_uid' => '02',
                 'flo_name' => 'flo02',
                 'flo_state' => 'CLOSED',
@@ -668,9 +668,9 @@ class PMSEProjectImporterTest extends TestCase
                 'flo_element_origin_type' => 'Activity',
                 'flo_element_dest' => 'eleB2',
                 'flo_element_dest_type' => 'Gateway',
-                'flo_default_flow' => 'some flow'
-            ),
-            array(
+                'flo_default_flow' => 'some flow',
+            ],
+            [
                 'flo_uid' => '03',
                 'flo_name' => 'flo03',
                 'flo_state' => 'CLOSED',
@@ -678,49 +678,49 @@ class PMSEProjectImporterTest extends TestCase
                 'flo_element_origin_type' => 'Activity',
                 'flo_element_dest' => 'eleB3',
                 'flo_element_dest_type' => 'Event',
-                'flo_default_flow' => 'some flow'
-            )
-        );
+                'flo_default_flow' => 'some flow',
+            ],
+        ];
 
-        $savedElements = array(
-            'BpmRuleSet' => array(
-                'some_field' => 'fieldValue'
-            ), 
-            'Activity'=> array(
-                'eleA1' => array('eleUidA1'),
-                'eleA2' => array('eleUidA2'),
-                'eleAB2' => array('eleUidAB2'),
-                'eleA3' => array('eleUidA3'),
-                'eleAB3' => array('eleUidAB3')
-            ),            
-            'Event'=> array(
-                'eleB1' => array('eleUidB2'),
-                'eleB3' => array('eleUidB3'),
-                'eleBC3' => array('eleUidBC3'),
-                'eleB4' => array('eleUidB4')
-            ),
-            'Gateway'=> array(
-                'eleA4' => array('eleUidA4'),
-                'eleA5' => array('eleUidA5'),
-                'eleB2' => array('eleUidB2'),
-                'eleBC2' => array('eleUidBC2'),
-                'eleB5' => array('eleUidB5'),
-            )
-        );
+        $savedElements = [
+            'BpmRuleSet' => [
+                'some_field' => 'fieldValue',
+            ],
+            'Activity'=> [
+                'eleA1' => ['eleUidA1'],
+                'eleA2' => ['eleUidA2'],
+                'eleAB2' => ['eleUidAB2'],
+                'eleA3' => ['eleUidA3'],
+                'eleAB3' => ['eleUidAB3'],
+            ],
+            'Event'=> [
+                'eleB1' => ['eleUidB2'],
+                'eleB3' => ['eleUidB3'],
+                'eleBC3' => ['eleUidBC3'],
+                'eleB4' => ['eleUidB4'],
+            ],
+            'Gateway'=> [
+                'eleA4' => ['eleUidA4'],
+                'eleA5' => ['eleUidA5'],
+                'eleB2' => ['eleUidB2'],
+                'eleBC2' => ['eleUidBC2'],
+                'eleB5' => ['eleUidB5'],
+            ],
+        ];
         
-        $defaultFlowList = array(
-            '01' => array(),
-            '02' => array()
-        );
+        $defaultFlowList = [
+            '01' => [],
+            '02' => [],
+        ];
         
-        $changedUidElements = array(
-            'eleA2' => array('new_uid' => 'eleAB2'),
-            'eleA3' => array('new_uid' => 'eleAB3'),
-            'eleB2' => array('new_uid' => 'eleBC2'),
-            'eleB3' => array('new_uid' => 'eleBC3')
-        );
+        $changedUidElements = [
+            'eleA2' => ['new_uid' => 'eleAB2'],
+            'eleA3' => ['new_uid' => 'eleAB3'],
+            'eleB2' => ['new_uid' => 'eleBC2'],
+            'eleB3' => ['new_uid' => 'eleBC3'],
+        ];
         
-        $arrayKeys = array('prj_id' => 'prj01', 'pro_id' => 'pro01', 'dia_id' => 'dia01');
+        $arrayKeys = ['prj_id' => 'prj01', 'pro_id' => 'pro01', 'dia_id' => 'dia01'];
         
         $projectImporterMock->setChangedUidElements($changedUidElements);
         $projectImporterMock->setSavedElements($savedElements);
@@ -737,18 +737,18 @@ class PMSEProjectImporterTest extends TestCase
         // Remove the following lines when you implement this test.
         $projectImporterMock = $this->getMockBuilder('PMSEProjectImporter')
                 ->disableOriginalConstructor()
-                ->setMethods(NULL)
+                ->setMethods(null)
                 ->getMock();
         
-        $defaultFlows = array(
-            array(
+        $defaultFlows = [
+            [
                 'bean' => 'pmse_BpmnFlow',
                 'search_field' => 'some_search',
                 'search_field_value' => 'some_field',
                 'default_flow' => 'some_flow',
-                'default_flow_field' => 'some_default'
-            )
-        );
+                'default_flow_field' => 'some_default',
+            ],
+        ];
         
         $projectImporterMock->setDefaultFlowList($defaultFlows);
         $projectImporterMock->processDefaultFlows();

@@ -42,24 +42,24 @@ class Bug44696Test extends TestCase
         $this->currentUser->setPreference('default_decimal_seperator', ',');
 
         $sugarChartObject = new SugarChart();
-        $sugarChartObject->group_by = array('sales_stage', 'user_name');
+        $sugarChartObject->group_by = ['sales_stage', 'user_name'];
         $sugarChartObject->data_set = $this->getDataSet();
-        $sugarChartObject->base_url = array(
+        $sugarChartObject->base_url = [
             'module' => 'Opportunities',
             'action' => 'index',
             'query' => 'true',
-            'searchFormTab' => 'advanced_search'
-        );
-        $sugarChartObject->url_params = array();
+            'searchFormTab' => 'advanced_search',
+        ];
+        $sugarChartObject->url_params = [];
         $sugarChartObject->is_currency = true;
-        // we have 5 users 
-        $sugarChartObject->super_set = array(
+        // we have 5 users
+        $sugarChartObject->super_set = [
             'will',
             'max',
             'sarah',
             'sally',
-            'chris'
-        );
+            'chris',
+        ];
         $this->sugarChartObject = $sugarChartObject;
     }
 
@@ -81,7 +81,7 @@ class Bug44696Test extends TestCase
     {
         $actual = $this->sugarChartObject->xmlDataGenericChart();
         $expected = $this->compareXml();
-        $order = array("\r\n", "\n", "\r", "\t");
+        $order = ["\r\n", "\n", "\r", "\t"];
         $replace = "";
         // remove all break lines and spaces and tabs
         $expected = str_replace($order, $replace, $expected);
@@ -91,8 +91,8 @@ class Bug44696Test extends TestCase
 
     protected function getDataSet()
     {
-        return array(
-            array(
+        return [
+            [
                 'sales_stage' => 'Proposal/Price Quote',
                 'user_name' => 'max',
                 'assigned_user_id' => 'seed_max_id',
@@ -100,8 +100,8 @@ class Bug44696Test extends TestCase
                 'total' => 50.1234,
                 'key' => 'Proposal/Price Quote',
                 'value' => 'Proposal/Price Quote',
-            ),
-            array(
+            ],
+            [
                 'sales_stage' => 'Proposal/Price Quote',
                 'user_name' => 'sally',
                 'assigned_user_id' => 'seed_sally_id',
@@ -109,8 +109,8 @@ class Bug44696Test extends TestCase
                 'total' => 75.98765,
                 'key' => 'Proposal/Price Quote',
                 'value' => 'Proposal/Price Quote',
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -200,6 +200,6 @@ class Bug44696Test extends TestCase
             $this->currentUser
         ) . $subAmountFormatted . 'K';
 
-        return array($subAmount, $subAmountFormatted);
+        return [$subAmount, $subAmountFormatted];
     }
 }

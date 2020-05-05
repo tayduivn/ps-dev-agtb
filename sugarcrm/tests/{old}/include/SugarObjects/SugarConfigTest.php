@@ -19,7 +19,7 @@ class SugarConfigTest extends TestCase
     protected function setUp() : void
     {
         $this->_old_sugar_config = $GLOBALS['sugar_config'];
-        $GLOBALS['sugar_config'] = array();
+        $GLOBALS['sugar_config'] = [];
     }
 
     protected function tearDown() : void
@@ -65,37 +65,36 @@ class SugarConfigTest extends TestCase
      * @param string $value
      */
     private function _addKeyValueToConfig(
-        $key, 
+        $key,
         $value
-        ) 
-    {
+    ) {
         $GLOBALS['sugar_config'][$key] = $value;
     }
 
-    private function _generateRandomValue() 
+    private function _generateRandomValue()
     {
         $this->_random = 'Some Random Foobar: ' . rand(10000, 20000);
         return $this->_getLastRandomValue();
     }
 
-    private function _getLastRandomValue() 
+    private function _getLastRandomValue()
     {
         return $this->_random;
     }
 
-    public function testGetInstanceReturnsASugarConfigObject() 
+    public function testGetInstanceReturnsASugarConfigObject()
     {
-        $this->assertTrue(SugarConfig::getInstance() instanceOf SugarConfig, 'Returned object is not a SugarConfig object');
+        $this->assertTrue(SugarConfig::getInstance() instanceof SugarConfig, 'Returned object is not a SugarConfig object');
     }
 
-    public function testGetInstanceReturnsASingleton() 
+    public function testGetInstanceReturnsASingleton()
     {
         $one = SugarConfig::getInstance();
         $two = SugarConfig::getInstance();
         $this->assertSame($one, $two);
     }
 
-    public function testReadsGlobalSugarConfigArray() 
+    public function testReadsGlobalSugarConfigArray()
     {
         for ($i = 0; $i < 10; $i++) {
             $anonymous_key = 'key-' . $i;
@@ -107,38 +106,39 @@ class SugarConfigTest extends TestCase
         $config = SugarConfig::getInstance();
         foreach ($rawConfigArray as $key => $value) {
             $this->assertEquals(
-                $config->get($key), $value,
+                $config->get($key),
+                $value,
                 "SugarConfig::get({$key}) should be equal to {$value}, got " . $config->get($key)
             );
         }
     }
 
-    public function testAllowDotNotationForSubValuesWithinTheConfig() 
+    public function testAllowDotNotationForSubValuesWithinTheConfig()
     {
         $random_value = 'Some Random Integer: ' . rand(1000, 2000);
-        $this->_addKeyValueToConfig('grandparent', array(
-                'parent' => array(
+        $this->_addKeyValueToConfig('grandparent', [
+                'parent' => [
                 'child' => $random_value,
-            ),
-        ));
+                ],
+        ]);
 
         $config = SugarConfig::getInstance();
         $this->assertEquals($random_value, $config->get('grandparent.parent.child'));
     }
 
-    public function testReturnsNullOnUnknownKey() 
+    public function testReturnsNullOnUnknownKey()
     {
         $config = SugarConfig::getInstance();
         $this->assertNull($config->get('unknown-and-unknowable'));
     }
 
-    public function testReturnsNullOnUnknownKeyWithinAHeirarchy() 
+    public function testReturnsNullOnUnknownKeyWithinAHeirarchy()
     {
-        $this->_addKeyValueToConfig('grandparent', array(
-            'parent' => array(
+        $this->_addKeyValueToConfig('grandparent', [
+            'parent' => [
                 'child' => 'foobar',
-            ),
-        ));
+            ],
+        ]);
         $config= SugarConfig::getInstance();
 
         $this->assertNull($config->get('some-unknown-grandparent.parent.child'));
@@ -146,7 +146,7 @@ class SugarConfigTest extends TestCase
         $this->assertNull($config->get('grandparent.parent.some-unknown-child'));
     }
 
-    public function testAllowSpecifyingDefault() 
+    public function testAllowSpecifyingDefault()
     {
         $config = SugarConfig::getInstance();
 
@@ -154,13 +154,13 @@ class SugarConfigTest extends TestCase
         $this->assertSame($random, $config->get('unknown-and-unknowable', $random));
     }
 
-    public function testAllowSpecifyingDefaultForSubValues() 
+    public function testAllowSpecifyingDefaultForSubValues()
     {
-        $this->_addKeyValueToConfig('grandparent', array(
-            'parent' => array(
+        $this->_addKeyValueToConfig('grandparent', [
+            'parent' => [
                 'child' => 'foobar',
-            ),
-        ));
+            ],
+        ]);
         $config = SugarConfig::getInstance();
 
         $this->assertEquals(
@@ -186,7 +186,7 @@ class SugarConfigTest extends TestCase
         );
     }
 
-    public function testStoresValuesInMemoryAfterFirstLookup() 
+    public function testStoresValuesInMemoryAfterFirstLookup()
     {
         $this->_addKeyValueToConfig('foobar', 'barfoo');
 
@@ -197,7 +197,7 @@ class SugarConfigTest extends TestCase
         $this->assertEquals($config->get('foobar'), 'barfoo', 'should still be equal "barfoo": got ' . $config->get('foobar'));
     }
 
-    public function testCanClearsCachedValues() 
+    public function testCanClearsCachedValues()
     {
         $this->_addKeyValueToConfig('foobar', 'barfoo');
 
@@ -210,7 +210,7 @@ class SugarConfigTest extends TestCase
         $this->assertEquals($config->get('foobar'), 'foobar', 'after clearCache() call, new value should be used');
     }
 
-    public function testCanCherryPickKeyToClear() 
+    public function testCanCherryPickKeyToClear()
     {
         $this->_addKeyValueToConfig('foobar', 'barfoo');
         $this->_addKeyValueToConfig('barfoo', 'barfoo');
@@ -229,18 +229,18 @@ class SugarConfigTest extends TestCase
         $this->assertEquals($config->get('foobar'), 'barfoo', 'should not be effected by cherry picked clearCache() call');
     }
 
-    public function testDemonstrateGrabbingSiblingNodes() 
+    public function testDemonstrateGrabbingSiblingNodes()
     {
-        $this->_addKeyValueToConfig('foobar', array(
-            'foo' => array(
-                array(
+        $this->_addKeyValueToConfig('foobar', [
+            'foo' => [
+                [
                     'first' => 'one',
-                ),
-                array(
+                ],
+                [
                     'first' => 'uno',
-                ),
-            ),
-        ));
+                ],
+            ],
+        ]);
 
         $config = SugarConfig::getInstance();
         $this->assertEquals($config->get('foobar.foo.0.first'), 'one');

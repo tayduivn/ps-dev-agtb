@@ -12,7 +12,7 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once('modules/Currencies/Currency.php');
+require_once 'modules/Currencies/Currency.php';
 
 class CurrencyTest extends TestCase
 {
@@ -54,9 +54,9 @@ class CurrencyTest extends TestCase
      */
     public function testCurrencyRetrieveBase()
     {
-        $currency = BeanFactory::getBean('Currencies','-99');
-        $this->assertInstanceOf('Currency',$currency);
-        $this->assertEquals(1.0,$currency->conversion_rate);
+        $currency = BeanFactory::getBean('Currencies', '-99');
+        $this->assertInstanceOf('Currency', $currency);
+        $this->assertEquals(1.0, $currency->conversion_rate);
     }
 
     /**
@@ -225,10 +225,10 @@ class CurrencyTest extends TestCase
         $current_user->save();
 
         //Force reset on dec_sep and num_grp_sep because the dec_sep and num_grp_sep values are stored as static variables
-        get_number_seperators(true);       
+        get_number_seperators(true);
         
         $testValue = "100000.50";
         $formattedValue = format_number($testValue);
         $this->assertEquals("100.000,50", $formattedValue, "Assert that 100000.50 becomes 100.000,50. Formatted value is: ".$formattedValue);
-    }    
+    }
 }

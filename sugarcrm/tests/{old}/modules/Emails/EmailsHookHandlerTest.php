@@ -55,7 +55,7 @@ class EmailsHookHandlerTest extends TestCase
         $note2 = SugarTestNoteUtilities::createNote();
 
         $email->load_relationship('attachments');
-        $email->attachments->add(array($note1, $note2));
+        $email->attachments->add([$note1, $note2]);
 
         $this->assertEquals(
             $email->assigned_user_id,

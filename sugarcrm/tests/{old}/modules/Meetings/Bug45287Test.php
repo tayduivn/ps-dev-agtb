@@ -38,58 +38,56 @@ class Bug45287Test extends TestCase
         // new object to avoid TZ caching
         $this->timedate = new TimeDate();
 
-        $this->meetingsArr = array();
+        $this->meetingsArr = [];
 
         // Create a Bunch of Meetings
         $d = 12;
         $cnt = 0;
-        while ($d < 15)
-        {
-          $this->meetingsArr[$cnt] = new Meeting();
-          $this->meetingsArr[$cnt]->name = 'Bug45287 Meeting ' . ($cnt + 1);
+        while ($d < 15) {
+            $this->meetingsArr[$cnt] = new Meeting();
+            $this->meetingsArr[$cnt]->name = 'Bug45287 Meeting ' . ($cnt + 1);
             $this->meetingsArr[$cnt]->assigned_user_id = $current_user->id;
-          $this->meetingsArr[$cnt]->date_start = $this->timedate->to_display_date_time(gmdate("Y-m-d H:i:s", mktime(10+$cnt, 30, 00, 7, $d, 2011)));
-          $this->meetingsArr[$cnt]->save();
-          $d++;
-          $cnt++;
+            $this->meetingsArr[$cnt]->date_start = $this->timedate->to_display_date_time(gmdate("Y-m-d H:i:s", mktime(10+$cnt, 30, 00, 7, $d, 2011)));
+            $this->meetingsArr[$cnt]->save();
+            $d++;
+            $cnt++;
         }
 
-        $this->searchDefs = array("Meetings" => array("layout" => array("basic_search" => array("name" => array("name" => "name",
+        $this->searchDefs = ["Meetings" => ["layout" => ["basic_search" => ["name" => ["name" => "name",
                                                                                                                 "default" => true,
                                                                                                                 "width" => "10%",
-                                                                                                               ),
-                                                                                                "date_start" => array("name" => "date_start",
+                                                                                                               ],
+                                                                                                "date_start" => ["name" => "date_start",
                                                                                                                       "default" => true,
                                                                                                                       "width" => "10%",
                                                                                                                       "type" => "datetimecombo",
-                                                                                                                     ),
-                                                                                               ),
-                                                                       ),
-                                                     ),
-                                 );
+                                                                                                                     ],
+                                                                                               ],
+                                                                       ],
+                                                     ],
+                                 ];
 
-        $this->searchFields = array("Meetings" => array("name" => array("query_type" => "default"),
-                                                        "date_start" => array("query_type" => "default"),
-                                                        "range_date_start" => array("query_type" => "default",
+        $this->searchFields = ["Meetings" => ["name" => ["query_type" => "default"],
+                                                        "date_start" => ["query_type" => "default"],
+                                                        "range_date_start" => ["query_type" => "default",
                                                                                     "enable_range_search" => 1,
-                                                                                    "is_date_field" => 1),
-                                                        "range_date_start" => array("query_type" => "default",
+                                                                                    "is_date_field" => 1],
+                                                        "range_date_start" => ["query_type" => "default",
                                                                                     "enable_range_search" => 1,
-                                                                                    "is_date_field" => 1),
-                                                        "start_range_date_start" => array("query_type" => "default",
+                                                                                    "is_date_field" => 1],
+                                                        "start_range_date_start" => ["query_type" => "default",
                                                                                           "enable_range_search" => 1,
-                                                                                          "is_date_field" => 1),
-                                                        "end_range_date_start" => array("query_type" => "default",
+                                                                                          "is_date_field" => 1],
+                                                        "end_range_date_start" => ["query_type" => "default",
                                                                                         "enable_range_search" => 1,
-                                                                                        "is_date_field" => 1),
-                                                       ),
-                                   );
+                                                                                        "is_date_field" => 1],
+                                                       ],
+                                   ];
     }
 
     protected function tearDown() : void
     {
-        foreach ($this->meetingsArr as $m)
-        {
+        foreach ($this->meetingsArr as $m) {
             $GLOBALS['db']->query('DELETE FROM meetings WHERE id = \'' . $m->id . '\' ');
         }
 
@@ -106,7 +104,7 @@ class Bug45287Test extends TestCase
 
     public function testRetrieveByExactDate()
     {
-        $_REQUEST = $_POST = array("module" => "Meetings",
+        $_REQUEST = $_POST = ["module" => "Meetings",
                                    "action" => "index",
                                    "searchFormTab" => "basic_search",
                                    "query" => "true",
@@ -119,7 +117,7 @@ class Bug45287Test extends TestCase
                                    "start_range_date_start_basic" => "",
                                    "end_range_date_start_basic" => "",
                                    "button" => "Search",
-                                  );
+                                  ];
 
         $srch = new SearchForm(new Meeting(), "Meetings");
         $srch->setup($this->searchDefs, $this->searchFields, "");
@@ -132,7 +130,7 @@ class Bug45287Test extends TestCase
         // Current User is on GMT+2.
         // Asking for meeting of 14 July 2011, I expect to search (GMT) from 13 July at 22:00 until 14 July at 22:00 (excluded)
         $expectedWhere = "meetings.date_start >= " . $GLOBALS['db']->convert($GLOBALS['db']->quoted($GMTDates['start']), 'datetime') .
-        	" AND meetings.date_start <= " . $GLOBALS['db']->convert($GLOBALS['db']->quoted($GMTDates['end']), 'datetime');
+            " AND meetings.date_start <= " . $GLOBALS['db']->convert($GLOBALS['db']->quoted($GMTDates['end']), 'datetime');
 
         $this->assertStringContainsString($expectedWhere, $w[0]);
     }
@@ -140,7 +138,7 @@ class Bug45287Test extends TestCase
 
     public function testRetrieveByDaterange()
     {
-        $_REQUEST = $_POST = array("module" => "Meetings",
+        $_REQUEST = $_POST = ["module" => "Meetings",
                                    "action" => "index",
                                    "searchFormTab" => "basic_search",
                                    "query" => "true",
@@ -153,7 +151,7 @@ class Bug45287Test extends TestCase
                                    "start_range_date_start_basic" => "13/07/2011",
                                    "end_range_date_start_basic" => "14/07/2011",
                                    "button" => "Search",
-                                  );
+                                  ];
 
 
         $srch = new SearchForm(new Meeting(), "Meetings");
@@ -168,8 +166,8 @@ class Bug45287Test extends TestCase
         // Current User is on GMT+2.
         // Asking for meeting between 13 and 14 July 2011, I expect to search (GMT) from 12 July at 22:00 until 14 July at 22:00 (excluded)
         $expectedWhere = "meetings.date_start >= " . $GLOBALS['db']->convert($GLOBALS['db']->quoted($GMTDatesStart['start']), 'datetime') .
-        	" AND meetings.date_start <= " . $GLOBALS['db']->convert($GLOBALS['db']->quoted($GMTDatesEnd['end']), 'datetime');
+            " AND meetings.date_start <= " . $GLOBALS['db']->convert($GLOBALS['db']->quoted($GMTDatesEnd['end']), 'datetime');
 
         $this->assertStringContainsString($expectedWhere, $w[0]);
-   }
+    }
 }

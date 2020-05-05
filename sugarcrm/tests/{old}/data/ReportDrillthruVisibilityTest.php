@@ -32,20 +32,20 @@ class ReportDrillthruVisibilityTest extends TestCase
         $team1->add_user_to_team($user->id);
 
         $this->teamSet1 = BeanFactory::newBean('TeamSets');
-        $this->teamSet1->addTeams(array($team1->id));
+        $this->teamSet1->addTeams([$team1->id]);
 
         $this->teamSet2 = BeanFactory::newBean('TeamSets');
-        $this->teamSet2->addTeams(array($team2->id));
+        $this->teamSet2->addTeams([$team2->id]);
 
         // account assigned to teamSet1
-        $account = SugarTestAccountUtilities::createAccount('', array('name' => 'RPTTESTACCOUNT'));
+        $account = SugarTestAccountUtilities::createAccount('', ['name' => 'RPTTESTACCOUNT']);
         $account->team_id = $team1->id;
         $account->team_set_id = $this->teamSet1->id;
         $account->save();
         $this->account = $account;
 
         // account assigned to teamSet2
-        $account = SugarTestAccountUtilities::createAccount('', array('name' => 'RPTTESTACCOUNT'));
+        $account = SugarTestAccountUtilities::createAccount('', ['name' => 'RPTTESTACCOUNT']);
         $account->team_id = $team2->id;
         $account->team_set_id = $this->teamSet2->id;
         $account->save();

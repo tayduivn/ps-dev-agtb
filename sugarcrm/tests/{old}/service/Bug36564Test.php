@@ -19,14 +19,14 @@ class Bug36564Test extends SOAPTestCase
      */
     protected function setUp() : void
     {
-    	$this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/service/v2/soap.php';
-		parent::setUp();
+        $this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/service/v2/soap.php';
+        parent::setUp();
     }
 
-    public function testBadQuery() 
+    public function testBadQuery()
     {
-    	$this->_login();
-		$result = $this->_soapClient->call('get_entry_list',array('session'=>$this->_sessionId,"module_name" => 'Accounts', "query" => "bad query"));
+        $this->_login();
+        $result = $this->_soapClient->call('get_entry_list', ['session'=>$this->_sessionId,"module_name" => 'Accounts', "query" => "bad query"]);
         $this->assertNotNull($result["faultstring"], "Result does not contain (expected) faultstring");
         $this->assertContains("Unknown error", $result["faultstring"]);
     } // fn

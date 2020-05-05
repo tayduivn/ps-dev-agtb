@@ -34,8 +34,7 @@ class Bug46869Test extends TestCase
                                   'sugarfield_resolution46869.php';
         $dirname = dirname($this->customVardefPath);
 
-        if (file_exists($dirname) === false)
-        {
+        if (file_exists($dirname) === false) {
             mkdir($dirname, 0777, true);
         }
 

@@ -21,50 +21,50 @@ class PMSEDataParserGatewayTest extends TestCase
     protected function setUp() : void
     {
         $this->parserGateway = ProcessManager\Factory::getPMSEObject('PMSEDataParserGateway');
-        $this->resultArray = array(
-            array(
+        $this->resultArray = [
+            [
                 'act_uid' => 'fjhsd892ddsdsjxd9891221',
                 'act_id' => 13,
-                'frm_action' => 'APPROVE'
-            ),
-            array(
+                'frm_action' => 'APPROVE',
+            ],
+            [
                 'act_uid' => 'as7yed2839jh9828988912a',
                 'act_id' => 14,
-                'frm_action' => 'REJECT'
-            ),
-            array(
+                'frm_action' => 'REJECT',
+            ],
+            [
                 'act_uid' => 'hjhsd892dj9821j8988912j',
                 'act_id' => 12,
-                'frm_action' => 'ROUTE'
-            )
-        );
+                'frm_action' => 'ROUTE',
+            ],
+        ];
         
-        $this->resultArrayBR = array(
-            array(
+        $this->resultArrayBR = [
+            [
                 'act_uid' => 'fjhsd892ddsdsjxd9891221',
                 'act_id' => 13,
                 'frm_action' => '{
                             "type": "INT",
                             "value": 2000
-                        }'
-            ),
-            array(
+                        }',
+            ],
+            [
                 'act_uid' => 'as7yed2839jh9828988912a',
                 'act_id' => 14,
                 'frm_action' => '{
                             "type": "INT",
                             "value": 2000
-                        }'
-            ),
-            array(
+                        }',
+            ],
+            [
                 'act_uid' => 'hjhsd892dj9821j8988912j',
                 'act_id' => 12,
                 'frm_action' => '{
                             "type": "INT",
                             "value": 2000
-                        }'
-            )
-        );
+                        }',
+            ],
+        ];
     }
     
     /**
@@ -72,18 +72,18 @@ class PMSEDataParserGatewayTest extends TestCase
      */
     public function testParseCriteriaArrayEmpty()
     {
-        $criteriaArray = array();
+        $criteriaArray = [];
         $bean = new stdClass();
         $currentUser = new stdClass();
         $resultCriteria = $this->parserGateway->parseCriteriaArray($criteriaArray, $bean, $currentUser);
-        $this->assertEquals($resultCriteria,array());
+        $this->assertEquals($resultCriteria, []);
         
         $criteriaToken = new stdClass();
         $criteriaToken->expType = "default";
 
         $criteriaArray[] = $criteriaToken;
         $resultCriteria = $this->parserGateway->parseCriteriaArray($criteriaArray, $bean, $currentUser);
-        $this->assertEquals($resultCriteria,$criteriaArray);
+        $this->assertEquals($resultCriteria, $criteriaArray);
     }
     
     /**
@@ -91,7 +91,7 @@ class PMSEDataParserGatewayTest extends TestCase
      */
     public function testParseCriteriaArrayUserAdmin()
     {
-        $criteriaArray = array();
+        $criteriaArray = [];
         $bean = new stdClass();
         $currentUser = $this->getMockBuilder('User')
                 ->disableOriginalConstructor()
@@ -119,12 +119,12 @@ class PMSEDataParserGatewayTest extends TestCase
             "expToken": "{::future::Users::id::}",
             "currentValue": "is_admin"
         }');
-        $this->assertEquals($resultCriteria,array($expectedCriteriaToken));
+        $this->assertEquals($resultCriteria, [$expectedCriteriaToken]);
     }
 
     public function testParseCriteriaArrayControl()
     {
-        $criteriaArray = array();
+        $criteriaArray = [];
         $bean = new stdClass();
         
         $currentUser = $this->getMockBuilder('User')
@@ -135,7 +135,7 @@ class PMSEDataParserGatewayTest extends TestCase
         $currentUser->is_admin = 1;
         
         $dbMock = $this->getMockBuilder('db')
-            ->setMethods(array('Query', 'fetchByAssoc'))
+            ->setMethods(['Query', 'fetchByAssoc'])
             ->getMock();
         
         $dbMock->expects($this->exactly(1))
@@ -160,14 +160,14 @@ class PMSEDataParserGatewayTest extends TestCase
         $expectedToken->currentValue = 'ROUTE';
         
         $criteriaArray[] = $criteriaToken;
-        $resultCriteria = $this->parserGateway->parseCriteriaArray($criteriaArray, $bean, $currentUser,array(),array('db'=>$dbMock,'cas_id'=>'15'));
+        $resultCriteria = $this->parserGateway->parseCriteriaArray($criteriaArray, $bean, $currentUser, [], ['db'=>$dbMock,'cas_id'=>'15']);
 
-        $this->assertEquals($resultCriteria[0]->currentValue,$expectedToken->currentValue);
+        $this->assertEquals($resultCriteria[0]->currentValue, $expectedToken->currentValue);
     }
     
     public function testParseCriteriaArrayModule()
     {
-        $beanList = array('Leads' => 'Lead');
+        $beanList = ['Leads' => 'Lead'];
         
         $currentUser = $this->getMockBuilder('User')
                 ->disableOriginalConstructor()
@@ -186,34 +186,34 @@ class PMSEDataParserGatewayTest extends TestCase
         $beanObject->phone_mobile = '7775555';
         $beanObject->module_name = 'Leads';
         $beanObject->date = '10/10/2013';
-        $beanObject->field_defs = array(
-            'account_name' => array(
+        $beanObject->field_defs = [
+            'account_name' => [
                 'type' => 'varchar',
                 'dbtype' => 'char',
-            ),
-            'email_addresses_primary' => array(
+            ],
+            'email_addresses_primary' => [
                 'type' => 'varchar',
                 'dbtype' => 'char',
-            ),
-            'phone_mobile' => array(
+            ],
+            'phone_mobile' => [
                 'type' => 'varchar',
                 'dbtype' => 'char',
-            ),
-            'probability' => array(
+            ],
+            'probability' => [
                 'type' => 'int',
                 'dbtype' => 'double',
-            ),
-            'amount' => array(
+            ],
+            'amount' => [
                 'type' => 'float',
                 'dbtype' => 'double',
-            ),
-            'do_not_call' => array(
-                'type' => 'bool'
-            ),
-            'date' => array(
-                'type' => 'date'
-            )
-        );
+            ],
+            'do_not_call' => [
+                'type' => 'bool',
+            ],
+            'date' => [
+                'type' => 'date',
+            ],
+        ];
         
         $beanObject->parent_type = '';
         
@@ -227,11 +227,11 @@ class PMSEDataParserGatewayTest extends TestCase
         $criteriaToken->expLabel = "Account Name: == \"ONE\"";
         
         $criteriaArray[] = $criteriaToken;
-        $processedCondition = $this->parserGateway->parseCriteriaArray($criteriaArray, $beanObject, $currentUser,$beanList,array());
-        $postCondition = array(
+        $processedCondition = $this->parserGateway->parseCriteriaArray($criteriaArray, $beanObject, $currentUser, $beanList, []);
+        $postCondition = [
             0 =>
             (object)
-            array(
+            [
                 'expDirection' => 'after',
                 'expModule' => 'Leads',
                 'expField' => 'date',
@@ -239,15 +239,15 @@ class PMSEDataParserGatewayTest extends TestCase
                 'expValue' => 'ONE',
                 'expType' => 'MODULE',
                 'expLabel' => 'Account Name: == "ONE"',
-                'currentValue' => array('10/10/2013'),
-                'expSubtype' => 'date'
-            ));
+                'currentValue' => ['10/10/2013'],
+                'expSubtype' => 'date',
+            ]];
         $this->assertEquals($postCondition[0], $processedCondition[0]);
     }
     
     public function testParseCriteriaArrayBR()
     {
-        $criteriaArray = array();
+        $criteriaArray = [];
         $bean = new stdClass();
         $currentUser = $this->getMockBuilder('User')
                 ->disableOriginalConstructor()
@@ -257,7 +257,7 @@ class PMSEDataParserGatewayTest extends TestCase
         $currentUser->is_admin = 1;
         
         $dbMock = $this->getMockBuilder('db')
-            ->setMethods(array('Query', 'fetchByAssoc'))
+            ->setMethods(['Query', 'fetchByAssoc'])
             ->getMock();
         $dbMock->resultArray = $this->resultArrayBR;
         $dbMock->expects($this->exactly(1))
@@ -285,8 +285,7 @@ class PMSEDataParserGatewayTest extends TestCase
         $expectedToken->expToken = '{::_form_::fjhsd892ddsdsjxd9891221::}';
         $expectedToken->currentValue = 2000;
         $criteriaArray[] = $businessRule;
-        $resultCriteriaToken = $this->parserGateway->parseCriteriaArray($criteriaArray, $bean, $currentUser,array(),$args);
+        $resultCriteriaToken = $this->parserGateway->parseCriteriaArray($criteriaArray, $bean, $currentUser, [], $args);
         $this->assertEquals($expectedToken->currentValue, $resultCriteriaToken[0]->currentValue);
     }
-    
 }

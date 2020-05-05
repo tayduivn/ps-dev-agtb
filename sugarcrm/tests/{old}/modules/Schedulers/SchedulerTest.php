@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 class SchedulerTest extends TestCase
 {
-	static protected $old_timedate;
+    protected static $old_timedate;
 
     /**
      * @var TestScheduler
@@ -28,20 +28,20 @@ class SchedulerTest extends TestCase
 
     public static function setUpBeforeClass() : void
     {
-		self::$old_timedate = $GLOBALS['timedate'];
-	    unset($GLOBALS['disable_date_format']);
+        self::$old_timedate = $GLOBALS['timedate'];
+        unset($GLOBALS['disable_date_format']);
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-	    $GLOBALS['current_user']->setPreference('datef', "m/d/Y");
-		$GLOBALS['current_user']->setPreference('timef', "h:ia");
-		$GLOBALS['current_user']->setPreference('timezone', "America/Los_Angeles");
-	}
+        $GLOBALS['current_user']->setPreference('datef', "m/d/Y");
+        $GLOBALS['current_user']->setPreference('timef', "h:ia");
+        $GLOBALS['current_user']->setPreference('timezone', "America/Los_Angeles");
+    }
 
     public static function tearDownAfterClass(): void
     {
-	    SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
-		$GLOBALS['timedate'] = self::$old_timedate;
-	}
+        $GLOBALS['timedate'] = self::$old_timedate;
+    }
 
     protected function setUp() : void
     {
@@ -62,7 +62,7 @@ class SchedulerTest extends TestCase
         SugarTestReflection::callProtectedMethod(
             $this->scheduler->user->_userPreferenceFocus,
             'storeToCache',
-            array($prefs['global'], 'global')
+            [$prefs['global'], 'global']
         );
     }
 
@@ -75,7 +75,7 @@ class SchedulerTest extends TestCase
         SugarTestReflection::callProtectedMethod(
             $this->scheduler->user->_userPreferenceFocus,
             'storeToCache',
-            array($this->preferencesOld['global'], 'global')
+            [$this->preferencesOld['global'], 'global']
         );
     }
 
@@ -161,35 +161,35 @@ class SchedulerTest extends TestCase
 
     public function getSchedules()
     {
-        return array(
+        return [
             // schedule - now point - last run - should be run?
-            array("*::*::*::*::*", "5/17/2011 1:00am", null, true),
-            array("*::*::*::*::*", "5/17/2011 11:20pm", null, true),
-            array("*::*::*::*::*", "5/17/2011 5:40pm", null, true),
-            array("*::*::*::*::*", "5/17/2011 7:43pm", null, true),
+            ["*::*::*::*::*", "5/17/2011 1:00am", null, true],
+            ["*::*::*::*::*", "5/17/2011 11:20pm", null, true],
+            ["*::*::*::*::*", "5/17/2011 5:40pm", null, true],
+            ["*::*::*::*::*", "5/17/2011 7:43pm", null, true],
             // at X:25
-            array("25::*::*::*::*", "5/17/2011 5:25pm", null, true),
-            array("25::*::*::*::*", "5/17/2011 7:27pm", null, false),
-            array("25::*::*::*::*", "5/17/2011 7:25pm", "5/17/2011 7:25pm", false),
-            array("25::*::*::*::*", "5/17/2011 8:25pm", "5/17/2011 7:25pm", true),
+            ["25::*::*::*::*", "5/17/2011 5:25pm", null, true],
+            ["25::*::*::*::*", "5/17/2011 7:27pm", null, false],
+            ["25::*::*::*::*", "5/17/2011 7:25pm", "5/17/2011 7:25pm", false],
+            ["25::*::*::*::*", "5/17/2011 8:25pm", "5/17/2011 7:25pm", true],
             // at 6:00
-             array("0::6::*::*::*", "5/17/2011 6:00pm", null, false),
-             array("0::6::*::*::*", "5/17/2011 6:00am", null, true),
-             array("0::6::*::*::*", "5/17/2011 1:00pm", null, false),
-             array("0::6::*::*::*", "5/17/2011 2:00pm", null, false),
+             ["0::6::*::*::*", "5/17/2011 6:00pm", null, false],
+             ["0::6::*::*::*", "5/17/2011 6:00am", null, true],
+             ["0::6::*::*::*", "5/17/2011 1:00pm", null, false],
+             ["0::6::*::*::*", "5/17/2011 2:00pm", null, false],
              // 2am on 1st
-             array("0::2::1::*::*", "2/1/2011 2:00pm", null, false),
-             array("0::2::1::*::*", "2/1/2011 2:00am", null, true),
-             array("0::2::1::*::*", "2/17/2011 2:00am", null, false),
-             array("0::2::1::*::*", "1/31/2011 2:00am", null, false),
-             array("0::2::1::*::*", "2/2/2011 2:00am", null, false),
+             ["0::2::1::*::*", "2/1/2011 2:00pm", null, false],
+             ["0::2::1::*::*", "2/1/2011 2:00am", null, true],
+             ["0::2::1::*::*", "2/17/2011 2:00am", null, false],
+             ["0::2::1::*::*", "1/31/2011 2:00am", null, false],
+             ["0::2::1::*::*", "2/2/2011 2:00am", null, false],
              // Every 15 mins on Mon, Tue
-             array("*/15::*::*::*::1,2", "5/16/2011 2:00pm", null, true),
-             array("*/15::*::*::*::1,2", "5/17/2011 2:00pm", null, true),
-             array("*/15::*::*::*::1,2", "5/18/2011 2:00pm", null, false),
-             array("*/15::*::*::*::1,2", "5/17/2011 2:10pm", "5/17/2011 2:00pm", false),
-             array("*/15::*::*::*::1,2", "5/17/2011 2:15pm", "5/17/2011 2:00pm", true),
-             );
+             ["*/15::*::*::*::1,2", "5/16/2011 2:00pm", null, true],
+             ["*/15::*::*::*::1,2", "5/17/2011 2:00pm", null, true],
+             ["*/15::*::*::*::1,2", "5/18/2011 2:00pm", null, false],
+             ["*/15::*::*::*::1,2", "5/17/2011 2:10pm", "5/17/2011 2:00pm", false],
+             ["*/15::*::*::*::1,2", "5/17/2011 2:15pm", "5/17/2011 2:00pm", true],
+             ];
     }
 
     /**
@@ -203,12 +203,12 @@ class SchedulerTest extends TestCase
         $this->timedate->setNow($time);
         $this->scheduler->job_interval = $sched;
         $this->scheduler->catch_up = false;
-        if($last) {
+        if ($last) {
             $this->scheduler->last_run = $this->timedate->fromUser($last)->asDb();
         } else {
             $this->scheduler->last_run = null;
         }
-        if($run) {
+        if ($run) {
             $this->assertTrue($this->scheduler->fireQualified());
         } else {
             $this->assertFalse($this->scheduler->fireQualified());
@@ -226,8 +226,8 @@ class SchedulerTest extends TestCase
         $this->scheduler->checkPendingJobs($queue);
         $this->assertNotEmpty($queue->jobs, "Job was not submitted");
         $ourjob = null;
-        foreach($queue->jobs as $job) {
-            if($job->scheduler_id == $this->scheduler->id) {
+        foreach ($queue->jobs as $job) {
+            if ($job->scheduler_id == $this->scheduler->id) {
                 $ourjob = $job;
                 break;
             }
@@ -247,8 +247,8 @@ class SchedulerTest extends TestCase
         $this->scheduler->checkPendingJobs($queue);
         $this->assertNotEmpty($queue->jobs, "Job was not submitted");
         $ourjob = null;
-        foreach($queue->jobs as $job) {
-            if($job->scheduler_id == $this->scheduler->id) {
+        foreach ($queue->jobs as $job) {
+            if ($job->scheduler_id == $this->scheduler->id) {
                 $ourjob = $job;
                 break;
             }
@@ -258,8 +258,8 @@ class SchedulerTest extends TestCase
         $queue = new MockSchedulerQueue();
         $this->scheduler->checkPendingJobs($queue);
         $ourjob2 = null;
-        foreach($queue->jobs as $job) {
-            if($job->scheduler_id == $this->scheduler->id) {
+        foreach ($queue->jobs as $job) {
+            if ($job->scheduler_id == $this->scheduler->id) {
                 $ourjob2 = $job;
                 break;
             }
@@ -271,8 +271,8 @@ class SchedulerTest extends TestCase
         $queue = new MockSchedulerQueue();
         $this->scheduler->checkPendingJobs($queue);
         $ourjob2 = null;
-        foreach($queue->jobs as $job) {
-            if($job->scheduler_id == $this->scheduler->id) {
+        foreach ($queue->jobs as $job) {
+            if ($job->scheduler_id == $this->scheduler->id) {
                 $ourjob2 = $job;
                 break;
             }
@@ -284,8 +284,8 @@ class SchedulerTest extends TestCase
         $queue = new MockSchedulerQueue();
         $this->scheduler->checkPendingJobs($queue);
         $ourjob2 = null;
-        foreach($queue->jobs as $job) {
-            if($job->scheduler_id == $this->scheduler->id) {
+        foreach ($queue->jobs as $job) {
+            if ($job->scheduler_id == $this->scheduler->id) {
                 $ourjob2 = $job;
                 break;
             }
@@ -317,8 +317,8 @@ class SchedulerTest extends TestCase
         $queue = new MockSchedulerQueue();
         $this->scheduler->checkPendingJobs($queue);
         $ourjob = null;
-        foreach($queue->jobs as $job) {
-            if($job->scheduler_id == $this->scheduler->id) {
+        foreach ($queue->jobs as $job) {
+            if ($job->scheduler_id == $this->scheduler->id) {
                 $ourjob = $job;
                 break;
             }
@@ -334,8 +334,8 @@ class SchedulerTest extends TestCase
         $queue = new MockSchedulerQueue();
         $this->scheduler->checkPendingJobs($queue);
         $ourjob = null;
-        foreach($queue->jobs as $job) {
-            if($job->scheduler_id == $this->scheduler->id) {
+        foreach ($queue->jobs as $job) {
+            if ($job->scheduler_id == $this->scheduler->id) {
                 $ourjob = $job;
                 break;
             }
@@ -346,7 +346,7 @@ class SchedulerTest extends TestCase
 
 class MockSchedulerQueue extends SugarJobQueue
 {
-    public $jobs = array();
+    public $jobs = [];
 
     public function submitJob($job)
     {
@@ -362,7 +362,8 @@ class TestScheduler extends Scheduler
     public $name = "testJob";
     public $date_time_start = '2005-01-01 19:00:00';
 
-    public function fire() {
+    public function fire()
+    {
         $this->fired = true;
     }
 }

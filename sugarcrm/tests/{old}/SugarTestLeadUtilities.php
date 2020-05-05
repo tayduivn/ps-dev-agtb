@@ -13,22 +13,24 @@
 
 class SugarTestLeadUtilities
 {
-    private static $_createdLeads = array();
+    private static $_createdLeads = [];
 
-    private function __construct() {}
+    private function __construct()
+    {
+    }
 
-    public static function createLead($id = '', $leadValues = array())
+    public static function createLead($id = '', $leadValues = [])
     {
         $time = mt_rand();
         $lead = BeanFactory::newBean('Leads');
 
 
         $leadValues = array_merge(
-            array(
+            [
                 'first_name' => "SugarLeadFirst{$time}",
                 'last_name' => 'SugarLeadLast',
                 'email' => "lead@{$time}sugar.com",
-            ),
+            ],
             $leadValues
         );
 
@@ -40,8 +42,7 @@ class SugarTestLeadUtilities
             $lead->$property = $value;
         }
 
-        if(!empty($id))
-        {
+        if (!empty($id)) {
             $lead->new_with_id = true;
             $lead->id = $id;
         }
@@ -52,15 +53,16 @@ class SugarTestLeadUtilities
         return $lead;
     }
 
-    public static function setCreatedLead($lead_ids) {
-    	foreach($lead_ids as $lead_id) {
-    		$lead = new Lead();
-    		$lead->id = $lead_id;
-        	self::$_createdLeads[] = $lead;
-    	} // foreach
+    public static function setCreatedLead($lead_ids)
+    {
+        foreach ($lead_ids as $lead_id) {
+            $lead = new Lead();
+            $lead->id = $lead_id;
+            self::$_createdLeads[] = $lead;
+        } // foreach
     } // fn
     
-    public static function removeAllCreatedLeads() 
+    public static function removeAllCreatedLeads()
     {
         $lead_ids = self::getCreatedLeadIds();
         $GLOBALS['db']->query('DELETE FROM leads WHERE id IN (\'' . implode("', '", $lead_ids) . '\')');
@@ -75,21 +77,23 @@ class SugarTestLeadUtilities
      * @static
      * @return void
      */
-    public static function removeCreatedLeadsEmailAddresses(){
-    	$lead_ids = self::getCreatedLeadIds();
+    public static function removeCreatedLeadsEmailAddresses()
+    {
+        $lead_ids = self::getCreatedLeadIds();
         $GLOBALS['db']->query('DELETE FROM email_addresses WHERE id IN (SELECT DISTINCT email_address_id FROM email_addr_bean_rel WHERE bean_module =\'Leads\' AND bean_id IN (\'' . implode("', '", $lead_ids) . '\'))');
         $GLOBALS['db']->query('DELETE FROM emails_beans WHERE bean_module=\'Leads\' AND bean_id IN (\'' . implode("', '", $lead_ids) . '\')');
         $GLOBALS['db']->query('DELETE FROM email_addr_bean_rel WHERE bean_module=\'Leads\' AND bean_id IN (\'' . implode("', '", $lead_ids) . '\')');
     }
 
-    public static function removeCreatedLeadsUsersRelationships(){
-    	$lead_ids = self::getCreatedLeadIds();
+    public static function removeCreatedLeadsUsersRelationships()
+    {
+        $lead_ids = self::getCreatedLeadIds();
         $GLOBALS['db']->query('DELETE FROM leads_users WHERE lead_id IN (\'' . implode("', '", $lead_ids) . '\')');
     }
     
-    public static function getCreatedLeadIds() 
+    public static function getCreatedLeadIds()
     {
-        $lead_ids = array();
+        $lead_ids = [];
         foreach (self::$_createdLeads as $lead) {
             $lead_ids[] = $lead->id;
         }

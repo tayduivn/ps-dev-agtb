@@ -13,12 +13,12 @@
 
 class SugarTestCommentUtilities
 {
-    private static $_createdComments = array();
+    private static $_createdComments = [];
 
     public static function createUnsavedComment(Activity $a = null, $new_id = '')
     {
         $time = mt_rand();
-        $data = array('value' => 'SugarComment' . $time);
+        $data = ['value' => 'SugarComment' . $time];
         $comment = new Comment();
         $comment->data = $data;
         if ($a && $a->id) {
@@ -61,7 +61,7 @@ class SugarTestCommentUtilities
 
     public static function getCreatedCommentIds()
     {
-        $comment_ids = array();
+        $comment_ids = [];
         foreach (self::$_createdComments as $comment) {
             $comment_ids[] = $comment->id;
         }

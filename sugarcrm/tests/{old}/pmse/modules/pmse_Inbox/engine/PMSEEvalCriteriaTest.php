@@ -29,9 +29,9 @@ class PMSEEvalCriteriaTest extends TestCase
     {
         $this->object = ProcessManager\Factory::getPMSEObject('PMSEEvalCriteria');
         // The default timezone is set to phoenix because the server could
-        // have a different timezone that triggers failures with the tests 
+        // have a different timezone that triggers failures with the tests
         // already defined values.
-        date_default_timezone_set("America/Phoenix"); 
+        date_default_timezone_set("America/Phoenix");
     }
 
     /**
@@ -42,8 +42,8 @@ class PMSEEvalCriteriaTest extends TestCase
     public function testExpresions()
     {
         $this->assertEquals(
-                0
-                , $this->object->expresions(json_decode('[{"expValue":"NOT","expType":"LOGIC","expLabel":"NOT"},{"expValue":"(","expType":"GROUP","expLabel":"("},{"expDirection":"after","expModule":"Leads","expField":"website","currentValue":"","expOperator":"equals","expValue":"","expType":"MODULE","expFieldType":"","expLabel":"Website == \"\""},{"expValue":"OR","expType":"LOGIC","expLabel":"OR"},{"expValue":"NOT","expType":"LOGIC","expLabel":"NOT"},{"expModule":null,"expField":"38748400252160f8bedad05063298920","expFieldType":"","currentValue":"Approve","expOperator":"equals","expValue":"Approve","expType":"CONTROL","expLabel":"comer == Approve"},{"expValue":")","expType":"GROUP","expLabel":")"},{"expValue":"AND","expType":"LOGIC","expLabel":"AND"},{"expValue":"NOT","expType":"LOGIC","expLabel":"NOT"},{"expDirection":"after","expModule":"Leads","expField":"account_name","currentValue":"TRUE","expOperator":"equals","expFieldType":"","expValue":"TRUE","expType":"MODULE","expLabel":"Account Name: == \"TRUE\""},{"expValue":"AND","expType":"LOGIC","expLabel":"AND"},{"expValue":"NOT","expType":"LOGIC","expLabel":"NOT"},{"expDirection":"after","expModule":"Leads","expField":"assistant","currentValue":"FALSE","expOperator":"major_equals_than","expValue":"FALSE","expFieldType":"","expType":"MODULE","expLabel":"Assistant >= \"FALSE\""},{"expValue":"AND","expType":"LOGIC","expLabel":"AND"},{"expValue":"(","expType":"GROUP","expLabel":"("},{"expValue":"NOT","expType":"LOGIC","expLabel":"NOT"},{"expDirection":"after","expModule":"Leads","expField":"account_name","currentValue":"APROVED","expOperator":"equals","expValue":"APROVED","expType":"MODULE","expFieldType":"","expLabel":"Account Name: == \"APROVED\""},{"expValue":")","expType":"GROUP","expLabel":")"},{"expValue":"AND","expType":"LOGIC","expLabel":"AND"},{"expModule":null,"expField":"15","currentValue":"","expOperator":"equals","expValue":"","expType":"BUSINESS_RULES","expFieldType":"","expLabel":"Action # 1 == \"\""}]'))
+            0,
+            $this->object->expresions(json_decode('[{"expValue":"NOT","expType":"LOGIC","expLabel":"NOT"},{"expValue":"(","expType":"GROUP","expLabel":"("},{"expDirection":"after","expModule":"Leads","expField":"website","currentValue":"","expOperator":"equals","expValue":"","expType":"MODULE","expFieldType":"","expLabel":"Website == \"\""},{"expValue":"OR","expType":"LOGIC","expLabel":"OR"},{"expValue":"NOT","expType":"LOGIC","expLabel":"NOT"},{"expModule":null,"expField":"38748400252160f8bedad05063298920","expFieldType":"","currentValue":"Approve","expOperator":"equals","expValue":"Approve","expType":"CONTROL","expLabel":"comer == Approve"},{"expValue":")","expType":"GROUP","expLabel":")"},{"expValue":"AND","expType":"LOGIC","expLabel":"AND"},{"expValue":"NOT","expType":"LOGIC","expLabel":"NOT"},{"expDirection":"after","expModule":"Leads","expField":"account_name","currentValue":"TRUE","expOperator":"equals","expFieldType":"","expValue":"TRUE","expType":"MODULE","expLabel":"Account Name: == \"TRUE\""},{"expValue":"AND","expType":"LOGIC","expLabel":"AND"},{"expValue":"NOT","expType":"LOGIC","expLabel":"NOT"},{"expDirection":"after","expModule":"Leads","expField":"assistant","currentValue":"FALSE","expOperator":"major_equals_than","expValue":"FALSE","expFieldType":"","expType":"MODULE","expLabel":"Assistant >= \"FALSE\""},{"expValue":"AND","expType":"LOGIC","expLabel":"AND"},{"expValue":"(","expType":"GROUP","expLabel":"("},{"expValue":"NOT","expType":"LOGIC","expLabel":"NOT"},{"expDirection":"after","expModule":"Leads","expField":"account_name","currentValue":"APROVED","expOperator":"equals","expValue":"APROVED","expType":"MODULE","expFieldType":"","expLabel":"Account Name: == \"APROVED\""},{"expValue":")","expType":"GROUP","expLabel":")"},{"expValue":"AND","expType":"LOGIC","expLabel":"AND"},{"expModule":null,"expField":"15","currentValue":"","expOperator":"equals","expValue":"","expType":"BUSINESS_RULES","expFieldType":"","expLabel":"Action # 1 == \"\""}]'))
         );
     }
 
@@ -79,37 +79,37 @@ class PMSEEvalCriteriaTest extends TestCase
      */
     public function testEvaluationsRecursive()
     {
-        $array = array('(', '1', 'AND', '1', ')', 'OR', '1');
+        $array = ['(', '1', 'AND', '1', ')', 'OR', '1'];
         $this->assertEquals(1, $this->object->evaluationsRecursive($array));
     }
     
     public function testEvaluationsRecursiveGroup()
     {
-        $array = array('(', '1', 'AND', '1', 'OR', '1');
+        $array = ['(', '1', 'AND', '1', 'OR', '1'];
         $this->assertEquals(0, $this->object->evaluationsRecursive($array));
     }
     
     public function testEvaluationsRecursiveGroups()
     {
-        $array = array('(', '(', '1', 'AND', '1', ')', 'OR', '1', ')');
+        $array = ['(', '(', '1', 'AND', '1', ')', 'OR', '1', ')'];
         $this->assertEquals(1, $this->object->evaluationsRecursive($array));
     }
     
     public function testEvaluationsRecursiveOneElement()
     {
-        $array = array('1');
+        $array = ['1'];
         $this->assertEquals(1, $this->object->evaluationsRecursive($array));
     }
     
     public function testVerifyGroups()
     {
-        $array = array('(', '1', 'AND', '1', ')', 'OR', '1');
+        $array = ['(', '1', 'AND', '1', ')', 'OR', '1'];
         $this->object->verifyGroups($array);
         $array = $this->object->arrayGroups;
-        $this->assertContainsOnly("integer",$array[0]['(']);
-        $this->assertContainsOnly("integer",$array[0][')']);
-        $this->assertEquals(0,$array[0]['('][0]);
-        $this->assertEquals(4,$array[0][')'][0]);
+        $this->assertContainsOnly("integer", $array[0]['(']);
+        $this->assertContainsOnly("integer", $array[0][')']);
+        $this->assertEquals(0, $array[0]['('][0]);
+        $this->assertEquals(4, $array[0][')'][0]);
     }
 
     public function testVerifyEqualsGroups()
@@ -135,10 +135,10 @@ class PMSEEvalCriteriaTest extends TestCase
      */
     public function testEvaluationAritmetic()
     {
-        $array = array('1', '/', '0');
+        $array = ['1', '/', '0'];
         $this->assertEquals(
-                0
-                , $this->object->evaluation($array)
+            0,
+            $this->object->evaluation($array)
         );
     }
 
@@ -148,10 +148,10 @@ class PMSEEvalCriteriaTest extends TestCase
      */
     public function testEvaluationRelations()
     {
-        $array = array('0', '==', '1');
+        $array = ['0', '==', '1'];
         $this->assertEquals(
-                0
-                , $this->object->evaluation($array)
+            0,
+            $this->object->evaluation($array)
         );
     }
 
@@ -161,17 +161,17 @@ class PMSEEvalCriteriaTest extends TestCase
      */
     public function testEvaluationLogic()
     {
-        $array = array('0', 'AND', '1','OR','NOT','0');
+        $array = ['0', 'AND', '1','OR','NOT','0'];
         $this->assertEquals(1, $this->object->evaluation($array));
     }
 
     
     public function testRouteFunctionOperator()
     {
-        $this->assertEquals(12, $this->object->routeFunctionOperator('evalAritmetic',6, '+', 6));
-        $this->assertEquals(1, $this->object->routeFunctionOperator('evalRelations',12, '>', 6));
-        $this->assertEquals(0, $this->object->routeFunctionOperator('evalLogic',0, 'AND', 0));
-        $this->assertEquals(0, $this->object->routeFunctionOperator('default',0, '?', 0));
+        $this->assertEquals(12, $this->object->routeFunctionOperator('evalAritmetic', 6, '+', 6));
+        $this->assertEquals(1, $this->object->routeFunctionOperator('evalRelations', 12, '>', 6));
+        $this->assertEquals(0, $this->object->routeFunctionOperator('evalLogic', 0, 'AND', 0));
+        $this->assertEquals(0, $this->object->routeFunctionOperator('default', 0, '?', 0));
     }
     /**
      * Generated from @assert ($value1, $relacion, $value2) == 0.
@@ -263,16 +263,16 @@ class PMSEEvalCriteriaTest extends TestCase
     }
     
     public function testTypeData()
-    {        
-        $this->assertEquals('Holas', $this->object->typeData('Holas','address'));
-        $this->assertEquals(true, $this->object->typeData(true,'bool'));
-        $this->assertEquals(1381388400, $this->object->typeData('10/10/2013','date'));
-        $this->assertEquals(12345, $this->object->typeData(12345,'enum'));
-        $this->assertEquals(12.34, $this->object->typeData(12.34,'float'));
-        $this->assertEquals(123456, $this->object->typeData(123456,'integer'));
-        $this->assertEquals(12, $this->object->typeData(12,'decimal'));
-        $this->assertEquals('None', $this->object->typeData('None','currency'));
-        $this->assertEquals('OTHERS', $this->object->typeData('OTHERS','encrypt'));
+    {
+        $this->assertEquals('Holas', $this->object->typeData('Holas', 'address'));
+        $this->assertEquals(true, $this->object->typeData(true, 'bool'));
+        $this->assertEquals(1381388400, $this->object->typeData('10/10/2013', 'date'));
+        $this->assertEquals(12345, $this->object->typeData(12345, 'enum'));
+        $this->assertEquals(12.34, $this->object->typeData(12.34, 'float'));
+        $this->assertEquals(123456, $this->object->typeData(123456, 'integer'));
+        $this->assertEquals(12, $this->object->typeData(12, 'decimal'));
+        $this->assertEquals('None', $this->object->typeData('None', 'currency'));
+        $this->assertEquals('OTHERS', $this->object->typeData('OTHERS', 'encrypt'));
     }
 
     public function testLogicSimbol()

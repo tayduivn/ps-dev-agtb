@@ -38,26 +38,26 @@ class EmailsApiAttachmentsTest extends EmailsApiIntegrationTestCase
         $docRevisionId = Uuid::uuid1();
         file_put_contents("upload://{$docRevisionId}", 'test');
 
-        $args = array(
+        $args = [
             'state' => Email::STATE_DRAFT,
-            'attachments' => array(
-                'create' => array(
-                    array(
+            'attachments' => [
+                'create' => [
+                    [
                         'filename_guid' => $uploadId,
                         'name' => 'aaaaa',
                         'filename' => 'aaaaa.png',
                         'file_mime_type' => 'image/png',
-                    ),
-                    array(
+                    ],
+                    [
                         'upload_id' => $docRevisionId,
                         'name' => 'aaaaa',
                         'filename' => 'aaaaa.png',
                         'file_mime_type' => 'image/png',
                         'file_source' => 'DocumentRevisions',
-                    ),
-                ),
-            ),
-        );
+                    ],
+                ],
+            ],
+        ];
         $record = $this->createRecord($args);
 
         $this->assertFileDoesNotExist("upload://tmp/{$uploadId}", 'The file should have been moved');
@@ -93,38 +93,38 @@ class EmailsApiAttachmentsTest extends EmailsApiIntegrationTestCase
 
         $email = SugarTestEmailUtilities::createEmail(
             '',
-            array(
+            [
                 'state' => Email::STATE_DRAFT,
                 'assigned_user_id' => $GLOBALS['current_user']->id,
-            )
+            ]
         );
         $email->load_relationship('attachments');
         $email->attachments->add($attachment1);
         $email->attachments->add($attachment2);
         $this->assertCount(2, $email->attachments->get(), 'Should start with two attachments');
 
-        $args = array(
-            'attachments' => array(
-                'create' => array(
-                    array(
+        $args = [
+            'attachments' => [
+                'create' => [
+                    [
                         'filename_guid' => $uploadId,
                         'name' => 'aaaaa',
                         'filename' => 'aaaaa.png',
                         'file_mime_type' => 'image/png',
-                    ),
-                    array(
+                    ],
+                    [
                         'upload_id' => $templateId,
                         'name' => 'bbbbb',
                         'filename' => 'bbbbb.png',
                         'file_mime_type' => 'image/png',
                         'file_source' => 'EmailTemplates',
-                    ),
-                ),
-                'delete' => array(
+                    ],
+                ],
+                'delete' => [
                     $attachment2->id,
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
         $record = $this->updateRecord($email->id, $args);
 
         $attachments = $this->getRelatedRecords($record['id'], 'attachments');

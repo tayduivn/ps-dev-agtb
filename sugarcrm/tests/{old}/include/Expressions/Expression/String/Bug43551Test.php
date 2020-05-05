@@ -15,9 +15,9 @@ use PHPUnit\Framework\TestCase;
 
 class Bug43551Test extends TestCase
 {
-	public function testSubStr()
-	{
-	    $contact = new Contact();
+    public function testSubStr()
+    {
+        $contact = new Contact();
             $contact->first_name = "Fabio";
             $contact->last_name = "Grande";
 
@@ -58,5 +58,5 @@ class Bug43551Test extends TestCase
             $expr = 'concat(subStr($last_name, 0, 2), subStr($first_name, 0, 2))';
             $result = Parser::evaluate($expr, $contact)->evaluate();
             $this->assertEquals("Gr", $result);
-	}
+    }
 }

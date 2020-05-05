@@ -60,16 +60,16 @@ class TeamTest extends TestCase
         $this->teamTwo->add_user_to_team($this->userThree->id, $this->userThree);
 
         $teams = $this->teamOne->get_teams_for_user($this->userOne->id);
-        $teamArr = array();
+        $teamArr = [];
         foreach ($teams as $team) {
             $teamArr[] = $team->id;
         }
-        $expectedTeams = array(
+        $expectedTeams = [
             $this->teamOne->global_team,
             $this->userOne->getPrivateTeam(),
             $this->teamOne->id,
             $this->teamTwo->id,
-        );
+        ];
         sort($expectedTeams);
         sort($teamArr);
         $this->assertEquals(

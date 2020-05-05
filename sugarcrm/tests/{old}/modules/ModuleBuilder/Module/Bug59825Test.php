@@ -28,12 +28,12 @@ class Bug59825Test extends TestCase
      */
     public static function setUpBeforeClass() : void
     {
-        SugarTestHelper::setUp('current_user', array(true, true)); // Admin user
+        SugarTestHelper::setUp('current_user', [true, true]); // Admin user
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('moduleList');
         SugarTestHelper::setUp('app_list_strings');
-        SugarTestHelper::setUp('mod_strings', array('ModuleBuilder'));
+        SugarTestHelper::setUp('mod_strings', ['ModuleBuilder']);
     }
     
     public static function tearDownAfterClass(): void
@@ -62,27 +62,27 @@ class Bug59825Test extends TestCase
      */
     public function _layoutProvider()
     {
-        return array(
+        return [
             // Basic types for all OOTB installations
             // This simulates StudioModule::getViewMetadataSources()
-            array('type' => MB_EDITVIEW),
-            array('type' => MB_DETAILVIEW),
-            array('type' => MB_LISTVIEW),
-            array('type' => MB_BASICSEARCH),
-            array('type' => MB_ADVANCEDSEARCH),
-            array('type' => MB_POPUPLIST),
-            array('type' => MB_QUICKCREATE),
+            ['type' => MB_EDITVIEW],
+            ['type' => MB_DETAILVIEW],
+            ['type' => MB_LISTVIEW],
+            ['type' => MB_BASICSEARCH],
+            ['type' => MB_ADVANCEDSEARCH],
+            ['type' => MB_POPUPLIST],
+            ['type' => MB_QUICKCREATE],
             // Wireless types
             // This simulates StudioModule::getWirelessLayouts()
-            array('type' => MB_WIRELESSEDITVIEW),
-            array('type' => MB_WIRELESSDETAILVIEW),
-            array('type' => MB_WIRELESSLISTVIEW),
+            ['type' => MB_WIRELESSEDITVIEW],
+            ['type' => MB_WIRELESSDETAILVIEW],
+            ['type' => MB_WIRELESSLISTVIEW],
             //BEGIN SUGARCRM flav=ent ONLY
             // Portal types not including search, which was the cause of the bug
             // This simulates StudioModule::getPortalLayoutSources()
-            array('type' => MB_PORTALRECORDVIEW),
-            array('type' => MB_PORTALLISTVIEW),
+            ['type' => MB_PORTALRECORDVIEW],
+            ['type' => MB_PORTALLISTVIEW],
             //END SUGARCRM flav=ent ONLY
-        );
+        ];
     }
 }

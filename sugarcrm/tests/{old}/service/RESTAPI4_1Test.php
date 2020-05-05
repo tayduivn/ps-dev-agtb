@@ -98,7 +98,7 @@ class RESTAPI4_1Test extends TestCase
     }
 
     protected function tearDown() : void
-	{
+    {
         SugarTestContactUtilities::removeCreatedContactsUsersRelationships();
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestMeetingUtilities::removeMeetingContacts();
@@ -106,11 +106,11 @@ class RESTAPI4_1Test extends TestCase
         SugarTestCallUtilities::removeAllCreatedCalls();
         SugarTestHelper::tearDown();
         unset($GLOBALS['app_list_strings']);
-	    unset($GLOBALS['app_strings']);
-	    unset($GLOBALS['mod_strings']);
-	}
+        unset($GLOBALS['app_strings']);
+        unset($GLOBALS['mod_strings']);
+    }
 
-    protected function _makeRESTCall($method,$parameters)
+    protected function _makeRESTCall($method, $parameters)
     {
         // specify the REST web service to interact with
         $url = $GLOBALS['sugar_config']['site_url'].'/service/v4_1/rest.php';
@@ -123,7 +123,7 @@ class RESTAPI4_1Test extends TestCase
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 0);
-        curl_setopt($curl, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_0 );
+        curl_setopt($curl, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_0);
         // build the request URL
         $json = json_encode($parameters);
         $postArgs = "method=$method&input_type=JSON&response_type=JSON&rest_data=$json";
@@ -136,7 +136,7 @@ class RESTAPI4_1Test extends TestCase
         $this->_lastRawResponse = $response;
 
         // Convert the result from JSON format to a PHP array
-        return json_decode($response,true);
+        return json_decode($response, true);
     }
 
     protected function _returnLastRawResponse()
@@ -148,35 +148,37 @@ class RESTAPI4_1Test extends TestCase
     {
         $GLOBALS['db']->commit(); // Making sure we commit any changes before logging in
         global $current_user;
-        return $this->_makeRESTCall('login',
-            array(
+        return $this->_makeRESTCall(
+            'login',
+            [
                 'user_auth' =>
-                    array(
+                    [
                         'user_name' => $current_user->user_name,
                         'password' => $current_user->user_hash,
                         'version' => '.01',
-                        ),
+                        ],
                 'application_name' => 'mobile',
-                'name_value_list' => array(),
-                )
-            );
+                'name_value_list' => [],
+                ]
+        );
     }
 
     public function testGetModifiedRelationships()
     {
         $result = $this->_login();
-        $this->assertTrue(!empty($result['id']) && $result['id'] != -1,$this->_returnLastRawResponse());
+        $this->assertTrue(!empty($result['id']) && $result['id'] != -1, $this->_returnLastRawResponse());
         $session = $result['id'];
 
-        $callsAndMeetingsFields = array('id', 'date_modified', 'deleted', 'name', 'rt.deleted synced');
-        $contactsSelectFields = array('id', 'date_modified', 'deleted', 'first_name', 'last_name', 'rt.deleted synced');
+        $callsAndMeetingsFields = ['id', 'date_modified', 'deleted', 'name', 'rt.deleted synced'];
+        $contactsSelectFields = ['id', 'date_modified', 'deleted', 'first_name', 'last_name', 'rt.deleted synced'];
 
         global $timedate, $current_user;
         $one_hour_ago = $timedate->asDb($timedate->getNow()->get("-1 hours"));
         $one_hour_later = $timedate->asDb($timedate->getNow()->get("+1 hours"));
 
-        $result = $this->_makeRESTCall('get_modified_relationships',
-            array(
+        $result = $this->_makeRESTCall(
+            'get_modified_relationships',
+            [
                 'session' => $session,
                 'module_name' => 'Users',
                 'related_module' => 'Contacts',
@@ -189,7 +191,7 @@ class RESTAPI4_1Test extends TestCase
                 'select_fields' => $contactsSelectFields,
                 'relationship_name' => 'contacts_users',
                 'deletion_date' => '',
-            )
+            ]
         );
 
         $this->assertNotEmpty($result['entry_list']);
@@ -197,8 +199,9 @@ class RESTAPI4_1Test extends TestCase
         $this->assertEquals(1, $result['next_offset']);
 
 
-        $result = $this->_makeRESTCall('get_modified_relationships',
-            array(
+        $result = $this->_makeRESTCall(
+            'get_modified_relationships',
+            [
                 'session' => $session,
                 'module_name' => 'Users',
                 'related_module' => 'Meetings',
@@ -211,15 +214,16 @@ class RESTAPI4_1Test extends TestCase
                 'select_fields' => $callsAndMeetingsFields,
                 'relationship_name' => 'meetings_users',
                 'deletion_date' => '',
-            )
+            ]
         );
 
         $this->assertNotEmpty($result['entry_list']);
         $this->assertEquals(2, $result['result_count']);
         $this->assertEquals(2, $result['next_offset']);
 
-        $result = $this->_makeRESTCall('get_modified_relationships',
-            array(
+        $result = $this->_makeRESTCall(
+            'get_modified_relationships',
+            [
                 'session' => $session,
                 'module_name' => 'Users',
                 'related_module' => 'Meetings',
@@ -232,7 +236,7 @@ class RESTAPI4_1Test extends TestCase
                 'select_fields' => $callsAndMeetingsFields,
                 'relationship_name' => 'meetings_users',
                 'deletion_date' => $one_hour_ago,
-            )
+            ]
         );
 
         $this->assertNotEmpty($result['entry_list']);

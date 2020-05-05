@@ -13,28 +13,29 @@
 
 class SugarTestTaskUtilities
 {
-    private static $_createdTasks = array();
+    private static $_createdTasks = [];
 
-    private function __construct() {}
+    private function __construct()
+    {
+    }
 
     /**
      * @return Task
      */
-    public static function createTask($id = '', $values = array())
+    public static function createTask($id = '', $values = [])
     {
         $time = mt_rand();
         $task = BeanFactory::newBean('Tasks');
 
-        $values = array_merge(array(
+        $values = array_merge([
             'name' => 'SugarTask' . $time,
-        ), $values);
+        ], $values);
 
         foreach ($values as $property => $value) {
             $task->$property = $value;
         }
 
-        if(!empty($id))
-        {
+        if (!empty($id)) {
             $task->new_with_id = true;
             $task->id = $id;
         }
@@ -43,23 +44,24 @@ class SugarTestTaskUtilities
         return $task;
     }
 
-    public static function setCreatedTask($task_ids) {
-    	foreach($task_ids as $task_id) {
-    		$task = new Task();
-    		$task->id = $task_id;
-        	self::$_createdTasks[] = $task;
-    	} // foreach
+    public static function setCreatedTask($task_ids)
+    {
+        foreach ($task_ids as $task_id) {
+            $task = new Task();
+            $task->id = $task_id;
+            self::$_createdTasks[] = $task;
+        } // foreach
     } // fn
     
-    public static function removeAllCreatedTasks() 
+    public static function removeAllCreatedTasks()
     {
         $task_ids = self::getCreatedTaskIds();
         $GLOBALS['db']->query('DELETE FROM tasks WHERE id IN (\'' . implode("', '", $task_ids) . '\')');
     }
         
-    public static function getCreatedTaskIds() 
+    public static function getCreatedTaskIds()
     {
-        $task_ids = array();
+        $task_ids = [];
         foreach (self::$_createdTasks as $task) {
             $task_ids[] = $task->id;
         }

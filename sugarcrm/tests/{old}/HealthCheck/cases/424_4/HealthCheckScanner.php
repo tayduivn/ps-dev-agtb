@@ -12,9 +12,9 @@
 
 class S_424_4_HealthCheckScannerCasesTestMock extends HealthCheckScannerCasesTestMock
 {
-    public $md5_files = array(
-        './modules/Accounts/Account.php' => 'fakeMD5'
-    );
+    public $md5_files = [
+        './modules/Accounts/Account.php' => 'fakeMD5',
+    ];
 
     public function isStockBWCModule($module)
     {

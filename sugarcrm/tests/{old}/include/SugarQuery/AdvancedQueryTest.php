@@ -19,12 +19,12 @@ class AdvancedQueryTest extends TestCase
      * @var DBManager
      */
     private $_db;
-    protected $created = array();
+    protected $created = [];
 
-    protected $backupGlobals = FALSE;
+    protected $backupGlobals = false;
 
-    protected $contacts = array();
-    protected $accounts = array();
+    protected $contacts = [];
+    protected $accounts = [];
 
     public static function setUpBeforeClass() : void
     {
@@ -37,7 +37,7 @@ class AdvancedQueryTest extends TestCase
 
     protected function setUp() : void
     {
-        if(empty($this->_db)){
+        if (empty($this->_db)) {
             $this->_db = DBManagerFactory::getInstance();
         }
     }
@@ -48,10 +48,10 @@ class AdvancedQueryTest extends TestCase
 
         BeanFactory::setBeanClass('Contacts');
 
-        if ( !empty($this->contacts) ) {
+        if (!empty($this->contacts)) {
             $bean = BeanFactory::newBean('Contacts');
-            $contactList = array();
-            foreach ( $this->contacts as $contact ) {
+            $contactList = [];
+            foreach ($this->contacts as $contact) {
                 $contactList[] = $this->_db->quoted($contact->id);
             }
 
@@ -62,9 +62,9 @@ class AdvancedQueryTest extends TestCase
                 );
             }
         }
-        if ( !empty($this->accounts) ) {
-            $accountList = array();
-            foreach ( $this->accounts as $account ) {
+        if (!empty($this->accounts)) {
+            $accountList = [];
+            foreach ($this->accounts as $account) {
                 $accountList[] = $this->_db->quoted($account->id);
             }
             $bean = BeanFactory::newBean('Accounts');
@@ -76,9 +76,9 @@ class AdvancedQueryTest extends TestCase
             }
         }
 
-        if ( !empty($this->cases) ) {
-            $casesList = array();
-            foreach ( $this->cases as $case ) {
+        if (!empty($this->cases)) {
+            $casesList = [];
+            foreach ($this->cases as $case) {
                 $casesList[] = $this->_db->quoted($case->id);
             }
             $bean = BeanFactory::newBean('Cases');
@@ -90,9 +90,9 @@ class AdvancedQueryTest extends TestCase
             }
         }
 
-        if ( !empty($this->notes) ) {
-            $notesList = array();
-            foreach ( $this->notes as $note) {
+        if (!empty($this->notes)) {
+            $notesList = [];
+            foreach ($this->notes as $note) {
                 $notesList[] = $this->_db->quoted($note->id);
             }
             $bean = BeanFactory::newBean('Notes');
@@ -117,7 +117,7 @@ class AdvancedQueryTest extends TestCase
         $sqWhere = new SugarQuery();
         $sqWhere->select("name");
         $sqWhere->from(BeanFactory::newBean('Accounts'));
-        $sqWhere->where()->equals('name','Awesome')->equals('id', $account->id);
+        $sqWhere->where()->equals('name', 'Awesome')->equals('id', $account->id);
         $sqWhereResult = $sqWhere->execute();
         $sqWhereResult = reset($sqWhereResult);
         $this->assertEquals($sqWhereResult['name'], 'Awesome', 'The name Did Not Match it was ' . $sqWhereResult['name']);
@@ -132,9 +132,9 @@ class AdvancedQueryTest extends TestCase
         $this->cases[] = $case;
 
         $sq = new SugarQuery();
-        $sq->select(array("name"));
+        $sq->select(["name"]);
         $sq->from(BeanFactory::newBean('Cases'));
-        $sq->where()->in('account_id', array($account->id));
+        $sq->where()->in('account_id', [$account->id]);
         $result = $sq->execute();
 
         // only 1 record
@@ -175,12 +175,12 @@ class AdvancedQueryTest extends TestCase
         $this->accounts[] = $account;
 
         $sq1 = new SugarQuery();
-        $sq1->select(array("id", "name"));
+        $sq1->select(["id", "name"]);
         $sq1->from(BeanFactory::newBean('Accounts'));
         $sq1->where()->equals('name', 'Awesome');
 
         $sq2 = new SugarQuery();
-        $sq2->select(array("id", "name"));
+        $sq2->select(["id", "name"]);
         $sq2->from(BeanFactory::newBean('Accounts'));
         $sq2->where()->equals('name', 'Not Awesome');
 
@@ -195,7 +195,8 @@ class AdvancedQueryTest extends TestCase
         return $sqUnion->execute();
     }
 
-    public function testSelectNotes() {
+    public function testSelectNotes()
+    {
         $account = BeanFactory::newBean('Accounts');
         $account->name = 'Awesome';
         $account->save();
@@ -211,9 +212,9 @@ class AdvancedQueryTest extends TestCase
 
         $sq = new SugarQuery();
         $sq->from($account);
-        $sq->where()->equals("id",$account_id, $account);
+        $sq->where()->equals("id", $account_id, $account);
         $notes = $sq->join('notes')->joinName();
-        $sq->select(array(array("accounts.name", "a_name"), array("$notes.name", "n_name")));
+        $sq->select([["accounts.name", "a_name"], ["$notes.name", "n_name"]]);
 
 
         $results = $sq->execute();
@@ -223,13 +224,14 @@ class AdvancedQueryTest extends TestCase
         $this->assertEquals('Test note', $result['n_name'], "The note name was: {$result['n_name']}");
     }
 
-    public function testSelectFavorites() {
-        $this->cases = array();
-        for ( $i = 0 ; $i < 40 ; $i++ ) {
+    public function testSelectFavorites()
+    {
+        $this->cases = [];
+        for ($i = 0; $i < 40; $i++) {
             $aCase = new aCase();
             $aCase->name = "UNIT TEST ".count($this->cases)." - ".create_guid();
-            $aCase->billing_address_postalcode = sprintf("%08d",count($this->cases));
-            if ( $i > 25 && $i < 36 ) {
+            $aCase->billing_address_postalcode = sprintf("%08d", count($this->cases));
+            if ($i > 25 && $i < 36) {
                 $aCase->assigned_user_id = $GLOBALS['current_user']->id;
             } else {
                 // The rest are assigned to admin
@@ -237,10 +239,10 @@ class AdvancedQueryTest extends TestCase
             }
             $aCase->save();
             $this->cases[] = $aCase;
-            if ( $i > 33 ) {
+            if ($i > 33) {
                 // Favorite the last six
                 $fav = new SugarFavorites();
-                $fav->id = SugarFavorites::generateGUID('Cases',$aCase->id);
+                $fav->id = SugarFavorites::generateGUID('Cases', $aCase->id);
                 $fav->new_with_id = true;
                 $fav->module = 'Cases';
                 $fav->record_id = $aCase->id;
@@ -252,7 +254,7 @@ class AdvancedQueryTest extends TestCase
         }
 
         $sq = new SugarQuery();
-        $sq->select(array("id", "name"));
+        $sq->select(["id", "name"]);
         $sq->from($aCase);
 
         $sf = new SugarFavorites();
@@ -262,8 +264,8 @@ class AdvancedQueryTest extends TestCase
 
         $this->assertEquals('6', count($results), "The number of rows returned doesn't match the number of favorites created: " . count($results));
 
-        foreach($results AS $case) {
-            $fav = SugarFavorites::isUserFavorite('Cases',$case['id'],$GLOBALS['current_user']->id);
+        foreach ($results as $case) {
+            $fav = SugarFavorites::isUserFavorite('Cases', $case['id'], $GLOBALS['current_user']->id);
             $this->assertEquals($fav, true, "The record: {$case['id']} was not set as a favorite it is marked:" . var_export($fav, true));
         }
     }
@@ -277,7 +279,7 @@ class AdvancedQueryTest extends TestCase
 
         $sqCount = new SugarQuery();
         $sqCount->select()->setCountQuery();
-        $sqCount->select(array('name', 'account_type'));
+        $sqCount->select(['name', 'account_type']);
         $sqCount->from(BeanFactory::newBean('Accounts'));
         $sql = $sqCount->compile()->getSQL();
         $this->assertStringContainsString('COUNT(0)', $sql);
@@ -294,7 +296,7 @@ class AdvancedQueryTest extends TestCase
 
         $sqCount = new SugarQuery();
         $sqCount->select()->setCountQuery();
-        $sqCount->select(array('name', 'account_type'));
+        $sqCount->select(['name', 'account_type']);
         $sqCount->from(BeanFactory::newBean('Accounts'));
         $sql = $sqCount->compile()->getSQL();
         $this->assertStringContainsString('COUNT(0)', $sql);
@@ -306,7 +308,7 @@ class AdvancedQueryTest extends TestCase
     public function testBadFields()
     {
         $sq = new SugarQuery();
-        $sq->select(array("id", "notARealField"));
+        $sq->select(["id", "notARealField"]);
         $sq->from(BeanFactory::newBean('Contacts'));
         $sq->where()->equals("noWhere", "nonYaBusiness");
         $sq->orderBy('yesIAmCertainlyAField');
@@ -320,7 +322,7 @@ class AdvancedQueryTest extends TestCase
     public function testUniqueAliases()
     {
         $sq = new SugarQuery();
-        $sq->select(array('*', array('id', 'superAwesomeField')));
+        $sq->select(['*', ['id', 'superAwesomeField']]);
         $sq->from(BeanFactory::newBean('Contacts'));
         $sq->where()->equals("id", "2");
         $sql = $sq->compile()->getSQL();
@@ -338,7 +340,7 @@ class AdvancedQueryTest extends TestCase
         $this->assertTrue($contact->hasCustomFields());
 
         $sq = new SugarQuery();
-        $sq->select(array("id", "last_name", "bigname_c", "report_to_bigname"));
+        $sq->select(["id", "last_name", "bigname_c", "report_to_bigname"]);
         $sq->from($contact);
 
         $sql = $sq->compile()->getSQL();
@@ -360,9 +362,9 @@ class AdvancedQueryTest extends TestCase
         $contact = BeanFactory::newBean("Contacts");
         // will throw because name is composite
         $sq = new SugarQuery();
-        $sq->select(array("id", "last_name", "account_name"));
+        $sq->select(["id", "last_name", "account_name"]);
         $sq->from($contact);
-        $sq->where()->equals('sync_contact',1);
+        $sq->where()->equals('sync_contact', 1);
         $sql = $sq->compile()->getSQL();
         // the field should not be there now
         $this->assertStringContainsString('id IS NOT NULL', $sql);
@@ -376,9 +378,9 @@ class AdvancedQueryTest extends TestCase
         $contact = BeanFactory::newBean("Contacts");
         // will throw because name is composite
         $sq = new SugarQuery();
-        $sq->select(array("id", "last_name", "account_name"));
+        $sq->select(["id", "last_name", "account_name"]);
         $sq->from($contact);
-        $sq->where()->equals('email_and_name1','Awesome');
+        $sq->where()->equals('email_and_name1', 'Awesome');
         $sql = $sq->compile()->getSQL();
         // the field should not be there now
         $this->assertStringNotContainsString("email_and_name1 = 'Awesome'", $sql);
@@ -393,28 +395,28 @@ class AdvancedQueryTest extends TestCase
 
         // by related field
         $sq = new SugarQuery();
-        $sq->select(array("id", "last_name"));
+        $sq->select(["id", "last_name"]);
         $sq->from($contact);
         $sq->orderBy("account_name");
         $this->assertMatchesRegularExpression('/.*ORDER BY jt\w+.name DESC.*/s', $sq->compile()->getSQL());
 
         // by custom field too
         $sq = new SugarQuery();
-        $sq->select(array("id", "last_name"));
+        $sq->select(["id", "last_name"]);
         $sq->from($contact);
         $sq->orderBy("account_name")->orderBy("bigname_c", "ASC");
         $this->assertMatchesRegularExpression('/ORDER BY jt\w+.name DESC, contacts.last_name ASC/s', $sq->compile()->getSQL());
 
         // by related custom field
         $sq = new SugarQuery();
-        $sq->select(array("id", "last_name"));
+        $sq->select(["id", "last_name"]);
         $sq->from($contact);
         $sq->orderBy("report_to_bigname");
         $this->assertMatchesRegularExpression('/ORDER BY jt\w+.last_name DESC/s', $sq->compile()->getSQL());
 
         // skip bad one
         $sq = new SugarQuery();
-        $sq->select(array("id", "last_name"));
+        $sq->select(["id", "last_name"]);
         $sq->from($contact);
         $sq->orderBy("portal_password1")->orderBy("account_name", "asc");
         $this->assertMatchesRegularExpression('/ORDER BY jt\w+.name asc/s', $sq->compile()->getSQL());
@@ -423,7 +425,7 @@ class AdvancedQueryTest extends TestCase
     public function testOrderByRaw()
     {
         $sq = new SugarQuery();
-        $sq->select(array("id", "last_name"));
+        $sq->select(["id", "last_name"]);
         $sq->from(BeanFactory::newBean('Contacts'));
         $sq->orderByRaw("last_name+1", 'DESC');
         $sql = $sq->compile()->getSQL();
@@ -433,7 +435,7 @@ class AdvancedQueryTest extends TestCase
     public function testGroupByRaw()
     {
         $sq = new SugarQuery();
-        $sq->select(array("id", "last_name"));
+        $sq->select(["id", "last_name"]);
         $sq->from(BeanFactory::newBean("Contacts"));
         $sq->groupByRaw("last_name is awesome");
         $sql = $sq->compile()->getSQL();
@@ -443,7 +445,7 @@ class AdvancedQueryTest extends TestCase
     public function testHavingRaw()
     {
         $sq = new SugarQuery();
-        $sq->select(array("id", "last_name"));
+        $sq->select(["id", "last_name"]);
         $sq->from(BeanFactory::newBean("Contacts"));
         $sq->havingRaw("last_name > 55");
         $sql = $sq->compile()->getSQL();
@@ -453,7 +455,7 @@ class AdvancedQueryTest extends TestCase
     public function testChildJoins()
     {
         $sq = new SugarQuery();
-        $sq->select(array("id","last_name"));
+        $sq->select(["id","last_name"]);
         $sq->from(BeanFactory::newBean('Contacts'));
         $accounts = $sq->join('accounts');
         $opportunities = $accounts->join('opportunities');
@@ -473,7 +475,7 @@ class AdvancedQueryTest extends TestCase
         $longAlias = "alias_longer_than_128_characters_that_should_normally_fail_on_not_mysql_stacks_" .
             "alias_longer_than_128_characters_that_should_normally_fail_on_not_mysql_stacks";
         $sq = new SugarQuery();
-        $sq->select(array("id", array("last_name", $longAlias)));
+        $sq->select(["id", ["last_name", $longAlias]]);
         $sq->from(BeanFactory::newBean('Contacts'));
         $sq->where()->equals("last_name", "McTester");
         $data = $sq->execute();
@@ -493,9 +495,9 @@ class AdvancedQueryTest extends TestCase
         $quote->shipping_accounts->add($shippingAccount);
 
         $query = new SugarQuery();
-        $query->from($quote, array(
+        $query->from($quote, [
             'team_security' => false,
-        ));
+        ]);
         $query->select('id', 'billing_account_name', 'shipping_account_name');
         $query->where()->equals('quotes.id', $quote->id);
 
@@ -542,7 +544,7 @@ class Contact_Mock_Bug62961 extends Contact
     {
         parent::__construct();
         $this->field_defs['bigname_c'] =
-            array (
+             [
                 'calculated' => 'true',
                 'formula' => 'strToUpper($last_name)',
                 'enforced' => 'true',
@@ -553,7 +555,7 @@ class Contact_Mock_Bug62961 extends Contact
                 'vname' => 'LBL_BIGNAME',
                 'type' => 'varchar',
                 'massupdate' => '0',
-                'default' => NULL,
+                'default' => null,
                 'no_default' => false,
                 'importable' => 'false',
                 'duplicate_merge' => 'disabled',
@@ -565,9 +567,9 @@ class Contact_Mock_Bug62961 extends Contact
                 'size' => '20',
                 'custom_module' => 'Contacts',
                 'sort_on' => 'last_name',
-            );
+            ];
         $this->field_defs['report_to_bigname'] =
-            array(
+            [
                 'name' => 'report_to_bigname',
                 'rname' => 'bigname_c',
                 'id_name' => 'reports_to_id',
@@ -581,7 +583,7 @@ class Contact_Mock_Bug62961 extends Contact
                 'len' => 'id',
                 'reportable' => false,
                 'source' => 'non-db',
-            );
+            ];
     }
 
     public function hasCustomFields()

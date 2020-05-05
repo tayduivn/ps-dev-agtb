@@ -41,7 +41,7 @@ class RestServiceTest extends TestCase
         $_SERVER['REQUEST_URI'] = $requestUrl;
         $_SERVER['SCRIPT_NAME'] = $scriptName;
 
-        $requestMock = $this->createPartialMock('RestRequest', array('getVersion', 'getResourceURIBase'));
+        $requestMock = $this->createPartialMock('RestRequest', ['getVersion', 'getResourceURIBase']);
         $requestMock->expects($this->any())
             ->method('getVersion')
             ->will($this->returnValue('11.2'));
@@ -57,7 +57,7 @@ class RestServiceTest extends TestCase
 
         $serviceMock = $this->getMockBuilder('RestService')
             ->disableOriginalConstructor()
-            ->setMethods(array('findRoute', 'getSiteUrl'))
+            ->setMethods(['findRoute', 'getSiteUrl'])
             ->getMock();
 
         $serviceMock->expects($this->any())
@@ -76,98 +76,98 @@ class RestServiceTest extends TestCase
 
     public function providerGetResourceURI()
     {
-        return array(
+        return [
             // resource is a string and has route
-            array(
+            [
                 'modules/Accounts',
                 true,
-                array('relative' => true),
+                ['relative' => true],
                 'a.com',
                 'b.com',
                 'rest/v11_2/modules/Accounts',
-            ),
+            ],
             // resource is array, has route
-            array(
-                array('Notes', 'id-123', 'file', 'filename'),
+            [
+                ['Notes', 'id-123', 'file', 'filename'],
                 true,
-                array('relative' => true),
+                ['relative' => true],
                 'a.com',
                 'b.com',
                 'rest/v11_2/Notes/id-123/file/filename',
-            ),
+            ],
             // no route
-            array(
+            [
                 'modules/abcd/efg',
                 false,
-                array('relative' => true),
+                ['relative' => true],
                 'a.com',
                 'b.com',
                 '',
-            ),
+            ],
             // resource is a string and has route, relative = false
-            array(
+            [
                 'modules/Accounts',
                 true,
-                array('relative' => false),
+                ['relative' => false],
                 'a.com',
                 'b.com',
                 self::SITE_URL . 'rest/v11_2/modules/Accounts',
-            ),
+            ],
             // resource is array, has route, , relative = false
-            array(
-                array('modules', 'Accounts'),
+            [
+                ['modules', 'Accounts'],
                 true,
-                array('relative' => false),
+                ['relative' => false],
                 'a.com',
                 'b.com',
                 self::SITE_URL . 'rest/v11_2/modules/Accounts',
-            ),
+            ],
             // resource is array, has route, relative = false
-            array(
-                array('Notes', 'id-123', 'file', 'filename'),
+            [
+                ['Notes', 'id-123', 'file', 'filename'],
                 true,
-                array('relative' => false),
+                ['relative' => false],
                 'a.com',
                 'b.com',
                 self::SITE_URL . 'rest/v11_2/Notes/id-123/file/filename',
-            ),
+            ],
             // no route, relative is false
-            array(
+            [
                 'modules/abcd/efg',
                 false,
-                array('relative' => false),
+                ['relative' => false],
                 'a.com',
                 'b.com',
                 '',
-            ),
+            ],
             // resource is array, has route, relative = false, URL and SCRIPT_NAME
-            array(
-                array('Notes', 'id-123', 'file', 'filename'),
+            [
+                ['Notes', 'id-123', 'file', 'filename'],
                 true,
-                array('relative' => false),
+                ['relative' => false],
                 'a.com',
                 'a.com',
                 self::SITE_URL . 'rest/v11_2/Notes/id-123/file/filename',
-            ),
+            ],
             // resource is array, has route, URL and SCRIPT_NAME is the same
-            array(
-                array('Notes', 'id-123', 'file', 'filename'),
+            [
+                ['Notes', 'id-123', 'file', 'filename'],
                 true,
-                array('relative' => true),
+                ['relative' => true],
                 'a.com',
                 'a.com',
                 'api/rest.php/v11_2/Notes/id-123/file/filename',
-            ),
+            ],
             // no route, URL and SCRIPT_NAME
-            array(
+            [
                 'modules/abcd/efg',
                 false,
-                array('relative' => false),
+                ['relative' => false],
                 'a.com',
                 'a.com',
                 '',
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -180,57 +180,56 @@ class RestServiceTest extends TestCase
         $ref  = new \ReflectionClass('RestService') ;
         $service = $ref->newInstanceWithoutConstructor();
 
-        $result = TestReflection::callProtectedMethod($service, 'checkVersionSupport', array($version, $minVersion, $maxVersion,));
+        $result = TestReflection::callProtectedMethod($service, 'checkVersionSupport', [$version, $minVersion, $maxVersion,]);
 
         $this->assertSame($expected, $result);
     }
 
     public function providerCheckVersionSupport()
     {
-        return array(
-            'version same as min and max is supported' => array(
+        return [
+            'version same as min and max is supported' => [
                 '10',
                 '10',
                 '10',
                 true,
-            ),
-            'major.minor version same as max is supported' => array(
+            ],
+            'major.minor version same as max is supported' => [
                 '12.2',
                 '10',
                 '12.2',
                 true,
-            ),
-            'major.minor version between min and max is supported' => array(
+            ],
+            'major.minor version between min and max is supported' => [
                 '13.1',
                 '13',
                 '13.3',
                 true,
-            ),
-            'version greater than min and max is not supported' => array(
+            ],
+            'version greater than min and max is not supported' => [
                 '11',
                 '10',
                 '10',
                 false,
-            ),
-            'major.minor version less than min is not supported' => array(
+            ],
+            'major.minor version less than min is not supported' => [
                 '12.2',
                 '13',
                 '13.5',
                 false,
-            ),
-            'major.minor version greater than max is not supported' => array(
+            ],
+            'major.minor version greater than max is not supported' => [
                 '12.2',
                 '10',
                 '11',
                 false,
-            ),
-            'minor version greater than max.minor version is not supported' => array(
+            ],
+            'minor version greater than max.minor version is not supported' => [
                 '10.15',
                 '10.1',
                 '10.2',
                 false,
-            ),
-        );
+            ],
+        ];
     }
 }
-

@@ -17,7 +17,7 @@ class UsersLastImportTest extends TestCase
     private $_importModule = 'Notes';
     private $_importObject = 'Note';
     private $_importRecordCount = 3;
-    private $_importIds = array();
+    private $_importIds = [];
     private $_usersLastImport;
     private $_usersLastImportIds;
     private $cstmTableExistBefore;
@@ -37,7 +37,7 @@ class UsersLastImportTest extends TestCase
         $sql = "DELETE FROM {$focus->table_name} WHERE id IN ('" . implode("','", $this->_importIds) . "')";
         $GLOBALS['db']->query($sql);
         
-        $sql = 'DELETE FROM users_last_import WHERE id IN (\'' . implode("','",$this->_usersLastImportIds) . '\')';
+        $sql = 'DELETE FROM users_last_import WHERE id IN (\'' . implode("','", $this->_usersLastImportIds) . '\')';
         $GLOBALS['db']->query($sql);
 
         if (!$this->cstmTableExistBefore && $GLOBALS['db']->tableExists('notes_cstm')) {
@@ -60,7 +60,7 @@ class UsersLastImportTest extends TestCase
     
     private function _addImportedRecords()
     {
-        for ( $i = 0; $i < $this->_importRecordCount; $i++ ) {
+        for ($i = 0; $i < $this->_importRecordCount; $i++) {
             $focus = $this->_loadBean($this->_importModule);
             $focus->name = "record $i";
             $focus->save();
@@ -84,7 +84,7 @@ class UsersLastImportTest extends TestCase
         
         $result = $GLOBALS['db']->query($query);
        
-        $this->assertFalse($GLOBALS['db']->fetchByAssoc($result),'There should not be any records in the table now');
+        $this->assertFalse($GLOBALS['db']->fetchByAssoc($result), 'There should not be any records in the table now');
     }
     
     public function testUndo()
@@ -96,12 +96,12 @@ class UsersLastImportTest extends TestCase
         $focus = $this->_loadBean($this->_importModule);
         
         $query = "SELECT * FROM {$focus->table_name}
-                    WHERE id IN ('" . 
-                        implode("','",$this->_importIds) . "')";
+                    WHERE id IN ('" .
+                        implode("','", $this->_importIds) . "')";
         
         $result = $GLOBALS['db']->query($query);
         
-        $this->assertFalse($GLOBALS['db']->fetchByAssoc($result),'There should not be any records in the table now');
+        $this->assertFalse($GLOBALS['db']->fetchByAssoc($result), 'There should not be any records in the table now');
     }
 
     /**
@@ -114,10 +114,10 @@ class UsersLastImportTest extends TestCase
             $GLOBALS['db']->createTableParams(
                 'notes_cstm',
                 [
-                    'id_c' => array (
+                    'id_c' =>  [
                         'name' => 'id_c',
                         'type' => 'id',
-                    ),
+                    ],
                 ],
                 [],
             );
@@ -168,11 +168,11 @@ class UsersLastImportTest extends TestCase
         $this->email_addr_bean_rel_id = 'email_addr_bean_rel_'.$unid;
         $this->email_address_id = 'email_address_id_'.$unid;
         $GLOBALS['db']->query("insert into email_addr_bean_rel (id , email_address_id, bean_id, bean_module, primary_address, date_created , date_modified) values ('{$this->email_addr_bean_rel_id}', '{$this->email_address_id}', '{$focus->id}', 'Accounts', 1, '$time', '$time')");
-				
+                
         $GLOBALS['db']->query("insert into email_addresses (id , email_address, email_address_caps, date_created, date_modified) values ('{$this->email_address_id}', 'test@g.com', 'TEST@G.COM', '$time', '$time')");
 
         // setup
-        require('include/modules.php');
+        require 'include/modules.php';
         $GLOBALS['beanList'] = $beanList;
         $GLOBALS['beanFiles'] = $beanFiles;
 
@@ -181,12 +181,12 @@ class UsersLastImportTest extends TestCase
         );
 
         $result = $GLOBALS['db']->query("SELECT * FROM email_addr_bean_rel where id = '{$this->email_addr_bean_rel_id}'");
-		$rows = $GLOBALS['db']->fetchByAssoc($result);
-    	$this->assertFalse($rows);
-    	
-    	$result = $GLOBALS['db']->query("SELECT * FROM email_addresses where id = '{$this->email_address_id}'");
-		$rows = $GLOBALS['db']->fetchByAssoc($result);
-    	$this->assertFalse($rows);
+        $rows = $GLOBALS['db']->fetchByAssoc($result);
+        $this->assertFalse($rows);
+        
+        $result = $GLOBALS['db']->query("SELECT * FROM email_addresses where id = '{$this->email_address_id}'");
+        $rows = $GLOBALS['db']->fetchByAssoc($result);
+        $this->assertFalse($rows);
         
         $GLOBALS['db']->query("DELETE FROM users_last_import WHERE id = '{$last_import->id}'");
     }
@@ -204,12 +204,13 @@ class UsersLastImportTest extends TestCase
         
         $result = $GLOBALS['db']->query($query);
         
-        $this->assertFalse($GLOBALS['db']->fetchByAssoc($result),'There should not be any records in the table now');
+        $this->assertFalse($GLOBALS['db']->fetchByAssoc($result), 'There should not be any records in the table now');
     }
     
     public function testGetBeansByImport()
     {
-        foreach ( UsersLastImport::getBeansByImport('Notes') as $objectName )
-            $this->assertEquals($objectName,'Note');
+        foreach (UsersLastImport::getBeansByImport('Notes') as $objectName) {
+            $this->assertEquals($objectName, 'Note');
+        }
     }
 }

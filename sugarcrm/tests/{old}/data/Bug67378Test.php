@@ -38,7 +38,7 @@ class Bug67378Test extends TestCase
 
     public function testSubpanelSortOn()
     {
-        $data = array(
+        $data = [
             'name' => 'assigned_user_name',
             'link' => 'assigned_user_link',
             'vname' => 'LBL_ASSIGNED_TO',
@@ -51,11 +51,11 @@ class Bug67378Test extends TestCase
             'module' => 'Users',
             'duplicate_merge' => 'disabled',
             'massupdate' => false,
-            'db_concat_field' => array(
+            'db_concat_field' => [
                 0 => 'first_name',
                 1 => 'last_name',
-            )
-        );
+            ],
+        ];
 
         $user = BeanFactory::newBean('Users');
         $relate_query = $user->getRelateFieldQuery($data, 'whatever');

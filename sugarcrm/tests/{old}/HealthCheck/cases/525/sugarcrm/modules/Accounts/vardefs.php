@@ -10,14 +10,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$dictionary['Account'] = array(
-    'fields' => array(
-        'test_multienum' => array(
+$dictionary['Account'] = [
+    'fields' => [
+        'test_multienum' => [
             'name' => 'test_multienum',
             'type' => 'multienum',
-            'function' => array(
+            'function' => [
                 'returns' => 'html',
-            ),
-        ),
-    ),
-);
+            ],
+        ],
+    ],
+];

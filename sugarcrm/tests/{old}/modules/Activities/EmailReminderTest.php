@@ -44,7 +44,7 @@ class EmailReminderTest extends TestCase
         $xtpl = SugarTestReflection::callProtectedMethod(
             $emailReminder,
             'setReminderBody',
-            array($xtpl, $meeting, $current_user)
+            [$xtpl, $meeting, $current_user]
         );
 
         $xtpl->parse('MeetingReminder');

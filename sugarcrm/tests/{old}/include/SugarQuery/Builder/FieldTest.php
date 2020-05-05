@@ -99,7 +99,7 @@ class FieldTest extends TestCase
         $account->name = 'Awesome account';
         $account->save();
 
-        SugarTestAccountUtilities::setCreatedAccount(array($account->id));
+        SugarTestAccountUtilities::setCreatedAccount([$account->id]);
 
         // Create case
         $cases = BeanFactory::newBean('Cases');
@@ -107,15 +107,15 @@ class FieldTest extends TestCase
         $cases->account_id = $account->id;
         $cases->save();
 
-        SugarTestCaseUtilities::setCreatedCase(array($cases->id));
+        SugarTestCaseUtilities::setCreatedCase([$cases->id]);
 
         // Set link field to null
         $cases->field_defs['account_name']['link'] = null;
 
         $query = new SugarQuery();
         $query->select('account_name');
-        $query->from($cases, array('team_security' => false));
-        $query->where()->in('account_id', array($account->id));
+        $query->from($cases, ['team_security' => false]);
+        $query->where()->in('account_id', [$account->id]);
         $result = $query->execute();
 
         $this->assertNotEmpty($result, 'Account should be selected');
@@ -124,8 +124,8 @@ class FieldTest extends TestCase
         $account->mark_deleted($account->id);
 
         $queryDeleted = new SugarQuery();
-        $queryDeleted->from($cases, array('team_security' => false));
-        $queryDeleted->where()->in('account_id', array($account->id));
+        $queryDeleted->from($cases, ['team_security' => false]);
+        $queryDeleted->where()->in('account_id', [$account->id]);
         $result = $queryDeleted->execute();
         $this->assertEmpty($result, 'Deleted account should not be selected');
     }
@@ -133,15 +133,15 @@ class FieldTest extends TestCase
     public function testGetRelatedFullNameFieldWithoutLink()
     {
         $contact = SugarTestContactUtilities::createContact();
-        $lead = SugarTestLeadUtilities::createLead(null, array(
+        $lead = SugarTestLeadUtilities::createLead(null, [
             'reports_to_id' => $contact->id,
-        ));
+        ]);
 
         $query = new SugarQuery();
         $query->select('id', 'report_to_name');
-        $query->from($lead, array(
+        $query->from($lead, [
             'team_security' => false,
-        ));
+        ]);
         $query->where()->equals('id', $lead->id);
         $result = $query->execute();
 
@@ -157,13 +157,13 @@ class FieldTest extends TestCase
     {
         $account = BeanFactory::newBean('Accounts');
         // create custom field defs
-        $account->field_defs['my_field_c'] = array(
+        $account->field_defs['my_field_c'] = [
             'labelValue' => 'my field',
             'full_text_search' =>
-            array (
+             [
                 'boost' => '0',
                 'enabled' => false,
-            ),
+            ],
             'enforced' => '',
             'dependency' => '',
             'required' => false,
@@ -188,9 +188,9 @@ class FieldTest extends TestCase
             'size' => '20',
             'id' => 'Accountsmy_field_c',
             'custom_module' => 'Accounts',
-        );
+        ];
         $sq = new SugarQuery();
-        $sq->select(array("my_field"));
+        $sq->select(["my_field"]);
         $sq->from($account);
         $field = new SugarQuery_Builder_Field('my_field', $sq);
         $def = $field->getFieldDef();

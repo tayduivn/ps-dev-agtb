@@ -26,18 +26,18 @@ class XhprofLoggerTest extends TestCase
      */
     public function startQueryDataProvider()
     {
-        return array(
-            array('Query: SELECT \'test\' FROM DUAL'),
-            array(
+        return [
+            ['Query: SELECT \'test\' FROM DUAL'],
+            [
                 'Query: SELECT \'test\' FROM DUAL',
-                array('some-param'),
-            ),
-            array(
+                ['some-param'],
+            ],
+            [
                 'Query: SELECT \'test\' FROM DUAL',
-                array('some-param'),
-                array('param-type'),
-            ),
-        );
+                ['some-param'],
+                ['param-type'],
+            ],
+        ];
     }
 
     /**
@@ -71,7 +71,7 @@ class XhprofLoggerTest extends TestCase
     public function testStopQuery()
     {
         $sugarXhprof = $this->getMockBuilder('SugarXhprof')
-            ->setMethods(array('trackSQL'))
+            ->setMethods(['trackSQL'])
             ->getMock();
 
         $sugarXhprof->expects($this->once())
@@ -84,7 +84,7 @@ class XhprofLoggerTest extends TestCase
 
         $dbalXhprofLogger = new XhprofLogger($sugarXhprof);
 
-        $dbalXhprofLogger->currentQuery = array('sql' => 'sample-sql', 'params' => null, 'types' => null);
+        $dbalXhprofLogger->currentQuery = ['sql' => 'sample-sql', 'params' => null, 'types' => null];
         $dbalXhprofLogger->stopQuery();
     }
 }

@@ -13,19 +13,20 @@
 use PHPUnit\Framework\TestCase;
 
 class OwnerOrAdminVisibilityTest extends TestCase
-{   
+{
+
     protected function setUp() : void
     {
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser(); 
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
     }
 
     protected function tearDown() : void
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset( $GLOBALS['current_user']);
+        unset($GLOBALS['current_user']);
     }
 
-    public function testOwnerVisibility() 
+    public function testOwnerVisibility()
     {
         $bean = new Account();
         $owner = new OwnerOrAdminVisibility($bean);

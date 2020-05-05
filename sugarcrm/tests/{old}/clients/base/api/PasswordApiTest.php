@@ -22,10 +22,10 @@ class PasswordApiTest extends TestCase
     public $unifiedSearchApi;
     public $moduleApi;
     public $serviceMock;
-    public $args = array(
+    public $args = [
         'email' => 'test@test.com',
-        'username' => 'test'
-    );
+        'username' => 'test',
+    ];
 
     /**
      * @var PasswordApi
@@ -71,16 +71,16 @@ class PasswordApiTest extends TestCase
     public function testRequestPasswordCorrect()
     {
         $this->passwordApi->usr->expects($this->any())->method('sendEmailForPassword')->will(
-        $this->returnValue(
-            array(
+            $this->returnValue(
+                [
                 'status' => true,
+                ]
             )
-        )
-    );
+        );
         $this->passwordApi->usr->expects($this->any())->method('isPrimaryEmail')->will(
-                $this->returnValue(
-                    true
-                )
+            $this->returnValue(
+                true
+            )
         );
 
         $this->args['email'] = 'test@test.com';
@@ -105,7 +105,7 @@ class PasswordApiTest extends TestCase
                     $this->containsEqual('') // Password.
                 )
             )
-            ->will($this->returnValue(array('status' => true)));
+            ->will($this->returnValue(['status' => true]));
 
         $GLOBALS['sugar_config']['passwordsetting']['SystemGeneratedPasswordON'] = false;
 
@@ -142,10 +142,10 @@ class PasswordApiTest extends TestCase
     {
         $this->passwordApi->usr->expects($this->any())->method('sendEmailForPassword')->will(
             $this->returnValue(
-                array(
+                [
                     'status' => $data['status'],
                     'message' => $data['message'],
-                )
+                ]
             )
         );
         $this->passwordApi->usr->expects($this->any())->method('isPrimaryEmail')->will(
@@ -163,57 +163,57 @@ class PasswordApiTest extends TestCase
 
     public function providerEmailData()
     {
-        return array(
-            array(
-                array(
+        return [
+            [
+                [
                     // Not primary email.
                     'primary' => false,
                     'status' => true,
                     'message' => 'fail',
                     'email' => $this->args['email'],
                     'portalOnly' => false,
-                ),
-            ),
-            array(
-                array(
+                ],
+            ],
+            [
+                [
                     // Status is false. Message exists.
                     'primary' => true,
                     'status' => false,
                     'message' => 'fail',
                     'email' => $this->args['email'],
                     'portalOnly' => false,
-                ),
-            ),
-            array(
-                array(
+                ],
+            ],
+            [
+                [
                     // Status is false. Message empty.
                     'primary' => true,
                     'status' => false,
                     'message' => '',
                     'email' => $this->args['email'],
                     'portalOnly' => false,
-                ),
-            ),
-            array(
-                array(
+                ],
+            ],
+            [
+                [
                     // Portal only user.
                     'primary' => true,
                     'status' => true,
                     'message' => 'fail',
                     'email' => $this->args['email'],
                     'portalOnly' => true,
-                ),
-            ),
-            array(
-                array(
+                ],
+            ],
+            [
+                [
                     // Wrong Email.
                     'primary' => true,
                     'status' => true,
                     'message' => 'fail',
                     'email' => 'bad',
                     'portalOnly' => false,
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
     }
 }

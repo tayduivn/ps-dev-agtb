@@ -24,7 +24,7 @@ class NusoapSoapTest extends TestCase
     {
         /** @var NusoapSoap $service */
         $service = $this->getMockBuilder('NusoapSoap')
-            ->setMethods(array('register'))
+            ->setMethods(['register'])
             ->disableOriginalConstructor()
             ->getMock();
         $server = new soap_server();
@@ -50,7 +50,7 @@ class NusoapSoapTest extends TestCase
         global $error_defs;
 
         return array_map(function ($code) {
-            return array($code);
+            return [$code];
         }, array_keys($error_defs));
     }
 }

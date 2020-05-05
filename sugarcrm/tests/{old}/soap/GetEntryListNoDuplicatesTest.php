@@ -33,7 +33,7 @@ class GetEntryListNoDuplicatesTest extends SOAPTestCase
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setUp('current_user', array(true, true));
+        SugarTestHelper::setUp('current_user', [true, true]);
 
         $this->contact = SugarTestContactUtilities::createContact();
         $this->meeting1 = SugarTestMeetingUtilities::createMeeting();
@@ -60,19 +60,19 @@ class GetEntryListNoDuplicatesTest extends SOAPTestCase
 
     public function testGetEntryList()
     {
-        $client = array(
+        $client = [
             'session'       => $this->_sessionId,
             'module_name'   => 'Contacts',
             'query'         => 'contacts.id=' . $GLOBALS['db']->quoted($this->contact->id),
             'order_by'      => '',
             'offset'        => 0,
-            'select_fields' => array('id'),
+            'select_fields' => ['id'],
             'max_results'   => 20,
             'deleted'       => -1,
-        );
+        ];
 
         $result = $this->_soapClient->call('get_entry_list', $client);
-        $data = array();
+        $data = [];
         foreach ($result['entry_list'] as $v) {
             $this->assertNotContains($v['id'], $data, 'Duplicates were found');
             $data[] = $v['id'];

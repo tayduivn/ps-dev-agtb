@@ -51,12 +51,12 @@ class PMSEElementValidatorTest extends TestCase
 
         $loggerMock = $this->getMockBuilder('PMSELogger')
                 ->disableOriginalConstructor()
-                ->setMethods(array('debug', 'info'))
+                ->setMethods(['debug', 'info'])
                 ->getMock();
 
         $requestMock = $this->getMockBuilder('PMSERequest')
                 ->disableOriginalConstructor()
-                ->setMethods(array('getFlowData', 'getBean', 'setExternalAction', 'setCreateThread'))
+                ->setMethods(['getFlowData', 'getBean', 'setExternalAction', 'setCreateThread'])
                 ->getMock();
 
         $requestMock->expects($this->once())
@@ -98,17 +98,17 @@ class PMSEElementValidatorTest extends TestCase
 
         $loggerMock = $this->getMockBuilder('PMSELogger')
                 ->disableOriginalConstructor()
-                ->setMethods(array('debug', 'info'))
+                ->setMethods(['debug', 'info'])
                 ->getMock();
 
         $requestMock = $this->getMockBuilder('PMSERequest')
                 ->disableOriginalConstructor()
-                ->setMethods(array('getFlowData', 'getBean', 'setBean', 'setExternalAction', 'setCreateThread'))
+                ->setMethods(['getFlowData', 'getBean', 'setBean', 'setExternalAction', 'setCreateThread'])
                 ->getMock();
 
         $requestMock->expects($this->once())
                 ->method('getFlowData')
-                ->will($this->returnValue(array('evn_type' => 'NO_VALID')));
+                ->will($this->returnValue(['evn_type' => 'NO_VALID']));
 
         $bean = BeanFactory::getBean('Accounts');
         $requestMock->expects($this->once())
@@ -125,10 +125,10 @@ class PMSEElementValidatorTest extends TestCase
 
     public function testIdentifyElementStatusIfRunning()
     {
-        $mockData = array('cas_id' => 1, 'cas_index' => 2);
+        $mockData = ['cas_id' => 1, 'cas_index' => 2];
         $elementValidatorMock = $this->getMockBuilder('PMSEElementValidator')
                 ->disableOriginalConstructor()
-                ->setMethods(NULL)
+                ->setMethods(null)
                 ->getMock();
 
         $result = $elementValidatorMock->identifyElementStatus($mockData);
@@ -137,10 +137,10 @@ class PMSEElementValidatorTest extends TestCase
 
     public function testIdentifyElementStatusIfNew()
     {
-        $mockData = array();
+        $mockData = [];
         $elementValidatorMock = $this->getMockBuilder('PMSEElementValidator')
                 ->disableOriginalConstructor()
-                ->setMethods(NULL)
+                ->setMethods(null)
                 ->getMock();
 
         $result = $elementValidatorMock->identifyElementStatus($mockData);
@@ -151,13 +151,13 @@ class PMSEElementValidatorTest extends TestCase
     {
         $bean = new stdClass();
         $bean->module_dir = 'Leads';
-        $mockData = array('rel_process_module' => 'Leads',
+        $mockData = ['rel_process_module' => 'Leads',
             'rel_element_relationship' => 'Leads',
             'rel_element_module' => 'Leads',
-        );
+        ];
         $elementValidatorMock = $this->getMockBuilder('PMSEElementValidator')
                 ->disableOriginalConstructor()
-                ->setMethods(NULL)
+                ->setMethods(null)
                 ->getMock();
 
         $result = $elementValidatorMock->identifyEventAction($mockData);
@@ -169,13 +169,13 @@ class PMSEElementValidatorTest extends TestCase
     {
         $bean = new stdClass();
         $bean->module_dir = 'Notes';
-        $mockData = array('rel_process_module' => 'Leads',
+        $mockData = ['rel_process_module' => 'Leads',
             'rel_element_relationship' => 'leads_notes',
             'rel_element_module' => 'Notes',
-        );
+        ];
         $elementValidatorMock = $this->getMockBuilder('PMSEElementValidator')
                 ->disableOriginalConstructor()
-                ->setMethods(NULL)
+                ->setMethods(null)
                 ->getMock();
 
         $result = $elementValidatorMock->identifyEventAction($mockData);
@@ -188,14 +188,14 @@ class PMSEElementValidatorTest extends TestCase
         $bean = new stdClass();
         $elementValidatorMock = $this->getMockBuilder('PMSEElementValidator')
                 ->disableOriginalConstructor()
-                ->setMethods(array('identifyElementStatus', 'identifyEventAction'))
+                ->setMethods(['identifyElementStatus', 'identifyEventAction'])
                 ->getMock();
 
         $elementValidatorMock->expects($this->once())
                 ->method('identifyElementStatus')
                 ->will($this->returnValue('RUNNING'));
 
-        $mockData = array('evn_type' => 'INTERMEDIATE');
+        $mockData = ['evn_type' => 'INTERMEDIATE'];
 
         $elementValidatorMock->expects($this->once())
                 ->method('identifyEventAction');
@@ -208,14 +208,14 @@ class PMSEElementValidatorTest extends TestCase
         $bean = new stdClass();
         $elementValidatorMock = $this->getMockBuilder('PMSEElementValidator')
                 ->disableOriginalConstructor()
-                ->setMethods(array('identifyElementStatus', 'identifyEventAction'))
+                ->setMethods(['identifyElementStatus', 'identifyEventAction'])
                 ->getMock();
 
         $elementValidatorMock->expects($this->any())
                 ->method('identifyElementStatus')
                 ->will($this->returnValue(false));
 
-        $mockData = array('evn_type' => 'START');
+        $mockData = ['evn_type' => 'START'];
         $result = $elementValidatorMock->processExternalAction($mockData);
         $this->assertEquals(false, $result);
     }
@@ -224,14 +224,14 @@ class PMSEElementValidatorTest extends TestCase
     {
         $elementValidatorMock = $this->getMockBuilder('PMSEElementValidator')
                 ->disableOriginalConstructor()
-                ->setMethods(array('identifyElementStatus'))
+                ->setMethods(['identifyElementStatus'])
                 ->getMock();
 
         $elementValidatorMock->expects($this->once())
                 ->method('identifyElementStatus')
                 ->will($this->returnValue('NEW'));
 
-        $flowData = array();
+        $flowData = [];
         $result = $elementValidatorMock->processCreateThread($flowData);
         $this->assertEquals(true, $result);
     }
@@ -240,14 +240,14 @@ class PMSEElementValidatorTest extends TestCase
     {
         $elementValidatorMock = $this->getMockBuilder('PMSEElementValidator')
                 ->disableOriginalConstructor()
-                ->setMethods(array('identifyElementStatus'))
+                ->setMethods(['identifyElementStatus'])
                 ->getMock();
 
         $elementValidatorMock->expects($this->once())
                 ->method('identifyElementStatus')
                 ->will($this->returnValue('INTERMEDIATE'));
 
-        $flowData = array();
+        $flowData = [];
         $result = $elementValidatorMock->processCreateThread($flowData);
         $this->assertEquals(false, $result);
     }
@@ -257,7 +257,7 @@ class PMSEElementValidatorTest extends TestCase
         $beanMock = new stdClass();
         $beanMock->id = 'bean123';
         $beanMock->module_name = 'Leads';
-        $flowData = array('pro_id' => 'pro123');
+        $flowData = ['pro_id' => 'pro123'];
 
         $elementValidator = $this->getMockBuilder('PMSEElementValidator')
                 ->disableOriginalConstructor()
@@ -266,11 +266,11 @@ class PMSEElementValidatorTest extends TestCase
 
         $beanMock = $this->getMockBuilder('SugarBean')
             ->disableOriginalConstructor()
-            ->setMethods(array())
+            ->setMethods([])
             ->getMock();
 
         $sugarQueryObjectMock = $this->getMockBuilder('SugarQuery')
-                ->setMethods(array('from', 'distinct', 'where', 'equals', 'query', 'getOne'))
+                ->setMethods(['from', 'distinct', 'where', 'equals', 'query', 'getOne'])
                 ->getMock();
 
         $sugarQueryObjectMock->expects($this->atLeastOnce())
@@ -285,7 +285,7 @@ class PMSEElementValidatorTest extends TestCase
             ->method('equals')
             ->will($this->returnValue($sugarQueryObjectMock));
 
-        $arrayDupli = array('id' => '999000');
+        $arrayDupli = ['id' => '999000'];
 
         $sugarQueryObjectMock->expects($this->any())
             ->method('getOne')
@@ -293,7 +293,7 @@ class PMSEElementValidatorTest extends TestCase
 
         $loggerMock = $this->getMockBuilder('PMSELogger')
                 ->disableOriginalConstructor()
-                ->setMethods(array('debug'))
+                ->setMethods(['debug'])
                 ->getMock();
 
         $elementValidator->expects($this->any())
@@ -309,7 +309,7 @@ class PMSEElementValidatorTest extends TestCase
             ->will($this->returnValue($loggerMock));
 
         $result = $elementValidator->isCaseDuplicated($beanMock, $flowData);
-        $this->assertEquals(TRUE, $result);
+        $this->assertEquals(true, $result);
     }
 
     public function testIsCaseDuplicatedNot()
@@ -317,7 +317,7 @@ class PMSEElementValidatorTest extends TestCase
         $beanMock = new stdClass();
         $beanMock->id = 'bean123';
         $beanMock->module_name = 'Leads';
-        $flowData = array('pro_id' => 'pro123');
+        $flowData = ['pro_id' => 'pro123'];
 
         $elementValidator = $this->getMockBuilder('PMSEElementValidator')
                 ->disableOriginalConstructor()
@@ -326,11 +326,11 @@ class PMSEElementValidatorTest extends TestCase
 
         $beanMock = $this->getMockBuilder('SugarBean')
             ->disableOriginalConstructor()
-            ->setMethods(array())
+            ->setMethods([])
             ->getMock();
 
         $sugarQueryObjectMock = $this->getMockBuilder('SugarQuery')
-            ->setMethods(array('from', 'distinct', 'where', 'equals', 'query', 'getOne'))
+            ->setMethods(['from', 'distinct', 'where', 'equals', 'query', 'getOne'])
             ->getMock();
 
         $sugarQueryObjectMock->expects($this->atLeastOnce())
@@ -351,7 +351,7 @@ class PMSEElementValidatorTest extends TestCase
 
         $loggerMock = $this->getMockBuilder('PMSELogger')
                 ->disableOriginalConstructor()
-                ->setMethods(array('debug'))
+                ->setMethods(['debug'])
                 ->getMock();
 
         $elementValidator->expects($this->any())
@@ -374,7 +374,7 @@ class PMSEElementValidatorTest extends TestCase
     {
         $elementValidatorMock = $this->getMockBuilder('PMSEElementValidator')
                 ->disableOriginalConstructor()
-                ->setMethods(array('isNewRecord', 'isCaseDuplicated'))
+                ->setMethods(['isNewRecord', 'isCaseDuplicated'])
                 ->getMock();
 
         $elementValidatorMock->expects($this->once())
@@ -384,7 +384,7 @@ class PMSEElementValidatorTest extends TestCase
         $beanMock = new stdClass();
         $request = ProcessManager\Factory::getPMSEObject('PMSERequest');
 
-        $flowDataMock = array('evn_params'=>'new');
+        $flowDataMock = ['evn_params'=>'new'];
         $elementValidatorMock->validateStartEvent($beanMock, $flowDataMock, $request);
         $this->assertEquals(true, $request->isValid());
     }
@@ -393,7 +393,7 @@ class PMSEElementValidatorTest extends TestCase
     {
         $elementValidatorMock = $this->getMockBuilder('PMSEElementValidator')
                 ->disableOriginalConstructor()
-                ->setMethods(array('isNewRecord', 'isCaseDuplicated'))
+                ->setMethods(['isNewRecord', 'isCaseDuplicated'])
                 ->getMock();
 
         $elementValidatorMock->expects($this->atLeastOnce())
@@ -407,7 +407,7 @@ class PMSEElementValidatorTest extends TestCase
         $beanMock = new stdClass();
         $request = ProcessManager\Factory::getPMSEObject('PMSERequest');
 
-        $flowDataMock = array('evn_params'=>'updated');
+        $flowDataMock = ['evn_params'=>'updated'];
         $elementValidatorMock->validateStartEvent($beanMock, $flowDataMock, $request);
         $this->assertEquals(true, $request->isValid());
     }
@@ -416,7 +416,7 @@ class PMSEElementValidatorTest extends TestCase
     {
         $elementValidatorMock = $this->getMockBuilder('PMSEElementValidator')
                 ->disableOriginalConstructor()
-                ->setMethods(array('isNewRecord', 'isCaseDuplicated'))
+                ->setMethods(['isNewRecord', 'isCaseDuplicated'])
                 ->getMock();
 
         $elementValidatorMock->expects($this->atLeastOnce())
@@ -430,7 +430,7 @@ class PMSEElementValidatorTest extends TestCase
         $beanMock = new stdClass();
         $request = ProcessManager\Factory::getPMSEObject('PMSERequest');
 
-        $flowDataMock = array('evn_params'=>'updated');
+        $flowDataMock = ['evn_params'=>'updated'];
         $elementValidatorMock->validateStartEvent($beanMock, $flowDataMock, $request);
         $this->assertEquals(false, $request->isValid());
     }

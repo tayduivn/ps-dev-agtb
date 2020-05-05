@@ -38,15 +38,15 @@ class SugarACLStrategyTest extends TestCase
     {
         // Remove the following lines when you implement this test.
         $user1 = $this->createMock('User');
-        $context = array('user' => $user1);
+        $context = ['user' => $user1];
         $user2 = $this->createMock('User');
 
         $this->assertEquals($user1, $this->object->getCurrentUser($context));
         unset($GLOBALS['current_user']);
-        $this->assertNull($this->object->getCurrentUser(array()));
+        $this->assertNull($this->object->getCurrentUser([]));
 
         $GLOBALS['current_user'] = $user2;
-        $this->assertEquals($user2, $this->object->getCurrentUser(array()));
+        $this->assertEquals($user2, $this->object->getCurrentUser([]));
 
         $this->assertEquals($user1, $this->object->getCurrentUser($context));
     }
@@ -62,16 +62,16 @@ class SugarACLStrategyTest extends TestCase
         $user1->id = 111;
         $user2->id = 222;
 
-        $this->assertNull($this->object->getUserID(array()));
+        $this->assertNull($this->object->getUserID([]));
 
         $GLOBALS['current_user'] = $user2;
 
-        $this->assertEquals($user2->id, $this->object->getUserID(array()));
+        $this->assertEquals($user2->id, $this->object->getUserID([]));
 
-        $this->assertEquals($user1->id, $this->object->getUserID(array('user' => $user1)));
+        $this->assertEquals($user1->id, $this->object->getUserID(['user' => $user1]));
 
-        $this->assertEquals(333, $this->object->getUserID(array('user_id' => 333)));
+        $this->assertEquals(333, $this->object->getUserID(['user_id' => 333]));
 
-        $this->assertEquals($user1->id, $this->object->getUserID(array('user_id' => 333, 'user' => $user1)));
+        $this->assertEquals($user1->id, $this->object->getUserID(['user_id' => 333, 'user' => $user1]));
     }
 }

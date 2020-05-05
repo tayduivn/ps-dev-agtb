@@ -22,7 +22,7 @@ require_once 'data/Relationships/SugarRelationship.php';
  */
 class Bug62026Test extends TestCase
 {
-    private static $custom_field_def = array(
+    private static $custom_field_def = [
         'calculated'  => 'true',
         'formula'     => 'count($tasks)',
         'name'        => 'bug62026',
@@ -31,14 +31,14 @@ class Bug62026Test extends TestCase
         'label'       => 'Bug 62026 Custom Count',
         'module'      => 'ModuleBuilder',
         'view_module' => 'Accounts',
-    );
+    ];
 
     public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
-        SugarTestHelper::setUp('current_user', array(true, 1));
+        SugarTestHelper::setUp('current_user', [true, 1]);
 
         // Create the custom field
         $mbc = new ModuleBuilderController();
@@ -65,7 +65,7 @@ class Bug62026Test extends TestCase
         SugarTestTaskUtilities::removeAllCreatedTasks();
         SugarTestAccountUtilities::removeAllCreatedAccounts();
 
-        $_REQUEST = array();
+        $_REQUEST = [];
         SugarCache::$isCacheReset = false;
 
         SugarTestHelper::tearDown();
@@ -92,7 +92,7 @@ class Bug62026Test extends TestCase
         $this->assertEquals(1, $account->$field, 'Create account with parent_id/type does not update count()');
 
         // Save the ID for removal after test is done
-        SugarTestTaskUtilities::setCreatedTask(array($task->id));
+        SugarTestTaskUtilities::setCreatedTask([$task->id]);
 
         // Unlink account by updating parent_id/type
         $task = $task->retrieve($task->id);

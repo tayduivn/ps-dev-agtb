@@ -25,7 +25,7 @@ use Sugarcrm\SugarcrmTestsUnit\TestReflection;
  */
 class ClientTest extends TestCase
 {
-    protected $config = array('host' => 'localhost', 'port' => '9200');
+    protected $config = ['host' => 'localhost', 'port' => '9200'];
     protected $logger;
     /**
      * @covers ::__construct
@@ -78,7 +78,7 @@ class ClientTest extends TestCase
     public function testCheckVersion($version, $expected)
     {
         $client = $this->getTestClient();
-        $this->assertSame($expected, TestReflection::callProtectedMethod($client, 'checkEsVersion', array($version)));
+        $this->assertSame($expected, TestReflection::callProtectedMethod($client, 'checkEsVersion', [$version]));
     }
 
     public function providerTestCheckVersion()
@@ -198,7 +198,7 @@ class ClientTest extends TestCase
      */
     public function testIsAvailable($force, $isSearchEngineAvallble, $responseString, $expected)
     {
-        $clientMock = $this->getClientMock(array('ping', 'isSearchEngineAvailable', 'saveAdminStatus'));
+        $clientMock = $this->getClientMock(['ping', 'isSearchEngineAvailable', 'saveAdminStatus']);
         $clientMock->expects($this->any())
             ->method('ping')
             ->will($this->returnValue(new Response($responseString)));
@@ -214,10 +214,10 @@ class ClientTest extends TestCase
 
     public function providerTestIsAvailable()
     {
-        return array(
+        return [
             // ES 6.x support
             // no force update
-            array(
+            [
                 false,
                 true,
                 '{
@@ -234,9 +234,9 @@ class ClientTest extends TestCase
                   "tagline" : "You Know, for Search"
                 }',
                 true,
-            ),
+            ],
             // force update, all good
-            array(
+            [
                 true,
                 true,
                 '{
@@ -253,9 +253,9 @@ class ClientTest extends TestCase
                   "tagline" : "You Know, for Search"
                 }',
                 true,
-            ),
+            ],
             // force update, new ES status is good
-            array(
+            [
                 true,
                 false,
                 '{
@@ -272,9 +272,9 @@ class ClientTest extends TestCase
                   "tagline" : "You Know, for Search"
                 }',
                 true,
-            ),
+            ],
             // ES 5.6.x support
-            array(
+            [
                 false,
                 true,
                 '{
@@ -291,8 +291,8 @@ class ClientTest extends TestCase
                   "tagline" : "You Know, for Search"
                 }',
                 true,
-            ),
-            array(
+            ],
+            [
                 false,
                 true,
                 '{
@@ -309,8 +309,8 @@ class ClientTest extends TestCase
                   "tagline" : "You Know, for Search"
                 }',
                 true,
-            ),
-            array(
+            ],
+            [
                 false,
                 true,
                 '{
@@ -327,9 +327,9 @@ class ClientTest extends TestCase
                   "tagline" : "You Know, for Search"
                 }',
                 true,
-            ),
+            ],
             // force update, all good
-            array(
+            [
                 true,
                 true,
                 '{
@@ -346,9 +346,9 @@ class ClientTest extends TestCase
                   "tagline" : "You Know, for Search"
                 }',
                 true,
-            ),
+            ],
             // force update, new ES status is good
-            array(
+            [
                 true,
                 false,
                 '{
@@ -365,9 +365,9 @@ class ClientTest extends TestCase
                   "tagline" : "You Know, for Search"
                 }',
                 true,
-            ),
+            ],
             // update to not available
-            array(
+            [
                 true,
                 true,
                 '{
@@ -383,9 +383,9 @@ class ClientTest extends TestCase
                   "tagline" : "You Know, for Search"
                 }',
                 false,
-            ),
+            ],
             // bad status
-            array(
+            [
                 true,
                 false,
                 '{
@@ -402,9 +402,9 @@ class ClientTest extends TestCase
                   "tagline" : "You Know, for Search"
                 }',
                 false,
-            ),
+            ],
             // ES version 1.7, not supported
-            array(
+            [
                 true,
                 true,
                 '{
@@ -421,9 +421,9 @@ class ClientTest extends TestCase
                   "tagline" : "You Know, for Search"
                 }',
                 false,
-            ),
+            ],
             // ES version 2.3, not supported
-            array(
+            [
                 true,
                 true,
                 '{
@@ -440,9 +440,9 @@ class ClientTest extends TestCase
                   "tagline" : "You Know, for Search"
                 }',
                 false,
-            ),
+            ],
             // ES version 5.3, not supported
-            array(
+            [
                 true,
                 true,
                 '{
@@ -459,8 +459,8 @@ class ClientTest extends TestCase
                   "tagline" : "You Know, for Search"
                 }',
                 false,
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -469,7 +469,7 @@ class ClientTest extends TestCase
      */
     public function testVerifyConnectivityHandleException()
     {
-        $clientMock = $this->getClientMock(array('ping'));
+        $clientMock = $this->getClientMock(['ping']);
         $clientMock->expects($this->any())
             ->method('ping')
             ->will($this->throwException(new Exception()));
@@ -483,7 +483,7 @@ class ClientTest extends TestCase
      */
     public function testRequestException()
     {
-        $clientMock = $this->getClientMock(array('isAvailable'));
+        $clientMock = $this->getClientMock(['isAvailable']);
         $clientMock->expects($this->any())
             ->method('isAvailable')
             ->will($this->returnValue(false));

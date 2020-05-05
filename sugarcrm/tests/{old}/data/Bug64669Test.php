@@ -12,7 +12,7 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once('include/export_utils.php');
+require_once 'include/export_utils.php';
 
 
 /**
@@ -31,8 +31,8 @@ class Bug64669Test extends TestCase
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('app_list_strings');
-        SugarTestHelper::setUp('mod_strings', array('Contacts'));
-        SugarTestHelper::setUp('current_user', array(true, 1));
+        SugarTestHelper::setUp('mod_strings', ['Contacts']);
+        SugarTestHelper::setUp('current_user', [true, 1]);
 
         $camp = BeanFactory::newBean('Campaigns');
         $camp->name = $this->campaign_name;
@@ -52,7 +52,7 @@ class Bug64669Test extends TestCase
 
     protected function tearDown() : void
     {
-        foreach($this->createdBeans as $bean) {
+        foreach ($this->createdBeans as $bean) {
             $bean->retrieve($bean->id);
             $bean->mark_deleted($bean->id);
         }
@@ -67,10 +67,10 @@ class Bug64669Test extends TestCase
         //query with filter on related field has been created,
         //make sure there is a Left Join with Campaigns in the returned query
         $this->assertMatchesRegularExpression(
-			'/LEFT JOIN\s.campaigns/',
-			$this->export_query,
+            '/LEFT JOIN\s.campaigns/',
+            $this->export_query,
             ' Left Join with Campaigns table was not found, where statement is not being processed correctly'
-		);
+        );
     }
 
     /**
@@ -78,20 +78,20 @@ class Bug64669Test extends TestCase
      */
     public function testExcludeFieldOrderMapping()
     {
-        $removeMe = array('campaign_id','campaign_name','description');
+        $removeMe = ['campaign_id','campaign_name','description'];
 
         //use the query with filter on related campaigns to get the result and fields array for the search
         $result = $GLOBALS['db']->query($this->export_query);
-        $fields_array = $GLOBALS['db']->getFieldsArray($result,true);
+        $fields_array = $GLOBALS['db']->getFieldsArray($result, true);
 
         //create the filter exclude array, we will remove related fields campaign_id and campaign_name, as well as description field
         //from the array that determines columns will be exported
-        $fields_exclude_array = array('contacts'=>$removeMe);
-        $mstr_fields_exclude_array = get_field_order_mapping('contacts',$fields_array,true,$fields_exclude_array);
+        $fields_exclude_array = ['contacts'=>$removeMe];
+        $mstr_fields_exclude_array = get_field_order_mapping('contacts', $fields_array, true, $fields_exclude_array);
 
         //make sure campaign_id field has been removed from the list of columns to be exported
         foreach ($removeMe as $removed) {
-            $this->assertArrayNotHasKey($removed, $mstr_fields_exclude_array, "field $removed was not excluded from fields list: ".var_export($mstr_fields_exclude_array,true));
+            $this->assertArrayNotHasKey($removed, $mstr_fields_exclude_array, "field $removed was not excluded from fields list: ".var_export($mstr_fields_exclude_array, true));
         }
     }
 
@@ -104,7 +104,7 @@ class Bug64669Test extends TestCase
     {
         //set up variables and request array for export function
         $type = 'Contacts';
-        $reArr = array(
+        $reArr = [
             'module' => 'Contacts',
             'action' => 'index',
             'searchFormTab' => 'basic_search',
@@ -114,8 +114,8 @@ class Bug64669Test extends TestCase
             'campaign_name_basic' => $this->campaign_name,
             'search_name_basic' => '',
             'current_user_only_basic' => 0,
-            'favorites_only_basic' => 0
-        );
+            'favorites_only_basic' => 0,
+        ];
         $reArr = serialize($reArr);
         $_REQUEST['current_post'] = base64_encode($reArr);
         $_REQUEST['entrypoint'] = 'export';

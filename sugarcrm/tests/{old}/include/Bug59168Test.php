@@ -35,10 +35,10 @@ class Bug59168Test extends TestCase
 
     public function searchFields()
     {
-        return array(
-            array('Contacts', array(), ''),
-            array('Contacts', array('account_name' => array('value' => 'one')), ''),
-        );
+        return [
+            ['Contacts', [], ''],
+            ['Contacts', ['account_name' => ['value' => 'one']], ''],
+        ];
     }
 
     protected function tearDown() : void

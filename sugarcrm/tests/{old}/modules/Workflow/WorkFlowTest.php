@@ -15,41 +15,37 @@ use PHPUnit\Framework\TestCase;
 
 class WorkFlowTest extends TestCase
 {
-	protected $testWFName = "WFUnitTest";
-	protected $testValue = "Workflow triggred!";
-	protected $testAccName = "WF Test Account";
+    protected $testWFName = "WFUnitTest";
+    protected $testValue = "Workflow triggred!";
+    protected $testAccName = "WF Test Account";
     private static $has_workflow_directory;
     private static $has_logic_hooks_file;
-    private static $wf_files = array('actions_array.php', 'alerts_array.php', 'plugins_array.php', 'triggers_array.php', 'workflow.php');
+    private static $wf_files = ['actions_array.php', 'alerts_array.php', 'plugins_array.php', 'triggers_array.php', 'workflow.php'];
     private $createdIds;
 
     public static function setUpBeforeClass() : void
     {
-        if(file_exists('custom/modules/Accounts/workflow'))
-        {
-           self::$has_workflow_directory = true;
+        if (file_exists('custom/modules/Accounts/workflow')) {
+            self::$has_workflow_directory = true;
         } else {
-           mkdir_recursive('custom/modules/Accounts/workflow');
+            mkdir_recursive('custom/modules/Accounts/workflow');
         }
 
-        foreach(self::$wf_files as $file) {
+        foreach (self::$wf_files as $file) {
              $target_file = 'custom/modules/Accounts/workflow/' . $file;
-             if(file_exists($target_file))
-             {
-             		copy($target_file, $target_file . '.bak');
-             }
+            if (file_exists($target_file)) {
+                   copy($target_file, $target_file . '.bak');
+            }
 
              $test_file = 'tests/{old}/include/workflow/testfiles/workflow/' . $file;
-             if(file_exists($test_file))
-             {
-           		copy($test_file, $target_file);
-             }
+            if (file_exists($test_file)) {
+                copy($test_file, $target_file);
+            }
         }
 
-        if(file_exists('custom/modules/Accounts/logic_hooks.php'))
-        {
-        	self::$has_logic_hooks_file = true;
-        	copy('custom/modules/Accounts/logic_hooks.php', 'custom/modules/Accounts/logic_hooks.php.bak');
+        if (file_exists('custom/modules/Accounts/logic_hooks.php')) {
+            self::$has_logic_hooks_file = true;
+            copy('custom/modules/Accounts/logic_hooks.php', 'custom/modules/Accounts/logic_hooks.php.bak');
         }
         copy('tests/{old}/include/workflow/testfiles/logic_hooks.php', 'custom/modules/Accounts/logic_hooks.php');
         LogicHook::refreshHooks();
@@ -57,63 +53,62 @@ class WorkFlowTest extends TestCase
 
     protected function setUp() : void
     {
-    	$this->testWFName = "WFUnitTest" . mt_rand();
-    	$this->testAccName = "WFTestAccount" . mt_rand();
-    	$this->wf = new WorkFlow();
-    	$this->wf->name = $this->testWFName;
-    	$this->wf->base_module = "Accounts";
-    	$this->wf->type = "Normal";
-    	$this->wf->fire_order = "alerts_actions";
-    	$this->wf->record_type = "All";
-    	$this->wf->save();
+        $this->testWFName = "WFUnitTest" . mt_rand();
+        $this->testAccName = "WFTestAccount" . mt_rand();
+        $this->wf = new WorkFlow();
+        $this->wf->name = $this->testWFName;
+        $this->wf->base_module = "Accounts";
+        $this->wf->type = "Normal";
+        $this->wf->fire_order = "alerts_actions";
+        $this->wf->record_type = "All";
+        $this->wf->save();
         $this->createdIds = [$this->wf->id];
-	}
+    }
 
     protected function tearDown() : void
-	{
+    {
         $db = $GLOBALS['db'];
-	    $this->wf->deleted = true;
-	    $this->wf->mark_deleted($this->wf->id);
+        $this->wf->deleted = true;
+        $this->wf->mark_deleted($this->wf->id);
         foreach ($this->createdIds as &$id) {
             $id = $db->quoted($id);
         }
         $sql = "DELETE FROM workflow WHERE id IN (" . implode(",", $this->createdIds) . ")";
         $db->query($sql);
-	}
+    }
 
     public static function tearDownAfterClass(): void
     {
-        if(self::$has_workflow_directory)
-        {
-           foreach(self::$wf_files as $file) {
-           	   $target_file = 'custom/modules/Accounts/workflow/' . $file;
-          	   if(file_exists($target_file . '.bak'))
-          	   {
-          	   		copy($target_file . '.bak', $target_file);
-          	   		unlink($target_file . '.bak');
-          	   } else {
+        if (self::$has_workflow_directory) {
+            foreach (self::$wf_files as $file) {
+                $target_file = 'custom/modules/Accounts/workflow/' . $file;
+                if (file_exists($target_file . '.bak')) {
+                    copy($target_file . '.bak', $target_file);
+                    unlink($target_file . '.bak');
+                } else {
                     unlink($target_file);
-          	   }
-           }
+                }
+            }
         } else {
-           rmdir_recursive('custom/modules/Accounts/workflow');
+            rmdir_recursive('custom/modules/Accounts/workflow');
         }
 
-        if(self::$has_logic_hooks_file)
-        {
-        	copy('custom/modules/Accounts/logic_hooks.php.bak', 'custom/modules/Accounts/logic_hooks.php');
-        	unlink('custom/modules/Accounts/logic_hooks.php.bak');
+        if (self::$has_logic_hooks_file) {
+            copy('custom/modules/Accounts/logic_hooks.php.bak', 'custom/modules/Accounts/logic_hooks.php');
+            unlink('custom/modules/Accounts/logic_hooks.php.bak');
         } else {
             unlink('custom/modules/Accounts/logic_hooks.php');
         }
     }
 
-	public function testCreate_new_list_query()
+    public function testCreate_new_list_query()
     {
         $query = $this->wf->create_new_list_query("name", "workflow.name like '{$this->testWFName}%'");
         $result = $this->wf->db->query($query);
         $count = 0;
-        while ( $row = $this->wf->db->fetchByAssoc($result) ) $count++;
+        while ($row = $this->wf->db->fetchByAssoc($result)) {
+            $count++;
+        }
         $this->assertEquals(1, $count);
     }
 
@@ -149,8 +144,8 @@ class WorkFlowTest extends TestCase
     public function testWrite_workflow()
     {
         //Build the workflow components
-    	echo ("Building workflow trigger...\n");
-    	$trigger = new WorkFlowTriggerShell();
+        echo ("Building workflow trigger...\n");
+        $trigger = new WorkFlowTriggerShell();
         $trigger->type = "trigger_record_change";
         $trigger->frame_type = "Primary";
         $trigger->rel_module_type = "any";

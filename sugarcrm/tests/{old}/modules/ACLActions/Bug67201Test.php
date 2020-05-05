@@ -44,7 +44,8 @@ class Bug67201Test extends TestCase
         SugarTestHelper::tearDown();
     }
 
-    public function testGetUserActions() {
+    public function testGetUserActions()
+    {
         $actions = ACLAction::getUserActions($GLOBALS['current_user']->id, true);
         $this->assertEquals(ACL_ALLOW_NONE, $actions['Accounts']['module']['edit']['aclaccess'], 'aclaccess should be: '. ACL_ALLOW_NONE);
         $this->assertEquals(false, $actions['Accounts']['module']['edit']['isDefault'], 'aclaccess should be overridden.');

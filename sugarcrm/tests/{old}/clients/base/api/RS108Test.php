@@ -30,7 +30,7 @@ class RS108Test extends TestCase
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setUp('current_user', array(true, true));
+        SugarTestHelper::setUp('current_user', [true, true]);
 
         $this->service = SugarTestRestUtilities::getRestServiceMock();
 
@@ -54,9 +54,9 @@ class RS108Test extends TestCase
      */
     public function testSaveTempImagePost()
     {
-        $api = $this->createPartialMock('FileTempApi', array('saveFilePost'));
+        $api = $this->createPartialMock('FileTempApi', ['saveFilePost']);
         $api->expects($this->once())->method('saveFilePost')->with($this->anything(), $this->anything(), $this->equalTo(true));
-        $api->saveTempImagePost($this->service, array());
+        $api->saveTempImagePost($this->service, []);
     }
 
     /**
@@ -64,15 +64,15 @@ class RS108Test extends TestCase
      */
     public function testGetTempImage()
     {
-        $service = $this->createPartialMock('RestService', array('fileResponse'));
+        $service = $this->createPartialMock('RestService', ['fileResponse']);
         $service->expects($this->once())->method('fileResponse')->with($this->equalTo($this->file));
         $api = new FileTempApi();
-        $api->getTempImage($service, array(
+        $api->getTempImage($service, [
                 'module' => 'Users',
                 'record' => $GLOBALS['current_user']->id,
                 'field' => 'image',
                 'temp_id' => basename($this->file),
-            ));
+            ]);
     }
 
     /**
@@ -83,7 +83,7 @@ class RS108Test extends TestCase
         $api = new FileTempApi();
 
         $this->expectException(SugarApiExceptionMissingParameter::class);
-        $api->getTempImage($this->service, array());
+        $api->getTempImage($this->service, []);
     }
 
     /**
@@ -97,11 +97,11 @@ class RS108Test extends TestCase
         $this->expectException(ViolationException::class);
 
         $api = new FileTempApi();
-        $api->getTempImage($this->service, array(
+        $api->getTempImage($this->service, [
                 'module' => 'Users',
                 'record' => $GLOBALS['current_user']->id,
                 'field' => 'image',
                 'temp_id' => basename($this->file),
-            ));
+            ]);
     }
 }

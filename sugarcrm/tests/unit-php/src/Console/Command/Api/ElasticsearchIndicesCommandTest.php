@@ -32,58 +32,58 @@ class ElasticsearchIndicesCommandTest extends AbstractApiCommandTestCase
      */
     public function providerTestExecuteCommand()
     {
-        return array(
-            array(
-                array(
-                    'accounts' => array(
-                        'indices' => array(
-                            'accounts' => array(
-                                'total' => array(
-                                    'docs' => array(
+        return [
+            [
+                [
+                    'accounts' => [
+                        'indices' => [
+                            'accounts' => [
+                                'total' => [
+                                    'docs' => [
                                         'count' => 5684,
                                         'max_doc' => 5687,
                                         'deleted_docs' => 3,
-                                    ),
-                                    'store' => array(
+                                    ],
+                                    'store' => [
                                         'primary_size_in_bytes' => 256854,
                                         'size_in_bytes' => 256854,
-                                    ),
-                                ),
-                            ),
-                        ),
-                        '_shards' => array(
+                                    ],
+                                ],
+                            ],
+                        ],
+                        '_shards' => [
                             'total' => 3,
                             'successful' => 3,
                             'failed' => 0,
-                        ),
-                    ),
-                    'contacts' => array(
-                        'indices' => array(
-                            'contacts' => array(
-                                'total' => array(
-                                    'docs' => array(
+                        ],
+                    ],
+                    'contacts' => [
+                        'indices' => [
+                            'contacts' => [
+                                'total' => [
+                                    'docs' => [
                                         'count' => 542568,
                                         'max_doc' => 542568,
                                         'deleted_docs' => 0,
-                                    ),
-                                    'store' => array(
+                                    ],
+                                    'store' => [
                                         'primary_size_in_bytes' => 254686854,
                                         'size_in_bytes' => 254686854,
-                                    ),
-                                ),
-                            ),
-                        ),
-                        '_shards' => array(
+                                    ],
+                                ],
+                            ],
+                        ],
+                        '_shards' => [
                             'total' => 5,
                             'successful' => 5,
                             'failed' => 0,
-                        ),
-                    ),
-                ),
-                array(),
+                        ],
+                    ],
+                ],
+                [],
                 'ElasticsearchIndicesCommand_0.txt',
                 0,
-            ),
-        );
+            ],
+        ];
     }
 }

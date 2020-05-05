@@ -16,12 +16,12 @@ use PHPUnit\Framework\TestCase;
 class SetValueActionTest extends TestCase
 {
     protected function setUp() : void
-	{
+    {
         SugarTestHelper::setUp("current_user");
         $GLOBALS['current_user']->setPreference('datef', "Y-m-d");
         //Set the time format preference to include seconds since the test uses '2001-01-10 11:45:00' which contains seconds
         $GLOBALS['current_user']->setPreference('timef', "H:i:s");
-	}
+    }
 
     protected function tearDown() : void
     {
@@ -34,7 +34,7 @@ class SetValueActionTest extends TestCase
         $expr = 'concat("Hello",
 " ",
 "World")';
-        $action = ActionFactory::getNewAction("SetValue", array("target" => $target,"value" => $expr));
+        $action = ActionFactory::getNewAction("SetValue", ["target" => $target,"value" => $expr]);
 
         $value = SugarTestReflection::getProtectedValue($action, 'expression');
         $this->assertStringNotContainsString("\n", $value);
@@ -44,20 +44,20 @@ class SetValueActionTest extends TestCase
     {
         $target = "name";
         $expr = 'concat("Hello", " ", "World")';
-        $action = ActionFactory::getNewAction("SetValue", array("target" => $target, "value" => $expr));
+        $action = ActionFactory::getNewAction("SetValue", ["target" => $target, "value" => $expr]);
         $expected = 'new SUGAR.forms.SetValueAction(\'name\',\'concat(\"Hello\", \" \", \"World\")\')';
         $this->assertEquals($expected, $action->getJavascriptFire());
     }
 
-	public function testSetValues()
-	{
-	    $task = new Task();
+    public function testSetValues()
+    {
+        $task = new Task();
 
         //Test Date value
         $task->date_due = '2001-01-10 11:45:00';
         $target = "date_start";
         $expr = 'addDays($date_due, -7)';
-        $action = ActionFactory::getNewAction("SetValue", array("target" => $target,"value" => $expr));
+        $action = ActionFactory::getNewAction("SetValue", ["target" => $target,"value" => $expr]);
         $action->fire($task);
 
         $this->assertEquals($task->$target, TimeDate::getInstance()->fromDb('2001-01-10 11:45:00')->get('- 7 days')->asDb());
@@ -65,17 +65,17 @@ class SetValueActionTest extends TestCase
         //Test string value
         $target = "name";
         $expr = 'concat("Hello", " ", "World")';
-        $action = ActionFactory::getNewAction("SetValue", array("target" => $target,"value" => $expr));
+        $action = ActionFactory::getNewAction("SetValue", ["target" => $target,"value" => $expr]);
         $action->fire($task);
         $this->assertEquals($task->$target, "Hello World");
 
         //Test numeric value
         $target = "name";
         $expr = 'ceiling(pi)';
-        $action = ActionFactory::getNewAction("SetValue", array("target" => $target,"value" => $expr));
+        $action = ActionFactory::getNewAction("SetValue", ["target" => $target,"value" => $expr]);
         $action->fire($task);
         $this->assertEquals($task->$target, 4);
-	}
+    }
 
     /**
      * check that SetValueAction sets NULL to empty dates

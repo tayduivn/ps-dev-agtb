@@ -14,11 +14,13 @@
 
 class SugarTestRevenueLineItemUtilities
 {
-    protected static $_createdRlis = array();
+    protected static $_createdRlis = [];
 
-    private function __construct() {}
+    private function __construct()
+    {
+    }
 
-    public static function createRevenueLineItem($id = '') 
+    public static function createRevenueLineItem($id = '')
     {
         $time = mt_rand();
         $name = 'SugarRevenueLineItem';
@@ -38,8 +40,7 @@ class SugarTestRevenueLineItemUtilities
         $rli->worst_case = '50.00';
         //END SUGARCRM flav=ent ONLY
 
-        if(!empty($id))
-        {
+        if (!empty($id)) {
             $rli->new_with_id = true;
             $rli->id = $id;
         }
@@ -48,30 +49,31 @@ class SugarTestRevenueLineItemUtilities
         return $rli;
     }
 
-    public static function setCreatedRevenueLineItem($rli_ids) {
-        foreach($rli_ids as $rli_id) {
+    public static function setCreatedRevenueLineItem($rli_ids)
+    {
+        foreach ($rli_ids as $rli_id) {
             $rli = new RevenueLineItem();
             $rli->id = $rli_id;
             self::$_createdRlis[] = $rli;
         }
     }
-    public static function removeAllCreatedRevenueLineItems() 
+    public static function removeAllCreatedRevenueLineItems()
     {
         $db = DBManagerFactory::getInstance();
-        $conditions = implode(',', array_map(array($db, 'quoted'), self::getCreatedRevenueLineItemIds()));
+        $conditions = implode(',', array_map([$db, 'quoted'], self::getCreatedRevenueLineItemIds()));
         if (!empty($conditions)) {
             $db->query('DELETE FROM revenue_line_items WHERE id IN (' . $conditions . ')');
             $db->query('DELETE FROM revenue_line_items_audit WHERE parent_id IN (' . $conditions . ')');
-            $db->query('DELETE FROM forecast_worksheets WHERE parent_type = ' . $db->quoted('RevenueLineItems') . ' and parent_id IN (' . $conditions . ')');    
+            $db->query('DELETE FROM forecast_worksheets WHERE parent_type = ' . $db->quoted('RevenueLineItems') . ' and parent_id IN (' . $conditions . ')');
         }
 
-        self::$_createdRlis = array();
+        self::$_createdRlis = [];
     }
         
-    public static function getCreatedRevenueLineItemIds() 
+    public static function getCreatedRevenueLineItemIds()
     {
-        $product_ids = array();
-        $rli_ids = array();
+        $product_ids = [];
+        $rli_ids = [];
         foreach (self::$_createdRlis as $rli) {
             $rli_ids[] = $rli->id;
         }

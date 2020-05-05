@@ -19,7 +19,7 @@ class Bug45767Test extends TestCase
 {
     protected function setUp() : void
     {
-        require('include/modules.php');
+        require 'include/modules.php';
         $GLOBALS['beanList'] = $beanList;
         $GLOBALS['beanFiles'] = $beanFiles;
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
@@ -32,9 +32,10 @@ class Bug45767Test extends TestCase
         unset($GLOBALS['beanList']);
     }
 
-    public function testCanGetFieldsFromTargetPanel() {
+    public function testCanGetFieldsFromTargetPanel()
+    {
         $parser = new GridLayoutMetaDataParser(MB_EDITVIEW, 'Contacts');
         $fields = $parser->getFieldsInPanel('lbl_contact_information');
-        $this->assertSame(array("description", "(empty)",), $fields);
+        $this->assertSame(["description", "(empty)",], $fields);
     }
 }

@@ -47,24 +47,24 @@ class PMSEConcurrencyValidatorTest extends TestCase
     {
         $this->validator = $this->getMockBuilder("PMSEConcurrencyValidator")
                 ->disableOriginalConstructor()
-                ->setMethods(NULL)
+                ->setMethods(null)
                 ->getMock();
 
         $loggerMock = $this->getMockBuilder("PSMELogger")
                 ->disableOriginalConstructor()
-                ->setMethods(array('info', 'debug'))
+                ->setMethods(['info', 'debug'])
                 ->getMock();
 
         $this->registry->set('locked_flows', ['abc123' => 1]);
 
         $requestMock = $this->getMockBuilder("PMSERequest")
                 ->disableOriginalConstructor()
-                ->setMethods(array('getArguments'))
+                ->setMethods(['getArguments'])
                 ->getMock();
 
         $requestMock->expects($this->once())
                 ->method('getArguments')
-                ->will($this->returnValue(array('idFlow' => 'abc123')));
+                ->will($this->returnValue(['idFlow' => 'abc123']));
 
         $this->validator->setLogger($loggerMock);
         $result = $this->validator->validateRequest($requestMock);
@@ -83,17 +83,17 @@ class PMSEConcurrencyValidatorTest extends TestCase
 
         $loggerMock = $this->getMockBuilder("PSMELogger")
                 ->disableOriginalConstructor()
-                ->setMethods(array('info', 'debug'))
+                ->setMethods(['info', 'debug'])
                 ->getMock();
 
         $requestMock = $this->getMockBuilder("PMSERequest")
                 ->disableOriginalConstructor()
-                ->setMethods(array('getArguments'))
+                ->setMethods(['getArguments'])
                 ->getMock();
 
         $requestMock->expects($this->once())
                 ->method('getArguments')
-                ->will($this->returnValue(array('idFlow' => 'abc123')));
+                ->will($this->returnValue(['idFlow' => 'abc123']));
 
         $this->validator->setLogger($loggerMock);
         $result = $this->validator->validateRequest($requestMock);

@@ -24,14 +24,15 @@ class SugarApplicationTest extends TestCase
             ->setMethods(null)
             ->getMock();
         $this->_app->controller = new stdClass();
-        if ( isset($_SESSION['authenticated_user_theme']) )
+        if (isset($_SESSION['authenticated_user_theme'])) {
             unset($_SESSION['authenticated_user_theme']);
+        }
 
-        if ( isset($GLOBALS['sugar_config']['http_referer']) ) {
+        if (isset($GLOBALS['sugar_config']['http_referer'])) {
             $this->prevRefererList = $GLOBALS['sugar_config']['http_referer'];
         }
 
-        $GLOBALS['sugar_config']['http_referer'] = array('list' => array(), 'actions' => array());
+        $GLOBALS['sugar_config']['http_referer'] = ['list' => [], 'actions' => []];
     }
 
     private function _loadUser()
@@ -51,14 +52,14 @@ class SugarApplicationTest extends TestCase
     {
         $GLOBALS['current_language'] = $GLOBALS['sugar_config']['default_language'];
 
-        if ( isset($this->prevRefererList)) {
+        if (isset($this->prevRefererList)) {
             $GLOBALS['sugar_config']['http_referer'] = $this->prevRefererList;
         } else {
-            unset ($GLOBALS['sugar_config']['http_referer']);
+            unset($GLOBALS['sugar_config']['http_referer']);
         }
 
         global $sugar_version, $sugar_db_version, $sugar_flavor, $sugar_build, $sugar_timestamp;
-        require('sugar_version.php');
+        require 'sugar_version.php';
     }
 
     public function testSetupPrint()
@@ -66,7 +67,8 @@ class SugarApplicationTest extends TestCase
         $_GET['foo'] = 'bar';
         $_POST['dog'] = 'cat';
         $this->_app->setupPrint();
-        $this->assertEquals($GLOBALS['request_string'],
+        $this->assertEquals(
+            $GLOBALS['request_string'],
             'foo=bar&dog=cat&print=true'
         );
     }
@@ -76,17 +78,16 @@ class SugarApplicationTest extends TestCase
      */
     public function testSetupPrintWithMultidimensionalArray()
     {
-        $_GET['foo'] = array(
-                            '0' => array(
+        $_GET['foo'] = [
+                            '0' => [
                                    '0'=>'bar',
-                                   'a' => 'hej'),
+                                   'a' => 'hej'],
                             '1' => 'notMultidemensional',
                             '2' => 'notMultidemensional',
-                           );
+                           ];
         $_POST['dog'] = 'cat';
         $this->_app->setupPrint();
-        $this->assertEquals('foo[1]=notMultidemensional&foo[2]=notMultidemensional&dog=cat&print=true', $GLOBALS['request_string']
-        );
+        $this->assertEquals('foo[1]=notMultidemensional&foo[2]=notMultidemensional&dog=cat&print=true', $GLOBALS['request_string']);
     }
 
     public function testLoadDisplaySettingsDefault()
@@ -95,8 +96,10 @@ class SugarApplicationTest extends TestCase
 
         $this->_app->loadDisplaySettings();
 
-        $this->assertEquals($GLOBALS['theme'],
-            $GLOBALS['sugar_config']['default_theme']);
+        $this->assertEquals(
+            $GLOBALS['theme'],
+            $GLOBALS['sugar_config']['default_theme']
+        );
 
         $this->_removeUser();
     }
@@ -126,14 +129,16 @@ class SugarApplicationTest extends TestCase
         $this->_app->loadDisplaySettings();
 
         global $sugar_config;
-        $disabledThemes = !empty($sugar_config['disabled_themes']) ? $sugar_config['disabled_themes'] : array();
-        if(is_string($disabledThemes)) {
-            $disabledThemes = array($disabledThemes);
+        $disabledThemes = !empty($sugar_config['disabled_themes']) ? $sugar_config['disabled_themes'] : [];
+        if (is_string($disabledThemes)) {
+            $disabledThemes = [$disabledThemes];
         }
         $expectedTheme = !in_array($GLOBALS['theme'], $disabledThemes) ? $GLOBALS['theme'] : 'RacerX';
 
-        $this->assertEquals($expectedTheme,
-            $_REQUEST['usertheme']);
+        $this->assertEquals(
+            $expectedTheme,
+            $_REQUEST['usertheme']
+        );
 
         $this->_removeUser();
     }
@@ -144,9 +149,9 @@ class SugarApplicationTest extends TestCase
             ControllerFactory::getController($this->_app->default_module);
         $this->_app->loadGlobals();
 
-        $this->assertEquals($GLOBALS['currentModule'],$this->_app->default_module);
-        $this->assertEquals($_REQUEST['module'],$this->_app->default_module);
-        $this->assertEquals($_REQUEST['action'],$this->_app->default_action);
+        $this->assertEquals($GLOBALS['currentModule'], $this->_app->default_module);
+        $this->assertEquals($_REQUEST['module'], $this->_app->default_module);
+        $this->assertEquals($_REQUEST['action'], $this->_app->default_action);
     }
 
     /**
@@ -154,10 +159,12 @@ class SugarApplicationTest extends TestCase
      */
     public function testCheckDatabaseVersion()
     {
-        if ( isset($GLOBALS['sugar_db_version']) )
+        if (isset($GLOBALS['sugar_db_version'])) {
             $old_sugar_db_version = $GLOBALS['sugar_db_version'];
-        if ( isset($GLOBALS['sugar_version']) )
+        }
+        if (isset($GLOBALS['sugar_version'])) {
             $old_sugar_version = $GLOBALS['sugar_version'];
+        }
         include 'sugar_version.php';
         $GLOBALS['sugar_version'] = $sugar_version;
 
@@ -173,21 +180,23 @@ class SugarApplicationTest extends TestCase
         sugar_cache_put('checkDatabaseVersion_row_count', 0);
         $this->assertFalse($this->_app->checkDatabaseVersion(false));
 
-        if ( isset($old_sugar_db_version) )
+        if (isset($old_sugar_db_version)) {
             $GLOBALS['sugar_db_version'] = $old_sugar_db_version;
-        if ( isset($old_sugar_version) )
+        }
+        if (isset($old_sugar_version)) {
             $GLOBALS['sugar_version'] = $old_sugar_version;
+        }
     }
 
     public function testLoadLanguages()
     {
-    	$this->_app->controller->module = 'Contacts';
-    	$this->_app->loadLanguages();
-    	//since there is a logged in user, the welcome screen should not be empty
-    	$this->assertEmpty($GLOBALS['app_strings']['NTC_WELCOME'], 'Testing that Welcome message is not empty');
-    	$this->assertNotEmpty($GLOBALS['app_strings'], "App Strings is not empty.");
-    	$this->assertNotEmpty($GLOBALS['app_list_strings'], "App List Strings is not empty.");
-    	$this->assertNotEmpty($GLOBALS['mod_strings'], "Mod Strings is not empty.");
+        $this->_app->controller->module = 'Contacts';
+        $this->_app->loadLanguages();
+        //since there is a logged in user, the welcome screen should not be empty
+        $this->assertEmpty($GLOBALS['app_strings']['NTC_WELCOME'], 'Testing that Welcome message is not empty');
+        $this->assertNotEmpty($GLOBALS['app_strings'], "App Strings is not empty.");
+        $this->assertNotEmpty($GLOBALS['app_list_strings'], "App List Strings is not empty.");
+        $this->assertNotEmpty($GLOBALS['mod_strings'], "Mod Strings is not empty.");
     }
 
     public function testCheckHTTPRefererReturnsTrueIfRefererNotSet()
@@ -255,7 +264,7 @@ class SugarApplicationTest extends TestCase
         $_SERVER['SERVER_NAME'] = 'cat';
         $this->_app->controller->action = 'poo';
 
-        $GLOBALS['sugar_config']['http_referer']['list'] = array();
+        $GLOBALS['sugar_config']['http_referer']['list'] = [];
 
         $this->assertFalse($this->_app->checkHTTPReferer(false));
     }
@@ -286,7 +295,7 @@ class SugarApplicationTest extends TestCase
     {
         $_SERVER['HTTP_REFERER'] = 'http://dog';
         $_SERVER['SERVER_NAME'] = 'cat';
-        $GLOBALS['sugar_config']['http_referer']['actions'] = array('poo');
+        $GLOBALS['sugar_config']['http_referer']['actions'] = ['poo'];
         $this->_app->controller->action = 'oauth';
         $this->assertTrue($this->_app->checkHTTPReferer(false));
         $this->_app->controller->action = 'index';
@@ -340,34 +349,35 @@ class SugarApplicationTest extends TestCase
         $this->assertStringContainsString($result_query, $url);
     }
 
-    function providerGetLoginRedirect() {
-        return array(
-            array(
+    function providerGetLoginRedirect()
+    {
+        return [
+            [
                 'add_empty' => true,
-                'post_data' => array(
+                'post_data' => [
                     'login_module' => 'foo',
                     'login_action' => 'bar',
-                ),
+                ],
                 'result_query' => 'index.php?module=foo&action=bar',
-            ),
-            array(
+            ],
+            [
                 'add_empty' => true,
-                'post_data' => array(
+                'post_data' => [
                     'login_module' => 'foo',
                     'login_action' => '',
-                ),
+                ],
                 'result_query' => 'index.php?module=foo&action=',
-            ),
-            array(
+            ],
+            [
                 'add_empty' => false,
-                'post_data' => array(
+                'post_data' => [
                     'login_module' => 'foo',
                     'login_empty_value' => '',
                     'login_zero_value' => '0',
-                ),
+                ],
                 'result_query' => 'index.php?module=foo&zero_value=0',
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -377,7 +387,7 @@ class SugarApplicationTest extends TestCase
     {
         $app = $this->getMockBuilder('SugarApplication')
             ->disableOriginalConstructor()
-            ->setMethods(array('getRequestVars'))
+            ->setMethods(['getRequestVars'])
             ->getMock();
 
         $app->expects($this->once())
@@ -393,89 +403,89 @@ class SugarApplicationTest extends TestCase
 
     public function providerTestCreateLoginVars()
     {
-        return array(
-            array(
-                array(),
+        return [
+            [
+                [],
                 '',
-            ),
-            array(
-                array(
+            ],
+            [
+                [
                     'csrf_token' => '123456',
-                ),
+                ],
                 '',
-            ),
-            array(
-                array(
+            ],
+            [
+                [
                     'foo' => 'bar',
-                ),
+                ],
                 '&login_foo=bar',
-            ),
-            array(
-                array(
+            ],
+            [
+                [
                     'foo' => 'bar',
                     'more' => 'beer',
-                ),
+                ],
                 '&login_foo=bar&login_more=beer',
-            ),
-            array(
-                array(
+            ],
+            [
+                [
                     'foo' => 'bar',
                     'mobile' => '1',
                     'more' => 'beer',
-                ),
+                ],
                 '&login_foo=bar&login_mobile=1&login_more=beer&mobile=1',
-            ),
-            array(
-                array(
+            ],
+            [
+                [
                     'foo' => 'bar',
                     'no_saml' => '1',
                     'more' => 'beer',
-                ),
+                ],
                 '&login_foo=bar&login_no_saml=1&login_more=beer&no_saml=1',
-            ),
-            array(
-                array(
+            ],
+            [
+                [
                     'foo' => 'bar',
                     'csrf_token' => '123456',
                     'more' => 'beer',
-                ),
+                ],
                 '&login_foo=bar&login_more=beer',
-            ),
-            array(
-                array(
+            ],
+            [
+                [
                     'foo' => 'bar',
                     'csrf_token' => '123456',
                     'more' => 'beer',
-                ),
+                ],
                 '&login_foo=bar&login_more=beer',
                 $this->createControllerMock(),
-            ),
-            array(
-                array(
+            ],
+            [
+                [
                     'foo' => 'bar',
                     'csrf_token' => '123456',
                     'more' => 'beer',
-                ),
+                ],
                 '&login_foo=override&login_more=beer',
-                $this->createControllerMock(array(
+                $this->createControllerMock([
                     'foo' => 'override',
-                )),
-            ),
-            array(
-                array(
+                ]),
+            ],
+            [
+                [
                     'foo' => 'bar',
                     'csrf_token' => '123456',
                     'mobile' => '1',
                     'more' => 'beer',
                     'no_saml' => '1',
-                ),
+                ],
                 '&login_foo=override&login_mobile=1&login_more=beer&login_no_saml=false&mobile=1&no_saml=1',
-                $this->createControllerMock(array(
+                $this->createControllerMock([
                     'foo' => 'override',
                     'no_saml' => 'false',
-                )),
-            ),
-        );
+                ]),
+            ],
+        ];
     }
 
     /**
@@ -483,7 +493,7 @@ class SugarApplicationTest extends TestCase
      * @param array $properties Key/value pairs to set
      * @return SugarController
      */
-    protected function createControllerMock(array $properties = array())
+    protected function createControllerMock(array $properties = [])
     {
         $controller = $this->createMock('SugarController');
         foreach ($properties as $property => $value) {

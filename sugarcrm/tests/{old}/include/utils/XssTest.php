@@ -26,12 +26,11 @@ class XssTest extends TestCase
     protected function setUp() : void
     {
         global $sugar_config;
-        if(isset($sugar_config['email_xss']))
-        {
+        if (isset($sugar_config['email_xss'])) {
             $this->email_xss = $sugar_config['email_xss'];
             $sugar_config['email_xss'] = '';
         }
-        if(isset($GLOBALS['sugar_config']['html_allow_objects'])) {
+        if (isset($GLOBALS['sugar_config']['html_allow_objects'])) {
             $this->html_allow_objects = $GLOBALS['sugar_config']['html_allow_objects'];
         }
         $GLOBALS['sugar_config']['html_allow_objects'] = true;
@@ -41,8 +40,7 @@ class XssTest extends TestCase
     protected function tearDown() : void
     {
         $GLOBALS['sugar_config']['html_allow_objects'] = $this->html_allow_objects;
-        if(!empty($this->email_xss))
-        {
+        if (!empty($this->email_xss)) {
             global $sugar_config;
             $sugar_config['email_xss'] = $this->email_xss;
         }
@@ -50,51 +48,51 @@ class XssTest extends TestCase
 
     public function xssData()
     {
-        return array(
+        return [
             // before, after
-            array("some data", "some data"),
+            ["some data", "some data"],
             // a href
-            array("test <a href=\"http://www.digitalbrandexpressions.com\">link</a>", "test <a href=\"http://www.digitalbrandexpressions.com\">link</a>"),
+            ["test <a href=\"http://www.digitalbrandexpressions.com\">link</a>", "test <a href=\"http://www.digitalbrandexpressions.com\">link</a>"],
             // xss
-            array("some data<script>alert('xss!')</script>", "some data"),
+            ["some data<script>alert('xss!')</script>", "some data"],
             // script with src
-            array("some data<script src=\" http://localhost/xss.js\"></script> and more", "some data and more"),
+            ["some data<script src=\" http://localhost/xss.js\"></script> and more", "some data and more"],
             // applet & script
-            array("some data<applet> and </applet>more <script src=\" http://localhost/xss.js\"></script>data", "some data and more data"),
+            ["some data<applet> and </applet>more <script src=\" http://localhost/xss.js\"></script>data", "some data and more data"],
             // onload
-            array('some data before<img alt="<script>" src="http://www.symbolset.org/images/peace-sign-2.jpg"; onload="alert(35)" width="1" height="1"/>some data after',
-            'some data before<img alt="&lt;script&gt;" src="http://www.symbolset.org/images/peace-sign-2.jpg" width="1" height="1" />some data after'),
+            ['some data before<img alt="<script>" src="http://www.symbolset.org/images/peace-sign-2.jpg"; onload="alert(35)" width="1" height="1"/>some data after',
+            'some data before<img alt="&lt;script&gt;" src="http://www.symbolset.org/images/peace-sign-2.jpg" width="1" height="1" />some data after'],
            // JS
-            array('some data before<img src="http://www.symbolset.org/images/peace-sign-2.jpg"; onload="alert(35)" width="1" height="1"/>some data after',
-            'some data before<img src="http://www.symbolset.org/images/peace-sign-2.jpg" width="1" height="1" alt="peace-sign-2.jpg" />some data after'),
+            ['some data before<img src="http://www.symbolset.org/images/peace-sign-2.jpg"; onload="alert(35)" width="1" height="1"/>some data after',
+            'some data before<img src="http://www.symbolset.org/images/peace-sign-2.jpg" width="1" height="1" alt="peace-sign-2.jpg" />some data after'],
 
-            array('some data before<img src="http://www.symbolset.org/images/peace-sign-2.jpg"; width="1" height="1"/>some data after',
-            'some data before<img src="http://www.symbolset.org/images/peace-sign-2.jpg" width="1" height="1" alt="peace-sign-2.jpg" />some data after'),
+            ['some data before<img src="http://www.symbolset.org/images/peace-sign-2.jpg"; width="1" height="1"/>some data after',
+            'some data before<img src="http://www.symbolset.org/images/peace-sign-2.jpg" width="1" height="1" alt="peace-sign-2.jpg" />some data after'],
 
-            array('<div style="font-family:Calibri;">Roger Smith</div>', '<div style="font-family:Calibri;">Roger Smith</div>'),
-            array('some data before<img onmouseover onload onmouseover=\'alert(8)\' src="http://www.docspopuli.org/images/Symbol.jpg";\'/>some data after',
-            'some data before<img src="http://www.docspopuli.org/images/Symbol.jpg" alt="Symbol.jpg" />some data after'),
+            ['<div style="font-family:Calibri;">Roger Smith</div>', '<div style="font-family:Calibri;">Roger Smith</div>'],
+            ['some data before<img onmouseover onload onmouseover=\'alert(8)\' src="http://www.docspopuli.org/images/Symbol.jpg";\'/>some data after',
+            'some data before<img src="http://www.docspopuli.org/images/Symbol.jpg" alt="Symbol.jpg" />some data after'],
             // xmp
-            array('<xmp>some data</xmp>', '<pre>some data</pre>'),
+            ['<xmp>some data</xmp>', '<pre>some data</pre>'],
             // youtube video
-            array('<object width="425" height="350"><param name="movie" value="http://www.youtube.com/watch?v=dQw4w9WgXcQ" /><param name="wmode" value="transparent" /><embed src="http://www.youtube.com/v/AyPzM5WK8ys" type="application/x-shockwave-flash" wmode="transparent" width="425" height="350" /></object>',
-                '<object width="425" height="350" data="http://www.youtube.com/watch?v=dQw4w9WgXcQ" type="application/x-shockwave-flash"><param name="allowScriptAccess" value="never" /><param name="allowNetworking" value="internal" /><param name="movie" value="http://www.youtube.com/watch?v=dQw4w9WgXcQ" /><param name="wmode" value="transparent" /><embed src="http://www.youtube.com/v/AyPzM5WK8ys" type="application/x-shockwave-flash" wmode="transparent" width="425" height="350" allowscriptaccess="never" allownetworking="internal" /></object>'),
+            ['<object width="425" height="350"><param name="movie" value="http://www.youtube.com/watch?v=dQw4w9WgXcQ" /><param name="wmode" value="transparent" /><embed src="http://www.youtube.com/v/AyPzM5WK8ys" type="application/x-shockwave-flash" wmode="transparent" width="425" height="350" /></object>',
+                '<object width="425" height="350" data="http://www.youtube.com/watch?v=dQw4w9WgXcQ" type="application/x-shockwave-flash"><param name="allowScriptAccess" value="never" /><param name="allowNetworking" value="internal" /><param name="movie" value="http://www.youtube.com/watch?v=dQw4w9WgXcQ" /><param name="wmode" value="transparent" /><embed src="http://www.youtube.com/v/AyPzM5WK8ys" type="application/x-shockwave-flash" wmode="transparent" width="425" height="350" allowscriptaccess="never" allownetworking="internal" /></object>'],
             // another youtube video
-            array('<iframe width="420" height="315" src="http://www.youtube.com/embed/dQw4w9WgXcQ" frameborder="0" allowfullscreen>My Frame</iframe>',
-            '<iframe width="420" height="315" src="http://www.youtube.com/embed/dQw4w9WgXcQ" frameborder="0">My Frame</iframe>'),
+            ['<iframe width="420" height="315" src="http://www.youtube.com/embed/dQw4w9WgXcQ" frameborder="0" allowfullscreen>My Frame</iframe>',
+            '<iframe width="420" height="315" src="http://www.youtube.com/embed/dQw4w9WgXcQ" frameborder="0">My Frame</iframe>'],
             // stuff inside iframe
-            array('<iframe width="420" height="315" src="http://www.youtube.com/embed/dQw4w9WgXcQ" frameborder="0" allowfullscreen>My <script>alert(\'xss!\')</script>Frame</iframe>',
-            '<iframe width="420" height="315" src="http://www.youtube.com/embed/dQw4w9WgXcQ" frameborder="0">My Frame</iframe>'),
+            ['<iframe width="420" height="315" src="http://www.youtube.com/embed/dQw4w9WgXcQ" frameborder="0" allowfullscreen>My <script>alert(\'xss!\')</script>Frame</iframe>',
+            '<iframe width="420" height="315" src="http://www.youtube.com/embed/dQw4w9WgXcQ" frameborder="0">My Frame</iframe>'],
             // body/html/head
-            array("<body><head><title>My Page</title></head><html>My Content</html></body>", "My Content"),
+            ["<body><head><title>My Page</title></head><html>My Content</html></body>", "My Content"],
             // link
-            array('<link rel="stylesheet" type="text/css" href="styles/plain.css" />',
-            '<link rel="stylesheet" type="text/css" href="styles/plain.css" />'
-            ),
+            ['<link rel="stylesheet" type="text/css" href="styles/plain.css" />',
+            '<link rel="stylesheet" type="text/css" href="styles/plain.css" />',
+            ],
             // international
-            array('в чащах юга жил-был <img src="http://images.com/fikus.jpg" alt="фикус"> - דג סקרן שט בים מאוכזב ולפתע מצא חברה',
-            'в чащах юга жил-был <img src="http://images.com/fikus.jpg" alt="фикус" /> - דג סקרן שט בים מאוכזב ולפתע מצא חברה')
-            );
+            ['в чащах юга жил-был <img src="http://images.com/fikus.jpg" alt="фикус"> - דג סקרן שט בים מאוכזב ולפתע מצא חברה',
+            'в чащах юга жил-был <img src="http://images.com/fikus.jpg" alt="фикус" /> - דג סקרן שט בים מאוכזב ולפתע מצא חברה'],
+            ];
     }
 
     protected function clean($str)
@@ -115,7 +113,7 @@ class XssTest extends TestCase
     public function testXssFilterBean($before, $after)
     {
         $bean = new EmailTemplate();
-		$bean->body_html = to_html($before);
+        $bean->body_html = to_html($before);
         $bean->cleanBean();
         $this->assertEquals(to_html($after), $bean->body_html);
     }

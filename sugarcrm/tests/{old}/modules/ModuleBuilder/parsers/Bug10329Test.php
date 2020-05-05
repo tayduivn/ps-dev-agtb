@@ -24,22 +24,22 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug10329Test extends TestCase
 {
-	private $_parser;
-	 
+    private $_parser;
+     
     protected function setUp() : void
     {
-		require('include/modules.php');
-		$GLOBALS['beanList'] = $beanList;
-		$GLOBALS['beanFiles'] = $beanFiles;    	
-    	$GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
-		$this->_parser = ParserFactory::getParser('EditView','Accounts');
+        require 'include/modules.php';
+        $GLOBALS['beanList'] = $beanList;
+        $GLOBALS['beanFiles'] = $beanFiles;
+        $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
+        $this->_parser = ParserFactory::getParser('EditView', 'Accounts');
     }
 
     protected function tearDown() : void
-	{
-		//unset($GLOBALS['app_list_strings']);
-		//unset($this->_parser);
-	}
+    {
+        //unset($GLOBALS['app_list_strings']);
+        //unset($this->_parser);
+    }
 
     public function testTranslateLabel()
     {

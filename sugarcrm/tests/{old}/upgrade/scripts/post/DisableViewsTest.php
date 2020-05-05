@@ -19,28 +19,28 @@ class DisableViewsTest extends UpgradeTestCase
 {
     public static function getFiles()
     {
-        return array(
-            array(
+        return [
+            [
                 'hasCustomViews',
-                array(
+                [
                     'custom/modules/Accounts/views/bad.php',
-                ),
-                array(
+                ],
+                [
                     'custom/modules/Accounts/views/bad.php' => 'custom/modules/Accounts/views/Disabled/bad.php',
-                ),
-            ),
-            array(
+                ],
+            ],
+            [
                 'hasCustomViewsModDir',
-                array(
+                [
                     'modules/Accounts/views/bad.php',
                     'modules/Accounts/views/bad1.php',
-                ),
-                array(
+                ],
+                [
                     'modules/Accounts/views/bad.php' => 'modules/Accounts/views/Disabled/bad.php',
                     'modules/Accounts/views/bad1.php' => 'modules/Accounts/views/Disabled/bad1.php',
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
     }
 
     /**
@@ -54,17 +54,17 @@ class DisableViewsTest extends UpgradeTestCase
      */
     public function testRun($report, $filesToDetect, $filesToCheck)
     {
-        $this->upgrader->state['healthcheck'] = array(
-            array(
+        $this->upgrader->state['healthcheck'] = [
+            [
                 'report' => $report,
-                'params' => array(
+                'params' => [
                     'Accounts',
                     $filesToDetect,
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
 
-        $script = $this->getMockBuilder('SugarUpgradeDisableViews')->setMethods(array('renameDisabled'))->setConstructorArgs(array($this->upgrader))->getMock();
+        $script = $this->getMockBuilder('SugarUpgradeDisableViews')->setMethods(['renameDisabled'])->setConstructorArgs([$this->upgrader])->getMock();
 
         $script->expects($this->once())->method('renameDisabled')->with($filesToCheck);
 

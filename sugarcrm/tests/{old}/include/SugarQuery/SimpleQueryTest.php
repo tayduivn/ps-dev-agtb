@@ -19,14 +19,14 @@ class SimpleQueryTest extends TestCase
      * @var DBManager
      */
     private $db;
-    protected $created = array();
+    protected $created = [];
 
     protected $backupGlobals = false;
 
-    protected $contacts = array();
-    protected $accounts = array();
-    protected $notes = array();
-    protected $kbDocuments = array();
+    protected $contacts = [];
+    protected $accounts = [];
+    protected $notes = [];
+    protected $kbDocuments = [];
 
     public static function setUpBeforeClass() : void
     {
@@ -51,7 +51,7 @@ class SimpleQueryTest extends TestCase
     protected function tearDown() : void
     {
         if (!empty($this->contacts)) {
-            $contactList = array();
+            $contactList = [];
             foreach ($this->contacts as $contact) {
                 $contactList[] = $this->db->quoted($contact->id);
             }
@@ -60,7 +60,7 @@ class SimpleQueryTest extends TestCase
             );
         }
         if (!empty($this->accounts)) {
-            $accountList = array();
+            $accountList = [];
             foreach ($this->accounts as $account) {
                 $accountList[] = $this->db->quoted($account->id);
             }
@@ -70,7 +70,7 @@ class SimpleQueryTest extends TestCase
         }
 
         if (!empty($this->notes)) {
-            $notesList = array();
+            $notesList = [];
             foreach ($this->notes as $note) {
                 $notesList[] = $this->db->quoted($note->id);
             }
@@ -80,7 +80,7 @@ class SimpleQueryTest extends TestCase
         }
 
         if (!empty($this->kbDocuments)) {
-            $kbDocumentsList = array();
+            $kbDocumentsList = [];
             foreach ($this->kbDocuments as $kbDocument) {
                 $kbDocumentsList[] = $this->db->quoted($kbDocument->id);
             }
@@ -104,7 +104,7 @@ class SimpleQueryTest extends TestCase
         // get the new contact
 
         $sq = new SugarQuery();
-        $sq->select(array("first_name", "last_name"));
+        $sq->select(["first_name", "last_name"]);
         $sq->from(BeanFactory::newBean('Contacts'));
         $sq->where()->equals("id", $id);
         $result = $sq->execute();
@@ -133,10 +133,10 @@ class SimpleQueryTest extends TestCase
 
         // get deleted items
         $sq = new SugarQuery();
-        $sq->select(array("first_name", "last_name"));
+        $sq->select(["first_name", "last_name"]);
         $sq->from(
             BeanFactory::newBean('Contacts'),
-            array('add_deleted' => false)
+            ['add_deleted' => false]
         );
         $sq->where()->equals("id", $id);
 
@@ -168,8 +168,8 @@ class SimpleQueryTest extends TestCase
         // get the new contact
 
         $sq = new SugarQuery();
-        $sq->select(array("first_name", "last_name"));
-        $sq->from(BeanFactory::newBean('Contacts'), array('alias' => 'c'));
+        $sq->select(["first_name", "last_name"]);
+        $sq->from(BeanFactory::newBean('Contacts'), ['alias' => 'c']);
         $sq->where()->equals("id", $id);
 
         $result = $sq->execute();
@@ -198,10 +198,10 @@ class SimpleQueryTest extends TestCase
 
         // get deleted items
         $sq = new SugarQuery();
-        $sq->select(array("first_name", "last_name"));
+        $sq->select(["first_name", "last_name"]);
         $sq->from(
             BeanFactory::newBean('Contacts'),
-            array('add_deleted' => false)
+            ['add_deleted' => false]
         );
         $sq->where()->equals("id", $id);
 
@@ -248,7 +248,7 @@ class SimpleQueryTest extends TestCase
         $sq->from(BeanFactory::newBean('Contacts'));
         $accounts = $sq->join('accounts')->joinName();
         $sq->select(
-            array("first_name", "last_name", array("$accounts.name", 'aname'))
+            ["first_name", "last_name", ["$accounts.name", 'aname']]
         );
 
         $sq->where()->equals("id", $contact_id);
@@ -295,7 +295,7 @@ class SimpleQueryTest extends TestCase
 
         // lets try a query
         $sq = new SugarQuery();
-        $sq->select(array(array("accounts.name", 'aname')));
+        $sq->select([["accounts.name", 'aname']]);
         $sq->from(BeanFactory::newBean('Accounts'));
         $sq->join('members');
         $sq->where()->equals("id", $account_id);
@@ -322,12 +322,12 @@ class SimpleQueryTest extends TestCase
 
         $current_user->email_addresses->add(
             $email_address->id,
-            array('deleted' => 0)
+            ['deleted' => 0]
         );
 
         // lets try a query
         $sq = new SugarQuery();
-        $sq->select(array(array("users.first_name", 'fname')));
+        $sq->select([["users.first_name", 'fname']]);
         $sq->from(BeanFactory::newBean('Users'));
         $email_addresses = $sq->join('email_addresses')->joinName();
         $sq->where()->starts("$email_addresses.email_address", "test");
@@ -358,12 +358,12 @@ class SimpleQueryTest extends TestCase
         $sq = new SugarQuery();
 
         $sq->from(BeanFactory::newBean('Contacts'));
-        $sq->where()->in('contacts.last_name', array('Awesome-Sauce', 'Bad-Sauce'));
+        $sq->where()->in('contacts.last_name', ['Awesome-Sauce', 'Bad-Sauce']);
         $sq->orderBy('full_name', 'DESC');
 
         $result = $sq->execute();
 
-        $expected = array('Bad-Sauce', 'Awesome-Sauce');
+        $expected = ['Bad-Sauce', 'Awesome-Sauce'];
 
         $lastNameResult = array_reduce(
             $result,
@@ -378,23 +378,23 @@ class SimpleQueryTest extends TestCase
         $this->assertEquals($expected, $lastNameResult);
 
         $sq = new SugarQuery();
-        $sq->select(array('last_name'));
+        $sq->select(['last_name']);
         $sq->from(BeanFactory::newBean('Contacts'));
-        $sq->where()->in('contacts.last_name', array('Awesome-Sauce', 'Bad-Sauce'));
+        $sq->where()->in('contacts.last_name', ['Awesome-Sauce', 'Bad-Sauce']);
         $sq->orderBy('full_name', 'ASC');
 
         $result = $sq->execute();
 
-        $expected = array(
-            array(
+        $expected = [
+            [
                 'last_name' => 'Awesome-Sauce',
                 'contacts__last_name' => 'Awesome-Sauce',
-            ),
-            array(
+            ],
+            [
                 'last_name' => 'Bad-Sauce',
                 'contacts__last_name' => 'Bad-Sauce',
-            ),
-        );
+            ],
+        ];
 
         $this->assertEquals($expected, $result);
     }
@@ -424,7 +424,7 @@ class SimpleQueryTest extends TestCase
         $sq = new SugarQuery();
         $sq->from(BeanFactory::newBean('Notes'));
         $accounts = $sq->join('accounts')->joinName();
-        $sq->select(array("$accounts.name", "$accounts.id"));
+        $sq->select(["$accounts.name", "$accounts.id"]);
         $sq->where()->equals("id", $note_id);
 
         $result = $sq->execute();
@@ -496,7 +496,7 @@ class SimpleQueryTest extends TestCase
         $data = $sq->execute();
         $this->assertCount(2, $data);
 
-        $expected = array($user1->id, $user2->id);
+        $expected = [$user1->id, $user2->id];
         sort($expected);
 
         $this->assertEquals($data[0]['id'], $expected[0]);
@@ -508,14 +508,14 @@ class SimpleQueryTest extends TestCase
         global $current_user;
 
         $owner = SugarTestUserUtilities::createAnonymousUser();
-        $account = SugarTestAccountUtilities::createAccount(null, array(
+        $account = SugarTestAccountUtilities::createAccount(null, [
             'assigned_user_id' => $owner->id,
-        ));
+        ]);
 
         $query = new SugarQuery();
-        $query->from($account, array(
+        $query->from($account, [
             'team_security' => false,
-        ));
+        ]);
         $query->select('assigned_user_name');
         $query->where()->equals('id', $account->id);
 

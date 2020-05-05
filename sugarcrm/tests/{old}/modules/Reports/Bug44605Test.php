@@ -20,7 +20,7 @@ class Bug44605Test extends TestCase
 {
     protected function setUp() : void
     {
-        require('include/modules.php');
+        require 'include/modules.php';
         $GLOBALS['beanList'] = $beanList;
         $GLOBALS['beanFiles'] = $beanFiles;
     }
@@ -38,44 +38,43 @@ class Bug44605Test extends TestCase
         $relatedModulesCount = 3;
 
         // create report definition
-        $definition = array(
+        $definition = [
             'module'     => $primaryModule,
-            'group_defs' => array(
-                array(
+            'group_defs' => [
+                [
                     'name'      => 'id',
                     'table_key' => 'self',
-                ),
-            ),
-            'summary_columns' => array(
-                array(
+                ],
+            ],
+            'summary_columns' => [
+                [
                     'name'      => 'count',
                     'table_key' => 'self',
-                ),
-            ),
-            'full_table_list' => array(
-                'self' => array(
-                    'params' => array(
+                ],
+            ],
+            'full_table_list' => [
+                'self' => [
+                    'params' => [
                         'join_table_alias' => $primaryModuleTable,
-                    ),
-                ),
-            ),
-            'filters_def' => array(),
-            'display_columns' => array(),
-        );
+                    ],
+                ],
+            ],
+            'filters_def' => [],
+            'display_columns' => [],
+        ];
 
         // add "count" field for each related module
-        for ($i = 0; $i < $relatedModulesCount; $i++)
-        {
+        for ($i = 0; $i < $relatedModulesCount; $i++) {
             $tableKey = $primaryModule . ':' . $relatedModule . $i;
 
-            $definition['summary_columns'][] = array(
+            $definition['summary_columns'][] = [
                 'name'      => 'count',
                 'table_key' => $tableKey,
-            );
+            ];
 
-            $definition['full_table_list'][$tableKey] = array(
-                'link_def' => array(),
-            );
+            $definition['full_table_list'][$tableKey] = [
+                'link_def' => [],
+            ];
         }
 
         $report = new Report(json_encode($definition));
@@ -83,15 +82,12 @@ class Bug44605Test extends TestCase
 
         $countFields = 0;
         $primaryModuleTableUsages = 0;
-        foreach ($report->summary_select_fields as $field)
-        {
+        foreach ($report->summary_select_fields as $field) {
             // calculate number of "count" fields in request
-            if (0 === strpos(strtolower($field), 'count('))
-            {
+            if (0 === strpos(strtolower($field), 'count(')) {
                 $countFields++;
 
-                if (false !== strpos($field, $primaryModuleTable))
-                {
+                if (false !== strpos($field, $primaryModuleTable)) {
                     $primaryModuleTableUsages++;
                 }
             }

@@ -51,12 +51,12 @@ class HistoryApiTest extends TestCase
     {
         $return = $this->filterApi->filterModuleList(
             $this->serviceMock,
-            array(
+            [
                 'module' => 'Accounts',
                 'record' => $this->account->id,
                 'module_list' => 'Calls,Emails,Meetings,Notes,Tasks',
                 'max_num' => 20,
-            ),
+            ],
             'list'
         );
         $this->assertNotEmpty($return, 'HistoryAPI is broken');

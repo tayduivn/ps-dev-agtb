@@ -32,7 +32,7 @@ class Bug56746Test extends TestCase
     protected function setUp() : void
     {
         //Unset global service_object variable so that the code in updateDependencyBean is run in SugarBean.php
-        if(isset($GLOBALS['service_object'])) {
+        if (isset($GLOBALS['service_object'])) {
             $this->stored_service_object = $GLOBALS['service_object'];
             unset($GLOBALS['service_object']);
         }
@@ -43,28 +43,28 @@ class Bug56746Test extends TestCase
         $this->account->name = 'SugarAccount' . $time;
         $this->account->email1 = 'account@' . $time . 'sugar.com';
 
-        $this->account->field_defs['checkbox_c'] = array(
+        $this->account->field_defs['checkbox_c'] = [
             'name' => 'checkbox_c',
             'vname' => 'LBL_CHECKBOX_C',
             'type' => 'bool',
             'default' => '0',
             'comment' => 'Custom checkbox field',
-        );
-        $this->account->field_defs['text_c'] = array(
+        ];
+        $this->account->field_defs['text_c'] = [
             'name' => 'text_c',
             'vname' => 'LBL_TEXT_C',
             'type' => 'varchar',
             'dependency' => 'equal($checkbox_c,true)',
             'comment' => 'Custom field with custom field dependency',
-        );
+        ];
     }
 
     protected function tearDown() : void
     {
-        if(!empty($this->stored_service_object)) {
+        if (!empty($this->stored_service_object)) {
             $GLOBALS['service_object'] = $this->stored_service_object;
         }
-	    unset($this->account->field_defs['checkbox_c']);
+        unset($this->account->field_defs['checkbox_c']);
 
         unset($this->account->field_defs['text_c']);
         SugarTestHelper::tearDown();
@@ -88,11 +88,11 @@ class Bug56746Test extends TestCase
         $text,
         $isTextHidden
     ) {
-        $filterFields = array(
+        $filterFields = [
             'name' => true,
             'city' => true,
             'text_c' => true,
-        );
+        ];
 
         $this->account->checkbox_c = $checkbox;
         $this->account->text_c = $text;
@@ -124,11 +124,11 @@ class Bug56746Test extends TestCase
         $text,
         $isTextHidden
     ) {
-        $filterFields = array(
+        $filterFields = [
             'name' => true,
             'city' => true,
             'phone' => true,
-        );
+        ];
 
         $this->account->checkbox_c = $checkbox;
         $this->account->text_c = $text;
@@ -153,10 +153,10 @@ class Bug56746Test extends TestCase
      */
     public function providerGetListViewArray()
     {
-        return array(
-            array(0, 'Text hidden', true),
-            array(1, 'Text being shown properly!', false),
-            array(0, 'Text to hide', true),
-        );
+        return [
+            [0, 'Text hidden', true],
+            [1, 'Text being shown properly!', false],
+            [0, 'Text to hide', true],
+        ];
     }
 }

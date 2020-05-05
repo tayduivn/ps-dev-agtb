@@ -32,7 +32,7 @@ class RevenueLineItemsGlobeChartApiTest extends TestCase
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-        $this->current_user = SugarTestHelper::setUp('current_user', array(true, false));
+        $this->current_user = SugarTestHelper::setUp('current_user', [true, false]);
         $this->api = new RevenueLineItemsGlobeChartApi();
     }
 
@@ -52,24 +52,24 @@ class RevenueLineItemsGlobeChartApiTest extends TestCase
         $account->save();
 
         $opp = SugarTestOpportunityUtilities::createOpportunity(null, $account);
-        $opp->teams->replace(array($this->current_user->team_id));
+        $opp->teams->replace([$this->current_user->team_id]);
         $opp->save();
 
         $rli1 = SugarTestRevenueLineItemUtilities::createRevenueLineItem();
         $rli1->opportunity_id  = $opp->id;
         $rli1->sales_stage = 'Closed Won';
-        $rli1->teams->replace(array($this->current_user->team_id));
+        $rli1->teams->replace([$this->current_user->team_id]);
         $rli1->save();
 
         $rli2 = SugarTestRevenueLineItemUtilities::createRevenueLineItem();
         $rli2->opportunity_id  = $opp->id;
         $rli2->sales_stage = 'Closed Won';
-        $rli2->teams->replace(array($this->current_user->team_id));
+        $rli2->teams->replace([$this->current_user->team_id]);
         $rli2->save();
 
         $result = $this->api->salesByCountry(
             SugarTestRestUtilities::getRestServiceMock($this->current_user),
-            array('module' => 'RevenueLineItems')
+            ['module' => 'RevenueLineItems']
         );
 
         $this->assertArrayHasKey('TestCountryName', $result);

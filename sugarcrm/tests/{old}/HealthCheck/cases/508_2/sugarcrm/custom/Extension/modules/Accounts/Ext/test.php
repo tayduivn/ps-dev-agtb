@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$data = array();
+$data = [];
 ?>
 <html></html>
 <?php $data = null; ?>

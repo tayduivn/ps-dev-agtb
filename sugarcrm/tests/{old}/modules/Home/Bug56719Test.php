@@ -21,20 +21,20 @@ class Bug56719Test extends TestCase
         self::$user  = SugarTestUserUtilities::createAnonymousUser();
 
         /** @var Team[] $teams */
-        $teams = array();
-        foreach (array(
+        $teams = [];
+        foreach ([
              'Priv1' => true,
              'XPriv1' => true,
              'Priv2' => true,
              'Pub1' => false,
              'Pub2' => false,
-            ) as $name => $private) {
+            ] as $name => $private) {
             $teams[] = SugarTestTeamUtilities::createAnonymousTeam(
                 null,
-                array(
+                [
                     'name'    => $name,
                     'private' => $private,
-                )
+                ]
             );
         }
 
@@ -73,14 +73,14 @@ class Bug56719Test extends TestCase
     public function testFilterPublicTeams()
     {
         $teams = $this->getTeams(
-            array(
-                'conditions' => array(
-                    array(
+            [
+                'conditions' => [
+                    [
                         'name'  => 'name',
                         'value' => 'Pub1',
-                    ),
-                ),
-            )
+                    ],
+                ],
+            ]
         );
 
         // team Pub1 meets search criteria
@@ -93,18 +93,18 @@ class Bug56719Test extends TestCase
     public function testFilterUserTeams()
     {
         $teams = $this->getTeams(
-            array(
-                'conditions' => array(
-                    array(
+            [
+                'conditions' => [
+                    [
                         'name'  => 'name',
                         'value' => 'P',
-                    ),
-                    array(
+                    ],
+                    [
                         'name'  => 'user_id',
                         'value' => self::$user->id,
-                    ),
-                ),
-            )
+                    ],
+                ],
+            ]
         );
 
         // user belongs to team Pub1 and it meets search criteria
@@ -123,26 +123,26 @@ class Bug56719Test extends TestCase
     public function testFilterByStandardField()
     {
         $teams = $this->getTeams(
-            array(
-                'conditions' => array(
-                    array(
+            [
+                'conditions' => [
+                    [
                         'name'  => 'description',
                         'value' => 'Bug56719Test',
-                    ),
-                ),
-            )
+                    ],
+                ],
+            ]
         );
 
         $this->assertNotContains('Pub1', $teams);
         $this->assertContains('Pub2', $teams);
     }
 
-    private function getTeams(array $args = array())
+    private function getTeams(array $args = [])
     {
         $args = array_merge(
-            array(
-                'field_list' => array('name'),
-            ),
+            [
+                'field_list' => ['name'],
+            ],
             $args
         );
 
@@ -154,7 +154,7 @@ class Bug56719Test extends TestCase
         $this->assertArrayHasKey('fields', $data);
         $this->assertIsArray($data['fields']);
 
-        $teams = array();
+        $teams = [];
         foreach ($data['fields'] as $row) {
             $teams[] = $row['name'];
         }

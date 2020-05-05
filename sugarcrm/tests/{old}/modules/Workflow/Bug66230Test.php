@@ -61,7 +61,7 @@ class Bug66230Test extends TestCase
         // Refresh Hooks
         LogicHook::refreshHooks();
 
-        $_SESSION['workflow_cron'] = array();
+        $_SESSION['workflow_cron'] = [];
     }
 
     protected function tearDown() : void

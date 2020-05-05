@@ -33,7 +33,7 @@ class PMSEBusinessRuleTest extends TestCase
     {
         $this->loggerMock = $this->getMockBuilder('PMSELogger')
                 ->disableOriginalConstructor()
-                ->setMethods(array('info', 'debug', 'warning'))
+                ->setMethods(['info', 'debug', 'warning'])
                 ->getMock();
     }
 
@@ -42,34 +42,34 @@ class PMSEBusinessRuleTest extends TestCase
         $this->businessRule = $this->getMockBuilder('PMSEBusinessRule')
             ->disableOriginalConstructor()
             ->setMethods(
-                    array(
-                        'prepareResponse', 
-                        'retrieveDefinitionData', 
-                        'getCurrentUser', 
+                [
+                        'prepareResponse',
+                        'retrieveDefinitionData',
+                        'getCurrentUser',
                         'getBusinessRuleReader',
-                        'retrieveHistoryData'
-                    )
-                )
+                        'retrieveHistoryData',
+                    ]
+            )
             ->getMock();
 
         $this->businessRule->setLogger($this->loggerMock);
 
-        $bpmnElement = array(
-            'id' => 'di92j3892dj'
-        ); 
+        $bpmnElement = [
+            'id' => 'di92j3892dj',
+        ];
 
         $this->businessRule->expects($this->exactly(1))
                 ->method('retrieveDefinitionData')
                 ->will($this->returnValue($bpmnElement));
 
         $caseFlowHandler = $this->getMockBuilder('PMSECaseFlowHandler')
-            ->setMethods(array('retrieveBean', 'saveFormAction'))
+            ->setMethods(['retrieveBean', 'saveFormAction'])
             ->getMock();
 
         $definition = $this->getMockBuilder('pmse_BpmActivityDefinition')
                 ->disableAutoload()
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve_by_string_fields'))
+                ->setMethods(['retrieve_by_string_fields'])
                 ->getMock();
 
         $definition->act_fields = '298uj9sd812';
@@ -82,7 +82,7 @@ class PMSEBusinessRuleTest extends TestCase
 
         $processDefinition = $this->getMockBuilder('pmse_BpmProcessDefinition')
             ->disableAutoload()
-            ->setMethods(array('retrieve_by_string_fields'))
+            ->setMethods(['retrieve_by_string_fields'])
             ->getMock();
         $processDefinition->pro_module = 'Leads';
         $processDefinition->pro_id = 'd8923dj982398d';
@@ -92,34 +92,34 @@ class PMSEBusinessRuleTest extends TestCase
                 ->will($this->returnValue($processDefinition));
 
         $dbHandler = $this->getMockBuilder('DBHandler')
-            ->setMethods(array('Query', 'fetchByAssoc'))
+            ->setMethods(['Query', 'fetchByAssoc'])
             ->getMock();
 
         $dbHandler->expects($this->exactly(1))
             ->method('Query')
-            ->will($this->returnValue(array()));
+            ->will($this->returnValue([]));
 
-        $row = array(
+        $row = [
             'name' => 'Some Rule',
             'rst_definition' => base64_encode("Some Array"),
             'rst_type' => 'SINGLE',
-            'rst_source_definition' => base64_encode("Some Array")
-        );
+            'rst_source_definition' => base64_encode("Some Array"),
+        ];
 
         $dbHandler->expects($this->exactly(1))
             ->method('fetchByAssoc')
             ->will($this->returnValue($row));
 
         $beanMock = $this->getMockBuilder('SugarBean')
-            ->setMethods(array('save'))
+            ->setMethods(['save'])
             ->getMock();
 
-        $beanMock->field_defs = array(
+        $beanMock->field_defs = [
             'first_field' => 'value',
             'second_field' => 'value',
             'third_field' => 'value',
-            'fourth_field' => 'value'
-        );
+            'fourth_field' => 'value',
+        ];
         $beanMock->name = "Some Name";
         $beanMock->first_field = 'value';
         $beanMock->second_field = 'value';
@@ -130,16 +130,16 @@ class PMSEBusinessRuleTest extends TestCase
                 ->will($this->returnValue($beanMock));
 
         $ruleReader = $this->getMockBuilder('PMSERuleReader')
-                ->setMethods(array('parseRuleSetJSON'))
+                ->setMethods(['parseRuleSetJSON'])
                 ->getMock();
 
-        $ruleResult = array(
+        $ruleResult = [
             'log' => 'Some Log Message',
             'return' => 'Return response for a BR evaluation',
-            'newAppData' => array(
-                'first_field' => 'Business Rule orders change this field'
-            )
-        );
+            'newAppData' => [
+                'first_field' => 'Business Rule orders change this field',
+            ],
+        ];
 
         $ruleReader->expects($this->once())
             ->method('parseRuleSetJSON')
@@ -150,7 +150,7 @@ class PMSEBusinessRuleTest extends TestCase
                 ->will($this->returnValue($ruleReader));
 
         $historyData = $this->getMockBuilder('PMSEHistoryData')
-                ->setMethods(array('savePredata', 'savePostData', 'getLog'))
+                ->setMethods(['savePredata', 'savePostData', 'getLog'])
                 ->disableOriginalConstructor()
                 ->getMock();
 
@@ -168,12 +168,12 @@ class PMSEBusinessRuleTest extends TestCase
         $this->businessRule->setCaseFlowHandler($caseFlowHandler);
         $this->businessRule->setDbHandler($dbHandler);
 
-        $flowData = array(
+        $flowData = [
             'cas_id' => 1,
             'cas_index' => 3,
             'cas_sugar_object_id' => 'mnedwij8923d2',
-            'bpmn_id' => 'di92j3892dj'
-        );
+            'bpmn_id' => 'di92j3892dj',
+        ];
 
         $bean = new stdClass();
 
@@ -185,33 +185,33 @@ class PMSEBusinessRuleTest extends TestCase
         $this->businessRule = $this->getMockBuilder('PMSEBusinessRule')
             ->disableOriginalConstructor()
             ->setMethods(
-                    array(
-                        'prepareResponse', 
-                        'retrieveDefinitionData', 
-                        'getCurrentUser', 
+                [
+                        'prepareResponse',
+                        'retrieveDefinitionData',
+                        'getCurrentUser',
                         'getBusinessRuleReader',
-                        'retrieveHistoryData'
-                    )
-                )
+                        'retrieveHistoryData',
+                    ]
+            )
             ->getMock();
 
         $this->businessRule->setLogger($this->loggerMock);
 
-        $bpmnElement = array(
-            'id' => 'di92j3892dj'
-        ); 
+        $bpmnElement = [
+            'id' => 'di92j3892dj',
+        ];
 
         $this->businessRule->expects($this->exactly(1))
                 ->method('retrieveDefinitionData')
                 ->will($this->returnValue($bpmnElement));
 
         $caseFlowHandler = $this->getMockBuilder('PMSECaseFlowHandler')
-            ->setMethods(array('retrieveBean', 'saveFormAction'))
+            ->setMethods(['retrieveBean', 'saveFormAction'])
             ->getMock();
 
         $definition = $this->getMockBuilder('pmse_BpmActivityDefinition')
             ->disableAutoload()
-            ->setMethods(array('retrieve_by_string_fields'))
+            ->setMethods(['retrieve_by_string_fields'])
             ->getMock();
 
         $definition->act_fields = '298uj9sd812';
@@ -225,7 +225,7 @@ class PMSEBusinessRuleTest extends TestCase
         $processDefinition = $this->getMockBuilder('pmse_BpmProcessDefinition')
                 ->disableAutoload()
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve_by_string_fields'))
+                ->setMethods(['retrieve_by_string_fields'])
                 ->getMock();
 
         $processDefinition->pro_module = 'Leads';
@@ -236,34 +236,34 @@ class PMSEBusinessRuleTest extends TestCase
                 ->will($this->returnValue($processDefinition));
 
         $dbHandler = $this->getMockBuilder('DBHandler')
-            ->setMethods(array('Query', 'fetchByAssoc'))
+            ->setMethods(['Query', 'fetchByAssoc'])
             ->getMock();
 
         $dbHandler->expects($this->exactly(1))
             ->method('Query')
-            ->will($this->returnValue(array()));
+            ->will($this->returnValue([]));
 
-        $row = array(
+        $row = [
             'name' => 'Some Rule',
             'rst_definition' => base64_encode("Some Array"),
             'rst_type' => 'SINGLE',
-            'rst_source_definition' => base64_encode("Some Array")
-        );
+            'rst_source_definition' => base64_encode("Some Array"),
+        ];
 
         $dbHandler->expects($this->exactly(1))
             ->method('fetchByAssoc')
             ->will($this->returnValue($row));
 
         $beanMock = $this->getMockBuilder('SugarBean')
-            ->setMethods(array('save'))
+            ->setMethods(['save'])
             ->getMock();
 
-        $beanMock->field_defs = array(
+        $beanMock->field_defs = [
             'first_field' => 'value',
             'second_field' => 'value',
             'third_field' => 'value',
-            'fourth_field' => 'value that has not a correspondent field'
-        );
+            'fourth_field' => 'value that has not a correspondent field',
+        ];
         $beanMock->first_field = 'value';
         $beanMock->second_field = 'value';
         $beanMock->third_field = 'value';
@@ -273,16 +273,16 @@ class PMSEBusinessRuleTest extends TestCase
                 ->will($this->returnValue($beanMock));
 
         $ruleReader = $this->getMockBuilder('PMSERuleReader')
-                ->setMethods(array('parseRuleSetJSON'))
+                ->setMethods(['parseRuleSetJSON'])
                 ->getMock();
 
-        $ruleResult = array(
+        $ruleResult = [
             'log' => 'Some Log Message',
             'return' => 'Return response for a BR evaluation',
-            'newAppData' => array(
-                'first_field' => 'Business Rule orders change this field'
-            )
-        );
+            'newAppData' => [
+                'first_field' => 'Business Rule orders change this field',
+            ],
+        ];
 
         $ruleReader->expects($this->once())
             ->method('parseRuleSetJSON')
@@ -293,7 +293,7 @@ class PMSEBusinessRuleTest extends TestCase
                 ->will($this->returnValue($ruleReader));
 
         $historyData = $this->getMockBuilder('PMSEHistoryData')
-                ->setMethods(array('savePredata', 'savePostData', 'getLog'))
+                ->setMethods(['savePredata', 'savePostData', 'getLog'])
                 ->disableOriginalConstructor()
                 ->getMock();
 
@@ -311,12 +311,12 @@ class PMSEBusinessRuleTest extends TestCase
         $this->businessRule->setCaseFlowHandler($caseFlowHandler);
         $this->businessRule->setDbHandler($dbHandler);
 
-        $flowData = array(
+        $flowData = [
             'cas_id' => 1,
             'cas_index' => 3,
             'cas_sugar_object_id' => 'mnedwij8923d2',
-            'bpmn_id' => 'di92j3892dj'
-        );
+            'bpmn_id' => 'di92j3892dj',
+        ];
 
         $bean = new stdClass();
 
@@ -327,26 +327,26 @@ class PMSEBusinessRuleTest extends TestCase
     {
         $this->businessRule = $this->getMockBuilder('PMSEBusinessRule')
             ->disableOriginalConstructor()
-            ->setMethods(array('prepareResponse', 'retrieveDefinitionData', 'getCurrentUser'))
+            ->setMethods(['prepareResponse', 'retrieveDefinitionData', 'getCurrentUser'])
             ->getMock();
 
         $this->businessRule->setLogger($this->loggerMock);
 
-        $bpmnElement = array(
-            'id' => 'di92j3892dj'
-        ); 
+        $bpmnElement = [
+            'id' => 'di92j3892dj',
+        ];
 
         $this->businessRule->expects($this->exactly(1))
                 ->method('retrieveDefinitionData')
                 ->will($this->returnValue($bpmnElement));
 
         $caseFlowHandler = $this->getMockBuilder('PMSECaseFlowHandler')
-            ->setMethods(array('retrieveBean', 'saveFormAction'))
+            ->setMethods(['retrieveBean', 'saveFormAction'])
             ->getMock();
 
         $definition = $this->getMockBuilder('pmse_BpmActivityDefinition')
                 ->disableAutoload()
-                ->setMethods(array('retrieve_by_string_fields'))
+                ->setMethods(['retrieve_by_string_fields'])
                 ->getMock();
         $definition->act_fields = '298uj9sd812';
         $definition->pro_id = 'd8923dj982398d';
@@ -358,7 +358,7 @@ class PMSEBusinessRuleTest extends TestCase
 
         $processDefinition = $this->getMockBuilder('pmse_BpmProcessDefinition')
                 ->disableAutoload()
-                ->setMethods(array('retrieve_by_string_fields'))
+                ->setMethods(['retrieve_by_string_fields'])
                 ->getMock();
         $processDefinition->pro_module = 'Leads';
 
@@ -367,18 +367,18 @@ class PMSEBusinessRuleTest extends TestCase
                 ->will($this->returnValue($processDefinition));
 
         $dbHandler = $this->geTMockBuilder('DBHandler')
-            ->setMethods(array('Query', 'fetchByAssoc'))
+            ->setMethods(['Query', 'fetchByAssoc'])
             ->getMock();
 
         $this->businessRule->setCaseFlowHandler($caseFlowHandler);
         $this->businessRule->setDbHandler($dbHandler);
 
-        $flowData = array(
+        $flowData = [
             'cas_id' => 1,
             'cas_index' => 3,
             'cas_sugar_object_id' => 'mnedwij8923d2',
-            'bpmn_id' => 'di92j3892dj'
-        );
+            'bpmn_id' => 'di92j3892dj',
+        ];
 
         $bean = new stdClass();
 

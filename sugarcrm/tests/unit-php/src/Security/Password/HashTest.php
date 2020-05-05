@@ -45,36 +45,36 @@ class HashTest extends TestCase
 
     public function providerTestVerify()
     {
-        return array(
+        return [
             // invalid md5 hash, hits backend
-            array(
+            [
                 true,
                 'password',
                 'invalidmd5',
                 null,
-            ),
+            ],
             // valid md5 hash and matching password
-            array(
+            [
                 true,
                 'passwordgoeshere',
                 '061ed5c2fdbe73d1420ec470f2c3e210',
                 true,
-            ),
+            ],
             // valid md5 hash with wrong password
-            array(
+            [
                 true,
                 'wrongpassword',
                 '061ed5c2fdbe73d1420ec470f2c3e210',
                 false,
-            ),
+            ],
             // valid md5 hash and matching password, but not allowed
-            array(
+            [
                 false,
                 'passwordgoeshere',
                 '061ed5c2fdbe73d1420ec470f2c3e210',
                 null,
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -100,48 +100,48 @@ class HashTest extends TestCase
 
     public function providerTestVerifyMd5()
     {
-        return array(
+        return [
             // valid md5 hash and matching password, no hit backend
-            array(
+            [
                 true,
                 '061ed5c2fdbe73d1420ec470f2c3e210',
                 '061ed5c2fdbe73d1420ec470f2c3e210',
                 false,
                 true,
-            ),
+            ],
             // valid md5 hash and matching password hash in upper case, no hit backend
-            array(
+            [
                 true,
                 strtoupper('061ed5c2fdbe73d1420ec470f2c3e210'),
                 '061ed5c2fdbe73d1420ec470f2c3e210',
                 false,
                 true,
-            ),
+            ],
             // valid md5 hash with wrong password hash
-            array(
+            [
                 true,
                 'd7eea11dffaf0936611d58d3c5aff066',
                 '061ed5c2fdbe73d1420ec470f2c3e210',
                 false,
                 false,
-            ),
+            ],
             // valid md5 hash and matching password hash, but not allowed, hits backend
-            array(
+            [
                 false,
                 '061ed5c2fdbe73d1420ec470f2c3e210',
                 '061ed5c2fdbe73d1420ec470f2c3e210',
                 true,
                 true,
-            ),
+            ],
             // valid md5 hash and matching password hash in uppercase, but not allowed, hits backend
-            array(
+            [
                 false,
                 strtoupper('061ed5c2fdbe73d1420ec470f2c3e210'),
                 '061ed5c2fdbe73d1420ec470f2c3e210',
                 true,
                 true,
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -164,64 +164,64 @@ class HashTest extends TestCase
 
     public function providerTestOldHashes()
     {
-        return array(
+        return [
             // plain md5 - valid
-            array(
+            [
                 'md5',
                 'my passw0rd',
                 '0db22d09a263d458c79581aefcbdb300',
                 true,
-            ),
+            ],
             // plain md5 - invalid
-            array(
+            [
                 'md5',
                 'my passw1rd',
                 '0db22d09a263d458c79581aefcbdb300',
                 false,
-            ),
+            ],
             // CRYPT_MD5 hash - valid
-            array(
+            [
                 'CRYPT_MD5',
                 'my passw0rd',
                 '$1$F0l3iEs7$sT3th960AcuSzp9kiSmxh/',
                 true,
-            ),
+            ],
             // CRYPT_MD5 hash - invalid
-            array(
+            [
                 'CRYPT_MD5',
                 'my passw1rd',
                 '$1$F0l3iEs7$sT3th960AcuSzp9kiSmxh/',
                 false,
-            ),
+            ],
             // CRYPT_EXT_DES hash - valid
-            array(
+            [
                 'CRYPT_EXT_DES',
                 'my passw0rd',
                 '_.012saltIO.319ikKPU',
                 true,
-            ),
+            ],
             // CRYPT_EXT_DES hash - invalid
-            array(
+            [
                 'CRYPT_EXT_DES',
                 'my passw1rd',
                 '_.012saltIO.319ikKPU',
                 false,
-            ),
+            ],
             // CRYPT_BLOWFISH hash, old type - valid
-            array(
+            [
                 'CRYPT_BLOWFISH',
                 'my passw0rd',
                 '$2a$07$usesomesillystringforeETvnK0/TgBVIVHViQjGDve4qlnRzeWS',
                 true,
-            ),
+            ],
             // CRYPT_BLOWFISH hash, old type - invalid
-            array(
+            [
                 'CRYPT_BLOWFISH',
                 'my passw1rd',
                 '$2a$07$usesomesillystringforeETvnK0/TgBVIVHViQjGDve4qlnRzeWS',
                 false,
-            ),
-        );
+            ],
+        ];
     }
 
     /**

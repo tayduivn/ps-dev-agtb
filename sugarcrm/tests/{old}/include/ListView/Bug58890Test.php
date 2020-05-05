@@ -45,15 +45,15 @@ class Bug58890Test extends TestCase
         $listViewData = new ListViewData();
         $listViewData->listviewName = $bean->module_name;
 
-        $listViewData->getListViewData($bean, '', -1, -1, array('name' => array()));
+        $listViewData->getListViewData($bean, '', -1, -1, ['name' => []]);
         $this->assertEquals('date_entered DESC', $bean->orderByString58890, 'Order by date_entered DESC should be used');
 
-        $GLOBALS['current_user']->setPreference('listviewOrder', array(
+        $GLOBALS['current_user']->setPreference('listviewOrder', [
             'orderBy' => 'name',
-            'sortOrder' => 'ASC'
-        ), 0, $listViewData->var_name);
+            'sortOrder' => 'ASC',
+        ], 0, $listViewData->var_name);
 
-        $listViewData->getListViewData($bean, '', -1, -1, array('name' => array()));
+        $listViewData->getListViewData($bean, '', -1, -1, ['name' => []]);
         $this->assertEquals('name ASC', $bean->orderByString58890, 'User\'s preference should be used');
     }
 }
@@ -65,7 +65,7 @@ class SugarBean58890 extends Account
      */
     public $orderByString58890 = '';
 
-    public function create_new_list_query($order_by, $where, $filter = array(), $params = array(), $show_deleted = 0, $join_type = '', $return_array = false, $parentbean = null, $singleSelect = false, $ifListForExport = false)
+    public function create_new_list_query($order_by, $where, $filter = [], $params = [], $show_deleted = 0, $join_type = '', $return_array = false, $parentbean = null, $singleSelect = false, $ifListForExport = false)
     {
         $this->orderByString58890 = $order_by;
         return parent::create_new_list_query($order_by, $where, $filter, $params, $show_deleted, $join_type, $return_array, $parentbean, $singleSelect, $ifListForExport);

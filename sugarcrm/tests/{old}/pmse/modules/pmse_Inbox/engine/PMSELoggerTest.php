@@ -33,7 +33,7 @@ class PMSELoggerTest extends TestCase
     {
         $loggerMock = $this->getMockBuilder('PMSELogger')
                 ->disableOriginalConstructor()
-                ->setMethods(array('formatMessage', 'write'))
+                ->setMethods(['formatMessage', 'write'])
                 ->getMock();
         $loggerMock->expects($this->once())
                 ->method('write');
@@ -45,7 +45,7 @@ class PMSELoggerTest extends TestCase
     {
         $loggerMock = $this->getMockBuilder('PMSELogger')
                 ->disableOriginalConstructor()
-                ->setMethods(array('formatMessage', 'write'))
+                ->setMethods(['formatMessage', 'write'])
                 ->getMock();
         $loggerMock->setLogLevel(LogLevel::EMERGENCY);
         $loggerMock->log(LogLevel::ALERT, 'some message');
@@ -55,24 +55,24 @@ class PMSELoggerTest extends TestCase
     {
         $loggerMock = $this->getMockBuilder('PMSELogger')
                 ->disableOriginalConstructor()
-                ->setMethods(array('write'))
+                ->setMethods(['write'])
                 ->getMock();
         
         $loggerMock->expects($this->once())
                 ->method('write');
         $loggerMock->setLogLevel(LogLevel::ALERT);
-        $loggerMock->log(LogLevel::EMERGENCY, 'some message', array());
+        $loggerMock->log(LogLevel::EMERGENCY, 'some message', []);
     }
     
     public function testWrite()
     {
         $loggerMock = $this->getMockBuilder('PMSELogger')
                 ->disableOriginalConstructor()
-                ->setMethods(NULL)
+                ->setMethods(null)
                 ->getMock();
         $writerMock = $this->getMockBuilder('PMSELogWriter')
                 ->disableOriginalConstructor()
-                ->setMethods(array('log'))
+                ->setMethods(['log'])
                 ->getMock();
         
         $writerMock->expects($this->once())

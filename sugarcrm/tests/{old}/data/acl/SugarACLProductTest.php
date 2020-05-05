@@ -21,34 +21,34 @@ class SugarACLProductTest extends TestCase
     public static function setUpBeforeClass() : void
     {
         // Set up a non-admin user
-        \SugarTestHelper::setUp('current_user', array(true, false));
+        \SugarTestHelper::setUp('current_user', [true, false]);
 
         // Set up the Product Templates ACLs
-        $aclData = array(
-            'module' => array(
-                'create' => array(
+        $aclData = [
+            'module' => [
+                'create' => [
                     'aclaccess' => ACL_ALLOW_DISABLED,
-                ),
-                'edit' => array(
+                ],
+                'edit' => [
                     'aclaccess' => ACL_ALLOW_DISABLED,
-                ),
-                'list' => array(
+                ],
+                'list' => [
                     'aclaccess' => ACL_ALLOW_ALL,
-                ),
-                'view' => array(
+                ],
+                'view' => [
                     'aclaccess' => ACL_ALLOW_ALL,
-                ),
-                'access' => array(
+                ],
+                'access' => [
                     'aclaccess' => ACL_ALLOW_ALL,
-                ),
-                'team_security' => array(
+                ],
+                'team_security' => [
                     'aclaccess' => ACL_ALLOW_ALL,
-                ),
-                'field' => array(
+                ],
+                'field' => [
                     'aclaccess' => ACL_ALLOW_ALL,
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
         ACLAction::setACLData($GLOBALS['current_user']->id, 'ProductTemplates', $aclData);
     }
 
@@ -90,6 +90,6 @@ class SugarACLProductTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->assertSame($result, $acl->checkAccess($module, $view, array()));
+        $this->assertSame($result, $acl->checkAccess($module, $view, []));
     }
 }

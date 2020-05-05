@@ -18,7 +18,7 @@ class RestFilterTest extends RestTestBase
         parent::setUp();
 
         // Need at least 20 records so we can test pagination
-        for ( $i = 0 ; $i < 20 ; $i++ ) {
+        for ($i = 0; $i < 20; $i++) {
             $account = BeanFactory::newBean('Accounts');
             $account->id = 'UNIT-TEST-' . create_guid_section(10);
             $account->new_with_id = true;
@@ -26,7 +26,7 @@ class RestFilterTest extends RestTestBase
             $account->billing_address_postalcode = ($i%10)."0210";
             $account->save();
             $this->accounts[] = $account;
-            for ( $ii = 0; $ii < 2 ; $ii++ ) {
+            for ($ii = 0; $ii < 2; $ii++) {
                 $opp = BeanFactory::newBean('Opportunities');
                 $opp->id = 'UNIT-TEST-' . create_guid_section(10);
                 $opp->new_with_id = true;
@@ -36,9 +36,9 @@ class RestFilterTest extends RestTestBase
                 $opp->save();
                 $this->opps[] = $opp;
                 $account->load_relationship('opportunities');
-                $account->opportunities->add(array($opp));
+                $account->opportunities->add([$opp]);
             }
-            if ( $i < 5 ) {
+            if ($i < 5) {
                 // Only need a few notes
                 $note = BeanFactory::newBean('Notes');
                 $note->id = 'UNIT-TEST-' . create_guid_section(10);
@@ -47,7 +47,7 @@ class RestFilterTest extends RestTestBase
                 $note->description = "This is a note for account $i";
                 $note->save();
                 $account->load_relationship('notes');
-                $account->notes->add(array($note));
+                $account->notes->add([$note]);
                 $note->save();
                 $this->notes[] = $note;
             }
@@ -65,7 +65,7 @@ class RestFilterTest extends RestTestBase
 
         $this->_cleanUpRecords();
         SugarTestFilterUtilities::removeAllCreatedFilters();
-   }
+    }
 
     /**
      * @group rest
@@ -73,9 +73,9 @@ class RestFilterTest extends RestTestBase
     public function testSimpleFilter()
     {
         $reply = $this->_restCall('Accounts/filter?filter='.urlencode('[{"name":"TEST 7 Account"}]').'&fields=id,name');
-        $this->assertEquals('TEST 7 Account',$reply['reply']['records'][0]['name'],'Simple: The name is not set correctly');
-        $this->assertEquals(-1,$reply['reply']['next_offset'],'Simple: Next offset is not set correctly');
-        $this->assertEquals(1,count($reply['reply']['records']),'Simple: Returned too many results');
+        $this->assertEquals('TEST 7 Account', $reply['reply']['records'][0]['name'], 'Simple: The name is not set correctly');
+        $this->assertEquals(-1, $reply['reply']['next_offset'], 'Simple: Next offset is not set correctly');
+        $this->assertEquals(1, count($reply['reply']['records']), 'Simple: Returned too many results');
     }
 
     /**
@@ -84,16 +84,16 @@ class RestFilterTest extends RestTestBase
     public function testSimpleFilterWithOffset()
     {
         $reply = $this->_restCall('Accounts/filter?filter='.urlencode('[{"name":{"$starts":"TEST 1"}}]').'&fields=id,name&max_num=5');
-        $this->assertEquals(5,$reply['reply']['next_offset'],'Offset-1: Next offset is not set correctly');
-        $this->assertEquals(5,count($reply['reply']['records']),'Offset-1: Returned too many results');
+        $this->assertEquals(5, $reply['reply']['next_offset'], 'Offset-1: Next offset is not set correctly');
+        $this->assertEquals(5, count($reply['reply']['records']), 'Offset-1: Returned too many results');
 
         $reply = $this->_restCall('Accounts/filter?filter='.urlencode('[{"name":{"$starts":"TEST 1"}}]').'&fields=id,name&max_num=5&offset=5');
-        $this->assertEquals(10,$reply['reply']['next_offset'],'Offset-2: Next offset is not set correctly');
-        $this->assertEquals(5,count($reply['reply']['records']),'Offset-2: Returned too many results');
+        $this->assertEquals(10, $reply['reply']['next_offset'], 'Offset-2: Next offset is not set correctly');
+        $this->assertEquals(5, count($reply['reply']['records']), 'Offset-2: Returned too many results');
 
         $reply = $this->_restCall('Accounts/filter?filter='.urlencode('[{"name":{"$starts":"TEST 1"}}]').'&fields=id,name&max_num=5&offset=10');
-        $this->assertEquals(-1,$reply['reply']['next_offset'],'Offset-3: Next offset is not set correctly');
-        $this->assertEquals(1,count($reply['reply']['records']),'Offset-3: Returned too many results');
+        $this->assertEquals(-1, $reply['reply']['next_offset'], 'Offset-3: Next offset is not set correctly');
+        $this->assertEquals(1, count($reply['reply']['records']), 'Offset-3: Returned too many results');
     }
 
     /**
@@ -102,10 +102,10 @@ class RestFilterTest extends RestTestBase
     public function testOrFilter()
     {
         $reply = $this->_restCall('Accounts/filter?filter='.urlencode('[{"$or":[{"name":"TEST 7 Account"},{"name":"TEST 17 Account"}]}]').'&fields=id,name&order_by=name:ASC');
-        $this->assertEquals('TEST 17 Account',$reply['reply']['records'][0]['name'],'Or-1: The name is not set correctly');
-        $this->assertEquals('TEST 7 Account',$reply['reply']['records'][1]['name'],'Or-2: The name is not set correctly');
-        $this->assertEquals(-1,$reply['reply']['next_offset'],'Or: Next offset is not set correctly');
-        $this->assertEquals(2,count($reply['reply']['records']),'Or: Returned too many results');
+        $this->assertEquals('TEST 17 Account', $reply['reply']['records'][0]['name'], 'Or-1: The name is not set correctly');
+        $this->assertEquals('TEST 7 Account', $reply['reply']['records'][1]['name'], 'Or-2: The name is not set correctly');
+        $this->assertEquals(-1, $reply['reply']['next_offset'], 'Or: Next offset is not set correctly');
+        $this->assertEquals(2, count($reply['reply']['records']), 'Or: Returned too many results');
     }
 
     /**
@@ -114,9 +114,9 @@ class RestFilterTest extends RestTestBase
     public function testAndFilter()
     {
         $reply = $this->_restCall('Accounts/filter?filter='.urlencode('[{"$and":[{"name":{"$starts":"TEST 1"}},{"billing_address_postalcode":"70210"}]}]').'&fields=id,name&order_by=name:ASC');
-        $this->assertEquals('TEST 17 Account',$reply['reply']['records'][0]['name'],'And: The name is not set correctly');
-        $this->assertEquals(-1,$reply['reply']['next_offset'],'And: Next offset is not set correctly');
-        $this->assertEquals(1,count($reply['reply']['records']),'And: Returned too many results');
+        $this->assertEquals('TEST 17 Account', $reply['reply']['records'][0]['name'], 'And: The name is not set correctly');
+        $this->assertEquals(-1, $reply['reply']['next_offset'], 'And: Next offset is not set correctly');
+        $this->assertEquals(1, count($reply['reply']['records']), 'And: Returned too many results');
     }
 
     /**
@@ -124,10 +124,10 @@ class RestFilterTest extends RestTestBase
      */
     public function testFavoriteFilter()
     {
-        $this->assertEquals('TEST 4 Account',$this->accounts[4]->name,'Favorites: Making sure the name is correct before favoriting.');
+        $this->assertEquals('TEST 4 Account', $this->accounts[4]->name, 'Favorites: Making sure the name is correct before favoriting.');
 
         $fav = new SugarFavorites();
-        $fav->id = SugarFavorites::generateGUID('Accounts',$this->accounts[4]->id);
+        $fav->id = SugarFavorites::generateGUID('Accounts', $this->accounts[4]->id);
         $fav->new_with_id = true;
         $fav->module = 'Accounts';
         $fav->record_id = $this->accounts[4]->id;
@@ -137,9 +137,9 @@ class RestFilterTest extends RestTestBase
         $fav->save();
 
         $reply = $this->_restCall('Accounts/filter?filter='.urlencode('[{"$favorite":""}]').'&fields=id,name&order_by=name:ASC');
-        $this->assertEquals('TEST 4 Account',$reply['reply']['records'][0]['name'],'Favorites: The name is not set correctly');
-        $this->assertEquals(-1,$reply['reply']['next_offset'],'Favorites: Next offset is not set correctly');
-        $this->assertEquals(1,count($reply['reply']['records']),'Favorites: Returned too many results');
+        $this->assertEquals('TEST 4 Account', $reply['reply']['records'][0]['name'], 'Favorites: The name is not set correctly');
+        $this->assertEquals(-1, $reply['reply']['next_offset'], 'Favorites: Next offset is not set correctly');
+        $this->assertEquals(1, count($reply['reply']['records']), 'Favorites: Returned too many results');
     }
 
     /**
@@ -147,10 +147,10 @@ class RestFilterTest extends RestTestBase
      */
     public function testRelatedFavoriteFilter()
     {
-        $this->assertEquals('TEST 0 Opportunity FOR 3 Account',$this->opps[6]->name,'FavRelated: Making sure the name is correct before favoriting.');
+        $this->assertEquals('TEST 0 Opportunity FOR 3 Account', $this->opps[6]->name, 'FavRelated: Making sure the name is correct before favoriting.');
 
         $fav = new SugarFavorites();
-        $fav->id = SugarFavorites::generateGUID('Opportunities',$this->opps[6]->id);
+        $fav->id = SugarFavorites::generateGUID('Opportunities', $this->opps[6]->id);
         $fav->new_with_id = true;
         $fav->module = 'Opportunities';
         $fav->record_id = $this->opps[6]->id;
@@ -160,9 +160,9 @@ class RestFilterTest extends RestTestBase
         $fav->save();
 
         $reply = $this->_restCall('Accounts/filter?filter='.urlencode('[{"$favorite":"opportunities"}]').'&fields=id,name&order_by=name:ASC');
-        $this->assertEquals('TEST 3 Account',$reply['reply']['records'][0]['name'],'FavRelated: The name is not set correctly');
-        $this->assertEquals(-1,$reply['reply']['next_offset'],'FavRelated: Next offset is not set correctly');
-        $this->assertEquals(1,count($reply['reply']['records']),'FavRelated: Returned too many results');
+        $this->assertEquals('TEST 3 Account', $reply['reply']['records'][0]['name'], 'FavRelated: The name is not set correctly');
+        $this->assertEquals(-1, $reply['reply']['next_offset'], 'FavRelated: Next offset is not set correctly');
+        $this->assertEquals(1, count($reply['reply']['records']), 'FavRelated: Returned too many results');
     }
 
     /**
@@ -170,12 +170,12 @@ class RestFilterTest extends RestTestBase
      */
     public function testMultipleRelatedFavoriteFilter()
     {
-        $this->assertEquals('TEST 0 Opportunity FOR 0 Account',$this->opps[0]->name,'FavMulRelated: Making sure the opp name is correct before favoriting.');
+        $this->assertEquals('TEST 0 Opportunity FOR 0 Account', $this->opps[0]->name, 'FavMulRelated: Making sure the opp name is correct before favoriting.');
 
-        $this->assertEquals('Test 4 Note',$this->notes[4]->name,'FavMulRelated: Making sure the note name is correct before favoriting.');
+        $this->assertEquals('Test 4 Note', $this->notes[4]->name, 'FavMulRelated: Making sure the note name is correct before favoriting.');
 
         $fav = new SugarFavorites();
-        $fav->id = SugarFavorites::generateGUID('Opportunities',$this->opps[0]->id);
+        $fav->id = SugarFavorites::generateGUID('Opportunities', $this->opps[0]->id);
         $fav->new_with_id = true;
         $fav->module = 'Opportunities';
         $fav->record_id = $this->opps[0]->id;
@@ -185,7 +185,7 @@ class RestFilterTest extends RestTestBase
         $fav->save();
 
         $fav = new SugarFavorites();
-        $fav->id = SugarFavorites::generateGUID('Notes',$this->notes[4]->id);
+        $fav->id = SugarFavorites::generateGUID('Notes', $this->notes[4]->id);
         $fav->new_with_id = true;
         $fav->module = 'Notes';
         $fav->record_id = $this->notes[4]->id;
@@ -195,10 +195,10 @@ class RestFilterTest extends RestTestBase
         $fav->save();
 
         $reply = $this->_restCall('Accounts/filter?filter='.urlencode('[{"$or":[{"$favorite":"opportunities"},{"$favorite":"notes"}]}]').'&fields=id,name&order_by=name:ASC');
-        $this->assertEquals('TEST 0 Account',$reply['reply']['records'][0]['name'],'FavMulRelated: The first name is not set correctly');
-        $this->assertEquals('TEST 4 Account',$reply['reply']['records'][1]['name'],'FavMulRelated: The second name is not set correctly');
-        $this->assertEquals(-1,$reply['reply']['next_offset'],'FavMulRelated: Next offset is not set correctly');
-        $this->assertEquals(2,count($reply['reply']['records']),'FavMulRelated: Returned too many results');
+        $this->assertEquals('TEST 0 Account', $reply['reply']['records'][0]['name'], 'FavMulRelated: The first name is not set correctly');
+        $this->assertEquals('TEST 4 Account', $reply['reply']['records'][1]['name'], 'FavMulRelated: The second name is not set correctly');
+        $this->assertEquals(-1, $reply['reply']['next_offset'], 'FavMulRelated: Next offset is not set correctly');
+        $this->assertEquals(2, count($reply['reply']['records']), 'FavMulRelated: Returned too many results');
     }
 
     /**
@@ -206,15 +206,15 @@ class RestFilterTest extends RestTestBase
      */
     public function testOwnerFilter()
     {
-        $this->assertEquals('TEST 7 Account',$this->accounts[7]->name,'Owner: Making sure the name is correct before ownering.');
+        $this->assertEquals('TEST 7 Account', $this->accounts[7]->name, 'Owner: Making sure the name is correct before ownering.');
 
         $this->accounts[7]->assigned_user_id = $GLOBALS['current_user']->id;
         $this->accounts[7]->save();
 
         $reply = $this->_restCall('Accounts/filter?filter='.urlencode('[{"$owner":""}]').'&fields=id,name&order_by=name:ASC');
-        $this->assertEquals('TEST 7 Account',$reply['reply']['records'][0]['name'],'Owner: The name is not set correctly');
-        $this->assertEquals(-1,$reply['reply']['next_offset'],'Owner: Next offset is not set correctly');
-        $this->assertEquals(1,count($reply['reply']['records']),'Owner: Returned too many results');
+        $this->assertEquals('TEST 7 Account', $reply['reply']['records'][0]['name'], 'Owner: The name is not set correctly');
+        $this->assertEquals(-1, $reply['reply']['next_offset'], 'Owner: Next offset is not set correctly');
+        $this->assertEquals(1, count($reply['reply']['records']), 'Owner: Returned too many results');
     }
 
     /**
@@ -222,15 +222,15 @@ class RestFilterTest extends RestTestBase
      */
     public function testRelatedOwnerFilter()
     {
-        $this->assertEquals('TEST 1 Opportunity FOR 3 Account',$this->opps[7]->name,'OwnerRelated: Making sure the name is correct before ownering.');
+        $this->assertEquals('TEST 1 Opportunity FOR 3 Account', $this->opps[7]->name, 'OwnerRelated: Making sure the name is correct before ownering.');
 
         $this->opps[7]->assigned_user_id = $GLOBALS['current_user']->id;
         $this->opps[7]->save();
 
         $reply = $this->_restCall('Accounts/filter?filter='.urlencode('[{"$owner":"opportunities"}]').'&fields=id,name&order_by=name:ASC');
-        $this->assertEquals('TEST 3 Account',$reply['reply']['records'][0]['name'],'OwnerRelated: The name is not set correctly');
-        $this->assertEquals(-1,$reply['reply']['next_offset'],'OwnerRelated: Next offset is not set correctly');
-        $this->assertEquals(1,count($reply['reply']['records']),'OwnerRelated: Returned too many results');
+        $this->assertEquals('TEST 3 Account', $reply['reply']['records'][0]['name'], 'OwnerRelated: The name is not set correctly');
+        $this->assertEquals(-1, $reply['reply']['next_offset'], 'OwnerRelated: Next offset is not set correctly');
+        $this->assertEquals(1, count($reply['reply']['records']), 'OwnerRelated: Returned too many results');
     }
 
     /**
@@ -240,25 +240,25 @@ class RestFilterTest extends RestTestBase
     {
         global $current_user;
 
-        $filter = SugarTestFilterUtilities::createUserFilter($current_user->id, 'test_user_filter', json_encode(array('name'=>'TEST 1 Account')));
+        $filter = SugarTestFilterUtilities::createUserFilter($current_user->id, 'test_user_filter', json_encode(['name'=>'TEST 1 Account']));
         $this->assertEquals($filter->name, 'test_user_filter');
         $this->assertEquals($filter->filter_definition, '{"name":"TEST 1 Account"}');
 
         $reply = $this->_restCall('Filters/'. $filter->id);
-        $this->assertEquals('test_user_filter',$reply['reply']['name']);
-        $this->assertEquals(json_decode('{"name":"TEST 1 Account"}',true),$reply['reply']['filter_definition']);
+        $this->assertEquals('test_user_filter', $reply['reply']['name']);
+        $this->assertEquals(json_decode('{"name":"TEST 1 Account"}', true), $reply['reply']['filter_definition']);
 
-        $reply = $this->_restCall('Filters', json_encode(array('name'=>'test_user_filter2','filter_definition'=>'TEST 2 Account')), 'POST');
-        $this->assertEquals('test_user_filter2',$reply['reply']['name']);
-        $this->assertEquals('TEST 2 Account',$reply['reply']['filter_definition']);
+        $reply = $this->_restCall('Filters', json_encode(['name'=>'test_user_filter2','filter_definition'=>'TEST 2 Account']), 'POST');
+        $this->assertEquals('test_user_filter2', $reply['reply']['name']);
+        $this->assertEquals('TEST 2 Account', $reply['reply']['filter_definition']);
 
         $id = $reply['reply']['id'];
 
-        $reply = $this->_restCall('Filters/' . $id, json_encode(array('name'=>'test_user_filter3','filter_definition'=>'TEST 3 Account')), 'PUT');
-        $this->assertEquals('test_user_filter3',$reply['reply']['name']);
-        $this->assertEquals('TEST 3 Account',$reply['reply']['filter_definition']);
+        $reply = $this->_restCall('Filters/' . $id, json_encode(['name'=>'test_user_filter3','filter_definition'=>'TEST 3 Account']), 'PUT');
+        $this->assertEquals('test_user_filter3', $reply['reply']['name']);
+        $this->assertEquals('TEST 3 Account', $reply['reply']['filter_definition']);
 
-        $reply = $this->_restCall('Filters/' . $id, array(), 'DELETE');
+        $reply = $this->_restCall('Filters/' . $id, [], 'DELETE');
         $this->assertEquals($id, $reply['reply']['id']);
     }
 
@@ -269,20 +269,20 @@ class RestFilterTest extends RestTestBase
     {
         global $current_user;
 
-        $filter = SugarTestFilterUtilities::createUserFilter($current_user->id, 'test_user_filter', json_encode(array('name'=>'TEST 1 Account')));
+        $filter = SugarTestFilterUtilities::createUserFilter($current_user->id, 'test_user_filter', json_encode(['name'=>'TEST 1 Account']));
         $this->assertEquals($filter->name, 'test_user_filter');
         $this->assertEquals($filter->filter_definition, '{"name":"TEST 1 Account"}');
 
-        $reply = $this->_restCall('Filters/Accounts/used/', json_encode(array('filters' => array($filter->id,))), 'PUT');
-        $this->assertEquals($filter->id,$reply['reply'][0]['id'], 'Test Put');
+        $reply = $this->_restCall('Filters/Accounts/used/', json_encode(['filters' => [$filter->id,]]), 'PUT');
+        $this->assertEquals($filter->id, $reply['reply'][0]['id'], 'Test Put');
 
         $reply = $this->_restCall('Filters/Accounts/used/');
-        $this->assertEquals($filter->id,$reply['reply'][0]['id'], 'Test Get');
+        $this->assertEquals($filter->id, $reply['reply'][0]['id'], 'Test Get');
 
-        $reply = $this->_restCall('Filters/Accounts/used/'. $filter->id, array(), 'DELETE');
+        $reply = $this->_restCall('Filters/Accounts/used/'. $filter->id, [], 'DELETE');
 
-        if(!empty($reply['reply'])) {
-            foreach($reply['reply'] as $record) {
+        if (!empty($reply['reply'])) {
+            foreach ($reply['reply'] as $record) {
                 $this->assertNotEquals($filter->id, $record['id'], 'Test Delete');
             }
         } else {
@@ -310,6 +310,6 @@ class RestFilterTest extends RestTestBase
     {
         $reply = $this->_restCall('Accounts/filter?max_num=10');
         $this->assertNotEmpty($reply['reply'], "Empty filter returned no results.");
-        $this->assertEquals(10,$reply['reply']['next_offset'], "Empty filter did not return at least 10 results.");
+        $this->assertEquals(10, $reply['reply']['next_offset'], "Empty filter did not return at least 10 results.");
     }
 }

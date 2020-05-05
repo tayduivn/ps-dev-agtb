@@ -12,7 +12,7 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once('include/export_utils.php');
+require_once 'include/export_utils.php';
 
 /**
  * Test if non-primary emails are being exported properly to a CSV file
@@ -24,7 +24,7 @@ class Bug25736ExportTest extends TestCase
     {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
-        SugarTestHelper::setUp('current_user', array(true, true));
+        SugarTestHelper::setUp('current_user', [true, true]);
     }
 
     public static function tearDownAfterClass(): void
@@ -67,23 +67,23 @@ class Bug25736ExportTest extends TestCase
      */
     public function providerEmailExport()
     {
-        $factories = array(
-            array('SugarTestAccountUtilities', 'createAccount'),
-            array('SugarTestContactUtilities', 'createContact'),
-            array('SugarTestLeadUtilities', 'createLead'),
-            array('SugarTestProspectUtilities', 'createProspect'),
-        );
+        $factories = [
+            ['SugarTestAccountUtilities', 'createAccount'],
+            ['SugarTestContactUtilities', 'createContact'],
+            ['SugarTestLeadUtilities', 'createLead'],
+            ['SugarTestProspectUtilities', 'createProspect'],
+        ];
 
-        $data = array();
+        $data = [];
         foreach ($factories as $factory) {
-            $data[] = array(
+            $data[] = [
                 $factory,
-                array(
-                    array('test1@mailmail.mail', true, false),
-                    array('test2@mailmail.mail', false, true),
-                ),
+                [
+                    ['test1@mailmail.mail', true, false],
+                    ['test2@mailmail.mail', false, true],
+                ],
                 'test1@mailmail.mail,1,0;test2@mailmail.mail,0,1',
-            );
+            ];
         }
 
         return $data;

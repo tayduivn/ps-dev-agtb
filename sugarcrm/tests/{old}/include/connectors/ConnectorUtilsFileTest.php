@@ -28,7 +28,7 @@ class ConnectorUtilsFileTest extends TestCase
     {
         $success = ConnectorUtils::setConnectorStrings(
             'test' . $this->timestamp,
-            array('asdf' => 'jkl;'),
+            ['asdf' => 'jkl;'],
             'asdf'
         );
 

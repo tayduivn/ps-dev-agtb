@@ -25,7 +25,7 @@ class Bug51423Test extends TestCase
     /**
      * @var array Request for creating/deleting related field for Accounts module
      */
-    private $_req = array (
+    private $_req =  [
         'to_pdf' => 'true',
         'sugar_body_only' => '1',
         'module' => 'ModuleBuilder',
@@ -46,7 +46,7 @@ class Bug51423Test extends TestCase
         'reportable' => '1',
         'importable' => 'true',
         'duplicate_merge' => '0',
-    );
+    ];
 
     private $_account_1;
 
@@ -77,7 +77,7 @@ class Bug51423Test extends TestCase
         $GLOBALS['current_user'] = $this->_user;
 
         $this->_req['action'] = 'saveField';
-        $request = InputValidation::create($this->_req, array());
+        $request = InputValidation::create($this->_req, []);
         $mb = new ModuleBuilderController($request);
         $mb->action_saveField();
 
@@ -111,7 +111,7 @@ class Bug51423Test extends TestCase
     {
         $this->_req['action'] = 'DeleteField';
         $this->_req['name'] = 'relate_contacts_c';
-        $request = InputValidation::create($this->_req, array());
+        $request = InputValidation::create($this->_req, []);
         $mb = new ModuleBuilderController($request);
         $mb->action_DeleteField();
 
@@ -131,41 +131,41 @@ class Bug51423Test extends TestCase
         /**
          * Report defs for generating the report
          */
-        $rep_defs =array (
+        $rep_defs = [
             'display_columns' =>
-            array (
+             [
                 0 =>
-                array (
+                 [
                     'name' => 'name',
                     'label' => 'Name',
                     'table_key' => 'self',
-                ),
+                ],
                 1 =>
-                array (
+                 [
                     'name' => 'relate_contacts_c',
                     'label' => 'relate contacts',
                     'table_key' => 'self',
-                ),
+                ],
                 2 =>
-                array (
+                 [
                     'name' => 'name',
                     'label' => 'Name1',
                     'table_key' => 'Accounts:member_of',
-                ),
+                ],
                 3 =>
-                array (
+                 [
                     'name' => 'relate_contacts_c',
                     'label' => 'relate contacts1',
                     'table_key' => 'Accounts:member_of',
-                ),
-            ),
+                ],
+            ],
             'module' => 'Accounts',
             'group_defs' =>
-            array (
-            ),
+             [
+            ],
             'summary_columns' =>
-            array (
-            ),
+             [
+            ],
             'report_name' => 'report #1',
             'chart_type' => 'none',
             'do_round' => 1,
@@ -174,19 +174,19 @@ class Bug51423Test extends TestCase
             'assigned_user_id' => '1',
             'report_type' => 'tabular',
             'full_table_list' =>
-            array (
+             [
                 'self' =>
-                array (
+                 [
                     'value' => 'Accounts',
                     'module' => 'Accounts',
                     'label' => 'Accounts',
-                ),
+                ],
                 'Accounts:member_of' =>
-                array (
+                 [
                     'name' => 'Accounts  >  Member of',
                     'parent' => 'self',
                     'link_def' =>
-                    array (
+                     [
                         'name' => 'member_of',
                         'relationship_name' => 'member_accounts',
                         'bean_is_lhs' => false,
@@ -194,40 +194,40 @@ class Bug51423Test extends TestCase
                         'label' => 'Member of',
                         'module' => 'Accounts',
                         'table_key' => 'Accounts:member_of',
-                    ),
+                    ],
                     'dependents' =>
-                    array (
+                     [
                         0 => 'display_cols_row_3',
                         1 => 'display_cols_row_4',
                         2 => 'display_cols_row_3',
                         3 => 'display_cols_row_4',
-                    ),
+                    ],
                     'module' => 'Accounts',
                     'label' => 'Member of',
                     'optional' => true,
-                ),
-            ),
+                ],
+            ],
             'filters_def' =>
-            array (
+             [
                 'Filter_1' =>
-                array (
+                 [
                     'operator' => 'AND',
                     0 =>
-                    array (
+                     [
                         'name' => 'name',
                         'table_key' => 'self',
-                        'qualifier_name' => 'is'
-                    ),
-                ),
-            ),
-        );
+                        'qualifier_name' => 'is',
+                    ],
+                ],
+            ],
+        ];
         $rep_defs['filters_def']['Filter_1']['0']['input_name0'] = $this->_account_2->id;
         $rep_defs['filters_def']['Filter_1']['0']['input_name1'] = $this->_account_2->name;
         $json = getJSONobj();
         $tmp = $json->encode($rep_defs);
         $this->_report = new Report($tmp);
         $this->_report->run_query();
-        while (( $row = $this->_report->get_next_row() ) != 0 ) {
+        while (( $row = $this->_report->get_next_row() ) != 0) {
             $this->assertMatchesRegularExpression('/.*' . preg_quote($this->_account_2->name) . '.*/', $row['cells']['0']);
             $this->assertMatchesRegularExpression('/.*' . preg_quote($this->_contact_2->last_name) . '.*/', $row['cells']['1']);
             $this->assertMatchesRegularExpression('/.*' . preg_quote($this->_account_1->name) . '.*/', $row['cells']['2']);

@@ -10,4 +10,4 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$hook_array['after_ui_frame'][] = array(1, 'fake', 'modules/Connectors/connectors/sources/ext/rest/insideview/InsideViewLogicHook.php', 'fake', 'fake');
+$hook_array['after_ui_frame'][] = [1, 'fake', 'modules/Connectors/connectors/sources/ext/rest/insideview/InsideViewLogicHook.php', 'fake', 'fake'];

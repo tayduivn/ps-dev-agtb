@@ -36,7 +36,7 @@ class RestBug57839Test extends RestTestBase
     public function testCorrectResponseHeadersForRequestTypes()
     {
         // Create an Account - POST
-        $reply = $this->_restCall("Accounts/", json_encode(array('name'=>'UNIT TEST - AFTER')), 'POST');
+        $reply = $this->_restCall("Accounts/", json_encode(['name'=>'UNIT TEST - AFTER']), 'POST');
         $this->assertTrue(isset($reply['reply']['id']), "An account was not created (or if it was, the ID was not returned)");
         $this->_accountId = $reply['reply']['id'];
         
@@ -56,7 +56,7 @@ class RestBug57839Test extends RestTestBase
         $this->assertNotEmpty($reply['headers']['ETag'], "ETag header missing from GET request");
         
         // Modify the Account - PUT
-        $reply = $this->_restCall("Accounts/{$this->_accountId}", json_encode(array('name'=>'UNIT TEST - AFTER')), 'PUT');
+        $reply = $this->_restCall("Accounts/{$this->_accountId}", json_encode(['name'=>'UNIT TEST - AFTER']), 'PUT');
         $this->assertTrue(isset($reply['reply']['id']), "Account ID was not returned in the PUT request");
         $this->assertEquals($this->_accountId, $reply['reply']['id'], "Account ID from reply is different from the create after PUT");
         

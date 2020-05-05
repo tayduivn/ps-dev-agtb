@@ -61,18 +61,18 @@ class Bug58463Test extends TestCase
      */
     public function testCustomDropDownListSavesProperly()
     {
-        $values = array(
-            array('bobby', 'Bobby'),
-            array('billy', 'Billy'),
-            array('benny', 'Benny'),
-        );
+        $values = [
+            ['bobby', 'Bobby'],
+            ['billy', 'Billy'],
+            ['benny', 'Benny'],
+        ];
 
-        $_REQUEST = array(
+        $_REQUEST = [
             'list_value' => json_encode($values),
             'dropdown_lang' => 'en_us',
             'dropdown_name' => 'test_dropdown',
             'view_package' => 'studio',
-        );
+        ];
         $parser = new ParserDropDown();
         $parser->saveDropDown($_REQUEST);
 
@@ -93,6 +93,6 @@ class Bug58463Test extends TestCase
         }
 
         // This would indicate a failure
-        return array();
+        return [];
     }
 }

@@ -31,7 +31,7 @@ class DownloadArchiveApiTest extends TestCase
      *
      * @var array
      */
-    public $notes = array();
+    public $notes = [];
 
     /**
      * @var Account
@@ -60,15 +60,15 @@ class DownloadArchiveApiTest extends TestCase
             $note = BeanFactory::newBean('Notes');
             $note->name = 'DownloadArchiveTest' . uniqid();
 
-            $_FILES['uploadfile'] = array(
+            $_FILES['uploadfile'] = [
                 'name' => 'DownloadArchiveTest' . $i . '.txt',
                 'tmp_name' => $tmpFile,
                 'size' => filesize($tmpFile),
                 'error' => 0,
                 '_SUGAR_API_UPLOAD' => true,
-            );
+            ];
 
-            $sf->save($note, array(), 'filename', $def, 'DownloadArchiveTest_');
+            $sf->save($note, [], 'filename', $def, 'DownloadArchiveTest_');
 
             $this->account->notes->add($note);
             $this->notes[] = $note;
@@ -80,7 +80,7 @@ class DownloadArchiveApiTest extends TestCase
         // Notes cleanup
         if (count($this->notes)) {
             $download = new DownloadFile();
-            $noteIds = array();
+            $noteIds = [];
             foreach ($this->notes as $note) {
                 if (false !== $fileInfo = $download->getFileInfo($note, 'filename')) {
                     if (file_exists($fileInfo['path'])) {
@@ -92,7 +92,7 @@ class DownloadArchiveApiTest extends TestCase
             $noteIds = "('" . implode("','", $noteIds) . "')";
             $GLOBALS['db']->query("DELETE FROM notes WHERE id IN {$noteIds}");
         }
-        $this->notes = array();
+        $this->notes = [];
 
         SugarTestHelper::tearDown();
     }
@@ -104,14 +104,14 @@ class DownloadArchiveApiTest extends TestCase
      */
     public function dataProviderGetArchive()
     {
-        return array(
-            'force download' => array(
-                true
-            ),
-            'not force download' => array(
-                false
-            ),
-        );
+        return [
+            'force download' => [
+                true,
+            ],
+            'not force download' => [
+                false,
+            ],
+        ];
     }
 
     /**
@@ -124,8 +124,8 @@ class DownloadArchiveApiTest extends TestCase
     {
         $unit = $this;
         $downloadMock = $this->getMockBuilder('DownloadFileApi')
-            ->setMethods(array('outputFile'))
-            ->setConstructorArgs(array($this->service))
+            ->setMethods(['outputFile'])
+            ->setConstructorArgs([$this->service])
             ->getMock();
         $downloadMock->expects($this->once())->method('outputFile')
             ->with(
@@ -157,18 +157,18 @@ class DownloadArchiveApiTest extends TestCase
                 $unit->assertEquals(3, $numFiles, 'Invalid file counts in archive');
             }));
 
-        $apiMock = $this->createPartialMock('FileApi', array('getDownloadFileApi'));
+        $apiMock = $this->createPartialMock('FileApi', ['getDownloadFileApi']);
         $apiMock->expects($this->once())
                 ->method('getDownloadFileApi')
                 ->will($this->returnValue($downloadMock));
 
-        $apiMock->getArchive($this->service, array(
+        $apiMock->getArchive($this->service, [
             'module' => 'Accounts',
             'record' =>  $this->account->id,
             'link_name' => 'notes',
             'field' => 'filename',
             'force_download' => $forceDownload,
-        ));
+        ]);
     }
 
     /**
@@ -179,11 +179,11 @@ class DownloadArchiveApiTest extends TestCase
         $api = new FileApi();
         $this->expectException(SugarApiExceptionMissingParameter::class);
 
-        $api->getArchive($this->service, array(
+        $api->getArchive($this->service, [
             'module' => 'Accounts',
             'record' =>  $this->account->id,
             'link_name' => 'notes',
-        ));
+        ]);
     }
 
     /**
@@ -194,11 +194,11 @@ class DownloadArchiveApiTest extends TestCase
         $api = new FileApi();
         $this->expectException(SugarApiExceptionNotFound::class);
 
-        $api->getArchive($this->service, array(
+        $api->getArchive($this->service, [
             'module' => 'Accounts',
             'record' =>  $this->account->id,
             'field' => 'filename',
             'link_name' => 'invalid_link_notes',
-        ));
+        ]);
     }
 }

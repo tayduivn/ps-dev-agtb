@@ -24,42 +24,48 @@ class CreateDefaultTeamsTest extends TestCase
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
 
-		$this->_user = SugarTestUserUtilities::createAnonymousUser();
-		$GLOBALS['current_user'] = $this->_user;
-		$GLOBALS['db']->query("DELETE FROM contacts WHERE first_name = 'Collin' AND last_name = 'Lee'");
-    }    
+        $this->_user = SugarTestUserUtilities::createAnonymousUser();
+        $GLOBALS['current_user'] = $this->_user;
+        $GLOBALS['db']->query("DELETE FROM contacts WHERE first_name = 'Collin' AND last_name = 'Lee'");
+    }
     
     protected function tearDown() : void
     {
         unset($GLOBALS['current_user']);
      
-        if ( $this->_contact instanceOf Contact && !empty($this->_contact->id) )
+        if ($this->_contact instanceof Contact && !empty($this->_contact->id)) {
             $GLOBALS['db']->query("DELETE FROM contacts WHERE id = '{$this->_contact->id}'");
+        }
         
         $this->_contact = null;
         
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-    }     
+    }
 
     /**
      * @dataProvider providerTeamName
      */
-    public function testGetCorrectTeamName($team, $expected){
-    	$this->assertEquals($team->get_summary_text(),$expected,
-            "{$expected} team name did not match");
+    public function testGetCorrectTeamName($team, $expected)
+    {
+        $this->assertEquals(
+            $team->get_summary_text(),
+            $expected,
+            "{$expected} team name did not match"
+        );
     }
     
-	public function providerTeamName(){
-		$team1 = BeanFactory::newBean('Teams');
-    	$team1->name = 'Will';
-    	$team1->name_2 = 'Westin';
-    	
-    	$team2 = BeanFactory::newBean('Teams');
-    	$team2->name = 'Will';
- 		
-        return array(
-            array($team1,'Will Westin'),
-            array($team2,'Will'),
-        );
+    public function providerTeamName()
+    {
+        $team1 = BeanFactory::newBean('Teams');
+        $team1->name = 'Will';
+        $team1->name_2 = 'Westin';
+        
+        $team2 = BeanFactory::newBean('Teams');
+        $team2->name = 'Will';
+        
+        return [
+            [$team1,'Will Westin'],
+            [$team2,'Will'],
+        ];
     }
 }

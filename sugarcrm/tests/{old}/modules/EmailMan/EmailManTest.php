@@ -26,40 +26,40 @@ class EmailManTest extends TestCase
 
     public function dataProviderForHasEmailBeenSent()
     {
-        return array(
-            array(
+        return [
+            [
                 'a@b',
                 '123',
                 'targeted',
                 'a@b',
                 '123',
                 true,
-            ),
-            array(
+            ],
+            [
                 'foo@bar',
                 '123',
                 'targeted',
                 'a@b',
                 '123',
                 false,
-            ),
-            array(
+            ],
+            [
                 'a@b',
                 '456',
                 'targeted',
                 'a@b',
                 '123',
                 false,
-            ),
-            array(
+            ],
+            [
                 'a@b',
                 '123',
                 'viewed',
                 'a@b',
                 '123',
                 false,
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -102,10 +102,10 @@ class EmailManTest extends TestCase
         $campaign = SugarTestCampaignUtilities::createCampaign();
         $relatedContact = SugarTestContactUtilities::createContact();
 
-        $extraVars = array(
+        $extraVars = [
             'more_information' => $email,
             'marketing_id' => $marketingId,
-        );
+        ];
 
         SugarTestCampaignUtilities::createCampaignLog(
             $campaign->id,

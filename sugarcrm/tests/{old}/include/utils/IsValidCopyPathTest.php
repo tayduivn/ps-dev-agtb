@@ -31,11 +31,11 @@ class IsValidCopyPathTest extends TestCase
 
     public static function isValidCopyPathSuccessProvider()
     {
-        return array(
-            'unix-path' => array('a/b/c'),
-            'windows-path' => array('a\\b\\c'),
-            'directory-name-contains-dots' => array('a/b..c/d'),
-        );
+        return [
+            'unix-path' => ['a/b/c'],
+            'windows-path' => ['a\\b\\c'],
+            'directory-name-contains-dots' => ['a/b..c/d'],
+        ];
     }
 
     /**
@@ -49,14 +49,14 @@ class IsValidCopyPathTest extends TestCase
 
     public static function isValidCopyPathFailureProvider()
     {
-        return array(
-            'absolute-unix' => array('/etc/passwd'),
-            'absolute-windows' => array('\\Windows\\Whatever'),
-            'parent-directory-beginning' => array('../some/other/instance'),
-            'parent-directory-middle' => array('some/../other/instance'),
-            'parent-directory-end' => array('some/other/instance/..'),
-            'empty' => array(''),
-        );
+        return [
+            'absolute-unix' => ['/etc/passwd'],
+            'absolute-windows' => ['\\Windows\\Whatever'],
+            'parent-directory-beginning' => ['../some/other/instance'],
+            'parent-directory-middle' => ['some/../other/instance'],
+            'parent-directory-end' => ['some/other/instance/..'],
+            'empty' => [''],
+        ];
     }
 
     /**
@@ -72,8 +72,8 @@ class IsValidCopyPathTest extends TestCase
 
     public static function isValidCopyPathFailureOnWindowsProvider()
     {
-        return array(
-            'drive-letter' => array('C:\\Windows\\Whatever'),
-        );
+        return [
+            'drive-letter' => ['C:\\Windows\\Whatever'],
+        ];
     }
 }

@@ -17,9 +17,11 @@
  */
 class SugarTestFilterUtilities
 {
-    private static $_createdFilters = array();
+    private static $_createdFilters = [];
 
-    private function __construct() {}
+    private function __construct()
+    {
+    }
 
     /**
      * Creates and returns a new user filter object
@@ -33,8 +35,7 @@ class SugarTestFilterUtilities
     public static function createUserFilter($assigned_user_id, $name, $filter_definition, $id = null)
     {
         $filter = new Filters();
-        if(!empty($id))
-        {
+        if (!empty($id)) {
             $filter->new_with_id = true;
             $filter->id = $id;
         }
@@ -63,7 +64,7 @@ class SugarTestFilterUtilities
      */
     public static function getCreatedFilterIds()
     {
-        $filter_ids = array();
+        $filter_ids = [];
         foreach (self::$_createdFilters as $filter) {
             $filter_ids[] = $filter->id;
         }

@@ -18,9 +18,9 @@ class Bug41493Test extends TestCase
     public function testGetListViewSmarty()
     {
         $teamset = new SugarFieldTeamset('teamset');
-        $result_template = $teamset->getListViewSmarty(array('TEAM_NAME' => 'Team name'), array('name' => 'team_name'), array(), '');
+        $result_template = $teamset->getListViewSmarty(['TEAM_NAME' => 'Team name'], ['name' => 'team_name'], [], '');
         $this->assertMatchesRegularExpression('/Team name/', $result_template, 'lowercase name');
-        $result_template = $teamset->getListViewSmarty(array('TEAM_NAME' => 'Team name'), array('name' => 'TEAM_NAME'), array(), '');
+        $result_template = $teamset->getListViewSmarty(['TEAM_NAME' => 'Team name'], ['name' => 'TEAM_NAME'], [], '');
         $this->assertMatchesRegularExpression('/Team name/', $result_template, 'uppercase name');
     }
 }

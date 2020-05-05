@@ -19,7 +19,7 @@ class ConnectorsEnableDisableTest extends Sugar_Connectors_TestCase
      *
      * @var array
      */
-    protected $backupFiles = array(
+    protected $backupFiles = [
         'custom/modules/Connectors/connectors/sources/ext/rest/twitter/config.php',
         'custom/modules/Connectors/connectors/sources/ext/rest/twitter/mapping.php',
         'custom/modules/Connectors/connectors/sources/ext/eapm/webex/config.php',
@@ -27,11 +27,11 @@ class ConnectorsEnableDisableTest extends Sugar_Connectors_TestCase
         'custom/modules/Connectors/metadata/connectors.php',
         'custom/modules/Connectors/metadata/display_config.php',
         'custom/modules/Connectors/metadata/searchdefs.php',
-    );
+    ];
 
     protected function setUp() : void
     {
-        SugarTestHelper::setUp('current_user', array(true, 1));
+        SugarTestHelper::setUp('current_user', [true, 1]);
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('files');
         SugarTestHelper::saveFile($this->backupFiles);
@@ -66,7 +66,7 @@ class ConnectorsEnableDisableTest extends Sugar_Connectors_TestCase
         $controller = new ConnectorsController();
         $controller->action_SaveModifyDisplay();
 
-        require(CONNECTOR_DISPLAY_CONFIG_FILE);
+        require CONNECTOR_DISPLAY_CONFIG_FILE;
 
         foreach ($modules_sources as $module => $entries) {
             if ($module == 'Accounts' || $module == 'Contacts') {
@@ -87,7 +87,7 @@ class ConnectorsEnableDisableTest extends Sugar_Connectors_TestCase
 
         $controller->action_SaveModifyDisplay();
 
-        require(CONNECTOR_DISPLAY_CONFIG_FILE);
+        require CONNECTOR_DISPLAY_CONFIG_FILE;
         $this->assertTrue(empty($modules_sources['ext_rest_twitter']));
     }
 
@@ -97,19 +97,19 @@ class ConnectorsEnableDisableTest extends Sugar_Connectors_TestCase
 
         // Needed as arguments for the test
         $connectors = ConnectorUtils::getConnectors(true);
-        $sources = array(
+        $sources = [
             'ext_rest_twitter' => 'ext_rest_twitter',
             'ext_eapm_webex' => 'ext_eapm_webex',
-        );
+        ];
 
         // Run the method being tested
-        $controller->handleEAPMSettings($connectors, $sources, array());
+        $controller->handleEAPMSettings($connectors, $sources, []);
 
         // Get our results
-        $results = array(
+        $results = [
             ConnectorUtils::eapmEnabled($sources['ext_rest_twitter']),
             ConnectorUtils::eapmEnabled($sources['ext_eapm_webex']),
-        );
+        ];
 
         // Make round 1 of assertions
         $this->assertFalse($results[0], "Failed to disable Twitter");
@@ -119,19 +119,19 @@ class ConnectorsEnableDisableTest extends Sugar_Connectors_TestCase
         $connectors = ConnectorUtils::getConnectors(true);
 
         // Mocks the $_REQUEST array used in the tested method
-        $request = array(
+        $request = [
             'ext_rest_twitter_external' => 1,
             'ext_eapm_webex_external' => 1,
-        );
+        ];
 
         // Run the method being tested
         $controller->handleEAPMSettings($connectors, $sources, $request);
 
         // Get the results
-        $results = array(
+        $results = [
             ConnectorUtils::eapmEnabled($sources['ext_rest_twitter']),
             ConnectorUtils::eapmEnabled($sources['ext_eapm_webex']),
-        );
+        ];
 
         // Make assertions
         $this->assertTrue($results[0], "Failed to enable Twitter");

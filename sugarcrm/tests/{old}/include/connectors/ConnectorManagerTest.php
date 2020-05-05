@@ -43,31 +43,32 @@ class SourceTest
 
     public function getMapping()
     {
-        return array(
+        return [
             'testfield1' => 'value',
-            'testfield2' => 'value'
-        );
+            'testfield2' => 'value',
+        ];
     }
 }
 
 
 class ConnectorManagerTest extends ConnectorManager
 {
-    public function getConnectorList() {
-        return array(
+    public function getConnectorList()
+    {
+        return [
             'ValidTestingDisabledAuth' =>
-                array('id' => 'ValidTestingDisabledAuth'),
+                ['id' => 'ValidTestingDisabledAuth'],
             'ValidTestingEnabledAuth' =>
-                array('id' => 'ValidTestingEnabledAuth'),
+                ['id' => 'ValidTestingEnabledAuth'],
             'ValidTestingEnabledUnAuth' =>
-                array('id' => 'ValidTestingEnabledUnAuth'),
+                ['id' => 'ValidTestingEnabledUnAuth'],
             'InvalidTestFails' =>
-                array('id' => 'InvalidTestFails'),
+                ['id' => 'InvalidTestFails'],
             'InvalidNoSource' =>
-                array('id' => 'InvalidNoSource'),
+                ['id' => 'InvalidNoSource'],
             'ThrowsErrors' =>
-                array('id' => 'ThrowsErrors'),
-        );
+                ['id' => 'ThrowsErrors'],
+        ];
     }
     public function getEAPMForConnector($connector)
     {
@@ -106,56 +107,56 @@ class ConnectorsValidTest extends TestCase
      */
     public function testGetConnectors()
     {
-        $expectedOut = array(
+        $expectedOut = [
             'ValidTestingDisabledAuth' =>
-                array(
+                [
                     'id' => 'ValidTestingDisabledAuth',
                     'testing_enabled' => false,
                     'test_passed' => false,
                     'eapm_bean' => false,
-                    'field_mapping' => array()
-                ),
+                    'field_mapping' => [],
+                ],
             'ValidTestingEnabledAuth' =>
-                array(
+                [
                     'id' => 'ValidTestingEnabledAuth',
                     'testing_enabled' => true,
                     'test_passed' => true,
                     'eapm_bean' => false,
-                    'field_mapping' => array()
-                ),
+                    'field_mapping' => [],
+                ],
             'ValidTestingEnabledUnAuth' =>
-                array(
+                [
                     'id' => 'ValidTestingEnabledUnAuth',
                     'testing_enabled' => true,
                     'test_passed' => true,
                     'eapm_bean' => false,
-                    'field_mapping' => array()
-                ),
+                    'field_mapping' => [],
+                ],
             'InvalidTestFails' =>
-                array(
+                [
                     'id' => 'InvalidTestFails',
                     'testing_enabled' => true,
                     'test_passed' => false,
                     'eapm_bean' => false,
-                    'field_mapping' => array()
-                ),
+                    'field_mapping' => [],
+                ],
             'InvalidNoSource' =>
-                array(
+                [
                     'id' => 'InvalidNoSource',
                     'testing_enabled' => false,
                     'test_passed' => false,
                     'eapm_bean' => false,
-                    'field_mapping' => array()
-                ),
+                    'field_mapping' => [],
+                ],
             'ThrowsErrors' =>
-                array(
+                [
                     'id' => 'ThrowsErrors',
                     'testing_enabled' => true,
                     'test_passed' => false,
                     'eapm_bean' => false,
-                    'field_mapping' => array()
-                ),
-        );
+                    'field_mapping' => [],
+                ],
+        ];
 
         $connectorManager = new ConnectorManagerTest();
         $connectors = $connectorManager->buildConnectorsMeta();

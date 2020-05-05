@@ -29,14 +29,14 @@ class RawPropertyTest extends TestCase
         $field = new RawProperty();
 
         // initial mapping
-        $field->setMapping(array('foo' => 'bar'));
-        $this->assertSame(array('foo' => 'bar'), $field->getMapping());
+        $field->setMapping(['foo' => 'bar']);
+        $this->assertSame(['foo' => 'bar'], $field->getMapping());
 
         // second mapping (overwrites previous)
-        $field->setMapping(array('more' => 'beer'));
-        $this->assertSame(array(
+        $field->setMapping(['more' => 'beer']);
+        $this->assertSame([
             'more' => 'beer',
-        ), $field->getMapping());
+        ], $field->getMapping());
     }
 
     /**
@@ -48,26 +48,26 @@ class RawPropertyTest extends TestCase
 
         // add first copy to field
         $field->addCopyTo('foo');
-        $this->assertSame(array(
-            'copy_to' => array('foo'),
-        ), $field->getMapping());
+        $this->assertSame([
+            'copy_to' => ['foo'],
+        ], $field->getMapping());
 
         // add second copy to field
         $field->addCopyTo('bar');
-        $this->assertSame(array(
-            'copy_to' => array(
+        $this->assertSame([
+            'copy_to' => [
                 'foo',
                 'bar',
-            ),
-        ), $field->getMapping());
+            ],
+        ], $field->getMapping());
 
         // add existing field again, should not change
         $field->addCopyTo('foo');
-        $this->assertSame(array(
-            'copy_to' => array(
+        $this->assertSame([
+            'copy_to' => [
                 'foo',
                 'bar',
-            ),
-        ), $field->getMapping());
+            ],
+        ], $field->getMapping());
     }
 }

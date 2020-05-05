@@ -22,7 +22,7 @@ class Sugar_Connectors_TestCase extends TestCase
     protected function setUp() : void
     {
         ConnectorUtils::getDisplayConfig();
-        require(CONNECTOR_DISPLAY_CONFIG_FILE);
+        require CONNECTOR_DISPLAY_CONFIG_FILE;
         $this->original_modules_sources = $modules_sources;
 
         //Remove the current file and rebuild with default

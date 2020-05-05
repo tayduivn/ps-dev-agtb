@@ -107,16 +107,16 @@ class AuthProviderManagerBuilderTest extends TestCase
         $sugar_config['auth']['saml']['Okta'] = [
             'strict' => false,
             'debug' => true,
-            'sp' => array (
+            'sp' =>  [
                 'entityId' => 'http://localhost:8000/saml/metadata',
-                'assertionConsumerService' => array (
+                'assertionConsumerService' =>  [
                     'url' => 'http://localhost:8000/saml/acs',
                     'binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
-                ),
-                'singleLogoutService' => array (
+                ],
+                'singleLogoutService' =>  [
                     'url' => 'http://localhost:8000/saml/logout',
                     'binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
-                ),
+                ],
                 'NameIDFormat' => 'urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress',
                 'x509cert' => '-----BEGIN CERTIFICATE-----
                     MIIDdTCCAl2gAwIBAgIJAMoIJg5+hQELMA0GCSqGSIb3DQEBCwUAMFExCzAJBgNV
@@ -168,18 +168,18 @@ class AuthProviderManagerBuilderTest extends TestCase
                     Oc2LpfBzb+d2XXEU54BlXH5J5A==
                     -----END PRIVATE KEY-----
                     ',
-            ),
+            ],
 
-            'idp' => array (
+            'idp' =>  [
                 'entityId' => 'http://www.okta.com/exk7y9w6b9H1jG46H0h7',
-                'singleSignOnService' => array (
+                'singleSignOnService' =>  [
                     'url' => 'https://dev-178368.oktapreview.com/app/sugarcrmdev280437_testidp_1/exk7y9w6b9H1jG46H0h7/sso/saml',
                     'binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
-                ),
-                'singleLogoutService' => array (
+                ],
+                'singleLogoutService' =>  [
                     'url' => 'https://dev-178368.oktapreview.com/app/sugarcrmdev280437_testidp_1/exk7y9w6b9H1jG46H0h7/slo/saml',
                     'binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
-                ),
+                ],
                 'x509cert' => '-----BEGIN CERTIFICATE-----
                       MIIDpDCCAoygAwIBAgIGAVad+pKSMA0GCSqGSIb3DQEBBQUAMIGSMQswCQYDVQQGEwJVUzETMBEG
                       A1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2FuIEZyYW5jaXNjbzENMAsGA1UECgwET2t0YTEU
@@ -199,7 +199,7 @@ class AuthProviderManagerBuilderTest extends TestCase
                       0s7jNKhU4VXLkdBe6XcCX5pFYW3H4vKz2LSrCpHmuoidJqs4RaJotoTa4px5uImOn9kbIAqbHHUb
                       F2XNRGdksB0l7arTUgTTe+1RsZeshp/L
                       -----END CERTIFICATE-----',
-            ),
+            ],
         ];
 
         $sugar_config['auth']['saml']['OneLogin'] = [
@@ -207,14 +207,14 @@ class AuthProviderManagerBuilderTest extends TestCase
             'debug' => true,
             'sp' => [
                 'entityId' => 'idpdev',
-                'assertionConsumerService' => array (
+                'assertionConsumerService' =>  [
                     'url' => 'http://localhost:8000/saml/acs',
                     'binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
-                ),
-                'singleLogoutService' => array (
+                ],
+                'singleLogoutService' =>  [
                     'url' => 'http://localhost:8000/saml/logout',
                     'binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
-                ),
+                ],
                 'NameIDFormat' => 'urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress',
                 'x509cert' => '-----BEGIN CERTIFICATE-----
                     MIIDdTCCAl2gAwIBAgIJAMoIJg5+hQELMA0GCSqGSIb3DQEBCwUAMFExCzAJBgNV
@@ -270,14 +270,14 @@ class AuthProviderManagerBuilderTest extends TestCase
 
             'idp' => [
                 'entityId' => 'https://app.onelogin.com/saml/metadata/619509',
-                'singleSignOnService' => array (
+                'singleSignOnService' =>  [
                     'url' => 'https://ddolbik-dev.onelogin.com/trust/saml2/http-post/sso/619509',
                     'binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
-                ),
-                'singleLogoutService' => array (
+                ],
+                'singleLogoutService' =>  [
                     'url' => 'https://ddolbik-dev.onelogin.com/trust/saml2/http-redirect/slo/619509',
                     'binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
-                ),
+                ],
                 'x509cert' => '-----BEGIN CERTIFICATE-----
                        MIIEFzCCAv+gAwIBAgIUd1QokbJ6e6pqcOLbJF/FuLEnAEkwDQYJKoZIhvcNAQEF
                        BQAwWDELMAkGA1UEBhMCVVMxETAPBgNVBAoMCFN1Z2FyQ1JNMRUwEwYDVQQLDAxP
@@ -310,14 +310,14 @@ class AuthProviderManagerBuilderTest extends TestCase
             'debug' => true,
             'sp' => [
                 'entityId' => '6a227274-ade1-4529-9163-2cf8c4ed8ae2',
-                'assertionConsumerService' => array (
+                'assertionConsumerService' =>  [
                     'url' => 'http://localhost:8000/saml/acs',
                     'binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
-                ),
-                'singleLogoutService' => array (
+                ],
+                'singleLogoutService' =>  [
                     'url' => 'http://localhost:8000/saml/logout',
                     'binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
-                ),
+                ],
                 'NameIDFormat' => 'urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress',
                 'x509cert' => '-----BEGIN CERTIFICATE-----
                     MIIDdTCCAl2gAwIBAgIJAMoIJg5+hQELMA0GCSqGSIb3DQEBCwUAMFExCzAJBgNV
@@ -373,14 +373,14 @@ class AuthProviderManagerBuilderTest extends TestCase
 
             'idp' => [
                 'entityId' => 'https://sts.windows.net/813dd852-6578-4014-9b75-afb27ac33c28',
-                'singleSignOnService' => array (
+                'singleSignOnService' =>  [
                     'url' => 'https://login.microsoftonline.com/813dd852-6578-4014-9b75-afb27ac33c28/saml2',
                     'binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
-                ),
-                'singleLogoutService' => array (
+                ],
+                'singleLogoutService' =>  [
                     'url' => 'https://login.microsoftonline.com/813dd852-6578-4014-9b75-afb27ac33c28/saml2',
                     'binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
-                ),
+                ],
                 'x509cert' => '-----BEGIN CERTIFICATE-----
                       MIIDBTCCAe2gAwIBAgIQEsuEXXy6BbJCK3bMU6GZ/TANBgkqhkiG9w0BAQsFADAt
                       MSswKQYDVQQDEyJhY2NvdW50cy5hY2Nlc3Njb250cm9sLndpbmRvd3MubmV0MB4X

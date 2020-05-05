@@ -79,41 +79,41 @@ class MBModuleTest extends TestCase
 
     protected function getExpectedActionItems($import = false)
     {
-        $expectedArray = array(
-            array(
+        $expectedArray = [
+            [
                 'route' => "#{$this->mbModuleName}/create",
                 'label' => 'LNK_NEW_RECORD',
                 'acl_action' => 'create',
                 'acl_module' => $this->mbModuleName,
                 'icon' => 'fa-plus',
-            ),
-            array(
+            ],
+            [
                 'route' => "#{$this->mbModuleName}",
                 'label' => 'LNK_LIST',
                 'acl_action' => 'list',
                 'acl_module' => $this->mbModuleName,
                 'icon' => 'fa-bars',
-            ),
-        );
+            ],
+        ];
 
         if ($import) {
             $importRoute = http_build_query(
-                array(
+                [
                     'module' => 'Import',
                     'action' => 'Step1',
                     'import_module' => $this->mbModuleName,
                     'return_module' => $this->mbModuleName,
                     'return_action' => 'index',
-                )
+                ]
             );
 
-            $expectedArray[] = array(
+            $expectedArray[] = [
                 'route' => "#bwc/index.php?{$importRoute}",
                 'label' => 'LBL_IMPORT',
                 'acl_action' => 'import',
                 'acl_module' => $this->mbModuleName,
                 'icon' => 'fa-arrow-circle-o-up',
-            );
+            ];
         }
 
         return $expectedArray;
@@ -122,20 +122,20 @@ class MBModuleTest extends TestCase
 
     public function vardefProvider()
     {
-        return array(
-          array(
-                array("name" => "testvardef", "label" => "testvardef"),
-                "testvardef"
-            ),
-          array(
-                array("name" => "range", "label" => "testvardef"),
-                "range_field"
-            ),
-          array(
-                array("name" => "hipopotomounstruosesquipedaliofobia_pentakismyriahexakisquilioletracosiohexacontapentagono", "label" => "testvardef"),
+        return [
+          [
+                ["name" => "testvardef", "label" => "testvardef"],
+                "testvardef",
+            ],
+          [
+                ["name" => "range", "label" => "testvardef"],
+                "range_field",
+            ],
+          [
+                ["name" => "hipopotomounstruosesquipedaliofobia_pentakismyriahexakisquilioletracosiohexacontapentagono", "label" => "testvardef"],
                 $GLOBALS['db']->getValidDBName('hipopotomounstruosesquipedaliofobia_pentakismyriahexakisquilioletracosiohexacontapentagono', true, 'column'),
-            ),
-        );
+            ],
+        ];
     }
 
     /**

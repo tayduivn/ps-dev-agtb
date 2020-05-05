@@ -36,7 +36,7 @@ class vCardApiTest extends TestCase
     {
         $api = new RestService();
         $api->user = $GLOBALS['current_user'];
-        $api->setResponse(new RestResponse(array()));
+        $api->setResponse(new RestResponse([]));
         return $api;
     }
 
@@ -45,10 +45,10 @@ class vCardApiTest extends TestCase
         $contact = SugarTestContactUtilities::createContact();
 
         $api = $this->getApi();
-        $args = array(
+        $args = [
             'module' => 'Contacts',
             'id' => $contact->id,
-        );
+        ];
 
         $apiClass = new vCardApi();
         $result = $apiClass->vCardSave($api, $args);
@@ -64,13 +64,13 @@ class vCardApiTest extends TestCase
         unset($_FILES);
         $api = $this->getApi();
 
-        $args = array(
+        $args = [
             'module' => 'Contacts',
-        );
+        ];
 
         $this->expectException(SugarApiExceptionMissingParameter::class);
 
-        $apiClassMock = $this->createPartialMock('vCardApi', array('isUploadedFile'));
+        $apiClassMock = $this->createPartialMock('vCardApi', ['isUploadedFile']);
 
         $apiClassMock->expects($this->never())
             ->method('isUploadedFile');
@@ -83,23 +83,23 @@ class vCardApiTest extends TestCase
      */
     public function testvCardImportPost_FileExists_ImportsPersonRecord()
     {
-        $_FILES = array(
-            'vcard_import'    =>  array(
+        $_FILES = [
+            'vcard_import'    =>  [
                 'name'      =>  'simplevcard.vcf',
                 'tmp_name'  =>  dirname(__FILE__)."/SimpleVCard.vcf",
                 'type'      =>  'text/directory',
                 'size'      =>  42,
-                'error'     =>  0
-            )
-        );
+                'error'     =>  0,
+            ],
+        ];
 
         $api = $this->getApi();
 
-        $args = array(
+        $args = [
             'module' => 'Contacts',
-        );
+        ];
 
-        $apiClassMock = $this->createPartialMock('vCardApi', array('isUploadedFile'));
+        $apiClassMock = $this->createPartialMock('vCardApi', ['isUploadedFile']);
 
         $apiClassMock->expects($this->once())
             ->method('isUploadedFile')
@@ -113,11 +113,11 @@ class vCardApiTest extends TestCase
         //verifying that the contact and account was created from vcard.
         $contact = BeanFactory::getBean('Contacts', $results['vcard_import']);
 
-        SugarTestContactUtilities::setCreatedContact(array($results['vcard_import']));
+        SugarTestContactUtilities::setCreatedContact([$results['vcard_import']]);
         SugarTestContactUtilities::removeAllCreatedContacts();
 
-        if(!empty($contact->account_id)) {
-            SugarTestAccountUtilities::setCreatedAccount(array($contact->account_id));
+        if (!empty($contact->account_id)) {
+            SugarTestAccountUtilities::setCreatedAccount([$contact->account_id]);
             SugarTestAccountUtilities::removeAllCreatedAccounts();
         }
     }
@@ -127,32 +127,32 @@ class vCardApiTest extends TestCase
      */
     public function testvCardImportPost_FailsACLCheck_ThrowsNotAuthorizedException()
     {
-        $_FILES = array(
-            'vcard_import'    =>  array(
+        $_FILES = [
+            'vcard_import'    =>  [
                 'name'      =>  'simplevcard.vcf',
                 'tmp_name'  =>  dirname(__FILE__)."/SimpleVCard.vcf",
                 'type'      =>  'text/directory',
                 'size'      =>  42,
-                'error'     =>  0
-            )
-        );
+                'error'     =>  0,
+            ],
+        ];
         //Setting access to be denied for import and read
-        $acldata = array();
+        $acldata = [];
         $acldata['module']['access']['aclaccess'] = ACL_ALLOW_DISABLED;
         $acldata['module']['import']['aclaccess'] = ACL_ALLOW_DISABLED;
         ACLAction::setACLData($GLOBALS['current_user']->id, 'Contacts', $acldata);
         // reset cached ACLs
-        SugarACL::$acls = array();
+        SugarACL::$acls = [];
 
         $api = $this->getApi();
 
-        $args = array(
+        $args = [
             'module' => 'Contacts',
-        );
+        ];
 
         $this->expectException(SugarApiExceptionNotAuthorized::class);
 
-        $apiClassMock = $this->createPartialMock('vCardApi', array('isUploadedFile'));
+        $apiClassMock = $this->createPartialMock('vCardApi', ['isUploadedFile']);
         $apiClassMock->vCardImport($api, $args);
     }
 
@@ -163,13 +163,13 @@ class vCardApiTest extends TestCase
     {
         $api = $this->getApi();
 
-        $args = array(
+        $args = [
             'module' => 'Contacts',
-        );
+        ];
 
         $this->expectException(SugarApiExceptionMissingParameter::class);
 
-        $apiClassMock = $this->createPartialMock('vCardApi', array('isUploadedFile'));
+        $apiClassMock = $this->createPartialMock('vCardApi', ['isUploadedFile']);
         $apiClassMock->vCardImport($api, $args);
     }
- }
+}

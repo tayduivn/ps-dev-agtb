@@ -18,7 +18,7 @@ class DBManagerTest extends TestCase
      * @var DBManager
      */
     protected $_db;
-    protected $created = array();
+    protected $created = [];
 
     protected $backupGlobals = false;
 
@@ -43,18 +43,17 @@ class DBManagerTest extends TestCase
 
     protected function setUp() : void
     {
-        if(empty($this->_db))
-        {
+        if (empty($this->_db)) {
             $this->_db = DBManagerFactory::getInstance();
             $this->dbEncode = $this->_db->getEncode();
         }
-        $this->created = array();
+        $this->created = [];
     }
 
     protected function tearDown() : void
     {
         $this->_db->setEncode($this->dbEncode);
-        foreach($this->created as $table => $dummy) {
+        foreach ($this->created as $table => $dummy) {
             $this->_db->dropTableName($table);
         }
     }
@@ -73,10 +72,9 @@ class DBManagerTest extends TestCase
 
     private function _createRecords(
         $num
-        )
-    {
-        $beanIds = array();
-        for ( $i = 0; $i < $num; $i++ ) {
+    ) {
+        $beanIds = [];
+        for ($i = 0; $i < $num; $i++) {
             $bean = new Contact();
             $bean->id = create_guid();
             $bean->last_name = "foobar";
@@ -89,18 +87,19 @@ class DBManagerTest extends TestCase
 
     private function _removeRecords(
         array $ids
-        )
-    {
-        foreach ($ids as $id)
+    ) {
+        foreach ($ids as $id) {
             $this->_db->query("DELETE From contacts where id = '{$id}'");
+        }
     }
 
     public function testGetDatabase()
     {
-        if ( $this->_db instanceOf MysqliManager )
-            $this->assertInstanceOf('Mysqli',$this->_db->getDatabase());
-        else
+        if ($this->_db instanceof MysqliManager) {
+            $this->assertInstanceOf('Mysqli', $this->_db->getDatabase());
+        } else {
             $this->assertTrue(is_resource($this->_db->getDatabase()));
+        }
     }
 
     public function testCheckError()
@@ -122,17 +121,18 @@ class DBManagerTest extends TestCase
         // using a random query.
         $randVal= rand(0, 10000);
         $sql = "SELECT accounts.* FROM accounts WHERE DELETED = 0";
-        $this->_db->limitQuery($sql,0,1+$randVal,true);
+        $this->_db->limitQuery($sql, 0, 1+$randVal, true);
         $this->assertTrue($this->_db->getQueryTime() > 0);
     }
 
     public function testCheckConnection()
     {
         $this->_db->checkConnection();
-        if ( $this->_db instanceOf MysqliManager )
-            $this->assertInstanceOf('Mysqli',$this->_db->getDatabase());
-        else
+        if ($this->_db instanceof MysqliManager) {
+            $this->assertInstanceOf('Mysqli', $this->_db->getDatabase());
+        } else {
             $this->assertTrue(is_resource($this->_db->getDatabase()));
+        }
     }
 
     public function testInsert()
@@ -145,8 +145,8 @@ class DBManagerTest extends TestCase
 
         $result = $this->_db->query("select id, last_name from contacts where id = '{$bean->id}'");
         $row = $this->_db->fetchByAssoc($result);
-        $this->assertEquals($row['last_name'],$bean->last_name);
-        $this->assertEquals($row['id'],$bean->id);
+        $this->assertEquals($row['last_name'], $bean->last_name);
+        $this->assertEquals($row['id'], $bean->id);
 
         $this->_db->query("delete from contacts where id = '{$row['id']}'");
     }
@@ -161,8 +161,8 @@ class DBManagerTest extends TestCase
 
         $result = $this->_db->query("select id, last_name from contacts where id = '{$id}'");
         $row = $this->_db->fetchByAssoc($result);
-        $this->assertEquals($row['last_name'],$bean->last_name);
-        $this->assertEquals($row['id'],$id);
+        $this->assertEquals($row['last_name'], $bean->last_name);
+        $this->assertEquals($row['id'], $id);
 
         $this->_db->query("delete from contacts where id = '{$row['id']}'");
     }
@@ -170,57 +170,58 @@ class DBManagerTest extends TestCase
     public function testCreateTableParams()
     {
         $tablename = 'test' . mt_rand();
-        $this->createTableParams($tablename,
-            array(
-                'foo' => array (
+        $this->createTableParams(
+            $tablename,
+            [
+                'foo' =>  [
                     'name' => 'foo',
                     'type' => 'varchar',
                     'len' => '255',
-                    ),
-                ),
-            array(
-                array(
+                    ],
+                ],
+            [
+                [
                     'name'   => 'idx_'. $tablename,
                     'type'   => 'index',
-                    'fields' => array('foo'),
-                    )
-                )
-            );
-        $this->assertTrue(in_array($tablename,$this->_db->getTablesArray()));
+                    'fields' => ['foo'],
+                    ],
+                ]
+        );
+        $this->assertTrue(in_array($tablename, $this->_db->getTablesArray()));
     }
 
     public function testRepairTableNoChanges()
     {
         $tableName = 'testRTNC_' . mt_rand();
-        $params =  array(
+        $params =  [
                 /* VARDEF - id -  ROW[name] => 'id'  [vname] => 'LBL_ID'  [required] => 'true'  [type] => 'char'  [reportable] => ''  [comment] => 'Unique identifier'  [dbType] => 'id'  [len] => '36'  */
             'id' =>
-                array (
+                 [
                 'name' => 'id',
                 'vname' => 'LBL_ID',
                 'required'=>true,
                 'type' => 'id',
                 'reportable'=>false,
-                'comment' => 'Unique identifier'
-                ),
+                'comment' => 'Unique identifier',
+                ],
             'date_entered' =>
-                array (
+                 [
                 'name' => 'date_entered',
                 'vname' => 'LBL_DATE_ENTERED',
                 'type' => 'datetime',
                 'required'=>true,
-                'comment' => 'Date record created'
-                ),
+                'comment' => 'Date record created',
+                ],
             'date_modified' =>
-                array (
+                 [
                   'name' => 'date_modified',
                   'vname' => 'LBL_DATE_MODIFIED',
                   'type' => 'datetime',
                   'required'=>true,
-                  'comment' => 'Date record last modified'
-                ),
+                  'comment' => 'Date record last modified',
+                ],
             'modified_user_id' =>
-                array (
+                 [
                   'name' => 'modified_user_id',
                   'rname' => 'user_name',
                   'id_name' => 'modified_user_id',
@@ -232,10 +233,10 @@ class DBManagerTest extends TestCase
                   'required'=> false,
                   'len' => 36,
                   'reportable'=>true,
-                  'comment' => 'User who last modified record'
-                ),
+                  'comment' => 'User who last modified record',
+                ],
             'created_by' =>
-                array (
+                 [
                   'name' => 'created_by',
                   'rname' => 'user_name',
                   'id_name' => 'created_by',
@@ -245,18 +246,18 @@ class DBManagerTest extends TestCase
                   'isnull' => 'false',
                   'dbType' => 'id',
                   'len' => 36,
-                  'comment' => 'User ID who created record'
-                ),
+                  'comment' => 'User ID who created record',
+                ],
             'name' =>
-                array (
+                 [
                   'name' => 'name',
                   'type' => 'varchar',
                   'vname' => 'LBL_NAME',
                   'len' => 150,
-                  'comment' => 'Name of the allowable action (view, list, delete, edit)'
-                ),
+                  'comment' => 'Name of the allowable action (view, list, delete, edit)',
+                ],
             'category' =>
-                array (
+                 [
                   'name' => 'category',
                   'vname' => 'LBL_CATEGORY',
                   'type' => 'varchar',
@@ -264,152 +265,152 @@ class DBManagerTest extends TestCase
                   'reportable'=>true,
                     'required'=>true,
                     'isnull' => false,
-                  'comment' => 'Category of the allowable action (usually the name of a module)'
-                ),
+                  'comment' => 'Category of the allowable action (usually the name of a module)',
+                ],
             'acltype' =>
-                array (
+                 [
                   'name' => 'acltype',
                   'vname' => 'LBL_TYPE',
                   'type' => 'varchar',
                   'len' =>100,
                   'reportable'=>true,
-                  'comment' => 'Specifier for Category, usually "module"'
-                ),
+                  'comment' => 'Specifier for Category, usually "module"',
+                ],
             'aclaccess' =>
-                array (
+                 [
                   'name' => 'aclaccess',
                   'vname' => 'LBL_ACCESS',
                   'type' => 'int',
                   'len'=>3,
                   'reportable'=>true,
-                  'comment' => 'Number specifying access priority; highest access "wins"'
-                ),
+                  'comment' => 'Number specifying access priority; highest access "wins"',
+                ],
             'deleted' =>
-                array (
+                 [
                   'name' => 'deleted',
                   'vname' => 'LBL_DELETED',
                   'type' => 'bool',
                   'reportable'=>false,
-                  'comment' => 'Record deletion indicator'
-                ),
+                  'comment' => 'Record deletion indicator',
+                ],
             'roles' =>
-                array (
+                 [
                     'name' => 'roles',
                     'type' => 'link',
                     'relationship' => 'acl_roles_actions',
                     'source'=>'non-db',
                     'vname'=>'LBL_USERS',
-                ),
-  			'reverse' =>
-                array (
+                ],
+            'reverse' =>
+                 [
                     'name' => 'reverse',
                     'vname' => 'LBL_REVERSE',
                     'type' => 'bool',
-                    'default' => 0
-                ),
-  		 	'deleted2' =>
-                array (
+                    'default' => 0,
+                ],
+            'deleted2' =>
+                 [
                     'name' => 'deleted2',
                     'vname' => 'LBL_DELETED2',
                     'type' => 'bool',
                     'reportable'=>false,
-                    'default' => '0'
-                ),
+                    'default' => '0',
+                ],
             'primary_address_country' =>
-                array (
+                 [
                    'name' => 'primary_address_country',
                    'vname' => 'LBL_PRIMARY_ADDRESS_COUNTRY',
                    'type' => 'varchar',
                    'group'=>'primary_address',
                    'comment' => 'Country for primary address',
                    'merge_filter' => 'enabled',
-                ),
-            'refer_url' => array (
+                ],
+            'refer_url' =>  [
                 'name' => 'refer_url',
                 'vname' => 'LBL_REFER_URL',
                 'type' => 'varchar',
                 'len' => '255',
                 'default' => 'http://',
-                'comment' => 'The URL referenced in the tracker URL; no longer used as of 4.2 (see campaign_trkrs)'
-                ),
-            'budget' => array (
+                'comment' => 'The URL referenced in the tracker URL; no longer used as of 4.2 (see campaign_trkrs)',
+                ],
+            'budget' =>  [
                 'name' => 'budget',
                 'vname' => 'LBL_CAMPAIGN_BUDGET',
                 'type' => 'currency',
                 'dbType' => 'double',
-                'comment' => 'Budgeted amount for the campaign'
-                ),
-            'time_from' => array (
+                'comment' => 'Budgeted amount for the campaign',
+                ],
+            'time_from' =>  [
                 'name' => 'time_from',
                 'vname' => 'LBL_TIME_FROM',
                 'type' => 'time',
                 'required' => false,
                 'reportable' => false,
-                ),
+                ],
             'description' =>
-                array (
+                 [
                 'name' => 'description',
                 'vname' => 'LBL_DESCRIPTION',
                 'type' => 'text',
                 'comment' => 'Full text of the note',
                 'rows' => 6,
                 'cols' => 80,
-                ),
-            'cur_plain' => array (
+                ],
+            'cur_plain' =>  [
                 'name' => 'cur_plain',
                 'vname' => 'LBL_curPlain',
                 'type' => 'currency',
-            ),
-            'cur_len_prec' => array (
+            ],
+            'cur_len_prec' =>  [
                 'name' => 'cur_len_prec',
                 'vname' => 'LBL_curLenPrec',
                 'dbType' => 'decimal',
                 'type' => 'currency',
                 'len' => '26,6',
-            ),
-            'cur_len' => array (
+            ],
+            'cur_len' =>  [
                 'name' => 'cur_len',
                 'vname' => 'LBL_curLen',
                 'dbType' => 'decimal',
                 'type' => 'currency',
                 'len' => '26',
-            ),
-            'cur_len_prec2' => array (
+            ],
+            'cur_len_prec2' =>  [
                 'name' => 'cur_len_prec2',
                 'vname' => 'LBL_curLenPrec',
                 'dbType' => 'decimal',
                 'type' => 'currency',
                 'len' => '26',
                 'precision' => '6',
-            ),
+            ],
             'token_ts' =>
-            array (
+             [
                 'name' => 'token_ts',
                 'type' => 'long',
                 'required' => true,
                 'comment' => 'Token timestamp',
-                'function' => array('name' => 'displayDateFromTs', 'returns' => 'html', 'onListView' => true)
-            ),
-            'conskey' => array(
-                'name'		=> 'conskey',
-                'type'		=> 'varchar',
-                'len'		=> 32,
-                'required'	=> true,
-                'isnull'	=> false,
-            ),
-        );
-        $indexes = array(
-            array(
+                'function' => ['name' => 'displayDateFromTs', 'returns' => 'html', 'onListView' => true],
+            ],
+            'conskey' => [
+                'name'      => 'conskey',
+                'type'      => 'varchar',
+                'len'       => 32,
+                'required'  => true,
+                'isnull'    => false,
+            ],
+        ];
+        $indexes = [
+            [
                 'name' => "idx_{$tableName}",
                 'type' =>'primary',
-                'fields' => array(
+                'fields' => [
                     'id',
                     'category',
-                )
-            )
-        );
+                ],
+            ],
+        ];
 
-        if($this->_db->tableExists($tableName)) {
+        if ($this->_db->tableExists($tableName)) {
             $this->_db->dropTableName($tableName);
         }
 
@@ -425,55 +426,55 @@ class DBManagerTest extends TestCase
     public function testPrimaryKeyOnExistingIndex()
     {
         $tableName = 'testRTNC2_' . mt_rand();
-        $fields = array (
-            'list_id' => array(
+        $fields =  [
+            'list_id' => [
                 'name' => 'list_id',
                 'type' => 'id',
                 'required' => true,
                 'reportable' => false,
-            ),
-            'bean_id' => array(
+            ],
+            'bean_id' => [
                 'name' => 'bean_id',
                 'type' => 'id',
                 'required' => true,
                 'reportable' => false,
-            ),
-        );
-        $indices = array(
-            array(
+            ],
+        ];
+        $indices = [
+            [
                 'name' => 'testRTNC2_list_id_idx',
                 'type' =>'index',
-                'fields' => array(
+                'fields' => [
                     'list_id',
-                )
-            ),
-            array(
+                ],
+            ],
+            [
                 'name' => 'testRTNC2_list_id_bean_idx',
                 'type' =>'index',
-                'fields' => array(
+                'fields' => [
                     'list_id',
                     'bean_id',
-                )
-            ),
-        );
+                ],
+            ],
+        ];
         $this->createTableParams($tableName, $fields, $indices);
-        $indices = array(
-            array(
+        $indices = [
+            [
                 'name' => 'testRTNC2_list_id_idx',
                 'type' =>'index',
-                'fields' => array(
+                'fields' => [
                     'list_id',
-                )
-            ),
-            array(
+                ],
+            ],
+            [
                 'name' => 'idx_testRTNC2_pk',
                 'type' =>'primary',
-                'fields' => array(
+                'fields' => [
                     'list_id',
                     'bean_id',
-                )
-            ),
-        );
+                ],
+            ],
+        ];
         $repair = $this->_db->repairTableParams($tableName, $fields, $indices, true);
         $this->assertNotEmpty($repair, "Shouldn't be empty repair");
 
@@ -493,29 +494,29 @@ class DBManagerTest extends TestCase
     public function testRepairTableParamsAddData()
     {
         $tableName = 'test1_' . mt_rand();
-        $params =  array(
-                'foo' => array (
+        $params =  [
+                'foo' =>  [
                     'name' => 'foo',
                     'type' => 'varchar',
                     'len' => '255',
-                    ),
-        );
+                    ],
+        ];
 
-        if($this->_db->tableExists($tableName)) {
+        if ($this->_db->tableExists($tableName)) {
             $this->_db->dropTableName($tableName);
         }
-		$this->createTableParams($tableName, $params, array());
+        $this->createTableParams($tableName, $params, []);
 
-		$params['bar'] =  array (
+        $params['bar'] =   [
                     'name' => 'bar',
                     'type' => 'int',
-                    );
+                    ];
         $cols = $this->_db->get_columns($tableName);
         $this->assertArrayNotHasKey('bar', $cols);
 
-        $repair = $this->_db->repairTableParams($tableName, $params, array(), false);
+        $repair = $this->_db->repairTableParams($tableName, $params, [], false);
         $this->assertMatchesRegularExpression('#MISSING IN DATABASE.*bar#i', $repair);
-        $repair = $this->_db->repairTableParams($tableName, $params, array(), true);
+        $repair = $this->_db->repairTableParams($tableName, $params, [], true);
         $cols = $this->_db->get_columns($tableName);
         $this->assertArrayHasKey('bar', $cols);
         $this->assertEquals('bar', $cols['bar']['name']);
@@ -525,40 +526,40 @@ class DBManagerTest extends TestCase
     public function testRepairTableParamsAddIndex()
     {
         $tableName = 'test1_' . mt_rand();
-        $params =  array(
-                'foo' => array (
+        $params =  [
+                'foo' =>  [
                     'name' => 'foo',
                     'type' => 'varchar',
                     'len' => '255',
                     'isnull' => false,
                     'required' => true,
-                    ),
-                'bar' => array (
+                    ],
+                'bar' =>  [
                     'name' => 'bar',
                     'type' => 'int',
-                    ),
-        );
+                    ],
+        ];
         $primaryKey = $tableName . '_pk';
-        $indices = array(
-            array(
+        $indices = [
+            [
                 'name' => $primaryKey,
                 'type' => 'primary',
-                'fields' => array('foo'),
-            ),
-            array(
+                'fields' => ['foo'],
+            ],
+            [
                 'name' => 'test_index',
                 'type' => 'index',
-                'fields' => array('foo', 'bar', 'bazz'),
-            ),
-        );
-        if($this->_db->tableExists($tableName)) {
+                'fields' => ['foo', 'bar', 'bazz'],
+            ],
+        ];
+        if ($this->_db->tableExists($tableName)) {
             $this->_db->dropTableName($tableName);
         }
-		$this->createTableParams($tableName, $params, array());
-		$params['bazz'] =  array (
+        $this->createTableParams($tableName, $params, []);
+        $params['bazz'] =   [
                     'name' => 'bazz',
                     'type' => 'int',
-        );
+        ];
 
         $repair = $this->_db->repairTableParams($tableName, $params, $indices, false);
         $this->assertMatchesRegularExpression('#MISSING IN DATABASE.*bazz#i', $repair);
@@ -588,30 +589,30 @@ class DBManagerTest extends TestCase
     public function testRepairTableParamsAddIndexAndData()
     {
         $tableName = 'test1_' . mt_rand();
-        $params =  array(
-                'foo' => array (
+        $params =  [
+                'foo' =>  [
                     'name' => 'foo',
                     'type' => 'varchar',
                     'len' => '255',
-                    ),
-                'bar' => array (
+                    ],
+                'bar' =>  [
                     'name' => 'bar',
                     'type' => 'int',
-                    ),
-        );
-        $index = array(
-			'name'			=> 'test_index',
-			'type'			=> 'index',
-			'fields'		=> array('foo', 'bar'),
-		);
-        if($this->_db->tableExists($tableName)) {
+                    ],
+        ];
+        $index = [
+            'name'          => 'test_index',
+            'type'          => 'index',
+            'fields'        => ['foo', 'bar'],
+        ];
+        if ($this->_db->tableExists($tableName)) {
             $this->_db->dropTableName($tableName);
         }
-		$this->createTableParams($tableName, $params, array());
+        $this->createTableParams($tableName, $params, []);
 
-        $repair = $this->_db->repairTableParams($tableName, $params, array($index), false);
+        $repair = $this->_db->repairTableParams($tableName, $params, [$index], false);
         $this->assertMatchesRegularExpression('#MISSING INDEX IN DATABASE.*test_index#i', $repair);
-        $repair = $this->_db->repairTableParams($tableName, $params, array($index), true);
+        $repair = $this->_db->repairTableParams($tableName, $params, [$index], true);
         $idx = $this->_db->get_indices($tableName);
         $this->assertArrayHasKey('test_index', $idx);
         $this->assertContains('foo', $idx['test_index']['fields']);
@@ -621,177 +622,197 @@ class DBManagerTest extends TestCase
     public function testCompareFieldInTables()
     {
         $tablename1 = 'test1_' . mt_rand();
-        $this->createTableParams($tablename1,
-            array(
-                'foo' => array (
+        $this->createTableParams(
+            $tablename1,
+            [
+                'foo' =>  [
                     'name' => 'foo',
                     'type' => 'varchar',
                     'len' => '255',
-                    ),
-                ),
-            array()
-            );
+                    ],
+                ],
+            []
+        );
         $tablename2 = 'test2_' . mt_rand();
-        $this->createTableParams($tablename2,
-            array(
-                'foo' => array (
+        $this->createTableParams(
+            $tablename2,
+            [
+                'foo' =>  [
                     'name' => 'foo',
                     'type' => 'varchar',
                     'len' => '255',
-                    ),
-                ),
-            array()
-            );
+                    ],
+                ],
+            []
+        );
 
         $res = $this->_db->compareFieldInTables(
-            'foo', $tablename1, $tablename2);
+            'foo',
+            $tablename1,
+            $tablename2
+        );
 
-        $this->assertEquals($res['msg'],'match');
+        $this->assertEquals($res['msg'], 'match');
     }
 
     public function testCompareFieldInTablesNotInTable1()
     {
         $tablename1 = 'test3_' . mt_rand();
-        $this->createTableParams($tablename1,
-            array(
-                'foobar' => array (
+        $this->createTableParams(
+            $tablename1,
+            [
+                'foobar' =>  [
                     'name' => 'foobar',
                     'type' => 'varchar',
                     'len' => '255',
-                    ),
-                ),
-            array()
-            );
+                    ],
+                ],
+            []
+        );
         $tablename2 = 'test4_' . mt_rand();
-        $this->createTableParams($tablename2,
-            array(
-                'foo' => array (
+        $this->createTableParams(
+            $tablename2,
+            [
+                'foo' =>  [
                     'name' => 'foo',
                     'type' => 'varchar',
                     'len' => '255',
-                    ),
-                ),
-            array()
-            );
+                    ],
+                ],
+            []
+        );
 
         $res = $this->_db->compareFieldInTables(
-            'foo', $tablename1, $tablename2);
-        $this->assertEquals($res['msg'],'not_exists_table1');
+            'foo',
+            $tablename1,
+            $tablename2
+        );
+        $this->assertEquals($res['msg'], 'not_exists_table1');
     }
 
     public function testCompareFieldInTablesNotInTable2()
     {
         $tablename1 = 'test5_' . mt_rand();
-        $this->createTableParams($tablename1,
-            array(
-                'foo' => array (
+        $this->createTableParams(
+            $tablename1,
+            [
+                'foo' =>  [
                     'name' => 'foo',
                     'type' => 'varchar',
                     'len' => '255',
-                    ),
-                ),
-            array()
-            );
+                    ],
+                ],
+            []
+        );
         $tablename2 = 'test6_' . mt_rand();
-        $this->createTableParams($tablename2,
-            array(
-                'foobar' => array (
+        $this->createTableParams(
+            $tablename2,
+            [
+                'foobar' =>  [
                     'name' => 'foobar',
                     'type' => 'varchar',
                     'len' => '255',
-                    ),
-                ),
-            array()
-            );
+                    ],
+                ],
+            []
+        );
 
         $res = $this->_db->compareFieldInTables(
-            'foo', $tablename1, $tablename2);
+            'foo',
+            $tablename1,
+            $tablename2
+        );
 
-        $this->assertEquals($res['msg'],'not_exists_table2');
+        $this->assertEquals($res['msg'], 'not_exists_table2');
     }
 
     public function testCompareFieldInTablesFieldsDoNotMatch()
     {
         $tablename1 = 'test7_' . mt_rand();
-        $this->createTableParams($tablename1,
-            array(
-                'foo' => array (
+        $this->createTableParams(
+            $tablename1,
+            [
+                'foo' =>  [
                     'name' => 'foo',
                     'type' => 'varchar',
                     'len' => '255',
-                    ),
-                ),
-            array()
-            );
+                    ],
+                ],
+            []
+        );
         $tablename2 = 'test8_' . mt_rand();
-        $this->createTableParams($tablename2,
-            array(
-                'foo' => array (
+        $this->createTableParams(
+            $tablename2,
+            [
+                'foo' =>  [
                     'name' => 'foo',
                     'type' => 'int',
-                    ),
-                ),
-            array()
-            );
+                    ],
+                ],
+            []
+        );
 
         $res = $this->_db->compareFieldInTables(
-            'foo', $tablename1, $tablename2);
+            'foo',
+            $tablename1,
+            $tablename2
+        );
 
-        $this->assertEquals($res['msg'],'no_match');
+        $this->assertEquals($res['msg'], 'no_match');
     }
 
     public function providerRepairIndexes()
     {
-        return array(
+        return [
         // create PK
-            array(
-                array(),
-                array(array('name' => 'pkey', 'type' => 'primary', 'fields' => array('id'))),
+            [
+                [],
+                [['name' => 'pkey', 'type' => 'primary', 'fields' => ['id']]],
                 'ADD {"name":"pkey","type":"primary","fields":["id"]}',
-            ),
+            ],
         // PK name change
-            array(
-                array(array('name' => 'pkey', 'type' => 'primary', 'fields' => array('id'))),
-                array(array('name' => 'pkey2', 'type' => 'primary', 'fields' => array('id'))),
+            [
+                [['name' => 'pkey', 'type' => 'primary', 'fields' => ['id']]],
+                [['name' => 'pkey2', 'type' => 'primary', 'fields' => ['id']]],
                 '',
-            ),
+            ],
         // PK removal
-            array(
-                array(array('name' => 'pkey', 'type' => 'primary', 'fields' => array('id'))),
-                array(),
+            [
+                [['name' => 'pkey', 'type' => 'primary', 'fields' => ['id']]],
+                [],
                 '',
-            ),
+            ],
         // Index add
-            array(
-                array(),
-                array(array('name' => 'mykey', 'type' => 'index', 'fields' => array('foo', 'bar'))),
+            [
+                [],
+                [['name' => 'mykey', 'type' => 'index', 'fields' => ['foo', 'bar']]],
                 'ADD {"name":"mykey","type":"index","fields":["foo","bar"]}',
-            ),
+            ],
         // Index remove
-            array(
-                array(array('name' => 'mykey', 'type' => 'index', 'fields' => array('foo', 'bar'))),
-                array(),
+            [
+                [['name' => 'mykey', 'type' => 'index', 'fields' => ['foo', 'bar']]],
+                [],
                 '',
-            ),
+            ],
         // Index change
-            array(
-                array(array('name' => 'mykey', 'type' => 'index', 'fields' => array('foo'))),
-                array(array('name' => 'mykey', 'type' => 'index', 'fields' => array('foo', 'bar'))),
+            [
+                [['name' => 'mykey', 'type' => 'index', 'fields' => ['foo']]],
+                [['name' => 'mykey', 'type' => 'index', 'fields' => ['foo', 'bar']]],
                 'ADD {"name":"mykey","type":"index","fields":["foo","bar"]}',
-            ),
+            ],
         // Index change 2
-            array(
-                array(array('name' => 'mykey', 'type' => 'index', 'fields' => array('foo'))),
-                array(array('name' => 'mykeynew', 'type' => 'index', 'fields' => array('foo', 'bar'))),
+            [
+                [['name' => 'mykey', 'type' => 'index', 'fields' => ['foo']]],
+                [['name' => 'mykeynew', 'type' => 'index', 'fields' => ['foo', 'bar']]],
                 'ADD {"name":"mykeynew","type":"index","fields":["foo","bar"]}',
-            ),
+            ],
         // Index rename
-            array(
-                array(array('name' => 'mykey', 'type' => 'index', 'fields' => array('foo', 'bar'))),
-                array(array('name' => 'mykeynew', 'type' => 'index', 'fields' => array('foo', 'bar'))),
+            [
+                [['name' => 'mykey', 'type' => 'index', 'fields' => ['foo', 'bar']]],
+                [['name' => 'mykeynew', 'type' => 'index', 'fields' => ['foo', 'bar']]],
                 '',
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -804,27 +825,27 @@ class DBManagerTest extends TestCase
     {
         $tablename1 = 'test23_' . mt_rand();
         $dbmock = $this->getMockBuilder(get_class($this->_db))
-            ->setMethods(array('get_columns', 'get_indices', 'add_drop_constraint'))
+            ->setMethods(['get_columns', 'get_indices', 'add_drop_constraint'])
             ->getMock();
 
-        $db_columns = array(
-                'id' => array(
+        $db_columns = [
+                'id' => [
                     'name' => 'id',
                     'type' => 'id',
-                ),
-                'foo' => array (
+                ],
+                'foo' =>  [
                     'name' => 'foo',
                     'type' => 'int',
-                    ),
-                'bar' => array (
+                    ],
+                'bar' =>  [
                     'name' => 'bar',
                     'type' => 'short',
-                    ),
-                'foobar' => array (
+                    ],
+                'foobar' =>  [
                     'name' => 'foobar',
                     'type' => 'float',
-                    ),
-        );
+                    ],
+        ];
 
 
         $dbmock->expects($this->any())
@@ -849,7 +870,7 @@ class DBManagerTest extends TestCase
         $sql = SugarTestReflection::callProtectedMethod(
             $dbmock,
             'repairTableIndices',
-            array($tablename1, $db_columns, $new, false)
+            [$tablename1, $db_columns, $new, false]
         );
 
         if (!empty($query)) {
@@ -863,53 +884,61 @@ class DBManagerTest extends TestCase
     public function testAddColumn()
     {
         $tablename1 = 'test23_' . mt_rand();
-        $this->createTableParams($tablename1,
-            array(
-                'foo' => array (
+        $this->createTableParams(
+            $tablename1,
+            [
+                'foo' =>  [
                     'name' => 'foo',
                     'type' => 'varchar',
                     'len' => '255',
-                    ),
-                'foobar' => array (
+                    ],
+                'foobar' =>  [
                     'name' => 'foobar',
                     'type' => 'varchar',
                     'len' => '255',
-                    ),
-                ),
-            array()
-            );
+                    ],
+                ],
+            []
+        );
         $tablename2 = 'test24_' . mt_rand();
-        $this->createTableParams($tablename2,
-            array(
-                'foo' => array (
+        $this->createTableParams(
+            $tablename2,
+            [
+                'foo' =>  [
                     'name' => 'foo',
                     'type' => 'varchar',
                     'len' => '255',
-                    ),
-                ),
-            array()
-            );
+                    ],
+                ],
+            []
+        );
 
         $res = $this->_db->compareFieldInTables(
-            'foobar', $tablename1, $tablename2);
+            'foobar',
+            $tablename1,
+            $tablename2
+        );
 
-        $this->assertEquals($res['msg'],'not_exists_table2');
+        $this->assertEquals($res['msg'], 'not_exists_table2');
 
         $this->_db->addColumn(
             $tablename2,
-            array(
-                'foobar' => array (
+            [
+                'foobar' =>  [
                     'name' => 'foobar',
                     'type' => 'varchar',
                     'len' => '255',
-                    )
-                )
-            );
+                    ],
+                ]
+        );
 
         $res = $this->_db->compareFieldInTables(
-            'foobar', $tablename1, $tablename2);
+            'foobar',
+            $tablename1,
+            $tablename2
+        );
 
-        $this->assertEquals($res['msg'],'match');
+        $this->assertEquals($res['msg'], 'match');
     }
 
     public static function alterColumnDataProvider()
@@ -1006,32 +1035,42 @@ class DBManagerTest extends TestCase
      */
     public function testAlterColumn(array $target, array $temp)
     {
-        $foo_col = array ('name' => 'foo', 'type' => 'varchar', 'len' => '255'); // Common column between tables
+        $foo_col =  ['name' => 'foo', 'type' => 'varchar', 'len' => '255']; // Common column between tables
 
         $tablebase = 'alter_column_';
 
         $t1 = $tablebase . 'A';
         $t2 = $tablebase . 'B';
-        $this->createTableParams(  $t1,
-                                        array('foo' => $foo_col, 'foobar' => $target),
-                                        array());
-        $this->createTableParams(  $t2,
-                                        array('foo' => $foo_col, 'foobar' => $temp),
-                                        array());
+        $this->createTableParams(
+            $t1,
+            ['foo' => $foo_col, 'foobar' => $target],
+            []
+        );
+        $this->createTableParams(
+            $t2,
+            ['foo' => $foo_col, 'foobar' => $temp],
+            []
+        );
 
         $res = $this->_db->compareFieldInTables('foobar', $t1, $t2);
 
-        $this->assertEquals('no_match', $res['msg'],
-                            "testAlterColumn table columns match while they shouldn't for table $t1 and $t2: "
-                            . print_r($res,true) );
+        $this->assertEquals(
+            'no_match',
+            $res['msg'],
+            "testAlterColumn table columns match while they shouldn't for table $t1 and $t2: "
+            . print_r($res, true)
+        );
 
-        $this->_db->alterColumn($t2, array('foobar' => $target));
+        $this->_db->alterColumn($t2, ['foobar' => $target]);
 
         $res = $this->_db->compareFieldInTables('foobar', $t1, $t2);
 
-        $this->assertEquals('match', $res['msg'],
-                            "testAlterColumn table columns don't match while they should for table $t1 and $t2: "
-                            . print_r($res,true) );
+        $this->assertEquals(
+            'match',
+            $res['msg'],
+            "testAlterColumn table columns don't match while they should for table $t1 and $t2: "
+            . print_r($res, true)
+        );
     }
 
     public function testAlterColumnWithIndex()
@@ -1069,33 +1108,33 @@ class DBManagerTest extends TestCase
         if (!($this->_db instanceof OracleManager)) {
             $this->markTestSkipped('This test can run only on Oracle instance');
         }
-        $params = array(
-            'foo' => array(
+        $params = [
+            'foo' => [
                 'name' => 'foo',
                 'vname' => 'LBL_FOO',
                 'type' => 'enum',
                 'dbType' => 'varchar',
-            ),
-        );
+            ],
+        ];
         $tableName = 'testVarchar2ToNumber' . mt_rand();
 
         if ($this->_db->tableExists($tableName)) {
             $this->_db->dropTableName($tableName);
         }
-        $this->createTableParams($tableName, $params, array());
+        $this->createTableParams($tableName, $params, []);
 
-        $this->_db->insertParams($tableName, $params, array('foo' => $insertValue));
+        $this->_db->insertParams($tableName, $params, ['foo' => $insertValue]);
 
-        $params = array(
-            'foo' => array(
+        $params = [
+            'foo' => [
                 'name' => 'foo',
                 'vname' => 'LBL_FOO',
                 'type' => 'enum',
                 'dbType' => 'int',
-            ),
-        );
+            ],
+        ];
 
-        $this->_db->repairTableParams($tableName, $params, array(), true);
+        $this->_db->repairTableParams($tableName, $params, [], true);
 
         $columns = $this->_db->get_columns($tableName);
         $this->assertEquals('number', $columns['foo']['type']);
@@ -1107,21 +1146,22 @@ class DBManagerTest extends TestCase
     public function testDropTableName()
     {
         $tablename = 'test' . mt_rand();
-        $this->createTableParams($tablename,
-            array(
-                'foo' => array (
+        $this->createTableParams(
+            $tablename,
+            [
+                'foo' =>  [
                     'name' => 'foo',
                     'type' => 'varchar',
                     'len' => '255',
-                    ),
-                ),
-            array()
-            );
-        $this->assertTrue(in_array($tablename,$this->_db->getTablesArray()));
+                    ],
+                ],
+            []
+        );
+        $this->assertTrue(in_array($tablename, $this->_db->getTablesArray()));
 
         $this->dropTableName($tablename);
 
-        $this->assertFalse(in_array($tablename,$this->_db->getTablesArray()));
+        $this->assertFalse(in_array($tablename, $this->_db->getTablesArray()));
     }
 
     public function testDisconnectAll()
@@ -1136,13 +1176,15 @@ class DBManagerTest extends TestCase
         $beanIds = $this->_createRecords(5);
 
         $result = $this->_db->query("SELECT id From contacts where last_name = 'foobar'");
-        if ( $this->_db instanceOf MysqliManager )
-            $this->assertInstanceOf('Mysqli_result',$result);
-        else
+        if ($this->_db instanceof MysqliManager) {
+            $this->assertInstanceOf('Mysqli_result', $result);
+        } else {
             $this->assertTrue(is_resource($result));
+        }
 
-        while ( $row = $this->_db->fetchByAssoc($result) )
-            $this->assertTrue(in_array($row['id'],$beanIds),"Id not found '{$row['id']}'");
+        while ($row = $this->_db->fetchByAssoc($result)) {
+            $this->assertTrue(in_array($row['id'], $beanIds), "Id not found '{$row['id']}'");
+        }
 
         $this->_removeRecords($beanIds);
     }
@@ -1151,17 +1193,19 @@ class DBManagerTest extends TestCase
     {
         $beanIds = $this->_createRecords(5);
         $_REQUEST['module'] = 'contacts';
-        $result = $this->_db->limitQuery("SELECT id From contacts where last_name = 'foobar'",1,3);
-        if ( $this->_db instanceOf MysqliManager )
-            $this->assertInstanceOf('Mysqli_result',$result);
-        else
+        $result = $this->_db->limitQuery("SELECT id From contacts where last_name = 'foobar'", 1, 3);
+        if ($this->_db instanceof MysqliManager) {
+            $this->assertInstanceOf('Mysqli_result', $result);
+        } else {
             $this->assertTrue(is_resource($result));
+        }
 
-        while ( $row = $this->_db->fetchByAssoc($result) ) {
-            if ( $row['id'][0] > 3 || $row['id'][0] < 0 )
-                $this->assertFalse(in_array($row['id'],$beanIds),"Found {$row['id']} in error");
-            else
-                $this->assertTrue(in_array($row['id'],$beanIds),"Didn't find {$row['id']}");
+        while ($row = $this->_db->fetchByAssoc($result)) {
+            if ($row['id'][0] > 3 || $row['id'][0] < 0) {
+                $this->assertFalse(in_array($row['id'], $beanIds), "Found {$row['id']} in error");
+            } else {
+                $this->assertTrue(in_array($row['id'], $beanIds), "Didn't find {$row['id']}");
+            }
         }
         unset($_REQUEST['module']);
         $this->_removeRecords($beanIds);
@@ -1189,12 +1233,12 @@ SQL;
         $beanIds = $this->_createRecords(1);
 
         $id = $this->_db->getOne("SELECT id From contacts where last_name = 'foobar'");
-        $this->assertEquals($id,$beanIds[0]);
+        $this->assertEquals($id, $beanIds[0]);
 
         // bug 38994
         if ($this->_db->dbType == 'mysql') {
             $id = $this->_db->getOne($this->_db->limitQuerySql("SELECT id From contacts where last_name = 'foobar'", 0, 1));
-            $this->assertEquals($id,$beanIds[0]);
+            $this->assertEquals($id, $beanIds[0]);
         }
 
         $this->_removeRecords($beanIds);
@@ -1205,9 +1249,9 @@ SQL;
         $beanIds = $this->_createRecords(1);
 
         $result = $this->_db->query("SELECT id From contacts where id = '{$beanIds[0]}'");
-        $fields = $this->_db->getFieldsArray($result,true);
+        $fields = $this->_db->getFieldsArray($result, true);
 
-        $this->assertEquals(array("id"),$fields);
+        $this->assertEquals(["id"], $fields);
 
         $this->_removeRecords($beanIds);
     }
@@ -1229,7 +1273,7 @@ SQL;
         $row = $this->_db->fetchByAssoc($result);
 
         $this->assertTrue(is_array($row));
-        $this->assertEquals($row['id'],$beanIds[0]);
+        $this->assertEquals($row['id'], $beanIds[0]);
 
         $this->_removeRecords($beanIds);
     }
@@ -1244,16 +1288,17 @@ SQL;
     public function testGetTablesArray()
     {
         $tablename = 'test' . mt_rand();
-        $this->createTableParams($tablename,
-            array(
-                'foo' => array (
+        $this->createTableParams(
+            $tablename,
+            [
+                'foo' =>  [
                     'name' => 'foo',
                     'type' => 'varchar',
                     'len' => '255',
-                    ),
-                ),
-            array()
-            );
+                    ],
+                ],
+            []
+        );
 
         $this->assertTrue($this->_db->tableExists($tablename));
     }
@@ -1268,89 +1313,90 @@ SQL;
     public function testTableExists()
     {
         $tablename = 'test' . mt_rand();
-        $this->createTableParams($tablename,
-            array(
-                'foo' => array (
+        $this->createTableParams(
+            $tablename,
+            [
+                'foo' =>  [
                     'name' => 'foo',
                     'type' => 'varchar',
                     'len' => '255',
-                    ),
-                ),
-            array()
-            );
+                    ],
+                ],
+            []
+        );
 
-        $this->assertTrue(in_array($tablename,$this->_db->getTablesArray()));
+        $this->assertTrue(in_array($tablename, $this->_db->getTablesArray()));
     }
 
     public function providerCompareVardefs()
     {
-        $returnArray = array(
-            array(
-                array(
+        $returnArray = [
+            [
+                [
                     'name' => 'foo',
                     'type' => 'varchar',
                     'len' => '255',
-                    ),
-                array(
+                    ],
+                [
                     'name' => 'foo',
                     'type' => 'varchar',
                     'len' => '255',
-                    ),
-                true),
-            array(
-                array(
+                    ],
+                true],
+            [
+                [
                     'name' => 'foo',
                     'type' => 'char',
                     'len' => '255',
-                    ),
-                array(
+                    ],
+                [
                     'name' => 'foo',
                     'type' => 'varchar',
                     'len' => '255',
-                    ),
-                false),
-            array(
-                array(
+                    ],
+                false],
+            [
+                [
                     'name' => 'foo',
                     'type' => 'char',
                     'len' => '255',
-                    ),
-                array(
+                    ],
+                [
                     'name' => 'foo',
                     'len' => '255',
-                ),
-                false),
-            array(
-                array(
+                ],
+                false],
+            [
+                [
                     'name' => 'foo',
                     'len' => '255',
-                    ),
-                array(
-                    'name' => 'foo',
-                    'type' => 'varchar',
-                    'len' => '255',
-                    ),
-                true),
-            array(
-                array(
+                    ],
+                [
                     'name' => 'foo',
                     'type' => 'varchar',
                     'len' => '255',
-                    ),
-                array(
+                    ],
+                true],
+            [
+                [
+                    'name' => 'foo',
+                    'type' => 'varchar',
+                    'len' => '255',
+                    ],
+                [
                     'name' => 'FOO',
                     'type' => 'varchar',
                     'len' => '255',
-                    ),
-                true),
-                array(
-                    array(
+                    ],
+                true],
+                [
+                    [
                         'name' => 'foo',
                         'type' => 'decimal',
                         'len' => '16,6',
                         'default' => '0.000000',
-                    ),
-                    array(
+                    ],
+                    [
                         'name' => 'foo',
                         'type' => 'decimal',
                         'default' => '',
@@ -1358,16 +1404,16 @@ SQL;
                         'len' => '16,6',
                         'size' => '20',
                         'precision' => '6',
-                    ),
-                    true),
-                    array(
-                        array(
+                    ],
+                    true],
+                    [
+                        [
                             'name' => 'foo',
                             'type' => 'decimal',
                             'len' => '16,6',
                             'default' => '0.000000',
-                        ),
-                        array(
+                        ],
+                        [
                             'name' => 'foo',
                             'type' => 'decimal',
                             'default' => '0',
@@ -1375,27 +1421,27 @@ SQL;
                             'len' => '16,6',
                             'size' => '20',
                             'precision' => '6',
-                        ),
-                        true),
-                        array(
-                            array(
+                        ],
+                        true],
+                        [
+                            [
                                 'name' => 'solution_number',
                                 'type' => 'int',
                                 'len' => '11',
                                 'auto_increment' => '1',
                                 'required' => 'true',
-                            ),
-                            array(
+                            ],
+                            [
                                 'name' => 'solution_number',
                                 'type' => 'int',
                                 'len' => '11',
                                 'auto_increment' => 'true',
                                 'required' => 'true',
                                 'autoinc_next' => '51',
-                                'dbType' => 'int'
-                            ),
-                            true,),
-            );
+                                'dbType' => 'int',
+                            ],
+                            true,],
+            ];
 
         return $returnArray;
     }
@@ -1403,13 +1449,12 @@ SQL;
     /**
      * @dataProvider providerCompareVarDefs
      */
-    public function testCompareVarDefs($fieldDef1,$fieldDef2,$expectedResult)
+    public function testCompareVarDefs($fieldDef1, $fieldDef2, $expectedResult)
     {
-        if ( $expectedResult ) {
-            $this->assertTrue($this->_db->compareVarDefs($fieldDef1,$fieldDef2));
-        }
-        else {
-            $this->assertFalse($this->_db->compareVarDefs($fieldDef1,$fieldDef2));
+        if ($expectedResult) {
+            $this->assertTrue($this->_db->compareVarDefs($fieldDef1, $fieldDef2));
+        } else {
+            $this->assertFalse($this->_db->compareVarDefs($fieldDef1, $fieldDef2));
         }
     }
 
@@ -1436,297 +1481,302 @@ SQL;
         $emptytime = $this->_db->emptyValue("time");
         $emptydatetime = $this->_db->emptyValue("datetime");
 
-        return array(
-            array("testid", array (
+        return [
+            ["testid",  [
                   'id' =>
-                  array (
+                   [
                     'name' => 'id',
                     'type' => 'varchar',
                     'required'=>true,
-                  ),
-                  ),
-                  array("id" => "test123"),
-                  array("id" => "'test123'")
-            ),
-            array("testtext", array (
+                  ],
+                  ],
+                  ["id" => "test123"],
+                  ["id" => "'test123'"],
+            ],
+            ["testtext",  [
                   'text1' =>
-                  array (
+                   [
                     'name' => 'text1',
                     'type' => 'varchar',
                     'required'=>true,
-                  ),
+                  ],
                   'text2' =>
-                  array (
+                   [
                     'name' => 'text2',
                     'type' => 'varchar',
-                  ),
-                  ),
-                  array(),
-                  array("text1" => "''", "text2" => "NULL"),
-                  array()
-            ),
-            array("testtext2", array (
+                  ],
+                  ],
+                  [],
+                  ["text1" => "''", "text2" => "NULL"],
+                  [],
+            ],
+            ["testtext2",  [
                   'text1' =>
-                  array (
+                   [
                     'name' => 'text1',
                     'type' => 'varchar',
                     'required'=>true,
-                  ),
+                  ],
                   'text2' =>
-                  array (
+                   [
                     'name' => 'text2',
                     'type' => 'varchar',
-                  ),
-                  ),
-                  array('text1' => 'foo', 'text2' => 'bar'),
-                  array("text1" => "'foo'", 'text2' => "'bar'"),
-            ),
-            array("testreq", array (
+                  ],
+                  ],
+                  ['text1' => 'foo', 'text2' => 'bar'],
+                  ["text1" => "'foo'", 'text2' => "'bar'"],
+            ],
+            ["testreq",  [
                   'id' =>
-                      array (
+                       [
                         'name' => 'id',
                         'type' => 'varchar',
                         'required'=>true,
-                      ),
+                      ],
                   'intval' =>
-                      array (
+                       [
                         'name' => 'intval',
                         'type' => 'int',
                         'required'=>true,
-                      ),
+                      ],
                   'floatval' =>
-                      array (
+                       [
                         'name' => 'floatval',
                         'type' => 'decimal',
                         'required'=>true,
-                      ),
+                      ],
                   'money' =>
-                      array (
+                       [
                         'name' => 'money',
                         'type' => 'currency',
                         'required'=>true,
-                      ),
+                      ],
                   'test_dtm' =>
-                      array (
+                       [
                         'name' => 'test_dtm',
                         'type' => 'datetime',
                         'required'=>true,
-                      ),
+                      ],
                   'test_dtm2' =>
-                      array (
+                       [
                         'name' => 'test_dtm2',
                         'type' => 'datetimecombo',
                         'required'=>true,
-                      ),
+                      ],
                   'test_dt' =>
-                      array (
+                       [
                         'name' => 'test_dt',
                         'type' => 'date',
                         'required'=>true,
-                      ),
+                      ],
                   'test_tm' =>
-                      array (
+                       [
                         'name' => 'test_tm',
                         'type' => 'time',
                         'required'=>true,
-                      ),
-                  ),
-                  array("id" => "test123", 'intval' => 42, 'floatval' => 42.24,
-                  		'money' => 56.78, 'test_dtm' => '2002-01-02 12:34:56', 'test_dtm2' => '2011-10-08 01:02:03',
-                        'test_dt' => '1998-10-04', 'test_tm' => '03:04:05'
-                  ),
-                  array("id" => "'test123'", 'intval' => 42, 'floatval' => 42.24,
-                  		'money' => 56.78, 'test_dtm' => $this->_db->convert('\'2002-01-02 12:34:56\'', "datetime"), 'test_dtm2' => $this->_db->convert('\'2011-10-08 01:02:03\'', 'datetime'),
-                        'test_dt' => $this->_db->convert('\'1998-10-04\'', 'date'), 'test_tm' => $this->_db->convert('\'03:04:05\'', 'time')
-                  ),
-            ),
-            array("testreqnull", array (
+                      ],
+                  ],
+                  ["id" => "test123", 'intval' => 42, 'floatval' => 42.24,
+                        'money' => 56.78, 'test_dtm' => '2002-01-02 12:34:56', 'test_dtm2' => '2011-10-08 01:02:03',
+                        'test_dt' => '1998-10-04', 'test_tm' => '03:04:05',
+                  ],
+                  ["id" => "'test123'", 'intval' => 42, 'floatval' => 42.24,
+                        'money' => 56.78, 'test_dtm' => $this->_db->convert('\'2002-01-02 12:34:56\'', "datetime"), 'test_dtm2' => $this->_db->convert('\'2011-10-08 01:02:03\'', 'datetime'),
+                        'test_dt' => $this->_db->convert('\'1998-10-04\'', 'date'), 'test_tm' => $this->_db->convert('\'03:04:05\'', 'time'),
+                  ],
+            ],
+            ["testreqnull",  [
                   'id' =>
-                      array (
+                       [
                         'name' => 'id',
                         'type' => 'varchar',
                         'required'=>true,
-                      ),
+                      ],
                   'intval' =>
-                      array (
+                       [
                         'name' => 'intval',
                         'type' => 'int',
                         'required'=>true,
-                      ),
+                      ],
                   'floatval' =>
-                      array (
+                       [
                         'name' => 'floatval',
                         'type' => 'decimal',
                         'required'=>true,
-                      ),
+                      ],
                   'money' =>
-                      array (
+                       [
                         'name' => 'money',
                         'type' => 'currency',
                         'required'=>true,
-                      ),
+                      ],
                   'test_dtm' =>
-                      array (
+                       [
                         'name' => 'test_dtm',
                         'type' => 'datetime',
                         'required'=>true,
-                      ),
+                      ],
                   'test_dtm2' =>
-                      array (
+                       [
                         'name' => 'test_dtm2',
                         'type' => 'datetimecombo',
                         'required'=>true,
-                      ),
+                      ],
                   'test_dt' =>
-                      array (
+                       [
                         'name' => 'test_dt',
                         'type' => 'date',
                         'required'=>true,
-                      ),
+                      ],
                   'test_tm' =>
-                      array (
+                       [
                         'name' => 'test_tm',
                         'type' => 'time',
                         'required'=>true,
-                      ),
-                  ),
-                  array(),
-                  array("id" => "''", 'intval' => 0, 'floatval' => 0,
-                  		'money' => 0, 'test_dtm' => "$emptydatetime", 'test_dtm2' => "$emptydatetime",
-                        'test_dt' => "$emptydate", 'test_tm' => "$emptytime"
-                  ),
-                  array(),
-            ),
-            array("testnull", array (
+                      ],
+                  ],
+                  [],
+                  ["id" => "''", 'intval' => 0, 'floatval' => 0,
+                        'money' => 0, 'test_dtm' => "$emptydatetime", 'test_dtm2' => "$emptydatetime",
+                        'test_dt' => "$emptydate", 'test_tm' => "$emptytime",
+                  ],
+                  [],
+            ],
+            ["testnull",  [
                   'id' =>
-                      array (
+                       [
                         'name' => 'id',
                         'type' => 'varchar',
-                      ),
+                      ],
                   'intval' =>
-                      array (
+                       [
                         'name' => 'intval',
                         'type' => 'int',
-                      ),
+                      ],
                   'floatval' =>
-                      array (
+                       [
                         'name' => 'floatval',
                         'type' => 'decimal',
-                      ),
+                      ],
                   'money' =>
-                      array (
+                       [
                         'name' => 'money',
                         'type' => 'currency',
-                      ),
+                      ],
                   'test_dtm' =>
-                      array (
+                       [
                         'name' => 'test_dtm',
                         'type' => 'datetime',
-                      ),
+                      ],
                   'test_dtm2' =>
-                      array (
+                       [
                         'name' => 'test_dtm2',
                         'type' => 'datetimecombo',
-                      ),
+                      ],
                   'test_dt' =>
-                      array (
+                       [
                         'name' => 'test_dt',
                         'type' => 'date',
-                      ),
+                      ],
                   'test_tm' =>
-                      array (
+                       [
                         'name' => 'test_tm',
                         'type' => 'time',
-                      ),
-                  ),
-                  array("id" => 123),
-                  array("id" => "'123'", 'intval' => 'NULL', 'floatval' => 'NULL',
+                      ],
+                  ],
+                  ["id" => 123],
+                  ["id" => "'123'", 'intval' => 'NULL', 'floatval' => 'NULL',
                         'money' => 'NULL', 'test_dtm' => 'NULL', 'test_dtm2' => 'NULL',
-                        'test_dt' => 'NULL', 'test_tm' => 'NULL'),
-                  array(),
-            ),
-            array("testempty", array (
+                        'test_dt' => 'NULL', 'test_tm' => 'NULL'],
+                  [],
+            ],
+            ["testempty",  [
                   'id' =>
-                      array (
+                       [
                         'name' => 'id',
                         'type' => 'varchar',
-                      ),
+                      ],
                   'intval' =>
-                      array (
+                       [
                         'name' => 'intval',
                         'type' => 'int',
-                      ),
+                      ],
                   'floatval' =>
-                      array (
+                       [
                         'name' => 'floatval',
                         'type' => 'decimal',
-                      ),
+                      ],
                   'money' =>
-                      array (
+                       [
                         'name' => 'money',
                         'type' => 'currency',
-                      ),
+                      ],
                   'test_dtm' =>
-                      array (
+                       [
                         'name' => 'test_dtm',
                         'type' => 'datetime',
-                      ),
+                      ],
                   'test_dtm2' =>
-                      array (
+                       [
                         'name' => 'test_dtm2',
                         'type' => 'datetimecombo',
-                      ),
+                      ],
                   'test_dt' =>
-                      array (
+                       [
                         'name' => 'test_dt',
                         'type' => 'date',
-                      ),
+                      ],
                   'test_tm' =>
-                      array (
+                       [
                         'name' => 'test_tm',
                         'type' => 'time',
-                      ),
+                      ],
                    'text_txt' =>
-                      array (
+                       [
                         'name' => 'test_txt',
                         'type' => 'varchar',
-                      ),
-                  ),
-                  array("id" => "", 'intval' => '', 'floatval' => '',
-                  		'money' => '', 'test_dtm' => '', 'test_dtm2' => '',
+                      ],
+                  ],
+                  ["id" => "", 'intval' => '', 'floatval' => '',
+                        'money' => '', 'test_dtm' => '', 'test_dtm2' => '',
                         'test_dt' => '', 'test_tm' => '', 'text_txt' => null,
-                  ),
-                  array("id" => "''", 'intval' => "NULL", 'floatval' => "NULL",
+                  ],
+                  ["id" => "''", 'intval' => "NULL", 'floatval' => "NULL",
                         'money' => "NULL", 'test_dtm' => "NULL", 'test_dtm2' => "NULL",
                         'test_dt' => "NULL", 'test_tm' => 'NULL', 'test_txt' => 'NULL',
-                  ),
-                  array('intval' => 'NULL', 'floatval' => 'NULL',
-                  		'money' => 'NULL', 'test_dtm' => 'NULL', 'test_dtm2' => 'NULL',
+                  ],
+                  ['intval' => 'NULL', 'floatval' => 'NULL',
+                        'money' => 'NULL', 'test_dtm' => 'NULL', 'test_dtm2' => 'NULL',
                         'test_dt' => 'NULL', 'test_tm' => 'NULL',
-                  ),
-            ),
-        );
+                  ],
+            ],
+        ];
     }
 
     /**
      * Test the canInstall
      * @return void
      */
-    public function testCanInstall() {
+    public function testCanInstall()
+    {
         $DBManagerClass = get_class($this->_db);
-        if(!method_exists($this->_db, 'version') || !method_exists($this->_db, 'canInstall'))
+        if (!method_exists($this->_db, 'version') || !method_exists($this->_db, 'canInstall')) {
             $this->markTestSkipped(
-              "Class {$DBManagerClass} doesn't implement canInstall or version methods");
+                "Class {$DBManagerClass} doesn't implement canInstall or version methods"
+            );
+        }
 
         $method = new ReflectionMethod($DBManagerClass, 'canInstall');
-        if($method->class == 'DBManager')
+        if ($method->class == 'DBManager') {
             $this->markTestSkipped(
-              "Class {$DBManagerClass} or one of it's ancestors doesn't override DBManager's canInstall");
+                "Class {$DBManagerClass} or one of it's ancestors doesn't override DBManager's canInstall"
+            );
+        }
 
         // First assuming that we are only running unit tests against a supported database :)
         $this->assertTrue($this->_db->canInstall(), "Apparently we are not running this unit test against a supported database!!!");
 
-        $DBstub = $this->getMockBuilder($DBManagerClass)->setMethods(array('version'))->getMock();
+        $DBstub = $this->getMockBuilder($DBManagerClass)->setMethods(['version'])->getMock();
         $DBstub->expects($this->any())
                ->method('version')
                ->will($this->returnValue('0.0.0')); // Expect that any supported version is higher than 0.0.0
@@ -1736,10 +1786,10 @@ SQL;
 
     public function providerValidateQuery()
     {
-        return array(
-            array(true, 'SELECT * FROM accounts'),
-            array(false, 'SELECT * FROM blablabla123'),
-        );
+        return [
+            [true, 'SELECT * FROM accounts'],
+            [false, 'SELECT * FROM blablabla123'],
+        ];
     }
 
     /**
@@ -1774,12 +1824,12 @@ SQL;
             ],
         ];
 
-        $this->createTableParams($tablename, $fielddefs, array());
+        $this->createTableParams($tablename, $fielddefs, []);
 
         $str = str_repeat('x', 131072);
 
         $size = strlen($str);
-        $this->_db->insertParams($tablename, $fielddefs, array('id' => $size, 'test' => $str, 'dummy' => $str));
+        $this->_db->insertParams($tablename, $fielddefs, ['id' => $size, 'test' => $str, 'dummy' => $str]);
 
         $select = "SELECT test FROM $tablename WHERE id = '{$size}'";
         $strresult = $this->_db->getOne($select);
@@ -1794,9 +1844,8 @@ SQL;
         // find if any are primary
         $found = false;
 
-        foreach($indices as $index)
-        {
-            if($index['type'] == "primary") {
+        foreach ($indices as $index) {
+            if ($index['type'] == "primary") {
                 $found = true;
                 break;
             }
@@ -1811,44 +1860,43 @@ SQL;
      */
     public function testDBGuidGeneration()
     {
-		$guids = array();
-		$sql = "SELECT {$this->_db->getGuidSQL()} {$this->_db->getFromDummyTable()}";
-		for($i = 0; $i < 1000; $i++)
-		{
-			$newguid = $this->_db->getOne($sql);
-			$this->assertFalse(in_array($newguid, $guids), "'$newguid' already existed in the array of GUIDs!");
-			$guids []= $newguid;
-		}
-	}
+        $guids = [];
+        $sql = "SELECT {$this->_db->getGuidSQL()} {$this->_db->getFromDummyTable()}";
+        for ($i = 0; $i < 1000; $i++) {
+            $newguid = $this->_db->getOne($sql);
+            $this->assertFalse(in_array($newguid, $guids), "'$newguid' already existed in the array of GUIDs!");
+            $guids []= $newguid;
+        }
+    }
 
     public function testAddPrimaryKey()
     {
         $tablename = 'testConstraints';
-        $fielddefs = array(
+        $fielddefs = [
                         'id' =>
-                            array (
+                             [
                             'name' => 'id',
                             'required'=>true,
                             'type' => 'id',
-                            ),
-                        'test' => array (
+                            ],
+                        'test' =>  [
                             'name' => 'test',
                             'type' => 'longtext',
-                            ),
-                        );
+                            ],
+                        ];
 
-        $this->createTableParams($tablename, $fielddefs, array());
+        $this->createTableParams($tablename, $fielddefs, []);
         unset($this->created[$tablename]); // that table is required by testRemovePrimaryKey test
 
         $sql = $this->_db->add_drop_constraint(
             $tablename,
-            array(
+            [
                 'name'   => 'testConstraints_pk',
                 'type'   => 'primary',
-                'fields' => array('id'),
-                ),
+                'fields' => ['id'],
+                ],
             false
-            );
+        );
 
         $result = $this->_db->query($sql);
 
@@ -1857,9 +1905,8 @@ SQL;
         // find if any are primary
         $found = false;
 
-        foreach($indices as $index)
-        {
-            if($index['type'] == "primary") {
+        foreach ($indices as $index) {
+            if ($index['type'] == "primary") {
                 $found = true;
                 break;
             }
@@ -1877,14 +1924,14 @@ SQL;
         $this->created[$tablename] = true;
 
          $sql = $this->_db->add_drop_constraint(
-            $tablename,
-            array(
+             $tablename,
+             [
                 'name'   => 'testConstraints_pk',
                 'type'   => 'primary',
-                'fields' => array('id'),
-                ),
-            true
-            );
+                'fields' => ['id'],
+                ],
+             true
+         );
 
         $result = $this->_db->query($sql);
 
@@ -1893,9 +1940,8 @@ SQL;
         // find if any are primary
         $found = false;
 
-        foreach($indices as $index)
-        {
-            if($index['type'] == "primary") {
+        foreach ($indices as $index) {
+            if ($index['type'] == "primary") {
                 $found = true;
                 break;
             }
@@ -1907,9 +1953,10 @@ SQL;
 
     private function addChildren($tableName, $parent_id, $parent_name, $number, $level, $stoplevel)
     {
-        if($level >= $stoplevel) return;
-        for($sibling = 0; $sibling < $number; $sibling++)
-        {
+        if ($level >= $stoplevel) {
+            return;
+        }
+        for ($sibling = 0; $sibling < $number; $sibling++) {
             $id = create_guid();
             $name = "{$parent_name}_{$sibling}";
             $this->addRecord($tableName, $id, $parent_id, $name, $level);
@@ -1931,63 +1978,63 @@ SQL;
 
     private function setupRecursiveStructure($tableName)
     {
-        $params =  array(
-            'id' => array (
+        $params =  [
+            'id' =>  [
                 'name' => 'id',
                 'type' => 'id',
                 'required'=>true,
-                ),
-            'parent_id' => array (
+                ],
+            'parent_id' =>  [
                 'name' => 'parent_id',
                 'type' => 'id',
-                ),
-            'name' => array (
+                ],
+            'name' =>  [
                 'name' => 'name',
                 'type' => 'varchar',
                 'len' => '20',
-                ),
-           'db_level' => array (  // For verification purpose
+                ],
+            'db_level' =>  [  // For verification purpose
                 'name' => 'db_level',
                 'type' => 'int',
-                ),
-        );
-        $indexes = array(
-            array(
+                ],
+        ];
+        $indexes = [
+            [
                 'name'   => 'idx_'. $tableName .'_id',
                 'type'   => 'primary',
-                'fields' => array('id'),
-                ),
-            array(
+                'fields' => ['id'],
+                ],
+            [
                 'name'   => 'idx_'. $tableName .'parent_id',
                 'type'   => 'index',
-                'fields' => array('parent_id'),
-                ),
-        );
+                'fields' => ['parent_id'],
+                ],
+        ];
 
         $this->createTableParams($tableName, $params, $indexes);
 
         // Load data
         $id = create_guid();
         $name = '1';
-        $this->addRecord($tableName, $id, NULL, $name, 0);
+        $this->addRecord($tableName, $id, null, $name, 0);
         $this->addChildren($tableName, $id, $name, 2, 1, 10);
     }
 
     public function providerRecursiveQuery()
     {
-        return array(
-            array('1_0_0_0_0_0_0_0_0_0', '9', 1),
-            array('1_1_1_1_1_1_1_1_1_1', '9', 1),
-            array('1_0_0_0_0_0_0_0_0', '8', 3),
-            array('1_1_1_1_1_1_1_1', '7', 7),
-            array('1_0_0_0_0_0_0', '6', 15),
-            array('1_1_1_1_1_1', '5', 31),
-            array('1_0_0_0_0', '4', 63),
-            array('1_1_1_1', '3', 127),
-            array('1_0_0', '2', 255),
-            array('1_1', '1', 511),
-            array('1', '0', 1023),
-        );
+        return [
+            ['1_0_0_0_0_0_0_0_0_0', '9', 1],
+            ['1_1_1_1_1_1_1_1_1_1', '9', 1],
+            ['1_0_0_0_0_0_0_0_0', '8', 3],
+            ['1_1_1_1_1_1_1_1', '7', 7],
+            ['1_0_0_0_0_0_0', '6', 15],
+            ['1_1_1_1_1_1', '5', 31],
+            ['1_0_0_0_0', '4', 63],
+            ['1_1_1_1', '3', 127],
+            ['1_0_0', '2', 255],
+            ['1_1', '1', 511],
+            ['1', '0', 1023],
+        ];
     }
 
     /**
@@ -2024,8 +2071,7 @@ SQL;
         $result = $this->_db->query($lineageSQL);
 
         $currentName = null;
-        while($row = $this->_db->fetchByAssoc($result))
-        {
+        while ($row = $this->_db->fetchByAssoc($result)) {
             $currentName = $row['name'];
             $this->assertEquals($currentId, $row['id'], "Incorrect ID found");
             if (!empty($row['parent_id'])) {
@@ -2051,8 +2097,7 @@ SQL;
 
         $result = $this->_db->query($childrenSQL);
 
-        while(($row = $this->_db->fetchByAssoc($result)) != null)
-        {
+        while (($row = $this->_db->fetchByAssoc($result)) != null) {
             $this->assertStringStartsWith(
                 $startName,
                 $row['name'],
@@ -2065,7 +2110,8 @@ SQL;
 
     // Inserts a 2D array of data into the specified table
     // First row of array must be the column headers, first column must be PK column name
-    public function insertTableArray( $tableName, $tableDataArray ) {
+    public function insertTableArray($tableName, $tableDataArray)
+    {
         $sqlPrefix = "INSERT INTO $tableName ( {$tableDataArray[0][0]} ";  // has to be at least one column
         for ($col = 1; $col < count($tableDataArray[0]); $col++) {
             $sqlPrefix .= ", {$tableDataArray[0][$col]}";
@@ -2090,7 +2136,8 @@ SQL;
 
     // Deletes a 2D array of data from the specified table
     // First row of array must be column headers, first column must be PK column name
-    public function deleteTableArray( $tableName, $tableDataArray ) {
+    public function deleteTableArray($tableName, $tableDataArray)
+    {
         $sql = "DELETE FROM $tableName WHERE {$tableDataArray[0][0]} IN ( '{$tableDataArray[1][0]}'";  // has to be at least one column
         for ($row = 2; $row < count($tableDataArray); $row++) {
             $sql .= ",'{$tableDataArray[$row][0]}'";
@@ -2103,8 +2150,7 @@ SQL;
 
     public function testRecursiveQueryMultiHierarchy()
     {
-        if ( !$this->_db->supports('recursive_query') )
-        {
+        if (!$this->_db->supports('recursive_query')) {
             $this->markTestSkipped('DBManager does not support recursive query');
         }
 
@@ -2113,45 +2159,45 @@ SQL;
         // Setup test data
         $tableName = 'forecast_tree';
         $this->assertTrue($this->_db->tableExists($tableName), "Table $tableName does not exist");
-        $tableDataArray = array(  array( 'id',             'parent_id',      'name',     'hierarchy_type', 'user_id' )
-        , array( 'sales_test_1',    null,            'sales1',   'sales_test',     'user1'   )
-        , array( 'sales_test_11',  'sales_test_1',   'sales11',  'sales_test',     'user11'  )
-        , array( 'sales_test_12',  'sales_test_1',   'sales12',  'sales_test',     'user12'  )
-        , array( 'sales_test_13',  'sales_test_1',   'sales13',  'sales_test',     'user13'  )
-        , array( 'sales_test_121', 'sales_test_12',  'sales121', 'sales_test',     'user121' )
-        , array( 'sales_test_122', 'sales_test_12',  'sales122', 'sales_test',     'user122' )
-        , array( 'sales_test_131', 'sales_test_13',  'sales131', 'sales_test',     'user131' )
-        , array( 'sales_test_132', 'sales_test_13',  'sales132', 'sales_test',     'user132' )
-        , array( 'sales_test_133', 'sales_test_13',  'sales133', 'sales_test',     'user133' )
-        , array( 'prod_test_1',     null,            'prod1',    'prod_test',      'user1'   )
-        , array( 'prod_test_11',   'prod_test_1',    'prod11',   'prod_test',      'user11'  )
-        , array( 'prod_test_12',   'prod_test_1',    'prod12',   'prod_test',      'user12'  )
-        , array( 'prod_test_13',   'prod_test_1',    'prod13',   'prod_test',      'user13'  )
-        , array( 'prod_test_121',  'prod_test_12',   'prod121',  'prod_test',      'user121' )
-        , array( 'prod_test_122',  'prod_test_12',   'prod122',  'prod_test',      'user122' )
-        , array( 'prod_test_131',  'prod_test_13',   'prod131',  'prod_test',      'user131' )
-        , array( 'prod_test_132',  'prod_test_13',   'prod132',  'prod_test',      'user132' )
-        , array( 'prod_test_133',  'prod_test_13',   'prod133',  'prod_test',      'user133' )
-        , array( 'prod_test_1321', 'prod_test_132',  'prod1321', 'prod_test',      'user1321')
-        );
+        $tableDataArray = [  [ 'id',             'parent_id',      'name',     'hierarchy_type', 'user_id' ]
+        , [ 'sales_test_1',    null,            'sales1',   'sales_test',     'user1'   ]
+        , [ 'sales_test_11',  'sales_test_1',   'sales11',  'sales_test',     'user11'  ]
+        , [ 'sales_test_12',  'sales_test_1',   'sales12',  'sales_test',     'user12'  ]
+        , [ 'sales_test_13',  'sales_test_1',   'sales13',  'sales_test',     'user13'  ]
+        , [ 'sales_test_121', 'sales_test_12',  'sales121', 'sales_test',     'user121' ]
+        , [ 'sales_test_122', 'sales_test_12',  'sales122', 'sales_test',     'user122' ]
+        , [ 'sales_test_131', 'sales_test_13',  'sales131', 'sales_test',     'user131' ]
+        , [ 'sales_test_132', 'sales_test_13',  'sales132', 'sales_test',     'user132' ]
+        , [ 'sales_test_133', 'sales_test_13',  'sales133', 'sales_test',     'user133' ]
+        , [ 'prod_test_1',     null,            'prod1',    'prod_test',      'user1'   ]
+        , [ 'prod_test_11',   'prod_test_1',    'prod11',   'prod_test',      'user11'  ]
+        , [ 'prod_test_12',   'prod_test_1',    'prod12',   'prod_test',      'user12'  ]
+        , [ 'prod_test_13',   'prod_test_1',    'prod13',   'prod_test',      'user13'  ]
+        , [ 'prod_test_121',  'prod_test_12',   'prod121',  'prod_test',      'user121' ]
+        , [ 'prod_test_122',  'prod_test_12',   'prod122',  'prod_test',      'user122' ]
+        , [ 'prod_test_131',  'prod_test_13',   'prod131',  'prod_test',      'user131' ]
+        , [ 'prod_test_132',  'prod_test_13',   'prod132',  'prod_test',      'user132' ]
+        , [ 'prod_test_133',  'prod_test_13',   'prod133',  'prod_test',      'user133' ]
+        , [ 'prod_test_1321', 'prod_test_132',  'prod1321', 'prod_test',      'user1321'],
+        ];
 
-        $this->insertTableArray( $tableName, $tableDataArray );
+        $this->insertTableArray($tableName, $tableDataArray);
 
         // idStarting, Up/Down, Forecast_Tree Type, expected result count
-        $resultsDataArray = array( array('sales_test_1',    false, 'sales_test',9)
-                                  ,array('sales_test_13',   false, 'sales_test',4)
-                                  ,array('sales_test_131',  true,  'sales_test',3)
-                                  ,array('sales_test_13',   true,  'sales_test',2)
-                                  ,array('sales_test_1',    true,  'sales_test',1)
-                                  ,array('prod_test_1',     false, 'prod_test',10)
-                                  ,array('prod_test_13',    false, 'prod_test', 5)
-                                  ,array('prod_test_1321',  true,  'prod_test', 4)
-                                  ,array('prod_test_133',   true,  'prod_test', 3)
-                                  ,array('prod_test_1',     true,  'prod_test', 1)
-        );
+        $resultsDataArray = [ ['sales_test_1',    false, 'sales_test',9]
+                                  ,['sales_test_13',   false, 'sales_test',4]
+                                  ,['sales_test_131',  true,  'sales_test',3]
+                                  ,['sales_test_13',   true,  'sales_test',2]
+                                  ,['sales_test_1',    true,  'sales_test',1]
+                                  ,['prod_test_1',     false, 'prod_test',10]
+                                  ,['prod_test_13',    false, 'prod_test', 5]
+                                  ,['prod_test_1321',  true,  'prod_test', 4]
+                                  ,['prod_test_133',   true,  'prod_test', 3]
+                                  ,['prod_test_1',     true,  'prod_test', 1],
+        ];
 
         // Loop through each test
-        foreach ( $resultsDataArray as $resultsRow ) {
+        foreach ($resultsDataArray as $resultsRow) {
             // Get where clause
             $whereClause = "hierarchy_type='$resultsRow[2]'";
 
@@ -2167,8 +2213,7 @@ SQL;
             $result = $this->_db->query($hierarchicalSQL);
             $resultsCnt = 0;
 
-            while(($row = $this->_db->fetchByAssoc($result)) != null)
-            {
+            while (($row = $this->_db->fetchByAssoc($result)) != null) {
                 $resultsCnt++;
             }
 
@@ -2176,7 +2221,7 @@ SQL;
         }
 
         // remove data from table
-        $result = $this->deleteTableArray( $tableName, $tableDataArray );
+        $result = $this->deleteTableArray($tableName, $tableDataArray);
     }
 
     /**
@@ -2193,107 +2238,107 @@ SQL;
 
     public function providerTestMassageValueEmptyValue()
     {
-        return array(
-            array(
-                array(
+        return [
+            [
+                [
                     'name' => 'float with empty value and required is true',
                     'type' => 'float',
                     'required' => true,
-                ),
+                ],
                 '',
                 'NULL',
-            ),
-            array(
-                array(
+            ],
+            [
+                [
                     'name' => 'float with empty value and required is true and isnull is false',
                     'type' => 'float',
                     'required' => true,
                     'isnull' => false,
-                ),
+                ],
                 '',
                 0,
-            ),
-            array(
-                array(
+            ],
+            [
+                [
                     'name' => 'float with empty value and required is false',
                     'type' => 'float',
-                ),
+                ],
                 '',
                 'NULL',
-            ),
-            array(
-                array(
+            ],
+            [
+                [
                     'name' => 'enum type with empty value and required is true',
                     'type' => 'enum',
                     'required' => true,
-                ),
+                ],
                 null,
                 'NULL',
-            ),
-            array(
-                array(
+            ],
+            [
+                [
                     'name' => 'enum type with empty value and required is false',
                     'type' => 'enum',
                     'required' => false,
-                ),
+                ],
                 null,
                 'NULL',
-            ),
-            array(
-                array(
+            ],
+            [
+                [
                     'name' => 'date type with empty value and required is true',
                     'type' => 'date',
                     'required' => true,
-                ),
+                ],
                 '',
                 'NULL',
-            ),
-            array(
-                array(
+            ],
+            [
+                [
                     'name' => 'date type with empty value and required is false',
                     'type' => 'date',
                     'required' => false,
-                ),
+                ],
                 '',
                 'NULL',
-            ),
-        );
+            ],
+        ];
     }
 
     public function searchStringProvider()
     {
-        return array(
-            array(
+        return [
+            [
                 'wildcard' => '%',
                 'inFront' => false,
                 'search' => 'test*test2',
-                'expected' => 'test*test2%'
-            ),
-            array(
+                'expected' => 'test*test2%',
+            ],
+            [
                 'wildcard' => '*',
                 'inFront' => false,
                 'search' => 'test*test2',
-                'expected' => 'test%test2%'
-            ),
-            array(
+                'expected' => 'test%test2%',
+            ],
+            [
                 'wildcard' => '%',
                 'inFront' => true,
                 'search' => 'test*test2',
-                'expected' => '%test*test2%'
-            ),
-            array(
+                'expected' => '%test*test2%',
+            ],
+            [
                 'wildcard' => '*',
                 'inFront' => true,
                 'search' => 'test*test2',
-                'expected' => '%test%test2%'
-            ),
-            array(
+                'expected' => '%test%test2%',
+            ],
+            [
                 'wildcard' => '',
                 'inFront' => true,
                 'search' => 'test*test2',
-                'expected' => '%test*test2%'
-            ),
-        );
+                'expected' => '%test*test2%',
+            ],
+        ];
     }
 
     /**
@@ -2325,185 +2370,185 @@ SQL;
      *
      * @return array
      */
-    static public function getTypeForOneColumnSQLRep()
+    public static function getTypeForOneColumnSQLRep()
     {
-        return array(
-            array(
-                array(
+        return [
+            [
+                [
                     'name' => 'test',
                     'type' => 'date',
                     'default' => '',
-                ),
+                ],
                 'once',
-            ),
-            array(
-                array(
+            ],
+            [
+                [
                     'name' => 'test',
                     'type' => 'datetime',
                     'default' => '',
-                ),
+                ],
                 'once',
-            ),
-            array(
-                array(
+            ],
+            [
+                [
                     'name' => 'test',
                     'type' => 'encrypt',
                     'default' => '',
-                ),
+                ],
                 'once',
-            ),
-            array(
-                array(
+            ],
+            [
+                [
                     'name' => 'test',
                     'type' => 'dropdown',
                     'default' => '',
-                ),
+                ],
                 'once',
-            ),
-            array(
-                array(
+            ],
+            [
+                [
                     'name' => 'test',
                     'type' => 'decimal',
                     'default' => '',
-                ),
+                ],
                 'once',
-            ),
-            array(
-                array(
+            ],
+            [
+                [
                     'name' => 'test',
                     'type' => 'float',
                     'default' => '',
-                ),
+                ],
                 'once',
-            ),
-            array(
-                array(
+            ],
+            [
+                [
                     'name' => 'test',
                     'type' => 'integer',
                     'default' => '',
-                ),
+                ],
                 'once',
-            ),
-            array(
-                array(
+            ],
+            [
+                [
                     'name' => 'test',
                     'type' => 'date',
                     'default' => 'not-empty',
-                ),
+                ],
                 'once',
-            ),
-            array(
-                array(
+            ],
+            [
+                [
                     'name' => 'test',
                     'type' => 'datetime',
                     'default' => 'not-empty',
-                ),
+                ],
                 'once',
-            ),
-            array(
-                array(
+            ],
+            [
+                [
                     'name' => 'test',
                     'type' => 'encrypt',
                     'default' => 'not-empty',
-                ),
+                ],
                 'once',
-            ),
-            array(
-                array(
+            ],
+            [
+                [
                     'name' => 'test',
                     'type' => 'dropdown',
                     'default' => 'not-empty',
-                ),
+                ],
                 'once',
-            ),
-            array(
-                array(
+            ],
+            [
+                [
                     'name' => 'test',
                     'type' => 'decimal',
                     'default' => 'not-empty',
-                ),
+                ],
                 'once',
-            ),
-            array(
-                array(
+            ],
+            [
+                [
                     'name' => 'test',
                     'type' => 'float',
                     'default' => 'not-empty',
-                ),
+                ],
                 'once',
-            ),
-            array(
-                array(
+            ],
+            [
+                [
                     'name' => 'test',
                     'type' => 'integer',
                     'default' => 'not-empty',
-                ),
+                ],
                 'once',
-            ),
-            array(
-                array(
+            ],
+            [
+                [
                     'name' => 'test',
                     'type' => 'date',
                     'default' => 'not-empty',
                     'no_default' => true,
-                ),
+                ],
                 'never',
-            ),
-            array(
-                array(
+            ],
+            [
+                [
                     'name' => 'test',
                     'type' => 'datetime',
                     'default' => 'not-empty',
                     'no_default' => true,
-                ),
+                ],
                 'never',
-            ),
-            array(
-                array(
+            ],
+            [
+                [
                     'name' => 'test',
                     'type' => 'encrypt',
                     'default' => 'not-empty',
                     'no_default' => true,
-                ),
+                ],
                 'never',
-            ),
-            array(
-                array(
+            ],
+            [
+                [
                     'name' => 'test',
                     'type' => 'dropdown',
                     'default' => 'not-empty',
                     'no_default' => true,
-                ),
+                ],
                 'never',
-            ),
-            array(
-                array(
+            ],
+            [
+                [
                     'name' => 'test',
                     'type' => 'decimal',
                     'default' => 'not-empty',
                     'no_default' => true,
-                ),
+                ],
                 'never',
-            ),
-            array(
-                array(
+            ],
+            [
+                [
                     'name' => 'test',
                     'type' => 'float',
                     'default' => 'not-empty',
                     'no_default' => true,
-                ),
+                ],
                 'never',
-            ),
-            array(
-                array(
+            ],
+            [
+                [
                     'name' => 'test',
                     'type' => 'integer',
                     'default' => 'not-empty',
                     'no_default' => true,
-                ),
+                ],
                 'never',
-            ),
-        );
+            ],
+        ];
     }
     /**
      * Testing that massageValue is called only when we need that
@@ -2512,13 +2557,13 @@ SQL;
      */
     public function testOneColumnSQLRep($fieldDef, $expected)
     {
-        $db = $this->getMockBuilder(get_class($this->_db))->setMethods(array('massageValue'))->getMock();
+        $db = $this->getMockBuilder(get_class($this->_db))->setMethods(['massageValue'])->getMock();
         $method = $db->expects($this->$expected())->method('massageValue');
         if ($expected != 'never') {
             $method->with($this->equalTo($fieldDef['default']), $this->equalTo($fieldDef))->will($this->returnValue("correct"));
         }
 
-        $result = SugarTestReflection::callProtectedMethod($db, 'oneColumnSQLRep', array($fieldDef));
+        $result = SugarTestReflection::callProtectedMethod($db, 'oneColumnSQLRep', [$fieldDef]);
         if ($expected == 'once') {
             $this->assertStringContainsString('correct', $result);
         } elseif ($expected == 'never') {
@@ -2528,42 +2573,42 @@ SQL;
 
     public function lengthTestProvider()
     {
-        $data = array(
-            array(
-                array('len' => '5'),
-                array('len' => '4', 'precision' => '2'),
-                "7,2"
-            ),
-            array(
-                array('len' => '4'),
-                array('len' => '12', 'precision' => '2'),
-                "12,2"
-            ),
-            array(
-                array('type' => 'decimal', 'len' => '10', 'precision' => '6'),
-                array('len' => '12', 'precision' => '2'),
-                "12,6"
-            ),
-            array(
-                array('type' => 'decimal', 'len' => '12', 'precision' => '6'),
-                array('len' => '14', 'precision' => '6'),
-                "14,6"
-            ),
-            array(
-                array('len' => '4,2', 'precision' => '2', 'type' => 'decimal'),
-                array('len' => '26,2', 'precision' => '2'),
-                "26,2"
-            ),
-        );
+        $data = [
+            [
+                ['len' => '5'],
+                ['len' => '4', 'precision' => '2'],
+                "7,2",
+            ],
+            [
+                ['len' => '4'],
+                ['len' => '12', 'precision' => '2'],
+                "12,2",
+            ],
+            [
+                ['type' => 'decimal', 'len' => '10', 'precision' => '6'],
+                ['len' => '12', 'precision' => '2'],
+                "12,6",
+            ],
+            [
+                ['type' => 'decimal', 'len' => '12', 'precision' => '6'],
+                ['len' => '14', 'precision' => '6'],
+                "14,6",
+            ],
+            [
+                ['len' => '4,2', 'precision' => '2', 'type' => 'decimal'],
+                ['len' => '26,2', 'precision' => '2'],
+                "26,2",
+            ],
+        ];
 
-        $result = array();
-        foreach (array(
+        $result = [];
+        foreach ([
             'MysqliManager',
             'SqlsrvManager',
 // BEGIN SUGARCRM flav=ent ONLY
             'IBMDB2Manager',
 // END SUGARCRM flav=ent ONLY
-        ) as $driver) {
+        ] as $driver) {
             foreach ($data as $item) {
                 $item[] = $driver;
                 $result[] = $item;
@@ -2581,21 +2626,21 @@ SQL;
     {
         DBManagerFactory::getDbDrivers(); // load the drivers
         $DBManagerClass = get_class($this->_db);
-        $db_columns = array(
-            "id" => array("name" => "id", 'type' => 'char', 'len' => '36'),
-            "quantity" => array("name" => "quantity", 'type' => 'int', 'len' => '5'),
-        );
+        $db_columns = [
+            "id" => ["name" => "id", 'type' => 'char', 'len' => '36'],
+            "quantity" => ["name" => "quantity", 'type' => 'int', 'len' => '5'],
+        ];
         $db_columns['quantity'] = array_merge($db_columns['quantity'], $dbcol);
 
-        $vardefs = array(
-            "id" => array("name" => "id", 'type' => 'id', 'len' => '36'),
-            "quantity" => array("name" => "quantity", 'type' => 'decimal', 'len' => '4', 'precision' => '2'),
-        );
+        $vardefs = [
+            "id" => ["name" => "id", 'type' => 'id', 'len' => '36'],
+            "quantity" => ["name" => "quantity", 'type' => 'decimal', 'len' => '4', 'precision' => '2'],
+        ];
         $vardefs['quantity'] = array_merge($vardefs['quantity'], $vardefcol);
 
         // Oracle currently forces decimals to be 20,2 - can't test here
         $dbmock = $this->getMockBuilder($driver)
-            ->setMethods(array('get_columns', 'get_field_default_constraint_name', 'get_indices', 'checkIdentity'))
+            ->setMethods(['get_columns', 'get_field_default_constraint_name', 'get_indices', 'checkIdentity'])
             ->getMock();
         if (!($dbmock instanceof DBManager)) {
                 // Failed to instantiate the driver, skip it
@@ -2606,75 +2651,75 @@ SQL;
                ->will($this->returnValue($db_columns));
         $dbmock->expects($this->any())
             ->method('get_field_default_constraint_name')
-            ->will($this->returnValue(array()));
+            ->will($this->returnValue([]));
         $dbmock->expects($this->any())
             ->method('get_indices')
-            ->will($this->returnValue(array()));
+            ->will($this->returnValue([]));
         $dbmock->expects($this->any())
             ->method('checkIdentity')
             ->will($this->returnValue(false));
 
-        $sql = SugarTestReflection::callProtectedMethod($dbmock, 'repairTableColumns', array("faketable", $vardefs, false));
+        $sql = SugarTestReflection::callProtectedMethod($dbmock, 'repairTableColumns', ["faketable", $vardefs, false]);
         $this->assertMatchesRegularExpression("#quantity.*?decimal\\($result\\)#i", $sql);
     }
 
     public function isNullableProvider()
     {
-        return array(
-            array(
-                array (
+        return [
+            [
+                 [
                     'name' => 'id',
                     'vname' => 'LBL_TAG_NAME',
                     'type' => 'id',
                     'len' => '36',
                     'required'=>true,
                     'reportable'=>false,
-                ),
-                false,
-            ),
-            array(
-                array (
+                 ],
+                 false,
+            ],
+            [
+                 [
                     'name' => 'parent_tag_id',
                     'vname' => 'LBL_PARENT_TAG_ID',
                     'type' => 'id',
                     'len' => '36',
                     'required'=>false,
                     'reportable'=>false,
-                ),
-                true,
-            ),
-            array(
-                array (
+                 ],
+                 true,
+            ],
+            [
+                 [
                     'name' => 'any_id',
                     'vname' => 'LBL_ANY_ID',
                     'dbType' => 'id',
                     'len' => '36',
                     'required'=>false,
                     'reportable'=>false,
-                ),
-                true,
-            ),
-            array(
-                array (
+                 ],
+                 true,
+            ],
+            [
+                 [
                     'name' => 'any_id',
                     'vname' => 'LBL_ANY_ID',
                     'type' => 'id',
                     'len' => '36',
                     'reportable'=>false,
-                ),
-                true,
-            ),
-            array(
-                array (
+                 ],
+                 true,
+            ],
+            [
+                 [
                     'name' => 'any_id',
                     'vname' => 'LBL_ANY_ID',
                     'dbType' => 'id',
                     'len' => '36',
                     'reportable'=>false,
-                ),
-                true,
-            ),
-        );
+                 ],
+                 true,
+            ],
+        ];
     }
 
     /**
@@ -2683,70 +2728,70 @@ SQL;
      */
     public function testIsNullable($vardef, $isNullable)
     {
-        $this->assertEquals($isNullable, SugarTestReflection::callProtectedMethod($this->_db, 'isNullable', array($vardef)));
+        $this->assertEquals($isNullable, SugarTestReflection::callProtectedMethod($this->_db, 'isNullable', [$vardef]));
     }
 
     private function setupInsertStructure()
     {
         // create test table for operational testing
         $tableName = 'test_insert';
-        $params =  array(
-            'id' => array (
+        $params =  [
+            'id' =>  [
                 'name' => 'id',
                 'type' => 'id',
                 'required'=>true,
-            ),
-            'col1' => array (
+            ],
+            'col1' =>  [
                 'name' => 'col1',
                 'type' => 'varchar',
                 'len' => '100',
-            ),
-            'col2' => array (
+            ],
+            'col2' =>  [
                 'name' => 'col2',
                 'type' => 'text',
                 'len' =>'200000',
-            ),
-            'col3' => array(
+            ],
+            'col3' => [
                 'name' => 'col3',
                 'type' => 'date',
-            )
-        );
-        $indexes = array(
-            array(
+            ],
+        ];
+        $indexes = [
+            [
                 'name'   => 'idx_'. $tableName .'_id',
                 'type'   => 'primary',
-                'fields' => array('id'),
-            ),
-        );
-        if($this->_db->tableExists($tableName)) {
+                'fields' => ['id'],
+            ],
+        ];
+        if ($this->_db->tableExists($tableName)) {
             $this->_db->dropTableName($tableName);
         }
         $this->createTableParams($tableName, $params, $indexes);
 
-        return array('tableName' => $tableName,
-                     'params' => $params);
+        return ['tableName' => $tableName,
+                     'params' => $params];
     }
 
     public function providerInsert()
     {
-        return array(
-            array(
-                array(
+        return [
+            [
+                [
                     'id' => 1,
                     'col1' => "col1 data",
                     'col2' => "col2 data",
                     'col3' => '2012-12-31',
-                )
-            ),
-            array(
-                array(
+                ],
+            ],
+            [
+                [
                     'id' => 2,
                     'col1' => "2",
                     'col2' => "col2 data",
                     'col3' => '2012-12-31',
-                )
-            ),
-        );
+                ],
+            ],
+        ];
     }
 
     /**
@@ -2763,7 +2808,7 @@ SQL;
 
         $result = $this->_db->query("SELECT * FROM $tableName");
         $resultsCnt = 0;
-        while(($row = $this->_db->fetchByAssoc($result)) != null)  {
+        while (($row = $this->_db->fetchByAssoc($result)) != null) {
             $resultsCnt++;
         }
         $this->assertEquals($resultsCnt, $resultsCntExpected, "Incorrect number or records. Found: $resultsCnt Expected: $resultsCntExpected");
@@ -2777,11 +2822,11 @@ SQL;
         $this->_db->query("DELETE FROM $tableName");
 
         $blobData = '0123456789abcdefghijklmnopqrstuvwxyz';
-        while(strlen($blobData) < 100000) {
+        while (strlen($blobData) < 100000) {
             $blobData .= $blobData;
         }
 
-        $data = array( 'id'=> '1', 'col1' => '10', 'col2' => $blobData);
+        $data = [ 'id'=> '1', 'col1' => '10', 'col2' => $blobData];
         $this->assertTrue($this->_db->insertParams($tableName, $params, $data));
 
         $result = $this->_db->query("SELECT * FROM $tableName");
@@ -2805,12 +2850,12 @@ SQL;
         $row = $this->_db->fetchByAssoc($result);
         $this->assertEquals($bean->last_name, $row['last_name'], 'last_name failed');
         $this->assertEquals($bean->description, $row['description'], 'description failed');
-        $this->assertEquals($bean->id, $row['id'],'id failed');
+        $this->assertEquals($bean->id, $row['id'], 'id failed');
 
         // update test
         $bean->last_name = 'newfoobar' . mt_rand();   // change their lastname field
         $bean->description = 'newdescription' . mt_rand();
-        $this->_db->update($bean, array('id'=>$bean->id));
+        $this->_db->update($bean, ['id'=>$bean->id]);
         $result = $this->_db->query("select id, last_name, description from contacts where id = '{$bean->id}'");
         $row = $this->_db->fetchByAssoc($result);
         $this->assertEquals($bean->last_name, $row['last_name'], 'last_name failed');
@@ -2822,54 +2867,54 @@ SQL;
     {
         // create test table for data type testing
         $tableName = 'test_types';
-        $params =  array( 'id'                  =>array ('name'=>'id',                  'type'=>'id','required'=>true),
-                            'int_param'           =>array ('name'=>'int_param',           'type'=>'int',     'default'=>1),
-                            'double_param'        =>array ('name'=>'double_param',        'type'=>'double',  'default'=>1),     //len,precision
-                            'float_param'         =>array ('name'=>'float_param',         'type'=>'float',   'default'=>1),
-                            'uint_param'          =>array ('name'=>'uint_param',          'type'=>'uint',    'default'=>1),
-                            'ulong_param'         =>array ('name'=>'ulong_param',         'type'=>'ulong',   'default'=>1),
-                            'long_param'          =>array ('name'=>'long_param',          'type'=>'long',    'default'=>1),
-                            'short_param'         =>array ('name'=>'short_param',         'type'=>'short',   'default'=>1),
-                            'varchar_param'       =>array ('name'=>'varchar_param',       'type'=>'varchar', 'default'=>'test'),
-                            'text_param'          =>array ('name'=>'text_param',          'type'=>'text',    'default'=>'test'),
-                            'longtext_param'      =>array ('name'=>'longtext_param',      'type'=>'longtext','default'=>'test'),
-                          'date_param'          =>array ('name'=>'date_param',          'type'=>'date'),
-                            'enum_param'          =>array ('name'=>'enum_param',          'type'=>'enum',    'default'=>'test'),
-                            'relate_param'        =>array ('name'=>'relate_param',        'type'=>'relate',  'default'=>'test'),
-                            'multienum_param'     =>array ('name'=>'multienum_param',     'type'=>'multienum', 'default'=>'test'),
-                            'html_param'          =>array ('name'=>'html_param',          'type'=>'html',    'default'=>'test'),
-                            'longhtml_param'      =>array ('name'=>'longhtml_param',      'type'=>'longhtml','default'=>'test'),
-                          'datetime_param'      =>array ('name'=>'datetime_param',      'type'=>'datetime'),
-                          'datetimecombo_param' =>array ('name'=>'datetimecombo_param', 'type'=>'datetimecombo'),
-                          'time_param'          =>array ('name'=>'time_param',          'type'=>'time'),
-                          'bool_param'          =>array ('name'=>'bool_param',          'type'=>'bool'),
-                          'tinyint_param'       =>array ('name'=>'tinyint_param',       'type'=>'tinyint'),
-                            'char_param'          =>array ('name'=>'char_param',          'type'=>'char',    'default'=>'test'),
-                            'id_param'            =>array ('name'=>'id_param',            'type'=>'id',      'default'=>'test'),
-                            'blob_param'          =>array ('name'=>'blob_param',          'type'=>'blob',    'default'=>'test'),
-                            'longblob_param'      =>array ('name'=>'longblob_param',      'type'=>'longblob','default'=>'test'),
-                            'currency_param'      =>array ('name'=>'currency_param',      'type'=>'currency','default'=>1.11),
-                            'decimal_param'       =>array ('name'=>'decimal_param',       'type'=>'decimal', 'len' => 10, 'precision' => 4,    'default'=>1.11),
-                            'decimal2_param'      =>array ('name'=>'decimal2_param',      'type'=>'decimal2', 'len' => 10, 'precision' => 4,    'default'=>1.11),
-                            'url_param'           =>array ('name'=>'url_param',           'type'=>'url',     'default'=>'test'),
-                            'encrypt_param'       =>array ('name'=>'encrypt_param',       'type'=>'encrypt', 'default'=>'test'),
-                            'file_param'          =>array ('name'=>'file_param',          'type'=>'file',    'default'=>'test'),
-                        );
+        $params =  [ 'id'                  => ['name'=>'id',                  'type'=>'id','required'=>true],
+                            'int_param'           => ['name'=>'int_param',           'type'=>'int',     'default'=>1],
+                            'double_param'        => ['name'=>'double_param',        'type'=>'double',  'default'=>1],     //len,precision
+                            'float_param'         => ['name'=>'float_param',         'type'=>'float',   'default'=>1],
+                            'uint_param'          => ['name'=>'uint_param',          'type'=>'uint',    'default'=>1],
+                            'ulong_param'         => ['name'=>'ulong_param',         'type'=>'ulong',   'default'=>1],
+                            'long_param'          => ['name'=>'long_param',          'type'=>'long',    'default'=>1],
+                            'short_param'         => ['name'=>'short_param',         'type'=>'short',   'default'=>1],
+                            'varchar_param'       => ['name'=>'varchar_param',       'type'=>'varchar', 'default'=>'test'],
+                            'text_param'          => ['name'=>'text_param',          'type'=>'text',    'default'=>'test'],
+                            'longtext_param'      => ['name'=>'longtext_param',      'type'=>'longtext','default'=>'test'],
+                          'date_param'          => ['name'=>'date_param',          'type'=>'date'],
+                            'enum_param'          => ['name'=>'enum_param',          'type'=>'enum',    'default'=>'test'],
+                            'relate_param'        => ['name'=>'relate_param',        'type'=>'relate',  'default'=>'test'],
+                            'multienum_param'     => ['name'=>'multienum_param',     'type'=>'multienum', 'default'=>'test'],
+                            'html_param'          => ['name'=>'html_param',          'type'=>'html',    'default'=>'test'],
+                            'longhtml_param'      => ['name'=>'longhtml_param',      'type'=>'longhtml','default'=>'test'],
+                          'datetime_param'      => ['name'=>'datetime_param',      'type'=>'datetime'],
+                          'datetimecombo_param' => ['name'=>'datetimecombo_param', 'type'=>'datetimecombo'],
+                          'time_param'          => ['name'=>'time_param',          'type'=>'time'],
+                          'bool_param'          => ['name'=>'bool_param',          'type'=>'bool'],
+                          'tinyint_param'       => ['name'=>'tinyint_param',       'type'=>'tinyint'],
+                            'char_param'          => ['name'=>'char_param',          'type'=>'char',    'default'=>'test'],
+                            'id_param'            => ['name'=>'id_param',            'type'=>'id',      'default'=>'test'],
+                            'blob_param'          => ['name'=>'blob_param',          'type'=>'blob',    'default'=>'test'],
+                            'longblob_param'      => ['name'=>'longblob_param',      'type'=>'longblob','default'=>'test'],
+                            'currency_param'      => ['name'=>'currency_param',      'type'=>'currency','default'=>1.11],
+                            'decimal_param'       => ['name'=>'decimal_param',       'type'=>'decimal', 'len' => 10, 'precision' => 4,    'default'=>1.11],
+                            'decimal2_param'      => ['name'=>'decimal2_param',      'type'=>'decimal2', 'len' => 10, 'precision' => 4,    'default'=>1.11],
+                            'url_param'           => ['name'=>'url_param',           'type'=>'url',     'default'=>'test'],
+                            'encrypt_param'       => ['name'=>'encrypt_param',       'type'=>'encrypt', 'default'=>'test'],
+                            'file_param'          => ['name'=>'file_param',          'type'=>'file',    'default'=>'test'],
+                        ];
 
-        $indexes = array(
-            array(
+        $indexes = [
+            [
                 'name'   => 'idx_'. $tableName .'_id',
                 'type'   => 'primary',
-                'fields' => array('id'),
-            ),
-        );
-        if($this->_db->tableExists($tableName)) {
+                'fields' => ['id'],
+            ],
+        ];
+        if ($this->_db->tableExists($tableName)) {
             $this->_db->dropTableName($tableName);
         }
         $this->createTableParams($tableName, $params, $indexes);
 
-        return array('tableName' => $tableName,
-                     'params' => $params);
+        return ['tableName' => $tableName,
+                     'params' => $params];
     }
 
 
@@ -2878,7 +2923,7 @@ SQL;
      */
     private function setupDataTypesData()
     {
-        return array(array( 'id'                  => create_guid(),
+        return [[ 'id'                  => create_guid(),
                         'int_param'           => 1,
                         'double_param'        => 1,
                         'float_param'         => 1.1,
@@ -2910,8 +2955,8 @@ SQL;
                         'url_param'           => 'utl',
                         'encrypt_param'       => 'encrypt',
                         'file_param'          => 'file',
-                          ),
-                     array( 'id'                  => create_guid(),
+                          ],
+                     [ 'id'                  => create_guid(),
                             'int_param'           => 2,
                             'double_param'        => 2,
                             'float_param'         => 2.2,
@@ -2943,12 +2988,12 @@ SQL;
                             'url_param'           => 'utl',
                             'encrypt_param'       => 'encrypt',
                             'file_param'          => 'file',
-                          ),
-                     array( 'id'                  => create_guid(),
+                          ],
+                     [ 'id'                  => create_guid(),
                             'int_param'           => 3,
                             'double_param'        => 3,
-                        ),
-        );
+                        ],
+        ];
     }
 
     public function testDataTypes()
@@ -2961,19 +3006,19 @@ SQL;
         // load and test each data record
         $dataArray = $this->setupDataTypesData();
 
-        foreach($dataArray as $data) {  // insert a single row of data and check it column by column
+        foreach ($dataArray as $data) {  // insert a single row of data and check it column by column
             $this->_db->insertParams($tableName, $params, $data);
             $id = $data['id'];
             $result = $this->_db->query("SELECT * FROM $tableName WHERE id = " . $this->_db->quoted($id));
-            while(($row = $this->_db->fetchByAssoc($result)) != null) {
-                    foreach ($data as $colKey => $col ) {
-                        $found = $this->_db->fromConvert($row[$colKey], $params[$colKey]['type']);
-                        $expected=$data[$colKey];
-                        if (empty($expected)) { // if null then compare to the table defined default
-                            $expected = $params[$colKey]['default'];
-                        }
-                        $this->assertEquals( $expected, $found, "Failed prepared statement data compare for column $colKey. Found: $found  Expected: $expected");
+            while (($row = $this->_db->fetchByAssoc($result)) != null) {
+                foreach ($data as $colKey => $col) {
+                    $found = $this->_db->fromConvert($row[$colKey], $params[$colKey]['type']);
+                    $expected=$data[$colKey];
+                    if (empty($expected)) { // if null then compare to the table defined default
+                        $expected = $params[$colKey]['default'];
                     }
+                    $this->assertEquals($expected, $found, "Failed prepared statement data compare for column $colKey. Found: $found  Expected: $expected");
+                }
             }
         }
     }
@@ -2989,33 +3034,33 @@ SQL;
         if (!($this->_db instanceof IBMDB2Manager)) {
             $this->markTestSkipped('This test can run only on DB2 instance');
         }
-        $params = array(
-            'logmeta' => array(
+        $params = [
+            'logmeta' => [
                 'name' => 'logmeta',
                 'vname' => 'LBL_LOGMETA',
                 'type' => 'json',
                 'dbType' => 'longblob',
-            ),
-        );
+            ],
+        ];
         $tableName = 'testAlterTableBlobToClob' . mt_rand();
 
         if ($this->_db->tableExists($tableName)) {
             $this->_db->dropTableName($tableName);
         }
-        $this->createTableParams($tableName, $params, array());
+        $this->createTableParams($tableName, $params, []);
 
-        $this->_db->insertParams($tableName, $params, array('logmeta' => $data));
+        $this->_db->insertParams($tableName, $params, ['logmeta' => $data]);
 
-        $params = array(
-            'logmeta' => array(
+        $params = [
+            'logmeta' => [
                 'name' => 'logmeta',
                 'vname' => 'LBL_LOGMETA',
                 'type' => 'json',
                 'dbType' => 'longtext',
-            ),
-        );
+            ],
+        ];
 
-        $this->_db->repairTableParams($tableName, $params, array(), true);
+        $this->_db->repairTableParams($tableName, $params, [], true);
 
         $columns = $this->_db->get_columns($tableName);
         $this->assertEquals('clob', $columns['logmeta']['type']);
@@ -3038,7 +3083,8 @@ SQL;
         $sql = $this->_db->createTableSQLParams(
             $bean->getTableName(),
             $bean->getFieldDefinitions(),
-            $bean->getIndices());
+            $bean->getIndices()
+        );
 
         $this->assertMatchesRegularExpression('/create\s*table\s*contacts/i', $sql);
     }
@@ -3047,8 +3093,9 @@ SQL;
     {
         $sql = $this->_db->createIndexSQL(
             new Contact,
-            array('id' => array('name'=>'id')),
-            'idx_id');
+            ['id' => ['name'=>'id']],
+            'idx_id'
+        );
 
         $this->assertMatchesRegularExpression(
             '/create\s*unique\s*index\s*idx_id\s*on\s*contacts\s*\(\s*id\s*\)/i',
@@ -3057,9 +3104,10 @@ SQL;
 
         $sql = $this->_db->createIndexSQL(
             new Contact,
-            array('id' => array('name'=>'id')),
+            ['id' => ['name'=>'id']],
             'idx_id',
-            false);
+            false
+        );
 
         $this->assertMatchesRegularExpression(
             '/create\s*index\s*idx_id\s*on\s*contacts\s*\(\s*id\s*\)/i',
@@ -3068,8 +3116,9 @@ SQL;
 
         $sql = $this->_db->createIndexSQL(
             new Contact,
-            array('id' => array('name'=>'id'),'deleted' => array('name'=>'deleted')),
-            'idx_id');
+            ['id' => ['name'=>'id'],'deleted' => ['name'=>'deleted']],
+            'idx_id'
+        );
 
         $this->assertMatchesRegularExpression(
             '/create\s*unique\s*index\s*idx_id\s*on\s*contacts\s*\(\s*id\s*,\s*deleted\s*\)/i',
@@ -3079,23 +3128,23 @@ SQL;
 
     public function testGetFieldType()
     {
-        $fieldDef = array(
+        $fieldDef = [
             'dbType'    => 'varchar',
             'dbtype'    => 'int',
             'type'      => 'char',
             'Type'      => 'bool',
             'data_type' => 'email',
-        );
+        ];
 
-        $this->assertEquals($this->_db->getFieldType($fieldDef),'varchar');
+        $this->assertEquals($this->_db->getFieldType($fieldDef), 'varchar');
         unset($fieldDef['dbType']);
-        $this->assertEquals($this->_db->getFieldType($fieldDef),'int');
+        $this->assertEquals($this->_db->getFieldType($fieldDef), 'int');
         unset($fieldDef['dbtype']);
-        $this->assertEquals($this->_db->getFieldType($fieldDef),'char');
+        $this->assertEquals($this->_db->getFieldType($fieldDef), 'char');
         unset($fieldDef['type']);
-        $this->assertEquals($this->_db->getFieldType($fieldDef),'bool');
+        $this->assertEquals($this->_db->getFieldType($fieldDef), 'bool');
         unset($fieldDef['Type']);
-        $this->assertEquals($this->_db->getFieldType($fieldDef),'email');
+        $this->assertEquals($this->_db->getFieldType($fieldDef), 'email');
     }
     public function testGetAutoIncrement()
     {
@@ -3112,7 +3161,7 @@ SQL;
     //BEGIN SUGARCRM flav=ent ONLY
     public function testGetAutoIncrementSQL()
     {
-        if( $this->_db->dbType != 'oci8') {
+        if ($this->_db->dbType != 'oci8') {
             $this->markTestSkipped('Only applies to Oracle');
         }
 
@@ -3147,7 +3196,7 @@ SQL;
     {
         $sql = $this->_db->addColumnSQL(
             'contacts',
-            array('foo' => array('name'=>'foo','type'=>'varchar'))
+            ['foo' => ['name'=>'foo','type'=>'varchar']]
         );
 
         $this->assertMatchesRegularExpression('/alter\s*table\s*contacts/i', $sql);
@@ -3157,11 +3206,11 @@ SQL;
     {
         $sql = $this->_db->alterColumnSQL(
             'contacts',
-            array('foo' => array('name'=>'foo','type'=>'varchar'))
+            ['foo' => ['name'=>'foo','type'=>'varchar']]
         );
 
         // Generated SQL may be a sequence of statements
-        switch(gettype($sql)){
+        switch (gettype($sql)) {
             case 'array':
                 $sql = $sql[0];
                 // fall-through
@@ -3189,7 +3238,7 @@ SQL;
     {
         $sql = $this->_db->deleteColumnSQL(
             new Contact,
-            array('foo' => array('name'=>'foo','type'=>'varchar'))
+            ['foo' => ['name'=>'foo','type'=>'varchar']]
         );
 // BEGIN SUGARCRM flav=ent ONLY
 
@@ -3206,29 +3255,29 @@ SQL;
     {
         $tableName = 'drop_columns_sql_test';
 
-        $id = array(
+        $id = [
             'name' => 'id',
-            'type' => 'id'
-        );
+            'type' => 'id',
+        ];
 
-        $field1 = array(
+        $field1 = [
             'name' => 'test1',
-            'type' => 'int'
-        );
+            'type' => 'int',
+        ];
 
-        $field2 = array(
+        $field2 = [
             'name' => 'test2',
-            'type' => 'int'
-        );
+            'type' => 'int',
+        ];
 
         $this->createTableParams(
             $tableName,
-            array(
+            [
                 'id' => $id,
                 'test1' => $field1,
-                'test2' => $field2
-            ),
-            array()
+                'test2' => $field2,
+            ],
+            []
         );
 
         $this->assertNotFalse(
@@ -3239,15 +3288,15 @@ SQL;
 
         $this->assertNotFalse(
             $this->_db->query(
-                $this->_db->dropColumnSQL($tableName, array($field2))
+                $this->_db->dropColumnSQL($tableName, [$field2])
             )
         );
 
-        $this->_db->addColumn($tableName, array($field1, $field2));
+        $this->_db->addColumn($tableName, [$field1, $field2]);
 
         $this->assertNotFalse(
             $this->_db->query(
-                $this->_db->dropColumnSQL($tableName, array($field1, $field2))
+                $this->_db->dropColumnSQL($tableName, [$field1, $field2])
             )
         );
     }
@@ -3256,7 +3305,7 @@ SQL;
     {
         $this->assertEquals(
             123,
-            $this->_db->massageValue(123, array('name' => 'foo', 'type' => 'int'))
+            $this->_db->massageValue(123, ['name' => 'foo', 'type' => 'int'])
         );
 
         switch ($this->_db->dbType) {
@@ -3274,16 +3323,20 @@ SQL;
 
         $this->assertEquals(
             $expected,
-            $this->_db->massageValue("'dog'",array('name'=>'foo','type'=>'varchar'))
+            $this->_db->massageValue("'dog'", ['name'=>'foo','type'=>'varchar'])
         );
     }
 
     public function testGetColumnType()
     {
-        switch($this->_db->dbType){
+        switch ($this->_db->dbType) {
             //BEGIN SUGARCRM flav=ent ONLY
-            case 'oci8': $expected_type = 'number'; break;
-            case 'ibm_db2': $expected_type = 'integer'; break;
+            case 'oci8':
+                $expected_type = 'number';
+                break;
+            case 'ibm_db2':
+                $expected_type = 'integer';
+                break;
             //END SUGARCRM flav=ent ONLY
             default:
                 $expected_type = 'int';
@@ -3295,15 +3348,15 @@ SQL;
     public function testIsFieldArray()
     {
         $this->assertTrue(
-            $this->_db->isFieldArray(array('name'=>'foo','type'=>array('int')))
+            $this->_db->isFieldArray(['name'=>'foo','type'=>['int']])
         );
 
         $this->assertFalse(
-            $this->_db->isFieldArray(array('name'=>'foo','type'=>'int'))
+            $this->_db->isFieldArray(['name'=>'foo','type'=>'int'])
         );
 
         $this->assertTrue(
-            $this->_db->isFieldArray(array('name'=>'foo'))
+            $this->_db->isFieldArray(['name'=>'foo'])
         );
 
         $this->assertFalse(
@@ -3323,7 +3376,7 @@ SQL;
     {
         $indices = $this->_db->get_indices('contacts');
 
-        foreach ( $indices as $index ) {
+        foreach ($indices as $index) {
             $this->assertTrue(!empty($index['name']));
             $this->assertTrue(!empty($index['type']));
             $this->assertTrue(!empty($index['fields']));
@@ -3335,11 +3388,11 @@ SQL;
         $tablename = 'test' . date("YmdHis");
         $sql = $this->_db->add_drop_constraint(
             $tablename,
-            array(
+            [
                 'name'   => 'idx_foo',
                 'type'   => 'index',
-                'fields' => array('foo'),
-            ),
+                'fields' => ['foo'],
+            ],
             false
         );
 
@@ -3349,11 +3402,11 @@ SQL;
         $tablename = 'test' . date("YmdHis");
         $sql = $this->_db->add_drop_constraint(
             $tablename,
-            array(
+            [
                 'name'   => 'idx_foo',
                 'type'   => 'index',
-                'fields' => array('foo'),
-            ),
+                'fields' => ['foo'],
+            ],
             true
         );
 
@@ -3373,7 +3426,7 @@ SQL;
             ],
         ], []);
 
-        $this->assertEquals($this->_db->number_of_columns($tablename),1);
+        $this->assertEquals($this->_db->number_of_columns($tablename), 1);
     }
 
     public function testGetColumns()
@@ -3391,15 +3444,15 @@ SQL;
     public function testEmptyPrecision()
     {
         //BEGIN SUGARCRM flav=ent ONLY
-        if (in_array($this->_db->dbType, array('oci8', 'ibm_db2'))) {
+        if (in_array($this->_db->dbType, ['oci8', 'ibm_db2'])) {
             $this->markTestSkipped("Skipping on {$this->_db->dbType}, as it doesn't apply to this backend");
         }
         //END SUGARCRM flav=ent ONLY
 
         $sql = $this->_db->alterColumnSQL(
             'contacts',
-            array('compensation_min' =>
-                array(
+            ['compensation_min' =>
+                [
                     'required' => false,
                     'name' => 'compensation_min',
                     'vname' => 'LBL_COMPENSATION_MIN',
@@ -3414,8 +3467,8 @@ SQL;
                     'reportable' => 1,
                     'len' => '18',
                     'precision' => '',
-                ),
-            )
+                ],
+            ]
         );
 
         $this->assertDoesNotMatchRegularExpression('/float\s*\(18,\s*\)/i', $sql);
@@ -3428,15 +3481,15 @@ SQL;
     public function testBlankSpacePrecision()
     {
         //BEGIN SUGARCRM flav=ent ONLY
-        if (in_array($this->_db->dbType, array('oci8', 'ibm_db2'))) {
+        if (in_array($this->_db->dbType, ['oci8', 'ibm_db2'])) {
             $this->markTestSkipped("Skipping on {$this->_db->dbType}, as it doesn't apply to this backend");
         }
         //END SUGARCRM flav=ent ONLY
 
         $sql = $this->_db->alterColumnSQL(
             'contacts',
-            array('compensation_min' =>
-                array(
+            ['compensation_min' =>
+                [
                     'required' => false,
                     'name' => 'compensation_min',
                     'vname' => 'LBL_COMPENSATION_MIN',
@@ -3451,8 +3504,8 @@ SQL;
                     'reportable' => 1,
                     'len' => '18',
                     'precision' => ' ',
-                ),
-            )
+                ],
+            ]
         );
 
         $this->assertDoesNotMatchRegularExpression('/float\s*\(18,\s*\)/i', $sql);
@@ -3465,15 +3518,15 @@ SQL;
     public function testSetPrecision()
     {
         //BEGIN SUGARCRM flav=ent ONLY
-        if (in_array($this->_db->dbType, array('oci8', 'ibm_db2'))) {
+        if (in_array($this->_db->dbType, ['oci8', 'ibm_db2'])) {
             $this->markTestSkipped("Skipping on {$this->_db->dbType}, as it doesn't apply to this backend");
         }
         //END SUGARCRM flav=ent ONLY
 
         $sql = $this->_db->alterColumnSQL(
             'contacts',
-            array('compensation_min' =>
-                array(
+            ['compensation_min' =>
+                [
                     'required' => false,
                     'name' => 'compensation_min',
                     'vname' => 'LBL_COMPENSATION_MIN',
@@ -3488,8 +3541,8 @@ SQL;
                     'reportable' => 1,
                     'len' => '18',
                     'precision' => '2',
-                ),
-            )
+                ],
+            ]
         );
 
         if ($this->_db->dbType == 'mssql') {
@@ -3505,15 +3558,15 @@ SQL;
     public function testSetPrecisionInLen()
     {
         //BEGIN SUGARCRM flav=ent ONLY
-        if (in_array($this->_db->dbType, array('oci8', 'ibm_db2'))) {
+        if (in_array($this->_db->dbType, ['oci8', 'ibm_db2'])) {
             $this->markTestSkipped("Skipping on {$this->_db->dbType}, as it doesn't apply to this backend");
         }
         //END SUGARCRM flav=ent ONLY
 
         $sql = $this->_db->alterColumnSQL(
             'contacts',
-            array('compensation_min' =>
-                array(
+            ['compensation_min' =>
+                [
                     'required' => false,
                     'name' => 'compensation_min',
                     'vname' => 'LBL_COMPENSATION_MIN',
@@ -3527,8 +3580,8 @@ SQL;
                     'audited' => 0,
                     'reportable' => 1,
                     'len' => '18,2',
-                ),
-            )
+                ],
+            ]
         );
 
         if ($this->_db->dbType == 'mssql') {
@@ -3544,11 +3597,11 @@ SQL;
     public function testEmptyPrecisionMassageFieldDef()
     {
         //BEGIN SUGARCRM flav=ent ONLY
-        if (in_array($this->_db->dbType, array('oci8', 'ibm_db2'))) {
+        if (in_array($this->_db->dbType, ['oci8', 'ibm_db2'])) {
             $this->markTestSkipped("Skipping on {$this->_db->dbType}, as it doesn't apply to this backend");
         }
         //END SUGARCRM flav=ent ONLY
-        $fielddef = array(
+        $fielddef = [
             'required' => false,
             'name' => 'compensation_min',
             'vname' => 'LBL_COMPENSATION_MIN',
@@ -3563,10 +3616,10 @@ SQL;
             'reportable' => 1,
             'len' => '18',
             'precision' => '',
-        );
+        ];
         $this->_db->massageFieldDef($fielddef);
 
-        $this->assertEquals("18",$fielddef['len']);
+        $this->assertEquals("18", $fielddef['len']);
     }
 
     /**
@@ -3575,12 +3628,12 @@ SQL;
     public function testBlankSpacePrecisionMassageFieldDef()
     {
         //BEGIN SUGARCRM flav=ent ONLY
-        if (in_array($this->_db->dbType, array('oci8', 'ibm_db2'))) {
+        if (in_array($this->_db->dbType, ['oci8', 'ibm_db2'])) {
             $this->markTestSkipped("Skipping on {$this->_db->dbType}, as it doesn't apply to this backend");
         }
         //END SUGARCRM flav=ent ONLY
 
-        $fielddef = array(
+        $fielddef = [
             'required' => false,
             'name' => 'compensation_min',
             'vname' => 'LBL_COMPENSATION_MIN',
@@ -3595,10 +3648,10 @@ SQL;
             'reportable' => 1,
             'len' => '18',
             'precision' => ' ',
-        );
+        ];
         $this->_db->massageFieldDef($fielddef);
 
-        $this->assertEquals("18",$fielddef['len']);
+        $this->assertEquals("18", $fielddef['len']);
     }
 
     /**
@@ -3607,11 +3660,11 @@ SQL;
     public function testSetPrecisionMassageFieldDef()
     {
         //BEGIN SUGARCRM flav=ent ONLY
-        if (in_array($this->_db->dbType, array('oci8', 'ibm_db2'))) {
+        if (in_array($this->_db->dbType, ['oci8', 'ibm_db2'])) {
             $this->markTestSkipped("Skipping on {$this->_db->dbType}, as it doesn't apply to this backend");
         }
         //END SUGARCRM flav=ent ONLY
-        $fielddef = array(
+        $fielddef = [
             'required' => false,
             'name' => 'compensation_min',
             'vname' => 'LBL_COMPENSATION_MIN',
@@ -3626,10 +3679,10 @@ SQL;
             'reportable' => 1,
             'len' => '18',
             'precision' => '2',
-        );
+        ];
         $this->_db->massageFieldDef($fielddef);
 
-        $this->assertEquals("18,2",$fielddef['len']);
+        $this->assertEquals("18,2", $fielddef['len']);
     }
 
     /**
@@ -3638,11 +3691,11 @@ SQL;
     public function testSetPrecisionInLenMassageFieldDef()
     {
         //BEGIN SUGARCRM flav=ent ONLY
-        if (in_array($this->_db->dbType, array('oci8', 'ibm_db2'))) {
+        if (in_array($this->_db->dbType, ['oci8', 'ibm_db2'])) {
             $this->markTestSkipped("Skipping on {$this->_db->dbType}, as it doesn't apply to this backend");
         }
         //END SUGARCRM flav=ent ONLY
-        $fielddef = array(
+        $fielddef = [
             'required' => false,
             'name' => 'compensation_min',
             'vname' => 'LBL_COMPENSATION_MIN',
@@ -3656,20 +3709,20 @@ SQL;
             'audited' => 0,
             'reportable' => 1,
             'len' => '18,2',
-        );
+        ];
         $this->_db->massageFieldDef($fielddef);
 
-        $this->assertEquals("18,2",$fielddef['len']);
+        $this->assertEquals("18,2", $fielddef['len']);
     }
 
     public function testGetSelectFieldsFromQuery()
     {
         $i=0;
-        foreach(array("", "DISTINCT ") as $distinct) {
-            $fields = array();
-            $expected = array();
-            foreach(array("field", "''", "'data'", "sometable.field") as $data) {
-                if($data[0] != "'") {
+        foreach (["", "DISTINCT "] as $distinct) {
+            $fields = [];
+            $expected = [];
+            foreach (["field", "''", "'data'", "sometable.field"] as $data) {
+                if ($data[0] != "'") {
                     $data .= $i++;
                     $fields[] = "{$distinct}$data";
                     $dotfields = explode('.', $data);
@@ -3684,7 +3737,7 @@ SQL;
             }
             $query = "SELECT ".join(', ', $fields);
             $result = $this->_db->getSelectFieldsFromQuery($query);
-            foreach($expected as $expect) {
+            foreach ($expected as $expect) {
                 $this->assertContains($expect, array_keys($result), "Result should include $expect");
             }
         }
@@ -3692,11 +3745,11 @@ SQL;
 
     public function providerBlobToClob()
     {
-        return array(
-            array('testAlterTableBlobToClob'),
-            array('縢嫆璻侁刵 榎 偢偣唲鷩'),
-            array(serialize(range(1, 262144))),
-        );
+        return [
+            ['testAlterTableBlobToClob'],
+            ['縢嫆璻侁刵 榎 偢偣唲鷩'],
+            [serialize(range(1, 262144))],
+        ];
     }
 
     /**
@@ -3715,9 +3768,9 @@ SQL;
 
     public function orderByEnumProvider()
     {
-        return array(
-            array('', array(), '', '')
-        );
+        return [
+            ['', [], '', ''],
+        ];
     }
 
     public function testLimitSubQuery()

@@ -24,7 +24,7 @@ class UserPreferenceTest extends TestCase
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-        self::$user = SugarTestHelper::setUp('current_user', array(true, false));
+        self::$user = SugarTestHelper::setUp('current_user', [true, false]);
     }
 
     public static function tearDownAfterClass(): void
@@ -40,7 +40,7 @@ class UserPreferenceTest extends TestCase
 
     protected function tearDown() : void
     {
-        $_SESSION = array();
+        $_SESSION = [];
     }
 
     public function testSettingAUserPreferenceInCache()

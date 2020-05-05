@@ -40,7 +40,7 @@ DEFS;
         SugarTestHelper::setUp('beanFiles');
 
         // Execute this test as a non-admin user
-        SugarTestHelper::setUp('current_user', array(true, 0));
+        SugarTestHelper::setUp('current_user', [true, 0]);
     }
 
     protected function tearDown() : void

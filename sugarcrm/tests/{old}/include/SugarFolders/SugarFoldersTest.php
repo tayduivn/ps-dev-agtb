@@ -15,8 +15,8 @@ use PHPUnit\Framework\TestCase;
 
 class SugarFoldersTest extends TestCase
 {
-	var $folder = null;
-	var $additionalFolders = null;
+    var $folder = null;
+    var $additionalFolders = null;
     var $_user = null;
     var $emails = null;
     private $toDelete = [];
@@ -26,9 +26,9 @@ class SugarFoldersTest extends TestCase
         $this->_user = SugarTestUserUtilities::createAnonymousUser();
         $current_user = $this->_user;
         $GLOBALS['current_user'] = $this->_user;
-		$this->folder = new SugarFolder();
-		$this->additionalFolders = array();
-		$this->emails = array();
+        $this->folder = new SugarFolder();
+        $this->additionalFolders = [];
+        $this->emails = [];
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('app_strings');
@@ -42,11 +42,13 @@ class SugarFoldersTest extends TestCase
         $GLOBALS['db']->query("DELETE FROM folders_subscriptions WHERE assigned_user_id='{$this->_user->id}'");
         $this->_clearFolder($this->folder->id);
 
-        foreach ($this->additionalFolders as $additionalID)
+        foreach ($this->additionalFolders as $additionalID) {
             $this->_clearFolder($additionalID);
+        }
 
-        foreach ($this->emails as $emailID)
+        foreach ($this->emails as $emailID) {
             $GLOBALS['db']->query("DELETE FROM emails WHERE id='$emailID'");
+        }
 
         unset($this->folder);
 
@@ -62,11 +64,11 @@ class SugarFoldersTest extends TestCase
     {
         //Set folder
         $this->folder->id = create_guid();
-        $this->folder->new_with_id = TRUE;
+        $this->folder->new_with_id = true;
 
-        $fields = array('name' => 'TEST_FOLDER','parent_folder' => 'PRNT_FOLDER',
+        $fields = ['name' => 'TEST_FOLDER','parent_folder' => 'PRNT_FOLDER',
                         'team_id' => create_guid(),'team_set_id' => create_guid(),
-                        );
+                        ];
 
         $this->folder->setFolder($fields);
 
@@ -74,11 +76,11 @@ class SugarFoldersTest extends TestCase
         $error_message = "Unable to set folder.";
         $this->folder->retrieve($this->folder->id);
 
-        $this->assertEquals($fields['name'], $this->folder->name, $error_message );
-        $this->assertEquals($fields['parent_folder'], $this->folder->parent_folder, $error_message );
-        $this->assertEquals($fields['team_id'], $this->folder->team_id, $error_message );
-        $this->assertEquals($fields['team_set_id'], $this->folder->team_set_id, $error_message );
-        $this->assertEquals($this->_user->id, $this->folder->assign_to_id, $error_message );
+        $this->assertEquals($fields['name'], $this->folder->name, $error_message);
+        $this->assertEquals($fields['parent_folder'], $this->folder->parent_folder, $error_message);
+        $this->assertEquals($fields['team_id'], $this->folder->team_id, $error_message);
+        $this->assertEquals($fields['team_set_id'], $this->folder->team_set_id, $error_message);
+        $this->assertEquals($this->_user->id, $this->folder->assign_to_id, $error_message);
 
         //Check for folder subscriptions create for global user
         $sub_ids = $this->folder->getSubscriptions($GLOBALS['current_user']);
@@ -100,7 +102,7 @@ class SugarFoldersTest extends TestCase
         $this->assertEquals(0, count($subs), $error_message);
 
         //Add a subscription
-        $this->folder->insertFolderSubscription($this->folder->id,$GLOBALS['current_user']->id);
+        $this->folder->insertFolderSubscription($this->folder->id, $GLOBALS['current_user']->id);
         $subs = $this->folder->getSubscriptions($GLOBALS['current_user']);
         $this->assertEquals(1, count($subs), $error_message);
 
@@ -120,13 +122,13 @@ class SugarFoldersTest extends TestCase
         $f3 = new SugarFolder();
 
         $f1->id = create_guid();
-        $f1->new_with_id = TRUE;
+        $f1->new_with_id = true;
 
         $f12->id = create_guid();
-        $f12->new_with_id = TRUE;
+        $f12->new_with_id = true;
 
         $f3->id = create_guid();
-        $f3->new_with_id = TRUE;
+        $f3->new_with_id = true;
 
         $f12->parent_folder = $f1->id;
         $f1->save();
@@ -145,12 +147,12 @@ class SugarFoldersTest extends TestCase
         $this->assertEquals(1, count($parentIDs), "Unable to retrieve parent ids recursively");
 
         //Find the children by going the other way.
-        $childrenArray = array();
-        $this->folder->findAllChildren($f1->id,$childrenArray);
+        $childrenArray = [];
+        $this->folder->findAllChildren($f1->id, $childrenArray);
         $this->assertEquals(1, count($childrenArray), "Unable to retrieve child ids recursively");
 
-        $childrenArray = array();
-        $this->folder->findAllChildren($f3->id,$childrenArray);
+        $childrenArray = [];
+        $this->folder->findAllChildren($f3->id, $childrenArray);
         $this->assertEquals(0, count($childrenArray), "Unable to retrieve child ids recursively");
     }
 
@@ -162,7 +164,7 @@ class SugarFoldersTest extends TestCase
         $emailUI = new EmailUI();
         $emailUI->preflightUser($GLOBALS['current_user']);
         $error_message = "Unable to get user folders";
-        $rootNode = new ExtNode('','');
+        $rootNode = new ExtNode('', '');
 
         $folderOpenState = "";
         $ret = $this->folder->getUserFolders($rootNode, $folderOpenState, $GLOBALS['current_user'], true);
@@ -178,12 +180,12 @@ class SugarFoldersTest extends TestCase
      */
     function testFolderEmailMethods()
     {
-        $emailParams = array('status' => 'read');
+        $emailParams = ['status' => 'read'];
         $email = $this->_createEmailObject($emailParams);
         $this->emails[] = $email->id;
 
         $this->_createNewSugarFolder();
-        $this->folder->addBean($email,$GLOBALS['current_user']);
+        $this->folder->addBean($email, $GLOBALS['current_user']);
 
         $emailExists = $this->folder->checkEmailExistForFolder($email->id);
         $this->assertTrue($emailExists, "Unable to check for emails with a specific folder");
@@ -197,16 +199,16 @@ class SugarFoldersTest extends TestCase
         //Move the Email bean from one folder to another
         $f3 = new SugarFolder();
         $f3->id = create_guid();
-        $f3->new_with_id = TRUE;
+        $f3->new_with_id = true;
         $f3->save();
         $this->additionalFolders[] = $f3->id;
 
-        $this->folder->addBean($email,$GLOBALS['current_user']);
+        $this->folder->addBean($email, $GLOBALS['current_user']);
 
         $emailExists = $f3->checkEmailExistForFolder($email->id);
         $this->assertFalse($emailExists);
 
-        $this->folder->move($this->folder->id, $f3->id,$email->id);
+        $this->folder->move($this->folder->id, $f3->id, $email->id);
         $emailExists = $f3->checkEmailExistForFolder($email->id);
         $this->assertTrue($emailExists, "Unable to move Emails bean to a different sugar folder");
     }
@@ -315,29 +317,30 @@ class SugarFoldersTest extends TestCase
         $this->assertEquals(0, $result);
     }
 
-    function _createEmailObject($additionalParams = array() )
+    function _createEmailObject($additionalParams = [])
     {
         global $timedate;
 
         $em = new Email();
-		$em->name = 'tst_' . uniqid();
-		$em->type = 'inbound';
-		$em->intent = 'pick';
+        $em->name = 'tst_' . uniqid();
+        $em->type = 'inbound';
+        $em->intent = 'pick';
         //Two days from today
         $em->date_sent = $timedate->to_display_date_time(gmdate("Y-m-d H:i:s", (time() + (3600 * 24 * 2))));
 
-		foreach ($additionalParams as $k => $v)
-		  $em->$k = $v;
+        foreach ($additionalParams as $k => $v) {
+            $em->$k = $v;
+        }
 
-		$em->save();
+        $em->save();
 
-		return $em;
+        return $em;
     }
 
     function _createNewSugarFolder()
     {
         $this->folder->id = create_guid();
-        $this->folder->new_with_id = TRUE;
+        $this->folder->new_with_id = true;
         $this->folder->name = "UNIT TEST";
         $this->folder->save();
     }

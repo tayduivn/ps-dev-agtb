@@ -28,13 +28,13 @@ class Bug52610Test extends TestCase
      */
     public function getDefaults()
     {
-        return array(
-            array(true),
-            array(''),
-            array('string'),
-            array(123),
-            array(123.45)
-        );
+        return [
+            [true],
+            [''],
+            ['string'],
+            [123],
+            [123.45],
+        ];
     }
 
     /**

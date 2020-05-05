@@ -57,28 +57,28 @@ class Bug46411Test extends TestCase
     public function testMissingFields()
     {
         $bean = $this->getMockBuilder('Call')
-            ->setMethods(array(
+            ->setMethods([
                 'get_importable_fields',
                 'populateDefaultValues',
                 'beforeImportSave',
                 'save',
                 'afterImportSave',
                 'writeRowToLastImport',
-            ))
+            ])
             ->getMock();
 
         $bean->expects($this->any())
             ->method('get_importable_fields')
-            ->will($this->returnValue(array(
-            'account_id'		=> 'accounts',
-            'opportunity_id'	=> 'opportunities',
-            'contact_id'		=> 'contacts',
-            'case_id'			=> 'cases',
-            'user_id'			=> 'users',
-            'assigned_user_id'	=> 'users',
-            'note_id'			=> 'notes',
-            'lead_id'			=> 'leads',
-        )));
+            ->will($this->returnValue([
+            'account_id'        => 'accounts',
+            'opportunity_id'    => 'opportunities',
+            'contact_id'        => 'contacts',
+            'case_id'           => 'cases',
+            'user_id'           => 'users',
+            'assigned_user_id'  => 'users',
+            'note_id'           => 'notes',
+            'lead_id'           => 'leads',
+            ]));
 
         $bean->expects($this->any())
             ->method('populateDefaultValues')
@@ -101,7 +101,7 @@ class Bug46411Test extends TestCase
             ->will($this->returnValue('foo'));
 
         $bean->date_modified = 'true';
-        $bean->fetched_row = array('date_modified' => '');
+        $bean->fetched_row = ['date_modified' => ''];
         $bean->object_name = '';
 
         $lead = SugarTestLeadUtilities::createLead();

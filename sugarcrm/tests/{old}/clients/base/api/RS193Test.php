@@ -18,7 +18,7 @@ class RS193Test extends TestCase
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setUp('current_user', array(true, true));
+        SugarTestHelper::setUp('current_user', [true, true]);
     }
 
     protected function tearDown() : void
@@ -30,17 +30,17 @@ class RS193Test extends TestCase
     public function testAddTrackerFilter()
     {
         $api = new FilterApi();
-        $actual = $api->filterList(SugarTestRestUtilities::getRestServiceMock(), array(
+        $actual = $api->filterList(SugarTestRestUtilities::getRestServiceMock(), [
                 '__sugar_url' => 'v10/Accounts/filter',
-                'filter' => array(
-                    array(
-                        '$tracker' => '-7 DAY'
-                    ),
-                ),
+                'filter' => [
+                    [
+                        '$tracker' => '-7 DAY',
+                    ],
+                ],
                 'fields' => 'id,name',
                 'max_num' => 3,
                 'module' => 'Accounts',
-            ));
+            ]);
         $this->assertArrayHasKey('records', $actual);
     }
 }

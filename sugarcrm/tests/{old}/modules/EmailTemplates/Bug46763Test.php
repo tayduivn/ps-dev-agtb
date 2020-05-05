@@ -30,12 +30,12 @@ class Bug46763Test extends TestCase
      *
      * @var array
      */
-    protected $modules = array(
+    protected $modules = [
         'Accounts' => 'Test1Account',
         'Contacts' => 'Test2Contact',
         'Leads'    => 'Test3Lead',
         'Prospects'    => 'Test4Target',
-    );
+    ];
 
     /**
      * Temporary file path
@@ -65,10 +65,9 @@ class Bug46763Test extends TestCase
         $current_user = SugarTestUserUtilities::createAnonymousUser(true, 1);
 
         // generate module localization data
-        $data = array('<?php');
+        $data = ['<?php'];
         $template = '$app_list_strings["moduleListSingular"]["%s"] = "%s";';
-        foreach ($this->modules as $moduleName => $singular)
-        {
+        foreach ($this->modules as $moduleName => $singular) {
             $data[] = sprintf($template, $moduleName, $singular);
         }
 
@@ -146,8 +145,7 @@ class Bug46763Test extends TestCase
         $this->assertArrayHasKey('DROPDOWN', $vars);
 
         // ensure that all localized values are contained within drop down list
-        foreach ($this->modules as $singular)
-        {
+        foreach ($this->modules as $singular) {
             $this->assertStringContainsString($singular, $vars['DROPDOWN']);
         }
     }

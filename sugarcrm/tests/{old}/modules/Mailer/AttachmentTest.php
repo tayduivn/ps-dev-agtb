@@ -18,8 +18,9 @@ class AttachmentTest extends TestCase
      * @group email
      * @group mailer
      */
-    public function testFromSugarBean_BeanIsAccount_ThrowsException() {
-        $mockAccount = self::getMockBuilder("Account")->setMethods(array("Account"))->getMock();
+    public function testFromSugarBean_BeanIsAccount_ThrowsException()
+    {
+        $mockAccount = self::getMockBuilder("Account")->setMethods(["Account"])->getMock();
 
         $mockAccount->expects(self::any())
             ->method("Account")

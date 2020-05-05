@@ -22,7 +22,7 @@ class RS278Test extends TestCase
     protected static $service = null;
 
     /** @var array */
-    protected $beans = array();
+    protected $beans = [];
 
     public static function setUpBeforeClass() : void
     {
@@ -57,26 +57,26 @@ class RS278Test extends TestCase
      */
     public function testCreateDashboardWithoutView()
     {
-        $args = array(
-            'metadata' => array(
-                'components' => array(
-                    array(
-                        'rows' => array(
-                            array(
-                                array(
-                                    'view' => array(
+        $args = [
+            'metadata' => [
+                'components' => [
+                    [
+                        'rows' => [
+                            [
+                                [
+                                    'view' => [
                                         'label' => 'LBL_DASHLET_PIPLINE_NAME',
                                         'type' => 'sales-pipeline',
                                         'visibility' => 'user',
-                                    ),
-                                ),
-                            ),
-                        ),
+                                    ],
+                                ],
+                            ],
+                        ],
                         'width' => 12,
-                    ),
-                ),
-            ),
-        );
+                    ],
+                ],
+            ],
+        ];
 
         $api = new DashboardApi();
         $actual = $api->createDashboard(self::$service, $args);
@@ -92,37 +92,37 @@ class RS278Test extends TestCase
      */
     public function testCreateDashboardWithView()
     {
-        $args = array(
-            'metadata' => array(
-                'components' => array(
-                    array(
-                        'rows' => array(
-                            array(
-                                array(
-                                    'context' => array(
+        $args = [
+            'metadata' => [
+                'components' => [
+                    [
+                        'rows' => [
+                            [
+                                [
+                                    'context' => [
                                         'module' => 'Accounts',
-                                    ),
-                                    'view' => array(
-                                        'display_columns' => array(
+                                    ],
+                                    'view' => [
+                                        'display_columns' => [
                                             'name',
                                             'billing_address_country',
                                             'billing_address_city',
-                                        ),
+                                        ],
                                         'label' => 'LBL_DASHLET_MY_MODULE',
                                         'type' => 'dashablelist',
-                                    ),
+                                    ],
                                     'width' => 12,
-                                ),
-                            ),
-                        ),
+                                ],
+                            ],
+                        ],
                         'width' => 12,
-                    ),
-                ),
-            ),
+                    ],
+                ],
+            ],
             'module' => 'Leads',
             'name' => 'LBL_DEFAULT_DASHBOARD_TITLE',
             'view' => 'records',
-        );
+        ];
 
         $api = new DashboardApi();
         $actual = $api->createDashboard(self::$service, $args);
@@ -138,38 +138,38 @@ class RS278Test extends TestCase
      */
     public function testCreateDashboardWithBoth()
     {
-        $args = array(
-            'metadata' => array(
-                'components' => array(
-                    array(
-                        'rows' => array(
-                            array(
-                                array(
-                                    'context' => array(
+        $args = [
+            'metadata' => [
+                'components' => [
+                    [
+                        'rows' => [
+                            [
+                                [
+                                    'context' => [
                                         'module' => 'Accounts',
-                                    ),
-                                    'view' => array(
-                                        'display_columns' => array(
+                                    ],
+                                    'view' => [
+                                        'display_columns' => [
                                             'name',
                                             'billing_address_country',
                                             'billing_address_city',
-                                        ),
+                                        ],
                                         'label' => 'LBL_DASHLET_MY_MODULE',
                                         'type' => 'dashablelist',
-                                    ),
+                                    ],
                                     'width' => 12,
-                                ),
-                            ),
-                        ),
+                                ],
+                            ],
+                        ],
                         'width' => 12,
-                    ),
-                ),
-            ),
+                    ],
+                ],
+            ],
             'module' => 'Contacts',
             'name' => 'LBL_DEFAULT_DASHBOARD_TITLE',
             'view' => '',
             'view_name' => 'records',
-        );
+        ];
 
         $api = new DashboardApi();
         $actual = $api->createDashboard(self::$service, $args);
@@ -187,9 +187,9 @@ class RS278Test extends TestCase
      */
     public function testGetDashboardsWithoutView($expected)
     {
-        $args = array(
+        $args = [
             'max_num' => '20',
-        );
+        ];
 
         $api = new DashboardListApi();
         $actual = $api->getDashboards(self::$service, $args);
@@ -209,12 +209,12 @@ class RS278Test extends TestCase
      */
     public function testGetDashboardsWithView($expected)
     {
-        $args = array(
+        $args = [
             'fields' => '',
             'max_num' => '20',
             'module' => 'Leads',
             'view' => 'records',
-        );
+        ];
 
         $api = new DashboardListApi();
         $actual = $api->getDashboards(self::$service, $args);
@@ -233,13 +233,13 @@ class RS278Test extends TestCase
      */
     public function testGetDashboardsWithBoth($expected)
     {
-        $args = array(
+        $args = [
             'fields' => '',
             'max_num' => '20',
             'module' => 'Contacts',
             'view' => '',
             'view_name' => 'records',
-        );
+        ];
 
         $api = new DashboardListApi();
         $actual = $api->getDashboards(self::$service, $args);

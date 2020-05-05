@@ -37,29 +37,29 @@ class commentlogTemplateTest extends TestCase
 
     public function hasCommentLogFieldProvider(): array
     {
-        return array(
-            array('Accounts', true),
-            array('Bugs', true),
-            array('Calls', true),
-            array('Cases', true),
-            array('Contacts', true),
-            array('Contracts', true),
-            array('DataPrivacy', true),
-            array('KBArticles', false),
-            array('KBContents', true),
-            array('KBContentTemplates', false),
-            array('KBDocuments', false),
-            array('Leads', true),
-            array('Meetings', true),
-            array('Notes', true),
-            array('Opportunities', true),
-            array('ProductCategories', false),
+        return [
+            ['Accounts', true],
+            ['Bugs', true],
+            ['Calls', true],
+            ['Cases', true],
+            ['Contacts', true],
+            ['Contracts', true],
+            ['DataPrivacy', true],
+            ['KBArticles', false],
+            ['KBContents', true],
+            ['KBContentTemplates', false],
+            ['KBDocuments', false],
+            ['Leads', true],
+            ['Meetings', true],
+            ['Notes', true],
+            ['Opportunities', true],
+            ['ProductCategories', false],
             // FIXME: re-enable once commentlog is enabled in Quotes
             // array('Quotes', true),
             //BEGIN SUGARCRM flav=ent ONLY
-            array('RevenueLineItems', true),
+            ['RevenueLineItems', true],
             //END SUGARCRM flav=ent ONLY
-            array('Tasks', true),
-        );
+            ['Tasks', true],
+        ];
     }
 }

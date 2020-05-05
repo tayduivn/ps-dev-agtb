@@ -21,16 +21,16 @@ class DropdownListItemsTest extends TestCase
     public static function setUpBeforeClass() : void
     {
         // Create a custom file that adds a new list and overrides the current
-        $testItems = array(
-            'test_list_1' => array(
+        $testItems = [
+            'test_list_1' => [
                 'list_item_0',
                 'list_item_1',
                 'list_item_2',
-            ),
-            'sales_stage_dom' => array(
-                'Prospecting'
-            ),
-        );
+            ],
+            'sales_stage_dom' => [
+                'Prospecting',
+            ],
+        ];
         sugar_mkdir(dirname(self::$custFilePath), null, true);
         write_array_to_file('app_list_strings_required', $testItems, self::$custFilePath);
     }

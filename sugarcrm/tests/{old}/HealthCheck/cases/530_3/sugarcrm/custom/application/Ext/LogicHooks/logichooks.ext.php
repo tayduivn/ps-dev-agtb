@@ -10,10 +10,10 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$hook_array['after_ui_footer'][] = array(
+$hook_array['after_ui_footer'][] = [
     1,
     'fts',
     null,
     '\\Sugarcrm\\Sugarcrm\\SearchEngine\\HookHandler',
     'indexBean',
-);
+];

@@ -25,18 +25,16 @@ class Bug48748Test extends RestTestCase
         parent::setUp();
 
         //If somehow this package already exists copy it
-        if(file_exists('custom/modules/' . $this->package))
-        {
-           $this->packageExists = true;
-           mkdir_recursive('custom/modules/' . $this->package . '_bak');
-           copy_recursive('custom/modules/' . $this->package, 'custom/modules/' . $this->package . '_bak');
+        if (file_exists('custom/modules/' . $this->package)) {
+            $this->packageExists = true;
+            mkdir_recursive('custom/modules/' . $this->package . '_bak');
+            copy_recursive('custom/modules/' . $this->package, 'custom/modules/' . $this->package . '_bak');
         }
 
         //Make the custom package directory and simulate copying the file in
         mkdir_recursive('custom/modules/' . $this->package . '/Ext/WirelessLayoutdefs');
-        if( $fh = @fopen('custom/modules/' . $this->package . '/Ext/WirelessLayoutdefs/wireless.subpaneldefs.ext.php', 'w+'))
-        {
-$string = <<<EOQ
+        if ($fh = @fopen('custom/modules/' . $this->package . '/Ext/WirelessLayoutdefs/wireless.subpaneldefs.ext.php', 'w+')) {
+            $string = <<<EOQ
 <?php
 \$layout_defs["{$this->package}"]["subpanel_setup"]['{$this->package}_accounts'] = array (
   'order' => 100,
@@ -48,8 +46,8 @@ $string = <<<EOQ
 
 ?>
 EOQ;
-            fputs( $fh, $string);
-            fclose( $fh );
+            fputs($fh, $string);
+            fclose($fh);
         }
 
 
@@ -68,8 +66,7 @@ EOQ;
     protected function tearDown() : void
     {
         parent::tearDown();
-        if($this->packageExists)
-        {
+        if ($this->packageExists) {
             //Copy original contents back in
             copy_recursive('custom/modules/' . $this->package . '_bak', 'custom/modules/' . $this->package);
             rmdir_recursive('custom/modules/' . $this->package . '_bak');
@@ -85,18 +82,19 @@ EOQ;
     {
         $this->assertTrue(file_exists('custom/modules/' . $this->package . '/Ext/WirelessLayoutdefs/wireless.subpaneldefs.ext.php'));
         //$contents = file_get_contents('custom/modules/' . $this->package . '/Ext/WirelessLayoutdefs/wireless.subpaneldefs.ext.php');
-        include('custom/modules/' . $this->package . '/Ext/WirelessLayoutdefs/wireless.subpaneldefs.ext.php');
+        include 'custom/modules/' . $this->package . '/Ext/WirelessLayoutdefs/wireless.subpaneldefs.ext.php';
 
         global $current_user;
         $result = $this->_login($current_user);
         $session = $result['id'];
-        $results = $this->_makeRESTCall('get_module_layout',
-        array(
+        $results = $this->_makeRESTCall(
+            'get_module_layout',
+            [
             'session' => $session,
-            'module' => array($this->package),
-            'type' => array('wireless'),
-            'view' => array('subpanel'),
-            )
+            'module' => [$this->package],
+            'type' => ['wireless'],
+            'view' => ['subpanel'],
+            ]
         );
 
         $this->assertEquals('Bug48748Test', $results[$this->package]['wireless']['subpanel']["{$this->package}_accounts"]['get_subpanel_data'], 'Cannot load custom wireless.subpaneldefs.ext.php file');

@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
@@ -13,14 +13,14 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once('modules/Campaigns/ProcessBouncedEmails.php');
+require_once 'modules/Campaigns/ProcessBouncedEmails.php';
 
 /**
- * @ticket 33918 
+ * @ticket 33918
  */
 class Bug33918Test extends TestCase
 {
-	public $folder = null;
+    public $folder = null;
     public $_user = null;
     public $_team = null;
     public $_ie = null;
@@ -31,11 +31,11 @@ class Bug33918Test extends TestCase
         $this->_team = SugarTestTeamUtilities::createAnonymousTeam();
         $this->_user->default_team=$this->_team->id;
         $this->_team->add_user_to_team($this->_user->id);
-		$this->_user->save();
-		$this->_ie = new InboundEmail();
-		
-		$GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-	}
+        $this->_user->save();
+        $this->_ie = new InboundEmail();
+        
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+    }
 
     protected function tearDown() : void
     {
@@ -55,25 +55,24 @@ class Bug33918Test extends TestCase
         $tst->activity_type  = 'targeted';
         $tst->target_tracker_key = $targetTrackerKey;
         $tst->id = $campaignLogID;
-        $tst->new_with_id = TRUE;
-        $tst->save(FALSE);
+        $tst->new_with_id = true;
+        $tst->save(false);
         
         $row = getExistingCampaignLogEntry($targetTrackerKey);
         
-        $this->assertEquals($tst->activity_type, $row['activity_type'] , "Unable to get existing bounced campaign log entry");
-        $this->assertEquals($tst->id, $row['id'] , "Unable to get existing bounced campaign log entry");
-        $this->assertEquals($tst->target_tracker_key, $row['target_tracker_key'] , "Unable to get existing bounced campaign log entry");
+        $this->assertEquals($tst->activity_type, $row['activity_type'], "Unable to get existing bounced campaign log entry");
+        $this->assertEquals($tst->id, $row['id'], "Unable to get existing bounced campaign log entry");
+        $this->assertEquals($tst->target_tracker_key, $row['target_tracker_key'], "Unable to get existing bounced campaign log entry");
         
         $emptyRow = getExistingCampaignLogEntry(uniqid());
         $this->assertTrue(empty($emptyRow), "Unable to get existing bounced campaign log entry");
         
         $GLOBALS['db']->query("DELETE FROM campaign_log WHERE id='$campaignLogID'");
-        
     }
     
     function testCreateBouncedCampaignLogEntry()
     {
-        $row = array(
+        $row = [
             'campaign_id' => create_guid(),
             'target_tracker_key' => create_guid(),
             'target_id' => create_guid(),
@@ -81,10 +80,10 @@ class Bug33918Test extends TestCase
             'list_id' => create_guid(),
             'marketing_id' => create_guid(),
             
-        );
+        ];
         $email = new stdClass();
         $email->date_created = gmdate('Y-m-d H:i:s');
-        $email->id = uniqid();    
+        $email->id = uniqid();
         $email_description = " Unit test with permanent[undeliverable] error ";
 
         
@@ -92,17 +91,17 @@ class Bug33918Test extends TestCase
         $bounce = new CampaignLog();
         $bounce->retrieve($bounce_id);
 
-        $this->assertEquals($row['campaign_id'], $bounce->campaign_id , "Unable to create bounced campaign log entry");
-        $this->assertEquals($row['target_id'], $bounce->target_id , "Unable to create bounced campaign log entry");
+        $this->assertEquals($row['campaign_id'], $bounce->campaign_id, "Unable to create bounced campaign log entry");
+        $this->assertEquals($row['target_id'], $bounce->target_id, "Unable to create bounced campaign log entry");
         $this->assertEquals($row['marketing_id'], $bounce->marketing_id, "Unable to create bounced campaign log entry");
-        $this->assertEquals('send error', $bounce->activity_type , "Unable to create bounced campaign log entry");
-        $this->assertEquals($email->id, $bounce->related_id , "Unable to create bounced campaign log entry");
+        $this->assertEquals('send error', $bounce->activity_type, "Unable to create bounced campaign log entry");
+        $this->assertEquals($email->id, $bounce->related_id, "Unable to create bounced campaign log entry");
         
         $GLOBALS['db']->query("DELETE FROM campaign_log WHERE id='$bounce_id'");
     }
     
     function testErrorReportRetrieval()
-    {   
+    {
         $noteID = uniqid();
         $emailId = uniqid();
         
@@ -110,7 +109,7 @@ class Bug33918Test extends TestCase
         $note->description = "Unit Test";
         $note->file_mime_type = 'message/rfc822';
         $note->subject = "Unit Test";
-        $note->new_with_id = TRUE;
+        $note->new_with_id = true;
         $note->id = $noteID;
         $note->email_id = $emailId;
         $note->email_type = 'Emails';
@@ -123,7 +122,7 @@ class Bug33918Test extends TestCase
         $emailEmpty->id = '1234';
         
         $this->assertEquals($note->description, retrieveErrorReportAttachment($email), "Unable to retrieve error report for bounced email");
-        $this->assertEquals("",retrieveErrorReportAttachment($emailEmpty), "Unable to retrieve error report for bounced email");
+        $this->assertEquals("", retrieveErrorReportAttachment($emailEmpty), "Unable to retrieve error report for bounced email");
         $GLOBALS['db']->query("DELETE FROM notes WHERE id='{$note->id}'");
     }
     
@@ -138,15 +137,15 @@ class Bug33918Test extends TestCase
     
     function _breadCrumbOffsetsData()
     {
-        return array(
-            array('base' => '1.0', 'offset' => '0.1', 'expected' => '1.1'),
-            array('base' => '2.0', 'offset' => '1.0', 'expected' => '3.0'),
-            array('base' => '1.0.1', 'offset' => '0.1', 'expected' => '1.1.1'),
-            array('base' => '4', 'offset' => '0.1', 'expected' => '4.1'),
-            array('base' => '0.0', 'offset' => '0.1', 'expected' => '0.1'),
-            array('base' => '0', 'offset' => '0', 'expected' => '0')
+        return [
+            ['base' => '1.0', 'offset' => '0.1', 'expected' => '1.1'],
+            ['base' => '2.0', 'offset' => '1.0', 'expected' => '3.0'],
+            ['base' => '1.0.1', 'offset' => '0.1', 'expected' => '1.1.1'],
+            ['base' => '4', 'offset' => '0.1', 'expected' => '4.1'],
+            ['base' => '0.0', 'offset' => '0.1', 'expected' => '0.1'],
+            ['base' => '0', 'offset' => '0', 'expected' => '0'],
         
-        );
+        ];
     }
     
     
@@ -162,7 +161,7 @@ class Bug33918Test extends TestCase
         $note->description = $message;
         $note->file_mime_type = 'message/rfc822';
         $note->subject = "Unit Test";
-        $note->new_with_id = TRUE;
+        $note->new_with_id = true;
         $note->id = $noteID;
         $note->email_id = $emailId;
         $note->email_type = 'Emails';
@@ -172,7 +171,7 @@ class Bug33918Test extends TestCase
         $email->id = $emailId;
         $email->description = $message;
         $email->raw_source = $message;
-        $email->date_created = gmdate('Y-m-d H:i:s'); 
+        $email->date_created = gmdate('Y-m-d H:i:s');
         $logID = $this->_createCampaignLogForTrackerKey($trackerKey);
         $email_header = new stdClass();
         $email_header->fromaddress = "Mail Delivery Subsystem <mailer-daemon@googlemail.com>";
@@ -180,7 +179,6 @@ class Bug33918Test extends TestCase
     
         $GLOBALS['db']->query("DELETE FROM notes WHERE id='{$note->id}'");
         $GLOBALS['db']->query("DELETE FROM campaign_log WHERE id='{$logID}' OR target_tracker_key='{$trackerKey}'");
-        
     }
     
     
@@ -227,7 +225,7 @@ CIA;
         $note->description = $message;
         $note->file_mime_type = 'message/rfc822';
         $note->subject = "Unit Test";
-        $note->new_with_id = TRUE;
+        $note->new_with_id = true;
         $note->id = $noteID;
         $note->email_id = $emailId;
         $note->email_type = 'Emails';
@@ -237,7 +235,7 @@ CIA;
         $email->id = $emailId;
         $email->description = $message;
         $email->raw_source = $message;
-        $email->date_created = gmdate('Y-m-d H:i:s'); 
+        $email->date_created = gmdate('Y-m-d H:i:s');
         $logID = $this->_createCampaignLogForTrackerKey($trackerKey);
         $email_header = new stdClass();
         $email_header->fromaddress = "MAILER-DAEMON";
@@ -245,7 +243,6 @@ CIA;
     
         $GLOBALS['db']->query("DELETE FROM notes WHERE id='{$note->id}'");
         $GLOBALS['db']->query("DELETE FROM campaign_log WHERE id='{$logID}' OR target_tracker_key='{$trackerKey}'");
-        
     }
     
     
@@ -255,7 +252,7 @@ CIA;
         $l->activity_type = 'targeted';
         $l->target_tracker_key = $trackerKey;
         $l->id = uniqid();
-        $l->new_with_id = TRUE;
+        $l->new_with_id = true;
         $l->save();
         return $l->id;
     }
@@ -448,10 +445,10 @@ To remove yourself from this email list go to http://localhost/SugarEnt-Ful=
 l-6.1.0beta/index.php?entryPoint=3Dremoveme&identifier=3D2b8923e2-3d0c-baaa=
 -354e-4c3eb5625533
 CIA;
-        return array(
-            array('trackerKey' => $trackerKey1, 'message' => $message1),
-            array('trackerKey' => $trackerKey2, 'message' => $message2),
-            array('trackerKey' => $trackerKey3, 'message' => $message3)
-        );
+        return [
+            ['trackerKey' => $trackerKey1, 'message' => $message1],
+            ['trackerKey' => $trackerKey2, 'message' => $message2],
+            ['trackerKey' => $trackerKey3, 'message' => $message3],
+        ];
     }
 }

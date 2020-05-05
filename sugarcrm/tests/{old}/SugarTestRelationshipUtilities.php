@@ -13,13 +13,13 @@
 
 class SugarTestRelationshipUtilities
 {
-    private static $_relsAdded = array();
+    private static $_relsAdded = [];
 
-    protected static $_relRequiredKeys = array(
+    protected static $_relRequiredKeys = [
         'relationship_type',
         'lhs_module',
         'rhs_module',
-    );
+    ];
 
     /**
      * Create a relationship
@@ -38,11 +38,13 @@ class SugarTestRelationshipUtilities
      */
     public static function createRelationship(array $relationship_def)
     {
-        if(!self::checkRequiredFields($relationship_def)) return false;
+        if (!self::checkRequiredFields($relationship_def)) {
+            return false;
+        }
 
-        $relationships = new DeployedRelationships ($relationship_def['lhs_module']);
+        $relationships = new DeployedRelationships($relationship_def['lhs_module']);
 
-        if(!isset($relationship_def['view_module'])) {
+        if (!isset($relationship_def['view_module'])) {
             $relationship_def['view_module'] = $relationship_def['lhs_module'];
         }
 
@@ -59,7 +61,7 @@ class SugarTestRelationshipUtilities
         // rebuild the dictionary to make sure that it has the new relationship in it
         SugarTestHelper::setUp('dictionary');
         // reset the link fields since we added one
-        VardefManager::$linkFields = array();
+        VardefManager::$linkFields = [];
 
         $_REQUEST = $REQUEST_Backup;
         unset($REQUEST_Backup);
@@ -77,7 +79,7 @@ class SugarTestRelationshipUtilities
      */
     public static function removeAllCreatedRelationships()
     {
-        foreach(self::$_relsAdded as $rel) {
+        foreach (self::$_relsAdded as $rel) {
             $relationships = new DeployedRelationships($rel['lhs_module']);
 
             $relationships->delete($rel['relationship_name']);
@@ -89,7 +91,7 @@ class SugarTestRelationshipUtilities
             SugarRelationshipFactory::rebuildCache();
         }
         // since we are creating a relationship we need to unset this global var
-        if(isset($GLOBALS['reload_vardefs'])) {
+        if (isset($GLOBALS['reload_vardefs'])) {
             unset($GLOBALS['reload_vardefs']);
         }
     }
@@ -103,8 +105,8 @@ class SugarTestRelationshipUtilities
      */
     protected static function checkRequiredFields(array $relationship_def)
     {
-        foreach(self::$_relRequiredKeys as $key) {
-            if(!array_key_exists($key, $relationship_def)) {
+        foreach (self::$_relRequiredKeys as $key) {
+            if (!array_key_exists($key, $relationship_def)) {
                 return false;
             }
         }

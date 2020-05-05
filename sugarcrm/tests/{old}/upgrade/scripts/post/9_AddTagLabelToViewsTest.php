@@ -33,44 +33,44 @@ class SugarUpgradeAddTagLabelToViewsTest extends UpgradeTestCase
 
     public function addTaggableToConfigProvider()
     {
-        return array(
+        return [
             // config is empty
-            array(
-                array(),
-                'expect' => array(
-                    'config' => array(),
-                ),
-            ),
+            [
+                [],
+                'expect' => [
+                    'config' => [],
+                ],
+            ],
             // config is not empty and does not have a taggable property
-            array(
-                'config' => array(
+            [
+                'config' => [
                     'team_security' => true,
                     'assignable' => true,
-                ),
-                'expect' => array(
-                    'config' => array(
+                ],
+                'expect' => [
+                    'config' => [
                         'team_security' => true,
                         'assignable' => true,
                         'taggable' => 1,
-                    ),
-                ),
-            ),
+                    ],
+                ],
+            ],
             // config is not empty and has a taggable property
-            array(
-                'config' => array(
+            [
+                'config' => [
                     'team_security' => true,
                     'assignable' => true,
                     'taggable' => 1,
-                ),
-                'expect' => array(
-                    'config' => array(
+                ],
+                'expect' => [
+                    'config' => [
                         'team_security' => true,
                         'assignable' => true,
                         'taggable' => 1,
-                    ),
-                ),
-            ),
-        );
+                    ],
+                ],
+            ],
+        ];
     }
 
     /**
@@ -89,44 +89,44 @@ class SugarUpgradeAddTagLabelToViewsTest extends UpgradeTestCase
 
     public function addTagPropToLangProvider()
     {
-        return array(
+        return [
             // mod_strings is empty
-            array(
-                array(),
-                'expect' => array(
-                    'mod_strings' => array(),
-                ),
-            ),
+            [
+                [],
+                'expect' => [
+                    'mod_strings' => [],
+                ],
+            ],
             // mod_strings is not empty and does not have LBLs
-            array(
-                'mod_strings' => array(
+            [
+                'mod_strings' => [
                     'LBL_TEAM' => 'Teams',
                     'LBL_TEAM_SET' => 'Teams Set',
-                ),
-                'expect' => array(
-                    'mod_strings' => array(
+                ],
+                'expect' => [
+                    'mod_strings' => [
                         'LBL_TEAM' => 'Teams',
                         'LBL_TEAM_SET' => 'Teams Set',
                         'LBL_TAGS_LINK' => 'Tags',
                         'LBL_TAGS' => 'Tags',
-                    ),
-                ),
-            ),
+                    ],
+                ],
+            ],
             // mod_strings is not empty and has LBLs
-            array(
-                'mod_strings' => array(
+            [
+                'mod_strings' => [
                     'LBL_TEAM' => 'Teams',
                     'LBL_TEAM_SET' => 'Teams Set',
-                ),
-                'expect' => array(
-                    'mod_strings' => array(
+                ],
+                'expect' => [
+                    'mod_strings' => [
                         'LBL_TEAM' => 'Teams',
                         'LBL_TEAM_SET' => 'Teams Set',
                         'LBL_TAGS_LINK' => 'Tags',
                         'LBL_TAGS' => 'Tags',
-                    ),
-                ),
-            ),
-        );
+                    ],
+                ],
+            ],
+        ];
     }
 }

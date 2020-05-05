@@ -12,7 +12,7 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once('include/download_file.php');
+require_once 'include/download_file.php';
 
 class RestResponseTest extends TestCase
 {
@@ -24,10 +24,12 @@ class RestResponseTest extends TestCase
      */
     protected function findHeader($headers, $header)
     {
-        foreach($headers as $h) {
+        foreach ($headers as $h) {
             $kv = explode($h, ':', 1);
-            if(count($kv) < 2)  continue;
-            if($kv[0] == $header) {
+            if (count($kv) < 2) {
+                continue;
+            }
+            if ($kv[0] == $header) {
                 return $kv[1];
             }
         }
@@ -45,16 +47,16 @@ class RestResponseTest extends TestCase
 
     public function versionProvider()
     {
-        return array(
-            array(array(), '1.1'),
-            array(array('SERVER_PROTOCOL' => 'HTTP/1.0'), '1.0'),
-            array(array('SERVER_PROTOCOL' => 'HTTP/2.0'), '2.0'),
-        );
+        return [
+            [[], '1.1'],
+            [['SERVER_PROTOCOL' => 'HTTP/1.0'], '1.0'],
+            [['SERVER_PROTOCOL' => 'HTTP/2.0'], '2.0'],
+        ];
     }
 
     public function testHeader()
     {
-        $r = new RestResponse(array());
+        $r = new RestResponse([]);
         $r->setHeader('Test-Header', 'foo');
         $this->assertEquals('foo', $r->getHeader('Test-Header'));
         $this->assertFalse($r->hasHeader('Content-Type'));
@@ -70,13 +72,13 @@ class RestResponseTest extends TestCase
      */
     public function testProcessJSON($content, $output)
     {
-        $r = new RestResponse(array());
+        $r = new RestResponse([]);
         $r->setType(RestResponse::JSON);
         $r->setContent($content);
         $response = $r->processContent();
 
         $this->assertEquals($output, $response);
-        if(!empty($response)) {
+        if (!empty($response)) {
             $this->assertEquals(strlen($response), $r->getHeader('Content-Length'));
         }
         $this->assertEquals("application/json", $r->getHeader('Content-Type'));
@@ -84,19 +86,19 @@ class RestResponseTest extends TestCase
 
     public function jsonProvider()
     {
-        return array(
-                array('', '""'),
-                array("test", '"test"'),
-                array(123, '123'),
-                array(array("foo"=>"bar", "test"=> array('"foo"', "'<test>'")), '{"foo":"bar","test":["\u0022foo\u0022","\u0027\u003Ctest\u003E\u0027"]}'),
-        );
+        return [
+                ['', '""'],
+                ["test", '"test"'],
+                [123, '123'],
+                [["foo"=>"bar", "test"=> ['"foo"', "'<test>'"]], '{"foo":"bar","test":["\u0022foo\u0022","\u0027\u003Ctest\u003E\u0027"]}'],
+        ];
     }
 
     public function testProcessJSONHTML()
     {
-        $r = new RestResponse(array());
+        $r = new RestResponse([]);
         $r->setType(RestResponse::JSON_HTML);
-        $r->setContent(array("foo"=>"bar", "test"=> array('"foo"', "'<test>'")));
+        $r->setContent(["foo"=>"bar", "test"=> ['"foo"', "'<test>'"]]);
         $response = $r->processContent();
 
         $this->assertEquals('{&quot;foo&quot;:&quot;bar&quot;,&quot;test&quot;:[&quot;\&quot;foo\&quot;&quot;,&quot;&#039;&lt;test&gt;&#039;&quot;]}', $response);
@@ -113,7 +115,7 @@ class RestResponseTest extends TestCase
      */
     public function testProcessRaw($content, $output)
     {
-        $r = new RestResponse(array());
+        $r = new RestResponse([]);
         $r->setType(RestResponse::RAW);
         $r->setContent($content);
         $response = $r->processContent();
@@ -123,14 +125,14 @@ class RestResponseTest extends TestCase
 
     public function testHeaders()
     {
-        $r = new MockRestResponse(array());
+        $r = new MockRestResponse([]);
         $r->setType(RestResponse::JSON);
         $r->setHeader("Content-Type", "text/plain");
         $r->sendHeaders();
 
         $this->assertContains("Content-Type: text/plain", $r->sent_headers);
 
-        $r->sent_headers = array();
+        $r->sent_headers = [];
         $r->headers_sent = true;
         $r->sendHeaders();
         $this->assertEmpty($r->sent_headers);
@@ -138,7 +140,7 @@ class RestResponseTest extends TestCase
 
     public function testErrors()
     {
-        $r = new MockRestResponse(array());
+        $r = new MockRestResponse([]);
         $r->setType(RestResponse::JSON);
         $r->setStatus(404);
         $r->sendHeaders();
@@ -149,20 +151,20 @@ class RestResponseTest extends TestCase
 
     public function testEtag()
     {
-        $r = new RestResponse(array());
+        $r = new RestResponse([]);
         $r->setType(RestResponse::JSON);
         $data = "test 134";
-        $dataArray = array("test"=>"data");
+        $dataArray = ["test"=>"data"];
         $r->setContent($data);
 
         // JSON/array tests
-        $r = new RestResponse(array('HTTP_IF_NONE_MATCH' => md5(json_encode($dataArray))));
+        $r = new RestResponse(['HTTP_IF_NONE_MATCH' => md5(json_encode($dataArray))]);
         $r->setType(RestResponse::JSON);
         $r->setContent($dataArray);
         $this->assertTrue($r->generateETagHeader());
         $this->assertEquals(304, $r->getStatus());
         
-        $r = new RestResponse(array());
+        $r = new RestResponse([]);
         $r->setType(RestResponse::JSON);
         $r->setContent($dataArray);
         $this->assertFalse($r->generateETagHeader());
@@ -171,34 +173,34 @@ class RestResponseTest extends TestCase
         $this->assertFalse($r->generateETagHeader(""));
         $this->assertFalse($r->generateETagHeader(md5($data)));
 
-        $r = new RestResponse(array('HTTP_IF_NONE_MATCH' => md5($data)));
+        $r = new RestResponse(['HTTP_IF_NONE_MATCH' => md5($data)]);
         $r->setType(RestResponse::JSON);
         $r->setContent($data);
         $this->assertTrue($r->generateETagHeader());
         $this->assertEmpty($r->getBody());
         $this->assertEquals(304, $r->getStatus());
         
-        $r = new RestResponse(array());
+        $r = new RestResponse([]);
         $r->setType(RestResponse::RAW);
         $r->setContent($data);
         // no header
         $this->assertFalse($r->generateETagHeader(md5($data)));
 
         // not matching data
-        $r = new RestResponse(array('HTTP_IF_NONE_MATCH' => md5($data.$data)));
+        $r = new RestResponse(['HTTP_IF_NONE_MATCH' => md5($data.$data)]);
         $r->setType(RestResponse::RAW);
         $r->setContent($data);
         $this->assertFalse($r->generateETagHeader(md5($data)));
 
         // matching data
-        $r = new RestResponse(array('HTTP_IF_NONE_MATCH' => md5($data)));
+        $r = new RestResponse(['HTTP_IF_NONE_MATCH' => md5($data)]);
         $r->setType(RestResponse::RAW);
         $r->setContent($data);
         $this->assertTrue($r->generateETagHeader(md5($data)));
         $this->assertEmpty($r->getBody());
         $this->assertEquals(304, $r->getStatus());
 
-        $r = new RestResponse(array('HTTP_IF_NONE_MATCH' => md5($data)));
+        $r = new RestResponse(['HTTP_IF_NONE_MATCH' => md5($data)]);
         $r->setType(RestResponse::RAW);
         $r->setContent($data);
         $this->assertTrue($r->generateETagHeader());
@@ -209,10 +211,10 @@ class RestResponseTest extends TestCase
     public function testDownload()
     {
         $rs = new RestService();
-        $r = new RestResponse(array());
+        $r = new RestResponse([]);
         $rs->setResponse($r);
         $down = new DownloadFileApi($rs);
-        $down->outputFile("image", array("path" => "/tmp/test", "name" => "test.png"));
+        $down->outputFile("image", ["path" => "/tmp/test", "name" => "test.png"]);
 
         $this->assertEquals(RestResponse::FILE, $r->getType());
         $h = $r->getHeaders();
@@ -220,11 +222,11 @@ class RestResponseTest extends TestCase
         $this->assertTrue($r->hasHeader('Expires'));
         $this->assertEquals("nosniff", $h['X-Content-Type-Options']);
 
-        $down->outputFile("image", array("path" => "/tmp/test", "name" => "test.png", "content-type" => "image/png"));
+        $down->outputFile("image", ["path" => "/tmp/test", "name" => "test.png", "content-type" => "image/png"]);
         $h = $r->getHeaders();
         $this->assertEquals("image/png", $h['Content-Type']);
 
-        $down->outputFile("file", array("path" => "/tmp/test", "name" => "test.png", "content-type" => "image/png"));
+        $down->outputFile("file", ["path" => "/tmp/test", "name" => "test.png", "content-type" => "image/png"]);
         $h = $r->getHeaders();
         $this->assertEquals("application/force-download", $h['Content-Type']);
         $this->assertContains('filename="test.png"', $h['Content-Disposition']);
@@ -232,7 +234,7 @@ class RestResponseTest extends TestCase
 
     public function testSendWrongFile()
     {
-        $r = new MockRestResponse(array());
+        $r = new MockRestResponse([]);
         $r->setType(RestResponse::FILE)->setFilename("/blah/blah/nosuchfile");
         $r->send();
         $this->assertContains("HTTP/1.1 404 Not Found", $r->sent_headers[0]);
@@ -241,7 +243,7 @@ class RestResponseTest extends TestCase
 
 class MockRestResponse extends RestResponse
 {
-    public $sent_headers = array();
+    public $sent_headers = [];
     public $headers_sent = false;
 
     protected function sendHeader($h)

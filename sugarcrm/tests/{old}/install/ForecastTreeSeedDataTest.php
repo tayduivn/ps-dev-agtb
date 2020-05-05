@@ -13,7 +13,7 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once('install/install_utils.php');
+require_once 'install/install_utils.php';
 
 class ForecastTreeSeedDataTest extends TestCase
 {
@@ -22,30 +22,28 @@ class ForecastTreeSeedDataTest extends TestCase
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         $GLOBALS['db']->query("DELETE FROM forecast_tree WHERE hierarchy_type in ('users','products')");
-	}
+    }
 
     public static function tearDownAfterClass(): void
     {
         SugarTestHelper::tearDown();
     }
 
-	public function testCreateForecastUserSeedData()
-	{
-		require_once('install/seed_data/ForecastTreeSeedData.php');
+    public function testCreateForecastUserSeedData()
+    {
+        require_once 'install/seed_data/ForecastTreeSeedData.php';
         $forecastSeedData = new ForecastTreeSeedData();
         $forecastSeedData->populateUserSeedData();
         $results = $GLOBALS['db']->query("SELECT id, reports_to_id FROM users WHERE status = 'Active'");
-        $users_data = array();
+        $users_data = [];
 
-        while(($row = $GLOBALS['db']->fetchByAssoc($results)))
-        {
+        while (($row = $GLOBALS['db']->fetchByAssoc($results))) {
             $users_data[$row['id']] = $row['reports_to_id'];
         }
 
         $tree_results = $GLOBALS['db']->query("SELECT user_id, parent_id FROM forecast_tree WHERE hierarchy_type = 'users'");
-        $tree_data = array();
-        while(($row = $GLOBALS['db']->fetchByAssoc($tree_results)))
-        {
+        $tree_data = [];
+        while (($row = $GLOBALS['db']->fetchByAssoc($tree_results))) {
             $tree_data[$row['user_id']] = $row['parent_id'];
         }
         sort($users_data, SORT_STRING);

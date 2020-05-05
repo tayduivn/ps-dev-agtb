@@ -28,20 +28,20 @@ class Bug40911 extends TestCase
     }
 
     /**
-     * Save a SugarFolder 
+     * Save a SugarFolder
      */
     public function testSaveNewFolder()
     {
         global $app_strings;
 
-        $data = array(
+        $data = [
             'type' => 'out',
             'status' => 'sent',
             'state' => Email::STATE_ARCHIVED,
             'from_addr' => 'sender@domain.eu',
             'to_addrs' => 'to@domain.eu',
             'cc_addrs' => 'cc@domain.eu',
-        );
+        ];
         $email = SugarTestEmailUtilities::createEmail('', $data);
 
         $_REQUEST["emailUIAction"] = "getSingleMessageFromSugar";
@@ -56,5 +56,4 @@ class Bug40911 extends TestCase
 
         $this->assertMatchesRegularExpression("/.*cc@domain.eu.*/", $meta->meta->email->cc);
     }
-    
 }

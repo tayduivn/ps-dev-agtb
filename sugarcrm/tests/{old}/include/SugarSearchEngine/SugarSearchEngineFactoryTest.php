@@ -31,16 +31,19 @@ class SugarSearchEngineFactoryTest extends TestCase
      */
     public static function factoryProvider()
     {
-        switch(SugarSearchEngineFactory::getFTSEngineNameFromConfig()) {
-            case 'Elastic'  : $default = 'SugarSearchEngineElastic'; break;
-            default         : $default = 'SugarSearchEngine';
+        switch (SugarSearchEngineFactory::getFTSEngineNameFromConfig()) {
+            case 'Elastic':
+                $default = 'SugarSearchEngineElastic';
+                break;
+            default:
+                $default = 'SugarSearchEngine';
         }
 
-        return array(
+        return [
             // depends on config, disabled array('','SugarSearchEngine'),
-            array('Elastic','SugarSearchEngineElastic'),
+            ['Elastic','SugarSearchEngineElastic'],
             //Fallback to default.
-            array('BadClassName','SugarSearchEngine')
-        );
+            ['BadClassName','SugarSearchEngine'],
+        ];
     }
 }

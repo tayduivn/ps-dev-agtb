@@ -27,10 +27,10 @@ class ReportCSVExporterMatrixTest extends TestCase
         // to setup Delimiter
         $current_user = $this->createPartialMock('User', ['getPreference']);
 
-        $preferenceMap = array(
-            array('export_delimiter', ','),
-            array('currency', '-99'),
-        );
+        $preferenceMap = [
+            ['export_delimiter', ','],
+            ['currency', '-99'],
+        ];
 
         $current_user->expects($this->any())
             ->method('getPreference')
@@ -59,18 +59,18 @@ class ReportCSVExporterMatrixTest extends TestCase
             'get_summary_next_row',
         ]);
 
-        $reporter->report_def = array('layout_options' => $layoutOptions);
+        $reporter->report_def = ['layout_options' => $layoutOptions];
 
         $this->assertEquals($expectedSubType, $mock->getSubTypeExporter($reporter));
     }
 
     public function matrixSubTypeProvider()
     {
-        return array(
-            array('2x2', '1x1'),
-            array('1x2', '1x2'),
-            array('2x1', '2x1'),
-        );
+        return [
+            ['2x2', '1x1'],
+            ['1x2', '1x2'],
+            ['2x1', '2x1'],
+        ];
     }
 
     /**
@@ -87,7 +87,7 @@ class ReportCSVExporterMatrixTest extends TestCase
 
         // don't need a real reporter here
         $reporter = new \stdClass();
-        $reporter->report_def = array('layout_options' => $layoutOptions);
+        $reporter->report_def = ['layout_options' => $layoutOptions];
         TestReflection::setProtectedValue($mock, 'reporter', $reporter);
 
         $this->assertEquals($expectedOutput, TestReflection::callProtectedMethod($mock, 'getLayoutOptions'));
@@ -95,11 +95,11 @@ class ReportCSVExporterMatrixTest extends TestCase
 
     public function matrixLayoutOptionsProvider()
     {
-        return array(
-            array('2x2', array('1', '1')),
-            array('1x2', array('1', '2')),
-            array('2x1', array('2', '1')),
-        );
+        return [
+            ['2x2', ['1', '1']],
+            ['1x2', ['1', '2']],
+            ['2x1', ['2', '1']],
+        ];
     }
 
     /**
@@ -142,12 +142,12 @@ class ReportCSVExporterMatrixTest extends TestCase
             'getDataTypeForColumnsForMatrix']
         );
 
-        $reporter->report_def = array(
+        $reporter->report_def = [
             'layout_options' => $layoutOption,
             'group_defs' => $groupDefs,
-        );
+        ];
 
-        $headers = array();
+        $headers = [];
         foreach ($detailHeaders as $detail_header) {
             $headers[] = $detail_header['label'];
         }
@@ -196,538 +196,538 @@ class ReportCSVExporterMatrixTest extends TestCase
         // 1x1 matrix
         $layoutOption1 = '2x2';
 
-        $detailHeaders1 = array(
-            'Games' => array(
+        $detailHeaders1 = [
+            'Games' => [
                 'label' => 'Games',
                 'type' => 'nothing',
-            ),
-            'Area' => array(
+            ],
+            'Area' => [
                 'label' => 'Area',
                 'type' => 'nothing',
-            ),
-            'Min' => array(
+            ],
+            'Min' => [
                 'group_function' => 'min',
                 'label' => 'Min',
                 'type' => 'nothing',
-            ),
-            'Count' => array(
+            ],
+            'Count' => [
                 'group_function' => 'count',
                 'label' => 'Count',
                 'type' => 'nothing',
-            ),
-            'Sum' => array(
+            ],
+            'Sum' => [
                 'group_function' => 'sum',
                 'label' => 'Sum',
                 'type' => 'nothing',
-            ),
-            'AVG' => array(
+            ],
+            'AVG' => [
                 'group_function' => 'avg',
                 'label' => 'AVG',
                 'type' => 'nothing',
-            ),
-            'Max' => array(
+            ],
+            'Max' => [
                 'group_function' => 'max',
                 'label' => 'Max',
                 'type' => 'nothing',
-            ),
-        );
+            ],
+        ];
 
-        $groupDefs1 = array(
-            array(
+        $groupDefs1 = [
+            [
                 'label' => 'Games',
-            ),
-            array(
+            ],
+            [
                 'label' => 'Area',
-            ),
-        );
+            ],
+        ];
 
-        $dataRows1 = array(
-            array(
+        $dataRows1 = [
+            [
                 'cells' => ['CS:GO', 'Asia', '1,000', '100', '1,000', '10', '10,000'],
                 'count' => 1,
-            ),
-            array(
+            ],
+            [
                 'cells' => ['CS:GO', 'Europe', '1,000', '100', '1,000', '10', '10,000'],
                 'count' => 1,
-            ),
-            array(
+            ],
+            [
                 'cells' => ['CS:GO', 'America', '1,000', '100', '1,000', '10', '10,000'],
                 'count' => 2,
-            ),
-        );
+            ],
+        ];
 
-        $expectedTrie1 = array(
-            'Games' => array(
-                'CS:GO' => array(
-                    'Area' => array(
-                        'Asia' => array(
-                            array(
-                                'cells' => array(
+        $expectedTrie1 = [
+            'Games' => [
+                'CS:GO' => [
+                    'Area' => [
+                        'Asia' => [
+                            [
+                                'cells' => [
                                     'Min' => '1,000',
                                     'Count' => '100',
                                     'Sum' => '1,000',
                                     'AVG' => '10',
                                     'Max' => '10,000',
-                                ),
+                                ],
                                 'count' => 1,
                                 'Count' => 1,
-                            ),
-                        ),
-                        'Europe' => array(
-                            array(
-                                'cells' => array(
+                            ],
+                        ],
+                        'Europe' => [
+                            [
+                                'cells' => [
                                     'Min' => '1,000',
                                     'Count' => '100',
                                     'Sum' => '1,000',
                                     'AVG' => '10',
                                     'Max' => '10,000',
-                                ),
+                                ],
                                 'count' => 1,
                                 'Count' => 1,
-                            ),
-                        ),
-                        'America' => array(
-                            array(
-                                'cells' => array(
+                            ],
+                        ],
+                        'America' => [
+                            [
+                                'cells' => [
                                     'Min' => '1,000',
                                     'Count' => '100',
                                     'Sum' => '1,000',
                                     'AVG' => '10',
                                     'Max' => '10,000',
-                                ),
+                                ],
                                 'count' => 2,
                                 'Count' => 2,
-                            ),
-                        ),
-                    ),
-                ),
-            ),
-        );
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
 
-        $expectedColumnHeaders1 = array('Asia', 'Europe', 'America');
+        $expectedColumnHeaders1 = ['Asia', 'Europe', 'America'];
 
-        $expectedRowHeaders1 = array('CS:GO');
+        $expectedRowHeaders1 = ['CS:GO'];
 
-        $expectedCleanHeaders1 = array('Min', 'Count', 'Sum', 'AVG', 'Max');
+        $expectedCleanHeaders1 = ['Min', 'Count', 'Sum', 'AVG', 'Max'];
 
         // 1x2 matrix
         $layoutOption2 = '1x2';
 
-        $detailHeaders2 = array(
-            'Games' => array(
+        $detailHeaders2 = [
+            'Games' => [
                 'label' => 'Games',
                 'type' => 'nothing',
-            ),
-            'Area' => array(
+            ],
+            'Area' => [
                 'label' => 'Area',
                 'type' => 'nothing',
-            ),
-            'Time' => array(
+            ],
+            'Time' => [
                 'label' => 'Time',
                 'type' => 'nothing',
-            ),
-            'Min' => array(
+            ],
+            'Min' => [
                 'group_function' => 'min',
                 'label' => 'Min',
                 'type' => 'nothing',
-            ),
-            'Count' => array(
+            ],
+            'Count' => [
                 'group_function' => 'count',
                 'label' => 'Count',
                 'type' => 'nothing',
-            ),
-            'Sum' => array(
+            ],
+            'Sum' => [
                 'group_function' => 'sum',
                 'label' => 'Sum',
                 'type' => 'nothing',
-            ),
-            'AVG' => array(
+            ],
+            'AVG' => [
                 'group_function' => 'avg',
                 'label' => 'AVG',
                 'type' => 'nothing',
-            ),
-            'Max' => array(
+            ],
+            'Max' => [
                 'group_function' => 'max',
                 'label' => 'Max',
                 'type' => 'nothing',
-            ),
-        );
+            ],
+        ];
 
-        $groupDefs2 = array(
-            array(
+        $groupDefs2 = [
+            [
                 'label' => 'Games',
-            ),
-            array(
+            ],
+            [
                 'label' => 'Area',
-            ),
-            array(
+            ],
+            [
                 'label' => 'Time',
-            ),
-        );
+            ],
+        ];
 
-        $dataRows2 = array(
-            array(
+        $dataRows2 = [
+            [
                 'cells' => ['CS:GO', 'Asia', 'Day', '1,000', '100', '1,000', '10', '10,000'],
                 'count' => 1,
-            ),
-            array(
+            ],
+            [
                 'cells' => ['CS:GO', 'Asia', 'Night', '1,000', '100', '1,000', '10', '10,000'],
                 'count' => 1,
-            ),
-            array(
+            ],
+            [
                 'cells' => ['CS:GO', 'Europe', 'Day', '1,000', '100', '1,000', '10', '10,000'],
                 'count' => 1,
-            ),
-            array(
+            ],
+            [
                 'cells' => ['CS:GO', 'Europe', 'Night', '1,000', '100', '1,000', '10', '10,000'],
                 'count' => 1,
-            ),
-            array(
+            ],
+            [
                 'cells' => ['CS:GO', 'America', 'Day', '1,000', '100', '1,000', '10', '10,000'],
                 'count' => 2,
-            ),
-            array(
+            ],
+            [
                 'cells' => ['CS:GO', 'America', 'Night', '1,000', '100', '1,000', '10', '10,000'],
                 'count' => 2,
-            ),
-        );
+            ],
+        ];
 
-        $expectedTrie2 = array(
-            'Games' => array(
-                'CS:GO' => array(
-                    'Area' => array(
-                        'Asia' => array(
-                            'Time' => array(
-                                'Day' => array(
-                                    array(
-                                        'cells' => array(
+        $expectedTrie2 = [
+            'Games' => [
+                'CS:GO' => [
+                    'Area' => [
+                        'Asia' => [
+                            'Time' => [
+                                'Day' => [
+                                    [
+                                        'cells' => [
                                             'Min' => '1,000',
                                             'Count' => '100',
                                             'Sum' => '1,000',
                                             'AVG' => '10',
                                             'Max' => '10,000',
-                                        ),
+                                        ],
                                         'count' => 1,
                                         'Count' => 1,
-                                    ),
-                                ),
-                                'Night' => array(
-                                    array(
-                                        'cells' => array(
+                                    ],
+                                ],
+                                'Night' => [
+                                    [
+                                        'cells' => [
                                             'Min' => '1,000',
                                             'Count' => '100',
                                             'Sum' => '1,000',
                                             'AVG' => '10',
                                             'Max' => '10,000',
-                                        ),
+                                        ],
                                         'count' => 1,
                                         'Count' => 1,
-                                    ),
-                                ),
-                            ),
-                        ),
-                        'Europe' => array(
-                            'Time' => array(
-                                'Day' => array(
-                                    array(
-                                        'cells' => array(
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'Europe' => [
+                            'Time' => [
+                                'Day' => [
+                                    [
+                                        'cells' => [
                                             'Min' => '1,000',
                                             'Count' => '100',
                                             'Sum' => '1,000',
                                             'AVG' => '10',
                                             'Max' => '10,000',
-                                        ),
+                                        ],
                                         'count' => 1,
                                         'Count' => 1,
-                                    ),
-                                ),
-                                'Night' => array(
-                                    array(
-                                        'cells' => array(
+                                    ],
+                                ],
+                                'Night' => [
+                                    [
+                                        'cells' => [
                                             'Min' => '1,000',
                                             'Count' => '100',
                                             'Sum' => '1,000',
                                             'AVG' => '10',
                                             'Max' => '10,000',
-                                        ),
+                                        ],
                                         'count' => 1,
                                         'Count' => 1,
-                                    ),
-                                ),
-                            ),
-                        ),
-                        'America' => array(
-                            'Time' => array(
-                                'Day' => array(
-                                    array(
-                                        'cells' => array(
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'America' => [
+                            'Time' => [
+                                'Day' => [
+                                    [
+                                        'cells' => [
                                             'Min' => '1,000',
                                             'Count' => '100',
                                             'Sum' => '1,000',
                                             'AVG' => '10',
                                             'Max' => '10,000',
-                                        ),
+                                        ],
                                         'count' => 2,
                                         'Count' => 2,
-                                    ),
-                                ),
-                                'Night' => array(
-                                    array(
-                                        'cells' => array(
+                                    ],
+                                ],
+                                'Night' => [
+                                    [
+                                        'cells' => [
                                             'Min' => '1,000',
                                             'Count' => '100',
                                             'Sum' => '1,000',
                                             'AVG' => '10',
                                             'Max' => '10,000',
-                                        ),
+                                        ],
                                         'count' => 2,
                                         'Count' => 2,
-                                    ),
-                                ),
-                            ),
-                        ),
-                    ),
-                ),
-            ),
-        );
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
 
-        $expectedColumnHeaders2 = array(
-            array(
+        $expectedColumnHeaders2 = [
+            [
                 'Asia' => 1,
                 'Europe' => 1,
                 'America' => 1,
-            ),
-            array(
+            ],
+            [
                 'Day' => 1,
                 'Night' => 1,
-            ),
-        );
+            ],
+        ];
 
-        $expectedRowHeaders2 = array('CS:GO');
+        $expectedRowHeaders2 = ['CS:GO'];
 
-        $expectedCleanHeaders2 = array('Min', 'Count', 'Sum', 'AVG', 'Max');
+        $expectedCleanHeaders2 = ['Min', 'Count', 'Sum', 'AVG', 'Max'];
 
         // 2x1 matrix
         $layoutOption3 = '2x1';
 
-        $detailHeaders3 = array(
-            'Area' => array(
+        $detailHeaders3 = [
+            'Area' => [
                 'label' => 'Area',
                 'type' => 'nothing',
-            ),
-            'Time' => array(
+            ],
+            'Time' => [
                 'label' => 'Time',
                 'type' => 'nothing',
-            ),
-            'Games' => array(
+            ],
+            'Games' => [
                 'label' => 'Games',
                 'type' => 'nothing',
-            ),
-            'Min' => array(
+            ],
+            'Min' => [
                 'group_function' => 'min',
                 'label' => 'Min',
                 'type' => 'nothing',
-            ),
-            'Count' => array(
+            ],
+            'Count' => [
                 'group_function' => 'count',
                 'label' => 'Count',
                 'type' => 'nothing',
-            ),
-            'Sum' => array(
+            ],
+            'Sum' => [
                 'group_function' => 'sum',
                 'label' => 'Sum',
                 'type' => 'nothing',
-            ),
-            'AVG' => array(
+            ],
+            'AVG' => [
                 'group_function' => 'avg',
                 'label' => 'AVG',
                 'type' => 'nothing',
-            ),
-            'Max' => array(
+            ],
+            'Max' => [
                 'group_function' => 'max',
                 'label' => 'Max',
                 'type' => 'nothing',
-            ),
-        );
+            ],
+        ];
 
-        $groupDefs3 = array(
-            array(
+        $groupDefs3 = [
+            [
                 'label' => 'Area',
-            ),
-            array(
+            ],
+            [
                 'label' => 'Time',
-            ),
-            array(
+            ],
+            [
                 'label' => 'Games',
-            ),
-        );
+            ],
+        ];
 
-        $dataRows3 = array(
-            array(
+        $dataRows3 = [
+            [
                 'cells' => ['Asia', 'Day', 'CS:GO', '1,000', '100', '1,000', '10', '10,000'],
                 'count' => 1,
-            ),
-            array(
+            ],
+            [
                 'cells' => ['Asia', 'Night', 'CS:GO', '1,000', '100', '1,000', '10', '10,000'],
                 'count' => 1,
-            ),
-            array(
+            ],
+            [
                 'cells' => ['Europe', 'Day', 'CS:GO', '1,000', '100', '1,000', '10', '10,000'],
                 'count' => 1,
-            ),
-            array(
+            ],
+            [
                 'cells' => ['Europe', 'Night', 'CS:GO', '1,000', '100', '1,000', '10', '10,000'],
                 'count' => 1,
-            ),
-            array(
+            ],
+            [
                 'cells' => ['America', 'Day', 'CS:GO', '1,000', '100', '1,000', '10', '10,000'],
                 'count' => 2,
-            ),
-            array(
+            ],
+            [
                 'cells' => ['America', 'Night', 'CS:GO', '1,000', '100', '1,000', '10', '10,000'],
                 'count' => 2,
-            ),
-        );
+            ],
+        ];
 
-        $expectedTrie3 = array(
-            'Area' => array(
-                'Asia' => array(
-                    'Time' => array(
-                        'Day' => array(
-                            'Games' => array(
-                                'CS:GO' => array(
-                                    '0' => array(
-                                        'cells' => array(
+        $expectedTrie3 = [
+            'Area' => [
+                'Asia' => [
+                    'Time' => [
+                        'Day' => [
+                            'Games' => [
+                                'CS:GO' => [
+                                    '0' => [
+                                        'cells' => [
                                             'Min' => '1,000',
                                             'Count' => '100',
                                             'Sum' => '1,000',
                                             'AVG' => '10',
                                             'Max' => '10,000',
-                                        ),
+                                        ],
                                         'count' => 1,
                                         'Count' => 1,
-                                    ),
-                                ),
-                            ),
-                        ),
-                        'Night' => array(
-                            'Games' => array(
-                                'CS:GO' => array(
-                                    array(
-                                        'cells' => array(
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'Night' => [
+                            'Games' => [
+                                'CS:GO' => [
+                                    [
+                                        'cells' => [
                                             'Min' => '1,000',
                                             'Count' => '100',
                                             'Sum' => '1,000',
                                             'AVG' => '10',
                                             'Max' => '10,000',
-                                        ),
+                                        ],
                                         'count' => 1,
                                         'Count' => 1,
-                                    ),
-                                ),
-                            ),
-                        ),
-                    ),
-                ),
-                'Europe' => array(
-                    'Time' => array(
-                        'Day' => array(
-                            'Games' => array(
-                                'CS:GO' => array(
-                                    array(
-                                        'cells' => array
-                                        (
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                'Europe' => [
+                    'Time' => [
+                        'Day' => [
+                            'Games' => [
+                                'CS:GO' => [
+                                    [
+                                        'cells' =>
+                                        [
                                             'Min' => '1,000',
                                             'Count' => '100',
                                             'Sum' => '1,000',
                                             'AVG' => '10',
                                             'Max' => '10,000',
-                                        ),
+                                        ],
                                         'count' => 1,
                                         'Count' => 1,
-                                    ),
-                                ),
-                            ),
-                        ),
-                        'Night' => array(
-                            'Games' => array(
-                                'CS:GO' => array(
-                                    array(
-                                        'cells' => array(
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'Night' => [
+                            'Games' => [
+                                'CS:GO' => [
+                                    [
+                                        'cells' => [
                                             'Min' => '1,000',
                                             'Count' => '100',
                                             'Sum' => '1,000',
                                             'AVG' => '10',
                                             'Max' => '10,000',
-                                        ),
+                                        ],
                                         'count' => 1,
                                         'Count' => 1,
-                                    ),
-                                ),
-                            ),
-                        ),
-                    ),
-                ),
-                'America' => array(
-                    'Time' => array(
-                        'Day' => array(
-                            'Games' => array(
-                                'CS:GO' => array(
-                                    array(
-                                        'cells' => array(
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                'America' => [
+                    'Time' => [
+                        'Day' => [
+                            'Games' => [
+                                'CS:GO' => [
+                                    [
+                                        'cells' => [
                                             'Min' => '1,000',
                                             'Count' => '100',
                                             'Sum' => '1,000',
                                             'AVG' => '10',
                                             'Max' => '10,000',
-                                        ),
+                                        ],
                                         'count' => 2,
                                         'Count' => 2,
-                                    ),
-                                ),
-                            ),
-                        ),
-                        'Night' => array(
-                            'Games' => array(
-                                'CS:GO' => array(
-                                    array(
-                                        'cells' => array(
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'Night' => [
+                            'Games' => [
+                                'CS:GO' => [
+                                    [
+                                        'cells' => [
                                             'Min' => '1,000',
                                             'Count' => '100',
                                             'Sum' => '1,000',
                                             'AVG' => '10',
                                             'Max' => '10,000',
-                                        ),
+                                        ],
                                         'count' => 2,
                                         'Count' => 2,
-                                    ),
-                                ),
-                            ),
-                        ),
-                    ),
-                ),
-            ),
-        );
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
 
 
-        $expectedColumnHeaders3 = array('CS:GO');
+        $expectedColumnHeaders3 = ['CS:GO'];
 
-        $expectedRowHeaders3 = array(
-            array(
+        $expectedRowHeaders3 = [
+            [
                 'Asia' => 1,
                 'Europe' => 1,
                 'America' => 1,
-            ),
-            array(
+            ],
+            [
                 'Day' => 1,
                 'Night' => 1,
-            ),
-        );
+            ],
+        ];
 
-        $expectedCleanHeaders3 = array('Min', 'Count', 'Sum', 'AVG', 'Max');
+        $expectedCleanHeaders3 = ['Min', 'Count', 'Sum', 'AVG', 'Max'];
 
-        return array(
-            array(
+        return [
+            [
                 $layoutOption1,
                 $detailHeaders1,
                 $groupDefs1,
@@ -736,8 +736,8 @@ class ReportCSVExporterMatrixTest extends TestCase
                 $expectedColumnHeaders1,
                 $expectedRowHeaders1,
                 $expectedCleanHeaders1,
-            ),
-            array(
+            ],
+            [
                 $layoutOption2,
                 $detailHeaders2,
                 $groupDefs2,
@@ -746,8 +746,8 @@ class ReportCSVExporterMatrixTest extends TestCase
                 $expectedColumnHeaders2,
                 $expectedRowHeaders2,
                 $expectedCleanHeaders2,
-            ),
-            array(
+            ],
+            [
                 $layoutOption3,
                 $detailHeaders3,
                 $groupDefs3,
@@ -756,7 +756,7 @@ class ReportCSVExporterMatrixTest extends TestCase
                 $expectedColumnHeaders3,
                 $expectedRowHeaders3,
                 $expectedCleanHeaders3,
-            ),
-        );
+            ],
+        ];
     }
 }

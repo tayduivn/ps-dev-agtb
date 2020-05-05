@@ -104,15 +104,13 @@ FILE;
         global $sugar_flavor, $server_unique_key, $current_language;
         $app_list_strings = return_app_list_strings_language($this->language, false);
 
-        $admin_group_header = array();
+        $admin_group_header = [];
         require 'modules/Administration/metadata/adminpaneldefs.php';
 
         $found = false;
-        foreach ($admin_group_header as $header)
-        {
+        foreach ($admin_group_header as $header) {
             $headerGroup = array_shift($header);
-            if ($headerGroup === $this->translation)
-            {
+            if ($headerGroup === $this->translation) {
                 $found = true;
                 break;
             }

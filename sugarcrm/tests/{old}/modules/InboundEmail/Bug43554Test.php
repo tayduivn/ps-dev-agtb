@@ -17,7 +17,7 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug43554Test extends TestCase
 {
-	static $ie = null;
+    static $ie = null;
     static $_user = null;
 
     public static function setUpBeforeClass() : void
@@ -25,8 +25,8 @@ class Bug43554Test extends TestCase
         self::$_user = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['current_user'] = self::$_user;
 
-		self::$ie = new InboundEmail();
-	}
+        self::$ie = new InboundEmail();
+    }
 
     public static function tearDownAfterClass(): void
     {
@@ -36,25 +36,25 @@ class Bug43554Test extends TestCase
 
     public function getUrls()
     {
-        return array(
-            array("http://localhost:8888/sugarent/index.php?composeLayoutId=composeLayout1&fromAccount=1&module=Emails&action=EmailUIAjax&emailUIAction=sendEmail&setEditor=1"),
-            array("http://localhost:8888/index.php?composeLayoutId=composeLayout1&fromAccount=1&module=Emails&action=EmailUIAjax&emailUIAction=sendEmail&setEditor=1"),
-            array(to_html("http://localhost:8888/index.php?composeLayoutId=composeLayout1&fromAccount=1&module=Emails&action=EmailUIAjax&emailUIAction=sendEmail&setEditor=1")),
-            array("/index.php?composeLayoutId=composeLayout1&fromAccount=1&module=Emails&action=EmailUIAjax&emailUIAction=sendEmail&setEditor=1"),
-            array("index.php?composeLayoutId=composeLayout1&fromAccount=1&module=Emails&action=EmailUIAjax&emailUIAction=sendEmail&setEditor=1"),
-            array("/?composeLayoutId=composeLayout1&fromAccount=1&module=Emails&action=EmailUIAjax&emailUIAction=sendEmail&setEditor=1"),
-            array("https://localhost/?composeLayoutId=composeLayout1&fromAccount=1&module=Emails&action=EmailUIAjax&emailUIAction=sendEmail&setEditor=1"),
-            );
+        return [
+            ["http://localhost:8888/sugarent/index.php?composeLayoutId=composeLayout1&fromAccount=1&module=Emails&action=EmailUIAjax&emailUIAction=sendEmail&setEditor=1"],
+            ["http://localhost:8888/index.php?composeLayoutId=composeLayout1&fromAccount=1&module=Emails&action=EmailUIAjax&emailUIAction=sendEmail&setEditor=1"],
+            [to_html("http://localhost:8888/index.php?composeLayoutId=composeLayout1&fromAccount=1&module=Emails&action=EmailUIAjax&emailUIAction=sendEmail&setEditor=1")],
+            ["/index.php?composeLayoutId=composeLayout1&fromAccount=1&module=Emails&action=EmailUIAjax&emailUIAction=sendEmail&setEditor=1"],
+            ["index.php?composeLayoutId=composeLayout1&fromAccount=1&module=Emails&action=EmailUIAjax&emailUIAction=sendEmail&setEditor=1"],
+            ["/?composeLayoutId=composeLayout1&fromAccount=1&module=Emails&action=EmailUIAjax&emailUIAction=sendEmail&setEditor=1"],
+            ["https://localhost/?composeLayoutId=composeLayout1&fromAccount=1&module=Emails&action=EmailUIAjax&emailUIAction=sendEmail&setEditor=1"],
+            ];
     }
 
     /**
      * @dataProvider getUrls
      * @param string $url
      */
-	function testEmailCleanup($url)
-	{
+    function testEmailCleanup($url)
+    {
         $data = "Test: <img src=\"$url\">";
         $res = str_replace("<img />", "", SugarCleaner::cleanHtml($data));
         $this->assertStringNotContainsString('<img', $res);
-	}
+    }
 }

@@ -21,33 +21,33 @@ class Bug50697Test extends TestCase
 {
     protected function setUp() : void
     {
-    global $current_user;
-    $current_user = SugarTestUserUtilities::createAnonymousUser();
-}
+        global $current_user;
+        $current_user = SugarTestUserUtilities::createAnonymousUser();
+    }
 
     protected function tearDown() : void
     {
-    SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-    unset($GLOBALS['current_user']);
-}
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        unset($GLOBALS['current_user']);
+    }
 
 /**
  * testProcessSearchForm
  *
  * Test the processSearchForm function which contained the offensive SQL
  */
-public function testProcessSearchForm()
-{
-    $_REQUEST = array();
-    $mlv = new MeetingsViewListbytype();
-    $mlv->processSearchForm();
+    public function testProcessSearchForm()
+    {
+        $_REQUEST = [];
+        $mlv = new MeetingsViewListbytype();
+        $mlv->processSearchForm();
         $this->assertMatchesRegularExpression(
             '/meetings\.date_start.*?\d{4}-\d{2}-\d{2} \d{1,2}:\d{2}:\d{2}/',
             $mlv->where
         );
 
-    $_REQUEST['name_basic'] = 'Bug50697Test';
-    $mlv->processSearchForm();
+        $_REQUEST['name_basic'] = 'Bug50697Test';
+        $mlv->processSearchForm();
         $this->assertMatchesRegularExpression(
             '/meetings\.date_start.*?\d{4}-\d{2}-\d{2} \d{1,2}:\d{2}:\d{2}/',
             $mlv->where
@@ -56,5 +56,5 @@ public function testProcessSearchForm()
             '/meetings\.name LIKE \'Bug50697Test%\'/',
             $mlv->where
         );
-}
+    }
 }

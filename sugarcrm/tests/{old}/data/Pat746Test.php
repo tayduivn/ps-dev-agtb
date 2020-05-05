@@ -37,10 +37,10 @@ class Pat746Test extends TestCase
         $current_user->setPreference('default_locale_name_format', 'f l');
 
         $this->lead->populateFromRow(
-            array(
+            [
                 'first_name' => 'John',
                 'last_name' => 'Doe',
-            )
+            ]
         );
 
         $this->assertEquals('John Doe', $this->lead->name);
@@ -52,17 +52,17 @@ class Pat746Test_SugarBean extends SugarBean
     public $object_name = 'Pat746Test';
     public $createLocaleFormattedName = true;
     public $module_name = 'Leads';
-    public $field_defs = array(
-        'name' => array(
+    public $field_defs = [
+        'name' => [
             'name' => 'name',
             'rname' => 'name',
             'type' => 'fullname',
-        ),
-    );
-    public $name_format_map = array(
+        ],
+    ];
+    public $name_format_map = [
         'f' => 'first_name',
         'l' => 'last_name',
         's' => 'salutation',
         't' => 'title',
-    );
+    ];
 }

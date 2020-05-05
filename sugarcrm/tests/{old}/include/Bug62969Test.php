@@ -55,7 +55,7 @@ EOQ;
 
         // clear cache so it can be reloaded later
         $cache_key = 'app_list_strings.'.$GLOBALS['current_language'];
-       	sugar_cache_clear($cache_key);
+        sugar_cache_clear($cache_key);
     }
 
     protected function tearDown() : void
@@ -68,7 +68,7 @@ EOQ;
 
         // clear cache so it can be reloaded later
         $cache_key = 'app_list_strings.'.$GLOBALS['current_language'];
-       	sugar_cache_clear($cache_key);
+        sugar_cache_clear($cache_key);
 
         // reload app_list_strings
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);

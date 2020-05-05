@@ -22,7 +22,7 @@ class PingApiTest extends TestCase
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setUp('current_user', array(true, false));
+        SugarTestHelper::setUp('current_user', [true, false]);
     }
 
     public static function tearDownAfterClass(): void
@@ -35,10 +35,10 @@ class PingApiTest extends TestCase
         $api = new PingApi();
         $rest = SugarTestRestUtilities::getRestServiceMock();
 
-        $result = $api->ping($rest, array());
+        $result = $api->ping($rest, []);
         $this->assertEquals('pong', $result);
 
-        $result = $api->ping($rest, array('sub_method' => 'whattimeisit'));
+        $result = $api->ping($rest, ['sub_method' => 'whattimeisit']);
         $this->assertMatchesRegularExpression('/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[+-]{1}\d{2}:\d{2}/', $result);
     }
 }

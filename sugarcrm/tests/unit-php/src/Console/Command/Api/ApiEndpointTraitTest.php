@@ -33,7 +33,7 @@ class ApiEndpointTraitTest extends TestCase
             ->getMock();
 
         $trait = $this->getMockBuilder('Sugarcrm\Sugarcrm\Console\Command\Api\ApiEndpointTrait')
-            ->setMethods(array('getService'))
+            ->setMethods(['getService'])
             ->getMockForTrait();
 
         $trait->expects($this->once())
@@ -42,17 +42,17 @@ class ApiEndpointTraitTest extends TestCase
 
         $api = $this->createMock(PingApi::class);
 
-        $apiCallArgs = array('foo', 'bar', array('more' => 'beer'));
+        $apiCallArgs = ['foo', 'bar', ['more' => 'beer']];
 
         $api->expects($this->once())
             ->method('ping')
             ->with($this->equalTo($service), $this->equalTo($apiCallArgs));
 
-        TestReflection::callProtectedMethod($trait, 'initApi', array($api));
+        TestReflection::callProtectedMethod($trait, 'initApi', [$api]);
         TestReflection::callProtectedMethod(
             $trait,
             'callApi',
-            array('ping', $apiCallArgs)
+            ['ping', $apiCallArgs]
         );
     }
 }

@@ -31,18 +31,18 @@ class UploadFileTest extends TestCase
 
     public function unlinkFileDataProvider()
     {
-        return array(
-            array(
-                array(
+        return [
+            [
+                [
                     'upload_id' => '123',
-                ),
+                ],
                 true,
-            ),
-            array(
-                array(),
+            ],
+            [
+                [],
                 false,
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -58,7 +58,7 @@ class UploadFileTest extends TestCase
         $this->db->addQuerySpy(
             'upload_id',
             "/SELECT upload_id FROM notes WHERE upload_id='{$id}'/",
-            array($rows)
+            [$rows]
         );
 
         $actual = UploadFile::unlink_file($id);
@@ -75,11 +75,11 @@ class UploadFileTest extends TestCase
     {
         $id = Sugarcrm\Sugarcrm\Util\Uuid::uuid1();
 
-        $rows = array();
+        $rows = [];
         $this->db->addQuerySpy(
             'upload_id',
             "/SELECT upload_id FROM notes WHERE upload_id='{$id}'/",
-            array($rows)
+            [$rows]
         );
 
         $actual = UploadFile::unlink_file($id);

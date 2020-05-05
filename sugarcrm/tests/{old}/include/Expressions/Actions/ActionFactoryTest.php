@@ -55,11 +55,12 @@ EOQ;
 
     public function testGetNewAction()
     {
-        $sva = ActionFactory::getNewAction('SetValue',
-            array(
+        $sva = ActionFactory::getNewAction(
+            'SetValue',
+            [
                 'target' => 'name',
-                'value' => 'strlen($name)'
-            )
+                'value' => 'strlen($name)',
+            ]
         );
         $this->assertInstanceOf("SetValueAction", $sva);
     }
@@ -68,7 +69,7 @@ EOQ;
     {
         $this->createCustomAction();
         ActionFactory::buildActionCache(true);
-        $customAction = ActionFactory::getNewAction('testCustomAction', array());
+        $customAction = ActionFactory::getNewAction('testCustomAction', []);
         $this->assertInstanceOf("TestCustomAction", $customAction);
         $this->removeCustomAction();
         ActionFactory::buildActionCache(true);

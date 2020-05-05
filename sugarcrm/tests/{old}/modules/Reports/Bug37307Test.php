@@ -16,32 +16,32 @@ use PHPUnit\Framework\TestCase;
 class Bug37307Test extends TestCase
 {
     public function testRelationshipWithApostropheInLabelOutputsCorrectly()
-	{
-            if (empty($GLOBALS['app_list_strings'])) {
-                $GLOBALS['app_list_strings'] = return_app_list_strings_language('en_us');
-            }
-		$bean_name = 'Foo';
-		$link_module = 'Bar';
-		$linked_field = array(
-		    'name' => 'Dog',
-		    'label' => "My Dog&#039;s",
-		    'relationship' => 'Cat',
-		    );
-		
-		$view = new MockReportsViewBuildreportmoduletree;
-		$output = $view->_populateNodeItem($bean_name,$link_module,$linked_field);
-		
-		$this->assertEquals(
-		    "javascript:SUGAR.reports.populateFieldGrid('Bar','Cat','Foo','My Dog\'s');",
-		    $output['href']
-		    );
-	}
+    {
+        if (empty($GLOBALS['app_list_strings'])) {
+            $GLOBALS['app_list_strings'] = return_app_list_strings_language('en_us');
+        }
+        $bean_name = 'Foo';
+        $link_module = 'Bar';
+        $linked_field = [
+            'name' => 'Dog',
+            'label' => "My Dog&#039;s",
+            'relationship' => 'Cat',
+            ];
+        
+        $view = new MockReportsViewBuildreportmoduletree;
+        $output = $view->_populateNodeItem($bean_name, $link_module, $linked_field);
+        
+        $this->assertEquals(
+            "javascript:SUGAR.reports.populateFieldGrid('Bar','Cat','Foo','My Dog\'s');",
+            $output['href']
+        );
+    }
 }
 
 class MockReportsViewBuildreportmoduletree extends ReportsViewBuildreportmoduletree
 {
-    public function _populateNodeItem($bean_name,$link_module,$linked_field)
+    public function _populateNodeItem($bean_name, $link_module, $linked_field)
     {
-        return parent::_populateNodeItem($bean_name,$link_module,$linked_field);
+        return parent::_populateNodeItem($bean_name, $link_module, $linked_field);
     }
 }

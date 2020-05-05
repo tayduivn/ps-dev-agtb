@@ -38,7 +38,7 @@ class RelateCollectionApiTest extends TestCase
 
     protected function setUp() : void
     {
-        SugarTestHelper::setUp('current_user', array(true));
+        SugarTestHelper::setUp('current_user', [true]);
         $this->user = SugarTestUserUtilities::createAnonymousUser();
         $this->bean = SugarTestMeetingUtilities::createMeeting('', $this->user);
     }
@@ -63,16 +63,16 @@ class RelateCollectionApiTest extends TestCase
         BeanFactory::unregisterBean($this->module, $this->bean->id);
 
         $serviceBaseMock = $this->createMock('ServiceBase');
-        $args = array(
+        $args = [
             'collection_name' => $this->collectionName,
             'module' => $this->module,
             'record' => $this->bean->id,
-            'order_by' => array(),
-            'offset' => array(),
+            'order_by' => [],
+            'offset' => [],
             'max_num' => 20,
-        );
+        ];
 
-        $relateCollectionApi = $this->createPartialMock('RelateCollectionApi', array(
+        $relateCollectionApi = $this->createPartialMock('RelateCollectionApi', [
             'normalizeArguments',
             'getSortSpec',
             'getAdditionalSortFields',
@@ -80,19 +80,19 @@ class RelateCollectionApiTest extends TestCase
             'cleanData',
             'extractErrors',
             'buildResponse',
-        ));
+        ]);
 
-        $relateCollectionApi->expects($this->once())->method('getSortSpec')->willReturn(array());
-        $relateCollectionApi->expects($this->once())->method('getAdditionalSortFields')->willReturn(array());
-        $relateCollectionApi->expects($this->once())->method('getData')->willReturn(array(
-            array(
-                'records' => array(),
+        $relateCollectionApi->expects($this->once())->method('getSortSpec')->willReturn([]);
+        $relateCollectionApi->expects($this->once())->method('getAdditionalSortFields')->willReturn([]);
+        $relateCollectionApi->expects($this->once())->method('getData')->willReturn([
+            [
+                'records' => [],
                 'next_offset' => 0,
-            ),
-        ));
+            ],
+        ]);
 
-        $relateCollectionApi->expects($this->once())->method('cleanData')->willReturn(array());
-        $relateCollectionApi->expects($this->once())->method('extractErrors')->willReturn(array());
+        $relateCollectionApi->expects($this->once())->method('cleanData')->willReturn([]);
+        $relateCollectionApi->expects($this->once())->method('extractErrors')->willReturn([]);
 
         $relateCollectionApi->expects($this->once())
             ->method('normalizeArguments')

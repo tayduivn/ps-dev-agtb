@@ -76,12 +76,12 @@ class RelatedActivitiesApiTest extends TestCase
     {
         $return = $this->filterApi->getRelatedActivities(
             $this->serviceMock,
-            array(
+            [
                 'module' => 'Cases',
                 'record' => $this->case->id,
                 'module_list' => 'Calls,Meetings',
                 'max_num' => 5,
-            ),
+            ],
             'list'
         );
 

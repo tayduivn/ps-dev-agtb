@@ -33,15 +33,15 @@ class SugarLoggerTest extends TestCase
 
     public function providerWriteLogEntries()
     {
-        return array(
-            array('debug','debug','foo1',true,'[DEBUG] foo1'),
-            array('debug','info','foo2',true,'[INFO] foo2'),
-            array('debug','warn','foo3',true,'[WARN] foo3'),
-            array('debug','error','foo4',true,'[ERROR] foo4'),
-            array('debug','fatal','foo5',true,'[FATAL] foo5'),
-            array('debug','security','foo6',true,'[SECURITY] foo6'),
-            array('fatal','warn','foo7',false,'[WARN] foo7'),
-            );
+        return [
+            ['debug','debug','foo1',true,'[DEBUG] foo1'],
+            ['debug','info','foo2',true,'[INFO] foo2'],
+            ['debug','warn','foo3',true,'[WARN] foo3'],
+            ['debug','error','foo4',true,'[ERROR] foo4'],
+            ['debug','fatal','foo5',true,'[FATAL] foo5'],
+            ['debug','security','foo6',true,'[SECURITY] foo6'],
+            ['fatal','warn','foo7',false,'[WARN] foo7'],
+            ];
     }
 
     /**
@@ -53,18 +53,17 @@ class SugarLoggerTest extends TestCase
         $logMessage,
         $shouldMessageBeWritten,
         $messageWritten
-        )
-    {
+    ) {
         $logMessages = '';
         
         /** @var SugarLogger|MockObject $logWriter */
-        $logWriter = $this->getMockBuilder('SugarLogger')->setMethods(array('write'))->getMock();
-        $logWriter->expects($this->any())->method('write')->will($this->returnCallback(function($message) use (&$logMessages) {
+        $logWriter = $this->getMockBuilder('SugarLogger')->setMethods(['write'])->getMock();
+        $logWriter->expects($this->any())->method('write')->will($this->returnCallback(function ($message) use (&$logMessages) {
             $logMessages .= $message;
         }));
         
         /** @var LoggerManagerSugarLoggerTestMock|MockObject $logManager */
-        $logManager = $this->createPartialMock('LoggerManagerSugarLoggerTestMock', array());
+        $logManager = $this->createPartialMock('LoggerManagerSugarLoggerTestMock', []);
         $logManager->setWriter($logWriter);
         
         $logManager->setLevel($currentLevel);
@@ -82,18 +81,18 @@ class SugarLoggerTest extends TestCase
         $logMessages = '';
         
         /** @var SugarLogger|MockObject $log */
-        $logWriter = $this->getMockBuilder('SugarLogger')->setMethods(array('write'))->getMock();
-        $logWriter->expects($this->any())->method('write')->will($this->returnCallback(function($message) use (&$logMessages) {
+        $logWriter = $this->getMockBuilder('SugarLogger')->setMethods(['write'])->getMock();
+        $logWriter->expects($this->any())->method('write')->will($this->returnCallback(function ($message) use (&$logMessages) {
             $logMessages .= $message;
         }));
         
         /** @var LoggerManagerSugarLoggerTestMock|MockObject $logManager */
-        $logManager = $this->createPartialMock('LoggerManagerSugarLoggerTestMock', array());
+        $logManager = $this->createPartialMock('LoggerManagerSugarLoggerTestMock', []);
         $logManager->setWriter($logWriter);
         
         $logManager->setLevel('debug');
-        $logManager->assert('this was asserted true',true);
-        $logManager->assert('this was asserted false',false);
+        $logManager->assert('this was asserted true', true);
+        $logManager->assert('this was asserted false', false);
         
         $this->assertStringContainsString('[DEBUG] this was asserted false', $logMessages);
         $this->assertStringNotContainsString('[DEBUG] this was asserted true', $logMessages);
@@ -104,19 +103,19 @@ class SugarLoggerTest extends TestCase
      */
     public function providerFileSizes()
     {
-        return array(
-            array("10MB", 10 * 1024 * 1024, true),
-            array("3KB", 3 * 1024, true),
-            array("3 kb", 3 * 1024, true),
-            array(" 2Mb", 2 * 1024 * 1024, true),
-            array("500 Bytes", 500 * 1, true),
-            array(".5Mb", 0.5 * 1024 * 1024, true),
-            array("0.7kb", 0.7 * 1024, true),
-            array(".0.5Mb", 0.5 * 1024 * 1024, false),
-            array("1GBtyes", 1024 * 1024 * 1024, true),
-            array("1 Bytes", 1 * 1, true),
-            array("1 FB", 1 * 1, false),
-        );
+        return [
+            ["10MB", 10 * 1024 * 1024, true],
+            ["3KB", 3 * 1024, true],
+            ["3 kb", 3 * 1024, true],
+            [" 2Mb", 2 * 1024 * 1024, true],
+            ["500 Bytes", 500 * 1, true],
+            [".5Mb", 0.5 * 1024 * 1024, true],
+            ["0.7kb", 0.7 * 1024, true],
+            [".0.5Mb", 0.5 * 1024 * 1024, false],
+            ["1GBtyes", 1024 * 1024 * 1024, true],
+            ["1 Bytes", 1 * 1, true],
+            ["1 FB", 1 * 1, false],
+        ];
     }
 
     /**
@@ -124,23 +123,19 @@ class SugarLoggerTest extends TestCase
      */
     public function testFileSizes($size, $value, $assert_equal)
     {
-        $units = array(
+        $units = [
             'b' => 1,
             'k' => 1024,
             'm' => 1024 * 1024,
             'g' => 1024 * 1024 * 1024,
-        );
+        ];
 
 
-        if( preg_match('/^\s*([0-9]+\.[0-9]+|\.?[0-9]+)\s*(k|m|g|b)(b?ytes)?/i', $size, $match) )
-        {
+        if (preg_match('/^\s*([0-9]+\.[0-9]+|\.?[0-9]+)\s*(k|m|g|b)(b?ytes)?/i', $size, $match)) {
             $file_size = $match[1] * $units[strtolower($match[2])];
-            if($assert_equal)
-            {
+            if ($assert_equal) {
                 $this->assertEquals($value, $file_size, "[DEBUG] File size parsed invalid");
-            }
-            else
-            {
+            } else {
                 $this->assertNotEquals($value, $file_size, "[DEBUG] File size parsed invalid");
             }
         } else {
@@ -152,7 +147,8 @@ class SugarLoggerTest extends TestCase
      * bug#: 50188
      * Fix the Logger to create dateformat suffix in the file name
      */
-    public function testFileName() {
+    public function testFileName()
+    {
         $config = SugarConfig::getInstance();
         $file_name = $config->get('logger.file.name');
         $log_dir = $config->get('log_dir');
@@ -168,8 +164,9 @@ class SugarLoggerTest extends TestCase
         $suffix_date_part = "";
         // IF there has been a suffix manually entered, let's include it,
         // otherwise this should be empty so we get "sugarcrm.log" in the full_path
-        if( !empty( $file_suffix ) )
+        if (!empty($file_suffix)) {
             $suffix_date_part = "_" . date(str_replace("%", "", $file_suffix));
+        }
 
         $full_path = $log_dir . $file_name . $suffix_date_part . '.log';
         $logger = new SugarLogger;
@@ -189,14 +186,12 @@ class SugarLoggerTest extends TestCase
         $logMessage,
         $shouldMessageBeWritten,
         $messageWritten
-        )
-    {
+    ) {
         /** @var LoggerManagerSugarLoggerTestMock|MockObject $logManager */
-        $logManager = $this->createPartialMock('LoggerManagerSugarLoggerTestMock', array());
+        $logManager = $this->createPartialMock('LoggerManagerSugarLoggerTestMock', []);
         
         $logManager ->setLevel($currentLevel);
         $this->assertEquals($shouldMessageBeWritten, $logManager->wouldLog($logLevel));
-        
     }
 }
 
@@ -207,7 +202,7 @@ class SugarLoggerTest extends TestCase
 class LoggerManagerSugarLoggerTestMock extends LoggerManager
 {
     /** @var array real loggers */
-    private static $storage = array();
+    private static $storage = [];
     
     /**
      * Backups loggers
@@ -216,7 +211,7 @@ class LoggerManagerSugarLoggerTestMock extends LoggerManager
     public static function backupLoggers()
     {
         self::$storage = self::$_loggers;
-        self::$_loggers = array();
+        self::$_loggers = [];
     }
     
     /**
@@ -226,7 +221,7 @@ class LoggerManagerSugarLoggerTestMock extends LoggerManager
     public static function restoreLoggers()
     {
         self::$_loggers = self::$storage;
-        self::$storage = array();
+        self::$storage = [];
     }
     
     /**
@@ -236,8 +231,8 @@ class LoggerManagerSugarLoggerTestMock extends LoggerManager
      */
     public function setWriter($logWriter)
     {
-        self::$_loggers = array(
+        self::$_loggers = [
             'SugarLogger' => $logWriter,
-        );
+        ];
     }
 }

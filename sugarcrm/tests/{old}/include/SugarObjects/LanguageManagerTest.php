@@ -36,12 +36,12 @@ class LanguageManagerTest extends TestCase
 
     public function languageFilePathProvider()
     {
-        return array(
-            array('index' => 0, 'path' => 'modules/do_not_change/language/ever.lang.php'),
-            array('index' => 1, 'path' => 'modules/do_not_change/language/ever.lang.override.php'),
-            array('index' => 2, 'path' => 'custom/modules/do_not_change/language/ever.lang.php'),
-            array('index' => 3, 'path' => 'custom/modules/do_not_change/Ext/Language/ever.lang.ext.php'),
-        );
+        return [
+            ['index' => 0, 'path' => 'modules/do_not_change/language/ever.lang.php'],
+            ['index' => 1, 'path' => 'modules/do_not_change/language/ever.lang.override.php'],
+            ['index' => 2, 'path' => 'custom/modules/do_not_change/language/ever.lang.php'],
+            ['index' => 3, 'path' => 'custom/modules/do_not_change/Ext/Language/ever.lang.ext.php'],
+        ];
     }
 
     protected function setUp() : void

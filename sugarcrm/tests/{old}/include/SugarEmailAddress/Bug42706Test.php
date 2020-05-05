@@ -19,10 +19,10 @@ class Bug42706Test extends TestCase
 {
     public function providerGetPrimaryAddress()
     {
-        return array(
-            array(true),
-            array(false),
-        );
+        return [
+            [true],
+            [false],
+        ];
     }
 
     /**

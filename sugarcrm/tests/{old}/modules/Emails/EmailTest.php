@@ -20,21 +20,21 @@ use PHPUnit\Framework\TestCase;
  */
 class EmailTest extends TestCase
 {
-	private $email;
+    private $email;
 
     protected function setUp() : void
-	{
-	    global $current_user;
+    {
+        global $current_user;
 
         OutboundEmailConfigurationTestHelper::setUp();
-	    $current_user = BeanFactory::newBean("Users");
+        $current_user = BeanFactory::newBean("Users");
         $current_user->getSystemUser();
-	    $this->email = new Email();
-	    $this->email->email2init();
-	}
+        $this->email = new Email();
+        $this->email->email2init();
+    }
 
     protected function tearDown() : void
-	{
+    {
         VardefManager::$linkFields = [];
         VardefManager::loadVardef('Contacts', 'Contact', true);
 
@@ -47,63 +47,62 @@ class EmailTest extends TestCase
         SugarTestProspectUtilities::removeAllCreatedProspects();
         SugarTestEmailAddressUtilities::removeAllCreatedAddresses();
         SugarTestEmailUtilities::removeAllCreatedEmails();
-		unset($this->email);
-		// SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-		unset($GLOBALS['current_user']);
+        unset($this->email);
+        // SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        unset($GLOBALS['current_user']);
         OutboundEmailConfigurationTestHelper::tearDown();
-	}
+    }
 
-	public function testSafeAttachmentName ()
-	{
-		$extArray[] = '0.py';
-		$extArray[] = '1.php';
-		$extArray[] = '2.php3';
-		$extArray[] = '3.php4';
-		$extArray[] = '4.php5';
-		$extArray[] = '5.js';
-		$extArray[] = '6.htm';
-		$extArray[] = '7.html';
-		$extArray[] = '8.txt';
-		$extArray[] = '9.doc';
-		$extArray[] = '10.xls';
-		$extArray[] = '11.pdf';
-		$extArray[] = '12';
+    public function testSafeAttachmentName()
+    {
+        $extArray[] = '0.py';
+        $extArray[] = '1.php';
+        $extArray[] = '2.php3';
+        $extArray[] = '3.php4';
+        $extArray[] = '4.php5';
+        $extArray[] = '5.js';
+        $extArray[] = '6.htm';
+        $extArray[] = '7.html';
+        $extArray[] = '8.txt';
+        $extArray[] = '9.doc';
+        $extArray[] = '10.xls';
+        $extArray[] = '11.pdf';
+        $extArray[] = '12';
 
-		for ($i = 0; $i < count($extArray); $i++) {
-			$result = $this->email->safeAttachmentName($extArray[$i]);
-			if ($i < 8) {
-				$this->assertEquals($result, true);
-			} else {
-				$this->assertEquals($result, false);
-			}
-		}
-	}
+        for ($i = 0; $i < count($extArray); $i++) {
+            $result = $this->email->safeAttachmentName($extArray[$i]);
+            if ($i < 8) {
+                $this->assertEquals($result, true);
+            } else {
+                $this->assertEquals($result, false);
+            }
+        }
+    }
 
-	public function testEmail2ParseAddresses()
-	{
-		$emailDisplayName[] = '';
-		$emailDisplayName[] = 'Shine Ye';
-		$emailDisplayName[] = 'Roger,Smith';
-		$emailAddress[] = 'masonhu@sugarcrm.com';
-		$emailAddress[] = 'xye@sugarcrm.com';
-		$emailAddress[] = 'roger@sugarcrm.com';
-		for ($j = 0; $j < count($emailDisplayName); $j++)
-		{
-			if ($j < 1)
-				$emailString[] = $emailDisplayName[$j].$emailAddress[$j];
-			else
-				$emailString[] = $emailDisplayName[$j].'<'.$emailAddress[$j].'>';
-		}
-		$emailAddressString = implode(', ', $emailString);
-		$result = $this->email->email2ParseAddresses($emailAddressString);
-		$onlyEmailResult = $this->email->email2ParseAddressesForAddressesOnly($emailAddressString);
-		for ($v = 0; $v < count($result); $v++)
-		{
-			$this->assertEquals($result[$v]['display'], $emailDisplayName[$v]);
-			$this->assertEquals($result[$v]['email'], $emailAddress[$v]);
-			$this->asserteQuals($onlyEmailResult[$v], $emailAddress[$v]);
-		}
-	}
+    public function testEmail2ParseAddresses()
+    {
+        $emailDisplayName[] = '';
+        $emailDisplayName[] = 'Shine Ye';
+        $emailDisplayName[] = 'Roger,Smith';
+        $emailAddress[] = 'masonhu@sugarcrm.com';
+        $emailAddress[] = 'xye@sugarcrm.com';
+        $emailAddress[] = 'roger@sugarcrm.com';
+        for ($j = 0; $j < count($emailDisplayName); $j++) {
+            if ($j < 1) {
+                $emailString[] = $emailDisplayName[$j].$emailAddress[$j];
+            } else {
+                $emailString[] = $emailDisplayName[$j].'<'.$emailAddress[$j].'>';
+            }
+        }
+        $emailAddressString = implode(', ', $emailString);
+        $result = $this->email->email2ParseAddresses($emailAddressString);
+        $onlyEmailResult = $this->email->email2ParseAddressesForAddressesOnly($emailAddressString);
+        for ($v = 0; $v < count($result); $v++) {
+            $this->assertEquals($result[$v]['display'], $emailDisplayName[$v]);
+            $this->assertEquals($result[$v]['email'], $emailAddress[$v]);
+            $this->asserteQuals($onlyEmailResult[$v], $emailAddress[$v]);
+        }
+    }
 
     public function testEmail2ParseAddresses_ParameterIsEmpty_EmptyArrayIsReturned()
     {
@@ -138,36 +137,36 @@ class EmailTest extends TestCase
 
     public function dataProviderEmailAddressParsing()
     {
-        return array(
-            array(htmlspecialchars('John Doe<john@doe.com>'), 'John Doe', 'john@doe.com'),
-            array(htmlspecialchars('Jo<hn Doe<john@doe.com>'), 'Jo<hn Doe', 'john@doe.com'),
-            array(htmlspecialchars('Jo>hn Doe<john@doe.com>'), 'Jo>hn Doe', 'john@doe.com'),
-            array(htmlspecialchars('Jo>h<n Doe<john@doe.com>'), 'Jo>h<n Doe', 'john@doe.com'),
-            array(htmlspecialchars('Jo>h<n Doe  <john@doe.com>'), 'Jo>h<n Doe', 'john@doe.com'),
-            array(htmlspecialchars("Jo'h<n D\"oe  <john@doe.com>"), "Jo'h<n D\"oe", 'john@doe.com'),
-        );
+        return [
+            [htmlspecialchars('John Doe<john@doe.com>'), 'John Doe', 'john@doe.com'],
+            [htmlspecialchars('Jo<hn Doe<john@doe.com>'), 'Jo<hn Doe', 'john@doe.com'],
+            [htmlspecialchars('Jo>hn Doe<john@doe.com>'), 'Jo>hn Doe', 'john@doe.com'],
+            [htmlspecialchars('Jo>h<n Doe<john@doe.com>'), 'Jo>h<n Doe', 'john@doe.com'],
+            [htmlspecialchars('Jo>h<n Doe  <john@doe.com>'), 'Jo>h<n Doe', 'john@doe.com'],
+            [htmlspecialchars("Jo'h<n D\"oe  <john@doe.com>"), "Jo'h<n D\"oe", 'john@doe.com'],
+        ];
     }
 
-	public function testDecodeDuringSend()
-	{
-		$testString = 'Replace sugarLessThan and sugarGreaterThan with &lt; and &gt;';
-		$expectedResult = 'Replace &lt; and &gt; with &lt; and &gt;';
-		$resultString = $this->email->decodeDuringSend($testString);
-		$this->asserteQuals($resultString, $expectedResult);
-	}
+    public function testDecodeDuringSend()
+    {
+        $testString = 'Replace sugarLessThan and sugarGreaterThan with &lt; and &gt;';
+        $expectedResult = 'Replace &lt; and &gt; with &lt; and &gt;';
+        $resultString = $this->email->decodeDuringSend($testString);
+        $this->asserteQuals($resultString, $expectedResult);
+    }
 
     public function configParamProvider()
     {
-        $address_array =  array(
+        $address_array =  [
             'id1' => 'test1@example.com',
             'id2' => 'test2@example.com',
-            'id3' => 'test3@example.com'
-        );
+            'id3' => 'test3@example.com',
+        ];
 
-        return array(
-            array(',',$address_array,'test1@example.com,test2@example.com,test3@example.com'), // default and correct delimiter for email addresses
-            array(';',$address_array,'test1@example.com;test2@example.com;test3@example.com'), // outlook's delimiter for email addresses
-        );
+        return [
+            [',',$address_array,'test1@example.com,test2@example.com,test3@example.com'], // default and correct delimiter for email addresses
+            [';',$address_array,'test1@example.com;test2@example.com;test3@example.com'], // outlook's delimiter for email addresses
+        ];
     }
 
     /**
@@ -188,10 +187,10 @@ class EmailTest extends TestCase
         $em->description_html = "This is the HTML Description";
         $em->description      = "This is the Text Description";
 
-        $from       = new EmailIdentity("twolf@sugarcrm.com" , "Tim Wolf");
+        $from       = new EmailIdentity("twolf@sugarcrm.com", "Tim Wolf");
         $replyto    = $from;
-        $to         = new EmailIdentity("twolf@sugarcrm.com" , "Tim Wolf");
-        $cc         = new EmailIdentity("twolf@sugarcrm.com" , "Tim Wolf");
+        $to         = new EmailIdentity("twolf@sugarcrm.com", "Tim Wolf");
+        $cc         = new EmailIdentity("twolf@sugarcrm.com", "Tim Wolf");
 
         $em->from_addr = $from->getEmail();
         $em->from_name = $from->getName();
@@ -199,18 +198,18 @@ class EmailTest extends TestCase
         $em->reply_to_addr = $replyto->getEmail();
         $em->reply_to_name = $replyto->getName();
 
-        $em->to_addrs_arr = array(
-            array(
+        $em->to_addrs_arr = [
+            [
                 'email'     => $to->getEmail(),
                 'display'   => $to->getName(),
-            )
-        );
-        $em->cc_addrs_arr = array(
-            array(
+            ],
+        ];
+        $em->cc_addrs_arr = [
+            [
                 'email'     => $cc->getEmail(),
                 'display'   => $cc->getName(),
-            )
-        );
+            ],
+        ];
 
         $em->send();
 
@@ -221,9 +220,9 @@ class EmailTest extends TestCase
         $headers = $mockMailer->getHeaders();
         $this->assertEquals($em->name, $headers['Subject']);
         $this->assertEquals($from->getEmail(), $headers['From'][0]);
-        $this->assertEquals($from->getName(),  $headers['From'][1]);
+        $this->assertEquals($from->getName(), $headers['From'][1]);
         $this->assertEquals($replyto->getEmail(), $headers['Reply-To'][0]);
-        $this->assertEquals($replyto->getName(),  $headers['Reply-To'][1]);
+        $this->assertEquals($replyto->getName(), $headers['Reply-To'][1]);
 
         $this->assertEquals($from->getEmail(), $headers['Sender']);
 
@@ -231,13 +230,13 @@ class EmailTest extends TestCase
 
         $actual_to=array_values($recipients['to']);
         $this->assertEquals($to->getEmail(), $actual_to[0]->getEmail(), "TO Email Address Incorrect");
-        $this->assertEquals($to->getName(),  $actual_to[0]->getName(),  "TO Name Incorrect");
+        $this->assertEquals($to->getName(), $actual_to[0]->getName(), "TO Name Incorrect");
 
         $actual_cc=array_values($recipients['cc']);
         $this->assertEquals($to->getEmail(), $actual_cc[0]->getEmail(), "CC Email Address Incorrect");
-        $this->assertEquals($to->getName(),  $actual_cc[0]->getName(),  "CC Name Incorrect");
+        $this->assertEquals($to->getName(), $actual_cc[0]->getName(), "CC Name Incorrect");
 
-        $this->assertEquals(true,$mockMailer->wasSent());
+        $this->assertEquals(true, $mockMailer->wasSent());
     }
 
     /**
@@ -251,7 +250,7 @@ class EmailTest extends TestCase
     {
         $GLOBALS['sugar_config']['email_address_separator'] = $config_param;
 
-        $this->assertEquals($expected,$this->email->_arrayToDelimitedString($address_array), 'Array should be delimited with correct delimiter');
+        $this->assertEquals($expected, $this->email->_arrayToDelimitedString($address_array), 'Array should be delimited with correct delimiter');
     }
 
     /**
@@ -330,10 +329,10 @@ class EmailTest extends TestCase
     public function testUpdateAttachmentsVisibility()
     {
         $email = SugarTestEmailUtilities::createEmail();
-        $data = array(
+        $data = [
             'email_type' => 'Emails',
             'email_id' => $email->id,
-        );
+        ];
         $note1 = SugarTestNoteUtilities::createNote('', $data);
         $note2 = SugarTestNoteUtilities::createNote('', $data);
 
@@ -342,7 +341,7 @@ class EmailTest extends TestCase
         $email->state = Email::STATE_ARCHIVED;
         $email->assigned_user_id = $GLOBALS['current_user']->id;
         $email->team_id = 'East';
-        $email->team_set_id = $teams->addTeams(array('East', 'West'));
+        $email->team_set_id = $teams->addTeams(['East', 'West']);
         //BEGIN SUGARCRM flav=ent ONLY
         $email->team_set_selected_id = 'East';
         //END SUGARCRM flav=ent ONLY
@@ -383,7 +382,7 @@ class EmailTest extends TestCase
     {
         $note = $this->getMockBuilder('Note')
             ->disableOriginalConstructor()
-            ->setMethods(array('save'))
+            ->setMethods(['save'])
             ->getMock();
         $note->expects($this->once())->method('save');
 
@@ -415,7 +414,7 @@ class EmailTest extends TestCase
         $teamSetId = Uuid::uuid1();
         $note = $this->getMockBuilder('Note')
             ->disableOriginalConstructor()
-            ->setMethods(array('save'))
+            ->setMethods(['save'])
             ->getMock();
         $note->expects($this->never())->method('save');
         $note->assigned_user_id = $assignedUserId;
@@ -463,10 +462,10 @@ class EmailTest extends TestCase
         ];
         $email = SugarTestEmailUtilities::createEmail('', $data);
 
-        $data = array(
+        $data = [
             'email_type' => 'Emails',
             'email_id' => $email->id,
-        );
+        ];
         $note = SugarTestNoteUtilities::createNote('', $data);
 
         $expected = $GLOBALS['current_user']->getPrivateTeam();
@@ -546,7 +545,7 @@ class EmailTest extends TestCase
             $email->to->add($ep);
         }
 
-        $participants = SugarTestReflection::callProtectedMethod($email, 'getParticipants', array('to'));
+        $participants = SugarTestReflection::callProtectedMethod($email, 'getParticipants', ['to']);
         $accountsParticipants = array_filter($participants, function ($participant) {
             return $participant->parent_type === 'Accounts';
         });
@@ -618,14 +617,14 @@ class EmailTest extends TestCase
         $contact = SugarTestContactUtilities::createContact();
 
         // Create a draft that will be sent.
-        $data = array(
+        $data = [
             'state' => Email::STATE_DRAFT,
             'outbound_email_id' => $config->getConfigId(),
             'name' => 'Welcome $contact_first_name',
             'description_html' => 'Hello <b>$contact_first_name</b>',
             'parent_type' => 'Contacts',
             'parent_id' => $contact->id,
-        );
+        ];
         $email = SugarTestEmailUtilities::createEmail('', $data);
 
         // Send to the contact.
@@ -705,7 +704,7 @@ class EmailTest extends TestCase
      */
     public function testSave_WillLinkEmailAddressesAndRecalculateEmailsText()
     {
-        $data = array(
+        $data = [
             'from_addr' => 'sam@example.com',
             'from_addr_name' => '"Sam Rooker" <sam@example.com>',
             'to_addrs' => 'tom@example.com,wendy@example.com',
@@ -714,7 +713,7 @@ class EmailTest extends TestCase
             'cc_addrs_names' => '"Randy Ulman" <randy@example.com>',
             'bcc_addrs' => 'bonnie@example.com;tara@example.com,bill@example.com',
             'bcc_addrs_names' => '"Bonnie Vickers" <bonnie@example.com>;tara@example.com,bill@example.com',
-        );
+        ];
         $email = SugarTestEmailUtilities::createEmail('', $data);
 
         SugarTestEmailAddressUtilities::setCreatedEmailAddressByAddress('sam@example.com');
@@ -1138,7 +1137,7 @@ class EmailTest extends TestCase
      */
     private function emailAddrsToArray($emailAddrs)
     {
-        $emailAddresses = array();
+        $emailAddresses = [];
         $temp = explode(', ', $emailAddrs);
         foreach ($temp as $emailAddr) {
             $emailAddresses[] = $emailAddr;
@@ -1170,37 +1169,44 @@ class MockMailer extends SmtpMailer
 {
     var $_sent;
 
-    function __construct(OutboundEmailConfiguration $config) {
+    function __construct(OutboundEmailConfiguration $config)
+    {
         $this->_sent = false;
         $this->config = $config;
         $headers = new EmailHeaders();
-        $headers->setHeader(EmailHeaders::From,   $config->getFrom());
+        $headers->setHeader(EmailHeaders::From, $config->getFrom());
         $headers->setHeader(EmailHeaders::Sender, $config->getFrom());
         $this->headers = $headers;
         $this->recipients = new RecipientsCollection();
     }
 
-    public function getHeaders() {
-        return($this->headers->packageHeaders());
+    public function getHeaders()
+    {
+        return $this->headers->packageHeaders();
     }
 
-    public function getRecipients() {
+    public function getRecipients()
+    {
         return $this->recipients->getAll();
     }
 
-    public function send() {
+    public function send()
+    {
         $this->_sent = true;
     }
 
-    public function wasSent() {
+    public function wasSent()
+    {
         return $this->_sent;
     }
 
-    public function toArray() {
+    public function toArray()
+    {
         return $this->asArray($this);
     }
 
-    private function asArray($d) {
+    private function asArray($d)
+    {
         if (is_object($d)) {
             $d = get_object_vars($d);
         }

@@ -752,10 +752,10 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
      */
     public function testCreateAndSendReplyEmail()
     {
-        $emailValues = array(
+        $emailValues = [
             'state' => Email::STATE_ARCHIVED,
             'reply_to_status' => false,
-        );
+        ];
         $repliedToEmail = SugarTestEmailUtilities::createEmail('', $emailValues);
 
         $contact = SugarTestContactUtilities::createContact();
@@ -993,7 +993,7 @@ class EmailsApiIntegrationTest extends EmailsApiIntegrationTestCase
 
     private function emailAddrsToArray($emailAddrs)
     {
-        $emailAddresses = array();
+        $emailAddresses = [];
         $temp = explode(', ', $emailAddrs);
         foreach ($temp as $emailAddr) {
             $emailAddresses[] = $emailAddr;

@@ -23,21 +23,21 @@ class FormatterTest extends TestCase
 {
     public function startQueryDataProvider()
     {
-        return array(
-            array('SELECT \'test\' FROM DUAL'),
-            array(
+        return [
+            ['SELECT \'test\' FROM DUAL'],
+            [
                 'SELECT \'test\' FROM DUAL'
                     . PHP_EOL . 'Params: ["some-param"]',
-                array('some-param'),
-            ),
-            array(
+                ['some-param'],
+            ],
+            [
                 'SELECT \'test\' FROM DUAL'
                     . PHP_EOL . 'Params: ["some-param"]'
                     . PHP_EOL . 'Types: ["param-type"]',
-                array('some-param'),
-                array('param-type'),
-            ),
-        );
+                ['some-param'],
+                ['param-type'],
+            ],
+        ];
     }
 
     /**

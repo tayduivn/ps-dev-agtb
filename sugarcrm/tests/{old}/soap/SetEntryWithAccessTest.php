@@ -32,7 +32,7 @@ class SetEntryWithAccessTest extends SOAPTestCase
         $this->testTeam = SugarTestTeamUtilities::createAnonymousTeam();
 
         $this->teamSet = BeanFactory::newBean('TeamSets');
-        $this->teamSet->addTeams(array($this->testTeam->id, $this->testUser->getPrivateTeamID()));
+        $this->teamSet->addTeams([$this->testTeam->id, $this->testUser->getPrivateTeamID()]);
 
 
         $this->testAccount->team_id = $this->testUser->getPrivateTeamID();
@@ -55,7 +55,7 @@ class SetEntryWithAccessTest extends SOAPTestCase
         $time = mt_rand();
         $this->_login();
 
-        $result = $this->_soapClient->call('set_entry',array('session'=> $this->_sessionId,'module_name'=>'Accounts', 'name_value_list'=>array(array('name'=>'id' , 'value'=>$this->testAccount->id),array('name'=>'name' , 'value'=>"$time Account SINGLE"))));
+        $result = $this->_soapClient->call('set_entry', ['session'=> $this->_sessionId,'module_name'=>'Accounts', 'name_value_list'=>[['name'=>'id' , 'value'=>$this->testAccount->id],['name'=>'name' , 'value'=>"$time Account SINGLE"]]]);
 
         $this->assertEquals($this->testAccount->id, $result['id'], "Did not update the Account as expected.");
     }

@@ -57,9 +57,9 @@ class EmailAddressesApiTest extends TestCase
     public function testCreateBean_CannotCreateWithoutAnEmailAddress()
     {
         $api = new EmailAddressesApi();
-        $args = array(
+        $args = [
             'module' => 'EmailAddresses',
-        );
+        ];
 
         $this->expectException(SugarApiExceptionMissingParameter::class);
         $api->createBean($this->service, $args);
@@ -71,10 +71,10 @@ class EmailAddressesApiTest extends TestCase
     public function testCreateBean_CannotCreateWithAnInvalidEmailAddress()
     {
         $api = new EmailAddressesApi();
-        $args = array(
+        $args = [
             'module' => 'EmailAddresses',
             'email_address' => 'a',
-        );
+        ];
 
         $this->expectException(SugarApiExceptionInvalidParameter::class);
         $api->createBean($this->service, $args);
@@ -91,15 +91,15 @@ class EmailAddressesApiTest extends TestCase
         $this->assertEmpty($ea->getGuid($address), "{$address} should not already exist");
 
         $api = $this->getMockBuilder('EmailAddressesApi')
-            ->setMethods(array('updateRecord'))
+            ->setMethods(['updateRecord'])
             ->getMock();
         $api->expects($this->never())->method('updateRecord');
 
-        $args = array(
+        $args = [
             'module' => 'EmailAddresses',
             'email_address' => $address,
             'email_address_caps' => 'foo@bar.com',
-        );
+        ];
         $bean = $api->createBean($this->service, $args);
 
         $this->assertNotEmpty($bean->id);
@@ -117,11 +117,11 @@ class EmailAddressesApiTest extends TestCase
         $address = SugarTestEmailAddressUtilities::createEmailAddress();
 
         $api = new EmailAddressesApi();
-        $args = array(
+        $args = [
             'module' => 'EmailAddresses',
             'email_address' => $address->email_address,
             'invalid_email' => true,
-        );
+        ];
         $bean = $api->createBean($this->service, $args);
 
         $this->assertSame($address->id, $bean->id);
@@ -138,12 +138,12 @@ class EmailAddressesApiTest extends TestCase
         $this->assertFalse($address->invalid_email);
 
         $api = new EmailAddressesApi();
-        $args = array(
+        $args = [
             'module' => 'EmailAddresses',
             'record' => $address->id,
             'email_address' => 'foo@bar.com',
             'invalid_email' => true,
-        );
+        ];
         $record = $api->updateRecord($this->service, $args);
 
         $this->assertSame($address->email_address, $record['email_address']);
@@ -152,10 +152,10 @@ class EmailAddressesApiTest extends TestCase
 
     public function optoutDataProvider()
     {
-        return array(
+        return [
             [true],
             [false],
-        );
+        ];
     }
 
     /**
@@ -168,11 +168,11 @@ class EmailAddressesApiTest extends TestCase
         $address = 'address-' . Uuid::uuid1() . '@example.com';
 
         $api = new EmailAddressesApi();
-        $args = array(
+        $args = [
             'module' => 'EmailAddresses',
             'email_address' => $address,
             'email_address_caps' => strtoupper($address),
-        );
+        ];
         $bean = $api->createBean($this->service, $args);
 
         $this->assertNotEmpty($bean->id);

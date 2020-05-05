@@ -12,7 +12,7 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once('include/utils.php');
+require_once 'include/utils.php';
 
 
 /**
@@ -22,10 +22,10 @@ class Bug33806Test extends TestCase
 {
     function _moduleNameProvider()
     {
-        return array(
-            array( 'singular' => 'Account', 'module' => 'Accounts'),
-            array( 'singular' => 'Contact', 'module' => 'Contacts'),
-        );
+        return [
+            [ 'singular' => 'Account', 'module' => 'Accounts'],
+            [ 'singular' => 'Contact', 'module' => 'Contacts'],
+        ];
     }
 
     /**
@@ -44,9 +44,9 @@ class Bug33806Test extends TestCase
 
     function _moduleNameProvider2()
     {
-        return array(
-            array( 'renamed' => 'Acct', 'module' => 'Accounts'),
-        );
+        return [
+            [ 'renamed' => 'Acct', 'module' => 'Accounts'],
+        ];
     }
 
     /**

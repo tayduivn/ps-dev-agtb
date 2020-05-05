@@ -25,8 +25,7 @@ class FetchByQueryCallsProcessRecordTest extends TestCase
         SugarTestHelper::setUp('current_user');
 
         //Setup mock logic hook files
-        if(file_exists($this->accountsHookFile))
-        {
+        if (file_exists($this->accountsHookFile)) {
             $this->hasCustomAccountLogicHookFile = true;
             copy($this->accountsHookFile, $this->accountsHookFile.'.bak');
         }
@@ -56,11 +55,10 @@ class FetchByQueryCallsProcessRecordTest extends TestCase
     protected function tearDown() : void
     {
         //Remove the custom logic hook files
-        if($this->hasCustomAccountLogicHookFile && file_exists($this->accountsHookFile.'.bak'))
-        {
+        if ($this->hasCustomAccountLogicHookFile && file_exists($this->accountsHookFile.'.bak')) {
             copy($this->accountsHookFile.'.bak', $this->accountsHookFile);
             unlink($this->accountsHookFile.'.bak');
-        } else if(file_exists($this->accountsHookFile)) {
+        } elseif (file_exists($this->accountsHookFile)) {
             unlink($this->accountsHookFile);
         }
         unlink($this->accountsLogicHookFile);
@@ -80,7 +78,7 @@ class FetchByQueryCallsProcessRecordTest extends TestCase
 
         //create query for accounts
         $sugarQuery = new SugarQuery();
-        $sugarQuery->select(array('id', 'name'));
+        $sugarQuery->select(['id', 'name']);
         $sugarQuery->from($bean);
         //run fetch from Query to test that logic hook event gets fired
         $bean->fetchFromQuery($sugarQuery);

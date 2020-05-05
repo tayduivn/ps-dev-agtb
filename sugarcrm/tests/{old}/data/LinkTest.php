@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
 
 class LinkTest extends TestCase
 {
-    protected $createdBeans = array();
+    protected $createdBeans = [];
 
     public static function setUpBeforeClass() : void
     {
@@ -24,9 +24,9 @@ class LinkTest extends TestCase
         SugarTestHelper::setUp('current_user');
 
         $GLOBALS['current_user']->setPreference('timezone', "America/Los_Angeles");
-	    $GLOBALS['current_user']->setPreference('datef', "m/d/Y");
-		$GLOBALS['current_user']->setPreference('timef', "h.iA");
-	}
+        $GLOBALS['current_user']->setPreference('datef', "m/d/Y");
+        $GLOBALS['current_user']->setPreference('timef', "h.iA");
+    }
 
     public static function tearDownAfterClass(): void
     {
@@ -34,9 +34,8 @@ class LinkTest extends TestCase
     }
 
     protected function tearDown() : void
-	{
-	    foreach($this->createdBeans as $bean)
-        {
+    {
+        foreach ($this->createdBeans as $bean) {
             $bean->retrieve($bean->id);
             $bean->mark_deleted($bean->id);
         }
@@ -45,17 +44,17 @@ class LinkTest extends TestCase
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestLeadUtilities::removeAllCreatedLeads();
         SugarTestNoteUtilities::removeAllCreatedNotes();
-	}
+    }
 
 
     /**
      * Create a new account and bug, then link them.
      * @return void
      */
-	public function testManytoMany()
-	{
+    public function testManytoMany()
+    {
         global $beanList, $beanFiles;
-        require('include/modules.php');
+        require 'include/modules.php';
         $module = "Accounts";
 
         $account = BeanFactory::newBean($module);
@@ -89,7 +88,7 @@ class LinkTest extends TestCase
     }
 
     public function testOnetoMany()
-	{
+    {
         //Test the accounts_leads relationship
         $account = BeanFactory::newBean("Accounts");
         $account->name = "Link 1->M Test Account";
@@ -101,9 +100,9 @@ class LinkTest extends TestCase
         $account2->save();
         $this->createdBeans[] = $account2;
 
-        $lead = SugarTestLeadUtilities::createLead(null, array(
+        $lead = SugarTestLeadUtilities::createLead(null, [
             'last_name' => 'Link 1->M Test Lead',
-        ));
+        ]);
 
         //Start by adding it from the Account side.
         $this->assertTrue($account->load_relationship("leads"));
@@ -147,36 +146,37 @@ class LinkTest extends TestCase
     }
 
     public function testParentRelationships()
-	{
-        $lead = SugarTestLeadUtilities::createLead(null, array(
+    {
+        $lead = SugarTestLeadUtilities::createLead(null, [
             'last_name' => 'Parent Lead',
-        ));
+        ]);
 
-        $note1 = SugarTestNoteUtilities::createNote(null, array(
+        $note1 = SugarTestNoteUtilities::createNote(null, [
             'name' => 'Lead Note 1',
-        ));
-        $note2 = SugarTestNoteUtilities::createNote(null, array(
+        ]);
+        $note2 = SugarTestNoteUtilities::createNote(null, [
             'name' => 'Lead Note 2',
-        ));
+        ]);
 
         //Test saving from the RHS
-        $note1->load_relationship ('leads') ;
+        $note1->load_relationship('leads') ;
         $note1->leads->add($lead);
 
         $this->assertEquals($note1->parent_id, $lead->id);
         $this->assertEquals($note1->parent_type, "Leads");
 
         //Test saving from the LHS
-        $lead->load_relationship ('notes') ;
+        $lead->load_relationship('notes') ;
         $lead->notes->add($note2);
 
         $this->assertEquals($note2->parent_id, $lead->id);
         $this->assertEquals($note2->parent_type, "Leads");
     }
 
-    public function testGetBeansWithParameters(){
+    public function testGetBeansWithParameters()
+    {
         $module = "Accounts";
-        require('include/modules.php');
+        require 'include/modules.php';
 
         $account = BeanFactory::newBean($module);
         $account->name = "LinkTestAccount";
@@ -206,44 +206,44 @@ class LinkTest extends TestCase
 
         //First test the generic result
         $result = $accountsLink->getBeans();
-        $expected = array(
+        $expected = [
             $bug->id => $bug,
             $bug2->id => $bug2,
             $bug3->id => $bug3,
-        );
+        ];
         ksort($result);
         ksort($expected);
 
         $this->assertEquals(array_keys($expected), array_keys($result));
-        foreach($expected as $key => $val) {
+        foreach ($expected as $key => $val) {
             $this->assertEquals($expected[$key]->id, $result[$key]->id, "Wrong data in key $key");
         }
 
         //Test a limited set
-        $result = $accountsLink->getBeans(array("limit" => 2));
+        $result = $accountsLink->getBeans(["limit" => 2]);
         $this->assertEquals(2, sizeof($result));
 
         //Test a custom where
-        $result = $accountsLink->getBeans(array(
-                "where" => array(
+        $result = $accountsLink->getBeans([
+                "where" => [
                     'lhs_field' => 'source',
                     'operator' => '=',
-                    'rhs_value' => 'external'
-                )
-            ));
+                    'rhs_value' => 'external',
+                ],
+            ]);
         $this->assertEquals(1, sizeof($result));
         $this->assertEquals($bug3->id, $result[$bug3->id]->id);
 
         //Test offset/pagination
-        $allIds = array_keys($accountsLink->getBeans(array(
+        $allIds = array_keys($accountsLink->getBeans([
                     'orderby' => 'id',
-                )));
+                ]));
         $this->assertEquals(3, sizeof($allIds));
-        $result = $accountsLink->getBeans(array(
+        $result = $accountsLink->getBeans([
                 "limit" => 1,
                 "offset" => 1,
                 'orderby' => 'id',
-            ));
+            ]);
         $this->assertEquals(1, sizeof($result));
         $this->assertArrayHasKey($allIds[1], $result);
 
@@ -272,12 +272,18 @@ class LinkTest extends TestCase
         $result = $account->get_linked_beans("contracts", "Contract");
         $this->assertEquals(2, sizeof($result));
 
-        $result = $account->get_linked_beans("contracts", "Contract",null, 0, -1, 0,
-            array(
+        $result = $account->get_linked_beans(
+            "contracts",
+            "Contract",
+            null,
+            0,
+            -1,
+            0,
+            [
                 'lhs_field' => 'status',
                 'operator' => '=',
-                'rhs_value' => 'inprogress'
-            )
+                'rhs_value' => 'inprogress',
+            ]
         );
         $this->assertEquals(1, sizeof($result));
         $this->assertEquals($contract2->id, $result[0]->id);
@@ -286,17 +292,18 @@ class LinkTest extends TestCase
         //Test offset/pagination on One2MBean
         $allIds = array_keys($account->contracts->getBeans());
         $this->assertEquals(2, sizeof($allIds));
-        $result = $account->contracts->getBeans(array("limit" => 1, "offset" => 1));
+        $result = $account->contracts->getBeans(["limit" => 1, "offset" => 1]);
         $this->assertEquals(1, sizeof($result));
-        $this->assertTrue(in_array(key($result),$allIds),"Link returned by limit/offset is not in list of all links returned");
+        $this->assertTrue(in_array(key($result), $allIds), "Link returned by limit/offset is not in list of all links returned");
 
         // This test assumes that the order of IDs gotten in $allIds will be the same order the DB uses for the offset query.
         //$this->assertArrayHasKey($allIds[1], $result);
     }
 
-    public function testGetBeansWithOrderBy(){
+    public function testGetBeansWithOrderBy()
+    {
         $module = "Accounts";
-        require('include/modules.php');
+        require 'include/modules.php';
 
         $account = BeanFactory::newBean($module);
         $account->name = "LinkTestAccount";
@@ -327,52 +334,52 @@ class LinkTest extends TestCase
         $accountsLink->add($bug2);
         $accountsLink->add($bug3);
 
-        $result = $accountsLink->getBeans(array(
-                "orderby" => "name"
-            ));
-        $expected = array(
+        $result = $accountsLink->getBeans([
+                "orderby" => "name",
+            ]);
+        $expected = [
             $bug3->id => $bug3,
             $bug2->id => $bug2,
             $bug->id => $bug,
-        );
+        ];
 
         $this->assertEquals(array_keys($expected), array_keys($result));
-        foreach($expected as $key => $val) {
+        foreach ($expected as $key => $val) {
             $this->assertEquals($expected[$key]->id, $result[$key]->id, "Wrong data in key $key");
         }
         //test order DESC and ASC
-        $result = $accountsLink->getBeans(array(
-                "orderby" => "name"
-            ));
-        $expected = array(
+        $result = $accountsLink->getBeans([
+                "orderby" => "name",
+            ]);
+        $expected = [
             $bug3->id => $bug3,
             $bug2->id => $bug2,
             $bug->id => $bug,
-        );
+        ];
 
         $this->assertEquals(array_keys($expected), array_keys($result));
-        foreach($expected as $key => $val) {
+        foreach ($expected as $key => $val) {
             $this->assertEquals($expected[$key]->id, $result[$key]->id, "Wrong data in key $key");
         }
 
-        $result = $accountsLink->getBeans(array(
-                "orderby" => "name DESC"
-            ));
-        $expected = array(
+        $result = $accountsLink->getBeans([
+                "orderby" => "name DESC",
+            ]);
+        $expected = [
             $bug->id => $bug,
             $bug2->id => $bug2,
             $bug3->id => $bug3,
-        );
+        ];
 
         $this->assertEquals(array_keys($expected), array_keys($result));
-        foreach($expected as $key => $val) {
+        foreach ($expected as $key => $val) {
             $this->assertEquals($expected[$key]->id, $result[$key]->id, "Wrong data in key $key");
         }
     }
 
     public function testLink2WithRelationshipFields()
     {
-        require('include/modules.php');
+        require 'include/modules.php';
 
         $opp = SugarTestOpportunityUtilities::createOpportunity();
         $opp->name = "A test Opp";
@@ -385,9 +392,9 @@ class LinkTest extends TestCase
         $this->createdBeans[] = $contact;
 
         $opp->load_relationship("contacts");
-        $opp->contacts->add($contact, array(
-            "contact_role" => "Observer"
-        ));
+        $opp->contacts->add($contact, [
+            "contact_role" => "Observer",
+        ]);
 
         $this->assertEmpty($contact->opportunity_role);
 
@@ -426,7 +433,7 @@ class LinkTest extends TestCase
     public function testGetType()
     {
         $link2 = $this->getMockBuilder('Link2')
-            ->setMethods(array('getSide'))
+            ->setMethods(['getSide'])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -436,12 +443,12 @@ class LinkTest extends TestCase
 
         $relationship = $this->getMockForAbstractClass(
             'AbstractRelationship',
-            array(),
+            [],
             '',
             false,
             false,
             false,
-            array('getType')
+            ['getType']
         );
 
         $relationship->expects($this->atLeastOnce())
@@ -492,13 +499,13 @@ class LinkTest extends TestCase
         $ids = $account->contacts->get();
         $this->assertCount(2, $ids, 'Should have returned the IDs of the related contacts');
         $beans = $account->contacts->getBeans(
-            array(
-                'where' => array(
+            [
+                'where' => [
                     'lhs_field' => 'id',
                     'operator' => '=',
                     'rhs_value' => $contact1->id,
-                ),
-            )
+                ],
+            ]
         );
         $this->assertCount(1, $beans, "Should have returned the related bean with id={$contact1->id}");
         $beans = $account->contacts->getBeans();

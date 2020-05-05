@@ -32,7 +32,9 @@ class ImportCacheFilesTest extends TestCase
         $filename = ImportCacheFiles::getDuplicateFileName();
 
         $this->assertEquals(
-            "{$this->importdir}/dupes_{$GLOBALS['current_user']->id}.csv", $filename);
+            "{$this->importdir}/dupes_{$GLOBALS['current_user']->id}.csv",
+            $filename
+        );
     }
 
     public function testgetErrorFileName()
@@ -40,7 +42,9 @@ class ImportCacheFilesTest extends TestCase
         $filename = ImportCacheFiles::getErrorFileName();
 
         $this->assertEquals(
-            "{$this->importdir}/error_{$GLOBALS['current_user']->id}.csv", $filename);
+            "{$this->importdir}/error_{$GLOBALS['current_user']->id}.csv",
+            $filename
+        );
     }
 
     public function testgetStatusFileName()
@@ -48,13 +52,15 @@ class ImportCacheFilesTest extends TestCase
         $filename = ImportCacheFiles::getStatusFileName();
 
         $this->assertEquals(
-            "{$this->importdir}/status_{$GLOBALS['current_user']->id}.csv", $filename);
+            "{$this->importdir}/status_{$GLOBALS['current_user']->id}.csv",
+            $filename
+        );
     }
 
     public function testclearCacheFiles()
     {
         // make sure there is a file in there
-        file_put_contents(ImportCacheFiles::getStatusFileName(),'foo');
+        file_put_contents(ImportCacheFiles::getStatusFileName(), 'foo');
 
         ImportCacheFiles::clearCacheFiles();
 

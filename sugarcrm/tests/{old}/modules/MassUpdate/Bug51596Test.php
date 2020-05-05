@@ -38,14 +38,14 @@ class Bug51596Test extends TestCase
      */
     protected function setUp() : void
     {
-        SugarTestHelper::setUp('mod_strings', array('Administration'));
-        SugarTestHelper::setUp('current_user', array(true, true));
+        SugarTestHelper::setUp('mod_strings', ['Administration']);
+        SugarTestHelper::setUp('current_user', [true, true]);
 
         // add an extra relationship that will be used for search
-        self::registerExtension('Contacts', 'bug51596test.php', array(
-            'Contact' => array(
-                'fields' => array(
-                    $this->field_name => array (
+        self::registerExtension('Contacts', 'bug51596test.php', [
+            'Contact' => [
+                'fields' => [
+                    $this->field_name =>  [
                         'name'      => $this->field_name,
                         'rname'     => 'name',
                         'id_name'   => 'account_id',
@@ -55,10 +55,10 @@ class Bug51596Test extends TestCase
                         'table'     => 'accounts',
                         'module'    => 'Accounts',
                         'source'    => 'non-db',
-                    ),
-                ),
-            ),
-        ));
+                    ],
+                ],
+            ],
+        ]);
 
         // this is needed for newly created extension to be loaded for new beans
         $_SESSION['developerMode'] = true;
@@ -86,11 +86,11 @@ class Bug51596Test extends TestCase
 
         /** @var Link2 $accounts1 */
         $accounts1 = $this->contact1->accounts;
-        $accounts1->add(array($this->account1->id));
+        $accounts1->add([$this->account1->id]);
 
         /** @var Link2 $accounts2 */
         $accounts2 = $this->contact2->accounts;
-        $accounts2->add(array($this->account2->id));
+        $accounts2->add([$this->account2->id]);
 
         // will update "do_not_call" attribute of found contacts
         $_REQUEST['massupdate'] = 'true';
@@ -109,20 +109,16 @@ class Bug51596Test extends TestCase
     {
         unset($_REQUEST['massupdate'], $_REQUEST['entire'], $_REQUEST['module'], $_POST['do_not_call']);
 
-        if (!empty($this->account2))
-        {
+        if (!empty($this->account2)) {
             $this->account2->mark_deleted($this->account2->id);
         }
-        if (!empty($this->account1))
-        {
+        if (!empty($this->account1)) {
             $this->account1->mark_deleted($this->account1->id);
         }
-        if (!empty($this->contact2))
-        {
+        if (!empty($this->contact2)) {
             $this->contact2->mark_deleted($this->contact2->id);
         }
-        if (!empty($this->contact1))
-        {
+        if (!empty($this->contact1)) {
             $this->contact1->mark_deleted($this->contact1->id);
         }
 
@@ -149,10 +145,10 @@ class Bug51596Test extends TestCase
         $mass_update->sugarbean = $contact;
 
         // search for contacts related to Bug51596Test_Account1 (e.g. Contact1)
-        $current_query_by_page = array (
+        $current_query_by_page =  [
             'searchFormTab'              => 'basic_search',
             $this->field_name . '_basic' => 'Bug51596Test_Account1',
-        );
+        ];
 
         // perform mass update
         $mass_update->generateSearchWhere('Contacts', $current_query_by_page);
@@ -181,8 +177,7 @@ class Bug51596Test extends TestCase
     {
         $directory = 'custom/Extension/modules/' . $module . '/Ext/Vardefs';
 
-        if (!file_exists($directory))
-        {
+        if (!file_exists($directory)) {
             mkdir($directory, 0777, true);
         }
 
@@ -211,8 +206,7 @@ HERE;
     {
         $directory = 'custom/Extension/modules/' . $module . '/Ext/Vardefs';
 
-        if (!file_exists($directory))
-        {
+        if (!file_exists($directory)) {
             mkdir($directory, 0777, true);
         }
 
@@ -232,6 +226,6 @@ HERE;
     protected static function rebuildExtensions($module)
     {
         $rc = new RepairAndClear();
-        $rc->repairAndClearAll(array('rebuildExtensions'), array($module), false, false);
+        $rc->repairAndClearAll(['rebuildExtensions'], [$module], false, false);
     }
 }

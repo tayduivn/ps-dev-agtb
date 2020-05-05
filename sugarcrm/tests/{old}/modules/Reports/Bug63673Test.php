@@ -83,8 +83,8 @@ class Bug63673Test extends TestCase
 
     public static function aggregateDataProvider()
     {
-        return array(
-            array(
+        return [
+            [
                 '{
                     "display_columns":[
                         {
@@ -158,12 +158,12 @@ class Bug63673Test extends TestCase
                         }
                     }
                 }',
-                array('Bug63673Test', 'setUpProducts'),
+                ['Bug63673Test', 'setUpProducts'],
                 '14.50',
                 '3',
                 '20',
                 '29',
-            ),
-        );
+            ],
+        ];
     }
 }

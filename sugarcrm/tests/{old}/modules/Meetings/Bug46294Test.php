@@ -1,4 +1,4 @@
-<?php 
+<?php
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -16,45 +16,45 @@ require_once 'modules/Meetings/Meeting.php';
 
 class Bug46294Test extends TestCase
 {
-    var $dictionaryOptionsNotSet = array('Meeting' => array(
-                                    'fields' => array(
-                                      'type' => array(
-                                        'options' => ''          
-                                      )
-                                    )
-                                  )
-                            );
-    var $dictionaryOptionsEmpty = array('Meeting' => array(
-                                    'fields' => array(
-                                      'type' => array()
-                                      //empty  
-                                    )
-                                 )
-                            );
-    var $dictionaryOptionsSet = array('Meeting' => array(
-                                        'fields' => array(
-                                          'type' => array(
-                                            'options' => 'type_list'
-                                          )
-                                        )
-                                   )
-                                );
-    var $dictionaryTypeListNotExists = array('Meeting' => array(
-                                'fields' => array(
-                                  'type' => array(
-                                    'options' => 'type_not_exists'
-                                  )
-                                )
-                              )
-                        );
-    var $appListStrings = array('type_list' => array(
+    var $dictionaryOptionsNotSet = ['Meeting' => [
+                                    'fields' => [
+                                      'type' => [
+                                        'options' => '',
+                                      ],
+                                    ],
+                                  ],
+                            ];
+    var $dictionaryOptionsEmpty = ['Meeting' => [
+                                    'fields' => [
+                                      'type' => [],
+                                      //empty
+                                    ],
+                                 ],
+                            ];
+    var $dictionaryOptionsSet = ['Meeting' => [
+                                        'fields' => [
+                                          'type' => [
+                                            'options' => 'type_list',
+                                          ],
+                                        ],
+                                   ],
+                                ];
+    var $dictionaryTypeListNotExists = ['Meeting' => [
+                                'fields' => [
+                                  'type' => [
+                                    'options' => 'type_not_exists',
+                                  ],
+                                ],
+                              ],
+                        ];
+    var $appListStrings = ['type_list' => [
                                     'breakfast' => 'breakfast',
                                     'lunch' => 'lunch',
-                                    'dinner' => 'dinner'
-                                 )
-                            );
+                                    'dinner' => 'dinner',
+                                 ],
+                            ];
     
-    var $appListStringsEmpty = array('type_list' => array());
+    var $appListStringsEmpty = ['type_list' => []];
        
     /**
     * @dataProvider provider
@@ -67,12 +67,12 @@ class Bug46294Test extends TestCase
 
     public function provider()
     {
-        return array(
-            array($this->dictionaryOptionsSet, $this->appListStrings, false),
-            array($this->dictionaryOptionsNotSet, $this->appListStrings, true),
-            array($this->dictionaryOptionsEmpty, $this->appListStrings, true),
-            array($this->dictionaryTypeListNotExists, $this->appListStrings, true),
-            array($this->dictionaryOptionsSet, $this->appListStringsEmpty, true)
-        );
+        return [
+            [$this->dictionaryOptionsSet, $this->appListStrings, false],
+            [$this->dictionaryOptionsNotSet, $this->appListStrings, true],
+            [$this->dictionaryOptionsEmpty, $this->appListStrings, true],
+            [$this->dictionaryTypeListNotExists, $this->appListStrings, true],
+            [$this->dictionaryOptionsSet, $this->appListStringsEmpty, true],
+        ];
     }
 }

@@ -19,22 +19,22 @@ class PMSEJobQueueHandlerTest extends TestCase
     {
         $jobQueueHandler = $this->getMockBuilder('PMSEJobQueueHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('filterData', 'getSchedulersJob', 'getSugarJobQueue', 'getCurrentUser'))
+                ->setMethods(['filterData', 'getSchedulersJob', 'getSugarJobQueue', 'getCurrentUser'])
                 ->getMock();
 
         $loggerMock = $this->getMockBuilder('PMSELogger')
                 ->disableOriginalConstructor()
-                ->setMethods(array('debug', 'info', 'error', 'warning'))
+                ->setMethods(['debug', 'info', 'error', 'warning'])
                 ->getMock();
 
         $schedulersJobMock = $this->getMockBuilder('SchedulersJob')
                 ->disableOriginalConstructor()
-                ->setMethods(NULL)
+                ->setMethods(null)
                 ->getMock();
 
         $sugarJobQueueMock = $this->getMockBuilder('SugarJobQueue')
                 ->disableOriginalConstructor()
-                ->setMethods(array('submitJob'))
+                ->setMethods(['submitJob'])
                 ->getMock();
 
         $mockJob = '12';
@@ -44,7 +44,7 @@ class PMSEJobQueueHandlerTest extends TestCase
                 ->will($this->returnValue($mockJob));
 
         // False in the first arg means no save
-        $currentUserMock = SugarTestUserUtilities::createAnonymousUser(false, 0, array('id' => 'user01'));
+        $currentUserMock = SugarTestUserUtilities::createAnonymousUser(false, 0, ['id' => 'user01']);
 
         $jobQueueHandler->setLogger($loggerMock);
         $jobQueueHandler->method('getCurrentUser')->willReturn($currentUserMock);
@@ -53,34 +53,34 @@ class PMSEJobQueueHandlerTest extends TestCase
 
         $params = new stdClass();
         $params->id = 'params01';
-        $params->data = array();
+        $params->data = [];
 
         $expectedJob = '12';
 
         $jobID = $jobQueueHandler->submitPMSEJob($params);
-        $this->assertEquals($expectedJob,$jobID);
+        $this->assertEquals($expectedJob, $jobID);
     }
 
     public function testExecuteRequest()
     {
         $jobQueueHandler = $this->getMockBuilder('PMSEJobQueueHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('filterData', 'preparePreProcessor'))
+                ->setMethods(['filterData', 'preparePreProcessor'])
                 ->getMock();
 
         $loggerMock = $this->getMockBuilder('PMSELogger')
                 ->disableOriginalConstructor()
-                ->setMethods(array('debug', 'info', 'error', 'warning'))
+                ->setMethods(['debug', 'info', 'error', 'warning'])
                 ->getMock();
 
         $preProcessorMock = $this->getMockBuilder('PMSEPreProcessor')
                 ->disableOriginalConstructor()
-                ->setMethods(array('getInstance', 'processRequest'))
+                ->setMethods(['getInstance', 'processRequest'])
                 ->getMock();
 
         $requestMock = $this->getMockBuilder('PMSERequest')
                 ->disableOriginalConstructor()
-                ->setMethods(array('setCreateThread', 'setExternalAction', 'setBean', 'setArguments'))
+                ->setMethods(['setCreateThread', 'setExternalAction', 'setBean', 'setArguments'])
                 ->getMock();
 
         $preProcessorMock->expects($this->once())
@@ -93,7 +93,7 @@ class PMSEJobQueueHandlerTest extends TestCase
 
         $params = new stdClass();
         $params->id = 'params01';
-        $params->data = array();
+        $params->data = [];
 
         $jobQueueHandler->executeRequest($params);
     }
@@ -102,17 +102,17 @@ class PMSEJobQueueHandlerTest extends TestCase
     {
         $jobQueueHandler = $this->getMockBuilder('PMSEJobQueueHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('preparePreProcessor'))
+                ->setMethods(['preparePreProcessor'])
                 ->getMock();
 
         $loggerMock = $this->getMockBuilder('PMSELogger')
                 ->disableOriginalConstructor()
-                ->setMethods(array('debug', 'info', 'error', 'warning'))
+                ->setMethods(['debug', 'info', 'error', 'warning'])
                 ->getMock();
 
         $jobQueueHandler->setLogger($loggerMock);
 
-        $params = array(
+        $params = [
             'pro_id' => 'pro01',
             'cas_id' => 1,
             'cas_index' => 2,
@@ -120,14 +120,14 @@ class PMSEJobQueueHandlerTest extends TestCase
             'some_data' => 'data',
             'additional_data' => 'data',
             'another_data' => 'data',
-        );
+        ];
 
-        $expectedData = array(
+        $expectedData = [
             'pro_id' => 'pro01',
             'cas_id' => 1,
             'cas_index' => 2,
             'id' => 'cas01',
-        );
+        ];
 
         $result = $jobQueueHandler->filterData($params);
 

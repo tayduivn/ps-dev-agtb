@@ -20,67 +20,67 @@ class MetaDataManagerModulesInfoTest extends TestCase
     /**
      * @var TabController Instance of TabController
      */
-    static protected $tabs;
+    protected static $tabs;
 
     /**
      * @var array Test set of tabs for base app
      */
-    static protected $testSystemTabs = array(
+    protected static $testSystemTabs = [
         'Accounts' => 'Accounts',
         'Contacts' => 'Contacts',
         'Leads' => 'Leads',
         'Opportunities' => 'Opportunities',
         'Cases' => 'Cases',
-        'Bugs' => 'Bugs'
-    );
+        'Bugs' => 'Bugs',
+    ];
 
     //BEGIN SUGARCRM flav=ent ONLY
     /**
      * @var array Test set of tabs for portal
      */
-    static protected $testPortalTabs = array(
+    protected static $testPortalTabs = [
         'Contacts' => 'Contacts',
         'Cases' => 'Cases',
-        'Bugs' => 'Bugs'
-    );
+        'Bugs' => 'Bugs',
+    ];
     //END SUGARCRM flav=ent ONLY
 
     /**
      * @var array Store current system tabs to backup later
      */
-    static protected $savedSystemTabs;
+    protected static $savedSystemTabs;
 
     //BEGIN SUGARCRM flav=ent ONLY
     /**
      * @var array Store current portal tabs to backup later
      */
-    static protected $savedPortalTabs;
+    protected static $savedPortalTabs;
     //END SUGARCRM flav=ent ONLY
 
     /**
      * @var string Location of the mobile tabs metadata file
      */
-    static protected $mobileMetaFile = 'include/MVC/Controller/wireless_module_registry.php';
+    protected static $mobileMetaFile = 'include/MVC/Controller/wireless_module_registry.php';
 
     /**
      * @var string Location of the custom mobile tabs metadata file
      */
-    static protected $customMobileMetaFile = 'custom/include/MVC/Controller/wireless_module_registry.php';
+    protected static $customMobileMetaFile = 'custom/include/MVC/Controller/wireless_module_registry.php';
 
     /**
      * @var bool Flag to indicate if the mobile custom file already exists
      */
-    static protected $mobileBackedUp = false;
+    protected static $mobileBackedUp = false;
 
     /**
      * @var bool Flag to indicate if the mobile custom path exists
      */
-    static protected $mobileCustomPathExists = true;
+    protected static $mobileCustomPathExists = true;
 
     /**
      * @var string Path that is created for test purpose.
      */
-    static protected $mobileCreatedPath;
+    protected static $mobileCreatedPath;
 
     /**
      * Set up once before all tests are run
@@ -88,7 +88,7 @@ class MetaDataManagerModulesInfoTest extends TestCase
     public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('app_list_strings');
-        SugarTestHelper::setUp('current_user', array(true, 1));
+        SugarTestHelper::setUp('current_user', [true, 1]);
 
         self::$tabs = new TabController();
 
@@ -142,30 +142,30 @@ class MetaDataManagerModulesInfoTest extends TestCase
 
         // Run the test
         $mm = $this->getMockBuilder('MetaDataManager')
-            ->setMethods(array('getModulesData'))
+            ->setMethods(['getModulesData'])
             ->getMock();
         $mm->expects($this->any())
             ->method('getModulesData')
-            ->will($this->returnValue(array(
-                'Accounts' => array(
-                    'menu' => array(
-                        'quickcreate' => array(
-                            'meta' => array(
+            ->will($this->returnValue([
+                'Accounts' => [
+                    'menu' => [
+                        'quickcreate' => [
+                            'meta' => [
                                 'visible' => false,
-                            ),
-                        ),
-                    ),
-                ),
-                'Cases' => array(
-                    'menu' => array(
-                        'quickcreate' => array(
-                            'meta' => array(
+                            ],
+                        ],
+                    ],
+                ],
+                'Cases' => [
+                    'menu' => [
+                        'quickcreate' => [
+                            'meta' => [
                                 'visible' => true,
-                            ),
-                        ),
-                    ),
-                ),
-            )));
+                            ],
+                        ],
+                    ],
+                ],
+            ]));
         $expectedTabs = array_keys(self::$testSystemTabs);
         $expectedSubpanels = SubPanelDefinitions::get_all_subpanels();
 
@@ -219,30 +219,30 @@ class MetaDataManagerModulesInfoTest extends TestCase
 
         // Run the test
         $mm = $this->getMockBuilder('MetaDataManager')
-            ->setMethods(array('getModulesData'))
+            ->setMethods(['getModulesData'])
             ->getMock();
         $mm->expects($this->any())
             ->method('getModulesData')
-            ->will($this->returnValue(array(
-                'Bugs' => array(
-                    'menu' => array(
-                        'quickcreate' => array(
-                            'meta' => array(
+            ->will($this->returnValue([
+                'Bugs' => [
+                    'menu' => [
+                        'quickcreate' => [
+                            'meta' => [
                                 'visible' => true,
-                            ),
-                        ),
-                    ),
-                ),
-                'Cases' => array(
-                    'menu' => array(
-                        'quickcreate' => array(
-                            'meta' => array(
+                            ],
+                        ],
+                    ],
+                ],
+                'Cases' => [
+                    'menu' => [
+                        'quickcreate' => [
+                            'meta' => [
                                 'visible' => false,
-                            ),
-                        ),
-                    ),
-                ),
-            )));
+                            ],
+                        ],
+                    ],
+                ],
+            ]));
         $expectedTabs = array_keys(self::$testPortalTabs);
         $expectedSubpanels = SubPanelDefinitions::get_all_subpanels();
 
@@ -313,7 +313,7 @@ class MetaDataManagerModulesInfoTest extends TestCase
         }
     }
 
-    static protected function setUpMobile()
+    protected static function setUpMobile()
     {
         // Don't allow these tests to be affected by the cache.
         sugar_cache_clear('wireless_module_registry_keys');
@@ -322,7 +322,7 @@ class MetaDataManagerModulesInfoTest extends TestCase
             // Backup the custom file if there is one
             self::$mobileBackedUp = true;
             rename(self::$customMobileMetaFile, self::$customMobileMetaFile . '.backup');
-        } else if (!is_dir(dirname(self::$customMobileMetaFile))) {
+        } elseif (!is_dir(dirname(self::$customMobileMetaFile))) {
             // If the custom path does not exist, we are gonna find the first
             // non existing folder of this path, se we can clean up later
             self::$mobileCustomPathExists = false;
@@ -363,7 +363,7 @@ EOF;
         file_put_contents(self::$customMobileMetaFile, $testFileContents);
     }
 
-    static protected function tearDownMobile()
+    protected static function tearDownMobile()
     {
         // Reset backed-up custom file
         if (self::$mobileBackedUp) {

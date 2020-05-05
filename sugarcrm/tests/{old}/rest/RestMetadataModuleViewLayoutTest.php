@@ -12,44 +12,47 @@
  */
 
 
-class RestMetadataModuleViewLayoutTest extends RestTestBase {
+class RestMetadataModuleViewLayoutTest extends RestTestBase
+{
     protected function setUp() : void
     {
         parent::setUp();
 
-        $this->oldFiles = array();
+        $this->oldFiles = [];
 
-        $this->_restLogin('','','mobile');
+        $this->_restLogin('', '', 'mobile');
         $this->mobileAuthToken = $this->authToken;
-        $this->_restLogin('','','base');
+        $this->_restLogin('', '', 'base');
         $this->baseAuthToken = $this->authToken;
     }
 
     /**
      * @group rest
      */
-    public function testMetadataSugarFields() {
+    public function testMetadataSugarFields()
+    {
         $this->_clearMetadataCache();
         $this->authToken = $this->mobileAuthToken;
         $restReply = $this->_restCall('metadata?type_filter=modules');
 
-        $this->assertTrue(isset($restReply['reply']['modules']['Cases']['views']),'No views for the cases module');
+        $this->assertTrue(isset($restReply['reply']['modules']['Cases']['views']), 'No views for the cases module');
     }
 
     /**
      * @group rest
      */
-    public function testMetadataModuleLayout() {
-        $filesToCheck = array('modules/Cases/clients/mobile/layouts/edit/edit.php',
+    public function testMetadataModuleLayout()
+    {
+        $filesToCheck = ['modules/Cases/clients/mobile/layouts/edit/edit.php',
                               'custom/modules/Cases/clients/mobile/layouts/edit/edit.php',
-        );
+        ];
         SugarTestHelper::saveFile($filesToCheck);
 
-        $dirsToMake = array('modules/Cases/clients/mobile/layouts/edit',
+        $dirsToMake = ['modules/Cases/clients/mobile/layouts/edit',
                             'custom/modules/Cases/clients/mobile/layouts/edit',
-        );
+        ];
 
-        foreach ($dirsToMake as $dir ) {
+        foreach ($dirsToMake as $dir) {
             SugarAutoLoader::ensureDir($dir);
         }
 
@@ -61,7 +64,7 @@ class RestMetadataModuleViewLayoutTest extends RestTestBase {
         $this->_clearMetadataCache();
         $this->authToken = $this->mobileAuthToken;
         $restReply = $this->_restCall('metadata/?type_filter=modules&module_filter=Cases');
-        $this->assertEquals('Standard Dir',$restReply['reply']['modules']['Cases']['layouts']['edit']['meta']['unit_test'],"Didn't get the mobile layout");
+        $this->assertEquals('Standard Dir', $restReply['reply']['modules']['Cases']['layouts']['edit']['meta']['unit_test'], "Didn't get the mobile layout");
 
         // Make sure we get the custom file
         file_put_contents(
@@ -70,13 +73,13 @@ class RestMetadataModuleViewLayoutTest extends RestTestBase {
         );
         $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata/?type_filter=modules&module_filter=Cases');
-        $this->assertEquals('Custom Dir',$restReply['reply']['modules']['Cases']['layouts']['edit']['meta']['unit_test'],"Didn't get the custom mobile layout");
+        $this->assertEquals('Custom Dir', $restReply['reply']['modules']['Cases']['layouts']['edit']['meta']['unit_test'], "Didn't get the custom mobile layout");
 
         // Make sure it flops back to the standard file
         unlink($filesToCheck[1]);
         $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata/?type_filter=modules&module_filter=Cases');
-        $this->assertEquals('Standard Dir',$restReply['reply']['modules']['Cases']['layouts']['edit']['meta']['unit_test'],"Didn't get the mobile layout");
+        $this->assertEquals('Standard Dir', $restReply['reply']['modules']['Cases']['layouts']['edit']['meta']['unit_test'], "Didn't get the mobile layout");
     }
 
     /**
@@ -87,7 +90,7 @@ class RestMetadataModuleViewLayoutTest extends RestTestBase {
         $this->_clearMetadataCache();
         $this->authToken = $this->mobileAuthToken;
         $restReply = $this->_restCall('metadata?type_filter=modules');
-        $this->assertTrue(isset($restReply['reply']['modules']['Cases']['subpanels']),'No subpanels for the cases module');
+        $this->assertTrue(isset($restReply['reply']['modules']['Cases']['subpanels']), 'No subpanels for the cases module');
     }
 
     /**
@@ -98,7 +101,7 @@ class RestMetadataModuleViewLayoutTest extends RestTestBase {
         $this->_clearMetadataCache();
         $this->authToken = $this->mobileAuthToken;
         $restReply = $this->_restCall('metadata?typeFilter=modules');
-        $this->assertTrue(isset($restReply['reply']['modules']['Cases']['ftsEnabled']),'No ftsEnabled for the cases module');
+        $this->assertTrue(isset($restReply['reply']['modules']['Cases']['ftsEnabled']), 'No ftsEnabled for the cases module');
     }
 
     /**
@@ -109,23 +112,24 @@ class RestMetadataModuleViewLayoutTest extends RestTestBase {
         $this->_clearMetadataCache();
         $this->authToken = $this->mobileAuthToken;
         $restReply = $this->_restCall('metadata?typeFilter=modules');
-        $this->assertTrue(isset($restReply['reply']['modules']['Cases']['favoritesEnabled']),'No favoritesEnabled for the cases module');
+        $this->assertTrue(isset($restReply['reply']['modules']['Cases']['favoritesEnabled']), 'No favoritesEnabled for the cases module');
     }
 
     /**
     * @group rest
     */
-    public function testMetadataModuleViews() {
-        $filesToCheck = array('modules/Cases/clients/mobile/views/edit/edit.php',
+    public function testMetadataModuleViews()
+    {
+        $filesToCheck = ['modules/Cases/clients/mobile/views/edit/edit.php',
                               'custom/modules/Cases/clients/mobile/views/edit/edit.php',
-        );
+        ];
         SugarTestHelper::saveFile($filesToCheck);
 
-        $dirsToMake = array('modules/Cases/clients/mobile/views/edit',
+        $dirsToMake = ['modules/Cases/clients/mobile/views/edit',
                             'custom/modules/Cases/clients/mobile/views/edit',
-        );
+        ];
 
-        foreach ($dirsToMake as $dir ) {
+        foreach ($dirsToMake as $dir) {
             SugarAutoLoader::ensureDir($dir);
         }
 
@@ -137,7 +141,7 @@ class RestMetadataModuleViewLayoutTest extends RestTestBase {
         $this->_clearMetadataCache();
         $this->authToken = $this->mobileAuthToken;
         $restReply = $this->_restCall('metadata/?type_filter=modules&module_filter=Cases');
-        $this->assertEquals('Standard Dir',$restReply['reply']['modules']['Cases']['views']['edit']['meta']['unit_test'],"Didn't get the mobile view");
+        $this->assertEquals('Standard Dir', $restReply['reply']['modules']['Cases']['views']['edit']['meta']['unit_test'], "Didn't get the mobile view");
 
         // Make sure we get the custom file
         file_put_contents(
@@ -146,13 +150,13 @@ class RestMetadataModuleViewLayoutTest extends RestTestBase {
         );
         $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata/?type_filter=modules&module_filter=Cases');
-        $this->assertEquals('Custom Dir',$restReply['reply']['modules']['Cases']['views']['edit']['meta']['unit_test'],"Didn't get the custom mobile view");
+        $this->assertEquals('Custom Dir', $restReply['reply']['modules']['Cases']['views']['edit']['meta']['unit_test'], "Didn't get the custom mobile view");
 
         // Make sure it flops back to the standard file
         unlink($filesToCheck[1]);
         $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata/?type_filter=modules&module_filter=Cases');
-        $this->assertEquals('Standard Dir',$restReply['reply']['modules']['Cases']['views']['edit']['meta']['unit_test'],"Didn't get the mobile view");
+        $this->assertEquals('Standard Dir', $restReply['reply']['modules']['Cases']['views']['edit']['meta']['unit_test'], "Didn't get the mobile view");
     }
 
     /**

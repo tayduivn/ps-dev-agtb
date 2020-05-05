@@ -34,7 +34,7 @@ class ServiceDictionaryTest extends TestCase
 
         // verify preregistering
         $sut->preRegisterEndpoints();
-        $this->assertSame(array(), $sut->getRegisteredEndpoints());
+        $this->assertSame([], $sut->getRegisteredEndpoints());
 
         // set endpoints
         $sut->registerEndpoints($endpoints, $file, $class, $platform, $custom);
@@ -43,245 +43,245 @@ class ServiceDictionaryTest extends TestCase
 
     public function providerTestRegisterEndpoints()
     {
-        return array(
+        return [
 
             // GET and POST definition combined, with custom score
-            array(
-                array(
-                    'entry1' => array(
+            [
+                [
+                    'entry1' => [
                         'reqType' => 'GET',
-                        'path' => array('path1', '<data>'),
-                        'pathVars' => array('pathvar1', 'pathvar2'),
+                        'path' => ['path1', '<data>'],
+                        'pathVars' => ['pathvar1', 'pathvar2'],
                         'method' => 'serviceMethod1',
-                    ),
-                    'entry2' => array(
+                    ],
+                    'entry2' => [
                         'reqType' => 'POST',
-                        'path' => array('?', 'path3'),
-                        'pathVars' => array('pathvar3'),
+                        'path' => ['?', 'path3'],
+                        'pathVars' => ['pathvar3'],
                         'method' => 'serviceMethod2',
-                    ),
-                ),
+                    ],
+                ],
                 'fileName',
                 'className',
                 'base',
                 true,
-                array(
-                    2 => array(
-                        'base' => array(
-                            'GET' => array(
-                                'path1' => array(
-                                    '<data>' => array(
-                                        array(
+                [
+                    2 => [
+                        'base' => [
+                            'GET' => [
+                                'path1' => [
+                                    '<data>' => [
+                                        [
                                             'reqType' => 'GET',
-                                            'path' => array('path1', '<data>'),
-                                            'pathVars' => array('pathvar1', 'pathvar2'),
+                                            'path' => ['path1', '<data>'],
+                                            'pathVars' => ['pathvar1', 'pathvar2'],
                                             'method' => 'serviceMethod1',
                                             'file' => 'fileName',
                                             'className' => 'className',
                                             'score' => 8.50,
-                                        ),
-                                    ),
-                                ),
-                            ),
-                            'POST' => array(
-                                '?' => array(
-                                    'path3' => array(
-                                        array(
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            'POST' => [
+                                '?' => [
+                                    'path3' => [
+                                        [
                                             'reqType' => 'POST',
-                                            'path' => array('?', 'path3'),
-                                            'pathVars' => array('pathvar3'),
+                                            'path' => ['?', 'path3'],
+                                            'pathVars' => ['pathvar3'],
                                             'method' => 'serviceMethod2',
                                             'file' => 'fileName',
                                             'className' => 'className',
                                             'score' => 8.25,
-                                        ),
-                                    ),
-                                ),
-                            ),
-                        ),
-                    ),
-                ),
-            ),
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
 
             // two GET conditions - one as single reqType one as array reqType
-            array(
-                array(
-                    'entry1' => array(
+            [
+                [
+                    'entry1' => [
                         'reqType' => 'GET',
-                        'path' => array('path1', 'path2'),
-                        'pathVars' => array('pathvar1', 'pathvar2'),
+                        'path' => ['path1', 'path2'],
+                        'pathVars' => ['pathvar1', 'pathvar2'],
                         'method' => 'serviceMethod1',
-                    ),
-                    'entry2' => array(
-                        'reqType' => array('GET'),
-                        'path' => array('?', 'path3'),
-                        'pathVars' => array('pathvar3'),
+                    ],
+                    'entry2' => [
+                        'reqType' => ['GET'],
+                        'path' => ['?', 'path3'],
+                        'pathVars' => ['pathvar3'],
                         'method' => 'serviceMethod2',
-                    ),
-                ),
+                    ],
+                ],
                 'fileName2',
                 'className2',
                 'base',
                 false,
-                array(
-                    2 => array(
-                        'base' => array(
-                            'GET' => array(
-                                'path1' => array(
-                                    'path2' => array(
-                                        array(
+                [
+                    2 => [
+                        'base' => [
+                            'GET' => [
+                                'path1' => [
+                                    'path2' => [
+                                        [
                                             'reqType' => 'GET',
-                                            'path' => array('path1', 'path2'),
-                                            'pathVars' => array('pathvar1', 'pathvar2'),
+                                            'path' => ['path1', 'path2'],
+                                            'pathVars' => ['pathvar1', 'pathvar2'],
                                             'method' => 'serviceMethod1',
                                             'file' => 'fileName2',
                                             'className' => 'className2',
                                             'score' => 8.75,
-                                        ),
-                                    ),
-                                ),
-                                '?' => array(
-                                    'path3' => array(
-                                        array(
+                                        ],
+                                    ],
+                                ],
+                                '?' => [
+                                    'path3' => [
+                                        [
                                             'reqType' => 'GET',
-                                            'path' => array('?', 'path3'),
-                                            'pathVars' => array('pathvar3'),
+                                            'path' => ['?', 'path3'],
+                                            'pathVars' => ['pathvar3'],
                                             'method' => 'serviceMethod2',
                                             'file' => 'fileName2',
                                             'className' => 'className2',
                                             'score' => 7.75,
-                                        ),
-                                    ),
-                                ),
-                            ),
-                        ),
-                    ),
-                ),
-            ),
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
 
             // extra score
-            array(
-                array(
-                    'entry1' => array(
+            [
+                [
+                    'entry1' => [
                         'reqType' => 'GET',
-                        'path' => array('path1'),
-                    ),
-                    'entry2' => array(
+                        'path' => ['path1'],
+                    ],
+                    'entry2' => [
                         'reqType' => 'GET',
-                        'path' => array('path2'),
+                        'path' => ['path2'],
                         'extraScore' => 9.50,
-                    ),
-                ),
+                    ],
+                ],
                 'fileName3',
                 'className3',
                 'mobile',
                 false,
-                array(
-                    1 => array(
-                        'mobile' => array(
-                            'GET' => array(
-                                'path1' => array(
-                                    array(
+                [
+                    1 => [
+                        'mobile' => [
+                            'GET' => [
+                                'path1' => [
+                                    [
                                         'reqType' => 'GET',
-                                        'path' => array('path1'),
+                                        'path' => ['path1'],
                                         'file' => 'fileName3',
                                         'className' => 'className3',
                                         'score' => 7.00,
-                                    ),
-                                ),
-                                'path2' => array(
-                                    array(
+                                    ],
+                                ],
+                                'path2' => [
+                                    [
                                         'reqType' => 'GET',
-                                        'path' => array('path2'),
+                                        'path' => ['path2'],
                                         'extraScore' => 9.50,
                                         'file' => 'fileName3',
                                         'className' => 'className3',
                                         'score' => 16.50,
-                                    ),
-                                ),
-                            ),
-                        ),
-                    ),
-                ),
-            ),
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
 
             // dual request type
-            array(
-                array(
-                    'entry1' => array(
-                        'reqType' => array('GET', 'POST'),
-                        'path' => array('path1', 'path2'),
-                        'pathVars' => array('pathvar1', 'pathvar2'),
+            [
+                [
+                    'entry1' => [
+                        'reqType' => ['GET', 'POST'],
+                        'path' => ['path1', 'path2'],
+                        'pathVars' => ['pathvar1', 'pathvar2'],
                         'method' => 'serviceMethod1',
-                    ),
-                ),
+                    ],
+                ],
                 'fileName4',
                 'className4',
                 'base',
                 false,
-                array(
-                    2 => array(
-                        'base' => array(
-                            'GET' => array(
-                                'path1' => array(
-                                    'path2' => array(
-                                        array(
+                [
+                    2 => [
+                        'base' => [
+                            'GET' => [
+                                'path1' => [
+                                    'path2' => [
+                                        [
                                             'reqType' => 'GET',
-                                            'path' => array('path1', 'path2'),
-                                            'pathVars' => array('pathvar1', 'pathvar2'),
+                                            'path' => ['path1', 'path2'],
+                                            'pathVars' => ['pathvar1', 'pathvar2'],
                                             'method' => 'serviceMethod1',
                                             'file' => 'fileName4',
                                             'className' => 'className4',
                                             'score' => 8.75,
-                                        ),
-                                    ),
-                                ),
-                            ),
-                            'POST' => array(
-                                'path1' => array(
-                                    'path2' => array(
-                                        array(
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            'POST' => [
+                                'path1' => [
+                                    'path2' => [
+                                        [
                                             'reqType' => 'POST',
-                                            'path' => array('path1', 'path2'),
-                                            'pathVars' => array('pathvar1', 'pathvar2'),
+                                            'path' => ['path1', 'path2'],
+                                            'pathVars' => ['pathvar1', 'pathvar2'],
                                             'method' => 'serviceMethod1',
                                             'file' => 'fileName4',
                                             'className' => 'className4',
                                             'score' => 8.75,
-                                        ),
-                                    ),
-                                ),
-                            ),
-                        ),
-                    ),
-                ),
-            ),
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
 
             // invalid entry points (not array)
-            array(
+            [
                 null,
                 null,
                 null,
                 null,
                 false,
-                array(),
-            ),
+                [],
+            ],
 
-        );
+        ];
     }
 
     public function providerTestlookupRoute()
     {
-        return array(
-            'default route' => array(array('Accounts', 'config'), '10', 'foo1'),
-            'exact match version and min/max Version' => array(array('Accounts', 'config'), '11', 'foo3'),
-            'minor version in between min/max Version' => array(array('Accounts', 'config'), '11.3', 'foo4'),
-            'foo4 has maxVersion specified' => array(array('Accounts', 'config'), '12', 'foo4'),
-            'foo2 has minVersion' => array(array('Accounts', 'config'), '13', 'foo2'),
-            'foo5 has higher minVersion' => array(array('Accounts', 'config'), '14', 'foo5'),
-            'minor version and foo5 has higher minVersion' => array(array('Accounts', 'config'), '14.4', 'foo5'),
-            'minor version and foo7 has higher minVersion' => array(array('Accounts', 'config'), '15.15', 'foo7'),
-        );
+        return [
+            'default route' => [['Accounts', 'config'], '10', 'foo1'],
+            'exact match version and min/max Version' => [['Accounts', 'config'], '11', 'foo3'],
+            'minor version in between min/max Version' => [['Accounts', 'config'], '11.3', 'foo4'],
+            'foo4 has maxVersion specified' => [['Accounts', 'config'], '12', 'foo4'],
+            'foo2 has minVersion' => [['Accounts', 'config'], '13', 'foo2'],
+            'foo5 has higher minVersion' => [['Accounts', 'config'], '14', 'foo5'],
+            'minor version and foo5 has higher minVersion' => [['Accounts', 'config'], '14.4', 'foo5'],
+            'minor version and foo7 has higher minVersion' => [['Accounts', 'config'], '15.15', 'foo7'],
+        ];
     }
 
     /**
@@ -306,71 +306,71 @@ class ServiceDictionaryTest extends TestCase
 
     protected function registerApiVersionRest()
     {
-        return array(
-            'foo1' => array(
+        return [
+            'foo1' => [
                 'reqType' => 'GET',
-                'path' => array('Accounts', 'config'),
-                'pathVars' => array('module', 'record'),
+                'path' => ['Accounts', 'config'],
+                'pathVars' => ['module', 'record'],
                 'method' => 'foo1',
-            ),
-            'foo2' => array(
+            ],
+            'foo2' => [
                 'reqType' => 'GET',
                 'minVersion' => '11',
-                'path' => array('Accounts', 'config'),
-                'pathVars' => array('module', 'record'),
+                'path' => ['Accounts', 'config'],
+                'pathVars' => ['module', 'record'],
                 'method' => 'foo2',
-            ),
-            'foo3' => array(
+            ],
+            'foo3' => [
                 'reqType' => 'GET',
                 'minVersion' => '11',
                 'maxVersion' => '11',
-                'path' => array('Accounts', 'config'),
-                'pathVars' => array('module', 'record'),
+                'path' => ['Accounts', 'config'],
+                'pathVars' => ['module', 'record'],
                 'method' => 'foo3',
-            ),
-            'foo4' => array(
+            ],
+            'foo4' => [
                 'reqType' => 'GET',
                 'minVersion' => '11',
                 'maxVersion' => '12',
-                'path' => array('Accounts', 'config'),
-                'pathVars' => array('module', 'record'),
+                'path' => ['Accounts', 'config'],
+                'pathVars' => ['module', 'record'],
                 'method' => 'foo4',
-            ),
-            'foo5' => array(
+            ],
+            'foo5' => [
                 'reqType' => 'GET',
                 'minVersion' => '14',
-                'path' => array('Accounts', 'config'),
-                'pathVars' => array('module', 'record'),
+                'path' => ['Accounts', 'config'],
+                'pathVars' => ['module', 'record'],
                 'method' => 'foo5',
-            ),
-            'foo6' => array(
+            ],
+            'foo6' => [
                 'reqType' => 'GET',
                 'minVersion' => '15.2', // test that version 15.12 is > version 15.2
-                'path' => array('Accounts', 'config'),
-                'pathVars' => array('module', 'record'),
+                'path' => ['Accounts', 'config'],
+                'pathVars' => ['module', 'record'],
                 'method' => 'foo6',
-            ),
-            'foo7' => array(
+            ],
+            'foo7' => [
                 'reqType' => 'GET',
                 'minVersion' => '15.12',  // test that version 15.12 is > version 15.2
-                'path' => array('Accounts', 'config'),
-                'pathVars' => array('module', 'record'),
+                'path' => ['Accounts', 'config'],
+                'pathVars' => ['module', 'record'],
                 'method' => 'foo7',
-            ),
-        );
+            ],
+        ];
     }
 
     public function providerTestlookupRouteCustom()
     {
-        return array(
-            array(array('Accounts', 'config'), '10', 'fooCustom1'),
-            array(array('Accounts', 'config'), '11', 'fooCustom4'),
-            array(array('Accounts', 'config'), '12', 'fooCustom4'),
-            array(array('Accounts', 'config'), '13', 'fooCustom1'),
-            array(array('Accounts', 'config'), '14', 'fooCustom5'),
-            array(array('Accounts', 'config'), '15.2', 'fooCustom6'),
-            array(array('Accounts', 'config'), '15.4', 'fooCustom6'),
-        );
+        return [
+            [['Accounts', 'config'], '10', 'fooCustom1'],
+            [['Accounts', 'config'], '11', 'fooCustom4'],
+            [['Accounts', 'config'], '12', 'fooCustom4'],
+            [['Accounts', 'config'], '13', 'fooCustom1'],
+            [['Accounts', 'config'], '14', 'fooCustom5'],
+            [['Accounts', 'config'], '15.2', 'fooCustom6'],
+            [['Accounts', 'config'], '15.4', 'fooCustom6'],
+        ];
     }
 
     /**
@@ -397,142 +397,142 @@ class ServiceDictionaryTest extends TestCase
 
     protected function registerApiVersionCustomRest()
     {
-        return array(
-            'fooCustom1' => array(
+        return [
+            'fooCustom1' => [
                 'reqType' => 'GET',
-                'path' => array('Accounts', 'config'),
-                'pathVars' => array('module', 'record'),
+                'path' => ['Accounts', 'config'],
+                'pathVars' => ['module', 'record'],
                 'method' => 'fooCustom1',
-            ),
-            'fooCustom2' => array(
+            ],
+            'fooCustom2' => [
                 'reqType' => 'GET',
                 'minVersion' => '11',
-                'path' => array('<module>', 'config'),
-                'pathVars' => array('module', 'record'),
+                'path' => ['<module>', 'config'],
+                'pathVars' => ['module', 'record'],
                 'method' => 'fooCustom2',
-            ),
-            'fooCustom3' => array(
+            ],
+            'fooCustom3' => [
                 'reqType' => 'GET',
                 'minVersion' => '11',
                 'maxVersion' => '11',
-                'path' => array('?', 'config'),
-                'pathVars' => array('module', 'record'),
+                'path' => ['?', 'config'],
+                'pathVars' => ['module', 'record'],
                 'method' => 'fooCustom3',
-            ),
-            'fooCustom4' => array(
+            ],
+            'fooCustom4' => [
                 'reqType' => 'GET',
                 'minVersion' => '11',
                 'maxVersion' => '12',
-                'path' => array('Accounts', 'config'),
-                'pathVars' => array('module', 'record'),
+                'path' => ['Accounts', 'config'],
+                'pathVars' => ['module', 'record'],
                 'method' => 'fooCustom4',
-            ),
-            'fooCustom5' => array(
+            ],
+            'fooCustom5' => [
                 'reqType' => 'GET',
                 'minVersion' => '14',
-                'path' => array('Accounts', 'config'),
-                'pathVars' => array('module', 'record'),
+                'path' => ['Accounts', 'config'],
+                'pathVars' => ['module', 'record'],
                 'method' => 'fooCustom5',
-            ),
-            'fooCustom6' => array(
+            ],
+            'fooCustom6' => [
                 'reqType' => 'GET',
                 'minVersion' => '15',
                 'maxVersion' => '15.4',
-                'path' => array('Accounts', 'config'),
-                'pathVars' => array('module', 'record'),
+                'path' => ['Accounts', 'config'],
+                'pathVars' => ['module', 'record'],
                 'method' => 'fooCustom6',
-            ),
-        );
+            ],
+        ];
     }
 
     public function providerTestlookupRouteModuleAndWildCard()
     {
-        return array(
-            array(
-                array(
-                    'fooModule1' => array(
+        return [
+            [
+                [
+                    'fooModule1' => [
                         'reqType' => 'GET',
-                        'path' => array('Accounts', 'config'),
-                        'pathVars' => array('module', 'record'),
+                        'path' => ['Accounts', 'config'],
+                        'pathVars' => ['module', 'record'],
                         'method' => 'fooModule1',
-                    ),
-                    'fooModule2' => array(
+                    ],
+                    'fooModule2' => [
                         'reqType' => 'GET',
                         'minVersion' => '11',
-                        'path' => array('<module>', 'config'),
-                        'pathVars' => array('module', 'record'),
+                        'path' => ['<module>', 'config'],
+                        'pathVars' => ['module', 'record'],
                         'method' => 'fooModule2',
-                    ),
-                    'fooModule3' => array(
+                    ],
+                    'fooModule3' => [
                         'reqType' => 'GET',
                         'minVersion' => '11',
-                        'path' => array('?', 'config'),
-                        'pathVars' => array('module', 'record'),
+                        'path' => ['?', 'config'],
+                        'pathVars' => ['module', 'record'],
                         'method' => 'fooModule3',
-                    ),
-                ),
-                array('Accounts', 'config'),
+                    ],
+                ],
+                ['Accounts', 'config'],
                 '11',
                 'fooModule1',
-            ), // exact match wins even no min/max version specified
-            array(
-                array(
-                    'fooModule1' => array(
+            ], // exact match wins even no min/max version specified
+            [
+                [
+                    'fooModule1' => [
                         'reqType' => 'GET',
                         'minVersion' => '11',
-                        'path' => array('<module>', 'config'),
-                        'pathVars' => array('module', 'record'),
+                        'path' => ['<module>', 'config'],
+                        'pathVars' => ['module', 'record'],
                         'method' => 'fooModule1',
-                    ),
-                    'fooModule2' => array(
+                    ],
+                    'fooModule2' => [
                         'reqType' => 'GET',
                         'minVersion' => '12',
                         'maxVersion' => '12',
-                        'path' => array('?', 'config'),
-                        'pathVars' => array('module', 'record'),
+                        'path' => ['?', 'config'],
+                        'pathVars' => ['module', 'record'],
                         'method' => 'fooModule2',
-                    ),
-                    'fooModule3' => array(
+                    ],
+                    'fooModule3' => [
                         'reqType' => 'GET',
                         'minVersion' => '12',
-                        'path' => array('<module>', 'config'),
-                        'pathVars' => array('module', 'record'),
+                        'path' => ['<module>', 'config'],
+                        'pathVars' => ['module', 'record'],
                         'method' => 'fooModule3',
-                    ),
-                ),
-                array('Accounts', 'config'),
+                    ],
+                ],
+                ['Accounts', 'config'],
                 '12',
                 'fooModule3',
-            ), // <module> wins over wildcard ?
-            array(
-                array(
-                    'fooModule1' => array(
+            ], // <module> wins over wildcard ?
+            [
+                [
+                    'fooModule1' => [
                         'reqType' => 'GET',
                         'minVersion' => '11',
-                        'path' => array('<module>', 'config'),
-                        'pathVars' => array('module', 'record'),
+                        'path' => ['<module>', 'config'],
+                        'pathVars' => ['module', 'record'],
                         'method' => 'fooModule1',
-                    ),
-                    'fooModule2' => array(
+                    ],
+                    'fooModule2' => [
                         'reqType' => 'GET',
                         'minVersion' => '11',
-                        'path' => array('?', 'config'),
-                        'pathVars' => array('module', 'record'),
+                        'path' => ['?', 'config'],
+                        'pathVars' => ['module', 'record'],
                         'method' => 'fooModule2',
-                    ),
-                    'fooModule3' => array(
+                    ],
+                    'fooModule3' => [
                         'reqType' => 'GET',
                         'minVersion' => '12',
-                        'path' => array('<module>', 'config'),
-                        'pathVars' => array('module', 'record'),
+                        'path' => ['<module>', 'config'],
+                        'pathVars' => ['module', 'record'],
                         'method' => 'fooModule3',
-                    ),
-                ),
-                array('Accounts', 'config'),
+                    ],
+                ],
+                ['Accounts', 'config'],
                 '13',
                 'fooModule3',
-            ), // highest minVersion winds
-        );
+            ], // highest minVersion winds
+        ];
     }
 
     /**
@@ -545,7 +545,7 @@ class ServiceDictionaryTest extends TestCase
     public function testlookupRouteModuleAndWildCard($endpoint, $path, $version, $expected)
     {
 
-        $vmServiceDict = $this->getServiceDictionaryRestMock(array('matchModule'));
+        $vmServiceDict = $this->getServiceDictionaryRestMock(['matchModule']);
         $vmServiceDict->expects($this->any())
             ->method('matchModule')
             ->with('Accounts')
@@ -576,7 +576,7 @@ class ServiceDictionaryTest extends TestCase
         $vServiceDict->dict = $vServiceDict->getRegisteredEndpoints();
 
         $this->expectException(SugarApiExceptionNoMethod::class);
-        $vServiceDict->lookupRoute(array('Accounts'), '11', 'GET', 'base');
+        $vServiceDict->lookupRoute(['Accounts'], '11', 'GET', 'base');
     }
 
     /**
@@ -591,15 +591,15 @@ class ServiceDictionaryTest extends TestCase
         $vServiceDict->preRegisterEndpoints();
 
         $vServiceDict->registerEndpoints(
-            array(
-                'foo' => array(
+            [
+                'foo' => [
                     'reqType' => 'GET',
                     'minVersion' => '11',
-                    'path' => array('Accounts', 'config'),
-                    'pathVars' => array('module', 'record'),
+                    'path' => ['Accounts', 'config'],
+                    'pathVars' => ['module', 'record'],
                     'method' => 'foo',
-                ),
-            ),
+                ],
+            ],
             'fake/foo.php',
             'fooClass',
             'base',
@@ -609,7 +609,7 @@ class ServiceDictionaryTest extends TestCase
         $vServiceDict->dict = $vServiceDict->getRegisteredEndpoints();
 
         $this->expectException(SugarApiExceptionNoMethod::class);
-        $vServiceDict->lookupRoute(array('Accounts', 'config'), '10', 'GET', 'base');
+        $vServiceDict->lookupRoute(['Accounts', 'config'], '10', 'GET', 'base');
     }
 
     /**

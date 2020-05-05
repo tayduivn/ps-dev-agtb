@@ -91,11 +91,11 @@ class EmailDirectionTest extends TestCase
      */
     public function testSave_SetsTheDirection(string $state, string $fromMethod, array $toMethods, string $direction)
     {
-        $fromAddr = call_user_func(array(get_class($this), $fromMethod));
+        $fromAddr = call_user_func([get_class($this), $fromMethod]);
         $toAddrs = [];
 
         foreach ($toMethods as $toMethod) {
-            $toAddrs[] = call_user_func(array(get_class($this), $toMethod));
+            $toAddrs[] = call_user_func([get_class($this), $toMethod]);
         }
 
         $email = SugarTestEmailUtilities::createEmail(

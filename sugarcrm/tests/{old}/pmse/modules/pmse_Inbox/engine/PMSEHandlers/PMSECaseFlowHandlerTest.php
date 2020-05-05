@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
 
 class PMSECaseFlowHandlerTest extends TestCase
 {
-    protected $originals = array();
+    protected $originals = [];
 
     protected function setUp() : void
     {
@@ -25,7 +25,7 @@ class PMSECaseFlowHandlerTest extends TestCase
 
     protected function tearDown() : void
     {
-        foreach($this->originals as $varname => $value) {
+        foreach ($this->originals as $varname => $value) {
             $GLOBALS[$varname] = $value;
         }
     }
@@ -34,18 +34,18 @@ class PMSECaseFlowHandlerTest extends TestCase
     {
         $caseFlowHandlerMock = $this->getMockBuilder('PMSECaseFlowHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieveSugarQueryObject'))
+                ->setMethods(['retrieveSugarQueryObject'])
                 ->getMock();
 
         $flowMock = $this->getMockBuilder('SugarBean')
                 ->disableAutoload()
                 ->disableOriginalConstructor()
-                ->setMethods(array('save'))
+                ->setMethods(['save'])
                 ->getMock();
 
         $sugarQueryMock = $this->getMockBuilder('SugarQuery')
                 ->disableOriginalConstructor()
-                ->setMethods(array('select', 'from', 'where', 'queryAnd', 'addRaw', 'execute'))
+                ->setMethods(['select', 'from', 'where', 'queryAnd', 'addRaw', 'execute'])
                 ->getMock();
 
         $caseFlowHandlerMock->expects($this->once())
@@ -60,19 +60,19 @@ class PMSECaseFlowHandlerTest extends TestCase
                 ->method('queryAnd')
                 ->will($this->returnValue($sugarQueryMock));
 
-        $expectedArray = array(
+        $expectedArray = [
             'result01',
-            'result02'
-        );
+            'result02',
+        ];
 
         $sugarQueryMock->expects($this->once())
                 ->method('execute')
                 ->will($this->returnValue($expectedArray));
 
-        $flowData = array(
+        $flowData = [
             'cas_id' => 1,
-            'cas_index' => 2
-        );
+            'cas_index' => 2,
+        ];
 
         $caseFlowHandlerMock->setBpmFlow($flowMock);
         $result = $caseFlowHandlerMock->retrieveFlowData($flowData);
@@ -84,18 +84,18 @@ class PMSECaseFlowHandlerTest extends TestCase
     {
         $caseFlowHandlerMock = $this->getMockBuilder('PMSECaseFlowHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieveSugarQueryObject'))
+                ->setMethods(['retrieveSugarQueryObject'])
                 ->getMock();
 
         $flowMock = $this->getMockBuilder('SugarBean')
                 ->disableAutoload()
                 ->disableOriginalConstructor()
-                ->setMethods(array('save'))
+                ->setMethods(['save'])
                 ->getMock();
 
         $sugarQueryMock = $this->getMockBuilder('SugarQuery')
             ->disableOriginalConstructor()
-            ->setMethods(array('select', 'where', 'equals', 'fieldRaw','getOne'))
+            ->setMethods(['select', 'where', 'equals', 'fieldRaw','getOne'])
             ->getMock();
 
         $selectMock = $this->getMockBuilder('SugarQuery_Builder_Select')
@@ -120,10 +120,10 @@ class PMSECaseFlowHandlerTest extends TestCase
         $sugarQueryMock->expects($this->once())
             ->method('getOne')->willReturn(6);
 
-        $flowData = array(
+        $flowData = [
             'cas_id' => 1,
-            'cas_index' => 2
-        );
+            'cas_index' => 2,
+        ];
 
         $result = $caseFlowHandlerMock->retrieveMaxIndex($flowData);
         $this->assertEquals(6, $result);
@@ -139,7 +139,7 @@ class PMSECaseFlowHandlerTest extends TestCase
         $flowMock = $this->getMockBuilder('SugarBean')
                 ->disableAutoload()
                 ->disableOriginalConstructor()
-                ->setMethods(array('save'))
+                ->setMethods(['save'])
                 ->getMock();
 
         $sugarQueryMock = $this->getMockBuilder('SugarQuery')
@@ -158,10 +158,10 @@ class PMSECaseFlowHandlerTest extends TestCase
 
         $sugarQueryMock->method('getOne')->willReturn(0);
 
-        $flowData = array(
+        $flowData = [
             'cas_id' => 1,
-            'cas_index' => 2
-        );
+            'cas_index' => 2,
+        ];
         $caseFlowHandlerMock->setBpmFlow($flowMock);
 
         $result = $caseFlowHandlerMock->retrieveMaxIndex($flowData);
@@ -172,10 +172,10 @@ class PMSECaseFlowHandlerTest extends TestCase
     {
         $caseFlowHandlerMock = $this->getMockBuilder('PMSECaseFlowHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieveSugarQueryObject'))
+                ->setMethods(['retrieveSugarQueryObject'])
                 ->getMock();
 
-        $flowData = array();
+        $flowData = [];
 
         $result = $caseFlowHandlerMock->retrieveMaxIndex($flowData);
         $this->assertEquals(0, $result);
@@ -185,18 +185,18 @@ class PMSECaseFlowHandlerTest extends TestCase
     {
         $caseFlowHandlerMock = $this->getMockBuilder('PMSECaseFlowHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieveBean', 'retrieveSugarQueryObject'))
+                ->setMethods(['retrieveBean', 'retrieveSugarQueryObject'])
                 ->getMock();
 
         $flowMock = $this->getMockBuilder('SugarBean')
                 ->disableAutoload()
                 ->disableOriginalConstructor()
-                ->setMethods(array('save'))
+                ->setMethods(['save'])
                 ->getMock();
 
         $sugarQueryMock = $this->getMockBuilder('SugarQuery')
                 ->disableOriginalConstructor()
-                ->setMethods(array('select', 'from', 'where', 'queryAnd', 'addRaw', 'execute'))
+                ->setMethods(['select', 'from', 'where', 'queryAnd', 'addRaw', 'execute'])
                 ->getMock();
 
         $caseFlowHandlerMock->expects($this->once())
@@ -211,19 +211,19 @@ class PMSECaseFlowHandlerTest extends TestCase
                 ->method('queryAnd')
                 ->will($this->returnValue($sugarQueryMock));
 
-        $expectedArray = array(
-            array('bpmn_id' => 'abc123', 'bpmn_type' => 'BpmnFlow')
-        );
+        $expectedArray = [
+            ['bpmn_id' => 'abc123', 'bpmn_type' => 'BpmnFlow'],
+        ];
 
         $sugarQueryMock->expects($this->once())
                 ->method('execute')
                 ->will($this->returnValue($expectedArray));
 
-        $flowData = array(
+        $flowData = [
             'id' => 'abc123',
             'bpmn_type' => 'bpmnFlow',
-            'bpmn_id' => 'asdf'
-        );
+            'bpmn_id' => 'asdf',
+        ];
 
         $caseFlowHandlerMock->expects($this->exactly(1))
                 ->method('retrieveBean')
@@ -236,18 +236,18 @@ class PMSECaseFlowHandlerTest extends TestCase
     {
         $caseFlowHandlerMock = $this->getMockBuilder('PMSECaseFlowHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieveBean', 'retrieveSugarQueryObject'))
+                ->setMethods(['retrieveBean', 'retrieveSugarQueryObject'])
                 ->getMock();
 
         $flowMock = $this->getMockBuilder('SugarBean')
                 ->disableAutoload()
                 ->disableOriginalConstructor()
-                ->setMethods(array('save'))
+                ->setMethods(['save'])
                 ->getMock();
 
         $sugarQueryMock = $this->getMockBuilder('SugarQuery')
                 ->disableOriginalConstructor()
-                ->setMethods(array('select', 'from', 'where', 'queryAnd', 'addRaw', 'execute'))
+                ->setMethods(['select', 'from', 'where', 'queryAnd', 'addRaw', 'execute'])
                 ->getMock();
 
         $caseFlowHandlerMock->expects($this->once())
@@ -262,19 +262,19 @@ class PMSECaseFlowHandlerTest extends TestCase
                 ->method('queryAnd')
                 ->will($this->returnValue($sugarQueryMock));
 
-        $expectedArray = array(
-            array('bpmn_id' => 'abc123', 'bpmn_type' => 'BpmnActivity')
-        );
+        $expectedArray = [
+            ['bpmn_id' => 'abc123', 'bpmn_type' => 'BpmnActivity'],
+        ];
 
         $sugarQueryMock->expects($this->once())
                 ->method('execute')
                 ->will($this->returnValue($expectedArray));
 
-        $flowData = array(
+        $flowData = [
             'id' => 'abc123',
             'bpmn_type' => 'BpmnActivity',
-            'bpmn_id' => 'asdf'
-        );
+            'bpmn_id' => 'asdf',
+        ];
 
         $caseFlowHandlerMock->expects($this->exactly(1))
                 ->method('retrieveBean')
@@ -288,7 +288,7 @@ class PMSECaseFlowHandlerTest extends TestCase
     {
         $caseFlowHandlerMock = $this->getMockBuilder('PMSECaseFlowHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieveFlowData', 'retrieveElementByType'))
+                ->setMethods(['retrieveFlowData', 'retrieveElementByType'])
                 ->getMock();
 
         $caseFlowHandlerMock->expects($this->once())
@@ -312,7 +312,7 @@ class PMSECaseFlowHandlerTest extends TestCase
     {
         $caseFlowHandlerMock = $this->getMockBuilder('PMSECaseFlowHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieveMaxIndex', 'processFlowData'))
+                ->setMethods(['retrieveMaxIndex', 'processFlowData'])
                 ->getMock();
 
         $caseFlowHandlerMock->expects($this->once())
@@ -324,7 +324,7 @@ class PMSECaseFlowHandlerTest extends TestCase
                 ->method('processFlowData')
                 ->will($this->returnValue($processedData));
 
-        $flowData = array('cas_index' => 1);
+        $flowData = ['cas_index' => 1];
 
         $result = $caseFlowHandlerMock->prepareFlowData($flowData);
         $this->assertEquals('Processed Data', $result);
@@ -334,13 +334,13 @@ class PMSECaseFlowHandlerTest extends TestCase
     {
         $caseFlowHandlerMock = $this->getMockBuilder('PMSECaseFlowHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('createThread', 'retrieveBean'))
+                ->setMethods(['createThread', 'retrieveBean'])
                 ->getMock();
 
         $flowBeanMock = $this->getMockBuilder('pmse_BpmFlow')
                 ->disableAutoload()
                 ->disableOriginalConstructor()
-                ->setMethods(array('save', 'toArray'))
+                ->setMethods(['save', 'toArray'])
                 ->getMock();
 
         $flowBeanMock->new_with_id = true;
@@ -358,13 +358,13 @@ class PMSECaseFlowHandlerTest extends TestCase
                 ->method('toArray')
                 ->will($this->returnValue($toArrayData));
 
-        $flowData = array(
+        $flowData = [
             'id' => 'abc123',
             'cas_id' => 1,
             'cas_index' => 2,
             'bpmn_type' => 'BpmnActivity',
-            'bpmn_id' => 'abc123'
-        );
+            'bpmn_id' => 'abc123',
+        ];
 
         $result = $caseFlowHandlerMock->saveFlowData($flowData);
         $this->assertEquals($result, $toArrayData);
@@ -374,13 +374,13 @@ class PMSECaseFlowHandlerTest extends TestCase
     {
         $caseFlowHandlerMock = $this->getMockBuilder('PMSECaseFlowHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('createThread', 'retrieveBean'))
+                ->setMethods(['createThread', 'retrieveBean'])
                 ->getMock();
 
         $flowBeanMock = $this->getMockBuilder('pmse_BpmFlow')
                 ->disableAutoload()
                 ->disableOriginalConstructor()
-                ->setMethods(array('save', 'toArray'))
+                ->setMethods(['save', 'toArray'])
                 ->getMock();
 
         $flowBeanMock->new_with_id = true;
@@ -398,13 +398,13 @@ class PMSECaseFlowHandlerTest extends TestCase
                 ->method('toArray')
                 ->will($this->returnValue($toArrayData));
 
-        $flowData = array(
+        $flowData = [
             'id' => 'abc123',
             'cas_id' => 1,
             'cas_index' => 2,
             'bpmn_type' => 'BpmnActivity',
-            'bpmn_id' => 'abc123'
-        );
+            'bpmn_id' => 'abc123',
+        ];
 
         $result = $caseFlowHandlerMock->saveFlowData($flowData, true, 'abc123');
         $this->assertEquals($result, $toArrayData);
@@ -414,10 +414,10 @@ class PMSECaseFlowHandlerTest extends TestCase
     {
         $caseFlowHandlerMock = $this->getMockBuilder('PMSECaseFlowHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('createThread', 'retrieveBean'))
+                ->setMethods(['createThread', 'retrieveBean'])
                 ->getMock();
 
-        $flowData = array(
+        $flowData = [
             'id' => 'flo123',
             'cas_id' => 1,
             'max_index' => 2,
@@ -433,7 +433,7 @@ class PMSECaseFlowHandlerTest extends TestCase
             'rel_element_relationship' => 'leads_notes',
             'rel_element_module' => 'Notes',
             'evn_criteria' => "{::notes::id::}=='SomeId'",
-        );
+        ];
 
         $result = $caseFlowHandlerMock->processFlowData($flowData);
         $this->assertTrue(!empty($result));
@@ -445,18 +445,18 @@ class PMSECaseFlowHandlerTest extends TestCase
         global $db;
         $db = $this->getMockBuilder('DBHandler')
             ->disableOriginalConstructor()
-            ->setMethods(array('Query', 'fetchByAssoc'))
+            ->setMethods(['Query', 'fetchByAssoc'])
             ->getMock();
 
         $caseFlowHandlerMock = $this->getMockBuilder('PMSECaseFlowHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieveBean', 'retrieveSugarQueryObject'))
+                ->setMethods(['retrieveBean', 'retrieveSugarQueryObject'])
                 ->getMock();
 
         $threadMock = $this->getMockBuilder('SugarBean')
                 ->disableAutoload()
                 ->disableOriginalConstructor()
-                ->setMethods(array('save'))
+                ->setMethods(['save'])
                 ->getMock();
 
         $caseFlowHandlerMock->expects($this->atLeastOnce())
@@ -465,7 +465,7 @@ class PMSECaseFlowHandlerTest extends TestCase
 
         $sugarQueryMock = $this->getMockBuilder('SugarQuery')
                 ->disableOriginalConstructor()
-                ->setMethods(array('select', 'from', 'where', 'queryAnd', 'addRaw', 'execute', 'equals'))
+                ->setMethods(['select', 'from', 'where', 'queryAnd', 'addRaw', 'execute', 'equals'])
                 ->getMock();
 
         $caseFlowHandlerMock->expects($this->atLeastOnce())
@@ -484,19 +484,19 @@ class PMSECaseFlowHandlerTest extends TestCase
                 ->method('queryAnd')
                 ->will($this->returnValue($sugarQueryMock));
 
-        $rowList = array(
-            array('cas_thread_index' => 1, 'id' => 'abc001'),
-            array('cas_thread_index' => 2, 'id' => 'abc002'),
-            array('cas_thread_index' => 3, 'id' => 'abc003'),
-            array('cas_thread_index' => 4, 'id' => 'abc004'),
-            array('cas_thread_index' => 5, 'id' => 'abc005')
-        );
+        $rowList = [
+            ['cas_thread_index' => 1, 'id' => 'abc001'],
+            ['cas_thread_index' => 2, 'id' => 'abc002'],
+            ['cas_thread_index' => 3, 'id' => 'abc003'],
+            ['cas_thread_index' => 4, 'id' => 'abc004'],
+            ['cas_thread_index' => 5, 'id' => 'abc005'],
+        ];
 
         $sugarQueryMock->expects($this->atLeastOnce())
                 ->method('execute')
                 ->will($this->returnValue($rowList));
 
-        $flowData = array('id' => 'abc0123', 'cas_id' => 1, 'cas_index' => 2, 'cas_thread' => 1);
+        $flowData = ['id' => 'abc0123', 'cas_id' => 1, 'cas_index' => 2, 'cas_thread' => 1];
 
         $caseFlowHandlerMock->createThread($flowData);
     }
@@ -505,16 +505,16 @@ class PMSECaseFlowHandlerTest extends TestCase
     {
         $caseFlowHandlerMock = $this->getMockBuilder('PMSECaseFlowHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('closeFlow'))
+                ->setMethods(['closeFlow'])
                 ->getMock();
 
         $caseFlowHandlerMock->expects($this->once())
                 ->method('closeFlow');
 
-        $flowData = array(
+        $flowData = [
             'cas_id' => 1,
-            'cas_index' => 2
-        );
+            'cas_index' => 2,
+        ];
 
         $caseFlowHandlerMock->closePreviousFlow($flowData);
     }
@@ -523,13 +523,13 @@ class PMSECaseFlowHandlerTest extends TestCase
     {
         $caseFlowHandlerMock = $this->getMockBuilder('PMSECaseFlowHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieveBean', 'getBpmFlow', 'handleTerminatedFlowRelatedBeans'))
+                ->setMethods(['retrieveBean', 'getBpmFlow', 'handleTerminatedFlowRelatedBeans'])
                 ->getMock();
 
         $flowMock = $this->getMockBuilder('pmse_BpmFlow')
                 ->disableAutoload()
                 ->disableOriginalConstructor()
-                ->setMethods(array('save', 'retrieve_by_string_fields'))
+                ->setMethods(['save', 'retrieve_by_string_fields'])
                 ->getMock();
 
         $caseFlowHandlerMock->expects($this->any())
@@ -560,7 +560,7 @@ class PMSECaseFlowHandlerTest extends TestCase
     public function testCloseThreadByThreadIndex()
     {
         $sugarQueryMock = $this->getMockBuilder('SugarQuery')
-            ->setMethods(array('from', 'where', 'equals', 'execute'))
+            ->setMethods(['from', 'where', 'equals', 'execute'])
             ->getMock();
 
         $sugarQueryMock->expects($this->atLeastOnce())
@@ -577,12 +577,12 @@ class PMSECaseFlowHandlerTest extends TestCase
 
         $threadMock = $this->getMockBuilder('SugarBean')
             ->disableOriginalConstructor()
-            ->setMethods(NULL)
+            ->setMethods(null)
             ->getMock();
 
         $caseFlowHandlerMock = $this->getMockBuilder('PMSECaseFlowHandler')
             ->disableOriginalConstructor()
-            ->setMethods(array('retrieveBean', 'retrieveSugarQueryObject'))
+            ->setMethods(['retrieveBean', 'retrieveSugarQueryObject'])
             ->getMock();
 
         $caseFlowHandlerMock->expects($this->atLeastOnce())
@@ -602,7 +602,7 @@ class PMSECaseFlowHandlerTest extends TestCase
     public function testCloseThreadByThreadIndexInexistent()
     {
         $sugarQueryMock = $this->getMockBuilder('SugarQuery')
-            ->setMethods(array('from', 'where', 'equals', 'execute'))
+            ->setMethods(['from', 'where', 'equals', 'execute'])
             ->getMock();
 
         $sugarQueryMock->expects($this->atLeastOnce())
@@ -619,12 +619,12 @@ class PMSECaseFlowHandlerTest extends TestCase
 
         $threadMock = $this->getMockBuilder('SugarBean')
             ->disableOriginalConstructor()
-            ->setMethods(NULL)
+            ->setMethods(null)
             ->getMock();
 
         $caseFlowHandlerMock = $this->getMockBuilder('PMSECaseFlowHandler')
             ->disableOriginalConstructor()
-            ->setMethods(array('retrieveBean', 'retrieveSugarQueryObject'))
+            ->setMethods(['retrieveBean', 'retrieveSugarQueryObject'])
             ->getMock();
 
         $caseFlowHandlerMock->expects($this->atLeastOnce())
@@ -645,17 +645,17 @@ class PMSECaseFlowHandlerTest extends TestCase
     {
         $caseFlowHandlerMock = $this->getMockBuilder('PMSECaseFlowHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieveBean'))
+                ->setMethods(['retrieveBean'])
                 ->getMock();
 
         $flowMock = $this->getMockBuilder('pmse_BpmFlow')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve_by_string_fields'))
+                ->setMethods(['retrieve_by_string_fields'])
                 ->getMock();
 
         $threadMock = $this->getMockBuilder('pmse_BpmThread')
             ->disableOriginalConstructor()
-            ->setMethods(array('retrieve_by_string_fields', 'save'))
+            ->setMethods(['retrieve_by_string_fields', 'save'])
             ->getMock();
 
         $threadMock->id = 'asdf';
@@ -692,13 +692,13 @@ class PMSECaseFlowHandlerTest extends TestCase
     {
         $caseFlowHandlerMock = $this->getMockBuilder('PMSECaseFlowHandler')
             ->disableOriginalConstructor()
-            ->setMethods(array('retrieveBean', 'handleTerminatedFlowRelatedBeans'))
+            ->setMethods(['retrieveBean', 'handleTerminatedFlowRelatedBeans'])
             ->getMock();
 
         $flowMock = $this->getMockBuilder('pmse_Inbox')
             ->disableAutoload()
             ->disableOriginalConstructor()
-            ->setMethods(array('save', 'retrieve_by_string_fields'))
+            ->setMethods(['save', 'retrieve_by_string_fields'])
             ->getMock();
 
         $caseFlowHandlerMock->expects($this->once())
@@ -728,22 +728,22 @@ class PMSECaseFlowHandlerTest extends TestCase
 
         $caseFlowHandlerMock = $this->getMockBuilder('PMSECaseFlowHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieveBean', 'retrieveSugarQueryObject', 'handleTerminatedFlowRelatedBeans'))
+                ->setMethods(['retrieveBean', 'retrieveSugarQueryObject', 'handleTerminatedFlowRelatedBeans'])
                 ->getMock();
 
         $sugarQueryMock = $this->getMockBuilder('SugarQuery')
             ->disableOriginalConstructor()
-            ->setMethods(array('select', 'from', 'whereRaw', 'execute'))
+            ->setMethods(['select', 'from', 'whereRaw', 'execute'])
             ->getMock();
 
         $caseFlowHandlerMock->method('retrieveSugarQueryObject')
                 ->willReturn($sugarQueryMock);
 
-        $rows = array(
+        $rows = [
             [
                 'id' => '1',
             ],
-        );
+        ];
         $sugarQueryMock->expects($this->once())
             ->method('execute')
             ->will($this->returnValue($rows));
@@ -772,22 +772,22 @@ class PMSECaseFlowHandlerTest extends TestCase
 
         $caseFlowHandlerMock = $this->getMockBuilder('PMSECaseFlowHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieveBean', 'retrieveSugarQueryObject', 'handleTerminatedFlowRelatedBeans'))
+                ->setMethods(['retrieveBean', 'retrieveSugarQueryObject', 'handleTerminatedFlowRelatedBeans'])
                 ->getMock();
 
         $sugarQueryMock = $this->getMockBuilder('SugarQuery')
             ->disableOriginalConstructor()
-            ->setMethods(array('select', 'from', 'whereRaw', 'execute'))
+            ->setMethods(['select', 'from', 'whereRaw', 'execute'])
             ->getMock();
 
         $caseFlowHandlerMock->method('retrieveSugarQueryObject')
             ->willReturn($sugarQueryMock);
 
-        $rows = array(
+        $rows = [
             [
                 'id' => '1',
             ],
-        );
+        ];
         $sugarQueryMock->expects($this->once())
             ->method('execute')
             ->will($this->returnValue($rows));
@@ -814,13 +814,13 @@ class PMSECaseFlowHandlerTest extends TestCase
 
         $caseFlowHandlerMock = $this->getMockBuilder('PMSECaseFlowHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieveBean'))
+                ->setMethods(['retrieveBean'])
                 ->getMock();
 
         $flowMock = $this->getMockBuilder('pmse_BpmFlow')
                 ->disableAutoload()
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve_by_string_fields'))
+                ->setMethods(['retrieve_by_string_fields'])
                 ->getMock();
         $flowMock->bpmn_id = 'flo123';
         $flowMock->pro_id = 'pro123';
@@ -832,7 +832,7 @@ class PMSECaseFlowHandlerTest extends TestCase
         $noteMock = $this->getMockBuilder('pmse_BpmNotes')
                 ->disableAutoload()
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve_by_string_fields', 'save'))
+                ->setMethods(['retrieve_by_string_fields', 'save'])
                 ->getMock();
 
         $caseFlowHandlerMock->expects($this->at(1))
@@ -842,7 +842,7 @@ class PMSECaseFlowHandlerTest extends TestCase
         $formActionMock = $this->getMockBuilder('pmse_BpmFormAction')
                 ->disableAutoload()
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve_by_string_fields', 'save'))
+                ->setMethods(['retrieve_by_string_fields', 'save'])
                 ->getMock();
 
         $formActionMock->frm_action = '';
@@ -854,7 +854,7 @@ class PMSECaseFlowHandlerTest extends TestCase
         $previousFormActionMock = $this->getMockBuilder('pmse_BpmFormAction')
                 ->disableAutoload()
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve_by_string_fields', 'save'))
+                ->setMethods(['retrieve_by_string_fields', 'save'])
                 ->getMock();
 
         $previousFormActionMock->frm_action = '';
@@ -864,14 +864,14 @@ class PMSECaseFlowHandlerTest extends TestCase
                 ->method('retrieveBean')
                 ->will($this->returnValue($previousFormActionMock));
 
-        $params = array(
+        $params = [
             'cas_id' => 1,
             'cas_index' => 2,
             'frm_action' => 'ROUTE',
             'not_type' => 'ELEMENT',
             'not_user_recipient_id' => 'usr980',
             'frm_comment' => 'some comment',
-        );
+        ];
 
         $caseFlowHandlerMock->saveFormAction($params);
     }
@@ -885,13 +885,13 @@ class PMSECaseFlowHandlerTest extends TestCase
 
         $caseFlowHandlerMock = $this->getMockBuilder('PMSECaseFlowHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieveBean'))
+                ->setMethods(['retrieveBean'])
                 ->getMock();
 
         $flowMock = $this->getMockBuilder('pmse_BpmFlow')
                 ->disableAutoload()
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve_by_string_fields'))
+                ->setMethods(['retrieve_by_string_fields'])
                 ->getMock();
         $flowMock->bpmn_id = 'flo123';
         $flowMock->pro_id = 'pro123';
@@ -903,7 +903,7 @@ class PMSECaseFlowHandlerTest extends TestCase
         $noteMock = $this->getMockBuilder('pmse_BpmNotes')
                 ->disableAutoload()
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve_by_string_fields', 'save'))
+                ->setMethods(['retrieve_by_string_fields', 'save'])
                 ->getMock();
 
         $caseFlowHandlerMock->expects($this->at(1))
@@ -913,7 +913,7 @@ class PMSECaseFlowHandlerTest extends TestCase
         $formActionMock = $this->getMockBuilder('pmse_BpmFormAction')
                 ->disableAutoload()
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve_by_string_fields', 'save'))
+                ->setMethods(['retrieve_by_string_fields', 'save'])
                 ->getMock();
 
         $formActionMock->frm_action = '';
@@ -925,26 +925,26 @@ class PMSECaseFlowHandlerTest extends TestCase
         $previousFormActionMock = $this->getMockBuilder('pmse_BpmFormAction')
                 ->disableAutoload()
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve_by_string_fields', 'save'))
+                ->setMethods(['retrieve_by_string_fields', 'save'])
                 ->getMock();
 
         $previousFormActionMock->frm_action = '';
         $previousFormActionMock->frm_index = 2;
-        $previousFormActionMock->fetched_row = array('frm_action' => 'ACCEPT', 'frm_index'=>2);
+        $previousFormActionMock->fetched_row = ['frm_action' => 'ACCEPT', 'frm_index'=>2];
 
 
         $caseFlowHandlerMock->expects($this->at(3))
                 ->method('retrieveBean')
                 ->will($this->returnValue($previousFormActionMock));
 
-        $params = array(
+        $params = [
             'cas_id' => 1,
             'cas_index' => 2,
             'frm_action' => 'ROUTE',
             'not_type' => 'ELEMENT',
             'not_user_recipient_id' => 'usr980',
             'frm_comment' => 'some comment',
-        );
+        ];
 
         $caseFlowHandlerMock->saveFormAction($params);
     }

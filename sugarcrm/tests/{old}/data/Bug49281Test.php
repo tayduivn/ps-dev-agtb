@@ -22,15 +22,15 @@ class Bug49281Test extends TestCase
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-	}
+    }
 
     protected function tearDown() : void
-	{
-	    SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+    {
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestHelper::tearDown();
-	}
+    }
     /**
      * @ticket 49281
      */
@@ -42,7 +42,7 @@ class Bug49281Test extends TestCase
         $acc->sic_code = 'mnbvcxzasdfghjklpoiuytrewqmnbvcxzasdfghjklpoiuytre';
         $acc->save();
         $id = $acc->id;
-        SugarTestAccountUtilities::setCreatedAccount(array($id));
+        SugarTestAccountUtilities::setCreatedAccount([$id]);
         $acc = new Account();
         $acc->retrieve($id);
         $this->assertEquals('mnbvcxzasd', $acc->sic_code);

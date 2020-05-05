@@ -37,10 +37,10 @@ class RelatedValueApiTest extends TestCase
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setUp('current_user', array(true, false));
+        SugarTestHelper::setUp('current_user', [true, false]);
         $this->api = new RelatedValueApi();
         $this->account = SugarTestAccountUtilities::createAccount();
-        $this->contact = SugarTestContactUtilities::createContact('', array('first_name' => 'RS148Test_FName'));
+        $this->contact = SugarTestContactUtilities::createContact('', ['first_name' => 'RS148Test_FName']);
         $this->account->load_relationship('contacts');
         $this->account->contacts->add($this->contact);
         $this->account->save();
@@ -71,7 +71,7 @@ class RelatedValueApiTest extends TestCase
         }
         $result = $this->api->getRelatedValues(
             SugarTestRestUtilities::getRestServiceMock(),
-            array('module' => 'Accounts', 'fields' => $fields, 'record' => $this->account->id)
+            ['module' => 'Accounts', 'fields' => $fields, 'record' => $this->account->id]
         );
         $this->assertEquals($expected, $result);
     }
@@ -91,106 +91,106 @@ class RelatedValueApiTest extends TestCase
 
     public function relatedProvider()
     {
-        return array(
-            'empty' => array(
-                array(),
-                array(),
+        return [
+            'empty' => [
+                [],
+                [],
                 false,
-            ),
-            'related' => array(
-                array(
-                    'contacts' => array(
+            ],
+            'related' => [
+                [
+                    'contacts' => [
                         'link' => 'contacts',
                         'type' => 'related',
                         'relate' => 'first_name',
-                    ),
-                ),
-                array(
-                    'contacts' => array(
-                        'related' => array(
+                    ],
+                ],
+                [
+                    'contacts' => [
+                        'related' => [
                             'first_name' => 'RS148Test_FName',
-                        ),
-                    ),
-                ),
+                        ],
+                    ],
+                ],
                 true,
-            ),
-            'count' => array(
-                array(
-                    'contacts' => array(
+            ],
+            'count' => [
+                [
+                    'contacts' => [
                         'link' => 'contacts',
                         'type' => 'count',
                         'relate' => 'first_name',
-                    ),
-                ),
-                array(
-                    'contacts' => array(
+                    ],
+                ],
+                [
+                    'contacts' => [
                         'count' => 1,
-                    ),
-                ),
+                    ],
+                ],
                 false,
-            ),
-            'rollupMin' => array(
-                array(
-                    'contacts' => array(
+            ],
+            'rollupMin' => [
+                [
+                    'contacts' => [
                         'link' => 'contacts',
                         'type' => 'rollupMin',
                         'relate' => 'first_name',
-                    ),
-                ),
-                array(
-                    'contacts' => array(
-                        'rollupMin' => array(
+                    ],
+                ],
+                [
+                    'contacts' => [
+                        'rollupMin' => [
                             'first_name' => '',
-                            'first_name_values' => array(),
-                        ),
-                    ),
-                ),
+                            'first_name_values' => [],
+                        ],
+                    ],
+                ],
                 false,
-            ),
-            'rollupSum' => array(
-                array(
-                    'contacts' => array(
+            ],
+            'rollupSum' => [
+                [
+                    'contacts' => [
                         'link' => 'contacts',
                         'type' => 'rollupSum',
                         'relate' => 'first_name',
-                    ),
-                ),
-                array(
-                    'contacts' => array(
-                        'rollupSum' => array(
+                    ],
+                ],
+                [
+                    'contacts' => [
+                        'rollupSum' => [
                             'first_name' => 0,
-                            'first_name_values' => array(),
-                        ),
-                    ),
-                ),
+                            'first_name_values' => [],
+                        ],
+                    ],
+                ],
                 false,
-            ),
-        );
+            ],
+        ];
     }
 
     public function testRelatedValueWithCurrencyWillConvertToBase()
     {
         $mock_opp = $this->getMockBuilder('Opportunity')
             ->disableOriginalConstructor()
-            ->setMethods(array('getFieldDefinition'))
+            ->setMethods(['getFieldDefinition'])
             ->getMock();
 
         $mock_opp->expects($this->once())
             ->method('getFieldDefinition')
-            ->willReturn(array('type' => 'currency'));
+            ->willReturn(['type' => 'currency']);
 
         $mock_opp->base_rate = '0.9';
         $mock_opp->amount = '90.000000';
 
-        $mock_opp->field_defs = array(
-            'amount' => array(
+        $mock_opp->field_defs = [
+            'amount' => [
                 'type' => 'currency',
-            ),
-        );
+            ],
+        ];
 
         $mock_acc = $this->getMockBuilder('Account')
             ->disableOriginalConstructor()
-            ->setMethods(array('load_relationship'))
+            ->setMethods(['load_relationship'])
             ->getMock();
 
         $mock_acc->expects($this->once())
@@ -202,50 +202,50 @@ class RelatedValueApiTest extends TestCase
 
         $mock_acc_link2 = $this->getMockBuilder('Link2')
             ->disableOriginalConstructor()
-            ->setMethods(array('getBeans'))
+            ->setMethods(['getBeans'])
             ->getMock();
 
         $mock_acc_link2->expects($this->once())
             ->method('getBeans')
-            ->willReturn(array($mock_opp));
+            ->willReturn([$mock_opp]);
 
         $mock_acc->opportunities = $mock_acc_link2;
 
         $mock_api = $this->getMockBuilder('RelatedValueApi')
             ->disableOriginalConstructor()
-            ->setMethods(array('loadBean'))
+            ->setMethods(['loadBean'])
             ->getMock();
 
         $mock_api->expects($this->once())
             ->method('loadBean')
             ->willReturn($mock_acc);
 
-        $fields = array(
-            'opportunities' => array(
+        $fields = [
+            'opportunities' => [
                 'link' => 'opportunities',
                 'type' => 'rollupSum',
                 'relate' => 'amount',
-            ),
-        );
+            ],
+        ];
 
         $actual = $mock_api->getRelatedValues(
             SugarTestRestUtilities::getRestServiceMock(),
-            array('module' => 'Accounts', 'fields' =>  json_encode($fields), 'record' => $mock_acc->id)
+            ['module' => 'Accounts', 'fields' =>  json_encode($fields), 'record' => $mock_acc->id]
         );
 
-        $expected = array(
+        $expected = [
             'opportunities' =>
-                array(
+                [
                     'rollupSum' =>
-                        array(
+                        [
                             'amount' => '100.000000',
                             'amount_values' =>
-                                array(
+                                [
                                     '' => '100.000000',
-                                ),
-                        ),
-                ),
-        );
+                                ],
+                        ],
+                ],
+        ];
 
         $this->assertEquals($expected, $actual);
     }

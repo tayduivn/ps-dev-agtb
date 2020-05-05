@@ -12,7 +12,7 @@
 
 class S_518_3_HealthCheckScannerCasesTestMock extends HealthCheckScannerCasesTestMock
 {
-    public $md5_files = array(
-        './modules/Accounts/Account.php' => 'fakeMD5'
-    );
+    public $md5_files = [
+        './modules/Accounts/Account.php' => 'fakeMD5',
+    ];
 }

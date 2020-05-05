@@ -22,20 +22,20 @@ class Bug37841Test extends TestCase
 
     protected function setUp() : void
     {
-       $this->modules = array('Accounts');
-       $this->has_dir = array();
+        $this->modules = ['Accounts'];
+        $this->has_dir = [];
 
-       foreach($this->modules as $module) {
-    	   if(!file_exists("custom/modules/{$module}/metadata")){
-    		  mkdir_recursive("custom/modules/{$module}/metadata", true);
-    	   }
+        foreach ($this->modules as $module) {
+            if (!file_exists("custom/modules/{$module}/metadata")) {
+                mkdir_recursive("custom/modules/{$module}/metadata", true);
+            }
 
-    	   if(file_exists("custom/modules/{$module}")) {
-    	   	  $this->has_dir[$module] = true;
-    	   }
-       } //foreach
-       $this->clearFilesInDirectory('custom/modules/Accounts/metadata');
-       $this->clearFilesInDirectory('custom/history/modules/Accounts/metadata');
+            if (file_exists("custom/modules/{$module}")) {
+                $this->has_dir[$module] = true;
+            }
+        } //foreach
+        $this->clearFilesInDirectory('custom/modules/Accounts/metadata');
+        $this->clearFilesInDirectory('custom/history/modules/Accounts/metadata');
     }
 
     protected function tearDown() : void
@@ -46,7 +46,7 @@ class Bug37841Test extends TestCase
             if (!$this->has_dir[$module]) {
                 rmdir_recursive("custom/modules/{$module}");
             } else {
-                $files = array('editviewdefs', 'detailviewdefs');
+                $files = ['editviewdefs', 'detailviewdefs'];
 
                 foreach ($files as $file) {
                     if (file_exists("custom/modules/{$module}/metadata/{$file}.php.bak")) {
@@ -78,14 +78,14 @@ class Bug37841Test extends TestCase
      */
     function testHistoryCreationForNonUpgradedMetadataFiles()
     {
-       $this->clearFilesInDirectory('custom/modules/Accounts/metadata');
-       $this->clearFilesInDirectory('custom/history/modules/Accounts/metadata');
-       $sugar_merge = new SugarMerge('tests/{old}/modules/UpgradeWizard/SugarMerge/od_metadata_files/610/oob');
+        $this->clearFilesInDirectory('custom/modules/Accounts/metadata');
+        $this->clearFilesInDirectory('custom/history/modules/Accounts/metadata');
+        $sugar_merge = new SugarMerge('tests/{old}/modules/UpgradeWizard/SugarMerge/od_metadata_files/610/oob');
 
        //Using oob defs make sure nothing is merged
-       $mergedFiles = $sugar_merge->mergeModule('Accounts');
-       $this->assertFalse(file_exists('custom/modules/Accounts/metadata/detailviewdefs.php'));
-       $this->assertFalse($this->checkForHistoryRecords('Accounts'));
+        $mergedFiles = $sugar_merge->mergeModule('Accounts');
+        $this->assertFalse(file_exists('custom/modules/Accounts/metadata/detailviewdefs.php'));
+        $this->assertFalse($this->checkForHistoryRecords('Accounts'));
     }
 
     /**
@@ -114,12 +114,11 @@ class Bug37841Test extends TestCase
     private function clearFilesInDirectory($path)
     {
         $dir_handle = @opendir($path);
-        if ($dir_handle === false)
+        if ($dir_handle === false) {
             return;
-        while (($filename = readdir($dir_handle)) !== false)
-        {
-            if ($filename == '.' || $filename == '..' || is_dir("{$path}/{$filename}"))
-            {
+        }
+        while (($filename = readdir($dir_handle)) !== false) {
+            if ($filename == '.' || $filename == '..' || is_dir("{$path}/{$filename}")) {
                 continue;
             }
             unlink("{$path}/{$filename}");
@@ -130,15 +129,14 @@ class Bug37841Test extends TestCase
     {
         $results = "";
         $dir_handle = opendir($path);
-        if ($dir_handle === false)
+        if ($dir_handle === false) {
             return "";
-        while (($filename = readdir($dir_handle)) !== false)
-        {
-            if ($filename == '.' || $filename == '..' || is_dir("{$path}/{$filename}"))
-            {
+        }
+        while (($filename = readdir($dir_handle)) !== false) {
+            if ($filename == '.' || $filename == '..' || is_dir("{$path}/{$filename}")) {
                 continue;
             } else {
-               return file_get_contents("{$path}/{$filename}");
+                return file_get_contents("{$path}/{$filename}");
             }
         }
         return $results;
@@ -149,16 +147,15 @@ class Bug37841Test extends TestCase
     {
         $path = "custom/history/modules/$module_dir/metadata";
         $dir_handle = @opendir($path);
-        if ($dir_handle === false)
-            return FALSE;
-        $found = FALSE;
-        while (($filename = readdir($dir_handle)) !== false)
-        {
-            if ($filename == '.' || $filename == '..' || is_dir("{$path}/{$filename}"))
-            {
+        if ($dir_handle === false) {
+            return false;
+        }
+        $found = false;
+        while (($filename = readdir($dir_handle)) !== false) {
+            if ($filename == '.' || $filename == '..' || is_dir("{$path}/{$filename}")) {
                 continue;
             } else {
-                return TRUE;
+                return true;
             }
         }
         return $found;

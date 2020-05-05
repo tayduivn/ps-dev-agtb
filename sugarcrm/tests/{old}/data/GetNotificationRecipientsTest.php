@@ -54,15 +54,15 @@ class GetNotificationRecipientsTest extends TestCase
 
     public static function dataProvider()
     {
-        return array(
-            array(
+        return [
+            [
                 false,
-                0
-            ),
-            array(
+                0,
+            ],
+            [
                 true,
-                1
-            ),
-        );
+                1,
+            ],
+        ];
     }
 }

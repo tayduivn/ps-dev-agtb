@@ -29,11 +29,11 @@ class MultiFieldHandlerTest extends TestCase
     public function testRequiredInterfaces()
     {
         $nsPrefix = 'Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler';
-        $interfaces = array(
+        $interfaces = [
             $nsPrefix . '\AnalysisHandlerInterface',
             $nsPrefix . '\MappingHandlerInterface',
             $nsPrefix . '\SearchFieldsHandlerInterface',
-        );
+        ];
         $implements = class_implements($nsPrefix . '\Implement\MultiFieldHandler');
         $this->assertEquals($interfaces, array_values(array_intersect($implements, $interfaces)));
     }
@@ -59,50 +59,50 @@ class MultiFieldHandlerTest extends TestCase
 
     public function providerTestSetProvider()
     {
-        return array(
-            array(
+        return [
+            [
                 'typesMultiField',
-                array(
-                    'varchar' => array(
+                [
+                    'varchar' => [
                         'gs_string_default',
                         'gs_string_ngram',
-                    ),
-                    'name' => array(
+                    ],
+                    'name' => [
                         'gs_string_default',
                         'gs_string_ngram',
-                    ),
-                ),
+                    ],
+                ],
                 'addSupportedTypes',
-                array(
+                [
                     'varchar',
                     'name',
-                ),
-            ),
-            array(
+                ],
+            ],
+            [
                 'weightedBoost',
-                array(
+                [
                     'field' => 0.35,
-                ),
+                ],
                 'addWeightedBoosts',
-                array(
+                [
                     'field' => 0.35,
-                ),
-            ),
-            array(
+                ],
+            ],
+            [
                 'highlighterFields',
-                array(
-                    '*.field_default' => array(
+                [
+                    '*.field_default' => [
                         'number_of_fragments' => 0,
-                    ),
-                ),
+                    ],
+                ],
                 'addHighlighterFields',
-                array(
-                    '*.field_default' => array(
+                [
+                    '*.field_default' => [
                         'number_of_fragments' => 0,
-                    ),
-                ),
-            ),
-        );
+                    ],
+                ],
+            ],
+        ];
     }
 
     /**
@@ -115,109 +115,109 @@ class MultiFieldHandlerTest extends TestCase
         $sut = $this->getMultiFieldHandlerMock();
         $sut->buildAnalysis($analysisBuilder);
 
-        $expected = array(
-            'analysis' => array(
-                'analyzer' => array(
-                    'gs_analyzer_string' => array(
+        $expected = [
+            'analysis' => [
+                'analyzer' => [
+                    'gs_analyzer_string' => [
                         'tokenizer' => 'standard',
-                        'filter' => array(
+                        'filter' => [
                             'lowercase',
-                        ),
+                        ],
                         'type' => 'custom',
-                    ),
-                    'gs_analyzer_string_ngram' => array(
+                    ],
+                    'gs_analyzer_string_ngram' => [
                         'tokenizer' => 'standard',
-                        'filter' => array(
+                        'filter' => [
                             'lowercase',
                             'gs_filter_ngram_1_15',
-                        ),
+                        ],
                         'type' => 'custom',
-                    ),
-                    'gs_analyzer_phone_ngram' => array(
+                    ],
+                    'gs_analyzer_phone_ngram' => [
                         'tokenizer' => 'whitespace',
-                        'filter' => array(
+                        'filter' => [
                             'gs_filter_ngram_3_15',
-                        ),
-                        'char_filter' => array(
+                        ],
+                        'char_filter' => [
                             'gs_char_num_pattern',
-                        ),
+                        ],
                         'type' => 'custom',
-                    ),
-                    'gs_analyzer_phone' => array(
+                    ],
+                    'gs_analyzer_phone' => [
                         'tokenizer' => 'whitespace',
-                        'char_filter' => array(
+                        'char_filter' => [
                             'gs_char_num_pattern',
-                        ),
+                        ],
                         'type' => 'custom',
-                    ),
-                    'gs_analyzer_text_ngram' => array(
+                    ],
+                    'gs_analyzer_text_ngram' => [
                         'tokenizer' => 'standard',
-                        'filter' => array(
+                        'filter' => [
                             'lowercase',
                             'gs_filter_ngram_3_15',
-                        ),
+                        ],
                         'type' => 'custom',
-                    ),
-                    'gs_analyzer_url' => array(
+                    ],
+                    'gs_analyzer_url' => [
                         'tokenizer' => 'uax_url_email',
-                        'filter' => array(
+                        'filter' => [
                             'lowercase',
-                        ),
+                        ],
                         'type' => 'custom',
-                    ),
-                    'gs_analyzer_url_ngram' => array(
+                    ],
+                    'gs_analyzer_url_ngram' => [
                         'tokenizer' => 'uax_url_email',
-                        'filter' => array(
+                        'filter' => [
                             'lowercase',
                             'gs_filter_ngram_3_15',
-                        ),
+                        ],
                         'type' => 'custom',
-                    ),
-                    'gs_analyzer_string_exact' => array(
+                    ],
+                    'gs_analyzer_string_exact' => [
                         'tokenizer' => 'whitespace',
-                        'filter' => array(
+                        'filter' => [
                             'lowercase',
-                        ),
+                        ],
                         'type' => 'custom',
-                    ),
-                    'gs_analyzer_string_html' => array(
+                    ],
+                    'gs_analyzer_string_html' => [
                         'tokenizer' => 'standard',
-                        'filter' => array(
+                        'filter' => [
                             'lowercase',
-                        ),
-                        'char_filter' => array(
+                        ],
+                        'char_filter' => [
                             'html_strip',
-                        ),
+                        ],
                         'type' => 'custom',
-                    ),
-                ),
-                'tokenizer' => array(),
-                'filter' => array(
-                    'gs_filter_ngram_1_15' => array(
+                    ],
+                ],
+                'tokenizer' => [],
+                'filter' => [
+                    'gs_filter_ngram_1_15' => [
                         'min_gram' => 1,
                         'max_gram' => 15,
                         'type' => 'nGram',
-                    ),
-                    'gs_filter_ngram_2_15' => array(
+                    ],
+                    'gs_filter_ngram_2_15' => [
                         'min_gram' => 2,
                         'max_gram' => 15,
                         'type' => 'nGram',
-                    ),
-                    'gs_filter_ngram_3_15' => array(
+                    ],
+                    'gs_filter_ngram_3_15' => [
                         'min_gram' => 3,
                         'max_gram' => 15,
                         'type' => 'nGram',
-                    ),
-                ),
-                'char_filter' => array(
-                    'gs_char_num_pattern' => array(
+                    ],
+                ],
+                'char_filter' => [
+                    'gs_char_num_pattern' => [
                         'pattern' => '[^\\d]+',
                         'replacement' => '',
                         'type' => 'pattern_replace',
-                    ),
-                ),
-            ),
-        );
+                    ],
+                ],
+            ],
+        ];
 
         $this->assertEquals($expected, $analysisBuilder->compile());
     }
@@ -237,97 +237,97 @@ class MultiFieldHandlerTest extends TestCase
 
     public function providerTestBuildMappingValidation()
     {
-        return array(
+        return [
             // test 'varchar' type
-            array(
+            [
                 'Accounts',
                 'billing_street',
-                array(
+                [
                     'type' => 'varchar',
-                ),
-                array(
-                    'Accounts__billing_street' => array(
+                ],
+                [
+                    'Accounts__billing_street' => [
                         'type' => 'keyword',
                         'index' => false,
-                        'fields' => array(
-                            'gs_string' =>  array(
+                        'fields' => [
+                            'gs_string' =>  [
                                 'type' => 'text',
                                 'index' => true,
                                 'analyzer' => 'gs_analyzer_string',
                                 'store' => true,
-                            ),
-                            'gs_string_wildcard' => array(
+                            ],
+                            'gs_string_wildcard' => [
                                 'type' => 'text',
                                 'index' => true,
                                 'analyzer' => 'gs_analyzer_string_ngram',
                                 'search_analyzer' => 'gs_analyzer_string',
                                 'store' => true,
-                            ),
-                        ),
-                    ),
-                    'billing_street' => array(
+                            ],
+                        ],
+                    ],
+                    'billing_street' => [
                         'type' => 'keyword',
                         'index' => false,
-                        'copy_to' => array(
+                        'copy_to' => [
                             'Accounts__billing_street',
-                        ),
-                    ),
-                ),
-            ),
+                        ],
+                    ],
+                ],
+            ],
             // test 'name' type
-            array(
+            [
                 'Opporunities',
                 'name',
-                array(
+                [
                     'type' => 'name',
-                ),
-                array(
-                    'Opporunities__name' => array(
+                ],
+                [
+                    'Opporunities__name' => [
                         'type' => 'keyword',
                         'index' => false,
-                        'fields' => array(
-                            'gs_string' =>  array(
+                        'fields' => [
+                            'gs_string' =>  [
                                 'type' => 'text',
                                 'index' => true,
                                 'analyzer' => 'gs_analyzer_string',
                                 'store' => true,
-                            ),
-                            'gs_string_wildcard' => array(
+                            ],
+                            'gs_string_wildcard' => [
                                 'type' => 'text',
                                 'index' => true,
                                 'analyzer' => 'gs_analyzer_string_ngram',
                                 'search_analyzer' => 'gs_analyzer_string',
                                 'store' => true,
-                            ),
-                        ),
-                    ),
-                    'name' => array(
+                            ],
+                        ],
+                    ],
+                    'name' => [
                         'type' => 'keyword',
                         'index' => false,
-                        'copy_to' => array(
+                        'copy_to' => [
                             'Opporunities__name',
-                        ),
-                    ),
-                ),
-            ),
+                        ],
+                    ],
+                ],
+            ],
             // test 'text' type
-            array(
+            [
                 'Accounts',
                 'description',
-                array(
+                [
                     'type' => 'text',
-                ),
-                array(
-                    'Accounts__description' => array(
+                ],
+                [
+                    'Accounts__description' => [
                         'type' => 'keyword',
                         'index' => false,
-                        'fields' => array(
-                            'gs_string' =>  array(
+                        'fields' => [
+                            'gs_string' =>  [
                                 'type' => 'text',
                                 'index' => true,
                                 'analyzer' => 'gs_analyzer_string',
                                 'store' => true,
-                            ),
+                            ],
                             //'gs_text_wildcard' => array(
                             //    'type' => 'string',
                             //    'index' => 'analyzed',
@@ -335,302 +335,302 @@ class MultiFieldHandlerTest extends TestCase
                             //    'search_analyzer' => 'gs_analyzer_string',
                             //    'store' => true,
                             //),
-                        ),
+                        ],
                         'doc_values' => false,
-                    ),
-                    'description' => array(
+                    ],
+                    'description' => [
                         'type' => 'keyword',
                         'index' => false,
-                        'copy_to' => array(
+                        'copy_to' => [
                             'Accounts__description',
-                        ),
+                        ],
                         'doc_values' => false,
-                    ),
-                ),
-            ),
+                    ],
+                ],
+            ],
             // test 'datetime' type
-            array(
+            [
                 'Accounts',
                 'date_modified',
-                array(
+                [
                     'type' => 'datetime',
-                ),
-                array(
-                    'Accounts__date_modified' => array(
+                ],
+                [
+                    'Accounts__date_modified' => [
                         'type' => 'keyword',
                         'index' => false,
-                        'fields' => array(
-                            'gs_datetime' =>  array(
+                        'fields' => [
+                            'gs_datetime' =>  [
                                 'type' => 'date',
                                 'format' => 'YYYY-MM-dd HH:mm:ss',
                                 'store' => false,
-                            ),
-                        ),
-                    ),
-                    'date_modified' => array(
+                            ],
+                        ],
+                    ],
+                    'date_modified' => [
                         'type' => 'keyword',
                         'index' => false,
-                        'copy_to' => array(
+                        'copy_to' => [
                             'Accounts__date_modified',
                             'Common__date_modified',
-                        ),
-                    ),
-                    'Common__date_modified' => array(
+                        ],
+                    ],
+                    'Common__date_modified' => [
                         'type' => 'keyword',
                         'index' => false,
-                        'fields' => array(
-                            'gs_datetime' => array(
+                        'fields' => [
+                            'gs_datetime' => [
                                 'type' => 'date',
                                 'format' => 'YYYY-MM-dd HH:mm:ss',
                                 'store' => false,
-                            ),
-                        ),
-                    ),
-                ),
-            ),
+                            ],
+                        ],
+                    ],
+                ],
+            ],
             // test 'datetimecombo' type
-            array(
+            [
                 'Meetings',
                 'date_start',
-                array(
+                [
                     'type' => 'datetimecombo',
-                ),
-                array(
-                    'Meetings__date_start' => array(
+                ],
+                [
+                    'Meetings__date_start' => [
                         'type' => 'keyword',
                         'index' => false,
-                        'fields' => array(
-                            'gs_datetime' =>  array(
+                        'fields' => [
+                            'gs_datetime' =>  [
                                 'type' => 'date',
                                 'format' => 'YYYY-MM-dd HH:mm:ss',
                                 'store' => false,
-                            ),
-                        ),
-                    ),
-                    'date_start' => array(
+                            ],
+                        ],
+                    ],
+                    'date_start' => [
                         'type' => 'keyword',
                         'index' => false,
-                        'copy_to' => array(
+                        'copy_to' => [
                             'Meetings__date_start',
-                        ),
-                    ),
-                ),
-            ),
+                        ],
+                    ],
+                ],
+            ],
             // test 'date' type
-            array(
+            [
                 'Opportunities',
                 'date_closed',
-                array(
+                [
                     'type' => 'date',
-                ),
-                array(
-                    'Opportunities__date_closed' => array(
+                ],
+                [
+                    'Opportunities__date_closed' => [
                         'type' => 'keyword',
                         'index' => false,
-                        'fields' => array(
-                            'gs_date' =>  array(
+                        'fields' => [
+                            'gs_date' =>  [
                                 'type' => 'date',
                                 'format' => 'YYYY-MM-dd',
                                 'store' => false,
-                            ),
-                        ),
-                    ),
-                    'date_closed' => array(
+                            ],
+                        ],
+                    ],
+                    'date_closed' => [
                         'type' => 'keyword',
                         'index' => false,
-                        'copy_to' => array(
+                        'copy_to' => [
                             'Opportunities__date_closed',
-                        ),
-                    ),
-                ),
-            ),
+                        ],
+                    ],
+                ],
+            ],
             // test 'int' type
-            array(
+            [
                 'Cases',
                 'case_number',
-                array(
+                [
                     'type' => 'int',
-                ),
-                array(
-                    'Cases__case_number' => array(
+                ],
+                [
+                    'Cases__case_number' => [
                         'type' => 'keyword',
                         'index' => false,
-                        'fields' => array(
-                            'gs_string' =>  array(
+                        'fields' => [
+                            'gs_string' =>  [
                                 'type' => 'text',
                                 'index' => true,
                                 'analyzer' => 'gs_analyzer_string',
                                 'store' => true,
-                            ),
-                            'gs_string_wildcard' => array(
+                            ],
+                            'gs_string_wildcard' => [
                                 'type' => 'text',
                                 'index' => true,
                                 'analyzer' => 'gs_analyzer_string_ngram',
                                 'search_analyzer' => 'gs_analyzer_string',
                                 'store' => true,
-                            ),
-                            'gs_integer' => array(
+                            ],
+                            'gs_integer' => [
                                 'type' => 'integer',
                                 'index' => false,
                                 'store' => false,
-                            ),
-                        ),
-                    ),
-                    'case_number' => array(
+                            ],
+                        ],
+                    ],
+                    'case_number' => [
                         'type' => 'keyword',
                         'index' => false,
-                        'copy_to' => array(
+                        'copy_to' => [
                             'Cases__case_number',
-                        ),
-                    ),
-                ),
-            ),
+                        ],
+                    ],
+                ],
+            ],
             // test 'phone' type
-            array(
+            [
                 'Contacts',
                 'mobile',
-                array(
+                [
                     'type' => 'phone',
-                ),
-                array(
-                    'Contacts__mobile' => array(
+                ],
+                [
+                    'Contacts__mobile' => [
                         'type' => 'keyword',
                         'index' => false,
-                        'fields' => array(
-                            'gs_phone_wildcard' => array(
+                        'fields' => [
+                            'gs_phone_wildcard' => [
                                 'type' => 'text',
                                 'index' => true,
                                 'analyzer' => 'gs_analyzer_phone_ngram',
                                 'search_analyzer' => 'gs_analyzer_phone',
                                 'store' => true,
-                            ),
-                            'gs_not_analyzed' => array(
+                            ],
+                            'gs_not_analyzed' => [
                                 'type' => 'keyword',
                                 'index' => true,
                                 'store' => true,
-                            ),
-                        ),
-                    ),
-                    'mobile' => array(
+                            ],
+                        ],
+                    ],
+                    'mobile' => [
                         'type' => 'keyword',
                         'index' => false,
-                        'copy_to' => array(
+                        'copy_to' => [
                             'Contacts__mobile',
-                        ),
-                    ),
-                ),
-            ),
+                        ],
+                    ],
+                ],
+            ],
             // test 'url' type
-            array(
+            [
                 'Accounts',
                 'website',
-                array(
+                [
                     'type' => 'url',
-                ),
-                array(
-                    'Accounts__website' => array(
+                ],
+                [
+                    'Accounts__website' => [
                         'type' => 'keyword',
                         'index' => false,
-                        'fields' => array(
-                            'gs_url' =>  array(
+                        'fields' => [
+                            'gs_url' =>  [
                                 'type' => 'text',
                                 'index' => true,
                                 'analyzer' => 'gs_analyzer_url',
                                 'store' => false,
-                            ),
-                            'gs_url_wildcard' => array(
+                            ],
+                            'gs_url_wildcard' => [
                                 'type' => 'text',
                                 'index' => true,
                                 'analyzer' => 'gs_analyzer_url_ngram',
                                 'search_analyzer' => 'gs_analyzer_url',
                                 'store' => false,
-                            ),
-                        ),
-                    ),
-                    'website' => array(
+                            ],
+                        ],
+                    ],
+                    'website' => [
                         'type' => 'keyword',
                         'index' => false,
-                        'copy_to' => array(
+                        'copy_to' => [
                             'Accounts__website',
-                        ),
-                    ),
-                ),
-            ),
+                        ],
+                    ],
+                ],
+            ],
             // test 'id' type
-            array(
+            [
                 'Accounts',
                 'id',
-                array(
+                [
                     'type' => 'id',
-                ),
-                array(
-                    'Accounts__id' => array(
+                ],
+                [
+                    'Accounts__id' => [
                         'type' => 'keyword',
                         'index' => false,
-                        'fields' => array(
-                            'gs_not_analyzed' => array(
+                        'fields' => [
+                            'gs_not_analyzed' => [
                                 'type' => 'keyword',
                                 'index' => true,
                                 'store' => true,
-                            ),
-                        ),
-                    ),
-                    'id' => array(
+                            ],
+                        ],
+                    ],
+                    'id' => [
                         'type' => 'keyword',
                         'index' => false,
-                        'copy_to' => array(
+                        'copy_to' => [
                             'Accounts__id',
-                        ),
-                    ),
-                ),
-            ),
+                        ],
+                    ],
+                ],
+            ],
             // test 'exact' type
-            array(
+            [
                 'Accounts',
                 'stuff',
-                array(
+                [
                     'type' => 'exact',
-                ),
-                array(
-                    'Accounts__stuff' => array(
+                ],
+                [
+                    'Accounts__stuff' => [
                         'type' => 'keyword',
                         'index' => false,
-                        'fields' => array(
-                            'gs_string_exact' => array(
+                        'fields' => [
+                            'gs_string_exact' => [
                                 'type' => 'text',
                                 'index' => true,
                                 'analyzer' => 'gs_analyzer_string_exact',
                                 'store' => true,
-                            ),
-                        ),
-                    ),
-                    'stuff' => array(
+                            ],
+                        ],
+                    ],
+                    'stuff' => [
                         'type' => 'keyword',
                         'index' => false,
-                        'copy_to' => array(
+                        'copy_to' => [
                             'Accounts__stuff',
-                        ),
-                    ),
-                ),
-            ),
+                        ],
+                    ],
+                ],
+            ],
             // test 'longtext' type
-            array(
+            [
                 'Accounts',
                 'description',
-                array(
+                [
                     'type' => 'longtext',
-                ),
-                array(
-                    'Accounts__description' => array(
+                ],
+                [
+                    'Accounts__description' => [
                         'type' => 'keyword',
                         'index' => false,
-                        'fields' => array(
-                            'gs_string' =>  array(
+                        'fields' => [
+                            'gs_string' =>  [
                                 'type' => 'text',
                                 'index' => true,
                                 'analyzer' => 'gs_analyzer_string',
                                 'store' => true,
-                            ),
+                            ],
                             //'gs_text_wildcard' => array(
                             //    'type' => 'string',
                             //    'index' => 'analyzed',
@@ -638,37 +638,37 @@ class MultiFieldHandlerTest extends TestCase
                             //    'search_analyzer' => 'gs_analyzer_string',
                             //    'store' => true,
                             //),
-                        ),
+                        ],
                         'doc_values' => false,
-                    ),
-                    'description' => array(
+                    ],
+                    'description' => [
                         'type' => 'keyword',
                         'index' => false,
-                        'copy_to' => array(
+                        'copy_to' => [
                             'Accounts__description',
-                        ),
+                        ],
                         'doc_values' => false,
-                    ),
-                ),
-            ),
+                    ],
+                ],
+            ],
             // test 'htmleditable_tinymce' type
-            array(
+            [
                 'KBContents',
                 'body',
-                array(
+                [
                     'type' => 'htmleditable_tinymce',
-                ),
-                array(
-                    'KBContents__body' => array(
+                ],
+                [
+                    'KBContents__body' => [
                         'type' => 'keyword',
                         'index' => false,
-                        'fields' => array(
-                            'gs_string' =>  array(
+                        'fields' => [
+                            'gs_string' =>  [
                                 'type' => 'text',
                                 'index' => true,
                                 'analyzer' => 'gs_analyzer_string',
                                 'store' => true,
-                            ),
+                            ],
                             //'gs_text_wildcard' => array(
                             //    'type' => 'string',
                             //    'index' => 'analyzed',
@@ -676,48 +676,48 @@ class MultiFieldHandlerTest extends TestCase
                             //    'search_analyzer' => 'gs_analyzer_string',
                             //    'store' => true,
                             //),
-                        ),
+                        ],
                         'doc_values' => false,
-                    ),
-                    'body' => array(
+                    ],
+                    'body' => [
                         'type' => 'keyword',
                         'index' => false,
-                        'copy_to' => array(
+                        'copy_to' => [
                             'KBContents__body',
-                        ),
+                        ],
                         'doc_values' => false,
-                    ),
-                ),
-            ),
+                    ],
+                ],
+            ],
             // test 'enum' type
-            array(
+            [
                 'Bugs',
                 'status',
-                array(
+                [
                     'type' => 'enum',
-                ),
-                array(
-                    'Bugs__status' => array(
+                ],
+                [
+                    'Bugs__status' => [
                         'type' => 'keyword',
                         'index' => false,
-                        'fields' => array(
-                            'gs_not_analyzed' => array(
+                        'fields' => [
+                            'gs_not_analyzed' => [
                                 'type' => 'keyword',
                                 'index' => true,
                                 'store' => true,
-                            ),
-                        ),
-                    ),
-                    'status' => array(
+                            ],
+                        ],
+                    ],
+                    'status' => [
                         'type' => 'keyword',
                         'index' => false,
-                        'copy_to' => array(
+                        'copy_to' => [
                             'Bugs__status',
-                        ),
-                    ),
-                ),
-            ),
-        );
+                        ],
+                    ],
+                ],
+            ],
+        ];
     }
 
     /**
@@ -740,144 +740,144 @@ class MultiFieldHandlerTest extends TestCase
 
     public function providerTestBuildMapping()
     {
-        return array(
+        return [
             // missing field type
-            array(
+            [
                 'FooBar',
-                array(),
-                array(),
+                [],
+                [],
                 'first_name',
-                array(
+                [
                     'name' => 'first_name',
-                ),
-                array(),
-            ),
+                ],
+                [],
+            ],
             // missing mapping definition
-            array(
+            [
                 'FooBar',
-                array(),
-                array(),
+                [],
+                [],
                 'first_name',
-                array(
+                [
                     'name' => 'first_name',
                     'type' => 'does_not_exist',
-                ),
-                array(),
-            ),
+                ],
+                [],
+            ],
             // single definition
-            array(
+            [
                 'custom_Module',
-                array(
-                    'type1' => array('mapping1'),
-                ),
-                array(
-                    'mapping1' => array('type' => 'text'),
-                ),
+                [
+                    'type1' => ['mapping1'],
+                ],
+                [
+                    'mapping1' => ['type' => 'text'],
+                ],
                 'field1',
-                array(
+                [
                     'type' => 'type1',
-                ),
-                array(
-                    'custom_Module__field1' => array(
+                ],
+                [
+                    'custom_Module__field1' => [
                         'type' => 'keyword',
                         'index' => false,
-                        'fields' => array(
-                            'mapping1' => array(
+                        'fields' => [
+                            'mapping1' => [
                                 'type' => 'text',
-                            ),
-                        ),
-                    ),
-                    'field1' => array(
+                            ],
+                        ],
+                    ],
+                    'field1' => [
                         'type' => 'keyword',
                         'index' => false,
-                        'copy_to' => array(
+                        'copy_to' => [
                             'custom_Module__field1',
-                        ),
-                    ),
-                ),
-            ),
+                        ],
+                    ],
+                ],
+            ],
             // multi definition
-            array(
+            [
                 'Accounts',
-                array(
-                    'type1' => array('mapping1', 'mapping2'),
-                ),
-                array(
-                    'mapping1' => array('type' => 'text'),
-                    'mapping2' => array('type' => 'integer'),
-                ),
+                [
+                    'type1' => ['mapping1', 'mapping2'],
+                ],
+                [
+                    'mapping1' => ['type' => 'text'],
+                    'mapping2' => ['type' => 'integer'],
+                ],
                 'field1',
-                array(
+                [
                     'type' => 'type1',
-                ),
-                array(
-                    'Accounts__field1' => array(
+                ],
+                [
+                    'Accounts__field1' => [
                         'type' => 'keyword',
                         'index' => false,
-                        'fields' => array(
-                            'mapping1' => array(
+                        'fields' => [
+                            'mapping1' => [
                                 'type' => 'text',
-                            ),
-                            'mapping2' => array(
+                            ],
+                            'mapping2' => [
                                 'type' => 'integer',
-                            ),
-                        ),
-                    ),
-                    'field1' => array(
+                            ],
+                        ],
+                    ],
+                    'field1' => [
                         'type' => 'keyword',
                         'index' => false,
-                        'copy_to' => array(
+                        'copy_to' => [
                             'Accounts__field1',
-                        ),
-                    ),
-                ),
-            ),
+                        ],
+                    ],
+                ],
+            ],
             // sortable
-            array(
+            [
                 'Module',
-                array(
-                    'type1' => array('mapping1'),
-                ),
-                array(
-                    'mapping1' => array('type' => 'text'),
-                ),
+                [
+                    'type1' => ['mapping1'],
+                ],
+                [
+                    'mapping1' => ['type' => 'text'],
+                ],
                 'field1',
-                array(
+                [
                     'type' => 'type1',
-                    'full_text_search' => array(
+                    'full_text_search' => [
                         'sortable' => true,
-                    ),
-                ),
-                array(
-                    'Module__field1' => array(
+                    ],
+                ],
+                [
+                    'Module__field1' => [
                         'type' => 'keyword',
                         'index' => false,
-                        'fields' => array(
-                            'mapping1' => array(
+                        'fields' => [
+                            'mapping1' => [
                                 'type' => 'text',
-                            ),
-                        ),
-                    ),
-                    'field1' => array(
+                            ],
+                        ],
+                    ],
+                    'field1' => [
                         'type' => 'keyword',
                         'index' => false,
-                        'copy_to' => array(
+                        'copy_to' => [
                             'Module__field1',
                             'Common__field1',
-                        ),
-                    ),
-                    'Common__field1' => array(
+                        ],
+                    ],
+                    'Common__field1' => [
                         'type' => 'keyword',
                         'index' => false,
-                        'fields' => array(
-                            'mapping1' => array(
+                        'fields' => [
+                            'mapping1' => [
                                 'type' => 'text',
-                            ),
-                        ),
-                    ),
-                ),
-            ),
-        );
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
     }
 
     /**
@@ -889,7 +889,7 @@ class MultiFieldHandlerTest extends TestCase
      */
     public function testBuildSearchFields(array $types, array $multi, $module, $field, array $defs, array $expected)
     {
-        $sut = $this->getMultiFieldHandlerMock(array('addHighlighterField'));
+        $sut = $this->getMultiFieldHandlerMock(['addHighlighterField']);
 
         // set multi field types and definitions
         TestReflection::setProtectedValue($sut, 'typesMultiField', $types);
@@ -908,76 +908,76 @@ class MultiFieldHandlerTest extends TestCase
 
     public function providerTestBuildSearchFields()
     {
-        return array(
+        return [
             // missing field type
-            array(
-                array(),
-                array(),
+            [
+                [],
+                [],
                 'Contacts',
                 'first_name',
-                array(
+                [
                     'name' => 'first_name',
-                ),
-                array(),
-            ),
+                ],
+                [],
+            ],
             // missing mapping definition
-            array(
-                array(),
-                array(),
+            [
+                [],
+                [],
                 'Contacts',
                 'first_name',
-                array(
+                [
                     'name' => 'first_name',
                     'type' => 'does_not_exist',
-                ),
-                array(),
-            ),
+                ],
+                [],
+            ],
             // test multi field string fields only
-            array(
-                array(
-                    'varchar' => array(
+            [
+                [
+                    'varchar' => [
                         'test_default',
                         'test_ngram',
-                    ),
-                ),
-                array(
-                    'test_default' => array('type' => 'text'),
-                    'test_ngram' => array('type' => 'text'),
-                ),
+                    ],
+                ],
+                [
+                    'test_default' => ['type' => 'text'],
+                    'test_ngram' => ['type' => 'text'],
+                ],
                 'Contacts',
                 'first_name',
-                array(
+                [
                     'name' => 'first_name',
                     'type' => 'varchar',
-                ),
-                array(
+                ],
+                [
                     'Contacts__first_name.test_default',
                     'Contacts__first_name.test_ngram',
-                ),
-            ),
+                ],
+            ],
             // test mix string and non-string fields
-            array(
-                array(
-                    'custom_type' => array(
+            [
+                [
+                    'custom_type' => [
                         'test_default',
                         'test_integer',
-                    ),
-                ),
-                array(
-                    'test_default' => array('type' => 'text'),
-                    'test_integer' => array('type' => 'integer'),
-                ),
+                    ],
+                ],
+                [
+                    'test_default' => ['type' => 'text'],
+                    'test_integer' => ['type' => 'integer'],
+                ],
                 'CustomModule',
                 'custom_field',
-                array(
+                [
                     'name' => 'custom_field',
                     'type' => 'custom_type',
-                ),
-                array(
+                ],
+                [
                     'CustomModule__custom_field.test_default',
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
     }
 
     /**

@@ -13,7 +13,7 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once('include/workflow/workflow_utils.php');
+require_once 'include/workflow/workflow_utils.php';
 
 class Bug43572Test extends TestCase
 {

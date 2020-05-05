@@ -22,7 +22,7 @@ class Bug46230Test extends TestCase
 {
     private $account;
     private $stored_service_object;
-	private $account2;
+    private $account2;
 
     protected function setUp() : void
     {
@@ -32,12 +32,12 @@ class Bug46230Test extends TestCase
         $this->account = SugarTestAccountUtilities::createAccount();
 
         //Unset global service_object variable so that the code in updateDependencyBean is run in SugarBean.php
-        if(isset($GLOBALS['service_object'])) {
+        if (isset($GLOBALS['service_object'])) {
             $this->stored_service_object = $GLOBALS['service_object'];
             unset($GLOBALS['service_object']);
         }
 
-		$this->account2 = SugarTestAccountUtilities::createAccount();
+        $this->account2 = SugarTestAccountUtilities::createAccount();
         $this->account2->account_type = 'Analyst';
         $this->account2->industry = 'Energy';
         $this->account2->field_defs['industry']['dependency'] = 'or(equal($account_type,"Analyst"),equal($account_type,"Customer"))';
@@ -48,18 +48,18 @@ class Bug46230Test extends TestCase
     {
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestHelper::tearDown();
-        if(!empty($this->stored_service_object)) {
+        if (!empty($this->stored_service_object)) {
             $GLOBALS['service_object'] = $this->stored_service_object;
         }
     }
 
     public function providerData()
     {
-        return array(
-            array('Partner', 'Banking', '1'),
-            array('Analyst', 'Energy', '0'),
-            array('Customer', 'Education', '0'),
-            );
+        return [
+            ['Partner', 'Banking', '1'],
+            ['Analyst', 'Energy', '0'],
+            ['Customer', 'Education', '0'],
+            ];
     }
     /**
      * @dataProvider providerData
@@ -76,35 +76,29 @@ class Bug46230Test extends TestCase
 
         $res = $this->account->get_list_view_array();
 
-        if ($is_industry_hidden == '1')
-        {
+        if ($is_industry_hidden == '1') {
             $this->assertEmpty($res['INDUSTRY']);
-        }
-        else
-        {
+        } else {
             $this->assertNotEmpty($res['INDUSTRY']);
         }
 
-		$this->account->updateDependentField();
+        $this->account->updateDependentField();
 
-        if ($is_industry_hidden == '1')
-        {
+        if ($is_industry_hidden == '1') {
             $this->assertEmpty($res['INDUSTRY']);
-        }
-        else
-        {
+        } else {
             $this->assertNotEmpty($res['INDUSTRY']);
         }
     }
 
-	/**
+    /**
      * @group 54042
      */
     function testRetrieveBeanUpdateDependentFields()
     {
-       $this->account->retrieve($this->account2->id);
-       $res = $this->account->get_list_view_array();
-       $this->assertNotEmpty($res['INDUSTRY']);
+        $this->account->retrieve($this->account2->id);
+        $res = $this->account->get_list_view_array();
+        $this->assertNotEmpty($res['INDUSTRY']);
     }
 
     /**
@@ -112,8 +106,8 @@ class Bug46230Test extends TestCase
      */
     function testRetrieveByStringFieldsBeanUpdateDependentFields()
     {
-       $this->account->retrieve_by_string_fields(array('id'=>$this->account2->id));
-       $res = $this->account->get_list_view_array();
-       $this->assertNotEmpty($res['INDUSTRY']);
+        $this->account->retrieve_by_string_fields(['id'=>$this->account2->id]);
+        $res = $this->account->get_list_view_array();
+        $this->assertNotEmpty($res['INDUSTRY']);
     }
 }

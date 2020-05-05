@@ -41,55 +41,55 @@ class Bug61736Test extends TestCase
      *
      * @var array
      */
-    protected static $_request = array();
+    protected static $_request = [];
 
     /**
      * Mock REQUEST array used to create the test package
      *
      * @var array
      */
-    protected static $_createPackageRequestVars = array(
+    protected static $_createPackageRequestVars = [
         'name' => 'p1',
         'description' => '',
         'author' => '',
         'key' => 'p0001',
         'readme' => '',
-    );
+    ];
 
     /**
      * Mock REQUEST array used to create the test module
      *
      * @var array
      */
-    protected static $_createModuleRequestVars = array(
+    protected static $_createModuleRequestVars = [
         'name' => 'bbb',
         'label' => 'BBB',
         'label_singular' => 'BBB',
         'package' => 'p1',
         'has_tab' => '1',
         'type' => 'basic',
-    );
+    ];
     
     /**
      * Mock request for creating the field
      *
      * @var array
      */
-    protected static $_createFieldRequestVars = array(
+    protected static $_createFieldRequestVars = [
         "labelValue" => "Basic Address",
         "label" => "LBL_BASIC_ADDRESS",
         "type" => "address",
         "name" => "basic_address",
         "view_module" => "bbb",
         "view_package" => "p1",
-    );
+    ];
 
     /**
      * Mock request for deleting the field
      *
      * @var array
      */
-    protected static $_deleteFieldRequestVars = array(
+    protected static $_deleteFieldRequestVars = [
         "labelValue" => "Basic Address",
         "label" => "LBL_BASIC_ADDRESS",
         "to_pdf" => "true",
@@ -97,29 +97,29 @@ class Bug61736Test extends TestCase
         "name" => "basic_address",
         "view_module" => "bbb",
         "view_package" => "p1",
-    );
+    ];
     
     public static function setUpBeforeClass() : void
     {
         // Basic setup of the environment
-        SugarTestHelper::setUp('current_user', array(true, true));
+        SugarTestHelper::setUp('current_user', [true, true]);
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('app_list_strings');
-        SugarTestHelper::setUp('mod_strings', array('ModuleBuilder'));
+        SugarTestHelper::setUp('mod_strings', ['ModuleBuilder']);
 
         // Create the package
-        $request = InputValidation::create(self::$_createPackageRequestVars, array());
+        $request = InputValidation::create(self::$_createPackageRequestVars, []);
         $mbc = new ModuleBuilderController($request);
         $mbc->action_SavePackage();
 
         // Now create the module
-        $request = InputValidation::create(self::$_createModuleRequestVars, array());
+        $request = InputValidation::create(self::$_createModuleRequestVars, []);
         $mbc = new ModuleBuilderController($request);
         $mbc->action_SaveModule();
 
         // Now create the address field
-        $request = InputValidation::create(self::$_createFieldRequestVars, array());
+        $request = InputValidation::create(self::$_createFieldRequestVars, []);
         $mbc = new ModuleBuilderController($request);
         $mbc->action_SaveField();
     }
@@ -130,10 +130,10 @@ class Bug61736Test extends TestCase
         $vars = self::$_deleteFieldRequestVars;
 
         // Loop through the created fields and wipe them out
-        $suffixes = array('street', 'city', 'state', 'postalcode', 'country');
+        $suffixes = ['street', 'city', 'state', 'postalcode', 'country'];
         foreach ($suffixes as $suffix) {
             $vars['name'] = self::_getFieldName($suffix);
-            $request = InputValidation::create($vars, array());
+            $request = InputValidation::create($vars, []);
             $mbc = new ModuleBuilderController($request);
             $mbc->action_DeleteField();
         }
@@ -141,14 +141,14 @@ class Bug61736Test extends TestCase
         // Delete the custom module
         $vars = self::$_createModuleRequestVars;
         $vars['view_module'] = 'bbb';
-        $request = InputValidation::create($vars, array());
+        $request = InputValidation::create($vars, []);
         $mbc = new ModuleBuilderController($request);
         $mbc->action_DeleteModule();
 
         // Delete the custom package
         $vars = self::$_createPackageRequestVars;
         $vars['package'] = $vars['name'];
-        $request = InputValidation::create($vars, array());
+        $request = InputValidation::create($vars, []);
         $mbc = new ModuleBuilderController($request);
         $mbc->action_DeletePackage();
     }

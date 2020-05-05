@@ -9,71 +9,70 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-$viewdefs['Cases']['EditView'] = array(
-    'templateMeta' => array(
-        'form' => array(
+$viewdefs['Cases']['EditView'] = [
+    'templateMeta' => [
+        'form' => [
             'footerTpl' => 'modules/Cases/tpls/EditViewFooter.tpl',
-        ),
+        ],
         'maxColumns' => '2',
-        'widths' => array(
-            array('label' => '10', 'field' => '30'),
-            array('label' => '10', 'field' => '30')
-        ),
-    ),
-    'panels' => array(
+        'widths' => [
+            ['label' => '10', 'field' => '30'],
+            ['label' => '10', 'field' => '30'],
+        ],
+    ],
+    'panels' => [
 
         'lbl_case_information' =>
-        array(
-            array(
-                array('name' => 'case_number', 'type' => 'readonly'),
-            ),
+        [
+            [
+                ['name' => 'case_number', 'type' => 'readonly'],
+            ],
 
-            array(
+            [
                 'priority',
-            ),
+            ],
 
-            array(
+            [
                 'status',
                 'account_name',
-            ),
+            ],
 
-            array(
+            [
                 'type',
-            ),
-            array(
-                array(
+            ],
+            [
+                [
                     'name' => 'name',
-                    'displayParams' => array('size' => 75)
-                ),
-            ),
+                    'displayParams' => ['size' => 75],
+                ],
+            ],
 
-            array(
+            [
 
-                array(
+                [
                     'name' => 'description',
                     'nl2br' => true,
-                ),
-            ),
+                ],
+            ],
 
-            array(
+            [
 
-                array(
+                [
                     'name' => 'resolution',
                     'nl2br' => true,
-                ),
-            ),
+                ],
+            ],
 
-        ),
+        ],
 
         'LBL_PANEL_ASSIGNMENT' =>
-        array(
-            array(
+        [
+            [
                 'assigned_user_name',
-                array('name' => 'team_name', 'displayParams' => array('required' => true)),
-            ),
-        ),
-    ),
+                ['name' => 'team_name', 'displayParams' => ['required' => true]],
+            ],
+        ],
+    ],
 
 
-);
-?>
+];

@@ -13,27 +13,27 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once('include/workflow/workflow_utils.php');
+require_once 'include/workflow/workflow_utils.php';
 
 class Bug37487Test extends TestCase
 {
     function testDropDownFromFunction()
     {
         $fakedBean = new stdClass();
-        $fakedBean->field_defs = array(
-            'test' => array(
-                'function' => 'testList37487'
-            )
-        );
+        $fakedBean->field_defs = [
+            'test' => [
+                'function' => 'testList37487',
+            ],
+        ];
 
         function testList37487()
         {
-            return array(
-                '1' => 'Value 1'
-            );
+            return [
+                '1' => 'Value 1',
+            ];
         }
 
-        $result = translate_option_name_from_bean($fakedBean , 'test', '1');
+        $result = translate_option_name_from_bean($fakedBean, 'test', '1');
         $this->assertEquals('Value 1', $result, 'Result should be title instead of value');
     }
 }

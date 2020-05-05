@@ -17,27 +17,27 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug59193Test extends TestCase
 {
-	var $disableCountQuery;
+    var $disableCountQuery;
 
     protected function setUp() : void
-	{
-	    global $sugar_config;
-	    $this->disableCountQuery = isset($sugar_config['disable_count_query']) ? $sugar_config['disable_count_query'] : false;
-	    $sugar_config['disable_count_query'] = true;
-	}
+    {
+        global $sugar_config;
+        $this->disableCountQuery = isset($sugar_config['disable_count_query']) ? $sugar_config['disable_count_query'] : false;
+        $sugar_config['disable_count_query'] = true;
+    }
 
     protected function tearDown() : void
-	{
-		global $sugar_config;
-		$sugar_config['disable_count_query'] = $this->disableCountQuery;
-	}
+    {
+        global $sugar_config;
+        $sugar_config['disable_count_query'] = $this->disableCountQuery;
+    }
 
-	/**
-	 * Test if query with two team clauses on different tables works.
-	 */
-	public function testAddDistinct()
-	{
-	      $q = <<<END
+    /**
+     * Test if query with two team clauses on different tables works.
+     */
+    public function testAddDistinct()
+    {
+          $q = <<<END
 SELECT accounts.id primaryid, accounts.name, l1.id, l1.last_name l1_full_name
 								FROM accounts
 
@@ -54,7 +54,7 @@ INNER JOIN (SELECT contacts.* FROM contacts INNER JOIN (select tst.team_set_id f
 								 WHERE ((1=1))
 								AND  accounts.deleted=0
 END;
-	      $res = $GLOBALS['db']->limitQuery($q, 0, 100);
-	      $this->assertNotEmpty($res);
-	}
+          $res = $GLOBALS['db']->limitQuery($q, 0, 100);
+          $this->assertNotEmpty($res);
+    }
 }

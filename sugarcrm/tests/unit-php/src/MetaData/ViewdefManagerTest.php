@@ -19,7 +19,7 @@ use Sugarcrm\Sugarcrm\MetaData\ViewdefManager;
  */
 class ViewdefManagerTest extends TestCase
 {
-    protected $filesToRemove = array();
+    protected $filesToRemove = [];
     private $sugarConfig;
     private $config;
 
@@ -72,10 +72,10 @@ class ViewdefManagerTest extends TestCase
     
     public function loadViewdefProvider()
     {
-        return array(
-            array('base', 'Quotes', 'record', true),
-            array('base', 'Quotes', 'foo', false),
-        );
+        return [
+            ['base', 'Quotes', 'record', true],
+            ['base', 'Quotes', 'foo', false],
+        ];
     }
     
     /**
@@ -85,15 +85,15 @@ class ViewdefManagerTest extends TestCase
     {
         $mock = new ViewdefManager();
 
-        $viewdef = array(
-            'Quotes' => array(
-                'base' => array(
-                    'view' => array(
-                        'foo' => array(),
-                    ),
-                ),
-            ),
-        );
+        $viewdef = [
+            'Quotes' => [
+                'base' => [
+                    'view' => [
+                        'foo' => [],
+                    ],
+                ],
+            ],
+        ];
         $filename = 'custom/modules/Quotes/clients/base/views/foo/foo.php';
         $this->filesToRemove[] = $filename;
 

@@ -21,20 +21,20 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug49982Test extends TestCase
 {
-	var $doc = null;
+    var $doc = null;
     var $contract = null;
 
     protected function setUp() : void
     {
-       $_POST = array();
-       $_FILES = array();
-       $_SERVER['REQUEST_METHOD'] = null;
-   	}
+        $_POST = [];
+        $_FILES = [];
+        $_SERVER['REQUEST_METHOD'] = null;
+    }
 
     protected function tearDown() : void
     {
         unset($_SERVER['REQUEST_METHOD']);
-        $_POST = array();
+        $_POST = [];
     }
 
     /**
@@ -44,13 +44,14 @@ class Bug49982Test extends TestCase
      * In the scenario we are trying to simulate, the post AND files array are returned empty by php, so let's simulate that
      * in order to test the error message from home page
      */
-    function testSaveUploadError() {
+    function testSaveUploadError()
+    {
         //first lets test that no errors show up under normal conditions, clear out Post array just in case there is stale info
         $sv = new SugarView();
-        $this->assertFalse($sv->checkPostMaxSizeError(),'Sugar view indicated an upload error when there should be none.');
+        $this->assertFalse($sv->checkPostMaxSizeError(), 'Sugar view indicated an upload error when there should be none.');
 
         //now lets simulate that we are coming from a post, which along with the empty file and post array should trigger the error message
         $_SERVER['REQUEST_METHOD'] = 'POST';
-        $this->assertTrue($sv->checkPostMaxSizeError(),'Sugar view list did not return an error, however conditions dictate that an upload with a file exceeding post_max_size has occurred.');
+        $this->assertTrue($sv->checkPostMaxSizeError(), 'Sugar view list did not return an error, however conditions dictate that an upload with a file exceeding post_max_size has occurred.');
     }
 }

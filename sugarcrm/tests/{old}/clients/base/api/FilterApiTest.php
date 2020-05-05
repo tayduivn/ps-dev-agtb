@@ -51,7 +51,7 @@ class FilterApiTest extends TestCase
                 $opp->save();
                 self::$opps[] = $opp;
                 $account->load_relationship('opportunities');
-                $account->opportunities->add(array($opp));
+                $account->opportunities->add([$opp]);
             }
             if ($i < 5) {
                 // Only need a few notes
@@ -62,7 +62,7 @@ class FilterApiTest extends TestCase
                 $note->description = "This is a note for account $i";
                 $note->save();
                 $account->load_relationship('notes');
-                $account->notes->add(array($note));
+                $account->notes->add([$note]);
                 $note->save();
                 self::$notes[] = $note;
             }
@@ -80,7 +80,7 @@ class FilterApiTest extends TestCase
         self::$test5AccountFilter = SugarTestFilterUtilities::createUserFilter(
             'admin',
             'test5AccountFilter',
-            json_encode(array(array('name' => 'TEST 5 Account'))),
+            json_encode([['name' => 'TEST 5 Account']]),
             'test5AccountFilter'
         );
 
@@ -108,7 +108,7 @@ class FilterApiTest extends TestCase
     public static function tearDownAfterClass(): void
     {
         if (count(self::$accounts)) {
-            $accountIds = array();
+            $accountIds = [];
             foreach (self::$accounts as $account) {
                 $accountIds[] = $account->id;
             }
@@ -118,7 +118,7 @@ class FilterApiTest extends TestCase
 
         // Opportunities clean up
         if (count(self::$opps)) {
-            $oppIds = array();
+            $oppIds = [];
             foreach (self::$opps as $opp) {
                 $oppIds[] = $opp->id;
             }
@@ -129,7 +129,7 @@ class FilterApiTest extends TestCase
 
         // Notes cleanup
         if (count(self::$notes)) {
-            $noteIds = array();
+            $noteIds = [];
             foreach (self::$notes as $note) {
                 $noteIds[] = $note->id;
             }
@@ -139,7 +139,7 @@ class FilterApiTest extends TestCase
         }
 
         if (count(self::$meetings)) {
-            $meetingIds = array();
+            $meetingIds = [];
             foreach (self::$meetings as $meeting) {
                 $meetingIds[] = $meeting->id;
             }
@@ -161,10 +161,10 @@ class FilterApiTest extends TestCase
         // before FilterApi::filterListSetup is called.
         $this->filterApi->filterList(
             $this->serviceMock,
-            array(
+            [
                 'module' => 'Contacts',
-                'filter' => '[{"id": 1}]'
-            )
+                'filter' => '[{"id": 1}]',
+            ]
         );
     }
 
@@ -172,11 +172,11 @@ class FilterApiTest extends TestCase
     {
         $reply = $this->filterApi->filterList(
             $this->serviceMock,
-            array(
+            [
                 'module' => 'Accounts',
-                'filter' => array(array('name' => 'TEST 7 Account')),
-                'fields' => 'id,name'
-            )
+                'filter' => [['name' => 'TEST 7 Account']],
+                'fields' => 'id,name',
+            ]
         );
         $this->assertEquals('TEST 7 Account', $reply['records'][0]['name'], 'Simple: The name is not set correctly');
         $this->assertEquals(-1, $reply['next_offset'], 'Simple: Next offset is not set correctly');
@@ -190,12 +190,12 @@ class FilterApiTest extends TestCase
         // one of the upcoming API versions.
         $result = $this->filterApi->filterListSetup(
             $this->serviceMock,
-            array(
+            [
                 'module' => 'Accounts',
                 'filter' => '',
-            )
+            ]
         );
-        $this->assertEquals(array(), $result[0]['filter'], 'Empty definition: filter becomes empty array');
+        $this->assertEquals([], $result[0]['filter'], 'Empty definition: filter becomes empty array');
     }
 
     public function testBadLinkName()
@@ -203,10 +203,10 @@ class FilterApiTest extends TestCase
         $this->expectException(SugarApiExceptionInvalidParameter::class);
         $this->filterApi->filterList(
             $this->serviceMock,
-            array(
+            [
                 'module' => 'Accounts',
-                'filter' => array(array('accounts.name' => 'TEST 3 Account')),
-            )
+                'filter' => [['accounts.name' => 'TEST 3 Account']],
+            ]
         );
     }
 
@@ -214,11 +214,11 @@ class FilterApiTest extends TestCase
     {
         $reply = $this->filterApi->filterList(
             $this->serviceMock,
-            array(
+            [
                 'module' => 'Accounts',
                 'filter_id' => self::$test5AccountFilter->id,
-                'fields' => 'id,name'
-            )
+                'fields' => 'id,name',
+            ]
         );
         $this->assertEquals('TEST 5 Account', $reply['records'][0]['name'], 'FilterID: The name is not set correctly');
         $this->assertEquals(1, count($reply['records']), 'FilterID: Returned the wrong number of results');
@@ -230,10 +230,10 @@ class FilterApiTest extends TestCase
         $this->expectException(SugarApiExceptionNotFound::class);
         $this->filterApi->filterList(
             $this->serviceMock,
-            array(
+            [
                 'module' => 'Accounts',
                 'filter_id' => $filterId,
-            )
+            ]
         );
     }
 
@@ -242,11 +242,11 @@ class FilterApiTest extends TestCase
         $this->expectException(SugarApiExceptionInvalidParameter::class);
         $this->filterApi->filterList(
             $this->serviceMock,
-            array(
+            [
                 'module' => 'Accounts',
                 'filter_id' => self::$test5AccountFilter->id,
-                'q' => "some query we don't care about"
-            )
+                'q' => "some query we don't care about",
+            ]
         );
     }
 
@@ -257,43 +257,43 @@ class FilterApiTest extends TestCase
      */
     public function providerMergeDefinitionAndId()
     {
-        $test5AccountFilterDef = array(
-            'name' => 'TEST 5 Account'
-        );
-        $nameInFilterDef = array(
-            'name' => array(
-                '$in' => array(
+        $test5AccountFilterDef = [
+            'name' => 'TEST 5 Account',
+        ];
+        $nameInFilterDef = [
+            'name' => [
+                '$in' => [
                     'Test 3 Account',
-                    'Test 4 Account'
-                )
-            )
-        );
-        $idStartsFilterDef = array(
-            'id' => array(
-                '$starts' => 'UNIT-TEST-'
-            )
-        );
-        return array(
+                    'Test 4 Account',
+                ],
+            ],
+        ];
+        $idStartsFilterDef = [
+            'id' => [
+                '$starts' => 'UNIT-TEST-',
+            ],
+        ];
+        return [
             // check with an empty filter definition
-            array(
-                array(),
-                array($test5AccountFilterDef)
-            ),
+            [
+                [],
+                [$test5AccountFilterDef],
+            ],
 
             // check with an identical filter
-            array(
-                array($test5AccountFilterDef),
-                array($test5AccountFilterDef, $test5AccountFilterDef)
-            ),
+            [
+                [$test5AccountFilterDef],
+                [$test5AccountFilterDef, $test5AccountFilterDef],
+            ],
 
             // check with a more complicated filter
             // note that since filter definitions have numeric keys,
             // the filters do not overlap even though they both filter on 'name'
-            array(
-                array($nameInFilterDef, $idStartsFilterDef),
-                array($test5AccountFilterDef, $nameInFilterDef, $idStartsFilterDef)
-            )
-        );
+            [
+                [$nameInFilterDef, $idStartsFilterDef],
+                [$test5AccountFilterDef, $nameInFilterDef, $idStartsFilterDef],
+            ],
+        ];
     }
 
     /**
@@ -308,12 +308,12 @@ class FilterApiTest extends TestCase
     {
         list($args, $q, $options, $seed) = $this->filterApi->filterListSetup(
             $this->serviceMock,
-            array(
+            [
                 'filter_id' => self::$test5AccountFilter->id,
                 'filter' => $filterDefinition,
                 'fields' => 'name,id',
-                'module' => 'Accounts'
-            )
+                'module' => 'Accounts',
+            ]
         );
         $this->assertEquals($merged, $args['filter'], 'Did not merge filters correctly');
     }
@@ -333,11 +333,11 @@ class FilterApiTest extends TestCase
     {
         $reply = $this->filterApi->filterList(
             $this->serviceMock,
-            array(
+            [
                 'module' => 'Accounts',
-                'filter' => array(array('notes.name' => 'Test 3 Note')),
-                'fields' => 'id,name'
-            )
+                'filter' => [['notes.name' => 'Test 3 Note']],
+                'fields' => 'id,name',
+            ]
         );
         $this->assertEquals(
             'TEST 3 Account',
@@ -348,11 +348,11 @@ class FilterApiTest extends TestCase
 
         $reply = $this->filterApi->getFilterListCount(
             $this->serviceMock,
-            array(
+            [
                 'module' => 'Accounts',
-                'filter' => array(array('notes.name' => 'Test 3 Note')),
-                'fields' => 'id,name'
-            )
+                'filter' => [['notes.name' => 'Test 3 Note']],
+                'fields' => 'id,name',
+            ]
         );
         $this->assertSame(1, $reply['record_count'], 'SimpleJoin: Returned too many results');
     }
@@ -365,12 +365,12 @@ class FilterApiTest extends TestCase
         $GLOBALS['sugar_config']['max_list_limit'] = $max_list_limit;
         $reply = $this->filterApi->filterList(
             $this->serviceMock,
-            array(
+            [
                 'module' => 'Accounts',
-                'filter' => array(array('name' => array('$starts' => 'TEST 1'))),
+                'filter' => [['name' => ['$starts' => 'TEST 1']]],
                 'fields' => 'id,name',
-                'max_num' => $max_num
-            )
+                'max_num' => $max_num,
+            ]
         );
         $this->assertEquals($expected, $reply['next_offset'], 'Next offset is not set correctly');
         $this->assertEquals($expected, count($reply['records']), 'Returned wrong count of results');
@@ -378,82 +378,82 @@ class FilterApiTest extends TestCase
 
     public static function providerMaxListAndNumLimit()
     {
-        return array(
-            array(
+        return [
+            [
                 'max_list_limit' => 5,
                 'max_num' => '',
-                'expected' => 5
-            ),
-            array(
+                'expected' => 5,
+            ],
+            [
                 'max_list_limit' => 4,
                 'max_num' => 2,
-                'expected' => 2
-            ),
-            array(
+                'expected' => 2,
+            ],
+            [
                 'max_list_limit' => 3,
                 'max_num' => 10,
-                'expected' => 3
-            ),
-            array(
+                'expected' => 3,
+            ],
+            [
                 'max_list_limit' => 2,
                 'max_num' => -1,
-                'expected' => 2
-            ),
-            array(
+                'expected' => 2,
+            ],
+            [
                 'max_list_limit' => 1,
                 'max_num' => -10,
-                'expected' => 1
-            ),
-        );
+                'expected' => 1,
+            ],
+        ];
     }
 
     public function testSimpleFilterWithOffset()
     {
         $reply = $this->filterApi->filterList(
             $this->serviceMock,
-            array(
+            [
                 'module' => 'Accounts',
-                'filter' => array(array('name' => array('$starts' => 'TEST 1'))),
+                'filter' => [['name' => ['$starts' => 'TEST 1']]],
                 'fields' => 'id,name',
-                'max_num' => '5'
-            )
+                'max_num' => '5',
+            ]
         );
         $this->assertEquals(5, $reply['next_offset'], 'Offset-1: Next offset is not set correctly');
         $this->assertEquals(5, count($reply['records']), 'Offset-1: Returned too many results');
 
         $reply = $this->filterApi->filterList(
             $this->serviceMock,
-            array(
+            [
                 'module' => 'Accounts',
-                'filter' => array(array('name' => array('$starts' => 'TEST 1'))),
+                'filter' => [['name' => ['$starts' => 'TEST 1']]],
                 'fields' => 'id,name',
                 'max_num' => '5',
-                'offset' => '5'
-            )
+                'offset' => '5',
+            ]
         );
         $this->assertEquals(10, $reply['next_offset'], 'Offset-2: Next offset is not set correctly');
         $this->assertEquals(5, count($reply['records']), 'Offset-2: Returned too many results');
 
         $reply = $this->filterApi->filterList(
             $this->serviceMock,
-            array(
+            [
                 'module' => 'Accounts',
-                'filter' => array(array('name' => array('$starts' => 'TEST 1'))),
+                'filter' => [['name' => ['$starts' => 'TEST 1']]],
                 'fields' => 'id,name',
                 'max_num' => '5',
-                'offset' => '10'
-            )
+                'offset' => '10',
+            ]
         );
         $this->assertEquals(-1, $reply['next_offset'], 'Offset-3: Next offset is not set correctly');
         $this->assertEquals(1, count($reply['records']), 'Offset-3: Returned too many results');
 
         $reply = $this->filterApi->getFilterListCount(
             $this->serviceMock,
-            array(
+            [
                 'module' => 'Accounts',
-                'filter' => array(array('name' => array('$starts' => 'TEST 1'))),
+                'filter' => [['name' => ['$starts' => 'TEST 1']]],
                 'fields' => 'id,name',
-            )
+            ]
         );
         $this->assertSame(11, $reply['record_count'], 'SimpleJoin: Returned too many results');
     }
@@ -462,19 +462,19 @@ class FilterApiTest extends TestCase
     {
         $reply = $this->filterApi->filterList(
             $this->serviceMock,
-            array(
+            [
                 'module' => 'Accounts',
-                'filter' => array(
-                    array(
-                        '$or' => array(
-                            array('name' => 'TEST 7 Account'),
-                            array('name' => 'TEST 17 Account'),
-                        )
-                    )
-                ),
+                'filter' => [
+                    [
+                        '$or' => [
+                            ['name' => 'TEST 7 Account'],
+                            ['name' => 'TEST 17 Account'],
+                        ],
+                    ],
+                ],
                 'fields' => 'id,name',
-                'order_by' => 'name:ASC'
-            )
+                'order_by' => 'name:ASC',
+            ]
         );
 
         $this->assertEquals('TEST 17 Account', $reply['records'][0]['name'], 'Or-1: The name is not set correctly');
@@ -483,19 +483,19 @@ class FilterApiTest extends TestCase
         $this->assertEquals(2, count($reply['records']), 'Or: Returned too many results');
         $reply = $this->filterApi->getFilterListCount(
             $this->serviceMock,
-            array(
+            [
                 'module' => 'Accounts',
-                'filter' => array(
-                    array(
-                        '$or' => array(
-                            array('name' => 'TEST 7 Account'),
-                            array('name' => 'TEST 17 Account'),
-                        )
-                    )
-                ),
+                'filter' => [
+                    [
+                        '$or' => [
+                            ['name' => 'TEST 7 Account'],
+                            ['name' => 'TEST 17 Account'],
+                        ],
+                    ],
+                ],
                 'fields' => 'id,name',
-                'order_by' => 'name:ASC'
-            )
+                'order_by' => 'name:ASC',
+            ]
         );
         $this->assertSame(2, $reply['record_count'], 'SimpleJoin: Returned too many results');
     }
@@ -504,19 +504,19 @@ class FilterApiTest extends TestCase
     {
         $reply = $this->filterApi->filterList(
             $this->serviceMock,
-            array(
+            [
                 'module' => 'Accounts',
-                'filter' => array(
-                    array(
-                        '$and' => array(
-                            array('name' => array('$starts' => 'TEST 1')),
-                            array('billing_address_postalcode' => '70210'),
-                        )
-                    )
-                ),
+                'filter' => [
+                    [
+                        '$and' => [
+                            ['name' => ['$starts' => 'TEST 1']],
+                            ['billing_address_postalcode' => '70210'],
+                        ],
+                    ],
+                ],
                 'fields' => 'id,name',
-                'order_by' => 'name:ASC'
-            )
+                'order_by' => 'name:ASC',
+            ]
         );
         $this->assertEquals('TEST 17 Account', $reply['records'][0]['name'], 'And: The name is not set correctly');
         $this->assertEquals(-1, $reply['next_offset'], 'And: Next offset is not set correctly');
@@ -527,7 +527,7 @@ class FilterApiTest extends TestCase
     {
         $reply = $this->filterApi->filterList(
             $this->serviceMock,
-            array('module' => 'Accounts', 'filter' => array(), 'max_num' => '10')
+            ['module' => 'Accounts', 'filter' => [], 'max_num' => '10']
         );
 
         $this->assertNotEmpty($reply, 'Empty filter returned no results.');
@@ -542,7 +542,7 @@ class FilterApiTest extends TestCase
 
         $reply = $this->filterApi->filterList(
             $this->serviceMock,
-            array('module' => 'UpgradeHistory', 'filter' => array(), 'max_num' => '-1')
+            ['module' => 'UpgradeHistory', 'filter' => [], 'max_num' => '-1']
         );
 
         $this->assertNotEmpty($reply['records'], 'Empty filter returned no results.');
@@ -560,17 +560,17 @@ class FilterApiTest extends TestCase
         /** @var SugarQuery_Builder_Where|MockObject $where */
         $where = $this->getMockBuilder('SugarQuery_Builder_Where')
             ->disableOriginalConstructor()
-            ->setMethods(array('isEmpty'))
+            ->setMethods(['isEmpty'])
             ->getMockForAbstractClass();
         $where->expects($this->once())->method('isEmpty')->with($field)->will($this->returnSelf());
 
-        FilterApiMock::addFilters(array(
-            array(
-                'account_type' => array(
+        FilterApiMock::addFilters([
+            [
+                'account_type' => [
                     '$empty' => '',
-                ),
-            ),
-        ), $where, $q);
+                ],
+            ],
+        ], $where, $q);
     }
 
     public function testNotEmptyFilters()
@@ -583,17 +583,17 @@ class FilterApiTest extends TestCase
         /** @var SugarQuery_Builder_Where|MockObject $where */
         $where = $this->getMockBuilder('SugarQuery_Builder_Where')
             ->disableOriginalConstructor()
-            ->setMethods(array('isNotEmpty'))
+            ->setMethods(['isNotEmpty'])
             ->getMockForAbstractClass();
         $where->expects($this->once())->method('isNotEmpty')->with($field)->will($this->returnSelf());
 
-        FilterApiMock::addFilters(array(
-            array(
-                'account_type' => array(
+        FilterApiMock::addFilters([
+            [
+                'account_type' => [
                     '$not_empty' => '',
-                ),
-            ),
-        ), $where, $q);
+                ],
+            ],
+        ], $where, $q);
     }
 
     /**
@@ -608,12 +608,12 @@ class FilterApiTest extends TestCase
 
         $reply = $this->filterApi->filterList(
             $this->serviceMock,
-            array(
+            [
                 'module' => 'Accounts',
                 'filter' => $filter,
                 'fields' => 'id,name',
-                'order_by' => 'name:ASC'
-            )
+                'order_by' => 'name:ASC',
+            ]
         );
         $this->assertNotEmpty($reply['records']);
         $this->assertEquals(1, count($reply['records']));
@@ -621,29 +621,29 @@ class FilterApiTest extends TestCase
 
     public static function followerFilterProvider()
     {
-        return array(
-            'simple' => array(
-                array(
-                    array(
+        return [
+            'simple' => [
+                [
+                    [
                         '$following' => '',
-                    ),
-                ),
-            ),
-            'BR-1432' => array(
-                array(
-                    array(
-                        '$or' => array(
-                            array(
+                    ],
+                ],
+            ],
+            'BR-1432' => [
+                [
+                    [
+                        '$or' => [
+                            [
                                 'id' => 'non-existing-id',
-                            ),
-                            array(
+                            ],
+                            [
                                 '$following' => '',
-                            ),
-                        ),
-                    ),
-                ),
-            ),
-        );
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
     }
 
     public function testFavoriteFilter()
@@ -666,12 +666,12 @@ class FilterApiTest extends TestCase
 
         $reply = $this->filterApi->filterList(
             $this->serviceMock,
-            array(
+            [
                 'module' => 'Accounts',
-                'filter' => array(array('$favorite' => '')),
+                'filter' => [['$favorite' => '']],
                 'fields' => 'id,name',
-                'order_by' => 'name:ASC'
-            )
+                'order_by' => 'name:ASC',
+            ]
         );
         $this->assertEquals('TEST 4 Account', $reply['records'][0]['name'], 'Favorites: The name is not set correctly');
         $this->assertEquals(-1, $reply['next_offset'], 'Favorites: Next offset is not set correctly');
@@ -697,12 +697,12 @@ class FilterApiTest extends TestCase
         $fav->save();
         $reply = $this->filterApi->filterList(
             $this->serviceMock,
-            array(
+            [
                 'module' => 'Accounts',
-                'filter' => array(array('$favorite' => 'opportunities')),
+                'filter' => [['$favorite' => 'opportunities']],
                 'fields' => 'id,name',
-                'order_by' => 'name:ASC'
-            )
+                'order_by' => 'name:ASC',
+            ]
         );
 
         $this->assertEquals(
@@ -750,19 +750,19 @@ class FilterApiTest extends TestCase
 
         $reply = $this->filterApi->filterList(
             $this->serviceMock,
-            array(
+            [
                 'module' => 'Accounts',
-                'filter' => array(
-                    array(
-                        '$or' => array(
-                            array('$favorite' => 'opportunities'),
-                            array('$favorite' => 'notes'),
-                        )
-                    )
-                ),
+                'filter' => [
+                    [
+                        '$or' => [
+                            ['$favorite' => 'opportunities'],
+                            ['$favorite' => 'notes'],
+                        ],
+                    ],
+                ],
                 'fields' => 'id,name',
-                'order_by' => 'name:ASC'
-            )
+                'order_by' => 'name:ASC',
+            ]
         );
 
         $this->assertEquals(
@@ -779,18 +779,18 @@ class FilterApiTest extends TestCase
 
         $reply = $this->filterApi->getFilterListCount(
             $this->serviceMock,
-            array(
+            [
                 'module' => 'Accounts',
-                'filter' => array(
-                    array(
-                        '$or' => array(
-                            array('$favorite' => 'opportunities'),
-                            array('$favorite' => 'notes'),
-                        )
-                    )
-                ),
+                'filter' => [
+                    [
+                        '$or' => [
+                            ['$favorite' => 'opportunities'],
+                            ['$favorite' => 'notes'],
+                        ],
+                    ],
+                ],
                 'fields' => 'id,name',
-            )
+            ]
         );
 
         $this->assertSame(3, $reply['record_count'], 'FavMulRelated: Returned too many results');
@@ -809,12 +809,12 @@ class FilterApiTest extends TestCase
 
         $reply = $this->filterApi->filterList(
             $this->serviceMock,
-            array(
+            [
                 'module' => 'Accounts',
-                'filter' => array(array('$owner' => '')),
+                'filter' => [['$owner' => '']],
                 'fields' => 'id,name',
-                'order_by' => 'name:ASC'
-            )
+                'order_by' => 'name:ASC',
+            ]
         );
 
         $this->assertEquals('TEST 7 Account', $reply['records'][0]['name'], 'Owner: The name is not set correctly');
@@ -835,12 +835,12 @@ class FilterApiTest extends TestCase
 
         $reply = $this->filterApi->filterList(
             $this->serviceMock,
-            array(
+            [
                 'module' => 'Accounts',
-                'filter' => array(array('$owner' => 'opportunities')),
+                'filter' => [['$owner' => 'opportunities']],
                 'fields' => 'id,name',
-                'order_by' => 'name:ASC'
-            )
+                'order_by' => 'name:ASC',
+            ]
         );
 
         $this->assertEquals(
@@ -869,11 +869,11 @@ class FilterApiTest extends TestCase
 
         $reply = $this->filterApi->filterList(
             $this->serviceMock,
-            array(
+            [
                 'module' => 'Meetings',
-                'filter' => array(array('date_start' => array('$between' => array($leftDate, $rightDate)))),
+                'filter' => [['date_start' => ['$between' => [$leftDate, $rightDate]]]],
                 'fields' => 'id,name',
-            )
+            ]
         );
 
         $this->assertNotEmpty($reply['records']);
@@ -894,38 +894,38 @@ class FilterApiTest extends TestCase
     {
         // prepare fetched bean array
         $beans = array_fill(0, $numBeans, new Account());
-        $beans['_rows'] = array_fill(0, $numBeans, array());
+        $beans['_rows'] = array_fill(0, $numBeans, []);
         $beans['_distinctCompensation'] = $compensation;
 
         $query = new SugarQuery();
 
         // setup seed bean
         $seed = $this->getMockBuilder('SugarBean')
-            ->setMethods(array('call_custom_logic', 'fetchFromQuery'))
+            ->setMethods(['call_custom_logic', 'fetchFromQuery'])
             ->getMock();
 
         // expected query options when calling SugarBean::fetchFromQuery
-        $queryOptions = array(
+        $queryOptions = [
             'returnRawRows' => true,
             'compensateDistinct' => true,
-        );
+        ];
 
         $seed->expects($this->once())
             ->method('fetchFromQuery')
             ->with(
                 $this->equalTo($query),
-                $this->equalTo(array()),
+                $this->equalTo([]),
                 $this->equalTo($queryOptions)
             )
             ->will($this->returnValue($beans));
 
         // sut
         $filterApi = $this->getMockBuilder('FilterApi')
-            ->setMethods(array('populateRelatedFields', 'formatBeans'))
+            ->setMethods(['populateRelatedFields', 'formatBeans'])
             ->getMock();
 
-        $options = array('limit' => $limit, 'offset' => $offset);
-        $methodArgs = array($this->serviceMock, array(), $query, $options, $seed);
+        $options = ['limit' => $limit, 'offset' => $offset];
+        $methodArgs = [$this->serviceMock, [], $query, $options, $seed];
         $result = SugarTestReflection::callProtectedMethod($filterApi, 'runQuery', $methodArgs);
 
         $this->assertEquals(
@@ -937,62 +937,62 @@ class FilterApiTest extends TestCase
 
     public function providerTestRunQueryOffsetCompensation()
     {
-        return array(
+        return [
 
             // bean records less than limit
-            array(
+            [
                 2,
                 0, // compensation
                 5, // limit
                 0, // offset
                 -1, // expected next_offset
-            ),
+            ],
 
             // bean records equal to limit
-            array(
+            [
                 5,
                 0, // compensation
                 5, // limit
                 0, // offset
                 -1, // expected next_offset
-            ),
+            ],
 
             // bean records equal to limit + 1
-            array(
+            [
                 6,
                 0, // compensation
                 5, // limit
                 0, // offset
                 5, // expected next_offset
-            ),
+            ],
 
             // bean records equal to limit, but with compensation
-            array(
+            [
                 5,
                 1, // compensation
                 5, // limit
                 0, // offset
                 5, // expected next_offset
-            ),
+            ],
 
             // bean records less than limit, but with compensation
-            array(
+            [
                 3,
                 3, // compensation
                 5, // limit
                 0, // offset
                 5, // expected next_offset
-            ),
+            ],
 
             // bean records less than limit and combination not reaching threshold
-            array(
+            [
                 3,
                 2, // compensation
                 5, // limit
                 0, // offset
                 -1, // expected next_offset
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -1004,12 +1004,12 @@ class FilterApiTest extends TestCase
     {
         $filter = $this->getMockBuilder('FilterApiMock')
             ->disableOriginalConstructor()
-            ->setMethods(array('getFieldsFromArgs'))
+            ->setMethods(['getFieldsFromArgs'])
             ->getMock();
 
         $filter->expects($this->once())
             ->method('getFieldsFromArgs')
-            ->will($this->returnValue(array()));
+            ->will($this->returnValue([]));
 
         $service = $this->getMockBuilder('ServiceBase')
             ->disableOriginalConstructor()
@@ -1048,114 +1048,114 @@ class FilterApiTest extends TestCase
 
     public function providerTestFilterReturnedField()
     {
-        return array(
+        return [
 
             // only fields specified
-            array(
-                array(
+            [
+                [
                     'module' => 'Accounts',
                     'fields' => 'name,billing_address_street',
-                ),
-                array(
+                ],
+                [
                     'name',
                     'billing_address_street',
-                ),
-                array(
+                ],
+                [
                     'billing_address_country',
                     'website',
-                ),
-            ),
+                ],
+            ],
 
             // only view specified
-            array(
-                array(
+            [
+                [
                     'module' => 'Accounts',
                     'view' => 'list',
-                ),
-                array(
+                ],
+                [
                     'name',
                     'billing_address_country',
-                ),
-                array(
+                ],
+                [
                     'billing_address_street',
                     'website',
-                ),
-            ),
+                ],
+            ],
 
             // both fields and view
-            array(
-                array(
+            [
+                [
                     'module' => 'Accounts',
                     'fields' => 'name,billing_address_street',
                     'view' => 'list',
-                ),
-                array(
+                ],
+                [
                     'name',
                     'billing_address_street',
                     'billing_address_country',
-                ),
-                array(
+                ],
+                [
                     'website',
-                ),
-            ),
+                ],
+            ],
 
             // nothing specified, returns every field
-            array(
-                array(
+            [
+                [
                     'module' => 'Accounts',
-                ),
-                array(
+                ],
+                [
                     'name',
                     'billing_address_street',
                     'billing_address_country',
                     'website',
-                ),
-                array(
-                ),
-            ),
-        );
+                ],
+                [
+                ],
+            ],
+        ];
     }
 
     public function testAddFiltersWithFieldCompare()
     {
         /** @var SugarQuery $query */
-        $query = SugarTestReflection::callProtectedMethod('FilterApi', 'getQueryObject', array(
+        $query = SugarTestReflection::callProtectedMethod('FilterApi', 'getQueryObject', [
             BeanFactory::newBean('Accounts'),
-            array(
-                'select' => array('name', 'contacts'),
-                'order_by' => array(),
+            [
+                'select' => ['name', 'contacts'],
+                'order_by' => [],
                 'limit' => null,
                 'offset' => 0,
-            ),
-        ));
+            ],
+        ]);
 
         /** @var SugarQuery_Builder_Where|MockObject $where */
         $where = $this->getMockBuilder('SugarQuery_Builder_Where')
             ->disableOriginalConstructor()
-            ->setMethods(array('gt'))
+            ->setMethods(['gt'])
             ->getMockForAbstractClass();
         $where->expects($this->once())->method('gt')->with(
             $this->equalTo('date_entered'),
-            $this->equalTo(array('$field' => 'date_modified')),
+            $this->equalTo(['$field' => 'date_modified']),
             $this->anything()
         );
 
         SugarTestReflection::callProtectedMethod(
             'FilterApi',
             'addFilters',
-            array(
-                array(
-                    array(
-                        'date_entered' => array(
-                            '$gt' => array(
-                                '$field' => 'date_modified'
-                            ),
-                        ),
-                    )
-                ),
+            [
+                [
+                    [
+                        'date_entered' => [
+                            '$gt' => [
+                                '$field' => 'date_modified',
+                            ],
+                        ],
+                    ],
+                ],
                 $where,
-                $query
-            )
+                $query,
+            ]
         );
     }
 
@@ -1170,35 +1170,35 @@ class FilterApiTest extends TestCase
         /** @var SugarQuery_Builder_Where|MockObject $where */
         $where = $this->getMockBuilder('SugarQuery_Builder_Where')
             ->disableOriginalConstructor()
-            ->setMethods(array('dateRange'))
+            ->setMethods(['dateRange'])
             ->getMockForAbstractClass();
         $where->expects($this->once())->method('dateRange')->with(
             $this->equalTo('date_entered'),
             $this->equalTo(''),
             $this->equalTo($bean)
         );
-        FilterApiMock::addFilters(array(
-            array(
-                'date_entered' => array(
+        FilterApiMock::addFilters([
+            [
+                'date_entered' => [
                     '$dateRange' => '',
-                ),
-            ),
-        ), $where, $q);
+                ],
+            ],
+        ], $where, $q);
     }
 
     public function testGetQueryObjectDoesNotSelectLinkFields()
     {
         $seed = BeanFactory::newBean('Accounts');
         /** @var SugarQuery $query */
-        $query = SugarTestReflection::callProtectedMethod('FilterApi', 'getQueryObject', array(
+        $query = SugarTestReflection::callProtectedMethod('FilterApi', 'getQueryObject', [
             $seed,
-            array(
-                'select' => array('name', 'contacts'),
-                'order_by' => array(),
+            [
+                'select' => ['name', 'contacts'],
+                'order_by' => [],
                 'limit' => null,
                 'offset' => 0,
-            ),
-        ));
+            ],
+        ]);
         $this->assertTrue($query->select->checkField('name', $seed->getTableName()));
         $this->assertFalse($query->select->checkField('contacts', $seed->getTableName()));
     }

@@ -23,24 +23,24 @@ class PMSETerminateEventTest extends TestCase
     public function testRun()
     {
         $this->endEvent = $this->getMockBuilder('PMSETerminateEvent')
-            ->setMethods(array('prepareResponse', 'closeCase'))
+            ->setMethods(['prepareResponse', 'closeCase'])
             ->disableOriginalConstructor()
             ->getMock();
 
         $caseFlowHandlerMock = $this->getMockBuilder('PMSECaseFlowHandler')
-            ->setMethods(array('closeThreadByCaseIndex', 'closeCase', 'terminateCaseFlow', 'retrieveSugarQueryObject',
-                'setCloseStatusForThisThread', 'closeThreadByThreadIndex', 'retrieveBean'))
+            ->setMethods(['closeThreadByCaseIndex', 'closeCase', 'terminateCaseFlow', 'retrieveSugarQueryObject',
+                'setCloseStatusForThisThread', 'closeThreadByThreadIndex', 'retrieveBean'])
             ->getMock();
 
         $sugarQueryMock = $this->getMockBuilder('SugarQuery')
             ->disableOriginalConstructor()
-            ->setMethods(array('select', 'from', 'where', 'equals', 'execute'))
+            ->setMethods(['select', 'from', 'where', 'equals', 'execute'])
             ->getMock();
 
         $bean = $this->getMockBuilder('SugarBean')
             ->disableAutoload()
             ->disableOriginalConstructor()
-            ->setMethods(array('save'))
+            ->setMethods(['save'])
             ->getMock();
 
         $caseFlowHandlerMock->expects($this->once())
@@ -61,18 +61,18 @@ class PMSETerminateEventTest extends TestCase
 
         $sugarQueryMock->expects($this->once())
             ->method('execute')
-            ->will($this->returnValue(array(
-                array(
+            ->will($this->returnValue([
+                [
                     'cas_thread_index' => 1,
-                ),
-            )));
+                ],
+            ]));
 
         $this->endEvent->setCaseFlowHandler($caseFlowHandlerMock);
 
-        $flowData = array(
+        $flowData = [
             'cas_id' => 1,
-            'cas_index' => 2
-        );
+            'cas_index' => 2,
+        ];
 
         $this->endEvent->run($flowData, $bean, '');
     }

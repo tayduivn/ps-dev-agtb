@@ -23,7 +23,7 @@ class RS147Test extends TestCase
     /**
      * @var array Beans created in tests.
      */
-    protected static $createdBeans = array();
+    protected static $createdBeans = [];
 
     /**
      * @var DBManager
@@ -35,17 +35,17 @@ class RS147Test extends TestCase
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setUp('current_user', array(true, false));
+        SugarTestHelper::setUp('current_user', [true, false]);
         self::$db = DBManagerFactory::getInstance();
     }
 
     public static function tearDownAfterClass(): void
     {
-        $_REQUEST = array();
+        $_REQUEST = [];
         foreach (self::$createdBeans as $bean) {
             $bean->mark_deleted($bean->id);
         }
-        self::$createdBeans = array();
+        self::$createdBeans = [];
         SugarTestHelper::tearDown();
     }
 
@@ -55,10 +55,10 @@ class RS147Test extends TestCase
         $bean->first_name = 'RS147Test';
         $bean->save(false);
         array_push(self::$createdBeans, $bean);
-        $_REQUEST = array(
+        $_REQUEST = [
             'term' => 'RS147Test',
-            'qModule' => 'Contacts'
-        );
+            'qModule' => 'Contacts',
+        ];
         $controller = new MailMergeController();
         $this->expectOutputRegex('/"value":"RS147Test"/');
         $controller->action_search();
@@ -116,56 +116,56 @@ class RS147Test extends TestCase
 
     public function provider()
     {
-        return array(
-            array(
+        return [
+            [
                 'Contacts',
                 'Accounts',
-                array(),
-                array(),
-                'accounts'
-            ),
-            array(
+                [],
+                [],
+                'accounts',
+            ],
+            [
                 'Contacts',
                 'Opportunities',
-                array(),
-                array(),
-                'opportunities'
-            ),
-            array(
+                [],
+                [],
+                'opportunities',
+            ],
+            [
                 'Contacts',
                 'Cases',
-                array(),
-                array(),
-                'cases'
-            ),
-            array(
+                [],
+                [],
+                'cases',
+            ],
+            [
                 'Contacts',
                 'Bugs',
-                array(),
-                array(),
-                'bugs'
-            ),
-            array(
+                [],
+                [],
+                'bugs',
+            ],
+            [
                 'Contacts',
                 'Quotes',
-                array(),
-                array(),
-                'quotes'
-            ),
-            array(
+                [],
+                [],
+                'quotes',
+            ],
+            [
                 'Opportunities',
                 'Accounts',
-                array(),
-                array(),
-                'accounts'
-            ),
-            array(
+                [],
+                [],
+                'accounts',
+            ],
+            [
                 'Accounts',
                 'Opportunities',
-                array(),
-                array(),
-                'opportunities'
-            )
-        );
+                [],
+                [],
+                'opportunities',
+            ],
+        ];
     }
 }

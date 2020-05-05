@@ -21,16 +21,14 @@ class SugarChartFactoryTest extends TestCase
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
 
         global $sugar_config;
-        if(!empty($sugar_config['chartEngine']))
-        {
+        if (!empty($sugar_config['chartEngine'])) {
             $this->engine = $sugar_config['chartEngine'];
         }
     }
 
     protected function tearDown() : void
     {
-        if(!empty($this->engine))
-        {
+        if (!empty($this->engine)) {
             global $sugar_config;
             $sugar_config['chartEngine'] = $this->engine;
         }
@@ -55,5 +53,4 @@ class SugarChartFactoryTest extends TestCase
         $name = get_class($sugarChart);
         $this->assertEquals('sucroseReports', $name, 'Assert chart engine is sucroseReports');
     }
-
 }

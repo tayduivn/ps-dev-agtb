@@ -21,18 +21,18 @@ class Bug39780Test extends TestCase
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $this->contact = SugarTestContactUtilities::createContact();
-	    $this->defs = $this->contact->field_defs;
-	}
+        $this->defs = $this->contact->field_defs;
+    }
 
     protected function tearDown() : void
-	{
-	    $this->contact->field_defs = $this->defs;
-	    SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+    {
+        $this->contact->field_defs = $this->defs;
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
         SugarTestContactUtilities::removeAllCreatedContacts();
-	}
+    }
 
-	// Test unPopulateDefaultValues to make sure it doesn't generate any notices
+    // Test unPopulateDefaultValues to make sure it doesn't generate any notices
     /*
      * @group bug39780
      */
@@ -40,10 +40,9 @@ class Bug39780Test extends TestCase
     {
         $this->contact->first_name = 'SadekDizzle';
         $this->contact->field_defs['first_name']['default'] = 'SadekSnizzle';
-        try{
+        try {
             $this->contact->unPopulateDefaultValues();
-        }
-        catch(Exception $e){
+        } catch (Exception $e) {
             $this->assertTrue(false, "SugarBean->unPopulateDefaultValues is generating a notice/warning/fatal: " .$e->getMessage());
             return;
         }

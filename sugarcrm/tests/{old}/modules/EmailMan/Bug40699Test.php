@@ -16,69 +16,69 @@ use PHPUnit\Framework\TestCase;
 class Bug40699Test extends TestCase
 {
     protected function setUp() : void
-	{
+    {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
-        SugarTestHelper::setUp('current_user', array(true, true));
+        SugarTestHelper::setUp('current_user', [true, true]);
         $GLOBALS['db']->commit();
-	}
+    }
 
     protected function tearDown() : void
-	{
+    {
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestHelper::tearDown();
-	}
+    }
 
-	public function testGetListViewDataForAccounts()
-	{
-		$testAccount = SugarTestAccountUtilities::createAccount();
+    public function testGetListViewDataForAccounts()
+    {
+        $testAccount = SugarTestAccountUtilities::createAccount();
 
-		$emailMan = new EmailMan();
-		$emailMan->related_id = $testAccount->id;
-		$emailMan->related_type = 'Accounts';
+        $emailMan = new EmailMan();
+        $emailMan->related_id = $testAccount->id;
+        $emailMan->related_type = 'Accounts';
 
-		$filter = array();
-		$filter['campaign_name'] = 1;
-		$filter['recipient_name'] = 1;
-		$filter['recipient_email'] = 1;
-		$filter['message_name'] = 1;
-		$filter['send_date_time'] = 1;
-		$filter['send_attempts'] = 1;
-		$filter['in_queue'] = 1;
+        $filter = [];
+        $filter['campaign_name'] = 1;
+        $filter['recipient_name'] = 1;
+        $filter['recipient_email'] = 1;
+        $filter['message_name'] = 1;
+        $filter['send_date_time'] = 1;
+        $filter['send_attempts'] = 1;
+        $filter['in_queue'] = 1;
 
-		$params = array();
-		$params['massupdate'] = 1;
+        $params = [];
+        $params['massupdate'] = 1;
 
-		$data = $emailMan->get_list_view_data();
-		$this->assertEquals($testAccount->name, $data['RECIPIENT_NAME'], 'Assert that account name was correctly set');
+        $data = $emailMan->get_list_view_data();
+        $this->assertEquals($testAccount->name, $data['RECIPIENT_NAME'], 'Assert that account name was correctly set');
     }
 
 
-	public function testGetListViewDataForContacts()
-	{
-	    $testContact = SugarTestContactUtilities::createContact();
+    public function testGetListViewDataForContacts()
+    {
+        $testContact = SugarTestContactUtilities::createContact();
 
-		$emailMan = new EmailMan();
-		$emailMan->related_id = $testContact->id;
-		$emailMan->related_type = 'Contacts';
+        $emailMan = new EmailMan();
+        $emailMan->related_id = $testContact->id;
+        $emailMan->related_type = 'Contacts';
 
-		$filter = array();
-		$filter['campaign_name'] = 1;
-		$filter['recipient_name'] = 1;
-		$filter['recipient_email'] = 1;
-		$filter['message_name'] = 1;
-		$filter['send_date_time'] = 1;
-		$filter['send_attempts'] = 1;
-		$filter['in_queue'] = 1;
+        $filter = [];
+        $filter['campaign_name'] = 1;
+        $filter['recipient_name'] = 1;
+        $filter['recipient_email'] = 1;
+        $filter['message_name'] = 1;
+        $filter['send_date_time'] = 1;
+        $filter['send_attempts'] = 1;
+        $filter['in_queue'] = 1;
 
-		$params = array();
-		$params['massupdate'] = 1;
-		$GLOBALS['current_user']->setPreference('default_locale_name_format', 'f l');
+        $params = [];
+        $params['massupdate'] = 1;
+        $GLOBALS['current_user']->setPreference('default_locale_name_format', 'f l');
 
-		$contact_name_expected = $testContact->first_name . ' ' . $testContact->last_name;
+        $contact_name_expected = $testContact->first_name . ' ' . $testContact->last_name;
 
-		$data = $emailMan->get_list_view_data();
-		$this->assertEquals($contact_name_expected, $data['RECIPIENT_NAME'], 'Assert that contact name was correctly set');
+        $data = $emailMan->get_list_view_data();
+        $this->assertEquals($contact_name_expected, $data['RECIPIENT_NAME'], 'Assert that contact name was correctly set');
     }
 }

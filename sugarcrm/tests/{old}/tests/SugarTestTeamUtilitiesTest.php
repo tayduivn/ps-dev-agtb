@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
 
 class SugarTestTeamUtilitiesTest extends TestCase
 {
-    private $_before_snapshot = array();
+    private $_before_snapshot = [];
     
     protected function setUp() : void
     {
@@ -27,9 +27,9 @@ class SugarTestTeamUtilitiesTest extends TestCase
         SugarTestTeamUtilities::removeAllCreatedAnonymousTeams();
     }
 
-    public function _takeTeamDBSnapshot() 
+    public function _takeTeamDBSnapshot()
     {
-        $snapshot = array();
+        $snapshot = [];
         $query = 'SELECT * FROM teams';
         $result = $GLOBALS['db']->query($query);
         while ($row = $GLOBALS['db']->fetchByAssoc($result)) {
@@ -38,7 +38,7 @@ class SugarTestTeamUtilitiesTest extends TestCase
         return $snapshot;
     }
 
-    public function testCanCreateAnAnonymousTeam() 
+    public function testCanCreateAnAnonymousTeam()
     {
         $team = SugarTestTeamUtilities::createAnonymousTeam();
 
@@ -48,24 +48,30 @@ class SugarTestTeamUtilitiesTest extends TestCase
         $this->assertNotEquals($this->_before_snapshot, $after_snapshot, "Simply insure that something was added");
     }
 
-    public function testAnonymousTeamHasARandomTeamName() 
+    public function testAnonymousTeamHasARandomTeamName()
     {
         $first_team = SugarTestTeamUtilities::createAnonymousTeam();
         $this->assertNotEquals($first_team->name, '', 'team name should not be empty');
 
         $second_team = SugarTestTeamUtilities::createAnonymousTeam();
-        $this->assertNotEquals($first_team->name, $second_team->name,
-            'each team should have a unique name property');
+        $this->assertNotEquals(
+            $first_team->name,
+            $second_team->name,
+            'each team should have a unique name property'
+        );
     }
 
-    public function testCanTearDownAllCreatedAnonymousTeams() 
+    public function testCanTearDownAllCreatedAnonymousTeams()
     {
         for ($i = 0; $i < 5; $i++) {
             SugarTestTeamUtilities::createAnonymousTeam();
         }
         SugarTestTeamUtilities::removeAllCreatedAnonymousTeams();
         
-        $this->assertEquals($this->_before_snapshot, $this->_takeTeamDBSnapshot(),
-            "removeAllCreatedAnonymousTeams() should have removed the team it added");
+        $this->assertEquals(
+            $this->_before_snapshot,
+            $this->_takeTeamDBSnapshot(),
+            "removeAllCreatedAnonymousTeams() should have removed the team it added"
+        );
     }
 }

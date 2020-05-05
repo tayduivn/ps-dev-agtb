@@ -15,53 +15,53 @@ use PHPUnit\Framework\TestCase;
 class ViewClassicTest extends TestCase
 {
     public function testConstructor()
-	{
+    {
         $view = new ViewClassic();
 
-        $this->assertEquals('',$view->type);
-	}
+        $this->assertEquals('', $view->type);
+    }
 
-	public function testDisplayWithClassicView()
-	{
-        $view = $this->createPartialMock('ViewClassic', array('includeClassicFile'));
+    public function testDisplayWithClassicView()
+    {
+        $view = $this->createPartialMock('ViewClassic', ['includeClassicFile']);
 
-	    $view->module = 'testmodule'.mt_rand();
-	    $view->action = 'testaction'.mt_rand();
+        $view->module = 'testmodule'.mt_rand();
+        $view->action = 'testaction'.mt_rand();
 
-	    sugar_mkdir("modules/{$view->module}",null,true);
+        sugar_mkdir("modules/{$view->module}", null, true);
         sugar_touch("modules/{$view->module}/{$view->action}.php");
 
-	    $return = $view->display();
+        $return = $view->display();
 
-	    rmdir_recursive("modules/{$view->module}");
+        rmdir_recursive("modules/{$view->module}");
 
-	    $this->assertTrue($return);
-	}
+        $this->assertTrue($return);
+    }
 
-	public function testDisplayWithClassicCustomView()
-	{
-        $view = $this->createPartialMock('ViewClassic', array('includeClassicFile'));
+    public function testDisplayWithClassicCustomView()
+    {
+        $view = $this->createPartialMock('ViewClassic', ['includeClassicFile']);
 
-	    $view->module = 'testmodule'.mt_rand();
-	    $view->action = 'testaction'.mt_rand();
+        $view->module = 'testmodule'.mt_rand();
+        $view->action = 'testaction'.mt_rand();
 
-	    sugar_mkdir("custom/modules/{$view->module}",null,true);
+        sugar_mkdir("custom/modules/{$view->module}", null, true);
         sugar_touch("custom/modules/{$view->module}/{$view->action}.php");
 
-	    $return = $view->display();
+        $return = $view->display();
 
-	    rmdir_recursive("custom/modules/{$view->module}");
+        rmdir_recursive("custom/modules/{$view->module}");
 
-	    $this->assertTrue($return);
-	}
+        $this->assertTrue($return);
+    }
 
-	public function testDisplayWithNoClassicView()
-	{
-        $view = $this->createPartialMock('ViewClassic', array('includeClassicFile'));
+    public function testDisplayWithNoClassicView()
+    {
+        $view = $this->createPartialMock('ViewClassic', ['includeClassicFile']);
 
-	    $view->module = 'testmodule'.mt_rand();
-	    $view->action = 'testaction'.mt_rand();
+        $view->module = 'testmodule'.mt_rand();
+        $view->action = 'testaction'.mt_rand();
 
-	    $this->assertFalse($view->display());
-	}
+        $this->assertFalse($view->display());
+    }
 }

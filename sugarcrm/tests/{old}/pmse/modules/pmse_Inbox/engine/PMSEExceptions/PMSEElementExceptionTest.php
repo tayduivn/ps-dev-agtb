@@ -18,13 +18,13 @@ class PMSEElementExceptionTest extends TestCase
     public function testToString()
     {
         $message = 'Exception message';
-        $flowData = array('sample_flow_data');
+        $flowData = ['sample_flow_data'];
         $element = new stdClass();
         $code = 1;
         $exception = new PMSEElementException($message, $flowData, $element, $code);
         $result = $exception->__toString();
         $this->assertEquals("PMSEElementException: [1]: Exception message\n", $result);
         $this->assertEquals($element, $exception->getElement());
-        $this->assertEquals(array(0 => 'sample_flow_data', 'cas_flow_status'=>'ERROR'), $exception->getFlowData());
+        $this->assertEquals([0 => 'sample_flow_data', 'cas_flow_status'=>'ERROR'], $exception->getFlowData());
     }
 }

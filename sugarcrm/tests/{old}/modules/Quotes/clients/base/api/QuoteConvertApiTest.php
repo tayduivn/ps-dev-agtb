@@ -44,22 +44,22 @@ class QuoteConvertApiTest extends TestCase
         SugarTestHelper::setUp('app_list_strings');
 
         $this->opp = $this->getMockBuilder('Opportunity')
-            ->setMethods(array('save', 'retrieve', 'load_relationship', 'ACLAccess'))
+            ->setMethods(['save', 'retrieve', 'load_relationship', 'ACLAccess'])
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->opp_link2 = $this->getMockBuilder('Link2')
-            ->setMethods(array('add', 'get'))
+            ->setMethods(['add', 'get'])
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->quote = $this->getMockBuilder('Quote')
-            ->setMethods(array('save', 'retrieve', 'load_relationship', 'get_linked_beans', 'ACLAccess', 'get_product_bundles'))
+            ->setMethods(['save', 'retrieve', 'load_relationship', 'get_linked_beans', 'ACLAccess', 'get_product_bundles'])
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->quote_link2 = $this->getMockBuilder('Link2')
-            ->setMethods(array('add', 'get', 'getBeans'))
+            ->setMethods(['add', 'get', 'getBeans'])
             ->disableOriginalConstructor()
             ->getMock();
     }
@@ -89,7 +89,7 @@ class QuoteConvertApiTest extends TestCase
      */
     public function testConvertQuoteThrowsExceptionWhenNoSaveAccessToOpportunity()
     {
-        $convert_api = $this->getConvertApi('UnitTest', array('requireArgs', 'loadBean'));
+        $convert_api = $this->getConvertApi('UnitTest', ['requireArgs', 'loadBean']);
 
         $this->quote->expects($this->once())
             ->method('ACLAccess')
@@ -113,11 +113,11 @@ class QuoteConvertApiTest extends TestCase
 
         $mockServiceBase = new RestService();
 
-        $args = array(
+        $args = [
             'targetModule' => 'Opportunity',
             'module' => 'Quotes',
-            'record' => 'test_record'
-        );
+            'record' => 'test_record',
+        ];
 
         $this->expectException(SugarApiExceptionNotAuthorized::class);
         $convert_api->convertQuote($mockServiceBase, $args);
@@ -128,7 +128,7 @@ class QuoteConvertApiTest extends TestCase
      */
     public function testConvertQuoteThrowsExceptionWhenQuoteHasOpportunity()
     {
-        $convert_api = $this->getConvertApi('UnitTest', array('requireArgs', 'loadBean'));
+        $convert_api = $this->getConvertApi('UnitTest', ['requireArgs', 'loadBean']);
 
         $this->quote->expects($this->once())
             ->method('ACLAccess')
@@ -147,7 +147,7 @@ class QuoteConvertApiTest extends TestCase
 
         $this->quote_link2->expects($this->once())
             ->method('getBeans')
-            ->will($this->returnValue(array('one record')));
+            ->will($this->returnValue(['one record']));
 
         $convert_api->expects($this->any())
             ->method('loadBean')
@@ -160,11 +160,11 @@ class QuoteConvertApiTest extends TestCase
 
         $mockServiceBase = new RestService();
 
-        $args = array(
+        $args = [
             'targetModule' => 'Opportunity',
             'module' => 'Quotes',
-            'record' => 'test_record'
-        );
+            'record' => 'test_record',
+        ];
 
         $this->expectException(SugarApiExceptionEditConflict::class);
         $convert_api->convertQuote($mockServiceBase, $args);
@@ -177,15 +177,15 @@ class QuoteConvertApiTest extends TestCase
     {
         $convert_api = $this->getConvertApi(
             'UnitTest',
-            array(
+            [
                 'requireArgs',
                 'loadBean',
                 'formatBean',
                 'mapQuoteToOpportunity',
                 'convertQuoteLineItemsToRevenueLineItems',
                 'linkQuoteContactsToOpportunity',
-                'linkQuoteContractsToOpportunity'
-            )
+                'linkQuoteContractsToOpportunity',
+            ]
         );
 
         $convert_api->expects($this->any())
@@ -213,8 +213,8 @@ class QuoteConvertApiTest extends TestCase
             ->method('formatBean')
             ->will(
                 $this->onConsecutiveCalls(
-                    array('id' => 'opp_id', '_module' => 'Opportunity'),
-                    array('id' => 'quote_id', '_module' => 'Quote')
+                    ['id' => 'opp_id', '_module' => 'Opportunity'],
+                    ['id' => 'quote_id', '_module' => 'Quote']
                 )
             );
 
@@ -240,15 +240,15 @@ class QuoteConvertApiTest extends TestCase
 
         $this->quote_link2->expects($this->once())
             ->method('getBeans')
-            ->will($this->returnValue(array()));
+            ->will($this->returnValue([]));
 
         $mockServiceBase = new RestService();
 
-        $args = array(
+        $args = [
             'targetModule' => 'Opportunity',
             'module' => 'Quotes',
-            'record' => 'test_record'
-        );
+            'record' => 'test_record',
+        ];
 
         $return = $convert_api->convertQuote($mockServiceBase, $args);
 
@@ -261,7 +261,7 @@ class QuoteConvertApiTest extends TestCase
      */
     public function testMapQuoteToOpportunity()
     {
-        $values = array(
+        $values = [
             'id' => create_guid(),
             'name' => 'UnitTest',
             'assigned_user_id' => 'TestAssignedUserId',
@@ -270,19 +270,19 @@ class QuoteConvertApiTest extends TestCase
             'currency_id' => 'CurrencyId',
             'base_rate' => '1.0',
             'billing_account_id' => 'BillingAccountId',
-            'date_quote_expected_closed' => '2004-01-01'
-        );
+            'date_quote_expected_closed' => '2004-01-01',
+        ];
 
         foreach ($values as $key => $value) {
             $this->quote->$key = $value;
         }
 
-        $quoteToOppKeyMap = array(
+        $quoteToOppKeyMap = [
             'date_quote_expected_closed' => 'date_closed',
             'billing_account_id' => 'account_id',
             'id' => 'quote_id',
             'total' => 'amount',
-        );
+        ];
 
         $this->opp->expects($this->once())
             ->method('save');
@@ -292,7 +292,7 @@ class QuoteConvertApiTest extends TestCase
         SugarTestReflection::callProtectedMethod(
             $convert_api,
             'mapQuoteToOpportunity',
-            array($this->quote, $this->opp)
+            [$this->quote, $this->opp]
         );
 
         foreach ($values as $key => $value) {
@@ -309,7 +309,7 @@ class QuoteConvertApiTest extends TestCase
      */
     public function testMapQuoteToOpportunityDoesNotSetOppAmountWhenNotForecastingByOpps()
     {
-        $values = array(
+        $values = [
             'id' => create_guid(),
             'name' => 'UnitTest',
             'assigned_user_id' => 'TestAssignedUserId',
@@ -318,8 +318,8 @@ class QuoteConvertApiTest extends TestCase
             'currency_id' => 'CurrencyId',
             'base_rate' => '1.0',
             'billing_account_id' => 'BillingAccountId',
-            'date_quote_expected_closed' => '2004-01-01'
-        );
+            'date_quote_expected_closed' => '2004-01-01',
+        ];
 
         foreach ($values as $key => $value) {
             $this->quote->$key = $value;
@@ -333,7 +333,7 @@ class QuoteConvertApiTest extends TestCase
         SugarTestReflection::callProtectedMethod(
             $convert_api,
             'mapQuoteToOpportunity',
-            array($this->quote, $this->opp)
+            [$this->quote, $this->opp]
         );
 
         $this->assertEmpty($this->opp->amount);
@@ -350,16 +350,16 @@ class QuoteConvertApiTest extends TestCase
             ->method('add');
 
         $rliMock = $this->getMockBuilder('RevenueLineItem')
-            ->setMethods(array('save'))
+            ->setMethods(['save'])
             ->getMock();
 
         $mockRliClassName = get_class($rliMock);
 
-        $products = array();
+        $products = [];
 
         for ($i = 0; $i < 3; $i++) {
             $productMock = $this->getMockBuilder('Product')
-                ->setMethods(array('convertToRevenueLineItem'))
+                ->setMethods(['convertToRevenueLineItem'])
                 ->getMock();
 
             $productMock->expects($this->once())
@@ -370,7 +370,7 @@ class QuoteConvertApiTest extends TestCase
         }
 
         $mockBundle = $this->getMockBuilder('ProductBundle')
-            ->setMethods(array('getProducts'))
+            ->setMethods(['getProducts'])
             ->getMock();
 
         $mockBundle->expects($this->once())
@@ -380,7 +380,7 @@ class QuoteConvertApiTest extends TestCase
         $this->quote->expects($this->once())
             ->method('get_product_bundles')
             ->will(
-                $this->returnValue(array($mockBundle))
+                $this->returnValue([$mockBundle])
             );
 
         $convert_api = $this->getConvertApi('RevenueLineItems');
@@ -388,7 +388,7 @@ class QuoteConvertApiTest extends TestCase
         SugarTestReflection::callProtectedMethod(
             $convert_api,
             'convertQuoteLineItemsToRevenueLineItems',
-            array($this->quote, $this->opp)
+            [$this->quote, $this->opp]
         );
     }
 
@@ -404,7 +404,7 @@ class QuoteConvertApiTest extends TestCase
         $actual = SugarTestReflection::callProtectedMethod(
             $convert_api,
             'getCommitStage',
-            array($probability)
+            [$probability]
         );
 
         $this->assertSame($expected, $actual);
@@ -417,10 +417,10 @@ class QuoteConvertApiTest extends TestCase
      */
     public static function dataProviderGetCommitStage()
     {
-        return array(
-            array('10', 'exclude'),
-            array('65', 'include')
-        );
+        return [
+            ['10', 'exclude'],
+            ['65', 'include'],
+        ];
     }
 
     /**
@@ -433,7 +433,7 @@ class QuoteConvertApiTest extends TestCase
         $return = SugarTestReflection::callProtectedMethod(
             $convert_api,
             'convertQuoteLineItemsToRevenueLineItems',
-            array($this->quote, $this->opp)
+            [$this->quote, $this->opp]
         );
 
         $this->assertFalse($return);
@@ -453,14 +453,14 @@ class QuoteConvertApiTest extends TestCase
 
         $this->quote_link2->expects($this->once())
             ->method('get')
-            ->will($this->returnValue(array('id_1', 'id-2')));
+            ->will($this->returnValue(['id_1', 'id-2']));
 
         $convert_api = $this->getConvertApi('UnitTest');
 
         SugarTestReflection::callProtectedMethod(
             $convert_api,
             'linkQuoteContractsToOpportunity',
-            array($this->quote, $this->opp)
+            [$this->quote, $this->opp]
         );
     }
 
@@ -478,14 +478,14 @@ class QuoteConvertApiTest extends TestCase
 
         $this->quote_link2->expects($this->once())
             ->method('get')
-            ->will($this->returnValue(array()));
+            ->will($this->returnValue([]));
 
         $convert_api = $this->getConvertApi('UnitTest');
 
         SugarTestReflection::callProtectedMethod(
             $convert_api,
             'linkQuoteContractsToOpportunity',
-            array($this->quote, $this->opp)
+            [$this->quote, $this->opp]
         );
     }
 
@@ -510,8 +510,8 @@ class QuoteConvertApiTest extends TestCase
             ->method('get')
             ->will(
                 $this->onConsecutiveCalls(
-                    array('id_1'),
-                    array('id_2')
+                    ['id_1'],
+                    ['id_2']
                 )
             );
 
@@ -520,7 +520,7 @@ class QuoteConvertApiTest extends TestCase
         SugarTestReflection::callProtectedMethod(
             $convert_api,
             'linkQuoteContactsToOpportunity',
-            array($this->quote, $this->opp)
+            [$this->quote, $this->opp]
         );
     }
 
@@ -545,8 +545,8 @@ class QuoteConvertApiTest extends TestCase
             ->method('get')
             ->will(
                 $this->onConsecutiveCalls(
-                    array('id_1'),
-                    array('id_1')
+                    ['id_1'],
+                    ['id_1']
                 )
             );
 
@@ -555,7 +555,7 @@ class QuoteConvertApiTest extends TestCase
         SugarTestReflection::callProtectedMethod(
             $convert_api,
             'linkQuoteContactsToOpportunity',
-            array($this->quote, $this->opp)
+            [$this->quote, $this->opp]
         );
     }
 
@@ -576,8 +576,8 @@ class QuoteConvertApiTest extends TestCase
             ->method('get')
             ->will(
                 $this->onConsecutiveCalls(
-                    array(),
-                    array()
+                    [],
+                    []
                 )
             );
 
@@ -586,7 +586,7 @@ class QuoteConvertApiTest extends TestCase
         SugarTestReflection::callProtectedMethod(
             $convert_api,
             'linkQuoteContactsToOpportunity',
-            array($this->quote, $this->opp)
+            [$this->quote, $this->opp]
         );
     }
 
@@ -597,7 +597,7 @@ class QuoteConvertApiTest extends TestCase
      * @param array $mock_methods
      * @return MockObject
      */
-    protected function getConvertApi($forecast_by, array $mock_methods = array())
+    protected function getConvertApi($forecast_by, array $mock_methods = [])
     {
         if (!in_array('getForecastConfig', $mock_methods)) {
             $mock_methods[] = 'getForecastConfig';
@@ -611,14 +611,14 @@ class QuoteConvertApiTest extends TestCase
         $convert_api->expects($this->any())
             ->method('getForecastConfig')
             ->will($this->returnValue(
-                array(
+                [
                     'forecast_by' => $forecast_by,
                     'forecast_ranges' => 'show_binary',
-                    'show_binary_ranges' => array(
-                        'include' => array('min' => 60, 'max' => 100),
-                        'exclude' => array('min' => 0, 'max' => 59)
-                    )
-                )
+                    'show_binary_ranges' => [
+                        'include' => ['min' => 60, 'max' => 100],
+                        'exclude' => ['min' => 0, 'max' => 59],
+                    ],
+                ]
             ));
 
         return $convert_api;

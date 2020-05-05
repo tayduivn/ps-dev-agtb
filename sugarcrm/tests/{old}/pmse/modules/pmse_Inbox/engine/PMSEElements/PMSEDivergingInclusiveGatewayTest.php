@@ -23,21 +23,21 @@ class PMSEDivergingInclusiveGatewayTest extends TestCase
     public function testRun()
     {
         $this->divergingInclusiveGateway = $this->getMockBuilder('PMSEDivergingInclusiveGateway')
-            ->setMethods(array('filterFlows', 'retrieveFollowingFlows', 'prepareResponse'))
+            ->setMethods(['filterFlows', 'retrieveFollowingFlows', 'prepareResponse'])
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->divergingInclusiveGateway->expects($this->once())
             ->method('filterFlows')
-            ->will($this->returnValue(array('some_flow')));
+            ->will($this->returnValue(['some_flow']));
 
-        $flowData = array(
-            'id' => 'some_data'
-        );
+        $flowData = [
+            'id' => 'some_data',
+        ];
 
         $this->divergingInclusiveGateway->expects($this->once())
             ->method('prepareResponse')
-            ->with($flowData, 'ROUTE', 'CREATE', array('some_flow'));
+            ->with($flowData, 'ROUTE', 'CREATE', ['some_flow']);
 
         $this->divergingInclusiveGateway->run($flowData);
     }
@@ -45,21 +45,21 @@ class PMSEDivergingInclusiveGatewayTest extends TestCase
     public function testRunWithoutFilters()
     {
         $this->divergingInclusiveGateway = $this->getMockBuilder('PMSEDivergingInclusiveGateway')
-            ->setMethods(array('filterFlows', 'retrieveFollowingFlows', 'prepareResponse'))
+            ->setMethods(['filterFlows', 'retrieveFollowingFlows', 'prepareResponse'])
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->divergingInclusiveGateway->expects($this->once())
             ->method('filterFlows')
-            ->will($this->returnValue(array()));
+            ->will($this->returnValue([]));
 
-        $flowData = array(
-            'id' => 'some_data'
-        );
+        $flowData = [
+            'id' => 'some_data',
+        ];
 
         $this->divergingInclusiveGateway->expects($this->once())
             ->method('prepareResponse')
-            ->with($flowData, 'WAIT', 'CREATE', array());
+            ->with($flowData, 'WAIT', 'CREATE', []);
 
         $this->divergingInclusiveGateway->run($flowData);
     }

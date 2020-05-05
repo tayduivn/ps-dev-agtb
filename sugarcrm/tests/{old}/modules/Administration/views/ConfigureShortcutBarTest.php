@@ -31,20 +31,20 @@ class ConfigureShortcutBarTest extends TestCase
     public function testGetQuickCreateModules_returnsCorrectNumberOfEnabledAndDisabledModules()
     {
         global $moduleList;
-        $moduleList = array('Accounts', 'Contacts', 'Leads');
-        $accountsMetadata = array(
+        $moduleList = ['Accounts', 'Contacts', 'Leads'];
+        $accountsMetadata = [
             'visible' => true,
             'order' => 0,
-        );
-        $contactsMetadata = array(
+        ];
+        $contactsMetadata = [
             'visible' => false,
-        );
-        $leadsMetadata = array(
+        ];
+        $leadsMetadata = [
             'visible' => true,
             'order' => 1,
-        );
+        ];
 
-        $stub = $this->createPartialMock('ViewConfigureShortcutBarMock', array('getQuickCreateMetadata'));
+        $stub = $this->createPartialMock('ViewConfigureShortcutBarMock', ['getQuickCreateMetadata']);
         $stub->expects($this->at(0))
             ->method('getQuickCreateMetadata')
             ->with('Accounts')
@@ -70,20 +70,20 @@ class ConfigureShortcutBarTest extends TestCase
     public function testGetQuickCreateModules_returnsOrderForAllEnabledModules()
     {
         global $moduleList;
-        $moduleList = array('Accounts', 'Contacts', 'Leads');
-        $accountsMetadata = array(
+        $moduleList = ['Accounts', 'Contacts', 'Leads'];
+        $accountsMetadata = [
             'visible' => true,
             'order' => 0,
-        );
-        $contactsMetadata = array(
+        ];
+        $contactsMetadata = [
             'visible' => false,
-        );
-        $leadsMetadata = array(
+        ];
+        $leadsMetadata = [
             'visible' => true,
             'order' => 1,
-        );
+        ];
 
-        $stub = $this->createPartialMock('ViewConfigureShortcutBarMock', array('getQuickCreateMetadata'));
+        $stub = $this->createPartialMock('ViewConfigureShortcutBarMock', ['getQuickCreateMetadata']);
         $stub->expects($this->at(0))
             ->method('getQuickCreateMetadata')
             ->with('Accounts')
@@ -109,25 +109,25 @@ class ConfigureShortcutBarTest extends TestCase
      */
     public function testSaveChangesToQuickCreateMetadata_setDisabledToEnabled_moduleIsEnabled()
     {
-        $enabled = array(
-            'Accounts' => array('visible' => true, 'order' => 0,),
-        );
-        $disabled = array(
-            'Contacts' => array('visible' => false,),
-        );
-        $modulesToEnable = array(
+        $enabled = [
+            'Accounts' => ['visible' => true, 'order' => 0,],
+        ];
+        $disabled = [
+            'Contacts' => ['visible' => false,],
+        ];
+        $modulesToEnable = [
             'Accounts' => 0,
             'Contacts' => 1,
-        );
+        ];
 
-        $mock = $this->createPartialMock('ViewConfigureShortcutBarMock', array('setQuickCreateMetadata'));
+        $mock = $this->createPartialMock('ViewConfigureShortcutBarMock', ['setQuickCreateMetadata']);
         $mock->expects($this->once())
             ->method('setQuickCreateMetadata')
             ->with(
-                array(
+                [
                      'visible' => true,
                      'order' => 1,
-                ),
+                ],
                 'Contacts'
             )
             ->will($this->returnValue(true));
@@ -142,21 +142,21 @@ class ConfigureShortcutBarTest extends TestCase
      */
     public function testSaveChangesToQuickCreateMetadata_setEnabledToDisabled_moduleIsDisabled()
     {
-        $enabled = array(
-            'Accounts' => array('visible' => true, 'order' => 0,),
-        );
-        $disabled = array(
-            'Contacts' => array('visible' => false,),
-        );
-        $modulesToEnable = array();
+        $enabled = [
+            'Accounts' => ['visible' => true, 'order' => 0,],
+        ];
+        $disabled = [
+            'Contacts' => ['visible' => false,],
+        ];
+        $modulesToEnable = [];
 
-        $mock = $this->createPartialMock('ViewConfigureShortcutBarMock', array('setQuickCreateMetadata'));
+        $mock = $this->createPartialMock('ViewConfigureShortcutBarMock', ['setQuickCreateMetadata']);
         $mock->expects($this->once())
             ->method('setQuickCreateMetadata')
             ->with(
-                array(
+                [
                      'visible' => false,
-                ),
+                ],
                 'Accounts'
             )
             ->will($this->returnValue(true));
@@ -171,17 +171,17 @@ class ConfigureShortcutBarTest extends TestCase
      */
     public function testSaveChangesToQuickCreateMetadata_noChange_setQuickCreateMetadataShouldNotBeCalled()
     {
-        $enabled = array(
-            'Accounts' => array('visible' => true, 'order' => 0,),
-        );
-        $disabled = array(
-            'Contacts' => array('visible' => false,),
-        );
-        $modulesToEnable = array(
+        $enabled = [
+            'Accounts' => ['visible' => true, 'order' => 0,],
+        ];
+        $disabled = [
+            'Contacts' => ['visible' => false,],
+        ];
+        $modulesToEnable = [
             'Accounts' => 0,
-        );
+        ];
 
-        $mock = $this->createPartialMock('ViewConfigureShortcutBarMock', array('setQuickCreateMetadata'));
+        $mock = $this->createPartialMock('ViewConfigureShortcutBarMock', ['setQuickCreateMetadata']);
         $mock->expects($this->never())
             ->method('setQuickCreateMetadata');
 
@@ -195,34 +195,34 @@ class ConfigureShortcutBarTest extends TestCase
      */
     public function testSaveChangesToQuickCreateMetadata_changeOrder_returnsCorrectOrder()
     {
-        $enabled = array(
-            'Accounts' => array('visible' => true, 'order' => 0,),
-            'Contacts' => array('visible' => true, 'order' => 1,),
-        );
-        $disabled = array();
-        $modulesToEnable = array(
+        $enabled = [
+            'Accounts' => ['visible' => true, 'order' => 0,],
+            'Contacts' => ['visible' => true, 'order' => 1,],
+        ];
+        $disabled = [];
+        $modulesToEnable = [
             'Contacts' => 0,
             'Accounts' => 1,
-        );
+        ];
 
-        $mock = $this->createPartialMock('ViewConfigureShortcutBarMock', array('setQuickCreateMetadata'));
+        $mock = $this->createPartialMock('ViewConfigureShortcutBarMock', ['setQuickCreateMetadata']);
         $mock->expects($this->at(0))
             ->method('setQuickCreateMetadata')
             ->with(
-                array(
+                [
                      'visible' => true,
                      'order' => 1,
-                ),
+                ],
                 'Accounts'
             )
             ->will($this->returnValue(true));
         $mock->expects($this->at(1))
             ->method('setQuickCreateMetadata')
             ->with(
-                array(
+                [
                      'visible' => true,
                      'order' => 0,
-                ),
+                ],
                 'Contacts'
             )
             ->will($this->returnValue(true));
@@ -237,18 +237,18 @@ class ConfigureShortcutBarTest extends TestCase
      */
     public function testSaveChangesToQuickCreateMetadata_failsWhileWritingMetadata_returnsFalse()
     {
-        $enabled = array(
-            'Accounts' => array('visible' => true, 'order' => 0,),
-        );
-        $disabled = array(
-            'Contacts' => array('visible' => false,),
-        );
-        $modulesToEnable = array(
+        $enabled = [
+            'Accounts' => ['visible' => true, 'order' => 0,],
+        ];
+        $disabled = [
+            'Contacts' => ['visible' => false,],
+        ];
+        $modulesToEnable = [
             'Accounts' => 0,
             'Contacts' => 1,
-        );
+        ];
 
-        $mock = $this->createPartialMock('ViewConfigureShortcutBarMock', array('setQuickCreateMetadata'));
+        $mock = $this->createPartialMock('ViewConfigureShortcutBarMock', ['setQuickCreateMetadata']);
         $mock->expects($this->once())
             ->method('setQuickCreateMetadata')
             ->will($this->returnValue(false));
@@ -263,11 +263,11 @@ class ConfigureShortcutBarTest extends TestCase
      */
     public function testSortEnabledModules_shouldSortBasedOnOrderAttribute()
     {
-        $modules = array(
-            'Accounts' => array('order' => 2),
-            'Contacts' => array('order' => 0),
-            'Leads' => array('order' => 1),
-        );
+        $modules = [
+            'Accounts' => ['order' => 2],
+            'Contacts' => ['order' => 0],
+            'Leads' => ['order' => 1],
+        ];
 
         $quickcreate = new ViewConfigureShortcutBarMock();
         $actual = $quickcreate->sortEnabledModules($modules);
@@ -299,10 +299,10 @@ class ConfigureShortcutBarTest extends TestCase
      */
     public function testFilterAndFormatModuleList_ReturnsFilteredData()
     {
-        $moduleList = array(
-            'PdfManager' => array('module'=>'PdfManager'),
-            'Accounts' => array('module'=>'Accounts'),
-        );
+        $moduleList = [
+            'PdfManager' => ['module'=>'PdfManager'],
+            'Accounts' => ['module'=>'Accounts'],
+        ];
         $obj = new ViewConfigureShortcutBarMock();
         $results = $obj->filterAndFormatModuleList($moduleList);
 

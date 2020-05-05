@@ -30,7 +30,7 @@ class ContainerTest extends TestCase
     public function testGetOverloadLazyLoad($property)
     {
         $initMethod = 'init' . ucfirst($property);
-        $container = $this->getContainerMock(array($initMethod));
+        $container = $this->getContainerMock([$initMethod]);
         $container->expects($this->once())
             ->method($initMethod);
 
@@ -39,16 +39,16 @@ class ContainerTest extends TestCase
 
     public function dataProviderTestGetOverloadLazyLoad()
     {
-        return array(
-            array('logger'),
-            array('metaDataHelper'),
-            array('queueManager'),
-            array('client'),
-            array('indexPool'),
-            array('indexManager'),
-            array('mappingManager'),
-            array('indexer'),
-        );
+        return [
+            ['logger'],
+            ['metaDataHelper'],
+            ['queueManager'],
+            ['client'],
+            ['indexPool'],
+            ['indexManager'],
+            ['mappingManager'],
+            ['indexer'],
+        ];
     }
 
     /**
@@ -60,19 +60,19 @@ class ContainerTest extends TestCase
         $container = $this->getContainerMock();
 
         // empty base values
-        $this->assertEquals(array(), $container->getConfig('engine'));
-        $this->assertEquals(array(), $container->getConfig('global'));
+        $this->assertEquals([], $container->getConfig('engine'));
+        $this->assertEquals([], $container->getConfig('global'));
 
         // default value
-        $this->assertEquals(array('default'), $container->getConfig('foo', array('default')));
+        $this->assertEquals(['default'], $container->getConfig('foo', ['default']));
 
         // setter existing key
-        $container->setConfig('engine', array('bar'));
-        $this->assertEquals(array('bar'), $container->getConfig('engine'));
+        $container->setConfig('engine', ['bar']);
+        $this->assertEquals(['bar'], $container->getConfig('engine'));
 
         // setter new key
-        $container->setConfig('new', array('beer'));
-        $this->assertEquals(array('beer'), $container->getConfig('new'));
+        $container->setConfig('new', ['beer']);
+        $this->assertEquals(['beer'], $container->getConfig('new'));
     }
 
     /**
@@ -87,7 +87,7 @@ class ContainerTest extends TestCase
     {
         // test if default providers are properly registered
         $container = new Container();
-        $this->assertEquals(array('GlobalSearch', 'Visibility'), $container->getRegisteredProviders());
+        $this->assertEquals(['GlobalSearch', 'Visibility'], $container->getRegisteredProviders());
 
         // Register/unregister new provider
         $this->assertFalse($container->isProviderAvailable('new'));
@@ -108,10 +108,10 @@ class ContainerTest extends TestCase
     {
         $user = $this->getMockBuilder('User')
             ->disableOriginalConstructor()
-            ->setMethods(array())
+            ->setMethods([])
             ->getMock();
 
-        $container = $this->getContainerMock(array('getCurrentUser'));
+        $container = $this->getContainerMock(['getCurrentUser']);
 
         $container->expects($this->once())
             ->method('getCurrentUser')
@@ -125,12 +125,12 @@ class ContainerTest extends TestCase
 
     public function dataProviderTestGetProvider()
     {
-        return array(
-            array(
+        return [
+            [
                 'GlobalSearch',
                 '\Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\GlobalSearch',
-            ),
-        );
+            ],
+        ];
     }
 
     /**

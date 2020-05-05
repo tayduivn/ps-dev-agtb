@@ -38,14 +38,12 @@ class GetTemplateNameForNotificationEmailTest extends TestCase
         global $beanList, $objectList;
         if (isset($this->accountBeanName)) {
             $beanList['Accounts'] = $this->accountBeanName;
-        }
-        else {
+        } else {
             unset($beanList['Accounts']);
         }
         if (isset($this->accountObjectName)) {
             $objectList['Accounts'] = $this->accountObjectName;
-        }
-        else {
+        } else {
             unset($objectList['Accounts']);
         }
         SugarTestHelper::tearDown();

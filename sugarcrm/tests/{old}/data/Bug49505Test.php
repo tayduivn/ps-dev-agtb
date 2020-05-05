@@ -21,7 +21,7 @@ class Bug49505Test extends TestCase
     /**
      * @var array
      */
-    private $_createdBeans = array();
+    private $_createdBeans = [];
 
     protected function setUp() : void
     {
@@ -43,10 +43,10 @@ class Bug49505Test extends TestCase
     public function testGetRelatedListFunctionWithLink2Class()
     {
         $focusModule = 'Accounts';
-        $linkedModules = array(
+        $linkedModules = [
             'Bugs', // many-to-many
-            'Contacts' // one-to-many
-        );
+            'Contacts', // one-to-many
+        ];
 
         $focus = BeanFactory::newBean($focusModule);
         $focus->name = "bug49505";
@@ -60,7 +60,7 @@ class Bug49505Test extends TestCase
             $this->_createdBeans[] = $linkedBean;
 
             $link = new Link2(strtolower($v), $focus);
-            $link->add(array($linkedBean));
+            $link->add([$linkedBean]);
 
             // get relation from 'Link2' class
             $link2List = $focus->get_related_list($linkedBean, strtolower($v));

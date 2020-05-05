@@ -31,7 +31,7 @@ class TrackableArrayTest extends TestCase
         $arr = new TrackableArray();
         $arr['a'] = 1;
         $arr['b'] = 'string';
-        $arr['c'] = array('data');
+        $arr['c'] = ['data'];
         $arr['d'] = 'not changed';
         $arr->enableTracking();
         $arr['a'] += 1;
@@ -40,7 +40,7 @@ class TrackableArrayTest extends TestCase
 
         $changedKeys = $arr->getChangedKeys();
         sort($changedKeys);
-        $this->assertSame(array('a', 'b', 'c'), $changedKeys);
+        $this->assertSame(['a', 'b', 'c'], $changedKeys);
     }
 
     /**
@@ -56,12 +56,12 @@ class TrackableArrayTest extends TestCase
         $arr[] = "zero";
         $arr->enableTracking();
         $arr[] = "one";
-        $this->assertSame(array(1), $arr->getChangedKeys());
+        $this->assertSame([1], $arr->getChangedKeys());
         $arr[] = "two";
-        $this->assertSame(array(1, 2), $arr->getChangedKeys());
+        $this->assertSame([1, 2], $arr->getChangedKeys());
         $arr["4"] = "four";
         $arr[] = "five";
-        $this->assertSame(array(1, 2, 4, 5), $arr->getChangedKeys());
+        $this->assertSame([1, 2, 4, 5], $arr->getChangedKeys());
     }
 
 
@@ -79,7 +79,7 @@ class TrackableArrayTest extends TestCase
         $arr['b'] = 'bar';
         $arr->enableTracking();
         unset($arr['a']);
-        $this->assertSame(array('a'), $arr->getChangedKeys());
+        $this->assertSame(['a'], $arr->getChangedKeys());
     }
 
 
@@ -92,7 +92,7 @@ class TrackableArrayTest extends TestCase
      */
     public function testArrayValuesAreIdentical()
     {
-        $array = array();
+        $array = [];
         $tracked = new TrackableArray();
 
         //Appending value to empty array
@@ -161,24 +161,24 @@ class TrackableArrayTest extends TestCase
         $tracked['deep']['a'] = 2;
         $tracked['new_deep']['a'] = 1;
         $tracked['tobeChanged'] = 'changed';
-        $tracked['nested'] = array("one" => 1, "some" => array("a", "b"));
-        $arr = array(
+        $tracked['nested'] = ["one" => 1, "some" => ["a", "b"]];
+        $arr = [
             'toBeUnset' => true,
             'tobeChanged' => 1,
-            'deep' => array('a' => 1)
-        );
+            'deep' => ['a' => 1],
+        ];
         $tracked->applyTrackedChangesToArray($arr);
-        $this->assertSame(array(
+        $this->assertSame([
             'tobeChanged' => 'changed',
-            'deep' => array(
-                'a' => 2
-            ),
-            'new_deep' => array(
-                'a' => 1
-            ),
-            'nested' => array('some' => array('a', 'b'), 'one' => 1),
+            'deep' => [
+                'a' => 2,
+            ],
+            'new_deep' => [
+                'a' => 1,
+            ],
+            'nested' => ['some' => ['a', 'b'], 'one' => 1],
             'tobeAdded' => true,
-        ), $arr);
+        ], $arr);
     }
 
     /**
@@ -188,10 +188,10 @@ class TrackableArrayTest extends TestCase
      */
     public function testPopulateFromArray()
     {
-        $arr = array(
+        $arr = [
             'a' => 1,
-            'deep' => array('b' => 2),
-        );
+            'deep' => ['b' => 2],
+        ];
         $trackable = new TrackableArray($arr);
 
 
@@ -218,7 +218,7 @@ class TrackableArrayTest extends TestCase
      */
     public function testInArrayAccess()
     {
-        $track = new TrackableArray(array('red', 'green', 'blue'));
+        $track = new TrackableArray(['red', 'green', 'blue']);
 
         $this->assertTrue(ArrayFunctions::in_array_access('red', $track));
         $this->assertFalse(ArrayFunctions::in_array_access('yellow', $track));
@@ -230,11 +230,11 @@ class TrackableArrayTest extends TestCase
      */
     public function testArrayAccessMerge()
     {
-        $track = new TrackableArray(array('red', 'green', 'blue'));
-        $toMerge = array('yellow');
+        $track = new TrackableArray(['red', 'green', 'blue']);
+        $toMerge = ['yellow'];
 
         $this->assertSame(
-            array('red', 'green', 'blue', 'yellow'),
+            ['red', 'green', 'blue', 'yellow'],
             ArrayFunctions::array_access_merge($track, $toMerge)
         );
     }
@@ -246,7 +246,7 @@ class TrackableArrayTest extends TestCase
      */
     public function testArrayAccessKeys()
     {
-        $arr = array('red' => 'RED!', 'green', 'blue');
+        $arr = ['red' => 'RED!', 'green', 'blue'];
         $track = new TrackableArray($arr);
 
         $this->assertSame(array_keys($arr), ArrayFunctions::array_access_keys($track));
@@ -259,12 +259,11 @@ class TrackableArrayTest extends TestCase
      */
     public function testIsArrayAccess()
     {
-        $arr = array('nested' => array());
+        $arr = ['nested' => []];
         $track = new TrackableArray($arr);
 
         $this->assertFalse(is_array($track['nested']));
         $this->assertTrue(ArrayFunctions::is_array_access($track['nested']));
         $this->assertInstanceOf('Sugarcrm\Sugarcrm\Util\Arrays\TrackableArray\TrackableArray', $track['nested']);
     }
-
 }

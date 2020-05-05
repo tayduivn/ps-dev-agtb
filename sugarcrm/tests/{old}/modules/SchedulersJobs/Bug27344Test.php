@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 class Bug27344Test extends TestCase
 {
-	private $_url;
+    private $_url;
     private $_initial_server_port;
     private $_has_initial_server_port;
     private $_cron_test_file = 'cronUnitTestBug27344.php';
@@ -41,7 +41,7 @@ class Bug27344Test extends TestCase
         $url = $GLOBALS['sugar_config']['site_url'] . '/maintenance.php';
 
         $_SERVER['SERVER_PORT'] = '9090';
-        $sJob = new SchedulersJob(FALSE);
+        $sJob = new SchedulersJob(false);
         $this->assertTrue($sJob->fireUrl($url));
     }
 }

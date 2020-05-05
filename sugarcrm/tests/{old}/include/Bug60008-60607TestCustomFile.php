@@ -9,20 +9,20 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-$app_list_strings['aaa_test_list'] = array(
+$app_list_strings['aaa_test_list'] = [
     'aba' => 'Abba',
     'ada' => 'Adda',
     'afa' => 'Affa',
-);
+];
 
-$GLOBALS['app_list_strings']['bbb_test_list'] = array(
+$GLOBALS['app_list_strings']['bbb_test_list'] = [
     'bippity' => 'Bippity',
     'boppity' => 'Boppity',
-    'boop'    => 'Boop',    
-);
+    'boop'    => 'Boop',
+];
 
-$app_list_strings['ccc_test_list'] = array(
+$app_list_strings['ccc_test_list'] = [
     'ham' => 'HAM',
     'sam' => 'SAM',
     'jam' => 'JAM',
-);
+];

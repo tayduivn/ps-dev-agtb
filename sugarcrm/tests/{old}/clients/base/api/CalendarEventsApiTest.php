@@ -22,12 +22,12 @@ class CalendarEventsApiTest extends TestCase
     private $api;
     private $calendarEventsApi;
 
-    private $meetingIds = array();
+    private $meetingIds = [];
 
     protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user');
-        $this->meetingIds = array();
+        $this->meetingIds = [];
 
         $this->api = SugarTestRestUtilities::getRestServiceMock();
         $this->api->user = $GLOBALS['current_user'];
@@ -45,21 +45,21 @@ class CalendarEventsApiTest extends TestCase
         if (!empty($this->meetingIds)) {
             $ids = implode("','", $this->meetingIds);
             $GLOBALS['db']->query("DELETE FROM meetings WHERE id IN ('" . $ids . "')");
-            $this->meetingIds = array();
+            $this->meetingIds = [];
         }
     }
 
     public function testDeleteRecord_NotRecurringMeeting_CallsDeleteMethod()
     {
         $calendarEventsApiMock = $this->getMockForCalendarEventsApi(
-            array('deleteRecord', 'deleteRecordAndRecurrences')
+            ['deleteRecord', 'deleteRecordAndRecurrences']
         );
         $calendarEventsApiMock->expects($this->once())
             ->method('deleteRecord');
         $calendarEventsApiMock->expects($this->never())
             ->method('deleteRecordAndRecurrences');
 
-        $mockMeeting = $this->createPartialMock('Meeting', array('ACLAccess'));
+        $mockMeeting = $this->createPartialMock('Meeting', ['ACLAccess']);
         $mockMeeting->expects($this->any())
             ->method('ACLAccess')
             ->will($this->returnValue(true));
@@ -69,10 +69,10 @@ class CalendarEventsApiTest extends TestCase
         $mockMeeting->id = create_guid();
         BeanFactory::registerBean($mockMeeting);
 
-        $args = array(
+        $args = [
             'module' => 'Meetings',
             'record' => $mockMeeting->id,
-        );
+        ];
 
         $calendarEventsApiMock->deleteCalendarEvent($this->api, $args);
 
@@ -82,14 +82,14 @@ class CalendarEventsApiTest extends TestCase
     public function testDeleteRecord_RecurringMeeting_CallsDeleterRecurrenceMethod()
     {
         $calendarEventsApiMock = $this->getMockForCalendarEventsApi(
-            array('deleteRecord', 'deleteRecordAndRecurrences')
+            ['deleteRecord', 'deleteRecordAndRecurrences']
         );
         $calendarEventsApiMock->expects($this->never())
             ->method('deleteRecord');
         $calendarEventsApiMock->expects($this->once())
             ->method('deleteRecordAndRecurrences');
 
-        $mockMeeting = $this->createPartialMock('Meeting', array('ACLAccess'));
+        $mockMeeting = $this->createPartialMock('Meeting', ['ACLAccess']);
         $mockMeeting->expects($this->any())
             ->method('ACLAccess')
             ->will($this->returnValue(true));
@@ -99,11 +99,11 @@ class CalendarEventsApiTest extends TestCase
         $mockMeeting->id = create_guid();
         BeanFactory::registerBean($mockMeeting);
 
-        $args = array(
+        $args = [
             'module' => 'Meetings',
             'record' => $mockMeeting->id,
             'all_recurrences' => 'true',
-        );
+        ];
 
         $calendarEventsApiMock->deleteCalendarEvent($this->api, $args);
 
@@ -112,7 +112,7 @@ class CalendarEventsApiTest extends TestCase
 
     public function testDeleteRecordAndRecurrences_NoAccess_ThrowsException()
     {
-        $mockMeeting = $this->getMockBuilder('Meeting')->setMethods(array('ACLAccess'))->getMock();
+        $mockMeeting = $this->getMockBuilder('Meeting')->setMethods(['ACLAccess'])->getMock();
         $mockMeeting->expects($this->any())
             ->method('ACLAccess')
             ->will($this->returnValue(false));
@@ -122,10 +122,10 @@ class CalendarEventsApiTest extends TestCase
         $mockMeeting->id = create_guid();
         BeanFactory::registerBean($mockMeeting);
 
-        $args = array(
+        $args = [
             'module' => 'Meetings',
             'record' => $mockMeeting->id,
-        );
+        ];
 
         $this->expectException(SugarApiExceptionNotAuthorized::class);
         $this->calendarEventsApi->deleteRecordAndRecurrences($this->api, $args);
@@ -143,10 +143,10 @@ class CalendarEventsApiTest extends TestCase
         $meeting2->repeat_parent_id = $parentMeeting->id;
         $meeting2->save();
 
-        $args = array(
+        $args = [
             'module' => 'Meetings',
             'record' => $meeting1->id,
-        );
+        ];
 
         $results = $this->calendarEventsApi->deleteRecordAndRecurrences($this->api, $args);
 
@@ -168,50 +168,50 @@ class CalendarEventsApiTest extends TestCase
     public function dataProviderForCheckRequiredParams_ApiMethods_ExceptionThrownIfMissing()
     {
         $dateStart = $this->dateTimeAsISO('2014-08-01 14:30:00');
-        return array(
-            array(
+        return [
+            [
                 "createRecord",
-                array(
+                [
                     'duration_hours' => '9',
                     'duration_minutes' => '9',
-                ),
-            ),
-            array(
+                ],
+            ],
+            [
                 "createRecord",
-                array(
+                [
                     'date_start' => $dateStart,
                     'duration_minutes' => '9',
-                ),
-            ),
-            array(
+                ],
+            ],
+            [
                 "createRecord",
-                array(
+                [
                     'date_start' => $dateStart,
                     'duration_hours' => '9',
-                ),
-            ),
-            array(
+                ],
+            ],
+            [
                 "updateCalendarEvent",
-                array(
+                [
                     'duration_hours' => '9',
                     'duration_minutes' => '9',
-                ),
-            ),
-            array(
+                ],
+            ],
+            [
                 "updateCalendarEvent",
-                array(
+                [
                     'date_start' => $dateStart,
                     'duration_minutes' => '9',
-                ),
-            ),
-            array(
+                ],
+            ],
+            [
                 "updateCalendarEvent",
-                array(
+                [
                     'date_start' => $dateStart,
                     'duration_hours' => '9',
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
     }
 
     /**
@@ -227,19 +227,19 @@ class CalendarEventsApiTest extends TestCase
     public function testCreateRecord_NotRecurringMeeting_CallsCreateMethod()
     {
         $calendarEventsApiMock = $this->getMockForCalendarEventsApi(
-            array('createRecord', 'generateRecurringCalendarEvents')
+            ['createRecord', 'generateRecurringCalendarEvents']
         );
         $calendarEventsApiMock->expects($this->once())
             ->method('createRecord');
         $calendarEventsApiMock->expects($this->never())
             ->method('generateRecurringCalendarEvents');
 
-        $args = array(
+        $args = [
             'module' => 'Meetings',
             'date_start' => $this->dateTimeAsISO('2014-12-25 13:00:00'),
             'duration_hours' => '1',
             'duration_minutes' => '30',
-        );
+        ];
 
         $calendarEventsApiMock->createRecord($this->api, $args);
     }
@@ -249,7 +249,7 @@ class CalendarEventsApiTest extends TestCase
         $id = create_guid();
         $this->meetingIds[] = $id;
 
-        $args = array();
+        $args = [];
         $args['module'] = 'Meetings';
         $args['id'] = $id;
         $args['name'] = 'Test Meetings';
@@ -262,7 +262,7 @@ class CalendarEventsApiTest extends TestCase
         /* Neither repeat_count nor repeat_until specified  - Error */
 
         $calendarEventsApiMock = $this->getMockForCalendarEventsApi(
-            array('generateRecurringCalendarEvents')
+            ['generateRecurringCalendarEvents']
         );
         $calendarEventsApiMock->expects($this->never())
             ->method('generateRecurringCalendarEvents');
@@ -276,7 +276,7 @@ class CalendarEventsApiTest extends TestCase
         $id = create_guid();
         $this->meetingIds[] = $id;
 
-        $args = array();
+        $args = [];
         $args['module'] = 'Meetings';
         $args['id'] = $id;
         $args['name'] = 'Test Meeting';
@@ -292,7 +292,7 @@ class CalendarEventsApiTest extends TestCase
         $args['duration_minutes'] = 30;
 
         $calendarEvents = new CalendarEventsApiTest_CalendarEvents();
-        $calendarEventsApiMock = $this->getMockForCalendarEventsApi(array('getCalendarEvents'), $calendarEvents);
+        $calendarEventsApiMock = $this->getMockForCalendarEventsApi(['getCalendarEvents'], $calendarEvents);
 
         $result = $calendarEventsApiMock->createBean($this->api, $args);
 
@@ -309,12 +309,12 @@ class CalendarEventsApiTest extends TestCase
         $meeting = BeanFactory::newBean('Meetings');
         $meeting->id = create_guid();
 
-        $args = array(
+        $args = [
             'module' => 'Meetings',
             'record' => $meeting->id,
             'all_recurrences' => 'true',
             'date_start' => $this->dateTimeAsISO('2014-12-25 13:00:00'),
-        );
+        ];
 
         $calendarEvents = $this->getMockForCalendarEventsIsEventRecurring(true);
 
@@ -335,12 +335,12 @@ class CalendarEventsApiTest extends TestCase
         $meeting = BeanFactory::newBean('Meetings');
         $meeting->id = create_guid();
 
-        $argsExpected = array(
+        $argsExpected = [
             'module' => 'Meetings',
             'record' => $meeting->id,
             'date_start' => $this->dateTimeAsISO('2014-12-25 13:00:00'),
-        );
-        $args = array_merge($argsExpected, array(
+        ];
+        $args = array_merge($argsExpected, [
             'date_start' => $this->dateTimeAsISO('2014-12-25 13:00:00'),
             'repeat_type' => 'Daily',
             'repeat_interval' => '1',
@@ -348,7 +348,7 @@ class CalendarEventsApiTest extends TestCase
             'repeat_dow' => '',
             'repeat_until' => '',
 
-        ));
+        ]);
 
         $calendarEvents = $this->getMockForCalendarEventsIsEventRecurring(true);
 
@@ -370,11 +370,11 @@ class CalendarEventsApiTest extends TestCase
         $meeting = BeanFactory::newBean('Meetings');
         $meeting->id = create_guid();
 
-        $args = array(
+        $args = [
             'module' => 'Meetings',
             'record' => $meeting->id,
             'date_start' => $this->dateTimeAsISO('2014-12-25 13:00:00'),
-        );
+        ];
 
         $calendarEvents = $this->getMockForCalendarEventsIsEventRecurring(false);
 
@@ -397,11 +397,11 @@ class CalendarEventsApiTest extends TestCase
         $meeting = BeanFactory::newBean('Meetings');
         $meeting->id = create_guid();
 
-        $args = array(
+        $args = [
             'module' => 'Meetings',
             'record' => $meeting->id,
             'date_start' => $this->dateTimeAsISO('2014-12-25 13:00:00'),
-        );
+        ];
 
         $calendarEvents = $this->getMockForCalendarEventsIsEventRecurring(false);
         //second time called will return true
@@ -429,16 +429,16 @@ class CalendarEventsApiTest extends TestCase
         $meeting->id = create_guid();
         $meeting->repeat_parent_id = '';
 
-        $args = array(
+        $args = [
             'module' => 'Meetings',
             'record' => $meeting->id,
             'date_start' => $this->dateTimeAsISO('2014-12-25 13:00:00'),
             'duration_hours' => '1',
             'duration_minutes' => '30',
-        );
+        ];
 
         $calendarEvents = $this->getMockForCalendarEvents(
-            array('isEventRecurring', 'saveRecurringEvents')
+            ['isEventRecurring', 'saveRecurringEvents']
         );
         $calendarEvents->expects($this->any())
             ->method('isEventRecurring')
@@ -447,14 +447,14 @@ class CalendarEventsApiTest extends TestCase
             ->method('saveRecurringEvents');
 
         $calendarEventsApiMock = $this->getMockForCalendarEventsApi(
-            array('updateRecord', 'getLoadedAndFormattedBean'),
+            ['updateRecord', 'getLoadedAndFormattedBean'],
             $calendarEvents
         );
         $calendarEventsApiMock->expects($this->once())
             ->method('updateRecord');
         $calendarEventsApiMock->expects($this->once())
             ->method('getLoadedAndFormattedBean')
-            ->will($this->returnValue(array()));
+            ->will($this->returnValue([]));
 
         $calendarEventsApiMock->updateRecurringCalendarEvent($meeting, $this->api, $args);
     }
@@ -465,16 +465,16 @@ class CalendarEventsApiTest extends TestCase
         $meeting->id = create_guid();
         $meeting->repeat_parent_id = '';
 
-        $args = array(
+        $args = [
             'module' => 'Meetings',
             'record' => $meeting->id,
             'date_start' => $this->dateTimeAsISO('2014-12-25 13:00:00'),
             'duration_hours' => '1',
             'duration_minutes' => '30',
-        );
+        ];
 
         $calendarEvents = $this->getMockForCalendarEvents(
-            array('isEventRecurring', 'saveRecurringEvents')
+            ['isEventRecurring', 'saveRecurringEvents']
         );
 
         $calendarEvents->expects($this->any())
@@ -484,7 +484,7 @@ class CalendarEventsApiTest extends TestCase
             ->method('saveRecurringEvents');
 
         $calendarEventsApiMock = $this->getMockForCalendarEventsApi(
-            array('updateRecord', 'deleteRecurrences', 'getLoadedAndFormattedBean'),
+            ['updateRecord', 'deleteRecurrences', 'getLoadedAndFormattedBean'],
             $calendarEvents
         );
         $calendarEventsApiMock->expects($this->once())
@@ -493,54 +493,54 @@ class CalendarEventsApiTest extends TestCase
             ->method('deleteRecurrences');
         $calendarEventsApiMock->expects($this->once())
             ->method('getLoadedAndFormattedBean')
-            ->will($this->returnValue(array()));
+            ->will($this->returnValue([]));
 
         $calendarEventsApiMock->updateRecurringCalendarEvent($meeting, $this->api, $args);
     }
 
-     public function testUpdateRecurringCalendarEvent_UsingChildRecord_ThrowsException()
-     {
-         $meeting                   = BeanFactory::newBean('Meetings');
-         $meeting->id               = create_guid();
-         $meeting->repeat_parent_id = 'foo';
+    public function testUpdateRecurringCalendarEvent_UsingChildRecord_ThrowsException()
+    {
+        $meeting                   = BeanFactory::newBean('Meetings');
+        $meeting->id               = create_guid();
+        $meeting->repeat_parent_id = 'foo';
 
-         $args = array(
-             'module'           => 'Meetings',
-             'record'           => $meeting->id,
-             'date_start'       => $this->dateTimeAsISO('2014-12-25 13:00:00'),
-             'duration_hours'   => '1',
-             'duration_minutes' => '30',
-         );
+        $args = [
+            'module'           => 'Meetings',
+            'record'           => $meeting->id,
+            'date_start'       => $this->dateTimeAsISO('2014-12-25 13:00:00'),
+            'duration_hours'   => '1',
+            'duration_minutes' => '30',
+        ];
 
-         $calendarEventsApiMock = $this->getMockForCalendarEventsApi(
-             array('updateRecord')
-         );
-         $calendarEventsApiMock->expects($this->never())
-             ->method('updateRecord');
+        $calendarEventsApiMock = $this->getMockForCalendarEventsApi(
+            ['updateRecord']
+        );
+        $calendarEventsApiMock->expects($this->never())
+            ->method('updateRecord');
 
-         $this->expectException(SugarApiException::class);
-         $calendarEventsApiMock->updateRecurringCalendarEvent(
-             $meeting,
-             $this->api,
-             $args
-         );
-     }
+        $this->expectException(SugarApiException::class);
+        $calendarEventsApiMock->updateRecurringCalendarEvent(
+            $meeting,
+            $this->api,
+            $args
+        );
+    }
 
     public function testCreateRecord_CreateRecordFails_rebuildFBCacheNotInvoked()
     {
         $calendarEventsApiMock = $this->getMockForCalendarEventsApi(
-            array('createRecord',)
+            ['createRecord',]
         );
         $calendarEventsApiMock->expects($this->once())
             ->method('createRecord')
-            ->will($this->returnValue(array()));
+            ->will($this->returnValue([]));
 
-        $args = array(
+        $args = [
             'module' => 'Meetings',
             'date_start' => $this->dateTimeAsISO('2014-12-25 13:00:00'),
             'duration_hours' => '1',
             'duration_minutes' => '30',
-        );
+        ];
 
         $calendarEventsApiMock->createRecord($this->api, $args);
     }
@@ -553,7 +553,7 @@ class CalendarEventsApiTest extends TestCase
         $this->meetingIds[] = $meeting->id;
 
         $calendarEvents = $this->getMockForCalendarEvents(
-            array('isEventRecurring', 'rebuildFreeBusyCache')
+            ['isEventRecurring', 'rebuildFreeBusyCache']
         );
 
         $calendarEvents->expects($this->any())
@@ -563,7 +563,7 @@ class CalendarEventsApiTest extends TestCase
             ->method('rebuildFreeBusyCache');
 
         $calendarEventsApiMock = $this->getMockForCalendarEventsApi(
-            array('loadBean', 'generateRecurringCalendarEvents'),
+            ['loadBean', 'generateRecurringCalendarEvents'],
             $calendarEvents
         );
         $calendarEventsApiMock->method('loadBean')
@@ -571,12 +571,12 @@ class CalendarEventsApiTest extends TestCase
         $calendarEventsApiMock->expects($this->never())
             ->method('generateRecurringCalendarEvents');
 
-        $args = array(
+        $args = [
             'module' => 'Meetings',
             'date_start' => $this->dateTimeAsISO('2014-12-25 13:00:00'),
             'duration_hours' => '1',
             'duration_minutes' => '30',
-        );
+        ];
         $calendarEventsApiMock->createRecord($this->api, $args);
     }
 
@@ -588,7 +588,7 @@ class CalendarEventsApiTest extends TestCase
         $this->meetingIds[] = $meeting->id;
 
         $calendarEvents = $this->getMockForCalendarEvents(
-            array('isEventRecurring', 'rebuildFreeBusyCache')
+            ['isEventRecurring', 'rebuildFreeBusyCache']
         );
 
         $calendarEvents->expects($this->any())
@@ -598,7 +598,7 @@ class CalendarEventsApiTest extends TestCase
             ->method('rebuildFreeBusyCache');
 
         $calendarEventsApiMock = $this->getMockForCalendarEventsApi(
-            array('loadBean', 'generateRecurringCalendarEvents'),
+            ['loadBean', 'generateRecurringCalendarEvents'],
             $calendarEvents
         );
         $calendarEventsApiMock->method('loadBean')
@@ -606,24 +606,24 @@ class CalendarEventsApiTest extends TestCase
         $calendarEventsApiMock->expects($this->once())
             ->method('generateRecurringCalendarEvents');
 
-        $args = array(
+        $args = [
             'module' => 'Meetings',
             'date_start' => $this->dateTimeAsISO('2014-12-25 13:00:00'),
             'duration_hours' => '1',
             'duration_minutes' => '30',
-        );
+        ];
         $calendarEventsApiMock->createRecord($this->api, $args);
     }
 
     public function testUpdateCalendarEvent_EventIdMissing_rebuildFBCacheNotInvoked()
     {
         $this->expectException(SugarApiExceptionMissingParameter::class);
-        $this->calendarEventsApi->updateCalendarEvent($this->api, array());
+        $this->calendarEventsApi->updateCalendarEvent($this->api, []);
     }
 
     public function testUpdateCalendarEvent_EventNotFound_rebuildFBCacheNotInvoked()
     {
-        $args = array();
+        $args = [];
         $args['module'] = 'Meetings';
         $args['record'] = create_guid();
         $args['date_start'] = $this->dateTimeAsISO('2014-12-25 13:00:00');
@@ -637,15 +637,15 @@ class CalendarEventsApiTest extends TestCase
         $meeting = BeanFactory::newBean('Meetings');
         $meeting->id = create_guid();
 
-        $args = array(
+        $args = [
             'module' => 'Meetings',
             'record' => $meeting->id,
             'date_start' => $this->dateTimeAsISO('2014-12-25 13:00:00'),
             'all_recurrences' => 'true',
-        );
+        ];
 
         $calendarEvents = $this->getMockForCalendarEvents(
-            array('isEventRecurring', 'rebuildFreeBusyCache')
+            ['isEventRecurring', 'rebuildFreeBusyCache']
         );
 
         $calendarEvents->expects($this->any())
@@ -660,7 +660,7 @@ class CalendarEventsApiTest extends TestCase
             ->will($this->returnValue($meeting));
         $calendarEventsApiMock->expects($this->once())
             ->method('updateRecurringCalendarEvent')
-            ->will($this->returnValue(array()));
+            ->will($this->returnValue([]));
 
         $calendarEventsApiMock->updateCalendarEvent($this->api, $args);
     }
@@ -670,15 +670,15 @@ class CalendarEventsApiTest extends TestCase
         $meeting = BeanFactory::newBean('Meetings');
         $meeting->id = create_guid();
 
-        $args = array(
+        $args = [
             'module' => 'Meetings',
             'record' => $meeting->id,
             'date_start' => $this->dateTimeAsISO('2014-12-25 13:00:00'),
             'all_recurrences' => 'false',
-        );
+        ];
 
         $calendarEvents = $this->getMockForCalendarEvents(
-            array('isEventRecurring', 'rebuildFreeBusyCache')
+            ['isEventRecurring', 'rebuildFreeBusyCache']
         );
 
         $calendarEvents->expects($this->any())
@@ -693,7 +693,7 @@ class CalendarEventsApiTest extends TestCase
             ->will($this->returnValue($meeting));
         $calendarEventsApiMock->expects($this->once())
             ->method('updateRecord')
-            ->will($this->returnValue(array()));
+            ->will($this->returnValue([]));
 
         $calendarEventsApiMock->updateCalendarEvent($this->api, $args);
     }
@@ -703,14 +703,14 @@ class CalendarEventsApiTest extends TestCase
         $meeting = BeanFactory::newBean('Meetings');
         $meeting->id = create_guid();
 
-        $args = array(
+        $args = [
             'module' => 'Meetings',
             'record' => $meeting->id,
             'date_start' => $this->dateTimeAsISO('2014-12-25 13:00:00'),
-        );
+        ];
 
         $calendarEvents = $this->getMockForCalendarEvents(
-            array('isEventRecurring', 'rebuildFreeBusyCache')
+            ['isEventRecurring', 'rebuildFreeBusyCache']
         );
 
         //first time called will return false
@@ -743,14 +743,14 @@ class CalendarEventsApiTest extends TestCase
         $meeting = BeanFactory::newBean('Meetings');
         $meeting->id = create_guid();
 
-        $args = array(
+        $args = [
             'module' => 'Meetings',
             'record' => $meeting->id,
             'date_start' => $this->dateTimeAsISO('2014-12-25 13:00:00'),
-        );
+        ];
 
         $calendarEvents = $this->getMockForCalendarEvents(
-            array('isEventRecurring', 'rebuildFreeBusyCache')
+            ['isEventRecurring', 'rebuildFreeBusyCache']
         );
 
         //first time called will return false
@@ -779,21 +779,21 @@ class CalendarEventsApiTest extends TestCase
         $meeting = BeanFactory::newBean('Meetings');
         $meeting->id = create_guid();
 
-        $args = array(
+        $args = [
             'module' => 'Meetings',
             'record' => $meeting->id,
             'all_recurrences' => 'false',
-        );
+        ];
 
         $calendarEvents = $this->getMockForCalendarEvents(
-            array('rebuildFreeBusyCache')
+            ['rebuildFreeBusyCache']
         );
 
         $calendarEvents->expects($this->never())
             ->method('rebuildFreeBusyCache');
 
         $calendarEventsApiMock = $this->getMockForCalendarEventsApi(
-            array('deleteRecord', 'deleteRecordAndRecurrences'),
+            ['deleteRecord', 'deleteRecordAndRecurrences'],
             $calendarEvents
         );
         $calendarEventsApiMock->expects($this->once())
@@ -809,21 +809,21 @@ class CalendarEventsApiTest extends TestCase
         $meeting = BeanFactory::newBean('Meetings');
         $meeting->id = create_guid();
 
-        $args = array(
+        $args = [
             'module' => 'Meetings',
             'record' => $meeting->id,
             'all_recurrences' => 'true',
-        );
+        ];
 
         $calendarEvents = $this->getMockForCalendarEvents(
-            array('rebuildFreeBusyCache')
+            ['rebuildFreeBusyCache']
         );
 
         $calendarEvents->expects($this->never())
             ->method('rebuildFreeBusyCache');
 
         $calendarEventsApiMock = $this->getMockForCalendarEventsApi(
-            array('deleteRecord', 'deleteRecordAndRecurrences'),
+            ['deleteRecord', 'deleteRecordAndRecurrences'],
             $calendarEvents
         );
         $calendarEventsApiMock->expects($this->never())
@@ -841,87 +841,87 @@ class CalendarEventsApiTest extends TestCase
         $parentId1 = '456';
         $parentId2 = '789';
 
-        return array(
-            array(
-                array(
+        return [
+            [
+                [
                     'id' => $meetingId,
-                ),
-                array(
+                ],
+                [
                     'auto_invite_parent' => false,
-                ),
+                ],
                 false,
                 'should be false when auto_invite_parent flag is false on create',
-            ),
-            array(
-                array(
+            ],
+            [
+                [
                     'id' => $meetingId,
                     'parent_type' => $parentType,
                     'parent_id' => $parentId1,
-                ),
-                array(
+                ],
+                [
                     'id' => $meetingId,
                     'auto_invite_parent' => false,
                     'parent_type' => $parentType,
                     'parent_id' => $parentId2,
-                ),
+                ],
                 false,
                 'should be false when auto_invite_parent flag is false on update',
-            ),
-            array(
-                array(
+            ],
+            [
+                [
                     'id' => $meetingId,
                     'parent_type' => $parentType,
                     'parent_id' => $parentId1,
-                ),
-                array(
+                ],
+                [
                     'id' => $meetingId,
                     'parent_type' => $parentType,
-                ),
+                ],
                 false,
                 'should be false when parent id not set',
-            ),
-            array(
-                array(
+            ],
+            [
+                [
                     'id' => $meetingId,
                     'parent_type' => $parentType,
                     'parent_id' => $parentId1,
-                ),
-                array(
+                ],
+                [
                     'parent_type' => $parentType,
                     'parent_id' => $parentId1,
-                ),
+                ],
                 true,
                 'should be true when parent set on create',
-            ),
-            array(
-                array(
+            ],
+            [
+                [
                     'id' => $meetingId,
                     'parent_type' => $parentType,
                     'parent_id' => $parentId1,
-                ),
-                array(
+                ],
+                [
                     'id' => $meetingId,
                     'parent_type' => $parentType,
                     'parent_id' => $parentId2,
-                ),
+                ],
                 true,
                 'should be true when parent changed on update',
-            ),
-            array(
-                array(
+            ],
+            [
+                [
                     'id' => $meetingId,
                     'parent_type' => $parentType,
                     'parent_id' => $parentId1,
-                ),
-                array(
+                ],
+                [
                     'id' => $meetingId,
                     'parent_type' => $parentType,
                     'parent_id' => $parentId1,
-                ),
+                ],
                 false,
                 'should be false when parent not changed on update',
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -930,11 +930,11 @@ class CalendarEventsApiTest extends TestCase
     public function testShouldAutoInviteParent($beanValues, $args, $expected, $message)
     {
         $bean = BeanFactory::newBean('Meetings');
-        foreach($beanValues as $field => $value) {
+        foreach ($beanValues as $field => $value) {
             $bean->$field = $value;
         }
 
-        $actual = SugarTestReflection::callProtectedMethod($this->calendarEventsApi, 'shouldAutoInviteParent', array($bean, $args));
+        $actual = SugarTestReflection::callProtectedMethod($this->calendarEventsApi, 'shouldAutoInviteParent', [$bean, $args]);
         $this->assertEquals($expected, $actual, $message);
     }
 
@@ -1024,17 +1024,17 @@ class CalendarEventsApiTest extends TestCase
     private function getMockForCalendarEventsApiUpdate(CalendarEvents $calendarEvents)
     {
         return $this->getMockForCalendarEventsApi(
-            array(
+            [
                 'updateRecord',
                 'updateRecurringCalendarEvent',
                 'loadBean',
                 'generateRecurringCalendarEvents',
-            ),
+            ],
             $calendarEvents
         );
     }
 
-    private function getMockForCalendarEventsApi(array $methodsArray = array(), CalendarEvents $calendarEvents = null)
+    private function getMockForCalendarEventsApi(array $methodsArray = [], CalendarEvents $calendarEvents = null)
     {
         if (empty($calendarEvents)) {
             $calendarEvents = new CalendarEvents();
@@ -1060,7 +1060,7 @@ class CalendarEventsApiTest extends TestCase
     private function getMockForCalendarEventsIsEventRecurring($isRecurring)
     {
         $calendarEvents = $this->getMockForCalendarEvents(
-            array('isEventRecurring')
+            ['isEventRecurring']
         );
 
         $calendarEvents->expects($this->at(0))
@@ -1070,7 +1070,7 @@ class CalendarEventsApiTest extends TestCase
         return $calendarEvents;
     }
 
-    private function getMockForCalendarEvents($methodsArray = array())
+    private function getMockForCalendarEvents($methodsArray = [])
     {
         $calendarEvents = $this->createPartialMock(
             'CalendarEvents',
@@ -1083,7 +1083,7 @@ class CalendarEventsApiTest extends TestCase
 
 class CalendarEventsApiTest_CalendarEvents extends CalendarEvents
 {
-    protected $eventsCreated = array();
+    protected $eventsCreated = [];
 
     public function getEventsCreated()
     {

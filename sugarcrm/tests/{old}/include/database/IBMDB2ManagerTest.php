@@ -42,9 +42,9 @@ class IBMDB2ManagerTest extends TestCase
      */
     public function testGetIndices()
     {
-        $db = $this->createPartialMock('IBMDB2Manager', array(
+        $db = $this->createPartialMock('IBMDB2Manager', [
             'populate_index_data',
-        ));
+        ]);
 
         $db->expects($this->once())
             ->method('populate_index_data');
@@ -57,12 +57,12 @@ class IBMDB2ManagerTest extends TestCase
      */
     public function testAddColumnSQL()
     {
-        $fieldDef = array(
+        $fieldDef = [
             'name' => 'testColumn',
             'required' => true,
             'type' => 'int',
-            'isnull' => false
-        );
+            'isnull' => false,
+        ];
 
         $this->assertStringNotContainsString(
             'NOT NULL',
@@ -78,16 +78,16 @@ class IBMDB2ManagerTest extends TestCase
 
     public function providerConvert()
     {
-        $returnArray = array(
-            array(
-                array('1.23', 'round', array(6)),
-                "round(1.23, 6)"
-            ),
-            array(
-                array('date_created', 'date_format', array('%v')),
-                "TO_CHAR(date_created, 'IW')"
-            ),
-        );
+        $returnArray = [
+            [
+                ['1.23', 'round', [6]],
+                "round(1.23, 6)",
+            ],
+            [
+                ['date_created', 'date_format', ['%v']],
+                "TO_CHAR(date_created, 'IW')",
+            ],
+        ];
         return $returnArray;
     }
 
@@ -96,7 +96,7 @@ class IBMDB2ManagerTest extends TestCase
      */
     public function testConvert(array $parameters, $result)
     {
-        $this->assertEquals($result, call_user_func_array(array($this->_db, "convert"), $parameters));
+        $this->assertEquals($result, call_user_func_array([$this->_db, "convert"], $parameters));
     }
 
     /**
@@ -115,56 +115,56 @@ class IBMDB2ManagerTest extends TestCase
         }
     }
 
-    static public function providerForMassageFieldDefDefault()
+    public static function providerForMassageFieldDefDefault()
     {
-        return array(
-            array(
-                array(
+        return [
+            [
+                [
                     'name' => 'test',
                     'type' => 'int',
-                ),
+                ],
                 null,
-            ),
-            array(
-                array(
+            ],
+            [
+                [
                     'name' => 'test',
                     'type' => 'int',
                     'default' => 5,
-                ),
+                ],
                 5,
-            ),
-            array(
-                array(
+            ],
+            [
+                [
                     'name' => 'test',
                     'type' => 'int',
                     'required' => true,
-                ),
+                ],
                 0,
-            ),
-            array(
-                array(
+            ],
+            [
+                [
                     'name' => 'test',
                     'type' => 'varchar',
-                ),
+                ],
                 null,
-            ),
-            array(
-                array(
+            ],
+            [
+                [
                     'name' => 'test',
                     'type' => 'varchar',
                     'default' => 'string',
-                ),
+                ],
                 'string',
-            ),
-            array(
-                array(
+            ],
+            [
+                [
                     'name' => 'test',
                     'type' => 'varchar',
                     'required' => true,
-                ),
+                ],
                 '',
-            ),
-        );
+            ],
+        ];
     }
 
     /**

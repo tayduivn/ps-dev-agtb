@@ -59,26 +59,26 @@ class ForecastWorksheetsFilterApiTest extends TestCase
         SugarTestHelper::setUp('current_user');
         // get current settings
 
-        SugarTestForecastUtilities::setUpForecastConfig(array(
-                'show_worksheet_worst' => 1
-            ));
+        SugarTestForecastUtilities::setUpForecastConfig([
+                'show_worksheet_worst' => 1,
+            ]);
 
         // setup the test users
         self::$manager = SugarTestForecastUtilities::createForecastUser();
 
-        self::$reportee = SugarTestForecastUtilities::createForecastUser(array(
-            "user" => array(
-                "reports_to" => self::$manager["user"]->id
-            ),
-            "opportunities" => array(
+        self::$reportee = SugarTestForecastUtilities::createForecastUser([
+            "user" => [
+                "reports_to" => self::$manager["user"]->id,
+            ],
+            "opportunities" => [
                 "total" => 5,
-                "include_in_forecast" => 5
-            )
-        ));
+                "include_in_forecast" => 5,
+            ],
+        ]);
 
         self::$timeperiod = SugarTestForecastUtilities::getCreatedTimePeriod();
 
-        self::$managerData = array(
+        self::$managerData = [
             "amount" => self::$manager["opportunities_total"],
             "quota" => self::$manager["quota"]->amount,
             "quota_id" => self::$manager["quota"]->id,
@@ -97,10 +97,10 @@ class ForecastWorksheetsFilterApiTest extends TestCase
             "id" => self::$manager["user"]->id,
             "name" => "Opportunities (" . self::$manager["user"]->first_name . " " . self::$manager["user"]->last_name . ")",
             "user_id" => self::$manager["user"]->id,
-            "timeperiod_id" => self::$timeperiod->id
-        );
+            "timeperiod_id" => self::$timeperiod->id,
+        ];
 
-        self::$repData = array(
+        self::$repData = [
             "amount" => self::$reportee["opportunities_total"],
             "quota" => self::$reportee["quota"]->amount,
             "quota_id" => self::$reportee["quota"]->id,
@@ -119,8 +119,8 @@ class ForecastWorksheetsFilterApiTest extends TestCase
             "id" => self::$reportee["user"]->id,
             "name" => self::$reportee["user"]->first_name . " " . self::$reportee["user"]->last_name,
             "user_id" => self::$reportee["user"]->id,
-            "timeperiod_id" => self::$timeperiod->id
-        );       
+            "timeperiod_id" => self::$timeperiod->id,
+        ];
     }
 
     protected function setUp() : void
@@ -151,11 +151,11 @@ class ForecastWorksheetsFilterApiTest extends TestCase
         $GLOBALS["current_user"] = self::$manager["user"];
 
         $newUser = SugarTestForecastUtilities::createForecastUser(
-            array("user" => array("reports_to" => self::$manager["user"]->id))
+            ["user" => ["reports_to" => self::$manager["user"]->id]]
         );
 
         //remove any created worksheets for this user so we can test the edge case
-        $worksheetIds = array();
+        $worksheetIds = [];
         foreach ($newUser["opp_worksheets"] as $worksheet) {
             $worksheetIds[] = $worksheet->id;
         }
@@ -163,7 +163,7 @@ class ForecastWorksheetsFilterApiTest extends TestCase
 
         $response = $this->filterApi->forecastWorksheetsGet(
             SugarTestRestUtilities::getRestServiceMock(self::$manager['user']),
-            array('user_id' => $newUser["user"]->id, 'timeperiod_id' => self::$timeperiod->id, 'module' => 'ForecastWorksheets')
+            ['user_id' => $newUser["user"]->id, 'timeperiod_id' => self::$timeperiod->id, 'module' => 'ForecastWorksheets']
         );
 
         $this->assertEmpty($response['records'], "Data was returned, this edge case should return no data");

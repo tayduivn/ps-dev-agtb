@@ -36,36 +36,36 @@ class QueryBuilderTest extends TestCase
     {
         $builder = $this->getQueryBuilderMock();
 
-        $postFilters = array();
+        $postFilters = [];
         foreach ($filterParams as $key => $value) {
             $termFilter = new \Elastica\Query\Term();
             $termFilter->setTerm($key, $value);
             $postFilters[] = $termFilter;
         }
 
-        $result = TestReflection::callProtectedMethod($builder, 'buildPostFilters', array($postFilters));
+        $result = TestReflection::callProtectedMethod($builder, 'buildPostFilters', [$postFilters]);
 
         $this->assertEquals($result->toArray(), $outputArray);
     }
 
     public function providerBuildPostFilters()
     {
-        return array(
-            array(
-                array("_type" => "Accounts", "assigned_user_id" => "seed_max_id"),
-                array(
-                    "bool" => array(
-                        "must" => array(
-                            "0" => array("term" => array("_type" => array("value" => "Accounts", "boost" => 1.0))),
-                            "1" => array("term" => array(
-                                "assigned_user_id" => array("value" => "seed_max_id", "boost" => 1.0),
-                                ),
-                            ),
-                        ),
-                    ),
-                ),
-            ),
-        );
+        return [
+            [
+                ["_type" => "Accounts", "assigned_user_id" => "seed_max_id"],
+                [
+                    "bool" => [
+                        "must" => [
+                            "0" => ["term" => ["_type" => ["value" => "Accounts", "boost" => 1.0]]],
+                            "1" => ["term" => [
+                                "assigned_user_id" => ["value" => "seed_max_id", "boost" => 1.0],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
     }
 
     /**
@@ -123,7 +123,7 @@ class QueryBuilderTest extends TestCase
      */
     public function testSetModules($disableVisibility, array $modules, array $allowedModules, $expectedModules)
     {
-        $queryBuilderMock = $this->getQueryBuilderMock(array('getAllowedModules'));
+        $queryBuilderMock = $this->getQueryBuilderMock(['getAllowedModules']);
         $queryBuilderMock->expects($this->any())
             ->method('getAllowedModules')
             ->will($this->returnValue($allowedModules));
@@ -138,20 +138,20 @@ class QueryBuilderTest extends TestCase
 
     public function providerTestSetModules()
     {
-        return array(
-            array(
+        return [
+            [
                 false,
-                array('Accounts', 'Contacts'),
-                array('Accounts', 'Emails'),
-                array('Accounts', 'Emails'),
-            ),
-            array(
+                ['Accounts', 'Contacts'],
+                ['Accounts', 'Emails'],
+                ['Accounts', 'Emails'],
+            ],
+            [
                 true,
-                array('Accounts', 'Contacts'),
-                array('Accounts', 'Emails'),
-                array('Accounts', 'Contacts'),
-            ),
-        );
+                ['Accounts', 'Contacts'],
+                ['Accounts', 'Emails'],
+                ['Accounts', 'Contacts'],
+            ],
+        ];
     }
 
     /**
@@ -180,7 +180,7 @@ class QueryBuilderTest extends TestCase
 
         $queryBuilderMock->setExplain($explain);
 
-        $properties = array('limit', 'offset', 'sort', 'explain');
+        $properties = ['limit', 'offset', 'sort', 'explain'];
         foreach ($properties as $property) {
             $this->assertSame($expected[$property], TestReflection::getProtectedValue($queryBuilderMock, $property));
         }
@@ -188,44 +188,44 @@ class QueryBuilderTest extends TestCase
 
     public function providerTestSets()
     {
-        return array(
-            array(
+        return [
+            [
                 10,
                 20,
-                array('id', 'name'),
+                ['id', 'name'],
                 true,
-                array(
+                [
                     'limit' => 10,
                     'offset' => 20,
-                    'sort' => array('id', 'name'),
+                    'sort' => ['id', 'name'],
                     'explain' => true,
-                ),
-            ),
-            array(
+                ],
+            ],
+            [
                 null,
                 20,
-                array('id', 'name'),
+                ['id', 'name'],
                 false,
-                array(
+                [
                     'limit' => null,
                     'offset' => 20,
-                    'sort' => array('id', 'name'),
+                    'sort' => ['id', 'name'],
                     'explain' => false,
-                ),
-            ),
-            array(
+                ],
+            ],
+            [
                 null,
                 20,
-                array(),
+                [],
                 true,
-                array(
+                [
                     'limit' => null,
                     'offset' => 20,
-                    'sort' => array('_score'), //default sort
+                    'sort' => ['_score'], //default sort
                     'explain' => true,
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
     }
 
     /**
@@ -275,37 +275,37 @@ class QueryBuilderTest extends TestCase
         $resultArray = $returnQuery->toArray();
         $this->assertSame(100, $resultArray['size']);
         $this->assertSame(10, $resultArray['from']);
-        $this->assertSame(array('_score'), $resultArray['sort']);
-        $expecteQuery = array (
-            array (
+        $this->assertSame(['_score'], $resultArray['sort']);
+        $expecteQuery =  [
+             [
                 'bool' =>
-                    array (
+                     [
                         'should' =>
-                            array (
-                                array (
+                             [
+                                 [
                                     'bool' =>
-                                        array (
+                                         [
                                             'should' =>
-                                                array (
-                                                    array (
+                                                 [
+                                                     [
                                                         'multi_match' =>
-                                                            array (
+                                                             [
                                                                 'type' => 'cross_fields',
                                                                 'query' => 'abc',
                                                                 'fields' =>
-                                                                    array (
+                                                                     [
                                                                         0 => 'id',
-                                                                    ),
+                                                                    ],
                                                                 'tie_breaker' => 1.0,
-                                                            ),
-                                                    ),
-                                                ),
-                                        ),
-                                ),
-                            ),
-                    ),
-            ),
-        );
+                                                            ],
+                                                     ],
+                                                ],
+                                        ],
+                                 ],
+                            ],
+                    ],
+             ],
+        ];
 
         $this->assertSame($expecteQuery, $resultArray['query']['bool']['must']);
     }
@@ -337,28 +337,28 @@ class QueryBuilderTest extends TestCase
         $resultSetMock = TestMockHelper::getObjectMock($this, 'Elastica\ResultSet');
 
         // Search Mock
-        $searchMock = TestMockHelper::getObjectMock($this, 'Elastica\Search', array('search'));
+        $searchMock = TestMockHelper::getObjectMock($this, 'Elastica\Search', ['search']);
         $searchMock->expects($this->any())
             ->method('search')
             ->will($this->returnValue($resultSetMock));
 
         // QueryBuilder Mock
-        $queryBuilderMock = $this->getQueryBuilderMock(array('newSearchObject', 'getAllowedModules', 'getReadIndices'));
+        $queryBuilderMock = $this->getQueryBuilderMock(['newSearchObject', 'getAllowedModules', 'getReadIndices']);
         $queryBuilderMock->expects($this->any())
             ->method('newSearchObject')
             ->will($this->returnValue($searchMock));
 
         $queryBuilderMock->expects($this->any())
             ->method('getAllowedModules')
-            ->will($this->returnValue(array('Accounts')));
+            ->will($this->returnValue(['Accounts']));
 
         $queryBuilderMock->expects($this->any())
             ->method('getReadIndices')
-            ->will($this->returnValue(array('Accounts')));
+            ->will($this->returnValue(['Accounts']));
 
         $userMock = TestMockHelper::getObjectMock($this, '\User');
         $queryBuilderMock->setUser($userMock);
-        $queryBuilderMock->setModules(array('Accounts'));
+        $queryBuilderMock->setModules(['Accounts']);
         $queryBuilderMock->setQuery($query);
         $queryBuilderMock->disableVisibility();
 

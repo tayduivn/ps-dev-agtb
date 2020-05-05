@@ -11,7 +11,8 @@
  */
 
 
-class RestZeroSpotSearchTest extends RestTestBase {
+class RestZeroSpotSearchTest extends RestTestBase
+{
     protected function setUp() : void
     {
         parent::setUp();
@@ -19,10 +20,10 @@ class RestZeroSpotSearchTest extends RestTestBase {
     
     protected function tearDown() : void
     {
-        if ( isset($this->account_id) ) {
-            foreach($this->account_id AS $account_id) {
+        if (isset($this->account_id)) {
+            foreach ($this->account_id as $account_id) {
                 $GLOBALS['db']->query("DELETE FROM accounts WHERE id = '{$account_id}'");
-                if($GLOBALS['db']->tableExists('accounts_cstm')) {
+                if ($GLOBALS['db']->tableExists('accounts_cstm')) {
                     $GLOBALS['db']->query("DELETE FROM accounts_cstm WHERE id = '{$account_id}'");
                 }
             }
@@ -31,23 +32,32 @@ class RestZeroSpotSearchTest extends RestTestBase {
         parent::tearDown();
     }
 
-    public function testZeroSpotSearch() {
-        $restReply = $this->_restCall("Accounts/",
-                                      json_encode(array('name'=>'0 - UNIT TEST - AFTER &nbsp;')),
-                                      'POST');
+    public function testZeroSpotSearch()
+    {
+        $restReply = $this->_restCall(
+            "Accounts/",
+            json_encode(['name'=>'0 - UNIT TEST - AFTER &nbsp;']),
+            'POST'
+        );
 
         $this->account_id[] = $restReply['reply']['id'];
 
-        $this->assertTrue(isset($restReply['reply']['id']),
-                          "An account was not created (or if it was, the ID was not returned)");
+        $this->assertTrue(
+            isset($restReply['reply']['id']),
+            "An account was not created (or if it was, the ID was not returned)"
+        );
 
 
-        $restReply = $this->_restCall("Accounts/",
-                                      json_encode(array('name'=>'1 - UNIT TEST - AFTER &nbsp;')),
-                                      'POST');
+        $restReply = $this->_restCall(
+            "Accounts/",
+            json_encode(['name'=>'1 - UNIT TEST - AFTER &nbsp;']),
+            'POST'
+        );
 
-        $this->assertTrue(isset($restReply['reply']['id']),
-                          "An account was not created (or if it was, the ID was not returned)");
+        $this->assertTrue(
+            isset($restReply['reply']['id']),
+            "An account was not created (or if it was, the ID was not returned)"
+        );
 
 
         $this->account_id[] = $restReply['reply']['id'];
@@ -57,6 +67,5 @@ class RestZeroSpotSearchTest extends RestTestBase {
         $this->assertEquals($this->account_id[0], $restReply['reply']['records'][0]['id'], "The record returned does not match the 0 record");
 
         $this->assertCount(1, $restReply['reply']['records']);
-        
     }
 }

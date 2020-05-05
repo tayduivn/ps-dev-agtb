@@ -195,18 +195,18 @@ class SessionProxyTest extends TestCase
      */
     public function testReplace()
     {
-        $keys = array(
+        $keys = [
             'sessionKey' . rand(1000, 9999),
             'sessionKey' . rand(1000, 9999),
             'sessionKey' . rand(1000, 9999),
             $this->sessionKey,
-        );
-        $values = array(
+        ];
+        $values = [
             'sessionValue' . rand(1000, 9999),
             'sessionValue' . rand(1000, 9999),
             'sessionValue' . rand(1000, 9999),
             'sessionReplacedValue' . rand(1000, 9999),
-        );
+        ];
 
         $replacement = array_combine($keys, $values);
 

@@ -32,11 +32,11 @@ class SanitizerTest extends TestCase
 
     public function providerTestSanitize()
     {
-        return array(
-            array(
+        return [
+            [
                 'test',
                 'test',
-            )
-        );
+            ],
+        ];
     }
 }

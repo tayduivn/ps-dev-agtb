@@ -65,7 +65,7 @@ class TeamBasedACLFieldTest extends TestCase
 
     protected function setUp() : void
     {
-        SugarTestHelper::setUp('current_user', array(true, true));
+        SugarTestHelper::setUp('current_user', [true, true]);
 
         $this->acl = new SugarACLTeamBased();
         $this->aclField = new ACLField();
@@ -74,13 +74,13 @@ class TeamBasedACLFieldTest extends TestCase
         $team2 = SugarTestTeamUtilities::createAnonymousTeam();
 
         $this->teamSetT1 = BeanFactory::newBean('TeamSets');
-        $this->teamSetT1->addTeams(array($team1->id));
+        $this->teamSetT1->addTeams([$team1->id]);
 
         $this->teamSetT2 = BeanFactory::newBean('TeamSets');
-        $this->teamSetT2->addTeams(array($team2->id));
+        $this->teamSetT2->addTeams([$team2->id]);
 
         $this->teamSetT1T2 = BeanFactory::newBean('TeamSets');
-        $this->teamSetT1T2->addTeams(array($team1->id, $team2->id));
+        $this->teamSetT1T2->addTeams([$team1->id, $team2->id]);
 
         $this->user = SugarTestUserUtilities::createAnonymousUser();
         $team1->add_user_to_team($this->user->id);
@@ -113,8 +113,8 @@ class TeamBasedACLFieldTest extends TestCase
 
         $access = $this->acl->getFieldListAccess(
             $this->module,
-            array($this->fieldName => $this->fieldName),
-            array('bean' => $this->bean, 'user' => $this->user)
+            [$this->fieldName => $this->fieldName],
+            ['bean' => $this->bean, 'user' => $this->user]
         );
         $this->assertEquals(0, $access[$this->fieldName]);
     }
@@ -134,8 +134,8 @@ class TeamBasedACLFieldTest extends TestCase
 
         $access = $this->acl->getFieldListAccess(
             $this->module,
-            array($this->fieldName => $this->fieldName),
-            array('bean' => $this->bean, 'user' => $this->user)
+            [$this->fieldName => $this->fieldName],
+            ['bean' => $this->bean, 'user' => $this->user]
         );
 
         $this->assertEquals(4, $access[$this->fieldName]);
@@ -157,8 +157,8 @@ class TeamBasedACLFieldTest extends TestCase
 
         $access = $this->acl->getFieldListAccess(
             $this->module,
-            array($this->fieldName => $this->fieldName),
-            array('bean' => $this->bean, 'user' => $this->user)
+            [$this->fieldName => $this->fieldName],
+            ['bean' => $this->bean, 'user' => $this->user]
         );
         $this->assertEquals($permissions, $access[$this->fieldName]);
     }
@@ -170,15 +170,15 @@ class TeamBasedACLFieldTest extends TestCase
          * @var bool $inSelectedTeams
          * @var int $permissions ACL_NO_ACCESS = 0; ACL_READ_ONLY = 1; ACL_READ_WRITE = 4;
          */
-        return array(
-            array(ACL_SELECTED_TEAMS_READ_WRITE, false, 0),
-            array(ACL_SELECTED_TEAMS_READ_WRITE, true, 4),
-            array(ACL_SELECTED_TEAMS_READ_OWNER_WRITE, false, 0),
-            array(ACL_SELECTED_TEAMS_READ_OWNER_WRITE, true, 1),
-            array(ACL_READ_SELECTED_TEAMS_WRITE, false, 1),
-            array(ACL_READ_SELECTED_TEAMS_WRITE, true, 4),
+        return [
+            [ACL_SELECTED_TEAMS_READ_WRITE, false, 0],
+            [ACL_SELECTED_TEAMS_READ_WRITE, true, 4],
+            [ACL_SELECTED_TEAMS_READ_OWNER_WRITE, false, 0],
+            [ACL_SELECTED_TEAMS_READ_OWNER_WRITE, true, 1],
+            [ACL_READ_SELECTED_TEAMS_WRITE, false, 1],
+            [ACL_READ_SELECTED_TEAMS_WRITE, true, 4],
             // Doesn't handle the old roles.
-            array(ACL_OWNER_READ_WRITE, false, 4),
-        );
+            [ACL_OWNER_READ_WRITE, false, 4],
+        ];
     }
 }

@@ -49,25 +49,28 @@ class Bug49691bTest extends TestCase
      * @dataProvider providerFunction
      * @return void
      */
-    public function testDBDateConversion($dateValue, $expected) {
+    public function testDBDateConversion($dateValue, $expected)
+    {
         global $current_user;
 
         $this->bean->test_c = $dateValue;
 
-        $this->sugarField->save($this->bean, array('test_c'=>$dateValue),'test_c', null, '');
+        $this->sugarField->save($this->bean, ['test_c'=>$dateValue], 'test_c', null, '');
 
         $this->assertNotEmpty($this->bean->test_c);
         $this->assertSame($expected, $this->bean->test_c);
     }
 
-    public function providerFunction() {
-        return array(
-            array('01/01/2012', '2012-01-01'),
-            array('2012-01-01', '2012-01-01'),
-        );
+    public function providerFunction()
+    {
+        return [
+            ['01/01/2012', '2012-01-01'],
+            ['2012-01-01', '2012-01-01'],
+        ];
     }
 }
 
-class Bug49691bMockBean {
+class Bug49691bMockBean
+{
     var $test_c;
 }

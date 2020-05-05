@@ -86,7 +86,7 @@ class ForecastsRestApiTest extends TestCase
         $this->_user->reloadPreferences();
 
         $api = new ForecastsApi();
-        $restReply = $api->getReportees(SugarTestRestUtilities::getRestServiceMock(), array('user_id' => self::$currentUser->id));
+        $restReply = $api->getReportees(SugarTestRestUtilities::getRestServiceMock(), ['user_id' => self::$currentUser->id]);
 
         $expectedData = $locale->formatName(self::$currentUser);
         $this->assertEquals($expectedData, $restReply['data']);
@@ -104,29 +104,29 @@ class ForecastsRestApiTest extends TestCase
     public function testReportees()
     {
         $api = new ForecastsApi();
-        $restReply = $api->getReportees(SugarTestRestUtilities::getRestServiceMock(), array('user_id' => self::$currentUser->id, 'level' => '4'));
+        $restReply = $api->getReportees(SugarTestRestUtilities::getRestServiceMock(), ['user_id' => self::$currentUser->id, 'level' => '4']);
 
-        $this->assertEquals($restReply['metadata']['id'], self::$currentUser->id, "currentUser's id was not found in the Expected place in the rest reply" );
+        $this->assertEquals($restReply['metadata']['id'], self::$currentUser->id, "currentUser's id was not found in the Expected place in the rest reply");
 
         // get the user ids from first, second, and third levels
-        $firstLevel = array();
-        $secondLevel = array();
-        $thirdLevel = array();
-        foreach($restReply['children'] as $level1Child ) {
+        $firstLevel = [];
+        $secondLevel = [];
+        $thirdLevel = [];
+        foreach ($restReply['children'] as $level1Child) {
             array_push($firstLevel, $level1Child['metadata']['id']);
-            foreach($level1Child['children'] as $level2Child) {
+            foreach ($level1Child['children'] as $level2Child) {
                 $secondLevel[] = $level2Child['metadata']['id'];
-                foreach($level2Child['children'] as $level3Child) {
+                foreach ($level2Child['children'] as $level3Child) {
                     $thirdLevel[] = $level3Child['metadata']['id'];
                 }
             }
         }
 
         // assertContains in case the order is ever jumbled
-        $this->assertContains(self::$employee1->id, $firstLevel, "employee1's id was not found in the Expected place in the rest reply" );
-        $this->assertContains(self::$employee2->id, $firstLevel, "employee2's id was not found in the Expected place in the rest reply" );
-        $this->assertContains(self::$employee3->id, $secondLevel, "employee3's id was not found in the Expected place in the rest reply" );
-        $this->assertContains(self::$employee4->id, $thirdLevel, "employee4's id was not found in the Expected place in the rest reply" );
+        $this->assertContains(self::$employee1->id, $firstLevel, "employee1's id was not found in the Expected place in the rest reply");
+        $this->assertContains(self::$employee2->id, $firstLevel, "employee2's id was not found in the Expected place in the rest reply");
+        $this->assertContains(self::$employee3->id, $secondLevel, "employee3's id was not found in the Expected place in the rest reply");
+        $this->assertContains(self::$employee4->id, $thirdLevel, "employee4's id was not found in the Expected place in the rest reply");
     }
 
     /**
@@ -144,15 +144,15 @@ class ForecastsRestApiTest extends TestCase
         $GLOBALS['db']->commit();
 
         $api = new ForecastsApi();
-        $restReply = $api->getReportees(SugarTestRestUtilities::getRestServiceMock(), array('user_id' => self::$currentUser->id));
+        $restReply = $api->getReportees(SugarTestRestUtilities::getRestServiceMock(), ['user_id' => self::$currentUser->id]);
 
-        $fullNames = array();
+        $fullNames = [];
 
-        foreach($restReply['children'] as $children ) {
+        foreach ($restReply['children'] as $children) {
             array_push($fullNames, $children['data']);
         }
 
-        $this->assertNotContains(self::$employee2->full_name, $fullNames, "Deleted employee2 was found in the rest reply when it should not have been" );
+        $this->assertNotContains(self::$employee2->full_name, $fullNames, "Deleted employee2 was found in the rest reply when it should not have been");
 
         // Undelete user if needed for other tests
         self::$employee2->deleted = 0;

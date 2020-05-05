@@ -39,132 +39,132 @@ class OracleManagerTest extends TestCase
     public function testQuote()
     {
         $string = "'dog eat ";
-        $this->assertEquals($this->_db->quote($string),"''dog eat ");
+        $this->assertEquals($this->_db->quote($string), "''dog eat ");
     }
 
     public function testArrayQuote()
     {
-        $string = array("'dog eat ");
+        $string = ["'dog eat "];
         $this->_db->arrayQuote($string);
-        $this->assertEquals($string,array("''dog eat "));
+        $this->assertEquals($string, ["''dog eat "]);
     }
 
     public function providerConvert()
     {
-        $returnArray = array(
-                array(
-                    array('foo','nothing'),
-                    'foo'
-                ),
-                array(
-                    array('foo','date'),
-                    "to_date(foo, 'YYYY-MM-DD')"
-                    ),
-                array(
-                    array('foo','time'),
-                    "to_date(foo, 'HH24:MI:SS')"
-                    ),
-                array(
-                    array('foo','datetime'),
-                    "to_date(foo, 'YYYY-MM-DD HH24:MI:SS')"
-                    ),
-                array(
-                    array('foo','datetime',array(1,2,3)),
-                    "to_date(foo, 'YYYY-MM-DD HH24:MI:SS',1,2,3)"
-                    ),
-                array(
-                    array('foo','today'),
-                    'sysdate'
-                    ),
-                array(
-                    array('foo','left'),
-                    "LTRIM(foo)"
-                    ),
-                array(
-                    array('foo','left',array(1,2,3)),
-                    "LTRIM(foo,1,2,3)"
-                    ),
-                array(
-                    array('foo','date_format'),
-                    "TO_CHAR(foo, 'YYYY-MM-DD')"
-                    ),
-                array(
-                    array('foo','date_format',array("'%Y-%m'")),
-                    "TO_CHAR(foo, 'YYYY-MM')"
-                    ),
-               array(
-                    array('foo','date_format',array(1,2,3)),
-                    "TO_CHAR(foo, 'YYYY-MM-DD')"
-                    ),
-                array(
-                    array('foo','time_format'),
-                    "TO_CHAR(foo,'HH24:MI:SS')"
-                    ),
-                array(
-                    array('foo','time_format',array(1,2,3)),
-                    "TO_CHAR(foo,1,2,3)"
-                    ),
-                array(
-                    array('foo','IFNULL'),
-                    "NVL(foo,'')"
-                    ),
-                array(
-                    array('foo','IFNULL',array(1,2,3)),
-                    "NVL(foo,1,2,3)"
-                    ),
-                array(
-                    array('foo','CONCAT'),
-                    "foo"
-                    ),
-                array(
-                    array('foo','CONCAT',array(1,2,3)),
-                    "foo||1||2||3"
-                    ),
-                array(
-                    array('foo','text2char'),
-                    "to_char(foo)"
-                    ),
-                array(
-                    array('foo','length'),
-                    "LENGTH(foo)"
-                ),
-                array(
-                    array('foo','month'),
-                    "TO_CHAR(foo, 'MM')"
-                ),
-                array(
-                    array('foo','quarter'),
-                    "TO_CHAR(foo, 'Q')"
-                ),
-                array(
-                    array('foo','add_date',array(1,'day')),
-                    "(foo + 1)"
-                ),
-                array(
-                    array('foo','add_date',array(2,'week')),
-                    "(foo + 2*7)"
-                ),
-                array(
-                    array('foo','add_date',array(3,'month')),
-                    "ADD_MONTHS(foo, 3)"
-                ),
-                array(
-                    array('foo','add_date',array(4,'quarter')),
-                    "ADD_MONTHS(foo, 4*3)"
-                ),
-                array(
-                    array('foo','add_date',array(5,'year')),
-                    "ADD_MONTHS(foo, 5*12)"
-                ),
-                array(
-                    array('1.23','round',array(6)),
-                    "round(1.23, 6)"
-                ),
-                array(
-                    array('date_created', 'date_format', array('%v')),
-                    "TO_CHAR(date_created, 'IW')"
-                ),
-        );
+        $returnArray = [
+                [
+                    ['foo','nothing'],
+                    'foo',
+                ],
+                [
+                    ['foo','date'],
+                    "to_date(foo, 'YYYY-MM-DD')",
+                    ],
+                [
+                    ['foo','time'],
+                    "to_date(foo, 'HH24:MI:SS')",
+                    ],
+                [
+                    ['foo','datetime'],
+                    "to_date(foo, 'YYYY-MM-DD HH24:MI:SS')",
+                    ],
+                [
+                    ['foo','datetime',[1,2,3]],
+                    "to_date(foo, 'YYYY-MM-DD HH24:MI:SS',1,2,3)",
+                    ],
+                [
+                    ['foo','today'],
+                    'sysdate',
+                    ],
+                [
+                    ['foo','left'],
+                    "LTRIM(foo)",
+                    ],
+                [
+                    ['foo','left',[1,2,3]],
+                    "LTRIM(foo,1,2,3)",
+                    ],
+                [
+                    ['foo','date_format'],
+                    "TO_CHAR(foo, 'YYYY-MM-DD')",
+                    ],
+                [
+                    ['foo','date_format',["'%Y-%m'"]],
+                    "TO_CHAR(foo, 'YYYY-MM')",
+                    ],
+                [
+                    ['foo','date_format',[1,2,3]],
+                    "TO_CHAR(foo, 'YYYY-MM-DD')",
+                    ],
+                [
+                    ['foo','time_format'],
+                    "TO_CHAR(foo,'HH24:MI:SS')",
+                    ],
+                [
+                    ['foo','time_format',[1,2,3]],
+                    "TO_CHAR(foo,1,2,3)",
+                    ],
+                [
+                    ['foo','IFNULL'],
+                    "NVL(foo,'')",
+                    ],
+                [
+                    ['foo','IFNULL',[1,2,3]],
+                    "NVL(foo,1,2,3)",
+                    ],
+                [
+                    ['foo','CONCAT'],
+                    "foo",
+                    ],
+                [
+                    ['foo','CONCAT',[1,2,3]],
+                    "foo||1||2||3",
+                    ],
+                [
+                    ['foo','text2char'],
+                    "to_char(foo)",
+                    ],
+                [
+                    ['foo','length'],
+                    "LENGTH(foo)",
+                ],
+                [
+                    ['foo','month'],
+                    "TO_CHAR(foo, 'MM')",
+                ],
+                [
+                    ['foo','quarter'],
+                    "TO_CHAR(foo, 'Q')",
+                ],
+                [
+                    ['foo','add_date',[1,'day']],
+                    "(foo + 1)",
+                ],
+                [
+                    ['foo','add_date',[2,'week']],
+                    "(foo + 2*7)",
+                ],
+                [
+                    ['foo','add_date',[3,'month']],
+                    "ADD_MONTHS(foo, 3)",
+                ],
+                [
+                    ['foo','add_date',[4,'quarter']],
+                    "ADD_MONTHS(foo, 4*3)",
+                ],
+                [
+                    ['foo','add_date',[5,'year']],
+                    "ADD_MONTHS(foo, 5*12)",
+                ],
+                [
+                    ['1.23','round',[6]],
+                    "round(1.23, 6)",
+                ],
+                [
+                    ['date_created', 'date_format', ['%v']],
+                    "TO_CHAR(date_created, 'IW')",
+                ],
+        ];
         return $returnArray;
     }
 
@@ -174,50 +174,50 @@ class OracleManagerTest extends TestCase
      */
     public function testConvert(array $parameters, $result)
     {
-        $this->assertEquals($result, call_user_func_array(array($this->_db, "convert"), $parameters));
-     }
+        $this->assertEquals($result, call_user_func_array([$this->_db, "convert"], $parameters));
+    }
 
      /**
       * @ticket 33283
       */
-     public function testConcat()
-     {
-         $ret = $this->_db->concat('foo',array('col1','col2','col3'));
-         $this->assertEquals("LTRIM(RTRIM(NVL(foo.col1,'')||' '||NVL(foo.col2,'')||' '||NVL(foo.col3,'')))", $ret);
-     }
+    public function testConcat()
+    {
+        $ret = $this->_db->concat('foo', ['col1','col2','col3']);
+        $this->assertEquals("LTRIM(RTRIM(NVL(foo.col1,'')||' '||NVL(foo.col2,'')||' '||NVL(foo.col3,'')))", $ret);
+    }
 
-     public function providerFromConvert()
-     {
-         $returnArray = array(
-             array(
-                 array('foo','nothing'),
-                 'foo'
-                 ),
-                 array(
-                     array('2009-01-01 12:00:00','date'),
-                     '2009-01-01'
-                     ),
-                 array(
-                     array('2009-01-01 12:00:00','time'),
-                     '12:00:00'
-                     )
-                 );
+    public function providerFromConvert()
+    {
+        $returnArray = [
+            [
+                ['foo','nothing'],
+                'foo',
+                ],
+                [
+                    ['2009-01-01 12:00:00','date'],
+                    '2009-01-01',
+                    ],
+                [
+                    ['2009-01-01 12:00:00','time'],
+                    '12:00:00',
+                    ],
+                ];
 
-         return $returnArray;
-     }
+        return $returnArray;
+    }
 
      /**
       * @ticket 33283
       * @dataProvider providerFromConvert
       */
-     public function testFromConvert(
-         array $parameters,
-         $result
-         )
-     {
-         $this->assertEquals($result,
-             $this->_db->fromConvert($parameters[0],$parameters[1])
-         );
+    public function testFromConvert(
+        array $parameters,
+        $result
+    ) {
+        $this->assertEquals(
+            $result,
+            $this->_db->fromConvert($parameters[0], $parameters[1])
+        );
     }
 
     /**
@@ -234,47 +234,47 @@ class OracleManagerTest extends TestCase
      */
     public function testIsNullableTypeDetection()
     {
-        $vardef = array(
+        $vardef = [
             'type' => 'someMagicType',
             'dbType' => 'text',
-        );
+        ];
         /** @var MockObject|OracleManager $db */
-        $db = $this->createPartialMock(get_class($this->_db), array('getFieldType', 'isTextType'));
+        $db = $this->createPartialMock(get_class($this->_db), ['getFieldType', 'isTextType']);
         $db->expects($this->atLeastOnce())->method('getFieldType')->with($this->equalTo($vardef))->will($this->returnValue($vardef['dbType']));
         $db->expects($this->atLeastOnce())->method('isTextType')->with($this->equalTo($vardef['dbType']))->will($this->returnValue(true));
-        SugarTestReflection::callProtectedMethod($db, 'isNullable', array($vardef));
+        SugarTestReflection::callProtectedMethod($db, 'isNullable', [$vardef]);
     }
 
     public function providerCompareVardefs()
     {
-        return array(
-            array(
-                array(
+        return [
+            [
+                [
                     'name' => 'foo',
                     'type' => 'number',
                     'len' => '38',
-                ),
-                array(
+                ],
+                [
                     'name' => 'foo',
                     'type' => 'int',
                     'len' => '38,2',
-                ),
-                true
-            ),
-            array(
-                array(
+                ],
+                true,
+            ],
+            [
+                [
                     'name' => 'foo',
                     'type' => 'number',
                     'len' => '30',
-                ),
-                array(
+                ],
+                [
                     'name' => 'foo',
                     'type' => 'int',
                     'len' => '31',
-                ),
-                false
-            ),
-        );
+                ],
+                false,
+            ],
+        ];
     }
 
     /**

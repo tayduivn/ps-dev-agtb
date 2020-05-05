@@ -23,23 +23,23 @@ class SugarForecasting_Chart_ManagerTest extends TestCase
     protected function setUp() : void
     {
         $this->obj = $this->getMockBuilder('SugarForecasting_Chart_Manager')
-            ->setMethods(array('getForecastConfig', 'getTimeperiod', 'getRollupQuota', 'getModuleLanguage'))
-            ->setConstructorArgs(array(array()))
+            ->setMethods(['getForecastConfig', 'getTimeperiod', 'getRollupQuota', 'getModuleLanguage'])
+            ->setConstructorArgs([[]])
             ->getMock();
 
         $this->obj->expects($this->atLeastOnce())
             ->method('getForecastConfig')
             ->will(
                 $this->returnValue(
-                    array(
+                    [
                         'show_worksheet_worst' => 0,
                         'show_worksheet_best' => 1,
-                        'show_worksheet_likely' => 1
-                    )
+                        'show_worksheet_likely' => 1,
+                    ]
                 )
             );
 
-        $tp_mock = $this->createPartialMock('TimePeriod', array('save'));
+        $tp_mock = $this->createPartialMock('TimePeriod', ['save']);
         $tp_mock->name = 'Q2 2012';
 
         $this->obj->expects($this->atLeastOnce())
@@ -50,9 +50,9 @@ class SugarForecasting_Chart_ManagerTest extends TestCase
             ->method('getModuleLanguage')
             ->will(
                 $this->returnValue(
-                    array(
-                        'LBL_CHART_FORECAST_FOR' => 'Test {0}'
-                    )
+                    [
+                        'LBL_CHART_FORECAST_FOR' => 'Test {0}',
+                    ]
                 )
             );
 
@@ -61,8 +61,8 @@ class SugarForecasting_Chart_ManagerTest extends TestCase
             ->will($this->returnValue(50.00));
 
 
-        $data_array = array(
-            array(
+        $data_array = [
+            [
                 'id' => 'wkst_test_1',
                 'user_id' => 'test_1',
                 'name' => 'Test 1',
@@ -73,9 +73,9 @@ class SugarForecasting_Chart_ManagerTest extends TestCase
                 'worst_case' => 30.00,
                 'worst_case_adjusted' => 40.00,
                 'base_rate' => 1,
-                'currency_id' => '-99'
-            ),
-            array(
+                'currency_id' => '-99',
+            ],
+            [
                 'id' => 'wkst_test_2',
                 'user_id' => 'test_2',
                 'name' => 'Test 2',
@@ -86,9 +86,9 @@ class SugarForecasting_Chart_ManagerTest extends TestCase
                 'worst_case' => 35.00,
                 'worst_case_adjusted' => 45.00,
                 'base_rate' => 1,
-                'currency_id' => '-99'
-            ),
-            array(
+                'currency_id' => '-99',
+            ],
+            [
                 'id' => 'wkst_test_3',
                 'user_id' => 'test_3',
                 'name' => 'Test 3',
@@ -99,9 +99,9 @@ class SugarForecasting_Chart_ManagerTest extends TestCase
                 'worst_case' => 37.00,
                 'worst_case_adjusted' => 47.00,
                 'base_rate' => 1,
-                'currency_id' => '-99'
-            ),
-            array(
+                'currency_id' => '-99',
+            ],
+            [
                 'id' => '',
                 'user_id' => 'test_4',
                 'name' => 'Test 4',
@@ -112,9 +112,9 @@ class SugarForecasting_Chart_ManagerTest extends TestCase
                 'worst_case' => 0,
                 'worst_case_adjusted' => 0,
                 'base_rate' => 1,
-                'currency_id' => '-99'
-            ),
-        );
+                'currency_id' => '-99',
+            ],
+        ];
 
         // set the data
         SugarTestReflection::setProtectedValue($this->obj, 'dataArray', $data_array);

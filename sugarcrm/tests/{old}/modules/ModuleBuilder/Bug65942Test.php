@@ -23,7 +23,7 @@ use PHPUnit\Framework\TestCase;
 class Bug65942Test extends TestCase
 {
     private $path = 'custom/Extension/modules/relationships';
-    private $files = array();
+    private $files = [];
 
     protected function setUp() : void
     {
@@ -66,48 +66,48 @@ class Bug65942Test extends TestCase
 
     public static function getLabelDefinitions()
     {
-        return array(
-            array(
-                array(
+        return [
+            [
+                [
                     0 =>
-                    array(
+                    [
                         'module' => 'Bug65942Test',
                         'system_label' => 'LBL_65942_TEST_1',
                         'display_label' => 'Bug65942Test 1',
-                    ),
+                    ],
                     1 =>
-                    array(
+                    [
                         'module' => 'Bug65942Test',
                         'system_label' => 'LBL_65942_TEST_2',
                         'display_label' => 'Bug65942Test 2',
-                    )
-                ),
-                '$mod_strings[\'LBL_65942_TEST_1\'] = \'Bug65942Test 1\';'
-            ),
-            array(
-                array(
+                    ],
+                ],
+                '$mod_strings[\'LBL_65942_TEST_1\'] = \'Bug65942Test 1\';',
+            ],
+            [
+                [
                     0 =>
-                    array(
+                    [
                         'module' => '65942Test',
                         'system_label' => '65942_TEST_1',
                         'display_label' => '65942Test 1',
-                    ),
+                    ],
                     1 =>
-                    array(
+                    [
                         'module' => '65942Test',
                         'system_label' => '65942_TEST_2',
                         'display_label' => '65942Test 2',
-                    ),
+                    ],
                     2 =>
-                    array(
+                    [
                         'module' => '65942Test',
                         'system_label' => '65942_TEST_3',
                         'display_label' => '65942Test 3',
-                    )
-                ),
-                '$mod_strings[\'65942_TEST_2\'] = \'65942Test 2\';'
-            )
-        );
+                    ],
+                ],
+                '$mod_strings[\'65942_TEST_2\'] = \'65942Test 2\';',
+            ],
+        ];
     }
 }
 

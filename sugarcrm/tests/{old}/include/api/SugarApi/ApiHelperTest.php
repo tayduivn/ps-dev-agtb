@@ -34,9 +34,9 @@ class ApiHelperTest extends TestCase
 
         $accountsBean = BeanFactory::newBean('Accounts');
 
-        $helper = ApiHelper::getHelper($api,$accountsBean);
+        $helper = ApiHelper::getHelper($api, $accountsBean);
 
-        $this->assertEquals('SugarBeanApiHelper',get_class($helper));
+        $this->assertEquals('SugarBeanApiHelper', get_class($helper));
     }
 
     public function testGetHelper_ReturnsModuleHelper()
@@ -45,9 +45,9 @@ class ApiHelperTest extends TestCase
 
         $bugsBean = BeanFactory::newBean('Users');
 
-        $helper = ApiHelper::getHelper($api,$bugsBean);
+        $helper = ApiHelper::getHelper($api, $bugsBean);
 
-        $this->assertEquals('UsersApiHelper',get_class($helper));
+        $this->assertEquals('UsersApiHelper', get_class($helper));
     }
 
     public function testGetHelper_ModulePathSubDirectory_ReturnModuleHelper()

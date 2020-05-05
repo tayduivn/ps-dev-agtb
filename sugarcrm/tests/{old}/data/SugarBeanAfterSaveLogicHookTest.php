@@ -23,7 +23,7 @@ class SugarBeanAfterSaveLogicHookTest extends TestCase
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
         LogicHook::refreshHooks();
-        $this->hook =  array('Accounts', 'after_save', Array(1, 'Accounts::after_save', __FILE__, 'SugarBeanAfterSaveTestHook', 'afterSave'));
+        $this->hook =  ['Accounts', 'after_save', [1, 'Accounts::after_save', __FILE__, 'SugarBeanAfterSaveTestHook', 'afterSave']];
         call_user_func_array('check_logic_hook_file', $this->hook);
     }
 
@@ -44,7 +44,7 @@ class SugarBeanAfterSaveLogicHookTest extends TestCase
         $account->retrieve($account->id);
         $fetched_row = $account->fetched_row;
         // clear cache
-        SugarBeanAfterSaveTestHook::$fetched_row = array();
+        SugarBeanAfterSaveTestHook::$fetched_row = [];
         $account->website = 'new website';
         $account->phone_office = 'new phone';
         $account->save();
@@ -56,12 +56,12 @@ class SugarBeanAfterSaveLogicHookTest extends TestCase
  
 class SugarBeanAfterSaveTestHook
 {
-    static public $fetched_row = array();
+    public static $fetched_row = [];
 
     public function afterSave($bean, $event, $arguments)
     {
         self::$fetched_row = $bean->fetched_row;
-        // restore fetched_row 
+        // restore fetched_row
         foreach ($arguments['dataChanges'] as $field) {
             self::$fetched_row[$field['field_name']] = $field['before'];
         }

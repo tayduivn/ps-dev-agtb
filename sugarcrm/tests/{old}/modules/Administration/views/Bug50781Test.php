@@ -19,7 +19,7 @@ class Bug50781Test extends TestCase
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setup('mod_strings', array('Administration'));
+        SugarTestHelper::setup('mod_strings', ['Administration']);
         SugarTestHelper::setUp('app_list_strings');
     }
 

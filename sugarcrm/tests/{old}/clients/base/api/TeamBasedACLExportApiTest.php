@@ -54,7 +54,7 @@ class TeamBasedACLExportApiTest extends TestCase
     /**
      * @var array
      */
-    protected $records = array();
+    protected $records = [];
 
     /**
      * @var SugarBean
@@ -68,7 +68,7 @@ class TeamBasedACLExportApiTest extends TestCase
 
     protected function setUp() : void
     {
-        SugarTestHelper::setUp('current_user', array(true, false));
+        SugarTestHelper::setUp('current_user', [true, false]);
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
@@ -81,12 +81,12 @@ class TeamBasedACLExportApiTest extends TestCase
         $this->teamUserIn->add_user_to_team($GLOBALS['current_user']->id);
 
         $this->teamSetUserIn = BeanFactory::newBean('TeamSets');
-        $this->teamSetUserIn->addTeams(array($this->teamUserIn->id));
+        $this->teamSetUserIn->addTeams([$this->teamUserIn->id]);
 
         $teamUserNot = SugarTestTeamUtilities::createAnonymousTeam();
 
         $this->teamSetUserNot = BeanFactory::newBean('TeamSets');
-        $this->teamSetUserNot->addTeams(array($teamUserNot->id));
+        $this->teamSetUserNot->addTeams([$teamUserNot->id]);
 
         $this->beanTBA = SugarTestAccountUtilities::createAccount(null, [
             'assigned_user_id' => null,
@@ -104,23 +104,23 @@ class TeamBasedACLExportApiTest extends TestCase
 
         $listData = $this->recordList->recordListCreate(
             SugarTestRestUtilities::getRestServiceMock(),
-            array('module' => $this->module, 'records' => $this->records)
+            ['module' => $this->module, 'records' => $this->records]
         );
         $this->recordListId = $listData['id'];
 
         $tbaConfigurator->setGlobal(true);
         $tbaConfigurator->setForModule($this->module, true);
 
-        $aclData = array(
-            'module' => array(
-                'access' => array(
+        $aclData = [
+            'module' => [
+                'access' => [
                     'aclaccess' => ACL_ALLOW_ALL,
-                ),
-                'export' => array(
+                ],
+                'export' => [
                     'aclaccess' => ACL_ALLOW_SELECTED_TEAMS,
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
 
         ACLAction::setACLData($GLOBALS['current_user']->id, $this->module, $aclData);
     }
@@ -129,7 +129,7 @@ class TeamBasedACLExportApiTest extends TestCase
     {
         $this->recordList->recordListDelete(
             SugarTestRestUtilities::getRestServiceMock(),
-            array('module' => 'Accounts', 'record_list_id' => $this->recordListId)
+            ['module' => 'Accounts', 'record_list_id' => $this->recordListId]
         );
         $this->teamSetUserIn->mark_deleted($this->teamSetUserIn->id);
         $this->teamSetUserNot->mark_deleted($this->teamSetUserNot->id);
@@ -145,7 +145,7 @@ class TeamBasedACLExportApiTest extends TestCase
     {
         $result = $this->api->export(
             SugarTestRestUtilities::getRestServiceMock(),
-            array('module' => 'Accounts', 'record_list_id' => $this->recordListId)
+            ['module' => 'Accounts', 'record_list_id' => $this->recordListId]
         );
 
         $this->assertStringContainsString($this->beanTBA->id, $result);
@@ -169,12 +169,12 @@ class TeamBasedACLExportApiTest extends TestCase
 
         $listData = $this->recordList->recordListCreate(
             SugarTestRestUtilities::getRestServiceMock(),
-            array('module' => $this->module, 'records' => array($this->beanTBA->id))
+            ['module' => $this->module, 'records' => [$this->beanTBA->id]]
         );
 
         $csvString = $this->api->export(
             SugarTestRestUtilities::getRestServiceMock(),
-            array('module' => 'Accounts', 'record_list_id' => $listData['id'])
+            ['module' => 'Accounts', 'record_list_id' => $listData['id']]
         );
         $actualGlobalTeam = substr_count($csvString, 'Global');
 

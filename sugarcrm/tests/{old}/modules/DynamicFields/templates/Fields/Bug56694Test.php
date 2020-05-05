@@ -75,18 +75,18 @@ class Bug56694Test extends TestCase
      */
     public function getMaxMin()
     {
-        return array(
-            array(null, null, false, false, false),
-            array(0, null, true, true, false),
-            array(0, 0, true, true, true),
-            array('0', '0', true, true, true),
-            array(null, 0, true, false, true),
-            array(1, 5, true, true, true, true),
-            array('1', '5', true, true, true, true),
-            array('a', 'b', false, false, false),
-            array('a', 5, true, false, true),
-            array(5, 'a', true, true, false)
-        );
+        return [
+            [null, null, false, false, false],
+            [0, null, true, true, false],
+            [0, 0, true, true, true],
+            ['0', '0', true, true, true],
+            [null, 0, true, false, true],
+            [1, 5, true, true, true, true],
+            ['1', '5', true, true, true, true],
+            ['a', 'b', false, false, false],
+            ['a', 5, true, false, true],
+            [5, 'a', true, true, false],
+        ];
     }
 
     /**
@@ -107,27 +107,18 @@ class Bug56694Test extends TestCase
         $this->templateInt->max = $max;
         $vardef = $this->templateInt->get_field_def();
 
-        if ($isValidation == false)
-        {
+        if ($isValidation == false) {
             $this->assertArrayNotHasKey('validation', $vardef, 'Validation is required');
-        }
-        else
-        {
+        } else {
             $this->assertArrayHasKey('validation', $vardef, 'Validation is not required');
-            if ($isMin == true)
-            {
+            if ($isMin == true) {
                 $this->assertEquals($min, $vardef['validation']['min'], 'Min value is incorrect');
-            }
-            else
-            {
+            } else {
                 $this->assertEquals(false, $vardef['validation']['min'], 'Min value is present');
             }
-            if ($isMax == true)
-            {
+            if ($isMax == true) {
                 $this->assertEquals($max, $vardef['validation']['max'], 'Max value is incorrect');
-            }
-            else
-            {
+            } else {
                 $this->assertEquals(false, $vardef['validation']['max'], 'Max value is present');
             }
         }
@@ -151,27 +142,18 @@ class Bug56694Test extends TestCase
         $this->templateInt->ext2 = $max;
         $vardef = $this->templateInt->get_field_def();
 
-        if ($isValidation == false)
-        {
+        if ($isValidation == false) {
             $this->assertArrayNotHasKey('validation', $vardef, 'Validation is required');
-        }
-        else
-        {
+        } else {
             $this->assertArrayHasKey('validation', $vardef, 'Validation is not required');
-            if ($isMin == true)
-            {
+            if ($isMin == true) {
                 $this->assertEquals($min, $vardef['validation']['min'], 'Min value is incorrect');
-            }
-            else
-            {
+            } else {
                 $this->assertEquals(false, $vardef['validation']['min'], 'Min value is present');
             }
-            if ($isMax == true)
-            {
+            if ($isMax == true) {
                 $this->assertEquals($max, $vardef['validation']['max'], 'Max value is incorrect');
-            }
-            else
-            {
+            } else {
                 $this->assertEquals(false, $vardef['validation']['max'], 'Max value is present');
             }
         }

@@ -35,14 +35,14 @@ class Bug51242Test extends TestCase
 
     public function providerGetParser()
     {
-        return array(
-            array(MB_PORTALLISTVIEW, 'Cases', null, null, MB_PORTAL),
-            array('portallayoutview','Cases', null, null, MB_PORTAL),
-            array(MB_PORTALLISTVIEW, 'Leads', null, null, MB_PORTAL),
-            array('portallayoutview','Leads', null, null, MB_PORTAL),
-            array(MB_PORTALLISTVIEW, 'Bugs', null, null, MB_PORTAL),
-            array('portallayoutview','Bugs', null, null, MB_PORTAL),
-        );
+        return [
+            [MB_PORTALLISTVIEW, 'Cases', null, null, MB_PORTAL],
+            ['portallayoutview','Cases', null, null, MB_PORTAL],
+            [MB_PORTALLISTVIEW, 'Leads', null, null, MB_PORTAL],
+            ['portallayoutview','Leads', null, null, MB_PORTAL],
+            [MB_PORTALLISTVIEW, 'Bugs', null, null, MB_PORTAL],
+            ['portallayoutview','Bugs', null, null, MB_PORTAL],
+        ];
     }
 
 

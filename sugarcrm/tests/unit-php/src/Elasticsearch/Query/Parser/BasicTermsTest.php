@@ -45,78 +45,78 @@ class BasicTermsTest extends TestCase
 
     public function providerBasicTermsTest()
     {
-        return array(
+        return [
             // add no new term
-            array(
+            [
                 'AND',
-                array('James', 'Bond'),
+                ['James', 'Bond'],
                 '',
-                array('AND' => array('James', 'Bond')),
-            ),
+                ['AND' => ['James', 'Bond']],
+            ],
             // normal case, 'AND'
-            array(
+            [
                 'AND',
-                array('James', 'Bond'),
+                ['James', 'Bond'],
                 'Movie',
-                array('AND' => array('James', 'Bond', 'Movie')),
-            ),
+                ['AND' => ['James', 'Bond', 'Movie']],
+            ],
             // normal case, 'NOT'
-            array(
+            [
                 'NOT',
-                array('James', 'Bond'),
+                ['James', 'Bond'],
                 'Movie',
-                array('NOT' => array('James', 'Bond', 'Movie')),
-            ),
+                ['NOT' => ['James', 'Bond', 'Movie']],
+            ],
             // normal case, 'OR'
-            array(
+            [
                 'OR',
-                array('James', 'Bond'),
+                ['James', 'Bond'],
                 'Movie',
-                array('OR' => array('James Bond Movie')),
-            ),
+                ['OR' => ['James Bond Movie']],
+            ],
             // 'AND', symbol operator
-            array(
+            [
                 '&',
-                array('James', 'Bond'),
+                ['James', 'Bond'],
                 'Movie',
-                array('AND' => array('James', 'Bond', 'Movie')),
-            ),
+                ['AND' => ['James', 'Bond', 'Movie']],
+            ],
             // 'NOT', symbol operator
-            array(
+            [
                 '-',
-                array('James', 'Bond'),
+                ['James', 'Bond'],
                 'Movie',
-                array('NOT' => array('James', 'Bond', 'Movie')),
-            ),
+                ['NOT' => ['James', 'Bond', 'Movie']],
+            ],
             // symbol operator, 'OR' operator
-            array(
+            [
                 '|',
-                array('James', 'Bond'),
+                ['James', 'Bond'],
                 'Movie',
-                array('OR' => array('James Bond Movie')),
-            ),
+                ['OR' => ['James Bond Movie']],
+            ],
             // 'OR' operator, combine terms into a string
-            array(
+            [
                 'OR',
-                array('James', 'Bond'),
+                ['James', 'Bond'],
                 'Movie',
-                array('OR' => array('James Bond Movie')),
-            ),
+                ['OR' => ['James Bond Movie']],
+            ],
             // nexted terms operator, combine terms into a string
-            array(
+            [
                 'OR',
-                array('James', 'Bond'),
-                new BasicTerms('AND', array('M6', '007')),
-                array('OR' => array(array('AND' => array('M6', '007')), 'James Bond')),
-            ),
+                ['James', 'Bond'],
+                new BasicTerms('AND', ['M6', '007']),
+                ['OR' => [['AND' => ['M6', '007']], 'James Bond']],
+            ],
             // NOT operator
-            array(
+            [
                 'NOT',
-                array('James', 'Bond'),
-                new BasicTerms('AND', array('M6', '007')),
-                array('NOT' => array('James', 'Bond', array('AND' => array('M6', '007')))),
-            ),
-        );
+                ['James', 'Bond'],
+                new BasicTerms('AND', ['M6', '007']),
+                ['NOT' => ['James', 'Bond', ['AND' => ['M6', '007']]]],
+            ],
+        ];
     }
 
     /**
@@ -126,14 +126,14 @@ class BasicTermsTest extends TestCase
     public function testBasicTermsException($operator)
     {
         $this->expectException(QueryBuilderException::class);
-        new BasicTerms($operator, array('abc'));
+        new BasicTerms($operator, ['abc']);
     }
 
     public function providerBasicTermsTestException()
     {
-        return array(
-            array('ands'),
-            array('&&'),
-        );
+        return [
+            ['ands'],
+            ['&&'],
+        ];
     }
 }

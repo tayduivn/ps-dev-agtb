@@ -23,22 +23,22 @@ class Bug42406 extends TestCase
 {
     public function getBrokenField()
     {
-        return array(
-            array(
-                array(
+        return [
+            [
+                [
                     'name' => 'withouttype',
-                    'type' => ''
-                ),
-                'TYPE'
-            ),
-            array(
-                array(
+                    'type' => '',
+                ],
+                'TYPE',
+            ],
+            [
+                [
                     'name' => '',
-                    'type' => 'withoutname'
-                ),
-                'NAME'
-            )
-        );
+                    'type' => 'withoutname',
+                ],
+                'NAME',
+            ],
+        ];
     }
     /**
      * @dataProvider getBrokenField
@@ -46,17 +46,17 @@ class Bug42406 extends TestCase
      */
     public function testVardef($field, $error)
     {
-        $fieldsdefs = array(
+        $fieldsdefs = [
             'broken_field' => $field,
-            'test' => array(
+            'test' => [
                 'name' => 'test',
-                'type' => 'varchar'
-            )
-        );
-        $indices = array();
+                'type' => 'varchar',
+            ],
+        ];
+        $indices = [];
 
         $db = DBManagerFactory::getInstance();
-        $result = $db->repairTableParams('contacts', $fieldsdefs,  $indices, false);
+        $result = $db->repairTableParams('contacts', $fieldsdefs, $indices, false);
 
         $this->assertMatchesRegularExpression('/\/\* ' . $error . ' IS MISSING IN VARDEF contacts::broken_field \*\//', $result, 'Broken vardef is passed to db');
     }

@@ -45,55 +45,55 @@ class PMSEProjectWrapperTest extends TestCase
     {
         $this->projectWrapper = $this->getMockBuilder('PMSEProjectWrapper')
             ->disableOriginalConstructor()
-            ->setMethods(array('getBean'))
-            ->getMock(); 
+            ->setMethods(['getBean'])
+            ->getMock();
         
         // $this->mockProject = $this->createMock('BpmnProject');
         $this->mockProject =$this->getMockBuilder('pmse_BpmnProject')
             ->disableAutoload()
             ->disableOriginalConstructor()
-            ->setMethods(array('get_full_list', '_get', '_put', '_post', '_delete', 'retrieve_by_string_fields', 'save', 'getPrimaryFieldUID'))
+            ->setMethods(['get_full_list', '_get', '_put', '_post', '_delete', 'retrieve_by_string_fields', 'save', 'getPrimaryFieldUID'])
             ->getMock();
         
         $this->mockDiagram = $this->getMockBuilder('pmse_BpmnDiagram')
                 ->disableAutoload()
                 ->disableOriginalConstructor()
-                ->setMethods( array('retrieve_by_string_fields'))
+                ->setMethods(['retrieve_by_string_fields'])
                 ->getMock();
         $this->mockProcess = $this->getMockBuilder('pmse_BpmnProcess')
                 ->disableAutoload()
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve_by_string_fields'))
+                ->setMethods(['retrieve_by_string_fields'])
                 ->getMock();
         $this->mockProcessDefinition = $this->getMockBuilder('pmse_BpmProcessDefinition')
                 ->disableAutoload()
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve_by_string_fields'))
+                ->setMethods(['retrieve_by_string_fields'])
                 ->getMock();
         $this->mockActivityBean = $this->getMockBuilder('pmse_BpmnActivity')
                 ->disableAutoload()
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve_by_string_fields'))
+                ->setMethods(['retrieve_by_string_fields'])
                 ->getMock();
         $this->mockArtifactBean = $this->getMockBuilder('pmse_BpmnArtifact')
                 ->disableAutoload()
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve_by_string_fields'))
+                ->setMethods(['retrieve_by_string_fields'])
                 ->getMock();
         $this->mockEventBean = $this->getMockBuilder('pmse_BpmnEvent')
                 ->disableAutoload()
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve_by_string_fields'))
+                ->setMethods(['retrieve_by_string_fields'])
                 ->getMock();
         $this->mockGatewayBean = $this->getMockBuilder('pmse_BpmnGateway')
                 ->disableAutoload()
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve_by_string_fields'))
+                ->setMethods(['retrieve_by_string_fields'])
                 ->getMock();
         $this->mockFlowBean = $this->getMockBuilder('pmse_BpmnFlow')
                 ->disableAutoload()
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve_by_string_fields'))
+                ->setMethods(['retrieve_by_string_fields'])
                 ->getMock();
         $this->mockParticipantBean = $this->getMockBuilder('pmse_BpmnParticipant')
                 ->disableAutoload()
@@ -127,7 +127,7 @@ class PMSEProjectWrapperTest extends TestCase
         $this->mockDynaformBean = $this->getMockBuilder('pmse_BpmDynaForm')
                 ->disableAutoload()
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve_by_string_fields'))
+                ->setMethods(['retrieve_by_string_fields'])
                 ->getMock();
         $this->mockRelatedDependency = $this->getMockBuilder('pmse_BpmRelatedDependency')
                 ->disableAutoload()
@@ -155,7 +155,7 @@ class PMSEProjectWrapperTest extends TestCase
 //                ->disableOriginalConstructor()
 //                ->setMethods(null)
 //                ->getMock();
-        $this->args = array();
+        $this->args = [];
     }
 
     public function testGetDiagram()
@@ -180,12 +180,12 @@ class PMSEProjectWrapperTest extends TestCase
         $this->mockProject->name = 'project_name';
         $this->mockProject->description = 'project_desc';
         $this->mockProject->prj_uid = '2193798123';
-        $this->mockProject->fetched_row = array(
+        $this->mockProject->fetched_row = [
             'id' => 1,
             'name' => 'project_name',
             'description' => 'project_desc',
             'prj_uid' => '2193798123',
-        );
+        ];
         $this->mockProject->expects($this->exactly(1))
                 ->method('retrieve_by_string_fields')
                 ->with($this->isType('array'))
@@ -193,17 +193,17 @@ class PMSEProjectWrapperTest extends TestCase
         
         $this->mockDiagram->id = 1;
         $this->mockDiagram->dia_uid = '2737981231';
-        $this->mockDiagram->fetched_row = array(
+        $this->mockDiagram->fetched_row = [
             'id' => 1,
             'prj_uid' => '2737981231',
-        );
+        ];
 
         $this->mockProcess->id = 1;
         $this->mockProcess->pro_uid = '2737909787';
-        $this->mockProcess->fetched_row = array(
+        $this->mockProcess->fetched_row = [
             'id' => 1,
             'prj_uid' => '2737909787',
-        );
+        ];
         $this->mockProcess->expects($this->exactly(1))
                 ->method('retrieve_by_string_fields')
                 ->with($this->isType('array'))
@@ -211,19 +211,19 @@ class PMSEProjectWrapperTest extends TestCase
 
         $this->mockProcessDefinition->id = 1;
         $this->mockProcessDefinition->pro_uid = '2737919822';
-        $this->mockProcessDefinition->fetched_row = array(
+        $this->mockProcessDefinition->fetched_row = [
             'id' => 1,
             'prj_uid' => '2737919822',
             'pro_locked_variables' => '',
             'pro_terminate_variables' => '',
-        );
+        ];
         $this->mockProcessDefinition->expects($this->exactly(1))
                 ->method('retrieve_by_string_fields')
                 ->with($this->isType('array'))
                 ->will($this->returnValue($this->mockProcessDefinition));
 
         //$this->mockApi = $this->createMock('ServiceBase');
-        $this->args = array('id' => '2193798123');
+        $this->args = ['id' => '2193798123'];
 
         $result = $this->projectWrapper->retrieveProject($this->args['id']);
         $this->assertIsArray($result);
@@ -241,18 +241,18 @@ class PMSEProjectWrapperTest extends TestCase
         $this->mockProject->name = 'project_name';
         $this->mockProject->description = 'project_desc';
         $this->mockProject->prj_uid = '2193798123';
-        $this->mockProject->fetched_row = array(
+        $this->mockProject->fetched_row = [
             'id' => 1,
             'name' => 'project_name',
             'description' => 'project_desc',
             'prj_uid' => '2193798123',
-        );
+        ];
         $this->mockProject->expects($this->exactly(1))
                 ->method('retrieve_by_string_fields')
                 ->with($this->isType('array'))
-                ->will($this->returnValue(false));                
+                ->will($this->returnValue(false));
 
-        $args = array('id' => 'pro01');
+        $args = ['id' => 'pro01'];
         
         $result = $this->projectWrapper->retrieveProject($args['id']);
         $this->assertIsArray($result);
@@ -280,9 +280,9 @@ class PMSEProjectWrapperTest extends TestCase
     public function testUpdateProject()
     {
          $this->projectWrapper = $this->getMockBuilder('PMSEProjectWrapper')
-            ->setMethods(array('getBean', 'updateDiagram', 'initWrapper'))
+            ->setMethods(['getBean', 'updateDiagram', 'initWrapper'])
             ->disableOriginalConstructor()
-            ->getMock(); 
+            ->getMock();
         
         $this->mockProject->expects($this->exactly(1))
                 ->method('retrieve_by_string_fields')
@@ -290,10 +290,10 @@ class PMSEProjectWrapperTest extends TestCase
                 ->will($this->returnValue($this->mockProject));
         $this->mockProject->id = 1;
         $this->mockProject->prj_uid = '2193798123';
-        $this->mockProject->fetched_row = array(
+        $this->mockProject->fetched_row = [
             'id' => 1,
-            'prj_uid' => '2193798123'
-        );
+            'prj_uid' => '2193798123',
+        ];
         
         $this->mockProcess->expects($this->exactly(1))
             ->method('retrieve_by_string_fields')
@@ -310,9 +310,9 @@ class PMSEProjectWrapperTest extends TestCase
         $this->projectWrapper->setProject($this->mockProject);
         $this->projectWrapper->setDiagram($this->mockDiagram);
         $this->projectWrapper->setProcess($this->mockProcess);
-        $this->projectWrapper->setProcessDefinition($this->mockProcessDefinition);        
+        $this->projectWrapper->setProcessDefinition($this->mockProcessDefinition);
         
-        $this->args = array('id' => '2193798123', 'flows' => array(), 'data' => array());
+        $this->args = ['id' => '2193798123', 'flows' => [], 'data' => []];
         
         $result = $this->projectWrapper->updateProject(1, $this->args);
         
@@ -324,24 +324,24 @@ class PMSEProjectWrapperTest extends TestCase
     public function testUpdateProjectInexistent()
     {
          $this->projectWrapper = $this->getMockBuilder('PMSEProjectWrapper')
-            ->setMethods(array('getBean', 'updateDiagram', 'initWrapper'))
+            ->setMethods(['getBean', 'updateDiagram', 'initWrapper'])
             ->disableOriginalConstructor()
-            ->getMock(); 
+            ->getMock();
         
         $this->mockProject->expects($this->exactly(1))
                 ->method('retrieve_by_string_fields')
                 ->with($this->isType('array'))
-                ->will($this->returnValue(NULL));
+                ->will($this->returnValue(null));
         $this->mockProject->id = 1;
         $this->mockProject->prj_uid = '2193798123';
-        $this->mockProject->fetched_row = array(
+        $this->mockProject->fetched_row = [
             'id' => 1,
-            'prj_uid' => '2193798123'
-        );
+            'prj_uid' => '2193798123',
+        ];
         
         $this->projectWrapper->setProject($this->mockProject);
         
-        $this->args = array('id' => '2193798123', 'flows' => array(), 'data' => array());
+        $this->args = ['id' => '2193798123', 'flows' => [], 'data' => []];
         
         $result = $this->projectWrapper->updateProject(1, $this->args);
         
@@ -399,12 +399,12 @@ class PMSEProjectWrapperTest extends TestCase
 //                ->will($this->returnValue($projectBean));
 ////        $this->mockProject->prj_id = 1;
 ////        $this->mockProject->prj_uid = '2193798123';
-//        
+//
 //        $this->mockProcess->expects($this->exactly(1))
 //                ->method('retrieve_by_string_fields')
 //                ->with($this->isType('array'));
 //        $this->mockProcess->pro_id = 1;
-//        
+//
 //        $this->mockBpmInbox = $this->createMock('BpmInbox');
 //        $this->mockBpmInbox->expects($this->exactly(1))
 //                ->method('getSelectRows')
@@ -430,7 +430,7 @@ class PMSEProjectWrapperTest extends TestCase
 //                ->with($this->equalTo('BpmInbox'))
 //                ->will($this->returnValue($this->mockBpmInbox));
 //        $this->projectWrapper->setBeanFactory($this->mockBeanFactory);
-//        
+//
 //        $this->projectWrapper->setProject($this->mockProject);
 //        $args = array('id' => '2193798123');
 //        $result = $this->projectWrapper->_delete($args);
@@ -447,12 +447,12 @@ class PMSEProjectWrapperTest extends TestCase
 //                ->will($this->returnValue($projectBean));
 ////        $this->mockProject->prj_id = 1;
 ////        $this->mockProject->prj_uid = '2193798123';
-//        
+//
 //        $this->mockProcess->expects($this->exactly(1))
 //                ->method('retrieve_by_string_fields')
 //                ->with($this->isType('array'));
 //        $this->mockProcess->pro_id = 1;
-//        
+//
 //        $this->mockBpmInbox = $this->createMock('pmse_BpmInbox');
 //        $this->mockBpmInbox->expects($this->exactly(1))
 //                ->method('getSelectRows')
@@ -469,13 +469,13 @@ class PMSEProjectWrapperTest extends TestCase
 //                                )
 //                            )
 //                        )));
-//        
+//
 //        $this->mockBeanFactory = $this->createMock('ADAMBeanFactory');
 //        $this->mockBeanFactory->expects($this->at(0))
 //                ->method('getBean')
 //                ->with($this->equalTo('pmse_BpmnProcess'))
 //                ->will($this->returnValue($this->mockProcess));
-//        
+//
 //        $this->mockBeanFactory->expects($this->at(1))
 //                ->method('getBean')
 //                ->with($this->equalTo('pmse_BpmInbox'))
@@ -492,24 +492,24 @@ class PMSEProjectWrapperTest extends TestCase
     {
         $this->projectWrapper = $this->getMockBuilder('PMSEProjectWrapper')
             ->disableOriginalConstructor()
-            ->setMethods(array(
-                'getBean', 
-                'getSelectRows', 
-                'sanitizeKeyFields', 
-                'getElementUid', 
-                'getEntityUid', 
-                'initWrapper'
-            ))
+            ->setMethods([
+                'getBean',
+                'getSelectRows',
+                'sanitizeKeyFields',
+                'getElementUid',
+                'getEntityUid',
+                'initWrapper',
+            ])
             ->getMock();
         
         $prjID = 1;
         $this->mockDiagram->id = 1;
         $this->mockDiagram->dia_uid = '2737981231';
-        $this->mockDiagram->fetched_row = array(
+        $this->mockDiagram->fetched_row = [
             'id' => 1,
             'prj_id' => 1,
             'prj_uid' => '2737981231',
-        );
+        ];
 
         $this->mockDiagram->expects($this->atLeastOnce())
             ->method('retrieve_by_string_fields')
@@ -519,17 +519,16 @@ class PMSEProjectWrapperTest extends TestCase
         $this->projectWrapper->expects($this->at(0))
             ->method('getSelectRows')
             ->will($this->returnValue(
-                array('rowList' =>
-                    array(
-                        array(
+                ['rowList' =>
+                    [
+                        [
                             'act_default_flow' => '1276',
                             'bou_uid' => '123asd',
-                            'name' => 'some activity name'
-                        )
-                    )
-                )
-            )
-        );
+                            'name' => 'some activity name',
+                        ],
+                    ],
+                ]
+            ));
 
         $this->mockFlowBean->expects($this->atLeastOnce())
             ->method('retrieve_by_string_fields')
@@ -540,83 +539,78 @@ class PMSEProjectWrapperTest extends TestCase
         $this->projectWrapper->expects($this->at(2))
             ->method('getSelectRows')
             ->will($this->returnValue(
-                array('rowList' =>
-                    array(
-                        array(
+                ['rowList' =>
+                    [
+                        [
                             'evn_attached_to' => '4123asd',
                             'evn_cancel_activity' => '456qwe',
                             'evn_activity_ref' => '789rty',
                             'bou_uid' => '123asd',
-                            'name' => 'some event name'
-                        )
-                    )
-                )
-            )
-        );
+                            'name' => 'some event name',
+                        ],
+                    ],
+                ]
+            ));
 
 
         $this->projectWrapper->expects($this->at(4))
             ->method('getSelectRows')
             ->will($this->returnValue(
-                array('rowList' =>
-                    array(
-                        array(
+                ['rowList' =>
+                    [
+                        [
                             'gat_default_flow' => '789rty',
                             'bou_uid' => '123asd',
-                            'name' => 'some gateway name'
-                        )
-                    )
-                )
-            )
-        );
+                            'name' => 'some gateway name',
+                        ],
+                    ],
+                ]
+            ));
 
         $this->projectWrapper->expects($this->at(6))
             ->method('getSelectRows')
             ->will($this->returnValue(
-                array('rowList' =>
-                    array(
-                        array(
+                ['rowList' =>
+                    [
+                        [
                             'bou_uid' => '123asd',
-                            'name' => 'some element name'
-                        )
-                    )
-                )
-            )
-        );
+                            'name' => 'some element name',
+                        ],
+                    ],
+                ]
+            ));
 
         $this->projectWrapper->expects($this->at(8))
             ->method('getSelectRows')
             ->will($this->returnValue(
-                array('rowList' =>
-                    array(
-                        array(
+                ['rowList' =>
+                    [
+                        [
                             'bou_uid' => '123asd',
                             'name' => 'some element name',
                             'flo_element_origin_type' => 'bpmnEvent',
                             'flo_element_origin' => 'event01',
                             'flo_element_dest_type' => 'bpmnActivity',
                             'flo_element_dest' => 'act01',
-                            'flo_state' => 'ACTIVE'
-                        )
-                    )
-                )
-            )
-        );     
+                            'flo_state' => 'ACTIVE',
+                        ],
+                    ],
+                ]
+            ));
 
         $this->projectWrapper->expects($this->at(9))
             ->method('sanitizeKeyFields')
             ->will($this->returnValue(
-                    array(
+                [
                         'bou_uid' => '123asd',
                         'name' => 'some element name',
                         'flo_element_origin_type' => 'bpmnEvent',
                         'flo_element_origin' => 'event01',
                         'flo_element_dest_type' => 'bpmnActivity',
                         'flo_element_dest' => 'act01',
-                        'flo_state' => 'ACTIVE'
-                    )
-                )
-            );
+                        'flo_state' => 'ACTIVE',
+                    ]
+            ));
         
         
         $this->projectWrapper->setProject($this->mockProject);
@@ -646,14 +640,14 @@ class PMSEProjectWrapperTest extends TestCase
     {
         $this->projectWrapper = $this->getMockBuilder('PMSEProjectWrapper')
             ->disableOriginalConstructor()
-            ->setMethods(array(
-                'getBean', 
-                'getSelectRows', 
-                'sanitizeKeyFields', 
-                'getElementUid', 
+            ->setMethods([
+                'getBean',
+                'getSelectRows',
+                'sanitizeKeyFields',
+                'getElementUid',
                 'getEntityUid',
-                'initWrapper'
-            ))
+                'initWrapper',
+            ])
             ->getMock();
         
         $this->mockDiagram->expects($this->atLeastOnce())
@@ -686,47 +680,47 @@ class PMSEProjectWrapperTest extends TestCase
         $this->projectWrapper = $this->getMockBuilder('PMSEProjectWrapper')
             ->disableOriginalConstructor()
             ->setMethods(
-                    array(
-                        'getBean', 
-                        'getClassEntity', 
-                        'getEntityData', 
-                        'getSelectRows', 
-                        'sanitizeKeyFields', 
-                        'getElementUid', 
-                        'getEntityUid', 
+                [
+                        'getBean',
+                        'getClassEntity',
+                        'getEntityData',
+                        'getSelectRows',
+                        'sanitizeKeyFields',
+                        'getElementUid',
+                        'getEntityUid',
                         'updateDiagramElements',
-                        'initWrapper'
-                    )
-                )
+                        'initWrapper',
+                    ]
+            )
             ->getMock();
 
-        $diagramArray = array(
-            'flows'=> array(
-                array(
+        $diagramArray = [
+            'flows'=> [
+                [
                     'action' => 'create',
                     'flo_element_origin_type' =>'bpmnActivity',
                     'flo_element_origin' =>'act001',
                     'flo_element_dest_type' =>'bpmnActivity',
                     'flo_element_dest' =>'act002',
-                    'flo_state' => array(
-                        array('x' => 12.23, 'y'=>12.24),
-                        array('x' => 29.54, 'y'=>29.55)
-                    )
-                )
-            ),
-            'gateways' => array(),
-            'activities' => array(),
-            'events' => array()
-        );
+                    'flo_state' => [
+                        ['x' => 12.23, 'y'=>12.24],
+                        ['x' => 29.54, 'y'=>29.55],
+                    ],
+                ],
+            ],
+            'gateways' => [],
+            'activities' => [],
+            'events' => [],
+        ];
         
-        $originMock = array(
+        $originMock = [
             'bean' => 'BpmnActivity',
-            'uid_field' => 'act_uid'
-        );
+            'uid_field' => 'act_uid',
+        ];
         
         $originBeanMock = $this->getMockBuilder('BpmnActivity')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve_by_string_fields'))
+                ->setMethods(['retrieve_by_string_fields'])
                 ->getMock();
 
         $originBeanMock->id = 'act001';
@@ -749,7 +743,7 @@ class PMSEProjectWrapperTest extends TestCase
 
         $destinationBeanMock = $this->getMockBuilder('BpmnEvent')
             ->disableOriginalConstructor()
-            ->setMethods(array('retrieve_by_string_fields'))
+            ->setMethods(['retrieve_by_string_fields'])
             ->getMock();
         $destinationBeanMock->id = 'evn001';
 
@@ -759,13 +753,13 @@ class PMSEProjectWrapperTest extends TestCase
 
         $flowBeanMock = $this->getMockBuilder('pmse_BpmFlowBean')
             ->disableOriginalConstructor()
-            ->setMethods(array('retrieve_by_string_fields'))
+            ->setMethods(['retrieve_by_string_fields'])
             ->getMock();
         $flowBeanMock->id = "mockFlow01";
         
         $this->projectWrapper->setFlowBean($flowBeanMock);
         
-        $keysArray = array();
+        $keysArray = [];
 
         $this->projectWrapper->updateDiagram($diagramArray, $keysArray);
     }
@@ -775,42 +769,42 @@ class PMSEProjectWrapperTest extends TestCase
         $this->projectWrapper = $this->getMockBuilder('PMSEProjectWrapper')
             ->disableOriginalConstructor()
             ->setMethods(
-                    array(
-                        'getBean', 
-                        'getClassEntity', 
-                        'getEntityData', 
-                        'getSelectRows', 
-                        'sanitizeKeyFields', 
-                        'getElementUid', 
-                        'getEntityUid', 
+                [
+                        'getBean',
+                        'getClassEntity',
+                        'getEntityData',
+                        'getSelectRows',
+                        'sanitizeKeyFields',
+                        'getElementUid',
+                        'getEntityUid',
                         'updateDiagramElements',
-                        'initWrapper'
-                    )
-                )
+                        'initWrapper',
+                    ]
+            )
             ->getMock();
 
-        $diagramArray = array(
-            'flows'=> array(
-                array(
+        $diagramArray = [
+            'flows'=> [
+                [
                     'action' => 'update',
                     'flo_element_origin_type' =>'bpmnActivity',
                     'flo_element_origin' =>'act001',
                     'flo_element_dest_type' =>'bpmnActivity',
                     'flo_element_dest' =>'act002',
-                    'flo_state' => array(
-                        array('x' => 12.23, 'y'=>12.24),
-                        array('x' => 29.54, 'y'=>29.55)
-                    )
-                )
-            ),
-            'gateways' => array(),
-            'activities' => array(),
-            'events' => array()
-        );
+                    'flo_state' => [
+                        ['x' => 12.23, 'y'=>12.24],
+                        ['x' => 29.54, 'y'=>29.55],
+                    ],
+                ],
+            ],
+            'gateways' => [],
+            'activities' => [],
+            'events' => [],
+        ];
         
         $originBeanMock = $this->getMockBuilder('BpmnActivity')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve_by_string_fields'))
+                ->setMethods(['retrieve_by_string_fields'])
                 ->getMock();
 
         $originBeanMock->id = 'act001';
@@ -825,7 +819,7 @@ class PMSEProjectWrapperTest extends TestCase
 
         $destinationBeanMock = $this->getMockBuilder('BpmnEvent')
             ->disableOriginalConstructor()
-            ->setMethods(array('retrieve_by_string_fields'))
+            ->setMethods(['retrieve_by_string_fields'])
             ->getMock();
         $destinationBeanMock->id = 'evn001';
 
@@ -833,7 +827,7 @@ class PMSEProjectWrapperTest extends TestCase
             ->method('getBean')
             ->will($this->returnValue($destinationBeanMock));
 
-        $keysArray = array();
+        $keysArray = [];
 
         $this->projectWrapper->updateDiagram($diagramArray, $keysArray);
     }
@@ -843,34 +837,34 @@ class PMSEProjectWrapperTest extends TestCase
         $this->projectWrapper = $this->getMockBuilder('PMSEProjectWrapper')
             ->disableOriginalConstructor()
             ->setMethods(
-                    array(
+                [
                         'getBean',
-                        'getClassEntity', 
-                        'getEntityData', 
-                        'getSelectRows', 
-                        'sanitizeKeyFields', 
-                        'getElementUid', 
-                        'getEntityUid', 
-                        'updateDiagramElements'
-                    )
-                )
+                        'getClassEntity',
+                        'getEntityData',
+                        'getSelectRows',
+                        'sanitizeKeyFields',
+                        'getElementUid',
+                        'getEntityUid',
+                        'updateDiagramElements',
+                    ]
+            )
             ->getMock();
 
-        $diagramArray = array(
-            'flows'=> array(),
-            'gateways' => array(
-                array(
+        $diagramArray = [
+            'flows'=> [],
+            'gateways' => [
+                [
                     'gat_default_flow' => 'abc123',
-                    'gat_direction' => 'CONVERGING'
-                ),
-                array(
+                    'gat_direction' => 'CONVERGING',
+                ],
+                [
                     'gat_default_flow' => '',
-                    'gat_direction' => 'DIVERGING'
-                )
-            ),
-            'activities' => array(),
-            'events' => array()
-        );
+                    'gat_direction' => 'DIVERGING',
+                ],
+            ],
+            'activities' => [],
+            'events' => [],
+        ];
         
         $this->projectWrapper->expects($this->any())
             ->method('getEntityData')
@@ -881,7 +875,7 @@ class PMSEProjectWrapperTest extends TestCase
 
         $this->projectWrapper->setFlowBean($this->mockFlowBean);
         
-        $keysArray = array();
+        $keysArray = [];
 
         $this->projectWrapper->updateDiagram($diagramArray, $keysArray);
     }
@@ -891,32 +885,32 @@ class PMSEProjectWrapperTest extends TestCase
         $this->projectWrapper = $this->getMockBuilder('PMSEProjectWrapper')
             ->disableOriginalConstructor()
             ->setMethods(
-                    array(
+                [
                         'getBean',
-                        'getClassEntity', 
-                        'getEntityData', 
-                        'getSelectRows', 
-                        'sanitizeKeyFields', 
-                        'getElementUid', 
-                        'getEntityUid', 
-                        'updateDiagramElements'
-                    )
-                )
+                        'getClassEntity',
+                        'getEntityData',
+                        'getSelectRows',
+                        'sanitizeKeyFields',
+                        'getElementUid',
+                        'getEntityUid',
+                        'updateDiagramElements',
+                    ]
+            )
             ->getMock();
 
-        $diagramArray = array(
-            'flows'=> array(),
-            'gateways' => array(),
-            'activities' => array(
-                array(
+        $diagramArray = [
+            'flows'=> [],
+            'gateways' => [],
+            'activities' => [
+                [
                     'act_default_flow' => 'abc123',
-                ),
-                array(
+                ],
+                [
                     'act_default_flow' => '',
-                )
-            ),
-            'events' => array()
-        );
+                ],
+            ],
+            'events' => [],
+        ];
         
         $this->projectWrapper->expects($this->any())
             ->method('getEntityData')
@@ -927,7 +921,7 @@ class PMSEProjectWrapperTest extends TestCase
 
         $this->projectWrapper->setFlowBean($this->mockFlowBean);
         
-        $keysArray = array();
+        $keysArray = [];
 
         $this->projectWrapper->updateDiagram($diagramArray, $keysArray);
     }
@@ -937,33 +931,33 @@ class PMSEProjectWrapperTest extends TestCase
         $this->projectWrapper = $this->getMockBuilder('PMSEProjectWrapper')
             ->disableOriginalConstructor()
             ->setMethods(
-                    array(
+                [
                         'getBean',
-                        'getClassEntity', 
-                        'getEntityData', 
-                        'getSelectRows', 
-                        'sanitizeKeyFields', 
-                        'getElementUid', 
-                        'getEntityUid', 
+                        'getClassEntity',
+                        'getEntityData',
+                        'getSelectRows',
+                        'sanitizeKeyFields',
+                        'getElementUid',
+                        'getEntityUid',
                         'updateDiagramElements',
-                        'initWrapper'
-                    )
-                )
+                        'initWrapper',
+                    ]
+            )
             ->getMock();
 
-        $diagramArray = array(
-            'flows'=> array(),
-            'gateways' => array(),
-            'activities' => array(),
-            'events' => array(
-                array(
+        $diagramArray = [
+            'flows'=> [],
+            'gateways' => [],
+            'activities' => [],
+            'events' => [
+                [
                     'evn_attached_to' => 'abc123',
-                ),
-                array(
+                ],
+                [
                     'evn_attached_to' => '',
-                )
-            )
-        );
+                ],
+            ],
+        ];
         
         $this->projectWrapper->expects($this->any())
             ->method('getEntityData')
@@ -971,14 +965,14 @@ class PMSEProjectWrapperTest extends TestCase
         
         $activityMock = $this->getMockBuilder('pmse_BpmnActivity')
             ->disableOriginalConstructor()
-            ->setMethods(array('retrieve_by_string_fields'))
+            ->setMethods(['retrieve_by_string_fields'])
             ->getMock();
         $activityMock->id = 'act01';
         $activityMock->act_uid = 'actUid01';
         
         $tmpObjectMock = $this->getMockBuilder('pmse_BpmnTmpObject')
             ->disableOriginalConstructor()
-            ->setMethods(array('getPrimaryFieldName'))
+            ->setMethods(['getPrimaryFieldName'])
             ->getMock();
         $tmpObjectMock->expects($this->exactly(2))
             ->method('getPrimaryFieldName')
@@ -994,101 +988,101 @@ class PMSEProjectWrapperTest extends TestCase
         
         $this->projectWrapper->setFlowBean($this->mockFlowBean);
         
-        $keysArray = array();
+        $keysArray = [];
 
         $this->projectWrapper->updateDiagram($diagramArray, $keysArray);
     }
 
     public function testGetEntityData()
     {
-        $fixtureArray = array(
-            array(
-                'inputData' => array('key' => 'activities'),
-                'outputData' => array(
+        $fixtureArray = [
+            [
+                'inputData' => ['key' => 'activities'],
+                'outputData' => [
                     'bean' => 'BpmnActivity',
                     'bean_object' => 'pmse_BpmnActivity',
                     'bound_element' => 'bpmnActivity',
                     'uid_field' => 'act_uid',
-                    'element_name' => 'act_name'
-                )
-            ),
-            array(
-                'inputData' => array('key' => 'artifacts'),
-                'outputData' => array(
+                    'element_name' => 'act_name',
+                ],
+            ],
+            [
+                'inputData' => ['key' => 'artifacts'],
+                'outputData' => [
                     'bean' => 'BpmnArtifact',
                     'bean_object' => 'pmse_BpmnArtifact',
                     'bound_element' => 'bpmnArtifact',
                     'uid_field' => 'art_uid',
-                    'element_name' => 'art_name'
-                )
-            ),
-            array(
-                'inputData' => array('key' => 'gateways'),
-                'outputData' => array(
+                    'element_name' => 'art_name',
+                ],
+            ],
+            [
+                'inputData' => ['key' => 'gateways'],
+                'outputData' => [
                     'bean' => 'BpmnGateway',
                     'bean_object' => 'pmse_BpmnGateway',
                     'bound_element' => 'bpmnGateway',
                     'uid_field' => 'gat_uid',
-                    'element_name' => 'gat_name'
-                )
-            ),
-            array(
-                'inputData' => array('key' => 'events'),
-                'outputData' => array(
+                    'element_name' => 'gat_name',
+                ],
+            ],
+            [
+                'inputData' => ['key' => 'events'],
+                'outputData' => [
                     'bean' => 'BpmnEvent',
                     'bean_object' => 'pmse_BpmnEvent',
                     'bound_element' => 'bpmnEvent',
                     'uid_field' => 'evn_uid',
-                    'element_name' => 'evn_name'
-                )
-            ),
-            array(
-                'inputData' => array('key' => 'flows'),
-                'outputData' => array(
+                    'element_name' => 'evn_name',
+                ],
+            ],
+            [
+                'inputData' => ['key' => 'flows'],
+                'outputData' => [
                     'bean' => 'BpmnFlow',
                     'bean_object' => 'pmse_BpmnFlow',
                     'bound_element' => 'bpmnFlow',
                     'uid_field' => 'flo_uid',
-                    'element_name' => 'flo_name'
-                )
-            ),
-            array(
-                'inputData' => array('key' => 'pools'),
-                'outputData' => array(
+                    'element_name' => 'flo_name',
+                ],
+            ],
+            [
+                'inputData' => ['key' => 'pools'],
+                'outputData' => [
                     'bean' => 'BpmnLaneset',
                     'bean_object' => 'pmse_BpmnLaneset',
                     'bound_element' => 'bpmnLaneset',
-                    'uid_field' => 'lns_uid'
-                )
-            ),
-            array(
-                'inputData' => array('key' => 'lanes'),
-                'outputData' => array(
+                    'uid_field' => 'lns_uid',
+                ],
+            ],
+            [
+                'inputData' => ['key' => 'lanes'],
+                'outputData' => [
                     'bean' => 'BpmnLane',
                     'bean_object' => 'pmse_BpmnLane',
                     'bound_element' => 'bpmnLane',
-                    'uid_field' => 'lan_uid'
-                )
-            ),
-            array(
-                'inputData' => array('key' => 'data'),
-                'outputData' => array(
+                    'uid_field' => 'lan_uid',
+                ],
+            ],
+            [
+                'inputData' => ['key' => 'data'],
+                'outputData' => [
                     'bean' => 'BpmnData',
                     'bean_object' => 'pmse_BpmnData',
                     'bound_element' => 'bpmnData',
-                    'uid_field' => 'dat_uid'
-                )
-            ),
-            array(
-                'inputData' => array('key' => 'participants'),
-                'outputData' => array(
+                    'uid_field' => 'dat_uid',
+                ],
+            ],
+            [
+                'inputData' => ['key' => 'participants'],
+                'outputData' => [
                     'bean' => 'BpmnParticipant',
                     'bean_object' => 'pmse_BpmnParticipant',
                     'bound_element' => 'bpmnParticipant',
-                    'uid_field' => 'par_uid'
-                )
-            ),
-        );
+                    'uid_field' => 'par_uid',
+                ],
+            ],
+        ];
         foreach ($fixtureArray as $fixture) {
             $this->assertEquals($fixture['outputData'], $this->projectWrapper->getEntityData($fixture['inputData']['key']));
         }
@@ -1096,45 +1090,45 @@ class PMSEProjectWrapperTest extends TestCase
 
     public function testGetEntityUid()
     {
-        $fixtureArray = array(
-            array(
+        $fixtureArray = [
+            [
                 'inputData' => 'bpmnActivity',
-                'outputData' => array('bean' => 'pmse_BpmnActivity', 'uid'=> 'act_uid')
-            ),
-            array(
+                'outputData' => ['bean' => 'pmse_BpmnActivity', 'uid'=> 'act_uid'],
+            ],
+            [
                 'inputData' => 'bpmnGateway',
-                'outputData' => array('bean' => 'pmse_BpmnGateway', 'uid'=> 'gat_uid')
-            ),
-            array(
+                'outputData' => ['bean' => 'pmse_BpmnGateway', 'uid'=> 'gat_uid'],
+            ],
+            [
                 'inputData' => 'bpmnEvent',
-                'outputData' => array('bean' => 'pmse_BpmnEvent', 'uid'=> 'evn_uid')
-            ),
-            array(
+                'outputData' => ['bean' => 'pmse_BpmnEvent', 'uid'=> 'evn_uid'],
+            ],
+            [
                 'inputData' => 'bpmnFlow',
-                'outputData' => array('bean' => 'pmse_BpmnFlow', 'uid'=> 'flo_uid')
-            ),
-            array(
+                'outputData' => ['bean' => 'pmse_BpmnFlow', 'uid'=> 'flo_uid'],
+            ],
+            [
                 'inputData' => 'bpmnLaneset',
-                'outputData' => 'id'
-            ),
-            array(
+                'outputData' => 'id',
+            ],
+            [
                 'inputData' => 'bpmnLane',
-                'outputData' => 'id'
-            ),
-            array(
+                'outputData' => 'id',
+            ],
+            [
                 'inputData' => 'bpmnData',
-                'outputData' => 'id'
-            ),
-            array(
+                'outputData' => 'id',
+            ],
+            [
                 'inputData' => 'bpmnParticipant',
-                'outputData' => 'id'
-            ),
-            array(
+                'outputData' => 'id',
+            ],
+            [
                 'inputData' => 'bpmnArtifact',
-                'outputData' => array('bean' => 'pmse_BpmnArtifact', 'uid'=> 'art_uid')
-            )
+                'outputData' => ['bean' => 'pmse_BpmnArtifact', 'uid'=> 'art_uid'],
+            ],
 
-        );
+        ];
         foreach ($fixtureArray as $fixture) {
             $this->assertEquals($fixture['outputData'], $this->projectWrapper->getEntityUid($fixture['inputData']));
         }
@@ -1143,9 +1137,9 @@ class PMSEProjectWrapperTest extends TestCase
     public function testGetElementUid()
     {
         $this->projectWrapper = $this->getMockBuilder('PMSEProjectWrapper')
-            ->setMethods(array('getBean', 'getPrimaryFieldName'))
+            ->setMethods(['getBean', 'getPrimaryFieldName'])
             ->disableOriginalConstructor()
-            ->getMock(); 
+            ->getMock();
         
         $this->mockDynaformBean->expects($this->exactly(1))
                 ->method('retrieve_by_string_fields')
@@ -1158,28 +1152,28 @@ class PMSEProjectWrapperTest extends TestCase
                 ->will($this->returnValue($this->mockDynaformBean));
 
 //        $this->projectWrapper->setBeanFactory($this->mockBeanFactory);
-        $this->assertEquals('2737981231', $this->projectWrapper->getElementUid('2737981231','BpmDynaForm','dyn_uid'));
+        $this->assertEquals('2737981231', $this->projectWrapper->getElementUid('2737981231', 'BpmDynaForm', 'dyn_uid'));
     }
     
     public function testGetDefaultDynaformView()
     {
         $this->projectWrapper = $this->getMockBuilder('PMSEProjectWrapper')
-            ->setMethods(array('getBean', 'getSelectRows'))
+            ->setMethods(['getBean', 'getSelectRows'])
             ->disableOriginalConstructor()
-            ->getMock(); 
+            ->getMock();
         
-        $rowList = array('rowList' =>
-                        array(
-                            array(
+        $rowList = ['rowList' =>
+                        [
+                            [
                                 'dyn_uid' => '2737981231',
                                 'flo_element_dest' => '123',
                                 'flo_element_origin_type' => 'bpmnActivity',
                                 'flo_element_dest_type' => 'bpmnEvent',
                                 'flo_state' => '{}',
-                                'bou_uid' => '123asd'
-                            )
-                        )
-                    );
+                                'bou_uid' => '123asd',
+                            ],
+                        ],
+                    ];
 
         $this->projectWrapper->expects($this->once())
                 ->method('getBean')
@@ -1190,25 +1184,25 @@ class PMSEProjectWrapperTest extends TestCase
     
     public function testGetClassEntity()
     {
-        $fixtureArray = array(
-            array(
+        $fixtureArray = [
+            [
                 'inputData' => 'BpmnActivity',
-                'outputData' => array('bean' => 'pmse_BpmnActivity', 'uid_field'=> 'act_uid')
-            ),
-            array(
+                'outputData' => ['bean' => 'pmse_BpmnActivity', 'uid_field'=> 'act_uid'],
+            ],
+            [
                 'inputData' => 'BpmnGateway',
-                'outputData' => array('bean' => 'pmse_BpmnGateway', 'uid_field'=> 'gat_uid')
-            ),
-            array(
+                'outputData' => ['bean' => 'pmse_BpmnGateway', 'uid_field'=> 'gat_uid'],
+            ],
+            [
                 'inputData' => 'BpmnEvent',
-                'outputData' => array('bean' => 'pmse_BpmnEvent', 'uid_field'=> 'evn_uid')
-            ),
-            array(
+                'outputData' => ['bean' => 'pmse_BpmnEvent', 'uid_field'=> 'evn_uid'],
+            ],
+            [
                 'inputData' => 'BpmnArtifact',
-                'outputData' => array('bean' => 'pmse_BpmnArtifact', 'uid_field'=> 'art_uid')
-            )
+                'outputData' => ['bean' => 'pmse_BpmnArtifact', 'uid_field'=> 'art_uid'],
+            ],
 
-        );
+        ];
         foreach ($fixtureArray as $fixture) {
             $this->assertEquals($fixture['outputData'], $this->projectWrapper->getClassEntity($fixture['inputData']));
         }
@@ -1217,13 +1211,13 @@ class PMSEProjectWrapperTest extends TestCase
     public function testUpdateDiagramElementsCreateActivity()
     {
         $this->projectWrapper = $this->getMockBuilder('PMSEProjectWrapper')
-            ->setMethods(array('getBean', 'getSelectRows', 'create', 'getDefaultDynaformView', 'initWrapper'))
+            ->setMethods(['getBean', 'getSelectRows', 'create', 'getDefaultDynaformView', 'initWrapper'])
             ->disableOriginalConstructor()
             ->getMock();
         
         $activityMock = $this->getMockBuilder('pmse_BpmnActivity')
             ->disableOriginalConstructor()
-            ->setMethods(NULL)
+            ->setMethods(null)
             ->getMock();
         
         $activityMock->act_task_type = 'USERTASK';
@@ -1241,7 +1235,7 @@ class PMSEProjectWrapperTest extends TestCase
 
         $definitionMock = $this->getMockBuilder('pmse_BpmActivityDefinition')
             ->disableOriginalConstructor()
-            ->setMethods(array('save'))
+            ->setMethods(['save'])
             ->getMock();
 
         $this->projectWrapper->expects($this->at(3))
@@ -1250,7 +1244,7 @@ class PMSEProjectWrapperTest extends TestCase
         
         $boundMock = $this->getMockBuilder('pmse_BpmnBound')
             ->disableOriginalConstructor()
-            ->setMethods(array('save'))
+            ->setMethods(['save'])
             ->getMock();
         
         $this->projectWrapper->expects($this->at(5))
@@ -1259,19 +1253,19 @@ class PMSEProjectWrapperTest extends TestCase
 
         $this->mockProcessDefinition->pro_module = 'Leads';
         
-        $entityData = array(
+        $entityData = [
             'bean_object' => 'pmse_bpmnActivity',
             'element_name' => 'act_name',
-            'bean' => 'BpmnActivity'
-        );
+            'bean' => 'BpmnActivity',
+        ];
 
-        $keysArray = array(
+        $keysArray = [
             'pro_id' => 'pro01',
             'prj_uid' => 'prj01',
-            'dia_id' => 'dia01'
-        );
+            'dia_id' => 'dia01',
+        ];
         
-        $elementArray = array(
+        $elementArray = [
             'action' => 'create',
             'act_name' => 'Task #1',
             'bou_x' => 12.8278,
@@ -1279,13 +1273,13 @@ class PMSEProjectWrapperTest extends TestCase
             'bou_width' => 200,
             'bou_height' => 50,
             'bou_container' => 'bpmnDiagram',
-        );
+        ];
         
         global $beanList;
         
-        $beanList = array(
-            'Meetings'
-        );
+        $beanList = [
+            'Meetings',
+        ];
         
         $this->projectWrapper->updateDiagramElements($entityData, $keysArray, $elementArray);
     }
@@ -1293,13 +1287,13 @@ class PMSEProjectWrapperTest extends TestCase
     public function testUpdateDiagramElementsCreateGateway()
     {
         $this->projectWrapper = $this->getMockBuilder('PMSEProjectWrapper')
-            ->setMethods(array('getBean', 'getSelectRows', 'create', 'getDefaultDynaformView', 'initWrapper'))
+            ->setMethods(['getBean', 'getSelectRows', 'create', 'getDefaultDynaformView', 'initWrapper'])
             ->disableOriginalConstructor()
             ->getMock();
 
         $activityMock = $this->getMockBuilder('pmse_BpmnGateway')
             ->disableOriginalConstructor()
-            ->setMethods(NULL)
+            ->setMethods(null)
             ->getMock();
         
         $activityMock->act_task_type = 'USERTASK';
@@ -1317,7 +1311,7 @@ class PMSEProjectWrapperTest extends TestCase
 
         $definitionMock = $this->getMockBuilder('pmse_BpmGatewayDefinition')
             ->disableOriginalConstructor()
-            ->setMethods(array('save'))
+            ->setMethods(['save'])
             ->getMock();
 
         $this->projectWrapper->expects($this->at(3))
@@ -1326,7 +1320,7 @@ class PMSEProjectWrapperTest extends TestCase
         
         $boundMock = $this->getMockBuilder('pmse_BpmnBound')
             ->disableOriginalConstructor()
-            ->setMethods(array('save'))
+            ->setMethods(['save'])
             ->getMock();
         
         $this->projectWrapper->expects($this->at(4))
@@ -1335,19 +1329,19 @@ class PMSEProjectWrapperTest extends TestCase
 
         $this->mockProcessDefinition->pro_module = 'Leads';
         
-        $entityData = array(
+        $entityData = [
             'bean_object' => 'pmse_bpmnGateway',
             'element_name' => 'gat_name',
-            'bean' => 'BpmnGateway'
-        );
+            'bean' => 'BpmnGateway',
+        ];
 
-        $keysArray = array(
+        $keysArray = [
             'pro_id' => 'pro01',
             'prj_uid' => 'prj01',
-            'dia_id' => 'dia01'
-        );
+            'dia_id' => 'dia01',
+        ];
         
-        $elementArray = array(
+        $elementArray = [
             'action' => 'create',
             'gat_name' => 'Task #1',
             'bou_x' => 12.8278,
@@ -1355,13 +1349,13 @@ class PMSEProjectWrapperTest extends TestCase
             'bou_width' => 200,
             'bou_height' => 50,
             'bou_container' => 'bpmnDiagram',
-        );
+        ];
         
         global $beanList;
         
-        $beanList = array(
-            'Meetings'
-        );
+        $beanList = [
+            'Meetings',
+        ];
         
         $this->projectWrapper->updateDiagramElements($entityData, $keysArray, $elementArray);
     }
@@ -1369,13 +1363,13 @@ class PMSEProjectWrapperTest extends TestCase
     public function testUpdateDiagramElementsCreateEvent()
     {
         $this->projectWrapper = $this->getMockBuilder('PMSEProjectWrapper')
-            ->setMethods(array('getBean', 'getSelectRows', 'create', 'getDefaultDynaformView', 'initWrapper'))
+            ->setMethods(['getBean', 'getSelectRows', 'create', 'getDefaultDynaformView', 'initWrapper'])
             ->disableOriginalConstructor()
             ->getMock();
 
         $activityMock = $this->getMockBuilder('pmse_BpmnEvent')
             ->disableOriginalConstructor()
-            ->setMethods(NULL)
+            ->setMethods(null)
             ->getMock();
         
         $activityMock->evn_type = 'CATCH';
@@ -1392,7 +1386,7 @@ class PMSEProjectWrapperTest extends TestCase
 
         $definitionMock = $this->getMockBuilder('pmse_BpmEventDefinition')
             ->disableOriginalConstructor()
-            ->setMethods(array('save'))
+            ->setMethods(['save'])
             ->getMock();
 
         $this->projectWrapper->expects($this->at(3))
@@ -1401,7 +1395,7 @@ class PMSEProjectWrapperTest extends TestCase
         
         $boundMock = $this->getMockBuilder('pmse_BpmnBound')
             ->disableOriginalConstructor()
-            ->setMethods(array('save'))
+            ->setMethods(['save'])
             ->getMock();
         
         $this->projectWrapper->expects($this->at(4))
@@ -1410,19 +1404,19 @@ class PMSEProjectWrapperTest extends TestCase
 
         $this->mockProcessDefinition->pro_module = 'Leads';
         
-        $entityData = array(
+        $entityData = [
             'bean_object' => 'pmse_bpmnEvent',
             'element_name' => 'evn_name',
-            'bean' => 'BpmnEvent'
-        );
+            'bean' => 'BpmnEvent',
+        ];
 
-        $keysArray = array(
+        $keysArray = [
             'pro_id' => 'pro01',
             'prj_uid' => 'prj01',
-            'dia_id' => 'dia01'
-        );
+            'dia_id' => 'dia01',
+        ];
 
-        $elementArray = array(
+        $elementArray = [
             'action' => 'create',
             'evn_name' => 'Task #1',
             'evn_message' => 'Leads',
@@ -1430,15 +1424,15 @@ class PMSEProjectWrapperTest extends TestCase
             'bou_y' => 11.2222,
             'bou_width' => 200,
             'bou_height' => 50,
-            'bou_container' => 'bpmnDiagram'
-        );
+            'bou_container' => 'bpmnDiagram',
+        ];
 
         global $beanList;
 
-        $beanList = array(
+        $beanList = [
             'Meetings',
-            'Leads'
-        );
+            'Leads',
+        ];
 
         $this->projectWrapper->updateDiagramElements($entityData, $keysArray, $elementArray);
     }
@@ -1446,13 +1440,13 @@ class PMSEProjectWrapperTest extends TestCase
     public function testUpdateDiagramElementsUpdate()
     {
         $this->projectWrapper = $this->getMockBuilder('PMSEProjectWrapper')
-            ->setMethods(array('getBean', 'getPrimaryFieldName', 'update', 'getDefaultDynaformView', 'initWrapper'))
+            ->setMethods(['getBean', 'getPrimaryFieldName', 'update', 'getDefaultDynaformView', 'initWrapper'])
             ->disableOriginalConstructor()
             ->getMock();
         
         $activityMock = $this->getMockBuilder('pmse_BpmnActivity')
             ->disableOriginalConstructor()
-            ->setMethods(array('retrieve_by_string_fields', 'save'))
+            ->setMethods(['retrieve_by_string_fields', 'save'])
             ->getMock();
         
         $activityMock->act_task_type = 'USERTASK';
@@ -1460,14 +1454,14 @@ class PMSEProjectWrapperTest extends TestCase
         $activityMock->id = 'act01';
         $activityMock->pro_id = 'pro01';
         $activityMock->prj_id = 'prj01';
-        $activityMock->fetched_row = array(
+        $activityMock->fetched_row = [
             'act_task_type' => 'USERTASK',
             'act_type' => 'TASK',
             'pro_id' => 'pro01',
             'prj_id' => 'prj01',
             'id' => 'act01',
-            'act_uit' => 'actUid01'
-        );
+            'act_uit' => 'actUid01',
+        ];
         
         $activityMock->expects($this->once())
             ->method('retrieve_by_string_fields')
@@ -1488,7 +1482,7 @@ class PMSEProjectWrapperTest extends TestCase
 
         $boundMock = $this->getMockBuilder('pmse_BpmnBound')
             ->disableOriginalConstructor()
-            ->setMethods(array('save', 'retrieve_by_string_fields'))
+            ->setMethods(['save', 'retrieve_by_string_fields'])
             ->getMock();
         
         $boundMock->dia_id = 'dia01';
@@ -1499,21 +1493,21 @@ class PMSEProjectWrapperTest extends TestCase
 
         $this->mockProcessDefinition->pro_module = 'Leads';
         
-        $entityData = array(
+        $entityData = [
             'bean_object' => 'pmse_bpmnActivity',
             'bound_element' => 'bpmnActivity',
             'element_name' => 'act_name',
             'uid_field' => 'act_uid',
-            'bean' => 'BpmnActivity'
-        );
+            'bean' => 'BpmnActivity',
+        ];
 
-        $keysArray = array(
+        $keysArray = [
             'pro_id' => 'pro01',
             'prj_uid' => 'prj01',
-            'dia_id' => 'dia01'
-        );
+            'dia_id' => 'dia01',
+        ];
         
-        $elementArray = array(
+        $elementArray = [
             'action' => 'update',
             'act_uid' => 'actUid01',
             'act_name' => 'Task #1',
@@ -1522,13 +1516,13 @@ class PMSEProjectWrapperTest extends TestCase
             'bou_width' => 200,
             'bou_height' => 50,
             'bou_container' => 'bpmnDiagram',
-        );
+        ];
         
         global $beanList;
         
-        $beanList = array(
-            'Meetings'
-        );
+        $beanList = [
+            'Meetings',
+        ];
         
         $this->projectWrapper->updateDiagramElements($entityData, $keysArray, $elementArray);
     }
@@ -1536,13 +1530,13 @@ class PMSEProjectWrapperTest extends TestCase
     public function testUpdateDiagramElementsRemoveActivity()
     {
         $this->projectWrapper = $this->getMockBuilder('PMSEProjectWrapper')
-            ->setMethods(array('getBean', 'getPrimaryFieldName', 'delete', 'getDefaultDynaformView', 'initWrapper'))
+            ->setMethods(['getBean', 'getPrimaryFieldName', 'delete', 'getDefaultDynaformView', 'initWrapper'])
             ->disableOriginalConstructor()
             ->getMock();
         
         $activityMock = $this->getMockBuilder('pmse_BpmnActivity')
             ->disableOriginalConstructor()
-            ->setMethods(array('retrieve_by_string_fields', 'save'))
+            ->setMethods(['retrieve_by_string_fields', 'save'])
             ->getMock();
         
         $activityMock->act_task_type = 'USERTASK';
@@ -1550,14 +1544,14 @@ class PMSEProjectWrapperTest extends TestCase
         $activityMock->id = 'act01';
         $activityMock->pro_id = 'pro01';
         $activityMock->prj_id = 'prj01';
-        $activityMock->fetched_row = array(
+        $activityMock->fetched_row = [
             'act_task_type' => 'USERTASK',
             'act_type' => 'TASK',
             'pro_id' => 'pro01',
             'prj_id' => 'prj01',
             'id' => 'act01',
-            'act_uit' => 'actUid01'
-        );
+            'act_uit' => 'actUid01',
+        ];
         
         $activityMock->expects($this->once())
             ->method('retrieve_by_string_fields')
@@ -1573,7 +1567,7 @@ class PMSEProjectWrapperTest extends TestCase
 
         $definitionMock = $this->getMockBuilder('pmse_BpmActivityDefinition')
             ->disableOriginalConstructor()
-            ->setMethods(array('save', 'retrieve_by_string_fields'))
+            ->setMethods(['save', 'retrieve_by_string_fields'])
             ->getMock();
 
         $this->projectWrapper->expects($this->at(3))
@@ -1587,7 +1581,7 @@ class PMSEProjectWrapperTest extends TestCase
         
         $boundMock = $this->getMockBuilder('pmse_BpmnBound')
             ->disableOriginalConstructor()
-            ->setMethods(array('save', 'retrieve_by_string_fields'))
+            ->setMethods(['save', 'retrieve_by_string_fields'])
             ->getMock();
         
         $boundMock->dia_id = 'dia01';
@@ -1602,21 +1596,21 @@ class PMSEProjectWrapperTest extends TestCase
         
         $this->mockProcessDefinition->pro_module = 'Leads';
         
-        $entityData = array(
+        $entityData = [
             'bean_object' => 'pmse_bpmnActivity',
             'bound_element' => 'bpmnActivity',
             'element_name' => 'act_name',
             'uid_field' => 'act_uid',
-            'bean' => 'BpmnActivity'
-        );
+            'bean' => 'BpmnActivity',
+        ];
 
-        $keysArray = array(
+        $keysArray = [
             'pro_id' => 'pro01',
             'prj_uid' => 'prj01',
-            'dia_id' => 'dia01'
-        );
+            'dia_id' => 'dia01',
+        ];
         
-        $elementArray = array(
+        $elementArray = [
             'action' => 'remove',
             'act_uid' => 'actUid01',
             'act_name' => 'Task #1',
@@ -1625,13 +1619,13 @@ class PMSEProjectWrapperTest extends TestCase
             'bou_width' => 200,
             'bou_height' => 50,
             'bou_container' => 'bpmnDiagram',
-        );
+        ];
         
         global $beanList;
         
-        $beanList = array(
-            'Meetings'
-        );
+        $beanList = [
+            'Meetings',
+        ];
         
         $this->projectWrapper->updateDiagramElements($entityData, $keysArray, $elementArray);
     }
@@ -1639,26 +1633,26 @@ class PMSEProjectWrapperTest extends TestCase
     public function testUpdateDiagramElementsRemoveEvent()
     {
         $this->projectWrapper = $this->getMockBuilder('PMSEProjectWrapper')
-            ->setMethods(array('getBean', 'getPrimaryFieldName', 'delete', 'getDefaultDynaformView', 'initWrapper'))
+            ->setMethods(['getBean', 'getPrimaryFieldName', 'delete', 'getDefaultDynaformView', 'initWrapper'])
             ->disableOriginalConstructor()
             ->getMock();
         
         $eventMock = $this->getMockBuilder('pmse_BpmnEvent')
             ->disableOriginalConstructor()
-            ->setMethods(array('retrieve_by_string_fields', 'save'))
+            ->setMethods(['retrieve_by_string_fields', 'save'])
             ->getMock();
         
         $eventMock->evn_type = 'CATCH';
         $eventMock->id = 'evn01';
         $eventMock->pro_id = 'pro01';
         $eventMock->prj_id = 'prj01';
-        $eventMock->fetched_row = array(
+        $eventMock->fetched_row = [
             'evn_type' => 'CATCH',
             'pro_id' => 'pro01',
             'prj_id' => 'prj01',
             'id' => 'evn01',
-            'evn_uid' => 'evnUid01'
-        );
+            'evn_uid' => 'evnUid01',
+        ];
         
         $eventMock->expects($this->once())
             ->method('retrieve_by_string_fields')
@@ -1674,7 +1668,7 @@ class PMSEProjectWrapperTest extends TestCase
 
         $definitionMock = $this->getMockBuilder('pmse_BpmEventDefinition')
             ->disableOriginalConstructor()
-            ->setMethods(array('save', 'retrieve_by_string_fields', 'delete'))
+            ->setMethods(['save', 'retrieve_by_string_fields', 'delete'])
             ->getMock();
 
         $this->projectWrapper->expects($this->at(3))
@@ -1688,7 +1682,7 @@ class PMSEProjectWrapperTest extends TestCase
         
         $boundMock = $this->getMockBuilder('pmse_BpmnBound')
             ->disableOriginalConstructor()
-            ->setMethods(array('save', 'retrieve_by_string_fields'))
+            ->setMethods(['save', 'retrieve_by_string_fields'])
             ->getMock();
         
         $boundMock->dia_id = 'dia01';
@@ -1705,21 +1699,21 @@ class PMSEProjectWrapperTest extends TestCase
 
         $this->mockProcessDefinition->pro_module = 'Leads';
         
-        $entityData = array(
+        $entityData = [
             'bean_object' => 'pmse_bpmnEvent',
             'bound_element' => 'bpmnEvent',
             'element_name' => 'evn_name',
             'uid_field' => 'evn_uid',
-            'bean' => 'BpmnEvent'
-        );
+            'bean' => 'BpmnEvent',
+        ];
 
-        $keysArray = array(
+        $keysArray = [
             'pro_id' => 'pro01',
             'prj_uid' => 'prj01',
-            'dia_id' => 'dia01'
-        );
+            'dia_id' => 'dia01',
+        ];
         
-        $elementArray = array(
+        $elementArray = [
             'action' => 'remove',
             'evn_uid' => 'evnUid01',
             'evn_name' => 'Event #1',
@@ -1728,13 +1722,13 @@ class PMSEProjectWrapperTest extends TestCase
             'bou_width' => 200,
             'bou_height' => 50,
             'bou_container' => 'bpmnDiagram',
-        );
+        ];
         
         global $beanList;
         
-        $beanList = array(
-            'Meetings'
-        );
+        $beanList = [
+            'Meetings',
+        ];
         
         $this->projectWrapper->updateDiagramElements($entityData, $keysArray, $elementArray);
     }
@@ -1742,13 +1736,13 @@ class PMSEProjectWrapperTest extends TestCase
     public function testUpdateDiagramElementsRemoveGateway()
     {
         $this->projectWrapper = $this->getMockBuilder('PMSEProjectWrapper')
-            ->setMethods(array('getBean', 'getPrimaryFieldName', 'delete', 'getDefaultDynaformView', 'initWrapper'))
+            ->setMethods(['getBean', 'getPrimaryFieldName', 'delete', 'getDefaultDynaformView', 'initWrapper'])
             ->disableOriginalConstructor()
             ->getMock();
         
         $activityMock = $this->getMockBuilder('pmse_BpmnActivity')
             ->disableOriginalConstructor()
-            ->setMethods(array('retrieve_by_string_fields', 'save'))
+            ->setMethods(['retrieve_by_string_fields', 'save'])
             ->getMock();
         
         $activityMock->act_task_type = 'USERTASK';
@@ -1756,14 +1750,14 @@ class PMSEProjectWrapperTest extends TestCase
         $activityMock->id = 'act01';
         $activityMock->pro_id = 'pro01';
         $activityMock->prj_id = 'prj01';
-        $activityMock->fetched_row = array(
+        $activityMock->fetched_row = [
             'act_task_type' => 'USERTASK',
             'act_type' => 'TASK',
             'pro_id' => 'pro01',
             'prj_id' => 'prj01',
             'id' => 'act01',
-            'act_uit' => 'actUid01'
-        );
+            'act_uit' => 'actUid01',
+        ];
         
         $activityMock->expects($this->once())
             ->method('retrieve_by_string_fields')
@@ -1779,7 +1773,7 @@ class PMSEProjectWrapperTest extends TestCase
 
         $definitionMock = $this->getMockBuilder('pmse_BpmActivityDefinition')
             ->disableOriginalConstructor()
-            ->setMethods(array('save', 'retrieve_by_string_fields'))
+            ->setMethods(['save', 'retrieve_by_string_fields'])
             ->getMock();
 
         $this->projectWrapper->expects($this->at(3))
@@ -1793,7 +1787,7 @@ class PMSEProjectWrapperTest extends TestCase
         
         $boundMock = $this->getMockBuilder('pmse_BpmnBound')
             ->disableOriginalConstructor()
-            ->setMethods(array('save', 'retrieve_by_string_fields'))
+            ->setMethods(['save', 'retrieve_by_string_fields'])
             ->getMock();
         
         $boundMock->dia_id = 'dia01';
@@ -1804,21 +1798,21 @@ class PMSEProjectWrapperTest extends TestCase
 
         $this->mockProcessDefinition->pro_module = 'Leads';
         
-        $entityData = array(
+        $entityData = [
             'bean_object' => 'pmse_bpmnActivity',
             'bound_element' => 'bpmnActivity',
             'element_name' => 'act_name',
             'uid_field' => 'act_uid',
-            'bean' => 'BpmnActivity'
-        );
+            'bean' => 'BpmnActivity',
+        ];
 
-        $keysArray = array(
+        $keysArray = [
             'pro_id' => 'pro01',
             'prj_uid' => 'prj01',
-            'dia_id' => 'dia01'
-        );
+            'dia_id' => 'dia01',
+        ];
         
-        $elementArray = array(
+        $elementArray = [
             'action' => 'remove',
             'act_uid' => 'actUid01',
             'act_name' => 'Task #1',
@@ -1827,13 +1821,13 @@ class PMSEProjectWrapperTest extends TestCase
             'bou_width' => 200,
             'bou_height' => 50,
             'bou_container' => 'bpmnDiagram',
-        );
+        ];
         
         global $beanList;
         
-        $beanList = array(
-            'Meetings'
-        );
+        $beanList = [
+            'Meetings',
+        ];
         
         $this->projectWrapper->updateDiagramElements($entityData, $keysArray, $elementArray);
     }
@@ -1841,28 +1835,28 @@ class PMSEProjectWrapperTest extends TestCase
     public function testUpdateDiagramElementsDefault()
     {
         $this->projectWrapper = $this->getMockBuilder('PMSEProjectWrapper')
-            ->setMethods(array('getBean', 'initWrapper'))
+            ->setMethods(['getBean', 'initWrapper'])
             ->disableOriginalConstructor()
             ->getMock();
         
         $this->projectWrapper->expects($this->once())
                 ->method('getBean');
         
-        $entityData = array(
+        $entityData = [
             'bean_object' => 'pmse_bpmnActivity',
             'bound_element' => 'bpmnActivity',
             'element_name' => 'act_name',
             'uid_field' => 'act_uid',
-            'bean' => 'BpmnActivity'
-        );
+            'bean' => 'BpmnActivity',
+        ];
 
-        $keysArray = array(
+        $keysArray = [
             'pro_id' => 'pro01',
             'prj_uid' => 'prj01',
-            'dia_id' => 'dia01'
-        );
+            'dia_id' => 'dia01',
+        ];
         
-        $elementArray = array(
+        $elementArray = [
             'action' => 'randomAction',
             'act_uid' => 'actUid01',
             'act_name' => 'Task #1',
@@ -1871,13 +1865,13 @@ class PMSEProjectWrapperTest extends TestCase
             'bou_width' => 200,
             'bou_height' => 50,
             'bou_container' => 'bpmnDiagram',
-        );
+        ];
         
         global $beanList;
         
-        $beanList = array(
-            'Meetings'
-        );
+        $beanList = [
+            'Meetings',
+        ];
         
         $this->projectWrapper->updateDiagramElements($entityData, $keysArray, $elementArray);
     }
@@ -1886,13 +1880,13 @@ class PMSEProjectWrapperTest extends TestCase
     public function testUpdateProcessDefinition()
     {
         $this->projectWrapper = $this->getMockBuilder('PMSEProjectWrapper')
-            ->setMethods(array('getBean', 'notify', 'initWrapper'))
+            ->setMethods(['getBean', 'notify', 'initWrapper'])
             ->disableOriginalConstructor()
             ->getMock();
 
         $processDefinitionMock = $this->getMockBuilder('pmse_BpmProcessDefinition')
             ->disableOriginalConstructor()
-            ->setMethods(array('retrieve_by_string_fields', 'save'))
+            ->setMethods(['retrieve_by_string_fields', 'save'])
             ->getMock();
         
         $processDefinitionMock->expects($this->once())
@@ -1905,7 +1899,7 @@ class PMSEProjectWrapperTest extends TestCase
         
         $diagramMock = $this->getMockBuilder('pmse_BpmnDiagram')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve_by_string_fields', 'save'))
+                ->setMethods(['retrieve_by_string_fields', 'save'])
                 ->getMock();
         
         $diagramMock->expects($this->once())
@@ -1918,7 +1912,7 @@ class PMSEProjectWrapperTest extends TestCase
 
         $processMock = $this->getMockBuilder('pmse_BpmnProcess')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve_by_string_fields', 'save'))
+                ->setMethods(['retrieve_by_string_fields', 'save'])
                 ->getMock();
         
         
@@ -1933,9 +1927,9 @@ class PMSEProjectWrapperTest extends TestCase
         $this->projectWrapper->expects($this->at(4))
                 ->method('notify');
         
-        $args = array(
-            'record' => 'someRecord01'
-        );
+        $args = [
+            'record' => 'someRecord01',
+        ];
 
         $this->projectWrapper->updateProcessDefinition($args);
     }
@@ -1943,15 +1937,15 @@ class PMSEProjectWrapperTest extends TestCase
     public function testAttachDetachNotify()
     {
         $this->projectWrapper = $this->getMockBuilder('PMSEProjectWrapper')
-            ->setMethods(NULL)
+            ->setMethods(null)
             ->disableOriginalConstructor()
             ->getMock();
         
-        $this->projectWrapper->setObservers(array());
+        $this->projectWrapper->setObservers([]);
         
         $observerMock = $this->getMockBuilder('PMSEObserver')
             ->disableOriginalConstructor()
-            ->setMethods(array('update'))
+            ->setMethods(['update'])
             ->getMock();
         
         $observerMock->expects($this->once())

@@ -47,18 +47,18 @@ class NativeTest extends TestCase
 
     public function providerTestVerify()
     {
-        return array(
-            array(
+        return [
+            [
                 'password1',
                 '$2y$10$duE5hc9IAC7JMBKxIZqXHu95QDpLtp1zk2SXjwZb9Sp2p0WDMCoSW',
                 true,
-            ),
-            array(
+            ],
+            [
                 'password2',
                 '$2y$10$duE5hc9IAC7JMBKxIZqXHu95QDpLtp1zk2SXjwZb9Sp2p0WDMCoSW',
                 false,
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -74,22 +74,22 @@ class NativeTest extends TestCase
 
     public function providerTestSetOptions()
     {
-        return array(
-            array(
-                array('cost' => 10),
-                array('cost' => 10),
-            ),
+        return [
+            [
+                ['cost' => 10],
+                ['cost' => 10],
+            ],
             // salt should be removed
-            array(
-                array('cost' => 10, 'salt' => 'xyz'),
-                array('cost' => 10),
-            ),
+            [
+                ['cost' => 10, 'salt' => 'xyz'],
+                ['cost' => 10],
+            ],
             // salt should be removed
-            array(
-                array('salt' => 'xyz'),
-                array(),
-            ),
-        );
+            [
+                ['salt' => 'xyz'],
+                [],
+            ],
+        ];
     }
 
     /**
@@ -109,20 +109,20 @@ class NativeTest extends TestCase
 
     public function providerTestHash()
     {
-        return array(
-            array(
+        return [
+            [
                 'PASSWORD_BCRYPT',
-                array(),
+                [],
                 'password1',
                 '#^\$2y\$10+\$[./A-Za-z0-9]{53}$#D',
-            ),
-            array(
+            ],
+            [
                 'PASSWORD_BCRYPT',
-                array('cost' => 5),
+                ['cost' => 5],
                 'password2',
                 '#^\$2y\$05+\$[./A-Za-z0-9]{53}$#D',
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -139,63 +139,63 @@ class NativeTest extends TestCase
 
     public function providerTestNeedsRehash()
     {
-        return array(
+        return [
 
             // BOGUS source
-            array(
+            [
                 'PASSWORD_BCRYPT',
-                array(),
+                [],
                 'foobar',
                 true,
-            ),
+            ],
 
             // EMPTY source
-            array(
+            [
                 'PASSWORD_BCRYPT',
-                array(),
+                [],
                 '',
                 true,
-            ),
+            ],
 
             // PASSWORD_BCRYPT source - different cost
-            array(
+            [
                 'PASSWORD_BCRYPT',
-                array('cost' => 15),
+                ['cost' => 15],
                 '$2y$10$duE5hc9IAC7JMBKxIZqXHu95QDpLtp1zk2SXjwZb9Sp2p0WDMCoSW',
                 true,
-            ),
+            ],
 
             // PASSWORD_BCRYPT source - different encryption
-            array(
+            [
                 'PASSWORD_BCRYPT',
-                array('cost' => 10),
+                ['cost' => 10],
                 '$2x$10$duE5hc9IAC7JMBKxIZqXHu95QDpLtp1zk2SXjwZb9Sp2p0WDMCoSW',
                 true,
-            ),
+            ],
 
             // PASSWORD_BCRYPT source - same cost
-            array(
+            [
                 'PASSWORD_BCRYPT',
-                array('cost' => 10),
+                ['cost' => 10],
                 '$2y$10$duE5hc9IAC7JMBKxIZqXHu95QDpLtp1zk2SXjwZb9Sp2p0WDMCoSW',
                 false,
-            ),
+            ],
 
             // CRYPT_SHA256 source
-            array(
+            [
                 'PASSWORD_BCRYPT',
-                array(),
+                [],
                 '$5$rounds=5000$1234567890123456$c5PoOfE/uqUoVcX5JnakJmrcR2VFEHZmQ.KaLEtUlR4',
                 true,
-            ),
+            ],
 
             // CRYPT_SHA512 source
-            array(
+            [
                 'PASSWORD_BCRYPT',
-                array(),
+                [],
                 '$6$rounds=5000$1234567890123456$QX1ndnRVi1/AxK0fPVQ4ZIQO.ThxS5VmQptu8AgQcjMCkETlLRDh4geJNhMtGvTWdQc.pFQ3l.TCeG/yvbukG.',
                 true,
-            ),
-        );
+            ],
+        ];
     }
 }

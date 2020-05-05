@@ -23,14 +23,14 @@ class Bug58282Test extends TestCase
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
-        SugarTestHelper::setUp('current_user', array(true, 1));
+        SugarTestHelper::setUp('current_user', [true, 1]);
 
         SugarTestHelper::setUp('dictionary');
         SugarTestHelper::setUp(
             'custom_field',
-            array(
+            [
                 'Opportunities',
-                array(
+                [
                     'formula'     => 'strToUpper(related($accounts,"name"))',
                     'name'        => 'custom_58282',
                     'calculated'  =>  true,
@@ -38,8 +38,8 @@ class Bug58282Test extends TestCase
                     'label'       => 'LBL_CUSTOM_FIELD',
                     'module'      => 'ModuleBuilder',
                     'view_module' => 'Opportunities',
-                )
-            )
+                ],
+            ]
         );
     }
 
@@ -92,7 +92,7 @@ class Bug58282Test extends TestCase
      */
     protected function getLinkMock(SugarBean $focus, $shouldBeanBeSaved)
     {
-        $bean = $this->createPartialMock('SugarBean', array('save'));
+        $bean = $this->createPartialMock('SugarBean', ['save']);
         $bean->id = 'Bug58282Test';
 
         if ($shouldBeanBeSaved) {
@@ -103,7 +103,7 @@ class Bug58282Test extends TestCase
                 ->method('save');
         }
 
-        $beans = array($bean);
+        $beans = [$bean];
 
         $mock = $this->getMockBuilder('Link2')
             ->setMethods(['getbeans'])

@@ -19,26 +19,26 @@ class SugarBeanIsOwner extends TestCase
     {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
-	}
+    }
 
     public static function tearDownAfterClass(): void
     {
-	    SugarTestHelper::tearDown();
-	}
+        SugarTestHelper::tearDown();
+    }
 
     public function testIsOwnerNew()
     {
         $bean = new SugarBean();
 
-        $this->assertTrue($bean->isOwner('DONT-CARE'),"SugarBean->isOwner() should return true if there is no id.");
+        $this->assertTrue($bean->isOwner('DONT-CARE'), "SugarBean->isOwner() should return true if there is no id.");
        
         $bean->id = "TEST-BEAN-PLEASE-IGNORE";
         $bean->new_with_id = true;
 
-        $this->assertTrue($bean->isOwner('DONT-CARE'),"SugarBean->isOwner() should return true if there is an id but new_with_id is true");
+        $this->assertTrue($bean->isOwner('DONT-CARE'), "SugarBean->isOwner() should return true if there is an id but new_with_id is true");
 
         $bean->new_with_id = false;
-        $this->assertFalse($bean->isOwner('DONT-CARE'),"SugarBean->isOwner() should return false if there is an id but new_with_id is false");
+        $this->assertFalse($bean->isOwner('DONT-CARE'), "SugarBean->isOwner() should return false if there is an id but new_with_id is false");
     }
 
     public function testIsOwnerAssignedUserId()
@@ -47,18 +47,18 @@ class SugarBeanIsOwner extends TestCase
         $bean->id = 'TEST-BEAN-PLEASE-IGNORE';
         $bean->assigned_user_id = 'MY-ONE-AND-ONLY-USER';
 
-        $this->assertTrue($bean->isOwner('MY-ONE-AND-ONLY-USER'),"SugarBean->isOwner() should return true if the assigned user matches the passed in user");
+        $this->assertTrue($bean->isOwner('MY-ONE-AND-ONLY-USER'), "SugarBean->isOwner() should return true if the assigned user matches the passed in user");
 
-        $this->assertFalse($bean->isOwner('NOT-ME'),"SugarBean->isOwner() should return false if the assigned user doesn't match the passed in user");
+        $this->assertFalse($bean->isOwner('NOT-ME'), "SugarBean->isOwner() should return false if the assigned user doesn't match the passed in user");
         
         $bean->assigned_user_id = 'OTHER-KIDS';
-        $bean->fetched_row = array('assigned_user_id' => 'MY-ONE-AND-ONLY-USER');
+        $bean->fetched_row = ['assigned_user_id' => 'MY-ONE-AND-ONLY-USER'];
         
-        $this->assertTrue($bean->isOwner('MY-ONE-AND-ONLY-USER'),"SugarBean->isOwner() should return true if the passed in user matches the fetched row assigned user");
+        $this->assertTrue($bean->isOwner('MY-ONE-AND-ONLY-USER'), "SugarBean->isOwner() should return true if the passed in user matches the fetched row assigned user");
 
-        $this->assertTrue($bean->isOwner('OTHER-KIDS'),"SugarBean->isOwner() should return true if the passed in user matches the assigned user but not the fetched row");
+        $this->assertTrue($bean->isOwner('OTHER-KIDS'), "SugarBean->isOwner() should return true if the passed in user matches the assigned user but not the fetched row");
 
-        $this->assertFalse($bean->isOwner('NOT-ME'),"SugarBean->isOwner() should return false if the passed in user doesn't match the fetched row or normal assigned user ");
+        $this->assertFalse($bean->isOwner('NOT-ME'), "SugarBean->isOwner() should return false if the passed in user doesn't match the fetched row or normal assigned user ");
         
 
         unset($bean->fetched_row);
@@ -66,14 +66,12 @@ class SugarBeanIsOwner extends TestCase
         
         $bean->created_by = 'MY-ONE-AND-ONLY-USER';
         
-        $this->assertTrue($bean->isOwner('MY-ONE-AND-ONLY-USER'),"SugarBean->isOwner() should return true if the created by user matches the passed in user and there is no assigned user");
+        $this->assertTrue($bean->isOwner('MY-ONE-AND-ONLY-USER'), "SugarBean->isOwner() should return true if the created by user matches the passed in user and there is no assigned user");
 
-        $this->assertFalse($bean->isOwner('NOT-ME'),"SugarBean->isOwner() should return false if the created by user doesn't match the passed in user and there is no assigned user");
+        $this->assertFalse($bean->isOwner('NOT-ME'), "SugarBean->isOwner() should return false if the created by user doesn't match the passed in user and there is no assigned user");
 
         $bean->assigned_user_id = 'OTHER-KIDS';
 
-        $this->assertFalse($bean->isOwner('MY-ONE-AND-ONLY-USER'),"SugarBean->isOwner() should return false if the created by user matches the passed in user and there is an assigned user");
-        
-        
+        $this->assertFalse($bean->isOwner('MY-ONE-AND-ONLY-USER'), "SugarBean->isOwner() should return false if the created by user matches the passed in user and there is an assigned user");
     }
 }

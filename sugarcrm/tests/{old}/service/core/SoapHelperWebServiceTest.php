@@ -20,7 +20,7 @@ use PHPUnit\Framework\TestCase;
  * @author Collin Lee
  */
 
-require_once('service/core/SoapHelperWebService.php');
+require_once 'service/core/SoapHelperWebService.php';
 
 class SoapHelperWebServiceTest extends TestCase
 {
@@ -50,11 +50,11 @@ class SoapHelperWebServiceTest extends TestCase
         global $service_object;
         $service_object = new ServiceMockObject();
         $error = new SoapError();
-        return array(
-            array($error, "id = 'abc'", true),
-            array($error, "user.id = prospects.id", true),
-            array($error, "id $% 'abc'", false),
-        );
+        return [
+            [$error, "id = 'abc'", true],
+            [$error, "user.id = prospects.id", true],
+            [$error, "id $% 'abc'", false],
+        ];
     }
 
     /**
@@ -83,7 +83,8 @@ class SoapHelperWebServiceTest extends TestCase
  *
  * Used to override global service_object
  */
-class ServiceMockObject {
+class ServiceMockObject
+{
     public function error()
     {
     }

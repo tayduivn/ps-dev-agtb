@@ -34,15 +34,15 @@ class Bug62040Test extends TestCase
 
     public function testConcatName()
     {
-        $layoutDef = array(
+        $layoutDef = [
             'table' => $this->contact->table_name,
-            'input_name0' => array(),
+            'input_name0' => [],
             'source' => 'non-db',
             'name' => 'contacts',
             'rname' => 'last_name',
-            'db_concat_fields' => array('first_name', 'last_name'),
+            'db_concat_fields' => ['first_name', 'last_name'],
             'module' => 'Contacts',
-        );
+        ];
         $html = $this->getSugarWidgetFieldRelate()->displayInput($layoutDef);
         $this->assertStringContainsString('Boro SugarTest', $html);
     }

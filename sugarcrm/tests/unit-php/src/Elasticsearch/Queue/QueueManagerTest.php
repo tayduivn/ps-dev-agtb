@@ -32,8 +32,8 @@ class QueueManagerTest extends TestCase
             ->getMockForAbstractClass();
 
         $queueManager = $this->getMockBuilder('Sugarcrm\Sugarcrm\Elasticsearch\Queue\QueueManager')
-            ->setConstructorArgs(array(array(), $container, $dbManager))
-            ->setMethods(array())
+            ->setConstructorArgs([[], $container, $dbManager])
+            ->setMethods([])
             ->getMock();
 
         $res = $queueManager->getQueueCountModule($module);
@@ -66,4 +66,3 @@ class QueueManagerTest extends TestCase
             ->getMock();
     }
 }
-

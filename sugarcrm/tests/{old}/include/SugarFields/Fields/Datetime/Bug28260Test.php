@@ -1,4 +1,4 @@
-<?php 
+<?php
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -22,7 +22,7 @@ class Bug28260Test extends TestCase
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $this->user = $GLOBALS['current_user'];
-	}
+    }
 
     protected function tearDown() : void
     {
@@ -33,30 +33,30 @@ class Bug28260Test extends TestCase
     
     public function _providerEmailTemplateFormat()
     {
-        return array(
-            array('10/11/2010 13:00','10/11/2010 13:00', 'm/d/Y', 'H:i' ), 
-            array('11/10/2010 13:00','11/10/2010 13:00', 'd/m/Y', 'H:i' ), 
-            array('2010-10-11 13:00:00','10/11/2010 13:00', 'm/d/Y', 'H:i' ), 
-            array('2010-10-11 13:00:00','11/10/2010 13:00', 'd/m/Y', 'H:i' ), 
-            array('2010-10-11 13:00:00','10-11-2010 13:00', 'm-d-Y', 'H:i' ), 
-            array('2010-10-11 13:00:00','11-10-2010 13:00', 'd-m-Y', 'H:i' ), 
-            array('2010-10-11 13:00:00','2010-10-11 13:00', 'Y-m-d', 'H:i' )                
-        );   
+        return [
+            ['10/11/2010 13:00','10/11/2010 13:00', 'm/d/Y', 'H:i' ],
+            ['11/10/2010 13:00','11/10/2010 13:00', 'd/m/Y', 'H:i' ],
+            ['2010-10-11 13:00:00','10/11/2010 13:00', 'm/d/Y', 'H:i' ],
+            ['2010-10-11 13:00:00','11/10/2010 13:00', 'd/m/Y', 'H:i' ],
+            ['2010-10-11 13:00:00','10-11-2010 13:00', 'm-d-Y', 'H:i' ],
+            ['2010-10-11 13:00:00','11-10-2010 13:00', 'd-m-Y', 'H:i' ],
+            ['2010-10-11 13:00:00','2010-10-11 13:00', 'Y-m-d', 'H:i' ],
+        ];
     }
     
      /**
      * @dataProvider _providerEmailTemplateFormat
      */
-	public function testEmailTemplateFormat($unformattedValue, $expectedValue, $dateFormat, $timeFormat)
-	{
-	    $GLOBALS['sugar_config']['default_date_format'] = $dateFormat;
-		$GLOBALS['sugar_config']['default_time_format'] = $timeFormat;
+    public function testEmailTemplateFormat($unformattedValue, $expectedValue, $dateFormat, $timeFormat)
+    {
+        $GLOBALS['sugar_config']['default_date_format'] = $dateFormat;
+        $GLOBALS['sugar_config']['default_time_format'] = $timeFormat;
         $GLOBALS['current_user']->setPreference('datef', $dateFormat);
-		$GLOBALS['current_user']->setPreference('timef', $timeFormat);
-		
-   		$sfr = SugarFieldHandler::getSugarField('datetime');
-    	$formattedValue = $sfr->getEmailTemplateValue($unformattedValue,array('type'=>'datetime'), array('notify_user' => $this->user));
-    	
-   	 	$this->assertSame($expectedValue, $formattedValue);
+        $GLOBALS['current_user']->setPreference('timef', $timeFormat);
+        
+        $sfr = SugarFieldHandler::getSugarField('datetime');
+        $formattedValue = $sfr->getEmailTemplateValue($unformattedValue, ['type'=>'datetime'], ['notify_user' => $this->user]);
+        
+        $this->assertSame($expectedValue, $formattedValue);
     }
 }

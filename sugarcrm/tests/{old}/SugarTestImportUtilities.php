@@ -13,24 +13,27 @@
 
 class SugarTestImportUtilities
 {
-    public static  $_createdFiles = array();
+    public static $_createdFiles = [];
 
-    private function __construct() {}
+    private function __construct()
+    {
+    }
 
     public function __destruct()
     {
         self::removeAllCreatedFiles();
     }
 
-    public static function createFile($lines = 2000,$columns = 3)
+    public static function createFile($lines = 2000, $columns = 3)
     {
-		$filename = ImportCacheFiles::getImportDir().'/test'. uniqid();
-        $fp = fopen($filename,"w");
+        $filename = ImportCacheFiles::getImportDir().'/test'. uniqid();
+        $fp = fopen($filename, "w");
         for ($i = 0; $i < $lines; $i++) {
-            $line = array();
-            for ($j = 0; $j < $columns; $j++)
+            $line = [];
+            for ($j = 0; $j < $columns; $j++) {
                 $line[] = "foo{$i}{$j}";
-            fputcsv($fp,$line);
+            }
+            fputcsv($fp, $line);
         }
         fclose($fp);
 
@@ -42,17 +45,16 @@ class SugarTestImportUtilities
     public static function createFileWithEOL(
         $lines = 2000,
         $columns = 3
-        )
-    {
+    ) {
         $filename = ImportCacheFiles::getImportDir().'/test'.date("YmdHis");
-        $fp = fopen($filename,"w");
+        $fp = fopen($filename, "w");
         for ($i = 0; $i < $lines; $i++) {
-            $line = array();
+            $line = [];
             for ($j = 0; $j < $columns; $j++) {
-            	// test both end of lines: \r\n (windows) and \n (unix)
+                // test both end of lines: \r\n (windows) and \n (unix)
                 $line[] = "start{$i}\r\n{$j}\nend";
             }
-            fputcsv($fp,$line);
+            fputcsv($fp, $line);
         }
         fclose($fp);
 
@@ -76,14 +78,15 @@ EOTEXT;
 
     public static function removeAllCreatedFiles()
     {
-        foreach ( self::$_createdFiles as $file ) {
+        foreach (self::$_createdFiles as $file) {
             @unlink($file);
             $i = 0;
-            while(true) {
-                if ( is_file($file.'-'.$i) )
+            while (true) {
+                if (is_file($file.'-'.$i)) {
                     unlink($file.'-'.$i++);
-                else
+                } else {
                     break;
+                }
             }
         }
         ImportCacheFiles::clearCacheFiles();

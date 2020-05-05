@@ -40,22 +40,22 @@ class ParserLabelTest extends TestCase
     {
         global $current_language;
 
-        SugarTestHelper::saveFile(array(
+        SugarTestHelper::saveFile([
             'custom/Extension/application/Ext/Language/' . $current_language . '.sugar_moduleList.php',
             'custom/Extension/application/Ext/Language/' . $current_language . '.sugar_moduleListSingular.php',
             'custom/application/Ext/Language/' . $current_language . '.lang.ext.php',
             'custom/include/language/' . $current_language . '.lang.php',
-            'custom/Extension/modules/' . $module . '/Ext/Language/' . $current_language . '.lang.php'
-        ));
+            'custom/Extension/modules/' . $module . '/Ext/Language/' . $current_language . '.lang.php',
+        ]);
 
         $strings = return_app_list_strings_language($current_language);
         $orig = $strings[$listName][$module];
         $this->assertNotEquals($label, $orig);
 
         $parser = new ParserLabel($module);
-        $parser->handleSave(array(
+        $parser->handleSave([
             'label_' . $labelName => $label,
-        ), $current_language);
+        ], $current_language);
 
         $strings = return_app_list_strings_language($current_language);
         $this->assertEquals($label, $strings[$listName][$module]);
@@ -63,19 +63,19 @@ class ParserLabelTest extends TestCase
 
     public static function updateModuleListsProvider()
     {
-        return array(
-            'plural' => array(
+        return [
+            'plural' => [
                 'Accounts',
                 'LBL_MODULE_NAME',
                 'Companies',
                 'moduleList',
-            ),
-            'singular' => array(
+            ],
+            'singular' => [
                 'Accounts',
                 'LBL_MODULE_NAME_SINGULAR',
                 'Company',
                 'moduleListSingular',
-            ),
-        );
+            ],
+        ];
     }
 }

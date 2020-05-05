@@ -115,17 +115,17 @@ class RSSFeedApiTest extends TestCase
     public function testGetFeed()
     {
         // Mock our API object so that the getFeedContent returns a known value
-        $api = $this->createPartialMock('RSSFeedApi', array('getFeedContent'));
+        $api = $this->createPartialMock('RSSFeedApi', ['getFeedContent']);
         $api->expects($this->once())
             ->method('getFeedContent')
             ->with($this->equalTo('http://www.sugarcrm.com/feed.xml'))
             ->will($this->returnValue($this->getXMLWithHeader()));
 
         // Setup the args to pass
-        $args = array(
+        $args = [
             'feed_url' => 'http://www.sugarcrm.com/feed.xml',
             'limit' => 4,
-        );
+        ];
 
         // Call the API
         $actual = $api->getFeed(SugarTestRestUtilities::getRestServiceMock(), $args);
@@ -134,7 +134,7 @@ class RSSFeedApiTest extends TestCase
         $specs = $this->providerTestGetParsedXMLData();
 
         // And build what the result would look like from the API
-        $expect = array('feed' => $specs[1]['expect']);
+        $expect = ['feed' => $specs[1]['expect']];
 
         // Test it
         $this->assertEquals($actual, $expect);
@@ -142,283 +142,283 @@ class RSSFeedApiTest extends TestCase
 
     public function providerTestValidateFeedUrl()
     {
-        return array(
-            array(
+        return [
+            [
                 'url' => 'http://some.feed.url/',
                 'expect' => true,
-            ),
-            array(
+            ],
+            [
                 'url' => 'https://some.feed.url/feed.xml',
                 'expect' => true,
-            ),
-            array(
+            ],
+            [
                 'url' => 'ftp://some.feed.url/feed.xml',
                 'expect' => false,
-            ),
-            array(
+            ],
+            [
                 'url' => 'some.feed.url/feed.xml',
                 'expect' => false,
-            ),
-            array(
+            ],
+            [
                 'url' => 'feed.xml',
                 'expect' => false,
-            ),
-        );
+            ],
+        ];
     }
 
     public function providerTestGetFeedLimit()
     {
-        return array(
-            array(
-                'args' => array('limit' => 10),
+        return [
+            [
+                'args' => ['limit' => 10],
                 'configMax' => null,
                 'expect' => 10,
-            ),
-            array(
-                'args' => array('limit' => 30),
+            ],
+            [
+                'args' => ['limit' => 30],
                 'configMax' => null,
                 'expect' => 20,
-            ),
-            array(
-                'args' => array(),
+            ],
+            [
+                'args' => [],
                 'configMax' => 30,
                 'expect' => 5,
-            ),
-            array(
-                'args' => array('limit' => 20),
+            ],
+            [
+                'args' => ['limit' => 20],
                 'configMax' => 10,
                 'expect' => 10,
-            ),
-            array(
-                'args' => array(),
+            ],
+            [
+                'args' => [],
                 'configMax' => 3,
                 'expect' => 3,
-            ),
-        );
+            ],
+        ];
     }
 
     public function providerTestGetFeedXMLObject()
     {
-        return array(
-            array(
+        return [
+            [
                 'data' => $this->getXMLWithHeader(),
                 'expect' => true,
-            ),
-            array(
+            ],
+            [
                 'data' => $this->getXMLWithoutHeader(),
                 'expect' => true,
-            ),
-            array(
+            ],
+            [
                 'data' => $this->getMalformedXML(),
                 'expect' => false,
-            ),
-        );
+            ],
+        ];
     }
 
     public function providerTestGetParsedXMLData()
     {
-        return array(
-            array(
+        return [
+            [
                 'data' => $this->getXMLWithHeader(),
                 'limit' => 10,
-                'expect' => array(
+                'expect' => [
                     'title' => 'Test RSSFeedApi',
                     'link' => 'http://www.sugarcrm.com',
                     'description' => 'Test Desc',
                     'publication_date' => 'Tue, 3 Aug 2014 13:38:55 -0800',
-                    'entries' => array(
-                        array(
+                    'entries' => [
+                        [
                             'title' => 'RSS Feed 0',
                             'description' => 'Feed 0 Desc',
                             'link' => 'http://www.sugarcrm.com/feed0.xml',
                             'publication_date' => 'Tue, 10 Aug 2014 13:38:55 -0800',
                             'source' => 'FooBar News',
                             'author' => 'Dr. Seuss',
-                        ),
-                        array(
+                        ],
+                        [
                             'title' => 'RSS Feed 1',
                             'description' => 'Feed 1 Desc',
                             'link' => 'http://www.sugarcrm.com/feed1.xml',
                             'publication_date' => 'Tue, 17 Aug 2014 13:38:55 -0800',
                             'source' => 'MSNBC',
                             'author' => '',
-                        ),
-                        array(
+                        ],
+                        [
                             'title' => 'RSS Feed 2',
                             'description' => 'Feed 2 Desc',
                             'link' => 'http://www.sugarcrm.com/feed2.xml',
                             'publication_date' => 'Tue, 24 Aug 2014 13:38:55 -0800',
                             'source' => '',
                             'author' => 'Shasta McNasty',
-                        ),
-                        array(
+                        ],
+                        [
                             'title' => 'RSS Feed 3',
                             'description' => 'Feed 3 Desc',
                             'link' => 'http://www.sugarcrm.com/feed3.xml',
                             'publication_date' => '',
                             'source' => '',
                             'author' => '',
-                        ),
-                        array(
+                        ],
+                        [
                             'title' => 'RSS Feed 4',
                             'description' => 'Feed 4 Desc',
                             'link' => 'http://www.sugarcrm.com/feed4.xml',
                             'publication_date' => '',
                             'source' => '',
                             'author' => '',
-                        ),
-                        array(
+                        ],
+                        [
                             'title' => 'RSS Feed 5',
                             'description' => 'Feed 5 Desc',
                             'link' => 'http://www.sugarcrm.com/feed5.xml',
                             'publication_date' => '',
                             'source' => '',
                             'author' => '',
-                        ),
-                    ),
-                ),
-            ),
-            array(
+                        ],
+                    ],
+                ],
+            ],
+            [
                 'data' => $this->getXMLWithHeader(),
                 'limit' => 4,
-                'expect' => array(
+                'expect' => [
                     'title' => 'Test RSSFeedApi',
                     'link' => 'http://www.sugarcrm.com',
                     'description' => 'Test Desc',
                     'publication_date' => 'Tue, 3 Aug 2014 13:38:55 -0800',
-                    'entries' => array(
-                        array(
+                    'entries' => [
+                        [
                             'title' => 'RSS Feed 0',
                             'description' => 'Feed 0 Desc',
                             'link' => 'http://www.sugarcrm.com/feed0.xml',
                             'publication_date' => 'Tue, 10 Aug 2014 13:38:55 -0800',
                             'source' => 'FooBar News',
                             'author' => 'Dr. Seuss',
-                        ),
-                        array(
+                        ],
+                        [
                             'title' => 'RSS Feed 1',
                             'description' => 'Feed 1 Desc',
                             'link' => 'http://www.sugarcrm.com/feed1.xml',
                             'publication_date' => 'Tue, 17 Aug 2014 13:38:55 -0800',
                             'source' => 'MSNBC',
                             'author' => '',
-                        ),
-                        array(
+                        ],
+                        [
                             'title' => 'RSS Feed 2',
                             'description' => 'Feed 2 Desc',
                             'link' => 'http://www.sugarcrm.com/feed2.xml',
                             'publication_date' => 'Tue, 24 Aug 2014 13:38:55 -0800',
                             'source' => '',
                             'author' => 'Shasta McNasty',
-                        ),
-                        array(
+                        ],
+                        [
                             'title' => 'RSS Feed 3',
                             'description' => 'Feed 3 Desc',
                             'link' => 'http://www.sugarcrm.com/feed3.xml',
                             'publication_date' => '',
                             'source' => '',
                             'author' => '',
-                        ),
-                    ),
-                ),
-            ),
-            array(
+                        ],
+                    ],
+                ],
+            ],
+            [
                 'data' => $this->getXMLWithoutHeader(),
                 'limit' => 10,
-                'expect' => array(
+                'expect' => [
                     'title' => '',
                     'link' => '',
                     'description' => '',
                     'publication_date' => '',
-                    'entries' => array(
-                        array(
+                    'entries' => [
+                        [
                             'title' => 'RSS Feed 0',
                             'description' => 'Feed 0 Desc',
                             'link' => 'http://www.sugarcrm.com/feed0.xml',
                             'publication_date' => 'Tue, 10 Aug 2014 13:38:55 -0800',
                             'source' => 'Hotwire',
                             'author' => 'Joe Shmoe',
-                        ),
-                        array(
+                        ],
+                        [
                             'title' => 'RSS Feed 1',
                             'description' => 'Feed 1 Desc',
                             'link' => 'http://www.sugarcrm.com/feed1.xml',
                             'publication_date' => 'Tue, 17 Aug 2014 13:38:55 -0800',
                             'source' => '',
                             'author' => 'Mickey Mouse',
-                        ),
-                        array(
+                        ],
+                        [
                             'title' => 'RSS Feed 2',
                             'description' => 'Feed 2 Desc',
                             'link' => 'http://www.sugarcrm.com/feed2.xml',
                             'publication_date' => 'Tue, 24 Aug 2014 13:38:55 -0800',
                             'source' => 'Home Depot',
                             'author' => '',
-                        ),
-                        array(
+                        ],
+                        [
                             'title' => 'RSS Feed 3',
                             'description' => 'Feed 3 Desc',
                             'link' => 'http://www.sugarcrm.com/feed3.xml',
                             'publication_date' => '',
                             'source' => '',
                             'author' => '',
-                        ),
-                        array(
+                        ],
+                        [
                             'title' => 'RSS Feed 4',
                             'description' => 'Feed 4 Desc',
                             'link' => 'http://www.sugarcrm.com/feed4.xml',
                             'publication_date' => '',
                             'source' => '',
                             'author' => '',
-                        ),
-                        array(
+                        ],
+                        [
                             'title' => 'RSS Feed 5',
                             'description' => 'Feed 5 Desc',
                             'link' => 'http://www.sugarcrm.com/feed5.xml',
                             'publication_date' => '',
                             'source' => '',
                             'author' => '',
-                        ),
-                    ),
-                ),
-            ),
-            array(
+                        ],
+                    ],
+                ],
+            ],
+            [
                 'data' => $this->getXMLWithoutHeader(),
                 'limit' => 3,
-                'expect' => array(
+                'expect' => [
                     'title' => '',
                     'link' => '',
                     'description' => '',
                     'publication_date' => '',
-                    'entries' => array(
-                        array(
+                    'entries' => [
+                        [
                             'title' => 'RSS Feed 0',
                             'description' => 'Feed 0 Desc',
                             'link' => 'http://www.sugarcrm.com/feed0.xml',
                             'publication_date' => 'Tue, 10 Aug 2014 13:38:55 -0800',
                             'source' => 'Hotwire',
                             'author' => 'Joe Shmoe',
-                        ),
-                        array(
+                        ],
+                        [
                             'title' => 'RSS Feed 1',
                             'description' => 'Feed 1 Desc',
                             'link' => 'http://www.sugarcrm.com/feed1.xml',
                             'publication_date' => 'Tue, 17 Aug 2014 13:38:55 -0800',
                             'source' => '',
                             'author' => 'Mickey Mouse',
-                        ),
-                        array(
+                        ],
+                        [
                             'title' => 'RSS Feed 2',
                             'description' => 'Feed 2 Desc',
                             'link' => 'http://www.sugarcrm.com/feed2.xml',
                             'publication_date' => 'Tue, 24 Aug 2014 13:38:55 -0800',
                             'source' => 'Home Depot',
                             'author' => '',
-                        ),
-                    ),
-                ),
-            ),
-        );
+                        ],
+                    ],
+                ],
+            ],
+        ];
     }
 
     protected function getXMLWithHeader()

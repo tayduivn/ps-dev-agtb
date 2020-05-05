@@ -29,8 +29,7 @@ class Bug45181 extends TestCase
         $this->sugarView = new Bug45181TestSugarViewMock();
         $this->sugarView->module = 'Contacts';
         $this->sugarView->action = 'EditView';
-        if (is_file('memory_usage.log'))
-        {
+        if (is_file('memory_usage.log')) {
             unlink('memory_usage.log');
         }
     }
@@ -38,8 +37,7 @@ class Bug45181 extends TestCase
     protected function tearDown() : void
     {
         global $sugar_config;
-        if (is_file('memory_usage.log'))
-        {
+        if (is_file('memory_usage.log')) {
             unlink('memory_usage.log');
         }
         $sugar_config = $this->sugar_config;
@@ -73,8 +71,7 @@ class Bug45181 extends TestCase
      */
     function testLogMemoryUsageOff()
     {
-        if(!function_exists('memory_get_usage') || !function_exists('memory_get_peak_usage'))
-        {
+        if (!function_exists('memory_get_usage') || !function_exists('memory_get_peak_usage')) {
             $this->markTestSkipped('Skipping test since memory_get_usage and memory_get_peak_usage function are unavailable');
             return;
         }

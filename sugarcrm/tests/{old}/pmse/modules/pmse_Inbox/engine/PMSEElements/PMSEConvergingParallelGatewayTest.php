@@ -23,19 +23,19 @@ class PMSEConvergingParallelGatewayTest extends TestCase
     public function testRunIncompleteFlows()
     {
         $this->convergingParallelGateway = $this->getMockBuilder('PMSEConvergingParallelGateway')
-            ->setMethods(array('retrievePreviousFlows', 'prepareResponse'))
+            ->setMethods(['retrievePreviousFlows', 'prepareResponse'])
             ->disableOriginalConstructor()
             ->getMock();
         
-        $passedFlows = array(
-            array('id' => '1234567')
-        );
+        $passedFlows = [
+            ['id' => '1234567'],
+        ];
         
-        $allFlows = array(
-            array('id' => '1234567'),
-            array('id' => '3982749'),
-            array('id' => '0987654')
-        );
+        $allFlows = [
+            ['id' => '1234567'],
+            ['id' => '3982749'],
+            ['id' => '0987654'],
+        ];
         
         $this->convergingParallelGateway->expects($this->at(0))
             ->method('retrievePreviousFlows')
@@ -45,12 +45,12 @@ class PMSEConvergingParallelGatewayTest extends TestCase
             ->method('retrievePreviousFlows')
             ->will($this->returnValue($allFlows));
         
-        $flowData = array('bpmn_id' => '9872398ue23', 'cas_id'=>1);
+        $flowData = ['bpmn_id' => '9872398ue23', 'cas_id'=>1];
         $bean = null;
         
         $this->convergingParallelGateway->expects($this->once())
             ->method('prepareResponse')
-            ->with($flowData, 'WAIT', 'NONE', array());
+            ->with($flowData, 'WAIT', 'NONE', []);
 
         $this->convergingParallelGateway->run($flowData, $bean);
     }
@@ -58,21 +58,21 @@ class PMSEConvergingParallelGatewayTest extends TestCase
     public function testRunCompletedFlows()
     {
         $this->convergingParallelGateway = $this->getMockBuilder('PMSEConvergingParallelGateway')
-            ->setMethods(array('retrievePreviousFlows', 'prepareResponse'))
+            ->setMethods(['retrievePreviousFlows', 'prepareResponse'])
             ->disableOriginalConstructor()
             ->getMock();
         
-        $passedFlows = array(
-            array('id' => '1234567'),
-            array('id' => '3982749'),
-            array('id' => '0987654')
-        );
+        $passedFlows = [
+            ['id' => '1234567'],
+            ['id' => '3982749'],
+            ['id' => '0987654'],
+        ];
         
-        $allFlows = array(
-            array('id' => '1234567'),
-            array('id' => '3982749'),
-            array('id' => '0987654')
-        );
+        $allFlows = [
+            ['id' => '1234567'],
+            ['id' => '3982749'],
+            ['id' => '0987654'],
+        ];
         
         $this->convergingParallelGateway->expects($this->at(0))
             ->method('retrievePreviousFlows')
@@ -82,12 +82,12 @@ class PMSEConvergingParallelGatewayTest extends TestCase
             ->method('retrievePreviousFlows')
             ->will($this->returnValue($allFlows));
         
-        $flowData = array('bpmn_id' => '9872398ue23', 'cas_id'=>1);
-        $bean = null;                
+        $flowData = ['bpmn_id' => '9872398ue23', 'cas_id'=>1];
+        $bean = null;
         
         $this->convergingParallelGateway->expects($this->once())
             ->method('prepareResponse')
-            ->with($flowData, 'ROUTE', 'CREATE', array());
+            ->with($flowData, 'ROUTE', 'CREATE', []);
         
         $this->convergingParallelGateway->run($flowData, $bean);
     }

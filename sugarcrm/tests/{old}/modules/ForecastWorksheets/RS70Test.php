@@ -25,9 +25,9 @@ class RS70Test extends TestCase
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
 
-        SugarTestForecastUtilities::setUpForecastConfig(array(
+        SugarTestForecastUtilities::setUpForecastConfig([
             'forecast_by' => 'RevenueLineItems',
-        ));
+        ]);
     }
 
     protected function tearDown() : void
@@ -47,7 +47,7 @@ class RS70Test extends TestCase
     public function testSaveWorksheetOpportunity()
     {
         /** @var MockObject|Opportunity $parent */
-        $parent = $this->getMockBuilder('Opportunity')->setMethods(array('save'))->getMock();
+        $parent = $this->getMockBuilder('Opportunity')->setMethods(['save'])->getMock();
         $parent->expects($this->once())->method('save');
         $parent->id = create_guid();
         $parent->new_with_id = true;
@@ -80,7 +80,7 @@ class RS70Test extends TestCase
     public function testSaveWorksheetRevenueLineItem()
     {
         /** @var MockObject|RevenueLineItem $parent */
-        $parent = $this->getMockBuilder('RevenueLineItem')->setMethods(array('save'))->getMock();
+        $parent = $this->getMockBuilder('RevenueLineItem')->setMethods(['save'])->getMock();
         $parent->expects($this->once())->method('save');
         $parent->id = create_guid();
         $parent->new_with_id = true;
@@ -115,10 +115,10 @@ class RS70Test extends TestCase
     public function testSetWorksheetArgs()
     {
         $bean = new ForecastWorksheet();
-        $agrs = array(
+        $agrs = [
             'id' => 'id1',
             'test' => 'test1',
-        );
+        ];
         $bean->setWorksheetArgs($agrs);
         $this->assertEquals($agrs, $bean->args);
         foreach ($agrs as $k => $v) {
@@ -136,7 +136,7 @@ class RS70Test extends TestCase
         $opportunity->account_id = create_guid();
 
         /** @var MockObject|ForecastWorksheet $bean */
-        $bean = $this->createPartialMock('ForecastWorksheet', array('retrieve_by_string_fields', 'getRelatedName', 'copyValues', 'save', 'removeMigratedRow'));
+        $bean = $this->createPartialMock('ForecastWorksheet', ['retrieve_by_string_fields', 'getRelatedName', 'copyValues', 'save', 'removeMigratedRow']);
         $bean->expects($this->once())->method('retrieve_by_string_fields');
         $bean->expects($this->once())->method('getRelatedName')->with($this->equalTo('Accounts'), $this->equalTo($opportunity->account_id))->will($this->returnValue('Account ' . __CLASS__));
         $bean->expects($this->once())->method('copyValues')->with($this->anything(), $this->equalTo($opportunity));
@@ -158,7 +158,7 @@ class RS70Test extends TestCase
         $parent->id = create_guid();
 
         /** @var MockObject|ForecastWorksheet $bean */
-        $bean = $this->createPartialMock('ForecastWorksheet', array('retrieve_by_string_fields', 'getRelatedName', 'copyValues', 'removeMigratedRow', 'save'));
+        $bean = $this->createPartialMock('ForecastWorksheet', ['retrieve_by_string_fields', 'getRelatedName', 'copyValues', 'removeMigratedRow', 'save']);
         $bean->expects($this->once())->method('retrieve_by_string_fields');
         $bean->expects($this->never())->method('getRelatedName');
         $bean->expects($this->once())->method('copyValues')->with($this->isType('array'), $this->equalTo($parent));
@@ -189,7 +189,7 @@ class RS70Test extends TestCase
         $parent->$propertyId = create_guid();
 
         /** @var MockObject|ForecastWorksheet $bean */
-        $bean = $this->createPartialMock('ForecastWorksheet', array('retrieve_by_string_fields', 'getRelatedName', 'copyValues', 'removeMigratedRow', 'save'));
+        $bean = $this->createPartialMock('ForecastWorksheet', ['retrieve_by_string_fields', 'getRelatedName', 'copyValues', 'removeMigratedRow', 'save']);
         $bean->expects($this->any())->method('retrieve_by_string_fields');
         $bean->expects($this->any())->method('copyValues');
         $bean->expects($this->any())->method('removeMigratedRow');
@@ -206,12 +206,12 @@ class RS70Test extends TestCase
      */
     public function getDataForTestSaveRelatedProductFillNames()
     {
-        return array(
-            array('Accounts', 'account_id', 'account_name'),
-            array('Opportunities', 'opportunity_id', 'opportunity_name'),
-            array('ProductTemplates', 'product_template_id', 'product_template_name'),
-            array('ProductCategories', 'category_id', 'category_name'),
-        );
+        return [
+            ['Accounts', 'account_id', 'account_name'],
+            ['Opportunities', 'opportunity_id', 'opportunity_name'],
+            ['ProductTemplates', 'product_template_id', 'product_template_name'],
+            ['ProductCategories', 'category_id', 'category_name'],
+        ];
     }
 
     /**
@@ -228,10 +228,10 @@ class RS70Test extends TestCase
         SugarTestTimePeriodUtilities::createTimePeriod('2013-01-01', '2013-05-01');
         SugarTestTimePeriodUtilities::createTimePeriod('2013-05-01', '2013-10-01');
         $bean = new ForecastWorksheet();
-        $actual = SugarTestReflection::callProtectedMethod($bean, 'timeperiodHasMigrated', array(
+        $actual = SugarTestReflection::callProtectedMethod($bean, 'timeperiodHasMigrated', [
                 $worksheetDate,
                 $objDate,
-            ));
+            ]);
         $this->assertEquals($expected, $actual);
     }
 
@@ -242,18 +242,18 @@ class RS70Test extends TestCase
      */
     public function getDataForTestTimePeriodHasMigrated()
     {
-        return array(
-            array(
+        return [
+            [
                 '2013-05-05 00:00:00',
                 '2013-05-05 00:00:00',
                 false,
-            ),
-            array(
+            ],
+            [
                 '2013-01-05 00:00:00',
                 '2013-05-05 00:00:00',
                 true,
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -265,10 +265,10 @@ class RS70Test extends TestCase
         $account = new Account();
         $account->id = 'id1';
         $account->name = 'name1';
-        SugarTestReflection::callProtectedMethod($bean, 'copyValues', array(
-                array('id', 'name'),
+        SugarTestReflection::callProtectedMethod($bean, 'copyValues', [
+                ['id', 'name'],
                 $account,
-            ));
+            ]);
         $this->assertEquals($account->id, $bean->id);
         $this->assertEquals($account->name, $bean->name);
     }
@@ -296,18 +296,18 @@ class RS70Test extends TestCase
         $rli->save();
         // END SUGARCRM flav=ent ONLY
 
-        $bean = $this->createPartialMock('ForecastWorksheet', array('createUpdateForecastWorksheetJob',
-                                                          'removeReassignedItems'));
+        $bean = $this->createPartialMock('ForecastWorksheet', ['createUpdateForecastWorksheetJob',
+                                                          'removeReassignedItems']);
 
         $bean->expects($this->any())->method('createUpdateForecastWorksheetJob');
 
         $bean->expects($this->once())
              ->method('removeReassignedItems');
 
-        $actual = SugarTestReflection::callProtectedMethod($bean, 'commitWorksheet', array(
+        $actual = SugarTestReflection::callProtectedMethod($bean, 'commitWorksheet', [
                 $GLOBALS['current_user']->id,
                 $tp->id,
-            ));
+            ]);
         $this->assertTrue($actual);
 
         SugarTestAccountUtilities::removeAllCreatedAccounts();
@@ -328,12 +328,12 @@ class RS70Test extends TestCase
         $bean->assigned_user_id = $GLOBALS['current_user']->id;
         $bean->save();
 
-        SugarTestWorksheetUtilities::setCreatedWorksheet(array($bean->id));
+        SugarTestWorksheetUtilities::setCreatedWorksheet([$bean->id]);
 
-        $actual = SugarTestReflection::callProtectedMethod($bean, 'reassignForecast', array(
+        $actual = SugarTestReflection::callProtectedMethod($bean, 'reassignForecast', [
                 $GLOBALS['current_user']->id,
                 $user->id,
-            ));
+            ]);
         $this->assertNotEmpty($actual);
     }
 

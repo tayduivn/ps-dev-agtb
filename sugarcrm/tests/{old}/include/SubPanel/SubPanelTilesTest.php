@@ -36,7 +36,7 @@ class SubPanelTilesBase extends TestCase
     public function testCustomSubpanelOrder($customSubpanelOrder)
     {
         $bean = SugarTestCampaignUtilities::createCampaign();
-        $remainingSubpanels = array(
+        $remainingSubpanels = [
             3 => 'emailmarketing',
             4 => 'track_queue',
             5 => 'targeted',
@@ -50,7 +50,7 @@ class SubPanelTilesBase extends TestCase
             13 => 'blocked',
             14 => 'accounts',
             15 => 'opportunities',
-        );
+        ];
         $customSubpanelOrder = array_merge($customSubpanelOrder, $remainingSubpanels);
 
         $GLOBALS['current_user']->setPreference('subpanelLayout', $customSubpanelOrder, 0, $bean->module_dir);
@@ -64,21 +64,21 @@ class SubPanelTilesBase extends TestCase
 
     public static function dataProviderCustomSubpanelOrder()
     {
-        return array(
-            array(
-                array(
+        return [
+            [
+                [
                     0 => 'leads',
                     1 => 'prospectlists',
                     2 => 'tracked_urls',
-                ),
-            ),
-            array(
-                array(
+                ],
+            ],
+            [
+                [
                     0 => 'prospectlists',
                     1 => 'tracked_urls',
                     2 => 'leads',
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
     }
 }

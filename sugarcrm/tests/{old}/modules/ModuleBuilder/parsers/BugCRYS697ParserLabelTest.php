@@ -38,7 +38,7 @@ class BugCRYS697ParserLabelTest extends TestCase
 
     public function testSavingEmptyLabels()
     {
-        ParserLabel::addLabels($this->lang, array(), $this->testModule);
+        ParserLabel::addLabels($this->lang, [], $this->testModule);
         $this->assertFalse(file_exists($this->getFileName()));
     }
 }

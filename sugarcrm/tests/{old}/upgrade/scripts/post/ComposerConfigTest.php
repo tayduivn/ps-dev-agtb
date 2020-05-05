@@ -37,7 +37,7 @@ class ComposerConfigTest extends UpgradeTestCase
      */
     public function testRun(array $files)
     {
-        $sut = $this->getMockSut(array('restoreFile'));
+        $sut = $this->getMockSut(['restoreFile']);
 
         $sut->expects($this->exactly(count($files)))
             ->method('restoreFile')
@@ -50,10 +50,10 @@ class ComposerConfigTest extends UpgradeTestCase
 
     public function dataProviderTestRun()
     {
-        return array(
-            array(array()),
-            array(array('first', 'second')),
-        );
+        return [
+            [[]],
+            [['first', 'second']],
+        ];
     }
 
     /**
@@ -64,7 +64,7 @@ class ComposerConfigTest extends UpgradeTestCase
     protected function getMockSut($method = null)
     {
         return $this->getMockBuilder('SugarUpgradeComposerConfig')
-            ->setConstructorArgs(array($this->upgrader))
+            ->setConstructorArgs([$this->upgrader])
             ->setMethods($method)
             ->getMock();
     }

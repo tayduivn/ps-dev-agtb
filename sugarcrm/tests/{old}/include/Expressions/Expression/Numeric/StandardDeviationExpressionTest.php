@@ -25,9 +25,9 @@ class StandardDeviationExpressionTest extends TestCase
 
     public function dataProviderTestEvaluate()
     {
-        return array(
-            array('stddev(4, 5, 6, 7, 10)', '2.059126'),
-            array('stddev("4", "5", "6", "7", "10")', '2.059126')
-        );
+        return [
+            ['stddev(4, 5, 6, 7, 10)', '2.059126'],
+            ['stddev("4", "5", "6", "7", "10")', '2.059126'],
+        ];
     }
 }

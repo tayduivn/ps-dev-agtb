@@ -22,7 +22,7 @@ class RS97Test extends TestCase
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setUp('current_user', array(true, false));
+        SugarTestHelper::setUp('current_user', [true, false]);
     }
 
     public static function tearDownAfterClass(): void
@@ -51,17 +51,17 @@ class RS97Test extends TestCase
         $this->assertEquals($acc2->id, $bean->merge_bean2->id);
 
         $where = $bean->create_where_statement();
-        $need = array("{$acc1->table_name}.id !=" . DBManagerFactory::getInstance()->quoted($acc1->id));
+        $need = ["{$acc1->table_name}.id !=" . DBManagerFactory::getInstance()->quoted($acc1->id)];
         $this->assertEquals($need, $where);
 
-        $where = $bean->generate_where_statement(array('id = 1', 'name = 2'));
+        $where = $bean->generate_where_statement(['id = 1', 'name = 2']);
         $need = "id = 1 AND name = 2";
         $this->assertEquals($need, $where);
 
-        $result = $bean->get_inputs_for_search_params(array());
+        $result = $bean->get_inputs_for_search_params([]);
         $this->assertEmpty($result);
 
-        $bean->populate_search_params(array('nameSearchField' => 'value', 'nameSearchType' => 'RS97Test'));
+        $bean->populate_search_params(['nameSearchField' => 'value', 'nameSearchType' => 'RS97Test']);
         $this->assertArrayHasKey('name', $bean->field_search_params);
 
         $where = $bean->build_generic_where_clause('');

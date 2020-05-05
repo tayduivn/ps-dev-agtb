@@ -1,4 +1,4 @@
-<?php 
+<?php
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -18,17 +18,17 @@ class ContactsBugFixesTest extends TestCase
     {
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('app_list_strings');
-        $this->fields = array('first_name' => 'contact', 'last_name' => 'unitTester', 'sync_contact' => '1');
+        $this->fields = ['first_name' => 'contact', 'last_name' => 'unitTester', 'sync_contact' => '1'];
         $this->prefix = 'unittest_contacts_bugfixes';
-        $this->contacts = array();
+        $this->contacts = [];
     }
 
     protected function tearDown() : void
     {
-        foreach($this->fields AS $fieldName => $fieldValue) {
+        foreach ($this->fields as $fieldName => $fieldValue) {
             unset($_POST[$fieldName]);
         }
-        foreach($this->contacts AS $contact) {
+        foreach ($this->contacts as $contact) {
             $contact->mark_deleted($contact->id);
         }
 
@@ -37,7 +37,8 @@ class ContactsBugFixesTest extends TestCase
         SugarTestHelper::tearDown();
     }
 
-	public function testBug59675ContactFormBaseRefactor() {
+    public function testBug59675ContactFormBaseRefactor()
+    {
         $formBase = new ContactFormBase();
         foreach ($this->fields as $fieldName => $fieldValue) {
             $_POST[$this->prefix . $fieldName] = $fieldValue;
@@ -51,7 +52,7 @@ class ContactsBugFixesTest extends TestCase
         $this->assertTrue($bean->sync_contact == true, "Sync Contact was not set to true");
 
         unset($bean);
-        $_POST[$this->prefix . 'sync_contact'] = '0';        
+        $_POST[$this->prefix . 'sync_contact'] = '0';
 
         $bean = $formBase->handleSave($this->prefix, false);
         $this->contacts[] = $bean;
@@ -59,10 +60,11 @@ class ContactsBugFixesTest extends TestCase
         $this->assertFalse($bean->sync_contact == true, "Sync Contact was not set to false");
     }
 
-    public function testPopulateFromApiSyncContactTrue() {
+    public function testPopulateFromApiSyncContactTrue()
+    {
         $capih = new ContactsApiHelper(new ContactsBugFixesServiceMockup);
         $contact = BeanFactory::newBean('Contacts');
-        $submittedData = array('sync_contact' => true);
+        $submittedData = ['sync_contact' => true];
         $data = $capih->populateFromApi($contact, $submittedData);
         $contact->save();
         $contact->retrieve($contact->id);
@@ -70,10 +72,11 @@ class ContactsBugFixesTest extends TestCase
         $contact->mark_deleted($contact->id);
     }
 
-    public function testPopulateFromApiSyncContactFalse() {
+    public function testPopulateFromApiSyncContactFalse()
+    {
         $capih = new ContactsApiHelper(new ContactsBugFixesServiceMockup);
         $contact = BeanFactory::newBean('Contacts');
-        $submittedData = array('sync_contact' => false);
+        $submittedData = ['sync_contact' => false];
         $data = $capih->populateFromApi($contact, $submittedData);
         $contact->save();
         $contact->retrieve($contact->id);
@@ -88,18 +91,23 @@ class ContactsBugFixesTest extends TestCase
         $contact->retrieve($contact->id);
         $this->assertEquals($contact->email1, $contact->fetched_row['email1']);
 
-        $submittedData = array(
-            'email' => array(
-                array('email_address' => 'testnew@example.com', 'primary_address' => true),
-                array('email_address' => 'test2@example.com', 'primary_address' => false)
-            )
-        );
+        $submittedData = [
+            'email' => [
+                ['email_address' => 'testnew@example.com', 'primary_address' => true],
+                ['email_address' => 'test2@example.com', 'primary_address' => false],
+            ],
+        ];
         $contactApi->populateFromApi($contact, $submittedData);
         $this->assertNotEquals($contact->email1, $contact->fetched_row['email1']);
     }
 }
 
-class ContactsBugFixesServiceMockup extends ServiceBase {
-    public function execute() {}
-    protected function handleException(Exception $exception) {}
+class ContactsBugFixesServiceMockup extends ServiceBase
+{
+    public function execute()
+    {
+    }
+    protected function handleException(Exception $exception)
+    {
+    }
 }

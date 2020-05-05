@@ -18,9 +18,9 @@ class MassUpdateTest extends TestCase
 {
     protected function setUp() : void
     {
-		$GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-		$GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
-	}
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
+    }
 
     protected function tearDown() : void
     {
@@ -38,7 +38,7 @@ class MassUpdateTest extends TestCase
         $displayname = "开始日期:";
         $varname = "date_start";
         
-        $result = $mass->addDate($displayname , $varname);
+        $result = $mass->addDate($displayname, $varname);
         $pos_f = strrpos($result, $GLOBALS['app_strings']['LBL_MASSUPDATE_DATE']);
         $this->assertTrue((bool) $pos_f);
     }
@@ -46,35 +46,35 @@ class MassUpdateTest extends TestCase
     /**
      * @ticket 23900
      */
-    public function testAddStatus() 
+    public function testAddStatus()
     {
         $mass = new MassUpdate();
-        $options = array (
+        $options =  [
             '' => '',
             '10' => 'ten',
             '20' => 'twenty',
             '30' => 'thirty',
-            );
+            ];
         $result = $mass->addStatus('test_dom', 'test_dom', $options);
         preg_match_all('/value=[\'\"].*?[\'\"]/si', $result, $matches);
         $this->assertTrue($matches[0][0] == "value=''");
         $this->assertTrue($matches[0][1] == "value='__SugarMassUpdateClearField__'");
         $this->assertTrue($matches[0][2] == "value='10'");
         $this->assertTrue($matches[0][3] == "value='20'");
-        $this->assertTrue($matches[0][4] == "value='30'");       	
+        $this->assertTrue($matches[0][4] == "value='30'");
     }
     
     /**
      * @ticket 23900
      */
-    public function testAddStatusMulti() 
+    public function testAddStatusMulti()
     {
         $mass = new MassUpdate();
-        $options = array (
+        $options =  [
             '10' => 'ten',
             '20' => 'twenty',
             '30' => 'thirty',
-            );
+            ];
         
         $result = $mass->addStatusMulti('test_dom', 'test_dom', $options);
         preg_match_all('/value=[\'\"].*?[\'\"]/si', $result, $matches);
@@ -83,17 +83,17 @@ class MassUpdateTest extends TestCase
         $this->assertTrue($matches[0][1] == "value='__SugarMassUpdateClearField__'");
         $this->assertTrue($matches[0][2] == "value='10'");
         $this->assertTrue($matches[0][3] == "value='20'");
-        $this->assertTrue($matches[0][4] == "value='30'");       	
+        $this->assertTrue($matches[0][4] == "value='30'");
     }
 
     public function testAddStatusMultiNoNullOption()
     {
         $mass = new MassUpdate();
-        $options = array (
+        $options =  [
             '10' => 'ten',
             '20' => 'twenty',
             '30' => 'thirty',
-        );
+        ];
 
         $result = $mass->addStatusMulti('test_dom', 'test_dom', $options, false);
         preg_match_all('/value=[\'\"].*?[\'\"]/si', $result, $matches);
@@ -116,217 +116,218 @@ class MassUpdateTest extends TestCase
         $this->assertEquals($resultFieldDefs, $result);
     }
 
-    public function setMassUpdateFielddefsProvider(){
-        return array(
-            array(
-                array('test' => array(
-                    'name' => 'foofield', 'type' => 'bool', 'readonly' => true)),
+    public function setMassUpdateFielddefsProvider()
+    {
+        return [
+            [
+                ['test' => [
+                    'name' => 'foofield', 'type' => 'bool', 'readonly' => true]],
                 'Foo',
-                array('test' => array(
-                    'name' => 'foofield', 'type' => 'bool', 'readonly' => true, 'massupdate' => false))
-            ),
-            array(
-                array('test' => array(
-                    'name' => 'foofield', 'type' => 'bool', 'calculated' => true, 'enforced' => true)),
+                ['test' => [
+                    'name' => 'foofield', 'type' => 'bool', 'readonly' => true, 'massupdate' => false]],
+            ],
+            [
+                ['test' => [
+                    'name' => 'foofield', 'type' => 'bool', 'calculated' => true, 'enforced' => true]],
                 'Foo',
-                array('test' => array(
-                    'name' => 'foofield', 'type' => 'bool', 'calculated' => true, 'enforced' => true, 'massupdate' => false))
-            ),
-            array(
-                array('test' => array(
-                    'name' => 'foofield', 'type' => 'bool', 'calculated' => true, 'enforced' => false)),
+                ['test' => [
+                    'name' => 'foofield', 'type' => 'bool', 'calculated' => true, 'enforced' => true, 'massupdate' => false]],
+            ],
+            [
+                ['test' => [
+                    'name' => 'foofield', 'type' => 'bool', 'calculated' => true, 'enforced' => false]],
                 'Foo',
-                array('test' => array(
-                    'name' => 'foofield', 'type' => 'bool', 'calculated' => true, 'enforced' => false, 'massupdate' => true))
-            ),
-            array(
-                array('test' => array(
-                    'name' => 'foofield', 'type' => 'bool', 'massupdate' => true)),
+                ['test' => [
+                    'name' => 'foofield', 'type' => 'bool', 'calculated' => true, 'enforced' => false, 'massupdate' => true]],
+            ],
+            [
+                ['test' => [
+                    'name' => 'foofield', 'type' => 'bool', 'massupdate' => true]],
                 'Foo',
-                array('test' => array(
-                    'name' => 'foofield', 'type' => 'bool', 'massupdate' => true)
-                ),
-            ),
-            array(
-                array('test' => array(
-                    'name' => 'foofield', 'type' => 'bool', 'massupdate' => 'true')),
+                ['test' => [
+                    'name' => 'foofield', 'type' => 'bool', 'massupdate' => true],
+                ],
+            ],
+            [
+                ['test' => [
+                    'name' => 'foofield', 'type' => 'bool', 'massupdate' => 'true']],
                 'Foo',
-                array('test' => array(
-                    'name' => 'foofield', 'type' => 'bool', 'massupdate' => true)
-                ),
-            ),
-            array(
-                array('test' => array(
-                    'name' => 'foofield', 'type' => 'bool', 'massupdate' => 1)),
+                ['test' => [
+                    'name' => 'foofield', 'type' => 'bool', 'massupdate' => true],
+                ],
+            ],
+            [
+                ['test' => [
+                    'name' => 'foofield', 'type' => 'bool', 'massupdate' => 1]],
                 'Foo',
-                array('test' => array(
-                    'name' => 'foofield', 'type' => 'bool', 'massupdate' => true)
-                ),
-            ),
-            array(
-                array('test' => array(
-                    'name' => 'foofield', 'type' => 'bool', 'massupdate' => 0)),
+                ['test' => [
+                    'name' => 'foofield', 'type' => 'bool', 'massupdate' => true],
+                ],
+            ],
+            [
+                ['test' => [
+                    'name' => 'foofield', 'type' => 'bool', 'massupdate' => 0]],
                 'Foo',
-                array('test' => array(
-                    'name' => 'foofield', 'type' => 'bool', 'massupdate' => false)
-                ),
-            ),
-            array(
-                array('test' => array(
-                    'name' => 'foofield', 'type' => 'bool', 'massupdate' => 'false')),
+                ['test' => [
+                    'name' => 'foofield', 'type' => 'bool', 'massupdate' => false],
+                ],
+            ],
+            [
+                ['test' => [
+                    'name' => 'foofield', 'type' => 'bool', 'massupdate' => 'false']],
                 'Foo',
-                array('test' => array(
-                    'name' => 'foofield', 'type' => 'bool', 'massupdate' => false)
-                ),
-            ),
-            array(
-                array('test' => array(
-                    'name' => 'foofield', 'type' => 'date_modified')),
+                ['test' => [
+                    'name' => 'foofield', 'type' => 'bool', 'massupdate' => false],
+                ],
+            ],
+            [
+                ['test' => [
+                    'name' => 'foofield', 'type' => 'date_modified']],
                 'Foo',
-                array('test' => array(
-                    'name' => 'foofield', 'type' => 'date_modified')
-                ),
-            ),
-            array(
-                array('test' => array(
-                    'name' => 'foofield', 'type' => 'contact_id')),
+                ['test' => [
+                    'name' => 'foofield', 'type' => 'date_modified'],
+                ],
+            ],
+            [
+                ['test' => [
+                    'name' => 'foofield', 'type' => 'contact_id']],
                 'Foo',
-                array('test' => array(
-                    'name' => 'foofield', 'type' => 'contact_id', 'massupdate' => true)
-                ),
-            ),
-            array(
-                array('test' => array(
-                    'name' => 'foofield', 'type' => 'assigned_user_name')),
+                ['test' => [
+                    'name' => 'foofield', 'type' => 'contact_id', 'massupdate' => true],
+                ],
+            ],
+            [
+                ['test' => [
+                    'name' => 'foofield', 'type' => 'assigned_user_name']],
                     'Foo',
-                    array('test' => array(
-                        'name' => 'foofield', 'type' => 'assigned_user_name', 'massupdate' => true)
-                ),
-            ),
-            array(
-                array('test' => array(
-                    'name' => 'foofield', 'type' => 'account_id')),
+                    ['test' => [
+                        'name' => 'foofield', 'type' => 'assigned_user_name', 'massupdate' => true],
+                ],
+            ],
+            [
+                ['test' => [
+                    'name' => 'foofield', 'type' => 'account_id']],
                     'Foo',
-                    array('test' => array(
-                        'name' => 'foofield', 'type' => 'account_id', 'massupdate' => true)
-                ),
-            ),
-            array(
-                array('test' => array(
-                    'name' => 'foofield', 'type' => 'account_name')),
+                    ['test' => [
+                        'name' => 'foofield', 'type' => 'account_id', 'massupdate' => true],
+                ],
+            ],
+            [
+                ['test' => [
+                    'name' => 'foofield', 'type' => 'account_name']],
                     'Foo',
-                    array('test' => array(
-                        'name' => 'foofield', 'type' => 'account_name', 'massupdate' => true)
-                ),
-            ),
-            array(
-                array('test' => array(
-                    'name' => 'foofield', 'type' => 'bool')),
+                    ['test' => [
+                        'name' => 'foofield', 'type' => 'account_name', 'massupdate' => true],
+                ],
+            ],
+            [
+                ['test' => [
+                    'name' => 'foofield', 'type' => 'bool']],
                     'Foo',
-                    array('test' => array(
-                        'name' => 'foofield', 'type' => 'bool', 'massupdate' => true)
-                ),
-            ),
-            array(
-                array('test' => array(
-                    'name' => 'foofield', 'type' => 'parent')),
+                    ['test' => [
+                        'name' => 'foofield', 'type' => 'bool', 'massupdate' => true],
+                ],
+            ],
+            [
+                ['test' => [
+                    'name' => 'foofield', 'type' => 'parent']],
                     'Foo',
-                    array('test' => array(
-                        'name' => 'foofield', 'type' => 'parent', 'massupdate' => true)
-                ),
-            ),
-            array(
-                array('test' => array(
-                    'name' => 'foofield', 'type' => 'enum')),
+                    ['test' => [
+                        'name' => 'foofield', 'type' => 'parent', 'massupdate' => true],
+                ],
+            ],
+            [
+                ['test' => [
+                    'name' => 'foofield', 'type' => 'enum']],
                     'Foo',
-                    array('test' => array(
-                        'name' => 'foofield', 'type' => 'enum', 'massupdate' => true)
-                ),
-            ),
-            array(
-                array('test' => array(
-                    'name' => 'foofield', 'type' => 'multienum')),
+                    ['test' => [
+                        'name' => 'foofield', 'type' => 'enum', 'massupdate' => true],
+                ],
+            ],
+            [
+                ['test' => [
+                    'name' => 'foofield', 'type' => 'multienum']],
                     'Foo',
-                    array('test' => array(
-                        'name' => 'foofield', 'type' => 'multienum', 'massupdate' => true)
-                ),
-            ),
-            array(
-                array('test' => array(
-                    'name' => 'foofield', 'type' => 'radioenum')),
+                    ['test' => [
+                        'name' => 'foofield', 'type' => 'multienum', 'massupdate' => true],
+                ],
+            ],
+            [
+                ['test' => [
+                    'name' => 'foofield', 'type' => 'radioenum']],
                     'Foo',
-                    array('test' => array(
-                        'name' => 'foofield', 'type' => 'radioenum', 'massupdate' => true)
-                ),
-            ),
-            array(
-                array('test' => array(
-                    'name' => 'foofield', 'type' => 'datetime')),
+                    ['test' => [
+                        'name' => 'foofield', 'type' => 'radioenum', 'massupdate' => true],
+                ],
+            ],
+            [
+                ['test' => [
+                    'name' => 'foofield', 'type' => 'datetime']],
                     'Foo',
-                    array('test' => array(
-                        'name' => 'foofield', 'type' => 'datetime', 'massupdate' => true)
-                ),
-            ),
-            array(
-                array('test' => array(
-                    'name' => 'foofield', 'type' => 'date')),
+                    ['test' => [
+                        'name' => 'foofield', 'type' => 'datetime', 'massupdate' => true],
+                ],
+            ],
+            [
+                ['test' => [
+                    'name' => 'foofield', 'type' => 'date']],
                     'Foo',
-                    array('test' => array(
-                        'name' => 'foofield', 'type' => 'date', 'massupdate' => true)
-                ),
-            ),
-            array(
-                array('test' => array(
-                    'name' => 'foofield', 'type' => 'int', 'massupdate' => true)),
+                    ['test' => [
+                        'name' => 'foofield', 'type' => 'date', 'massupdate' => true],
+                ],
+            ],
+            [
+                ['test' => [
+                    'name' => 'foofield', 'type' => 'int', 'massupdate' => true]],
                     'Foo',
-                    array('test' => array(
-                        'name' => 'foofield', 'type' => 'int', 'massupdate' => true)
-                ),
-            ),
-            array(
-                array('test' => array(
-                    'name' => 'foofield', 'type' => 'int', 'auto_increment' => true)),
+                    ['test' => [
+                        'name' => 'foofield', 'type' => 'int', 'massupdate' => true],
+                ],
+            ],
+            [
+                ['test' => [
+                    'name' => 'foofield', 'type' => 'int', 'auto_increment' => true]],
                     'Foo',
-                    array('test' => array(
-                        'name' => 'foofield', 'type' => 'int', 'auto_increment' => true)
-                ),
-            ),
-            array(
-                array('test' => array(
-                    'name' => 'foofield', 'type' => 'relate')),
+                    ['test' => [
+                        'name' => 'foofield', 'type' => 'int', 'auto_increment' => true],
+                ],
+            ],
+            [
+                ['test' => [
+                    'name' => 'foofield', 'type' => 'relate']],
                 'Foo',
-                array('test' => array(
-                    'name' => 'foofield', 'type' => 'relate'))
-            ),
-            array(
-                array('test' => array(
-                    'name' => 'foofield', 'type' => 'relate', 'id_name' => 'bar')),
+                ['test' => [
+                    'name' => 'foofield', 'type' => 'relate']],
+            ],
+            [
+                ['test' => [
+                    'name' => 'foofield', 'type' => 'relate', 'id_name' => 'bar']],
                 'Foo',
-                array('test' => array(
-                    'name' => 'foofield', 'type' => 'relate', 'id_name' => 'bar', 'massupdate' => true))
-            ),
-            array(
-                array('sync_contact' => array()),
+                ['test' => [
+                    'name' => 'foofield', 'type' => 'relate', 'id_name' => 'bar', 'massupdate' => true]],
+            ],
+            [
+                ['sync_contact' => []],
                 'Contacts',
-                array('sync_contact' => array(
-                    'massupdate' => true)
-                ),
-            ),
-            array(
-                array('employee_status' => array()),
+                ['sync_contact' => [
+                    'massupdate' => true],
+                ],
+            ],
+            [
+                ['employee_status' => []],
                 'Employees',
-                array('employee_status' => array(
-                    'massupdate' => true, 'type' => 'enum', 'options' => 'employee_status_dom')
-                ),
-            ),
-            array(
-                array('status' => array()),
+                ['employee_status' => [
+                    'massupdate' => true, 'type' => 'enum', 'options' => 'employee_status_dom'],
+                ],
+            ],
+            [
+                ['status' => []],
                 'InboundEmail',
-                array('status' => array(
-                    'massupdate' => true, 'type' => 'enum', 'options' => 'user_status_dom')
-                ),
-            ),
+                ['status' => [
+                    'massupdate' => true, 'type' => 'enum', 'options' => 'user_status_dom'],
+                ],
+            ],
 
-        );
+        ];
     }
 }

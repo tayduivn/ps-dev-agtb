@@ -50,50 +50,50 @@ class Bug64675Test extends TestCase
 
     public static function providerShouldQualify()
     {
-        return array(
-            array(
+        return [
+            [
                 // schedule is "Every minute on Tuesday"
                 '*::*::*::*::2',
                 // now is "Tuesday, 23:30"
                 '2013-01-01 23:30:00',
-            ),
-            array(
+            ],
+            [
                 // schedule is "Every minute in January"
                 '*::*::*::1::*',
                 // now is "January 31st, 23:30"
                 '2013-01-31 23:30:00',
-            ),
-            array(
+            ],
+            [
                 // schedule is "Every minute of the 1st day of month"
                 '*::*::1::*::*',
                 // now is "January 1st, 23:30"
                 '2013-01-01 23:30:00',
-            ),
-        );
+            ],
+        ];
     }
 
     public static function providerShouldNotQualify()
     {
-        return array(
-            array(
+        return [
+            [
                 // schedule is "Every minute on Tuesday"
                 '*::*::*::*::2',
                 // now is "Wednesday, 00:30"
                 '2013-01-02 00:30:00',
-            ),
-            array(
+            ],
+            [
                 // schedule is "Every minute in January"
                 '*::*::*::1::*',
                 // now is "February 1st, 00:30"
                 '2013-02-01 00:30:00',
-            ),
-            array(
+            ],
+            [
                 // schedule is "Every minute of the 1st day of month"
                 '*::*::1::*::*',
                 // now is "January 2nd, 00:30"
                 '2013-01-02 00:30:00',
-            ),
-        );
+            ],
+        ];
     }
 
     protected function qualify($schedule, $time, $serverTimezone)

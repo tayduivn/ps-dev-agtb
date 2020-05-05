@@ -13,9 +13,9 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once("include/Sugarpdf/sugarpdf_config.php");
-require_once('vendor/tcpdf/config/lang/eng.php');
-require_once('vendor/tcpdf/tcpdf.php');
+require_once "include/Sugarpdf/sugarpdf_config.php";
+require_once 'vendor/tcpdf/config/lang/eng.php';
+require_once 'vendor/tcpdf/tcpdf.php';
 /**
  * @ticket 38850
  */
@@ -25,21 +25,21 @@ class Bug38850Test extends TestCase
     {
         $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
 
-        $dom = array(
-            0 => array(
-                'value' => 'html'
-                ),
-            1 => array(
+        $dom = [
+            0 => [
+                'value' => 'html',
+                ],
+            1 => [
                 'parent' => 0,
                 'value' => 'tcpdf',
-                'attribute' => array(
+                'attribute' => [
                     'method' => 'Close',
-                    'params' => serialize(array(");echo ('Can Interject Code'")),
-                    ),
-                ),
-            );
+                    'params' => serialize([");echo ('Can Interject Code'"]),
+                    ],
+                ],
+            ];
 
-        SugarTestReflection::callProtectedMethod($pdf, 'openHTMLTagHandler', array(&$dom, 1));
+        SugarTestReflection::callProtectedMethod($pdf, 'openHTMLTagHandler', [&$dom, 1]);
 
         $this->setOutputCallback(function ($output) {
             $this->assertStringNotContainsString('Can Interject Code', $output);

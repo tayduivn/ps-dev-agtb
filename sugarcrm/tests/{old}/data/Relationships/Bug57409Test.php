@@ -56,13 +56,13 @@ class Bug57409Test extends TestCase
      */
     public function testGetQuery()
     {
-        $query = $this->contact->opportunities->relationship->getQuery($this->contact->opportunities, array(
-            'enforce_teams' => true
-        ));
+        $query = $this->contact->opportunities->relationship->getQuery($this->contact->opportunities, [
+            'enforce_teams' => true,
+        ]);
 
         $actual = 0;
         $result = $GLOBALS['db']->query($query);
-        while ($GLOBALS['db']->fetchByAssoc($result, FALSE)) {
+        while ($GLOBALS['db']->fetchByAssoc($result, false)) {
             $actual++;
         }
 

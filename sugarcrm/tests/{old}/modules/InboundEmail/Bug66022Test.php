@@ -20,55 +20,55 @@ class Bug66022Test extends TestCase
     public static function dataProvider_processHTMLForWindowsMSOutlook()
     {
         $margin = "<style>p.MsoNormal {margin: 0;}</style>\n";
-        return array(
-            array(
+        return [
+            [
                 false,
                 '<p class="MsoNormal">Row1</p><p> </p><p>aaa</p>',
                 '<p class="MsoNormal">Row1</p><p> </p><p>aaa</p>',
-            ),
-            array(
+            ],
+            [
                 /* Not processed - not seen as containing MSOutlook tags */
                 true,
                 '<p class="Mso">Row1</p><p> </p><p></p>',
                 '<p class="Mso">Row1</p><p> </p><p></p>',
-            ),
-            array(
+            ],
+            [
                 /* remove empty paragraph */
                 true,
                 '<p class="MsoNormal">Row1</p><p></p><p>aaa</p>',
                 $margin . '<p class="MsoNormal">Row1</p><p>aaa</p>',
-            ),
-            array(
+            ],
+            [
                 /* remove paragraph having single blank character - replace with <br/> */
                 true,
                 '<p class="MsoNormal">Row1</p><p> </p>',
                 $margin . '<p class="MsoNormal">Row1</p><br/>',
-            ),
-            array(
+            ],
+            [
                 /* remove paragraph having single non breaking space - replace with <br/> */
                 true,
                 '<p class="MsoNormal">Row1</p><p>&nbsp;</p>',
                 $margin . '<p class="MsoNormal">Row1</p><br/>',
-            ),
-            array(
+            ],
+            [
                 /* remove empty paragraph with class='MsoNormal'*/
                 true,
                 '<p class="MsoNormal">Row1</p><p class="MsoNormal"></p><p>aaa</p>',
                 $margin . '<p class="MsoNormal">Row1</p><p>aaa</p>',
-            ),
-            array(
+            ],
+            [
                 /* remove paragraph having single blank character with class='MsoNormal'*/
                 true,
                 '<p class="MsoNormal">Row1</p><p class="MsoNormal"> </p>',
                 $margin . '<p class="MsoNormal">Row1</p>',
-            ),
-            array(
+            ],
+            [
                 /* remove paragraph having single non breaking space with class='MsoNormal'*/
                 true,
                 '<p class="MsoNormal">Row1</p><p class="MsoNormal">&nbsp;</p>',
                 $margin . '<p class="MsoNormal">Row1</p>',
-            ),
-        );
+            ],
+        ];
     }
 
     /**

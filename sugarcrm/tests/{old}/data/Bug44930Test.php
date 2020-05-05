@@ -36,17 +36,17 @@ class Bug44930Test extends TestCase
         $bean = new SugarBean();
         $bean->id = '1';
         $bean->test_id = '3';
-        $bean->field_defs = array(
-            'test' => array(
+        $bean->field_defs = [
+            'test' => [
                 'type' => 'link',
                 'relationship' => 'test',
                 'link_file' => 'data/SugarBean.php',
-                'link_class' => 'Link44930'
-            )
-        );
-        $bean->relationship_fields = array(
-            'test_id' => 'test'
-        );
+                'link_class' => 'Link44930',
+            ],
+        ];
+        $bean->relationship_fields = [
+            'test_id' => 'test',
+        ];
 
         $bean->save_relationship_changes(true);
 
@@ -63,8 +63,7 @@ class Link44930
 
     function __call($function, $arguments)
     {
-        if ($function == 'add')
-        {
+        if ($function == 'add') {
             $this->lastCall = reset($arguments);
         }
     }

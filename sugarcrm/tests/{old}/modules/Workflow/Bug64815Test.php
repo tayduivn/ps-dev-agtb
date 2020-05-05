@@ -34,7 +34,7 @@ class Bug64815Test extends TestCase
         $this->db = $GLOBALS['db'];
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setUp('current_user', array(true, 1));
+        SugarTestHelper::setUp('current_user', [true, 1]);
 
         $wf = new WorkFlow();
         $wf->name = 'WF 64815';
@@ -89,7 +89,7 @@ class Bug64815Test extends TestCase
         SugarTestCallUtilities::removeAllCreatedCalls();
         SugarTestHelper::tearDown();
 
-        $_REQUEST = array();
+        $_REQUEST = [];
     }
 
     /**

@@ -13,7 +13,7 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once('include/modules.php');
+require_once 'include/modules.php';
 
 
 /**
@@ -30,53 +30,52 @@ class Bug46805Test extends TestCase
      * @return void
      */
     protected function setUp() : void
-	{
-		require('include/modules.php');
-	    $GLOBALS['beanList'] = $beanList;
-	    $GLOBALS['beanFiles'] = $beanFiles;
-	    $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-	}
-	
+    {
+        require 'include/modules.php';
+        $GLOBALS['beanList'] = $beanList;
+        $GLOBALS['beanFiles'] = $beanFiles;
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+    }
+    
     protected function tearDown() : void
-	{
+    {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-	    unset($GLOBALS['current_user']);
-	   	unset($GLOBALS['beanList']);
-	    unset($GLOBALS['beanFiles']);
-	}
+        unset($GLOBALS['current_user']);
+        unset($GLOBALS['beanList']);
+        unset($GLOBALS['beanFiles']);
+    }
     function testOrderFields()
     {
         $db = new stdClass();
         $db->dbType = 'mssql';
         $report = new Report();
         $report->db = $db;
-        $report->select_fields = array(
-            'test1'
-        );
+        $report->select_fields = [
+            'test1',
+        ];
         $report->from = ' FROM test';
 
-        $report->order_by_arr = array(
-            '(test.test1=\'\' OR test.test1 IS NULL)  DESC, test.test1=\'1\'  DESC'
-        );
+        $report->order_by_arr = [
+            '(test.test1=\'\' OR test.test1 IS NULL)  DESC, test.test1=\'1\'  DESC',
+        ];
         $report->create_query();
 
-        $report->order_by_arr = array(
-            '([!@#$%^&*()_+ ].[!@#$%^&*()_+ ]=\'\' OR [!@#$%^&*()_+ ].[!@#$%^&*()_+ ] IS NULL)  DESC, [!@#$%^&*()_+ ].[!@#$%^&*()_+ ]=\'1\'  DESC'
-        );
+        $report->order_by_arr = [
+            '([!@#$%^&*()_+ ].[!@#$%^&*()_+ ]=\'\' OR [!@#$%^&*()_+ ].[!@#$%^&*()_+ ] IS NULL)  DESC, [!@#$%^&*()_+ ].[!@#$%^&*()_+ ]=\'1\'  DESC',
+        ];
         $report->create_query();
 
-        $report->order_by_arr = array(
-            '(test1=\'\' OR test1 IS NULL)  DESC, test1=\'1\'  DESC'
-        );
+        $report->order_by_arr = [
+            '(test1=\'\' OR test1 IS NULL)  DESC, test1=\'1\'  DESC',
+        ];
         $report->create_query();
 
-        $report->order_by_arr = array(
-            '([!@#$%^&*()_+ ]=\'\' OR [!@#$%^&*()_+ ] IS NULL)  DESC, [!@#$%^&*()_+ ]=\'1\'  DESC'
-        );
+        $report->order_by_arr = [
+            '([!@#$%^&*()_+ ]=\'\' OR [!@#$%^&*()_+ ] IS NULL)  DESC, [!@#$%^&*()_+ ]=\'1\'  DESC',
+        ];
         $report->create_query();
 
-        foreach ($report->query_list as $query)
-        {
+        foreach ($report->query_list as $query) {
             $query = preg_replace('/\[[^\]]+\]/', '', $query);
             $query = preg_replace('/[^\(\)]/', '', $query);
             // Compare number of left and right brackets. Query is not valid if their number is not equal.

@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
@@ -13,14 +13,14 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once('modules/Campaigns/ProcessBouncedEmails.php');
+require_once 'modules/Campaigns/ProcessBouncedEmails.php';
 
 /**
- * @ticket 38053 
+ * @ticket 38053
  */
 class Bug38053Test extends TestCase
 {
-	public $folder = null;
+    public $folder = null;
     public $_user = null;
     public $_team = null;
     
@@ -28,7 +28,7 @@ class Bug38053Test extends TestCase
     {
         $this->_user = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['current_user'] = $this->_user;
-	}
+    }
 
     protected function tearDown() : void
     {

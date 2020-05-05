@@ -45,12 +45,12 @@ class SmtpMailerTest extends TestCase
         $config = new OutboundSmtpEmailConfiguration($GLOBALS['current_user']);
 
         $mockMailer = $this->getMockBuilder('SmtpMailer')
-            ->setConstructorArgs(array($config))
+            ->setConstructorArgs([$config])
             ->setMethods(
-                array(
+                [
                     'transferConfigurations',
                     'connectToHost',
-                )
+                ]
             )
             ->getMock();
 
@@ -65,12 +65,12 @@ class SmtpMailerTest extends TestCase
         $config = new OutboundSmtpEmailConfiguration($GLOBALS['current_user']);
 
         $mockMailer = $this->getMockBuilder('SmtpMailer')
-            ->setConstructorArgs(array($config))
+            ->setConstructorArgs([$config])
             ->setMethods(
-                array(
+                [
                     'transferConfigurations',
                     'connectToHost',
-                )
+                ]
             )
             ->getMock();
 
@@ -84,12 +84,12 @@ class SmtpMailerTest extends TestCase
     public function testClearRecipients_ClearToAndBccButNotCc()
     {
         $mockMailer = $this->getMockBuilder('SmtpMailer')
-            ->setMethods(array(
+            ->setMethods([
                  'clearRecipientsTo',
                  'clearRecipientsCc',
                  'clearRecipientsBcc',
-            ))
-            ->setConstructorArgs(array(new OutboundSmtpEmailConfiguration($GLOBALS['current_user'])))
+            ])
+            ->setConstructorArgs([new OutboundSmtpEmailConfiguration($GLOBALS['current_user'])])
             ->getmock();
 
         $mockMailer->expects($this->once())
@@ -106,22 +106,22 @@ class SmtpMailerTest extends TestCase
 
     public function testSend_PHPMailerSmtpConnectThrowsException_ConnectToHostCatchesAndThrowsMailerException()
     {
-        $mockPhpMailerProxy = $this->createPartialMock('PHPMailerProxy', array('smtpConnect'));
+        $mockPhpMailerProxy = $this->createPartialMock('PHPMailerProxy', ['smtpConnect']);
 
         $mockPhpMailerProxy->expects($this->once())
             ->method('smtpConnect')
             ->will($this->throwException(new phpmailerException()));
 
         $mockMailer = $this->getMockBuilder('SmtpMailer')
-            ->setMethods(array(
+            ->setMethods([
                  'generateMailer',
                  'transferConfigurations',
                  'transferHeaders',
                  'transferRecipients',
                  'transferBody',
                  'transferAttachments',
-            ))
-            ->setConstructorArgs(array(new OutboundSmtpEmailConfiguration($GLOBALS['current_user'])))
+            ])
+            ->setConstructorArgs([new OutboundSmtpEmailConfiguration($GLOBALS['current_user'])])
             ->getmock();
 
         $mockMailer->expects($this->once())
@@ -161,14 +161,14 @@ class SmtpMailerTest extends TestCase
         $phpMailerProxy->Body = 'baz';
 
         $mailer = $this->getMockBuilder('SmtpMailer')
-            ->setConstructorArgs(array($config))
-            ->setMethods(array(
+            ->setConstructorArgs([$config])
+            ->setMethods([
                 'generateMailer',
                 'connectToHost',
                 'transferRecipients',
                 'transferBody',
                 'transferAttachments',
-            ))
+            ])
             ->getMock();
         $mailer->expects($this->once())->method('generateMailer')->willReturn($phpMailerProxy);
         $mailer->expects($this->once())->method('connectToHost')->willReturn(true);
@@ -199,15 +199,15 @@ class SmtpMailerTest extends TestCase
         $phpMailerProxy->Body = 'baz';
 
         $mailer = $this->getMockBuilder('SmtpMailer')
-            ->setConstructorArgs(array($config))
+            ->setConstructorArgs([$config])
             ->setMethods(
-                array(
+                [
                     'generateMailer',
                     'connectToHost',
                     'transferRecipients',
                     'transferBody',
                     'transferAttachments',
-                )
+                ]
             )
             ->getMock();
         $mailer->expects($this->once())->method('generateMailer')->willReturn($phpMailerProxy);
@@ -227,34 +227,34 @@ class SmtpMailerTest extends TestCase
 
     public function testSend_PHPMailerSetFromThrowsException_TransferHeadersThrowsMailerException()
     {
-        $packagedEmailHeaders = array(
-            EmailHeaders::From => array(
+        $packagedEmailHeaders = [
+            EmailHeaders::From => [
                 'foo@bar.com',
                 null,
-            ),
-        );
-        $mockEmailHeaders     = $this->createPartialMock('EmailHeaders', array('packageHeaders'));
+            ],
+        ];
+        $mockEmailHeaders     = $this->createPartialMock('EmailHeaders', ['packageHeaders']);
 
         $mockEmailHeaders->expects($this->once())
             ->method('packageHeaders')
             ->will($this->returnValue($packagedEmailHeaders));
 
-        $mockPhpMailerProxy = $this->createPartialMock('PHPMailerProxy', array('setFrom'));
+        $mockPhpMailerProxy = $this->createPartialMock('PHPMailerProxy', ['setFrom']);
 
         $mockPhpMailerProxy->expects($this->once())
             ->method('setFrom')
             ->will($this->throwException(new phpmailerException()));
 
         $mockMailer = $this->getMockBuilder('SmtpMailer')
-            ->setConstructorArgs(array(new OutboundSmtpEmailConfiguration($GLOBALS['current_user'])))
-            ->setMethods(array(
+            ->setConstructorArgs([new OutboundSmtpEmailConfiguration($GLOBALS['current_user'])])
+            ->setMethods([
                  'generateMailer',
                  'transferConfigurations',
                  'connectToHost',
                  'transferRecipients',
                  'transferBody',
                  'transferAttachments',
-            ))
+            ])
             ->getMock();
 
         $mockMailer->setHeaders($mockEmailHeaders);
@@ -288,34 +288,34 @@ class SmtpMailerTest extends TestCase
 
     public function testSend_PHPMailerAddReplyToReturnsFalse_TransferHeadersThrowsMailerException()
     {
-        $packagedEmailHeaders = array(
-            EmailHeaders::ReplyTo => array(
+        $packagedEmailHeaders = [
+            EmailHeaders::ReplyTo => [
                 'foo@bar.com',
                 null,
-            ),
-        );
-        $mockEmailHeaders     = $this->createPartialMock('EmailHeaders', array('packageHeaders'));
+            ],
+        ];
+        $mockEmailHeaders     = $this->createPartialMock('EmailHeaders', ['packageHeaders']);
 
         $mockEmailHeaders->expects($this->once())
             ->method('packageHeaders')
             ->will($this->returnValue($packagedEmailHeaders));
 
-        $mockPhpMailerProxy = $this->createPartialMock('PHPMailerProxy', array('addReplyTo'));
+        $mockPhpMailerProxy = $this->createPartialMock('PHPMailerProxy', ['addReplyTo']);
 
         $mockPhpMailerProxy->expects($this->once())
             ->method('addReplyTo')
             ->will($this->returnValue(false));
 
         $mockMailer = $this->getMockBuilder('SmtpMailer')
-            ->setConstructorArgs(array(new OutboundSmtpEmailConfiguration($GLOBALS['current_user'])))
-            ->setMethods(array(
+            ->setConstructorArgs([new OutboundSmtpEmailConfiguration($GLOBALS['current_user'])])
+            ->setMethods([
                  'generateMailer',
                  'transferConfigurations',
                  'connectToHost',
                  'transferRecipients',
                  'transferBody',
                  'transferAttachments',
-            ))
+            ])
             ->getMock();
 
         $mockMailer->setHeaders($mockEmailHeaders);
@@ -349,7 +349,7 @@ class SmtpMailerTest extends TestCase
 
     public function testSend_PHPMailerAddAttachmentThrowsException_TransferAttachmentsThrowsMailerException()
     {
-        $mockLocale = $this->getMockBuilder('Localization')->setMethods(array('translateCharset'))->getMock();
+        $mockLocale = $this->getMockBuilder('Localization')->setMethods(['translateCharset'])->getMock();
         $mockLocale->expects($this->any())
             ->method('translateCharset')
             ->will($this->returnValue('foobar')); // the filename that Localization::translateCharset will return
@@ -357,22 +357,22 @@ class SmtpMailerTest extends TestCase
         $mailerConfiguration = new OutboundSmtpEmailConfiguration($GLOBALS['current_user']);
         $mailerConfiguration->setLocale($mockLocale);
 
-        $mockPhpMailerProxy = $this->getMockBuilder('PHPMailerProxy')->setMethods(array('addAttachment'))->getMock();
+        $mockPhpMailerProxy = $this->getMockBuilder('PHPMailerProxy')->setMethods(['addAttachment'])->getMock();
 
         $mockPhpMailerProxy->expects($this->once())
             ->method('addAttachment')
             ->will($this->throwException(new phpmailerException()));
 
         $mockMailer = $this->getMockBuilder('SmtpMailer')
-            ->setMethods(array(
+            ->setMethods([
                  'generateMailer',
                  'transferConfigurations',
                  'connectToHost',
                  'transferHeaders',
                  'transferRecipients',
                  'transferBody',
-            ))
-            ->setConstructorArgs(array($mailerConfiguration))
+            ])
+            ->setConstructorArgs([$mailerConfiguration])
             ->getMock();
 
         $attachment = new Attachment('/foo/bar.txt');
@@ -406,7 +406,7 @@ class SmtpMailerTest extends TestCase
 
     public function testSend_PHPMailerAddEmbeddedImageReturnsFalse_TransferAttachmentsThrowsMailerException()
     {
-        $mockLocale = $this->getMockBuilder('Localization')->setMethods(array('translateCharset'))->getMock();
+        $mockLocale = $this->getMockBuilder('Localization')->setMethods(['translateCharset'])->getMock();
         $mockLocale->expects($this->any())
             ->method('translateCharset')
             ->will($this->returnValue('foobar')); // the filename that Localization::translateCharset will return
@@ -414,22 +414,22 @@ class SmtpMailerTest extends TestCase
         $mailerConfiguration = new OutboundSmtpEmailConfiguration($GLOBALS['current_user']);
         $mailerConfiguration->setLocale($mockLocale);
 
-        $mockPhpMailerProxy = $this->getMockBuilder('PHPMailerProxy')->setMethods(array('addEmbeddedImage'))->getMock();
+        $mockPhpMailerProxy = $this->getMockBuilder('PHPMailerProxy')->setMethods(['addEmbeddedImage'])->getMock();
 
         $mockPhpMailerProxy->expects($this->once())
             ->method('addEmbeddedImage')
             ->will($this->returnValue(false));
 
         $mockMailer = $this->getMockBuilder('SmtpMailer')
-            ->setConstructorArgs(array($mailerConfiguration))
-            ->setMethods(array(
+            ->setConstructorArgs([$mailerConfiguration])
+            ->setMethods([
                  'generateMailer',
                  'transferConfigurations',
                  'connectToHost',
                  'transferHeaders',
                  'transferRecipients',
                  'transferBody',
-            ))
+            ])
             ->getMock();
 
         $embeddedImage = new EmbeddedImage('foobar', '/foo/bar.txt');
@@ -463,15 +463,15 @@ class SmtpMailerTest extends TestCase
 
     public function testSend_PHPMailerSendThrowsException_SendCatchesItAndThrowsMailerException()
     {
-        $mockPhpMailerProxy = $this->createPartialMock('PHPMailerProxy', array('send'));
+        $mockPhpMailerProxy = $this->createPartialMock('PHPMailerProxy', ['send']);
 
         $mockPhpMailerProxy->expects($this->once())
             ->method('send')
             ->will($this->throwException(new phpmailerException()));
 
         $mockMailer = $this->getMockBuilder('SmtpMailer')
-            ->setConstructorArgs(array(new OutboundSmtpEmailConfiguration($GLOBALS['current_user'])))
-            ->setMethods(array(
+            ->setConstructorArgs([new OutboundSmtpEmailConfiguration($GLOBALS['current_user'])])
+            ->setMethods([
                  'generateMailer',
                  'transferConfigurations',
                  'connectToHost',
@@ -479,7 +479,7 @@ class SmtpMailerTest extends TestCase
                  'transferRecipients',
                  'transferBody',
                  'transferAttachments',
-            ))
+            ])
             ->getMock();
 
         $mockMailer->expects($this->once())
@@ -516,7 +516,7 @@ class SmtpMailerTest extends TestCase
 
     public function testSend_AllMethodCallsAreSuccessful_ReturnsSentMessage()
     {
-        $mockPhpMailerProxy = $this->createPartialMock('PHPMailerProxy', array('send', 'getSentMIMEMessage'));
+        $mockPhpMailerProxy = $this->createPartialMock('PHPMailerProxy', ['send', 'getSentMIMEMessage']);
 
         $mockPhpMailerProxy->expects($this->once())
             ->method('send')
@@ -526,8 +526,8 @@ class SmtpMailerTest extends TestCase
         $mockPhpMailerProxy->expects($this->once())->method('getSentMIMEMessage')->willReturn($expected);
 
         $mockMailer = $this->getMockBuilder('SmtpMailer')
-            ->setConstructorArgs(array(new OutboundSmtpEmailConfiguration($GLOBALS['current_user'])))
-            ->setMethods(array(
+            ->setConstructorArgs([new OutboundSmtpEmailConfiguration($GLOBALS['current_user'])])
+            ->setMethods([
                  'generateMailer',
                  'transferConfigurations',
                  'connectToHost',
@@ -535,7 +535,7 @@ class SmtpMailerTest extends TestCase
                  'transferRecipients',
                  'transferBody',
                  'transferAttachments',
-            ))
+            ])
             ->getMock();
 
         $mockMailer->expects($this->once())

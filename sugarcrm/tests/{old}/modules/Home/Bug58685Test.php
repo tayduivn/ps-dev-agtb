@@ -31,7 +31,7 @@ class Bug58685Test extends TestCase
             $this->oldCL = $_SERVER['CONTENT_LENGTH'];
         }
         SugarTestHelper::setUp('app_strings');
-	}
+    }
 
     protected function tearDown() : void
     {
@@ -47,13 +47,14 @@ class Bug58685Test extends TestCase
     /**
      * testEmptyPostError
      */
-    function testSaveUploadErrorMessage() {
+    function testSaveUploadErrorMessage()
+    {
         //first lets test that no errors show up under normal conditions, clear out Post array just in case there is stale info
-        $_POST = array();
+        $_POST = [];
         //now lets simulate that we are coming from a post, which along with the empty file and post array should trigger the error message
         $_SERVER['REQUEST_METHOD'] = 'POST';
         $_SERVER['CONTENT_LENGTH'] = 10;
-        $_FILES = array();
+        $_FILES = [];
         $view = new HomeViewList();
         $view->suppressDisplayErrors = true;
         $view->processMaxPostErrors();

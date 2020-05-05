@@ -16,21 +16,21 @@ use PHPUnit\Framework\TestCase;
 class GetACLCategoryTest extends TestCase
 {
     protected function setUp() : void
-	{
+    {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-	}
+    }
 
     protected function tearDown() : void
-	{
-		SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+    {
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
-	}
+    }
     
     /**
      * @ticket 39846
      */
-	public function testGetACLCategoryWhenACLCategoryIsDefined()
-	{
+    public function testGetACLCategoryWhenACLCategoryIsDefined()
+    {
         $bean = new SugarBean();
         $bean->module_dir = 'Foo';
         $bean->acl_category = 'Bar';
@@ -38,20 +38,20 @@ class GetACLCategoryTest extends TestCase
         $this->assertEquals(
             'Bar',
             $bean->getACLCategory()
-            );
+        );
     }
     
     /**
      * @ticket 39846
      */
-	public function testGetACLCategoryWhenACLCategoryIsNotDefined()
-	{
+    public function testGetACLCategoryWhenACLCategoryIsNotDefined()
+    {
         $bean = new SugarBean();
         $bean->module_dir = 'Foo';
         
         $this->assertEquals(
             'Foo',
             $bean->getACLCategory()
-            );
+        );
     }
 }

@@ -15,7 +15,7 @@ class SugarTestConfigUtilities
     /**
      * @var array
      */
-    protected static $orgConfig = array();
+    protected static $orgConfig = [];
 
     /**
      * @var Administration
@@ -64,7 +64,7 @@ class SugarTestConfigUtilities
             }
             self::$admin->saveSetting($config['category'], $config['name'], $config['value'], $config['platform']);
         }
-        self::$orgConfig = array();
+        self::$orgConfig = [];
         self::$admin = null;
     }
 }

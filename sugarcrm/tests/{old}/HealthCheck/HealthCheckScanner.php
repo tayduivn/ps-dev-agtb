@@ -19,8 +19,8 @@ class HealthCheckScannerCasesTestMock extends HealthCheckScanner
 {
     public $not = false;
     public $skip = false;
-    public $md5_files = array();
-    public $bwcModulesHash = array();
+    public $md5_files = [];
+    public $bwcModulesHash = [];
 
     /**
      * Initialize instance environment
@@ -44,7 +44,7 @@ class HealthCheckScannerCasesTestMock extends HealthCheckScanner
 
     public function getVersionAndFlavor()
     {
-        return array('6.5.0', 'ent');
+        return ['6.5.0', 'ent'];
     }
 
     public function ping($data)
@@ -59,13 +59,13 @@ class HealthCheckScannerCasesTestMock extends HealthCheckScanner
 
     public function getVersion()
     {
-        return array ('7.6.0.0','1000');
+        return  ['7.6.0.0','1000'];
     }
 
     public function getPackageManifest()
     {
-        return array(
+        return [
             'version' => '7.6.0.1',
-        );
+        ];
     }
 }

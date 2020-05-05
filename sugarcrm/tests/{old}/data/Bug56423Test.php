@@ -43,8 +43,8 @@ class Bug56423Test extends TestCase
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('app_list_strings');
-        SugarTestHelper::setUp('mod_strings', array('ModuleBuilder'));
-        SugarTestHelper::setUp('current_user', array(true, 1));
+        SugarTestHelper::setUp('mod_strings', ['ModuleBuilder']);
+        SugarTestHelper::setUp('current_user', [true, 1]);
 
         $_POST = $_REQUEST = $this->getPostData();
 
@@ -53,7 +53,7 @@ class Bug56423Test extends TestCase
         $module = $_REQUEST['view_module'];
         $this->accountField = new DynamicField($module);
         $class_name = $GLOBALS['beanList'][$module];
-        require_once ($GLOBALS['beanFiles'][$class_name]);
+        require_once $GLOBALS['beanFiles'][$class_name];
         $mod = new $class_name();
         $this->accountField->setup($mod);
         $this->accountFieldWidget->save($this->accountField);
@@ -65,21 +65,23 @@ class Bug56423Test extends TestCase
         $module = $_REQUEST['view_module'];
         $this->opportunityField = new DynamicField($module);
         $class_name = $GLOBALS['beanList'][$module];
-        require_once ($GLOBALS['beanFiles'][$class_name]);
+        require_once $GLOBALS['beanFiles'][$class_name];
         $mod = new $class_name();
         $this->opportunityField->setup($mod);
         $this->opportunityFieldWidget->save($this->opportunityField);
 
         $repair = new RepairAndClear();
-        $repair->repairAndClearAll(array('rebuildExtensions', 'clearVardefs'),
-                                   array($GLOBALS['beanList']['Accounts'], $GLOBALS['beanList']['Opportunities']),
-                                   true,
-                                   false);
+        $repair->repairAndClearAll(
+            ['rebuildExtensions', 'clearVardefs'],
+            [$GLOBALS['beanList']['Accounts'], $GLOBALS['beanList']['Opportunities']],
+            true,
+            false
+        );
     }
 
     public function getPostData()
     {
-        return array (
+        return  [
             'module' => 'ModuleBuilder',
             'action' => 'saveField',
             'new_dropdown' => '',
@@ -100,27 +102,27 @@ class Bug56423Test extends TestCase
             'reportable' => '1',
             'importable' => 'true',
             'duplicate_merge' => '0',
-        );
-    } 
+        ];
+    }
 
     protected function tearDown() : void
     {
-        if ($this->accountFieldWidget)
-        {
+        if ($this->accountFieldWidget) {
             $this->accountFieldWidget->delete($this->accountField);
         }
-        if ($this->opportunityFieldWidget)
-        {
+        if ($this->opportunityFieldWidget) {
             $this->opportunityFieldWidget->delete($this->opportunityField);
         }
 
         $repair = new RepairAndClear();
-        $repair->repairAndClearAll(array('rebuildExtensions', 'clearVardefs'),
-                                   array($GLOBALS['beanList']['Accounts'], $GLOBALS['beanList']['Opportunities']),
-                                   true,
-                                   false);
+        $repair->repairAndClearAll(
+            ['rebuildExtensions', 'clearVardefs'],
+            [$GLOBALS['beanList']['Accounts'], $GLOBALS['beanList']['Opportunities']],
+            true,
+            false
+        );
 
-        $_REQUEST = $_POST = array();
+        $_REQUEST = $_POST = [];
         SugarTestHelper::tearDown();
     }
 
@@ -134,12 +136,12 @@ class Bug56423Test extends TestCase
         $query = $bean->create_new_list_query(
             "accounts.name",
             "(accounts.name like 'A%')",
-            array(),
-            array(),
+            [],
+            [],
             0,
             "",
             true,
-            NULL,
+            null,
             false
         );
         $this->assertEquals(1, substr_count($query['select'], 'accounts_cstm.contact_id_c'));

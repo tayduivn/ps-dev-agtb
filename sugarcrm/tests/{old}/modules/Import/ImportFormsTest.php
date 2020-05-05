@@ -18,12 +18,12 @@ class ImportFormsTest extends TestCase
 {
     protected function setUp() : void
     {
-        $beanList = array();
-        require('include/modules.php');
+        $beanList = [];
+        require 'include/modules.php';
         $GLOBALS['beanList'] = $beanList;
         $GLOBALS['beanFiles'] = $beanFiles;
-        $mod_strings = array();
-        require('modules/Import/language/en_us.lang.php');
+        $mod_strings = [];
+        require 'modules/Import/language/en_us.lang.php';
         $GLOBALS['mod_strings'] = $mod_strings;
         $_SESSION['developerMode'] = true;
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
@@ -75,7 +75,7 @@ class ImportFormsTest extends TestCase
 
     public function testGetControlIdField()
     {
-        $html = getControl('Contacts','assigned_user_id');
+        $html = getControl('Contacts', 'assigned_user_id');
 
         $this->assertMatchesRegularExpression('/name=\'assigned_user_id\'/', $html);
         $this->assertMatchesRegularExpression('/id=\'assigned_user_id\'/', $html);
@@ -84,7 +84,7 @@ class ImportFormsTest extends TestCase
 
     public function testGetControlEmail()
     {
-        $html = getControl('Contacts','email1');
+        $html = getControl('Contacts', 'email1');
 
         $this->assertMatchesRegularExpression('/name=\'email1\'/', $html);
         $this->assertMatchesRegularExpression('/id=\'email1\'/', $html);
@@ -95,12 +95,12 @@ class ImportFormsTest extends TestCase
     {
         global $app_strings;
 
-        $html = getControl('Opportunities','currency_id');
+        $html = getControl('Opportunities', 'currency_id');
 
         $focus = BeanFactory::newBean('Opportunities');
 
 
-        $string = str_ireplace('</select>','<option value="">'.$app_strings['LBL_NONE'].'</option></select>',getCurrencyDropDown($focus, 'currency_id', '', 'EditView'));
+        $string = str_ireplace('</select>', '<option value="">'.$app_strings['LBL_NONE'].'</option></select>', getCurrencyDropDown($focus, 'currency_id', '', 'EditView'));
         $this->assertStringContainsString($string, $html, "Failed to find string '$string' in '$html'");
 
         $string = "<script>function CurrencyConvertAll() { return; }</script>";
@@ -110,11 +110,12 @@ class ImportFormsTest extends TestCase
     public function testGetControlVardef()
     {
         VardefManager::loadVardef(
-                'Contacts',
-                'Contact');
+            'Contacts',
+            'Contact'
+        );
         $vardef = $GLOBALS['dictionary']['Contact']['fields']['assigned_user_id'];
 
-        $html = getControl('Contacts','assigned_user_id',$vardef);
+        $html = getControl('Contacts', 'assigned_user_id', $vardef);
 
         $this->assertMatchesRegularExpression('/name=\'assigned_user_id\'/', $html);
         $this->assertMatchesRegularExpression('/id=\'assigned_user_id\'/', $html);
@@ -123,7 +124,7 @@ class ImportFormsTest extends TestCase
 
     public function testGetControlValue()
     {
-        $html = getControl('Contacts','email1',null,'poo');
+        $html = getControl('Contacts', 'email1', null, 'poo');
 
         $this->assertMatchesRegularExpression('/name=\'email1\'/', $html);
         $this->assertMatchesRegularExpression('/id=\'email1\'/', $html);
@@ -136,7 +137,7 @@ class ImportFormsTest extends TestCase
      */
     public function testGetControlDatetimecombo()
     {
-        $html = getControl('Calls','date_start');
+        $html = getControl('Calls', 'date_start');
 
         global $timedate;
         $string = '", "' . $timedate->get_user_time_format() . '", "';

@@ -72,11 +72,11 @@ class FunctionNameValidatorTest extends AbstractConstraintValidatorTest
 
     public function providerTestValidValues()
     {
-        return array(
-            array('functionName'),
-            array('function-Name'),
-            array('function-Name9'),
-        );
+        return [
+            ['functionName'],
+            ['function-Name'],
+            ['function-Name9'],
+        ];
     }
 
     /**
@@ -85,9 +85,9 @@ class FunctionNameValidatorTest extends AbstractConstraintValidatorTest
      */
     public function testInvalidValues($value, $code)
     {
-        $constraint = new FunctionName(array(
+        $constraint = new FunctionName([
             'message' => 'testMessage',
-        ));
+        ]);
 
         $this->validator->validate($value, $constraint);
 
@@ -100,11 +100,11 @@ class FunctionNameValidatorTest extends AbstractConstraintValidatorTest
 
     public function providerTestInvalidValues()
     {
-        return array(
-            array(
+        return [
+            [
                 'Function%Name',
                 FunctionName::ERROR_INVALID_FUNCTION_NAME,
-            ),
-        );
+            ],
+        ];
     }
 }

@@ -1,4 +1,4 @@
-<?php 
+<?php
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -13,26 +13,27 @@
 use PHPUnit\Framework\TestCase;
 
 class ViewVcardTest extends TestCase
-{   
+{
+
     protected function setUp() : void
     {
         SugarTestHelper::setUp("current_user");
     }
     
-    public function testConstructor() 
-	{
-	    $view = new ViewVcard;
+    public function testConstructor()
+    {
+        $view = new ViewVcard;
         
-        $this->assertEquals('detail',$view->type);
-	}
-	
-	public function testDisplay()
-	{
-	    $view = new ViewVcard;
-	    $view->bean = SugarTestContactUtilities::createContact();
-	    $view->module = 'Contacts';
+        $this->assertEquals('detail', $view->type);
+    }
+    
+    public function testDisplay()
+    {
+        $view = new ViewVcard;
+        $view->bean = SugarTestContactUtilities::createContact();
+        $view->module = 'Contacts';
         $view->display();
         SugarTestContactUtilities::removeAllCreatedContacts();
         $this->expectOutputRegex('/BEGIN\:VCARD/');
-	}
+    }
 }

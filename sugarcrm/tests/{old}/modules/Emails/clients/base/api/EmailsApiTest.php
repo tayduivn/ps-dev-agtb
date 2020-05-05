@@ -51,15 +51,15 @@ class EmailsApiTest extends TestCase
         $before = $GLOBALS['db']->fetchOne('SELECT COUNT(*) as num FROM emails WHERE deleted=0');
 
         $api = $this->getMockBuilder('EmailsApi')
-            ->setMethods(array('sendEmail'))
+            ->setMethods(['sendEmail'])
             ->getMock();
         $api->method('sendEmail')->willThrowException(new SugarApiExceptionRequestMethodFailure());
 
-        $args = array(
+        $args = [
             'module' => 'Emails',
             'name' => 'Sugar Email' . mt_rand(),
             'state' => Email::STATE_READY,
-        );
+        ];
 
         $caught = false;
 
@@ -210,7 +210,7 @@ class EmailsApiTest extends TestCase
     {
         $email = $this->getMockBuilder('Email')
             ->disableOriginalConstructor()
-            ->setMethods(array('sendEmail'))
+            ->setMethods(['sendEmail'])
             ->getMock();
         $email->expects($this->never())
             ->method('sendEmail');
@@ -248,7 +248,7 @@ class EmailsApiTest extends TestCase
     {
         $email = $this->getMockBuilder('Email')
             ->disableOriginalConstructor()
-            ->setMethods(array('sendEmail'))
+            ->setMethods(['sendEmail'])
             ->getMock();
         $email->expects($this->once())
             ->method('sendEmail')
@@ -262,40 +262,40 @@ class EmailsApiTest extends TestCase
 
     public function smtpServerErrorProvider()
     {
-        return array(
-            array(
+        return [
+            [
                 MailerException::FailedToSend,
                 'smtp_server_error',
-            ),
-            array(
+            ],
+            [
                 MailerException::FailedToConnectToRemoteServer,
                 'smtp_server_error',
-            ),
-            array(
+            ],
+            [
                 MailerException::InvalidConfiguration,
                 'smtp_server_error',
-            ),
-            array(
+            ],
+            [
                 MailerException::InvalidHeader,
                 'smtp_payload_error',
-            ),
-            array(
+            ],
+            [
                 MailerException::InvalidEmailAddress,
                 'smtp_payload_error',
-            ),
-            array(
+            ],
+            [
                 MailerException::InvalidAttachment,
                 'smtp_payload_error',
-            ),
-            array(
+            ],
+            [
                 MailerException::FailedToTransferHeaders,
                 'smtp_payload_error',
-            ),
-            array(
+            ],
+            [
                 MailerException::ExecutableAttachment,
                 'smtp_payload_error',
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -306,7 +306,7 @@ class EmailsApiTest extends TestCase
     {
         $email = $this->getMockBuilder('Email')
             ->disableOriginalConstructor()
-            ->setMethods(array('sendEmail'))
+            ->setMethods(['sendEmail'])
             ->getMock();
         $email->expects($this->once())
             ->method('sendEmail')

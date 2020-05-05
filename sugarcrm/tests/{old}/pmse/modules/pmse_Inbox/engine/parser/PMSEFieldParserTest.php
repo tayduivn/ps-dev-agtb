@@ -28,14 +28,14 @@ class PMSEFieldParserTest extends TestCase
     {
         $this->dataParser = $this->getMockBuilder('PMSEFieldParser')
             ->disableOriginalConstructor()
-            ->setMethods(array('parseTokenValue'))
+            ->setMethods(['parseTokenValue'])
             ->getMock();
 
         $this->dataParser->expects($this->once())
             ->method('parseTokenValue')
             ->will($this->returnValue('10/10/2013'));
 
-        $beanList = array('Leads' => 'Lead');
+        $beanList = ['Leads' => 'Lead'];
         $this->dataParser->setBeanList($beanList);
         $beanObject = $this->getMockBuilder('Lead')
             ->disableOriginalConstructor()
@@ -47,34 +47,34 @@ class PMSEFieldParserTest extends TestCase
         $beanObject->phone_mobile = '7775555';
         $beanObject->module_name = 'Leads';
         $beanObject->date = '10/10/2013';
-        $beanObject->field_defs = array(
-            'account_name' => array(
+        $beanObject->field_defs = [
+            'account_name' => [
                 'type' => 'varchar',
                 'dbtype' => 'char',
-            ),
-            'email_addresses_primary' => array(
+            ],
+            'email_addresses_primary' => [
                 'type' => 'varchar',
                 'dbtype' => 'char',
-            ),
-            'phone_mobile' => array(
+            ],
+            'phone_mobile' => [
                 'type' => 'varchar',
                 'dbtype' => 'char',
-            ),
-            'probability' => array(
+            ],
+            'probability' => [
                 'type' => 'int',
                 'dbtype' => 'double',
-            ),
-            'amount' => array(
+            ],
+            'amount' => [
                 'type' => 'float',
                 'dbtype' => 'double',
-            ),
-            'do_not_call' => array(
-                'type' => 'bool'
-            ),
-            'date' => array(
-                'type' => 'date'
-            )
-        );
+            ],
+            'do_not_call' => [
+                'type' => 'bool',
+            ],
+            'date' => [
+                'type' => 'date',
+            ],
+        ];
         $preCondition =  json_decode('[{
                 "expDirection": "after",
                 "expModule": "Leads",
@@ -86,10 +86,10 @@ class PMSEFieldParserTest extends TestCase
               }]');
         $this->dataParser->setEvaluatedBean($beanObject);
         $processedCondition = $this->dataParser->parseCriteria($preCondition[0]);
-        $postCondition = array(
+        $postCondition = [
             0 =>
             (object)
-            array(
+            [
                 'expDirection' => 'after',
                 'expModule' => 'Leads',
                 'expField' => 'account_name',
@@ -99,21 +99,21 @@ class PMSEFieldParserTest extends TestCase
                 'expLabel' => 'Account Name: == "ONE"',
                 'expToken' => '{::future::Leads::account_name::}',
                 'currentValue' => '10/10/2013',
-            ));
+            ]];
         $this->assertEquals($postCondition[0]->currentValue, $processedCondition->currentValue);
     }
     public function testParseCriteriaNotEquals()
     {
         $this->dataParser = $this->getMockBuilder('PMSEFieldParser')
             ->disableOriginalConstructor()
-            ->setMethods(array('parseTokenValue' ))
+            ->setMethods(['parseTokenValue' ])
             ->getMock();
 
         $this->dataParser->expects($this->once())
             ->method('parseTokenValue')
             ->will($this->returnValue('ROCKSTAR'));
 
-        $beanList = array('Leads' => 'Lead');
+        $beanList = ['Leads' => 'Lead'];
         $this->dataParser->setBeanList($beanList);
         $beanObject = $this->getMockBuilder('Lead')
             ->disableOriginalConstructor()
@@ -123,31 +123,31 @@ class PMSEFieldParserTest extends TestCase
         $beanObject->email_addresses_primary = 'rock.star@gmail.com';
         $beanObject->phone_mobile = '7775555';
         $beanObject->module_name = 'Leads';
-        $beanObject->field_defs = array(
-            'account_name' => array(
+        $beanObject->field_defs = [
+            'account_name' => [
                 'type' => 'varchar',
                 'dbtype' => 'char',
-            ),
-            'email_addresses_primary' => array(
+            ],
+            'email_addresses_primary' => [
                 'type' => 'varchar',
                 'dbtype' => 'char',
-            ),
-            'phone_mobile' => array(
+            ],
+            'phone_mobile' => [
                 'type' => 'varchar',
                 'dbtype' => 'char',
-            ),
-            'probability' => array(
+            ],
+            'probability' => [
                 'type' => 'int',
                 'dbtype' => 'double',
-            ),
-            'amount' => array(
+            ],
+            'amount' => [
                 'type' => 'float',
                 'dbtype' => 'double',
-            ),
-            'do_not_call' => array(
-                'type' => 'bool'
-            )
-        );
+            ],
+            'do_not_call' => [
+                'type' => 'bool',
+            ],
+        ];
         $preCondition =  json_decode('[{
                 "expDirection": "after",
                 "expModule": "Leads",
@@ -159,10 +159,10 @@ class PMSEFieldParserTest extends TestCase
               }]');
         $this->dataParser->setEvaluatedBean($beanObject);
         $processedCondition = $this->dataParser->parseCriteria($preCondition[0]);
-        $postCondition = array(
+        $postCondition = [
             0 =>
                 (object)
-                array(
+                [
                     'expDirection' => 'after',
                     'expModule' => 'Leads',
                     'expField' => 'account_name',
@@ -172,21 +172,21 @@ class PMSEFieldParserTest extends TestCase
                     'expLabel' => 'Account Name: == "ONE"',
                     'expToken' => '{::future::Leads::account_name::}',
                     'currentValue' => 'ROCKSTAR',
-                ));
+                ]];
         $this->assertEquals($postCondition[0]->currentValue, $processedCondition->currentValue);
     }
     public function testParseCriteriaMajorEqualThan()
     {
         $this->dataParser = $this->getMockBuilder('PMSEFieldParser')
             ->disableOriginalConstructor()
-            ->setMethods(array('parseTokenValue'))
+            ->setMethods(['parseTokenValue'])
             ->getMock();
 
         $this->dataParser->expects($this->once())
             ->method('parseTokenValue')
             ->will($this->returnValue('ROCKSTAR'));
 
-        $beanList = array('Leads' => 'Lead');
+        $beanList = ['Leads' => 'Lead'];
         $this->dataParser->setBeanList($beanList);
         $beanObject = $this->getMockBuilder('Lead')
             ->disableOriginalConstructor()
@@ -196,31 +196,31 @@ class PMSEFieldParserTest extends TestCase
         $beanObject->email_addresses_primary = 'rock.star@gmail.com';
         $beanObject->phone_mobile = '7775555';
         $beanObject->module_name = 'Leads';
-        $beanObject->field_defs = array(
-            'account_name' => array(
+        $beanObject->field_defs = [
+            'account_name' => [
                 'type' => 'varchar',
                 'dbtype' => 'char',
-            ),
-            'email_addresses_primary' => array(
+            ],
+            'email_addresses_primary' => [
                 'type' => 'varchar',
                 'dbtype' => 'char',
-            ),
-            'phone_mobile' => array(
+            ],
+            'phone_mobile' => [
                 'type' => 'varchar',
                 'dbtype' => 'char',
-            ),
-            'probability' => array(
+            ],
+            'probability' => [
                 'type' => 'int',
                 'dbtype' => 'double',
-            ),
-            'amount' => array(
+            ],
+            'amount' => [
                 'type' => 'float',
                 'dbtype' => 'double',
-            ),
-            'do_not_call' => array(
-                'type' => 'bool'
-            )
-        );
+            ],
+            'do_not_call' => [
+                'type' => 'bool',
+            ],
+        ];
         $preCondition =  json_decode('[{
                 "expDirection": "after",
                 "expModule": "Leads",
@@ -232,10 +232,10 @@ class PMSEFieldParserTest extends TestCase
               }]');
         $this->dataParser->setEvaluatedBean($beanObject);
         $processedCondition = $this->dataParser->parseCriteria($preCondition[0]);
-        $postCondition = array(
+        $postCondition = [
             0 =>
                 (object)
-                array(
+                [
                     'expDirection' => 'after',
                     'expModule' => 'Leads',
                     'expField' => 'account_name',
@@ -245,21 +245,21 @@ class PMSEFieldParserTest extends TestCase
                     'expLabel' => 'Account Name: == "ONE"',
                     'expToken' => '{::future::Leads::account_name::}',
                     'currentValue' => 'ROCKSTAR',
-                ));
+                ]];
         $this->assertEquals($postCondition[0]->currentValue, $processedCondition->currentValue);
     }
     public function testParseCriteriaMinorEqualThan()
     {
         $this->dataParser = $this->getMockBuilder('PMSEFieldParser')
             ->disableOriginalConstructor()
-            ->setMethods(array('parseTokenValue'))
+            ->setMethods(['parseTokenValue'])
             ->getMock();
 
         $this->dataParser->expects($this->once())
             ->method('parseTokenValue')
             ->will($this->returnValue('ROCKSTAR'));
 
-        $beanList = array('Leads' => 'Lead');
+        $beanList = ['Leads' => 'Lead'];
         $this->dataParser->setBeanList($beanList);
         $beanObject = $this->getMockBuilder('Lead')
             ->disableOriginalConstructor()
@@ -269,31 +269,31 @@ class PMSEFieldParserTest extends TestCase
         $beanObject->email_addresses_primary = 'rock.star@gmail.com';
         $beanObject->phone_mobile = '7775555';
         $beanObject->module_name = 'Leads';
-        $beanObject->field_defs = array(
-            'account_name' => array(
+        $beanObject->field_defs = [
+            'account_name' => [
                 'type' => 'varchar',
                 'dbtype' => 'char',
-            ),
-            'email_addresses_primary' => array(
+            ],
+            'email_addresses_primary' => [
                 'type' => 'varchar',
                 'dbtype' => 'char',
-            ),
-            'phone_mobile' => array(
+            ],
+            'phone_mobile' => [
                 'type' => 'varchar',
                 'dbtype' => 'char',
-            ),
-            'probability' => array(
+            ],
+            'probability' => [
                 'type' => 'int',
                 'dbtype' => 'double',
-            ),
-            'amount' => array(
+            ],
+            'amount' => [
                 'type' => 'float',
                 'dbtype' => 'double',
-            ),
-            'do_not_call' => array(
-                'type' => 'bool'
-            )
-        );
+            ],
+            'do_not_call' => [
+                'type' => 'bool',
+            ],
+        ];
         $preCondition =  json_decode('[{
                 "expDirection": "after",
                 "expModule": "Leads",
@@ -305,10 +305,10 @@ class PMSEFieldParserTest extends TestCase
               }]');
         $this->dataParser->setEvaluatedBean($beanObject);
         $processedCondition = $this->dataParser->parseCriteria($preCondition[0]);
-        $postCondition = array(
+        $postCondition = [
             0 =>
                 (object)
-                array(
+                [
                     'expDirection' => 'after',
                     'expModule' => 'Leads',
                     'expField' => 'account_name',
@@ -318,21 +318,21 @@ class PMSEFieldParserTest extends TestCase
                     'expLabel' => 'Account Name: == "ONE"',
                     'expToken' => '{::future::Leads::account_name::}',
                     'currentValue' => 'ROCKSTAR',
-                ));
+                ]];
         $this->assertEquals($postCondition[0]->currentValue, $processedCondition->currentValue);
     }
     public function testParseCriteriaMinorThan()
     {
         $this->dataParser = $this->getMockBuilder('PMSEFieldParser')
             ->disableOriginalConstructor()
-            ->setMethods(array('parseTokenValue'))
+            ->setMethods(['parseTokenValue'])
             ->getMock();
 
         $this->dataParser->expects($this->once())
             ->method('parseTokenValue')
             ->will($this->returnValue('ROCKSTAR'));
 
-        $beanList = array('Leads' => 'Lead');
+        $beanList = ['Leads' => 'Lead'];
         $this->dataParser->setBeanList($beanList);
         $beanObject = $this->getMockBuilder('Lead')
             ->disableOriginalConstructor()
@@ -342,31 +342,31 @@ class PMSEFieldParserTest extends TestCase
         $beanObject->email_addresses_primary = 'rock.star@gmail.com';
         $beanObject->phone_mobile = '7775555';
         $beanObject->module_name = 'Leads';
-        $beanObject->field_defs = array(
-            'account_name' => array(
+        $beanObject->field_defs = [
+            'account_name' => [
                 'type' => 'varchar',
                 'dbtype' => 'char',
-            ),
-            'email_addresses_primary' => array(
+            ],
+            'email_addresses_primary' => [
                 'type' => 'varchar',
                 'dbtype' => 'char',
-            ),
-            'phone_mobile' => array(
+            ],
+            'phone_mobile' => [
                 'type' => 'varchar',
                 'dbtype' => 'char',
-            ),
-            'probability' => array(
+            ],
+            'probability' => [
                 'type' => 'int',
                 'dbtype' => 'double',
-            ),
-            'amount' => array(
+            ],
+            'amount' => [
                 'type' => 'float',
                 'dbtype' => 'double',
-            ),
-            'do_not_call' => array(
-                'type' => 'bool'
-            )
-        );
+            ],
+            'do_not_call' => [
+                'type' => 'bool',
+            ],
+        ];
         $preCondition =  json_decode('[{
                 "expDirection": "after",
                 "expModule": "Leads",
@@ -378,10 +378,10 @@ class PMSEFieldParserTest extends TestCase
               }]');
         $this->dataParser->setEvaluatedBean($beanObject);
         $processedCondition = $this->dataParser->parseCriteria($preCondition[0]);
-        $postCondition = array(
+        $postCondition = [
             0 =>
                 (object)
-                array(
+                [
                     'expDirection' => 'after',
                     'expModule' => 'Leads',
                     'expField' => 'account_name',
@@ -391,21 +391,21 @@ class PMSEFieldParserTest extends TestCase
                     'expLabel' => 'Account Name: == "ONE"',
                     'expToken' => '{::future::Leads::account_name::}',
                     'currentValue' => 'ROCKSTAR',
-                ));
+                ]];
         $this->assertEquals($postCondition[0]->currentValue, $processedCondition->currentValue);
     }
     public function testParseCriteriaMajorThan()
     {
         $this->dataParser = $this->getMockBuilder('PMSEFieldParser')
             ->disableOriginalConstructor()
-            ->setMethods(array('parseTokenValue'))
+            ->setMethods(['parseTokenValue'])
             ->getMock();
 
         $this->dataParser->expects($this->once())
             ->method('parseTokenValue')
             ->will($this->returnValue('ROCKSTAR'));
 
-        $beanList = array('Leads' => 'Lead');
+        $beanList = ['Leads' => 'Lead'];
         $this->dataParser->setBeanList($beanList);
         $beanObject = $this->getMockBuilder('Lead')
             ->disableOriginalConstructor()
@@ -415,31 +415,31 @@ class PMSEFieldParserTest extends TestCase
         $beanObject->email_addresses_primary = 'rock.star@gmail.com';
         $beanObject->phone_mobile = '7775555';
         $beanObject->module_name = 'Leads';
-        $beanObject->field_defs = array(
-            'account_name' => array(
+        $beanObject->field_defs = [
+            'account_name' => [
                 'type' => 'varchar',
                 'dbtype' => 'char',
-            ),
-            'email_addresses_primary' => array(
+            ],
+            'email_addresses_primary' => [
                 'type' => 'varchar',
                 'dbtype' => 'char',
-            ),
-            'phone_mobile' => array(
+            ],
+            'phone_mobile' => [
                 'type' => 'varchar',
                 'dbtype' => 'char',
-            ),
-            'probability' => array(
+            ],
+            'probability' => [
                 'type' => 'int',
                 'dbtype' => 'double',
-            ),
-            'amount' => array(
+            ],
+            'amount' => [
                 'type' => 'float',
                 'dbtype' => 'double',
-            ),
-            'do_not_call' => array(
-                'type' => 'bool'
-            )
-        );
+            ],
+            'do_not_call' => [
+                'type' => 'bool',
+            ],
+        ];
         $preCondition =  json_decode('[{
                 "expDirection": "after",
                 "expModule": "Leads",
@@ -451,10 +451,10 @@ class PMSEFieldParserTest extends TestCase
               }]');
         $this->dataParser->setEvaluatedBean($beanObject);
         $processedCondition = $this->dataParser->parseCriteria($preCondition[0]);
-        $postCondition = array(
+        $postCondition = [
             0 =>
                 (object)
-                array(
+                [
                     'expDirection' => 'after',
                     'expModule' => 'Leads',
                     'expField' => 'account_name',
@@ -464,7 +464,7 @@ class PMSEFieldParserTest extends TestCase
                     'expLabel' => 'Account Name: == "ONE"',
                     'expToken' => '{::future::Leads::account_name::}',
                     'currentValue' => 'ROCKSTAR',
-                ));
+                ]];
         $this->assertEquals($postCondition[0]->currentValue, $processedCondition->currentValue);
     }
 
@@ -472,14 +472,14 @@ class PMSEFieldParserTest extends TestCase
     {
         $this->dataParser = $this->getMockBuilder('PMSEFieldParser')
             ->disableOriginalConstructor()
-            ->setMethods(array('parseTokenValue'))
+            ->setMethods(['parseTokenValue'])
             ->getMock();
 
         $this->dataParser->expects($this->once())
             ->method('parseTokenValue')
             ->will($this->returnValue('10/10/2013'));
 
-        $beanList = array('Leads' => 'Lead');
+        $beanList = ['Leads' => 'Lead'];
         $this->dataParser->setBeanList($beanList);
         $beanObject = $this->getMockBuilder('Lead')
             ->disableOriginalConstructor()
@@ -490,34 +490,34 @@ class PMSEFieldParserTest extends TestCase
         $beanObject->phone_mobile = '7775555';
         $beanObject->module_name = 'Leads';
         $beanObject->datetime = '10/10/2013';
-        $beanObject->field_defs = array(
-            'account_name' => array(
+        $beanObject->field_defs = [
+            'account_name' => [
                 'type' => 'varchar',
                 'dbtype' => 'char',
-            ),
-            'email_addresses_primary' => array(
+            ],
+            'email_addresses_primary' => [
                 'type' => 'varchar',
                 'dbtype' => 'char',
-            ),
-            'phone_mobile' => array(
+            ],
+            'phone_mobile' => [
                 'type' => 'varchar',
                 'dbtype' => 'char',
-            ),
-            'probability' => array(
+            ],
+            'probability' => [
                 'type' => 'int',
                 'dbtype' => 'double',
-            ),
-            'amount' => array(
+            ],
+            'amount' => [
                 'type' => 'float',
                 'dbtype' => 'double',
-            ),
-            'do_not_call' => array(
-                'type' => 'bool'
-            ),
-            'datetime' => array(
-                'type' => 'datetime'
-            ),
-        );
+            ],
+            'do_not_call' => [
+                'type' => 'bool',
+            ],
+            'datetime' => [
+                'type' => 'datetime',
+            ],
+        ];
         $preCondition =  json_decode('[{
                 "expDirection": "after",
                 "expModule": "Leads",
@@ -530,10 +530,10 @@ class PMSEFieldParserTest extends TestCase
         $this->dataParser->setEvaluatedBean($beanObject);
 
         $processedCondition = $this->dataParser->parseCriteria($preCondition[0]);
-        $postCondition = array(
+        $postCondition = [
             0 =>
             (object)
-            array(
+            [
                 'expDirection' => 'after',
                 'expModule' => 'Leads',
                 'expField' => 'account_name',
@@ -543,7 +543,7 @@ class PMSEFieldParserTest extends TestCase
                 'expLabel' => 'Account Name: == "ONE"',
                 'expToken' => '{::future::Leads::account_name::}',
                 'currentValue' => '10/10/2013',
-            ));
+            ]];
         $this->assertEquals($postCondition[0]->currentValue, $processedCondition->currentValue);
     }
 
@@ -551,14 +551,14 @@ class PMSEFieldParserTest extends TestCase
     {
         $this->dataParser = $this->getMockBuilder('PMSEFieldParser')
             ->disableOriginalConstructor()
-            ->setMethods(array('parseTokenValue'))
+            ->setMethods(['parseTokenValue'])
             ->getMock();
 
         $this->dataParser->expects($this->once())
             ->method('parseTokenValue')
             ->will($this->returnValue('ROCKSTAR'));
 
-        $beanList = array('Leads' => 'Lead');
+        $beanList = ['Leads' => 'Lead'];
         $this->dataParser->setBeanList($beanList);
         $beanObject = $this->getMockBuilder('Lead')
             ->disableOriginalConstructor()
@@ -568,31 +568,31 @@ class PMSEFieldParserTest extends TestCase
         $beanObject->email_addresses_primary = 'rock.star@gmail.com';
         $beanObject->phone_mobile = '7775555';
         $beanObject->module_name = 'Leads';
-        $beanObject->field_defs = array(
-            'account_name' => array(
+        $beanObject->field_defs = [
+            'account_name' => [
                 'type' => 'varchar',
                 'dbtype' => 'char',
-            ),
-            'email_addresses_primary' => array(
+            ],
+            'email_addresses_primary' => [
                 'type' => 'varchar',
                 'dbtype' => 'char',
-            ),
-            'phone_mobile' => array(
+            ],
+            'phone_mobile' => [
                 'type' => 'varchar',
                 'dbtype' => 'char',
-            ),
-            'probability' => array(
+            ],
+            'probability' => [
                 'type' => 'int',
                 'dbtype' => 'double',
-            ),
-            'amount' => array(
+            ],
+            'amount' => [
                 'type' => 'float',
                 'dbtype' => 'double',
-            ),
-            'do_not_call' => array(
-                'type' => 'bool'
-            )
-        );
+            ],
+            'do_not_call' => [
+                'type' => 'bool',
+            ],
+        ];
         $preCondition =  json_decode('[{
                 "expDirection": "after",
                 "expModule": "Leads",
@@ -604,10 +604,10 @@ class PMSEFieldParserTest extends TestCase
               }]');
         $this->dataParser->setEvaluatedBean($beanObject);
         $processedCondition = $this->dataParser->parseCriteria($preCondition[0]);
-        $postCondition = array(
+        $postCondition = [
             0 =>
             (object)
-            array(
+            [
                 'expDirection' => 'after',
                 'expModule' => 'Leads',
                 'expField' => 'account_name',
@@ -617,7 +617,7 @@ class PMSEFieldParserTest extends TestCase
                 'expLabel' => 'Account Name: == "ONE"',
                 'expToken' => '{::future::Leads::account_name::}',
                 'currentValue' => 'ROCKSTAR',
-            ));
+            ]];
         $this->assertEquals($postCondition[0]->currentValue, $processedCondition->currentValue);
     }
 
@@ -625,14 +625,14 @@ class PMSEFieldParserTest extends TestCase
     {
         $this->dataParser = $this->getMockBuilder('PMSEFieldParser')
             ->disableOriginalConstructor()
-            ->setMethods(array('parseTokenValue'))
+            ->setMethods(['parseTokenValue'])
             ->getMock();
 
         $this->dataParser->expects($this->once())
             ->method('parseTokenValue')
             ->will($this->returnValue('ROCKSTAR'));
 
-        $beanList = array('Leads' => 'Lead');
+        $beanList = ['Leads' => 'Lead'];
         $this->dataParser->setBeanList($beanList);
         $beanObject = $this->getMockBuilder('Lead')
             ->disableOriginalConstructor()
@@ -642,31 +642,31 @@ class PMSEFieldParserTest extends TestCase
         $beanObject->email_addresses_primary = 'rock.star@gmail.com';
         $beanObject->phone_mobile = '7775555';
         $beanObject->module_name = 'Leads';
-        $beanObject->field_defs = array(
-            'account_name' => array(
+        $beanObject->field_defs = [
+            'account_name' => [
                 'type' => 'varchar',
                 'dbtype' => 'char',
-            ),
-            'email_addresses_primary' => array(
+            ],
+            'email_addresses_primary' => [
                 'type' => 'varchar',
                 'dbtype' => 'char',
-            ),
-            'phone_mobile' => array(
+            ],
+            'phone_mobile' => [
                 'type' => 'varchar',
                 'dbtype' => 'char',
-            ),
-            'probability' => array(
+            ],
+            'probability' => [
                 'type' => 'int',
                 'dbtype' => 'double',
-            ),
-            'amount' => array(
+            ],
+            'amount' => [
                 'type' => 'float',
                 'dbtype' => 'double',
-            ),
-            'do_not_call' => array(
-                'type' => 'bool'
-            )
-        );
+            ],
+            'do_not_call' => [
+                'type' => 'bool',
+            ],
+        ];
         $preCondition =  json_decode('[{
                 "expDirection": "after",
                 "expModule": "Leads",
@@ -678,10 +678,10 @@ class PMSEFieldParserTest extends TestCase
               }]');
         $this->dataParser->setEvaluatedBean($beanObject);
         $processedCondition = $this->dataParser->parseCriteria($preCondition[0]);
-        $postCondition = array(
+        $postCondition = [
             0 =>
             (object)
-            array(
+            [
                 'expDirection' => 'after',
                 'expModule' => 'Leads',
                 'expField' => 'account_name',
@@ -691,7 +691,7 @@ class PMSEFieldParserTest extends TestCase
                 'expLabel' => 'Account Name: > "ONE"',
                 'expToken' => '{::future::Leads::account_name::}',
                 'currentValue' => 'ROCKSTAR',
-            ));
+            ]];
         $this->assertEquals($postCondition[0]->currentValue, $processedCondition->currentValue);
     }
 
@@ -699,7 +699,7 @@ class PMSEFieldParserTest extends TestCase
     {
         $this->dataParser = $this->getMockBuilder('PMSEFieldParser')
             ->disableOriginalConstructor()
-            ->setMethods(array('parseTokenValue'))
+            ->setMethods(['parseTokenValue'])
             ->getMock();
 
         $this->dataParser->expects($this->once())
@@ -707,7 +707,7 @@ class PMSEFieldParserTest extends TestCase
             ->will($this->returnValue('ROCKSTAR'));
 
 
-        $beanList = array('Leads' => 'Lead');
+        $beanList = ['Leads' => 'Lead'];
         $this->dataParser->setBeanList($beanList);
         $beanObject = $this->getMockBuilder('Lead')
             ->disableOriginalConstructor()
@@ -717,31 +717,31 @@ class PMSEFieldParserTest extends TestCase
         $beanObject->email_addresses_primary = 'rock.star@gmail.com';
         $beanObject->phone_mobile = '7775555';
         $beanObject->module_name = 'Leads';
-        $beanObject->field_defs = array(
-            'account_name' => array(
+        $beanObject->field_defs = [
+            'account_name' => [
                 'type' => 'varchar',
                 'dbtype' => 'char',
-            ),
-            'email_addresses_primary' => array(
+            ],
+            'email_addresses_primary' => [
                 'type' => 'varchar',
                 'dbtype' => 'char',
-            ),
-            'phone_mobile' => array(
+            ],
+            'phone_mobile' => [
                 'type' => 'varchar',
                 'dbtype' => 'char',
-            ),
-            'probability' => array(
+            ],
+            'probability' => [
                 'type' => 'int',
                 'dbtype' => 'double',
-            ),
-            'amount' => array(
+            ],
+            'amount' => [
                 'type' => 'float',
                 'dbtype' => 'double',
-            ),
-            'do_not_call' => array(
-                'type' => 'bool'
-            )
-        );
+            ],
+            'do_not_call' => [
+                'type' => 'bool',
+            ],
+        ];
         $preCondition =  json_decode('[{
                 "expDirection": "after",
                 "expModule": "Leads",
@@ -753,10 +753,10 @@ class PMSEFieldParserTest extends TestCase
               }]');
         $this->dataParser->setEvaluatedBean($beanObject);
         $processedCondition = $this->dataParser->parseCriteriaToken($preCondition[0]);
-        $postCondition = array(
+        $postCondition = [
             0 =>
             (object)
-            array(
+            [
                 'expDirection' => 'after',
                 'expModule' => 'Leads',
                 'expField' => 'account_name',
@@ -766,7 +766,7 @@ class PMSEFieldParserTest extends TestCase
                 'expLabel' => 'Account Name: == "ONE"',
                 'expToken' => '{::future::Leads::account_name::}',
                 'currentValue' => 'ROCKSTAR',
-            ));
+            ]];
         $this->assertEquals($postCondition[0]->currentValue, $processedCondition->currentValue);
     }
 
@@ -774,14 +774,14 @@ class PMSEFieldParserTest extends TestCase
     {
         $this->dataParser = $this->getMockBuilder('PMSEFieldParser')
             ->disableOriginalConstructor()
-            ->setMethods(array('parseTokenValue'))
+            ->setMethods(['parseTokenValue'])
             ->getMock();
 
         $this->dataParser->expects($this->once())
             ->method('parseTokenValue')
             ->will($this->returnValue('ROCKSTAR'));
 
-        $beanList = array('Leads' => 'Lead');
+        $beanList = ['Leads' => 'Lead'];
         $this->dataParser->setBeanList($beanList);
         $beanObject = $this->getMockBuilder('Lead')
             ->disableOriginalConstructor()
@@ -791,31 +791,31 @@ class PMSEFieldParserTest extends TestCase
         $beanObject->email_addresses_primary = 'rock.star@gmail.com';
         $beanObject->phone_mobile = '7775555';
         $beanObject->module_name = 'Leads';
-        $beanObject->field_defs = array(
-            'account_name' => array(
+        $beanObject->field_defs = [
+            'account_name' => [
                 'type' => 'varchar',
                 'dbtype' => 'char',
-            ),
-            'email_addresses_primary' => array(
+            ],
+            'email_addresses_primary' => [
                 'type' => 'varchar',
                 'dbtype' => 'char',
-            ),
-            'phone_mobile' => array(
+            ],
+            'phone_mobile' => [
                 'type' => 'varchar',
                 'dbtype' => 'char',
-            ),
-            'probability' => array(
+            ],
+            'probability' => [
                 'type' => 'int',
                 'dbtype' => 'double',
-            ),
-            'amount' => array(
+            ],
+            'amount' => [
                 'type' => 'float',
                 'dbtype' => 'double',
-            ),
-            'do_not_call' => array(
-                'type' => 'bool'
-            )
-        );
+            ],
+            'do_not_call' => [
+                'type' => 'bool',
+            ],
+        ];
         $preCondition =  json_decode('[{
                 "expDirection": "after",
                 "expModule": "Leads",
@@ -827,10 +827,10 @@ class PMSEFieldParserTest extends TestCase
               }]');
         $this->dataParser->setEvaluatedBean($beanObject);
         $processedCondition = $this->dataParser->parseCriteria($preCondition[0]);
-        $postCondition = array(
+        $postCondition = [
             0 =>
             (object)
-            array(
+            [
                 'expDirection' => 'after',
                 'expModule' => 'Leads',
                 'expField' => 'account_name',
@@ -840,7 +840,7 @@ class PMSEFieldParserTest extends TestCase
                 'expLabel' => 'Account Name: == "ONE"',
                 'expToken' => '{::future::Leads::account_name::}',
                 'currentValue' => 'ROCKSTAR',
-            ));
+            ]];
         $this->assertEquals($postCondition[0]->currentValue, $processedCondition->currentValue);
     }
 
@@ -848,14 +848,14 @@ class PMSEFieldParserTest extends TestCase
     {
         $this->dataParser = $this->getMockBuilder('PMSEFieldParser')
             ->disableOriginalConstructor()
-            ->setMethods(array('parseTokenValue'))
+            ->setMethods(['parseTokenValue'])
             ->getMock();
 
         $this->dataParser->expects($this->once())
             ->method('parseTokenValue')
             ->will($this->returnValue('ROCKSTAR'));
 
-        $beanList = array('Leads' => 'Lead');
+        $beanList = ['Leads' => 'Lead'];
         $this->dataParser->setBeanList($beanList);
         $beanObject = $this->getMockBuilder('Lead')
             ->disableOriginalConstructor()
@@ -865,31 +865,31 @@ class PMSEFieldParserTest extends TestCase
         $beanObject->email_addresses_primary = 'rock.star@gmail.com';
         $beanObject->phone_mobile = '7775555';
         $beanObject->module_name = 'Leads';
-        $beanObject->field_defs = array(
-            'account_name' => array(
+        $beanObject->field_defs = [
+            'account_name' => [
                 'type' => 'varchar',
                 'dbtype' => 'char',
-            ),
-            'email_addresses_primary' => array(
+            ],
+            'email_addresses_primary' => [
                 'type' => 'varchar',
                 'dbtype' => 'char',
-            ),
-            'phone_mobile' => array(
+            ],
+            'phone_mobile' => [
                 'type' => 'varchar',
                 'dbtype' => 'char',
-            ),
-            'probability' => array(
+            ],
+            'probability' => [
                 'type' => 'int',
                 'dbtype' => 'double',
-            ),
-            'amount' => array(
+            ],
+            'amount' => [
                 'type' => 'float',
                 'dbtype' => 'double',
-            ),
-            'do_not_call' => array(
-                'type' => 'bool'
-            )
-        );
+            ],
+            'do_not_call' => [
+                'type' => 'bool',
+            ],
+        ];
         $preCondition =  json_decode('[{
                 "expDirection": "after",
                 "expModule": "Leads",
@@ -901,10 +901,10 @@ class PMSEFieldParserTest extends TestCase
               }]');
         $this->dataParser->setEvaluatedBean($beanObject);
         $processedCondition = $this->dataParser->parseCriteria($preCondition[0]);
-        $postCondition = array(
+        $postCondition = [
             0 =>
             (object)
-            array(
+            [
                 'expDirection' => 'after',
                 'expModule' => 'Leads',
                 'expField' => 'account_name',
@@ -914,7 +914,7 @@ class PMSEFieldParserTest extends TestCase
                 'expLabel' => 'Account Name: within "ONE"',
                 'expToken' => '{::future::Leads::account_name::}',
                 'currentValue' => 'ROCKSTAR',
-            ));
+            ]];
         $this->assertEquals($postCondition[0]->currentValue, $processedCondition->currentValue);
     }
 
@@ -922,14 +922,14 @@ class PMSEFieldParserTest extends TestCase
     {
         $this->dataParser = $this->getMockBuilder('PMSEFieldParser')
             ->disableOriginalConstructor()
-            ->setMethods(array('parseTokenValue'))
+            ->setMethods(['parseTokenValue'])
             ->getMock();
 
         $this->dataParser->expects($this->once())
             ->method('parseTokenValue')
             ->will($this->returnValue('ROCKSTAR'));
 
-        $beanList = array('Leads' => 'Lead');
+        $beanList = ['Leads' => 'Lead'];
         $this->dataParser->setBeanList($beanList);
         $beanObject = $this->getMockBuilder('Lead')
             ->disableOriginalConstructor()
@@ -939,31 +939,31 @@ class PMSEFieldParserTest extends TestCase
         $beanObject->email_addresses_primary = 'rock.star@gmail.com';
         $beanObject->phone_mobile = '7775555';
         $beanObject->module_name = 'Leads';
-        $beanObject->field_defs = array(
-            'account_name' => array(
+        $beanObject->field_defs = [
+            'account_name' => [
                 'type' => 'varchar',
                 'dbtype' => 'char',
-            ),
-            'email_addresses_primary' => array(
+            ],
+            'email_addresses_primary' => [
                 'type' => 'varchar',
                 'dbtype' => 'char',
-            ),
-            'phone_mobile' => array(
+            ],
+            'phone_mobile' => [
                 'type' => 'varchar',
                 'dbtype' => 'char',
-            ),
-            'probability' => array(
+            ],
+            'probability' => [
                 'type' => 'int',
                 'dbtype' => 'double',
-            ),
-            'amount' => array(
+            ],
+            'amount' => [
                 'type' => 'float',
                 'dbtype' => 'double',
-            ),
-            'do_not_call' => array(
-                'type' => 'bool'
-            )
-        );
+            ],
+            'do_not_call' => [
+                'type' => 'bool',
+            ],
+        ];
         $preCondition =  json_decode('[{
                 "expDirection": "after",
                 "expModule": "Leads",
@@ -975,10 +975,10 @@ class PMSEFieldParserTest extends TestCase
               }]');
         $this->dataParser->setEvaluatedBean($beanObject);
         $processedCondition = $this->dataParser->parseCriteria($preCondition[0]);
-        $postCondition = array(
+        $postCondition = [
             0 =>
             (object)
-            array(
+            [
                 'expDirection' => 'after',
                 'expModule' => 'Leads',
                 'expField' => 'account_name',
@@ -988,7 +988,7 @@ class PMSEFieldParserTest extends TestCase
                 'expLabel' => 'Account Name: not_within "ONE"',
                 'expToken' => '{::future::Leads::account_name::}',
                 'currentValue' => 'ROCKSTAR',
-            ));
+            ]];
         $this->assertEquals($postCondition[0]->currentValue, $processedCondition->currentValue);
     }
 
@@ -997,14 +997,14 @@ class PMSEFieldParserTest extends TestCase
     {
         $this->dataParser = $this->getMockBuilder('PMSEFieldParser')
             ->disableOriginalConstructor()
-            ->setMethods(array('parseTokenValue'))
+            ->setMethods(['parseTokenValue'])
             ->getMock();
 
         $this->dataParser->expects($this->once())
             ->method('parseTokenValue')
             ->will($this->returnValue('ROCKSTAR'));
 
-        $beanList = array('Leads' => 'Lead');
+        $beanList = ['Leads' => 'Lead'];
         $this->dataParser->setBeanList($beanList);
         $beanObject = $this->getMockBuilder('Lead')
             ->disableOriginalConstructor()
@@ -1014,31 +1014,31 @@ class PMSEFieldParserTest extends TestCase
         $beanObject->email_addresses_primary = 'rock.star@gmail.com';
         $beanObject->phone_mobile = '7775555';
         $beanObject->module_name = 'Leads';
-        $beanObject->field_defs = array(
-            'account_name' => array(
+        $beanObject->field_defs = [
+            'account_name' => [
                 'type' => 'varchar',
                 'dbtype' => 'char',
-            ),
-            'email_addresses_primary' => array(
+            ],
+            'email_addresses_primary' => [
                 'type' => 'varchar',
                 'dbtype' => 'char',
-            ),
-            'phone_mobile' => array(
+            ],
+            'phone_mobile' => [
                 'type' => 'varchar',
                 'dbtype' => 'char',
-            ),
-            'probability' => array(
+            ],
+            'probability' => [
                 'type' => 'int',
                 'dbtype' => 'double',
-            ),
-            'amount' => array(
+            ],
+            'amount' => [
                 'type' => 'float',
                 'dbtype' => 'double',
-            ),
-            'do_not_call' => array(
-                'type' => 'bool'
-            )
-        );
+            ],
+            'do_not_call' => [
+                'type' => 'bool',
+            ],
+        ];
         $preCondition =  json_decode('[{
                 "expDirection": "after",
                 "expModule": "Leads",
@@ -1050,10 +1050,10 @@ class PMSEFieldParserTest extends TestCase
               }]');
         $this->dataParser->setEvaluatedBean($beanObject);
         $processedCondition = $this->dataParser->parseCriteria($preCondition[0]);
-        $postCondition = array(
+        $postCondition = [
             0 =>
             (object)
-            array(
+            [
                 'expDirection' => 'after',
                 'expModule' => 'Leads',
                 'expField' => 'account_name',
@@ -1063,14 +1063,14 @@ class PMSEFieldParserTest extends TestCase
                 'expLabel' => 'Account Name: not_within "ONE"',
                 'expToken' => '{::future::Leads::account_name::}',
                 'currentValue' => 'ROCKSTAR',
-            ));
+            ]];
         $this->assertEquals($postCondition[0]->currentValue, $processedCondition->currentValue);
     }
 
     public function testParseTokenValue()
     {
-        $preferencesArray = array();
-        $beanList = array('Leads' => 'Lead');
+        $preferencesArray = [];
+        $beanList = ['Leads' => 'Lead'];
         $beanObject = $this->getMockBuilder('Lead')
             ->disableOriginalConstructor()
             ->setMethods(null)
@@ -1080,34 +1080,34 @@ class PMSEFieldParserTest extends TestCase
         $beanObject->phone_mobile = '7775555';
         $beanObject->module_name = 'Leads';
         $beanObject->parent_type = 'Opprtunities';
-        $beanObject->field_defs = array(
-            'account_name' => array(
+        $beanObject->field_defs = [
+            'account_name' => [
                 'type' => 'varchar',
                 'dbtype' => 'char',
-            ),
-            'email_addresses_primary' => array(
+            ],
+            'email_addresses_primary' => [
                 'type' => 'varchar',
                 'dbtype' => 'char',
-            ),
-            'phone_mobile' => array(
+            ],
+            'phone_mobile' => [
                 'type' => 'varchar',
                 'dbtype' => 'char',
-            ),
-            'probability' => array(
+            ],
+            'probability' => [
                 'type' => 'int',
                 'dbtype' => 'double',
-            ),
-            'amount' => array(
+            ],
+            'amount' => [
                 'type' => 'float',
                 'dbtype' => 'double',
-            ),
-            'do_not_call' => array(
-                'type' => 'bool'
-            )
-        );
+            ],
+            'do_not_call' => [
+                'type' => 'bool',
+            ],
+        ];
 
-        $token = array('Leads', 'email_addresses_primary');
-        $expectedToken = array("rock.star@gmail.com");
+        $token = ['Leads', 'email_addresses_primary'];
+        $expectedToken = ["rock.star@gmail.com"];
         $this->dataParser->setEvaluatedBean($beanObject);
         $this->dataParser->setBeanList($beanList);
         $processedToken = $this->dataParser->parseTokenValue($token);
@@ -1119,7 +1119,7 @@ class PMSEFieldParserTest extends TestCase
      */
     public function testParseTokenValueNull()
     {
-        $beanList = array('Leads' => 'Lead');
+        $beanList = ['Leads' => 'Lead'];
         $beanObject = $this->getMockBuilder('Lead')
             ->disableOriginalConstructor()
             ->setMethods(null)
@@ -1128,9 +1128,9 @@ class PMSEFieldParserTest extends TestCase
         $beanObject->email_addresses_primary = 'anything';
 
         // set before value to null
-        $beanObject->dataChanges = array('email_addresses_primary' => array('before' => null));
+        $beanObject->dataChanges = ['email_addresses_primary' => ['before' => null]];
 
-        $token = array('Leads', 'email_addresses_primary', 'changes_from');
+        $token = ['Leads', 'email_addresses_primary', 'changes_from'];
         $this->dataParser->setEvaluatedBean($beanObject);
         $this->dataParser->setBeanList($beanList);
         $processedToken = $this->dataParser->parseTokenValue($token);
@@ -1141,8 +1141,8 @@ class PMSEFieldParserTest extends TestCase
 
     public function testParseTokenValueToken()
     {
-        $preferencesArray = array();
-        $beanList = array('Leads' => 'Lead','Notes' => 'Notes');
+        $preferencesArray = [];
+        $beanList = ['Leads' => 'Lead','Notes' => 'Notes'];
         $beanObject = $this->getMockBuilder('Lead')
             ->disableOriginalConstructor()
             ->setMethods(null)
@@ -1153,34 +1153,34 @@ class PMSEFieldParserTest extends TestCase
         $beanObject->phone_mobile = '7775555';
         $beanObject->module_name = 'Leads';
         $beanObject->parent_type = 'Opprtunities';
-        $beanObject->field_defs = array(
-            'account_name' => array(
+        $beanObject->field_defs = [
+            'account_name' => [
                 'type' => 'varchar',
                 'dbtype' => 'char',
-            ),
-            'email_addresses_primary' => array(
+            ],
+            'email_addresses_primary' => [
                 'type' => 'varchar',
                 'dbtype' => 'char',
-            ),
-            'phone_mobile' => array(
+            ],
+            'phone_mobile' => [
                 'type' => 'varchar',
                 'dbtype' => 'char',
-            ),
-            'probability' => array(
+            ],
+            'probability' => [
                 'type' => 'int',
                 'dbtype' => 'double',
-            ),
-            'amount' => array(
+            ],
+            'amount' => [
                 'type' => 'float',
                 'dbtype' => 'double',
-            ),
-            'do_not_call' => array(
-                'type' => 'bool'
-            )
-        );
+            ],
+            'do_not_call' => [
+                'type' => 'bool',
+            ],
+        ];
 
-        $token = array('Leads', 'do_not_call');
-        $expectedToken = array(true);
+        $token = ['Leads', 'do_not_call'];
+        $expectedToken = [true];
         $this->dataParser->setEvaluatedBean($beanObject);
         $this->dataParser->setBeanList($beanList);
         $processedToken = $this->dataParser->parseTokenValue($token);
@@ -1189,8 +1189,8 @@ class PMSEFieldParserTest extends TestCase
 
     public function testParseTokenValueTokenEmptyModules()
     {
-        $preferencesArray = array();
-        $beanList = array('Leads' => 'Lead','Notes' => 'Notes');
+        $preferencesArray = [];
+        $beanList = ['Leads' => 'Lead','Notes' => 'Notes'];
         $beanObject = $this->getMockBuilder('Lead')
             ->disableOriginalConstructor()
             ->setMethods(null)
@@ -1201,34 +1201,34 @@ class PMSEFieldParserTest extends TestCase
         $beanObject->phone_mobile = '7775555';
         $beanObject->module_name = 'Notes';
         $beanObject->parent_type = 'Opprtunities';
-        $beanObject->field_defs = array(
-            'account_name' => array(
+        $beanObject->field_defs = [
+            'account_name' => [
                 'type' => 'varchar',
                 'dbtype' => 'char',
-            ),
-            'email_addresses_primary' => array(
+            ],
+            'email_addresses_primary' => [
                 'type' => 'varchar',
                 'dbtype' => 'char',
-            ),
-            'phone_mobile' => array(
+            ],
+            'phone_mobile' => [
                 'type' => 'varchar',
                 'dbtype' => 'char',
-            ),
-            'probability' => array(
+            ],
+            'probability' => [
                 'type' => 'int',
                 'dbtype' => 'double',
-            ),
-            'amount' => array(
+            ],
+            'amount' => [
                 'type' => 'float',
                 'dbtype' => 'double',
-            ),
-            'do_not_call' => array(
-                'type' => 'bool'
-            )
-        );
+            ],
+            'do_not_call' => [
+                'type' => 'bool',
+            ],
+        ];
 
-        $token = array('Leads', 'do_not_call');
-        $expectedToken = array(true);
+        $token = ['Leads', 'do_not_call'];
+        $expectedToken = [true];
         $this->dataParser->setEvaluatedBean($beanObject);
         $this->dataParser->setBeanList($beanList);
         $processedToken = $this->dataParser->parseTokenValue($token);
@@ -1238,7 +1238,7 @@ class PMSEFieldParserTest extends TestCase
     public function testDecomposeToken()
     {
         $token = "{::future::Leads::email_addresses_primary::}";
-        $expectedToken = array('future', 'Leads', 'email_addresses_primary');
+        $expectedToken = ['future', 'Leads', 'email_addresses_primary'];
         $processedToken = $this->dataParser->decomposeToken($token);
         $this->assertEquals($expectedToken, $processedToken);
     }
@@ -1246,7 +1246,7 @@ class PMSEFieldParserTest extends TestCase
     public function testDecomposeTokenEmpty()
     {
         $token = "";
-        $expectedToken = array();
+        $expectedToken = [];
         $processedToken = $this->dataParser->decomposeToken($token);
         $this->assertEquals($expectedToken, $processedToken);
     }

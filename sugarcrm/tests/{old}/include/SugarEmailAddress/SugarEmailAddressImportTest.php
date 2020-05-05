@@ -24,7 +24,7 @@ class SugarEmailAddressImportTest extends TestCase
     const NON_PRIMARY_EMAIL_OPTED_IN = 'non_primary_opted_in@foo.bar';
     const NON_PRIMARY_EMAIL_OPTED_OUT = 'non_primary_opted_out@foo.bar';
 
-    private $importData = array();
+    private $importData = [];
     private $configOptoutBackUp;
     private $fileName = 'upload://import_email_properties.csv';
 
@@ -42,21 +42,21 @@ class SugarEmailAddressImportTest extends TestCase
         unlink($this->fileName);
 
         $id = Uuid::uuid1();
-        $this->importData = array(
+        $this->importData = [
             'id' => $id,
             'first_name' => 'ContactFirstName',
             'last_name' => 'ContactLastName',
             'email' => static::PRIMARY_EMAIL,
             'email_addresses_non_primary' => static::NON_PRIMARY_EMAIL_OPTED_IN . ',0,0;' .
                 static::NON_PRIMARY_EMAIL_OPTED_OUT . ',0,1',
-        );
+        ];
         SugarTestContactUtilities::setCreatedContact([$id]);
     }
 
     protected function tearDown() : void
     {
         SugarTestContactUtilities::removeAllCreatedContacts();
-        $this->importData = array();
+        $this->importData = [];
         unlink($this->fileName);
 
         if (isset($this->configOptoutBackUp)) {
@@ -68,10 +68,10 @@ class SugarEmailAddressImportTest extends TestCase
 
     public function optoutDataProvider()
     {
-        return array(
+        return [
             [true],
             [false],
-        );
+        ];
     }
 
     /**
@@ -168,7 +168,7 @@ class SugarEmailAddressImportTest extends TestCase
 
     private function getEmailProperties($contact)
     {
-        $emailProperties = array();
+        $emailProperties = [];
         foreach ($contact->email as $emailData) {
             $emailAddress = $emailData['email_address'];
             $emailProperties[$emailAddress] = $emailData;

@@ -30,7 +30,7 @@ class PMSEAddRelatedRecordTest extends TestCase
         SugarTestHelper::setUp('current_user');
         $this->loggerMock = $this->getMockBuilder('PMSELogger')
             ->disableOriginalConstructor()
-            ->setMethods(array('info', 'debug', 'warning'))
+            ->setMethods(['info', 'debug', 'warning'])
             ->getMock();
     }
 
@@ -46,15 +46,15 @@ class PMSEAddRelatedRecordTest extends TestCase
     public function testRunFixedDate()
     {
         $beanMock = $this->getMockBuilder('SugarBean')
-            ->setMethods(array('save'))
+            ->setMethods(['save'])
             ->getMock();
         $beanMock->module_name = 'Calls';
         $beanMock->id = '8an9n0r2jd9j923cm89kyk32tb2in83';
         $beanMock->db = new stdClass();
         $beanMock->description = 'Some description';
-        $beanMock->field_defs = array(
-            'description' => array()
-        );
+        $beanMock->field_defs = [
+            'description' => [],
+        ];
 
 //        Queue of fields to be added
         $assignedField = new stdClass();
@@ -65,7 +65,7 @@ class PMSEAddRelatedRecordTest extends TestCase
         $dateField = new stdClass();
         $dateField->field = 'birthdate';
         $dateField->type = 'Date';
-        $dateField->value[0] = array('expType' => 'CONSTANT', 'expSubtype' => 'date', 'expValue' => '2015-12-06');
+        $dateField->value[0] = ['expType' => 'CONSTANT', 'expSubtype' => 'date', 'expValue' => '2015-12-06'];
 
         $lastNameField = new stdClass();
         $lastNameField->field = 'last_name';
@@ -73,23 +73,23 @@ class PMSEAddRelatedRecordTest extends TestCase
         $lastNameField->value = 'New Contact';
 
 //        Process definition
-        $definitionMock = array(
+        $definitionMock = [
             'id' => 'q2389djq9238jd93489234df9g5k',
             'pro_id' => 'sami89w93fm9w38fw',
             'act_field_module' => 'contacts',
             'pro_module' => 'Calls',
-            'act_fields' => json_encode(array($lastNameField, $assignedField, $dateField))
-        );
+            'act_fields' => json_encode([$lastNameField, $assignedField, $dateField]),
+        ];
 
 //        Process Flow
-        $flowData = array(
+        $flowData = [
             'bpmn_id' => 'o1289d89823dj23d892',
             'cas_id' => 1,
             'cas_index' => 2,
-            'id' => '9238d3d234udj89234jd'
-        );
+            'id' => '9238d3d234udj89234jd',
+        ];
         $this->addRelatedRecord = $this->getMockBuilder('PMSEAddRelatedRecord')
-            ->setMethods(array('retrieveDefinitionData', 'retrieveHistoryData','getCustomUser'))
+            ->setMethods(['retrieveDefinitionData', 'retrieveHistoryData','getCustomUser'])
             ->getMock();
 
         $this->addRelatedRecord->expects($this->exactly(1))
@@ -98,7 +98,7 @@ class PMSEAddRelatedRecordTest extends TestCase
 
         $caseFlowHandlerMock = $this->getMockBuilder('PMSECaseFlowHandler')
             ->disableOriginalConstructor()
-            ->setMethods(array('retrieveBean'))
+            ->setMethods(['retrieveBean'])
             ->getMock();
 
         $caseFlowHandlerMock->expects($this->at(0))
@@ -113,35 +113,35 @@ class PMSEAddRelatedRecordTest extends TestCase
 
         $beanHandler = $this->getMockBuilder('PMSEBeanHandler')
             ->disableOriginalConstructor()
-            ->setMethods(array('getRelationshipData', 'getCustomUser', 'calculateDueDate', 'processValueExpression', 'mergeBeanInTemplate'))
+            ->setMethods(['getRelationshipData', 'getCustomUser', 'calculateDueDate', 'processValueExpression', 'mergeBeanInTemplate'])
             ->getMock();
 
         $this->addRelatedRecord->expects($this->once())
             ->method('getCustomUser')
-            ->will ($this->returnValue("1"));
+            ->will($this->returnValue("1"));
 
         $beanHandler->expects($this->at(0))
             ->method('mergeBeanInTemplate')
             ->with($beanMock, "New Contact")
-            ->will ($this->returnValue("New Contact"));
+            ->will($this->returnValue("New Contact"));
 
         $beanHandler->expects($this->at(2))
             ->method('mergeBeanInTemplate')
             ->with($beanMock, "1")
-            ->will ($this->returnValue("1"));
+            ->will($this->returnValue("1"));
 
         $beanHandler->expects($this->any())
             ->method('processValueExpression')
-            ->will ($this->returnValue($dateField->value[0]['expValue']));
+            ->will($this->returnValue($dateField->value[0]['expValue']));
 
         $pmseRelatedModule = $this->getMockBuilder('PMSERelatedModule')
             ->disableOriginalConstructor()
-            ->setMethods(array('addRelatedRecord'))
+            ->setMethods(['addRelatedRecord'])
             ->getMock();
 
         $pmseRelatedModule->expects($this->any())
             ->method('addRelatedRecord')
-            ->with($beanMock, "contacts", array('last_name' => 'New Contact', 'assigned_user_id' => "1", 'birthdate' => '2015-12-06'))
+            ->with($beanMock, "contacts", ['last_name' => 'New Contact', 'assigned_user_id' => "1", 'birthdate' => '2015-12-06'])
             ->will($this->returnValue(true));
 
         $this->addRelatedRecord->setLogger($this->loggerMock);
@@ -155,15 +155,15 @@ class PMSEAddRelatedRecordTest extends TestCase
     public function testRunFixedDatetime()
     {
         $beanMock = $this->getMockBuilder('SugarBean')
-            ->setMethods(array('save'))
+            ->setMethods(['save'])
             ->getMock();
         $beanMock->module_name = 'Calls';
         $beanMock->id = '8an9n0r2jd9j923cm89kyk32tb2in83';
         $beanMock->db = new stdClass();
         $beanMock->description = 'Some description';
-        $beanMock->field_defs = array(
-            'description' => array()
-        );
+        $beanMock->field_defs = [
+            'description' => [],
+        ];
 
 //        Queue of fields to be added
         $assignedField = new stdClass();
@@ -174,7 +174,7 @@ class PMSEAddRelatedRecordTest extends TestCase
         $dateField = new stdClass();
         $dateField->field = 'birthdate';
         $dateField->type = 'Datetime';
-        $dateField->value[0] = array('expType' => 'CONSTANT', 'expSubtype' => 'datetime', 'expValue' => '2015-12-06 00:00:00');
+        $dateField->value[0] = ['expType' => 'CONSTANT', 'expSubtype' => 'datetime', 'expValue' => '2015-12-06 00:00:00'];
 
         $lastNameField = new stdClass();
         $lastNameField->field = 'last_name';
@@ -182,23 +182,23 @@ class PMSEAddRelatedRecordTest extends TestCase
         $lastNameField->value = 'New Contact';
 
 //        Process definition
-        $definitionMock = array(
+        $definitionMock = [
             'id' => 'q2389djq9238jd93489234df9g5k',
             'pro_id' => 'sami89w93fm9w38fw',
             'act_field_module' => 'contacts',
             'pro_module' => 'Calls',
-            'act_fields' => json_encode(array($lastNameField, $assignedField, $dateField))
-        );
+            'act_fields' => json_encode([$lastNameField, $assignedField, $dateField]),
+        ];
 
 //        Process Flow
-        $flowData = array(
+        $flowData = [
             'bpmn_id' => 'o1289d89823dj23d892',
             'cas_id' => 1,
             'cas_index' => 2,
-            'id' => '9238d3d234udj89234jd'
-        );
+            'id' => '9238d3d234udj89234jd',
+        ];
         $this->addRelatedRecord = $this->getMockBuilder('PMSEAddRelatedRecord')
-            ->setMethods(array('retrieveDefinitionData', 'retrieveHistoryData','getCustomUser'))
+            ->setMethods(['retrieveDefinitionData', 'retrieveHistoryData','getCustomUser'])
             ->getMock();
 
         $this->addRelatedRecord->expects($this->exactly(1))
@@ -207,7 +207,7 @@ class PMSEAddRelatedRecordTest extends TestCase
 
         $caseFlowHandlerMock = $this->getMockBuilder('PMSECaseFlowHandler')
             ->disableOriginalConstructor()
-            ->setMethods(array('retrieveBean'))
+            ->setMethods(['retrieveBean'])
             ->getMock();
 
         $caseFlowHandlerMock->expects($this->at(0))
@@ -222,35 +222,35 @@ class PMSEAddRelatedRecordTest extends TestCase
 
         $beanHandler = $this->getMockBuilder('PMSEBeanHandler')
             ->disableOriginalConstructor()
-            ->setMethods(array('getRelationshipData', 'getCustomUser', 'calculateDueDate', 'processValueExpression', 'mergeBeanInTemplate'))
+            ->setMethods(['getRelationshipData', 'getCustomUser', 'calculateDueDate', 'processValueExpression', 'mergeBeanInTemplate'])
             ->getMock();
 
         $this->addRelatedRecord->expects($this->once())
             ->method('getCustomUser')
-            ->will ($this->returnValue("1"));
+            ->will($this->returnValue("1"));
 
         $beanHandler->expects($this->at(0))
             ->method('mergeBeanInTemplate')
             ->with($beanMock, "New Contact")
-            ->will ($this->returnValue("New Contact"));
+            ->will($this->returnValue("New Contact"));
 
         $beanHandler->expects($this->at(2))
             ->method('mergeBeanInTemplate')
             ->with($beanMock, "1")
-            ->will ($this->returnValue("1"));
+            ->will($this->returnValue("1"));
 
         $beanHandler->expects($this->any())
             ->method('processValueExpression')
-            ->will ($this->returnValue($dateField->value[0]['expValue']));
+            ->will($this->returnValue($dateField->value[0]['expValue']));
 
         $pmseRelatedModule = $this->getMockBuilder('PMSERelatedModule')
             ->disableOriginalConstructor()
-            ->setMethods(array('addRelatedRecord'))
+            ->setMethods(['addRelatedRecord'])
             ->getMock();
 
         $pmseRelatedModule->expects($this->any())
             ->method('addRelatedRecord')
-            ->with($beanMock, "contacts", array('last_name' => 'New Contact', 'assigned_user_id' => "1", 'birthdate' => '2015-12-06 00:00:00'))
+            ->with($beanMock, "contacts", ['last_name' => 'New Contact', 'assigned_user_id' => "1", 'birthdate' => '2015-12-06 00:00:00'])
             ->will($this->returnValue(true));
 
         $this->addRelatedRecord->setLogger($this->loggerMock);

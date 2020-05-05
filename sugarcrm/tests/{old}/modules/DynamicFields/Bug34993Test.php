@@ -20,23 +20,23 @@ class Bug34993Test extends TestCase
     protected function setUp() : void
     {
         $this->accountMockBean = $this->getMockBuilder('Account')
-            ->setMethods(array('hasCustomFields'))
+            ->setMethods(['hasCustomFields'])
             ->getMock();
         $this->_tablename = 'test' . date("YmdHis");
-        if ( isset($GLOBALS['installing']) )
-        {
+        if (isset($GLOBALS['installing'])) {
             $this->_old_installing = $GLOBALS['installing'];
         }
         $GLOBALS['installing'] = true;
 
-        $GLOBALS['db']->createTableParams($this->_tablename . '_cstm',
-            array(
-                'id_c' => array (
+        $GLOBALS['db']->createTableParams(
+            $this->_tablename . '_cstm',
+            [
+                'id_c' =>  [
                     'name' => 'id_c',
                     'type' => 'id',
-                ),
-            ),
-            array()
+                ],
+            ],
+            []
         );
         $GLOBALS['db']->query("INSERT INTO {$this->_tablename}_cstm (id_c) VALUES ('12345')");
 
@@ -48,29 +48,25 @@ class Bug34993Test extends TestCase
     {
         $GLOBALS['db']->dropTableName($this->_tablename . '_cstm');
         $GLOBALS['db']->query("DELETE FROM fields_meta_data WHERE id in ('Accountsbug34993_test_c', 'Accountsbug34993_test2_c', 'Accountsfloat_test1_c', 'Accountsfloat_test2_c')");
-        if ( isset($this->_old_installing) ) {
+        if (isset($this->_old_installing)) {
             $GLOBALS['installing'] = $this->_old_installing;
         } else {
             unset($GLOBALS['installing']);
         }
 
-        if(file_exists('custom/Extension/modules/Accounts/Ext/Vardefs/sugarfield_bug34993_test_c.php'))
-        {
+        if (file_exists('custom/Extension/modules/Accounts/Ext/Vardefs/sugarfield_bug34993_test_c.php')) {
             unlink('custom/Extension/modules/Accounts/Ext/Vardefs/sugarfield_bug34993_test_c.php');
         }
 
-        if(file_exists('custom/Extension/modules/Accounts/Ext/Vardefs/sugarfield_bug34993_test2_c.php'))
-        {
+        if (file_exists('custom/Extension/modules/Accounts/Ext/Vardefs/sugarfield_bug34993_test2_c.php')) {
             unlink('custom/Extension/modules/Accounts/Ext/Vardefs/sugarfield_bug34993_test2_c.php');
         }
 
-        if(file_exists('custom/Extension/modules/Accounts/Ext/Vardefs/sugarfield_float_test1_c.php'))
-        {
+        if (file_exists('custom/Extension/modules/Accounts/Ext/Vardefs/sugarfield_float_test1_c.php')) {
             unlink('custom/Extension/modules/Accounts/Ext/Vardefs/sugarfield_float_test1_c.php');
         }
 
-        if(file_exists('custom/Extension/modules/Accounts/Ext/Vardefs/sugarfield_float_test2_c.php'))
-        {
+        if (file_exists('custom/Extension/modules/Accounts/Ext/Vardefs/sugarfield_float_test2_c.php')) {
             unlink('custom/Extension/modules/Accounts/Ext/Vardefs/sugarfield_float_test2_c.php');
         }
 
@@ -80,7 +76,7 @@ class Bug34993Test extends TestCase
 
     public function testCustomFieldDefaultValue()
     {
-        require_once('modules/DynamicFields/FieldCases.php');
+        require_once 'modules/DynamicFields/FieldCases.php';
 
         //Simulate create a custom text field with a default value set to 123
         $templateText = get_widget('varchar');
@@ -99,10 +95,10 @@ class Bug34993Test extends TestCase
         $templateText->importable = true;
         $templateText->duplicate_merge = 0;
         $templateText->reportable = 1;
-        $templateText->ext1 = NULL;
-        $templateText->ext2 = NULL;
-        $templateText->ext3 = NULL;
-        $templateText->ext4 = NULL;
+        $templateText->ext1 = null;
+        $templateText->ext2 = null;
+        $templateText->ext3 = null;
+        $templateText->ext4 = null;
 
         $bean = $this->accountMockBean;
         $bean->custom_fields = new DynamicField($bean->module_dir);
@@ -115,7 +111,7 @@ class Bug34993Test extends TestCase
         $bean->id = '12345';
         $bean->custom_fields->addFieldObject($templateText);
         $bean->custom_fields->retrieve();
-        $this->assertEquals($bean->bug34993_test_c, NULL, "Assert that the custom text field has a default value set to NULL");
+        $this->assertEquals($bean->bug34993_test_c, null, "Assert that the custom text field has a default value set to NULL");
 
 
         //Simulate create a custom text field with a default value set to 123
@@ -136,9 +132,9 @@ class Bug34993Test extends TestCase
         $templateText->duplicate_merge = 0;
         $templateText->reportable = 1;
         $templateText->ext1 = 'account_type_dom';
-        $templateText->ext2 = NULL;
-        $templateText->ext3 = NULL;
-        $templateText->ext4 = NULL;
+        $templateText->ext2 = null;
+        $templateText->ext3 = null;
+        $templateText->ext4 = null;
 
         $bean = $this->accountMockBean;
         $bean->custom_fields = new DynamicField($bean->module_dir);
@@ -151,7 +147,7 @@ class Bug34993Test extends TestCase
         $bean->id = '12345';
         $bean->custom_fields->addFieldObject($templateText);
         $bean->custom_fields->retrieve();
-        $this->assertEquals($bean->bug34993_test2_c, NULL, "Assert that the custom enum field has a default value set to NULL");
+        $this->assertEquals($bean->bug34993_test2_c, null, "Assert that the custom enum field has a default value set to NULL");
     }
 
     /**
@@ -159,7 +155,7 @@ class Bug34993Test extends TestCase
      */
     public function testCustomFieldFloatType()
     {
-        require_once('modules/DynamicFields/FieldCases.php');
+        require_once 'modules/DynamicFields/FieldCases.php';
 
         // custom field: float type required is false
         $templateFloat = get_widget('float');
@@ -181,9 +177,9 @@ class Bug34993Test extends TestCase
         $templateFloat->duplicate_merge = 1;
         $templateFloat->reportable = 1;
         $templateFloat->ext1 = '8';
-        $templateFloat->ext2 = NULL;
-        $templateFloat->ext3 = NULL;
-        $templateFloat->ext4 = NULL;
+        $templateFloat->ext2 = null;
+        $templateFloat->ext3 = null;
+        $templateFloat->ext4 = null;
 
         $bean = $this->accountMockBean;
         $bean->custom_fields = new DynamicField($bean->module_dir);
@@ -219,9 +215,9 @@ class Bug34993Test extends TestCase
         $templateFloat->duplicate_merge = 1;
         $templateFloat->reportable = 1;
         $templateFloat->ext1 = '8';
-        $templateFloat->ext2 = NULL;
-        $templateFloat->ext3 = NULL;
-        $templateFloat->ext4 = NULL;
+        $templateFloat->ext2 = null;
+        $templateFloat->ext3 = null;
+        $templateFloat->ext4 = null;
 
 
         $bean = $this->accountMockBean;

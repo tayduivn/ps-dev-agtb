@@ -72,15 +72,15 @@ class SugarForecasting_Export_ManagerTest extends TestCase
         self::$manager2["user"]->save();
 
         self::$reportee = SugarTestForecastUtilities::createForecastUser(
-            array('user' => array('reports_to' => self::$manager['user']->id))
+            ['user' => ['reports_to' => self::$manager['user']->id]]
         );
         self::$reportee2 = SugarTestForecastUtilities::createForecastUser(
-            array('user' => array('reports_to' => self::$manager2['user']->id))
+            ['user' => ['reports_to' => self::$manager2['user']->id]]
         );
 
         self::$timeperiod = SugarTestForecastUtilities::getCreatedTimePeriod();
 
-        self::$managerData = array(
+        self::$managerData = [
             "amount" => self::$manager['opportunities_total'],
             "quota" => self::$manager['quota']->amount,
             "quota_id" => self::$manager['quota']->id,
@@ -98,9 +98,9 @@ class SugarForecasting_Export_ManagerTest extends TestCase
             "name" => 'Opportunities (' . self::$manager['user']->first_name . ' ' . self::$manager['user']->last_name . ')',
             "user_id" => self::$manager['user']->id,
 
-        );
+        ];
 
-        self::$managerData2 = array(
+        self::$managerData2 = [
             "amount" => self::$manager2['opportunities_total'],
             "quota" => self::$manager2['quota']->amount,
             "quota_id" => self::$manager2['quota']->id,
@@ -118,9 +118,9 @@ class SugarForecasting_Export_ManagerTest extends TestCase
             "name" => 'Opportunities (' . self::$manager2['user']->first_name . ' ' . self::$manager2['user']->last_name . ')',
             "user_id" => self::$manager2['user']->id,
 
-        );
+        ];
 
-        self::$repData = array(
+        self::$repData = [
             "amount" => self::$reportee['opportunities_total'],
             "quota" => self::$reportee['quota']->amount,
             "quota_id" => self::$reportee['quota']->id,
@@ -138,7 +138,7 @@ class SugarForecasting_Export_ManagerTest extends TestCase
             "name" => self::$reportee['user']->first_name . ' ' . self::$reportee['user']->last_name,
             "user_id" => self::$reportee['user']->id,
 
-        );
+        ];
     }
 
     public static function tearDownAfterClass(): void
@@ -160,15 +160,15 @@ class SugarForecasting_Export_ManagerTest extends TestCase
      */
     public function exportForecastWorksheetProvider()
     {
-        return array
-        (
-            array('show_worksheet_best', '1', 'assertMatchesRegularExpression', '/Best/'),
-            array('show_worksheet_best', '0', 'assertDoesNotMatchRegularExpression', '/Best/'),
-            array('show_worksheet_likely', '1', 'assertMatchesRegularExpression', '/Likely/'),
-            array('show_worksheet_likely', '0', 'assertDoesNotMatchRegularExpression', '/Likely/'),
-            array('show_worksheet_worst', '1', 'assertMatchesRegularExpression', '/Worst/'),
-            array('show_worksheet_worst', '0', 'assertDoesNotMatchRegularExpression', '/Worst/'),
-        );
+        return
+        [
+            ['show_worksheet_best', '1', 'assertMatchesRegularExpression', '/Best/'],
+            ['show_worksheet_best', '0', 'assertDoesNotMatchRegularExpression', '/Best/'],
+            ['show_worksheet_likely', '1', 'assertMatchesRegularExpression', '/Likely/'],
+            ['show_worksheet_likely', '0', 'assertDoesNotMatchRegularExpression', '/Likely/'],
+            ['show_worksheet_worst', '1', 'assertMatchesRegularExpression', '/Worst/'],
+            ['show_worksheet_worst', '0', 'assertDoesNotMatchRegularExpression', '/Worst/'],
+        ];
     }
 
     /**
@@ -185,7 +185,7 @@ class SugarForecasting_Export_ManagerTest extends TestCase
     {
         global $current_user;
         $current_user = self::$manager2['user'];
-        $args = array();
+        $args = [];
         $args['timeperiod_id'] = self::$timeperiod->id;
         $args['user_id'] = self::$manager2['user']->id;
 
@@ -208,7 +208,7 @@ class SugarForecasting_Export_ManagerTest extends TestCase
      */
     public function testGetFilename()
     {
-        $args = array();
+        $args = [];
         $args['timeperiod_id'] = self::$timeperiod->id;
         $args['user_id'] = self::$manager2['user']->id;
         $obj = new SugarForecasting_Export_Manager($args);

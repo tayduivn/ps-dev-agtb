@@ -33,10 +33,10 @@ class KBContentsFilterApiTest extends TestCase
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setUp('current_user', array(true, true));
+        SugarTestHelper::setUp('current_user', [true, true]);
 
         $this->service = SugarTestRestUtilities::getRestServiceMock();
-        $this->api = $this->createPartialMock('KBContentsFilterApi', array('getElasticQueryBuilder'));
+        $this->api = $this->createPartialMock('KBContentsFilterApi', ['getElasticQueryBuilder']);
         $this->bean = SugarTestKBContentUtilities::createBean();
     }
 
@@ -60,40 +60,40 @@ class KBContentsFilterApiTest extends TestCase
          * @param $args
          * @param $isElasticCalled
          */
-        return array(
-            array(
-                array(
+        return [
+            [
+                [
                     'module' => 'KBContents',
-                    'filter' => array(
-                        array(
-                            'kbdocument_body' => array(
-                                '$contains' => 'test'
-                            )
-                        )
-                    ),
-                ),
-                true
-            ),
-            array(
-                array(
+                    'filter' => [
+                        [
+                            'kbdocument_body' => [
+                                '$contains' => 'test',
+                            ],
+                        ],
+                    ],
+                ],
+                true,
+            ],
+            [
+                [
                     'module' => 'KBContents',
-                    'filter' => array(
-                        array(
-                            'kbdocument_body' => array(
-                                '$not_contains' => 'test'
-                            )
-                        )
-                    ),
-                ),
-                true
-            ),
-            array(
-                array(
+                    'filter' => [
+                        [
+                            'kbdocument_body' => [
+                                '$not_contains' => 'test',
+                            ],
+                        ],
+                    ],
+                ],
+                true,
+            ],
+            [
+                [
                     'module' => 'KBContents',
-                ),
-                false
-            ),
-        );
+                ],
+                false,
+            ],
+        ];
     }
 
     /**
@@ -105,11 +105,11 @@ class KBContentsFilterApiTest extends TestCase
      */
     public function testFilterList($args, $expected)
     {
-        $api = $this->createPartialMock('KBContentsFilterApi', array('filterByContainingExcludingWords'));
+        $api = $this->createPartialMock('KBContentsFilterApi', ['filterByContainingExcludingWords']);
         if ($expected) {
             $api->expects($this->once())->method('filterByContainingExcludingWords')->with(
                 $this->equalTo($this->service)
-            )->willReturn(array());
+            )->willReturn([]);
         } else {
             $api->expects($this->never())->method('filterByContainingExcludingWords')->with(
                 $this->equalTo($this->service)
@@ -125,26 +125,26 @@ class KBContentsFilterApiTest extends TestCase
      */
     public function dataProvider()
     {
-        return array(
-            array(
-                array(
-                    array(
-                        'kbdocument_body' => array(
-                            '$contains' => 'test'
-                        )
-                    )
-                )
-            ),
-            array(
-                array(
-                    array(
-                        'kbdocument_body' => array(
-                            '$not_contains' => 'test'
-                        )
-                    )
-                )
-            )
-        );
+        return [
+            [
+                [
+                    [
+                        'kbdocument_body' => [
+                            '$contains' => 'test',
+                        ],
+                    ],
+                ],
+            ],
+            [
+                [
+                    [
+                        'kbdocument_body' => [
+                            '$not_contains' => 'test',
+                        ],
+                    ],
+                ],
+            ],
+        ];
     }
 
     /**
@@ -156,23 +156,23 @@ class KBContentsFilterApiTest extends TestCase
     {
         $builderMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Elasticsearch\Query\QueryBuilder')
             ->disableOriginalConstructor()
-            ->setMethods(array())
+            ->setMethods([])
             ->getMock();
 
         $resultSetMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Elasticsearch\Adapter\ResultSet')
             ->disableOriginalConstructor()
-            ->setMethods(array())
+            ->setMethods([])
             ->getMock();
 
         $this->api->expects($this->once())->method('getElasticQueryBuilder')->will($this->returnValue($builderMock));
         $builderMock->expects($this->any())->method('executeSearch')->will($this->returnValue($resultSetMock));
 
-        $result = $this->api->filterList($this->service, array(
+        $result = $this->api->filterList($this->service, [
             'module' => $this->bean->module_name,
             'record' => $this->bean->id,
             'filter' => $filter,
-            'order_by' => 'name'
-        ));
+            'order_by' => 'name',
+        ]);
 
         $this->assertIsArray($result);
         $this->assertArrayHasKey('next_offset', $result);

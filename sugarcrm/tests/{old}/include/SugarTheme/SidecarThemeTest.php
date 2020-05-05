@@ -75,7 +75,8 @@ class SidecarThemeTest extends TestCase
     /**
      * @group Theming
      */
-    public function testCompileTheme() {
+    public function testCompileTheme()
+    {
         $theme = new SidecarTheme($this->platformTest, $this->themeTest);
         $themePaths = $theme->getPaths();
 
@@ -92,7 +93,8 @@ class SidecarThemeTest extends TestCase
     /**
      * @group Theming
      */
-    public function testPreviewCss() {
+    public function testPreviewCss()
+    {
         $theme = new SidecarTheme($this->platformTest, $this->themeTest);
         $themePaths = $theme->getPaths();
 
@@ -105,7 +107,8 @@ class SidecarThemeTest extends TestCase
     /**
      * @group Theming
      */
-    public function testCompileFile() {
+    public function testCompileFile()
+    {
         $theme = new SidecarTheme($this->platformTest, $this->themeTest);
         $themePaths = $theme->getPaths();
 
@@ -163,31 +166,31 @@ class SidecarThemeTest extends TestCase
     public function testLoadVariables()
     {
         // Create a stub for getThemeVariables().
-        $mockThemeVariables = array(
-            'type1' => array(
+        $mockThemeVariables = [
+            'type1' => [
                 'Variable11' => 'Value12',
                 'Variable12' => 'Value12',
-            ),
-            'type2' => array(
+            ],
+            'type2' => [
                 'Variable21' => 'Value21',
                 'Variable22' => 'Value22',
-            ),
-        );
+            ],
+        ];
         // Create a stub for the SomeClass class.
         $theme = $this->getMockBuilder('SidecarTheme')
-            ->setMethods(array('getThemeVariables'))
-            ->setConstructorArgs(array($this->platformTest, $this->themeTest))
+            ->setMethods(['getThemeVariables'])
+            ->setConstructorArgs([$this->platformTest, $this->themeTest])
             ->getMock();
         $theme->expects($this->any())
             ->method('getThemeVariables')
             ->will($this->returnValue($mockThemeVariables));
 
-        $expected = array(
+        $expected = [
             'Variable11' => 'Value12',
             'Variable12' => 'Value12',
             'Variable21' => 'Value21',
             'Variable22' => 'Value22',
-        );
+        ];
         $actual = $theme->loadVariables();
         $this->assertEquals($expected, $actual, 'It should have set variables correctly');
     }
@@ -213,7 +216,8 @@ class SidecarThemeTest extends TestCase
     /**
      * @group Theming
      */
-    public function testGetThemeVariables() {
+    public function testGetThemeVariables()
+    {
         //Initiate out test theme
         $theme = new SidecarTheme($this->platformTest, $this->themeTest);
         $paths = $theme->getPaths();
@@ -266,24 +270,24 @@ class SidecarThemeTest extends TestCase
 
 
         // Should result this array
-        $expectedArray = array(
-            'mixins' => array(
-                'textMixin' => 'mixinChoice'
-            ),
-            'colors' => array(
+        $expectedArray = [
+            'mixins' => [
+                'textMixin' => 'mixinChoice',
+            ],
+            'colors' => [
                 'BorderColor' => '#000000',
                 'NavigationBar' => '#111111',
                 'PrimaryButton' => '#0679c8', //base theme var
                 "testColor" => "#cccccc",
-                'testRgba' => 'rgba(100, 101, 102)'
-            ),
-            'rel' => array(
-                'testRel' => '@otherColor'
-            ),
-            'bgPath' => array(
-                'testbgPath' => 'other_background.png'
-            ),
-        );
+                'testRgba' => 'rgba(100, 101, 102)',
+            ],
+            'rel' => [
+                'testRel' => '@otherColor',
+            ],
+            'bgPath' => [
+                'testbgPath' => 'other_background.png',
+            ],
+        ];
 
         // TEST Result
         $this->assertEquals($expectedArray, $variables, 'It should retrieve all variables');
@@ -292,7 +296,8 @@ class SidecarThemeTest extends TestCase
     /**
      * @group Theming
      */
-    public function testSaveThemeVariables() {
+    public function testSaveThemeVariables()
+    {
         //Initiate out test theme
         $theme = new SidecarTheme($this->platformTest, $this->themeTest);
         $paths = $theme->getPaths();
@@ -310,13 +315,13 @@ class SidecarThemeTest extends TestCase
         $variables = $theme->getThemeVariables();
 
         // Should result this array
-        $expectedArray = array(
-            'colors' => array(
+        $expectedArray = [
+            'colors' => [
                 'BorderColor' => '#FFFFFF',
                 'NavigationBar' => '#fff',
                 'PrimaryButton' => '#0679c8',
-            ),
-        );
+            ],
+        ];
 
         // TEST Result
         $this->assertEquals($expectedArray, $variables, 'It should have updated the variable');
@@ -361,7 +366,7 @@ class SidecarThemeTest extends TestCase
     {
         $theme = new SidecarTheme($this->platformTest, $this->themeTest);
 
-        $url = SugarTestReflection::callProtectedMethod($theme,'getLessFileLocation',array('sugar'));
+        $url = SugarTestReflection::callProtectedMethod($theme, 'getLessFileLocation', ['sugar']);
         $this->assertEquals($url, 'styleguide/less/clients/base/sugar.less');
 
         //Save the file
@@ -370,7 +375,7 @@ class SidecarThemeTest extends TestCase
         sugar_file_put_contents($path . 'sugar.less', '');
 
         //Make sure
-        $url = SugarTestReflection::callProtectedMethod($theme,'getLessFileLocation',array('sugar'));
+        $url = SugarTestReflection::callProtectedMethod($theme, 'getLessFileLocation', ['sugar']);
         $this->assertEquals($url, 'styleguide/less/clients/' . $this->platformTest . '/sugar.less');
 
         // Remove our temporary

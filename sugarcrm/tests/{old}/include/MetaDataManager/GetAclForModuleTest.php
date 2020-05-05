@@ -17,19 +17,19 @@ use PHPUnit\Framework\TestCase;
  */
 class GetAclForModuleTest extends TestCase
 {
-    public $roles = array();
+    public $roles = [];
     protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('app_list_strings');
-        $this->accounts = array();
-        SugarACL::$acls = array();
+        $this->accounts = [];
+        SugarACL::$acls = [];
     }
 
     protected function tearDown() : void
     {
         $db = DBManagerFactory::getInstance();
-        foreach($this->accounts AS $account_id) {
+        foreach ($this->accounts as $account_id) {
             $db->query("DELETE FROM accounts WHERE id = '{$account_id}'");
         }
         $db->commit();
@@ -41,9 +41,9 @@ class GetAclForModuleTest extends TestCase
 
     public function testViewOnly()
     {
-        $modules = array('Accounts', );
+        $modules = ['Accounts', ];
         // user can view, list, delete, and export
-        $expected_result = array(
+        $expected_result = [
             'admin' => 'no',
             'developer' => 'no',
             'create' => 'no',
@@ -53,14 +53,14 @@ class GetAclForModuleTest extends TestCase
             'import' => 'no',
             'export' => 'no',
             'massupdate' => 'no',
-        );
+        ];
 
-        $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'view'));
+        $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, ['access', 'view']);
 
         SugarTestACLUtilities::setupUser($role);
 
         $mm = MetaDataManager::getManager();
-        foreach($modules AS $module) {
+        foreach ($modules as $module) {
             unset($_SESSION['ACL']);
             $acls = $mm->getAclForModule($module, $GLOBALS['current_user']);
             unset($acls['_hash']);
@@ -75,9 +75,9 @@ class GetAclForModuleTest extends TestCase
 
     public function testListOnly()
     {
-        $modules = array('Accounts');
+        $modules = ['Accounts'];
         // user can view, list, delete, and export
-        $expected_result = array(
+        $expected_result = [
             'admin' => 'no',
             'developer' => 'no',
             'create' => 'no',
@@ -86,14 +86,14 @@ class GetAclForModuleTest extends TestCase
             'import' => 'no',
             'export' => 'no',
             'massupdate' => 'no',
-        );
+        ];
 
-        $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'view', 'list'));
+        $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, ['access', 'view', 'list']);
 
         SugarTestACLUtilities::setupUser($role);
 
         $mm = MetaDataManager::getManager();
-        foreach($modules AS $module) {
+        foreach ($modules as $module) {
             unset($_SESSION['ACL']);
             $acls = $mm->getAclForModule($module, $GLOBALS['current_user']);
             unset($acls['_hash']);
@@ -106,9 +106,9 @@ class GetAclForModuleTest extends TestCase
     // test view + list owner
     public function testViewListOwner()
     {
-        $modules = array('Accounts');
+        $modules = ['Accounts'];
         // user can view, list, delete, and export
-        $expected_result = array(
+        $expected_result = [
             'admin' => 'no',
             'developer' => 'no',
             'create' => 'no',
@@ -117,15 +117,15 @@ class GetAclForModuleTest extends TestCase
             'import' => 'no',
             'export' => 'no',
             'massupdate' => 'no',
-        );
+        ];
 
-        $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, array(
-            'access', 'list', 'view'), array('list', 'view'));
+        $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, [
+            'access', 'list', 'view'], ['list', 'view']);
 
         SugarTestACLUtilities::setupUser($role);
 
         $mm = MetaDataManager::getManager();
-        foreach($modules AS $module) {
+        foreach ($modules as $module) {
             unset($_SESSION['ACL']);
             $acls = $mm->getAclForModule($module, $GLOBALS['current_user']);
             unset($acls['_hash']);
@@ -140,9 +140,9 @@ class GetAclForModuleTest extends TestCase
     // test view owner + edit owner + create
     public function testViewEditOwnerCreate()
     {
-        $modules = array('Accounts');
+        $modules = ['Accounts'];
         // user can view, list, delete, and export
-        $expected_result = array(
+        $expected_result = [
             'admin' => 'no',
             'developer' => 'no',
             'list' => 'no',
@@ -150,15 +150,15 @@ class GetAclForModuleTest extends TestCase
             'import' => 'no',
             'export' => 'no',
             'massupdate' => 'no',
-        );
+        ];
 
-        $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, array(
-            'access', 'create', 'edit', 'view'), array('edit', 'view'));
+        $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, [
+            'access', 'create', 'edit', 'view'], ['edit', 'view']);
 
         SugarTestACLUtilities::setupUser($role);
 
         $mm = MetaDataManager::getManager();
-        foreach($modules AS $module) {
+        foreach ($modules as $module) {
             unset($_SESSION['ACL']);
             $acls = $mm->getAclForModule($module, $GLOBALS['current_user']);
             unset($acls['_hash']);
@@ -171,20 +171,20 @@ class GetAclForModuleTest extends TestCase
     // test all access, but admin
     public function testAllButAdmin()
     {
-        $modules = array('Accounts', );
+        $modules = ['Accounts', ];
         // user can view, list, delete, and export
-        $expected_result = array(
+        $expected_result = [
             'admin' => 'no',
             'developer' => 'no',
-        );
+        ];
 
-        $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, array(
-            'access', 'create', 'view', 'list', 'edit', 'delete', 'import', 'export', 'massupdate'));
+        $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, [
+            'access', 'create', 'view', 'list', 'edit', 'delete', 'import', 'export', 'massupdate']);
 
         SugarTestACLUtilities::setupUser($role);
 
         $mm = MetaDataManager::getManager();
-        foreach($modules AS $module) {
+        foreach ($modules as $module) {
             unset($_SESSION['ACL']);
             $acls = $mm->getAclForModule($module, $GLOBALS['current_user']);
             unset($acls['_hash']);
@@ -199,15 +199,15 @@ class GetAclForModuleTest extends TestCase
     // test read only 1 field
     public function testReadOnlyOneField()
     {
-        $modules = array('Accounts');
+        $modules = ['Accounts'];
         // user can view, list, delete, and export
-        $expected_result = array(
+        $expected_result = [
             'fields' =>
-            array(
-                'website' => array(
+            [
+                'website' => [
                     'write' => 'no',
                     'create' => 'no',
-                ),
+                ],
                 //BEGIN SUGARCRM flav=ent ONLY
                 'business_center_name' => [
                     'write' => 'no',
@@ -225,74 +225,30 @@ class GetAclForModuleTest extends TestCase
                     'license' => 'no',
                 ],
                 //END SUGARCRM flav=ent ONLY
-            ),
+            ],
             'admin' => 'no',
             'developer' => 'no',
-        );
+        ];
 
-        $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, array(
-            'access', 'create', 'view', 'list', 'edit','delete','import', 'export', 'massupdate'));
+        $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, [
+            'access', 'create', 'view', 'list', 'edit','delete','import', 'export', 'massupdate']);
 
         SugarTestACLUtilities::createField($role->id, 'Accounts', 'website', 50);
 
         SugarTestACLUtilities::setupUser($role);
 
         $mm = MetaDataManager::getManager();
-        foreach($modules AS $module) {
+        foreach ($modules as $module) {
             $acls = $mm->getAclForModule($module, $GLOBALS['current_user']);
             unset($acls['_hash']);
             $this->assertEquals($expected_result, $acls);
         }
-    }    
+    }
 
     // test owner write 1 field
     public function testReadOwnerWriteOneField()
     {
-        $modules = array('Accounts');
-        // user can view, list, delete, and export
-        $expected_result = array(
-            'fields' => array(
-                //BEGIN SUGARCRM flav=ent ONLY
-                'business_center_name' => [
-                    'write' => 'no',
-                    'create' => 'no',
-                    'license' => 'no',
-                ],
-                'business_center_id' => [
-                    'write' => 'no',
-                    'create' => 'no',
-                    'license' => 'no',
-                ],
-                'next_renewal_date' => [
-                    'write' => 'no',
-                    'create' => 'no',
-                    'license' => 'no',
-                ],
-                //END SUGARCRM flav=ent ONLY
-            ),
-            'admin' => 'no',
-            'developer' => 'no',
-        );
-
-        $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, array(
-            'access', 'create', 'view', 'list', 'edit','delete','import', 'export', 'massupdate'));
-
-        SugarTestACLUtilities::createField($role->id, 'Accounts', 'website', 60);
-
-        SugarTestACLUtilities::setupUser($role);
-
-        $mm = MetaDataManager::getManager();
-        foreach($modules AS $module) {
-            $acls = $mm->getAclForModule($module, $GLOBALS['current_user']);
-            unset($acls['_hash']);
-            $this->assertEquals($expected_result, $acls);
-        }
-    }       
-
-    // test owner read/owner write 1 field
-    public function testOwnerReadOwnerWriteOneField()
-    {
-        $modules = array('Accounts');
+        $modules = ['Accounts'];
         // user can view, list, delete, and export
         $expected_result = [
             'fields' => [
@@ -318,15 +274,59 @@ class GetAclForModuleTest extends TestCase
             'developer' => 'no',
         ];
 
-        $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, array(
-            'access', 'create', 'view', 'list', 'edit','delete','import', 'export', 'massupdate'));
+        $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, [
+            'access', 'create', 'view', 'list', 'edit','delete','import', 'export', 'massupdate']);
 
-        SugarTestACLUtilities::createField($role->id, 'Accounts','website', 40);
+        SugarTestACLUtilities::createField($role->id, 'Accounts', 'website', 60);
 
         SugarTestACLUtilities::setupUser($role);
 
         $mm = MetaDataManager::getManager();
-        foreach($modules AS $module) {
+        foreach ($modules as $module) {
+            $acls = $mm->getAclForModule($module, $GLOBALS['current_user']);
+            unset($acls['_hash']);
+            $this->assertEquals($expected_result, $acls);
+        }
+    }
+
+    // test owner read/owner write 1 field
+    public function testOwnerReadOwnerWriteOneField()
+    {
+        $modules = ['Accounts'];
+        // user can view, list, delete, and export
+        $expected_result = [
+            'fields' => [
+                //BEGIN SUGARCRM flav=ent ONLY
+                'business_center_name' => [
+                    'write' => 'no',
+                    'create' => 'no',
+                    'license' => 'no',
+                ],
+                'business_center_id' => [
+                    'write' => 'no',
+                    'create' => 'no',
+                    'license' => 'no',
+                ],
+                'next_renewal_date' => [
+                    'write' => 'no',
+                    'create' => 'no',
+                    'license' => 'no',
+                ],
+                //END SUGARCRM flav=ent ONLY
+            ],
+            'admin' => 'no',
+            'developer' => 'no',
+        ];
+
+        $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, [
+            'access', 'create', 'view', 'list', 'edit','delete','import', 'export', 'massupdate']);
+
+        SugarTestACLUtilities::createField($role->id, 'Accounts', 'website', 40);
+
+        SugarTestACLUtilities::setupUser($role);
+
+        $mm = MetaDataManager::getManager();
+        foreach ($modules as $module) {
             $acls = $mm->getAclForModule($module, $GLOBALS['current_user']);
             unset($acls['_hash']);
             $this->assertEquals($expected_result, $acls);

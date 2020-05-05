@@ -29,7 +29,7 @@ class PMSEDynaFormTest extends TestCase
     public function testGenerateDefaultDynaform()
     {
         $mockDynaform = $this->getMockBuilder('PMSEDynaForm')
-            ->setMethods(array('save', 'saveDynaform'))
+            ->setMethods(['save', 'saveDynaform'])
             ->getMock();
         //todo: improve the mockobject BpmDynaForm
         $mockDynaform->dyn_id = 23;
@@ -40,7 +40,7 @@ class PMSEDynaFormTest extends TestCase
         $mockDynaform->dyn_name = 'Opportunity Dynaform';
         $mockDynaform->dyn_module = 'Opportunity';
         $mockDynaform->dyn_description = 'Form';
-        $mockDynaform->dyn_view_defs = array("EditView"=>array());
+        $mockDynaform->dyn_view_defs = ["EditView"=>[]];
         $mockDynaform->expects($this->exactly(1))
                 ->method('saveDynaform')
                 ->will($this->returnValue($mockDynaform));
@@ -57,9 +57,9 @@ class PMSEDynaFormTest extends TestCase
         //returning the same mockobject just to pass the test
         $generatedObject = $mockDynaform;
 
-        $mockDynaform->saveDynaform($sampleBaseModule,$this->adamDynaform );
+        $mockDynaform->saveDynaform($sampleBaseModule, $this->adamDynaform);
 
-        $this->assertObjectHasAttribute('dyn_id',  $generatedObject);
+        $this->assertObjectHasAttribute('dyn_id', $generatedObject);
         $this->assertObjectHasAttribute('dyn_uid', $generatedObject);
         $this->assertObjectHasAttribute('dyn_name', $generatedObject);
         $this->assertObjectHasAttribute('dyn_description', $generatedObject);
@@ -71,15 +71,15 @@ class PMSEDynaFormTest extends TestCase
         $this->assertObjectHasAttribute("BpmView", $expectedView);
 
         $this->assertEquals($this->adamDynaform->getBaseModule(), $sampleBaseModule);
-        $this->assertEquals($generatedObject->pro_id,  $keys['pro_id']);
-        $this->assertEquals($generatedObject->prj_id,  $keys['prj_id']);
+        $this->assertEquals($generatedObject->pro_id, $keys['pro_id']);
+        $this->assertEquals($generatedObject->prj_id, $keys['prj_id']);
         $this->assertInstanceOf('PMSEDynaForm', $generatedObject);
     }
 
     public function testSaveDynaform()
     {
         $mockDynaform = $this->getMockBuilder('pmse_BpmnDynaform')
-            ->setMethods(array('save'))
+            ->setMethods(['save'])
             ->getMock();
         //todo: improve the mockobject BpmDynaForm
         $mockDynaform->dyn_id = 23;
@@ -90,7 +90,7 @@ class PMSEDynaFormTest extends TestCase
         $mockDynaform->dyn_name = 'Opportunity Dynaform';
         $mockDynaform->dyn_module = 'Opportunity';
         $mockDynaform->dyn_description = 'Form';
-        $mockDynaform->dyn_view_defs = array("EditView"=>array());
+        $mockDynaform->dyn_view_defs = ["EditView"=>[]];
 
         $mockDynaform->expects($this->exactly(1))
             ->method('save')
@@ -109,7 +109,7 @@ class PMSEDynaFormTest extends TestCase
 
         $mockDynaform->save();
 
-        $this->assertObjectHasAttribute('dyn_id',  $generatedObject);
+        $this->assertObjectHasAttribute('dyn_id', $generatedObject);
         $this->assertObjectHasAttribute('dyn_uid', $generatedObject);
         $this->assertObjectHasAttribute('dyn_name', $generatedObject);
         $this->assertObjectHasAttribute('dyn_description', $generatedObject);
@@ -119,8 +119,8 @@ class PMSEDynaFormTest extends TestCase
         $this->assertObjectHasAttribute('dyn_view_defs', $generatedObject);
 
 //        $this->assertEquals($this->adamDynaform->getBaseModule(), $sampleBaseModule);
-        $this->assertEquals($generatedObject->pro_id,  $keys['pro_id']);
-        $this->assertEquals($generatedObject->prj_id,  $keys['prj_id']);
+        $this->assertEquals($generatedObject->pro_id, $keys['pro_id']);
+        $this->assertEquals($generatedObject->prj_id, $keys['prj_id']);
         $this->assertInstanceOf('pmse_BpmnDynaform', $generatedObject);
     }
 }

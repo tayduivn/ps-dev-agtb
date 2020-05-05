@@ -25,7 +25,7 @@ class SaveTest extends TestCase
     public static function setUpBeforeClass() : void
     {
         parent::setUpBeforeClass();
-        SugarTestHelper::setUp('current_user', array(true, 1));
+        SugarTestHelper::setUp('current_user', [true, 1]);
     }
 
     public static function tearDownAfterClass(): void
@@ -60,7 +60,7 @@ class SaveTest extends TestCase
         $_REQUEST['display_tabs_def'] = 'display_tabs[]=Leads';  //Save only included Leads
         include 'modules/Users/Save.php';
         //Home was prepended
-        $this->assertEquals(array('Home' => 'Home', 'Leads' => 'Leads'), $this->tabs->get_user_tabs($focus));
+        $this->assertEquals(['Home' => 'Home', 'Leads' => 'Leads'], $this->tabs->get_user_tabs($focus));
     }
 
     public function testSaveOfOutboundEmailSystemOverrideConfiguration()
@@ -363,7 +363,7 @@ class SaveTest extends TestCase
      */
     public function testSetLicenseType(array $licenseType, bool $isAdmin, array $expected)
     {
-        $current_user = SugarTestHelper::setUp('current_user', array(true, $isAdmin));
+        $current_user = SugarTestHelper::setUp('current_user', [true, $isAdmin]);
 
         $_POST['record'] = $current_user->id;
         $_POST['LicenseTypes'] = $licenseType;

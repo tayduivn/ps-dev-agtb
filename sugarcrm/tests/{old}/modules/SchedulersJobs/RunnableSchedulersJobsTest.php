@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 class RunnableSchedulersJobsTest extends TestCase
 {
-    public $jobs = array();
+    public $jobs = [];
 
     protected function setUp() : void
     {
@@ -23,13 +23,13 @@ class RunnableSchedulersJobsTest extends TestCase
 
     protected function tearDown() : void
     {
-        if(!empty($this->jobs)) {
+        if (!empty($this->jobs)) {
             $jobs = implode("','", $this->jobs);
             $this->db->query("DELETE FROM job_queue WHERE id IN ('$jobs')");
         }
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         $ids = SugarTestAccountUtilities::getCreatedAccountIds();
-        if(!empty($ids)) {
+        if (!empty($ids)) {
             SugarTestAccountUtilities::removeAllCreatedAccounts();
         }
     }
@@ -38,7 +38,7 @@ class RunnableSchedulersJobsTest extends TestCase
     {
         $job = new SchedulersJob();
         $job->status = SchedulersJob::JOB_STATUS_QUEUED;
-        foreach($data as $key => $val) {
+        foreach ($data as $key => $val) {
             $job->$key = $val;
         }
         $job->execute_time = empty($job->execute_time) ? TimeDate::getInstance()->getNow()->asDb() : $job->execute_time;
@@ -53,8 +53,8 @@ class RunnableSchedulersJobsTest extends TestCase
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
 
-        $job = $this->createJob(array("name" => "Test Func", "status" => SchedulersJob::JOB_STATUS_RUNNING,
-            "target" => "class::TestRunnableJob", "assigned_user_id" => $GLOBALS['current_user']->id));
+        $job = $this->createJob(["name" => "Test Func", "status" => SchedulersJob::JOB_STATUS_RUNNING,
+            "target" => "class::TestRunnableJob", "assigned_user_id" => $GLOBALS['current_user']->id]);
         $job->runJob();
         $job->retrieve($job->id);
 
@@ -65,9 +65,9 @@ class RunnableSchedulersJobsTest extends TestCase
         $this->assertEquals($GLOBALS['current_user']->id, $job->user->id, "Wrong user");
 
         // function with args
-        $job = $this->createJob(array("name" => "Test Func 2", "status" => SchedulersJob::JOB_STATUS_RUNNING,
+        $job = $this->createJob(["name" => "Test Func 2", "status" => SchedulersJob::JOB_STATUS_RUNNING,
                     "target" => "class::TestRunnableJob",
-                    "data" => "function data", "assigned_user_id" => $GLOBALS['current_user']->id));
+                    "data" => "function data", "assigned_user_id" => $GLOBALS['current_user']->id]);
         $job->runJob();
         $job->retrieve($job->id);
         $this->assertTrue($job->runnable_ran);

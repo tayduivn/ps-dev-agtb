@@ -12,7 +12,8 @@
  */
 
 
-class RestBug54528Test extends RestTestPortalBase {
+class RestBug54528Test extends RestTestPortalBase
+{
     protected function setUp() : void
     {
         parent::setUp();
@@ -50,7 +51,7 @@ class RestBug54528Test extends RestTestPortalBase {
     
     protected function tearDown() : void
     {
-        if ( isset($this->bug_id) ) {
+        if (isset($this->bug_id)) {
             $GLOBALS['db']->query("DELETE FROM bugs WHERE id = '{$this->bug_id}'");
             if ($GLOBALS['db']->tableExists('bugs_cstm')) {
                 $GLOBALS['db']->query("DELETE FROM bugs_cstm WHERE id_c = '{$this->bug_id}'");
@@ -61,39 +62,37 @@ class RestBug54528Test extends RestTestPortalBase {
             if ($GLOBALS['db']->tableExists('cases_cstm')) {
                 $GLOBALS['db']->query("DELETE FROM cases_cstm WHERE id_c = '{$this->case_id}'");
             }
-        } 
-        if(isset($this->account->id))
-        {
+        }
+        if (isset($this->account->id)) {
             $GLOBALS['db']->query("DELETE FROM accounts WHERE id = '{$this->account->id}'");
             if ($GLOBALS['db']->tableExists('accounts_cstm')) {
                 $GLOBALS['db']->query("DELETE FROM accounts_cstm WHERE id_c = '{$this->account->id}'");
             }
-        } 
-        if(isset($this->contact->id))
-        {
+        }
+        if (isset($this->contact->id)) {
             $GLOBALS['db']->query("DELETE FROM contacts WHERE id = '{$this->contact->id}'");
             if ($GLOBALS['db']->tableExists('contacts_cstm')) {
                 $GLOBALS['db']->query("DELETE FROM contacts_cstm WHERE id_c = '{$this->contact->id}'");
             }
-        } 
+        }
         parent::tearDown();
-        
     }
 
     /**
      * @group rest
      */
-    public function testCreate() {
+    public function testCreate()
+    {
         // we need to be an admin to get at the relationship data
         $GLOBALS['current_user']->is_admin = 1;
-        $args = array(
+        $args = [
             'grant_type' => 'password',
             'username' => $this->contact->portal_name,
             'password' => 'unittest',
             'client_id' => 'support_portal',
             'client_secret' => '',
             'platform' => 'portal',
-        );
+        ];
         // reload user
 
         // Prevents _restCall from automatically logging in
@@ -103,17 +102,21 @@ class RestBug54528Test extends RestTestPortalBase {
         // flip to the portal auth
         $this->authToken = $reply['reply']['access_token'];
         // create case
-        $restReply = $this->_restCall("Cases/",
-            json_encode(array('name' => 'UNIT TEST Case')),
-            'POST');
+        $restReply = $this->_restCall(
+            "Cases/",
+            json_encode(['name' => 'UNIT TEST Case']),
+            'POST'
+        );
 
-        $this->assertTrue(isset($restReply['reply']['id']),
-                          "A case was not created (or if it was, the ID was not returned)");
+        $this->assertTrue(
+            isset($restReply['reply']['id']),
+            "A case was not created (or if it was, the ID was not returned)"
+        );
 
         $this->case_id = $restReply['reply']['id'];
 
         // load case to check teamset and user id match
-        $case = BeanFactory::getBean('Cases',$this->case_id);
+        $case = BeanFactory::getBean('Cases', $this->case_id);
 
         $this->assertEquals($this->_user->default_team, $case->team_id, "Team ID doesn't match");
         $this->assertEquals($this->_user->default_team, $case->team_set_id, "Team Set ID doesn't match");
@@ -125,24 +128,27 @@ class RestBug54528Test extends RestTestPortalBase {
 
         $restReply = null;
 
-        $restReply = $this->_restCall("Bugs/",
-                                      json_encode(array('name'=>'UNIT TEST Bug')),
-                                      'POST');
+        $restReply = $this->_restCall(
+            "Bugs/",
+            json_encode(['name'=>'UNIT TEST Bug']),
+            'POST'
+        );
 
-        $this->assertTrue(isset($restReply['reply']['id']),
-                          "A bug was not created (or if it was, the ID was not returned)");
+        $this->assertTrue(
+            isset($restReply['reply']['id']),
+            "A bug was not created (or if it was, the ID was not returned)"
+        );
 
         $this->bug_id = $restReply['reply']['id'];
 
         $bug = BeanFactory::getBean('Bugs', $this->bug_id);
 
         $this->assertEquals($this->_user->default_team, $bug->team_id, "Team ID doesn't match");
-        $this->assertEquals($this->_user->team_set_id, $bug->team_set_id, "Team Set ID doesn't match");        
+        $this->assertEquals($this->_user->team_set_id, $bug->team_set_id, "Team Set ID doesn't match");
 
 //        $this->assertEquals($this->contact->team_id, $bug->team_id, "Team ID doesn't match");
 //        $this->assertEquals($this->contact->team_set_id, $bug->team_set_id, "Team Set ID doesn't match");
 
         $this->assertEquals($this->contact->assigned_user_id, $bug->assigned_user_id, "Assigned user id doesn't.");
-        
     }
 }

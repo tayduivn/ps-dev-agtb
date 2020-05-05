@@ -25,38 +25,38 @@ class BugPAT416Test extends TestCase
 
     protected function setUp() : void
     {
-        $this->dummy_defs = array(
-            'account_name' => array(
+        $this->dummy_defs = [
+            'account_name' => [
                 'id_name' => 'account_id',
                 'type' => 'relate',
-             ),
-             'account_id' => array(
+             ],
+             'account_id' => [
                 'id_name' => 'account_id',
                 'type' => 'relate',
-             ),
-             'test_field' => array(
+             ],
+             'test_field' => [
                 'id_name' => 'test_field',
                 'type' => 'varchar',
-             ),
-        );
+             ],
+        ];
     }
 
     public function importColumnsProvider()
     {
-        $set1 = array("account_id", "account_name");
-        $exp1 = array(0, 1);
+        $set1 = ["account_id", "account_name"];
+        $exp1 = [0, 1];
 
-        $set2 = array("account_name", "account_id");
-        $exp2 = array(1, 0);
+        $set2 = ["account_name", "account_id"];
+        $exp2 = [1, 0];
 
-        $set3 = array("account_name", "test_field", "account_id");
-        $exp3 = array(2, 0, 1);
+        $set3 = ["account_name", "test_field", "account_id"];
+        $exp3 = [2, 0, 1];
 
-        return array(
-            array($set1, $exp1),
-            array($set2, $exp2),
-            array($set3, $exp3),
-        );
+        return [
+            [$set1, $exp1],
+            [$set2, $exp2],
+            [$set3, $exp3],
+        ];
     }
 
     /**

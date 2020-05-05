@@ -43,7 +43,7 @@ class GlobalSearchTest extends TestCase
      */
     public function testGetStudioSupportedTypes()
     {
-        $supported = array(
+        $supported = [
             'varchar',
             'name',
             'text',
@@ -54,7 +54,7 @@ class GlobalSearchTest extends TestCase
             'htmleditable_tinymce',
             'email',
             'commentlog',
-        );
+        ];
         $sut = new GlobalSearch();
         $this->assertEquals($supported, $sut->getStudioSupportedTypes());
     }
@@ -66,10 +66,10 @@ class GlobalSearchTest extends TestCase
     public function testIsValidTypeField($type, $fromQueue, $isSupported, $isSkipped, $expected)
     {
         $globalSearch = $this->getGlobalSearchMock(
-            array(
+            [
                 'isSupportedType',
-                'isSkippedType'
-            )
+                'isSkippedType',
+            ]
         );
 
         $globalSearch->expects($this->any())
@@ -86,36 +86,36 @@ class GlobalSearchTest extends TestCase
 
     public function providerTestIsValidTypeField()
     {
-        return array(
-            array(
+        return [
+            [
                 'string',
                 false,
                 true,
                 false,
-                true
-            ),
-            array(
+                true,
+            ],
+            [
                 'datetimecombo',
                 false,
                 false,
                 false,
-                false
-            ),
-            array(
+                false,
+            ],
+            [
                 'string',
                 true,
                 false,
                 false,
-                false
-            ),
-            array(
+                false,
+            ],
+            [
                 'email',
                 true,
                 true,
                 true,
-                false
-            ),
-        );
+                false,
+            ],
+        ];
     }
 
     /**

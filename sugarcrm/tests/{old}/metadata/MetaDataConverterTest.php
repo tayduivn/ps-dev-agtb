@@ -15,95 +15,95 @@ use PHPUnit\Framework\TestCase;
 
 class MetaDataConverterTest extends TestCase
 {
-    protected $defs = array(
-        'detail' => array(
-            'templateMeta' => array(
+    protected $defs = [
+        'detail' => [
+            'templateMeta' => [
                 'maxColumns' => '1',
-                'widths' => array(
-                    array('label' => '10', 'field' => '30'),
-                ),
-            ),
-            'panels' => array(
-                array(
+                'widths' => [
+                    ['label' => '10', 'field' => '30'],
+                ],
+            ],
+            'panels' => [
+                [
                     'label' => 'LBL_PANEL_DEFAULT',
-                    'fields' => array(
+                    'fields' => [
                         'bug_number',
-                        array(
+                        [
                             'name'=>'name',
-                            'displayParams'=>array(
+                            'displayParams'=>[
                                 'required'=>true,
                                 'wireless_edit_only'=>true,
-                            ),
-                        ),
-                    ),
-                ),
-            ),
-        ),
-        'edit' => array(
-            'templateMeta' => array(
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ],
+        'edit' => [
+            'templateMeta' => [
                 'maxColumns' => '1',
-                'widths' => array(
-                    array('label' => '10', 'field' => '30'),
-                ),
-            ),
-            'panels' => array(
-                array(
+                'widths' => [
+                    ['label' => '10', 'field' => '30'],
+                ],
+            ],
+            'panels' => [
+                [
                     'label' => 'LBL_PANEL_DEFAULT',
-                    'fields' => array(
-                        array(
+                    'fields' => [
+                        [
                             'name'=>'name',
-                            'displayParams'=>array(
+                            'displayParams'=>[
                                 'required'=>true,
                                 'wireless_edit_only'=>true,
-                            ),
-                        ),
+                            ],
+                        ],
                         'phone_office',
-                        array(
+                        [
                             'name'=>'website',
-                            'displayParams'=>array(
+                            'displayParams'=>[
                                 'type'=>'link',
-                            ),
-                        ),
+                            ],
+                        ],
                         'email',
-                    ),
-                ),
-            ),
-        ),
-        'list' => array(
-            'panels' => array(
-                array(
+                    ],
+                ],
+            ],
+        ],
+        'list' => [
+            'panels' => [
+                [
                     'label' => 'LBL_PANEL_DEFAULT',
-                    'fields' => array(
-                        array(
+                    'fields' => [
+                        [
                             'name' => 'name',
                             'label' => 'LBL_NAME',
                             'default' => true,
                             'enabled' => true,
                             'link' => true,
                             'width' => '10%',
-                        ),
-                        array(
+                        ],
+                        [
                             'name' => 'bug_number',
                             'enabled' => true,
                             'width' => '10%',
                             'default' => true,
-                        ),
-                    ),
-                ),
-            ),
-        ),
-        'search' => array(
-            'templateMeta' => array(
+                        ],
+                    ],
+                ],
+            ],
+        ],
+        'search' => [
+            'templateMeta' => [
                 'maxColumns' => '1',
-                'widths' => array('label' => '10', 'field' => '30'),
-            ),
-            'layout' => array(
-                'basic_search' => array(
+                'widths' => ['label' => '10', 'field' => '30'],
+            ],
+            'layout' => [
+                'basic_search' => [
                     'name',
-                ),
-            ),
-        ),
-    );
+                ],
+            ],
+        ],
+    ];
 
     /**
      * @inheritdoc
@@ -123,24 +123,28 @@ class MetaDataConverterTest extends TestCase
         SugarTestHelper::tearDown();
     }
 
-    public function testConvertWirelessListToLegacy() {
+    public function testConvertWirelessListToLegacy()
+    {
         $converted = MetaDataConverter::toLegacy('list', $this->defs['list']);
         $this->assertArrayHasKey('BUG_NUMBER', $converted, 'BUG_NUMBER missing from the conversion');
         $this->assertArrayHasKey('NAME', $converted, 'NAME missing from the conversion');
     }
     
-    public function testConvertWirelessDetailToLegacy() {
+    public function testConvertWirelessDetailToLegacy()
+    {
         $converted = MetaDataConverter::toLegacy('detail', $this->defs['detail']);
         $this->assertNotEmpty($converted['panels'][0][0], 'First string field name is missing');
         $this->assertEquals('bug_number', $converted['panels'][0][0], 'First field name is not as expected');
     }
     
-    public function testNoConversionForNonConvertableViewType() {
+    public function testNoConversionForNonConvertableViewType()
+    {
         $converted = MetaDataConverter::toLegacy('search', $this->defs['search']);
         $this->assertEquals($converted, $this->defs['search'], 'Viewdefs converted unexpectedly');
     }
     
-    public function testConvertFieldsets() {
+    public function testConvertFieldsets()
+    {
         $file = 'tests/{old}/metadata/supportfiles/Callsmobileedit.php';
         require $file;
         
@@ -159,13 +163,13 @@ class MetaDataConverterTest extends TestCase
      */
     public function testConvertSubpanels()
     {
-        static $fieldMap = array(
+        static $fieldMap = [
             'name' => true,
             'label' => true,
             'type' => true,
             'target_module' => true,
             'target_record_key' => true,
-        );
+        ];
         $converter = new MetaDataConverter();
         $bean = BeanFactory::newBean('Users');
 
@@ -201,57 +205,57 @@ class MetaDataConverterTest extends TestCase
 
         // Create Input field map includes different test link to see if these links are
         // converted properly which has correct label, route and acl_action
-        $testlink = array();
-        $testlink['google'] = array('linkinfo' => array('Google' => 'https://www.google.com/'),
-            'submenu' => ''
-        );
-        $testlink['contact'] = array('linkinfo' => array('LBL_CONTACTS' => '#Contacts'),
-            'submenu' => ''
-        );
-        $testlink['report'] = array('linkinfo' => array('LBL_REPORTS' => 'index.php?module=Reports&action=index'),
-            'submenu' => ''
-        );
-        $testlink['administration'] = array('linkinfo' => array('LBL_ADMIN' => 'index.php?module=Administration&action=index'),
-            'submenu' => ''
-        );
-        $testlink['support'] = array(
-            'linkinfo' => array('LBL_TRAINING' => 'javascript:void(window.open(\'http://support.sugarcrm.com\'))'),
-            'submenu' => ''
-        );
-        $testlink['task'] = array('linkinfo' => array('LBL_TASKS' => '#Tasks'),
-            'submenu' => array(
-                'case' => array('LBL_CASES' => '#Cases'),
-                'note' => array('LBL_NOTES' => '#Notes'),
-                'bug'  => array('LBL_BUGS' => '#Bugs'),
-                'support' => array('LBL_TRAINING' => 'javascript:void(window.open(\'http://support.sugarcrm.com\'))'),
-            )
-        );
+        $testlink = [];
+        $testlink['google'] = ['linkinfo' => ['Google' => 'https://www.google.com/'],
+            'submenu' => '',
+        ];
+        $testlink['contact'] = ['linkinfo' => ['LBL_CONTACTS' => '#Contacts'],
+            'submenu' => '',
+        ];
+        $testlink['report'] = ['linkinfo' => ['LBL_REPORTS' => 'index.php?module=Reports&action=index'],
+            'submenu' => '',
+        ];
+        $testlink['administration'] = ['linkinfo' => ['LBL_ADMIN' => 'index.php?module=Administration&action=index'],
+            'submenu' => '',
+        ];
+        $testlink['support'] = [
+            'linkinfo' => ['LBL_TRAINING' => 'javascript:void(window.open(\'http://support.sugarcrm.com\'))'],
+            'submenu' => '',
+        ];
+        $testlink['task'] = ['linkinfo' => ['LBL_TASKS' => '#Tasks'],
+            'submenu' => [
+                'case' => ['LBL_CASES' => '#Cases'],
+                'note' => ['LBL_NOTES' => '#Notes'],
+                'bug'  => ['LBL_BUGS' => '#Bugs'],
+                'support' => ['LBL_TRAINING' => 'javascript:void(window.open(\'http://support.sugarcrm.com\'))'],
+            ],
+        ];
         // Transform globalcontrollink format into regular associate array format
         $inputTestLinks = $converter->processFromGlobalControlLinkFormat($testlink);
 
         // Expected output field map
-        $expectedOutput = array(
-            'Google' => array( 'label' => 'Google', 'route' => 'https://www.google.com/', 'acl_action' => ''),
-            'LBL_CONTACTS' => array( 'label' => 'LBL_CONTACTS', 'route' => '#Contacts', 'acl_action' => ''),
-            'LBL_TRAINING' => array( 'label' => 'LBL_TRAINING', 'route' => 'http://support.sugarcrm.com', 'acl_action' => '', 'openwindow' => true),
-            'LBL_TASKS' => array( 'label' => 'LBL_TASKS', 'route' => '#Tasks', 'acl_action' => '',
-                'submenu' => array(
-                    array( 'label' => 'LBL_CASES', 'route' => '#Cases', 'acl_action' => ''),
-                    array( 'label' => 'LBL_NOTES', 'route' => '#Notes', 'acl_action' => ''),
-                    array( 'label' => 'LBL_BUGS', 'route' => '#Bugs', 'acl_action' => ''),
-                    array( 'label' => 'LBL_TRAINING', 'route' => 'http://support.sugarcrm.com', 'acl_action' => '', 'openwindow' => true),
-                )
-            ),
-            'LBL_REPORTS' => array( 'label' => 'LBL_REPORTS', 'route' => '#Reports', 'acl_action' => 'list'),
-            'LBL_ADMIN' => array( 'label' => 'LBL_ADMIN', 'route' => '#bwc/index.php?module=Administration&action=index', 'acl_action' => 'admin'),
-        );
+        $expectedOutput = [
+            'Google' => [ 'label' => 'Google', 'route' => 'https://www.google.com/', 'acl_action' => ''],
+            'LBL_CONTACTS' => [ 'label' => 'LBL_CONTACTS', 'route' => '#Contacts', 'acl_action' => ''],
+            'LBL_TRAINING' => [ 'label' => 'LBL_TRAINING', 'route' => 'http://support.sugarcrm.com', 'acl_action' => '', 'openwindow' => true],
+            'LBL_TASKS' => [ 'label' => 'LBL_TASKS', 'route' => '#Tasks', 'acl_action' => '',
+                'submenu' => [
+                    [ 'label' => 'LBL_CASES', 'route' => '#Cases', 'acl_action' => ''],
+                    [ 'label' => 'LBL_NOTES', 'route' => '#Notes', 'acl_action' => ''],
+                    [ 'label' => 'LBL_BUGS', 'route' => '#Bugs', 'acl_action' => ''],
+                    [ 'label' => 'LBL_TRAINING', 'route' => 'http://support.sugarcrm.com', 'acl_action' => '', 'openwindow' => true],
+                ],
+            ],
+            'LBL_REPORTS' => [ 'label' => 'LBL_REPORTS', 'route' => '#Reports', 'acl_action' => 'list'],
+            'LBL_ADMIN' => [ 'label' => 'LBL_ADMIN', 'route' => '#bwc/index.php?module=Administration&action=index', 'acl_action' => 'admin'],
+        ];
 
         // Test if custom links are converted correctly by comparing with expectedOutput
-        foreach($inputTestLinks as $item){
+        foreach ($inputTestLinks as $item) {
             $convertedItem = $converter->convertCustomMenu($item);
-            if(!empty($item['SUBMENU'])){
-                $convertedSubmenu = array();
-                foreach($item['SUBMENU'] as $submenu){
+            if (!empty($item['SUBMENU'])) {
+                $convertedSubmenu = [];
+                foreach ($item['SUBMENU'] as $submenu) {
                     $convertedSubmenu[] = $converter->convertCustomMenu($submenu);
                 }
                 $convertedItem['submenu'] = $convertedSubmenu;
@@ -262,12 +266,12 @@ class MetaDataConverterTest extends TestCase
 
     public function testEmptyConvertProfileactions()
     {
-        $testlink = array(
-            'attachment' => array(
-                'linkinfo' => array('ATTACHMENTS' => 'client/base/views/attachments/attachments.php'),
-            'submenu' => ''
-            )
-        );
+        $testlink = [
+            'attachment' => [
+                'linkinfo' => ['ATTACHMENTS' => 'client/base/views/attachments/attachments.php'],
+            'submenu' => '',
+            ],
+        ];
         $converter = new MetaDataConverter();
         $result = $converter->processFromGlobalControlLinkFormat($testlink);
         $this->assertCount(1, $result);
@@ -288,12 +292,12 @@ class MetaDataConverterTest extends TestCase
     {
         $mock = $this->createPartialMock(
             'MetaDataConverter',
-            array('loadSearchFields')
+            ['loadSearchFields']
         );
         $mock->expects($this->any())
             ->method('loadSearchFields')
             ->will($this->returnValue($viewdef));
-        $defs = array();
+        $defs = [];
         $defs['layout']['basic_search'] = $viewdef;
         $fields = $mock->convertLegacyViewDefsToSidecar($defs, "", $vardef, "", "", "");
         $this->assertEquals($result, $fields['fields']);
@@ -306,61 +310,61 @@ class MetaDataConverterTest extends TestCase
      */
     public function provider_convertLegacyViewDefsToSidecar()
     {
-        return array(
-            array(
-                array(
-                    'name' => array(
+        return [
+            [
+                [
+                    'name' => [
                         'query_type' => 'default',
-                        'label' => 'LBL_NAME'
-                    ),
-                    'account_name' => array(
+                        'label' => 'LBL_NAME',
+                    ],
+                    'account_name' => [
                         'query_type' => 'default',
                         'label' => 'LBL_ACC',
-                        'db_field' => array(
+                        'db_field' => [
                             'accounts.name',
-                        ),
-                    ),
-                    'wrong_field' => array(
+                        ],
+                    ],
+                    'wrong_field' => [
                         'label' => 'LBL_FLD',
-                        'db_field' => array()
-                    ),
-                    'another_field' => array(
+                        'db_field' => [],
+                    ],
+                    'another_field' => [
                         'label' => 'LBL_FLD2',
-                        'db_field' => array('name'),
+                        'db_field' => ['name'],
                         'type' => 'bool',
-                    ),
-                ),
-                array(
-                    'name' => array(
+                    ],
+                ],
+                [
+                    'name' => [
                         'name' => 'name',
                         'type' => 'varchar',
-                    ),
-                    'account_name' => array(
+                    ],
+                    'account_name' => [
                         'name' => 'account_name',
                         'type' => 'relate',
-                    ),
-                ),
-                array(
-                    'name' => array(),
-                    'account_name' => array(
-                        'dbFields' => array(),
-                        'vname' => 'LBL_ACC'
-                    ),
-                    'another_field' => array(
-                        'dbFields' => array('name'),
+                    ],
+                ],
+                [
+                    'name' => [],
+                    'account_name' => [
+                        'dbFields' => [],
+                        'vname' => 'LBL_ACC',
+                    ],
+                    'another_field' => [
+                        'dbFields' => ['name'],
                         'vname' => 'LBL_FLD2',
                         'type' => 'bool',
-                    ),
-                    '$owner' => array(
+                    ],
+                    '$owner' => [
                         'predefined_filter' => 1,
                         'vname' => 'LBL_CURRENT_USER_FILTER',
-                    ),
-                    '$favorite' => array(
+                    ],
+                    '$favorite' => [
                         'predefined_filter' => 1,
                         'vname' => 'LBL_FAVORITES_FILTER',
-                    )
-                ),
-            ),
-        );
+                    ],
+                ],
+            ],
+        ];
     }
 }

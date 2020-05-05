@@ -14,24 +14,23 @@ use PHPUnit\Framework\TestCase;
 
 class GetLinkedBeansTest extends TestCase
 {
-    protected $createdBeans = array();
+    protected $createdBeans = [];
 
     protected function setUp() : void
-	{
+    {
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
-	}
+    }
 
     protected function tearDown() : void
-	{
-	    foreach($this->createdBeans as $bean)
-        {
+    {
+        foreach ($this->createdBeans as $bean) {
             $bean->retrieve($bean->id);
             $bean->mark_deleted($bean->id);
         }
         SugarTestHelper::tearDown();
-	}
+    }
 
     public function testGetLinkedBeans()
     {
@@ -52,13 +51,13 @@ class GetLinkedBeansTest extends TestCase
         $account->cases->add($case);
         $account->save();
 
-        $where = array(
+        $where = [
                  'lhs_field' => 'id',
                  'operator' => ' LIKE ',
                  'rhs_value' => "{$case->id}",
-        );
+        ];
 
-        $cases = $account->get_linked_beans('cases', 'Case', array(), 0, 10, 0, $where);
+        $cases = $account->get_linked_beans('cases', 'Case', [], 0, 10, 0, $where);
         $this->assertEquals(1, count($cases), 'Assert that we have found the test case linked to the test account');
 
         $contact  = BeanFactory::newBean("Contacts");
@@ -72,13 +71,13 @@ class GetLinkedBeansTest extends TestCase
         $this->assertTrue($account->contacts->loadedSuccesfully());
         $account->contacts->add($contact);
 
-        $where = array(
+        $where = [
                  'lhs_field' => 'id',
                  'operator' => ' LIKE ',
                  'rhs_value' => "{$contact->id}",
-        );
+        ];
 
-        $contacts = $account->get_linked_beans('contacts', 'Contact', array(), 0, -1, 0, $where);
+        $contacts = $account->get_linked_beans('contacts', 'Contact', [], 0, -1, 0, $where);
         $this->assertEquals(1, count($contacts), 'Assert that we have found the test contact linked to the test account');
     }
 }

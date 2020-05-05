@@ -12,13 +12,10 @@
 
 use PHPUnit\Framework\TestCase;
 
-if (file_exists("custom/include/SugarSmarty/plugins/function.sugar_currency_format.php"))
-{
-	require_once("custom/include/SugarSmarty/plugins/function.sugar_currency_format.php");
-}
-else
-{
-	require_once("include/SugarSmarty/plugins/function.sugar_currency_format.php");
+if (file_exists("custom/include/SugarSmarty/plugins/function.sugar_currency_format.php")) {
+    require_once "custom/include/SugarSmarty/plugins/function.sugar_currency_format.php";
+} else {
+    require_once "include/SugarSmarty/plugins/function.sugar_currency_format.php";
 }
 
 class Bug47406Test extends TestCase
@@ -42,12 +39,12 @@ class Bug47406Test extends TestCase
 
     public function providerMBVardefAddFieldVardef()
     {
-        return array(
-            array(array('name' => 'field_name', 'default' => 0), 0),
-            array(array('name' => 'field_name', 'default' => '0'), '0'),
-            array(array('name' => 'field_name', 'default' => '0.00'), '0.00'),
-            array(array('name' => 'field_name', 'default' => ' '), ' '),
-        );
+        return [
+            [['name' => 'field_name', 'default' => 0], 0],
+            [['name' => 'field_name', 'default' => '0'], '0'],
+            [['name' => 'field_name', 'default' => '0.00'], '0.00'],
+            [['name' => 'field_name', 'default' => ' '], ' '],
+        ];
     }
 
     /**
@@ -58,13 +55,13 @@ class Bug47406Test extends TestCase
         unset($this->mbvardef);
 
         $this->mbvardef = $this->getMockBuilder('MBVardefs')
-            ->disableOriginalConstructor(array('load'))
-            ->setMethods(array('load'))
-            ->setConstructorArgs(array('name', 'path', 'key'))
+            ->disableOriginalConstructor(['load'])
+            ->setMethods(['load'])
+            ->setConstructorArgs(['name', 'path', 'key'])
             ->getMock();
 
         $this->mbvardef->addFieldVardef($vardef);
 
-        $this->assertEquals( $expected, $this->mbvardef->vardef['fields'][$vardef['name']]['default']);
+        $this->assertEquals($expected, $this->mbvardef->vardef['fields'][$vardef['name']]['default']);
     }
 }

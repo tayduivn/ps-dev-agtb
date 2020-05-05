@@ -74,9 +74,9 @@ class SugarFieldTagTest extends TestCase
         // call api format for tags field
         $tags = new SugarFieldTag('tag');
 
-        $data = array();
+        $data = [];
 
-        $tags->apiFormatField($data, $this->contact, array(), $relName, array('link' => $relName));
+        $tags->apiFormatField($data, $this->contact, [], $relName, ['link' => $relName]);
 
         // expect tags data
         $this->assertArrayHasKey($relName, $data);
@@ -105,17 +105,17 @@ class SugarFieldTagTest extends TestCase
         // create new Name Tag
         $newTagName = SugarTestTagUtilities::createNewTagName();
 
-        $params['tag'] = array(
+        $params['tag'] = [
             // add new tag which exists in system
-            array(
+            [
                 'id' => $this->tag2->id,
                 'name' => $this->tag2->name,
-            ),
+            ],
             // add new tag which does not exist in system
             $newTagName,
-        );
+        ];
 
-        $tags->apiSave($this->contact, $params, 'tag', array('link' => $relName));
+        $tags->apiSave($this->contact, $params, 'tag', ['link' => $relName]);
 
         // refresh contact bean
         BeanFactory::unregisterBean($this->contact);
@@ -141,36 +141,36 @@ class SugarFieldTagTest extends TestCase
     {
         $tags = new SugarFieldTag('Tag');
         list($addedTags, $removedTags) = $tags->getChangedValues($initial, $changed);
-        $this->assertEquals($expected, array($addedTags, $removedTags));
+        $this->assertEquals($expected, [$addedTags, $removedTags]);
     }
 
     public function getChangedValuesProvider()
     {
-        return array(
-            array(
-                array('apple' => 'Apple','pear' => 'Pear'),
-                array('orange' => 'ORANGE','grape' => 'GrApE'),
-                array(array('orange' => 'ORANGE' ,'grape' => 'GrApE'),array('apple' => 'Apple','pear' => 'Pear')),
-            ),
-            array(
-                array('apple' => 'Apple','pear' => 'Pear'),
-                array('apple' => 'Apple', 'orange' => 'ORANGE','grape' => 'GrApE'),
-                array(array('orange' => 'ORANGE' ,'grape' => 'GrApE'),array('pear' => 'Pear')),
-            ),
-        );
+        return [
+            [
+                ['apple' => 'Apple','pear' => 'Pear'],
+                ['orange' => 'ORANGE','grape' => 'GrApE'],
+                [['orange' => 'ORANGE' ,'grape' => 'GrApE'],['apple' => 'Apple','pear' => 'Pear']],
+            ],
+            [
+                ['apple' => 'Apple','pear' => 'Pear'],
+                ['apple' => 'Apple', 'orange' => 'ORANGE','grape' => 'GrApE'],
+                [['orange' => 'ORANGE' ,'grape' => 'GrApE'],['pear' => 'Pear']],
+            ],
+        ];
     }
 
     public function testGetOriginalTags()
     {
         $tags = new SugarFieldTag('Tag');
-        $currRelBeans = array(
+        $currRelBeans = [
             $this->tag1->id => $this->tag1,
             $this->tag2->id => $this->tag2,
-        );
-        $expected = array(
+        ];
+        $expected = [
             strtolower($this->tag1->name) => $this->tag1->name,
             strtolower($this->tag2->name) => $this->tag2->name,
-        );
+        ];
         $originalTags = $tags->getOriginalTags($currRelBeans);
         $this->assertEquals($expected, $originalTags);
     }

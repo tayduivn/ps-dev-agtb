@@ -217,7 +217,7 @@ class AccessControlManagerTest extends TestCase
                 [
                     'activity-timeline' => ['SUGAR_SERVE'],
                     'commentlog-dashlet' => ['SUGAR_SERVE'],
-                    'dashablerecord' => ['SUGAR_SERVE']
+                    'dashablerecord' => ['SUGAR_SERVE'],
                 ],
                 'activity-timeline',
                 ['SUGAR_SERVE'],
@@ -228,7 +228,7 @@ class AccessControlManagerTest extends TestCase
                 [
                     'activity-timeline' => ['SUGAR_SERVE'],
                     'commentlog-dashlet' => ['SUGAR_SERVE'],
-                    'dashablerecord' => ['SUGAR_SERVE']
+                    'dashablerecord' => ['SUGAR_SERVE'],
                 ],
                 'activity-timeline',
                 [],
@@ -239,7 +239,7 @@ class AccessControlManagerTest extends TestCase
                 [
                     'activity-timeline' => ['SUGAR_SERVE'],
                     'commentlog-dashlet' => ['SUGAR_SERVE'],
-                    'dashablerecord' => ['SUGAR_SERVE']
+                    'dashablerecord' => ['SUGAR_SERVE'],
                 ],
                 'commentlog-dashlet',
                 ['NOT_SERVICE_CLOUD', 'SUGAR_SERVE'],
@@ -250,7 +250,7 @@ class AccessControlManagerTest extends TestCase
                 [
                     'activity-timeline' => ['SUGAR_SERVE'],
                     'commentlog-dashlet' => ['SUGAR_SERVE'],
-                    'dashablerecord' => ['SUGAR_SERVE']
+                    'dashablerecord' => ['SUGAR_SERVE'],
                 ],
                 'commentlog-dashlet',
                 ['SUGAR_SELL'],
@@ -261,7 +261,7 @@ class AccessControlManagerTest extends TestCase
                 [
                     'activity-timeline' => ['SUGAR_SERVE'],
                     'commentlog-dashlet' => ['SUGAR_SERVE'],
-                    'dashablerecord' => ['SUGAR_SERVE']
+                    'dashablerecord' => ['SUGAR_SERVE'],
                 ],
                 'not_controlled_dashlet',
                 ['NOT_SERVICE_CLOUD'],
@@ -272,7 +272,7 @@ class AccessControlManagerTest extends TestCase
                 [
                     'activity-timeline' => ['SUGAR_SERVE'],
                     'commentlog-dashlet' => ['SUGAR_SERVE'],
-                    'dashablerecord' => ['SUGAR_SERVE']
+                    'dashablerecord' => ['SUGAR_SERVE'],
                 ],
                 null,
                 ['SERVICE_CLOUD'],

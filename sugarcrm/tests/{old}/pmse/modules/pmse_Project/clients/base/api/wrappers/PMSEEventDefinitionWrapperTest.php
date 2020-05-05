@@ -26,47 +26,47 @@ class PMSEEventDefinitionWrapperTest extends TestCase
         $this->mockElement = $this->getMockBuilder("pmse_BpmnEvent")
                 ->disableAutoload()
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve_by_string_fields', 'retrieve', 'save'))
+                ->setMethods(['retrieve_by_string_fields', 'retrieve', 'save'])
                 ->getMock();
         
         $this->mockDefinition = $this->getMockBuilder("pmse_BpmEventDefinition")
                 ->disableAutoload()
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve_by_string_fields', 'retrieve', 'save'))
+                ->setMethods(['retrieve_by_string_fields', 'retrieve', 'save'])
                 ->getMock();
         
         $this->mockCrmDataWrapper = $this->getMockBuilder("PMSECrmDataWrapper")
                 ->disableOriginalConstructor()
-                ->setMethods(array('getRelatedSearch'))
+                ->setMethods(['getRelatedSearch'])
                 ->getMock();
         
-        $this->arguments = array ('record' => '1');
+        $this->arguments =  ['record' => '1'];
     }
     public function testGet()
     {
         $mockEventDefinitionWrapper = $this->getMockBuilder('PMSEEventDefinitionWrapper')
                 ->disableOriginalConstructor()
-                ->setMethods(NULL)
+                ->setMethods(null)
                 ->getMock();
         
         $this->mockElement->expects($this->once())
                 ->method('retrieve_by_string_fields');
         
         $this->mockElement->id = 'event01';
-        $this->mockElement->fetched_row = array(
+        $this->mockElement->fetched_row = [
             'id' => 'event01',
             'name' => ' some event',
-            'evn_uid' => 'eventUID01'
-        );
+            'evn_uid' => 'eventUID01',
+        ];
         
         $this->mockDefinition->expects($this->once())
                 ->method('retrieve');
         
-        $this->mockDefinition->fetched_row = array(
+        $this->mockDefinition->fetched_row = [
             'id' => 'event01',
             'name' => ' some event',
-            'evn_uid' => 'eventUID01'
-        );
+            'evn_uid' => 'eventUID01',
+        ];
         
         $this->mockCrmDataWrapper->expects($this->exactly(2))
                 ->method('getRelatedSearch');
@@ -75,10 +75,10 @@ class PMSEEventDefinitionWrapperTest extends TestCase
         $mockEventDefinitionWrapper->setEvent($this->mockElement);
         $mockEventDefinitionWrapper->setEventDefinition($this->mockDefinition);
         
-        $args = array(
+        $args = [
             'record' => 'event01',
-            'related' => 'Leads,Meetings'
-        );
+            'related' => 'Leads,Meetings',
+        ];
         
         $result = $mockEventDefinitionWrapper->_get($args);
     }
@@ -87,7 +87,7 @@ class PMSEEventDefinitionWrapperTest extends TestCase
     {
          $mockEventDefinitionWrapper = $this->getMockBuilder('PMSEEventDefinitionWrapper')
                 ->disableOriginalConstructor()
-                ->setMethods(NULL)
+                ->setMethods(null)
                 ->getMock();
          
         $this->mockElement->expects($this->once())
@@ -95,22 +95,22 @@ class PMSEEventDefinitionWrapperTest extends TestCase
                 ->will($this->returnValue(true));
         
         $this->mockElement->id = 'event01';
-        $this->mockElement->fetched_row = array(
+        $this->mockElement->fetched_row = [
             'id' => 'event01',
             'name' => ' some event',
-            'evn_uid' => 'eventUID01'
-        );
+            'evn_uid' => 'eventUID01',
+        ];
                 
         $mockEventDefinitionWrapper->setCrmDataWrapper($this->mockCrmDataWrapper);
         $mockEventDefinitionWrapper->setEvent($this->mockElement);
         $mockEventDefinitionWrapper->setEventDefinition($this->mockDefinition);
 
-        $args = array(
+        $args = [
             'record' => 'event01',
-            'data' => array(
+            'data' => [
                 
-            )
-        );
+            ],
+        ];
 
         $result = $mockEventDefinitionWrapper->_put($args);
     }
@@ -119,7 +119,7 @@ class PMSEEventDefinitionWrapperTest extends TestCase
     {
          $mockEventDefinitionWrapper = $this->getMockBuilder('PMSEEventDefinitionWrapper')
                 ->disableOriginalConstructor()
-                ->setMethods(NULL)
+                ->setMethods(null)
                 ->getMock();
          
         $this->mockElement->expects($this->once())
@@ -127,22 +127,22 @@ class PMSEEventDefinitionWrapperTest extends TestCase
                 ->will($this->returnValue(true));
         
         $this->mockElement->id = 'event01';
-        $this->mockElement->fetched_row = array(
+        $this->mockElement->fetched_row = [
             'id' => 'event01',
             'name' => ' some event',
-            'evn_uid' => 'eventUID01'
-        );
+            'evn_uid' => 'eventUID01',
+        ];
                 
         $mockEventDefinitionWrapper->setCrmDataWrapper($this->mockCrmDataWrapper);
         $mockEventDefinitionWrapper->setEvent($this->mockElement);
         $mockEventDefinitionWrapper->setEventDefinition($this->mockDefinition);
 
-        $args = array(
+        $args = [
             'record' => 'event01',
-            'data' => array(
+            'data' => [
                 'evn_timer_type' => '',
-            )
-        );
+            ],
+        ];
 
         $result = $mockEventDefinitionWrapper->_put($args);
     }
@@ -151,7 +151,7 @@ class PMSEEventDefinitionWrapperTest extends TestCase
     {
          $mockEventDefinitionWrapper = $this->getMockBuilder('PMSEEventDefinitionWrapper')
                 ->disableOriginalConstructor()
-                ->setMethods(NULL)
+                ->setMethods(null)
                 ->getMock();
          
         $this->mockElement->expects($this->once())
@@ -159,25 +159,25 @@ class PMSEEventDefinitionWrapperTest extends TestCase
                 ->will($this->returnValue(true));
         
         $this->mockElement->id = 'event01';
-        $this->mockElement->fetched_row = array(
+        $this->mockElement->fetched_row = [
             'id' => 'event01',
             'name' => ' some event',
-            'evn_uid' => 'eventUID01'
-        );
+            'evn_uid' => 'eventUID01',
+        ];
                 
         $mockEventDefinitionWrapper->setCrmDataWrapper($this->mockCrmDataWrapper);
         $mockEventDefinitionWrapper->setEvent($this->mockElement);
         $mockEventDefinitionWrapper->setEventDefinition($this->mockDefinition);
 
-        $args = array(
+        $args = [
             'record' => 'event01',
-            'data' => array(
+            'data' => [
                 'evn_timer_type' => 'duration',
                 'evn_duration_criteria' => 'Some Criteria',
-                'evn_duration_params' => array()
-            )
+                'evn_duration_params' => [],
+            ],
             
-        );
+        ];
         $result = $mockEventDefinitionWrapper->_put($args);
     }
 
@@ -185,7 +185,7 @@ class PMSEEventDefinitionWrapperTest extends TestCase
     {
          $mockEventDefinitionWrapper = $this->getMockBuilder('PMSEEventDefinitionWrapper')
                 ->disableOriginalConstructor()
-                ->setMethods(NULL)
+                ->setMethods(null)
                 ->getMock();
          
         $this->mockElement->expects($this->once())
@@ -193,23 +193,23 @@ class PMSEEventDefinitionWrapperTest extends TestCase
                 ->will($this->returnValue(true));
         
         $this->mockElement->id = 'event01';
-        $this->mockElement->fetched_row = array(
+        $this->mockElement->fetched_row = [
             'id' => 'event01',
             'name' => ' some event',
-            'evn_uid' => 'eventUID01'
-        );
+            'evn_uid' => 'eventUID01',
+        ];
                 
         $mockEventDefinitionWrapper->setCrmDataWrapper($this->mockCrmDataWrapper);
         $mockEventDefinitionWrapper->setEvent($this->mockElement);
         $mockEventDefinitionWrapper->setEventDefinition($this->mockDefinition);
 
-        $args = array(
+        $args = [
             'record' => 'event01',
-            'data' => array(
+            'data' => [
                 'evn_timer_type' => 'fixed date',
-                'evn_criteria' => 'Some fixed criteria'
-            )
-        );
+                'evn_criteria' => 'Some fixed criteria',
+            ],
+        ];
 
         $result = $mockEventDefinitionWrapper->_put($args);
     }
@@ -218,12 +218,12 @@ class PMSEEventDefinitionWrapperTest extends TestCase
     {
          $mockEventDefinitionWrapper = $this->getMockBuilder('PMSEEventDefinitionWrapper')
                 ->disableOriginalConstructor()
-                ->setMethods(NULL)
+                ->setMethods(null)
                 ->getMock();
          
         $observerMock = $this->getMockBuilder('PMSEObserver')
                 ->disableOriginalConstructor()
-                ->setMethods(array('update'))
+                ->setMethods(['update'])
                 ->getMock();
         
         $observerMock->expects($this->once())
@@ -237,12 +237,12 @@ class PMSEEventDefinitionWrapperTest extends TestCase
     {
          $mockEventDefinitionWrapper = $this->getMockBuilder('PMSEEventDefinitionWrapper')
                 ->disableOriginalConstructor()
-                ->setMethods(NULL)
+                ->setMethods(null)
                 ->getMock();
          
         $observerMock = $this->getMockBuilder('PMSEObserver')
                 ->disableOriginalConstructor()
-                ->setMethods(array('update'))
+                ->setMethods(['update'])
                 ->getMock();
         
         $observerMock->expects($this->once())

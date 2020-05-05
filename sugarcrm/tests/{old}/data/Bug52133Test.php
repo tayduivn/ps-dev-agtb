@@ -25,7 +25,7 @@ class Bug52133Test extends TestCase
 
     public static function tearDownAfterClass(): void
     {
-	    SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
     }
 
@@ -34,36 +34,36 @@ class Bug52133Test extends TestCase
         $this->bean = new Account();
         Bug52113TestHook::$count = 0;
         LogicHook::refreshHooks();
-	}
+    }
 
     protected function tearDown() : void
-	{
-	    if(!empty($this->hook)) {
-	        call_user_func_array('remove_logic_hook', $this->hook);
-	    }
-	}
+    {
+        if (!empty($this->hook)) {
+            call_user_func_array('remove_logic_hook', $this->hook);
+        }
+    }
 
     /**
      * @ticket 52113
      */
     public function testCallLogicHookLoop()
     {
-        $this->hook = array('Accounts', 'test_event', Array(1, 'Test hook', __FILE__, 'Bug52113TestHook', 'count'));
+        $this->hook = ['Accounts', 'test_event', [1, 'Test hook', __FILE__, 'Bug52113TestHook', 'count']];
         call_user_func_array('check_logic_hook_file', $this->hook);
-        for($i=0;$i<50;$i++) {
+        for ($i=0; $i<50; $i++) {
             $this->bean->call_custom_logic("test_event");
         }
         $this->assertEquals(50, Bug52113TestHook::$count);
     }
 
-	/**
+    /**
      * @ticket 52113
      */
     public function testCallLogicHookRecursive()
     {
-        $this->hook = array('Accounts', 'test_event', Array(1, 'Test hook', __FILE__, 'Bug52113TestHook', 'recurse'));
+        $this->hook = ['Accounts', 'test_event', [1, 'Test hook', __FILE__, 'Bug52113TestHook', 'recurse']];
         call_user_func_array('check_logic_hook_file', $this->hook);
-        for($i=0;$i<20;$i++) {
+        for ($i=0; $i<20; $i++) {
             $this->bean->call_custom_logic("test_event");
         }
         $this->assertEquals(220, Bug52113TestHook::$count);
@@ -72,7 +72,7 @@ class Bug52133Test extends TestCase
 
 class Bug52113TestHook
 {
-    static public $count = 0;
+    public static $count = 0;
     public function count()
     {
         self::$count++;

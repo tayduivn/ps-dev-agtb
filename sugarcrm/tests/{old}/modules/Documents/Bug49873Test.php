@@ -23,18 +23,18 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug49873Test extends TestCase
 {
-	var $doc = null;
+    var $doc = null;
     var $contract = null;
 
     protected function setUp() : void
     {
         global $current_user, $currentModule, $beanFiles, $beanList;
-        include('include/modules.php');
-		$mod_strings = return_module_language($GLOBALS['current_language'], "Documents");
-		$current_user = SugarTestUserUtilities::createAnonymousUser();
+        include 'include/modules.php';
+        $mod_strings = return_module_language($GLOBALS['current_language'], "Documents");
+        $current_user = SugarTestUserUtilities::createAnonymousUser();
         $current_user->is_admin = 1;
         $current_user->save();
-		$this->doc = new Document();
+        $this->doc = new Document();
         $this->doc->document_name = 'Bug 49873 Test Document';
         $this->doc->assigned_user_id = $current_user->id;
         $this->doc->save();
@@ -44,7 +44,7 @@ class Bug49873Test extends TestCase
         $this->contract->save();
         $this->doc->load_relationship('contracts');
         $this->doc->contracts->add($this->contract->id);
-	}
+    }
 
     protected function tearDown() : void
     {
@@ -72,7 +72,7 @@ class Bug49873Test extends TestCase
 
         //Now assert that the linked_documents entry (this holds the many-to-many documents to contracts relationship) is marked as deleted
         $results = $GLOBALS['db']->query("SELECT deleted FROM linked_documents WHERE document_id = '{$this->doc->id}'");
-        while($row = $GLOBALS['db']->fetchByAssoc($results)) {
+        while ($row = $GLOBALS['db']->fetchByAssoc($results)) {
               $deleted = $row['deleted'];
               break;
         }

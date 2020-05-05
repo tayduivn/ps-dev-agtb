@@ -37,12 +37,12 @@ class SugarSystemInfoTest extends TestCase
         $user2 = SugarTestUserUtilities::createAnonymousUser(true, false);
         $user2->updateLastLogin();
 
-        $user3 = SugarTestUserUtilities::createAnonymousUser(true, false, array('deleted' => 1));
-        $user4 = SugarTestUserUtilities::createAnonymousUser(true, false, array('status' => 'Inactive'));
+        $user3 = SugarTestUserUtilities::createAnonymousUser(true, false, ['deleted' => 1]);
+        $user4 = SugarTestUserUtilities::createAnonymousUser(true, false, ['status' => 'Inactive']);
         $user4->updateLastLogin();
 
-        $user5 = SugarTestUserUtilities::createAnonymousUser(true, false, array('portal_only' => 1));
-        $user6 = SugarTestUserUtilities::createAnonymousUser(true, false, array('is_group' => 1));
+        $user5 = SugarTestUserUtilities::createAnonymousUser(true, false, ['portal_only' => 1]);
+        $user6 = SugarTestUserUtilities::createAnonymousUser(true, false, ['is_group' => 1]);
     }
 
     protected function tearDown() : void
@@ -57,7 +57,7 @@ class SugarSystemInfoTest extends TestCase
      */
     public function testGetInstance()
     {
-       $this->assertInstanceOf('SugarSystemInfo', SugarSystemInfo::getInstance());
+        $this->assertInstanceOf('SugarSystemInfo', SugarSystemInfo::getInstance());
     }
 
 

@@ -20,7 +20,7 @@ use PHPUnit\Framework\TestCase;
 class MetaDataManagerCacheRefreshTest extends TestCase
 {
     /**
-     * The build number from sugar_config. Saved here for use in testing as it 
+     * The build number from sugar_config. Saved here for use in testing as it
      * will be changed
      * @var string
      */
@@ -37,7 +37,7 @@ class MetaDataManagerCacheRefreshTest extends TestCase
     protected function setUp() : void
     {
         SugarTestHelper::setUp('app_list_strings');
-        SugarTestHelper::setUp('current_user', array(true, false));
+        SugarTestHelper::setUp('current_user', [true, false]);
         
         // Back up the build number from config to check changes in metadata in
         // refresh tests
@@ -63,7 +63,7 @@ class MetaDataManagerCacheRefreshTest extends TestCase
         
         // Clean up test files
         $c = 0;
-        foreach (array($this->accountsFile, $this->casesFile) as $file) {
+        foreach ([$this->accountsFile, $this->casesFile] as $file) {
             $save = $c > 0;
             if (file_exists($file)) {
                 unlink($file);
@@ -102,7 +102,7 @@ class MetaDataManagerCacheRefreshTest extends TestCase
         $this->assertEmpty($db->getOne("SELECT id FROM metadata_cache WHERE type='meta:hash:base'"));
 
         // Refresh the cache and ensure that there are file in place
-        TestMetaDataManager::refreshCache(array('base'), true);
+        TestMetaDataManager::refreshCache(['base'], true);
         $this->assertNotEmpty($db->getOne("SELECT id FROM metadata_cache WHERE type='meta:hash:public:base'"));
         $this->assertNotEmpty($db->getOne("SELECT id FROM metadata_cache WHERE type='meta:hash:base'"));
 
@@ -179,7 +179,7 @@ class MetaDataManagerCacheRefreshTest extends TestCase
 
         $key = $public ? "meta:hash:public:base" : "meta:hash:base";
         // Get the metadata manager for use in this test
-        $mm = MetaDataManager::getManager(array('base'), $public);
+        $mm = MetaDataManager::getManager(['base'], $public);
 
         // Wipe out the cache
         $repair = new RepairAndClear();
@@ -188,14 +188,16 @@ class MetaDataManagerCacheRefreshTest extends TestCase
 
         // Build the cache now to ensure we have a cache file
         $mm->getMetadata();
-        $this->assertNotEmpty($db->getOne("SELECT id FROM metadata_cache WHERE type='$key'"),
+        $this->assertNotEmpty(
+            $db->getOne("SELECT id FROM metadata_cache WHERE type='$key'"),
             "Could not load the metadata cache for $key after load"
         );
 
 
         // Refresh the cache and ensure that there are file in place
         $repair->repairMetadataAPICache();
-        $this->assertNotEmpty($db->getOne("SELECT id FROM metadata_cache WHERE type='$key'"),
+        $this->assertNotEmpty(
+            $db->getOne("SELECT id FROM metadata_cache WHERE type='$key'"),
             "Could not load the metadata cache for $key after repair"
         );
     }
@@ -214,7 +216,7 @@ class MetaDataManagerCacheRefreshTest extends TestCase
 
         // Change the build number to ensure that server info gets changed
         $GLOBALS['sugar_build'] = 'TESTBUILDXXX';
-        MetaDataManager::refreshSectionCache(MetaDataManager::MM_SERVERINFO, array('base'));
+        MetaDataManager::refreshSectionCache(MetaDataManager::MM_SERVERINFO, ['base']);
 
         // Get the newest metadata, which should be different
         $dataPri = $mmPri->getMetadata();
@@ -249,7 +251,7 @@ $viewdefs[\'Accounts\'][\'mobile\'][\'view\'][\'herfy\'] = array(\'test\' => \'t
         sugar_file_put_contents($this->accountsFile, $AccountsFile);
 
         // Refresh the modules cache
-        MetaDataManager::refreshModulesCache(array('Accounts'), array('mobile'));
+        MetaDataManager::refreshModulesCache(['Accounts'], ['mobile']);
 
         // Get the newest metadata, which should be different
         $data = $mm->getMetadata();
@@ -270,32 +272,32 @@ $viewdefs[\'Accounts\'][\'mobile\'][\'view\'][\'herfy\'] = array(\'test\' => \'t
     }
     public function managerTypeProvider()
     {
-        return array(
+        return [
             //BEGIN SUGARCRM flav=ent ONLY
-            array('platform' => 'portal', 'manager' => 'MetaDataManagerPortal'),
+            ['platform' => 'portal', 'manager' => 'MetaDataManagerPortal'],
             //END SUGARCRM flav=ent ONLY
-            array('platform' => 'mobile', 'manager' => 'MetaDataManagerMobile'),
-            array('platform' => 'base', 'manager' => 'MetaDataManager'),
-        );
+            ['platform' => 'mobile', 'manager' => 'MetaDataManagerMobile'],
+            ['platform' => 'base', 'manager' => 'MetaDataManager'],
+        ];
     }
 
     public function platformProvider()
     {
-        return array(
+        return [
             //BEGIN SUGARCRM flav=ent ONLY
-            array('platform' => 'portal'),
+            ['platform' => 'portal'],
             //END SUGARCRM flav=ent ONLY
-            array('platform' => 'mobile'),
-            array('platform' => 'base'),
-        );
+            ['platform' => 'mobile'],
+            ['platform' => 'base'],
+        ];
     }
 
     public function visibilityFlags()
     {
-        return array(
-            array('public' => true),
-            array('public' => false),
-        );
+        return [
+            ['public' => true],
+            ['public' => false],
+        ];
     }
 }
 

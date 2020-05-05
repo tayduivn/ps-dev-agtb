@@ -23,8 +23,8 @@ class CronRemoteTest extends TestCase
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         // clean up queue
-		$GLOBALS['db']->query("DELETE FROM job_queue WHERE status='queued'");
-		$GLOBALS['sugar_config']['job_server'] = "http://test.job.server/";
+        $GLOBALS['db']->query("DELETE FROM job_queue WHERE status='queued'");
+        $GLOBALS['sugar_config']['job_server'] = "http://test.job.server/";
     }
 
     public static function tearDownAfterClass(): void
@@ -37,7 +37,7 @@ class CronRemoteTest extends TestCase
     {
         $this->jq = $jobq = new SugarCronRemoteJobs();
         $this->client = $this->getMockBuilder('SugarHttpClient')
-            ->setMethods(array('callRest'))
+            ->setMethods(['callRest'])
             ->getMock();
         $this->jq->setClient($this->client);
     }
@@ -72,7 +72,7 @@ class CronRemoteTest extends TestCase
                         && ($GLOBALS['sugar_config']['site_url'] == $data['instance']);
                 })
             )
-            ->will($this->returnValue(json_encode(array('ok' => $job->id))));
+            ->will($this->returnValue(json_encode(['ok' => $job->id])));
 
         $this->jq->min_interval = 0; // disable throttle
         $this->jq->disable_schedulers = true;

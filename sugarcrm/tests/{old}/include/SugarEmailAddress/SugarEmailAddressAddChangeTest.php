@@ -74,7 +74,7 @@ class SugarEmailAddressAddChangeTest extends TestCase
         $uuid = $this->email->AddUpdateEmailAddress($this->old_email);
 
         $this->assertNotNull($uuid, 'Where did my email address go?');
-        $this->assertEquals($this->old_uuid,$uuid, 'We are using a different bean for the same email address!');
+        $this->assertEquals($this->old_uuid, $uuid, 'We are using a different bean for the same email address!');
 
         $sea = $this->readSugarEmailAddress($uuid);
         $this->assertNotNull($sea, 'We lost our Email Address row!');

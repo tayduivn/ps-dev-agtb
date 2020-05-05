@@ -10,7 +10,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-require_once('vendor/nusoap//nusoap.php');
+require_once 'vendor/nusoap//nusoap.php';
 
 /**
  * @group bug43282
@@ -47,15 +47,16 @@ class SetEntryTest extends SOAPTestCase
         $privateTeamID = $GLOBALS['current_user']->getPrivateTeamID();
 
         $this->_login();
-        $result = $this->_soapClient->call('set_entry',
-            array(
+        $result = $this->_soapClient->call(
+            'set_entry',
+            [
                 'session' => $this->_sessionId,
                 'module' => 'Tasks',
-                'name_value_list' => array(
-                    array('name' => 'id', 'value' => $this->_tsk->id),
-                    array('name' => 'team_id', 'value' => $privateTeamID),
-                ),
-            )
+                'name_value_list' => [
+                    ['name' => 'id', 'value' => $this->_tsk->id],
+                    ['name' => 'team_id', 'value' => $privateTeamID],
+                ],
+            ]
         );
 
         $modifiedTask = new Task();

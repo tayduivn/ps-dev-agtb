@@ -40,7 +40,7 @@ class Bug49772Test extends TestCase
         $new_label = $prepared_pref . ' ' . $this->_old_label;
 
         // save the new label to the language file
-        ParserLabel::addLabels($this->_lang, array($this->_test_label => $new_label), $this->_test_module);
+        ParserLabel::addLabels($this->_lang, [$this->_test_label => $new_label], $this->_test_module);
 
         // read the language file to get the new value
         include "custom/modules/{$this->_test_module}/Ext/Language/{$this->_lang}.lang.ext.php";
@@ -51,6 +51,6 @@ class Bug49772Test extends TestCase
 
     protected function tearDown() : void
     {
-        ParserLabel::addLabels($this->_lang, array($this->_test_label=>$this->_old_label), $this->_test_module);
+        ParserLabel::addLabels($this->_lang, [$this->_test_label=>$this->_old_label], $this->_test_module);
     }
 }

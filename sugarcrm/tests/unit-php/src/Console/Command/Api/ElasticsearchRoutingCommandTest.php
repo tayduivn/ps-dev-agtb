@@ -32,32 +32,32 @@ class ElasticsearchRoutingCommandTest extends AbstractApiCommandTestCase
      */
     public function providerTestExecuteCommand()
     {
-        return array(
-            array(
-                array(
-                    'accounts' => array(
+        return [
+            [
+                [
+                    'accounts' => [
                         'strategy' => 'static',
-                        'routing' => array(
+                        'routing' => [
                             'write_index' => 'accounts',
-                            'read_indices' => array('accounts'),
-                        ),
-                    ),
-                    'emails' => array(
+                            'read_indices' => ['accounts'],
+                        ],
+                    ],
+                    'emails' => [
                         'strategy' => 'archive',
-                        'routing' => array(
+                        'routing' => [
                             'write_index' => 'emails_current',
-                            'read_indices' => array(
+                            'read_indices' => [
                                 'emails_2015_12',
                                 'emails_2015_11',
                                 'emails_2015_10',
-                            ),
-                        ),
-                    ),
-                ),
-                array(),
+                            ],
+                        ],
+                    ],
+                ],
+                [],
                 'ElasticsearchRoutingCommand_0.txt',
                 0,
-            ),
-        );
+            ],
+        ];
     }
 }

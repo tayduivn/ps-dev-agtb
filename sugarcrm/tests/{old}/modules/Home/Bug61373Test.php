@@ -12,7 +12,7 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once('modules/ACLFields/actiondefs.php');
+require_once 'modules/ACLFields/actiondefs.php';
 
 /**
  * Bug #61373
@@ -70,128 +70,128 @@ class Bug61373Test extends TestCase
             ]);
         };
 
-        return array(
-            'contacts-email-owner' => array(
+        return [
+            'contacts-email-owner' => [
                 'Contacts',
                 'email1',
                 ACL_OWNER_READ_WRITE,
                 'test1@test.com',
                 '',
-                array(
+                [
                     'SugarTestContactUtilities',
-                    'createContact'
-                )
-            ),
-            'accounts-email-owner' => array(
+                    'createContact',
+                ],
+            ],
+            'accounts-email-owner' => [
                 'Accounts',
                 'email1',
                 ACL_OWNER_READ_WRITE,
                 'test1@test.com',
                 '',
                 $createAccount,
-            ),
-            'leads-email-owner' => array(
+            ],
+            'leads-email-owner' => [
                 'Leads',
                 'email1',
                 ACL_OWNER_READ_WRITE,
                 'test1@test.com',
                 '',
-                array(
+                [
                     'SugarTestLeadUtilities',
-                    'createLead'
-                )
-            ),
-            'contacts-email-default' => array(
+                    'createLead',
+                ],
+            ],
+            'contacts-email-default' => [
                 'Contacts',
                 'email1',
                 ACL_FIELD_DEFAULT,
                 'test1@test.com',
                 'test1@test.com',
-                array(
+                [
                     'SugarTestContactUtilities',
-                    'createContact'
-                )
-            ),
-            'accounts-email-default' => array(
+                    'createContact',
+                ],
+            ],
+            'accounts-email-default' => [
                 'Accounts',
                 'email1',
                 ACL_FIELD_DEFAULT,
                 'test1@test.com',
                 'test1@test.com',
                 $createAccount,
-            ),
-            'leads-email-default' => array(
+            ],
+            'leads-email-default' => [
                 'Leads',
                 'email1',
                 ACL_FIELD_DEFAULT,
                 'test1@test.com',
                 'test1@test.com',
-                array(
+                [
                     'SugarTestLeadUtilities',
-                    'createLead'
-                )
-            ),
-            'contacts-description-owner' => array(
+                    'createLead',
+                ],
+            ],
+            'contacts-description-owner' => [
                 'Contacts',
                 'description',
                 ACL_OWNER_READ_WRITE,
                 'Test Desc',
                 '',
-                array(
+                [
                     'SugarTestContactUtilities',
-                    'createContact'
-                )
-            ),
-            'accounts-description-owner' => array(
+                    'createContact',
+                ],
+            ],
+            'accounts-description-owner' => [
                 'Accounts',
                 'description',
                 ACL_OWNER_READ_WRITE,
                 'Test Desc',
                 '',
                 $createAccount,
-            ),
-            'leads-description-owner' => array(
+            ],
+            'leads-description-owner' => [
                 'Leads',
                 'description',
                 ACL_OWNER_READ_WRITE,
                 'Test Desc',
                 '',
-                array(
+                [
                     'SugarTestLeadUtilities',
-                    'createLead'
-                )
-            ),
-            'contacts-description-default' => array(
+                    'createLead',
+                ],
+            ],
+            'contacts-description-default' => [
                 'Contacts',
                 'description',
                 ACL_FIELD_DEFAULT,
                 'Test Desc',
                 'Test Desc',
-                array(
+                [
                     'SugarTestContactUtilities',
-                    'createContact'
-                )
-            ),
-            'accounts-description-default' => array(
+                    'createContact',
+                ],
+            ],
+            'accounts-description-default' => [
                 'Accounts',
                 'description',
                 ACL_FIELD_DEFAULT,
                 'Test Desc',
                 'Test Desc',
                 $createAccount,
-            ),
-            'leads-description-default' => array(
+            ],
+            'leads-description-default' => [
                 'Leads',
                 'description',
                 ACL_FIELD_DEFAULT,
                 'Test Desc',
                 'Test Desc',
-                array(
+                [
                     'SugarTestLeadUtilities',
-                    'createLead'
-                )
-            ),
-        );
+                    'createLead',
+                ],
+            ],
+        ];
     }
 
     /**
@@ -223,31 +223,31 @@ class Bug61373Test extends TestCase
 
         $quickSearchQuery = new QuickSearchQuery();
 
-        $args = array (
+        $args =  [
             'method' => 'query',
             'modules' =>
-            array (
-                0 => $module
-            ),
+             [
+                0 => $module,
+            ],
             'group' => 'or',
             'field_list' =>
-            array (
-                0 => $field
-            ),
+             [
+                0 => $field,
+            ],
             'conditions' =>
-            array (
+             [
                 0 =>
-                array (
+                 [
                     'name' => 'name',
                     'op' => 'like_custom',
                     'end' => '%',
                     'value' => $this->bean->name,
-                ),
-            ),
+                ],
+            ],
             'order' => 'name',
             'limit' => '30',
             'no_match_text' => 'No Match',
-        );
+        ];
 
         // Do a QuickSearch query
         $results = $quickSearchQuery->query($args);

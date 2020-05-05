@@ -34,8 +34,8 @@ class Bug65865Test extends TestCase
         $account->name = "Test deleted";
         $account->save();
         $account->mark_deleted($account->id);
-        $this->assertNotNull(BeanFactory::getBean('Accounts', $account->id, array('deleted' => false, 'strict_retrieve' => true)));
-        $this->assertNull(BeanFactory::getBean('Accounts', $account->id,  array('strict_retrieve' => true)));
+        $this->assertNotNull(BeanFactory::getBean('Accounts', $account->id, ['deleted' => false, 'strict_retrieve' => true]));
+        $this->assertNull(BeanFactory::getBean('Accounts', $account->id, ['strict_retrieve' => true]));
     }
 
     public function testGetBeanDisableRowLevelSecurity()
@@ -50,7 +50,7 @@ class Bug65865Test extends TestCase
         $account->assigned_user_id = $user->id;
         $account->disable_row_level_security = true;
         $account->save();
-        $this->assertNotNull(BeanFactory::getBean('Accounts', $account->id, array('disable_row_level_security' => true, 'strict_retrieve' => true)));
-        $this->assertNull(BeanFactory::getBean('Accounts', $account->id,  array('strict_retrieve' => true)));
+        $this->assertNotNull(BeanFactory::getBean('Accounts', $account->id, ['disable_row_level_security' => true, 'strict_retrieve' => true]));
+        $this->assertNull(BeanFactory::getBean('Accounts', $account->id, ['strict_retrieve' => true]));
     }
 }

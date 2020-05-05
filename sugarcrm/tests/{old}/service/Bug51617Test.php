@@ -22,20 +22,20 @@ class Bug51617Test extends SOAPTestCase
 
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setUp('current_user', array(true, 1));
+        SugarTestHelper::setUp('current_user', [true, 1]);
 
         $this->field = get_widget('varchar');
         $this->field->id = 'Accountstest_custom_c';
         $this->field->name = 'test_custom_c';
         $this->field->vname = 'LBL_TEST_CUSTOM_C';
-        $this->field->comments = NULL;
-        $this->field->help = NULL;
+        $this->field->comments = null;
+        $this->field->help = null;
         $this->field->custom_module = 'Accounts';
         $this->field->type = 'varchar';
         $this->field->label = 'LBL_TEST_CUSTOM_C';
         $this->field->len = 255;
         $this->field->required = 0;
-        $this->field->default_value = NULL;
+        $this->field->default_value = null;
         $this->field->date_modified = '2009-09-14 02:23:23';
         $this->field->deleted = 0;
         $this->field->audited = 0;
@@ -43,10 +43,10 @@ class Bug51617Test extends SOAPTestCase
         $this->field->duplicate_merge = 0;
         $this->field->reportable = 1;
         $this->field->importable = 'true';
-        $this->field->ext1 = NULL;
-        $this->field->ext2 = NULL;
-        $this->field->ext3 = NULL;
-        $this->field->ext4 = NULL;
+        $this->field->ext1 = null;
+        $this->field->ext2 = null;
+        $this->field->ext3 = null;
+        $this->field->ext4 = null;
 
         $this->df = new DynamicField('Accounts');
         $this->mod = new Account();
@@ -91,40 +91,42 @@ class Bug51617Test extends SOAPTestCase
     }
 
     /**
-     * 
+     *
      */
     public function testGetEntryListWithCustomField()
     {
         $this->_login();
         $GLOBALS['db']->commit();
-        $result = $this->_soapClient->call('get_entry_list',
-            array(
+        $result = $this->_soapClient->call(
+            'get_entry_list',
+            [
                  'session'=>$this->_sessionId,
                  "module_name" => 'Accounts',
                  "accounts.id = '{$this->_account->id}'",
                  '',
                  0,
-                 "select_fields" => array('id', 'name', 'test_custom_c'),
+                 "select_fields" => ['id', 'name', 'test_custom_c'],
                  null,
-                 'max_results' => 1
-            )
+                 'max_results' => 1,
+            ]
         );
 
-        $this->assertTrue($result['result_count'] > 0,
-            'Get_entry_list failed: Fault code: '.$this->_soapClient->faultcode.', fault string:'.$this->_soapClient->faultstring.', fault detail: '.$this->_soapClient->faultdetail);
+        $this->assertTrue(
+            $result['result_count'] > 0,
+            'Get_entry_list failed: Fault code: '.$this->_soapClient->faultcode.', fault string:'.$this->_soapClient->faultstring.', fault detail: '.$this->_soapClient->faultdetail
+        );
 
-        $row = array();
+        $row = [];
         $row = $result['entry_list'][0]['name_value_list'];
 
         // find the custom field
-        if (!empty($row))
-        {
-            foreach($row as $r) {
+        if (!empty($row)) {
+            foreach ($row as $r) {
                 // just make sure they are all not empty
-                $this->assertNotEmpty($r['value'],"Value is empty, looks like: ".var_export($r,true));
+                $this->assertNotEmpty($r['value'], "Value is empty, looks like: ".var_export($r, true));
                 // make sure that the test field has our value in it
-                if($r['name'] == "test_custom_c") {
-                    $this->assertEquals("Custom Field", $r['value'],"Custom field does not have our value in it");
+                if ($r['name'] == "test_custom_c") {
+                    $this->assertEquals("Custom Field", $r['value'], "Custom field does not have our value in it");
                 }
             }
         } // if

@@ -1,4 +1,4 @@
-<?php 
+<?php
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -31,10 +31,10 @@ class DocumentTest extends TestCase
         $this->doc = BeanFactory::newBean('Documents');
 
         // Make sure it prefers name if it comes from the row
-        $this->doc->populateFromRow(array('name'=>'SetName','document_name'=>'NotThis'));
-        $this->assertEquals('SetName',$this->doc->name);
+        $this->doc->populateFromRow(['name'=>'SetName','document_name'=>'NotThis']);
+        $this->assertEquals('SetName', $this->doc->name);
         
-        $this->doc->populateFromRow(array('document_name'=>'DocName'));
-        $this->assertEquals('DocName',$this->doc->name);
+        $this->doc->populateFromRow(['document_name'=>'DocName']);
+        $this->assertEquals('DocName', $this->doc->name);
     }
 }

@@ -21,14 +21,14 @@ require_once 'modules/DynamicFields/FieldCases.php';
  */
 class Bug59155Test extends TestCase
 {
-    private static $custom_field_def = array(
+    private static $custom_field_def = [
         'formula'     => 'related($accounts,"name")',
         'name'        => 'bug_59155',
         'type'        => 'text',
         'label'       => 'LBL_CUSTOM_FIELD',
         'module'      => 'ModuleBuilder',
         'view_module' => 'Cases',
-    );
+    ];
 
     public static function setUpBeforeClass() : void
     {
@@ -41,9 +41,9 @@ class Bug59155Test extends TestCase
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
-        SugarTestHelper::setUp('current_user', array(true, 1));
+        SugarTestHelper::setUp('current_user', [true, 1]);
 
-        $request = InputValidation::create(self::$custom_field_def, array());
+        $request = InputValidation::create(self::$custom_field_def, []);
         $mbc = new ModuleBuilderController($request);
         $mbc->action_SaveField();
 
@@ -55,13 +55,13 @@ class Bug59155Test extends TestCase
         $custom_field_def = self::$custom_field_def;
         $custom_field_def['name'] .= '_c';
 
-        $request = InputValidation::create($custom_field_def, array());
+        $request = InputValidation::create($custom_field_def, []);
         $mbc = new ModuleBuilderController($request);
         $mbc->action_DeleteField();
 
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
 
-        $_REQUEST = array();
+        $_REQUEST = [];
         SugarCache::$isCacheReset = false;
     }
 
@@ -71,7 +71,7 @@ class Bug59155Test extends TestCase
         $fields = SugarTestReflection::callProtectedMethod(
             $account,
             'get_fields_influencing_linked_bean_calc_fields',
-            array('cases')
+            ['cases']
         );
         $this->assertContains('name', $fields);
     }

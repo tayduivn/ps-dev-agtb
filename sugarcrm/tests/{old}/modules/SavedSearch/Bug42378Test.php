@@ -45,8 +45,8 @@ class Bug42378Test extends TestCase
 
         $storeQuery = new StoreQuery();
         //Simulate a search request here
-        $_REQUEST = array
-        (
+        $_REQUEST =
+        [
             'module' => 'Opportunities',
             'action' => 'index',
             'searchFormTab' => 'advanced_search',
@@ -87,7 +87,7 @@ class Bug42378Test extends TestCase
             'globalLinksOpen' => 'true',
             'SQLiteManager_currentLangue' => '2',
             'PHPSESSID' => 'b8e4b4b955ef3c4b29291779751b5fca',
-        );
+        ];
 
         $storeQuery->saveFromRequest('Opportunities');
 

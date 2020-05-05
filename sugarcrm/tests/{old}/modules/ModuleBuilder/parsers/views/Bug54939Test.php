@@ -17,13 +17,16 @@ use PHPUnit\Framework\TestCase;
  * Accessor class, in the event the parsers public properties go protected, which
  * they are slated to do.
  */
-class Bug54939TestListParser extends SidecarListLayoutMetaDataParser {
-    public function changeFieldType($field, $type) {
+class Bug54939TestListParser extends SidecarListLayoutMetaDataParser
+{
+    public function changeFieldType($field, $type)
+    {
         $this->_fielddefs[$field]['type'] = $type;
     }
 }
 //BEGIN SUGARCRM flav=ent ONLY
-class Bug54939TestPortalListParser extends SidecarPortalListLayoutMetaDataParser {
+class Bug54939TestPortalListParser extends SidecarPortalListLayoutMetaDataParser
+{
     public function changeFieldType($field, $type)
     {
         $this->_fielddefs[$field]['type'] = $type;
@@ -31,12 +34,15 @@ class Bug54939TestPortalListParser extends SidecarPortalListLayoutMetaDataParser
 }
 //END SUGARCRM flav=ent ONLY
 
-class Bug54939TestGridParser extends SidecarGridLayoutMetaDataParser {
-    public function changeFieldType($field, $type) {
+class Bug54939TestGridParser extends SidecarGridLayoutMetaDataParser
+{
+    public function changeFieldType($field, $type)
+    {
         $this->_fielddefs[$field]['type'] = $type;
     }
 
-    public function isAvailableFieldName($name, $fields) {
+    public function isAvailableFieldName($name, $fields)
+    {
         foreach ($fields as $field) {
             if (isset($field['name']) && $field['name'] == $name) {
                 return true;
@@ -61,14 +67,16 @@ class Bug54939Test extends TestCase
         SugarTestHelper::tearDown();
     }
 
-    public function testClientIsSet() {
+    public function testClientIsSet()
+    {
         $grid = new Bug54939TestGridParser(MB_WIRELESSEDITVIEW, 'Bugs', '', MB_WIRELESS);
         $this->assertNotEmpty($grid->client, 'Client was not set');
         $this->assertEquals(MB_WIRELESS, $grid->client, 'Client was not properly set');
     }
     
     //BEGIN SUGARCRM flav=ent ONLY
-    public function testPortalLayoutDoesNotIncludeInvalidFields() {
+    public function testPortalLayoutDoesNotIncludeInvalidFields()
+    {
         $list = new Bug54939TestPortalListParser(MB_PORTALLISTVIEW, 'Cases', '', MB_PORTAL);
         $list->changeFieldType('resolution', 'iframe');
         // Relate SHOULD be clean on list
@@ -88,7 +96,8 @@ class Bug54939Test extends TestCase
     }
     //END SUGARCRM flav=ent ONLY
     
-    public function testMobileLayoutDoesIncludeInvalidPortalFields() {
+    public function testMobileLayoutDoesIncludeInvalidPortalFields()
+    {
         $list = new Bug54939TestListParser(MB_WIRELESSLISTVIEW, 'Cases', '', MB_WIRELESS);
         $list->changeFieldType('description', 'iframe');
         $list->changeFieldType('work_log', 'relate');

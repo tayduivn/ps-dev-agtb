@@ -29,7 +29,7 @@ class StrategyCollectionTest extends TestCase
 
     public function testHash()
     {
-        $visibility = $this->getMockForAbstractClass('\SugarVisibility', array(), 'TestSugarVisibility', false);
+        $visibility = $this->getMockForAbstractClass('\SugarVisibility', [], 'TestSugarVisibility', false);
         $strategyCollection = new StrategyCollection();
         $this->assertEquals('TestSugarVisibility', $strategyCollection->getHash($visibility));
     }

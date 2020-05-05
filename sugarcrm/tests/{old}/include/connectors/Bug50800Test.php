@@ -26,9 +26,8 @@ class Bug50800Test extends TestCase
     protected function setUp() : void
     {
         SugarTestHelper::setUp('app_strings');
-        if(file_exists($this->custom_path.'/connectors.php'))
-        {
-           $this->custom_contents = file_get_contents($this->custom_path.'/connectors.php');
+        if (file_exists($this->custom_path.'/connectors.php')) {
+            $this->custom_contents = file_get_contents($this->custom_path.'/connectors.php');
             unlink($this->custom_path.'/connectors.php');
         } else {
             mkdir_recursive($this->custom_path);
@@ -38,8 +37,7 @@ class Bug50800Test extends TestCase
     protected function tearDown() : void
     {
         //remove connector file
-        if(!empty($this->custom_contents))
-        {
+        if (!empty($this->custom_contents)) {
             file_put_contents($this->custom_path.'/connectors.php', $this->custom_contents);
         } else {
             unlink($this->custom_path.'/connectors.php');

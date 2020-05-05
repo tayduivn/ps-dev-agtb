@@ -48,7 +48,7 @@ class CallsApiHelperTest extends TestCase
         SugarTestContactUtilities::removeAllCreatedContacts();
     }
 
-    public function testFormatForApi() 
+    public function testFormatForApi()
     {
         $helper = new CallsApiHelper(new CallsServiceMockup());
         $data = $helper->formatForApi($this->bean);
@@ -66,7 +66,14 @@ class CallsApiHelperTest extends TestCase
 
 class CallsServiceMockup extends ServiceBase
 {
-    public function __construct() {$this->user = $GLOBALS['current_user'];}
-    public function execute() {}
-    protected function handleException(Exception $exception) {}
+    public function __construct()
+    {
+        $this->user = $GLOBALS['current_user'];
+    }
+    public function execute()
+    {
+    }
+    protected function handleException(Exception $exception)
+    {
+    }
 }

@@ -24,10 +24,10 @@ class SugarRelationshipTest extends TestCase
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
         LogicHook::refreshHooks();
-        $this->hooks = array(
-            array('Opportunities', 'after_relationship_update', Array(1, 'Opportunities::after_relationship_update', __FILE__, 'SugarRelationshipTestHook', 'testFunction')),
-            array('Contacts', 'after_relationship_update', Array(1, 'Contacts::after_relationship_update', __FILE__, 'SugarRelationshipTestHook', 'testFunction'))
-        );
+        $this->hooks = [
+            ['Opportunities', 'after_relationship_update', [1, 'Opportunities::after_relationship_update', __FILE__, 'SugarRelationshipTestHook', 'testFunction']],
+            ['Contacts', 'after_relationship_update', [1, 'Contacts::after_relationship_update', __FILE__, 'SugarRelationshipTestHook', 'testFunction']],
+        ];
         foreach ($this->hooks as $hook) {
             call_user_func_array('check_logic_hook_file', $hook);
         }
@@ -50,7 +50,7 @@ class SugarRelationshipTest extends TestCase
         $opportunity->load_relationship('contacts');
         $opportunity->contacts->add($contact->id);
         // clear log
-        SugarRelationshipTestHook::$log = array();
+        SugarRelationshipTestHook::$log = [];
         // adding existing relationship should call 'after_relationship_update' hook
         $opportunity->contacts->add($contact->id);
         $this->assertEquals($contact->id, SugarRelationshipTestHook::$log[$opportunity->id]['after_relationship_update'], "Logic hook not triggered for Opportunities:after_relationship_update:Contacts");
@@ -86,7 +86,7 @@ class SugarRelationshipTest extends TestCase
         // Sets certain test field defs to ensure proper functionality
         $mock->field_defs['foo']['source'] = 'custom_fields';
         $mock->field_defs['baz']['source'] = 'non-db';
-        $mock->field_defs['zim'] = array();
+        $mock->field_defs['zim'] = [];
 
         return $mock;
     }
@@ -108,44 +108,44 @@ class SugarRelationshipTest extends TestCase
 
     public function whereProvider()
     {
-        return array(
-            array(
-                'options' => array(
+        return [
+            [
+                'options' => [
                     'lhs_field' => 'foo',
                     'operator' => '=',
                     'rhs_value' => 'bar',
-                ),
+                ],
                 'where' => 'mytable',
                 'related' => $this->getMockBean(),
                 'expect' => "bug_foo_c.foo='bar'",
-            ),
-            array(
-                'options' => array(
+            ],
+            [
+                'options' => [
                     'lhs_field' => 'baz',
                     'operator' => '=',
                     'rhs_value' => 'zim',
-                ),
+                ],
                 'where' => 'thattable',
                 'related' => $this->getMockBean(),
                 'expect' => "thattable.baz='zim'",
-            ),
-            array(
-                'options' => array(
+            ],
+            [
+                'options' => [
                     'lhs_field' => 'zim',
                     'operator' => '=',
                     'rhs_value' => 'car',
-                ),
+                ],
                 'where' => '',
                 'related' => $this->getMockBean(),
                 'expect' => "zim='car'",
-            ),
-        );
+            ],
+        ];
     }
 }
  
 class SugarRelationshipTestHook
 {
-    static public $log = array();
+    public static $log = [];
 
     public function testFunction($bean, $event, $arguments)
     {

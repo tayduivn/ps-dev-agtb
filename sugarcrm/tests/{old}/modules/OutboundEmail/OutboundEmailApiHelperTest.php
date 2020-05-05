@@ -302,7 +302,7 @@ class OutboundEmailApiHelperTest extends TestCase
     public function testFormatForApi_TheSystemAccountCanBeUsedByUsers_OverwritesTheNameAndEmailAddressForTheSystemAccount()
     {
         $bean = $this->getMockBuilder('OutboundEmail')
-            ->setMethods(array('isAllowUserAccessToSystemDefaultOutbound'))->getMock();
+            ->setMethods(['isAllowUserAccessToSystemDefaultOutbound'])->getMock();
         $bean->method('isAllowUserAccessToSystemDefaultOutbound')->willReturn(true);
 
         $row = [
@@ -341,7 +341,7 @@ class OutboundEmailApiHelperTest extends TestCase
     public function testFormatForApi_DoesNotOverwriteTheNameAndEmailAddress($type)
     {
         $bean = $this->getMockBuilder('OutboundEmail')
-            ->setMethods(array('isAllowUserAccessToSystemDefaultOutbound'))->getMock();
+            ->setMethods(['isAllowUserAccessToSystemDefaultOutbound'])->getMock();
         $bean->method('isAllowUserAccessToSystemDefaultOutbound')->willReturn(false);
 
         $row = [

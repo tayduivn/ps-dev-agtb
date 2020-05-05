@@ -12,25 +12,24 @@
 
 
 
-  $searchdefs['Documents'] = array(
-                    'templateMeta' => array('maxColumns' => '3', 
-                            'widths' => array('label' => '10', 'field' => '30'), 
-                           ),
-                    'layout' => array(
-                        'basic_search' => array(
+  $searchdefs['Documents'] = [
+                    'templateMeta' => ['maxColumns' => '3',
+                            'widths' => ['label' => '10', 'field' => '30'],
+                           ],
+                    'layout' => [
+                        'basic_search' => [
                                 'document_name',
                                 
-		      array ('name' => 'favorites_only','label' => 'LBL_FAVORITES_FILTER','type' => 'bool',),
-                            ),
-                        'advanced_search' => array(
-                                'document_name', 
-                                'category_id', 
+                    ['name' => 'favorites_only','label' => 'LBL_FAVORITES_FILTER','type' => 'bool',],
+                            ],
+                        'advanced_search' => [
+                                'document_name',
+                                'category_id',
                                 'subcategory_id',
                                 'active_date',
                                 'exp_date',
                                 
-		      array ('name' => 'favorites_only','label' => 'LBL_FAVORITES_FILTER','type' => 'bool',),
-                        ),
-                    ),
-               );
-?>
+                        ['name' => 'favorites_only','label' => 'LBL_FAVORITES_FILTER','type' => 'bool',],
+                        ],
+                    ],
+               ];

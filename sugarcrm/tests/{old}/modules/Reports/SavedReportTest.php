@@ -57,7 +57,7 @@ class SavedReportTest extends TestCase
         $mock->method('beansAreLoaded')->willReturn(true);
         $relBean = new SugarBean();
         $relBean->date_modified = $now;
-        $mock->method('getBeans')->willReturn(array($relBean));
+        $mock->method('getBeans')->willReturn([$relBean]);
         $report->last_run_date_link = $mock;
         //Set values to other relate fields to ensure nothing tries to populate them
         $report->report_cache_id = "-1";
@@ -105,27 +105,27 @@ class SavedReportTest extends TestCase
      */
     public function reportBeanVardefsProvider()
     {
-        return array(
+        return [
             // basic
-            array('fields', 'description'),
-            array('indices' , 'id'),
-            array('relationships' , 'reports_modified_user'),
+            ['fields', 'description'],
+            ['indices' , 'id'],
+            ['relationships' , 'reports_modified_user'],
 
             // assignable
-            array('fields', 'assigned_user_id'),
-            array('indices' , 'assigned_user_id'),
-            array('relationships' , 'reports_assigned_user'),
+            ['fields', 'assigned_user_id'],
+            ['indices' , 'assigned_user_id'],
+            ['relationships' , 'reports_assigned_user'],
 
             // reports
-            array('fields', 'module'),
-            array('indices' , 'idx_savedreport_module'),
-            array('relationships' , 'reports_last_run_date'),
+            ['fields', 'module'],
+            ['indices' , 'idx_savedreport_module'],
+            ['relationships' , 'reports_last_run_date'],
 
             // team_security
-            array('fields', 'team_id'),
-            array('indices' , 'team_set_saved_reports'),
-            array('relationships' , 'reports_team_count_relationship'),
-        );
+            ['fields', 'team_id'],
+            ['indices' , 'team_set_saved_reports'],
+            ['relationships' , 'reports_team_count_relationship'],
+        ];
     }
 
     /**

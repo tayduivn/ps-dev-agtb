@@ -17,80 +17,79 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug36329Test extends TestCase
 {
-	var $save_query;
-	var $current_language;
+    var $save_query;
+    var $current_language;
 
     protected function setUp() : void
-	{
-		global $sugar_config;
-		if(isset($sugar_config['save_query']))
-        {
+    {
+        global $sugar_config;
+        if (isset($sugar_config['save_query'])) {
             $this->save_query = $sugar_config['save_query'];
         }
-		$this->current_language = $GLOBALS['current_language'];
+        $this->current_language = $GLOBALS['current_language'];
 
-		global $current_user;
-		$current_user = new User();
-		$current_user->retrieve('1');
+        global $current_user;
+        $current_user = new User();
+        $current_user->retrieve('1');
 
-		global $mod_strings, $app_strings;
-		$mod_strings = return_module_language('en_us', 'Accounts');
-		$app_strings = return_application_language('en_us');
+        global $mod_strings, $app_strings;
+        $mod_strings = return_module_language('en_us', 'Accounts');
+        $app_strings = return_application_language('en_us');
 
-		$beanList = array();
-		$beanFiles = array();
-		require('include/modules.php');
-		$GLOBALS['beanList'] = $beanList;
-		$GLOBALS['beanFiles'] = $beanFiles;
+        $beanList = [];
+        $beanFiles = [];
+        require 'include/modules.php';
+        $GLOBALS['beanList'] = $beanList;
+        $GLOBALS['beanFiles'] = $beanFiles;
 
-		require('sugar_version.php');
-		$GLOBALS['sugar_version'] = $sugar_version;
-	}
+        require 'sugar_version.php';
+        $GLOBALS['sugar_version'] = $sugar_version;
+    }
 
     protected function tearDown() : void
-	{
-	    global $sugar_config;
-		if(!empty($this->save_query)) {
-		   $sugar_config['save_query'] = $this->save_query;
-		}
+    {
+        global $sugar_config;
+        if (!empty($this->save_query)) {
+            $sugar_config['save_query'] = $this->save_query;
+        }
 
-		$GLOBALS['current_language'] = $this->current_language;
-		//unset($GLOBALS['mod_strings']);
-		//unset($GLOBALS['app_strings']);
-		//unset($GLOBALS['beanList']);
-		//unset($GLOBALS['beanFiles']);
-	}
+        $GLOBALS['current_language'] = $this->current_language;
+        //unset($GLOBALS['mod_strings']);
+        //unset($GLOBALS['app_strings']);
+        //unset($GLOBALS['beanList']);
+        //unset($GLOBALS['beanFiles']);
+    }
 
     public function test_populate_only_no_query()
     {
-    	$GLOBALS['sugar_config']['save_query'] = 'populate_only';
-    	$_REQUEST['module'] = 'Accounts';
-    	$_REQUEST['action'] = 'Popup';
-    	$_REQUEST['mode'] = 'single';
-    	$_REQUEST['create'] = 'true';
-    	$_REQUEST['metadata'] = 'undefined';
-    	require_once('include/utils/layout_utils.php');
-    	$popup = new ViewPopup();
-    	$popup->module = 'Accounts';
+        $GLOBALS['sugar_config']['save_query'] = 'populate_only';
+        $_REQUEST['module'] = 'Accounts';
+        $_REQUEST['action'] = 'Popup';
+        $_REQUEST['mode'] = 'single';
+        $_REQUEST['create'] = 'true';
+        $_REQUEST['metadata'] = 'undefined';
+        require_once 'include/utils/layout_utils.php';
+        $popup = new ViewPopup();
+        $popup->module = 'Accounts';
         $popup->bean = new Account();
-    	$this->expectOutputRegex('/Perform a search using the search form above/');
-    	$popup->display();
+        $this->expectOutputRegex('/Perform a search using the search form above/');
+        $popup->display();
     }
 
 
     public function test_populate_only_with_query()
     {
-    	$GLOBALS['sugar_config']['save_query'] = 'populate_only';
-    	$_REQUEST['module'] = 'Accounts';
-    	$_REQUEST['action'] = 'Popup';
-    	$_REQUEST['mode'] = 'single';
-    	$_REQUEST['create'] = 'true';
-    	$_REQUEST['metadata'] = 'undefined';
-    	$_REQUEST['name_advanced'] = 'Test';
-    	$_REQUEST['query'] = 'true';
-    	require_once('include/utils/layout_utils.php');
-    	$popup = new ViewPopup();
-    	$popup->module = 'Accounts';
+        $GLOBALS['sugar_config']['save_query'] = 'populate_only';
+        $_REQUEST['module'] = 'Accounts';
+        $_REQUEST['action'] = 'Popup';
+        $_REQUEST['mode'] = 'single';
+        $_REQUEST['create'] = 'true';
+        $_REQUEST['metadata'] = 'undefined';
+        $_REQUEST['name_advanced'] = 'Test';
+        $_REQUEST['query'] = 'true';
+        require_once 'include/utils/layout_utils.php';
+        $popup = new ViewPopup();
+        $popup->module = 'Accounts';
         $popup->bean = new Account();
 
         $this->setOutputCallback(function ($output) {

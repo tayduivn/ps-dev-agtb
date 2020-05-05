@@ -28,24 +28,24 @@ class Bug53218Test extends TestCase
     protected function setUp() : void
     {
         SugarTestHelper::setUp('dictionary');
-        SugarTestHelper::setUp('current_user', array(true, 1));
+        SugarTestHelper::setUp('current_user', [true, 1]);
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
         $this->relationships = new DeployedRelationships('Products');
-        $definition = array(
+        $definition = [
             'lhs_module' => 'Products',
             'relationship_type' => 'one-to-one',
-            'rhs_module' => 'Users'
-        );
+            'rhs_module' => 'Users',
+        ];
         $this->relationship = RelationshipFactory::newRelationship($definition);
         $this->relationships->add($this->relationship);
         $this->relationships->save();
         $this->relationships->build();
-        SugarTestHelper::setUp('relation', array(
+        SugarTestHelper::setUp('relation', [
             'Products',
-            'Users'
-        ));
+            'Users',
+        ]);
     }
 
     protected function tearDown() : void

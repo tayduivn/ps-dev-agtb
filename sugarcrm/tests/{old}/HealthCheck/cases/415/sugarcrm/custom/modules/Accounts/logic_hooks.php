@@ -10,4 +10,4 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$hook_array['after_ui_frame'][] = array(1, 'fake', 'path/to/fake/file.php', 'fake', 'fake');
+$hook_array['after_ui_frame'][] = [1, 'fake', 'path/to/fake/file.php', 'fake', 'fake'];

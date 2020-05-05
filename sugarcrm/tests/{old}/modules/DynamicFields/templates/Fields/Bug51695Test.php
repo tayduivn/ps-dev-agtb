@@ -27,7 +27,8 @@ class Bug51695Test extends TestCase
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }
 
-    public function testGetFieldDefsForCurrencyTemplateHasPrecision() {
+    public function testGetFieldDefsForCurrencyTemplateHasPrecision()
+    {
         $template = new TemplateCurrency();
 
         $this->assertArrayHasKey('precision', $template->get_field_def());

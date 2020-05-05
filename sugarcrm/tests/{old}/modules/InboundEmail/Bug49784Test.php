@@ -34,12 +34,11 @@ class Bug49784Test extends TestCase
         $GLOBALS['current_user'] = $this->user;
 
         //Setup logichook files
-        if(file_exists($this->casesHookFile))
-        {
+        if (file_exists($this->casesHookFile)) {
             $this->hasCustomCasesLogicHookFile = true;
             copy($this->casesHookFile, $this->casesHookFile.'.bak');
         }
-        $hook_array['after_relationship_add'][] = Array(1, 'Cases increment count', $this->casesCountFile,'CaseCount', 'countMe');
+        $hook_array['after_relationship_add'][] = [1, 'Cases increment count', $this->casesCountFile,'CaseCount', 'countMe'];
         $pi = pathinfo($this->casesHookFile);
         SugarAutoLoader::ensureDir($pi['dirname']);
         write_array_to_file("hook_array", $hook_array, $this->casesHookFile);
@@ -56,8 +55,8 @@ class Bug49784Test extends TestCase
                 }}?>';
         file_put_contents($this->casesCountFile, $fileCont);
 
-    	//setup test account for case
-		$this->account = new Account();
+        //setup test account for case
+        $this->account = new Account();
         $this->account->name = 'test account for bug 39855';
         $this->account->assigned_user_id = 'SugarUser';
         $this->account->save();
@@ -86,11 +85,10 @@ class Bug49784Test extends TestCase
     protected function tearDown() : void
     {
         //Remove the custom logic hook files
-        if($this->hasCustomCasesLogicHookFile && file_exists($this->casesHookFile.'.bak'))
-        {
+        if ($this->hasCustomCasesLogicHookFile && file_exists($this->casesHookFile.'.bak')) {
             copy($this->casesHookFile.'.bak', $this->casesHookFile);
             unlink($this->casesHookFile.'.bak');
-        } else if(file_exists($this->casesHookFile)) {
+        } elseif (file_exists($this->casesHookFile)) {
             unlink($this->casesHookFile);
         }
         unlink($this->casesCountFile);

@@ -21,11 +21,11 @@ class Bug20626Test extends TestCase
 {
     protected function setUp() : void
     {
-    	$GLOBALS['reload_vardefs'] = true;
+        $GLOBALS['reload_vardefs'] = true;
         global $current_user;
 
         $current_user = SugarTestUserUtilities::createAnonymousUser();
-	}
+    }
 
     protected function tearDown() : void
     {
@@ -43,11 +43,11 @@ class Bug20626Test extends TestCase
 
         $meeting = new Meeting();
         $format = $current_user->getUserDateTimePreferences();
-        $meeting->date_start = $timedate->swap_formats("2006-12-23 11:00pm" , 'Y-m-d h:ia', $format['date'].' '.$format['time']);
+        $meeting->date_start = $timedate->swap_formats("2006-12-23 11:00pm", 'Y-m-d h:ia', $format['date'].' '.$format['time']);
         $meeting->time_start = "";
         $meeting->object_name = "Meeting";
         $meeting->duration_hours = 2;
         $ca = new CalendarActivity($meeting);
-        $this->assertEquals($meeting->date_start , $ca->sugar_bean->date_start);
+        $this->assertEquals($meeting->date_start, $ca->sugar_bean->date_start);
     }
 }

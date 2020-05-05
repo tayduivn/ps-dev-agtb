@@ -11,22 +11,24 @@
  */
 
 
-class RestCallHelperTest extends RestTestBase {
+class RestCallHelperTest extends RestTestBase
+{
     protected function tearDown() : void
     {
         parent::tearDown();
         $GLOBALS['db']->query("DELETE FROM calls WHERE id = '{$this->call_id}'");
     }
 
-    public function testCall() {
+    public function testCall()
+    {
         // create a call linked to yourself, a contact, and a lead, verify the call is linked to each and on your calendar
-        $call = array(
+        $call = [
             'name' => 'Test call',
             'duration' => 1,
             'date_start' => '2012-12-13T10:00:00-07:00',
             'date_end' => '2012-12-13T10:15:00-07:00',
             'assigned_user_id' => 1,
-        );
+        ];
 
         $restReply = $this->_restCall('Calls/', json_encode($call), 'POST');
 
@@ -38,8 +40,8 @@ class RestCallHelperTest extends RestTestBase {
 
         // verify the user has the Call, which will validate on calendar
         $restReplyUsers = $this->_restCall("Calls/{$call_id}/link/users");
-        $users_linked = array();
-        foreach($restReplyUsers['reply']['records'] AS $record) {
+        $users_linked = [];
+        foreach ($restReplyUsers['reply']['records'] as $record) {
             $users_linked[] = $record['id'];
         }
 
@@ -47,16 +49,17 @@ class RestCallHelperTest extends RestTestBase {
         $this->assertTrue(in_array(1, $users_linked), "Assigned User was not successfully linked");
     }
 
-    public function testCallHeld() {
+    public function testCallHeld()
+    {
         // create a call linked to yourself, a contact, and a lead, verify the call is linked to each and on your calendar
-        $call = array(
+        $call = [
             'name' => 'Test call',
             'duration' => 1,
             'date_start' => '2012-12-13T10:00:00-07:00',
             'date_end' => '2012-12-13T10:15:00-07:00',
             'assigned_user_id' => 1,
             'status' => 'Held',
-        );
+        ];
 
         $restReply = $this->_restCall('Calls/', json_encode($call), 'POST');
 
@@ -68,12 +71,12 @@ class RestCallHelperTest extends RestTestBase {
 
         // verify the user has the Call, which will validate on calendar
         $restReplyUsers = $this->_restCall("Calls/{$call_id}/link/users");
-        $users_linked = array();
-        foreach($restReplyUsers['reply']['records'] AS $record) {
+        $users_linked = [];
+        foreach ($restReplyUsers['reply']['records'] as $record) {
             $users_linked[] = $record['id'];
         }
 
         $this->assertTrue(in_array($GLOBALS['current_user']->id, $users_linked), "Current User was not successfully linked");
         $this->assertTrue(in_array(1, $users_linked), "Assigned User was not successfully linked");
-    }    
+    }
 }

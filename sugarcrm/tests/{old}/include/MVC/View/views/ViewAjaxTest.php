@@ -1,4 +1,4 @@
-<?php 
+<?php
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -13,9 +13,10 @@
 use PHPUnit\Framework\TestCase;
 
 class ViewAjaxTest extends TestCase
-{   
-    public function testConstructor() 
-	{
+{
+
+    public function testConstructor()
+    {
         $view = new ViewAjax();
         
         $this->assertFalse($view->options['show_title']);
@@ -23,5 +24,5 @@ class ViewAjaxTest extends TestCase
         $this->assertFalse($view->options['show_javascript']);
         $this->assertFalse($view->options['show_subpanels']);
         $this->assertFalse($view->options['show_search']);
-	}
+    }
 }

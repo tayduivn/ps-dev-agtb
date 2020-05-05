@@ -16,17 +16,17 @@ class EqualExpressionTest extends TestCase
 {
     public static function dataProviderTestEqual()
     {
-        return array(
-            array('equal(true, 1)', 'true'),
-            array('equal(0, "")', 'true'),
-            array('equal(1, "true")', 'false'),
-            array('equal(true, "true")', 'true'),
-            array('equal("true", 1)', 'false'),
-            array('equal(false, equal(0, ""))', 'false'),
-            array('equal(false, 0)', 'true'),
-            array('equal(false, "")', 'true'),
-            array('equal(false, "false")', 'true'),
-        );
+        return [
+            ['equal(true, 1)', 'true'],
+            ['equal(0, "")', 'true'],
+            ['equal(1, "true")', 'false'],
+            ['equal(true, "true")', 'true'],
+            ['equal("true", 1)', 'false'],
+            ['equal(false, equal(0, ""))', 'false'],
+            ['equal(false, 0)', 'true'],
+            ['equal(false, "")', 'true'],
+            ['equal(false, "false")', 'true'],
+        ];
     }
 
     /**

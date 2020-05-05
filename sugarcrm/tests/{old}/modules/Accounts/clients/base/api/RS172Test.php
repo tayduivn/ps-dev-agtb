@@ -36,7 +36,7 @@ class RS172Test extends TestCase
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setUp('current_user', array(true, true));
+        SugarTestHelper::setUp('current_user', [true, true]);
 
         $this->service = SugarTestRestUtilities::getRestServiceMock();
         $this->api = new AccountsRelateApi();
@@ -69,12 +69,12 @@ class RS172Test extends TestCase
         $this->account->load_relationship('calls');
         $this->account->calls->add($this->call);
 
-        $actual = $this->api->filterRelated($this->service, array(
+        $actual = $this->api->filterRelated($this->service, [
                 'module' => 'Accounts',
                 'record' => $this->account->id,
                 'link_name' => 'calls',
                 'include_child_items' => true,
-            ));
+            ]);
         $this->assertArrayHasKey('records', $actual);
         $actual = reset($actual['records']);
         $this->assertEquals($this->call->id, $actual['id']);
@@ -89,12 +89,12 @@ class RS172Test extends TestCase
         $this->account->load_relationship('meetings');
         $this->account->meetings->add($this->meeting);
 
-        $actual = $this->api->filterRelated($this->service, array(
+        $actual = $this->api->filterRelated($this->service, [
                 'module' => 'Accounts',
                 'record' => $this->account->id,
                 'link_name' => 'meetings',
                 'include_child_items' => true,
-            ));
+            ]);
         $this->assertArrayHasKey('records', $actual);
         $actual = reset($actual['records']);
         $this->assertEquals($this->meeting->id, $actual['id']);

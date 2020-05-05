@@ -21,7 +21,7 @@ class NotesTest extends TestCase
     protected function setUp() : void
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-	}
+    }
 
     protected function tearDown() : void
     {
@@ -103,9 +103,9 @@ class NotesTest extends TestCase
         $contact->disable_row_level_security = true;
         $contact_id = $contact->save();
 
-        $note = SugarTestNoteUtilities::createNote(null, array(
+        $note = SugarTestNoteUtilities::createNote(null, [
             'contact_id' => $contact_id,
-        ));
+        ]);
 
         $note->disable_row_level_security = true;
         $note->retrieve();
@@ -168,7 +168,7 @@ class NotesTest extends TestCase
 
         $uploadFile = $this->getMockBuilder('UploadFile')
             ->disableOriginalConstructor()
-            ->setMethods(array('get_temp_file_location'))
+            ->setMethods(['get_temp_file_location'])
             ->getMock();
         $uploadFile->method('get_temp_file_location')->willReturn($file);
 
@@ -176,7 +176,7 @@ class NotesTest extends TestCase
         $note->file = $uploadFile;
         $note->filename = 'quote.pdf';
         $note->save(false);
-        SugarTestNoteUtilities::setCreatedNotes(array($note->id));
+        SugarTestNoteUtilities::setCreatedNotes([$note->id]);
 
         // Note: We can't test that the right mime type is stored because the file is fake. But it shouldn't be empty.
         $this->assertNotEmpty($note->file_mime_type, 'Should have stored the mime type');
@@ -188,18 +188,18 @@ class NotesTest extends TestCase
 
     public function markDeletedProvider()
     {
-        return array(
-            array(
-                array(
+        return [
+            [
+                [
                     'upload_id' => Sugarcrm\Sugarcrm\Util\Uuid::uuid1(),
-                ),
+                ],
                 true,
-            ),
-            array(
-                array(),
+            ],
+            [
+                [],
                 false,
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -220,9 +220,9 @@ class NotesTest extends TestCase
 
     public function deleteAttachmentProvider()
     {
-        return array(
-            array(
-                array(
+        return [
+            [
+                [
                     'filename' => 'foo.jpg',
                     'file_mime_type' => 'image/jpg',
                     'file_ext' => 'jpg',
@@ -230,21 +230,21 @@ class NotesTest extends TestCase
                     'email_type' => 'Emails',
                     'email_id' => Sugarcrm\Sugarcrm\Util\Uuid::uuid1(),
                     'upload_id' => Sugarcrm\Sugarcrm\Util\Uuid::uuid1(),
-                ),
+                ],
                 true,
-            ),
-            array(
-                array(
+            ],
+            [
+                [
                     'filename' => 'foo.jpg',
                     'file_mime_type' => 'image/jpg',
                     'file_ext' => 'jpg',
                     'file_size' => 111,
                     'email_type' => 'Emails',
                     'email_id' => Sugarcrm\Sugarcrm\Util\Uuid::uuid1(),
-                ),
+                ],
                 false,
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -262,7 +262,7 @@ class NotesTest extends TestCase
         $note->deleteAttachment();
         $this->assertSame($expected, file_exists($file));
 
-        $note = BeanFactory::retrieveBean('Notes', $note->id, array('use_cache' => false));
+        $note = BeanFactory::retrieveBean('Notes', $note->id, ['use_cache' => false]);
         $this->assertEmpty($note->filename, 'The filename should be empty');
         $this->assertEmpty($note->file_mime_type, 'The file_mime_type should be empty');
         $this->assertEmpty($note->file_ext, 'The file_ext should be empty');

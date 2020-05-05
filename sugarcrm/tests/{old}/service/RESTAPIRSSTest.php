@@ -31,7 +31,7 @@ class RESTAPIRSSTest extends TestCase
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }
 
-    protected function _makeRESTCall($method,$parameters,$response_type = 'JSON',$api = 'v3_1')
+    protected function _makeRESTCall($method, $parameters, $response_type = 'JSON', $api = 'v3_1')
     {
         // specify the REST web service to interact with
         $url = $GLOBALS['sugar_config']['site_url']."/service/$api/rest.php";
@@ -44,7 +44,7 @@ class RESTAPIRSSTest extends TestCase
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 0);
-        curl_setopt($curl, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_0 );
+        curl_setopt($curl, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_0);
         // build the request URL
         $json = json_encode($parameters);
         $postArgs = "method=$method&input_type=JSON&response_type=$response_type&rest_data=$json";
@@ -54,8 +54,8 @@ class RESTAPIRSSTest extends TestCase
         // Close the connection
         curl_close($curl);
 
-        if ( $response_type == 'JSON' ) {
-            return json_decode($response,true);
+        if ($response_type == 'JSON') {
+            return json_decode($response, true);
         }
 
         return $response;
@@ -64,18 +64,19 @@ class RESTAPIRSSTest extends TestCase
     protected function _login()
     {
         $GLOBALS['db']->commit(); // Making sure we commit any changes before logging in
-        return $this->_makeRESTCall('login',
-            array(
+        return $this->_makeRESTCall(
+            'login',
+            [
                 'user_auth' =>
-                    array(
+                    [
                         'user_name' => $this->_user->user_name,
                         'password' => $this->_user->user_hash,
                         'version' => '.01',
-                        ),
+                        ],
                 'application_name' => 'SugarTestRunner',
-                'name_value_list' => array(),
-                )
-            );
+                'name_value_list' => [],
+                ]
+        );
     }
 
     public function testGetEntryListReturnsRSScorrectly()
@@ -83,18 +84,19 @@ class RESTAPIRSSTest extends TestCase
         $result = $this->_login();
         $sessionId = $result['id'];
 
-        $rss = $this->_makeRESTCall('get_entry_list',
-                        array(
+        $rss = $this->_makeRESTCall(
+            'get_entry_list',
+            [
                             'session' => $sessionId,
                             'module' => 'Contacts',
                             'query' => "contacts.id = '{$this->_contact->id}'",
-                            ),
-                        'RSS'
-                        );
+                            ],
+            'RSS'
+        );
 
-        $this->assertContains('<description>1 record(s) found</description>',$rss);
-        $this->assertContains("<title>{$this->_contact->name}</title>",$rss);
-        $this->assertContains("<guid>{$this->_contact->id}</guid>",$rss);
+        $this->assertContains('<description>1 record(s) found</description>', $rss);
+        $this->assertContains("<title>{$this->_contact->name}</title>", $rss);
+        $this->assertContains("<guid>{$this->_contact->id}</guid>", $rss);
     }
 
     public function testGetEntryReturnsRSScorrectly()
@@ -102,18 +104,19 @@ class RESTAPIRSSTest extends TestCase
         $result = $this->_login();
         $sessionId = $result['id'];
 
-        $rss = $this->_makeRESTCall('get_entry',
-                        array(
+        $rss = $this->_makeRESTCall(
+            'get_entry',
+            [
                             'session' => $sessionId,
                             'module' => 'Contacts',
                             'id' => $this->_contact->id,
-                            ),
-                        'RSS'
-                        );
+                            ],
+            'RSS'
+        );
 
-        $this->assertContains('<description>1 record(s) found</description>',$rss);
-        $this->assertContains("<title>{$this->_contact->name}</title>",$rss);
-        $this->assertContains("<guid>{$this->_contact->id}</guid>",$rss);
+        $this->assertContains('<description>1 record(s) found</description>', $rss);
+        $this->assertContains("<title>{$this->_contact->name}</title>", $rss);
+        $this->assertContains("<guid>{$this->_contact->id}</guid>", $rss);
     }
 
     public function testGetEntriesReturnsRSScorrectly()
@@ -121,17 +124,18 @@ class RESTAPIRSSTest extends TestCase
         $result = $this->_login();
         $sessionId = $result['id'];
 
-        $rss = $this->_makeRESTCall('get_entries',
-                        array(
+        $rss = $this->_makeRESTCall(
+            'get_entries',
+            [
                             'session' => $sessionId,
                             'module' => 'Contacts',
-                            'ids' => array($this->_contact->id),
-                            ),
-                        'RSS'
-                        );
+                            'ids' => [$this->_contact->id],
+                            ],
+            'RSS'
+        );
 
-        $this->assertContains('<description>1 record(s) found</description>',$rss);
-        $this->assertContains("<title>{$this->_contact->name}</title>",$rss);
-        $this->assertContains("<guid>{$this->_contact->id}</guid>",$rss);
+        $this->assertContains('<description>1 record(s) found</description>', $rss);
+        $this->assertContains("<title>{$this->_contact->name}</title>", $rss);
+        $this->assertContains("<guid>{$this->_contact->id}</guid>", $rss);
     }
 }

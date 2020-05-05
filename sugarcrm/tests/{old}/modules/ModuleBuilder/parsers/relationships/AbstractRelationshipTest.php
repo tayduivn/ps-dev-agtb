@@ -69,34 +69,34 @@ class AbstractRelationshipTest extends TestCase
      */
     public function testRelateFieldDefinitionRName($module, $relationshipName, $expected)
     {
-        $ar = new AbstractRelationship(array());
+        $ar = new AbstractRelationship([]);
 
         $definition = SugarTestReflection::callProtectedMethod(
             $ar,
             'getRelateFieldDefinition',
-            array($module, $relationshipName)
+            [$module, $relationshipName]
         );
         $this->assertEquals($expected, $definition['rname']);
     }
 
     public static function relateFieldDefinitionRNameProvider()
     {
-        return array(
-            'person' => array(
+        return [
+            'person' => [
                 'Contacts',
                 'contacts_documents',
                 'full_name',
-            ),
-            'basic' => array(
+            ],
+            'basic' => [
                 'Accounts',
                 'accounts_documents',
                 'name',
-            ),
-            'non-deployed' => array(
+            ],
+            'non-deployed' => [
                 'test_test',
                 'test_documents',
                 'full_name',
-            ),
-        );
+            ],
+        ];
     }
 }

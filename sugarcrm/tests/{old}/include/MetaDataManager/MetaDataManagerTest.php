@@ -23,7 +23,7 @@ class MetaDataManagerTest extends TestCase
     {
         SugarTestHelper::setup('beanFiles');
         SugarTestHelper::setup('beanList');
-        SugarTestHelper::setup('current_user', array(true, true));
+        SugarTestHelper::setup('current_user', [true, true]);
         SugarTestHelper::setup('files');
 
         $sugarConfig = \SugarConfig::getInstance();
@@ -141,7 +141,7 @@ class MetaDataManagerTest extends TestCase
 
     protected function setTestLanguageSettings()
     {
-        $GLOBALS['sugar_config']['languages'] = array(
+        $GLOBALS['sugar_config']['languages'] = [
             'br_test' => 'Test Language',
             'br_mine' => 'My Language',
             'snazzy' => 'Snazzy Language',
@@ -149,7 +149,7 @@ class MetaDataManagerTest extends TestCase
             'awesome' => 'Awesome Sauce',
             'br_ikea' => 'Ikead an idea',
             'en_us' => 'English (US)',
-        );
+        ];
 
         $GLOBALS['sugar_config']['disabled_languages'] = "whiskey,br_ikea";
     }
@@ -327,19 +327,19 @@ class MetaDataManagerTest extends TestCase
     public function testNormalizeMetadata()
     {
         // Test data, to be used for testing both mobile and base
-        $data = array(
-            'modules' => array(
-                'Accounts' => array(
+        $data = [
+            'modules' => [
+                'Accounts' => [
                     'menu' => true,
-                    'views' => array(
+                    'views' => [
                         'record' => true,
-                    ),
-                    'layouts' => array(
+                    ],
+                    'layouts' => [
                         'record' => true,
-                    ),
-                ),
-            ),
-        );
+                    ],
+                ],
+            ],
+        ];
 
         // Test base first, which should be equality
         $mm = MetaDataManager::getManager();
@@ -363,39 +363,39 @@ class MetaDataManagerTest extends TestCase
         //Would be nice to mock the app_list_strings, but this currently isn't possible with return_app_list_strings_language
         $this->assertEquals(
             $normalList['checkbox_dom'],
-            array(
+            [
                 '' => '',
                 '1' => 'Yes',
                 '2' => 'No',
-            )
+            ]
         );
 
         $this->assertEquals(
             $tupleList['checkbox_dom'],
-            array(
-                array('', ''),
-                array('1', 'Yes'),
-                array('2', 'No'),
-            )
+            [
+                ['', ''],
+                ['1', 'Yes'],
+                ['2', 'No'],
+            ]
         );
     }
 
     public function getLanguageDataProvider()
     {
-        return array(
-            array(
-                array(
+        return [
+            [
+                [
                     'lang' => 'en_us',
-                    'ordered' => true
-                )
-            ),
-            array(
-                array(
+                    'ordered' => true,
+                ],
+            ],
+            [
+                [
                     'lang' => 'en_us',
-                    'ordered' => false
-                )
-            )
-        );
+                    'ordered' => false,
+                ],
+            ],
+        ];
     }
 
     /**
@@ -406,12 +406,12 @@ class MetaDataManagerTest extends TestCase
     public function testGetLanguage($params)
     {
         $manager = $this->getMockBuilder('MetaDataManager')
-            ->disableOriginalConstructor()->setMethods(array('getAppListStrings', 'getLangUrl'))->getMock();
+            ->disableOriginalConstructor()->setMethods(['getAppListStrings', 'getLangUrl'])->getMock();
         //Skipping the constructor requires we set up the db ourselves
         $manager->db = DBManagerFactory::getInstance();
 
         $manager->expects($this->once())->method('getAppListStrings')
-            ->with($params['lang'], $params['ordered'])->will($this->returnValue(array()));
+            ->with($params['lang'], $params['ordered'])->will($this->returnValue([]));
 
         $fileName = md5(microtime());
 
@@ -430,7 +430,7 @@ class MetaDataManagerTest extends TestCase
     {
         $mm = $this->getMockBuilder('MetaDataManager')
             ->disableOriginalConstructor()
-            ->setMethods(array('getModuleViews'))
+            ->setMethods(['getModuleViews'])
             ->getMock();
 
         $mm->expects($this->once())
@@ -443,22 +443,22 @@ class MetaDataManagerTest extends TestCase
 
     public function providerTestGetModuleView()
     {
-        return array(
+        return [
             // existing view
-            array(
+            [
                 'Accounts',
                 'record',
-                array('record' => array('foo', 'bar')),
-                array('foo', 'bar'),
-            ),
+                ['record' => ['foo', 'bar']],
+                ['foo', 'bar'],
+            ],
             // non-existing view
-            array(
+            [
                 'Accounts',
                 'blaat',
-                array('record' => array('foo', 'bar')),
-                array(),
-            ),
-        );
+                ['record' => ['foo', 'bar']],
+                [],
+            ],
+        ];
     }
 
     /**
@@ -472,7 +472,7 @@ class MetaDataManagerTest extends TestCase
         /** @var MetaDataManager|MockObject $mm */
         $mm = $this->getMockBuilder('MetaDataManager')
             ->disableOriginalConstructor()
-            ->setMethods(array('getModuleView'))
+            ->setMethods(['getModuleView'])
             ->getMock();
 
         $mm->expects($this->once())
@@ -487,97 +487,97 @@ class MetaDataManagerTest extends TestCase
 
     public function providerTestGetModuleViewFields()
     {
-        return array(
+        return [
             // empty view data
-            array(
+            [
                 'Contacts',
                 'record',
-                array(),
-                array(),
-                array(),
-            ),
+                [],
+                [],
+                [],
+            ],
             // real view data
-            array(
+            [
                 'Contacts',
                 'record',
-                array(
-                    'meta' => array(
-                        'panels' => array(
-                            array(
-                                'fields' => array(
+                [
+                    'meta' => [
+                        'panels' => [
+                            [
+                                'fields' => [
 
                                     // string based field def
                                     'first_name',
 
                                     // array based field def
-                                    array(
+                                    [
                                         'name' => 'last_name',
-                                    ),
+                                    ],
 
                                     // link field
-                                    array(
+                                    [
                                         'name' => 'tasks',
-                                        'fields' => array('id', 'date_due'),
+                                        'fields' => ['id', 'date_due'],
                                         'order_by' => 'date_due:desc',
-                                    ),
+                                    ],
 
                                     // array based invalid field
-                                    array(
+                                    [
                                         'span',
-                                    ),
+                                    ],
 
                                     // non-string/array invalid field
                                     69,
 
                                     // nested field set
-                                    array(
+                                    [
                                         'name' => 'primary_address',
-                                        'fields' => array(
+                                        'fields' => [
                                             'street',
-                                            array(
+                                            [
                                                 'name' => 'country',
-                                            ),
-                                        ),
-                                    ),
+                                            ],
+                                        ],
+                                    ],
 
                                     // anonymous nested field set
-                                    array(
-                                        'fields' => array(
+                                    [
+                                        'fields' => [
                                             'foo',
-                                            array(
+                                            [
                                                 'name' => 'bar',
-                                            ),
+                                            ],
 
                                             // link field inside field set
-                                            array(
+                                            [
                                                 'name' => 'opportunities',
-                                                'fields' => array('id', 'name'),
-                                            ),
-                                        ),
-                                    ),
+                                                'fields' => ['id', 'name'],
+                                            ],
+                                        ],
+                                    ],
 
                                     // related field set
-                                    array(
-                                        'related_fields' => array(
-                                            array(
+                                    [
+                                        'related_fields' => [
+                                            [
                                                 'name' => 'good',
-                                            ),
+                                            ],
                                             'karma',
 
                                             // link field inside related fields
-                                            array(
+                                            [
                                                 'name' => 'bugs',
-                                            ),
-                                        )
-                                    ),
+                                            ],
+                                        ],
+                                    ],
                                     // link field as string
                                     'calls',
-                                ),
-                            ),
-                        ),
-                    ),
-                ),
-                array(
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                [
                     'first_name',
                     'last_name',
                     'tasks',
@@ -591,29 +591,29 @@ class MetaDataManagerTest extends TestCase
                     'karma',
                     'bugs',
                     'calls',
-                ),
-                array(
-                    'first_name' => array(),
-                    'last_name' => array(),
-                    'tasks' => array(
-                        'fields' => array('id', 'date_due'),
+                ],
+                [
+                    'first_name' => [],
+                    'last_name' => [],
+                    'tasks' => [
+                        'fields' => ['id', 'date_due'],
                         'order_by' => 'date_due:desc',
-                    ),
-                    'street' => array(),
-                    'country' => array(),
-                    'primary_address' => array(),
-                    'foo' => array(),
-                    'bar' => array(),
-                    'opportunities' => array(
-                        'fields' => array('id', 'name'),
-                    ),
-                    'good' => array(),
-                    'karma' => array(),
-                    'bugs' => array(),
-                    'calls' => array(),
-                ),
-            ),
-        );
+                    ],
+                    'street' => [],
+                    'country' => [],
+                    'primary_address' => [],
+                    'foo' => [],
+                    'bar' => [],
+                    'opportunities' => [
+                        'fields' => ['id', 'name'],
+                    ],
+                    'good' => [],
+                    'karma' => [],
+                    'bugs' => [],
+                    'calls' => [],
+                ],
+            ],
+        ];
     }
 
     public function testGetPlatformList()
@@ -653,48 +653,48 @@ PLATFORMS;
     public function testRemoveDisabledFields($input, $expected)
     {
         $mm = new MetaDataManager();
-        $actual = SugarTestReflection::callProtectedMethod($mm, 'removeDisabledFields', array('Accounts', $input));
+        $actual = SugarTestReflection::callProtectedMethod($mm, 'removeDisabledFields', ['Accounts', $input]);
         $this->assertSame($actual, $expected);
     }
 
     public static function removeDisabledFieldsProvider()
     {
-        return array(
-            array(
-                array(
-                    'some-arbitrary-structure' => array(
-                        'fields' => array(
-                            array(
+        return [
+            [
+                [
+                    'some-arbitrary-structure' => [
+                        'fields' => [
+                            [
                                 'name' => 'f1',
                                 'enabled' => true,
-                            ),
-                            array(
+                            ],
+                            [
                                 'name' => 'f2',
                                 'enabled' => false,
-                            ),
-                            array(
+                            ],
+                            [
                                 'name' => 'f3',
-                            ),
+                            ],
                             'f4',
-                        ),
-                    ),
-                ),
-                array(
-                    'some-arbitrary-structure' => array(
-                        'fields' => array(
-                            array(
+                        ],
+                    ],
+                ],
+                [
+                    'some-arbitrary-structure' => [
+                        'fields' => [
+                            [
                                 'name' => 'f1',
                                 'enabled' => true,
-                            ),
-                            array(
+                            ],
+                            [
                                 'name' => 'f3',
-                            ),
+                            ],
                             'f4',
-                        ),
-                    ),
-                ),
-            ),
-        );
+                        ],
+                    ],
+                ],
+            ],
+        ];
     }
 
     /**
@@ -724,24 +724,24 @@ PLATFORMS;
 
     public static function cacheStaticProvider()
     {
-        return array(
-            array('getPlatformsWithCachesInDatabase', array(), 'getConnection'),
-        );
+        return [
+            ['getPlatformsWithCachesInDatabase', [], 'getConnection'],
+        ];
     }
 
     private function getCacheEnabledDatabaseMock($method)
     {
         $stmt = $this->getMockBuilder('\Doctrine\DBAL\Statement')
             ->disableOriginalConstructor()
-            ->setMethods(array('fetchAll'))
+            ->setMethods(['fetchAll'])
             ->getMock();
         $stmt->expects($this->atLeastOnce())
             ->method('fetchAll')
-            ->willReturn(array());
+            ->willReturn([]);
 
         $conn = $this->getMockBuilder('\Doctrine\DBAL\Connection')
             ->disableOriginalConstructor()
-            ->setMethods(array('executeQuery'))
+            ->setMethods(['executeQuery'])
             ->getMock();
         $conn->expects($this->atLeastOnce())
             ->method('executeQuery')
@@ -767,7 +767,7 @@ PLATFORMS;
     protected function getAbstractDbManagerMock($method)
     {
         return $this->getMockBuilder('DBManager')
-            ->setMethods(array($method))
+            ->setMethods([$method])
             ->getMockForAbstractClass();
     }
 
@@ -788,20 +788,20 @@ PLATFORMS;
 
     public static function getPlatformsWithCachesInFilesystemProvider()
     {
-        return array(
-            array(
+        return [
+            [
                 'en_us_test_base_public_ordered.json',
-                'base'
-            ),
-            array(
+                'base',
+            ],
+            [
                 'en_us_test_portal_public.json',
-                'portal'
-            ),
-            array(
+                'portal',
+            ],
+            [
                 'metadata_test_mobile_private.php',
-                'mobile'
-            )
-        );
+                'mobile',
+            ],
+        ];
     }
 
     /**
@@ -820,28 +820,28 @@ PLATFORMS;
 
     public static function getPlatformsWithCachesInDatabaseProvider()
     {
-        return array(
-            array(
+        return [
+            [
                 'meta:hash:public:base',
-                array(
+                [
                     'base',
-                ),
-            ),
-            array(
+                ],
+            ],
+            [
                 'meta:hash:base,mobile',
-                array(
+                [
                     'base',
                     'mobile',
-                ),
-            ),
-            array(
+                ],
+            ],
+            [
                 'meta:hash:contexthash1234:base,custom_platform-with_underscores-and_dashes',
-                array(
+                [
                     'base',
                     'custom_platform-with_underscores-and_dashes',
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
     }
 
     /**
@@ -854,7 +854,7 @@ PLATFORMS;
      */
     public function testGetCachedMetadataHashKey($public, $platforms, $contextHash, $expected)
     {
-        $contextMock = $this->createPartialMock('MetaDataContextDefault', array('getHash'));
+        $contextMock = $this->createPartialMock('MetaDataContextDefault', ['getHash']);
         $contextMock->method('getHash')->willReturn($contextHash);
 
         $mm = new MetaDataManager($platforms, $public);
@@ -865,32 +865,32 @@ PLATFORMS;
 
     public static function getCachedMetadataHashKeyProvider()
     {
-        return array(
-            array(
+        return [
+            [
                 true,
                 ['base'],
                 null,
                 'meta:hash:public:base',
-            ),
-            array(
+            ],
+            [
                 false,
                 ['base','mobile'],
                 null,
                 'meta:hash:base,mobile',
-            ),
-            array(
+            ],
+            [
                 true,
                 ['base','mobile'],
                 'contextHash123',
                 'meta:hash:public:base,mobile',
-            ),
-            array(
+            ],
+            [
                 false,
                 ['base','mobile'],
                 'contextHash123',
                 'meta:hash:contextHash123:base,mobile',
-            ),
-        );
+            ],
+        ];
     }
 
     public function getActivityStreamDataProvider()
@@ -949,13 +949,14 @@ PLATFORMS;
     /**
      * @dataProvider getEditableDropdownFilterProvider
      */
-    public function testGetEditableDropdownFilter($filter, $defaults, $expected) {
+    public function testGetEditableDropdownFilter($filter, $defaults, $expected)
+    {
         global $app_list_strings;
 
 
         $app_list_strings['md_fix_filter_test'] = $defaults;
 
-        $mock = $this->createPartialMock('MetaDataManager', array('getRawFilter'));
+        $mock = $this->createPartialMock('MetaDataManager', ['getRawFilter']);
         $mock->expects($this->any())->method('getRawFilter')->willReturn($filter);
         $actual = $mock->getEditableDropdownFilter('md_fix_filter_test', 'foo');
 
@@ -968,78 +969,78 @@ PLATFORMS;
 
     public static function getEditableDropdownFilterProvider()
     {
-        return array(
+        return [
             //Arrays with numeric keys
-            array(
-                array(),
-                array(
+            [
+                [],
+                [
                     '01' => 'one',
                     '02' => 'two',
                     '10' => 'ten',
-                ),
-                array(
+                ],
+                [
                     '01' => true,
                     '02' => true,
                     '10' => true,
-                )
-            ),
+                ],
+            ],
             //Non-empty filter should not contain new values by default
             //nor entries that were in the filter but not the default
-            array(
-                array(
+            [
+                [
                     'a' => false,
                     'b' => true,
                     'c' => true,
-                ),
-                array(
+                ],
+                [
                     'a' => 'A',
                     'c' => 'C',
                     'd' => 'D',
-                ),
-                array(
+                ],
+                [
                     'a' => false,
                     'c' => true,
                     'd' => false,
-                )
-            ),
+                ],
+            ],
             //Order should be preserved from the filter
-            array(
-                array(
+            [
+                [
                     'b' => true,
                     'a' => true,
                     'c' => false,
-                ),
-                array(
+                ],
+                [
                     'a' => 'A',
                     'b' => 'B',
                     'c' => 'C',
-                ),
-                array(
+                ],
+                [
                     'b' => true,
                     'a' => true,
                     'c' => false,
-                )
-            ),
-        );
+                ],
+            ],
+        ];
     }
 
     public function testGetPartialMetadata()
     {
-        $mm = $this->createPartialMock('MetaDataManager', array('loadSectionMetadata'));
+        $mm = $this->createPartialMock('MetaDataManager', ['loadSectionMetadata']);
         $contextSections = SugarTestReflection::callProtectedMethod($mm, 'getContextAwareSections');
         $allSections = array_merge($contextSections, ['foo']);
         SugarTestReflection::setProtectedValue($mm, 'sections', $allSections);
         $mm->expects($this->once())
             ->method('loadSectionMetadata')
             ->with('foo')
-            ->willReturn(array('foo' => 'bar'));
+            ->willReturn(['foo' => 'bar']);
 
         $data = SugarTestReflection::callProtectedMethod($mm, 'loadMetadata', [[], new MetaDataContextPartial()]);
 
         unset($data['_hash']);
         unset($data['_override_values']);
 
-        $this->assertSame(array('foo' => 'bar'), $data);
+        $this->assertSame(['foo' => 'bar'], $data);
     }
 // END SUGARCRM flav=ent ONLY
 }

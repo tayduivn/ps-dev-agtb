@@ -31,7 +31,7 @@ class RecordListApiTest extends TestCase
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setUp('current_user', array(true, true));
+        SugarTestHelper::setUp('current_user', [true, true]);
 
         $this->recordListApi = new RecordListApi();
         $this->serviceMock = SugarTestRestUtilities::getRestServiceMock();
@@ -49,32 +49,32 @@ class RecordListApiTest extends TestCase
      */
     public function recordListCreateDataProvider()
     {
-        return array(
-            array(
-                array(
-                    'records' => array(1, 2, 3),
+        return [
+            [
+                [
+                    'records' => [1, 2, 3],
                     'module' => 'Accounts',
-                ),
+                ],
                 'Accounts',
-                array(1, 2, 3),
-            ),
-            array(
-                array(
-                    'records' => array(),
+                [1, 2, 3],
+            ],
+            [
+                [
+                    'records' => [],
                     'module' => 'Contacts',
-                ),
+                ],
                 'Contacts',
-                array(),
-            ),
-            array(
-                array(
-                    'records' => array(3, 2, 1),
+                [],
+            ],
+            [
+                [
+                    'records' => [3, 2, 1],
                     'module' => 'Contacts',
-                ),
+                ],
                 'Contacts',
-                array(3, 2, 1),
-            ),
-        );
+                [3, 2, 1],
+            ],
+        ];
     }
 
     /**
@@ -104,20 +104,20 @@ class RecordListApiTest extends TestCase
      */
     public function recordListDeleteDataProvider()
     {
-        return array(
-            array(
+        return [
+            [
                 'Accounts',
-                array(1, 2, 3),
-            ),
-            array(
+                [1, 2, 3],
+            ],
+            [
                 'Accounts',
-                array(),
-            ),
-            array(
+                [],
+            ],
+            [
                 'Contacts',
-                array(3, 2, 1),
-            ),
-        );
+                [3, 2, 1],
+            ],
+        ];
     }
 
     /**
@@ -129,10 +129,10 @@ class RecordListApiTest extends TestCase
     {
         $recordListId = RecordListFactory::saveRecordList($records, $moduleName);
 
-        $result = $this->recordListApi->recordListDelete($this->serviceMock, array(
+        $result = $this->recordListApi->recordListDelete($this->serviceMock, [
             'module' => $moduleName,
             'record_list_id' => $recordListId,
-        ));
+        ]);
 
         $this->assertNotEmpty($result);
         $this->assertTrue($result);
@@ -145,20 +145,20 @@ class RecordListApiTest extends TestCase
      */
     public function recordListGetDataProvider()
     {
-        return array(
-            array(
+        return [
+            [
                 'Accounts',
-                array(1, 2, 3),
-            ),
-            array(
+                [1, 2, 3],
+            ],
+            [
                 'Accounts',
-                array(),
-            ),
-            array(
+                [],
+            ],
+            [
                 'Contacts',
-                array(3, 2, 1),
-            ),
-        );
+                [3, 2, 1],
+            ],
+        ];
     }
 
     /**
@@ -169,10 +169,10 @@ class RecordListApiTest extends TestCase
     public function testRecordListGet($moduleName, array $records)
     {
         $recordListId = RecordListFactory::saveRecordList($records, $moduleName);
-        $result = $this->recordListApi->recordListGet($this->serviceMock, array(
+        $result = $this->recordListApi->recordListGet($this->serviceMock, [
             'module' => $moduleName,
             'record_list_id' => $recordListId,
-        ));
+        ]);
 
         $this->assertNotEmpty($result);
         $this->assertArrayHasKey('id', $result);

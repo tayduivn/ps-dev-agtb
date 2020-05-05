@@ -61,11 +61,11 @@ final class AnnotationListener implements TestListener
      */
     private function hasNoCoversAnnotation(array $annotations) : bool
     {
-        return (
+        return
             empty($annotations['class']['covers']) &&
             empty($annotations['class']['coversNothing']) &&
             empty($annotations['method']['covers']) &&
             empty($annotations['method']['coversNothing'])
-        );
+        ;
     }
 }

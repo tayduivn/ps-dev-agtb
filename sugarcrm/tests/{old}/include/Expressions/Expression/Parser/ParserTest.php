@@ -15,26 +15,26 @@ use PHPUnit\Framework\TestCase;
 
 class ParserTest extends TestCase
 {
-	/**
+    /**
      * @group bug39037
      */
-	public function testEvaluate()
-	{
+    public function testEvaluate()
+    {
         try {
-        	$dep = new Dependency("test");
-        	$dep->addAction(
-        	   ActionFactory::getNewAction('SetValue', array('target' => 'name', 'value' => 'notAFunction(1,1)'))
-        	);
-        	$focus = new Account();
-        	$dep->fire($focus);
-        	$dep->setTrigger(new Trigger('falz'));
-        	$dep->fire($focus);
-        	$dep->setTrigger(new Trigger('isAlpha($notAField)'));
+            $dep = new Dependency("test");
+            $dep->addAction(
+                ActionFactory::getNewAction('SetValue', ['target' => 'name', 'value' => 'notAFunction(1,1)'])
+            );
+            $focus = new Account();
+            $dep->fire($focus);
+            $dep->setTrigger(new Trigger('falz'));
+            $dep->fire($focus);
+            $dep->setTrigger(new Trigger('isAlpha($notAField)'));
             $dep->fire($focus);
             //fake assert to show the test passed
             $this->assertTrue(true);
-        } catch (Exception $e){
-        	$this->assertTrue(false, "Parser threw exception: {$e->getMessage()}");
+        } catch (Exception $e) {
+            $this->assertTrue(false, "Parser threw exception: {$e->getMessage()}");
         }
     }
 
@@ -42,7 +42,7 @@ class ParserTest extends TestCase
     {
         $expr = 'enum("test")';
         $result = Parser::evaluate($expr)->evaluate();
-        $this->assertEquals(array("test"), $result);
+        $this->assertEquals(["test"], $result);
 
         $expr = 'concat("test")';
         $result = Parser::evaluate($expr)->evaluate();

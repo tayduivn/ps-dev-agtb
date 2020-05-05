@@ -24,7 +24,7 @@ class ForecastWorksheetHooksTest extends TestCase
         SugarTestHelper::setUp('moduleList');
         SugarTestHelper::setUp('beanList');
 
-        $this->worksheet = $this->createPartialMock('ForecastWorksheet', array('save', 'load_relationship'));
+        $this->worksheet = $this->createPartialMock('ForecastWorksheet', ['save', 'load_relationship']);
     }
 
     protected function tearDown() : void
@@ -40,12 +40,12 @@ class ForecastWorksheetHooksTest extends TestCase
     {
         $this->markTestSkipped('Skipped for now as Notifications are not working currently');
         $this->worksheet->draft = 0;
-        $this->worksheet->fetched_row = array();
+        $this->worksheet->fetched_row = [];
 
         /* @var $hook ForecastWorksheetHooks */
         $hook = new MockForecastWorksheetHooks();
         $hook::$_isForecastSetup = false;
-        $ret = $hook::managerNotifyCommitStage($this->worksheet, 'before_save', array());
+        $ret = $hook::managerNotifyCommitStage($this->worksheet, 'before_save', []);
         $this->assertFalse($ret);
     }
 
@@ -56,17 +56,17 @@ class ForecastWorksheetHooksTest extends TestCase
     {
         $this->markTestSkipped('Skipped for now as Notifications are not working currently');
         $this->worksheet->draft = 0;
-        $this->worksheet->fetched_row = array(
-            'commit_stage' => 'include'
-        );
+        $this->worksheet->fetched_row = [
+            'commit_stage' => 'include',
+        ];
         $this->worksheet->parent_type = 'Test';
 
 
         $hook = new MockForecastWorksheetHooks();
         $hook::$_isForecastSetup = false;
         /* @var $hook ForecastWorksheetHooks */
-        $hook::$settings = array('forecast_by' => 'Test1');
-        $ret = $hook::managerNotifyCommitStage($this->worksheet, 'before_save', array());
+        $hook::$settings = ['forecast_by' => 'Test1'];
+        $ret = $hook::managerNotifyCommitStage($this->worksheet, 'before_save', []);
         $this->assertFalse($ret);
     }
 
@@ -77,9 +77,9 @@ class ForecastWorksheetHooksTest extends TestCase
     {
         $this->markTestSkipped('Skipped for now as Notifications are not working currently');
         $this->worksheet->draft = 0;
-        $this->worksheet->fetched_row = array(
-            'commit_stage' => 'include'
-        );
+        $this->worksheet->fetched_row = [
+            'commit_stage' => 'include',
+        ];
         $this->worksheet->commit_stage = 'include';
         $this->worksheet->parent_type = 'Test';
 
@@ -87,8 +87,8 @@ class ForecastWorksheetHooksTest extends TestCase
         $hook = new MockForecastWorksheetHooks();
         $hook::$_isForecastSetup = false;
         /* @var $hook ForecastWorksheetHooks */
-        $hook::$settings = array('forecast_by' => 'Test');
-        $ret = $hook::managerNotifyCommitStage($this->worksheet, 'before_save', array());
+        $hook::$settings = ['forecast_by' => 'Test'];
+        $ret = $hook::managerNotifyCommitStage($this->worksheet, 'before_save', []);
         $this->assertFalse($ret);
     }
 
@@ -99,7 +99,7 @@ class ForecastWorksheetHooksTest extends TestCase
     {
         $hook = new MockForecastWorksheetHooks();
 
-        $worksheet = $this->createPartialMock('ForecastWorksheet', array('save'));
+        $worksheet = $this->createPartialMock('ForecastWorksheet', ['save']);
 
         $fn = $field . '_name';
         $fi = $field . '_id';
@@ -107,19 +107,19 @@ class ForecastWorksheetHooksTest extends TestCase
         $worksheet->$fn = 'Test Value';
         $worksheet->$fi = $value;
 
-        $hook->checkRelatedName($worksheet, 'before_save', array());
+        $hook->checkRelatedName($worksheet, 'before_save', []);
 
         $this->assertEquals($isEmpty, empty($worksheet->$fn));
     }
 
     public function dataProviderCheckRelatedName()
     {
-        return array(
-            array('account', '', true),
-            array('account', 'some_value', false),
-            array('opportunity', '', true),
-            array('opportunity', 'some_value', false),
-        );
+        return [
+            ['account', '', true],
+            ['account', 'some_value', false],
+            ['opportunity', '', true],
+            ['opportunity', 'some_value', false],
+        ];
     }
 
     public function testAfterRelationshipDelete()
@@ -131,7 +131,7 @@ class ForecastWorksheetHooksTest extends TestCase
          */
         $dbMock = SugarTestHelper::setUp('mock_db');
 
-        $worksheet = $this->createPartialMock('ForecastWorksheet', array('save', 'load_relationship', 'getFieldDefinition'));
+        $worksheet = $this->createPartialMock('ForecastWorksheet', ['save', 'load_relationship', 'getFieldDefinition']);
         $worksheet->db = $dbMock;
 
         $worksheet->expects($this->once())
@@ -141,7 +141,7 @@ class ForecastWorksheetHooksTest extends TestCase
             ->method('getFieldDefinition')
             ->will($this->returnValue(true));
 
-        $relMock = $this->getMockBuilder('One2MBeanRelationship', array('__get'))
+        $relMock = $this->getMockBuilder('One2MBeanRelationship', ['__get'])
             ->disableOriginalConstructor()
             ->getMock();
         $relMock->expects($this->any())
@@ -149,13 +149,13 @@ class ForecastWorksheetHooksTest extends TestCase
             ->will(
                 $this->returnCallback(
                     function () {
-                        return array('rhs_key' => 'test_id');
+                        return ['rhs_key' => 'test_id'];
                     }
                 )
             );
 
         $linkMock = $this->getMockBuilder('Link2')
-            ->setMethods(array('getRelationshipObject'))
+            ->setMethods(['getRelationshipObject'])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -171,7 +171,7 @@ class ForecastWorksheetHooksTest extends TestCase
         );
         /* @var $hook ForecastWorksheetHooks */
         /* @var $worksheet ForecastWorksheet */
-        $hook->afterRelationshipDelete($worksheet, 'after_relationship_delete', array('link' => 'test'));
+        $hook->afterRelationshipDelete($worksheet, 'after_relationship_delete', ['link' => 'test']);
 
         $this->assertEquals(1, $dbMock->getQuerySpyRunCount('name_query'));
     }
@@ -192,7 +192,7 @@ class MockForecastWorksheetHooks extends ForecastWorksheetHooks
      */
     public static $_notificationBean = null;
 
-    public static $_languageStringsMock = array();
+    public static $_languageStringsMock = [];
 
     public static function isForecastSetup()
     {

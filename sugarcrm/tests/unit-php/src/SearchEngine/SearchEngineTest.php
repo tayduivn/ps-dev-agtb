@@ -38,23 +38,23 @@ class SearchEngineTest extends TestCase
 
     public function dataProviderTestHasCapability()
     {
-        return array(
-            array(
+        return [
+            [
                 'Sugarcrm\Sugarcrm\SearchEngine\Engine\EngineInterface',
                 'DoesNotExist',
                 false,
-            ),
-            array(
+            ],
+            [
                 'Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\GlobalSearchCapable',
                 'FakeCapability',
                 false,
-            ),
-            array(
+            ],
+            [
                 'Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\GlobalSearchCapable',
                 'GlobalSearch',
                 true,
-            )
-        );
+            ],
+        ];
     }
 
     /**
@@ -71,10 +71,10 @@ class SearchEngineTest extends TestCase
 
     public function dataProviderTestGetEngine()
     {
-        return array(
-            array($this->createMock('Sugarcrm\Sugarcrm\SearchEngine\Engine\EngineInterface')),
-            array($this->createMock('Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\GlobalSearchCapable')),
-        );
+        return [
+            [$this->createMock('Sugarcrm\Sugarcrm\SearchEngine\Engine\EngineInterface')],
+            [$this->createMock('Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\GlobalSearchCapable')],
+        ];
     }
 
     /**
@@ -102,11 +102,11 @@ class SearchEngineTest extends TestCase
 
     public function dataProviderTestNewEngine()
     {
-        return array(
-            array(
+        return [
+            [
                 'Elastic',
-                array('foo' => 'bar', 0 => 'sweet', 'config' => true),
-            ),
-        );
+                ['foo' => 'bar', 0 => 'sweet', 'config' => true],
+            ],
+        ];
     }
 }

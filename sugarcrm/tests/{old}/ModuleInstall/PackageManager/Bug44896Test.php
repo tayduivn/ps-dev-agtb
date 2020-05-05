@@ -23,8 +23,7 @@ class Bug44896Test extends TestCase
             rmdir_recursive(dirname(Bug44896PackageManger::$location));
         }
         sugar_mkdir(dirname(Bug44896PackageManger::$location));
-        if (is_dir(Bug44896PackageManger::$location))
-        {
+        if (is_dir(Bug44896PackageManger::$location)) {
             rmdir_recursive(Bug44896PackageManger::$location);
         }
         sugar_mkdir(Bug44896PackageManger::$location);
@@ -54,13 +53,13 @@ class Bug44896Test extends TestCase
 
 class Bug44896PackageManger
 {
-	static $manifest_location = "upload://upgrades/module/Bug44896-manifest.php";
+    static $manifest_location = "upload://upgrades/module/Bug44896-manifest.php";
     static $zip_location = "upload://upgrades/module/Bug44896.zip";
     static $location = "upload://upgrades/module/";
 
-	public function __construct()
+    public function __construct()
     {
-	   $this->manifest_content = <<<EOQ
+        $this->manifest_content = <<<EOQ
 <?php
 \$manifest = array (
          'acceptable_sugar_versions' =>
@@ -95,14 +94,13 @@ class Bug44896PackageManger
 );
 
 EOQ;
-	}
+    }
 
-	public function createTempModule()
+    public function createTempModule()
     {
-	   if (!is_file(self::$manifest_location))
-       {
+        if (!is_file(self::$manifest_location)) {
             file_put_contents(self::$manifest_location, $this->manifest_content);
-            zip_files_list(self::$zip_location, array(self::$manifest_location));
-       }
-	}
+            zip_files_list(self::$zip_location, [self::$manifest_location]);
+        }
+    }
 }

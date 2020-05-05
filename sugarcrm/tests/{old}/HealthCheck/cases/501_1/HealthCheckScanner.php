@@ -13,7 +13,7 @@
 class S_501_1_HealthCheckScannerCasesTestMock extends HealthCheckScannerCasesTestMock
 {
     public $skip = true;
-    public $md5_files = array(
-        './path/to/fake/file.php' => 'fakeMD5'
-    );
+    public $md5_files = [
+        './path/to/fake/file.php' => 'fakeMD5',
+    ];
 }

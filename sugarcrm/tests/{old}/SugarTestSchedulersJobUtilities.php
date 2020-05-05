@@ -13,7 +13,7 @@
 
 class SugarTestSchedulersJobUtilities
 {
-    private static $_createdJobs = array();
+    private static $_createdJobs = [];
 
     /**
      * Create a new job.
@@ -67,7 +67,7 @@ class SugarTestSchedulersJobUtilities
      */
     public static function getCreatedJobIds()
     {
-        $jobIds = array();
+        $jobIds = [];
         foreach (self::$_createdJobs as $job) {
             $jobIds[] = $job->id;
         }

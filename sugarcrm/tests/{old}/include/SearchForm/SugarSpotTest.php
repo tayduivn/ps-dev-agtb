@@ -27,39 +27,39 @@ class SugarSpotTest extends TestCase
     /**
      * @ticket 41236
      */
-    public function testSearchGrabsModuleDisplayName() 
+    public function testSearchGrabsModuleDisplayName()
     {
         $langpack = new SugarTestLangPackCreator();
-        $langpack->setAppListString('moduleList',array('Foo'=>'Bar'));
+        $langpack->setAppListString('moduleList', ['Foo'=>'Bar']);
         $langpack->save();
         
-        $result = array(
-            'Foo' => array(
-                'data' => array(
-                    array(
+        $result = [
+            'Foo' => [
+                'data' => [
+                    [
                         'ID' => '1',
                         'NAME' => 'recordname',
-                        ),
-                    ),
-                'pageData' => array(
-                    'offsets' => array(
+                        ],
+                    ],
+                'pageData' => [
+                    'offsets' => [
                         'total' => 1,
                         'next' => 0,
-                        ),
-                    'bean' => array(
+                        ],
+                    'bean' => [
                         'moduleDir' => 'Foo',
-                        ),
-                    ),
-                ),
+                        ],
+                    ],
+                ],
                 'readAccess' => true,
-            );
+            ];
         
-        $sugarSpot = $this->createPartialMock('SugarSpot', array('_performSearch'));
+        $sugarSpot = $this->createPartialMock('SugarSpot', ['_performSearch']);
         $sugarSpot->expects($this->any())
             ->method('_performSearch')
             ->will($this->returnValue($result));
             
-        $returnValue = $sugarSpot->searchAndDisplay('','');
+        $returnValue = $sugarSpot->searchAndDisplay('', '');
 
         $this->assertMatchesRegularExpression('/Bar/', $returnValue);
     }
@@ -67,42 +67,42 @@ class SugarSpotTest extends TestCase
     /**
      * @ticket 43080
      */
-    public function testSearchGrabsMore() 
+    public function testSearchGrabsMore()
     {
-        $app_strings = return_application_language($GLOBALS['current_language']); 
+        $app_strings = return_application_language($GLOBALS['current_language']);
         $this->assertTrue(array_key_exists('LBL_SEARCH_MORE', $app_strings));
 
         $langpack = new SugarTestLangPackCreator();
         $langpack->setAppString('LBL_SEARCH_MORE', 'XXmoreXX');
         $langpack->save();
         
-        $result = array(
-            'Foo' => array(
-                'data' => array(
-                    array(
+        $result = [
+            'Foo' => [
+                'data' => [
+                    [
                         'ID' => '1',
                         'NAME' => 'recordname',
-                        ),
-                    ),
-                'pageData' => array(
-                    'offsets' => array(
+                        ],
+                    ],
+                'pageData' => [
+                    'offsets' => [
                         'total' => 100,
                         'next' => 0,
-                        ),
-                    'bean' => array(
+                        ],
+                    'bean' => [
                         'moduleDir' => 'Foo',
-                        ),
-                    ),
-                ),
+                        ],
+                    ],
+                ],
                 'readAccess' => true,
-            );
+            ];
         
-        $sugarSpot = $this->createPartialMock('SugarSpot', array('_performSearch'));
+        $sugarSpot = $this->createPartialMock('SugarSpot', ['_performSearch']);
         $sugarSpot->expects($this->any())
             ->method('_performSearch')
             ->will($this->returnValue($result));
             
-        $returnValue = $sugarSpot->searchAndDisplay('','');
+        $returnValue = $sugarSpot->searchAndDisplay('', '');
 
         $this->assertStringNotContainsString('(99 more)', $returnValue);
         $this->assertStringContainsString('(99 XXmoreXX)', $returnValue);
@@ -115,32 +115,32 @@ class SugarSpotTest extends TestCase
      */
     public function providerTestSearchType()
     {
-        return array(
-              array('phone', '777', true),
-              array('phone', '(777)', true),
-              array('phone', '%777', true),
-              array('phone', '77', false),
-              array('phone', '%77) 7', false),
-              array('phone', '88-88-88', false),
-              array('int', '1', true),
-              array('int', '1.0', true),
-              array('int', '.1', true),
-              array('int', 'a', false),
-              array('decimal', '1.0', true),
-              array('decimal', '1', true),
-              array('decimal', '1,000', true),
-              array('decimal', 'aaaaa', false),
-              array('float', '1.0', true),
-              array('float', '1', true),
-              array('float', '1,000', true),
-              array('float', 'aaaaa', false),
-              array('id', '1', false),
-              array('datetime', '2011-01-01 10:10:10', false),
-              array('date', '2011-01-01', false),
-              array('bool', true, false),
-              array('bool', false, false),
-              array('foo', 'foo', true),
-        );
+        return [
+              ['phone', '777', true],
+              ['phone', '(777)', true],
+              ['phone', '%777', true],
+              ['phone', '77', false],
+              ['phone', '%77) 7', false],
+              ['phone', '88-88-88', false],
+              ['int', '1', true],
+              ['int', '1.0', true],
+              ['int', '.1', true],
+              ['int', 'a', false],
+              ['decimal', '1.0', true],
+              ['decimal', '1', true],
+              ['decimal', '1,000', true],
+              ['decimal', 'aaaaa', false],
+              ['float', '1.0', true],
+              ['float', '1', true],
+              ['float', '1,000', true],
+              ['float', 'aaaaa', false],
+              ['id', '1', false],
+              ['datetime', '2011-01-01 10:10:10', false],
+              ['date', '2011-01-01', false],
+              ['bool', true, false],
+              ['bool', false, false],
+              ['foo', 'foo', true],
+        ];
     }
 
     /**
@@ -151,8 +151,11 @@ class SugarSpotTest extends TestCase
     public function testFilterSearchType($type, $query, $expected)
     {
         $sugarSpot = new Bug50484SugarSpotMock();
-        $this->assertEquals($expected, $sugarSpot->filterSearchType($type, $query),
-            ('SugarSpot->filterSearchType expected type ' . $type . ' with value ' . $query . ' to return ' . $expected ? 'true' : false));
+        $this->assertEquals(
+            $expected,
+            $sugarSpot->filterSearchType($type, $query),
+            ('SugarSpot->filterSearchType expected type ' . $type . ' with value ' . $query . ' to return ' . $expected ? 'true' : false)
+        );
     }
 
     /**
@@ -167,47 +170,47 @@ class SugarSpotTest extends TestCase
 
     public static function getOptionProvider()
     {
-        return array(
-            'none-provided' => array(
-                array(),
+        return [
+            'none-provided' => [
+                [],
                 'foo',
                 null,
                 null,
-            ),
-            'global-provided' => array(
-                array(
+            ],
+            'global-provided' => [
+                [
                     'foo' => 'bar',
-                ),
+                ],
                 'foo',
                 null,
                 'bar',
-            ),
-            'module-specific-provided' => array(
-                array(
-                    'modules' => array(
-                        'Accounts' => array(
+            ],
+            'module-specific-provided' => [
+                [
+                    'modules' => [
+                        'Accounts' => [
                             'foo' => 'baz',
-                        ),
-                    ),
-                ),
+                        ],
+                    ],
+                ],
                 'foo',
                 'Accounts',
                 'baz',
-            ),
-            'both-provided' => array(
-                array(
+            ],
+            'both-provided' => [
+                [
                     'foo' => 'bar',
-                    'modules' => array(
-                        'Accounts' => array(
+                    'modules' => [
+                        'Accounts' => [
                             'foo' => 'baz',
-                        ),
-                    ),
-                ),
+                        ],
+                    ],
+                ],
                 'foo',
                 'Accounts',
                 'baz',
-            ),
-        );
+            ],
+        ];
     }
 }
 

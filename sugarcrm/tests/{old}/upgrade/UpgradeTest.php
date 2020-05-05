@@ -39,12 +39,12 @@ END;
 
     public function dataGetScripts()
     {
-        return array(
-            array("pre", "custom/upgrade/scripts/pre/TestScript.php"),
-            array("post", "custom/upgrade/scripts/post/7_TestScript2.php"),
-            array("pre", "custom/modules/Accounts/upgrade/scripts/pre/13_TestScript3.php"),
-            array("post", "custom/modules/Contacts/upgrade/scripts/post/1_TestScript4.php"),
-        );
+        return [
+            ["pre", "custom/upgrade/scripts/pre/TestScript.php"],
+            ["post", "custom/upgrade/scripts/post/7_TestScript2.php"],
+            ["pre", "custom/modules/Accounts/upgrade/scripts/pre/13_TestScript3.php"],
+            ["post", "custom/modules/Contacts/upgrade/scripts/post/1_TestScript4.php"],
+        ];
     }
 
     /**
@@ -61,7 +61,7 @@ END;
             ->setConstructorArgs([$this->upgrader])
             ->getMock();
         $dbMock = $this->getMockBuilder('DBManager')
-            ->setMethods(array('getScriptName'))
+            ->setMethods(['getScriptName'])
             ->getMockForAbstractClass();
         $dbMock->expects($this->any())->method("getScriptName")->will($this->returnValue($db));
         $this->upgrader->setDb($dbMock);
@@ -78,11 +78,11 @@ END;
 
     public function dataRunSQL()
     {
-        return array(
-            array("6.6.2", "ent", "7.0.0", "ent", "mysql", "66_to_70_mysql.sql"),
-            array("6.6.2", "ent", "7.0.0", "ent", "foo", "66_to_70_foo.sql"),
-            array("7.0.0", "pro", "7.0.0", "ent", "oracle", "70_pro_to_ent_oracle.sql"),
-        );
+        return [
+            ["6.6.2", "ent", "7.0.0", "ent", "mysql", "66_to_70_mysql.sql"],
+            ["6.6.2", "ent", "7.0.0", "ent", "foo", "66_to_70_foo.sql"],
+            ["7.0.0", "pro", "7.0.0", "ent", "oracle", "70_pro_to_ent_oracle.sql"],
+        ];
     }
 
     /**
@@ -108,12 +108,12 @@ END;
         @touch('sugarCaseTest.txt');
 
         $script = $this->upgrader->getScript('post', '9_RemoveFiles');
-        $this->upgrader->state['files_to_delete'] = array('sugarcasetest.txt');
+        $this->upgrader->state['files_to_delete'] = ['sugarcasetest.txt'];
         $script->run();
 
         $this->assertEquals(true, file_exists('sugarCaseTest.txt'), 'Failed case-insensitivity file-remove test.');
 
-        $this->upgrader->state['files_to_delete'] = array('sugarCaseTest.txt');
+        $this->upgrader->state['files_to_delete'] = ['sugarCaseTest.txt'];
         $script->run();
 
         $this->assertEquals(false, file_exists('sugarCaseTest.txt'), 'Failed general file-remove test.');

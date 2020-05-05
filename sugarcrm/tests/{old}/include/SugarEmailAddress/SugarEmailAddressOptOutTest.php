@@ -46,10 +46,10 @@ class SugarEmailAddressOptOutTest extends TestCase
 
     public function optoutDataProvider()
     {
-        return array(
+        return [
             [true],
             [false],
-        );
+        ];
     }
 
     /**

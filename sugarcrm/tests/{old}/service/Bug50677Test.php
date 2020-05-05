@@ -36,7 +36,7 @@ class Bug50677Test extends SOAPTestCase
     protected function setUp() : void
     {
         $this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/service/v3_1/soap.php';
-   		parent::setUp();
+        parent::setUp();
         $this->_login(); // Logging in just before the SOAP call as this will also commit any pending DB changes
 
         $this->_product = SugarTestProductUtilities::createProduct();
@@ -55,18 +55,17 @@ class Bug50677Test extends SOAPTestCase
 
     public function testSetRelationshipProductBundleProduct()
     {
-        $result = $this->_soapClient->call('set_relationship', array(
+        $result = $this->_soapClient->call('set_relationship', [
             'session' => $this->_sessionId,
             'module_name' => 'ProductBundles',
             'module_id' => $this->_product_bundle->id,
             'link_field_name' => 'products',
             'related_ids' => $this->_product->id,
-            'name_value_list' => array(
-                array('name' => 'product_index', 'value' => 1)
-                ),
-            'deleted' => 0
-            )
-        );
+            'name_value_list' => [
+                ['name' => 'product_index', 'value' => 1],
+                ],
+            'deleted' => 0,
+            ]);
         $this->assertEquals(1, $result['created'], "Failed To Create Product Bundle -> Product Relationship");
 
         // lets make sure the row is correct since it was created

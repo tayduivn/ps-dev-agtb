@@ -26,13 +26,12 @@ class Bug48135Test extends TestCase
 
     protected function setUp() : void
     {
-        $beanList = array();
-        $beanFiles = array();
-        require('include/modules.php');
+        $beanList = [];
+        $beanFiles = [];
+        require 'include/modules.php';
         $GLOBALS['beanList'] = $beanList;
         $GLOBALS['beanFiles'] = $beanFiles;
-        if(!isset($GLOBALS['current_language']))
-        {
+        if (!isset($GLOBALS['current_language'])) {
                 $GLOBALS['current_language'] = 'en_us';
         }
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
@@ -48,7 +47,7 @@ class Bug48135Test extends TestCase
 
 
         //create an eapm record that is assigned to user 1
-        require_once('modules/EAPM/EAPM.php');
+        require_once 'modules/EAPM/EAPM.php';
         $this->eapm = new EAPM();
         $this->eapm->name = 'testUnit48135EAPM';
         $this->eapm->description = 'simulate an inbound email box to Gmail for unit test';
@@ -90,11 +89,11 @@ class Bug48135Test extends TestCase
 
         //lets call reassignUserRecords to create the query.  The file is full of echo's, so let's catch the buffer.
         ob_start();
-        include('modules/Users/reassignUserRecords.php');
+        include 'modules/Users/reassignUserRecords.php';
         ob_end_clean();
 
         //asssert that expected session variable structure exists
-        $this->assertArrayHasKey('modules', $_SESSION['reassignRecords'],'Session[reassignRecords] does not contain a modules element, reassignuserrecords.php did not process as expected. ');
+        $this->assertArrayHasKey('modules', $_SESSION['reassignRecords'], 'Session[reassignRecords] does not contain a modules element, reassignuserrecords.php did not process as expected. ');
         $this->assertArrayHasKey('EAPM', $_SESSION['reassignRecords']['modules'], 'Session[reassignRecords][modules] does not contain an EAPM element, reassignuserrecords.php did not process as expected. ');
         $this->assertArrayHasKey('update', $_SESSION['reassignRecords']['modules']['EAPM'], 'Session[reassignRecords][modules][EAPM] does not contain an update element, reassignuserrecords.php did not process as expected. ');
 
@@ -107,16 +106,17 @@ class Bug48135Test extends TestCase
     }
 
 
-    public function simulateStep2Session(){
+    public function simulateStep2Session()
+    {
         //simulate having only selected eapm for reassignment
-        $_SESSION['reassignRecords']['assignedModuleListCache'] = array('EAPM' => 'EAPM');
-        $_SESSION['reassignRecords']['assignedModuleListCacheDisp'] = array ('EAPM' => 'EAPM');
+        $_SESSION['reassignRecords']['assignedModuleListCache'] = ['EAPM' => 'EAPM'];
+        $_SESSION['reassignRecords']['assignedModuleListCacheDisp'] =  ['EAPM' => 'EAPM'];
 
         $_REQUEST['module'] = 'Users';
         $_REQUEST['action'] = 'reassignUserRecords';
         $_REQUEST['fromuser'] = $this->user1->id;
         $_REQUEST['touser'] = $this->user2->id;
-        $_REQUEST['modules'] = array('EAPM');
+        $_REQUEST['modules'] = ['EAPM'];
         $_REQUEST['steponesubmit'] = 'Next';
     }
 }

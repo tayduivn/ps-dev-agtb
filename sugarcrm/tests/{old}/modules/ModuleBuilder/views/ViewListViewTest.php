@@ -17,8 +17,8 @@ class ViewListViewTest extends TestCase
 {
     protected function setUp() : void
     {
-	    global $app_list_strings;
-        include("include/language/en_us.lang.php");
+        global $app_list_strings;
+        include "include/language/en_us.lang.php";
     }
 
 
@@ -28,17 +28,16 @@ class ViewListViewTest extends TestCase
      */
     public function testConstructor()
     {
-    	$req = array(
+        $req = [
             "to_pdf" => "1",
             "sugar_body_only"=>"1",
             "module"=>"ModuleBuilder",
             "view_package"=>"",
             "view_module"=>"Bugs",
             "view"=>"listview",
-        );
+        ];
         $view = new ViewListView(null, null, InputValidation::create($req, $req));
         $ajax = $view->constructAjax();
         $this->assertNotNull($ajax);
     }
-    
 }

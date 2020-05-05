@@ -10,11 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
  
-//Workflow Triggers Meta Data Arrays 
-$trigger_meta_array = array ( 
+//Workflow Triggers Meta Data Arrays
+$trigger_meta_array =  [
 
-); 
-
- 
-
-?>
+];

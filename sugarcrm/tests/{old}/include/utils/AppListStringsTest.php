@@ -17,9 +17,9 @@ use PHPUnit\Framework\TestCase;
  */
 class AppListStringsTest extends TestCase
 {
-    private $temp_files = array();
+    private $temp_files = [];
 
-    protected $created_files = array();
+    protected $created_files = [];
     private $configBackup = [];
 
     protected function setUp() : void
@@ -31,8 +31,9 @@ class AppListStringsTest extends TestCase
             'en_us' => 'English (US)',
             'fr_test' => 'Test Lang',
         ];
-        if (!is_dir('custom/include/language'))
+        if (!is_dir('custom/include/language')) {
             @mkdir('custom/include/language', 0777, true);
+        }
 
         sugar_cache_clear('app_list_strings.en_us');
         sugar_cache_clear('app_list_strings.fr_test');
@@ -41,7 +42,7 @@ class AppListStringsTest extends TestCase
     protected function tearDown() : void
     {
         if (!empty($this->created_files)) {
-            $this->created_files = array();
+            $this->created_files = [];
             $this->restore_or_delete('include/language/fr_test.lang.php');
             $this->restore_or_delete('custom/include/language/en_us.lang.php');
             $this->restore_or_delete('custom/include/language/fr_test.lang.php');
@@ -60,20 +61,20 @@ class AppListStringsTest extends TestCase
         $this->loadCustomFrench();
 
         $result = return_app_list_strings_language('fr_test');
-        $expected = array(
-            "account_type_dom" => array(
+        $expected = [
+            "account_type_dom" => [
                 'Partner' => 'Partenaire',
                 'Press' => 'Presse',
                 'Prospect' => 'Prospect',
                 'School' => 'School',
-                'Other' => 'Autre'
-            ),
-            "case_type_dom" => array(
+                'Other' => 'Autre',
+            ],
+            "case_type_dom" => [
                 'Product' => 'Produit',
                 'User' => 'Utilisateur',
-                '' => ''
-            )
-        );
+                '' => '',
+            ],
+        ];
         $this->assertTrue(
             $this->isEqual($expected["account_type_dom"], $result["account_type_dom"]),
             'The english custom list string is not correctly loaded.'
@@ -86,50 +87,50 @@ class AppListStringsTest extends TestCase
 
     public function testIsEqual()
     {
-        $arr1 = array(
-            "a" => array(
-                "aa" => array(
+        $arr1 = [
+            "a" => [
+                "aa" => [
                     "aaa",
                     "aab",
-                ),
-                "ab" => array(
+                ],
+                "ab" => [
                     "aba",
                     "abb",
-                ),
-            ),
-            "b" => array(
-                "ba" => array(
+                ],
+            ],
+            "b" => [
+                "ba" => [
                     "baa",
                     "bab",
-                ),
-                "bb" => array(
+                ],
+                "bb" => [
                     "bba",
                     "bbb",
-                ),
-            ),
-        );
-        $arr2 = array(
-            "a" => array(
-                "aa" => array(
+                ],
+            ],
+        ];
+        $arr2 = [
+            "a" => [
+                "aa" => [
                     "aaa",
                     "aab",
-                ),
-                "ab" => array(
+                ],
+                "ab" => [
                     "aba",
                     "abb",
-                ),
-            ),
-            "b" => array(
-                "ba" => array(
+                ],
+            ],
+            "b" => [
+                "ba" => [
                     "baa",
                     "bab",
-                ),
-                "bb" => array(
+                ],
+                "bb" => [
                     "bbb", // CHANGE ORDER
                     "bba",
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
 
         $this->assertFalse(
             $this->isEqual($arr1, $arr2),
@@ -165,7 +166,7 @@ class AppListStringsTest extends TestCase
         if (isset($this->temp_files[$filename]) && !empty($this->temp_files[$filename])) {
             file_put_contents($filename, $this->temp_files[$filename]);
             $this->temp_files[$filename] = '';
-        } else if (file_exists($filename)) {
+        } elseif (file_exists($filename)) {
             unlink($filename);
         }
     }

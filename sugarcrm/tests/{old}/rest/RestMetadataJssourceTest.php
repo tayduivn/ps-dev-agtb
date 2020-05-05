@@ -12,7 +12,8 @@
  */
 
 
-class RestMetadataJssourceTest extends RestTestBase {
+class RestMetadataJssourceTest extends RestTestBase
+{
     protected function setUp() : void
     {
         parent::setUp();
@@ -27,18 +28,19 @@ class RestMetadataJssourceTest extends RestTestBase {
     /**
      * @group rest
      */
-    public function testJssource() {
+    public function testJssource()
+    {
         $restReply = $this->_restCall('metadata?type_filter=jssource&platform=portal');
         // Hash should always be set
         $this->assertTrue(isset($restReply['reply']['jssource']), "Jssource is missing");
-        
     }
     //END SUGARCRM flav=ent ONLY
 
     /**
      * @group rest
      */
-    public function testNoJssource() {
+    public function testNoJssource()
+    {
         $restReply = $this->_restCall('metadata?type_filter=modules&module_filter=Contacts&platform=portal');
         // Hash should always be set
         $this->assertTrue(!isset($restReply['reply']['jssource']), "Jssource should not be here");

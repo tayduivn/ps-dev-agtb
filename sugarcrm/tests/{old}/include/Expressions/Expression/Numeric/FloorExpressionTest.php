@@ -25,8 +25,8 @@ class FloorExpressionTest extends TestCase
 
     public function dataProviderTestEvaluate()
     {
-        return array(
-            array('floor(5.12)', '5')
-        );
+        return [
+            ['floor(5.12)', '5'],
+        ];
     }
 }

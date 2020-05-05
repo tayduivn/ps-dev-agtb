@@ -32,7 +32,8 @@ class MailerFactoryTest extends TestCase
     /**
      * @group bug59513
      */
-    public function testGetMailerForUser_UserHasAMailConfiguration_ReturnsSmtpMailerWithExpectedFromEmailAddress() {
+    public function testGetMailerForUser_UserHasAMailConfiguration_ReturnsSmtpMailerWithExpectedFromEmailAddress()
+    {
         $expected = "foo@bar.com";
 
         $outboundSmtpEmailConfiguration = new OutboundSmtpEmailConfiguration($GLOBALS["current_user"]);
@@ -46,14 +47,16 @@ class MailerFactoryTest extends TestCase
         self::assertEquals(
             $expected,
             $actual,
-            "The mailer should have been an SmtpMailer instance with '{$expected}' as the From email address");
+            "The mailer should have been an SmtpMailer instance with '{$expected}' as the From email address"
+        );
     }
 
     /**
      * @group bug59513
      * @group functional
      */
-    public function testGetMailerForUser_UsesACustomSendingStrategy_MailConfigurationExists_ReturnsCustomMailer() {
+    public function testGetMailerForUser_UsesACustomSendingStrategy_MailConfigurationExists_ReturnsCustomMailer()
+    {
         SugarTestHelper::ensureDir("custom/modules/Mailer");
 
         // the name of the custom strategy that is expected
@@ -64,9 +67,9 @@ class MailerFactoryTest extends TestCase
         $outboundSmtpEmailConfiguration = new OutboundSmtpEmailConfiguration($GLOBALS["current_user"]);
         $outboundSmtpEmailConfiguration->setFrom("foo@bar.com", "Foo Bar");
 
-        $strategies = array(
+        $strategies = [
             "smtp" => $fqn,
-        );
+        ];
 
         MailerFactoryTest_MockMailerFactory::$outboundEmailConfiguration = $outboundSmtpEmailConfiguration;
         MailerFactoryTest_MockMailerFactory::$strategies = $strategies;
@@ -102,10 +105,11 @@ PHP;
         MockMailerFactoryThrowsException::getMailerForUser($GLOBALS["current_user"]);
     }
 
-    public function testGetMailer_ModeIsInvalid_ThrowsException() {
+    public function testGetMailer_ModeIsInvalid_ThrowsException()
+    {
         $mockOutboundEmailConfiguration = self::getMockBuilder("OutboundEmailConfiguration")
-            ->setMethods(array("getMode"))
-            ->setConstructorArgs(array($GLOBALS["current_user"]))
+            ->setMethods(["getMode"])
+            ->setConstructorArgs([$GLOBALS["current_user"]])
             ->getMock();
 
         $mockOutboundEmailConfiguration->expects(self::any())
@@ -125,10 +129,11 @@ PHP;
      * been mistakenly left around by a unit test. Regardless of the reason, there is no Mailer strategy that matches
      * the "default" mode, so we don't want to support the notion that such a strategy exists.
      */
-    public function testGetMailer_ModeIsDefault_ThrowsException() {
+    public function testGetMailer_ModeIsDefault_ThrowsException()
+    {
         $mockOutboundEmailConfiguration = self::getMockBuilder("OutboundEmailConfiguration")
-            ->setMethods(array("getMode"))
-            ->setConstructorArgs(array($GLOBALS["current_user"]))
+            ->setMethods(["getMode"])
+            ->setConstructorArgs([$GLOBALS["current_user"]])
             ->getMock();
 
         $mockOutboundEmailConfiguration->expects(self::any())

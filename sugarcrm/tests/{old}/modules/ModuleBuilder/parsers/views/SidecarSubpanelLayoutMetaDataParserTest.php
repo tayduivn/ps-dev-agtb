@@ -30,25 +30,25 @@ class SidecarSubpanelLayoutMetaDataParserTest extends TestCase
 
     public static function relationshipFieldsProvider()
     {
-        return array(
-            array(
+        return [
+            [
                 'Opportunities',
                 'contacts',
                 'opportunity_role',
                 true,
-            ),
-            array(
+            ],
+            [
                 'Accounts',
                 'contacts',
                 'opportunity_role',
                 false,
-            ),
-            array(
+            ],
+            [
                 'Accounts',
                 'opportunities',
                 'contact_role',
                 false,
-            ),
-        );
+            ],
+        ];
     }
 }

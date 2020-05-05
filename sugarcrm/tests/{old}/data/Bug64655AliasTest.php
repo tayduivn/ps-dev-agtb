@@ -44,20 +44,20 @@ class Bug64655AliasTest extends TestCase
         SugarTestHelper::setUp('beanFiles');
 
         SugarTestHelper::setUp('dictionary');
-        SugarTestHelper::setUp('custom_field', array(
+        SugarTestHelper::setUp('custom_field', [
             'Users',
-            array(
+            [
                 'name' => self::$fieldName,
                 'type' => 'varchar',
-            ),
-        ));
+            ],
+        ]);
 
         // add custom field to the name format map under "x" alias
-        $GLOBALS['dictionary']['User']['name_format_map'] = array(
+        $GLOBALS['dictionary']['User']['name_format_map'] = [
             'x' => self::$fieldName . '_c',
-        );
+        ];
 
-        SugarTestHelper::setUp('current_user', array(true, true));
+        SugarTestHelper::setUp('current_user', [true, true]);
     }
 
     protected function setUp() : void
@@ -84,9 +84,9 @@ class Bug64655AliasTest extends TestCase
         global $current_user;
         $current_user->setPreference('default_locale_name_format', 'x');
 
-        $account = BeanFactory::retrieveBean('Accounts', $this->account->id, array(
+        $account = BeanFactory::retrieveBean('Accounts', $this->account->id, [
             'use_cache' => false,
-        ));
+        ]);
         $this->assertNotEmpty($account);
 
         // formatted assigned user name must contain the value of custom field

@@ -30,7 +30,8 @@ class ReportsUtilitiesTest extends TestCase
      * @group email
      * @group mailer
      */
-    public function testSendNotificationOfInvalidReport_InvalidRecipientAddress_ThrowsMailerException() {
+    public function testSendNotificationOfInvalidReport_InvalidRecipientAddress_ThrowsMailerException()
+    {
         $recipient = new User();
         $recipient->email1 = null;
         $recipient->email2 = null;

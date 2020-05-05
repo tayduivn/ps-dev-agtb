@@ -36,21 +36,21 @@ class RestThemeTest extends RestTestBase
      */
     public function testPreviewCSS()
     {
-        $args1 = array(
+        $args1 = [
             'platform' => $this->platformTest,
             'themeName' => $this->themeTest,
             'BorderColor' => '#75c1d1',
             'NavigationBar' => '#192c47',
             'PrimaryButton' => '#f5b30a',
-        );
+        ];
 
-        $args2 = array(
+        $args2 = [
             'platform' => $this->platformTest,
             'themeName' => $this->themeTest,
             'BorderColor' => '#aaaaaa',
             'NavigationBar' => '#aaaaaa',
             'PrimaryButton' => '#aaaaaa',
-        );
+        ];
 
         // TEST= GET bootstrap.css with a set of arguments
         $restReply1 = $this->_restCall('css/preview' . $this->rawurlencode($args1));
@@ -76,9 +76,9 @@ class RestThemeTest extends RestTestBase
         $restReply = $this->_restCall('theme?platform=' . $this->platformTest);
 
         // TEST we get a hash of variables
-        $this->assertEquals(array('name' => 'BorderColor', 'value' => '#E61718'), $restReply['reply']['hex'][0]);
-        $this->assertEquals(array('name' => 'NavigationBar', 'value' => '#000000'), $restReply['reply']['hex'][1]);
-        $this->assertEquals(array('name' => 'PrimaryButton', 'value' => '#177EE5'), $restReply['reply']['hex'][2]);
+        $this->assertEquals(['name' => 'BorderColor', 'value' => '#E61718'], $restReply['reply']['hex'][0]);
+        $this->assertEquals(['name' => 'NavigationBar', 'value' => '#000000'], $restReply['reply']['hex'][1]);
+        $this->assertEquals(['name' => 'PrimaryButton', 'value' => '#177EE5'], $restReply['reply']['hex'][2]);
     }
 
     /**
@@ -87,13 +87,13 @@ class RestThemeTest extends RestTestBase
      */
     public function testUpdateCustomTheme()
     {
-        $args = array(
+        $args = [
             'platform' => $this->platformTest,
             'themeName' => $this->themeTest,
             'BorderColor' => '#75c1d1',
             'NavigationBar' => '#192c47',
             'PrimaryButton' => '#f5b30a',
-        );
+        ];
 
         // Fake the user is an admin
         $this->_user->is_admin = 1;
@@ -153,14 +153,14 @@ class RestThemeTest extends RestTestBase
      */
     public function testResetDefaultTheme()
     {
-        $args = array(
+        $args = [
             'platform' => $this->platformTest,
             'themeName' => $this->themeTest,
             'BorderColor' => '#ABCDEF',
             'NavigationBar' => '#ABCDEF',
             'PrimaryButton' => '#ABCDEF',
             'reset' => 'true',
-        );
+        ];
 
         // Fake the user is an admin
         $this->_user->is_admin = 1;
@@ -193,13 +193,13 @@ class RestThemeTest extends RestTestBase
     public function testBug58031BaseUrlVariable()
     {
         // TEST 1:  for preview, baseUrl is "../../styleguide/assets"
-        $args = array(
+        $args = [
             'platform' => $this->platformTest,
             'themeName' => $this->themeTest,
             'BorderColor' => '#75c1d1',
             'NavigationBar' => '#192c47',
             'PrimaryButton' => '#f5b30a',
-        );
+        ];
         $restReply = $this->_restCall('css/preview' . $this->rawurlencode($args));
 
         // TEST= the CSS contains the expected baseUrl

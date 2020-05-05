@@ -18,11 +18,10 @@ class Bug48369Test extends TestCase
 
     protected function setUp() : void
     {
-        if(!file_exists('custom/include/generic/SugarWidgets/SugarWidgetFieldcustomname.php'))
-        {
-           mkdir_recursive('custom/include/generic/SugarWidgets');
+        if (!file_exists('custom/include/generic/SugarWidgets/SugarWidgetFieldcustomname.php')) {
+            mkdir_recursive('custom/include/generic/SugarWidgets');
         } else {
-           $this->backupContents = file_get_contents('custom/include/generic/SugarWidgets/SugarWidgetFieldcustomname.php');
+            $this->backupContents = file_get_contents('custom/include/generic/SugarWidgets/SugarWidgetFieldcustomname.php');
         }
 
         $contents = <<<EOQ
@@ -41,8 +40,7 @@ EOQ;
 
     protected function tearDown() : void
     {
-        if(!empty($this->backupContents))
-        {
+        if (!empty($this->backupContents)) {
             file_put_contents('custom/include/generic/SugarWidgets/SugarWidgetFieldcustomname.php', $this->backupContents);
         } else {
             unlink('custom/include/generic/SugarWidgets/SugarWidgetFieldcustomname.php');
@@ -56,6 +54,6 @@ EOQ;
     {
         $layoutManager = $this->createMock(LayoutManager::class);
         $customWidget = new SugarWidgetFieldCustomName($layoutManager);
-        $this->assertEquals('Bug48369Test', $customWidget->queryFilterIs(array()));
+        $this->assertEquals('Bug48369Test', $customWidget->queryFilterIs([]));
     }
 }

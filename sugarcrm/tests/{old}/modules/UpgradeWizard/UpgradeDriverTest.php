@@ -18,7 +18,7 @@ use PHPUnit\Framework\TestCase;
  * This class tests functions inside the file UpgradeDriver.php.
  */
 
-require_once('modules/UpgradeWizard/CliUpgrader.php');
+require_once 'modules/UpgradeWizard/CliUpgrader.php';
 
 class UpgradeDriverTest extends TestCase
 {
@@ -56,179 +56,179 @@ class UpgradeDriverTest extends TestCase
      */
     public function providers_test_genConfigs()
     {
-        $returnArray = array(
+        $returnArray = [
             ///////////////////
             //Cases for array
             //////////////////
-            array( // Case: Same in $over and $new, but not in $old
-                array(),
-                array('WRALholidays' => array('0' => 'Jan 1, 2014', '1' => 'Jan 13, 2014')),
-                array('WRALholidays' => array('0' => 'Jan 1, 2014', '1' => 'Jan 13, 2014')),
-                array(),
-            ),
-            array( // Case: Same in $over and $new, but different in $old
-                array('WRALholidays' => array('0' => 'Jan 1, 2014', '1' => 'Feb 15, 2014')),
-                array('WRALholidays' => array('0' => 'Jan 1, 2014', '1' => 'Jan 13, 2014')),
-                array('WRALholidays' => array('0' => 'Jan 1, 2014', '1' => 'Jan 13, 2014')),
-                array('WRALholidays' => array('0' => 'Jan 1, 2014', '1' => 'Feb 15, 2014')),
-            ),
-            array( // Case: Same in all three
-                array('WRALholidays' => array('0' => 'Jan 1, 2014', '1' => 'Jan 13, 2014')),
-                array('WRALholidays' => array('0' => 'Jan 1, 2014', '1' => 'Jan 13, 2014')),
-                array('WRALholidays' => array('0' => 'Jan 1, 2014', '1' => 'Jan 13, 2014')),
-                array('WRALholidays' => array('0' => 'Jan 1, 2014', '1' => 'Jan 13, 2014')),
-            ),
-            array( // Case: Same in $over and $new, but extra elements than $old
-                array('WRALholidays' => array('0' => 'Jan 1, 2014')),
-                array('WRALholidays' => array('0' => 'Jan 1, 2014', '1' => 'Jan 13, 2014')),
-                array('WRALholidays' => array('0' => 'Jan 1, 2014', '1' => 'Jan 13, 2014')),
-                array('WRALholidays' => array('0' => 'Jan 1, 2014')),
-            ),
-            array( // Case: Only in new, but not in either $over or $old
-                array(),
-                array(),
-                array('WRALholidays' => array('0' => 'Jan 1, 2014')),
-                array('WRALholidays' => array('0' => 'Jan 1, 2014')),
-            ),
-            array( // Case: Different in $old and $over, but not in $new
-                array('WRALholidays' => array('0' => 'Jan 1, 2014')),
-                array('WRALholidays' => array('1' => 'Jan 13, 2014')),
-                array(),
-                array('WRALholidays' => array('0' => 'Jan 1, 2014')),
-            ),
-            array( // Case: Incremental in $old, $over, and $new
-                array('WRALholidays' => array('0' => 'Jan 1, 2014')),
-                array('WRALholidays' => array('1' => 'Jan 13, 2014')),
-                array('WRALholidays' => array('2' => 'Feb 15, 2014')),
-                array('WRALholidays' => array('0' => 'Jan 1, 2014', '2' => 'Feb 15, 2014')),
-            ),
-            array( // Case: Different values for the same key in $old, $over, and $new
-                array('WRALholidays' => array('0' => 'Jan 1, 2014')),
-                array('WRALholidays' => array('0' => 'Jan 13, 2014')),
-                array('WRALholidays' => array('0' => 'Feb 15, 2014')),
-                array('WRALholidays' => array('0' => 'Feb 15, 2014')),
-            ),
+            [ // Case: Same in $over and $new, but not in $old
+                [],
+                ['WRALholidays' => ['0' => 'Jan 1, 2014', '1' => 'Jan 13, 2014']],
+                ['WRALholidays' => ['0' => 'Jan 1, 2014', '1' => 'Jan 13, 2014']],
+                [],
+            ],
+            [ // Case: Same in $over and $new, but different in $old
+                ['WRALholidays' => ['0' => 'Jan 1, 2014', '1' => 'Feb 15, 2014']],
+                ['WRALholidays' => ['0' => 'Jan 1, 2014', '1' => 'Jan 13, 2014']],
+                ['WRALholidays' => ['0' => 'Jan 1, 2014', '1' => 'Jan 13, 2014']],
+                ['WRALholidays' => ['0' => 'Jan 1, 2014', '1' => 'Feb 15, 2014']],
+            ],
+            [ // Case: Same in all three
+                ['WRALholidays' => ['0' => 'Jan 1, 2014', '1' => 'Jan 13, 2014']],
+                ['WRALholidays' => ['0' => 'Jan 1, 2014', '1' => 'Jan 13, 2014']],
+                ['WRALholidays' => ['0' => 'Jan 1, 2014', '1' => 'Jan 13, 2014']],
+                ['WRALholidays' => ['0' => 'Jan 1, 2014', '1' => 'Jan 13, 2014']],
+            ],
+            [ // Case: Same in $over and $new, but extra elements than $old
+                ['WRALholidays' => ['0' => 'Jan 1, 2014']],
+                ['WRALholidays' => ['0' => 'Jan 1, 2014', '1' => 'Jan 13, 2014']],
+                ['WRALholidays' => ['0' => 'Jan 1, 2014', '1' => 'Jan 13, 2014']],
+                ['WRALholidays' => ['0' => 'Jan 1, 2014']],
+            ],
+            [ // Case: Only in new, but not in either $over or $old
+                [],
+                [],
+                ['WRALholidays' => ['0' => 'Jan 1, 2014']],
+                ['WRALholidays' => ['0' => 'Jan 1, 2014']],
+            ],
+            [ // Case: Different in $old and $over, but not in $new
+                ['WRALholidays' => ['0' => 'Jan 1, 2014']],
+                ['WRALholidays' => ['1' => 'Jan 13, 2014']],
+                [],
+                ['WRALholidays' => ['0' => 'Jan 1, 2014']],
+            ],
+            [ // Case: Incremental in $old, $over, and $new
+                ['WRALholidays' => ['0' => 'Jan 1, 2014']],
+                ['WRALholidays' => ['1' => 'Jan 13, 2014']],
+                ['WRALholidays' => ['2' => 'Feb 15, 2014']],
+                ['WRALholidays' => ['0' => 'Jan 1, 2014', '2' => 'Feb 15, 2014']],
+            ],
+            [ // Case: Different values for the same key in $old, $over, and $new
+                ['WRALholidays' => ['0' => 'Jan 1, 2014']],
+                ['WRALholidays' => ['0' => 'Jan 13, 2014']],
+                ['WRALholidays' => ['0' => 'Feb 15, 2014']],
+                ['WRALholidays' => ['0' => 'Feb 15, 2014']],
+            ],
             ///////////////////
             //Cases for boolean
             //////////////////
-            array( // Case: boolean value, same $over and $new but not in $old
-                array(),
-                array('fts_disable_notification' => true),
-                array('fts_disable_notification' => true),
-                array(),
-            ),
-            array( // Case: boolean value, same in $over and new, but different in $old
-                array('fts_disable_notification' => false),
-                array('fts_disable_notification' => true),
-                array('fts_disable_notification' => true),
-                array('fts_disable_notification' => false),
-            ),
-            array( // Case: boolean value, only in $new but not in $over or $old
-                array(),
-                array(),
-                array('fts_disable_notification' => true),
-                array('fts_disable_notification' => true),
-            ),
+            [ // Case: boolean value, same $over and $new but not in $old
+                [],
+                ['fts_disable_notification' => true],
+                ['fts_disable_notification' => true],
+                [],
+            ],
+            [ // Case: boolean value, same in $over and new, but different in $old
+                ['fts_disable_notification' => false],
+                ['fts_disable_notification' => true],
+                ['fts_disable_notification' => true],
+                ['fts_disable_notification' => false],
+            ],
+            [ // Case: boolean value, only in $new but not in $over or $old
+                [],
+                [],
+                ['fts_disable_notification' => true],
+                ['fts_disable_notification' => true],
+            ],
             ///////////////////
             //Cases for string
             //////////////////
-            array( // Case: string value, same $over and $new but not in $old
-                array(),
-                array('chartEngine' => 'bar'),
-                array('chartEngine' => 'bar'),
-                array(),
-            ),
-            array( // Case: string value, same in $over and new, but different in $old
-                array('chartEngine' => 'foo'),
-                array('chartEngine' => 'bar'),
-                array('chartEngine' => 'bar'),
-                array('chartEngine' => 'foo'),
-            ),
-            array( // Case: string value, only in $new but not in $over or $old
-                array(),
-                array(),
-                array('chartEngine' => 'baz'),
-                array('chartEngine' => 'baz'),
-            ),
-            array( // Case: string value, Different in everything
-                array('chartEngine' => 'foo'),
-                array('chartEngine' => 'bar'),
-                array('chartEngine' => 'paz'),
-                array('chartEngine' => 'paz'),
-            ),
+            [ // Case: string value, same $over and $new but not in $old
+                [],
+                ['chartEngine' => 'bar'],
+                ['chartEngine' => 'bar'],
+                [],
+            ],
+            [ // Case: string value, same in $over and new, but different in $old
+                ['chartEngine' => 'foo'],
+                ['chartEngine' => 'bar'],
+                ['chartEngine' => 'bar'],
+                ['chartEngine' => 'foo'],
+            ],
+            [ // Case: string value, only in $new but not in $over or $old
+                [],
+                [],
+                ['chartEngine' => 'baz'],
+                ['chartEngine' => 'baz'],
+            ],
+            [ // Case: string value, Different in everything
+                ['chartEngine' => 'foo'],
+                ['chartEngine' => 'bar'],
+                ['chartEngine' => 'paz'],
+                ['chartEngine' => 'paz'],
+            ],
             ///////////////////
             //Cases for number
             //////////////////
-            array( // Case: number value, same $over and $new but not in $old
-                array(),
-                array('js_lang_version' => 2),
-                array('js_lang_version' => 2),
-                array(),
-            ),
-            array( // Case: number value, same in $over and new, but different in $old
-                array('js_lang_version' => 1),
-                array('js_lang_version' => 2),
-                array('js_lang_version' => 2),
-                array('js_lang_version' => 1),
-            ),
-            array( // Case: number value, only in $new but not in $over or $old
-                array(),
-                array(),
-                array('js_lang_version' => 2),
-                array('js_lang_version' => 2),
-            ),
-            array( // Case: number value, different int everything
-                array('js_lang_version' => 1),
-                array('js_lang_version' => 2),
-                array('js_lang_version' => 3),
-                array('js_lang_version' => 3),
-            ),
+            [ // Case: number value, same $over and $new but not in $old
+                [],
+                ['js_lang_version' => 2],
+                ['js_lang_version' => 2],
+                [],
+            ],
+            [ // Case: number value, same in $over and new, but different in $old
+                ['js_lang_version' => 1],
+                ['js_lang_version' => 2],
+                ['js_lang_version' => 2],
+                ['js_lang_version' => 1],
+            ],
+            [ // Case: number value, only in $new but not in $over or $old
+                [],
+                [],
+                ['js_lang_version' => 2],
+                ['js_lang_version' => 2],
+            ],
+            [ // Case: number value, different int everything
+                ['js_lang_version' => 1],
+                ['js_lang_version' => 2],
+                ['js_lang_version' => 3],
+                ['js_lang_version' => 3],
+            ],
             ///////////////////
             //Cases for deep array
             //////////////////
-            array( // Case: same $over and $new but not in $old
-                array(),
-                array('foo' => array('bar1' => array('1' => '10'), 'bar2'=> array('2' => '20'))),
-                array('foo' => array('bar1' => array('1' => '10'), 'bar2'=> array('2' => '20'))),
-                array(),
-            ),
-            array( // Case: same in $over and new, but different in $old
-                array('foo' => array('bar1' => array('1' => '100'), 'bar2'=> array('2' => '200'))),
-                array('foo' => array('bar1' => array('1' => '10'), 'bar2'=> array('2' => '20'))),
-                array('foo' => array('bar1' => array('1' => '10'), 'bar2'=> array('2' => '20'))),
-                array('foo' => array('bar1' => array('1' => '100'), 'bar2'=> array('2' => '200'))),
-            ),
-            array( // Case: only in $new but not in $over or $old
-                array(),
-                array(),
-                array('foo' => array('bar1' => array('1' => '10'), 'bar2'=> array('2' => '20'))),
-                array('foo' => array('bar1' => array('1' => '10'), 'bar2'=> array('2' => '20'))),
-            ),
-            array( // Case: $new and $over have different values in deep level
-                array('foo' => array('bar1' => array('1' => '10'), 'bar2'=> array('2' => '20'))),
-                array('foo' => array('bar1' => array('1' => '10'), 'bar2'=> array('3' => '30'))),
-                array('foo' => array('bar1' => array('1' => '10'), 'bar2'=> array('3' => '30'))),
-                array('foo' => array('bar1' => array('1' => '10'), 'bar2'=> array('2' => '20'))),
-            ),
-            array( // Case: $new and $over have incremental values in deep level
-                array('foo' => array('bar1' => array('1' => '10'))),
-                array('foo' => array('bar1' => array('1' => '10', '3' => '30'))),
-                array('foo' => array('bar1' => array('1' => '10', '3' => '30'))),
-                array('foo' => array('bar1' => array('1' => '10'))),
-            ),
-            array( // Case: $new has values in deep level than $old, and $over is empty
-                array('foo' => array('bar1' => array('1' => '10'))),
-                array(),
-                array('foo' => array('bar1' => array('1' => '10', '3' => '30'))),
-                array('foo' => array('bar1' => array('1' => '10', '3' => '30'))),
-            ),
-            array( // Case: $old, $over and $new have different values in deep level
-                array('foo' => array('bar1' => array('1' => '10'), 'bar2'=> array('2' => '20'))),
-                array('foo' => array('bar1' => array('1' => '10'), 'bar2'=> array('2' => '30'))),
-                array('foo' => array('bar1' => array('1' => '10'), 'bar2'=> array('2' => '50'))),
-                array('foo' => array('bar1' => array('1' => '10'), 'bar2'=> array('2' => '50'))),
-            ),
-        );
+            [ // Case: same $over and $new but not in $old
+                [],
+                ['foo' => ['bar1' => ['1' => '10'], 'bar2'=> ['2' => '20']]],
+                ['foo' => ['bar1' => ['1' => '10'], 'bar2'=> ['2' => '20']]],
+                [],
+            ],
+            [ // Case: same in $over and new, but different in $old
+                ['foo' => ['bar1' => ['1' => '100'], 'bar2'=> ['2' => '200']]],
+                ['foo' => ['bar1' => ['1' => '10'], 'bar2'=> ['2' => '20']]],
+                ['foo' => ['bar1' => ['1' => '10'], 'bar2'=> ['2' => '20']]],
+                ['foo' => ['bar1' => ['1' => '100'], 'bar2'=> ['2' => '200']]],
+            ],
+            [ // Case: only in $new but not in $over or $old
+                [],
+                [],
+                ['foo' => ['bar1' => ['1' => '10'], 'bar2'=> ['2' => '20']]],
+                ['foo' => ['bar1' => ['1' => '10'], 'bar2'=> ['2' => '20']]],
+            ],
+            [ // Case: $new and $over have different values in deep level
+                ['foo' => ['bar1' => ['1' => '10'], 'bar2'=> ['2' => '20']]],
+                ['foo' => ['bar1' => ['1' => '10'], 'bar2'=> ['3' => '30']]],
+                ['foo' => ['bar1' => ['1' => '10'], 'bar2'=> ['3' => '30']]],
+                ['foo' => ['bar1' => ['1' => '10'], 'bar2'=> ['2' => '20']]],
+            ],
+            [ // Case: $new and $over have incremental values in deep level
+                ['foo' => ['bar1' => ['1' => '10']]],
+                ['foo' => ['bar1' => ['1' => '10', '3' => '30']]],
+                ['foo' => ['bar1' => ['1' => '10', '3' => '30']]],
+                ['foo' => ['bar1' => ['1' => '10']]],
+            ],
+            [ // Case: $new has values in deep level than $old, and $over is empty
+                ['foo' => ['bar1' => ['1' => '10']]],
+                [],
+                ['foo' => ['bar1' => ['1' => '10', '3' => '30']]],
+                ['foo' => ['bar1' => ['1' => '10', '3' => '30']]],
+            ],
+            [ // Case: $old, $over and $new have different values in deep level
+                ['foo' => ['bar1' => ['1' => '10'], 'bar2'=> ['2' => '20']]],
+                ['foo' => ['bar1' => ['1' => '10'], 'bar2'=> ['2' => '30']]],
+                ['foo' => ['bar1' => ['1' => '10'], 'bar2'=> ['2' => '50']]],
+                ['foo' => ['bar1' => ['1' => '10'], 'bar2'=> ['2' => '50']]],
+            ],
+        ];
         return $returnArray;
     }
 }

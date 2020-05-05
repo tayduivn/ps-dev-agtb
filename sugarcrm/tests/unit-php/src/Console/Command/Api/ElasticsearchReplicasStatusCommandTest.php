@@ -32,16 +32,16 @@ class ElasticsearchReplicasStatusCommandTest extends AbstractApiCommandTestCase
      */
     public function providerTestExecuteCommand()
     {
-        return array(
-            array(
-                array(
+        return [
+            [
+                [
                     'shared' => '2',
                     'accountsonly' => '1',
-                ),
-                array(),
+                ],
+                [],
                 'ElasticsearchReplicasStatusCommand_0.txt',
                 0,
-            ),
-        );
+            ],
+        ];
     }
 }

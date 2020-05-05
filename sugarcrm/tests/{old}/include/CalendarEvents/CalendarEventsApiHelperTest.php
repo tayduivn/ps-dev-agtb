@@ -18,40 +18,40 @@ class CalendarEventsApiHelperTest extends TestCase
 
     public function happyPathProvider()
     {
-        return array(
-            array(1, 1),
-            array('1', '1'),
-            array(0, 0),
-            array('0', '0'),
-        );
+        return [
+            [1, 1],
+            ['1', '1'],
+            [0, 0],
+            ['0', '0'],
+        ];
     }
 
     public function throwsMissingParameterExceptionProvider()
     {
         $now = $GLOBALS['timedate']->nowDb();
-        return array(
-            array(null, 1, 1),
-            array($now, null, 1),
-            array($now, 1, null),
-            array($now, '', 1),
-            array($now, 1, ''),
-        );
+        return [
+            [null, 1, 1],
+            [$now, null, 1],
+            [$now, 1, null],
+            [$now, '', 1],
+            [$now, 1, ''],
+        ];
     }
 
     public function throwsInvalidParameterExceptionProvider()
     {
-        return array(
-            array('a', 1),
-            array(1, 'a'),
-            array(-1, 1),
-            array('-1', '1'),
-            array(1, -1),
-            array('1', '-1'),
-            array(1.5, 1),
-            array('1.5', '1'),
-            array(1, 1.5),
-            array('1', '1.5'),
-        );
+        return [
+            ['a', 1],
+            [1, 'a'],
+            [-1, 1],
+            ['-1', '1'],
+            [1, -1],
+            ['1', '-1'],
+            [1.5, 1],
+            ['1.5', '1'],
+            [1, 1.5],
+            ['1', '1.5'],
+        ];
     }
 
     protected function setUp() : void
@@ -82,9 +82,9 @@ class CalendarEventsApiHelperTest extends TestCase
             ->setMethods(['getInvitees'])
             ->setConstructorArgs([$this->api])
             ->getMock();
-        $helper->expects($this->any())->method('getInvitees')->will($this->returnValue(array()));
+        $helper->expects($this->any())->method('getInvitees')->will($this->returnValue([]));
 
-        $helper->populateFromApi($meeting, array());
+        $helper->populateFromApi($meeting, []);
         $this->assertFalse($meeting->update_vcal, 'Should have been set to false');
     }
 
@@ -101,18 +101,18 @@ class CalendarEventsApiHelperTest extends TestCase
         $leads = array_map('create_guid', array_fill(0, 5, null));
         $contacts = array_map('create_guid', array_fill(0, 5, null));
 
-        $map = array(
-            array($meeting, 'users', array(), $users),
-            array($meeting, 'leads', array(), $leads),
-            array($meeting, 'contacts', array(), $contacts),
-        );
+        $map = [
+            [$meeting, 'users', [], $users],
+            [$meeting, 'leads', [], $leads],
+            [$meeting, 'contacts', [], $contacts],
+        ];
         $helper = $this->getMockBuilder('CalendarEventsApiHelper')
             ->setMethods(['getInvitees'])
             ->setConstructorArgs([$this->api])
             ->getMock();
         $helper->expects($this->any())->method('getInvitees')->will($this->returnValueMap($map));
 
-        $helper->populateFromApi($meeting, array());
+        $helper->populateFromApi($meeting, []);
         $this->assertCount(
             count($users),
             $meeting->users_arr,
@@ -134,7 +134,7 @@ class CalendarEventsApiHelperTest extends TestCase
         $meeting->duration_minutes = $minutes;
 
         $helper = new CalendarEventsApiHelper($this->api);
-        $actual = $helper->populateFromApi($meeting, array());
+        $actual = $helper->populateFromApi($meeting, []);
         $this->assertTrue($actual, 'The happy path should have returned true');
     }
 
@@ -152,7 +152,7 @@ class CalendarEventsApiHelperTest extends TestCase
         $helper = new CalendarEventsApiHelper($this->api);
 
         $this->expectException(SugarApiExceptionMissingParameter::class);
-        $helper->populateFromApi($meeting, array());
+        $helper->populateFromApi($meeting, []);
     }
 
     /**
@@ -169,12 +169,12 @@ class CalendarEventsApiHelperTest extends TestCase
         $helper = new CalendarEventsApiHelper($this->api);
 
         $this->expectException(SugarApiExceptionInvalidParameter::class);
-        $helper->populateFromApi($meeting, array());
+        $helper->populateFromApi($meeting, []);
     }
 
     public function testFormatForApi_MeetingIsRelatedToAContact_TheNameOfTheContactIsAddedToTheResponse()
     {
-        $meeting = $this->getMockBuilder('Meeting')->setMethods(array('ACLAccess'))->getMock();
+        $meeting = $this->getMockBuilder('Meeting')->setMethods(['ACLAccess'])->getMock();
         $meeting->expects($this->any())->method('ACLAccess')->will($this->returnValue(true));
         BeanFactory::setBeanClass('Meetings', get_class($meeting));
         $meeting->id = create_guid();
@@ -193,7 +193,7 @@ class CalendarEventsApiHelperTest extends TestCase
 
     public function testGetInvitees_ReturnsCorrectDataForLink()
     {
-        $meeting = $this->createPartialMock('Meeting', array('load_relationship'));
+        $meeting = $this->createPartialMock('Meeting', ['load_relationship']);
         $meeting->expects($this->any())->method('load_relationship')
             ->will($this->returnValue(false));
 
@@ -207,27 +207,27 @@ class CalendarEventsApiHelperTest extends TestCase
         $leadsId1    = create_guid();
         $usersId1    = create_guid();
 
-        $submittedData = array(
-            'contacts' => array(
-                'add'    => array(
+        $submittedData = [
+            'contacts' => [
+                'add'    => [
                     $contactsId1,
-                    array(
+                    [
                         'id' => $contactsId2,
-                    )
-                ),
-            ),
-            'leads'    => array(
-                'add'    => array(
+                    ],
+                ],
+            ],
+            'leads'    => [
+                'add'    => [
                     $leadsId1,
-                ),
-                'delete' => array()
-            ),
-            'users'    => array(
-                'delete' => array(
+                ],
+                'delete' => [],
+            ],
+            'users'    => [
+                'delete' => [
                     $usersId1,
-                )
-            )
-        );
+                ],
+            ],
+        ];
         $helper = new CalendarEventsApiHelperMock($this->api);
 
         $invitees = $helper->getInvitees($meeting, 'contacts', $submittedData);

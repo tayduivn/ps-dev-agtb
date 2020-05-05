@@ -36,12 +36,12 @@ class ChartDisplayMock47148 extends ChartDisplay
  */
 class Bug47148Test extends TestCase
 {
-    private $_backup = array();
+    private $_backup = [];
 
     protected function setUp() : void
     {
         global $beanFiles, $beanList;
-        require('include/modules.php');
+        require 'include/modules.php';
         $this->_backup['do_thousands'] = (isset($GLOBALS['do_thousands'])) ? $GLOBALS['do_thousands'] : false;
         $GLOBALS['do_thousands'] = true;
     }
@@ -57,28 +57,28 @@ class Bug47148Test extends TestCase
         $expected = '1000000000000000';
 
         // define fake of row result
-        $row = array(
-            'cells' => array(
-                0 => array(
-                    'val' => $expected
-                )
-            )
-        );
+        $row = [
+            'cells' => [
+                0 => [
+                    'val' => $expected,
+                ],
+            ],
+        ];
         $row['count'] = count($row['cells']);
 
         // define fake of report
         $report = new Report();
         $report->chart_numerical_position = 0;
-        $report->chart_header_row = array(
-            0 => array(
+        $report->chart_header_row = [
+            0 => [
                 'label' => 'test',
-                'column_key' => 0
-            )
-        );
+                'column_key' => 0,
+            ],
+        ];
         $report->module = null;
-        $report->report_def = array(
-            'group_defs' => array()
-        );
+        $report->report_def = [
+            'group_defs' => [],
+        ];
 
         $cdm = new ChartDisplayMock47148();
         $cdm->setReporter($report);

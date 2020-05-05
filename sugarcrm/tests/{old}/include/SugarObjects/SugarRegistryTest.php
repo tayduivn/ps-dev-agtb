@@ -16,17 +16,17 @@ class SugarRegistryTest extends TestCase
 {
     public function testGetInstanceReturnsAnInstanceOfSugarRegistry()
     {
-        $this->assertTrue(SugarRegistry::getInstance() instanceOf SugarRegistry,'Returned object is not a SugarRegistry instance');
+        $this->assertTrue(SugarRegistry::getInstance() instanceof SugarRegistry, 'Returned object is not a SugarRegistry instance');
     }
 
-    public function testGetInstanceReturnsSameObject() 
+    public function testGetInstanceReturnsSameObject()
     {
         $one = SugarRegistry::getInstance();
         $two = SugarRegistry::getInstance();
         $this->assertSame($one, $two);
     }
 
-    public function testParameterPassedToGetInstanceSpecifiesInstanceName() 
+    public function testParameterPassedToGetInstanceSpecifiesInstanceName()
     {
         $foo1 = SugarRegistry::getInstance('foo');
         $foo2 = SugarRegistry::getInstance('foo');
@@ -36,7 +36,7 @@ class SugarRegistryTest extends TestCase
         $this->assertNotSame($foo1, $bar);
     }
 
-    public function testCanSetAndGetValues() 
+    public function testCanSetAndGetValues()
     {
         $random = rand(100, 200);
         $r = SugarRegistry::getInstance();
@@ -45,7 +45,7 @@ class SugarRegistryTest extends TestCase
         $this->assertEquals($random, SugarRegistry::getInstance()->integer);
     }
 
-    public function testIssetReturnsTrueFalse() 
+    public function testIssetReturnsTrueFalse()
     {
         $r = SugarRegistry::getInstance();
         $this->assertFalse(isset($r->foo));
@@ -56,7 +56,7 @@ class SugarRegistryTest extends TestCase
         $this->assertTrue(isset(SugarRegistry::getInstance()->foo));
     }
 
-    public function testUnsetRemovesValueFromRegistry() 
+    public function testUnsetRemovesValueFromRegistry()
     {
         $r = SugarRegistry::getInstance();
         $r->foo = 'bar';
@@ -65,14 +65,14 @@ class SugarRegistryTest extends TestCase
         $this->assertFalse(isset(SugarRegistry::getInstance()->foo));
     }
 
-    public function testReturnsNullOnAnyUnknownValue() 
+    public function testReturnsNullOnAnyUnknownValue()
     {
         $r = SugarRegistry::getInstance();
         $this->assertNull($r->unknown);
         $this->assertNull(SugarRegistry::getInstance()->unknown);
     }
 
-    public function testAddToGlobalsPutsRefsToAllRegistryObjectsInGlobalSpace() 
+    public function testAddToGlobalsPutsRefsToAllRegistryObjectsInGlobalSpace()
     {
         $r = SugarRegistry::getInstance();
         $r->foo = 'bar';

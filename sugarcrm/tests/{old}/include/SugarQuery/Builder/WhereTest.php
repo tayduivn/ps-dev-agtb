@@ -20,20 +20,20 @@ class WhereTest extends TestCase
      */
     public function testDateRangeWithoutBean()
     {
-        $bean = $this->getMockBuilder('Account')->setMethods(array('getFieldDefinition'))->getMock();
+        $bean = $this->getMockBuilder('Account')->setMethods(['getFieldDefinition'])->getMock();
         $bean->expects($this->never())->method('getFieldDefinition');
         $q = new SugarQuery();
         $q->from($bean);
         $dateTime = new DateTime();
 
         /** @var TimeDate|MockObject $timeDate */
-        $timeDate = $this->createPartialMock('TimeDate', array('parseDateRange', 'asDb', 'asDbType'));
-        $timeDate->expects($this->once())->method('parseDateRange')->will($this->returnValue(array($dateTime, $dateTime)));
+        $timeDate = $this->createPartialMock('TimeDate', ['parseDateRange', 'asDb', 'asDbType']);
+        $timeDate->expects($this->once())->method('parseDateRange')->will($this->returnValue([$dateTime, $dateTime]));
         $timeDate->expects($this->exactly(2))->method('asDb')->will($this->returnValue(3));
         $timeDate->expects($this->never())->method('asDbType');
 
         /** @var SugarQuery_Builder_Where|MockObject $where */
-        $where = $this->getMockForAbstractClass('SugarQuery_Builder_Where', array($q), '', false, true, true, array('timeDateInstance', 'queryAnd', 'lte', 'gte'), false);
+        $where = $this->getMockForAbstractClass('SugarQuery_Builder_Where', [$q], '', false, true, true, ['timeDateInstance', 'queryAnd', 'lte', 'gte'], false);
         $where->expects($this->any())->method('timeDateInstance')->will($this->returnValue($timeDate));
         $where->expects($this->any())->method('queryAnd')->will($this->returnValue($where));
         $where->expects($this->once())->method('gte')->with($this->equalTo('field'), $this->equalTo(3), $this->equalTo(false));
@@ -50,22 +50,22 @@ class WhereTest extends TestCase
      */
     public function testDateRangeWithBeanDateField($type)
     {
-        $bean = $this->getMockBuilder('Account')->setMethods(array('getFieldDefinition'))->getMock();
-        $bean->expects($this->once())->method('getFieldDefinition')->will($this->returnValue(array(
+        $bean = $this->getMockBuilder('Account')->setMethods(['getFieldDefinition'])->getMock();
+        $bean->expects($this->once())->method('getFieldDefinition')->will($this->returnValue([
             'type' => $type,
-        )));
+        ]));
         $q = new SugarQuery();
         $q->from($bean);
         $dateTime = new DateTime();
 
         /** @var TimeDate|MockObject $timeDate */
-        $timeDate = $this->createPartialMock('TimeDate', array('parseDateRange', 'asDb', 'asDbType'));
-        $timeDate->expects($this->once())->method('parseDateRange')->will($this->returnValue(array($dateTime, $dateTime)));
+        $timeDate = $this->createPartialMock('TimeDate', ['parseDateRange', 'asDb', 'asDbType']);
+        $timeDate->expects($this->once())->method('parseDateRange')->will($this->returnValue([$dateTime, $dateTime]));
         $timeDate->expects($this->exactly(2))->method('asDbType')->with($this->equalTo($dateTime), $this->equalTo($type), $this->equalTo(false))->will($this->returnValue(3));
         $timeDate->expects($this->never())->method('asDb');
 
         /** @var SugarQuery_Builder_Where|MockObject $where */
-        $where = $this->getMockForAbstractClass('SugarQuery_Builder_Where', array($q), '', false, true, true, array('timeDateInstance', 'queryAnd', 'lte', 'gte'), false);
+        $where = $this->getMockForAbstractClass('SugarQuery_Builder_Where', [$q], '', false, true, true, ['timeDateInstance', 'queryAnd', 'lte', 'gte'], false);
         $where->expects($this->any())->method('timeDateInstance')->will($this->returnValue($timeDate));
         $where->expects($this->any())->method('queryAnd')->will($this->returnValue($where));
         $where->expects($this->once())->method('gte')->with($this->equalTo('field'), $this->equalTo(3), $this->equalTo($bean));
@@ -80,11 +80,11 @@ class WhereTest extends TestCase
      */
     public static function getDataForTestDateRangeWithBeanDateField()
     {
-        return array(
-            array('date'),
-            array('time'),
-            array('datetime'),
-            array('datetimecombo'),
-        );
+        return [
+            ['date'],
+            ['time'],
+            ['datetime'],
+            ['datetimecombo'],
+        ];
     }
 }

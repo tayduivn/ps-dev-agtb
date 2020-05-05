@@ -33,41 +33,41 @@ class SugarUpgradeRemoveDefaultSubpanelTitleFromCustomModulesTest extends Upgrad
 
     public function removePropFromLangProvider()
     {
-        return array(
+        return [
             // mod_strings is empty
-            array(
-                array(),
-                'expect' => array(
-                    'mod_strings' => array(),
-                ),
-            ),
+            [
+                [],
+                'expect' => [
+                    'mod_strings' => [],
+                ],
+            ],
             // mod_strings is not empty and does not have 'LBL_DEFAULT_SUBPANEL_TITLE'
-            array(
-                'mod_strings' => array(
+            [
+                'mod_strings' => [
                     'LBL_TEAM' => 'Teams',
                     'LBL_TEAM_SET' => 'Teams Set',
-                ),
-                'expect' => array(
-                    'mod_strings' => array(
+                ],
+                'expect' => [
+                    'mod_strings' => [
                         'LBL_TEAM' => 'Teams',
                         'LBL_TEAM_SET' => 'Teams Set',
-                    ),
-                ),
-            ),
+                    ],
+                ],
+            ],
             // mod_strings is not empty and has 'LBL_DEFAULT_SUBPANEL_TITLE'
-            array(
-                'mod_strings' => array(
+            [
+                'mod_strings' => [
                     'LBL_TEAM' => 'Teams',
                     'LBL_TEAM_SET' => 'Teams Set',
                     'LBL_DEFAULT_SUBPANEL_TITLE' => 'Sale',
-                ),
-                'expect' => array(
-                    'mod_strings' => array(
+                ],
+                'expect' => [
+                    'mod_strings' => [
                         'LBL_TEAM' => 'Teams',
                         'LBL_TEAM_SET' => 'Teams Set',
-                    ),
-                ),
-            ),
-        );
+                    ],
+                ],
+            ],
+        ];
     }
 }

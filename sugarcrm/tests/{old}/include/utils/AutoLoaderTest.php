@@ -23,7 +23,7 @@ class AutoLoaderTests extends TestCase
     /**
      * @var array List of files to remove during tearDown
      */
-    protected $cleanupFiles = array();
+    protected $cleanupFiles = [];
 
     protected function setUp() : void
     {
@@ -44,7 +44,7 @@ class AutoLoaderTests extends TestCase
             unlink(sugar_cached(SugarAutoLoader::CLASS_CACHE_FILE));
         }
 
-        SugarAutoLoader::$classMap = array();
+        SugarAutoLoader::$classMap = [];
         SugarAutoLoader::$classMapDirty = true;
         SugarAutoLoader::$namespaceMap = $this->namespaceMap;
         SugarAutoLoader::$namespaceMapPsr4 = $this->namespaceMapPsr4;
@@ -104,7 +104,7 @@ class AutoLoaderTests extends TestCase
 
     public function testSaveClassMap()
     {
-        SugarAutoLoader::$classMap = array();
+        SugarAutoLoader::$classMap = [];
         SugarAutoLoader::$classMap["chicken"] = "shack";
         // Lie, tell it the class map isn't dirty, when it is.
         SugarAutoLoader::$classMapDirty = false;
@@ -119,7 +119,7 @@ class AutoLoaderTests extends TestCase
 
         $this->assertFileExists(sugar_cached(SugarAutoLoader::CLASS_CACHE_FILE), "Didn't actually save the class map");
 
-        $class_map = array();
+        $class_map = [];
         include sugar_cached(SugarAutoLoader::CLASS_CACHE_FILE);
         $this->assertTrue(count($class_map) > 0, "Class map is empty");
         $this->assertArrayHasKey('chicken', $class_map, "Class map was not rebuilt");
@@ -132,8 +132,8 @@ class AutoLoaderTests extends TestCase
     public function testGetFilenameForFQCN($type, $namespace, $dir, $className, $fileName)
     {
         // Empty current namespace defs
-        SugarAutoLoader::$namespaceMap = array();
-        SugarAutoLoader::$namespaceMapPsr4 = array();
+        SugarAutoLoader::$namespaceMap = [];
+        SugarAutoLoader::$namespaceMapPsr4 = [];
 
         // Register namespace / directory pair
         SugarAutoLoader::addNamespace($namespace, $dir, $type);
@@ -148,115 +148,115 @@ class AutoLoaderTests extends TestCase
     {
         $ds = DIRECTORY_SEPARATOR;
 
-        return array(
+        return [
 
             /*
              * PSR-0 - see http://www.php-fig.org/psr/psr-0/
              */
-            array(
+            [
                 'psr0',
                 'Doctrine',
                 'vendor',
                 'Doctrine\\Common\\IsolatedClassLoader',
                 'vendor/Doctrine/Common/IsolatedClassLoader.php',
-            ),
-            array(
+            ],
+            [
                 'psr0',
                 'Symfony\\Core',
                 'vendor/Symfony/Core/src',
                 'Symfony\\Core\\Request',
                 'vendor/Symfony/Core/src/Symfony/Core/Request.php',
-            ),
-            array(
+            ],
+            [
                 'psr0',
                 'Zend',
                 'vendor',
                 'Zend\\Acl',
                 'vendor/Zend/Acl.php',
-            ),
-            array(
+            ],
+            [
                 'psr0',
                 'namespace',
                 'vendor',
                 'namespace\\package\\Class_Name',
                 'vendor/namespace/package/Class/Name.php',
-            ),
-            array(
+            ],
+            [
                 'psr0',
                 'namespace',
                 'vendor',
                 'namespace\package_name\Class_Name',
                 'vendor/namespace/package_name/Class/Name.php',
-            ),
+            ],
 
             /*
              * PSR-4 - see http://www.php-fig.org/psr/psr-4/
              */
-            array(
+            [
                 'psr4',
                 'Acme\\Log\\Writer',
                 'acme-log-writer/lib',
                 'Acme\\Log\\Writer\\File_Writer',
                 'acme-log-writer/lib/File_Writer.php',
-            ),
-            array(
+            ],
+            [
                 'psr4',
                 'Symfony\\Core',
                 'vendor/Symfony/Core',
                 'Symfony\\Core\\Request',
                 'vendor/Symfony/Core/Request.php',
-            ),
-            array(
+            ],
+            [
                 'psr4',
                 'namespace',
                 'vendor/namespace',
                 'namespace\\package_name\\Class_Name',
                 'vendor/namespace/package_name/Class_Name.php',
-            ),
+            ],
 
             /*
              * Sugarcrm namespace
              */
-            array(
+            [
                 'psr4',
                 'Sugarcrm\\Sugarcrm',
                 '',
                 'Sugarcrm\\Sugarcrm\\modules\\Account',
                 'modules/Account.php',
-            ),
-            array(
+            ],
+            [
                 'psr4',
                 'Sugarcrm\\Sugarcrm\\inc',
                 'include',
                 'Sugarcrm\\Sugarcrm\\inc\\SugarLogger\\FakeLoggerManager',
                 'include/SugarLogger/FakeLoggerManager.php',
-            ),
-            array(
+            ],
+            [
                 'psr4',
                 'Sugarcrm\\Sugarcrm\\custom\\Shizzle',
                 'custom/Shizzle',
                 'Sugarcrm\\Sugarcrm\\custom\\Shizzle\\modules\\xxx_Module\\yyy_Bean',
                 'custom/Shizzle/modules/xxx_Module/yyy_Bean.php',
-            ),
+            ],
 
             /*
              * Path normalization tests
              */
-            array(
+            [
                 'psr0',
                 'Foo\\Bar',
                 SUGAR_BASE_DIR . $ds . 'vendor'.$ds.'Foo'.$ds.'Bar'.$ds.'src',
                 'Foo\\Bar\\Deer',
                 'vendor/Foo/Bar/src/Foo/Bar/Deer.php',
-            ),
-            array(
+            ],
+            [
                 'psr4',
                 'Acme\\Factory',
                 SUGAR_BASE_DIR . $ds . 'vendor'.$ds.'figures',
                 'Acme\\Factory\\Roadrunner',
                 'vendor/figures/Roadrunner.php',
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -288,62 +288,62 @@ class AutoLoaderTests extends TestCase
 
     public function testAddNamespace()
     {
-        SugarAutoLoader::$namespaceMap = array();
+        SugarAutoLoader::$namespaceMap = [];
 
         // 1st pass - add first level namespace - also test fixups on trailing \ and /
         SugarAutoLoader::addNamespace('Sugarcrm', '/');
-        $expected = array(
-            'Sugarcrm\\' => array(''),
-        );
+        $expected = [
+            'Sugarcrm\\' => [''],
+        ];
         $this->assertSame($expected, SugarAutoLoader::$namespaceMap);
 
         // 2nd pass - add second level namespace
         SugarAutoLoader::addNamespace('Sugarcrm\\inc\\', 'include');
-        $expected = array(
-            'Sugarcrm\\inc\\' => array('include'),
-            'Sugarcrm\\' => array(''),
-        );
+        $expected = [
+            'Sugarcrm\\inc\\' => ['include'],
+            'Sugarcrm\\' => [''],
+        ];
         $this->assertSame($expected, SugarAutoLoader::$namespaceMap);
 
         // 3rd pass - add another second level namespace (alphabetic order matters)
         SugarAutoLoader::addNamespace('Acme\\LooneyTunes\\', 'vendor/Acme');
-        $expected = array(
-            'Acme\\LooneyTunes\\' => array('vendor/Acme'),
-            'Sugarcrm\\inc\\' => array('include'),
-            'Sugarcrm\\' => array(''),
-        );
+        $expected = [
+            'Acme\\LooneyTunes\\' => ['vendor/Acme'],
+            'Sugarcrm\\inc\\' => ['include'],
+            'Sugarcrm\\' => [''],
+        ];
         $this->assertSame($expected, SugarAutoLoader::$namespaceMap);
 
         // 4th pass - add third level namespace
         SugarAutoLoader::addNamespace('Acme\\LooneyTunes\\RoadRunner\\', 'vendor/RoadRunner');
-        $expected = array(
-            'Acme\\LooneyTunes\\RoadRunner\\' => array('vendor/RoadRunner'),
-            'Acme\\LooneyTunes\\' => array('vendor/Acme'),
-            'Sugarcrm\\inc\\' => array('include'),
-            'Sugarcrm\\' => array(''),
-        );
+        $expected = [
+            'Acme\\LooneyTunes\\RoadRunner\\' => ['vendor/RoadRunner'],
+            'Acme\\LooneyTunes\\' => ['vendor/Acme'],
+            'Sugarcrm\\inc\\' => ['include'],
+            'Sugarcrm\\' => [''],
+        ];
         $this->assertSame($expected, SugarAutoLoader::$namespaceMap);
 
         // 5th pass - add another second level namespace (alphabetic order matters)
         SugarAutoLoader::addNamespace('Sugarcrm\\modules\\', 'modules');
-        $expected = array(
-            'Acme\\LooneyTunes\\RoadRunner\\' => array('vendor/RoadRunner'),
-            'Acme\\LooneyTunes\\' => array('vendor/Acme'),
-            'Sugarcrm\\inc\\' => array('include'),
-            'Sugarcrm\\modules\\' => array('modules'),
-            'Sugarcrm\\' => array(''),
-        );
+        $expected = [
+            'Acme\\LooneyTunes\\RoadRunner\\' => ['vendor/RoadRunner'],
+            'Acme\\LooneyTunes\\' => ['vendor/Acme'],
+            'Sugarcrm\\inc\\' => ['include'],
+            'Sugarcrm\\modules\\' => ['modules'],
+            'Sugarcrm\\' => [''],
+        ];
         $this->assertSame($expected, SugarAutoLoader::$namespaceMap);
 
         // 6th pass - add new path to already existing second level namespace
         SugarAutoLoader::addNamespace('Sugarcrm\\modules\\', 'modules2');
-        $expected = array(
-            'Acme\\LooneyTunes\\RoadRunner\\' => array('vendor/RoadRunner'),
-            'Acme\\LooneyTunes\\' => array('vendor/Acme'),
-            'Sugarcrm\\inc\\' => array('include'),
-            'Sugarcrm\\modules\\' => array('modules', 'modules2'),
-            'Sugarcrm\\' => array(''),
-        );
+        $expected = [
+            'Acme\\LooneyTunes\\RoadRunner\\' => ['vendor/RoadRunner'],
+            'Acme\\LooneyTunes\\' => ['vendor/Acme'],
+            'Sugarcrm\\inc\\' => ['include'],
+            'Sugarcrm\\modules\\' => ['modules', 'modules2'],
+            'Sugarcrm\\' => [''],
+        ];
         $this->assertSame($expected, SugarAutoLoader::$namespaceMap);
     }
 
@@ -358,32 +358,32 @@ class AutoLoaderTests extends TestCase
 
     public function dataProviderTestGetCustomClassFQCN()
     {
-        return array(
-            array(
+        return [
+            [
                 'Sugarcrm\\Sugarcrm\\custom\\AlreadyCustom',
                 false,
-            ),
-            array(
+            ],
+            [
                 'Sugarcrm\\Sugarcrm\\custom\\AlreadyCustom\\Again',
                 false,
-            ),
-            array(
+            ],
+            [
                 'Bogus\\Name\\Space\\Balls',
                 false,
-            ),
-            array(
+            ],
+            [
                 'Sugarcrm\\Sugarcrm\\inc\\Test',
                 'Sugarcrm\\Sugarcrm\\custom\\inc\\Test',
-            ),
-            array(
+            ],
+            [
                 'Sugarcrm\\Sugarcrm\\Test',
                 'Sugarcrm\\Sugarcrm\\custom\\Test',
-            ),
-            array(
+            ],
+            [
                 'Sugarcrm\\Sugarcrm\\Queue\\Test',
                 'Sugarcrm\\Sugarcrm\\custom\\Queue\\Test',
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -414,7 +414,7 @@ class AutoLoaderTests extends TestCase
             $this->getClassPhp('Sugarcrm\\Sugarcrm', 'OverlapSrc', 'winner')
         );
 
-        SugarAutoLoader::$classMap = array();
+        SugarAutoLoader::$classMap = [];
 
         $class = SugarAutoLoader::customClass('Sugarcrm\\Sugarcrm\\OverlapSrc');
         $this->assertSame(
@@ -447,7 +447,7 @@ class AutoLoaderTests extends TestCase
 
         // make the Composer's autoloader forget that the custom class doesn't exist
         $composerAutoloader = $this->getComposerAutoLoader();
-        SugarTestReflection::setProtectedValue($composerAutoloader, 'missingClasses', array());
+        SugarTestReflection::setProtectedValue($composerAutoloader, 'missingClasses', []);
 
         $class = SugarAutoLoader::customClass('Sugarcrm\\Sugarcrm\\OverlapSrc');
         $this->assertSame(

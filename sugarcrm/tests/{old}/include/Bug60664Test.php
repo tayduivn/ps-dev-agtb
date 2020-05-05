@@ -33,10 +33,10 @@ class Bug60664Test extends TestCase
         }
         
         // Create our own test mod strings for this test
-        $GLOBALS['mod_strings'] = array(
+        $GLOBALS['mod_strings'] = [
             'LBL_TEST1' => 'Test Label',
             'LBL_TEST2' => 'Second Label',
-        );
+        ];
     }
     
     public static function tearDownAfterClass(): void
@@ -73,12 +73,12 @@ class Bug60664Test extends TestCase
     
     public function labelProvider()
     {
-        return array(
-            array('label' => 'LBL_TEST1', 'expects' => 'Test Label', 'module' => '',),
-            array('label' => 'LBL_TEST2', 'expects' => 'Second Label', 'module' => '',),
-            array('label' => 'LBL_ACCOUNT_INFORMATION', 'expects' => 'Overview', 'module' => 'Accounts',),
-            array('label' => 'LBL_CONVERTLEAD_BUTTON_KEY', 'expects' => 'V', 'module' => 'Leads',),
-            array('label' => 'LBL_HIDEOPTIONS', 'expects' => 'Hide Options', 'module' => 'ModuleBuilder',),
-        );
+        return [
+            ['label' => 'LBL_TEST1', 'expects' => 'Test Label', 'module' => '',],
+            ['label' => 'LBL_TEST2', 'expects' => 'Second Label', 'module' => '',],
+            ['label' => 'LBL_ACCOUNT_INFORMATION', 'expects' => 'Overview', 'module' => 'Accounts',],
+            ['label' => 'LBL_CONVERTLEAD_BUTTON_KEY', 'expects' => 'V', 'module' => 'Leads',],
+            ['label' => 'LBL_HIDEOPTIONS', 'expects' => 'Hide Options', 'module' => 'ModuleBuilder',],
+        ];
     }
 }

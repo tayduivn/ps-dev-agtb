@@ -39,15 +39,15 @@ class ArchivedEmailsBeanLinkTest extends TestCase
         $emailAddress = 'testRelatedEmails@testRelatedEmails.com';
 
         // create contact and email related (via to_addr) to contact
-        $contact = SugarTestContactUtilities::createContact(null, array(
+        $contact = SugarTestContactUtilities::createContact(null, [
             'email' => $emailAddress,
-        ));
+        ]);
 
-        $email = SugarTestEmailUtilities::createEmail(null, array(
+        $email = SugarTestEmailUtilities::createEmail(null, [
             'parent_type' => 'Contacts',
             'parent_id' => $contact->id,
             'to_addrs' => $emailAddress,
-        ));
+        ]);
 
         $opportunity = SugarTestOpportunityUtilities::createOpportunity(null, $this->account);
         $opportunity->load_relationship('contacts');

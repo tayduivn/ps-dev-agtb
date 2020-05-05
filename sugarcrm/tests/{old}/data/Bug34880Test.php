@@ -23,14 +23,14 @@ class Bug34880Test extends TestCase
 {
     public static function provider()
     {
-        return array(
-            array('standard_display'),
-            array('normal_trigger'),
-            array('normal_date_trigger'),
-            array('action_filter'),
-            array('template_filter'),
-            array('alert_trigger')
-        );
+        return [
+            ['standard_display'],
+            ['normal_trigger'],
+            ['normal_date_trigger'],
+            ['action_filter'],
+            ['template_filter'],
+            ['alert_trigger'],
+        ];
     }
     /**
      * Reportable fields must be available in workflow
@@ -39,9 +39,9 @@ class Bug34880Test extends TestCase
      */
     public function testReportableFieldsMustBeAvailableInWorkflow($action)
     {
-        $def = array(
-            'reportable' => ''
-        );
+        $def = [
+            'reportable' => '',
+        ];
         $obj = new VarDefHandler('', $action);
         $this->assertTrue($obj->compare_type($def), "reportable fields should be available in workflow");
     }

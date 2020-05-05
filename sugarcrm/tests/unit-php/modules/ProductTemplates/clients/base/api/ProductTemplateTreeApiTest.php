@@ -35,24 +35,24 @@ class ProductTemplateTreeApiTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $compare = array(
-            'tree' => array(
+        $compare = [
+            'tree' => [
                 'reqType' => 'GET',
-                'path' => array('ProductTemplates', 'tree',),
-                'pathVars' => array('module', 'type',),
+                'path' => ['ProductTemplates', 'tree',],
+                'pathVars' => ['module', 'type',],
                 'method' => 'getTemplateTree',
                 'shortHelp' => 'Returns a filterable tree structure of all Product Templates and Product Categories',
                 'longHelp' => 'modules/ProductTemplates/clients/base/api/help/tree.html',
-            ),
-            'filterTree' => array(
+            ],
+            'filterTree' => [
                 'reqType' => 'POST',
-                'path' => array('ProductTemplates', 'tree',),
-                'pathVars' => array('module', 'type',),
+                'path' => ['ProductTemplates', 'tree',],
+                'pathVars' => ['module', 'type',],
                 'method' => 'getTemplateTree',
                 'shortHelp' => 'Returns a filterable tree structure of all Product Templates and Product Categories',
                 'longHelp' => 'modules/ProductTemplates/clients/base/api/help/tree.html',
-            ),
-        );
+            ],
+        ];
 
         $returnVal = $mock->registerApiRest();
         $this->assertEquals($compare, $returnVal);
@@ -76,11 +76,11 @@ class ProductTemplateTreeApiTest extends TestCase
         $returnObj->state = $state;
         $returnObj->index = $index;
 
-        $node = array(
+        $node = [
             'id' => 'foo',
             'name' => 'bar',
             'type' => $type,
-        );
+        ];
 
         $mock = $this->getMockBuilder('\ProductTemplateTreeApi')
             ->setMethods(null)
@@ -94,12 +94,12 @@ class ProductTemplateTreeApiTest extends TestCase
 
     public function generateNewLeafProvider()
     {
-        return array(
-            array(
+        return [
+            [
                 'category', 'closed',
                 'product', '',
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -155,10 +155,10 @@ class ProductTemplateTreeApiTest extends TestCase
 
     public function getRootedTreeDataProvider()
     {
-        return array(
-            array('foo'),
-            array(null),
-        );
+        return [
+            ['foo'],
+            [null],
+        ];
     }
 
     /**
@@ -212,10 +212,10 @@ class ProductTemplateTreeApiTest extends TestCase
 
     public function getTreeDataProvider()
     {
-        return array(
-            array('', '', null),
-            array("and name like ? ", "and (pc.name like ? or pt.name like ?) ", 'foo'),
-        );
+        return [
+            ['', '', null],
+            ["and name like ? ", "and (pc.name like ? or pt.name like ?) ", 'foo'],
+        ];
     }
 
     /**
@@ -227,19 +227,19 @@ class ProductTemplateTreeApiTest extends TestCase
         //build tree data
         $treeData = [];
         for ($i=1; $i <= 100; $i++) {
-            $treeData[] = array(
+            $treeData[] = [
                 'id' => $i,
                 'name' => 'foo_' . $i,
                 'type' => 'category',
-            );
+            ];
         }
 
         for ($i=101; $i <= 200; $i++) {
-            $treeData[] = array(
+            $treeData[] = [
                 'id' => $i,
                 'name' => 'bar_' . $i,
                 'type' => 'product',
-            );
+            ];
         }
 
         $mock = $this->getMockBuilder('\ProductTemplateTreeApi')
@@ -284,62 +284,62 @@ class ProductTemplateTreeApiTest extends TestCase
 
     public function getTemplateTreeProvider()
     {
-        return array(
-            array(
-                array('filter' => 'foo'),
+        return [
+            [
+                ['filter' => 'foo'],
                 1,
                 0,
                 0,
                 1,
                 true,
                 20,
-            ),
-            array(
-                array('root' => 'foo'),
+            ],
+            [
+                ['root' => 'foo'],
                 0,
                 1,
                 0,
                 1,
                 true,
                 20,
-            ),
-            array(
-                array('filter' => 'foo', 'offset' => 100),
+            ],
+            [
+                ['filter' => 'foo', 'offset' => 100],
                 1,
                 0,
                 100,
                 101,
                 true,
                 20,
-            ),
-            array(
-                array('offset' => 201),
+            ],
+            [
+                ['offset' => 201],
                 0,
                 1,
                 100,
                 101,
                 false,
                 0,
-            ),
-            array(
-                array('max_num' => 50),
+            ],
+            [
+                ['max_num' => 50],
                 0,
                 1,
                 0,
                 1,
                 true,
                 20,
-            ),
-            array(
-                array('max_num' => -1),
+            ],
+            [
+                ['max_num' => -1],
                 0,
                 1,
                 0,
                 1,
                 true,
                 20,
-            ),
-        );
+            ],
+        ];
     }
 }
 

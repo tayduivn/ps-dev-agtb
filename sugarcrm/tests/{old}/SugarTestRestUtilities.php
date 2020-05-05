@@ -13,7 +13,9 @@
 
 class SugarTestRestUtilities
 {
-    private function __construct() {}
+    private function __construct()
+    {
+    }
     /**
      * Get the RestServiceMock
      * @param User $user            A User to put in the rest service
@@ -31,7 +33,7 @@ class SugarTestRestUtilities
         $mock->setupVisibilityForMock();
 
         // Api helpers must be reset after a new service was created.
-        ApiHelper::$moduleHelpers = array();
+        ApiHelper::$moduleHelpers = [];
 
         return $mock;
     }
@@ -52,9 +54,13 @@ class SugarTestRestServiceMock extends RestService
 {
     public $type;
 
-    public function execute() {}
+    public function execute()
+    {
+    }
 
-    protected function handleException(Exception $exception) {}
+    protected function handleException(Exception $exception)
+    {
+    }
 
     public function getVersion()
     {

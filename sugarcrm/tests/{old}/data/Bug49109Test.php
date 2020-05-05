@@ -24,9 +24,9 @@ class Bug49109Test extends TestCase
 {
     protected function setUp() : void
     {
-        require('include/modules.php');
-	    $GLOBALS['beanList'] = $beanList;
-	    $GLOBALS['beanFiles'] = $beanFiles;
+        require 'include/modules.php';
+        $GLOBALS['beanList'] = $beanList;
+        $GLOBALS['beanFiles'] = $beanFiles;
     }
 
     /**

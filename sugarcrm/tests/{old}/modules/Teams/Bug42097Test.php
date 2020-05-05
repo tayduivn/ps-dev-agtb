@@ -15,37 +15,36 @@ use PHPUnit\Framework\TestCase;
 
 class Bug42097Test extends TestCase
 {
-	var $testUser;
-	
+    var $testUser;
+    
     protected function setUp() : void
-    {  
-       $this->testUser = SugarTestUserUtilities::createAnonymousUser();
-    }    
+    {
+        $this->testUser = SugarTestUserUtilities::createAnonymousUser();
+    }
     
     protected function tearDown() : void
     {
-       SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-	   $this->testUser = null;
-    } 	
-	
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        $this->testUser = null;
+    }
+    
     
     /**
      * testRemoveUserFromTeam
      *
-     * This test checks the case where a user is removed from his own private team.  
+     * This test checks the case where a user is removed from his own private team.
      * We are expecting an exception to be thrown.
      */
-    public function testRemoveUserFromTeam() 
+    public function testRemoveUserFromTeam()
     {
-	   $team = BeanFactory::getBean('Teams', $this->testUser->getPrivateTeamID());
-	   $exceptionThrown = false;
-	   try {
-	     $team->remove_user_from_team($this->testUser->id);
-	   } catch(Exception $ex) {
-	   	 $exceptionThrown = true;
-	   }
-	   
-	   $this->assertTrue($exceptionThrown, 'Assert that an exception was thrown for attempting to remove user off own private team');
+        $team = BeanFactory::getBean('Teams', $this->testUser->getPrivateTeamID());
+        $exceptionThrown = false;
+        try {
+            $team->remove_user_from_team($this->testUser->id);
+        } catch (Exception $ex) {
+            $exceptionThrown = true;
+        }
+       
+        $this->assertTrue($exceptionThrown, 'Assert that an exception was thrown for attempting to remove user off own private team');
     }
-    
 }

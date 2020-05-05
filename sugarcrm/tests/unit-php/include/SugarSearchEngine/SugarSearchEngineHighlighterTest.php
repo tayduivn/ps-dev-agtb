@@ -27,7 +27,7 @@ class SugarSearchEngineHighlighterTest extends TestCase
      */
     public function testNormalizeFieldName($module, array $results, array $fieldDefs, array $expected)
     {
-        $sut = $this->getHighlighterMock(array('getFieldDefs'));
+        $sut = $this->getHighlighterMock(['getFieldDefs']);
 
         $sut->expects($this->any())
             ->method('getFieldDefs')
@@ -39,169 +39,169 @@ class SugarSearchEngineHighlighterTest extends TestCase
 
     public function providerTestProcessHighlightText()
     {
-        return array(
+        return [
 
             // empty results without module specified
-            array(
+            [
                 null,
-                array(),
-                array(),
-                array(),
-            ),
+                [],
+                [],
+                [],
+            ],
 
             // empty high lights
-            array(
+            [
                 'Accounts',
-                array(),
-                array(),
-                array(),
-            ),
+                [],
+                [],
+                [],
+            ],
 
             // normal field highlights, no field defs/label
-            array(
+            [
                 'Accounts',
-                array(
-                    'name' => array(
+                [
+                    'name' => [
                         'SugarCRM <strong>Incorporated</strong>',
                         'And <strong>more</strong> hits',
-                    ),
-                ),
-                array(),
-                array(
-                    'name' => array(
+                    ],
+                ],
+                [],
+                [
+                    'name' => [
                         'text' => 'SugarCRM <strong>Incorporated</strong> ... And <strong>more</strong> hits',
                         'module' => 'Accounts',
                         'label' => 'name',
-                    ),
-                ),
-            ),
+                    ],
+                ],
+            ],
 
             // the field value is an array with 1 element
-            array(
+            [
                 'Accounts',
-                array(
-                    'email' => array(
-                        array(0 => '<strong>beans.vegan.hr@example.name</strong>'),
-                    ),
-                ),
-                array(),
-                array(
-                    'email' => array(
+                [
+                    'email' => [
+                        [0 => '<strong>beans.vegan.hr@example.name</strong>'],
+                    ],
+                ],
+                [],
+                [
+                    'email' => [
                         'text' => '<strong>beans.vegan.hr@example.name</strong>',
                         'module' => 'Accounts',
                         'label' => 'email',
-                    ),
-                ),
-            ),
+                    ],
+                ],
+            ],
 
             // the field value is an array with more than 1 element
-            array(
+            [
                 'Accounts',
-                array(
-                    'email' => array(
-                        array(0 => '<strong>beans@example.name</strong>'),
-                        array(0 => '<strong>kid.air@example.name</strong>'),
-                    ),
-                ),
-                array(),
-                array(
-                    'email' => array(
+                [
+                    'email' => [
+                        [0 => '<strong>beans@example.name</strong>'],
+                        [0 => '<strong>kid.air@example.name</strong>'],
+                    ],
+                ],
+                [],
+                [
+                    'email' => [
                         'text' => '<strong>beans@example.name</strong> ... <strong>kid.air@example.name</strong>',
                         'module' => 'Accounts',
                         'label' => 'email',
-                    ),
-                ),
-            ),
+                    ],
+                ],
+            ],
 
             // the field value is an array of multiple arrays
-            array(
+            [
                 'Accounts',
-                array(
-                    'email' => array(
-                        array(
+                [
+                    'email' => [
+                        [
                             0 => '<strong>beans.vegan.hr@example.name</strong>',
                             1 => '<strong>kid.play@example.name</strong>',
-                        ),
-                    ),
-                ),
-                array(),
-                array(
-                    'email' => array(
+                        ],
+                    ],
+                ],
+                [],
+                [
+                    'email' => [
                         'text' => '',
                         'module' => 'Accounts',
                         'label' => 'email',
-                    ),
-                ),
-            ),
+                    ],
+                ],
+            ],
 
             // testing labels and field normalization
-            array(
+            [
                 'Accounts',
-                array(
-                    'name' => array(
+                [
+                    'name' => [
                         'SugarCRM <strong>Incorporated</strong>',
                         'And <strong>more</strong> hits',
-                    ),
-                    'description' => array(
+                    ],
+                    'description' => [
                         '<strong>Aweseom</strong> company',
-                    ),
-                    'industry' => array(),
-                ),
-                array(
-                    'name' => array(
+                    ],
+                    'industry' => [],
+                ],
+                [
+                    'name' => [
                         'label' => 'LBL_NAME_LABEL',
                         'vname' => 'LBL_NAME_VNAME',
-                    ),
-                    'description' => array(
+                    ],
+                    'description' => [
                         'label' => 'LBL_DESC_LABEL',
-                    ),
-                    'industry' => array(
+                    ],
+                    'industry' => [
                         'vname' => 'LBL_INDUS_VNAME',
-                    ),
-                ),
-                array(
-                    'name' => array(
+                    ],
+                ],
+                [
+                    'name' => [
                         'text' => 'SugarCRM <strong>Incorporated</strong> ... And <strong>more</strong> hits',
                         'module' => 'Accounts',
                         'label' => 'LBL_NAME_LABEL',
-                    ),
-                    'description' => array(
+                    ],
+                    'description' => [
                         'text' => '<strong>Aweseom</strong> company',
                         'module' => 'Accounts',
                         'label' => 'LBL_DESC_LABEL',
-                    ),
-                    'industry' => array(
+                    ],
+                    'industry' => [
                         'text' => '',
                         'module' => 'Accounts',
                         'label' => 'LBL_INDUS_VNAME',
-                    ),
-                ),
-            ),
+                    ],
+                ],
+            ],
 
             // passing some unicode in the mix
-            array(
+            [
                 'Accounts',
-                array(
-                    'name' => array(
+                [
+                    'name' => [
                         '我知道我我知道我知道 <strong>我知道我知道我知道我知道我知道</strong> 我知道我知道我知道我知道我知道我知道我知道我知道',
-                        '<strong>我知道我知道</strong> 我知道我'
-                    ),
-                ),
-                array(
-                    'name' => array(
+                        '<strong>我知道我知道</strong> 我知道我',
+                    ],
+                ],
+                [
+                    'name' => [
                         'label' => 'LBL_NAME_LABEL',
-                    ),
-                ),
-                array(
-                    'name' => array(
+                    ],
+                ],
+                [
+                    'name' => [
                         'text' => '我知道我我知道我知道 <strong>我知道我知道我知道我知道我知道</strong> 我知道我知道我知道我知道我知道我知道我知道我知道 ... <strong>我知道我知道</strong> 我知道我',
                         'module' => 'Accounts',
                         'label' => 'LBL_NAME_LABEL',
-                    ),
-                ),
-            ),
+                    ],
+                ],
+            ],
 
-        );
+        ];
     }
 
 

@@ -20,7 +20,7 @@ class RelateRecordApiTest extends TestCase
      */
     private $api;
 
-    protected $createdBeans = array();
+    protected $createdBeans = [];
 
     protected function setUp() : void
     {
@@ -33,8 +33,7 @@ class RelateRecordApiTest extends TestCase
 
     protected function tearDown() : void
     {
-        foreach($this->createdBeans as $bean)
-        {
+        foreach ($this->createdBeans as $bean) {
             $bean->retrieve($bean->id);
             $bean->mark_deleted($bean->id);
         }
@@ -49,8 +48,8 @@ class RelateRecordApiTest extends TestCase
 
     public function testCreateRelatedRecord()
     {
-        $relateApiArgs = array('param1' => 'value1');
-        $moduleApiArgs = array('param2' => 'value2');
+        $relateApiArgs = ['param1' => 'value1'];
+        $moduleApiArgs = ['param2' => 'value2'];
         $service = SugarTestRestUtilities::getRestServiceMock();
 
         $link = $this->getMockBuilder('Link2')
@@ -64,9 +63,9 @@ class RelateRecordApiTest extends TestCase
         $primaryBean->testLink = $link;
 
         $relatedBean = new SugarBean();
-        $relatedBean->field_defs = array();
+        $relatedBean->field_defs = [];
         $moduleApi = $this->getMockBuilder('ModuleApi')
-            ->setMethods(array('createBean'))
+            ->setMethods(['createBean'])
             ->getMock();
         $moduleApi->expects($this->once())
             ->method('createBean')
@@ -75,21 +74,21 @@ class RelateRecordApiTest extends TestCase
 
         /** @var RelateRecordApi|MockObject $api */
         $api = $this->getMockBuilder('RelateRecordApi')
-            ->setMethods(array(
+            ->setMethods([
                 'loadBean',
                 'checkRelatedSecurity',
                 'getModuleApi',
                 'getModuleApiArgs',
                 'formatNearAndFarRecords',
                 'getRelatedRecord',
-            ))
+            ])
             ->getMock();
         $api->expects($this->any())
             ->method('loadBean')
             ->willReturn($primaryBean);
         $api->expects($this->any())
             ->method('checkRelatedSecurity')
-            ->willReturn(array('testLink'));
+            ->willReturn(['testLink']);
         $api->expects($this->once())
             ->method('getModuleApi')
             ->with($service, 'TestModule')
@@ -100,7 +99,7 @@ class RelateRecordApiTest extends TestCase
             ->willReturn($moduleApiArgs);
         $api->expects($this->any())
             ->method('getRelatedRecord')
-            ->willReturn(array());
+            ->willReturn([]);
 
         $api->createRelatedRecord($service, $relateApiArgs);
     }
@@ -121,7 +120,7 @@ class RelateRecordApiTest extends TestCase
     {
         $api = new RelateRecordApi();
         $service = SugarTestRestUtilities::getRestServiceMock();
-        return SugarTestReflection::callProtectedMethod($api, 'loadModuleApi', array($service, $module));
+        return SugarTestReflection::callProtectedMethod($api, 'loadModuleApi', [$service, $module]);
     }
 
     /**
@@ -131,23 +130,23 @@ class RelateRecordApiTest extends TestCase
     {
         $service = SugarTestRestUtilities::getRestServiceMock();
 
-        $api = $this->createPartialMock('RelateRecordApi', array('loadModuleApi'));
+        $api = $this->createPartialMock('RelateRecordApi', ['loadModuleApi']);
         $api->expects($this->once())
             ->method('loadModuleApi')
             ->with($service, 'TheModule')
             ->willReturn($loaded);
 
-        $actual = SugarTestReflection::callProtectedMethod($api, 'getModuleApi', array($service, 'TheModule'));
+        $actual = SugarTestReflection::callProtectedMethod($api, 'getModuleApi', [$service, 'TheModule']);
         $this->assertInstanceOf($expected, $actual);
     }
 
     public static function getModuleApiProvider()
     {
-        return array(
-            'module-specific' => array(new UsersApi(), 'UsersApi'),
-            'non-module' => array(new stdClass(), 'ModuleApi'),
-            'default' => array(null, 'ModuleApi'),
-        );
+        return [
+            'module-specific' => [new UsersApi(), 'UsersApi'],
+            'non-module' => [new stdClass(), 'ModuleApi'],
+            'default' => [null, 'ModuleApi'],
+        ];
     }
 
     /**
@@ -156,32 +155,33 @@ class RelateRecordApiTest extends TestCase
     public function testGetModuleApiArgs(array $args, $module, array $expected)
     {
         $api = new RelateRecordApi();
-        $actual = SugarTestReflection::callProtectedMethod($api, 'getModuleApiArgs', array($args, $module));
+        $actual = SugarTestReflection::callProtectedMethod($api, 'getModuleApiArgs', [$args, $module]);
         $this->assertEquals($expected, $actual);
     }
 
     public static function getModuleApiArgsProvider()
     {
-        return array(
-            array(
-                array(
+        return [
+            [
+                [
                     'module' => 'PrimaryModule',
                     'record' => 'PrimaryRecord',
                     'link_name' => 'LinkName',
                     'property' => 'value',
-                ),
+                ],
                 'RelateModule',
-                array(
+                [
                     'relate_module' => 'PrimaryModule',
                     'relate_record' => 'PrimaryRecord',
                     'module' => 'RelateModule',
                     'property' => 'value',
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
     }
 
-    public function testCreateRelatedNote() {
+    public function testCreateRelatedNote()
+    {
         $contact = BeanFactory::newBean("Contacts");
         $contact->last_name = "Related Record Unit Test Contact";
         $contact->save();
@@ -195,13 +195,13 @@ class RelateRecordApiTest extends TestCase
         $api->user = $GLOBALS['current_user'];
 
 
-        $args = array(
+        $args = [
             "module" => "Contacts",
             "record" => $contact->id,
             "link_name" => "notes",
             "name" => $noteName,
             "assigned_user_id" => $GLOBALS['current_user']->id,
-        );
+        ];
         $apiClass = new RelateRecordApi();
         $result = $apiClass->createRelatedRecord($api, $args);
 
@@ -230,10 +230,10 @@ class RelateRecordApiTest extends TestCase
         $account1 = SugarTestAccountUtilities::createAccount();
         $account2 = SugarTestAccountUtilities::createAccount();
 
-        $records = array ($account1->id, $account2->id);
+        $records =  [$account1->id, $account2->id];
         $recordListId = RecordListFactory::saveRecordList($records, 'Reports');
 
-        $mockAPI = self::createPartialMock("RelateRecordApi", array("loadBean", "requireArgs"));
+        $mockAPI = self::createPartialMock("RelateRecordApi", ["loadBean", "requireArgs"]);
         $mockAPI->expects(self::once())
             ->method("loadBean")
             ->will(self::returnValue($prospectList));
@@ -241,14 +241,14 @@ class RelateRecordApiTest extends TestCase
         $api = new RestService();
         $api->user = $GLOBALS['current_user'];
 
-        $args = array(
+        $args = [
             "module"    => "ProspectLists",
             "record"    => $prospectList->id,
             "link_name" => "accounts",
             "remote_id" => $recordListId,
-        );
+        ];
 
-        $result = $mockAPI->createRelatedLinksFromRecordList($api,$args);
+        $result = $mockAPI->createRelatedLinksFromRecordList($api, $args);
         $this->assertNotEmpty($result['record']);
         $this->assertNotEmpty($result['record']['id']);
         $this->assertEquals(2, count($result['related_records']['success']));
@@ -267,19 +267,19 @@ class RelateRecordApiTest extends TestCase
         $account1 = SugarTestAccountUtilities::createAccount();
         $account2 = SugarTestAccountUtilities::createAccount();
 
-        $records = array ($account1->id, $account2->id);
+        $records =  [$account1->id, $account2->id];
         $recordListId = RecordListFactory::saveRecordList($records, 'Reports');
 
 
         $relationshipStub = $this->getMockRelationship();
         $relationshipStub->expects($this->once())
             ->method('add')
-            ->will($this->returnValue(array($account1->id)));
+            ->will($this->returnValue([$account1->id]));
 
         $stub = $this->getMockBuilder(BeanFactory::getObjectName('ProspectLists'))->getMock();
         $stub->accounts = $relationshipStub;
 
-        $mockAPI = self::createPartialMock("RelateRecordApi", array("loadBean", "requireArgs", "checkRelatedSecurity"));
+        $mockAPI = self::createPartialMock("RelateRecordApi", ["loadBean", "requireArgs", "checkRelatedSecurity"]);
         $mockAPI->expects(self::once())
             ->method("loadBean")
             ->will(self::returnValue($stub));
@@ -288,19 +288,19 @@ class RelateRecordApiTest extends TestCase
             ->will(self::returnValue(true));
         $mockAPI->expects(self::once())
             ->method("checkRelatedSecurity")
-            ->will(self::returnValue(array('accounts')));
+            ->will(self::returnValue(['accounts']));
 
         $api = new RestService();
         $api->user = $GLOBALS['current_user'];
 
-        $args = array(
+        $args = [
             "module"    => "ProspectLists",
             "record"    => $prospectList->id,
             "link_name" => "accounts",
             "remote_id" => $recordListId,
-        );
+        ];
 
-        $result = $mockAPI->createRelatedLinksFromRecordList($api,$args);
+        $result = $mockAPI->createRelatedLinksFromRecordList($api, $args);
 
         $this->assertNotEmpty($result['record']);
         $this->assertEquals(1, count($result['related_records']['success']));
@@ -322,8 +322,8 @@ class RelateRecordApiTest extends TestCase
 
     public function testGetRelatedFieldsReturnsOnlyFieldsForPassedInLink()
     {
-        $opp = $this->getMockBuilder('Opportunity')->setMethods(array('save'))->getMock();
-        $contact = $this->getMockBuilder('Contact')->setMethods(array('save'))->getMock();
+        $opp = $this->getMockBuilder('Opportunity')->setMethods(['save'])->getMock();
+        $contact = $this->getMockBuilder('Contact')->setMethods(['save'])->getMock();
 
         $rr_api = new RelateRecordApi();
 
@@ -333,18 +333,18 @@ class RelateRecordApiTest extends TestCase
         $fields = SugarTestReflection::callProtectedMethod(
             $rr_api,
             'getRelatedFields',
-            array(
+            [
                 $api,
                 // all of the below fields contain a rname_link.
-                array(
+                [
                     'accept_status_calls' => '',
                     'accept_status_meetings' => '',
-                    'opportunity_role' => 'Unit Test'
-                ),
+                    'opportunity_role' => 'Unit Test',
+                ],
                 $opp,
                 'contacts',
-                $contact
-            )
+                $contact,
+            ]
         );
 
         // this should only contain one field as opportunity_role is the only valid one for the contacts link
@@ -359,7 +359,7 @@ class RelateRecordApiTest extends TestCase
         $this->assertTrue($call->load_relationship('contacts'), 'Relationship is not loaded');
         $call->contacts->add($contact);
 
-        $call = BeanFactory::retrieveBean('Calls', $call->id, array('use_cache' => false));
+        $call = BeanFactory::retrieveBean('Calls', $call->id, ['use_cache' => false]);
         $this->assertEquals($contact->id, $call->contact_id, 'Contact is not linked to call');
 
         // unregister bean in order to make sure API won't take it from cache
@@ -368,12 +368,12 @@ class RelateRecordApiTest extends TestCase
 
         $api = new RelateRecordApi();
         $service = SugarTestRestUtilities::getRestServiceMock();
-        $response = $api->deleteRelatedLink($service, array(
+        $response = $api->deleteRelatedLink($service, [
             'module' => 'Calls',
             'record' => $call->id,
             'link_name' => 'contacts',
             'remote_id' => $contact->id,
-        ));
+        ]);
 
         $this->assertArrayHasKey('record', $response);
         $this->assertEquals($call->id, $response['record']['id'], 'Call is not returned by API');
@@ -387,11 +387,11 @@ class RelateRecordApiTest extends TestCase
     public function testBeforeSaveOnCreateRelatedRecord()
     {
         LogicHook::refreshHooks();
-        $hook = array(
+        $hook = [
             'Notes',
             'before_save',
-            Array(1, 'Notes::before_save', __FILE__, 'SugarBeanBeforeSaveTestHook', 'beforeSave')
-        );
+            [1, 'Notes::before_save', __FILE__, 'SugarBeanBeforeSaveTestHook', 'beforeSave'],
+        ];
         call_user_func_array('check_logic_hook_file', $hook);
 
         $contact = SugarTestContactUtilities::createContact();
@@ -399,13 +399,13 @@ class RelateRecordApiTest extends TestCase
         $api = new RestService();
         $api->user = $GLOBALS['current_user'];
 
-        $args = array(
+        $args = [
             'module' => 'Contacts',
             'record' => $contact->id,
             'link_name' => 'notes',
             'name' => 'Test Note',
             'assigned_user_id' => $api->user->id,
-        );
+        ];
         $apiClass = new RelateRecordApi();
         $result = $apiClass->createRelatedRecord($api, $args);
 
@@ -428,13 +428,13 @@ class RelateRecordApiTest extends TestCase
         $api = new RestService();
         $api->user = $GLOBALS['current_user'];
 
-        $args = array(
+        $args = [
             "opportunity_role" => "Technical Decision Maker",
             "module" => "Opportunities",
             "record" => $opportunity->id,
             "link_name" => "contacts",
             'assigned_user_id' => $api->user->id,
-        );
+        ];
 
         $apiClass = new RelateRecordApi();
         $result = $apiClass->createRelatedRecord($api, $args);
@@ -453,15 +453,15 @@ class RelateRecordApiTest extends TestCase
 
     public static function normalizeLinkIdsSuccessProvider()
     {
-        return array(
-            array(
-                array('id1', array('id' => 'id2', 'key' => 'value')),
-                array(
-                    'id1' => array(),
-                    'id2' => array('key' => 'value'),
-                ),
-            )
-        );
+        return [
+            [
+                ['id1', ['id' => 'id2', 'key' => 'value']],
+                [
+                    'id1' => [],
+                    'id2' => ['key' => 'value'],
+                ],
+            ],
+        ];
     }
 
     /**
@@ -475,20 +475,20 @@ class RelateRecordApiTest extends TestCase
 
     public static function normalizeLinkIdsFailureProvider()
     {
-        return array(
-            'non-array' => array('id'),
-            'no-id' => array(
-                array(
-                    array('key' => 'value'),
-                ),
-            ),
-        );
+        return [
+            'non-array' => ['id'],
+            'no-id' => [
+                [
+                    ['key' => 'value'],
+                ],
+            ],
+        ];
     }
 
     private function normalizeLinkIds($ids)
     {
         $api = new RelateRecordApi();
-        return SugarTestReflection::callProtectedMethod($api, 'normalizeLinkIds', array($ids));
+        return SugarTestReflection::callProtectedMethod($api, 'normalizeLinkIds', [$ids]);
     }
 
     /**
@@ -518,7 +518,7 @@ class RelateRecordApiTest extends TestCase
 
 class SugarBeanBeforeSaveTestHook
 {
-    static public $callCounter = 0;
+    public static $callCounter = 0;
 
     public function beforeSave($bean, $event, $arguments)
     {
@@ -529,28 +529,28 @@ class SugarBeanBeforeSaveTestHook
     {
         $contact = SugarTestContactUtilities::createContact();
         $case = $this->getMockBuilder('SugarBean')
-            ->setMethods(array('ACLAccess', 'save'))
+            ->setMethods(['ACLAccess', 'save'])
             ->getMock();
         $case->expects($this->any())
             ->method('ACLAccess')
             ->will($this->returnValue(false));
-        $case->field_defs = array();
+        $case->field_defs = [];
         $case->module_dir = 'Cases';
         $case->module_name = 'Cases';
         $case->id = 'the-id';
 
         /** @var RelateRecordApi|MockObject $api */
         $api = $this->getMockBuilder('RelateRecordApi')
-            ->setMethods(array('loadBean'))
+            ->setMethods(['loadBean'])
             ->getMock();
         $api->expects($this->any())
             ->method('loadBean')
             ->will($this->onConsecutiveCalls($contact, $case));
 
         $service = SugarTestRestUtilities::getRestServiceMock();
-        $response = $api->createRelatedRecord($service, array(
+        $response = $api->createRelatedRecord($service, [
             'link_name' => 'cases',
-        ));
+        ]);
 
         $this->assertArrayHasKey('related_record', $response);
         $this->assertArrayHasKey('_acl', $response['related_record']);

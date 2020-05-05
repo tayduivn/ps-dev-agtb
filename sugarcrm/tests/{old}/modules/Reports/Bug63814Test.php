@@ -50,10 +50,10 @@ class Bug63814Test extends TestCase
         $layoutManager = new LayoutManager();
         $layoutManager->setAttribute('reporter', new Report());
         $SWFDT = new $class($layoutManager);
-        $layoutDef = array(
+        $layoutDef = [
             'qualifier_name' => 'quarter',
-            'type' => $type
-        );
+            'type' => $type,
+        ];
 
         $result = $SWFDT->getQuarterFilter($layoutDef, $modifyFilter, $date);
 
@@ -64,62 +64,62 @@ class Bug63814Test extends TestCase
     public static function filterDataProvider()
     {
         $db = DBManagerFactory::getInstance();
-        return array(
-            array(
+        return [
+            [
                 '2013-05-05',
                 'datetime',
                 'SugarWidgetFielddatetime63814Test',
                 '',
                 ">= {$db->convert($db->quoted('2013-04-01 07:00:00'), 'datetime')}",
                 "<= {$db->convert($db->quoted('2013-07-01 06:59:59'), 'datetime')}",
-                'America/Los_Angeles'
-            ),
-            array(
+                'America/Los_Angeles',
+            ],
+            [
                 '1987-01-01',
                 'datetime',
                 'SugarWidgetFielddatetime63814Test',
                 '+3 month',
                 ">= {$db->convert($db->quoted('1987-03-31 21:00:00'), 'datetime')}",
                 "<= {$db->convert($db->quoted('1987-06-30 20:59:59'), 'datetime')}",
-                'Europe/Helsinki'
-            ),
-            array(
+                'Europe/Helsinki',
+            ],
+            [
                 '2013-09-08',
                 'datetime',
                 'SugarWidgetFielddatetime63814Test',
                 '-3 month',
                 ">= {$db->convert($db->quoted('2013-04-01 00:00:00'), 'datetime')}",
                 "<= {$db->convert($db->quoted('2013-06-30 23:59:59'), 'datetime')}",
-                'UTC'
-            ),
-            array(
+                'UTC',
+            ],
+            [
                 '2013-05-05',
                 'date',
                 'SugarWidgetFielddate63814Test',
                 '',
                 ">= {$db->convert($db->quoted('2013-04-01'), 'date')}",
                 "<= {$db->convert($db->quoted('2013-06-30'), 'date')}",
-                'America/Los_Angeles'
-            ),
-            array(
+                'America/Los_Angeles',
+            ],
+            [
                 '1987-01-01',
                 'date',
                 'SugarWidgetFielddate63814Test',
                 '+3 month',
                 ">= {$db->convert($db->quoted('1987-04-01'), 'date')}",
                 "<= {$db->convert($db->quoted('1987-06-30'), 'date')}",
-                'Europe/Helsinki'
-            ),
-            array(
+                'Europe/Helsinki',
+            ],
+            [
                 '2013-09-08',
                 'date',
                 'SugarWidgetFielddate63814Test',
                 '-3 month',
                 ">= {$db->convert($db->quoted('2013-04-01'), 'date')}",
                 "<= {$db->convert($db->quoted('2013-06-30'), 'date')}",
-                'UTC'
-            ),
-        );
+                'UTC',
+            ],
+        ];
     }
 }
 

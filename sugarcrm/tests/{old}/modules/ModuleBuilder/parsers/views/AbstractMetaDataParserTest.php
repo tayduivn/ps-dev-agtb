@@ -24,23 +24,23 @@ class AbstractMetaDataParserTest extends TestCase
         $this->assertSame($expected, SugarTestReflection::callProtectedMethod(
             'AbstractMetaDataParser',
             'isTrue',
-            array($value)
+            [$value]
         ));
     }
 
     public static function isTrueProvider()
     {
-        return array(
-            array(true, true),
-            array(false, false),
-            array(0, false),
-            array('', false),
-            array('true', true),
-            array('false', false),
-            array('FALSE', false),
-            array('0', false),
-            array('something', true),
-        );
+        return [
+            [true, true],
+            [false, false],
+            [0, false],
+            ['', false],
+            ['true', true],
+            ['false', false],
+            ['FALSE', false],
+            ['0', false],
+            ['something', true],
+        ];
     }
 
     /**
@@ -60,62 +60,62 @@ class AbstractMetaDataParserTest extends TestCase
     
     public function studioValidationDefProvider()
     {
-        return array(
+        return [
             // Test no client specific rule in the defs is null
-            array(
-                'def' => array(),
+            [
+                'def' => [],
                 'view' => 'list',
                 'client' => 'base',
                 'expected' => null,
-            ),
+            ],
             // Test no client passed is null
-            array(
-                'def' => array('base' => array()),
+            [
+                'def' => ['base' => []],
                 'view' => 'list',
                 'client' => '',
                 'expected' => null,
-            ),
+            ],
             // Test def[client] is a string is null
-            array(
-                'def' => array('base' => 'list'),
+            [
+                'def' => ['base' => 'list'],
                 'view' => 'list',
                 'client' => 'base',
                 'expected' => null,
-            ),
+            ],
             // Test no view passed is null
-            array(
-                'def' => array('mobile' => array()),
+            [
+                'def' => ['mobile' => []],
                 'view' => '',
                 'client' => 'mobile',
                 'expected' => null,
-            ),
+            ],
             // Test def[client] is boolean returns the boolean
-            array(
-                'def' => array('mobile' => true),
+            [
+                'def' => ['mobile' => true],
                 'view' => 'list',
                 'client' => 'mobile',
                 'expected' => true,
-            ),
-            array(
-                'def' => array('mobile' => false),
+            ],
+            [
+                'def' => ['mobile' => false],
                 'view' => 'list',
                 'client' => 'mobile',
                 'expected' => false,
-            ),
+            ],
             // Test client and view specific rules are boolean
-            array(
-                'def' => array('mobile' => array('list' => false)),
+            [
+                'def' => ['mobile' => ['list' => false]],
                 'view' => 'list',
                 'client' => 'mobile',
                 'expected' => false,
-            ),
-            array(
-                'def' => array('custom' => array('record' => 'somestring')),
+            ],
+            [
+                'def' => ['custom' => ['record' => 'somestring']],
                 'view' => 'record',
                 'client' => 'custom',
                 'expected' => true,
-            ),
-        );
+            ],
+        ];
     }
 
     public function validFieldDataProvider()

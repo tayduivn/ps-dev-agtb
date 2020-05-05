@@ -90,7 +90,7 @@ class FileUtilsTests extends TestCase
 
         // Assert #3 nonexistent file
         $actual = $ul->getMimeSoap($this->_testFileNotExists);
-        $this->assertEquals('application/octet-stream', $actual,  "Nonexistent Upload File SOAP mime getter expected 'application/octet-stream' but returned $actual");
+        $this->assertEquals('application/octet-stream', $actual, "Nonexistent Upload File SOAP mime getter expected 'application/octet-stream' but returned $actual");
     }
 
     public function testUploadFileGetMime()
@@ -98,18 +98,18 @@ class FileUtilsTests extends TestCase
         $ul = new UploadFile();
 
         // Assert #1 - file with extension and type set
-        $files = array('name' => $this->_testFileWithExt, 'type' => 'text/plain');
+        $files = ['name' => $this->_testFileWithExt, 'type' => 'text/plain'];
         $actual = $ul->getMime($files);
         $this->assertEquals('text/plain', $actual, "Upload File Get Mime should have returned 'text/plain' but returned $actual");
 
         // Assert #2 - file without extension and type set to octet-stream
-        $files = array('name' => $this->_testFileNoExt, 'type' => 'application/octet-stream', 'tmp_name' => $this->_testFileNoExt);
+        $files = ['name' => $this->_testFileNoExt, 'type' => 'application/octet-stream', 'tmp_name' => $this->_testFileNoExt];
         $actual = $ul->getMime($files);
         $expected = $this->_getDefaultMimeType();
         $this->assertEquals($expected, $actual, "Upload File Get Mime on file with no extension should have returned $expected but returneded $actual");
 
         // Assert #3 - nonexistent file
-        $files = array('name' => $this->_testFileNotExists, 'type' => 'application/octet-stream', 'tmp_name' => $this->_testFileNotExists);
+        $files = ['name' => $this->_testFileNotExists, 'type' => 'application/octet-stream', 'tmp_name' => $this->_testFileNotExists];
         $actual = $ul->getMime($files);
         $this->assertEquals('application/octet-stream', $actual, "Upload File Get Mime on nonexistent file should have returned 'application/octet-stream' but returned $actual");
     }
@@ -117,7 +117,7 @@ class FileUtilsTests extends TestCase
     public function testWriteArrayToFileWithKeyValuePair()
     {
         $the_file = "temp_file.php";
-        $testArray = array (
+        $testArray =  [
             'name' => 'solution_number',
             'vname' => 'LBL_SOLUTION_NUMBER',
             'type' => 'int',
@@ -125,14 +125,14 @@ class FileUtilsTests extends TestCase
             'auto_increment' => 'true',
             'required' => 'true',
             'enable_range_search' => '',
-            'full_text_search' => array (
+            'full_text_search' =>  [
                 'enabled' => 1,
                 'searchable' =>'',
-                'boost' => 1 ),
+                'boost' => 1 ],
             'merge_filter' => 'disabled',
             'autoinc_next' => '51',
-            'dbType' => 'int'
-        );
+            'dbType' => 'int',
+        ];
 
         $the_name = 'mod_strings';
         write_array_to_file_as_key_value_pair($the_name, $testArray, $the_file, 'w');
@@ -140,7 +140,7 @@ class FileUtilsTests extends TestCase
         if (!file_exists($the_file)) {
             $this->assertEquals(1, 0, "failed to write to file!");
         } else {
-            $mod_strings = array();
+            $mod_strings = [];
             require $the_file;
             foreach ($testArray as $key => $value) {
                 if (!is_array($value)) {
@@ -158,8 +158,7 @@ class FileUtilsTests extends TestCase
     {
         $mime = 'text/plain';
 
-        if (!mime_is_detectable())
-        {
+        if (!mime_is_detectable()) {
             $mime = 'application/octet-stream';
         }
 

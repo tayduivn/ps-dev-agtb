@@ -22,26 +22,26 @@ class Bug33036Test extends TestCase
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-	}
+    }
 
 
     public static function tearDownAfterClass(): void
     {
         SugarTestHelper::tearDown();
-	}
+    }
 
     protected function setUp() : void
-	{
-	    $this->obj = new Contact();
-	}
+    {
+        $this->obj = new Contact();
+    }
 
     protected function tearDown() : void
-	{
+    {
         if (! empty($this->obj->id)) {
             $this->obj->db->query("DELETE FROM contacts WHERE id = '" . $this->obj->id . "'");
         }
         unset($this->obj);
-	}
+    }
 
     public function testAuditForRelatedFields()
     {
@@ -58,7 +58,7 @@ class Bug33036Test extends TestCase
         $this->obj->account_name = $test_account_name;
         $changes = $this->obj->db->getAuditDataChanges($this->obj);
 
-        $this->assertTrue(isset($changes['account_name']),"The account name was not in the list of changes");
+        $this->assertTrue(isset($changes['account_name']), "The account name was not in the list of changes");
         $this->assertEquals($changes['account_name']['after'], $test_account_name);
 
         SugarTestAccountUtilities::removeAllCreatedAccounts();

@@ -32,7 +32,7 @@ class CRYS642Test extends TestCase
         $allData = $view->getAjaxRelationships($relationships);
 
         $noLabelValuesArray = array_filter($allData, function ($item) {
-                return (!empty($item['rhs_module']));
+                return !empty($item['rhs_module']);
         });
 
         $this->assertSameSize($allData, $noLabelValuesArray);

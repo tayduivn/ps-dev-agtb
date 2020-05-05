@@ -35,10 +35,10 @@ class BugPAT543Test extends TestCase
 
     public function meetingLanguagesProvider()
     {
-        return array(
-            array('en_us'),
-            array('es_ES')
-        );
+        return [
+            ['en_us'],
+            ['es_ES'],
+        ];
     }
 
     /**

@@ -22,9 +22,9 @@ class Bug44515WithoutCustomTest extends TestCase
      */
     public function testLoadCustomFormulas()
     {
-      refresh_price_formulas();
+        refresh_price_formulas();
       // At this point I expect to have only the 5 standard formulas
-      $expectedIndexes = 5;
-      $this->assertEquals($expectedIndexes, count($GLOBALS['price_formulas']));
+        $expectedIndexes = 5;
+        $this->assertEquals($expectedIndexes, count($GLOBALS['price_formulas']));
     }
 }

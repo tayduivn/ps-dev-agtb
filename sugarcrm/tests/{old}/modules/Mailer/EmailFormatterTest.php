@@ -22,15 +22,16 @@ class EmailFormatterTest extends TestCase
      * @group bug30591
      * @group mailer
      */
-    public function testTranslateCharacters_HtmlEntitiesAreTranslatedToRealCharacters() {
+    public function testTranslateCharacters_HtmlEntitiesAreTranslatedToRealCharacters()
+    {
         $body = "Check to see if &quot; &lt; &gt; &#039; was translated to \" < > '";
 
-        $mockLocale = self::createPartialMock("Localization", array("translateCharset"));
+        $mockLocale = self::createPartialMock("Localization", ["translateCharset"]);
         $mockLocale->expects(self::any())
             ->method("translateCharset")
             ->will(self::returnValue($body)); // return the exact same string
 
-        $mockFormatter = self::createPartialMock("EmailFormatter", array("retrieveDisclosureSettings"));
+        $mockFormatter = self::createPartialMock("EmailFormatter", ["retrieveDisclosureSettings"]);
         $mockFormatter->expects(self::any())
             ->method("retrieveDisclosureSettings")
             ->will(self::returnValue(false));

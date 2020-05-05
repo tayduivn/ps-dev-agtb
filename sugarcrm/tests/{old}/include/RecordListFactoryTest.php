@@ -21,7 +21,7 @@ class RecordListFactoryTest extends TestCase
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setUp('current_user', array(true, true));
+        SugarTestHelper::setUp('current_user', [true, true]);
     }
 
     protected function tearDown() : void
@@ -36,23 +36,23 @@ class RecordListFactoryTest extends TestCase
      */
     public function getRecordListDataProvider()
     {
-        return array(
-            array(
+        return [
+            [
                 'Accounts',
-                array(1,2,3,4,5),
-                array(1,2,3,4,5),
-            ),
-            array(
+                [1,2,3,4,5],
+                [1,2,3,4,5],
+            ],
+            [
                 'Cases',
-                array(),
-                array(),
-            ),
-            array(
+                [],
+                [],
+            ],
+            [
                 'Contacts',
-                array(99, 30, 6),
-                array(99, 30, 6),
-            ),
-        );
+                [99, 30, 6],
+                [99, 30, 6],
+            ],
+        ];
     }
 
     /**
@@ -84,28 +84,28 @@ class RecordListFactoryTest extends TestCase
      */
     public function saveRecordListDataProvider()
     {
-        return array(
-            array(
+        return [
+            [
                 'Accounts',
-                array(1,2,3,4,5),
-                array(7, 8, 9),
-            ),
-            array(
+                [1,2,3,4,5],
+                [7, 8, 9],
+            ],
+            [
                 'Contacts',
-                array(),
-                array(22, 34, 56),
-            ),
-            array(
+                [],
+                [22, 34, 56],
+            ],
+            [
                 'Bugs',
-                array(22, 34, 56),
-                array(),
-            ),
-            array(
+                [22, 34, 56],
+                [],
+            ],
+            [
                 'Cases',
-                array(),
-                array(),
-            ),
-        );
+                [],
+                [],
+            ],
+        ];
     }
 
     /**
@@ -150,7 +150,7 @@ class RecordListFactoryTest extends TestCase
      */
     public function testDeleteRecordList()
     {
-        $id = RecordListFactory::saveRecordList(array(1, 2, 3), 'Accounts');
+        $id = RecordListFactory::saveRecordList([1, 2, 3], 'Accounts');
         $this->assertNotEmpty($id);
 
         $result = RecordListFactory::deleteRecordList($id);

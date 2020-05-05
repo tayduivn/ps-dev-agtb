@@ -10,5 +10,5 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$data = array();
+$data = [];
 print_r($data);

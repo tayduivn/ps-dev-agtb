@@ -33,7 +33,8 @@ class GetSearchWhereValueTest extends TestCase
      *
      * @dataProvider  getSearchWhereProvider
      */
-    public function testGetSearchWhereValue($exp, $val) {
+    public function testGetSearchWhereValue($exp, $val)
+    {
         $this->assertSame($exp, $this->intField->getSearchWhereValue($val));
     }
 
@@ -44,14 +45,15 @@ class GetSearchWhereValueTest extends TestCase
      *
      * @return Array values for testing
      */
-    public function getSearchWhereProvider() {
-        return array(
-            array(123, 123),
-            array(-1, 'test'),
-            array('12,14,16', '12,14,16'),
-            array('12,-1,16', '12,junk,16'),
-            array('-1,12,-1,16,34,124,-1', 'stuff,12,junk,16,34,124,morejunk'),
-            array(-1, ''),
-        );
+    public function getSearchWhereProvider()
+    {
+        return [
+            [123, 123],
+            [-1, 'test'],
+            ['12,14,16', '12,14,16'],
+            ['12,-1,16', '12,junk,16'],
+            ['-1,12,-1,16,34,124,-1', 'stuff,12,junk,16,34,124,morejunk'],
+            [-1, ''],
+        ];
     }
 }

@@ -18,7 +18,7 @@ class AdministrationControllerTest extends TestCase
     protected $tabs;
     protected function setUp() : void
     {
-        SugarTestHelper::setUp('current_user', array(true, 1));
+        SugarTestHelper::setUp('current_user', [true, 1]);
         SugarTestHelper::setUp('app_list_strings');
         $this->tabs = new TabController();
         $this->savedTabs = $this->tabs->get_system_tabs();
@@ -40,6 +40,6 @@ class AdministrationControllerTest extends TestCase
         $admin->action_savetabs();
         $tabs = new TabController();
         //Home tab should be prepended
-        $this->assertEquals(array('Home' => 'Home', 'Leads' => 'Leads'), $tabs->get_system_tabs());
+        $this->assertEquals(['Home' => 'Home', 'Leads' => 'Leads'], $tabs->get_system_tabs());
     }
 }

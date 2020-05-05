@@ -32,16 +32,16 @@ class ElasticsearchRefreshEnableCommandTest extends AbstractApiCommandTestCase
      */
     public function providerTestExecuteCommand()
     {
-        return array(
-            array(
-                array(
+        return [
+            [
+                [
                     'shared' => 200,
                     'accountsonly' => 500,
-                ),
-                array(),
+                ],
+                [],
                 'ElasticsearchRefreshEnableCommand_0.txt',
                 0,
-            ),
-        );
+            ],
+        ];
     }
 }

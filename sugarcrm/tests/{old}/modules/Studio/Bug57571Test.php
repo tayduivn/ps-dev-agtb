@@ -30,7 +30,7 @@ class Bug57571Test extends TestCase
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('moduleList');
         SugarTestHelper::setUp('app_list_strings');
-        SugarTestHelper::setUp('mod_strings', array($this->_module));
+        SugarTestHelper::setUp('mod_strings', [$this->_module]);
         
         // Backup the custom metadata for quotes if there is one
         if (file_exists($this->_testFile)) {
@@ -50,12 +50,13 @@ class Bug57571Test extends TestCase
         // Restore if necessary
         if ($this->_backedUpDefs) {
             rename($this->_testFile . '.backup', $this->_testFile);
-        } 
+        }
         
         SugarTestHelper::tearDown();
     }
     
-    public function testTabIndexFoundInViewDefs() {
+    public function testTabIndexFoundInViewDefs()
+    {
         $parser = new GridLayoutMetaDataParser(MB_EDITVIEW, $this->_module);
         $defs = $parser->getLayout();
         $this->assertNotEmpty($defs[$this->_panel], "No panel named $this->_panel found in the modified defs");
@@ -67,7 +68,8 @@ class Bug57571Test extends TestCase
         $this->assertEquals($col['tabindex'], '1', 'Tab Index was not set to 1 as expected');
     }
     
-    protected function _addTabIndex() {
+    protected function _addTabIndex()
+    {
         require 'modules/Quotes/metadata/editviewdefs.php';
         foreach ($viewdefs['Quotes']['EditView']['panels'] as $panelname => $paneldef) {
             foreach ($paneldef as $index => $row) {
@@ -78,10 +80,10 @@ class Bug57571Test extends TestCase
                         $this->_field = $value;
                         
                         // Rewrite the def
-                        $viewdefs['Quotes']['EditView']['panels'][$panelname][$index][$id] = array(
+                        $viewdefs['Quotes']['EditView']['panels'][$panelname][$index][$id] = [
                             'name' => $value,
                             'tabindex' => '1',
-                        );
+                        ];
                         
                         break 3;
                     }
@@ -93,7 +95,8 @@ class Bug57571Test extends TestCase
         write_array_to_file('viewdefs', $viewdefs, $this->_testFile);
     }
     
-    protected function _getColFromPanel($panel) {
+    protected function _getColFromPanel($panel)
+    {
         foreach ($panel as $row) {
             foreach ($row as $col) {
                 if (isset($col['name']) && $col['name'] == $this->_field) {
@@ -102,6 +105,6 @@ class Bug57571Test extends TestCase
             }
         }
         
-        return array();
+        return [];
     }
 }

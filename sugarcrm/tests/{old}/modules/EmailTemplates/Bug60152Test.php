@@ -37,13 +37,13 @@ class Bug60152Test extends TestCase
         $this->assertStringContainsString($needle, $bean->body_html);
     }
 
-    static public function dataProvider()
+    public static function dataProvider()
     {
-        return array(
-            array(
+        return [
+            [
                 '<a href="{::test::}">test</a>',
-                '{::test::}'
-            )
-        );
+                '{::test::}',
+            ],
+        ];
     }
 }

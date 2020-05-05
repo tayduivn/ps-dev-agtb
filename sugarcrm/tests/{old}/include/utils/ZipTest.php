@@ -12,7 +12,7 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once('include/utils/zip_utils.php');
+require_once 'include/utils/zip_utils.php';
 /**
  * @ticket 40957
  */
@@ -24,82 +24,83 @@ class ZipTest extends TestCase
     protected function setUp() : void
     {
         $this->testdir = sugar_cached("tests/{old}/include/utils/ziptest");
-        sugar_mkdir($this->testdir.'/testarchive',null,true);
+        sugar_mkdir($this->testdir.'/testarchive', null, true);
         sugar_touch($this->testdir.'/testarchive/testfile1.txt');
         sugar_touch($this->testdir.'/testarchive/testfile2.txt');
         sugar_touch($this->testdir.'/testarchive/testfile3.txt');
-        sugar_mkdir($this->testdir.'/testarchiveoutput',null,true);
+        sugar_mkdir($this->testdir.'/testarchiveoutput', null, true);
     }
 
     protected function tearDown() : void
     {
-        if ( is_dir($this->testdir) )
+        if (is_dir($this->testdir)) {
             rmdir_recursive($this->testdir);
+        }
     }
 
     public function testZipADirectory()
-	{
-		zip_dir($this->testdir.'/testarchive',$this->testdir.'/testarchive.zip');
+    {
+        zip_dir($this->testdir.'/testarchive', $this->testdir.'/testarchive.zip');
 
-		$this->assertTrue(file_exists($this->testdir.'/testarchive.zip'));
-	}
+        $this->assertTrue(file_exists($this->testdir.'/testarchive.zip'));
+    }
 
-	public function testZipADirectoryFailsWhenDirectorySpecifedDoesNotExists()
-	{
-	    $this->assertFalse(zip_dir($this->testdir.'/notatestarchive',$this->testdir.'/testarchive.zip'));
-	}
+    public function testZipADirectoryFailsWhenDirectorySpecifedDoesNotExists()
+    {
+        $this->assertFalse(zip_dir($this->testdir.'/notatestarchive', $this->testdir.'/testarchive.zip'));
+    }
 
-	/**
+    /**
      * @depends testZipADirectory
      */
     public function testExtractEntireArchive()
-	{
-	    zip_dir($this->testdir.'/testarchive',$this->testdir.'/testarchive.zip');
-		unzip($this->testdir.'/testarchive.zip',$this->testdir.'/testarchiveoutput');
+    {
+        zip_dir($this->testdir.'/testarchive', $this->testdir.'/testarchive.zip');
+        unzip($this->testdir.'/testarchive.zip', $this->testdir.'/testarchiveoutput');
 
-	    $this->assertTrue(file_exists($this->testdir.'/testarchiveoutput/testfile1.txt'));
-	    $this->assertTrue(file_exists($this->testdir.'/testarchiveoutput/testfile2.txt'));
-	    $this->assertTrue(file_exists($this->testdir.'/testarchiveoutput/testfile3.txt'));
-	}
+        $this->assertTrue(file_exists($this->testdir.'/testarchiveoutput/testfile1.txt'));
+        $this->assertTrue(file_exists($this->testdir.'/testarchiveoutput/testfile2.txt'));
+        $this->assertTrue(file_exists($this->testdir.'/testarchiveoutput/testfile3.txt'));
+    }
 
-	/**
+    /**
      * @depends testZipADirectory
      */
     public function testExtractSingleFileFromAnArchive()
-	{
-	    zip_dir($this->testdir.'/testarchive',$this->testdir.'/testarchive.zip');
-		unzip_file($this->testdir.'/testarchive.zip','testfile1.txt',$this->testdir.'/testarchiveoutput');
+    {
+        zip_dir($this->testdir.'/testarchive', $this->testdir.'/testarchive.zip');
+        unzip_file($this->testdir.'/testarchive.zip', 'testfile1.txt', $this->testdir.'/testarchiveoutput');
 
-	    $this->assertTrue(file_exists($this->testdir.'/testarchiveoutput/testfile1.txt'));
-	    $this->assertFalse(file_exists($this->testdir.'/testarchiveoutput/testfile2.txt'));
-	    $this->assertFalse(file_exists($this->testdir.'/testarchiveoutput/testfile3.txt'));
-	}
+        $this->assertTrue(file_exists($this->testdir.'/testarchiveoutput/testfile1.txt'));
+        $this->assertFalse(file_exists($this->testdir.'/testarchiveoutput/testfile2.txt'));
+        $this->assertFalse(file_exists($this->testdir.'/testarchiveoutput/testfile3.txt'));
+    }
 
-	/**
+    /**
      * @depends testZipADirectory
      */
     public function testExtractTwoIndividualFilesFromAnArchive()
-	{
-	    zip_dir($this->testdir.'/testarchive',$this->testdir.'/testarchive.zip');
-		unzip_file($this->testdir.'/testarchive.zip',array('testfile2.txt','testfile3.txt'),$this->testdir.'/testarchiveoutput');
+    {
+        zip_dir($this->testdir.'/testarchive', $this->testdir.'/testarchive.zip');
+        unzip_file($this->testdir.'/testarchive.zip', ['testfile2.txt','testfile3.txt'], $this->testdir.'/testarchiveoutput');
 
-	    $this->assertFalse(file_exists($this->testdir.'/testarchiveoutput/testfile1.txt'));
-	    $this->assertTrue(file_exists($this->testdir.'/testarchiveoutput/testfile2.txt'));
-	    $this->assertTrue(file_exists($this->testdir.'/testarchiveoutput/testfile3.txt'));
-	}
+        $this->assertFalse(file_exists($this->testdir.'/testarchiveoutput/testfile1.txt'));
+        $this->assertTrue(file_exists($this->testdir.'/testarchiveoutput/testfile2.txt'));
+        $this->assertTrue(file_exists($this->testdir.'/testarchiveoutput/testfile3.txt'));
+    }
 
-	public function testExtractFailsWhenArchiveDoesNotExist()
-	{
-	    $this->assertFalse(unzip($this->testdir.'/testarchivenothere.zip',$this->testdir.'/testarchiveoutput'));
-	}
+    public function testExtractFailsWhenArchiveDoesNotExist()
+    {
+        $this->assertFalse(unzip($this->testdir.'/testarchivenothere.zip', $this->testdir.'/testarchiveoutput'));
+    }
 
-	public function testExtractFailsWhenExtractDirectoryDoesNotExist()
-	{
-	    $this->assertFalse(unzip($this->testdir.'/testarchive.zip',$this->testdir.'/testarchiveoutputnothere'));
-	}
+    public function testExtractFailsWhenExtractDirectoryDoesNotExist()
+    {
+        $this->assertFalse(unzip($this->testdir.'/testarchive.zip', $this->testdir.'/testarchiveoutputnothere'));
+    }
 
-	public function testExtractFailsWhenFilesDoNotExistInArchive()
-	{
-	    $this->assertFalse(unzip_file($this->testdir.'/testarchive.zip','testfile4.txt',$this->testdir.'/testarchiveoutput'));
-	}
+    public function testExtractFailsWhenFilesDoNotExistInArchive()
+    {
+        $this->assertFalse(unzip_file($this->testdir.'/testarchive.zip', 'testfile4.txt', $this->testdir.'/testarchiveoutput'));
+    }
 }

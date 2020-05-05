@@ -21,10 +21,10 @@ class Bug47650Test extends SOAPTestCase
      */
     protected function setUp() : void
     {
-    	$this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/service/v2/soap.php';
+        $this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/service/v2/soap.php';
         SugarTestAccountUtilities::createAccount();
         SugarTestAccountUtilities::createAccount();
-		parent::setUp();
+        parent::setUp();
     }
 
     /**
@@ -32,9 +32,9 @@ class Bug47650Test extends SOAPTestCase
      */
     protected function tearDown() : void
     {
-		parent::tearDown();
+        parent::tearDown();
         SugarTestAccountUtilities::removeAllCreatedAccounts();
-    	global $soap_version_test_accountId, $soap_version_test_opportunityId, $soap_version_test_contactId;
+        global $soap_version_test_accountId, $soap_version_test_opportunityId, $soap_version_test_contactId;
         unset($soap_version_test_accountId);
         unset($soap_version_test_opportunityId);
         unset($soap_version_test_contactId);
@@ -42,18 +42,19 @@ class Bug47650Test extends SOAPTestCase
 
     public function testGetEntryListWithFourFieldsFields()
     {
-    	$this->_login();
-		$result = $this->_soapClient->call('get_entry_list',
-            array(
+        $this->_login();
+        $result = $this->_soapClient->call(
+            'get_entry_list',
+            [
                  'session'=>$this->_sessionId,
                  "module_name" => 'Accounts',
                  '',
                  '',
                  0,
-                 "select_fields" => array('id', 'name', 'account_type', 'industry'),
-                 null, 
-                 'max_results' => 1
-            )
+                 "select_fields" => ['id', 'name', 'account_type', 'industry'],
+                 null,
+                 'max_results' => 1,
+            ]
         );
 
         $this->assertEquals(4, count($result['entry_list'][0]['name_value_list']), 'More than four fields were returned');

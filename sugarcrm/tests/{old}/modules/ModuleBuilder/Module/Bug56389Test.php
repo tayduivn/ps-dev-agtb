@@ -28,9 +28,8 @@ class Bug56389SugarModule extends StudioModule
      */
     function removeFieldFromLayouts($fieldName)
     {
-    	$sources = $this->getPortalLayoutSources();
-        foreach ($sources as $defs)
-        {
+        $sources = $this->getPortalLayoutSources();
+        foreach ($sources as $defs) {
             //If this module type doesn't support a given metadata type, we will get an exception from getParser()
             try {
                 $parser = ParserFactory::getParser($defs['type'], $this->module);
@@ -38,7 +37,8 @@ class Bug56389SugarModule extends StudioModule
                     // don't populate from $_REQUEST, just save as is...
                     $parser->handleSave(false);
                 }
-            } catch(Exception $e){}
+            } catch (Exception $e) {
+            }
         }
     }
 }
@@ -49,12 +49,12 @@ class Bug56389SugarModule extends StudioModule
 class Bug56389Test extends TestCase
 {
     protected $moduleToTest = 'Cases';
-    protected $filesBackedUp = array();
-    protected $filesToTest = array(
+    protected $filesBackedUp = [];
+    protected $filesToTest = [
         'modules/Cases/clients/portal/views/list/list.php',
         'modules/Cases/clients/portal/views/record/record.php',
-    );
-    protected $filesToTearDown = array();
+    ];
+    protected $filesToTearDown = [];
     protected $fieldToTest = 'name';
 
     protected function setUp() : void
@@ -73,7 +73,7 @@ class Bug56389Test extends TestCase
             // Set aside custom and working files.
             $custom = "custom/$file";
             $working = "custom/working/$file";
-            $filesets = array($custom, $working);
+            $filesets = [$custom, $working];
             SugarTestHelper::saveFile($filesets);
             SugarTestHelper::saveFile($file);
             foreach ($filesets as $filepath) {
@@ -96,7 +96,8 @@ class Bug56389Test extends TestCase
      * @param array $defs The defs, as of view type
      * @return bool
      */
-    protected function _fieldExistsInDefs($fieldname, $defs) {
+    protected function _fieldExistsInDefs($fieldname, $defs)
+    {
         foreach ($defs['panels'] as $panel) {
             foreach ($panel['fields'] as $field) {
                 if ((is_array($field) && isset($field['name']) && $field['name'] == $fieldname) || $field == $fieldname) {

@@ -76,7 +76,7 @@ class HealthCheckCasesTest extends TestCase
 
         $this->scanner->scan();
 
-        $detectedStatuses = array();
+        $detectedStatuses = [];
         foreach ($this->scanner->getStatusLog() as $bucket) {
             foreach ($bucket as $log) {
                 $detectedStatuses[] = $log['code'];
@@ -109,7 +109,7 @@ class HealthCheckCasesTest extends TestCase
 
     public static function getCases()
     {
-        $cases = array();
+        $cases = [];
 
         foreach (SugarTestReflection::getProtectedValue(new HealthCheckScannerMeta(), 'meta') as $code => $data) {
             $iterator = new DirectoryIterator(__DIR__ . '/cases');
@@ -125,11 +125,11 @@ class HealthCheckCasesTest extends TestCase
                 if ($pointer->getFilename() != $code && substr($pointer->getFilename(), 0, strlen($code) + 1) != $code . '_') {
                     continue;
                 }
-                $cases['CASE_' . $pointer->getFilename()] = array($code, $pointer->getFilename());
+                $cases['CASE_' . $pointer->getFilename()] = [$code, $pointer->getFilename()];
                 $isUpdated = true;
             }
             if (!$isUpdated) {
-                $cases['CASE_' . $code] = array($code, $code);
+                $cases['CASE_' . $code] = [$code, $code];
             }
         }
 

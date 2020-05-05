@@ -18,23 +18,23 @@ class SugarArrayIntersectMergeTest extends TestCase
 {
     public function testSubArrayOrderIsPreserved()
     {
-        $array1 = array(
-            'dog' => array(
+        $array1 = [
+            'dog' => [
                 'dog1' => 'dog1',
                 'dog2' => 'dog2',
                 'dog3' => 'dog3',
                 'dog4' => 'dog4',
-            )
-        );
+            ],
+        ];
 
-        $array2 = array(
-            'dog' => array(
+        $array2 = [
+            'dog' => [
                 'dog2' => 'dog2',
                 'dog1' => 'dog1',
                 'dog3' => 'dog3',
                 'dog4' => 'dog4',
-            )
-        );
+            ],
+        ];
 
         $results = sugarArrayIntersectMerge($array1, $array2);
 
@@ -48,40 +48,40 @@ class SugarArrayIntersectMergeTest extends TestCase
 
     public function testIntersectMerge()
     {
-        $foo = array(
+        $foo = [
             'one' => 123,
             'two' => 123,
-            'foo' => array(
+            'foo' => [
                 'int' => 123,
                 'foo' => 'bar',
-            ),
-            'bar' => array(
+            ],
+            'bar' => [
                 'int' => 123,
                 'foo' => 'bar',
-            ),
-        );
-        $bar = array(
+            ],
+        ];
+        $bar = [
             'one' => 123,
             'two' => 321,
             'three' => 321,
-            'foo' => array(
+            'foo' => [
                 'int' => 321,
                 'bar' => 'foo',
-            ),
-        );
+            ],
+        ];
 
-        $expected = array(
+        $expected = [
             'one' => 123,
             'two' => 321,
-            'foo' => array(
+            'foo' => [
                 'int' => 321,
                 'foo' => 'bar',
-            ),
-            'bar' => array(
+            ],
+            'bar' => [
                 'int' => 123,
                 'foo' => 'bar',
-            ),
-        );
+            ],
+        ];
         $this->assertEquals(sugarArrayIntersectMerge($foo, $bar), $expected);
         // insure that internal functions can't duplicate behavior
         $this->assertNotEquals(array_merge($foo, $bar), $expected);
@@ -90,16 +90,16 @@ class SugarArrayIntersectMergeTest extends TestCase
 
     public function testDaysOfTheWeek()
     {
-        $gimp = array(
-            'days_of_the_week' => array('mon', 'tues', 'weds', 'thurs', 'fri', 'sat', 'sun'),
-        );
-        $dom = array(
-            'days_of_the_week' => array('1', '2', '3', '4'),
-        );
+        $gimp = [
+            'days_of_the_week' => ['mon', 'tues', 'weds', 'thurs', 'fri', 'sat', 'sun'],
+        ];
+        $dom = [
+            'days_of_the_week' => ['1', '2', '3', '4'],
+        ];
 
-        $expected = array(
-            'days_of_the_week' => array('1', '2', '3', '4', 'fri', 'sat', 'sun'),
-        );
+        $expected = [
+            'days_of_the_week' => ['1', '2', '3', '4', 'fri', 'sat', 'sun'],
+        ];
         $this->assertEquals(sugarArrayIntersectMerge($gimp, $dom), $expected);
         // insure that internal functions can't duplicate behavior
         $this->assertNotEquals(array_merge($gimp, $dom), $expected);
@@ -108,30 +108,30 @@ class SugarArrayIntersectMergeTest extends TestCase
 
     public function testDuration()
     {
-        $gimp = array(
-            'duration' => array(
+        $gimp = [
+            'duration' => [
                 '86400' => '1 day',
                 '172800' => '2 days',
                 '259200' => '3 days',
                 '867-5309' => 'jenny',
-            ),
-        );
-        $dom = array(
-            'duration' => array(
+            ],
+        ];
+        $dom = [
+            'duration' => [
                 '86400' => '1 day translated',
                 '259200' => '3 days translated',
                 '123456' => '25 years translated',
                 '867-5309' => '',  // Should not replace gimp since this is empty
-            ),
-        );
-        $expected = array(
-            'duration' => array(
+            ],
+        ];
+        $expected = [
+            'duration' => [
                 '86400' => '1 day translated',
                 '172800' => '2 days',
                 '259200' => '3 days translated',
                 '867-5309' => 'jenny',
-            ),
-        );
+            ],
+        ];
         $this->assertEquals(sugarArrayIntersectMerge($gimp, $dom), $expected);
         // insure that internal functions can't duplicate behavior
         $this->assertNotEquals(array_merge($gimp, $dom), $expected);

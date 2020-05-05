@@ -43,7 +43,7 @@ class SavedReportTest extends TestCase
         ]);
         $link->expects($this->once())
             ->method('getBeans')
-            ->will($this->returnValue(array($reportSchedule)));
+            ->will($this->returnValue([$reportSchedule]));
         $savedReport->reportschedules = $link;
         TestReflection::callProtectedMethod($savedReport, 'deleteSchedules');
     }

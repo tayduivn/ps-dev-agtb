@@ -14,7 +14,7 @@
 
 class SugarTestManagerWorksheetUtilities
 {
-    private static $_createdWorksheets = array();
+    private static $_createdWorksheets = [];
 
     public static function createWorksheet($id = '')
     {
@@ -23,8 +23,7 @@ class SugarTestManagerWorksheetUtilities
         $worksheet = BeanFactory::newBean("ForecastManagerWorksheets");
         $worksheet->name = $name . $time;
 
-        if(!empty($id))
-        {
+        if (!empty($id)) {
             $worksheet->new_with_id = true;
             $worksheet->id = $id;
         }
@@ -35,8 +34,7 @@ class SugarTestManagerWorksheetUtilities
 
     public static function setCreatedWorksheet($worksheet_ids)
     {
-        foreach($worksheet_ids as $worksheet_id)
-        {
+        foreach ($worksheet_ids as $worksheet_id) {
             $worksheet = BeanFactory::newBean("ForecastManagerWorksheets");
             $worksheet->id = $worksheet_id;
             self::$_createdWorksheets[] = $worksheet;
@@ -53,14 +51,13 @@ class SugarTestManagerWorksheetUtilities
 
     public static function removeSpecificCreatedWorksheets($ids)
     {
-        $GLOBALS["db"]->query("delete from forecast_manager_worksheets where id in('" . implode("', '", $ids) . "')" );
+        $GLOBALS["db"]->query("delete from forecast_manager_worksheets where id in('" . implode("', '", $ids) . "')");
     }
 
     public static function getCreatedWorksheetIds()
     {
-        $worksheet_ids = array();
-        foreach (self::$_createdWorksheets as $worksheet)
-        {
+        $worksheet_ids = [];
+        foreach (self::$_createdWorksheets as $worksheet) {
             $worksheet_ids[] = $worksheet->id;
         }
         return $worksheet_ids;
@@ -77,12 +74,12 @@ class SugarTestManagerWorksheetUtilities
         /* @var $worksheet ForecastManagerWorksheet */
         $worksheet = BeanFactory::newBean('ForecastManagerWorksheets');
         $worksheet->retrieve_by_string_fields(
-            array(
+            [
                 'user_id' => $user_id,
                 'timeperiod_id' => $timeperiod_id,
                 'draft' => ($isCommit === false) ? 1 : 0,
                 'deleted' => 0,
-            )
+            ]
         );
 
         if (empty($worksheet->id)) {

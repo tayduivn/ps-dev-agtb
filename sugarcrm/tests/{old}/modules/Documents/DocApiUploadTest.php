@@ -26,13 +26,13 @@ class DocApiUploadTest extends TestCase
         $document->name = "Documents Upload Test".mt_rand(0, 1000);
         $document->save();
         $this->documents[] = $document;
-        $_FILES = array();
+        $_FILES = [];
     }
 
     protected function tearDown() : void
     {
-        $_FILES = array();
-        foreach($this->documents AS $document) {
+        $_FILES = [];
+        foreach ($this->documents as $document) {
             $document->mark_deleted($document->id);
         }
         SugarTestHelper::tearDown();
@@ -46,18 +46,18 @@ class DocApiUploadTest extends TestCase
         SugarTestHelper::saveFile($this->file);
         file_put_contents($this->file, create_guid());
 
-        $_FILES = array(
-                'filename' => array(
+        $_FILES = [
+                'filename' => [
                         'name' => 'test.txt',
                         'size' => filesize($this->file),
                         'tmp_name' => $this->file,
                         'error' => 0,
                         '_SUGAR_API_UPLOAD' => true,
-                ),
-        );
+                ],
+        ];
 
 
-        $result = $api->saveFilePost($rest, array("module" => "Documents", "record" => $this->documents[0]->id, "field" => "filename"));
+        $result = $api->saveFilePost($rest, ["module" => "Documents", "record" => $this->documents[0]->id, "field" => "filename"]);
         $this->assertArrayHasKey("filename", $result);
         $this->assertArrayHasKey("record", $result);
 
@@ -75,17 +75,17 @@ class DocApiUploadTest extends TestCase
         $rev1 =  $result['record']['document_revision_id'];
 
         file_put_contents($this->file, create_guid());
-        $_FILES = array(
-                'filename' => array(
+        $_FILES = [
+                'filename' => [
                         'name' => 'test2.txt',
                         'size' => filesize($this->file),
                         'tmp_name' => $this->file,
                         'error' => 0,
                         '_SUGAR_API_UPLOAD' => true,
-                ),
-        );
+                ],
+        ];
 
-        $result = $api->saveFilePost($rest, array("module" => "Documents", "record" => $this->documents[0]->id, "field" => "filename"));
+        $result = $api->saveFilePost($rest, ["module" => "Documents", "record" => $this->documents[0]->id, "field" => "filename"]);
 
         $this->assertArrayHasKey("filename", $result);
         $this->assertArrayHasKey("record", $result);

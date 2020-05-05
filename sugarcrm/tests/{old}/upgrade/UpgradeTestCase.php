@@ -23,7 +23,7 @@ abstract class UpgradeTestCase extends TestCase
      * admin user
      * @var User
      */
-    static protected $admin;
+    protected static $admin;
 
     public static function setUpBeforeClass() : void
     {

@@ -35,7 +35,7 @@ class PMSEEmailsTemplatesApiAclTest extends TestCase
 
         $this->PMSEEmailsTemplates = ProcessManager\Factory::getPMSEObject('PMSEEmailsTemplates');
         $this->api = new RestService();
-        $this->api->getRequest()->setRoute(array('acl' => array()));
+        $this->api->getRequest()->setRoute(['acl' => []]);
     }
 
     protected function tearDown() : void
@@ -49,7 +49,7 @@ class PMSEEmailsTemplatesApiAclTest extends TestCase
         $this->expectException(SugarApiExceptionNotAuthorized::class);
         $this->PMSEEmailsTemplates->emailTemplateDownload(
             $this->api,
-            array('module' => 'pmse_Emails_Templates')
+            ['module' => 'pmse_Emails_Templates']
         );
     }
 
@@ -58,7 +58,7 @@ class PMSEEmailsTemplatesApiAclTest extends TestCase
         $this->expectException(SugarApiExceptionNotAuthorized::class);
         $this->PMSEEmailsTemplates->findVariables(
             $this->api,
-            array('module' => 'pmse_Emails_Templates')
+            ['module' => 'pmse_Emails_Templates']
         );
     }
 
@@ -67,7 +67,7 @@ class PMSEEmailsTemplatesApiAclTest extends TestCase
         $this->expectException(SugarApiExceptionNotAuthorized::class);
         $this->PMSEEmailsTemplates->retrieveRelatedBeans(
             $this->api,
-            array('module' => 'pmse_Emails_Templates')
+            ['module' => 'pmse_Emails_Templates']
         );
     }
 
@@ -76,7 +76,7 @@ class PMSEEmailsTemplatesApiAclTest extends TestCase
         $this->expectException(SugarApiExceptionNotAuthorized::class);
         $this->PMSEEmailsTemplates->emailTemplatesImport(
             $this->api,
-            array('module' => 'pmse_Emails_Templates')
+            ['module' => 'pmse_Emails_Templates']
         );
     }
 
@@ -88,7 +88,7 @@ class PMSEEmailsTemplatesApiAclTest extends TestCase
         $GLOBALS['current_user']->is_admin = 1;
         $ret = $this->PMSEEmailsTemplates->findVariables(
             $this->api,
-            array('module' => 'pmse_Emails_Templates')
+            ['module' => 'pmse_Emails_Templates']
         );
         $this->assertTrue(is_array($ret), "ACL access test failed for findVariables");
     }

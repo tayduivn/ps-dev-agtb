@@ -27,7 +27,7 @@ class ModuleNameValidatorTest extends AbstractConstraintValidatorTest
     protected function createValidator()
     {
         return $this->getMockBuilder('\Sugarcrm\Sugarcrm\Security\Validator\Constraints\Bean\ModuleNameValidator')
-            ->setMethods(array('isValidModule'))
+            ->setMethods(['isValidModule'])
             ->getMock();
     }
 
@@ -78,9 +78,9 @@ class ModuleNameValidatorTest extends AbstractConstraintValidatorTest
      */
     public function testInvalidValues()
     {
-        $constraint = new ModuleName(array(
+        $constraint = new ModuleName([
             'message' => 'testMessage',
-        ));
+        ]);
 
         // Validation fully relies on BeanFactory so we just stub its result
         $this->validator->method('isValidModule')

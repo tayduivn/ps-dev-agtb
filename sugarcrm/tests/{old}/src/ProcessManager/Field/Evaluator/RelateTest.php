@@ -49,17 +49,17 @@ class RelateTest extends TestCase
         $bean = \BeanFactory::newBean('Bugs');
 
         // Create a mock set of vardefs for this bean
-        $defs = array(
-            'test1' => array(
+        $defs = [
+            'test1' => [
                 'id_name' => 'test1_foo',
-            ),
-            'test2' => array(
+            ],
+            'test2' => [
                 'id_name' => 'test2_foo',
-            ),
-            'test3' => array(
+            ],
+            'test3' => [
                 'id_name' => 'test3_foo',
-            ),
-        );
+            ],
+        ];
         $bean->field_defs = array_merge($bean->field_defs, $defs);
 
         $bean->test1_foo = 'test_value_1';
@@ -74,35 +74,35 @@ class RelateTest extends TestCase
         // Simple bean setup to cover all test cases
         $bean = $this->getPreparedBean();
 
-        return array(
+        return [
             // Tests no data value given
-            array(
+            [
                 'bean' => $bean,
                 'name' => 'test1',
-                'data' => array(),
+                'data' => [],
                 'expect' => false,
-            ),
+            ],
             // Tests no bean property set
-            array(
+            [
                 'bean' => $bean,
                 'name' => 'test7',
-                'data' => array('test7_foo' => 'test_value_7'),
+                'data' => ['test7_foo' => 'test_value_7'],
                 'expect' => false,
-            ),
+            ],
             // Tests no change of data
-            array(
+            [
                 'bean' => $bean,
                 'name' => 'test2',
-                'data' => array('test2_foo' => 'test_value_2'),
+                'data' => ['test2_foo' => 'test_value_2'],
                 'expect' => false,
-            ),
+            ],
             // Tests value change
-            array(
+            [
                 'bean' => $bean,
                 'name' => 'test3',
-                'data' => array('test3_foo' => 'test_value_3_foo'),
+                'data' => ['test3_foo' => 'test_value_3_foo'],
                 'expect' => true,
-            ),
-        );
+            ],
+        ];
     }
 }

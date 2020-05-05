@@ -31,7 +31,8 @@ class ModuleBuilderRelatedTest extends TestCase
      * @group forecasts
      * @group bug59133
      */
-    public function testRestrictedDropdownOptions() {
+    public function testRestrictedDropdownOptions()
+    {
         $this->assertTrue(in_array('commit_stage_dom', DropDownBrowser::$restrictedDropdowns));
         $this->assertTrue(in_array('commit_stage_binary_dom', DropDownBrowser::$restrictedDropdowns));
         $this->assertTrue(in_array('commit_stage_custom_dom', DropDownBrowser::$restrictedDropdowns));

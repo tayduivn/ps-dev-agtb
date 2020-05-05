@@ -59,7 +59,7 @@ class ForecastsChartApiTest extends TestCase
     public function testGetClass($_file, $_klass)
     {
         $api = new ForecastsChartApi();
-        $klass = SugarTestReflection::callProtectedMethod($api, 'getClass', array($_file, $_klass, array()));
+        $klass = SugarTestReflection::callProtectedMethod($api, 'getClass', [$_file, $_klass, []]);
         $this->assertInstanceOf($_klass, $klass);
     }
     /**
@@ -77,7 +77,7 @@ class Custom$_klass {}
 FILE;
         sugar_file_put_contents('custom/' . $_file, $file);
         $api = new ForecastsChartApi();
-        $klass = SugarTestReflection::callProtectedMethod($api, 'getClass', array($_file, $_klass, array()));
+        $klass = SugarTestReflection::callProtectedMethod($api, 'getClass', [$_file, $_klass, []]);
         $this->assertInstanceOf('Custom' . $_klass, $klass);
         unlink('custom/' . $_file);
     }
@@ -93,25 +93,25 @@ FILE;
     public function testChart($userId, $_file, $_klass, $display_manager)
     {
         $api = $this->getMockBuilder('ForecastsChartApi')
-            ->setMethods(array('getClass'))
+            ->setMethods(['getClass'])
             ->getMock();
 
         $user = $this->getMockBuilder('User')
-            ->setMethods(array('save'))
+            ->setMethods(['save'])
             ->disableOriginalConstructor()
             ->getMock();
 
         $user->id = $userId;
 
-        $args = array(
+        $args = [
             'timeperiod_id' => 'test-timeperiod-id',
             'user_id' => 'test-user-id',
-            'display_manager' => $display_manager
-        );
+            'display_manager' => $display_manager,
+        ];
 
         SugarAutoLoader::load($_file);
         $klass = $this->getMockBuilder($_klass)
-            ->setMethods(array('process'))
+            ->setMethods(['process'])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -130,33 +130,33 @@ FILE;
 
     public static function dataProviderChart()
     {
-        return array(
-            array(
+        return [
+            [
                 self::$users[0]['id'],
                 'include/SugarForecasting/Chart/Individual.php',
                 'SugarForecasting_Chart_Individual',
                 0,
-            ),
-            array(
+            ],
+            [
                 self::$users[1]['id'],
                 'include/SugarForecasting/Chart/Manager.php',
                 'SugarForecasting_Chart_Manager',
                 1,
-            ),
-        );
+            ],
+        ];
     }
 
     public static function dataProviderGetClass()
     {
-        return array(
-            array(
+        return [
+            [
                 'include/SugarForecasting/Chart/Individual.php',
-                'SugarForecasting_Chart_Individual'
-            ),
-            array(
+                'SugarForecasting_Chart_Individual',
+            ],
+            [
                 'include/SugarForecasting/Chart/Manager.php',
-                'SugarForecasting_Chart_Manager'
-            ),
-        );
+                'SugarForecasting_Chart_Manager',
+            ],
+        ];
     }
 }

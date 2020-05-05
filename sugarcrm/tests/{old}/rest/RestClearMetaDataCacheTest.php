@@ -14,13 +14,13 @@
 /**
  * Bug 59210 - Editing a modules field in Studio does not take affect immediately
  * in metadata API requests.
- * 
+ *
  * This test confirms that when certain metadata containing elements are edited
  * in studio that they indeed clear the metadata cache. While bug 59210 is specific
  * to field edits, the same condition existed among all studio related editable
  * elements, which was the metadata cache was not being invalidated when edits
  * were made.
- * 
+ *
  * NOTE: this will be a fairly long running test since it will be testing cache
  * clearing of the API metadata after certain UI tasks are carried out.
  */
@@ -28,28 +28,28 @@ class RestClearMetadataCacheTest extends RestTestBase
 {
     /**
      * Collection of teardown methods to call after the test is run
-     * 
+     *
      * @var array
      */
-    protected $_teardowns = array();
+    protected $_teardowns = [];
     
     /**
      * Holder for the current request array
-     * 
+     *
      * @var array
      */
-    protected $_request = array();
+    protected $_request = [];
 
     /**
-     * Object containing various request arrays 
-     * 
+     * Object containing various request arrays
+     *
      * @var RestCacheClearRequestMock
      */
     protected $_requestMock;
 
     /**
      * Flag used in handling modListHeader global
-     * 
+     *
      * @var bool
      */
     protected $_modListHeaderSet = false;
@@ -82,7 +82,7 @@ class RestClearMetadataCacheTest extends RestTestBase
         mkdir_recursive(dirname($this->_requestMock->ddlCustomFile));
         sugar_file_put_contents($this->_requestMock->ddlCustomFile, '<?php' . "\n");
         
-        // Force a mobile platform 
+        // Force a mobile platform
         $this->_restLogin($this->_user->user_name, $this->_user->user_name, 'mobile');
         
         // Lets clear the metadata cache to make sure we are start with fresh data
@@ -115,7 +115,7 @@ class RestClearMetadataCacheTest extends RestTestBase
      * Tests relationship create, edit and delete reflect immediately in metadata
      * requests
      *
-     * @group rest 
+     * @group rest
      */
     public function testRelationshipChangesClearMetadataCache()
     {
@@ -145,12 +145,12 @@ class RestClearMetadataCacheTest extends RestTestBase
         $data = $mm->getMetadata();
         $this->assertNotEmpty($data['relationships'][$relName], "The created relationship was not found in the metadata response and it should have been");
         
-        // Delete the relationship and remove the teardown method from the 
+        // Delete the relationship and remove the teardown method from the
         // teardown stack since at this point it will have cleaned itself up
         $this->_teardownRelationship();
         unset($this->_teardowns['r']);
         
-        // Test relationship no longer shows up 
+        // Test relationship no longer shows up
         $data = $mm->getMetadata();
         $this->assertFalse(isset($data['relationships'][$relName]), "The created relationship was found in the metadata response and it should not have been");
     }
@@ -194,10 +194,10 @@ class RestCacheClearRequestMock
 {
     /**
      * Mock request for creating a field
-     * 
+     *
      * @var array
      */
-    public $createFieldRequestVars = array(
+    public $createFieldRequestVars = [
         "action" => "saveField",
         "comments" => "",
         "default" => "",
@@ -220,14 +220,14 @@ class RestCacheClearRequestMock
         "name" => "unit_testy",
         "module" => "ModuleBuilder",
         "view_module" => "Accounts",
-    );
+    ];
 
     /**
      * Mock request for deleting a field
-     * 
+     *
      * @var array
      */
-    public $deleteFieldRequestVars = array(
+    public $deleteFieldRequestVars = [
         "action" => "DeleteField",
         "labelValue" => "Unit Testosterone",
         "label" => "LBL_UNIT_TESTY",
@@ -236,14 +236,14 @@ class RestCacheClearRequestMock
         "name" => "unit_testy_c",
         "module" => "ModuleBuilder",
         "view_module" => "Accounts",
-    );
+    ];
 
     /**
      * Mock relationship request
-     * 
+     *
      * @var array
      */
-    public $createRelationshipRequestVars = array(
+    public $createRelationshipRequestVars = [
         'to_pdf' => '1',
         'module' => 'ModuleBuilder',
         'action' => 'SaveRelationship',
@@ -252,31 +252,31 @@ class RestCacheClearRequestMock
         'relationship_name' => '',
         'lhs_module' => 'Bugs',
         'relationship_type' => 'one-to-one',
-        'rhs_module' => 'Accounts'
-    );
+        'rhs_module' => 'Accounts',
+    ];
 
     /**
      * Mock dropdown list items
-     * 
+     *
      * @var array
      */
-    public $ddlItems = array(
-        array('jimmy', 'Jimmy'),
-        array('jerry', 'Jerry'),
-        array('jenny', 'Jenny'),
-    );
+    public $ddlItems = [
+        ['jimmy', 'Jimmy'],
+        ['jerry', 'Jerry'],
+        ['jenny', 'Jenny'],
+    ];
 
     /**
      * Mock dropdownlist request
-     * 
+     *
      * @var array
      */
-    public $ddlFieldRequestVars = array(
+    public $ddlFieldRequestVars = [
         'list_value' => '',
         'dropdown_lang' => 'en_us',
         'dropdown_name' => 'unit_test_dropdown',
         'view_package' => 'studio',
-    );
+    ];
     
     /**
      * Custom file created by the dropdownlist save
@@ -287,7 +287,8 @@ class RestCacheClearRequestMock
     /**
      * Setup the dropdown list elements
      */
-    public function __construct() {
+    public function __construct()
+    {
         // Prepare the dropdownlist items
         $this->ddlFieldRequestVars['list_value'] = json_encode($this->ddlItems);
     }

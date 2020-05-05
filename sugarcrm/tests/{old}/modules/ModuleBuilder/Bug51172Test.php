@@ -35,7 +35,7 @@ class Bug51172Test extends TestCase
 
     protected function tearDown() : void
     {
-        $_REQUEST = array();
+        $_REQUEST = [];
         sugar_cache_clear('mod_strings.en_us');
 
         // Make sure to remove the test files from the filemap cache when removing
@@ -44,13 +44,11 @@ class Bug51172Test extends TestCase
         $eLang = 'custom/modules/'.$this->module.'/language/en_us.lang.php';
         $uLang = 'custom/modules/'.$this->add_module.'/language/en_us.lang.php';
 
-        if(file_exists($eLang))
-        {
+        if (file_exists($eLang)) {
             unlink($eLang);
         }
 
-        if(file_exists($uLang))
-        {
+        if (file_exists($uLang)) {
             unlink($uLang);
         }
 
@@ -62,12 +60,12 @@ class Bug51172Test extends TestCase
      */
     public function getRequestData()
     {
-        return array (
+        return  [
             'name' => $this->field_name,
             'view_module' => $this->module,
             'label' => 'LBL_' . strtoupper($this->field_name),
             'labelValue' => $this->field_name,
-        );
+        ];
     }
 
     /**
@@ -86,6 +84,6 @@ class Bug51172Test extends TestCase
         $mod_strings = return_module_language($GLOBALS['current_language'], $this->add_module);
 
         //assert that array $mod_strings Users module contains current label
-        $this->assertArrayHasKey( $_REQUEST['label'], $mod_strings);
+        $this->assertArrayHasKey($_REQUEST['label'], $mod_strings);
     }
 }

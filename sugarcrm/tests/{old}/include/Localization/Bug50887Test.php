@@ -31,7 +31,8 @@ class Bug50887Test extends TestCase
         unset($GLOBALS['current_user']);
     }
 
-    public function testGetDecimalSeparator() {
+    public function testGetDecimalSeparator()
+    {
         $this->assertSame('.', $this->loc->getDecimalSeparator($this->user));
     }
 }

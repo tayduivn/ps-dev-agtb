@@ -30,17 +30,17 @@ class Bug50567Test extends TestCase
      */
     public function providerCorrectNextMonth()
     {
-        return array(
-            array('2012-01-31', 'next', '&year=2012&month=2&day=1'),
-            array('2012-02-29', 'next', '&year=2012&month=3&day=1'), //Check leap year
-            array('2011-02-28', 'next', '&year=2011&month=3&day=1'), //Check non-leap year
-            array('2012-12-31', 'next', '&year=2013&month=1&day=1'), //Check new year
+        return [
+            ['2012-01-31', 'next', '&year=2012&month=2&day=1'],
+            ['2012-02-29', 'next', '&year=2012&month=3&day=1'], //Check leap year
+            ['2011-02-28', 'next', '&year=2011&month=3&day=1'], //Check non-leap year
+            ['2012-12-31', 'next', '&year=2013&month=1&day=1'], //Check new year
 
-            array('2012-01-31', 'previous', '&year=2011&month=12&day=1'),
-            array('2012-12-31', 'previous', '&year=2012&month=11&day=1'),
-            array('2012-02-29', 'previous', '&year=2012&month=1&day=1'), //Check leap year
-            array('2011-02-28', 'previous', '&year=2011&month=1&day=1'), //Check non-leap year
-        );
+            ['2012-01-31', 'previous', '&year=2011&month=12&day=1'],
+            ['2012-12-31', 'previous', '&year=2012&month=11&day=1'],
+            ['2012-02-29', 'previous', '&year=2012&month=1&day=1'], //Check leap year
+            ['2011-02-28', 'previous', '&year=2011&month=1&day=1'], //Check non-leap year
+        ];
     }
 
 

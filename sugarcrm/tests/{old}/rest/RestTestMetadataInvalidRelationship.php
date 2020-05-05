@@ -11,22 +11,23 @@
  */
 
 
-class RestTestMetadataInvalidRelationship extends RestTestBase {
+class RestTestMetadataInvalidRelationship extends RestTestBase
+{
     protected function setUp() : void
     {
         //Create an anonymous user for login purposes/
         $this->_user = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['current_user'] = $this->_user;
-        $this->_restLogin($this->_user->user_name,$this->_user->user_name);
-        $invalidRelationship = array(
+        $this->_restLogin($this->_user->user_name, $this->_user->user_name);
+        $invalidRelationship = [
                 "lhs_key" => "id",
                 "lhs_module" => "badModule",
                 "lhs_tabls" => "badTable",
                 "relationship_type" => "one-to-many",
                 "rhs_key" => "badModule_id",
                 "rhs_module" => "Opportunities",
-                "rhs_table" => "opportunities"
-        );
+                "rhs_table" => "opportunities",
+        ];
         $GLOBALS['dictionary']['Opportunity']['relationships']['opportunities_badModule'] = $invalidRelationship;
     }
 
@@ -37,14 +38,15 @@ class RestTestMetadataInvalidRelationship extends RestTestBase {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }
 
-    public function testFullMetadataWithInvalidRelationship() {
+    public function testFullMetadataWithInvalidRelationship()
+    {
         global $dictionary;
         $restReply = $this->_restCall('metadata');
 
-        $this->assertTrue(isset($restReply['reply']['_hash']),'Primary hash is missing.');
-        $this->assertTrue(isset($restReply['reply']['modules']),'Modules are missing.');
+        $this->assertTrue(isset($restReply['reply']['_hash']), 'Primary hash is missing.');
+        $this->assertTrue(isset($restReply['reply']['modules']), 'Modules are missing.');
 
-        $this->assertTrue(isset($restReply['reply']['fields']),'SugarFields are missing.');
-        $this->assertTrue(isset($restReply['reply']['views']),'ViewTemplates are missing.');
+        $this->assertTrue(isset($restReply['reply']['fields']), 'SugarFields are missing.');
+        $this->assertTrue(isset($restReply['reply']['views']), 'ViewTemplates are missing.');
     }
 }

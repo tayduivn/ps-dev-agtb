@@ -20,10 +20,10 @@ class PMSEBeanHandlerTest extends TestCase
      */
     protected $loggerMock;
 
-    protected $originals = array();
+    protected $originals = [];
 
     /**
-     * Sets up the test data, for example, 
+     * Sets up the test data, for example,
      *     opens a network connection.
      * This method is called before a test is executed.
      */
@@ -34,26 +34,26 @@ class PMSEBeanHandlerTest extends TestCase
         $this->originals['beanList'] = $GLOBALS['beanList'];
         $this->originals['db'] = $GLOBALS['db'];
 
-        $beanList = array('Opportunities'=>array(), 'Notes'=>array(), 'Leads'=>array(), 'Meetings'=>array());
+        $beanList = ['Opportunities'=>[], 'Notes'=>[], 'Leads'=>[], 'Meetings'=>[]];
         $db = $this->getMockBuilder('DBHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(NULL)
+                ->setMethods(null)
                 ->getMock();
         
         $this->loggerMock = $this->getMockBuilder('PMSELogger')
                 ->disableOriginalConstructor()
-                ->setMethods(array('warning', 'error', 'debug', 'info'))
+                ->setMethods(['warning', 'error', 'debug', 'info'])
                 ->getMock();
     }
 
     /**
      * Removes the initial test configurations for each test, for example:
-     *     close a network connection. 
+     *     close a network connection.
      * This method is called after a test is executed.
      */
     protected function tearDown() : void
     {
-        foreach($this->originals as $varname => $value) {
+        foreach ($this->originals as $varname => $value) {
             $GLOBALS[$varname] = $value;
         }
     }
@@ -62,10 +62,10 @@ class PMSEBeanHandlerTest extends TestCase
     {
         $beanHandlerMock = $this->getMockBuilder('PMSEBeanHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieveBean', 'getRelationshipData'))
+                ->setMethods(['retrieveBean', 'getRelationshipData'])
                 ->getMock();
         
-        $relationshipData = array('lhs_module'=>'Leads', 'rhs_module'=>'Accounts');
+        $relationshipData = ['lhs_module'=>'Leads', 'rhs_module'=>'Accounts'];
         
         $beanHandlerMock->expects($this->once())
                 ->method('getRelationshipData')
@@ -75,11 +75,11 @@ class PMSEBeanHandlerTest extends TestCase
         
         $beanMock = $this->getMockBuilder('SugarBean')
                 ->disableOriginalConstructor()
-                ->setMethods(array())
+                ->setMethods([])
                 ->getMock();
         $beanMock->id = 'beanId01';
         
-        $flowDataMock = array('cas_sugar_module'=>'Accounts');
+        $flowDataMock = ['cas_sugar_module'=>'Accounts'];
 
         $module = 'Leads';
         
@@ -90,10 +90,10 @@ class PMSEBeanHandlerTest extends TestCase
     {
         $beanHandlerMock = $this->getMockBuilder('PMSEBeanHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieveBean', 'getRelationshipData'))
+                ->setMethods(['retrieveBean', 'getRelationshipData'])
                 ->getMock();
         
-        $relationShipData = array('lhs_module'=>'Notes', 'rhs_module'=>'Meetings');
+        $relationShipData = ['lhs_module'=>'Notes', 'rhs_module'=>'Meetings'];
         
         $beanHandlerMock->expects($this->once())
                 ->method('getRelationshipData')
@@ -103,7 +103,7 @@ class PMSEBeanHandlerTest extends TestCase
         
         $relationshipMock = $this->getMockBuilder('Relationship')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve_by_sides'))
+                ->setMethods(['retrieve_by_sides'])
                 ->getMock();
         
         $beanHandlerMock->expects($this->at(1))
@@ -112,7 +112,7 @@ class PMSEBeanHandlerTest extends TestCase
         
         $relatedBeanMock = $this->getMockBuilder('SugarBean')
                 ->disableOriginalConstructor()
-                ->setMethods(array('get_full_list', 'retrieve_by_string_fields'))
+                ->setMethods(['get_full_list', 'retrieve_by_string_fields'])
                 ->getMock();
         
         $beanHandlerMock->expects($this->at(2))
@@ -121,11 +121,11 @@ class PMSEBeanHandlerTest extends TestCase
         
         $beanMock = $this->getMockBuilder('SugarBean')
                 ->disableOriginalConstructor()
-                ->setMethods(array())
+                ->setMethods([])
                 ->getMock();
         $beanMock->id = 'beanId01';
         
-        $flowDataMock = array('cas_sugar_module'=>'Meetings');
+        $flowDataMock = ['cas_sugar_module'=>'Meetings'];
 
         $module = 'Leads';
         
@@ -137,10 +137,10 @@ class PMSEBeanHandlerTest extends TestCase
     {
         $beanHandlerMock = $this->getMockBuilder('PMSEBeanHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieveBean', 'getRelationshipData'))
+                ->setMethods(['retrieveBean', 'getRelationshipData'])
                 ->getMock();
         
-        $relationShipData = array('lhs_module'=>'Notes', 'rhs_module'=>'Meetings');
+        $relationShipData = ['lhs_module'=>'Notes', 'rhs_module'=>'Meetings'];
         
         $beanHandlerMock->expects($this->once())
                 ->method('getRelationshipData')
@@ -150,7 +150,7 @@ class PMSEBeanHandlerTest extends TestCase
         
         $relationshipMock = $this->getMockBuilder('Relationship')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve_by_sides'))
+                ->setMethods(['retrieve_by_sides'])
                 ->getMock();
         
         $beanHandlerMock->expects($this->at(1))
@@ -159,7 +159,7 @@ class PMSEBeanHandlerTest extends TestCase
         
         $relatedBeanMock = $this->getMockBuilder('SugarBean')
                 ->disableOriginalConstructor()
-                ->setMethods(array('get_full_list', 'retrieve_by_string_fields'))
+                ->setMethods(['get_full_list', 'retrieve_by_string_fields'])
                 ->getMock();
         
         $relatedBeanMock->id = 'relBeanId01';
@@ -170,11 +170,11 @@ class PMSEBeanHandlerTest extends TestCase
         
         $beanMock = $this->getMockBuilder('SugarBean')
                 ->disableOriginalConstructor()
-                ->setMethods(array())
+                ->setMethods([])
                 ->getMock();
         $beanMock->id = 'beanId01';
         
-        $flowDataMock = array('cas_sugar_module'=>'Meetings');
+        $flowDataMock = ['cas_sugar_module'=>'Meetings'];
 
         $module = 'Meetings';
         
@@ -186,10 +186,10 @@ class PMSEBeanHandlerTest extends TestCase
     {
         $beanHandlerMock = $this->getMockBuilder('PMSEBeanHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieveBean', 'getRelationshipData'))
+                ->setMethods(['retrieveBean', 'getRelationshipData'])
                 ->getMock();
         
-        $relationShipData = array('lhs_module'=>'Notes', 'rhs_module'=>'Meetings');
+        $relationShipData = ['lhs_module'=>'Notes', 'rhs_module'=>'Meetings'];
         
         $beanHandlerMock->expects($this->once())
                 ->method('getRelationshipData')
@@ -199,7 +199,7 @@ class PMSEBeanHandlerTest extends TestCase
         
         $relationshipMock = $this->getMockBuilder('Relationship')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve_by_sides'))
+                ->setMethods(['retrieve_by_sides'])
                 ->getMock();
         
         $beanHandlerMock->expects($this->at(1))
@@ -208,14 +208,14 @@ class PMSEBeanHandlerTest extends TestCase
         
         $relatedBeanMock = $this->getMockBuilder('SugarBean')
                 ->disableOriginalConstructor()
-                ->setMethods(array('get_full_list', 'retrieve_by_string_fields'))
+                ->setMethods(['get_full_list', 'retrieve_by_string_fields'])
                 ->getMock();
         
-        $relatedBeanList = array(
-            (object)array('id'=>'relatedBean01'),
-            (object)array('id'=>'relatedBean02'),
-            (object)array('id'=>'relatedBean03')
-        );
+        $relatedBeanList = [
+            (object)['id'=>'relatedBean01'],
+            (object)['id'=>'relatedBean02'],
+            (object)['id'=>'relatedBean03'],
+        ];
         
         $relatedBeanMock->expects($this->once())
                 ->method('get_full_list')
@@ -230,11 +230,11 @@ class PMSEBeanHandlerTest extends TestCase
         
         $beanMock = $this->getMockBuilder('SugarBean')
                 ->disableOriginalConstructor()
-                ->setMethods(array())
+                ->setMethods([])
                 ->getMock();
         $beanMock->id = 'beanId01';
         
-        $flowDataMock = array('cas_sugar_module'=>'Meetings');
+        $flowDataMock = ['cas_sugar_module'=>'Meetings'];
 
         $module = 'Meetings';
         
@@ -246,12 +246,12 @@ class PMSEBeanHandlerTest extends TestCase
     {
         $beanHandlerMock = $this->getMockBuilder('PMSEBeanHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(NULL)
+                ->setMethods(null)
                 ->getMock();
         
         $dbMock = $this->getMockBuilder('DBHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('Query', 'fetchByAssoc'))
+                ->setMethods(['Query', 'fetchByAssoc'])
                 ->getMock();
         
         $dbMock->expects($this->once())
@@ -263,18 +263,17 @@ class PMSEBeanHandlerTest extends TestCase
         $relationName = 'leads_notes';
         
         $beanHandlerMock->getRelationshipData($relationName, $dbMock);
-        
     }
     
     public function testMergeBeanInTemplate()
     {
         $beanHandlerMock = $this->getMockBuilder('PMSEBeanHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('parseString', 'mergeTemplate'))
+                ->setMethods(['parseString', 'mergeTemplate'])
                 ->getMock();
         $bean = new stdClass();
         $bean->module_dir = 'PATH/TO/MODULE';
-        $template = array();
+        $template = [];
         
         $beanHandlerMock->expects($this->once())
                 ->method('parseString');
@@ -316,7 +315,7 @@ EOR1;
 
         $beanHandlerMock = $this->getMockBuilder('PMSEBeanHandler')
             ->disableOriginalConstructor()
-            ->setMethods(array('get_href_link'))
+            ->setMethods(['get_href_link'])
             ->getMock();
 
         $beanHandlerMock->setLogger($this->loggerMock);
@@ -332,19 +331,19 @@ EOR1;
         $beanMock->description = $description;
         $beanMock->link_field = 'linked_somewhere';
 
-        $beanMock->field_defs = array(
-            'description' => array('name' => 'description', 'type' => 'text', 'dbType' => 'text'),
-        );
+        $beanMock->field_defs = [
+            'description' => ['name' => 'description', 'type' => 'text', 'dbType' => 'text'],
+        ];
 
-        $componentArray = array(
-            'Calls' => array(
-                'Calls_description_future' => array(
+        $componentArray = [
+            'Calls' => [
+                'Calls_description_future' => [
                     'name' => 'description',
                     'value_type' => 'future',
                     'original' => '{::Calls::description::}',
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
 
         $actual = $beanHandlerMock->mergingTemplate($beanMock, $template, $componentArray, false);
         $this->assertSame($expected, $actual);
@@ -354,7 +353,7 @@ EOR1;
     {
         $beanHandlerMock = $this->getMockBuilder('PMSEBeanHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('get_href_link'))
+                ->setMethods(['get_href_link'])
                 ->getMock();
         
         $beanHandlerMock->setLogger($this->loggerMock);
@@ -365,36 +364,36 @@ EOR1;
         $beanMock->last_name = 'Squirrel';
         $beanMock->link_field = 'linked_somewhere';
         
-        $beanMock->fetched_row = array(
-            'id'=>'lead01', 
-            'first_name'=>'Alvin', 
-            'last_name'=>'Squirrel', 
-            'link_field'=>'linked_somewhere'
-        );
+        $beanMock->fetched_row = [
+            'id'=>'lead01',
+            'first_name'=>'Alvin',
+            'last_name'=>'Squirrel',
+            'link_field'=>'linked_somewhere',
+        ];
         
-        $beanMock->field_defs = array(
-            'id' => array('type' => 'field', 'name'=>'id'), 
-            'first_name' => array('type' => 'field', 'name'=>'first_name'), 
-            'last_name' => array('type' => 'field', 'name'=>'last_name'), 
-            'link_field' => array('type' => 'field', 'name'=>'link_field')
-        );
+        $beanMock->field_defs = [
+            'id' => ['type' => 'field', 'name'=>'id'],
+            'first_name' => ['type' => 'field', 'name'=>'first_name'],
+            'last_name' => ['type' => 'field', 'name'=>'last_name'],
+            'link_field' => ['type' => 'field', 'name'=>'link_field'],
+        ];
         
-        $beanMock->field_defs = array(
-            'id' => array('type' => 'string', 'dbType' => 'varchar'), 
-            'first_name' => array('type' => 'string', 'dbType' => 'varchar'), 
-            'last_name' => array('type' => 'string', 'dbType' => 'varchar'), 
-            'link_field' => array('type' => 'string', 'dbType' => 'varchar')
-        );
+        $beanMock->field_defs = [
+            'id' => ['type' => 'string', 'dbType' => 'varchar'],
+            'first_name' => ['type' => 'string', 'dbType' => 'varchar'],
+            'last_name' => ['type' => 'string', 'dbType' => 'varchar'],
+            'link_field' => ['type' => 'string', 'dbType' => 'varchar'],
+        ];
         
         $template = "[]";
-        $componentArray = array(
-            'Leads' => array(
-                'id'=>array('value_type'=>'past', 'name'=>'id', 'original' =>''), 
-                'first_name'=>array('value_type'=>'future', 'name'=>'first_name', 'original' =>''), 
-                'last_name'=>array('value_type'=>'future', 'name'=> 'last_name', 'original' =>''),
-                'link_field'=>array('value_type'=>'href_link', 'name'=> 'link_field', 'original' =>'')
-            )
-        );
+        $componentArray = [
+            'Leads' => [
+                'id'=>['value_type'=>'past', 'name'=>'id', 'original' =>''],
+                'first_name'=>['value_type'=>'future', 'name'=>'first_name', 'original' =>''],
+                'last_name'=>['value_type'=>'future', 'name'=> 'last_name', 'original' =>''],
+                'link_field'=>['value_type'=>'href_link', 'name'=> 'link_field', 'original' =>''],
+            ],
+        ];
         
         $beanHandlerMock->mergeTemplate($beanMock, $template, $componentArray, false);
     }
@@ -403,7 +402,7 @@ EOR1;
     {
         $beanHandlerMock = $this->getMockBuilder('PMSEBeanHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('get_href_link'))
+                ->setMethods(['get_href_link'])
                 ->getMock();
         
         $beanHandlerMock->setLogger($this->loggerMock);
@@ -416,40 +415,40 @@ EOR1;
         $beanMock->order = 1;
         $beanMock->link_field = 'linked_somewhere';
         
-        $beanMock->fetched_row = array (
-            'id'=>'lead01', 
-            'first_name'=>'Alvin', 
-            'last_name'=>'Squirrel', 
-            'order'=>1, 
-            'link_field'=>'linked_somewhere'
-        );
+        $beanMock->fetched_row =  [
+            'id'=>'lead01',
+            'first_name'=>'Alvin',
+            'last_name'=>'Squirrel',
+            'order'=>1,
+            'link_field'=>'linked_somewhere',
+        ];
         
-        $beanMock->field_defs = array (
-            'id' => array('type' => 'field', 'name'=>'id'), 
-            'first_name' => array('type' => 'field', 'name'=>'first_name'), 
-            'last_name' => array('type' => 'field', 'name'=>'last_name'), 
-            'order' => array('type' => 'field', 'name'=>'order'), 
-            'link_field' => array('type' => 'field', 'name'=>'link_field')
-        );
+        $beanMock->field_defs =  [
+            'id' => ['type' => 'field', 'name'=>'id'],
+            'first_name' => ['type' => 'field', 'name'=>'first_name'],
+            'last_name' => ['type' => 'field', 'name'=>'last_name'],
+            'order' => ['type' => 'field', 'name'=>'order'],
+            'link_field' => ['type' => 'field', 'name'=>'link_field'],
+        ];
         
-        $beanMock->field_defs = array (
-            'id' => array('type' => 'string', 'dbType' => 'varchar'), 
-            'first_name' => array('type' => 'string', 'dbType' => 'varchar'), 
-            'last_name' => array('type' => 'string', 'dbType' => 'varchar'), 
-            'order' => array('type' => 'double', 'dbType' => 'double'), 
-            'link_field' => array('type' => 'string', 'dbType' => 'varchar')
-        );
+        $beanMock->field_defs =  [
+            'id' => ['type' => 'string', 'dbType' => 'varchar'],
+            'first_name' => ['type' => 'string', 'dbType' => 'varchar'],
+            'last_name' => ['type' => 'string', 'dbType' => 'varchar'],
+            'order' => ['type' => 'double', 'dbType' => 'double'],
+            'link_field' => ['type' => 'string', 'dbType' => 'varchar'],
+        ];
         
         $template = "[]";
-        $componentArray = array (
-            'Leads' => array (
-                'id'=>array('value_type'=>'past', 'name'=>'id', 'original' =>'id', 'db_type' => 'varchar'), 
-                'first_name'=>array('value_type'=>'future', 'name'=>'first_name', 'original' =>'first_name', 'db_type' => 'varchar'), 
-                'last_name'=>array('value_type'=>'future', 'name'=> 'last_name', 'original' =>'last_name', 'db_type' => 'varchar'),
-                'order'=>array('value_type'=>'future', 'name'=> 'order', 'original' =>'order', 'db_type' => 'double'),
-                'link_field'=>array('value_type'=>'href_link', 'name'=> 'link_field', 'original' =>'link_field', 'db_type' => 'varchar')
-            )
-        );
+        $componentArray =  [
+            'Leads' =>  [
+                'id'=>['value_type'=>'past', 'name'=>'id', 'original' =>'id', 'db_type' => 'varchar'],
+                'first_name'=>['value_type'=>'future', 'name'=>'first_name', 'original' =>'first_name', 'db_type' => 'varchar'],
+                'last_name'=>['value_type'=>'future', 'name'=> 'last_name', 'original' =>'last_name', 'db_type' => 'varchar'],
+                'order'=>['value_type'=>'future', 'name'=> 'order', 'original' =>'order', 'db_type' => 'double'],
+                'link_field'=>['value_type'=>'href_link', 'name'=> 'link_field', 'original' =>'link_field', 'db_type' => 'varchar'],
+            ],
+        ];
         
         $beanHandlerMock->mergeTemplate($beanMock, $template, $componentArray, true);
     }
@@ -458,7 +457,7 @@ EOR1;
     {
         $beanHandlerMock = $this->getMockBuilder('PMSEBeanHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('get_href_link'))
+                ->setMethods(['get_href_link'])
                 ->getMock();
         
         $beanHandlerMock->setLogger($this->loggerMock);
@@ -471,40 +470,40 @@ EOR1;
         $beanMock->order = 1;
         $beanMock->link_field = 'linked_somewhere';
         
-        $beanMock->fetched_row = array (
-            'id'=>'lead01', 
-            'first_name'=>'Alvin', 
-            'last_name'=>'Squirrel', 
-            'order'=>1, 
-            'link_field'=>'linked_somewhere'
-        );
+        $beanMock->fetched_row =  [
+            'id'=>'lead01',
+            'first_name'=>'Alvin',
+            'last_name'=>'Squirrel',
+            'order'=>1,
+            'link_field'=>'linked_somewhere',
+        ];
         
-        $beanMock->field_defs = array (
-            'id' => array('type' => 'field', 'name'=>'id'), 
-            'first_name' => array('type' => 'field', 'name'=>'first_name'), 
-            'last_name' => array('type' => 'field', 'name'=>'last_name'), 
-            'order' => array('type' => 'field', 'name'=>'order'), 
-            'link_field' => array('type' => 'field', 'name'=>'link_field')
-        );
+        $beanMock->field_defs =  [
+            'id' => ['type' => 'field', 'name'=>'id'],
+            'first_name' => ['type' => 'field', 'name'=>'first_name'],
+            'last_name' => ['type' => 'field', 'name'=>'last_name'],
+            'order' => ['type' => 'field', 'name'=>'order'],
+            'link_field' => ['type' => 'field', 'name'=>'link_field'],
+        ];
         
-        $beanMock->field_defs = array (
-            'id' => array('type' => 'string', 'dbType' => 'varchar'), 
-            'first_name' => array('type' => 'string', 'dbType' => 'varchar'), 
-            'last_name' => array('type' => 'string', 'dbType' => 'varchar'), 
-            'order' => array('type' => 'currency', 'dbType' => 'double'), 
-            'link_field' => array('type' => 'string', 'dbType' => 'varchar')
-        );
+        $beanMock->field_defs =  [
+            'id' => ['type' => 'string', 'dbType' => 'varchar'],
+            'first_name' => ['type' => 'string', 'dbType' => 'varchar'],
+            'last_name' => ['type' => 'string', 'dbType' => 'varchar'],
+            'order' => ['type' => 'currency', 'dbType' => 'double'],
+            'link_field' => ['type' => 'string', 'dbType' => 'varchar'],
+        ];
         
         $template = "[]";
-        $componentArray = array (
-            'Leads' => array (
-                'id'=>array('value_type'=>'past', 'name'=>'id', 'original' =>'id', 'db_type' => 'varchar'), 
-                'first_name'=>array('value_type'=>'future', 'name'=>'first_name', 'original' =>'first_name', 'db_type' => 'varchar'), 
-                'last_name'=>array('value_type'=>'future', 'name'=> 'last_name', 'original' =>'last_name', 'db_type' => 'varchar'),
-                'order'=>array('value_type'=>'future', 'name'=> 'order', 'original' =>'order', 'db_type' => 'double'),
-                'link_field'=>array('value_type'=>'href_link', 'name'=> 'link_field', 'original' =>'link_field', 'db_type' => 'varchar')
-            )
-        );
+        $componentArray =  [
+            'Leads' =>  [
+                'id'=>['value_type'=>'past', 'name'=>'id', 'original' =>'id', 'db_type' => 'varchar'],
+                'first_name'=>['value_type'=>'future', 'name'=>'first_name', 'original' =>'first_name', 'db_type' => 'varchar'],
+                'last_name'=>['value_type'=>'future', 'name'=> 'last_name', 'original' =>'last_name', 'db_type' => 'varchar'],
+                'order'=>['value_type'=>'future', 'name'=> 'order', 'original' =>'order', 'db_type' => 'double'],
+                'link_field'=>['value_type'=>'href_link', 'name'=> 'link_field', 'original' =>'link_field', 'db_type' => 'varchar'],
+            ],
+        ];
 
         $beanHandlerMock->mergeTemplate($beanMock, $template, $componentArray, true);
     }
@@ -513,19 +512,19 @@ EOR1;
     {
         $beanHandlerMock = $this->getMockBuilder('PMSEBeanHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('get_href_link'))
+                ->setMethods(['get_href_link'])
                 ->getMock();
         
         $beanHandlerMock->setLogger($this->loggerMock);
 
         $beanMock = $this->getMockBuilder('SugarBean')
                 ->disableOriginalConstructor()
-                ->setMethods(array('call_relationship_handler'))
+                ->setMethods(['call_relationship_handler'])
                 ->getMock();
         
         $relHandlerMock = $this->getMockBuilder('RelationshipHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('build_related_list'))
+                ->setMethods(['build_related_list'])
                 ->getMock();
         
         $beanMock->expects($this->once())
@@ -540,40 +539,40 @@ EOR1;
         $beanMock->link_field = 'linked_somewhere';
         $beanMock->db = new stdClass();
         
-        $beanMock->fetched_row = array (
-            'id'=>'lead01', 
-            'first_name'=>'Alvin', 
-            'last_name'=>'Squirrel', 
-            'order'=>1, 
-            'link_field'=>'linked_somewhere'
-        );
+        $beanMock->fetched_row =  [
+            'id'=>'lead01',
+            'first_name'=>'Alvin',
+            'last_name'=>'Squirrel',
+            'order'=>1,
+            'link_field'=>'linked_somewhere',
+        ];
         
-        $beanMock->field_defs = array (
-            'id' => array('type' => 'field', 'name'=>'id'), 
-            'first_name' => array('type' => 'field', 'name'=>'first_name'), 
-            'last_name' => array('type' => 'field', 'name'=>'last_name'), 
-            'order' => array('type' => 'field', 'name'=>'order'), 
-            'link_field' => array('type' => 'field', 'name'=>'link_field'),
-            'Notes' => array('type' => 'Notes', 'relationship'=>'')
-        );
+        $beanMock->field_defs =  [
+            'id' => ['type' => 'field', 'name'=>'id'],
+            'first_name' => ['type' => 'field', 'name'=>'first_name'],
+            'last_name' => ['type' => 'field', 'name'=>'last_name'],
+            'order' => ['type' => 'field', 'name'=>'order'],
+            'link_field' => ['type' => 'field', 'name'=>'link_field'],
+            'Notes' => ['type' => 'Notes', 'relationship'=>''],
+        ];
         
-        $beanMock->field_defs = array (
-            'id' => array('type' => 'string', 'dbType' => 'varchar'), 
-            'first_name' => array('type' => 'string', 'dbType' => 'varchar'), 
-            'last_name' => array('type' => 'string', 'dbType' => 'varchar'), 
-            'order' => array('type' => 'currency', 'dbType' => 'double'), 
-            'link_field' => array('type' => 'string', 'dbType' => 'varchar'),
-            'Notes' => array('type' => 'Notes', 'dbType' => 'string')
-        );
+        $beanMock->field_defs =  [
+            'id' => ['type' => 'string', 'dbType' => 'varchar'],
+            'first_name' => ['type' => 'string', 'dbType' => 'varchar'],
+            'last_name' => ['type' => 'string', 'dbType' => 'varchar'],
+            'order' => ['type' => 'currency', 'dbType' => 'double'],
+            'link_field' => ['type' => 'string', 'dbType' => 'varchar'],
+            'Notes' => ['type' => 'Notes', 'dbType' => 'string'],
+        ];
         
         $template = "[]";
-        $componentArray = array (
-            'Notes' => array (
-                'id'=>array('value_type'=>'past', 'name'=>'id', 'original' =>'id', 'db_type' => 'varchar'), 
-                'subject'=>array('value_type'=>'future', 'name'=>'subject', 'original' =>'subject', 'db_type' => 'varchar'), 
-                'description'=>array('value_type'=>'future', 'name'=> 'description', 'original' =>'description', 'db_type' => 'varchar'),
-            )
-        );
+        $componentArray =  [
+            'Notes' =>  [
+                'id'=>['value_type'=>'past', 'name'=>'id', 'original' =>'id', 'db_type' => 'varchar'],
+                'subject'=>['value_type'=>'future', 'name'=>'subject', 'original' =>'subject', 'db_type' => 'varchar'],
+                'description'=>['value_type'=>'future', 'name'=> 'description', 'original' =>'description', 'db_type' => 'varchar'],
+            ],
+        ];
 
         $beanHandlerMock->mergeTemplate($beanMock, $template, $componentArray, false);
     }
@@ -583,19 +582,19 @@ EOR1;
     {
         $beanHandlerMock = $this->getMockBuilder('PMSEBeanHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('get_href_link'))
+                ->setMethods(['get_href_link'])
                 ->getMock();
         
         $beanHandlerMock->setLogger($this->loggerMock);
 
         $beanMock = $this->getMockBuilder('SugarBean')
                 ->disableOriginalConstructor()
-                ->setMethods(array('call_relationship_handler'))
+                ->setMethods(['call_relationship_handler'])
                 ->getMock();
         
         $relHandlerMock = $this->getMockBuilder('RelationshipHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('build_related_list', 'process_by_rel_bean'))
+                ->setMethods(['build_related_list', 'process_by_rel_bean'])
                 ->getMock();
         
         $noteMock = new stdClass();
@@ -604,13 +603,13 @@ EOR1;
         $noteMock->id = 'note01';
         $noteMock->subject = 'Note';
         $noteMock->description = 'Some description';
-        $noteMock->field_defs = array (
-            'id' => array('type' => 'field', 'name'=>'id'), 
-            'subject' => array('type' => 'field', 'name'=>'subject'), 
-            'description' => array('type' => 'field', 'name'=>'description'), 
-        );
+        $noteMock->field_defs =  [
+            'id' => ['type' => 'field', 'name'=>'id'],
+            'subject' => ['type' => 'field', 'name'=>'subject'],
+            'description' => ['type' => 'field', 'name'=>'description'],
+        ];
         
-        $relListMock = array($noteMock);
+        $relListMock = [$noteMock];
         
         $relHandlerMock->expects($this->once())
                 ->method('build_related_list')
@@ -628,41 +627,41 @@ EOR1;
         $beanMock->link_field = 'linked_somewhere';
         $beanMock->db = new stdClass();
 
-        $beanMock->fetched_row = array (
-            'id'=>'lead01', 
-            'first_name'=>'Alvin', 
-            'last_name'=>'Squirrel', 
-            'order'=>1, 
-            'link_field'=>'linked_somewhere'
-        );
+        $beanMock->fetched_row =  [
+            'id'=>'lead01',
+            'first_name'=>'Alvin',
+            'last_name'=>'Squirrel',
+            'order'=>1,
+            'link_field'=>'linked_somewhere',
+        ];
 
-        $beanMock->field_defs = array (
-            'id' => array('type' => 'field', 'name'=>'id'), 
-            'first_name' => array('type' => 'field', 'name'=>'first_name'), 
-            'last_name' => array('type' => 'field', 'name'=>'last_name'), 
-            'order' => array('type' => 'field', 'name'=>'order'), 
-            'link_field' => array('type' => 'field', 'name'=>'link_field'),
-            'Notes' => array('type' => 'href_link', 'relationship'=>'leads_notes')
-        );
+        $beanMock->field_defs =  [
+            'id' => ['type' => 'field', 'name'=>'id'],
+            'first_name' => ['type' => 'field', 'name'=>'first_name'],
+            'last_name' => ['type' => 'field', 'name'=>'last_name'],
+            'order' => ['type' => 'field', 'name'=>'order'],
+            'link_field' => ['type' => 'field', 'name'=>'link_field'],
+            'Notes' => ['type' => 'href_link', 'relationship'=>'leads_notes'],
+        ];
 
-        $beanMock->field_defs = array (
-            'id' => array('type' => 'string', 'dbType' => 'varchar'), 
-            'first_name' => array('type' => 'string', 'dbType' => 'varchar'), 
-            'last_name' => array('type' => 'string', 'dbType' => 'varchar'), 
-            'order' => array('type' => 'currency', 'dbType' => 'double'), 
-            'link_field' => array('type' => 'string', 'dbType' => 'varchar'),
-            'Notes' => array('type' => 'href_link', 'dbType' => 'string')
-        );
+        $beanMock->field_defs =  [
+            'id' => ['type' => 'string', 'dbType' => 'varchar'],
+            'first_name' => ['type' => 'string', 'dbType' => 'varchar'],
+            'last_name' => ['type' => 'string', 'dbType' => 'varchar'],
+            'order' => ['type' => 'currency', 'dbType' => 'double'],
+            'link_field' => ['type' => 'string', 'dbType' => 'varchar'],
+            'Notes' => ['type' => 'href_link', 'dbType' => 'string'],
+        ];
 
         $template = "[]";
-        $componentArray = array (
-            'Notes' => array (
-                'id'=>array('value_type'=>'past', 'name'=>'id', 'original' =>'id', 'db_type' => 'varchar'), 
-                'subject'=>array('value_type'=>'future', 'name'=>'subject', 'original' =>'subject', 'db_type' => 'varchar'), 
-                'description'=>array('value_type'=>'future', 'name'=> 'description', 'original' =>'description', 'db_type' => 'varchar'),
-                'link'=>array('value_type'=>'href_link', 'name'=> 'link', 'original' =>'link', 'db_type' => 'varchar'),
-            )
-        );
+        $componentArray =  [
+            'Notes' =>  [
+                'id'=>['value_type'=>'past', 'name'=>'id', 'original' =>'id', 'db_type' => 'varchar'],
+                'subject'=>['value_type'=>'future', 'name'=>'subject', 'original' =>'subject', 'db_type' => 'varchar'],
+                'description'=>['value_type'=>'future', 'name'=> 'description', 'original' =>'description', 'db_type' => 'varchar'],
+                'link'=>['value_type'=>'href_link', 'name'=> 'link', 'original' =>'link', 'db_type' => 'varchar'],
+            ],
+        ];
 
         $beanHandlerMock->mergeTemplate($beanMock, $template, $componentArray, false);
     }
@@ -671,19 +670,19 @@ EOR1;
     {
         $beanHandlerMock = $this->getMockBuilder('PMSEBeanHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('get_href_link'))
+                ->setMethods(['get_href_link'])
                 ->getMock();
         
         $beanHandlerMock->setLogger($this->loggerMock);
 
         $beanMock = $this->getMockBuilder('SugarBean')
                 ->disableOriginalConstructor()
-                ->setMethods(array('call_relationship_handler'))
+                ->setMethods(['call_relationship_handler'])
                 ->getMock();
         
         $relHandlerMock = $this->getMockBuilder('RelationshipHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('build_related_list', 'process_by_rel_bean'))
+                ->setMethods(['build_related_list', 'process_by_rel_bean'])
                 ->getMock();
         
         $noteMock = new stdClass();
@@ -692,13 +691,13 @@ EOR1;
         $noteMock->id = 'note01';
         $noteMock->subject = 'Note';
         $noteMock->description = 'Some description';
-        $noteMock->field_defs = array (
-            'id' => array('type' => 'field', 'name'=>'id'), 
-            'subject' => array('type' => 'field', 'name'=>'subject'), 
-            'description' => array('type' => 'field', 'name'=>'description'), 
-        );
+        $noteMock->field_defs =  [
+            'id' => ['type' => 'field', 'name'=>'id'],
+            'subject' => ['type' => 'field', 'name'=>'subject'],
+            'description' => ['type' => 'field', 'name'=>'description'],
+        ];
         
-        $relListMock = array($noteMock);
+        $relListMock = [$noteMock];
         
         $relHandlerMock->expects($this->once())
                 ->method('build_related_list')
@@ -716,39 +715,39 @@ EOR1;
         $beanMock->link_field = 'linked_somewhere';
         $beanMock->db = new stdClass();
 
-        $beanMock->fetched_row = array (
-            'id'=>'lead01', 
-            'first_name'=>'Alvin', 
-            'last_name'=>'Squirrel', 
-            'order'=>1, 
-            'link_field'=>'linked_somewhere'
-        );
+        $beanMock->fetched_row =  [
+            'id'=>'lead01',
+            'first_name'=>'Alvin',
+            'last_name'=>'Squirrel',
+            'order'=>1,
+            'link_field'=>'linked_somewhere',
+        ];
 
-        $beanMock->field_defs = array (
-            'id' => array('type' => 'field', 'name'=>'id'), 
-            'first_name' => array('type' => 'field', 'name'=>'first_name'), 
-            'last_name' => array('type' => 'field', 'name'=>'last_name'), 
-            'order' => array('type' => 'field', 'name'=>'order'), 
-            'link_field' => array('type' => 'field', 'name'=>'link_field'),
-        );
+        $beanMock->field_defs =  [
+            'id' => ['type' => 'field', 'name'=>'id'],
+            'first_name' => ['type' => 'field', 'name'=>'first_name'],
+            'last_name' => ['type' => 'field', 'name'=>'last_name'],
+            'order' => ['type' => 'field', 'name'=>'order'],
+            'link_field' => ['type' => 'field', 'name'=>'link_field'],
+        ];
 
-        $beanMock->field_defs = array (
-            'id' => array('type' => 'string', 'dbType' => 'varchar'), 
-            'first_name' => array('type' => 'string', 'dbType' => 'varchar'), 
-            'last_name' => array('type' => 'string', 'dbType' => 'varchar'), 
-            'order' => array('type' => 'currency', 'dbType' => 'double'), 
-            'link_field' => array('type' => 'string', 'dbType' => 'varchar'),
-        );
+        $beanMock->field_defs =  [
+            'id' => ['type' => 'string', 'dbType' => 'varchar'],
+            'first_name' => ['type' => 'string', 'dbType' => 'varchar'],
+            'last_name' => ['type' => 'string', 'dbType' => 'varchar'],
+            'order' => ['type' => 'currency', 'dbType' => 'double'],
+            'link_field' => ['type' => 'string', 'dbType' => 'varchar'],
+        ];
 
         $template = "[]";
-        $componentArray = array (
-            'Notes' => array (
-                'id'=>array('value_type'=>'past', 'name'=>'id', 'original' =>'id', 'db_type' => 'varchar'), 
-                'subject'=>array('value_type'=>'future', 'name'=>'subject', 'original' =>'subject', 'db_type' => 'varchar'), 
-                'description'=>array('value_type'=>'future', 'name'=> 'description', 'original' =>'description', 'db_type' => 'varchar'),
-                'link'=>array('value_type'=>'href_link', 'name'=> 'link', 'original' =>'link', 'db_type' => 'varchar'),
-            )
-        );
+        $componentArray =  [
+            'Notes' =>  [
+                'id'=>['value_type'=>'past', 'name'=>'id', 'original' =>'id', 'db_type' => 'varchar'],
+                'subject'=>['value_type'=>'future', 'name'=>'subject', 'original' =>'subject', 'db_type' => 'varchar'],
+                'description'=>['value_type'=>'future', 'name'=> 'description', 'original' =>'description', 'db_type' => 'varchar'],
+                'link'=>['value_type'=>'href_link', 'name'=> 'link', 'original' =>'link', 'db_type' => 'varchar'],
+            ],
+        ];
 
         $beanHandlerMock->mergeTemplate($beanMock, $template, $componentArray, false);
     }
@@ -757,21 +756,21 @@ EOR1;
     {
         $beanHandlerMock = $this->getMockBuilder('PMSEBeanHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('get_href_link'))
+                ->setMethods(['get_href_link'])
                 ->getMock();
         
-        $expressionMock = array(
-            (object)array('expSubtype'=>'INT', 'expType'=>'CONSTANT', 'expValue'=>2),
-            (object)array('expSubtype'=>'FLOAT', 'expType'=>'CONSTANT', 'expValue'=>2.1),
-            (object)array('expSubtype'=>'DOUBLE', 'expType'=>'CONSTANT', 'expValue'=>2.2),
-            (object)array('expSubtype'=>'NUMBER', 'expType'=>'CONSTANT', 'expValue'=>2),
-            (object)array('expSubtype'=>'BOOL', 'expType'=>'CONSTANT', 'expValue'=>false),
-            (object)array('expSubtype'=>'STRING', 'expType'=>'CONSTANT', 'expValue'=>'some string'),
-            (object)array('expSubtype'=>'STRING', 'expType'=>'VARIABLE', 'expValue'=>'subject'),
-        );
+        $expressionMock = [
+            (object)['expSubtype'=>'INT', 'expType'=>'CONSTANT', 'expValue'=>2],
+            (object)['expSubtype'=>'FLOAT', 'expType'=>'CONSTANT', 'expValue'=>2.1],
+            (object)['expSubtype'=>'DOUBLE', 'expType'=>'CONSTANT', 'expValue'=>2.2],
+            (object)['expSubtype'=>'NUMBER', 'expType'=>'CONSTANT', 'expValue'=>2],
+            (object)['expSubtype'=>'BOOL', 'expType'=>'CONSTANT', 'expValue'=>false],
+            (object)['expSubtype'=>'STRING', 'expType'=>'CONSTANT', 'expValue'=>'some string'],
+            (object)['expSubtype'=>'STRING', 'expType'=>'VARIABLE', 'expValue'=>'subject'],
+        ];
         $beanMock = $this->getMockBuilder('SugarBean')
                 ->disableOriginalConstructor()
-                ->setMethods(NULL)
+                ->setMethods(null)
                 ->getMock();
         $beanMock->id = '1';
         $beanMock->subject = 'some subject';
@@ -780,7 +779,7 @@ EOR1;
         
         $evaluatorMock = $this->getMockBuilder('PMSEEvaluator')
                 ->disableOriginalConstructor()
-                ->setMethods(array('evaluateExpression'))
+                ->setMethods(['evaluateExpression'])
                 ->getMock();
         
         $evaluatorMock->expects($this->once())
@@ -789,22 +788,21 @@ EOR1;
         $beanHandlerMock->setEvaluator($evaluatorMock);
         
         $beanHandlerMock->processValueExpression($expressionMock, $beanMock);
-        
     }
     
     public function testProcessValueExpressionSingleExpression()
     {
         $beanHandlerMock = $this->getMockBuilder('PMSEBeanHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('get_href_link'))
+                ->setMethods(['get_href_link'])
                 ->getMock();
         
-        $expressionMock = array(
-            (object)array('expType'=>'CONSTANT', 'expSubtype'=>'int', 'expValue'=>2),
-        );
+        $expressionMock = [
+            (object)['expType'=>'CONSTANT', 'expSubtype'=>'int', 'expValue'=>2],
+        ];
         $beanMock = $this->getMockBuilder('SugarBean')
                 ->disableOriginalConstructor()
-                ->setMethods(NULL)
+                ->setMethods(null)
                 ->getMock();
         $beanMock->id = '1';
         $beanMock->subject = 'some subject';
@@ -813,7 +811,7 @@ EOR1;
         
         $evaluatorMock = $this->getMockBuilder('PMSEEvaluator')
                 ->disableOriginalConstructor()
-                ->setMethods(array('evaluateExpression'))
+                ->setMethods(['evaluateExpression'])
                 ->getMock();
         
         
@@ -829,7 +827,7 @@ EOR1;
     {
         $beanHandlerMock = $this->getMockBuilder('PMSEBeanHandler')
             ->disableOriginalConstructor()
-            ->setMethods(array('get_href_link'))
+            ->setMethods(['get_href_link'])
             ->getMock();
         
         $template = "{::future::Notes::subject::}=='Some Subject'";
@@ -841,7 +839,7 @@ EOR1;
     {
         $beanHandlerMock = $this->getMockBuilder('PMSEBeanHandler')
             ->disableOriginalConstructor()
-            ->setMethods(array('get_href_link'))
+            ->setMethods(['get_href_link'])
             ->getMock();
         
         $template = "{::Notes::subject::}=='Some Subject'";
@@ -853,7 +851,7 @@ EOR1;
     {
         $beanHandlerMock = $this->getMockBuilder('PMSEBeanHandler')
             ->disableOriginalConstructor()
-            ->setMethods(array('get_href_link'))
+            ->setMethods(['get_href_link'])
             ->getMock();
         
         $template = "{::future::Notes::Meetings::subject::}=='Some Subject'";
@@ -865,41 +863,41 @@ EOR1;
     {
         $beanHandlerMock = $this->getMockBuilder('PMSEBeanHandler')
             ->disableOriginalConstructor()
-            ->setMethods(array('get_href_link'))
+            ->setMethods(['get_href_link'])
             ->getMock();
         
-        $expressionMock = array(
-            (object)array('expType'=>'FIXED_DATE', 'expValue'=>'2012/12/01'),
-            (object)array('expType'=>'SUGAR_DATE', 'expValue'=>'created_date'),
-            (object)array('expType'=>'OPERATOR', 'expValue'=>"+", 'expUnit'=>''),
-            (object)array('expType'=>'UNIT_TIME', 'expValue'=>1, 'expUnit'=>'minutes'),
-            (object)array('expType'=>'OPERATOR', 'expValue'=>"+", 'expUnit'=>''),
-            (object)array('expType'=>'UNIT_TIME', 'expValue'=>1, 'expUnit'=>'hours'),
-            (object)array('expType'=>'OPERATOR', 'expValue'=>"+", 'expUnit'=>''),
-            (object)array('expType'=>'UNIT_TIME', 'expValue'=>1, 'expUnit'=>'days'),
-            (object)array('expType'=>'OPERATOR', 'expValue'=>"+", 'expUnit'=>''),
-            (object)array('expType'=>'UNIT_TIME', 'expValue'=>1, 'expUnit'=>'months'),
-            (object)array('expType'=>'OPERATOR', 'expValue'=>"+", 'expUnit'=>''),
-            (object)array('expType'=>'UNIT_TIME', 'expValue'=>1, 'expUnit'=>'years'),
-            (object)array('expType'=>'OPERATOR', 'expValue'=>"+", 'expUnit'=>''),
-            (object)array('expType'=>'UNIT_TIME', 'expValue'=>1, 'expUnit'=>'arbitrary_measure'),
-            (object)array('expType'=>'OPERATOR', 'expValue'=>"-", 'expUnit'=>''),
-            (object)array('expType'=>'UNIT_TIME', 'expValue'=>1, 'expUnit'=>'minutes'),
-            (object)array('expType'=>'OPERATOR', 'expValue'=>"-", 'expUnit'=>''),
-            (object)array('expType'=>'UNIT_TIME', 'expValue'=>1, 'expUnit'=>'hours'),
-            (object)array('expType'=>'OPERATOR', 'expValue'=>"-", 'expUnit'=>''),
-            (object)array('expType'=>'UNIT_TIME', 'expValue'=>1, 'expUnit'=>'days'),
-            (object)array('expType'=>'OPERATOR', 'expValue'=>"-", 'expUnit'=>''),
-            (object)array('expType'=>'UNIT_TIME', 'expValue'=>1, 'expUnit'=>'months'),
-            (object)array('expType'=>'OPERATOR', 'expValue'=>"-", 'expUnit'=>''),
-            (object)array('expType'=>'UNIT_TIME', 'expValue'=>1, 'expUnit'=>'years'),
-            (object)array('expType'=>'OPERATOR', 'expValue'=>"-", 'expUnit'=>''),
-            (object)array('expType'=>'UNIT_TIME', 'expValue'=>1, 'expUnit'=>'arbitrary_measure')
-        );
+        $expressionMock = [
+            (object)['expType'=>'FIXED_DATE', 'expValue'=>'2012/12/01'],
+            (object)['expType'=>'SUGAR_DATE', 'expValue'=>'created_date'],
+            (object)['expType'=>'OPERATOR', 'expValue'=>"+", 'expUnit'=>''],
+            (object)['expType'=>'UNIT_TIME', 'expValue'=>1, 'expUnit'=>'minutes'],
+            (object)['expType'=>'OPERATOR', 'expValue'=>"+", 'expUnit'=>''],
+            (object)['expType'=>'UNIT_TIME', 'expValue'=>1, 'expUnit'=>'hours'],
+            (object)['expType'=>'OPERATOR', 'expValue'=>"+", 'expUnit'=>''],
+            (object)['expType'=>'UNIT_TIME', 'expValue'=>1, 'expUnit'=>'days'],
+            (object)['expType'=>'OPERATOR', 'expValue'=>"+", 'expUnit'=>''],
+            (object)['expType'=>'UNIT_TIME', 'expValue'=>1, 'expUnit'=>'months'],
+            (object)['expType'=>'OPERATOR', 'expValue'=>"+", 'expUnit'=>''],
+            (object)['expType'=>'UNIT_TIME', 'expValue'=>1, 'expUnit'=>'years'],
+            (object)['expType'=>'OPERATOR', 'expValue'=>"+", 'expUnit'=>''],
+            (object)['expType'=>'UNIT_TIME', 'expValue'=>1, 'expUnit'=>'arbitrary_measure'],
+            (object)['expType'=>'OPERATOR', 'expValue'=>"-", 'expUnit'=>''],
+            (object)['expType'=>'UNIT_TIME', 'expValue'=>1, 'expUnit'=>'minutes'],
+            (object)['expType'=>'OPERATOR', 'expValue'=>"-", 'expUnit'=>''],
+            (object)['expType'=>'UNIT_TIME', 'expValue'=>1, 'expUnit'=>'hours'],
+            (object)['expType'=>'OPERATOR', 'expValue'=>"-", 'expUnit'=>''],
+            (object)['expType'=>'UNIT_TIME', 'expValue'=>1, 'expUnit'=>'days'],
+            (object)['expType'=>'OPERATOR', 'expValue'=>"-", 'expUnit'=>''],
+            (object)['expType'=>'UNIT_TIME', 'expValue'=>1, 'expUnit'=>'months'],
+            (object)['expType'=>'OPERATOR', 'expValue'=>"-", 'expUnit'=>''],
+            (object)['expType'=>'UNIT_TIME', 'expValue'=>1, 'expUnit'=>'years'],
+            (object)['expType'=>'OPERATOR', 'expValue'=>"-", 'expUnit'=>''],
+            (object)['expType'=>'UNIT_TIME', 'expValue'=>1, 'expUnit'=>'arbitrary_measure'],
+        ];
 
         $beanMock = $this->getMockBuilder('SugarBean')
                 ->disableOriginalConstructor()
-                ->setMethods(NULL)
+                ->setMethods(null)
                 ->getMock();
 
         $beanMock->id = '1';
@@ -918,17 +916,17 @@ EOR1;
     {
         $beanHandlerMock = $this->getMockBuilder('PMSEBeanHandler')
             ->disableOriginalConstructor()
-            ->setMethods(array('get_href_link'))
+            ->setMethods(['get_href_link'])
             ->getMock();
         
-        $expressionMock = array(
-            (object)array('expType'=>'FIXED_DATE', 'expValue'=>'2012/12/01'),
-            (object)array('expType'=>'SUGAR_DATE', 'expValue'=>'created_date'),
-        );
+        $expressionMock = [
+            (object)['expType'=>'FIXED_DATE', 'expValue'=>'2012/12/01'],
+            (object)['expType'=>'SUGAR_DATE', 'expValue'=>'created_date'],
+        ];
 
         $beanMock = $this->getMockBuilder('SugarBean')
                 ->disableOriginalConstructor()
-                ->setMethods(NULL)
+                ->setMethods(null)
                 ->getMock();
 
         $beanMock->id = '1';
@@ -947,29 +945,29 @@ EOR1;
     {
         $beanHandlerMock = $this->getMockBuilder('PMSEBeanHandler')
             ->disableOriginalConstructor()
-            ->setMethods(array('get_href_link'))
+            ->setMethods(['get_href_link'])
             ->getMock();
         
-        $expressionMock = array(
-            (object)array('expType'=>'FIXED_DATE', 'expValue'=>'2012/12/01'),
-            (object)array('expType'=>'SUGAR_DATE', 'expValue'=>'created_date'),
-            (object)array('expType'=>'OPERATOR', 'expValue'=>"+", 'expUnit'=>''),
-            (object)array('expType'=>'UNIT_TIME', 'expValue'=>1, 'expUnit'=>'minutes'),
-            (object)array('expType'=>'OPERATOR', 'expValue'=>"+", 'expUnit'=>''),
-            (object)array('expType'=>'UNIT_TIME', 'expValue'=>1, 'expUnit'=>'hours'),
-            (object)array('expType'=>'OPERATOR', 'expValue'=>"+", 'expUnit'=>''),
-            (object)array('expType'=>'UNIT_TIME', 'expValue'=>1, 'expUnit'=>'days'),
-            (object)array('expType'=>'OPERATOR', 'expValue'=>"+", 'expUnit'=>''),
-            (object)array('expType'=>'UNIT_TIME', 'expValue'=>1, 'expUnit'=>'months'),
-            (object)array('expType'=>'OPERATOR', 'expValue'=>"+", 'expUnit'=>''),
-            (object)array('expType'=>'UNIT_TIME', 'expValue'=>1, 'expUnit'=>'years'),
-            (object)array('expType'=>'OPERATOR', 'expValue'=>"+", 'expUnit'=>''),
-            (object)array('expType'=>'UNIT_TIME', 'expValue'=>1, 'expUnit'=>'arbitrary_measure')
-        );
+        $expressionMock = [
+            (object)['expType'=>'FIXED_DATE', 'expValue'=>'2012/12/01'],
+            (object)['expType'=>'SUGAR_DATE', 'expValue'=>'created_date'],
+            (object)['expType'=>'OPERATOR', 'expValue'=>"+", 'expUnit'=>''],
+            (object)['expType'=>'UNIT_TIME', 'expValue'=>1, 'expUnit'=>'minutes'],
+            (object)['expType'=>'OPERATOR', 'expValue'=>"+", 'expUnit'=>''],
+            (object)['expType'=>'UNIT_TIME', 'expValue'=>1, 'expUnit'=>'hours'],
+            (object)['expType'=>'OPERATOR', 'expValue'=>"+", 'expUnit'=>''],
+            (object)['expType'=>'UNIT_TIME', 'expValue'=>1, 'expUnit'=>'days'],
+            (object)['expType'=>'OPERATOR', 'expValue'=>"+", 'expUnit'=>''],
+            (object)['expType'=>'UNIT_TIME', 'expValue'=>1, 'expUnit'=>'months'],
+            (object)['expType'=>'OPERATOR', 'expValue'=>"+", 'expUnit'=>''],
+            (object)['expType'=>'UNIT_TIME', 'expValue'=>1, 'expUnit'=>'years'],
+            (object)['expType'=>'OPERATOR', 'expValue'=>"+", 'expUnit'=>''],
+            (object)['expType'=>'UNIT_TIME', 'expValue'=>1, 'expUnit'=>'arbitrary_measure'],
+        ];
 
         $beanMock = $this->getMockBuilder('SugarBean')
                 ->disableOriginalConstructor()
-                ->setMethods(NULL)
+                ->setMethods(null)
                 ->getMock();
 
         $beanMock->id = '1';

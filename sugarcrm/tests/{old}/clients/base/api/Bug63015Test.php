@@ -67,12 +67,12 @@ class Bug63015Test extends TestCase
         ]);
     }
 
-    public function testCreateWithNewId() 
+    public function testCreateWithNewId()
     {
         $id = create_guid();
         $this->accountIds[] = $id;
         // create a record
-        $result = $this->moduleApi->createRecord($this->serviceMock, array('module' => 'Accounts','name' => 'Test Account2', 'assigned_user_id' => $GLOBALS['current_user']->id, 'id' => $id));
+        $result = $this->moduleApi->createRecord($this->serviceMock, ['module' => 'Accounts','name' => 'Test Account2', 'assigned_user_id' => $GLOBALS['current_user']->id, 'id' => $id]);
         // verify same id is returned
         $this->assertEquals($id, $result['id']);
     }

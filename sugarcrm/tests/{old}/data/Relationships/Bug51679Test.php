@@ -41,13 +41,13 @@ class Bug51679Test extends TestCase
 
     public function testM2MRelationships()
     {
-        $def = array(
+        $def = [
             'table'=>'accounts_contacts',
             'join_table'=>'accounts_contacts',
             'name'=>'accounts_contacts',
             'lhs_module' => 'accounts',
-            'rhs_module' => 'contacts'
-        );
+            'rhs_module' => 'contacts',
+        ];
         $m2mRelationship = new M2MRelationship($def);
         $m2mRelationship->join_key_lhs = 'account_id';
         $m2mRelationship->join_key_rhs = 'contact_id';

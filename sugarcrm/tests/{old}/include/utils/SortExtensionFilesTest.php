@@ -26,7 +26,7 @@ class SortExtensionFilesTest extends TestCase
         sugar_touch(self::getTestFilePath('file2.php'));
         sugar_touch(self::getTestFilePath('file3.php'));
         sugar_touch(self::getTestFilePath('_overridefile3.php'));
-    } 
+    }
 
     public static function tearDownAfterClass(): void
     {
@@ -40,19 +40,20 @@ class SortExtensionFilesTest extends TestCase
      * @param string $filename Filename
      * @return string Filepath
      */
-    public static function getTestFilePath($filename) {
+    public static function getTestFilePath($filename)
+    {
         return self::$test_directory.$filename;
     }
 
     /**
      * @dataProvider providerSortExtensionFiles
      */
-    public function testSortExtensionFiles($files_for_test, $expected_result) 
+    public function testSortExtensionFiles($files_for_test, $expected_result)
     {
         $timestamp = time();
-        $files = array();
+        $files = [];
 
-        foreach($files_for_test as $file) {
+        foreach ($files_for_test as $file) {
             sugar_touch(self::getTestFilePath($file['filename']), $timestamp + $file['time_diff']);
             $files[] = self::getTestFilePath($file['filename']);
         }
@@ -66,97 +67,98 @@ class SortExtensionFilesTest extends TestCase
         $this->assertEquals($expected_result, $files_sorted);
     }
 
-    function providerSortExtensionFiles() {
-        return array(
-            array(
-                'files_for_test' => array(
-                    array(
+    function providerSortExtensionFiles()
+    {
+        return [
+            [
+                'files_for_test' => [
+                    [
                         'filename' => 'file1.php',
                         'time_diff' => 2,
-                    ),
-                    array(
+                    ],
+                    [
                         'filename' => 'file2.php',
                         'time_diff' => 0,
-                    ),
-                    array(
+                    ],
+                    [
                         'filename' => 'file3.php',
                         'time_diff' => 1,
-                    ),
-                    array(
+                    ],
+                    [
                         'filename' => '_overridefile3.php',
                         'time_diff' => 0,
-                    ),
-                ),
-                'expected_result' => array(
+                    ],
+                ],
+                'expected_result' => [
                     'file2.php',
                     'file3.php',
                     'file1.php',
                     '_overridefile3.php',
-                ),
-            ),
-            array(
-                'files_for_test' => array(
-                    array(
+                ],
+            ],
+            [
+                'files_for_test' => [
+                    [
                         'filename' => 'file1.php',
                         'time_diff' => 0,
-                    ),
-                    array(
+                    ],
+                    [
                         'filename' => 'file2.php',
                         'time_diff' => 0,
-                    ),
-                    array(
+                    ],
+                    [
                         'filename' => 'file3.php',
                         'time_diff' => 0,
-                    ),
-                ),
-                'expected_result' => array(
+                    ],
+                ],
+                'expected_result' => [
                     'file1.php',
                     'file2.php',
                     'file3.php',
-                ),
-            ),
-            array(
-                'files_for_test' => array(
-                    array(
+                ],
+            ],
+            [
+                'files_for_test' => [
+                    [
                         'filename' => 'file1.php',
                         'time_diff' => 2,
-                    ),
-                    array(
+                    ],
+                    [
                         'filename' => 'file2.php',
                         'time_diff' => 2,
-                    ),
-                    array(
-                        'filename' => 'file3.php',
-                        'time_diff' => 1,
-                    ),
-                ),
-                'expected_result' => array(
-                    'file3.php',
-                    'file1.php',
-                    'file2.php',
-                ),
-            ),
-            array(
-                'files_for_test' => array(
-                    array(
-                        'filename' => 'file1.php',
-                        'time_diff' => 2,
-                    ),
-                    array(
-                        'filename' => 'file2.php',
-                        'time_diff' => 0,
-                    ),
-                    array(
+                    ],
+                    [
                         'filename' => 'file3.php',
                         'time_diff' => 1,
-                    ),
-                ),
-                'expected_result' => array(
+                    ],
+                ],
+                'expected_result' => [
+                    'file3.php',
+                    'file1.php',
+                    'file2.php',
+                ],
+            ],
+            [
+                'files_for_test' => [
+                    [
+                        'filename' => 'file1.php',
+                        'time_diff' => 2,
+                    ],
+                    [
+                        'filename' => 'file2.php',
+                        'time_diff' => 0,
+                    ],
+                    [
+                        'filename' => 'file3.php',
+                        'time_diff' => 1,
+                    ],
+                ],
+                'expected_result' => [
                     'file2.php',
                     'file3.php',
                     'file1.php',
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
     }
 }

@@ -12,14 +12,14 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once('vendor/nusoap//nusoap.php');
+require_once 'vendor/nusoap//nusoap.php';
 
 abstract class SOAPTestCase extends TestCase
 {
-	public static $_user = null;
-	public $_soapClient = null;
-	public $_session = null;
-	public $_sessionId;
+    public static $_user = null;
+    public $_soapClient = null;
+    public $_session = null;
+    public $_sessionId;
     public $_soapURL;
 
     public static function setUpBeforeClass() : void
@@ -49,7 +49,7 @@ abstract class SOAPTestCase extends TestCase
             . '/service/v4_1/soap.php';
         // $this->_soapURL .= '?XDEBUG_SESSION_START=phpstorm-xdebug';
 
-        $this->_soapClient = new nusoapclient($this->_soapURL,false,false,false,false,false,600,600);
+        $this->_soapClient = new nusoapclient($this->_soapURL, false, false, false, false, false, 600, 600);
         $GLOBALS['db']->commit();
     }
 
@@ -67,21 +67,23 @@ abstract class SOAPTestCase extends TestCase
     protected function _login()
     {
         $GLOBALS['db']->commit();
-    	$result = $this->_soapClient->call('login',
-            array('user_auth' =>
-                array('user_name' => 'admin',
+        $result = $this->_soapClient->call(
+            'login',
+            ['user_auth' =>
+                ['user_name' => 'admin',
                     'password' => md5('asdf'),
-                    'version' => '.01'),
-                'application_name' => 'SoapTest', "name_value_list" => array())
-            );
+                    'version' => '.01'],
+                'application_name' => 'SoapTest', "name_value_list" => []]
+        );
         $this->_sessionId = $result['id'];
-		return $result;
+        return $result;
     }
 
     /**
      * Create a test user
      */
-	public function _setupTestUser() {
+    public function _setupTestUser()
+    {
         $this->_user = SugarTestUserUtilities::createAnonymousUser();
         $this->_user->status = 'Active';
         $this->_user->is_admin = 1;
@@ -93,8 +95,9 @@ abstract class SOAPTestCase extends TestCase
     /**
      * Remove user created for test
      */
-	public function _tearDownTestUser() {
-       SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-       unset($GLOBALS['current_user']);
+    public function _tearDownTestUser()
+    {
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        unset($GLOBALS['current_user']);
     }
 }

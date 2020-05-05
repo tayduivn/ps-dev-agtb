@@ -40,25 +40,23 @@ class PMSEImporterTest extends TestCase
         $row5->name = "Email Template (2)";
 
         $this->object = ProcessManager\Factory::getPMSEObject('PMSEImporter');
-        $this->bean = $this->createPartialMock('pmse_EmailsTemplates', array('get_full_list', 'save', 'in_save'));
+        $this->bean = $this->createPartialMock('pmse_EmailsTemplates', ['get_full_list', 'save', 'in_save']);
         $this->bean->table_name = 'pmse_emails_templates';
         $this->bean->expects($this->any())
             ->method('get_full_list')
 //            ->with($this->equalTo('Nombre'));
-            ->will($this->returnValue(array(
+            ->will($this->returnValue([
                     "0" => $row1,
                     "1" => $row2,
                     "2" => $row3,
                     "3" => $row4,
                     "4" => $row5,
-                )
-            ));
+                ]));
 
         $this->bean->expects($this->any())
             ->method('save')
 //            ->with($this->equalTo('Nombre'));
-            ->will($this->returnValue('1'
-            ));
+            ->will($this->returnValue('1'));
 
         $this->object->setBean($this->bean);
         $this->object->setName('name');
@@ -72,10 +70,10 @@ class PMSEImporterTest extends TestCase
     {
         $GLOBALS['current_user'] = new stdClass();
         $GLOBALS['current_user']->id = '';
-        $project = array("name" => "Email Templates");
+        $project = ["name" => "Email Templates"];
         $this->bean->in_save = false;
         $result = $this->object->saveProjectData($project);
-        $this->assertEquals(1,$result);
+        $this->assertEquals(1, $result);
 
         $this->bean->in_save = true;
         $result = $this->object->saveProjectData($project);
@@ -88,14 +86,14 @@ class PMSEImporterTest extends TestCase
      */
     public function testGetNameWhitSuffix()
     {
-        $names = array (
+        $names =  [
             "Test" => "Test (3)",
             "Test (1)" => "Test (1) (3)",
             "Email Template" => "Email Template (3)",
             "Email Template (1)" => "Email Template (1) (3)",
             "Email Template (2)" => "Email Template (2) (2)",
-            "Emails Templates" => "Emails Templates"
-        );
+            "Emails Templates" => "Emails Templates",
+        ];
 
         foreach ($names as $key => $value) {
             $result = $this->object->getNameWithSuffix($key);

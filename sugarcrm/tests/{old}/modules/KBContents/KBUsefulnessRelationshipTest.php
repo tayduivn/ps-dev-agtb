@@ -21,14 +21,14 @@ class KBUsefulnessRelationshipTest extends TestCase
      * Definition for relationship.
      * @var array
      */
-    protected $def = array(
+    protected $def = [
         'name' => 'rel',
         'join_table' => 'jt',
         'true_relationship_type' => 'many-to-many',
         'primary_flag_column' => 'flag',
         'lhs_module' => 'Users',
         'rhs_module' => 'KBContents',
-    );
+    ];
 
     /**
      * Check required where condition for relationship.
@@ -52,35 +52,35 @@ class KBUsefulnessRelationshipTest extends TestCase
      */
     public function getWhereParams()
     {
-        return array(
-            array(
-                array(
+        return [
+            [
+                [
                     '',
                     true,
                     true,
-                ),
-            ),
-            array(
-                array(
+                ],
+            ],
+            [
+                [
                     'jt',
                     false,
                     true,
-                ),
-            ),
-            array(
-                array(
+                ],
+            ],
+            [
+                [
                     'jt',
                     true,
                     false,
-                ),
-            ),
-            array(
-                array(
+                ],
+            ],
+            [
+                [
                     'jt',
                     false,
                     false,
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
     }
 }

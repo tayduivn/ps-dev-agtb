@@ -29,7 +29,7 @@ class Bug53288Test extends TestCase
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('app_list_strings');
-        SugarTestHelper::setUp('current_user', array(true, 1));
+        SugarTestHelper::setUp('current_user', [true, 1]);
         $this->_oProspect = SugarTestProspectUtilities::createProspect();
         $this->createProspectList();
     }
@@ -39,7 +39,7 @@ class Bug53288Test extends TestCase
         SugarTestProspectListsUtilities::removeProspectsListToProspectRelation($this->_oProspectList->id, $this->_oProspect->id);
         SugarTestProspectUtilities::removeAllCreatedProspects();
         SugarTestProspectListsUtilities::removeProspectLists($this->_oProspectList->id);
-        $_REQUEST = array();
+        $_REQUEST = [];
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestHelper::tearDown();
     }
@@ -48,9 +48,9 @@ class Bug53288Test extends TestCase
     {
         $_REQUEST['prospect_list_id'] = $this->_oProspectList->id;
         $_REQUEST['prospect_id'] = $this->_oProspect->id;
-        $_REQUEST['prospect_ids'] = array($this->_oProspect->id);
+        $_REQUEST['prospect_ids'] = [$this->_oProspect->id];
         $_REQUEST['return_type'] = 'addtoprospectlist';
-        require('include/generic/Save2.php');
+        require 'include/generic/Save2.php';
         $res = $GLOBALS['db']->query("SELECT * FROM prospect_lists_prospects WHERE prospect_list_id='{$this->_oProspectList->id}' AND related_id='{$this->_oProspect->id}'");
         $row = $GLOBALS['db']->fetchByAssoc($res);
         $this->assertIsArray($row);

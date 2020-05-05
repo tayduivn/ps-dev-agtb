@@ -15,88 +15,88 @@
  * Time: 16:51
  * just require this file into the unit test. and then use some iterator in the data provider.
  */
-$canonicals = array(
+$canonicals = [
 // canonical panels
-    array(array(
-        'fields' => array(),
+    [[
+        'fields' => [],
         'name' => 0,
         'label' => 0,
         'columns' => 2,
         'placeholders' => 1,
-    )),
+    ]],
 
-    array(array(
-        'fields' => array(
-            array(
+    [[
+        'fields' => [
+            [
                 'name' => 'name',
                 'label' => 'LBL_NAME',
-            ),
-            array(
+            ],
+            [
                 'name' => 'status',
                 'label' => 'LBL_STATUS',
-                'comment' => 'Status of the lead'
-            ),
-            array(
+                'comment' => 'Status of the lead',
+            ],
+            [
                 'name' => 'description',
                 'label' => 'LBL_DESCRIPTION',
                 'comment' => 'Full text of the note',
-            ),
-            array()
-        ),
+            ],
+            [],
+        ],
         'name' => 0,
         'label' => '0',
         'columns' => 2,
         'placeholders' => 1,
-    )),
+    ]],
 
 
-    array(array(
-        'fields' => array(
-            array(
+    [[
+        'fields' => [
+            [
                 'name' => 'name',
                 'label' => 'LBL_NAME',
-                'span' => 12
-            ),
-            array(
+                'span' => 12,
+            ],
+            [
                 'name' => 'status',
                 'label' => 'LBL_STATUS',
-                'comment' => 'Status of the lead'
-            ),
-            array(
+                'comment' => 'Status of the lead',
+            ],
+            [
                 'name' => 'description',
                 'label' => 'LBL_DESCRIPTION',
-                'comment' => 'Full text of the note'
-            ),
+                'comment' => 'Full text of the note',
+            ],
 
-        ),
+        ],
         'name' => 0,
         'label' => '0',
         'columns' => 2,
         'placeholders' => 1,
-    )),
-    array(array(
-        'fields' => array(
+    ]],
+    [[
+        'fields' => [
             'name',
             'status',
-            array(
+            [
                 'name' => 'description',
-            ),
-            array()
-        ),
+            ],
+            [],
+        ],
         'name' => 0,
         'label' => '0',
         'columns' => 2,
         'placeholders' => 1,
-    )),
-    array(array(
-        'fields' => array(
-            array(),
-            array()
-        ),
+    ]],
+    [[
+        'fields' => [
+            [],
+            [],
+        ],
         'name' => 0,
         'label' => '0',
         'columns' => 2,
         'placeholders' => 1,
-    )),
+    ]],
 // end
-);
+];

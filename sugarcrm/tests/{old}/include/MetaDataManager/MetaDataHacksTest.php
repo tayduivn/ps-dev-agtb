@@ -34,16 +34,16 @@ class MetaDataHacksTest extends TestCase
 
     public function testFixRelateFields()
     {
-        $fieldDefs = array(
-            'name' => array(
+        $fieldDefs = [
+            'name' => [
                 'type' => 'string',
                 'dbType' => 'varchar',
-            ),
-            'myawesome_id' => array(
+            ],
+            'myawesome_id' => [
                 'type' => 'relate',
                 'dbType' => 'id',
-            ),
-        );
+            ],
+        ];
 
         $fieldDefsNew = $this->mdh->fixRelateFields($fieldDefs);
         $this->assertEquals(

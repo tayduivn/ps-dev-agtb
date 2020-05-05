@@ -32,12 +32,11 @@ class GetEntryListOppTest extends SOAPTestCase
         $this->currency            = BeanFactory::newBean('Currencies');
         $GLOBALS['current_user']   = SOAPTestCase::$_user;
 
-        $found = $this->currency->retrieve_by_string_fields(array(
+        $found = $this->currency->retrieve_by_string_fields([
             'iso4217' => self::CURRENCY_CODE,
-        ));
+        ]);
 
-        if (!$found)
-        {
+        if (!$found) {
             $this->markTestSkipped('Currency \'' . self::CURRENCY_CODE . '\' not found.');
         }
     }
@@ -51,11 +50,11 @@ class GetEntryListOppTest extends SOAPTestCase
 
     public function dataset()
     {
-        return array(
+        return [
             // [create_currency, retrieve_currency, amount]
-            array('US', 'US', 10000),
-            array('EUR', 'EUR', 10000),
-        );
+            ['US', 'US', 10000],
+            ['EUR', 'EUR', 10000],
+        ];
     }
 
     /**
@@ -65,23 +64,17 @@ class GetEntryListOppTest extends SOAPTestCase
     {
         global $current_user;
 
-        if ($createCurrency == self::CURRENCY_CODE)
-        {
+        if ($createCurrency == self::CURRENCY_CODE) {
             $createCurrencyId = $this->currency->id;
-        }
-        else
-        {
+        } else {
             $createCurrencyId = '-99';
         }
 
-        if ($retrieveCurrency == self::CURRENCY_CODE)
-        {
+        if ($retrieveCurrency == self::CURRENCY_CODE) {
             $retrieveCurrencyId     = $this->currency->id;
             $retrieveCurrencyName   = $this->currency->name;
             $retrieveCurrencySymbol = $this->currency->symbol;
-        }
-        else
-        {
+        } else {
             $retrieveCurrencyId     = '-99';
             $retrieveCurrencyName   = 'US Dollars';
             $retrieveCurrencySymbol = '\$';
@@ -100,16 +93,16 @@ class GetEntryListOppTest extends SOAPTestCase
 
         $this->_login();
 
-        $client = array(
+        $client = [
             'session'       => $this->_sessionId,
             'module_name'   => 'Opportunities',
             'query'         => 'opportunities.id = \'' . $opportunity->id . '\'',
             'order_by'      => '',
             'offset'        => 0,
-            'select_fields' => array(),
+            'select_fields' => [],
             'max_results'   => 10,
             'deleted'       => -1,
-        );
+        ];
 
         $result = $this->_soapClient->call('get_entry_list', $client);
 
@@ -117,11 +110,10 @@ class GetEntryListOppTest extends SOAPTestCase
         $this->assertGreaterThan(0, $result['result_count'], 'Empty result returned');
 
         $opportunityData = array_shift($result['entry_list']);
-        $dataIndex = array();
+        $dataIndex = [];
         $dataLength = count($opportunityData['name_value_list']);
 
-        for ($i = 0; $i < $dataLength; $i ++)
-        {
+        for ($i = 0; $i < $dataLength; $i ++) {
             $piece = $opportunityData['name_value_list'][$i];
             $dataIndex[$piece['name']] = $piece['value'];
         }
@@ -129,5 +121,4 @@ class GetEntryListOppTest extends SOAPTestCase
         $this->assertEquals($retrieveCurrencySymbol, $dataIndex['currency_symbol'], 'Currency symbol is not match.');
         $this->assertEquals($retrieveCurrencyName, $dataIndex['currency_name'], 'Currency name is not match.');
     }
-
 }

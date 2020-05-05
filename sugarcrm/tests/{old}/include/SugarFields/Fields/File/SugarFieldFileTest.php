@@ -56,11 +56,11 @@ class SugarFieldFileTest extends TestCase
         $this->newNote = BeanFactory::newBean('Notes');
         $this->newNote->id = create_guid();
 
-        $submittedData = array(
+        $submittedData = [
             'name' => 'new note',
             'filename' => 'test.txt',
             'filename_duplicateBeanId' => $this->origNote->id,
-        );
+        ];
 
         $sfh = new SugarFieldHandler();
         $field = $sfh->getSugarField($this->newNote->field_defs['filename']['type']);
@@ -73,13 +73,13 @@ class SugarFieldFileTest extends TestCase
     {
         $this->newNote = BeanFactory::getBean('Notes');
         $this->newNote->id = Uuid::uuid1();
-        $submittedData = array(
+        $submittedData = [
             'name' => 'new note',
             'filename' => 'test.txt',
             'filename_duplicateBeanId' => $this->origNote->id,
             'email_type' => 'Emails',
             'email_id' => Uuid::uuid1(),
-        );
+        ];
 
         $sfh = new SugarFieldHandler();
         $field = $sfh->getSugarField($this->newNote->field_defs['filename']['type']);

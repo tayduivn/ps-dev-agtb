@@ -13,12 +13,12 @@
 
 class SugarTestActivityUtilities
 {
-    private static $_createdActivities = array();
+    private static $_createdActivities = [];
 
-    public static function createUnsavedActivity($new_id = '', $activityValues = array())
+    public static function createUnsavedActivity($new_id = '', $activityValues = [])
     {
         $time = mt_rand();
-        $data = array('value' => 'SugarActivity' . $time);
+        $data = ['value' => 'SugarActivity' . $time];
         $activity = BeanFactory::newBean('Activities');
         foreach ($activityValues as $property => $value) {
             $activity->$property = $value;
@@ -31,7 +31,7 @@ class SugarTestActivityUtilities
         return $activity;
     }
 
-    public static function createActivity($new_id = '', $activityValues = array())
+    public static function createActivity($new_id = '', $activityValues = [])
     {
         Activity::enable();
         $activity = self::createUnsavedActivity($new_id, $activityValues);
@@ -70,7 +70,7 @@ class SugarTestActivityUtilities
 
     public static function getCreatedActivityIds()
     {
-        $activity_ids = array();
+        $activity_ids = [];
         foreach (self::$_createdActivities as $activity) {
             $activity_ids[] = $activity->id;
         }

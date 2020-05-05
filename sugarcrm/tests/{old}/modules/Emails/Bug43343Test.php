@@ -1,4 +1,4 @@
-<?php 
+<?php
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -23,7 +23,7 @@ class Bug43343Test extends TestCase
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $this->email = new Email();
-	}
+    }
 
     protected function tearDown() : void
     {
@@ -39,6 +39,6 @@ class Bug43343Test extends TestCase
         unset($_REQUEST['searchDateTo']);
         $whereClause = $this->email->_generateSearchImportWhereClause();
  
-        $this->assertTrue( preg_match('/emails.date_sent/', $whereClause) == 0 );
+        $this->assertTrue(preg_match('/emails.date_sent/', $whereClause) == 0);
     }
 }

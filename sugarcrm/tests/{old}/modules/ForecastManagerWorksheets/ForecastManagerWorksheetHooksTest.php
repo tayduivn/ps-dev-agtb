@@ -22,7 +22,7 @@ class ForecastManagerWorksheetHooksTest extends TestCase
     public function testSetManagerSavedFlag($data, $expected)
     {
         /** @var ForecastManagerWorksheet $worksheet */
-        $worksheet = $this->createPartialMock('ForecastManagerWorksheet', array('save'));
+        $worksheet = $this->createPartialMock('ForecastManagerWorksheet', ['save']);
 
         foreach ($data as $key => $value) {
             $worksheet->$key = $value;
@@ -44,147 +44,147 @@ class ForecastManagerWorksheetHooksTest extends TestCase
          *
          *  worksheet - unknown, original test value
          */
-        return array(
-            array(
-                array(
+        return [
+            [
+                [
                     'assigned_user_id' => 'test_user',
                     'modified_user_id' => 'test_user',
                     'draft' => 1,
                     'draft_save_type' => 'worksheet',
-                    'manager_saved' => false
-                ),
-                false // was originally true but should be false if it functions as <blank>
-            ),
-            array(
-                array(
+                    'manager_saved' => false,
+                ],
+                false, // was originally true but should be false if it functions as <blank>
+            ],
+            [
+                [
                     'assigned_user_id' => 'test_user',
                     'modified_user_id' => 'test_user',
                     'draft' => 0,
                     'draft_save_type' => 'worksheet',
-                    'manager_saved' => false
-                ),
-                false
-            ),
-            array(
-                array(
+                    'manager_saved' => false,
+                ],
+                false,
+            ],
+            [
+                [
                     'assigned_user_id' => 'test_user',
                     'modified_user_id' => 'test_user',
                     'draft' => 1,
                     'draft_save_type' => 'worksheet',
-                    'manager_saved' => true
-                ),
-                true
-            ),
-            array(
-                array(
+                    'manager_saved' => true,
+                ],
+                true,
+            ],
+            [
+                [
                     'assigned_user_id' => 'test_user_1',
                     'modified_user_id' => 'test_user',
                     'draft' => 1,
                     'draft_save_type' => 'worksheet',
-                    'manager_saved' => false
-                ),
-                false
-            ),
-            array(
-                array(
+                    'manager_saved' => false,
+                ],
+                false,
+            ],
+            [
+                [
                     'assigned_user_id' => 'test_user',
                     'modified_user_id' => 'test_user',
                     'draft' => 1,
                     'draft_save_type' => 'assign_quota',
-                    'manager_saved' => false
-                ),
-                false
-            ),
-            array(
-                array(
+                    'manager_saved' => false,
+                ],
+                false,
+            ],
+            [
+                [
                     'assigned_user_id' => 'test_user',
                     'modified_user_id' => 'test_user',
                     'draft' => 0,
                     'draft_save_type' => 'assign_quota',
-                    'manager_saved' => false
-                ),
-                false
-            ),
-            array(
-                array(
+                    'manager_saved' => false,
+                ],
+                false,
+            ],
+            [
+                [
                     'assigned_user_id' => 'test_user',
                     'modified_user_id' => 'test_user',
                     'draft' => 1,
                     'draft_save_type' => 'draft',
-                    'manager_saved' => false
-                ),
-                true
-            ),
-            array(
-                array(
+                    'manager_saved' => false,
+                ],
+                true,
+            ],
+            [
+                [
                     'assigned_user_id' => 'test_user',
                     'modified_user_id' => 'test_user',
                     'draft' => 1,
                     'draft_save_type' => 'draft',
-                    'manager_saved' => true
-                ),
-                true
-            ),
-            array(
-                array(
+                    'manager_saved' => true,
+                ],
+                true,
+            ],
+            [
+                [
                     'assigned_user_id' => 'test_user',
                     'modified_user_id' => 'test_user',
                     'draft' => 1,
                     'draft_save_type' => 'commit',
-                    'manager_saved' => false
-                ),
-                true
-            ),
-            array(
-                array(
+                    'manager_saved' => false,
+                ],
+                true,
+            ],
+            [
+                [
                     'assigned_user_id' => 'test_user',
                     'modified_user_id' => 'test_user',
                     'draft' => 0,
                     'draft_save_type' => 'commit',
-                    'manager_saved' => false
-                ),
-                false
-            ),
-            array(
-                array(
+                    'manager_saved' => false,
+                ],
+                false,
+            ],
+            [
+                [
                     'assigned_user_id' => 'test_user',
                     'modified_user_id' => 'test_user',
                     'draft' => 1,
                     'draft_save_type' => 'commit',
-                    'manager_saved' => true
-                ),
-                true
-            ),
-            array(
-                array(
+                    'manager_saved' => true,
+                ],
+                true,
+            ],
+            [
+                [
                     'assigned_user_id' => 'test_user',
                     'modified_user_id' => 'test_user',
                     'draft' => 1,
                     'draft_save_type' => null,
-                    'manager_saved' => false
-                ),
-                false
-            ),
-            array(
-                array(
+                    'manager_saved' => false,
+                ],
+                false,
+            ],
+            [
+                [
                     'assigned_user_id' => 'test_user',
                     'modified_user_id' => 'test_user',
                     'draft' => 0,
                     'draft_save_type' => null,
-                    'manager_saved' => false
-                ),
-                false
-            ),
-            array(
-                array(
+                    'manager_saved' => false,
+                ],
+                false,
+            ],
+            [
+                [
                     'assigned_user_id' => 'test_user',
                     'modified_user_id' => 'test_user',
                     'draft' => 1,
                     'draft_save_type' => null,
-                    'manager_saved' => true
-                ),
-                true
-            )
-        );
+                    'manager_saved' => true,
+                ],
+                true,
+            ],
+        ];
     }
 }

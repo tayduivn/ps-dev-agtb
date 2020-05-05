@@ -22,20 +22,18 @@ class UpgradeAccessTest extends TestCase
 {
     protected function setUp() : void
     {
-        if(!file_exists('.htaccess'))
-        {
+        if (!file_exists('.htaccess')) {
             $this->markTestSkipped('This may be an instance that does not support the use of .htaccess files');
             return;
         }
 
-        if(!is_writable('.htaccess'))
-        {
+        if (!is_writable('.htaccess')) {
             $this->markTestSkipped('Cannot write to .htaccess file.');
             return;
         }
 
         SugarTestHelper::setUp('files');
-        SugarTestHelper::setUp('mod_strings', array('Administration'));
+        SugarTestHelper::setUp('mod_strings', ['Administration']);
 
         SugarTestHelper::saveFile(".htaccess");
     }
@@ -54,7 +52,7 @@ class UpgradeAccessTest extends TestCase
      */
     public function testUpgradeAccessCreatesRewriteRule()
     {
-        require('modules/Administration/UpgradeAccess.php');
+        require 'modules/Administration/UpgradeAccess.php';
         $contents = file_get_contents('.htaccess');
 
         preg_match('/RewriteRule \^rest\/\(\.\*\)\$ api\/rest.php\?\_\_sugar\_url=\$1 \[L\,QSA\]/', $contents, $matches);

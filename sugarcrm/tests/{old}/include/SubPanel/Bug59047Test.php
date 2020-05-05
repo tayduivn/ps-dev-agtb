@@ -24,27 +24,27 @@ class Bug59047Test extends TestCase
     public function testDependentFieldsAreExpanded()
     {
         $bean = new SugarBean();
-        $bean->field_defs = array(
-            'field_1' => array(
+        $bean->field_defs = [
+            'field_1' => [
                 'dependency' => 'equals($field_2,"test")',
-            ),
-            'field_2' => array(),
-            'field_3' => array(
+            ],
+            'field_2' => [],
+            'field_3' => [
                 'dependency' => 'equals($non_existing_field,"test")',
-            ),
-            'field_4' => array(
+            ],
+            'field_4' => [
                 'dependency' => 'equals($field_5,"test")',
-            ),
-            'field_5' => array(),
-        );
+            ],
+            'field_5' => [],
+        ];
 
-        $definition = array(
-            'list_fields' => array(
-                'field_1' => array(),
-                'field_3' => array(),
-                'field_5' => array(),
-            ),
-        );
+        $definition = [
+            'list_fields' => [
+                'field_1' => [],
+                'field_3' => [],
+                'field_5' => [],
+            ],
+        ];
 
         $subPanel = new Bug59047Test_SubPanel();
         $subPanel->template_instance = $bean;

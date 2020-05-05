@@ -29,7 +29,7 @@ class Bug44113Test extends TestCase
 
         OutboundEmailConfigurationTestHelper::setUp();
 
-        require("config.php");
+        require "config.php";
 
         if (isset($sugar_config['email_xss'])) {
             $this->_original_email_xss      = $sugar_config['email_xss'];
@@ -39,12 +39,12 @@ class Bug44113Test extends TestCase
         }
 
         // email_xss settings to be saved using config_override
-        $this->email_xss = array(
+        $this->email_xss = [
             //'applet' => 'applet',
             'form'   => 'form',
             'iframe' => 'iframe',
             'script' => 'script',
-        );
+        ];
     }
 
     protected function tearDown() : void
@@ -98,7 +98,7 @@ class Bug44113Test extends TestCase
         // to create a new config_override.php
 
         // now check to make sure that config_override received the updated settings
-        require("config_override.php");
+        require "config_override.php";
         $this->assertEquals(
             $new_security_settings,
             $sugar_config['email_xss'],

@@ -53,7 +53,7 @@ class ForecastTest extends TestCase
         $user = $GLOBALS['current_user'];
 
         if ($customCurrency) {
-            $this->currency = SugarTestCurrencyUtilities::createCurrency('MonkeyDollars', $symbol,'MOD',$baseRate);
+            $this->currency = SugarTestCurrencyUtilities::createCurrency('MonkeyDollars', $symbol, 'MOD', $baseRate);
             $GLOBALS['current_user']->setPreference('currency', $this->currency->id);
         } else {
             unset($GLOBALS['current_user']);
@@ -69,10 +69,10 @@ class ForecastTest extends TestCase
 
     public function constructProvider()
     {
-        return array(
-            array(false, '$', 1),
-            array(true, '^', 2)
-        );
+        return [
+            [false, '$', 1],
+            [true, '^', 2],
+        ];
     }
 
     /**
@@ -112,13 +112,14 @@ class ForecastTest extends TestCase
      * @param $finalPipelineAmount
      * @param $finalOppCount
      */
-    public function testCalculatePipelineData($likely_case,
-                                              $opp_count,
-                                              $closedAmount,
-                                              $closedCount,
-                                              $finalPipelineAmount,
-                                              $finalOppCount)
-    {
+    public function testCalculatePipelineData(
+        $likely_case,
+        $opp_count,
+        $closedAmount,
+        $closedCount,
+        $finalPipelineAmount,
+        $finalOppCount
+    ) {
         $forecast = $this->getMockBuilder('Forecast')
                          ->setMethods(null)
                          ->getMock();
@@ -133,10 +134,10 @@ class ForecastTest extends TestCase
 
     public function calculatePipelineDataProvider()
     {
-        return array(
-            array(100, 10, 50, 5, 50, 5),
-            array(100, 10, 500, 20, 0, 0)
-        );
+        return [
+            [100, 10, 50, 5, 50, 5],
+            [100, 10, 500, 20, 0, 0],
+        ];
     }
 
     /**
@@ -180,7 +181,7 @@ class ForecastTest extends TestCase
     public function testCreate_new_list_query($orderby, $where, $returnArray, $result)
     {
         $forecast = $this->getMockBuilder('Forecast')
-                         ->setMethods(array('addVisibilityFrom', 'addVisibilityWhere'))
+                         ->setMethods(['addVisibilityFrom', 'addVisibilityWhere'])
                          ->getMock();
 
         $forecast->expects($this->once())
@@ -196,17 +197,17 @@ class ForecastTest extends TestCase
 
     public function create_new_list_queryProvider()
     {
-        return array(
-            array('', '', false,
-                  'SELECT tp.name timeperiod_name, tp.start_date start_date, tp.end_date end_date, forecasts.*  FROM forecasts LEFT JOIN timeperiods tp on forecasts.timeperiod_id = tp.id    ORDER BY forecasts.date_entered desc'),
-            array('foo desc', '', false,
-                'SELECT tp.name timeperiod_name, tp.start_date start_date, tp.end_date end_date, forecasts.*  FROM forecasts LEFT JOIN timeperiods tp on forecasts.timeperiod_id = tp.id   ORDER BY foo desc'),
-            array('', '1=1', false,
-                'SELECT tp.name timeperiod_name, tp.start_date start_date, tp.end_date end_date, forecasts.*  FROM forecasts LEFT JOIN timeperiods tp on forecasts.timeperiod_id = tp.id   WHERE 1=1  ORDER BY forecasts.date_entered desc'),
-            array('', '', true,
-                json_decode('{"select":"SELECT tp.name timeperiod_name, tp.start_date start_date, tp.end_date end_date, forecasts.* ","from":" FROM forecasts LEFT JOIN timeperiods tp on forecasts.timeperiod_id = tp.id  ","where":"","order_by":"  ORDER BY forecasts.date_entered desc"}', true)),
+        return [
+            ['', '', false,
+                  'SELECT tp.name timeperiod_name, tp.start_date start_date, tp.end_date end_date, forecasts.*  FROM forecasts LEFT JOIN timeperiods tp on forecasts.timeperiod_id = tp.id    ORDER BY forecasts.date_entered desc'],
+            ['foo desc', '', false,
+                'SELECT tp.name timeperiod_name, tp.start_date start_date, tp.end_date end_date, forecasts.*  FROM forecasts LEFT JOIN timeperiods tp on forecasts.timeperiod_id = tp.id   ORDER BY foo desc'],
+            ['', '1=1', false,
+                'SELECT tp.name timeperiod_name, tp.start_date start_date, tp.end_date end_date, forecasts.*  FROM forecasts LEFT JOIN timeperiods tp on forecasts.timeperiod_id = tp.id   WHERE 1=1  ORDER BY forecasts.date_entered desc'],
+            ['', '', true,
+                json_decode('{"select":"SELECT tp.name timeperiod_name, tp.start_date start_date, tp.end_date end_date, forecasts.* ","from":" FROM forecasts LEFT JOIN timeperiods tp on forecasts.timeperiod_id = tp.id  ","where":"","order_by":"  ORDER BY forecasts.date_entered desc"}', true)],
 
-        );
+        ];
     }
 
     /**
@@ -234,10 +235,10 @@ class ForecastTest extends TestCase
 
     public function get_list_view_arrayProvider()
     {
-        return array(
-            array(100, 100, 100,
-                json_decode('{"PIPELINE_OPP_COUNT":"0","PIPELINE_AMOUNT":"0","CLOSED_AMOUNT":"0","BEST_CASE":100,"LIKELY_CASE":100,"WORST_CASE":100,"DELETED":0,"CURRENCY_ID":"-99","BASE_RATE":1}', true)),
-        );
+        return [
+            [100, 100, 100,
+                json_decode('{"PIPELINE_OPP_COUNT":"0","PIPELINE_AMOUNT":"0","CLOSED_AMOUNT":"0","BEST_CASE":100,"LIKELY_CASE":100,"WORST_CASE":100,"DELETED":0,"CURRENCY_ID":"-99","BASE_RATE":1}', true)],
+        ];
     }
 
     /**
@@ -251,18 +252,18 @@ class ForecastTest extends TestCase
     public function testGetForecastForUser($where, $user, $timeperiod, $rollup)
     {
         $forecast = $this->getMockBuilder('Forecast')
-                         ->setMethods(array('create_new_list_query'))
+                         ->setMethods(['create_new_list_query'])
                          ->getMock();
 
         $db = $this->getMockBuilder('DBManager')
-            ->setMethods(array())
+            ->setMethods([])
             ->getMock();
 
         $forecast->db = $db;
 
         $forecast->expects($this->once())
             ->method('create_new_list_query')
-            ->with(null, $where, array(), array (), 0, '', false, null, false)
+            ->with(null, $where, [], [], 0, '', false, null, false)
             ->will($this->returnValue('foo'));
 
         $db->expects($this->once())
@@ -281,13 +282,13 @@ class ForecastTest extends TestCase
     {
         $timeperiod_id = TimePeriod::getCurrentId();
 
-        return array(
-            array("user_id='user' AND forecast_type='Direct' AND timeperiod_id='{$timeperiod_id}'",
-                'user', $timeperiod_id , false),
-            array("user_id='user' AND forecast_type='Rollup' AND timeperiod_id='{$timeperiod_id}'",
-                'user', $timeperiod_id , true)
+        return [
+            ["user_id='user' AND forecast_type='Direct' AND timeperiod_id='{$timeperiod_id}'",
+                'user', $timeperiod_id , false],
+            ["user_id='user' AND forecast_type='Rollup' AND timeperiod_id='{$timeperiod_id}'",
+                'user', $timeperiod_id , true],
 
-        );
+        ];
     }
 
     /**
@@ -309,10 +310,10 @@ class ForecastTest extends TestCase
 
     public function bean_implementsProvider()
     {
-        return array(
-            array('ACL', true),
-            array('Foo', false)
-        );
+        return [
+            ['ACL', true],
+            ['Foo', false],
+        ];
     }
 
     /**

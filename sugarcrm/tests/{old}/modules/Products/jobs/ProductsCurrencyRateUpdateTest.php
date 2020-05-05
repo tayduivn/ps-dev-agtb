@@ -42,7 +42,7 @@ class ProductsCurrencyRateUpdateTest extends TestCase
      */
     public function setupMockClass()
     {
-        $this->mock = $this->createPartialMock('ProductsCurrencyRateUpdate', array('getProductsWithNonClosedQuote'));
+        $this->mock = $this->createPartialMock('ProductsCurrencyRateUpdate', ['getProductsWithNonClosedQuote']);
         // we want to use our mock database for these tests, so replace it
         SugarTestReflection::setProtectedValue($this->mock, 'db', $this->db);
     }
@@ -59,13 +59,13 @@ class ProductsCurrencyRateUpdateTest extends TestCase
     {
         $this->mock->expects($this->once())
             ->method('getProductsWithNonClosedQuote')
-            ->will($this->returnValue(array('id1', 'id2')));
+            ->will($this->returnValue(['id1', 'id2']));
 
         // setup the query strings we are expecting and what they should return
         $this->db->addQuerySpy(
             'rate_update',
             "/UPDATE mytable SET amount_usdollar = 1\.234 \/ base_rate/",
-            array(array(1))
+            [[1]]
         );
 
         // run our tests with mockup data

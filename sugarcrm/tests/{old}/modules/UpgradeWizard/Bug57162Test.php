@@ -12,7 +12,7 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once('modules/UpgradeWizard/uw_utils.php');
+require_once 'modules/UpgradeWizard/uw_utils.php';
 
 /**
  * Bug #57162
@@ -25,24 +25,24 @@ class Bug57162Test extends TestCase
 {
     public function dataProvider()
     {
-        return array(
-            array('656', array('6.5.6')),
-            array('660', array('6.6.0beta1')),
-            array('640', array('6.4.0rc2')),
-            array('600', array('6', 3)),
-            array('6601', array('6.6.0.1')),
-            array('6601', array('6.6.0.1', 0)),
-            array('660', array('6.6.0.1', 3)),
-            array('660', array('6.6.0.1', 3, '')),
-            array('66x', array('6.6.0.1', 3, 'x')),
-            array('660x', array('6.6.0.1', 0, 'x')),
-            array('6.6.x', array('6.6.0.1', 3, 'x', '.')),
-            array('6-6-0-beta2', array('6.6.0.1', 0, 'beta2', '-')),
-            array('6601', array('6.6.0.1', 0, '', '')),
-            array('', array('test342lk')),
-            array('650', array('6.5.6' ,0, '0')),
-            array('60', array('6.5.6', 2, 0)),
-        );
+        return [
+            ['656', ['6.5.6']],
+            ['660', ['6.6.0beta1']],
+            ['640', ['6.4.0rc2']],
+            ['600', ['6', 3]],
+            ['6601', ['6.6.0.1']],
+            ['6601', ['6.6.0.1', 0]],
+            ['660', ['6.6.0.1', 3]],
+            ['660', ['6.6.0.1', 3, '']],
+            ['66x', ['6.6.0.1', 3, 'x']],
+            ['660x', ['6.6.0.1', 0, 'x']],
+            ['6.6.x', ['6.6.0.1', 3, 'x', '.']],
+            ['6-6-0-beta2', ['6.6.0.1', 0, 'beta2', '-']],
+            ['6601', ['6.6.0.1', 0, '', '']],
+            ['', ['test342lk']],
+            ['650', ['6.5.6' ,0, '0']],
+            ['60', ['6.5.6', 2, 0]],
+        ];
     }
 
     /**

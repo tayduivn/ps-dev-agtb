@@ -26,7 +26,7 @@ class ForecastWorksheetsApiTest extends TestCase
     public function testGetClass()
     {
         $api = new ForecastWorksheetsApi();
-        $klass = SugarTestReflection::callProtectedMethod($api, 'getClass', array(array()));
+        $klass = SugarTestReflection::callProtectedMethod($api, 'getClass', [[]]);
 
         $this->assertInstanceOf('SugarForecasting_Individual', $klass);
     }
@@ -43,7 +43,7 @@ FILE;
         sugar_file_put_contents('custom/include/SugarForecasting/Individual.php', $file);
 
         $api = new ForecastWorksheetsApi();
-        $klass = SugarTestReflection::callProtectedMethod($api, 'getClass', array(array()));
+        $klass = SugarTestReflection::callProtectedMethod($api, 'getClass', [[]]);
 
         $this->assertInstanceOf('CustomSugarForecasting_Individual', $klass);
 
@@ -58,7 +58,7 @@ FILE;
         SugarAutoLoader::load('include/SugarForecasting/Individual.php');
         $class = $this->getMockBuilder('SugarForecasting_Individual')
             ->disableOriginalConstructor()
-            ->setMethods(array('save'))
+            ->setMethods(['save'])
             ->getMock();
 
         $bean = $this->getMockBuilder('Opportunity')
@@ -72,17 +72,17 @@ FILE;
         $api = SugarTestRestUtilities::getRestServiceMock();
 
         $fw_api = $this->getMOckBuilder('ForecastWorksheetsApi')
-            ->setMethods(array('getClass', 'formatBean'))
+            ->setMethods(['getClass', 'formatBean'])
             ->getMock();
 
         $fw_api->expects($this->once())
             ->method('formatBean')
-            ->with($api, array(), $bean);
+            ->with($api, [], $bean);
 
         $fw_api->expects($this->once())
             ->method('getClass')
             ->willReturn($class);
 
-        $fw_api->forecastWorksheetSave($api, array());
+        $fw_api->forecastWorksheetSave($api, []);
     }
 }

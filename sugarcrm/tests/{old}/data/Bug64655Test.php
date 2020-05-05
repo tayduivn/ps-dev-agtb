@@ -42,10 +42,10 @@ class Bug64655Test extends TestCase
         $current_user->setPreference('default_locale_name_format', 'f l');
 
         $this->bean->populateFromRow(
-            array(
+            [
                 'rel_contact_name_first_name' => 'John',
                 'rel_contact_name_last_name' => 'Doe',
-            )
+            ]
         );
 
         $this->assertEquals('John Doe', $this->bean->contact_name);
@@ -112,83 +112,83 @@ class Bug64655Test extends TestCase
 
     public static function provider()
     {
-        return array(
-            'empty-vardefs' => array(
-                array(), 'jt1', '', array()
-            ),
-            'non-name-field' => array(
-                array(
-                    'name' => array(
+        return [
+            'empty-vardefs' => [
+                [], 'jt1', '', [],
+            ],
+            'non-name-field' => [
+                [
+                    'name' => [
                         'name' => 'name',
                         'type' => 'varchar',
-                    ),
-                ),
+                    ],
+                ],
                 'jt2',
                 'jt2.name contact_name',
-                array(
+                [
                     'contact_name' => 'jt2.name',
-                ),
-            ),
-            'name-field' => array(
-                array(
-                    'name' => array(
+                ],
+            ],
+            'name-field' => [
+                [
+                    'name' => [
                         'name' => 'name',
                         'type' => 'fullname',
-                    ),
-                ),
+                    ],
+                ],
                 'jt3',
                 'jt3.foo rel_contact_name_foo, jt3.bar rel_contact_name_bar',
-                array(
+                [
                     'rel_contact_name_foo' => 'jt3.foo',
                     'rel_contact_name_bar' => 'jt3.bar',
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
     }
 }
 
 class Bug64655Test_SugarBean1 extends SugarBean
 {
     public $object_name = 'Bug64655Test1';
-    public $field_defs = array(
-        'contact_name' => array(
+    public $field_defs = [
+        'contact_name' => [
             'name' => 'contact_name',
             'rname' => 'name',
             'type' => 'relate',
             'module' => 'Contacts',
             'id_name' => 'contact_id',
-        ),
-    );
+        ],
+    ];
 }
 
 class Bug64655Test_SugarBean2 extends SugarBean
 {
     public $object_name = 'Bug64655Test2';
-    public $name_format_map = array(
+    public $name_format_map = [
         'f' => 'foo',
         'b' => 'bar',
-    );
+    ];
 }
 
 class Bug64655Test_SugarBean3 extends SugarBean
 {
     public $object_name = 'Bug64655Test3';
-    public $name_format_map = array(
+    public $name_format_map = [
         'f' => 'foo',
         'b' => 'bar',
-    );
+    ];
     public $table_name = 'bug64655test2';
-    public $field_defs = array(
-        'name' => array(
+    public $field_defs = [
+        'name' => [
             'name' => 'name',
             'type' => 'fullname',
-        ),
-        'foo' => array(
+        ],
+        'foo' => [
             'name' => 'foo',
-        ),
-        'bar' => array(
+        ],
+        'bar' => [
             'name' => 'bar',
             'custom_module' => 'Bug64655Test2',
-        ),
-    );
+        ],
+    ];
 }

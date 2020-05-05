@@ -30,13 +30,13 @@ class M2MRelationshipTest extends TestCase
         $this->opportunity2 = SugarTestOpportunityUtilities::createOpportunity();
         $GLOBALS['db']->commit();
 
-        $this->def = array(
+        $this->def = [
             'table'=>'opportunities_contacts',
             'join_table'=>'opportunities_contacts',
             'name'=>'opportunities_contacts',
             'lhs_module' => 'opportunities',
-            'rhs_module' => 'contacts'
-        );
+            'rhs_module' => 'contacts',
+        ];
     }
 
     protected function tearDown() : void
@@ -53,7 +53,7 @@ class M2MRelationshipTest extends TestCase
     public function testM2MRelationshipFields()
     {
         $this->opportunity->load_relationship('contacts');
-        $this->opportunity->contacts->add($this->contact, array('contact_role' => 'test'));
+        $this->opportunity->contacts->add($this->contact, ['contact_role' => 'test']);
 
         $m2mRelationship = new M2MRelationship($this->def);
         $m2mRelationship->join_key_lhs = 'opportunity_id';
@@ -76,7 +76,7 @@ class M2MRelationshipTest extends TestCase
     public function testM2MRelationshipFieldUpdate()
     {
         $this->opportunity->load_relationship('contacts');
-        $this->opportunity->contacts->add($this->contact, array('contact_role' => 'test'));
+        $this->opportunity->contacts->add($this->contact, ['contact_role' => 'test']);
 
         $m2mRelationship = new M2MRelationship($this->def);
         $m2mRelationship->join_key_lhs = 'opportunity_id';
@@ -89,7 +89,7 @@ class M2MRelationshipTest extends TestCase
         $role = $GLOBALS['db']->getOne("SELECT contact_role FROM opportunities_contacts WHERE opportunity_id='{$this->opportunity->id}' AND contact_id = '{$this->contact->id}'");
         $this->assertEquals("test", $role);
 
-        $this->opportunity->contacts->add($this->contact, array('contact_role' => 'test2'));
+        $this->opportunity->contacts->add($this->contact, ['contact_role' => 'test2']);
 
         $second_id = $GLOBALS['db']->getOne("SELECT id FROM opportunities_contacts WHERE opportunity_id='{$this->opportunity->id}' AND contact_id = '{$this->contact->id}'");
         $this->assertEquals($entry_id, $second_id, "Entry ID shouldn't change when updating relationship fields");

@@ -12,17 +12,18 @@
  */
 
 
-class RestMetadataViewDefsTest extends RestTestPortalBase {
-    public $testMetaDataFiles = array(
+class RestMetadataViewDefsTest extends RestTestPortalBase
+{
+    public $testMetaDataFiles = [
         //BEGIN SUGARCRM flav=ent ONLY
         'contacts' => 'custom/modules/Contacts/clients/portal/layouts/banana/banana.php',
-        'cases'     => 'modules/Cases/clients/portal/views/ghostrider/ghostrider.php'
+        'cases'     => 'modules/Cases/clients/portal/views/ghostrider/ghostrider.php',
         //END SUGARCRM flav=ent ONLY
-    );
+    ];
 
     protected function tearDown() : void
     {
-        foreach($this->testMetaDataFiles as $file ) {
+        foreach ($this->testMetaDataFiles as $file) {
             if (file_exists($file)) {
                 // Ignore the warning on this, the file stat cache causes the file_exist to trigger even when it's not really there
                 @unlink($file);
@@ -39,7 +40,8 @@ class RestMetadataViewDefsTest extends RestTestPortalBase {
     /**
      * @group rest
      */
-    public function testDefaultPortalLayoutMetaData() {
+    public function testDefaultPortalLayoutMetaData()
+    {
         // FIXME TY-1298: investigate why this test fails
         $restReply = $this->_restCall('metadata?type_filter=modules&module_filter=Contacts');
         // Hash should always be set
@@ -53,7 +55,8 @@ class RestMetadataViewDefsTest extends RestTestPortalBase {
     /**
      * @group rest
      */
-    public function testDefaultPortalViewMetaData() {
+    public function testDefaultPortalViewMetaData()
+    {
         $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata?type_filter=modules&module_filter=Cases');
         $this->assertTrue(empty($restReply['reply']['modules']['Cases']['views']['ghostrider']), "Test file found unexpectedly");
@@ -62,7 +65,8 @@ class RestMetadataViewDefsTest extends RestTestPortalBase {
     /**
      * @group rest
      */
-    public function testAdditionalPortalLayoutMetaData() {
+    public function testAdditionalPortalLayoutMetaData()
+    {
         // FIXME TY-1298: investigate why this test fails
         SugarAutoLoader::ensureDir(dirname($this->testMetaDataFiles['contacts']));
         file_put_contents(
@@ -72,13 +76,14 @@ class RestMetadataViewDefsTest extends RestTestPortalBase {
 
         $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata?type_filter=modules&module_filter=Contacts');
-        $this->assertEquals('Banana Split',$restReply['reply']['modules']['Contacts']['layouts']['banana']['meta']['yummy'], "Failed to retrieve all layout metadata");
+        $this->assertEquals('Banana Split', $restReply['reply']['modules']['Contacts']['layouts']['banana']['meta']['yummy'], "Failed to retrieve all layout metadata");
     }
 
     /**
      * @group rest
      */
-    public function testAdditionalPortalViewMetaData() {
+    public function testAdditionalPortalViewMetaData()
+    {
         // FIXME TY-1298: investigate why this test fails
         SugarAutoLoader::ensureDir(dirname($this->testMetaDataFiles['cases']));
         file_put_contents(
@@ -88,19 +93,20 @@ class RestMetadataViewDefsTest extends RestTestPortalBase {
 
         $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata?type_filter=modules&module_filter=Cases');
-        $this->assertEquals('Full',$restReply['reply']['modules']['Cases']['views']['ghostrider']['meta']['pattern'], "Failed to retrieve all view metadata");
+        $this->assertEquals('Full', $restReply['reply']['modules']['Cases']['views']['ghostrider']['meta']['pattern'], "Failed to retrieve all view metadata");
     }
 
     /**
      * @group rest
      */
-    public function testMetadataCacheBuild() {
+    public function testMetadataCacheBuild()
+    {
         $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata/public?type_filter=config&platform=portal');
-        $this->assertArrayHasKey('_hash',$restReply['reply'],"Did not have a _hash on the first run");
+        $this->assertArrayHasKey('_hash', $restReply['reply'], "Did not have a _hash on the first run");
 
         $restReply = $this->_restCall('metadata/public?type_filter=config&platform=portal');
-        $this->assertArrayHasKey('_hash',$restReply['reply'],"Did not have a _hash on the second run");
+        $this->assertArrayHasKey('_hash', $restReply['reply'], "Did not have a _hash on the second run");
     }
 
     //END SUGARCRM flav=ent ONLY

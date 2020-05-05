@@ -19,11 +19,11 @@ use PHPUnit\Framework\TestCase;
  *
  * Abstract class to separate out the common setup, tearDown and utility methods for testing REST API calls
  * @author Collin Lee
- * 
+ *
  */
 abstract class RestTestCase extends TestCase
 {
-	protected $_soapClient = null;
+    protected $_soapClient = null;
     protected $_sessionId;
     protected $_lastRawResponse;
 
@@ -45,11 +45,15 @@ abstract class RestTestCase extends TestCase
      */
     protected function tearDown() : void
     {
-	    if(isset($GLOBALS['listViewDefs'])) unset($GLOBALS['listViewDefs']);
-	    if(isset($GLOBALS['viewdefs'])) unset($GLOBALS['viewdefs']);
+        if (isset($GLOBALS['listViewDefs'])) {
+            unset($GLOBALS['listViewDefs']);
+        }
+        if (isset($GLOBALS['viewdefs'])) {
+            unset($GLOBALS['viewdefs']);
+        }
         unset($GLOBALS['app_list_strings']);
-	    unset($GLOBALS['app_strings']);
-	    unset($GLOBALS['mod_strings']);
+        unset($GLOBALS['app_strings']);
+        unset($GLOBALS['mod_strings']);
         SugarTestHelper::tearDown();
     }
 
@@ -63,7 +67,7 @@ abstract class RestTestCase extends TestCase
      *
      * @return mixed JSON decoded response made from REST call
      */
-    protected function _makeRESTCall($method,$parameters)
+    protected function _makeRESTCall($method, $parameters)
     {
         // specify the REST web service to interact with
         $url = $GLOBALS['sugar_config']['site_url'].'/service/v4/rest.php';
@@ -76,7 +80,7 @@ abstract class RestTestCase extends TestCase
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 0);
-        curl_setopt($curl, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_0 );
+        curl_setopt($curl, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_0);
         // build the request URL
         $json = json_encode($parameters);
         $postArgs = "method=$method&input_type=JSON&response_type=JSON&rest_data=$json";
@@ -89,7 +93,7 @@ abstract class RestTestCase extends TestCase
         $this->_lastRawResponse = $response;
 
         // Convert the result from JSON format to a PHP array
-        return json_decode($response,true);
+        return json_decode($response, true);
     }
 
     protected function _returnLastRawResponse()
@@ -111,17 +115,18 @@ abstract class RestTestCase extends TestCase
         $GLOBALS['db']->commit(); // Making sure we commit any changes before logging in
         // for now hard coded admin login as reg user login does not work
         // because of password hash issue
-        return $this->_makeRESTCall('login',
-            array(
+        return $this->_makeRESTCall(
+            'login',
+            [
                 'user_auth' =>
-                    array(
+                    [
                         'user_name' => 'admin',
                         'password' => md5('asdf'),
                         'version' => '.01',
-                        ),
+                        ],
                 'application_name' => 'mobile',
-                'name_value_list' => array(),
-                )
-            );
+                'name_value_list' => [],
+                ]
+        );
     }
 }

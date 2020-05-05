@@ -21,10 +21,10 @@ class Bug40216Test extends TestCase
 
     protected function setUp() : void
     {
-    	   $this->moduleName = 'TestModule'.mt_rand();
+           $this->moduleName = 'TestModule'.mt_rand();
 
-        sugar_mkdir("modules/{$this->moduleName}/metadata",null,true);
-        sugar_mkdir("custom/modules/{$this->moduleName}/metadata",null,true);
+        sugar_mkdir("modules/{$this->moduleName}/metadata", null, true);
+        sugar_mkdir("custom/modules/{$this->moduleName}/metadata", null, true);
     }
 
     protected function tearDown() : void
@@ -37,24 +37,24 @@ class Bug40216Test extends TestCase
     {
         sugar_touch("modules/{$this->moduleName}/metadata/additionalDetails.php");
 
-    	   $viewObject = new Bug40216Mock;
+           $viewObject = new Bug40216Mock;
 
-    	   $this->assertEquals(
-    	       "modules/{$this->moduleName}/metadata/additionalDetails.php",
-    	       $viewObject->getAdditionalDetailsMetadataFile($this->moduleName)
-    	       );
+           $this->assertEquals(
+               "modules/{$this->moduleName}/metadata/additionalDetails.php",
+               $viewObject->getAdditionalDetailsMetadataFile($this->moduleName)
+           );
     }
 
     public function testCustomAdditionalDetailsMetadataFileIsFound()
     {
         sugar_touch("custom/modules/{$this->moduleName}/metadata/additionalDetails.php");
 
-    	   $viewObject = new Bug40216Mock;
+           $viewObject = new Bug40216Mock;
 
-    	   $this->assertEquals(
-    	       "custom/modules/{$this->moduleName}/metadata/additionalDetails.php",
-    	       $viewObject->getAdditionalDetailsMetadataFile($this->moduleName)
-    	       );
+           $this->assertEquals(
+               "custom/modules/{$this->moduleName}/metadata/additionalDetails.php",
+               $viewObject->getAdditionalDetailsMetadataFile($this->moduleName)
+           );
     }
 
     public function testCustomAdditionalDetailsMetadataFileIsUsedBeforeNonCustomOne()
@@ -62,12 +62,12 @@ class Bug40216Test extends TestCase
         sugar_touch("modules/{$this->moduleName}/metadata/additionalDetails.php");
         sugar_touch("custom/modules/{$this->moduleName}/metadata/additionalDetails.php");
 
-    	   $viewObject = new Bug40216Mock;
+           $viewObject = new Bug40216Mock;
 
-    	   $this->assertEquals(
-    	       "custom/modules/{$this->moduleName}/metadata/additionalDetails.php",
-    	       $viewObject->getAdditionalDetailsMetadataFile($this->moduleName)
-    	       );
+           $this->assertEquals(
+               "custom/modules/{$this->moduleName}/metadata/additionalDetails.php",
+               $viewObject->getAdditionalDetailsMetadataFile($this->moduleName)
+           );
     }
 }
 
@@ -75,8 +75,7 @@ class Bug40216Mock extends HomeViewAdditionaldetailsretrieve
 {
     public function getAdditionalDetailsMetadataFile(
         $moduleName
-        )
-    {
+    ) {
         return parent::getAdditionalDetailsMetadataFile($moduleName);
     }
 }

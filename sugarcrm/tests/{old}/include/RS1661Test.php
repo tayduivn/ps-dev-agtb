@@ -102,26 +102,26 @@ class RS1661Test extends TestCase
      */
     private function createAndPopulateTable()
     {
-        $fieldParams = array(
-            'id' => array (
+        $fieldParams = [
+            'id' =>  [
                 'name' => 'id',
                 'type' => 'id',
-            ),
-            'acl_team_set_id' => array (
+            ],
+            'acl_team_set_id' =>  [
                 'name' => 'acl_team_set_id',
                 'type' => 'varchar',
                 'len' => 36,
-            ),
-        );
+            ],
+        ];
 
         // Create test table with params
-        $this->db->createTableParams($this->tableName, $fieldParams, array());
+        $this->db->createTableParams($this->tableName, $fieldParams, []);
 
         // Insert some data to test table
-        $this->db->insertParams($this->tableName, $fieldParams, array(
+        $this->db->insertParams($this->tableName, $fieldParams, [
             'id' => Uuid::uuid1(),
             'acl_team_set_id' => Uuid::uuid1(),
-        ));
+        ]);
     }
 
     /**
@@ -133,7 +133,7 @@ class RS1661Test extends TestCase
     {
         // Get list of tables from current database
         $allTables = $this->db->getTablesArray();
-        $excludeTables = array();
+        $excludeTables = [];
         foreach ($allTables as $tableName) {
             // Exclude everything except our test table
             if ($tableName != $this->tableName) {

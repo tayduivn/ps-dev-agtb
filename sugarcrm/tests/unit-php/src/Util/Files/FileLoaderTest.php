@@ -25,7 +25,7 @@ class FileLoaderTest extends TestCase
      * List of test files created
      * @var array
      */
-    protected $testFiles = array();
+    protected $testFiles = [];
 
     /**
      * {@inheritdoc}
@@ -51,20 +51,20 @@ class FileLoaderTest extends TestCase
 
     public function providerTestValidFilePath()
     {
-        return array(
-            array(
+        return [
+            [
                 SUGAR_BASE_DIR . '/bogus.php',
                 false,
-            ),
-            array(
+            ],
+            [
                 SUGAR_BASE_DIR . '/bogus.php',
                 true,
-            ),
-            array(
+            ],
+            [
                 $this->getUploadDir() . '/bogus.php',
                 true,
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -81,28 +81,28 @@ class FileLoaderTest extends TestCase
 
     public function providerTestInvalidFilePath()
     {
-        return array(
-            array(
+        return [
+            [
                 '/etc/passwd',
                 'File name violation: file outside basedir',
                 false,
-            ),
-            array(
+            ],
+            [
                 '/etc/passwd' . chr(0),
                 'File name violation: null bytes detected',
                 false,
-            ),
-            array(
+            ],
+            [
                 SUGAR_BASE_DIR . '/modules/Accounts/FooBar.php',
                 'File name violation: file not found',
                 false,
-            ),
-            array(
+            ],
+            [
                 SUGAR_BASE_DIR . '/modules/../modules/Accounts/Account.php',
                 'File name violation: directory traversal detected',
                 false,
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -133,55 +133,55 @@ class FileLoaderTest extends TestCase
 
     public function providerTestVarsFromInclude()
     {
-        return array(
-            array(
-                array(
-                    'vardef1' => array('foo' => 'bar'),
-                    'vardef2' => array('beer' => 'buzz'),
-                ),
-                array('vardef'),
-                array('vardef' => null),
-            ),
-            array(
-                array(
-                    'vardef1' => array('happy' => 'joy'),
-                    'vardef2' => array('sad' => 'bugs'),
-                ),
-                array('vardef1'),
-                array('vardef1' => array('happy' => 'joy')),
-            ),
-            array(
-                array(
-                    'vardef1' => array('happy' => 'joy'),
-                    'vardef2' => array('sad' => 'bugs'),
-                ),
-                array('vardef2'),
-                array('vardef2' => array('sad' => 'bugs')),
-            ),
-            array(
-                array(
-                    'vardef1' => array('happy' => 'joy'),
-                    'vardef2' => array('sad' => 'bugs'),
-                ),
-                array('vardef1', 'vardef2'),
-                array(
-                    'vardef1' => array('happy' => 'joy'),
-                    'vardef2' => array('sad' => 'bugs'),
-                ),
-            ),
-            array(
-                array(
-                    'vardef1' => array('happy' => 'joy'),
-                    'vardef2' => array('sad' => 'bugs'),
-                ),
-                array('vardef1', 'bogus', 'vardef2'),
-                array(
-                    'vardef1' => array('happy' => 'joy'),
+        return [
+            [
+                [
+                    'vardef1' => ['foo' => 'bar'],
+                    'vardef2' => ['beer' => 'buzz'],
+                ],
+                ['vardef'],
+                ['vardef' => null],
+            ],
+            [
+                [
+                    'vardef1' => ['happy' => 'joy'],
+                    'vardef2' => ['sad' => 'bugs'],
+                ],
+                ['vardef1'],
+                ['vardef1' => ['happy' => 'joy']],
+            ],
+            [
+                [
+                    'vardef1' => ['happy' => 'joy'],
+                    'vardef2' => ['sad' => 'bugs'],
+                ],
+                ['vardef2'],
+                ['vardef2' => ['sad' => 'bugs']],
+            ],
+            [
+                [
+                    'vardef1' => ['happy' => 'joy'],
+                    'vardef2' => ['sad' => 'bugs'],
+                ],
+                ['vardef1', 'vardef2'],
+                [
+                    'vardef1' => ['happy' => 'joy'],
+                    'vardef2' => ['sad' => 'bugs'],
+                ],
+            ],
+            [
+                [
+                    'vardef1' => ['happy' => 'joy'],
+                    'vardef2' => ['sad' => 'bugs'],
+                ],
+                ['vardef1', 'bogus', 'vardef2'],
+                [
+                    'vardef1' => ['happy' => 'joy'],
                     'bogus' => null,
-                    'vardef2' => array('sad' => 'bugs'),
-                ),
-            ),
-        );
+                    'vardef2' => ['sad' => 'bugs'],
+                ],
+            ],
+        ];
     }
 
     /**
@@ -199,39 +199,39 @@ class FileLoaderTest extends TestCase
 
     public function providerTestVarFromInclude()
     {
-        return array(
-            array(
-                array(
-                    'vardef' => array('foo' => 'bar'),
-                ),
+        return [
+            [
+                [
+                    'vardef' => ['foo' => 'bar'],
+                ],
                 'vardef',
-                array('foo' => 'bar'),
-            ),
-            array(
-                array(
-                    'vardef1' => array('foo' => 'bar'),
-                    'vardef2' => array('beer' => 'buzz'),
-                ),
+                ['foo' => 'bar'],
+            ],
+            [
+                [
+                    'vardef1' => ['foo' => 'bar'],
+                    'vardef2' => ['beer' => 'buzz'],
+                ],
                 'vardef',
                 null,
-            ),
-            array(
-                array(
-                    'vardef1' => array('happy' => 'joy'),
-                    'vardef2' => array('sad' => 'bugs'),
-                ),
+            ],
+            [
+                [
+                    'vardef1' => ['happy' => 'joy'],
+                    'vardef2' => ['sad' => 'bugs'],
+                ],
                 'vardef1',
-                array('happy' => 'joy'),
-            ),
-            array(
-                array(
-                    'vardef1' => array('happy' => 'joy'),
-                    'vardef2' => array('sad' => 'bugs'),
-                ),
+                ['happy' => 'joy'],
+            ],
+            [
+                [
+                    'vardef1' => ['happy' => 'joy'],
+                    'vardef2' => ['sad' => 'bugs'],
+                ],
                 'vardef2',
-                array('sad' => 'bugs'),
-            ),
-        );
+                ['sad' => 'bugs'],
+            ],
+        ];
     }
 
     /**

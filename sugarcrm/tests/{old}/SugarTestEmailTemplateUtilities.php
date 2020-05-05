@@ -13,7 +13,7 @@
 
 class SugarTestEmailTemplateUtilities
 {
-    private static $createdEmailTemplates = array();
+    private static $createdEmailTemplates = [];
 
     private function __construct()
     {
@@ -22,14 +22,14 @@ class SugarTestEmailTemplateUtilities
     /**
      * @return EmailTemplate
      */
-    public static function createEmailTemplate($id = '', $emailTemplateValues = array())
+    public static function createEmailTemplate($id = '', $emailTemplateValues = [])
     {
         $time = mt_rand();
         $emailTemplate = BeanFactory::newBean('EmailTemplates');
 
-        $emailTemplateValues = array_merge(array(
+        $emailTemplateValues = array_merge([
             'name' => 'SugarEmailTemplate' . $time,
-        ), $emailTemplateValues);
+        ], $emailTemplateValues);
 
         foreach ($emailTemplateValues as $property => $value) {
             $emailTemplate->$property = $value;
@@ -54,7 +54,7 @@ class SugarTestEmailTemplateUtilities
 
     public static function getCreatedEmailTemplateIds()
     {
-        $emailTemplate_ids = array();
+        $emailTemplate_ids = [];
         foreach (self::$createdEmailTemplates as $emailTemplate) {
             $emailTemplate_ids[] = $emailTemplate->id;
         }

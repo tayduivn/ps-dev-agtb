@@ -46,11 +46,11 @@ class FlexRelateChildrenLinkTest extends TestCase
 
         /** @var Link2 $tasks */
         $tasks = self::$contact->tasks;
-        $tasks->add(array(self::$task1, self::$task2));
+        $tasks->add([self::$task1, self::$task2]);
 
         /** @var Link2 $taskParent */
         $taskParent = self::$contact->tasks_parent;
-        $taskParent->add(array(self::$task2, self::$task3));
+        $taskParent->add([self::$task2, self::$task3]);
     }
 
     public static function tearDownAfterClass(): void

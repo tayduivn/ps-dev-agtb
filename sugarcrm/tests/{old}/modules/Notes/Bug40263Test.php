@@ -17,41 +17,41 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug40263Test extends TestCase
 {
-	var $user;
-	var $note;
+    var $user;
+    var $note;
 
     protected function setUp() : void
     {
         SugarTestHelper::setUp('current_user');
-	}
+    }
 
     protected function tearDown() : void
     {
         SugarTestNoteUtilities::removeAllCreatedNotes();
-	}
+    }
 
-	public function testGetListViewQueryCreatedBy()
+    public function testGetListViewQueryCreatedBy()
     {
         $note = SugarTestNoteUtilities::createNote();
 
-        include("modules/Notes/metadata/listviewdefs.php");
-        $displayColumns = array(
-            'NAME' => array (
-			    'width' => '40%',
-			    'label' => 'LBL_LIST_SUBJECT',
-			    'link' => true,
-			    'default' => true,
-			 ),
-			 'CREATED_BY_NAME' => array (
-			     'type' => 'relate',
-			     'label' => 'LBL_CREATED_BY',
-			     'width' => '10%',
-			     'default' => true,
-			 ),
-		);
-		$lvd = new ListViewDisplay();
-		$lvd->displayColumns = $displayColumns;
-		$fields = $lvd->setupFilterFields();
+        include "modules/Notes/metadata/listviewdefs.php";
+        $displayColumns = [
+            'NAME' =>  [
+                'width' => '40%',
+                'label' => 'LBL_LIST_SUBJECT',
+                'link' => true,
+                'default' => true,
+             ],
+             'CREATED_BY_NAME' =>  [
+                 'type' => 'relate',
+                 'label' => 'LBL_CREATED_BY',
+                 'width' => '10%',
+                 'default' => true,
+             ],
+        ];
+        $lvd = new ListViewDisplay();
+        $lvd->displayColumns = $displayColumns;
+        $fields = $lvd->setupFilterFields();
         $query = $note->create_new_list_query('', 'id="' . $note->id . '"', $fields);
 
         $this->assertMatchesRegularExpression(

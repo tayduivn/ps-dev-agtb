@@ -42,14 +42,14 @@ class RelateRecordApiUnrelatedRecordTest extends TestCase
         $service = SugarTestRestUtilities::getRestServiceMock();
         $api = new RelateRecordApi();
 
-        $result = $api->createRelatedRecord($service, array(
+        $result = $api->createRelatedRecord($service, [
             'module' => 'Accounts',
             'record' => self::$account1->id,
             'link_name' => 'contacts',
             'account_id' => self::$account2->id,
-        ));
+        ]);
 
-        SugarTestContactUtilities::setCreatedContact(array($result['related_record']['id']));
+        SugarTestContactUtilities::setCreatedContact([$result['related_record']['id']]);
         $this->assertEquals(self::$account2->id, $result['related_record']['account_id']);
     }
 }

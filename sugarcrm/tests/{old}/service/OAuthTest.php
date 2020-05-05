@@ -31,14 +31,14 @@ class OAuthTest extends TestCase
         SugarTestHelper::setUp("app_strings");
         //Create an anonymous user for login purposes/
         self::$_user = SugarTestHelper::setUp("current_user");
-        SugarTestHelper::setUp("mod_strings", array('Accounts'));
+        SugarTestHelper::setUp("mod_strings", ['Accounts']);
 
         self::$helperObject = new APIv3Helper();
         // create our own customer key
         $GLOBALS['db']->query("DELETE FROM oauth_consumer where c_key='TESTCUSTOMER'");
-	    $GLOBALS['db']->query("DELETE FROM oauth_nonce where conskey='TESTCUSTOMER'");
+        $GLOBALS['db']->query("DELETE FROM oauth_nonce where conskey='TESTCUSTOMER'");
         self::$_consumer = new OAuthKey();
-	    self::$_consumer->c_key = "TESTCUSTOMER";
+        self::$_consumer->c_key = "TESTCUSTOMER";
         self::$_consumer->c_secret = "TESTSECRET";
         self::$_consumer->save();
     }
@@ -46,21 +46,21 @@ class OAuthTest extends TestCase
     public static function tearDownAfterClass(): void
     {
         SugarTestHelper::tearDown();
-	    $GLOBALS['db']->query("DELETE FROM oauth_consumer where c_key='TESTCUSTOMER'");
-	    $GLOBALS['db']->query("DELETE FROM oauth_nonce where conskey='TESTCUSTOMER'");
-	    $GLOBALS['db']->query("DELETE FROM oauth_tokens where consumer='".self::$_consumer->id."'");
-	    SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-	}
+        $GLOBALS['db']->query("DELETE FROM oauth_consumer where c_key='TESTCUSTOMER'");
+        $GLOBALS['db']->query("DELETE FROM oauth_nonce where conskey='TESTCUSTOMER'");
+        $GLOBALS['db']->query("DELETE FROM oauth_tokens where consumer='".self::$_consumer->id."'");
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+    }
 
     protected function setUp() : void
-	{
-	    if(!SugarOAuthServer::enabled() || !extension_loaded('oauth')) {
+    {
+        if (!SugarOAuthServer::enabled() || !extension_loaded('oauth')) {
             $this->markTestSkipped("No OAuth support");
         }
-        $this->oauth = new OAuth('TESTCUSTOMER','TESTSECRET',OAUTH_SIG_METHOD_HMACSHA1,OAUTH_AUTH_TYPE_URI);
-        $this->url = rtrim($GLOBALS['sugar_config']['site_url'],'/').'/service/v4/rest.php';
-	    $GLOBALS['current_user'] = self::$_user;
-	}
+        $this->oauth = new OAuth('TESTCUSTOMER', 'TESTSECRET', OAUTH_SIG_METHOD_HMACSHA1, OAUTH_AUTH_TYPE_URI);
+        $this->url = rtrim($GLOBALS['sugar_config']['site_url'], '/').'/service/v4/rest.php';
+        $GLOBALS['current_user'] = self::$_user;
+    }
 
     protected function _returnLastRawResponse()
     {
@@ -70,7 +70,7 @@ class OAuthTest extends TestCase
     public function testOauthRequestToken()
     {
         $request_token_info = $this->oauth->getRequestToken($this->url."?method=oauth_request_token");
-        $this->assertEquals(rtrim($GLOBALS['sugar_config']['site_url'],'/').'/index.php?module=OAuthTokens&action=authorize', $request_token_info["authorize_url"]);
+        $this->assertEquals(rtrim($GLOBALS['sugar_config']['site_url'], '/').'/index.php?module=OAuthTokens&action=authorize', $request_token_info["authorize_url"]);
         $this->assertEquals("true", $request_token_info["oauth_callback_confirmed"]);
         $this->assertNotEmpty($request_token_info['oauth_token']);
         $this->assertNotEmpty($request_token_info['oauth_token_secret']);
@@ -92,7 +92,7 @@ class OAuthTest extends TestCase
         $this->assertInstanceOf('OAuthToken', $c_token);
         // check token is in the right state
         $this->assertEquals(OAuthToken::REQUEST, $c_token->tstate, "Request token has wrong state");
-        $verify = $c_token->authorize(array("user" => $current_user->id));
+        $verify = $c_token->authorize(["user" => $current_user->id]);
 
         $this->oauth->setToken($token, $secret);
         $access_token_info = $this->oauth->getAccessToken($this->url."?method=oauth_access_token&oauth_verifier=$verify");
@@ -110,7 +110,7 @@ class OAuthTest extends TestCase
         $this->assertEquals(OAuthToken::INVALID, $rtoken->tstate, "Request token was not invalidated");
     }
 
-    protected function _makeRESTCall($method,$parameters)
+    protected function _makeRESTCall($method, $parameters)
     {
         // specify the REST web service to interact with
         $url = $GLOBALS['sugar_config']['site_url'].'/service/v4/rest.php';
@@ -123,7 +123,7 @@ class OAuthTest extends TestCase
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 0);
-        curl_setopt($curl, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_0 );
+        curl_setopt($curl, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_0);
         // build the request URL
         $json = json_encode($parameters);
         $postArgs = "method=$method&input_type=JSON&response_type=JSON&rest_data=$json";
@@ -136,7 +136,7 @@ class OAuthTest extends TestCase
         $this->_lastRawResponse = $response;
 
         // Convert the result from JSON format to a PHP array
-        return json_decode($response,true);
+        return json_decode($response, true);
     }
 
     public function testOauthServiceAccess()
@@ -147,7 +147,7 @@ class OAuthTest extends TestCase
         $secret = $request_token_info['oauth_token_secret'];
 
         $c_token = OAuthToken::load($token);
-        $verify = $c_token->authorize(array("user" => $current_user->id));
+        $verify = $c_token->authorize(["user" => $current_user->id]);
 
         $this->oauth->setToken($token, $secret);
         $access_token_info = $this->oauth->getAccessToken($this->url."?method=oauth_access_token&oauth_verifier=$verify");
@@ -166,7 +166,7 @@ class OAuthTest extends TestCase
         $id = json_decode($this->oauth->getLastResponse(), true);
         $this->assertEquals($current_user->id, $id);
         // test fetch through session initiated by OAuth
-        $id2 = $this->_makeRESTCall('get_user_id', array("session" => $session["id"]));
+        $id2 = $this->_makeRESTCall('get_user_id', ["session" => $session["id"]]);
         $this->assertEquals($current_user->id, $id2);
     }
 }

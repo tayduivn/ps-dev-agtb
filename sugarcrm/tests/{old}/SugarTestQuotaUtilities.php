@@ -11,19 +11,21 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$beanList = array();
-$beanFiles = array();
-require('include/modules.php');
+$beanList = [];
+$beanFiles = [];
+require 'include/modules.php';
 $GLOBALS['beanList'] = $beanList;
 $GLOBALS['beanFiles'] = $beanFiles;
 require_once 'modules/Quotas/Quota.php';
 
 class SugarTestQuotaUtilities
 {
-    private static $_createdQuotas = array();
-    private static $_createdUserIds = array();
+    private static $_createdQuotas = [];
+    private static $_createdUserIds = [];
 
-    private function __construct() {}
+    private function __construct()
+    {
+    }
 
     public static function createQuota($amount = 500, $id = '')
     {
@@ -31,8 +33,7 @@ class SugarTestQuotaUtilities
         $quota->amount = $amount;
         $quota->currency_id = -99;
         $quota->committed = 1;
-        if(!empty($id))
-        {
+        if (!empty($id)) {
             $quota->new_with_id = true;
             $quota->id = $id;
         }
@@ -41,12 +42,13 @@ class SugarTestQuotaUtilities
         return $quota;
     }
 
-    public static function setCreatedQuota($quota_ids) {
-    	foreach($quota_ids as $quota_id) {
-    		$quota = new Quota();
-    		$quota->id = $quota_id;
-        	self::$_createdQuotas[] = $quota;
-    	} // foreach
+    public static function setCreatedQuota($quota_ids)
+    {
+        foreach ($quota_ids as $quota_id) {
+            $quota = new Quota();
+            $quota->id = $quota_id;
+            self::$_createdQuotas[] = $quota;
+        } // foreach
     } // fn
 
     public static function setCreatedUserIds($user_ids)
@@ -56,7 +58,7 @@ class SugarTestQuotaUtilities
 
     public static function getCreatedUserIds()
     {
-    	return self::$_createdUserIds;
+        return self::$_createdUserIds;
     }
 
     public static function removeAllCreatedQuotas()
@@ -67,16 +69,15 @@ class SugarTestQuotaUtilities
         //remove quotas generated in the worksheets by using the temporary user id's
         $GLOBALS['db']->query('DELETE FROM quotas WHERE user_id IN (\'' . implode("', '", self::getCreatedUserIds()) . '\')');
 
-        self::$_createdQuotas = array();
+        self::$_createdQuotas = [];
     }
 
     public static function getCreatedQuotaIds()
     {
-        $quota_ids = array();
+        $quota_ids = [];
         foreach (self::$_createdQuotas as $quota) {
             $quota_ids[] = $quota->id;
         }
         return $quota_ids;
     }
 }
-?>

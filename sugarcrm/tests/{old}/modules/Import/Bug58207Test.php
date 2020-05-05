@@ -31,7 +31,7 @@ class Bug58207Test extends TestCase
         copy(__DIR__ . '/'. $this->_file, $dst);
         
         global $sugar_config;
-        $this->_sugarConfig = $sugar_config; 
+        $this->_sugarConfig = $sugar_config;
         $sugar_config['default_export_charset'] = "SJIS";
 
         SugarTestHelper::setUp('current_user');

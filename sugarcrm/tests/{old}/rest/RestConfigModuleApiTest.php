@@ -11,12 +11,13 @@
  */
 
 
-class RestConfigModuleApiTest extends RestTestBase {
-    protected $configs = array(
-        array('name' => 'AdministrationTest', 'value' => 'Base', 'platform' => 'base', 'category' => 'Forecasts'),
-        array('name' => 'AdministrationTest', 'value' => 'Portal', 'platform' => 'portal', 'category' => 'Forecasts'),
-        array('name' => 'AdministrationTest', 'value' => '["Portal"]', 'platform' => 'json', 'category' => 'Forecasts'),
-    );
+class RestConfigModuleApiTest extends RestTestBase
+{
+    protected $configs = [
+        ['name' => 'AdministrationTest', 'value' => 'Base', 'platform' => 'base', 'category' => 'Forecasts'],
+        ['name' => 'AdministrationTest', 'value' => 'Portal', 'platform' => 'portal', 'category' => 'Forecasts'],
+        ['name' => 'AdministrationTest', 'value' => '["Portal"]', 'platform' => 'json', 'category' => 'Forecasts'],
+    ];
     protected function setUp() : void
     {
         parent::setUp();
@@ -28,7 +29,7 @@ class RestConfigModuleApiTest extends RestTestBase {
         $db->query("DELETE FROM config where name = 'AdministrationTest'");
         /* @var $admin Administration */
         $admin = BeanFactory::newBean('Administration');
-        foreach($this->configs as $config){
+        foreach ($this->configs as $config) {
             $admin->saveSetting($config['category'], $config['name'], $config['value'], $config['platform']);
         }
     }
@@ -92,7 +93,7 @@ class RestConfigModuleApiTest extends RestTestBase {
     {
         $restReply = $this->_restCall('Forecasts/config?platform=json');
         $this->assertEquals('200', $restReply['info']['http_code']);
-        $this->assertEquals(array("Portal"), $restReply['reply']['AdministrationTest']);
+        $this->assertEquals(["Portal"], $restReply['reply']['AdministrationTest']);
     }
 
     /**
@@ -102,7 +103,7 @@ class RestConfigModuleApiTest extends RestTestBase {
     {
         $GLOBALS['current_user']->is_admin = false;
         $GLOBALS['current_user']->save();
-        $restReply = $this->_restCall('Forecasts/config?platform=base',json_encode(array('AdministrationSaveTest' => 'My voice is my passport, verify me')),'POST');
+        $restReply = $this->_restCall('Forecasts/config?platform=base', json_encode(['AdministrationSaveTest' => 'My voice is my passport, verify me']), 'POST');
         $this->assertEquals('403', $restReply['info']['http_code']);
         $this->assertEquals("Current User not authorized to change Forecasts configuration settings", $restReply['reply']['error_message']);
     }
@@ -114,7 +115,7 @@ class RestConfigModuleApiTest extends RestTestBase {
     {
         $GLOBALS['current_user']->is_admin = true;
         $GLOBALS['current_user']->save();
-        $restReply = $this->_restCall('Forecasts/config?platform=base',json_encode(array('AdministrationSaveTest' => 'My voice is my passport, verify me')),'POST');
+        $restReply = $this->_restCall('Forecasts/config?platform=base', json_encode(['AdministrationSaveTest' => 'My voice is my passport, verify me']), 'POST');
         $this->assertEquals('200', $restReply['info']['http_code']);
         $this->assertEquals('My voice is my passport, verify me', $restReply['reply']['AdministrationSaveTest']);
     }

@@ -12,7 +12,7 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once('modules/Currencies/Currency.php');
+require_once 'modules/Currencies/Currency.php';
 
 /**
  * Bug #48690

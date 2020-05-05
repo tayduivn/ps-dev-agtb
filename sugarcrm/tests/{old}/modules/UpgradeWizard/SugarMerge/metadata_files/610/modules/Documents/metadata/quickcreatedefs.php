@@ -10,73 +10,73 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$viewdefs['Documents']['QuickCreate'] = array(
-    'templateMeta' => array('form' => array('enctype'=>'multipart/form-data',
-                                            'hidden'=>array('<input type="hidden" name="old_id" value="{$fields.document_revision_id.value}">',
+$viewdefs['Documents']['QuickCreate'] = [
+    'templateMeta' => ['form' => ['enctype'=>'multipart/form-data',
+                                            'hidden'=>['<input type="hidden" name="old_id" value="{$fields.document_revision_id.value}">',
                                                             '<input type="hidden" name="parent_id" value="{$smarty.request.parent_id}">',
-                                                            '<input type="hidden" name="parent_type" value="{$smarty.request.parent_type}">',)),
+                                                            '<input type="hidden" name="parent_type" value="{$smarty.request.parent_type}">',]],
                                             
-                            'maxColumns' => '2', 
-                            'widths' => array(
-                                            array('label' => '10', 'field' => '30'), 
-                                            array('label' => '10', 'field' => '30')
-                                            ),
-                            'includes' => 
-                              array (
-                                array('file' => 'include/javascript/popup_parent_helper.js'),
-                                array('file' => 'modules/Documents/documents.js'),
-                              ),
-),
- 'panels' =>array (
-  'default' => 
-  array (
+                            'maxColumns' => '2',
+                            'widths' => [
+                                            ['label' => '10', 'field' => '30'],
+                                            ['label' => '10', 'field' => '30'],
+                                            ],
+                            'includes' =>
+                               [
+                                ['file' => 'include/javascript/popup_parent_helper.js'],
+                                ['file' => 'modules/Documents/documents.js'],
+                              ],
+    ],
+    'panels' => [
+    'default' =>
+    [
     
-    array (
+     [
 
-      array('name'=>'uploadfile', 
+      ['name'=>'uploadfile',
             'customCode' => '<input type="hidden" name="escaped_document_name"><input name="uploadfile" type="file" size="30" maxlength="" onchange="setvalue(this);" value="{$fields.filename.value}">{$fields.filename.value}',
-            'displayParams'=>array('required'=>true),
-            ),
-      'status_id',            
-    ),
+            'displayParams'=>['required'=>true],
+            ],
+      'status_id',
+     ],
     
-    array (
+     [
       'document_name',
-      array('name'=>'revision',
-            'customCode' => '<input name="revision" type="text" value="{$fields.revision.value}">'
-           ),    
-    ),    
+      ['name'=>'revision',
+            'customCode' => '<input name="revision" type="text" value="{$fields.revision.value}">',
+           ],
+     ],
     
-    array (
-        array (
+     [
+         [
           'name' => 'template_type',
           'label' => 'LBL_DET_TEMPLATE_TYPE',
-        ),
-    	array (
+         ],
+         [
           'name' => 'is_template',
           'label' => 'LBL_DET_IS_TEMPLATE',
-        ),
-    ),
+         ],
+     ],
     
-    array (
-       array('name'=>'active_date','displayParams'=>array('required'=>true)),
+     [
+       ['name'=>'active_date','displayParams'=>['required'=>true]],
        'category_id',
-    ),
+     ],
     
-    array (
+     [
       'exp_date',
       'subcategory_id',
-    ),    
+     ],
     
-    array (
-      array('name'=>'team_name','displayParams'=>array('required'=>true)),
+     [
+      ['name'=>'team_name','displayParams'=>['required'=>true]],
      
-    ),
+     ],
 
-    array (
-      array('name'=>'description', 'displayParams'=>array('rows'=>10, 'cols'=>120)),
-    ),
-  ),
-)
+     [
+      ['name'=>'description', 'displayParams'=>['rows'=>10, 'cols'=>120]],
+     ],
+    ],
+    ],
 
-);
+];

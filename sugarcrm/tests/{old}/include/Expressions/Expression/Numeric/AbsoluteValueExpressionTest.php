@@ -26,11 +26,11 @@ class AbsoluteValueExpressionTest extends TestCase
 
     public function dataProviderTestEvaluate()
     {
-        return array(
-            array('abs(-5)', 5),
-            array('abs("-5")', 5),
-            array('abs(5)', 5),
-            array('abs("5")', 5),
-        );
+        return [
+            ['abs(-5)', 5],
+            ['abs("-5")', 5],
+            ['abs(5)', 5],
+            ['abs("5")', 5],
+        ];
     }
 }

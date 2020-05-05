@@ -25,12 +25,12 @@ class ModuleNameValidatorTest extends AbstractConstraintValidatorTest
      * List of modules as reported by globals
      * @var unknown
      */
-    protected $moduleList = array(
+    protected $moduleList = [
         'Accounts',
         'Contacts',
         'Leads',
         'MailMerge',
-    );
+    ];
 
     /**
      * {@inheritdoc}
@@ -38,8 +38,8 @@ class ModuleNameValidatorTest extends AbstractConstraintValidatorTest
     protected function createValidator()
     {
         return $this->getMockBuilder('\Sugarcrm\Sugarcrm\Security\Validator\Constraints\Mvc\ModuleNameValidator')
-            ->setConstructorArgs(array($this->moduleList))
-            ->setMethods(array('isValidBeanModule'))
+            ->setConstructorArgs([$this->moduleList])
+            ->setMethods(['isValidBeanModule'])
             ->getMock();
     }
 
@@ -88,17 +88,17 @@ class ModuleNameValidatorTest extends AbstractConstraintValidatorTest
 
     public function providerTestValidValues()
     {
-        return array(
+        return [
 
             // use bean validation
-            array('Accounts', true),
+            ['Accounts', true],
 
             // module list validation
-            array('MailMerge', false),
+            ['MailMerge', false],
 
             // url rewrite for cache/jsLanguage uses app_strings
-            array('app_strings', false),
-        );
+            ['app_strings', false],
+        ];
     }
 
     /**
@@ -108,9 +108,9 @@ class ModuleNameValidatorTest extends AbstractConstraintValidatorTest
      */
     public function testInvalidValues($value, $isBean, $code)
     {
-        $constraint = new ModuleName(array(
+        $constraint = new ModuleName([
             'message' => 'testMessage',
-        ));
+        ]);
 
         $this->validator->method('isValidBeanModule')
             ->willReturn($isBean);
@@ -126,12 +126,12 @@ class ModuleNameValidatorTest extends AbstractConstraintValidatorTest
 
     public function providerTestInvalidValues()
     {
-        return array(
-            array(
+        return [
+            [
                 'FooBar',
                 false,
-                ModuleName::ERROR_UNKNOWN_MODULE
-            ),
-        );
+                ModuleName::ERROR_UNKNOWN_MODULE,
+            ],
+        ];
     }
 }

@@ -19,10 +19,10 @@ class Bug38424IntTest extends TestCase
     protected function setUp() : void
     {
         $sfr = new SugarFieldInt('int');
-        $vardef = array(
+        $vardef = [
             'len' => '10',
-        );
-        $this->_fieldOutput = $sfr->getEditViewSmarty(array(), $vardef, array(), 1);
+        ];
+        $this->_fieldOutput = $sfr->getEditViewSmarty([], $vardef, [], 1);
     }
 
     public function testMaxLength()

@@ -32,7 +32,7 @@ class Bug55455Test extends TestCase
     
     public function testProperMimeTypeFetching()
     {
-        // This test is a *little* loose since not all servers are the same. 
+        // This test is a *little* loose since not all servers are the same.
         // Additionally, in some odd cases, PHP errors on finfo and mime_content_type
         // calls and, when this happens, the mime getter will return application/octet-stream
         $dl = new DownloadFile();

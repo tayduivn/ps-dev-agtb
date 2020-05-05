@@ -13,7 +13,7 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once('modules/Campaigns/utils.php');
+require_once 'modules/Campaigns/utils.php';
 
 /**
  * Bug #54098
@@ -51,15 +51,15 @@ class Bug54098Test extends TestCase
         $oCampaign = SugarTestCampaignUtilities::createCampaign();
         $oCampaign->campaign_type = 'NewsLetter';
         $oCampaign->save();
-        $oProspectList = SugarTestProspectListsUtilities::createProspectList(NULL, array(
-            'list_type' => 'default'
-        ));
-        $oProspectList2 = SugarTestProspectListsUtilities::createProspectList(NULL, array(
-            'list_type' => 'default'
-        ));
-        $oProspectList3 = SugarTestProspectListsUtilities::createProspectList(NULL, array(
-            'list_type' => 'exempt'
-        ));
+        $oProspectList = SugarTestProspectListsUtilities::createProspectList(null, [
+            'list_type' => 'default',
+        ]);
+        $oProspectList2 = SugarTestProspectListsUtilities::createProspectList(null, [
+            'list_type' => 'default',
+        ]);
+        $oProspectList3 = SugarTestProspectListsUtilities::createProspectList(null, [
+            'list_type' => 'exempt',
+        ]);
         $oContact = SugarTestContactUtilities::createContact();
         $oContact2 = SugarTestContactUtilities::createContact();
         $this->createProspectlistToCampaignRelationRecord($oCampaign, $oProspectList);
@@ -79,8 +79,7 @@ class Bug54098Test extends TestCase
 
     private function createProspectlistToCampaignRelationRecord(Campaign $oCampaign, ProspectList $oProspectList)
     {
-        if (!empty($oCampaign->id) and !empty($oProspectList->id))
-        {
+        if (!empty($oCampaign->id) and !empty($oProspectList->id)) {
             $id = 'BUg54098' . mt_rand();
             $this->_aProspectlists_Campaigns[] = $id;
             $sDate = $GLOBALS['db']->convert(date('\'Y-m-d H:i:s\''), 'datetime');
@@ -90,16 +89,14 @@ class Bug54098Test extends TestCase
 
     private function deleteProspectlistToCampaignRelationRecords()
     {
-        if (!empty($this->_aProspectlists_Campaigns))
-        {
+        if (!empty($this->_aProspectlists_Campaigns)) {
             $GLOBALS['db']->query("DELETE FROM prospect_list_campaigns WHERE id IN ('" . implode("','", $this->_aProspectlists_Campaigns) . "')");
         }
     }
 
     private function createContactToProspectlistRelationRecord(Contact $oContact, ProspectList $oProspectList)
     {
-        if (!empty($oContact->id) and !empty($oProspectList->id))
-        {
+        if (!empty($oContact->id) and !empty($oProspectList->id)) {
             $id = 'BUg54098' . mt_rand();
             $this->_aProspectlists_Prospects[] = $id;
             $sDate = $GLOBALS['db']->convert(date('\'Y-m-d H:i:s\''), 'datetime');
@@ -109,8 +106,7 @@ class Bug54098Test extends TestCase
 
     private function deleteProspectlistToContactRelationRecords()
     {
-        if (!empty($this->_aProspectlists_Campaigns))
-        {
+        if (!empty($this->_aProspectlists_Campaigns)) {
             $GLOBALS['db']->query("DELETE FROM prospect_lists_prospects WHERE id IN ('" . implode("','", $this->_aProspectlists_Prospects) . "')");
         }
     }

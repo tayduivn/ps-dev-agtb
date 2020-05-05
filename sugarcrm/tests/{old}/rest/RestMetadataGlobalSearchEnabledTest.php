@@ -18,7 +18,7 @@ class RestMetadataGlobalSearchEnabledTest extends RestTestBase
      */
     public function testGlobalSearchEnabled($platform, $seed, $vardefs, $expects, $failMessage)
     {
-        $mm = MetaDataManager::getManager(array($platform));
+        $mm = MetaDataManager::getManager([$platform]);
         $actual = $mm->getGlobalSearchEnabled($seed, $vardefs, $platform);
         $this->assertEquals($expects, $actual, $failMessage);
     }
@@ -26,97 +26,97 @@ class RestMetadataGlobalSearchEnabledTest extends RestTestBase
     // Please see `failMessage` property to see what each run is testing for
     public function moduleVardefDataProvider()
     {
-        return array(
-            array(
+        return [
+            [
                 'platform' => 'base',
                 'seed' => true,
-                'vardefs' => array(),
+                'vardefs' => [],
                 'expects' => true,
-                'failMessage' => "When globalSearchEnabled not provided, should check if \$seed is Bean; if so should return true"
-            ),
-            array(
+                'failMessage' => "When globalSearchEnabled not provided, should check if \$seed is Bean; if so should return true",
+            ],
+            [
                 'platform' => 'base',
                 'seed' => false,
-                'vardefs' => array(),
+                'vardefs' => [],
                 'expects' => false,
-                'failMessage' => "When globalSearchEnabled not provided, should check if \$seed is Bean; if NOT should return false"
-            ),
-            array(
+                'failMessage' => "When globalSearchEnabled not provided, should check if \$seed is Bean; if NOT should return false",
+            ],
+            [
                 'platform' => 'base',
                 'seed' => true,
-                'vardefs' => array(
+                'vardefs' => [
                     'globalSearchEnabled' => true,
-                ),
+                ],
                 'expects' => true,
-                'failMessage' => "When globalSearchEnabled used as 'global boolean', that value should be returned (truthy)"
-            ),
-            array(
+                'failMessage' => "When globalSearchEnabled used as 'global boolean', that value should be returned (truthy)",
+            ],
+            [
                 'platform' => 'base',
                 'seed' => true,
-                'vardefs' => array(
+                'vardefs' => [
                     'globalSearchEnabled' => false,
-                ),
+                ],
                 'expects' => false,
-                'failMessage' => "When globalSearchEnabled used as 'global boolean', that value should be returned (falsy)"
-            ),
-            array(
+                'failMessage' => "When globalSearchEnabled used as 'global boolean', that value should be returned (falsy)",
+            ],
+            [
                 'platform' => 'portal',
                 'seed' => true,
-                'vardefs' => array(
-                    'globalSearchEnabled' => array(
+                'vardefs' => [
+                    'globalSearchEnabled' => [
                         'portal' => true,
-                        'base' => false
-                    )
-                ),
+                        'base' => false,
+                    ],
+                ],
                 'expects' => true,
-                'failMessage' => "When globalSearchEnabled used as array with platform, should use value for current platform if exists (truthy)"
-            ),
-            array(
+                'failMessage' => "When globalSearchEnabled used as array with platform, should use value for current platform if exists (truthy)",
+            ],
+            [
                 'platform' => 'portal',
                 'seed' => true,
-                'vardefs' => array(
-                    'globalSearchEnabled' => array(
+                'vardefs' => [
+                    'globalSearchEnabled' => [
                         'portal' => false,
                         'base' => true,
-                    )
-                ),
+                    ],
+                ],
                 'expects' => false,
-                'failMessage' => "When globalSearchEnabled used as array with platform, should use value for current platform if exists (falsy) (even if another platform is truthy)"
-            ),
-            array(
+                'failMessage' => "When globalSearchEnabled used as array with platform, should use value for current platform if exists (falsy) (even if another platform is truthy)",
+            ],
+            [
                 'platform' => 'portal',
                 'seed' => true,
-                'vardefs' => array(
-                    'globalSearchEnabled' => array(
+                'vardefs' => [
+                    'globalSearchEnabled' => [
                         'base' => true,
-                    )
-                ),
+                    ],
+                ],
                 'expects' => true,
-                'failMessage' => "When globalSearchEnabled used as array with platform and the platform is not set in the meta, it should check to see if base is set; if so, it should return THAT value (truthy check)"
-            ),
-            array(
+                'failMessage' => "When globalSearchEnabled used as array with platform and the platform is not set in the meta, it should check to see if base is set; if so, it should return THAT value (truthy check)",
+            ],
+            [
                 'platform' => 'portal',
                 'seed' => true,
-                'vardefs' => array(
-                    'globalSearchEnabled' => array(
+                'vardefs' => [
+                    'globalSearchEnabled' => [
                         'base' => false,
-                    )
-                ),
+                    ],
+                ],
                 'expects' => false,
-                'failMessage' => "When globalSearchEnabled used as array with platform and the platform is not set in the meta, it should check to see if base is set; if so, it should return THAT value (false check)"
-            ),
-            array(
+                'failMessage' => "When globalSearchEnabled used as array with platform and the platform is not set in the meta, it should check to see if base is set; if so, it should return THAT value (false check)",
+            ],
+            [
                 'platform' => 'portal',
                 'seed' => true,
-                'vardefs' => array(
-                    'globalSearchEnabled' => array(
+                'vardefs' => [
+                    'globalSearchEnabled' => [
                         'notportal1' => false,
                         'notportal2' => false,
-                    )
-                ),
+                    ],
+                ],
                 'expects' => true,
-                'failMessage' => "When globalSearchEnabled used as array but current platform not found should fallback to true ignoring other platform settings"
-            ),
-        );
+                'failMessage' => "When globalSearchEnabled used as array but current platform not found should fallback to true ignoring other platform settings",
+            ],
+        ];
     }
 }

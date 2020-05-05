@@ -31,71 +31,71 @@ class IndexManagerTest extends TestCase
         $index = $this->getIndexMock($indexName);
         $indexManager = $this->getIndexManagerMock();
         TestReflection::setProtectedValue($indexManager, 'config', $config);
-        TestReflection::setProtectedValue($indexManager, 'defaultSettings', array('setting_Z' => 'core'));
-        $settings = TestReflection::callProtectedMethod($indexManager, 'getIndexSettingsFromConfig', array($index));
+        TestReflection::setProtectedValue($indexManager, 'defaultSettings', ['setting_Z' => 'core']);
+        $settings = TestReflection::callProtectedMethod($indexManager, 'getIndexSettingsFromConfig', [$index]);
         $this->assertEquals($settings, $output);
     }
 
     public function providerTestGetIndexSettingsFromConfig()
     {
-        return array(
+        return [
             // explicit index config + default config + default core
-            array(
+            [
                 'index_foo',
-                array(
-                    'index_foo' => array (
+                [
+                    'index_foo' =>  [
                         'setting_A' => 'foo',
                         'setting_B' => 'fox',
-                    ),
+                    ],
                     IndexManager::DEFAULT_INDEX_SETTINGS_KEY =>
-                        array(
+                        [
                             'setting_A' => 'bar',
                             'setting_C' => 'foo',
-                        ),
-                    'index_bar' => array(),
-                ),
-                array(
+                        ],
+                    'index_bar' => [],
+                ],
+                [
                     'setting_Z' => 'core',
                     'setting_C' => 'foo',
                     'setting_A' => 'foo',
                     'setting_B' => 'fox',
-                ),
-            ),
+                ],
+            ],
             // default config + default core
-            array(
+            [
                 'index_foo',
-                array(
+                [
                     IndexManager::DEFAULT_INDEX_SETTINGS_KEY =>
-                        array(
+                        [
                             'setting_A' => 'bar',
                             'setting_C' => 'foo',
                             'setting_Z' => 'nocore',
-                        ),
-                    'index_bar' => array(),
-                ),
-                array(
+                        ],
+                    'index_bar' => [],
+                ],
+                [
                     'setting_Z' => 'nocore',
                     'setting_A' => 'bar',
                     'setting_C' => 'foo',
-                ),
-            ),
+                ],
+            ],
             // explicit config with analysis settings (the latter is stripped)
-            array(
+            [
                 'index_foo',
-                array(
-                    'index_foo' => array (
+                [
+                    'index_foo' =>  [
                         'setting_A' => 'bar',
                         'setting_B' => 'fox',
-                        AnalysisBuilder::ANALYSIS => 'quick'
-                    ),
-                ),
-                array (
+                        AnalysisBuilder::ANALYSIS => 'quick',
+                    ],
+                ],
+                 [
                     'setting_Z' => 'core',
                     'setting_A' => 'bar',
                     'setting_B' => 'fox',
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
     }
 
     /**

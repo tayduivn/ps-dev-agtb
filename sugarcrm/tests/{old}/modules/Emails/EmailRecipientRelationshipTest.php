@@ -361,7 +361,7 @@ class EmailRecipientRelationshipTest extends TestCase
      */
     public function testAdd_RolesCanHaveMultipleParticipants()
     {
-        $expectedResults = array();
+        $expectedResults = [];
         $email = SugarTestEmailUtilities::createEmail('', ['state' => Email::STATE_DRAFT]);
 
         $contact1 = SugarTestContactUtilities::createContact();
@@ -945,7 +945,7 @@ class EmailRecipientRelationshipTest extends TestCase
      */
     private function explodeRecipients($recipients)
     {
-        $recipientArray = array();
+        $recipientArray = [];
         $exploded = explode(',', $recipients);
 
         foreach ($exploded as $recipient) {

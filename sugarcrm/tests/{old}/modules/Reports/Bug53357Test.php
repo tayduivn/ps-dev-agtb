@@ -29,7 +29,7 @@ class Bug53357Test extends TestCase
     protected function setUp() : void
     {
         global $beanList, $beanFiles;
-        require('include/modules.php');
+        require 'include/modules.php';
 
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser(true, 1);
@@ -56,8 +56,12 @@ class Bug53357Test extends TestCase
         $opportunity->mark_deleted($this->opportunity_id);
 
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($GLOBALS['current_user'], $GLOBALS['beanFiles'],
-        $GLOBALS['beanList'], $GLOBALS['app_list_strings']);
+        unset(
+            $GLOBALS['current_user'],
+            $GLOBALS['beanFiles'],
+            $GLOBALS['beanList'],
+            $GLOBALS['app_list_strings']
+        );
     }
 
     /**
@@ -70,78 +74,78 @@ class Bug53357Test extends TestCase
         // Display columns: Opportunity amount
         // Group By columns: Sales Stage and Assigned User Name
         // Filter: the only opportunity which is created in setUp() method
-        $report_def = array(
+        $report_def = [
             'module' => 'Opportunities',
-            'group_defs' => array(
-                array(
+            'group_defs' => [
+                [
                     'name'        => 'user_name',
                     'label'       => 'User Name',
                     'table_key'   => 'Opportunities:assigned_user_link',
-                ),
-                array(
+                ],
+                [
                     'name'        => 'sales_stage',
                     'label'       => 'Sales Stage',
                     'table_key'   => 'self',
-                ),
-            ),
-            'display_columns' => array(),
-            'summary_columns' => array(
-                array(
+                ],
+            ],
+            'display_columns' => [],
+            'summary_columns' => [
+                [
                     'name'      => 'user_name',
                     'label'     => 'User Name',
                     'table_key' => 'Opportunities:assigned_user_link',
-                ),
-                array(
+                ],
+                [
                     'name'      => 'sales_stage',
                     'label'     => 'Sales Stage',
                     'table_key' => 'self',
-                ),
-                array(
+                ],
+                [
                     'name'      => 'amount_usdollar',
                     'label'     => 'AVG: Amount',
                     'group_function' => 'avg',
                     'table_key' => 'self',
-                ),
-            ),
+                ],
+            ],
             'report_type' => 'summary',
             'layout_options' => '2x2',
-            'full_table_list' => array(
-                'self' => array(
+            'full_table_list' => [
+                'self' => [
                     'value' => 'Opportunities',
                     'module' => 'Opportunities',
-                ),
-                'Opportunities:assigned_user_link' => array(
+                ],
+                'Opportunities:assigned_user_link' => [
                     'name' => 'Opportunities  >  Assigned to User',
                     'parent' => 'self',
-                    'link_def' => array(
+                    'link_def' => [
                         'name' => 'assigned_user_link',
                         'relationship_name' => 'opportunities_assigned_user',
                         'link_type' => 'one',
                         'module' => 'Users',
                         'table_key' => 'Opportunities:assigned_user_link',
-                    ),
+                    ],
                     'module' => 'Users',
-                ),
-            ),
-            'filters_def' => array (
+                ],
+            ],
+            'filters_def' =>  [
                 'Filter_1' =>
-                array (
+                 [
                     'operator' => 'AND',
                     0 =>
-                    array (
+                     [
                         'name' => 'id',
                         'table_key' => 'self',
                         'qualifier_name' => 'is',
                         'input_name0' => $this->opportunity_id,
-                    ),
-                ),
-            )
-        );
+                    ],
+                ],
+            ],
+        ];
 
         $json = getJSONobj();
         $report = new Report($json->encode($report_def));
 
-        $args = array();
+        $args = [];
 
         ob_start();
         template_summary_list_view($report, $args);
@@ -152,11 +156,11 @@ class Bug53357Test extends TestCase
         global $locale;
 
         // prepare expected substring (the formatted value of opportunity amount)
-        $substring = currency_format_number($this->amount, array(
+        $substring = currency_format_number($this->amount, [
                 'currency_id'     => $locale->getPrecedentPreference('currency'),
                 'convert'         => true,
                 'currency_symbol' => $locale->getPrecedentPreference('default_currency_symbol'),
-            ));
+            ]);
 
         // Opportunity amount must appear 4 times in report output:
         // 1. The amount of opportunity itself

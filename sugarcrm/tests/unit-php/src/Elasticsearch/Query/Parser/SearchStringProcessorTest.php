@@ -34,20 +34,20 @@ class SearchStringProcessorTest extends TestCase
 
     public function providerParseTest()
     {
-        return array(
-            array('', array()),
-            array('a b or c', array('a', 'b', 'or', 'c')),
-            array('(a b or c)', array(array('a', 'b', 'or', 'c'))),
-            array('a b or c and d', array('a', 'b', 'or', 'c', 'and', 'd')),
-            array('a (b or c) and d', array('a', array('b', 'or', 'c'), 'and', 'd')),
-            array('(a or b) and (c or d)', array(array('a', 'or', 'b'), 'and', array('c', 'or', 'd'))),
+        return [
+            ['', []],
+            ['a b or c', ['a', 'b', 'or', 'c']],
+            ['(a b or c)', [['a', 'b', 'or', 'c']]],
+            ['a b or c and d', ['a', 'b', 'or', 'c', 'and', 'd']],
+            ['a (b or c) and d', ['a', ['b', 'or', 'c'], 'and', 'd']],
+            ['(a or b) and (c or d)', [['a', 'or', 'b'], 'and', ['c', 'or', 'd']]],
             // nested structure
-            array('a or (b and (c or d))', array('a', 'or', array('b', 'and', array('c', 'or', 'd')))),
+            ['a or (b and (c or d))', ['a', 'or', ['b', 'and', ['c', 'or', 'd']]]],
             // unbalanced braces, make a best guess
-            array('a or (b and (c or d)', array(array('a', 'or'), 'b', 'and', array('c', 'or', 'd'))),
-            array('a (b', array(array('a'), 'b')),
-            array('a b) c', array(array('a', 'b'), 'c')),
-            array('a b &) c', array(array('a', 'b', '&'), 'c')),
-        );
+            ['a or (b and (c or d)', [['a', 'or'], 'b', 'and', ['c', 'or', 'd']]],
+            ['a (b', [['a'], 'b']],
+            ['a b) c', [['a', 'b'], 'c']],
+            ['a b &) c', [['a', 'b', '&'], 'c']],
+        ];
     }
 }

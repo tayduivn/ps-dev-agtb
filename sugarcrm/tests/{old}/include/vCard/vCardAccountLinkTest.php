@@ -21,7 +21,7 @@ class vCardAccountLinkTest extends TestCase
     {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
-        SugarTestHelper::setUp('current_user', array(true, 1));
+        SugarTestHelper::setUp('current_user', [true, 1]);
 
         $account = SugarTestAccountUtilities::createAccount();
         $account->name = "SDizzle Inc";

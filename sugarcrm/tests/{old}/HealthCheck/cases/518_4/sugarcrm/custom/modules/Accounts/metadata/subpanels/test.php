@@ -10,6 +10,6 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$subpanel_layout = array(
+$subpanel_layout = [
     'customCode' => 'customCode',
-);
+];

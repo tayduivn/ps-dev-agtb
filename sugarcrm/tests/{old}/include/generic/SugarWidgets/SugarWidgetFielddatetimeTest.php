@@ -49,10 +49,10 @@ class SugarWidgetFielddatetimeTest extends TestCase
      */
     public function providerTestNoFormatChange()
     {
-        return array(
-            array('2018-10-10', false),
-            array('2018-10-10 12:00:00', true),
-        );
+        return [
+            ['2018-10-10', false],
+            ['2018-10-10 12:00:00', true],
+        ];
     }
 
     /**
@@ -64,9 +64,9 @@ class SugarWidgetFielddatetimeTest extends TestCase
     public function testNoFormatChange(string $date, bool $hasTime)
     {
         $datetimeField = $this->createPartialMock('SugarWidgetFieldDateTime', []);
-        $newDate = SugarTestReflection::callProtectedMethod($datetimeField, 'getTZOffsetByUser', array($date));
+        $newDate = SugarTestReflection::callProtectedMethod($datetimeField, 'getTZOffsetByUser', [$date]);
 
-        $resultHasTime = SugarTestReflection::callProtectedMethod($datetimeField, 'hasTime', array($newDate));
+        $resultHasTime = SugarTestReflection::callProtectedMethod($datetimeField, 'hasTime', [$newDate]);
         $this->assertEquals($hasTime, $resultHasTime);
     }
 
@@ -90,9 +90,9 @@ class SugarWidgetFielddatetimeTest extends TestCase
      */
     public static function providerDisplayListweek()
     {
-        return array(
-            array(
-                array(
+        return [
+            [
+                [
                     'name' => 'date_entered',
                     'column_function' => 'week',
                     'qualifier' => 'week',
@@ -101,13 +101,13 @@ class SugarWidgetFielddatetimeTest extends TestCase
                     'column_key' => 'self:date_entered',
                     'type' => 'datetime',
                     'fields' =>
-                        array (
+                         [
                             'OPPORTUNITIES_WEEK_DAT3634CE' => '2015-19',
-                        ),
-                ),
-                'W19 2015'
-            ),
-        );
+                        ],
+                ],
+                'W19 2015',
+            ],
+        ];
     }
 
     /**

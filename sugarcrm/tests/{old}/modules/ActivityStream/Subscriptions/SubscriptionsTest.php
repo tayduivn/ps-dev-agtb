@@ -117,18 +117,18 @@ class SubscriptionsTest extends TestCase
         $activity->save();
         Activity::restoreToPreviousState();
 
-        $data = array(
+        $data = [
             'act_id'        => $activity->id,
-            'user_partials' => array(
-                array(
+            'user_partials' => [
+                [
                     'created_by' => $this->user->id,
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
         $subscriptionsBeanName = BeanFactory::getBeanClass('Subscriptions');
         $subscriptionsBeanName::addActivitySubscriptions($data);
         $activity->load_relationship('activities_users');
-        $expected = array($this->user->id);
+        $expected = [$this->user->id];
         $actual = $activity->activities_users->get();
         $this->assertEquals($expected, $actual, 'Should have added the user relationship to the activity.');
         unset($GLOBALS['reload_vardefs']);

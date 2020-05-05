@@ -83,10 +83,10 @@ class RS266Test extends TestCase
                 WHERE c.TABLE_NAME = '{$this->tableName}'
                 ORDER BY c.ORDINAL_POSITION";
 
-        $data = array();
+        $data = [];
         $result = $this->db->query($sql);
 
-        while(false !== $row = $this->db->fetchRow($result)) {
+        while (false !== $row = $this->db->fetchRow($result)) {
             $data[$row['column_name']] = $row;
         }
         return $data;
@@ -99,39 +99,39 @@ class RS266Test extends TestCase
      */
     public function dataProviderAddColumn()
     {
-        return array(
+        return [
             // with identity
-            array(
-                array(
+            [
+                [
                     'name' => 'number',
                     'auto_increment' => true,
                     'isnull' => false,
                     'required' => true,
                     'type' => 'int',
-                ),
-                array(
+                ],
+                [
                     'identity_column' => 1,
                     'is_nullable' => 0,
                     'data_type' => 'int',
                     'position' => 3,
-                ),
-            ),
+                ],
+            ],
             // without identity
-            array(
-                array(
+            [
+                [
                     'name' => 'number',
                     'isnull' => true,
                     'required' => false,
                     'type' => 'int',
-                ),
-                array(
+                ],
+                [
                     'identity_column' => 0,
                     'is_nullable' => 1,
                     'data_type' => 'int',
                     'position' => 3,
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
     }
 
     /**
@@ -175,40 +175,40 @@ class RS266Test extends TestCase
      */
     public function dataProviderAddColumnWhenIdentityAlreadyExistsInTable()
     {
-        return array(
+        return [
             // with identity
-            array(
-                array(
+            [
+                [
                     'name' => 'number',
                     'isnull' => false,
                     'required' => true,
                     'isnull' => 'false',
                     'type' => 'int',
                     'auto_increment' => 1,
-                ),
-                array(
+                ],
+                [
                     'identity_column' => 0,
                     'is_nullable' => 0,
                     'data_type' => 'int',
                     'position' => 4,
-                ),
-            ),
+                ],
+            ],
             // without identity
-            array(
-                array(
+            [
+                [
                     'name' => 'number',
                     'isnull' => true,
                     'required' => false,
                     'type' => 'int',
-                ),
-                array(
+                ],
+                [
                     'identity_column' => 0,
                     'is_nullable' => 1,
                     'data_type' => 'int',
                     'position' => 4,
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
     }
 
     /**
@@ -258,38 +258,38 @@ class RS266Test extends TestCase
      */
     public function dataProviderDropColumn()
     {
-        return array(
+        return [
             // without identity
-            array(
-                array(
+            [
+                [
                     'name' => 'number_nonidentity',
                     'type' => 'int',
-                ),
-                array(
+                ],
+                [
                     'name' => 'number_identity',
                     'type' => 'int',
                     'is_nullable' => 0,
                     'position' => 3,
                     'identity_column' => 1,
                     'data_type' => 'int',
-                ),
-            ),
+                ],
+            ],
             // with identity
-            array(
-                array(
+            [
+                [
                     'name' => 'number_identity',
                     'type' => 'int',
-                ),
-                array(
+                ],
+                [
                     'name' => 'number_nonidentity',
                     'type' => 'int',
                     'is_nullable' => 0,
                     'position' => 3,
                     'identity_column' => 0,
                     'data_type' => 'int',
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
     }
 
     /**
@@ -336,38 +336,38 @@ class RS266Test extends TestCase
     {
         // create test table
         $this->db->query("CREATE TABLE {$this->tableName} (id int NOT NULL PRIMARY KEY, somename varchar NOT NULL, number INT NOT NULL IDENTITY(1,1))");
-        $demoData = array(
-            array(
+        $demoData = [
+            [
                 'id' => 4353253,
                 'somename' => 'blabla',
-            ),
-            array(
+            ],
+            [
                 'id' => 76865,
                 'somename' => 'sfdgdfgsd',
-            ),
-            array(
+            ],
+            [
                 'id' => 1809897,
                 'somename' => 'sfgsfsasd dsaf',
-            ),
-        );
+            ],
+        ];
         // create test data
-        foreach($demoData as $demo) {
+        foreach ($demoData as $demo) {
             $sql = "INSERT INTO {$this->tableName} (id, somename) VALUES ({$demo['id']}, '{$demo['somename']}')";
             $this->db->query($sql);
         }
 
-        $data = array();
+        $data = [];
         $result = $this->db->query("SELECT * FROM {$this->tableName}");
 
-        while(false !== $row = $this->db->fetchRow($result)) {
+        while (false !== $row = $this->db->fetchRow($result)) {
             $data[$row['id']] = $row;
         }
 
-        $result = $this->db->alterColumn($this->tableName, array(
+        $result = $this->db->alterColumn($this->tableName, [
             'name' => 'number',
             'type' => 'bigint',
             'auto_increment' => 1,
-        ));
+        ]);
 
         $this->assertNotEmpty($result);
 
@@ -396,7 +396,7 @@ class RS266Test extends TestCase
         // checking data after alter table
         $result = $this->db->query("SELECT * FROM {$this->tableName}");
 
-        while(false !== $row = $this->db->fetchRow($result)) {
+        while (false !== $row = $this->db->fetchRow($result)) {
             $this->assertArrayHasKey($row['id'], $data);
             $this->assertEquals($data[$row['id']]['somename'], $row['somename']);
             $this->assertEquals($data[$row['id']]['number'], $row['number']);
@@ -410,40 +410,40 @@ class RS266Test extends TestCase
     {
         // create test table
         $this->db->query("CREATE TABLE {$this->tableName} (id int NOT NULL PRIMARY KEY, somename varchar NOT NULL, number INT NOT NULL IDENTITY(1,1))");
-        $demoData = array(
-            array(
+        $demoData = [
+            [
                 'id' => 4353253,
                 'somename' => 'blabla',
-            ),
-            array(
+            ],
+            [
                 'id' => 76865,
                 'somename' => 'sfdgdfgsd',
-            ),
-            array(
+            ],
+            [
                 'id' => 1809897,
                 'somename' => 'sfgsfsasd dsaf',
-            ),
-        );
+            ],
+        ];
         // create test data
-        foreach($demoData as $demo) {
+        foreach ($demoData as $demo) {
             $sql = "INSERT INTO {$this->tableName} (id, somename) VALUES ({$demo['id']}, '{$demo['somename']}')";
             $this->db->query($sql);
         }
 
-        $data = array();
+        $data = [];
         $result = $this->db->query("SELECT * FROM {$this->tableName}");
 
-        while(false !== $row = $this->db->fetchRow($result)) {
+        while (false !== $row = $this->db->fetchRow($result)) {
             $data[$row['id']] = $row;
         }
 
-        $result = $this->db->alterColumn($this->tableName, array(
+        $result = $this->db->alterColumn($this->tableName, [
             'name' => 'number',
             'type' => 'bigint',
             'auto_increment' => 0,
             'required' => true,
             'isnull' => false,
-        ));
+        ]);
 
         $this->assertNotEmpty($result);
 
@@ -472,7 +472,7 @@ class RS266Test extends TestCase
         // checking data after alter table
         $result = $this->db->query("SELECT * FROM {$this->tableName}");
 
-        while(false !== $row = $this->db->fetchRow($result)) {
+        while (false !== $row = $this->db->fetchRow($result)) {
             $this->assertArrayHasKey($row['id'], $data);
             $this->assertEquals($data[$row['id']]['somename'], $row['somename']);
             $this->assertEquals($data[$row['id']]['number'], $row['number']);
@@ -486,44 +486,44 @@ class RS266Test extends TestCase
     {
         // create test table
         $this->db->query("CREATE TABLE {$this->tableName} (id int NOT NULL PRIMARY KEY, somename varchar NOT NULL, number INT NOT NULL)");
-        $demoData = array(
-            array(
+        $demoData = [
+            [
                 'id' => 4353253,
                 'somename' => 'blabla',
                 'number' => 1,
-            ),
-            array(
+            ],
+            [
                 'id' => 76865,
                 'somename' => 'sfdgdfgsd',
                 'number' => 2,
-            ),
-            array(
+            ],
+            [
                 'id' => 1809897,
                 'somename' => 'sfgsfsasd dsaf',
                 'number' => 3,
-            ),
-        );
+            ],
+        ];
         // create test data
-        foreach($demoData as $demo) {
+        foreach ($demoData as $demo) {
             $sql = "INSERT INTO {$this->tableName} (id, somename, number)
                 VALUES ({$demo['id']}, '{$demo['somename']}', {$demo['number']})";
             $this->db->query($sql);
         }
 
-        $data = array();
+        $data = [];
         $result = $this->db->query("SELECT * FROM {$this->tableName}");
 
-        while(false !== $row = $this->db->fetchRow($result)) {
+        while (false !== $row = $this->db->fetchRow($result)) {
             $data[$row['id']] = $row;
         }
 
-        $result = $this->db->alterColumn($this->tableName, array(
+        $result = $this->db->alterColumn($this->tableName, [
             'name' => 'number',
             'type' => 'bigint',
             'auto_increment' => 1,
             'required' => true,
             'isnull' => false,
-        ));
+        ]);
 
         $this->assertNotEmpty($result);
 
@@ -552,7 +552,7 @@ class RS266Test extends TestCase
         // checking data after alter table
         $result = $this->db->query("SELECT * FROM {$this->tableName}");
 
-        while(false !== $row = $this->db->fetchRow($result)) {
+        while (false !== $row = $this->db->fetchRow($result)) {
             $this->assertArrayHasKey($row['id'], $data);
             $this->assertEquals($data[$row['id']]['somename'], $row['somename']);
             $this->assertEquals($data[$row['id']]['number'], $row['number']);
@@ -566,43 +566,43 @@ class RS266Test extends TestCase
     {
         // create test table
         $this->db->query("CREATE TABLE {$this->tableName} (id int NOT NULL PRIMARY KEY, somename varchar NOT NULL, number INT NOT NULL, number_identity INT NOT NULL IDENTITY(1,1))");
-        $demoData = array(
-            array(
+        $demoData = [
+            [
                 'id' => 4353253,
                 'somename' => 'blabla',
                 'number' => 1,
-            ),
-            array(
+            ],
+            [
                 'id' => 76865,
                 'somename' => 'sfdgdfgsd',
                 'number' => 3,
-            ),
-            array(
+            ],
+            [
                 'id' => 1809897,
                 'somename' => 'sfgsfsasd dsaf',
                 'number' => 3,
-            ),
-        );
+            ],
+        ];
         // create test data
-        foreach($demoData as $demo) {
+        foreach ($demoData as $demo) {
             $sql = "INSERT INTO {$this->tableName} (id, somename, number) VALUES ({$demo['id']}, '{$demo['somename']}', {$demo['number']})";
             $this->db->query($sql);
         }
 
-        $data = array();
+        $data = [];
         $result = $this->db->query("SELECT * FROM {$this->tableName}");
 
-        while(false !== $row = $this->db->fetchRow($result)) {
+        while (false !== $row = $this->db->fetchRow($result)) {
             $data[$row['id']] = $row;
         }
 
-        $result = $this->db->alterColumn($this->tableName, array(
+        $result = $this->db->alterColumn($this->tableName, [
             'name' => 'number',
             'type' => 'bigint',
             'auto_increment' => 1,
             'required' => true,
             'isnull' => false,
-        ));
+        ]);
 
         $this->assertNotEmpty($result);
 
@@ -637,7 +637,7 @@ class RS266Test extends TestCase
         // checking data after alter table
         $result = $this->db->query("SELECT * FROM {$this->tableName}");
 
-        while(false !== $row = $this->db->fetchRow($result)) {
+        while (false !== $row = $this->db->fetchRow($result)) {
             $this->assertArrayHasKey($row['id'], $data);
             $this->assertEquals($data[$row['id']]['somename'], $row['somename']);
             $this->assertEquals($data[$row['id']]['number'], $row['number']);
@@ -651,82 +651,82 @@ class RS266Test extends TestCase
      */
     public function alterColumnAddDefaultValueDataProvider()
     {
-        return array(
+        return [
             // for non-identical column
-            array(
-                array(
+            [
+                [
                     'name' => 'number',
                     'type' => 'bigint',
                     'default' => 20,
                     'required' => true,
                     'isnull' => false,
-                ),
-                array(
-                    'number' => array(
+                ],
+                [
+                    'number' => [
                         'identity_column' => 0,
                         'is_nullable' => 0,
                         'data_type' => 'bigint',
                         'column_default' => '((20))',
-                    ),
-                ),
-            ),
+                    ],
+                ],
+            ],
             // add/modify default value
-            array(
-                array(
+            [
+                [
                     'name' => 'number',
                     'type' => 'bigint',
                     'default' => 70,
                     'required' => true,
                     'isnull' => false,
-                ),
-                array(
-                    'number' => array(
+                ],
+                [
+                    'number' => [
                         'identity_column' => 0,
                         'is_nullable' => 0,
                         'data_type' => 'bigint',
                         'column_default' => '((70))',
-                    ),
-                ),
-            ),
+                    ],
+                ],
+            ],
             // when column identity
-            array(
-                array(
+            [
+                [
                     'name' => 'number_identity',
                     'type' => 'bigint',
                     'auto_increment' => 1,
                     'default' => 40,
                     'required' => true,
                     'isnull' => false,
-                ),
-                array(
-                    'number_identity' => array(
+                ],
+                [
+                    'number_identity' => [
                         'identity_column' => 1,
                         'is_nullable' => 0,
                         'data_type' => 'bigint',
                         'column_default' => null,
-                    ),
-                ),
-            ),
+                    ],
+                ],
+            ],
             // when column was identity
-            array(
-                array(
+            [
+                [
                     'name' => 'number_identity',
                     'type' => 'bigint',
                     'auto_increment' => 0,
                     'default' => 40,
                     'required' => true,
                     'isnull' => false,
-                ),
-                array(
-                    'number_identity' => array(
+                ],
+                [
+                    'number_identity' => [
                         'identity_column' => 0,
                         'is_nullable' => 0,
                         'data_type' => 'bigint',
                         'column_default' => '((40))',
-                    ),
-                ),
-            ),
-        );
+                    ],
+                ],
+            ],
+        ];
     }
 
     /**
@@ -745,9 +745,9 @@ class RS266Test extends TestCase
 
         $info = $this->getColumnsInfo();
 
-        foreach($expected as $columnName => $expectedAttrs) {
+        foreach ($expected as $columnName => $expectedAttrs) {
             $this->assertArrayHasKey($columnName, $info);
-            foreach($expectedAttrs as $expectedKey => $expectedValue) {
+            foreach ($expectedAttrs as $expectedKey => $expectedValue) {
                 $this->assertArrayHasKey($expectedKey, $info[$columnName]);
                 $this->assertEquals($expectedValue, $info[$columnName][$expectedKey]);
             }
@@ -759,41 +759,41 @@ class RS266Test extends TestCase
      */
     public function alterColumnDropDefaultValueDataProvider()
     {
-        return array(
+        return [
             // number
-            array(
-                array(
+            [
+                [
                     'name' => 'number',
                     'type' => 'bigint',
                     'required' => true,
                     'isnull' => false,
-                ),
-                array(
-                    'number' => array(
+                ],
+                [
+                    'number' => [
                         'identity_column' => 0,
                         'is_nullable' => 0,
                         'data_type' => 'bigint',
                         'column_default' => null,
-                    ),
-                ),
-            ),
+                    ],
+                ],
+            ],
             // string
-            array(
-                array(
+            [
+                [
                     'name' => 'somename',
                     'type' => 'varchar',
                     'required' => true,
                     'isnull' => false,
-                ),
-                array(
-                    'somename' => array(
+                ],
+                [
+                    'somename' => [
                         'is_nullable' => 0,
                         'data_type' => 'nvarchar',
                         'column_default' => null,
-                    ),
-                ),
-            ),
-        );
+                    ],
+                ],
+            ],
+        ];
     }
 
     /**
@@ -812,9 +812,9 @@ class RS266Test extends TestCase
 
         $info = $this->getColumnsInfo();
 
-        foreach($expected as $columnName => $expectedAttrs) {
+        foreach ($expected as $columnName => $expectedAttrs) {
             $this->assertArrayHasKey($columnName, $info);
-            foreach($expectedAttrs as $expectedKey => $expectedValue) {
+            foreach ($expectedAttrs as $expectedKey => $expectedValue) {
                 $this->assertArrayHasKey($expectedKey, $info[$columnName]);
                 $this->assertEquals($expectedValue, $info[$columnName][$expectedKey]);
             }

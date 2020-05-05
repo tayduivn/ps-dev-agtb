@@ -31,31 +31,39 @@ class RestRegisterLeadTest extends RestTestBase
      */
     public function testCreate()
     {
-        $leadProps = array(
+        $leadProps = [
             'first_name' => 'UNIT TEST FIRST',
             'last_name' => 'UNIT TEST LAST',
-            'email' => array(
-                array(
-                    'email_address' => 'UT@test.com'
-                ))
-        );
-        $restReply = $this->_restCall("Leads/register",
+            'email' => [
+                [
+                    'email_address' => 'UT@test.com',
+                ]],
+        ];
+        $restReply = $this->_restCall(
+            "Leads/register",
             json_encode($leadProps),
-            'POST');
+            'POST'
+        );
 
-        $this->assertTrue(isset($restReply['reply']),
-            "Lead was not created (or if it was, the ID was not returned)");
+        $this->assertTrue(
+            isset($restReply['reply']),
+            "Lead was not created (or if it was, the ID was not returned)"
+        );
 
 
         $nlead = new Lead();
         $nlead->id = $restReply['reply'];
         $nlead->retrieve();
-        $this->assertEquals($leadProps['first_name'],
+        $this->assertEquals(
+            $leadProps['first_name'],
             $nlead->first_name,
-            "Submitted Lead and Lead Bean Do Not Match.");
-        $this->assertEquals("UT@test.com",
+            "Submitted Lead and Lead Bean Do Not Match."
+        );
+        $this->assertEquals(
+            "UT@test.com",
             $nlead->email1,
-            "Submitted Lead and Lead Bean Do Not Match.");
+            "Submitted Lead and Lead Bean Do Not Match."
+        );
     }
 
     /**
@@ -63,11 +71,13 @@ class RestRegisterLeadTest extends RestTestBase
      */
     public function testCreateEmpty()
     {
-        $leadProps = array(
-        );
-        $restReply = $this->_restCall("Leads/register",
+        $leadProps = [
+        ];
+        $restReply = $this->_restCall(
+            "Leads/register",
             json_encode($leadProps),
-            'POST');
+            'POST'
+        );
         $this->assertEquals($restReply['info']['http_code'], 412);
     }
 }

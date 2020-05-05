@@ -15,15 +15,15 @@ use PHPUnit\Framework\TestCase;
 class DropdownUpgradeTest extends TestCase
 {
     protected $_language = 'en_us'; // Test against English
-    protected $_testCustFile = array('include' => 'tests/{old}/include/DropdownUpgradeTestCustFile.php', 'ext' => 'tests/{old}/include/Bug60008-60607TestCustomFile.php');
-    protected $_custFile = array('include' => 'custom/include/language/en_us.lang.php', 'ext' => 'custom/application/Ext/Language/en_us.lang.ext.php');
-    protected $_custDir = array('include' => 'custom/include/language/', 'ext' => 'custom/application/Ext/Language/');
+    protected $_testCustFile = ['include' => 'tests/{old}/include/DropdownUpgradeTestCustFile.php', 'ext' => 'tests/{old}/include/Bug60008-60607TestCustomFile.php'];
+    protected $_custFile = ['include' => 'custom/include/language/en_us.lang.php', 'ext' => 'custom/application/Ext/Language/en_us.lang.ext.php'];
+    protected $_custDir = ['include' => 'custom/include/language/', 'ext' => 'custom/application/Ext/Language/'];
     protected $_backedUp = false;
     
     protected function setUp() : void
     {
         // Back up existing custom app list strings if they exist
-        foreach($this->_custFile as $custFile) {
+        foreach ($this->_custFile as $custFile) {
             if (file_exists($custFile)) {
                 rename($custFile, $custFile . '-backup');
                 $this->_backedUp = true;
@@ -46,7 +46,7 @@ class DropdownUpgradeTest extends TestCase
     
     protected function tearDown() : void
     {
-        foreach($this->_custFile as $custFile) {
+        foreach ($this->_custFile as $custFile) {
             // Delete the custom file we just created
             unlink($custFile);
             

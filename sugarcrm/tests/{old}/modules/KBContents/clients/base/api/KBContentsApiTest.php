@@ -33,10 +33,10 @@ class KBContentsApiTest extends TestCase
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setUp('current_user', array(true, true));
+        SugarTestHelper::setUp('current_user', [true, true]);
 
         $this->service = SugarTestRestUtilities::getRestServiceMock();
-        $this->api = $this->createPartialMock('KBContentsApi', array('getElasticQueryBuilder'));
+        $this->api = $this->createPartialMock('KBContentsApi', ['getElasticQueryBuilder']);
         $this->bean = SugarTestKBContentUtilities::createBean();
     }
 
@@ -53,20 +53,20 @@ class KBContentsApiTest extends TestCase
     {
         $builderMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Elasticsearch\Query\QueryBuilder')
             ->disableOriginalConstructor()
-            ->setMethods(array('setQuery', 'executeSearch', 'addFilter'))
+            ->setMethods(['setQuery', 'executeSearch', 'addFilter'])
             ->getMock();
 
         $resultSetMock = $this->getMockBuilder('Sugarcrm\Sugarcrm\Elasticsearch\Adapter\ResultSet')
             ->disableOriginalConstructor()
-            ->setMethods(array())
+            ->setMethods([])
             ->getMock();
         $builderMock->expects($this->any())->method('executeSearch')->will($this->returnValue($resultSetMock));
         $this->api->expects($this->any())->method('getElasticQueryBuilder')->will($this->returnValue($builderMock));
 
-        $result = $this->api->relatedDocuments($this->service, array(
+        $result = $this->api->relatedDocuments($this->service, [
             'module' => $this->bean->module_name,
             'record' => $this->bean->id,
-        ));
+        ]);
 
         $this->assertIsArray($result);
         $this->assertArrayHasKey('next_offset', $result);

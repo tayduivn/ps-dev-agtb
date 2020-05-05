@@ -36,23 +36,23 @@ class SugarForecasting_Chart_IndividualTest extends TestCase
     {
         $this->obj = $this->createPartialMock(
             'SugarForecasting_Chart_Individual',
-            array('getForecastConfig', 'getTimeperiod', 'getUserQuota', 'getModuleLanguage')
+            ['getForecastConfig', 'getTimeperiod', 'getUserQuota', 'getModuleLanguage']
         );
 
         $this->obj->expects($this->atLeastOnce())
             ->method('getForecastConfig')
             ->will(
                 $this->returnValue(
-                    array(
+                    [
                         'show_worksheet_worst' => 0,
                         'show_worksheet_best' => 1,
                         'show_worksheet_likely' => 1,
-                        'buckets_dom' => 'commit_stage_binary_dom'
-                    )
+                        'buckets_dom' => 'commit_stage_binary_dom',
+                    ]
                 )
             );
 
-        $tp_mock = $this->createPartialMock('TimePeriod', array('save', 'getChartLabels'));
+        $tp_mock = $this->createPartialMock('TimePeriod', ['save', 'getChartLabels']);
         $tp_mock->name = 'Q2 2012';
         $tp_mock->id = 1;
 
@@ -60,17 +60,17 @@ class SugarForecasting_Chart_IndividualTest extends TestCase
             ->method('getChartLabels')
             ->will(
                 $this->returnValue(
-                    array(
-                        array(
-                            'label' => 'x-axis 1'
-                        ),
-                        array(
-                            'label' => 'x-axis 2'
-                        ),
-                        array(
-                            'label' => 'x-axis 3'
-                        )
-                    )
+                    [
+                        [
+                            'label' => 'x-axis 1',
+                        ],
+                        [
+                            'label' => 'x-axis 2',
+                        ],
+                        [
+                            'label' => 'x-axis 3',
+                        ],
+                    ]
                 )
             );
 
@@ -82,9 +82,9 @@ class SugarForecasting_Chart_IndividualTest extends TestCase
             ->method('getModuleLanguage')
             ->will(
                 $this->returnValue(
-                    array(
-                        'LBL_CHART_FORECAST_FOR' => 'Test {0}'
-                    )
+                    [
+                        'LBL_CHART_FORECAST_FOR' => 'Test {0}',
+                    ]
                 )
             );
 
@@ -93,8 +93,8 @@ class SugarForecasting_Chart_IndividualTest extends TestCase
             ->will($this->returnValue(50.00));
 
 
-        $data_array = array(
-            array(
+        $data_array = [
+            [
                 'id' => 'wkst_test_1',
                 'parent_id' => 'parent_test_1',
                 'name' => 'Test 1',
@@ -106,9 +106,9 @@ class SugarForecasting_Chart_IndividualTest extends TestCase
                 'commit_stage' => 'include',
                 'sales_stage' => 'test_1',
                 'probability' => 50,
-                'date_closed_timestamp' => '10000'
-            ),
-            array(
+                'date_closed_timestamp' => '10000',
+            ],
+            [
                 'id' => 'wkst_test_2',
                 'parent_id' => 'parent_test_2',
                 'user_id' => 'test_2',
@@ -121,9 +121,9 @@ class SugarForecasting_Chart_IndividualTest extends TestCase
                 'commit_stage' => 'include',
                 'sales_stage' => 'test_1',
                 'probability' => 50,
-                'date_closed_timestamp' => '10000'
-            ),
-            array(
+                'date_closed_timestamp' => '10000',
+            ],
+            [
                 'id' => 'wkst_test_3',
                 'parent_id' => 'parent_test_3',
                 'user_id' => 'test_3',
@@ -136,9 +136,9 @@ class SugarForecasting_Chart_IndividualTest extends TestCase
                 'commit_stage' => 'include',
                 'sales_stage' => 'test_1',
                 'probability' => 50,
-                'date_closed_timestamp' => '10000'
-            ),
-            array(
+                'date_closed_timestamp' => '10000',
+            ],
+            [
                 'id' => '',
                 'user_id' => 'test_4',
                 'parent_id' => 'parent_test_4',
@@ -151,9 +151,9 @@ class SugarForecasting_Chart_IndividualTest extends TestCase
                 'commit_stage' => 'include',
                 'sales_stage' => 'test_1',
                 'probability' => 50,
-                'date_closed_timestamp' => '10000'
-            ),
-        );
+                'date_closed_timestamp' => '10000',
+            ],
+        ];
 
         // set the data
         SugarTestReflection::setProtectedValue($this->obj, 'dataArray', $data_array);

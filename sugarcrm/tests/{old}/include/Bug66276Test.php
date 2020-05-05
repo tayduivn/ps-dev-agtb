@@ -17,9 +17,9 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug66276Test extends TestCase
 {
-    protected $testFiles = array(
-        array('dir' => 'custom/include', 'name' => 'QuickSearchDefaults.php', 'content' => '<?php class QuickSearchDefaultsCustom {}'),
-        array('dir' => 'custom/modules/Test', 'name' => 'QuickSearchDefaults.php', 'content' => '<?php class QuickSearchDefaultsModule {}'));
+    protected $testFiles = [
+        ['dir' => 'custom/include', 'name' => 'QuickSearchDefaults.php', 'content' => '<?php class QuickSearchDefaultsCustom {}'],
+        ['dir' => 'custom/modules/Test', 'name' => 'QuickSearchDefaults.php', 'content' => '<?php class QuickSearchDefaultsModule {}']];
 
     protected function setUp() : void
     {
@@ -46,7 +46,7 @@ class Bug66276Test extends TestCase
      */
     public function testGetQuickSearchDefaults()
     {
-        $this->assertInstanceOf('QuickSearchDefaultsModule', QuickSearchDefaults::getQuickSearchDefaults(array('custom/modules/Test/QuickSearchDefaults.php'=>'QuickSearchDefaultsModule')));
+        $this->assertInstanceOf('QuickSearchDefaultsModule', QuickSearchDefaults::getQuickSearchDefaults(['custom/modules/Test/QuickSearchDefaults.php'=>'QuickSearchDefaultsModule']));
         $this->assertInstanceOf('QuickSearchDefaultsCustom', QuickSearchDefaults::getQuickSearchDefaults());
         unlink('custom/include/QuickSearchDefaults.php');
         $this->assertInstanceOf('QuickSearchDefaults', QuickSearchDefaults::getQuickSearchDefaults());

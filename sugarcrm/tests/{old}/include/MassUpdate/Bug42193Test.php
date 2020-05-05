@@ -15,16 +15,16 @@ use PHPUnit\Framework\TestCase;
 class Bug42193Test extends TestCase
 {
     protected function setUp() : void
-	{
-	    $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-	    $GLOBALS['current_user']->is_admin = '1';
-	    $GLOBALS['current_user']->save();
-	}
-	
+    {
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        $GLOBALS['current_user']->is_admin = '1';
+        $GLOBALS['current_user']->save();
+    }
+    
     protected function tearDown() : void
-	{
+    {
         unset($GLOBALS['current_user']);
-	}
+    }
     
     public function testDateConversionMassUpdate()
     {
@@ -35,8 +35,8 @@ class Bug42193Test extends TestCase
         $mass->setSugarBean($emailMan);
         $pattern = '/07\/22\/2011 [0-9]{2}:[0-9]{2}/';
         $this->assertMatchesRegularExpression(
-			$pattern,
-			$mass->date_to_dateTime('send_date_time', '07/22/2011')
-		);        
+            $pattern,
+            $mass->date_to_dateTime('send_date_time', '07/22/2011')
+        );
     }
 }

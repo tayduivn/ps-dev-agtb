@@ -12,7 +12,7 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once('modules/Campaigns/ProcessBouncedEmails.php');
+require_once 'modules/Campaigns/ProcessBouncedEmails.php';
 
 class Bug12755Test extends TestCase
 {
@@ -40,7 +40,7 @@ class Bug12755Test extends TestCase
         markEmailAddressInvalid($this->emailAddress);
 
         $sea = BeanFactory::newBean('EmailAddresses');
-        $rs = $sea->retrieve_by_string_fields( array('email_address_caps' => trim(strtoupper($this->emailAddress))) );
-        $this->assertTrue( (bool) $rs->invalid_email);
+        $rs = $sea->retrieve_by_string_fields(['email_address_caps' => trim(strtoupper($this->emailAddress))]);
+        $this->assertTrue((bool) $rs->invalid_email);
     }
 }

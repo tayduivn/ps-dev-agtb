@@ -34,14 +34,14 @@ class CRYS528Test extends TestCase
 
         $api = new ModuleApi();
 
-        $params = array('module' => 'Contacts', 'record' => $contact->id, 'email1' => '');
+        $params = ['module' => 'Contacts', 'record' => $contact->id, 'email1' => ''];
         $result = $api->updateRecord($service, $params);
         $this->assertEquals($params['email1'], $result['email1']);
         $this->assertEmpty($result['email']);
         $contact->retrieve();
         $this->assertEquals($params['email1'], $contact->email1);
 
-        $params = array('module' => 'Contacts', 'record' => $contact->id, 'email1' => 'test@email2.com');
+        $params = ['module' => 'Contacts', 'record' => $contact->id, 'email1' => 'test@email2.com'];
         $result = $api->updateRecord($service, $params);
         $this->assertEquals($params['email1'], $result['email1']);
         $contact->retrieve();

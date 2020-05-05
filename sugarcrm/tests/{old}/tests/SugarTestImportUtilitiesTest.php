@@ -24,14 +24,15 @@ class SugarTestImportUtilitiesTest extends TestCase
         $filename = SugarTestImportUtilities::createFile();
 
         $this->assertTrue(is_file($filename));
-        $fp = fopen($filename,"r");
+        $fp = fopen($filename, "r");
         $i = 0;
         $buffer = '';
         while (!feof($fp)) {
             $columns = $buffer;
             $buffer = fgetcsv($fp, 4096);
-            if ( $buffer !== false )
+            if ($buffer !== false) {
                 $i++;
+            }
         }
         fclose($fp);
         $this->assertEquals(2000, $i);
@@ -42,34 +43,35 @@ class SugarTestImportUtilitiesTest extends TestCase
     {
         $filename = SugarTestImportUtilities::createFile(1);
         $this->assertTrue(is_file($filename));
-        $fp = fopen($filename,"r");
+        $fp = fopen($filename, "r");
         $i = 0;
         $buffer = '';
         while (!feof($fp)) {
             $buffer = fgetcsv($fp, 4096);
-            if ( $buffer !== false ) {
+            if ($buffer !== false) {
                 $i++;
                 $columns = $buffer;
             }
         }
         fclose($fp);
-        $this->assertEquals(1,$i);
+        $this->assertEquals(1, $i);
         $this->assertEquals(3, count($columns));
     }
 
     public function testCanCreateFileAndSpecifyLinesAndColumns()
     {
-        $filename = SugarTestImportUtilities::createFile(2,5);
+        $filename = SugarTestImportUtilities::createFile(2, 5);
 
         $this->assertTrue(is_file($filename));
-        $fp = fopen($filename,"r");
+        $fp = fopen($filename, "r");
         $i = 0;
         $buffer = '';
         while (!feof($fp)) {
             $columns = $buffer;
             $buffer = fgetcsv($fp, 4096);
-            if ( $buffer !== false )
+            if ($buffer !== false) {
                 $i++;
+            }
         }
         fclose($fp);
         $this->assertEquals(2, $i);
@@ -78,15 +80,17 @@ class SugarTestImportUtilitiesTest extends TestCase
 
     public function testCanRemoveAllCreatedFiles()
     {
-        $filesCreated = array();
+        $filesCreated = [];
 
-        for ($i = 0; $i < 5; $i++)
+        for ($i = 0; $i < 5; $i++) {
             $filesCreated[] = SugarTestImportUtilities::createFile();
+        }
         $filesCreated[] = $filesCreated[4].'-0';
 
         SugarTestImportUtilities::removeAllCreatedFiles();
 
-        foreach ( $filesCreated as $filename )
+        foreach ($filesCreated as $filename) {
             $this->assertFalse(is_file($filename));
+        }
     }
 }

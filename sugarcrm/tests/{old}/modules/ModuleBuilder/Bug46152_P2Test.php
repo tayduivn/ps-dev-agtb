@@ -16,7 +16,7 @@ require_once 'modules/DynamicFields/FieldCases.php';
 
 class Bug46152_P2Test extends TestCase
 {
-    private $fields = array();
+    private $fields = [];
     private $dynamicField = null;
 
     /**
@@ -42,8 +42,8 @@ class Bug46152_P2Test extends TestCase
     protected function setUp() : void
     {
         SugarTestHelper::setUp('app_list_strings');
-        SugarTestHelper::setUp('mod_strings', array('Notes'));
-        SugarTestHelper::setUp('mod_strings', array('ModuleBuilder'));
+        SugarTestHelper::setUp('mod_strings', ['Notes']);
+        SugarTestHelper::setUp('mod_strings', ['ModuleBuilder']);
 
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
@@ -56,7 +56,7 @@ class Bug46152_P2Test extends TestCase
         $this->addField('testfield1_b46152');
         $this->addField('testfield2_b46152');
 
-        SugarTestHelper::setUp('mod_strings', array('Notes'));
+        SugarTestHelper::setUp('mod_strings', ['Notes']);
     }
 
     private function addField($name)
@@ -84,7 +84,7 @@ class Bug46152_P2Test extends TestCase
 
     private function deleteFields()
     {
-        foreach ($this->fields AS $field) {
+        foreach ($this->fields as $field) {
             $field->delete($this->dynamicField);
         }
     }

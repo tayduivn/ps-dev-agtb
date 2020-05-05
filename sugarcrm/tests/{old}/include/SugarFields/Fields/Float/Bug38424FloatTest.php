@@ -19,10 +19,10 @@ class Bug38424FloatTest extends TestCase
     protected function setUp() : void
     {
         $sfr = new SugarFieldFloat('float');
-        $vardef = array(
+        $vardef = [
             'len' => '10',
-        );
-        $this->_fieldOutput = $sfr->getEditViewSmarty(array(), $vardef, array(), 1);
+        ];
+        $this->_fieldOutput = $sfr->getEditViewSmarty([], $vardef, [], 1);
     }
 
     

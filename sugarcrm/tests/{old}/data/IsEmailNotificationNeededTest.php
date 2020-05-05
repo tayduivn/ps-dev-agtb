@@ -62,151 +62,151 @@ class isEmailNotificationNeededTest extends TestCase
         // $assignedUserId = [8, 9];
         // $currentUserId = [9, 10];
 
-        return array(
-            array(
-                array(
+        return [
+            [
+                [
                     'assignedUserIdOld' => 7,
                     'isInstalling' => false,
                     'assignedUserId' => 8,
-                    'currentUserId' => 9
-                ),
-                true
-            ),
-            array(
-                array(
+                    'currentUserId' => 9,
+                ],
+                true,
+            ],
+            [
+                [
                     'assignedUserIdOld' => 7,
                     'isInstalling' => false,
                     'assignedUserId' => 8,
-                    'currentUserId' => 10
-                ),
-                true
-            ),
-            array(
-                array(
+                    'currentUserId' => 10,
+                ],
+                true,
+            ],
+            [
+                [
                     'assignedUserIdOld' => 7,
                     'isInstalling' => false,
                     'assignedUserId' => 9,
-                    'currentUserId' => 9
-                ),
-                false
-            ),
-            array(
-                array(
+                    'currentUserId' => 9,
+                ],
+                false,
+            ],
+            [
+                [
                     'assignedUserIdOld' => 7,
                     'isInstalling' => false,
                     'assignedUserId' => 9,
-                    'currentUserId' => 10
-                ),
-                true
-            ),
-            array(
-                array(
+                    'currentUserId' => 10,
+                ],
+                true,
+            ],
+            [
+                [
                     'assignedUserIdOld' => 7,
                     'isInstalling' => true,
                     'assignedUserId' => 8,
-                    'currentUserId' => 9
-                ),
-                false
-            ),
-            array(
-                array(
+                    'currentUserId' => 9,
+                ],
+                false,
+            ],
+            [
+                [
                     'assignedUserIdOld' => 7,
                     'isInstalling' => true,
                     'assignedUserId' => 8,
-                    'currentUserId' => 10
-                ),
-                false
-            ),
-            array(
-                array(
+                    'currentUserId' => 10,
+                ],
+                false,
+            ],
+            [
+                [
                     'assignedUserIdOld' => 7,
                     'isInstalling' => true,
                     'assignedUserId' => 9,
-                    'currentUserId' => 9
-                ),
-                false
-            ),
-            array(
-                array(
+                    'currentUserId' => 9,
+                ],
+                false,
+            ],
+            [
+                [
                     'assignedUserIdOld' => 7,
                     'isInstalling' => true,
                     'assignedUserId' => 9,
-                    'currentUserId' => 10
-                ),
-                false
-            ),
-            array(
-                array(
+                    'currentUserId' => 10,
+                ],
+                false,
+            ],
+            [
+                [
                     'assignedUserIdOld' => 8,
                     'isInstalling' => false,
                     'assignedUserId' => 8,
-                    'currentUserId' => 9
-                ),
-                false
-            ),
-            array(
-                array(
+                    'currentUserId' => 9,
+                ],
+                false,
+            ],
+            [
+                [
                     'assignedUserIdOld' => 8,
                     'isInstalling' => false,
                     'assignedUserId' => 8,
-                    'currentUserId' => 10
-                ),
-                false
-            ),
-            array(
-                array(
+                    'currentUserId' => 10,
+                ],
+                false,
+            ],
+            [
+                [
                     'assignedUserIdOld' => 8,
                     'isInstalling' => false,
                     'assignedUserId' => 9,
-                    'currentUserId' => 9
-                ),
-                false
-            ),
-            array(
-                array(
+                    'currentUserId' => 9,
+                ],
+                false,
+            ],
+            [
+                [
                     'assignedUserIdOld' => 8,
                     'isInstalling' => false,
                     'assignedUserId' => 9,
-                    'currentUserId' => 10
-                ),
-                true
-            ),
-            array(
-                array(
+                    'currentUserId' => 10,
+                ],
+                true,
+            ],
+            [
+                [
                     'assignedUserIdOld' => 8,
                     'isInstalling' => true,
                     'assignedUserId' => 8,
-                    'currentUserId' => 9
-                ),
-                false
-            ),
-            array(
-                array(
+                    'currentUserId' => 9,
+                ],
+                false,
+            ],
+            [
+                [
                     'assignedUserIdOld' => 8,
                     'isInstalling' => true,
                     'assignedUserId' => 8,
-                    'currentUserId' => 10
-                ),
-                false
-            ),
-            array(
-                array(
+                    'currentUserId' => 10,
+                ],
+                false,
+            ],
+            [
+                [
                     'assignedUserIdOld' => 8,
                     'isInstalling' => true,
                     'assignedUserId' => 9,
-                    'currentUserId' => 9
-                ),
-                false
-            ),
-            array(
-                array(
+                    'currentUserId' => 9,
+                ],
+                false,
+            ],
+            [
+                [
                     'assignedUserIdOld' => 8,
                     'isInstalling' => true,
                     'assignedUserId' => 9,
-                    'currentUserId' => 10
-                ),
-                false
-            ),
-        );
+                    'currentUserId' => 10,
+                ],
+                false,
+            ],
+        ];
     }
 }

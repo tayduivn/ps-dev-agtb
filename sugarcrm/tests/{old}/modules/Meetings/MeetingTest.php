@@ -108,7 +108,7 @@ class MeetingTest extends TestCase
     {
         global $db;
         // setup $_POST
-        $_POST = array();
+        $_POST = [];
         $_POST['name'] = 'MeetingTestMeeting';
         $_POST['lead_invitees'] = $this->lead->id;
         $_POST['contact_invitees'] = $this->contact->id;
@@ -142,10 +142,10 @@ class MeetingTest extends TestCase
         $this->assertEmpty($meeting->reminder_checked);
         $this->assertEmpty($meeting->email_reminder_checked);
 
-        $meeting->loadFromRow(array(
+        $meeting->loadFromRow([
             'reminder_time' => 30,
             'email_reminder_time' => 30,
-        ));
+        ]);
 
         $this->assertTrue($meeting->reminder_checked);
         $this->assertTrue($meeting->email_reminder_checked);
@@ -156,14 +156,14 @@ class MeetingTest extends TestCase
         sugar_cache_clear('meetings_type_drop_down');
         //no way to mock out ExternalAPIFactory, so just using the value returned, likely empty array
         $expected = ExternalAPIFactory::getModuleDropDown('Meetings');
-        $expected = array_merge(array('Sugar' => 'Sugar'), $expected);
+        $expected = array_merge(['Sugar' => 'Sugar'], $expected);
         $actual = getMeetingsExternalApiDropDown();
         $this->assertEquals($expected, $actual);
     }
 
     public function testGetMeetingsExternalApiDropDown_WithCachedValues_ReturnsCachedValues()
     {
-        $cachedValues = array('Cached' => 'Cached');
+        $cachedValues = ['Cached' => 'Cached'];
         sugar_cache_put('meetings_type_drop_down', $cachedValues);
         $actual = getMeetingsExternalApiDropDown();
         $this->assertEquals($cachedValues, $actual);
@@ -172,9 +172,9 @@ class MeetingTest extends TestCase
     public function testGetMeetingsExternalApiDropDown_WithValuePassed_AppendValueToList()
     {
         $passedValue = 'PassedIn';
-        $cachedValues = array('Cached' => 'Cached');
+        $cachedValues = ['Cached' => 'Cached'];
         sugar_cache_put('meetings_type_drop_down', $cachedValues);
-        $expected = array_merge($cachedValues, array($passedValue => $passedValue));
+        $expected = array_merge($cachedValues, [$passedValue => $passedValue]);
         $actual = getMeetingsExternalApiDropDown(null, null, $passedValue);
         $this->assertEquals($expected, $actual);
     }
@@ -184,8 +184,8 @@ class MeetingTest extends TestCase
         SugarTestHelper::setUp("dictionary");
         global $dictionary, $app_list_strings;
         $dictionary['Meeting']['fields']['type']['options'] = 'foo_type';
-        $app_list_strings['foo_type'] = array('Foo' => 'Foo');
-        $cachedValues = array('Cached' => 'Cached');
+        $app_list_strings['foo_type'] = ['Foo' => 'Foo'];
+        $cachedValues = ['Cached' => 'Cached'];
         sugar_cache_put('meetings_type_drop_down', $cachedValues);
         $expected = array_merge($cachedValues, $app_list_strings['foo_type']);
         $actual = getMeetingsExternalApiDropDown();
@@ -195,14 +195,14 @@ class MeetingTest extends TestCase
 
     public function testGetNotificationRecipients_RecipientsAreAlreadyLoaded_ReturnsRecipients()
     {
-        $contacts = array(
+        $contacts = [
             SugarTestContactUtilities::createContact(),
             SugarTestContactUtilities::createContact(),
-        );
+        ];
 
         $meeting = BeanFactory::newBean('Meetings');
-        $meeting->users_arr = array($GLOBALS['current_user']->id);
-        $meeting->contacts_arr = array($contacts[0]->id, $contacts[1]->id);
+        $meeting->users_arr = [$GLOBALS['current_user']->id];
+        $meeting->contacts_arr = [$contacts[0]->id, $contacts[1]->id];
 
         $actual = $meeting->get_notification_recipients();
         $this->assertArrayHasKey($GLOBALS['current_user']->id, $actual, 'The current user should be in the list.');
@@ -212,10 +212,10 @@ class MeetingTest extends TestCase
 
     public function testGetNotificationRecipients_RecipientsAreNotAlreadyLoaded_ReturnsEmptyRecipients()
     {
-        $contacts = array(
+        $contacts = [
             SugarTestContactUtilities::createContact(),
             SugarTestContactUtilities::createContact(),
-        );
+        ];
 
         $meeting = SugarTestMeetingUtilities::createMeeting();
         SugarTestMeetingUtilities::addMeetingUserRelation($meeting->id, $GLOBALS['current_user']->id);

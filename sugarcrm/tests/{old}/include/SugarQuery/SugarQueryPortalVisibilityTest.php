@@ -38,7 +38,7 @@ class SugarQueryPortalVisibilityTest extends TestCase
      */
     public function testVisibilityCall()
     {
-        $bean = $this->createPartialMock('SugarBean', array('loadVisibility'));
+        $bean = $this->createPartialMock('SugarBean', ['loadVisibility']);
 
         $vis = $this->getMockBuilder('SupportPortalVisibility')
             ->setMethods(['addVisibilityQuery'])
@@ -67,6 +67,6 @@ class SupportPortalVisibilityQueryMock extends SupportPortalVisibility
 {
     public function getAccountIds()
     {
-        return self::$accountIds = array('1','2','3','4');
+        return self::$accountIds = ['1','2','3','4'];
     }
 }

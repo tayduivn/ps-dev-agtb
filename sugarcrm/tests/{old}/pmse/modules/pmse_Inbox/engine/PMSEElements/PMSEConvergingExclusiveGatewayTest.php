@@ -23,20 +23,20 @@ class PMSEConvergingExclusiveGatewayTest extends TestCase
     public function testRunWithNoPreviousFlows()
     {
         $this->convergingExclusiveGateway = $this->getMockBuilder('PMSEConvergingExclusiveGateway')
-            ->setMethods(array('retrievePreviousFlows', 'prepareResponse'))
+            ->setMethods(['retrievePreviousFlows', 'prepareResponse'])
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->convergingExclusiveGateway->expects($this->exactly(1))
             ->method('retrievePreviousFlows')
-            ->will($this->returnValue(array()));
+            ->will($this->returnValue([]));
 
-        $flowData = array('bpmn_id' => '9872398ue23', 'cas_id' => 1);
+        $flowData = ['bpmn_id' => '9872398ue23', 'cas_id' => 1];
         $bean = null;
 
         $this->convergingExclusiveGateway->expects($this->once())
             ->method('prepareResponse')
-            ->with($flowData, 'WAIT', 'NONE', array());
+            ->with($flowData, 'WAIT', 'NONE', []);
 
         $this->convergingExclusiveGateway->run($flowData, $bean);
     }
@@ -44,15 +44,15 @@ class PMSEConvergingExclusiveGatewayTest extends TestCase
     public function testRun()
     {
         $this->convergingExclusiveGateway = $this->getMockBuilder('PMSEConvergingExclusiveGateway')
-            ->setMethods(array('retrievePreviousFlows', 'prepareResponse'))
+            ->setMethods(['retrievePreviousFlows', 'prepareResponse'])
             ->disableOriginalConstructor()
             ->getMock();
 
-        $previousFlows = array(
-            array('id' => '1234567'),
-        );
+        $previousFlows = [
+            ['id' => '1234567'],
+        ];
 
-        $flowData = array('bpmn_id' => '9872398ue23', 'cas_id' => 1);
+        $flowData = ['bpmn_id' => '9872398ue23', 'cas_id' => 1];
         $bean = null;
 
         $this->convergingExclusiveGateway->expects($this->exactly(1))
@@ -61,7 +61,7 @@ class PMSEConvergingExclusiveGatewayTest extends TestCase
 
         $this->convergingExclusiveGateway->expects($this->once())
             ->method('prepareResponse')
-            ->with($flowData, 'ROUTE', 'CREATE', array());
+            ->with($flowData, 'ROUTE', 'CREATE', []);
 
         $this->convergingExclusiveGateway->run($flowData, $bean);
     }

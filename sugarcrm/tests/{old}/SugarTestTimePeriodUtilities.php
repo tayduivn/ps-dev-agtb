@@ -16,9 +16,11 @@
  */
 class SugarTestTimePeriodUtilities
 {
-    public static $_createdTimePeriods = array();
+    public static $_createdTimePeriods = [];
 
-    private function __construct() {}
+    private function __construct()
+    {
+    }
 
     /**
      * @static
@@ -28,18 +30,17 @@ class SugarTestTimePeriodUtilities
      * @param $end_date String value of a db date default end date
      * @return TimePeriod Mixed TimePeriod test instance
      */
-    public static function createTimePeriod($start_date='', $end_date='', $name='', $parent_id='')
+    public static function createTimePeriod($start_date = '', $end_date = '', $name = '', $parent_id = '')
     {
         global $timedate;
         $timedate = TimeDate::getInstance();
         $now = $timedate->getNow();
         $month = $timedate->getNow()->format('n');
-        if($month < 4)
-        {
+        if ($month < 4) {
             $month = 1;
-        } else if ($month < 7) {
+        } elseif ($month < 7) {
             $month = 4;
-        } else if ($month < 10) {
+        } elseif ($month < 10) {
             $month = 7;
         } else {
             $month = 10;
@@ -52,13 +53,11 @@ class SugarTestTimePeriodUtilities
         }
         $timeperiod = new TimePeriod();
 
-        if(empty($start_date))
-        {
+        if (empty($start_date)) {
             $start_date = $timedate->asDbDate($now->get_day_begin(1, $month, $year));
         }
 
-        if(empty($end_date))
-        {
+        if (empty($end_date)) {
             $end_date =  $timedate->asDbDate($now->get_day_end(31, $month+2, $year));
         }
 
@@ -82,7 +81,8 @@ class SugarTestTimePeriodUtilities
     /*
      * magic tardis function
      */
-    public static function createITimePeriod ($type, $is_fiscal=false){
+    public static function createITimePeriod($type, $is_fiscal = false)
+    {
         global $timedate;
         $timedate = TimeDate::getInstance();
         $time = mt_rand();
@@ -98,17 +98,17 @@ class SugarTestTimePeriodUtilities
         return $timeperiod;
     }
 
-    protected static function getRandDate() {
+    protected static function getRandDate()
+    {
         global $timedate;
         $timedate = TimeDate::getInstance();
         $rand_date = $timedate->getNow();
         $month = $timedate->getNow()->format('n');
-        if($month < 4)
-        {
+        if ($month < 4) {
             $month = 1;
-        } else if ($month < 8) {
+        } elseif ($month < 8) {
             $month = 4;
-        } else if ($month < 11) {
+        } elseif ($month < 11) {
             $month = 7;
         } else {
             $month = 10;
@@ -137,7 +137,8 @@ class SugarTestTimePeriodUtilities
      *
      * @param $timeperiod
      */
-    public static function addCreatedTimePeriod($timeperiod) {
+    public static function addCreatedTimePeriod($timeperiod)
+    {
         self::$_createdTimePeriods[] = $timeperiod;
     }
 
@@ -149,9 +150,8 @@ class SugarTestTimePeriodUtilities
      */
     public static function getCreatedTimePeriodIds()
     {
-        $timeperiod_ids = array();
-        foreach (self::$_createdTimePeriods as $tp)
-        {
+        $timeperiod_ids = [];
+        foreach (self::$_createdTimePeriods as $tp) {
             $timeperiod_ids[] = $tp->id;
         }
         return $timeperiod_ids;
@@ -163,7 +163,7 @@ class SugarTestTimePeriodUtilities
      *
      * @param $timePeriods Array of TimePeriod instances
      */
-    public static function setCreatedTimePeriods($timePeriods=array())
+    public static function setCreatedTimePeriods($timePeriods = [])
     {
         self::$_createdTimePeriods = $timePeriods;
     }

@@ -54,7 +54,7 @@ class Bug51719Test extends TestCase
         $this->account->industry = '';
         $this->account->save();
 
-        $layout_def = array(
+        $layout_def = [
             'column_key' => 'self:account_type',
             'input_name0' => 'empty',
             'input_name1' => 'on',
@@ -63,18 +63,17 @@ class Bug51719Test extends TestCase
             'runtime' => 1,
             'table_alias' => 'accounts',
             'tablekey' => 'self',
-            'type' => 'enum'
-        );
+            'type' => 'enum',
+        ];
         $report = new Report();
         $layoutManager = new LayoutManager();
         $layoutManager->setAttributePtr('reporter', $report);
         $sugarWidgetFieldEnum = new SugarWidgetFieldEnum($layoutManager);
         $where = $sugarWidgetFieldEnum->queryFilter($layout_def);
-        if ($where != '')
-        {
+        if ($where != '') {
             $where .= " AND accounts.id = '" . $this->account->id . "'";
         }
-        $query = $this->account->create_new_list_query('', $where, array('id'));
+        $query = $this->account->create_new_list_query('', $where, ['id']);
         $account = $GLOBALS['db']->fetchOne($query);
 
         $this->assertEquals($this->account->id, $account['id'], 'Returned incorrect account');
@@ -92,7 +91,7 @@ class Bug51719Test extends TestCase
         $this->account->industry = 'Apparel';
         $this->account->save();
 
-        $layout_def = array(
+        $layout_def = [
             'column_key' => 'self:account_type',
             'input_name0' => 'not_empty',
             'input_name1' => 'on',
@@ -101,18 +100,17 @@ class Bug51719Test extends TestCase
             'runtime' => 1,
             'table_alias' => 'accounts',
             'tablekey' => 'self',
-            'type' => 'enum'
-        );
+            'type' => 'enum',
+        ];
         $report = new Report();
         $layoutManager = new LayoutManager();
         $layoutManager->setAttributePtr('reporter', $report);
         $sugarWidgetFieldEnum = new SugarWidgetFieldEnum($layoutManager);
         $where = $sugarWidgetFieldEnum->queryFilter($layout_def);
-        if ($where != '')
-        {
+        if ($where != '') {
             $where .= " AND accounts.id = '" . $this->account->id . "'";
         }
-        $query = $this->account->create_new_list_query('', $where, array('id'));
+        $query = $this->account->create_new_list_query('', $where, ['id']);
         $account = $GLOBALS['db']->fetchOne($query);
 
         $this->assertEquals($this->account->id, $account['id'], 'Returned incorrect account');

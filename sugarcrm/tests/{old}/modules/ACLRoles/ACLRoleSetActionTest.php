@@ -25,20 +25,20 @@ class ACLRoleSetActionTest extends TestCase
 
     public function testShouldSaveNonAdminPermissionsForUsers()
     {
-        $this->setRoleAction(array(
+        $this->setRoleAction([
             'acltype' => 'module',
             'category' => 'Users',
             'name' => 'admin',
-        ), $this->once());
+        ], $this->once());
     }
 
     public function testShouldNotSaveAdminPermissionsForUsers()
     {
-        $this->setRoleAction(array(
+        $this->setRoleAction([
             'acltype' => 'module',
             'category' => 'Users',
             'name' => 'access',
-        ), $this->never());
+        ], $this->never());
     }
 
     private function setRoleAction(array $params, Matcher $matcher)
@@ -55,7 +55,7 @@ class ACLRoleSetActionTest extends TestCase
      */
     private function getRole()
     {
-        return $this->createPartialMock('ACLRole', array('set_relationship'));
+        return $this->createPartialMock('ACLRole', ['set_relationship']);
     }
 
     /**

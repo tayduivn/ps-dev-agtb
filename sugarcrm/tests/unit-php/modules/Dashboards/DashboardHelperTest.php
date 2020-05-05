@@ -24,7 +24,7 @@ class DashboardHelperTest extends TestCase
     public function testPrepareDashboardModules()
     {
         $dashboardHelperMock = $this->getMockBuilder('DashboardHelper')
-            ->setMethods(array('checkModuleAccess'))
+            ->setMethods(['checkModuleAccess'])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -37,22 +37,22 @@ class DashboardHelperTest extends TestCase
                 }
             ));
 
-        $moduleList = array(
+        $moduleList = [
             'SecondAllowedModule',
             'AllowedModule',
             'DeniedModule',
-        );
+        ];
 
-        $translations = array(
+        $translations = [
             'SecondAllowedModule' => 'Second Allowed Module',
             'AllowedModule' => 'Allowed Module',
             'DeniedModule' => 'Denied Module',
-        );
+        ];
 
-        $expected = array(
+        $expected = [
             'AllowedModule' => 'Allowed Module',
             'SecondAllowedModule' => 'Second Allowed Module',
-        );
+        ];
 
         $preparedModules = $dashboardHelperMock->prepareDashboardModules($moduleList, $translations);
 

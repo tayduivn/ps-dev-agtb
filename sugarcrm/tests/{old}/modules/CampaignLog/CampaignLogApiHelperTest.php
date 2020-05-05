@@ -45,7 +45,7 @@ class CampaignLogApiHelperTest extends TestCase
         $this->bean->related_id = $campaignTracker->id;
         $this->bean->related_type = 'CampaignTrackers';
 
-        $data = $this->helper->formatForApi($this->bean, array('related_name'));
+        $data = $this->helper->formatForApi($this->bean, ['related_name']);
 
         $this->assertEquals($data['related_name'], $campaignTracker->tracker_url, "Tracker URL does not match");
 
@@ -60,7 +60,7 @@ class CampaignLogApiHelperTest extends TestCase
         $this->bean->related_id = $contact->id;
         $this->bean->related_type = 'Contacts';
 
-        $data = $this->helper->formatForApi($this->bean, array('related_name'));
+        $data = $this->helper->formatForApi($this->bean, ['related_name']);
 
         $this->assertEquals($data['related_name'], $contact->full_name, "Contact name does not match");
 
@@ -75,7 +75,7 @@ class CampaignLogApiHelperTest extends TestCase
         $this->bean->related_id = $account->id;
         $this->bean->related_type = 'Accounts';
 
-        $data = $this->helper->formatForApi($this->bean, array('related_name'));
+        $data = $this->helper->formatForApi($this->bean, ['related_name']);
 
         $this->assertEquals($data['related_name'], $account->name, "Account name does not match");
 

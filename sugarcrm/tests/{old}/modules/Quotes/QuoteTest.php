@@ -94,16 +94,16 @@ class QuoteTest extends TestCase
     public function testMarkDeleted()
     {
         $quote = $this->getMockBuilder('Quote')
-            ->setMethods(array('save', 'retrieve', 'load_relationship'))
+            ->setMethods(['save', 'retrieve', 'load_relationship'])
             ->getMock();
 
         $link2 = $this->getMockBuilder('Link2')
-            ->setMethods(array('getBeans'))
+            ->setMethods(['getBeans'])
             ->disableOriginalConstructor()
             ->getMock();
 
         $product_bundle = $this->getMockBuilder('ProductBundle')
-            ->setMethods(array('mark_deleted'))
+            ->setMethods(['mark_deleted'])
             ->getMock();
 
         $product_bundle->id = 'pb_unittest';
@@ -114,7 +114,7 @@ class QuoteTest extends TestCase
 
         $link2->expects($this->once())
             ->method('getBeans')
-            ->will($this->returnValue(array($product_bundle)));
+            ->will($this->returnValue([$product_bundle]));
 
         $quote->product_bundles = $link2;
 
@@ -135,7 +135,7 @@ class QuoteTest extends TestCase
     public function testQuoteIsClosed($stage, $expected)
     {
         $quote = $this->getMockBuilder('Quote')
-            ->setMethods(array('save', 'retrieve', 'load_relationship'))
+            ->setMethods(['save', 'retrieve', 'load_relationship'])
             ->getMock();
 
         $quote->quote_stage = $stage;
@@ -150,16 +150,16 @@ class QuoteTest extends TestCase
      */
     public function dataProviderQuoteIsClosed()
     {
-        return array(
-            array('Draft', false),
-            array('Negotiation', false),
-            array('Delivered', false),
-            array('On Hold', false),
-            array('Confirmed', false),
-            array('Closed Accepted', true),
-            array('Closed Lost', true),
-            array('Closed Dead', true)
-        );
+        return [
+            ['Draft', false],
+            ['Negotiation', false],
+            ['Delivered', false],
+            ['On Hold', false],
+            ['Confirmed', false],
+            ['Closed Accepted', true],
+            ['Closed Lost', true],
+            ['Closed Dead', true],
+        ];
     }
 
     /**
@@ -170,7 +170,7 @@ class QuoteTest extends TestCase
     public function testQuoteUpdateBaseRate($stage, $expected)
     {
         $quote = $this->getMockBuilder('Quote')
-            ->setMethods(array('save', 'retrieve', 'load_relationship'))
+            ->setMethods(['save', 'retrieve', 'load_relationship'])
             ->getMock();
 
         $quote->quote_stage = $stage;
@@ -185,16 +185,16 @@ class QuoteTest extends TestCase
      */
     public function dataProviderQuoteUpdateCurrencyBaseRate()
     {
-        return array(
-            array('Draft', true),
-            array('Negotiation', true),
-            array('Delivered', true),
-            array('On Hold', true),
-            array('Confirmed', true),
-            array('Closed Accepted', false),
-            array('Closed Lost', false),
-            array('Closed Dead', false)
-        );
+        return [
+            ['Draft', true],
+            ['Negotiation', true],
+            ['Delivered', true],
+            ['On Hold', true],
+            ['Confirmed', true],
+            ['Closed Accepted', false],
+            ['Closed Lost', false],
+            ['Closed Dead', false],
+        ];
     }
 
     /**
@@ -203,7 +203,7 @@ class QuoteTest extends TestCase
     public function testUpdateProductsAccountId()
     {
         $quote = $this->getMockBuilder('Quote')
-        ->setMethods(array('load_relationship'))
+        ->setMethods(['load_relationship'])
         ->getMock();
         $quote->expects($this->once())
         ->method('load_relationship')
@@ -212,20 +212,20 @@ class QuoteTest extends TestCase
         $quote->billing_account_id = 'new';
         $quote->account_id = 'old';
         $product = $this->getMockBuilder('Product')
-        ->setMethods(array('save'))
+        ->setMethods(['save'])
         ->getMock();
         $product->account_id = 'old';
         $product->expects($this->once())
         ->method('save');
         $link2 = $this->getMockBuilder('Link2')
-        ->setMethods(array('getBeans'))
+        ->setMethods(['getBeans'])
         ->disableOriginalConstructor()
         ->getMock();
         $link2->expects($this->once())
         ->method('getBeans')
-        ->will($this->returnValue(array($product)));
+        ->will($this->returnValue([$product]));
         $bundle = $this->getMockBuilder('ProductBundle')
-        ->setMethods(array('load_relationship'))
+        ->setMethods(['load_relationship'])
         ->getMock();
         $bundle->expects($this->once())
         ->method('load_relationship')
@@ -233,12 +233,12 @@ class QuoteTest extends TestCase
         ->willReturn(true);
         $bundle->products = $link2;
         $link2 = $this->getMockBuilder('Link2')
-        ->setMethods(array('getBeans'))
+        ->setMethods(['getBeans'])
         ->disableOriginalConstructor()
         ->getMock();
         $link2->expects($this->once())
         ->method('getBeans')
-        ->will($this->returnValue(array($bundle)));
+        ->will($this->returnValue([$bundle]));
         $quote->product_bundles = $link2;
         $quote->updateProductsAccountId();
         $this->assertEquals($quote->billing_account_id, $product->account_id, 'Product account_id should have been updated');

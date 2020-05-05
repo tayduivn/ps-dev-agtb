@@ -38,42 +38,42 @@ class AnalysisBuilderTest extends TestCase
 
     public function providerTestAddCustomAnalyzer()
     {
-        return array(
-            array(
+        return [
+            [
                 'gs_analyzer_string',
                 'standard',
-                array('lowercase'),
-                array(),
-                array(
+                ['lowercase'],
+                [],
+                [
                     'type' => AnalysisBuilder::CUSTOM_ANALYZER,
                     AnalysisBuilder::TOKENIZER => 'standard',
-                    AnalysisBuilder::TOKENFILTER => array('lowercase'),
-                )
-            ),
-            array(
+                    AnalysisBuilder::TOKENFILTER => ['lowercase'],
+                ],
+            ],
+            [
                 'gs_analyzer_phone',
                 'whitespace',
-                array(),
-                array('gs_char_num_pattern'),
-                array(
+                [],
+                ['gs_char_num_pattern'],
+                [
                     'type' => AnalysisBuilder::CUSTOM_ANALYZER,
                     AnalysisBuilder::TOKENIZER => 'whitespace',
-                    AnalysisBuilder::CHARFILTER => array('gs_char_num_pattern'),
-                )
-            ),
-            array(
+                    AnalysisBuilder::CHARFILTER => ['gs_char_num_pattern'],
+                ],
+            ],
+            [
                 'gs_analyzer_phone_ngram',
                 'whitespace',
-                array('gs_filter_ngram_3_15'),
-                array('gs_char_num_pattern'),
-                array(
+                ['gs_filter_ngram_3_15'],
+                ['gs_char_num_pattern'],
+                [
                     'type' => AnalysisBuilder::CUSTOM_ANALYZER,
                     AnalysisBuilder::TOKENIZER => 'whitespace',
-                    AnalysisBuilder::TOKENFILTER => array('gs_filter_ngram_3_15'),
-                    AnalysisBuilder::CHARFILTER => array('gs_char_num_pattern'),
-                )
-            ),
-        );
+                    AnalysisBuilder::TOKENFILTER => ['gs_filter_ngram_3_15'],
+                    AnalysisBuilder::CHARFILTER => ['gs_char_num_pattern'],
+                ],
+            ],
+        ];
     }
 
 
@@ -88,7 +88,7 @@ class AnalysisBuilderTest extends TestCase
     public function testAddAnalyzer($name, $base, $type, array $options, array $output)
     {
         $builder = $this->getAnalysisBuilderMock();
-        switch($base) {
+        switch ($base) {
             case AnalysisBuilder::ANALYZER:
                 $builder2 = $builder->addAnalyzer($name, $type, $options);
                 break;
@@ -111,48 +111,48 @@ class AnalysisBuilderTest extends TestCase
 
     public function providerTestAddAnalyzer()
     {
-        return array(
-            array(
+        return [
+            [
                 'gs_analyzer_standard',
                 AnalysisBuilder::ANALYZER,
                 'standard',
-                array(),
-                array(
+                [],
+                [
                     'type' => 'standard',
-                )
-            ),
-            array(
+                ],
+            ],
+            [
                 'gs_analyzer_whitespace',
                 AnalysisBuilder::TOKENIZER,
                 'whitespace',
-                array(),
-                array(
+                [],
+                [
                     'type' => 'whitespace',
-                )
-            ),
-            array(
+                ],
+            ],
+            [
                 'gs_filter_ngram_1_15',
                 AnalysisBuilder::TOKENFILTER,
                 'nGram',
-                array('min_gram' => 1, 'max_gram' => 15),
-                array(
+                ['min_gram' => 1, 'max_gram' => 15],
+                [
                     'type' => 'nGram',
                     'min_gram' => 1,
                     'max_gram' => 15,
-                )
-            ),
-            array(
+                ],
+            ],
+            [
                 'gs_char_num_pattern',
                 AnalysisBuilder::CHARFILTER,
                 'pattern_replace',
-                array('pattern' => '[^\\d\\s]+', 'replacement' => ''),
-                array(
+                ['pattern' => '[^\\d\\s]+', 'replacement' => ''],
+                [
                     'type' => 'pattern_replace',
                     'pattern' => '[^\\d\\s]+',
                     'replacement' => '',
-                )
-            ),
-        );
+                ],
+            ],
+        ];
     }
 
     /**
@@ -168,17 +168,17 @@ class AnalysisBuilderTest extends TestCase
             null,
             false
         );
-        $expected = array(
-            AnalysisBuilder::ANALYZER => array(),
-            AnalysisBuilder::TOKENIZER => array(),
-            AnalysisBuilder::TOKENFILTER => array(),
-            AnalysisBuilder::CHARFILTER => array(),
-        );
+        $expected = [
+            AnalysisBuilder::ANALYZER => [],
+            AnalysisBuilder::TOKENIZER => [],
+            AnalysisBuilder::TOKENFILTER => [],
+            AnalysisBuilder::CHARFILTER => [],
+        ];
 
         $this->assertSame($expected, TestReflection::getProtectedValue($analysisBuilderMock, 'analysis'));
 
         $analysisBuilderMock->compile();
-        $this->assertSame(array(AnalysisBuilder::ANALYSIS => $expected), $analysisBuilderMock->compile());
+        $this->assertSame([AnalysisBuilder::ANALYSIS => $expected], $analysisBuilderMock->compile());
     }
 
     /**

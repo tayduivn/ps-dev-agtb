@@ -9,132 +9,131 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-$searchdefs ['Opportunities'] = 
-array (
-  'layout' => 
-  array (
-    'basic_search' => 
-    array (
+$searchdefs ['Opportunities'] =
+ [
+  'layout' =>
+   [
+    'basic_search' =>
+     [
       0 => 'name',
       1 => 'opportunity_type',
       2 => 'account_name',
-      3 => 
-      array (
+      3 =>
+       [
         'name' => 'current_user_only',
         'label' => 'LBL_CURRENT_USER_FILTER',
         'type' => 'bool',
-      ),
-    ),
-    'advanced_search' => 
-    array (
-      'name' => 
-      array (
+      ],
+    ],
+    'advanced_search' =>
+     [
+      'name' =>
+       [
         'name' => 'name',
         'label' => 'LBL_OPPORTUNITY_NAME',
         'default' => true,
         'width' => '10%',
-      ),
-      'amount' => 
-      array (
+      ],
+      'amount' =>
+       [
         'name' => 'amount',
         'label' => 'LBL_AMOUNT',
         'default' => true,
         'currency_format' => true,
         'width' => '10%',
-      ),
-      'account_name' => 
-      array (
+      ],
+      'account_name' =>
+       [
         'name' => 'account_name',
         'label' => 'LBL_ACCOUNT_NAME',
         'default' => true,
         'width' => '10%',
-      ),
-      'date_closed' => 
-      array (
+      ],
+      'date_closed' =>
+       [
         'name' => 'date_closed',
         'label' => 'LBL_DATE_CLOSED',
         'default' => true,
         'width' => '10%',
-      ),
-      'opportunity_type' => 
-      array (
+      ],
+      'opportunity_type' =>
+       [
         'width' => '10%',
         'label' => 'LBL_TYPE',
         'sortable' => false,
         'default' => true,
         'name' => 'opportunity_type',
-      ),
-      'lead_source' => 
-      array (
+      ],
+      'lead_source' =>
+       [
         'name' => 'lead_source',
         'label' => 'LBL_LEAD_SOURCE',
         'default' => true,
         'sortable' => false,
         'width' => '10%',
-      ),
-      'next_step' => 
-      array (
+      ],
+      'next_step' =>
+       [
         'name' => 'next_step',
         'label' => 'LBL_NEXT_STEP',
         'default' => true,
         'width' => '10%',
-      ),
-      'sales_stage' => 
-      array (
+      ],
+      'sales_stage' =>
+       [
         'name' => 'sales_stage',
         'label' => 'LBL_SALES_STAGE',
         'default' => true,
         'sortable' => false,
         'width' => '10%',
-      ),
-      'probability' => 
-      array (
+      ],
+      'probability' =>
+       [
         'name' => 'probability',
         'label' => 'LBL_PROBABILITY',
         'default' => true,
         'width' => '10%',
-      ),
-      'assigned_user_id' => 
-      array (
+      ],
+      'assigned_user_id' =>
+       [
         'name' => 'assigned_user_id',
         'type' => 'enum',
         'label' => 'LBL_ASSIGNED_TO',
-        'function' => 
-        array (
+        'function' =>
+         [
           'name' => 'get_user_array',
-          'params' => 
-          array (
+          'params' =>
+           [
             0 => false,
-          ),
-        ),
+          ],
+        ],
         'default' => true,
         'sortable' => false,
         'width' => '10%',
-      ),
-      'partner_assigned_to_c' => 
-      array (
+      ],
+      'partner_assigned_to_c' =>
+       [
         'width' => '10%',
         'label' => 'Partner_Assigned_To_c',
         'default' => true,
         'name' => 'partner_assigned_to_c',
-      ),
-      'order_number' => 
-      array (
+      ],
+      'order_number' =>
+       [
         'width' => '10%',
         'label' => 'LBL_ORDER_NUMBER',
         'default' => true,
         'name' => 'order_number',
-      ),
-    ),
-  ),
-  'templateMeta' => 
-  array (
+      ],
+    ],
+  ],
+  'templateMeta' =>
+   [
     'maxColumns' => '3',
-    'widths' => 
-    array (
+    'widths' =>
+     [
       'label' => '10',
       'field' => '30',
-    ),
-  ),
-);
-?>
+    ],
+  ],
+];

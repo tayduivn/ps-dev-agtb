@@ -14,8 +14,8 @@ use PHPUnit\Framework\TestCase;
 
 class ConditionTest extends TestCase
 {
-    protected static $products = array();
-    protected static $prodIds = array();
+    protected static $products = [];
+    protected static $prodIds = [];
 
     public static function setUpBeforeClass() : void
     {
@@ -39,10 +39,10 @@ class ConditionTest extends TestCase
         }
 
         for ($x = 1; $x <= 4; $x++) {
-            self::$products[] = SugarTestProductUtilities::createProduct(null, array(
+            self::$products[] = SugarTestProductUtilities::createProduct(null, [
                 'name' => "SugarQuery Unit Test {$x}",
                 'quantity' => $x,
-            ));
+            ]);
         }
     }
 
@@ -53,7 +53,7 @@ class ConditionTest extends TestCase
         $db = DBManagerFactory::getInstance();
 
         if (!empty(self::$products)) {
-            $oppList = array();
+            $oppList = [];
             foreach (self::$products as $opp) {
                 $oppList[] = $opp->id;
             }
@@ -81,7 +81,7 @@ class ConditionTest extends TestCase
 
         $result = $sq->execute();
 
-        $this->assertResult(array(3), $result);
+        $this->assertResult([3], $result);
     }
 
     public function testContains()
@@ -94,7 +94,7 @@ class ConditionTest extends TestCase
 
         $result = $sq->execute();
 
-        $this->assertResult(array(2), $result);
+        $this->assertResult([2], $result);
     }
 
     public function testStartsWith()
@@ -107,7 +107,7 @@ class ConditionTest extends TestCase
 
         $result = $sq->execute();
 
-        $this->assertResult(array(3), $result);
+        $this->assertResult([3], $result);
     }
 
     public function testLessThan()
@@ -120,7 +120,7 @@ class ConditionTest extends TestCase
 
         $result = $sq->execute();
 
-        $this->assertResult(array(1, 2), $result);
+        $this->assertResult([1, 2], $result);
     }
 
     public function testLessThanEquals()
@@ -133,7 +133,7 @@ class ConditionTest extends TestCase
 
         $result = $sq->execute();
 
-        $this->assertResult(array(1, 2, 3), $result);
+        $this->assertResult([1, 2, 3], $result);
     }
 
     public function testGreaterThan()
@@ -146,7 +146,7 @@ class ConditionTest extends TestCase
 
         $result = $sq->execute();
 
-        $this->assertResult(array(3, 4), $result);
+        $this->assertResult([3, 4], $result);
     }
 
     public function testGreaterThanEquals()
@@ -159,14 +159,14 @@ class ConditionTest extends TestCase
 
         $result = $sq->execute();
 
-        $this->assertResult(array(2, 3, 4), $result);
+        $this->assertResult([2, 3, 4], $result);
     }
 
     public function testDateRange()
     {
         $sq = new SugarQuery();
 
-        $sq->select(array('name', 'date_modified'));
+        $sq->select(['name', 'date_modified']);
         $sq->from(BeanFactory::newBean('Products'));
         $sq->where()->dateRange('date_entered', 'last_7_days');
 
@@ -178,7 +178,7 @@ class ConditionTest extends TestCase
             'Wrong row count, actually received: ' . count($result) . ' back.'
         );
 
-        foreach ($result AS $opp) {
+        foreach ($result as $opp) {
             $this->assertGreaterThanOrEqual(
                 gmdate("Y-m-d H:i:s", gmmktime(0, 0, 0, gmdate('m'), gmdate('d') - 7, gmdate('Y'))),
                 $opp['date_modified'],
@@ -196,9 +196,9 @@ class ConditionTest extends TestCase
     {
         $sq = new SugarQuery();
 
-        $sq->select(array('name', 'date_modified'));
+        $sq->select(['name', 'date_modified']);
         $sq->from(BeanFactory::newBean('Products'));
-        $params = array(gmdate('Y-m-d', gmmktime(0, 0, 0, gmdate('m'), gmdate('d') - 1, gmdate('Y'))), gmdate('Y-m-d'));
+        $params = [gmdate('Y-m-d', gmmktime(0, 0, 0, gmdate('m'), gmdate('d') - 1, gmdate('Y'))), gmdate('Y-m-d')];
         $sq->where()->dateBetween('date_entered', $params);
 
         $result = $sq->execute();
@@ -209,7 +209,7 @@ class ConditionTest extends TestCase
             'Wrong row count, actually received: ' . count($result) . ' back.'
         );
 
-        foreach ($result AS $opp) {
+        foreach ($result as $opp) {
             $this->assertGreaterThanOrEqual(
                 gmdate("Y-m-d H:i:s", gmmktime(0, 0, 0, gmdate('m'), gmdate('d') - 1, gmdate('Y'))),
                 $opp['date_modified'],
@@ -241,20 +241,20 @@ class ConditionTest extends TestCase
 
     public static function inProvider()
     {
-        return array(
-            'only-non-null' => array(
-                array(1, 3),
-                array(1, 3),
-            ),
-            'null-and-non-null' => array(
-                array('', 1, 3),
-                array(1, 3),
-            ),
-            'only-null' => array(
-                array(''),
-                array(),
-            ),
-        );
+        return [
+            'only-non-null' => [
+                [1, 3],
+                [1, 3],
+            ],
+            'null-and-non-null' => [
+                ['', 1, 3],
+                [1, 3],
+            ],
+            'only-null' => [
+                [''],
+                [],
+            ],
+        ];
     }
 
     /**
@@ -275,20 +275,20 @@ class ConditionTest extends TestCase
 
     public static function notInProvider()
     {
-        return array(
-            'only-non-null' => array(
-                array(1, 3),
-                array(2, 4),
-            ),
-            'null-and-non-null' => array(
-                array('', 1, 3),
-                array(2, 4),
-            ),
-            'only-null' => array(
-                array(''),
-                array(1, 2, 3, 4),
-            ),
-        );
+        return [
+            'only-non-null' => [
+                [1, 3],
+                [2, 4],
+            ],
+            'null-and-non-null' => [
+                ['', 1, 3],
+                [2, 4],
+            ],
+            'only-null' => [
+                [''],
+                [1, 2, 3, 4],
+            ],
+        ];
     }
 
     public function testBetween()
@@ -301,7 +301,7 @@ class ConditionTest extends TestCase
 
         $result = $sq->execute();
 
-        $this->assertResult(array(2, 3, 4), $result);
+        $this->assertResult([2, 3, 4], $result);
     }
 
     public function testNotNull()
@@ -314,7 +314,7 @@ class ConditionTest extends TestCase
 
         $result = $sq->execute();
 
-        $this->assertResult(array(1, 2, 3, 4), $result);
+        $this->assertResult([1, 2, 3, 4], $result);
     }
 
     public function testNull()
@@ -327,7 +327,7 @@ class ConditionTest extends TestCase
 
         $result = $sq->execute();
 
-        $this->assertResult(array(), $result);
+        $this->assertResult([], $result);
     }
 
     public function testNotEmptyNotRequiredDate()
@@ -340,7 +340,7 @@ class ConditionTest extends TestCase
 
         $result = $sq->execute();
 
-        $this->assertResult(array(1, 2, 3, 4), $result);
+        $this->assertResult([1, 2, 3, 4], $result);
     }
 
     public function testRaw()
@@ -353,7 +353,7 @@ class ConditionTest extends TestCase
 
         $result = $sq->execute();
 
-        $this->assertResult(array(2), $result);
+        $this->assertResult([2], $result);
     }
 
     public function testOrderByLimit()

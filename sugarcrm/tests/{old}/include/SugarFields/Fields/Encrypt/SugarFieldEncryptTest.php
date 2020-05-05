@@ -19,7 +19,7 @@ class SugarFieldEncryptTest extends TestCase
     protected function setUp() : void
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-	}
+    }
     
     protected function tearDown() : void
     {
@@ -29,18 +29,18 @@ class SugarFieldEncryptTest extends TestCase
     
     public function _providerEmailTemplateFormat()
     {
-        return array(
-            array(Blowfish::encode(Blowfish::getKey('encrypt_field'), 'Test value'), 'Test value'),
-            );
+        return [
+            [Blowfish::encode(Blowfish::getKey('encrypt_field'), 'Test value'), 'Test value'],
+            ];
     }
     
     /**
      * @dataProvider _providerEmailTemplateFormat
      */
     public function testEmailTemplateFormat($unformattedValue, $expectedValue)
-	{
-   		$sfr = SugarFieldHandler::getSugarField('encrypt');
-        $formattedValue = $sfr->getEmailTemplateValue($unformattedValue,array(), array('notify_user' => $GLOBALS['current_user']));
-        $this->assertEquals($expectedValue, $formattedValue);    	
+    {
+        $sfr = SugarFieldHandler::getSugarField('encrypt');
+        $formattedValue = $sfr->getEmailTemplateValue($unformattedValue, [], ['notify_user' => $GLOBALS['current_user']]);
+        $this->assertEquals($expectedValue, $formattedValue);
     }
 }

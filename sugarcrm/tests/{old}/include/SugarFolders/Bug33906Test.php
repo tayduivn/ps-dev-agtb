@@ -1,4 +1,4 @@
-<?php 
+<?php
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -25,9 +25,9 @@ class Bug33906Test extends TestCase
         global $current_user, $currentModule;
 
         $this->_user = SugarTestUserUtilities::createAnonymousUser();
-		 $GLOBALS['current_user'] = $this->_user;
-		$this->folder = new SugarFolder(); 
-	}
+         $GLOBALS['current_user'] = $this->_user;
+        $this->folder = new SugarFolder();
+    }
 
     protected function tearDown() : void
     {
@@ -41,25 +41,25 @@ class Bug33906Test extends TestCase
         unset($this->folder);
     }
     
-	public function testSaveFolderNoSubscriptions()
-	{
-	    global $current_user;
-	    $this->folder->save();
+    public function testSaveFolderNoSubscriptions()
+    {
+        global $current_user;
+        $this->folder->save();
 
-	    $result = $GLOBALS['db']->query("SELECT count(*) as cnt FROM folders_subscriptions where folder_id='{$this->folder->id}'");
-	    $rs = $GLOBALS['db']->fetchByAssoc($result);
+        $result = $GLOBALS['db']->query("SELECT count(*) as cnt FROM folders_subscriptions where folder_id='{$this->folder->id}'");
+        $rs = $GLOBALS['db']->fetchByAssoc($result);
 
-	    $this->assertGreaterThan(0, $rs['cnt'], "Could not create folder subscriptions properly." );
+        $this->assertGreaterThan(0, $rs['cnt'], "Could not create folder subscriptions properly.");
     }
     
-	public function testSaveFolderWithSubscriptions()
-	{
+    public function testSaveFolderWithSubscriptions()
+    {
         global $current_user;
-	    $this->folder->save(FALSE);
+        $this->folder->save(false);
 
-	    $result = $GLOBALS['db']->query("SELECT count(*) as cnt FROM folders_subscriptions where folder_id='{$this->folder->id}'");
-	    $rs = $GLOBALS['db']->fetchByAssoc($result);
+        $result = $GLOBALS['db']->query("SELECT count(*) as cnt FROM folders_subscriptions where folder_id='{$this->folder->id}'");
+        $rs = $GLOBALS['db']->fetchByAssoc($result);
 
-	    $this->assertEquals(0, $rs['cnt'], "Created folder subscriptions when none should have been created." );
+        $this->assertEquals(0, $rs['cnt'], "Created folder subscriptions when none should have been created.");
     }
 }

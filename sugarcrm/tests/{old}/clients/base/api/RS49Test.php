@@ -34,7 +34,7 @@ class RS49Test extends TestCase
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setUp('current_user', array(true, true));
+        SugarTestHelper::setUp('current_user', [true, true]);
         SugarTestHelper::setUP('app_list_strings');
 
         $this->service = SugarTestRestUtilities::getRestServiceMock();
@@ -49,12 +49,12 @@ class RS49Test extends TestCase
         $this->note->title = 'Note ' . __CLASS__;
         $this->note->save();
 
-        $_FILES = array();
+        $_FILES = [];
     }
 
     protected function tearDown() : void
     {
-        $_FILES = array();
+        $_FILES = [];
 
         if ($this->note instanceof Note) {
             $this->note->mark_deleted($this->note->id);
@@ -67,13 +67,13 @@ class RS49Test extends TestCase
      */
     public function testSaveFilePut()
     {
-        $parameters = array(
+        $parameters = [
             'module' => $this->note->module_dir,
             'record' => $this->note->id,
             'field' => 'filename',
-        );
-        $_FILES[$parameters['field']] = array();
-        $api = $this->createPartialMock('FileApi', array('saveFilePost'));
+        ];
+        $_FILES[$parameters['field']] = [];
+        $api = $this->createPartialMock('FileApi', ['saveFilePost']);
         $api->expects($this->once())->method('saveFilePost')->will($this->returnValue('saveFilePostReturnString'))->with($this->equalTo($this->service), $this->equalTo($parameters));
         $actual = $api->saveFilePut($this->service, $parameters, $this->file);
         $this->assertEquals('saveFilePostReturnString', $actual);
@@ -86,11 +86,11 @@ class RS49Test extends TestCase
     public function testSaveFilePutFileSize()
     {
         file_put_contents($this->file, '');
-        $api = $this->createPartialMock('FileApi', array('saveFilePost'));
+        $api = $this->createPartialMock('FileApi', ['saveFilePost']);
         $api->expects($this->never())->method('saveFilePost');
 
         $this->expectException(SugarApiExceptionMissingParameter::class);
-        $api->saveFilePut($this->service, array(), $this->file);
+        $api->saveFilePut($this->service, [], $this->file);
     }
 
     /**
@@ -98,21 +98,21 @@ class RS49Test extends TestCase
      */
     public function testSaveFilePost()
     {
-        $_FILES = array(
-            'filename' => array(
+        $_FILES = [
+            'filename' => [
                 'name' => 'test.txt',
                 'size' => filesize($this->file),
                 'tmp_name' => $this->file,
                 'error' => 0,
                 '_SUGAR_API_UPLOAD' => true,
-            ),
-        );
+            ],
+        ];
 
-        $parameters = array(
+        $parameters = [
             'module' => $this->note->module_dir,
             'record' => $this->note->id,
             'field' => 'filename',
-        );
+        ];
         $actual = $this->api->saveFilePost($this->service, $parameters);
         $this->assertNotEmpty($actual);
         $this->assertArrayHasKey($parameters['field'], $actual);
@@ -127,18 +127,18 @@ class RS49Test extends TestCase
      */
     public function testSaveFilePostBeanACLAccessView()
     {
-        $bean = $this->createPartialMock('Note', array('ACLAccess'));
+        $bean = $this->createPartialMock('Note', ['ACLAccess']);
         $bean->id = $this->note->id;
         $bean->expects($this->once())->method('ACLAccess')->will($this->returnValue(false));
 
-        $api = $this->createPartialMock('FileApi', array('loadBean'));
+        $api = $this->createPartialMock('FileApi', ['loadBean']);
         $api->expects($this->once())->method('loadBean')->will($this->returnValue($bean));
 
-        $parameters = array(
+        $parameters = [
             'module' => $bean->module_dir,
             'record' => $bean->id,
             'field' => 'filename',
-        );
+        ];
 
         $this->expectException(SugarApiExceptionNotAuthorized::class);
         $api->saveFilePost($this->service, $parameters);
@@ -151,11 +151,11 @@ class RS49Test extends TestCase
     {
         $_FILES = null;
 
-        $parameters = array(
+        $parameters = [
             'module' => $this->note->module_dir,
             'record' => $this->note->id,
             'field' => 'filename',
-        );
+        ];
 
         $this->expectException(SugarApiExceptionMissingParameter::class);
         $this->api->saveFilePost($this->service, $parameters);
@@ -166,13 +166,13 @@ class RS49Test extends TestCase
      */
     public function testSaveFilePostFilesAreSetAndEmpty()
     {
-        $_FILES = array();
+        $_FILES = [];
 
-        $parameters = array(
+        $parameters = [
             'module' => $this->note->module_dir,
             'record' => $this->note->id,
             'field' => 'filename',
-        );
+        ];
 
         $this->expectException(SugarApiExceptionMissingParameter::class);
         $this->api->saveFilePost($this->service, $parameters);
@@ -183,17 +183,17 @@ class RS49Test extends TestCase
      */
     public function testSaveFilePostFilesAreSetButWithoutCurrentFile()
     {
-        $_FILES = array(
-            'name' => array(
+        $_FILES = [
+            'name' => [
                 'name' => 'name',
-            ),
-        );
+            ],
+        ];
 
-        $parameters = array(
+        $parameters = [
             'module' => $this->note->module_dir,
             'record' => $this->note->id,
             'field' => 'filename',
-        );
+        ];
 
         $this->expectException(SugarApiExceptionMissingParameter::class);
         $this->api->saveFilePost($this->service, $parameters);
@@ -201,17 +201,17 @@ class RS49Test extends TestCase
 
     public function testSaveFilePostIncorrectFieldType()
     {
-        $_FILES = array(
-            'name' => array(
+        $_FILES = [
+            'name' => [
                 'name' => 'name',
-            )
-        );
+            ],
+        ];
 
-        $parameters = array(
+        $parameters = [
             'module' => $this->note->module_dir,
             'record' => $this->note->id,
             'field' => 'name',
-        );
+        ];
 
         $this->expectException(SugarApiExceptionError::class);
         $this->api->saveFilePost($this->service, $parameters);
@@ -223,21 +223,21 @@ class RS49Test extends TestCase
      */
     public function testDeleteIfFailsWithParameter()
     {
-        $_FILES = array();
+        $_FILES = [];
 
-        $parameters = array(
+        $parameters = [
             'module' => $this->note->module_dir,
             'record' => $this->note->id,
             'field' => 'filename',
             'delete_if_fails' => true,
-        );
+        ];
 
-        $bean = $this->createPartialMock('Note', array('mark_deleted'));
+        $bean = $this->createPartialMock('Note', ['mark_deleted']);
         $bean->id = $this->note->id;
         $bean->created_by = $GLOBALS['current_user']->id;
         $bean->expects($this->once())->method('mark_deleted')->with($this->equalTo($bean->id))->will($this->returnValue(true));
 
-        $api = $this->createPartialMock('FileApi', array('loadBean'));
+        $api = $this->createPartialMock('FileApi', ['loadBean']);
         $api->expects($this->any())->method('loadBean')->will($this->returnValue($bean));
 
         $this->expectException(SugarApiExceptionMissingParameter::class);
@@ -250,20 +250,20 @@ class RS49Test extends TestCase
      */
     public function testDeleteIfFailsWithoutParameter()
     {
-        $_FILES = array();
+        $_FILES = [];
 
-        $parameters = array(
+        $parameters = [
             'module' => $this->note->module_dir,
             'record' => $this->note->id,
             'field' => 'filename',
-        );
+        ];
 
-        $bean = $this->createPartialMock('Note', array('mark_deleted'));
+        $bean = $this->createPartialMock('Note', ['mark_deleted']);
         $bean->id = $this->note->id;
         $bean->created_by = $GLOBALS['current_user']->id;
         $bean->expects($this->never())->method('mark_deleted');
 
-        $api = $this->createPartialMock('FileApi', array('loadBean'));
+        $api = $this->createPartialMock('FileApi', ['loadBean']);
         $api->expects($this->any())->method('loadBean')->will($this->returnValue($bean));
 
         $this->expectException(SugarApiExceptionMissingParameter::class);
@@ -275,10 +275,10 @@ class RS49Test extends TestCase
      */
     public function testGetFileList()
     {
-        $parameters = array(
+        $parameters = [
             'module' => $this->note->module_dir,
             'record' => $this->note->id,
-        );
+        ];
         $actual = $this->api->getFileList($this->service, $parameters);
         $this->assertNotEmpty($actual);
         $this->assertArrayHasKey('filename', $actual);
@@ -289,17 +289,17 @@ class RS49Test extends TestCase
      */
     public function testGetFileListACLAccessView()
     {
-        $bean = $this->getMockBuilder('Note')->setMethods(array('ACLAccess'))->getMock();
+        $bean = $this->getMockBuilder('Note')->setMethods(['ACLAccess'])->getMock();
         $bean->id = $this->note->id;
         $bean->expects($this->once())->method('ACLAccess')->will($this->returnValue(false));
 
-        $api = $this->createPartialMock('FileApi', array('loadBean'));
+        $api = $this->createPartialMock('FileApi', ['loadBean']);
         $api->expects($this->once())->method('loadBean')->will($this->returnValue($bean));
 
-        $parameters = array(
+        $parameters = [
             'module' => $bean->module_dir,
             'record' => $bean->id,
-        );
+        ];
 
         $this->expectException(SugarApiExceptionNotAuthorized::class);
         $api->getFileList($this->service, $parameters);
@@ -310,19 +310,19 @@ class RS49Test extends TestCase
      */
     public function testGetFile()
     {
-        $bean = $this->getMockBuilder('Note')->setMethods(array('ACLAccess'))->getMock();
+        $bean = $this->getMockBuilder('Note')->setMethods(['ACLAccess'])->getMock();
         $bean->id = $this->note->id;
         $bean->filename = $this->file;
         $bean->expects($this->once())->method('ACLAccess')->will($this->returnValue(true));
 
-        $api = $this->createPartialMock('FileApi', array('loadBean'));
+        $api = $this->createPartialMock('FileApi', ['loadBean']);
         $api->expects($this->once())->method('loadBean')->will($this->returnValue($bean));
 
-        $parameters = array(
+        $parameters = [
             'module' => $bean->module_dir,
             'record' => $bean->id,
             'field' => 'filename',
-        );
+        ];
 
         $this->expectException(SugarApiExceptionNotFound::class);
         $this->expectExceptionMessage('File information could not be retrieved for this record');
@@ -334,10 +334,10 @@ class RS49Test extends TestCase
      */
     public function testGetFileWithoutField()
     {
-        $parameters = array(
+        $parameters = [
             'module' => $this->note->module_dir,
             'record' => $this->note->id,
-        );
+        ];
 
         $this->expectException(SugarApiExceptionMissingParameter::class);
         $this->api->getFile($this->service, $parameters);
@@ -348,18 +348,18 @@ class RS49Test extends TestCase
      */
     public function testGetFileACLAccessView()
     {
-        $bean = $this->getMockBuilder('Note')->setMethods(array('ACLAccess'))->getMock();
+        $bean = $this->getMockBuilder('Note')->setMethods(['ACLAccess'])->getMock();
         $bean->id = $this->note->id;
         $bean->expects($this->once())->method('ACLAccess')->will($this->returnValue(false));
 
-        $api = $this->createPartialMock('FileApi', array('loadBean'));
+        $api = $this->createPartialMock('FileApi', ['loadBean']);
         $api->expects($this->once())->method('loadBean')->will($this->returnValue($bean));
 
-        $parameters = array(
+        $parameters = [
             'module' => $bean->module_dir,
             'record' => $bean->id,
             'field' => 'filename',
-        );
+        ];
 
         $this->expectException(SugarApiExceptionNotAuthorized::class);
         $api->getFile($this->service, $parameters);
@@ -370,19 +370,19 @@ class RS49Test extends TestCase
      */
     public function testGetFileACLEmptyField()
     {
-        $bean = $this->getMockBuilder('Note')->setMethods(array('ACLAccess'))->getMock();
+        $bean = $this->getMockBuilder('Note')->setMethods(['ACLAccess'])->getMock();
         $bean->id = $this->note->id;
         $bean->filename = '';
         $bean->expects($this->once())->method('ACLAccess')->will($this->returnValue(true));
 
-        $api = $this->createPartialMock('FileApi', array('loadBean'));
+        $api = $this->createPartialMock('FileApi', ['loadBean']);
         $api->expects($this->once())->method('loadBean')->will($this->returnValue($bean));
 
-        $parameters = array(
+        $parameters = [
             'module' => $bean->module_dir,
             'record' => $bean->id,
             'field' => 'filename',
-        );
+        ];
 
         $this->expectException(SugarApiExceptionNotFound::class);
         $api->getFile($this->service, $parameters);
@@ -394,20 +394,20 @@ class RS49Test extends TestCase
      */
     public function testRemoveFile()
     {
-        $bean = $this->getMockBuilder('Note')->setMethods(array('deleteAttachment'))->getMock();
+        $bean = $this->getMockBuilder('Note')->setMethods(['deleteAttachment'])->getMock();
         $bean->id = $this->note->id;
         $bean->filename = $this->file;
         $bean->expects($this->once())->method('deleteAttachment')->will($this->returnValue(true));
 
-        $api = $this->createPartialMock('FileApi', array('loadBean', 'getFileList'));
+        $api = $this->createPartialMock('FileApi', ['loadBean', 'getFileList']);
         $api->expects($this->once())->method('loadBean')->will($this->returnValue($bean));
-        $api->expects($this->once())->method('getFileList')->will($this->returnValue(array('getFileListReturnString')));
+        $api->expects($this->once())->method('getFileList')->will($this->returnValue(['getFileListReturnString']));
 
-        $parameters = array(
+        $parameters = [
             'module' => $bean->module_dir,
             'record' => $bean->id,
             'field' => 'filename',
-        );
+        ];
         $actual = $api->removeFile($this->service, $parameters);
         $this->assertContains('getFileListReturnString', $actual);
     }
@@ -418,19 +418,19 @@ class RS49Test extends TestCase
      */
     public function testRemoveFileEmptyField()
     {
-        $bean = $this->getMockBuilder('Note')->setMethods(array('deleteAttachment'))->getMock();
+        $bean = $this->getMockBuilder('Note')->setMethods(['deleteAttachment'])->getMock();
         $bean->id = $this->note->id;
         $bean->filename = '';
 
-        $api = $this->createPartialMock('FileApi', array('loadBean', 'getFileList'));
+        $api = $this->createPartialMock('FileApi', ['loadBean', 'getFileList']);
         $api->expects($this->once())->method('loadBean')->will($this->returnValue($bean));
-        $api->expects($this->once())->method('getFileList')->will($this->returnValue(array('getFileListReturnString')));
+        $api->expects($this->once())->method('getFileList')->will($this->returnValue(['getFileListReturnString']));
 
-        $parameters = array(
+        $parameters = [
             'module' => $bean->module_dir,
             'record' => $bean->id,
             'field' => 'filename',
-        );
+        ];
         $actual = $api->removeFile($this->service, $parameters);
         $this->assertContains('getFileListReturnString', $actual);
     }
@@ -440,15 +440,15 @@ class RS49Test extends TestCase
      */
     public function testRemoveFileIncorrectFieldType()
     {
-        $api = $this->createPartialMock('FileApi', array('loadBean', 'getFileList'));
+        $api = $this->createPartialMock('FileApi', ['loadBean', 'getFileList']);
         $api->expects($this->once())->method('loadBean')->will($this->returnValue($this->note));
         $api->expects($this->never())->method('getFileList')->will($this->returnValue('getFileListReturnString'));
 
-        $parameters = array(
+        $parameters = [
             'module' => $this->note->module_dir,
             'record' => $this->note->id,
             'field' => 'id',
-        );
+        ];
 
         $this->expectException(SugarApiExceptionError::class);
         $api->removeFile($this->service, $parameters);
@@ -459,20 +459,20 @@ class RS49Test extends TestCase
      */
     public function testRemoveFileDeleteAttachmentFails()
     {
-        $bean = $this->getMockBuilder('Note')->setMethods(array('deleteAttachment'))->getMock();
+        $bean = $this->getMockBuilder('Note')->setMethods(['deleteAttachment'])->getMock();
         $bean->id = $this->note->id;
         $bean->filename = $this->file;
         $bean->expects($this->once())->method('deleteAttachment')->will($this->returnValue(false));
 
-        $api = $this->createPartialMock('FileApi', array('loadBean', 'getFileList'));
+        $api = $this->createPartialMock('FileApi', ['loadBean', 'getFileList']);
         $api->expects($this->once())->method('loadBean')->will($this->returnValue($bean));
         $api->expects($this->never())->method('getFileList')->will($this->returnValue('getFileListReturnString'));
 
-        $parameters = array(
+        $parameters = [
             'module' => $bean->module_dir,
             'record' => $bean->id,
             'field' => 'filename',
-        );
+        ];
 
         $this->expectException(SugarApiExceptionRequestMethodFailure::class);
         $api->removeFile($this->service, $parameters);

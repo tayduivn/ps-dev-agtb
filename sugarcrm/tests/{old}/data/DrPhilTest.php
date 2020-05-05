@@ -115,9 +115,9 @@ class DrPhilTest extends TestCase
             SugarTestHelper::setUp('beanList');
             SugarTestHelper::setUp('app_list_strings');
 
-            $validModules = array();
+            $validModules = [];
 
-            $invalidModules = array(
+            $invalidModules = [
                 'DynamicFields',
                 'Connectors',
                 'CustomFields',
@@ -125,11 +125,11 @@ class DrPhilTest extends TestCase
                 'Audit',
                 'MergeRecords',
                 'Relationships',
-            );
+            ];
 
 
-            foreach ( array_keys($GLOBALS['beanList']) as $moduleName ) {
-                if ( in_array($moduleName,$invalidModules) ) {
+            foreach (array_keys($GLOBALS['beanList']) as $moduleName) {
+                if (in_array($moduleName, $invalidModules)) {
                     continue;
                 }
                 $validModules[] = $moduleName;
@@ -144,7 +144,7 @@ class DrPhilTest extends TestCase
      */
     protected static function getSeedBean($moduleName)
     {
-        static $seedBeans = array();
+        static $seedBeans = [];
 
         if (!isset($seedBeans[$moduleName])) {
             $seedBeans[$moduleName] = BeanFactory::newBean($moduleName);
@@ -158,11 +158,11 @@ class DrPhilTest extends TestCase
         static $validModulesDataSet;
 
         if (!isset($validModulesDataSet)) {
-            $validModulesDataSet = array();
+            $validModulesDataSet = [];
 
             $validModules = self::getValidModules();
-            foreach ( $validModules as $module ) {
-                $validModulesDataSet[] = array($module);
+            foreach ($validModules as $module) {
+                $validModulesDataSet[] = [$module];
             }
         }
 
@@ -173,10 +173,10 @@ class DrPhilTest extends TestCase
      * @group SanityCheck
      * @dataProvider provideValidModules
      */
-    public function testCanLoadModules( $moduleName )
+    public function testCanLoadModules($moduleName)
     {
         $bean = BeanFactory::newBean($moduleName);
-        $this->assertNotNull($bean,"Could not load bean: $moduleName");
+        $this->assertNotNull($bean, "Could not load bean: $moduleName");
     }
 
     /**
@@ -200,7 +200,7 @@ class DrPhilTest extends TestCase
                 $this->assertNotEmpty($def, 'Field for primary key should exists');
                 $bean->db->massageFieldDef($def);
                 $this->assertFalse(
-                    SugarTestReflection::callProtectedMethod($bean->db, 'isNullable', array($def)),
+                    SugarTestReflection::callProtectedMethod($bean->db, 'isNullable', [$def]),
                     'Field for primary key shouldn\'t be nullable'
                 );
             }
@@ -221,7 +221,7 @@ class DrPhilTest extends TestCase
         $db = DBManagerFactory::getInstance();
 
         foreach ($metadata['fields'] as $key => $def) {
-            $this->checkFieldDefinition($table, $metadata['fields'], $key, $def, array());
+            $this->checkFieldDefinition($table, $metadata['fields'], $key, $def, []);
         }
 
         foreach ($this->getMetaPrimaryIndexes($metadata) as $index) {
@@ -231,7 +231,7 @@ class DrPhilTest extends TestCase
                 $this->assertNotEmpty($def, 'Field for primary key should exists');
                 $db->massageFieldDef($def);
                 $this->assertFalse(
-                    SugarTestReflection::callProtectedMethod($db, 'isNullable', array($def)),
+                    SugarTestReflection::callProtectedMethod($db, 'isNullable', [$def]),
                     'Field for primary key shouldn\'t be nullable'
                 );
             }
@@ -273,7 +273,7 @@ class DrPhilTest extends TestCase
         if (!empty($def['rname'])
             && $def['type'] != 'link'
             && !empty($def['source'])
-            && $def['source'] == 'non-db' ) {
+            && $def['source'] == 'non-db') {
             $this->assertTrue(!empty($def['link']), "Def for $table/{$key} has an rname, but no link");
         }
 
@@ -281,7 +281,7 @@ class DrPhilTest extends TestCase
             // Sort on can be either a string or an array... make it an array
             // for testing
             if (is_string($def['sort_on'])) {
-                $def['sort_on'] = array($def['sort_on']);
+                $def['sort_on'] = [$def['sort_on']];
             }
 
             // Loop and test
@@ -348,14 +348,14 @@ class DrPhilTest extends TestCase
 
     public static function rNameLinkFieldDefinitionProvider()
     {
-        $data = array();
+        $data = [];
 
         foreach (self::getValidModules() as $module) {
             $bean = self::getSeedBean($module);
 
             foreach ($bean->getFieldDefinitions() as $field => $definition) {
                 if (isset($definition['rname_link'])) {
-                    $data[$module . '#' . $field] = array($definition);
+                    $data[$module . '#' . $field] = [$definition];
                 }
             }
         }
@@ -365,11 +365,11 @@ class DrPhilTest extends TestCase
 
     public static function tableMetadataProvider()
     {
-        $dictionary = $data = array();
+        $dictionary = $data = [];
         include 'modules/TableDictionary.php';
 
         foreach ($dictionary as $table => $metadata) {
-            $data[] = array($table, $metadata);
+            $data[] = [$table, $metadata];
         }
 
         return $data;
@@ -382,7 +382,7 @@ class DrPhilTest extends TestCase
      */
     protected function getMetaPrimaryIndexes($meta)
     {
-        $result = array();
+        $result = [];
 
         if (empty($meta['indices'])) {
             return $result;
@@ -403,7 +403,7 @@ class DrPhilTest extends TestCase
      */
     protected function getBeanPrimaryIndexes($bean)
     {
-        $result = array();
+        $result = [];
         foreach ($bean->getIndices() as $index) {
             if (strtolower($index['type']) == 'primary') {
                 array_push($result, $index);
@@ -415,8 +415,8 @@ class DrPhilTest extends TestCase
     public static function provideLinkFields()
     {
         $moduleList = self::getValidModules();
-        $linkFields = array();
-        foreach ( $moduleList as $module ) {
+        $linkFields = [];
+        foreach ($moduleList as $module) {
             $bean = self::getSeedBean($module);
             if (!is_array($bean->field_defs)) {
                 continue;
@@ -427,7 +427,7 @@ class DrPhilTest extends TestCase
                     continue;
                 }
 
-                $linkFields[] = array($module, $linkName);
+                $linkFields[] = [$module, $linkName];
             }
         }
 
@@ -443,13 +443,13 @@ class DrPhilTest extends TestCase
         $bean = self::getSeedBean($moduleName);
 
         $bean->load_relationship($linkName);
-        $this->assertNotNull($bean->$linkName,"Could not load link {$bean->module_dir}/{$linkName}");
+        $this->assertNotNull($bean->$linkName, "Could not load link {$bean->module_dir}/{$linkName}");
 
         $relatedModuleName = $bean->$linkName->getRelatedModuleName();
-        $this->assertNotNull($relatedModuleName,"Could not figure out the related module name for link {$bean->module_dir}/{$linkName}");
+        $this->assertNotNull($relatedModuleName, "Could not figure out the related module name for link {$bean->module_dir}/{$linkName}");
 
         $relatedBean = self::getSeedBean($relatedModuleName);
-        $this->assertNotNull($relatedBean,"Could not load related module ({$relatedModuleName}) for link {$bean->module_dir}/{$linkName}");
+        $this->assertNotNull($relatedBean, "Could not load related module ({$relatedModuleName}) for link {$bean->module_dir}/{$linkName}");
 
         $linkDef = $bean->field_defs[$linkName];
         $relationship = $linkDef['relationship'];
@@ -486,20 +486,20 @@ class DrPhilTest extends TestCase
 
         // The following tests make sure that the relationship has both ends.
         // the world is too cruel for these tests right now.
-        static $allowedOneWay = array(
+        static $allowedOneWay = [
             'Users' => 'Users',
             'Activities' => 'Activities',
-        );
+        ];
 
         if (isset($allowedOneWay[$relatedModuleName])) {
             return;
         }
 
         $relatedLinkName = $bean->$linkName->getRelatedModuleLinkName();
-        $this->assertNotNull($relatedLinkName,"Could not load related module's link record for link {$bean->module_dir}/{$linkName}");
+        $this->assertNotNull($relatedLinkName, "Could not load related module's link record for link {$bean->module_dir}/{$linkName}");
 
         $relatedBean->load_relationship($relatedLinkName);
-        $this->assertNotNull($relatedBean->$relatedLinkName,"Could not load related module link {$relatedBean->module_dir}/${relatedLinkName}");
+        $this->assertNotNull($relatedBean->$relatedLinkName, "Could not load related module link {$relatedBean->module_dir}/${relatedLinkName}");
     }
 
     /**
@@ -508,7 +508,7 @@ class DrPhilTest extends TestCase
     public function testModuleList()
     {
         $diff = array_diff(array_keys($GLOBALS['app_list_strings']['moduleList']), array_keys($GLOBALS['app_list_strings']['moduleListSingular']));
-        $this->assertEquals(array(), $diff, "Key lists do not match");
+        $this->assertEquals([], $diff, "Key lists do not match");
     }
 
     /**
@@ -534,7 +534,7 @@ class DrPhilTest extends TestCase
         $query = new SugarQuery();
         $query->from($bean);
         $query->select($field);
-        $duplicates = SugarTestReflection::callProtectedMethod($bean, 'queryProducesDuplicates', array($query));
+        $duplicates = SugarTestReflection::callProtectedMethod($bean, 'queryProducesDuplicates', [$query]);
         $this->assertFalse($duplicates, 'Fetching related field should not produce duplicates');
     }
 
@@ -560,7 +560,7 @@ class DrPhilTest extends TestCase
     protected function getMustNotOverridenFields()
     {
         //here is the list of fields in SugarBean that must not be overridden or redefined
-        return array(
+        return [
             'db',
             'table_name',
             'object_name',
@@ -590,8 +590,8 @@ class DrPhilTest extends TestCase
             'module_key',
             'name_format_map',
 
-            'loadedDefs'
-        );
+            'loadedDefs',
+        ];
     }
 
     /**
@@ -637,10 +637,10 @@ class DrPhilTest extends TestCase
 
     public static function overriddenSugarBeanFieldsProvider()
     {
-        $modules = array();
+        $modules = [];
         $validModules = self::getValidModules();
         foreach ($validModules as $module) {
-            $modules[] = array($module);
+            $modules[] = [$module];
         }
         return $modules;
     }
@@ -653,7 +653,7 @@ class DrPhilTest extends TestCase
         $this->assertArrayHasKey('fields', $def, 'M2M relationship must have field definitions');
 
         foreach ($def['fields'] as $key => $fieldDef) {
-            $this->checkFieldDefinition($name, $def['fields'], $key, $fieldDef, array());
+            $this->checkFieldDefinition($name, $def['fields'], $key, $fieldDef, []);
         }
     }
 
@@ -662,10 +662,10 @@ class DrPhilTest extends TestCase
         $factory = SugarRelationshipFactory::getInstance();
         $factory->rebuildCache();
         $defs = $factory->getRelationshipDefs();
-        $data = array();
+        $data = [];
         foreach ($defs as $name => $def) {
             if (isset($def['relationship_type']) && $def['relationship_type'] == 'many-to-many') {
-                $data[$name] = array($name, $def);
+                $data[$name] = [$name, $def];
             }
         }
 

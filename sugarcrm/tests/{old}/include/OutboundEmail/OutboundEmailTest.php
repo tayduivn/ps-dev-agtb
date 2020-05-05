@@ -65,7 +65,7 @@ class OutboundEmailTest extends TestCase
      */
     public function testSaveOutboundEmailConfigurationWithPassword($encodedPassword, $decodedPassword)
     {
-        $configuration = array(
+        $configuration = [
             'name' => 'User Configuration',
             'type' => 'user',
             'user_id' => $GLOBALS['current_user']->id,
@@ -81,7 +81,7 @@ class OutboundEmailTest extends TestCase
             'mail_smtpssl' => '0',
             'team_id' => '1',
             'team_set_id' => '1',
-        );
+        ];
         $configuration = OutboundEmailConfigurationTestHelper::createOutboundEmail($configuration);
 
         $record = new OutboundEmail();

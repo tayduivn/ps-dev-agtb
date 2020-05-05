@@ -46,10 +46,10 @@ class SugarQuery_Compiler_DoctrineTest extends TestCase
     public function testSelect()
     {
         $query = new SugarQuery();
-        $query->select(array(
-            array('name', 'account_name'),
+        $query->select([
+            ['name', 'account_name'],
             'parent_name',
-        ));
+        ]);
         $query->from($this->account);
         $builder = $query->compile();
 
@@ -105,24 +105,24 @@ class SugarQuery_Compiler_DoctrineTest extends TestCase
      */
     public static function compileFromProvider()
     {
-        return array(
-            'without-alias' => array(
-                array(),
-                array(
+        return [
+            'without-alias' => [
+                [],
+                [
                     'table' => 'accounts',
                     'alias' => null,
-                ),
-            ),
-            'with-alias' => array(
-                array(
+                ],
+            ],
+            'with-alias' => [
+                [
                     'alias' => 'a',
-                ),
-                array(
+                ],
+                [
                     'table' => 'accounts',
                     'alias' => 'a',
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
     }
 
     public function testCompileFromNoBean()
@@ -136,9 +136,9 @@ class SugarQuery_Compiler_DoctrineTest extends TestCase
     public function testCompileJoin()
     {
         $query = $this->getQuery();
-        $query->joinTable('opportunities', array(
+        $query->joinTable('opportunities', [
             'joinType' => 'left',
-        ))->on()->equalsField('opportunities.account_id', 'accounts.id');
+        ])->on()->equalsField('opportunities.account_id', 'accounts.id');
         $builder = $query->compile();
         $join = $builder->getQueryPart('join');
 
@@ -158,8 +158,8 @@ class SugarQuery_Compiler_DoctrineTest extends TestCase
 
         /** @var SugarQuery_Compiler_Doctrine|MockObject $compiler */
         $compiler = $this->getMockBuilder('SugarQuery_Compiler_Doctrine')
-            ->setMethods(array('compileSubQuery'))
-            ->setConstructorArgs(array($this->account->db))
+            ->setMethods(['compileSubQuery'])
+            ->setConstructorArgs([$this->account->db])
             ->getMock();
         $compiler->expects($this->once())
             ->method('compileSubQuery')
@@ -167,12 +167,12 @@ class SugarQuery_Compiler_DoctrineTest extends TestCase
             ->willReturn('SELECT 1 FROM DUAL');
 
         $query = new SugarQuery();
-        $query->from($this->account, array(
+        $query->from($this->account, [
             'team_security' => false,
-        ));
-        $query->joinTable($subQuery, array(
+        ]);
+        $query->joinTable($subQuery, [
             'alias' => 'q',
-        ));
+        ]);
         $builder = $compiler->compile($query);
         $join = $builder->getQueryPart('join');
 
@@ -216,31 +216,31 @@ class SugarQuery_Compiler_DoctrineTest extends TestCase
      */
     public static function compileWhereProvider()
     {
-        return array(
-            'consider-deleted-flag' => array(
+        return [
+            'consider-deleted-flag' => [
                 true,
                 // we don't enforce parentheses around simple expressions, but Doctrine CompositeExpression adds them
                 '(accounts.industry = ?) AND (accounts.deleted = ?)',
-                array(
+                [
                     1 => 'Apparel',
                     2 => 0,
-                ),
-                array(
+                ],
+                [
                     1 => PDO::PARAM_STR,
                     2 => PDO::PARAM_BOOL,
-                ),
-            ),
-            'ignore-deleted-flag' => array(
+                ],
+            ],
+            'ignore-deleted-flag' => [
                 false,
                 'accounts.industry = ?',
-                array(
+                [
                     1 => 'Apparel',
-                ),
-                array(
+                ],
+                [
                     1 => PDO::PARAM_STR,
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
     }
 
     public function testCompileHaving()
@@ -262,9 +262,9 @@ class SugarQuery_Compiler_DoctrineTest extends TestCase
     {
         $query = new SugarQuery();
         $query->from($this->account);
-        $query->joinTable('opportunities', array(
+        $query->joinTable('opportunities', [
             'joinType' => 'left',
-        ))->on()->equalsField('opportunities.account_id', 'accounts.id');
+        ])->on()->equalsField('opportunities.account_id', 'accounts.id');
 
         $query->orderBy($orderBy, 'DESC');
 
@@ -278,22 +278,22 @@ class SugarQuery_Compiler_DoctrineTest extends TestCase
      */
     public function compileOrderByWithJoinProvider()
     {
-        return array(
-            'sort using column from first table in join' => array(
+        return [
+            'sort using column from first table in join' => [
                 'accounts.name',
-                array(
+                [
                     'accounts.name DESC',
                     'accounts.id DESC',
-                ),
-            ),
-            'sort using column from second table in join' => array(
+                ],
+            ],
+            'sort using column from second table in join' => [
                 'opportunities.name',
-                array(
+                [
                     'opportunities.name DESC',
                     'opportunities.id DESC',
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
     }
 
     public function testCompileOrderByCustomField()
@@ -304,9 +304,9 @@ class SugarQuery_Compiler_DoctrineTest extends TestCase
         ]);
         $query = new SugarQuery();
         $query->from(BeanFactory::newBean('Accounts'));
-        $query->joinTable('account_cstm', array(
+        $query->joinTable('account_cstm', [
             'joinType' => 'left',
-        ))->on()->equalsField('account_cstm.id_c', 'accounts.id');
+        ])->on()->equalsField('account_cstm.id_c', 'accounts.id');
         $query->orderBy('test_c', 'DESC');
 
         $builder = $query->compile();
@@ -329,7 +329,7 @@ class SugarQuery_Compiler_DoctrineTest extends TestCase
         $query->from($this->account);
 
         foreach ($orderBy as $column) {
-            call_user_func_array(array($query, 'orderBy'), $column);
+            call_user_func_array([$query, 'orderBy'], $column);
         }
 
         $builder = $query->compile();
@@ -343,53 +343,53 @@ class SugarQuery_Compiler_DoctrineTest extends TestCase
      */
     public static function compileOrderByProvider()
     {
-        return array(
-            'id-is-added' => array(
-                array(
-                    array('name', 'DESC'),
-                ),
-                array(
+        return [
+            'id-is-added' => [
+                [
+                    ['name', 'DESC'],
+                ],
+                [
                     'accounts.name DESC',
                     'accounts.id DESC',
-                ),
-            ),
-            'id-is-not-duplicated' => array(
-                array(
-                    array('id', 'DESC'),
-                ),
-                array(
+                ],
+            ],
+            'id-is-not-duplicated' => [
+                [
+                    ['id', 'DESC'],
+                ],
+                [
                     'accounts.id DESC',
-                ),
-            ),
-            'direction-is-preserved' => array(
-                array(
-                    array('name', 'ASC'),
-                ),
-                array(
+                ],
+            ],
+            'direction-is-preserved' => [
+                [
+                    ['name', 'ASC'],
+                ],
+                [
                     'accounts.name ASC',
                     'accounts.id ASC',
-                ),
-            ),
-            'empty-order-is-preserved' => array(
-                array(),
-                array(),
-            ),
-            'non-db-columns-are-ignored' => array(
-                array(
-                    array('members'),
-                ),
-                array(
+                ],
+            ],
+            'empty-order-is-preserved' => [
+                [],
+                [],
+            ],
+            'non-db-columns-are-ignored' => [
+                [
+                    ['members'],
+                ],
+                [
                     'accounts.id DESC',
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
     }
 
     /**
      * @param callable $where
      * @dataProvider compileConditionProvider
      */
-    public function testCompileCondition(callable $where, $expectedWhere, $expectedParams = array())
+    public function testCompileCondition(callable $where, $expectedWhere, $expectedParams = [])
     {
         $query = $this->getQuery();
         $where($query->where());
@@ -406,101 +406,101 @@ class SugarQuery_Compiler_DoctrineTest extends TestCase
      */
     public static function compileConditionProvider()
     {
-        return array(
-            'is-null' => array(
+        return [
+            'is-null' => [
                 function (SugarQuery_Builder_Where $where) {
                     $where->isNull('industry');
                 },
                 'accounts.industry IS NULL',
-            ),
-            'is-not-null' => array(
+            ],
+            'is-not-null' => [
                 function (SugarQuery_Builder_Where $where) {
                     $where->notNull('industry');
                 },
                 'accounts.industry IS NOT NULL',
-            ),
-            'in' => array(
+            ],
+            'in' => [
                 function (SugarQuery_Builder_Where $where) {
-                    $where->in('industry', array('Apparel', 'Banking'));
+                    $where->in('industry', ['Apparel', 'Banking']);
                 },
                 'accounts.industry IN (?,?)',
-                array(
+                [
                     1 => 'Apparel',
                     2 => 'Banking',
-                ),
-            ),
-            'in-empty-set' => array(
+                ],
+            ],
+            'in-empty-set' => [
                 function (SugarQuery_Builder_Where $where) {
-                    $where->in('industry', array());
+                    $where->in('industry', []);
                 },
                 'accounts.industry IN (NULL)',
-            ),
-            'in-sub-query' => array(
+            ],
+            'in-sub-query' => [
                 function (SugarQuery_Builder_Where $where) {
                     $subQuery = new SugarQuery();
-                    $subQuery->from(BeanFactory::newBean('Accounts'), array(
+                    $subQuery->from(BeanFactory::newBean('Accounts'), [
                         'add_deleted' => false,
                         'team_security' => false,
-                    ));
+                    ]);
                     $subQuery->select('id');
                     $subQuery->where()
                         ->equals('industry', 'Apparel');
                     $where->in('id', $subQuery);
                 },
                 'accounts.id IN (SELECT accounts.id FROM accounts WHERE accounts.industry = ?)',
-                array(
+                [
                     1 => 'Apparel',
-                ),
-            ),
-            'not-in' => array(
+                ],
+            ],
+            'not-in' => [
                 function (SugarQuery_Builder_Where $where) {
-                    $where->notIn('industry', array('Retail', 'Shipping'));
+                    $where->notIn('industry', ['Retail', 'Shipping']);
                 },
                 'accounts.industry IS NULL OR accounts.industry NOT IN (?,?)',
-                array(
+                [
                     1 => 'Retail',
                     2 => 'Shipping',
-                ),
-            ),
-            'equal-field' => array(
+                ],
+            ],
+            'equal-field' => [
                 function (SugarQuery_Builder_Where $where) {
                     $where->equalsField('industry', 'account_type');
                 },
                 'accounts.industry = accounts.account_type',
-            ),
-            'not-equal-field' => array(
+            ],
+            'not-equal-field' => [
                 function (SugarQuery_Builder_Where $where) {
                     $where->notEqualsField('industry', 'account_type');
                 },
                 'accounts.industry != accounts.account_type',
-            ),
-            'compare-field' => array(
+            ],
+            'compare-field' => [
                 function (SugarQuery_Builder_Where $where) {
-                    $where->gt('industry', array('$field' => 'account_type'));
+                    $where->gt('industry', ['$field' => 'account_type']);
                 },
                 'accounts.industry > accounts.account_type',
-            ),
-            'between' => array(
+            ],
+            'between' => [
                 function (SugarQuery_Builder_Where $where) {
                     // it's a bad example, but Accounts doesn't have numeric fields,
                     // while the SQL for DATE fields will depend on the current DB platform
                     $where->between('rating', 'good', 'bad');
                 },
                 'accounts.rating BETWEEN ? AND ?',
-                array(
+                [
                     1 => 'good',
                     2 => 'bad',
-                ),
-            ),
-            'starts-with' => array(
+                ],
+            ],
+            'starts-with' => [
                 function (SugarQuery_Builder_Where $where) {
                     $where->starts('name', 'A');
                 },
                 'accounts.name LIKE ?',
-                array(
+                [
                     1 => 'A%',
-                ),
-            ),
+                ],
+            ],
             /* temporarily disable this for BR-4919
             'ends-with-escaping' => array(
                 function (SugarQuery_Builder_Where $where) {
@@ -512,51 +512,51 @@ class SugarQuery_Compiler_DoctrineTest extends TestCase
                 ),
             ),
             */
-            'does-not-contain-array' => array(
+            'does-not-contain-array' => [
                 function (SugarQuery_Builder_Where $where) {
-                    $where->notContains('name', array('X', 'Y'));
+                    $where->notContains('name', ['X', 'Y']);
                 },
                 'accounts.name IS NULL OR (accounts.name NOT LIKE ? AND accounts.name NOT LIKE ?)',
-                array(
+                [
                     1 => '%X%',
                     2 => '%Y%',
-                ),
-            ),
-            'like' => array(
+                ],
+            ],
+            'like' => [
                 function (SugarQuery_Builder_Where $where) {
                     $where->like('name', '%X%Y%Z%');
                 },
                 'accounts.name LIKE ?',
-                array(
+                [
                     1 => '%X%Y%Z%',
-                ),
-            ),
-            'in-set-with-int-0' => array(
+                ],
+            ],
+            'in-set-with-int-0' => [
                 function (SugarQuery_Builder_Where $where) {
-                    $where->in('industry', array(0));
+                    $where->in('industry', [0]);
                 },
                 'accounts.industry IN (?)',
-                array(
+                [
                     1 => 0,
-                ),
-            ),
-            'in-set-with-empty-string' => array(
+                ],
+            ],
+            'in-set-with-empty-string' => [
                 function (SugarQuery_Builder_Where $where) {
-                    $where->in('industry', array(''));
+                    $where->in('industry', ['']);
                 },
                 '(accounts.industry IS NULL) OR (accounts.industry IN (?))',
-                array(
+                [
                     1 => '',
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
     }
 
     public function testCompileConditionCaseSensitive()
     {
         $query = $this->getQuery();
         $query->where()
-            ->notContains('name', array('x', 'y'));
+            ->notContains('name', ['x', 'y']);
 
         $compiler = $this->getCompilerWithCollationCaseSensitivity(true);
         $builder = $compiler->compile($query);
@@ -565,19 +565,19 @@ class SugarQuery_Compiler_DoctrineTest extends TestCase
             'accounts.name IS NULL OR (UPPER(accounts.name) NOT LIKE ? AND UPPER(accounts.name) NOT LIKE ?)',
             $builder->getQueryPart('where')
         );
-        $this->assertSame(array(
+        $this->assertSame([
             1 => '%X%',
             2 => '%Y%',
-        ), $builder->getParameters());
+        ], $builder->getParameters());
     }
 
-    private function getQuery(array $options = array())
+    private function getQuery(array $options = [])
     {
         $query = new SugarQuery();
-        $query->from($this->account, array_merge(array(
+        $query->from($this->account, array_merge([
             'add_deleted' => false,
             'team_security' => false,
-        ), $options));
+        ], $options));
 
         return $query;
     }
@@ -592,8 +592,8 @@ class SugarQuery_Compiler_DoctrineTest extends TestCase
     {
         /** @var SugarQuery_Compiler_Doctrine|MockObject $compiler */
         $compiler = $this->getMockBuilder('SugarQuery_Compiler_Doctrine')
-            ->setMethods(array('isCollationCaseSensitive'))
-            ->setConstructorArgs(array($this->account->db))
+            ->setMethods(['isCollationCaseSensitive'])
+            ->setConstructorArgs([$this->account->db])
             ->getMock();
         $compiler->expects($this->any())
             ->method('isCollationCaseSensitive')
@@ -609,9 +609,9 @@ class SugarQuery_Compiler_DoctrineTest extends TestCase
         $subQuery->where()
             ->equals('id', 'ACCOUNT_ID');
 
-        $query = $this->getQuery(array(
+        $query = $this->getQuery([
             'add_deleted' => true,
-        ));
+        ]);
         $query->select('name');
         $query->where()
             ->equals('industry', $subQuery);
@@ -624,14 +624,14 @@ class SugarQuery_Compiler_DoctrineTest extends TestCase
             . ')) AND (accounts.deleted = ?)',
             $builder->getSQL()
         );
-        $this->assertSame(array(
+        $this->assertSame([
             1 => 'ACCOUNT_ID',
             2 => 0,
-        ), $builder->getParameters());
-        $this->assertSame(array(
+        ], $builder->getParameters());
+        $this->assertSame([
             1 => PDO::PARAM_STR,
             2 => PDO::PARAM_BOOL,
-        ), $builder->getParameterTypes());
+        ], $builder->getParameterTypes());
     }
 
     public function testCompileUnion()
@@ -660,14 +660,14 @@ class SugarQuery_Compiler_DoctrineTest extends TestCase
             . ' ORDER BY name ASC',
             $builder->getSQL()
         );
-        $this->assertSame(array(
+        $this->assertSame([
             1 => 'Apparel',
             2 => 'Analyst',
-        ), $builder->getParameters());
-        $this->assertSame(array(
+        ], $builder->getParameters());
+        $this->assertSame([
             1 => PDO::PARAM_STR,
             2 => PDO::PARAM_STR,
-        ), $builder->getParameterTypes());
+        ], $builder->getParameterTypes());
     }
 
     /**
@@ -679,7 +679,7 @@ class SugarQuery_Compiler_DoctrineTest extends TestCase
         /** @var SugarQuery_Compiler_Doctrine|MockObject $compiler */
         $compiler = $this->getMockBuilder(SugarQuery_Compiler_Doctrine::class)
             ->setMethods(['isPiiFieldsSelected'])
-            ->setConstructorArgs(array($this->account->db))
+            ->setConstructorArgs([$this->account->db])
             ->getMock();
 
         $compiler->expects($this->any())

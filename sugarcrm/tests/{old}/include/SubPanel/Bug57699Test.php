@@ -24,7 +24,7 @@ class Bug57699Test extends SubPanelTestBase
         parent::setUp();
         
         // Set up our test defs
-        $this->_testDefs = array(
+        $this->_testDefs = [
             'order' => 40,
             'title_key' => 'LBL_HISTORY_SUBPANEL_TITLE',
             'type' => 'collection',
@@ -33,17 +33,17 @@ class Bug57699Test extends SubPanelTestBase
             'sort_by' => 'date_entered',
             'header_definition_from_subpanel'=> 'calls',
             'module'=>'History',
-            'top_buttons' => array(
-                array('widget_class' => 'SubPanelTopCreateNoteButton'),
-            ),	
-            'collection_list' => array(		
-                'notes' => array(
+            'top_buttons' => [
+                ['widget_class' => 'SubPanelTopCreateNoteButton'],
+            ],
+            'collection_list' => [
+                'notes' => [
                     'module' => 'Notes',
                     'subpanel_name' => 'ForCalls',
                     'get_subpanel_data' => 'notes',
-                ),		
-            ), 
-        );
+                ],
+            ],
+        ];
     }
     
     /**
@@ -51,7 +51,8 @@ class Bug57699Test extends SubPanelTestBase
      *
      * @group Bug57699
      */
-    public function testNotesSubpanelOnCallsAllowedOnDefaultInstallation() {
+    public function testNotesSubpanelOnCallsAllowedOnDefaultInstallation()
+    {
         $subpanel = new aSubPanel('history', $this->_testDefs, $this->_testBean);
         $this->assertArrayHasKey('notes', $subpanel->sub_subpanels, "Notes module not found in History subpanel's Notes subpanel");
     }
@@ -62,7 +63,8 @@ class Bug57699Test extends SubPanelTestBase
      *
      * @group Bug57699
      */
-    public function testNotesSubpanelOnCallsAllowedWhenNotesIsHiddenFromNav() {
+    public function testNotesSubpanelOnCallsAllowedWhenNotesIsHiddenFromNav()
+    {
         // Adjust the module list by removing Notes from nav and prove it's still there
         $currentTabs = $this->_currentTabs;
         unset($currentTabs['Notes']);
@@ -77,7 +79,8 @@ class Bug57699Test extends SubPanelTestBase
      *
      * @group Bug57699
      */
-    public function testNotesSubpanelOnCallsNotAllowedWhenNotesIsHiddenFromSubpanels() {
+    public function testNotesSubpanelOnCallsNotAllowedWhenNotesIsHiddenFromSubpanels()
+    {
         // Remove Notes from the subpanel modules and test it is NOT shown
         $hidden = $this->_currentSubpanels['hidden'];
         $hidden['notes'] = 'notes';

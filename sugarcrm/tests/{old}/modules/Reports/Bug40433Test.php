@@ -28,70 +28,70 @@ class Bug40433Test extends TestCase
 
     protected function setUp() : void
     {
-    	$beanList = array();
-		$beanFiles = array();
-		require('include/modules.php');
-		$GLOBALS['beanList'] = $beanList;
-		$GLOBALS['beanFiles'] = $beanFiles;
-		$this->reportInstance = new Report();
-		$this->dbType = $this->reportInstance->db->dbType;
-		//force test to simulate mssql
-		$this->reportInstance->db->dbType = 'mssql';
-	    $this->reportInstance->from = "\n FROM CONTRACTS ";
-	}
+        $beanList = [];
+        $beanFiles = [];
+        require 'include/modules.php';
+        $GLOBALS['beanList'] = $beanList;
+        $GLOBALS['beanFiles'] = $beanFiles;
+        $this->reportInstance = new Report();
+        $this->dbType = $this->reportInstance->db->dbType;
+        //force test to simulate mssql
+        $this->reportInstance->db->dbType = 'mssql';
+        $this->reportInstance->from = "\n FROM CONTRACTS ";
+    }
 
     protected function tearDown() : void
-	{
-	    $this->reportInstance->db->dbType = $this->dbType;
-		$this->reportInstance = null;
+    {
+        $this->reportInstance->db->dbType = $this->dbType;
+        $this->reportInstance = null;
         unset($GLOBALS['beanFiles']);
         unset($GLOBALS['beanList']);
-	}
+    }
 
-	/**
-	 * test_create_query
-	 * This method simulates a row/column report for the contracts module.  We are attempting to select
-	 * the contract_value, contract_id and contract_value_us_dollar
-	 */
-	function test_create_query()
-	{
-		$this->reportInstance->select_fields = array(0=>'contracts.id primaryid',
-													 1=>'contracts.name contracts_name',
-													 2=>'contracts.status contracts_status',
-													 3=>'contracts.total_contract_value CONTRACTS_TOTAL_CONTRA1E104D , contracts.currency_id CONTRACTS_TOTAL_CONTRAE75D5E',
-													 4=>'contracts.total_contract_value_us_dollar CONTRACTS_TOTAL_CONTRA5A324D',
-	    );
-		$this->reportInstance->create_query('query', 'select_fields');
-		$select = implode(",", $this->reportInstance->select_fields);
-		$this->assertTrue(isset($this->reportInstance->select_fields[3]), "Assert that we have preserved the select argument");
-		preg_match('/total_contract_value/', $select, $matches);
-		$this->assertEquals('total_contract_value', $matches[0], "Assert that the contract_value select statement is preserved");
-		preg_match('/currency_id/', $select, $matches);
-		$this->assertEquals('currency_id', $matches[0], "Assert that the currency_id select statement is preserved");
-		preg_match('/total_contract_value/', $select, $matches);
-		$this->assertEquals('total_contract_value', $matches[0], "Assert that the total_contract_value select statement is preserved");
-	}
+    /**
+     * test_create_query
+     * This method simulates a row/column report for the contracts module.  We are attempting to select
+     * the contract_value, contract_id and contract_value_us_dollar
+     */
+    function test_create_query()
+    {
+        $this->reportInstance->select_fields = [0=>'contracts.id primaryid',
+                                                     1=>'contracts.name contracts_name',
+                                                     2=>'contracts.status contracts_status',
+                                                     3=>'contracts.total_contract_value CONTRACTS_TOTAL_CONTRA1E104D , contracts.currency_id CONTRACTS_TOTAL_CONTRAE75D5E',
+                                                     4=>'contracts.total_contract_value_us_dollar CONTRACTS_TOTAL_CONTRA5A324D',
+        ];
+        $this->reportInstance->create_query('query', 'select_fields');
+        $select = implode(",", $this->reportInstance->select_fields);
+        $this->assertTrue(isset($this->reportInstance->select_fields[3]), "Assert that we have preserved the select argument");
+        preg_match('/total_contract_value/', $select, $matches);
+        $this->assertEquals('total_contract_value', $matches[0], "Assert that the contract_value select statement is preserved");
+        preg_match('/currency_id/', $select, $matches);
+        $this->assertEquals('currency_id', $matches[0], "Assert that the currency_id select statement is preserved");
+        preg_match('/total_contract_value/', $select, $matches);
+        $this->assertEquals('total_contract_value', $matches[0], "Assert that the total_contract_value select statement is preserved");
+    }
 
-	/**
-	 * test_create_query2
-	 * This is similar to test_create_query except that the [3] element has the currency_id and currency_value positions swapped
-	 */
-	function test_create_query2()
-	{
-		$this->reportInstance->select_fields = array(0=>'contracts.id primaryid',
-													 1=>'contracts.name contracts_name',
-													 2=>'contracts.status contracts_status',
-													 3=>'contracts.currency_id CONTRACTS_TOTAL_CONTRAE75D5E, contracts.total_contract_value CONTRACTS_TOTAL_CONTRA1E104D',
-													 4=>'contracts.total_contract_value_us_dollar CONTRACTS_TOTAL_CONTRA5A324D',
-	    );
-		$this->reportInstance->create_query('query', 'select_fields');
-		$select = implode(",", $this->reportInstance->select_fields);
-		$this->assertTrue(isset($this->reportInstance->select_fields[3]), "Assert that we have preserved the select argument");
-		preg_match('/total_contract_value/', $select, $matches);
-		$this->assertEquals('total_contract_value', $matches[0], "Assert that the contract_value select statement is preserved");
-		preg_match('/currency_id/', $select, $matches);
-		$this->assertEquals('currency_id', $matches[0], "Assert that the currency_id select statement is preserved");
-		preg_match('/total_contract_value/', $select, $matches);
-		$this->assertEquals('total_contract_value', $matches[0], "Assert that the total_contract_value select statement is preserved");
-	}
+    /**
+     * test_create_query2
+     * This is similar to test_create_query except that the [3] element has the currency_id and currency_value positions swapped
+     */
+    function test_create_query2()
+    {
+        $this->reportInstance->select_fields = [0=>'contracts.id primaryid',
+                                                     1=>'contracts.name contracts_name',
+                                                     2=>'contracts.status contracts_status',
+                                                     3=>'contracts.currency_id CONTRACTS_TOTAL_CONTRAE75D5E, contracts.total_contract_value CONTRACTS_TOTAL_CONTRA1E104D',
+                                                     4=>'contracts.total_contract_value_us_dollar CONTRACTS_TOTAL_CONTRA5A324D',
+        ];
+        $this->reportInstance->create_query('query', 'select_fields');
+        $select = implode(",", $this->reportInstance->select_fields);
+        $this->assertTrue(isset($this->reportInstance->select_fields[3]), "Assert that we have preserved the select argument");
+        preg_match('/total_contract_value/', $select, $matches);
+        $this->assertEquals('total_contract_value', $matches[0], "Assert that the contract_value select statement is preserved");
+        preg_match('/currency_id/', $select, $matches);
+        $this->assertEquals('currency_id', $matches[0], "Assert that the currency_id select statement is preserved");
+        preg_match('/total_contract_value/', $select, $matches);
+        $this->assertEquals('total_contract_value', $matches[0], "Assert that the total_contract_value select statement is preserved");
+    }
 }

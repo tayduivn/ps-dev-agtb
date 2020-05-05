@@ -27,29 +27,29 @@ class LogicHookRefTest extends TestCase
         $this->bean = new Account();
         SugarTestHelper::setUp('current_user');
         LogicHook::refreshHooks();
-	}
+    }
 
     protected function tearDown() : void
-	{
-	    if(!empty($this->hook)) {
-	        call_user_func_array('remove_logic_hook', $this->hook);
-	    }
-	    SugarTestHelper::tearDown();
-	}
+    {
+        if (!empty($this->hook)) {
+            call_user_func_array('remove_logic_hook', $this->hook);
+        }
+        SugarTestHelper::tearDown();
+    }
 
     public function testCallLogicHook()
     {
-        $this->hook = array('Accounts', 'test_event', Array(1, 'Test hook BR-1345', __FILE__, 'BR1345TestHook', 'count', 'foo', 123));
+        $this->hook = ['Accounts', 'test_event', [1, 'Test hook BR-1345', __FILE__, 'BR1345TestHook', 'count', 'foo', 123]];
         call_user_func_array('check_logic_hook_file', $this->hook);
         $this->bean->call_custom_logic("test_event", "bar", 345);
         $this->assertInstanceOf("Account", BR1345TestHook::$args[0]);
-        $this->assertEquals(array('test_event', 'bar', 'foo', 123), array_slice(BR1345TestHook::$args, 1));
+        $this->assertEquals(['test_event', 'bar', 'foo', 123], array_slice(BR1345TestHook::$args, 1));
     }
 }
 
 class BR1345TestHook
 {
-    static public $args = '';
+    public static $args = '';
     public function count(&$bean, $event, $arguments)
     {
         self::$args = func_get_args();

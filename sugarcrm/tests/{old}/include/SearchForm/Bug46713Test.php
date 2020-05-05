@@ -23,12 +23,11 @@ class Bug46713Test extends TestCase
 
     protected function setUp() : void
     {
-        if(file_exists('custom/modules/Cases/metadata/SearchFields.php'))
-        {
+        if (file_exists('custom/modules/Cases/metadata/SearchFields.php')) {
             $this->hasExistingCustomSearchFields = true;
             copy('custom/modules/Cases/metadata/SearchFields.php', 'custom/modules/Cases/metadata/SearchFields.php.bak');
             unlink('custom/modules/Cases/metadata/SearchFields.php');
-        } else if(!file_exists('custom/modules/Cases/metadata')) {
+        } elseif (!file_exists('custom/modules/Cases/metadata')) {
             mkdir_recursive('custom/modules/Cases/metadata');
         }
 
@@ -38,19 +37,19 @@ class Bug46713Test extends TestCase
         $templateDate = new TemplateDate();
         $templateDate->enable_range_search = true;
         $templateDate->populateFromPost();
-        include('custom/modules/Cases/metadata/SearchFields.php');
+        include 'custom/modules/Cases/metadata/SearchFields.php';
 
         //Prepare SearchForm
         $seed = new aCase();
         $module = 'Cases';
         $this->searchForm = new SearchForm($seed, $module);
-        $this->searchForm->searchFields = array(
-            'range_case_number' => array
-            (
+        $this->searchForm->searchFields = [
+            'range_case_number' =>
+            [
                 'query_type' => 'default',
-                'enable_range_search' => true
-            ),
-        );
+                'enable_range_search' => true,
+            ],
+        ];
         $this->originalDbType = $GLOBALS['db']->dbType;
     }
 
@@ -58,32 +57,30 @@ class Bug46713Test extends TestCase
     {
         $GLOBALS['db']->dbType = $this->originalDbType;
 
-        if(!$this->hasExistingCustomSearchFields)
-        {
+        if (!$this->hasExistingCustomSearchFields) {
             unlink('custom/modules/Cases/metadata/SearchFields.php');
         }
 
-        if(file_exists('custom/modules/Cases/metadata/SearchFields.php.bak')) {
+        if (file_exists('custom/modules/Cases/metadata/SearchFields.php.bak')) {
             copy('custom/modules/Cases/metadata/SearchFields.php.bak', 'custom/modules/Cases/metadata/SearchFields.php');
             unlink('custom/modules/Cases/metadata/SearchFields.php.bak');
         }
 
-        if(file_exists($this->smartyTestFile))
-        {
+        if (file_exists($this->smartyTestFile)) {
             unlink($this->smartyTestFile);
         }
     }
 
     public function testRangeNumberSearches()
     {
-    	$GLOBALS['db']->dbType = 'mysql';
+        $GLOBALS['db']->dbType = 'mysql';
 
-        $this->searchForm->searchFields['range_case_number'] = array (
+        $this->searchForm->searchFields['range_case_number'] =  [
             'query_type' => 'default',
             'enable_range_search' => 1,
             'value' => '0',
             'operator' => '=',
-        );
+        ];
 
         $where_clauses = $this->searchForm->generateSearchWhere();
         $this->assertEquals('cases.case_number = 0', $where_clauses[0]);

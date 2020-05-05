@@ -50,42 +50,42 @@ class ActivityQueueManagerTest extends TestCase
         $teamBefore = SugarTestTeamUtilities::createAnonymousTeam();
         $teamAfter  = SugarTestTeamUtilities::createAnonymousTeam();
 
-        $activityData = array(
-            'object'  => array(
+        $activityData = [
+            'object'  => [
                 'name'   => $contact->full_name,
                 'type'   => 'Contact',
                 'module' => 'Contacts',
                 'id'     => $contact->id,
-            ),
-            'changes' => array(
-                'team_id' => array(
+            ],
+            'changes' => [
+                'team_id' => [
                     'field_name' => 'team_id',
                     'data_type'  => 'id',
                     'before'     => $teamBefore->id,
                     'after'      => $teamAfter->id,
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
 
-        $expectedData = array(
-            'object'  => array(
+        $expectedData = [
+            'object'  => [
                 'name'   => $contact->full_name,
                 'type'   => 'Contact',
                 'module' => 'Contacts',
                 'id'     => $contact->id,
-            ),
-            'changes' => array(
-                'team_id' => array(
+            ],
+            'changes' => [
+                'team_id' => [
                     'field_name' => 'team_id',
                     'data_type'  => 'id',
                     'before'     => $teamBefore->name,
                     'after'      => $teamAfter->name,
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
 
         $actManager = new ActivityQueueManager();
-        SugarTestReflection::callProtectedMethod($actManager, 'prepareChanges', array($contact, &$activityData));
+        SugarTestReflection::callProtectedMethod($actManager, 'prepareChanges', [$contact, &$activityData]);
 
         $this->assertEquals($expectedData, $activityData);
     }
@@ -98,42 +98,42 @@ class ActivityQueueManagerTest extends TestCase
         $lead         = SugarTestLeadUtilities::createLead();
         $assignedUser = SugarTestUserUtilities::createAnonymousUser();
 
-        $activityData = array(
-            'object'  => array(
+        $activityData = [
+            'object'  => [
                 'name'   => $lead->full_name,
                 'type'   => 'Lead',
                 'module' => 'Leads',
                 'id'     => $lead->id,
-            ),
-            'changes' => array(
-                'assigned_user_id' => array(
+            ],
+            'changes' => [
+                'assigned_user_id' => [
                     'field_name' => 'assigned_user_id',
                     'data_type'  => 'id',
                     'before'     => '',
                     'after'      => $assignedUser->id,
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
 
-        $expectedData = array(
-            'object'  => array(
+        $expectedData = [
+            'object'  => [
                 'name'   => $lead->full_name,
                 'type'   => 'Lead',
                 'module' => 'Leads',
                 'id'     => $lead->id,
-            ),
-            'changes' => array(
-                'assigned_user_id' => array(
+            ],
+            'changes' => [
+                'assigned_user_id' => [
                     'field_name' => 'assigned_user_id',
                     'data_type'  => 'id',
                     'before'     => '',
                     'after'      => $assignedUser->name,
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
 
         $actManager = new ActivityQueueManager();
-        SugarTestReflection::callProtectedMethod($actManager, 'prepareChanges', array($lead, &$activityData));
+        SugarTestReflection::callProtectedMethod($actManager, 'prepareChanges', [$lead, &$activityData]);
 
         $this->assertEquals($expectedData, $activityData);
     }
@@ -146,43 +146,43 @@ class ActivityQueueManagerTest extends TestCase
         $account1 = SugarTestAccountUtilities::createAccount();
         $account2 = SugarTestAccountUtilities::createAccount();
 
-        $activityData = array(
-            'object'  => array(
+        $activityData = [
+            'object'  => [
                 'name'   => $account1->name,
                 'type'   => 'Account',
                 'module' => 'Accounts',
                 'id'     => $account1->id,
-            ),
-            'changes' => array(
+            ],
+            'changes' => [
                 'parent_id' =>
-                array(
+                [
                     'field_name' => 'parent_id',
                     'data_type'  => 'id',
                     'before'     => '',
                     'after'      => $account2->id,
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
 
-        $expectedData = array(
-            'object'  => array(
+        $expectedData = [
+            'object'  => [
                 'name'   => $account1->name,
                 'type'   => 'Account',
                 'module' => 'Accounts',
                 'id'     => $account1->id,
-            ),
-            'changes' => array(
-                'parent_id' => array(
+            ],
+            'changes' => [
+                'parent_id' => [
                     'field_name' => 'parent_id',
                     'data_type'  => 'id',
                     'before'     => '',
                     'after'      => $account2->name,
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
 
         $actManager = new ActivityQueueManager();
-        SugarTestReflection::callProtectedMethod($actManager, 'prepareChanges', array($account1, &$activityData));
+        SugarTestReflection::callProtectedMethod($actManager, 'prepareChanges', [$account1, &$activityData]);
 
         $this->assertEquals($expectedData, $activityData);
     }
@@ -201,42 +201,42 @@ class ActivityQueueManagerTest extends TestCase
         $contact->parent_id   = $account1;
         $contact->save();
 
-        $activityData = array(
-            'object'  => array(
+        $activityData = [
+            'object'  => [
                 'name'   => $contact->full_name,
                 'type'   => 'Account',
                 'module' => 'Accounts',
                 'id'     => $contact->id,
-            ),
-            'changes' => array(
-                'parent_id' => array(
+            ],
+            'changes' => [
+                'parent_id' => [
                     'field_name' => 'parent_id',
                     'data_type'  => 'id',
                     'before'     => $account1->id,
                     'after'      => $account2->id,
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
 
-        $expectedData = array(
-            'object'  => array(
+        $expectedData = [
+            'object'  => [
                 'name'   => $contact->full_name,
                 'type'   => 'Account',
                 'module' => 'Accounts',
                 'id'     => $contact->id,
-            ),
-            'changes' => array(
-                'parent_id' => array(
+            ],
+            'changes' => [
+                'parent_id' => [
                     'field_name' => 'parent_id',
                     'data_type'  => 'id',
                     'before'     => $account1->name,
                     'after'      => $account2->name,
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
 
         $actManager = new ActivityQueueManager();
-        SugarTestReflection::callProtectedMethod($actManager, 'prepareChanges', array($account1, &$activityData));
+        SugarTestReflection::callProtectedMethod($actManager, 'prepareChanges', [$account1, &$activityData]);
 
         $this->assertEquals($expectedData, $activityData);
     }
@@ -250,115 +250,115 @@ class ActivityQueueManagerTest extends TestCase
 
         //mock out field defs
         $originalFieldDefs = $contact->field_defs;
-        $contact->field_defs = array(
-            'foo' => array(
+        $contact->field_defs = [
+            'foo' => [
                 'name' => 'foo',
                 'activity_enabled' => false,
-            ),
-            'bar' => array(
+            ],
+            'bar' => [
                 'name' => 'bar',
                 'audited' => true,
                 'activity_enabled' => true,
-            ),
-            'baz' => array(
+            ],
+            'baz' => [
                 'name' => 'baz',
-            ),
-            'qux' => array(
+            ],
+            'qux' => [
                 'name' => 'qux',
                 'audited' => false,
-            ),
-            'quux' => array(
+            ],
+            'quux' => [
                 'name' => 'quux',
                 'audited' => true,
-            ),
-            'qir' => array(
+            ],
+            'qir' => [
                 'name' => 'qir',
                 'audited' => false,
                 'activity_enabled' => true,
-            ),
-            'qiir' => array(
+            ],
+            'qiir' => [
                 'name' => 'qiir',
                 'audited' => true,
                 'activity_enabled' => false,
-            ),
-            'biiru' => array(
+            ],
+            'biiru' => [
                 'name' => 'biiru',
                 'activity_enabled' => true,
-            ),
-        );
+            ],
+        ];
 
-        $activityData = array(
-            'changes' => array(
-                'foo' => array(
+        $activityData = [
+            'changes' => [
+                'foo' => [
                     'field_name' => 'foo',
                     'data_type'  => 'varchar',
                     'before'     => 'fooval1',
                     'after'      => 'fooval2',
-                ),
-                'bar' => array(
+                ],
+                'bar' => [
                     'field_name' => 'bar',
                     'data_type'  => 'varchar',
                     'before'     => 'barval1',
                     'after'      => 'barval2',
-                ),
-                'baz' => array(
+                ],
+                'baz' => [
                     'field_name' => 'baz',
                     'data_type'  => 'varchar',
                     'before'     => 'bazval1',
                     'after'      => 'bazval2',
-                ),
-                'qux' => array(
+                ],
+                'qux' => [
                     'field_name' => 'qux',
                     'data_type'  => 'varchar',
                     'before'     => 'qux1',
                     'after'      => 'qux2',
-                ),
-                'quux' => array(
+                ],
+                'quux' => [
                     'field_name' => 'quux',
                     'data_type'  => 'varchar',
                     'before'     => 'quux1',
                     'after'      => 'quux2',
-                ),
-                'qir' => array(
+                ],
+                'qir' => [
                     'field_name' => 'qir',
                     'data_type'  => 'varchar',
                     'before'     => 'qirval1',
                     'after'      => 'qirval2',
-                ),
-                'qiir' => array(
+                ],
+                'qiir' => [
                     'field_name' => 'qiir',
                     'data_type'  => 'varchar',
                     'before'     => 'qiirval1',
                     'after'      => 'qiirval2',
-                ),
-                'biiru' => array(
+                ],
+                'biiru' => [
                     'field_name' => 'biiru',
                     'data_type'  => 'varchar',
                     'before'     => 'biiryval1',
                     'after'      => 'biiruval2',
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
 
-        $expectedData = array(
-            'changes' => array(
-                'bar' => array(
+        $expectedData = [
+            'changes' => [
+                'bar' => [
                     'field_name' => 'bar',
                     'data_type'  => 'varchar',
                     'before'     => 'barval1',
                     'after'      => 'barval2',
-                ),
-                'quux' => array(
+                ],
+                'quux' => [
                     'field_name' => 'quux',
                     'data_type'  => 'varchar',
                     'before'     => 'quux1',
                     'after'      => 'quux2',
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
 
         $actManager = new ActivityQueueManager();
-        SugarTestReflection::callProtectedMethod($actManager, 'prepareChanges', array($contact, &$activityData));
+        SugarTestReflection::callProtectedMethod($actManager, 'prepareChanges', [$contact, &$activityData]);
 
         //restore contact field defs
         $contact->field_defs = $originalFieldDefs;
@@ -368,19 +368,19 @@ class ActivityQueueManagerTest extends TestCase
 
     public function dataProviderForAddSubscriptions()
     {
-        return array(
-            /*  1 */  array(self::USER_ONE,    self::USER_ONE,    false, 1),
-            /*  2 */  array(self::USER_ONE,    self::USER_TWO,    false, 2),
-            /*  3 */  array(self::USER_ONE,    self::USER_TWO,    true,  1),
-            /*  4 */  array(self::USER_ONE,    self::PORTAL_USER, false, 1),
-            /*  5 */  array(self::USER_ONE,    self::BOGUS_USER,  false, 1),
-            /*  6 */  array(self::PORTAL_USER, self::USER_TWO,    false, 1),
-            /*  7 */  array(self::PORTAL_USER, self::USER_TWO,    true,  0),
-            /*  8 */  array(self::BOGUS_USER,  self::USER_TWO,    false, 1),
-            /*  9 */  array(self::BOGUS_USER,  self::USER_TWO,    true,  0),
-            /* 10 */  array(self::BOGUS_USER,  self::BOGUS_USER,  false, 0),
-            /* 11 */  array(self::PORTAL_USER, self::PORTAL_USER, false, 0),
-        );
+        return [
+            /*  1 */  [self::USER_ONE,    self::USER_ONE,    false, 1],
+            /*  2 */  [self::USER_ONE,    self::USER_TWO,    false, 2],
+            /*  3 */  [self::USER_ONE,    self::USER_TWO,    true,  1],
+            /*  4 */  [self::USER_ONE,    self::PORTAL_USER, false, 1],
+            /*  5 */  [self::USER_ONE,    self::BOGUS_USER,  false, 1],
+            /*  6 */  [self::PORTAL_USER, self::USER_TWO,    false, 1],
+            /*  7 */  [self::PORTAL_USER, self::USER_TWO,    true,  0],
+            /*  8 */  [self::BOGUS_USER,  self::USER_TWO,    false, 1],
+            /*  9 */  [self::BOGUS_USER,  self::USER_TWO,    true,  0],
+            /* 10 */  [self::BOGUS_USER,  self::BOGUS_USER,  false, 0],
+            /* 11 */  [self::PORTAL_USER, self::PORTAL_USER, false, 0],
+        ];
     }
 
     /**
@@ -423,12 +423,12 @@ class ActivityQueueManagerTest extends TestCase
         $bean->assigned_user_id = $assignedUser->id;
         $bean->created_by       = $createdByUser->id;
 
-        $args = array(
+        $args = [
             'isUpdate'    => $isUpdate,
-            'dataChanges' => array("assigned_user_id" => array())
-        );
+            'dataChanges' => ["assigned_user_id" => []],
+        ];
 
-        $mockActivity = self::getMockBuilder('Activity')->setMethods(array('save', 'processRecord'))->getMock();
+        $mockActivity = self::getMockBuilder('Activity')->setMethods(['save', 'processRecord'])->getMock();
         $mockActivity->expects($this->once())
             ->method('save');
         $mockActivity->expects($this->once())
@@ -436,30 +436,30 @@ class ActivityQueueManagerTest extends TestCase
 
         $actManager = $this->createPartialMock(
             'ActivityQueueManager',
-            array(
+            [
                 'subscribeUserToRecord',
-                'prepareChanges'
-            )
+                'prepareChanges',
+            ]
         );
         $actManager->expects($this->exactly($subscriptions))
             ->method('subscribeUserToRecord');
 
         Activity::enable();
 
-        SugarTestReflection::callProtectedMethod($actManager, 'createOrUpdate', array($bean, $args, $mockActivity));
+        SugarTestReflection::callProtectedMethod($actManager, 'createOrUpdate', [$bean, $args, $mockActivity]);
 
         Activity::restoreToPreviousState();
     }
 
     public function dataProviderForActivityMessageCreation()
     {
-        return array(
-            array(true, 'after_save', 'createOrUpdate'),
-            array(false, 'after_save', null),
-            array(true, 'before_save', null),
-            array(true, 'after_relationship_add', 'link'),
-            array(true, 'after_relationship_delete', 'unlink'),
-        );
+        return [
+            [true, 'after_save', 'createOrUpdate'],
+            [false, 'after_save', null],
+            [true, 'before_save', null],
+            [true, 'after_relationship_add', 'link'],
+            [true, 'after_relationship_delete', 'unlink'],
+        ];
     }
 
     /**
@@ -468,11 +468,11 @@ class ActivityQueueManagerTest extends TestCase
      */
     public function testEventDispatcher_ActivityMessageCreation($activityEnabled, $event, $expectedAction)
     {
-        $actions     = array(
+        $actions     = [
             'createOrUpdate',
             'link',
             'unlink',
-        );
+        ];
         $contact     = BeanFactory::newBean('Contacts');
         $contact->id = create_guid();
 
@@ -483,7 +483,7 @@ class ActivityQueueManagerTest extends TestCase
 
         $actManager = self::createPartialMock(
             'ActivityQueueManager',
-            array('isValidLink', 'createOrUpdate', 'link', 'unlink')
+            ['isValidLink', 'createOrUpdate', 'link', 'unlink']
         );
         $actManager->expects($this->any())->method('isValidLink')->will($this->returnValue(true));
         foreach ($actions as $action) {
@@ -493,7 +493,7 @@ class ActivityQueueManagerTest extends TestCase
                 $actManager->expects($this->never())->method($action);
             }
         }
-        $actManager->eventDispatcher($contact, $event, array());
+        $actManager->eventDispatcher($contact, $event, []);
 
         if ($activityEnabled) {
             Activity::restoreToPreviousState();
@@ -515,11 +515,11 @@ class ActivityQueueManagerTest extends TestCase
 
     public static function dataProviderModuleBlackListWhiteListEnabled()
     {
-        return array(
-            array('Forecasts', false, 'expected blacklist module to be disabled'),
-            array('Notes', true, 'expected whitelist module to be enabled'),
-            array('Foo', false, 'expected nonexistent module to be disabled'),
-        );
+        return [
+            ['Forecasts', false, 'expected blacklist module to be disabled'],
+            ['Notes', true, 'expected whitelist module to be enabled'],
+            ['Foo', false, 'expected nonexistent module to be disabled'],
+        ];
     }
 
     /**
@@ -534,11 +534,11 @@ class ActivityQueueManagerTest extends TestCase
 
     public static function dataProviderModuleBlackListWhiteListDisabled()
     {
-        return array(
-            array('Forecasts', false, 'expected blacklist module to be disabled'),
-            array('Notes', false, 'expected whitelist module to be disabled'),
-            array('Foo', false, 'expected nonexistent module to be disabled'),
-        );
+        return [
+            ['Forecasts', false, 'expected blacklist module to be disabled'],
+            ['Notes', false, 'expected whitelist module to be disabled'],
+            ['Foo', false, 'expected nonexistent module to be disabled'],
+        ];
     }
     /**
      * @covers ActivityQueueManager::isEnabledForModule
@@ -569,12 +569,12 @@ class ActivityQueueManagerTest extends TestCase
 
     public static function dataProviderDifferentActivityAndAuditFlags()
     {
-        return array(
-            array(true, true, true, 'expected module with activity and audit enabled to return true'),
-            array(false, false, false, 'expected module with activity and audit disabled to return false'),
-            array(true, false, false, 'expected module with activity disabled to return false'),
-            array(false, true, false, 'expected module with audit disabled to return false'),
-        );
+        return [
+            [true, true, true, 'expected module with activity and audit enabled to return true'],
+            [false, false, false, 'expected module with activity and audit disabled to return false'],
+            [true, false, false, 'expected module with activity disabled to return false'],
+            [false, true, false, 'expected module with audit disabled to return false'],
+        ];
     }
 
     /**
@@ -587,41 +587,41 @@ class ActivityQueueManagerTest extends TestCase
 
         //mock out db manager
         $dbManagerClass = get_class($bean->db);
-        $dbManager = self::createPartialMock($dbManagerClass, array('getDataChanges'));
+        $dbManager = self::createPartialMock($dbManagerClass, ['getDataChanges']);
         $dbManager->expects($this->any())->method('getDataChanges')->will($this->returnValue($allDataChanges));
         $bean->db = $dbManager;
 
-        $auditedDataChanges = array(
+        $auditedDataChanges = [
             'dataChanges' => $auditedChanges,
-        );
+        ];
 
         $actManager = new ActivityQueueManager();
-        $actual = SugarTestReflection::callProtectedMethod($actManager, 'assignmentChanged', array($bean, $auditedDataChanges));
+        $actual = SugarTestReflection::callProtectedMethod($actManager, 'assignmentChanged', [$bean, $auditedDataChanges]);
         $this->assertEquals($expected, $actual, $assertMessage);
     }
 
     public static function dataProviderAssignedUserChanged()
     {
-        return array(
-            array(
-                array('assigned_user_id' => array()),
-                array('assigned_user_id' => array(), 'foo' => array()),
+        return [
+            [
+                ['assigned_user_id' => []],
+                ['assigned_user_id' => [], 'foo' => []],
                 true,
                 'Assignment changed when assigned_user_id is in audited changes',
-            ),
-            array(
-                array(),
-                array('assigned_user_id' => array(), 'foo' => array()),
+            ],
+            [
+                [],
+                ['assigned_user_id' => [], 'foo' => []],
                 true,
                 'Assignment changed when assigned_user_id is not audited, but still changed',
-            ),
-            array(
-                array(),
-                array('foo' => array()),
+            ],
+            [
+                [],
+                ['foo' => []],
                 false,
                 'Assignment did not change when assigned_user_id is not changed at all (audited or otherwise)',
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -631,84 +631,84 @@ class ActivityQueueManagerTest extends TestCase
     public function testIsLinkDupeReturnsValidResult(array $link1, array $link2, $expected)
     {
         $aqm = new ActivityQueueManager();
-        $this->assertEquals($expected, SugarTestReflection::callProtectedMethod($aqm, 'isLinkDupe', array($link1, $link2)));
+        $this->assertEquals($expected, SugarTestReflection::callProtectedMethod($aqm, 'isLinkDupe', [$link1, $link2]));
     }
 
     public static function dataProviderIsLinkDupe()
     {
-        $link1 = array(
+        $link1 = [
             'id' => 'foo',
             'module' => 'Accounts',
             'related_module' => 'Leads',
             'related_id' => 'bar',
             'link' => 'leads',
             'relationship' => 'account_leads',
-        );
+        ];
 
-        $link2 = array(
+        $link2 = [
             'related_id' => 'foo',
             'related_module' => 'Accounts',
             'module' => 'Leads',
             'id' => 'bar',
             'link' => 'account',
             'relationship' => 'account_leads',
-        );
+        ];
 
-        $link3 = array(
+        $link3 = [
             'id' => 'baz',
             'module' => 'Leads',
             'related_id' => 'bar',
             'related_module' => 'Accounts',
             'link' => 'account',
             'relationship' => 'account_leads',
-        );
+        ];
 
-        $link4 = array(
+        $link4 = [
             'id' => 'a1',
             'module' => 'Accounts',
             'related_id' => 'c1',
             'related_module' => 'Contacts',
             'link' => 'account',
             'relationship' => 'account_contacts',
-        );
+        ];
 
-        $link5 = array(
+        $link5 = [
             'id' => 'a1',
             'module' => 'Accounts',
             'related_id' => 'c2',
             'related_module' => 'Contacts',
             'link' => 'account',
             'relationship' => 'account_contacts',
-        );
+        ];
 
-        return array(
-            array($link1, $link2, true),
-            array($link1, $link3, false),
-            array($link2, $link3, false),
-            array($link4, $link5, false),
-        );
+        return [
+            [$link1, $link2, true],
+            [$link1, $link3, false],
+            [$link2, $link3, false],
+            [$link4, $link5, false],
+        ];
     }
 
     public function getBeanAttributesDataProvider()
     {
-        return array(
-            'Non-Person Bean Has Name' => array(
+        return [
+            'Non-Person Bean Has Name' => [
                 'SugarTestAccountUtilities::createAccount',
                 [],
                 [
                     'name' => 'John Doe',
                 ],
                 'John Doe',
-            ),
-            'Non-Person Bean Name Empty' => array(
+            ],
+            'Non-Person Bean Name Empty' => [
                 'SugarTestAccountUtilities::createAccount',
                 [],
                 [
                     'name' => '',
                 ],
                 '',
-            ),
-            'Person Bean Has Name' => array(
+            ],
+            'Person Bean Has Name' => [
                 'SugarTestLeadUtilities::createLead',
                 [],
                 [
@@ -716,8 +716,8 @@ class ActivityQueueManagerTest extends TestCase
                     'last_name' => 'Doe',
                 ],
                 'John Doe',
-            ),
-            'Person Bean Name Empty, First Name Erased' => array(
+            ],
+            'Person Bean Name Empty, First Name Erased' => [
                 'SugarTestContactUtilities::createContact',
                 [
                     'first_name',
@@ -727,8 +727,8 @@ class ActivityQueueManagerTest extends TestCase
                     'last_name' => 'Doe',
                 ],
                 'Doe',
-            ),
-            'Person Bean Name Empty, Last Name Erased' => array(
+            ],
+            'Person Bean Name Empty, Last Name Erased' => [
                 'SugarTestContactUtilities::createContact',
                 [
                     'last_name',
@@ -738,8 +738,8 @@ class ActivityQueueManagerTest extends TestCase
                     'last_name' => '',
                 ],
                 'John',
-            ),
-            'Person Bean Name Empty, First Name and Last Name Erased' => array(
+            ],
+            'Person Bean Name Empty, First Name and Last Name Erased' => [
                 'SugarTestContactUtilities::createContact',
                 [
                     'first_name',
@@ -750,8 +750,8 @@ class ActivityQueueManagerTest extends TestCase
                     'last_name' => '',
                 ],
                 'LBL_VALUE_ERASED',
-            ),
-            'Person Bean Name Empty, Not Erased' => array(
+            ],
+            'Person Bean Name Empty, Not Erased' => [
                 'SugarTestContactUtilities::createContact',
                 [],
                 [
@@ -759,8 +759,8 @@ class ActivityQueueManagerTest extends TestCase
                     'last_name' => '',
                 ],
                 '',
-            ),
-        );
+            ],
+        ];
     }
 
     /**

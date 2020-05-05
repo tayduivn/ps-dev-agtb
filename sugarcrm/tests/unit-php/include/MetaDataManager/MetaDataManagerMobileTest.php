@@ -46,32 +46,32 @@ class MetaDataManagerMobileTest extends TestCase
      */
     public function modListProvider()
     {
-        return array(
-            array(
-                array('Mod0', 'Mod1', 'Mod2', 'Mod3',),
-                array(
-                    'Mod0' => array(),
-                    'Mod1' => array('Sup1', 'Sup2',),
-                    'Mod2' => array(),
-                    'Mod3' => array('Sup3', 'Sup4',),
-                ),
-                array('Sup1', 'Sup2', 'Sup3', 'Sup4',),
-            ),
-            array(
-                array('Mod0', 'Mod1', 'Mod2', 'Mod3',),
-                array('Mod0' => array(), 'Mod1' => array(), 'Mod2' => array(), 'Mod3' => array(),),
-                array(),
-            ),
-            array(
-                array('Mod0', 'Mod1', 'Mod2', 'Mod3'),
-                array(
-                    'Mod0' => array('Sup1',),
-                    'Mod1' => array('Sup2',),
-                    'Mod2' => array('Sup3',),
-                    'Mod3' => array('Sup4',),
-                ),
-                array('Sup1', 'Sup2', 'Sup3', 'Sup4',),
-            ),
-        );
+        return [
+            [
+                ['Mod0', 'Mod1', 'Mod2', 'Mod3',],
+                [
+                    'Mod0' => [],
+                    'Mod1' => ['Sup1', 'Sup2',],
+                    'Mod2' => [],
+                    'Mod3' => ['Sup3', 'Sup4',],
+                ],
+                ['Sup1', 'Sup2', 'Sup3', 'Sup4',],
+            ],
+            [
+                ['Mod0', 'Mod1', 'Mod2', 'Mod3',],
+                ['Mod0' => [], 'Mod1' => [], 'Mod2' => [], 'Mod3' => [],],
+                [],
+            ],
+            [
+                ['Mod0', 'Mod1', 'Mod2', 'Mod3'],
+                [
+                    'Mod0' => ['Sup1',],
+                    'Mod1' => ['Sup2',],
+                    'Mod2' => ['Sup3',],
+                    'Mod3' => ['Sup4',],
+                ],
+                ['Sup1', 'Sup2', 'Sup3', 'Sup4',],
+            ],
+        ];
     }
 }

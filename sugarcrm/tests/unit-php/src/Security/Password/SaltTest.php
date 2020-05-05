@@ -29,7 +29,7 @@ class SaltTest extends TestCase
     public function testGenerate($size, $gen, $subst, $expected)
     {
         // mock CSPRNG
-        $csprng = $this->getCSPRNGMock(array('generate'));
+        $csprng = $this->getCSPRNGMock(['generate']);
         $csprng->expects($this->once())
             ->method('generate')
             ->with($this->equalTo($size), $this->equalTo(true))
@@ -42,20 +42,20 @@ class SaltTest extends TestCase
 
     public function providerTestGenerate()
     {
-        return array(
-            array(
+        return [
+            [
                 9,
                 'random123',
                 '',
                 'random123',
-            ),
-            array(
+            ],
+            [
                 10,
                 'ABBCCCDDDD',
                 'XYZ',
                 'XYYZZZDDDD',
-            ),
-        );
+            ],
+        ];
     }
 
     /**

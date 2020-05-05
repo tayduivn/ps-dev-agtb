@@ -17,13 +17,13 @@ use PHPUnit\Framework\TestCase;
  */
 class iCalParserTest extends TestCase
 {
-    static protected $e;
+    protected static $e;
 
     public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
-        SugarTestHelper::setUp('current_user', array(true, true));
+        SugarTestHelper::setUp('current_user', [true, true]);
         $meeting = SugarTestMeetingUtilities::createMeeting();
 
         // email with description that contains meeting id
@@ -40,7 +40,8 @@ class iCalParserTest extends TestCase
         $GLOBALS['db']->query('delete from meetings where outlook_id='."'".'73fc8eef-bacc-4d7b-94eb-af2080437132'."'");
     }
 
-    protected function getEmailCount() {
+    protected function getEmailCount()
+    {
         return $GLOBALS['db']->getOne("select count(*) from meetings where deleted = 0");
     }
 

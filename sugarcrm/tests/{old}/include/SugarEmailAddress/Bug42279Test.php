@@ -14,13 +14,12 @@ use PHPUnit\Framework\TestCase;
 
 class Bug42279Test extends TestCase
 {
-    private $contact;	
+    private $contact;
 
     protected function setUp() : void
     {
-    	$GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $this->contact = SugarTestContactUtilities::createContact();
-               
     }
 
     protected function tearDown() : void
@@ -32,7 +31,8 @@ class Bug42279Test extends TestCase
     /**
      * @group bug42279
      */
-    public function testEmailAddressInFetchedRow() {
+    public function testEmailAddressInFetchedRow()
+    {
         $sea = BeanFactory::newBean('EmailAddresses');
 
         // this will populate contact->email1
@@ -41,6 +41,6 @@ class Bug42279Test extends TestCase
 
         // this should set fetched_row['email1'] to contatc->email1
         $sea->handleLegacyRetrieve($this->contact);
-    	$this->assertEquals($email1, $this->contact->fetched_row['email1']);
+        $this->assertEquals($email1, $this->contact->fetched_row['email1']);
     }
 }

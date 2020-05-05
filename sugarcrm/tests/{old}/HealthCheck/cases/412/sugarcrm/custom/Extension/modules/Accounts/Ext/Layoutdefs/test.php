@@ -10,12 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$layout_defs = array(
-    'fake' => array(
-        'subpanel_setup' => array(
-            'fake' => array(
+$layout_defs = [
+    'fake' => [
+        'subpanel_setup' => [
+            'fake' => [
                 'get_subpanel_data' => 'fake',
-            ),
-        ),
-    ),
-);
+            ],
+        ],
+    ],
+];

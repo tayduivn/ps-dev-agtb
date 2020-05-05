@@ -50,7 +50,7 @@ class SugarWidgetFieldMultiEnumTest extends TestCase
     public function testQueryFilterIs()
     {
         $expected = "accounts_cstm.custom_multi_c = \"Value1\"\n";
-        $layoutDef = $layoutDef =  array(
+        $layoutDef = $layoutDef =  [
             'name' => 'custom_multi_c',
             'table_key' => 'self',
             'qualifier_name' => 'is',
@@ -58,7 +58,7 @@ class SugarWidgetFieldMultiEnumTest extends TestCase
             'input_name0' => 'Value1',
             'column_key' => 'self:custom_multi',
             'type' => 'multienum',
-        );
+        ];
         $this->reporter->db->expects($this->once())
             ->method('quoted')
             ->willReturnCallback(function ($str) {

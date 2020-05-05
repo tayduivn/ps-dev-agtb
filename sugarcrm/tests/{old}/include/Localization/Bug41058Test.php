@@ -31,7 +31,7 @@ class Bug41058Test extends TestCase
 
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['current_user']->is_admin = '1';
-	    $GLOBALS['current_user']->save();
+        $GLOBALS['current_user']->save();
 
         $this->loc = Localization::getObject();
         if ($this->loc->invalidLocaleNameFormatUpgrade()) {
@@ -56,7 +56,7 @@ class Bug41058Test extends TestCase
         unset($GLOBALS['current_user']);
 
         $sugar_config = $this->backupConfig;
-        if(!rebuildConfigFile($sugar_config, $sugar_version)) {
+        if (!rebuildConfigFile($sugar_config, $sugar_version)) {
             logThis('*** ERROR: could not write config.php!');
             $errors[] = $mod_strings['ERR_UW_CONFIG_WRITE'];
         }
@@ -77,7 +77,8 @@ class Bug41058Test extends TestCase
      * @param $name_format valid name format from dataProvider
      * @dataProvider goodLocaleNameFormatProvider
      */
-    public function testCheckReturnsTrueForValidNameFormats($name_format) {
+    public function testCheckReturnsTrueForValidNameFormats($name_format)
+    {
         $this->assertTrue($this->loc->isAllowedNameFormat($name_format));
     }
 
@@ -86,7 +87,8 @@ class Bug41058Test extends TestCase
      * @param $name_format invalid name format from dataProvider
      * @dataProvider badLocaleNameFormatProvider
      */
-    public function testCheckReturnsFalseForInvalidNameFormats($name_format) {
+    public function testCheckReturnsFalseForInvalidNameFormats($name_format)
+    {
         $this->assertFalse($this->loc->isAllowedNameFormat($name_format));
     }
 
@@ -96,7 +98,8 @@ class Bug41058Test extends TestCase
      * @dataProvider goodLocaleNameFormatProvider
      * @depends testCheckReturnsTrueForValidNameFormats
      */
-    public function testUserPreferenceForLocaleNameFormatUpgrade($name_format) {
+    public function testUserPreferenceForLocaleNameFormatUpgrade($name_format)
+    {
         global $sugar_config;
 
         $this->user->setPreference('default_locale_name_format', $name_format);
@@ -117,7 +120,8 @@ class Bug41058Test extends TestCase
      * @dataProvider badLocaleNameFormatProvider
      * @depends testCheckReturnsFalseForInvalidNameFormats
      */
-    public function testBadUserPreferenceForLocaleNameFormatUpgrade($name_format) {
+    public function testBadUserPreferenceForLocaleNameFormatUpgrade($name_format)
+    {
         global $sugar_config;
 
         $this->user->setPreference('default_locale_name_format', $name_format);
@@ -141,18 +145,19 @@ class Bug41058Test extends TestCase
      * @dataProvider goodLocaleNameFormatProvider
      * @depends testCheckReturnsTrueForValidNameFormats
      */
-    public function testGlobalPreferenceForLocaleNameFormatUpgrade($name_format) {
+    public function testGlobalPreferenceForLocaleNameFormatUpgrade($name_format)
+    {
         global $sugar_config, $sugar_version;
 
         $this->assertFileDoesNotExist($this->loc->invalidNameFormatUpgradeFilename);
         $this->assertNotSame($name_format, $sugar_config['default_locale_name_format']);
         $sugar_config['default_locale_name_format'] = $name_format;
-        if(!rebuildConfigFile($sugar_config, $sugar_version)) {
+        if (!rebuildConfigFile($sugar_config, $sugar_version)) {
             $errors[] = $mod_strings['ERR_UW_CONFIG_WRITE'];
             $this->fail("Could not rebuild config file, please check your installation.");
         }
         upgradeUserPreferences();
-        require ('config.php');
+        require 'config.php';
         $this->assertSame($name_format, $sugar_config['default_locale_name_format']);
         $this->assertFileDoesNotExist($this->loc->invalidNameFormatUpgradeFilename);
     }
@@ -163,19 +168,20 @@ class Bug41058Test extends TestCase
      * @dataProvider badLocaleNameFormatProvider
      * @depends testCheckReturnsFalseForInvalidNameFormats
      */
-    public function testInvalidGlobalPreferenceForLocaleNameFormatUpgrade($name_format) {
+    public function testInvalidGlobalPreferenceForLocaleNameFormatUpgrade($name_format)
+    {
         global $sugar_config, $sugar_version;
 
         $this->assertFileDoesNotExist($this->loc->invalidNameFormatUpgradeFilename);
         $this->assertNotSame($name_format, $sugar_config['default_locale_name_format']);
         $sugar_config['default_locale_name_format'] = $name_format;
-        if(!rebuildConfigFile($sugar_config, $sugar_version)) {
+        if (!rebuildConfigFile($sugar_config, $sugar_version)) {
             $errors[] = $mod_strings['ERR_UW_CONFIG_WRITE'];
             $this->fail("Could not rebuild config file, please check your installation.");
         }
         upgradeUserPreferences();
         $this->assertNotSame($name_format, $sugar_config['default_locale_name_format']);
-        require ('config.php');
+        require 'config.php';
         $coreDefaults = $this->loc->getLocaleConfigDefaults();
         $this->assertSame($coreDefaults['default_locale_name_format'], $sugar_config['default_locale_name_format']);
         $this->assertFileExists($this->loc->invalidNameFormatUpgradeFilename);
@@ -187,10 +193,11 @@ class Bug41058Test extends TestCase
      * @dataProvider badLocaleNameFormatProvider
      * @depends testCheckReturnsFalseForInvalidNameFormats
      */
-    public function testMessageIsShownWhenInvalidLocaleNameFormatIsFoundInUpgrade($name_format) {
+    public function testMessageIsShownWhenInvalidLocaleNameFormatIsFoundInUpgrade($name_format)
+    {
         global $sugar_config, $locale, $app_strings, $app_list_strings;
 
-        require('modules/Administration/language/en_us.lang.php');
+        require 'modules/Administration/language/en_us.lang.php';
 
         $this->assertFileDoesNotExist($this->loc->invalidNameFormatUpgradeFilename);
         $sugar_config['default_locale_name_format'] = $name_format;
@@ -200,7 +207,7 @@ class Bug41058Test extends TestCase
         require_once 'include/utils/layout_utils.php';
 
         $this->expectOutputRegex('/'.$mod_strings['ERR_INVALID_LOCALE_NAME_FORMAT_UPGRADE'].'/');
-        require('modules/Administration/Locale.php');
+        require 'modules/Administration/Locale.php';
     }
 
     /**
@@ -209,7 +216,8 @@ class Bug41058Test extends TestCase
      * @dataProvider goodLocaleNameFormatProvider
      * @depends testCheckReturnsTrueForValidNameFormats
      */
-    public function testMessageIsNotShownWhenNoInvalidLocaleNameFormatIsFoundInUpgrade($name_format) {
+    public function testMessageIsNotShownWhenNoInvalidLocaleNameFormatIsFoundInUpgrade($name_format)
+    {
         global $sugar_config, $locale, $app_strings, $app_list_strings;
 
         require 'modules/Administration/language/en_us.lang.php';
@@ -232,9 +240,10 @@ class Bug41058Test extends TestCase
      * @dataProvider badLocaleNameFormatProvider
      * @depends testCheckReturnsFalseForInvalidNameFormats
      */
-    public function testFileGetsRemovedAfterLocaleSave($name_format) {
+    public function testFileGetsRemovedAfterLocaleSave($name_format)
+    {
         global $sugar_config, $locale, $app_strings, $app_list_strings;
-        require('modules/Administration/language/en_us.lang.php');
+        require 'modules/Administration/language/en_us.lang.php';
 
         $this->assertFileDoesNotExist($this->loc->invalidNameFormatUpgradeFilename);
         $sugar_config['default_locale_name_format'] = $name_format;
@@ -242,7 +251,7 @@ class Bug41058Test extends TestCase
         $this->assertFileExists($this->loc->invalidNameFormatUpgradeFilename);
         try {
             $_REQUEST['process'] = 'true';
-            require('modules/Administration/Locale.php');
+            require 'modules/Administration/Locale.php';
         } catch (Exception $e) {
             $this->assertFileDoesNotExist($this->loc->invalidNameFormatUpgradeFilename);
         }
@@ -255,7 +264,8 @@ class Bug41058Test extends TestCase
      * @param $name_format invalid name format from data provider
      * @dataProvider badLocaleNameFormatProvider
      */
-    public function testBadFormatsInConfigAreNotIncludedInDropdown($name_format) {
+    public function testBadFormatsInConfigAreNotIncludedInDropdown($name_format)
+    {
         $localeDefaults = $this->loc->getLocaleConfigDefaults();
         $formats = $localeDefaults['name_formats'];
 
@@ -270,13 +280,14 @@ class Bug41058Test extends TestCase
      * Data provider of allowed name formats
      * @return array of allowed name format strings
      */
-    public function goodLocaleNameFormatProvider() {
-        $goodFormatsArray = array(
-            array('`l` `f` `s`'),
-            array('l_f_s'),
-            array('*-s-f-l-*'),
-            array('{[`~!@#$%^&*()_-+=;:\'"/?\\|.>s, f, l    <]}'),
-        );
+    public function goodLocaleNameFormatProvider()
+    {
+        $goodFormatsArray = [
+            ['`l` `f` `s`'],
+            ['l_f_s'],
+            ['*-s-f-l-*'],
+            ['{[`~!@#$%^&*()_-+=;:\'"/?\\|.>s, f, l    <]}'],
+        ];
 
         return $goodFormatsArray;
     }
@@ -285,13 +296,14 @@ class Bug41058Test extends TestCase
      * Data provider of disallowed name formats
      * @return array of disallowed name format strings
      */
-    public function badLocaleNameFormatProvider() {
-        $badFormatsArray = array(
-            array('`l` `f` `s`: `t`'),
-            array('alpha-bits'),
-            array('*-s-f-l-*-bad_name_format'),
-            array('bad{[`~!@#$%^&*()_-+=;:\'"/?\\|.>s, f, l    <]}'),
-        );
+    public function badLocaleNameFormatProvider()
+    {
+        $badFormatsArray = [
+            ['`l` `f` `s`: `t`'],
+            ['alpha-bits'],
+            ['*-s-f-l-*-bad_name_format'],
+            ['bad{[`~!@#$%^&*()_-+=;:\'"/?\\|.>s, f, l    <]}'],
+        ];
 
         return $badFormatsArray;
     }

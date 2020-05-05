@@ -11,7 +11,8 @@
  */
 
 
-class RestUpdateTest extends RestTestBase {
+class RestUpdateTest extends RestTestBase
+{
     protected function setUp() : void
     {
         parent::setUp();
@@ -51,20 +52,24 @@ class RestUpdateTest extends RestTestBase {
 
         $GLOBALS['db']->commit();
 
-        $restReply = $this->_restCall("Accounts/{$this->account->id}", json_encode(array('name' => 'UNIT TEST - AFTER')), "PUT");
+        $restReply = $this->_restCall("Accounts/{$this->account->id}", json_encode(['name' => 'UNIT TEST - AFTER']), "PUT");
 
         $this->assertEquals($this->account->id, $restReply['reply']['id'], "The returned account id was not the same.");
 
         $account2 = new Account();
         $account2->retrieve($this->account->id);
 
-        $this->assertEquals("UNIT TEST - AFTER",
-                            $account2->name,
-                            "Did not set the account name.");
+        $this->assertEquals(
+            "UNIT TEST - AFTER",
+            $account2->name,
+            "Did not set the account name."
+        );
 
-        $this->assertEquals($restReply['reply']['name'],
-                            $account2->name,
-                            "Rest Reply and Bean Do Not Match.");
+        $this->assertEquals(
+            $restReply['reply']['name'],
+            $account2->name,
+            "Rest Reply and Bean Do Not Match."
+        );
     }
     
     /**
@@ -79,7 +84,7 @@ class RestUpdateTest extends RestTestBase {
         $GLOBALS['db']->commit();
 
 
-        $restReply = $this->_restCall("Accounts/{$this->account->id}", json_encode(array('my_favorite' => true)), "PUT");
+        $restReply = $this->_restCall("Accounts/{$this->account->id}", json_encode(['my_favorite' => true]), "PUT");
 
         $is_fav = SugarFavorites::isUserFavorite('Accounts', $this->account->id, $this->_user->id);
         
@@ -98,7 +103,7 @@ class RestUpdateTest extends RestTestBase {
         $GLOBALS['db']->commit();
 
         $fav = new SugarFavorites();
-        $fav->id = SugarFavorites::generateGUID('Accounts',$this->account->id);
+        $fav->id = SugarFavorites::generateGUID('Accounts', $this->account->id);
         $fav->new_with_id = true;
         $fav->module = 'Accounts';
         $fav->record_id = $this->account->id;
@@ -113,7 +118,7 @@ class RestUpdateTest extends RestTestBase {
 
         $this->assertEquals($is_fav, true, "Didn't actually set the favorite");
 
-        $restReply = $this->_restCall("Accounts/{$this->account->id}", json_encode(array('my_favorite' => false)), "PUT");
+        $restReply = $this->_restCall("Accounts/{$this->account->id}", json_encode(['my_favorite' => false]), "PUT");
         
         $is_fav = SugarFavorites::isUserFavorite('Accounts', $this->account->id, $this->_user->id);
         
@@ -132,7 +137,7 @@ class RestUpdateTest extends RestTestBase {
         $GLOBALS['db']->commit();
 
         $fav = new SugarFavorites();
-        $fav->id = SugarFavorites::generateGUID('Accounts',$this->account->id);
+        $fav->id = SugarFavorites::generateGUID('Accounts', $this->account->id);
         $fav->new_with_id = true;
         $fav->module = 'Accounts';
         $fav->record_id = $this->account->id;
@@ -147,7 +152,7 @@ class RestUpdateTest extends RestTestBase {
 
         $this->assertEquals($is_fav, true, "Didn't actually set the favorite");
 
-        $restReply = $this->_restCall("Accounts/{$this->account->id}/favorite",array(), "DELETE");
+        $restReply = $this->_restCall("Accounts/{$this->account->id}/favorite", [], "DELETE");
         
         $is_fav = SugarFavorites::isUserFavorite('Accounts', $this->account->id, $this->_user->id);
         
@@ -166,24 +171,24 @@ class RestUpdateTest extends RestTestBase {
         $GLOBALS['db']->commit();
 
 
-        $emails = array(
-                        array(
+        $emails = [
+                        [
                             'email_address'=>'test@test.com',
                             'opt_out'=>'0',
                             'invalid_email'=>'0',
-                            'primary_address'=>'1'
-                        ),
-                        array(
+                            'primary_address'=>'1',
+                        ],
+                        [
                             'email_address'=>'asdf@test.com',
                             'opt_out'=>'0',
                             'invalid_email'=>'1',
-                            'primary_address'=>'0'
-                        ),
-                    );
-        $restReply = $this->_restCall("Contacts/{$this->contact->id}", json_encode(array(
+                            'primary_address'=>'0',
+                        ],
+                    ];
+        $restReply = $this->_restCall("Contacts/{$this->contact->id}", json_encode([
             'first_name' => 'UNIT TEST - AFTER',
             'email' => $emails,
-        )), "PUT");
+        ]), "PUT");
 
         $this->assertEquals($this->contact->id, $restReply['reply']['id'], "The returned contact id was not the same.");
 
@@ -191,21 +196,26 @@ class RestUpdateTest extends RestTestBase {
         $contact2->retrieve($this->contact->id);
         $restReply = $this->_restCall("Contacts/{$this->contact->id}");
 
-        $this->assertEquals($restReply['reply']['email'], $emails,"Returned emails don't match");
+        $this->assertEquals($restReply['reply']['email'], $emails, "Returned emails don't match");
 
-        $this->assertEquals("UNIT TEST - AFTER",
-                            $contact2->name,
-                            "Did not set the contact name.");
+        $this->assertEquals(
+            "UNIT TEST - AFTER",
+            $contact2->name,
+            "Did not set the contact name."
+        );
 
-        $this->assertEquals($restReply['reply']['name'],
-                            $contact2->name,
-                            "Rest Reply and Bean Do Not Match.");
+        $this->assertEquals(
+            $restReply['reply']['name'],
+            $contact2->name,
+            "Rest Reply and Bean Do Not Match."
+        );
     }
     
     /**
      * @group rest
      */
-    public function testHasParentNameAfterSave() {
+    public function testHasParentNameAfterSave()
+    {
         // Build an account
         $this->account = new Account();
         $this->account->name = 'ABC TEST';
@@ -222,7 +232,7 @@ class RestUpdateTest extends RestTestBase {
         $GLOBALS['db']->commit();
         
         // Change the note description and check for parent_name
-        $reply = $this->_restCall("Notes/{$this->note->id}", json_encode(array('description' => 'Some other descriptions')), 'PUT');
+        $reply = $this->_restCall("Notes/{$this->note->id}", json_encode(['description' => 'Some other descriptions']), 'PUT');
         $this->assertEquals($this->note->id, $reply['reply']['id'], 'Note ID was not the correct ID');
         $this->assertEquals($this->account->name, $reply['reply']['parent_name'], 'Parent Account name was not returned or was incorrect');
     }

@@ -18,11 +18,11 @@ use Sugarcrm\Sugarcrm\Util\Uuid;
  */
 class RelateApiTest extends TestCase
 {
-    public $accounts = array();
-    public $contacts = array();
-    public $roles = array();
-    public $opportunities = array();
-    public $opp_contacts = array();
+    public $accounts = [];
+    public $contacts = [];
+    public $roles = [];
+    public $opportunities = [];
+    public $opp_contacts = [];
 
     /** @var  RelateApi */
     public $relateApi;
@@ -88,14 +88,14 @@ class RelateApiTest extends TestCase
     {
         $GLOBALS['current_user']->is_admin = 1;
         // delete the bunch of accounts crated
-        foreach($this->accounts AS $account) {
+        foreach ($this->accounts as $account) {
             $account->mark_deleted($account->id);
         }
-        foreach($this->contacts AS $contact) {
+        foreach ($this->contacts as $contact) {
             $contact->mark_deleted($contact->id);
         }
 
-        foreach($this->roles AS $role) {
+        foreach ($this->roles as $role) {
             $role->mark_deleted($role->id);
             $role->mark_relationships_deleted($role->id);
             $GLOBALS['db']->query("DELETE FROM acl_fields WHERE role_id = '{$role->id}'");
@@ -109,12 +109,13 @@ class RelateApiTest extends TestCase
     }
 
     // test set favorite
-    public function testRelateRecordViewNone() {
-        $modules = array('Contacts');
+    public function testRelateRecordViewNone()
+    {
+        $modules = ['Contacts'];
         $this->roles[] = $role = $this->createRole(
             'UNIT TEST ' . create_guid(),
             $modules,
-            array('access', 'edit', 'list', 'export')
+            ['access', 'edit', 'list', 'export']
         );
 
         if (!($GLOBALS['current_user']->check_role_membership($role->name))) {
@@ -128,12 +129,12 @@ class RelateApiTest extends TestCase
 
         $result = $this->relateApi->filterRelated(
             new RelateApiServiceMockUp,
-            array(
+            [
                 'module' => 'Accounts',
                 'record' => $this->accounts[0]->id,
                 'link_name' => 'contacts',
-                'fields' => array(),
-            )
+                'fields' => [],
+            ]
         );
 
         $this->assertNotEmpty($result['records'], "Records were empty");
@@ -143,12 +144,13 @@ class RelateApiTest extends TestCase
     /**
      * Test asserts result of filterRelatedCount
      */
-    public function testRelateCountViewNone() {
-        $modules = array('Contacts');
+    public function testRelateCountViewNone()
+    {
+        $modules = ['Contacts'];
         $this->roles[] = $role = $this->createRole(
             'UNIT TEST ' . create_guid(),
             $modules,
-            array('access', 'edit', 'list', 'export')
+            ['access', 'edit', 'list', 'export']
         );
 
         if (!($GLOBALS['current_user']->check_role_membership($role->name))) {
@@ -162,18 +164,19 @@ class RelateApiTest extends TestCase
 
         $reply = $this->relateApi->filterRelatedCount(
             new RelateApiServiceMockUp,
-            array(
+            [
                 'module' => 'Accounts',
                 'record' => $this->accounts[0]->id,
                 'link_name' => 'contacts',
-                'fields' => array(),
-            )
+                'fields' => [],
+            ]
         );
         $this->assertArrayHasKey('record_count', $reply);
         $this->assertSame(1, $reply['record_count']);
     }
 
-    protected function createRole($name, $allowedModules, $allowedActions, $ownerActions = array()) {
+    protected function createRole($name, $allowedModules, $allowedActions, $ownerActions = [])
+    {
         $role = new ACLRole();
         $role->name = $name;
         $role->description = $name;
@@ -197,10 +200,9 @@ class RelateApiTest extends TestCase
 
             if (in_array($moduleName, $allowedModules)) {
                 foreach ($actions['module'] as $actionName => $action) {
-                    if(in_array($actionName, $allowedActions) && in_array($actionName, $ownerActions)) {
+                    if (in_array($actionName, $allowedActions) && in_array($actionName, $ownerActions)) {
                         $aclAllow = ACL_ALLOW_OWNER;
-                    }
-                    elseif (in_array($actionName, $allowedActions)) {
+                    } elseif (in_array($actionName, $allowedActions)) {
                         $aclAllow = ACL_ALLOW_ALL;
                     } else {
                         $aclAllow = ACL_ALLOW_NONE;
@@ -218,11 +220,14 @@ class RelateApiTest extends TestCase
         $account_id = $this->accounts[0]->id;
         $contact_id = $this->contacts[0]->id;
         $serviceMock = new RelateApiServiceMockUp();
-        $reply = $this->relateApi->filterRelated($serviceMock,
-                array('module' => 'Accounts', 'record' => $account_id,
+        $reply = $this->relateApi->filterRelated(
+            $serviceMock,
+            ['module' => 'Accounts', 'record' => $account_id,
                         'link_name' => 'contacts',
-                        'filter' => array(array('first_name' => array('$starts' => "RelateApi"))),
-                        'fields' => 'id,name', 'order_by' => 'name:ASC'));
+                        'filter' => [['first_name' => ['$starts' => "RelateApi"]]],
+            'fields' => 'id,name',
+            'order_by' => 'name:ASC']
+        );
 
         $this->assertEquals(1, count($reply['records']));
         $this->assertEquals($contact_id, $reply['records'][0]['id']);
@@ -235,11 +240,14 @@ class RelateApiTest extends TestCase
     {
         $account_id = $this->accounts[0]->id;
         $serviceMock = new RelateApiServiceMockUp();
-        $reply = $this->relateApi->filterRelatedCount($serviceMock,
-            array('module' => 'Accounts', 'record' => $account_id,
+        $reply = $this->relateApi->filterRelatedCount(
+            $serviceMock,
+            ['module' => 'Accounts', 'record' => $account_id,
                   'link_name' => 'contacts',
-                  'filter' => array(array('first_name' => array('$starts' => "RelateApi"))),
-                  'fields' => 'id,name', 'order_by' => 'name:ASC'));
+                  'filter' => [['first_name' => ['$starts' => "RelateApi"]]],
+            'fields' => 'id,name',
+            'order_by' => 'name:ASC']
+        );
         $this->assertArrayHasKey('record_count', $reply);
         $this->assertSame(1, $reply['record_count']);
     }
@@ -254,11 +262,12 @@ class RelateApiTest extends TestCase
         $serviceMock = new RelateApiServiceMockUp();
         $reply = $this->relateApi->filterRelated(
             $serviceMock,
-            array('module' => 'Opportunities',
+            ['module' => 'Opportunities',
                   'record' => $opp_id,
                   'link_name' => 'contacts',
                   'fields' => 'id, name, opportunity_role',
-                  'order_by' => 'opportunity_role:DESC'));
+            'order_by' => 'opportunity_role:DESC']
+        );
 
         $this->assertEquals(3, count($reply['records']), 'Should return three records');
         $this->assertEquals($contact_id, $reply['records'][0]['id'], 'Should be in desc order');
@@ -270,44 +279,44 @@ class RelateApiTest extends TestCase
      */
     public function testFilterRelated()
     {
-        $fieldParams = array(
-            'id' => array (
+        $fieldParams = [
+            'id' =>  [
                 'name' => 'id',
                 'type' => 'id',
                 'len' => 36,
-            ),
-            'pd_id' => array (
+            ],
+            'pd_id' =>  [
                 'name' => 'pd_id',
                 'type' => 'id',
                 'len' => 36,
-            ),
-            'bean_id' => array (
+            ],
+            'bean_id' =>  [
                 'name' => 'bean_id',
                 'type' => 'id',
                 'len' => 36,
-            ),
-            'bean_module' => array (
+            ],
+            'bean_module' =>  [
                 'name' => 'bean_module',
                 'type' => 'varchar',
                 'len' => 100,
-            ),
-        );
+            ],
+        ];
 
         // we have three contacts in $this->opp_contacts
         foreach ($this->opp_contacts as $contact) {
             $i = 0;
             // insert twice to locked_field_bean_rel for each Contact
             while ($i++ < 2) {
-                $this->db->insertParams('locked_field_bean_rel', $fieldParams, array(
+                $this->db->insertParams('locked_field_bean_rel', $fieldParams, [
                     'id' => Uuid::uuid1(),
                     'pd_id' => Uuid::uuid1(),
                     'bean_id' => $contact->id,
                     'bean_module' => 'Contacts',
-                ));
+                ]);
             }
         }
 
-        $args = array(
+        $args = [
             'module' => 'Opportunities',
             'record' => $this->opportunities[0]->id,
             'view' => 'subpanel',
@@ -315,7 +324,7 @@ class RelateApiTest extends TestCase
             'fields' => 'id, name',
             'max_num' => 2,
             'erased_fields' => true,
-        );
+        ];
         $serviceMock = new RelateApiServiceMockUp();
         $reply = $this->relateApi->filterRelated(
             $serviceMock,
@@ -413,26 +422,26 @@ class RelateApiTest extends TestCase
         $email->load_relationship('leads');
         $email->leads->add($lead);
 
-        return array($lead, $email);
+        return [$lead, $email];
     }
 
     private function getRelatedEmails(Lead $lead, array $acl)
     {
         global $current_user;
 
-        ACLAction::setACLData($current_user->id, $lead->module_dir, array(
-            'module' => array_merge(array(
-                'access' => array('aclaccess' => ACL_ALLOW_ENABLED),
-            ), $acl),
-        ));
+        ACLAction::setACLData($current_user->id, $lead->module_dir, [
+            'module' => array_merge([
+                'access' => ['aclaccess' => ACL_ALLOW_ENABLED],
+            ], $acl),
+        ]);
 
         $serviceBase = SugarTestRestUtilities::getRestServiceMock();
-        $response = $this->relateApi->filterRelated($serviceBase, array(
+        $response = $this->relateApi->filterRelated($serviceBase, [
             'fields' => 'id',
             'link_name' => 'archived_emails',
             'module' => $lead->module_dir,
             'record' => $lead->id,
-        ));
+        ]);
         $this->assertArrayHasKey('records', $response);
 
         return $response['records'];
@@ -442,15 +451,15 @@ class RelateApiTest extends TestCase
     {
         require_once 'modules/ACLActions/actiondefs.php';
 
-        return array(
+        return [
             // not having permission to view the parent record should cause SugarApiExceptionNotFound
-            array(
-                array(
-                    'view' => array('aclaccess' => ACL_ALLOW_OWNER),
-                ),
+            [
+                [
+                    'view' => ['aclaccess' => ACL_ALLOW_OWNER],
+                ],
                 SugarApiExceptionNotFound::class,
-            ),
-        );
+            ],
+        ];
     }
 
     public static function leanCountProvider()
@@ -550,7 +559,14 @@ class RelateApiTest extends TestCase
 
 class RelateApiServiceMockUp extends RestService
 {
-    public function __construct() {$this->user = $GLOBALS['current_user'];}
-    public function execute() {}
-    protected function handleException(Exception $exception) {}
+    public function __construct()
+    {
+        $this->user = $GLOBALS['current_user'];
+    }
+    public function execute()
+    {
+    }
+    protected function handleException(Exception $exception)
+    {
+    }
 }

@@ -25,7 +25,7 @@ class ExtAPILotusLiveTest extends TestCase
     protected function setUp() : void
     {
         global $app_strings;
-      	$app_strings = return_application_language('en_us');
+        $app_strings = return_application_language('en_us');
     }
 
     /**
@@ -42,7 +42,7 @@ class ExtAPILotusLiveTest extends TestCase
         $msg = $externalAPILotusLiveMock->getErrorStringFromCode();
         $this->assertEquals('An error occurred when trying to save to the external account.', $msg);
 
-        $msg = $externalAPILotusLiveMock->getErrorStringFromCode(array());
+        $msg = $externalAPILotusLiveMock->getErrorStringFromCode([]);
         $this->assertEquals('An error occurred when trying to save to the external account.', $msg);
     }
 

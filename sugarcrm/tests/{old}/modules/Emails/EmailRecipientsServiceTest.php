@@ -82,7 +82,7 @@ class EmailRecipientsServiceTest extends TestCase
         $this->createRecipientsAcrossModules();
         $term     = "{$this->salt}_sam_";
         $module   = "contacts";
-        $orderBy  = array();
+        $orderBy  = [];
         $expected = 1;
         $actual   = count($this->emailRecipientsService->find($term, $module, $orderBy, $expected));
         $this->assertEquals($expected, $actual, "Should have found {$expected} {$module} who matched {$term}.");
@@ -121,7 +121,7 @@ class EmailRecipientsServiceTest extends TestCase
         $this->createRecipientsAcrossModules();
         $term        = "{$this->salt}_";
         $module      = "accounts";
-        $orderBy     = array("email" => "ASC");
+        $orderBy     = ["email" => "ASC"];
         $limit       = 3;
         $recipients  = $this->emailRecipientsService->find($term, $module, $orderBy, $limit);
 
@@ -204,19 +204,19 @@ class EmailRecipientsServiceTest extends TestCase
     {
         $contact = SugarTestContactUtilities::createContact();
 
-        $input = array(
-            "module" => 'Contacts',
-            "id" => $contact->id,
-            "email" => $contact->email1,
-            "name" => $contact->name
-        );
-        $expected = array(
+        $input = [
             "module" => 'Contacts',
             "id" => $contact->id,
             "email" => $contact->email1,
             "name" => $contact->name,
-            "resolved" => true
-        );
+        ];
+        $expected = [
+            "module" => 'Contacts',
+            "id" => $contact->id,
+            "email" => $contact->email1,
+            "name" => $contact->name,
+            "resolved" => true,
+        ];
         $actual = $this->emailRecipientsService->lookup($input);
 
         $this->assertEquals($expected, $actual, "Expected Recipient to be Resolved From ID and Module");
@@ -226,14 +226,14 @@ class EmailRecipientsServiceTest extends TestCase
     {
         $contact = SugarTestContactUtilities::createContact();
 
-        $input = array("module" => 'Contacts', "id" => $contact->id, "email" => '', "name" => '');
-        $expected = array(
+        $input = ["module" => 'Contacts', "id" => $contact->id, "email" => '', "name" => ''];
+        $expected = [
             "module" => 'Contacts',
             "id" => $contact->id,
             "email" => $contact->email1,
             "name" => $contact->name,
-            "resolved" => true
-        );
+            "resolved" => true,
+        ];
         $actual = $this->emailRecipientsService->lookup($input);
 
         $this->assertEquals($expected, $actual, "Expected Recipient to be Resolved From ID and Module");
@@ -250,25 +250,25 @@ class EmailRecipientsServiceTest extends TestCase
         $lead->email1 = $email;
         $lead->save();
 
-        $input = array("module" => 'Leads', "id" => '', "email" => $email, "name" => '');
-        $expected = array(
+        $input = ["module" => 'Leads', "id" => '', "email" => $email, "name" => ''];
+        $expected = [
             "module" => 'Leads',
             "id" => $lead->id,
             "email" => $lead->email1,
             "name" => $lead->name,
-            "resolved" => true
-        );
+            "resolved" => true,
+        ];
         $actual = $this->emailRecipientsService->lookup($input);
         $this->assertEquals($expected, $actual, "Expected Lead Recipient to be Resolved From Email Address");
 
-        $input = array("module" => 'Contacts', "id" => '', "email" => $email, "name" => '');
-        $expected = array(
+        $input = ["module" => 'Contacts', "id" => '', "email" => $email, "name" => ''];
+        $expected = [
             "module" => 'Contacts',
             "id" => $contact->id,
             "email" => $contact->email1,
             "name" => $contact->name,
-            "resolved" => true
-        );
+            "resolved" => true,
+        ];
         $actual = $this->emailRecipientsService->lookup($input);
         $this->assertEquals($expected, $actual, "Expected Contact Recipient to be Resolved From Email Address");
     }
@@ -285,21 +285,21 @@ class EmailRecipientsServiceTest extends TestCase
         $lead->email1 = $email;
         $lead->save();
 
-        $input = array("module" => '', "id" => '', "email" => $email, "name" => '');
-        $expected1 = array(
+        $input = ["module" => '', "id" => '', "email" => $email, "name" => ''];
+        $expected1 = [
             "module" => 'Contacts',
             "id" => $contact->id,
             "email" => $contact->email1,
             "name" => $contact->name,
-            "resolved" => true
-        );
-        $expected2 = array(
+            "resolved" => true,
+        ];
+        $expected2 = [
             "module" => 'Leads',
             "id" => $lead->id,
             "email" => $lead->email1,
             "name" => $lead->name,
-            "resolved" => true
-        );
+            "resolved" => true,
+        ];
         $actual = $this->emailRecipientsService->lookup($input);
 
         $this->assertTrue(
@@ -312,14 +312,14 @@ class EmailRecipientsServiceTest extends TestCase
     {
         $invalid_contact_id = create_guid();
 
-        $input = array("module" => 'Contacts', "id" => $invalid_contact_id, "email" => '', "name" => '');
-        $expected = array(
+        $input = ["module" => 'Contacts', "id" => $invalid_contact_id, "email" => '', "name" => ''];
+        $expected = [
             "module" => 'Contacts',
             "id" => $invalid_contact_id,
             "email" => '',
             "name" => '',
-            "resolved" => false
-        );
+            "resolved" => false,
+        ];
         $actual = $this->emailRecipientsService->lookup($input);
 
         $this->assertEquals($expected, $actual, "Expected Recipient not to Resolve - Module Required with an ID");
@@ -332,14 +332,14 @@ class EmailRecipientsServiceTest extends TestCase
 
         $contact = SugarTestContactUtilities::createContact();
 
-        $input = array("module" => 'Contacts', "id" => $contact->id, "email" => $email, "name" => $name);
-        $expected = array(
+        $input = ["module" => 'Contacts', "id" => $contact->id, "email" => $email, "name" => $name];
+        $expected = [
             "module" => 'Contacts',
             "id" => $contact->id,
             "email" => $email,
             "name" => $name,
-            "resolved" => true
-        );
+            "resolved" => true,
+        ];
         $actual = $this->emailRecipientsService->lookup($input);
         $this->assertEquals($expected, $actual, "Unexpected Recipient to Resolve and Supplied Name not to be Replaced");
     }
@@ -361,14 +361,14 @@ class EmailRecipientsServiceTest extends TestCase
 
         $id = $contact2->id;
 
-        $input = array("module" => '', "id" => $id, "email" => $contact2->email1, "name" => '');
-        $expected = array(
+        $input = ["module" => '', "id" => $id, "email" => $contact2->email1, "name" => ''];
+        $expected = [
             "module" => 'Contacts',
             "id" => $id,
             "email" => $contact2->email1,
             "name" => $contact2->name,
-            "resolved" => true
-        );
+            "resolved" => true,
+        ];
         $actual = $this->emailRecipientsService->lookup($input);
         $this->assertEquals($expected, $actual, "Expected Recipient to Resolve to Matching ID and Email");
     }
@@ -390,14 +390,14 @@ class EmailRecipientsServiceTest extends TestCase
 
         $id = $contact2->id . "abcdefg";
 
-        $input = array("module" => '', "id" => $id, "email" => $contact2->email1, "name" => '');
-        $expected = array(
+        $input = ["module" => '', "id" => $id, "email" => $contact2->email1, "name" => ''];
+        $expected = [
             "module" => '',
             "id" => $id,
             "email" => $contact2->email1,
             "name" => '',
-            "resolved" => false
-        );
+            "resolved" => false,
+        ];
         $actual = $this->emailRecipientsService->lookup($input);
         $this->assertEquals($expected, $actual, "Expected Recipient Not to Resolve with unmatching ID");
     }
@@ -407,73 +407,73 @@ class EmailRecipientsServiceTest extends TestCase
         $email = "unit_test_" . create_guid() . "@yahoo.com";
         $name = "George Jetson";
 
-        $input = array("module" => '', "id" => '123', "email" => $email, "name" => $name);
-        $expected = array(
+        $input = ["module" => '', "id" => '123', "email" => $email, "name" => $name];
+        $expected = [
             "module" => '',
             "id" => '123',
             "email" => $email,
             "name" => $name,
-            "resolved" => false
-        );
+            "resolved" => false,
+        ];
         $actual = $this->emailRecipientsService->lookup($input);
         $this->assertEquals($expected, $actual, "Expected Supplied Data to be Returned on Unresolved ID");
     }
 
     protected function createRecipientsAcrossModules()
     {
-        $recipients = array(
-            array(
+        $recipients = [
+            [
                 "type"  => "accounts",
                 "name"  => "This Account",
                 "email" => "{$this->salt}_this_account@yahoo.com",
-            ),
-            array(
+            ],
+            [
                 "type"  => "accounts",
                 "name"  => "My Account",
                 "email" => "{$this->salt}_my_account@yahoo.com",
-            ),
-            array(
+            ],
+            [
                 "type"  => "accounts",
                 "name"  => "That Account",
                 "email" => "{$this->salt}_that_account@yahoo.com",
-            ),
-            array(
+            ],
+            [
                 "type"       => "contacts",
                 "first_name" => "John",
                 "last_name"  => "Doe",
                 "email"      => "{$this->salt}_john_doe@yahoo.com",
-            ),
-            array(
+            ],
+            [
                 "type"       => "contacts",
                 "first_name" => "Sam",
                 "last_name"  => "The Sham",
                 "email"      => "{$this->salt}_sam_the_sham@yahoo.com",
-            ),
-            array(
+            ],
+            [
                 "type"       => "contacts",
                 "first_name" => "Jiminy",
                 "last_name"  => "Crickett",
                 "email"      => "{$this->salt}_jiminy_crickett@gmail.com",
-            ),
-            array(
+            ],
+            [
                 "type"       => "leads",
                 "first_name" => "Davey",
                 "last_name"  => "Crockett",
                 "email"      => "{$this->salt}_davey_crockett@alamo.com",
-            ),
-            array(
+            ],
+            [
                 "type"       => "leads",
                 "first_name" => "Jim",
                 "last_name"  => "Bowie",
                 "email"      => "{$this->salt}_jim_bowie@alamo.com",
-            ),
-            array(
+            ],
+            [
                 "type"       => "leads",
                 "first_name" => "Sam",
                 "last_name"  => "Houston",
                 "email"      => "{$this->salt}_sam_houston@alamo.com",
-            ),
-        );
+            ],
+        ];
 
         foreach ($recipients as $recipient) {
             switch ($recipient["type"]) {

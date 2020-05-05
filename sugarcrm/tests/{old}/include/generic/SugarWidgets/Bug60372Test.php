@@ -47,10 +47,10 @@ class Bug60372Test extends TestCase
         $layoutManager = new LayoutManager();
         $layoutManager->setAttribute('reporter', new Report());
         $SWFDT = new SugarWidgetFieldDateTime($layoutManager);
-        $layoutDef = array(
+        $layoutDef = [
             'type' => 'datetime',
             'input_name0' => $days,
-        );
+        ];
 
         $result = $SWFDT->$qualifier($layoutDef);
 
@@ -60,25 +60,25 @@ class Bug60372Test extends TestCase
     public static function filterDataProvider()
     {
         $db = DBManagerFactory::getInstance();
-        return array(
-            array(
+        return [
+            [
                 'queryFilterTP_last_n_days',
                 5,
                 "* >= " .
                 $db->convert($db->quoted('2014-01-26 00:00:00'), 'datetime') .
                 " AND * <= " .
                 $db->convert($db->quoted('2014-01-30 23:59:59'), 'datetime'),
-                '2014-01-30 08:00:00'
-            ),
-            array(
+                '2014-01-30 08:00:00',
+            ],
+            [
                 'queryFilterTP_next_n_days',
                 2,
                 "* >= " .
                 $db->convert($db->quoted('2014-02-15 00:00:00'), 'datetime') .
                 " AND * <= " .
                 $db->convert($db->quoted('2014-02-16 23:59:59'), 'datetime'),
-                '2014-02-15 07:00:00'
-            ),
-        );
+                '2014-02-15 07:00:00',
+            ],
+        ];
     }
 }

@@ -88,7 +88,7 @@ class PortalStandardFunctionalityApiTest extends TestCase
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setUp('current_user', array(true, true)); // admin
+        SugarTestHelper::setUp('current_user', [true, true]); // admin
         SugarTestPortalUtilities::enablePortal();
         self::createOriginalTestRecords();
     }
@@ -454,7 +454,7 @@ class PortalStandardFunctionalityApiTest extends TestCase
         The test below, in theory should not be needed, as the previous test (that tests the opposite scenario) should succeed when encountering an exception.
         It was found out that in some occasions exceptions were thrown and the records were still created, and that's why these tests have been added.
 
-        It appears that the issue is due to the fact of having the same exception while saving a record, for both the "save" logic and for the "reload saved record" logic 
+        It appears that the issue is due to the fact of having the same exception while saving a record, for both the "save" logic and for the "reload saved record" logic
         By not having a rollback functionality, if something fails during "reload", it looks like the record did not "save", while instead it did.
         This comment applies to all the "testDidntCreate*" tests below as well
     */

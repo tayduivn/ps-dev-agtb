@@ -25,10 +25,10 @@ class PowerExpressionTest extends TestCase
 
     public function dataProviderTestEvaluate()
     {
-        return array(
-            array('pow(2, 3)', '8.000000'),
-            array('pow("2", "3")', '8.000000'),
-            array('pow("2.666667", "3")', '18.962970'),
-        );
+        return [
+            ['pow(2, 3)', '8.000000'],
+            ['pow("2", "3")', '8.000000'],
+            ['pow("2.666667", "3")', '18.962970'],
+        ];
     }
 }

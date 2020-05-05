@@ -21,10 +21,10 @@ class RevenueLineItemHooksTest extends TestCase
 
     public static function setUpBeforeClass() : void
     {
-        SugarTestForecastUtilities::setUpForecastConfig(array(
-            'sales_stage_won' => array('Closed Won'),
-            'sales_stage_lost' => array('Closed Lost')
-        ));
+        SugarTestForecastUtilities::setUpForecastConfig([
+            'sales_stage_won' => ['Closed Won'],
+            'sales_stage_lost' => ['Closed Lost'],
+        ]);
     }
 
     protected function setUp() : void
@@ -32,7 +32,7 @@ class RevenueLineItemHooksTest extends TestCase
         SugarTestHelper::setUp('moduleList');
         SugarTestHelper::setUp('beanList');
 
-        $this->rli = $this->createPartialMock('RevenueLineItem', array('save'));
+        $this->rli = $this->createPartialMock('RevenueLineItem', ['save']);
     }
 
     protected function tearDown() : void
@@ -66,14 +66,14 @@ class RevenueLineItemHooksTest extends TestCase
 
     public function dataAfterRelationshipDelete()
     {
-        return array(
-            array('after_relationship_delete', array('link' => 'account_link'), true, 0, 1),
-            array('after_relationship_delete', array('link' => 'foo'), false, 0, 0),
-            array('after_relationship_delete', array('link' => 'account_link'), false, 1, 0),
-            array('after_relationship_delete', array('link' => 'foo'), false, 1, 0),
-            array('foo', array('link' => 'account_link'), false, 0, 0),
-            array('foo', array('link' => 'foo'), false, 0, 0 ),
-        );
+        return [
+            ['after_relationship_delete', ['link' => 'account_link'], true, 0, 1],
+            ['after_relationship_delete', ['link' => 'foo'], false, 0, 0],
+            ['after_relationship_delete', ['link' => 'account_link'], false, 1, 0],
+            ['after_relationship_delete', ['link' => 'foo'], false, 1, 0],
+            ['foo', ['link' => 'account_link'], false, 0, 0],
+            ['foo', ['link' => 'foo'], false, 0, 0 ],
+        ];
     }
 
     /**
@@ -92,10 +92,11 @@ class RevenueLineItemHooksTest extends TestCase
         $this->assertEquals($rli->commit_stage, $expected);
     }
 
-    public function beforeSaveIncludedCheckProvider(){
-        return array(
-            array('Closed Won', 'exclude', 100, 'include'),
-            array('Closed Lost', 'include', 0, 'exclude')
-        );
+    public function beforeSaveIncludedCheckProvider()
+    {
+        return [
+            ['Closed Won', 'exclude', 100, 'include'],
+            ['Closed Lost', 'include', 0, 'exclude'],
+        ];
     }
 }

@@ -25,10 +25,10 @@ class AddExpressionTest extends TestCase
 
     public function dataProviderTestEvaluate()
     {
-        return array(
-            array('add(1, 1, "1")', '3.000000'),
-            array('add("33.333333", "33.333333")', '66.666666'),
-        );
+        return [
+            ['add(1, 1, "1")', '3.000000'],
+            ['add("33.333333", "33.333333")', '66.666666'],
+        ];
     }
 
     /**

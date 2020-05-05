@@ -28,7 +28,7 @@ class DashboardTest extends TestCase
     {
         $workBenachType = 'twitter';
         $dashboardMock = $this->getMockBuilder('Dashboard')
-            ->setMethods(array('allowedToAccessDashlet'))
+            ->setMethods(['allowedToAccessDashlet'])
             ->disableOriginalConstructor()
             ->getMock();
 

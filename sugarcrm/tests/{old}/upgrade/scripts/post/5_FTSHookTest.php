@@ -15,17 +15,17 @@ require_once 'upgrade/scripts/post/5_FTSHook.php';
 
 class SugarUpgradeFTSHookTest extends UpgradeTestCase
 {
-    private $oldHookDefs = array(
+    private $oldHookDefs = [
         'application/Ext/LogicHooks/logichooks.ext.php',
         'Extension/application/Ext/LogicHooks/SugarFTSHooks.php',
-    );
+    ];
 
     public function fileExistsProvider()
     {
-        return array(
-            array(true),
-            array(false),
-        );
+        return [
+            [true],
+            [false],
+        ];
     }
 
     /**
@@ -55,7 +55,7 @@ class SugarUpgradeFTSHookTest extends UpgradeTestCase
     public function testRemoveDuplicates()
     {
         $upgraderMock =
-            $this->getMockForAbstractClass('UpgradeDriver', array(), '', true, true, true, array('fileToDelete'));
+            $this->getMockForAbstractClass('UpgradeDriver', [], '', true, true, true, ['fileToDelete']);
 
         $upgraderMock->expects($this->exactly(2))
                      ->method('fileToDelete')

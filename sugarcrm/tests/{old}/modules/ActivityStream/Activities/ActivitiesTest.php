@@ -212,12 +212,12 @@ class ActivitiesTest extends TestCase
             ->will($this->returnValue(true));
         $stub->activities_teams = $relationshipStub;
 
-        SugarTestReflection::callProtectedMethod($stub, 'processPostSubscription', array());
+        SugarTestReflection::callProtectedMethod($stub, 'processPostSubscription', []);
     }
 
     public static function dataProvider_TestGetData()
     {
-        return array(array('String'), array('Array'));
+        return [['String'], ['Array']];
     }
 
     /**
@@ -228,10 +228,10 @@ class ActivitiesTest extends TestCase
     public function testGetData($format)
     {
         $activity = SugarTestActivityUtilities::createUnsavedActivity();
-        $testData = array(
+        $testData = [
             'String' => '{"test":123}',
-            'Array' => array('test' => 123),
-        );
+            'Array' => ['test' => 123],
+        ];
 
         foreach ($testData as $data) {
             $activity->data = $data;
@@ -325,9 +325,9 @@ class ActivitiesTest extends TestCase
         $result = SugarTestReflection::callProtectedMethod(
             $activity,
             'getChangedFieldsForUser',
-            array(new User(), $bean)
+            [new User(), $bean]
         );
-        $this->assertEquals(array(), $result, "Should return empty array");
+        $this->assertEquals([], $result, "Should return empty array");
     }
 
     /**
@@ -345,9 +345,9 @@ class ActivitiesTest extends TestCase
         $result = SugarTestReflection::callProtectedMethod(
             $activity,
             'getChangedFieldsForUser',
-            array(new User(), $bean)
+            [new User(), $bean]
         );
-        $this->assertEquals(array(), $result, "Should return empty array");
+        $this->assertEquals([], $result, "Should return empty array");
     }
 
     /**
@@ -365,9 +365,9 @@ class ActivitiesTest extends TestCase
         $result = SugarTestReflection::callProtectedMethod(
             $activity,
             'getChangedFieldsForUser',
-            array(new User(), $bean)
+            [new User(), $bean]
         );
-        $this->assertEquals(array('foo','bar'), $result, "Should return array with two fields");
+        $this->assertEquals(['foo','bar'], $result, "Should return array with two fields");
     }
 
     /**
@@ -375,7 +375,7 @@ class ActivitiesTest extends TestCase
      */
     public function testProcessPostTags_WithTags_CallsProcessTags()
     {
-        $activity = $this->createPartialMock('Activity', array('processTags'));
+        $activity = $this->createPartialMock('Activity', ['processTags']);
         $activity->expects($this->once())->method('processTags');
 
         $activity->data = '{"tags": ["tag1","tag2"]}';
@@ -387,7 +387,7 @@ class ActivitiesTest extends TestCase
      */
     public function testProcessPostTags_WithNoTags_DoesNotCallProcessTags()
     {
-        $activity = $this->createPartialMock('Activity', array('processTags'));
+        $activity = $this->createPartialMock('Activity', ['processTags']);
         $activity->expects($this->never())->method('processTags');
 
         $activity->data = '{}';
@@ -399,8 +399,8 @@ class ActivitiesTest extends TestCase
      */
     public function testProcessTags_WithNoTags_DoesNotProcessAnyRelationships()
     {
-        $tags = array();
-        $activity = $this->createPartialMock('Activity', array('processUserRelationships', 'processRecord'));
+        $tags = [];
+        $activity = $this->createPartialMock('Activity', ['processUserRelationships', 'processRecord']);
         $activity->expects($this->never())->method('processUserRelationships');
         $activity->expects($this->never())->method('processRecord');
         $activity->processTags($tags);
@@ -411,13 +411,13 @@ class ActivitiesTest extends TestCase
      */
     public function testProcessTags_UserTagNonPostActivity_CallsProcessUserRelationships()
     {
-        $tags = array(
-            array('module'=>'Users', 'id'=>'123'),
-        );
-        $activity = $this->createPartialMock('Activity', array('processUserRelationships', 'processRecord'));
+        $tags = [
+            ['module'=>'Users', 'id'=>'123'],
+        ];
+        $activity = $this->createPartialMock('Activity', ['processUserRelationships', 'processRecord']);
         $activity->expects($this->once())
             ->method('processUserRelationships')
-            ->with($this->equalTo(array('123')));
+            ->with($this->equalTo(['123']));
         $activity->expects($this->never())->method('processRecord');
 
         $activity->parent_id = '456';
@@ -431,19 +431,19 @@ class ActivitiesTest extends TestCase
     {
         $user = BeanFactory::newBean('Users');
         BeanFactory::registerBean($user);
-        $tags = array(
-            array(
+        $tags = [
+            [
                 'module' => $user->module_name,
                 'id' => $user->id,
-            ),
-        );
+            ],
+        ];
         $activity = $this->createPartialMock(
             'Activity',
-            array(
+            [
                 'processUserRelationships',
                 'processRecord',
                 'userHasViewAccessToParentModule',
-            )
+            ]
         );
         $activity->expects($this->once())->method('userHasViewAccessToParentModule')->will($this->returnValue(true));
         $activity->expects($this->once())->method('processRecord');
@@ -458,14 +458,14 @@ class ActivitiesTest extends TestCase
      */
     public function testProcessTags_UserTagPostToModuleWithNoAccess_DoesNotProcessAnyRelationships()
     {
-        $tags = array(
-            array('module'=>'Users', 'id'=>'123'),
-        );
-        $activity = $this->createPartialMock('Activity', array(
+        $tags = [
+            ['module'=>'Users', 'id'=>'123'],
+        ];
+        $activity = $this->createPartialMock('Activity', [
             'processUserRelationships',
             'processRecord',
             'userHasViewAccessToParentModule',
-        ));
+        ]);
         $activity->expects($this->once())
             ->method('userHasViewAccessToParentModule')
             ->will($this->returnValue(false));
@@ -483,18 +483,18 @@ class ActivitiesTest extends TestCase
     {
         $contact = BeanFactory::newBean('Contacts');
         BeanFactory::registerBean($contact);
-        $tags = array(
-            array(
+        $tags = [
+            [
                 'module' => $contact->module_name,
                 'id' => $contact->id,
-            ),
-        );
+            ],
+        ];
         $activity = $this->createPartialMock(
             'Activity',
-            array(
+            [
                 'processUserRelationships',
                 'processRecord',
-            )
+            ]
         );
         $activity->expects($this->once())->method('processRecord');
         $activity->expects($this->never())->method('processUserRelationships');
@@ -512,7 +512,7 @@ class ActivitiesTest extends TestCase
         $result = SugarTestReflection::callProtectedMethod(
             $activity,
             'userHasViewAccessToParentModule',
-            array(array('123'))
+            [['123']]
         );
         $this->assertTrue($result);
     }
@@ -522,7 +522,7 @@ class ActivitiesTest extends TestCase
      */
     public function testProcessUserRelationships_NoRelationship_ReturnsFalse()
     {
-        $activity = $this->createPartialMock('Activity', array('load_relationship'));
+        $activity = $this->createPartialMock('Activity', ['load_relationship']);
         $activity->expects($this->once())
             ->method('load_relationship')
             ->will($this->returnValue(false));
@@ -540,17 +540,17 @@ class ActivitiesTest extends TestCase
         $relationship->expects($this->never())->method('add');
         $activity = $this->createPartialMock(
             'Activity',
-            array(
+            [
                 'load_relationship',
                 'getParentBean',
-                'handleUserToBeanRelationship'
-            )
+                'handleUserToBeanRelationship',
+            ]
         );
         $activity->expects($this->once())->method('load_relationship')->will($this->returnValue(true));
         $activity->expects($this->once())->method('getParentBean')->will($this->returnValue(null));
         $activity->expects($this->never())->method('handleUserToBeanRelationship');
         $activity->activities_users = $relationship;
-        $activity->processUserRelationships(array());
+        $activity->processUserRelationships([]);
     }
 
     /**
@@ -563,11 +563,11 @@ class ActivitiesTest extends TestCase
         $relationship->expects($this->never())->method('add');
         $activity = $this->createPartialMock(
             'Activity',
-            array(
+            [
                 'load_relationship',
                 'getParentBean',
-                'handleUserToBeanRelationship'
-            )
+                'handleUserToBeanRelationship',
+            ]
         );
         $activity->expects($this->once())->method('load_relationship')->will($this->returnValue(true));
         $activity->expects($this->once())->method('getParentBean')->will($this->returnValue($parentBean));
@@ -575,7 +575,7 @@ class ActivitiesTest extends TestCase
         $activity->activities_users = $relationship;
         $user = BeanFactory::newBean('Users');
         BeanFactory::registerBean($user);
-        $activity->processUserRelationships(array($user->id, create_guid()));
+        $activity->processUserRelationships([$user->id, create_guid()]);
         BeanFactory::unregisterBean($user);
     }
 
@@ -588,11 +588,11 @@ class ActivitiesTest extends TestCase
         $relationship->expects($this->never())->method('add');
         $activity = $this->createPartialMock(
             'Activity',
-            array(
+            [
                 'load_relationship',
                 'getParentBean',
-                'handleUserToBeanRelationship'
-            )
+                'handleUserToBeanRelationship',
+            ]
         );
         $activity->expects($this->once())->method('load_relationship')->will($this->returnValue(true));
         $activity->expects($this->once())->method('getParentBean')->will($this->returnValue(null));
@@ -600,7 +600,7 @@ class ActivitiesTest extends TestCase
         $activity->activities_users = $relationship;
         $user = BeanFactory::newBean('Users');
         BeanFactory::registerBean($user);
-        $activity->processUserRelationships(array($user->id));
+        $activity->processUserRelationships([$user->id]);
         BeanFactory::unregisterBean($user);
     }
 
@@ -614,11 +614,11 @@ class ActivitiesTest extends TestCase
         $relationship->expects($this->never())->method('add');
         $activity = $this->createPartialMock(
             'Activity',
-            array(
+            [
                 'load_relationship',
                 'getParentBean',
-                'handleUserToBeanRelationship'
-            )
+                'handleUserToBeanRelationship',
+            ]
         );
         $activity->expects($this->once())->method('load_relationship')->will($this->returnValue(true));
         $activity->expects($this->once())->method('getParentBean')->will($this->returnValue($parentBean));
@@ -626,7 +626,7 @@ class ActivitiesTest extends TestCase
         $activity->activities_users = $relationship;
         $user = BeanFactory::newBean('Users');
         BeanFactory::registerBean($user);
-        $activity->processUserRelationships(array($user->id));
+        $activity->processUserRelationships([$user->id]);
         BeanFactory::unregisterBean($user);
     }
 
@@ -635,18 +635,18 @@ class ActivitiesTest extends TestCase
      */
     public function testProcessUserRelationships_UserHasAccessToParent_RelationshipIsAdded()
     {
-        $parentBean = $this->createPartialMock('SugarBean', array('checkUserAccess'));
+        $parentBean = $this->createPartialMock('SugarBean', ['checkUserAccess']);
         $parentBean->expects($this->once())->method('checkUserAccess')->will($this->returnValue(true));
         $relationship = $this->getMockBuilder('Link2')->disableOriginalConstructor()->getMock();
         $relationship->expects($this->once())->method('add');
-        $activity = $this->createPartialMock('Activity', array('load_relationship', 'getParentBean', 'getChangedFieldsForUser'));
+        $activity = $this->createPartialMock('Activity', ['load_relationship', 'getParentBean', 'getChangedFieldsForUser']);
         $activity->expects($this->once())->method('load_relationship')->will($this->returnValue(true));
         $activity->expects($this->once())->method('getParentBean')->will($this->returnValue($parentBean));
         $activity->expects($this->once())->method('getChangedFieldsForUser')->will($this->returnValue(true));
         $activity->activities_users = $relationship;
         $user = BeanFactory::newBean('Users');
         BeanFactory::registerBean($user);
-        $activity->processUserRelationships(array($user->id));
+        $activity->processUserRelationships([$user->id]);
         BeanFactory::unregisterBean($user);
     }
 
@@ -657,28 +657,28 @@ class ActivitiesTest extends TestCase
     {
         $contact = SugarTestContactUtilities::createContact();
         $user = SugarTestUserUtilities::createAnonymousUser();
-        $subscriptionId = Subscription::subscribeUserToRecord($user, $contact, array('disable_row_level_security' => true));
+        $subscriptionId = Subscription::subscribeUserToRecord($user, $contact, ['disable_row_level_security' => true]);
         $relationship = $this->getMockBuilder('Link2')->disableOriginalConstructor()->getMock();
         $relationship->expects($this->never())->method('add');
-        $activity = $this->createPartialMock('Activity', array('load_relationship', 'getParentBean', 'getChangedFieldsForUser'));
+        $activity = $this->createPartialMock('Activity', ['load_relationship', 'getParentBean', 'getChangedFieldsForUser']);
         $activity->expects($this->once())->method('load_relationship')->will($this->returnValue(true));
         $activity->expects($this->once())->method('getParentBean')->will($this->returnValue($contact));
         $activity->expects($this->never())->method('getChangedFieldsForUser');
         $activity->activities_users = $relationship;
         $this->assertNotEmpty(Subscription::checkSubscription($user, $contact), 'The user should be subscribed');
-        $data = array(
-            'module' => array(
-                'access' => array(
+        $data = [
+            'module' => [
+                'access' => [
                     'aclaccess' => ACL_ALLOW_DISABLED,
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
         ACLAction::setACLData($user->id, 'Contacts', $data);
-        $activity->processUserRelationships(array($user->id));
+        $activity->processUserRelationships([$user->id]);
         $this->assertEmpty(Subscription::checkSubscription($user, $contact), 'The user should not be subscribed');
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        SugarACL::$acls = array();
+        SugarACL::$acls = [];
 
         $GLOBALS['db']->query("DELETE FROM subscriptions WHERE id = '{$subscriptionId}'");
     }

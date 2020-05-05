@@ -24,9 +24,9 @@ class SugarForecasting_Filter_TimePeriodFilterTest extends TestCase
     {
         $admin = BeanFactory::newBean('Administration');
         $settings = $admin->getConfigForModule('Forecasts', 'base');
-        $settingsToRestore = array('timeperod_interval', 'timeperiod_leaf_interval', 'timeperiod_start_date', 'timeperiod_shown_forward', 'timeperiod_shown_backward');
-        foreach($settingsToRestore as $id) {
-            if(isset($settings[$id])) {
+        $settingsToRestore = ['timeperod_interval', 'timeperiod_leaf_interval', 'timeperiod_start_date', 'timeperiod_shown_forward', 'timeperiod_shown_backward'];
+        foreach ($settingsToRestore as $id) {
+            if (isset($settings[$id])) {
                 self::$currentSettings[$id] = $settings[$id];
             }
         }
@@ -48,7 +48,7 @@ class SugarForecasting_Filter_TimePeriodFilterTest extends TestCase
      */
     public static function tearDownAfterClass(): void
     {
-        self::updateForecastSettings(self::$currentSettings);        
+        self::updateForecastSettings(self::$currentSettings);
     }
 
     protected function tearDown() : void
@@ -59,18 +59,19 @@ class SugarForecasting_Filter_TimePeriodFilterTest extends TestCase
         $db->query("UPDATE timeperiods SET deleted = 0");
     }
 
-    public function timePeriodFilterWithTimePeriodsProvider() {
+    public function timePeriodFilterWithTimePeriodsProvider()
+    {
         $timedate = TimeDate::getInstance();
         $now = $timedate->getNow(false);
         $year = $now->format('Y');
-        return array(
-            array(TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, $now->setDate($year, 1, 1)->asDbDate(), 'current_year', 1, 1, 12),
-            array(TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, $now->setDate($year, 1, 1)->asDbDate(), 'current_year', 2, 2, 20),
-            array(TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, $now->setDate($year, 2, 1)->asDbDate(), 'current_year', 1, 1, 12),
-            array(TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, $now->setDate($year, 1, 1)->asDbDate(), 'current_year', 1, 1, 9),
-            array(TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, $now->setDate($year, 1, 1)->asDbDate(), 'current_year', 2, 2, 15),
-            array(TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, $now->setDate($year, 2, 1)->asDbDate(), 'current_year', 2, 2, 15),
-        );
+        return [
+            [TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, $now->setDate($year, 1, 1)->asDbDate(), 'current_year', 1, 1, 12],
+            [TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, $now->setDate($year, 1, 1)->asDbDate(), 'current_year', 2, 2, 20],
+            [TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, $now->setDate($year, 2, 1)->asDbDate(), 'current_year', 1, 1, 12],
+            [TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, $now->setDate($year, 1, 1)->asDbDate(), 'current_year', 1, 1, 9],
+            [TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, $now->setDate($year, 1, 1)->asDbDate(), 'current_year', 2, 2, 15],
+            [TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, $now->setDate($year, 2, 1)->asDbDate(), 'current_year', 2, 2, 15],
+        ];
     }
 
     /**
@@ -81,15 +82,16 @@ class SugarForecasting_Filter_TimePeriodFilterTest extends TestCase
      * @group timeperiods
      * @dataProvider timePeriodFilterWithTimePeriodsProvider
      */
-    public function testTimePeriodFilterWithTimePeriods($parentType, $leafType, $startDate, $fiscalYear, $shownForward, $shownBackward, $expectedLeaves) {
-        $forecastConfigSettings = array (
+    public function testTimePeriodFilterWithTimePeriods($parentType, $leafType, $startDate, $fiscalYear, $shownForward, $shownBackward, $expectedLeaves)
+    {
+        $forecastConfigSettings =  [
             'timeperiod_interval' => $parentType,
             'timeperiod_leaf_interval' => $leafType,
             'timeperiod_start_date' => $startDate,
             'timeperiod_fiscal_year' => $fiscalYear,
             'timeperiod_shown_forward' => $shownForward,
-            'timeperiod_shown_backward' => $shownBackward
-        );
+            'timeperiod_shown_backward' => $shownBackward,
+        ];
 
         self::updateForecastSettings($forecastConfigSettings);
 
@@ -97,17 +99,17 @@ class SugarForecasting_Filter_TimePeriodFilterTest extends TestCase
         $settings =  $admin->getConfigForModule('Forecasts', 'base');
 
         $timePeriod = TimePeriod::getByType($parentType);
-        $timePeriod->rebuildForecastingTimePeriods(array(), $settings);
+        $timePeriod->rebuildForecastingTimePeriods([], $settings);
 
-        $obj = new SugarForecasting_Filter_TimePeriodFilter(array());
+        $obj = new SugarForecasting_Filter_TimePeriodFilter([]);
         $this->assertEquals($expectedLeaves, count($obj->process()));
 
         //Now assert that the leaf_cycle is 1 according to the specified start month
         $timedate = TimeDate::getInstance();
         $timePeriodToCheck = TimePeriod::getEarliest($leafType);
 
-        while($timePeriodToCheck != null) {
-            if($timedate->fromDbDate($timePeriodToCheck->start_date)->format('n') == $timedate->fromDbDate($startDate)->format('n')) {
+        while ($timePeriodToCheck != null) {
+            if ($timedate->fromDbDate($timePeriodToCheck->start_date)->format('n') == $timedate->fromDbDate($startDate)->format('n')) {
                 $this->assertEquals(1, $timePeriodToCheck->leaf_cycle);
             }
             $timePeriodToCheck = $timePeriodToCheck->getNextTimePeriod();
@@ -117,7 +119,7 @@ class SugarForecasting_Filter_TimePeriodFilterTest extends TestCase
     private static function updateForecastSettings($settings)
     {
         $admin = BeanFactory::newBean('Administration');
-        foreach($settings as $id=>$value) {
+        foreach ($settings as $id => $value) {
             $admin->saveSetting('Forecasts', $id, $value, 'base');
         }
     }

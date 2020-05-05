@@ -53,7 +53,7 @@ class ForecastsModuleApiTest extends TestCase
      */
     public function createRecordDataProvider()
     {
-        $expectedSalesRep = array(
+        $expectedSalesRep = [
             'timeperiod_id' => 0,
             'amount' => 0,
             'best_case' => 0,
@@ -79,8 +79,8 @@ class ForecastsModuleApiTest extends TestCase
             'pipeline_opp_count' => 0,
             'likely_case' => 0,
             'closed_amount' => 0,
-        );
-        $expectedManager = array(
+        ];
+        $expectedManager = [
             'quota' => 0,
             'best_case' => 0,
             'best_adjusted' => 0,
@@ -92,74 +92,74 @@ class ForecastsModuleApiTest extends TestCase
             'pipeline_opp_count' => 0,
             'pipeline_amount' => 0,
             'closed_amount' => 0,
-        );
+        ];
 
-        return array(
-            array(
-                array(
+        return [
+            [
+                [
                     'forecast_type' => 'Direct',
                     'commit_type' => 'sales_rep',
                     'timeperiod_id' => 0,
-                ),
-                $expectedSalesRep
-            ),
-            array(
-                array(
+                ],
+                $expectedSalesRep,
+            ],
+            [
+                [
                     'forecast_type' => 'direct',
                     'commit_type' => 'sales_rep',
                     'timeperiod_id' => 0,
-                ),
-                $expectedSalesRep
-            ),
-            array(
-                array(
+                ],
+                $expectedSalesRep,
+            ],
+            [
+                [
                     'forecast_type' => 'Rollup',
                     'commit_type' => 'sales_rep',
                     'timeperiod_id' => 0,
-                ),
-                $expectedSalesRep
-            ),
-            array(
-                array(
+                ],
+                $expectedSalesRep,
+            ],
+            [
+                [
                     'forecast_type' => 'rollup',
                     'commit_type' => 'sales_rep',
                     'timeperiod_id' => 0,
-                ),
-                $expectedSalesRep
-            ),
-            array(
-                array(
+                ],
+                $expectedSalesRep,
+            ],
+            [
+                [
                     'forecast_type' => 'Direct',
                     'commit_type' => 'manager',
                     'timeperiod_id' => 0,
-                ),
-                $expectedManager
-            ),
-            array(
-                array(
+                ],
+                $expectedManager,
+            ],
+            [
+                [
                     'forecast_type' => 'direct',
                     'commit_type' => 'manager',
                     'timeperiod_id' => 0,
-                ),
-                $expectedManager
-            ),
-            array(
-                array(
+                ],
+                $expectedManager,
+            ],
+            [
+                [
                     'forecast_type' => 'Rollup',
                     'commit_type' => 'manager',
                     'timeperiod_id' => 0,
-                ),
-                $expectedManager
-            ),
-            array(
-                array(
+                ],
+                $expectedManager,
+            ],
+            [
+                [
                     'forecast_type' => 'rollup',
                     'commit_type' => 'manager',
                     'timeperiod_id' => 0,
-                ),
-                $expectedManager
-            ),
-        );
+                ],
+                $expectedManager,
+            ],
+        ];
     }
 
     /**
@@ -180,7 +180,7 @@ class ForecastsModuleApiTest extends TestCase
 
         $this->assertNotEmpty($result);
 
-        foreach($expected as $expectedKey => $expectedValue) {
+        foreach ($expected as $expectedKey => $expectedValue) {
             $this->assertArrayHasKey($expectedKey, $result);
             $this->assertEquals($expectedValue, $result[$expectedKey]);
         }

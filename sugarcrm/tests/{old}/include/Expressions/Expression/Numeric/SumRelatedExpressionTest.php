@@ -21,31 +21,31 @@ class SumRelatedExpressionTest extends TestCase
     public function testRelatedSum()
     {
         $opp = $this->getMockBuilder('Opportunity')
-            ->setMethods(array('save', 'load_relationship'))
+            ->setMethods(['save', 'load_relationship'])
             ->getMock();
 
 
         $link2 = $this->getMockBuilder('Link2')
             ->disableOriginalConstructor()
-            ->setMethods(array('getBeans'))
+            ->setMethods(['getBeans'])
             ->getMock();
 
         $opp->revenuelineitems = $link2;
 
-        $rlis = array();
+        $rlis = [];
         // lets create 3 rlis which with 10 * the index, which will give us the total of 60
         for ($x = 1; $x <= 3; $x++) {
             $rli = $this->getMockBuilder('RevenueLineItem')
-                ->setMethods(array('save', 'getFieldDefinition'))
+                ->setMethods(['save', 'getFieldDefinition'])
                 ->getMock();
 
             $rli->expects($this->any())
                 ->method('getFieldDefinition')
                 ->will(
                     $this->returnValue(
-                        array(
-                            'type' => 'integer'
-                        )
+                        [
+                            'type' => 'integer',
+                        ]
                     )
                 );
 
@@ -70,34 +70,34 @@ class SumRelatedExpressionTest extends TestCase
     public function testRelatedSumWithCurrency()
     {
         $opp = $this->getMockBuilder('Opportunity')
-            ->setMethods(array('save', 'load_relationship'))
+            ->setMethods(['save', 'load_relationship'])
             ->getMock();
 
 
         $link2 = $this->getMockBuilder('Link2')
             ->disableOriginalConstructor()
-            ->setMethods(array('getBeans'))
+            ->setMethods(['getBeans'])
             ->getMock();
 
         $opp->revenuelineitems = $link2;
         $opp->base_rate = '1.0';
         $opp->currecy_id = '-1';
 
-        $rlis = array();
+        $rlis = [];
         // lets create 3 rlis which with 100 * the index
         for ($x = 1; $x <= 3; $x++) {
             $rli = $this->getMockBuilder('RevenueLineItem')
-                ->setMethods(array('save', 'getFieldDefinition'))
+                ->setMethods(['save', 'getFieldDefinition'])
                 ->getMock();
 
             $rli->expects($this->any())
                 ->method('getFieldDefinition')
                 ->will(
                     $this->returnValue(
-                        array(
+                        [
                             'type' => 'currency',
-                            'precision' => '6'
-                        )
+                            'precision' => '6',
+                        ]
                     )
                 );
 

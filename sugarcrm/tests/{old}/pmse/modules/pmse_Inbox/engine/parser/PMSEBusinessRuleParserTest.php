@@ -22,38 +22,38 @@ class PMSEBusinessRuleParserTest extends TestCase
     {
         $this->dataParser = ProcessManager\Factory::getPMSEObject('PMSEBusinessRuleParser');
         
-        $this->resultArray = array(
-            array(
+        $this->resultArray = [
+            [
                 'act_uid' => 'fjhsd892ddsdsjxd9891221',
                 'act_id' => 13,
                 'frm_action' => '{
                             "type": "INT",
                             "value": 2000
-                        }'
-            ),
-            array(
+                        }',
+            ],
+            [
                 'act_uid' => 'as7yed2839jh9828988912a',
                 'act_id' => 14,
                 'frm_action' => '{
                             "type": "INT",
                             "value": 2000
-                        }'
-            ),
-            array(
+                        }',
+            ],
+            [
                 'act_uid' => 'hjhsd892dj9821j8988912j',
                 'act_id' => 12,
                 'frm_action' => '{
                             "type": "INT",
                             "value": 2000
-                        }'
-            )
-        );
+                        }',
+            ],
+        ];
     }
     
     public function testParseCriteriaToken()
     {
         $dbMock = $this->getMockBuilder('db')
-            ->setMethods(array('Query', 'fetchByAssoc'))
+            ->setMethods(['Query', 'fetchByAssoc'])
             ->getMock();
 
         $dbMock->resultArray = $this->resultArray;
@@ -91,7 +91,7 @@ class PMSEBusinessRuleParserTest extends TestCase
         $args['cas_id'] = 15;
         $expectedToken = new stdClass();
         $expectedToken->expToken = '{::_form_::fjhsd892ddsdsjxd9891221::}';
-        $expectedToken->currentValue = array(2000);
+        $expectedToken->currentValue = [2000];
         $resultCriteriaToken = $this->dataParser->parseCriteriaToken($businessRule[0], $args);
         $this->assertEquals($expectedToken->currentValue, $resultCriteriaToken->currentValue);
     }
@@ -99,7 +99,7 @@ class PMSEBusinessRuleParserTest extends TestCase
     public function testParseCriteriaTokens()
     {
         $dbMock = $this->getMockBuilder('db')
-            ->setMethods(array('Query', 'fetchByAssoc'))
+            ->setMethods(['Query', 'fetchByAssoc'])
             ->getMock();
 
         $dbMock->resultArray = $this->resultArray;
@@ -125,9 +125,9 @@ class PMSEBusinessRuleParserTest extends TestCase
         $args['cas_id'] = 15;
         $expectedToken = new stdClass();
         $expectedToken->expToken = '{::_form_::fjhsd892ddsdsjxd9891221::}';
-        $expectedToken->currentValue = array(2000);
+        $expectedToken->currentValue = [2000];
         $resultCriteriaToken = $this->dataParser->parseCriteriaToken($businessRule[0], $args);
-        $this->assertEquals(array(''), $resultCriteriaToken->currentValue);
+        $this->assertEquals([''], $resultCriteriaToken->currentValue);
     }
     
     public function testProcessValueExpression()

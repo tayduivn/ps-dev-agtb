@@ -18,21 +18,21 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug33250_Test extends TestCase
 {
-    public function test_generic_sql_with_matched_quotes() 
+    public function test_generic_sql_with_matched_quotes()
     {
         $sql = 'SELECT id FROM contacts WHERE first_name = \'Collin\' and last_name = \'Lee\'';
         $generic_sql = TrackerUtility::getGenericSQL($sql);
         $this->assertEquals($generic_sql, "SELECT id FROM contacts WHERE first_name = '?' and last_name = '?'", 'Assert that matched quoted query is properly formatted');
     }
     
-    public function test_generic_sql_with_unmatched_quotes() 
+    public function test_generic_sql_with_unmatched_quotes()
     {
         $sql = 'SELECT id FROM contacts WHERE first_name = \'Collin\' and last_name = \'Lee';
         $generic_sql = TrackerUtility::getGenericSQL($sql);
         $this->assertEquals($generic_sql, $sql, 'Assert that unmatched quoted query is the same as input query.');
     }
 
-    public function test_generic_sql_with_escaped_quotes() 
+    public function test_generic_sql_with_escaped_quotes()
     {
         $sql = 'SELECT id FROM contacts WHERE first_name = \'Bill\' and last_name = \'O\\\'Reilly\'';
         $generic_sql = TrackerUtility::getGenericSQL($sql);
@@ -43,8 +43,8 @@ class Bug33250_Test extends TestCase
         $this->assertEquals($generic_sql, "INSERT into contacts (first_name, last_name) values ('?', '?')", 'Assert that matched quoted query is properly formatted');
         
         //Check for double quoted format as well
-		$sql = "SELECT id FROM contacts WHERE first_name = 'Bill' and last_name = 'O\'Reilly'";
+        $sql = "SELECT id FROM contacts WHERE first_name = 'Bill' and last_name = 'O\'Reilly'";
         $generic_sql = TrackerUtility::getGenericSQL($sql);
-        $this->assertEquals($generic_sql, "SELECT id FROM contacts WHERE first_name = '?' and last_name = '?'", 'Assert that matched quoted query is properly formatted');        
+        $this->assertEquals($generic_sql, "SELECT id FROM contacts WHERE first_name = '?' and last_name = '?'", 'Assert that matched quoted query is properly formatted');
     }
 }

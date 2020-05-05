@@ -19,11 +19,11 @@ class ModuleScannerTest extends TestCase
     public $fileLoc = "cache/moduleScannerTemp.php";
 
     protected function setUp() : void
-	{
+    {
         SugarTestHelper::setUp('files');
         SugarTestHelper::saveFile($this->fileLoc);
         SugarTestHelper::saveFile('files.md5');
-	}
+    }
 
     protected function tearDown() : void
     {
@@ -33,32 +33,32 @@ class ModuleScannerTest extends TestCase
         }
     }
 
-	public function phpSamples()
-	{
-	    return array(
-	        array("<?php echo blah;", true),
-	        array("<? echo blah;", true),
-	        array("blah <? echo blah;", true),
-	        array("blah <?xml echo blah;", true),
-	        array("<?xml version=\"1.0\"></xml>", false),
-	        array("<?xml \n echo blah;", true),
-	        array("<?xml version=\"1.0\"><? blah ?></xml>", true),
-	        array("<?xml version=\"1.0\"><?php blah ?></xml>", true),
-	        );
-	}
-
-	/**
-	 * @dataProvider phpSamples
-	 */
-	public function testPHPFile($content, $is_php)
-	{
-        $ms = new ModuleScanner();
-	    $this->assertEquals($is_php, $ms->isPHPFile($content), "Bad PHP file result");
-	}
-
-	public function testFileTemplatePass()
+    public function phpSamples()
     {
-    	$fileModContents = <<<EOQ
+        return [
+            ["<?php echo blah;", true],
+            ["<? echo blah;", true],
+            ["blah <? echo blah;", true],
+            ["blah <?xml echo blah;", true],
+            ["<?xml version=\"1.0\"></xml>", false],
+            ["<?xml \n echo blah;", true],
+            ["<?xml version=\"1.0\"><? blah ?></xml>", true],
+            ["<?xml version=\"1.0\"><?php blah ?></xml>", true],
+            ];
+    }
+
+    /**
+     * @dataProvider phpSamples
+     */
+    public function testPHPFile($content, $is_php)
+    {
+        $ms = new ModuleScanner();
+        $this->assertEquals($is_php, $ms->isPHPFile($content), "Bad PHP file result");
+    }
+
+    public function testFileTemplatePass()
+    {
+        $fileModContents = <<<EOQ
 <?PHP
 
 class testFile_sugar extends File {
@@ -70,15 +70,15 @@ class testFile_sugar extends File {
 }
 ?>
 EOQ;
-		file_put_contents($this->fileLoc, $fileModContents);
-		$ms = new ModuleScanner();
-		$errors = $ms->scanFile($this->fileLoc);
-		$this->assertTrue(empty($errors));
+        file_put_contents($this->fileLoc, $fileModContents);
+        $ms = new ModuleScanner();
+        $errors = $ms->scanFile($this->fileLoc);
+        $this->assertTrue(empty($errors));
     }
 
-	public function testFileFunctionFail()
+    public function testFileFunctionFail()
     {
-    	$fileModContents = <<<EOQ
+        $fileModContents = <<<EOQ
 <?PHP
 
 class testFile_sugar extends File {
@@ -90,23 +90,23 @@ class testFile_sugar extends File {
 }
 ?>
 EOQ;
-		file_put_contents($this->fileLoc, $fileModContents);
-		$ms = new ModuleScanner();
-		$errors = $ms->scanFile($this->fileLoc);
-		$this->assertTrue(!empty($errors));
+        file_put_contents($this->fileLoc, $fileModContents);
+        $ms = new ModuleScanner();
+        $errors = $ms->scanFile($this->fileLoc);
+        $this->assertTrue(!empty($errors));
     }
 
-	public function testCallUserFunctionFail()
+    public function testCallUserFunctionFail()
     {
-    	$fileModContents = <<<EOQ
+        $fileModContents = <<<EOQ
 <?PHP
 	call_user_func("sugar_file_put_contents", "test2.php", "test");
 ?>
 EOQ;
-		file_put_contents($this->fileLoc, $fileModContents);
-		$ms = new ModuleScanner();
-		$errors = $ms->scanFile($this->fileLoc);
-		$this->assertTrue(!empty($errors));
+        file_put_contents($this->fileLoc, $fileModContents);
+        $ms = new ModuleScanner();
+        $errors = $ms->scanFile($this->fileLoc);
+        $this->assertTrue(!empty($errors));
     }
 
     /**
@@ -197,32 +197,32 @@ EOQ;
         ];
     }
 
-	public function testCallMethodObjectOperatorFail()
+    public function testCallMethodObjectOperatorFail()
     {
-    	$fileModContents = <<<EOQ
+        $fileModContents = <<<EOQ
 <?PHP
     //doesnt matter what the class name is, what matters is use of the banned method, setlevel
 	\$GlobalLoggerClass->setLevel();
 ?>
 EOQ;
-		file_put_contents($this->fileLoc, $fileModContents);
-		$ms = new ModuleScanner();
-		$errors = $ms->scanFile($this->fileLoc);
-		$this->assertNotEmpty($errors, 'There should have been an error caught for use of "->setLevel()');
+        file_put_contents($this->fileLoc, $fileModContents);
+        $ms = new ModuleScanner();
+        $errors = $ms->scanFile($this->fileLoc);
+        $this->assertNotEmpty($errors, 'There should have been an error caught for use of "->setLevel()');
     }
 
-	public function testCallMethodDoubleColonFail()
+    public function testCallMethodDoubleColonFail()
     {
-    	$fileModContents = <<<EOQ
+        $fileModContents = <<<EOQ
 <?PHP
     //doesnt matter what the class name is, what matters is use of the banned method, setlevel
 	\$GlobalLoggerClass::setLevel();
 ?>
 EOQ;
-		file_put_contents($this->fileLoc, $fileModContents);
-		$ms = new ModuleScanner();
-		$errors = $ms->scanFile($this->fileLoc);
-		$this->assertNotEmpty($errors, 'There should have been an error caught for use of "::setLevel()');
+        file_put_contents($this->fileLoc, $fileModContents);
+        $ms = new ModuleScanner();
+        $errors = $ms->scanFile($this->fileLoc);
+        $this->assertNotEmpty($errors, 'There should have been an error caught for use of "::setLevel()');
     }
 
     /**
@@ -245,19 +245,20 @@ EOQ;
     /**
      * When ModuleScanner is enabled, validating allowed and disallowed file extension names.
      */
-    public function testValidExtsAllowed() {
+    public function testValidExtsAllowed()
+    {
         // Allowed file names
-        $allowed = array(
+        $allowed = [
             'php' => 'test.php',
             'htm' => 'test.htm',
             'xml' => 'test.xml',
             'hbs' => 'test.hbs',
             'less' => 'test.less',
             'config' => 'custom/config.php',
-        );
+        ];
 
         // Disallowed file names
-        $notAllowed = array(
+        $notAllowed = [
             'docx' => 'test.docx',
             'docx(2)' => '../sugarcrm.xml/../sugarcrm/test.docx',
             'java' => 'test.java',
@@ -265,7 +266,7 @@ EOQ;
             'md5' => 'files.md5',
             'md5(2)' => '../sugarcrm/files.md5',
 
-        );
+        ];
 
         // Get our scanner
         $ms = new ModuleScanner();
@@ -293,57 +294,57 @@ EOQ;
 
     public function testConfigChecks()
     {
-            $isconfig = array(
+            $isconfig = [
             'config.php',
             'config_override.php',
             'custom/../config_override.php',
             'custom/.././config.php',
-            );
+            ];
 
         // Disallowed file names
-        $notconfig = array(
+            $notconfig = [
             'custom/config.php',
             'custom/modules/config.php',
             'cache/config_override.php',
-            'modules/Module/config.php'
-        );
+            'modules/Module/config.php',
+            ];
 
         // Get our scanner
-        $ms = new ModuleScanner();
+            $ms = new ModuleScanner();
 
         // Test valid
-        foreach ($isconfig as $file) {
-            $valid = $ms->isConfigFile($file);
-            $this->assertTrue($valid, "$file should be recognized as config file");
-        }
+            foreach ($isconfig as $file) {
+                $valid = $ms->isConfigFile($file);
+                $this->assertTrue($valid, "$file should be recognized as config file");
+            }
 
         // Test not valid
-        foreach ($notconfig as $ext => $file) {
-            $valid = $ms->isConfigFile($file);
-            $this->assertFalse($valid, "$file should not be recognized as config file");
-        }
+            foreach ($notconfig as $ext => $file) {
+                $valid = $ms->isConfigFile($file);
+                $this->assertFalse($valid, "$file should not be recognized as config file");
+            }
     }
 
     /**
      * @group bug58072
      */
-	public function testLockConfig()
+    public function testLockConfig()
     {
-    	$fileModContents = <<<EOQ
+        $fileModContents = <<<EOQ
 <?PHP
 	\$GLOBALS['sugar_config']['moduleInstaller']['test'] = true;
     	\$manifest = array();
     	\$installdefs = array();
 ?>
 EOQ;
-		file_put_contents($this->fileLoc, $fileModContents);
-		$ms = new MockModuleScanner();
-		$ms->config['test'] = false;
-		$ms->lockConfig();
-		MSLoadManifest($this->fileLoc);
-		$errors = $ms->checkConfig($this->fileLoc);
-		$this->assertTrue(!empty($errors), "Not detected config change");
-		$this->assertFalse($ms->config['test'], "config was changed");
+        file_put_contents($this->fileLoc, $fileModContents);
+        $ms = new MockModuleScanner();
+        $ms->config['test'] = false;
+        $ms->lockConfig();
+        MSLoadManifest($this->fileLoc);
+        $errors = $ms->checkConfig($this->fileLoc);
+        $this->assertTrue(!empty($errors), "Not detected config change");
+        $this->assertFalse($ms->config['test'], "config was changed");
     }
 
     /**
@@ -359,17 +360,17 @@ EOQ;
 
     public function normalizePathProvider()
     {
-        return array(
-            array('./foo', 'foo'),
-            array('foo//bar///baz/', 'foo/bar/baz'),
-            array('./foo/.//./bar/foo', 'foo/bar/foo'),
-            array('foo/../bar', false),
-            array('../bar/./', false),
-            array('./', ''),
-            array('.', ''),
-            array('', ''),
-            array('/', ''),
-        );
+        return [
+            ['./foo', 'foo'],
+            ['foo//bar///baz/', 'foo/bar/baz'],
+            ['./foo/.//./bar/foo', 'foo/bar/foo'],
+            ['foo/../bar', false],
+            ['../bar/./', false],
+            ['./', ''],
+            ['.', ''],
+            ['', ''],
+            ['/', ''],
+        ];
     }
 
     /**
@@ -406,39 +407,40 @@ EOQ;
 
     public function scanCopyProvider()
     {
-        return array(
-          array(
+        return [
+          [
             'copy/modules/Audit/Audit.php',
             'copy/modules/Audit/Audit.php',
             "modules/Audit",
-            false
-          ),
-          array(
+            false,
+          ],
+          [
             'copy/modules/Audit/Audit.php',
             'copy/modules/Audit/Audit.php',
             "modules/Audit/Audit.php",
-            false
-          ),
-        array(
+            false,
+          ],
+          [
             'copy/modules/Audit/Audit.php',
             'copy',
             ".",
-            false
-          ),
-        array(
+            false,
+          ],
+          [
             'copy/modules/Audit/SomeFile.php',
             'copy',
             ".",
-            true
-          ),
-        );
+            true,
+          ],
+        ];
     }
 }
 
-class MockModuleScanner extends  ModuleScanner
+class MockModuleScanner extends ModuleScanner
 {
     public $config;
-    public function isPHPFile($contents) {
+    public function isPHPFile($contents)
+    {
         return parent::isPHPFile($contents);
     }
 }

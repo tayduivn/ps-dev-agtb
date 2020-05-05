@@ -24,9 +24,9 @@ class Bug42961Test extends TestCase
      */
     public function testBuildCache()
     {
-        $beanList = array();
-        $beanFiles = array();
-        require('include/modules.php');
+        $beanList = [];
+        $beanFiles = [];
+        require 'include/modules.php';
         $GLOBALS['beanList'] = $beanList;
         $GLOBALS['beanFiles'] = $beanFiles;
         $unifiedSearchAdvanced = new UnifiedSearchAdvanced();
@@ -34,10 +34,8 @@ class Bug42961Test extends TestCase
         $this->assertFileExists($GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules.php', 'Here should be cache file with data');
         include $GLOBALS['sugar_config']['cache_dir'].'modules/unified_search_modules.php';
         $force_unifiedsearch = 0;
-        foreach ($unified_search_modules as $moduleName=>$moduleInformation)
-        {
-            foreach ($moduleInformation['fields'] as $fieldName=>$fieldInformation)
-            {
+        foreach ($unified_search_modules as $moduleName => $moduleInformation) {
+            foreach ($moduleInformation['fields'] as $fieldName => $fieldInformation) {
                 if (array_key_exists('force_unifiedsearch', $fieldInformation)) {
                     $force_unifiedsearch++;
                 }

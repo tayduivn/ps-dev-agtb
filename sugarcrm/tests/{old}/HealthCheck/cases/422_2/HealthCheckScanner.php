@@ -14,7 +14,7 @@ class S_422_2_HealthCheckScannerCasesTestMock extends HealthCheckScannerCasesTes
 {
     public $not = true;
 
-    public $md5_files = array(
-        './modules/Accounts/Account.php' => 'fakeMD5'
-    );
+    public $md5_files = [
+        './modules/Accounts/Account.php' => 'fakeMD5',
+    ];
 }

@@ -1,4 +1,4 @@
-<?php 
+<?php
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -29,7 +29,7 @@ class SugarFieldBoolTest extends TestCase
         $this->meeting->email_reminder_time = 1;
 
         $this->sf = SugarFieldHandler::getSugarField('bool');
-	}
+    }
 
     protected function tearDown() : void
     {
@@ -37,19 +37,20 @@ class SugarFieldBoolTest extends TestCase
         unset($this->meeting);
     }
     
-	public function testTrueBoolFieldFormatting() {
-        $data = array();
+    public function testTrueBoolFieldFormatting()
+    {
+        $data = [];
         $service = SugarTestRestUtilities::getRestServiceMock();
 
         $this->meeting->reminder_checked = true;
-        $this->meeting->email_reminder_checked = true;        
+        $this->meeting->email_reminder_checked = true;
         $this->sf->apiFormatField(
             $data,
             $this->meeting,
-            array(),
+            [],
             'reminder_checked',
-            array(),
-            array('reminder_checked'),
+            [],
+            ['reminder_checked'],
             $service
         );
 
@@ -58,36 +59,38 @@ class SugarFieldBoolTest extends TestCase
         $this->sf->apiFormatField(
             $data,
             $this->meeting,
-            array(),
+            [],
             'email_reminder_checked',
-            array(),
-            array('email_reminder_checked'),
+            [],
+            ['email_reminder_checked'],
             $service
         );
 
         $this->assertTrue($data['reminder_checked']);
     }
-    public function testTrueBoolFieldUnformatting() {
-        $result = $this->sf->unformatField(true, array());
+    public function testTrueBoolFieldUnformatting()
+    {
+        $result = $this->sf->unformatField(true, []);
         $this->assertTrue($result);
     }
-    public function testFalseboolFieldFormatting() {
+    public function testFalseboolFieldFormatting()
+    {
         // make'em false
         $this->meeting->reminder_time = -1;
         $this->meeting->email_reminder_time = -1;
         $this->meeting->reminder_checked = false;
         $this->meeting->email_reminder_checked = false;
 
-        $data = array();
+        $data = [];
         $service = SugarTestRestUtilities::getRestServiceMock();
 
         $this->sf->apiFormatField(
             $data,
             $this->meeting,
-            array(),
+            [],
             'reminder_checked',
-            array(),
-            array('reminder_checked'),
+            [],
+            ['reminder_checked'],
             $service
         );
         
@@ -96,10 +99,10 @@ class SugarFieldBoolTest extends TestCase
         $this->sf->apiFormatField(
             $data,
             $this->meeting,
-            array(),
+            [],
             'email_reminder_checked',
-            array(),
-            array('email_reminder_checked'),
+            [],
+            ['email_reminder_checked'],
             $service
         );
         $this->assertFalse($data['email_reminder_checked']);

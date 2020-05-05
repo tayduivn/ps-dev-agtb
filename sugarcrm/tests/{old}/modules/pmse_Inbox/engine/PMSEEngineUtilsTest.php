@@ -63,16 +63,16 @@ class PMSEEngineUtilsTest extends TestCase
             $this->oldDictionary = $GLOBALS['dictionary'];
         }
 
-        $GLOBALS['dictionary']['Email'] = array(
-            'fields' => array(),
-            'processes' => array(
+        $GLOBALS['dictionary']['Email'] = [
+            'fields' => [],
+            'processes' => [
                 'enabled' => true,
-                'types' => array(
-                    'CF' => array('assigned_user_id'),
-                    'AC' => array(),
-                ),
-            ),
-        );
+                'types' => [
+                    'CF' => ['assigned_user_id'],
+                    'AC' => [],
+                ],
+            ],
+        ];
 
         if (!empty($GLOBALS['timedate'])) {
             $this->oldTimedata = $GLOBALS['timedate'];
@@ -89,12 +89,12 @@ class PMSEEngineUtilsTest extends TestCase
         if (!empty($GLOBALS['app_list_strings']['moduleList'])) {
             $this->oldModuleList = $GLOBALS['app_list_strings']['moduleList'];
         }
-        $GLOBALS['app_list_strings']['moduleList'] = array('Emails' => 'Emails');
+        $GLOBALS['app_list_strings']['moduleList'] = ['Emails' => 'Emails'];
 
         if (!empty($_REQUEST)) {
             $this->oldRequest = $_REQUEST;
         }
-        $_REQUEST = array('cardinality' => "all");
+        $_REQUEST = ['cardinality' => "all"];
 
         $this->oldCurrentUser = $current_user;
         $this->oldBeanList = $beanList;
@@ -159,15 +159,15 @@ class PMSEEngineUtilsTest extends TestCase
             ->getMock();
 
         $current_user = $this->getMockBuilder(\User::class)
-            ->setMethods(array('getDeveloperModules'))
+            ->setMethods(['getDeveloperModules'])
             ->disableOriginalConstructor()
             ->getMock();
 
         $current_user->method('getDeveloperModules')
-            ->will($this->returnValue(array('Emails')));
+            ->will($this->returnValue(['Emails']));
 
         $beanList['Emails'] = 'Email';
-        $bwcModules = array('Employees', 'Documents');
+        $bwcModules = ['Employees', 'Documents'];
 
         $supportedModules = $this->object->getModules();
         $this->assertArrayHasKey("Emails", $supportedModules, "Emails should be a supported module.");
@@ -228,7 +228,7 @@ class PMSEEngineUtilsTest extends TestCase
 
 class EmailMock
 {
-    public $field_defs = array();
+    public $field_defs = [];
     public function newBean($name)
     {
         return $this;

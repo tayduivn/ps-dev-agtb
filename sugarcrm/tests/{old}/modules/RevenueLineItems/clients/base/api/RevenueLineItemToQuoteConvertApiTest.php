@@ -41,7 +41,7 @@ class RevenueLineItemToQuoteConvertApiTests extends TestCase
         self::$revenueLineItem->discount_price = '1.00';
         self::$revenueLineItem->save();
 
-        SugarTestRevenueLineItemUtilities::setCreatedRevenueLineItem(array(self::$revenueLineItem->id));
+        SugarTestRevenueLineItemUtilities::setCreatedRevenueLineItem([self::$revenueLineItem->id]);
     }
 
     public static function tearDownAfterClass(): void
@@ -62,11 +62,11 @@ class RevenueLineItemToQuoteConvertApiTests extends TestCase
         $restService = SugarTestRestUtilities::getRestServiceMock();
 
         $api = new RevenueLineItemToQuoteConvertApi();
-        $return = $api->convertToQuote($restService, array('module' => 'RevenueLineItem', 'record' => self::$revenueLineItem->id));
+        $return = $api->convertToQuote($restService, ['module' => 'RevenueLineItem', 'record' => self::$revenueLineItem->id]);
 
         $this->assertNotEmpty($return['id']);
 
-        SugarTestQuoteUtilities::setCreatedQuote(array($return['id']));
+        SugarTestQuoteUtilities::setCreatedQuote([$return['id']]);
 
         // now pull up the quote to make sure it matches the stuff from the opp
         /* @var $quote Quote */
@@ -104,7 +104,7 @@ class RevenueLineItemToQuoteConvertApiTests extends TestCase
     public function testCreateProductBundleFromRLIListThrowsException()
     {
         $mock_rli = $this->getMockBuilder('RevenueLineItem')
-            ->setMethods(array('canConvertToQuote'))
+            ->setMethods(['canConvertToQuote'])
             ->getMock();
 
         $mock_rli->id = 'unit_test_1';

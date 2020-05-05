@@ -10,10 +10,10 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$hook_array['after_ui_footer'][] = array(
+$hook_array['after_ui_footer'][] = [
     1,
     'fake',
     null,
     '\\Sugarcrm\\Sugarcrm\\fake\\fake',
-    'fake'
-);
+    'fake',
+];

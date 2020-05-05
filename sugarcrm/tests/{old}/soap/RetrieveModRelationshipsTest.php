@@ -12,7 +12,7 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once('soap/SoapRelationshipHelper.php');
+require_once 'soap/SoapRelationshipHelper.php';
 class RetrieveModRelationshipsTest extends TestCase
 {
     protected static $call;
@@ -35,7 +35,7 @@ class RetrieveModRelationshipsTest extends TestCase
         // Call 1
         self::$call = SugarTestCallUtilities::createCall();
         self::$call->load_relationship('teams');
-        self::$call->teams->replace(array('East', 'West'));
+        self::$call->teams->replace(['East', 'West']);
         self::$call->calls_user_id = $current_user->id;
         self::$call->save();
         $GLOBALS['db']->commit();
@@ -46,7 +46,7 @@ class RetrieveModRelationshipsTest extends TestCase
         // Call 2
         self::$call2 = SugarTestCallUtilities::createCall();
         self::$call2->load_relationship('teams');
-        self::$call2->teams->replace(array('West'));
+        self::$call2->teams->replace(['West']);
         self::$call2->calls_user_id = $current_user->id;
         self::$call2->save();
         $GLOBALS['db']->commit();
@@ -57,7 +57,7 @@ class RetrieveModRelationshipsTest extends TestCase
         // Contact 1
         self::$contact = SugarTestContactUtilities::createContact();
         self::$contact->load_relationship('teams');
-        self::$contact->teams->replace(array('East', 'West'));
+        self::$contact->teams->replace(['East', 'West']);
         self::$contact->email1 = 'soap@sugarcrm.com';
         self::$contact->contacts_users_id = $current_user->id;
         self::$contact->save();
@@ -67,7 +67,7 @@ class RetrieveModRelationshipsTest extends TestCase
         // Contact 2
         self::$contact2 = SugarTestContactUtilities::createContact();
         self::$contact2->load_relationship('teams');
-        self::$contact2->teams->replace(array('North'));
+        self::$contact2->teams->replace(['North']);
         self::$contact2->email1 = 'soap.user@sugarcrm.com';
         self::$contact2->contacts_users_id = $current_user->id;
         self::$contact2->save();
@@ -78,7 +78,7 @@ class RetrieveModRelationshipsTest extends TestCase
         // Meeting 1
         self::$meeting = SugarTestMeetingUtilities::createMeeting();
         self::$meeting->load_relationship('teams');
-        self::$meeting->teams->replace(array('East', 'West'));
+        self::$meeting->teams->replace(['East', 'West']);
         self::$meeting->assigned_user_id = $current_user->id;
         self::$meeting->save();
         $GLOBALS['db']->commit();
@@ -89,7 +89,7 @@ class RetrieveModRelationshipsTest extends TestCase
         // Meeting 2
         self::$meeting = SugarTestMeetingUtilities::createMeeting();
         self::$meeting->load_relationship('teams');
-        self::$meeting->teams->replace(array('South'));
+        self::$meeting->teams->replace(['South']);
         self::$meeting->assigned_user_id = $current_user->id;
         self::$meeting->save();
         $GLOBALS['db']->commit();
@@ -130,13 +130,13 @@ class RetrieveModRelationshipsTest extends TestCase
      */
     public static function getDataForRetrieveModifiedRelationships()
     {
-        $calls_meetings_select_fields = array('id', 'date_modified', 'deleted', 'name', 'rt.deleted synced');
-        $contacts_select_fields = array('id', 'date_modified', 'deleted', 'first_name', 'last_name', 'rt.deleted synced');
+        $calls_meetings_select_fields = ['id', 'date_modified', 'deleted', 'name', 'rt.deleted synced'];
+        $contacts_select_fields = ['id', 'date_modified', 'deleted', 'first_name', 'last_name', 'rt.deleted synced'];
 
-        return array(
-            array('Users', 'Calls', "({0}.deleted = 0) AND m2.id = ", 0, 0, 3000, $calls_meetings_select_fields, 'calls_users', 2),
-            array('Users', 'Contacts', "({0}.deleted = 0) AND m2.id = ", 0, 0, 3000, $contacts_select_fields, 'contacts_users', 1),
-            array('Users', 'Meetings', "({0}.deleted = 0) AND m2.id = ", 0, 0, 3000, $calls_meetings_select_fields, 'meetings_users', 1)
-        );
+        return [
+            ['Users', 'Calls', "({0}.deleted = 0) AND m2.id = ", 0, 0, 3000, $calls_meetings_select_fields, 'calls_users', 2],
+            ['Users', 'Contacts', "({0}.deleted = 0) AND m2.id = ", 0, 0, 3000, $contacts_select_fields, 'contacts_users', 1],
+            ['Users', 'Meetings', "({0}.deleted = 0) AND m2.id = ", 0, 0, 3000, $calls_meetings_select_fields, 'meetings_users', 1],
+        ];
     }
 }

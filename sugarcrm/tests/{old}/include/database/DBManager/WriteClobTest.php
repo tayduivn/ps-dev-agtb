@@ -30,16 +30,16 @@ class DBManager_WriteClobTest extends TestCase
         $account = BeanFactory::newBean('Accounts');
         $account->id = create_guid();
         $account->new_with_id = true;
-        SugarTestAccountUtilities::setCreatedAccount(array($account->id));
+        SugarTestAccountUtilities::setCreatedAccount([$account->id]);
 
         $description = str_repeat('A', 65535);
         $account->description = $description;
         $account->save();
 
         /** @var Account $reloaded */
-        $reloaded = BeanFactory::getBean($account->module_name, $account->id, array(
+        $reloaded = BeanFactory::getBean($account->module_name, $account->id, [
             'use_cache' => false,
-        ));
+        ]);
         $this->assertEquals($description, $reloaded->description);
 
         return $account;
@@ -55,9 +55,9 @@ class DBManager_WriteClobTest extends TestCase
         $account->save();
 
         /** @var Account $reloaded */
-        $reloaded = BeanFactory::getBean($account->module_name, $account->id, array(
+        $reloaded = BeanFactory::getBean($account->module_name, $account->id, [
             'use_cache' => false,
-        ));
+        ]);
         $this->assertEquals($description, $reloaded->description);
     }
 }

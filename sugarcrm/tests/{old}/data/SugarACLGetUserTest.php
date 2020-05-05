@@ -21,9 +21,8 @@ class SugarACLGetUserTest extends TestCase
 
     protected function setUp() : void
     {
-        SugarACL::$acls = array();
-        if(!$this->bean)
-        {
+        SugarACL::$acls = [];
+        if (!$this->bean) {
             $this->bean = $this->getTestMock();
         }
         SugarTestHelper::setUp('beanList');
@@ -36,7 +35,7 @@ class SugarACLGetUserTest extends TestCase
     protected function tearDown() : void
     {
         SugarTestHelper::tearDown();
-        SugarACL::$acls = array();
+        SugarACL::$acls = [];
         unset($GLOBALS['dictionary'][$this->bean->object_name]);
     }
 
@@ -53,11 +52,11 @@ class SugarACLGetUserTest extends TestCase
 
     public function modulesAccess()
     {
-        return array(
-            array("Users", array("access" => true, "view" => true, "import" => false)),
-            array("Accounts", array("access" => true, "view" => true, "import" => true, "massupdate" => true)),
-            array("test", array("access" => true, "view" => true, "import" => true)),
-        );
+        return [
+            ["Users", ["access" => true, "view" => true, "import" => false]],
+            ["Accounts", ["access" => true, "view" => true, "import" => true, "massupdate" => true]],
+            ["test", ["access" => true, "view" => true, "import" => true]],
+        ];
     }
 
     /**
@@ -69,7 +68,7 @@ class SugarACLGetUserTest extends TestCase
     public function testGetAccess($module, $expected)
     {
         $access = SugarACL::getUserAccess($module);
-        foreach($expected as $action => $expvalue) {
+        foreach ($expected as $action => $expvalue) {
             $this->assertEquals($access[$action], $expvalue, "Action $action for module $module should be: ".var_export($expvalue, true));
         }
     }
@@ -80,7 +79,7 @@ class SugarACLGetUserTest extends TestCase
         $acldata['module']['access']['aclaccess'] = ACL_ALLOW_DISABLED;
         ACLAction::setACLData($GLOBALS['current_user']->id, 'Accounts', $acldata);
         $access = SugarACL::getUserAccess("Accounts");
-        foreach(SugarACL::$all_access as $action => $value) {
+        foreach (SugarACL::$all_access as $action => $value) {
             $this->assertFalse($access[$action], "Action $action should be set to false");
         }
     }

@@ -20,7 +20,7 @@ class ExpressionEngine_ControllerTest extends TestCase
 {
     protected function tearDown() : void
     {
-        $_REQUEST = array();
+        $_REQUEST = [];
     }
 
     /**
@@ -32,15 +32,15 @@ class ExpressionEngine_ControllerTest extends TestCase
      */
     public function testBadRequest($module, $fields, $id = null)
     {
-        $_REQUEST = array(
+        $_REQUEST = [
             'tmodule' => $module,
             'fields' => $fields,
             'record_id' => $id,
-        );
+        ];
 
 
         /** @var ExpressionEngineController|MockObject $controller */
-        $controller = $this->createPartialMock('ExpressionEngineController', array('display'));
+        $controller = $this->createPartialMock('ExpressionEngineController', ['display']);
 
         // assert that display method was invoked which means no PHP error was triggered
         $controller->expects($this->once())->method('display');
@@ -49,21 +49,21 @@ class ExpressionEngine_ControllerTest extends TestCase
 
     public static function badRequestProvider()
     {
-        return array(
-            'non-json-string' => array('Accounts', 'non-json-string'),
-            'bad-common-field-defs' => array('Accounts', json_encode(array(array()))),
-            'bad-relate-field-defs' => array('Accounts', json_encode(array(array(
+        return [
+            'non-json-string' => ['Accounts', 'non-json-string'],
+            'bad-common-field-defs' => ['Accounts', json_encode([[]])],
+            'bad-relate-field-defs' => ['Accounts', json_encode([[
                 'link' => 'foo',
                 'type' => 'related',
-            )))),
-            'bad-rollup-field-defs' => array('Accounts', json_encode(array(array(
+            ]])],
+            'bad-rollup-field-defs' => ['Accounts', json_encode([[
                 'link' => 'foo',
                 'type' => 'rollupSum',
-            )))),
-            'bean-not-found' => array('Accounts', json_encode(array(array(
+            ]])],
+            'bean-not-found' => ['Accounts', json_encode([[
                 'link' => 'contacts',
                 'type' => 'count',
-            ))), 'non-existing-id'),
-        );
+            ]]), 'non-existing-id'],
+        ];
     }
 }

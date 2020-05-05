@@ -25,7 +25,8 @@ class Bug50285Test extends TestCase
     }
 
     // This will fail without fix for Bug50285
-    public function testGetImageFunctionWithMinimalParameters() {
+    public function testGetImageFunctionWithMinimalParameters()
+    {
         try {
             $this->assertNotNull(get_image("select", ''));
         } catch (Exception $e) {
@@ -34,7 +35,8 @@ class Bug50285Test extends TestCase
     }
 
     // This will fail without fix for Bug50285
-    public function testGetImageFunctionWithSomeParameters() {
+    public function testGetImageFunctionWithSomeParameters()
+    {
         try {
             $this->assertNotNull(get_image("select", '', null, null, ".gif"));
         } catch (Exception $e) {
@@ -43,7 +45,8 @@ class Bug50285Test extends TestCase
     }
 
     // This should always pass
-    public function testGetImageFunctionWithAllParameters() {
+    public function testGetImageFunctionWithAllParameters()
+    {
         try {
             $this->assertNotNull(get_image("select", '', null, null, ".gif", "test alt text"));
         } catch (Exception $e) {

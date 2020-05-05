@@ -18,7 +18,7 @@ use PHPUnit\Framework\TestCase;
 class SugarACLStaticTest extends TestCase
 {
     public $testUser;
-    public static $_modules = array();
+    public static $_modules = [];
 
     protected function setUp() : void
     {
@@ -37,14 +37,14 @@ class SugarACLStaticTest extends TestCase
     public function testTrackerTypeForBeanACL()
     {
         // a role that can access Tracker
-        $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), array('Trackers'), array('access', 'edit', 'list', 'export', 'view'), array(), 'Tracker');
+        $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), ['Trackers'], ['access', 'edit', 'list', 'export', 'view'], [], 'Tracker');
         SugarTestACLUtilities::setupUser($role);
 
         // parameters needed to call beanACL
         $module = 'Trackers';
         $action = 'detailview';
         $bean = new Tracker();
-        $context = array('bean'=>$bean);
+        $context = ['bean'=>$bean];
 
         $mockObj = new MockSugarACLStatic();
         $ret = $mockObj->mockBeanACL($module, $action, $context);
@@ -55,7 +55,8 @@ class SugarACLStaticTest extends TestCase
 
 class MockSugarACLStatic extends SugarACLStatic
 {
-    public function mockBeanACL($module, $action, $context) {
+    public function mockBeanACL($module, $action, $context)
+    {
         return parent::beanACL($module, $action, $context);
     }
 }

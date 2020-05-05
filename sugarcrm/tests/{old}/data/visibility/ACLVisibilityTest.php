@@ -47,22 +47,22 @@ class ACLVisibilityTest extends TestCase
 
     protected function setUp() : void
     {
-        SugarTestHelper::setUp('current_user', array(true, true));
+        SugarTestHelper::setUp('current_user', [true, true]);
         $this->user = SugarTestUserUtilities::createAnonymousUser();
 
         $this->team = SugarTestTeamUtilities::createAnonymousTeam();
         $this->teamSet = BeanFactory::newBean('TeamSets');
-        $this->teamSet->addTeams(array($this->team->id));
+        $this->teamSet->addTeams([$this->team->id]);
 
         $this->bean = $this->getMockBuilder('Account')
-            ->setMethods(array('loadVisibility'))
+            ->setMethods(['loadVisibility'])
             ->disableOriginalConstructor()
             ->getMock();
 
         $beanVisibility = new BeanVisibility(
             BeanFactory::newBean($this->module),
             // The ACLVisibility is added in constructor.
-            array()
+            []
         );
         $this->bean->expects($this->any())->method('loadVisibility')->will(
             $this->returnValue($beanVisibility)
@@ -71,7 +71,7 @@ class ACLVisibilityTest extends TestCase
 
         $this->team->add_user_to_team($this->user->id);
 
-        SugarTestAccountUtilities::setCreatedAccount(array($this->bean->id));
+        SugarTestAccountUtilities::setCreatedAccount([$this->bean->id]);
 
         // Mocks Leads Bean
         $this->leadBean = SugarTestLeadUtilities::createLead();
@@ -156,7 +156,7 @@ class ACLVisibilityTest extends TestCase
         $this->leadBean->save();
 
         $bv = new ACLVisibility($this->leadBean);
-        $options = array('table_alias' => 'l1');
+        $options = ['table_alias' => 'l1'];
         $query = '';
         $bv->setOptions($options)->addVisibilityWhere($query);
 

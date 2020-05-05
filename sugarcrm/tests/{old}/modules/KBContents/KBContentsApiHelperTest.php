@@ -31,7 +31,7 @@ class KBContentsApiHelperTest extends TestCase
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('moduleList');
-        SugarTestHelper::setUp('current_user', array(true, true));
+        SugarTestHelper::setUp('current_user', [true, true]);
 
         $this->bean = SugarTestKBContentUtilities::createBean();
     }
@@ -58,7 +58,7 @@ class KBContentsApiHelperTest extends TestCase
         SugarTestHelper::tearDown();
     }
 
-    public function testFormatForApi() 
+    public function testFormatForApi()
     {
         $helper = new KBContentsApiHelper(SugarTestRestUtilities::getRestServiceMock());
         $data = $helper->formatForApi($this->bean);

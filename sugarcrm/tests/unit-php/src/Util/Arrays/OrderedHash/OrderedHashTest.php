@@ -27,30 +27,31 @@ class OrderedHashTest extends TestCase
      */
     public function hashProvider()
     {
-        return array(
-            array(
-                array()
-            ),
-            array(
-                array(
+        return [
+            [
+                [],
+            ],
+            [
+                [
                     'susan' => 'Susan',
                     'suzy' => 'Suzy',
-                )
-            ),
-        );
+                ],
+            ],
+        ];
     }
 
     /**
      * Invalid hash keys provider.
      * @return array
      */
-    public function invalidHashKeys() {
-        return array(
-            array(false),
-            array(6.53),
-            array(new \stdClass()),
-            array(array('invalid')),
-        );
+    public function invalidHashKeys()
+    {
+        return [
+            [false],
+            [6.53],
+            [new \stdClass()],
+            [['invalid']],
+        ];
     }
 
     /**
@@ -73,7 +74,7 @@ class OrderedHashTest extends TestCase
     public function testToArrayWhenEmpty()
     {
         $hash = new OrderedHash();
-        $this->assertSame(array(), $hash->toArray());
+        $this->assertSame([], $hash->toArray());
     }
 
     /**
@@ -104,11 +105,11 @@ class OrderedHashTest extends TestCase
         $this->assertSame('suzy', $before->getAfter()->getKey());
         $this->assertSame('suzy', $after->getBefore()->getKey());
 
-        $expected = array(
+        $expected = [
             'sally' => 'Sally',
             'suzy' => 'Suzy',
             'susan' => 'Susan',
-        );
+        ];
         $this->assertSame($expected, $hash->toArray());
     }
 
@@ -128,9 +129,9 @@ class OrderedHashTest extends TestCase
      */
     public function testAddDuplicateKey()
     {
-        $hash = new OrderedHash(array(
+        $hash = new OrderedHash([
             'sally' => 'Sally',
-        ));
+        ]);
 
         $this->expectException(RuntimeException::class);
         $hash->add($hash->top(), 'sally', 'Foo');
@@ -141,14 +142,14 @@ class OrderedHashTest extends TestCase
      */
     public function testBottom()
     {
-        $hash = new OrderedHash(array(
+        $hash = new OrderedHash([
             'susan' => 'Susan',
             'suzy' => 'Suzy',
             'sally' => 'Sally',
             'stephanie' => 'Stephanie',
             'sara' => 'Sara',
             'sue' => 'Sue',
-        ));
+        ]);
         $head = $hash->bottom();
 
         $this->assertSame('susan', $head->getKey());
@@ -171,14 +172,14 @@ class OrderedHashTest extends TestCase
      */
     public function testCount()
     {
-        $hash = new OrderedHash(array(
+        $hash = new OrderedHash([
             'susan' => 'Susan',
             'suzy' => 'Suzy',
             'sally' => 'Sally',
             'stephanie' => 'Stephanie',
             'sara' => 'Sara',
             'sue' => 'Sue',
-        ));
+        ]);
         $this->assertCount(6, $hash);
     }
 
@@ -192,14 +193,14 @@ class OrderedHashTest extends TestCase
      */
     public function testIterator()
     {
-        $hash = new OrderedHash(array(
+        $hash = new OrderedHash([
             'susan' => 'Susan',
             'suzy' => 'Suzy',
             'sally' => 'Sally',
             'stephanie' => 'Stephanie',
             'sara' => 'Sara',
             'sue' => 'Sue',
-        ));
+        ]);
         $hash->rewind();
         $this->assertSame('susan', $hash->current()->getKey());
 
@@ -233,15 +234,15 @@ class OrderedHashTest extends TestCase
         $this->assertTrue($hash->isEmpty());
         $this->assertEmpty($hash);
 
-        $hash = new OrderedHash(array());
+        $hash = new OrderedHash([]);
 
         $this->assertTrue($hash->isEmpty());
         $this->assertEmpty($hash);
 
-        $hash = new OrderedHash(array(
+        $hash = new OrderedHash([
             'susan' => 'Susan',
             'suzy' => 'Suzy',
-        ));
+        ]);
 
         $this->assertFalse($hash->isEmpty());
         $this->assertNotEmpty($hash);
@@ -252,10 +253,10 @@ class OrderedHashTest extends TestCase
      */
     public function testKey_CurrentIsTheHead_ReturnsTheValueOfHead()
     {
-        $hash = new OrderedHash(array(
+        $hash = new OrderedHash([
             'susan' => 'Susan',
             'suzy' => 'Suzy',
-        ));
+        ]);
 
         $hash->rewind();
         $this->assertSame('susan', $hash->key());
@@ -272,14 +273,14 @@ class OrderedHashTest extends TestCase
      */
     public function testMove()
     {
-        $expected = array(
+        $expected = [
             'susan' => 'Susan',
             'suzy' => 'Suzy',
             'sally' => 'Sally',
             'stephanie' => 'Stephanie',
             'sara' => 'Sara',
             'sue' => 'Sue',
-        );
+        ];
         $hash = new OrderedHash($expected);
         $hash->move('invalid', $hash->bottom());
         $this->assertSame($expected, $hash->toArray());
@@ -317,11 +318,11 @@ class OrderedHashTest extends TestCase
      */
     public function testOffsetExistsAndGet()
     {
-        $hash = new OrderedHash(array(
+        $hash = new OrderedHash([
             'susan' => 'Susan',
             'suzy' => 'Suzy',
             'sally' => 'Sally',
-        ));
+        ]);
 
         $this->assertArrayNotHasKey('missing', $hash);
         $this->assertArrayHasKey('sally', $hash);
@@ -344,11 +345,11 @@ class OrderedHashTest extends TestCase
      */
     public function testOffsetGetInvalid($key)
     {
-        $hash = new OrderedHash(array(
+        $hash = new OrderedHash([
             'susan' => 'Susan',
             'suzy' => 'Suzy',
             'sally' => 'Sally',
-        ));
+        ]);
 
         $this->expectException(OutOfRangeException::class);
         $hash[$key];
@@ -360,11 +361,11 @@ class OrderedHashTest extends TestCase
      */
     public function testOffsetSetInvalid($key)
     {
-        $hash = new OrderedHash(array(
+        $hash = new OrderedHash([
             'susan' => 'Susan',
             'suzy' => 'Suzy',
             'sally' => 'Sally',
-        ));
+        ]);
 
         $this->expectException(OutOfRangeException::class);
         $hash[$key] = 'Foo';
@@ -395,11 +396,11 @@ class OrderedHashTest extends TestCase
      */
     public function testOffsetUnsetInvalid($key)
     {
-        $hash = new OrderedHash(array(
+        $hash = new OrderedHash([
             'susan' => 'Susan',
             'suzy' => 'Suzy',
             'sally' => 'Sally',
-        ));
+        ]);
 
         $this->expectException(OutOfRangeException::class);
         unset($hash[$key]);
@@ -410,11 +411,11 @@ class OrderedHashTest extends TestCase
      */
     public function testOffsetUnset()
     {
-        $expected = array(
+        $expected = [
             'susan' => 'Susan',
             'suzy' => 'Suzy',
             'sally' => 'Sally',
-        );
+        ];
         $hash = new OrderedHash($expected);
 
         unset($hash['missing']);
@@ -443,11 +444,11 @@ class OrderedHashTest extends TestCase
      */
     public function testOffsetUnsetCurrent()
     {
-        $hash = new OrderedHash(array(
+        $hash = new OrderedHash([
             'susan' => 'Susan',
             'suzy' => 'Suzy',
             'sally' => 'Sally',
-        ));
+        ]);
         $hash->rewind();
 
         while ($hash->valid()) {
@@ -481,11 +482,11 @@ class OrderedHashTest extends TestCase
      */
     public function testPop()
     {
-        $hash = new OrderedHash(array(
+        $hash = new OrderedHash([
             'susan' => 'Susan',
             'suzy' => 'Suzy',
             'sally' => 'Sally',
-        ));
+        ]);
 
         $element = $hash->pop();
         $this->assertNotNull($element);
@@ -531,11 +532,11 @@ class OrderedHashTest extends TestCase
      */
     public function testShift()
     {
-        $hash = new OrderedHash(array(
+        $hash = new OrderedHash([
             'susan' => 'Susan',
             'suzy' => 'Suzy',
             'sally' => 'Sally',
-        ));
+        ]);
 
         $element = $hash->shift();
         $this->assertNotNull($element);
@@ -554,14 +555,14 @@ class OrderedHashTest extends TestCase
      */
     public function testTop()
     {
-        $hash = new OrderedHash(array(
+        $hash = new OrderedHash([
             'susan' => 'Susan',
             'suzy' => 'Suzy',
             'sally' => 'Sally',
             'stephanie' => 'Stephanie',
             'sara' => 'Sara',
             'sue' => 'Sue',
-        ));
+        ]);
         $head = $hash->top();
 
         $this->assertSame('sue', $head->getKey());

@@ -65,11 +65,11 @@ class Bug48484Test extends TestCase
     public function testModuleCustomFieldsAreConsidered()
     {
         // create search query
-        $query = array(
+        $query = [
             'searchFormTab'                                => 'basic_search',
             $this->customFieldName . '_basic_range_choice' => $this->range,
             'range_' . $this->customFieldName . '_basic'   => '[' . $this->range . ']',
-        );
+        ];
 
         // generate SQL where clause
         $this->massUpdate->generateSearchWhere($this->moduleName, $query);
@@ -89,37 +89,36 @@ class MassUpdateStub extends MassUpdate
         $this->customFieldName = $customFieldName;
     }
 
-    protected function getSearchDefs($module, $metafiles = array())
+    protected function getSearchDefs($module, $metafiles = [])
     {
-        return array($module => array(
-            'layout' => array(
-                'basic_search' => array(
-                    $this->customFieldName => array(
+        return [$module => [
+            'layout' => [
+                'basic_search' => [
+                    $this->customFieldName => [
                         'type' => 'date',
                         'name' => $this->customFieldName,
-                    ),
-                ),
-            ),
-        ));
+                    ],
+                ],
+            ],
+        ]];
     }
 
-    protected function getSearchFields($module, $metafiles = array())
+    protected function getSearchFields($module, $metafiles = [])
     {
-         $customFields = array(
+         $customFields = [
             'range_'       . $this->customFieldName,
             'start_range_' . $this->customFieldName,
             'end_range_'   . $this->customFieldName,
-        );
+         ];
 
-        $searchFields = array();
-        foreach ($customFields as $field)
-        {
-            $searchFields[$field] = array(
+         $searchFields = [];
+         foreach ($customFields as $field) {
+             $searchFields[$field] = [
                 'query_type'          => 'default',
                 'enable_range_search' => true,
                 'is_date_field'       => true,
-            );
-        }
-        return array($module => $searchFields);
+             ];
+         }
+         return [$module => $searchFields];
     }
 }

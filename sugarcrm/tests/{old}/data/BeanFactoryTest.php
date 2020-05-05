@@ -18,7 +18,7 @@ use PHPUnit\Framework\TestCase;
  */
 class BeanFactoryTest extends TestCase
 {
-    protected $createdBeans = array();
+    protected $createdBeans = [];
 
     public static function setUpBeforeClass() : void
     {
@@ -119,28 +119,28 @@ class BeanFactoryTest extends TestCase
         $filterBean = BeanFactory::newBean("Filters");
         $filterBean->module_name = 'Accounts';
 
-        return array(
-            array(
+        return [
+            [
                 BeanFactory::newBean("Accounts"),
                 "Accounts",
-            ),
-            array(
+            ],
+            [
                 BeanFactory::newBean("Cases"),
                 "Cases",
-            ),
-            array(
+            ],
+            [
                 BeanFactory::newBean("Users"),
                 "Users",
-            ),
-            array(
+            ],
+            [
                 new stdClass(),
                 false,
-            ),
-            array(
+            ],
+            [
                 $filterBean,
                 'Filters',
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -156,32 +156,32 @@ class BeanFactoryTest extends TestCase
 
     public function providerGetModuleNameByName()
     {
-        return array(
-            array(
+        return [
+            [
                 "Account",
                 "Accounts",
-            ),
-            array(
+            ],
+            [
                 "Case",
                 "Cases",
-            ),
-            array(
+            ],
+            [
                 "User",
                 "Users",
-            ),
-            array(
+            ],
+            [
                 "Group",
                 "Groups",
-            ),
-            array(
+            ],
+            [
                 "aCase",
                 false,
-            ),
-            array(
+            ],
+            [
                 "Cases",
                 false,
-            ),
-        );
+            ],
+        ];
     }
 
     /**

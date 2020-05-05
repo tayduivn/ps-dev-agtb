@@ -25,14 +25,14 @@ class BulkHandlerTest extends TestCase
      * Trace log messages
      * @var array
      */
-    public $logMessages = array();
+    public $logMessages = [];
 
     /**
      * {@inheritdoc}
      */
     protected function setUp() : void
     {
-        $this->logMessages = array();
+        $this->logMessages = [];
     }
 
     /**
@@ -44,15 +44,15 @@ class BulkHandlerTest extends TestCase
      */
     public function testBatchDocuments()
     {
-        $bulk = $this->getBulkMock(array('__destruct', 'sendBulk'));
+        $bulk = $this->getBulkMock(['__destruct', 'sendBulk']);
         $bulk->setMaxBulkThreshold(3);
 
         // 4 document batch (within threshold of 3 per index)
-        $doc1 = new Document('11', array('name' => 'doc1'), 'Module1', 'index1');
-        $doc2 = new Document('12', array('name' => 'doc2'), 'Module1', 'index1');
-        $doc3 = new Document('23', array('name' => 'doc3'), 'Module2', 'index2');
-        $doc4 = new Document('24', array('name' => 'doc4'), 'Module2', 'index2');
-        $docs = array($doc1, $doc2, $doc3, $doc4);
+        $doc1 = new Document('11', ['name' => 'doc1'], 'Module1', 'index1');
+        $doc2 = new Document('12', ['name' => 'doc2'], 'Module1', 'index1');
+        $doc3 = new Document('23', ['name' => 'doc3'], 'Module2', 'index2');
+        $doc4 = new Document('24', ['name' => 'doc4'], 'Module2', 'index2');
+        $docs = [$doc1, $doc2, $doc3, $doc4];
 
         // ensure index is set
         foreach ($docs as $doc) {
@@ -63,10 +63,10 @@ class BulkHandlerTest extends TestCase
         $bulk->batchDocuments($docs);
         $this->assertCount(2, $bulk->getBatchedDocuments());
 
-        $this->assertSame(array(
-            'index1' => array($doc1, $doc2),
-            'index2' => array($doc3, $doc4),
-        ), $bulk->getBatchedDocuments());
+        $this->assertSame([
+            'index1' => [$doc1, $doc2],
+            'index2' => [$doc3, $doc4],
+        ], $bulk->getBatchedDocuments());
 
         // indices are expected to be stripped from the docs
         foreach ($docs as $doc) {
@@ -78,13 +78,13 @@ class BulkHandlerTest extends TestCase
             ->method('sendBulk');
 
         // 3th document should trigger a send to index1
-        $doc5 = new Document('15', array('name' => 'doc5'), 'Module1', 'index1');
+        $doc5 = new Document('15', ['name' => 'doc5'], 'Module1', 'index1');
         $bulk->batchDocument($doc5);
         $batched = $bulk->getBatchedDocuments();
         $this->assertCount(0, $batched['index1']);
 
         // 3th document should trigger a send to index2
-        $doc6 = new Document('26', array('name' => 'doc6'), 'Module2', 'index2');
+        $doc6 = new Document('26', ['name' => 'doc6'], 'Module2', 'index2');
         $bulk->batchDocument($doc6);
         $batched = $bulk->getBatchedDocuments();
         $this->assertCount(0, $batched['index2']);
@@ -95,15 +95,15 @@ class BulkHandlerTest extends TestCase
      */
     public function testFinishBatch()
     {
-        $bulk = $this->getBulkMock(array('__destruct', 'sendBulk'));
+        $bulk = $this->getBulkMock(['__destruct', 'sendBulk']);
         $bulk->setMaxBulkThreshold(10);
 
-        $docs = array(
-            new Document('11', array('name' => 'doc1'), 'Module1', 'index1'),
-            new Document('12', array('name' => 'doc2'), 'Module1', 'index1'),
-            new Document('23', array('name' => 'doc3'), 'Module2', 'index2'),
-            new Document('24', array('name' => 'doc4'), 'Module2', 'index2'),
-        );
+        $docs = [
+            new Document('11', ['name' => 'doc1'], 'Module1', 'index1'),
+            new Document('12', ['name' => 'doc2'], 'Module1', 'index1'),
+            new Document('23', ['name' => 'doc3'], 'Module2', 'index2'),
+            new Document('24', ['name' => 'doc4'], 'Module2', 'index2'),
+        ];
 
         $bulk->batchDocuments($docs);
 
@@ -123,23 +123,23 @@ class BulkHandlerTest extends TestCase
      */
     public function testSendBulk()
     {
-        $bulk = $this->getBulkMock(array('__destruct', 'newBulkObject'));
+        $bulk = $this->getBulkMock(['__destruct', 'newBulkObject']);
 
         // set threshold to amount of docs we are testing with
         $bulk->setMaxBulkThreshold(2);
 
         // index document
-        $doc1 = new Document('11', array('name' => 'doc1'), 'Module1', 'index1');
+        $doc1 = new Document('11', ['name' => 'doc1'], 'Module1', 'index1');
         $doc1->setOpType(\Elastica\Bulk\Action::OP_TYPE_INDEX);
 
         // delete document
-        $doc2 = new Document('12', array(), 'Module1', 'index1');
+        $doc2 = new Document('12', [], 'Module1', 'index1');
         $doc2->setOpType(\Elastica\Bulk\Action::OP_TYPE_DELETE);
 
-        $docs = array($doc1, $doc2);
+        $docs = [$doc1, $doc2];
 
         // mock Elastica bulk object
-        $elasticaBulk = $this->getElasticaBulkMock(array('send'));
+        $elasticaBulk = $this->getElasticaBulkMock(['send']);
         $bulk->expects($this->once())
             ->method('newBulkObject')
             ->will($this->returnValue($elasticaBulk));
@@ -169,7 +169,7 @@ class BulkHandlerTest extends TestCase
      */
     public function testHandleBulkException($docCount, $responseString, $status, $expectedLog)
     {
-        $bulk = $this->getBulkMock(array('__destruct', 'newBulkObject', 'log'));
+        $bulk = $this->getBulkMock(['__destruct', 'newBulkObject', 'log']);
         $bulk->setMaxBulkThreshold($docCount);
 
         // mock Elastica bulk/client
@@ -187,9 +187,9 @@ class BulkHandlerTest extends TestCase
             }));
 
         // build documents to send
-        $documents = array();
+        $documents = [];
         for ($i = 1; $i <= $docCount; $i++) {
-            $documents[] = new Document($i, array('name' => 'foo'), 'Accounts', 'foobar');
+            $documents[] = new Document($i, ['name' => 'foo'], 'Accounts', 'foobar');
         }
 
         $bulk->batchDocuments($documents);
@@ -198,45 +198,45 @@ class BulkHandlerTest extends TestCase
 
     public function providerTestHandleBulkException()
     {
-        return array(
+        return [
             // one document, one failure, HTTP 200 return (actual log message)
-            array(
+            [
                 1,
                 '{"took":4,"errors":true,"items":[{"index":{"_index":"foobar","_type":"Accounts","_id":"633aca08-594e-1ba3-2ec4-5727c4e231e0","status":500,"error":"IllegalArgumentException[Document contains at least one immense term in field=\"Accounts__description\" (whose UTF8 encoding is longer than the max length 32766), all of which were skipped.  Please correct the analyzer to not produce such terms, original message: bytes can be at most 32766 in length; got 40003]; nested: MaxBytesLengthExceededException[bytes can be at most 32766 in length; got 40003];"}}]}',
                 200,
-                array(
+                [
                     'Unrecoverable indexing failure [500]: foobar -> Accounts -> 633aca08-594e-1ba3-2ec4-5727c4e231e0 -> IllegalArgumentException[Document contains at least one immense term in field="Accounts__description" (whose UTF8 encoding is longer than the max length 32766), all of which were skipped.  Please correct the analyzer to not produce such terms, original message: bytes can be at most 32766 in length; got 40003]; nested: MaxBytesLengthExceededException[bytes can be at most 32766 in length; got 40003];',
-                ),
-            ),
+                ],
+            ],
             // 3 documents, two failures, HTTP 200 return (actual log message)
-            array(
+            [
                 3,
                 '{"took":10,"errors":true,"items":[{"index":{"_index":"autobr4142_accountsonly","_type":"Accounts","_id":"5d3f72e7-4dee-4208-185f-571fc5d95a9d","_version":1,"status":201}},{"index":{"_index":"autobr4142_accountsonly","_type":"Accounts","_id":"633aca08-594e-1ba3-2ec4-5727c4e231e0","status":500,"error":"IllegalArgumentException[Document contains at least one immense term in field=\"Accounts__description\" (whose UTF8 encoding is longer than the max length 32766), all of which were skipped.  Please correct the analyzer to not produce such terms., original message: bytes can be at most 32766 in length; got 40003]; nested: MaxBytesLengthExceededException[bytes can be at most 32766 in length; got 40003]; "}},{"index":{"_index":"autobr4142_accountsonly","_type":"Accounts","_id":"a88802d5-909e-3bc1-c025-5727fd4cb5e8","status":500,"error":"IllegalArgumentException[Document contains at least one immense term in field=\"Accounts__description\" (whose UTF8 encoding is longer than the max length 32766), all of which were skipped.  Please correct the analyzer to not produce such terms., original message: bytes can be at most 32766 in length; got 40003]; nested: MaxBytesLengthExceededException[bytes can be at most 32766 in length; got 40003]; "}}]}',
                 200,
-                array(
+                [
                     'Unrecoverable indexing failure [500]: autobr4142_accountsonly -> Accounts -> 633aca08-594e-1ba3-2ec4-5727c4e231e0 -> IllegalArgumentException[Document contains at least one immense term in field="Accounts__description" (whose UTF8 encoding is longer than the max length 32766), all of which were skipped.  Please correct the analyzer to not produce such terms., original message: bytes can be at most 32766 in length; got 40003]; nested: MaxBytesLengthExceededException[bytes can be at most 32766 in length; got 40003]; ',
                     'Unrecoverable indexing failure [500]: autobr4142_accountsonly -> Accounts -> a88802d5-909e-3bc1-c025-5727fd4cb5e8 -> IllegalArgumentException[Document contains at least one immense term in field="Accounts__description" (whose UTF8 encoding is longer than the max length 32766), all of which were skipped.  Please correct the analyzer to not produce such terms., original message: bytes can be at most 32766 in length; got 40003]; nested: MaxBytesLengthExceededException[bytes can be at most 32766 in length; got 40003]; ',
-                ),
-            ),
+                ],
+            ],
             // 2 documents, one failure
-            array(
+            [
                 2,
                 '{"took":10,"errors":true,"items":[{"index":{"_index":"autobr5598_accountsonly","_type":"Leads","_id":"5d3f72e7-4dee-4208-185f-571fc5d95a9d","_version":1,"status":201}},{"index":{"_index":"autobr4142_accountsonly","_type":"Leads","_id":"633aca08-594e-1ba3-2ec4-5727c4e231e0","status":404,"error":"TypeMissingException[[automaster_shared] type[[Leads, trying to auto create mapping, but dynamic mapping is disabled]] missing]"}}]}',
                 200,
-                array(
+                [
                     'Unrecoverable indexing failure [404]: autobr4142_accountsonly -> Leads -> 633aca08-594e-1ba3-2ec4-5727c4e231e0 -> TypeMissingException[[automaster_shared] type[[Leads, trying to auto create mapping, but dynamic mapping is disabled]] missing]',
-                ),
-            ),
+                ],
+            ],
             // Same as above with 2 documents, but now with an array reported error
-            array(
+            [
                 2,
                 '{"took":10,"errors":true,"items":[{"index":{"_index":"autobr5598_accountsonly","_type":"Leads","_id":"5d3f72e7-4dee-4208-185f-571fc5d95a9d","_version":1,"status":201}},{"index":{"_index":"autobr4142_accountsonly","_type":"Leads","_id":"633aca08-594e-1ba3-2ec4-5727c4e231e0","status":404,"error":{"type":"index_closed_exception","reason":"closed","index_uuid":"Km0N3lMIRfGgrs9tPGYIBA","index":"autobr5598_master"}}}]}',
                 200,
-                array(
+                [
                     "Unrecoverable indexing failure [404]: autobr4142_accountsonly -> Leads -> 633aca08-594e-1ba3-2ec4-5727c4e231e0 -> array (   'type' => 'index_closed_exception',   'reason' => 'closed',   'index_uuid' => 'Km0N3lMIRfGgrs9tPGYIBA',   'index' => 'autobr5598_master', )",
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
     }
 
     /**
@@ -244,10 +244,10 @@ class BulkHandlerTest extends TestCase
      */
     public function testWakeup()
     {
-        $bulk = $this->getBulkMock(array('__destruct'));
+        $bulk = $this->getBulkMock(['__destruct']);
 
         // add one document
-        $bulk->batchDocument(new Document('x', array(), 'y', 'z'));
+        $bulk->batchDocument(new Document('x', [], 'y', 'z'));
         $this->assertCount(1, $bulk->getBatchedDocuments());
 
         // ensure document count is empty on unserialize
@@ -279,7 +279,7 @@ class BulkHandlerTest extends TestCase
     {
         $client = $this->getMockBuilder('Sugarcrm\Sugarcrm\Elasticsearch\Adapter\Client')
             ->disableOriginalConstructor()
-            ->setMethods(array('request'))
+            ->setMethods(['request'])
             ->getMock();
 
         $client->expects($this->any())
@@ -287,7 +287,7 @@ class BulkHandlerTest extends TestCase
             ->will($this->returnValue(new \Elastica\Response($responseString, $status)));
 
         return $this->getMockBuilder('Elastica\Bulk')
-            ->setConstructorArgs(array($client))
+            ->setConstructorArgs([$client])
             ->setMethods($methods)
             ->getMock();
     }
@@ -305,7 +305,7 @@ class BulkHandlerTest extends TestCase
 
         return $this->getMockBuilder('Sugarcrm\Sugarcrm\Elasticsearch\Indexer\BulkHandler')
             ->setMethods($methods)
-            ->setConstructorArgs(array($container))
+            ->setConstructorArgs([$container])
             ->getMock();
     }
 }

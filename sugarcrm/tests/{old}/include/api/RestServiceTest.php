@@ -22,59 +22,61 @@ class RestServiceTest extends TestCase
 
     protected function tearDown() : void
     {
-        while ( ob_get_level() > 1 ) {
+        while (ob_get_level() > 1) {
             ob_end_flush();
         }
     }
 
     public function testGetRequestArgs()
     {
-        $request = $this->createPartialMock('RestRequest', array('getPathVars', 'getPostContents', 'getQueryVars'));
+        $request = $this->createPartialMock('RestRequest', ['getPathVars', 'getPostContents', 'getQueryVars']);
         $request->expects($this->any())
                 ->method('getPathVars')
-                ->will($this->returnValue(array()));
+                ->will($this->returnValue([]));
 
-        $_GET = array('my_json'=>'{"christopher":"walken","bill":"murray"}');
+        $_GET = ['my_json'=>'{"christopher":"walken","bill":"murray"}'];
         $request->expects($this->any())
             ->method('getPostContents')
             ->will($this->onConsecutiveCalls(
-            "", '{"my_json":{"christopher":"walken","bill":"murray"}}', '{"my_json":{"christopher":"walken","bill":"murray"}}}'
-        ));
+                "",
+                '{"my_json":{"christopher":"walken","bill":"murray"}}',
+                '{"my_json":{"christopher":"walken","bill":"murray"}}}'
+            ));
 
         $request->expects($this->any())
         ->method('getQueryVars')
         ->will($this->onConsecutiveCalls(
-            array('my_json'=>'{"christopher":"walken","bill":"murray"}'),
-            array('my_json'=>'{"christopher":"walken","bill":"murray"}}'),
-            array()
+            ['my_json'=>'{"christopher":"walken","bill":"murray"}'],
+            ['my_json'=>'{"christopher":"walken","bill":"murray"}}'],
+            []
         ));
 
 
         $service = new RestService();
         SugarTestReflection::setProtectedValue($service, 'request', $request);
 
-        $output = SugarTestReflection::callProtectedMethod($service, 'getRequestArgs', array(array('jsonParams'=>array('my_json'))));
+        $output = SugarTestReflection::callProtectedMethod($service, 'getRequestArgs', [['jsonParams'=>['my_json']]]);
         $this->assertArrayHasKey('christopher', $output['my_json'], "Missing Christopher => Walken #1");
         $this->assertArrayHasKey('bill', $output['my_json'], "Missing Bill => Murray #1");
 
         $hadException = false;
         try {
-            $output = SugarTestReflection::callProtectedMethod($service, 'getRequestArgs', array(array('jsonParams'=>array('my_json'))));
-        } catch ( SugarApiExceptionInvalidParameter $e ) {
+            $output = SugarTestReflection::callProtectedMethod($service, 'getRequestArgs', [['jsonParams'=>['my_json']]]);
+        } catch (SugarApiExceptionInvalidParameter $e) {
             $hadException = true;
         }
 
         $this->assertTrue($hadException, "Did not throw an exception on invalid JSON #1");
 
-        $output = SugarTestReflection::callProtectedMethod($service, 'getRequestArgs', array(array()));
+        $output = SugarTestReflection::callProtectedMethod($service, 'getRequestArgs', [[]]);
 
         $this->assertArrayHasKey('christopher', $output['my_json'], "Missing Christopher => Walken #2");
         $this->assertArrayHasKey('bill', $output['my_json'], "Missing Bill => Murray #2");
 
         $hadException = false;
         try {
-            $output = SugarTestReflection::callProtectedMethod($service, 'getRequestArgs', array(array()));
-        } catch ( SugarApiExceptionInvalidParameter $e ) {
+            $output = SugarTestReflection::callProtectedMethod($service, 'getRequestArgs', [[]]);
+        } catch (SugarApiExceptionInvalidParameter $e) {
             $hadException = true;
         }
 

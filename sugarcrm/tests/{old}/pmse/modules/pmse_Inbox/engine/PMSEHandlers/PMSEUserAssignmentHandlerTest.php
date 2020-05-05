@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
 
 class PMSEUserAssignmentHandlerTest extends TestCase
 {
-    protected $originals = array();
+    protected $originals = [];
 
     protected function setUp() : void
     {
@@ -34,64 +34,64 @@ class PMSEUserAssignmentHandlerTest extends TestCase
     {
         $userAssignmentMock = $this->getMockBuilder('PMSEUserAssignmentHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieveBean', 'getRecordOwnerId', 'getSupervisorId'))
+                ->setMethods(['retrieveBean', 'getRecordOwnerId', 'getSupervisorId'])
                 ->getMock();
         
         $loggerMock = $this->getMockBuilder('PSMELogger')
                 ->disableOriginalConstructor()
-                ->setMethods(array('error', 'info'))
+                ->setMethods(['error', 'info'])
                 ->getMock();
         
         $activityMock = $this->getMockBuilder('pmse_BpmnActivity')
                 ->disableOriginalConstructor()
-                ->setMethods(array('get_list'))
+                ->setMethods(['get_list'])
                 ->getMock();
         
-        $actList = array(
-            'list'=>array(
-                (object) array(
+        $actList = [
+            'list'=>[
+                (object) [
                     'act_task_type' => '',
                     'act_type' => '',
                     'act_assign_user' => '',
                     'act_assignment_method' => '',
-                    'act_assign_team' => ''
-                )
-            )
-        );
+                    'act_assign_team' => '',
+                ],
+            ],
+        ];
         
         $activityMock->expects($this->once())
                 ->method('get_list')
                 ->will($this->returnValue($actList));
         
-        $defList = array(
-            'list'=>array(
-                (object) array(
+        $defList = [
+            'list'=>[
+                (object) [
                     'act_task_type' => '',
                     'act_type' => '',
                     'act_assign_user' => '',
                     'act_assignment_method' => '',
-                    'act_assign_team' => ''
-                )
-            )
-        );
+                    'act_assign_team' => '',
+                ],
+            ],
+        ];
         
         $activityDefinitionMock = $this->getMockBuilder('pmse_BpmActivityDefinition')
                 ->disableOriginalConstructor()
-                ->setMethods(array('get_list'))
+                ->setMethods(['get_list'])
                 ->getMock();
         
         $activityDefinitionMock->expects($this->once())
                 ->method('get_list')
                 ->will($this->returnValue($defList));
         
-        $flowData = array(
+        $flowData = [
             'bpmn_id' => 'act01',
             'cas_user_id' => 'user01',
             'cas_sugar_object_id' => 'lead01',
             'cas_sugar_module' => 'Leads',
             'cas_id' => 1,
-            'cas_index' => 1
-        );
+            'cas_index' => 1,
+        ];
         
         $userAssignmentMock->expects($this->at(0))
                 ->method('retrieveBean')
@@ -110,64 +110,64 @@ class PMSEUserAssignmentHandlerTest extends TestCase
     {
         $userAssignmentMock = $this->getMockBuilder('PMSEUserAssignmentHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieveBean', 'getRecordOwnerId', 'getSupervisorId'))
+                ->setMethods(['retrieveBean', 'getRecordOwnerId', 'getSupervisorId'])
                 ->getMock();
         
         $loggerMock = $this->getMockBuilder('PSMELogger')
                 ->disableOriginalConstructor()
-                ->setMethods(array('error', 'info'))
+                ->setMethods(['error', 'info'])
                 ->getMock();
         
         $activityMock = $this->getMockBuilder('pmse_BpmnActivity')
                 ->disableOriginalConstructor()
-                ->setMethods(array('get_list'))
+                ->setMethods(['get_list'])
                 ->getMock();
         
-        $actList = array(
-            'list'=>array(
-                (object) array(
+        $actList = [
+            'list'=>[
+                (object) [
                     'act_task_type' => '',
                     'act_type' => '',
                     'act_assign_user' => 'owner',
                     'act_assignment_method' => 'static',
-                    'act_assign_team' => ''
-                )
-            )
-        );
+                    'act_assign_team' => '',
+                ],
+            ],
+        ];
         
         $activityMock->expects($this->once())
                 ->method('get_list')
                 ->will($this->returnValue($actList));
         
-        $defList = array(
-            'list'=>array(
-                (object) array(
+        $defList = [
+            'list'=>[
+                (object) [
                     'act_task_type' => '',
                     'act_type' => '',
                     'act_assign_user' => 'owner',
                     'act_assignment_method' => 'static',
-                    'act_assign_team' => ''
-                )
-            )
-        );
+                    'act_assign_team' => '',
+                ],
+            ],
+        ];
         
         $activityDefinitionMock = $this->getMockBuilder('pmse_BpmActivityDefinition')
                 ->disableOriginalConstructor()
-                ->setMethods(array('get_list'))
+                ->setMethods(['get_list'])
                 ->getMock();
         
         $activityDefinitionMock->expects($this->once())
                 ->method('get_list')
                 ->will($this->returnValue($defList));
         
-        $flowData = array(
+        $flowData = [
             'bpmn_id' => 'act01',
             'cas_user_id' => 'user01',
             'cas_sugar_object_id' => 'lead01',
             'cas_sugar_module' => 'Leads',
             'cas_id' => 1,
-            'cas_index' => 1
-        );
+            'cas_index' => 1,
+        ];
         
         $userAssignmentMock->expects($this->at(0))
                 ->method('retrieveBean')
@@ -186,64 +186,64 @@ class PMSEUserAssignmentHandlerTest extends TestCase
     {
         $userAssignmentMock = $this->getMockBuilder('PMSEUserAssignmentHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieveBean', 'getRecordOwnerId', 'getSupervisorId'))
+                ->setMethods(['retrieveBean', 'getRecordOwnerId', 'getSupervisorId'])
                 ->getMock();
         
         $loggerMock = $this->getMockBuilder('PSMELogger')
                 ->disableOriginalConstructor()
-                ->setMethods(array('error', 'info'))
+                ->setMethods(['error', 'info'])
                 ->getMock();
         
         $activityMock = $this->getMockBuilder('pmse_BpmnActivity')
                 ->disableOriginalConstructor()
-                ->setMethods(array('get_list'))
+                ->setMethods(['get_list'])
                 ->getMock();
         
-        $actList = array(
-            'list'=>array(
-                (object) array(
+        $actList = [
+            'list'=>[
+                (object) [
                     'act_task_type' => '',
                     'act_type' => '',
                     'act_assign_user' => 'supervisor',
                     'act_assignment_method' => 'static',
-                    'act_assign_team' => ''
-                )
-            )
-        );
+                    'act_assign_team' => '',
+                ],
+            ],
+        ];
         
         $activityMock->expects($this->once())
                 ->method('get_list')
                 ->will($this->returnValue($actList));
         
-        $defList = array(
-            'list'=>array(
-                (object) array(
+        $defList = [
+            'list'=>[
+                (object) [
                     'act_task_type' => '',
                     'act_type' => '',
                     'act_assign_user' => 'supervisor',
                     'act_assignment_method' => 'static',
-                    'act_assign_team' => ''
-                )
-            )
-        );
+                    'act_assign_team' => '',
+                ],
+            ],
+        ];
         
         $activityDefinitionMock = $this->getMockBuilder('pmse_BpmActivityDefinition')
                 ->disableOriginalConstructor()
-                ->setMethods(array('get_list'))
+                ->setMethods(['get_list'])
                 ->getMock();
         
         $activityDefinitionMock->expects($this->once())
                 ->method('get_list')
                 ->will($this->returnValue($defList));
         
-        $flowData = array(
+        $flowData = [
             'bpmn_id' => 'act01',
             'cas_user_id' => 'user01',
             'cas_sugar_object_id' => 'lead01',
             'cas_sugar_module' => 'Leads',
             'cas_id' => 1,
-            'cas_index' => 1
-        );
+            'cas_index' => 1,
+        ];
         
         $userAssignmentMock->expects($this->at(0))
                 ->method('retrieveBean')
@@ -262,64 +262,64 @@ class PMSEUserAssignmentHandlerTest extends TestCase
     {
         $userAssignmentMock = $this->getMockBuilder('PMSEUserAssignmentHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieveBean', 'getRecordOwnerId', 'getSupervisorId'))
+                ->setMethods(['retrieveBean', 'getRecordOwnerId', 'getSupervisorId'])
                 ->getMock();
         
         $loggerMock = $this->getMockBuilder('PSMELogger')
                 ->disableOriginalConstructor()
-                ->setMethods(array('error', 'info'))
+                ->setMethods(['error', 'info'])
                 ->getMock();
         
         $activityMock = $this->getMockBuilder('pmse_BpmnActivity')
                 ->disableOriginalConstructor()
-                ->setMethods(array('get_list'))
+                ->setMethods(['get_list'])
                 ->getMock();
         
-        $actList = array(
-            'list'=>array(
-                (object) array(
+        $actList = [
+            'list'=>[
+                (object) [
                     'act_task_type' => '',
                     'act_type' => '',
                     'act_assign_user' => 'currentuser',
                     'act_assignment_method' => 'static',
-                    'act_assign_team' => ''
-                )
-            )
-        );
+                    'act_assign_team' => '',
+                ],
+            ],
+        ];
         
         $activityMock->expects($this->once())
                 ->method('get_list')
                 ->will($this->returnValue($actList));
         
-        $defList = array(
-            'list'=>array(
-                (object) array(
+        $defList = [
+            'list'=>[
+                (object) [
                     'act_task_type' => '',
                     'act_type' => '',
                     'act_assign_user' => 'currentuser',
                     'act_assignment_method' => 'static',
-                    'act_assign_team' => ''
-                )
-            )
-        );
+                    'act_assign_team' => '',
+                ],
+            ],
+        ];
         
         $activityDefinitionMock = $this->getMockBuilder('pmse_BpmActivityDefinition')
                 ->disableOriginalConstructor()
-                ->setMethods(array('get_list'))
+                ->setMethods(['get_list'])
                 ->getMock();
         
         $activityDefinitionMock->expects($this->once())
                 ->method('get_list')
                 ->will($this->returnValue($defList));
         
-        $flowData = array(
+        $flowData = [
             'bpmn_id' => 'act01',
             'cas_user_id' => 'user01',
             'cas_sugar_object_id' => 'lead01',
             'cas_sugar_module' => 'Leads',
             'cas_id' => 1,
-            'cas_index' => 1
-        );
+            'cas_index' => 1,
+        ];
         
         $userAssignmentMock->expects($this->at(0))
                 ->method('retrieveBean')
@@ -338,64 +338,64 @@ class PMSEUserAssignmentHandlerTest extends TestCase
     {
         $userAssignmentMock = $this->getMockBuilder('PMSEUserAssignmentHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieveBean', 'getRecordOwnerId', 'getSupervisorId'))
+                ->setMethods(['retrieveBean', 'getRecordOwnerId', 'getSupervisorId'])
                 ->getMock();
         
         $loggerMock = $this->getMockBuilder('PSMELogger')
                 ->disableOriginalConstructor()
-                ->setMethods(array('error', 'info'))
+                ->setMethods(['error', 'info'])
                 ->getMock();
         
         $activityMock = $this->getMockBuilder('pmse_BpmnActivity')
                 ->disableOriginalConstructor()
-                ->setMethods(array('get_list'))
+                ->setMethods(['get_list'])
                 ->getMock();
         
-        $actList = array(
-            'list'=>array(
-                (object) array(
+        $actList = [
+            'list'=>[
+                (object) [
                     'act_task_type' => '',
                     'act_type' => '',
                     'act_assign_user' => 'administrator',
                     'act_assignment_method' => 'static',
-                    'act_assign_team' => ''
-                )
-            )
-        );
+                    'act_assign_team' => '',
+                ],
+            ],
+        ];
         
         $activityMock->expects($this->once())
                 ->method('get_list')
                 ->will($this->returnValue($actList));
         
-        $defList = array(
-            'list'=>array(
-                (object) array(
+        $defList = [
+            'list'=>[
+                (object) [
                     'act_task_type' => '',
                     'act_type' => '',
                     'act_assign_user' => 'administrator',
                     'act_assignment_method' => 'static',
-                    'act_assign_team' => ''
-                )
-            )
-        );
+                    'act_assign_team' => '',
+                ],
+            ],
+        ];
         
         $activityDefinitionMock = $this->getMockBuilder('pmse_BpmActivityDefinition')
                 ->disableOriginalConstructor()
-                ->setMethods(array('get_list'))
+                ->setMethods(['get_list'])
                 ->getMock();
         
         $activityDefinitionMock->expects($this->once())
                 ->method('get_list')
                 ->will($this->returnValue($defList));
         
-        $flowData = array(
+        $flowData = [
             'bpmn_id' => 'act01',
             'cas_user_id' => 'user01',
             'cas_sugar_object_id' => 'lead01',
             'cas_sugar_module' => 'Leads',
             'cas_id' => 1,
-            'cas_index' => 1
-        );
+            'cas_index' => 1,
+        ];
         
         $userAssignmentMock->expects($this->at(0))
                 ->method('retrieveBean')
@@ -414,64 +414,64 @@ class PMSEUserAssignmentHandlerTest extends TestCase
     {
         $userAssignmentMock = $this->getMockBuilder('PMSEUserAssignmentHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieveBean', 'getRecordOwnerId', 'getSupervisorId'))
+                ->setMethods(['retrieveBean', 'getRecordOwnerId', 'getSupervisorId'])
                 ->getMock();
         
         $loggerMock = $this->getMockBuilder('PSMELogger')
                 ->disableOriginalConstructor()
-                ->setMethods(array('error', 'info'))
+                ->setMethods(['error', 'info'])
                 ->getMock();
         
         $activityMock = $this->getMockBuilder('pmse_BpmnActivity')
                 ->disableOriginalConstructor()
-                ->setMethods(array('get_list'))
+                ->setMethods(['get_list'])
                 ->getMock();
         
-        $actList = array(
-            'list'=>array(
-                (object) array(
+        $actList = [
+            'list'=>[
+                (object) [
                     'act_task_type' => '',
                     'act_type' => '',
                     'act_assign_user' => 'team01',
                     'act_assignment_method' => 'selfservice',
-                    'act_assign_team' => ''
-                )
-            )
-        );
+                    'act_assign_team' => '',
+                ],
+            ],
+        ];
         
         $activityMock->expects($this->once())
                 ->method('get_list')
                 ->will($this->returnValue($actList));
         
-        $defList = array(
-            'list'=>array(
-                (object) array(
+        $defList = [
+            'list'=>[
+                (object) [
                     'act_task_type' => '',
                     'act_type' => '',
                     'act_assign_user' => 'team01',
                     'act_assignment_method' => 'selfservice',
-                    'act_assign_team' => ''
-                )
-            )
-        );
+                    'act_assign_team' => '',
+                ],
+            ],
+        ];
         
         $activityDefinitionMock = $this->getMockBuilder('pmse_BpmActivityDefinition')
                 ->disableOriginalConstructor()
-                ->setMethods(array('get_list'))
+                ->setMethods(['get_list'])
                 ->getMock();
         
         $activityDefinitionMock->expects($this->once())
                 ->method('get_list')
                 ->will($this->returnValue($defList));
         
-        $flowData = array(
+        $flowData = [
             'bpmn_id' => 'act01',
             'cas_user_id' => 'user01',
             'cas_sugar_object_id' => 'lead01',
             'cas_sugar_module' => 'Leads',
             'cas_id' => 1,
-            'cas_index' => 1
-        );
+            'cas_index' => 1,
+        ];
         
         $userAssignmentMock->expects($this->at(0))
                 ->method('retrieveBean')
@@ -490,64 +490,64 @@ class PMSEUserAssignmentHandlerTest extends TestCase
     {
         $userAssignmentMock = $this->getMockBuilder('PMSEUserAssignmentHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieveBean', 'getRecordOwnerId', 'getSupervisorId', 'getNextUserUsingRoundRobin'))
+                ->setMethods(['retrieveBean', 'getRecordOwnerId', 'getSupervisorId', 'getNextUserUsingRoundRobin'])
                 ->getMock();
         
         $loggerMock = $this->getMockBuilder('PSMELogger')
                 ->disableOriginalConstructor()
-                ->setMethods(array('error', 'info'))
+                ->setMethods(['error', 'info'])
                 ->getMock();
         
         $activityMock = $this->getMockBuilder('pmse_BpmnActivity')
                 ->disableOriginalConstructor()
-                ->setMethods(array('get_list'))
+                ->setMethods(['get_list'])
                 ->getMock();
         
-        $actList = array(
-            'list'=>array(
-                (object) array(
+        $actList = [
+            'list'=>[
+                (object) [
                     'act_task_type' => '',
                     'act_type' => '',
                     'act_assign_user' => 'team01',
                     'act_assignment_method' => 'balanced',
-                    'act_assign_team' => ''
-                )
-            )
-        );
+                    'act_assign_team' => '',
+                ],
+            ],
+        ];
         
         $activityMock->expects($this->once())
                 ->method('get_list')
                 ->will($this->returnValue($actList));
         
-        $defList = array(
-            'list'=>array(
-                (object) array(
+        $defList = [
+            'list'=>[
+                (object) [
                     'act_task_type' => '',
                     'act_type' => '',
                     'act_assign_user' => 'team01',
                     'act_assignment_method' => 'balanced',
-                    'act_assign_team' => ''
-                )
-            )
-        );
+                    'act_assign_team' => '',
+                ],
+            ],
+        ];
         
         $activityDefinitionMock = $this->getMockBuilder('pmse_BpmActivityDefinition')
                 ->disableOriginalConstructor()
-                ->setMethods(array('get_list'))
+                ->setMethods(['get_list'])
                 ->getMock();
         
         $activityDefinitionMock->expects($this->once())
                 ->method('get_list')
                 ->will($this->returnValue($defList));
         
-        $flowData = array(
+        $flowData = [
             'bpmn_id' => 'act01',
             'cas_user_id' => 'user01',
             'cas_sugar_object_id' => 'lead01',
             'cas_sugar_module' => 'Leads',
             'cas_id' => 1,
-            'cas_index' => 1
-        );
+            'cas_index' => 1,
+        ];
         
         $userAssignmentMock->expects($this->at(0))
                 ->method('retrieveBean')
@@ -566,64 +566,64 @@ class PMSEUserAssignmentHandlerTest extends TestCase
     {
         $userAssignmentMock = $this->getMockBuilder('PMSEUserAssignmentHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieveBean', 'getRecordOwnerId', 'getSupervisorId', 'getNextUserUsingRoundRobin'))
+                ->setMethods(['retrieveBean', 'getRecordOwnerId', 'getSupervisorId', 'getNextUserUsingRoundRobin'])
                 ->getMock();
         
         $loggerMock = $this->getMockBuilder('PSMELogger')
                 ->disableOriginalConstructor()
-                ->setMethods(array('error', 'info'))
+                ->setMethods(['error', 'info'])
                 ->getMock();
         
         $activityMock = $this->getMockBuilder('pmse_BpmnActivity')
                 ->disableOriginalConstructor()
-                ->setMethods(array('get_list'))
+                ->setMethods(['get_list'])
                 ->getMock();
         
-        $actList = array(
-            'list'=>array(
-                (object) array(
+        $actList = [
+            'list'=>[
+                (object) [
                     'act_task_type' => 'SCRIPTTASK',
                     'act_type' => '',
                     'act_assign_user' => 'team01',
                     'act_assignment_method' => 'balanced',
-                    'act_assign_team' => ''
-                )
-            )
-        );
+                    'act_assign_team' => '',
+                ],
+            ],
+        ];
         
         $activityMock->expects($this->once())
                 ->method('get_list')
                 ->will($this->returnValue($actList));
         
-        $defList = array(
-            'list'=>array(
-                (object) array(
+        $defList = [
+            'list'=>[
+                (object) [
                     'act_task_type' => 'SCRIPTTASK',
                     'act_type' => '',
                     'act_assign_user' => 'team01',
                     'act_assignment_method' => 'balanced',
-                    'act_assign_team' => ''
-                )
-            )
-        );
+                    'act_assign_team' => '',
+                ],
+            ],
+        ];
         
         $activityDefinitionMock = $this->getMockBuilder('pmse_BpmActivityDefinition')
                 ->disableOriginalConstructor()
-                ->setMethods(array('get_list'))
+                ->setMethods(['get_list'])
                 ->getMock();
         
         $activityDefinitionMock->expects($this->once())
                 ->method('get_list')
                 ->will($this->returnValue($defList));
         
-        $flowData = array(
+        $flowData = [
             'bpmn_id' => 'act01',
             'cas_user_id' => 'user01',
             'cas_sugar_object_id' => 'lead01',
             'cas_sugar_module' => 'Leads',
             'cas_id' => 1,
-            'cas_index' => 1
-        );
+            'cas_index' => 1,
+        ];
         
         $userAssignmentMock->expects($this->at(0))
                 ->method('retrieveBean')
@@ -642,58 +642,58 @@ class PMSEUserAssignmentHandlerTest extends TestCase
     {
         $userAssignmentMock = $this->getMockBuilder('PMSEUserAssignmentHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieveBean', 'getRecordOwnerId', 'getSupervisorId', 'getNextUserUsingRoundRobin'))
+                ->setMethods(['retrieveBean', 'getRecordOwnerId', 'getSupervisorId', 'getNextUserUsingRoundRobin'])
                 ->getMock();
         
         $loggerMock = $this->getMockBuilder('PSMELogger')
                 ->disableOriginalConstructor()
-                ->setMethods(array('error', 'info'))
+                ->setMethods(['error', 'info'])
                 ->getMock();
         
         $activityMock = $this->getMockBuilder('pmse_BpmnActivity')
                 ->disableOriginalConstructor()
-                ->setMethods(array('get_list'))
+                ->setMethods(['get_list'])
                 ->getMock();
         
-        $actList = array(
-            'list'=>array(
-                (object) array(
+        $actList = [
+            'list'=>[
+                (object) [
                     'act_task_type' => 'SCRIPTTASK',
                     'act_type' => '',
                     'act_assign_user' => 'team01',
                     'act_assignment_method' => 'balanced',
-                    'act_assign_team' => ''
-                )
-            )
-        );
+                    'act_assign_team' => '',
+                ],
+            ],
+        ];
         
         $activityMock->expects($this->once())
                 ->method('get_list')
                 ->will($this->returnValue($actList));
         
-        $defList = array(
-            'list'=>array(
+        $defList = [
+            'list'=>[
                 
-            )
-        );
+            ],
+        ];
         
         $activityDefinitionMock = $this->getMockBuilder('pmse_BpmActivityDefinition')
                 ->disableOriginalConstructor()
-                ->setMethods(array('get_list'))
+                ->setMethods(['get_list'])
                 ->getMock();
         
         $activityDefinitionMock->expects($this->once())
                 ->method('get_list')
                 ->will($this->returnValue($defList));
         
-        $flowData = array(
+        $flowData = [
             'bpmn_id' => 'act01',
             'cas_user_id' => 'user01',
             'cas_sugar_object_id' => 'lead01',
             'cas_sugar_module' => 'Leads',
             'cas_id' => 1,
-            'cas_index' => 1
-        );
+            'cas_index' => 1,
+        ];
         
         $userAssignmentMock->expects($this->at(0))
                 ->method('retrieveBean')
@@ -715,7 +715,7 @@ class PMSEUserAssignmentHandlerTest extends TestCase
         $current_user->id = "someID";
         $current_user->full_name = "Some Name";
         
-        $caseData = array(
+        $caseData = [
             'cas_id' => 1,
             'cas_index' => 1,
             'cas_adhoc_type' => 'ROUND_TRIP',
@@ -723,8 +723,8 @@ class PMSEUserAssignmentHandlerTest extends TestCase
             'cas_sugar_object_id' => 'abc012',
             'full_name' => 'Some Name',
             'user_name' => 'someName',
-            'taskName' => 'Task 01'
-        );
+            'taskName' => 'Task 01',
+        ];
 
         $userId = 'user01';
 
@@ -732,24 +732,24 @@ class PMSEUserAssignmentHandlerTest extends TestCase
         
         $userAssignmentMock = $this->getMockBuilder('PMSEUserAssignmentHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieveBean', 'reassignCaseToUser'))
+                ->setMethods(['retrieveBean', 'reassignCaseToUser'])
                 ->getMock();
         
         $flowMock = $this->getMockBuilder('PMSEBpmFlow')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve_by_string_fields', 'save'))
+                ->setMethods(['retrieve_by_string_fields', 'save'])
                 ->getMock();
         
         $flowMock->cas_delegate_date = new DateTime();
         
         $wrapperMock = $this->getMockBuilder('PMSEWrapper')
                 ->disableOriginalConstructor()
-                ->setMethods(array('getSelectRows'))
+                ->setMethods(['getSelectRows'])
                 ->getMock();
         
         $loggerMock = $this->getMockBuilder('PSMELogger')
                 ->disableOriginalConstructor()
-                ->setMethods(array('activity'))
+                ->setMethods(['activity'])
                 ->getMock();
         
         $caseBean = new stdClass();
@@ -779,7 +779,7 @@ class PMSEUserAssignmentHandlerTest extends TestCase
         $current_user->id = "someID";
         $current_user->full_name = "Some Name";
         
-        $caseData = array(
+        $caseData = [
             'cas_id' => 1,
             'cas_index' => 1,
             'cas_adhoc_type' => 'ROUND_TRIP',
@@ -787,8 +787,8 @@ class PMSEUserAssignmentHandlerTest extends TestCase
             'cas_sugar_object_id' => 'abc012',
             'full_name' => 'Some Name',
             'user_name' => 'someName',
-            'taskName' => 'Task 01'
-        );
+            'taskName' => 'Task 01',
+        ];
 
         $userId = 'user01';
 
@@ -796,26 +796,26 @@ class PMSEUserAssignmentHandlerTest extends TestCase
         
         $userAssignmentMock = $this->getMockBuilder('PMSEUserAssignmentHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieveBean', 'reassignCaseToUser'))
+                ->setMethods(['retrieveBean', 'reassignCaseToUser'])
                 ->getMock();
         
         $flowMock = $this->getMockBuilder('PMSEBpmFlow')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve_by_string_fields', 'save'))
+                ->setMethods(['retrieve_by_string_fields', 'save'])
                 ->getMock();
         
         $flowMock->cas_delegate_date = new DateTime();
         
         $wrapperMock = $this->getMockBuilder('PMSEWrapper')
                 ->disableOriginalConstructor()
-                ->setMethods(array('getSelectRows'))
+                ->setMethods(['getSelectRows'])
                 ->getMock();
         
         $caseBean = new stdClass();
         
         $loggerMock = $this->getMockBuilder('PSMELogger')
                 ->disableOriginalConstructor()
-                ->setMethods(array('activity'))
+                ->setMethods(['activity'])
                 ->getMock();
 
         $userAssignmentMock->expects($this->at(0))
@@ -838,33 +838,33 @@ class PMSEUserAssignmentHandlerTest extends TestCase
 
     public function testOriginReassign()
     {
-        $caseData = array(
+        $caseData = [
             'cas_id' => 1,
             'cas_index' => 2,
             'cas_adhoc_type' => 'ROUND_TRIP',
-        );
+        ];
 
         $userId = 'user01';
 
         $userAssignmentMock = $this->getMockBuilder('PMSEUserAssignmentHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieveBean', 'reassignCaseToUser'))
+                ->setMethods(['retrieveBean', 'reassignCaseToUser'])
                 ->getMock();
         
         $flowMock = $this->getMockBuilder('PMSEBpmFlow')
                 ->disableOriginalConstructor()
-                ->setMethods(array('get_list', 'retrieve_by_string_fields', 'save'))
+                ->setMethods(['get_list', 'retrieve_by_string_fields', 'save'])
                 ->getMock();
         
         
-        $flow = array(
-            'list' => array(
-                (object)array(
+        $flow = [
+            'list' => [
+                (object)[
                     'cas_task_start_date' => '2012-01-01',
-                    'cas_delegate_date' => '2012-01-01'
-                )
-            )
-        );
+                    'cas_delegate_date' => '2012-01-01',
+                ],
+            ],
+        ];
         
         $flowMock->expects($this->once())
                 ->method('get_list')
@@ -874,16 +874,16 @@ class PMSEUserAssignmentHandlerTest extends TestCase
                 
         $wrapperMock = $this->getMockBuilder('PMSEWrapper')
                 ->disableOriginalConstructor()
-                ->setMethods(array('getSelectRows'))
+                ->setMethods(['getSelectRows'])
                 ->getMock();
         
-        $maxIndex = array(
-            'rowList' => array(
-                array(
-                    'max_index' => 2
-                )
-            )
-        );
+        $maxIndex = [
+            'rowList' => [
+                [
+                    'max_index' => 2,
+                ],
+            ],
+        ];
         
         $wrapperMock->expects($this->once())
                 ->method('getSelectRows')
@@ -904,17 +904,17 @@ class PMSEUserAssignmentHandlerTest extends TestCase
     {
         $userAssignmentHandlerMock = $this->getMockBuilder('PMSEUserAssignmentHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieveBean', 'adhocReassign'))
+                ->setMethods(['retrieveBean', 'adhocReassign'])
                 ->getMock();
         
         $flowMock = $this->getMockBuilder('pmse_BpmFlow')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve_by_string_fields', 'get_full_list', 'save'))
+                ->setMethods(['retrieve_by_string_fields', 'get_full_list', 'save'])
                 ->getMock();
         
-        $beanArray = array(
-            (object)array('cas_user_id' => 'user01')
-        );
+        $beanArray = [
+            (object)['cas_user_id' => 'user01'],
+        ];
         
         $flowMock->expects($this->once())
                 ->method('get_full_list')
@@ -927,14 +927,14 @@ class PMSEUserAssignmentHandlerTest extends TestCase
         
         $userAssignmentHandlerMock->expects($this->atLeastOnce())
                 ->method('retrieveBean')
-                ->will($this->returnValue($flowMock));                                
+                ->will($this->returnValue($flowMock));
         
-        $caseData = array(
+        $caseData = [
             'cas_id' => 1,
             'cas_index' => 2,
             'cas_thread' => 1,
             'cas_adhoc_type' => 'ROUND_TRIP',
-        );
+        ];
         
         $userAssignmentHandlerMock->roundTripReassign($caseData);
     }
@@ -943,12 +943,12 @@ class PMSEUserAssignmentHandlerTest extends TestCase
     {
          $userAssignmentHandlerMock = $this->getMockBuilder('PMSEUserAssignmentHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieveBean'))
+                ->setMethods(['retrieveBean'])
                 ->getMock();
          
         $flowMock = $this->getMockBuilder('pmse_BpmFlow')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve_by_string_fields'))
+                ->setMethods(['retrieve_by_string_fields'])
                 ->getMock();
 
         $flowMock->bpmn_type = 'bpmnActivity';
@@ -958,25 +958,25 @@ class PMSEUserAssignmentHandlerTest extends TestCase
                 ->method('retrieveBean')
                 ->will($this->returnValue($flowMock));
         
-        $caseData = array( 
+        $caseData = [
             'cas_id' => 1,
-            'cas_index' => 2
-        );
+            'cas_index' => 2,
+        ];
         
         $result = $userAssignmentHandlerMock->isRoundTrip($caseData);
-        $this->assertEquals(true, $result);                
+        $this->assertEquals(true, $result);
     }
     
     public function testIsRoundTripFalse()
     {
          $userAssignmentHandlerMock = $this->getMockBuilder('PMSEUserAssignmentHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieveBean'))
+                ->setMethods(['retrieveBean'])
                 ->getMock();
          
         $flowMock = $this->getMockBuilder('pmse_BpmFlow')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve_by_string_fields'))
+                ->setMethods(['retrieve_by_string_fields'])
                 ->getMock();
 
         $flowMock->bpmn_type = 'bpmnActivity';
@@ -986,30 +986,30 @@ class PMSEUserAssignmentHandlerTest extends TestCase
                 ->method('retrieveBean')
                 ->will($this->returnValue($flowMock));
         
-        $caseData = array( 
+        $caseData = [
             'cas_id' => 1,
-            'cas_index' => 2
-        );
+            'cas_index' => 2,
+        ];
         
         $result = $userAssignmentHandlerMock->isRoundTrip($caseData);
-        $this->assertEquals(false, $result);                
+        $this->assertEquals(false, $result);
     }
     
     public function testOneWayReassign()
     {
         $userAssignmentHandlerMock = $this->getMockBuilder('PMSEUserAssignmentHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieveBean', 'originReassign'))
+                ->setMethods(['retrieveBean', 'originReassign'])
                 ->getMock();
         
         $flowMock = $this->getMockBuilder('pmse_BpmFlow')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve_by_string_fields', 'get_full_list', 'save'))
+                ->setMethods(['retrieve_by_string_fields', 'get_full_list', 'save'])
                 ->getMock();
         
-        $beanArray = array(
-            (object)array('cas_user_id' => 'user01')
-        );
+        $beanArray = [
+            (object)['cas_user_id' => 'user01'],
+        ];
         
         $flowMock->expects($this->once())
                 ->method('retrieve_by_string_fields')
@@ -1022,21 +1022,21 @@ class PMSEUserAssignmentHandlerTest extends TestCase
         
         $wrapperMock = $this->getMockBuilder('PMSEWrapper')
                 ->disableOriginalConstructor()
-                ->setMethods(array('getSelectRows'))
+                ->setMethods(['getSelectRows'])
                 ->getMock();
         
         $userAssignmentHandlerMock->expects($this->atLeastOnce())
                 ->method('retrieveBean')
-                ->will($this->returnValue($flowMock));                                
+                ->will($this->returnValue($flowMock));
         
         $userAssignmentHandlerMock->setWrapper($wrapperMock);
         
-        $caseData = array(
+        $caseData = [
             'cas_id' => 1,
             'cas_index' => 2,
             'cas_thread' => 1,
             'cas_adhoc_type' => 'ONE_WAY',
-        );
+        ];
         
         $userAssignmentHandlerMock->oneWayReassign($caseData);
     }
@@ -1045,12 +1045,12 @@ class PMSEUserAssignmentHandlerTest extends TestCase
     {
         $userAssignmentHandlerMock = $this->getMockBuilder('PMSEUserAssignmentHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieveBean'))
+                ->setMethods(['retrieveBean'])
                 ->getMock();
 
         $flowMock = $this->getMockBuilder('pmse_BpmFlow')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve_by_string_fields'))
+                ->setMethods(['retrieve_by_string_fields'])
                 ->getMock();
 
         $flowMock->bpmn_type = 'bpmnActivity';
@@ -1060,10 +1060,10 @@ class PMSEUserAssignmentHandlerTest extends TestCase
                 ->method('retrieveBean')
                 ->will($this->returnValue($flowMock));
 
-        $caseData = array( 
+        $caseData = [
             'cas_id' => 1,
-            'cas_index' => 2
-        );
+            'cas_index' => 2,
+        ];
 
         $result = $userAssignmentHandlerMock->isOneWay($caseData);
         $this->assertEquals(true, $result);
@@ -1073,12 +1073,12 @@ class PMSEUserAssignmentHandlerTest extends TestCase
     {
         $userAssignmentHandlerMock = $this->getMockBuilder('PMSEUserAssignmentHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieveBean'))
+                ->setMethods(['retrieveBean'])
                 ->getMock();
 
         $flowMock = $this->getMockBuilder('pmse_BpmFlow')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve_by_string_fields'))
+                ->setMethods(['retrieve_by_string_fields'])
                 ->getMock();
 
         $flowMock->bpmn_type = 'bpmnActivity';
@@ -1088,10 +1088,10 @@ class PMSEUserAssignmentHandlerTest extends TestCase
                 ->method('retrieveBean')
                 ->will($this->returnValue($flowMock));
 
-        $caseData = array( 
+        $caseData = [
             'cas_id' => 1,
-            'cas_index' => 2
-        );
+            'cas_index' => 2,
+        ];
 
         $result = $userAssignmentHandlerMock->isOneWay($caseData);
         $this->assertEquals(false, $result);
@@ -1101,17 +1101,17 @@ class PMSEUserAssignmentHandlerTest extends TestCase
     {
         $userAssignmentHandlerMock = $this->getMockBuilder('PMSEUserAssignmentHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieveBean'))
+                ->setMethods(['retrieveBean'])
                 ->getMock();
 
         $flowMock = $this->getMockBuilder('pmse_BpmFlow')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve_by_string_fields', 'save'))
+                ->setMethods(['retrieve_by_string_fields', 'save'])
                 ->getMock();
         
         $flowMock->expects($this->once())
                 ->method('save')
-                ->will($this->returnValue(TRUE));
+                ->will($this->returnValue(true));
 
         $flowMock->bpmn_type = 'bpmnActivity';
         $flowMock->cas_adhoc_type = 'ROUND_TRIP';
@@ -1120,10 +1120,10 @@ class PMSEUserAssignmentHandlerTest extends TestCase
                 ->method('retrieveBean')
                 ->will($this->returnValue($flowMock));
 
-        $caseData = array( 
+        $caseData = [
             'cas_id' => 1,
-            'cas_index' => 2
-        );
+            'cas_index' => 2,
+        ];
 
         $userId = 'user01';
         
@@ -1135,17 +1135,17 @@ class PMSEUserAssignmentHandlerTest extends TestCase
     {
         $userAssignmentHandlerMock = $this->getMockBuilder('PMSEUserAssignmentHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieveBean'))
+                ->setMethods(['retrieveBean'])
                 ->getMock();
 
         $flowMock = $this->getMockBuilder('pmse_BpmFlow')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve_by_string_fields', 'save'))
+                ->setMethods(['retrieve_by_string_fields', 'save'])
                 ->getMock();
         
         $flowMock->expects($this->once())
                 ->method('save')
-                ->will($this->returnValue(FALSE));
+                ->will($this->returnValue(false));
 
         $flowMock->bpmn_type = 'bpmnActivity';
         $flowMock->cas_adhoc_type = 'ROUND_TRIP';
@@ -1154,10 +1154,10 @@ class PMSEUserAssignmentHandlerTest extends TestCase
                 ->method('retrieveBean')
                 ->will($this->returnValue($flowMock));
 
-        $caseData = array( 
+        $caseData = [
             'cas_id' => 1,
-            'cas_index' => 2
-        );
+            'cas_index' => 2,
+        ];
 
         $userId = 'user01';
         
@@ -1170,17 +1170,17 @@ class PMSEUserAssignmentHandlerTest extends TestCase
     {
         $userAssignmentHandlerMock = $this->getMockBuilder('PMSEUserAssignmentHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieveBean'))
+                ->setMethods(['retrieveBean'])
                 ->getMock();
 
         $flowMock = $this->getMockBuilder('pmse_BpmFlow')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve_by_string_fields', 'save'))
+                ->setMethods(['retrieve_by_string_fields', 'save'])
                 ->getMock();
         
         $flowMock->expects($this->once())
                 ->method('save')
-                ->will($this->returnValue(TRUE));
+                ->will($this->returnValue(true));
 
         $flowMock->bpmn_type = 'bpmnActivity';
         $flowMock->cas_adhoc_type = 'ROUND_TRIP';
@@ -1191,33 +1191,32 @@ class PMSEUserAssignmentHandlerTest extends TestCase
                 ->method('retrieveBean')
                 ->will($this->returnValue($flowMock));
 
-        $caseData = array( 
+        $caseData = [
             'cas_id' => 1,
             'cas_index' => 2,
-        );
+        ];
 
         $userId = 'user01';
         
         $result = $userAssignmentHandlerMock->reassignRecordToUser($caseData, $userId);
         $this->assertEquals(true, $result);
-        
     }
     
     public function testReassignRecordToUserFalse()
     {
         $userAssignmentHandlerMock = $this->getMockBuilder('PMSEUserAssignmentHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieveBean'))
+                ->setMethods(['retrieveBean'])
                 ->getMock();
 
         $flowMock = $this->getMockBuilder('pmse_BpmFlow')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve_by_string_fields', 'save'))
+                ->setMethods(['retrieve_by_string_fields', 'save'])
                 ->getMock();
         
         $flowMock->expects($this->once())
                 ->method('save')
-                ->will($this->returnValue(FALSE));
+                ->will($this->returnValue(false));
 
         $flowMock->bpmn_type = 'bpmnActivity';
         $flowMock->cas_adhoc_type = 'ROUND_TRIP';
@@ -1228,41 +1227,40 @@ class PMSEUserAssignmentHandlerTest extends TestCase
                 ->method('retrieveBean')
                 ->will($this->returnValue($flowMock));
 
-        $caseData = array( 
+        $caseData = [
             'cas_id' => 1,
             'cas_index' => 2,
-        );
+        ];
 
         $userId = 'user01';
         
         $result = $userAssignmentHandlerMock->reassignRecordToUser($caseData, $userId);
         $this->assertEquals(false, $result);
-        
     }
     
     public function testGetReassignedUserList()
     {
         $userAssignmentHandlerMock = $this->getMockBuilder('PMSEUserAssignmentHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieveBean'))
+                ->setMethods(['retrieveBean'])
                 ->getMock();
 
         $flowMock = $this->getMockBuilder('pmse_BpmFlow')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve_by_string_fields', 'save', 'get_full_list'))
+                ->setMethods(['retrieve_by_string_fields', 'save', 'get_full_list'])
                 ->getMock();
         
-        $flowList = array(
-            (object) array(
-                'cas_user_id' => 'user01'
-            ),
-            (object) array(
-                'cas_user_id' => 'user02'
-            ),
-            (object) array(
-                'cas_user_id' => 'user03'
-            )
-        );
+        $flowList = [
+            (object) [
+                'cas_user_id' => 'user01',
+            ],
+            (object) [
+                'cas_user_id' => 'user02',
+            ],
+            (object) [
+                'cas_user_id' => 'user03',
+            ],
+        ];
         
         $flowMock->expects($this->once())
             ->method('get_full_list')
@@ -1285,16 +1283,16 @@ class PMSEUserAssignmentHandlerTest extends TestCase
     {
         $userAssignmentHandlerMock = $this->getMockBuilder('PMSEUserAssignmentHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieveBean', 'getReassignedUserList'))
+                ->setMethods(['retrieveBean', 'getReassignedUserList'])
                 ->getMock();
         
         $userAssignmentHandlerMock->expects($this->once())
                 ->method('getReassignedUserList')
-                ->will($this->returnValue(array('user01')));
+                ->will($this->returnValue(['user01']));
         
         $flowMock = $this->getMockBuilder('pmse_BpmFlow')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve_by_string_fields', 'save', 'get_full_list'))
+                ->setMethods(['retrieve_by_string_fields', 'save', 'get_full_list'])
                 ->getMock();
         
         $flowMock->cas_id = 1;
@@ -1309,7 +1307,7 @@ class PMSEUserAssignmentHandlerTest extends TestCase
         
         $activityMock = $this->getMockBuilder('pmse_BpmnActivity')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve_by_string_fields'))
+                ->setMethods(['retrieve_by_string_fields'])
                 ->getMock();
         $activityMock->act_adhoc_team = 'teamAdhoc';
         $activityMock->act_reassign_team = 'teamReassign';
@@ -1320,14 +1318,14 @@ class PMSEUserAssignmentHandlerTest extends TestCase
         
         $membershipMock = $this->getMockBuilder('TeamMembership')
                 ->disableOriginalConstructor()
-                ->setMethods(array('get_full_list'))
+                ->setMethods(['get_full_list'])
                 ->getMock();
         
-        $membersMock = array(
-            (object)array('user_id' => 'user01'),
-            (object)array('user_id' => 'user02'),
-            (object)array('user_id' => 'user03'),
-        );
+        $membersMock = [
+            (object)['user_id' => 'user01'],
+            (object)['user_id' => 'user02'],
+            (object)['user_id' => 'user03'],
+        ];
         
         $membershipMock->expects($this->once())
                 ->method('get_full_list')
@@ -1339,7 +1337,7 @@ class PMSEUserAssignmentHandlerTest extends TestCase
         
         $userMock = new stdClass();
         
-        $userAssignmentHandlerMock->expects($this->at(4,5,6))
+        $userAssignmentHandlerMock->expects($this->at(4, 5, 6))
                 ->method('retrieveBean')
                 ->will($this->returnValue($userMock));
         
@@ -1348,7 +1346,7 @@ class PMSEUserAssignmentHandlerTest extends TestCase
         $fullList = false;
         $type = 'ADHOC';
         
-        $expectedList = array('user02', 'user03');
+        $expectedList = ['user02', 'user03'];
         
         $list = $userAssignmentHandlerMock->getAssignableUserList($flowMock, $fullList, $type);
         $this->assertCount(2, $list);
@@ -1362,16 +1360,16 @@ class PMSEUserAssignmentHandlerTest extends TestCase
         
         $userAssignmentHandlerMock = $this->getMockBuilder('PMSEUserAssignmentHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieveBean', 'getReassignedUserList'))
+                ->setMethods(['retrieveBean', 'getReassignedUserList'])
                 ->getMock();
         
         $userAssignmentHandlerMock->expects($this->once())
                 ->method('getReassignedUserList')
-                ->will($this->returnValue(array('user01')));
+                ->will($this->returnValue(['user01']));
         
         $flowMock = $this->getMockBuilder('pmse_BpmFlow')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve_by_string_fields', 'save', 'get_full_list'))
+                ->setMethods(['retrieve_by_string_fields', 'save', 'get_full_list'])
                 ->getMock();
         
         $flowMock->cas_id = 1;
@@ -1382,7 +1380,7 @@ class PMSEUserAssignmentHandlerTest extends TestCase
 
         $activityDefinitionMock = $this->getMockBuilder('pmse_BpmActivityDefinition')
             ->disableOriginalConstructor()
-            ->setMethods(array('retrieve_by_string_fields'))
+            ->setMethods(['retrieve_by_string_fields'])
             ->getMock();
 
         $activityDefinitionMock->act_adhoc_team = 'current_team';
@@ -1393,7 +1391,7 @@ class PMSEUserAssignmentHandlerTest extends TestCase
         
         $activityMock = $this->getMockBuilder('pmse_BpmnActivity')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieve_by_string_fields'))
+                ->setMethods(['retrieve_by_string_fields'])
                 ->getMock();
         $activityMock->act_adhoc_team = 'current_team';
         $activityMock->act_reassign_team = 'teamReassign';
@@ -1404,14 +1402,14 @@ class PMSEUserAssignmentHandlerTest extends TestCase
 
         $membershipMock = $this->getMockBuilder('TeamMembership')
             ->disableOriginalConstructor()
-            ->setMethods(array('get_full_list'))
+            ->setMethods(['get_full_list'])
             ->getMock();
 
-        $membersMock = array(
-            (object)array('user_id' => 'user01'),
-            (object)array('user_id' => 'user02'),
-            (object)array('user_id' => 'user03'),
-        );
+        $membersMock = [
+            (object)['user_id' => 'user01'],
+            (object)['user_id' => 'user02'],
+            (object)['user_id' => 'user03'],
+        ];
 
         $membershipMock->expects($this->once())
             ->method('get_full_list')
@@ -1439,19 +1437,18 @@ class PMSEUserAssignmentHandlerTest extends TestCase
         
         $userAssignmentHandlerMock = $this->getMockBuilder('PMSEUserAssignmentHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(NULL)
+                ->setMethods(null)
                 ->getMock();
         $result = $userAssignmentHandlerMock->getCurrentUserId();
         
         $this->assertEquals('user01', $result);
-        
     }
     
     public function testGetRecordOwnerIdAssigned()
     {
         $userAssignmentHandlerMock = $this->getMockBuilder('PMSEUserAssignmentHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieveBean'))
+                ->setMethods(['retrieveBean'])
                 ->getMock();
         
         $beanMock = new stdClass();
@@ -1459,7 +1456,7 @@ class PMSEUserAssignmentHandlerTest extends TestCase
         
         $userAssignmentHandlerMock->expects($this->once())
                 ->method('retrieveBean')
-                ->will($this->returnValue($beanMock));        
+                ->will($this->returnValue($beanMock));
         
         $result = $userAssignmentHandlerMock->getRecordOwnerId('lead01', 'Leads');
         
@@ -1470,7 +1467,7 @@ class PMSEUserAssignmentHandlerTest extends TestCase
     {
         $userAssignmentHandlerMock = $this->getMockBuilder('PMSEUserAssignmentHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieveBean'))
+                ->setMethods(['retrieveBean'])
                 ->getMock();
         
         $beanMock = new stdClass();
@@ -1489,7 +1486,7 @@ class PMSEUserAssignmentHandlerTest extends TestCase
     {
         $userAssignmentHandlerMock = $this->getMockBuilder('PMSEUserAssignmentHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieveBean'))
+                ->setMethods(['retrieveBean'])
                 ->getMock();
         
         $beanMock = new stdClass();
@@ -1508,12 +1505,12 @@ class PMSEUserAssignmentHandlerTest extends TestCase
         global $db;
         $db = $this->getMockBuilder('DBHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('Query', 'fetchByAssoc'))
+                ->setMethods(['Query', 'fetchByAssoc'])
                 ->getMock();
         
-        $users = array(
-            'reports_to_id' => 'supervisor_id'
-        );
+        $users = [
+            'reports_to_id' => 'supervisor_id',
+        ];
         
         $db->expects($this->once())
                 ->method('fetchByAssoc')
@@ -1521,7 +1518,7 @@ class PMSEUserAssignmentHandlerTest extends TestCase
         
         $userAssignmentHandlerMock = $this->getMockBuilder('PMSEUserAssignmentHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieveBean'))
+                ->setMethods(['retrieveBean'])
                 ->getMock();
         
         $result = $userAssignmentHandlerMock->getSupervisorId('current_user_id');
@@ -1534,13 +1531,13 @@ class PMSEUserAssignmentHandlerTest extends TestCase
         global $db;
         $db = $this->getMockBuilder('DBHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('Query', 'fetchByAssoc'))
+                ->setMethods(['Query', 'fetchByAssoc'])
                 ->getMock();
         
-        $definition = array(
+        $definition = [
             'act_assign_team' => 'current_team_01',
             'act_last_user_assigned' => 'user_01',
-        );
+        ];
         
         $db->expects($this->once())
                 ->method('fetchByAssoc')
@@ -1552,25 +1549,25 @@ class PMSEUserAssignmentHandlerTest extends TestCase
         
         $userAssignmentHandlerMock = $this->getMockBuilder('PMSEUserAssignmentHandler')
                 ->disableOriginalConstructor()
-                ->setMethods(array('retrieveBean'))
+                ->setMethods(['retrieveBean'])
                 ->getMock();
         
         $teamMock = $this->getMockBuilder('Teams')
                 ->disableOriginalConstructor()
-                ->setMethods(array('get_team_members'))
+                ->setMethods(['get_team_members'])
                 ->getMock();
         
-        $members = array(
-            (object) array(
-                'id' => 'user_02'
-            ),
-            (object) array(
-                'id' => 'user_03'
-            ),
-            (object) array(
-                'id' => 'user_04'
-            )
-        );
+        $members = [
+            (object) [
+                'id' => 'user_02',
+            ],
+            (object) [
+                'id' => 'user_03',
+            ],
+            (object) [
+                'id' => 'user_04',
+            ],
+        ];
         
         $teamMock->expects($this->once())
                 ->method('get_team_members')

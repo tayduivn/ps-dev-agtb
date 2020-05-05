@@ -26,10 +26,10 @@ class ForecastManagerWorksheetsExportApiTest extends TestCase
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setUp('current_user', array(true, true));
-        $fields = array(
+        SugarTestHelper::setUp('current_user', [true, true]);
+        $fields = [
             'reports_to_id' => $GLOBALS['current_user']->id,
-        );
+        ];
         $user = SugarTestUserUtilities::createAnonymousUser(true, 0, $fields);
 
         $this->service = SugarTestRestUtilities::getRestServiceMock();
@@ -46,7 +46,7 @@ class ForecastManagerWorksheetsExportApiTest extends TestCase
      */
     public function testExport()
     {
-        $api = $this->createPartialMock('ForecastManagerWorksheetsExportApi', array('doExport'));
+        $api = $this->createPartialMock('ForecastManagerWorksheetsExportApi', ['doExport']);
         $api->expects($this->once())
             ->method('doExport')
             ->with(
@@ -54,6 +54,6 @@ class ForecastManagerWorksheetsExportApiTest extends TestCase
                 $this->logicalNot($this->isEmpty()),
                 $this->logicalNot($this->isEmpty())
             );
-        $api->export($this->service, array());
+        $api->export($this->service, []);
     }
 }

@@ -22,26 +22,27 @@ class SugarFileUtilsTest extends TestCase
 
     protected function setUp() : void
     {
-        if (is_windows())
+        if (is_windows()) {
             $this->markTestSkipped('Skipping on Windows');
+        }
 
         $this->_filename = realpath(dirname(__FILE__).'/../../../cache/').'file_utils_override'.mt_rand().'.txt';
         touch($this->_filename);
         $this->_old_default_permissions = $GLOBALS['sugar_config']['default_permissions'];
         $GLOBALS['sugar_config']['default_permissions'] =
-            array (
+             [
                 'dir_mode' => 0777,
                 'file_mode' => 0660,
                 'user' => $this->_getCurrentUser(),
                 'group' => $this->_getCurrentGroup(),
-              );
+              ];
 
         $this->testDirectory = $GLOBALS['sugar_config']['cache_dir'] . md5($GLOBALS['sugar_config']['cache_dir']) . '/';
     }
 
     protected function tearDown() : void
     {
-        if(file_exists($this->_filename)) {
+        if (file_exists($this->_filename)) {
             unlink($this->_filename);
         }
 
@@ -53,7 +54,7 @@ class SugarFileUtilsTest extends TestCase
 
     private function _getCurrentUser()
     {
-        if ( function_exists('posix_getuid') ) {
+        if (function_exists('posix_getuid')) {
             return posix_getuid();
         }
         return '';
@@ -61,7 +62,7 @@ class SugarFileUtilsTest extends TestCase
 
     private function _getCurrentGroup()
     {
-        if ( function_exists('posix_getgid') ) {
+        if (function_exists('posix_getgid')) {
             return posix_getgid();
         }
         return '';
@@ -83,7 +84,7 @@ class SugarFileUtilsTest extends TestCase
 
         $this->assertTrue(sugar_touch($this->_filename, $time));
 
-        $this->assertEquals($time,filemtime($this->_filename));
+        $this->assertEquals($time, filemtime($this->_filename));
     }
 
     public function testSugarTouchWithAccessTime()
@@ -93,8 +94,8 @@ class SugarFileUtilsTest extends TestCase
 
         $this->assertTrue(sugar_touch($this->_filename, $time, $atime));
 
-        $this->assertEquals($time,filemtime($this->_filename));
-        $this->assertEquals($atime,fileatime($this->_filename));
+        $this->assertEquals($time, filemtime($this->_filename));
+        $this->assertEquals($atime, fileatime($this->_filename));
     }
 
     public function testSugarChmodDefaultModeNotAnInteger()
@@ -111,12 +112,11 @@ class SugarFileUtilsTest extends TestCase
 
     public function testSugarChown()
     {
-        if ($GLOBALS['sugar_config']['default_permissions']['user'] == '')
-        {
+        if ($GLOBALS['sugar_config']['default_permissions']['user'] == '') {
             $this->markTestSkipped('Can not get UID. Posix extension is required.');
         }
         $this->assertTrue(sugar_chown($this->_filename));
-        $this->assertEquals(fileowner($this->_filename),$this->_getCurrentUser());
+        $this->assertEquals(fileowner($this->_filename), $this->_getCurrentUser());
     }
 
     /**
@@ -124,8 +124,8 @@ class SugarFileUtilsTest extends TestCase
      */
     public function testSugarChownWithUser()
     {
-        $this->assertTrue(sugar_chown($this->_filename,$this->_getCurrentUser()));
-        $this->assertEquals(fileowner($this->_filename),$this->_getCurrentUser());
+        $this->assertTrue(sugar_chown($this->_filename, $this->_getCurrentUser()));
+        $this->assertEquals(fileowner($this->_filename), $this->_getCurrentUser());
     }
 
     public function testSugarChownNoDefaultUser()
@@ -142,9 +142,9 @@ class SugarFileUtilsTest extends TestCase
     {
         $GLOBALS['sugar_config']['default_permissions']['user'] = '';
 
-        $this->assertTrue(sugar_chown($this->_filename,$this->_getCurrentUser()));
+        $this->assertTrue(sugar_chown($this->_filename, $this->_getCurrentUser()));
 
-        $this->assertEquals(fileowner($this->_filename),$this->_getCurrentUser());
+        $this->assertEquals(fileowner($this->_filename), $this->_getCurrentUser());
     }
 
     public function testSugarTouchDirectoryCreation()

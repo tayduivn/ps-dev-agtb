@@ -46,7 +46,7 @@ class ReportsApiHelperTest extends TestCase
         SugarTestHelper::tearDown();
     }
 
-    public function testFormatForApi() 
+    public function testFormatForApi()
     {
         $data = $this->helper->formatForApi($this->bean);
         $this->assertEquals($data['report_type'], $this->bean->fetched_row['report_type'], "Report Type Does not match");
@@ -54,10 +54,10 @@ class ReportsApiHelperTest extends TestCase
 
     public function testSanitizeSubmittedData()
     {
-        $submittedData = array(
+        $submittedData = [
             'module' => 'Reports',
             'name' => 'Report Name',
-        );
+        ];
 
         $sanitized = $this->helper->sanitizeSubmittedData($submittedData);
 
@@ -67,7 +67,14 @@ class ReportsApiHelperTest extends TestCase
 
 class ReportsServiceMockup extends ServiceBase
 {
-    public function __construct() {$this->user = $GLOBALS['current_user'];}
-    public function execute() {}
-    protected function handleException(Exception $exception) {}
+    public function __construct()
+    {
+        $this->user = $GLOBALS['current_user'];
+    }
+    public function execute()
+    {
+    }
+    protected function handleException(Exception $exception)
+    {
+    }
 }

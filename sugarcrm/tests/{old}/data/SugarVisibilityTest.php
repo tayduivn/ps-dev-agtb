@@ -28,7 +28,7 @@ class SugarVisibilityTest extends TestCase
      */
     protected function setUp() : void
     {
-        $this->object = $this->getMockForAbstractClass('SugarVisibility', array($this->createMock(SugarBean::class)));
+        $this->object = $this->getMockForAbstractClass('SugarVisibility', [$this->createMock(SugarBean::class)]);
     }
 
     /**
@@ -56,7 +56,7 @@ class SugarVisibilityTest extends TestCase
     {
         $this->assertEquals('default', $this->object->getOption('nonexisting_option', 'default'), 'returns default value');
         $this->assertNull($this->object->getOption('nonexisting_option'));
-        $this->object->setOptions(array('test' => 'yay'));
+        $this->object->setOptions(['test' => 'yay']);
         $this->assertEquals('yay', $this->object->getOption('test'), 'returns option\'s value');
     }
 
@@ -65,16 +65,15 @@ class SugarVisibilityTest extends TestCase
      */
     public function testSetOptions()
     {
-        $options = array(
+        $options = [
             'test1' => 'yay1',
             'test2' => 'yay2',
-            'pirates' => 'attack!'
-        );
+            'pirates' => 'attack!',
+        ];
 
         $this->assertEquals($this->object, $this->object->setOptions($options), 'returns self');
 
-        foreach($options as $key => $value)
-        {
+        foreach ($options as $key => $value) {
             $this->assertEquals($value, $this->object->getOption($key));
         }
     }

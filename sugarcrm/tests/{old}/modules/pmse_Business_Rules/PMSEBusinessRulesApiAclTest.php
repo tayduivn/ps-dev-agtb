@@ -35,7 +35,7 @@ class PMSEBusinessRulesApiAclTest extends TestCase
 
         $this->PMSEBusinessRules = ProcessManager\Factory::getPMSEObject('PMSEBusinessRules');
         $this->api = new RestService();
-        $this->api->getRequest()->setRoute(array('acl' => array()));
+        $this->api->getRequest()->setRoute(['acl' => []]);
     }
 
     protected function tearDown() : void
@@ -49,14 +49,14 @@ class PMSEBusinessRulesApiAclTest extends TestCase
         $this->expectException(SugarApiExceptionNotAuthorized::class);
         $this->PMSEBusinessRules->businessRuleDownload(
             $this->api,
-            array('module' => 'pmse_Business_Rules')
+            ['module' => 'pmse_Business_Rules']
         );
     }
 
     public function testBusinessRulesImport()
     {
         $this->expectException(SugarApiExceptionNotAuthorized::class);
-        $this->PMSEBusinessRules->businessRulesImport($this->api, array('module' => 'pmse_Business_Rules'));
+        $this->PMSEBusinessRules->businessRulesImport($this->api, ['module' => 'pmse_Business_Rules']);
     }
 
     /**
@@ -67,7 +67,7 @@ class PMSEBusinessRulesApiAclTest extends TestCase
         $GLOBALS['current_user']->is_admin = 1;
 
         $pmseBusinessRuleExporter = $this->getMockBuilder('PMSEBusinessRuleExporter')
-                                         ->setMethods(array('exportProject'))
+                                         ->setMethods(['exportProject'])
                                          ->getMock();
         $pmseBusinessRuleExporter
             ->expects($this->any())
@@ -75,7 +75,7 @@ class PMSEBusinessRulesApiAclTest extends TestCase
             ->will($this->returnValue('testPassed'));
 
         $pmseBusinessRulesApi = $this->getMockBuilder('PMSEBusinessRules')
-                                     ->setMethods(array('getPMSEBusinessRuleExporter'))
+                                     ->setMethods(['getPMSEBusinessRuleExporter'])
                                      ->getMock();
         $pmseBusinessRulesApi
             ->expects($this->any())
@@ -84,7 +84,7 @@ class PMSEBusinessRulesApiAclTest extends TestCase
 
         $ret = $pmseBusinessRulesApi->businessRuleDownload(
             $this->api,
-            array('module' => 'pmse_Business_Rules', 'record' => 'dummy')
+            ['module' => 'pmse_Business_Rules', 'record' => 'dummy']
         );
 
         $this->assertEquals($ret, "testPassed", "ACL access test failed for businessRuleDownload");

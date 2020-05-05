@@ -14,15 +14,15 @@ use PHPUnit\Framework\TestCase;
 
 class Bug58774Test extends TestCase
 {
-    protected $_originalRequest = array();
-    protected $_originalDictionary = array();
-    protected $_backedUpFiles = array();
-    protected $_tearDownFiles = array(
+    protected $_originalRequest = [];
+    protected $_originalDictionary = [];
+    protected $_backedUpFiles = [];
+    protected $_tearDownFiles = [
         'custom/modules/Calls/Ext/Vardefs/vardefs.ext.php',
         'custom/modules/Calls/metadata/SearchFields.php',
-        'custom/Extension/modules/Calls/Ext/Vardefs/sugarfield_duration_hours.php',        
+        'custom/Extension/modules/Calls/Ext/Vardefs/sugarfield_duration_hours.php',
         'cache/modules/Calls/Callvardefs.php',
-    );
+    ];
     
     protected function setUp() : void
     {
@@ -39,14 +39,14 @@ class Bug58774Test extends TestCase
         }
         
         // The current user needs to be an admin user
-        SugarTestHelper::setUp('current_user', array(true, true));
+        SugarTestHelper::setUp('current_user', [true, true]);
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('moduleList');
         SugarTestHelper::setUp('app_list_strings');
-        SugarTestHelper::setUp('mod_strings', array('ModuleBuilder'));
+        SugarTestHelper::setUp('mod_strings', ['ModuleBuilder']);
         
-        $this->_originalRequest = array('r' => $_REQUEST, 'p' => $_POST);
+        $this->_originalRequest = ['r' => $_REQUEST, 'p' => $_POST];
     }
     
     protected function tearDown() : void
@@ -77,7 +77,7 @@ class Bug58774Test extends TestCase
     public function testCacheClearedAfterSavingFieldChanges()
     {
         // Setup some of the items needed in the request
-        $_REQUEST = $_POST =array(
+        $_REQUEST = $_POST =[
             'module' => 'ModuleBuilder',
             'action' => 'saveSugarField',
             'view_module' => 'Calls',
@@ -88,7 +88,7 @@ class Bug58774Test extends TestCase
             'comments' => 'Call duration, minutes portion',
             'min' => '5',
             'max' => '90',
-        );
+        ];
         
         $controller = new ModuleBuilderController();
         $controller->action_saveSugarField();

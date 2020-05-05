@@ -20,7 +20,8 @@
  * but now, upon saving, the client will attempt to PUT related record first and if their ACL's
  * may prevent edit/deletes it would fail. This rectifies such a scenario.
  */
-class RestBug57210Test extends RestFileTestBase {
+class RestBug57210Test extends RestFileTestBase
+{
     private $_config_override_existed = false;
     private $_config_override_name = 'config_override.php';
 
@@ -30,7 +31,7 @@ class RestBug57210Test extends RestFileTestBase {
 
         // Hijack the config_override.php file if exists, otherwise we'll create sugar_config anew
         if (file_exists($this->_config_override_name)) {
-            require($this->_config_override_name);
+            require $this->_config_override_name;
             rename($this->_config_override_name, ($this->_config_override_name.".bak"));
             $this->_config_override_existed = true;
         } else {
@@ -52,7 +53,7 @@ class RestBug57210Test extends RestFileTestBase {
         parent::tearDown();
 
         // If was original config override, copy back over original kept in our ".bak"
-        if($this->_config_override_existed && file_exists($this->_config_override_name.".bak")) {
+        if ($this->_config_override_existed && file_exists($this->_config_override_name.".bak")) {
             rename(($this->_config_override_name.".bak"), $this->_config_override_name);
         } else {
             // If it didn't exist before, we need to remove the one we created
@@ -67,11 +68,11 @@ class RestBug57210Test extends RestFileTestBase {
     */
     public function testSimulateFileTooLargeWithDeleteIfFails()
     {
-        $fileToPost = array('filename' => '@include/images/badge_256.png');
+        $fileToPost = ['filename' => '@include/images/badge_256.png'];
         $reply = $this->_restCall('Notes/' . $this->_note_id . '/file/filename' . '?delete_if_fails=true', $fileToPost, 'POST');
 
         // Check DB to see if the related Note actually got marked deleted
-        $ret = $GLOBALS['db']->query("SELECT deleted from notes where id = '".$this->_note_id."'",true);
+        $ret = $GLOBALS['db']->query("SELECT deleted from notes where id = '".$this->_note_id."'", true);
         $row = $GLOBALS['db']->fetchByAssoc($ret);
 
         // Our main expectation is that the related Note record got marked deleted=1
@@ -86,11 +87,11 @@ class RestBug57210Test extends RestFileTestBase {
     */
     public function testSimulateFileTooLargeWithOutDeleteIfFails()
     {
-        $fileToPost = array('filename' => '@include/images/badge_256.png');
+        $fileToPost = ['filename' => '@include/images/badge_256.png'];
         $reply = $this->_restCall('Notes/' . $this->_note_id . '/file/filename', $fileToPost, 'POST');
 
         // Check DB to ensure that the related Note did NOT got marked deleted
-        $ret = $GLOBALS['db']->query("SELECT deleted from notes where id = '".$this->_note_id."'",true);
+        $ret = $GLOBALS['db']->query("SELECT deleted from notes where id = '".$this->_note_id."'", true);
         $row = $GLOBALS['db']->fetchByAssoc($ret);
 
         // Our main expectation is that the related Note record did NOT get marked as deleted (e.g. deleted=0)

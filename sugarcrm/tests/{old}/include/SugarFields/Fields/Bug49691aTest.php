@@ -48,12 +48,13 @@ class Bug49691aTest extends TestCase
     /**
      * @dataProvider providerFunction
      */
-    public function testDBDateConversion($dateValue, $expected) {
+    public function testDBDateConversion($dateValue, $expected)
+    {
         global $current_user;
 
         $this->bean->test_c = $dateValue;
 
-        $inputData = array('test_c'=>$dateValue);
+        $inputData = ['test_c'=>$dateValue];
         $field = 'test_c';
         $def = '';
         $prefix = '';
@@ -63,16 +64,18 @@ class Bug49691aTest extends TestCase
         $this->assertSame($expected, $this->bean->test_c);
     }
 
-    public function providerFunction() {
-        return array(
-            array('01/01/2012 12:00', '2012-01-01 12:00:00'),
-            array('2012-01-01 12:00:00', '2012-01-01 12:00:00'),
-            array('01/01/2012', '2012-01-01'),
-            array('2012-01-01', '2012-01-01'),
-        );
+    public function providerFunction()
+    {
+        return [
+            ['01/01/2012 12:00', '2012-01-01 12:00:00'],
+            ['2012-01-01 12:00:00', '2012-01-01 12:00:00'],
+            ['01/01/2012', '2012-01-01'],
+            ['2012-01-01', '2012-01-01'],
+        ];
     }
 }
 
-class Bug49691aMockBean {
+class Bug49691aMockBean
+{
     var $test_c;
 }

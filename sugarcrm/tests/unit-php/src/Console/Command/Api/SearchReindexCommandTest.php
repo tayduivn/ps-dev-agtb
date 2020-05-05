@@ -32,19 +32,19 @@ class SearchReindexCommandTest extends AbstractApiCommandTestCase
      */
     public function providerTestExecuteCommand()
     {
-        return array(
-            array(
-                array('success' => true),
-                array(),
+        return [
+            [
+                ['success' => true],
+                [],
                 'Reindex succesfully scheduled',
                 0,
-            ),
-            array(
-                array('success' => false),
-                array(),
+            ],
+            [
+                ['success' => false],
+                [],
                 'Something went wrong, check your logs',
                 1,
-            ),
-        );
+            ],
+        ];
     }
 }

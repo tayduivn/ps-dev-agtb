@@ -27,13 +27,13 @@ class PMSEStartEventTest extends TestCase
     public function testRun()
     {
         $id = '1234567890';
-        $flowData = array('bpmn_id' => $id);
+        $flowData = ['bpmn_id' => $id];
         $bean = $this->getMockBuilder('SugarBean')
             ->disableOriginalConstructor()
             ->getMock();
         $bean->id = '0987654321';
 
-        $registryEntry = array('1234567890' => array('0987654321' => true));
+        $registryEntry = ['1234567890' => ['0987654321' => true]];
 
         $registryMock = $this->createMock(Registry\Registry::class);
 
@@ -57,7 +57,7 @@ class PMSEStartEventTest extends TestCase
 
         $startEventMock->expects($this->once())
             ->method('prepareResponse')
-            ->with(array(), '', '');
+            ->with([], '', '');
 
         $startEventMock->run($flowData, $bean);
     }

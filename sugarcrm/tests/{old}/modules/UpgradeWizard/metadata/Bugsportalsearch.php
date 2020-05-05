@@ -10,18 +10,17 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$viewdefs['Bugs']['searchform']['basic'] = array(
-    'templateMeta' => array('maxColumns' => '2',
-                            'widths' => array(
-                                            array('label' => '10', 'field' => '30'),
-                                            array('label' => '10', 'field' => '30')
-                                            ),
+$viewdefs['Bugs']['searchform']['basic'] = [
+    'templateMeta' => ['maxColumns' => '2',
+                            'widths' => [
+                                            ['label' => '10', 'field' => '30'],
+                                            ['label' => '10', 'field' => '30'],
+                                            ],
                             'formId' => 'BugSearchForm',
                             'formName' => 'BugSearchForm',
-                           ),
-    'data' => array(
-        array('bug_number', 'name'),
-        array('resolution', 'status'),
-    )
-);
-?>
+                           ],
+    'data' => [
+        ['bug_number', 'name'],
+        ['resolution', 'status'],
+    ],
+];

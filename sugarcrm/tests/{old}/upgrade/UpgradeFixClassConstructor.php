@@ -15,27 +15,27 @@ class UpgradeFixClassConstructorTest extends UpgradeTestCase
     /**
      * @var array Set of test modules and their properties.
      */
-    private $modules = array(
-        'TestCustomModuleA_0123456789' => array(
+    private $modules = [
+        'TestCustomModuleA_0123456789' => [
             'extendsFrom' => 'Basic',
             'importable' => true,
             'team_security' => true,
             'acl' => true,
-        ),
-        'TestCustomModuleB_0123456789' => array(
+        ],
+        'TestCustomModuleB_0123456789' => [
             'extendsFrom' => 'Company',
             'importable' => true,
             'team_security' => true,
             'acl' => true,
-        ),
-        'TestCustomModuleC_0123456789' => array(
+        ],
+        'TestCustomModuleC_0123456789' => [
             'extendsFrom' => 'Company',
             'importable' => false,
             'team_security' => false,
             'acl' => false,
 
-        ),
-    );
+        ],
+    ];
 
     protected function setUp() : void
     {
@@ -57,31 +57,31 @@ class UpgradeFixClassConstructorTest extends UpgradeTestCase
 
     private function create65CustomClass($moduleName, $params)
     {
-        $class = array(
+        $class = [
             'name' => $moduleName,
             'extends' => $params['extendsFrom'],
             'table_name' => strtolower($moduleName),
             'importable' => $params['importable'],
-            'fields' => array(
+            'fields' => [
                 'fieldA' => 'fieldA',
                 'fieldB' => 'fieldB',
                 'fieldC' => 'fieldC',
                 'fieldD' => 'fieldD',
                 'fieldE' => 'fieldE',
-            ),
+            ],
             'team_security' => $params['team_security'],
             'acl' => $params['acl'],
-        );
+        ];
 
         if ($params['extendsFrom'] !== 'Basic') {
             $template = strtolower($params['extendsFrom']);
-            $class['requires'] = array(
+            $class['requires'] = [
                 'include' . DIRECTORY_SEPARATOR .
                 'SugarObjects' . DIRECTORY_SEPARATOR .
                 'templates' . DIRECTORY_SEPARATOR .
                 $template . DIRECTORY_SEPARATOR .
                 $params['extendsFrom'] . '.php',
-            );
+            ];
         }
 
         $smarty = new Sugar_Smarty();
@@ -101,7 +101,7 @@ class UpgradeFixClassConstructorTest extends UpgradeTestCase
      */
     public function testFixClassConstructor()
     {
-        $oldContents = array();
+        $oldContents = [];
         foreach ($this->modules as $moduleName => $params) {
             $this->assertFileExists(
                 'modules' . DIRECTORY_SEPARATOR . $moduleName . DIRECTORY_SEPARATOR . $moduleName . '_sugar.php'
@@ -116,7 +116,7 @@ class UpgradeFixClassConstructorTest extends UpgradeTestCase
         $script->to_version = 7.2;
         $script->run();
 
-        $newContents = array();
+        $newContents = [];
         foreach ($this->modules as $moduleName => $params) {
             $newContents[$moduleName] = file_get_contents(
                 'modules' . DIRECTORY_SEPARATOR . $moduleName . DIRECTORY_SEPARATOR . $moduleName . '_sugar.php'

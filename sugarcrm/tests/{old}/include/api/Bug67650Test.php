@@ -50,7 +50,7 @@ EOQ;
     {
         $api = new RestService();
         $bean = BeanFactory::newBean('Campaigns');
-        $helper = ApiHelper::getHelper($api,$bean);
-        $this->assertEquals('CustomSugarBeanApiHelper',get_class($helper));
+        $helper = ApiHelper::getHelper($api, $bean);
+        $this->assertEquals('CustomSugarBeanApiHelper', get_class($helper));
     }
 }

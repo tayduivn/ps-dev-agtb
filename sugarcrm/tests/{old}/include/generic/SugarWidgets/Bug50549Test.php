@@ -20,7 +20,7 @@ class Bug50549Test extends TestCase
     protected function setUp() : void
     {
         global $beanList, $beanFiles;
-        require('include/modules.php');
+        require 'include/modules.php';
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['sugar_config']['default_language']);
 
         $mock = new Bug50549MockReporter();
@@ -37,17 +37,18 @@ class Bug50549Test extends TestCase
     /**
      * @dataProvider bug50549DataProvider
      */
-    public function testQuery($layout_def, $expected) {
-		switch ($layout_def['qualifier_name']) {
-	    	case 'is_not':
-	    		$function = "queryFilteris_not";
-	    		break;
-	    	case 'is': 
-	    		$function = "queryFilteris";
-	    		break;
-	    	default:
-	    		$function = "";
-	    		break;
+    public function testQuery($layout_def, $expected)
+    {
+        switch ($layout_def['qualifier_name']) {
+            case 'is_not':
+                $function = "queryFilteris_not";
+                break;
+            case 'is':
+                $function = "queryFilteris";
+                break;
+            default:
+                $function = "";
+                break;
         }
 
         $this->assertStringContainsString($expected, $this->field->$function($layout_def));
@@ -57,143 +58,145 @@ class Bug50549Test extends TestCase
      * Data provider for testColumnLabelsAreCorrectForMatrixReport()
      * @return array layout_def, expected
      */
-    public function bug50549DataProvider() {
-        return array(
-            '0' => array( 
-                array (
-  					'name' => 'multi_c',
-  					'table_key' => 'self',
-			  		'qualifier_name' => 'is_not',
-			  		'runtime' => 1,
-			  		'input_name0' => 
-			  		array (
-			    		0 => 'B',
-			  		),
-			  		'column_name' => 'self:multi_c',
-			  		'id' => 'rowid0',
-			  		'table_alias' => 'cases_cstm',
-			  		'column_key' => 'self:multi_c',
-			  		'type' => 'multienum',
-				),
-                "<> '^B^'",
-            ),
-            '1' => array( 
-                array (
-  					'name' => 'multi_c',
-  					'table_key' => 'self',
-			  		'qualifier_name' => 'is',
-			  		'runtime' => 1,
-			  		'input_name0' => 
-			  		array (
-			    		0 => 'C',
-			  		),
-			  		'column_name' => 'self:multi_c',
-			  		'id' => 'rowid0',
-			  		'table_alias' => 'cases_cstm',
-			  		'column_key' => 'self:multi_c',
-			  		'type' => 'multienum',
-				),
-                "= '^C^'",
-            ),
-            '2' => array( 
-                array (
-  					'name' => 'multi_c2',
-  					'table_key' => 'self',
-			  		'qualifier_name' => 'is_not',
-			  		'runtime' => 1,
-			  		'input_name0' => 
-			  		array (
-			    		0 => 'B',
-			  		),
-			  		'column_name' => 'self:multi_c2',
-			  		'id' => 'rowid0',
-			  		'table_alias' => 'cases_cstm',
-			  		'column_key' => 'self:multi_c2',
-			  		'type' => 'multienum',
-				),
-                "<> 'B'",
-            ),
-            '3' => array( 
-                array (
-  					'name' => 'multi_c2',
-  					'table_key' => 'self',
-			  		'qualifier_name' => 'is',
-			  		'runtime' => 1,
-			  		'input_name0' => 
-			  		array (
-			    		0 => 'C',
-			  		),
-			  		'column_name' => 'self:multi_c2',
-			  		'id' => 'rowid0',
-			  		'table_alias' => 'cases_cstm',
-			  		'column_key' => 'self:multi_c2',
-			  		'type' => 'multienum',
-				),
-                "= 'C'",
-            ),
-        );
+    public function bug50549DataProvider()
+    {
+        return [
+            '0' => [
+                 [
+                    'name' => 'multi_c',
+                    'table_key' => 'self',
+                    'qualifier_name' => 'is_not',
+                    'runtime' => 1,
+                    'input_name0' =>
+                     [
+                        0 => 'B',
+                    ],
+                    'column_name' => 'self:multi_c',
+                    'id' => 'rowid0',
+                    'table_alias' => 'cases_cstm',
+                    'column_key' => 'self:multi_c',
+                    'type' => 'multienum',
+                 ],
+                 "<> '^B^'",
+            ],
+            '1' => [
+                 [
+                    'name' => 'multi_c',
+                    'table_key' => 'self',
+                    'qualifier_name' => 'is',
+                    'runtime' => 1,
+                    'input_name0' =>
+                     [
+                        0 => 'C',
+                    ],
+                    'column_name' => 'self:multi_c',
+                    'id' => 'rowid0',
+                    'table_alias' => 'cases_cstm',
+                    'column_key' => 'self:multi_c',
+                    'type' => 'multienum',
+                 ],
+                 "= '^C^'",
+            ],
+            '2' => [
+                 [
+                    'name' => 'multi_c2',
+                    'table_key' => 'self',
+                    'qualifier_name' => 'is_not',
+                    'runtime' => 1,
+                    'input_name0' =>
+                     [
+                        0 => 'B',
+                    ],
+                    'column_name' => 'self:multi_c2',
+                    'id' => 'rowid0',
+                    'table_alias' => 'cases_cstm',
+                    'column_key' => 'self:multi_c2',
+                    'type' => 'multienum',
+                 ],
+                 "<> 'B'",
+            ],
+            '3' => [
+                 [
+                    'name' => 'multi_c2',
+                    'table_key' => 'self',
+                    'qualifier_name' => 'is',
+                    'runtime' => 1,
+                    'input_name0' =>
+                     [
+                        0 => 'C',
+                    ],
+                    'column_name' => 'self:multi_c2',
+                    'id' => 'rowid0',
+                    'table_alias' => 'cases_cstm',
+                    'column_key' => 'self:multi_c2',
+                    'type' => 'multienum',
+                 ],
+                 "= 'C'",
+            ],
+        ];
     }
 }
 
 
-class Bug50549MockReporter extends Report {
-	var $all_fields = array (
-		'self:multi_c' => array (
-	  		'dependency' => '',
-	  		'required' => false,
-	  		'source' => 'custom_fields',
-	  		'name' => 'multi_c',
-	  		'vname' => 'LBL_MULTI',
-	  		'type' => 'multienum',
-	  		'massupdate' => '0',
-	  		'default' => '^A^',
-	  		'comments' => '',
-	  		'help' => '',
-	  		'importable' => 'true',
-	  		'duplicate_merge' => 'disabled',
-	  		'duplicate_merge_dom_value' => '0',
-	  		'audited' => false,
-	  		'reportable' => true,
-	  		'unified_search' => false,
-	  		'calculated' => false,
-	  		'size' => '20',
-	  		'options' => 'test_list',
-	  		'studio' => 'visible',
-	  		'isMultiSelect' => true,
-			'id' => 'Casesmulti_c',
-	  		'custom_module' => 'Cases',
-	  		'module' => 'Cases',
-	  		'real_table' => 'cases_cstm',
-		),
-		'self:multi_c2' => array (
-	  		'dependency' => '',
-	  		'required' => false,
-	  		'name' => 'multi_c',
-	  		'vname' => 'LBL_MULTI',
-	  		'type' => 'multienum',
-	  		'massupdate' => '0',
-	  		'default' => '^A^',
-	  		'comments' => '',
-	  		'help' => '',
-	  		'importable' => 'true',
-	  		'duplicate_merge' => 'disabled',
-	  		'duplicate_merge_dom_value' => '0',
-	  		'audited' => false,
-	  		'reportable' => true,
-	  		'unified_search' => false,
-	  		'calculated' => false,
-	  		'size' => '20',
-	  		'options' => 'test_list',
-	  		'studio' => 'visible',
-	  		'isMultiSelect' => true,
-			'id' => 'Casesmulti_c',
-	  		'custom_module' => 'Cases',
-	  		'module' => 'Cases',
-	  		'real_table' => 'cases_cstm',
-		)
-	);
-	 
-	public function getAttribute($name)
+class Bug50549MockReporter extends Report
+{
+    var $all_fields =  [
+        'self:multi_c' =>  [
+            'dependency' => '',
+            'required' => false,
+            'source' => 'custom_fields',
+            'name' => 'multi_c',
+            'vname' => 'LBL_MULTI',
+            'type' => 'multienum',
+            'massupdate' => '0',
+            'default' => '^A^',
+            'comments' => '',
+            'help' => '',
+            'importable' => 'true',
+            'duplicate_merge' => 'disabled',
+            'duplicate_merge_dom_value' => '0',
+            'audited' => false,
+            'reportable' => true,
+            'unified_search' => false,
+            'calculated' => false,
+            'size' => '20',
+            'options' => 'test_list',
+            'studio' => 'visible',
+            'isMultiSelect' => true,
+            'id' => 'Casesmulti_c',
+            'custom_module' => 'Cases',
+            'module' => 'Cases',
+            'real_table' => 'cases_cstm',
+        ],
+        'self:multi_c2' =>  [
+            'dependency' => '',
+            'required' => false,
+            'name' => 'multi_c',
+            'vname' => 'LBL_MULTI',
+            'type' => 'multienum',
+            'massupdate' => '0',
+            'default' => '^A^',
+            'comments' => '',
+            'help' => '',
+            'importable' => 'true',
+            'duplicate_merge' => 'disabled',
+            'duplicate_merge_dom_value' => '0',
+            'audited' => false,
+            'reportable' => true,
+            'unified_search' => false,
+            'calculated' => false,
+            'size' => '20',
+            'options' => 'test_list',
+            'studio' => 'visible',
+            'isMultiSelect' => true,
+            'id' => 'Casesmulti_c',
+            'custom_module' => 'Cases',
+            'module' => 'Cases',
+            'real_table' => 'cases_cstm',
+        ],
+    ];
+     
+    public function getAttribute($name)
     {
         return $this;
     }

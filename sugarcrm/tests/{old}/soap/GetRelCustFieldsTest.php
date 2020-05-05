@@ -60,7 +60,7 @@ class GetRelCustFieldsTest extends SOAPTestCase
         parent::setUp();
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
-        SugarTestHelper::setUp('current_user', array(true, true));
+        SugarTestHelper::setUp('current_user', [true, true]);
 
         $this->field = get_widget('varchar');
         $this->field->id = 'Contactstest_c';
@@ -143,7 +143,7 @@ class GetRelCustFieldsTest extends SOAPTestCase
             'v3' => ['/service/v3/soap.php'],
             'v3_1' => ['/service/v3_1/soap.php'],
             'v4' => ['/service/v4/soap.php'],
-            'v4_1' => ['/service/v4_1/soap.php']
+            'v4_1' => ['/service/v4_1/soap.php'],
         ];
     }
 }

@@ -23,33 +23,32 @@ use PHPUnit\Framework\TestCase;
  * @ticket
  */
 
-require_once ('modules/DynamicFields/FieldCases.php') ;
+require_once 'modules/DynamicFields/FieldCases.php' ;
 
 class Bug48826Test extends TestCase
 {
     public function provider()
     {
-        $types = array(
+        $types = [
             'char','varchar','varchar2','text','textarea','double','float','decimal','int','date','bool','relate',
             'enum','multienum','radioenum','email','url','iframe','html','phone','currency','parent','parent_type',
-            'currency_id','address','encrypt','id','datetimecombo','datetime','image','_other_'
-        );
-        $provider_array = array();
-        foreach ( $types as $type )
-        {
+            'currency_id','address','encrypt','id','datetimecombo','datetime','image','_other_',
+        ];
+        $provider_array = [];
+        foreach ($types as $type) {
             // Bug #48826
-            $provider_array[] = array($type, array('name' => 'equal($dd1_c,"Analyst")'), 'equal($dd1_c,"Analyst")');
-            $provider_array[] = array($type, array('dependency' => 'equal($dd1_c,"Analyst")'), 'equal($dd1_c,"Analyst")');
-            $provider_array[] = array($type, array('dependency' => 'equal($dd1_c,"Analyst")'), 'equal($dd1_c,"Analyst")');
-            $provider_array[] = array($type, array('formula' => 'equal($dd1_c,"Analyst")'), 'equal($dd1_c,"Analyst")');
-            $provider_array[] = array($type, array('formula' => 'equal($dd1_c,"Analyst")'), 'equal($dd1_c,"Analyst")');
+            $provider_array[] = [$type, ['name' => 'equal($dd1_c,"Analyst")'], 'equal($dd1_c,"Analyst")'];
+            $provider_array[] = [$type, ['dependency' => 'equal($dd1_c,"Analyst")'], 'equal($dd1_c,"Analyst")'];
+            $provider_array[] = [$type, ['dependency' => 'equal($dd1_c,"Analyst")'], 'equal($dd1_c,"Analyst")'];
+            $provider_array[] = [$type, ['formula' => 'equal($dd1_c,"Analyst")'], 'equal($dd1_c,"Analyst")'];
+            $provider_array[] = [$type, ['formula' => 'equal($dd1_c,"Analyst")'], 'equal($dd1_c,"Analyst")'];
             // Bug #49775
-            $provider_array[] = array($type, array('formula' => 'concat("<script>alert(1623651453416)</script>", "<script>alert(1623651453416)</script>")'), 'concat("alert(1623651453416)", "alert(1623651453416)")');
-            $provider_array[] = array($type, array('formula' => 'concat("<script>alert(1623651453416)</script>", "<script>alert(1623651453416)</script>")'), 'concat("alert(1623651453416)", "alert(1623651453416)")');
-            $provider_array[] = array($type, array('formula' => 'concat("<script>alert(1623651453416)</script>", "<script>alert(1623651453416)</script>")'), 'concat("alert(1623651453416)", "alert(1623651453416)")');
-            $provider_array[] = array($type, array('dependency' => 'concat("<script>alert(1623651453416)</script>", "<script>alert(1623651453416)</script>")'), 'concat("alert(1623651453416)", "alert(1623651453416)")');
-            $provider_array[] = array($type, array('dependency' => 'concat("<script>alert(1623651453416)</script>", "<script>alert(1623651453416)</script>")'), 'concat("alert(1623651453416)", "alert(1623651453416)")');
-            $provider_array[] = array($type, array('dependency' => 'concat("<script>alert(1623651453416)</script>", "<script>alert(1623651453416)</script>")'), 'concat("alert(1623651453416)", "alert(1623651453416)")');
+            $provider_array[] = [$type, ['formula' => 'concat("<script>alert(1623651453416)</script>", "<script>alert(1623651453416)</script>")'], 'concat("alert(1623651453416)", "alert(1623651453416)")'];
+            $provider_array[] = [$type, ['formula' => 'concat("<script>alert(1623651453416)</script>", "<script>alert(1623651453416)</script>")'], 'concat("alert(1623651453416)", "alert(1623651453416)")'];
+            $provider_array[] = [$type, ['formula' => 'concat("<script>alert(1623651453416)</script>", "<script>alert(1623651453416)</script>")'], 'concat("alert(1623651453416)", "alert(1623651453416)")'];
+            $provider_array[] = [$type, ['dependency' => 'concat("<script>alert(1623651453416)</script>", "<script>alert(1623651453416)</script>")'], 'concat("alert(1623651453416)", "alert(1623651453416)")'];
+            $provider_array[] = [$type, ['dependency' => 'concat("<script>alert(1623651453416)</script>", "<script>alert(1623651453416)</script>")'], 'concat("alert(1623651453416)", "alert(1623651453416)")'];
+            $provider_array[] = [$type, ['dependency' => 'concat("<script>alert(1623651453416)</script>", "<script>alert(1623651453416)</script>")'], 'concat("alert(1623651453416)", "alert(1623651453416)")'];
         }
         
         return $provider_array;
@@ -64,7 +63,7 @@ class Bug48826Test extends TestCase
         $this->assertCount(1, $request_data);
         $tested_key = key($request_data);
 
-        $request = InputValidation::create($request_data, array());
+        $request = InputValidation::create($request_data, []);
         $field = get_widget($type) ;
         $field->populateFromPost($request);
 

@@ -47,52 +47,52 @@ class HandlerFilterIteratorTest extends TestCase
 
     public function providerTestIterator()
     {
-        return array(
+        return [
             // no filter
-            array(
-                $this->getCollectionMock(array(
+            [
+                $this->getCollectionMock([
                     new AnalysisHandler(),
                     new MappingHandler(),
-                )),
+                ]),
                 null,
-                array(
+                [
                     'AnalysisHandler' => $this->getHandlerInterface('Analysis'),
                     'MappingHandler' => $this->getHandlerInterface('Mapping'),
-                ),
-            ),
+                ],
+            ],
             // filter, no hits
-            array(
-                $this->getCollectionMock(array(
+            [
+                $this->getCollectionMock([
                     new AnalysisHandler(),
-                )),
+                ]),
                 'Mapping',
-                array(),
-            ),
+                [],
+            ],
             // filter, one hit
-            array(
-                $this->getCollectionMock(array(
+            [
+                $this->getCollectionMock([
                     new AnalysisHandler(),
                     new MappingHandler(),
-                )),
+                ]),
                 'Mapping',
-                array(
+                [
                     'MappingHandler' => $this->getHandlerInterface('Mapping'),
-                ),
-            ),
+                ],
+            ],
             // filter, multiple hits
-            array(
-                $this->getCollectionMock(array(
+            [
+                $this->getCollectionMock([
                     new AnalysisHandler(),
                     new MappingHandler(),
                     new AnalysisMappingHandler(),
-                )),
+                ]),
                 'Analysis',
-                array(
+                [
                     'AnalysisHandler' => $this->getHandlerInterface('Analysis'),
                     'AnalysisMappingHandler' => $this->getHandlerInterface('Analysis'),
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
     }
 
     /**
@@ -116,7 +116,7 @@ class HandlerFilterIteratorTest extends TestCase
     {
         return $this->getMockBuilder('Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\GlobalSearch')
             ->disableOriginalConstructor()
-            ->setMethods(array())
+            ->setMethods([])
             ->getMock();
     }
 

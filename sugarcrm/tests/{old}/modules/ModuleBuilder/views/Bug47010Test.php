@@ -16,7 +16,7 @@ class Bug47010Test extends TestCase
 {
     protected function setUp() : void
     {
-        SugarTestHelper::setUp('mod_strings', array('ModuleBuilder'));
+        SugarTestHelper::setUp('mod_strings', ['ModuleBuilder']);
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $_SESSION['authenticated_user_language'] = 'en_us';
 
@@ -33,7 +33,8 @@ class Bug47010Test extends TestCase
         SugarTestHelper::tearDown();
     }
 
-    public function testModuleNameMissingDoesNotThrowExceptionWhenGenereatingSmarty() {
+    public function testModuleNameMissingDoesNotThrowExceptionWhenGenereatingSmarty()
+    {
         $view = new ViewDropdown();
         $smarty = $view->generateSmarty($_REQUEST);
         $this->assertEmpty($smarty->get_template_vars('module_name'));

@@ -22,36 +22,36 @@ class SugarTestHelper
     /**
      * @var array array of registered vars. It allows helper to unregister them on tearDown
      */
-    protected static $registeredVars = array();
+    protected static $registeredVars = [];
 
     /**
      * Global variables to be restored after each test
      *
      * @var array<string,mixed>
      */
-    private static $globals = array();
+    private static $globals = [];
 
     /**
      * Global variables to be unset after each test
      *
      * @var array<string,null>
      */
-    private static $unsetGlobals = array();
+    private static $unsetGlobals = [];
 
     /**
      * @var array of system preference of SugarCRM as theme etc. They are storing on init one time and restoring each tearDown
      */
-    protected static $systemVars = array();
+    protected static $systemVars = [];
 
     /**
      * @var array of modules which we should refresh on tearDown.
      */
-    protected static $cleanModules = array();
+    protected static $cleanModules = [];
 
     /**
      * @var array of modules and their custom fields created during setup.
      */
-    protected static $customFields = array();
+    protected static $customFields = [];
 
     /**
      * @var bool is SugarTestHelper inited or not. Just to skip initialization on the second and others call of init method
@@ -131,7 +131,7 @@ class SugarTestHelper
      * @param  array  $params  some parameters for helper. For example for $mod_strings or $current_user
      * @return bool   is variable setuped or not
      */
-    public static function setUp($varName, $params = array())
+    public static function setUp($varName, $params = [])
     {
         if (method_exists(__CLASS__, 'setUp_' . $varName) == false) {
             throw new Exception('setUp for $' . $varName . ' is not implemented. ' . __CLASS__ . '::setUp_' . $varName);
@@ -159,7 +159,7 @@ class SugarTestHelper
             if ($isCalled) {
                 unset(self::$registeredVars[$varName]);
                 if (method_exists(__CLASS__, 'tearDown_' . $varName)) {
-                    call_user_func(__CLASS__ . '::tearDown_' . $varName, array());
+                    call_user_func(__CLASS__ . '::tearDown_' . $varName, []);
                 } elseif (isset($GLOBALS[$varName])) {
                     unset($GLOBALS[$varName]);
                 }
@@ -222,7 +222,7 @@ class SugarTestHelper
      * @static
      * @return bool is variable setuped or not
      */
-    protected static function setUp_beanList($params = array(), $register = true)
+    protected static function setUp_beanList($params = [], $register = true)
     {
         if ($register) {
             self::$registeredVars['beanList'] = true;
@@ -239,7 +239,7 @@ class SugarTestHelper
      * @static
      * @return bool is variable setuped or not
      */
-    protected static function setUp_beanFiles($params = array(), $register = true)
+    protected static function setUp_beanFiles($params = [], $register = true)
     {
         if ($register) {
             self::$registeredVars['beanFiles'] = true;
@@ -256,7 +256,7 @@ class SugarTestHelper
      * @static
      * @return bool is variable setuped or not
      */
-    protected static function setUp_bwcModules($params = array(), $register = true)
+    protected static function setUp_bwcModules($params = [], $register = true)
     {
         if ($register) {
             self::$registeredVars['bwcModules'] = true;
@@ -273,7 +273,7 @@ class SugarTestHelper
      * @static
      * @return bool is variable setuped or not
      */
-    protected static function setUp_moduleList($params = array(), $register = true)
+    protected static function setUp_moduleList($params = [], $register = true)
     {
         if ($register) {
             self::$registeredVars['moduleList'] = true;
@@ -305,10 +305,10 @@ class SugarTestHelper
     {
         self::$registeredVars['modListHeader'] = true;
         if (isset($GLOBALS['current_user']) == false) {
-            self::setUp_current_user(array(
+            self::setUp_current_user([
                 true,
-                1
-            ));
+                1,
+            ]);
         }
         $GLOBALS['modListHeader'] = query_module_access_list($GLOBALS['current_user']);
 
@@ -350,7 +350,7 @@ class SugarTestHelper
 
         self::$systemVars['db'] = DBManagerFactory::$instances;
         self::$registeredVars['mock_db'] = $mock;
-        DBManagerFactory::$instances = array('' => $mock);
+        DBManagerFactory::$instances = ['' => $mock];
 
         return $mock;
     }
@@ -384,7 +384,7 @@ class SugarTestHelper
      * @static
      * @return bool is variable setuped or not
      */
-    protected static function setUp_timedate($params = array(), $register = true)
+    protected static function setUp_timedate($params = [], $register = true)
     {
         if ($register) {
             self::$registeredVars['timedate'] = true;
@@ -437,7 +437,7 @@ class SugarTestHelper
         self::$registeredVars['dictionary'] = true;
 
         global $dictionary;
-        $dictionary = array();
+        $dictionary = [];
         $moduleInstaller = new ModuleInstaller();
         $moduleInstaller->silent = true;
         $moduleInstaller->rebuild_tabledictionary();
@@ -492,7 +492,7 @@ class SugarTestHelper
         $mi->silent = true;
         $mi->rebuild_vardefs();
 
-        self::$customFields[] = array($dynamicField, $field);
+        self::$customFields[] = [$dynamicField, $field];
 
         $objectName = BeanFactory::getObjectName($module);
         VardefManager::loadVardef($module, $objectName, true);
@@ -552,7 +552,7 @@ class SugarTestHelper
             VardefManager::loadVardef($module, $objectName, true);
         }
 
-        self::$customFields = array();
+        self::$customFields = [];
     }
 
     /**
@@ -572,8 +572,8 @@ class SugarTestHelper
      */
     public static function setUpFiles() : void
     {
-        self::$oldFiles = array();
-        self::$oldDirs = array();
+        self::$oldFiles = [];
+        self::$oldDirs = [];
         self::$registeredVars['files'] = true;
     }
 
@@ -597,7 +597,7 @@ class SugarTestHelper
 
             return;
         }
-        if ( file_exists($filename) ) {
+        if (file_exists($filename)) {
             self::$oldFiles[$filename] = file_get_contents($filename);
         } else {
             self::$oldFiles[$filename] = self::NOFILE_DATA;
@@ -640,11 +640,11 @@ class SugarTestHelper
                 }
             }
             if ($filecontents == self::NOFILE_DATA) {
-                if ( file_exists($filename) ) {
+                if (file_exists($filename)) {
                     unlink($filename);
                 }
             } else {
-                file_put_contents($filename,$filecontents);
+                file_put_contents($filename, $filecontents);
             }
         }
         rsort(self::$oldDirs);
@@ -666,7 +666,7 @@ class SugarTestHelper
     /**
      * @var ACLAction
      */
-    static public $aclAction;
+    public static $aclAction;
 
     protected static function setUp_ACLStatic()
     {
@@ -719,7 +719,7 @@ class SugarTestHelper
 
         self::setUp('dictionary');
 
-        VardefManager::$linkFields = array();
+        VardefManager::$linkFields = [];
         VardefManager::clearVardef();
         VardefManager::refreshVardefs($lhs_module, BeanFactory::getObjectName($lhs_module));
         if ($lhs_module != $rhs_module) {
@@ -747,14 +747,14 @@ class SugarTestHelper
 
         self::tearDown('dictionary');
 
-        VardefManager::$linkFields = array();
+        VardefManager::$linkFields = [];
         VardefManager::clearVardef();
         foreach ($modules as $module) {
             VardefManager::refreshVardefs($module, BeanFactory::getBeanClass($module));
         }
         SugarRelationshipFactory::rebuildCache();
 
-        self::$cleanModules = array();
+        self::$cleanModules = [];
 
         return true;
     }
@@ -775,7 +775,7 @@ class SugarTestHelper
      * @static
      * @return bool is variable setuped or not
      */
-    protected static function setUp_modInvisList($params = array(), $register = true)
+    protected static function setUp_modInvisList($params = [], $register = true)
     {
         if ($register) {
             self::$registeredVars['modInvisList'] = true;

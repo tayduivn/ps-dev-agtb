@@ -36,31 +36,31 @@ class BoosterTest extends TestCase
 
     public function dataProviderTestGetBoostedField()
     {
-        return array(
-            array(
-                array(),
-                array(),
+        return [
+            [
+                [],
+                [],
                 'foo',
                 1.0,
-            ),
-            array(
-                array(),
-                array('full_text_search' => array()),
+            ],
+            [
+                [],
+                ['full_text_search' => []],
                 'foo',
                 1.0,
-            ),
-            array(
-                array(),
-                array('full_text_search' => array('boost' => 2.138)),
+            ],
+            [
+                [],
+                ['full_text_search' => ['boost' => 2.138]],
                 'foo',
                 2.14,
-            ),
-            array(
-                array('foo' => 0.5),
-                array('full_text_search' => array('boost' => 2.138)),
+            ],
+            [
+                ['foo' => 0.5],
+                ['full_text_search' => ['boost' => 2.138]],
                 'foo',
                 1.07,
-            ),
-        );
+            ],
+        ];
     }
 }

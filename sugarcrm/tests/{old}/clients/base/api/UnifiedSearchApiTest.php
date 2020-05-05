@@ -48,7 +48,7 @@ class UnifiedSearchApiTest extends TestCase
     {
         $GLOBALS['current_user']->is_admin = 1;
         // delete the bunch of accounts crated
-        foreach ($this->accounts AS $account) {
+        foreach ($this->accounts as $account) {
             $account->mark_deleted($account->id);
         }
         // unset unifiedSearchApi
@@ -64,17 +64,17 @@ class UnifiedSearchApiTest extends TestCase
     public function testReadOnlyFields()
     {
         // create role that is all fields read only
-        $role = SugarTestACLUtilities::createRole('UNIFIEDSEARCHAPI - UNIT TEST ' . create_guid(), array('Accounts'), array('access', 'view', 'list', 'export'));
+        $role = SugarTestACLUtilities::createRole('UNIFIEDSEARCHAPI - UNIT TEST ' . create_guid(), ['Accounts'], ['access', 'view', 'list', 'export']);
 
         // get all the accounts fields and set them readonly
-        foreach ($this->accounts[0]->field_defs AS $fieldName => $params) {
+        foreach ($this->accounts[0]->field_defs as $fieldName => $params) {
             SugarTestACLUtilities::createField($role->id, "Accounts", $fieldName, 50);
         }
 
         SugarTestACLUtilities::setupUser($role);
         SugarTestHelper::clearACLCache();
         // test I can retreive accounts
-        $args = array('module_list' => 'Accounts',);
+        $args = ['module_list' => 'Accounts',];
         $list = $this->unifiedSearchApi->globalSearch($this->serviceMock, $args);
         $this->assertNotEmpty($list['records'], "Should have some accounts: " . print_r($list, true));
     }
@@ -83,13 +83,13 @@ class UnifiedSearchApiTest extends TestCase
     public function testViewOnly()
     {
         // create a role that is view only
-        $role = SugarTestACLUtilities::createRole('UNIFIEDSEARCHAPI - UNIT TEST ' . create_guid(), array('Accounts', ), array('access', 'view', 'list', ));
+        $role = SugarTestACLUtilities::createRole('UNIFIEDSEARCHAPI - UNIT TEST ' . create_guid(), ['Accounts', ], ['access', 'view', 'list', ]);
 
         SugarTestACLUtilities::setupUser($role);
         SugarTestHelper::clearACLCache();
 
         // test I can retrieve accounts
-        $args = array('module_list' => 'Accounts',);
+        $args = ['module_list' => 'Accounts',];
         $list = $this->unifiedSearchApi->globalSearch($this->serviceMock, $args);
         $this->assertNotEmpty($list['records'], "Should have some accounts: " . print_r($list, true));
         // test I can't create
@@ -98,6 +98,6 @@ class UnifiedSearchApiTest extends TestCase
             'You are not authorized to create Accounts. Contact your administrator if you need access.'
         );
 
-        $this->moduleApi->createRecord($this->serviceMock, array('module' => 'Accounts', 'name' => 'UnifiedSearchApi Create Denied - ' . create_guid()));
+        $this->moduleApi->createRecord($this->serviceMock, ['module' => 'Accounts', 'name' => 'UnifiedSearchApi Create Denied - ' . create_guid()]);
     }
 }

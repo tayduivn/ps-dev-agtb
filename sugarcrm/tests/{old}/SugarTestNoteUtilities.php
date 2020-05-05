@@ -16,7 +16,7 @@ class SugarTestNoteUtilities
     /**
      * @var array
      */
-    private static $createdNotes = array();
+    private static $createdNotes = [];
 
     /**
      * Creates a new Note with optional default values.
@@ -24,14 +24,14 @@ class SugarTestNoteUtilities
      * @param array $noteValues
      * @return mixed
      */
-    public static function createNote($id = '', $noteValues = array())
+    public static function createNote($id = '', $noteValues = [])
     {
         $time = mt_rand();
         $note = \BeanFactory::newBean('Notes');
 
-        $noteValues = array_merge(array(
+        $noteValues = array_merge([
             'name' => "TestNote_{$time}",
-        ), $noteValues);
+        ], $noteValues);
 
         foreach ($noteValues as $property => $value) {
             $note->$property = $value;
@@ -85,7 +85,7 @@ class SugarTestNoteUtilities
             }
         }
 
-        static::$createdNotes = array();
+        static::$createdNotes = [];
     }
 
     /**
@@ -94,7 +94,7 @@ class SugarTestNoteUtilities
      */
     public static function getCreatedNoteIds()
     {
-        $ids = array();
+        $ids = [];
         foreach (self::$createdNotes as $note) {
             $ids[] = $note->id;
         }

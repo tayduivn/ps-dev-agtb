@@ -16,7 +16,7 @@
  */
 class SugarTestNotificationUtilities
 {
-    private static $_createdNotifications = array();
+    private static $_createdNotifications = [];
 
     public static function createNotification($id = '')
     {
@@ -32,19 +32,17 @@ class SugarTestNotificationUtilities
     {
         $notification_ids = self::getCreatedNotificationIds();
         
-        if (!empty($Notification_ids))
-        {
+        if (!empty($Notification_ids)) {
             $GLOBALS['db']->query('DELETE FROM notifications WHERE id IN (\'' . implode("', '", $notification_ids) . '\')');
             $GLOBALS['db']->query('DELETE FROM notifications_audit WHERE parent_id IN (\'' . implode("', '", $notification_ids) . '\')');
-         }
+        }
     }
     
     public static function getCreatedNotificationIds()
     {
-        $notification_ids = array();
+        $notification_ids = [];
         
-        foreach (self::$_createdNotifications as $notification)
-        {
+        foreach (self::$_createdNotifications as $notification) {
             $notification_ids[] = $notification->id;
         }
         

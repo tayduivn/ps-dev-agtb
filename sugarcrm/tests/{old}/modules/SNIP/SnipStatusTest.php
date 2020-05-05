@@ -22,24 +22,42 @@ class SnipStatusTest extends TestCase
 
     protected function setUp() : void
     {
-    	$this->snip = SugarSNIP::getInstance();
+        $this->snip = SugarSNIP::getInstance();
     }
 
-    public function testStatusPurchased() { $this->statusTest(json_encode(array('result'=>'ok','status'=>'success')),'purchased'); }
-
-    public function testStatusNotPurchased1() { $this->statusTest(json_encode(array('result'=>'instance not found')),'notpurchased'); }
-    public function testStatusNotPurchased2() { $this->statusTest(json_encode(array('result'=>'instance not found','status'=>'fasdfkuaseyrkajsdfh udd')),'notpurchased'); }
-
-    public function testStatusDownShowEnableScreen() { $this->statusTest(json_encode(array('result'=>'asdofi7aso8fdus','status'=>'dafso8dfuds')),'notpurchased',null,false); }
-
-    public function testStatusPurchasedError1() { $this->statusTest(json_encode(array('result'=>'ok')),'purchased_error',null); }
-    public function testStatusPurchasedError2() { $this->statusTest(json_encode(array('result'=>'ok', 'status'=>'this is a test error status')),'purchased_error','this is a test error status'); }
-
-
-
-    protected function statusTest($serverResponse,$expectedStatus,$expectedMessage=null,$snipEmailExists=true)
+    public function testStatusPurchased()
     {
-    	//give snip our mock client
+        $this->statusTest(json_encode(['result'=>'ok','status'=>'success']), 'purchased');
+    }
+
+    public function testStatusNotPurchased1()
+    {
+        $this->statusTest(json_encode(['result'=>'instance not found']), 'notpurchased');
+    }
+    public function testStatusNotPurchased2()
+    {
+        $this->statusTest(json_encode(['result'=>'instance not found','status'=>'fasdfkuaseyrkajsdfh udd']), 'notpurchased');
+    }
+
+    public function testStatusDownShowEnableScreen()
+    {
+        $this->statusTest(json_encode(['result'=>'asdofi7aso8fdus','status'=>'dafso8dfuds']), 'notpurchased', null, false);
+    }
+
+    public function testStatusPurchasedError1()
+    {
+        $this->statusTest(json_encode(['result'=>'ok']), 'purchased_error', null);
+    }
+    public function testStatusPurchasedError2()
+    {
+        $this->statusTest(json_encode(['result'=>'ok', 'status'=>'this is a test error status']), 'purchased_error', 'this is a test error status');
+    }
+
+
+
+    protected function statusTest($serverResponse, $expectedStatus, $expectedMessage = null, $snipEmailExists = true)
+    {
+        //give snip our mock client
         $clientMock = $this->createMock('SugarHttpClient');
         $clientMock->expects($this->once())
             ->method('callRest')
@@ -47,20 +65,20 @@ class SnipStatusTest extends TestCase
             ->will($this->returnValue($serverResponse));
         $this->snip->setClient($clientMock);
         $oldemail = $this->snip->getSnipEmail();
-        if ($snipEmailExists){
+        if ($snipEmailExists) {
             $this->snip->setSnipEmail("snip-test-182391820@sugarcrm.com");
-        }else{
+        } else {
             $this->snip->setSnipEmail("");
         }
 
-    	//call getStatus on snip
-    	$status = $this->snip->getStatus();
+        //call getStatus on snip
+        $status = $this->snip->getStatus();
 
         $this->snip->setSnipEmail($oldemail);
 
-    	//check to make sure the status is an array with the correct values
-    	$this->assertTrue(is_array($status),"getStatus() should always return an associative array of the form array('status'=>string,'message'=>string|null). But it did not return an array.");
-    	$this->assertEquals($expectedStatus,$status['status'],"Expected status: '$expectedStatus'. Returned status: '{$status['status']}'");
-    	$this->assertEquals($expectedMessage,$status['message'],"Expected message: ".(is_null($expectedMessage)?"null":"'$expectedMessage'").". Returned message: '{$status['message']}'");
+        //check to make sure the status is an array with the correct values
+        $this->assertTrue(is_array($status), "getStatus() should always return an associative array of the form array('status'=>string,'message'=>string|null). But it did not return an array.");
+        $this->assertEquals($expectedStatus, $status['status'], "Expected status: '$expectedStatus'. Returned status: '{$status['status']}'");
+        $this->assertEquals($expectedMessage, $status['message'], "Expected message: ".(is_null($expectedMessage)?"null":"'$expectedMessage'").". Returned message: '{$status['message']}'");
     }
 }

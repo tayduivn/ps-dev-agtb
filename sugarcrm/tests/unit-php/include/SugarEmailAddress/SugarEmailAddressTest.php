@@ -271,5 +271,4 @@ class SugarEmailAddressTest extends TestCase
             [null, 'same@t.com', true],
         ];
     }
-
 }

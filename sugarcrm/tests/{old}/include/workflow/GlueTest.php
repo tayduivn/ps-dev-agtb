@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 class GlueTest extends TestCase
 {
-    private $toClean = array();
+    private $toClean = [];
 
     protected function setUp() : void
     {
@@ -52,16 +52,16 @@ class GlueTest extends TestCase
 
     public static function dataProviderWriteEscape()
     {
-        return array(
-            array(
+        return [
+            [
                 'A strange string "that is $being" &#64;, &amp; compared',
                 'A strange string "that is $being" @, & compared',
-            ),
-            array(
+            ],
+            [
                 "A strange string 'that is &#36;being' escaped, &#38; compared",
                 "A strange string 'that is \$being' escaped, & compared",
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -88,10 +88,10 @@ class GlueTest extends TestCase
         $class = new ReflectionClass('WorkFlowGlue');
         $method = $class->getMethod('getCompareText');
         $method->setAccessible(true);
-        $args = array(
+        $args = [
             $workflowShell,
-            $is_equal
-        );
+            $is_equal,
+        ];
         $output = $method->invokeArgs(new WorkFlowGlue(), $args);
 
         $this->assertStringContainsString($expected, $output);
@@ -99,29 +99,29 @@ class GlueTest extends TestCase
 
     public static function dataProviderGetCompareText()
     {
-        return array(
-            array(
+        return [
+            [
                 'date_modified',
                 true,
                 "\$GLOBALS['timedate']->to_display_date_time(\$focus->fetched_row['date_modified']) === " .
-                "\$GLOBALS['timedate']->to_display_date_time(\$focus->date_modified)"
-            ),
-            array(
+                "\$GLOBALS['timedate']->to_display_date_time(\$focus->date_modified)",
+            ],
+            [
                 'description',
                 false,
-                "\$focus->fetched_row['description'] !== \$focus->description"
-            ),
-            array(
+                "\$focus->fetched_row['description'] !== \$focus->description",
+            ],
+            [
                 'probability',
                 true,
-                "\$focus->fetched_row['probability'] == \$focus->probability"
-            ),
-            array(
+                "\$focus->fetched_row['probability'] == \$focus->probability",
+            ],
+            [
                 'date_closed',
                 false,
                 "\$GLOBALS['timedate']->to_display_date(\$focus->fetched_row['date_closed']) !== " .
-                "\$GLOBALS['timedate']->to_display_date(\$focus->date_closed)"
-            ),
-        );
+                "\$GLOBALS['timedate']->to_display_date(\$focus->date_closed)",
+            ],
+        ];
     }
 }

@@ -19,17 +19,17 @@ use PHPUnit\Framework\TestCase;
 class Bug38903Test extends TestCase
 {
     protected function setUp() : void
-	{
-	    require('include/modules.php');
-	    $GLOBALS['beanList'] = $beanList;
-	    $GLOBALS['beanFiles'] = $beanFiles;		
-	}	
-	
+    {
+        require 'include/modules.php';
+        $GLOBALS['beanList'] = $beanList;
+        $GLOBALS['beanFiles'] = $beanFiles;
+    }
+    
     public function testAccountNameExists()
     {
         //Reset moduleList, beanList and beanFiles
         global $beanList, $beanFiles, $moduleList;
-        require('include/modules.php');
+        require 'include/modules.php';
         
         $bean = new Expression();
 
@@ -38,7 +38,15 @@ class Bug38903Test extends TestCase
         // wf condition: when a field in the target module changes to or from a specified value
         // module: Leads
         $options = strtolower($bean->get_selector_array(
-            'field', null, 'Leads', false, 'normal_trigger', true, 'compare_specific', false));
+            'field',
+            null,
+            'Leads',
+            false,
+            'normal_trigger',
+            true,
+            'compare_specific',
+            false
+        ));
 
         $this->assertMatchesRegularExpression('#<option value=\'account_name\'>[^>]+?</option>#', $options);
     }

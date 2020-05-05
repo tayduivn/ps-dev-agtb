@@ -40,84 +40,84 @@ class IndexerTest extends TestCase
         $dbManager->setEncode(true);
 
         $indexer = $this->getMockBuilder('Sugarcrm\Sugarcrm\Elasticsearch\Indexer\Indexer')
-            ->setConstructorArgs(array(array(), $container, $dbManager))
-            ->setMethods(array('isFromApi'))
+            ->setConstructorArgs([[], $container, $dbManager])
+            ->setMethods(['isFromApi'])
             ->getMock();
 
         $indexer->expects($this->once())
             ->method('isFromApi')
             ->will($this->returnValue($fromApi));
 
-        $result = TestReflection::callProtectedMethod($indexer, 'decodeBeanField', array($fieldValue));
+        $result = TestReflection::callProtectedMethod($indexer, 'decodeBeanField', [$fieldValue]);
         $this->assertEquals($expected, $result);
     }
 
     public function providerDecodeBeanField()
     {
         $date = new \DateTime('2015-03-14');
-        return array(
+        return [
 
             // htmlspecialchars
-            array(
+            [
                 "Hello &amp; world",
                 false,
                 "Hello & world",
-            ),
-            array(
+            ],
+            [
                 "Hello &quot; world",
                 false,
                 "Hello \" world",
-            ),
-            array(
+            ],
+            [
                 "Here&#039;s what we have",
                 false,
                 "Here's what we have",
-            ),
-            array(
+            ],
+            [
                 "Hello &lt; world",
                 false,
                 "Hello < world",
-            ),
-            array(
+            ],
+            [
                 "Hello &gt; world",
                 false,
                 "Hello > world",
-            ),
+            ],
 
             // no decoding when coming from API
-            array(
+            [
                 "Hello &amp; world",
                 true,
                 "Hello &amp; world",
-            ),
+            ],
 
             // non-string non-decode situations
-            array(
+            [
                 "Here&apos;s what we have",
                 false,
                 "Here&apos;s what we have",
-            ),
-            array(
+            ],
+            [
                 "Here are what we have",
                 false,
                 "Here are what we have",
-            ),
-            array(
-                array('Foo is here', 'bar is there'),
+            ],
+            [
+                ['Foo is here', 'bar is there'],
                 false,
-                array('Foo is here', 'bar is there'),
-            ),
-            array(
-                array('Foo&#039;s is here', 'bar&#039;s is there'),
+                ['Foo is here', 'bar is there'],
+            ],
+            [
+                ['Foo&#039;s is here', 'bar&#039;s is there'],
                 false,
-                array('Foo&#039;s is here', 'bar&#039;s is there'),
-            ),
-            array(
+                ['Foo&#039;s is here', 'bar&#039;s is there'],
+            ],
+            [
                 $date,
                 false,
                 $date,
-            ),
-        );
+            ],
+        ];
     }
 
 
@@ -127,19 +127,19 @@ class IndexerTest extends TestCase
      */
     public function testGetBeanIndexFields($module, $fields1, $fields2, $output)
     {
-        $provider1 = $this->getProviderMock(array('getBeanIndexFields'));
+        $provider1 = $this->getProviderMock(['getBeanIndexFields']);
         $provider1->expects($this->once())
             ->method('getBeanIndexFields')
             ->will($this->returnValue($fields1));
 
-        $provider2 = $this->getProviderMock(array('getBeanIndexFields'));
+        $provider2 = $this->getProviderMock(['getBeanIndexFields']);
         $provider2->expects($this->once())
             ->method('getBeanIndexFields')
             ->will($this->returnValue($fields2));
 
-        $collection = new ProviderCollection($this->getContainerMock(), array($provider1, $provider2));
+        $collection = new ProviderCollection($this->getContainerMock(), [$provider1, $provider2]);
 
-        $indexer = $this->getIndexerMock(array('getRegisteredProviders'));
+        $indexer = $this->getIndexerMock(['getRegisteredProviders']);
         $indexer->expects($this->once())
             ->method('getRegisteredProviders')
             ->will($this->returnValue($collection));
@@ -150,30 +150,30 @@ class IndexerTest extends TestCase
 
     public function providerTestGetBeanIndexFields()
     {
-        return array(
-            array(
+        return [
+            [
                 'Contacts',
-                array('first_name' => 'John', 'last_name' => 'Smith'),
-                array('title' => 'sales rep'),
-                array('first_name' => 'John', 'last_name' => 'Smith', 'title' => 'sales rep'),
-            ),
-            array(
+                ['first_name' => 'John', 'last_name' => 'Smith'],
+                ['title' => 'sales rep'],
+                ['first_name' => 'John', 'last_name' => 'Smith', 'title' => 'sales rep'],
+            ],
+            [
                 'Contacts',
-                array('first_name' => 'John', 'last_name' => 'Smith'),
-                array('last_name' => 'Joe', 'title' => 'sales rep'),
-                array('first_name' => 'John', 'last_name' => 'Joe', 'title' => 'sales rep'),
-            ),
-            array(
+                ['first_name' => 'John', 'last_name' => 'Smith'],
+                ['last_name' => 'Joe', 'title' => 'sales rep'],
+                ['first_name' => 'John', 'last_name' => 'Joe', 'title' => 'sales rep'],
+            ],
+            [
                 'Contacts',
-                array('first_name' => 'John', 'last_name' => 'Smith', 'description' => 'new member'),
-                array('last_name' => 'Joe', 'title' => 'sales rep'),
-                array(
+                ['first_name' => 'John', 'last_name' => 'Smith', 'description' => 'new member'],
+                ['last_name' => 'Joe', 'title' => 'sales rep'],
+                [
                     'first_name' => 'John',
                     'last_name' => 'Joe',
                     'title' => 'sales rep',
-                    'description' => 'new member'),
-            ),
-        );
+                    'description' => 'new member'],
+            ],
+        ];
     }
 
     /**

@@ -26,8 +26,10 @@ class Bug56259Test extends TestCase
     public function testUserACLs()
     {
         $result = $GLOBALS['current_user']->get_list('', '', 0, 100, -1, 0);
-        foreach($result['list'] as $bean) {
-            if($bean->id == $GLOBALS['current_user']->id) continue;
+        foreach ($result['list'] as $bean) {
+            if ($bean->id == $GLOBALS['current_user']->id) {
+                continue;
+            }
             $bean->ACLFilterFields();
             $this->assertEmpty($bean->user_hash, "User hash not hidden");
         }

@@ -30,7 +30,7 @@ class BeanVisibilityTest extends TestCase
     {
         $this->object = new BeanVisibility(
             $this->createMock(SugarBean::class),
-            array()
+            []
         );
     }
 
@@ -48,7 +48,7 @@ class BeanVisibilityTest extends TestCase
      */
     public function testAddStrategy()
     {
-        $this->assertNull($this->object->addStrategy($this->getStrategy(), array('pirates' => 'yay')));
+        $this->assertNull($this->object->addStrategy($this->getStrategy(), ['pirates' => 'yay']));
     }
 
     /**
@@ -56,7 +56,7 @@ class BeanVisibilityTest extends TestCase
      */
     public function testAddVisibilityFrom()
     {
-        $this->object->addStrategy("MockSugarStrategy", array("query" => "testingFrom"));
+        $this->object->addStrategy("MockSugarStrategy", ["query" => "testingFrom"]);
         $query = 'from';
         $this->assertEquals($this->object->addVisibilityFrom($query), 'from testingFrom');
     }
@@ -66,7 +66,7 @@ class BeanVisibilityTest extends TestCase
      */
     public function testAddVisibilityWhere()
     {
-        $this->object->addStrategy("MockSugarStrategy", array("query" => "testingWhere"));
+        $this->object->addStrategy("MockSugarStrategy", ["query" => "testingWhere"]);
         $query = 'where';
         $this->assertEquals($this->object->addVisibilityWhere($query), 'where testingWhere');
     }
@@ -76,21 +76,22 @@ class MockSugarStrategy extends SugarVisibility
 {
     public $query;
 
-    public function __construct($bean, $data = array())
+    public function __construct($bean, $data = [])
     {
         parent::__construct($bean, $data);
-        if(!empty($data['query']))
+        if (!empty($data['query'])) {
             $this->query = $data['query'];
+        }
     }
 
     public function addVisibilityFrom(&$query)
     {
-    	$query .= " {$this->query}";
-    	return $query;
+        $query .= " {$this->query}";
+        return $query;
     }
     public function addVisibilityWhere(&$query)
     {
-    	$query .= " {$this->query}";
-    	return $query;
+        $query .= " {$this->query}";
+        return $query;
     }
 }

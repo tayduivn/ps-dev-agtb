@@ -36,8 +36,8 @@ class CurrencyCacheClearTest extends TestCase
 
     protected function tearDown() : void
     {
-        $_POST = array();
-        if ( file_exists($this->testCacheFile) ) {
+        $_POST = [];
+        if (file_exists($this->testCacheFile)) {
             @unlink($this->testCacheFile);
         }
         TimeDate::getInstance()->allow_cache = true;

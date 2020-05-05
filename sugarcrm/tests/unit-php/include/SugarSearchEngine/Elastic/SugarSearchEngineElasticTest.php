@@ -25,11 +25,11 @@ class SugarSearchEngineElasticTest extends TestCase
      */
     public function testSearch($query, $offset, $limit, array $options)
     {
-        $engineMethods = array(
+        $engineMethods = [
             'isAvailable',
             'search',
             'term',
-        );
+        ];
 
         $engine = $this->getMockBuilder('Sugarcrm\Sugarcrm\SearchEngine\Capability\GlobalSearch\GlobalSearchCapable')
             ->setMethods($engineMethods)
@@ -81,8 +81,8 @@ class SugarSearchEngineElasticTest extends TestCase
 
         // tests search
         $sut = $this->getMockBuilder('SugarSearchEngineElastic')
-            ->setConstructorArgs(array(array(), $engine, $logger))
-            ->setMethods(array('createResultSet'))
+            ->setConstructorArgs([[], $engine, $logger])
+            ->setMethods(['createResultSet'])
             ->getMock();
 
         $sut->search($query, $offset, $limit, $options);
@@ -90,22 +90,22 @@ class SugarSearchEngineElasticTest extends TestCase
 
     public function providerTestSearch()
     {
-        return array(
-            array(
+        return [
+            [
                 'find this',
                 10,
                 30,
-                array(),
-            ),
-            array(
+                [],
+            ],
+            [
                 'find this',
                 10,
                 30,
-                array(
-                    'moduleFilter' => array('Accounts', 'Contacts'),
-                ),
-            ),
-        );
+                [
+                    'moduleFilter' => ['Accounts', 'Contacts'],
+                ],
+            ],
+        ];
     }
 
     /**

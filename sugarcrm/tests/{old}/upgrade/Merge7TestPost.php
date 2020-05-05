@@ -34,7 +34,7 @@ class Merge7TestPost extends UpgradeTestCase
         if ($prefix) {
             $filename = "$prefix/$filename";
         }
-        $pdata = array('panels' => $data);
+        $pdata = ['panels' => $data];
         mkdir_recursive(dirname($filename));
         SugarTestHelper::saveFile($filename);
         write_array_to_file("viewdefs['Accounts']['test']['view']['$viewname']", $pdata, $filename);
@@ -42,223 +42,223 @@ class Merge7TestPost extends UpgradeTestCase
 
     public function mergeData()
     {
-        return array(
+        return [
             // add field with out panel name, but panel label
-            array(
+            [
                 // pre
-                array(
-                    array(
+                [
+                    [
                         'label' => 'panel1',
-                        'fields' => array('email', 'phone', 'fax')
-                    )
-                ),
+                        'fields' => ['email', 'phone', 'fax'],
+                    ],
+                ],
                 // post
-                array(
-                    array(
+                [
+                    [
                         'label' => 'panel1',
-                        'fields' => array('email', 'phone', 'fax', 'description')
-                    )
-                ),
+                        'fields' => ['email', 'phone', 'fax', 'description'],
+                    ],
+                ],
                 // custom
-                array(
-                    array(
+                [
+                    [
                         'label' => 'panel1',
-                        'fields' => array('email', 'phone', 'fax', "custom_c")
-                    )
-                ),
+                        'fields' => ['email', 'phone', 'fax', "custom_c"],
+                    ],
+                ],
                 // result
-                array(
-                    array(
+                [
+                    [
                         'label' => 'panel1',
-                        'fields' => array('email', 'phone', 'fax', "custom_c", 'description')
-                    )
-                ),
-            ),
+                        'fields' => ['email', 'phone', 'fax', "custom_c", 'description'],
+                    ],
+                ],
+            ],
             // add field
-            array(
+            [
                 // pre
-                array(
-                    array(
+                [
+                    [
                         'name' => 'panel1',
-                        'fields' => array('email', 'phone', 'fax')
-                    )
-                ),
+                        'fields' => ['email', 'phone', 'fax'],
+                    ],
+                ],
                 // post
-                array(
-                    array(
+                [
+                    [
                         'name' => 'panel1',
-                        'fields' => array('email', 'phone', 'fax', 'description')
-                    )
-                ),
+                        'fields' => ['email', 'phone', 'fax', 'description'],
+                    ],
+                ],
                 // custom
-                array(
-                    array(
+                [
+                    [
                         'name' => 'panel1',
-                        'fields' => array('email', 'phone', 'fax', "custom_c")
-                    )
-                ),
+                        'fields' => ['email', 'phone', 'fax', "custom_c"],
+                    ],
+                ],
                 // result
-                array(
-                    array(
+                [
+                    [
                         'name' => 'panel1',
-                        'fields' => array('email', 'phone', 'fax', "custom_c", 'description')
-                    )
-                ),
-            ),
+                        'fields' => ['email', 'phone', 'fax', "custom_c", 'description'],
+                    ],
+                ],
+            ],
             // add field to another panel
-            array(
+            [
                 // pre
-                array(
-                    array(
+                [
+                    [
                         'name' => 'panel1',
-                        'fields' => array('email')
-                    ),
-                    array(
+                        'fields' => ['email'],
+                    ],
+                    [
                         'name' => 'panel2',
-                        'fields' => array('phone', 'fax')
-                    ),
-                ),
+                        'fields' => ['phone', 'fax'],
+                    ],
+                ],
                 // post
-                array(
-                    array(
+                [
+                    [
                         'name' => 'panel1',
-                        'fields' => array('email')
-                    ),
-                    array(
+                        'fields' => ['email'],
+                    ],
+                    [
                         'name' => 'panel2',
-                        'fields' => array('phone', 'fax', array("name" => 'description', "type" => "text"))
-                    ),
-                ),
+                        'fields' => ['phone', 'fax', ["name" => 'description', "type" => "text"]],
+                    ],
+                ],
                 // custom
-                array(
-                    array(
+                [
+                    [
                         'name' => 'panel1',
-                        'fields' => array('custom_c')
-                    ),
-                    array(
+                        'fields' => ['custom_c'],
+                    ],
+                    [
                         'name' => 'panel2',
-                        'fields' => array('phone', 'fax')
-                    ),
-                ),
+                        'fields' => ['phone', 'fax'],
+                    ],
+                ],
                 // result
-                array(
-                    array(
+                [
+                    [
                         'name' => 'panel1',
-                        'fields' => array('custom_c')
-                    ),
-                    array(
+                        'fields' => ['custom_c'],
+                    ],
+                    [
                         'name' => 'panel2',
-                        'fields' => array('phone', 'fax', array("name" => 'description', "type" => "text"))
-                    ),
-                ),
-            ),
+                        'fields' => ['phone', 'fax', ["name" => 'description', "type" => "text"]],
+                    ],
+                ],
+            ],
             // remove field
-            array(
+            [
                 // pre
-                array(
-                    array(
+                [
+                    [
                         'name' => 'panel1',
-                        'fields' => array('email', 'phone', 'fax', array("name" => "address"))
-                    )
-                ),
+                        'fields' => ['email', 'phone', 'fax', ["name" => "address"]],
+                    ],
+                ],
                 // post
-                array(
-                    array(
+                [
+                    [
                         'name' => 'panel1',
-                        'fields' => array('email', 'phone', 'description')
-                    )
-                ),
+                        'fields' => ['email', 'phone', 'description'],
+                    ],
+                ],
                 // custom
-                array(
-                    array(
+                [
+                    [
                         'name' => 'panel1',
-                        'fields' => array('email', 'phone', 'fax', "custom_c")
-                    ),
-                    array(
+                        'fields' => ['email', 'phone', 'fax', "custom_c"],
+                    ],
+                    [
                         "name" => "panel2",
-                        'fields' => array(array("name" => "address"))
-                    )
-                ),
+                        'fields' => [["name" => "address"]],
+                    ],
+                ],
                 // result
-                array(
-                    array(
+                [
+                    [
                         'name' => 'panel1',
-                        'fields' => array('email', 'phone', "custom_c", 'description')
-                    ),
-                    array(
+                        'fields' => ['email', 'phone', "custom_c", 'description'],
+                    ],
+                    [
                         "name" => "panel2",
-                        'fields' => array()
-                    )
-                ),
-            ),
+                        'fields' => [],
+                    ],
+                ],
+            ],
             // field changed in new
-            array(
+            [
                 // pre
-                array(
-                    array(
+                [
+                    [
                         'name' => 'panel1',
-                        'fields' => array('email', 'phone', array("name" => 'fax', "type" => "text"))
-                    )
-                ),
+                        'fields' => ['email', 'phone', ["name" => 'fax', "type" => "text"]],
+                    ],
+                ],
                 // post
-                array(
-                    array(
+                [
+                    [
                         'name' => 'panel1',
-                        'fields' => array('email', 'phone', array("name" => 'fax', "type" => "phone"), 'description')
-                    )
-                ),
+                        'fields' => ['email', 'phone', ["name" => 'fax', "type" => "phone"], 'description'],
+                    ],
+                ],
                 // custom
-                array(
-                    array(
+                [
+                    [
                         'name' => 'panel1',
-                        'fields' => array('email', 'phone', array("name" => 'fax', "type" => "text"), "custom_c")
-                    )
-                ),
+                        'fields' => ['email', 'phone', ["name" => 'fax', "type" => "text"], "custom_c"],
+                    ],
+                ],
                 // result
-                array(
-                    array(
+                [
+                    [
                         'name' => 'panel1',
-                        'fields' => array(
-                            'email', 'phone', array("name" => 'fax', "type" => "phone"), "custom_c", 'description'
-                        )
-                    )
-                ),
-            ),
+                        'fields' => [
+                            'email', 'phone', ["name" => 'fax', "type" => "phone"], "custom_c", 'description',
+                        ],
+                    ],
+                ],
+            ],
             // field changed in custom
-            array(
+            [
                 // pre
-                array(
-                    array(
+                [
+                    [
                         'name' => 'panel1',
-                        'fields' => array('email', 'phone', array("name" => 'fax', "type" => "text"))
-                    )
-                ),
+                        'fields' => ['email', 'phone', ["name" => 'fax', "type" => "text"]],
+                    ],
+                ],
                 // post
-                array(
-                    array(
+                [
+                    [
                         'name' => 'panel1',
-                        'fields' => array('email', 'phone', array("name" => 'fax', "type" => "phone"), 'description')
-                    )
-                ),
+                        'fields' => ['email', 'phone', ["name" => 'fax', "type" => "phone"], 'description'],
+                    ],
+                ],
                 // custom
-                array(
-                    array(
+                [
+                    [
                         'name' => 'panel1',
-                        'fields' => array('email', 'phone', array("name" => 'fax', "type" => "enum"), "custom_c")
-                    )
-                ),
+                        'fields' => ['email', 'phone', ["name" => 'fax', "type" => "enum"], "custom_c"],
+                    ],
+                ],
                 // result
-                array(
-                    array(
+                [
+                    [
                         'name' => 'panel1',
-                        'fields' => array(
-                            'email', 'phone', array("name" => 'fax', "type" => "enum"), "custom_c", 'description'
-                        )
-                    )
-                ),
-            ),
+                        'fields' => [
+                            'email', 'phone', ["name" => 'fax', "type" => "enum"], "custom_c", 'description',
+                        ],
+                    ],
+                ],
+            ],
 
-        );
+        ];
     }
 
     /**
@@ -340,114 +340,114 @@ class Merge7TestPost extends UpgradeTestCase
 
     public function getSantizeDataProvider()
     {
-        return array(
+        return [
             // Test empty top level viewdefs element is removed
-            array(
-                'input' => array(
-                    'buttons' => array(),
-                    'panels' => array(
-                        array(
+            [
+                'input' => [
+                    'buttons' => [],
+                    'panels' => [
+                        [
                             'name' => 'panel1',
-                            'fields' => array(
+                            'fields' => [
                                 'test1',
                                 'test2',
-                            ),
-                        ),
-                    ),
-                    'templateMeta' => array(
+                            ],
+                        ],
+                    ],
+                    'templateMeta' => [
                         'maxColumns' => '1',
-                        'widths' => array(
-                            array(
+                        'widths' => [
+                            [
                                 'label' => '10',
                                 'field' => '30',
-                            ),
-                        ),
-                    ),
-                ),
-                'expect' => array(
-                    'panels' => array(
-                        array(
+                            ],
+                        ],
+                    ],
+                ],
+                'expect' => [
+                    'panels' => [
+                        [
                             'name' => 'panel1',
-                            'fields' => array(
+                            'fields' => [
                                 'test1',
                                 'test2',
-                            ),
-                        ),
-                    ),
-                    'templateMeta' => array(
+                            ],
+                        ],
+                    ],
+                    'templateMeta' => [
                         'maxColumns' => '1',
-                        'widths' => array(
-                            array(
+                        'widths' => [
+                            [
                                 'label' => '10',
                                 'field' => '30',
-                            ),
-                        ),
-                    ),
-                ),
-            ),
+                            ],
+                        ],
+                    ],
+                ],
+            ],
             // Test not empty top level viewdefs element not changed
-            array(
-                'input' => array(
-                    'buttons' => array('Test not empty'),
-                    'panels' => array(
-                        array(
+            [
+                'input' => [
+                    'buttons' => ['Test not empty'],
+                    'panels' => [
+                        [
                             'name' => 'panel1',
-                            'fields' => array(
+                            'fields' => [
                                 'test1',
                                 'test2',
-                            ),
-                        ),
-                    ),
-                    'templateMeta' => array(
+                            ],
+                        ],
+                    ],
+                    'templateMeta' => [
                         'maxColumns' => '1',
-                        'widths' => array(
-                            array(
+                        'widths' => [
+                            [
                                 'label' => '10',
                                 'field' => '30',
-                            ),
-                        ),
-                    ),
-                ),
-                'expect' => array(
-                    'buttons' => array('Test not empty'),
-                    'panels' => array(
-                        array(
+                            ],
+                        ],
+                    ],
+                ],
+                'expect' => [
+                    'buttons' => ['Test not empty'],
+                    'panels' => [
+                        [
                             'name' => 'panel1',
-                            'fields' => array(
+                            'fields' => [
                                 'test1',
                                 'test2',
-                            ),
-                        ),
-                    ),
-                    'templateMeta' => array(
+                            ],
+                        ],
+                    ],
+                    'templateMeta' => [
                         'maxColumns' => '1',
-                        'widths' => array(
-                            array(
+                        'widths' => [
+                            [
                                 'label' => '10',
                                 'field' => '30',
-                            ),
-                        ),
-                    ),
-                ),
-            ),
-        );
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
     }
 
     public function getMergeTestData()
     {
-        return array(
+        return [
             // Old/new same, no custom... take old/new
-            array(
-                'old' => array(
-                    'buttons' => array(
-                        array(
+            [
+                'old' => [
+                    'buttons' => [
+                        [
                             'type' => 'button',
                             'name' => 'cancel_button',
                             'label' => 'LBL_CANCEL_BUTTON_LABEL',
                             'css_class' => 'btn-invisible btn-link',
                             'showOn' => 'edit',
-                        ),
-                        array(
+                        ],
+                        [
                             'type' => 'rowaction',
                             'event' => 'button:save_button:click',
                             'name' => 'save_button',
@@ -455,19 +455,19 @@ class Merge7TestPost extends UpgradeTestCase
                             'css_class' => 'btn btn-primary',
                             'showOn' => 'edit',
                             'acl_action' => 'edit',
-                        ),
-                    ),
-                ),
-                'new' => array(
-                    'buttons' => array(
-                        array(
+                        ],
+                    ],
+                ],
+                'new' => [
+                    'buttons' => [
+                        [
                             'type' => 'button',
                             'name' => 'cancel_button',
                             'label' => 'LBL_CANCEL_BUTTON_LABEL',
                             'css_class' => 'btn-invisible btn-link',
                             'showOn' => 'edit',
-                        ),
-                        array(
+                        ],
+                        [
                             'type' => 'rowaction',
                             'event' => 'button:save_button:click',
                             'name' => 'save_button',
@@ -475,67 +475,67 @@ class Merge7TestPost extends UpgradeTestCase
                             'css_class' => 'btn btn-primary',
                             'showOn' => 'edit',
                             'acl_action' => 'edit',
-                        ),
-                    ),
-                ),
-                'cst' => array(),
+                        ],
+                    ],
+                ],
+                'cst' => [],
                 'noChange' => true,
                 'needSave' => false,
-                'expect' => array(),
-            ),
+                'expect' => [],
+            ],
             // Old/New same, Custom different, merge custom with changes
-            array(
-                'old' => array(
-                    'a1' => array(
+            [
+                'old' => [
+                    'a1' => [
                         'id' => 'record_view',
-                        'defaults' => array(
-                            'show_more' => 'more'
-                        ),
-                    ),
-                    'a2' => array(
-                        'node' => array(
+                        'defaults' => [
+                            'show_more' => 'more',
+                        ],
+                    ],
+                    'a2' => [
+                        'node' => [
                             'foo' => 'bar',
-                        ),
-                    ),
-                ),
-                'new' => array(
-                    'a1' => array(
+                        ],
+                    ],
+                ],
+                'new' => [
+                    'a1' => [
                         'id' => 'record_view',
-                        'defaults' => array(
-                            'show_more' => 'more'
-                        ),
-                    ),
-                    'a2' => array(
-                        'node' => array(
+                        'defaults' => [
+                            'show_more' => 'more',
+                        ],
+                    ],
+                    'a2' => [
+                        'node' => [
                             'foo' => 'bar',
-                        ),
-                    ),
-                ),
-                'cst' => array(
-                    'a1' => array(
+                        ],
+                    ],
+                ],
+                'cst' => [
+                    'a1' => [
                         'id' => 'list_view',
-                    ),
-                ),
+                    ],
+                ],
                 'noChange' => false,
                 'needSave' => false,
-                'expect' => array(
-                    'a1' => array(
+                'expect' => [
+                    'a1' => [
                         'id' => 'list_view',
-                    ),
-                ),
-            ),
+                    ],
+                ],
+            ],
             // Old/New different, no Custom, take changes between new and old
-            array(
-                'old' => array(
-                    'buttons' => array(
-                        array(
+            [
+                'old' => [
+                    'buttons' => [
+                        [
                             'type' => 'button',
                             'name' => 'cancel_button',
                             'label' => 'LBL_CANCEL_BUTTON_LABEL',
                             'css_class' => 'btn-invisible btn-link',
                             'showOn' => 'edit',
-                        ),
-                        array(
+                        ],
+                        [
                             'type' => 'rowaction',
                             'event' => 'button:save_button:click',
                             'name' => 'save_button',
@@ -543,36 +543,36 @@ class Merge7TestPost extends UpgradeTestCase
                             'css_class' => 'btn btn-primary',
                             'showOn' => 'edit',
                             'acl_action' => 'edit',
-                        ),
-                    ),
-                ),
-                'new' => array(
-                    'buttons' => array(
-                        array(
+                        ],
+                    ],
+                ],
+                'new' => [
+                    'buttons' => [
+                        [
                             'type' => 'button',
                             'name' => 'modify_button',
                             'label' => 'LBL_MODIFY_BUTTON_LABEL',
                             'css_class' => 'btn-invisible btn-link',
-                        ),
-                    ),
-                ),
-                'cst' => array(),
+                        ],
+                    ],
+                ],
+                'cst' => [],
                 'noChange' => false,
                 'needSave' => false,
-                'expect' => array(),
-            ),
+                'expect' => [],
+            ],
             // Old, new and Custom all different, merge custom with changes
-            array(
-                'old' => array(
-                    'buttons' => array(
-                        array(
+            [
+                'old' => [
+                    'buttons' => [
+                        [
                             'type' => 'button',
                             'name' => 'cancel_button',
                             'label' => 'LBL_CANCEL_BUTTON_LABEL',
                             'css_class' => 'btn-invisible btn-link',
                             'showOn' => 'edit',
-                        ),
-                        array(
+                        ],
+                        [
                             'type' => 'rowaction',
                             'event' => 'button:save_button:click',
                             'name' => 'save_button',
@@ -580,199 +580,199 @@ class Merge7TestPost extends UpgradeTestCase
                             'css_class' => 'btn btn-primary',
                             'showOn' => 'edit',
                             'acl_action' => 'edit',
-                        ),
-                    ),
-                ),
-                'new' => array(
-                    'buttons' => array(
-                        array(
+                        ],
+                    ],
+                ],
+                'new' => [
+                    'buttons' => [
+                        [
                             'type' => 'button',
                             'name' => 'modify_button',
                             'label' => 'LBL_MODIFY_BUTTON_LABEL',
                             'css_class' => 'btn-invisible btn-link',
-                        ),
-                    ),
-                ),
-                'cst' => array(
-                    'buttons' => array(
-                        array(
+                        ],
+                    ],
+                ],
+                'cst' => [
+                    'buttons' => [
+                        [
                             'type' => 'button',
                             'name' => 'send_button',
                             'label' => 'LBL_SEND_BUTTON_LABEL',
                             'css_class' => 'btn-invisible btn-link',
-                            'showOn' => array('edit', 'record'),
-                        ),
-                    ),
-                ),
+                            'showOn' => ['edit', 'record'],
+                        ],
+                    ],
+                ],
                 'noChange' => false,
                 'needSave' => true,
-                'expect' => array(
-                    'buttons' => array(
-                        array(
+                'expect' => [
+                    'buttons' => [
+                        [
                             'type' => 'button',
                             'name' => 'modify_button',
                             'label' => 'LBL_MODIFY_BUTTON_LABEL',
                             'css_class' => 'btn-invisible btn-link',
-                        ),
-                        array(
+                        ],
+                        [
                             'type' => 'button',
                             'name' => 'send_button',
                             'label' => 'LBL_SEND_BUTTON_LABEL',
                             'css_class' => 'btn-invisible btn-link',
-                            'showOn' => array('edit', 'record'),
-                        ),
-                    ),
-                ),
-            ),
-            // From ticket # BR-1804... 
+                            'showOn' => ['edit', 'record'],
+                        ],
+                    ],
+                ],
+            ],
+            // From ticket # BR-1804...
             // old is 7.2.0 OOTB Accounts record viewdefs
             // new is 7.2.1 OOTB Accounts record viewdefs
             // cst is 7.2.0 custom Accounts record viewdefs
             // expect contains panels, last_state and buttons
-            array(
-                'old' => array(
-                    'panels' => array(
-                        array(
+            [
+                'old' => [
+                    'panels' => [
+                        [
                             'name' => 'panel_header',
                             'label' => 'LBL_PANEL_HEADER',
                             'header' => true,
-                            'fields' => array(
-                                array(
+                            'fields' => [
+                                [
                                     'name' => 'picture',
                                     'type' => 'avatar',
                                     'size' => 'large',
                                     'dismiss_label' => true,
                                     'readonly' => true,
-                                ),
+                                ],
                                 'name',
-                                array(
+                                [
                                     'name' => 'favorite',
                                     'label' => 'LBL_FAVORITE',
                                     'type' => 'favorite',
                                     'dismiss_label' => true,
-                                ),
-                                array(
+                                ],
+                                [
                                     'name' => 'follow',
                                     'label' => 'LBL_FOLLOW',
                                     'type' => 'follow',
                                     'readonly' => true,
                                     'dismiss_label' => true,
-                                ),
-                            )
-                        ),
-                        array(
+                                ],
+                            ],
+                        ],
+                        [
                             'name' => 'panel_body',
                             'label' => 'LBL_RECORD_BODY',
                             'columns' => 2,
                             'labelsOnTop' => true,
                             'placeholders' => true,
-                            'fields' => array(
+                            'fields' => [
                                 'website',
                                 'industry',
                                 'parent_name',
                                 'account_type',
                                 'assigned_user_name',
                                 'phone_office',
-                            ),
-                        ),
-                        array(
+                            ],
+                        ],
+                        [
                             'name' => 'panel_hidden',
                             'label' => 'LBL_RECORD_SHOWMORE',
                             'hide' => true,
                             'columns' => 2,
                             'labelsOnTop' => true,
                             'placeholders' => true,
-                            'fields' => array(
-                                array(
+                            'fields' => [
+                                [
                                     'name' => 'billing_address',
                                     'type' => 'fieldset',
                                     'css_class' => 'address',
                                     'label' => 'LBL_BILLING_ADDRESS',
-                                    'fields' => array(
-                                        array(
+                                    'fields' => [
+                                        [
                                             'name' => 'billing_address_street',
                                             'css_class' => 'address_street',
                                             'placeholder' => 'LBL_BILLING_ADDRESS_STREET',
-                                        ),
-                                        array(
+                                        ],
+                                        [
                                             'name' => 'billing_address_city',
                                             'css_class' => 'address_city',
                                             'placeholder' => 'LBL_BILLING_ADDRESS_CITY',
-                                        ),
-                                        array(
+                                        ],
+                                        [
                                             'name' => 'billing_address_state',
                                             'css_class' => 'address_state',
                                             'placeholder' => 'LBL_BILLING_ADDRESS_STATE',
-                                        ),
-                                        array(
+                                        ],
+                                        [
                                             'name' => 'billing_address_postalcode',
                                             'css_class' => 'address_zip',
                                             'placeholder' => 'LBL_BILLING_ADDRESS_POSTALCODE',
-                                        ),
-                                        array(
+                                        ],
+                                        [
                                             'name' => 'billing_address_country',
                                             'css_class' => 'address_country',
                                             'placeholder' => 'LBL_BILLING_ADDRESS_COUNTRY',
-                                        ),
-                                    ),
-                                ),
-                                array(
+                                        ],
+                                    ],
+                                ],
+                                [
                                     'name' => 'shipping_address',
                                     'type' => 'fieldset',
                                     'css_class' => 'address',
                                     'label' => 'LBL_SHIPPING_ADDRESS',
-                                    'fields' => array(
-                                        array(
+                                    'fields' => [
+                                        [
                                             'name' => 'shipping_address_street',
                                             'css_class' => 'address_street',
                                             'placeholder' => 'LBL_SHIPPING_ADDRESS_STREET',
-                                        ),
-                                        array(
+                                        ],
+                                        [
                                             'name' => 'shipping_address_city',
                                             'css_class' => 'address_city',
                                             'placeholder' => 'LBL_SHIPPING_ADDRESS_CITY',
-                                        ),
-                                        array(
+                                        ],
+                                        [
                                             'name' => 'shipping_address_state',
                                             'css_class' => 'address_state',
                                             'placeholder' => 'LBL_SHIPPING_ADDRESS_STATE',
-                                        ),
-                                        array(
+                                        ],
+                                        [
                                             'name' => 'shipping_address_postalcode',
                                             'css_class' => 'address_zip',
                                             'placeholder' => 'LBL_SHIPPING_ADDRESS_POSTALCODE',
-                                        ),
-                                        array(
+                                        ],
+                                        [
                                             'name' => 'shipping_address_country',
                                             'css_class' => 'address_country',
                                             'placeholder' => 'LBL_SHIPPING_ADDRESS_COUNTRY',
-                                        ),
-                                        array(
+                                        ],
+                                        [
                                             'name' => 'copy',
                                             'label' => 'NTC_COPY_BILLING_ADDRESS',
                                             'type' => 'copy',
-                                            'mapping' => array(
+                                            'mapping' => [
                                                 'billing_address_street' => 'shipping_address_street',
                                                 'billing_address_city' => 'shipping_address_city',
                                                 'billing_address_state' => 'shipping_address_state',
                                                 'billing_address_postalcode' => 'shipping_address_postalcode',
                                                 'billing_address_country' => 'shipping_address_country',
-                                            ),
-                                        ),
-                                    ),
-                                ),
-                                array(
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                                [
                                     'name' => 'phone_alternate',
                                     'label' => 'LBL_OTHER_PHONE',
-                                ),
+                                ],
                                 'email',
                                 'phone_fax',
                                 'campaign_name',
                                 'twitter',
-                                array(
+                                [
                                     'name' => 'description',
                                     'span' => 12,
-                                ),
+                                ],
                                 'sic_code',
                                 'ticker_symbol',
                                 'annual_revenue',
@@ -780,61 +780,61 @@ class Merge7TestPost extends UpgradeTestCase
                                 'ownership',
                                 'rating',
 
-                                array(
+                                [
                                     'name' => 'duns_num',
                                     'readonly' => true,
-                                ),
-                                array(
+                                ],
+                                [
                                     'name' => 'date_entered_by',
                                     'readonly' => true,
                                     'type' => 'fieldset',
                                     'label' => 'LBL_DATE_ENTERED',
-                                    'fields' => array(
-                                        array(
+                                    'fields' => [
+                                        [
                                             'name' => 'date_entered',
-                                        ),
-                                        array(
+                                        ],
+                                        [
                                             'type' => 'label',
                                             'default_value' => 'LBL_BY',
-                                        ),
-                                        array(
+                                        ],
+                                        [
                                             'name' => 'created_by_name',
-                                        ),
-                                    ),
-                                ),
+                                        ],
+                                    ],
+                                ],
                                 'team_name',
-                                array(
+                                [
                                     'name' => 'date_modified_by',
                                     'readonly' => true,
                                     'type' => 'fieldset',
                                     'label' => 'LBL_DATE_MODIFIED',
-                                    'fields' => array(
-                                        array(
+                                    'fields' => [
+                                        [
                                             'name' => 'date_modified',
-                                        ),
-                                        array(
+                                        ],
+                                        [
                                             'type' => 'label',
                                             'default_value' => 'LBL_BY',
-                                        ),
-                                        array(
+                                        ],
+                                        [
                                             'name' => 'modified_by_name',
-                                        ),
-                                    ),
-                                ),
-                            ),
-                        ),
-                    ),
-                ),
-                'new' => array(
-                    'buttons' => array(
-                        array(
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                'new' => [
+                    'buttons' => [
+                        [
                             'type' => 'button',
                             'name' => 'cancel_button',
                             'label' => 'LBL_CANCEL_BUTTON_LABEL',
                             'css_class' => 'btn-invisible btn-link',
                             'showOn' => 'edit',
-                        ),
-                        array(
+                        ],
+                        [
                             'type' => 'rowaction',
                             'event' => 'button:save_button:click',
                             'name' => 'save_button',
@@ -842,231 +842,231 @@ class Merge7TestPost extends UpgradeTestCase
                             'css_class' => 'btn btn-primary',
                             'showOn' => 'edit',
                             'acl_action' => 'edit',
-                        ),
-                        array(
+                        ],
+                        [
                             'type' => 'actiondropdown',
                             'name' => 'main_dropdown',
                             'primary' => true,
                             'showOn' => 'view',
-                            'buttons' => array(
-                                array(
+                            'buttons' => [
+                                [
                                     'type' => 'rowaction',
                                     'event' => 'button:edit_button:click',
                                     'name' => 'edit_button',
                                     'label' => 'LBL_EDIT_BUTTON_LABEL',
                                     'acl_action' => 'edit',
-                                ),
-                                array(
+                                ],
+                                [
                                     'type' => 'shareaction',
                                     'name' => 'share',
                                     'label' => 'LBL_RECORD_SHARE_BUTTON',
                                     'acl_action' => 'view',
-                                ),
-                                array(
+                                ],
+                                [
                                     'type' => 'pdfaction',
                                     'name' => 'download-pdf',
                                     'label' => 'LBL_PDF_VIEW',
                                     'action' => 'download',
                                     'acl_action' => 'view',
-                                ),
-                                array(
+                                ],
+                                [
                                     'type' => 'pdfaction',
                                     'name' => 'email-pdf',
                                     'label' => 'LBL_PDF_EMAIL',
                                     'action' => 'email',
                                     'acl_action' => 'view',
-                                ),
-                                array(
+                                ],
+                                [
                                     'type' => 'divider',
-                                ),
-                                array(
+                                ],
+                                [
                                     'type' => 'rowaction',
                                     'event' => 'button:find_duplicates_button:click',
                                     'name' => 'find_duplicates_button',
                                     'label' => 'LBL_DUP_MERGE',
                                     'acl_action' => 'edit',
-                                ),
-                                array(
+                                ],
+                                [
                                     'type' => 'rowaction',
                                     'event' => 'button:duplicate_button:click',
                                     'name' => 'duplicate_button',
                                     'label' => 'LBL_DUPLICATE_BUTTON_LABEL',
                                     'acl_module' => 'Accounts',
                                     'acl_action' => 'create',
-                                ),
-                                array(
+                                ],
+                                [
                                     'type' => 'rowaction',
                                     'event' => 'button:historical_summary_button:click',
                                     'name' => 'historical_summary_button',
                                     'label' => 'LBL_HISTORICAL_SUMMARY',
                                     'acl_action' => 'view',
-                                ),
-                                array(
+                                ],
+                                [
                                     'type' => 'rowaction',
                                     'event' => 'button:audit_button:click',
                                     'name' => 'audit_button',
                                     'label' => 'LNK_VIEW_CHANGE_LOG',
                                     'acl_action' => 'view',
-                                ),
-                                array(
+                                ],
+                                [
                                     'type' => 'divider',
-                                ),
-                                array(
+                                ],
+                                [
                                     'type' => 'rowaction',
                                     'event' => 'button:delete_button:click',
                                     'name' => 'delete_button',
                                     'label' => 'LBL_DELETE_BUTTON_LABEL',
                                     'acl_action' => 'delete',
-                                ),
-                            ),
-                        ),
-                        array(
+                                ],
+                            ],
+                        ],
+                        [
                             'name' => 'sidebar_toggle',
                             'type' => 'sidebartoggle',
-                        ),
-                    ),
-                    'panels' => array(
-                        array(
+                        ],
+                    ],
+                    'panels' => [
+                        [
                             'name' => 'panel_header',
                             'label' => 'LBL_PANEL_HEADER',
                             'header' => true,
-                            'fields' => array(
-                                array(
+                            'fields' => [
+                                [
                                     'name' => 'picture',
                                     'type' => 'avatar',
                                     'size' => 'large',
                                     'dismiss_label' => true,
                                     'readonly' => true,
-                                ),
+                                ],
                                 'name',
-                                array(
+                                [
                                     'name' => 'favorite',
                                     'label' => 'LBL_FAVORITE',
                                     'type' => 'favorite',
                                     'dismiss_label' => true,
-                                ),
-                                array(
+                                ],
+                                [
                                     'name' => 'follow',
                                     'label' => 'LBL_FOLLOW',
                                     'type' => 'follow',
                                     'readonly' => true,
                                     'dismiss_label' => true,
-                                ),
-                            )
-                        ),
-                        array(
+                                ],
+                            ],
+                        ],
+                        [
                             'name' => 'panel_body',
                             'label' => 'LBL_RECORD_BODY',
                             'columns' => 2,
                             'labelsOnTop' => true,
                             'placeholders' => true,
-                            'fields' => array(
+                            'fields' => [
                                 'website',
                                 'industry',
                                 'parent_name',
                                 'account_type',
                                 'assigned_user_name',
                                 'phone_office',
-                            ),
-                        ),
-                        array(
+                            ],
+                        ],
+                        [
                             'name' => 'panel_hidden',
                             'label' => 'LBL_RECORD_SHOWMORE',
                             'hide' => true,
                             'columns' => 2,
                             'labelsOnTop' => true,
                             'placeholders' => true,
-                            'fields' => array(
-                                array(
+                            'fields' => [
+                                [
                                     'name' => 'billing_address',
                                     'type' => 'fieldset',
                                     'css_class' => 'address',
                                     'label' => 'LBL_BILLING_ADDRESS',
-                                    'fields' => array(
-                                        array(
+                                    'fields' => [
+                                        [
                                             'name' => 'billing_address_street',
                                             'css_class' => 'address_street',
                                             'placeholder' => 'LBL_BILLING_ADDRESS_STREET',
-                                        ),
-                                        array(
+                                        ],
+                                        [
                                             'name' => 'billing_address_city',
                                             'css_class' => 'address_city',
                                             'placeholder' => 'LBL_BILLING_ADDRESS_CITY',
-                                        ),
-                                        array(
+                                        ],
+                                        [
                                             'name' => 'billing_address_state',
                                             'css_class' => 'address_state',
                                             'placeholder' => 'LBL_BILLING_ADDRESS_STATE',
-                                        ),
-                                        array(
+                                        ],
+                                        [
                                             'name' => 'billing_address_postalcode',
                                             'css_class' => 'address_zip',
                                             'placeholder' => 'LBL_BILLING_ADDRESS_POSTALCODE',
-                                        ),
-                                        array(
+                                        ],
+                                        [
                                             'name' => 'billing_address_country',
                                             'css_class' => 'address_country',
                                             'placeholder' => 'LBL_BILLING_ADDRESS_COUNTRY',
-                                        ),
-                                    ),
-                                ),
-                                array(
+                                        ],
+                                    ],
+                                ],
+                                [
                                     'name' => 'shipping_address',
                                     'type' => 'fieldset',
                                     'css_class' => 'address',
                                     'label' => 'LBL_SHIPPING_ADDRESS',
-                                    'fields' => array(
-                                        array(
+                                    'fields' => [
+                                        [
                                             'name' => 'shipping_address_street',
                                             'css_class' => 'address_street',
                                             'placeholder' => 'LBL_SHIPPING_ADDRESS_STREET',
-                                        ),
-                                        array(
+                                        ],
+                                        [
                                             'name' => 'shipping_address_city',
                                             'css_class' => 'address_city',
                                             'placeholder' => 'LBL_SHIPPING_ADDRESS_CITY',
-                                        ),
-                                        array(
+                                        ],
+                                        [
                                             'name' => 'shipping_address_state',
                                             'css_class' => 'address_state',
                                             'placeholder' => 'LBL_SHIPPING_ADDRESS_STATE',
-                                        ),
-                                        array(
+                                        ],
+                                        [
                                             'name' => 'shipping_address_postalcode',
                                             'css_class' => 'address_zip',
                                             'placeholder' => 'LBL_SHIPPING_ADDRESS_POSTALCODE',
-                                        ),
-                                        array(
+                                        ],
+                                        [
                                             'name' => 'shipping_address_country',
                                             'css_class' => 'address_country',
                                             'placeholder' => 'LBL_SHIPPING_ADDRESS_COUNTRY',
-                                        ),
-                                        array(
+                                        ],
+                                        [
                                             'name' => 'copy',
                                             'label' => 'NTC_COPY_BILLING_ADDRESS',
                                             'type' => 'copy',
-                                            'mapping' => array(
+                                            'mapping' => [
                                                 'billing_address_street' => 'shipping_address_street',
                                                 'billing_address_city' => 'shipping_address_city',
                                                 'billing_address_state' => 'shipping_address_state',
                                                 'billing_address_postalcode' => 'shipping_address_postalcode',
                                                 'billing_address_country' => 'shipping_address_country',
-                                            ),
-                                        ),
-                                    ),
-                                ),
-                                array(
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                                [
                                     'name' => 'phone_alternate',
                                     'label' => 'LBL_OTHER_PHONE',
-                                ),
+                                ],
                                 'email',
                                 'phone_fax',
                                 'campaign_name',
                                 'twitter',
-                                array(
+                                [
                                     'name' => 'description',
                                     'span' => 12,
-                                ),
+                                ],
                                 'sic_code',
                                 'ticker_symbol',
                                 'annual_revenue',
@@ -1074,161 +1074,161 @@ class Merge7TestPost extends UpgradeTestCase
                                 'ownership',
                                 'rating',
 
-                                array(
+                                [
                                     'name' => 'duns_num',
                                     'readonly' => true,
-                                ),
-                                array(
+                                ],
+                                [
                                     'name' => 'date_entered_by',
                                     'readonly' => true,
                                     'type' => 'fieldset',
                                     'label' => 'LBL_DATE_ENTERED',
-                                    'fields' => array(
-                                        array(
+                                    'fields' => [
+                                        [
                                             'name' => 'date_entered',
-                                        ),
-                                        array(
+                                        ],
+                                        [
                                             'type' => 'label',
                                             'default_value' => 'LBL_BY',
-                                        ),
-                                        array(
+                                        ],
+                                        [
                                             'name' => 'created_by_name',
-                                        ),
-                                    ),
-                                ),
+                                        ],
+                                    ],
+                                ],
                                 'team_name',
-                                array(
+                                [
                                     'name' => 'date_modified_by',
                                     'readonly' => true,
                                     'type' => 'fieldset',
                                     'label' => 'LBL_DATE_MODIFIED',
-                                    'fields' => array(
-                                        array(
+                                    'fields' => [
+                                        [
                                             'name' => 'date_modified',
-                                        ),
-                                        array(
+                                        ],
+                                        [
                                             'type' => 'label',
                                             'default_value' => 'LBL_BY',
-                                        ),
-                                        array(
+                                        ],
+                                        [
                                             'name' => 'modified_by_name',
-                                        ),
-                                    ),
-                                ),
-                            ),
-                        ),
-                    ),
-                ),
-                'cst' => array(
-                    'panels' => array(
-                        array(
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                'cst' => [
+                    'panels' => [
+                        [
                             'name' => 'panel_header',
                             'label' => 'LBL_PANEL_HEADER',
                             'header' => true,
-                            'fields' => array(
-                                array(
+                            'fields' => [
+                                [
                                     'name' => 'picture',
                                     'type' => 'avatar',
                                     'size' => 'large',
                                     'dismiss_label' => true,
                                     'readonly' => true,
-                                ),
+                                ],
                                 'name',
-                                array(
+                                [
                                     'name' => 'favorite',
                                     'label' => 'LBL_FAVORITE',
                                     'type' => 'favorite',
                                     'dismiss_label' => true,
-                                ),
-                                array(
+                                ],
+                                [
                                     'name' => 'follow',
                                     'label' => 'LBL_FOLLOW',
                                     'type' => 'follow',
                                     'readonly' => true,
                                     'dismiss_label' => true,
-                                ),
-                            )
-                        ),
-                        array(
+                                ],
+                            ],
+                        ],
+                        [
                             'name' => 'panel_body',
                             'label' => 'LBL_RECORD_BODY',
                             'columns' => 2,
                             'labelsOnTop' => true,
                             'placeholders' => true,
-                            'fields' => array(
+                            'fields' => [
                                 'website',
                                 'industry',
                                 'parent_name',
                                 'account_type',
                                 'assigned_user_name',
                                 'phone_office',
-                            ),
-                        ),
-                    ),
-                    'last_state' => array(
+                            ],
+                        ],
+                    ],
+                    'last_state' => [
                         'id' => 'record_view',
-                        'defaults' => array(
-                            'show_more' => 'more'
-                        ),
-                    ),
-                ),
+                        'defaults' => [
+                            'show_more' => 'more',
+                        ],
+                    ],
+                ],
                 'noChange' => false,
                 'needSave' => true,
-                'expect' => array(
-                    'panels' => array(
-                        array(
+                'expect' => [
+                    'panels' => [
+                        [
                             'name' => 'panel_header',
                             'label' => 'LBL_PANEL_HEADER',
                             'header' => true,
-                            'fields' => array(
-                                array(
+                            'fields' => [
+                                [
                                     'name' => 'picture',
                                     'type' => 'avatar',
                                     'size' => 'large',
                                     'dismiss_label' => true,
                                     'readonly' => true,
-                                ),
+                                ],
                                 'name',
-                                array(
+                                [
                                     'name' => 'favorite',
                                     'label' => 'LBL_FAVORITE',
                                     'type' => 'favorite',
                                     'dismiss_label' => true,
-                                ),
-                                array(
+                                ],
+                                [
                                     'name' => 'follow',
                                     'label' => 'LBL_FOLLOW',
                                     'type' => 'follow',
                                     'readonly' => true,
                                     'dismiss_label' => true,
-                                ),
-                            )
-                        ),
-                        array(
+                                ],
+                            ],
+                        ],
+                        [
                             'name' => 'panel_body',
                             'label' => 'LBL_RECORD_BODY',
                             'columns' => 2,
                             'labelsOnTop' => true,
                             'placeholders' => true,
-                            'fields' => array(
+                            'fields' => [
                                 'website',
                                 'industry',
                                 'parent_name',
                                 'account_type',
                                 'assigned_user_name',
                                 'phone_office',
-                            ),
-                        ),
-                    ),
-                    'buttons' => array(
-                        array(
+                            ],
+                        ],
+                    ],
+                    'buttons' => [
+                        [
                             'type' => 'button',
                             'name' => 'cancel_button',
                             'label' => 'LBL_CANCEL_BUTTON_LABEL',
                             'css_class' => 'btn-invisible btn-link',
                             'showOn' => 'edit',
-                        ),
-                        array(
+                        ],
+                        [
                             'type' => 'rowaction',
                             'event' => 'button:save_button:click',
                             'name' => 'save_button',
@@ -1236,97 +1236,97 @@ class Merge7TestPost extends UpgradeTestCase
                             'css_class' => 'btn btn-primary',
                             'showOn' => 'edit',
                             'acl_action' => 'edit',
-                        ),
-                        array(
+                        ],
+                        [
                             'type' => 'actiondropdown',
                             'name' => 'main_dropdown',
                             'primary' => true,
                             'showOn' => 'view',
-                            'buttons' => array(
-                                array(
+                            'buttons' => [
+                                [
                                     'type' => 'rowaction',
                                     'event' => 'button:edit_button:click',
                                     'name' => 'edit_button',
                                     'label' => 'LBL_EDIT_BUTTON_LABEL',
                                     'acl_action' => 'edit',
-                                ),
-                                array(
+                                ],
+                                [
                                     'type' => 'shareaction',
                                     'name' => 'share',
                                     'label' => 'LBL_RECORD_SHARE_BUTTON',
                                     'acl_action' => 'view',
-                                ),
-                                array(
+                                ],
+                                [
                                     'type' => 'pdfaction',
                                     'name' => 'download-pdf',
                                     'label' => 'LBL_PDF_VIEW',
                                     'action' => 'download',
                                     'acl_action' => 'view',
-                                ),
-                                array(
+                                ],
+                                [
                                     'type' => 'pdfaction',
                                     'name' => 'email-pdf',
                                     'label' => 'LBL_PDF_EMAIL',
                                     'action' => 'email',
                                     'acl_action' => 'view',
-                                ),
-                                array(
+                                ],
+                                [
                                     'type' => 'divider',
-                                ),
-                                array(
+                                ],
+                                [
                                     'type' => 'rowaction',
                                     'event' => 'button:find_duplicates_button:click',
                                     'name' => 'find_duplicates_button',
                                     'label' => 'LBL_DUP_MERGE',
                                     'acl_action' => 'edit',
-                                ),
-                                array(
+                                ],
+                                [
                                     'type' => 'rowaction',
                                     'event' => 'button:duplicate_button:click',
                                     'name' => 'duplicate_button',
                                     'label' => 'LBL_DUPLICATE_BUTTON_LABEL',
                                     'acl_module' => 'Accounts',
                                     'acl_action' => 'create',
-                                ),
-                                array(
+                                ],
+                                [
                                     'type' => 'rowaction',
                                     'event' => 'button:historical_summary_button:click',
                                     'name' => 'historical_summary_button',
                                     'label' => 'LBL_HISTORICAL_SUMMARY',
                                     'acl_action' => 'view',
-                                ),
-                                array(
+                                ],
+                                [
                                     'type' => 'rowaction',
                                     'event' => 'button:audit_button:click',
                                     'name' => 'audit_button',
                                     'label' => 'LNK_VIEW_CHANGE_LOG',
                                     'acl_action' => 'view',
-                                ),
-                                array(
+                                ],
+                                [
                                     'type' => 'divider',
-                                ),
-                                array(
+                                ],
+                                [
                                     'type' => 'rowaction',
                                     'event' => 'button:delete_button:click',
                                     'name' => 'delete_button',
                                     'label' => 'LBL_DELETE_BUTTON_LABEL',
                                     'acl_action' => 'delete',
-                                ),
-                            ),
-                        ),
-                        array(
+                                ],
+                            ],
+                        ],
+                        [
                             'name' => 'sidebar_toggle',
                             'type' => 'sidebartoggle',
-                        ),
-                    ),
-                    'last_state' => array(
+                        ],
+                    ],
+                    'last_state' => [
                         'id' => 'record_view',
-                        'defaults' => array(
-                            'show_more' => 'more'
-                        ),
-                    ),
-                ),
-            ),
-        );
+                        'defaults' => [
+                            'show_more' => 'more',
+                        ],
+                    ],
+                ],
+            ],
+        ];
     }
 }

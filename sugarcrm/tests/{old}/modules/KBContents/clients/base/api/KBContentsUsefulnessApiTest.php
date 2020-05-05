@@ -36,7 +36,7 @@ class KBContentsUsefulnessApiTest extends TestCase
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setUp('current_user', array(true, true));
+        SugarTestHelper::setUp('current_user', [true, true]);
 
         $this->service = SugarTestRestUtilities::getRestServiceMock();
         $this->api = new KBContentsUsefulnessApi();
@@ -68,10 +68,10 @@ class KBContentsUsefulnessApiTest extends TestCase
         for ($i = 1; $i <= 3; $i++) {
             $result = $this->api->voteUseful(
                 $this->service,
-                array(
+                [
                     'module' => 'KBContents',
-                    'record' => $this->kbcontent->id
-                )
+                    'record' => $this->kbcontent->id,
+                ]
             );
 
             $this->assertNotEmpty($result);
@@ -95,10 +95,10 @@ class KBContentsUsefulnessApiTest extends TestCase
         for ($i = 1; $i <= 3; $i++) {
             $result = $this->api->voteNotUseful(
                 $this->service,
-                array(
+                [
                     'module' => 'KBContents',
-                    'record' => $this->kbcontent->id
-                )
+                    'record' => $this->kbcontent->id,
+                ]
             );
 
             $this->assertNotEmpty($result);
@@ -120,10 +120,10 @@ class KBContentsUsefulnessApiTest extends TestCase
      */
     public function dataProviderUsefulAndNotUseful()
     {
-        return array(
-            array(true), // useful
-            array(false), // not useful
-        );
+        return [
+            [true], // useful
+            [false], // not useful
+        ];
     }
 
     /**
@@ -133,9 +133,9 @@ class KBContentsUsefulnessApiTest extends TestCase
      */
     public function testVoteNotSpecifiedModule($isUseful)
     {
-        $args = array(
-            'record' => '123'
-        );
+        $args = [
+            'record' => '123',
+        ];
 
         $this->expectException(SugarApiExceptionMissingParameter::class);
 
@@ -153,9 +153,9 @@ class KBContentsUsefulnessApiTest extends TestCase
      */
     public function testVoteNotSpecifiedRecord($isUseful)
     {
-        $args = array(
-            'module' => 'KBContents'
-        );
+        $args = [
+            'module' => 'KBContents',
+        ];
 
         $this->expectException(SugarApiExceptionMissingParameter::class);
 
@@ -173,10 +173,10 @@ class KBContentsUsefulnessApiTest extends TestCase
      */
     public function testVoteNotFoundRecord($isUseful)
     {
-        $args = array(
+        $args = [
             'module' => 'KBContents',
-            'record' => 'some_id_123'
-        );
+            'record' => 'some_id_123',
+        ];
 
         $this->expectException(SugarApiExceptionNotFound::class);
 
@@ -194,12 +194,12 @@ class KBContentsUsefulnessApiTest extends TestCase
      */
     public function testVoteNotUsefulNotAuthorized($isUseful)
     {
-        $beanMock = $this->getMockBuilder('KBContents')->setMethods(array('ACLAccess'))->getMock();
+        $beanMock = $this->getMockBuilder('KBContents')->setMethods(['ACLAccess'])->getMock();
         $beanMock->expects($this->once())
             ->method('ACLAccess')
             ->will($this->returnValue(false));
 
-        $apiMock = $this->getMockBuilder('KBContentsUsefulnessApi')->setMethods(array('loadBean'))->getMock();
+        $apiMock = $this->getMockBuilder('KBContentsUsefulnessApi')->setMethods(['loadBean'])->getMock();
         $apiMock->expects($this->once())
             ->method('loadBean')
             ->will(
@@ -210,10 +210,10 @@ class KBContentsUsefulnessApiTest extends TestCase
                 )
             );
 
-        $args = array(
+        $args = [
             'module' => 'KBContents',
-            'record' => $this->kbcontent->id
-        );
+            'record' => $this->kbcontent->id,
+        ];
 
         $this->expectException(SugarApiExceptionNotAuthorized::class);
 

@@ -36,14 +36,14 @@ class RS99Test extends TestCase
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setUp('current_user', array(true, true));
+        SugarTestHelper::setUp('current_user', [true, true]);
 
         $this->account = SugarTestAccountUtilities::createAccount();
         $this->opportunity = SugarTestOpportunityUtilities::createOpportunity('', $this->account);
 
-        Opportunity::$settings = array(
-            'opps_view_by' => 'RevenueLineItems'
-        );
+        Opportunity::$settings = [
+            'opps_view_by' => 'RevenueLineItems',
+        ];
 
         $this->revenuelineitem = new RevenueLineItem();
         $this->revenuelineitem->name = 'Revenue Line Item ' . __CLASS__;
@@ -58,7 +58,7 @@ class RS99Test extends TestCase
 
     protected function tearDown() : void
     {
-        Opportunity::$settings = array();
+        Opportunity::$settings = [];
 
         if ($this->revenuelineitem instanceof SugarBean) {
             $this->revenuelineitem->mark_deleted($this->revenuelineitem->id);
@@ -74,10 +74,10 @@ class RS99Test extends TestCase
     public function testOpportunityStats()
     {
         $api = new AccountsApi();
-        $actual = $api->opportunityStats(SugarTestRestUtilities::getRestServiceMock(), array(
+        $actual = $api->opportunityStats(SugarTestRestUtilities::getRestServiceMock(), [
                 'module' => 'Accounts',
-                'record' => $this->account->id
-            ));
+                'record' => $this->account->id,
+            ]);
         $this->assertArrayHasKey('lost', $actual);
         $this->assertEquals(1, $actual['lost']['count']);
     }

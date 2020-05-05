@@ -14,21 +14,19 @@
 //this is to make sure it can find dce_config.php
 chdir("../../");
  
-require_once('include/entryPoint.php');
+require_once 'include/entryPoint.php';
 
 
-if (!empty($_REQUEST['expression']))
-{
-	$admin = new User();
-	$admin = $admin->retrieve(1);
-	global $current_user, $timezones;
-	$current_user = $admin;
-	
-	try {
-		$expression = Parser::evaluate(from_html($_REQUEST['expression']));
-		print_r($expression->evaluate());
-	} catch (Exception $e) {
-		echo $e->getMessage();
-	}
+if (!empty($_REQUEST['expression'])) {
+    $admin = new User();
+    $admin = $admin->retrieve(1);
+    global $current_user, $timezones;
+    $current_user = $admin;
+    
+    try {
+        $expression = Parser::evaluate(from_html($_REQUEST['expression']));
+        print_r($expression->evaluate());
+    } catch (Exception $e) {
+        echo $e->getMessage();
+    }
 }
-

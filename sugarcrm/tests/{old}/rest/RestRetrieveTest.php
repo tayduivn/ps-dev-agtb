@@ -11,7 +11,8 @@
  */
 
 
-class RestRetrieveTest extends RestTestBase {
+class RestRetrieveTest extends RestTestBase
+{
     protected function setUp() : void
     {
         parent::setUp();
@@ -19,7 +20,7 @@ class RestRetrieveTest extends RestTestBase {
     
     protected function tearDown() : void
     {
-        if ( isset($this->account_id) ) {
+        if (isset($this->account_id)) {
             $GLOBALS['db']->query("DELETE FROM accounts WHERE id = '{$this->account->id}'");
             if ($GLOBALS['db']->tableExists('accounts_cstm')) {
                 $GLOBALS['db']->query("DELETE FROM accounts_cstm WHERE id_c = '{$this->account->id}'");
@@ -31,29 +32,31 @@ class RestRetrieveTest extends RestTestBase {
     /**
      * @group rest
      */
-    public function testRetrieve() {
+    public function testRetrieve()
+    {
         $this->account = new Account();
         $this->account->name = "UNIT TEST - BEFORE";
         $this->account->save();
         $GLOBALS['db']->commit();
         $restReply = $this->_restCall("Accounts/{$this->account->id}");
 
-        $this->assertEquals($this->account->id,$restReply['reply']['id'],"The returned account id was not the same as the requested account.");
-        $this->assertEquals("UNIT TEST - BEFORE",$restReply['reply']['name'],"Did not retrieve the account name.");
+        $this->assertEquals($this->account->id, $restReply['reply']['id'], "The returned account id was not the same as the requested account.");
+        $this->assertEquals("UNIT TEST - BEFORE", $restReply['reply']['name'], "Did not retrieve the account name.");
     }
 
     /**
      * @group rest
      */
     // test that the reply is html decoded Story Id: 30925015 Url: https://www.pivotaltracker.com/story/show/30925015
-    public function testRetrieveHTMLEntity() {
+    public function testRetrieveHTMLEntity()
+    {
         $this->account = new Account();
         $this->account->name = "UNIT TEST << >> BEFORE";
         $this->account->save();
         $GLOBALS['db']->commit();
         $restReply = $this->_restCall("Accounts/{$this->account->id}");
 
-        $this->assertEquals($this->account->id,$restReply['reply']['id'],"The returned account id was not the same as the requested account.");
-        $this->assertEquals("UNIT TEST << >> BEFORE",$restReply['reply']['name'],"Did not retrieve the account name.");
+        $this->assertEquals($this->account->id, $restReply['reply']['id'], "The returned account id was not the same as the requested account.");
+        $this->assertEquals("UNIT TEST << >> BEFORE", $restReply['reply']['name'], "Did not retrieve the account name.");
     }
 }

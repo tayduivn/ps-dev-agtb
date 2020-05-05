@@ -32,7 +32,7 @@ class OracleManagerTest extends TestCase
         /** @var \DBManager|MockObject $db */
         $db = $this->getMockBuilder('OracleManager')
             ->disableOriginalConstructor()
-            ->setMethods(array('query'))
+            ->setMethods(['query'])
             ->getMock();
 
         $ciIndexConstraint = $this->logicalAnd(
@@ -44,21 +44,21 @@ class OracleManagerTest extends TestCase
         $db->expects($this->exactly(3))
             ->method('query')
             ->withConsecutive(
-                array(),
-                array($this->matchesRegularExpression('/idx1/')),
-                array($ciIndexConstraint)
+                [],
+                [$this->matchesRegularExpression('/idx1/')],
+                [$ciIndexConstraint]
             )
             ->willReturn(true);
 
-        $indices = array(
-            array('name' => 'idx1', 'type' => 'index', 'fields' => array('field1', 'field2', 'field3')),
-        );
+        $indices = [
+            ['name' => 'idx1', 'type' => 'index', 'fields' => ['field1', 'field2', 'field3']],
+        ];
 
-        $fieldDefs = array(
-            'field1' => array('name' => 'field1', 'type' => 'id'),
-            'field2' => array('name' => 'field2', 'type' => 'enum'),
-            'field3' => array('name' => 'field3', 'type' => 'varchar'),
-        );
+        $fieldDefs = [
+            'field1' => ['name' => 'field1', 'type' => 'id'],
+            'field2' => ['name' => 'field2', 'type' => 'enum'],
+            'field3' => ['name' => 'field3', 'type' => 'varchar'],
+        ];
 
         $db->createTableParams('table1', $fieldDefs, $indices);
     }

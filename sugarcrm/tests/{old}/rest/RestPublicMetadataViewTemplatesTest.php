@@ -11,46 +11,49 @@
  */
 
 
-class RestPublicMetadataViewTemplatesTest extends RestTestBase {
+class RestPublicMetadataViewTemplatesTest extends RestTestBase
+{
     /**
      * @group rest
      */
-    public function testMetadataViewTemplates() {
+    public function testMetadataViewTemplates()
+    {
         $restReply = $this->_restCall('metadata/public?type_filter=views');
 
-        $this->assertTrue(isset($restReply['reply']['views']['_hash']),'Views hash is missing.');
+        $this->assertTrue(isset($restReply['reply']['views']['_hash']), 'Views hash is missing.');
     }
 
     /**
      * @group rest
      */
-    public function testMetadataViewTemplatesHbs() {
-        $filesToCheck = array(
+    public function testMetadataViewTemplatesHbs()
+    {
+        $filesToCheck = [
             //BEGIN SUGARCRM flav=ent ONLY
-            'portal' => array(
+            'portal' => [
                 'clients/portal/views/edit/edit.hbs',
                 'custom/clients/portal/views/edit/edit.hbs',
-            ),
+            ],
             //END SUGARCRM flav=ent ONLY
-            'base' => array(
+            'base' => [
                 'clients/base/views/edit/edit.hbs',
                 'custom/clients/base/views/edit/edit.hbs',
-            ),
-        );
+            ],
+        ];
         SugarTestHelper::saveFile($filesToCheck);
 
-        $dirsToMake = array(
+        $dirsToMake = [
             //BEGIN SUGARCRM flav=ent ONLY
-            'portal' => array(
+            'portal' => [
                 'clients/portal/views/edit',
                 'custom/clients/portal/views/edit',
-            ),
+            ],
             //END SUGARCRM flav=ent ONLY
-            'base' => array(
+            'base' => [
                 'clients/base/views/edit',
                 'custom/clients/base/views/edit',
-            ),
-        );
+            ],
+        ];
 
         foreach ($dirsToMake as $platformDirs) {
             foreach ($platformDirs as $dir) {
@@ -65,38 +68,38 @@ class RestPublicMetadataViewTemplatesTest extends RestTestBase {
         // To test public API's, we need to not login.
         $this->authToken = 'LOGGING_IN';
         $restReply = $this->_restCall('metadata/public?type_filter=views&platform=portal');
-        $this->assertEquals('PORTAL CODE',$restReply['reply']['views']['edit']['templates']['edit'],"Didn't get portal code when that was the direct option");
+        $this->assertEquals('PORTAL CODE', $restReply['reply']['views']['edit']['templates']['edit'], "Didn't get portal code when that was the direct option");
 
 
         // Make sure we get it when we ask for portal, even though there is base code there
         file_put_contents($filesToCheck['base'][0], 'BASE CODE');
         $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata/public?type_filter=views&platform=portal');
-        $this->assertEquals('PORTAL CODE',$restReply['reply']['views']['edit']['templates']['edit'],"Didn't get portal code when base code was there.");
+        $this->assertEquals('PORTAL CODE', $restReply['reply']['views']['edit']['templates']['edit'], "Didn't get portal code when base code was there.");
         //END SUGARCRM flav=ent ONLY
 
         // Make sure we get the base code when we ask for it.
         $restReply = $this->_restCall('metadata/public?type_filter=views&platform=base');
-        $this->assertEquals('BASE CODE',$restReply['reply']['views']['edit']['templates']['edit'],"Didn't get base code when it was the direct option");
+        $this->assertEquals('BASE CODE', $restReply['reply']['views']['edit']['templates']['edit'], "Didn't get base code when it was the direct option");
 
         //BEGIN SUGARCRM flav=ent ONLY
         // Delete the portal template and make sure it falls back to base
         unlink($filesToCheck['portal'][0]);
         $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata/public?type_filter=views&platform=portal');
-        $this->assertEquals('BASE CODE',$restReply['reply']['views']['edit']['templates']['edit'],"Didn't fall back to base code when portal code wasn't there.");
+        $this->assertEquals('BASE CODE', $restReply['reply']['views']['edit']['templates']['edit'], "Didn't fall back to base code when portal code wasn't there.");
 
         // Make sure the portal code is loaded before the non-custom base code
         file_put_contents($filesToCheck['portal'][1], 'CUSTOM PORTAL CODE');
         $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata/public?type_filter=views&platform=portal');
-        $this->assertEquals('CUSTOM PORTAL CODE',$restReply['reply']['views']['edit']['templates']['edit'],"Didn't use the custom portal code.");
+        $this->assertEquals('CUSTOM PORTAL CODE', $restReply['reply']['views']['edit']['templates']['edit'], "Didn't use the custom portal code.");
         //END SUGARCRM flav=ent ONLY
 
         // Make sure custom base code works
         file_put_contents($filesToCheck['base'][1], 'CUSTOM BASE CODE');
         $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata/public?type_filter=views');
-        $this->assertEquals('CUSTOM BASE CODE',$restReply['reply']['views']['edit']['templates']['edit'],"Didn't use the custom base code.");
+        $this->assertEquals('CUSTOM BASE CODE', $restReply['reply']['views']['edit']['templates']['edit'], "Didn't use the custom base code.");
     }
 }

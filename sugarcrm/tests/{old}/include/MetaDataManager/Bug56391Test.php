@@ -21,7 +21,7 @@ class Bug56391Test extends TestCase
     {
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('app_list_strings');
-        $this->accounts = array();
+        $this->accounts = [];
         SugarACL::resetACLs();
         SugarTestHelper::setUp('ACLStatic');
 
@@ -31,7 +31,7 @@ class Bug56391Test extends TestCase
 
     protected function tearDown() : void
     {
-        foreach ($this->accounts AS $account_id) {
+        foreach ($this->accounts as $account_id) {
             $GLOBALS['db']->query("DELETE FROM accounts WHERE id = '{$account_id}'");
         }
         SugarTestACLUtilities::tearDown();
@@ -48,7 +48,7 @@ class Bug56391Test extends TestCase
     {
         $mm = MetaDataManager::getManager();
         // because the user is not an admin the user should only have view and list access
-        $expected_result = array(
+        $expected_result = [
             'admin' => 'no',
             'developer' => 'no',
             'create' => 'no',
@@ -56,7 +56,7 @@ class Bug56391Test extends TestCase
             'delete' => 'no',
             'import' => 'no',
             'massupdate' => 'no',
-        );
+        ];
         $acls = $mm->getAclForModule('Users', $GLOBALS['current_user']);
         unset($acls['_hash']);
         // not checking fields right now
@@ -75,32 +75,32 @@ class Bug56391Test extends TestCase
     {
         $mm = MetaDataManager::getManager();
         // because the user is not an admin the user should only have view and list access
-        $expected_result = array(
-            'user_name' => array('write' => 'no', 'create' => 'no'),
-            'user_hash' => array('read' => 'no', 'write' => 'no', 'create' => 'no', ),
-            'system_generated_password' => array('read' => 'no', 'write' => 'no', 'create' => 'no',),
-            'pwd_last_changed' => array('read' => 'no', 'write' => 'no', 'create' => 'no',),
-            'authenticate_id' => array('read' => 'no', 'write' => 'no', 'create' => 'no', ),
-            'sugar_login' => array('read' => 'no', 'write' => 'no', 'create' => 'no', ),
-            'external_auth_only' => array('read' => 'no', 'write' => 'no', 'create' => 'no', ),
-            'status' => array('write' => 'no', 'create' => 'no'),
-            'show_on_employees' => array('read' => 'no', 'write' => 'no', 'create' => 'no'),
-            'portal_only' => array('read' => 'no', 'write' => 'no', 'create' => 'no',),
-            'employee_status' => array('write' => 'no', 'create' => 'no'),
-            'is_group' => array('read' => 'no', 'write' => 'no', 'create' => 'no', ),
-            'title' => array( 'write' => 'no', 'create' => 'no', ),
-            'department' => array( 'write' => 'no', 'create' => 'no', ),
-            'reports_to_id' => array( 'write' => 'no', 'create' => 'no', ),
-            'reports_to_name' => array( 'write' => 'no', 'create' => 'no', ),
-            'reports_to_link' => array( 'write' => 'no', 'create' => 'no', ),
-            'is_admin' => array('write' => 'no', 'create' => 'no',  ),
-            'last_login' => array( 'read' => 'no', 'write' => 'no', 'create' => 'no',  ),
-            'license_type' => array('write' => 'no', 'create' => 'no'),
+        $expected_result = [
+            'user_name' => ['write' => 'no', 'create' => 'no'],
+            'user_hash' => ['read' => 'no', 'write' => 'no', 'create' => 'no', ],
+            'system_generated_password' => ['read' => 'no', 'write' => 'no', 'create' => 'no',],
+            'pwd_last_changed' => ['read' => 'no', 'write' => 'no', 'create' => 'no',],
+            'authenticate_id' => ['read' => 'no', 'write' => 'no', 'create' => 'no', ],
+            'sugar_login' => ['read' => 'no', 'write' => 'no', 'create' => 'no', ],
+            'external_auth_only' => ['read' => 'no', 'write' => 'no', 'create' => 'no', ],
+            'status' => ['write' => 'no', 'create' => 'no'],
+            'show_on_employees' => ['read' => 'no', 'write' => 'no', 'create' => 'no'],
+            'portal_only' => ['read' => 'no', 'write' => 'no', 'create' => 'no',],
+            'employee_status' => ['write' => 'no', 'create' => 'no'],
+            'is_group' => ['read' => 'no', 'write' => 'no', 'create' => 'no', ],
+            'title' => [ 'write' => 'no', 'create' => 'no', ],
+            'department' => [ 'write' => 'no', 'create' => 'no', ],
+            'reports_to_id' => [ 'write' => 'no', 'create' => 'no', ],
+            'reports_to_name' => [ 'write' => 'no', 'create' => 'no', ],
+            'reports_to_link' => [ 'write' => 'no', 'create' => 'no', ],
+            'is_admin' => ['write' => 'no', 'create' => 'no',  ],
+            'last_login' => [ 'read' => 'no', 'write' => 'no', 'create' => 'no',  ],
+            'license_type' => ['write' => 'no', 'create' => 'no'],
             //BEGIN SUGARCRM flav=ent ONLY
             'business_center_name' => ['write' => 'no', 'create' => 'no', 'license' => 'no',],
             'business_center_id' => ['write' => 'no', 'create' => 'no', 'license' => 'no',],
             //END SUGARCRM flav=ent ONLY
-        );
+        ];
         $acls = $mm->getAclForModule('Users', $GLOBALS['current_user']);
         unset($acls['_hash']);
         // not checking fields right now
@@ -122,7 +122,7 @@ class Bug56391Test extends TestCase
         $mm = MetaDataManager::getManager();
         // because the user is not an admin the user should only have view and list access
 
-        $expected_result = array();
+        $expected_result = [];
         $acls = $mm->getAclForModule('Users', $GLOBALS['current_user']);
         unset($acls['_hash']);
         // not checking fields right now
@@ -169,9 +169,9 @@ class Bug56391Test extends TestCase
      */
     public function testModuleAccess()
     {
-        $modules = array('Accounts', 'Contacts', 'Contracts', 'Opportunities', 'Leads');
+        $modules = ['Accounts', 'Contacts', 'Contracts', 'Opportunities', 'Leads'];
         // user can view, list, delete, and export
-        $expected_result = array(
+        $expected_result = [
             'admin' => 'no',
             'developer' => 'no',
             'create' => 'no',
@@ -179,14 +179,14 @@ class Bug56391Test extends TestCase
             'delete' => 'no',
             'import' => 'no',
             'massupdate' => 'no',
-        );
+        ];
 
-        $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'view', 'list', 'export'));
+        $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, ['access', 'view', 'list', 'export']);
         SugarTestACLUtilities::setupUser($role);
         SugarTestHelper::clearACLCache();
 
         $mm = MetaDataManager::getManager();
-        foreach ($modules AS $module) {
+        foreach ($modules as $module) {
             $acls = $mm->getAclForModule($module, $GLOBALS['current_user']);
             unset($acls['_hash']);
             // not checking fields right now
@@ -205,16 +205,16 @@ class Bug56391Test extends TestCase
      */
     public function testFieldAccess()
     {
-        $modules = array('Accounts');
+        $modules = ['Accounts'];
         // user can view, list, delete, and export
-        $expected_result = array(
+        $expected_result = [
             'fields' =>
-            array(
-                'website' => array(
+            [
+                'website' => [
                     'read' => 'no',
                     'write' => 'no',
                     'create' => 'no',
-                ),
+                ],
                 //BEGIN SUGARCRM flav=ent ONLY
                 'business_center_name' => [
                     'write' => 'no',
@@ -232,14 +232,14 @@ class Bug56391Test extends TestCase
                     'license' => 'no',
                 ],
                 //END SUGARCRM flav=ent ONLY
-            ),
+            ],
             'admin' => 'no',
             'developer' => 'no',
             'delete' => 'no',
-        );
+        ];
 
-        $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, array(
-            'access', 'create', 'view', 'list', 'edit', 'import', 'export', 'massupdate'));
+        $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, [
+            'access', 'create', 'view', 'list', 'edit', 'import', 'export', 'massupdate']);
 
         SugarTestACLUtilities::createField($role->id, 'Accounts', 'website', -99);
 
@@ -247,7 +247,7 @@ class Bug56391Test extends TestCase
         SugarTestHelper::clearACLCache();
 
         $mm = MetaDataManager::getManager();
-        foreach ($modules AS $module) {
+        foreach ($modules as $module) {
             $acls = $mm->getAclForModule($module, $GLOBALS['current_user']);
             unset($acls['_hash']);
             $this->assertEquals($expected_result, $acls);
@@ -263,18 +263,18 @@ class Bug56391Test extends TestCase
      */
     public function testModuleOwnerAccess()
     {
-        $modules = array('Accounts');
+        $modules = ['Accounts'];
 
 
-        $expected_bean_result['access'] = array(
+        $expected_bean_result['access'] = [
             'admin' => 'no',
             'developer' => 'no',
             'import' => 'no',
             'massupdate' => 'no',
-        );
+        ];
 
-        $this->roles[] = $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, array(
-            'access', 'view', 'list', 'edit', 'delete', 'export'), array('edit', 'delete'));
+        $this->roles[] = $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, [
+            'access', 'view', 'list', 'edit', 'delete', 'export'], ['edit', 'delete']);
 
         SugarTestACLUtilities::setupUser($role);
         SugarTestHelper::clearACLCache();
@@ -306,19 +306,19 @@ class Bug56391Test extends TestCase
      */
     public function testModuleOwnerCreateAccess()
     {
-        $modules = array('Accounts');
+        $modules = ['Accounts'];
 
 
-        $expected_bean_result['access'] = array(
+        $expected_bean_result['access'] = [
             'admin' => 'no',
             'developer' => 'no',
             'import' => 'no',
             'massupdate' => 'no',
-        );
+        ];
 
 
-        $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, array(
-            'access', 'view', 'list', 'edit', 'delete', 'export'), array('create', 'edit'));
+        $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, [
+            'access', 'view', 'list', 'edit', 'delete', 'export'], ['create', 'edit']);
 
         SugarTestACLUtilities::setupUser($role);
         SugarTestHelper::clearACLCache();
@@ -342,18 +342,18 @@ class Bug56391Test extends TestCase
      */
     public function testModuleOwnerCreateNewWithIdAccess()
     {
-        $modules = array('Accounts');
+        $modules = ['Accounts'];
 
 
-        $expected_bean_result['access'] = array(
+        $expected_bean_result['access'] = [
             'admin' => 'no',
             'developer' => 'no',
             'import' => 'no',
             'massupdate' => 'no',
-        );
+        ];
 
 
-        $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, array('access', 'view', 'list', 'edit', 'delete', 'export'), array('create', 'edit'));
+        $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, ['access', 'view', 'list', 'edit', 'delete', 'export'], ['create', 'edit']);
 
         SugarTestACLUtilities::setupUser($role);
         SugarTestHelper::clearACLCache();
@@ -375,7 +375,7 @@ class Bug56391Test extends TestCase
 
     public function testModuleFieldOwnerAccess()
     {
-        $modules = array('Accounts');
+        $modules = ['Accounts'];
 
         $expected_bean_result['field_access'] = [
             //BEGIN SUGARCRM flav=ent ONLY
@@ -405,8 +405,8 @@ class Bug56391Test extends TestCase
 
         unset($account);
 
-        $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, array(
-            'access', 'view', 'list', 'edit', 'delete', 'export'), array('edit'));
+        $role = SugarTestACLUtilities::createRole('UNIT TEST ' . create_guid(), $modules, [
+            'access', 'view', 'list', 'edit', 'delete', 'export'], ['edit']);
 
         SugarTestACLUtilities::createField($role->id, 'Acconts', 'name', ACL_READ_OWNER_WRITE);
 

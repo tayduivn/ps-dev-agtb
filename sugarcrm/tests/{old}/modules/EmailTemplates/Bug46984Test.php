@@ -24,9 +24,9 @@ class Bug46984Test extends TestCase
 
     protected function setUp() : void
     {
-        $beanList = array();
-        $beanFiles = array();
-        require('include/modules.php');
+        $beanList = [];
+        $beanFiles = [];
+        require 'include/modules.php';
         $GLOBALS['beanList'] = $beanList;
         $GLOBALS['beanFiles'] = $beanFiles;
         $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
@@ -50,12 +50,9 @@ class Bug46984Test extends TestCase
     {
         $et =new EmailTemplate();
         $res = $et->parse_tracker_urls($data[0], $data[1], $data[2], $data[3]);
-        if($result)
-        {
+        if ($result) {
             $this->assertEquals($expects, $res);
-        }
-        else
-        {
+        } else {
             $this->assertNotEquals($expects, $res);
         }
     }
@@ -63,7 +60,7 @@ class Bug46984Test extends TestCase
     public function templatesProvider()
     {
         global $sugar_config;
-        $result = array();
+        $result = [];
         $text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin id leo at eros dictum fringilla. In sit amet est lacus. Vivamus luctus dapibus erat, vitae malesuada elit hendrerit ut. Etiam convallis auctor lectus eu blandit. Fusce condimentum sodales metus, et aliquam eros ornare eget. Quisque ultrices risus arcu. Aliquam sit amet turpis nunc.
 
  Nam congue, lorem vitae congue dapibus, nulla nulla tristique turpis, ut convallis enim libero in quam. Nulla feugiat, ligula nec sagittis lobortis, massa odio hendrerit nisl, at vehicula arcu sapien at magna. Duis quis justo nisl. Proin tempus nunc et nulla tincidunt vehicula. In vestibulum euismod sollicitudin. Cras dictum lectus pharetra nibh eleifend iaculis. Praesent vitae est enim, a mattis massa. Morbi accumsan ligula eu dui iaculis a laoreet lectus elementum. Maecenas a odio augue. Suspendisse congue, turpis id venenatis ornare, enim justo commodo magna, a ornare mauris lacus at eros. Suspendisse pretium cursus dui ut bibendum. Vivamus euismod, erat ac dignissim tincidunt, odio augue cursus elit, a venenatis ante nunc et urna. Integer dignissim gravida dui vitae facilisis. Sed nec turpis id elit venenatis mattis.
@@ -75,45 +72,40 @@ class Bug46984Test extends TestCase
  Phasellus metus felis, lacinia eget malesuada sed, porta at arcu. Aliquam erat volutpat. Aenean pretium sapien at nisl faucibus pellentesque. Mauris tristique lorem non arcu elementum accumsan tincidunt lacus scelerisque. Nulla convallis elementum libero et eleifend. Quisque lectus urna, imperdiet vitae laoreet rutrum, condimentum a tortor. Quisque in enim sed lacus elementum aliquet. Aliquam ultrices hendrerit odio, quis luctus neque ultrices vel. Sed felis quam, auctor nec convallis at, porta ut purus. Aliquam vitae tempor enim. Nunc rutrum augue quis justo tincidunt eu rutrum nisl lobortis. Sed id lorem ante. Donec enim erat, fringilla sed cursus eget, posuere sit amet nunc. Nulla tempus consectetur viverra. Proin odio odio, malesuada sit amet placerat nec, vulputate nec diam. Cras facilisis molestie auctor.";
         $text_len = strlen($text);
         $removeme = 'bad_trackers_url';
-        for($i = 0; $i < 10; $i++)
-        {
+        for ($i = 0; $i < 10; $i++) {
             $res1 = $res2 = $text;
-            $tracker_urls = array();
+            $tracker_urls = [];
             $guid = create_guid();
-            $j_rand = rand(3,7);
+            $j_rand = rand(3, 7);
             $limit = floor($text_len/$j_rand);
-            for($j = $j_rand; $j > 1; $j--)
-            {
+            for ($j = $j_rand; $j > 1; $j--) {
                 $guid_tr = create_guid();
                 $tr_name = "tr_url{$j}";
-                $tracker_urls["{{$tr_name}}"] = array(
+                $tracker_urls["{{$tr_name}}"] = [
                     'tracker_name' => $tr_name,
                     'tracker_key' => $j,
                     'id' => $guid_tr,
-                    'is_optout' => $j % 2
-                );
+                    'is_optout' => $j % 2,
+                ];
 
-                $ins_ind = rand( $limit*($j - 2) , $limit * ($j - 1));
+                $ins_ind = rand($limit*($j - 2), $limit * ($j - 1));
                 $res1 = substr_replace($res1, "{{$tr_name}}", $ins_ind, 0);
-                if($j % 2 == 1)
-                {
+                if ($j % 2 == 1) {
                     $res2 = substr_replace($res2, $removeme, $ins_ind, 0);
-                }
-                else
-                {
+                } else {
                     $res2 = substr_replace($res2, "{$sugar_config['site_url']}index.php?entryPoint=campaign_trackerv2&track={$tracker_urls["{{$tr_name}}"]['id']}&{$guid}", $ins_ind, 0);
                 }
             }
-            $result[$i]  = array(
-                array(
-                    array('body' => $res1),
+            $result[$i]  = [
+                [
+                    ['body' => $res1],
                     "{$sugar_config['site_url']}index.php?entryPoint=campaign_trackerv2&track=%s&{$guid}",
                     $tracker_urls,
-                    $removeme
-                ),
-                array('body' => $res2),
-                true
-            );
+                    $removeme,
+                ],
+                ['body' => $res2],
+                true,
+            ];
         }
         return $result;
     }

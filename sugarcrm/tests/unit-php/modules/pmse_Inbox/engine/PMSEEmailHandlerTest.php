@@ -25,53 +25,53 @@ class PMSEEmailHandlerTest extends TestCase
      */
     public function providerIsUserActiveForEmail()
     {
-        return array(
-            array(
-                array(
+        return [
+            [
+                [
                     'full_name' => 'John Doe',
                     'email1' => 'john.doe@example.com',
                     'status' => 'Active',
                     'employee_status' => 'Active',
-                ),
+                ],
                 true,
-            ),
-            array(
-                array(
+            ],
+            [
+                [
                     'full_name' => '',
                     'email1' => 'jane.elliot@abc.com',
                     'status' => 'Active',
                     'employee_status' => 'Active',
-                ),
+                ],
                 false,
-            ),
-            array(
-                array(
+            ],
+            [
+                [
                     'full_name' => 'Bob Smith',
                     'email1' => '',
                     'status' => 'Active',
                     'employee_status' => 'Active',
-                ),
+                ],
                 false,
-            ),
-            array(
-                array(
+            ],
+            [
+                [
                     'full_name' => 'Mary Jones',
                     'email1' => 'mjones@xyz.com',
                     'status' => 'Inactive',
                     'employee_status' => 'Active',
-                ),
+                ],
                 false,
-            ),
-            array(
-                array(
+            ],
+            [
+                [
                     'full_name' => 'Jim Brown',
                     'email1' => 'jim.brown@foo.com',
                     'status' => 'Active',
                     'employee_status' => '',
-                ),
+                ],
                 false,
-            ),
-        );
+            ],
+        ];
     }
 
     /**

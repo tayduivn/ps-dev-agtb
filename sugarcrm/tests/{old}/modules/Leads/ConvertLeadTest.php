@@ -31,10 +31,9 @@ class ConvertLeadTest extends TestCase
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('app_list_strings');
-        SugarTestHelper::setUp('mod_strings', array('Leads'));
+        SugarTestHelper::setUp('mod_strings', ['Leads']);
         SugarTestHelper::setUp('current_user');
-        if (isset($_SESSION['LICENSE_EXPIRES_IN']))
-        {
+        if (isset($_SESSION['LICENSE_EXPIRES_IN'])) {
             $this->license_expires_in = $_SESSION['LICENSE_EXPIRES_IN'];
         }
         $_SESSION['LICENSE_EXPIRES_IN'] = '5';
@@ -44,7 +43,7 @@ class ConvertLeadTest extends TestCase
     {
         SugarTestLeadUtilities::removeAllCreatedLeads();
         SugarTestStudioUtilities::removeAllCreatedFields();
-        if(!empty($this->relation_id)) {
+        if (!empty($this->relation_id)) {
             SugarTestMeetingUtilities::deleteMeetingLeadRelation($this->relation_id);
         }
         SugarTestMeetingUtilities::removeMeetingContacts();
@@ -57,22 +56,22 @@ class ConvertLeadTest extends TestCase
         unset($_REQUEST['module']);
         unset($_REQUEST['action']);
         unset($_REQUEST['record']);
-        if(!empty($this->meeting) && !empty($this->contact)) {
+        if (!empty($this->meeting) && !empty($this->contact)) {
             $GLOBALS['db']->query("delete from meetings_contacts where meeting_id='{$this->meeting->id}' and contact_id= '{$this->contact->id}'");
         }
-        if(!empty($this->contact)) {
+        if (!empty($this->contact)) {
             $GLOBALS['db']->query("delete from meetings where parent_id='{$this->contact->id}' and parent_type= 'Contacts'");
         }
-        if(!empty($this->contact_id)) {
+        if (!empty($this->contact_id)) {
             $GLOBALS['db']->query("delete from meetings where parent_id='{$this->contact_id}' and parent_type= 'Contacts'");
         }
-        if(!empty($this->lead)) {
+        if (!empty($this->lead)) {
             $GLOBALS['db']->query("delete from meetings where parent_id='{$this->lead->id}' and parent_type= 'Leads'");
         }
-        if(!empty($this->new_meeting_id) && !empty($this->contact)) {
+        if (!empty($this->new_meeting_id) && !empty($this->contact)) {
             $GLOBALS['db']->query("delete from meetings_contacts where meeting_id='{$this->new_meeting_id}' and contact_id= '{$this->contact->id}'");
         }
-        if(!empty($this->new_meeting_id) && !empty($this->contact_id)) {
+        if (!empty($this->new_meeting_id) && !empty($this->contact_id)) {
             $GLOBALS['db']->query("delete from meetings_contacts where meeting_id='{$this->new_meeting_id}' and contact_id= '{$this->contact_id}'");
         }
 
@@ -83,7 +82,8 @@ class ConvertLeadTest extends TestCase
     /**
      * @group bug44033
      */
-    public function testActivityMove() {
+    public function testActivityMove()
+    {
         // init
         $lead = SugarTestLeadUtilities::createLead();
         $this->contact = $contact = SugarTestContactUtilities::createContact();
@@ -123,7 +123,8 @@ class ConvertLeadTest extends TestCase
     }
 
 
-    public function testActivityCopyWithParent() {
+    public function testActivityCopyWithParent()
+    {
         // lets the run the activity copy again, only this time we pass in a parent account
         $this->lead = $lead = SugarTestLeadUtilities::createLead();
         $this->contact = $contact = SugarTestContactUtilities::createContact();
@@ -140,7 +141,7 @@ class ConvertLeadTest extends TestCase
 
         // action: copy meeting from lead to contact
         $convertObj = new TestViewConvertLead();
-        $convertObj->copyActivityWrapper($meeting, $contact, array('id'=>$account->id,'type'=>'Accounts'));
+        $convertObj->copyActivityWrapper($meeting, $contact, ['id'=>$account->id,'type'=>'Accounts']);
 
 
         // 2a a newly created meeting with no parent info passed in, so parent id and type are empty
@@ -148,9 +149,9 @@ class ConvertLeadTest extends TestCase
         //$sql = "select id from meetings where parent_id='{$contact->id}' and parent_type= 'Contacts' and deleted=0";
         $sql = "select id, parent_id from meetings where name = '{$meeting->name}'";
         $result = $GLOBALS['db']->query($sql);
-        while ($row = $GLOBALS['db']->fetchByAssoc($result)){
+        while ($row = $GLOBALS['db']->fetchByAssoc($result)) {
             //skip if this is the original message
-            if($row['id'] == $meeting_id){
+            if ($row['id'] == $meeting_id) {
                 continue;
             }
 
@@ -159,7 +160,8 @@ class ConvertLeadTest extends TestCase
     }
 
 
-    public function testActivityCopyWithNoParent() {
+    public function testActivityCopyWithNoParent()
+    {
         // init
         $this->lead = $lead = SugarTestLeadUtilities::createLead();
         $this->contact = $contact = SugarTestContactUtilities::createContact();
@@ -186,14 +188,14 @@ class ConvertLeadTest extends TestCase
         $new_meeting_id = '';
         $sql = "select id, parent_id from meetings where name = '{$meeting->name}'";
               $result = $GLOBALS['db']->query($sql);
-              while ($row = $GLOBALS['db']->fetchByAssoc($result)){
-                  //skip if this is the original message
-                  if($row['id'] == $meeting_id){
-                      continue;
-                  }
-                  $new_meeting_id = $row['id'];
-                  $this->assertEmpty($row['parent_id'],'parent id of meeting should be empty as no parent was sent in ');
-              }
+        while ($row = $GLOBALS['db']->fetchByAssoc($result)) {
+            //skip if this is the original message
+            if ($row['id'] == $meeting_id) {
+                continue;
+            }
+            $new_meeting_id = $row['id'];
+            $this->assertEmpty($row['parent_id'], 'parent id of meeting should be empty as no parent was sent in ');
+        }
               $this->new_meeting_id = $new_meeting_id;
 
 
@@ -213,7 +215,8 @@ class ConvertLeadTest extends TestCase
     /**
      * @outputBuffering enabled
      */
-    public function testConversionAndCopyActivities() {
+    public function testConversionAndCopyActivities()
+    {
         global $sugar_config;
 
         // init
@@ -231,7 +234,7 @@ class ConvertLeadTest extends TestCase
         $_REQUEST['handle'] = 'save';
         $_REQUEST['selectedAccount'] = $account->id;
         $sugar_config['lead_conv_activity_opt'] = 'copy';
-        $_POST['lead_conv_ac_op_sel'] = array('Contacts');
+        $_POST['lead_conv_ac_op_sel'] = ['Contacts'];
 
         // call display to trigger conversion
         $vc = new ViewConvertLead();
@@ -292,7 +295,8 @@ class ConvertLeadTest extends TestCase
     /**
      * @outputBuffering enabled
      */
-    public function testConversionAndDoNothing() {
+    public function testConversionAndDoNothing()
+    {
         global $sugar_config;
 
         // init
@@ -363,8 +367,7 @@ class ConvertLeadTest extends TestCase
         $bean = SugarTestMeetingUtilities::createMeeting();
         $convert_lead = SugarTestViewConvertLeadUtilities::createViewConvertLead();
 
-        if ($bean->object_name == "Meeting")
-        {
+        if ($bean->object_name == "Meeting") {
             $convert_lead->setMeetingsUsersRelationship($bean);
         }
 
@@ -374,12 +377,14 @@ class ConvertLeadTest extends TestCase
 
 class TestViewConvertLead extends ViewConvertLead
 {
-    public function moveActivityWrapper($activity, $bean) {
+    public function moveActivityWrapper($activity, $bean)
+    {
         parent::moveActivity($activity, $bean);
     }
 
-    public function copyActivityWrapper($activity, $bean,$parent=array()) {
-        parent::copyActivityAndRelateToBean($activity, $bean,$parent);
+    public function copyActivityWrapper($activity, $bean, $parent = [])
+    {
+        parent::copyActivityAndRelateToBean($activity, $bean, $parent);
     }
 
     public function testMeetingsUsersRelationships()
@@ -389,8 +394,7 @@ class TestViewConvertLead extends ViewConvertLead
         $bean = SugarTestMeetingUtilities::createMeeting();
         $convert_lead = SugarTestViewConvertLeadUtilities::createViewConvertLead();
 
-        if ($bean->object_name == "Meeting")
-        {
+        if ($bean->object_name == "Meeting") {
             $convert_lead->setMeetingsUsersRelationship($bean);
         }
 

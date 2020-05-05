@@ -19,69 +19,69 @@ use PHPUnit\Framework\TestCase;
 class DuplicateCheckApiTest extends TestCase
 {
     private $copyOfLeadsDuplicateCheckVarDef;
-    private $mockLeadsDuplicateCheckVarDef = array(
+    private $mockLeadsDuplicateCheckVarDef = [
         'enabled' => true,
-        'FilterDuplicateCheck' => array(
-            'filter_template' => array(
-                array(
-                    '$and' => array(
-                        array(
-                            '$or' => array(
-                                array(
-                                    'status' => array(
+        'FilterDuplicateCheck' => [
+            'filter_template' => [
+                [
+                    '$and' => [
+                        [
+                            '$or' => [
+                                [
+                                    'status' => [
                                         '$not_equals' => 'Converted',
-                                    ),
-                                ),
-                                array(
-                                    'status' => array(
+                                    ],
+                                ],
+                                [
+                                    'status' => [
                                         '$is_null' => '',
-                                    ),
-                                ),
-                            ),
-                        ),
-                        array(
-                            '$or' => array(
-                                array(
-                                    '$and' => array(
-                                        array(
-                                            'first_name' => array(
+                                    ],
+                                ],
+                            ],
+                        ],
+                        [
+                            '$or' => [
+                                [
+                                    '$and' => [
+                                        [
+                                            'first_name' => [
                                                 '$starts' => '$first_name',
-                                            ),
-                                        ),
-                                        array(
-                                            'last_name' => array(
+                                            ],
+                                        ],
+                                        [
+                                            'last_name' => [
                                                 '$starts' => '$last_name',
-                                            ),
-                                        ),
-                                    ),
-                                ),
-                                array(
-                                    'phone_work' => array(
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                                [
+                                    'phone_work' => [
                                         '$equals' => '$phone_work',
-                                    ),
-                                ),
-                            ),
-                        ),
-                        array(
-                            'account_name' => array(
+                                    ],
+                                ],
+                            ],
+                        ],
+                        [
+                            'account_name' => [
                                 '$equals' => '$account_name',
-                            ),
-                        ),
-                    ),
-                ),
-            ),
-            'ranking_fields'  => array(
-                array(
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            'ranking_fields'  => [
+                [
                     'in_field_name'   => 'last_name',
                     'dupe_field_name' => 'last_name',
-                ),
-                array(
+                ],
+                [
                     'in_field_name'   => 'first_name',
                     'dupe_field_name' => 'first_name',
-                ),
-            ),
-        ),
-    );
+                ],
+            ],
+        ],
+    ];
 
     private $api;
     private $duplicateCheckApi;
@@ -153,75 +153,77 @@ class DuplicateCheckApiTest extends TestCase
         self::assertEquals($expected, $actual, $message);
     }
 
-    public function duplicatesProvider() {
-        return array(
-            array(
-                array(
+    public function duplicatesProvider()
+    {
+        return [
+            [
+                [
                     "first_name" => $this->newLeadFirstName,
                     "last_name"  => $this->newLeadLastName,
-                ),
+                ],
                 2,
                 "Two fields passed in; should match two Leads",
-            ),
-            array(
-                array(
+            ],
+            [
+                [
                     "first_name" => $this->newLead2FirstName,
                     "last_name"  => $this->newLead2LastName,
-                ),
+                ],
                 1,
                 "Two fields passed in; should match one Lead",
-            ),
-            array(
-                array(
+            ],
+            [
+                [
                     "first_name" => "",
                     "last_name"  => $this->newLeadLastName,
-                ),
+                ],
                 2,
                 "One of the two fields passed in is blank; should match two Leads",
-            ),
-            array(
-                array(
+            ],
+            [
+                [
                     "last_name" => $this->newLeadLastName,
-                ),
+                ],
                 2,
                 "Filter omits 'first_name' since field is not passed in; should match two Leads",
-            ),
-            array(
-                array(
+            ],
+            [
+                [
                     "last_name" => 'DO NOT MATCH ANY LAST NAMES',
-                ),
+                ],
                 0,
                 "No duplicate matches, should returns 0 results",
-            ),
-        );
+            ],
+        ];
     }
 
-    public function testCheckForDuplicates_AllFilterArgumentsAreEmpty_ReturnsEmptyResultSet() {
-        $GLOBALS["dictionary"]["Lead"]["duplicate_check"] = array(
-            'FilterDuplicateCheck' => array(
-                'filter_template' => array(
-                    array(
-                        'last_name' => array(
+    public function testCheckForDuplicates_AllFilterArgumentsAreEmpty_ReturnsEmptyResultSet()
+    {
+        $GLOBALS["dictionary"]["Lead"]["duplicate_check"] = [
+            'FilterDuplicateCheck' => [
+                'filter_template' => [
+                    [
+                        'last_name' => [
                             '$starts' => '$last_name',
-                        ),
-                    )
-                )
-            ),
-        );
+                        ],
+                    ],
+                ],
+            ],
+        ];
 
-        $args = array(
+        $args = [
             'module' => 'Leads',
-            'last_name' => ''
-        );
+            'last_name' => '',
+        ];
         $results = $this->duplicateCheckApi->checkForDuplicates($this->api, $args);
-        self::assertEquals(array(), $results, 'When all arguments expected by the filter are empty, no records should be returned');
+        self::assertEquals([], $results, 'When all arguments expected by the filter are empty, no records should be returned');
     }
 
     public function testCheckForDuplicates_EmptyBean()
     {
-        $args = array(
-            "module" => "FooModule"
-        );
+        $args = [
+            "module" => "FooModule",
+        ];
 
         $this->expectException(SugarApiExceptionInvalidParameter::class);
         $this->duplicateCheckApi->checkForDuplicates($this->api, $args);
@@ -229,14 +231,14 @@ class DuplicateCheckApiTest extends TestCase
 
     public function testCheckForDuplicates_NotAuthorized()
     {
-        $args = array(
-            "module" => "Leads"
-        );
+        $args = [
+            "module" => "Leads",
+        ];
         //Setting access to be denied for read
         $acldata['module']['access']['aclaccess'] = ACL_ALLOW_DISABLED;
         ACLAction::setACLData($GLOBALS['current_user']->id, $args['module'], $acldata);
         // reset cached ACLs
-        SugarACL::$acls = array();
+        SugarACL::$acls = [];
 
         $this->expectException(SugarApiExceptionNotAuthorized::class);
         $this->duplicateCheckApi->checkForDuplicates($this->api, $args);
@@ -244,15 +246,15 @@ class DuplicateCheckApiTest extends TestCase
 
     public function testCheckForDuplicates_InvalidParameter()
     {
-        $args = array(
-            "module" => "Leads"
-        );
+        $args = [
+            "module" => "Leads",
+        ];
 
         $this->expectException(SugarApiExceptionInvalidParameter::class);
-        $duplicateCheckApi = $this->createPartialMock('DuplicateCheckApi', array('populateFromApi'));
+        $duplicateCheckApi = $this->createPartialMock('DuplicateCheckApi', ['populateFromApi']);
         $duplicateCheckApi->expects($this->any())
                           ->method('populateFromApi')
-                          ->will($this->returnValue(array()));
+                          ->will($this->returnValue([]));
         $duplicateCheckApi->checkForDuplicates($this->api, $args);
     }
 }

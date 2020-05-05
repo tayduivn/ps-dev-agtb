@@ -12,37 +12,36 @@
 
 $module_name = 'f0001_bango';
 $OBJECT_NAME = 'F0001_BANGO';
-$listViewDefs[$module_name] = array(
-	$OBJECT_NAME . '_NUMBER' => array(
-		'width' => '5',
-		'label' => 'LBL_NUMBER',
-		'link' => true,
-        'default' => true),
-	'NAME' => array(
-		'width' => '32',
-		'label' => 'LBL_SUBJECT',
-		'default' => true,
-        'link' => true),
-	'STATUS' => array(
-		'width' => '10',
-		'label' => 'LBL_STATUS',
-        'default' => true),
-    'PRIORITY' => array(
+$listViewDefs[$module_name] = [
+    $OBJECT_NAME . '_NUMBER' => [
+        'width' => '5',
+        'label' => 'LBL_NUMBER',
+        'link' => true,
+        'default' => true],
+    'NAME' => [
+        'width' => '32',
+        'label' => 'LBL_SUBJECT',
+        'default' => true,
+        'link' => true],
+    'STATUS' => [
+        'width' => '10',
+        'label' => 'LBL_STATUS',
+        'default' => true],
+    'PRIORITY' => [
         'width' => '10',
         'label' => 'LBL_PRIORITY',
-        'default' => true),
-    'RESOLUTION' => array(
+        'default' => true],
+    'RESOLUTION' => [
         'width' => '10',
         'label' => 'LBL_RESOLUTION',
-        'default' => true),
-	'TEAM_NAME' => array(
-		'width' => '9',
-		'label' => 'LBL_TEAM',
-        'default' => true),
-	'ASSIGNED_USER_NAME' => array(
-		'width' => '9',
-		'label' => 'LBL_ASSIGNED_USER',
-        'default' => true),
+        'default' => true],
+    'TEAM_NAME' => [
+        'width' => '9',
+        'label' => 'LBL_TEAM',
+        'default' => true],
+    'ASSIGNED_USER_NAME' => [
+        'width' => '9',
+        'label' => 'LBL_ASSIGNED_USER',
+        'default' => true],
 
-);
-?>
+];

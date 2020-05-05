@@ -20,49 +20,47 @@ use PHPUnit\Framework\TestCase;
  */
 class Bug44507Test extends TestCase
 {
-	var $disableCountQuery;
-	var $skipped = false;
+    var $disableCountQuery;
+    var $skipped = false;
 
     protected function setUp() : void
     {
-    	if($GLOBALS['db']->variant != 'mysql' || !function_exists('mysqli_connect'))
-    	{
+        if ($GLOBALS['db']->variant != 'mysql' || !function_exists('mysqli_connect')) {
             $this->skipped = true;
-    		$this->markTestSkipped('Skipping Test Bug44507');
-    		return;
-    	}
+            $this->markTestSkipped('Skipping Test Bug44507');
+            return;
+        }
 
-    	$GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-    	$GLOBALS['current_user']->is_admin = false;
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        $GLOBALS['current_user']->is_admin = false;
 
-    	$randomTeam = SugarTestTeamUtilities::createAnonymousTeam();
+        $randomTeam = SugarTestTeamUtilities::createAnonymousTeam();
         $randomTeam->add_user_to_team($GLOBALS['current_user']->id);
 
-	    global $sugar_config;
-	    $this->disableCountQuery = isset($sugar_config['disable_count_query']) ? $sugar_config['disable_count_query'] : false;
-	    $sugar_config['disable_count_query'] = true;
+        global $sugar_config;
+        $this->disableCountQuery = isset($sugar_config['disable_count_query']) ? $sugar_config['disable_count_query'] : false;
+        $sugar_config['disable_count_query'] = true;
 
         global $beanList;
         global $beanFiles;
-        require('include/modules.php');
+        require 'include/modules.php';
         $GLOBALS['beanList'] = $beanList;
         $GLOBALS['beanFiles'] = $beanFiles;
     }
 
     protected function tearDown() : void
     {
-    	if($this->skipped)
-    	{
-    		return;
-    	}
+        if ($this->skipped) {
+            return;
+        }
         DBManagerFactory::disconnectAll();
         unset($GLOBALS['sugar_config']['dbconfig']['db_manager_class']);
         $GLOBALS['db'] = DBManagerFactory::getInstance();
-    	global $sugar_config;
-    	$sugar_config['disable_count_query'] = $this->disableCountQuery;
+        global $sugar_config;
+        $sugar_config['disable_count_query'] = $this->disableCountQuery;
 
-		SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-		SugarTestTeamUtilities::removeAllCreatedAnonymousTeams();
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        SugarTestTeamUtilities::removeAllCreatedAnonymousTeams();
         unset($GLOBALS['current_user']);
         unset($GLOBALS['beanList']);
         unset($GLOBALS['beanFiles']);
@@ -70,55 +68,54 @@ class Bug44507Test extends TestCase
 
     public function testGetBeanSelectArray()
     {
-    	if($this->skipped)
-    	{
-    		return;
-    	}
+        if ($this->skipped) {
+            return;
+        }
 
-    	//From EmailMarketing/DetailView this covers most of the cases where EmailTemplate module is queries against
-    	DBManagerFactory::disconnectAll();
-    	$GLOBALS['sugar_config']['dbconfig']['db_manager_class'] = 'Bug44507SqlManager';
-		$localDb = DBManagerFactory::getInstance();
+        //From EmailMarketing/DetailView this covers most of the cases where EmailTemplate module is queries against
+        DBManagerFactory::disconnectAll();
+        $GLOBALS['sugar_config']['dbconfig']['db_manager_class'] = 'Bug44507SqlManager';
+        $localDb = DBManagerFactory::getInstance();
 
-		$this->assertInstanceOf("Bug44507SqlManager", $localDb);
+        $this->assertInstanceOf("Bug44507SqlManager", $localDb);
 
-    	get_bean_select_array('true', 'EmailTemplate', 'name');
-    	$sql = $localDb->getExpectedSql();
+        get_bean_select_array('true', 'EmailTemplate', 'name');
+        $sql = $localDb->getExpectedSql();
         $this->assertMatchesRegularExpression('/email_templates\.id/', $sql);
-    	$this->assertFalse($localDb->lastError(), "Assert we could run SQL:{$sql}");
+        $this->assertFalse($localDb->lastError(), "Assert we could run SQL:{$sql}");
 
-		//From Emailmarketing/EditView
-		get_bean_select_array(true, 'EmailTemplate','name','','name');
-    	$sql = $localDb->getExpectedSql();
+        //From Emailmarketing/EditView
+        get_bean_select_array(true, 'EmailTemplate', 'name', '', 'name');
+        $sql = $localDb->getExpectedSql();
         $this->assertMatchesRegularExpression('/email_templates\.id/', $sql);
-    	$this->assertFalse($localDb->lastError(), "Assert we could run SQL:{$sql}");
+        $this->assertFalse($localDb->lastError(), "Assert we could run SQL:{$sql}");
 
-    	//From Expressions/Expressions.php
-    	get_bean_select_array(true, 'ACLRole','name');
-    	$sql = $localDb->getExpectedSql();
+        //From Expressions/Expressions.php
+        get_bean_select_array(true, 'ACLRole', 'name');
+        $sql = $localDb->getExpectedSql();
         $this->assertMatchesRegularExpression('/acl_roles\.id/', $sql);
-    	$this->assertFalse($localDb->lastError(), "Assert we could run SQL:{$sql}");
+        $this->assertFalse($localDb->lastError(), "Assert we could run SQL:{$sql}");
 
-    	//From Contracts/Contract.php
-    	get_bean_select_array(true, 'ContractType','name','deleted=0','list_order');
-    	$sql = $localDb->getExpectedSql();
+        //From Contracts/Contract.php
+        get_bean_select_array(true, 'ContractType', 'name', 'deleted=0', 'list_order');
+        $sql = $localDb->getExpectedSql();
         $this->assertMatchesRegularExpression('/contract_types\.id/', $sql);
-    	$this->assertFalse($localDb->lastError(), "Assert we could run SQL:{$sql}");
+        $this->assertFalse($localDb->lastError(), "Assert we could run SQL:{$sql}");
     }
 }
 
 class Bug44507SqlManager extends MysqliManager
 {
-	var $expectedSql;
+    var $expectedSql;
 
     protected function addDistinctClause(&$sql)
     {
-    	parent::addDistinctClause($sql);
-    	$this->expectedSql = $sql;
+        parent::addDistinctClause($sql);
+        $this->expectedSql = $sql;
     }
 
     public function getExpectedSql()
     {
-    	return $this->expectedSql;
+        return $this->expectedSql;
     }
 }

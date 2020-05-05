@@ -199,7 +199,7 @@ class JobQueueTest extends TestCase
             ->method('postponeJob')
             ->with($this->equalTo($msg), $this->equalTo($delay));
 
-        $sut = $this->getClassMock('SugarJobQueue', array('getJob'));
+        $sut = $this->getClassMock('SugarJobQueue', ['getJob']);
         $sut->expects($this->any())
             ->method('getJob')
             ->will($this->returnValue($job));
@@ -218,7 +218,7 @@ class JobQueueTest extends TestCase
         ->method('resolveJob')
         ->with($this->equalTo($msg), $this->equalTo($delay));
 
-        $sut = $this->getClassMock('SugarJobQueue', array('getJob'));
+        $sut = $this->getClassMock('SugarJobQueue', ['getJob']);
         $sut->expects($this->any())
         ->method('getJob')
         ->will($this->returnValue($job));
@@ -226,7 +226,7 @@ class JobQueueTest extends TestCase
         $sut->resolveJob($jobId, $msg, $delay);
     }
 
-    protected function getClassMock($class, $methods = array())
+    protected function getClassMock($class, $methods = [])
     {
         return $this->getMockbuilder($class)
             ->disableOriginalConstructor()

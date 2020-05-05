@@ -47,14 +47,14 @@ class LocaleApiTest extends TestCase
 
     public function testRetrieveLocaleOptions()
     {
-        $result = $this->api->localeOptions($this->serviceMock, array());
+        $result = $this->api->localeOptions($this->serviceMock, []);
 
         $this->assertNotEmpty($result);
         $this->assertIsArray($result);
 
-        $fields = array('timepref', 'datepref', 'default_locale_name_format', 'timezone');
+        $fields = ['timepref', 'datepref', 'default_locale_name_format', 'timezone'];
 
-        foreach($fields as $field) {
+        foreach ($fields as $field) {
             $this->assertArrayHasKey($field, $result);
             $this->assertIsArray($result[$field]);
         }

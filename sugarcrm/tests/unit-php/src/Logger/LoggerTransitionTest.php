@@ -34,7 +34,7 @@ class LoggerTransitionTest extends TestCase
     {
         $logMan = $this->getMockBuilder('LoggerManager')
             ->disableOriginalConstructor()
-            ->setMethods(array($sugarLevel))
+            ->setMethods([$sugarLevel])
             ->getMock();
 
         $logMan->expects($this->once())
@@ -42,20 +42,20 @@ class LoggerTransitionTest extends TestCase
             ->with($this->equalTo($message));
 
         $logger = new LoggerTransition($logMan);
-        call_user_func_array(array($logger, 'log'), array($psrLevel, $message));
+        call_user_func_array([$logger, 'log'], [$psrLevel, $message]);
     }
 
     public function dataProviderTestLog()
     {
-        return array(
-            array(LogLevel::EMERGENCY, "fatal", "hello world 1"),
-            array(LogLevel::ALERT, "fatal", "hello world 2"),
-            array(LogLevel::CRITICAL, "fatal", "hello world 3"),
-            array(LogLevel::ERROR, "error", "hello world 4"),
-            array(LogLevel::WARNING, "warn", "hello world 5"),
-            array(LogLevel::NOTICE, "info", "hello world 6"),
-            array(LogLevel::INFO, "info", "hello world 7"),
-            array(LogLevel::DEBUG, "debug", "hello world 8"),
-        );
+        return [
+            [LogLevel::EMERGENCY, "fatal", "hello world 1"],
+            [LogLevel::ALERT, "fatal", "hello world 2"],
+            [LogLevel::CRITICAL, "fatal", "hello world 3"],
+            [LogLevel::ERROR, "error", "hello world 4"],
+            [LogLevel::WARNING, "warn", "hello world 5"],
+            [LogLevel::NOTICE, "info", "hello world 6"],
+            [LogLevel::INFO, "info", "hello world 7"],
+            [LogLevel::DEBUG, "debug", "hello world 8"],
+        ];
     }
 }

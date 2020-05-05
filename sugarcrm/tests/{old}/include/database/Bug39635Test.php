@@ -29,9 +29,9 @@ class Bug39635Test extends TestCase
     public function testRepairTableParams()
     {
         $bigInt = 9876543210;
-        $fieldDef = array(
-            'dbType' => 'long'
-        );
+        $fieldDef = [
+            'dbType' => 'long',
+        ];
 
         $oDB = DBManagerFactory::getInstance();
         $result = $oDB->massageValue($bigInt, $fieldDef);

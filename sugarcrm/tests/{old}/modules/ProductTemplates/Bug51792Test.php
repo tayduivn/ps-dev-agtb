@@ -61,11 +61,11 @@ class Bug51792Test extends TestCase
      */
     public function testOrder()
     {
-        $labels = array($this->_category1->name, $this->_category2->name, $this->_category3->name);
-        $indexes = array();
+        $labels = [$this->_category1->name, $this->_category2->name, $this->_category3->name];
+        $indexes = [];
 
         $catalogtree = new Tree('productcatalog');
-        $catalogtree->set_param('module','ProductTemplates');
+        $catalogtree->set_param('module', 'ProductTemplates');
         $nodes = get_categories_and_products(null);
 
         $this->assertNotEmpty($nodes, 'Error retrieving data');

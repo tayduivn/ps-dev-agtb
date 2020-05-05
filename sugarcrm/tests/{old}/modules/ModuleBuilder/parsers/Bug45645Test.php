@@ -29,7 +29,7 @@ class Bug45645Test extends TestCase
     protected function tearDown() : void
     {
         // Set things back to what they were
-        $params = array($this->testLabel => $this->oldLabel);
+        $params = [$this->testLabel => $this->oldLabel];
         ParserLabel::addLabels($this->lang, $params, $this->testModule);
     }
 
@@ -40,7 +40,7 @@ class Bug45645Test extends TestCase
         $this->newLabel = 'test ' . $this->oldLabel;
 
         // save the new label to the language file
-        $params = array($this->testLabel => $this->newLabel);
+        $params = [$this->testLabel => $this->newLabel];
         ParserLabel::addLabels($this->lang, $params, $this->testModule);
 
         // read the language file to get the new value

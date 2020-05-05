@@ -20,7 +20,7 @@ class RemoveMeTest extends TestCase
 
     protected function setUp() : void
     {
-        SugarTestHelper::setUp('mod_strings', array('Campaigns'));
+        SugarTestHelper::setUp('mod_strings', ['Campaigns']);
         $this->campaign = SugarTestCampaignUtilities::createCampaign();
     }
 

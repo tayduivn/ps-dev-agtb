@@ -21,13 +21,13 @@ class RestBug57887Test extends RestTestBase
      *
      * @var array
      */
-    protected $_newDefs = array(
-        'LBL_PANEL_DEFAULT' => array(
-            array('name', '(empty)'),
-            array('phone_office', '(empty)'),
-            array('date_modified', '(empty)'),
-        ),
-    );
+    protected $_newDefs = [
+        'LBL_PANEL_DEFAULT' => [
+            ['name', '(empty)'],
+            ['phone_office', '(empty)'],
+            ['date_modified', '(empty)'],
+        ],
+    ];
 
     /**
      * Custom file to be checked and deleted
@@ -40,7 +40,7 @@ class RestBug57887Test extends RestTestBase
      *
      * @var array
      */
-    protected $_backedUp = array();
+    protected $_backedUp = [];
 
     protected function setUp() : void
     {
@@ -112,7 +112,7 @@ class RestBug57887Test extends RestTestBase
         $exists = (bool) file_exists($this->_metadataFile);
         $this->assertTrue($exists, "The custom file was not found in the file map cache");
 
-        // Confirm metadata cache is now updated and that the change was picked 
+        // Confirm metadata cache is now updated and that the change was picked
         // up and returned accordingly
         $mm = MetaDataManager::getManager('mobile');
         $data = $mm->getMetadata();

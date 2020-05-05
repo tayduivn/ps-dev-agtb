@@ -15,6 +15,6 @@ class S_903_HealthCheckScannerCasesTestMock extends HealthCheckScannerCasesTestM
 {
     public function getVersion()
     {
-        return array('6.5.20', '1000');
+        return ['6.5.20', '1000'];
     }
 }

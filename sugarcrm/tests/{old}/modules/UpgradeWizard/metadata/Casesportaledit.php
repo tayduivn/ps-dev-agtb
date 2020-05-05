@@ -10,15 +10,15 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$viewdefs['Cases']['editview']  = array(
-    'templateMeta' => array('maxColumns' => '2',
-                            'widths' => array(
-                                            array('label' => '10', 'field' => '30'),
-                                            array('label' => '10', 'field' => '30')
-                                            ),
+$viewdefs['Cases']['editview']  = [
+    'templateMeta' => ['maxColumns' => '2',
+                            'widths' => [
+                                            ['label' => '10', 'field' => '30'],
+                                            ['label' => '10', 'field' => '30'],
+                                            ],
                             'formId' => 'CaseEditView',
                             'formName' => 'CaseEditView',
-                            'hiddenInputs' => array('module' => 'Cases',
+                            'hiddenInputs' => ['module' => 'Cases',
                                                     'returnmodule' => 'Cases',
                                                     'returnaction' => 'DetailView',
                                                     'contact_id' => '{$fields.contact_id.value}',
@@ -27,20 +27,19 @@ $viewdefs['Cases']['editview']  = array(
                                                     'action' => 'Save',
                                                     'type' => '{$fields.type.value}',
                                                     'status' => 'New',
-                                                   ),
-							'hiddenFields' => array(
-							    array (
-	                               'name'=>'portal_viewable',
-	                               'operator'=>'=',
-	                               'value'=>'1',
-							    ),
-						    ),
-                           ),
-    'data' => array(
-        array(array('field' => 'case_number', 'readOnly' => true)),
-        array('priority', 'status', 'id'),
-        array(array('field' => 'name', 'displayParams' => array('size' => 60), 'required'=>true)),
-        array(array('field' => 'description', 'displayParams' => array('rows' => '15', 'cols' => '100'))),
-    )
-);
-?>
+                                                   ],
+                            'hiddenFields' => [
+                                 [
+                                   'name'=>'portal_viewable',
+                                   'operator'=>'=',
+                                   'value'=>'1',
+                                 ],
+                            ],
+                           ],
+    'data' => [
+        [['field' => 'case_number', 'readOnly' => true]],
+        ['priority', 'status', 'id'],
+        [['field' => 'name', 'displayParams' => ['size' => 60], 'required'=>true]],
+        [['field' => 'description', 'displayParams' => ['rows' => '15', 'cols' => '100']]],
+    ],
+];

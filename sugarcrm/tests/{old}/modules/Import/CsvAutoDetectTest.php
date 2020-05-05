@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 class CsvAutoDetectTest extends TestCase
 {
-    private static $CsvContent = array (
+    private static $CsvContent =  [
         0 => "\"date_entered\",\"description\"\n\"3/26/2011 10:02am\",\"test description\"",
         1 => "\"date_entered\"\t\"description\"\n\"2011-3-26 10:2 am\"\t\"test description\"",
         2 => "\"date_entered\",\"description\"\n\"3.26.2011 15.02\",\"test description\"",
@@ -22,7 +22,7 @@ class CsvAutoDetectTest extends TestCase
         4 => "\"date_entered\",\"description\"\n\"2010/03/26 10:2am\",\"test description\"",
         5 => "'date_entered','description'\n'26/3/2011 15:02','test description'",
         6 => "\"date_entered\"|\"description\"\n\"3/26/2011 10:02am\"|\"test description\"",
-    );
+    ];
 
     protected function setUp() : void
     {
@@ -36,15 +36,15 @@ class CsvAutoDetectTest extends TestCase
 
     public function providerCsvData()
     {
-        return array(
-            array(0, ',', '"', 'm/d/Y', 'h:ia', true),
-            array(1, "\t", '"', 'Y-m-d', 'h:i a', true),
-            array(2, ",", '"', 'm.d.Y', 'H.i', true),
-            array(3, ',', '"', 'm/d/Y', 'h:ia', false),
-            array(4, ',', '"', 'Y/m/d', 'h:ia', true),
-            array(5, ',', "'", 'd/m/Y', 'H:i', true),
-            array(6, '|', '"', 'm/d/Y', 'h:ia', true),
-            );
+        return [
+            [0, ',', '"', 'm/d/Y', 'h:ia', true],
+            [1, "\t", '"', 'Y-m-d', 'h:i a', true],
+            [2, ",", '"', 'm.d.Y', 'H.i', true],
+            [3, ',', '"', 'm/d/Y', 'h:ia', false],
+            [4, ',', '"', 'Y/m/d', 'h:ia', true],
+            [5, ',', "'", 'd/m/Y', 'H:i', true],
+            [6, '|', '"', 'm/d/Y', 'h:ia', true],
+            ];
     }
 
     /**

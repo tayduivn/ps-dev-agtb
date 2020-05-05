@@ -45,9 +45,9 @@ class SugarUpgradeOpportunityFixSalesStageFieldDefinitionTest extends UpgradeTes
             ->setConstructorArgs([$this->upgrader])
             ->getMock();
 
-        Opportunity::$settings = array(
+        Opportunity::$settings = [
             'opps_view_by' => 'RevenueLineItems',
-        );
+        ];
 
         $mock->expects($this->never())->method('fixSalesStageFieldDefinition');
         $mock->run();
@@ -58,9 +58,9 @@ class SugarUpgradeOpportunityFixSalesStageFieldDefinitionTest extends UpgradeTes
      */
     public function testFixSalesStageField_OppsOnly_DoesNotUpgrade()
     {
-        Opportunity::$settings = array(
+        Opportunity::$settings = [
             'opps_view_by' => 'Opportunities',
-        );
+        ];
 
         $this->upgrader->setVersions('8.0.0', 'ent', '9.1.0', 'ent');
         $this->upgrader->setDb($this->db);
@@ -87,7 +87,7 @@ class SugarUpgradeOpportunityFixSalesStageFieldDefinitionTest extends UpgradeTes
         $this->upgrader->setDb($this->db);
         $script = $this->upgrader->getScript('post', $this->scriptFileName);
 
-        $fieldDef = array(
+        $fieldDef = [
             'name' => 'sales_stage',
             'vname' => 'LBL_SALES_STAGE',
             'type' => 'enum',
@@ -101,20 +101,20 @@ class SugarUpgradeOpportunityFixSalesStageFieldDefinitionTest extends UpgradeTes
             'required' => false,
             'massupdate' => false,
             'reportable' => true,
-        );
+        ];
 
-        $mockOpp = $this->createPartialMock('Opportunity', array('getFieldDefinition'));
+        $mockOpp = $this->createPartialMock('Opportunity', ['getFieldDefinition']);
         $mockOpp->expects($this->once())
             ->method('getFieldDefinition')
             ->with('sales_stage')
             ->willReturn($fieldDef);
 
-        $mockStandardField = $this->createPartialMock('StandardField', array('setup'));
+        $mockStandardField = $this->createPartialMock('StandardField', ['setup']);
         $mockStandardField->expects($this->once())
             ->method('setup')
             ->with($mockOpp);
 
-        $mockEnumTemplateField = $this->createPartialMock('TemplateEnum', array('save'));
+        $mockEnumTemplateField = $this->createPartialMock('TemplateEnum', ['save']);
         $mockEnumTemplateField->expects($this->once())
             ->method('save')
             ->with($mockStandardField);

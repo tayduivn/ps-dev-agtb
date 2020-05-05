@@ -22,7 +22,7 @@ class Bug57656Test extends SOAPTestCase
         parent::setUp();
         $this->tabs = new TabController();
         $tabs = $this->orig_tabs = $this->tabs->get_system_tabs();
-        if(in_array("Bugs", $tabs)) {
+        if (in_array("Bugs", $tabs)) {
             unset($tabs[array_search("Bugs", $tabs)]);
         }
         $this->tabs->set_system_tabs($tabs);
@@ -30,7 +30,7 @@ class Bug57656Test extends SOAPTestCase
 
     protected function tearDown() : void
     {
-        if(!empty($this->bugid)) {
+        if (!empty($this->bugid)) {
             $GLOBALS['db']->query("DELETE FROM bugs WHERE id='{$this->bugid}'");
         }
         $this->tabs->set_system_tabs($this->orig_tabs);
@@ -38,10 +38,10 @@ class Bug57656Test extends SOAPTestCase
 
     public function soapClients()
     {
-        return array(
-            array($GLOBALS['sugar_config']['site_url'].'/soap.php'),
-            array($GLOBALS['sugar_config']['site_url'].'/service/v3_1/soap.php')
-        );
+        return [
+            [$GLOBALS['sugar_config']['site_url'].'/soap.php'],
+            [$GLOBALS['sugar_config']['site_url'].'/service/v3_1/soap.php'],
+        ];
     }
 
     /**
@@ -51,16 +51,16 @@ class Bug57656Test extends SOAPTestCase
      */
     public function testCreateBug($url)
     {
-        $this->_soapClient = new nusoapclient($url,false,false,false,false,false,600,600);
+        $this->_soapClient = new nusoapclient($url, false, false, false, false, false, 600, 600);
         $this->_login();
-        $params = array(
-        array("name" => "name", "value" => "TEST"),
-        array("name" => "parent_id", "value" => "5a770071-66ca-6127-5a1a-4cb3a2c46e40"),
-        array("name" => "parent_type", "value" => "Accounts"),
-        array("name" => "from_addr", "value" => "test@test.com"),
-        array("name" => "to_addrs", "value" => "test@test.com"),
-        );
-        $res = $this->_soapClient->call('set_entry', array($this->_sessionId, 'Bugs', $params));
+        $params = [
+        ["name" => "name", "value" => "TEST"],
+        ["name" => "parent_id", "value" => "5a770071-66ca-6127-5a1a-4cb3a2c46e40"],
+        ["name" => "parent_type", "value" => "Accounts"],
+        ["name" => "from_addr", "value" => "test@test.com"],
+        ["name" => "to_addrs", "value" => "test@test.com"],
+        ];
+        $res = $this->_soapClient->call('set_entry', [$this->_sessionId, 'Bugs', $params]);
         $this->assertNotEquals("-1", $res['id'], "Bad bug ID");
 
         $b = new Bug();

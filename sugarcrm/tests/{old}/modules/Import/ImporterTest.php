@@ -18,17 +18,17 @@ class ImporterTest extends TestCase
     private $_importObject;
 
     // date_entered and last_name
-    private static $CsvContent = array (
+    private static $CsvContent =  [
         0 => "\"3/26/2011 10:02am\",\"Doe\"",
         1 => "\"2011-3-26 10:02 am\",\"Doe\"",
         2 => "\"3.26.2011 10.02\",\"Doe\"",
-    );
+    ];
 
     protected function setUp() : void
     {
-        $beanList = array();
-        $beanFiles = array();
-        require('include/modules.php');
+        $beanList = [];
+        $beanFiles = [];
+        require 'include/modules.php';
         $GLOBALS['beanList'] = $beanList;
         $GLOBALS['beanFiles'] = $beanFiles;
         
@@ -47,11 +47,11 @@ class ImporterTest extends TestCase
     
     public function providerCsvData()
     {
-        return array(
-            array(0, '2011-03-26 10:02:00', 'm/d/Y', 'h:ia'),
-            array(1, '2011-03-26 10:02:00', 'Y-m-d', 'h:ia'),
-            array(2, '2011-03-26 10:02:00', 'm.d.Y', 'H.i'),
-            );
+        return [
+            [0, '2011-03-26 10:02:00', 'm/d/Y', 'h:ia'],
+            [1, '2011-03-26 10:02:00', 'Y-m-d', 'h:ia'],
+            [2, '2011-03-26 10:02:00', 'm.d.Y', 'H.i'],
+            ];
     }
 
     /**
@@ -94,19 +94,19 @@ class ImporterTest extends TestCase
 
     public function providerIdData()
     {
-        return array(
+        return [
             //Valid ids
-            array('12345','12345'),
-            array('12345-6789-1258','12345-6789-1258'),
-            array('aaaBBB12AA122cccD','aaaBBB12AA122cccD'),
-            array('aaa-BBB-12AA122-cccD','aaa-BBB-12AA122-cccD'),
-            array('aaa_BBB_12AA122_cccD','aaa_BBB_12AA122_cccD'),
-            array('aaa.BBB.12AA122.cccD','aaa.BBB.12AA122.cccD'),
+            ['12345','12345'],
+            ['12345-6789-1258','12345-6789-1258'],
+            ['aaaBBB12AA122cccD','aaaBBB12AA122cccD'],
+            ['aaa-BBB-12AA122-cccD','aaa-BBB-12AA122-cccD'],
+            ['aaa_BBB_12AA122_cccD','aaa_BBB_12AA122_cccD'],
+            ['aaa.BBB.12AA122.cccD','aaa.BBB.12AA122.cccD'],
             //Invalid
-            array('1242','12*'),
-            array('abdcd36','abdcd$'),
-            array('1234-asdf3535353523','1234-asdf####23'),
-            );
+            ['1242','12*'],
+            ['abdcd36','abdcd$'],
+            ['1234-asdf3535353523','1234-asdf####23'],
+            ];
     }
 
     /**

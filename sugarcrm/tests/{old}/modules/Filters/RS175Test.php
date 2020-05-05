@@ -32,7 +32,7 @@ class RS175Test extends TestCase
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setUp('current_user', array(true, false));
+        SugarTestHelper::setUp('current_user', [true, false]);
         self::$rest = SugarTestRestUtilities::getRestServiceMock();
     }
 
@@ -49,7 +49,7 @@ class RS175Test extends TestCase
 
     protected function tearDown() : void
     {
-        $this->api->setUsed(self::$rest, array('module_name' => 'Accounts', 'filters' => array()));
+        $this->api->setUsed(self::$rest, ['module_name' => 'Accounts', 'filters' => []]);
     }
 
     public function testApi()
@@ -57,24 +57,24 @@ class RS175Test extends TestCase
         global $current_user;
         $result = $this->api->setUsed(
             self::$rest,
-            array('module_name' => 'Accounts', 'filters' => array())
+            ['module_name' => 'Accounts', 'filters' => []]
         );
         $this->assertEmpty($result);
 
         $filter1 = SugarTestFilterUtilities::createUserFilter(
             $current_user->id,
             'RS189Filter1',
-            json_encode(array(array('module' => 'Accounts', 'name' => 'RS189Name1')))
+            json_encode([['module' => 'Accounts', 'name' => 'RS189Name1']])
         );
         $result = $this->api->setUsed(
             self::$rest,
-            array('module_name' => 'Accounts', 'filters' => array($filter1->id))
+            ['module_name' => 'Accounts', 'filters' => [$filter1->id]]
         );
         $this->assertCount(1, $result);
         $result = array_shift($result);
         $this->assertEquals($filter1->id, $result['id']);
 
-        $result = $this->api->getUsed(self::$rest, array('module_name' => 'Accounts'));
+        $result = $this->api->getUsed(self::$rest, ['module_name' => 'Accounts']);
         $this->assertCount(1, $result);
         $result = array_shift($result);
         $this->assertEquals($filter1->id, $result['id']);
@@ -83,22 +83,22 @@ class RS175Test extends TestCase
         $filter2 = SugarTestFilterUtilities::createUserFilter(
             $current_user->id,
             'RS189Filter2',
-            json_encode(array(array('module' => 'Accounts', 'name' => 'RS189Name2')))
+            json_encode([['module' => 'Accounts', 'name' => 'RS189Name2']])
         );
         $this->api->setUsed(
             self::$rest,
-            array('module_name' => 'Accounts', 'filters' => array($filter1->id, $filter2->id))
+            ['module_name' => 'Accounts', 'filters' => [$filter1->id, $filter2->id]]
         );
 
         $result = $this->api->deleteUsed(
             self::$rest,
-            array('module_name' => 'Accounts', 'record' => $filter1->id)
+            ['module_name' => 'Accounts', 'record' => $filter1->id]
         );
         $this->assertCount(1, $result);
 
         $result = $this->api->deleteUsed(
             self::$rest,
-            array('module_name' => 'Accounts')
+            ['module_name' => 'Accounts']
         );
         $this->assertEmpty($result);
     }

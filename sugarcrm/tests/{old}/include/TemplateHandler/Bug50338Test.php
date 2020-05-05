@@ -20,19 +20,19 @@ class Bug50338Test extends TestCase
 
     function testCreateFieldFefs()
     {
-        $this->TemplateHandler = new MockTemplateHandler ();
-        $this->fieldDefs = array(
-                             'amount' => Array (
+        $this->TemplateHandler = new MockTemplateHandler();
+        $this->fieldDefs = [
+                             'amount' =>  [
                                           'calculated' => true,
                                           'formula' => 'add($calc1_c, $calc2_c)',
-                                        ),
-                             'calc1_c' => Array (
-                                        'id' => 'Opportunitiescalc1_c'
-                                        ),
-                             'calc2_c' => Array (
-                                        'id' => 'Opportunitiescalc2_c'
-                                        ),
-                           );
+                                        ],
+                             'calc1_c' =>  [
+                                        'id' => 'Opportunitiescalc1_c',
+                                        ],
+                             'calc2_c' =>  [
+                                        'id' => 'Opportunitiescalc2_c',
+                                        ],
+                           ];
         $fieldDefs = $this->TemplateHandler->mockPrepareCalculationFields($this->fieldDefs, 'Opportunities');
         $this->assertArrayHasKey('Opportunitiesamount', $fieldDefs);
         $this->assertStringContainsString('Opportunitiescalc1_c', $fieldDefs['Opportunitiesamount']['formula']);

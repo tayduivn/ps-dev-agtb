@@ -18,12 +18,12 @@ class SugarForecasting_Progress_IndividualTest extends TestCase
     /**
      * @var array args to be passed onto methods
      */
-    protected static $args = array();
+    protected static $args = [];
 
     /**
      * @var array array of users used throughout class
      */
-    protected static $users = array();
+    protected static $users = [];
 
     /**
      * @var Currency
@@ -36,7 +36,7 @@ class SugarForecasting_Progress_IndividualTest extends TestCase
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setup('mod_strings', array('manager', 'Forecasts'));
+        SugarTestHelper::setup('mod_strings', ['manager', 'Forecasts']);
         SugarTestHelper::setup('current_user');
         SugarTestForecastUtilities::setUpForecastConfig();
 
@@ -44,17 +44,17 @@ class SugarForecasting_Progress_IndividualTest extends TestCase
 
         self::$args['timeperiod_id'] = $timeperiod->id;
 
-        self::$currency = SugarTestCurrencyUtilities::createCurrency('Yen','¥','YEN',78.87);
+        self::$currency = SugarTestCurrencyUtilities::createCurrency('Yen', '¥', 'YEN', 78.87);
 
         SugarTestForecastUtilities::setTimePeriod($timeperiod);
 
         global $current_user;
 
-        $config = array(
+        $config = [
             'timeperiod_id' => $timeperiod->id,
             'currency_id' => self::$currency->id,
-            'quota' => array('amount' => 27000)
-        );
+            'quota' => ['amount' => 27000],
+        ];
         self::$users['reportee'] = SugarTestForecastUtilities::createForecastUser($config);
 
         $current_user = self::$users['reportee']['user'];
@@ -95,9 +95,9 @@ class SugarForecasting_Progress_IndividualTest extends TestCase
         $data = $obj->process();
 
         //find expected quota object for the created quotas
-        foreach(SugarTestQuotaUtilities::getCreatedQuotaIds() as $quotaID) {
+        foreach (SugarTestQuotaUtilities::getCreatedQuotaIds() as $quotaID) {
             $quota = BeanFactory::getBean('Quotas', $quotaID);
-            if($quota->timeperiod_id == self::$args['timeperiod_id'] && $quota->user_id == self::$args['user_id'] && $quota->quota_type == "Direct"){
+            if ($quota->timeperiod_id == self::$args['timeperiod_id'] && $quota->user_id == self::$args['user_id'] && $quota->quota_type == "Direct") {
                 break;
             }
         }

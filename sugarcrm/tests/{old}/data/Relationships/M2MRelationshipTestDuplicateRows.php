@@ -18,11 +18,11 @@ class M2MRelationshipTestDuplicateRows extends TestCase
     protected $origDB;
 
     protected function setUp() : void
-        {
+    {
             $this->origDB = $GLOBALS['db'];
             $this->db = new SugarTestDatabaseMock();
             $GLOBALS['db'] = $this->db;
-            $this->def = array(
+            $this->def = [
                 'name' => "accounts_contacts",
                 'table' => "accounts_contacts",
                 'lhs_module' => 'Accounts',
@@ -38,8 +38,8 @@ class M2MRelationshipTestDuplicateRows extends TestCase
                 'primary_flag_column' => 'primary_account',
                 'primary_flag_side' => 'rhs',
                 'primary_flag_default' => true,
-           );
-        }
+            ];
+    }
 
     protected function tearDown() : void
     {
@@ -51,7 +51,7 @@ class M2MRelationshipTestDuplicateRows extends TestCase
      */
     public function testM2MDupeRowCheck($row, $accId, $conId, $expected)
     {
-        $this->db->addQuerySpy('searchForExisting', '/SELECT.*FROM.*accounts_contacts/i', array($row));
+        $this->db->addQuerySpy('searchForExisting', '/SELECT.*FROM.*accounts_contacts/i', [$row]);
 
         $m2mRelationship = new TestDuplicateM2MRel($this->def);
         $account = BeanFactory::newBean("Accounts");
@@ -64,65 +64,66 @@ class M2MRelationshipTestDuplicateRows extends TestCase
         $this->assertEquals($expected, $m2mRelationship->addRowCalled);
     }
 
-    public function dupeRowProvider() {
-            return array(
-                array(
-                    array(
+    public function dupeRowProvider()
+    {
+            return [
+                [
+                    [
                         "id" => "12345",
                         "contact_id" => "contact_1",
                         "account_id" => "account_1",
                         "date_modified" => "2014-06-02 22:14:12",
                         "primary_account" => "1",
                         "deleted" => "0",
-                    ),
+                    ],
                     "account_1",
                     "contact_1",
                     false,
-                ),
+                ],
                 //Check deleted flag
-                array(
-                    array(
+                [
+                    [
                         "id" => "1234",
                         "contact_id" => "contact_1",
                         "account_id" => "account_1",
                         "date_modified" => "2014-06-02 22:14:12",
                         "primary_account" => "1",
                         "deleted" => "1",
-                    ),
+                    ],
                     "account_1",
                     "contact_1",
                     true,
-                ),
+                ],
                 //Check for additional fields (primary_account here)
-                array(
-                    array(
+                [
+                    [
                         "id" => "12345",
                         "contact_id" => "contact_1",
                         "account_id" => "account_1",
                         "date_modified" => "2014-06-02 22:14:12",
                         "primary_account" => "0",
                         "deleted" => "0",
-                    ),
+                    ],
                     "account_1",
                     "contact_1",
                     true,
-                ),
+                ],
                 //Check for new related ids
-                array(
-                    array(
+                [
+                    [
                         "id" => "12345",
                         "contact_id" => "contact_1",
                         "account_id" => "account_2",
                         "date_modified" => "2014-06-02 22:14:12",
                         "primary_account" => "1",
                         "deleted" => "0",
-                    ),
+                    ],
                     "account_1",
                     "contact_1",
                     true,
-                ),
-            );
-        }
+                ],
+            ];
+    }
 }
 
 class TestDuplicateM2MRel extends M2MRelationship

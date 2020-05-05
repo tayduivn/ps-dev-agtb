@@ -1,4 +1,4 @@
-<?php 
+<?php
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -17,26 +17,28 @@ class StoreQueryTest extends TestCase
     protected function setUp() : void
     {
         global $current_user;
-		$current_user = SugarTestUserUtilities::createAnonymousUser();
-	}
+        $current_user = SugarTestUserUtilities::createAnonymousUser();
+    }
 
     protected function tearDown() : void
     {
-    	SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
     }
     
-	function testGetStoredQuery(){
-		$query = StoreQuery::getStoredQueryForUser("Contacts");
-	    $this->assertTrue(empty($query), "StoreQuery::getStoredQueryForUser is not empty.");
+    function testGetStoredQuery()
+    {
+        $query = StoreQuery::getStoredQueryForUser("Contacts");
+        $this->assertTrue(empty($query), "StoreQuery::getStoredQueryForUser is not empty.");
     }
 
-    function testPopulateRequestOverride(){
+    function testPopulateRequestOverride()
+    {
         $_REQUEST['lvso'] = 'desc';
         $_REQUEST['foo'] = 'bar';
 
         $sq = new StoreQuery();
-	    $sq->loadQuery("Contacts");
+        $sq->loadQuery("Contacts");
 
         //StoreQuery should override foo while leaving lvso untouched
         $sq->query['lvso'] = 'asc';

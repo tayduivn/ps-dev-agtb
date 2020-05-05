@@ -56,80 +56,80 @@ class WebToLeadTest extends TestCase
 
     public function optoutDataProvider()
     {
-        return array(
-            array(
+        return [
+            [
                 false,
-                array(),
+                [],
                 0,
-            ),
-            array(
+            ],
+            [
                 false,
-                array('email_opt_out' => true),
+                ['email_opt_out' => true],
                 1,
-            ),
-            array(
+            ],
+            [
                 false,
-                array('email_opt_in' => 'on'),
+                ['email_opt_in' => 'on'],
                 0,
-            ),
-            array(
+            ],
+            [
                 false,
-                array('email_opt_out' => 'off'),
+                ['email_opt_out' => 'off'],
                 1,
-            ),
-            array(
+            ],
+            [
                 false,
-                array(
+                [
                     'email_opt_in' => 'on',
                     'email_opt_out' => true,
-                ),
+                ],
                 0,
-            ),
-            array(
+            ],
+            [
                 false,
-                array(
+                [
                     'email_opt_in' => 'off',
                     'email_opt_out' => true,
-                ),
+                ],
                 1,
-            ),
-            array(
+            ],
+            [
                 true,
-                array(),
+                [],
                 1,
-            ),
-            array(
+            ],
+            [
                 true,
-                array('email_opt_out' => true),
+                ['email_opt_out' => true],
                 1,
-            ),
-            array(
+            ],
+            [
                 true,
-                array('email_opt_in' => 'on'),
+                ['email_opt_in' => 'on'],
                 0,
-            ),
-            array(
+            ],
+            [
                 true,
-                array('email_opt_out' => 'off'),
+                ['email_opt_out' => 'off'],
                 1,
-            ),
-            array(
+            ],
+            [
                 true,
-                array(
+                [
                     'email_opt_in' => 'on',
                     'email_opt_out' => true,
-                ),
+                ],
                 0,
-            ),
-            array(
+            ],
+            [
                 true,
-                array(
+                [
                     'email_opt_in' => 'off',
                     'email_opt_out' => true,
-                ),
+                ],
                 1,
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -141,13 +141,13 @@ class WebToLeadTest extends TestCase
     {
         $this->setConfigOptout($configDefaultValue);
 
-        $emails = array();
+        $emails = [];
         for ($i = 0; $i <= 1; $i++) {
             $emails[] = "test{$i}_" . Uuid::uuid1() . '@testonly.app';
         }
 
         $requestId = Uuid::uuid1();
-        $_POST = array(
+        $_POST = [
             'first_name' => 'TestFirstName',
             'last_name' => 'TestLastName',
             'campaign_id' => $this->campaignId,
@@ -158,7 +158,7 @@ class WebToLeadTest extends TestCase
             'email' => $emails[0],
             'email2' => $emails[1],
             'req_id' => $requestId,
-        );
+        ];
         foreach ($formVars as $key => $value) {
             $_POST[$key] = $value;
         }
@@ -208,7 +208,7 @@ class WebToLeadTest extends TestCase
     {
         $sea = BeanFactory::newBean('EmailAddresses');
         $q = new SugarQuery();
-        $q->select(array('*'));
+        $q->select(['*']);
         $q->from($sea);
         $q->where()->queryAnd()
             ->equals('email_address_caps', strtoupper($emailAddress))
@@ -216,7 +216,7 @@ class WebToLeadTest extends TestCase
         $q->limit(1);
         $rows = $q->execute();
         if (empty($rows)) {
-            return array();
+            return [];
         }
         return $rows[0];
     }

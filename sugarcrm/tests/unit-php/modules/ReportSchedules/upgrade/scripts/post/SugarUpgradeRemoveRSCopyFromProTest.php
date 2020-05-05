@@ -28,55 +28,55 @@ class SugarUpgradeRemoveRSCopyFromProTest extends TestCase
      */
     public function providerTestRemoveCopyButton()
     {
-        return array(
+        return [
             // copy button exists
-            array(
-                array(
-                    'buttons' => array(
-                        array(
+            [
+                [
+                    'buttons' => [
+                        [
                             'type' => 'actiondropdown',
                             'name' => 'main_dropdown',
                             'primary' => true,
                             'showOn' => 'view',
-                            'buttons' => array(
-                                array(
+                            'buttons' => [
+                                [
                                     'type' => 'rowaction',
                                     'event' => 'button:duplicate_button:click',
                                     'name' => 'duplicate_button',
                                     'label' => 'LBL_DUPLICATE_BUTTON_LABEL',
                                     'acl_action' => 'create',
-                                ),
-                            ),
-                        ),
-                    ),
-                ),
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
                 true,
-            ),
+            ],
             // copy button doesn't exist
-            array(
-                array(
-                    'buttons' => array(
-                        array(
+            [
+                [
+                    'buttons' => [
+                        [
                             'type' => 'actiondropdown',
                             'name' => 'main_dropdown',
                             'primary' => true,
                             'showOn' => 'view',
-                            'buttons' => array(
-                                array(
+                            'buttons' => [
+                                [
                                     'type' => 'rowaction',
                                     'event' => 'button:edit_button:click',
                                     'name' => 'edit_button',
                                     'label' => 'LBL_EDIT_BUTTON_LABEL',
                                     'primary' => true,
                                     'acl_action' => 'edit',
-                                ),
-                            ),
-                        ),
-                    ),
-                ),
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
                 false,
-            ),
-        );
+            ],
+        ];
     }
 
     /**
@@ -86,7 +86,7 @@ class SugarUpgradeRemoveRSCopyFromProTest extends TestCase
     public function testRemoveCopyButton($meta, $expected)
     {
         $mock = $this->createMock('\SugarUpgradeRemoveRSCopyFromPro');
-        $result = TestReflection::callProtectedMethod($mock, 'removeCopyButton', array(&$meta));
+        $result = TestReflection::callProtectedMethod($mock, 'removeCopyButton', [&$meta]);
         $this->assertEquals($expected, $result);
     }
 }

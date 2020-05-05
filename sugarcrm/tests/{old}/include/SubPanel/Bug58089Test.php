@@ -16,7 +16,7 @@ class Bug58089Test extends TestCase
 {
     protected $_tabController;
     protected $_currentTabs;
-    protected $_currentSubpanels = array('hidden' => array(), 'shown' => array());
+    protected $_currentSubpanels = ['hidden' => [], 'shown' => []];
     protected $_modListGlobal;
     protected $_subPanelDefinitions;
     protected $_testDefs;
@@ -25,7 +25,7 @@ class Bug58089Test extends TestCase
     protected function setUp() : void
     {
         // Set up our test defs
-        $this->_testDefs = array(
+        $this->_testDefs = [
             'order' => 40,
             'title_key' => 'LBL_HISTORY_SUBPANEL_TITLE',
             'type' => 'collection',
@@ -34,17 +34,17 @@ class Bug58089Test extends TestCase
             'sort_by' => 'date_entered',
             'header_definition_from_subpanel'=> 'calls',
             'module'=>'History',
-            'top_buttons' => array(
-                array('widget_class' => 'SubPanelTopCreateNoteButton'),
-            ),	
-            'collection_list' => array(		
-                'notes' => array(
+            'top_buttons' => [
+                ['widget_class' => 'SubPanelTopCreateNoteButton'],
+            ],
+            'collection_list' => [
+                'notes' => [
                     'module' => 'Notes',
                     'subpanel_name' => 'ForCalls',
                     'get_subpanel_data' => 'notes',
-                ),		
-            ), 
-        );
+                ],
+            ],
+        ];
         
         // Globals setup
         SugarTestHelper::setUp('moduleList');
@@ -54,7 +54,7 @@ class Bug58089Test extends TestCase
         SugarTestHelper::setUp('current_user');
         
         // @hack - Projects totally overrides the exempt module list in its subpanel
-        // viewdefs, so to run this test effectively, Projects needs to be 
+        // viewdefs, so to run this test effectively, Projects needs to be
         // disabled if it is enabled. - rgonzalez
         $this->_modListGlobal = $GLOBALS['moduleList'];
         $key = array_search('Project', $GLOBALS['moduleList']);
@@ -78,7 +78,7 @@ class Bug58089Test extends TestCase
         // Handle exempt modules, since this global gets set in other places in
         // the code base and is causing the last unit test to fail because of the
         // override that happens in the Project module subpaneldefs.php file.
-        $this->_exemptModules = empty($GLOBALS['modules_exempt_from_availability_check']) ? array() : $GLOBALS['modules_exempt_from_availability_check'];
+        $this->_exemptModules = empty($GLOBALS['modules_exempt_from_availability_check']) ? [] : $GLOBALS['modules_exempt_from_availability_check'];
         unset($GLOBALS['modules_exempt_from_availability_check']);
         
         // Copied from include/utils/security_utils.php
@@ -125,7 +125,8 @@ class Bug58089Test extends TestCase
      *
      * @group Bug58089
      */
-    public function testNotesSubpanelOnAccountsAllowedOnDefaultInstallation() {
+    public function testNotesSubpanelOnAccountsAllowedOnDefaultInstallation()
+    {
         $subpanel = new aSubPanel('history', $this->_testDefs, BeanFactory::newBean('Accounts'));
         $this->assertArrayHasKey('notes', $subpanel->sub_subpanels, "Notes module not found in History subpanel's Notes subpanel");
     }
@@ -135,7 +136,8 @@ class Bug58089Test extends TestCase
      *
      * @group Bug58089
      */
-    public function testNotesSubpanelOnAccountsNotAllowedWhenNotesIsHiddenFromSubpanels() {
+    public function testNotesSubpanelOnAccountsNotAllowedWhenNotesIsHiddenFromSubpanels()
+    {
         // Remove Notes from the subpanel modules and test it is NOT shown
         $hidden = $this->_currentSubpanels['hidden'];
         $hidden['notes'] = 'notes';

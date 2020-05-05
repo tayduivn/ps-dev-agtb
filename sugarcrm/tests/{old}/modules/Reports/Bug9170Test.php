@@ -19,39 +19,39 @@ class Bug9170Test extends TestCase
     
     protected function setUp() : void
     {
-		$this->rs = new ReportSchedule();
-	}
+        $this->rs = new ReportSchedule();
+    }
 
     /**
      * Data provider for test create schedule.
      *
      * @return array
      */
-	public function testCreateScheduleProvider()
-	{
-	    global $timedate;
+    public function testCreateScheduleProvider()
+    {
+        global $timedate;
 
         $today = gmdate($timedate->get_db_date_time_format(), time());
         $yesterday = gmdate($timedate->get_db_date_time_format(), time() - 3600 * 24);
 
-        return array(
-            array($yesterday, 3600 * 24, $yesterday),
-            array($today, 3600 * 24, $today),
-        );
-	}
+        return [
+            [$yesterday, 3600 * 24, $yesterday],
+            [$today, 3600 * 24, $today],
+        ];
+    }
 
 
-	/**
+    /**
      * @dataProvider testCreateScheduleProvider
      */
-	public function testCreateSchedule($start_date, $interval, $expected_date)
-	{
+    public function testCreateSchedule($start_date, $interval, $expected_date)
+    {
         global $timedate;
         $reportID = uniqid();
-	    $id = $this->rs->save_schedule("","1",$reportID,$start_date, $interval,1,'pro');
-	    $results = $this->rs->get_report_schedule($reportID);
+        $id = $this->rs->save_schedule("", "1", $reportID, $start_date, $interval, 1, 'pro');
+        $results = $this->rs->get_report_schedule($reportID);
         $next_run = '';
-        foreach($results as $ur){
+        foreach ($results as $ur) {
             $next_run = $ur['next_run'];
         }
 
@@ -60,7 +60,7 @@ class Bug9170Test extends TestCase
 
         //Assert that the timestamps are within a minute of each other
         $this->assertTrue(($next_run_ts + 60) > $expected_date_ts && $expected_date_ts > ($next_run_ts - 60), "Unable to schedule report");
-	}
+    }
 
     /**
      * Data provider for test update schedule.
@@ -76,34 +76,34 @@ class Bug9170Test extends TestCase
         $nextWeek = gmdate($timedate->get_db_date_time_format(), time() + 3600 * 24 * 7);
         $yesterday = gmdate($timedate->get_db_date_time_format(), time() - 3600 * 24);
 
-	    return array(
-           array($yesterday, 3600 * 24, $tomorrow),
-           array($yesterday, 3600 * 24 * 8, $nextWeek),
-           array($today, 3600 * 24, $tomorrow),
-           array($today, 3600 * 24 * 7, $nextWeek),
-	    );
+        return [
+           [$yesterday, 3600 * 24, $tomorrow],
+           [$yesterday, 3600 * 24 * 8, $nextWeek],
+           [$today, 3600 * 24, $tomorrow],
+           [$today, 3600 * 24 * 7, $nextWeek],
+        ];
     }
 
     /**
      * @dataProvider testUpdateScheduleProvider
      */
-	public function testUpdateNextRun($startDate, $interval, $expectedDate)
-	{
-	    $reportID = uniqid();
-	    $id = $this->rs->save_schedule("", "1", $reportID, $startDate, $interval,1,'pro');
-	    
-	    //Update the report schedule
-	    $results = $this->rs->get_report_schedule($reportID);
+    public function testUpdateNextRun($startDate, $interval, $expectedDate)
+    {
+        $reportID = uniqid();
+        $id = $this->rs->save_schedule("", "1", $reportID, $startDate, $interval, 1, 'pro');
+        
+        //Update the report schedule
+        $results = $this->rs->get_report_schedule($reportID);
         $next_run = '';
-        foreach($results as $ur){
+        foreach ($results as $ur) {
             $next_run = $ur['next_run'];
         }
-	    $this->rs->update_next_run_time($id,$next_run,$results[0]['time_interval'] );
-	    
-	    //Get the update
-	    $updatedResults = $this->rs->get_report_schedule($reportID);
+        $this->rs->update_next_run_time($id, $next_run, $results[0]['time_interval']);
+        
+        //Get the update
+        $updatedResults = $this->rs->get_report_schedule($reportID);
         $nextRun = '';
-        foreach($updatedResults as $ur){
+        foreach ($updatedResults as $ur) {
             $nextRun = $ur['next_run'];
         }
         $nextRunTimestamp = strtotime($nextRun);
@@ -111,10 +111,10 @@ class Bug9170Test extends TestCase
 
         $this->assertTrue(($nextRunTimestamp + 60) > $expectedDateTimestamp &&
             $expectedDateTimestamp > ($nextRunTimestamp - 60), "Unable to update scheduled report.");
-	}
-	
+    }
+    
     protected function tearDown() : void
     {
         $GLOBALS['db']->truncateTableSQL($this->rs->table_name);
-	}
+    }
 }

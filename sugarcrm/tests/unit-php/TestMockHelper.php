@@ -86,7 +86,7 @@ class TestMockHelper
      */
     public static function createMock(TestCase $testCase, $originalClassName)
     {
-        return TestReflection::callProtectedMethod($testCase, 'createMock', array($originalClassName));
+        return TestReflection::callProtectedMethod($testCase, 'createMock', [$originalClassName]);
     }
 
     /**
@@ -102,6 +102,6 @@ class TestMockHelper
      */
     public static function createPartialMock(TestCase $testCase, $originalClassName, array $methods)
     {
-        return TestReflection::callProtectedMethod($testCase, 'createPartialMock', array($originalClassName, $methods));
+        return TestReflection::callProtectedMethod($testCase, 'createPartialMock', [$originalClassName, $methods]);
     }
 }

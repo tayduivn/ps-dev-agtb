@@ -30,7 +30,7 @@ class Bug56838Test extends TestCase
         SugarTestHelper::setup('beanList');
         SugarTestHelper::setup('beanFiles');
         SugarTestHelper::setup('app_list_strings');
-        SugarTestHelper::setup('mod_strings', array(self::$testModule));
+        SugarTestHelper::setup('mod_strings', [self::$testModule]);
     }
 
     public static function tearDownAfterClass(): void
@@ -69,7 +69,7 @@ class Bug56838Test extends TestCase
     /**
      * @group Bug56838
      */
-    public function testMobileListViewPanelLabelIsCorrect() 
+    public function testMobileListViewPanelLabelIsCorrect()
     {
         // SidecarListLayoutMetaDataParser
         $parser = ParserFactory::getParser(MB_WIRELESSLISTVIEW, self::$testModule, null, null, MB_WIRELESS);
@@ -103,7 +103,7 @@ class Bug56838Test extends TestCase
      * <code>
      * $fields = $parser->getAdditionalFields();
      * $this->assertArrayNotHasKey($this->testField, $fields, "$this->testField should not be in the additional fields list");
-     * </code> 
+     * </code>
      */
     /**
      * @group Bug56838

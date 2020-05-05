@@ -57,7 +57,7 @@ class QueryBuilderTest extends TestCase
             ->where('id = ' . $q1->createPositionalParameter($current_user->id));
 
         $q2 = $conn->createQueryBuilder();
-        $q2->select(array('q2.id, q1.last_name'))
+        $q2->select(['q2.id, q1.last_name'])
             ->from('users', 'q2')
             ->join('q2', '(' . $q2->importSubQuery($q1) . ')', 'q1', 'q2.id = q1.id');
 
@@ -79,7 +79,7 @@ class QueryBuilderTest extends TestCase
             ->where('id = ' . $q1->createPositionalParameter($current_user->id));
 
         $q2 = $conn->createQueryBuilder();
-        $q2->select(array('id, last_name'))
+        $q2->select(['id, last_name'])
             ->from('users')
             ->where('id IN(' . $q2->importSubQuery($q1) . ')');
 

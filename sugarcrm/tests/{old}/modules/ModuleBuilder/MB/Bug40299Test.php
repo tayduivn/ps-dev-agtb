@@ -22,17 +22,17 @@ class Bug40299Test extends TestCase
     var $MBModule;
     
     protected function setUp() : void
-	{
-	    $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+    {
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $this->MBModule = new MBModule('testModule', 'custom/modulebuilder/packages/testPkg', 'testPkg', 'testPkg');
-	}
-	
+    }
+    
     protected function tearDown() : void
-	{
-		SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-		unset($GLOBALS['current_user']);
+    {
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        unset($GLOBALS['current_user']);
         $this->MBModule->delete();
-	}
+    }
     
     public function testFieldExistForBasicFields()
     {

@@ -37,42 +37,42 @@ class Bug50358Test extends TestCase
 
     public function currencyDataProvider()
     {
-        return array (
-            array (
-                array (
-                    '-99' => array (
+        return  [
+             [
+                 [
+                    '-99' =>  [
                         'name' => 'USD',
-                        'symbol' => 'USD'
-                    ),
-                    '1' => array (
+                        'symbol' => 'USD',
+                    ],
+                    '1' =>  [
                         'name' => 'EUR',
-                        'symbol' => '&'
-                    ),
-                    '2' => array (
+                        'symbol' => '&',
+                    ],
+                    '2' =>  [
                         'name' => 'AAA',
-                        'symbol' => '*'
-                    )
-                ),
-                "currencies[0] = 'USD';\ncurrencies[1] = '*';\ncurrencies[2] = '&';"
-            ),
-            array (
-                array (
-                    '-99' => array (
+                        'symbol' => '*',
+                    ],
+                 ],
+                 "currencies[0] = 'USD';\ncurrencies[1] = '*';\ncurrencies[2] = '&';",
+             ],
+             [
+                 [
+                    '-99' =>  [
                         'name' => 'USD',
-                        'symbol' => 'USD'
-                    ),
-                    '1' => array (
+                        'symbol' => 'USD',
+                    ],
+                    '1' =>  [
                         'name' => 'AAA',
-                        'symbol' => '*'
-                    ),
-                    '2' => array (
+                        'symbol' => '*',
+                    ],
+                    '2' =>  [
                         'name' => 'EUR',
-                        'symbol' => '&'
-                    )
-                ),
-                "currencies[0] = 'USD';\ncurrencies[1] = '*';\ncurrencies[2] = '&';"
-            ),
-        );
+                        'symbol' => '&',
+                    ],
+                 ],
+                 "currencies[0] = 'USD';\ncurrencies[1] = '*';\ncurrencies[2] = '&';",
+             ],
+        ];
     }
 
     /**

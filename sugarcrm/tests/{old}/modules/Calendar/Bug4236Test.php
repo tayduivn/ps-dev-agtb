@@ -37,17 +37,17 @@ class Bug4236Test extends TestCase
 
         $fdow = $current_user->get_first_day_of_week();
         // Expect that the first day in slices_arr is Sunday
-        $this->assertEquals($fdow , 0);
+        $this->assertEquals($fdow, 0);
 
         // Set 0 (Sunday) as FDOW. I expect Calendar Month View to render starting on Sunday
         $current_user->setPreference('fdow', 0, 0, 'global');
         $fdow = $current_user->get_first_day_of_week();
         // Expect that the first day in slices_arr is Sunday
-        $this->assertEquals($fdow , 0);
+        $this->assertEquals($fdow, 0);
 
         // Set 1 (Monday) as FDOW. I expect Calendar Month View to render starting on Monday
         $current_user->setPreference('fdow', 1, 0, 'global');
         $fdow = $current_user->get_first_day_of_week();
-        $this->assertEquals($fdow , 1);
+        $this->assertEquals($fdow, 1);
     }
 }

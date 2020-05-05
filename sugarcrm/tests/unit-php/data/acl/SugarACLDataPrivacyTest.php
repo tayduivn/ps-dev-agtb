@@ -27,13 +27,13 @@ class SugarACLDataPrivacyTest extends TestCase
      */
     public function testCheckAccess($isAdmin, $action, $fieldToChange, $expected)
     {
-        $currentUserMock = $this->getCurrentUserMock(array('isAdminForModule'));
+        $currentUserMock = $this->getCurrentUserMock(['isAdminForModule']);
 
         $currentUserMock->method('isAdminForModule')
             ->willReturn($isAdmin);
 
         $aclClass = $this->getMockBuilder('SugarACLDataPrivacy')
-            ->setMethods(array('getCurrentUser'))
+            ->setMethods(['getCurrentUser'])
             ->getMock();
 
         $aclClass->method('getCurrentUser')

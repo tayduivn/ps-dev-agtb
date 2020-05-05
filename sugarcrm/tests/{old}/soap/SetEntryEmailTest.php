@@ -19,14 +19,14 @@ class SetEntryEmailTest extends SOAPTestCase
      */
     protected function setUp() : void
     {
-    	$this->acc = SugarTestAccountUtilities::createAccount();
+        $this->acc = SugarTestAccountUtilities::createAccount();
         $this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/service/v3_1/soap.php';
-		parent::setUp();
+        parent::setUp();
     }
 
     protected function tearDown() : void
     {
-        if(!empty($this->email_id)) {
+        if (!empty($this->email_id)) {
             $GLOBALS['db']->query("DELETE FROM emails WHERE id='{$this->email_id}'");
             $GLOBALS['db']->query("DELETE FROM emails_beans WHERE email_id='{$this->email_id}'");
             $GLOBALS['db']->query("DELETE FROM emails_text WHERE email_id='{$this->email_id}'");
@@ -37,18 +37,18 @@ class SetEntryEmailTest extends SOAPTestCase
 
     public function testEmailImport()
     {
-    	$this->_login();
-    	$nv = array(
-    	    'from_addr' => 'test@test.com',
-    	    'parent_type' => 'Accounts',
-    	    'parent_id' => $this->acc->id,
-    	    'description' => 'test',
-    	    'name' => 'Test Subject',
-    	);
-		$result = $this->_soapClient->call('set_entry',array('session'=>$this->_sessionId,"module_name" => 'Emails', 'name_value_list' => $nv));
-		$this->email_id = $result['id'];
+        $this->_login();
+        $nv = [
+            'from_addr' => 'test@test.com',
+            'parent_type' => 'Accounts',
+            'parent_id' => $this->acc->id,
+            'description' => 'test',
+            'name' => 'Test Subject',
+        ];
+        $result = $this->_soapClient->call('set_entry', ['session'=>$this->_sessionId,"module_name" => 'Emails', 'name_value_list' => $nv]);
+        $this->email_id = $result['id'];
         $email = new Email();
-        $email->retrieve($this->email_id );
+        $email->retrieve($this->email_id);
         $email->load_relationship('accounts');
         $acc = $email->accounts->get();
         $this->assertEquals($this->acc->id, $acc[0]);

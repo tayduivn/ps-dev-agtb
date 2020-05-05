@@ -42,7 +42,7 @@ class TrackerReportsUsageTest extends TestCase
         $monitor->setValue('item_summary', 'Foo');
         $monitor->setValue('date_modified', gmdate($GLOBALS['timedate']->get_db_date_time_format(), strtotime("-1 week")+5000));
         $monitor->setValue('action', 'index');
-        $monitor->setValue('session_id', 'test_session');        
+        $monitor->setValue('session_id', 'test_session');
         $monitor->setValue('user_id', $GLOBALS['current_user']->id);
         $monitor->setValue('team_id', $GLOBALS['current_user']->getPrivateTeamID());
         $trackerManager->save();
@@ -53,7 +53,7 @@ class TrackerReportsUsageTest extends TestCase
         $monitor->setValue('date_modified', gmdate($GLOBALS['timedate']->get_db_date_time_format(), strtotime("-1 month")+5000));
         $monitor->setValue('action', 'index');
         $monitor->setValue('session_id', 'test_session');
-        $monitor->setValue('user_id', $GLOBALS['current_user']->id);            
+        $monitor->setValue('user_id', $GLOBALS['current_user']->id);
         $monitor->setValue('team_id', $GLOBALS['current_user']->getPrivateTeamID());
         $trackerManager->save();
     }
@@ -69,30 +69,36 @@ class TrackerReportsUsageTest extends TestCase
     public function testUsageMetricsDay()
     {
         $query = "SELECT module_name, item_id, item_summary, date_modified from tracker where session_id = 'test_session' and user_id = '{$GLOBALS['current_user']->id}' and date_modified > ";
-        $query .= db_convert("'". gmdate($GLOBALS['timedate']->get_db_date_time_format(), strtotime("-1 day")) ."'" ,"datetime");
+        $query .= db_convert("'". gmdate($GLOBALS['timedate']->get_db_date_time_format(), strtotime("-1 day")) ."'", "datetime");
         $result = $GLOBALS['db']->query($query);
         $count = 0;
-        while ( $row = $GLOBALS['db']->fetchByAssoc($result) ) $count++;
-        $this->assertEquals($count,1);
+        while ($row = $GLOBALS['db']->fetchByAssoc($result)) {
+            $count++;
+        }
+        $this->assertEquals($count, 1);
     }
     
     public function testUsageMetricsWeek()
     {
         $query = "SELECT module_name, item_id, item_summary, date_modified from tracker where session_id = 'test_session' and user_id = '{$GLOBALS['current_user']->id}' and date_modified > ";
-        $query .= db_convert("'". gmdate($GLOBALS['timedate']->get_db_date_time_format(), strtotime("-1 week")) ."'" ,"datetime");
+        $query .= db_convert("'". gmdate($GLOBALS['timedate']->get_db_date_time_format(), strtotime("-1 week")) ."'", "datetime");
         $result = $GLOBALS['db']->query($query);
         $count = 0;
-        while ( $row = $GLOBALS['db']->fetchByAssoc($result) ) $count++;
-        $this->assertEquals($count,2);
+        while ($row = $GLOBALS['db']->fetchByAssoc($result)) {
+            $count++;
+        }
+        $this->assertEquals($count, 2);
     }
     
     public function testUsageMetricsMonth()
     {
         $query = "SELECT module_name, item_id, item_summary, date_modified from tracker where session_id = 'test_session' and user_id = '{$GLOBALS['current_user']->id}' and date_modified > ";
-        $query .= db_convert("'". gmdate($GLOBALS['timedate']->get_db_date_time_format(), strtotime("-1 month")) ."'" ,"datetime");
+        $query .= db_convert("'". gmdate($GLOBALS['timedate']->get_db_date_time_format(), strtotime("-1 month")) ."'", "datetime");
         $result = $GLOBALS['db']->query($query);
         $count = 0;
-        while ( $row = $GLOBALS['db']->fetchByAssoc($result) ) $count++;
-        $this->assertEquals($count,3);   	
+        while ($row = $GLOBALS['db']->fetchByAssoc($result)) {
+            $count++;
+        }
+        $this->assertEquals($count, 3);
     }
 }

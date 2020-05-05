@@ -26,10 +26,10 @@ class Bug46941Test extends TestCase
 
     protected function setUp() : void
     {
-        SugarTestHelper::setUp('current_user', array(true, true));
+        SugarTestHelper::setUp('current_user', [true, true]);
 
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
-        $GLOBALS['mod_strings'] = array();
+        $GLOBALS['mod_strings'] = [];
 
         $_REQUEST['name'] = 'test';
         $_REQUEST['view'] = 'advanced_search';

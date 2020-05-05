@@ -57,9 +57,9 @@ class RecentApiTest extends TestCase
         $this->trackAction($employee, $date);
 
         // Employees module is currently handled in a special way, so test it explicitly
-        $modules = array('Accounts', 'Employees', 'NonExistingModule');
+        $modules = ['Accounts', 'Employees', 'NonExistingModule'];
         $api = new RecentApi();
-        $filtered = SugarTestReflection::callProtectedMethod($api, 'filterModules', array($modules));
+        $filtered = SugarTestReflection::callProtectedMethod($api, 'filterModules', [$modules]);
 
         $this->assertContains('Accounts', $filtered);
         $this->assertContains('Employees', $filtered);
@@ -81,9 +81,9 @@ class RecentApiTest extends TestCase
         $date = '2014-01-01 00:00:00';
 
         $this->trackAction($account, $date);
-        $response = $this->api->getRecentlyViewed($service, array(
+        $response = $this->api->getRecentlyViewed($service, [
             'module_list' => $account->module_name,
-        ));
+        ]);
 
         $this->assertCount(1, $response['records'], 'API response should contain exactly one record');
         $record = array_shift($response['records']);
@@ -110,11 +110,10 @@ class RecentApiTest extends TestCase
 
         $this->trackAction($contact, '2014-01-01 00:00:00');
 
-        $response = $this->api->getRecentlyViewed($service, array(
+        $response = $this->api->getRecentlyViewed($service, [
                 'module_list' => $contact->module_name,
                 'erased_fields' => true,
-            )
-        );
+            ]);
 
         $this->assertSame(['field_list'], $response['records'][0]['_erased_fields']);
     }

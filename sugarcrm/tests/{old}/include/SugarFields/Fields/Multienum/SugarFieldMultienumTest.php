@@ -32,11 +32,11 @@ class SugarFieldMultienumTest extends TestCase
     public function testExportSanitize()
     {
         global $app_list_strings;
-        $app_list_strings['multienum_test'] = array(
+        $app_list_strings['multienum_test'] = [
             'a' => 'A',
             'b' => 'B',
-            'c' => 'C'
-        );
+            'c' => 'C',
+        ];
 
         $obj = BeanFactory::newBean('Opportunities');
         $vardef = $obj->field_defs['sales_stage'];

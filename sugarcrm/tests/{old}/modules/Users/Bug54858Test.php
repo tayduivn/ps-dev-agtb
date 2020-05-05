@@ -29,8 +29,8 @@ class Bug54858Test extends TestCase
 
     protected function tearDown() : void
     {
-    	unset($GLOBALS['current_user']);
-    	SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        unset($GLOBALS['current_user']);
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }
 
     /**

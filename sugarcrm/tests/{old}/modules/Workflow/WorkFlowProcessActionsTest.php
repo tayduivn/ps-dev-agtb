@@ -12,7 +12,7 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once('include/workflow/action_utils.php');
+require_once 'include/workflow/action_utils.php';
 
 class WorkFlowProcessActionsTest extends TestCase
 {
@@ -53,30 +53,30 @@ class WorkFlowProcessActionsTest extends TestCase
 
         $this->quote->load_relationship('teams');
         $this->quote->teams->setSaved(false);
-        $this->quote->teams->add(array($team->id, $user->team_id));
+        $this->quote->teams->add([$team->id, $user->team_id]);
 
-        $this->_wf_array = array (
+        $this->_wf_array =  [
             'action_type' => 'new',
             'action_module' => 'Tasks',
             'rel_module' => '',
             'rel_module_type' => 'all',
-            'basic' => array (
+            'basic' =>  [
                 'name' => 'Created from workflow',
                 'status' => 'Not Started',
                 'priority' => 'Medium',
-            ),
-            'basic_ext' => array (
-            ),
-            'advanced' => array (
-                'team_id' => array (
+            ],
+            'basic_ext' =>  [
+            ],
+            'advanced' =>  [
+                'team_id' =>  [
                     'value' => 'team_set_id',
                     'ext1' => '',
                     'ext2' => '',
                     'ext3' => '',
                     'adv_type' => 'exist_team',
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
     }
     protected function tearDown() : void
     {

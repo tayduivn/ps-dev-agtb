@@ -19,7 +19,7 @@ class UpgradeRenameModuleTest extends UpgradeTestCase
     protected $moduleExtLang = 'custom/Extension/modules/Contacts/Ext/Language/en_us.lang.php';
     protected $alsBackup;
     protected $modBackup;
-    protected $changedModuleList = array();
+    protected $changedModuleList = [];
 
     protected function setUp() : void
     {
@@ -38,7 +38,7 @@ class UpgradeRenameModuleTest extends UpgradeTestCase
 
         $GLOBALS['current_language'] = 'en_us';
         SugarTestHelper::setUp('app_list_strings');
-        SugarTestHelper::setUp('mod_strings', array('Contacts'));
+        SugarTestHelper::setUp('mod_strings', ['Contacts']);
 
         $this->alsBackup = $GLOBALS['app_list_strings'];
         $this->modBackup = $GLOBALS['mod_strings'];
@@ -54,8 +54,7 @@ class UpgradeRenameModuleTest extends UpgradeTestCase
             copy($this->moduleFilename . '.bak', $this->moduleFilename);
         }
 
-        foreach ($this->changedModuleList as $row)
-        {
+        foreach ($this->changedModuleList as $row) {
             if (file_exists('custom/modules/' . $row . '/Ext/Language/' . $GLOBALS['current_language'] . '.lang.ext.php')) {
                 unlink('custom/modules/' . $row . '/Ext/Language/' . $GLOBALS['current_language'] . '.lang.ext.php');
             }
@@ -83,7 +82,8 @@ class UpgradeRenameModuleTest extends UpgradeTestCase
         }
     }
 
-    public function testUpgradeRename() {
+    public function testUpgradeRename()
+    {
         $toWrite = "<?php
 \$app_list_strings['moduleListSingular']['Contacts']='Property Contact';
 \$app_list_strings['moduleList']['Contacts']='Property Contacts';";
@@ -104,12 +104,13 @@ class UpgradeRenameModuleTest extends UpgradeTestCase
         $changedModuleList = $script->run();
         $this->handleChangedModuleList($changedModuleList);
 
-        include($this->globalFilename);
+        include $this->globalFilename;
         $this->assertEquals($app_list_strings['moduleListSingular']['Contacts'], 'Property Contact');
         $this->assertEquals($app_list_strings['moduleList']['Contacts'], 'Property Contacts');
     }
 
-    public function testUpgradeRenameWithIntendedDouble() {
+    public function testUpgradeRenameWithIntendedDouble()
+    {
         $toWrite = "<?php
 \$app_list_strings['moduleListSingular']['Contacts']='New Contact';
 \$app_list_strings['moduleList']['Contacts']='New Contacts';";
@@ -123,7 +124,7 @@ class UpgradeRenameModuleTest extends UpgradeTestCase
         $changedModuleList = $script->run();
         $this->handleChangedModuleList($changedModuleList);
 
-        include($this->globalFilename);
+        include $this->globalFilename;
         $mod_strings = return_module_language('en_us', 'Contacts', true);
         $this->assertEquals($app_list_strings['moduleListSingular']['Contacts'], 'New Contact');
         $this->assertEquals($app_list_strings['moduleList']['Contacts'], 'New Contacts');
@@ -155,16 +156,16 @@ class UpgradeRenameModuleTest extends UpgradeTestCase
 
         /** @var MockObject|SugarUpgradeRenameModules $script */
         $script = $this->getMockBuilder('SugarUpgradeRenameModules')
-            ->setMethods(array(
+            ->setMethods([
                 'getLanguages',
                 'getDefaultAppListStrings',
                 'getAppListStrings',
                 'getCoreAppListStrings',
                 'getRenameModulesInstance',
-            ))
+            ])
             ->setConstructorArgs([$this->getMockForAbstractClass('UpgradeDriver')])
             ->getMock();
-        $script->expects($this->once())->method('getLanguages')->will($this->returnValue(array('lang_LANG' => 'Language')));
+        $script->expects($this->once())->method('getLanguages')->will($this->returnValue(['lang_LANG' => 'Language']));
         $script->expects($this->once())->method('getDefaultAppListStrings')->will($this->returnValue($appListStringDefault));
         $script->expects($this->atLeastOnce())->method('getAppListStrings')->with($this->equalTo('lang_LANG'))->will($this->returnValue($appListStringLang));
         $script->expects($this->atLeastOnce())->method('getCoreAppListStrings')->with($this->equalTo('lang_LANG'))->will($this->returnValue($appListStringLangCore));
@@ -184,34 +185,34 @@ class UpgradeRenameModuleTest extends UpgradeTestCase
      */
     public static function getAppListStringsSets()
     {
-        return array(
-            'moduleListIsNotTranslatedInNonUsLanguage' => array(
-                array(
-                    'moduleListSingular' => array(
+        return [
+            'moduleListIsNotTranslatedInNonUsLanguage' => [
+                [
+                    'moduleListSingular' => [
                         'test' => 'Translated Singular String',
-                    ),
-                    'moduleList' => array(
+                    ],
+                    'moduleList' => [
                         'test' => 'English Plural String', // means it wasn't translated and loaded from english lang
-                    ),
-                ),
-                array(
-                    'moduleListSingular' => array(
+                    ],
+                ],
+                [
+                    'moduleListSingular' => [
                         'test' => 'Translated Singular String',
-                    ),
-                    'moduleList' => array(
+                    ],
+                    'moduleList' => [
                         'test' => '', // we don't have translation for module
-                    ),
-                ),
-                array(
-                    'moduleListSingular' => array(
+                    ],
+                ],
+                [
+                    'moduleListSingular' => [
                         'test' => 'English Singular String',
-                    ),
-                    'moduleList' => array(
+                    ],
+                    'moduleList' => [
                         'test' => 'English Plural String',
-                    ),
-                ),
+                    ],
+                ],
 
-            ),
-        );
+            ],
+        ];
     }
 }

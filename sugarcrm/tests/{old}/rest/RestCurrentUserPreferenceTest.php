@@ -11,18 +11,19 @@
  */
 
 
-class RestCurrentUserPreferenceTest extends RestTestBase {
-    protected static $testPreferences = array(
+class RestCurrentUserPreferenceTest extends RestTestBase
+{
+    protected static $testPreferences = [
         'hello' => 'world',
-        'test' => 'preference'
-    );
+        'test' => 'preference',
+    ];
 
     protected function setUp() : void
     {
         parent::setUp();
 
         // add a test preference to the user
-        foreach(self::$testPreferences as $key => $pref) {
+        foreach (self::$testPreferences as $key => $pref) {
             $this->_user->setPreference($key, $pref);
         }
 
@@ -69,18 +70,20 @@ class RestCurrentUserPreferenceTest extends RestTestBase {
      */
     public function testUpdatePreferenceReturnsNewKeyValuePair()
     {
-        $reply = $this->_restCall('me/preference/hello',  json_encode(array('value' => 'world1')), 'PUT');
+        $reply = $this->_restCall('me/preference/hello', json_encode(['value' => 'world1']), 'PUT');
 
-        $this->assertEquals(array('hello' => 'world1'), $reply['reply']);
+        $this->assertEquals(['hello' => 'world1'], $reply['reply']);
     }
 
     public function testUpdateMultiplePreferencesReturnsUpdatedKeyValuePair()
     {
-        $reply = $this->_restCall('me/preferences',
-            json_encode(array('hello' => 'world1', 'test' => 'preference1'))
-            , 'PUT');
+        $reply = $this->_restCall(
+            'me/preferences',
+            json_encode(['hello' => 'world1', 'test' => 'preference1']),
+            'PUT'
+        );
 
-        $this->assertEquals(array('hello' => 'world1', 'test' => 'preference1'), $reply['reply']);
+        $this->assertEquals(['hello' => 'world1', 'test' => 'preference1'], $reply['reply']);
     }
 
     /**
@@ -88,9 +91,11 @@ class RestCurrentUserPreferenceTest extends RestTestBase {
      */
     public function testUpdatePreferenceWithSpecificMetaName()
     {
-        $reply = $this->_restCall('me/preferences',
-            json_encode(array('datepref' => '(y)(m)(d)', 'timepref' => '(h)(i)'))
-            , 'PUT');
+        $reply = $this->_restCall(
+            'me/preferences',
+            json_encode(['datepref' => '(y)(m)(d)', 'timepref' => '(h)(i)']),
+            'PUT'
+        );
 
         $this->assertEquals('(y)(m)(d)', $reply['reply']['datepref']);
         $this->assertEquals('(h)(i)', $reply['reply']['timepref']);
@@ -106,9 +111,9 @@ class RestCurrentUserPreferenceTest extends RestTestBase {
      */
     public function testCreatePreferenceReturnsCreatedKeyValuePair()
     {
-        $reply = $this->_restCall('me/preference/create', json_encode(array('value' => 'preference')), 'POST');
+        $reply = $this->_restCall('me/preference/create', json_encode(['value' => 'preference']), 'POST');
 
-        $this->assertEquals(array('create' => 'preference'), $reply['reply']);
+        $this->assertEquals(['create' => 'preference'], $reply['reply']);
     }
 
     /**
@@ -116,7 +121,7 @@ class RestCurrentUserPreferenceTest extends RestTestBase {
      */
     public function testDeletePreferenceReturnsDeletedKey()
     {
-        $reply = $this->_restCall('me/preference/hello', json_encode(array('value' => 'preference')), 'DELETE');
+        $reply = $this->_restCall('me/preference/hello', json_encode(['value' => 'preference']), 'DELETE');
 
         $this->assertEquals('hello', $reply['reply']);
     }
@@ -132,13 +137,13 @@ class RestCurrentUserPreferenceTest extends RestTestBase {
     }
 
 
-    public static function dataProviderGetSpecificPreference() {
-        $return = array();
-        foreach(self::$testPreferences as $key => $pref) {
-            $return[] = array($key, $pref);
+    public static function dataProviderGetSpecificPreference()
+    {
+        $return = [];
+        foreach (self::$testPreferences as $key => $pref) {
+            $return[] = [$key, $pref];
         }
 
         return $return;
     }
-    
 }

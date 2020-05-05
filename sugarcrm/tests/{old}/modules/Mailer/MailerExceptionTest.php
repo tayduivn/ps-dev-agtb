@@ -32,7 +32,7 @@ class MailerExceptionTest extends TestCase
         $exception = new MailerException('foo', MailerException::InvalidEmailAddress);
         $result = $exception->getUserFriendlyMessage();
 
-        $this->assertEquals($expected,  $result, 'Should map to the correct error message');
+        $this->assertEquals($expected, $result, 'Should map to the correct error message');
     }
 
     public function testGetUserFriendlyMessage_ErrorCodeDoesNotExistInMap_ReturnsDefaultModuleString()
@@ -42,6 +42,6 @@ class MailerExceptionTest extends TestCase
         $exception = new MailerException('foo', 0);
         $result = $exception->getUserFriendlyMessage();
 
-        $this->assertEquals($expected,  $result, 'Should map to the correct error message');
+        $this->assertEquals($expected, $result, 'Should map to the correct error message');
     }
 }

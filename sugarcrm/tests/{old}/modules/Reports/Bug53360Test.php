@@ -12,7 +12,7 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once('modules/Reports/templates/templates_list_view.php');
+require_once 'modules/Reports/templates/templates_list_view.php';
 
 /**
  * Bug #53360
@@ -33,7 +33,7 @@ class Bug53360Test extends TestCase
         SugarTestHelper::setUp('beanList');
 
         $this->report = new Report();
-        $this->report->report_def = array('group_defs' => $this->_getDummyGroupDefs());
+        $this->report->report_def = ['group_defs' => $this->_getDummyGroupDefs()];
         $this->report->group_defs_Info = $this->_getDummyGroupDefsInfo();
         $this->rowsAndColumnsData = $this->_getData();
     }
@@ -71,30 +71,30 @@ class Bug53360Test extends TestCase
 
     private function _getDummyGroupDefs()
     {
-        return array(
-            0 => array('name' => 'user_name', 'label' => 'User Name', 'table_key' => 'Opportunities:assigned_user_link', 'type' => 'user_name'),
-            1 => array('name' => 'sales_stage', 'label' => 'Sales Stage', 'table_key' => 'self', 'type' => 'enum'),
-        );
+        return [
+            0 => ['name' => 'user_name', 'label' => 'User Name', 'table_key' => 'Opportunities:assigned_user_link', 'type' => 'user_name'],
+            1 => ['name' => 'sales_stage', 'label' => 'Sales Stage', 'table_key' => 'self', 'type' => 'enum'],
+        ];
     }
 
     private function _getDummyGroupDefsInfo()
     {
-        $grpDefs = array(
-            array('name' => 'user_name', 'label' => 'User Name', 'table_key' => 'Opportunities:assigned_user_link',
-                'type' => 'username', 'index' => 0),
-            array('name' => 'sales_stage', 'label' => 'Sales Stage', 'table_key' => 'self', 'type' => 'enum',
-                'index' => 1),
-        );
+        $grpDefs = [
+            ['name' => 'user_name', 'label' => 'User Name', 'table_key' => 'Opportunities:assigned_user_link',
+                'type' => 'username', 'index' => 0],
+            ['name' => 'sales_stage', 'label' => 'Sales Stage', 'table_key' => 'self', 'type' => 'enum',
+                'index' => 1],
+        ];
         $grpKeys = array_map('getGroupByKey', $grpDefs);
         return array_combine($grpKeys, $grpDefs);
     }
 
     private function _getData()
     {
-        return array(
-            array('cells' => array("chris", "Value Proposition", "$10,000.00", "$10,000.00", "1"), 'count' => 1, 'User Name' => 'chris'),
-            array('cells' => array("sarah", "Value Proposition", "$10,000.00", "$20,000.00", "2"), 'count' => 2, 'User Name' => 'sarah'),
-            array('cells' => array("sarah", "Needs Analysis", "$10,000.00", "$10,000.00", "1"), 'count' => 1, 'User Name' => 'sarah'),
-        );
+        return [
+            ['cells' => ["chris", "Value Proposition", "$10,000.00", "$10,000.00", "1"], 'count' => 1, 'User Name' => 'chris'],
+            ['cells' => ["sarah", "Value Proposition", "$10,000.00", "$20,000.00", "2"], 'count' => 2, 'User Name' => 'sarah'],
+            ['cells' => ["sarah", "Needs Analysis", "$10,000.00", "$10,000.00", "1"], 'count' => 1, 'User Name' => 'sarah'],
+        ];
     }
 }

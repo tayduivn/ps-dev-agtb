@@ -20,7 +20,7 @@ class Bug57563Test extends TestCase
 
     protected function setUp() : void
     {
-        if(empty($this->_db)){
+        if (empty($this->_db)) {
             $this->_db = DBManagerFactory::getInstance();
         }
     }
@@ -32,11 +32,10 @@ class Bug57563Test extends TestCase
         $m_closed = $query_object->db->convert('opportunities.date_closed', 'month');
         $today = $query_object->db->convert('', 'today');
         $m_date[0] = $query_object->db->convert($today, 'month');
-        for($i=1; $i<6; $i++)
-        {
-            $m_date[$i] = $query_object->db->convert($query_object->db->convert($today, 'add_date', array($i, 'month')), 'month');
+        for ($i=1; $i<6; $i++) {
+            $m_date[$i] = $query_object->db->convert($query_object->db->convert($today, 'add_date', [$i, 'month']), 'month');
         }
-        $m_date5 = $query_object->db->convert($today, 'add_date', array(5, "month"));
+        $m_date5 = $query_object->db->convert($today, 'add_date', [5, "month"]);
 
         $query = "(
             SELECT

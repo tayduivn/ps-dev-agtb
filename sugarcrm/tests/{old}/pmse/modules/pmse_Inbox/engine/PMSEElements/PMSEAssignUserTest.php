@@ -33,7 +33,7 @@ class PMSEAssignUserTest extends TestCase
     {
         $this->loggerMock = $this->getMockBuilder('PMSELogger')
                 ->disableOriginalConstructor()
-                ->setMethods(array('info', 'debug'))
+                ->setMethods(['info', 'debug'])
                 ->getMock();
     }
 
@@ -42,23 +42,23 @@ class PMSEAssignUserTest extends TestCase
         $this->assignUser = $this->getMockBuilder('PMSEAssignUser')
             ->disableOriginalConstructor()
             ->setMethods(
-                array(
+                [
                     'retrieveDefinitionData',
                     'retrieveUserData',
                     'retrieveHistoryData',
-                    'prepareResponse'
-                )
+                    'prepareResponse',
+                ]
             )
             ->getMock();
 
         $this->assignUser->setLogger($this->loggerMock);
         
-        $definitionMock = array(
+        $definitionMock = [
             'id' => '12s1829s739sj8912123',
             'pro_id' => '8937298492jd823',
             'act_assign_user' => 'dui3j89d8923jd3',
-            'act_update_record_owner' => true
-        );
+            'act_update_record_owner' => true,
+        ];
 
         $this->assignUser->expects($this->exactly(1))
             ->method('retrieveDefinitionData')
@@ -76,7 +76,7 @@ class PMSEAssignUserTest extends TestCase
             ->will($this->returnValue($userMock));
 
         $historyMock = $this->getMockBuilder('PMSEHistoryData')
-            ->setMethods(array('savePreData', 'savePostData', 'getLog'))
+            ->setMethods(['savePreData', 'savePostData', 'getLog'])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -86,22 +86,22 @@ class PMSEAssignUserTest extends TestCase
 
         $beanMock = $this->getMockBuilder('SugarBean')
             ->disableOriginalConstructor()
-            ->setMethods(array('save'))
+            ->setMethods(['save'])
             ->getMock();
-        $beanMock->field_defs = array(
-            'assigned_user_id' => '2389uj29eu8932ue93'
-        );
+        $beanMock->field_defs = [
+            'assigned_user_id' => '2389uj29eu8932ue93',
+        ];
 
-        $flowData = array(
+        $flowData = [
             'bpmn_id' => 'act89u298dj2893j',
             'cas_sugar_module' => 'Leads',
             'cas_user_id' => 'sijd8923j98d2',
             'cas_id' => 1,
-            'cas_index' => 2
-        );
+            'cas_index' => 2,
+        ];
 
         $caseHandlerMock = $this->getMockBuilder('PMSECaseFlowHandler')
-            ->setMethods(array('saveFormAction'))
+            ->setMethods(['saveFormAction'])
             ->getMock();
 
         $caseHandlerMock->expects($this->exactly(1))

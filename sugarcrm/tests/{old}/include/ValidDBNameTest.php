@@ -12,7 +12,7 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once("include/utils.php");
+require_once "include/utils.php";
 
 class ValidDBNameTest extends TestCase
 {
@@ -95,10 +95,10 @@ class ValidDBNameTest extends TestCase
 
     public function longNameProvider()
     {
-        return array(
-            array("eeeee_eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee_opportunities", "eeeee_eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee1_opportunities"),
-            array("abc_auctions_abc_contactauctions", "abc_auctionsleadsources_abc_contact_auctions")
-         );
+        return [
+            ["eeeee_eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee_opportunities", "eeeee_eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee1_opportunities"],
+            ["abc_auctions_abc_contactauctions", "abc_auctionsleadsources_abc_contact_auctions"],
+         ];
     }
 
     public function testDots()

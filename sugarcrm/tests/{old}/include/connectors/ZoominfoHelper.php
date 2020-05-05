@@ -10,7 +10,8 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-class ZoominfoTestHelper {
+class ZoominfoTestHelper
+{
     const STREAM_NAME = "zoominfo";
 
     public function __construct()
@@ -24,7 +25,7 @@ class ZoominfoTestHelper {
         stream_wrapper_unregister(self::STREAM_NAME);
     }
 
-    public function url($type='query')
+    public function url($type = 'query')
     {
         return self::STREAM_NAME."://$type/query?pc=";
     }
@@ -32,17 +33,17 @@ class ZoominfoTestHelper {
 
 class ZoominfoMockStream
 {
-    public $query_params = array();
+    public $query_params = [];
     protected $data = '';
 
     function stream_open($path, $mode, $options, &$opened_path)
     {
         $dir = dirname(__FILE__);
         $urlinfo = parse_url($path);
-        $this->query_params = array();
+        $this->query_params = [];
         parse_str($urlinfo['query'], $this->query_params);
         $smarty = new Sugar_Smarty();
-        foreach($this->query_params as $name => $value) {
+        foreach ($this->query_params as $name => $value) {
             $smarty->assign($name, $value);
         }
         $this->data = $smarty->fetch($dir."/".$urlinfo['host']."-zoominfo.xml");

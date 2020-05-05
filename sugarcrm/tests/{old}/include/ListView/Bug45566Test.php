@@ -37,10 +37,10 @@ class Bug45566Test extends TestCase
         $lv->should_process = true;
         $account = new Account();
         $lv->seed = $account;
-        $lv->displayColumns = array();
-        $mockData = array();
-        $mockData['data'] = array();
-        $mockData['pageData'] = array('ordering'=>'ASC', 'offsets' => array('current'=>0, 'next'=>0, 'total'=>0), 'bean'=>array('moduleDir'=>$account->module_dir));
+        $lv->displayColumns = [];
+        $mockData = [];
+        $mockData['data'] = [];
+        $mockData['pageData'] = ['ordering'=>'ASC', 'offsets' => ['current'=>0, 'next'=>0, 'total'=>0], 'bean'=>['moduleDir'=>$account->module_dir]];
         $lv->process('include/ListView/ListViewGeneric.tpl', $mockData, $account->module_dir);
         $this->assertEquals('<textarea style="display: none" name="uid"></textarea>', $lv->ss->_tpl_vars['multiSelectData'], 'Assert that multiSelectData Smarty variable was still assigned');
     }

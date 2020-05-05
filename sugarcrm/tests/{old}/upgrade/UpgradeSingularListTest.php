@@ -25,7 +25,7 @@ class UpgradeSingularListTest extends UpgradeTestCase
     {
         $mi = new ModuleInstaller();
         $mi->silent = true;
-        $mi->rebuild_languages(array('en_us' => 'en_us'));
+        $mi->rebuild_languages(['en_us' => 'en_us']);
     }
 
     protected function setUp() : void
@@ -42,7 +42,7 @@ class UpgradeSingularListTest extends UpgradeTestCase
         SugarTestHelper::saveFile($this->getPackageLangFile());
         SugarTestHelper::saveFile($this->getLangPath());
 
-        $this->upgrader->state['MBModules'] = array($this->testModule);
+        $this->upgrader->state['MBModules'] = [$this->testModule];
     }
 
     protected function tearDown() : void
@@ -65,7 +65,7 @@ class UpgradeSingularListTest extends UpgradeTestCase
         $script = $this->getMockScript();
         $script->run();
 
-        $app_list_strings = array();
+        $app_list_strings = [];
 
         $this->assertFileExists($this->getPackageLangFile());
         include $this->getPackageLangFile();
@@ -89,7 +89,7 @@ class UpgradeSingularListTest extends UpgradeTestCase
         $script = $this->getMockScript();
         $script->run();
 
-        $app_list_strings = array();
+        $app_list_strings = [];
         $this->assertFileExists($this->getPackageLangFile());
         include $this->getPackageLangFile();
 
@@ -106,13 +106,13 @@ class UpgradeSingularListTest extends UpgradeTestCase
     {
         $mock = $this->getMockBuilder('SugarUpgradeFixSingularList')
             ->disableOriginalConstructor()
-            ->setMethods(array('getLanguageFilePath', 'getPackages', 'getPackageLangFile'))
+            ->setMethods(['getLanguageFilePath', 'getPackages', 'getPackageLangFile'])
             ->getMock();
 
         $mock->upgrader = $this->upgrader;
 
         $keys = explode('_', $this->testModule);
-        $packages = array($keys[0] => $keys[0]);
+        $packages = [$keys[0] => $keys[0]];
 
         $mock->expects($this->any())
             ->method('getPackages')

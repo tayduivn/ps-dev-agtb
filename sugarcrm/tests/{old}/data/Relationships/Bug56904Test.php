@@ -31,12 +31,9 @@ class Bug56904Test extends TestCase
         $link         = $this->getLinkMock(count($results));
 
         $result = $relationship->removeAll($link);
-        if ($expected)
-        {
+        if ($expected) {
             $this->assertTrue($result);
-        }
-        else
-        {
+        } else {
             $this->assertFalse($result);
         }
     }
@@ -54,7 +51,7 @@ class Bug56904Test extends TestCase
         $mock->expects($this->exactly(count($results)))
             ->method('remove')
             ->will(
-                call_user_func_array(array($this, 'onConsecutiveCalls'), $results)
+                call_user_func_array([$this, 'onConsecutiveCalls'], $results)
             );
         return $mock;
     }
@@ -67,18 +64,15 @@ class Bug56904Test extends TestCase
      */
     protected function getLinkMock($count)
     {
-        if ($count > 0)
-        {
+        if ($count > 0) {
             $bean  = new SugarBean();
             $bean->id = 'Bug56904Test';
             $beans = array_fill(0, $count, $bean);
-        }
-        else
-        {
-            $beans = array();
+        } else {
+            $beans = [];
         }
 
-        $mock = $this->createPartialMock('Link2', array('getSide', 'getFocus', 'getBeans'));
+        $mock = $this->createPartialMock('Link2', ['getSide', 'getFocus', 'getBeans']);
         $mock->expects($this->any())
             ->method('getSide')
             ->will($this->returnValue(REL_LHS));
@@ -99,28 +93,28 @@ class Bug56904Test extends TestCase
      */
     public static function getRemoveResults()
     {
-        return array(
-            array(
-                array(), true,
-            ),
-            array(
-                array(true), true,
-            ),
-            array(
-                array(false), false,
-            ),
-            array(
-                array(true, false), false,
-            ),
-            array(
-                array(false, true), false,
-            ),
-            array(
-                array(false, false), false,
-            ),
-            array(
-                array(true, true), true,
-            ),
-        );
+        return [
+            [
+                [], true,
+            ],
+            [
+                [true], true,
+            ],
+            [
+                [false], false,
+            ],
+            [
+                [true, false], false,
+            ],
+            [
+                [false, true], false,
+            ],
+            [
+                [false, false], false,
+            ],
+            [
+                [true, true], true,
+            ],
+        ];
     }
 }

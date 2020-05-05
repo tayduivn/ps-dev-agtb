@@ -31,18 +31,18 @@ class Bug43652Test extends TestCase
     }
 
     protected function tearDown() : void
-	{
+    {
         unlink($this->fileData1);
-	}
+    }
 
     function _fileMimeProvider()
     {
-        return array(
-            array( array('name' => 'te.st.png','type' => 'img/png'),'img/png'),
-            array( array('name' => 'test.jpg','type' => 'img/jpeg'),'img/jpeg'),
-            array( array('name' => 'test.out','type' => 'application/octet-stream'),'application/octet-stream'),
-            array( array('name' => 'test_again','type' => 'img/png'),'img/png'),
-        );
+        return [
+            [ ['name' => 'te.st.png','type' => 'img/png'],'img/png'],
+            [ ['name' => 'test.jpg','type' => 'img/jpeg'],'img/jpeg'],
+            [ ['name' => 'test.out','type' => 'application/octet-stream'],'application/octet-stream'],
+            [ ['name' => 'test_again','type' => 'img/png'],'img/png'],
+        ];
     }
 
     /**
@@ -65,7 +65,7 @@ class Bug43652Test extends TestCase
      */
     public function testUploadFileWithEmptyFileExtension()
     {
-        $file_info = array('name' => 'test', 'type' => 'application/octet-stream', 'tmp_name' => $this->fileData1);
+        $file_info = ['name' => 'test', 'type' => 'application/octet-stream', 'tmp_name' => $this->fileData1];
         $expectedMime = $this->extAPI->isMimeDetectionAvailable() ? 'text/plain' : 'application/octet-stream';
         $uf = new UploadFile('');
         $mime = $uf->getMime($file_info);
@@ -80,7 +80,7 @@ class Bug43652Test extends TestCase
      */
     public function testUploadFileWithEmptyFileExtenEmptyMime()
     {
-        $file_info = array('name' => 'test','tmp_name' => $this->fileData1);
+        $file_info = ['name' => 'test','tmp_name' => $this->fileData1];
         $expectedMime = $this->extAPI->isMimeDetectionAvailable() ? 'text/plain' : 'application/octet-stream';
         $uf = new UploadFile('');
         $mime = $uf->getMime($file_info);

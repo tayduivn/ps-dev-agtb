@@ -12,7 +12,7 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once('include/SugarCache/SugarCache.php');
+require_once 'include/SugarCache/SugarCache.php';
 
 class ExternalCacheAPITest extends TestCase
 {
@@ -23,99 +23,112 @@ class ExternalCacheAPITest extends TestCase
         $this->_cacheKey2   = 'test cache key 2 '.date("YmdHis");
         $this->_cacheValue2 = 'test cache value 2 '.date("YmdHis");
         $this->_cacheKey3   = 'test cache key 3 '.date("YmdHis");
-        $this->_cacheValue3 = array(
+        $this->_cacheValue3 = [
             'test cache value 3 key 1 '.date("YmdHis") => 'test cache value 3 value 1 '.date("YmdHis"),
             'test cache value 3 key 2 '.date("YmdHis") => 'test cache value 3 value 2 '.date("YmdHis"),
             'test cache value 3 key 3 '.date("YmdHis") => 'test cache value 3 value 3 '.date("YmdHis"),
-            );
+            ];
     }
 
     protected function tearDown() : void
     {
        // clear out the test cache if we haven't already
-       if ( sugar_cache_retrieve($this->_cacheKey1) )
-           sugar_cache_clear($this->_cacheKey1);
-       if ( sugar_cache_retrieve($this->_cacheKey2) )
-           sugar_cache_clear($this->_cacheKey2);
-       if ( sugar_cache_retrieve($this->_cacheKey3) )
-           sugar_cache_clear($this->_cacheKey3);
-       SugarCache::$isCacheReset = false;
+        if (sugar_cache_retrieve($this->_cacheKey1)) {
+            sugar_cache_clear($this->_cacheKey1);
+        }
+        if (sugar_cache_retrieve($this->_cacheKey2)) {
+            sugar_cache_clear($this->_cacheKey2);
+        }
+        if (sugar_cache_retrieve($this->_cacheKey3)) {
+            sugar_cache_clear($this->_cacheKey3);
+        }
+        SugarCache::$isCacheReset = false;
     }
 
     public function testStoreAndRetrieve()
     {
-        sugar_cache_put($this->_cacheKey1,$this->_cacheValue1);
-        sugar_cache_put($this->_cacheKey2,$this->_cacheValue2);
-        sugar_cache_put($this->_cacheKey3,$this->_cacheValue3);
+        sugar_cache_put($this->_cacheKey1, $this->_cacheValue1);
+        sugar_cache_put($this->_cacheKey2, $this->_cacheValue2);
+        sugar_cache_put($this->_cacheKey3, $this->_cacheValue3);
         $this->assertEquals(
             $this->_cacheValue1,
-            sugar_cache_retrieve($this->_cacheKey1));
+            sugar_cache_retrieve($this->_cacheKey1)
+        );
         $this->assertEquals(
             $this->_cacheValue2,
-            sugar_cache_retrieve($this->_cacheKey2));
+            sugar_cache_retrieve($this->_cacheKey2)
+        );
         $this->assertEquals(
             $this->_cacheValue3,
-            sugar_cache_retrieve($this->_cacheKey3));
+            sugar_cache_retrieve($this->_cacheKey3)
+        );
     }
 
     public function testStoreClearCacheKeyAndRetrieve()
     {
-        sugar_cache_put($this->_cacheKey1,$this->_cacheValue1);
-        sugar_cache_put($this->_cacheKey2,$this->_cacheValue2);
+        sugar_cache_put($this->_cacheKey1, $this->_cacheValue1);
+        sugar_cache_put($this->_cacheKey2, $this->_cacheValue2);
         sugar_cache_clear($this->_cacheKey1);
         $this->assertNotEquals(
             $this->_cacheValue1,
-            sugar_cache_retrieve($this->_cacheKey1));
+            sugar_cache_retrieve($this->_cacheKey1)
+        );
         $this->assertEquals(
             $this->_cacheValue2,
-            sugar_cache_retrieve($this->_cacheKey2));
+            sugar_cache_retrieve($this->_cacheKey2)
+        );
     }
     
     public function testStoreResetCacheAndRetrieve()
     {
-        sugar_cache_put($this->_cacheKey1,$this->_cacheValue1);
-        sugar_cache_put($this->_cacheKey2,$this->_cacheValue2);
+        sugar_cache_put($this->_cacheKey1, $this->_cacheValue1);
+        sugar_cache_put($this->_cacheKey2, $this->_cacheValue2);
         sugar_cache_reset();
         $this->assertNotEquals(
             $this->_cacheValue1,
-            sugar_cache_retrieve($this->_cacheKey1));
+            sugar_cache_retrieve($this->_cacheKey1)
+        );
         $this->assertNotEquals(
             $this->_cacheValue2,
-            sugar_cache_retrieve($this->_cacheKey2));
+            sugar_cache_retrieve($this->_cacheKey2)
+        );
     }
 
     public function testStoreAndRetrieveWithTTL()
     {
-        sugar_cache_put($this->_cacheKey1,$this->_cacheValue1, 100);
-        sugar_cache_put($this->_cacheKey2,$this->_cacheValue2, 100);
-        sugar_cache_put($this->_cacheKey3,$this->_cacheValue3,100);
+        sugar_cache_put($this->_cacheKey1, $this->_cacheValue1, 100);
+        sugar_cache_put($this->_cacheKey2, $this->_cacheValue2, 100);
+        sugar_cache_put($this->_cacheKey3, $this->_cacheValue3, 100);
         $this->assertEquals(
             $this->_cacheValue1,
-            sugar_cache_retrieve($this->_cacheKey1));
+            sugar_cache_retrieve($this->_cacheKey1)
+        );
         $this->assertEquals(
             $this->_cacheValue2,
-            sugar_cache_retrieve($this->_cacheKey2));
+            sugar_cache_retrieve($this->_cacheKey2)
+        );
         $this->assertEquals(
             $this->_cacheValue3,
-            sugar_cache_retrieve($this->_cacheKey3));
+            sugar_cache_retrieve($this->_cacheKey3)
+        );
     }
 
     public function testStoreAndRetrieveWithTTLZero()
     {
         $sc = SugarCache::instance();
-        $cacheStub = $this->createPartialMock(get_class($sc), array('_setExternal'));
+        $cacheStub = $this->createPartialMock(get_class($sc), ['_setExternal']);
         $cacheStub->expects($this->once())
                        ->method('_setExternal');
-        $cacheStub->set($this->_cacheKey1,$this->_cacheValue1,0);
+        $cacheStub->set($this->_cacheKey1, $this->_cacheValue1, 0);
     }
 
     public function testStoreAndRetrieveWithTTLNull()
     {
         $sc = SugarCache::instance();
-        $cacheStub = $this->createPartialMock(get_class($sc), array('_setExternal'));
+        $cacheStub = $this->createPartialMock(get_class($sc), ['_setExternal']);
         $cacheStub->expects($this->once())
                        ->method('_setExternal');
-        $cacheStub->set($this->_cacheKey1,$this->_cacheValue1,null);
+        $cacheStub->set($this->_cacheKey1, $this->_cacheValue1, null);
     }
 
 

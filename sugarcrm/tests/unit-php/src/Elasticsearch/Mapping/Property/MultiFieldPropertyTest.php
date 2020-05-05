@@ -28,7 +28,7 @@ class MultiFieldPropertyTest extends TestCase
      */
     public function testSetType($type)
     {
-        $expected = array('type' => $type);
+        $expected = ['type' => $type];
         $field = new MultiFieldProperty();
         $field->setType($type);
         $this->assertSame($expected, $field->getMapping());
@@ -36,18 +36,18 @@ class MultiFieldPropertyTest extends TestCase
 
     public function providerTestSetType()
     {
-        return array(
-            array('text'),
-            array('float'),
-            array('double'),
-            array('byte'),
-            array('short'),
-            array('integer'),
-            array('long'),
-            array('token_count'),
-            array('date'),
-            array('boolean'),
-        );
+        return [
+            ['text'],
+            ['float'],
+            ['double'],
+            ['byte'],
+            ['short'],
+            ['integer'],
+            ['long'],
+            ['token_count'],
+            ['date'],
+            ['boolean'],
+        ];
     }
 
     /**

@@ -51,7 +51,7 @@ class ConnectorsAdminViewTest extends TestCase
         $view = new ViewModifyMapping(null, null);
         $view->ss = new Sugar_Smarty();
         $view->display();
-        $this->setOutputCallback(array($this, 'withTwitter'));
+        $this->setOutputCallback([$this, 'withTwitter']);
     }
 
     public function testEnableConnectors()
@@ -59,7 +59,7 @@ class ConnectorsAdminViewTest extends TestCase
         $view = new ViewModifyDisplay(null, null);
         $view->ss = new Sugar_Smarty();
         $view->display();
-        $this->setOutputCallback(array($this, 'withTwitter'));
+        $this->setOutputCallback([$this, 'withTwitter']);
     }
 
     public function testConnectorProperties()
@@ -67,7 +67,7 @@ class ConnectorsAdminViewTest extends TestCase
         $view = new ViewModifyProperties(null, null);
         $view->ss = new Sugar_Smarty();
         $view->display();
-        $this->setOutputCallback(array($this, 'withTwitter'));
+        $this->setOutputCallback([$this, 'withTwitter']);
     }
 
     public function testConnectorSearchProperties()
@@ -75,6 +75,6 @@ class ConnectorsAdminViewTest extends TestCase
         $view = new ViewModifySearch(null, null);
         $view->ss = new Sugar_Smarty();
         $view->display();
-        $this->setOutputCallback(array($this, 'withoutTwitter'));
+        $this->setOutputCallback([$this, 'withoutTwitter']);
     }
 }

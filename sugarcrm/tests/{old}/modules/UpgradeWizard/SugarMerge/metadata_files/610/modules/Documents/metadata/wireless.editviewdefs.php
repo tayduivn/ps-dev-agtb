@@ -11,31 +11,30 @@
  */
 
 
-$viewdefs['Documents']['EditView'] = array(
-	'templateMeta' => array('maxColumns' => '1',
-                            'widths' => array(
-                                            array('label' => '10', 'field' => '30'),
-                                            ),
-                            ),
+$viewdefs['Documents']['EditView'] = [
+    'templateMeta' => ['maxColumns' => '1',
+                            'widths' => [
+                                            ['label' => '10', 'field' => '30'],
+                                            ],
+                            ],
 
 
-	'panels' => array (
-    	array (
-    		array (
-      			'name' => 'document_name',
-      			'label' => 'LBL_DOC_NAME',
-    		),
-    	),
-     	array (
-     		array (
-      			'name' => 'uploadfile',
-      			'displayParams' => array('link'=>'uploadfile', 'id'=>'id'),
-     		),
-    	),
-      	array ('active_date'),
-      	array ('exp_date'),
-		array('team_name'),
-	)
+    'panels' =>  [
+         [
+             [
+                'name' => 'document_name',
+                'label' => 'LBL_DOC_NAME',
+             ],
+         ],
+         [
+             [
+                'name' => 'uploadfile',
+                'displayParams' => ['link'=>'uploadfile', 'id'=>'id'],
+             ],
+         ],
+         ['active_date'],
+         ['exp_date'],
+         ['team_name'],
+    ],
 
-);
-?>
+];

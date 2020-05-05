@@ -29,7 +29,7 @@ class Bug57260Test extends TestCase
         $GLOBALS['current_user']->is_admin = true;
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('app_strings');
-        SugarTestHelper::setUp('mod_strings', array('ModuleBuilder'));
+        SugarTestHelper::setUp('mod_strings', ['ModuleBuilder']);
 
         $_REQUEST['name'] = 'test';
         $_REQUEST['view'] = 'advanced_search';
@@ -75,22 +75,23 @@ class Bug57260Test extends TestCase
         SugarTestHelper::tearDown();
     }
 
-	/**
+    /**
      * @group Bug57260
      *
      * Tests that the default panel label of LBL_PANEL_DEFAULT correctly translates
      * to 'Default' when rendered for undeployed modules in studio
      */
-    public function testUndeployedModuleHasDefaultLabelInStudioLayoutEditor() {
+    public function testUndeployedModuleHasDefaultLabelInStudioLayoutEditor()
+    {
         // Mock the request
-        $req = array(
+        $req = [
             'module' => 'ModuleBuilder',
             'MB' => '1',
             'action' => 'editLayout',
             'view' => 'wirelessdetailview',
             'view_module' => 'test',
             'view_package' => 'test',
-        );
+        ];
         
         // Get the view we need
 

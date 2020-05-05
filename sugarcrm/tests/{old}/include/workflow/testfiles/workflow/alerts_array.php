@@ -10,11 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
  
-//Workflow Alert Meta Data Arrays 
-$alert_meta_array = array ( 
+//Workflow Alert Meta Data Arrays
+$alert_meta_array =  [
 
-); 
-
- 
-
-?>
+];

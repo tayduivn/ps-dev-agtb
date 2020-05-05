@@ -12,36 +12,35 @@
 
 $module_name = 'f0001_bango';
 $_object_name = 'f0001_bango';
-$viewdefs[$module_name]['EditView'] = array(
-	'templateMeta' => array(
+$viewdefs[$module_name]['EditView'] = [
+    'templateMeta' => [
         'maxColumns' => '1',
-        'widths' => array(
-            array('label' => '10', 'field' => '30'),
-            array('label' => '10', 'field' => '30')
-        ),
-    ),
-	'panels' => array (
-    	array (
-			array('name' => $_object_name . '_number','displayParams'=>array('required'=>false,'wireless_detail_only'=>true,)),
-		),
-		array (
-			'priority'
-		),
-		array (
-			'status',
-		),
-		array (
-			array (
-				'name' => 'name',
-				'label' => 'LBL_SUBJECT',
-			)
-		),
-		array (
-			'assigned_user_name',
-		),
-		array (
-			'team_name',
-		),
-	)
-);
-?>
+        'widths' => [
+            ['label' => '10', 'field' => '30'],
+            ['label' => '10', 'field' => '30'],
+        ],
+    ],
+    'panels' =>  [
+         [
+            ['name' => $_object_name . '_number','displayParams'=>['required'=>false,'wireless_detail_only'=>true,]],
+         ],
+         [
+            'priority',
+         ],
+         [
+            'status',
+         ],
+         [
+             [
+                'name' => 'name',
+                'label' => 'LBL_SUBJECT',
+             ],
+         ],
+         [
+            'assigned_user_name',
+         ],
+         [
+            'team_name',
+         ],
+    ],
+];

@@ -19,10 +19,10 @@ class ImportFileSplitterTest extends TestCase
 
     protected function setUp() : void
     {
-    	$GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-    	$this->_goodFile = SugarTestImportUtilities::createFile(2000, 3);
-		$this->_badFile  = ImportCacheFiles::getImportDir().'/thisfileisntthere'.date("YmdHis");
-		$this->_whiteSpaceFile  = SugarTestImportUtilities::createFileWithWhiteSpace();
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        $this->_goodFile = SugarTestImportUtilities::createFile(2000, 3);
+        $this->_badFile  = ImportCacheFiles::getImportDir().'/thisfileisntthere'.date("YmdHis");
+        $this->_whiteSpaceFile  = SugarTestImportUtilities::createFileWithWhiteSpace();
     }
 
     protected function tearDown() : void
@@ -47,7 +47,7 @@ class ImportFileSplitterTest extends TestCase
     public function testSplitSourceFile()
     {
         $importFileSplitter = new ImportFileSplitter($this->_goodFile);
-        $importFileSplitter->splitSourceFile(',','"');
+        $importFileSplitter->splitSourceFile(',', '"');
 
         $this->assertEquals(2000, $importFileSplitter->getRecordCount());
         $this->assertEquals(2, $importFileSplitter->getFileCount());
@@ -56,7 +56,7 @@ class ImportFileSplitterTest extends TestCase
     public function testSplitSourceFileNoEnclosure()
     {
         $importFileSplitter = new ImportFileSplitter($this->_goodFile);
-        $importFileSplitter->splitSourceFile(',','');
+        $importFileSplitter->splitSourceFile(',', '');
 
         $this->assertEquals(2000, $importFileSplitter->getRecordCount());
         $this->assertEquals(2, $importFileSplitter->getFileCount());
@@ -65,7 +65,7 @@ class ImportFileSplitterTest extends TestCase
     public function testSplitSourceFileWithHeader()
     {
         $importFileSplitter = new ImportFileSplitter($this->_goodFile);
-        $importFileSplitter->splitSourceFile(',','"',true);
+        $importFileSplitter->splitSourceFile(',', '"', true);
 
         $this->assertEquals(1999, $importFileSplitter->getRecordCount());
         $this->assertEquals(2, $importFileSplitter->getFileCount());
@@ -73,8 +73,8 @@ class ImportFileSplitterTest extends TestCase
 
     public function testSplitSourceFileWithThreshold()
     {
-        $importFileSplitter = new ImportFileSplitter($this->_goodFile,500);
-        $importFileSplitter->splitSourceFile(',','"');
+        $importFileSplitter = new ImportFileSplitter($this->_goodFile, 500);
+        $importFileSplitter->splitSourceFile(',', '"');
 
         $this->assertEquals(2000, $importFileSplitter->getRecordCount());
         $this->assertEquals(4, $importFileSplitter->getFileCount());
@@ -83,24 +83,24 @@ class ImportFileSplitterTest extends TestCase
     public function testGetSplitFileName()
     {
         $importFileSplitter = new ImportFileSplitter($this->_goodFile);
-        $importFileSplitter->splitSourceFile(',','"');
+        $importFileSplitter->splitSourceFile(',', '"');
 
-        $this->assertEquals($importFileSplitter->getSplitFileName(0),"{$this->_goodFile}-0");
-        $this->assertEquals($importFileSplitter->getSplitFileName(1),"{$this->_goodFile}-1");
-        $this->assertEquals($importFileSplitter->getSplitFileName(2),false);
+        $this->assertEquals($importFileSplitter->getSplitFileName(0), "{$this->_goodFile}-0");
+        $this->assertEquals($importFileSplitter->getSplitFileName(1), "{$this->_goodFile}-1");
+        $this->assertEquals($importFileSplitter->getSplitFileName(2), false);
     }
 
-	/**
-	 * @ticket 25119
-	 */
+    /**
+     * @ticket 25119
+     */
     public function testTrimSpaces()
     {
         $splitter = new ImportFileSplitter($this->_whiteSpaceFile);
-        $splitter->splitSourceFile(',',' ',false);
+        $splitter->splitSourceFile(',', ' ', false);
 
         $this->assertEquals(
             trim(file_get_contents("{$this->_whiteSpaceFile}-0")),
             trim(file_get_contents("{$this->_whiteSpaceFile}"))
-            );
+        );
     }
 }

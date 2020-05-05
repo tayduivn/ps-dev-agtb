@@ -26,27 +26,26 @@ class Bug55650Test extends TestCase
      */
     public function testGetTrackerSubstring($value, $expected)
     {
-    	// Setup some helper values
-    	$add = "";
-    	$cut = $GLOBALS['sugar_config']['tracker_max_display_length'];
-    	// If the length is longer then the set tracker_max_display_length, the substring length for asserting equal will be
-    	// -3 the length of the tracker_max_display_length, and we should add ...
-    	if (strlen($expected) > $GLOBALS['sugar_config']['tracker_max_display_length'])
-    	{
-    		$add = "...";
-    		$cut = $cut - 3;
-    	}
-    	
-    	// Test if the values got converted, and if the original string was chopped to the expected string
+        // Setup some helper values
+        $add = "";
+        $cut = $GLOBALS['sugar_config']['tracker_max_display_length'];
+        // If the length is longer then the set tracker_max_display_length, the substring length for asserting equal will be
+        // -3 the length of the tracker_max_display_length, and we should add ...
+        if (strlen($expected) > $GLOBALS['sugar_config']['tracker_max_display_length']) {
+            $add = "...";
+            $cut = $cut - 3;
+        }
+        
+        // Test if the values got converted, and if the original string was chopped to the expected string
         $this->assertEquals(getTrackerSubstring($value), substr($expected, 0, $cut) . $add, '');
     }
     
     function providerTestGetTrackerSubstring()
     {
-        return array(
-        	0 => array("A lot of quotes &#039;&#039;&#039;&#039;&#039;&#039;&#039;&#039;&#039;&#039;&#039;&#039;&#039;&#039;&#039;", "A lot of quotes '''''''''''''''"),
-        	1 => array("A lot of quotes <>'\" &#34; &#62; &#60; &#8364; &euro;&euro;&euro;&euro;&euro;&euro;&euro;&euro;", "A lot of quotes <>'\" \" > < € €€€€€€€€"),
-        	2 => array("A lot of quotes &amp;", "A lot of quotes &"),
-        );
+        return [
+            0 => ["A lot of quotes &#039;&#039;&#039;&#039;&#039;&#039;&#039;&#039;&#039;&#039;&#039;&#039;&#039;&#039;&#039;", "A lot of quotes '''''''''''''''"],
+            1 => ["A lot of quotes <>'\" &#34; &#62; &#60; &#8364; &euro;&euro;&euro;&euro;&euro;&euro;&euro;&euro;", "A lot of quotes <>'\" \" > < € €€€€€€€€"],
+            2 => ["A lot of quotes &amp;", "A lot of quotes &"],
+        ];
     }
 }

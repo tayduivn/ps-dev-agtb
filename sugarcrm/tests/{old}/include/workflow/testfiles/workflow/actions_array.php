@@ -10,57 +10,53 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
  
-//Workflow Action Meta Data Arrays 
-$action_meta_array = array ( 
+//Workflow Action Meta Data Arrays
+$action_meta_array =  [
 
-'Accounts0_action0' => 
+'Accounts0_action0' =>
 
-array ( 
+ [
 
-		 'action_type' => 'update', 
-		 'action_module' => '', 
-		 'rel_module' => '', 
-		 'rel_module_type' => 'all', 
-	 'basic' => array ( 
+         'action_type' => 'update',
+         'action_module' => '',
+         'rel_module' => '',
+         'rel_module_type' => 'all',
+     'basic' =>  [
 
-		 'description' => 'Hey Man!', 
-	 ), 
+         'description' => 'Hey Man!',
+         ],
 
-	 'basic_ext' => array ( 
+         'basic_ext' =>  [
 
-	 ), 
+         ],
 
-	 'advanced' => array ( 
+         'advanced' =>  [
 
-	 ), 
+         ],
 
-), 
+],
 
-'Accounts1_action0' => 
+'Accounts1_action0' =>
 
-array ( 
+ [
 
-		 'action_type' => 'update', 
-		 'action_module' => '', 
-		 'rel_module' => '', 
-		 'rel_module_type' => 'all', 
-	 'basic' => array ( 
+         'action_type' => 'update',
+         'action_module' => '',
+         'rel_module' => '',
+         'rel_module_type' => 'all',
+     'basic' =>  [
 
-		 'team_id' => '1', 
-	 ), 
+         'team_id' => '1',
+         ],
 
-	 'basic_ext' => array ( 
+         'basic_ext' =>  [
 
-	 ), 
+         ],
 
-	 'advanced' => array ( 
+         'advanced' =>  [
 
-	 ), 
+         ],
 
-), 
+],
 
-); 
-
- 
-
-?>
+];

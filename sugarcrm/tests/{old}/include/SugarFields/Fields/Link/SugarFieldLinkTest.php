@@ -1,4 +1,4 @@
-<?php 
+<?php
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -33,11 +33,11 @@ class SugarFieldLinkTest extends TestCase
         $this->note->field_defs['testurl_c1']['type']='url';
 
         $this->lead = BeanFactory::newBean('Leads');
-        $this->lead->field_defs['test_c'] = array(
+        $this->lead->field_defs['test_c'] = [
             'gen' => 1,
             'default' => 'http://test/{name}',
-        );
-	}
+        ];
+    }
 
     protected function tearDown() : void
     {
@@ -54,21 +54,23 @@ class SugarFieldLinkTest extends TestCase
      /**
      * @ticket 36744
      */
-	public function testLinkField() {
+    public function testLinkField()
+    {
         $sf = SugarFieldHandler::getSugarField('url');
-        $data = array();
+        $data = [];
         $service = SugarTestRestUtilities::getRestServiceMock();
-        $sf->apiFormatField($data, $this->note, array(), 'testurl_c', array(), array('testurl_c'), $service);
+        $sf->apiFormatField($data, $this->note, [], 'testurl_c', [], ['testurl_c'], $service);
         $this->assertEquals('http://test/'.$GLOBALS['current_user']->id, $data['testurl_c']);
     }
     /**
      * @jira task sc50 url fields not coming across on api
      */
-    public function testURLField() {
+    public function testURLField()
+    {
         $sf = SugarFieldHandler::getSugarField('url');
-        $data = array();
+        $data = [];
         $service = SugarTestRestUtilities::getRestServiceMock();
-        $sf->apiFormatField($data, $this->note, array(), 'testurl_c1', array(), array('testurl_c1'), $service);
+        $sf->apiFormatField($data, $this->note, [], 'testurl_c1', [], ['testurl_c1'], $service);
         $this->assertEquals('www.sugarcrm.com', $data['testurl_c1']);
     }
 
@@ -78,9 +80,9 @@ class SugarFieldLinkTest extends TestCase
 
         /** @var SugarFieldLink $sf */
         $sf = SugarFieldHandler::getSugarField('url');
-        $data = array();
+        $data = [];
         $service = SugarTestRestUtilities::getRestServiceMock();
-        $sf->apiFormatField($data, $this->lead, array(), 'test_c', array(), array('test_c'), $service);
+        $sf->apiFormatField($data, $this->lead, [], 'test_c', [], ['test_c'], $service);
         $this->assertEquals('http://test/John Doe', $data['test_c']);
     }
 }

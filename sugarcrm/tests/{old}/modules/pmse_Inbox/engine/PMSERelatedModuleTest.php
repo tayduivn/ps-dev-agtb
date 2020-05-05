@@ -29,7 +29,7 @@ class PMSERelatedModulesTest extends TestCase
     {
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
-        SugarTestHelper::setUp('current_user', array(true, 1));
+        SugarTestHelper::setUp('current_user', [true, 1]);
 
         $this->account = SugarTestAccountUtilities::createAccount();
         $this->contact = $this->contact = SugarTestContactUtilities::createContact();
@@ -81,13 +81,13 @@ class PMSERelatedModulesTest extends TestCase
      */
     public function testAddRelatedRecord()
     {
-        $bugFields = array(
+        $bugFields = [
             "assigned_user_id" => "1",
             "priority" => "Urgent",
             "status" => "New",
             "name" => "New Bug ICE-717",
             "type" => "Defect",
-        );
+        ];
 
         $def = BeanFactory::newBean('pmse_BpmActivityDefinition');
         $def->act_params = '{
@@ -117,10 +117,10 @@ class PMSERelatedModulesTest extends TestCase
         $this->assertNotEmpty($bugBeans[$addedBeans[0]->id]);
 
         // No Related To (module) is selected, a new record of the Related Module is added to the Target Module
-        $contactFields = array(
+        $contactFields = [
             "assigned_user_id" => "1",
             "last_name" => "Doe",
-        );
+        ];
         $def->act_params = '{"module":"contacts"}';
         $addedBeans = $PMSERelatedModule->addRelatedRecord($this->accountOne, 'contacts', $contactFields, $def);
 

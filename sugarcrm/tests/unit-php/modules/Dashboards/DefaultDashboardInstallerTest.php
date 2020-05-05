@@ -346,16 +346,16 @@ class DefaultDashboardInstallerTest extends TestCase
             ->getMock();
 
         $dashboardBeanMock = $this->getMockBuilder('Dashboard')
-            ->setMethods(array('save'))
+            ->setMethods(['save'])
             ->disableOriginalConstructor()
             ->getMock();
 
         $dashboardBeanMock->method('save');
 
-        $properties = array(
+        $properties = [
             'key1' => 'value1',
             'key2' => 'value2',
-        );
+        ];
 
         $dashboardBeanMock->expects($this->once())
             ->method('save');
@@ -373,67 +373,67 @@ class DefaultDashboardInstallerTest extends TestCase
     {
         return [
             // regular dashboard
-            array(
-                array(
-                    'components' => array(
-                        array(
-                            'rows' => array(
-                                array(
-                                    array(
-                                        'view' => array(
+            [
+                [
+                    'components' => [
+                        [
+                            'rows' => [
+                                [
+                                    [
+                                        'view' => [
                                             'type' => 'saved-reports-chart',
                                             'saved_report_key' => 'DEFAULT_REPORT_TITLE_16',
                                             'chart_type' => 'horizontal group by chart',
-                                        ),
+                                        ],
                                         'width' => 12,
-                                    ),
-                                ),
-                                array(
-                                    array(
-                                        'view' => array(
+                                    ],
+                                ],
+                                [
+                                    [
+                                        'view' => [
                                             'type' => 'opportunity-metrics',
                                             'label' => 'LBL_DASHLET_OPPORTUNITY_NAME',
-                                        ),
+                                        ],
                                         'width' => 12,
-                                    ),
-                                ),
-                            ),
+                                    ],
+                                ],
+                            ],
                             'width' => 12,
-                        ),
-                    ),
-                ),
-                array(
-                    'components' => array(
-                        array(
-                            'rows' => array(
-                                array(
-                                    array(
-                                        'view' => array(
+                        ],
+                    ],
+                ],
+                [
+                    'components' => [
+                        [
+                            'rows' => [
+                                [
+                                    [
+                                        'view' => [
                                             'type' => 'saved-reports-chart',
                                             'saved_report_key' => 'DEFAULT_REPORT_TITLE_16',
                                             'chart_type' => 'horizontal group by chart',
                                             'label' => 'saved report',
                                             'saved_report' => 'saved report',
                                             'saved_report_id' => 'report id',
-                                        ),
+                                        ],
                                         'width' => 12,
-                                    ),
-                                ),
-                                array(
-                                    array(
-                                        'view' => array(
+                                    ],
+                                ],
+                                [
+                                    [
+                                        'view' => [
                                             'type' => 'opportunity-metrics',
                                             'label' => 'LBL_DASHLET_OPPORTUNITY_NAME',
-                                        ),
+                                        ],
                                         'width' => 12,
-                                    ),
-                                ),
-                            ),
+                                    ],
+                                ],
+                            ],
                             'width' => 12,
-                        ),
-                    ),
-                ),
-            ),
+                        ],
+                    ],
+                ],
+            ],
             // tabbed dashboard
             [
                 // original metadata

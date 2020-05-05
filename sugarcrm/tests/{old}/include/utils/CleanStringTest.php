@@ -18,29 +18,27 @@ class CleanStringTest extends TestCase
 {
     public function providerCleanString()
     {
-        return array(
-            array('4.2.1','STANDARD',true),
-            array('4.2$1','STANDARD',false),
-            array('abc',"NUMBER",false),
-            array('date(d)','SQL_COLUMN_LIST',true),
-            );
+        return [
+            ['4.2.1','STANDARD',true],
+            ['4.2$1','STANDARD',false],
+            ['abc',"NUMBER",false],
+            ['date(d)','SQL_COLUMN_LIST',true],
+            ];
     }
     
     /**
      * @dataProvider providerCleanString
      * @ticket 45877
      */
-	public function testCleanString(
-	    $string, 
-	    $filter, 
-	    $resultBool
-	    )
-	{
-	    if ( $resultBool ) {
-	        $this->assertEquals($string, clean_string($string,$filter,false));
-	    }
-	    else {
-	        $this->assertFalse(clean_string($string,$filter,false));
-	    }
-	}
+    public function testCleanString(
+        $string,
+        $filter,
+        $resultBool
+    ) {
+        if ($resultBool) {
+            $this->assertEquals($string, clean_string($string, $filter, false));
+        } else {
+            $this->assertFalse(clean_string($string, $filter, false));
+        }
+    }
 }

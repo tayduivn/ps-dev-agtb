@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
 
 class Bug41051Test extends TestCase
 {
-    private $revert = array();
+    private $revert = [];
 
     protected function setUp() : void
     {
@@ -23,7 +23,7 @@ class Bug41051Test extends TestCase
         $this->revert['isPaused'] = $trackerManager->isPaused();
 
         $trackerManager->isPaused = false;
-        $trackerManager->setDisabledMonitors(array());
+        $trackerManager->setDisabledMonitors([]);
     }
 
     protected function tearDown() : void

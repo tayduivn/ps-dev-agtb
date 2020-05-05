@@ -44,74 +44,79 @@ class SOAPAPI3Test extends SOAPTestCase
     /**
      * Ensure we can create a session on the server.
      */
-    public function testCanLogin(){
+    public function testCanLogin()
+    {
         $result = $this->_login();
-        $this->assertTrue(!empty($result['id']) && $result['id'] != -1,
-            'SOAP Session not created. Error ('.$this->_soapClient->faultcode.'): '.$this->_soapClient->faultstring.': '.$this->_soapClient->faultdetail);
+        $this->assertTrue(
+            !empty($result['id']) && $result['id'] != -1,
+            'SOAP Session not created. Error ('.$this->_soapClient->faultcode.'): '.$this->_soapClient->faultstring.': '.$this->_soapClient->faultdetail
+        );
     }
 
     public function testSearchByModule()
     {
         $seedData = self::$helperObject->populateSeedDataForSearchTest('1');
 
-        $searchModules = array('Accounts','Contacts','Opportunities');
+        $searchModules = ['Accounts','Contacts','Opportunities'];
         $searchString = "UNIT TEST";
         $offSet = 0;
         $maxResults = 10;
 
-        $results = $this->_soapClient->call('search_by_module',
-            array(
+        $results = $this->_soapClient->call(
+            'search_by_module',
+            [
                 'session' => $this->_sessionId,
                 'search'  => $searchString,
                 'modules' => $searchModules,
                 'offset'  => $offSet,
                 'max'     => $maxResults,
-                'user'    => '1')
+                'user'    => '1']
         );
 
-        $this->assertTrue( self::$helperObject->findBeanIdFromEntryList($results['entry_list'],$seedData[0]['id'],'Accounts') );
-        $this->assertFalse( self::$helperObject->findBeanIdFromEntryList($results['entry_list'],$seedData[1]['id'],'Accounts') );
-        $this->assertTrue( self::$helperObject->findBeanIdFromEntryList($results['entry_list'],$seedData[2]['id'],'Contacts') );
-        $this->assertTrue( self::$helperObject->findBeanIdFromEntryList($results['entry_list'],$seedData[3]['id'],'Opportunities') );
-        $this->assertFalse( self::$helperObject->findBeanIdFromEntryList($results['entry_list'],$seedData[4]['id'],'Opportunities') );
+        $this->assertTrue(self::$helperObject->findBeanIdFromEntryList($results['entry_list'], $seedData[0]['id'], 'Accounts'));
+        $this->assertFalse(self::$helperObject->findBeanIdFromEntryList($results['entry_list'], $seedData[1]['id'], 'Accounts'));
+        $this->assertTrue(self::$helperObject->findBeanIdFromEntryList($results['entry_list'], $seedData[2]['id'], 'Contacts'));
+        $this->assertTrue(self::$helperObject->findBeanIdFromEntryList($results['entry_list'], $seedData[3]['id'], 'Opportunities'));
+        $this->assertFalse(self::$helperObject->findBeanIdFromEntryList($results['entry_list'], $seedData[4]['id'], 'Opportunities'));
     }
 
     public function testSearchByModuleWithReturnFields()
     {
         $seedData = self::$helperObject->populateSeedDataForSearchTest('1');
 
-        $returnFields = array('name','id','deleted');
-        $searchModules = array('Accounts','Contacts','Opportunities');
+        $returnFields = ['name','id','deleted'];
+        $searchModules = ['Accounts','Contacts','Opportunities'];
         $searchString = "UNIT TEST";
         $offSet = 0;
         $maxResults = 10;
 
-        $results = $this->_soapClient->call('search_by_module',
-            array(
+        $results = $this->_soapClient->call(
+            'search_by_module',
+            [
                 'session' => $this->_sessionId,
                 'search'  => $searchString,
                 'modules' => $searchModules,
                 'offset'  => $offSet,
                 'max'     => $maxResults,
                 'user'    => '1',
-                'fields'  => $returnFields)
+                'fields'  => $returnFields]
         );
 
-        $this->assertEquals($seedData[0]['fieldValue'], self::$helperObject->findFieldByNameFromEntryList($results['entry_list'],$seedData[0]['id'],'Accounts', $seedData[0]['fieldName']));
-        $this->assertFalse(self::$helperObject->findFieldByNameFromEntryList($results['entry_list'],$seedData[1]['id'],'Accounts', $seedData[1]['fieldName']));
-        $this->assertEquals($seedData[2]['fieldValue'], self::$helperObject->findFieldByNameFromEntryList($results['entry_list'],$seedData[2]['id'],'Contacts', $seedData[2]['fieldName']));
-        $this->assertEquals($seedData[3]['fieldValue'], self::$helperObject->findFieldByNameFromEntryList($results['entry_list'],$seedData[3]['id'],'Opportunities', $seedData[3]['fieldName']));
-        $this->assertFalse(self::$helperObject->findFieldByNameFromEntryList($results['entry_list'],$seedData[4]['id'],'Opportunities', $seedData[4]['fieldName']));
+        $this->assertEquals($seedData[0]['fieldValue'], self::$helperObject->findFieldByNameFromEntryList($results['entry_list'], $seedData[0]['id'], 'Accounts', $seedData[0]['fieldName']));
+        $this->assertFalse(self::$helperObject->findFieldByNameFromEntryList($results['entry_list'], $seedData[1]['id'], 'Accounts', $seedData[1]['fieldName']));
+        $this->assertEquals($seedData[2]['fieldValue'], self::$helperObject->findFieldByNameFromEntryList($results['entry_list'], $seedData[2]['id'], 'Contacts', $seedData[2]['fieldName']));
+        $this->assertEquals($seedData[3]['fieldValue'], self::$helperObject->findFieldByNameFromEntryList($results['entry_list'], $seedData[3]['id'], 'Opportunities', $seedData[3]['fieldName']));
+        $this->assertFalse(self::$helperObject->findFieldByNameFromEntryList($results['entry_list'], $seedData[4]['id'], 'Opportunities', $seedData[4]['fieldName']));
     }
 
     public function testGetVardefsMD5()
     {
-        $GLOBALS['reload_vardefs'] = TRUE;
+        $GLOBALS['reload_vardefs'] = true;
         //Test a regular module
         $result = $this->_getVardefsMD5('Accounts');
         $a = new Account();
         $soapHelper = new SugarWebServiceUtilv3();
-        $actualVardef = $soapHelper->get_return_module_fields($a,'Accounts','');
+        $actualVardef = $soapHelper->get_return_module_fields($a, 'Accounts', '');
         $actualMD5 = md5(serialize($actualVardef));
         $this->assertEquals($actualMD5, $result[0], "Unable to retrieve vardef md5.");
     }
@@ -119,18 +124,20 @@ class SOAPAPI3Test extends SOAPTestCase
     public function testGetUpcomingActivities()
     {
         $expected = $this->_createUpcomingActivities(); //Seed the data.
-        $results = $this->_soapClient->call('get_upcoming_activities',array('session'=>$this->_sessionId));
+        $results = $this->_soapClient->call('get_upcoming_activities', ['session'=>$this->_sessionId]);
         $this->_removeUpcomingActivities();
 
-        $this->assertEquals($expected[0] ,$results[1]['id'] , 'Unable to get upcoming activities Error ('.$this->_soapClient->faultcode.'): '.$this->_soapClient->faultstring.': '.$this->_soapClient->faultdetail);
-        $this->assertEquals($expected[1] ,$results[2]['id'] , 'Unable to get upcoming activities Error ('.$this->_soapClient->faultcode.'): '.$this->_soapClient->faultstring.': '.$this->_soapClient->faultdetail);
+        $this->assertEquals($expected[0], $results[1]['id'], 'Unable to get upcoming activities Error ('.$this->_soapClient->faultcode.'): '.$this->_soapClient->faultstring.': '.$this->_soapClient->faultdetail);
+        $this->assertEquals($expected[1], $results[2]['id'], 'Unable to get upcoming activities Error ('.$this->_soapClient->faultcode.'): '.$this->_soapClient->faultstring.': '.$this->_soapClient->faultdetail);
     }
 
     public function testSetEntriesForAccount()
     {
         $result = $this->_setEntriesForAccount();
-        $this->assertTrue(!empty($result['ids']) && $result['ids'][0] != -1,
-            'Can not create new account using testSetEntriesForAccount. Error ('.$this->_soapClient->faultcode.'): '.$this->_soapClient->faultstring.': '.$this->_soapClient->faultdetail);
+        $this->assertTrue(
+            !empty($result['ids']) && $result['ids'][0] != -1,
+            'Can not create new account using testSetEntriesForAccount. Error ('.$this->_soapClient->faultcode.'): '.$this->_soapClient->faultstring.': '.$this->_soapClient->faultdetail
+        );
     } // fn
 
     /**
@@ -141,17 +148,15 @@ class SOAPAPI3Test extends SOAPTestCase
         $testModule = 'Accounts';
         $testModuleID = create_guid();
 
-        $this->_createTrackerEntry($testModule,$testModuleID);
+        $this->_createTrackerEntry($testModule, $testModuleID);
 
         $this->_login();
-        $results = $this->_soapClient->call('get_last_viewed',array('session'=>$this->_sessionId,'module_names'=> array($testModule) ));
+        $results = $this->_soapClient->call('get_last_viewed', ['session'=>$this->_sessionId,'module_names'=> [$testModule] ]);
 
-        $found = FALSE;
-        foreach ($results as $entry)
-        {
-            if($entry['item_id'] == $testModuleID)
-            {
-                $found = TRUE;
+        $found = false;
+        foreach ($results as $entry) {
+            if ($entry['item_id'] == $testModuleID) {
+                $found = true;
                 break;
             }
         }
@@ -159,7 +164,7 @@ class SOAPAPI3Test extends SOAPTestCase
         $this->assertTrue($found, "Unable to get last viewed modules");
     }
 
-    private function _createTrackerEntry($module, $id,$summaryText = "UNIT TEST SUMMARY")
+    private function _createTrackerEntry($module, $id, $summaryText = "UNIT TEST SUMMARY")
     {
         $trackerManager = TrackerManager::getInstance();
         $trackerManager->unPause();
@@ -198,8 +203,8 @@ class SOAPAPI3Test extends SOAPTestCase
 
     private function _createUpcomingActivities()
     {
-        $GLOBALS['current_user']->setPreference('datef','Y-m-d') ;
-        $GLOBALS['current_user']->setPreference('timef','H:i') ;
+        $GLOBALS['current_user']->setPreference('datef', 'Y-m-d') ;
+        $GLOBALS['current_user']->setPreference('timef', 'H:i') ;
         global $timedate;
         $date1 = $timedate->asUser($timedate->getNow()->modify("+2 days"));
         $date2 = $timedate->asUser($timedate->getNow()->modify("+4 days"));
@@ -207,59 +212,62 @@ class SOAPAPI3Test extends SOAPTestCase
         $callID = uniqid();
         $c = new Call();
         $c->id = $callID;
-        $c->new_with_id = TRUE;
+        $c->new_with_id = true;
         $c->status = 'Planned';
         $c->date_start = $date1;
         $c->name = "UNIT TEST";
         $c->assigned_user_id = '1';
-        $c->save(FALSE);
+        $c->save(false);
 
         $callID = uniqid();
         $c = new Call();
         $c->id = $callID;
-        $c->new_with_id = TRUE;
+        $c->new_with_id = true;
         $c->status = 'Planned';
         $c->date_start = $date1;
         $c->name = "UNIT TEST";
         $c->assigned_user_id = '1';
-        $c->save(FALSE);
+        $c->save(false);
 
         $taskID = uniqid();
         $t = new Task();
         $t->id = $taskID;
-        $t->new_with_id = TRUE;
+        $t->new_with_id = true;
         $t->status = 'Not Started';
         $t->date_due = $date2;
         $t->name = "UNIT TEST";
         $t->assigned_user_id = '1';
-        $t->save(FALSE);
+        $t->save(false);
         $GLOBALS['db']->commit();
 
-        return array($callID, $taskID);
+        return [$callID, $taskID];
     }
 
     public function _getVardefsMD5($module)
     {
-        $result = $this->_soapClient->call('get_module_fields_md5',array('session'=>$this->_sessionId,'module'=> $module ));
+        $result = $this->_soapClient->call('get_module_fields_md5', ['session'=>$this->_sessionId,'module'=> $module ]);
         return $result;
     }
 
     public function _getModuleLayoutMD5()
     {
-        $result = $this->_soapClient->call('get_module_layout_md5',
-            array('session'=>$this->_sessionId,'module_names'=> array('Accounts'),'types' => array('default'),'views' => array('list')));
+        $result = $this->_soapClient->call(
+            'get_module_layout_md5',
+            ['session'=>$this->_sessionId,'module_names'=> ['Accounts'],'types' => ['default'],'views' => ['list']]
+        );
         return $result;
     }
 
-    public function _setEntriesForAccount() {
+    public function _setEntriesForAccount()
+    {
         global $timedate;
         $current_date = $timedate->nowDb();
         $time = mt_rand();
         $name = 'SugarAccount' . $time;
         $email1 = 'account@'. $time. 'sugar.com';
-        $result = $this->_soapClient->call('set_entries',array('session'=>$this->_sessionId,'module_name'=>'Accounts', 'name_value_lists'=>array(array(array('name'=>'name' , 'value'=>"$name"), array('name'=>'email1' , 'value'=>"$email1")))));
+        $result = $this->_soapClient->call('set_entries', ['session'=>$this->_sessionId,'module_name'=>'Accounts', 'name_value_lists'=>[[['name'=>'name' , 'value'=>"$name"], ['name'=>'email1' , 'value'=>"$email1"]]]]);
         $soap_version_test_accountId = $result['ids'][0];
-        SugarTestAccountUtilities::setCreatedAccount(array($soap_version_test_accountId));
+        SugarTestAccountUtilities::setCreatedAccount([$soap_version_test_accountId]);
         return $result;
     } // fn
 }

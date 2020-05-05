@@ -21,7 +21,7 @@ class WebLogicHookTest extends TestCase
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('app_list_strings');
-        SugarTestHelper::setUp('mod_strings', array('WebLogicHooks'));
+        SugarTestHelper::setUp('mod_strings', ['WebLogicHooks']);
     }
 
     public static function tearDownAfterClass(): void
@@ -35,13 +35,13 @@ class WebLogicHookTest extends TestCase
      */
     public function testWebLogicHookFire()
     {
-        $hook = SugarTestWebLogicHookUtilities::createWebLogicHook(false, array(
+        $hook = SugarTestWebLogicHookUtilities::createWebLogicHook(false, [
             'name' => ('Text Hook ' . time()),
             'webhook_target_module' => 'Accounts',
             'request_method' => 'POST',
             'url' => 'http://www.example.com',
             'trigger_event' => 'after_save',
-        ));
+        ]);
 
         $account = SugarTestAccountUtilities::createAccount();
         $dispatchOptions = $hook::$dispatchOptions;

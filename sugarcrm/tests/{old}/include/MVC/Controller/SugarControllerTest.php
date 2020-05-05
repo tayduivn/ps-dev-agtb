@@ -39,7 +39,7 @@ class SugarControllerTest extends TestCase
         $controller = new SugarControllerMock;
         $controller->setup();
 
-        $this->assertEquals('Home',$controller->module);
+        $this->assertEquals('Home', $controller->module);
         $this->assertNull($controller->target_module);
     }
 
@@ -48,7 +48,7 @@ class SugarControllerTest extends TestCase
         $controller = new SugarControllerMock;
         $controller->setup('foo');
 
-        $this->assertEquals('foo',$controller->module);
+        $this->assertEquals('foo', $controller->module);
         $this->assertNull($controller->target_module);
     }
 
@@ -59,7 +59,7 @@ class SugarControllerTest extends TestCase
         $GLOBALS['moduleList'][] = 'dog1312';
         Validator::clearValidatorsCache();
 
-        $_REQUEST = array(
+        $_REQUEST = [
             'module' => 'dog33434',
             'target_module' => 'dog121255',
             'action' => 'dog3232',
@@ -68,18 +68,18 @@ class SugarControllerTest extends TestCase
             'return_module' => 'dog1312',
             'return_action' => 'dog1212',
             'return_id' => '11212',
-            );
+            ];
         $controller = new SugarControllerMock;
         $controller->setup();
 
-        $this->assertEquals($_REQUEST['module'],$controller->module);
-        $this->assertEquals($_REQUEST['target_module'],$controller->target_module);
-        $this->assertEquals($_REQUEST['action'],$controller->action);
-        $this->assertEquals($_REQUEST['record'],$controller->record);
-        $this->assertEquals($_REQUEST['view'],$controller->view);
-        $this->assertEquals($_REQUEST['return_module'],$controller->return_module);
-        $this->assertEquals($_REQUEST['return_action'],$controller->return_action);
-        $this->assertEquals($_REQUEST['return_id'],$controller->return_id);
+        $this->assertEquals($_REQUEST['module'], $controller->module);
+        $this->assertEquals($_REQUEST['target_module'], $controller->target_module);
+        $this->assertEquals($_REQUEST['action'], $controller->action);
+        $this->assertEquals($_REQUEST['record'], $controller->record);
+        $this->assertEquals($_REQUEST['view'], $controller->view);
+        $this->assertEquals($_REQUEST['return_module'], $controller->return_module);
+        $this->assertEquals($_REQUEST['return_action'], $controller->return_action);
+        $this->assertEquals($_REQUEST['return_id'], $controller->return_id);
     }
 
 
@@ -91,7 +91,7 @@ class SugarControllerTest extends TestCase
     protected function mkdir($filename)
     {
         $this->rmdir[] = $filename;
-        sugar_mkdir($filename,null,true);
+        sugar_mkdir($filename, null, true);
     }
 
     public function testSetModule()
@@ -99,7 +99,7 @@ class SugarControllerTest extends TestCase
         $controller = new SugarControllerMock;
         $controller->setModule('cat');
 
-        $this->assertEquals('cat',$controller->module);
+        $this->assertEquals('cat', $controller->module);
     }
 
     public function testCallLegacyCodeIfLegacyDetailViewFound()
@@ -114,7 +114,7 @@ class SugarControllerTest extends TestCase
         $controller->view = 'list';
         $controller->callLegacyCode();
 
-        $this->assertEquals('classic',$controller->view);
+        $this->assertEquals('classic', $controller->view);
     }
 
     public function testCallLegacyCodeIfNewDetailViewFound()
@@ -130,14 +130,14 @@ class SugarControllerTest extends TestCase
         $controller->view = 'list';
         $controller->callLegacyCode();
 
-        $this->assertEquals('list',$controller->view);
+        $this->assertEquals('list', $controller->view);
     }
 
 
     public function testCallLegacyCodeIfLegacyDetailViewAndNewDetailViewFound()
     {
         $this->module_name = $module_name = 'TestModule'.mt_rand();
-        sugar_mkdir("modules/$module_name/views",null,true);
+        sugar_mkdir("modules/$module_name/views", null, true);
         $this->touch("modules/$module_name/views/view.detail.php");
         $this->touch("modules/$module_name/DetailView.php");
 
@@ -148,15 +148,15 @@ class SugarControllerTest extends TestCase
         $controller->view = 'list';
         $controller->callLegacyCode();
 
-        $this->assertEquals('list',$controller->view);
+        $this->assertEquals('list', $controller->view);
     }
 
     public function testCallLegacyCodeIfCustomLegacyDetailViewAndNewDetailViewFound()
     {
         $this->module_name = $module_name = 'TestModule'.mt_rand();
-        sugar_mkdir("modules/$module_name/views",null,true);
+        sugar_mkdir("modules/$module_name/views", null, true);
         $this->touch("modules/$module_name/views/view.detail.php");
-        sugar_mkdir("custom/modules/$module_name",null,true);
+        sugar_mkdir("custom/modules/$module_name", null, true);
         $this->touch("custom/modules/$module_name/DetailView.php");
 
         $controller = new SugarControllerMock;
@@ -166,15 +166,15 @@ class SugarControllerTest extends TestCase
         $controller->view = 'list';
         $controller->callLegacyCode();
 
-        $this->assertEquals('classic',$controller->view);
+        $this->assertEquals('classic', $controller->view);
     }
 
     public function testCallLegacyCodeIfLegacyDetailViewAndCustomNewDetailViewFound()
     {
         $this->module_name = $module_name = 'TestModule'.mt_rand();
-        sugar_mkdir("custom/modules/$module_name/views",null,true);
+        sugar_mkdir("custom/modules/$module_name/views", null, true);
         $this->touch("custom/modules/$module_name/views/view.detail.php");
-        sugar_mkdir("modules/$module_name",null,true);
+        sugar_mkdir("modules/$module_name", null, true);
         $this->touch("modules/$module_name/DetailView.php");
 
         $controller = new SugarControllerMock;
@@ -183,16 +183,16 @@ class SugarControllerTest extends TestCase
         $controller->view = 'list';
         $controller->callLegacyCode();
 
-        $this->assertEquals('classic',$controller->view);
+        $this->assertEquals('classic', $controller->view);
     }
 
     public function testCallLegacyCodeIfLegacyDetailViewAndNewDetailViewFoundAndCustomLegacyDetailViewFound()
     {
         $this->module_name = $module_name = 'TestModule'.mt_rand();
-        sugar_mkdir("modules/$module_name/views",null,true);
+        sugar_mkdir("modules/$module_name/views", null, true);
         $this->touch("modules/$module_name/views/view.detail.php");
         $this->touch("modules/$module_name/DetailView.php");
-        sugar_mkdir("custom/modules/$module_name",null,true);
+        sugar_mkdir("custom/modules/$module_name", null, true);
         $this->touch("custom/modules/$module_name/DetailView.php");
 
         $controller = new SugarControllerMock;
@@ -202,15 +202,15 @@ class SugarControllerTest extends TestCase
         $controller->view = 'list';
         $controller->callLegacyCode();
 
-        $this->assertEquals('classic',$controller->view);
+        $this->assertEquals('classic', $controller->view);
     }
 
     public function testCallLegacyCodeIfLegacyDetailViewAndNewDetailViewFoundAndCustomNewDetailViewFound()
     {
         $this->module_name = $module_name = 'TestModule'.mt_rand();
-        sugar_mkdir("custom/modules/$module_name/views",null,true);
+        sugar_mkdir("custom/modules/$module_name/views", null, true);
         $this->touch("custom/modules/$module_name/views/view.detail.php");
-        sugar_mkdir("modules/$module_name/views",null,true);
+        sugar_mkdir("modules/$module_name/views", null, true);
         $this->touch("modules/$module_name/views/view.detail.php");
         $this->touch("modules/$module_name/DetailView.php");
 
@@ -220,16 +220,16 @@ class SugarControllerTest extends TestCase
         $controller->view = 'list';
         $controller->callLegacyCode();
 
-        $this->assertEquals('list',$controller->view);
+        $this->assertEquals('list', $controller->view);
     }
 
     public function testCallLegacyCodeIfLegacyDetailViewAndNewDetailViewFoundAndCustomLegacyDetailViewFoundAndCustomNewDetailViewFound()
     {
         $this->module_name = $module_name = 'TestModule'.mt_rand();
-        sugar_mkdir("custom/modules/$module_name/views",null,true);
+        sugar_mkdir("custom/modules/$module_name/views", null, true);
         $this->touch("custom/modules/$module_name/views/view.detail.php");
         $this->touch("custom/modules/$module_name/DetailView.php");
-        sugar_mkdir("modules/$module_name/views",null,true);
+        sugar_mkdir("modules/$module_name/views", null, true);
         $this->touch("modules/$module_name/views/view.detail.php");
         $this->touch("modules/$module_name/DetailView.php");
 
@@ -240,7 +240,7 @@ class SugarControllerTest extends TestCase
         $controller->view = 'list';
         $controller->callLegacyCode();
 
-        $this->assertEquals('list',$controller->view);
+        $this->assertEquals('list', $controller->view);
     }
 
     public function testPostDelete()
@@ -256,7 +256,7 @@ class SugarControllerTest extends TestCase
         unset($_REQUEST['return_action']);
         unset($_REQUEST['return_id']);
 
-        $this->assertEquals("index.php?module=foo&action=bar&record=123",$controller->redirect_url);
+        $this->assertEquals("index.php?module=foo&action=bar&record=123", $controller->redirect_url);
     }
 
     /**
@@ -277,7 +277,7 @@ class SugarControllerTest extends TestCase
         unset($_REQUEST['return_id']);
         unset($_REQUEST['offset']);
 
-        $this->assertEquals("index.php?module=foo&action=bar&record=123&offset=2",$controller->redirect_url);
+        $this->assertEquals("index.php?module=foo&action=bar&record=123&offset=2", $controller->redirect_url);
     }
 
     /**
@@ -300,7 +300,7 @@ class SugarControllerTest extends TestCase
         unset($_REQUEST['offset']);
         unset($_REQUEST['duplicateSave']);
 
-        $this->assertEquals("index.php?module=foo&action=bar&record=123",$controller->redirect_url);
+        $this->assertEquals("index.php?module=foo&action=bar&record=123", $controller->redirect_url);
     }
 
     public function testPostDeleteWithDefaultValues()
@@ -317,12 +317,12 @@ class SugarControllerTest extends TestCase
         $GLOBALS['sugar_config']['default_module'] = $backupDefaultModule;
         $GLOBALS['sugar_config']['default_action'] = $backupDefaultAction;
 
-        $this->assertEquals("index.php?module=yuck&action=yuckyuck&record=",$controller->redirect_url);
+        $this->assertEquals("index.php?module=yuck&action=yuckyuck&record=", $controller->redirect_url);
     }
 
     public function testExecuteException()
     {
-        $controller = $this->createPartialMock('SugarController', array('process', 'handleException'));
+        $controller = $this->createPartialMock('SugarController', ['process', 'handleException']);
         $controller->expects($this->once())
             ->method('process')
             ->will($this->throwException(new Exception('test')));

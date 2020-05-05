@@ -21,9 +21,9 @@ class RS798Test extends TestCase
 
     protected function setUp() : void
     {
-        SugarTestHelper::setUp('current_user', array(true, true));
+        SugarTestHelper::setUp('current_user', [true, true]);
         SugarTestHelper::setUp('app_list_strings');
-        SugarTestHelper::setUp('mod_strings', array('KBContents'));
+        SugarTestHelper::setUp('mod_strings', ['KBContents']);
         $this->bean = SugarTestKBContentUtilities::createBean();
     }
 
@@ -93,89 +93,89 @@ class RS798Test extends TestCase
      */
     public function dataProviderForCheckNotifyStatus()
     {
-        return array(
-            array(
-                array(
+        return [
+            [
+                [
                     'setUser' => false,
                     'before' => null,
                     'after' => KBContent::ST_IN_REVIEW,
                     'notify' => false,
-                ),
-            ),
-            array(
-                array(
+                ],
+            ],
+            [
+                [
                     'setUser' => true,
                     'before' => null,
                     'after' => KBContent::ST_IN_REVIEW,
                     'notify' => true,
-                ),
-            ),
+                ],
+            ],
 
-            array(
-                array(
+            [
+                [
                     'setUser' => false,
                     'before' => null,
                     'after' => KBContent::ST_PUBLISHED,
                     'notify' => false,
-                ),
-            ),
-            array(
-                array(
+                ],
+            ],
+            [
+                [
                     'setUser' => true,
                     'before' => null,
                     'after' => KBContent::ST_PUBLISHED,
                     'notify' => true,
-                ),
-            ),
+                ],
+            ],
 
-            array(
-                array(
+            [
+                [
                     'setUser' => false,
                     'before' => KBContent::ST_DRAFT,
                     'after' => KBContent::ST_IN_REVIEW,
                     'notify' => false,
-                ),
-            ),
-            array(
-                array(
+                ],
+            ],
+            [
+                [
                     'setUser' => true,
                     'before' => KBContent::ST_DRAFT,
                     'after' => KBContent::ST_IN_REVIEW,
                     'notify' => true,
-                ),
-            ),
+                ],
+            ],
 
-            array(
-                array(
+            [
+                [
                     'setUser' => false,
                     'before' => KBContent::ST_IN_REVIEW,
                     'after' => KBContent::ST_DRAFT,
                     'notify' => false,
-                ),
-            ),
-            array(
-                array(
+                ],
+            ],
+            [
+                [
                     'setUser' => true,
                     'before' => KBContent::ST_IN_REVIEW,
                     'after' => KBContent::ST_DRAFT,
                     'notify' => true,
-                ),
-            ),
+                ],
+            ],
 
-            array(
-                array(
+            [
+                [
                     'before' => KBContent::ST_IN_REVIEW,
                     'after' => KBContent::ST_IN_REVIEW,
                     'notify' => false,
-                ),
-            ),
-            array(
-                array(
+                ],
+            ],
+            [
+                [
                     'before' => null,
                     'after' => KBContent::ST_DRAFT,
                     'notify' => false,
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
     }
 }

@@ -193,12 +193,12 @@ class SugarTestPortalUtilities
     public static function restoreNormalUser(bool $isAdmin = false)
     {
         self::clearLoggedInUser();
-        SugarTestHelper::setUp('current_user', array(true, $isAdmin));
+        SugarTestHelper::setUp('current_user', [true, $isAdmin]);
     }
 
     public static function getPortalCurrentUser(string $contactId)
     {
-        return (new CurrentUserPortalApi())->retrieveCurrentUser(self::loginAsPortalUser($contactId), array());
+        return (new CurrentUserPortalApi())->retrieveCurrentUser(self::loginAsPortalUser($contactId), []);
     }
 
     public static function createBasicObject(string $module, string $id)

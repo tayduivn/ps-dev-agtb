@@ -44,7 +44,8 @@ class Bug49008Test extends TestCase
 
 class SugarWidgetFieldDateTime49008Mock extends SugarWidgetFieldDateTime
 {
-     public function expandDate($date, $end=false) {
-         return parent::expandDate($date, $end);
-     }
+    public function expandDate($date, $end = false)
+    {
+        return parent::expandDate($date, $end);
+    }
 }

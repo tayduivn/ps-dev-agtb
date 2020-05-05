@@ -14,9 +14,11 @@
 
 class SugarTestWorksheetUtilities
 {
-    private static $_createdWorksheets = array();
+    private static $_createdWorksheets = [];
 
-    private function __construct() {}
+    private function __construct()
+    {
+    }
 
     public static function createWorksheet($id = '')
     {
@@ -25,8 +27,7 @@ class SugarTestWorksheetUtilities
         $worksheet = BeanFactory::newBean("ForecastWorksheets");
         $worksheet->name = $name . $time;
 
-        if(!empty($id))
-        {
+        if (!empty($id)) {
             $worksheet->new_with_id = true;
             $worksheet->id = $id;
         }
@@ -37,8 +38,7 @@ class SugarTestWorksheetUtilities
 
     public static function setCreatedWorksheet($worksheet_ids)
     {
-        foreach($worksheet_ids as $worksheet_id)
-        {
+        foreach ($worksheet_ids as $worksheet_id) {
             $worksheet = BeanFactory::newBean("ForecastWorksheets");
             $worksheet->id = $worksheet_id;
             self::$_createdWorksheets[] = $worksheet;
@@ -64,9 +64,8 @@ class SugarTestWorksheetUtilities
 
     public static function getCreatedWorksheetIds()
     {
-        $worksheet_ids = array();
-        foreach (self::$_createdWorksheets as $worksheet)
-        {
+        $worksheet_ids = [];
+        foreach (self::$_createdWorksheets as $worksheet) {
             $worksheet_ids[] = $worksheet->id;
         }
         return $worksheet_ids;
@@ -82,22 +81,22 @@ class SugarTestWorksheetUtilities
 
     public static function loadWorksheetForBeans($bean, array $ids, $isCommit = false)
     {
-        if($bean instanceof SugarBean) {
+        if ($bean instanceof SugarBean) {
             $bean = $bean->module_name;
         }
 
-        $worksheets = array();
+        $worksheets = [];
 
         /* @var $worksheet ForecastWorksheet */
-        foreach($ids as $id) {
+        foreach ($ids as $id) {
             $worksheet = BeanFactory::newBean('ForecastWorksheets');
             $worksheet->retrieve_by_string_fields(
-                array(
+                [
                     'parent_type' => $bean,
                     'parent_id' => $id,
                     'draft' => ($isCommit === false) ? 1 : 0,
                     'deleted' => 0,
-                )
+                ]
             );
 
             if (empty($worksheet->id)) {
@@ -123,12 +122,12 @@ class SugarTestWorksheetUtilities
         /* @var $worksheet ForecastWorksheet */
         $worksheet = BeanFactory::newBean('ForecastWorksheets');
         $worksheet->retrieve_by_string_fields(
-            array(
+            [
                 'parent_type' => $bean->module_name,
                 'parent_id' => $bean->id,
                 'draft' => ($isCommit === false) ? 1 : 0,
-                'deleted' => ($isDeleted === false) ? 0 : 1
-            ),
+                'deleted' => ($isDeleted === false) ? 0 : 1,
+            ],
             true,
             false
         );

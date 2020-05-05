@@ -12,7 +12,7 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once('modules/Calls/CallHelper.php');
+require_once 'modules/Calls/CallHelper.php';
 
 class CallHelperTest extends TestCase
 {
@@ -31,59 +31,58 @@ class CallHelperTest extends TestCase
     
     public function providerGetDurationMinutesOptions()
     {
-        return array(
-            array('EditView',<<<EOHTML
+        return [
+            ['EditView',<<<EOHTML
 <select id="duration_minutes" onchange="SugarWidgetScheduler.update_time();" name="duration_minutes">
 <OPTION value='0'>00</OPTION>
 <OPTION selected value='15'>15</OPTION>
 <OPTION value='30'>30</OPTION>
 <OPTION value='45'>45</OPTION></select>
-EOHTML
-                ),
-            array('MassUpdate',<<<EOHTML
+EOHTML,
+                ],
+            ['MassUpdate',<<<EOHTML
 <select id="duration_minutes" name="duration_minutes">
 <OPTION value='0'>00</OPTION>
 <OPTION selected value='15'>15</OPTION>
 <OPTION value='30'>30</OPTION>
 <OPTION value='45'>45</OPTION></select>
-EOHTML
-                ),
-            array('QuickCreate',<<<EOHTML
+EOHTML,
+                ],
+            ['QuickCreate',<<<EOHTML
 <select id="duration_minutes" onchange="SugarWidgetScheduler.update_time();" name="duration_minutes">
 <OPTION value='0'>00</OPTION>
 <OPTION selected value='15'>15</OPTION>
 <OPTION value='30'>30</OPTION>
 <OPTION value='45'>45</OPTION></select>
-EOHTML
-                ),
+EOHTML,
+                ],
 
-            array('wirelessedit',<<<EOHTML
+            ['wirelessedit',<<<EOHTML
 <select id="duration_minutes" name="duration_minutes">
 <OPTION value='0'>00</OPTION>
 <OPTION selected value='15'>15</OPTION>
 <OPTION value='30'>30</OPTION>
 <OPTION value='45'>45</OPTION></select>
-EOHTML
-                ),
+EOHTML,
+                ],
 
-            array('DetailView','15'),
-        );
+            ['DetailView','15'],
+        ];
     }
     
     /**
      * @dataProvider providerGetDurationMinutesOptions
      */
-	public function testGetDurationMinutesOptions(
-	    $view,
-	    $returnValue
-	    )
-    {
+    public function testGetDurationMinutesOptions(
+        $view,
+        $returnValue
+    ) {
         $focus = new Call();
         
         $this->assertEquals(
-            getDurationMinutesOptions($focus,'','',$view),
+            getDurationMinutesOptions($focus, '', '', $view),
             $returnValue
-            );
+        );
     }
     
     public function testGetDurationMinutesOptionsNonDefaultValue()
@@ -92,9 +91,9 @@ EOHTML
         $focus->duration_minutes = '30';
         
         $this->assertEquals(
-            getDurationMinutesOptions($focus,'','','DetailView'),
+            getDurationMinutesOptions($focus, '', '', 'DetailView'),
             $focus->duration_minutes
-            );
+        );
     }
     
     public function testGetDurationMinutesOptionsFromRequest()
@@ -103,9 +102,9 @@ EOHTML
         $_REQUEST['duration_minutes'] = '45';
         
         $this->assertEquals(
-            getDurationMinutesOptions($focus,'','','DetailView'),
+            getDurationMinutesOptions($focus, '', '', 'DetailView'),
             $_REQUEST['duration_minutes']
-            );
+        );
         
         unset($_REQUEST['duration_minutes']);
     }
@@ -117,17 +116,17 @@ EOHTML
         $focus->duration_hours = null;
         $focus->minutes_value_default = null;
         
-        getDurationMinutesOptions($focus,'','','DetailView');
+        getDurationMinutesOptions($focus, '', '', 'DetailView');
         
-        $this->assertEquals($focus->date_start,$GLOBALS['timedate']->to_display_date(gmdate($GLOBALS['timedate']->get_date_time_format())));
-        $this->assertEquals($focus->duration_hours,'0');
-        $this->assertEquals($focus->duration_minutes,'1');
+        $this->assertEquals($focus->date_start, $GLOBALS['timedate']->to_display_date(gmdate($GLOBALS['timedate']->get_date_time_format())));
+        $this->assertEquals($focus->duration_hours, '0');
+        $this->assertEquals($focus->duration_minutes, '1');
     }
     
     public function providerGetReminderTime()
     {
-        return array(
-            array('EditView',<<<EOHTML
+        return [
+            ['EditView',<<<EOHTML
 <select id="reminder_time" name="reminder_time">
 <OPTION value='60'>1 minute prior</OPTION>
 <OPTION value='300'>5 minutes prior</OPTION>
@@ -135,9 +134,9 @@ EOHTML
 <OPTION value='900'>15 minutes prior</OPTION>
 <OPTION value='1800'>30 minutes prior</OPTION>
 <OPTION value='3600'>1 hour prior</OPTION></select>
-EOHTML
-                ),
-            array('MassUpdate',<<<EOHTML
+EOHTML,
+                ],
+            ['MassUpdate',<<<EOHTML
 <select id="reminder_time" name="reminder_time">
 <OPTION value='60'>1 minute prior</OPTION>
 <OPTION value='300'>5 minutes prior</OPTION>
@@ -145,9 +144,9 @@ EOHTML
 <OPTION value='900'>15 minutes prior</OPTION>
 <OPTION value='1800'>30 minutes prior</OPTION>
 <OPTION value='3600'>1 hour prior</OPTION></select>
-EOHTML
-                ),
-            array('SubpanelCreates',<<<EOHTML
+EOHTML,
+                ],
+            ['SubpanelCreates',<<<EOHTML
 <select id="reminder_time" name="reminder_time">
 <OPTION value='60'>1 minute prior</OPTION>
 <OPTION value='300'>5 minutes prior</OPTION>
@@ -155,9 +154,9 @@ EOHTML
 <OPTION value='900'>15 minutes prior</OPTION>
 <OPTION value='1800'>30 minutes prior</OPTION>
 <OPTION value='3600'>1 hour prior</OPTION></select>
-EOHTML
-                ),
-            array('QuickCreate',<<<EOHTML
+EOHTML,
+                ],
+            ['QuickCreate',<<<EOHTML
 <select id="reminder_time" name="reminder_time">
 <OPTION value='60'>1 minute prior</OPTION>
 <OPTION value='300'>5 minutes prior</OPTION>
@@ -165,10 +164,10 @@ EOHTML
 <OPTION value='900'>15 minutes prior</OPTION>
 <OPTION value='1800'>30 minutes prior</OPTION>
 <OPTION value='3600'>1 hour prior</OPTION></select>
-EOHTML
-                ),
+EOHTML,
+                ],
 
-            array('wirelessedit',<<<EOHTML
+            ['wirelessedit',<<<EOHTML
 <select id="reminder_time" name="reminder_time">
 <OPTION value='60'>1 minute prior</OPTION>
 <OPTION value='300'>5 minutes prior</OPTION>
@@ -176,10 +175,10 @@ EOHTML
 <OPTION value='900'>15 minutes prior</OPTION>
 <OPTION value='1800'>30 minutes prior</OPTION>
 <OPTION value='3600'>1 hour prior</OPTION></select>
-EOHTML
-                ),
+EOHTML,
+                ],
 
-            array('DetailView',''),
-        );
+            ['DetailView',''],
+        ];
     }
 }

@@ -12,7 +12,7 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once('include/utils.php');
+require_once 'include/utils.php';
 
 function testFuncString()
 {
@@ -72,12 +72,12 @@ EOQ;
      */
     public function dataProviderForTestGetFunctionValue()
     {
-        return array(
-                array(null, 'testFuncString', array(), 'func string'),
-                array(null, 'testFuncArgs', array('func args'), 'func args'),
-                array(new testBeanParam(), 'testFuncBean', array(), 'func bean'),
-                array('', array('name'=>'testFuncInclude', 'include'=>$this->customIncludeDir . '/' . $this->customIncludeFile), array(), 'func include')
-        );
+        return [
+                [null, 'testFuncString', [], 'func string'],
+                [null, 'testFuncArgs', ['func args'], 'func args'],
+                [new testBeanParam(), 'testFuncBean', [], 'func bean'],
+                ['', ['name'=>'testFuncInclude', 'include'=>$this->customIncludeDir . '/' . $this->customIncludeFile], [], 'func include'],
+        ];
     }
 
     /**

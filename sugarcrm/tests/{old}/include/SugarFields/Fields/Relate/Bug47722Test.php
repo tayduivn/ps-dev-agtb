@@ -38,9 +38,9 @@ class Bug47722Test extends TestCase
      */
     public function testImportSanitize()
     {
-        $vardef = array('module' => 'Contacts', 
-                        'id_name' => 'contact_id_c', 
-                        'name' => 'test_rel_cont_c');
+        $vardef = ['module' => 'Contacts',
+                        'id_name' => 'contact_id_c',
+                        'name' => 'test_rel_cont_c'];
         $value = $this->contact->first_name .' '. $this->contact->last_name;
         $focus = new Lead();
         $settings = new ImportFieldSanitize();

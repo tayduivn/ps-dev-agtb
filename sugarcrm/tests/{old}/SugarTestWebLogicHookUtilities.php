@@ -14,26 +14,27 @@
 
 class SugarTestWebLogicHookUtilities
 {
-    private static  $_createdWebLogicHooks = array();
+    private static $_createdWebLogicHooks = [];
 
-    private function __construct() {}
+    private function __construct()
+    {
+    }
 
-    public static function createWebLogicHook($id = '', $attributes = array())
+    public static function createWebLogicHook($id = '', $attributes = [])
     {
         LogicHook::refreshHooks();
-    	$webLogicHook = new WebLogicHookMock();
+        $webLogicHook = new WebLogicHookMock();
 
-    	foreach ($attributes as $attribute=>$value) {
-    		$webLogicHook->$attribute = $value;
-    	}
+        foreach ($attributes as $attribute => $value) {
+            $webLogicHook->$attribute = $value;
+        }
 
-    	if(!empty($id))
-        {
+        if (!empty($id)) {
             $webLogicHook->new_with_id = true;
             $webLogicHook->id = $id;
         }
 
-    	$webLogicHook->save();
+        $webLogicHook->save();
         $GLOBALS['db']->commit();
         self::$_createdWebLogicHooks[] = $webLogicHook;
         return $webLogicHook;
@@ -42,7 +43,7 @@ class SugarTestWebLogicHookUtilities
     public static function removeAllCreatedWebLogicHook()
     {
         $db = DBManagerFactory::getInstance();
-        $conditions = implode(',', array_map(array($db, 'quoted'), self::getCreatedWebLogicHookIds()));
+        $conditions = implode(',', array_map([$db, 'quoted'], self::getCreatedWebLogicHookIds()));
         foreach (self::$_createdWebLogicHooks as $hook) {
             $hook->mark_deleted($hook->id);
         }
@@ -55,13 +56,13 @@ class SugarTestWebLogicHookUtilities
 
     public static function getCreatedWebLogicHookIds()
     {
-    	$hook_ids = array();
+        $hook_ids = [];
         foreach (self::$_createdWebLogicHooks as $hook) {
             $hook_ids[] = $hook->id;
         }
         return $hook_ids;
     }
-} 
+}
 
 
 class WebLogicHookMock extends WebLogicHook
@@ -70,16 +71,16 @@ class WebLogicHookMock extends WebLogicHook
 
     protected function getActionArray()
     {
-        return array(1, $this->name, 'tests/{old}/SugarTestWebLogicHookUtilities.php', __CLASS__, 'dispatchRequest', $this->id);
+        return [1, $this->name, 'tests/{old}/SugarTestWebLogicHookUtilities.php', __CLASS__, 'dispatchRequest', $this->id];
     }
 
     public function dispatchRequest(SugarBean $seed, $event, $arguments, $id)
     {
-        self::$dispatchOptions = array(
+        self::$dispatchOptions = [
             'seed' => $seed,
             'event' => $event,
             'arguments' => $arguments,
             'id' => $id,
-        );
+        ];
     }
 }

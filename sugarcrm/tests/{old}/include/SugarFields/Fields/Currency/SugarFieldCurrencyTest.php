@@ -65,18 +65,18 @@ class SugarFieldCurrencyTest extends TestCase
 
         $field = SugarFieldHandler::getSugarField('currency');
 
-        $parentFieldArray = array (
+        $parentFieldArray =  [
             'CURRENCY_ID' => '-99',
             'BASE_RATE' => '1.000000',
             'TOTAL' => '4200.000000',
             'TOTAL_USDOLLAR' => '4200.000000',
-        );
-        $vardef = array (
+        ];
+        $vardef =  [
             'type' => 'currency',
             'name' => 'TOTAL',
             'vname' => 'LBL_TOTAL',
-            );
-        $displayParams = array('labelSpan' => null, 'fieldSpan' => null);
+            ];
+        $displayParams = ['labelSpan' => null, 'fieldSpan' => null];
         $col = null;
 
         // format base currency
@@ -104,11 +104,11 @@ class SugarFieldCurrencyTest extends TestCase
 
     public function importSanitizeProvider()
     {
-        return array(
-            array('$123.123,00', '123123.000000', '.', ','),
-            array('$123,123.00', '123123.000000', ',', '.'),
-            array('$123A123z00', '123123.000000', 'A', 'z'),
-        );
+        return [
+            ['$123.123,00', '123123.000000', '.', ','],
+            ['$123,123.00', '123123.000000', ',', '.'],
+            ['$123A123z00', '123123.000000', 'A', 'z'],
+        ];
     }
 
     /**
@@ -123,10 +123,10 @@ class SugarFieldCurrencyTest extends TestCase
         $settings->dec_sep = $decimal;
         $settings->num_grp_sep = $group;
 
-        $vardef = array();
+        $vardef = [];
 
         /* @var $focus SugarBean */
-        $focus = $this->createPartialMock('Opportunity', array('save'));
+        $focus = $this->createPartialMock('Opportunity', ['save']);
 
         /* @var $field SugarFieldCurrency */
         $field = SugarFieldHandler::getSugarField('currency');
@@ -140,9 +140,9 @@ class SugarFieldCurrencyTest extends TestCase
     public function testImportSanitizeDoesNotThrowSugarMathException()
     {
         try {
-            $vardef = array(
+            $vardef = [
                 'convertToBase' => true,
-            );
+            ];
 
             $currency = SugarTestCurrencyUtilities::createCurrency('My Test Currency', '$', 'MTC', 1);
 
@@ -153,7 +153,7 @@ class SugarFieldCurrencyTest extends TestCase
             $settings->num_grp_sep = ',';
 
             /* @var $focus SugarBean */
-            $focus = $this->createPartialMock('Opportunity', array('save'));
+            $focus = $this->createPartialMock('Opportunity', ['save']);
 
             /* @var $field SugarFieldCurrency */
             $field = SugarFieldHandler::getSugarField('currency');
@@ -195,7 +195,7 @@ class SugarFieldCurrencyTest extends TestCase
 
         //Test that we can use the row overload feature in exportSanitize
         $obj->currency_id = '';
-        $value = $field->exportSanitize($obj->amount, $vardef, $obj, array('currency_id'=>self::$currency->id));
+        $value = $field->exportSanitize($obj->amount, $vardef, $obj, ['currency_id'=>self::$currency->id]);
         $this->assertEquals($expectedValue, $value);
     }
 
@@ -240,12 +240,12 @@ class SugarFieldCurrencyTest extends TestCase
      */
     public static function unformatFieldProvider()
     {
-        return array(
-            array('1000', '1000'),
-            array('1.000', '1'),
-            array('1,000', '1000'),
-            array('1,000.00', '1000'),
-        );
+        return [
+            ['1000', '1000'],
+            ['1.000', '1'],
+            ['1,000', '1000'],
+            ['1,000.00', '1000'],
+        ];
     }
 
     /**
@@ -276,12 +276,12 @@ class SugarFieldCurrencyTest extends TestCase
      */
     public static function unformatFieldProviderCommaDotFlip()
     {
-        return array(
-            array('1,000', '1'),
-            array('1000,00', '1000'),
-            array('1.000,65', '1000.65'),
-            array('1.065', '1065'),
-        );
+        return [
+            ['1,000', '1'],
+            ['1000,00', '1000'],
+            ['1.000,65', '1000.65'],
+            ['1.065', '1065'],
+        ];
     }
 
     /**
@@ -303,11 +303,11 @@ class SugarFieldCurrencyTest extends TestCase
      */
     public static function apiUnformatFieldProvider()
     {
-        return array(
-            array('1000', '1000'),
-            array('1.000', '1.000'),
-            array('1,000', '1,000'),
-            array('1,000.00', '1,000.00'),
-        );
+        return [
+            ['1000', '1000'],
+            ['1.000', '1.000'],
+            ['1,000', '1,000'],
+            ['1,000.00', '1,000.00'],
+        ];
     }
 }

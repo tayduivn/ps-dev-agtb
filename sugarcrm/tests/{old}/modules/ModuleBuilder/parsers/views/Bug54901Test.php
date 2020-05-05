@@ -17,18 +17,23 @@ use PHPUnit\Framework\TestCase;
  * Accessor class, in the event the parsers public properties go protected, which
  * they are slated to do.
  */
-class Bug54901TestListParser extends SidecarPortalListLayoutMetaDataParser {
-    public function changeFieldType($field, $type) {
+class Bug54901TestListParser extends SidecarPortalListLayoutMetaDataParser
+{
+    public function changeFieldType($field, $type)
+    {
         $this->_fielddefs[$field]['type'] = $type;
     }
 }
 
-class Bug54901TestGridParser extends SidecarGridLayoutMetaDataParser {
-    public function changeFieldType($field, $type) {
+class Bug54901TestGridParser extends SidecarGridLayoutMetaDataParser
+{
+    public function changeFieldType($field, $type)
+    {
         $this->_fielddefs[$field]['type'] = $type;
     }
 
-    public function isAvailableFieldName($name, $fields) {
+    public function isAvailableFieldName($name, $fields)
+    {
         foreach ($fields as $field) {
             if (isset($field['name']) && $field['name'] == $name) {
                 return true;
@@ -53,7 +58,8 @@ class Bug54901Test extends TestCase
         SugarTestHelper::tearDown();
     }
     
-    public function testPortalListLayoutDoesNotIncludeInvalidFields() {
+    public function testPortalListLayoutDoesNotIncludeInvalidFields()
+    {
         // Build the parser
         $list = new Bug54901TestListParser(MB_PORTALLISTVIEW, 'Cases', '', MB_PORTAL);
         
@@ -70,7 +76,8 @@ class Bug54901Test extends TestCase
         $this->assertArrayHasKey('description', $fields, 'Description is showing as not available');
     }
     
-    public function testPortalRecordLayoutDoesNotIncludeInvalidFields() {
+    public function testPortalRecordLayoutDoesNotIncludeInvalidFields()
+    {
         // Build the parser
         $grid = new Bug54901TestGridParser(MB_PORTALRECORDVIEW, 'Cases', '', MB_PORTAL);
         

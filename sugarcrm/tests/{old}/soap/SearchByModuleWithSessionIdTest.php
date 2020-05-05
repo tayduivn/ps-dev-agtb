@@ -49,12 +49,12 @@ class SearchByModuleWithSessionIdTest extends SOAPTestCase
     public function testSearchByModuleWithSessionIdHack()
     {
         //Assert that the plugin fix to use a blank user_name and session id as password works
-        $modules = array('Contacts', 'Accounts', 'Leads');
-        $result = $this->_soapClient->call('search_by_module', array('user_name' => '', 'password' => $this->_sessionId, 'search_string' => $this->contact->email1, 'modules' => $modules, 'offset' => 0, 'max_results' => 10));
+        $modules = ['Contacts', 'Accounts', 'Leads'];
+        $result = $this->_soapClient->call('search_by_module', ['user_name' => '', 'password' => $this->_sessionId, 'search_string' => $this->contact->email1, 'modules' => $modules, 'offset' => 0, 'max_results' => 10]);
         $this->assertTrue(!empty($result) && count($result['entry_list']) == 3, 'Incorrect number of results returned. HTTP Response: '.$this->_soapClient->response);
 
         //Assert that the traditional method of using user_name and password also works
-        $result = $this->_soapClient->call('search_by_module', array('user_name' => 'admin', 'password' => md5('asdf'), 'search_string' => $this->contact->email1, 'modules' => $modules, 'offset' => 0, 'max_results' => 10));
+        $result = $this->_soapClient->call('search_by_module', ['user_name' => 'admin', 'password' => md5('asdf'), 'search_string' => $this->contact->email1, 'modules' => $modules, 'offset' => 0, 'max_results' => 10]);
         $this->assertTrue(!empty($result) && count($result['entry_list']) == 3, 'Incorrect number of results returned. HTTP Response: '.$this->_soapClient->response);
     }
 }

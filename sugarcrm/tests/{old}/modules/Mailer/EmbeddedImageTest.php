@@ -18,8 +18,9 @@ class EmbeddedImageTest extends TestCase
      * @group email
      * @group mailer
      */
-    public function testFromSugarBean_ThrowsException() {
-        $mockNote = self::getMockBuilder("Note")->setMethods(array("Note"))->getMock();
+    public function testFromSugarBean_ThrowsException()
+    {
+        $mockNote = self::getMockBuilder("Note")->setMethods(["Note"])->getMock();
 
         $mockNote->expects(self::any())
             ->method("Note")
@@ -33,12 +34,13 @@ class EmbeddedImageTest extends TestCase
      * @group email
      * @group mailer
      */
-    public function testToArray() {
-        $expected      = array(
+    public function testToArray()
+    {
+        $expected      = [
             "cid"  => "1234",
             "path" => "path/to/somewhere",
             "name" => "abcd",
-        );
+        ];
         $embeddedImage = new EmbeddedImage($expected["cid"], $expected["path"], $expected["name"]);
         $actual        = $embeddedImage->toArray();
 

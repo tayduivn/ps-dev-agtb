@@ -37,7 +37,7 @@ class ForecastWorksheetTest extends TestCase
      * @param array $methods
      * @return MockObject|ForecastWorksheet
      */
-    protected function getMockWorksheet(array $methods = array('save', 'getBean'))
+    protected function getMockWorksheet(array $methods = ['save', 'getBean'])
     {
         if (!in_array('save', $methods)) {
             $methods[] = 'save';
@@ -54,18 +54,18 @@ class ForecastWorksheetTest extends TestCase
 
     public static function dataProviderSaveWorksheet()
     {
-        return array(
-            array(
+        return [
+            [
                 'RevenueLineItem',
                 'RevenueLineItems',
-                'likely_case'
-            ),
-            array(
+                'likely_case',
+            ],
+            [
                 'Opportunity',
                 'Opportunities',
-                'amount'
-            )
-        );
+                'amount',
+            ],
+        ];
     }
 
     /**
@@ -75,20 +75,20 @@ class ForecastWorksheetTest extends TestCase
     public function testSaveWorksheet($klass_name, $module_name, $likely_field)
     {
         $bean = $this->getMockBuilder($klass_name)
-            ->setMethods(array('save'))
+            ->setMethods(['save'])
             ->getMock();
 
         $bean->id = 'test_bean_1';
         $bean->worst_case = '60.000000';
         $bean->best_case = '60.000000';
 
-        $worksheet = $this->getMockWorksheet(array('ACLFieldAccess'));
+        $worksheet = $this->getMockWorksheet(['ACLFieldAccess']);
 
         $worksheet->expects($this->exactly(2))
             ->method('ACLFieldAccess')
             ->withConsecutive(
-                array('best_case', 'write'),
-                array('worst_case', 'write')
+                ['best_case', 'write'],
+                ['worst_case', 'write']
             )
             ->willReturn(true);
 
@@ -118,7 +118,7 @@ class ForecastWorksheetTest extends TestCase
     public function testSaveWorksheetDoesNotUpdateDateClosed($klass_name, $module_name, $likely_field)
     {
         $bean = $this->getMockBuilder($klass_name)
-            ->setMethods(array('save'))
+            ->setMethods(['save'])
             ->getMock();
 
         $bean->id = 'test_bean_1';
@@ -126,13 +126,13 @@ class ForecastWorksheetTest extends TestCase
         $bean->best_case = '60.000000';
         $bean->date_closed = 'unit_test';
 
-        $worksheet = $this->getMockWorksheet(array('ACLFieldAccess'));
+        $worksheet = $this->getMockWorksheet(['ACLFieldAccess']);
 
         $worksheet->expects($this->exactly(2))
             ->method('ACLFieldAccess')
             ->withConsecutive(
-                array('best_case', 'write'),
-                array('worst_case', 'write')
+                ['best_case', 'write'],
+                ['worst_case', 'write']
             )
             ->willReturn(true);
 
@@ -161,20 +161,20 @@ class ForecastWorksheetTest extends TestCase
     public function testSaveWorksheetDoesNotOverwriteBestWorst($klass_name, $module_name, $likely_field)
     {
         $bean = $this->getMockBuilder($klass_name)
-            ->setMethods(array('save'))
+            ->setMethods(['save'])
             ->getMock();
 
         $bean->id = 'test_bean_1';
         $bean->worst_case = '60.000000';
         $bean->best_case = '60.000000';
 
-        $worksheet = $this->getMockWorksheet(array('ACLFieldAccess'));
+        $worksheet = $this->getMockWorksheet(['ACLFieldAccess']);
 
         $worksheet->expects($this->exactly(2))
             ->method('ACLFieldAccess')
             ->withConsecutive(
-                array('best_case', 'write'),
-                array('worst_case', 'write')
+                ['best_case', 'write'],
+                ['worst_case', 'write']
             )
             ->willReturn(false);
 
@@ -202,41 +202,41 @@ class ForecastWorksheetTest extends TestCase
      */
     public function testSetWorksheetArgs()
     {
-        $args = array(
+        $args = [
             'likely_case' => '50.00',
             'best_case' => '50.00',
-        );
+        ];
         $worksheet = $this->getMockWorksheet();
         $worksheet->setWorksheetArgs($args);
         $this->assertSame($args, $worksheet->args);
-        foreach($args as $key => $val) {
+        foreach ($args as $key => $val) {
             $this->assertSame($val, $worksheet->$key);
         }
     }
 
     public static function dataProviderSaveRelatedOpportunity()
     {
-        return array(
-            array(
+        return [
+            [
                 false,
-                array(
+                [
                     'id' => 'test_opp_id',
                     'amount' => '50.000000',
                     'account_id' => 'test_account_id',
-                ),
-                true
-            ),
-            array(
+                ],
                 true,
-                array(
+            ],
+            [
+                true,
+                [
                     'id' => 'test_opp_id',
                     'amount' => '50.000000',
                     'account_id' => 'test_account_id',
-                    'account_name' => 'Test Account'
-                ),
-                false
-            )
-        );
+                    'account_name' => 'Test Account',
+                ],
+                false,
+            ],
+        ];
     }
 
     /**
@@ -247,13 +247,13 @@ class ForecastWorksheetTest extends TestCase
      */
     public function testSaveRelatedOpportunity($isCommit, $opp_values, $acc_check)
     {
-        $worksheet = $this->getMockWorksheet(array('retrieve_by_string_fields', 'copyValues', 'getRelatedName', 'removeMigratedRow'));
+        $worksheet = $this->getMockWorksheet(['retrieve_by_string_fields', 'copyValues', 'getRelatedName', 'removeMigratedRow']);
 
         $mockOpp = $this->getMockBuilder('Opportunity')
-            ->setMethods(array('save'))
+            ->setMethods(['save'])
             ->getMock();
 
-        foreach($opp_values as $key => $val) {
+        foreach ($opp_values as $key => $val) {
             $mockOpp->$key = $val;
         }
 
@@ -274,12 +274,12 @@ class ForecastWorksheetTest extends TestCase
         $worksheet->expects($this->once())
             ->method('retrieve_by_string_fields')
             ->with(
-                array(
+                [
                     'parent_type' => 'Opportunities',
                     'parent_id' => 'test_opp_id',
                     'draft' => ($isCommit === false) ? 1 : 0,
-                    'deleted' => 0
-                ),
+                    'deleted' => 0,
+                ],
                 true,
                 false
             );
@@ -292,13 +292,13 @@ class ForecastWorksheetTest extends TestCase
      */
     public function testSaveRelatedProduct()
     {
-        $worksheet = $this->getMockWorksheet(array('retrieve_by_string_fields', 'copyValues', 'getRelatedName', 'removeMigratedRow'));
+        $worksheet = $this->getMockWorksheet(['retrieve_by_string_fields', 'copyValues', 'getRelatedName', 'removeMigratedRow']);
 
         $mockRli = $this->getMockBuilder('RevenueLineItem')
-            ->setMethods(array('save'))
+            ->setMethods(['save'])
             ->getMock();
 
-        $values = array(
+        $values = [
             'id' => 'test_rli_id',
             'account_name' => 'test_acc_name',
             'account_id' => 'test_acc_id',
@@ -308,9 +308,9 @@ class ForecastWorksheetTest extends TestCase
             'product_template_id' => 'product_template_id',
             'category_name' => 'category_name',
             'category_id' => 'category_id',
-        );
+        ];
 
-        foreach($values as $key => $val) {
+        foreach ($values as $key => $val) {
             $mockRli->$key = $val;
         }
 
@@ -324,12 +324,12 @@ class ForecastWorksheetTest extends TestCase
         $worksheet->expects($this->once())
             ->method('retrieve_by_string_fields')
             ->with(
-                array(
+                [
                     'parent_type' => 'RevenueLineItems',
                     'parent_id' => 'test_rli_id',
                     'draft' => 1,
-                    'deleted' => 0
-                ),
+                    'deleted' => 0,
+                ],
                 true,
                 false
             );
@@ -342,21 +342,21 @@ class ForecastWorksheetTest extends TestCase
      */
     public function testSaveRelatedProductFetchedRelatedName()
     {
-        $worksheet = $this->getMockWorksheet(array('retrieve_by_string_fields', 'copyValues', 'getRelatedName', 'removeMigratedRow'));
+        $worksheet = $this->getMockWorksheet(['retrieve_by_string_fields', 'copyValues', 'getRelatedName', 'removeMigratedRow']);
 
         $mockRli = $this->getMockBuilder('RevenueLineItem')
-            ->setMethods(array('save'))
+            ->setMethods(['save'])
             ->getMock();
 
-        $values = array(
+        $values = [
             'id' => 'test_rli_id',
             'account_id' => 'account_id',
             'opportunity_id' => 'opportunity_id',
             'product_template_id' => 'product_template_id',
             'category_id' => 'category_id',
-        );
+        ];
 
-        foreach($values as $key => $val) {
+        foreach ($values as $key => $val) {
             $mockRli->$key = $val;
         }
 
@@ -369,22 +369,22 @@ class ForecastWorksheetTest extends TestCase
         $worksheet->expects($this->exactly(4))
             ->method('getRelatedName')
             ->withConsecutive(
-                array('Accounts', 'account_id'),
-                array('Opportunities', 'opportunity_id'),
-                array('ProductTemplates', 'product_template_id'),
-                array('ProductCategories', 'category_id')
+                ['Accounts', 'account_id'],
+                ['Opportunities', 'opportunity_id'],
+                ['ProductTemplates', 'product_template_id'],
+                ['ProductCategories', 'category_id']
             )
             ->willReturn('Unit Test');
 
         $worksheet->expects($this->once())
             ->method('retrieve_by_string_fields')
             ->with(
-                array(
+                [
                     'parent_type' => 'RevenueLineItems',
                     'parent_id' => 'test_rli_id',
                     'draft' => 1,
-                    'deleted' => 0
-                ),
+                    'deleted' => 0,
+                ],
                 true,
                 false
             );
@@ -394,16 +394,16 @@ class ForecastWorksheetTest extends TestCase
 
     public function dataProviderCommitWorksheetReturnFalse()
     {
-        return array(
-            array(
+        return [
+            [
                 false,
                 'test_timperiod_id',
-            ),
-            array(
+            ],
+            [
                 true,
                 null,
-            )
-        );
+            ],
+        ];
     }
 
     /**
@@ -414,15 +414,15 @@ class ForecastWorksheetTest extends TestCase
      */
     public function testCommitWorksheetReturnFalse($forecastSetup, $timePeriodId)
     {
-        Forecast::$settings = array(
-            'is_setup' => $forecastSetup
-        );
+        Forecast::$settings = [
+            'is_setup' => $forecastSetup,
+        ];
 
         $worksheet = $this->getMockWorksheet();
 
         $count = intval($forecastSetup);
 
-        $tp = $this->createPartialMock('Timeperiod', array('save'));
+        $tp = $this->createPartialMock('Timeperiod', ['save']);
         $tp->id = $timePeriodId;
 
         $worksheet->expects($this->exactly($count))
@@ -438,18 +438,18 @@ class ForecastWorksheetTest extends TestCase
 
     public static function dataProviderCommitWorksheet()
     {
-        return array(
-            array(
+        return [
+            [
                 'RevenueLineItems',
                 'RevenueLineItem',
-                'account_link'
-            ),
-            array(
+                'account_link',
+            ],
+            [
                 'Opportunities',
                 'Opportunity',
-                'accounts'
-            )
-        );
+                'accounts',
+            ],
+        ];
     }
 
     /**
@@ -460,38 +460,38 @@ class ForecastWorksheetTest extends TestCase
      */
     public function testCommitWorksheet($type, $bean, $link_name)
     {
-        Forecast::$settings = array(
+        Forecast::$settings = [
             'is_setup' => true,
-            'forecast_by' => $type
-        );
+            'forecast_by' => $type,
+        ];
 
         $worksheet = $this->getMockWorksheet(
-            array(
+            [
                 'getSugarQuery',
                 'removeReassignedItems',
                 'processWorksheetDataChunk',
-                'createUpdateForecastWorksheetJob'
-            )
+                'createUpdateForecastWorksheetJob',
+            ]
         );
 
         $worksheet->expects($this->once())
             ->method('removeReassignedItems')
             ->with('test_user_id', 'test_timeperiod_id', 1);
 
-        $tp = $this->getMockBuilder('Timeperiod')->setMethods(array('save'))->getMock();
+        $tp = $this->getMockBuilder('Timeperiod')->setMethods(['save'])->getMock();
         $tp->id = 'test_timeperiod_id';
 
-        $sq = $this->getMockBuilder('SugarQuery')->setMethods(array('execute'))->getMock();
+        $sq = $this->getMockBuilder('SugarQuery')->setMethods(['execute'])->getMock();
 
-        $bean = $this->getMockBuilder($bean)->setMethods(array('save', 'load_relationship'))->getMock();
+        $bean = $this->getMockBuilder($bean)->setMethods(['save', 'load_relationship'])->getMock();
         $link2 = $this->getMockBuilder('Link2')
-            ->setMethods(array('buildJoinSugarQuery'))
+            ->setMethods(['buildJoinSugarQuery'])
             ->disableOriginalConstructor()
             ->getMock();
 
         $link2->expects($this->once())
             ->method('buildJoinSugarQuery')
-            ->with($sq, array('joinTableAlias' => 'account'));
+            ->with($sq, ['joinTableAlias' => 'account']);
 
         $bean->expects($this->once())
             ->method('load_relationship')
@@ -503,8 +503,8 @@ class ForecastWorksheetTest extends TestCase
         $worksheet->expects($this->exactly(2))
             ->method('getBean')
             ->withConsecutive(
-                array('TimePeriods', 'test_timeperiod_id'),
-                array($type)
+                ['TimePeriods', 'test_timeperiod_id'],
+                [$type]
             )
             ->willReturnOnConsecutiveCalls(
                 $tp,
@@ -517,23 +517,23 @@ class ForecastWorksheetTest extends TestCase
 
         $sq->expects($this->once())
             ->method('execute')
-            ->willReturn(array(
-                array('one'),
-                array('two'),
-                array('three'),
-                array('four')
-            ));
+            ->willReturn([
+                ['one'],
+                ['two'],
+                ['three'],
+                ['four'],
+            ]);
 
         $worksheet->expects($this->once())
             ->method('processWorksheetDataChunk')
-            ->with($type, array(array('one')));
+            ->with($type, [['one']]);
 
         $worksheet->expects($this->exactly(3))
             ->method('createUpdateForecastWorksheetJob')
             ->withConsecutive(
-                array($type, array(array('two'))),
-                array($type, array(array('three'))),
-                array($type, array(array('four')))
+                [$type, [['two']]],
+                [$type, [['three']]],
+                [$type, [['four']]]
             );
 
         $actual = $worksheet->commitWorksheet('test_user_id', 'test_timeperiod_id', 1);
@@ -544,14 +544,14 @@ class ForecastWorksheetTest extends TestCase
 
     public static function dataProviderRemoveMigratedRow()
     {
-        return array(
-            array(
-                true
-            ),
-            array(
-                false
-            )
-        );
+        return [
+            [
+                true,
+            ],
+            [
+                false,
+            ],
+        ];
     }
     /**
      * @dataProvider dataProviderRemoveMigratedRow
@@ -559,16 +559,16 @@ class ForecastWorksheetTest extends TestCase
      */
     public function testRemoveMigratedRow($hasMigrated)
     {
-        $worksheet = $this->getMockWorksheet(array('timeperiodHasMigrated', 'retrieve_by_string_fields'));
+        $worksheet = $this->getMockWorksheet(['timeperiodHasMigrated', 'retrieve_by_string_fields']);
 
         $worksheet->fetched_row['date_closed'] = 'date_1';
 
-        $bean = $this->getMockForAbstractClass('SugarBean', array('save'));
+        $bean = $this->getMockForAbstractClass('SugarBean', ['save']);
         $bean->fetched_row['date_closed'] = 'date_2';
         $bean->module_name = 'unit_test';
         $bean->id = 'unit_test_id';
 
-        if($hasMigrated) {
+        if ($hasMigrated) {
             $worksheet->expects($this->once())
                 ->method('getBean')
                 ->willReturn($worksheet);
@@ -576,12 +576,12 @@ class ForecastWorksheetTest extends TestCase
             $worksheet->expects($this->once())
                 ->method('retrieve_by_string_fields')
                 ->with(
-                    array(
+                    [
                         "parent_type" => 'unit_test',
                         "parent_id" => 'unit_test_id',
                         "draft" => 0,
                         "deleted" => 0,
-                    ),
+                    ],
                     true,
                     false
                 );
@@ -610,33 +610,33 @@ class ForecastWorksheetTest extends TestCase
 
     public function dataProviderCopyValues()
     {
-        $bean = $this->createPartialMock('Opportunity', array('save', 'toArray'));
+        $bean = $this->createPartialMock('Opportunity', ['save', 'toArray']);
         $bean->amount = '50.000000';
-        return array(
-            array(
-                array(
-                    array('likely_case' => 'amount')
-                ),
-                array(
-                    'amount' => '50.000000'
-                )
-            ),
-            array(
-                array(
-                    'likely_case'
-                ),
-                array(
-                    'likely_case' => '50.000000'
-                )
-            ),
-            array(
-                array(
-                    array('likely_case' => 'amount')
-                ),
-                $bean
-            ),
+        return [
+            [
+                [
+                    ['likely_case' => 'amount'],
+                ],
+                [
+                    'amount' => '50.000000',
+                ],
+            ],
+            [
+                [
+                    'likely_case',
+                ],
+                [
+                    'likely_case' => '50.000000',
+                ],
+            ],
+            [
+                [
+                    ['likely_case' => 'amount'],
+                ],
+                $bean,
+            ],
 
-        );
+        ];
     }
     /**
      * @dataProvider dataProviderCopyValues
@@ -648,9 +648,9 @@ class ForecastWorksheetTest extends TestCase
             $values->expects($this->once())
                 ->method("toArray")
                 ->with()
-                ->will($this->returnValue(array(
-                    'amount' => '50.000000'
-                )));
+                ->will($this->returnValue([
+                    'amount' => '50.000000',
+                ]));
         }
 
         $worksheet = $this->getMockWorksheet();
@@ -660,22 +660,22 @@ class ForecastWorksheetTest extends TestCase
 
     public static function dataProviderProcessWorksheetDataChunk()
     {
-        return array(
-            array(
+        return [
+            [
                 'RevenueLineItems',
                 'RevenueLineItem',
-                array(
-                    array('id' => 'test_rli')
-                )
-            ),
-            array(
+                [
+                    ['id' => 'test_rli'],
+                ],
+            ],
+            [
                 'Opportunities',
                 'Opportunity',
-                array(
-                    array('id' => 'test_opp')
-                )
-            )
-        );
+                [
+                    ['id' => 'test_opp'],
+                ],
+            ],
+        ];
     }
 
     /**
@@ -684,16 +684,16 @@ class ForecastWorksheetTest extends TestCase
      */
     public function testProcessWorksheetDataChunk($type, $bean, $data)
     {
-        $worksheet = $this->getMockWorksheet(array('saveRelatedOpportunity', 'saveRelatedProduct'));
+        $worksheet = $this->getMockWorksheet(['saveRelatedOpportunity', 'saveRelatedProduct']);
         $obj = $this->getMockBuilder($bean)
-            ->setMethods(array('save', 'loadFromRow'))
+            ->setMethods(['save', 'loadFromRow'])
             ->getMock();
 
         $worksheet->expects($this->exactly(2))
             ->method('getBean')
             ->withConsecutive(
-                array($type),
-                array('ForecastWorksheets')
+                [$type],
+                ['ForecastWorksheets']
             )
             ->willReturnOnConsecutiveCalls(
                 $obj,
@@ -717,11 +717,11 @@ class ForecastWorksheetTest extends TestCase
      */
     public function testCreateUpdateForecastWorksheetJob()
     {
-        $data = array('forecast_by' => 'unit_test', 'data' => array());
+        $data = ['forecast_by' => 'unit_test', 'data' => []];
         $user_id = "bar";
         $sj = $this->createMock('SchedulersJob');
-        $jq = $this->createPartialMock('SugarJobQueue', array('submitJob'));
-        $fw = $this->getMockWorksheet(array('getJobQueue'));
+        $jq = $this->createPartialMock('SugarJobQueue', ['submitJob']);
+        $fw = $this->getMockWorksheet(['getJobQueue']);
 
         $jq->expects($this->once())
             ->method('submitJob')
@@ -735,7 +735,7 @@ class ForecastWorksheetTest extends TestCase
             ->method('getJobQueue')
             ->will($this->returnValue($jq));
 
-        SugarTestReflection::callProtectedMethod($fw, 'createUpdateForecastWorksheetJob', array('unit_test', array(), $user_id));
+        SugarTestReflection::callProtectedMethod($fw, 'createUpdateForecastWorksheetJob', ['unit_test', [], $user_id]);
 
         $this->assertEquals('Update ForecastWorksheets', $sj->name);
         $this->assertEquals('class::SugarJobUpdateForecastWorksheets', $sj->target);
@@ -749,21 +749,21 @@ class ForecastWorksheetTest extends TestCase
      */
     public function testGetRelatedNameReturnsEmpty()
     {
-       self::$db->addQuerySpy(
+        self::$db->addQuerySpy(
             'accountQuery',
             '/my_test_id/',
-            array(
-                array(
-                    'name' => 'My Test Account'
-                ),
-            )
+            [
+                [
+                    'name' => 'My Test Account',
+                ],
+            ]
         );
 
         $forecast_worksheet = BeanFactory::newBean('ForecastWorksheets');
         $return = SugarTestReflection::callProtectedMethod(
             $forecast_worksheet,
             'getRelatedName',
-            array('Accounts', 'test_id')
+            ['Accounts', 'test_id']
         );
         $this->assertEmpty($return);
     }
@@ -773,13 +773,13 @@ class ForecastWorksheetTest extends TestCase
      */
     public function testProcessRemoveChunk()
     {
-        $fw = $this->createPartialMock('ForecastWorksheet', array('mark_deleted'));
-        $bean = array('id' => 'foo');
+        $fw = $this->createPartialMock('ForecastWorksheet', ['mark_deleted']);
+        $bean = ['id' => 'foo'];
 
         $fw->expects($this->once())
             ->method('mark_deleted');
 
-        $fw->processRemoveChunk(array($bean));
+        $fw->processRemoveChunk([$bean]);
     }
 
     /**
@@ -787,12 +787,12 @@ class ForecastWorksheetTest extends TestCase
      */
     public function testCreateRemoveReassignedJob()
     {
-        $data = array("foo");
+        $data = ["foo"];
         $user_id = "bar";
         $sj = $this->createMock('SchedulersJob');
-        $jq = $this->createPartialMock('SugarJobQueue', array('submitJob'));
-        $fw = $this->createPartialMock('ForecastWorksheet', array('getBean',
-                                                        'getJobQueue'));
+        $jq = $this->createPartialMock('SugarJobQueue', ['submitJob']);
+        $fw = $this->createPartialMock('ForecastWorksheet', ['getBean',
+                                                        'getJobQueue']);
 
         $jq->expects($this->once())
             ->method('submitJob')
@@ -822,7 +822,7 @@ class ForecastWorksheetTest extends TestCase
     {
         $worksheet = $this->getMockWorksheet();
 
-        $tp = $this->createPartialMock('Timeperiod', array('save'));
+        $tp = $this->createPartialMock('Timeperiod', ['save']);
         $tp->id = null;
 
         $worksheet->expects($this->once())
@@ -840,12 +840,12 @@ class ForecastWorksheetTest extends TestCase
      */
     public function testWorksheetTotalsReturnsDefaultEmptyArrayWhenNoValuesAreFound()
     {
-        $GLOBALS['current_user'] = $this->createPartialMock('User', array('save'));
+        $GLOBALS['current_user'] = $this->createPartialMock('User', ['save']);
         $GLOBALS['current_user']->id = 'current_user_id';
 
-        $worksheet = $this->getMockWorksheet(array('getSugarQuery', 'getTableName'));
+        $worksheet = $this->getMockWorksheet(['getSugarQuery', 'getTableName']);
 
-        $tp = $this->createPartialMock('Timeperiod', array('save'));
+        $tp = $this->createPartialMock('Timeperiod', ['save']);
         $tp->id = 'test_timeperiod_id';
         $tp->start_date_timestamp = '10000';
         $tp->end_date_timestamp = '10000';
@@ -857,8 +857,8 @@ class ForecastWorksheetTest extends TestCase
         $worksheet->expects($this->exactly(2))
             ->method('getBean')
             ->withConsecutive(
-                array('TimePeriods', 'test_timeperiod_id'),
-                array('ForecastWorksheets')
+                ['TimePeriods', 'test_timeperiod_id'],
+                ['ForecastWorksheets']
             )
             ->willReturnOnConsecutiveCalls(
                 $tp,
@@ -866,12 +866,12 @@ class ForecastWorksheetTest extends TestCase
             );
 
         $sq = $this->getMockBuilder('SugarQuery')
-            ->setMethods(array('execute'))
+            ->setMethods(['execute'])
             ->getMock();
 
         $sq->expects($this->once())
             ->method('execute')
-            ->willReturn(array());
+            ->willReturn([]);
 
         $worksheet->expects($this->once())
             ->method('getSugarQuery')
@@ -880,7 +880,7 @@ class ForecastWorksheetTest extends TestCase
 
         $actual = $worksheet->worksheetTotals('test_timeperiod_id', 'test_user_id', 'unit_test');
 
-        $expected = array(
+        $expected = [
             'amount' => '0',
             'best_case' => '0',
             'worst_case' => '0',
@@ -905,8 +905,8 @@ class ForecastWorksheetTest extends TestCase
             'pipeline_amount' => '0',
             'pipeline_opp_count' => 0,
             'closed_amount' => '0',
-            'includedIdsInLikelyTotal' => array()
-        );
+            'includedIdsInLikelyTotal' => [],
+        ];
 
         $this->assertSame($expected, $actual);
 
@@ -918,18 +918,18 @@ class ForecastWorksheetTest extends TestCase
      */
     public function testWorksheetTotals()
     {
-        $GLOBALS['current_user'] = $this->createPartialMock('User', array('save'));
+        $GLOBALS['current_user'] = $this->createPartialMock('User', ['save']);
         $GLOBALS['current_user']->id = 'current_user_id';
 
-        Forecast::$settings = array(
-            'sales_stage_won' => array('Closed Won'),
-            'sales_stage_lost' => array('Closed Lost'),
-            'commit_stages_included' => array('Include')
-        );
+        Forecast::$settings = [
+            'sales_stage_won' => ['Closed Won'],
+            'sales_stage_lost' => ['Closed Lost'],
+            'commit_stages_included' => ['Include'],
+        ];
 
-        $worksheet = $this->getMockWorksheet(array('getSugarQuery', 'getTableName'));
+        $worksheet = $this->getMockWorksheet(['getSugarQuery', 'getTableName']);
 
-        $tp = $this->createPartialMock('Timeperiod', array('save'));
+        $tp = $this->createPartialMock('Timeperiod', ['save']);
         $tp->id = 'test_timeperiod_id';
         $tp->start_date_timestamp = '10000';
         $tp->end_date_timestamp = '10000';
@@ -941,8 +941,8 @@ class ForecastWorksheetTest extends TestCase
         $worksheet->expects($this->exactly(2))
             ->method('getBean')
             ->withConsecutive(
-                array('TimePeriods', 'test_timeperiod_id'),
-                array('ForecastWorksheets')
+                ['TimePeriods', 'test_timeperiod_id'],
+                ['ForecastWorksheets']
             )
             ->willReturnOnConsecutiveCalls(
                 $tp,
@@ -950,41 +950,41 @@ class ForecastWorksheetTest extends TestCase
             );
 
         $sq = $this->getMockBuilder('SugarQuery')
-            ->setMethods(array('execute'))
+            ->setMethods(['execute'])
             ->getMock();
 
         $sq->expects($this->once())
             ->method('execute')
             ->willReturn(
-                array(
-                    array(
+                [
+                    [
                         'likely_case' => '50',
                         'best_case' => '50',
                         'worst_case' => '50',
                         'base_rate' => '1',
                         'sales_stage' => 'Closed Won',
                         'commit_stage' => 'Include',
-                        'parent_id' => 'test_1'
-                    ),
-                    array(
+                        'parent_id' => 'test_1',
+                    ],
+                    [
                         'likely_case' => '50',
                         'best_case' => '50',
                         'worst_case' => '50',
                         'base_rate' => '1',
                         'sales_stage' => 'Test',
                         'commit_stage' => 'Include',
-                        'parent_id' => 'test_3'
-                    ),
-                    array(
+                        'parent_id' => 'test_3',
+                    ],
+                    [
                         'likely_case' => '50',
                         'best_case' => '50',
                         'worst_case' => '50',
                         'base_rate' => '1',
                         'sales_stage' => 'Closed Lost',
                         'commit_stage' => 'Exclude',
-                        'parent_id' => 'test_2'
-                    )
-                )
+                        'parent_id' => 'test_2',
+                    ],
+                ]
             );
 
         $worksheet->expects($this->once())
@@ -994,7 +994,7 @@ class ForecastWorksheetTest extends TestCase
 
         $actual = $worksheet->worksheetTotals('test_timeperiod_id', 'test_user_id', 'unit_test');
 
-        $expected = array(
+        $expected = [
             'amount' => '50.000000',
             'best_case' => '50.000000',
             'worst_case' => '50.000000',
@@ -1019,10 +1019,10 @@ class ForecastWorksheetTest extends TestCase
             'pipeline_amount' => '0',
             'pipeline_opp_count' => 0,
             'closed_amount' => '0',
-            'includedIdsInLikelyTotal' => Array (
-                0 => 'test_3'
-            )
-        );
+            'includedIdsInLikelyTotal' =>  [
+                0 => 'test_3',
+            ],
+        ];
 
         $this->assertSame($expected, $actual);
 

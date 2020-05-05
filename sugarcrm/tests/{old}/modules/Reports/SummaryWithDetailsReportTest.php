@@ -12,7 +12,7 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once('modules/Reports/templates/templates_list_view.php');
+require_once 'modules/Reports/templates/templates_list_view.php';
 
 /**
  * Summary With Details Report tests
@@ -29,7 +29,7 @@ class SummaryWithDetailsReportTest extends TestCase
         SugarTestHelper::setUp('beanList');
 
         $this->report = new Report();
-        $this->report->report_def = array('group_defs' => $this->getDummyGroupDefs());
+        $this->report->report_def = ['group_defs' => $this->getDummyGroupDefs()];
         $this->report->group_defs_Info = $this->getDummyGroupDefsInfo();
         $this->rowsAndColumnsData = $this->getData();
     }
@@ -87,80 +87,80 @@ class SummaryWithDetailsReportTest extends TestCase
 
     private function getDummyGroupDefs()
     {
-        return array(
-            0 => array(
+        return [
+            0 => [
                 'name' => 'user_name',
                 'label' => 'User Name',
                 'table_key' => 'Opportunities:assigned_user_link',
-                'type' => 'username'
-            ),
-            1 => array(
-                'name' => 'sales_stage',
-                'label' => 'Sales Stage',
-                'table_key' => 'self',
-                'type' => 'enum'
-            ),
-        );
-    }
-
-    private function getDummyGroupDefsInfo()
-    {
-        $grpDefs =  array(
-            array(
-                'name' => 'user_name',
-                'label' => 'User Name',
-                'table_key' => 'Opportunities:assigned_user_link',
-                'type' => 'user_name',
-                'index' => 0
-            ),
-            array(
+                'type' => 'username',
+            ],
+            1 => [
                 'name' => 'sales_stage',
                 'label' => 'Sales Stage',
                 'table_key' => 'self',
                 'type' => 'enum',
-                'index' => 1
-            ),
-        );
+            ],
+        ];
+    }
+
+    private function getDummyGroupDefsInfo()
+    {
+        $grpDefs =  [
+            [
+                'name' => 'user_name',
+                'label' => 'User Name',
+                'table_key' => 'Opportunities:assigned_user_link',
+                'type' => 'user_name',
+                'index' => 0,
+            ],
+            [
+                'name' => 'sales_stage',
+                'label' => 'Sales Stage',
+                'table_key' => 'self',
+                'type' => 'enum',
+                'index' => 1,
+            ],
+        ];
         $grpKeys = array_map('getGroupByKey', $grpDefs);
         return array_combine($grpKeys, $grpDefs);
     }
 
     private function getData()
     {
-        return array(
-            array(
-                'cells' => array(
+        return [
+            [
+                'cells' => [
                     "chris",
                     "Value Proposition",
                     "$10,000.00",
                     "$10,000.00",
-                    "1"
-                ),
+                    "1",
+                ],
                 'count' => 1,
-                'User Name' => 'chris'
-            ),
-            array(
-                'cells' => array(
+                'User Name' => 'chris',
+            ],
+            [
+                'cells' => [
                     "sarah",
                     "Value Proposition",
                     "$10,000.00",
                     "$20,000.00",
-                    "2"
-                ),
+                    "2",
+                ],
                 'count' => 2,
-                'User Name' => 'sarah'
-            ),
-            array(
-                'cells' => array(
+                'User Name' => 'sarah',
+            ],
+            [
+                'cells' => [
                     "sarah",
                     "Needs Analysis",
                     "$10,000.00",
                     "$10,000.00",
-                    "1"
-                ),
+                    "1",
+                ],
                 'count' => 1,
-                'User Name' => 'sarah'
-            ),
-        );
+                'User Name' => 'sarah',
+            ],
+        ];
     }
 }

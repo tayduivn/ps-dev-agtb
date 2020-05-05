@@ -16,8 +16,8 @@ class ViewFactoryTest extends TestCase
 {
     protected function setUp() : void
     {
-        $GLOBALS['app_strings'] = array();
-        $GLOBALS['mod_strings'] = array();
+        $GLOBALS['app_strings'] = [];
+        $GLOBALS['mod_strings'] = [];
     }
     
     protected function tearDown() : void
@@ -28,8 +28,8 @@ class ViewFactoryTest extends TestCase
     
     public function testLoadView()
     {
-    	$view = ViewFactory::loadView('detail', 'Contacts');
-    	$className = get_class($view);
-    	$this->assertEquals($className,'ContactsViewDetail', 'Ensure that we load the right view for Contacts');
+        $view = ViewFactory::loadView('detail', 'Contacts');
+        $className = get_class($view);
+        $this->assertEquals($className, 'ContactsViewDetail', 'Ensure that we load the right view for Contacts');
     }
 }

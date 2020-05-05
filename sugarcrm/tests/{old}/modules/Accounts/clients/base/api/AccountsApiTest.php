@@ -23,14 +23,14 @@ class AccountsApiTest extends TestCase
     {
         $this->api = new AccountsApi();
 
-        Opportunity::$settings = array(
-            'opps_view_by' => 'Opportunities'
-        );
+        Opportunity::$settings = [
+            'opps_view_by' => 'Opportunities',
+        ];
     }
 
     protected function tearDown() : void
     {
-        Opportunity::$settings = array();
+        Opportunity::$settings = [];
     }
 
     public function testGetOpportunityStatusFieldReturnsSalesStage()
@@ -43,9 +43,9 @@ class AccountsApiTest extends TestCase
     //BEGIN SUGARCRM flav=ent ONLY
     public function testGetOpportunityStatusFieldReturnsSalesStatus()
     {
-        Opportunity::$settings = array(
-            'opps_view_by' => 'RevenueLineItems'
-        );
+        Opportunity::$settings = [
+            'opps_view_by' => 'RevenueLineItems',
+        ];
         $field = SugarTestReflection::callProtectedMethod($this->api, 'getOpportunityStatusField');
 
         $this->assertEquals('sales_status', $field);

@@ -34,16 +34,16 @@ class SugarOAuth2StorageTest extends RestTestPortalBase
 
         $admin = new Administration();
 
-        if(!isset($admin->settings['license_num_portal_users'])) {
+        if (!isset($admin->settings['license_num_portal_users'])) {
             $admin->settings['license_num_portal_users'] = 50;
             $admin->saveSetting('license', 'num_portal_users', '50');
         }
 
 
         $admin->retrieveSettings('system');
-        if(!isset($admin->settings['system_session_timeout'])) {
-           $session_timeout = abs(ini_get('session.gc_maxlifetime'));
-           $admin->saveSetting('system', 'session_timeout', $session_timeout);
+        if (!isset($admin->settings['system_session_timeout'])) {
+            $session_timeout = abs(ini_get('session.gc_maxlifetime'));
+            $admin->saveSetting('system', 'session_timeout', $session_timeout);
         }
 
         $admin->retrieveSettings('license');
@@ -72,7 +72,7 @@ class SugarOAuth2StorageTest extends RestTestPortalBase
         }
         
         // Reset the portal login license to previous numbers, if we have it
-        if ( isset($this->previousPortalLicense) ) {
+        if (isset($this->previousPortalLicense)) {
             $GLOBALS['db']->query("UPDATE config SET value = '".$this->previousPortalLicense."' WHERE name = 'num_portal_users'");
             sugar_cache_clear('admin_settings_cache');
         }
@@ -82,7 +82,7 @@ class SugarOAuth2StorageTest extends RestTestPortalBase
         SugarTestHelper::tearDown();
 
         parent::tearDown();
-        $_SESSION=array();
+        $_SESSION=[];
     }
 
     /**
@@ -101,7 +101,7 @@ class SugarOAuth2StorageTest extends RestTestPortalBase
 
         $storage = new SugarOAuth2Storage();
         $storage->setPlatform('portal');
-        $res = $storage->checkUserCredentials('support_portal','unittestportal1','unittestportal1');
+        $res = $storage->checkUserCredentials('support_portal', 'unittestportal1', 'unittestportal1');
         $this->assertNotEmpty($res, "Client credentials did not validate");
     }
 
@@ -110,20 +110,20 @@ class SugarOAuth2StorageTest extends RestTestPortalBase
      */
     public function testPortalInactiveErrorInactive()
     {
-    	$contact2 = BeanFactory::newBean('Contacts');
-    	$contact2->first_name = 'portal';
-    	$contact2->last_name = 'inactive';
-    	$contact2->portal_active = false;
-    	$contact2->portal_name = "unittestportal2";
-    	$contact2->portal_password = User::getPasswordHash("unittestportal2");
-    	$contact2->save();
-    	$this->contacts[] = $contact2;
+        $contact2 = BeanFactory::newBean('Contacts');
+        $contact2->first_name = 'portal';
+        $contact2->last_name = 'inactive';
+        $contact2->portal_active = false;
+        $contact2->portal_name = "unittestportal2";
+        $contact2->portal_password = User::getPasswordHash("unittestportal2");
+        $contact2->save();
+        $this->contacts[] = $contact2;
 
-    	$storage = new SugarOAuth2Storage();
+        $storage = new SugarOAuth2Storage();
         $storage->setPlatform('portal');
 
         $this->expectException(SugarApiExceptionNeedLogin::class);
-    	$storage->checkUserCredentials('support_portal','unittestportal2','unittestportal2');
+        $storage->checkUserCredentials('support_portal', 'unittestportal2', 'unittestportal2');
     }
 
     public function testTooManyUsers()
@@ -164,9 +164,9 @@ class SugarOAuth2StorageTest extends RestTestPortalBase
         $GLOBALS['db']->query("UPDATE config SET value = '1' WHERE name = 'num_portal_users'");
         $admin = new Administration();
 
-        if(!isset($admin->settings['license_num_portal_users'])) {
-           $admin->settings['license_num_portal_users'] = 1;
-           $admin->saveSetting('license', 'num_portal_users', '1');
+        if (!isset($admin->settings['license_num_portal_users'])) {
+            $admin->settings['license_num_portal_users'] = 1;
+            $admin->saveSetting('license', 'num_portal_users', '1');
         }
 
         sugar_cache_clear('admin_settings_cache');
@@ -189,25 +189,25 @@ class SugarOAuth2StorageTest extends RestTestPortalBase
         $_SESSION['platform'] = 'portal';
 
         // First login should work.
-        $firstCheck = $storage->checkUserCredentials('support_portal','unittestportal1','unittestportal1');
-        $storage->setAccessToken(create_guid(),'support_portal',$contact1->id,time()+30,NULL);
+        $firstCheck = $storage->checkUserCredentials('support_portal', 'unittestportal1', 'unittestportal1');
+        $storage->setAccessToken(create_guid(), 'support_portal', $contact1->id, time()+30, null);
 
         // Second login is borderline, but we let them pass because we are nice.
-        $firstCheck = $storage->checkUserCredentials('support_portal','unittestportal2','unittestportal2');
-        $storage->setAccessToken(create_guid(),'support_portal',$contact2->id,time()+30,NULL);
+        $firstCheck = $storage->checkUserCredentials('support_portal', 'unittestportal2', 'unittestportal2');
+        $storage->setAccessToken(create_guid(), 'support_portal', $contact2->id, time()+30, null);
 
         try {
             // Third login is time to fail
-            $firstCheck = $storage->checkUserCredentials('support_portal','unittestportal3','unittestportal3');
-            $storage->setAccessToken(create_guid(),'support_portal',$contact3->id,time()+30,NULL);
+            $firstCheck = $storage->checkUserCredentials('support_portal', 'unittestportal3', 'unittestportal3');
+            $storage->setAccessToken(create_guid(), 'support_portal', $contact3->id, time()+30, null);
 
 
             $errorLabel = 'no_error';
-        } catch ( SugarApiException $e ) {
+        } catch (SugarApiException $e) {
             $errorLabel = $e->messageLabel;
         }
 
         // We need to make sure this errored out here
-        $this->assertEquals('too_many_concurrent_connections',$errorLabel);
+        $this->assertEquals('too_many_concurrent_connections', $errorLabel);
     }
 }

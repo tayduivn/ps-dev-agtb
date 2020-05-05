@@ -15,31 +15,31 @@ use PHPUnit\Framework\TestCase;
 
 class Bug37168Test extends TestCase
 {
-    protected $has_disable_count_query_enabled;	
-    protected $previous_current_user;	
+    protected $has_disable_count_query_enabled;
+    protected $previous_current_user;
     
     protected function setUp() : void
     {
         global $sugar_config, $current_user;
         
-        if ( $GLOBALS['db']->dbType != 'mysql' ) {
+        if ($GLOBALS['db']->dbType != 'mysql') {
             $this->markTestSkipped('Only applies to MySQL');
         }
         
         $this->has_disable_count_query_enabled = !empty($sugar_config['disable_count_query']);
-        if(!$this->has_disable_count_query_enabled) {
-           $sugar_config['disable_count_query'] = true;
+        if (!$this->has_disable_count_query_enabled) {
+            $sugar_config['disable_count_query'] = true;
         }
         
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-    }	
+    }
     
     protected function tearDown() : void
     {
         global $sugar_config;
         
-        if(!$this->has_disable_count_query_enabled) {
-           unset($sugar_config['disable_count_query']);
+        if (!$this->has_disable_count_query_enabled) {
+            unset($sugar_config['disable_count_query']);
         }
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
@@ -47,12 +47,12 @@ class Bug37168Test extends TestCase
         $GLOBALS['current_user'] = $this->previous_current_user;
     }
         
-    public function test_add_distinct_clause() 
+    public function test_add_distinct_clause()
     {
         //Test a list query
         $focus = new Account();
         $query = 'SELECT * FROM accounts';
-        if(!$focus->disable_row_level_security){
+        if (!$focus->disable_row_level_security) {
             $focus->add_team_security_where_clause($query);
         }
         $this->assertTrue(preg_match('/\s*?SELECT\s+?DISTINCT/si', $query) !== false, "Assert that SELECT DISTINCT clause is added");
@@ -62,6 +62,6 @@ class Bug37168Test extends TestCase
         $GLOBALS['db']->query($query);
         
         //For some reason, because of passing by value we don't get the other UNION ALL distinct clauses, but it is being replaced
-        $this->assertTrue(preg_match('/\(\s*?SELECT\s+?DISTINCT/si', $query) !== false, "Assert that SELECT DISTINCT clause is added");    
+        $this->assertTrue(preg_match('/\(\s*?SELECT\s+?DISTINCT/si', $query) !== false, "Assert that SELECT DISTINCT clause is added");
     }
 }
