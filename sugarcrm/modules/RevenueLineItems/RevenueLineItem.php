@@ -196,6 +196,8 @@ class RevenueLineItem extends SugarBean
         //If an opportunity_id value is provided, lookup the Account information (if available)
         if (!empty($this->opportunity_id)) {
             $this->setAccountIdForOpportunity($this->opportunity_id);
+            //Updates the non-SugarLogic rollup fields on the Opportunity if necessary
+            $this->addOpportunityToResaveList($this->opportunity_id);
         }
 
         $this->setBestWorstFromLikely();
@@ -298,6 +300,18 @@ class RevenueLineItem extends SugarBean
     //END SUGARCRM flav=ent ONLY
 
     /**
+     * Force add Opportunity to the resave list
+     *
+     * @param string $id the ID of the Opportunity to update
+     */
+    protected function addOpportunityToResaveList($id = null)
+    {
+        if ($opp = BeanFactory::retrieveBean('Opportunities', $id)) {
+            SugarRelationship::addToResaveList($opp);
+        }
+    }
+
+    /**
      * Set the discount_price
      */
     protected function setDiscountPrice()
@@ -332,6 +346,11 @@ class RevenueLineItem extends SugarBean
         // call to the parent mark_deleted
         $accountId = $this->account_id;
         //END SUGARCRM flav=ent ONLY
+
+        //Updates the non-SugarLogic rollup fields on the Opportunity if necessary
+        if (!empty($this->opportunity_id)) {
+            $this->addOpportunityToResaveList($this->opportunity_id);
+        }
 
         parent::mark_deleted($id);
 
