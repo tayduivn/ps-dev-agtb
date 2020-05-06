@@ -68,6 +68,10 @@ class SugarEmailAddress extends SugarBean
     public static function isValidEmail($emailAddress)
     {
         $emailAddress = implode('@', array_map(function (string $part) : string {
+            if (mb_check_encoding($part, 'ASCII')) {
+                return $part;
+            }
+
             return idn_to_ascii($part, IDNA_DEFAULT, INTL_IDNA_VARIANT_UTS46);
         }, explode('@', $emailAddress)));
 
