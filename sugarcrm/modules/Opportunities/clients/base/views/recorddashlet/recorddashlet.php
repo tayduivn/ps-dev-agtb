@@ -84,19 +84,57 @@ $viewdefs['Opportunities']['base']['view']['recorddashlet'] = [
                     'name' => 'worst_case',
                     'readonly' => true,
                 ],
+                // BEGIN SUGARCRM flav!=ent ONLY
                 [
                     'name' => 'date_closed',
-                    'readonly' => true,
+                    'related_fields' => [
+                        'date_closed_timestamp',
+                    ],
                 ],
+                // END SUGARCRM flav!=ent ONLY
+                // BEGIN SUGARCRM flav=ent ONLY
+                [
+                    'name' => 'date_closed',
+                    'type' => 'date-cascade',
+                    'label' => 'LBL_LIST_DATE_CLOSED',
+                    'disable_field' => [
+                        'total_revenue_line_items',
+                        'closed_revenue_line_items',
+                    ],
+                ],
+                // END SUGARCRM flav=ent ONLY
                 [
                     'name' => 'sales_status',
                     'readonly' => true,
                 ],
+                // BEGIN SUGARCRM flav!=ent ONLY
                 [
                     'name' => 'sales_stage',
-                    'readonly' => true,
                 ],
+                // END SUGARCRM flav!=ent ONLY
+                // BEGIN SUGARCRM flav=ent ONLY
+                [
+                    'name' => 'sales_stage',
+                    'type' => 'enum-cascade',
+                    'label' => 'LBL_SALES_STAGE',
+                    'disable_field' => [
+                        'total_revenue_line_items',
+                        'closed_revenue_line_items',
+                    ],
+                ],
+                // END SUGARCRM flav=ent ONLY
                 'opportunity_type',
+                // BEGIN SUGARCRM flav=ent ONLY
+                [
+                    'name' => 'service_start_date',
+                    'type' => 'date-cascade',
+                    'label' => 'LBL_SERVICE_START_DATE',
+                    'disable_field' => 'service_open_revenue_line_items',
+                    'related_fields' => [
+                        'service_open_revenue_line_items',
+                    ],
+                ],
+                // END SUGARCRM flav=ent ONLY
             ],
         ],
         [
