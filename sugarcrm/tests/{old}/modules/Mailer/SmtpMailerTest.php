@@ -582,18 +582,13 @@ class SmtpMailerTest extends TestCase
     {
         // Mock the config object to be used by the SmtpMailer instance
         $mockConfig = $this->createPartialMock('OutboundSmtpEmailConfiguration', []);
-        $mockConfig->setAuthAccount('fake@email.com');
         $mockConfig->setEAPMId('fake_eapm_id');
 
         // Mock the external API object to be used by the SmtpMailer instance
-        $mockApi = $this->createPartialMock('ExtAPIGoogleEmail', ['getPHPMailerOauthCredentials']);
+        $mockApi = $this->createPartialMock('ExtAPIGoogleEmail', ['getAccessToken']);
         $mockApi->expects($this->once())
-            ->method('getPHPMailerOauthCredentials')
-            ->willReturn([
-                'clientId' => 'fake_client_id',
-                'clientSecret' => 'fake_client_secret',
-                'refreshToken' => 'fake_refresh_token',
-            ]);
+            ->method('getAccessToken')
+            ->willReturn('fake_access_token');
 
         // Mock the EAPM bean to be used by the SmtpMailer instance
         $mockEAPMBean = $this->createPartialMock('EAPM', []);
@@ -609,13 +604,9 @@ class SmtpMailerTest extends TestCase
             ->method('getEAPMBean')
             ->willReturn($mockEAPMBean);
 
-        // Assert that transferOauthConfigurations correctly assigns the oauth
-        // values to the PHPMailer object
+        // Assert that transferOauthConfigurations correctly assigns the access token to the mailer
         $mockPHPMailerProxy = $this->createPartialMock('PHPMailerProxy', []);
         SugarTestReflection::callProtectedMethod($mockMailer, 'transferOauthConfigurations', [&$mockPHPMailerProxy]);
-        $this->assertEquals('fake_client_id', $mockPHPMailerProxy->oauthClientId);
-        $this->assertEquals('fake_client_secret', $mockPHPMailerProxy->oauthClientSecret);
-        $this->assertEquals('fake_refresh_token', $mockPHPMailerProxy->oauthRefreshToken);
-        $this->assertEquals('fake@email.com', $mockPHPMailerProxy->oauthUserEmail);
+        $this->assertEquals('fake_access_token', $mockPHPMailerProxy->accessToken);
     }
 }

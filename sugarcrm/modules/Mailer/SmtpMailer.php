@@ -47,14 +47,7 @@ class SmtpMailer extends BaseMailer
      */
     const ApiMap = [
         'Google' => 'GoogleEmail',
-    ];
-
-    /**
-     * A list of all OutboundEmail SMTP types that use XOAUTH2 authentication
-     */
-    const XOAUTH2SmtpTypes = [
-        'google_oauth2',
-        'exchange_online',
+        'Microsoft' => 'MicrosoftEmail',
     ];
 
     /**
@@ -172,7 +165,7 @@ class SmtpMailer extends BaseMailer
         $mailer->Password   = from_html($this->config->getPassword()); // perform HTML character translations
 
         // Transfer any Oauth2 credentials if applicable
-        if (in_array($this->config->getSMTPType(), self::XOAUTH2SmtpTypes)) {
+        if ($this->config->getAuthType() === 'oauth2') {
             $mailer->AuthType = 'XOAUTH2';
             $this->transferOauthConfigurations($mailer);
         }
@@ -190,12 +183,8 @@ class SmtpMailer extends BaseMailer
         $eapmBean = $this->getEAPMBean($eapmId);
         if (!empty($eapmBean->id)) {
             $api = $this->getExternalApi($eapmBean->application);
-            $oauthCredentials = $api->getPHPMailerOauthCredentials($eapmId);
-            if (!empty($oauthCredentials)) {
-                $mailer->oauthClientId = $oauthCredentials['clientId'] ?? '';
-                $mailer->oauthClientSecret = $oauthCredentials['clientSecret'] ?? '';
-                $mailer->oauthRefreshToken = $oauthCredentials['refreshToken'] ?? '';
-                $mailer->oauthUserEmail = $this->config->getAuthAccount();
+            if (!empty($api)) {
+                $mailer->accessToken = $api->getAccessToken($eapmId);
             }
         }
     }

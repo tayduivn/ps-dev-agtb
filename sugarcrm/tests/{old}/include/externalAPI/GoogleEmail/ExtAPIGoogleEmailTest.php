@@ -53,9 +53,10 @@ class ExtAPIGoogleEmailTest extends TestCase
     {
         $mockAPI = $this->getMockBuilder('ExtAPIGoogleEmail')
             ->disableOriginalConstructor()
-            ->onlyMethods(['getClient', 'saveToken'])
+            ->onlyMethods(['getClient', 'saveToken', 'getEmailAddress'])
             ->getMock();
         $mockAPI->method('saveToken')->willReturn('fake_eapm_id');
+        $mockAPI->method('getEmailAddress')->willReturn('fake_email_address');
 
         $mockClient = $this->getMockBuilder('Google_Client')
             ->disableOriginalConstructor()
@@ -63,13 +64,14 @@ class ExtAPIGoogleEmailTest extends TestCase
             ->getMock();
         $mockClient->method('getAccessToken')->willReturn('fake_access_token');
 
-
         $mockAPI->method('getClient')->willReturn($mockClient);
 
         $this->assertEquals(
             [
                 'token' => 'fake_access_token',
                 'eapmId' => 'fake_eapm_id',
+                'emailAddress' => 'fake_email_address',
+                'userName' => 'fake_email_address',
             ],
             $mockAPI->authenticate('fake_authorization_code')
         );
@@ -123,36 +125,5 @@ class ExtAPIGoogleEmailTest extends TestCase
         $mockAPI->method('getClient')->willReturn($mockClient);
 
         $this->assertEquals(true, $mockAPI->revokeToken('fake_eapm_id'));
-    }
-
-    /**
-     * @covers ::getPHPMailerOauthCredentials
-     */
-    public function testGetPHPMailerOauthCredentials()
-    {
-        $mockEapmBean = $this->getMockBuilder('EAPM')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $mockEapmBean->id = 'fake_eapm_id';
-        $mockEapmBean->api_data = '{"access_token":"fake_access_token","refresh_token":"fake_refresh_token"}';
-
-        $mockAPI = $this->getMockBuilder('ExtAPIGoogleEmail')
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getEAPMBean', 'getGoogleOauth2Config'])
-            ->getMock();
-        $mockAPI->method('getEAPMBean')->willReturn($mockEapmBean);
-        $mockAPI->method('getGoogleOauth2Config')->willReturn([
-            'properties' => [
-                'oauth2_client_id' => 'fake_client_id',
-                'oauth2_client_secret' => 'fake_client_secret'
-            ]
-        ]);
-
-        $result = $mockAPI->getPHPMailerOauthCredentials('fake_eapm_id');
-        $this->assertEquals([
-            'clientId' => 'fake_client_id',
-            'clientSecret' => 'fake_client_secret',
-            'refreshToken' => 'fake_refresh_token',
-        ], $result);
     }
 }

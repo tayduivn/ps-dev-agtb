@@ -31,6 +31,7 @@
             auth_warning: 'LBL_EMAIL_GOOGLE_AUTH_WARNING',
             auth_url: null,
             eapm_id: null,
+            mail_smtpuser: null,
             authorized_account: null,
             dataSource: 'googleEmailRedirect'
         },
@@ -39,6 +40,7 @@
             auth_warning: 'LBL_EMAIL_MICROSOFT_AUTH_WARNING',
             auth_url: null,
             eapm_id: null,
+            mail_smtpuser: null,
             authorized_account: null,
             dataSource: 'microsoftEmailRedirect'
         }
@@ -79,12 +81,14 @@
             data.dataSource !== this.oauth2Types[this.value].dataSource) {
             return false;
         }
-        if (data.eapmId && data.emailAddress) {
+        if (data.eapmId && data.emailAddress && data.userName) {
             this.model.set('eapm_id', data.eapmId);
             this.model.set('authorized_account', data.emailAddress);
+            this.model.set('mail_smtpuser', data.userName);
             // save data in case user switches to another email provider and back
             this.oauth2Types[this.value].eapm_id = data.eapmId;
             this.oauth2Types[this.value].authorized_account = data.emailAddress;
+            this.oauth2Types[this.value].mail_smtpuser = data.userName;
         } else {
             app.alert.show('error', {
                 level: 'error',
@@ -94,6 +98,28 @@
         return true;
     },
 
+    /**
+     * Listens to model sync to make sure oauth2Type data is properly set when
+     * the record initially loads
+     */
+    bindDataChange: function() {
+        this.model.on('sync', function() {
+            var smtpType = this.model.get(this.name);
+            if (this.oauth2Types[smtpType]) {
+                this.oauth2Types[smtpType].eapm_id = this.model.get('eapm_id');
+                this.oauth2Types[smtpType].authorized_account = this.model.get('authorized_account');
+                this.oauth2Types[smtpType].mail_smtpuser = this.model.get('mail_smtpuser');
+            }
+        }, this);
+
+        this._super('bindDataChange');
+    },
+
+    /**
+     * Sets the proper values of authorization fields based on the current
+     * email provider selected before rendering
+     * @private
+     */
     _render: function() {
         this._checkAuth(this.model.get(this.name));
         this._super('_render');
@@ -108,8 +134,6 @@
         var self = this;
         this.authWarning = '';
         this.authButton = false;
-        this.model.set('eapm_id', '');
-        this.model.set('authorized_account', '');
 
         if (this.oauth2Types[smtpType]) {
             this.model.set('mail_authtype', 'oauth2');
@@ -141,16 +165,16 @@
                 this.authWarning = this.oauth2Types[smtpType].auth_warning;
                 this.authButton = 'disabled';
             } else {
-                if (this.oauth2Types[smtpType].eapm_id) {
-                    this.model.set('eapm_id', this.oauth2Types[smtpType].eapm_id);
-                }
-                if (this.oauth2Types[smtpType].authorized_account) {
-                    this.model.set('authorized_account', this.oauth2Types[smtpType].authorized_account);
-                }
+                this.model.set('eapm_id', this.oauth2Types[smtpType].eapm_id || '');
+                this.model.set('authorized_account', this.oauth2Types[smtpType].authorized_account || '');
+                this.model.set('mail_smtpuser', this.oauth2Types[smtpType].mail_smtpuser || '');
                 this.authButton = 'enabled';
             }
         } else {
             this.model.set('mail_authtype', '');
+            this.model.set('eapm_id', '');
+            this.model.set('authorized_account', '');
+            this.model.set('mail_smtpuser', '');
         }
     },
 

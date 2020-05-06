@@ -569,7 +569,6 @@ function sendTestEmail()
     var eapmId = document.getElementById('EditView').eapm_id.value;
     var authAccount = document.getElementById('authorized_account').value;
     var authType = document.getElementById('mail_authtype').value;
-
     var from_name = document.getElementById('notify_fromname').value;
 	var postDataString = 'mail_type=system&mail_sendtype=' + mail_sendtype + '&mail_smtpserver=' + smtpServer + "&mail_smtpport=" + smtpPort + "&mail_smtpssl=" + smtpssl +
 	                      "&mail_smtpauth_req=" + mailsmtpauthreq.checked + "&mail_smtpuser=" + trim(document.getElementById('mail_smtpuser').value) +
@@ -682,13 +681,15 @@ function handleOauthComplete(e) {
     if (!data.dataSource || !authInfo[smtpType] || data.dataSource !== authInfo[smtpType]['dataSource']) {
         return;
     }
-    if (data.eapmId && data.emailAddress) {
+    if (data.eapmId && data.emailAddress && data.userName) {
         authInfo[smtpType]['eapm_id'] = data.eapmId;
         authInfo[smtpType]['authorized_account'] = data.emailAddress;
+        authInfo[smtpType]['mail_smtpuser'] = data.userName;
         document.getElementById('eapm_id').value = data.eapmId;
         document.getElementById('auth_status').value = '{/literal}{$APP.LBL_EMAIL_AUTHORIZED}{literal}';
         document.getElementById('authorized_account').value = data.emailAddress;
         document.getElementById('auth_email').value = data.emailAddress;
+        document.getElementById('mail_smtpuser').value = data.userName;
     } else {
         alert('{/literal}{$APP.LBL_EMAIL_AUTH_FAILURE}{literal}');
     }
@@ -774,7 +775,8 @@ function changeEmailScreenDisplay(smtptype, clear)
         document.getElementById("mail_smtpauth_req").checked = true;
         document.getElementById("mail_authtype").value = 'oauth2';
         document.getElementById("eapm_id").value = authInfo['google_oauth2']['eapm_id'];
-        document.getElementById("authorized_account").value = authInfo['google_oauth2']['authorized_account'];;
+        document.getElementById("authorized_account").value = authInfo['google_oauth2']['authorized_account'];
+        document.getElementById("mail_smtpuser").value = authInfo['google_oauth2']['mail_smtpuser'];
         document.getElementById("auth_email").value = document.getElementById("authorized_account").value;
         if (!authInfo['google_oauth2']['auth_url']) {
             document.getElementById("auth_warning").style.display = 'block';
@@ -807,7 +809,8 @@ function changeEmailScreenDisplay(smtptype, clear)
         document.getElementById("mail_smtpauth_req").checked = true;
         document.getElementById("mail_authtype").value = 'oauth2';
         document.getElementById("eapm_id").value = authInfo['exchange_online']['eapm_id'];
-        document.getElementById("authorized_account").value = authInfo['exchange_online']['authorized_account'];;
+        document.getElementById("authorized_account").value = authInfo['exchange_online']['authorized_account'];
+        document.getElementById("mail_smtpuser").value = authInfo['exchange_online']['mail_smtpuser'];
         document.getElementById("auth_email").value = document.getElementById("authorized_account").value;
         if (!authInfo['exchange_online']['auth_url']) {
             document.getElementById("auth_warning").style.display = 'block';
@@ -821,6 +824,13 @@ function changeEmailScreenDisplay(smtptype, clear)
             document.getElementById("mail_smtpserver").value == 'smtp.gmail.com' || 
             document.getElementById("mail_smtpserver").value === '') {
             document.getElementById("mail_smtpserver").value = 'smtp.office365.com';
+            var ssl = document.getElementById("mail_smtpssl");
+            for(var j=0;j<ssl.options.length;j++) {
+                if(ssl.options[j].text == 'TLS') {
+                    ssl.options[j].selected = true;
+                    break;
+                }
+            }
         }
         document.getElementById("mail_smtpport_label").innerHTML = '{/literal}{$MOD.LBL_EXCHANGE_SMTPPORT}{literal}';
         document.getElementById("mail_smtpserver_label").innerHTML = '{/literal}{$MOD.LBL_EXCHANGE_SMTPSERVER}{literal}';

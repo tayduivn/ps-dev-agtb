@@ -27,13 +27,6 @@ class ExtAPIMicrosoftEmail extends ExternalAPIBase
     public $useAuth = true;
     public $requireAuth = true;
 
-    protected $scopes = array(
-        'offline_access',
-        'user.read',
-        'mail.read',
-        'mail.send',
-    );
-
     public $docSearch = false;
     public $needsUrl = false;
     public $sharingOptions = null;
@@ -43,6 +36,23 @@ class ExtAPIMicrosoftEmail extends ExternalAPIBase
     const APP_STRING_ERROR_PREFIX = 'ERR_MICROSOFT_API_';
     const URL_AUTHORIZE = 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize';
     const URL_ACCESS_TOKEN = 'https://login.microsoftonline.com/common/oauth2/v2.0/token';
+    const OUTLOOK_API_BASE_URL = 'https://outlook.office.com/api/';
+    const OUTLOOK_API_DEFAULT_VERSION = 'v2.0';
+    const SCOPES_AUTHORIZE = array(
+        'offline_access',
+        'https://graph.microsoft.com/User.Read',
+        'https://outlook.office365.com/IMAP.AccessAsUser.All',
+        'https://outlook.office365.com/SMTP.Send',
+    );
+    const SCOPES_GRAPH_API = array(
+        'offline_access',
+        'https://graph.microsoft.com/User.Read',
+    );
+    const SCOPES_OUTLOOK_API = array(
+        'offline_access',
+        'https://outlook.office365.com/IMAP.AccessAsUser.All',
+        'https://outlook.office365.com/SMTP.Send',
+    );
 
     /**
      * Returns the Microsoft client used to query the Microsoft Graph API
@@ -70,7 +80,7 @@ class ExtAPIMicrosoftEmail extends ExternalAPIBase
             'redirect_uri' => $config['redirect_uri'],
             'response_type' => 'code',
             'prompt' => 'select_account',
-            'scope' => implode(' ', $this->scopes),
+            'scope' => implode(' ', self::SCOPES_AUTHORIZE),
             'state' => 'email',
         );
 
@@ -87,18 +97,24 @@ class ExtAPIMicrosoftEmail extends ExternalAPIBase
      */
     public function authenticate($code)
     {
+        // Authenticate the authorization code with Microsoft servers
         $token = $this->getAccessTokenFromServer('authorization_code', [
             'code' => $code,
+            'scope' => implode(' ', self::SCOPES_OUTLOOK_API),
         ]);
 
+        // If we are successful, save the new token data in the database
         $eapmId = null;
         if (!empty($token)) {
             $eapmId = $this->saveToken(json_encode($token));
         }
 
+        // Return the token and account information
         return array(
             'token' => $token,
             'eapmId' => $eapmId,
+            'emailAddress' => $this->getEmailAddress($eapmId),
+            'userName' => $this->getUserName($eapmId),
         );
     }
 
@@ -124,21 +140,67 @@ class ExtAPIMicrosoftEmail extends ExternalAPIBase
 
     /**
      * Uses an authenticated token to query the Microsoft server to retrieve the
-     * Microsoft account's email address
+     * Microsoft account's userPrincipalName (username)
      *
      * @param string $eapmId the ID of the EAPM bean storing the account's Oauth2 token
-     * @return string|bool the email address if successful; false otherwise
+     * @return string|bool the user's principal name if successful; false otherwise
+     */
+    public function getUserName($eapmId)
+    {
+        $eapmBean = $this->getEAPMBean($eapmId);
+        if (!empty($eapmBean->id)) {
+            try {
+                // Get the current token data we have for the EAPM bean
+                $token = json_decode($eapmBean->api_data, true);
+
+                // Using the saved refresh token, get a new token specifying the
+                // Graph API scopes specifically
+                $newToken = $this->getAccessTokenFromServer('refresh_token', [
+                    'refresh_token' => $token['refresh_token'] ?? '',
+                    'scope' => implode(' ', self::SCOPES_GRAPH_API),
+                ]);
+                $accessToken = $newToken->getToken();
+
+                // Use the Graph API to get the userPrincipalName with the new
+                // access token
+                $client = $this->getClient()
+                    ->setAccessToken($accessToken);
+                $user = $client->createRequest('GET', '/me?$select=userPrincipalName')
+                    ->setReturnType(Model\User::class)
+                    ->execute();
+                return $user->getUserPrincipalName() ?? false;
+            } catch (Exception $e) {
+                $GLOBALS['log']->error($e->getMessage());
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Uses an authenticated token to query the Outlook REST API to retrieve the
+     * user's email address for Exchange Online/Office365
+     *
+     * @param string $eapmId the ID of the EAPM bean storing the account's Oauth2 token
+     * @return string|bool the user's email address if successful; false otherwise
      */
     public function getEmailAddress($eapmId)
     {
         try {
+            // Get an access token for the EAPM bean
             $accessToken = $this->getAccessToken($eapmId);
-            $client = $this->getClient();
-            $client->setAccessToken($accessToken);
-            $user = $client->createRequest('GET', '/me?$select=mail,userPrincipalName')
+
+            // Query the Outlook REST API to get the user's information
+            $client = $this->getClient()
+                ->setBaseUrl(self::OUTLOOK_API_BASE_URL)
+                ->setApiVersion(self::OUTLOOK_API_DEFAULT_VERSION)
+                ->setAccessToken($accessToken);
+            $user = $client->createRequest('GET', '/me')
                 ->setReturnType(Model\User::class)
                 ->execute();
-            return $user->getMail() ?? $user->getUserPrincipalName();
+
+            // Return the user's email address
+            $properties =  $user->getProperties();
+            return $properties['EmailAddress'] ?? false;
         } catch (Exception $e) {
             $GLOBALS['log']->error($e->getMessage());
         }
@@ -146,20 +208,20 @@ class ExtAPIMicrosoftEmail extends ExternalAPIBase
     }
 
     /**
-     * Retrieves an access token from the given EAPM bean. If the token is
-     * expired, will automatically refresh it.
+     * Retrieves an access token from the given EAPM bean. If the access token
+     * is expired (or close to it), this will automatically refresh it.
      *
      * @param string $eapmId the ID of the EAPM bean storing the access token
      * @return string|bool The access token string if successful; false otherwise
      */
-    protected function getAccessToken($eapmId)
+    public function getAccessToken($eapmId)
     {
         $eapmBean = $this->getEAPMBean($eapmId);
         if (!empty($eapmBean->id)) {
             $token = json_decode($eapmBean->api_data, true);
             if ($token) {
-                // If the token is expired, refresh it
-                if (!empty($token['refresh_token']) && !empty($token['expires']) && time() > $token['expires']) {
+                // If the token is expired (or close to it), refresh it
+                if (!empty($token['refresh_token']) && !empty($token['expires']) && time() + 30 > $token['expires']) {
                     return $this->refreshToken($eapmId);
                 } elseif (!empty($token['access_token'])) {
                     return $token['access_token'];
@@ -221,7 +283,6 @@ class ExtAPIMicrosoftEmail extends ExternalAPIBase
                     'urlAuthorize' => self::URL_AUTHORIZE,
                     'urlAccessToken' => self::URL_ACCESS_TOKEN,
                     'urlResourceOwnerDetails' => '',
-                    'scopes' => implode(' ', $this->scopes),
                 ]);
             }
             return $this->provider->getAccessToken($grantType, $params);

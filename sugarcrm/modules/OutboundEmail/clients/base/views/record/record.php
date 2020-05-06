@@ -277,6 +277,13 @@ $viewdefs['OutboundEmail']['base']['view']['record'] = array(
                         'value' => 'equal($mail_authtype,"oauth2")',
                     ),
                 ),
+                array(
+                    'action' => 'ReadOnly',
+                    'params' => array(
+                        'target' => 'authorized_account',
+                        'value' => 'equal($mail_authtype,"oauth2")',
+                    ),
+                ),
             ),
         ),
     ),

@@ -95,11 +95,12 @@ describe('OutboundEmail.BaseEmailProviderField', function() {
             expect(field.handleOauthComplete(e)).toBeFalsy();
         });
 
-        it('should set eapm_id in model', function() {
+        it('should set eapm_id, authorized_account, and mail_smtpuser in model', function() {
             let data = {
                 dataSource: 'googleEmailRedirect',
                 eapmId: 'fakeId',
-                emailAddress: 'fakeEmail'
+                emailAddress: 'fakeEmail',
+                userName: 'fakeUserName'
             };
             let e = {data: JSON.stringify(data)};
             field.value = 'google_oauth2';
@@ -107,6 +108,7 @@ describe('OutboundEmail.BaseEmailProviderField', function() {
             field.handleOauthComplete(e);
             expect(field.model.get('eapm_id')).toEqual('fakeId');
             expect(field.model.get('authorized_account')).toEqual('fakeEmail');
+            expect(field.model.get('mail_smtpuser')).toEqual('fakeUserName');
         });
     });
 

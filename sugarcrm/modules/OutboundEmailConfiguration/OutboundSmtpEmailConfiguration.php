@@ -31,9 +31,8 @@ class OutboundSmtpEmailConfiguration extends OutboundEmailConfiguration
     private $authenticate;     // true=require authentication on the SMTP server
     private $username;         // the username to use if authenticate=true
     private $password;         // the password to use if authenticate=true
-    private $smtpType;         // the type of SMTP connection (google, google_oauth2, etc)
+    private $authType;         // the type of authentication to use when connecting to the smtp server
     private $eapmId;           // the ID of the EAPM bean holding Oauth2 information to use if applicable
-    private $authAccount;      // the email account that was authenticated via Oauth2 if applicable
 
     /**
      * Extends the default configurations for this sending strategy. Adds default SMTP configurations needed to send
@@ -51,9 +50,8 @@ class OutboundSmtpEmailConfiguration extends OutboundEmailConfiguration
         $this->setAuthenticationRequirement();
         $this->setUsername();
         $this->setPassword();
-        $this->setSMTPType();
+        $this->setAuthType();
         $this->setEAPMId();
-        $this->setAuthAccount();
     }
 
     /**
@@ -242,31 +240,33 @@ class OutboundSmtpEmailConfiguration extends OutboundEmailConfiguration
     }
 
     /**
-     * Sets the type of SMTP connection this represents (google, google_oauth2, etc)
+     * Sets the type of authentication to use when connecting to the SMTP server
+     * ('LOGIN', 'XOAUTH2', etc)
      *
-     * @param string $smtpType
+     * @param string $authType
      * @throws MailerException
      */
-    public function setSMTPType($smtpType = '')
+    public function setAuthType($authType = '')
     {
-        if (!is_string($smtpType) && !is_null($smtpType)) {
+        if (!is_string($authType) && !is_null($authType)) {
             throw new MailerException(
-                "Invalid Configuration: smtpType must be a string",
+                "Invalid Configuration: authType must be a string",
                 MailerException::InvalidConfiguration
             );
         }
 
-        $this->smtpType = trim($smtpType);
+        $this->authType = trim($authType);
     }
 
     /**
-     * Gets the type of SMTP connection this represents (google, google_oauth2, etc)
+     * Gets the type of authentication to use when connecting to the SMTP server
+     * ('LOGIN', 'XOAUTH2', etc)
      *
-     * @return mixed
+     * @return string
      */
-    public function getSMTPType()
+    public function getAuthType()
     {
-        return $this->smtpType;
+        return $this->authType;
     }
 
     /**
@@ -295,34 +295,6 @@ class OutboundSmtpEmailConfiguration extends OutboundEmailConfiguration
     public function getEAPMId()
     {
         return $this->eapmId;
-    }
-
-    /**
-     * Sets the name/ID of the email account that was authorized via Oauth2
-     *
-     * @param string $account the account name/ID (likely an email address login)
-     * @throws MailerException
-     */
-    public function setAuthAccount($account = '')
-    {
-        if (!is_string($account) && !is_null($account)) {
-            throw new MailerException(
-                "Invalid Configuration: account must be a string",
-                MailerException::InvalidConfiguration
-            );
-        }
-
-        $this->authAccount = $account;
-    }
-
-    /**
-     * Gets the name/ID of the email account that was authorized via Oauth2
-     *
-     * @return mixed
-     */
-    public function getAuthAccount()
-    {
-        return $this->authAccount;
     }
 
     /**
@@ -359,9 +331,8 @@ class OutboundSmtpEmailConfiguration extends OutboundEmailConfiguration
             "securityProtocol" => $this->getSecurityProtocol(),
             "username"     => $this->getUsername(),
             "password"     => $this->getPassword(),
-            'smtpType'     => $this->getSMTPType(),
+            'authType'     => $this->getAuthType(),
             'eapmId'       => $this->getEAPMId(),
-            'authAccount'  => $this->getAuthAccount(),
         );
         return array_merge(parent::toArray(), $fields);
     }

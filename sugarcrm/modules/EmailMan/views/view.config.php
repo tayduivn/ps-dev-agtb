@@ -69,6 +69,7 @@ class ViewConfig extends SugarView
             if ($key === $settings['mail_smtptype']) {
                 $authInfo[$key]['eapm_id'] = $settings['eapm_id'];
                 $authInfo[$key]['authorized_account'] = $settings['authorized_account'];
+                $authInfo[$key]['mail_smtpuser'] = $settings['mail_smtpuser'];
             }
         }
         // convert to json string

@@ -13,7 +13,7 @@
 use PHPUnit\Framework\TestCase;
 use League\OAuth2\Client\Provider\GenericProvider;
 
-class ExtAPIMicrosoftTest extends TestCase
+class ExtAPIMicrosoftEmailTest extends TestCase
 {
     /**
      * @covers ::authenticate
@@ -22,9 +22,11 @@ class ExtAPIMicrosoftTest extends TestCase
     {
         $mockAPI = $this->getMockBuilder('ExtAPIMicrosoftEmail')
             ->disableOriginalConstructor()
-            ->onlyMethods(['saveToken'])
+            ->onlyMethods(['saveToken', 'getEmailAddress', 'getUserName'])
             ->getMock();
         $mockAPI->method('saveToken')->willReturn('fake_eapm_id');
+        $mockAPI->method('getEmailAddress')->willReturn('fake_email_address');
+        $mockAPI->method('getUserName')->willReturn('fake_user_name');
 
         $mockProvider = $this->getMockBuilder(GenericProvider::class)
             ->disableOriginalConstructor()
@@ -38,6 +40,8 @@ class ExtAPIMicrosoftTest extends TestCase
             [
                 'token' => 'fake_access_token',
                 'eapmId' => 'fake_eapm_id',
+                'emailAddress' => 'fake_email_address',
+                'userName' => 'fake_user_name',
             ],
             $mockAPI->authenticate('fake_authorization_code')
         );

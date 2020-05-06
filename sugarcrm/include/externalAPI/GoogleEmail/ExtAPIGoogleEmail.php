@@ -90,6 +90,7 @@ class ExtAPIGoogleEmail extends ExternalAPIBase
      */
     public function authenticate($code)
     {
+        // Authenticate the authorization code with Google servers
         try {
             $client = $this->getClient();
             $client->authenticate($code);
@@ -98,16 +99,84 @@ class ExtAPIGoogleEmail extends ExternalAPIBase
             return false;
         }
 
+        // If we are successful, save the new token data in the database
         $eapmId = null;
         $token = $client->getAccessToken();
         if ($token) {
             $eapmId = $this->saveToken($token);
         }
 
+        // Return the token and account information
+        $emailAddress = $this->getEmailAddress($eapmId);
         return array(
             'token' => $token,
             'eapmId' => $eapmId,
+            'emailAddress' => $emailAddress,
+            'userName' => $emailAddress,
         );
+    }
+
+    /**
+     * Retrieves an access token from the given EAPM bean. If the access token
+     * is expired (or close to it), this will automatically refresh it.
+     *
+     * @param string $eapmId the ID of the EAPM bean storing the access token
+     * @return string|bool The access token string if successful; false otherwise
+     */
+    public function getAccessToken($eapmId)
+    {
+        $eapmBean = $this->getEAPMBean($eapmId);
+        if (!empty($eapmBean->id)) {
+            try {
+                // Get the current token data we have for the EAPM bean
+                $client = $this->getClient();
+                $client->setAccessToken($eapmBean->api_data);
+
+                // If the token is expired (or close to it), refresh it. Return
+                // the access_token portion of the token
+                if ($client->isAccessTokenExpired()) {
+                    return $this->refreshToken($eapmId);
+                } else {
+                    $token = json_decode($client->getAccessToken(), true);
+                    return $token['access_token'];
+                }
+            } catch (Exception $e) {
+                $GLOBALS['log']->error($e->getMessage());
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Uses a refresh token to refresh the token stored in the given EAPM bean
+     *
+     * @param string $eapmId the ID of the EAPM bean to save the refreshed token to
+     * @return string|bool The new access token string if successful; false otherwise
+     */
+    protected function refreshToken($eapmId)
+    {
+        $eapmBean = $this->getEAPMBean($eapmId);
+        if (!empty($eapmBean->id)) {
+            try {
+                // Re-authenticate using the stored refresh token
+                $client = $this->getClient();
+                $client->setAccessToken($eapmBean->api_data);
+                $client->refreshToken($client->getRefreshToken());
+                $token = $client->getAccessToken();
+            } catch (Exception $e) {
+                $GLOBALS['log']->error($e->getMessage());
+                return false;
+            }
+
+            // Save the new access token JSON in the database, and return the
+            // access_token portion of it
+            if (!empty($token)) {
+                $this->saveToken($token, $eapmId);
+                $tokenProperties = json_decode($token, true);
+                return $tokenProperties['access_token'];
+            }
+        }
+        return false;
     }
 
     /**
@@ -189,37 +258,6 @@ class ExtAPIGoogleEmail extends ExternalAPIBase
                 $GLOBALS['log']->error($e->getMessage());
             }
         }
-        return false;
-    }
-
-    /**
-     * Builds an array containing the credentials used by PHPMailer to authenticate
-     * the given account with the Google SMTP server using Oauth2
-     *
-     * @param string $eapmId the ID of the EAPM bean storing the Google Oauth2 token
-     * @return array|bool the Oauth credentials if successful; false otherwise
-     */
-    public function getPHPMailerOauthCredentials($eapmId)
-    {
-        $eapmBean = $this->getEAPMBean($eapmId);
-        if (empty($eapmBean->id) || empty($eapmBean->api_data)) {
-            return false;
-        }
-
-        try {
-            // Get the Google connector configuration
-            $config = $this->getGoogleOauth2Config();
-
-            $apiData = json_decode($eapmBean->api_data, true);
-            return [
-                'clientId' => $config['properties']['oauth2_client_id'] ?? '',
-                'clientSecret' => $config['properties']['oauth2_client_secret'] ?? '',
-                'refreshToken' => $apiData['refresh_token'] ?? '',
-            ];
-        } catch (Exception $e) {
-            $GLOBALS['log']->error($e->getMessage());
-        }
-
         return false;
     }
 }

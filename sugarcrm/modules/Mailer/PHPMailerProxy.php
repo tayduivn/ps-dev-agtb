@@ -18,6 +18,12 @@ class PHPMailerProxy extends PHPMailerOAuth
     public $AllowEmpty = true;
 
     /**
+     * @var string $accessToken stores the access token that is used with the username
+     * to validate the sending account via XOAUTH2
+     */
+    public $accessToken = '';
+
+    /**
      * {@inheritDoc}
      *
      * Uses PHPMailer with exceptions.
@@ -47,6 +53,22 @@ class PHPMailerProxy extends PHPMailerOAuth
         }
 
         return $this->smtp;
+    }
+
+    /**
+     * Configures an XOAUTH2Encoder instance for PHPMailer to use
+     *
+     * @return XOAUTHEncoder
+     */
+    public function getOAUTHInstance()
+    {
+        if (!is_object($this->oauth)) {
+            $this->oauth = new XOAUTHEncoder(
+                $this->Username,
+                $this->accessToken
+            );
+        }
+        return $this->oauth;
     }
 
     /**
