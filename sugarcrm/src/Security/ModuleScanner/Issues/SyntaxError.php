@@ -13,17 +13,19 @@ declare(strict_types=1);
 
 namespace Sugarcrm\Sugarcrm\Security\ModuleScanner\Issues;
 
-final class DynamicallyNamedClassUsed implements Issue
-{
-    private $line;
+use PhpParser\Error;
 
-    public function __construct(int $line)
+final class SyntaxError implements Issue
+{
+    private $error;
+
+    public function __construct(Error $error)
     {
-        $this->line = $line;
+        $this->error = $error;
     }
 
     public function getMessage(): string
     {
-        return 'Code attempted to use dynamically-named class on line ' . $this->line;
+        return $this->error->getMessage();
     }
 }

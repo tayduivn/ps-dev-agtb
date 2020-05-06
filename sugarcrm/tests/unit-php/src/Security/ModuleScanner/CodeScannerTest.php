@@ -28,9 +28,10 @@ use Sugarcrm\Sugarcrm\Security\ModuleScanner\Issues\DynamicallyNamedMethodCalled
 use Sugarcrm\Sugarcrm\Security\ModuleScanner\Issues\DynamicallyNamedStaticMethodCalled;
 use Sugarcrm\Sugarcrm\Security\ModuleScanner\Issues\EvalUsed;
 use Sugarcrm\Sugarcrm\Security\ModuleScanner\Issues\ShellExecUsed;
+use Sugarcrm\Sugarcrm\Security\ModuleScanner\Issues\SyntaxError;
 
 /**
- * @coversDefaultClass CodeScanner
+ * @coversDefaultClass \Sugarcrm\Sugarcrm\Security\ModuleScanner\CodeScanner
  */
 class CodeScannerTest extends TestCase
 {
@@ -231,7 +232,7 @@ PHP
 
     /**
      * @dataProvider allowedCodeProvider
-     * @covers ::scanCode
+     * @covers ::scan
      */
     public function testScanCodeSucceeded(string $code): void
     {
@@ -402,11 +403,24 @@ PHP
 
     /**
      * @dataProvider forbiddenStatementProvider
-     * @covers ::scanCode
+     * @covers ::scan
      */
     public function testForbiddenStatement(string $code, string $exepectedIssue)
     {
         $issues = $this->codeScanner->scan($code);
         $this->assertInstanceOf($exepectedIssue, $issues[0]);
+    }
+
+    /**
+     * @covers ::scan
+     */
+    public function testSyntaxError()
+    {
+        $code = <<<'PHP'
+<?php
+$foo());
+PHP;
+        $issues = $this->codeScanner->scan(($code));
+        $this->assertInstanceOf(SyntaxError::class, $issues[0]);
     }
 }

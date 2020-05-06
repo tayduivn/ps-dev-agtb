@@ -12,11 +12,13 @@ declare(strict_types=1);
  */
 
 namespace Sugarcrm\Sugarcrm\Security\ModuleScanner;
+
 use PhpParser\Error;
 use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitor\NameResolver;
 use PhpParser\ParserFactory;
 use Sugarcrm\Sugarcrm\Security\ModuleScanner\Issues\Issue;
+use Sugarcrm\Sugarcrm\Security\ModuleScanner\Issues\SyntaxError;
 
 class CodeScanner
 {
@@ -45,8 +47,11 @@ class CodeScanner
         $traverser->addVisitor(new NameResolver());
         $traverser->addVisitor($dynamicNameVisitor);
         $traverser->addVisitor($blacklistVisitor);
-
-        $stmts = $parser->parse($code);
+        try {
+            $stmts = $parser->parse($code);
+        } catch (Error $error) {
+            return [new SyntaxError($error)];
+        }
         $traverser->traverse($stmts);
 
         return array_merge($dynamicNameVisitor->getIssues(), $blacklistVisitor->getIssues());

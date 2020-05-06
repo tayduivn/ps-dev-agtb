@@ -24,6 +24,6 @@ final class EvalUsed implements Issue
 
     public function getMessage(): string
     {
-        return 'Code attempted to use eval() at line ' . $this->line;
+        return 'Code attempted to use eval() on line ' . $this->line;
     }
 }

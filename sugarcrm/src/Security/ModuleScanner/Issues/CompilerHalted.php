@@ -24,6 +24,6 @@ final class CompilerHalted implements Issue
 
     public function getMessage(): string
     {
-        return 'Code attempted to halt compiler at line ' . $this->line;
+        return 'Code attempted to halt compiler on line ' . $this->line;
     }
 }

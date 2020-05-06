@@ -719,6 +719,10 @@ class HealthCheckScannerMeta
             'kb' => 'https://support.sugarcrm.com/Knowledge_Base/Installation_Upgrade/Troubleshooting_Health_Check_Output/Health_Check_Error_Removed_jQuery_Functions_Detected',
             //@codingStandardsIgnoreEnd
         ),
+        585 => [
+            'report' => 'forbiddenStatement',
+            'bucket' => self::MANUAL,
+        ],
         // Bucket G
         901 => array(
             'report' => 'alreadyUpgraded',

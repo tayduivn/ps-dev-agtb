@@ -722,6 +722,7 @@ class HealthCheckScanner
      */
     public function getPackageManager()
     {
+        require_once 'ModuleInstall/PackageManager/PackageManager.php';
         return new PackageManager();
     }
 
@@ -844,6 +845,8 @@ class HealthCheckScanner
         // Check for quotes customizations, can be removed after 7.9 is the base.
         $this->checkQuotesCustomizations();
 
+        $this->checkForForbiddenStatementsInUpgrades();
+
         // TODO: custom dashlets
         $this->log("VERDICT: {$this->status}", 'STATUS');
         if ($GLOBALS['sugar_config']['site_url']) {
@@ -860,6 +863,27 @@ class HealthCheckScanner
 
         restore_error_handler();
         return $this->logMeta;
+    }
+
+    protected function checkForForbiddenStatementsInUpgrades()
+    {
+        $pm = $this->getPackageManager();
+        $modules = $pm->getInstalled(['module']);
+        foreach ($modules as $module) {
+            $filename = $module->filename;
+            if (!file_exists($filename)) {
+                continue;
+            }
+            $moduleScanner = new ModuleScanner();
+            $moduleScanner->scanArchive($filename);
+            if ($moduleScanner->hasIssues()) {
+                foreach ($moduleScanner->getIssues()['file'] as $file => $issues) {
+                    foreach ($issues as $issue) {
+                        $this->updateStatus('forbiddenStatement', $file, $issue);
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -2460,8 +2484,6 @@ class HealthCheckScanner
     protected function checkPackages()
     {
         $this->loadPackageChecklist();
-
-        require_once 'ModuleInstall/PackageManager/PackageManager.php';
 
         $this->log("Checking packages");
         $pm = $this->getPackageManager();

@@ -42,14 +42,14 @@ class BlacklistVisitor extends ForbiddenStatementVisitor
     public function leaveNode(Node $node)
     {
         if ($node instanceof Node\Expr\Eval_) {
-            $this->issues[] =  new EvalUsed($node->getLine());
+            $this->issues[] = new EvalUsed($node->getLine());
         }
 
         if ($node instanceof Node\Stmt\HaltCompiler) {
-            $this->issues[] =  new CompilerHalted($node->getLine());
+            $this->issues[] = new CompilerHalted($node->getLine());
         }
         if ($node instanceof Node\Expr\ShellExec) {
-            $this->issues[] =  new ShellExecUsed($node->getLine());
+            $this->issues[] = new ShellExecUsed($node->getLine());
         }
 
         if ($node instanceof Node\Expr\MethodCall) {
@@ -61,7 +61,7 @@ class BlacklistVisitor extends ForbiddenStatementVisitor
                 $method = $node->name->value;
             }
             if ($method !== null && in_array(strtolower($method), $this->methodsBlackList, true)) {
-                $this->issues[] =  new BlacklistedMethodCalled($method, $node->getLine());
+                $this->issues[] = new BlacklistedMethodCalled($method, $node->getLine());
             }
         } elseif ($node instanceof Node\Expr\FuncCall) {
             $function = null;
@@ -72,13 +72,13 @@ class BlacklistVisitor extends ForbiddenStatementVisitor
                 $function = $node->name->value;
             }
             if ($function !== null && in_array(strtolower($function), $this->functionsBlackList, true)) {
-                $this->issues[] =  new BlacklistedFunctionCalled($function, $node->getLine());
+                $this->issues[] = new BlacklistedFunctionCalled($function, $node->getLine());
             }
         } elseif ($node instanceof Node\Stmt\Class_) {
             if ($node->extends instanceof Node\Name) {
                 $class = $node->extends->toString();
                 if (in_array(strtolower($class), $this->classesBlackList, true)) {
-                    $this->issues[] =  new BlacklistedClassExtended($class, $node->getLine());
+                    $this->issues[] = new BlacklistedClassExtended($class, $node->getLine());
                 }
             }
         } elseif ($node instanceof Node\Expr\New_) {
@@ -105,12 +105,11 @@ class BlacklistVisitor extends ForbiddenStatementVisitor
                 $method = $node->name->value;
             }
             if ($method !== null && in_array(strtolower($method), $this->methodsBlackList, true)) {
-                $this->issues[] =  new BlacklistedStaticMethodCalled($method, $node->getLine());
+                $this->issues[] = new BlacklistedStaticMethodCalled($method, $node->getLine());
             }
             if ($method !== null && $class !== null && isset($this->methodsBlackList[strtolower($method)]) && in_array(strtolower($class), $this->methodsBlackList[strtolower($method)], true)) {
-                $this->issues[] =  new BlacklistedStaticMethodOfClassCalled($class, $method, $node->getLine());
+                $this->issues[] = new BlacklistedStaticMethodOfClassCalled($class, $method, $node->getLine());
             }
         }
     }
-
 }

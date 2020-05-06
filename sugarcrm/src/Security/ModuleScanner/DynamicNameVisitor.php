@@ -26,24 +26,24 @@ class DynamicNameVisitor extends ForbiddenStatementVisitor
     {
         if ($node instanceof Node\Expr\MethodCall) {
             if ($node->name instanceof Node\Expr\Variable) {
-                $this->issues[] =  new DynamicallyNamedMethodCalled($node->getLine());
+                $this->issues[] = new DynamicallyNamedMethodCalled($node->getLine());
             }
         } elseif ($node instanceof Node\Expr\FuncCall) {
             if ($node->name instanceof Node\Expr\Variable) {
-                $this->issues[] =  new DynamicallyNamedFunctionCalled($node->getLine());
+                $this->issues[] = new DynamicallyNamedFunctionCalled($node->getLine());
             }
         } elseif ($node instanceof Node\Expr\StaticCall) {
             $class = $node->class;
             $method = $node->name;
             if ($class instanceof Node\Expr\Variable) {
-                $this->issues[] =  new DynamicallyNamedClassUsed($node->getLine());
+                $this->issues[] = new DynamicallyNamedClassUsed($node->getLine());
             }
             if ($method instanceof Node\Expr\Variable) {
-                $this->issues[] =  new DynamicallyNamedStaticMethodCalled($node->getLine());
+                $this->issues[] = new DynamicallyNamedStaticMethodCalled($node->getLine());
             }
         } elseif ($node instanceof Node\Expr\New_) {
             if ($node->class instanceof Node\Expr\Variable) {
-                $this->issues[] =  new DynamicallyNamedClassInstantiated($node->getLine());
+                $this->issues[] = new DynamicallyNamedClassInstantiated($node->getLine());
             }
         }
     }

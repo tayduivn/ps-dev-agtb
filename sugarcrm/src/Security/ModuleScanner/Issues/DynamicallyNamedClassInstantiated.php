@@ -24,6 +24,6 @@ final class DynamicallyNamedClassInstantiated implements Issue
 
     public function getMessage(): string
     {
-        return 'Code attempted to instantiate dynamically-named class at line ' . $this->line;
+        return 'Code attempted to instantiate dynamically-named class on line ' . $this->line;
     }
 }

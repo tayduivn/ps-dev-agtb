@@ -24,6 +24,6 @@ final class DynamicallyNamedFunctionCalled implements Issue
 
     public function getMessage(): string
     {
-        return 'Code attempted dynamically-named function call at line ' . $this->line;
+        return 'Code attempted dynamically-named function call on line ' . $this->line;
     }
 }

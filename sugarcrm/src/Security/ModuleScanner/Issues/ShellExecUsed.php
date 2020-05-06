@@ -24,6 +24,6 @@ final class ShellExecUsed implements Issue
 
     public function getMessage(): string
     {
-        return 'Code attempted to execute command via shell at line ' . $this->line;
+        return 'Code attempted to execute command via shell on line ' . $this->line;
     }
 }
