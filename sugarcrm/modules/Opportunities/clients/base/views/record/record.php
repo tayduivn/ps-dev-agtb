@@ -179,6 +179,9 @@ $viewdefs['Opportunities']['base']['view']['record'] = array(
                     )
                 ),
                 array(
+                    'name' => 'sales_status',
+                ),
+                array(
                     'name' => 'sales_stage',
                 ),
                 // END SUGARCRM flav!=ent ONLY
@@ -192,7 +195,10 @@ $viewdefs['Opportunities']['base']['view']['record'] = array(
                         'closed_revenue_line_items',
                     ),
                 ),
-                [
+                array(
+                    'name' => 'sales_status',
+                ),
+                array(
                     'name' => 'sales_stage',
                     'type' => 'enum-cascade',
                     'label' => 'LBL_SALES_STAGE',
@@ -200,7 +206,22 @@ $viewdefs['Opportunities']['base']['view']['record'] = array(
                         'total_revenue_line_items',
                         'closed_revenue_line_items',
                     ),
-                ],
+                ),
+                // END SUGARCRM flav=ent ONLY
+                array(
+                    'name' => 'amount',
+                    'type' => 'currency',
+                    'label' => 'LBL_LIKELY',
+                    'related_fields' => array(
+                        'amount',
+                        'currency_id',
+                        'base_rate',
+                    ),
+                    'span' => 6,
+                    'currency_field' => 'currency_id',
+                    'base_rate_field' => 'base_rate',
+                ),
+                // BEGIN SUGARCRM flav=ent ONLY
                 array(
                     'name' => 'service_start_date',
                     'type' => 'date-cascade',
@@ -214,20 +235,7 @@ $viewdefs['Opportunities']['base']['view']['record'] = array(
                 'probability',
                 array(
                     'name' => 'commit_stage',
-                    'span' => 6
-                ),
-                array(
-                    'name' => 'amount',
-                    'type' => 'currency',
-                    'label' => 'LBL_LIKELY',
-                    'related_fields' => array(
-                        'amount',
-                        'currency_id',
-                        'base_rate',
-                    ),
                     'span' => 6,
-                    'currency_field' => 'currency_id',
-                    'base_rate_field' => 'base_rate',
                 ),
                 array(
                     'name' => 'best_case',
