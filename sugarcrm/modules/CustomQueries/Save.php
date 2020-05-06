@@ -138,16 +138,33 @@ if(!empty($is_edit) && $is_edit==true){
 $return_id = $focus->id;
 //exit;
 $edit='';
-if(isset($_REQUEST['return_module']) && $_REQUEST['return_module'] != "") $return_module = $_REQUEST['return_module'];
-else $return_module = "CustomQueries";
-if(isset($_REQUEST['return_action']) && $_REQUEST['return_action'] != "") $return_action = $_REQUEST['return_action'];
-else $return_action = "DetailView";
-if(isset($_REQUEST['return_id']) && $_REQUEST['return_id'] != "") $return_id = $_REQUEST['return_id'];
-if(!empty($_REQUEST['edit'])) {
-	$return_id='';
-	$edit='edit=true';
+if (!empty($_REQUEST['return_module'])) {
+    $return_module = $_REQUEST['return_module'];
+} else {
+    $return_module = 'CustomQueries';
+}
+if (!empty($_REQUEST['return_action'])) {
+    $return_action = $_REQUEST['return_action'];
+} else {
+    $return_action = 'DetailView';
+}
+if (!empty($_REQUEST['return_id'])) {
+    $return_id = $_REQUEST['return_id'];
 }
 
-$GLOBALS['log']->debug("Saved record with id of ".$return_id);
-header("Location: index.php?action=$return_action&module=$return_module&record=$return_id&$edit&old_column_array=$old_column_array");
+$queryParams = array(
+    'action' => $return_action,
+    'module' => $return_module,
+    'record' => $return_id,
+    'old_column_array' => $old_column_array,
+);
+$GLOBALS['log']->debug('Saved record with id of ' . $return_id);
+
+if (!empty($_REQUEST['edit'])) {
+    unset($queryParams['record']);
+    $queryData['edit'] = 'true';
+}
+
+$query = http_build_query($queryParams);
+header('Location: index.php?' . $query);
 ?>
