@@ -63,6 +63,7 @@ class OutboundEmail extends SugarBean
         'mail_smtpssl',
         'mail_smtpuser',
         'mail_smtppass',
+        'mail_authtype',
         'eapm_id',
         'authorized_account',
     );
@@ -90,6 +91,7 @@ class OutboundEmail extends SugarBean
     public $mail_smtpdisplay; // calculated value, not in DB
     public $eapm_id;
     public $authorized_account;
+    public $mail_authtype;
 
     /**
      * @var null|OutboundEmail

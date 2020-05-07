@@ -54,6 +54,7 @@ class SmtpMailer extends BaseMailer
      */
     const XOAUTH2SmtpTypes = [
         'google_oauth2',
+        'exchange_online',
     ];
 
     /**

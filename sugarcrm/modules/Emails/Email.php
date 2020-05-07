@@ -696,6 +696,7 @@ class Email extends SugarBean {
         $mail_sendtype = 'SMTP',
         $fromname = '',
         $mail_smtptype = '',
+        $mail_authtype = '',
         $eapm_id = '',
         $authorized_account = ''
     ) {
@@ -724,6 +725,7 @@ class Email extends SugarBean {
         $outboundEmail->mail_smtppass     = $smtppassword;
         $outboundEmail->mail_smtpssl      = $ssltls;
         $outboundEmail->mail_smtptype     = $mail_smtptype;
+        $outboundEmail->mail_authtype     = $mail_authtype;
         $outboundEmail->eapm_id           = $eapm_id;
         $outboundEmail->authorized_account = $authorized_account;
         $return = array();

@@ -44,6 +44,7 @@ if(!empty($_REQUEST['mail_smtppass'])) {
     }
 }
 $smtpType = !empty($_REQUEST['mail_smtptype']) ? $_REQUEST['mail_smtptype'] : '';
+$authType = !empty($_REQUEST['mail_authtype']) ? $_REQUEST['mail_authtype'] : '';
 $eapmId = !empty($_REQUEST['eapm_id']) ? $_REQUEST['eapm_id'] : '';
 $authAccount = !empty($_REQUEST['authorized_account']) ? $_REQUEST['authorized_account'] : '';
 
@@ -52,6 +53,7 @@ $out = Email::sendEmailTest($_REQUEST['mail_smtpserver'], $_REQUEST['mail_smtppo
         							$pass, $_REQUEST['outboundtest_from_address'], $_REQUEST['outboundtest_to_address'], $_REQUEST['mail_sendtype'],
     (!empty($_REQUEST['mail_from_name']) ? $_REQUEST['mail_from_name'] : ''),
     $smtpType,
+    $authType,
     $eapmId,
     $authAccount
 );

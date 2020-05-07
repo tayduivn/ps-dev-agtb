@@ -2724,6 +2724,7 @@ $app_strings = array (
     'LBL_EMAIL_SIGNATURE_NAME'              => 'Signature Name',
     'LBL_EMAIL_SIGNATURE_TEXT'              => 'Signature Body',
     'LBL_SMTPTYPE_GOOGLE_OAUTH2'            => 'Google',
+    'LBL_SMTPTYPE_EXCHANGE_ONLINE'          => 'Exchange Online',
     'LBL_SMTPTYPE_GMAIL'                    => 'Google Less-Secure Apps',
     'LBL_SMTPTYPE_YAHOO'                    => 'Yahoo! Mail',
     'LBL_SMTPTYPE_EXCHANGE'                 => 'Microsoft Exchange',

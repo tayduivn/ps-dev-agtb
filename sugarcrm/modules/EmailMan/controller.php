@@ -48,7 +48,7 @@ class EmailManController extends SugarController
         // cn: handle mail_smtpauth_req checkbox on/off (removing double reference in the form itself
         if( !isset($_POST['mail_smtpauth_req']) )
         {
-            if ($_POST['mail_smtptype'] === 'google_oauth2') {
+            if ($_POST['mail_authtype'] === 'oauth2') {
                 // always required
                 $_POST['mail_smtpauth_req'] = 1;
             } else {

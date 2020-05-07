@@ -41,6 +41,7 @@ var authInfo = {/literal}{$js_authinfo}{literal}
 	<input type="hidden" name="source_form" value="config" />
     <input type="hidden" name="eapm_id" id="eapm_id" value="{$eapm_id}" />
     <input type="hidden" name="authorized_account" id="authorized_account" value="{$authorized_account}" />
+    <input type="hidden" name="mail_authtype" id="mail_authtype" value="{$mail_authtype}" />
 
 <table width="100%" cellpadding="0" cellspacing="0" border="0">
 	<tr>
@@ -89,6 +90,13 @@ var authInfo = {/literal}{$js_authinfo}{literal}
                         <span class="first-child">
                             <button type="button" name="mail_smtptype" value="google_oauth2">
                                 &nbsp;&nbsp;&nbsp;&nbsp;{$APP.LBL_SMTPTYPE_GOOGLE_OAUTH2}&nbsp;&nbsp;&nbsp;&nbsp;
+                            </button>
+                        </span>
+                    </span>
+                    <span id="exchange_online" class="yui-button yui-radio-button{if $mail_smtptype == 'exchange_online'} yui-button-checked{/if}">
+                        <span class="first-child">
+                            <button type="button" name="mail_smtptype" value="exchange_online">
+                                &nbsp;&nbsp;&nbsp;&nbsp;{$APP.LBL_SMTPTYPE_EXCHANGE_ONLINE}&nbsp;&nbsp;&nbsp;&nbsp;
                             </button>
                         </span>
                     </span>
@@ -485,8 +493,9 @@ function testOutboundSettings() {
     var smtpType = document.getElementById('EditView').mail_smtptype.value;
     var eapmId = document.getElementById('EditView').eapm_id.value;
     var authAccount = document.getElementById('authorized_account').value;
+    var authType = document.getElementById('mail_authtype').value;
 
-    if(smtpType === 'google_oauth2' && (trim(eapmId) === '' || trim(authAccount) === '')) {
+    if(authType === 'oauth2' && (trim(eapmId) === '' || trim(authAccount) === '')) {
         errorMessage = "{/literal}{$APP.LBL_EMAIL_PLEASE_AUTHORIZE_TESTING}{literal}" + "<br/>";
         overlay("{/literal}{$APP.LBL_EMAIL_ACCOUNT_NOT_AUTHORIZED}{literal}", errorMessage, 'alert');
         return false;
@@ -499,7 +508,7 @@ function testOutboundSettings() {
         isError = true;
         errorMessage += "{/literal}{$APP.LBL_EMAIL_ACCOUNTS_SMTPPORT}{literal}" + "<br/>";
     }
-    if(mailsmtpauthreq.checked) {
+    if(mailsmtpauthreq.checked && authType !== 'oauth2') {
         if(trim(document.getElementById('mail_smtpuser').value) == '') {
             isError = true;
             errorMessage += "{/literal}{$APP.LBL_EMAIL_ACCOUNTS_SMTPUSER}{literal}" + "<br/>";
@@ -559,12 +568,13 @@ function sendTestEmail()
     var smtpType = document.getElementById('EditView').mail_smtptype.value;
     var eapmId = document.getElementById('EditView').eapm_id.value;
     var authAccount = document.getElementById('authorized_account').value;
+    var authType = document.getElementById('mail_authtype').value;
 
     var from_name = document.getElementById('notify_fromname').value;
 	var postDataString = 'mail_type=system&mail_sendtype=' + mail_sendtype + '&mail_smtpserver=' + smtpServer + "&mail_smtpport=" + smtpPort + "&mail_smtpssl=" + smtpssl +
 	                      "&mail_smtpauth_req=" + mailsmtpauthreq.checked + "&mail_smtpuser=" + trim(document.getElementById('mail_smtpuser').value) +
 	                      "&mail_smtppass=" + encodeURIComponent(smtppass) + "&outboundtest_to_address=" + encodeURIComponent(toAddress) +
-                          "&outboundtest_from_address=" + fromAddress + "&mail_from_name=" + from_name + "&mail_smtptype=" + smtpType + "&eapm_id=" + eapmId + "&authorized_account=" + authAccount;
+                          "&outboundtest_from_address=" + fromAddress + "&mail_from_name=" + from_name + "&mail_smtptype=" + smtpType  + "&mail_authtype=" + authType + "&eapm_id=" + eapmId + "&authorized_account=" + authAccount;
 
 	YAHOO.util.Connect.asyncRequest("POST", "index.php?action=testOutboundEmail&module=EmailMan&to_pdf=true&sugar_body_only=true", callbackOutboundTest, postDataString);
 }
@@ -602,7 +612,7 @@ function hideOverlay() {
 function notify_setrequired(f) {
 	document.getElementById("smtp_settings").style.display = (f.mail_sendtype.value == "SMTP") ? "inline" : "none";
 	document.getElementById("smtp_settings").style.visibility = (f.mail_sendtype.value == "SMTP") ? "visible" : "hidden";
-    if (document.getElementById('EditView').mail_smtptype.value != 'google_oauth2') {
+    if (document.getElementById('EditView').mail_authtype.value !== 'oauth2') {
         document.getElementById("smtp_auth1").style.display = (document.getElementById('mail_smtpauth_req').checked) ? "" : "none";
         document.getElementById("smtp_auth1").style.visibility = (document.getElementById('mail_smtpauth_req').checked) ? "visible" : "hidden";
         document.getElementById("smtp_auth2").style.display = (document.getElementById('mail_smtpauth_req').checked) ? "" : "none";
@@ -667,27 +677,29 @@ function authorize() {
     }
 }
 function handleOauthComplete(e) {
+    var smtpType = document.getElementById('EditView').mail_smtptype.value;
     var data = JSON.parse(e.data);
-    if (!data.dataSource || data.dataSource !== 'googleEmailRedirect') {
+    if (!data.dataSource || !authInfo[smtpType] || data.dataSource !== authInfo[smtpType]['dataSource']) {
         return;
     }
     if (data.eapmId && data.emailAddress) {
+        authInfo[smtpType]['eapm_id'] = data.eapmId;
+        authInfo[smtpType]['authorized_account'] = data.emailAddress;
         document.getElementById('eapm_id').value = data.eapmId;
         document.getElementById('auth_status').value = '{/literal}{$APP.LBL_EMAIL_AUTHORIZED}{literal}';
         document.getElementById('authorized_account').value = data.emailAddress;
         document.getElementById('auth_email').value = data.emailAddress;
-        document.getElementById('mail_smtpuser').value = data.emailAddress;
     } else {
         alert('{/literal}{$APP.LBL_EMAIL_AUTH_FAILURE}{literal}');
     }
     window.removeEventListener('message', handleOauthComplete);
 }
 function save_data(form) {
-    var smtpType = document.getElementById('EditView').mail_smtptype.value;
     var eapmId = document.getElementById('EditView').eapm_id.value;
     var authAccount = document.getElementById('authorized_account').value;
+    var authType = document.getElementById('mail_authtype').value;
 
-    if(smtpType === 'google_oauth2' && (trim(eapmId) === '' || trim(authAccount) === '')) {
+    if(authType === 'oauth2' && (trim(eapmId) === '' || trim(authAccount) === '')) {
         errorMessage = "{/literal}{$APP.LBL_EMAIL_PLEASE_AUTHORIZE}{literal}";
         alert(errorMessage);
         return false;
@@ -705,6 +717,9 @@ function changeEmailScreenDisplay(smtptype, clear)
     document.getElementById("mail_smtpauth_req").disabled = false;
 
     if(clear) {
+        document.getElementById("mail_authtype").value = '';
+        document.getElementById("eapm_id").value = '';
+        document.getElementById("authorized_account").value = '';
 	    document.getElementById("mail_smtpserver").value = '';
 	    document.getElementById("mail_smtpport").value = '25';
 	    document.getElementById("mail_smtpauth_req").checked = true;
@@ -757,9 +772,10 @@ function changeEmailScreenDisplay(smtptype, clear)
         document.getElementById("mailsettings0").style.display = '';
         document.getElementById("mail_smtpauth_req").disabled = true;
         document.getElementById("mail_smtpauth_req").checked = true;
-        document.getElementById("mail_smtpuser").value = document.getElementById("authorized_account").value;
+        document.getElementById("mail_authtype").value = 'oauth2';
+        document.getElementById("eapm_id").value = authInfo['google_oauth2']['eapm_id'];
+        document.getElementById("authorized_account").value = authInfo['google_oauth2']['authorized_account'];;
         document.getElementById("auth_email").value = document.getElementById("authorized_account").value;
-        document.getElementById("mail_smtppass").value = 'not required';
         if (!authInfo['google_oauth2']['auth_url']) {
             document.getElementById("auth_warning").style.display = 'block';
             document.getElementById("auth_warning").innerHTML = authInfo['google_oauth2']['auth_warning'];
@@ -779,6 +795,35 @@ function changeEmailScreenDisplay(smtptype, clear)
                 }
             }
         }
+        document.getElementById("smtp_auth1").style.display = 'none';
+        document.getElementById("smtp_auth2").style.display = 'none';
+        document.getElementById("smtp_auth1").style.visibility = 'hidden';
+        document.getElementById("smtp_auth2").style.visibility = 'hidden';
+        break;
+    case "exchange_online":
+        document.getElementById("auth_block").style.display = '';
+        document.getElementById("mailsettings0").style.display = '';
+        document.getElementById("mail_smtpauth_req").disabled = true;
+        document.getElementById("mail_smtpauth_req").checked = true;
+        document.getElementById("mail_authtype").value = 'oauth2';
+        document.getElementById("eapm_id").value = authInfo['exchange_online']['eapm_id'];
+        document.getElementById("authorized_account").value = authInfo['exchange_online']['authorized_account'];;
+        document.getElementById("auth_email").value = document.getElementById("authorized_account").value;
+        if (!authInfo['exchange_online']['auth_url']) {
+            document.getElementById("auth_warning").style.display = 'block';
+            document.getElementById("auth_warning").innerHTML = authInfo['exchange_online']['auth_warning'];
+            document.getElementById("auth_button").disabled = true;
+        } else {
+            document.getElementById("auth_warning").style.display = 'none';
+            document.getElementById("auth_button").disabled = false;
+        }
+        if (document.getElementById("mail_smtpserver").value == 'plus.smtp.mail.yahoo.com' ||
+            document.getElementById("mail_smtpserver").value == 'smtp.gmail.com' || 
+            document.getElementById("mail_smtpserver").value === '') {
+            document.getElementById("mail_smtpserver").value = 'smtp.office365.com';
+        }
+        document.getElementById("mail_smtpport_label").innerHTML = '{/literal}{$MOD.LBL_EXCHANGE_SMTPPORT}{literal}';
+        document.getElementById("mail_smtpserver_label").innerHTML = '{/literal}{$MOD.LBL_EXCHANGE_SMTPSERVER}{literal}';
         document.getElementById("smtp_auth1").style.display = 'none';
         document.getElementById("smtp_auth2").style.display = 'none';
         document.getElementById("smtp_auth1").style.visibility = 'hidden';
