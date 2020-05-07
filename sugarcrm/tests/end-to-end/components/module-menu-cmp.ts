@@ -111,9 +111,14 @@ export default class extends BaseView {
 
                     // Purchases
                     'Create Purchase': 'a[data-navbar-menu-item="LNK_NEW_PURCHASE"]',
-                    'View Purchases': 'a[data-navbar-menu-item="LNK_LNK_NEW_PURCHASE_LIST"]',
+                    'View Purchases': 'a[data-navbar-menu-item="LNK_PURCHASE_LIST"]',
                     'View Purchase Reports': 'a[data-navbar-menu-item="LNK_PURCHASE_REPORTS"]',
-                    'Import Purchases': 'a[data-navbar-menu-item="LNK_IMPORT_PURCHASE"]',
+                    'Import Purchases': 'a[data-navbar-menu-item="LNK_IMPORT_PURCHASES"]',
+
+                    // Purchased Line Items
+                    'Create Purchased Line Item': 'a[data-navbar-menu-item="LNK_NEW_PURCHASEDLINEITEM"]',
+                    'View Purchased Line Items': 'a[data-navbar-menu-item="LNK_PURCHASEDLINEITEM_LIST"]',
+                    'Import Purchased Line Items': 'a[data-navbar-menu-item="LNK_IMPORT_PURCHASEDLINEITEMS"]',
                 },
             }
         };

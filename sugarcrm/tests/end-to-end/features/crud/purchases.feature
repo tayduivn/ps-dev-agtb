@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@crud_modules_purchases @job1
+@crud_modules_purchases @job1 @pr
 Feature: Purchases module verification
 
   Background:
@@ -33,15 +33,13 @@ Feature: Purchases module verification
       | A_1 | Account One |
 
     And Purchases records exist related via purchases link to *A_1:
-      | *     | name       | start_date | end_date   | service | renewable | description            |
-      | Pur_1 | Purchase 1 | 2020-06-01 | 2021-05-31 | true    | true      | This is great purchase |
+      | *     | name       | service | renewable | description            |
+      | Pur_1 | Purchase 1 | true    | true      | This is great purchase |
 
     Then Purchases *Pur_1 should have the following values in the preview:
       | fieldName    | value                  |
       | name         | Purchase 1             |
       | account_name | Account One            |
-      | start_date   | 06/01/2020             |
-      | end_date     | 05/31/2021             |
       | service      | true                   |
       | renewable    | true                   |
       | description  | This is great purchase |
@@ -50,8 +48,8 @@ Feature: Purchases module verification
   @list-search
   Scenario Outline: Purchases > List View > Filter > Search main input
     Given 3 Purchases records exist:
-      | *             | name               | start_date         | end_date           | service | renewable | description            |
-      | Pur_{{index}} | Purchase {{index}} | 2020-06-0{{index}} | 2021-06-0{{index}} | true    | true      | This is great purchase |
+      | *             | name               | service | renewable | description            |
+      | Pur_{{index}} | Purchase {{index}} | true    | true      | This is great purchase |
     # Search for specific record
     When I choose Purchases in modules menu
     And I search for "Purchase <searchIndex>" in #PurchasesList.FilterView view
@@ -69,24 +67,20 @@ Feature: Purchases module verification
       | A_{{index}} | Account_{{index}} |
 
     Given Purchases records exist related via purchases link to *A_1:
-      | *     | name       | start_date | end_date   | service | renewable | description            |
-      | Pur_1 | Purchase 1 | 2020-06-01 | 2021-06-01 | true    | true      | This is great purchase |
+      | *     | name       | service | renewable | description            |
+      | Pur_1 | Purchase 1 | true    | true      | This is great purchase |
 
     # Edit (or cancel editing of) record in the list view
     When I <action> *Pur_1 record in Purchases list view with the following values:
       | fieldName    | value                  |
       | name         | Purchase <changeIndex> |
       | account_name | Account_<changeIndex>  |
-      | start_date   | 06/0<changeIndex>/2020 |
-      | end_date     | 06/0<changeIndex>/2021 |
 
     # Verify if edit (or cancel) is successful
     Then Purchases *Pur_1 should have the following values in the list view:
       | fieldName    | value                    |
       | name         | Purchase <expectedIndex> |
       | account_name | Account_<expectedIndex>  |
-      | start_date   | 06/0<expectedIndex>/2020 |
-      | end_date     | 06/0<expectedIndex>/2021 |
 
     Examples:
       | action            | changeIndex | expectedIndex |
@@ -97,8 +91,8 @@ Feature: Purchases module verification
   @list-delete
   Scenario Outline: Purchases > List View > Delete > OK/Cancel
     Given Purchases records exist:
-      | *     | name       | start_date | end_date   | service | renewable | description            |
-      | Pur_1 | Purchase 1 | 2020-06-01 | 2021-06-01 | true    | true      | This is great purchase |
+      | *     | name       | service | renewable | description            |
+      | Pur_1 | Purchase 1 | true    | true      | This is great purchase |
     # Delete (or Cancel deletion of) record from list view
     When I <action> *Pur_1 record in Purchases list view
     # Verify that record is (is not) deleted
@@ -111,8 +105,8 @@ Feature: Purchases module verification
   @delete
   Scenario Outline: Purchases > Record View > Delete
     Given Purchases records exist:
-      | *     | name       | start_date | end_date   | service | renewable | description            |
-      | Pur_1 | Purchase 1 | 2020-06-01 | 2021-06-01 | true    | true      | This is great purchase |
+      | *     | name       | service | renewable | description            |
+      | Pur_1 | Purchase 1 | true    | true      | This is great purchase |
 
     # Delete (or Cancel deletion of) record in the record view
     When I <action> *Pur_1 record in Purchases record view
@@ -132,8 +126,8 @@ Feature: Purchases module verification
       | A_1 | Account One |
 
     And Purchases records exist related via purchases link to *A_1:
-      | *     | name       | start_date | end_date   | service | renewable | description            |
-      | Pur_1 | Purchase 1 | 2020-06-01 | 2021-05-31 | true    | true      | This is great purchase |
+      | *     | name       | service | renewable | description            |
+      | Pur_1 | Purchase 1 | true    | true      | This is great purchase |
 
     # Copy (or cancel copy of) record in the record view
     When I <action> *Pur_1 record in Purchases record view with the following header values:
@@ -145,8 +139,6 @@ Feature: Purchases module verification
       | fieldName    | value                    |
       | name         | Purchase <expectedIndex> |
       | account_name | Account One              |
-      | start_date   | 06/01/2020               |
-      | end_date     | 05/31/2021               |
       | service      | true                     |
       | renewable    | true                     |
       | description  | This is great purchase   |
@@ -175,8 +167,8 @@ Feature: Purchases module verification
       | Pur_1 | My New Purchase |
     # Populate record data
     When I provide input for #PurchasesDrawer.RecordView view
-      | *     | account_name | product_template_name | start_date | end_date   | service | renewable | tag  | commentlog  | description                  |
-      | Pur_1 | Account One  | Product One           | 06/01/2020 | 05/31/2021 | true    | true      | Alex | New Message | You've made a great purchase |
+      | *     | account_name | product_template_name | service | renewable | tag  | commentlog  | description                  |
+      | Pur_1 | Account One  | Product One           | true    | true      | Alex | New Message | You've made a great purchase |
     # Save
     When I click Save button on #PurchasesDrawer header
     When I close alert
@@ -186,12 +178,63 @@ Feature: Purchases module verification
       | name                  | My New Purchase              |
       | account_name          | Account One                  |
       | product_template_name | Product One                  |
-      | start_date            | 06/01/2020                   |
-      | end_date              | 05/31/2021                   |
       | service               | true                         |
       | renewable             | true                         |
       | tag                   | Alex                         |
       | description           | You've made a great purchase |
+
+
+  @SS-431
+  Scenario: Purchases > Calculate Purchase's Start Date and End Date fields
+    Given Accounts records exist:
+      | *   | name        |
+      | A_1 | Account One |
+
+    And Purchases records exist related via purchases link to *A_1:
+      | *     | name       | service | renewable | description            |
+      | Pur_1 | Purchase 1 | true    | true      | This is great purchase |
+
+    And PurchasedLineItems records exist related via purchasedlineitems link to *Pur_1:
+      | *     | name  | revenue | date_closed | quantity | service_start_date | service_end_date | service | renewable | discount_price |
+      | PLI_1 | PLI_1 | 2000    | 2020-06-01  | 3.00     | 2020-06-01         | 2021-06-01       | true    | true      | 2000           |
+      | PLI_2 | PLI_2 | 2000    | 2020-06-01  | 3.00     | 2020-05-30         | 2021-05-31       | true    | true      | 2000           |
+
+    # Verify purchase start date and end date
+    Then Purchases *Pur_1 should have the following values in the preview:
+      | fieldName  | value      |
+      | name       | Purchase 1 |
+      | start_date | 05/30/2020 |
+      | end_date   | 06/01/2021 |
+
+    # Update PLI record
+    When I choose PurchasedLineItems in modules menu
+    When I select *PLI_1 in #PurchasedLineItemsList.ListView
+    When I click Edit button on #PLI_1Record header
+    When I click show more button on #PLI_1Record view
+    When I provide input for #PLI_1Record.RecordView view
+      | service_start_date |
+      | 05/15/2020         |
+    When I click Save button on #PLI_1Record header
+    When I close alert
+
+    # Update PLI record
+    When I choose PurchasedLineItems in modules menu
+    When I select *PLI_2 in #PurchasedLineItemsList.ListView
+    When I click Edit button on #PLI_2Record header
+    When I click show more button on #PLI_2Record view
+    When I provide input for #PLI_2Record.RecordView view
+      | service_start_date | service_duration_value | service_duration_unit |
+      | 06/29/2020         | 1                      | Year(s)               |
+    When I click Save button on #PLI_1Record header
+    When I close alert
+
+    # Verify purchase start date and end date
+    Then Purchases *Pur_1 should have the following values in the preview:
+      | fieldName  | value      |
+      | name       | Purchase 1 |
+      | start_date | 05/15/2020 |
+      | end_date   | 06/28/2021 |
+
 
   @user_profile
   Scenario: User Profile > Change license type
