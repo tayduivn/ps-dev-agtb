@@ -11,9 +11,11 @@
  */
 --}}
 <nav>
-    <ul class="field-list">
+    <ul id="fields-sortable" class="field-list connectedSortable">
     {{#each currentAvailableFields}}
-        <li field_name="{{name}}">{{label}}</li>
+        <li class="pill outer" fieldname="{{name}}" fieldlabel="{{label}}" rel="tooltip" data-original-title="{{display-name}}">
+        {{display-name}}
+        </li>
     {{/each}}
     </ul>
 </nav>

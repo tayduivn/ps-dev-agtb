@@ -153,5 +153,14 @@ describe('ConsoleConfiguration.Fields.AvailableFieldList', function() {
             });
         });
     });
+
+    describe('handleDragAndDrop', function() {
+        it('should call this.$.sortable method', function() {
+            sinon.collection.stub(jQuery.fn, 'sortable', function() {});
+            field.handleDragAndDrop();
+
+            expect(jQuery.fn.sortable).toHaveBeenCalled();
+        });
+    });
 });
 

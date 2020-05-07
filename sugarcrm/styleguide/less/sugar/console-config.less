@@ -54,6 +54,7 @@
   display: flex;
   border-bottom: 1px solid #ddd;
   background-color: @grayLighter;
+  overflow-x: scroll;
 }
 
 /* Create two equal columns that sits next to each other */
@@ -64,7 +65,6 @@
 
 .config-side-pane .border-right {
   border-right: 1px solid  #ddd;
-  margin-left: 12px;
 }
 
 .config-side-pane nav ul.field-list {
@@ -103,14 +103,26 @@
 
 .config-side-pane .columns nav ul.field-list {
   height: 480px;
+  width: 200px;
 }
 
 .config-side-pane .fields nav ul.field-list {
   height: 500px;
 }
 
-.config-side-pane nav li {
+.config-side-pane .columns nav li {
   padding-left: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  position: relative;
+}
+
+.config-side-pane .fields nav li {
+  padding-left: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .config-side-pane .columns nav .pill {
@@ -120,6 +132,11 @@
   margin: 3px;
   margin-bottom: 5px;
   cursor: pointer;
+}
+
+.config-side-pane .columns nav .pill .list-header {
+  color: black;
+  position: relative;
 }
 
 .config-side-pane .columns nav .outer {
@@ -156,6 +173,9 @@
 
 .config-side-pane .columns nav li.list-header {
   padding-left: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .config-side-pane .columns nav i.console-field-remove {
@@ -168,10 +188,13 @@
 
 .config-side-pane .columns nav .pill i.console-field-remove {
   color: white;
+  position: absolute;
+  left: 90%;
 }
 
 .config-side-pane .columns nav li.list-header i.console-field-remove {
   color: black;
+  left: 90%;
 }
 
 .config-side-pane .columns nav ul.multi-field:hover li.list-header i.console-field-remove {
@@ -180,6 +203,33 @@
 
 .config-side-pane .columns nav ul.multi-field li.list-header i.console-field-remove {
   visibility: hidden;
+}
+
+.config-side-pane .columns nav i.multi-field-column-remove {
+  float: right;
+  padding-right: 3px;
+  cursor: pointer;
+  z-index: 1;
+  margin-top: 3px;
+}
+
+.config-side-pane .columns nav .pill i.multi-field-column-remove {
+  color: white;
+}
+
+.config-side-pane .columns nav li.list-header i.multi-field-column-remove {
+  color: black;
+  left: 90%;
+}
+
+.config-side-pane .columns nav ul.multi-field:hover li.list-header i.multi-field-column-remove {
+  visibility: visible;
+  position: absolute;
+}
+
+.config-side-pane .columns nav ul.multi-field li.list-header i.multi-field-column-remove {
+  visibility: hidden;
+  position: absolute;
 }
 
 .config-side-pane .columns li.pill:hover i {

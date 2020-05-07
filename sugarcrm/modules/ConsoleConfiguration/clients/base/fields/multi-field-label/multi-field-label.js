@@ -14,6 +14,8 @@
  * @extends View.Fields.Base.BaseField
  */
 ({
+    extendsFrom: 'ConsoleConfigurationFieldListField',
+
     events: {
         'click .multi-field-label': 'multiFieldColumnLinkClicked'
     },
@@ -25,10 +27,16 @@
     multiFieldColumnLinkClicked: function(e) {
         var multiRow = app.lang.get('LBL_CONSOLE_MULTI_ROW', this.module);
         var multiRowHint = app.lang.get('LBL_CONSOLE_MULTI_ROW_HINT', this.module);
-        var newMultiField = '<li class="multi-field-block"><ul class="multi-field"><li class="list-header"><i>' +
-            multiRow +
-            '</i><i class="fa fa-times-circle console-field-remove"></i></li><div class="multi-field-hint">' +
+        var newMultiField = '<li class="pill outer multi-field-block">' +
+            '<ul id="multi-field-sortable" class="multi-field connectedSortable">' +
+            '<li class="list-header" rel="tooltip" data-original-title="' + multiRow + '">' + multiRow +
+            '<i class="fa fa-times-circle multi-field-column-remove"></i></li><div class="multi-field-hint">' +
             multiRowHint + '</div></ul></li>';
-        $(e.currentTarget).closest('div.column').find('ul.field-list:first').append(newMultiField);
+
+        var columnBox = $(e.currentTarget).closest('div.column').find('ul.field-list:first');
+        columnBox.append(newMultiField);
+        var newUl = columnBox.find('#multi-field-sortable.multi-field.connectedSortable:last');
+
+        this.getSortable(newUl);
     }
 })

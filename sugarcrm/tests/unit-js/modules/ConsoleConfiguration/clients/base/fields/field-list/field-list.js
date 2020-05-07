@@ -138,4 +138,22 @@ describe('ConsoleConfiguration.Fields.FieldList', function() {
             expect(actual).toEqual(expected);
         });
     });
+
+    describe('handleDragAndDrop', function() {
+        it('should call this.$.sortable method', function() {
+            sinon.collection.stub(jQuery.fn, 'sortable', function() {});
+            field.handleDragAndDrop();
+
+            expect(jQuery.fn.sortable).toHaveBeenCalled();
+        });
+    });
+
+    describe('getSortable', function() {
+        it('should call $.sortable method', function() {
+            sinon.collection.stub(jQuery.fn, 'sortable', function() {});
+            field.getSortable(jQuery.fn);
+
+            expect(jQuery.fn.sortable).toHaveBeenCalled();
+        });
+    });
 });

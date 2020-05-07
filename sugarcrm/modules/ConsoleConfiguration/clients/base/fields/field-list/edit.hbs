@@ -11,21 +11,21 @@
  */
 --}}
 <nav>
-    <ul class="field-list">
+    <ul id="columns-sortable" class="field-list connectedSortable">
         {{#each mappedFields}}
             {{#notEq this.length "1"}}
-                <li class="multi-field-block">
-                    <ul class="multi-field">
-                        <li class="list-header" fieldname="{{this.[0].parent_name}}">
+                <li class="pill outer multi-field-block">
+                    <ul id="multi-field-sortable" class="multi-field connectedSortable">
+                        <li class="list-header" fieldname="{{this.[0].parent_name}}" fieldlabel="{{this.[0].parent_label}}" rel="tooltip" data-original-title="{{#each this}}{{#unless @first}}/{{/unless}}{{str label ../../../model.attributes.enabled_module}}{{/each}}">
                             {{#each this}}
                                 {{#unless @first}}/{{/unless}}
                                 {{str label ../../../model.attributes.enabled_module}}
                             {{/each}}
-                            <i class="fa fa-times-circle console-field-remove"></i>
+                        <i class="fa fa-times-circle multi-field-column-remove"></i>
                         </li>
                         {{#each this}}
-                            <li class="pill" fieldname="{{name}}" parentname="{{parent_name}}"
-                                parentlabel="{{parent_label}}">
+                            <li class="pill" fieldname="{{name}}" fieldlabel="{{label}}" rel="tooltip"
+                                data-original-title="{{str label ../../../model.attributes.enabled_module}}">
                                 {{str label ../../../model.attributes.enabled_module}}
                                 <i class="fa fa-times-circle console-field-remove"></i>
                             </li>
@@ -36,8 +36,9 @@
             {{#eq this.length "1"}}
                 <li class="pill outer"
                     fieldname="{{this.[0].name}}"
-                    parentname="{{this.[0].parent_name}}"
-                    parentlabel="{{this.[0].parent_label}}">
+                    fieldlabel="{{this.[0].label}}"
+                    rel="tooltip"
+                    data-original-title="{{str this.[0].label ../../model.attributes.enabled_module}}">
                     {{str this.[0].label ../../model.attributes.enabled_module}}
                     <i class="fa fa-times-circle console-field-remove"></i>
                 </li>

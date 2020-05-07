@@ -87,6 +87,14 @@
     },
 
     /**
+     * @inheritdoc
+     */
+    _render: function() {
+        this._super('_render');
+        this.handleDragAndDrop();
+    },
+
+    /**
      * Sets the available fields for the requested module.
      *
      * @param {string} moduleName The selected module name from the available modules.
@@ -101,7 +109,8 @@
             if (this.isFieldSupported(field, multiLineFields)) {
                 this.availableFieldLists.push({
                     'name': field.name,
-                    'label': app.lang.get(field.label || field.vname, moduleName)
+                    'label': (field.label || field.vname),
+                    'display-name': app.lang.get(field.label || field.vname, moduleName)
                 });
             }
         }, this);
@@ -177,4 +186,52 @@
         }
         return false;
     },
+
+    /**
+     * Handles the dragging of the items from available fields list to the columns list section
+     * But not the way around
+     */
+    handleDragAndDrop: function() {
+        this.$('#fields-sortable').sortable({
+            connectWith: '.connectedSortable',
+            update: _.bind(function(event, ui) {
+                var multiRow = app.lang.get('LBL_CONSOLE_MULTI_ROW', this.module);
+                var multiRowHint = app.lang.get('LBL_CONSOLE_MULTI_ROW_HINT', this.module);
+                var hint = '<div class="multi-field-hint">' + multiRowHint + '</div>';
+                if ($(ui.sender).hasClass('multi-field') && ui.sender.children().length > 0) {
+                    var header = '';
+                    var headerLabel = '';
+                    var i = 0;
+                    _.each(ui.sender.children(), function(field) {
+                        if (i > 1) {
+                            header += '/';
+                            headerLabel += '/';
+                        }
+                        if (i++ > 0 && !_.isUndefined(field) && !_.isUndefined(field.textContent)) {
+                            if (field.textContent.trim() === multiRowHint) {
+                                // clean hint text, it will be added later
+                                $(field).remove();
+                            } else {
+                                header += field.textContent.trim();
+                                headerLabel += field.getAttribute('fieldlabel');
+                            }
+                        }
+                    }, this);
+                    if (header.endsWith('/')) {
+                        header = header.slice(0, -1);
+                        headerLabel = headerLabel.slice(0, -1);
+                    }
+                    header = header ? header : multiRow;
+                    $(ui.sender.children()[0]).text(header)
+                        .append(this.removeColIcon);
+                    $(ui.sender.children()[0]).attr('data-original-title', header);
+                    $(ui.sender.children()[0]).attr('fieldname', header);
+                    $(ui.sender.children()[0]).attr('fieldlabel', headerLabel);
+                }
+            }, this),
+            receive: _.bind(function(event, ui) {
+                ui.sender.sortable('cancel');
+            }, this)
+        });
+    }
 })
