@@ -76,7 +76,7 @@ Then(/^I verify (\*[a-zA-Z](?:\w|\S)*) tile field values in (#[a-zA-Z](?:\w|\S)*
  *  @example
  *  Then I verify the [*Opp_1] records are under "Qualification" column in #OpportunitiesTileView view
  */
-Then(/^I verify the (\[(?:\*\w+)(?:,\s*(?:\*\w+))*\]) records are (not )?under "(\w+[\/\s\+]*\w+)" column in (#[a-zA-Z](?:\w|\S)*) view$/,
+Then(/^I verify the (\[(?:\*\w+)(?:,\s*(?:\*\w+))*\]) records are (not )?under "(\w+[\/\s\+\-]*\w+)" column in (#[a-zA-Z](?:\w|\S)*) view$/,
     async function (inputIDs: string, not, columnName: string, view: any) {
 
         let value;

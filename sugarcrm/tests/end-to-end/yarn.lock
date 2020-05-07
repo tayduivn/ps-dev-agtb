@@ -465,9 +465,10 @@
   dependencies:
     core-js "^2.5.7"
 
-"@sugarcrm/seedbed@0.8.15":
-  version "0.8.15"
-  resolved "https://cache.sugardev.team/repository/npm/@sugarcrm/seedbed/-/seedbed-0.8.15.tgz#8da4e4ef946fb15f7a21c3d1ede65a4997ac47de"
+"@sugarcrm/seedbed@0.8.16":
+  version "0.8.16"
+  resolved "https://cache.sugardev.team/repository/npm/@sugarcrm/seedbed/-/seedbed-0.8.16.tgz#599bda2bc16263bc06cbfb1d5969c56bc95757bf"
+  integrity sha512-72nPbUAo9kg1MGFoiANHjau4lQ5lIbESY4Ij8gpjbxhcAitqy31UKaXbNjQ7hkXMEDGg6OS92BUOZWpYf9BKEQ==
   dependencies:
     "@types/async" "1.4.28"
     "@types/bluebird" "2.0.30"
@@ -583,9 +584,10 @@
   version "4.14.104"
   resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.104.tgz#53ee2357fa2e6e68379341d92eb2ecea4b11bb80"
 
-"@types/lodash@4.14.54":
-  version "4.14.54"
-  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.54.tgz#287dbbcd97d5da69c25ca99fb5afa81c4839b7fa"
+"@types/lodash@^4.14.150":
+  version "4.14.151"
+  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.151.tgz#7d58cac32bedb0ec37cb7f99094a167d6176c9d5"
+  integrity sha512-Zst90IcBX5wnwSu7CAS0vvJkTjTELY4ssKbHiTnGcJgi170uiS8yQDdc3v6S77bRqYQIN1App5a1Pc2lceE5/g==
 
 "@types/moment@2.13.0":
   version "2.13.0"
@@ -6389,6 +6391,11 @@ natives@^1.1.0:
   version "1.1.5"
   resolved "https://registry.yarnpkg.com/natives/-/natives-1.1.5.tgz#3bdbdb4104023e5dd239b56fc7ef3d9a17acc6aa"
 
+natives@^1.1.6:
+  version "1.1.6"
+  resolved "https://registry.yarnpkg.com/natives/-/natives-1.1.6.tgz#a603b4a498ab77173612b9ea1acdec4d980f00bb"
+  integrity sha512-6+TDFewD4yxY14ptjKaS63GVdtKiES1pTPyxn9Jb0rBqPMZ7VcCiooEhPNsr+mqHtMGxa/5c/HhcC4uPEUw/nA==
+
 natural-compare@^1.4.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/natural-compare/-/natural-compare-1.4.0.tgz#4abebfeed7541f2c27acfb29bdbbd15c8d5ba4f7"
@@ -8867,13 +8874,14 @@ typedarray@^0.0.6:
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
 
-typescript@2.6.1:
-  version "2.6.1"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.6.1.tgz#ef39cdea27abac0b500242d6726ab90e0c846631"
-
 typescript@2.7.2:
   version "2.7.2"
   resolved "http://registry.npmjs.org/typescript/-/typescript-2.7.2.tgz#2d615a1ef4aee4f574425cdff7026edf81919836"
+
+typescript@^2.7.2:
+  version "2.9.2"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.9.2.tgz#1cbf61d05d6b96269244eb6a3bce4bd914e0f00c"
+  integrity sha512-Gr4p6nFNaoufRIY4NMdpQRNmgxVIGMs4Fcu/ujdYk3nAZqk7supzBE9idmvfZIlH/Cuj//dvi+019qEue9lV0w==
 
 uglify-js@1.2.5:
   version "1.2.5"
