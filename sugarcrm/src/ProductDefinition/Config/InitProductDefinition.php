@@ -319,7 +319,8 @@ class InitProductDefinition
             "business_center_name":["SUGAR_SELL"]
         },
         "Opportunities": {
-            "renewal":["SUGAR_SELL"]
+            "renewal":["SUGAR_SELL"],
+            "service_start_date":["SUGAR_SELL"]
         },
         "Products": {
             "service":["SUGAR_SELL"],
@@ -344,7 +345,9 @@ class InitProductDefinition
             "renewable":["SUGAR_SELL"],
             "service_duration":["SUGAR_SELL"],
             "service_duration_value":["SUGAR_SELL"],
-            "service_duration_unit":["SUGAR_SELL"]
+            "service_duration_unit":["SUGAR_SELL"],
+            "purchasedlineitem":["SUGAR_SELL"],
+            "generate_purchase":["SUGAR_SELL"]
         },
         "Users": {
             "business_center_id":["SUGAR_SERVE","SUGAR_SELL"],
