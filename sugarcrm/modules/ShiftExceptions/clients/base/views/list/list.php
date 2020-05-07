@@ -18,18 +18,6 @@ $viewdefs['ShiftExceptions']['base']['view']['list'] = [
             'label' => 'LBL_PANEL_1',
             'fields' => [
                 [
-                    'name' => 'date_start',
-                    'label' => 'LBL_CALENDAR_START_DATE',
-                    'default' => true,
-                    'enabled' => true,
-                ],
-                [
-                    'name' => 'date_end',
-                    'label' => 'LBL_CALENDAR_END_DATE',
-                    'default' => true,
-                    'enabled' => true,
-                ],
-                [
                     'name' => 'name',
                     'label' => 'LBL_NAME',
                     'default' => true,
@@ -37,24 +25,22 @@ $viewdefs['ShiftExceptions']['base']['view']['list'] = [
                     'link' => true,
                 ],
                 [
-                    'name' => 'type',
-                    'label' => 'LBL_TYPE',
+                    'name' => 'start_date',
+                    'label' => 'LBL_CALENDAR_START_DATE',
                     'default' => true,
                     'enabled' => true,
                 ],
                 [
-                    'name' => 'start_time',
-                    'label' => 'LBL_START_TIME',
-                    'default' => false,
+                    'name' => 'end_date',
+                    'label' => 'LBL_CALENDAR_END_DATE',
+                    'default' => true,
                     'enabled' => true,
-                    'readonly' => true,
                 ],
                 [
-                    'name' => 'end_time',
-                    'label' => 'LBL_END_TIME',
-                    'default' => false,
+                    'name' => 'shift_exception_type',
+                    'label' => 'LBL_TYPE',
+                    'default' => true,
                     'enabled' => true,
-                    'readonly' => true,
                 ],
                 [
                     'name' => 'timezone',
