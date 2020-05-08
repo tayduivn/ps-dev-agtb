@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "04dc233fe53b7931af26fae83f54e8ec",
+    "content-hash": "8933c37df65505ae58df188ac9392e52",
     "packages": [
         {
             "name": "aws/aws-sdk-php",
@@ -2887,7 +2887,7 @@
             "dist": {
                 "type": "path",
                 "url": "dist/identity-provider",
-                "reference": "50dc62d966ddfdc3d3c8f61f024bcf169c653a10"
+                "reference": "31cfe20a79f906ce384ec417f413b577e4c4a28e"
             },
             "require": {
                 "doctrine/dbal": "~2.2",

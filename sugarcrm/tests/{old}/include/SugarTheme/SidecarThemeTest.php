@@ -11,25 +11,29 @@
  */
 
 use PHPUnit\Framework\TestCase;
+use Sugarcrm\Sugarcrm\Security\ValueObjects\PlatformName;
 
 class SidecarThemeTest extends TestCase
 {
-    private $platformTest = 'platform_TEST_123456789E_1234';
-    private $themeTest = 'theme_TEST_123456789E_1234';
+    private $platformName;
+    protected function setUp(): void
+    {
+        $this->platformName = PlatformName::fromString('platform_TEST_123456789E_1234');
+    }
 
     protected function tearDown() : void
     {
         SugarCache::instance()->flush();
-        // Clear out the test folders
-        $customDir = 'custom/themes/clients/' . $this->platformTest;
+        // Clear out the test directories
+        $customDir = 'custom/themes/clients/' . $this->platformName->value();
         if (is_dir($customDir)) {
             rmdir_recursive($customDir);
         }
-        $cacheDir = 'cache/themes/clients/' . $this->platformTest;
+        $cacheDir = 'cache/themes/clients/' . $this->platformName->value();
         if (is_dir($cacheDir)) {
             rmdir_recursive($cacheDir);
         }
-        $baseDir = 'styleguide/themes/clients/' . $this->platformTest;
+        $baseDir = 'styleguide/themes/clients/' . $this->platformName->value();
         if (is_dir($baseDir)) {
             rmdir_recursive($baseDir);
         }
@@ -42,17 +46,13 @@ class SidecarThemeTest extends TestCase
     {
         // If our theme doesn't have a variables.php file, it should cache the
         // default file.
-        $theme = new SidecarTheme($this->platformTest, $this->themeTest);
-        $defaultTheme = new SidecarTheme($this->platformTest, 'default');
+        $theme = new SidecarTheme($this->platformName);
         $themePaths = $theme->getPaths();
-        $defaultPaths = $defaultTheme->getPaths();
 
         // Make sure our environment is clean. The FileNotExists assertion works
         // on directories as well.
         $this->assertFileDoesNotExist($themePaths['cache']);
-        $this->assertFileDoesNotExist($defaultPaths['cache']);
         $this->assertNull(sugar_cache_retrieve($themePaths['hashKey']));
-        $this->assertNull(sugar_cache_retrieve($defaultPaths['hashKey']));
 
         $urls = $theme->getCSSURL();
         $this->assertArrayHasKey('sugar', $urls);
@@ -60,16 +60,12 @@ class SidecarThemeTest extends TestCase
             $this->assertFileExists($url, 'The CSS (' . $url . ') file should be found');
         }
 
-        // The fake theme doesn't have a variables.php, so it should only set a
-        // cache key for the default theme.
-        $this->assertNull(sugar_cache_retrieve($themePaths['hashKey']));
-        $this->assertIsArray(sugar_cache_retrieve($defaultPaths['hashKey']));
+        $this->assertIsArray(sugar_cache_retrieve($themePaths['hashKey']));
 
-        if (is_dir($defaultPaths['cache'])) {
-            rmdir_recursive($defaultPaths['cache']);
+        if (is_dir($themePaths['cache'])) {
+            rmdir_recursive($themePaths['cache']);
         }
         sugar_cache_clear($themePaths['hashKey']);
-        sugar_cache_clear($defaultPaths['hashKey']);
     }
 
     /**
@@ -77,7 +73,7 @@ class SidecarThemeTest extends TestCase
      */
     public function testCompileTheme()
     {
-        $theme = new SidecarTheme($this->platformTest, $this->themeTest);
+        $theme = new SidecarTheme($this->platformName);
         $themePaths = $theme->getPaths();
 
         $this->assertFileDoesNotExist($themePaths['cache']);
@@ -95,7 +91,7 @@ class SidecarThemeTest extends TestCase
      */
     public function testPreviewCss()
     {
-        $theme = new SidecarTheme($this->platformTest, $this->themeTest);
+        $theme = new SidecarTheme($this->platformName);
         $themePaths = $theme->getPaths();
 
         $this->assertFileDoesNotExist($themePaths['cache']);
@@ -109,7 +105,7 @@ class SidecarThemeTest extends TestCase
      */
     public function testCompileFile()
     {
-        $theme = new SidecarTheme($this->platformTest, $this->themeTest);
+        $theme = new SidecarTheme($this->platformName);
         $themePaths = $theme->getPaths();
 
         $files = glob($themePaths['cache'] . '*.css');
@@ -119,45 +115,6 @@ class SidecarThemeTest extends TestCase
         $hash = $theme->compileFile('sugar');
 
         $this->assertFileExists($themePaths['cache'] . 'sugar_' . $hash .'.css', 'The css file should have been created.');
-    }
-
-    /**
-     * @group Theming
-     */
-    public function testGetUserPreferredTheme()
-    {
-        $oldPreferredTheme = null;
-        $preferredTheme = 'MyTestPreferredTheme';
-
-        // Save preferred theme stored in session
-        if (isset($_SESSION['authenticated_user_theme'])) {
-            $oldPreferredTheme = $_SESSION['authenticated_user_theme'];
-        }
-        $_SESSION['authenticated_user_theme'] = $preferredTheme;
-
-
-        // Create a theme without defining a themeName
-        $theme = new SidecarTheme($this->platformTest, null);
-        $paths = $theme->getPaths();
-
-        $userTheme = SugarTestReflection::callProtectedMethod($theme, 'getUserTheme');
-        $this->assertEquals(
-            'default',
-            $userTheme,
-            'Multiple themes are no longer supported. It should return default'
-        );
-
-        $this->assertEquals(
-            'styleguide/themes/clients/' . $this->platformTest . '/default/',
-            $paths['base'],
-            'Multiple themes are no longer supported. It should always load default theme'
-        );
-
-        // Reset session var
-        unset($_SESSION['authenticated_user_theme']);
-        if ($oldPreferredTheme) {
-            $_SESSION['authenticated_user_theme'] = $oldPreferredTheme;
-        }
     }
 
     /**
@@ -179,7 +136,7 @@ class SidecarThemeTest extends TestCase
         // Create a stub for the SomeClass class.
         $theme = $this->getMockBuilder('SidecarTheme')
             ->setMethods(['getThemeVariables'])
-            ->setConstructorArgs([$this->platformTest, $this->themeTest])
+            ->setConstructorArgs([$this->platformName])
             ->getMock();
         $theme->expects($this->any())
             ->method('getThemeVariables')
@@ -198,31 +155,13 @@ class SidecarThemeTest extends TestCase
     /**
      * @group Theming
      */
-    public function testIsDefined()
-    {
-        $theme = new SidecarTheme($this->platformTest, $this->themeTest);
-        $themePaths = $theme->getPaths();
-        $customPaths = $themePaths['custom'];
-        $this->assertFalse($theme->isDefined(), 'Should say this theme does not exist');
-
-        sugar_mkdir($customPaths, null, true);
-        sugar_file_put_contents($customPaths . 'variables.php', '');
-
-        $theme = new SidecarTheme($this->platformTest, $this->themeTest);
-        $this->assertTrue($theme->isDefined(), 'Should say this theme exists');
-        rmdir_recursive($customPaths);
-    }
-
-    /**
-     * @group Theming
-     */
     public function testGetThemeVariables()
     {
         //Initiate out test theme
-        $theme = new SidecarTheme($this->platformTest, $this->themeTest);
+        $theme = new SidecarTheme($this->platformName);
         $paths = $theme->getPaths();
 
-        $platformTestDefault = new SidecarTheme($this->platformTest, 'default');
+        $platformTestDefault = new SidecarTheme($this->platformName);
         $platformTestDefaultPaths = $platformTestDefault->getPaths();
 
         //Write a sample variables.php to temporary put in /custom/
@@ -299,7 +238,7 @@ class SidecarThemeTest extends TestCase
     public function testSaveThemeVariables()
     {
         //Initiate out test theme
-        $theme = new SidecarTheme($this->platformTest, $this->themeTest);
+        $theme = new SidecarTheme($this->platformName);
         $paths = $theme->getPaths();
 
         $this->assertFileDoesNotExist($paths['custom'] . 'variables.php');
@@ -342,7 +281,7 @@ class SidecarThemeTest extends TestCase
      */
     public function testRetrieveCssFilesInCache()
     {
-        $theme = new SidecarTheme($this->platformTest, $this->themeTest);
+        $theme = new SidecarTheme($this->platformName);
         $themePaths = $theme->getPaths();
 
         // Clear out the path
@@ -364,19 +303,19 @@ class SidecarThemeTest extends TestCase
      */
     public function testGetLessFileLocation()
     {
-        $theme = new SidecarTheme($this->platformTest, $this->themeTest);
+        $theme = new SidecarTheme($this->platformName);
 
         $url = SugarTestReflection::callProtectedMethod($theme, 'getLessFileLocation', ['sugar']);
         $this->assertEquals($url, 'styleguide/less/clients/base/sugar.less');
 
         //Save the file
-        $path = 'styleguide/less/clients/' . $this->platformTest . '/';
+        $path = 'styleguide/less/clients/' . $this->platformName->value() . '/';
         sugar_mkdir($path, null, true);
         sugar_file_put_contents($path . 'sugar.less', '');
 
         //Make sure
-        $url = SugarTestReflection::callProtectedMethod($theme, 'getLessFileLocation', ['sugar']);
-        $this->assertEquals($url, 'styleguide/less/clients/' . $this->platformTest . '/sugar.less');
+        $url = SugarTestReflection::callProtectedMethod($theme, 'getLessFileLocation', array('sugar'));
+        $this->assertEquals($url, 'styleguide/less/clients/' . $this->platformName->value() . '/sugar.less');
 
         // Remove our temporary
         if (is_dir($path)) {

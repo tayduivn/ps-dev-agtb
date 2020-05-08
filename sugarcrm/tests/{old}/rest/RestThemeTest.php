@@ -9,21 +9,24 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-
+use Sugarcrm\Sugarcrm\Security\ValueObjects\PlatformName;
 
 class RestThemeTest extends RestTestBase
 {
-    private $platformTest = 'platform_TEST_123456789';
-    private $themeTest = 'theme_TEST_123456789';
+    private $platformName;
+    protected function setUp(): void
+    {
+        $this->platformName = PlatformName::fromString('platform_TEST_123456789E_1234');
+    }
 
     protected function tearDown() : void
     {
         // Clear out the test folders
-        $customDir = 'custom/themes/clients/' . $this->platformTest;
+        $customDir = 'custom/themes/clients/' . $this->platformName->value();
         if (is_dir($customDir)) {
             rmdir_recursive($customDir);
         }
-        $cacheDir = 'cache/themes/clients/' . $this->platformTest;
+        $cacheDir = 'cache/themes/clients/' . $this->platformName->value();
         if (is_dir($cacheDir)) {
             rmdir_recursive($cacheDir);
         }
@@ -37,16 +40,16 @@ class RestThemeTest extends RestTestBase
     public function testPreviewCSS()
     {
         $args1 = [
-            'platform' => $this->platformTest,
-            'themeName' => $this->themeTest,
+            'platform' => $this->platformName->value(),
+            'themeName' => 'default',
             'BorderColor' => '#75c1d1',
             'NavigationBar' => '#192c47',
             'PrimaryButton' => '#f5b30a',
         ];
 
         $args2 = [
-            'platform' => $this->platformTest,
-            'themeName' => $this->themeTest,
+            'platform' => $this->platformName->value(),
+            'themeName' => 'default',
             'BorderColor' => '#aaaaaa',
             'NavigationBar' => '#aaaaaa',
             'PrimaryButton' => '#aaaaaa',
@@ -73,7 +76,7 @@ class RestThemeTest extends RestTestBase
     public function testGetCustomThemeVars()
     {
         // TEST= GET theme
-        $restReply = $this->restCall('theme?platform=' . $this->platformTest);
+        $restReply = $this->restCall('theme?platform=' . $this->platformName->value());
 
         // TEST we get a hash of variables
         $this->assertEquals(['name' => 'BorderColor', 'value' => '#E61718'], $restReply['reply']['hex'][0]);
@@ -88,8 +91,8 @@ class RestThemeTest extends RestTestBase
     public function testUpdateCustomTheme()
     {
         $args = [
-            'platform' => $this->platformTest,
-            'themeName' => $this->themeTest,
+            'platform' => $this->platformName->value(),
+            'themeName' => 'default',
             'BorderColor' => '#75c1d1',
             'NavigationBar' => '#192c47',
             'PrimaryButton' => '#f5b30a',
@@ -124,7 +127,7 @@ class RestThemeTest extends RestTestBase
         $this->assertTrue(filesize($bootstrapFile) > 0, "Created file (" . $bootstrapFileName . ") has no contents");
         $this->assertTrue(filesize($sugarFile) > 0, "Created file (" . $sugarFileName . ") has no contents");
 
-        $thisTheme = new SidecarTheme($args['platform'], $args['themeName']);
+        $thisTheme = new SidecarTheme($args['platform']);
 
         // TEST we have updated the variables in variables.less
         $variables = $thisTheme->loadVariables();
@@ -154,18 +157,34 @@ class RestThemeTest extends RestTestBase
     public function testResetDefaultTheme()
     {
         $args = [
-            'platform' => $this->platformTest,
-            'themeName' => $this->themeTest,
-            'BorderColor' => '#ABCDEF',
-            'NavigationBar' => '#ABCDEF',
-            'PrimaryButton' => '#ABCDEF',
-            'reset' => 'true',
+            'platform' => $this->platformName->value(),
+            'themeName' => 'default',
+            'BorderColor' => '#75c1d1',
+            'NavigationBar' => '#192c47',
+            'PrimaryButton' => '#f5b30a',
         ];
 
         // Fake the user is an admin
         $this->user->is_admin = 1;
         $this->user->save();
         $GLOBALS['db']->commit();
+        // TEST= POST theme
+        $this->restCall('theme', json_encode($args));
+        $thisTheme = new SidecarTheme($args['platform']);
+        // TEST we have updated the variables in variables.less
+        $variables = $thisTheme->loadVariables();
+        $this->assertEquals($args['BorderColor'], $variables['BorderColor']);
+        $this->assertEquals($args['NavigationBar'], $variables['NavigationBar']);
+        $this->assertEquals($args['PrimaryButton'], $variables['PrimaryButton']);
+
+        $args = array(
+            'platform' => $this->platformName->value(),
+            'themeName' => 'default',
+            'BorderColor' => '#ABCDEF',
+            'NavigationBar' => '#ABCDEF',
+            'PrimaryButton' => '#ABCDEF',
+            'reset' => 'true',
+        );
 
         // TEST= POST theme with reset=true
         $this->restCall('theme', json_encode($args));
@@ -175,14 +194,8 @@ class RestThemeTest extends RestTestBase
         $GLOBALS['db']->commit();
 
         // TEST variables.less generated in the custom folder is the same as the default theme
-        $defaultTheme = new SidecarTheme($args['platform'], 'default');
-        $thisTheme = new SidecarTheme($args['platform'], $args['themeName']);
-
-        // TEST they contain the same variables
-        $this->assertEquals(
-            $defaultTheme->loadVariables(),
-            $thisTheme->loadVariables()
-        );
+        $thisTheme = new SidecarTheme($args['platform']);
+        $this->assertNotEquals($variables, $thisTheme->loadVariables());
     }
 
     /**
@@ -194,8 +207,8 @@ class RestThemeTest extends RestTestBase
     {
         // TEST 1:  for preview, baseUrl is "../../styleguide/assets"
         $args = [
-            'platform' => $this->platformTest,
-            'themeName' => $this->themeTest,
+            'platform' => $this->platformName->value(),
+            'themeName' => 'default',
             'BorderColor' => '#75c1d1',
             'NavigationBar' => '#192c47',
             'PrimaryButton' => '#f5b30a',
@@ -207,7 +220,7 @@ class RestThemeTest extends RestTestBase
         $this->assertNotContains("../../../../../styleguide/assets", $restReply['replyRaw']);
 
         // TEST 2:  for deployment, baseUrl is "../../../../../styleguide/assets"
-        $theme = new SidecarTheme($this->platformTest, $this->themeTest);
+        $theme = new SidecarTheme($this->platformName->value());
         $css = $theme->previewCss();
         // TEST= the CSS contains the expected baseUrl
         $this->assertContains("../../../../../styleguide/assets", $css);
