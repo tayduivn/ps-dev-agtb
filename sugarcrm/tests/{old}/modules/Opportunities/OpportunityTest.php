@@ -649,5 +649,36 @@ class OpportunityTest extends TestCase
             ],
         ];
     }
+
+    /**
+     * @dataProvider dataProviderGeneratePurchaseRliIds
+     * @param $generate_purchases
+     * @param $sales_stage
+     * @param $expected
+     * @throws SugarQueryException
+     */
+    public function testGetGeneratePurchaseRliIDs($generate_purchase, $sales_stage, $expected): void
+    {
+        $opp = SugarTestOpportunityUtilities::createOpportunity();
+        $opp->sales_stage = 'Closed Won';
+        $rli = SugarTestRevenueLineItemUtilities::createRevenueLineItem('123');
+        $rli->generate_purchase = $generate_purchase;
+        $rli->sales_stage = $sales_stage;
+        $opp->load_relationship('revenuelineitems');
+        $opp->revenuelineitems->add($rli);
+
+        $ids = $opp->getGeneratePurchaseRliIds();
+        $this->assertEquals($expected, $ids);
+    }
+
+    public function dataProviderGeneratePurchaseRliIds(): array
+    {
+        return [
+            ['Yes', 'Closed Won', [['id' => '123'],],],
+            ['No', 'Closed Won', [],],
+            ['Yes', 'Qualification', [['id' => '123'],],],
+            ['Completed', 'Closed Won', [],],
+        ];
+    }
     //END SUGARCRM flav=ent ONLY
 }

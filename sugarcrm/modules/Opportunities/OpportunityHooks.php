@@ -70,6 +70,33 @@ class OpportunityHooks extends AbstractForecastHooks
 
         return false;
     }
+
+    /**
+     * Queue Purchase generation for Closed Won RLIs when an Opportunity becomes
+     * Closed Won.
+     *
+     * Return true if the job was scheduled, otherwise false
+     * @param Opportunity $bean
+     * @param string $event
+     * @param array $args
+     * @return bool
+     * @throws SugarQueryException
+     */
+    public static function queueRLItoPurchaseJob(Opportunity $bean, string $event, array $args): bool
+    {
+        if (!static::useRevenueLineItems()) {
+            return false;
+        }
+        $closedWon = $bean->getRliClosedWonStages();
+        if (empty($args['dataChanges']['sales_stage']) ||
+            !in_array($args['dataChanges']['sales_stage']['after'], $closedWon)) {
+            return false;
+        }
+
+        $data = $bean->getGeneratePurchaseRliIds();
+        RevenueLineItem::schedulePurchaseGenerationJob($data);
+        return true;
+    }
     //END SUGARCRM flav=ent ONLY
 
     /**

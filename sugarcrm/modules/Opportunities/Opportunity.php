@@ -728,6 +728,24 @@ class Opportunity extends SugarBean
     }
 
     /**
+     * Get the ids of Related RLIs with "Generate Purchase" => Yes
+     *
+     * @return array ids of RLIs
+     * @throws SugarQueryException
+     */
+    public function getGeneratePurchaseRliIds()
+    {
+        $closedWon = $this->getRliClosedWonStages();
+        $q = new SugarQuery();
+        $q->from(BeanFactory::newBean('RevenueLineItems'));
+        $q->select(['id']);
+        $q->where()->queryAnd()
+            ->equals('opportunity_id', $this->id)
+            ->equals('generate_purchase', 'Yes');
+        return $q->execute();
+    }
+
+    /**
      * Get existing renewal opportunity.
      *
      * @return Opportunity|NULL

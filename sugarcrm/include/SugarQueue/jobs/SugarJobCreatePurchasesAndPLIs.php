@@ -20,7 +20,7 @@ class SugarJobCreatePurchasesAndPLIs implements RunnableSchedulerJob
     /**
      * @inheritDoc
      */
-    public function setJob(SchedulersJob $job)
+    public function setJob(SchedulersJob $job): void
     {
         $this->job = $job;
     }

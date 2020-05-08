@@ -706,6 +706,40 @@ class RevenueLineItem extends SugarBean
         );
         Activity::restoreToPreviousState();
     }
+
+    /**
+     * Util function to schedule a purchase generation jobs for a given array of
+     * RLI IDs in the form returned by a SugarQuery. i.e.
+     * [
+     *   [ 'id' => abc,],
+     *   [ 'id' => def,],
+     * ]
+     *
+     * @param array $data list of RLI Ids to schedule in a job
+     */
+    public static function schedulePurchaseGenerationJob(array $data): void
+    {
+        global $current_user;
+        $licenses = $current_user->getLicenseTypes();
+        if (Opportunity::usingRevenueLineItems() &&
+            in_array('SUGAR_SELL', $licenses)) {
+            $jobGroup = md5(microtime());
+            $jq = new SugarJobQueue();
+
+            foreach (array_chunk($data, 100) as $chunk) {
+                /* @var $job SchedulersJob */
+                $job = BeanFactory::newBean('SchedulersJobs');
+                $job->name = 'Generate Purchases for Closed RLIs';
+                $job->target = 'class::SugarJobCreatePurchasesAndPLIs';
+                $job->data = json_encode(['data' => $chunk]);
+                $job->retry_count = 0;
+                $job->assigned_user_id = $current_user->id;
+                $job->job_group = empty($jobGroup) ? md5(microtime()) : $jobGroup;
+
+                $jq->submitJob($job);
+            }
+        }
+    }
     //END SUGARCRM flav=ent ONLY
 
     /**

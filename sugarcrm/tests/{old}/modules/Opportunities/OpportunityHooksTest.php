@@ -25,6 +25,7 @@ class OpportunityHooksTest extends TestCase
     protected function tearDown() : void
     {
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
+        SugarTestRevenueLineItemUtilities::removeAllCreatedRevenueLineItems();
     }
 
     public static function tearDownAfterClass() : void
@@ -257,6 +258,48 @@ class OpportunityHooksTest extends TestCase
             [false, false, null, false],
         ];
     }
+
+    //BEGIN SUGARCRM flav=ent ONLY
+    /**
+     * @param $useRlis
+     * @param $args
+     * @param $result
+     * @throws SugarQueryException
+     * @dataProvider dataProviderQueueRliToPurchase
+     */
+    public function testQueueRliToPurchaseJob($useRlis, $salesStage, $result): void
+    {
+        $hookMock = new MockOpportunityHooks();
+        $opp = SugarTestOpportunityUtilities::createOpportunity();
+
+        $args = [
+            'dataChanges' => [
+                'sales_stage' => [
+                    'after' => $salesStage,
+                ],
+            ],
+        ];
+        $hookMock::$useRevenueLineItems = $useRlis;
+
+        $returnVal = $hookMock::queueRLItoPurchaseJob($opp, '', $args);
+        $this->assertEquals($result, $returnVal);
+
+        if ($result) {
+            $db = DBManagerFactory::getInstance();
+            $db->query('DELETE FROM job_queue WHERE status = ' . $db->quoted('queued') . ';');
+        }
+    }
+
+    public function dataProviderQueueRliToPurchase()
+    {
+        return [
+            [true, '', false,],
+            [true, Opportunity::STAGE_CLOSED_LOST, false,],
+            [false, Opportunity::STAGE_CLOSED_WON, false,],
+            [true, Opportunity::STAGE_CLOSED_WON, true,],
+        ];
+    }
+    //END SUGARCRM flav=ent ONLY
 }
 
 class MockOpportunityHooks extends OpportunityHooks

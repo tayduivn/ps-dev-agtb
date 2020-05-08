@@ -40,6 +40,7 @@ class RevenueLineItemHooksTest extends TestCase
         $this->rli = null;
         SugarTestHelper::tearDown();
         SugarTestRevenueLineItemUtilities::removeAllCreatedRevenueLineItems();
+        SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
     }
 
     public static function tearDownAfterClass(): void
@@ -98,5 +99,78 @@ class RevenueLineItemHooksTest extends TestCase
             ['Closed Won', 'exclude', 100, 'include'],
             ['Closed Lost', 'include', 0, 'exclude'],
         ];
+    }
+
+    /**
+     * @param $useRlis
+     * @param $salesStageChange
+     * @param $generatePurchases
+     * @param $expected
+     * @dataProvider dataProviderQueuePurchaseGeneration
+     */
+    public function testQueuePurchaseGeneration(
+        $useRlis,
+        $salesStageChange,
+        $generatePurchases,
+        $expected
+    ): void {
+        $hookMock = new MockRevenueLineItemHooks();
+        $hookMock::$useRevenueLineItems = $useRlis;
+        $args = [
+            'dataChanges' => [
+                'sales_stage' => $salesStageChange ? ['after'=>'Closed Won',] : [],
+                'generate_purchase' => $generatePurchases ? ['after'=>'Yes',] : ['after'=>'No',],
+            ],
+        ];
+        $rli = SugarTestRevenueLineItemUtilities::createRevenueLineItem();
+        $opp = SugarTestOpportunityUtilities::createOpportunity();
+        $opp->load_relationship('revenuelineitems');
+        $opp->revenuelineitems->add($rli);
+        $opp->sales_stage = 'Prospecting';
+
+        // RLI and Opp are open
+        $result = $hookMock::queuePurchaseGeneration($rli, '', $args);
+        $this->assertFalse($result);
+
+        // RLI closed, Opp open
+        $rli->sales_stage = Opportunity::STAGE_CLOSED_WON;
+        $result = $hookMock::queuePurchaseGeneration($rli, '', $args);
+        $this->assertFalse($result);
+
+        // Both RLI and Opp Closed
+        $opp->sales_stage = Opportunity::STAGE_CLOSED_WON;
+        $result = $hookMock::queuePurchaseGeneration($rli, '', $args);
+        $this->assertEquals($expected, $result);
+
+        if ($result) {
+            $db = DBManagerFactory::getInstance();
+            $db->query('DELETE FROM job_queue WHERE status = ' . $db->quoted('queued') . ';');
+        }
+    }
+
+    public function dataProviderQueuePurchaseGeneration(): array
+    {
+        // args are:
+        // 1. are we in RLIs mode
+        // 2. is sales stage changing
+        // 3. is generate purchases being set to "Yes"
+        // 4. do we expect a job to be scheduled
+        return [
+            [true, false, true, true],
+            [false, false, true, false],
+            [true, true, true, false],
+            [true, false, false, false],
+            [true, true, false, false],
+        ];
+    }
+}
+
+class MockRevenueLineItemHooks extends RevenueLineItemHooks
+{
+    public static $useRevenueLineItems = false;
+
+    public static function useRevenueLineItems(): bool
+    {
+        return self::$useRevenueLineItems;
     }
 }
