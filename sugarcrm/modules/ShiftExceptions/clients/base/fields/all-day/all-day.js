@@ -39,8 +39,10 @@
      *
      * @property {string}
      */
-    _timeFields: '.record-cell[data-name="start_time"], ' +
-        '.record-cell[data-name="end_time"]',
+    _timeFields: [
+        'start_time',
+        'end_time',
+    ],
 
     /**
      * @inheritdoc
@@ -48,9 +50,19 @@
     initialize: function(options) {
         this._super('initialize', [options]);
         this.type = 'bool';
+        this._currentDayStartEnd = {};
 
         if (this.model && this.model.isNew()) {
-            this.view.once('render', this._updateTimeFields, this);
+            this._currentDayStartEnd = {
+                start_hour: 0,
+                start_minutes: 0,
+                end_hour: 0,
+                end_minutes: 0,
+            };
+
+            this.view.once('render', function() {
+                this._updateTimeFields(false);
+            }, this);
         }
     },
 
@@ -58,25 +70,36 @@
      * Restore temporary values
      */
     _restoreTime: function() {
-        this.model.set(this._currentDayStartEnd);
+        if (!_.isEmpty(this._currentDayStartEnd)) {
+            this.model.set(this._currentDayStartEnd);
+        }
     },
 
     /**
      * Set default value for the saving
+     * @param {boolean} save It shows if it needs to save current values
      */
-    _clearTime: function() {
-        this._saveTime();
+    _clearTime: function(save) {
+        if (save) {
+            this._saveTime();
+        }
+
         this.model.set(this._defaultDayStartEnd);
     },
 
     /**
      * Update the model and show/hide time fields
+     * @param {boolean} save It shows if it needs to save current values
      */
-    _updateTimeFields: function() {
+    _updateTimeFields: function(save) {
         const isAllDay = this.getValue();
 
-        isAllDay ? this._clearTime() : this._restoreTime();
-        $(this.$el).closest('.record').find(this._timeFields).toggle(!isAllDay);
+        isAllDay ? this._clearTime(save) : this._restoreTime();
+
+        $.each(this._timeFields, function(key, item) {
+            const field = this.view.getField(item);
+            field.$el.closest('.record-cell').toggle(!isAllDay);
+        }.bind(this));
     },
 
     /**
@@ -90,7 +113,9 @@
 
     bindDataChange: function() {
         this._super('bindDataChange');
-        this.model.on('change:' + this.name, this._updateTimeFields, this);
+        this.model.on('change:' + this.name, function() {
+            this._updateTimeFields(true);
+        }, this);
     },
 
     unformat: function(value) {
