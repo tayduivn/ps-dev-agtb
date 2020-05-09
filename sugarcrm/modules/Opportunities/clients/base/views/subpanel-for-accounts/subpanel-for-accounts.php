@@ -24,12 +24,6 @@ $viewdefs['Opportunities']['base']['view']['subpanel-for-accounts'] = array(
                     'link' => true,
                 ),
                 array(
-                    'name' => 'sales_stage',
-                    'label' => 'LBL_LIST_SALES_STAGE',
-                    'enabled' => true,
-                    'default' => true,
-                ),
-                array(
                     'name' => 'probability',
                     'label' => 'LBL_PROBABILITY',
                     'enabled' => true,
@@ -45,10 +39,6 @@ $viewdefs['Opportunities']['base']['view']['subpanel-for-accounts'] = array(
                         'date_closed_timestamp',
                     ),
                 ),
-                array(
-                    'name' => 'sales_stage',
-                    'label' => 'LBL_LIST_SALES_STAGE',
-                ),
                 // END SUGARCRM flav!=ent ONLY
                 // BEGIN SUGARCRM flav=ent ONLY
                 array(
@@ -62,6 +52,18 @@ $viewdefs['Opportunities']['base']['view']['subpanel-for-accounts'] = array(
                         'closed_revenue_line_items',
                     ),
                 ),
+                // END SUGARCRM flav=ent ONLY
+                [
+                    'name' => 'sales_status',
+                    'readonly' => true,
+                ],
+                // BEGIN SUGARCRM flav!=ent ONLY
+                array(
+                    'name' => 'sales_stage',
+                    'label' => 'LBL_LIST_SALES_STAGE',
+                ),
+                // END SUGARCRM flav!=ent ONLY
+                // BEGIN SUGARCRM flav=ent ONLY
                 array(
                     'name' => 'sales_stage',
                     'type' => 'enum-cascade',

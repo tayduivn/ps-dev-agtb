@@ -48,12 +48,9 @@ $viewdefs['Opportunities']['base']['view']['subpanel-for-contacts'] = array(
                     'label' => 'LBL_DATE_CLOSED',
                     'enabled' => true,
                     'default' => true,
-                ),
-                array(
-                    'name' => 'sales_stage',
-                    'label' => 'LBL_LIST_SALES_STAGE',
-                    'enabled' => true,
-                    'default' => true,
+                    'related_fields' => array(
+                        'date_closed_timestamp',
+                    ),
                 ),
                 // END SUGARCRM flav!=ent ONLY
                 // BEGIN SUGARCRM flav=ent ONLY
@@ -68,6 +65,18 @@ $viewdefs['Opportunities']['base']['view']['subpanel-for-contacts'] = array(
                         'closed_revenue_line_items',
                     ),
                 ),
+                // END SUGARCRM flav=ent ONLY
+                [
+                    'name' => 'sales_status',
+                    'readonly' => true,
+                ],
+                // BEGIN SUGARCRM flav!=ent ONLY
+                array(
+                    'name' => 'sales_stage',
+                    'label' => 'LBL_LIST_SALES_STAGE',
+                ),
+                // END SUGARCRM flav!=ent ONLY
+                // BEGIN SUGARCRM flav=ent ONLY
                 array(
                     'name' => 'sales_stage',
                     'type' => 'enum-cascade',

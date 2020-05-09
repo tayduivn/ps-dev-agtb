@@ -18,6 +18,7 @@ $viewdefs['Opportunities']['base']['filter']['default'] = array(
         'amount' => array(),
         'best_case' => array(),
         'worst_case' => array(),
+        'renewal' => array(),
         'next_step' => array(),
         'probability' => array(),
         'lead_source' => array(),

@@ -41,19 +41,16 @@ $viewdefs['Opportunities']['base']['view']['subpanel-list'] = array(
                     'label' => 'LBL_DATE_CLOSED',
                     'enabled' => true,
                     'default' => true,
-                ),
-                array(
-                    'name' => 'sales_stage',
-                    'label' => 'LBL_LIST_SALES_STAGE',
-                    'enabled' => true,
-                    'default' => true,
+                    'related_fields' => array(
+                        'date_closed_timestamp',
+                    ),
                 ),
                 // END SUGARCRM flav!=ent ONLY
                 // BEGIN SUGARCRM flav=ent ONLY
                 array(
                     'name' => 'date_closed',
                     'type' => 'date-cascade',
-                    'label' => 'LBL_LIST_DATE_CLOSED',
+                    'label' => 'LBL_DATE_CLOSED',
                     'enabled' => true,
                     'default' => true,
                     'disable_field' => array(
@@ -61,12 +58,22 @@ $viewdefs['Opportunities']['base']['view']['subpanel-list'] = array(
                         'closed_revenue_line_items',
                     ),
                 ),
+                // END SUGARCRM flav=ent ONLY
+                [
+                    'name' => 'sales_status',
+                    'readonly' => true,
+                ],
+                // BEGIN SUGARCRM flav!=ent ONLY
+                array(
+                    'name' => 'sales_stage',
+                    'label' => 'LBL_LIST_SALES_STAGE',
+                ),
+                // END SUGARCRM flav!=ent ONLY
+                // BEGIN SUGARCRM flav=ent ONLY
                 array(
                     'name' => 'sales_stage',
                     'type' => 'enum-cascade',
                     'label' => 'LBL_LIST_SALES_STAGE',
-                    'enabled' => true,
-                    'default' => true,
                     'disable_field' => array(
                         'total_revenue_line_items',
                         'closed_revenue_line_items',

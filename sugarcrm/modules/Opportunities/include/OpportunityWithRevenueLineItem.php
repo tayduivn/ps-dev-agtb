@@ -143,6 +143,8 @@ class OpportunityWithRevenueLineItem extends OpportunitySetup
 
         $this->fixListViews(
             array(
+                'sales_stage' => true,
+                'sales_status' => true,
                 'probability' => false,
                 'commit_stage' => false,
             )

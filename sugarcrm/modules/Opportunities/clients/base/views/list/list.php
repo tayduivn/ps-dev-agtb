@@ -45,6 +45,28 @@ $viewdefs['Opportunities']['base']['view']['list'] = array(
                     'enabled' => true,
                     'default' => true,
                 ),
+                // END SUGARCRM flav!=ent ONLY
+                // BEGIN SUGARCRM flav=ent ONLY
+                [
+                    'name' => 'date_closed',
+                    'type' => 'date-cascade',
+                    'label' => 'LBL_DATE_CLOSED',
+                    'enabled' => true,
+                    'default' => true,
+                    'disable_field' => [
+                        'total_revenue_line_items',
+                        'closed_revenue_line_items',
+                    ],
+                ],
+                // END SUGARCRM flav=ent ONLY
+                [
+                    'name' => 'sales_status',
+                    'label' => 'LBL_SALES_STATUS',
+                    'default' => true,
+                    'enabled' => true,
+                    'type' => 'enum',
+                ],
+                // BEGIN SUGARCRM flav!=ent ONLY
                 array(
                     'name' => 'sales_stage',
                     'label' => 'LBL_LIST_SALES_STAGE',
@@ -53,17 +75,6 @@ $viewdefs['Opportunities']['base']['view']['list'] = array(
                 ),
                 // END SUGARCRM flav!=ent ONLY
                 // BEGIN SUGARCRM flav=ent ONLY
-                array(
-                    'name' => 'date_closed',
-                    'type' => 'date-cascade',
-                    'label' => 'LBL_DATE_CLOSED',
-                    'enabled' => true,
-                    'default' => true,
-                    'disable_field' => array(
-                        'total_revenue_line_items',
-                        'closed_revenue_line_items',
-                    ),
-                ),
                 [
                     'name' => 'sales_stage',
                     'type' => 'enum-cascade',
@@ -83,6 +94,7 @@ $viewdefs['Opportunities']['base']['view']['list'] = array(
                     'related_fields' => array(
                         'service_open_revenue_line_items',
                     ),
+                    'default' => false,
                 ),
                 // END SUGARCRM flav=ent ONLY
                 array(
