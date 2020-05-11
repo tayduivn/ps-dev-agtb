@@ -304,6 +304,22 @@ class SubscriptionManager
         }
         return 0;
     }
+
+    /**
+     * get all subscription seats by types
+     * @return array
+     */
+    public function getSystemSubscriptionSeats() : array
+    {
+        $systemSubscriptions = $this->getSystemSubscriptions();
+        $results = [];
+        foreach ($systemSubscriptions as $key => $value) {
+            $results[$key] = $value['quantity'];
+        }
+
+        return $results;
+    }
+
     /**
      * get user's subscriptions, it compares system subscriptions with user's license type
      * @param null|\User $user

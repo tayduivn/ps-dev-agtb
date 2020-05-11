@@ -11,6 +11,7 @@
  */
 
 use Sugarcrm\Sugarcrm\AccessControl\AdminWork;
+use Sugarcrm\Sugarcrm\Entitlements\SubscriptionManager;
 use Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
 use Sugarcrm\Sugarcrm\SearchEngine\Engine\Elastic;
 
@@ -203,6 +204,17 @@ class AdministrationApi extends SugarApi
                 'longHelp' => 'include/api/help/administration_disable_idm_migrations_post_help.html',
                 'exceptions' => ['SugarApiExceptionNotAuthorized'],
                 'minVersion' => '11.2',
+                'ignoreSystemStatusError' => true,
+            ],
+            // license limits
+            'licenseLimits' => [
+                'reqType' => ['GET'],
+                'path' => ['Administration', 'license', 'limits'],
+                'pathVars' => [''],
+                'method' => 'getLicenseLimits',
+                'shortHelp' => 'get license seats',
+                'longHelp' => 'include/api/help/administration_disable_license_limits_get_help.html',
+                'exceptions' => ['SugarApiExceptionNotAuthorized'],
                 'ignoreSystemStatusError' => true,
             ],
         );
@@ -651,6 +663,23 @@ class AdministrationApi extends SugarApi
         return ['success' => 'true'];
     }
 
+    /**
+     * get license limits for the instance, the limits are based on license types
+     * @param ServiceBase $api
+     * @param array $args
+     * @return array
+     * @throws SugarApiExceptionNotAuthorized
+     */
+    public function getLicenseLimits(ServiceBase $api, array $args): array
+    {
+        $this->ensureAdminUser();
+        $seats = SubscriptionManager::instance()->getSystemSubscriptionSeats();
+        $defaultType = SubscriptionManager::instance()->getUserDefaultLicenseType();
+        return [
+            'default_limit' => $seats[$defaultType],
+            'seats' => $seats,
+        ];
+    }
     /**
      * Factory method to mock Configurator
      *

@@ -361,6 +361,52 @@ class SubscriptionManagerTest extends TestCase
             ],
         ];
     }
+    /**
+     * @covers ::getSystemSubscriptionSeats
+     * @param $data
+     * @param string $type
+     * @param $expected
+     *
+     * @dataProvider getSystemSubscriptionSeatsProvider
+     */
+    public function testGetSystemSubscriptionSeats(array $data, array $expected)
+    {
+        $subMock = $this->getMockBuilder(SubscriptionManager::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getSystemSubscriptions'])
+            ->getMock();
+
+        $subMock->expects($this->any())
+            ->method('getSystemSubscriptions')
+            ->will($this->returnValue($data));
+
+        $this->assertSame($expected, $subMock->getSystemSubscriptionSeats());
+    }
+
+    public function getSystemSubscriptionSeatsProvider()
+    {
+        return [
+            // product is SERVE + ENT
+            [
+                [
+                    'SUGAR_SERVE' => ['quantity' => 10, 'expiration_date' => 1587798000],
+                    'CURRENT' => ['quantity' => 1000, 'expiration_date' => 1587798000],
+                ],
+                ['SUGAR_SERVE' => 10, 'CURRENT' => 1000],
+            ],
+            // product is SERVE
+            [
+                [
+                    'SUGAR_SERVE' => ['quantity' => 10, 'expiration_date' => 1587798000],
+                ],
+                ['SUGAR_SERVE' => 10],
+            ],
+            [
+                [],
+                [],
+            ],
+        ];
+    }
 
     /**
      * @covers ::getAllSubsetsOfSystemSubscriptions
