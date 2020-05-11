@@ -67,15 +67,17 @@ $viewdefs['PurchasedLineItems']['base']['view']['list'] = [
                     'default' => false,
                 ],
                 [
-                    'name' => 'discount',
+                    'name' => 'discount_field',
                     'type' => 'fieldset',
                     'css_class' => 'discount-field',
                     'label' => 'LBL_DISCOUNT_AMOUNT_COMBINED',
+                    'show_child_labels' => false,
+                    'sortable' => false,
                     'fields' => [
                         [
                             'name' => 'discount_amount',
                             'label' => 'LBL_TOTAL_DISCOUNT_AMOUNT',
-                            'type' => 'discount',
+                            'type' => 'discount-amount',
                             'discountFieldName' => 'discount_select',
                             'related_fields' => [
                                 'currency_id',

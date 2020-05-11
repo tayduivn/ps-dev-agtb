@@ -162,17 +162,33 @@ $viewdefs['PurchasedLineItems']['base']['view']['record'] = [
                     'base_rate_field' => 'base_rate',
                 ],
                 [
-                    'name' => 'discount_amount',
-                    'type' => 'currency',
-                    'related_fields' => [
-                        'discount_amount',
-                        'currency_id',
-                        'base_rate',
+                    'name' => 'discount_field',
+                    'type' => 'fieldset',
+                    'css_class' => 'discount-field',
+                    'label' => 'LBL_DISCOUNT_AMOUNT_COMBINED',
+                    'show_child_labels' => false,
+                    'sortable' => false,
+                    'fields' => [
+                        [
+                            'name' => 'discount_amount',
+                            'label' => 'LBL_TOTAL_DISCOUNT_AMOUNT',
+                            'type' => 'discount-amount',
+                            'discountFieldName' => 'discount_select',
+                            'related_fields' => [
+                                'currency_id',
+                            ],
+                            'convertToBase' => true,
+                            'base_rate_field' => 'base_rate',
+                            'showTransactionalAmount' => true,
+                        ],
+                        [
+                            'type' => 'discount-select',
+                            'name' => 'discount_select',
+                            'options' => [],
+                        ],
                     ],
-                    'convertToBase' => true,
-                    'showTransactionalAmount' => true,
-                    'currency_field' => 'currency_id',
-                    'base_rate_field' => 'base_rate',
+                    'enabled' => true,
+                    'default' => false,
                 ],
                 [
                     'name' => 'tag',
