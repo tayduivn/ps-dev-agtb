@@ -121,7 +121,7 @@ Feature: Subpanel Support
       | name         | CreateOpportunityTest |
       | date_closed  | 12/12/2022            |
       | amount       | $700.00               |
-      | sales_status | In Progress           |
+      | sales_stage  | Value Proposition     |
 
     # Verify  RLI records are created
     Then I should see #Account_ARecord view
@@ -243,5 +243,5 @@ Feature: Subpanel Support
       | name         | CreateOpportunityTest |
       | date_closed  | 12/12/2022            |
       | amount       | $700.00               |
-      | sales_status | In Progress           |
+      | sales_stage  | Value Proposition     |
 

@@ -334,7 +334,7 @@ Feature: Quotes module E2E testing
     When I choose createLineItem on QLI section on #Quote_3Record view
     When I provide input for #Quote_3Record.QliTable.QliRecord view
       | *     | quantity | product_template_name | discount_price | discount_amount | discount_select |
-      | Test1 | 2.00     | New QLI               | 100            | 2.00            | $ US Dollars    |
+      | Test1 | 2.00     | New QLI               | 100            | 2.00            | $ US Dollar     |
     When I click on save button on QLI #Quote_3Record.QliTable.QliRecord record
     When I close alert
     # 2. Verify all fields in QLI Grand Total bar are calculated properly
@@ -349,7 +349,7 @@ Feature: Quotes module E2E testing
     When I choose editLineItem on #Test1QLIRecord
     When I provide input for #Test1QLIRecord view
       | quantity | discount_price | discount_amount | discount_select | product_template_name |
-      | 4        | 150.00         | 4.00            | $ US Dollars    | New Name              |
+      | 4        | 150.00         | 4.00            | $ US Dollar     | New Name              |
     When I click on cancel button on QLI #Test1QLIRecord record
     # 4. Verify that no values are changed after QLI editing is canceled
     Then I verify fields on QLI total header on #Quote_3Record view

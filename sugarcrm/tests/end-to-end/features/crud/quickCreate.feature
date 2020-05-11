@@ -105,6 +105,7 @@ Feature: Sugar Mega Menu > Quick Create
       | Acc_1 | www.google.com | Apparel  | Analyst      | T1            | 555-555-0000 | 555-555-0001    |
 
     When I choose Opportunities in the Quick Create actions menu
+    When I click ToggleSidePanel button on #OpportunitiesRecord header
     When I click show more button on #OpportunitiesDrawer view
 
     When I provide input for #OpportunitiesDrawer.HeaderView view

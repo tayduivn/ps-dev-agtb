@@ -288,7 +288,7 @@ Feature: Products module verification
     When I click show more button on #ProductsDrawer view
     When I provide input for #ProductsDrawer.RecordView view
       | *        | cost_price | discount_price | discount_amount | discount_select |
-      | RecordID | 5          | 200            | 10.00           | $ US Dollars    |
+      | RecordID | 5          | 200            | 10.00           | $ US Dollar     |
     When I click show less button on #ProductsDrawer view
     When I click Save button on #ProductsDrawer header
     When I close alert

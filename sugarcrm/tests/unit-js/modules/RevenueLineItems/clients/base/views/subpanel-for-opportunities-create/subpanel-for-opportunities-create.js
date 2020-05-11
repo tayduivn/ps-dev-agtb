@@ -12,6 +12,7 @@ describe('RevenueLineItems.Base.View.SubpanelForOpportunitiesCreate', function()
     var app,
         view,
         layout,
+        options,
         parentLayout,
         sandbox;
     beforeEach(function() {
@@ -62,7 +63,36 @@ describe('RevenueLineItems.Base.View.SubpanelForOpportunitiesCreate', function()
 
         sinon.sandbox.stub(app.metadata, 'getModule', function() {
             return {
-                is_setup: 1
+                is_setup: 1,
+                layouts: {
+                    subpanels: {
+                        meta: {
+                            components: [
+                                {
+                                    context: {
+                                        link: 'revenuelineitems'
+                                    },
+                                    override_subpanel_list_view: 'subpanel-for-opportunities',
+                                }
+                            ]
+                        },
+                    }
+                },
+                views: {
+                    'subpanel-for-opportunities': {
+                        meta: {
+                            panels: [
+                                {
+                                    fields: [
+                                        {
+                                            name: 'test'
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                }
             }
         });
 
@@ -73,14 +103,52 @@ describe('RevenueLineItems.Base.View.SubpanelForOpportunitiesCreate', function()
         });
         app.routing.start();
 
-        view = SugarTest.createView('base', 'RevenueLineItems', 'subpanel-for-opportunities-create', {}, context, true, layout, true);
+        options = {
+            meta: {
+                panels: [
+                    {
+                        fields: []
+                    }
+                ]
+            }
+        };
+
+        view = SugarTest.createView(
+            'base',
+            'RevenueLineItems',
+            'subpanel-for-opportunities-create',
+            options.meta,
+            context,
+            true,
+            layout,
+            true
+        );
     });
 
     afterEach(function() {
         sinon.sandbox.restore();
         view.dispose();
+        options = null;
         view = null;
         app.router.stop();
+    });
+
+    describe('initialize()', function() {
+        describe('when there is a overriden subpanel layout', function() {
+            beforeEach(function() {
+                sinon.collection.stub(view, '_super', function() {});
+                view.initialize(options);
+            });
+
+            afterEach(function() {
+                bean = null;
+                result = null;
+            });
+
+            it('should set the metadata for fields', function() {
+                expect(options.meta.panels[0].fields[0].name).toBe('test');
+            });
+        });
     });
 
     describe('_addCustomFieldsToBean()', function() {

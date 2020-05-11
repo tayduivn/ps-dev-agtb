@@ -408,7 +408,7 @@ Feature: Quotes module verification
     When I choose createLineItem on QLI section on #Quote_3Record view
     When I provide input for #Quote_3Record.QliTable.QliRecord view
       | *     | quantity | product_template_name | discount_price | discount_amount | discount_select |
-      | QLI_2 | -2.00    | QLI_222               | 100            | 10.00           | $ US Dollars    |
+      | QLI_2 | -2.00    | QLI_222               | 100            | 10.00           | $ US Dollar     |
     When I click on save button on QLI #Quote_3Record.QliTable.QliRecord record
     When I close alert
 
