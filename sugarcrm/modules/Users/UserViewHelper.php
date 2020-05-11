@@ -448,6 +448,12 @@ class UserViewHelper {
         $this->ss->assign('EXPORT_CHARSET_DISPLAY', $export_charset);
         //end:12293
 
+        if ($this->bean->getPreference('send_email_on_mention') == 'on') {
+            $this->ss->assign("SEND_EMAIL_ON_MENTION", 'checked');
+        } else {
+            $this->ss->assign("SEND_EMAIL_ON_MENTION", 'unchecked');
+        }
+
         if( $this->bean->getPreference('use_real_names') == 'on'
             || ( empty($this->bean->id)
                  && isset($GLOBALS['sugar_config']['use_real_names'])

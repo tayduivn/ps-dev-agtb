@@ -208,6 +208,14 @@ $dictionary['User'] = array(
             'massupdate' => false,
             'studio' => false,
         ) ,
+        'send_email_on_mention' => array(
+            'name' => 'send_email_on_mention',
+            'vname' => 'LBL_SEND_EMAIL_ON_MENTION',
+            'type' => 'bool',
+            'default' => '0',
+            'massupdate' => false,
+            'studio' => false,
+        ) ,
         'description' => array(
             'name' => 'description',
             'vname' => 'LBL_DESCRIPTION',

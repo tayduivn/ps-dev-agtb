@@ -685,6 +685,19 @@ Report Name: $report_name
 Report Run Date and Time: $report_time',
     ),
 
+    'comment_log_mention_email' => [
+        'name' => 'System Comment Log Email Notification',
+        'subject' => 'SugarCRM - $initiator_full_name mentioned you on a(n) $singular_module_name',
+        'description' => 'This template is used to send email notification for users that have been tagged int comment log section.',
+        'body' =>
+            '<div>
+                <p>You have been mentioned in the following record’s comment log:  <a href="$record_url">$record_name</a></p>
+                <p>Please log in to Sugar to view the comment.</p>
+            </div>',
+        'txt_body' => 'You have been mentioned in the following record’s comment log: $record_name
+            Please log in to Sugar to view the comment.',
+    ],
+
     'advanced_password_new_account_email' => array(
         'subject' => 'New account information',
         'description' => 'This template is used when the System Administrator sends a new password to a user.',
@@ -741,5 +754,4 @@ $contact_user_link_guid',
 
     $portal_login_url',
     ],
-
 );

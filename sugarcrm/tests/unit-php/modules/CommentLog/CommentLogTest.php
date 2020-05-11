@@ -82,6 +82,8 @@ class CommentLogTest extends TestCase
             'getBean',
         ]);
         $notificationMock = $this->createPartialMock('Notifications', ['save']);
+        $userMock = $this->createPartialMock('User', ['getPreference']);
+        $commentlog->method('getBean')->willReturn($userMock);
         $commentlog->method('getNewBean')->willReturn($notificationMock);
         $commentlog->method('load_relationship')->willReturn(true);
         $commentlog->method('getSugarConfigValue')->willReturn('en_us');
@@ -103,5 +105,72 @@ class CommentLogTest extends TestCase
         $this->assertEquals('Case: You have been mentioned', $notificationMock->name);
         $this->assertEquals('LBL_YOU_HAVE_BEEN_MENTIONED_BY', $notificationMock->description);
         $this->assertEquals('information', $notificationMock->severity);
+    }
+
+    /**
+     * @covers ::sendNotificationsEmail
+     */
+    public function testSendNotificationsEmail()
+    {
+        $moduleName = 'Cases';
+        $recordId = 'caseId';
+        $recordName = 'name';
+        $singularModuleName = 'Case';
+        $commentlog = $this->createPartialMock('CommentLog', [
+            'getSugarConfigValue',
+            'getBean',
+            'getSystemMailer',
+            'getCurrentUser',
+            'getRecordUrl',
+        ]);
+
+        $templateFields = [
+            'subject' => 'Subject: $initiator_full_name $singular_module_name',
+            'body' => 'Body: <div><a href="$record_url">$record_name</a></div>',
+            'txt_body' => 'Textbody: $record_name',
+        ];
+        $caseMock = $this->createPartialMock('aCase', []);
+        $caseMock->name = $recordName;
+        $caseMock->id = $recordId;
+
+        $eTMock = $this->createPartialMock('EmailTemplate', []);
+        $eTMock->id = 'etID';
+        $eTMock->subject = $templateFields['subject'];
+        $eTMock->body_html = $templateFields['body'];
+        $eTMock->body = $templateFields['txt_body'];
+
+        $commentlog->method('getBean')->will($this->onConsecutiveCalls($caseMock, $eTMock));
+
+        $et = ['CommentLogMention' => 'etID'];
+        $commentlog->method('getSugarConfigValue')->willReturn($et);
+        $commentlog->method('getRecordUrl')->willReturn('http://sugarcrm.com/index.php#' .
+            $moduleName . '/' . $recordId);
+
+        $mailerMock = $this->createPartialMock('SmtpMailer', [
+            'getMailTransmissionProtocol',
+            'addRecipientsTo',
+            'setSubject',
+            'setHtmlBody',
+            'setTextBody',
+            'send',
+        ]);
+        $commentlog->method('getSystemMailer')->willReturn($mailerMock);
+        $userMock = $this->createPartialMock('User', []);
+        $userMock->email1 = 'a@a.com';
+
+        $currentUserMock = $this->createPartialMock('User', []);
+        $cuName = 'Current User Name';
+        $currentUserMock->full_name = $cuName;
+        $commentlog->method('getCurrentUser')->willReturn($currentUserMock);
+        $commentlog->sendNotificationsEmail($userMock, $moduleName, $recordId, $singularModuleName);
+        $expectedURL = 'http://sugarcrm.com/index.php#'. $moduleName . '/' . $recordId;
+        $expectedFields = [
+            'subject' => 'Subject: '. $cuName.' '. strtolower($singularModuleName),
+            'body' => 'Body: <div><a href="'. $expectedURL.'">'. $recordName . '</a></div>',
+            'txt_body' => 'Textbody: '. $recordName,
+        ];
+        $this->assertEquals($expectedFields['subject'], $eTMock->subject);
+        $this->assertEquals($expectedFields['body'], $eTMock->body_html);
+        $this->assertEquals($expectedFields['txt_body'], $eTMock->body);
     }
 }

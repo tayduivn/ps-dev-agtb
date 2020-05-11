@@ -39,6 +39,7 @@ class CurrentUserApi extends SugarApi
         'reminder_time' => 'reminder_time',
         'email_reminder_time' => 'email_reminder_time',
         'field_name_placement' => 'field_name_placement',
+        'send_email_on_mention' => 'send_email_on_mention',
     );
 
     const TYPE_ADMIN = "admin";
@@ -701,6 +702,22 @@ class CurrentUserApi extends SugarApi
         return [
             'field_name_placement' =>
             $user->getPreference('field_name_placement', $category) ?? 'field_on_side',
+        ];
+    }
+
+    /**
+     * Utility function to get the users preference in case of comment log mention.
+     * Default is 'off'
+     *
+     * @param User $user Current User object
+     * @param string $category The category for the preference
+     * @return array
+     */
+    protected function getUserPrefSend_email_on_mention(User $user, $category = 'global')
+    {
+        return [
+            'send_email_on_mention' =>
+            $user->getPreference('send_email_on_mention', $category) ?? 'send_email_on_mention',
         ];
     }
 

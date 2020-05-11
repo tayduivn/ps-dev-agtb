@@ -299,8 +299,10 @@ $mod_strings = array (
     'LBL_WORKSHEETS'                    => 'Worksheets',
 	'LBL_CALENDARS'                     => 'Calendars',
 
-	'LBL_RECEIVE_NOTIFICATIONS_TEXT'	=> 'Receive an email notification when a record is assigned to you.',
-	'LBL_RECEIVE_NOTIFICATIONS'			=> 'Notify on Assignment',
+    'LBL_RECEIVE_NOTIFICATIONS_TEXT'    => 'Receive an email notification when a record is assigned to you.',
+    'LBL_RECEIVE_NOTIFICATIONS'         => 'Email on Assignment',
+    'LBL_SEND_EMAIL_ON_MENTION_TEXT'    => 'Receive an email notification when someone mentions you in a comment log entry.',
+    'LBL_SEND_EMAIL_ON_MENTION'         => 'Email on Mention',
     'LBL_FIELD_NAME_PLACEMENT_TEXT'     => 'Select how field names should be displayed on record views. Choose "Beside Field Value" for a more compact record view.',
     'LBL_FIELD_NAME_PLACEMENT'          => 'Field Name Placement',
     'LBL_ABOVE_FIELD_VALUE'             => 'Above Field Value',

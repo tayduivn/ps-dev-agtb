@@ -67,7 +67,8 @@ class User extends Person {
 	//adding a property called team_id so we can populate it for use in the team widget
 	var $team_id;
 
-	var $receive_notifications;
+    public $receive_notifications;
+    public $send_email_on_mention;
 	var $default_team;
 
     //BEGIN SUGARCRM flav=ent ONLY

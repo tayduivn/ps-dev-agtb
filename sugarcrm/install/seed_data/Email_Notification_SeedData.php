@@ -22,6 +22,7 @@ $templateData = array(
     'Meeting' => 'meeting_notification_email',
     'Call' => 'call_notification_email',
     '‌ReportSchedule' => 'scheduled_report_email',
+    'CommentLogMention' => 'comment_log_mention_email',
 );
 
 $team = new Team();
