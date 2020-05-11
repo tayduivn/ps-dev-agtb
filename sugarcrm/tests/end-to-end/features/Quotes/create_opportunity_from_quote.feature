@@ -30,9 +30,9 @@ Feature: Create Opportunity from Quote
       | Group_1 |
     # Add QLI
     Given Products records exist related via products link:
-      | *name | discount_price | discount_amount | discount_select |
-      | QLI_1 | 100            | 1               | false           |
-      | QLI_2 | 200            | 2               | true            |
+      | *name | discount_price | discount_amount | discount_select | quantity |
+      | QLI_1 | 100            | 1               | false           | -2.00    |
+      | QLI_2 | 200            | 2               | true            | 1.00     |
     Given I open about view and login
 
     When I choose Quotes in modules menu
@@ -51,9 +51,9 @@ Feature: Create Opportunity from Quote
       | date_closed      | 10/19/2018   |
       | account_name     | Acc_1        |
       | sales_status     | In Progress  |
-      | amount           | $295.00      |
-      | best_case        | $295.00      |
-      | worst_case       | $295.00      |
+      | amount           | $-3.00       |
+      | best_case        | $-3.00       |
+      | worst_case       | $-3.00       |
       | opportunity_type | New Business |
 
     # Assign id for newly created opportunity record
@@ -62,18 +62,19 @@ Feature: Create Opportunity from Quote
     # Assign id for newly created RLI record named 'QLI_1'
     When I filter for the RevenueLineItems record *RLI_1 named "QLI_1"
     When I select *RLI_1 in #RevenueLineItemsList.ListView
-#   TODO: This needs to wait until SS-338 is implemented
-#    Then I verify fields on #RLI_1Record.RecordView
-#      | fieldName       | value |
-#      | discount_amount | $1.00 |
+    Then I verify fields on #RLI_1Record.RecordView
+      | fieldName       | value |
+      | discount_amount | $1.00 |
+      | quantity        | -2.00 |
+
 
     # Assign id for newly created RLI record named 'QLI_2'
     When I filter for the RevenueLineItems record *RLI_2 named "QLI_2"
     When I select *RLI_2 in #RevenueLineItemsList.ListView
-#   TODO: This needs to wait until SS-338 is implemented
-#    Then I verify fields on #RLI_2Record.RecordView
-#      | fieldName       | value |
-#      | discount_amount | 2.00% |
+    Then I verify fields on #RLI_2Record.RecordView
+      | fieldName       | value |
+      | discount_amount | 2.00% |
+      | quantity        | 1.00  |
 
     # Verify discount_amount field in created RLIs in RLI subpanel of Opportunity record view
     When I choose Opportunities in modules menu
@@ -84,11 +85,13 @@ Feature: Create Opportunity from Quote
       | fieldName       | value |
       | name            | QLI_1 |
       | discount_amount | $1.00 |
+      | quantity        | -2.00 |
 
     Then I verify fields for *RLI_2 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
       | fieldName       | value |
       | name            | QLI_2 |
       | discount_amount | 2.00% |
+      | quantity        | 1.00  |
 
 
   @create_opportunity_from_quote @pr

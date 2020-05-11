@@ -28,6 +28,7 @@ import PreviewHeaderView from '../views/preview-header-view';
 import LoginLayout from '../layouts/login-layout';
 import QuickCreateMenuCmp from '../components/quick-create-menu-cmp';
 import AdminMenuCmp from "../components/admin-menu-cmp";
+import PreviewLayout from '../layouts/preview-layout';
 
 /**
  * Select module in modules menu
@@ -775,6 +776,11 @@ When(/^I filter for the (\w+) record \*(\w+) named "([^"]*)"$/,
             id: recordID,
         });
 
+        // Create preview layout of the added record
+        seedbed.defineComponent(`${uid}Preview`, PreviewLayout, {
+            module: module,
+            id: recordID,
+        });
     }, {waitForApp: true}
 );
 

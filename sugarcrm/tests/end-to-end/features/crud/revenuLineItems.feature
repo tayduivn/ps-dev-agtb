@@ -320,11 +320,68 @@ Feature: Revenue Line Items module verification
       | account_name     | <account_name>                |
       | sales_stage      | <sales_stage>                 |
       | probability      | <probability>                 |
-      | quantity         | <quanity>                     |
+      | quantity         | <quantity>                    |
       | discount_price   | <dollar_sign><discount_price> |
       | total_amount     | <dollar_sign><total_amount>   |
 
     Examples:
-      | date_closed | likely_case | opportunity_name | account_name | sales_stage    | probability | quanity | discount_price | total_amount | dollar_sign |
-      | 11/20/2018  | 1,000.00    | Opp_1            | Acc_1        | Needs Analysis | 25          | 5.00    | 1,000.00       | 5,000.00     | $           |
-      | 11/20/2018  | -1,000.00   | Opp_1            | Acc_1        | Needs Analysis | 25          | 5.00    | -1,000.00      | -5,000.00    | $           |
+      | date_closed | likely_case | opportunity_name | account_name | sales_stage    | probability | quantity | discount_price | total_amount | dollar_sign |
+      | 11/20/2018  | 1,000.00    | Opp_1            | Acc_1        | Needs Analysis | 25          | 5.00     | 1,000.00       | 5,000.00     | $           |
+      | 11/20/2018  | -1,000.00   | Opp_1            | Acc_1        | Needs Analysis | 25          | 5.00     | -1,000.00      | -5,000.00    | $           |
+
+
+  @rli_with_negative_quantity @SS-367 @pr
+  Scenario Outline: Revenue Line Items > Create RLI with negative quantity and convert to quote
+    Given Opportunities records exist:
+      | name  |
+      | Opp_1 |
+    Given Accounts records exist related via accounts link:
+      | name  |
+      | Acc_1 |
+    Given I open about view and login
+    When I choose RevenueLineItems in modules menu
+    When I click Create button on #RevenueLineItemsList header
+    When I provide input for #RevenueLineItemsDrawer.HeaderView view
+      | *name |
+      | RLI_1 |
+    When I provide input for #RevenueLineItemsDrawer.RecordView view
+      | *     | date_closed | likely_case   | opportunity_name | sales_stage    | quantity   | discount_amount | discount_select |
+      | RLI_1 | 11/20/2018  | <likely_case> | Opp_1            | Needs Analysis | <quantity> | 10.00           | % Percent       |
+
+    # Save RLI record
+    When I click Save button on #RevenueLineItemsDrawer header
+    When I close alert
+    Then I verify fields for *RLI_1 in #RevenueLineItemsList.ListView
+      | fieldName | value |
+      | name      | RLI_1 |
+    When I click on preview button on *RLI_1 in #RevenueLineItemsList.ListView
+    Then I should see #RLI_1Preview view
+    Then I verify fields on #RLI_1Preview.PreviewView
+      | fieldName      | value                         |
+      | date_closed    | <date_closed>                 |
+      | quantity       | <quantity>                    |
+      | discount_price | <dollar_sign><discount_price> |
+      | total_amount   | <dollar_sign><total_amount>   |
+
+    # Convert RLI to quote
+    When I select *RLI_1 in #RevenueLineItemsList.ListView
+    When I open actions menu in #RLI_1Record
+    When I choose GenerateQuote from actions menu in #RLI_1Record
+    #Provide input for the following fields and Save
+    When I provide input for #QuotesRecord.RecordView view
+      | *   | date_quote_expected_closed |
+      | Q_1 | 12/12/2020                 |
+    When I click Save button on #QuotesRecord header
+    When I close alert
+
+    # Verify quantity of generated QLI record
+    When I filter for the Products record *QLI_1 named "RLI_1"
+    When I click on preview button on *QLI_1 in #ProductsList.ListView
+    Then I should see #QLI_1Preview view
+    Then I verify fields on #QLI_1Preview.PreviewView
+      | fieldName | value |
+      | quantity  | <quantity> |
+
+    Examples:
+      | date_closed | likely_case | quantity | discount_price | total_amount | dollar_sign |
+      | 11/20/2018  | 1,000.00    | -5.00    | 1,000.00       | -4,500.00    | $           |
