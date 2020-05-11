@@ -509,6 +509,12 @@ function get_sugar_config_defaults()
                 'KBContents',
             ],
         ],
+        'login_page' => [
+            'marketing_extras_content' => [
+                'url' => 'https://www.sugarcrm.com/product-login-page-service/',
+                'static_url' => 'include/MarketingExtras/StaticMarketingContent/static.html',
+            ],
+        ],
     );
 
     if (empty($locale)) {

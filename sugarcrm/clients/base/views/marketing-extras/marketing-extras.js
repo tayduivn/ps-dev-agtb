@@ -14,67 +14,30 @@
  * @extends View.View
  */
 ({
-    marketingContentUrl: '',
-
     /**
-     * Url of background image.
-     * @property {string}
+     * The URL for marketing content
      */
-    backgroundImageUrl: '',
+    marketingContentUrl: '',
 
     /**
      * @inheritdoc
      */
     initialize: function(options) {
-        this.receiveMessage = this.receiveMessage.bind(this);
-        window.addEventListener('message', this.receiveMessage, false);
         this._super('initialize', [options]);
-        this.fetchMarketingExtras();
+
+        this.fetchMarketingContentUrl();
     },
 
     /**
-     * Listen for the marketing frame to post a navigation event on click
-     * Expected format for the event data is a JSON encoded object.
-     * {"marketing_content_navigate":"https://url.navto.com"}
-     *
-     * @param {MessageEvent} event Message event with the location to navigate to.
+     * Fetch the marketing content URL
      */
-    receiveMessage: function(event) {
-        //First verify the message came from the page we expected
-        if (this.marketingContentUrl.substr(0, event.origin.length) === event.origin) {
-            var data = JSON.parse(event.data);
-            if (data && data.marketing_content_navigate) {
-                window.open(data.marketing_content_navigate, '_blank');
-            }
-        }
-    },
-
-    /**
-     * @inheritdoc
-     */
-    unbind: function() {
-        window.removeEventListener('message', this.receiveMessage, false);
-        this._super('unbind', arguments);
-    },
-
-    /**
-     * Retrieve marketing extras URL from login content endpoint
-     */
-    fetchMarketingExtras: function() {
-        var config = app.metadata.getConfig();
-        this.showMarketingContent = config.marketingExtrasEnabled;
-        if (this.showMarketingContent) {
-            var language = app.user.getLanguage();
-            var url = app.api.buildURL('login/content', null, null, {selected_language: language});
-            app.api.call('read', url, null, {
-                success: _.bind(function(contents) {
-                    if (contents && !_.isEmpty(contents.content_url) && !_.isEmpty(contents.image_url)) {
-                        this.marketingContentUrl = contents.content_url;
-                        this.backgroundImageUrl = contents.image_url;
-                        this.render();
-                    }
-                }, this)
-            });
-        }
+    fetchMarketingContentUrl: function() {
+        var url = app.api.buildURL('login/marketingContentUrl', null, null, null);
+        app.api.call('read', url, null, {
+            success: _.bind(function(response) {
+                this.marketingContentUrl = response;
+                this.render();
+            }, this),
+        });
     },
 })

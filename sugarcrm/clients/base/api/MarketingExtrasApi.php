@@ -38,6 +38,8 @@ class MarketingExtrasApi extends SugarApi
 
     /**
      * Retrieve JSON for receiving SugarCRM marketing content.
+     *
+     * @todo To be deprecated in the future and replaced with login/marketingContentUrl
      * @param ServiceBase $api The REST API instance.
      * @param array $args REST API arguments.
      * @return array Information on how to receive SugarCRM marketing content.

@@ -26,18 +26,28 @@ class MarketingExtrasTest extends TestCase
      */
     public function testGetMarketingContentUrl()
     {
+        $marketingExtrasHelper = $this->getMarketingExtrasHelperMock([
+            'getSugarDetails',
+        ]);
+
+        $marketingExtrasHelper->method('getSugarDetails')
+            ->willReturn([
+                'version' => '10.1.0',
+                'flavor' => 'pro',
+                'build' => 55555,
+                'license' => 1234567890,
+                'domain' => 'localhost',
+            ]);
+
         $marketingExtras = $this->getMarketingExtrasMock(
             [
                 'areMarketingExtrasEnabled',
+                'getMarketingExtrasHelper',
             ]
         );
 
-        $oldBuild = $GLOBALS['sugar_build'] ?? null;
-        $oldFlavor = $GLOBALS['sugar_flavor'] ?? null;
-        $oldVersion = $GLOBALS['sugar_version'] ?? null;
-        $GLOBALS['sugar_build'] = 55555;
-        $GLOBALS['sugar_flavor'] = 'pro';
-        $GLOBALS['sugar_version'] = '8.1.0';
+        $marketingExtras->method('getMarketingExtrasHelper')
+            ->willReturn($marketingExtrasHelper);
 
         $marketingExtras->expects($this->once())
             ->method('areMarketingExtrasEnabled')
@@ -46,10 +56,6 @@ class MarketingExtrasTest extends TestCase
         $contentUrl = $marketingExtras->getMarketingContentUrl('en_us');
 
         $this->assertEquals('', $contentUrl);
-
-        $GLOBALS['sugar_build'] = $oldBuild;
-        $GLOBALS['sugar_flavor'] = $oldFlavor;
-        $GLOBALS['sugar_version'] = $oldVersion;
     }
 
     /**
@@ -62,14 +68,32 @@ class MarketingExtrasTest extends TestCase
         if ($expected === 'exception') {
             $this->expectException(\Exception::class);
         }
+
+        $marketingExtrasHelper = $this->getMarketingExtrasHelperMock([
+            'getSugarDetails',
+        ]);
+
+        $marketingExtrasHelper->method('getSugarDetails')
+            ->willReturn([
+                'version' => '10.1.0',
+                'flavor' => 'ent',
+                'build' => '777',
+                'license' => 1234567890,
+                'domain' => 'localhost',
+            ]);
+
         $marketingExtras = $this->getMarketingExtrasMock(
             [
                 'areMarketingExtrasEnabled',
                 'getMarketingExtrasUrl',
                 'fetchMarketingContentInfo',
-                'getSugarDetails',
+                'getMarketingExtrasHelper',
             ]
         );
+
+        $marketingExtras->method('getMarketingExtrasHelper')
+            ->willReturn($marketingExtrasHelper);
+
         $marketingExtras->expects($this->once())
             ->method('areMarketingExtrasEnabled')
             ->willReturn(true);
@@ -79,9 +103,7 @@ class MarketingExtrasTest extends TestCase
         $marketingExtras->expects($this->once())
             ->method('fetchMarketingContentInfo')
             ->willReturn(['content_url' => $contentUrl]);
-        $marketingExtras->expects($this->once())
-            ->method('getSugarDetails')
-            ->willReturn(['version' => '9.2.0', 'flavor' => 'ent', 'build' => '777']);
+
         $this->assertEquals($expected, $marketingExtras->getMarketingContentUrl('en_Us'));
     }
 
@@ -108,18 +130,27 @@ class MarketingExtrasTest extends TestCase
         if ($expected === 'exception') {
             $this->expectException(\Exception::class);
         }
-        $marketingExtras = $this->getMarketingExtrasMock(
-            [
-                'getSugarConfig',
-            ]
-        );
+
         $map = [
             ['background_image', null, $image],
             ['default_background_image', null, $default],
             ['site_url', null, 'http://mysugar.com'],
         ];
-        $marketingExtras->method('getSugarConfig')
+
+        $marketingExtrasHelper = $this->getMarketingExtrasHelperMock([
+            'getSugarConfig',
+        ]);
+
+        $marketingExtrasHelper->method('getSugarConfig')
             ->will($this->returnValueMap($map));
+
+        $marketingExtras = $this->getMarketingExtrasMock([
+            'getMarketingExtrasHelper',
+        ]);
+
+        $marketingExtras->method('getMarketingExtrasHelper')
+            ->willReturn($marketingExtrasHelper);
+
         $this->assertEquals($expected, $marketingExtras->getBackgroundImageUrl());
     }
 
@@ -182,6 +213,14 @@ class MarketingExtrasTest extends TestCase
     {
         return $this->getMockBuilder('Constraint')
             ->disableOriginalConstructor()
+            ->getMock();
+    }
+
+    protected function getMarketingExtrasHelperMock($methods = [])
+    {
+        return $this->getMockBuilder('\Sugarcrm\Sugarcrm\Marketing\MarketingExtrasHelper')
+            ->disableOriginalConstructor()
+            ->onlyMethods($methods)
             ->getMock();
     }
 }
