@@ -2397,6 +2397,91 @@ class InboundEmail extends SugarBean {
 		}
 		return $return;
 	} // fn
+
+    /**
+     * Sets up connection info into session
+     *
+     * @param bool $useSsl
+     * @param string $user
+     * @param string $pass
+     * @param RemoteSystemName|null $remoteSystemName
+     * @param string $port
+     * @param string $prot
+     * @param string $mailboxName
+     * @return array|bool
+     */
+    public function preConnectMailServer(
+        $useSsl = false,
+        $user = '',
+        $pass = '',
+        ?RemoteSystemName $remoteSystemName = null,
+        $port = '',
+        $prot = '',
+        $mailboxName = '',
+        $eapm_id = null
+    ) {
+        if (isset($_REQUEST['ssl']) && $_REQUEST['ssl'] == 1) {
+            $useSsl = true;
+        }
+
+        if (isset($user) && !empty($user)) {
+            $this->email_password = $pass;
+            $this->email_user = $user;
+            $this->remoteSystemName = $remoteSystemName;
+            $this->port = $port;
+            $this->protocol = $prot;
+            $this->mailbox = $mailboxName;
+            $this->eapm_id = $eapm_id;
+        }
+
+        //If user has selected multiple mailboxes, we only need to test the first mailbox for the connection string.
+        $a_mailbox = explode(",", $this->mailbox);
+        $tmpMailbox = isset($a_mailbox[0]) ? $a_mailbox[0] : "";
+
+        $nonSsl = '/notls/novalidate-cert/secure';
+        $ssl = '/ssl/tls/validate-cert/secure';
+
+        $servicesList = $useSsl ? $ssl : $nonSsl;
+        $mailbox = $this->getMailbox($servicesList, $tmpMailbox);
+
+        // open the connection and test the settings
+        $this->conn = $this->getImapMailer($mailbox);
+
+        if (empty($this->conn)) {
+            return false;
+        }
+
+        $boxes = imap_getmailboxes($this->conn, '', "*");
+        $delimiter = '.';
+        // clean MBOX path names
+        foreach ($boxes as $k => $mbox) {
+            $raw[] = $mbox->name;
+            if ($mbox->delimiter) {
+                $delimiter = $mbox->delimiter;
+            }
+        }
+        $this->setSessionInboundDelimiterString($this->remoteSystemName, $this->email_user, $this->port, $this->protocol, $delimiter);
+
+
+        $connectionOptions = '{' . $this->remoteSystemName->value() . ':' . $this->port
+            . '/service=' . $this->protocol . $servicesList . '}';
+        $connectionSettings = [
+            'serial' => $this->getSerial($servicesList),
+            'service' => $servicesList,
+        ];
+        $this->setSessionConnectionOptions($this->remoteSystemName, $this->email_user, $this->port, $this->protocol, $connectionSettings);
+
+        $i = 0;
+        foreach ($raw as $mbox) {
+            $raw[$i] = str_replace($connectionOptions, "", $GLOBALS['locale']->translateCharset($mbox, "UTF7-IMAP", "UTF8"));
+            $i++;
+        }
+        sort($raw);
+        $this->setSessionInboundFoldersString($this->remoteSystemName, $this->email_user, $this->port, $this->protocol, implode(",", $raw));
+
+        return $connectionSettings;
+    }
+
 	/**
 	 * Programatically determines best-case settings for imap_open()
 	 */
@@ -2426,7 +2511,6 @@ class InboundEmail extends SugarBean {
 		}
 
 		imap_errors(); // clearing error stack
-		error_reporting(0); // turn off notices from IMAP
 
 		if(isset($_REQUEST['ssl']) && $_REQUEST['ssl'] == 1) {
 			$useSsl = true;
@@ -2555,37 +2639,9 @@ class InboundEmail extends SugarBean {
 		$GLOBALS['log']->debug('---------------end FINDOPTIMUMS LOOP----------------');
 
 		if(!empty($retArray['good'])) {
-			$newTls				= '';
-			$newCert			= '';
-			$newSsl				= '';
-			$newNotls			= '';
-			$newNovalidate_cert	= '';
 			$good = array_pop($retArray['good']); // get most complete string
-			$exGood = explode('/', $good);
-			foreach($exGood as $v) {
-				switch($v) {
-					case 'ssl':
-						$newSsl = 'ssl';
-					break;
-					case 'tls':
-						$newTls = 'tls';
-					break;
-					case 'notls':
-						$newNotls = 'notls';
-					break;
-					case 'cert':
-						$newCert = 'validate-cert';
-					break;
-					case 'novalidate-cert':
-						$newNovalidate_cert = 'novalidate-cert';
-					break;
-					case 'secure':
-						$secure = 'secure';
-					break;
-				}
-			}
 
-			$goodStr['serial'] = $newTls.'::'.$newCert.'::'.$newSsl.'::'.$this->protocol.'::'.$newNovalidate_cert.'::'.$newNotls.'::'.$secure;
+            $goodStr['serial'] = $this->getSerial($good);
 			$goodStr['service'] = $good;
 			$testConnectString = str_replace('foo','', $good);
             $testConnectString = '{' . $this->remoteSystemName->value() . ':' . $this->port
@@ -2604,6 +2660,48 @@ class InboundEmail extends SugarBean {
 			return false;
 		}
 	}
+
+    /**
+     * Gets service info to be stored in session
+     *
+     * @param string $serviceStr
+     * @return string
+     */
+    private function getSerial($serviceStr)
+    {
+        $newTls = '';
+        $newCert = '';
+        $newSsl = '';
+        $newNotls = '';
+        $newNovalidate_cert = '';
+        $secure = '';
+        $services = explode('/', $serviceStr);
+        foreach ($services as $v) {
+            switch ($v) {
+                case 'ssl':
+                    $newSsl = 'ssl';
+                    break;
+                case 'tls':
+                    $newTls = 'tls';
+                    break;
+                case 'notls':
+                    $newNotls = 'notls';
+                    break;
+                case 'cert':
+                    $newCert = 'validate-cert';
+                    break;
+                case 'novalidate-cert':
+                    $newNovalidate_cert = 'novalidate-cert';
+                    break;
+                case 'secure':
+                    $secure = 'secure';
+                    break;
+            }
+        }
+
+        return  $newTls . '::' . $newCert . '::' . $newSsl . '::' . $this->protocol . '::' . $newNovalidate_cert
+            . '::' . $newNotls . '::' . $secure;
+    }
 
     public function getSessionConnectionOptions(RemoteSystemName $remoteSystemName, $email_user, $port, $protocol)
     {
@@ -4813,6 +4911,55 @@ eoq;
 		}
 	}
 
+    /**
+     * Connects to Imap Server
+     *
+     * @param bool $test
+     * @param bool $force
+     * @return mixed|string
+     */
+    public function connectToImapServer($test = false, $force = false)
+    {
+        global $mod_strings;
+
+        $useSsl = ($_REQUEST['ssl'] == 'true') ? true : false;
+
+        if ($test) {
+            $opts = $this->preConnectMailServer($useSsl);
+            if (isset($opts['good']) && empty($opts['good'])) {
+                return array_pop($opts['err']);
+            } else {
+                $service = $opts['service'];
+                $service = str_replace('foo', '', $service); // foo there to support no-item explodes
+            }
+        } else {
+            $service = $this->getServiceString();
+        }
+        $mailbox = $this->getMailbox($service, $this->mailbox);
+
+        if (empty($this->conn) && !$test) {
+            $this->conn = $this->getImapMailer($mailbox);
+        }
+
+        if ($test) {
+            $msg = '';
+
+            if (!empty($this->conn)) {
+                if ($this->protocol == 'imap') {
+                    $msg .= $mod_strings['LBL_TEST_SUCCESSFUL'];
+                }
+            } else {
+                $msg = $mod_strings['ERR_TEST_MAILBOX'];
+            }
+
+            return $msg;
+        } elseif (empty($this->conn)) {
+            return "false";
+        } else {
+            return "true";
+        }
+    }
+
 	/**
 	 * Connects to mailserver.  If an existing IMAP resource is available, it
 	 * will attempt to reuse the connection, updating the mailbox path.
@@ -4829,7 +4976,6 @@ eoq;
 		}
 
 		imap_errors(); // clearing error stack
-		error_reporting(0); // turn off notices from IMAP
 
 		// tls::ca::ssl::protocol::novalidate-cert::notls
 		$useSsl = ($_REQUEST['ssl'] == 'true') ? true : false;
@@ -4965,6 +5111,18 @@ eoq;
     }
 
 
+    /**
+     * Get an ImapMailer object
+     *
+     * @param Mailbox $mailbox
+     * @return null|ImapMailer returns `null` if authentication fails
+     */
+    protected function getImapMailer(Mailbox $mailbox)
+    {
+        $mailer = new ImapMailer($mailbox, $this->email_user, $this->email_password, $this->eapm_id);
+
+        return $mailer->testSettings() ? $mailer : null;
+    }
 
 	/**
 	 * retrieves an array of I-E beans based on the group_id

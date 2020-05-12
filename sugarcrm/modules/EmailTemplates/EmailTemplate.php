@@ -587,8 +587,9 @@ class EmailTemplate extends SugarBean {
 				}
 
 				if($field_def['type'] == 'enum') {
-                    $translated = translate($field_def['options'], 'Accounts', $contact->{$field_def['name']});
-
+                    if (isset($field_def['options'])) {
+                        $translated = translate($field_def['options'], 'Accounts', $contact->{$field_def['name']});
+                    }
 					if(isset($translated) && ! is_array($translated)) {
                         $repl_arr = EmailTemplate::add_replacement($repl_arr, $field_def, array(
                             'contact_'         . $field_def['name'] => $translated,

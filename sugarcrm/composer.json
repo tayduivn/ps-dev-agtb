@@ -131,6 +131,7 @@
         "vanderlee/php-stable-sort-functions": "2.0.2",
         "symfony/process": "v3.4.11",
         "ultra-lite/container": "6.2.0",
+        "laminas/laminas-mail": "^2.10.1",
         "microsoft/microsoft-graph": "^1.13.0"
     },
     "require-dev": {

@@ -105,7 +105,7 @@ if(!empty($_REQUEST['email_password'])) {
 $ie->mailbox        = 'INBOX';
 
 if($popupBoolean) {
-    $msg = $ie->connectMailserver(true);
+    $msg = $ie->connectToImapServer(true);
 }
 
 ////	END TITLES

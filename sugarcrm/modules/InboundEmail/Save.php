@@ -65,7 +65,7 @@ $useSsl = (isset($_REQUEST['ssl']) && $_REQUEST['ssl'] == 1) ? true : false;
 $remoteSystemName = RemoteSystemName::fromString($focus->server_url);
 $optimum = $focus->getSessionConnectionOptions($remoteSystemName, $focus->email_user, $focus->port, $focus->protocol);
 if (empty($optimum)) {
-    $optimum = $focus->findOptimumSettings($useSsl, $focus->email_user, $focus->email_password, $remoteSystemName, $focus->port, $focus->protocol, $focus->mailbox);
+    $optimum = $focus->preConnectMailServer($useSsl, $focus->email_user, $focus->email_password, $remoteSystemName, $focus->port, $focus->protocol, $focus->mailbox, $focus->eapm_id);
 } // if
 $delimiter = $focus->getSessionInboundDelimiterString($remoteSystemName, $focus->email_user, $focus->port, $focus->protocol);
 

@@ -101,7 +101,7 @@ function pollMonitoredInboxes() {
 				// get all the keys which are msgnos;
 				$newMsgs = array_keys($msgNoToUIDL);
 			}
-			if($ieX->connectMailserver() == 'true') {
+            if ($ieX->connectToImapServer() == 'true') {
 				$connectToMailServer = true;
 			} // if
 

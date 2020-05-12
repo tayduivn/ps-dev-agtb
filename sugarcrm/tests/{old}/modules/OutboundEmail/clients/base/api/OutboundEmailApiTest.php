@@ -70,7 +70,9 @@ class OutboundEmailApiTest extends TestCase
         $mailer = $this->createPartialMock('SmtpMailer', ['connect']);
         $mailer->expects($this->once())->method('connect');
 
-        $api = $this->createPartialMock('OutboundEmailApi', ['getMailer']);
+        $api = $this->getMockBuilder('OutboundEmailApi')
+            ->onlyMethods(['getMailer'])
+            ->getMock();
         $api->method('getMailer')->willReturn($mailer);
 
         $args = [
@@ -96,7 +98,9 @@ class OutboundEmailApiTest extends TestCase
         $mailer = $this->createPartialMock('SmtpMailer', ['connect']);
         $mailer->method('connect')->willThrowException(new MailerException());
 
-        $api = $this->createPartialMock('OutboundEmailApi', ['getMailer']);
+        $api = $this->getMockBuilder('OutboundEmailApi')
+            ->onlyMethods(['getMailer'])
+            ->getMock();
         $api->method('getMailer')->willReturn($mailer);
 
         $this->expectException(SugarApiException::class);

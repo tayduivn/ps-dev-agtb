@@ -171,6 +171,7 @@ class OutboundEmailConfigurationPeerTest extends TestCase
             "mail_smtpauth_req" => "1",
             "mail_smtpssl"      => "0",
         ];
+        $configuration = OutboundEmailConfigurationTestHelper::mergeOutboundEmailConfigurations($configuration);
         OutboundEmailConfigurationTestHelper::createOutboundEmail($configuration);
 
         $this->setUpMockOutboundEmailConfigurationPeer(true);
@@ -206,6 +207,7 @@ class OutboundEmailConfigurationPeerTest extends TestCase
             "mail_smtpauth_req" => "1",
             "mail_smtpssl"      => "0",
         ];
+        $configuration = OutboundEmailConfigurationTestHelper::mergeOutboundEmailConfigurations($configuration);
         OutboundEmailConfigurationTestHelper::createOutboundEmail($configuration);
 
         $this->setUpMockOutboundEmailConfigurationPeer(false);
@@ -233,6 +235,7 @@ class OutboundEmailConfigurationPeerTest extends TestCase
             "mail_smtpauth_req" => "1",
             "mail_smtpssl"      => "0",
         ];
+        $configuration = OutboundEmailConfigurationTestHelper::mergeOutboundEmailConfigurations($configuration);
         OutboundEmailConfigurationTestHelper::createOutboundEmail($configuration);
 
         $this->setUpMockOutboundEmailConfigurationPeer(false);
@@ -261,6 +264,7 @@ class OutboundEmailConfigurationPeerTest extends TestCase
             "mail_smtpauth_req" => "0",
             "mail_smtpssl"      => "0",
         ];
+        $configuration = OutboundEmailConfigurationTestHelper::mergeOutboundEmailConfigurations($configuration);
         OutboundEmailConfigurationTestHelper::createOutboundEmail($configuration);
 
         $this->setUpMockOutboundEmailConfigurationPeer(false);
@@ -289,6 +293,7 @@ class OutboundEmailConfigurationPeerTest extends TestCase
             "mail_smtpauth_req" => "1",
             "mail_smtpssl"      => "0",
         ];
+        $configuration = OutboundEmailConfigurationTestHelper::mergeOutboundEmailConfigurations($configuration);
         OutboundEmailConfigurationTestHelper::createOutboundEmail($configuration);
 
         $this->setUpMockOutboundEmailConfigurationPeer(false);

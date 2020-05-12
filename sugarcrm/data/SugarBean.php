@@ -5709,7 +5709,7 @@ class SugarBean
         $response = array();
         $response['list'] = $list;
         $response['parent_data'] = $parent_fields;
-        $response['row_count'] = $rows_found;
+        $response['row_count'] = $rows_found ?? 0;
         $response['next_offset'] = $next_offset;
         $response['previous_offset'] = $previous_offset;
         $response['current_offset'] = $row_offset ;
