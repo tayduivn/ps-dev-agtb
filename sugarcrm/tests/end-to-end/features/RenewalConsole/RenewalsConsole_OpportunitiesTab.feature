@@ -529,6 +529,7 @@ Feature: Sugar Sell Renewals Console Verification > Opportunities Tab
 
 
   @renewals-console @rc_opportunities_config
+  @ci-excluded
   Scenario: Renewals Console > Console Settings > Opportunities Tab
     # Create an account record
     Given Accounts records exist:

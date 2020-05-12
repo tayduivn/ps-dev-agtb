@@ -161,7 +161,7 @@ describe('ConsoleConfiguration.View.ConfigHeaderButtons', function() {
         });
     });
 
-    describe('_setupSaveConfig', function() {
+    describe('_beforeSaveConfig', function() {
         var model;
         var contextModel;
         var getStub;
@@ -203,19 +203,19 @@ describe('ConsoleConfiguration.View.ConfigHeaderButtons', function() {
         });
 
         it('should call view.context.get with model', function() {
-            view._setupSaveConfig();
+            view._beforeSaveConfig();
 
             expect(view.context.get).toHaveBeenCalledWith('model');
         });
 
         it('should call view.context.get.get with enabled_modules', function() {
-            view._setupSaveConfig();
+            view._beforeSaveConfig();
 
             expect(contextModel.get).toHaveBeenCalledWith('enabled_modules');
         });
 
         it('should call model.get with method', function() {
-            view._setupSaveConfig();
+            view._beforeSaveConfig();
 
             expect(model.get).toHaveBeenCalledWith('enabled_module');
             expect(model.get).toHaveBeenCalledWith('order_by_primary');
@@ -224,13 +224,15 @@ describe('ConsoleConfiguration.View.ConfigHeaderButtons', function() {
         });
 
         it('should call the view.context.get.set method with the new values', function() {
-            view._setupSaveConfig();
+            view._beforeSaveConfig();
 
             expect(contextModel.set).toHaveBeenCalledWith({
                 is_setup: true,
                 enabled_modules: {'1234-5678': ['Accounts']},
                 order_by_primary: {'1234-5678': {'Accounts': 'next_renewal_date:asc'}},
                 order_by_secondary: {'1234-5678': {'Accounts': ''}},
+                labels: {},
+                viewdefs: {},
                 filter_def: {'1234-5678': {'Accounts': {'$owner': ''}}}
             }, {silent: true});
         });
@@ -262,6 +264,188 @@ describe('ConsoleConfiguration.View.ConfigHeaderButtons', function() {
         it('should call view.getField.setDisabled with false', function() {
 
             expect(view.getField('save_button').setDisabled).toHaveBeenCalledWith(true);
+        });
+    });
+
+    describe('addLabelToList', function() {
+        beforeEach(function() {
+            sinon.collection.stub(app.lang, 'get')
+                .withArgs('LBL_AAA').returns('LBL_AAA')
+                .withArgs('LBL_BBB').returns('ANYTHING_BUT_LBL_BBB');
+        });
+
+        using('various settings', [{
+            element: '<li fieldlabel="LBL_AAA" data-original-title="aaa"></li>',
+            expected: [{label: 'LBL_AAA', labelValue: 'aaa'}]
+        },{
+            element: '<li fieldlabel="LBL_BBB" data-original-title="aaa"></li>',
+            expected: []
+        }], function(value) {
+            it('should set addLabelToList to proper value', function() {
+                labelList = [];
+                view.addLabelToList($(value.element), 'Cases', labelList);
+                expect(labelList).toEqual(value.expected);
+            });
+        });
+    });
+
+    describe('isSpecialField', function() {
+        beforeEach(function() {
+            sinon.collection.stub(app.metadata, 'getModule')
+                .withArgs('ModuleA', 'fields')
+                .returns({
+                    field1: {type: 'widget'},
+                    field2: {type: 'anything_but_widget'}
+                });
+        });
+
+        using('various module settings', [{
+            modulename: 'ModuleA',
+            fieldName: 'field1',
+            expected: true
+        },{
+            modulename: 'ModuleA',
+            fieldName: 'field2',
+            expected: false
+        }], function(value) {
+            it('should set determine whether it is a special field', function() {
+                var result = view.isSpecialField(value.fieldName, value.modulename);
+                expect(result).toEqual(value.expected);
+            });
+        });
+    });
+
+    describe('getRelateFieldType', function() {
+        beforeEach(function() {
+            getViewStub = sinon.collection.stub(app.metadata, 'getModule')
+                .withArgs('ModuleA', 'fields')
+                .returns({
+                    anyfield: {module: 'ModuleB', rname: 'relatedFieldName'}
+                })
+                .withArgs('ModuleB', 'fields')
+                .returns({
+                    relatedFieldName: {type: 'relatedType'}
+                });
+        });
+
+        using('various module settings', [{
+            modulename: 'ModuleA',
+            expected: 'relatedType'
+        },{
+            modulename: 'ModuleB',
+            expected: ''
+        }], function(value) {
+            it('should return the actual type of a related field', function() {
+                var relatedType = view.getRelateFieldType('anyfield', value.modulename);
+                expect(relatedType).toEqual(value.expected);
+            });
+        });
+    });
+
+    describe('buildSpecialField', function() {
+        beforeEach(function() {
+            getViewStub = sinon.collection.stub(app.metadata, 'getModule')
+                .withArgs('ModuleA', 'fields')
+                .returns({
+                    field1: {console: {prop1: true}},
+                    field2: {console: {prop1: true, prop2: false}}
+                });
+        });
+
+        using('various module settings', [{
+            modulename: 'ModuleA',
+            fieldName: 'field1',
+            expected: {prop1: true, widget_name: 'field1'}
+        },{
+            modulename: 'ModuleA',
+            fieldName: 'field2',
+            expected: {prop1: true, prop2: false, widget_name: 'field2'}
+        }], function(value) {
+            it('should build a proper special field definition', function() {
+                var fieldObj = {};
+                view.buildSpecialField(value.fieldName, fieldObj, value.modulename);
+                expect(fieldObj).toEqual(value.expected);
+            });
+        });
+    });
+
+    describe('buildRegularField', function() {
+        beforeEach(function() {
+            getViewStub = sinon.collection.stub(app.metadata, 'getModule')
+                .withArgs('ModuleA', 'fields')
+                .returns({
+                    nameField: {type: 'name'},
+                    datetimeField: {type: 'datetime'},
+                    relateField1: {
+                        type: 'relate',
+                        module: 'ModuleB',
+                        rname: 'rField1',
+                        enum_module: 'AAA'
+                    },
+                    relateField2: {
+                        type: 'relate',
+                        module: 'ModuleB',
+                        rname: 'rField2',
+                        related_fields: ['fieldA']
+                    },
+                    relateField3: {
+                        type: 'relate',
+                        module: 'ModuleB',
+                        rname: 'rField2',
+                        id_name: 'fieldA'
+                    }
+                })
+                .withArgs('ModuleB', 'fields')
+                .returns({
+                    rField1: {type: 'enum'},
+                    rField2: {type: 'bool'}
+                });
+        });
+
+        using('various module settings', [{
+            modulename: 'ModuleA',
+            element: '<li fieldname="nameField" fieldlabel="LBL_AAA"></li>',
+            expected: {name: 'nameField', label: 'LBL_AAA', link: false}
+        },{
+            modulename: 'ModuleA',
+            element: '<li fieldname="datetimeField" fieldlabel="LBL_AAA"></li>',
+            expected: {name: 'datetimeField', label: 'LBL_AAA', type: 'datetime'}
+        },{
+            modulename: 'ModuleA',
+            element: '<li fieldname="relateField1" fieldlabel="LBL_AAA"></li>',
+            expected: {
+                name: 'relateField1',
+                label: 'LBL_AAA',
+                type: 'enum',
+                enum_module: 'ModuleB',
+                link: false
+            }
+        },{
+            modulename: 'ModuleA',
+            element: '<li fieldname="relateField2" fieldlabel="LBL_AAA"></li>',
+            expected: {
+                name: 'relateField2',
+                label: 'LBL_AAA',
+                module: 'ModuleB',
+                related_fields: ['fieldA'],
+                link: false
+            }
+        },{
+            modulename: 'ModuleA',
+            element: '<li fieldname="relateField3" fieldlabel="LBL_AAA"></li>',
+            expected: {
+                name: 'relateField3',
+                label: 'LBL_AAA',
+                module: 'ModuleB',
+                related_fields: ['fieldA'],
+                link: false
+            }
+        }], function(value) {
+            it('should build a proper regular field definition', function() {
+                var fieldObj = {};
+                view.buildRegularField(value.element, fieldObj, value.modulename);
+                expect(fieldObj).toEqual(value.expected);
+            });
         });
     });
 

@@ -11,7 +11,7 @@
  */
 --}}
 <nav>
-    <ul id="columns-sortable" class="field-list connectedSortable">
+    <ul id="columns-sortable" class="field-list connectedSortable" module_name="{{this.model.attributes.enabled_module}}">
         {{#each mappedFields}}
             {{#notEq this.length "1"}}
                 <li class="pill outer multi-field-block">

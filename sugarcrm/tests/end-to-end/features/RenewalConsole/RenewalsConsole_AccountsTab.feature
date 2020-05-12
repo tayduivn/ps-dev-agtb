@@ -559,6 +559,7 @@ Feature: Sugar Sell Renewals Console Verification > Accounts Tab
 
 
   @renewals-console @rc_accounts_config
+  @ci-excluded
   Scenario: Renewals Console > Console Settings > Accounts Tab
     Given Accounts records exist:
       | *   | name      | industry     | annual_revenue | service_level | type     | my_favorite |
