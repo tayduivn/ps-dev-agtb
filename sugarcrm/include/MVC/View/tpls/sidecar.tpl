@@ -75,9 +75,12 @@
             } else {
                 var App;
                 {/literal}{if $authorization}
-                SUGAR.App.cache.set("{$appPrefix}AuthAccessToken", "{$authorization.access_token}");
+                let authStore = SUGAR.App.config.authStore || "cache";
+                let keyPrefix = (authStore == "cache") ? "{$appPrefix}" : "";
+                let keyValueStore = SUGAR.App[authStore];
+                keyValueStore.set(keyPrefix + "AuthAccessToken", "{$authorization.access_token}");
                 {if $authorization.refresh_token}
-                SUGAR.App.cache.set("{$appPrefix}AuthRefreshToken", "{$authorization.refresh_token}");
+                keyValueStore.set(keyPrefix + "AuthRefreshToken", "{$authorization.refresh_token}");
                 {/if}
                 if (window.SUGAR.App.config.siteUrl != '') {ldelim}
                     history.replaceState(null, 'SugarCRM', window.SUGAR.App.config.siteUrl+"/"+window.location.hash);
