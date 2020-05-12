@@ -132,4 +132,18 @@ class ImapMailer implements Inbound
             }
         }
     }
+
+    /**
+     * Gets a list of mailbox data from the current connection
+     *
+     * @return array
+     */
+    public function getMailboxes() : array
+    {
+        $boxes = [];
+        if (!empty($this->client)) {
+            $boxes = $this->client->listMailbox();
+        }
+        return $boxes;
+    }
 }

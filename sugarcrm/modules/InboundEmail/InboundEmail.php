@@ -49,6 +49,7 @@ class InboundEmail extends SugarBean {
     private $remoteSystemName;
 	var $email_user;
 	var $email_password;
+    public $eapm_id;
 	var $port;
 	var $service;
 	var $mailbox;
@@ -2380,7 +2381,7 @@ class InboundEmail extends SugarBean {
         $foldersList = $this->getSessionInboundFoldersString($this->remoteSystemName, $this->email_user, $this->port, $this->protocol);
 		if (empty($foldersList)) {
 			global $mod_strings;
-			$msg = $this->connectMailserver(true);
+            $msg = $this->connectToImapServer(true);
 			if (strpos($msg, "successfully")) {
                 $foldersList = $this->getSessionInboundFoldersString($this->remoteSystemName, $this->email_user, $this->port, $this->protocol);
 				$return['status'] = true;
@@ -2451,13 +2452,13 @@ class InboundEmail extends SugarBean {
             return false;
         }
 
-        $boxes = imap_getmailboxes($this->conn, '', "*");
+        $boxes = $this->conn->getMailboxes();
         $delimiter = '.';
         // clean MBOX path names
-        foreach ($boxes as $k => $mbox) {
-            $raw[] = $mbox->name;
-            if ($mbox->delimiter) {
-                $delimiter = $mbox->delimiter;
+        foreach ($boxes as $boxName => $boxProperties) {
+            $raw[] = $boxName;
+            if (!empty($boxProperties['delim'])) {
+                $delimiter = $boxProperties['delim'];
             }
         }
         $this->setSessionInboundDelimiterString($this->remoteSystemName, $this->email_user, $this->port, $this->protocol, $delimiter);

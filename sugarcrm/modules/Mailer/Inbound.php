@@ -18,4 +18,11 @@ interface Inbound
      * @return bool
      */
     public function testSettings();
+
+    /**
+     * Returns a list of mailbox data
+     *
+     * @return array
+     */
+    public function getMailboxes() : array;
 }

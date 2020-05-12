@@ -195,28 +195,31 @@ function isDataValid(formName, validateMonitoredFolder) {
 
 } // fn
 
-function getFoldersListForInboundAccount(module_name, action, pageTarget, width, height, mail_server, protocol, port, login, password, mailbox, ssl, personal, searchFieldValue, formName) {
+function getFoldersListForInboundAccount(moduleName, action, pageTarget, width, height, mailServer,
+                                         protocol, port, login, password, mailbox, ssl, personal,
+                                         searchFieldValue, formName, eapmId) {
 	if (!formName) formName = "testSettingsView";
 
 	var words = getEncryptedPassword(login, password, mailbox);
 	var isPersonal = (personal) ? 'true' : 'false';
 
-	// launch the popup
-	URL = 'index.php?'
-        + 'module=' + module_name
-        + '&to_pdf=1'
-        + '&action=' + action
-        + '&target=' + pageTarget
-        + '&target1=' + pageTarget
-        + '&server_url=' + mail_server
-        + '&email_user=' + words[0]
-        + '&protocol=' + protocol
-        + '&port=' + port
-        + '&email_password=' + encodeURIComponent(words[1])
-        + '&mailbox=' + words[2]
-        + '&ssl=' + ssl
-        + '&personal=' + isPersonal
-		+ '&searchField='+ searchFieldValue;
+    // launch the popup
+    var url = 'index.php?' +
+        'module=' + moduleName +
+        '&to_pdf=1' +
+        '&action=' + action +
+        '&target=' + pageTarget +
+        '&target1=' + pageTarget +
+        '&server_url=' + mailServer +
+        '&eapmId=' + eapmId +
+        '&email_user=' + words[0] +
+        '&protocol=' + protocol +
+        '&port=' + port +
+        '&email_password=' + encodeURIComponent(words[1]) +
+        '&mailbox=' + words[2] +
+        '&ssl=' + ssl +
+        '&personal=' + isPersonal +
+        '&searchField=' + searchFieldValue;
 
 	var SI = SUGAR.inboundEmail;
     if (!SI.listDlg) {
@@ -242,8 +245,14 @@ function getFoldersListForInboundAccount(module_name, action, pageTarget, width,
 
     SI.listDlg.render(document.body);
     var Connect = YAHOO.util.Connect;
-    if (Connect.url) URL = Connect.url + "&" +  url;
-    Connect.asyncRequest("POST", URL, {success:SI.listDlg._updateContent, failure:SI.listDlg.hide, scope:SI.listDlg});
+    if (Connect.url) {
+        url = Connect.url + '&' +  url;
+    }
+    Connect.asyncRequest('POST', url, {
+        success: SI.listDlg._updateContent,
+        failure: SI.listDlg.hide,
+        scope: SI.listDlg
+    });
     SI.listDlg.show();
 
 } // fn

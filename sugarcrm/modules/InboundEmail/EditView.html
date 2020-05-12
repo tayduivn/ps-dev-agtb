@@ -123,7 +123,7 @@
                 <slot><span id="label_inbox">{MOD.LBL_MAILBOX}: <span class="required">{APP.LBL_REQUIRED_SYMBOL}</span></span>&nbsp;</slot></td>
             <td id="mailboxRow1" valign="top"  width="35%">
                 <slot><input id="mailbox" name='mailbox' tabindex='90' size='30' maxlength='500' type="text" value="{MAILBOX}">
-                    <input type="button" id="subscribeFolderButton" style="display:none;" class="button" onclick='javascript:getFoldersListForInboundAccount("InboundEmail", "ShowInboundFoldersList", "Popup", 400, 300, this.form.server_url.value, this.form.protocol.value, this.form.port.value, this.form.email_user.value, Rot13.write(this.form.email_password.value), this.form.mailbox.value, this.form.ssl.checked, this.form.personal.value, this.form.searchField.value, "EditView");' value="{MOD.LBL_SELECT}">
+                    <input type="button" id="subscribeFolderButton" style="display:none;" class="button" onclick='javascript:getFoldersListForInboundAccount("InboundEmail", "ShowInboundFoldersList", "Popup", 400, 300, this.form.server_url.value, this.form.protocol.value, this.form.port.value, this.form.email_user.value, Rot13.write(this.form.email_password.value), this.form.mailbox.value, this.form.ssl.checked, this.form.personal.value, this.form.searchField.value, "EditView", this.form.eapm_id.value);' value="{MOD.LBL_SELECT}">
                 </slot></td>
         </tr>
 		</tr>
@@ -140,7 +140,7 @@
             <td id="trashFolderRow1" valign="top"  width="35%">
                 <slot>
                 <input name='trashFolder' id='trashFolder' tabindex="92" value="{TRASHFOLDER}" size='30' maxlength='100' type="text">
-                <input type="button" id="trashFolderButton" class="button" onclick='javascript:getFoldersListForInboundAccount("InboundEmail", "ShowInboundFoldersList", "Popup", 400, 300, this.form.server_url.value, this.form.protocol.value, this.form.port.value, this.form.email_user.value, Rot13.write(this.form.email_password.value), this.form.trashFolder.value, this.form.ssl.checked, this.form.personal.value, "trash", "EditView");' value="{MOD.LBL_SELECT}">
+                <input type="button" id="trashFolderButton" class="button" onclick='javascript:getFoldersListForInboundAccount("InboundEmail", "ShowInboundFoldersList", "Popup", 400, 300, this.form.server_url.value, this.form.protocol.value, this.form.port.value, this.form.email_user.value, Rot13.write(this.form.email_password.value), this.form.trashFolder.value, this.form.ssl.checked, this.form.personal.value, "trash", "EditView", this.form.eapm_id.value);' value="{MOD.LBL_SELECT}">
 		<tr>
 			<td valign="top" scope="row" width="15%" NOWRAP>
 				<slot><span>{MOD.LBL_SSL}:&nbsp;{TIPS.LBL_SSL_DESC}</span></slot>
@@ -154,7 +154,7 @@
                 <slot>{MOD.LBL_SENT_FOLDER}:</slot></td>
             <td id="sentFolderRow1" valign="top"  width="35%">
                 <slot><input id="sentFolder" name='sentFolder' tabindex='95' size='30' maxlength='100' type="text" value="{SENTFOLDER}">
-                    <input type="button" id="sentFolderButton" class="button" onclick='javascript:getFoldersListForInboundAccount("InboundEmail", "ShowInboundFoldersList", "Popup", 400, 300, this.form.server_url.value, this.form.protocol.value, this.form.port.value, this.form.email_user.value, Rot13.write(this.form.email_password.value), this.form.sentFolder.value, this.form.ssl.checked, this.form.personal.value, "sent", "EditView");' value="{MOD.LBL_SELECT}">
+                    <input type="button" id="sentFolderButton" class="button" onclick='javascript:getFoldersListForInboundAccount("InboundEmail", "ShowInboundFoldersList", "Popup", 400, 300, this.form.server_url.value, this.form.protocol.value, this.form.port.value, this.form.email_user.value, Rot13.write(this.form.email_password.value), this.form.sentFolder.value, this.form.ssl.checked, this.form.personal.value, "sent", "EditView", this.form.eapm_id.value);' value="{MOD.LBL_SELECT}">
                 </slot>
             </td>
 		</tr>
