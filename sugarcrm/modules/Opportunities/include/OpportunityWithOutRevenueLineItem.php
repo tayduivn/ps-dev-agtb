@@ -168,7 +168,7 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
      * - Removes the duplicate check change
      * - Removes the dependency extension that turns off the default oob dependencies
      */
-    protected function fixOpportunityModule()
+    public function fixOpportunityModule()
     {
         // Clear the Opportunities extension vardefs
         if (file_exists($this->moduleExtFolder . '/Vardefs/' . $this->dupeCheckExtFile)) {
@@ -181,7 +181,6 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
 <?php
 \$dictionary['Opportunity']['fields']['renewal'] = null;
 \$dictionary['Opportunity']['fields']['renewal_parent_name'] = null;
-\$dictionary['Opportunity']['fields']['renewal_parent_id'] = null;
 EOL;
         sugar_file_put_contents($this->moduleExtFolder . '/Vardefs/' . $this->dupeCheckExtFile, $file_contents);
 

@@ -2424,6 +2424,12 @@ abstract class DBManager implements LoggerAwareInterface
             }
         }
 
+        // If our values array is empty, return false to avoid executing a
+        // malformed query
+        if (empty($values)) {
+            return false;
+        }
+
         $builder = $this->getConnection()->createQueryBuilder();
         $builder->update($table);
 
