@@ -86,14 +86,13 @@ class SessionListenerTest extends TestCase
         $this->token = $this->getMockBuilder(IntrospectToken::class)
             ->setConstructorArgs(
                 [
-                    $this->accessToken,
+                    null,
                     'srn:cloud:idp:eu:0000000001:tenant',
                     'https://apis.sugarcrm.com/auth/crm',
                 ]
             )
-            ->setMethods(['getUser', 'getAttribute'])
+            ->onlyMethods(['getUser', 'getAttribute', 'getCredentials', 'hasAttribute'])
             ->getMock();
-        $this->token->method('getUser')->willReturn($this->user);
 
         $this->sugarConfig = $this->createMock(\SugarConfig::class);
 
@@ -124,13 +123,15 @@ class SessionListenerTest extends TestCase
      * @runInSeparateProcess
      * @covers ::execute
      */
-    public function testExecuteWithNewSession()
+    public function testExecuteWithNewSessionAccessTokenInCredentials(): void
     {
         $this->sugarConfig->expects($this->exactly(2))
                           ->method('get')
                           ->with('unique_key')
                           ->willReturn('unique_key');
 
+        $this->token->method('getUser')->willReturn($this->user);
+        $this->token->method('getCredentials')->willReturn($this->accessToken);
         $this->token->expects($this->once())
                     ->method('getAttribute')
                     ->with('platform')
@@ -156,10 +157,68 @@ class SessionListenerTest extends TestCase
      * @runInSeparateProcess
      * @covers ::execute
      */
+    public function testExecuteWithNewSessionAccessTokenInAttribute(): void
+    {
+        $this->sugarConfig->expects($this->exactly(2))
+            ->method('get')
+            ->with('unique_key')
+            ->willReturn('unique_key');
+
+        $this->token->method('getUser')->willReturn($this->user);
+        $this->token->method('getCredentials')->willReturn(null);
+        $this->token->expects($this->once())
+            ->method('hasAttribute')
+            ->with('token')
+            ->willReturn(true);
+
+        $this->token->expects($this->exactly(2))
+            ->method('getAttribute')
+            ->withConsecutive(['token'], ['platform'])
+            ->willReturnOnConsecutiveCalls($this->accessToken, 'opi');
+
+        $this->sugarUser->id = 1;
+
+        $this->listener->execute($this->event);
+
+        $this->assertEquals(hash('sha256', $this->accessToken . 'unique_key'), session_id());
+        $this->assertTrue($_SESSION['externalLogin']);
+        $this->assertTrue($_SESSION['is_valid_session']);
+        $this->assertEquals(1, $_SESSION['user_id']);
+        $this->assertEquals('127.0.0.2', $_SESSION['ip_address']);
+        $this->assertEquals('user', $_SESSION['type']);
+        $this->assertEquals(1, $_SESSION['authenticated_user_id']);
+        $this->assertEquals('unique_key', $_SESSION['unique_key']);
+        $this->assertEquals('opi', $_SESSION['platform']);
+        $this->assertTrue($_SESSION['oidc_login_action']);
+    }
+
+    /**
+     * @runInSeparateProcess
+     * @covers ::execute
+     */
+    public function testExecuteWithNewSessionNoAccessToken(): void
+    {
+        $this->token->expects($this->never())->method('getUser')->willReturn($this->user);
+        $this->token->method('getCredentials')->willReturn(null);
+        $this->token->expects($this->once())
+            ->method('hasAttribute')
+            ->with('token')
+            ->willReturn(false);
+
+        $this->listener->execute($this->event);
+    }
+
+    /**
+     * @runInSeparateProcess
+     * @covers ::execute
+     */
     public function testExecuteWithExistingSession()
     {
         $this->sugarConfig->expects($this->once())->method('get')->willReturn('unique_key');
+
+        $this->token->method('getUser')->willReturn($this->user);
         $this->token->expects($this->never())->method('getAttribute');
+        $this->token->method('getCredentials')->willReturn($this->accessToken);
 
         ini_set("session.use_cookies", false);
         session_id(hash('sha256', $this->accessToken . 'unique_key'));

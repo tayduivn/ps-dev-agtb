@@ -264,6 +264,7 @@ class SugarOAuth2ServerOIDC extends SugarOAuth2Server implements LoggerAwareInte
         try {
             $authManager = $this->getAuthProviderApiLoginBuilder($idpConfig)->buildAuthProviders();
             $jwtBearerToken = new JWTBearerToken(Srn\Converter::toString($userSrn), $idmModeConfig['tid']);
+            $jwtBearerToken->setAttribute('platform', $this->platform);
             $accessToken = $authManager->authenticate($jwtBearerToken);
 
             $token = array(

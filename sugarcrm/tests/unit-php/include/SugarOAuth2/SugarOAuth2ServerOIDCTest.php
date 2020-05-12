@@ -329,6 +329,8 @@ class SugarOAuth2ServerOIDCTest extends TestCase
      */
     public function testGrantAccessTokenWithValidUsernameOrPasswordUserJWTBearerFlowError()
     {
+        $this->oAuth2Server->setPlatform('test');
+
         $this->storage->expects($this->once())
                       ->method('checkClientCredentials')
                       ->with($this->inputData['client_id'], $this->inputData['client_secret'])
@@ -358,6 +360,7 @@ class SugarOAuth2ServerOIDCTest extends TestCase
             function ($token) {
                 $this->assertInstanceOf(JWTBearerToken::class, $token);
                 $this->assertEquals('srn:cluster:iam::0000000001:user:seed_sally_id', $token->getIdentity());
+                $this->assertEquals('test', $token->getAttribute('platform'));
                 throw new AuthenticationException();
             }
         );
@@ -371,6 +374,8 @@ class SugarOAuth2ServerOIDCTest extends TestCase
      */
     public function testGrantAccessTokenWithValidUsernameOrPasswordUser()
     {
+        $this->oAuth2Server->setPlatform('test');
+
         $this->storage->refreshToken->expects($this->once())->method('save');
 
         $this->storage->expects($this->once())
@@ -408,6 +413,7 @@ class SugarOAuth2ServerOIDCTest extends TestCase
             function ($token) {
                 $this->assertInstanceOf(JWTBearerToken::class, $token);
                 $this->assertEquals('srn:cluster:iam::0000000001:user:seed_sally_id', $token->getIdentity());
+                $this->assertEquals('test', $token->getAttribute('platform'));
                 $token->setAttribute('token', 'resultToken');
                 $token->setAttribute('expires_in', '1');
                 $token->setAttribute('token_type', 'bearer');
