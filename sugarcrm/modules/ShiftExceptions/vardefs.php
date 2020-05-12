@@ -71,6 +71,7 @@ $dictionary['ShiftException'] = [
             'merge_filter' => 'enabled',
             'required' => true,
             'audited' => true,
+            'massupdate' => false,
         ],
         'start_minutes' => [
             'name' => 'start_minutes',
@@ -84,6 +85,7 @@ $dictionary['ShiftException'] = [
             'merge_filter' => 'enabled',
             'required' => true,
             'audited' => true,
+            'massupdate' => false,
         ],
         'end_date' => [
             'name' => 'end_date',
@@ -105,6 +107,7 @@ $dictionary['ShiftException'] = [
             'merge_filter' => 'enabled',
             'required' => true,
             'audited' => true,
+            'massupdate' => false,
         ],
         'end_minutes' => [
             'name' => 'end_minutes',
@@ -118,6 +121,7 @@ $dictionary['ShiftException'] = [
             'merge_filter' => 'enabled',
             'required' => true,
             'audited' => true,
+            'massupdate' => false,
         ],
         'enabled' => [
             'name' => 'enabled',
