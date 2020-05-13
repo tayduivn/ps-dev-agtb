@@ -66,13 +66,35 @@ class SimpleTermParser implements ParserInterface
         // parse the parentheses
         $data = SearchStringProcessor::parse($terms);
         if (function_exists('mb_convert_encoding')) {
-            $data = mb_convert_encoding($data, 'UTF-8');
+            $data = $this->mbConvertEncoding($data);
         }
 
         // parse and compress the terms
         $basicTerms = $this->compressTerms($data);
 
         return $basicTerms->toArray();
+    }
+
+    /**
+     * make utf-8 encoding
+     *
+     * @param $data
+     * @return mixed|string
+     */
+    private function mbConvertEncoding($data)
+    {
+        if (empty($data) || !function_exists('mb_convert_encoding') || (!is_string($data) && !is_array($data))) {
+            return $data;
+        }
+
+        if (is_string($data)) {
+            return mb_convert_encoding($data, 'UTF-8');
+        } else {
+            foreach ($data as $key => $value) {
+                $data[$key] = $this->mbConvertEncoding($value);
+            }
+            return $data;
+        }
     }
 
     /**
