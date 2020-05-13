@@ -65,6 +65,9 @@ class SimpleTermParser implements ParserInterface
 
         // parse the parentheses
         $data = SearchStringProcessor::parse($terms);
+        if (function_exists('mb_convert_encoding')) {
+            $data = mb_convert_encoding($data, 'UTF-8');
+        }
 
         // parse and compress the terms
         $basicTerms = $this->compressTerms($data);
