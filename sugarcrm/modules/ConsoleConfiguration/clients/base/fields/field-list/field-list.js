@@ -197,6 +197,8 @@
                         }
                     }
                 }
+
+                this.handleColumnsChanging();
             }, this),
             receive: _.bind(function(event, ui) {
                 // prevents dropping from a multi-field-column into another multi-field-column
@@ -218,6 +220,24 @@
             function(multiField) {
             this.getSortable($(multiField));
         }, this);
+    },
+
+    /**
+     * Update columns property of the model basing on the selected columns
+     */
+    handleColumnsChanging: function() {
+        let columns = {};
+        const module = this.model.get('enabled_module');
+        const columnsSortable = $('#' + module + '-side')
+            .find('#columns-sortable .pill:not(.multi-field-block)');
+
+        const fields = app.metadata.getModule(module, 'fields');
+        _.each(columnsSortable, function(item) {
+            const fieldName = $(item).attr('fieldname');
+            columns[fieldName] = fields[fieldName];
+        });
+
+        this.model.set('columns', columns);
     },
 
     /**
@@ -378,6 +398,8 @@
                 '" rel="tooltip" data-original-title="' + text + '">' + text + '</li>';
             fieldsSortable.append(field);
             selectedField.remove();
+
+            this.handleColumnsChanging();
         }
     },
 
@@ -404,6 +426,7 @@
                 }
             }, this);
             miltiFieldColumn.remove();
+            this.handleColumnsChanging();
         }
     },
 })

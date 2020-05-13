@@ -493,6 +493,7 @@ describe('ConsoleConfiguration.Layout.ConfigDrawer', function() {
                 .withArgs('LBL_REL_2').returns('Related Field 2');
 
             sinon.collection.spy(layout, '_getMultiLineFields');
+            sinon.collection.spy(layout, 'getColumns');
         });
 
         it('should call bean.get method', function() {
@@ -503,6 +504,11 @@ describe('ConsoleConfiguration.Layout.ConfigDrawer', function() {
         it('should get the multi-line-list fields for the correct module', function() {
             layout.setTabContent(bean);
             expect(layout._getMultiLineFields).toHaveBeenCalledWith('Accounts');
+        });
+
+        it('should get columns for the correct module', function() {
+            layout.setTabContent(bean, true);
+            expect(layout.getColumns).toHaveBeenCalledWith(bean);
         });
 
         it('should call bean.set with tabContent and content', function() {
@@ -613,6 +619,94 @@ describe('ConsoleConfiguration.Layout.ConfigDrawer', function() {
                 layout.get = function() {return;};
                 layout._validatePrimaryOrderBy(fields, errors, callback);
                 expect(errors.order_by_primary.required).toBe(true);
+            });
+        });
+    });
+
+    describe('setSortValues', function() {
+        var bean;
+        beforeEach(function() {
+            bean = app.data.createBean(layout.module);
+
+            sinon.collection.stub(bean, 'set');
+        });
+
+        it('should clear the primary sort', function() {
+            sinon.collection.stub(bean, 'get')
+                .withArgs('order_by_primary').returns('primary_value')
+                .withArgs('order_by_secondary').returns('');
+
+            sinon.collection.stub(layout, 'getColumns').returns({});
+
+            layout.setSortValues(bean);
+            expect(bean.set).toHaveBeenCalledWith('order_by_primary', '');
+        });
+
+        it('should set the value of the secondary sort to the primary field', function() {
+            sinon.collection.stub(bean, 'get')
+                .withArgs('order_by_primary').returns('primary_value')
+                .withArgs('order_by_secondary').returns('secondary_value');
+
+            sinon.collection.stub(layout, 'getColumns').returns({
+                secondary_value: {},
+            });
+
+            layout.setSortValues(bean);
+            expect(bean.set).toHaveBeenCalledWith('order_by_primary', 'secondary_value');
+        });
+
+        it('should clear the secondary sort', function() {
+            sinon.collection.stub(bean, 'get')
+                .withArgs('order_by_primary').returns('primary_value')
+                .withArgs('order_by_secondary').returns('secondary_value');
+
+            sinon.collection.stub(layout, 'getColumns').returns({});
+
+            layout.setSortValues(bean);
+            expect(bean.set).toHaveBeenCalledWith('order_by_secondary', '');
+        });
+    });
+
+    describe('getColumns', function() {
+        var bean;
+        beforeEach(function() {
+            bean = app.data.createBean(layout.module);
+
+            sinon.collection.stub(bean, 'get')
+                .withArgs('columns').returns({
+                field1: {
+                    name: 'field1',
+                },
+                field2: {
+                    name: 'field2',
+                },
+            });
+
+            sinon.collection.stub(layout, '_getMultiLineFields')
+                .returns({
+                    field1: {
+                        name: 'field1',
+                        property: '',
+                    },
+                    field2: {
+                        name: 'field2',
+                    },
+                    field3: {
+                        name: 'field3',
+                    },
+                });
+        });
+
+        it('!!should clear the secondary sort', function() {
+            const result = layout.getColumns(bean);
+            expect(result).toEqual({
+                field1: {
+                    name: 'field1',
+                    property: '',
+                },
+                field2: {
+                    name: 'field2',
+                },
             });
         });
     });
