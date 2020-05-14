@@ -153,36 +153,50 @@ Feature: Purchases module verification
     Given Accounts records exist:
       | *   | name        |
       | A_1 | Account One |
-
     Given ProductTemplates records exist:
-      | *      | name        | discount_price | cost_price | list_price |
-      | Prod_1 | Product One | 100            | 200        | 300        |
-
-    # Click Create Purchase in Mega menu
+      | *      | name        | discount_price | cost_price | list_price | service | service_start_date | service_duration_value | service_duration_unit | renewable |
+      | Prod_1 | Product One | 100            | 200        | 300        | true    | 2020-01-01         | 2                      | year                  | false     |
+    And ProductCategories records exist:
+      | *name      |
+      | Category_1 |
+    And ProductTypes records exist:
+      | *name  |
+      | Type_1 |
+  # Update Product with type and category
+    When I choose ProductTemplates in modules menu
+    When I select *Prod_1 in #ProductTemplatesList.ListView
+    When I click Edit button on #Prod_1Record header
+    When I provide input for #Prod_1Record.RecordView view
+      | type_name | category_name |
+      | Type_1    | Category_1    |
+    When I click Save button on #ProductTemplatesRecord header
+    When I close alert
+  # Click Create Purchase in Mega menu
     When I choose Purchases in modules menu and select "Create Purchase" menu item
     When I click show more button on #PurchasesDrawer view
-    # Populate Header data
+  # Populate Header data
     When I provide input for #PurchasesDrawer.HeaderView view
       | *     | name            |
       | Pur_1 | My New Purchase |
-    # Populate record data
+  # Populate record data
     When I provide input for #PurchasesDrawer.RecordView view
-      | *     | account_name | product_template_name | service | renewable | tag  | commentlog  | description                  |
-      | Pur_1 | Account One  | Product One           | true    | true      | Alex | New Message | You've made a great purchase |
-    # Save
+      | *     | account_name | tag  | commentlog  | description                  | product_template_name |
+      | Pur_1 | Account One  | Alex | New Message | You've made a great purchase | Product One           |
+  # Save
     When I click Save button on #PurchasesDrawer header
     When I close alert
-    # Verify that record is created successfully
+  # Verify that record is created successfully
     Then Purchases *Pur_1 should have the following values:
       | fieldName             | value                        |
       | name                  | My New Purchase              |
       | account_name          | Account One                  |
       | product_template_name | Product One                  |
       | service               | true                         |
-      | renewable             | true                         |
+      | renewable             | false                        |
       | tag                   | Alex                         |
       | description           | You've made a great purchase |
-
+      | category_name         | Category_1                   |
+      | type_name             | Type_1                       |
 
   @SS-431
   Scenario: Purchases > Calculate Purchase's Start Date and End Date fields

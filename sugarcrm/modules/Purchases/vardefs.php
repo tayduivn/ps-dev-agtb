@@ -73,6 +73,14 @@ $dictionary['Purchase'] = [
             'source' => 'non-db',
             'unified_search' => true,
             'required' => false,
+            'auto_populate' => true,
+            'populate_list' => [
+                'category_name' => 'category_name',
+                'type_name' => 'type_name',
+                'service' => 'service',
+                'type_id' => 'type_id',
+                'category_id' => 'category_id',
+            ],
         ],
         'account_name' => [
             'name' => 'account_name',
