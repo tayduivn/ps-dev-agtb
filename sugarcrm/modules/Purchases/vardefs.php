@@ -169,7 +169,7 @@ $dictionary['Purchase'] = [
             'vname' => 'LBL_PURCHASED_LINE_ITEMS',
             'relationship' => 'purchase_purchasedlineitems',
             'source' => 'non-db',
-            'workflow' => false
+            'workflow' => false,
         ),
         'product_templates' => [
             'name' => 'product_templates',

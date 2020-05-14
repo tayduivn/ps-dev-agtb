@@ -188,5 +188,4 @@ class PurchasedLineItem extends Basic
         // Update rollups on parent records
         $this->updateRelatedPurchase($purchaseId);
     }
-
 }
