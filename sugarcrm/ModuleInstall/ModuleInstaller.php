@@ -109,9 +109,15 @@ class ModuleInstaller
         if ((defined('MODULE_INSTALLER_PACKAGE_SCAN') && MODULE_INSTALLER_PACKAGE_SCAN)
             || !empty($GLOBALS['sugar_config']['moduleInstaller']['packageScan'])) {
             $this->ms->scanPackage($base_dir);
-            if($this->ms->hasIssues()){
-                $this->ms->displayIssues();
-                sugar_cleanup(true);
+            if ($this->ms->hasIssues()) {
+                if ($this->silent) {
+                    $e = new SugarException('LBL_UPGRADE_WIZARD_INVALID_PKG', null, 'Administration');
+                    $e->setExtraData('error_description', $this->ms->getFormattedIssues());
+                    throw $e;
+                } else {
+                    $this->ms->displayIssues();
+                    sugar_cleanup(true);
+                }
             }
         }
 

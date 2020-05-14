@@ -10,8 +10,11 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\PackageManager\Entity\PackageManifest;
 use Sugarcrm\Sugarcrm\SearchEngine\SearchEngine;
 use Sugarcrm\Sugarcrm\AccessControl\AccessControlManager;
+use Sugarcrm\Sugarcrm\PackageManager\PackageManager;
+use Sugarcrm\Sugarcrm\PackageManager\File\PackageZipFile;
 
 require_once 'modules/DynamicFields/FieldCases.php';
 
@@ -201,7 +204,7 @@ class ModuleBuilderController extends SugarController
 
     public function action_DeployPackage()
     {
-        global $current_user;
+        global $current_user, $log;
 
         if (defined('TEMPLATE_URL')) {
             sugar_cache_reset();
@@ -218,19 +221,22 @@ class ModuleBuilderController extends SugarController
             // there may be temp files left over for unknown reason
             $this->removeTempFiles($load);
             $zip = $mb->getPackage($load);
-            $pm = new PackageManager ();
-            $info = $mb->packages [$load]->build(false);
-            $uploadDir = $pm->upload_dir . '/upgrades/module/';
-            mkdir_recursive($uploadDir);
-            rename($info ['zip'], $uploadDir . $info ['name'] . '.zip');
-            copy($info ['manifest'], $uploadDir . $info ['name'] . '-manifest.php');
-            $installFile = $uploadDir . $info ['name'] . '.zip';
+            $info = $mb->packages[$load]->build(false);
 
-            // FIXME: This *may* be needed somewhere else, leaving it for now
-            $_REQUEST ['install_file'] = $installFile;
+            $packageManager = new PackageManager();
 
-            $GLOBALS ['mi_remove_tables'] = false;
-            $pm->performUninstall($load);
+            /** @var UpgradeHistory $upgradeHistory */
+            $upgradeHistory = (new UpgradeHistory())->retrieveByIdName($load);
+            if ($upgradeHistory) {
+                try {
+                    if ($upgradeHistory->status === UpgradeHistory::STATUS_INSTALLED) {
+                        $packageManager->uninstallPackage($upgradeHistory, false);
+                    }
+                    $packageManager->deletePackage($upgradeHistory);
+                } catch (Exception $e) {
+                    $log->error('Deploy package error: ' . $e->getMessage());
+                }
+            }
             //#23177 , js cache clear
             clearAllJsAndJsLangFilesWithoutOutput();
             //#30747, clear the cache in memory
@@ -238,7 +244,16 @@ class ModuleBuilderController extends SugarController
             sugar_cache_clear($cache_key);
             sugar_cache_reset();
             //clear end
-            $pm->performInstall($installFile, true);
+            try {
+                $packageZipFile = new PackageZipFile($info['zip'], $packageManager->getBaseTempDir());
+                $upgradeHistory = $packageManager->uploadPackageFromFile(
+                    $packageZipFile,
+                    PackageManifest::PACKAGE_TYPE_MODULE
+                );
+                $packageManager->installPackage($upgradeHistory);
+            } catch (Exception $e) {
+                $log->error('Deploy package error: ' . $e->getMessage());
+            }
 
             //clear the unified_search_module.php file
             UnifiedSearchAdvanced::unlinkUnifiedSearchModulesFile();

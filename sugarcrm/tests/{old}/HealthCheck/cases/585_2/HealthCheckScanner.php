@@ -14,16 +14,21 @@ class S_585_2_HealthCheckScannerCasesTestMock extends HealthCheckScannerCasesTes
 {
     public $not = true;
 
+    public function getUpgradeHistory()
+    {
+        return new class {
+            public function getInstalledPackagesByType(string $type): array
+            {
+                $history = new UpgradeHistory();
+                $history->filename = 'upload/upgrades/module/DemoPackage.zip';
+                return [$history];
+            }
+        };
+    }
+
     public function getPackageManager()
     {
         return new class {
-            public function getInstalled(): array
-            {
-                $o = new stdClass();
-                $o->filename = 'upload/upgrades/module/DemoPackage.zip';
-                return [$o];
-            }
-
             public function getinstalledPackages(): array
             {
                 return [];

@@ -14,6 +14,7 @@
 require_once dirname(__FILE__) . '/ScannerMeta.php';
 
 use Sugarcrm\Sugarcrm\Util\Serialized;
+use Sugarcrm\Sugarcrm\PackageManager\Entity\PackageManifest;
 
 /**
  *
@@ -865,10 +866,19 @@ class HealthCheckScanner
         return $this->logMeta;
     }
 
+    /**
+     * @return UpgradeHistory
+     */
+    protected function getUpgradeHistory()
+    {
+        require_once 'modules/Administration/UpgradeHistory.php';
+        return new UpgradeHistory();
+    }
+
     protected function checkForForbiddenStatementsInUpgrades()
     {
-        $pm = $this->getPackageManager();
-        $modules = $pm->getInstalled(['module']);
+        $history = $this->getUpgradeHistory();
+        $modules = $history->getInstalledPackagesByType(PackageManifest::PACKAGE_TYPE_MODULE);
         foreach ($modules as $module) {
             $filename = $module->filename;
             if (!file_exists($filename)) {
@@ -2487,7 +2497,7 @@ class HealthCheckScanner
 
         $this->log("Checking packages");
         $pm = $this->getPackageManager();
-        $packages = $pm->getinstalledPackages(array('module'));
+        $packages = $pm->getinstalledPackages();
         foreach ($packages as $pack) {
 
             if ($pack['enabled'] == 'DISABLED') {
@@ -2575,8 +2585,7 @@ class HealthCheckScanner
      */
     protected function listUpgrades()
     {
-        $uh = new UpgradeHistory();
-        $ulist = $uh->getList("SELECT * FROM {$uh->table_name} WHERE type='patch'");
+        $ulist = $this->getUpgradeHistory()->getInstalledPackagesByType(PackageManifest::PACKAGE_TYPE_PATCH);
         if (empty($ulist)) {
             return;
         }

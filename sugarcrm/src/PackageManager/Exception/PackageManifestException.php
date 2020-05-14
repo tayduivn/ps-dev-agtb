@@ -10,16 +10,10 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-use PHPUnit\Framework\TestCase;
+namespace Sugarcrm\Sugarcrm\PackageManager\Exception;
 
-class UpgradeHistoryTest extends TestCase
+class PackageManifestException extends PackageManagerException
 {
-    /**
-     * @ticket 44075
-     */
-    public function testTrackerVisibilityBug44075()
-    {
-        $uh = new UpgradeHistory();
-        $this->assertFalse($uh->tracker_visibility);
-    }
+    public $messageLabel = 'ML_MANIFEST_ISSUE';
+    public $moduleName = 'Administration';
 }
