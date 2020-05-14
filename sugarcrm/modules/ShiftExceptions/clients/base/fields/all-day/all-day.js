@@ -52,7 +52,7 @@
         this.type = 'bool';
         this._currentDayStartEnd = {};
 
-        if (this.model && this.model.isNew()) {
+        if (this.model.isNew()) {
             this._currentDayStartEnd = {
                 start_hour: 0,
                 start_minutes: 0,
@@ -62,6 +62,12 @@
 
             this.view.once('render', function() {
                 this._updateTimeFields(false);
+            }, this);
+        }
+
+        if (this.view.name === 'preview') {
+            this.view.once('render', function() {
+                this._toggleTimeFields();
             }, this);
         }
     },
@@ -95,6 +101,15 @@
         const isAllDay = this.getValue();
 
         isAllDay ? this._clearTime(save) : this._restoreTime();
+
+        this._toggleTimeFields();
+    },
+
+    /**
+     * Toggle (show/hide) time fields
+     */
+    _toggleTimeFields: function() {
+        const isAllDay = this.getValue();
 
         $.each(this._timeFields, function(key, item) {
             const field = this.view.getField(item);

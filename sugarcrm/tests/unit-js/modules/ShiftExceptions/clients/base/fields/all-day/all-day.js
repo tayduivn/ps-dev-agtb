@@ -20,7 +20,6 @@ describe('ShiftExceptions.Fields.AllDay', function() {
         app = SugarTest.app;
         model = app.data.createBean(module);
         options = {};
-        SugarTest.loadComponent('base', 'field', 'all-day');
 
         field = SugarTest.createField(
             'base',
