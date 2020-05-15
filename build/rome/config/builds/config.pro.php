@@ -138,6 +138,9 @@ $config['blackList']['pro'] = array(
 'sugarcrm/tests/unit-js/modules/ConsoleConfiguration' => 1,
 'sugarcrm/tests/{old}/modules/ConsoleConfiguration' => 1,
 
+// Shift Exceptions Dashlet
+'sugarcrm/clients/base/views/shift-exceptions-dashlet' => 1,
+
 // Workforce Management
 'sugarcrm/modules/Shifts' => 1,
 'sugarcrm/modules/ShiftExceptions' => 1,

@@ -23,7 +23,8 @@ $mod_strings = [
     'LBL_RECORD_SHIFT_CARD_PANEL_HEADER' => 'Business Card',
     'LNK_NEW_SHIFT_EXCEPTION' => 'Create Shift Exception',
     'LNK_VIEW_SHIFT_EXCEPTIONS' => 'View Shift Exceptions',
-
+    'LBL_DASHLET_SHIFT_EXCEPTIONS_NAME' => 'My Shift Exceptions',
+    'LBL_SHIFTS_LIST_DASHBOARD' => 'Shifts List Dashboard',
     'LBL_SUNDAY' => 'Sunday',
     'LBL_MONDAY' => 'Monday',
     'LBL_TUESDAY' => 'Tuesday',

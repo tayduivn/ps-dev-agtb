@@ -25,7 +25,7 @@ $mod_strings = [
     'LBL_PRIMARY_TEAM' => 'Primary Team',
     'LNK_NEW_SHIFT_EXCEPTION' => 'Create Shift Exception',
     'LNK_VIEW_SHIFT_EXCEPTIONS' => 'View Shift Exceptions',
-
     'LBL_USERS_SUBPANEL_TITLE' => 'Users',
     'LBL_SHIFT_EXCEPTION_USERS_TITLE' => 'Users',
+    'LBL_DASHLET_SHIFT_EXCEPTIONS_NAME' => 'My Shift Exceptions',
 ];
