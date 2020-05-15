@@ -43,24 +43,23 @@
     expiryComingSoon: false,
 
     /**
-     * Flag indicating if RLI is enabled.
+     * Flag indicating Purchases module is enabled.
      *
      * @property {bool}
      */
-    opportunitiesWithRevenueLineItems: false,
+    purchasesModule: false,
 
     /**
      * @inheritdoc
      */
     initialize: function(options) {
         this._super('initialize', [options]);
-        this.module = 'RevenueLineItems';
+        this.module = 'Purchases';
         this.moduleName = {'module_name': app.lang.getModuleName(this.module, {'plural': true})};
         this.baseModule = 'Accounts';
         this._getBaseModel();
-        var oppConfig = app.metadata.getModule('Opportunities', 'config');
-        if (oppConfig && oppConfig.opps_view_by === 'RevenueLineItems') {
-            this.opportunitiesWithRevenueLineItems = true;
+        if (!_.isUndefined(app.metadata.getModule('Purchases'))) {
+            this.purchasesModule = true;
         }
     },
 
@@ -105,7 +104,7 @@
      * @private
      */
     _initCollection: function() {
-        if (!this.baseModel || !this.opportunitiesWithRevenueLineItems) {
+        if (!this.baseModel || !this.purchasesModule) {
             return;
         }
         var today = app.date().formatServer(true);
@@ -116,50 +115,44 @@
                 }
             },
             {
-                'opportunities.sales_status': {
-                    '$equals': 'Closed Won'
-                }
+                'service': {
+                    '$equals': 1,
+                },
             },
             {
-                'sales_stage': {
-                    '$equals': 'Closed Won'
-                }
-            },
-            {
-                'service_duration_value': {
-                    '$gt': 0
-                }
-            },
-            {
-                'service_start_date': {
+                'start_date': {
                     '$lte': today
                 }
             },
             {
-                'service_end_date': {
+                'end_date': {
                     '$gte': today
                 }
             }
         ];
         var options = {
-            'fields': this.meta.fields || [],
+            'fields': this.dashletConfig.fields || [],
             'filter': filter,
             'limit': app.config.maxRecordFetchSize || 1000,
-            'params': {
-                'order_by': 'service_start_date,service_end_date',
-            },
             'success': _.bind(function() {
                 if (this.disposed) {
                     return;
                 }
+                var self = this;
+                // Render here only when the model empty, else render after the bulk call is resolved.
+                if (!this.collection.models.length) {
+                    this.render();
+                }
                 _.each(this.collection.models, function(model) {
                     // add 1 day to display remaining time correctly
-                    var nextDate = app.date(model.get('service_end_date')).add('1', 'day');
+                    var nextDate = app.date(model.get('end_date')).add('1', 'day');
                     model.set('service_remaining_time', nextDate.fromNow());
+                    collections = model.get('pli_collection');
+                    // create the payload
+                    var bulkSaveRequests = self._createBulkCollectionsPayload(collections);
+                    // send the payload
+                    self._sendBulkCollectionsUpdate(bulkSaveRequests);
                 });
-                this._caseComparator();
-                this._daysDifferenceCalculator();
-                this.render();
             }, this)
         };
         this.collection = app.data.createBeanCollection(this.module, null, options);
@@ -180,10 +173,98 @@
      * @param {Object} options Call options
      */
     loadData: function(options) {
-        if (this._mode === 'config' || !this.opportunitiesWithRevenueLineItems) {
+        if (this._mode === 'config' || !this.purchasesModule) {
             return;
         }
         this.collection.fetch(options);
+    },
+
+    /**
+     * Utility method to create the payload that will be sent to the server via the bulk api call
+     * to fetch the related PLIs for a purchase
+     *
+     * @param {Array} collections
+     * @private
+     */
+    _createBulkCollectionsPayload: function(collections) {
+        // loop over all the collections and create the requests
+        var bulkSaveRequests = [];
+        var url;
+        collections.each(function(element) {
+            // if the element is new, don't try and save it
+            if (!element.isNew()) {
+                // create the update url
+                url = app.api.buildURL(element.module, 'read', {
+                    id: element.get('id')
+                });
+
+                // get request on each PLI
+                bulkSaveRequests.push({
+                    // app.api.buildURL() in app.api.call() calls the rest endpoint with the following request
+                    // remove rest from the url here
+                    url: url.substr(4),
+                    method: 'GET',
+                });
+            }
+        });
+
+        return bulkSaveRequests;
+    },
+
+    /**
+     * Send the payload via the bulk api
+     *
+     * @param {Array} bulkSaveRequests
+     * @private
+     */
+    _sendBulkCollectionsUpdate: function(bulkSaveRequests) {
+        if (!_.isEmpty(bulkSaveRequests)) {
+            app.api.call(
+                'create',
+                app.api.buildURL(null, 'bulk'),
+                {
+                    requests: bulkSaveRequests
+                },
+                {
+                    success: _.bind(this._onBulkCollectionsUpdateSuccess, this)
+                }
+            );
+        }
+    },
+
+    /**
+     * Update the bundles when the results from the bulk api call
+     *
+     * @param {Array} bulkResponses
+     * @private
+     */
+    _onBulkCollectionsUpdateSuccess: function(bulkResponses) {
+        var purchaseId = _.first(bulkResponses).contents.purchase_id;
+        var model = _.first(this.collection.models.filter(function(ele) {
+            return ele.id === purchaseId;
+        }));
+        var collections = model.get('pli_collection');
+        var element;
+        var quantity = 0;
+        var totalAmount = 0;
+
+        _.each(bulkResponses, function(record) {
+            element = collections.get(record.contents.id);
+            if (element) {
+                var startDate = app.date(record.contents.service_start_date);
+                var endDate = app.date(record.contents.service_end_date);
+                var today = app.date();
+                if (startDate <= today && endDate >= today) {
+                    quantity += record.contents.quantity;
+                    totalAmount += parseInt(record.contents.total_amount, 10);
+                }
+            }
+        }, this);
+        model.set('quantity', quantity);
+        model.set('total_amount', totalAmount);
+        this._caseComparator();
+        this._daysDifferenceCalculator();
+        this.render();
     },
 
     /**
@@ -199,10 +280,10 @@
             var end;
             var modelArray = this.collection.models;
             modelArray.forEach(function(model) {
-                start = model.get('service_start_date');
+                start = model.get('start_date');
                 start = this.moment(start);
                 start = start.diff(daysPast, 'days');
-                end = model.get('service_end_date');
+                end = model.get('end_date');
                 end = this.moment(end);
                 end = end.diff(daysPast, 'days');
                 if (max < end) {
@@ -238,12 +319,12 @@
             today = today.diff(daysPast, 'days');
 
             _.each(this.collection.models, function(model) {
-                start = model.get('service_start_date');
+                start = model.get('start_date');
                 start = this.moment(start);
                 start = start.diff(daysPast, 'days');
                 startDate = ((start - overallSubscriptionStartDate) / overallDaysDifference).toFixed(2) * 100;
 
-                end = model.get('service_end_date');
+                end = model.get('end_date');
                 end = this.moment(end);
                 this.endDate = end;
                 end = end.diff(daysPast, 'days');
@@ -262,8 +343,8 @@
                 activePastTimelineWidth = isNaN(activePastTimelineWidth) ? 99 : activePastTimelineWidth;
                 activeTimelineWidth = (activeTimelineWidth === 0) ? 100 - activePastTimelineWidth : activeTimelineWidth;
                 model.set({
-                    startDate: app.date(model.get('service_start_date')).formatUser().split(' ')[0],
-                    endDate: app.date(model.get('service_end_date')).formatUser().split(' ')[0],
+                    startDate: _.first(app.date(model.get('start_date')).formatUser().split(' ')),
+                    endDate: _.first(app.date(model.get('end_date')).formatUser().split(' ')),
                     expiration: this.endDate.fromNow(),
                     timelineOffset: timelineOffset,
                     subscriptionValidityActive: activeTimelineWidth.toFixed(2),

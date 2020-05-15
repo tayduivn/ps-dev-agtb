@@ -33,7 +33,9 @@ describe('Base.View.ActiveSubscriptions', function() {
             {
                 fields: [
                     'name',
-                    'quantity'
+                    'start_date',
+                    'end_date',
+                    'pli_collection',
                 ],
             }
         );
@@ -134,20 +136,18 @@ describe('Base.View.ActiveSubscriptions', function() {
             view.meta = {
                 'fields': ['name']
             };
-            view.opportunitiesWithRevenueLineItems = true;
+            view.purchasesModule = true;
             app.config.maxRecordFetchSize = 1000;
             view._initCollection();
-            expect(beanCollectionStub.lastCall.args[0]).toEqual('RevenueLineItems');
-            expect(beanCollectionStub.lastCall.args[2].fields).toEqual(['name']);
+            expect(beanCollectionStub.lastCall.args[0]).toEqual('Purchases');
+            expect(beanCollectionStub.lastCall.args[2].fields)
+                .toEqual(['name', 'start_date', 'end_date', 'pli_collection',]);
             expect(beanCollectionStub.lastCall.args[2].filter[0].account_id.$equals).toEqual('my_id');
-            expect(beanCollectionStub.lastCall.args[2].filter[1]['opportunities.sales_status'].$equals).
-            toEqual('Closed Won');
-            expect(beanCollectionStub.lastCall.args[2].filter[2].sales_stage.$equals).toEqual('Closed Won');
-            expect(beanCollectionStub.lastCall.args[2].filter[3].service_duration_value.$gt).toEqual(0);
-            expect(beanCollectionStub.lastCall.args[2].filter[4].service_start_date.$lte).toEqual(today);
-            expect(beanCollectionStub.lastCall.args[2].filter[5].service_end_date.$gte).toEqual(today);
+            expect(beanCollectionStub.lastCall.args[2].filter[1].service.$equals)
+                .toEqual(1);
+            expect(beanCollectionStub.lastCall.args[2].filter[2].start_date.$lte).toEqual(today);
+            expect(beanCollectionStub.lastCall.args[2].filter[3].end_date.$gte).toEqual(today);
             expect(beanCollectionStub.lastCall.args[2].limit).toEqual(app.config.maxRecordFetchSize);
-            expect(beanCollectionStub.lastCall.args[2].params.order_by).toEqual('service_start_date,service_end_date');
         });
 
         it('calls _daysDifferenceCalculator', function() {
@@ -157,8 +157,8 @@ describe('Base.View.ActiveSubscriptions', function() {
                     }};
             });
             var model = app.data.createBean('Accounts', {
-                service_start_date: '2019-10-21',
-                service_end_date: '2020-10-20',
+                start_date: '2019-10-21',
+                end_date: '2020-10-20',
                 get: sinon.collection.stub(),
                 set: function() {},
             });
@@ -181,8 +181,8 @@ describe('Base.View.ActiveSubscriptions', function() {
                     }};
             });
             var model = app.data.createBean('Accounts', {
-                service_start_date: '2019-10-21',
-                service_end_date: '2020-10-20',
+                start_date: '2019-10-21',
+                end_date: '2020-10-20',
                 get: sinon.collection.stub(),
                 set: function() {},
             });
@@ -207,7 +207,7 @@ describe('Base.View.ActiveSubscriptions', function() {
                 fetch: fetchStub,
                 off: $.noop
             };
-            view.opportunitiesWithRevenueLineItems = true;
+            view.purchasesModule = true;
             view.loadData();
             expect(fetchStub).toHaveBeenCalled();
         });

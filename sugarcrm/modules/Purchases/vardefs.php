@@ -171,6 +171,14 @@ $dictionary['Purchase'] = [
             'source' => 'non-db',
             'workflow' => false,
         ),
+        'pli_collection' => array(
+            'name' => 'pli_collection',
+            'type' => 'collection',
+            'vname' => 'LBL_PURCHASED_LINE_ITEMS',
+            'links' => array('purchasedlineitems'),
+            'source' => 'non-db',
+            'hideacl' => true,
+        ),
         'product_templates' => [
             'name' => 'product_templates',
             'type' => 'link',

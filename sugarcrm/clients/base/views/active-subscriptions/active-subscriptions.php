@@ -28,13 +28,8 @@ $viewdefs['base']['view']['active-subscriptions'] = [
     ],
     'fields' => [
         'name',
-        'quantity',
-        'total_amount',
-        'currency_id',
-        'base_rate',
-        'service_start_date',
-        'service_end_date',
-        'service_duration_value',
-        'service_duration_unit',
+        'start_date',
+        'end_date',
+        'pli_collection',
     ],
 ];
