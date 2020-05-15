@@ -2476,21 +2476,49 @@ class User extends Person {
     public static function getReporteesWithLeafCount($userId, $includeDeleted = false, $additionalFields = [])
     {
         $qb = DBManagerFactory::getConnection()->createQueryBuilder();
-        $expr = $qb->expr();
+
+        $whereNonDeleted = $qb->expr()
+            ->andX()
+            ->add("u.status = 'Active'")
+            ->add("u.deleted = 0");
+        if (!$includeDeleted) {
+            $whereCondition = $whereNonDeleted;
+        } else {
+            $whereDeleted = $qb->expr()
+                ->andX()
+                ->add("u.deleted = 1");
+            $whereCondition =  $qb->expr()
+                ->orX()
+                ->add($whereNonDeleted)
+                ->add($whereDeleted);
+        }
+
         $qb->select(['u.id', 'sum(CASE WHEN u2.id IS NULL THEN 0 ELSE 1 END) total'])
             ->from('users', 'u')
-            ->where($expr->eq('u.reports_to_id', $qb->createPositionalParameter($userId)))
-            ->andWhere("u.status = 'Active'")
+            ->where($qb->expr()->eq('u.reports_to_id', $qb->createPositionalParameter($userId)))
+            ->andWhere($whereCondition)
             ->groupBy('u.id');
 
-        $joinWhere = $expr->andX()
-            ->add('u.id = u2.reports_to_id')
-            ->add("u2.status = 'Active'");
+        $joinWhereNonDeleted = $qb->expr()
+            ->andX()
+            ->add("u2.status = 'Active'")
+            ->add("u2.deleted = 0");
 
         if (!$includeDeleted) {
-            $qb->andWhere('u.deleted = 0');
-            $joinWhere->add('u2.deleted = 0');
+            $joinWhereCondition = $joinWhereNonDeleted;
+        } else {
+            $joinWhereDeleted = $qb->expr()
+                ->andX()
+                ->add("u2.deleted = 1");
+            $joinWhereCondition =  $qb->expr()
+                ->orX()
+                ->add($joinWhereNonDeleted)
+                ->add($joinWhereDeleted);
         }
+
+        $joinWhere = $qb->expr()->andX()
+            ->add('u.id = u2.reports_to_id')
+            ->add($joinWhereCondition);
 
         $qb->leftJoin('u', 'users', 'u2', $joinWhere);
 
@@ -3042,5 +3070,14 @@ class User extends Person {
         }
 
         return in_array($license, $this->getLicenseTypes());
+    }
+
+    protected function getDeleteUpdateParams(string $date = null, string $userId = null)
+    {
+        $params = parent::getDeleteUpdateParams($date, $userId);
+        $params['status'] = 'Inactive';
+        $params['employee_status'] = 'Terminated';
+
+        return $params;
     }
 }

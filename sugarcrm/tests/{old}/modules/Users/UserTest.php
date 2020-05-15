@@ -202,6 +202,22 @@ class UserTest extends TestCase
         );
     }
 
+    public function testDeleteUser()
+    {
+        SugarTestHelper::setUp('current_user', [true, true]);
+
+        $createdUser = SugarTestUserUtilities::createAnonymousUser(true);
+
+        $createdUser->mark_deleted($createdUser->id);
+
+        // reload the user
+        $createdUser->retrieve($createdUser->id, true, false);
+
+        $this->assertEquals(1, $createdUser->deleted);
+        $this->assertEquals('Inactive', $createdUser->status);
+        $this->assertEquals('Terminated', $createdUser->employee_status);
+    }
+
     public function testGetReporteesWithLeafCount()
     {
         $manager = SugarTestUserUtilities::createAnonymousUser();
