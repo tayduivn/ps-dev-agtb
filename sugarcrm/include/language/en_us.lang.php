@@ -2024,6 +2024,11 @@ $app_list_strings = array (
         'exchange' => 'Exchange',
         'other' => 'Other',
     ),
+    'dom_imaptype_options' => array(
+        'google_oauth2' => 'Google Mail',
+        'exchange_online' => 'Exchange Online',
+        'other' => 'Other',
+    ),
     'import_enclosure_options' =>
     array (
         '\'' => 'Single Quote (\')',

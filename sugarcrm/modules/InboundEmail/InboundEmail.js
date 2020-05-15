@@ -287,6 +287,9 @@ function toggle_monitored_folder(field) {
 	var trashFolderRow = document.getElementById('trashFolderRow');
 	var trashFolderRow1 = document.getElementById('trashFolderRow1');
 	var sentFolderRow = document.getElementById('sentFolderRow');
+    var sentFolderRow1 = document.getElementById('sentFolderRow1');
+    var mailboxRow = document.getElementById('mailboxRow');
+    var mailboxRow1 = document.getElementById('mailboxRow1');
 
 	if (field1.value == 'imap') {
 		mailbox.disabled=false;
@@ -296,7 +299,10 @@ function toggle_monitored_folder(field) {
 		  trashFolderRow.style.display = '';
 		  sentFolderRow.style.display = '';
 		  trashFolderRow1.style.display = '';
-          subscribeFolderButton.style.display = '';
+            subscribeFolderButton.style.display = '';
+            sentFolderRow1.style.display = '';
+            mailboxRow.style.display = '';
+            mailboxRow1.style.display = '';
         } catch(e) {};
 		label_inbox.style.display='';
 	}
@@ -309,7 +315,10 @@ function toggle_monitored_folder(field) {
           trashFolderRow.style.display = "none";
 		  sentFolderRow.style.display = "none";
 		  trashFolderRow1.style.display = "none";
-          subscribeFolderButton.style.display = "none";
+            subscribeFolderButton.style.display = 'none';
+            sentFolderRow1.style.display = 'none';
+            mailboxRow.style.display = 'none';
+            mailboxRow1.style.display = 'none';
         } catch(e) {};
 		label_inbox.style.display = "none";
 	}
