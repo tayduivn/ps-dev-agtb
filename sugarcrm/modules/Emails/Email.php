@@ -739,7 +739,7 @@ class Email extends SugarBean {
             $GLOBALS["log"]->error($me->getLogMessage());
             ob_clean();
             $return['status']       = false;
-            $return['errorMessage'] = $app_strings['LBL_EMAIL_ERROR_PREPEND'] . $me->getMessage();
+            $return['errorMessage'] = $app_strings['LBL_EMAIL_ERROR_PREPEND'] . $app_strings['LBL_EMAIL_INVALID_PERSONAL_OUTBOUND'];
         }
 
         return $return;
