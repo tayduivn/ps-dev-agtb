@@ -186,7 +186,7 @@ describe('Dashboards.Base.Layout.Dashboard', function() {
                 view: 'side-drawer-header'
             }, {
                 layout: 'dashlet-main'
-            }]
+            }];
             expect(layoutSpy.args[0][0][0].layout.components).toEqual(componentsDef);
         });
 
