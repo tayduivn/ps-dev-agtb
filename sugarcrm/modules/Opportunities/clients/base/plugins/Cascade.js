@@ -114,7 +114,10 @@
                 });
             },
 
-            handleReadOnly: function(editClick = false) {
+            handleReadOnly: function(editClick) {
+                if (_.isUndefined(editClick)) {
+                    editClick = false;
+                }
                 if (this.options && this.options.def && this.options.def.disable_field) {
                     let disableFieldName = this.options.def.disable_field;
                     let calculatedValue = null;
