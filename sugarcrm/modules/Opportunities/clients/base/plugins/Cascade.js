@@ -39,10 +39,14 @@
 
                 var oppConfig = app.metadata.getModule('Opportunities', 'config');
                 if (!oppConfig || oppConfig.opps_view_by !== 'RevenueLineItems') {
-                    this.field.rlisEnabled = false;
+                    this.field.displayCheckbox = false;
+                    return;
+                } else if (this.field.options.view.action === 'create') {
+                    this.field.displayCheckbox = false;
+                    this.field.action = 'disabled';
                     return;
                 }
-                this.field.rlisEnabled = true;
+                this.field.displayCheckbox = true;
 
                 component.setMode = _.wrap(component.setMode, _.bind(function(setMode, args) {
                     setMode.call(component, args);

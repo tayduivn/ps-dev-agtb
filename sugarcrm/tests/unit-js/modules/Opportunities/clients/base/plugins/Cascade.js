@@ -44,11 +44,11 @@ describe('Opportunities.Base.Plugins.Cascade', function() {
             'different opps+rlis configs', [
                 {
                     oppsConfig: 'RevenueLineItems',
-                    rlisEnabled: true,
+                    displayCheckbox: true,
                     callCount: 1
                 }, {
                     oppsConfig: 'OpportunitiesOnly',
-                    rlisEnabled: false,
+                    displayCheckbox: false,
                     callCount: 0
                 }
             ],
@@ -73,10 +73,50 @@ describe('Opportunities.Base.Plugins.Cascade', function() {
                     on: sinon.stub()
                 };
                 plugin.onAttach(field, plugin);
-                expect(field.rlisEnabled).toEqual(values.rlisEnabled);
+                expect(field.displayCheckbox).toEqual(values.displayCheckbox);
                 expect(field.on.callCount).toBe(values.callCount);
                 expect(field.options.model.on.callCount).toBe(values.callCount);
                 expect(_.wrap.callCount).toBe(values.callCount);
+            });
+        });
+
+        using('create vs other modes', [
+            {
+                viewAction: 'create',
+                displayCheckbox: false,
+                fieldAction: 'disabled'
+            }, {
+                viewAction: 'detail',
+                displayCheckbox: true,
+                fieldAction: undefined,
+            }, {
+                viewAction: 'edit',
+                displayCheckbox: true,
+                fieldAction: undefined,
+            }
+        ], function(values) {
+            it('should hide checkbox and disable field on create mode', function() {
+                sinon.collection.stub(app.metadata, 'getModule', function() {
+                    return {opps_view_by: 'RevenueLineItems'};
+                });
+                sinon.collection.stub(_, 'wrap');
+                var field = {
+                    options: {
+                        def: {
+                            name: 'testField'
+                        },
+                        view: {
+                            action: values.viewAction,
+                        },
+                        model: {
+                            on: sinon.stub()
+                        }
+                    },
+                    on: sinon.stub()
+                };
+                plugin.onAttach(field, plugin);
+                expect(field.displayCheckbox).toEqual(values.displayCheckbox);
+                expect(field.action).toEqual(values.fieldAction);
             });
         });
     });
