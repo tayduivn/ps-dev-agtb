@@ -272,8 +272,9 @@ class SugarTestDatabaseMock extends DBManager
     {
         return [];
     }
-    public function add_drop_constraint($table, $definition, $drop = false)
+    public function add_drop_constraint(string $table, array $definition, bool $drop = false): string
     {
+        return '';
     }
     public function getFieldsArray($result, $make_lower_case = false)
     {

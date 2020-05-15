@@ -1464,11 +1464,13 @@ INNER JOIN sys.columns c
 
     /**
      * @see DBManager::add_drop_constraint()
+     * @inheritDoc
      */
-    public function add_drop_constraint($table, $definition, $drop = false)
+    public function add_drop_constraint(string $table, array $definition, bool $drop = false): string
     {
         $type         = $definition['type'];
-        $fields       = is_array($definition['fields'])?implode(',',$definition['fields']):$definition['fields'];
+        $fieldsListSQL = implode(',', $definition['fields']);
+        $fieldsListSQLNotNull = implode(' IS NOT NULL AND ', $definition['fields']) . ' IS NOT NULL';
         $name         = $definition['name'];
         $sql          = '';
 
@@ -1479,32 +1481,32 @@ INNER JOIN sys.columns c
             if ($drop)
                 $sql = "DROP INDEX {$name} ON {$table}";
             else
-                $sql = "CREATE INDEX {$name} ON {$table} ({$fields})";
+                $sql = "CREATE INDEX {$name} ON {$table} ({$fieldsListSQL})";
             break;
         case 'clustered':
             if ($drop)
                 $sql = "DROP INDEX {$name} ON {$table}";
             else
-                $sql = "CREATE CLUSTERED INDEX $name ON $table ($fields)";
+                $sql = "CREATE CLUSTERED INDEX $name ON $table ($fieldsListSQL)";
             break;
             // constraints as indices
         case 'unique':
             if ($drop)
                 $sql = "ALTER TABLE {$table} DROP CONSTRAINT $name";
             else
-                $sql = "ALTER TABLE {$table} ADD CONSTRAINT {$name} UNIQUE ({$fields})";
+                $sql = "CREATE UNIQUE INDEX {$name} ON {$table} ({$fieldsListSQL}) WHERE " . $fieldsListSQLNotNull;
             break;
         case 'primary':
             if ($drop)
                 $sql = "ALTER TABLE {$table} DROP CONSTRAINT {$name}";
             else
-                $sql = "ALTER TABLE {$table} ADD CONSTRAINT {$name} PRIMARY KEY ({$fields})";
+                $sql = "ALTER TABLE {$table} ADD CONSTRAINT {$name} PRIMARY KEY ({$fieldsListSQL})";
             break;
         case 'foreign':
             if ($drop)
-                $sql = "ALTER TABLE {$table} DROP FOREIGN KEY ({$fields})";
+                $sql = "ALTER TABLE {$table} DROP FOREIGN KEY ({$fieldsListSQL})";
             else
-                $sql = "ALTER TABLE {$table} ADD CONSTRAINT {$name}  FOREIGN KEY ({$fields}) REFERENCES {$definition['foreignTable']}({$definition['foreignFields']})";
+                $sql = "ALTER TABLE {$table} ADD CONSTRAINT {$name}  FOREIGN KEY ({$fieldsListSQL}) REFERENCES {$definition['foreignTable']}({$definition['foreignFields']})";
             break;
         }
         return $sql;

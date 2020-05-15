@@ -4417,11 +4417,11 @@ abstract class DBManager implements LoggerAwareInterface
 	 * Supports both adding and droping a constraint.
 	 *
 	 * @param  string $table      tablename
-	 * @param  array  $definition field definition
+     * @param  array<string,array<string,mixed>>  $definition field definition
 	 * @param  bool   $drop       true if we are dropping the constraint, false if we are adding it
 	 * @return string SQL statement
 	 */
-	abstract public function add_drop_constraint($table, $definition, $drop = false);
+    abstract public function add_drop_constraint(string $table, array $definition, bool $drop = false): string;
 
 	/**
 	 * Returns the description of fields based on the result

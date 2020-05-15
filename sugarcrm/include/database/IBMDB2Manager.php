@@ -1233,12 +1233,13 @@ INNER JOIN SYSCAT."INDEXCOLUSE" c
 
 	/**~
 	 * @see DBManager::add_drop_constraint()
+     * @inheritDoc
 	 * Note: Tested all constructs pending feedback from IBM on text search index creation from code
 	 */
-	public function add_drop_constraint($table, $definition, $drop = false)
+    public function add_drop_constraint(string $table, array $definition, bool $drop = false): string
 	{
 		$type         = $definition['type'];
-		$fields       = implode(',',$definition['fields']);
+        $fieldsListSQL = implode(',', $definition['fields']);
 		$name         = $definition['name'];
 		$sql          = '';
 
@@ -1250,28 +1251,26 @@ INNER JOIN SYSCAT."INDEXCOLUSE" c
 			if ($drop)
 				$sql = "DROP INDEX {$name}";
 			else
-				$sql = "CREATE INDEX {$name} ON {$table} ({$fields})";
+                $sql = "CREATE INDEX {$name} ON {$table} ({$fieldsListSQL})";
 			break;
 		// constraints as indices
 		case 'unique':
-			// NOTE: DB2 doesn't allow null columns in UNIQUE constraint. Hence
-			// we will not enforce the uniqueness other than through Indexes which does treats nulls as 1 value.
 			if ($drop)
 				$sql = "DROP INDEX {$name}";
 			else
-				$sql = "CREATE UNIQUE INDEX {$name} ON {$table} ({$fields})";
+                $sql = "CREATE UNIQUE INDEX {$name} ON {$table} ({$fieldsListSQL}) EXCLUDE NULL KEYS";
 			break;
 		case 'primary':
 			if ($drop)
 				$sql = "ALTER TABLE {$table} DROP PRIMARY KEY";
 			else
-				$sql = "ALTER TABLE {$table} ADD CONSTRAINT {$name} PRIMARY KEY ({$fields})";
+                $sql = "ALTER TABLE {$table} ADD CONSTRAINT {$name} PRIMARY KEY ({$fieldsListSQL})";
 			break;
 		case 'foreign':
 			if ($drop)
-				$sql = "ALTER TABLE {$table} DROP FOREIGN KEY ({$fields})";
+                $sql = "ALTER TABLE {$table} DROP FOREIGN KEY ({$fieldsListSQL})";
 			else
-				$sql = "ALTER TABLE {$table} ADD CONSTRAINT {$name} FOREIGN KEY ({$fields}) REFERENCES {$definition['foreignTable']}({$definition['foreignField']})";
+                $sql = "ALTER TABLE {$table} ADD CONSTRAINT {$name} FOREIGN KEY ({$fieldsListSQL}) REFERENCES {$definition['foreignTable']}({$definition['foreignField']})";
 			break;
 		}
 

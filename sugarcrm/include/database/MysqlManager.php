@@ -811,11 +811,12 @@ FROM information_schema.statistics';
 
 	/**
 	 * @see DBManager::add_drop_constraint()
+     * @inheritDoc
 	 */
-	public function add_drop_constraint($table, $definition, $drop = false)
-	{
+    public function add_drop_constraint(string $table, array $definition, bool $drop = false): string
+    {
 		$type         = $definition['type'];
-		$fields       = implode(',',$definition['fields']);
+        $fieldsListSQL = implode(',', $definition['fields']);
 		$name         = $definition['name'];
 		$sql          = '';
 
@@ -827,26 +828,26 @@ FROM information_schema.statistics';
 			if ($drop)
 				$sql = "ALTER TABLE {$table} DROP INDEX {$name} ";
 			else
-				$sql = "ALTER TABLE {$table} ADD INDEX {$name} ({$fields})";
+                $sql = "ALTER TABLE {$table} ADD INDEX {$name} ({$fieldsListSQL})";
 			break;
 		// constraints as indices
 		case 'unique':
 			if ($drop)
 				$sql = "ALTER TABLE {$table} DROP INDEX $name";
 			else
-				$sql = "ALTER TABLE {$table} ADD CONSTRAINT UNIQUE {$name} ({$fields})";
+                $sql = "ALTER TABLE {$table} ADD CONSTRAINT UNIQUE {$name} ({$fieldsListSQL})";
 			break;
 		case 'primary':
 			if ($drop)
 				$sql = "ALTER TABLE {$table} DROP PRIMARY KEY";
 			else
-				$sql = "ALTER TABLE {$table} ADD CONSTRAINT PRIMARY KEY ({$fields})";
+                $sql = "ALTER TABLE {$table} ADD CONSTRAINT PRIMARY KEY ({$fieldsListSQL})";
 			break;
 		case 'foreign':
 			if ($drop)
-				$sql = "ALTER TABLE {$table} DROP FOREIGN KEY ({$fields})";
+                $sql = "ALTER TABLE {$table} DROP FOREIGN KEY ({$fieldsListSQL})";
 			else
-				$sql = "ALTER TABLE {$table} ADD CONSTRAINT FOREIGN KEY {$name} ({$fields}) REFERENCES {$definition['foreignTable']}({$definition['foreignField']})";
+                $sql = "ALTER TABLE {$table} ADD CONSTRAINT FOREIGN KEY {$name} ({$fieldsListSQL}) REFERENCES {$definition['foreignTable']}({$definition['foreignField']})";
 			break;
 		}
 		return $sql;
