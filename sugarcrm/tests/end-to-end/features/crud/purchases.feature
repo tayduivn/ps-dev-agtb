@@ -203,24 +203,40 @@ Feature: Purchases module verification
     Given Accounts records exist:
       | *   | name        |
       | A_1 | Account One |
-
     And Purchases records exist related via purchases link to *A_1:
-      | *     | name       | service | renewable | description            |
-      | Pur_1 | Purchase 1 | true    | true      | This is great purchase |
-
-    And PurchasedLineItems records exist related via purchasedlineitems link to *Pur_1:
-      | *     | name  | revenue | date_closed | quantity | service_start_date | service_end_date | service | renewable | discount_price |
-      | PLI_1 | PLI_1 | 2000    | 2020-06-01  | 3.00     | 2020-06-01         | 2021-06-01       | true    | true      | 2000           |
-      | PLI_2 | PLI_2 | 2000    | 2020-06-01  | 3.00     | 2020-05-30         | 2021-05-31       | true    | true      | 2000           |
-
-    # Verify purchase start date and end date
+      | *     | name       | service | description            |
+      | Pur_1 | Purchase 1 | true    | This is great purchase |
+    And PurchasedLineItems records exist:
+      | *name | revenue | date_closed | quantity | service_start_date | renewable | discount_price |
+      | PLI_1 | 2000    | 2020-06-01  | 3.00     | 2020-06-01         | true      | 2000           |
+      | PLI_2 | 2000    | 2020-06-01  | 3.00     | 2020-05-30         | true      | 2000           |
+  # Update Purchased Line Items record
+    When I choose PurchasedLineItems in modules menu
+    When I select *PLI_1 in #PurchasedLineItemsList.ListView
+    When I click Edit button on #PLI_1Record header
+    When I click show more button on #PLI_1Record view
+    When I provide input for #PLI_1Record.RecordView view
+      | purchase_name | service_start_date | service_duration_value | service_duration_unit |
+      | Purchase 1    | 06/01/2020         | 1                      | Year(s)               |
+    When I click Save button on #PurchasedLineItemsRecord header
+    When I close alert
+  # Update Purchased Line Items record
+    When I choose PurchasedLineItems in modules menu
+    When I select *PLI_2 in #PurchasedLineItemsList.ListView
+    When I click Edit button on #PLI_2Record header
+    When I click show more button on #PLI_1Record view
+    When I provide input for #PLI_2Record.RecordView view
+      | purchase_name | service_start_date | service_duration_value | service_duration_unit |
+      | Purchase 1    | 05/29/2020         | 6                      | Month(s)              |
+    When I click Save button on #PurchasedLineItemsRecord header
+    When I close alert
+  # Verify purchase start date and end date
     Then Purchases *Pur_1 should have the following values in the preview:
       | fieldName  | value      |
       | name       | Purchase 1 |
-      | start_date | 05/30/2020 |
-      | end_date   | 06/01/2021 |
-
-    # Update PLI record
+      | start_date | 05/29/2020 |
+      | end_date   | 05/31/2021 |
+  # Update PLI record
     When I choose PurchasedLineItems in modules menu
     When I select *PLI_1 in #PurchasedLineItemsList.ListView
     When I click Edit button on #PLI_1Record header
@@ -230,8 +246,7 @@ Feature: Purchases module verification
       | 05/15/2020         |
     When I click Save button on #PLI_1Record header
     When I close alert
-
-    # Update PLI record
+  # Update PLI record
     When I choose PurchasedLineItems in modules menu
     When I select *PLI_2 in #PurchasedLineItemsList.ListView
     When I click Edit button on #PLI_2Record header
@@ -241,13 +256,13 @@ Feature: Purchases module verification
       | 06/29/2020         | 1                      | Year(s)               |
     When I click Save button on #PLI_1Record header
     When I close alert
-
-    # Verify purchase start date and end date
+  # Verify purchase start date and end date
     Then Purchases *Pur_1 should have the following values in the preview:
       | fieldName  | value      |
       | name       | Purchase 1 |
       | start_date | 05/15/2020 |
       | end_date   | 06/28/2021 |
+
 
 
   @user_profile
