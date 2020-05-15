@@ -377,7 +377,7 @@ Feature: Generate Quote From RLI subpanel in Opportunity record view
     # Provide input for the second RLI
     When I provide input for #OpportunityDrawer.RLITable view for 2 row
       | *name | date_closed | sales_stage | discount_amount | discount_select | likely_case |
-      | RLI_2 | 12/12/2022  | Prospecting | 50              | $ US Dollar     | 1000        |
+      | RLI_2 | 12/12/2022  | Prospecting | 50              | $ US Dollars    | 1000        |
     When I click Save button on #OpportunitiesDrawer header
     When I close alert
 
