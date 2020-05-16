@@ -97,6 +97,10 @@ class RenameModulesTest extends TestCase
             // Test whole words.
             ['Account', ['prev_singular' => 'Account', 'prev_plural' => 'Accounts', 'singular' => 'Client', 'plural' => 'Clients'], 'Client', 'Client'],
             ['Accounts', ['prev_singular' => 'Account', 'prev_plural' => 'Accounts', 'singular' => 'Client', 'plural' => 'Clients'], 'Clients', 'Clients'],
+            ['Purchase', ['prev_singular' => 'Purchase', 'prev_plural' => 'Purchases', 'singular' => 'Subscription', 'plural' => 'Subscriptions'], 'Subscription', 'Subscription'],
+            ['Purchases', ['prev_singular' => 'Purchase', 'prev_plural' => 'Purchases', 'singular' => 'Subscription', 'plural' => 'Subscriptions'], 'Subscriptions', 'Subscriptions'],
+            ['PurchaseLineItem', ['prev_singular' => 'PurchaseLineItem', 'prev_plural' => 'PurchaseLineItems', 'singular' => 'SubscriptionLineItem', 'plural' => 'SubscriptionLineItems'], 'SubscriptionLineItem', 'SubscriptionLineItem'],
+            ['PurchaseLineItems', ['prev_singular' => 'PurchaseLineItem', 'prev_plural' => 'PurchaseLineItems', 'singular' => 'SubscriptionLineItem', 'plural' => 'SubscriptionLineItems'], 'SubscriptionLineItems', 'SubscriptionLineItems'],
             // Test empty field values.
             ['Contacts', ['prev_singular' => '', 'prev_plural' => '', 'singular' => '', 'plural' => ''], 'Contacts', 'Contacts'],
             ['Contact', ['prev_singular' => 'Contact', 'prev_plural' => '', 'singular' => 'Client', 'plural' => 'Clients'], 'Contact', 'Contact'],
@@ -105,9 +109,14 @@ class RenameModulesTest extends TestCase
             ['Contacts', ['prev_singular' => 'Contact', 'prev_plural' => 'Contacts', 'singular' => 'Client', 'plural' => ''], 'Contacts', 'Contacts'],
             ['Contacts', ['prev_singular' => 'Contact', 'prev_plural' => 'Contacts', 'singular' => '', 'plural' => 'Clients'], 'Contacts', 'Clients'],
             ['Contact', ['prev_singular' => 'Contact', 'prev_plural' => 'Contacts', 'singular' => 'Client', 'plural' => ''], 'Client', 'Contact'],
+            ['Purchase', ['prev_singular' => 'Purchase', 'prev_plural' => 'Purchases', 'singular' => 'Subscription', 'plural' => ''], 'Subscription', 'Purchase'],
+            ['Purchases', ['prev_singular' => 'Purchase', 'prev_plural' => 'Purchases', 'singular' => '', 'plural' => 'Subscriptions'], 'Purchases', 'Subscriptions'],
+            ['PurchaseLineItem', ['prev_singular' => 'PurchaseLineItem', 'prev_plural' => 'PurchaseLineItems', 'singular' => 'SubscriptionLineItem', 'plural' => ''], 'SubscriptionLineItem', 'PurchaseLineItem'],
+            ['PurchaseLineItems', ['prev_singular' => 'PurchaseLineItem', 'prev_plural' => 'PurchaseLineItems', 'singular' => '', 'plural' => 'SubscriptionLineItems'], 'PurchaseLineItems', 'SubscriptionLineItems'],
             // Test multiple words in labels.
             ['My Account:', ['prev_singular' => 'Account', 'prev_plural' => 'Accounts', 'singular' => 'Client', 'plural' => 'Clients'], 'My Client:', 'My Client:'],
             ['View Accounts Module', ['prev_singular' => 'Account', 'prev_plural' => 'Accounts', 'singular' => 'Client', 'plural' => 'Clients'], 'View Clients Module', 'View Clients Module'],
+            ['Generated Purchases', ['prev_singular' => 'Purchase', 'prev_plural' => 'Purchases', 'singular' => 'Subscription', 'plural' => 'Subscriptions'], 'Generated Subscriptions', 'Generated Subscriptions'],
             // Test labels without previous values.
             ['View Module', ['prev_singular' => 'Account', 'prev_plural' => 'Accounts', 'singular' => 'Client', 'plural' => 'Clients'], 'View Module', 'View Module'],
             ['Settings', ['prev_singular' => 'Account', 'prev_plural' => 'Accounts', 'singular' => 'Client', 'plural' => 'Clients'], 'Settings', 'Settings'],

@@ -750,6 +750,34 @@ $renamedefs = array(
             array('name' => 'LBL_PROJECT_HOLIDAYS_TITLE', 'type' => 'singular', 'source' => 'Projects'),
             array('name' => 'LBL_PROJECT_TASKS_SUBPANEL_TITLE', 'type' => 'singular', 'source' => 'Projects'),
         ),
+        // BEGIN SUGARCRM flav=ent ONLY
+        'Purchases' => array(
+            array('name' => 'LBL_ACCOUNT_ID', 'type' => 'singular', 'source' => 'Accounts'),
+            array('name' => 'LBL_ACCOUNT_NAME', 'type' => 'singular', 'source' => 'Accounts'),
+            array('name' => 'LBL_PRODUCT_TYPE', 'type' => 'singular', 'source' => 'ProductTypes'),
+            array('name' => 'LBL_PRODUCT_TEMPLATE_ID', 'type' => 'singular', 'source' => 'ProductTemplates'),
+            array('name' => 'LBL_PRODUCT_TEMPLATE_NAME', 'type' => 'singular', 'source' => 'ProductTemplates'),
+            array('name' => 'LBL_PRODUCT_TEMPLATES', 'type' => 'plural', 'source' => 'ProductTemplates'),
+            array('name' => 'LBL_PURCHASED_LINE_ITEMS', 'type' => 'plural', 'source' => 'PurchasedLineItems'),
+        ),
+        'PurchasedLineItems' => array(
+            array('name' => 'LBL_CATEGORY_ID', 'type' => 'singular', 'source' => 'ProductCategories'),
+            array('name' => 'LBL_CATEGORY_NAME', 'type' => 'singular', 'source' => 'ProductCategories'),
+            array('name' => 'LBL_MANUFACTURER', 'type' => 'singular', 'source' => 'Manufacturers'),
+            array('name' => 'LBL_MANUFACTURERS', 'type' => 'plural', 'source' => 'Manufacturers'),
+            array('name' => 'LBL_MANUFACTURER_NAME', 'type' => 'singular', 'source' => 'Manufacturers'),
+            array('name' => 'LBL_PRODUCT', 'type' => 'singular', 'source' => 'Products'),
+            array('name' => 'LBL_PRODUCT_CATEGORIES', 'type' => 'plural', 'source' => 'Products'),
+            array('name' => 'LBL_PRODUCT_TEMPLATE', 'type' => 'singular', 'source' => 'ProductTemplates'),
+            array('name' => 'LBL_PRODUCT_TEMPLATES', 'type' => 'plural', 'source' => 'ProductTemplates'),
+            array('name' => 'LBL_PRODUCT_TEMPLATE_ID', 'type' => 'singular', 'source' => 'ProductTemplates'),
+            array('name' => 'LBL_PRODUCT_TYPE', 'type' => 'singular', 'source' => 'ProductTypes'),
+            array('name' => 'LBL_PURCHASE', 'type' => 'singular', 'source' => 'Purchases'),
+            array('name' => 'LBL_RLI', 'type' => 'singular', 'source' => 'RevenueLineItems'),
+            array('name' => 'LBL_RLI_ID', 'type' => 'singular', 'source' => 'RevenueLineItems'),
+            array('name' => 'LBL_RLI_NAME', 'type' => 'singular', 'source' => 'RevenueLineItems'),
+        ),
+        // END SUGARCRM flav=ent ONLY
         'Quotes' => array(
             array('name' => 'LBL_ACCOUNT_ID', 'type' => 'singular', 'source' => 'Accounts'),
             array('name' => 'LBL_CONTRACTS', 'type' => 'plural', 'source' => 'Contracts'),
@@ -863,6 +891,10 @@ $renamedefs = array(
             array('name' => 'LBL_CONVERT_RLI_TO_QUOTE', 'type' => 'singular', 'source' => 'RevenueLineItems'),
             array('name' => 'LBL_CONVERT_INVALID_RLI_ALREADYQUOTED', 'type' => 'singular',
                 'source' => 'RevenueLineItems'),
+            // BEGIN SUGARCRM flav=ent ONLY
+            array('name' => 'LBL_GENERATE_PURCHASE', 'type' => 'singular', 'source' => 'Purchases'),
+            array('name' => 'LBL_PURCHASED_LINE_ITEM', 'type' => 'singular', 'source' => 'PurchasedLineItem'),
+            // END SUGARCRM flav=ent ONLY
         ),
         'Reports' => array(
             array('name' => 'LNK_NEW_CONTACT', 'type' => 'singular', 'source' => 'Contacts'),
