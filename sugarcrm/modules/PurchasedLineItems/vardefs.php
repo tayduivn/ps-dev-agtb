@@ -169,10 +169,13 @@ $dictionary['PurchasedLineItem'] = [
         'discount_amount' => [
             'name' => 'discount_amount',
             'vname' => 'LBL_TOTAL_DISCOUNT_AMOUNT',
-            'type' => 'currency',
+            'dbType' => 'currency',
+            'type' => 'discount-amount',
             'len' => '26,6',
+            'default' => '0',
             'precision' => 6,
             'comment' => 'Discounted amount',
+            'studio' => false,
             'related_fields' => [
                 'currency_id',
                 'base_rate',
@@ -231,6 +234,37 @@ $dictionary['PurchasedLineItem'] = [
             'type' => 'bool',
             'reportable' => false,
             'importable' => false,
+        ],
+        'discount_field' => [
+            'name' => 'discount_field',
+            'type' => 'fieldset',
+            'css_class' => 'discount-field',
+            'label' => 'LBL_DISCOUNT_AMOUNT',
+            'source' => 'non-db',
+            'fields' => [
+                [
+                    'name' => 'discount_amount',
+                    'label' => 'LBL_DISCOUNT_AMOUNT',
+                    'type' => 'discount-amount',
+                    'discountFieldName' => 'discount_select',
+                    'related_fields' => [
+                        'currency_id',
+                    ],
+                    'convertToBase' => true,
+                    'base_rate_field' => 'base_rate',
+                    'showTransactionalAmount' => true,
+                ],
+                [
+                    'type' => 'discount-select',
+                    'name' => 'discount_select',
+                    'options' => [],
+                ],
+            ],
+            'studio' => [
+                'editview' => true,
+                'listview' => true,
+                'recordview' => true,
+            ],
         ],
         'discount_usdollar' => [
             'name' => 'discount_usdollar',
