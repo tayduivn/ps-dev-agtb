@@ -116,6 +116,7 @@ $config['blackList']['pro'] = array(
 'sugarcrm/modules/pmse_Project'=>1,
 
 'sugarcrm/tests/unit-php/modules/pmse_Inbox'=>1,
+'sugarcrm/tests/unit-js/include/javascript/pmse' => 1,
 
 'sugarcrm/src/ProcessManager' => 1,
 'sugarcrm/tests/{old}/src/ProcessManager' => 1,
@@ -140,8 +141,11 @@ $config['blackList']['pro'] = array(
 
 // Shift Exceptions Dashlet
 'sugarcrm/clients/base/views/shift-exceptions-dashlet' => 1,
+'sugarcrm/tests/unit-js/clients/base/views/shift-exceptions-dashlet' => 1,
 
 // Workforce Management
 'sugarcrm/modules/Shifts' => 1,
 'sugarcrm/modules/ShiftExceptions' => 1,
+'sugarcrm/tests/unit-js/modules/ShiftExceptions' => 1,
+
 );
