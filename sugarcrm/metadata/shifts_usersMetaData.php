@@ -52,7 +52,7 @@ $dictionary['shifts_users'] = [
             ],
         ],
         [
-            'name' => 'idx_user_id',
+            'name' => 'shift_idx_user_id',
             'type' => 'alternate_key',
             'fields' => [
                 'shift_id',
