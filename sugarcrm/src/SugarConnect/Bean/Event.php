@@ -37,6 +37,19 @@ class Event extends SugarBean
             }
         }
 
+        $relEvents = [
+            'after_relationship_add',
+            'after_relationship_update',
+            'after_relationship_delete',
+        ];
+
+        if (in_array($event, $relEvents)) {
+            // We only care about changes to attendees.
+            if (!in_array($args['link'], ['contacts', 'leads', 'users'])) {
+                return;
+            }
+        }
+
         parent::publish($bean, $event, $args);
     }
 }

@@ -31,6 +31,7 @@ class HandlerTest extends TestCase
     {
         \SugarTestCallUtilities::removeAllCreatedCalls();
         \SugarTestMeetingUtilities::removeAllCreatedMeetings();
+        \SugarTestLeadUtilities::removeAllCreatedLeads();
         \SugarTestContactUtilities::removeAllCreatedContacts();
         \SugarTestAccountUtilities::removeAllCreatedAccounts();
     }
@@ -40,18 +41,14 @@ class HandlerTest extends TestCase
      *
      * 1. after_save: meeting
      * 2. after_save: call
-     * 3. after_relationship_add: meeting, contact
-     * 4. after_relationship_delete: meeting, contact
-     * 5. after_relationship_add: call, contact
-     * 6. after_relationship_delete: call, contact
-     * 7. after_delete: meeting
-     * 8. after_delete: call
-     *
-     * Then there are 4 additional events that are published while deleting the
-     * meeting and call. There are two after_relationship_delete events
-     * triggered while deleting the meeting to unlink the meeting from its teams
-     * over team_link and team_count_link. And the same while deleting the call.
-     * Hence, 12 events are published in all.
+     * 3. after_relationship_add: meeting, lead
+     * 4. after_relationship_add: meeting, contact
+     * 5. after_relationship_delete: meeting, contact
+     * 6. after_relationship_add: call, contact
+     * 7. after_relationship_delete: call, contact
+     * 8. after_relationship_delete: meeting, lead (during delete of meeting)
+     * 9. after_delete: meeting
+     * 10. after_delete: call
      */
     public function testPublish_SugarConnectIsEnabled() : void
     {
@@ -59,7 +56,7 @@ class HandlerTest extends TestCase
         $config->enable();
 
         $client = $this->createMock(Client::class);
-        $client->expects($this->exactly(12))->method('send');
+        $client->expects($this->exactly(10))->method('send');
 
         Event::setClient($client);
 
@@ -83,11 +80,15 @@ class HandlerTest extends TestCase
     {
         $account = \SugarTestAccountUtilities::createAccount();
         $contact = \SugarTestContactUtilities::createContact();
+        $lead = \SugarTestLeadUtilities::createLead();
         $meeting = \SugarTestMeetingUtilities::createMeeting();
         $call = \SugarTestCallUtilities::createCall();
 
         $account->load_relationship('contacts');
         $account->contacts->add($contact);
+
+        $meeting->load_relationship('leads');
+        $meeting->leads->add($lead);
 
         $meeting->load_relationship('contacts');
         $meeting->contacts->add($contact);
