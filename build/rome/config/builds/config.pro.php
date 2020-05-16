@@ -147,5 +147,5 @@ $config['blackList']['pro'] = array(
 'sugarcrm/modules/Shifts' => 1,
 'sugarcrm/modules/ShiftExceptions' => 1,
 'sugarcrm/tests/unit-js/modules/ShiftExceptions' => 1,
-
+'sugarcrm/tests/{old}/modules/Shifts' => 1,
 );

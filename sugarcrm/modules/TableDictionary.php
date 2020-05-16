@@ -121,9 +121,11 @@ include 'metadata/business_centers_holidaysMetaData.php';
 
 // Users to Shift Exceptions relationship
 include 'metadata/shift_exceptions_usersMetaData.php';
-//END SUGARCRM flav=ent ONLY
 
+// Users to Shifts  relationship
 include 'metadata/shifts_usersMetaData.php';
+
+//END SUGARCRM flav=ent ONLY
 
 // Commentlog relation field
 include 'metadata/commentlog_relMetaData.php';
