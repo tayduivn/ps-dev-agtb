@@ -614,6 +614,11 @@ class OIDCAuthenticationProviderTest extends TestCase
             ->with('token')
             ->willReturn($introspectResult);
 
+        $this->oAuthProvider->method('getUserInfo')
+            ->willReturn([
+                'updated_at' => 1589590541,
+            ]);
+
         $this->expectException(IdmNonrecoverableException::class);
         $this->provider->authenticate($token);
     }

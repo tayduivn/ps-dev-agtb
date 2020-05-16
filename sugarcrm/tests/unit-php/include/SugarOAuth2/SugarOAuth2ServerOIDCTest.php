@@ -163,6 +163,9 @@ class SugarOAuth2ServerOIDCTest extends TestCase
 
         $this->oAuth2Server->method('getIdpConfig')->willReturn($configMock);
 
+        $this->oAuth2Server->method('getidmModeConfig')
+            ->willReturn($this->idmMode);
+
         $this->authProviderBuilder = $this->createMock(AuthProviderOIDCManagerBuilder::class);
         $this->authProviderBasicBuilder = $this->createMock(AuthProviderBasicManagerBuilder::class);
         $this->authProviderApiLoginBuilder = $this->createMock(AuthProviderApiLoginManagerBuilder::class);
@@ -353,9 +356,6 @@ class SugarOAuth2ServerOIDCTest extends TestCase
             }
         );
 
-        $this->oAuth2Server->expects($this->any())
-            ->method('getIdmModeConfig')->willReturn($this->idmMode);
-
         $this->authManager->expects($this->once())->method('authenticate')->willReturnCallback(
             function ($token) {
                 $this->assertInstanceOf(JWTBearerToken::class, $token);
@@ -406,8 +406,6 @@ class SugarOAuth2ServerOIDCTest extends TestCase
 
         $refreshTokenId = 'testRefreshTokenId';
         $this->oAuth2Server->expects($this->once())->method('genAccessToken')->willReturn($refreshTokenId);
-        $this->oAuth2Server->expects($this->any())
-            ->method('getidmModeConfig')->willReturn($this->idmMode);
 
         $this->authManager->expects($this->once())->method('authenticate')->willReturnCallback(
             function ($token) {
@@ -484,9 +482,6 @@ class SugarOAuth2ServerOIDCTest extends TestCase
                 return $this->authProviderBuilder;
             }
         );
-
-        $this->oAuth2Server->expects($this->any())
-            ->method('getidmModeConfig')->willReturn($this->idmMode);
 
         $this->authManager->expects($this->once())->method('authenticate')->willReturnCallback(
             function ($token) {
