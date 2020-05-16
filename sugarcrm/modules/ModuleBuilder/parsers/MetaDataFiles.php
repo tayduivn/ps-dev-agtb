@@ -937,16 +937,22 @@ class MetaDataFiles
      * 1) Get a list of directories;
      * 2) Get the files in these directories.
      *
-     * @param array  $platforms A list of platforms to build for. Uses the first
-     *                          platform in the list as the platform.
-     * @param string $type      The type of file to retrieve for building metadata.
-     * @param string $module    The module to retrieve for building metadata.
-     * @param MetaDataContextInterface|null $context Metadata context
+     * @param string[]                      $platforms A list of platforms to build for. Uses the first
+     *                                                 platform in the list as the platform.
+     * @param string                        $type      The type of file to retrieve for building metadata.
+     * @param string                        $module    The module to retrieve for building metadata.
+     * @param MetaDataContextInterface|null $context   Metadata context
+     * @param SugarBean|null                $bean
      *
-     * @return array
+     * @return array<string,array<string,mixed>>
      */
-    public static function getClientFiles( $platforms, $type, $module = null, MetaDataContextInterface $context = null, $bean = null)
-    {
+    public static function getClientFiles(
+        $platforms,
+        $type,
+        $module = null,
+        MetaDataContextInterface $context = null,
+        ?SugarBean $bean = null
+    ) {
         $checkPaths = array();
 
         // First, build a list of paths to check
@@ -983,8 +989,7 @@ class MetaDataFiles
         }
 
         // Second, get a list of files in those directories, sorted by "relevance"
-        $fileList = self::getClientFileList($checkPaths, $context);
-        return $fileList;
+        return self::getClientFileList($checkPaths, $context);
     }
 
     /**
@@ -993,7 +998,7 @@ class MetaDataFiles
      * @param array $checkPaths A list of directories to include files.
      * @param MetaDataContextInterface|null $context Metadata context
      *
-     * @return array
+     * @return array<string,array<string,mixed>>
      */
     public static function getClientFileList($checkPaths, MetaDataContextInterface $context = null)
     {
