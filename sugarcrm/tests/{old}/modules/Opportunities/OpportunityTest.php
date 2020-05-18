@@ -668,6 +668,11 @@ class OpportunityTest extends TestCase
         $opp->revenuelineitems->add($rli);
 
         $ids = $opp->getGeneratePurchaseRliIds();
+        // Ensure IDs returned from DB are trimmed, as some DB2 enforces length
+        // on our ID fields
+        foreach ($ids as &$row) {
+            $row['id'] = trim($row['id']);
+        }
         $this->assertEquals($expected, $ids);
     }
 

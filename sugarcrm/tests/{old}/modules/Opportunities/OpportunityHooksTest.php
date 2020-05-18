@@ -286,7 +286,7 @@ class OpportunityHooksTest extends TestCase
 
         if ($result) {
             $db = DBManagerFactory::getInstance();
-            $db->query('DELETE FROM job_queue WHERE status = ' . $db->quoted('queued') . ';');
+            $db->query("DELETE FROM job_queue WHERE status='queued'");
         }
     }
 

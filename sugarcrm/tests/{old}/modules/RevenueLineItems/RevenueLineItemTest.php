@@ -37,8 +37,10 @@ class RevenueLineItemTest extends TestCase
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestRevenueLineItemUtilities::removeAllCreatedRevenueLineItems();
+        //BEGIN SUGARCRM flav=ent ONLY
         SugarTestPurchaseUtilities::removeAllCreatedPurchases();
         SugarTestPurchasedLineItemUtilities::removeAllCreatedPurchasedLineItems();
+        //END SUGARCRM flav=ent ONLY
         SugarTestProductTemplatesUtilities::removeAllCreatedProductTemplate();
     }
 
@@ -762,7 +764,10 @@ class RevenueLineItemTest extends TestCase
         $purchase->load_relationship('product_templates');
         $purchase->accounts->add($purchaseAccount);
         $purchase->product_templates->add($purchaseProduct);
-        $this->assertEquals($expected, $rli->getMatchingPurchaseId());
+        // For test legibility, this uses 3-char IDs. Trim the returned ID as
+        // some of our supported DBs add whitespace to fill length requirements
+        // on ID fields
+        $this->assertEquals($expected, trim($rli->getMatchingPurchaseId()));
     }
 
     public function providerTestHasMatchingPurchase(): array
@@ -1076,7 +1081,7 @@ class RevenueLineItemTest extends TestCase
     {
         return [
             [
-                ['int', 'decimal',], [1, 1.5],
+                ['text', 'text'], ['fennel', 'ice cream',],
             ],
             [
                 ['varchar', 'enum',], ['pizza', 23,],

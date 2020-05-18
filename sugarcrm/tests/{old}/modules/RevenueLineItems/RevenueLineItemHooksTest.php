@@ -101,6 +101,7 @@ class RevenueLineItemHooksTest extends TestCase
         ];
     }
 
+    // BEGIN SUGARCRM flav=ent ONLY
     /**
      * @param $useRlis
      * @param $salesStageChange
@@ -144,7 +145,7 @@ class RevenueLineItemHooksTest extends TestCase
 
         if ($result) {
             $db = DBManagerFactory::getInstance();
-            $db->query('DELETE FROM job_queue WHERE status = ' . $db->quoted('queued') . ';');
+            $db->query("DELETE FROM job_queue WHERE status='queued'");
         }
     }
 
@@ -163,6 +164,7 @@ class RevenueLineItemHooksTest extends TestCase
             [true, true, false, false],
         ];
     }
+    // END SUGARCRM flav=ent ONLY
 }
 
 class MockRevenueLineItemHooks extends RevenueLineItemHooks

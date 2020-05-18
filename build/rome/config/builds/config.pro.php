@@ -163,5 +163,7 @@ $config['blackList']['pro'] = array(
 'sugarcrm/tests/{old}/include/SugarQueue/jobs/SugarJobCreatePurchasesAndPLIsTest.php' => 1,
 'sugarcrm/tests/{old}/modules/PurchasedLineItems' => 1,
 'sugarcrm/tests/{old}/SugarTestPurchasedLineItemUtilities.php' => 1,
+'sugarcrm/tests/{old}/SugarTestPurchasesUtilities.php' => 1,
+'sugarcrm/tests/unit-js/modules/PurchasedLineItems' => 1,
 'sugarcrm/themes/RacerX/images/icon_PurchasedLineItems_32.png' => 1,
 );
