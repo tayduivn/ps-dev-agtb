@@ -102,6 +102,24 @@ if (!empty($_POST['saveConfig'])) {
 		if( isset($_REQUEST['passwordsetting_lockoutexpirationtime']) && is_numeric($_REQUEST['passwordsetting_lockoutexpirationtime'])  )
 		    $_POST['passwordsetting_lockoutexpiration'] = 2;
 
+        $minPasswordLength = $_POST['passwordsetting_minpwdlength'] ?? $GLOBALS['sugar_config']['passwordsetting']['minpwdlength'];
+        $maxPasswordLength = $_POST['passwordsetting_maxpwdlength'] ?? $GLOBALS['sugar_config']['passwordsetting']['maxpwdlength'];
+
+        if ($minPasswordLength < 1) {
+            $configurator->addError($config_strings['ERR_MIN_LENGTH_NEGATIVE']);
+            break;
+        }
+
+        if ($maxPasswordLength < 1) {
+            $configurator->addError($config_strings['ERR_MAX_LENGTH_NEGATIVE']);
+            break;
+        }
+
+        if ($minPasswordLength > $maxPasswordLength) {
+            $configurator->addError($config_strings['ERR_MIN_LENGTH_GREATER_THAN_MAX']);
+            break;
+        }
+
         // Check SAML settings
         if (!empty($_POST['authenticationClass']) && $_POST['authenticationClass'] == 'IdMSAMLAuthenticate') {
             if (empty($_POST['SAML_loginurl'])) {
