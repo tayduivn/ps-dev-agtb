@@ -9,6 +9,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+// jscs:disable requireCamelCaseOrUpperCaseIdentifiers, requireOperatorBeforeLineBreak
+
 SUGAR.inboundEmail = { };
 
 Rot13 = {
@@ -88,8 +90,8 @@ function close_ie_test_popup() {
     SUGAR.inboundEmail.ie_test_popup_dialog.hide();
 }
 
-function ie_test_open_popup_with_submit(module_name, action, pageTarget, width, height, mail_server, protocol, port, login, password, mailbox, ssl, personal, formName, ie_id)
-{
+function ie_test_open_popup_with_submit(module_name, action, pageTarget, width, height, mail_server, protocol, port,
+    login, password, mailbox, ssl, personal, formName, ie_id, eapm_id) {
 	if (!formName) formName = "testSettingsView";
 	var words = getEncryptedPassword(login, password, mailbox);
 	var isPersonal = (personal) ? 'true' : 'false';
@@ -116,7 +118,8 @@ function ie_test_open_popup_with_submit(module_name, action, pageTarget, width, 
 		+ '&mailbox=' + words[2]
 		+ '&ssl=' + ssl
 		+ '&ie_id=' + ie_id
-		+ '&personal=' + isPersonal;
+        + '&personal=' + isPersonal
+        + '&eapm_id=' + eapm_id;
 
 	var SI = SUGAR.inboundEmail;
 	if (!SI.testDlg) {

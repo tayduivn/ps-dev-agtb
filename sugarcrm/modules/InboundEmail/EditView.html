@@ -42,7 +42,7 @@
 					type='button'
 					class="button"
 					id="emailTestSettings"
-					onClick='ie_test_open_popup_with_submit("InboundEmail", "Popup", "Popup", 400, 300, trim(this.form.server_url.value), this.form.protocol.value, trim(this.form.port.value), trim(this.form.email_user.value), Rot13.write(this.form.email_password.value), trim(this.form.mailbox.value), this.form.ssl.checked, this.form.personal.value, "EditView", this.form.origin_id.value?this.form.origin_id.value:this.form.record.value);'
+					onClick='ie_test_open_popup_with_submit("InboundEmail", "Popup", "Popup", 400, 300, trim(this.form.server_url.value), this.form.protocol.value, trim(this.form.port.value), trim(this.form.email_user.value), Rot13.write(this.form.email_password.value), trim(this.form.mailbox.value), this.form.ssl.checked, this.form.personal.value, "EditView", this.form.origin_id.value?this.form.origin_id.value:this.form.record.value, this.form.eapm_id.value);'
 					name="button" value="  {MOD.LBL_TEST_SETTINGS}  " {IE_DISABLED}>
 			</td>
 			<td align="right" width="20%" NOWRAP><span class="required">{APP.LBL_REQUIRED_SYMBOL}</span> {APP.NTC_REQUIRED}</td>
@@ -317,10 +317,12 @@ function toggle_email_provider() {
             document.getElementById("subscribeFolderButton").disabled = true;
             document.getElementById("trashFolderButton").disabled = true;
             document.getElementById("sentFolderButton").disabled = true;
+            document.getElementById("emailTestSettings").disabled = true;
         } else {
             document.getElementById("subscribeFolderButton").disabled = false;
             document.getElementById("trashFolderButton").disabled = false;
             document.getElementById("sentFolderButton").disabled = false;
+            document.getElementById("emailTestSettings").disabled = false;
         }
         document.getElementById("auth_block").style.display = '';
         document.getElementById("auth_status_label").style.display = '';
@@ -351,6 +353,7 @@ function toggle_email_provider() {
         document.getElementById("subscribeFolderButton").disabled = false;
         document.getElementById("trashFolderButton").disabled = false;
         document.getElementById("sentFolderButton").disabled = false;
+        document.getElementById("emailTestSettings").disabled = false;
     }
 }
 
@@ -384,6 +387,7 @@ function handleOauthComplete(e) {
         document.getElementById("subscribeFolderButton").disabled = false;
         document.getElementById("trashFolderButton").disabled = false;
         document.getElementById("sentFolderButton").disabled = false;
+        document.getElementById("emailTestSettings").disabled = false;
     } else {
         alert('{APP.LBL_EMAIL_AUTH_FAILURE}');
     }
