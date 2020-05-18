@@ -310,12 +310,15 @@ $dictionary['Opportunity'] = array(
             )
         ),
         //BEGIN SUGARCRM flav=ent ONLY
-        'service_start_date' => array(
+        'service_start_date' => [
             'name' => 'service_start_date',
             'vname' => 'LBL_SERVICE_START_DATE',
             'type' => 'date',
             'comment' => 'Service start date field.',
-        ),
+            'related_fields' => [
+                'service_open_revenue_line_items',
+            ],
+        ],
         'service_open_revenue_line_items' => array(
             'name' => 'service_open_revenue_line_items',
             'vname' => 'LBL_CLOSED_RLIS',

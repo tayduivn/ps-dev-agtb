@@ -50,7 +50,9 @@
         //Grab the record list of fields to display from the base metadata
         var recordListMeta = this._initializeMetadata(options);
         //Allows sub-views to override and use different view metadata if desired
-        options.meta = this._filterMeta(_.extend({}, recordListMeta, options.meta || {}), options);
+        var subViewMeta = this.combineMeta(recordListMeta, options.meta);
+        // Filter given metadata removing non-applicable portions
+        options.meta = this._filterMeta(subViewMeta, options);
         this._super("initialize", [options]);
 
         //Extend the prototype's events object to setup additional events for this controller
@@ -804,5 +806,16 @@
      */
     _refreshReorderableColumns: function() {
         $(window).resize();
-    }
+    },
+
+    /**
+     * Helper function to allow subclasses to override how metadata is combined
+     *
+     * @param {Object} recordListMeta record-list metaData
+     * @param {Object} subViewMeta sub-views metaData
+     * @return {Object} Combined metadata with subview props overriding record view props
+     */
+    combineMeta: function(recordListMeta, subViewMeta) {
+        return _.extend({}, recordListMeta, subViewMeta || {});
+    },
 })
