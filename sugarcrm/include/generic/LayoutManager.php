@@ -236,6 +236,10 @@ class LayoutManager
 			$widget_def['widget_class'] = 'Fieldteam_set_id';
 		}
 
+        if (!empty($widget_def['name']) && $widget_def['name'] == 'service_end_date') {
+            $widget_def['widget_class'] = 'Fielddate';
+        }
+
 		if(empty($widget_def['widget_class']))
 		{
 			// Default the class to SugarWidgetField
