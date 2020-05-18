@@ -50,7 +50,7 @@ final class HTTP extends WithConfiguration
         }
 
         $region = Srn\Converter::fromString($tenant)->getRegion();
-        $url = $config->getWebhookURL($region);
+        $url = $this->config->getWebhookURL($region);
 
         //TODO: For now, add the tenant to each event. This won't be necessary
         // once the oauth2 token is used.
