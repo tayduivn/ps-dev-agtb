@@ -733,11 +733,11 @@ class PMSEUserAssignmentHandler
 
         $holidays = $user->holidays->getBeans();
         foreach ($holidays as $holiday) {
-            if (!empty($holiday['holiday_date'])) {
+            if (!empty($holiday->holiday_date)) {
                 $timezone = $user->getPreference('timezone');
-                $holidayStart = new \SugarDateTime($holiday['holiday_date'], new DateTimeZone($timezone));
+                $holidayStart = new \SugarDateTime($holiday->holiday_date, new DateTimeZone($timezone));
                 $holidayStart = $holidayStart->setTimezone(new DateTimeZone("UTC"));
-                $holidayEnd = new \SugarDateTime($holiday['holiday_date'], new DateTimeZone($timezone));
+                $holidayEnd = new \SugarDateTime($holiday->holiday_date, new DateTimeZone($timezone));
                 $holidayEnd = $holidayEnd->setTime('23', '59', '59');
                 $holidayEnd = $holidayEnd->setTimezone(new DateTimeZone("UTC"));
                 if ($checkTime >= $holidayStart && $checkTime <= $holidayEnd) {
