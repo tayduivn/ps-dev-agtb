@@ -38,7 +38,7 @@ class ConsoleConfigDefaultMetaDataApi extends SugarApi
                 'method' => 'getDefaultMetadata',
                 'shortHelp' => 'This method will return the original metadata for the module.',
                 'longHelp' => 'modules/ConsoleConfiguration/clients/base/api/help/default_metadata.html',
-                //'minVersion' => '11.9',//TODO: un-comment me after we bump up the api version
+                'minVersion' => '11.9',
             ],
         ];
     }

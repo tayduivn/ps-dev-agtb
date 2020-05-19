@@ -50,7 +50,7 @@ class MarketingExtrasContentApi extends SugarApi
                 'longHelp' => 'include/api/help/marketing_extras_content_get_help.html',
                 'noLoginRequired' => true,
                 'ignoreSystemStatusError' => true,
-                //'minVersion' => '11.9', //TODO: un-comment me after we bump up the api version
+                'minVersion' => '11.9',
             ],
         ];
     }

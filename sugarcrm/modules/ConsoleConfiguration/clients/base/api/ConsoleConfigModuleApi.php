@@ -41,7 +41,7 @@ class ConsoleConfigModuleApi extends ConfigModuleApi
                 'method' => 'configSave',
                 'shortHelp' => 'Creates the config entries for the ConsoleConfiguration module',
                 'longHelp' => 'modules/ConsoleConfiguration/clients/base/api/help/module_config_post_help.html',
-                //'minVersion' => '11.9',//TODO: un-comment me after we bump up the api version
+                'minVersion' => '11.9',
             ],
             'configUpdate' => [
                 'reqType' => 'PUT',
@@ -50,7 +50,7 @@ class ConsoleConfigModuleApi extends ConfigModuleApi
                 'method' => 'configSave',
                 'shortHelp' => 'Creates the config entries for the ConsoleConfiguration module',
                 'longHelp' => 'modules/ConsoleConfiguration/clients/base/api/help/module_config_post_help.html',
-                //'minVersion' => '11.9',//TODO: un-comment me after we bump up the api version
+                'minVersion' => '11.9',
             ],
         ];
     }
