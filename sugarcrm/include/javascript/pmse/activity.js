@@ -2464,7 +2464,7 @@ AdamActivity.prototype.getAction = function(type, w) {
                     {text: App.lang.getModString('LBL_PMSE_FORM_OPTION_SELECT', 'pmse_Project'), value: ''},
                 ],
                 proxy: new SugarProxy({
-                    url: 'pmse_Project/CrmData/dateFieldsOfModule/${PROJECT_MODULE}',
+                    url: 'pmse_Project/CrmData/dateFieldsOfModule/' + PROJECT_MODULE,
                     uid: null,
                     callback: null,
                 }),

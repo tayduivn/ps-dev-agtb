@@ -1799,6 +1799,7 @@ SQL;
     /**
      * Method that returns a list of type date fields
      * @param $filter
+     * @param $includeCurrent
      * @return object
      */
     public function retrieveDateFields($filter, $includeCurrent = true)
