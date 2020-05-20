@@ -46,6 +46,7 @@ function check_now($send_usage_info=true, $get_request_data=false, $response_dat
     if(!$from_install && empty($license))loadLicense(true);
 
     $key = null;
+    $needToDownload = true;
 	if(!$response_data){
 
         $systemInfo = SugarSystemInfo::getInstance();
@@ -82,7 +83,7 @@ function check_now($send_usage_info=true, $get_request_data=false, $response_dat
 	}else{
 		$encodedResult = 	$response_data['data'];
 		$key = $response_data['key'];
-
+        $needToDownload = false;
 	}
 
     if ($response_data || !$sclient->getError()) {
@@ -110,7 +111,9 @@ function check_now($send_usage_info=true, $get_request_data=false, $response_dat
         // may modify any portion of the Critical Control Software.
         checkDownloadKey($resultData['validation']);
         // download subscription content
-        SubscriptionManager::instance()->downloadSubscriptionContent($key);
+        if ($needToDownload) {
+            SubscriptionManager::instance()->downloadSubscriptionContent($key);
+        }
         //END REQUIRED CODE
 
         if (!empty($resultData['msg'])) {
