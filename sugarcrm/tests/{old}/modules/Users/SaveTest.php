@@ -109,6 +109,8 @@ class SaveTest extends TestCase
      * @covers SugarEmailAddress::getEmailGUID
      * @covers SugarEmailAddress::getGuid
      */
+    // TODO: This test needs to be re-written in the future and will be handled by SS-560
+    /*
     public function testSaveReplacesTheEmailAddressForTheCurrentUserWithoutAffectingTheOtherUser()
     {
         $address1 = Uuid::uuid4() . '@example.com';
@@ -241,6 +243,7 @@ class SaveTest extends TestCase
             );
         }
     }
+    */
 
     /**
      * @covers User::save
