@@ -37,16 +37,18 @@ class SugarUpgradeRemoveWebUpgrader extends UpgradeScript
             if (strpos($package->name, 'SugarCRM Upgrader') === false) {
                 continue;
             }
-            try {
-                if ($package->status === UpgradeHistory::STATUS_INSTALLED) {
-                    $packageManager->uninstallPackage($package, true);
-                }
-                $packageManager->deletePackage($package);
+            if ($package->status === UpgradeHistory::STATUS_INSTALLED) {
+                $package->status = UpgradeHistory::STATUS_STAGED;
+                $package->save();
                 $this->filesToRemove[] = 'custom/Extension/application/Ext/Include/' . $package->id_name . '.php';
-            } catch (Exception $e) {
-                $this->log('Fail to remove SugarCRM Upgrader version' . $package->version);
             }
+
+            try {
+                $packageManager->deletePackage($package);
+            } catch (Exception $e) {
+                $this->log('Fail to remove SugarCRM Upgrader version ' . $package->version);
+            }
+            $this->upgrader->fileToDelete($this->filesToRemove, $this);
         }
-        $this->upgrader->fileToDelete($this->filesToRemove, $this);
     }
 }

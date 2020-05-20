@@ -14,7 +14,6 @@
 require_once dirname(__FILE__) . '/ScannerMeta.php';
 
 use Sugarcrm\Sugarcrm\Util\Serialized;
-use Sugarcrm\Sugarcrm\PackageManager\Entity\PackageManifest;
 
 /**
  *
@@ -867,24 +866,34 @@ class HealthCheckScanner
     }
 
     /**
-     * @return UpgradeHistory
+     * return list of installed packages by type.
+     * @TODO use UpgradeHistory->getInstalledPackagesByType after Sugar 10.1.0 upgrade
+     * @param string $type
+     * @return array|SugarBean[]
+     * @throws SugarQueryException
      */
-    protected function getUpgradeHistory()
+    protected function getInstalledPackagesByType(string $type): array
     {
-        require_once 'modules/Administration/UpgradeHistory.php';
-        return new UpgradeHistory();
+        $history = new UpgradeHistory();
+        $query = new SugarQuery();
+        $query->from($history);
+        $query->where()->equals('type', $type);
+        return $history->fetchFromQuery($query);
     }
 
     protected function checkForForbiddenStatementsInUpgrades()
     {
-        $history = $this->getUpgradeHistory();
-        $modules = $history->getInstalledPackagesByType(PackageManifest::PACKAGE_TYPE_MODULE);
+        $moduleScanner = new ModuleScanner();
+        if (!method_exists($moduleScanner, 'scanArchive')) {
+            return;
+        }
+        $modules = $this->getInstalledPackagesByType('module');
         foreach ($modules as $module) {
             $filename = $module->filename;
             if (!file_exists($filename)) {
                 continue;
             }
-            $moduleScanner = new ModuleScanner();
+
             $moduleScanner->scanArchive($filename);
             if ($moduleScanner->hasIssues()) {
                 foreach ($moduleScanner->getIssues()['file'] as $file => $issues) {
@@ -2585,7 +2594,7 @@ class HealthCheckScanner
      */
     protected function listUpgrades()
     {
-        $ulist = $this->getUpgradeHistory()->getInstalledPackagesByType(PackageManifest::PACKAGE_TYPE_PATCH);
+        $ulist = $this->getInstalledPackagesByType('patch');
         if (empty($ulist)) {
             return;
         }

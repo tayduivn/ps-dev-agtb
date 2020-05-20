@@ -122,11 +122,14 @@ class UpgradeHistory extends SugarBean
     public function getPackageManifest(): PackageManifest
     {
         if (!$this->packageManifest) {
-            $manifest = ['manifest' => [], 'installdefs' => [], 'upgrade_manifest' => []];
-            $manifest = array_merge(
-                $manifest,
-                unserialize(base64_decode($this->manifest), ['allowed_classes' => false])
-            );
+            $manifest = unserialize(base64_decode($this->manifest), ['allowed_classes' => false]);
+            // Previous manifest might be saved with empty string instead of array
+            $keys = ['manifest', 'installdefs', 'upgrade_manifest'];
+            foreach ($keys as $key) {
+                if (empty($manifest[$key]) || !is_array($manifest[$key])) {
+                    $manifest[$key] = [];
+                }
+            }
             $this->packageManifest = new PackageManifest(
                 $manifest['manifest'],
                 $manifest['installdefs'],
