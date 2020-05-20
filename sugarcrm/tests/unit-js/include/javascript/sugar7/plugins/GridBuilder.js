@@ -444,9 +444,46 @@ describe("Plugins.GridBuilder", function() {
                 expect(results[4][1].labelSpan).toBe(2);
             });
 
+            it('Should create a three-column panel grid with label-field ratio of 2/2', function() {
+                var results;
+                var fields = [{
+                    name: 'foo1'
+                }, {
+                    name: 'foo2'
+                }, {
+                    name: 'foo3'
+                }, {
+                    name: 'foo4'
+                }, {
+                    name: 'foo5'
+                }];
+                app.user.setPreference('field_name_placement', 'field_on_side');
+                view.meta.panels = [{
+                    columns: 3,
+                    labels: true,
+                    fields: fields
+                }];
+                view.render();
+                results = view.meta.panels[0].grid;
+
+                // the fields should appear in 2 rows
+                expect(results.length).toBe(2);
+
+                //first row should contain 3 fields
+                expect(results[0].length).toBe(3);
+                // second row should contain 2 fields
+                expect(results[1].length).toBe(2);
+
+                // each field and label size should be 2 and 2
+                _.each(_.union(results[0], results[1]), function(field) {
+                    expect(field.span).toBe(2);
+                    expect(field.labelSpan).toBe(2);
+                }, this);
+            });
+
             it("Should create a five-column panel grid with no field.span's or label.span's less than 1", function() {
                 var results,
-                    fields    = [
+                    fields = [
                         {
                             name: "foo1"
                         },
