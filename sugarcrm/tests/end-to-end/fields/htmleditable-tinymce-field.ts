@@ -25,8 +25,9 @@ export default class KBDetail extends BaseField {
         this.selectors = this.mergeSelectors({
             $: '[field-name={{name}}].detail',
             field: {
-                selector: 'div.kbdocument-body',
+                selector: 'iframe.kbdocument-body',
             },
+            iframe: 'iframe',
         });
     }
 
@@ -37,8 +38,11 @@ export default class KBDetail extends BaseField {
      * @returns {Promise<string>}
      */
     public async getText(selector: string): Promise<string> {
-        let value: string | string[] = await this.driver.getText(this.$('field.selector'));
-        return value.toString().replace(/\n/g, ' ').trim();
+        let iframeSelector = this.$('iframe');
+        await this.driver.waitForVisible(iframeSelector);
+        let name = await this.driver.getAttribute(iframeSelector, 'name');
+        let value = await seedbed.client.driver.execSync('getiFrameValue', [name]);
+        return value.value.toString().replace(/\n/g, ' ').trim();
     }
 }
 

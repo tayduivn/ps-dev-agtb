@@ -174,8 +174,8 @@ Feature: Knowledge Base module verification
       | fieldName | value |
       | name      | KB_2  |
     Then I verify fields on #KB_1Record.RecordView
-      | fieldName       | value                           |
-      | kbdocument_body | Hello World! (copy)Hello World! |
+      | fieldName       | value                                  |
+      | kbdocument_body | <p>Hello World! (copy)Hello World!</p> |
 
 
   @create_cancel @create_save @job6
@@ -261,8 +261,8 @@ Feature: Knowledge Base module verification
       | name      | KB_1 - revision 1 |
       | status    | In Review         |
     Then I verify fields on #KB_rev1Record.RecordView
-      | fieldName       | value                  |
-      | kbdocument_body | Revision 1Hello World! |
+      | fieldName       | value                         |
+      | kbdocument_body | <p>Revision 1Hello World!</p> |
     # Check revision subpanels
     When I open the revisions subpanel on #KB_rev1Record view
     When I verify number of records in #KB_rev1Record.SubpanelsLayout.subpanels.revisions is 1
@@ -304,12 +304,13 @@ Feature: Knowledge Base module verification
       | fieldName | value      |
       | name      | Template 1 |
     When I click on preview button on *KBT_1 in #KBContentTemplatesList.ListView
-    Then I should see #KBT_1Preview view
-    Then I click show more button on #KBT_1Preview view
-    Then I verify fields on #KBT_1Preview.PreviewView
-      | fieldName | value         |
-      | name      | Template 1    |
-      | body      | My Template 1 |
+     # TODO: This can be uncommented after AT-371 is fixed
+#    Then I should see #KBT_1Preview view
+#    Then I click show more button on #KBT_1Preview view
+#    Then I verify fields on #KBT_1Preview.PreviewView
+#      | fieldName | value         |
+#      | name      | Template 1    |
+#      | body      | My Template 1 |
 
 
   @kbTemplates_use_existing @job1
@@ -388,10 +389,10 @@ Feature: Knowledge Base module verification
       | name      | KB_1     |
       | status    | Approved |
     Then I verify fields on #T_1Record.RecordView
-      | fieldName       | value        |
-      | kbdocument_body | New Template |
-      | language        | English      |
-      | revision        | 1            |
+      | fieldName       | value               |
+      | kbdocument_body | <p>New Template</p> |
+      | language        | English             |
+      | revision        | 1                   |
 
 
   @kbSettings @job1 @ci-excluded
@@ -446,4 +447,3 @@ Feature: Knowledge Base module verification
     When I wait for 2 seconds
 #    When I moveDown *KBCategory_2 on #KBViewCategoriesDrawer.KBCategoriesList view
 #    When I wait for 2 seconds
-

@@ -44,19 +44,19 @@ Feature: Cases module verification
     # Edit cases > Save > Verify
     When I click on Edit button for *C1 in #CasesList.ListView
     When I set values for *C1 in #CasesList.ListView
-      | fieldName    | value       |
-      | name         | Case B     |
-      | account_name | Account 2  |
-      | priority     | Low |
-      | status       | Rejected   |
+      | fieldName    | value     |
+      | name         | Case B    |
+      | account_name | Account 2 |
+      | priority     | Low       |
+      | status       | Rejected  |
     When I click on Save button for *C1 in #CasesList.ListView
     When I close alert
     Then I verify fields for *C1 in #CasesList.ListView
-      | fieldName    | value       |
+      | fieldName    | value     |
       | name         | Case B    |
-      | account_name | Account 2  |
-      | priority     | Low |
-      | status       | Rejected   |
+      | account_name | Account 2 |
+      | priority     | Low       |
+      | status       | Rejected  |
 
     # Edit cases > Cancel > Verify
     When I click on Edit button for *C1 in #CasesList.ListView
@@ -68,11 +68,11 @@ Feature: Cases module verification
       | status       | Assigned  |
     When I click on Cancel button for *C1 in #CasesList.ListView
     Then I verify fields for *C1 in #CasesList.ListView
-      | fieldName    | value       |
-      | name         | Case B     |
-      | account_name | Account 2  |
-      | priority     | Low |
-      | status       | Rejected   |
+      | fieldName    | value     |
+      | name         | Case B    |
+      | account_name | Account 2 |
+      | priority     | Low       |
+      | status       | Rejected  |
 
     Examples:
       | name1  | priority1 | status1 |
@@ -198,8 +198,8 @@ Feature: Cases module verification
       | name      | KB_1  |
 
     Then KBContents *KB_1 should have the following values:
-      | fieldName       | value                                            |
-      | kbdocument_body | Cases Number: {*C1.case_number} Subject: <name1> |
+      | fieldName       | value                                                                  |
+      | kbdocument_body | <p>Cases Number: {*C1.case_number}</p>    <p>Subject: <name1></p> |
 
     Examples:
       | name1  | account1  |
