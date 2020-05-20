@@ -31,7 +31,7 @@ $mod_strings = [
     'LBL_CATEGORY_ID' => 'Product Category ID',
     'LBL_CATEGORY_NAME' => 'Product Category',
     'LBL_PRODUCT_CATEGORIES' => 'Product Categories',
-    'LBL_PURCHASED_LINE_ITEMS', 'Purchased Line Items',
+    'LBL_PURCHASED_LINE_ITEMS' => 'Purchased Line Items',
 
     // Subpanels
     'LBL_DOCUMENTS_SUBPANEL_TITLE' => 'Documents',
