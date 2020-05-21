@@ -32,6 +32,7 @@ $dictionary['Opportunity'] = array(
             'merge_filter' => 'selected',
             'importable' => 'required',
             'required' => true,
+            'console_filterable' => true,
         ),
         'opportunity_type' => array(
             'name' => 'opportunity_type',
@@ -127,6 +128,7 @@ $dictionary['Opportunity'] = array(
             'len' => '50',
             'comment' => 'Source of the opportunity',
             'merge_filter' => 'enabled',
+            'console_filterable' => true,
         ),
         'amount' => array(
             'name' => 'amount',
@@ -146,6 +148,7 @@ $dictionary['Opportunity'] = array(
             ),
             'convertToBase' => true,
             'showTransactionalAmount' => true,
+            'console_filterable' => true,
         ),
         'amount_usdollar' => array(
             'name' => 'amount_usdollar',
@@ -194,6 +197,7 @@ $dictionary['Opportunity'] = array(
                 'enabled' => true,
                 'searchable' => false,
             ),
+            'console_filterable' => true,
         ),
         'date_closed_timestamp' => array(
             'name' => 'date_closed_timestamp',
@@ -225,6 +229,7 @@ $dictionary['Opportunity'] = array(
             'comment' => 'The next step in the sales process',
             'merge_filter' => 'enabled',
             'massupdate' => true,
+            'console_filterable' => true,
         ),
         'sales_stage' => array(
             'name' => 'sales_stage',
@@ -238,6 +243,7 @@ $dictionary['Opportunity'] = array(
             'importable' => 'required',
             'audited' => true,
             'required' => true,
+            'console_filterable' => true,
         ),
         'sales_status' => array(
             'name' => 'sales_status',
@@ -251,6 +257,7 @@ $dictionary['Opportunity'] = array(
             'reportable' => false,
             'massupdate' => false,
             'importable' => false,
+            'console_filterable' => true,
             'default' => 'New'
         ),
         'probability' => array(
@@ -280,6 +287,7 @@ $dictionary['Opportunity'] = array(
             ),
             'convertToBase' => true,
             'showTransactionalAmount' => true,
+            'console_filterable' => true,
         ),
         'worst_case' => array(
             'name' => 'worst_case',
@@ -294,6 +302,7 @@ $dictionary['Opportunity'] = array(
             ),
             'convertToBase' => true,
             'showTransactionalAmount' => true,
+            'console_filterable' => true,
         ),
         'commit_stage' => array(
             'name' => 'commit_stage',
@@ -431,7 +440,7 @@ $dictionary['Opportunity'] = array(
             'source' => 'non-db',
             'console' => [
                 'name' => 'sales_stage',
-                'label' => 'LBL_SALES_STAGE',
+                'label' => 'LBL_WIDGET_SALES_STAGE',
                 'type' => 'enum-colorcoded-fore-bkgd',
             ],
         ],
@@ -447,7 +456,7 @@ $dictionary['Opportunity'] = array(
             'source' => 'non-db',
             'console' => [
                 'name' => 'date_closed',
-                'label' => 'LBL_DATE_CLOSED',
+                'label' => 'LBL_WIDGET_DATE_CLOSED',
                 'type' => 'relative-date',
             ],
         ],
@@ -463,7 +472,7 @@ $dictionary['Opportunity'] = array(
             'source' => 'non-db',
             'console' => [
                 'name' => 'amount',
-                'label' => 'LBL_LIKELY',
+                'label' => 'LBL_WIDGET_AMOUNT',
                 'type' => 'boxplot',
                 'related_fields' => [
                     'best_case',

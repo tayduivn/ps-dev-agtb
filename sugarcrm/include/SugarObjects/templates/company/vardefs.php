@@ -30,6 +30,7 @@ $vardefs= array (
     'importable' => 'required',
     'duplicate_on_record_copy' => 'always',
     'merge_filter' => 'selected',  //field will be enabled for merge and will be a part of the default search criteria..other valid values for this property are enabled and disabled, default value is disabled.
+    'console_filterable' => true,
                             //property value is case insensitive.
   ),
     'facebook' =>
@@ -68,6 +69,7 @@ $vardefs= array (
     'len'=>50,
     'duplicate_on_record_copy' => 'always',
     'comment' => 'The Company is of this type',
+    'console_filterable' => true,
   ),
 'industry' =>
   array (
@@ -79,6 +81,7 @@ $vardefs= array (
     'duplicate_on_record_copy' => 'always',
     'comment' => 'The company belongs in this industry',
     'merge_filter' => 'enabled',
+    'console_filterable' => true,
   ),
     'annual_revenue' =>
   array (
@@ -89,6 +92,7 @@ $vardefs= array (
     'duplicate_on_record_copy' => 'always',
     'comment' => 'Annual revenue for this company',
     'merge_filter' => 'enabled',
+    'console_filterable' => true,
   ),
   'phone_fax' =>
   array (
@@ -362,6 +366,7 @@ $vardefs= array (
     'options' => 'service_level_dom',
     'audited' => true,
     'comment' => 'An indication of the service level of a company',
+    'console_filterable' => true,
   ),
   //END SUGARCRM flav=ent ONLY
 ),

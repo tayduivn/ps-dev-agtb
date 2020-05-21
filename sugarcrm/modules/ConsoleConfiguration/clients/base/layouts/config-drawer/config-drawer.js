@@ -272,6 +272,7 @@
             });
 
             this.setTabContent(bean);
+            this.setFilterableFields(bean);
             this.addValidationTasks(bean);
 
             bean.on('change:columns', function() {
@@ -283,6 +284,19 @@
         }
 
         this.setActiveTabIndex();
+    },
+
+    /**
+     * Sets the filterable fields
+     * @param bean
+     */
+    setFilterableFields: function(bean) {
+        var moduleFields = app.metadata.getModule(bean.get('enabled_module'), 'fields');
+        var filterableFields = _.pick(moduleFields, function(fieldDef, key, object) {
+            return !_.isUndefined(fieldDef.console_filterable) &&
+                app.utils.isTruthy(fieldDef.console_filterable);
+        }, this);
+        bean.set('filterableFields', filterableFields);
     },
 
     /**
@@ -401,6 +415,11 @@
                 });
             }, this);
         }, this);
+
+        // To filter out special fields as they should not be available for sorting or filtering.
+        subfields = _.filter(subfields, function(field) {
+            return _.isEmpty(field.widget_name);
+        });
 
         // Return the combined list of subfields and related fields. Ensure that
         // the correct field type is associated with the field (important for

@@ -382,6 +382,7 @@ $dictionary['Account'] = array(
             'vname' => 'LBL_NEXT_RENEWAL_DATE',
             'type' => 'date',
             'readonly' => true,
+            'console_filterable' => true,
         ),
         'widget_next_renewal_date' => [
             'name' => 'widget_next_renewal_date',
@@ -395,7 +396,7 @@ $dictionary['Account'] = array(
             'source' => 'non-db',
             'console' => [
                 'name' => 'next_renewal_date',
-                'label' => 'LBL_NEXT_RENEWAL_DATE',
+                'label' => 'LBL_WIDGET_NEXT_RENEWAL_DATE',
                 'type' => 'relative-date',
             ],
         ],

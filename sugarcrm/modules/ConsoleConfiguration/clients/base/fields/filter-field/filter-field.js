@@ -107,10 +107,10 @@
      * @param {string} module The module to load the filter fields for.
      */
     loadFilterFields: function(module) {
-        // Get the set of multi-line-list fields for the tab, and extend it with
+        // Get the set of filterableFields for the tab, and extend it with
         // the default fieldList
-        var tabContent = this.model.get('tabContent') || {};
-        this.fieldList = _.extend({}, this.fieldList, tabContent.fields);
+        var filterableFields = this.model.get('filterableFields') || {};
+        this.fieldList = _.extend({}, this.fieldList, filterableFields);
 
         // For each field, if it is filterable (or a pre-defined filter), add it
         // to the filterFields list

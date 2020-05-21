@@ -73,13 +73,11 @@ describe('ConsoleConfiguration.Fields.filter-field', function() {
         var module = 'Accounts';
 
         beforeEach(function() {
-            model.set('tabContent', {
-                fields: {
-                    'next_renewal_date': {
-                        'name': 'next_renewal_date',
-                        'type': 'date',
-                        'label': 'LBL_NEXT_RENEWAL_DATE'
-                    }
+            model.set('filterableFields', {
+                'next_renewal_date': {
+                    'name': 'next_renewal_date',
+                    'type': 'date',
+                    'label': 'LBL_NEXT_RENEWAL_DATE'
                 }
             });
 

@@ -637,21 +637,6 @@ Feature: Customer Service Console Verification
 
     # Set sorting order in the Console Settings > Cases tab and save
     When I set sort order in Cases tab of #ConsoleSettingsConfig view:
-      | sortOrderField | sortBy | sortDirection |
-      | primary        | Status | Ascending     |
-      | secondary      | Number | Ascending     |
-
-    # Verify the order of records in the multiline list view after sorting order is changed
-    Then I verify records order in #CasesList.MultilineListView
-      | record_identifier | expected_list_order |
-      | C_2               | 1                   |
-      | C_5               | 2                   |
-      | C_1               | 3                   |
-      | C_4               | 4                   |
-      | C_3               | 5                   |
-
-    # Set sorting order in the Console Settings > Cases tab and save
-    When I set sort order in Cases tab of #ConsoleSettingsConfig view:
       | sortOrderField | sortBy   | sortDirection |
       | primary        | Priority | Ascending     |
       | secondary      | Subject  | Ascending     |

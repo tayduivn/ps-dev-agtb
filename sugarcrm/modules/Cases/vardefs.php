@@ -143,6 +143,7 @@ $dictionary['Case'] = array(
             'comment' => 'The status of the case',
             'merge_filter' => 'enabled',
             'sortable' => true,
+            'console_filterable' => true,
         ),
         'priority' => array(
             'name' => 'priority',
@@ -154,6 +155,7 @@ $dictionary['Case'] = array(
             'comment' => 'The priority of the case',
             'merge_filter' => 'enabled',
             'sortable' => true,
+            'console_filterable' => true,
         ),
         'resolution' => array(
             'name' => 'resolution',
@@ -193,7 +195,7 @@ $dictionary['Case'] = array(
             'source' => 'non-db',
             'console' => [
                 'name' => 'status',
-                'label' => 'LBL_STATUS',
+                'label' => 'LBL_WIDGET_STATUS',
                 'type' => 'case-status',
             ],
         ],

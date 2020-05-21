@@ -43,7 +43,7 @@ $viewdefs['Cases']['base']['view']['multi-line-list'] = [
                         ],
                         [
                             'name' => 'status',
-                            'label' => 'LBL_STATUS',
+                            'label' => 'LBL_WIDGET_STATUS',
                             'default' => true,
                             'enabled' => true,
                             'type' => 'case-status',
@@ -58,7 +58,7 @@ $viewdefs['Cases']['base']['view']['multi-line-list'] = [
                     'subfields' => [
                         [
                             'name' => 'follow_up_datetime',
-                            'label' => 'LBL_FOLLOW_UP_DATETIME',
+                            'label' => 'LBL_WIDGET_FOLLOW_UP_DATETIME',
                             'default' => true,
                             'enabled' => true,
                             'readonly' => true,

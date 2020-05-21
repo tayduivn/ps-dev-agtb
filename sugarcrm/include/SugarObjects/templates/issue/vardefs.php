@@ -26,6 +26,7 @@ $vardefs = array (
 			'disable_num_format' => true,
 			'studio' => array('quickcreate' => false),
             'duplicate_on_record_copy' => 'no',
+            'console_filterable' => true,
 		),
 
         'name' => array (
@@ -46,7 +47,7 @@ $vardefs = array (
 			'required'=>true,
             'importable' => 'required',
             'duplicate_on_record_copy' => 'always',
-
+            'console_filterable' => true,
 		),
         'type' => array (
             'name' => 'type',
@@ -120,6 +121,7 @@ $vardefs = array (
             'dbType' => 'datetime',
             'comment' => 'Deadline for following up on an issue',
             'audited' => true,
+            'console_filterable' => true,
         ),
         'widget_follow_up_datetime' => [
             'name' => 'widget_follow_up_datetime',
@@ -133,7 +135,7 @@ $vardefs = array (
             'source' => 'non-db',
             'console' => [
                 'name' => 'follow_up_datetime',
-                'label' => 'LBL_FOLLOW_UP_DATETIME',
+                'label' => 'LBL_WIDGET_FOLLOW_UP_DATETIME',
                 'type' => 'follow-up-datetime-colorcoded',
                 'color_code_classes' => [
                     'overdue' => 'expired',

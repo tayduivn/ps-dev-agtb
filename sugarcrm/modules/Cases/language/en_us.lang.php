@@ -152,6 +152,6 @@ To create a {{module_name}}:
     //BEGIN SUGARCRM flav=ent ONLY
     'LBL_SLA_DETAILS' => 'SLA Details',
     'LBL_HOURS' => 'Hours',
-    'LBL_WIDGET_STATUS' => 'Status',
+    'LBL_WIDGET_STATUS' => 'Status *',
     //END SUGARCRM flav=ent ONLY
 );

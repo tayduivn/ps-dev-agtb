@@ -16,7 +16,7 @@
             {{#notEq this.length "1"}}
                 <li class="pill outer multi-field-block">
                     <ul id="multi-field-sortable" class="multi-field connectedSortable">
-                        <li class="list-header" fieldname="{{this.[0].parent_name}}" fieldlabel="{{this.[0].parent_label}}" rel="tooltip" data-original-title="{{#each this}}{{#unless @first}}/{{/unless}}{{str label ../../../model.attributes.enabled_module}}{{/each}}">
+                        <li class="list-header" fieldname="{{this.[0].parent_name}}" fieldlabel="{{#each this}}{{#unless @first}}/{{/unless}}{{label}}{{/each}}" rel="tooltip" data-original-title="{{#each this}}{{#unless @first}}/{{/unless}}{{str label ../../../model.attributes.enabled_module}}{{/each}}">
                             {{#each this}}
                                 {{#unless @first}}/{{/unless}}
                                 {{str label ../../../model.attributes.enabled_module}}
