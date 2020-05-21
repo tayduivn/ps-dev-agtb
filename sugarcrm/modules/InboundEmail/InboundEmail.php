@@ -1283,11 +1283,45 @@ class InboundEmail extends SugarBean {
 				$fetchedOverviews[$k] = $overview;
 			}
 		} else {
-			$fetchedOverviews = imap_fetch_overview($this->conn, $uid, FT_UID);
+            $fetchedOverviews = $this->getImapOverview($uid);
 		} // else
 		$this->updateOverviewCacheFile($fetchedOverviews);
 
 	} // fn
+
+    /**
+     * Returns object with a bunch of headers and flags set from a message. Tries to emulate
+     * the return value of imap_fetch_overview
+     * @param $uid
+     * @return stdClass
+     */
+    public function getImapOverview($uid)
+    {
+        $overview = new stdClass();
+        $headersToCheck = ['subject', 'from', 'to', 'date', 'message_id', 'references', 'in_reply_to'];
+
+        $message = $this->conn->getMessageFromId($uid);
+
+        foreach ($headersToCheck as $headerName) {
+            if (isset($message->$headerName)) {
+                $name = strtolower($headerName);
+                $name = str_replace('-', '_', $name);
+                $overview->$name = $message->getHeader($headerName, 'string');
+            }
+        }
+
+        $overview->size = $message->getSize();
+        $overview->uid = $uid;
+        $overview->msgno = $this->conn->getMessageNum($uid);
+
+        $flags = ['recent', 'answered', 'flagged', 'deleted', 'draft'];
+
+        foreach ($flags as $flag) {
+            $overview->$flag = $this->conn->hasFlag($flag, $uid);
+        }
+
+        return $overview;
+    }
 
 	/**
 	 * Checks email (local caching too) for one mailbox
@@ -4441,6 +4475,260 @@ class InboundEmail extends SugarBean {
 		return true;
 	}
 
+    /**
+     * Import an email into Sugar
+     * @param $uid
+     * @return bool
+     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Doctrine\DBAL\Exception\InvalidArgumentException
+     */
+    public function importEmailFromUid($uid)
+    {
+        global $app_strings, $timedate;
+
+        $mailer = $this->conn;
+
+        if (!empty($sugar_config['mark_emails_seen'])) {
+            $mailer->setFlag($uid, 'seen', true);
+        }
+
+        $header = $mailer->getHeaders($uid);
+
+        // reset inline images cache
+        $this->inlineImages = [];
+
+        // handle messages deleted on server
+        if (empty($header)) {
+            if (!isset($this->email) || empty($this->email)) {
+                $this->email = BeanFactory::newBean('Emails');
+            }
+
+
+            $this->email->name = $app_strings['LBL_EMAIL_ERROR_IMAP_MESSAGE_DELETED'];
+            $identifier = [
+                'imap_uid' => $uid,
+                'ie_id' => $this->id,
+                'mbox' => $this->mailbox,
+            ];
+
+            // delete local cache
+            $this->db->getConnection()
+                ->delete(
+                    'email_cache',
+                    $identifier
+                );
+
+            $this->email->date_sent = $timedate->nowDb();
+            return false;
+        }
+
+        // DUPLICATE CHECK
+        $message_id = $mailer->getMessageId($uid);
+        $dupeCheckResult = $this->importDupeCheck($message_id, $header, $mailer->getRawHeaders($uid));
+        if ($dupeCheckResult) {
+            $GLOBALS['log']->debug('*********** NO duplicate found, continuing with processing.');
+
+            $email = BeanFactory::newBean('Emails');
+            $email->isDuplicate = false;
+            $email->mailbox_id = $this->id;
+            $email->id = create_guid();
+            $email->new_with_id = true; //forcing a GUID here to prevent double saves.
+
+            // Don't assign the email to the current user by default.
+            $email->assigned_user_id = null;
+
+            ///////////////////////////////////////////////////////////////////
+            ////	HANDLE EMAIL ATTACHEMENTS OR HTML TEXT
+            ////	Inline images require that I-E handle attachments before body text
+            // parts defines attachments - be mindful of .html being interpreted as an attachment
+//            if($structure->type == 1 && !empty($structure->parts)) {
+//                $GLOBALS['log']->debug('InboundEmail found multipart email - saving attachments if found.');
+//                $this->saveAttachments($msgNo, $structure->parts, $email->id, 0, $forDisplay);
+//            } elseif($structure->type == 0) {
+//                $uuemail = ($this->isUuencode($email->description)) ? true : false;
+//                /*
+//                 * UUEncoded attachments - legacy, but still have to deal with it
+//                 * format:
+//                 * begin 777 filename.txt
+//                 * UUENCODE
+//                 *
+//                 * end
+//                 */
+//                // set body to the filtered one
+//                if($uuemail) {
+//                    $email->description = $this->handleUUEncodedEmailBody($email->description, $email->id);
+//                    $email->retrieve($email->id);
+//                    $email->save();
+//                }
+//            } else {
+//                if($this->port != 110) {
+//                    $GLOBALS['log']->debug('InboundEmail found a multi-part email (id:'.$msgNo.') with no child parts to parse.');
+//                }
+//            }
+            ////	END HANDLE EMAIL ATTACHEMENTS OR HTML TEXT
+            $email->name = $mailer->getSubject($uid);
+            $email->state = Email::STATE_ARCHIVED;
+            $email->type = 'inbound';
+
+            $dateSent = $mailer->getDate($uid);
+            if (!empty($dateSent)) {
+                $unixHeaderDate = $timedate->fromString($dateSent);
+            }
+
+            if (!empty($unixHeaderDate)) {
+                $email->date_sent = $timedate->asUser($unixHeaderDate);
+                list($email->date_getMessageUidstart, $email->time_start) = $timedate->split_date_time($email->date_sent);
+            } else {
+                $email->date_start = $email->time_start = $email->date_sent = "";
+            }
+            $email->status = 'unread'; // this is used in Contacts' Emails SubPanel
+
+            $email->to_name = $mailer->getTo($uid);
+            $email->to_addrs_names = $email->to_name;
+            $email->to_addrs = implode(',', $mailer->getToAddresses($uid));
+
+            $email->from_name = $mailer->getFrom($uid);
+            $email->from_addr_name = $email->from_name;
+            $email->from_addr = implode(',', $mailer->getFromAddress($uid));
+
+            $email->cc_addrs = implode(',', $mailer->getCcAddresses($uid));
+            $email->cc_addrs_names = $mailer->getCc($uid);
+
+            $email->reply_to_name = $mailer->getReplyTo($uid);
+            $email->reply_to_email = implode(',', $mailer->getReplyToAddresses($uid));
+
+            if (!empty($email->reply_to_email)) {
+                $email->reply_to_addr   = $email->reply_to_name;
+            }
+            $email->intent = $this->mailbox_type;
+
+            $email->message_id = $this->compoundMessageId; // filled by importDupeCheck();
+
+            // save uid to have ability to remove message from imap
+            $email->message_uid = $uid;
+
+            $oldPrefix = $this->imagePrefix;
+
+            // handle multi-part email bodies
+            // runs through handleTranserEncoding() already
+//            $email->description_html = $this->getMessageText($msgNo, 'HTML', $structure, $fullHeader, $clean_email);
+//            // runs through handleTranserEncoding() already
+//            $email->description = $this->getMessageText($msgNo, 'PLAIN', $structure, $fullHeader, $clean_email);
+//            $this->imagePrefix = $oldPrefix;
+//            if (empty($email->description)) {
+//                $email->description = strip_tags($email->description_html);
+//            }
+
+            // empty() check for body content
+            if (empty($email->description)) {
+                $GLOBALS['log']->debug('InboundEmail Message (id:' . $email->message_id . ') has no body');
+            }
+
+            // assign_to group
+            if (!empty($_REQUEST['user_id'])) {
+                $email->assigned_user_id = $_REQUEST['user_id'];
+            }
+            // assign to mailbox team if available
+            if (!empty($_REQUEST['team_ids'])) {
+                $teamIds = explode(",", $_REQUEST['team_ids']);
+                $primaryTeamId = $_REQUEST['primary_team_id'];
+                $_REQUEST['team_id'] = $primaryTeamId;
+                $email->load_relationship('teams');
+                if (!empty($email->teams)) {
+                    //Use the TeamSetLink to generate the correct team set id rather than
+                    //re-implementing the logic.
+                    $email->team_id = $primaryTeamId;
+                    $email->teams->replace($teamIds, array(), false);
+                    $email->teams->save(false, false);
+                    $_REQUEST['team_set_id'] = $email->team_set_id;
+                }
+            }
+
+            if (empty($_REQUEST['team_id'])) {
+                if (empty($this->team_id)) {
+                    $email->team_id = "1";
+                    $email->team_set_id = $this->getTeamSetIdForTeams($email->team_id);
+                } else {
+                    $email->team_id = $this->team_id;
+                    $email->team_set_id = $this->team_set_id;
+                }
+            } else {
+                $email->team_id = $_REQUEST['team_id'];
+                if (!empty($_REQUEST['team_set_id'])) {
+                    $email->team_set_id = $_REQUEST['team_set_id'];
+                }
+            }
+
+            //BEGIN SUGARCRM flav=ent ONLY
+            $email->acl_team_set_id = '';
+            $selectedTeamIdsArray = InputValidation::getService()->getValidInputRequest('selected_team_ids');
+            if (!empty($selectedTeamIdsArray)) {
+                $selectedTeamIdsArray = explode(',', $selectedTeamIdsArray);
+                $selectedTeamIdsArray = array_filter($selectedTeamIdsArray);
+                if (!empty($selectedTeamIdsArray)) {
+                    $email->acl_team_set_id = $this->getTeamSetIdForTeams($selectedTeamIdsArray);
+                }
+            }
+            //END SUGARCRM flav=ent ONLY
+
+            //Assign Parent Values if set
+            if (!empty($_REQUEST['parent_id']) && !empty($_REQUEST['parent_type'])) {
+                $email->parent_id = $_REQUEST['parent_id'];
+                $email->parent_type = $_REQUEST['parent_type'];
+                $parent = BeanFactory::retrieveBean(
+                    $email->parent_type,
+                    $email->parent_id,
+                    [
+                        'disable_row_level_security' => true,
+                    ]
+                );
+
+                if ($parent) {
+                    $linkName = $email->findEmailsLink($parent);
+
+                    if ($parent->load_relationship($linkName)) {
+                        $parent->$linkName->add($email);
+                    } else {
+                        return false;
+                    }
+                }
+            }
+
+            $email->save();
+
+            $email->new_with_id = false; // to allow future saves by UPDATE, instead of INSERT
+            $this->handleMailboxType($email, $header);
+
+            // SEND AUTORESPONSE
+            if (!empty($email->reply_to_email)) {
+                $contactAddr = $email->reply_to_email;
+            } else {
+                $contactAddr = $email->from_addr;
+            }
+            if (!$this->isMailBoxTypeCreateCase()) {
+                $this->handleAutoresponse($email, $contactAddr);
+            }
+        } else {
+            // only log if not POP3; pop3 iterates through ALL mail
+            if ($this->protocol != 'pop3') {
+                $GLOBALS['log']->info("InboundEmail found a duplicate email: ".$header->message_id);
+                //echo "This email has already been imported";
+            }
+            return false;
+        }
+
+        // if delete_seen, mark msg as deleted
+        if ($this->delete_seen == 1) {
+            $GLOBALS['log']->info("INBOUNDEMAIL: delete_seen == 1 - deleting email");
+            $mailer->deleteMessage($uid);
+        }
+
+        $GLOBALS['log']->debug('********************************* InboundEmail finished import of 1 email: '.$email->name);
+        $this->email = $email;
+
+        return true;
+    }
+
 	/**
 	 * figures out if a plain text email body has UUEncoded attachments
 	 * @param string string The email body
@@ -4887,6 +5175,19 @@ eoq;
 	}
 
     /**
+     * Searches mailbox for new emails
+     * @return mixed
+     */
+    public function getNewIds()
+    {
+        if (!empty($this->conn)) {
+            $ids = $this->conn->search(['UNDELETED', 'UNSEEN']);
+        }
+        $GLOBALS['log']->debug('-----> getNewIds() got ' . count($ids) . ' new Messages');
+        return $ids;
+    }
+
+    /**
      * @param string $service Service string, will generate if not passed
      * @return Mailbox
      */
@@ -4923,10 +5224,8 @@ eoq;
     {
         global $mod_strings;
 
-        $useSsl = ($_REQUEST['ssl'] == 'true') ? true : false;
-
         if ($test) {
-            $opts = $this->preConnectMailServer($useSsl);
+            $opts = $this->preConnectMailServer();
             if (isset($opts['good']) && empty($opts['good'])) {
                 return array_pop($opts['err']);
             } else {

@@ -91,6 +91,7 @@ function pollMonitoredInboxes() {
         $GLOBALS['current_user']->team_id = $ieX->team_id;
         $GLOBALS['current_user']->team_set_id = $ieX->team_set_id;
 		$mailboxes = $ieX->mailboxarray;
+        $leaveMessagesOnMailServer = $ieX->get_stored_options("leaveMessagesOnMailServer", 0);
 		foreach($mailboxes as $mbox) {
 			$ieX->mailbox = $mbox;
 			$newMsgs = array();
@@ -109,7 +110,8 @@ function pollMonitoredInboxes() {
 			if($connectToMailServer) {
 				$GLOBALS['log']->debug('Connected to mailserver');
 				if (!$ieX->isPop3Protocol()) {
-					$newMsgs = $ieX->getNewMessageIds();
+                    $ieX->conn->selectMailbox($mbox);
+                    $newMsgs = $ieX->getNewIds();
 				}
 				if(is_array($newMsgs)) {
 					$current = 1;
@@ -150,19 +152,17 @@ function pollMonitoredInboxes() {
 						$GLOBALS['log']->debug('distribution method id [ '.$distributionMethod.' ]');
 					}
 					foreach($newMsgs as $k => $msgNo) {
-						$uid = $msgNo;
+                        $uid = $msgNo;
 						if ($ieX->isPop3Protocol()) {
 							$uid = $msgNoToUIDL[$msgNo];
-						} else {
-							$uid = imap_uid($ieX->conn, $msgNo);
-						} // else
+                        }
 						if ($isGroupFolderExists) {
 							$_REQUEST['team_id'] = $sugarFolder->team_id;
 							$_REQUEST['team_set_id'] = $sugarFolder->team_set_id;
 //BEGIN SUGARCRM flav=ent ONLY
                             $_REQUEST['acl_team_set_id'] = $sugarFolder->acl_team_set_id;
 //END SUGARCRM flav=ent ONLY
-							if ($ieX->importOneEmail($msgNo, $uid)) {
+                            if ($ieX->importEmailFromUid($uid)) {
 								// add to folder
 								$sugarFolder->addBean($ieX->email);
 								if ($ieX->isPop3Protocol()) {
@@ -203,19 +203,21 @@ function pollMonitoredInboxes() {
 									$GLOBALS['log']->debug('userId [ '.$userId.' ]');
 									$ieX->handleCreateCase($ieX->email, $userId);
 								} // if
+                                if (!$leaveMessagesOnMailServer) {
+                                    $ieX->conn->deleteMessage($uid);
+                                }
 							} // if
 						} else {
 								if($ieX->isAutoImport()) {
-									$ieX->importOneEmail($msgNo, $uid);
+                                    $ieX->importEmailFromUid($uid);
 								} else {
 									/*If the group folder doesn't exist then download only those messages
 									 which has caseid in message*/
 									$ieX->getMessagesInEmailCache($msgNo, $uid);
 									$email = BeanFactory::newBean('Emails');
-									$header = imap_headerinfo($ieX->conn, $msgNo);
-									$email->name = $ieX->handleMimeHeaderDecode($header->subject);
-									$email->from_addr = $ieX->convertImapToSugarEmailAddress($header->from);
-									$email->reply_to_email  = $ieX->convertImapToSugarEmailAddress($header->reply_to);
+                                    $email->name = $ieX->conn->getSubject($uid);
+                                    $email->from_addr = implode(',', $ieX->conn->getFromAddresses($uid));
+                                    $email->reply_to_email  = implode(',', $ieX->conn->getReplyToAddresses($uid));
 									if(!empty($email->reply_to_email)) {
 										$contactAddr = $email->reply_to_email;
 									} else {
@@ -223,13 +225,10 @@ function pollMonitoredInboxes() {
 									}
 									$mailBoxType = $ieX->mailbox_type;
 									if (($mailBoxType == 'support') || ($mailBoxType == 'pick')) {
-										if(!class_exists('aCase')) {
-
-										}
 										$c = BeanFactory::newBean('Cases');
 										$GLOBALS['log']->debug('looking for a case for '.$email->name);
 										if ($ieX->getCaseIdFromCaseNumber($email->name, $c)) {
-											$ieX->importOneEmail($msgNo, $uid);
+                                            $ieX->importEmailFromUid($uid);
 										} else {
 											$ieX->handleAutoresponse($email, $contactAddr);
 										} // else
@@ -247,23 +246,11 @@ function pollMonitoredInboxes() {
 					} // if
 
 				} // if
-				if ($isGroupFolderExists)	 {
-					$leaveMessagesOnMailServer = $ieX->get_stored_options("leaveMessagesOnMailServer", 0);
-					if (!$leaveMessagesOnMailServer) {
-						if ($ieX->isPop3Protocol()) {
-							$ieX->deleteMessageOnMailServerForPop3(implode(",", $messagesToDelete));
-						} else {
-							$ieX->deleteMessageOnMailServer(implode($app_strings['LBL_EMAIL_DELIMITER'], $messagesToDelete));
-						}
-					}
-				}
 			} else {
 				$GLOBALS['log']->fatal("SCHEDULERS: could not get an IMAP connection resource for ID [ {$a['id']} ]. Skipping mailbox [ {$a['name']} ].");
 				// cn: bug 9171 - continue while
 			} // else
 		} // foreach
-		imap_expunge($ieX->conn);
-		imap_close($ieX->conn, CL_EXPUNGE);
 	} // while
     $GLOBALS['current_user']->team_id = $_bck_up['team_id'];
     $GLOBALS['current_user']->team_set_id = $_bck_up['team_set_id'];

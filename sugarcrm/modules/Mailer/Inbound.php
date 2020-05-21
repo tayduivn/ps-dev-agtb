@@ -25,4 +25,103 @@ interface Inbound
      * @return array
      */
     public function getMailboxes() : array;
+
+    /**
+     * Search a mailbox for messages. Criteria must be passed as an array.
+     *
+     * @param array $criteria
+     * @return array|bool|null
+     */
+    public function search(array $criteria);
+
+    /**
+     * Delete a message on the server
+     * @param int $uid
+     */
+    public function deleteMessage(int $uid);
+
+    /**
+     * Gets a message object from Uid. Mailbox needs to be selected beforehand.
+     * Caches the message so we don't download it multiple times.
+     * @param $uid
+     * @return Message
+     */
+    public function getMessageFromId(int $uid);
+
+    /**
+     * Get Subject line from email
+     * @param int $uid
+     * @return string
+     */
+    public function getSubject(int $uid) : string;
+
+    /**
+     * Get From line from email
+     * @param int $uid
+     * @return string
+     */
+    public function getFrom(int $uid) : string;
+
+    /**
+     * Get To line from email
+     * @param int $uid
+     * @return string
+     */
+    public function getTo(int $uid) : string;
+
+    /**
+     * Get CC line from email
+     * @param int $uid
+     * @return string
+     */
+    public function getCc(int $uid) : string;
+
+    /**
+     * Get BCC line from email
+     * @param int $uid
+     * @return string
+     */
+    public function getBcc(int $uid) : string;
+
+    /**
+     * Get Reply-To line from email
+     * @param int $uid
+     * @return string
+     */
+    public function getReplyTo(int $uid) : string;
+
+    /**
+     * Get From email address from email
+     * @param int $uid
+     * @return array
+     */
+    public function getFromAddress(int $uid) : array;
+
+    /**
+     * Get To email addresses from email
+     * @param int $uid
+     * @return array
+     */
+    public function getToAddresses(int $uid) : array;
+
+    /**
+     * Get CC email addresses from email
+     * @param int $uid
+     * @return array
+     */
+    public function getCcAddresses(int $uid) : array;
+
+    /**
+     * Get BCC email addresses from email
+     * @param int $uid
+     * @return array
+     */
+    public function getBccAddresses(int $uid) : array;
+
+    /**
+     * Get Reply-To email addresses from email
+     * @param int $uid
+     * @return array
+     */
+    public function getReplyToAddresses(int $uid) : array;
 }
