@@ -12,6 +12,11 @@
 
 class AuthApi extends SugarApi
 {
+    const CONNECTOR_LABELS = [
+        'GoogleEmail' => 'LBL_SMTPTYPE_GOOGLE_OAUTH2',
+        'MicrosoftEmail' => 'LBL_SMTPTYPE_MICROSOFT',
+    ];
+
     public function registerApiRest()
     {
         return [
@@ -39,16 +44,29 @@ class AuthApi extends SugarApi
         if (!isset($args['application'])) {
             throw new SugarApiExceptionNotFound('Application not found');
         }
+        $authWarning = $this->getAuthWarning($args['application']);
+        $data = ['auth_warning' => $authWarning];
         $extApi = $this->getExternalApi($args['application']);
-        if (!$extApi) {
-            throw new SugarApiExceptionNotFound('External API not found');
+        if ($extApi) {
+            $client = $extApi->getClient();
+            $data['auth_url'] = $client->createAuthUrl();
         }
-        $client = $extApi->getClient();
-        $authUrl = $client->createAuthUrl();
-        $data = [
-            'auth_url' => $authUrl,
-        ];
         return $data;
+    }
+
+    /**
+     * Gets warning message for oauth2 connector.
+     *
+     * @param string $application
+     * @return string
+     */
+    public function getAuthWarning(string $application): string
+    {
+        $docUrl = 'http://www.sugarcrm.com/crm/product_doc.php?edition=' . $GLOBALS['sugar_flavor'] . '&version=' .
+            $GLOBALS['sugar_version'] . '&lang=' . $GLOBALS['current_language'] . '&module=Emails&route=Outgoing';
+        $docLink = '<a href="' . $docUrl . '" target="_blank">' . translate('LBL_EMAILS') . '</a>';
+        $connectorName = translate(self::CONNECTOR_LABELS[$application] ?? '');
+        return string_format(translate('LBL_EMAIL_AUTH_WARNING'), [$connectorName, $docLink]);
     }
 
     /**

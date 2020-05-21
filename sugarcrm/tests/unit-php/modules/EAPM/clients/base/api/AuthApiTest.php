@@ -26,11 +26,12 @@ class AuthApiTest extends TestCase
         $this->expectException(\SugarApiExceptionNotFound::class);
 
         $expected = [
+            'auth_warning' => 'fake_warning',
             'auth_url' => 'fake_url',
         ];
 
         $authApiMock = $this->getMockBuilder('\AuthApi')
-            ->setMethods(['getExternalApi'])
+            ->setMethods(['getExternalApi', 'getAuthWarning'])
             ->getMock();
 
         $extApiMock = $this->getMockBuilder('\ExtAPIGoogleEmail')
@@ -50,7 +51,10 @@ class AuthApiTest extends TestCase
         $authApiMock->method('getExternalApi')
             ->willReturn($extApiMock);
 
-        $result = $authApiMock->getAuthInfo(new \RestService(), ['application' => 'google_oauth2']);
+        $authApiMock->method('getAuthWarning')
+            ->willReturn('fake_warning');
+
+        $result = $authApiMock->getAuthInfo(new \RestService(), ['application' => 'GoogleEmail']);
 
         $this->assertSame($expected, $result);
 

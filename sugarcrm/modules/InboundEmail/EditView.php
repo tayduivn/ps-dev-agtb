@@ -80,7 +80,7 @@ $GLOBALS['log']->info("InboundEmail Edit View");
 $authInfo = [
     'google_oauth2' => [
         'application' => 'GoogleEmail',
-        'auth_warning' => 'LBL_EMAIL_GOOGLE_AUTH_WARNING',
+        'auth_warning' => '',
         'server_url' => 'imap.gmail.com',
         'port' => '993',
         'auth_url' => null,
@@ -91,7 +91,7 @@ $authInfo = [
     ],
     'exchange_online' => [
         'application' =>'MicrosoftEmail',
-        'auth_warning' => 'LBL_EMAIL_MICROSOFT_AUTH_WARNING',
+        'auth_warning' => '',
         'server_url' => 'outlook.office365.com',
         'port' => '993',
         'auth_url' => null,
@@ -112,9 +112,6 @@ foreach ($authInfo as $key => $value) {
         $info = [];
     }
     $authInfo[$key] = array_merge($value, $info);
-    if ($authInfo[$key]['auth_warning']) {
-        $authInfo[$key]['auth_warning'] = translate($authInfo[$key]['auth_warning']);
-    }
     if ($key === $focus->email_provider) {
         $authInfo[$key]['eapm_id'] = $focus->eapm_id;
         $authInfo[$key]['authorized_account'] = $focus->authorized_account;

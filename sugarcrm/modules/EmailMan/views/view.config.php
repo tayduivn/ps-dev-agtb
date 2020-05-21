@@ -29,7 +29,7 @@ class ViewConfig extends SugarView
     private $oauth2Types = [
         'google_oauth2' => [
             'application' => 'GoogleEmail',
-            'auth_warning' => 'LBL_EMAIL_GOOGLE_AUTH_WARNING',
+            'auth_warning' => '',
             'auth_url' => null,
             'eapm_id' => '',
             'authorized_account' => '',
@@ -37,7 +37,7 @@ class ViewConfig extends SugarView
         ],
         'exchange_online' => [
             'application' =>'MicrosoftEmail',
-            'auth_warning' => 'LBL_EMAIL_MICROSOFT_AUTH_WARNING',
+            'auth_warning' => '',
             'auth_url' => null,
             'eapm_id' => '',
             'authorized_account' => '',
@@ -63,9 +63,6 @@ class ViewConfig extends SugarView
                 $info = [];
             }
             $authInfo[$key] = array_merge($value, $info);
-            if ($authInfo[$key]['auth_warning']) {
-                $authInfo[$key]['auth_warning'] = translate($authInfo[$key]['auth_warning']);
-            }
             if ($key === $settings['mail_smtptype']) {
                 $authInfo[$key]['eapm_id'] = $settings['eapm_id'];
                 $authInfo[$key]['authorized_account'] = $settings['authorized_account'];

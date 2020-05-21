@@ -28,7 +28,7 @@
     oauth2Types: {
         google_oauth2: {
             application: 'GoogleEmail',
-            auth_warning: 'LBL_EMAIL_GOOGLE_AUTH_WARNING',
+            auth_warning: '',
             auth_url: null,
             eapm_id: null,
             mail_smtpuser: null,
@@ -37,7 +37,7 @@
         },
         exchange_online: {
             application: 'MicrosoftEmail',
-            auth_warning: 'LBL_EMAIL_MICROSOFT_AUTH_WARNING',
+            auth_warning: '',
             auth_url: null,
             eapm_id: null,
             mail_smtpuser: null,
@@ -144,9 +144,11 @@
                     success: _.bind(function(data) {
                         if (data && data.auth_url) {
                             self.oauth2Types[smtpType].auth_url = data.auth_url;
+                            self.oauth2Types[smtpType].auth_warning = data.auth_warning || '';
                             self.authButton = 'enabled';
                         } else {
                             self.oauth2Types[smtpType].auth_url = false
+                            self.oauth2Types[smtpType].auth_warning = data.auth_warning || '';
                             self.authWarning = self.oauth2Types[smtpType].auth_warning;
                             self.authButton = 'disabled';
                         }
@@ -193,5 +195,5 @@
         }
 
         return this._super('_getFallbackTemplate', [viewName]);
-    },
+    }
 })
