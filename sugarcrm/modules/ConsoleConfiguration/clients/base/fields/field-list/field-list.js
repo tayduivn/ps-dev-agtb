@@ -300,6 +300,8 @@
                         }
                     }, this);
                 }
+
+                this.handleColumnsChanging();
                 var domFieldList = this.$el.parent().parent().parent().find('#columns-sortable');
                 this.context.trigger(this.previewEvent, this.getSelectedFieldList(domFieldList));
             }, this),
