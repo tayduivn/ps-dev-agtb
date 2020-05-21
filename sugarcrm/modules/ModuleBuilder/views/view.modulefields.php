@@ -16,6 +16,9 @@ use Sugarcrm\Sugarcrm\AccessControl\AccessControlManager;
 
 class ViewModulefields extends SugarView
 {
+    /**
+     * @var MBModule
+     */
     var $mbModule;
 
     /**
@@ -104,14 +107,7 @@ class ViewModulefields extends SugarView
                 $customFieldsData[$def['name']] = $def['custom'];
             }
 
-            $smarty->assign('module', [
-                'name' => $module_name,
-                'mbvardefs' => [
-                    'vardefs' => [
-                        'fields' => $f,
-                    ],
-                ],
-            ]);
+            $smarty->assign('moduleName', $module_name);
 
             $package = new stdClass;
             $package->name = '';
@@ -212,7 +208,7 @@ class ViewModulefields extends SugarView
             $smarty->assign('sortPreferences', $sortPreferences);
             $smarty->assign('title', $titleLBL);
             $smarty->assign('package', $package);
-            $smarty->assign('module', $this->mbModule);
+            $smarty->assign('moduleName', $this->mbModule->name);
             $smarty->assign('editLabelsMb','1');
             $smarty->assign('studio', false);
 
