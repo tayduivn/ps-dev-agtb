@@ -2066,13 +2066,25 @@ NumberField.prototype.initObject = function (options) {
     var defaults = {
         maxCharacters: 0,
         minValue: false,
+        keyup: function() {},
     };
     $.extend(true, defaults, options);
-    this.setMaxCharacters(defaults.maxCharacters);
+    this.setMaxCharacters(defaults.maxCharacters)
+        .setKeyUpHandler(defaults.keyup);
 
     if (defaults.minValue !== false) {
         this.setMinValue(parseInt(defaults.minValue));
     }
+};
+
+/**
+ * Sets the keyup property
+ * @param {Function} fn
+ * @return {Object}
+ */
+NumberField.prototype.setKeyUpHandler = function(fn) {
+    this.keyup = fn;
+    return this;
 };
 
 /**
@@ -2160,6 +2172,10 @@ NumberField.prototype.attachListeners = function () {
             .change(function () {
                 self.setValue(this.value, true);
                 self.onChange();
+            })
+            .keyup(function() {
+                self.setValue(this.value, true);
+                self.keyup();
             });
     }
     return this;
@@ -2177,8 +2193,8 @@ NumberField.prototype.isValid = function() {
         ($.isNumeric(this.minValue) && parseInt(this.value) < this.minValue)) {
         // If not, mark it invalid and mark a field error
         valid = false;
-        this.markFieldError(!valid);
     }
+    this.markFieldError(!valid);
     return valid;
 };
 
@@ -2856,6 +2872,7 @@ FieldsGroup.prototype.type = 'FieldsGroup';
 FieldsGroup.prototype.initObject = function(options) {
     let defaults = {
         items: [],
+        required: false,
     };
 
     $.extend(true, defaults, options);
@@ -2864,10 +2881,13 @@ FieldsGroup.prototype.initObject = function(options) {
     $.each(this.items, function(key, item) {
         item.field.setParent(this);
     }.bind(this));
+
+    this.setRequired(defaults.required);
 };
 
 /**
  * Creates the HTML Element of the field group
+ * @return {*}
  */
 FieldsGroup.prototype.createHTML = function() {
     PMSE.Field.prototype.createHTML.call(this);
@@ -2903,11 +2923,15 @@ FieldsGroup.prototype.createHTML = function() {
 
     this.html.appendChild(fieldsGroup);
 
+    this.labelObject = fieldLabel;
+
     return this.html;
 };
 
 /**
  * Wrapper for setting the dirty parameter of the form from children's methods
+ * @param {boolean} value
+ * @return {Object}
  */
 FieldsGroup.prototype.setDirty = function(value) {
     if (this.parent) {
@@ -2917,7 +2941,8 @@ FieldsGroup.prototype.setDirty = function(value) {
 };
 
 /**
- * Wrapper for checking if children's fiels are valid
+ * Wrapper for checking if children's fields are valid
+ * @return {boolean}
  */
 FieldsGroup.prototype.isValid = function() {
     let valid = true;
@@ -2940,6 +2965,7 @@ FieldsGroup.prototype.attachListeners = function() {
 
 /**
  * Return list of children fields values
+ * @return {boolean}
  */
 FieldsGroup.prototype.getObjectValue = function() {
     let response = {};
@@ -2947,5 +2973,20 @@ FieldsGroup.prototype.getObjectValue = function() {
         $.extend(response, item.field.getObjectValue());
     });
 
+    return response;
+};
+
+/**
+ * Run the evalRequired method of childrens
+ * @return {boolean}
+ */
+FieldsGroup.prototype.evalRequired = function() {
+    let response = true;
+    $.each(this.items, function(key, item) {
+        const fieldRequired = item.field.evalRequired();
+        if (!fieldRequired) {
+            response = false;
+        }
+    });
     return response;
 };

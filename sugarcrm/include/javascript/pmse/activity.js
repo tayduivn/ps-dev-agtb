@@ -2420,6 +2420,10 @@ AdamActivity.prototype.getAction = function(type, w) {
                 $(reserveUser.html).toggle(avlFlag);
                 reserveUser.setRequired(avlFlag);
 
+                if (!avlFlag) {
+                    beforeType.setRequired(false);
+                }
+
                 $('.pmse-form-error')
                     .removeClass('pmse-form-error-on')
                     .addClass('pmse-form-error-off');
@@ -2437,11 +2441,25 @@ AdamActivity.prototype.getAction = function(type, w) {
                 }
             });
 
+            // Set the required attribute of "before" field when the "count" field was changed
+            const keyupAvailableCountFn = function() {
+                const required = !!parseInt(availableCount.value);
+
+                avlSettings.setRequired(required);
+                beforeType.setRequired(required);
+
+                if (!required) {
+                    beforeType.markFieldError(false);
+                    avlSettings.parent.validate();
+                }
+            };
+
             let availableCount = new NumberField({
                 name: 'act_avl_count',
                 initialValue: '0',
                 fieldWidth: '20px',
                 minValue: 0,
+                keyup: keyupAvailableCountFn,
             });
 
             let availableType = new ComboboxField({
@@ -2455,6 +2473,12 @@ AdamActivity.prototype.getAction = function(type, w) {
                 initialValue: 'minutes',
                 fieldWidth: '92px',
             });
+
+            // Re-validate form when "before" field was changed.
+            // It's necessary to hide/show errors dynamically
+            const changeBeforeTypeFn = function() {
+                avlSettings.parent.validate();
+            };
 
             let beforeType = new ComboboxField({
                 jtype: 'combobox',
@@ -2470,10 +2494,12 @@ AdamActivity.prototype.getAction = function(type, w) {
                 }),
                 initialValue: '',
                 fieldWidth: '125px',
+                change: changeBeforeTypeFn,
             });
 
             let avlSettings = new FieldsGroup({
                 label: App.lang.getModString('LBL_PMSE_FORM_REQUIRED_SHIFT_AVAILABILITY', 'pmse_Project'),
+                required: false,
                 items: [
                     {
                         field: availableCount,
@@ -2487,6 +2513,12 @@ AdamActivity.prototype.getAction = function(type, w) {
                     },
                 ],
             });
+
+            // Re-validate form when "If no users are available" field was changed.
+            // It's necessary to hide/show errors dynamically
+            const changeReserveUserFn = function() {
+                avlSettings.parent.validate();
+            };
 
             let reserveUser = new SearchableCombobox({
                 label: App.lang.getModString('LBL_PMSE_FORM_LABEL_IF_NO_AVAILABLE', 'pmse_Project'),
@@ -2520,6 +2552,7 @@ AdamActivity.prototype.getAction = function(type, w) {
                         'value': 'supervisor',
                     },
                 ],
+                change: changeReserveUserFn,
             });
 
             var combo_method = new ComboboxField({
@@ -2577,6 +2610,8 @@ AdamActivity.prototype.getAction = function(type, w) {
                     beforeType.setValue(data.act_avl_before_type || beforeType.initialValue);
 
                     reserveUser.setValue(data.act_reserve_user || '');
+
+                    keyupAvailableCountFn();
 
                     beforeType.proxy.getData({}, {
                         success: function(data) {
