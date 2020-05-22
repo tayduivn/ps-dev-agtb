@@ -433,6 +433,161 @@ class ImapMailer implements Inbound
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function getBody($uid) : array
+    {
+        $messageObj = $this->getMessageFromId($uid);
+        $textArray = [
+            'plain' => '',
+            'html' => '',
+        ];
+
+        if ($messageObj->isMultipart()) {
+            foreach (new RecursiveIteratorIterator($messageObj) as $part) {
+                $this->getMessagePartBody($part, $textArray);
+            }
+        } else {
+            $this->getMessagePartBody($messageObj, $textArray);
+        }
+
+        return $textArray;
+    }
+
+    /**
+     * Handles checking a message part to see if we should include its contents
+     * in the message
+     *
+     * @param Laminas\Mail\Storage\Part $part the message part to check
+     * @param array $textArray array containing two versions of the message:
+     *          'plain' => the plaintext version of the message
+     *          'html' => the HTML version of the message
+     */
+    protected function getMessagePartBody($part, &$textArray)
+    {
+        $partData = $this->getPartData($part);
+
+        if (strtolower($partData['contentType']) === 'text/plain') {
+            $textArray['plain'] .= $this->getMessagePartBodyText($partData);
+        } elseif (strtolower($partData['contentType']) === 'text/html') {
+            $textArray['html'] .= $this->getMessagePartBodyText($partData);
+        }
+    }
+
+    /**
+     * Returns the decoded text of a message part
+     *
+     * @param array $partData the array of part data from getPartData
+     * @return string the decoded text of the message part
+     */
+    protected function getMessagePartBodyText($partData)
+    {
+        // Handle the transfer encoding and character set translation
+        $text = InboundEmailUtils::handleTransferEncoding($partData['content'], $partData['encoding']);
+        return InboundEmailUtils::handleCharsetTranslation($text, $partData['charset']);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getAttachments($uid) : array
+    {
+        $message = $this->getMessageFromId($uid);
+        $attachments = [];
+
+        // Loop through the message parts and find attachments
+        if ($message->isMultipart()) {
+            foreach (new RecursiveIteratorIterator($message) as $part) {
+                $this->getPartAttachment($part, $attachments);
+            }
+        } else {
+            $this->getPartAttachment($message, $attachments);
+        }
+
+        return $attachments;
+    }
+
+    /**
+     * Parses attachment data from a single message part. If the message part
+     * is an attachment, its data will be added to the attachments array
+     *
+     * @param Laminas\Mail\Storage\Part $part the message part to parse
+     * @param array $attachments the array of attachments to add any attachment to
+     */
+    protected function getPartAttachment($part, &$attachments)
+    {
+        // Check if this is an attachment type. If so, add the part's data to the
+        // attachments array
+        $partData = $this->getPartData($part);
+
+        // If it is, add a new entry to the attachments array
+        if ($this->isValidAttachment($partData)) {
+            $attachments[] = $partData;
+        }
+    }
+
+    /**
+     * Parses the header data of a message part to determine if the part
+     * represents an attachment type relevant to Sugar
+     *
+     * @param array $partData array of part data (relevant headers and content)
+     * @return bool true if the message part represents a valid attachment; false otherwise
+     */
+    protected function isValidAttachment($partData)
+    {
+        $isEncapsulatedMessage = $partData['contentType'] === 'message/rfc822';
+        $isAttachment = $partData['contentDisposition'] === 'attachment' && !empty($partData['fileName']);
+        $isInline = $partData['contentDisposition'] === 'inline' && $partData['type'] !== 'text' &&
+            !empty($partData['fileName']);
+        $isHidden = empty($partData['contentDisposition']) && !in_array($partData['type'], ['text', 'message']) &&
+            !empty($partData['fileName']);
+
+        return $isEncapsulatedMessage || $isAttachment || $isInline || $isHidden;
+    }
+
+    /**
+     * Helper function to get relevant message header data from a Laminas Part object
+     *
+     * @param Laminas\Mail\Storage\Part $part the Laminas Part object storing the message part
+     * @return array the list of relevant header data values
+     */
+    protected function getPartData($part)
+    {
+        $contentType = $this->getPartHeader($part, 'Content-Type');
+        $contentTypeArray = explode('/', $contentType);
+        $fileName = $this->getPartHeader($part, 'Content-Disposition', 'filename');
+        $fileName = !empty($fileName) ? $fileName : $this->getPartHeader($part, 'Content-Type', 'name');
+        return [
+            'contentType' => $contentType,
+            'type' => $contentTypeArray[0] ?? null,
+            'subtype' => $contentTypeArray[1] ?? null,
+            'contentDisposition' => $this->getPartHeader($part, 'Content-Disposition'),
+            'contentId' => $this->getPartHeader($part, 'Content-ID'),
+            'encoding' => $this->getPartHeader($part, 'Content-Transfer-Encoding'),
+            'charset' => $this->getPartHeader($part, 'Content-Type', 'charset'),
+            'fileName' => $fileName,
+            'content' => $part->getContent(),
+        ];
+    }
+
+    /**
+     * Safe helper function to get a header value from a Laminas message part
+     *
+     * @param Laminas\Mail\Storage\Part $part the message part to get the header from
+     * @param string $headerName the key of the header field to look for
+     * @param string $parameter a parameter to look for within the given header
+     * @return string|null the header value if found; null otherwise
+     */
+    protected function getPartHeader($part, $headerName, $parameter = '0')
+    {
+        try {
+            return $part->getHeaderField($headerName, $parameter);
+        } catch (Exception $e) {
+            return null;
+        }
+    }
+
+    /**
      * Delete a message on the server
      * @param int $uid
      */

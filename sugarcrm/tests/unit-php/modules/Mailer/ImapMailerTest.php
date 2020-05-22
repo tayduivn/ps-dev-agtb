@@ -230,4 +230,55 @@ class ImapMailerTest extends TestCase
         $expectedBCC = [];
         $this->assertEquals($expectedBCC, $this->mailerMock->getBccAddresses(123));
     }
+
+    /**
+     * @covers ::getBody
+     */
+    public function testGetBody()
+    {
+        // Create a mock message with the test raw content
+        $messageRaw = file_get_contents(__DIR__ . '/ImapMailerTestMessage.txt');
+        $messageMock = $this->getMockBuilder(Laminas\Mail\Storage\Message::class)
+            ->setConstructorArgs([['raw' => $messageRaw]])
+            ->onlyMethods([])
+            ->getMock();
+        $this->mailerMock->method('getMessageFromId')->willReturn($messageMock);
+
+        // Assert that the correct plain and HTML versions of the message body
+        // are returned by getBody()
+        $result = $this->mailerMock->getBody(123);
+        $this->assertEquals('The plain text message part', $result['plain']);
+        $this->assertEquals('<a href="https://fake-link.com">The HTML message part</a>', $result['html']);
+    }
+
+    /**
+     * @covers ::getAttachments
+     */
+    public function testGetAttachments()
+    {
+        // Create a mock message with the test raw content
+        $messageRaw = file_get_contents(__DIR__ . '/ImapMailerTestMessage.txt');
+        $messageMock = $this->getMockBuilder(Laminas\Mail\Storage\Message::class)
+            ->setConstructorArgs([['raw' => $messageRaw]])
+            ->onlyMethods([])
+            ->getMock();
+        $this->mailerMock->method('getMessageFromId')->willReturn($messageMock);
+
+        // Assert that getAttachments() returns an array containing the expected
+        // attachment from the test message
+        $expected = [
+            'contentType' => 'application/pdf',
+            'type' => 'application',
+            'subtype' => 'pdf',
+            'contentDisposition' => 'attachment',
+            'contentId' => '<123@fake.contentID.com>',
+            'encoding' => 'base64',
+            'charset' => null,
+            'fileName' => 'TestFile.pdf',
+            'content' => "ZmFrZV9lbmNvZGVkX2F0dGFjaG1lbnRfZGF0YQ==\n",
+        ];
+        $result = $this->mailerMock->getAttachments(123);
+        $this->assertNotEmpty($result[0]);
+        $this->assertEquals($expected, $result[0]);
+    }
 }

@@ -124,4 +124,30 @@ interface Inbound
      * @return array
      */
     public function getReplyToAddresses(int $uid) : array;
+
+    /**
+     * Get Body from email
+     * @param $uid
+     * @return array containing the following:
+     *      'plain' => The plaintext (no HTML) version of the email
+     *      'html' => The HTML version of the email
+     */
+    public function getBody($uid) : array;
+
+    /**
+     * Get Attachment data from email
+     * @param $uid
+     * @return array containing an entry for each attachment of the email. Each
+     * entry contains the following:
+     *      'contentType' => The Content-Type header value
+     *      'type' => The type part of the Content-Type header value
+     *      'subtype' => The subtype part of the Content-Type header value
+     *      'contentDisposition' => The Content-Disposition header value
+     *      'contentId' => The Content-ID header value
+     *      'encoding' => The encoding of the attachment
+     *      'charset' => The charset of the attachment
+     *      'fileName' => The filename of the attachment
+     *      'content' => The raw content of the attachment
+     */
+    public function getAttachments($uid) : array;
 }

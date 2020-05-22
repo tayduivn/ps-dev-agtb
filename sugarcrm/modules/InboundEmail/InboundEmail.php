@@ -2455,7 +2455,7 @@ class InboundEmail extends SugarBean {
         $mailboxName = '',
         $eapm_id = null
     ) {
-        if (isset($_REQUEST['ssl']) && $_REQUEST['ssl'] == 1) {
+        if (isset($_REQUEST['ssl']) && isTruthy($_REQUEST['ssl'])) {
             $useSsl = true;
         }
 
@@ -4537,35 +4537,6 @@ class InboundEmail extends SugarBean {
             // Don't assign the email to the current user by default.
             $email->assigned_user_id = null;
 
-            ///////////////////////////////////////////////////////////////////
-            ////	HANDLE EMAIL ATTACHEMENTS OR HTML TEXT
-            ////	Inline images require that I-E handle attachments before body text
-            // parts defines attachments - be mindful of .html being interpreted as an attachment
-//            if($structure->type == 1 && !empty($structure->parts)) {
-//                $GLOBALS['log']->debug('InboundEmail found multipart email - saving attachments if found.');
-//                $this->saveAttachments($msgNo, $structure->parts, $email->id, 0, $forDisplay);
-//            } elseif($structure->type == 0) {
-//                $uuemail = ($this->isUuencode($email->description)) ? true : false;
-//                /*
-//                 * UUEncoded attachments - legacy, but still have to deal with it
-//                 * format:
-//                 * begin 777 filename.txt
-//                 * UUENCODE
-//                 *
-//                 * end
-//                 */
-//                // set body to the filtered one
-//                if($uuemail) {
-//                    $email->description = $this->handleUUEncodedEmailBody($email->description, $email->id);
-//                    $email->retrieve($email->id);
-//                    $email->save();
-//                }
-//            } else {
-//                if($this->port != 110) {
-//                    $GLOBALS['log']->debug('InboundEmail found a multi-part email (id:'.$msgNo.') with no child parts to parse.');
-//                }
-//            }
-            ////	END HANDLE EMAIL ATTACHEMENTS OR HTML TEXT
             $email->name = $mailer->getSubject($uid);
             $email->state = Email::STATE_ARCHIVED;
             $email->type = 'inbound';
@@ -4607,22 +4578,12 @@ class InboundEmail extends SugarBean {
             // save uid to have ability to remove message from imap
             $email->message_uid = $uid;
 
+            // Handle message body and attachments
             $oldPrefix = $this->imagePrefix;
-
-            // handle multi-part email bodies
-            // runs through handleTranserEncoding() already
-//            $email->description_html = $this->getMessageText($msgNo, 'HTML', $structure, $fullHeader, $clean_email);
-//            // runs through handleTranserEncoding() already
-//            $email->description = $this->getMessageText($msgNo, 'PLAIN', $structure, $fullHeader, $clean_email);
-//            $this->imagePrefix = $oldPrefix;
-//            if (empty($email->description)) {
-//                $email->description = strip_tags($email->description_html);
-//            }
-
-            // empty() check for body content
-            if (empty($email->description)) {
-                $GLOBALS['log']->debug('InboundEmail Message (id:' . $email->message_id . ') has no body');
-            }
+            $this->imagePrefix = 'cid:';
+            $this->processMessageAttachments($uid, $email);
+            $this->processMessageBodyText($uid, $email);
+            $this->imagePrefix = $oldPrefix;
 
             // assign_to group
             if (!empty($_REQUEST['user_id'])) {
@@ -4727,6 +4688,137 @@ class InboundEmail extends SugarBean {
         $this->email = $email;
 
         return true;
+    }
+
+    /**
+     * Gets the attachments of a message, saves the attachment files, and creates
+     * a Note bean to represent the attachment in Sugar
+     *
+     * @param int $uid the ID of the message
+     * @param $emailBean
+     */
+    protected function processMessageAttachments($uid, $emailBean)
+    {
+        // Get the array of attachment data from the message
+        $attachments = $this->conn->getAttachments($uid);
+
+        // For each attachment, create a note bean to represent it and save the
+        // attachment in the file system
+        foreach ($attachments as $attachment) {
+            // Create a note bean to represent the attachment
+            $noteBean = $this->getNoteBeanForAttachment($emailBean->id);
+            if ($attachment['contentType'] === 'message/rfc822') {
+                // Handle encapsulated RFC822 message
+                $rfcHeaders = imap_rfc822_parse_headers($attachment['content']);
+                $noteBean->description = $attachment['content'];
+                $fileName = $rfcHeaders->subject . '.eml';
+            } else {
+                // Handle standard attachment
+                $fileName = $this->handleEncodedFilename($attachment['fileName']);
+            }
+            $noteBean->name = $noteBean->filename = $fileName;
+            $noteBean->file_mime_type = $attachment['contentType'];
+            $noteBean->safeAttachmentName();
+            $noteBean->save();
+
+            // Save the attachment in the file system
+            $this->saveAttachmentFile($attachment, $noteBean);
+        }
+    }
+
+    /**
+     * Handles saving a single attachment file
+     *
+     * @param array $attachment array containing the attachment data
+     * @param Note $noteBean the Note bean representing the attachment in Sugar
+     */
+    protected function saveAttachmentFile($attachment, $noteBean)
+    {
+        global $sugar_config;
+        $uploadDir = $sugar_config['upload_dir'];
+        $fileName = $noteBean->id;
+
+        // Download the attachment if we haven't yet
+        if (!file_exists($uploadDir . $fileName)) {
+            // Save the decoded file content to the path and filename
+            $content = InboundEmailUtils::handleTransferEncoding($attachment['content'], $attachment['encoding']);
+            if (file_put_contents($uploadDir . $fileName, $content)) {
+                // Resave the bean to guarantee that the file size is stored
+                $noteBean->save();
+                $GLOBALS['log']->debug('InboundEmail saved attachment file: ' . $noteBean->filename);
+            } else {
+                $GLOBALS['log']->debug(
+                    'InboundEmail could not create attachment file: ' . $noteBean->filename .
+                    ' - temp file target: [ ' . $uploadDir . $fileName . ' ]'
+                );
+                return;
+            }
+        }
+
+        // For inline images, the Content-ID header stores their ID. We need to
+        // update the inlineImages array to store the correct mapping from
+        // Content-ID header value => saved filename. This is used later to
+        // replace image references in the email body with the correct values
+        $subType = $attachment['subtype'];
+        if ($attachment['contentDisposition'] === 'inline' && in_array(strtoupper($subType), $this->imageTypes)) {
+            if (copy($uploadDir . $fileName, sugar_cached('images/' . $fileName) . strtolower($subType))) {
+                // Strip the <> around the Content-Id
+                $imageId = substr($attachment['contentId'], 1, -1);
+                $this->inlineImages[$imageId] = $noteBean->id . '.' . strtolower($subType);
+            } else {
+                $GLOBALS['log']->debug('InboundEmail could not copy ' . $uploadDir . $fileName . ' to cache');
+            }
+        }
+    }
+
+    /**
+     * Adds both the plaintext and HTML versions of the given message to the
+     * given Email bean's 'description' and 'description_html' fields respectively
+     *
+     * @param int $uid the UID of the message to get the body from
+     * @param Email $emailBean the Email bean to set the body text in
+     */
+    protected function processMessageBodyText($uid, $emailBean)
+    {
+        // For each inline image, update the HTML version of the body to point to
+        // the correct image path
+        $bodyText = $this->conn->getBody($uid);
+        foreach ($this->inlineImages as $imageId => $imageName) {
+            $oldImagePath = "src=\"cid:$imageId\"";
+            $newImagePath = "class=\"image\" src=\"{$this->imagePrefix}{$imageName}\"";
+            $bodyText['html'] = str_replace($oldImagePath, $newImagePath, $bodyText['html']);
+        }
+
+        // Set the values on the email bean after processing the results
+        $emailBean->description_html = $this->postProcessMessageText($bodyText['html'], 'html');
+        $emailBean->description = $this->postProcessMessageText($bodyText['plain'], 'plain');
+        $emailBean->description = $emailBean->description ?: strip_tags($emailBean->description_html);
+        if (empty($emailBean->description)) {
+            $GLOBALS['log']->debug('InboundEmail Message (id:' . $emailBean->message_id . ') has no body');
+        }
+    }
+
+    /**
+     * Performs final processing of email message body text
+     *
+     * @param string $text the body text to process
+     * @param string $type the type of text ('plain' or 'html')
+     * @return string the processed text
+     */
+    protected function postProcessMessageText($text, $type)
+    {
+        // Allow for custom processing of email message text
+        $text = $this->customGetMessageText($text);
+
+        /* cn: bug 9176 - htmlEntitites hide XSS attacks. */
+        if ($type === 'plain') {
+            return SugarCleaner::cleanHtml(to_html($text), false);
+        }
+
+        // Bug 50241: can't process <?xml:namespace .../> properly. Strip <?xml ...> tag first.
+        $text = preg_replace("/<\?xml[^>]*>/", "", $text);
+
+        return SugarCleaner::cleanHtml($text, false);
     }
 
 	/**
