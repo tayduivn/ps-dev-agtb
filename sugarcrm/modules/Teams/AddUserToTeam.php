@@ -11,7 +11,6 @@
  */
 
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
-use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
 
 global $current_user;
 
@@ -49,4 +48,9 @@ if ((empty($record) && empty($records)) || empty($user_id)) {
     }
 }
 
-header("Location: index.php?module={$_REQUEST['return_module']}&action={$_REQUEST['return_action']}&record={$_REQUEST['return_id']}");
+$location = 'index.php?' . http_build_query([
+        'module' => $_REQUEST['return_module'],
+        'action' => $_REQUEST['return_action'],
+        'record' => $_REQUEST['return_id'],
+    ]);
+header("Location: $location");

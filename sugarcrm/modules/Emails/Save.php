@@ -249,22 +249,33 @@ if(empty($_POST['return_action'])) {
 }
 $GLOBALS['log']->debug("Saved record with id of ".$return_id);
 
-if($focus->type == 'draft') {
-	if($return_module == 'Emails') {
-		header("Location: index.php?module=$return_module&action=ListViewDrafts");
-	} else {
+if ($focus->type === 'draft') {
+    if ($return_module == 'Emails') {
+        SugarApplication::redirect('index.php?module=Emails&action=ListViewDrafts');
+    } else {
         handleRedirect($return_id, 'Emails');
-	}
-} elseif($focus->type == 'out') {
-	if($return_module == 'Home') {
-		header('Location: index.php?module='.$return_module.'&action=index');
-	}
-	if(!empty($_REQUEST['return_id'])) {
-		$return_id = $_REQUEST['return_id'];
-	}
-	header('Location: index.php?action='.$return_action.'&module='.$return_module.'&record='.$return_id.'&assigned_user_id='.$current_user->id.'&type=inbound');
-} elseif(isset($_POST['return_id']) && $_POST['return_id'] != "") {
-	$return_id = $_POST['return_id'];
+    }
+} elseif ($focus->type === 'out') {
+    if ($return_module === 'Home') {
+        SugarApplication::redirect('index.php?module=Home&action=index');
+    }
+    if (!empty($_REQUEST['return_id'])) {
+        $return_id = $_REQUEST['return_id'];
+    }
+    $location = 'index.php?' . http_build_query([
+            'action' => $return_action,
+            'module' => $return_module,
+            'record' => $return_id,
+            'assigned_user_id' => $current_user->id,
+            'type' => 'inbound',
+        ]);
+    SugarApplication::redirect($location);
+} elseif (isset($_POST['return_id']) && $_POST['return_id'] !== '') {
+    $return_id = $_POST['return_id'];
 }
-	header("Location: index.php?action=$return_action&module=$return_module&record=$return_id");
-?>
+$location = 'index.php?' . http_build_query([
+        'action' => $return_action,
+        'module' => $return_module,
+        'record' => $return_id,
+    ]);
+SugarApplication::redirect($location);
