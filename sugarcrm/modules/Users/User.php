@@ -3018,4 +3018,14 @@ class User extends Person {
     {
         return array_keys(SubscriptionManager::instance()->getSystemSubscriptionKeys());
     }
+
+    /**
+     * Can user be authenticated?
+     *
+     * @return bool
+     */
+    public function canBeAuthenticated(): bool
+    {
+        return !empty($this->user_name) || $this->external_auth_only;
+    }
 }

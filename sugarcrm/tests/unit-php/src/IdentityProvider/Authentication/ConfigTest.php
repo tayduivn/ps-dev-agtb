@@ -1351,7 +1351,7 @@ class ConfigTest extends TestCase
                 'isPortal' => null,
                 'moduleName' => 'Users',
                 'request' => [],
-                'username' => 'user',
+                'canBeAuthenticated' => true,
                 'result' => true,
             ],
             [
@@ -1359,7 +1359,7 @@ class ConfigTest extends TestCase
                 'isPortal' => '1',
                 'moduleName' => 'Users',
                 'request' => [],
-                'username' => 'user',
+                'canBeAuthenticated' => true,
                 'result' => true,
             ],
             [
@@ -1367,7 +1367,7 @@ class ConfigTest extends TestCase
                 'isPortal' => null,
                 'moduleName' => 'Users',
                 'request' => [],
-                'username' => 'user',
+                'canBeAuthenticated' => true,
                 'result' => false,
             ],
             [
@@ -1375,7 +1375,7 @@ class ConfigTest extends TestCase
                 'isPortal' => '0',
                 'moduleName' => 'Users',
                 'request' => [],
-                'username' => 'user',
+                'canBeAuthenticated' => true,
                 'result' => false,
             ],
             [
@@ -1383,7 +1383,7 @@ class ConfigTest extends TestCase
                 'isPortal' => false,
                 'moduleName' => 'Users',
                 'request' => [],
-                'username' => 'user',
+                'canBeAuthenticated' => true,
                 'result' => false,
             ],
             [
@@ -1391,7 +1391,7 @@ class ConfigTest extends TestCase
                 'isPortal' => true,
                 'moduleName' => 'Users',
                 'request' => [],
-                'username' => 'user',
+                'canBeAuthenticated' => true,
                 'result' => true,
             ],
             [
@@ -1399,7 +1399,7 @@ class ConfigTest extends TestCase
                 'isPortal' => '1',
                 'moduleName' => 'Calls',
                 'request' => [],
-                'username' => 'user',
+                'canBeAuthenticated' => true,
                 'result' => false,
             ],
             [
@@ -1407,7 +1407,7 @@ class ConfigTest extends TestCase
                 'isPortal' => null,
                 'moduleName' => 'Users',
                 'request' => ['usertype' => 'portal'],
-                'username' => 'user',
+                'canBeAuthenticated' => true,
                 'result' => true,
             ],
             [
@@ -1415,7 +1415,7 @@ class ConfigTest extends TestCase
                 'isPortal' => null,
                 'moduleName' => 'Users',
                 'request' => ['usertype' => 'group'],
-                'username' => 'user',
+                'canBeAuthenticated' => true,
                 'result' => true,
             ],
             [
@@ -1423,7 +1423,7 @@ class ConfigTest extends TestCase
                 'isPortal' => null,
                 'moduleName' => 'Users',
                 'request' => ['usertype' => 'foo'],
-                'username' => 'user',
+                'canBeAuthenticated' => true,
                 'result' => false,
             ],
             [
@@ -1431,15 +1431,23 @@ class ConfigTest extends TestCase
                 'isPortal' => true,
                 'moduleName' => 'Users',
                 'request' => [],
-                'username' => 'user',
+                'canBeAuthenticated' => true,
                 'result' => true,
+            ],
+            [
+                'isGroup' => '0',
+                'isPortal' => '0',
+                'moduleName' => 'Users',
+                'request' => [],
+                'canBeAuthenticated' => false,
+                'result' => false,
             ],
             [
                 'isGroup' => '1',
                 'isPortal' => '1',
                 'moduleName' => 'Calls',
                 'request' => ['usertype' => 'group'],
-                'username' => 'user',
+                'canBeAuthenticated' => true,
                 'result' => false,
             ],
             [
@@ -1447,7 +1455,7 @@ class ConfigTest extends TestCase
                 'isPortal' => '0',
                 'moduleName' => 'Employees',
                 'request' => [],
-                'username' => 'user',
+                'canBeAuthenticated' => true,
                 'result' => false,
             ],
             [
@@ -1455,7 +1463,7 @@ class ConfigTest extends TestCase
                 'isPortal' => '0',
                 'moduleName' => 'Employees',
                 'request' => [],
-                'username' => '',
+                'canBeAuthenticated' => false,
                 'result' => true,
             ],
         ];
@@ -1469,7 +1477,7 @@ class ConfigTest extends TestCase
      * @param mixed $isPortal
      * @param string $moduleName
      * @param array $request
-     * @param string $username
+     * @param bool $canBeAuthenticated
      * @param bool $result
      */
     public function testIsSpecialBeanAction(
@@ -1477,15 +1485,21 @@ class ConfigTest extends TestCase
         $isPortal,
         string $moduleName,
         array $request,
-        string $username,
+        bool $canBeAuthenticated,
         bool $result
     ): void {
         $config = new Config($this->createMock(\SugarConfig::class));
-        $bean = $this->createMock(\SugarBean::class);
+        if ($moduleName == 'Employees') {
+            $bean = $this->createMock(\Employee::class);
+            $bean->expects($this->once())
+                ->method('canBeAuthenticated')
+                ->willReturn($canBeAuthenticated);
+        } else {
+            $bean = $this->createMock(\SugarBean::class);
+        }
         $bean->is_group = $isGroup;
         $bean->portal_only = $isPortal;
         $bean->module_name = $moduleName;
-        $bean->user_name = $username;
         $this->assertEquals($result, $config->isSpecialBeanAction($bean, $request));
     }
 }

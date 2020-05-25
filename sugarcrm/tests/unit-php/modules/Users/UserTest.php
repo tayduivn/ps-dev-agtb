@@ -14,6 +14,8 @@ namespace Sugarcrm\SugarcrmTestsUnit\modules\Users;
 use PHPUnit\Framework\TestCase;
 use SugarApiExceptionInvalidParameter;
 
+use User;
+
 /**
  * @coversDefaultClass \User
  */
@@ -260,5 +262,51 @@ class UserTest extends TestCase
                 'system not in good state and is non-admin and message is not ERROR_LICENSE_SEATS_MAXED',
             ],
         ];
+    }
+
+    public static function canBeAuthenticatedDataProvider(): array
+    {
+        return [
+            'regular user' => [
+                'userName' => 'user1',
+                'externalAuthOnly' => false,
+                'expected' => true,
+            ],
+            'SAML user' => [
+                'userName' => 'saml@example.com',
+                'externalAuthOnly' => true,
+                'expected' => true,
+            ],
+            'legacy SAML user' => [
+                'userName' => '',
+                'externalAuthOnly' => true,
+                'expected' => true,
+            ],
+            'employee only' => [
+                'userName' => '',
+                'externalAuthOnly' => false,
+                'expected' => false,
+            ],
+        ];
+    }
+
+    /**
+     * @param string $userName
+     * @param bool $externalAuthOnly
+     * @param bool $expected
+     *
+     * @dataProvider canBeAuthenticatedDataProvider
+     * @covers ::canBeAuthenticated
+     */
+    public function testCanBeAuthenticated($userName, $externalAuthOnly, $expected)
+    {
+        $user = $this->getMockBuilder(User::class)
+            ->disableOriginalConstructor()
+            ->setMethods(null)
+            ->getMock();
+
+        $user->user_name = $userName;
+        $user->external_auth_only = $externalAuthOnly;
+        $this->assertEquals($expected, $user->canBeAuthenticated());
     }
 }

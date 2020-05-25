@@ -74,7 +74,7 @@ EOHTML;
 			 $this->ss->assign('DISPLAY_EDIT', true);
         }
 
-        $isEmployee = empty($this->bean->user_name);
+        $isEmployee = !$this->bean->canBeAuthenticated();
 
         if (is_admin($GLOBALS['current_user']) && ($isEmployee || !$idmConfig->isIDMModeEnabled())) {
             $this->ss->assign('DISPLAY_DUPLICATE', true);
@@ -97,7 +97,7 @@ EOHTML;
         );
 
         parent::display();
- 	}
+    }
 
     /**
      * @return IdmConfig

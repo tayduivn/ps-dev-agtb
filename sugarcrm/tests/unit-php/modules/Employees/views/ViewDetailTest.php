@@ -113,7 +113,7 @@ class ViewDetailTest extends TestCase
             'currentUserIsNotAdminViewUserIsUser' => [
                 'currentUserId' => 'uid-1',
                 'viewUserId' => 'uid-2',
-                'viewUserUsername' => 'username',
+                'viewUserCanBeAuthenticated' => true,
                 'currentUserIdAdmin' => false,
                 'currentUserIsAdminForModule' => false,
                 'idmModeEnabled' => false,
@@ -124,7 +124,7 @@ class ViewDetailTest extends TestCase
             'currentUserIsAdminButNotAdminForModuleViewUserIsUser' => [
                 'currentUserId' => 'uid-1',
                 'viewUserId' => 'uid-2',
-                'viewUserUsername' => 'username',
+                'viewUserCanBeAuthenticated' => true,
                 'currentUserIdAdmin' => true,
                 'currentUserIsAdminForModule' => false,
                 'idmModeEnabled' => false,
@@ -141,7 +141,7 @@ class ViewDetailTest extends TestCase
             'currentUserIsAdminAndAdminForModuleViewUserIsUser' => [
                 'currentUserId' => 'uid-1',
                 'viewUserId' => 'uid-2',
-                'viewUserUsername' => 'username',
+                'viewUserCanBeAuthenticated' => true,
                 'currentUserIdAdmin' => true,
                 'currentUserIsAdminForModule' => true,
                 'idmModeEnabled' => false,
@@ -159,7 +159,7 @@ class ViewDetailTest extends TestCase
             'CurrentUserIsAdminAndAdminForModuleViewUserIsEmployee' => [
                 'currentUserId' => 'uid-1',
                 'viewUserId' => 'uid-2',
-                'viewUserUsername' => '',
+                'viewUserCanBeAuthenticated' => false,
                 'currentUserIdAdmin' => true,
                 'currentUserIsAdminForModule' => true,
                 'idmModeEnabled' => false,
@@ -177,7 +177,7 @@ class ViewDetailTest extends TestCase
             'IDMMode_CurrentUserIsAdminAndAdminForModuleViewUserIsEmployee' => [
                 'currentUserId' => 'uid-1',
                 'viewUserId' => 'uid-2',
-                'viewUserUsername' => '',
+                'viewUserCanBeAuthenticated' => false,
                 'currentUserIdAdmin' => true,
                 'currentUserIsAdminForModule' => true,
                 'idmModeEnabled' => true,
@@ -195,7 +195,7 @@ class ViewDetailTest extends TestCase
             'IDMMode_CurrentUserIsAdminAndAdminForModuleViewUserIsUser' => [
                 'currentUserId' => 'uid-1',
                 'viewUserId' => 'uid-2',
-                'viewUserUsername' => 'username',
+                'viewUserCanBeAuthenticated' => true,
                 'currentUserIdAdmin' => true,
                 'currentUserIsAdminForModule' => true,
                 'idmModeEnabled' => true,
@@ -216,6 +216,7 @@ class ViewDetailTest extends TestCase
      * @param string $currentUserId
      * @param string $viewUserId
      * @param string $viewUserUsername
+     * @param bool $viewUserCanBeAuthenticated
      * @param bool $currentUserIdAdmin
      * @param bool $currentUserIsAdminForModule
      * @param bool $idmModeEnabled
@@ -228,7 +229,7 @@ class ViewDetailTest extends TestCase
     public function testDisplay(
         string $currentUserId,
         string $viewUserId,
-        string $viewUserUsername,
+        bool $viewUserCanBeAuthenticated,
         bool $currentUserIdAdmin,
         bool $currentUserIsAdminForModule,
         bool $idmModeEnabled,
@@ -241,7 +242,9 @@ class ViewDetailTest extends TestCase
         $this->currentUser->id = $currentUserId;
 
         $this->viewUser->id = $viewUserId;
-        $this->viewUser->user_name = $viewUserUsername;
+        $this->viewUser->expects($this->once())
+            ->method('canBeAuthenticated')
+            ->willReturn($viewUserCanBeAuthenticated);
 
         $_REQUEST['record'] = $viewUserId;
 

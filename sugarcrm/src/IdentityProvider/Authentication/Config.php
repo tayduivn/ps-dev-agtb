@@ -282,7 +282,7 @@ class Config
         // Group and Portal Users are not a IdM domain entities and are special Users in terms of SugarCRM
         $creation = empty($bean->id) && in_array(strtolower($request['usertype'] ?? ''), ['portal', 'group']);
         $isPortalOrGroupUser = $bean->module_name == 'Users' && ($bean->is_group || $bean->portal_only || $creation);
-        $isEmployee = $bean->module_name == 'Employees' && empty($bean->user_name);
+        $isEmployee = ($bean->module_name == 'Employees') && !$bean->canBeAuthenticated();
         return $isPortalOrGroupUser || $isEmployee;
     }
 
