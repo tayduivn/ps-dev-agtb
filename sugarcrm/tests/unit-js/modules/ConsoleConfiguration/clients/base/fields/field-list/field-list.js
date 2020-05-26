@@ -10,16 +10,30 @@
  */
 describe('ConsoleConfiguration.Fields.FieldList', function() {
     var app;
-    var module = 'ConsoleConfiguration';
     var field;
-    var fieldName;
     var model;
     var fields;
-    var getViewStub;
+    var fieldName;
+    var multiLineMetadata;
+    var module = 'ConsoleConfiguration';
+    var domSample = '<ul id="columns-sortable" class="field-list" module_name="Accounts">' +
+        '<li class="pill outer multi-field-block">' +
+        '<ul class="multi-field-sortable multi-field">' +
+        '<li class="list-header" fieldname="name" ' +
+        'fieldlabel="LBL_NAME/LBL_INDUSTRY" data-original-title="Name/Industry">' +
+        'Name/Industry<i class="multi-field-column-remove"></i></li>' +
+        '<li class="pill" fieldname="name" fieldlabel="LBL_NAME" data-original-title="Name">' +
+        'Name<i class="console-field-remove"></i></li>' +
+        '<li class="pill" fieldname="industry" fieldlabel="LBL_INDUSTRY" data-original-title="Industry">' +
+        'Industry<i class="console-field-remove"></i></li>' +
+        '</ul></li>' +
+        '<li class="pill outer" fieldname="description" fieldlabel="LBL_DESCRIPTION" data-original-title="Desc">' +
+        'Description<i class="console-field-remove"></i></li>' +
+        '<li class="pill outer" fieldname="account_type" fieldlabel="LBL_TYPE" data-original-title="Type">' +
+        'Type<i class="console-field-remove"></i></li></ul>';
 
     beforeEach(function() {
         app = SugarTest.app;
-
         fields = [
             {
                 name: 'next_renewal_date',
@@ -42,36 +56,40 @@ describe('ConsoleConfiguration.Fields.FieldList', function() {
                 ],
             },
         ];
-
+        multiLineMetadata = {
+            panels: [{
+                fields: fields,
+            }],
+        };
         model = app.data.createBean(module);
         model.set({
             enabled_module: 'Accounts',
         });
 
-        var enabledModule = model.get('enabled_module');
+        var moduleFields = {
+            renewal: {
+                name: 'renewal',
+                type: 'bool'
+            },
+            calls: {
+                name: 'calls',
+                type: 'link'
+            },
+            widget_amount: {
+                name: 'widget_amount',
+                type: 'widget',
+                multiline: 'true'
+            }
+        };
+        sinon.collection.stub(app.metadata, 'getModule')
+            .withArgs(model.get('enabled_module'), 'fields').returns(moduleFields);
 
-        getViewStub = sinon.collection.stub(app.metadata, 'getView')
-            .withArgs(enabledModule, 'multi-line-list')
-            .returns({
-            panels: [
-                {
-                    fields: fields,
-                },
-            ],
-        });
+        sinon.collection.stub(app.metadata, 'getView')
+            .withArgs(model.get('enabled_module'), 'multi-line-list')
+            .returns(multiLineMetadata);
 
         SugarTest.loadComponent('base', 'field', 'base');
-        field = SugarTest.createField(
-            'base',
-            fieldName,
-            'field-list',
-            'edit',
-            {},
-            module,
-            model,
-            null,
-            true
-        );
+        field = SugarTest.createField('base', fieldName, 'field-list', 'edit', {}, module, model, null, true);
     });
 
     afterEach(function() {
@@ -80,40 +98,38 @@ describe('ConsoleConfiguration.Fields.FieldList', function() {
         model.dispose();
     });
 
-    describe('getViewMetaData', function() {
-        it('should call proper function based on defaultViewMeta in context', function() {
-            var fieldContextGetSpy = sinon.collection.spy(field.context, 'get');
-            field.getViewMetaData('Accounts');
-
-            // when no defaultViewMeta in context, app.metadata.getView
-            // should be called twice, one from initialize, another from  getViewMetaData
-            expect(getViewStub).toHaveBeenCalled(2);
-            // should not call context.get
-            expect(fieldContextGetSpy).toHaveBeenCalled(0);
-
-            // this time, set defaultViewMeta to context and try again
-            field.context.set('defaultViewMeta', {Accounts: {aaa: true}});
-            field.getViewMetaData('Accounts');
-
-            // when defaultViewMeta exists in context, shouldn't call getView
-            // so the call count should remain twice.
-            expect(getViewStub).toHaveBeenCalled(2);
-            // should call context.get instad
-            expect(fieldContextGetSpy).toHaveBeenCalled(1);
-        });
-    });
-
     describe('initialize', function() {
         it('should call getTabContentFields once', function() {
             var getTabContentFieldsSpy = sinon.collection.spy(field, 'getMappedFields');
-
             field.initialize(field.options);
-
             expect(getTabContentFieldsSpy.calledOnce).toBe(true);
+        });
+
+        it('should initialize the main sortable', function() {
+            sinon.collection.stub(jQuery.fn, 'sortable', function() {});
+            field.initSingleFieldDragAndDrop();
+            expect(jQuery.fn.sortable).toHaveBeenCalled();
+        });
+
+        it('should initialize the multi line field sortables', function() {
+            sinon.collection.stub(jQuery.fn, 'sortable', function() {});
+            field.initMultiFieldDragAndDrop(jQuery.fn);
+            expect(jQuery.fn.sortable).toHaveBeenCalled();
         });
     });
 
-    describe('getTabContentFields', function() {
+    describe('getViewMetaData', function() {
+        it('should call proper function based on defaultViewMeta in context', function() {
+            var viewMeta = field.getViewMetaData('Accounts');
+            expect(viewMeta).toEqual(multiLineMetadata);
+
+            field.context.set('defaultViewMeta', {Accounts: {}});
+            viewMeta = field.getViewMetaData('Accounts');
+            expect(viewMeta).toEqual({});
+        });
+    });
+
+    describe('getMappedFields', function() {
         it('should return field to subfield mapping', function() {
             var expected = {
                 next_renewal_date: [
@@ -139,21 +155,154 @@ describe('ConsoleConfiguration.Fields.FieldList', function() {
         });
     });
 
-    describe('handleDragAndDrop', function() {
-        it('should call this.$.sortable method', function() {
-            sinon.collection.stub(jQuery.fn, 'sortable', function() {});
-            field.handleDragAndDrop();
+    describe('getSelectedFieldList', function() {
+        it('should call the getSelectedFieldList method', function() {
+            var methodStub = sinon.collection.stub(field, 'getSelectedFieldList');
+            field.triggerPreviewUpdate();
+            expect(methodStub).toHaveBeenCalled();
+        });
 
-            expect(jQuery.fn.sortable).toHaveBeenCalled();
+        it('should call the trigger with an empty list', function() {
+            var contextTriggerSpy = sinon.collection.stub(field.context, 'trigger');
+            field.triggerPreviewUpdate();
+            expect(contextTriggerSpy).toHaveBeenCalledWith('consoleconfig:preview:Accounts', []);
+        });
+
+        it('should call the trigger with the correct list of fields', function() {
+            var contextTriggerSpy = sinon.collection.stub(field.context, 'trigger');
+            var expectedList = JSON.parse('[[{"name":"name","label":"LBL_NAME"},{"name":"industry",' +
+                '"label":"LBL_INDUSTRY"}],[{"name":"description","label":"LBL_DESCRIPTION"}],' +
+                '[{"name":"account_type","label":"LBL_TYPE"}]]');
+            field.$el.append(domSample);
+            field.triggerPreviewUpdate();
+            expect(contextTriggerSpy).toHaveBeenCalledWith('consoleconfig:preview:Accounts', expectedList);
+            field.$el.html('');
         });
     });
 
-    describe('getSortable', function() {
-        it('should call $.sortable method', function() {
-            sinon.collection.stub(jQuery.fn, 'sortable', function() {});
-            field.getSortable(jQuery.fn);
+    describe('utilitary methods', function() {
+        it('can check if a field is defined as multi-line', function() {
+            expect(field.isDefinedAsMultiLine('calls')).toBe(false);
+            expect(field.isDefinedAsMultiLine('renewal')).toBe(false);
+            expect(field.isDefinedAsMultiLine('widget_amount')).toBe(true);
+        });
+    });
 
-            expect(jQuery.fn.sortable).toHaveBeenCalled();
+    describe('multi line field updates', function() {
+        // updateMultiLineField, getNewHeaderDetails, addMultiFieldHint
+        var multiLineField;
+        var multiLineFieldHeader;
+
+        beforeEach(function() {
+            field.$el.append(domSample);
+            multiLineFieldHeader = field.$el.find('.list-header[fieldname="name"]');
+            multiLineField = multiLineFieldHeader.parent();
+        });
+
+        afterEach(function() {
+            field.$el.html('');
+        });
+
+        it('updates correctly when it has only a single field', function() {
+            multiLineField.find('.pill[fieldname="name"]').remove();
+            field.addMultiFieldHint(multiLineField);
+            field.updateMultiLineField(multiLineField);
+            expect(multiLineFieldHeader.attr('fieldname')).toEqual('industry');
+            expect(multiLineFieldHeader.attr('fieldlabel')).toEqual('LBL_INDUSTRY');
+            expect(multiLineFieldHeader.attr('data-original-title')).toEqual('Industry');
+            expect(multiLineField.find('.multi-field-hint').length).toEqual(0);
+        });
+
+        it('updates correctly when it has no fields', function() {
+            multiLineField.find('.pill[fieldname="name"]').remove();
+            multiLineField.find('.pill[fieldname="industry"]').remove();
+            field.addMultiFieldHint(multiLineField);
+            field.updateMultiLineField(multiLineField);
+            expect(multiLineFieldHeader.attr('fieldname')).toBeFalsy();
+            expect(multiLineFieldHeader.attr('fieldlabel')).toEqual('');
+            expect(multiLineFieldHeader.attr('data-original-title')).toEqual('LBL_CONSOLE_MULTI_ROW');
+            expect(multiLineField.find('.multi-field-hint').length).toEqual(1);
+        });
+
+        it('updates correctly when fields have been re-added', function() {
+            multiLineField.find('.pill[fieldname="name"]').remove();
+            multiLineField.find('.pill[fieldname="industry"]').remove();
+            multiLineField.append('<li class="pill" fieldname="industry" fieldlabel="LBL_INDUSTRY" ' +
+                'data-original-title="Industry">Industry</li>');
+            multiLineField.append('<li class="pill" fieldname="status" fieldlabel="LBL_STATUS" ' +
+                'data-original-title="Status">Status</li>');
+            field.addMultiFieldHint(multiLineField);
+            field.updateMultiLineField(multiLineField);
+            expect(multiLineFieldHeader.attr('fieldname')).toEqual('industry/status');
+            expect(multiLineFieldHeader.attr('fieldlabel')).toEqual('LBL_INDUSTRY/LBL_STATUS');
+            expect(multiLineFieldHeader.attr('data-original-title')).toEqual('Industry/Status');
+            expect(multiLineField.find('.multi-field-hint').length).toEqual(0);
+        });
+    });
+
+    describe('drag & drop into a multi line field - shouldRejectFieldDrop', function() {
+        var multiLineField;
+        var multiLineFieldHeader;
+
+        beforeEach(function() {
+            field.$el.append(domSample);
+            multiLineFieldHeader = field.$el.find('.list-header[fieldname="name"]');
+            multiLineField = multiLineFieldHeader.parent();
+        });
+
+        afterEach(function() {
+            field.$el.html('');
+        });
+
+        it('should reject the drop because there are already 2 fields in it', function() {
+            var ui = {
+                item: $('<li class="pill outer" fieldname="status">Status</li>')
+            };
+            multiLineField.append(ui.item); // simulate the drop
+            var multiLineFields = multiLineField.find('.pill');
+            expect(field.shouldRejectFieldDrop(ui, multiLineFields)).toEqual(true);
+        });
+
+        it('should reject the drop because a multi line field is dropped into another', function() {
+            var ui = {
+                item: $('<li class="pill outer multi-field-block"></li>')
+            };
+            multiLineField.append(ui.item); // simulate the drop
+            var multiLineFields = multiLineField.find('.pill');
+            expect(field.shouldRejectFieldDrop(ui, multiLineFields)).toEqual(true);
+        });
+
+        it('should reject the drop because there is a multi line widget inside', function() {
+            var ui = {
+                item: $('<li class="pill outer" fieldname="status">Status</li>')
+            };
+            multiLineField.find('.pill[fieldname="name"]').remove();
+            multiLineField.find('.pill[fieldname="industry"]').remove();
+            multiLineField.append('<li class="pill" fieldname="widget_amount">Amount</li>');
+            multiLineField.append(ui.item); // simulate the drop
+            var multiLineFields = multiLineField.find('.pill');
+            expect(field.shouldRejectFieldDrop(ui, multiLineFields)).toEqual(true);
+        });
+
+        it('should reject the drop because there is an item already and a multi line widget is dropped', function() {
+            var ui = {
+                item: $('<li class="pill" fieldname="widget_amount">Amount</li>')
+            };
+            multiLineField.find('.pill[fieldname="industry"]').remove();
+            multiLineField.append('<li class="pill" fieldname="widget_amount">Amount</li>');
+            multiLineField.append(ui.item); // simulate the drop
+            var multiLineFields = multiLineField.find('.pill');
+            expect(field.shouldRejectFieldDrop(ui, multiLineFields)).toEqual(true);
+        });
+
+        it('should not reject the drop if there is a single item and we drop another standard item', function() {
+            var ui = {
+                item: $('<li class="pill" fieldname="status">Amount</li>')
+            };
+            multiLineField.find('.pill[fieldname="name"]').remove();
+            multiLineField.append(ui.item); // simulate the drop
+            var multiLineFields = multiLineField.find('.pill');
+            expect(field.shouldRejectFieldDrop(ui, multiLineFields)).toEqual(false);
         });
     });
 });

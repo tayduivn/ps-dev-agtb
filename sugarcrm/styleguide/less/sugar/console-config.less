@@ -89,7 +89,7 @@
   padding-bottom: 5px;
   margin-left: 0;
   background-color: @grayMid;
-  cursor: pointer;
+  cursor: move;
 }
 
 .config-side-pane .fields nav ul.field-list {
@@ -104,6 +104,7 @@
 .config-side-pane .columns nav ul.field-list {
   height: 480px;
   width: 200px;
+  padding-right: 8px;
 }
 
 .config-side-pane .fields nav ul.field-list {
@@ -119,6 +120,7 @@
 }
 
 .config-side-pane .fields nav li {
+  cursor: move;
   padding-left: 10px;
   white-space: nowrap;
   overflow: hidden;
@@ -131,7 +133,7 @@
   color: white;
   margin: 3px;
   margin-bottom: 5px;
-  cursor: pointer;
+  cursor: move;
 
   &:not(.multi-field-block) {
     padding-right: 18px;
@@ -195,84 +197,77 @@
   }
 }
 
-.config-side-pane .columns nav li.multi-field-block {
-  padding-left: 0;
-  height: 75px;
-  margin-bottom: 5px;
-}
+.config-side-pane .columns {
+  .console-field-remove {
+    right: 3px;
+    color: white;
+  }
 
-.config-side-pane .columns nav li.list-header {
-  padding-left: 12px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
+  .multi-field-column-remove {
+    right: 6px;
+    color: black;
+  }
 
-.config-side-pane .columns nav i.console-field-remove {
-  float: right;
-  padding-right: 3px;
-  cursor: pointer;
-  z-index: 1;
-  margin-top: 3px;
-}
+  .console-field-remove,
+  .multi-field-column-remove {
+    top: 2px;
+    z-index: 1;
+    cursor: pointer;
+    position: absolute;
+  }
 
-.config-side-pane .columns nav .pill i.console-field-remove {
-  color: white;
-  position: absolute;
-  left: 90%;
-}
+  .multi-field-hint {
+    position: relative;
+    left: 20px;
+    top: 10px;
+    color: grey;
+  }
 
-.config-side-pane .columns nav li.list-header i.console-field-remove {
-  color: black;
-  left: 90%;
-}
+  .list-header {
+    padding-left: 12px;
+    padding-right: 20px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
 
-.config-side-pane .columns nav ul.multi-field:hover li.list-header i.console-field-remove {
-  visibility: visible;
-}
+  .multi-field-block {
+    height: 75px;
+    padding-left: 0;
+    margin-bottom: 5px;
 
-.config-side-pane .columns nav ul.multi-field li.list-header i.console-field-remove {
-  visibility: hidden;
-}
+    &:hover {
+      .list-header .fa-times-circle {
+        visibility: visible;
+      }
+    }
 
-.config-side-pane .columns nav i.multi-field-column-remove {
-  float: right;
-  padding-right: 3px;
-  cursor: pointer;
-  z-index: 1;
-  margin-top: 3px;
-}
+    &:not(:hover) {
+      .list-header .fa-times-circle {
+        visibility: hidden;
+      }
+    }
+  }
 
-.config-side-pane .columns nav .pill i.multi-field-column-remove {
-  color: white;
-}
+  .pill {
+    &:not(.multi-field-block) {
+      padding-right: 20px;
+    }
 
-.config-side-pane .columns nav li.list-header i.multi-field-column-remove {
-  color: black;
-  left: 90%;
-}
+    &.ui-sortable-helper {
+      cursor: move;
+    }
 
-.config-side-pane .columns nav ul.multi-field:hover li.list-header i.multi-field-column-remove {
-  visibility: visible;
-  position: absolute;
-}
+    &:hover {
+      .fa-times-circle {
+        visibility: visible;
+      }
+    }
 
-.config-side-pane .columns nav ul.multi-field li.list-header i.multi-field-column-remove {
-  visibility: hidden;
-  position: absolute;
-}
-
-.config-side-pane .columns li.pill:hover i {
-  visibility: visible;
-}
-
-.config-side-pane .columns li.pill i {
-  visibility: hidden;
-}
-
-.config-side-pane .columns nav li.multi-field-block div.multi-field-hint {
-  position: relative;
-  left: 20px;
-  top: 10px;
-  color: grey;
+    &:not(:hover) {
+      .fa-times-circle {
+        visibility: hidden;
+      }
+    }
+  }
 }

@@ -18,21 +18,12 @@
     removeColIcon: '<i class="fa fa-times-circle multi-field-column-remove"></i>',
 
     events: {
-        'click .fa.fa-times-circle.console-field-remove': 'removeSelectedFieldClicked',
-        'click .fa.fa-times-circle.multi-field-column-remove': 'removeMultiFieldColumnClicked'
+        'click .fa.fa-times-circle.console-field-remove': 'removePill',
+        'click .fa.fa-times-circle.multi-field-column-remove': 'removeMultiLineField'
     },
 
     /**
-     * The field properties to get from multi-line-list
-     */
-    whitelistedProperties: [
-        'name',
-        'label',
-        'widget_name',
-    ],
-
-    /**
-     * Fields mapped to their subfields
+     * Fields mapped to their subfields.
      */
     mappedFields: {},
 
@@ -50,15 +41,14 @@
      * @inheritdoc
      *
      * Overrides the parent bindDataChange to make sure this field is re-rendered
-     * when the config is reset
+     * when the config is reset.
      */
     bindDataChange: function() {
         if (this.model) {
             this.context.on('consoleconfig:reset:defaultmetarelay', function() {
-                // the default meta data is ready, use it to re-render
                 var defaultViewMeta = this.context.get('defaultViewMeta');
                 var moduleName = this.model.get('enabled_module');
-                if (!_.isEmpty(defaultViewMeta) && !_.isEmpty(defaultViewMeta[moduleName])) {
+                if (defaultViewMeta && defaultViewMeta[moduleName]) {
                     this.mappedFields = this.getMappedFields();
                     this.context.set('defaultViewMeta', null);
                     this.render();
@@ -69,19 +59,42 @@
     },
 
     /**
-     * Return the proper view metadata.
+     * Removes a pill from the selected fields list.
      *
-     * @param {string} moduleName The selected module name from the available modules.
+     * @param {e} event Remove icon click event.
      */
-    getViewMetaData: function(moduleName) {
-        // If defaultViewMeta exists, it means we are restoring the default settings.
-        var defaultViewMeta = this.context.get('defaultViewMeta');
-        if (!_.isEmpty(defaultViewMeta) && !_.isEmpty(defaultViewMeta[moduleName])) {
-            return this.context.get('defaultViewMeta')[moduleName];
-        }
+    removePill: function(event) {
+        var pill = event.target.parentElement;
+        var container = $(pill.parentElement);
 
-        // Not restoring defaults, use the regular view meta data
-        return app.metadata.getView(moduleName, 'multi-line-list');
+        event.target.remove();
+        pill.setAttribute('class', 'pill outer');
+        this.getAvailableSortable().append(pill);
+        if (container.hasClass('multi-field-sortable')) {
+            this.updateMultiLineField(container);
+            this.addMultiFieldHint(container);
+        }
+        this.handleColumnsChanging();
+        this.triggerPreviewUpdate();
+    },
+
+    /**
+     * Remove a multi line field column and fields inside.
+     *
+     * @param {e} event Remove icon click event.
+     */
+    removeMultiLineField: function(event) {
+        var multiLineField = event.target.parentElement.parentElement.parentElement;
+
+        _.each($(multiLineField).find('.pill'), function(pill) {
+            pill.children[0].remove();
+            pill.setAttribute('class', 'pill outer');
+            this.getAvailableSortable().append(pill);
+        }, this);
+
+        multiLineField.remove();
+        this.handleColumnsChanging();
+        this.triggerPreviewUpdate();
     },
 
     /**
@@ -89,11 +102,310 @@
      */
     _render: function() {
         this._super('_render');
-        this.handleDragAndDrop();
+        this.initSingleFieldDragAndDrop();
         if (this.options.def.type == 'field-list') {
-            var domFieldList = this.$el.find('#columns-sortable');
-            this.context.trigger(this.previewEvent, this.getSelectedFieldList(domFieldList));
+            this.triggerPreviewUpdate();
         }
+    },
+
+    /**
+     * Initialize drag & drop for the selected field (main) list.
+     */
+    initSingleFieldDragAndDrop: function() {
+        var sortableEl = this.$('#columns-sortable');
+        sortableEl.sortable({
+            cursor: 'move',
+            items: '.outer.pill',
+            connectWith: '.connectedSortable',
+            receive: _.bind(this.handleSingleFieldDrop, this),
+            update: _.bind(this.handleSingleFieldStop, this)
+        });
+
+        var multiFieldSortables = sortableEl.find('.multi-field-sortable.multi-field.connectedSortable');
+        _.each(multiFieldSortables, function(multiField) {
+            this.initMultiFieldDragAndDrop($(multiField));
+        }, this);
+    },
+
+    /**
+     * Initialize drag & drop for a multi field container.
+     *
+     * @param {Object} element The multi-field container element.
+     */
+    initMultiFieldDragAndDrop: function(element) {
+        element.sortable({
+            items: '.pill',
+            cursor: 'move',
+            connectWith: '.connectedSortable',
+            receive: _.bind(this.handleMultiLineFieldDrop, this),
+            update: _.bind(this.handleMultiLineFieldStop, this)
+        });
+    },
+
+    /**
+     * Event handler for the single field drag & drop. The event is fired when an item is dropped to a list.
+     * Several actions are performed:
+     * - When moving a field from the right to the left we add the remove icon.
+     * - When moving a field from a multi line field to the outside we change selector.
+     * - The library can't handle the case when the last item from the list is a multi line field.
+     *   In such cases we manually insert the moved item after the group;
+     *   dropping into a multi-line field is handled in `handleMultiLineFieldDrop`.
+     *
+     * @param {e} event jQuery sortable event handler.
+     * @param {Object} ui jQuery UI's helper object for drag & drop operations.
+     */
+    handleSingleFieldDrop: function(event, ui) {
+        if ('fields-sortable' == ui.sender.attr('id')) {
+            ui.item.append(this.removeFldIcon);
+        }
+
+        if (ui.sender.hasClass('multi-field-sortable')) {
+            ui.item.addClass('outer');
+            this.addMultiFieldHint(ui.sender);
+        }
+
+        this.repositionItem(ui);
+    },
+
+    /**
+     * Event handler for the single field drag & drop.
+     * The event is fired when drop has been finished and the DOM has been updated.
+     *
+     * @param {e} event jQuery sortable event handler.
+     * @param {Object} ui jQuery UI's helper object for drag & drop operations.
+     */
+    handleSingleFieldStop: function(e, ui) {
+        this.repositionItem(ui);
+        this.handleColumnsChanging();
+        this.triggerPreviewUpdate();
+    },
+
+    /**
+     * Event handler for the multi field drag & drop. The event is fired when an item is dropped to a list.
+     * Several actions are performed here:
+     * - If certain conditions are met the drag & drop is cancelled.
+     * - If there is a hint text, it is removed.
+     * - When moving a field from the right to the left we add the remove icon.
+     * - When a field is being moved from the right to the left or from the ouside inside the selector is changed.
+     *
+     * @param {e} event jQuery sortable event handler.
+     * @param {Object} ui jQuery UI's helper object for drag & drop operations.
+     */
+    handleMultiLineFieldDrop: function(event, ui) {
+        var multiLineFields = $(event.target).find('.pill');
+
+        if (this.shouldRejectFieldDrop(ui, multiLineFields)) {
+            ui.sender.sortable('cancel');
+            this.updateMultiLineField(ui.sender);
+        } else {
+            $(event.target).find('.multi-field-hint').remove();
+            if ('fields-sortable' == ui.sender.attr('id')) {
+                ui.item.append(this.removeFldIcon);
+            }
+
+            if (ui.sender.hasClass('multi-field-sortable')) {
+                this.addMultiFieldHint(ui.sender);
+            } else {
+                ui.item.removeClass('outer');
+            }
+
+            this.triggerPreviewUpdate();
+        }
+    },
+
+    /**
+     * Event handler for the multi field drag & drop.
+     * The event is fired when drop has been finished and the DOM has been updated.
+     *
+     * @param {e} event jQuery sortable event handler.
+     */
+    handleMultiLineFieldStop: function(event) {
+        this.updateMultiLineField($(event.target));
+        this.triggerPreviewUpdate();
+    },
+
+    /**
+     * Update columns property of the model basing on the selected columns.
+     */
+    handleColumnsChanging: function() {
+        var fieldName;
+        var columns = {};
+        var moduleName = this.model.get('enabled_module');
+        var columnsSortable = $('#' + moduleName + '-side')
+            .find('#columns-sortable .pill:not(.multi-field-block)');
+
+        var fields = app.metadata.getModule(moduleName, 'fields');
+        _.each(columnsSortable, function(item) {
+            fieldName = $(item).attr('fieldname');
+            columns[fieldName] = fields[fieldName];
+        });
+
+        this.model.set('columns', columns);
+    },
+
+    /**
+     * jQuery UI does not support drag & drop into nested containers. When the last item is a multi line field,
+     * we have to check for the correct drop area and if the library targets the multi line field instead of the
+     * main container as a drop zone, we move the dropped item to the outside container.
+     *
+     * @param {Object} ui jQuery UI's helper object for drag & drop operations.
+     */
+    repositionItem: function(ui) {
+        var parentContainer = ui.item.parent();
+        if (parentContainer.hasClass('multi-field')) {
+            var parentStartPos = parentContainer.offset().top;
+            var parentEndPos = parentStartPos + parentContainer.height();
+            if (ui.offset.top <= parentStartPos || ui.offset.top >= parentEndPos) {
+                parentContainer.parent().after(ui.item);
+            }
+        }
+    },
+
+    /**
+     * Checks 4 conditions in which drag & drop into a multi line field should not be allowed.
+     * The 4 conditions are the following:
+     * - When there are already 2 fields in the block.
+     * - When a multi line field block is being dropped.
+     * - When a field that is defined as a multi-line field is dropped into a block with at least 1 item already.
+     * - When the block contains already a field defined as a multi-line field (such fields count as 2 simple fields).
+     *
+     * @param {Object} ui The jQuery UI library sortable action object.
+     * @param {Array} multiLineFields The list of fields inside a multi field block.
+     */
+    shouldRejectFieldDrop: function(ui, multiLineFields) {
+        var moduleName = this.model.get('enabled_module');
+        var droppedFieldName = ui.item.attr('fieldname');
+        var fieldDefinitions = app.metadata.getModule(moduleName, 'fields');
+        var isDefinedAsMultiLine = this.isDefinedAsMultiLine(droppedFieldName, fieldDefinitions);
+
+        // IMPORTANT NOTE: the placeholder is considered another field present in cases
+        // when we perform operation other than a simple reordering of items.
+        var subFieldLimit = 2;
+
+        // Reject conditions.
+        var hasAlready2Fields = multiLineFields.length > subFieldLimit;
+        var isMultiLineIntoMultiLineDrop = ui.item.hasClass('multi-field-block');
+        var isMultiFieldDrop = isDefinedAsMultiLine && multiLineFields.length > (subFieldLimit - 1);
+        var containsAlreadyAMultiLineFieldDef = multiLineFields.length == subFieldLimit &&
+            this.containsMultiLineFieldDef(multiLineFields, fieldDefinitions);
+
+        return hasAlready2Fields || isMultiLineIntoMultiLineDrop ||
+            isMultiFieldDrop || containsAlreadyAMultiLineFieldDef;
+    },
+
+    /**
+     * Check whether a multi line field contains and fields that are defined as multi line fields.
+     *
+     * @param {jQuery} multiLineFields The pills from a multi line field.
+     * @param {Object} fieldDefinitions The list of field definitions for the current module.
+     * @return {boolean} True or false.
+     */
+    containsMultiLineFieldDef: function(multiLineFields, fieldDefinitions) {
+        return _.isObject(_.find(multiLineFields, function(field) {
+            var fieldName = field.getAttribute('fieldname');
+            return fieldName && this.isDefinedAsMultiLine(fieldName, fieldDefinitions);
+        }, this));
+    },
+
+    /**
+     * Will add a text hint about possible drag & drop to a multi line field.
+     *
+     * @param {jQuery} multiLineField The multi field into which the hint text should be inserted.
+     */
+    addMultiFieldHint: function(multiLineField) {
+        var pills = multiLineField.children('.pill');
+        var hint = multiLineField.children('.multi-field-hint');
+        if (!hint.length && pills.length == 0) {
+            multiLineField.append(
+                '<div class="multi-field-hint">' +
+                app.lang.get('LBL_CONSOLE_MULTI_ROW_HINT', 'ConsoleConfiguration') +
+                '</div>'
+            );
+        }
+    },
+
+    /**
+     * It will create a new aggregated header text and label for a multi line field.
+     * In case there are no fields in a multi line field the default values will be set.
+     *
+     * @param {jQuery} fields The pills found inside a multi line field.
+     * @return {Object} A header title text and custom label.
+     */
+    getNewHeaderDetails: function(fields) {
+        var lbl = '';
+        var name = '';
+        var text = '';
+        var delimiter = '';
+        _.each(fields, function(field) {
+            lbl += delimiter + field.getAttribute('fieldlabel');
+            name += delimiter + field.getAttribute('fieldname');
+            text += delimiter + field.getAttribute('data-original-title');
+            delimiter = '/';
+        });
+        return {
+            fieldName: name || '',
+            label: lbl || '',
+            text: text || app.lang.get('LBL_CONSOLE_MULTI_ROW', this.module)
+        };
+    },
+
+    /**
+     * It will update a multi line field depending on the number of pills it contains.
+     * If there are no fields inside, a hint will be displayed. If a field has been added,
+     * the hint text will be removed. Additionally the multi line field header text will be changed.
+     *
+     * @param {jQuery} multiLineField A multi line field to be updated.
+     */
+    updateMultiLineField: function(multiLineField) {
+        var fields = multiLineField.children('.pill');
+        var headerDetails = this.getNewHeaderDetails(fields);
+
+        if (fields.length) {
+            multiLineField.children('.multi-field-hint').remove();
+        }
+
+        var header = multiLineField.children('.list-header');
+        header.text(headerDetails.text).append(this.removeColIcon)
+            .attr('data-original-title', headerDetails.text)
+            .attr('fieldname', headerDetails.fieldName)
+            .attr('fieldlabel', headerDetails.label);
+    },
+
+    /**
+     * Checks if a given field is defined as a multi-line field.
+     *
+     * @param {string} fieldName The name of the field to check.
+     * @return {boolean} True if it is a multi line field definition.
+     */
+    isDefinedAsMultiLine: function(fieldName) {
+        var moduleName = this.model.get('enabled_module');
+        var fieldDefinitions = app.metadata.getModule(moduleName, 'fields');
+        return _.isObject(_.find(fieldDefinitions, function(field) {
+            return field.multiline && field.type === 'widget' && field.name === fieldName;
+        }));
+    },
+
+    /**
+     * Return the proper view metadata. If there is a default metadata we restore it,
+     * otherwise we return the view metadata.
+     *
+     * @param {string} moduleName The selected module name from the available modules.
+     * @return {Object} The default view meta or the multi line list metadata.
+     */
+    getViewMetaData: function(moduleName) {
+        var defaultViewMeta = this.context.get('defaultViewMeta');
+        return defaultViewMeta && defaultViewMeta[moduleName] ? defaultViewMeta[moduleName] :
+            app.metadata.getView(moduleName, 'multi-line-list');
+    },
+
+    /**
+     * Will cache and return the sortable list with the available fields.
+     *
+     * @return {jQuery} The available fields sortable lost node.
+     */
+    getAvailableSortable: function() {
+        var parentSelector = '#' + this.model.get('enabled_module') + '-side';
+        return this.availableSortable || (this.availableSortable = $(parentSelector).find('#fields-sortable'));
     },
 
     /**
@@ -103,14 +415,18 @@
      */
     getMappedFields: function() {
         var tabContentFields = {};
-
+        var whitelistedProperties = [
+            'name',
+            'label',
+            'widget_name',
+        ];
         var multiLineMeta = this.getViewMetaData(this.model.get('enabled_module'));
 
         _.each(multiLineMeta.panels, function(panel) {
             _.each(panel.fields, function(fieldDefs) {
                 var subfields = [];
                 _.each(fieldDefs.subfields, function(subfield) {
-                    var parsedSubfield = _.pick(subfield, this.whitelistedProperties);
+                    var parsedSubfield = _.pick(subfield, whitelistedProperties);
 
                     // if label does not exist, get it from the parent's vardef
                     if (!_.has(parsedSubfield, 'label')) {
@@ -137,322 +453,23 @@
     },
 
     /**
-     * Handles the dragging of the items from the available fields list to the columns list section
-     * and sorting/drag & dropping to multi fields list
+     * It will trigger an update on the multi lint list preview. To trigger the preview it needs a
+     * list of selected fields based on the sortable list. In case the preview is triggered from a
+     * multi field, we have have to climb higher to find the sortable list.
      */
-    handleDragAndDrop: function() {
-        this.$('#columns-sortable').sortable({
-            connectWith: '.connectedSortable',
-            items: '.pill.outer',
-            update: _.bind(function(event, ui) {
-                var lastMultiFields = $(event.target).find('#multi-field-sortable.multi-field.connectedSortable:last');
-                var moduleName = this.model.get('enabled_module');
-                var fields = app.metadata.getModule(moduleName, 'fields');
-                var fieldDrop = ui.item.attr('fieldname');
-                var fieldsInMiltiLine = (lastMultiFields.children()) ? lastMultiFields.children() : null;
-                var dropMiltiLine = this.isMultilineField(fieldDrop, fields);
-                var hasMultiline = _.find(fieldsInMiltiLine, function(field) {
-                    return field.getAttribute('fieldname') &&
-                        this.isMultilineField(field.getAttribute('fieldname'), fields);
-                }, this);
-                var hintText = _.find(lastMultiFields.children(), function(child) {
-                    return $(child).hasClass('multi-field-hint');
-                }, this);
-                var isMultiFieldAtLast = $(event.target).hasClass('field-list') === true && event.target.lastChild &&
-                    $(event.target.lastChild).hasClass('multi-field-block');
-                var columnsSortable = $('#' + this.model.get('enabled_module') + '-side').find('#columns-sortable');
-                // handles this only when multi-field-column is the last element
-                if (isMultiFieldAtLast) {
-                    if (lastMultiFields.children() &&
-                        (
-                            ((_.isUndefined(dropMiltiLine) && _.isUndefined(hasMultiline)) &&
-                                lastMultiFields.children().length > 3) ||
-                            ((!_.isUndefined(dropMiltiLine) || !_.isUndefined(hasMultiline)) &&
-                                (
-                                    (!hintText && lastMultiFields.children().length > 2) ||
-                                    (hintText && lastMultiFields.children().length > 3)
-                                )
-                            )
-                        )
-                    ) {
-                        if (ui.sender) {
-                            // 1. prevents from sorting/dropping to a target having more than two pills
-                            // (one header + two pills) when no multi-line field involved
-                            // 2. prevents from sorting/dropping to a target having more than one pill
-                            // (one header + one pill) when there's multi-line field involved
-                            // 3. not moving into multi-field-column, don't prevent the move, skip
-                            if ((_.isUndefined(dropMiltiLine) && _.isUndefined(hasMultiline)) ||
-                                !_.isUndefined(hasMultiline)) {
-                                ui.sender.sortable('cancel');
-                            }
-                        } else {
-                            var dropFieldName = ui.item.attr('fieldname');
-                            var i = 0;
-                            // dropping a pill to the last multi-field-column that contains two pills (or one pill when
-                            // there's multi-line field involved) sometimes misses sortable's receive event,
-                            // we need to handle that
-                            _.each(lastMultiFields.children(), function(child) {
-                                if (i++ > 0 && child.getAttribute('fieldname') === dropFieldName) {
-                                    child.remove();
-                                    if (!ui.item.hasClass('outer')) {
-                                        ui.item.addClass('outer');
-                                    }
-                                    columnsSortable.append(ui.item);
-                                }
-                            }, this);
-                        }
-                    }
-                }
-
-                this.handleColumnsChanging();
-                var domFieldList = this.$el.find('#columns-sortable');
-                this.context.trigger(this.previewEvent, this.getSelectedFieldList(domFieldList));
-            }, this),
-            receive: _.bind(function(event, ui) {
-                // prevents dropping from a multi-field-column into another multi-field-column
-                if (ui.sender && ui.item.hasClass('outer') && ui.sender.attr('id') === 'multi-field-sortable') {
-                    ui.item.removeClass('outer');
-                    ui.sender.sortable('cancel');
-                } else {
-                    if (!ui.item.hasClass('outer')) {
-                        ui.item.addClass('outer');
-                    }
-                    if (ui.item.find('i.console-field-remove').length === 0) {
-                        ui.item.append(this.removeFldIcon);
-                    }
-                }
-            }, this)
-        });
-
-        _.each(this.$('#columns-sortable').find('#multi-field-sortable.multi-field.connectedSortable'),
-            function(multiField) {
-                this.getSortable($(multiField));
-            }, this);
-    },
-
-    /**
-     * Update columns property of the model basing on the selected columns
-     */
-    handleColumnsChanging: function() {
-        let columns = {};
-        const module = this.model.get('enabled_module');
-        const columnsSortable = $('#' + module + '-side')
-            .find('#columns-sortable .pill:not(.multi-field-block)');
-
-        const fields = app.metadata.getModule(module, 'fields');
-        _.each(columnsSortable, function(item) {
-            const fieldName = $(item).attr('fieldname');
-            columns[fieldName] = fields[fieldName];
-        });
-
-        this.model.set('columns', columns);
-    },
-
-    /**
-     * Gets jQuery sortable for multi field column
-     *
-     * @param {Object} element the element to be sortable enabled
-     */
-    getSortable: function(element) {
-        element.sortable({
-            connectWith: '.connectedSortable',
-            items: '.pill',
-            update: _.bind(function(event, ui) {
-                var multiRow = app.lang.get('LBL_CONSOLE_MULTI_ROW', this.module);
-                var multiRowHint = app.lang.get('LBL_CONSOLE_MULTI_ROW_HINT', 'ConsoleConfiguration');
-                var hint = '<div class="multi-field-hint">' + multiRowHint + '</div>';
-                var multiFields = $('#' + this.model.get('enabled_module') + '-side')
-                    .find('#multi-field-sortable.multi-field.connectedSortable');
-                if (multiFields.length > 0) {
-                    // re-concatenates header for each multi-field-columns
-                    _.each(multiFields, function(fields) {
-                        if (fields.children && fields.children.length > 0) {
-                            var header = '';
-                            var headerLabel = '';
-                            var i = 0;
-                            _.each(fields.children, function(field) {
-                                if (i > 1) {
-                                    header += '/';
-                                    headerLabel += '/';
-                                }
-                                if (i++ > 0 && !_.isUndefined(field) && !_.isUndefined(field.textContent)) {
-                                    if (field.textContent.trim() === multiRowHint) {
-                                        // clean hint text, it will be added later
-                                        $(field).remove();
-                                    } else {
-                                        header += field.textContent.trim();
-                                        headerLabel += field.getAttribute('fieldlabel');
-                                    }
-                                }
-                            }, this);
-                            if (header.endsWith('/')) {
-                                header = header.slice(0, -1);
-                                headerLabel = headerLabel.slice(0, -1);
-                            }
-                            header = header ? header : multiRow;
-                            $(fields.firstElementChild).text(header)
-                                .append(this.removeColIcon);
-                            $(fields.firstElementChild).attr('data-original-title', header);
-                            $(fields.firstElementChild).attr('fieldname', header);
-                            $(fields.firstElementChild).attr('fieldlabel', headerLabel);
-                            if (header === multiRow) {
-                                $(fields).append(hint);
-                            }
-                        }
-                    }, this);
-                }
-
-                this.handleColumnsChanging();
-                var domFieldList = this.$el.parent().parent().parent().find('#columns-sortable');
-                this.context.trigger(this.previewEvent, this.getSelectedFieldList(domFieldList));
-            }, this),
-            receive: _.bind(function(event, ui) {
-                var moduleName = this.model.get('enabled_module');
-                var fields = app.metadata.getModule(moduleName, 'fields');
-                // field that is dropping
-                var fieldDrop = ui.item.attr('fieldname');
-                // fields in milti-field-column
-                var fieldsInMiltiLine = (event.target.children) ? event.target.children : null;
-                // finds if dropping field a muti-line field
-                var dropMiltiLine = this.isMultilineField(fieldDrop, fields);
-                // finds muti-line fields in multi-field-column
-                var hasMultiline = _.find(fieldsInMiltiLine, function(field) {
-                    return field.getAttribute('fieldname') &&
-                        this.isMultilineField(field.getAttribute('fieldname'), fields);
-                }, this);
-                // finds if target multi-field column contains hint text element
-                var hintText = _.find(event.target.children, function(child) {
-                    return $(child).hasClass('multi-field-hint');
-                }, this);
-                if (ui.item.hasClass('multi-field-block') ||
-                    ((_.isUndefined(dropMiltiLine) && _.isUndefined(hasMultiline)) &&
-                        event.target.children.length && event.target.children.length > 3) ||
-                    ((!_.isUndefined(hasMultiline) || !_.isUndefined(dropMiltiLine)) &&
-                        event.target.children.length &&
-                        (
-                            (!hintText && event.target.children.length > 2) ||
-                            (hintText && event.target.children.length > 3)
-                        )
-                    )
-                ) {
-                    // 1. prevents a multi-line field from sorting/dropping to a multi-field-column that contains
-                    // at least one header + one pill (or sometimes one header + one hint Text) already,
-                    // or the orhte way
-                    // 2. when there's no multi-line field involved, a multi-field-column can't contain more than
-                    // two pills, i.e. one header + two pills
-                    ui.sender.sortable('cancel');
-                } else {
-                    if (hintText) {
-                        hintText.remove();
-                    }
-                    if (ui.item.hasClass('outer')) {
-                        ui.item.removeClass('outer');
-                    }
-                    if (ui.item.find('i.console-field-remove').length === 0) {
-                        ui.item.append(this.removeFldIcon);
-                    }
-                }
-                var domFieldList = this.$el.parent().parent().parent().find('#columns-sortable');
-                this.context.trigger(this.previewEvent, this.getSelectedFieldList(domFieldList));
-            }, this)
-        });
-    },
-
-    /**
-     * Checks if fields contains the multi-line field
-     * @param {string} fieldToCheck field to check
-     * @param {Array} fields all fields
-     */
-    isMultilineField: function(fieldToCheck, fields) {
-        return _.find(fields, function(field) {
-            return field.name === fieldToCheck &&
-                field.type === 'widget' &&
-                field.multiline &&
-                field.multiline === true;
-        }, this);
-    },
-
-    /**
-     * Remove a selected field
-     * @param e
-     */
-    removeSelectedFieldClicked: function(e) {
-        var selectedField = e.currentTarget.parentNode || {};
-        var fieldsSortable = $('#' + this.model.get('enabled_module') + '-side').find('#fields-sortable');
-        var multiRow = app.lang.get('LBL_CONSOLE_MULTI_ROW', this.module);
-        var multiRowHint = app.lang.get('LBL_CONSOLE_MULTI_ROW_HINT', 'ConsoleConfiguration');
-        var hint = '<div class="multi-field-hint">' + multiRowHint + '</div>';
-        if (selectedField) {
-            var fieldName = e.currentTarget.parentNode.getAttribute('fieldname');
-            var parentName = e.currentTarget.parentNode.getAttribute('parentname');
-            var fieldLabel = e.currentTarget.parentNode.getAttribute('fieldlabel');
-            var headerElement = $('ul.field-list').find('[fieldname=' + fieldName + ']')[0].parentNode;
-            if (headerElement.getAttribute('id') !== 'columns-sortable') {
-                var header = '';
-                var newHeader = '';
-                var i = 0;
-                // re-concatenates header for each multi-field-columns when deleting a pill
-                _.each(headerElement.children, function(child) {
-                    if (i++ > 0 && child && child.getAttribute('fieldname')) {
-                        if (fieldName !== child.getAttribute('fieldname')) {
-                            header += child.textContent.trim();
-                        }
-                    }
-                }, this);
-                newHeader = header ? header : multiRow;
-                $(headerElement.firstElementChild).text(newHeader)
-                    .append(this.removeColIcon);
-                $(headerElement.firstElementChild).attr('data-original-title', header);
-                if (newHeader === multiRow) {
-                    $(headerElement).append(hint);
-                }
-            }
-            var text = e.currentTarget.parentNode.textContent.trim();
-            var field = '<li class="pill outer" fieldname="' + fieldName + '" fieldlabel="' + fieldLabel +
-                '" rel="tooltip" data-original-title="' + text + '">' + text + '</li>';
-            fieldsSortable.append(field);
-            selectedField.remove();
-
-            this.handleColumnsChanging();
-            var domFieldList = this.$el.find('#columns-sortable');
-            this.context.trigger(this.previewEvent, this.getSelectedFieldList(domFieldList));
+    triggerPreviewUpdate: function() {
+        var domFieldList = this.$el.find('#columns-sortable');
+        if (!domFieldList.length) {
+            domFieldList = this.$el.parent().parent().parent().find('#columns-sortable');
         }
+        this.context.trigger(this.previewEvent, this.getSelectedFieldList(domFieldList));
     },
 
     /**
-     * Remove a multi field column and fields inside
-     * @param e
-     */
-    removeMultiFieldColumnClicked: function(e) {
-        var miltiFieldColumn = e.currentTarget.closest('.multi-field-block') || {};
-        var fieldsSortable = $('#' + this.model.get('enabled_module') + '-side').find('#fields-sortable');
-        if (miltiFieldColumn) {
-            var fields = e.currentTarget.parentNode.parentNode.children;
-            var i = 0;
-            // re-concatenates header for each multi-field-columns when deleting a multi-field-column
-            _.each(fields, function(field) {
-                if (i++ > 0 && field.textContent) {
-                    var text = field.textContent.trim();
-                    var avField = '<li class="pill outer" fieldname="' + field.getAttribute('fieldname') +
-                        '" fieldlabel="' + field.getAttribute('fieldlabel') +
-                        '" rel="tooltip" data-original-title="' + text + '">' + text + '</li>';
-                    if (!$(field).hasClass('multi-field-hint')) {
-                        fieldsSortable.append(avField);
-                    }
-                }
-            }, this);
-            miltiFieldColumn.remove();
-            this.handleColumnsChanging();
-            var domFieldList = this.$el.find('#columns-sortable');
-            this.context.trigger(this.previewEvent, this.getSelectedFieldList(domFieldList));
-        }
-    },
-
-    /**
-     * Taking the dom list of fields, creates an accurate mapping of fields.
+     * Taking the dom list of fields, creates an accurate mapping of fields for the preview.
      *
      * @param {jQuery} node The DOM representation of the selected fields.
-     * @return {Array}
+     * @return {Array} The list of selected fields.
      */
     getSelectedFieldList: function(node) {
         var subFields;
