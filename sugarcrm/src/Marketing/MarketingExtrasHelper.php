@@ -14,9 +14,15 @@ namespace Sugarcrm\Sugarcrm\Marketing;
 
 use SugarConfig;
 use Sugarcrm\Sugarcrm\DependencyInjection\Container;
+use Sugarcrm\Sugarcrm\Entitlements\SubscriptionManager;
 
 class MarketingExtrasHelper
 {
+    /**
+     * @var Sugar Config Object
+     */
+    protected $configObj = null;
+
     /**
      * Retrieve the version, flavor, build number, license,
      * and domain of this Sugar instance.
@@ -26,13 +32,16 @@ class MarketingExtrasHelper
      */
     public function getSugarDetails(): array
     {
-        global $sugar_build, $sugar_flavor, $sugar_version, $license;
+        global $sugar_build, $sugar_flavor, $sugar_version;
+
+        $subscriptions = SubscriptionManager::instance()->getSystemSubscriptionKeys();
+        $readableProductNames = getReadableProductNames(array_keys($subscriptions));
 
         return [
             'version' => $sugar_version,
             'flavor' => strtolower($sugar_flavor),
             'build' => $sugar_build,
-            'license' => $license->settings['license_key'],
+            'license' => implode(',', $readableProductNames),
             'domain' => $_SERVER['HTTP_HOST'],
         ];
     }
@@ -69,8 +78,20 @@ class MarketingExtrasHelper
      */
     public function getSugarConfig(string $key, $default = null)
     {
-        $container = Container::getInstance();
-        $config = $container->get(SugarConfig::class);
-        return $config->get($key, $default);
+        return $this->getConfigObject()->get($key, $default);
+    }
+
+    /**
+     * Lazy loading of config object
+     *
+     * @return mixed|SugarConfig|Sugar
+     */
+    protected function getConfigObject()
+    {
+        if (empty($this->configObj)) {
+            $container = Container::getInstance();
+            $this->configObj = $container->get(SugarConfig::class);
+        }
+        return $this->configObj;
     }
 }

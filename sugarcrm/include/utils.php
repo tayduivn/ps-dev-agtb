@@ -26,6 +26,43 @@ use Sugarcrm\Sugarcrm\Security\Validator\Constraints\Language;
 use Sugarcrm\Sugarcrm\Security\Validator\Validator;
 use Sugarcrm\Sugarcrm\ProductDefinition\Config\Config as ProductDefinitionConfig;
 
+/**
+ * To get human readable, non-localized subscriptions such Enterprise, Sell, Serve, etc.
+ *
+ * @param array $subscriptions
+ * @return array
+ */
+function getReadableProductNames(array $subscriptions) : array
+{
+    global $sugar_flavor;
+
+    $readableNames = [];
+    static $flavorMapping = [
+        'PRO' => 'Professional',
+        'ENT' => 'Enterprise',
+        'ULT' => 'Ultimate',
+    ];
+    static $licenseMapping = [
+        'SUGAR_SELL' => 'Sell',
+        'SUGAR_SERVE' => 'Serve',
+    ];
+
+    if (!empty($sugar_flavor) && $flavorMapping[$sugar_flavor]) {
+        $currentFlavor = $flavorMapping[$sugar_flavor];
+    }
+    foreach ($subscriptions as $sub) {
+        if ($sub == 'CURRENT' && !empty($currentFlavor)) {
+            $readableNames[] = $currentFlavor;
+        } elseif (!empty($licenseMapping[$sub])) {
+            $readableNames[] = $licenseMapping[$sub];
+        } else {
+            // just in case
+            $readableNames[] = $sub;
+        }
+    }
+    return $readableNames;
+}
+
 function make_sugar_config(&$sugar_config)
 {
     /* used to convert non-array config.php file to array format */

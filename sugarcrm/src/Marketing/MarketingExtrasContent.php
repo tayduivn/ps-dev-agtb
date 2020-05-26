@@ -33,7 +33,7 @@ class MarketingExtrasContent
      *
      * @return MarketingExtrasHelper
      */
-    public function getMarketingExtrasHelper(): MarketingExtrasHelper
+    protected function getMarketingExtrasHelper(): MarketingExtrasHelper
     {
         if ($this->marketingExtrasHelper === null) {
             $this->marketingExtrasHelper = new MarketingExtrasHelper();
