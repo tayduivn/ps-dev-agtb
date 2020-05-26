@@ -115,7 +115,7 @@ class ModuleInstaller
                     $e->setExtraData('error_description', $this->ms->getFormattedIssues());
                     throw $e;
                 } else {
-                    $this->ms->displayIssues();
+                    SugarCleaner::cleanHtml($this->ms->displayIssues());
                     sugar_cleanup(true);
                 }
             }

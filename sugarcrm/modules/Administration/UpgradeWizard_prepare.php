@@ -20,12 +20,12 @@ require_once 'include/utils.php';
 
 $historyId = InputValidation::getService()->getValidInputRequest('install_file');
 if (empty($historyId)) {
-    sugar_die(translate('ERR_UW_NO_PACKAGE_FILE', 'Administration'));
+    sugar_die(htmlspecialchars(translate('ERR_UW_NO_PACKAGE_FILE', 'Administration')));
 }
 
 $upgradeHistory = BeanFactory::retrieveBean('UpgradeHistory', $historyId);
-if (!$upgradeHistory instanceof UpgradeHistory || empty($upgradeHistory->id)) {
-    sugar_die(translate('ERR_UW_NO_PACKAGE_FILE', 'Administration'));
+if (empty($upgradeHistory->id)) {
+    sugar_die(htmlspecialchars(translate('ERR_UW_NO_PACKAGE_FILE', 'Administration')));
 }
 $packageManager = new PackageManager();
 try {
@@ -51,7 +51,7 @@ $mode = InputValidation::getService()->getValidInputRequest(
     ''
 );
 if (empty($mode)) {
-    sugar_die(translate('LBL_UPGRADE_WIZARD_NO_MODE_SPEC', 'Administration'));
+    sugar_die(htmlspecialchars(translate('LBL_UPGRADE_WIZARD_NO_MODE_SPEC', 'Administration')));
 }
 
 $installType = $historyManifest->getPackageType();
@@ -64,11 +64,11 @@ $readmeFile = $packageZipFile->getPackageDir() . DIRECTORY_SEPARATOR . 'README.t
 $isPackageTypeModule = $installType === PackageManifest::PACKAGE_TYPE_MODULE;
 if ($isPackageTypeModule && ($mode === 'Install' || $mode === 'Enable') && file_exists($licenseFile)) {
     $licenseContent = htmlspecialchars(file_get_contents($licenseFile));
-    $moduleLicenseLabel = translate('LBL_LICENSE', 'Administration');
-    $moduleReadLicenseLabel = translate('LBL_MODULE_LICENSE', 'Administration');
-    $moduleLicenseAcceptLabel = translate('LBL_ACCEPT', 'Administration');
-    $moduleLicenseDenyLabel = translate('LBL_DENY', 'Administration');
-    $moduleLicenseError = translate('ERR_UW_ACCEPT_LICENSE', 'Administration');
+    $moduleLicenseLabel = htmlspecialchars(translate('LBL_LICENSE', 'Administration'));
+    $moduleReadLicenseLabel = htmlspecialchars(translate('LBL_MODULE_LICENSE', 'Administration'));
+    $moduleLicenseAcceptLabel = htmlspecialchars(translate('LBL_ACCEPT', 'Administration'));
+    $moduleLicenseDenyLabel = htmlspecialchars(translate('LBL_DENY', 'Administration'));
+    $moduleLicenseError = htmlspecialchars(translate('ERR_UW_ACCEPT_LICENSE', 'Administration'));
     if (!empty($licenseContent)) {
         $license = <<<HTML
 <div id="uw-license-block" style="text-align:left; width: 50%; margin-top: 15px;">
@@ -94,9 +94,9 @@ HTML;
         }
         if (!empty($readmeContent)) {
             $readmeContent = htmlspecialchars($readmeContent);
-            $readmeLabel = translate('LBL_README', 'Administration');
-            $showMoreLabel = translate('LBL_SHOW_MORE');
-            $showLessLabel = translate('LBL_SHOW_LESS');
+            $readmeLabel = htmlspecialchars(translate('LBL_README', 'Administration'));
+            $showMoreLabel = htmlspecialchars(translate('LBL_SHOW_MORE'));
+            $showLessLabel = htmlspecialchars(translate('LBL_SHOW_LESS'));
             $readme = <<<HTML
 <div id="uw-readme-block" style="text-align:left; width: 50%; margin-top: 15px;">
     <div style="display: block">
@@ -119,29 +119,29 @@ HTML;
 
 switch ($mode) {
     case 'Install':
-        $actionLabel = translate('LBL_UW_PATCH_READY', 'Administration');
+        $actionLabel = htmlspecialchars(translate('LBL_UW_PATCH_READY', 'Administration'));
         if ($installType === PackageManifest::PACKAGE_TYPE_LANGPACK) {
-            $actionLabel = translate('LBL_UW_LANGPACK_READY', 'Administration');
+            $actionLabel = htmlspecialchars(translate('LBL_UW_LANGPACK_READY', 'Administration'));
         }
         break;
     case 'Uninstall':
-        $actionLabel = translate('LBL_UW_UNINSTALL_READY', 'Administration');
+        $actionLabel = htmlspecialchars(translate('LBL_UW_UNINSTALL_READY', 'Administration'));
         if ($installType === PackageManifest::PACKAGE_TYPE_LANGPACK) {
-            $actionLabel = translate('LBL_UW_LANGPACK_READY', 'Administration');
+            $actionLabel = htmlspecialchars(translate('LBL_UW_LANGPACK_READY', 'Administration'));
         } elseif ($installType !==  PackageManifest::PACKAGE_TYPE_MODULE) {
-            $actionLabel = translate('LBL_UW_FILES_REMOVED', 'Administration');
+            $actionLabel = htmlspecialchars(translate('LBL_UW_FILES_REMOVED', 'Administration'));
         }
         break;
     case 'Disable':
-        $actionLabel = translate('LBL_UW_DISABLE_READY', 'Administration');
+        $actionLabel = htmlspecialchars(translate('LBL_UW_DISABLE_READY', 'Administration'));
         if ($installType === PackageManifest::PACKAGE_TYPE_LANGPACK) {
-            $actionLabel = translate('LBL_UW_LANGPACK_READY_DISABLE', 'Administration');
+            $actionLabel = htmlspecialchars(translate('LBL_UW_LANGPACK_READY_DISABLE', 'Administration'));
         }
         break;
     case 'Enable':
-        $actionLabel = translate('LBL_UW_ENABLE_READY', 'Administration');
+        $actionLabel = htmlspecialchars(translate('LBL_UW_ENABLE_READY', 'Administration'));
         if ($installType === PackageManifest::PACKAGE_TYPE_LANGPACK) {
-            $actionLabel = translate('LBL_UW_LANGPACK_READY_ENABLE', 'Administration');
+            $actionLabel = htmlspecialchars(translate('LBL_UW_LANGPACK_READY_ENABLE', 'Administration'));
         }
         break;
 }
@@ -149,8 +149,8 @@ switch ($mode) {
 $removeTables = $historyManifest->getManifestValue('remove_tables');
 $removeTablesContent = '';
 if ($removeTables === 'prompt' && $mode === 'Uninstall') {
-    $removeTablesLabel = translate('ML_LBL_REMOVE_TABLES', 'Administration');
-    $doNotRemoveTablesLabel = translate('ML_LBL_DO_NOT_REMOVE_TABLES', 'Administration');
+    $removeTablesLabel = htmlspecialchars(translate('ML_LBL_REMOVE_TABLES', 'Administration'));
+    $doNotRemoveTablesLabel = htmlspecialchars(translate('ML_LBL_DO_NOT_REMOVE_TABLES', 'Administration'));
 
     $removeTablesContent = <<<HTML
 <div style="width: 50%; display: block; margin-top: 15px;">
@@ -171,8 +171,8 @@ $overwriteFilesContent = '';
 if ($mode === "Disable" || $mode === "Enable") {
     $copyFiles = $historyManifest->getInstallDefsValue('copy');
     if (!empty($copyFiles)) {
-        $overwriteFilesLabel = translate('LBL_OVERWRITE_FILES', 'Administration');
-        $doNotOverwriteFilesLabel = translate('LBL_DO_OVERWRITE_FILES', 'Administration');
+        $overwriteFilesLabel = htmlspecialchars(translate('LBL_OVERWRITE_FILES', 'Administration'));
+        $doNotOverwriteFilesLabel = htmlspecialchars(translate('LBL_DO_OVERWRITE_FILES', 'Administration'));
 
         $overwriteFilesContent = <<<HTML
 <div style="width: 50%; display: block; margin-top: 15px;">
@@ -194,8 +194,8 @@ HTML;
     }
 }
 
-$commitButtonLabel = translate('LBL_ML_COMMIT', 'Administration');
-$cancelButtonLabel = translate('LBL_ML_CANCEL', 'Administration');
+$commitButtonLabel = htmlspecialchars(translate('LBL_ML_COMMIT', 'Administration'));
+$cancelButtonLabel = htmlspecialchars(translate('LBL_ML_CANCEL', 'Administration'));
 
 echo <<<HTML
 <div style="display:block; width: 100%;">
@@ -205,7 +205,7 @@ echo <<<HTML
         <input type="hidden" name="package_id"  value="{$upgradeHistory->id}" />
         $license
         $readme
-        <div style="width: 50%; display: block; margin-top: 15px;">$actionLabel</div>
+        <div style="width: 50%; display: block; margin-top: 15px;"><h2>$actionLabel</h2></div>
         $removeTablesContent
         $overwriteFilesContent
         <div style="width: 50%; display: block; margin-top: 15px;">

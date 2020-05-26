@@ -44,16 +44,27 @@ class UpgradeHistoryFactory
 
         $history->filename = $file;
         $history->md5sum = $md5Sum;
+        $history->status = $status;
+
+        $this->populateHistoryFromManifest($history, $manifest);
+
+        return $history;
+    }
+
+    /**
+     * populate upgrade history from manifest
+     * @param UpgradeHistory $history
+     * @param PackageManifest $manifest
+     */
+    public function populateHistoryFromManifest(UpgradeHistory $history, PackageManifest $manifest)
+    {
         $history->type = $manifest->getPackageType();
         $history->version = $manifest->getPackageVersion();
-        $history->status = $status;
         $history->name = $manifest->getPackageName();
         $history->description = $manifest->getManifestValue('description', '');
         $history->id_name = $manifest->getPackageIdName();
         $history->manifest = base64_encode(serialize($manifest->toArray()));
         $history->published_date = $manifest->getManifestValue('published_date', '');
         $history->uninstallable = $manifest->isPackageUninstallable();
-
-        return $history;
     }
 }

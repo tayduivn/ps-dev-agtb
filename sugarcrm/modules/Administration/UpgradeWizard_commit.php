@@ -30,7 +30,7 @@ $mode = $request->getValidInputRequest(
     ''
 );
 if (empty($mode)) {
-    sugar_die(translate('ERR_UW_NO_MODE', 'Administration'));
+    sugar_die(htmlspecialchars(translate('ERR_UW_NO_MODE', 'Administration')));
 }
 
 $removeTables = $request->getValidInputRequest('remove_tables');
@@ -39,12 +39,12 @@ $overwriteFiles = $overwrite !== 'do_not_overwrite';
 
 $historyId = $request->getValidInputRequest('package_id');
 if (empty($historyId)) {
-    sugar_die(translate('ERR_UW_NO_PACKAGE_FILE', 'Administration'));
+    sugar_die(htmlspecialchars(translate('ERR_UW_NO_PACKAGE_FILE', 'Administration')));
 }
 
 $upgradeHistory = BeanFactory::retrieveBean('UpgradeHistory', $historyId);
 if (!$upgradeHistory instanceof UpgradeHistory || empty($upgradeHistory->id)) {
-    sugar_die(translate('ERR_UW_NO_PACKAGE_FILE', 'Administration'));
+    sugar_die(htmlspecialchars(translate('ERR_UW_NO_PACKAGE_FILE', 'Administration')));
 }
 
 try {
@@ -77,7 +77,7 @@ try {
 } catch (SugarException $e) {
     sugar_die($e->getMessage());
 } catch (Exception $e) {
-    sugar_die(translate('ERR_UW_NO_PACKAGE_FILE', 'Administration'));
+    sugar_die(htmlspecialchars(translate('ERR_UW_NO_PACKAGE_FILE', 'Administration')));
 }
 
 if ($shouldClearCache) {
@@ -86,11 +86,11 @@ if ($shouldClearCache) {
 
 $resultText = sprintf(
     '%s %s %s',
-    translate('LBL_UW_TYPE_' . strtoupper($installType), 'Administration'),
-    translate('LBL_UW_MODE_' . strtoupper($mode), 'Administration'),
-    translate('LBL_UW_SUCCESSFULLY', 'Administration')
+    htmlspecialchars(translate('LBL_UW_TYPE_' . strtoupper($installType), 'Administration')),
+    htmlspecialchars(translate('LBL_UW_MODE_' . strtoupper($mode), 'Administration')),
+    htmlspecialchars(translate('LBL_UW_SUCCESSFULLY', 'Administration'))
 );
-$buttonText = translate('LBL_UW_BTN_BACK_TO_MOD_LOADER', 'Administration');
+$buttonText = htmlspecialchars(translate('LBL_UW_BTN_BACK_TO_MOD_LOADER', 'Administration'));
 $csrfFieldName = CsrfAuthenticator::FORM_TOKEN_FIELD;
 $csrfToken = CsrfAuthenticator::getInstance()->getFormToken();
 

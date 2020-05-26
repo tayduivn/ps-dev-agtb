@@ -408,9 +408,9 @@ class PackageManager
      * @return UpgradeHistory[]
      * @throws SugarQueryException
      */
-    public function getStagedPackages(): array
+    public function getStagedModulePackages(): array
     {
-        return (new UpgradeHistory())->getPackagesByStatus(UpgradeHistory::STATUS_STAGED);
+        return (new UpgradeHistory())->getModulePackagesByStatus(UpgradeHistory::STATUS_STAGED);
     }
 
     /**
@@ -418,19 +418,19 @@ class PackageManager
      * @return UpgradeHistory[]
      * @throws SugarQueryException
      */
-    public function getInstalledPackages(): array
+    public function getInstalledModulePackages(): array
     {
-        return (new UpgradeHistory())->getPackagesByStatus(UpgradeHistory::STATUS_INSTALLED);
+        return (new UpgradeHistory())->getModulePackagesByStatus(UpgradeHistory::STATUS_INSTALLED);
     }
 
     /**
-     * return list of all packages
+     * return list of all module packages
      * @return UpgradeHistory[]
      * @throws SugarQueryException
      */
-    public function getPackages(): array
+    public function getModulePackages(): array
     {
-        return (new UpgradeHistory())->getPackages();
+        return (new UpgradeHistory())->getPackagesByType(PackageManifest::PACKAGE_TYPE_MODULE);
     }
 
     /**

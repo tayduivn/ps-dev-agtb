@@ -343,7 +343,7 @@ final class PackageApiRest extends FileApi
     public function getStagedPackages(RestService $api, array $args): array
     {
         $this->ensureAdminUser();
-        $packages = $this->packageManager->getStagedPackages();
+        $packages = $this->packageManager->getStagedModulePackages();
         $packages = array_map(function (UpgradeHistory $history) {
             return $history->getData();
         }, $packages);
@@ -363,7 +363,7 @@ final class PackageApiRest extends FileApi
     public function getInstalledPackages(RestService $api, array $args): array
     {
         $this->ensureAdminUser();
-        $packages = $this->packageManager->getInstalledPackages();
+        $packages = $this->packageManager->getInstalledModulePackages();
         $packages = array_map(function (UpgradeHistory $history) {
             return $history->getData();
         }, $packages);
@@ -383,7 +383,7 @@ final class PackageApiRest extends FileApi
     public function getPackages(RestService $api, array $args): array
     {
         $this->ensureAdminUser();
-        $packages = $this->packageManager->getPackages();
+        $packages = $this->packageManager->getModulePackages();
         $packages = array_map(function (UpgradeHistory $history) {
             $data = $history->getData();
             $data['installed'] = $history->status === UpgradeHistory::STATUS_INSTALLED;

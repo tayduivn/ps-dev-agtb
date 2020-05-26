@@ -41,37 +41,13 @@ class PackageManager
     }
 
     /**
-     * @param $type
-     * @return string
-     */
-    protected function getPackageTypeUIText(string $type): string
-    {
-        switch ($type) {
-            case PackageManifest::PACKAGE_TYPE_FULL:
-                return translate('LBL_UW_TYPE_FULL', 'Administration');
-            case PackageManifest::PACKAGE_TYPE_LANGPACK:
-                return translate('LBL_UW_TYPE_LANGPACK', 'Administration');
-                break;
-            case PackageManifest::PACKAGE_TYPE_MODULE:
-                return translate('LBL_UW_TYPE_MODULE', 'Administration');
-                break;
-            case PackageManifest::PACKAGE_TYPE_PATCH:
-                return translate('LBL_UW_TYPE_PATCH', 'Administration');
-                break;
-            case PackageManifest::PACKAGE_TYPE_THEME:
-                return translate('LBL_UW_TYPE_THEME', 'Administration');
-                break;
-        }
-    }
-
-    /**
      * return array of staging packages
      * @return array
      * @throws SugarQueryException
      */
     public function getPackagesInStaging(): array
     {
-        $packages = $this->upgradedPackageManager->getStagedPackages();
+        $packages = $this->upgradedPackageManager->getStagedModulePackages();
 
         return array_map(
             function (UpgradeHistory $history) {
@@ -84,7 +60,7 @@ class PackageManager
                     'published_date' => $data['published_data'],
                     'description' => $data['description'],
                     'uninstallable' => $history->isPackageUninstallable() ? 'Yes' : 'No',
-                    'type' => $this->getPackageTypeUIText($data['type']),
+                    'type' => htmlspecialchars(translate('LBL_UW_TYPE_' . strtoupper($data['type']), 'Administration')),
                     'file' => $data['id'],
                     'file_install' => $data['id'],
                     'unFile' => $data['id'],
@@ -94,9 +70,14 @@ class PackageManager
         );
     }
 
+    /**
+     * return array of installed packages
+     * @return array
+     * @throws SugarQueryException
+     */
     public function getinstalledPackages()
     {
-        $packages = $this->upgradedPackageManager->getInstalledPackages();
+        $packages = $this->upgradedPackageManager->getInstalledModulePackages();
 
         return array_map(
             function (UpgradeHistory $history) {
@@ -106,7 +87,7 @@ class PackageManager
                 return [
                     'name' => $data['name'],
                     'version' => $data['version'],
-                    'type' => $this->getPackageTypeUIText($data['type']),
+                    'type' => htmlspecialchars(translate('LBL_UW_TYPE_' . strtoupper($data['type']), 'Administration')),
                     'published_date' => $data['published_data'],
                     'description' => $data['description'],
                     'uninstallable' => $history->isPackageUninstallable() ? 'Yes' : 'No',

@@ -124,8 +124,7 @@ class UpgradeHistory extends SugarBean
         if (!$this->packageManifest) {
             $manifest = unserialize(base64_decode($this->manifest), ['allowed_classes' => false]);
             // Previous manifest might be saved with empty string instead of array
-            $keys = ['manifest', 'installdefs', 'upgrade_manifest'];
-            foreach ($keys as $key) {
+            foreach (['manifest', 'installdefs', 'upgrade_manifest'] as $key) {
                 if (empty($manifest[$key]) || !is_array($manifest[$key])) {
                     $manifest[$key] = [];
                 }
@@ -174,7 +173,7 @@ class UpgradeHistory extends SugarBean
     }
 
     /**
-     * return packages by status
+     * return all packages
      * @return SugarBean[]
      * @throws SugarQueryException
      */
@@ -187,15 +186,31 @@ class UpgradeHistory extends SugarBean
     }
 
     /**
-     * return packages by status
+     * return all packages by type
+     * @param string $type
+     * @return SugarBean[]
+     * @throws SugarQueryException
+     */
+    public function getPackagesByType(string $type): array
+    {
+        $query = new SugarQuery();
+        $query->from($this);
+        $query->where()->equals('type', $type);
+        $query->orderBy('date_entered');
+        return $this->fetchFromQuery($query);
+    }
+
+    /**
+     * return module packages by status
      * @param string $status
      * @return SugarBean[]
      * @throws SugarQueryException
      */
-    public function getPackagesByStatus(string $status): array
+    public function getModulePackagesByStatus(string $status): array
     {
         $query = new SugarQuery();
         $query->from($this);
+        $query->where()->equals('type', PackageManifest::PACKAGE_TYPE_MODULE);
         $query->where()->equals('status', $status);
         return $this->fetchFromQuery($query);
     }

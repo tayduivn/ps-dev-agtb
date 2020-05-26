@@ -64,7 +64,7 @@ class PackageController
         if (!empty($id)) {
             /** @var UpgradeHistory $upgradeHistory */
             $upgradeHistory = BeanFactory::retrieveBean('UpgradeHistory', $id);
-            if (!empty($upgradeHistory) && !empty($upgradeHistory->id)) {
+            if (!empty($upgradeHistory->id)) {
                 try {
                     $this->upgradedPackageManager->deletePackage($upgradeHistory);
                     $result = true;

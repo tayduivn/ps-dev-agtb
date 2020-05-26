@@ -27,7 +27,7 @@ use Sugarcrm\Sugarcrm\PackageManager\File\PackageZipFile;
 global $mod_strings;
 
 $form_action = "index.php?module=Administration&view=module&action=UpgradeWizard";
-$uploadLabel = $mod_strings['LBL_UW_UPLOAD_MODULE'];
+$uploadLabel = htmlspecialchars(translate('LBL_UW_UPLOAD_MODULE', 'Administration'));
 $descItemsQueued = $mod_strings['LBL_UW_DESC_MODULES_QUEUED'];
 $descItemsInstalled = $mod_strings['LBL_UW_DESC_MODULES_INSTALLED'];
 
@@ -65,7 +65,11 @@ if ($run !== "" && empty($GLOBALS['sugar_config']['use_common_ml_dir'])) {
 }
 
 
-echo getClassicModuleTitle($mod_strings['LBL_MODULE_NAME'], array($mod_strings['LBL_MODULE_LOADER_TITLE']), false);
+echo getClassicModuleTitle(
+    htmlspecialchars(translate('LBL_MODULE_NAME', 'Administration')),
+    [htmlspecialchars(translate('LBL_MODULE_LOADER_TITLE', 'Administration'))],
+    false
+);
 $csrfToken = smarty_function_sugar_csrf_form_token(array(), $smarty);
 
 // upload link

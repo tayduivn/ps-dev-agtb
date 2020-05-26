@@ -877,6 +877,7 @@ class HealthCheckScanner
         $history = new UpgradeHistory();
         $query = new SugarQuery();
         $query->from($history);
+        $query->where()->equals('status', 'installed');
         $query->where()->equals('type', $type);
         return $history->fetchFromQuery($query);
     }
