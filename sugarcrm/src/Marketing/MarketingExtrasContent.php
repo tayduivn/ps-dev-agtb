@@ -114,24 +114,28 @@ class MarketingExtrasContent
             return false;
         }
 
-        curl_setopt($curlHandle, CURLOPT_NOBODY, true);
         curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curlHandle, CURLOPT_HEADER, true);
         curl_setopt($curlHandle, CURLOPT_CONNECTTIMEOUT_MS, $timeoutInMs);
         curl_setopt($curlHandle, CURLOPT_TIMEOUT_MS, ($timeoutInMs * 2));
 
         $response = curl_exec($curlHandle);
+        $headers = substr($response, 0, curl_getinfo($curlHandle, CURLINFO_HEADER_SIZE));
+        $httpCode = curl_getinfo($curlHandle, CURLINFO_HTTP_CODE);
+        $curlError = curl_error($curlHandle);
+
         curl_close($curlHandle);
 
-        if ($response === false) {
-            \LoggerManager::getLogger()->warn('MarketingExtrasContent:: Could not get response from URL ' . $url);
+        if ($response === false || $httpCode !== 200) {
+            \LoggerManager::getLogger()->warn('MarketingExtrasContent:: Could not get response from URL ' . $url .
+                ' with HTTP code: ' . $httpCode . ' and curl error: ' . $curlError);
             return false;
         }
 
-        $response = strtolower($response);
+        $headers = strtolower($headers);
 
         foreach ($this->blacklistedHeaders as $blacklistedHeader) {
-            if (strpos($response, $blacklistedHeader) !== false) {
+            if (strpos($headers, $blacklistedHeader) !== false) {
                 \LoggerManager::getLogger()->warn('MarketingExtrasContent:: Cannot load iframe due to ' .
                     $blacklistedHeader . ' header from URL ' . $url);
                 return false;
