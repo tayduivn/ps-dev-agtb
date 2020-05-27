@@ -4579,11 +4579,8 @@ class InboundEmail extends SugarBean {
             $email->message_uid = $uid;
 
             // Handle message body and attachments
-            $oldPrefix = $this->imagePrefix;
-            $this->imagePrefix = 'cid:';
             $this->processMessageAttachments($uid, $email);
             $this->processMessageBodyText($uid, $email);
-            $this->imagePrefix = $oldPrefix;
 
             // assign_to group
             if (!empty($_REQUEST['user_id'])) {
@@ -4734,8 +4731,7 @@ class InboundEmail extends SugarBean {
      */
     protected function saveAttachmentFile($attachment, $noteBean)
     {
-        global $sugar_config;
-        $uploadDir = $sugar_config['upload_dir'];
+        $uploadDir = 'upload://';
         $fileName = $noteBean->id;
 
         // Download the attachment if we haven't yet
@@ -4761,7 +4757,7 @@ class InboundEmail extends SugarBean {
         // replace image references in the email body with the correct values
         $subType = $attachment['subtype'];
         if ($attachment['contentDisposition'] === 'inline' && in_array(strtoupper($subType), $this->imageTypes)) {
-            if (copy($uploadDir . $fileName, sugar_cached('images/' . $fileName) . strtolower($subType))) {
+            if (copy($uploadDir . $fileName, sugar_cached('images/' . $fileName . '.') . strtolower($subType))) {
                 // Strip the <> around the Content-Id
                 $imageId = substr($attachment['contentId'], 1, -1);
                 $this->inlineImages[$imageId] = $noteBean->id . '.' . strtolower($subType);
@@ -4780,16 +4776,7 @@ class InboundEmail extends SugarBean {
      */
     protected function processMessageBodyText($uid, $emailBean)
     {
-        // For each inline image, update the HTML version of the body to point to
-        // the correct image path
         $bodyText = $this->conn->getBody($uid);
-        foreach ($this->inlineImages as $imageId => $imageName) {
-            $oldImagePath = "src=\"cid:$imageId\"";
-            $newImagePath = "class=\"image\" src=\"{$this->imagePrefix}{$imageName}\"";
-            $bodyText['html'] = str_replace($oldImagePath, $newImagePath, $bodyText['html']);
-        }
-
-        // Set the values on the email bean after processing the results
         $emailBean->description_html = $this->postProcessMessageText($bodyText['html'], 'html');
         $emailBean->description = $this->postProcessMessageText($bodyText['plain'], 'plain');
         $emailBean->description = $emailBean->description ?: strip_tags($emailBean->description_html);
@@ -4810,14 +4797,15 @@ class InboundEmail extends SugarBean {
         // Allow for custom processing of email message text
         $text = $this->customGetMessageText($text);
 
-        /* cn: bug 9176 - htmlEntitites hide XSS attacks. */
+        // Clean and return the text
         if ($type === 'plain') {
-            return SugarCleaner::cleanHtml(to_html($text), false);
+            // Bug 9176: htmlEntitites hide XSS attacks
+            $text = to_html($text);
+        } else {
+            // Bug 50241: can't process <?xml:namespace .../> properly. Strip <?xml ...> tag first.
+            $text = preg_replace("/<\?xml[^>]*>/", "", $text);
+            $text = InboundEmailUtils::updateInlineImageHtml($text, $this->inlineImages);
         }
-
-        // Bug 50241: can't process <?xml:namespace .../> properly. Strip <?xml ...> tag first.
-        $text = preg_replace("/<\?xml[^>]*>/", "", $text);
-
         return SugarCleaner::cleanHtml($text, false);
     }
 

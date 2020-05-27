@@ -16,7 +16,6 @@
  */
 class InboundEmailUtils
 {
-
     /**
      * Decodes a string of text with the specified encoding
      *
@@ -47,9 +46,10 @@ class InboundEmailUtils
     {
         global $locale;
 
+        // If no charset was provided, attempt to detect it
+        $charset = !empty($charset) ? $charset : $locale->detectCharset($text, true);
         if (empty($charset)) {
-            $GLOBALS['log']->debug("***ERROR: ImapOauthMailer::handleCharsetTranslation() called without a \$charset!");
-            $GLOBALS['log']->debug("***STACKTRACE: ".print_r(debug_backtrace(), true));
+            $GLOBALS['log']->debug("InboundEmailUtils::handleCharsetTranslation() called without \$charset");
             return $text;
         }
 
@@ -59,5 +59,46 @@ class InboundEmailUtils
         }
 
         return $locale->translateCharset($text, $charset);
+    }
+
+    /**
+     * Correctly formats CID-embedded inline image references in an email HTML
+     * body for storage in Sugar
+     *
+     * @param string $html the email HTML body to update
+     * @param array $inlineImages mapping of {Old cid => New cid} for all inline CID images
+     * @return string the HTML body with updated image references
+     */
+    public static function updateInlineImageHtml($html, $inlineImages)
+    {
+        // For each inline image in the email HTML, update all tags that reference
+        // the image by CID
+        foreach ($inlineImages as $imageId => $imageName) {
+            $references = [];
+            if (preg_match(
+                '#<[^>]*src="cid:' . preg_quote($imageId, '#') . '"[^>]*>#',
+                $html,
+                $references
+            )) {
+                // For each reference, update the class and src attributes to the
+                // correct format
+                foreach ($references as $oldReference) {
+                    $newReference = preg_replace(
+                        [
+                            '#[ ]*class="[^"]*"[ ]*#',
+                            '#src="cid:' . preg_quote($imageId, '#') . '"#',
+                        ],
+                        [
+                            ' ',
+                            'class="image" src="cid:' . $imageName . '"',
+                        ],
+                        $oldReference
+                    );
+
+                    $html = str_replace($oldReference, $newReference, $html);
+                }
+            }
+        }
+        return $html;
     }
 }
