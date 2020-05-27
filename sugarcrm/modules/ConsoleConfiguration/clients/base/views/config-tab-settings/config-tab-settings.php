@@ -69,6 +69,7 @@ $viewdefs['ConsoleConfiguration']['base']['view']['config-tab-settings'] = array
             ),
         ),
         [
+            'label' => 'LBL_PREVIEW',
             'fields' => [
                 [
                     'name' => 'preview-table',
