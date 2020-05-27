@@ -136,8 +136,7 @@ function checkBouncedEmailForIdentifier($email_description)
 
 function campaign_process_bounced_emails(&$email, &$email_header) 
 {
-	global $sugar_config;
-	$emailFromAddress = $email_header->fromaddress;
+    $emailFromAddress = $email->from_name;
 	$email_description = $email->raw_source;
     	
 	//if raw_source is empty, try using the description instead

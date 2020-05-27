@@ -214,7 +214,7 @@ function getFoldersListForInboundAccount(moduleName, action, pageTarget, width, 
         '&target=' + pageTarget +
         '&target1=' + pageTarget +
         '&server_url=' + mailServer +
-        '&eapmId=' + eapmId +
+        '&eapm_id=' + eapmId +
         '&email_user=' + words[0] +
         '&protocol=' + protocol +
         '&port=' + port +

@@ -382,38 +382,35 @@ function trimTracker()
  */
 function pollMonitoredInboxesForBouncedCampaignEmails() {
 	$GLOBALS['log']->info('----->Scheduler job of type pollMonitoredInboxesForBouncedCampaignEmails()');
-	global $dictionary;
-
 
 	$ie = BeanFactory::newBean('InboundEmail');
 	$r = $ie->db->query('SELECT id FROM inbound_email WHERE deleted=0 AND status=\'Active\' AND mailbox_type=\'bounce\'');
 
 	while($a = $ie->db->fetchByAssoc($r)) {
 		$ieX = BeanFactory::getBean('InboundEmail', $a['id'], array('disable_row_level_security' => true));
-		$ieX->connectMailserver();
+        $ieX->connectToImapServer();
         $GLOBALS['log']->info("Bounced campaign scheduler connected to mail server id: {$a['id']} ");
-		$newMsgs = array();
-		if ($ieX->isPop3Protocol()) {
-			$newMsgs = $ieX->getPop3NewMessagesToDownload();
-		} else {
-			$newMsgs = $ieX->getNewMessageIds();
-		}
 
-		//$newMsgs = $ieX->getNewMessageIds();
-		if(is_array($newMsgs)) {
-			foreach($newMsgs as $k => $msgNo) {
-				$uid = $msgNo;
-				if ($ieX->isPop3Protocol()) {
-					$uid = $ieX->getUIDLForMessage($msgNo);
-				} else {
-					$uid = imap_uid($ieX->conn, $msgNo);
-				} // else
-                 $GLOBALS['log']->info("Bounced campaign scheduler will import message no: $msgNo");
-				$ieX->importOneEmail($msgNo, $uid, false,false);
-			}
-		}
-		imap_expunge($ieX->conn);
-		imap_close($ieX->conn);
+        $mailboxes = $ieX->mailboxarray;
+        foreach ($mailboxes as $mailbox) {
+            if ($ieX->isPop3Protocol()) {
+                $newMsgs = $ieX->getPop3NewMessagesToDownload();
+            } else {
+                $ieX->conn->selectMailbox($mailbox);
+                $newMsgs = $ieX->getNewIds();
+            }
+
+            if (is_array($newMsgs)) {
+                foreach ($newMsgs as $k => $msgNo) {
+                    $uid = $msgNo;
+                    if ($ieX->isPop3Protocol()) {
+                        $uid = $ieX->getUIDLForMessage($msgNo);
+                    }
+                    $GLOBALS['log']->info("Bounced campaign scheduler will import message no: $msgNo");
+                    $ieX->importEmailFromUid($uid);
+                }
+            }
+        }
 	}
 
 	return true;

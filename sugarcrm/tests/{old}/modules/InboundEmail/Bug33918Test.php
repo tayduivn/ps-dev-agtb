@@ -173,7 +173,7 @@ class Bug33918Test extends TestCase
         $email->date_created = gmdate('Y-m-d H:i:s');
         $logID = $this->createCampaignLogForTrackerKey($trackerKey);
         $email_header = new stdClass();
-        $email_header->fromaddress = "Mail Delivery Subsystem <mailer-daemon@googlemail.com>";
+        $email->from_name = "Mail Delivery Subsystem <mailer-daemon@googlemail.com>";
         $this->assertTrue(campaign_process_bounced_emails($email, $email_header), "Unable to process bounced email");
     
         $GLOBALS['db']->query("DELETE FROM notes WHERE id='{$note->id}'");
@@ -237,7 +237,7 @@ CIA;
         $email->date_created = gmdate('Y-m-d H:i:s');
         $logID = $this->createCampaignLogForTrackerKey($trackerKey);
         $email_header = new stdClass();
-        $email_header->fromaddress = "MAILER-DAEMON";
+        $email->from_name = "MAILER-DAEMON";
         $this->assertTrue(campaign_process_bounced_emails($email, $email_header), "Unable to process bounced email");
     
         $GLOBALS['db']->query("DELETE FROM notes WHERE id='{$note->id}'");
