@@ -111,7 +111,11 @@ $viewdefs['ShiftExceptions']['base']['view']['record'] = [
                 'timezone',
                 'shift_exception_type',
                 [],
-                'all_day',
+                [
+                    'name' => 'all_day',
+                    'label' => 'LBL_ALL_DAY',
+                    'type' => 'all-day',
+                ],
                 [],
                 'start_date',
                 [

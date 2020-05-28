@@ -131,6 +131,7 @@
         this.model.on('change:' + this.name, function() {
             this._updateTimeFields(true);
         }, this);
+        this.context.on('button:save_button:click', this._saveTime, this);
     },
 
     unformat: function(value) {

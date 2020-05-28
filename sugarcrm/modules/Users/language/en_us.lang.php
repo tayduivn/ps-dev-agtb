@@ -298,6 +298,8 @@ $mod_strings = array (
     'LBL_FORECASTS'                     => 'Forecasts',
     'LBL_WORKSHEETS'                    => 'Worksheets',
 	'LBL_CALENDARS'                     => 'Calendars',
+    'LBL_SHIFTS'                        => 'Shifts',
+    'LBL_SHIFT_EXCEPTIONS'              => 'Shift Exceptions',
 
     'LBL_RECEIVE_NOTIFICATIONS_TEXT'    => 'Receive an email notification when a record is assigned to you.',
     'LBL_RECEIVE_NOTIFICATIONS'         => 'Email on Assignment',

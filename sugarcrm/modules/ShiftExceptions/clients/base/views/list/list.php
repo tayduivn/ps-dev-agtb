@@ -53,6 +53,7 @@ $viewdefs['ShiftExceptions']['base']['view']['list'] = [
                     'label' => 'LBL_ALL_DAY',
                     'default' => false,
                     'enabled' => true,
+                    'type' => 'all-day',
                 ],
                 [
                     'name' => 'enabled',
