@@ -13,7 +13,7 @@ Feature: Renewal Opp > Auto-generate Renewal Opportunity when original renewable
   Background:
     Given I am logged in
 
-  @user_profile
+  @user_profile @pr
   Scenario: User Profile > Change license type
     When I choose Profile in the user actions menu
     # Change the value of License Type field
@@ -118,7 +118,7 @@ Feature: Renewal Opp > Auto-generate Renewal Opportunity when original renewable
     Then I should not see [*OppRenewal] on Opportunities list view
 
 
-  @multiple_RLI_renewal_oppertunity @SS-198
+  @multiple_RLI_renewal_opportunity @SS-198
   Scenario: Opportunities >  Add in multiple RLI's with the same product catalog id's on a renewal opportunity
     # Create product records
     Given ProductTemplates records exist:
@@ -212,7 +212,7 @@ Feature: Renewal Opp > Auto-generate Renewal Opportunity when original renewable
 
 
   @renewal_opportunity @SS-318 @AT-348
-  Scenario: Renewal Opportunity > Verify value of 'Service Start Date' field on opportunity record view
+  Scenario: Service Opportunity > Verify value of 'Service Start Date' field on opportunity record view
     Given Accounts records exist:
       | *   | name      |
       | A_1 | Account_1 |
@@ -293,7 +293,144 @@ Feature: Renewal Opp > Auto-generate Renewal Opportunity when original renewable
     When I close alert
 
 
-  @user_profile
+
+  @SS-316 @SS-317 @pr
+  Scenario: Service Opportunity > Change Service Start Date of RLIs from Opportunity level
+    Given Accounts records exist:
+      | *   | name      |
+      | A_1 | Account_1 |
+    And Opportunities records exist related via opportunities link to *A_1:
+      | *     | name  |
+      | Opp_1 | Opp_1 |
+    And RevenueLineItems records exist related via revenuelineitems link to *Opp_1:
+      | *name | date_closed | worst_case | likely_case | best_case | sales_stage         | quantity | service | service_start_date | service_duration_value | service_duration_unit | renewable |
+      | RLI_1 | now         | 1000       | 2000        | 3000      | Prospecting         | 1        | true    | 2020-01-01         | 2                      | year                  | true      |
+      | RLI_2 | now         | 1000       | 2000        | 3000      | Closed Lost         | 1        | true    | 2020-01-02         | 2                      | year                  | false     |
+      | RLI_3 | now         | 1000       | 2000        | 3000      | Needs Analysis      | 1        | true    | 2020-01-03         | 2                      | year                  | true      |
+      | RLI_4 | now         | 1000       | 2000        | 3000      | Perception Analysis | 1        | false   |                    |                        |                       |           |
+      | RLI_5 | now         | 1000       | 2000        | 3000      | Closed Won          | 1        | true    | 2020-01-05         | 2                      | year                  | true      |
+    
+    # Navigate to Opportunities module
+    When I choose Opportunities in modules menu
+    When I select *Opp_1 in #OpportunitiesList.ListView
+
+    # Verify value of 'service_start_date' field
+    Then I verify fields on #Opp_1Record.RecordView
+      | fieldName          | value      |
+      | service_start_date | 01/01/2020 |
+
+    # Edit 'service_start_date' field of the opportunity
+    When I click Edit button on #Opp_1Record header
+    When I provide input for #Opp_1Record.RecordView view
+      | service_start_date |
+      | 01/15/2020         |
+    When I click Save button on #Opp_1Record header
+    When I close alert
+    
+    # Verify value of 'service_start_date' field in linked RLI records
+    When I open the revenuelineitems subpanel on #Opp_1Record view
+    Then I verify fields for *RLI_1 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
+      | fieldName          | value      |
+      | service_start_date | 01/15/2020 |
+    Then I verify fields for *RLI_2 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
+      | fieldName          | value      |
+      | service_start_date | 01/02/2020 |
+    Then I verify fields for *RLI_3 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
+      | fieldName          | value      |
+      | service_start_date | 01/15/2020 |
+    Then I verify fields for *RLI_4 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
+      | fieldName          | value |
+      | service_start_date |       |
+    Then I verify fields for *RLI_5 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
+      | fieldName          | value      |
+      | service_start_date | 01/05/2020 |
+
+    When I choose Opportunities in modules menu
+    When I click on preview button on *Opp_1 in #OpportunitiesList.ListView
+    When I click on Edit button in #Opp_1Preview.PreviewHeaderView
+    When I provide input for #Opp_1Preview.PreviewView view
+      | service_start_date |
+      | 02/01/2020         |
+    When I click on Save button in #Opp_1Preview.PreviewHeaderView
+    When I close alert
+
+    When I select *Opp_1 in #OpportunitiesList.ListView
+    # Verify value of 'service_start_date' field in linked RLI records
+    When I open the revenuelineitems subpanel on #Opp_1Record view
+    Then I verify fields for *RLI_1 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
+      | fieldName          | value      |
+      | service_start_date | 02/01/2020 |
+    Then I verify fields for *RLI_2 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
+      | fieldName          | value      |
+      | service_start_date | 01/02/2020 |
+    Then I verify fields for *RLI_3 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
+      | fieldName          | value      |
+      | service_start_date | 02/01/2020 |
+    Then I verify fields for *RLI_4 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
+      | fieldName          | value |
+      | service_start_date |       |
+    Then I verify fields for *RLI_5 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
+      | fieldName          | value      |
+      | service_start_date | 01/05/2020 |
+
+    # Change Sales Stage of some RLIs to "Close Won"
+    When I perform mass update of RevenueLineItems [*RLI_1, *RLI_3, *RLI_4] with the following values:
+      | fieldName   | value      |
+      | sales_stage | Closed Won |
+
+    # Navigate to Opportunities module
+    When I choose Opportunities in modules menu
+    When I select *Opp_1 in #OpportunitiesList.ListView
+
+    # Verify value of 'service_start_date' field
+    Then I verify fields on #Opp_1Record.RecordView
+      | fieldName          | value      |
+      | service_start_date | 01/05/2020 |
+
+    # Change Sales Stage of some RLIs to "Close Lost"
+    When I perform mass update of RevenueLineItems [*RLI_1, *RLI_3, *RLI_4, *RLI_5] with the following values:
+      | fieldName   | value       |
+      | sales_stage | Closed Lost |
+
+    # Navigate to Opportunities module
+    When I choose Opportunities in modules menu
+    When I select *Opp_1 in #OpportunitiesList.ListView
+
+    # Verify value of 'service_start_date' field
+    Then I verify fields on #Opp_1Record.RecordView
+      | fieldName          | value |
+      | service_start_date |       |
+
+    # Verify value of 'service_start_date' field in linked RLI records
+    When I open the revenuelineitems subpanel on #Opp_1Record view
+    Then I verify fields for *RLI_1 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
+      | fieldName          | value      |
+      | service_start_date | 02/01/2020 |
+    Then I verify fields for *RLI_2 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
+      | fieldName          | value      |
+      | service_start_date | 01/02/2020 |
+    Then I verify fields for *RLI_3 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
+      | fieldName          | value      |
+      | service_start_date | 02/01/2020 |
+    Then I verify fields for *RLI_4 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
+      | fieldName          | value |
+      | service_start_date |       |
+    Then I verify fields for *RLI_5 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
+      | fieldName          | value      |
+      | service_start_date | 01/05/2020 |
+
+
+  @multiple_RLI_renewal_oppertunity_cleanup @AT-328
+  Scenario: Opportunities >  Select all records > Mass Delete
+    # Issue with seedbed not cleaning up created rewable opportunities and RLIs operation below handles the clean up. remove when fixed.
+    When I choose Opportunities in modules menu
+    When I toggleAll records in #OpportunitiesList.ListView
+    When I select "Delete Selected" action in #OpportunitiesList.ListView
+    When I Confirm confirmation alert
+    When I close alert
+
+
+  @user_profile @pr
   Scenario: User Profile > Change license type
     When I choose Profile in the user actions menu
     # Change the value of License Type field

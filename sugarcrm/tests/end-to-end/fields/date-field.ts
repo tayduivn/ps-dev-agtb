@@ -109,6 +109,24 @@ export class Detail extends DateField {
     }
 }
 
+/**
+ *  This class handling date field empty value case in record/list/preview views
+ *  In case of empty value there is 'hide' class added
+ *  to the field's css path which this class is taking advantage of.
+ */
+export class DetailEmptyValue extends BaseField {
+
+    constructor(options) {
+        super(options);
+        this.selectors = this.mergeSelectors({
+            $: '.hide[field-name={{name}}][field-type={{type}}]',
+            field: {
+                selector: '',
+            }
+        });
+    }
+}
+
 export class List extends DateField {
 
     constructor(options) {
@@ -119,9 +137,7 @@ export class List extends DateField {
                 selector: 'div.ellipsis_inline'
             }
         });
-
     }
-
 }
 
 export const Preview = Detail;
