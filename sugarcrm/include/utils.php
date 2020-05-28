@@ -1628,6 +1628,7 @@ function get_admin_modules_for_user($user)
         'pmse_Emails_Templates', // Process Emails Templates
         'pmse_Inbox', // Processes
         'DataPrivacy',
+        'Shifts',
     );
 
     $workflow_mod_list = array();
