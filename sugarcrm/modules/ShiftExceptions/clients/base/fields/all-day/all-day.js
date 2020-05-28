@@ -65,7 +65,7 @@
             }, this);
         }
 
-        if (this.view.name === 'preview') {
+        if (_.contains(['preview', 'dashablerecord'], this.view.name)) {
             this.view.once('render', function() {
                 this._toggleTimeFields();
             }, this);
