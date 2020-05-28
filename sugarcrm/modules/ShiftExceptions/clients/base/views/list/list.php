@@ -12,7 +12,6 @@
  */
 
 $viewdefs['ShiftExceptions']['base']['view']['list'] = [
-    'name' => 'LBL_MODULE_NAME',
     'panels' => [
         [
             'label' => 'LBL_PANEL_1',
