@@ -31,13 +31,15 @@
 
             /**
              * Handler for Service change event
-             * Switches between service duration unit as 'Year(s)' or 'Day(s)' based on service field
+             * Switches between service duration unit as 'Year(s)' or 'Day(s)' based on service
+             * field. If the unit is already set, we should allow the existing enum handler to
+             * update that property.
              */
             handleServiceChange: function() {
-                if (this.model.get('service')) {
-                    this.model.set('service_duration_unit', 'year');
-                } else {
-                    this.model.set('service_duration_unit', 'day');
+                var updatedServiceDurationUnit = this.model.get('service') ? 'year' : 'day';
+
+                if (_.isEmpty(this.model.get('service_duration_unit'))) {
+                    this.model.set('service_duration_unit', updatedServiceDurationUnit);
                 }
             },
 

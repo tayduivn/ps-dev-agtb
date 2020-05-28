@@ -86,19 +86,38 @@ describe('PurchasedLineItems.Base.Plugins.PurchaseAndServiceChangeHandler', func
             plugin.model = null;
         });
 
-        it('when service is true should set service_duration_unit with year', function() {
-            plugin.model.get = function() { return true; };
+        it(
+            'when service is true and service_duration_unit is not set, should set service_duration_unit with year',
+            function() {
+                plugin.model.get = function(property) {
+                    return property === 'service' ? true : '';
+                };
+                plugin.handleServiceChange();
+
+                expect(plugin.model.set).toHaveBeenCalledWith('service_duration_unit', 'year');
+            }
+        );
+
+        it('when service is true and service_duration_unit is set, should not set service_duration_unit', function() {
+            plugin.model.get = function(property) {
+                return property === 'service_duration_unit' ? 'month' : false;
+            };
             plugin.handleServiceChange();
 
-            expect(plugin.model.set).toHaveBeenCalledWith('service_duration_unit', 'year');
+            expect(plugin.model.set).not.toHaveBeenCalled();
         });
 
-        it('when service is false should set service_duration_unit with day', function() {
-            plugin.model.get = function() { return false; };
-            plugin.handleServiceChange();
+        it(
+            'when service is false and service_duration_unit is empty, should set service_duration_unit with day',
+            function() {
+                plugin.model.get = function(property) {
+                    return false;
+                };
+                plugin.handleServiceChange();
 
-            expect(plugin.model.set).toHaveBeenCalledWith('service_duration_unit', 'day');
-        });
+                expect(plugin.model.set).toHaveBeenCalledWith('service_duration_unit', 'day');
+            }
+        );
     });
 
     describe('handlePurchaseChange()', function() {
