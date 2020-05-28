@@ -2538,20 +2538,6 @@ AdamActivity.prototype.getAction = function(type, w) {
                     fields: ['id', 'full_name'],
                     filterOptions: null,
                 },
-                options: [
-                    {
-                        'text': App.lang.getModString('LBL_PMSE_FORM_OPTION_CURRENT_USER', 'pmse_Project'),
-                        'value': 'currentuser',
-                    },
-                    {
-                        'text': App.lang.getModString('LBL_PMSE_FORM_OPTION_RECORD_OWNER', 'pmse_Project'),
-                        'value': 'owner',
-                    },
-                    {
-                        'text': App.lang.getModString('LBL_PMSE_FORM_OPTION_SUPERVISOR', 'pmse_Project'),
-                        'value': 'supervisor',
-                    },
-                ],
                 change: changeReserveUserFn,
             });
 
