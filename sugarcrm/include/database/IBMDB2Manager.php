@@ -607,8 +607,9 @@ WHERE TABSCHEMA = ?
 	{
 		global $sugar_config;
 
-		if(is_null($configOptions))
-			$configOptions = $sugar_config['dbconfig'];
+        if (is_null($configOptions)) {
+            $configOptions = $sugar_config['dbconfig'];
+        }
 
 
 		if($this->getOption('persistent'))

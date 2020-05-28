@@ -28,13 +28,22 @@ class MysqliManagerTest extends MysqlManagerTest
         ];
         
         $this->db->setOptions([]);
+        global $sugar_config;
+        $sugar_config['db']['test'] = $sugar_config['dbconfig'];
+        $sugar_config['db']['test']['db_host_instance'] = 'TEST';
     }
 
     protected function tearDown() : void
     {
+        global $sugar_config;
         if ($this->db) {
             $this->db->disconnect();
         }
+        if (isset(DBManagerFactory::$instances['test'])) {
+            DBManagerFactory::getInstance('test')->disconnect();
+            unset(DBManagerFactory::$instances['test']);
+        }
+        unset($sugar_config['db']['test']);
 
         parent::tearDown();
     }
@@ -90,5 +99,18 @@ class MysqliManagerTest extends MysqlManagerTest
     public function testSupports($feature, $expectedSupport)
     {
         $this->assertEquals($expectedSupport, $this->db->supports($feature));
+    }
+
+    public function testReconnect()
+    {
+        if ($GLOBALS['db']->dbType != 'mysql') {
+            $this->markTestSkipped('Only applies to MySQL');
+        }
+
+        DBManagerFactory::getInstance('test')->query('SET SESSION wait_timeout=1');
+        sleep(2);
+        // This query will reconnect to DB
+        DBManagerFactory::getInstance('test')->query('SELECT NULL', false, '', true);
+        $this->assertEquals('TEST', DBManagerFactory::getInstance('test')->connectOptions['db_host_instance']);
     }
 }

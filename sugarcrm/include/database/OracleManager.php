@@ -593,8 +593,9 @@ WHERE OWNER = ?
     {
         global $sugar_config;
 
-        if(!$configOptions)
-			$configOptions = $sugar_config['dbconfig'];
+        if (is_null($configOptions)) {
+            $configOptions = $sugar_config['dbconfig'];
+        }
 
         if (empty($configOptions['db_schema_name'])) {
             $configOptions['db_schema_name'] = $configOptions['db_user_name'];

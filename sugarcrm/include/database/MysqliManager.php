@@ -161,7 +161,7 @@ class MysqliManager extends MysqlManager
             $this->logger->alert('mysqli has gone away, retrying');
             $this->retryCount++;
             $this->disconnect();
-            $this->connect();
+            $this->connect($this->connectOptions);
             return $this->query($sql, $dieOnError, $msg, $suppress, $keepResult);
         } else {
             $this->retryCount = 0;
@@ -346,7 +346,7 @@ class MysqliManager extends MysqlManager
      */
     protected function setupConnectOptions(array $configOptions = null)
     {
-        if (is_null($configOptions)) {            
+        if (is_null($configOptions)) {
             $this->connectOptions = SugarConfig::getInstance()->get('dbconfig');
         } else {
             $this->connectOptions = $configOptions;
