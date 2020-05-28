@@ -162,7 +162,7 @@ Feature: Purchases module verification
     And ProductTypes records exist:
       | *name  |
       | Type_1 |
-  # Update Product with type and category
+    # Update Product with type and category
     When I choose ProductTemplates in modules menu
     When I select *Prod_1 in #ProductTemplatesList.ListView
     When I click Edit button on #Prod_1Record header
@@ -171,21 +171,21 @@ Feature: Purchases module verification
       | Type_1    | Category_1    |
     When I click Save button on #ProductTemplatesRecord header
     When I close alert
-  # Click Create Purchase in Mega menu
+    # Click Create Purchase in Mega menu
     When I choose Purchases in modules menu and select "Create Purchase" menu item
     When I click show more button on #PurchasesDrawer view
-  # Populate Header data
+    # Populate Header data
     When I provide input for #PurchasesDrawer.HeaderView view
       | *     | name            |
       | Pur_1 | My New Purchase |
-  # Populate record data
+    # Populate record data
     When I provide input for #PurchasesDrawer.RecordView view
       | *     | account_name | tag  | commentlog  | description                  | product_template_name |
       | Pur_1 | Account One  | Alex | New Message | You've made a great purchase | Product One           |
-  # Save
+    # Save
     When I click Save button on #PurchasesDrawer header
     When I close alert
-  # Verify that record is created successfully
+    # Verify that record is created successfully
     Then Purchases *Pur_1 should have the following values:
       | fieldName             | value                        |
       | name                  | My New Purchase              |

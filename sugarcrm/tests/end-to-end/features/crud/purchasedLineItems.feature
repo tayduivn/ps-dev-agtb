@@ -183,7 +183,7 @@ Feature: Purchased Line Items module verification
       | copy           | 2           | 2             |
 
 
-  @create
+  @create @SS-473
   Scenario: Purchased Line Items > Create
     Given Accounts records exist:
       | *   | name        |
@@ -231,6 +231,23 @@ Feature: Purchased Line Items module verification
       | service_end_date       | 05/31/2022 |
       | tag                    | Chelsea    |
       | revenuelineitem_name   | RLI_1      |
+      | annual_revenue         | $2,950.00  |
+
+    When I click Edit button on #PLI_1Record header
+    When I provide input for #PLI_1Record.RecordView view
+      | discount_amount | discount_select |
+      | 30              | % Percent       |
+    When I click Save button on #PLI_1Record header
+    When I close alert
+
+    # Verify that calculation is correct when discount appied in percentages (SS-473)
+    Then PurchasedLineItems *PLI_1 should have the following values:
+      | fieldName       | value     |
+      | revenue         | $2,000.00 |
+      | quantity        | 3.00      |
+      | discount_amount | 30.00%    |
+      | total_amount    | $4,200.00 |
+      | annual_revenue  | $2,100.00 |
 
 
   @SS-441
