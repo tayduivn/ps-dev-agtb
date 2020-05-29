@@ -19,6 +19,7 @@ $viewdefs['base']['view']['shift-exceptions-dashlet'] = [
                 'module' => 'ShiftExceptions',
             ],
             'preview' => [
+                'module' => 'ShiftExceptions',
             ],
             'filter' => [
                 'module' => [
