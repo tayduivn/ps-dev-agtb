@@ -100,6 +100,7 @@ class MysqliManagerTest extends MysqlManagerTest
     {
         $this->assertEquals($expectedSupport, $this->db->supports($feature));
     }
+//BEGIN SUGARCRM flav=ent ONLY
 
     public function testReconnect()
     {
@@ -113,4 +114,5 @@ class MysqliManagerTest extends MysqlManagerTest
         DBManagerFactory::getInstance('test')->query('SELECT NULL', false, '', true);
         $this->assertEquals('TEST', DBManagerFactory::getInstance('test')->connectOptions['db_host_instance']);
     }
+//END SUGARCRM flav=ent ONLY
 }
