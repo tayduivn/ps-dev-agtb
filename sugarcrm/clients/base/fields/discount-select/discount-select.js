@@ -76,7 +76,7 @@
         var newOptions = {
             placeholder: this.currentDropdownSymbol,
             containerCssClass: this.containerCssClass,
-            dropdownCss: {width: 'unset'},
+            dropdownCss: {width: 'auto'},
             width: '28px',
         };
 

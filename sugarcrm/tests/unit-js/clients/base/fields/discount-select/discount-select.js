@@ -95,7 +95,7 @@ describe('Base.Field.DiscountSelect', function() {
             expect(select2Options).toEqual(jasmine.objectContaining({
                 placeholder: field.currentDropdownSymbol,
                 containerCssClass: field.containerCssClass,
-                dropdownCss: {width: 'unset'},
+                dropdownCss: {width: 'auto'},
                 width: '28px',
             }));
         });
