@@ -18,12 +18,12 @@
     /**
      * Fields with these names should not be displayed in fields list.
      */
-    ignoredNames: ['deleted', 'mkto_id', 'googleplus'],
+    ignoredNames: ['deleted', 'mkto_id', 'googleplus', 'team_name'],
 
     /**
      * Fields with these types should not be displayed in fields list.
      */
-    ignoredTypes: ['id', 'link'],
+    ignoredTypes: ['id', 'link', 'tag'],
 
     /**
      * Here are stored all available fields for all available tabs.
