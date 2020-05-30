@@ -53,7 +53,8 @@ Feature: Data Privacy module verification
       | status      | Open                                              |
 
 
-  @DataPrivacy_EraseAndComplete @pr
+  @DataPrivacy_EraseAndComplete @ci-excluded
+  # Re-enable after AT-372 is addressed
   Scenario: Data Privacy > Erase And Complete
     Given DataPrivacy records exist:
       | *name | type                         | priority | source     | date_due                  |

@@ -74,7 +74,6 @@ Feature: Sugar Sell Renewals Console Verification > Accounts Tab
       | annual_revenue | 30K        |
       | account_type   | Competitor |
 
-
     # Verify that record is present in multiline list view
     Then I verify fields for *A_4 in #AccountsList.MultilineListView
       | fieldName      | value      |
@@ -82,7 +81,6 @@ Feature: Sugar Sell Renewals Console Verification > Accounts Tab
       | industry       | Apparel    |
       | annual_revenue | 40K        |
       | account_type   | Competitor |
-
 
     # Accounts assigned to different user shouldn't be displayed in Renewal Console
     Then I should not see *A_5 in #AccountsList.MultilineListView
@@ -159,7 +157,7 @@ Feature: Sugar Sell Renewals Console Verification > Accounts Tab
     When I close alert
 
     # Return to Renewal Console tab
-    When I switch to tab 0
+    When I choose Home in modules menu
 
     # Refresh the browser
     When I refresh the browser

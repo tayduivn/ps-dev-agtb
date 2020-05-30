@@ -152,7 +152,7 @@ Feature: Sugar Sell Renewals Console Verification > Opportunities Tab
     When I close alert
 
     # Return to Renewal Console tab
-    When I switch to tab 0
+    When I choose Home in modules menu
 
     # Refresh the browser
     When I refresh the browser
