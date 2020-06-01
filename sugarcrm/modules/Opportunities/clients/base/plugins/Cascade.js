@@ -145,7 +145,7 @@
                 }
 
                 // Force to set the checkbox to false only on entering the edit mode and not during the other flow
-                if (editClick) {
+                if (app.utils.isTruthy(editClick)) {
                     this.field.setDisabled(true, {trigger: true});
                 }
                 this.bindEditActions();
