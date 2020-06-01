@@ -913,6 +913,7 @@ class RevenueLineItemTest extends TestCase
         }
         $rli->save();
         $purchase = SugarTestPurchaseUtilities::createPurchase();
+        $purchase->service = $copyFields['service'];
 
         $pli = $rli->generatePliFromRli($purchase);
         $this->assertEquals($current_user->id, $pli->created_by);

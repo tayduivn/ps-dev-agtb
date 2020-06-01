@@ -139,8 +139,8 @@ class RevenueLineItem extends SugarBean
         'tax_class', 'weight', 'website', 'serial_number', 'cost_price',
         'mft_part_num', 'book_value_date', 'book_value', 'support_term',
         'support_title', 'support_expires', 'support_starts',
-        'support_contact', 'support_desc', 'service','category_id',
-        'product_template_id', 'product_template_name',
+        'support_contact', 'support_desc', 'product_template_id',
+        'product_template_name',
     ];
 
     /** Fields to map when generating a Purchased Line Item */
@@ -600,6 +600,7 @@ class RevenueLineItem extends SugarBean
 
         if ($purchase->load_relationship('purchasedlineitems')) {
             $purchase->purchasedlineitems->add($pli);
+            $purchase->mapFieldsToPli($pli);
         }
 
         if ($this->load_relationship('documents') &&

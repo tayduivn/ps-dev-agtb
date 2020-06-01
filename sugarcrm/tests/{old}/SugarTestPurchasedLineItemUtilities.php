@@ -15,9 +15,9 @@ class SugarTestPurchasedLineItemUtilities
     protected static $createdPLIs = array();
 
     /**
-     * @return SugarBean
+     * @return PurchasedLineItem
      */
-    public static function createPurchasedLineItem($id = ''): SugarBean
+    public static function createPurchasedLineItem($id = ''): PurchasedLineItem
     {
         $time = mt_rand();
         $name = 'SugarPurchasedLineItem';

@@ -33,6 +33,14 @@ class Purchase extends Basic
     public $category_id;
     public $category_name;
 
+    public $pliCopyFields = [
+        'service' => 'service',
+        'type_id' => 'product_type_id',
+        'type_name' => 'product_type_name',
+        'category_id' => 'category_id',
+        'category_name' => 'category_name',
+    ];
+
     /**
      * {@inheritDoc}
      *
@@ -44,5 +52,12 @@ class Purchase extends Basic
                 return true;
         }
         return false;
+    }
+
+    public function mapFieldsToPli(PurchasedLineItem $pli)
+    {
+        foreach ($this->pliCopyFields as $purchaseField => $pliField) {
+            $pli->$pliField = $this->$purchaseField;
+        }
     }
 }
