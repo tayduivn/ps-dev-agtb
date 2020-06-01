@@ -29,6 +29,18 @@ class OpportunityViews
     }
 
     /**
+     * Process the Preview View for Opportunities
+     *
+     * @param array $fieldMap
+     */
+    public function processPreviewLayout(array $fieldMap)
+    {
+        /* @var $gridDefParser SidecarGridLayoutMetaDataParser */
+        $gridDefParser = ParserFactory::getParser(MB_PREVIEWVIEW, 'Opportunities', null, null, 'base');
+        $this->_processRecordParser($gridDefParser, $fieldMap);
+    }
+
+    /**
      * Process the Base Record View for Opportunities
      *
      * @param array $fieldMap

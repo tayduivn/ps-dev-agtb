@@ -300,6 +300,7 @@ abstract class OpportunitySetup
         $view = new OpportunityViews();
         $view->processBaseRecordLayout($fieldMap);
         $view->processMobileRecordLayout($fieldMap);
+        $view->processPreviewLayout($fieldMap);
     }
 
     /**
