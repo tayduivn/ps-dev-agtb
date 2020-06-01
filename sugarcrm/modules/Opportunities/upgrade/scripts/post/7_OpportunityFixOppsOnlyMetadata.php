@@ -12,27 +12,22 @@
 
 class SugarUpgradeOpportunityFixOppsOnlyMetadata extends UpgradeScript
 {
-    public $order = 7000;
+    public $order = 7030;
     public $type = self::UPGRADE_CUSTOM;
 
     public function run()
     {
-        if ($this->toFlavor('ent')) {
-            $settings = Opportunity::getSettings();
-            if (isset($settings['opps_view_by']) &&
-                $settings['opps_view_by'] !== 'RevenueLineItems') {
-                $fieldMap = [
-                    'service_start_date' => false,
-                    'sales_status' => false,
-                    
-                ];
-                SugarAutoLoader::load('modules/Opportunities/include/OpportunityViews.php');
-                $view = new OpportunityViews();
-                $view->processBaseRecordLayout($fieldMap);
-                $view->processMobileRecordLayout($fieldMap);
-                $view->processPreviewLayout($fieldMap);
-                $view->processListViews($fieldMap);
-            }
+        if ($this->toFlavor('ent') && !Opportunity::usingRevenueLineItems()) {
+            $fieldMap = [
+                'service_start_date' => false,
+                'sales_status' => false,
+            ];
+            SugarAutoLoader::load('modules/Opportunities/include/OpportunityViews.php');
+            $view = new OpportunityViews();
+            $view->processBaseRecordLayout($fieldMap);
+            $view->processMobileRecordLayout($fieldMap);
+            $view->processPreviewLayout($fieldMap);
+            $view->processListViews($fieldMap);
         }
     }
 }
