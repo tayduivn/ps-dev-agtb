@@ -2782,7 +2782,10 @@ $app_strings = array (
     'LBL_TO' => 'To',
     'LBL_CC' => 'CC',
     'LBL_BCC' => 'BCC',
-
+    
+    'LBL_START_DATE' => 'Start Date',
+    'LBL_END_DATE' => 'End Date',
+    
     'LBL_LINK_NONE'=> 'None',
     'LBL_LINK_ALL'=> 'All',
     'LBL_LINK_RECORDS'=> 'Records',
@@ -4550,6 +4553,7 @@ Sincerely, SugarCRM',
     'LBL_TASKS_SUBPANEL_TITLE' => 'Tasks',
     'LBL_CALLS_SUBPANEL_TITLE' => 'Calls',
     'LBL_EMAILS_SUBPANEL_TITLE' => 'Emails',
+    'LBL_SHIFTS_SUBPANEL_TITLE' => 'Shifts',
     'LBL_PRODUCTS_SUBPANEL_TITLE' => 'Quoted Line Items',
     'LNK_SETTINGS' => 'Settings',
     'LBL_MOBILE_SUPPORT' => 'Support',

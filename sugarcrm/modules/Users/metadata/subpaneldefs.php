@@ -27,6 +27,17 @@ $layout_defs['Users'] = array(
 			),
 			'title_key' => 'LBL_USER_HOLIDAY_SUBPANEL_TITLE',
 		),
+        'shifts' => array(
+            'order' => 31,
+            'sort_by' => 'name',
+            'sort_order' => 'asc',
+            'module' => 'Shifts',
+            'subpanel_name' => 'default',
+            'get_subpanel_data' => 'shifts',
+            'refresh_page' => 1,
+            'top_buttons' => array(),
+            'title_key' => 'LBL_SHIFTS_SUBPANEL_TITLE',
+        ),
 	),
 	'default_subpanel_define' => array(
 		'subpanel_title' => 'LBL_DEFAULT_SUBPANEL_TITLE',
