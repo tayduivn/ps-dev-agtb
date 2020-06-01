@@ -89,9 +89,10 @@ class SugarLicensing
      * @param $endpoint
      * @param $payload
      * @param bool $doDecode
+     * @param int $timeout
      * @return array
      */
-    public function request($endpoint, $payload, $doDecode = true)
+    public function request($endpoint, $payload, $doDecode = true, $timeout = 30)
     {
         // make sure that the first char is a "/"
         if (substr($endpoint, 0, 1) != "/") {
@@ -100,6 +101,8 @@ class SugarLicensing
 
         $endpoint = $this->getServerName() . $endpoint;
         curl_setopt($this->_curl, CURLOPT_URL, $endpoint);
+
+        curl_setopt($this->_curl, CURLOPT_CONNECTTIMEOUT, $timeout);
 
         if (!empty($payload)) {
             if (is_array($payload)) {
@@ -112,7 +115,7 @@ class SugarLicensing
 
         $response = $this->_reqeust();
 
-        if ($doDecode) {
+        if ($doDecode && $response != false) {
             return json_decode($response, true);
         }
 
@@ -130,7 +133,7 @@ class SugarLicensing
         
         if($results === FALSE)
         {
-            $GLOBALS['log']->fatal("Sugar Licensing encountered an error: " . curl_error($this->_curl));
+            $GLOBALS['log']->error("Sugar Licensing encountered an error: " . curl_error($this->_curl));
         }
 
         return $results;

@@ -15,6 +15,7 @@ namespace Sugarcrm\SugarcrmTestsUnit\inc\Entitlements;
 use Exception;
 use PHPUnit\Framework\TestCase;
 use Sugarcrm\Sugarcrm\Entitlements\Subscription;
+use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 
 /**
  * Class SubscriptionTest
@@ -100,11 +101,52 @@ class SubscriptionTest extends TestCase
     public function subscriptionExceptionProvider()
     {
         return [
-            [''],
             ['{"subscription": {"no_id" : "100"}'],
         ];
     }
 
+    /**
+     * @covers ::getDefaultSubscription
+     *
+     * @param $quantity
+     * @param $exirationDate
+     * @param $expected
+     *
+     * @dataProvider getDefaultSubscriptionProvider
+     */
+    public function testGetDefaultSubscription($quantity, $exirationDate, $expected)
+    {
+        $subscriptionMock = $this->getMockBuilder(Subscription::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getLicenseSettingByKey'])
+            ->getMock();
+
+        $subscriptionMock->expects($this->any())
+            ->method('getLicenseSettingByKey')
+            ->willReturnMap([
+                ['license_users', 1, $quantity],
+                ['license_expire_date', '+12 months', $exirationDate],
+            ]);
+
+        $sub = TestReflection::callProtectedMethod($subscriptionMock, 'getDefaultSubscription', []);
+        $this->assertSame($sub, $expected);
+    }
+
+    public function getDefaultSubscriptionProvider()
+    {
+        return [
+            'normal' => [
+                1000,
+                '2030-04-05',
+                ['quantity' => 1000, 'expiration_date' => 1901602800],
+            ],
+            'expired' => [
+                1000,
+                '2020-04-05',
+                [],
+            ],
+        ];
+    }
     /**
      * @covers ::getSubscriptions
      * @covers ::parse

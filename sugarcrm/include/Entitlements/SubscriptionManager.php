@@ -66,6 +66,22 @@ class SubscriptionManager
     protected static $instance;
 
     /**
+     * flag to ignore do metadata diff
+     * @var bool
+     */
+    protected $ignoreMedatdataDiff = false;
+
+    /**
+     * timeout for the request
+     */
+    const REQUEST_TIMEOUT = 10;
+
+    /**
+     * no data from license server, using default setting
+     */
+    const USE_DEFAULT_SETTING = 'use_default';
+
+    /**
      * no public ctor
      * subscriptionmanager constructor.
      */
@@ -124,9 +140,9 @@ class SubscriptionManager
      *
      * @param string $licenseKey license key
      * @param bool $useDb if false, it will ignore local DB and retrieve data directly from license server
-     * @return string
+     * @return bool|string
      */
-    protected function getSubscriptionContent(string $licenseKey, bool $useDb) : string
+    protected function getSubscriptionContent(string $licenseKey, bool $useDb)
     {
         $admin = \BeanFactory::newBean('Administration');
         $admin->retrieveSettings('license');
@@ -137,15 +153,22 @@ class SubscriptionManager
                 $data = json_encode($admin->settings['license_subscription']);
             }
         }
+
         if ($useDb && !empty($data)) {
+            if ($data === self::USE_DEFAULT_SETTING) {
+                return false;
+            }
             return $data;
         }
 
+        if ($data === self::USE_DEFAULT_SETTING) {
+            $data = false;
+        }
             // go to license server to retrieve data
         $endpoint = $this->subscriptionRestApiEndPoint . $licenseKey;
         $subscriptionClient = $this->getSugarLicensingClient();
         $GLOBALS['log']->info('download new sunscription data');
-        $response = $subscriptionClient->request($endpoint, [], false);
+        $response = $subscriptionClient->request($endpoint, [], false, self::REQUEST_TIMEOUT);
 
         // try to parse and valid the content
         $this->subscription = new Subscription($response);
@@ -156,11 +179,17 @@ class SubscriptionManager
             return '';
         }
 
-        // save to config table
-        $admin->saveSetting('license', 'subscription', $response);
+        if ($response !== false) {
+            // save to config table
+            $admin->saveSetting('license', 'subscription', $response);
+        } else {
+            $admin->saveSetting('license', 'subscription', self::USE_DEFAULT_SETTING);
+        }
 
         // refresh metadata cache if not in installation stage and subscription has changed
         if ((!(isset($GLOBALS['installing'])) || $GLOBALS['installing'] != true)
+            && !$this->ignoreMedatdataDiff
+            && !($data === false && $response === false)
             && $this->isSubscriptionChanged($data)) {
             $this->refreshMetadataCache();
         }
@@ -170,16 +199,18 @@ class SubscriptionManager
 
     /**
      * check if there is any entitlement changes, it'll ignore any expiration date and quantity changes
-     * @param string $oldSubscrptionData
+     * @param bool|string $oldSubscrptionData
      * @return bool
      */
-    protected function isSubscriptionChanged(?string $oldSubscrptionData)
+    protected function isSubscriptionChanged($oldSubscrptionData)
     {
         if (empty($oldSubscrptionData)) {
             return true;
         }
         $oldSubscrptionData = new Subscription($oldSubscrptionData);
+        $this->ignoreMedatdataDiff = true;
         $currentKeys = $this->getSystemSubscriptionKeys();
+        $this->ignoreMedatdataDiff = false;
         $oldKeys = $oldSubscrptionData->getSubscriptionKeys();
         return $currentKeys != $oldKeys;
     }
@@ -259,6 +290,7 @@ class SubscriptionManager
 
     /**
      * get subscription keys
+     *
      * @return array
      */
     public function getSystemSubscriptionKeys() : array

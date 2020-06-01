@@ -73,12 +73,23 @@ class Subscription
     protected $addons = [];
 
     /**
-     * private Subscription constructor.
-     * @param string $jsonData
+     * use default value from license config
+     * @var bool
      */
-    public function __construct(string $jsonData)
+    protected $useDefault = false;
+
+    /**
+     * private Subscription constructor.
+     * @param mixed $jsonData
+     */
+    public function __construct($jsonData)
     {
-        $this->parse($jsonData);
+        if ($jsonData === false || $jsonData === '') {
+            $this->useDefault = true;
+            $this->subscriptions[self::SUGAR_BASIC_KEY] = $this->getDefaultSubscription();
+        } else {
+            $this->parse($jsonData);
+        }
     }
 
     /**
@@ -134,7 +145,7 @@ class Subscription
      */
     public function getSubscriptions() : array
     {
-        if ($this->subscriptions) {
+        if ($this->subscriptions || $this->useDefault) {
             return $this->subscriptions;
         }
 
@@ -222,6 +233,48 @@ class Subscription
             Subscription::SUGAR_SELL_KEY,
             Subscription::SUGAR_SERVE_KEY,
         ];
+    }
+
+    /**
+     * get default subscription in case of offline, client is not able to download from license server
+     * @return array
+     */
+    protected function getDefaultSubscription() : array
+    {
+
+        $expiredDate = $this->getLicenseSettingByKey('license_expire_date', '+12 months');
+        if (strtotime($expiredDate) - time() < 0) {
+            if (!empty($GLOBALS['log'])) {
+                $GLOBALS['log']->fatal("license was expired at " . $expiredDate);
+            }
+            return [];
+        }
+
+        return [
+            'quantity' => $this->getLicenseSettingByKey('license_users', 1),
+            'expiration_date' => strtotime($expiredDate),
+        ];
+    }
+
+    /**
+     * get license setting values, it will take the default value if it is during installation
+     * @param string $key
+     * @param $defaultValue
+     */
+    protected function getLicenseSettingByKey(string $key, $defaultValue)
+    {
+        if (isset($GLOBALS['installing']) && $GLOBALS['installing'] === true) {
+            return $defaultValue;
+        }
+
+        if (!isset($GLOBALS['license'])) {
+            loadLicense(true);
+        }
+
+        if (!empty($GLOBALS['license']->settings[$key])) {
+            return $GLOBALS['license']->settings[$key];
+        }
+        return $defaultValue;
     }
 }
 //END REQUIRED CODE DO NOT MODIFY
