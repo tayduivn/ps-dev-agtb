@@ -70,6 +70,38 @@
                 this._toggleTimeFields();
             }, this);
         }
+
+        this.model.addValidationTask(
+            'start_time_before_end_time' + this.cid,
+            _.bind(this._validateStartTime, this)
+        );
+    },
+
+    /**
+     * Validate the "Start Time" field
+     */
+    _validateStartTime: function(fields, errors, callback) {
+        let newErrors = {};
+
+        // if "All day" is not active
+        if (!this.getValue()) {
+            const openName = 'start_time';
+            const closeName = 'end_time';
+
+            const start = app.date(this.model.get(openName));
+            const end = app.date(this.model.get(closeName));
+
+            if (this.model.get('start_date') === this.model.get('end_date') && !start.isBefore(end)) {
+                newErrors[openName] = {
+                    ERROR_TIME_IS_BEFORE: this.view.getField(closeName).label,
+                };
+                newErrors[closeName] = {
+                    ERROR_TIME_IS_AFTER: this.view.getField(openName).label
+                };
+            }
+        }
+
+        callback(null, fields, _.extend(errors, newErrors));
     },
 
     /**

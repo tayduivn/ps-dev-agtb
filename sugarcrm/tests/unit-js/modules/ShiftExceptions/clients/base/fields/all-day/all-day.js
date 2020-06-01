@@ -118,4 +118,45 @@ describe('ShiftExceptions.Fields.AllDay', function() {
             expect(field._restoreTime).toHaveBeenCalled();
         });
     });
+
+    describe('_validateStartTime', function() {
+        let callback;
+
+        beforeEach(function() {
+            callback = sinon.collection.stub();
+        });
+
+        it('should call the callback function without error', function() {
+            sinon.collection.stub(field.model, 'get')
+                .withArgs('start_time').returns({hour: 1, minute: 0})
+                .withArgs('end_time').returns({hour: 2, minute: 0})
+                .withArgs('start_date').returns('01/01/2000')
+                .withArgs('end_date').returns('01/01/2000');
+
+            sinon.collection.stub(field.view, 'getField')
+                .withArgs('start_time').returns({label: 'start-field label'})
+                .withArgs('end_time').returns({label: 'end-field label'});
+
+            field._validateStartTime({}, {}, callback);
+            expect(callback).toHaveBeenCalledWith(null, {}, {});
+        });
+
+        it('should call the callback function with error', function() {
+            sinon.collection.stub(field.model, 'get')
+                .withArgs('start_time').returns({hour: 2, minute: 0})
+                .withArgs('end_time').returns({hour: 1, minute: 0})
+                .withArgs('start_date').returns('01/01/2000')
+                .withArgs('end_date').returns('01/01/2000');
+
+            sinon.collection.stub(field.view, 'getField')
+                .withArgs('start_time').returns({label: 'start-field label'})
+                .withArgs('end_time').returns({label: 'end-field label'});
+
+            field._validateStartTime({}, {}, callback);
+            expect(callback).toHaveBeenCalledWith(null, {}, {
+                'start_time': {'ERROR_TIME_IS_BEFORE': 'end-field label'},
+                'end_time': {'ERROR_TIME_IS_AFTER': 'start-field label'},
+            });
+        });
+    });
 });
