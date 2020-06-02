@@ -63,7 +63,6 @@ class OpportunityWithRevenueLineItem extends OpportunitySetup
             'workflow' => false,
         ),
         'sales_stage' => array(
-            'readonly' => true,
             'audited' => false,
             'required' => false,
             'massupdate' => false,
