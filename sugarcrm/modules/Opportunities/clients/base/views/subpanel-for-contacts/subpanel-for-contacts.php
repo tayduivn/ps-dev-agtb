@@ -64,6 +64,10 @@ $viewdefs['Opportunities']['base']['view']['subpanel-for-contacts'] = array(
                         'total_revenue_line_items',
                         'closed_revenue_line_items',
                     ),
+                    'related_fields' => [
+                        'total_revenue_line_items',
+                        'closed_revenue_line_items',
+                    ],
                 ),
                 // END SUGARCRM flav=ent ONLY
                 [
@@ -87,6 +91,10 @@ $viewdefs['Opportunities']['base']['view']['subpanel-for-contacts'] = array(
                         'total_revenue_line_items',
                         'closed_revenue_line_items',
                     ),
+                    'related_fields' => [
+                        'total_revenue_line_items',
+                        'closed_revenue_line_items',
+                    ],
                 ),
                 array(
                     'name' => 'service_start_date',

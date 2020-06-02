@@ -122,7 +122,7 @@
                 if (_.isUndefined(editClick)) {
                     editClick = false;
                 }
-                if (this.options && this.options.def && this.options.def.disable_field) {
+                if (this.model && this.options && this.options.def && this.options.def.disable_field) {
                     let disableFieldName = this.options.def.disable_field;
                     let calculatedValue = null;
                     // When disableFieldName is an array, calculatedValue is fieldValue1 - fieldValue2
@@ -132,9 +132,12 @@
                     if (_.isArray(disableFieldName)) {
                         let fieldValue1 = this.model.get(disableFieldName[0]);
                         let fieldValue2 = this.model.get(disableFieldName[1]);
-                        calculatedValue = fieldValue1 - fieldValue2;
+                        // if either fieldValue1 or fieldValue2 is undefined set calculatedValue to null
+                        calculatedValue = (!_.isUndefined(fieldValue1) && !_.isUndefined(fieldValue2)) ?
+                            (fieldValue1 - fieldValue2) : null;
                     } else if (typeof disableFieldName === 'string') {
-                        calculatedValue = this.model.get(disableFieldName);
+                        var disableFieldValue = this.model.get(disableFieldName);
+                        calculatedValue = !_.isUndefined(disableFieldValue) ? disableFieldValue : null;
                     }
 
                     if (calculatedValue !== null) {
