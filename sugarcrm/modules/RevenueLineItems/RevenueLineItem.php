@@ -140,7 +140,7 @@ class RevenueLineItem extends SugarBean
         'mft_part_num', 'book_value_date', 'book_value', 'support_term',
         'support_title', 'support_expires', 'support_starts',
         'support_contact', 'support_desc', 'product_template_id',
-        'product_template_name',
+        'product_template_name', 'currency_id',
     ];
 
     /** Fields to map when generating a Purchased Line Item */
