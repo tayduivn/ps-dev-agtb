@@ -662,13 +662,18 @@ class PMSEUserAssignmentHandler
         if (!empty($bpmnElement['act_avl_count']) &&
             !empty($bpmnElement['act_avl_before_type']) &&
             !empty($bean->{$bpmnElement['act_avl_before_type']})) {
-            $checkTime = new \SugarDateTime($bean->{$bpmnElement['act_avl_before_type']});
+            // 'act_avl_before_type' has converted to UTC already when the record is saved.
+            // We need to explicitly set UTC timezone in case the default timezone is not UTC.
+            $checkTime = new \SugarDateTime($bean->{$bpmnElement['act_avl_before_type']}, new DateTimeZone('UTC'));
             $checkTime->modify("-{$bpmnElement['act_avl_count']} {$bpmnElement['act_avl_type']}");
         } else {
             // Required shift availability has count value set to 0 or blank.
-            // Or other availability criteria is not set, we want to set the availability datetime to current time.
-            $checkTime = new \SugarDateTime(TimeDate::getInstance()->nowDb());
+            // Or other availability criteria is not set, we want to set the availability datetime to current time
+            // based on the UTC timezone.
+            $checkTime = new \SugarDateTime(TimeDate::getInstance()->nowDb(), new DateTimeZone('UTC'));
         }
+        $this->getLogger()->info("[{$flowData['cas_id']}][{$flowData['cas_index']}] time is sent to check for " .
+            "Round Robin availability: {$checkTime}");
         $nextUserId = null;
         foreach ($orderedUsers as $userId) {
             $user = BeanFactory::retrieveBean('Users', $userId);
@@ -706,8 +711,8 @@ class PMSEUserAssignmentHandler
             } else {
                 // no pre-defined user is set
                 $nextUserId = '';
-                $this->logger->info("[{$flowData['cas_id']}][{$flowData['cas_index']}] no default user is defined " .
-                "from Round Robin action");
+                $this->getLogger()->info("[{$flowData['cas_id']}][{$flowData['cas_index']}] no default user " .
+                    "is defined from Round Robin action");
             }
         }
 
@@ -734,12 +739,13 @@ class PMSEUserAssignmentHandler
         $holidays = $user->holidays->getBeans();
         foreach ($holidays as $holiday) {
             if (!empty($holiday->holiday_date)) {
-                $timezone = $user->getPreference('timezone');
+                // as in user profile, uses guess timezone if user timezone is not set in user preference
+                $timezone = $user->getPreference('timezone') ?? TimeDate::guessTimezone();
                 $holidayStart = new \SugarDateTime($holiday->holiday_date, new DateTimeZone($timezone));
-                $holidayStart = $holidayStart->setTimezone(new DateTimeZone("UTC"));
+                $holidayStart = $holidayStart->setTimezone(new DateTimeZone('UTC'));
                 $holidayEnd = new \SugarDateTime($holiday->holiday_date, new DateTimeZone($timezone));
                 $holidayEnd = $holidayEnd->setTime('23', '59', '59');
-                $holidayEnd = $holidayEnd->setTimezone(new DateTimeZone("UTC"));
+                $holidayEnd = $holidayEnd->setTimezone(new DateTimeZone('UTC'));
                 if ($checkTime >= $holidayStart && $checkTime <= $holidayEnd) {
                     return true;
                 }
@@ -773,9 +779,9 @@ class PMSEUserAssignmentHandler
                     new DateTimeZone($shiftExceptionBean->timezone)
                 );
                 $start_date->setTime($shiftExceptionBean->start_hour, $shiftExceptionBean->start_minutes);
-                $start_date = $start_date->setTimezone(new DateTimeZone("UTC"));
+                $start_date = $start_date->setTimezone(new DateTimeZone('UTC'));
                 $end_date->setTime($shiftExceptionBean->end_hour, $shiftExceptionBean->end_minutes);
-                $end_date = $end_date->setTimezone(new DateTimeZone("UTC"));
+                $end_date = $end_date->setTimezone(new DateTimeZone('UTC'));
                 if ($checkTime >= $start_date && $checkTime <= $end_date) {
                     return true;
                 }
@@ -803,13 +809,13 @@ class PMSEUserAssignmentHandler
                 $shiftBean->date_start,
                 new DateTimeZone($shiftBean->timezone)
             );
-            $date_start = $date_start->setTimezone(new DateTimeZone("UTC"));
+            $date_start = $date_start->setTimezone(new DateTimeZone('UTC'));
             $date_end = new \SugarDateTime(
                 $shiftBean->date_end,
                 new DateTimeZone($shiftBean->timezone)
             );
             $date_end->setTime('23', '59', '59');
-            $date_end = $date_end->setTimezone(new DateTimeZone("UTC"));
+            $date_end = $date_end->setTimezone(new DateTimeZone('UTC'));
             if ($checkTime >= $date_start && $checkTime <= $date_end) {
                 $checkTime = $checkTime->setTimezone(new DateTimeZone($shiftBean->timezone));
                 $weekDay = strtolower($checkTime->format("l"));
