@@ -265,7 +265,7 @@ Feature: Purchased Line Items module verification
       | fieldName      | value      |
       | name           | Chelsea FC |
       | total_amount   | $100.00    |
-      | annual_revenue | $100.00    |
+      | annual_revenue | $36,500.00 |
 
     # Calc Amount = $100, Duration = 1 year -> Yearly Revenue $100
     When I click Edit button on #PLI_1Record header
