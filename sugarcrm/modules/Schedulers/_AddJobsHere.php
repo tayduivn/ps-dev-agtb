@@ -152,93 +152,100 @@ function pollMonitoredInboxes() {
 						$GLOBALS['log']->debug('distribution method id [ '.$distributionMethod.' ]');
 					}
 					foreach($newMsgs as $k => $msgNo) {
-                        $uid = $msgNo;
-						if ($ieX->isPop3Protocol()) {
-							$uid = $msgNoToUIDL[$msgNo];
-                        }
-						if ($isGroupFolderExists) {
-							$_REQUEST['team_id'] = $sugarFolder->team_id;
-							$_REQUEST['team_set_id'] = $sugarFolder->team_set_id;
+                        try {
+                            $uid = $msgNo;
+                            if ($ieX->isPop3Protocol()) {
+                                $uid = $msgNoToUIDL[$msgNo];
+                            }
+                            if ($isGroupFolderExists) {
+                                $_REQUEST['team_id'] = $sugarFolder->team_id;
+                                $_REQUEST['team_set_id'] = $sugarFolder->team_set_id;
 //BEGIN SUGARCRM flav=ent ONLY
-                            $_REQUEST['acl_team_set_id'] = $sugarFolder->acl_team_set_id;
+                                $_REQUEST['acl_team_set_id'] = $sugarFolder->acl_team_set_id;
 //END SUGARCRM flav=ent ONLY
-                            if ($ieX->importEmailFromUid($uid)) {
-								// add to folder
-								$sugarFolder->addBean($ieX->email);
-								if ($ieX->isPop3Protocol()) {
-									$messagesToDelete[] = $msgNo;
-								} else {
-									$messagesToDelete[] = $uid;
-								}
-								if ($ieX->isMailBoxTypeCreateCase()) {
-									$userId = "";
-									if ($distributionMethod == 'roundRobin') {
-										if (sizeof($users) == 1) {
-											$userId = $users[0];
-											$lastRobin = $users[0];
-										} else {
-											$userIdsKeys = array_flip($users); // now keys are values
-											$thisRobinKey = $userIdsKeys[$lastRobin] + 1;
-											if(!empty($users[$thisRobinKey])) {
-												$userId = $users[$thisRobinKey];
-												$lastRobin = $users[$thisRobinKey];
-											} else {
-												$userId = $users[0];
-												$lastRobin = $users[0];
-											}
-										} // else
-									} else {
-										if (sizeof($users) == 1) {
-											foreach($users as $k => $value) {
-												$userId = $value;
-											} // foreach
-										} else {
-											asort($counts); // lowest to highest
-											$countsKeys = array_flip($counts); // keys now the 'count of items'
-											$leastBusy = array_shift($countsKeys); // user id of lowest item count
-											$userId = $leastBusy;
-											$counts[$leastBusy] = $counts[$leastBusy] + 1;
-										}
-									} // else
-									$GLOBALS['log']->debug('userId [ '.$userId.' ]');
-									$ieX->handleCreateCase($ieX->email, $userId);
-								} // if
-                                if (!$leaveMessagesOnMailServer) {
-                                    $ieX->conn->deleteMessage($uid);
-                                }
-							} // if
-						} else {
-								if($ieX->isAutoImport()) {
+                                if ($ieX->importEmailFromUid($uid)) {
+                                    // add to folder
+                                    $sugarFolder->addBean($ieX->email);
+                                    if ($ieX->isPop3Protocol()) {
+                                        $messagesToDelete[] = $msgNo;
+                                    } else {
+                                        $messagesToDelete[] = $uid;
+                                    }
+                                    if ($ieX->isMailBoxTypeCreateCase()) {
+                                        $userId = "";
+                                        if ($distributionMethod == 'roundRobin') {
+                                            if (sizeof($users) == 1) {
+                                                $userId = $users[0];
+                                                $lastRobin = $users[0];
+                                            } else {
+                                                $userIdsKeys = array_flip($users); // now keys are values
+                                                $thisRobinKey = $userIdsKeys[$lastRobin] + 1;
+                                                if (!empty($users[$thisRobinKey])) {
+                                                    $userId = $users[$thisRobinKey];
+                                                    $lastRobin = $users[$thisRobinKey];
+                                                } else {
+                                                    $userId = $users[0];
+                                                    $lastRobin = $users[0];
+                                                }
+                                            } // else
+                                        } else {
+                                            if (sizeof($users) == 1) {
+                                                foreach ($users as $k => $value) {
+                                                    $userId = $value;
+                                                } // foreach
+                                            } else {
+                                                asort($counts); // lowest to highest
+                                                $countsKeys = array_flip($counts); // keys now the 'count of items'
+                                                $leastBusy = array_shift($countsKeys); // user id of lowest item count
+                                                $userId = $leastBusy;
+                                                $counts[$leastBusy] = $counts[$leastBusy] + 1;
+                                            }
+                                        } // else
+                                        $GLOBALS['log']->debug('userId [ '.$userId.' ]');
+                                        $ieX->handleCreateCase($ieX->email, $userId);
+                                    } // if
+                                    if (!$leaveMessagesOnMailServer) {
+                                        $ieX->conn->deleteMessage($uid);
+                                    }
+                                } // if
+                            } else {
+                                if ($ieX->isAutoImport()) {
                                     $ieX->importEmailFromUid($uid);
-								} else {
-									/*If the group folder doesn't exist then download only those messages
-									 which has caseid in message*/
-									$ieX->getMessagesInEmailCache($msgNo, $uid);
-									$email = BeanFactory::newBean('Emails');
+                                } else {
+                                    /*If the group folder doesn't exist then download only those messages
+                                     which has caseid in message*/
+                                    $ieX->getMessagesInEmailCache($msgNo, $uid);
+                                    $email = BeanFactory::newBean('Emails');
                                     $email->name = $ieX->conn->getSubject($uid);
                                     $email->from_addr = implode(',', $ieX->conn->getFromAddresses($uid));
                                     $email->reply_to_email  = implode(',', $ieX->conn->getReplyToAddresses($uid));
-									if(!empty($email->reply_to_email)) {
-										$contactAddr = $email->reply_to_email;
-									} else {
-										$contactAddr = $email->from_addr;
-									}
-									$mailBoxType = $ieX->mailbox_type;
-									if (($mailBoxType == 'support') || ($mailBoxType == 'pick')) {
-										$c = BeanFactory::newBean('Cases');
-										$GLOBALS['log']->debug('looking for a case for '.$email->name);
-										if ($ieX->getCaseIdFromCaseNumber($email->name, $c)) {
+                                    if (!empty($email->reply_to_email)) {
+                                        $contactAddr = $email->reply_to_email;
+                                    } else {
+                                        $contactAddr = $email->from_addr;
+                                    }
+                                    $mailBoxType = $ieX->mailbox_type;
+                                    if (($mailBoxType == 'support') || ($mailBoxType == 'pick')) {
+                                        $c = BeanFactory::newBean('Cases');
+                                        $GLOBALS['log']->debug('looking for a case for '.$email->name);
+                                        if ($ieX->getCaseIdFromCaseNumber($email->name, $c)) {
                                             $ieX->importEmailFromUid($uid);
-										} else {
-											$ieX->handleAutoresponse($email, $contactAddr);
-										} // else
-									} else {
-										$ieX->handleAutoresponse($email, $contactAddr);
-									} // else
-								} // else
-						} // else
-						$GLOBALS['log']->debug('***** On message [ '.$current.' of '.$total.' ] *****');
-						$current++;
+                                        } else {
+                                            $ieX->handleAutoresponse($email, $contactAddr);
+                                        } // else
+                                    } else {
+                                        $ieX->handleAutoresponse($email, $contactAddr);
+                                    } // else
+                                } // else
+                            } // else
+                        } catch (Exception $e) {
+                            $GLOBALS['log']->error(
+                                'pollMonitoredInboxes unable to import email with UID ' . $uid . ': ' .
+                                $e->getMessage()
+                            );
+                        }
+                        $GLOBALS['log']->debug('***** On message [ '.$current.' of '.$total.' ] *****');
+                        $current++;
 					} // foreach
 					// update Inbound Account with last robin
 					if ($ieX->isMailBoxTypeCreateCase() && $distributionMethod == 'roundRobin') {
@@ -402,12 +409,19 @@ function pollMonitoredInboxesForBouncedCampaignEmails() {
 
             if (is_array($newMsgs)) {
                 foreach ($newMsgs as $k => $msgNo) {
-                    $uid = $msgNo;
-                    if ($ieX->isPop3Protocol()) {
-                        $uid = $ieX->getUIDLForMessage($msgNo);
+                    try {
+                        $uid = $msgNo;
+                        if ($ieX->isPop3Protocol()) {
+                            $uid = $ieX->getUIDLForMessage($msgNo);
+                        }
+                        $GLOBALS['log']->info("Bounced campaign scheduler will import message no: $msgNo");
+                        $ieX->importEmailFromUid($uid);
+                    } catch (Exception $e) {
+                        $GLOBALS['log']->error(
+                            'pollMonitoredInboxesForBouncedCampaignEmails unable to import email with UID ' . $uid .
+                            ': ' . $e->getMessage()
+                        );
                     }
-                    $GLOBALS['log']->info("Bounced campaign scheduler will import message no: $msgNo");
-                    $ieX->importEmailFromUid($uid);
                 }
             }
         }
