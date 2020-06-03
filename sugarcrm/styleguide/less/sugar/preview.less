@@ -240,6 +240,10 @@
     background: @previewDataBackground;
   }
 
+  .process-design + div + div {
+    margin-left: 40px;
+  }
+
   .field-row {
     /* override */
     display: block;
@@ -260,6 +264,10 @@
 
       /* override */
       font-size: @previewLabelFontSize;
+    }
+
+    .field-label.hide {
+      display: none;
     }
 
     .field-value {
@@ -318,6 +326,7 @@ These will be removed with completion of ticket https://sugarcrm.atlassian.net/b
       &[data-name=picture] {
         position: absolute;
         top: 2px;
+        left: 0;
 
         .label,
         .image_field .image_preview {
@@ -345,7 +354,6 @@ These will be removed with completion of ticket https://sugarcrm.atlassian.net/b
     .field-value {
       &[data-name=name],
       &[data-name=full_name] {
-        margin-left: 40px;
         width: calc(~'100% - 40px');
 
         > span:not(.hide) {
@@ -354,14 +362,11 @@ These will be removed with completion of ticket https://sugarcrm.atlassian.net/b
         }
       }
     }
-
-    .field-row > span + .field-label.ellipsis_inline[data-name=name] {
-      margin-left: 40px;
-    }
   }
 
   .field-row:nth-child(2) {
     border-top: 0;
+    margin-left: 40px;
 
     .field-label {
       margin-top: 0;
@@ -369,7 +374,7 @@ These will be removed with completion of ticket https://sugarcrm.atlassian.net/b
   }
 
   .show-hide-toggle {
-    display: block !important;
+    display: block;
     margin-top: 0 !important;
 
     > button {

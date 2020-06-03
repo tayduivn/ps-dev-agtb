@@ -118,7 +118,6 @@ $dictionary['ProductTemplate'] = array(
             'len' => '26,6',
             'comment' => 'Product cost ("Cost" in Quote)',
             'importable' => 'required',
-            'required' => true,
             'related_fields' => array(
                 'currency_id',
                 'base_rate'
@@ -129,7 +128,6 @@ $dictionary['ProductTemplate'] = array(
         'discount_price' => array(
             'name' => 'discount_price',
             'vname' => 'LBL_DISCOUNT_PRICE',
-            'required' => true,
             'type' => 'currency',
             'len' => '26,6',
             'comment' => 'Discounted price ("Unit Price" in Quote)',
@@ -145,7 +143,6 @@ $dictionary['ProductTemplate'] = array(
         'list_price' => array(
             'name' => 'list_price',
             'vname' => 'LBL_LIST_PRICE',
-            'required' => true,
             'type' => 'currency',
             'len' => '26,6',
             'importable' => 'required',
