@@ -63,7 +63,6 @@ class AdministrationViewEnablewirelessmodules extends SugarView
             'Users',
             'pmse_Business_Rules',
             'pmse_Emails_Templates',
-            'pmse_Inbox',
             'pmse_Project',
             'KBContents',
             'DataPrivacy',

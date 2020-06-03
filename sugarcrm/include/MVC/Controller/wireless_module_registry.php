@@ -27,4 +27,7 @@ $wireless_module_registry = array(
     'Notes' => array(),
 	'Reports' => array('disable_create' => true),
     'Emails' => array(),
+    // BEGIN SUGARCRM flav=ent ONLY
+    'pmse_Inbox' => array(),
+    // END SUGARCRM flav=ent ONLY
 );
