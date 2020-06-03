@@ -102,7 +102,9 @@
 
         isAllDay ? this._clearTime(save) : this._restoreTime();
 
-        this._toggleTimeFields();
+        if (this.view.name !== 'recordlist') {
+            this._toggleTimeFields();
+        }
     },
 
     /**
