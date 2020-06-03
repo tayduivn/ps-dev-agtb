@@ -90,11 +90,10 @@ class ConfigTest extends TestCase
         $this->assertEquals([], $this->config->getProductDefinition());
     }
 
-
     /**
      * @covers ::getProductDefinition
      */
-    public function testGetProductDefinitionCurrentVersionFromCache()
+    public function testGetProductDefinitionCacheIsEmpty()
     {
         $this->config->expects($this->once())
             ->method('isInstallInProgress')
@@ -104,75 +103,50 @@ class ConfigTest extends TestCase
             ->method('getCache')
             ->willReturn($this->cache);
         $this->cache->expects($this->once())
-            ->method('getCurrentDefinition')
-            ->willReturn('{"key":"value"}');
+            ->method('get')
+            ->willReturn('');
 
-        $this->assertEquals(['key' => 'value'], $this->config->getProductDefinition());
+        $this->assertEquals([], $this->config->getProductDefinition());
     }
 
     /**
      * @covers ::getProductDefinition
      */
-    public function testGetProductDefinitionNewVersionFromSource()
+    public function testGetProductDefinition()
     {
         $this->config->expects($this->once())
             ->method('isInstallInProgress')
             ->willReturn(false);
 
-        $this->config->expects($this->exactly(2))
+        $this->config->expects($this->once())
             ->method('getCache')
             ->willReturn($this->cache);
-
         $this->cache->expects($this->once())
-            ->method('getCurrentDefinition')
-            ->willReturn(null);
+            ->method('get')
+            ->willReturn('{"key2":"value"}');
 
-        $this->cache->expects($this->once())
-            ->method('set');
+        $this->assertEquals(['key2' => 'value'], $this->config->getProductDefinition());
+    }
 
+    /**
+     * @covers ::updateProductDefinition
+     */
+    public function testUpdateProductDefinition()
+    {
         $this->config->expects($this->once())
             ->method('getSource')
             ->willReturn($this->source);
-
         $this->source->expects($this->once())
             ->method('getDefinition')
-            ->willReturn('{"key1":"value"}');
-
-        $this->assertEquals(['key1' => 'value'], $this->config->getProductDefinition());
-    }
-
-    /**
-     * @covers ::getProductDefinition
-     */
-    public function testGetProductDefinitionPreviousVersionFromCache()
-    {
-        $this->config->expects($this->once())
-            ->method('isInstallInProgress')
-            ->willReturn(false);
-
-        $this->config->expects($this->exactly(3))
-            ->method('getCache')
-            ->willReturn($this->cache);
-
-        $this->cache->expects($this->once())
-            ->method('getCurrentDefinition')
-            ->willReturn(null);
-
-        $this->cache->expects($this->once())
-            ->method('set');
-
-        $this->cache->expects($this->once())
-            ->method('getPreviousDefinition')
             ->willReturn('{"key2":"value"}');
 
         $this->config->expects($this->once())
-            ->method('getSource')
-            ->willReturn($this->source);
+            ->method('getCache')
+            ->willReturn($this->cache);
+        $this->cache->expects($this->once())
+            ->method('set')
+            ->with('{"key2":"value"}');
 
-        $this->source->expects($this->once())
-            ->method('getDefinition')
-            ->willReturn(null);
-
-        $this->assertEquals(['key2' => 'value'], $this->config->getProductDefinition());
+        $this->assertTrue($this->config->updateProductDefinition());
     }
 }

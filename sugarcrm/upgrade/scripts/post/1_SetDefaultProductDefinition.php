@@ -17,7 +17,7 @@ use Sugarcrm\Sugarcrm\ProductDefinition\Config;
 /**
  * Write initial product definition
  */
-class SugarUpgradeWriteInitialProductDefinition extends UpgradeScript
+class SugarUpgradeSetDefaultProductDefinition extends UpgradeScript
 {
     // make sure the order is the very first one
     public $order = 1000;
@@ -39,6 +39,6 @@ class SugarUpgradeWriteInitialProductDefinition extends UpgradeScript
             );
         }
 
-        (new Config\InitProductDefinition())->writeInitialProductDefinition(true);
+        (new Config\InitProductDefinition())->setDefaultProductDefinition();
     }
 }

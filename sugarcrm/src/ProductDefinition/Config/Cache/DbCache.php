@@ -29,7 +29,6 @@ class DbCache implements CacheInterface
 
     /**
      * DbCache constructor.
-     * @throws \Exception
      */
     public function __construct()
     {
@@ -38,50 +37,18 @@ class DbCache implements CacheInterface
 
     /**
      * @inheritDoc
-     * @throws \Exception
      */
-    public function getCurrentDefinition():? string
+    public function get():? string
     {
-        $result = $this->getDefinition();
-        if (empty($result)) {
-            return null;
-        }
-        $dateTimeCreated = \DateTime::createFromFormat(
-            \TimeDate::DB_DATETIME_FORMAT,
-            $result['date_created'],
-            new \DateTimeZone('UTC')
-        );
-        $dateTimeCreated->add(new \DateInterval(sprintf('PT%dH', static::REFRESH_INTERVAL)));
-        $dateTimeNow = new \DateTime('now', new \DateTimeZone('UTC'));
-        if ($dateTimeCreated < $dateTimeNow) {
-            return null;
-        }
-        return $result['data'];
-    }
+        $data = $this->db->getConnection()
+            ->createQueryBuilder()
+            ->select('data')
+            ->from(static::TABLE_NAME)
+            ->setMaxResults(1)
+            ->execute()
+            ->fetchColumn();
 
-    /**
-     * @throws \Exception
-     * @inheritDoc
-     */
-    public function getPreviousDefinition():? string
-    {
-        $result = $this->getDefinition();
-        return $result['data'] ?? '';
-    }
-
-    /**
-     * return definition actual product definition depends on interval
-     * @throws \Exception
-     * @return array|null
-     */
-    protected function getDefinition():? array
-    {
-        $conn = $this->db->getConnection();
-        $result = $conn->executeQuery('SELECT date_created, data FROM ' . static::TABLE_NAME)->fetch();
-        if (!$result) {
-            return null;
-        }
-        return $result;
+        return $data === false ? null : $data;
     }
 
     /**
@@ -91,11 +58,11 @@ class DbCache implements CacheInterface
     public function set(string $data)
     {
         $this->db->commit();
-        $this->db->query($this->db->truncateTableSQL(static::TABLE_NAME));
-        $this->db->getConnection()->insert(static::TABLE_NAME, [
-            'date_created' => (new \DateTime('now', new \DateTimeZone('UTC')))->format(\TimeDate::DB_DATETIME_FORMAT),
-            'data' => $data,
-        ]);
+
+        $conn = $this->db->getConnection();
+        $conn->delete(static::TABLE_NAME, [1 => 1]);
+        $conn->insert(static::TABLE_NAME, ['data' => $data]);
+
         $this->db->commit();
     }
 }

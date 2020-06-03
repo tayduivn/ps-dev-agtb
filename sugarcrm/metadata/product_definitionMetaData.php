@@ -13,10 +13,6 @@
 $dictionary['product_definition'] = [
     'table' => 'product_definition',
     'fields' => [
-        'date_created' => array(
-            'name' => 'date_created',
-            'type' => 'datetime',
-        ),
         'data' => array(
             'name' => 'data',
             'type' => 'json',

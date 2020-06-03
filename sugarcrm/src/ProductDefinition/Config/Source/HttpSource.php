@@ -13,6 +13,7 @@
 namespace Sugarcrm\Sugarcrm\ProductDefinition\Config\Source;
 
 use GuzzleHttp\Client as HttpClient;
+use GuzzleHttp\Exception\GuzzleException;
 use Symfony\Component\HttpFoundation\Response;
 
 class HttpSource implements SourceInterface
@@ -82,8 +83,6 @@ class HttpSource implements SourceInterface
     /**
      * make request and return product definition array
      * @return string|null
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     * @throws \RuntimeException
      */
     public function getDefinition():? string
     {
@@ -105,13 +104,15 @@ class HttpSource implements SourceInterface
      * Make HTTP GET request and return response
      * @param string $version
      * @return string|null
-     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     protected function makeRequest(string $version):? string
     {
         try {
             $response = $this->client->request('GET', $version);
         } catch (\Exception $e) {
+            $this->getLogger()->error('Can\'t download product definition for version: ' . $version);
+            return null;
+        } catch (GuzzleException $e) {
             $this->getLogger()->error('Can\'t download product definition for version: ' . $version);
             return null;
         }

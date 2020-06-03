@@ -23,18 +23,10 @@ class InitProductDefinition
      * write initial product definition in DB
      * @throws \Exception
      */
-    public function writeInitialProductDefinition(bool $useDefault = false)
+    public function setDefaultProductDefinition()
     {
         $cache = new DbCache();
-        if ($useDefault) {
-            $definition = $this->getDefaultProductDefinition();
-        } else {
-            $definition = $cache->getPreviousDefinition();
-        }
-        if (empty($definition)) {
-            $definition = $this->getDefaultProductDefinition();
-        }
-        $cache->set($definition);
+        $cache->set($this->getDefaultProductDefinition());
     }
 
     /**

@@ -18,16 +18,11 @@ namespace Sugarcrm\Sugarcrm\ProductDefinition\Config\Cache;
 interface CacheInterface
 {
     /**
-     * get current definition from cache
+     * return actual product definition
+     * @throws \Exception
      * @return string|null
      */
-    public function getCurrentDefinition():? string;
-
-    /**
-     * get previous definition from cache
-     * @return string|null
-     */
-    public function getPreviousDefinition():? string;
+    public function get():? string;
 
     /**
      * set definition to cache

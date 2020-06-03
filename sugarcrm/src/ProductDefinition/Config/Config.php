@@ -68,25 +68,33 @@ class Config
     /**
      * Return product definition
      *
-     * @throws \Exception
      * @return array
+     * @throws \Exception
      */
     public function getProductDefinition(): array
     {
         if ($this->isInstallInProgress()) {
             return [];
         }
+        $definition = $this->getCache()->get();
+        return (array) json_decode($definition, true);
+    }
 
-        $raw = $this->getCache()->getCurrentDefinition();
-        if (!$raw) {
-            $raw = $this->getSource()->getDefinition();
-            if (!$raw) {
-                $raw = $this->getCache()->getPreviousDefinition();
-            }
-            // reset time stamp product_definition.date_created
-            $this->getCache()->set($raw);
+    /**
+     * update product definition in cache from source
+     * @return bool
+     */
+    public function updateProductDefinition(): bool
+    {
+        $result = false;
+
+        $definition = $this->getSource()->getDefinition();
+        if (!empty($definition)) {
+            $result = true;
+            $this->getCache()->set($definition);
         }
-        return (array) json_decode($raw, true);
+
+        return $result;
     }
 
     /**
@@ -108,8 +116,6 @@ class Config
 
     /**
      * Create config cache by type
-     * @throws \RuntimeException
-     * @throws \Exception
      * @return Cache\CacheInterface|null
      */
     protected function getCache():? Cache\CacheInterface

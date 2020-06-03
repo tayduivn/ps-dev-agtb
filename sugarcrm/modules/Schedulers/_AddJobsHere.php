@@ -11,6 +11,7 @@
  */
 
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Job\RebuildJob;
+use Sugarcrm\Sugarcrm\ProductDefinition\Job\UpdateProductDefinitionJob;
 
 /**
  * Set up an array of Jobs with the appropriate metadata
@@ -55,6 +56,7 @@ $job_strings = array (
     25 => 'class::SugarJobRemoveTmpFiles',
     26 => 'class::' . RebuildJob::class,
     27 => 'class::SugarJobActivityStreamPurger',
+    28 => 'class::' . UpdateProductDefinitionJob::class,
 );
 
 /**

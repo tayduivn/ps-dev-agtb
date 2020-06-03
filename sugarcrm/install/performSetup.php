@@ -306,7 +306,7 @@ foreach ($rel_dictionary as $rel_name => $rel_data) {
 }
 
 // write init product definition
-(new \Sugarcrm\Sugarcrm\ProductDefinition\Config\InitProductDefinition())->writeInitialProductDefinition();
+(new \Sugarcrm\Sugarcrm\ProductDefinition\Config\InitProductDefinition())->setDefaultProductDefinition();
 
 // Setup the relationship cache and build out the initial vardef cache
 SugarRelationshipFactory::rebuildCache();
