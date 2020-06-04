@@ -127,16 +127,16 @@ describe('OutboundEmail.BaseEmailProviderField', function() {
         });
 
         it('should show warning, disable button and do not call auth api', function() {
-            field.oauth2Types['google_oauth2'].auth_url = false;
+            field.oauth2Types.google_oauth2.auth_url = false;
             let callStub = sandbox.stub(app.api,'call');
             field._checkAuth('google_oauth2');
             expect(callStub).not.toHaveBeenCalled();
-            expect(field.authWarning).toEqual(field.oauth2Types['google_oauth2'].auth_warning);
+            expect(field.authWarning).toEqual(field.oauth2Types.google_oauth2.auth_warning);
             expect(field.authButton).toEqual('disabled');
         });
 
         it('should enable button and show no warning', function() {
-            field.oauth2Types['google_oauth2'].auth_url = 'fakeUrl';
+            field.oauth2Types.google_oauth2.auth_url = 'fakeUrl';
             let callStub = sandbox.stub(app.api,'call');
             field._checkAuth('google_oauth2');
             expect(callStub).not.toHaveBeenCalled();

@@ -103,7 +103,7 @@ $viewdefs['OutboundEmail']['base']['view']['record'] = array(
                     'related_fields' => [
                         'eapm_id',
                     ],
-                    'readonly' => true
+                    'readonly' => true,
                 ],
                 'authorized_account',
                 array(

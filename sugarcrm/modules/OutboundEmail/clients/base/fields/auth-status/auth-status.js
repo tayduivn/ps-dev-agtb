@@ -18,7 +18,7 @@
      * @inheritdoc
      *
      */
-    bindDataChange: function () {
+    bindDataChange: function() {
         if (this.model) {
             this.model.on('change:eapm_id', function(model, value) {
                 this.render();

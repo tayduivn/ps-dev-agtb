@@ -63,7 +63,11 @@
             var width = 600;
             var left = (screen.width - width) / 2;
             var top = (screen.height - height) / 4;
-            window.open(this.oauth2Types[this.value].auth_url, '_blank', 'width=' + width + ',height=' + height + ',left=' + left + ',top=' + top + ',resizable=1');
+            window.open(
+                this.oauth2Types[this.value].auth_url,
+                '_blank',
+                'width=' + width + ',height=' + height + ',left=' + left + ',top=' + top + ',resizable=1'
+            );
         }
     },
 
@@ -74,7 +78,7 @@
      * @param {Object} e
      * @return {boolean} True if success, otherwise false
      */
-    handleOauthComplete: function (e) {
+    handleOauthComplete: function(e) {
         var data = JSON.parse(e.data);
         if (!data.dataSource ||
             !this.oauth2Types[this.value] ||
@@ -147,7 +151,7 @@
                             self.oauth2Types[smtpType].auth_warning = data.auth_warning || '';
                             self.authButton = 'enabled';
                         } else {
-                            self.oauth2Types[smtpType].auth_url = false
+                            self.oauth2Types[smtpType].auth_url = false;
                             self.oauth2Types[smtpType].auth_warning = data.auth_warning || '';
                             self.authWarning = self.oauth2Types[smtpType].auth_warning;
                             self.authButton = 'disabled';
@@ -155,7 +159,7 @@
                         self.render();
                     }),
                     error: function() {
-                        self.oauth2Types[smtpType].auth_url = false
+                        self.oauth2Types[smtpType].auth_url = false;
                         self.authWarning = self.oauth2Types[smtpType].auth_warning;
                         self.authButton = 'disabled';
                         self.render();
