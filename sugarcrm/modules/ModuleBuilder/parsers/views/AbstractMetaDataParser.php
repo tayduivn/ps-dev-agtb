@@ -82,6 +82,36 @@ abstract class AbstractMetaDataParser
     }
 
     /**
+     * Calls viewdef setter for the parser $implementation
+     *
+     * @param array $fieldList Array of field names to which the given properties will be set
+     * @param array $propertyList Array of 'property => value' to be set for each field in
+     */
+    public function setFieldProps($fieldList, $propertyList)
+    {
+        $this->implementation->setFieldProps($fieldList, $propertyList);
+    }
+
+    /**
+     * Updates the fielddefs with the properties for the given fieldNames
+     *
+     * @param array $fieldNames Array of field names to which the given properties will be set
+     * @param array $propertyList Array of 'property => value' to be set for each field in
+     */
+    public function setFielddefsProps($fieldNames, $propertyList)
+    {
+        $fielddefs = $this->getFieldDefs();
+        foreach ($fielddefs as $key => $fielddef) {
+            if (in_array($key, $fieldNames)) {
+                $fielddefs[$key] = array_merge($fielddefs[$key], $propertyList);
+            }
+        }
+
+        // update the _fielddefs for the parser
+        $this->_fielddefs = $fielddefs;
+    }
+
+    /**
      * Is this field something we wish to show in Studio/ModuleBuilder layout editors?
      *
      * @param array $def     Field definition in the standard SugarBean field definition format - name, vname, type and so on

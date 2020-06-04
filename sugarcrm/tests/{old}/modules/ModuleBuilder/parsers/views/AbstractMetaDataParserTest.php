@@ -169,4 +169,79 @@ class AbstractMetaDataParserTest extends TestCase
     {
         $this->assertEquals($expected, AbstractMetaDataParser::validField($definition));
     }
+
+    /**
+     * @covers ::setFielddefsProps
+     * @dataProvider setFielddefsPropsDataProvider
+     *
+     * @param array $fielddefs fielddefs to be passed in constructor call
+     * @param array $constructorArgs Array of parameters to be passed in constructor call
+     * @param array $fieldNames Array of field names to which the given properties will be set
+     * @param array $propertyList Array of 'property => value' to be set
+     * @param array $expectation Expected fielddefs
+     */
+    public function testSetFielddefsProps(
+        $fielddefs,
+        $constructorArgs,
+        $fieldNames,
+        $propertyList,
+        $expectation
+    ) {
+        $parser = SugarTestAbstractMetaDataParserUtilities::createGridLayoutParserWithFielddefs(
+            $fielddefs,
+            $constructorArgs
+        );
+        $parser->setFielddefsProps($fieldNames, $propertyList);
+        $this->assertEquals($expectation, $parser->_fielddefs);
+
+        // unsets the parser created above
+        SugarTestAbstractMetaDataParserUtilities::removeCreatedParser($parser);
+    }
+
+    public function setFielddefsPropsDataProvider()
+    {
+        return [
+            [
+                // fielddefs
+                [
+                    'service_start_date' => [
+                        'name' => 'service_start_date',
+                    ],
+                    'test_1' => [
+                        'name' => 'test_1',
+                    ],
+                    'test_2' => [
+                        'name' => 'test_2',
+                        'testProperty' => 'testValue',
+                    ],
+                ],
+                // contructorArgs
+                ['editview', 'Opportunities', null, null, 'mobile'],
+                // fieldNames
+                [
+                    'service_start_date',
+                    'test_2',
+                ],
+                // propertyList
+                [
+                    'newProperty' => 'newValue',
+                ],
+                // expectation
+                [
+                    'service_start_date' => [
+                        'name' => 'service_start_date',
+                        'newProperty' => 'newValue',
+                    ],
+                    'test_1' => [
+                        'name' => 'test_1',
+                    ],
+                    'test_2' => [
+                        'name' => 'test_2',
+                        'testProperty' => 'testValue',
+                        'newProperty' => 'newValue',
+                    ],
+                ],
+            ],
+        ];
+    }
 }
