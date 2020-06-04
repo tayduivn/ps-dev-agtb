@@ -292,10 +292,16 @@ class OpportunityViews
         if (!empty($fieldMap)) {
             foreach($fieldMap as $field => $trigger) {
                 if($trigger === true) {
-                    $defs = $this->bean->getFieldDefinition($field);
-                    if ($defs) {
-                        $saveFields[] = array($field, array());
+                    $origDef = $listParser->panelGetField($field, $listParser->getOriginalPanelDefs());
+                    if (!empty($origDef['field'])) {
+                        $saveFields[] = array($field, $origDef['field']);
                         $handleSave = true;
+                    } else {
+                        $defs = $this->bean->getFieldDefinition($field);
+                        if ($defs) {
+                            $saveFields[] = array($field, array());
+                            $handleSave = true;
+                        }
                     }
                 }
             }
