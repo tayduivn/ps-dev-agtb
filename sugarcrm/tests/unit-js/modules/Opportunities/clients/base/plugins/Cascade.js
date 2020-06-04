@@ -45,11 +45,13 @@ describe('Opportunities.Base.Plugins.Cascade', function() {
                 {
                     oppsConfig: 'RevenueLineItems',
                     displayCheckbox: true,
-                    callCount: 1
+                    callCount: 1,
+                    modelCallCount: 2
                 }, {
                     oppsConfig: 'OpportunitiesOnly',
                     displayCheckbox: false,
-                    callCount: 0
+                    callCount: 0,
+                    modelCallCount: 0
                 }
             ],
             function(values) {
@@ -75,7 +77,7 @@ describe('Opportunities.Base.Plugins.Cascade', function() {
                 plugin.onAttach(field, plugin);
                 expect(field.displayCheckbox).toEqual(values.displayCheckbox);
                 expect(field.on.callCount).toBe(values.callCount);
-                expect(field.options.model.on.callCount).toBe(values.callCount);
+                expect(field.options.model.on.callCount).toBe(values.modelCallCount);
                 expect(_.wrap.callCount).toBe(values.callCount);
             });
         });

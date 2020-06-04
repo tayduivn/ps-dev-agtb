@@ -58,6 +58,7 @@
                 }
 
                 this.model.on('change:' + this.baseFieldName, this.setCascadeValue, this);
+                this.model.on('sync', this.clearCascadeValue, this);
 
                 if (this.options && this.options.def && this.options.def.disable_field) {
                     let disableFieldName = this.options.def.disable_field;
@@ -109,6 +110,7 @@
                     } else {
                         self.field.setDisabled(false, {trigger: true});
                         $('.' + self.baseFieldName + '_should_cascade').prop('checked', true);
+                        self.setCascadeValue();
                     }
                     // If the field has been enabled/disabled, it has also been
                     // re-rendered. This re-rendering removes the DOM element
@@ -169,6 +171,15 @@
              */
             setCascadeValue: function() {
                 this.model.set(this.baseFieldName + '_cascade', this.model.get(this.baseFieldName));
+            },
+
+            /**
+             * Clear cascade field
+             */
+            clearCascadeValue: function() {
+                if (this.context.attributes.layout  && this.context.attributes.layout == 'record') {
+                    this.model.set(this.baseFieldName + '_cascade', '');
+                }
             }
         });
     });
