@@ -151,38 +151,40 @@
   cursor: pointer;
 }
 
-.multi-line-list-view.console-preview {
+.multi-line-list-view {
   overflow: auto;
 
-  .multi-line-table {
-    border: 1px solid @tableTheadRowBorderColor;
+  &.console-preview {
+    .multi-line-table {
+      border: 1px solid @tableTheadRowBorderColor;
 
-    th,
-    td {
-      vertical-align: middle;
-      font-weight: normal;
-      line-height: 16px;
-      padding: 6px 4px 6px 14px;
-    }
+      th,
+      td {
+        vertical-align: middle;
+        font-weight: normal;
+        line-height: 16px;
+        padding: 6px 4px 6px 14px;
+      }
 
-    tbody tr:not(:last-child) {
-      border-bottom: 1px solid @tableTheadRowBorderColor;
-    }
+      tbody tr:not(:last-child) {
+        border-bottom: 1px solid @tableTheadRowBorderColor;
+      }
 
-    .cell-bar--long,
-    .cell-bar--short {
-      border-radius: 4px;
-      height: 10px;
-      margin: 6px 0;
-      background-color: @grayMid;
-    }
+      .cell-bar--long,
+      .cell-bar--short {
+        border-radius: 4px;
+        height: 10px;
+        margin: 6px 0;
+        background-color: @grayMid;
+      }
 
-    .cell-bar--long {
-      width: 120px;
-    }
+      .cell-bar--long {
+        width: 120px;
+      }
 
-    .cell-bar--short {
-      width: 80px;
+      .cell-bar--short {
+        width: 80px;
+      }
     }
   }
 }
