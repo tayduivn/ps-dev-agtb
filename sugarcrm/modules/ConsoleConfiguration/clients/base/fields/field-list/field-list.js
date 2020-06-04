@@ -62,6 +62,7 @@
                     this.mappedFields = this.getMappedFields();
                     this.context.set('defaultViewMeta', null);
                     this.render();
+                    this.handleColumnsChanging();
                 }
             }, this);
         }
