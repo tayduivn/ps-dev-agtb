@@ -2595,8 +2595,11 @@ class SugarBean
             // Pull the email template if it exists
             $emailTemplate = BeanFactory::getBean('EmailTemplates', $templateID);
 
+            $htmlBody = null;
+
             if (!empty($emailTemplate) && $emailTemplate->id && !empty($xtpl->VARS)) {
                 $textBody = $this->processText($emailTemplate->body, $xtpl->VARS);
+                $htmlBody = $this->processText($emailTemplate->body_html, $xtpl->VARS);
                 $subject = $this->processText($emailTemplate->subject, $xtpl->VARS);
             } else {
                 $subject      = $xtpl->text($templateName . "_Subject");
@@ -2637,6 +2640,11 @@ class SugarBean
 
                 // set the body of the email... looks to be plain-text only
                 $mailer->setTextBody($textBody);
+
+                // set html text of the email
+                if ($htmlBody && !isTruthy($emailTemplate->text_only)) {
+                    $mailer->setHtmlBody($htmlBody);
+                }
 
                 // add the recipient
                 $recipientEmailAddress = $notify_user->emailAddress->getPrimaryAddress($notify_user);
