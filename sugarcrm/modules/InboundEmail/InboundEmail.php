@@ -4707,7 +4707,6 @@ class InboundEmail extends SugarBean {
             if ($attachment['contentType'] === 'message/rfc822') {
                 // Handle encapsulated RFC822 message
                 $rfcHeaders = imap_rfc822_parse_headers($attachment['content']);
-                $noteBean->description = $attachment['content'];
                 $fileName = $rfcHeaders->subject . '.eml';
             } else {
                 // Handle standard attachment
