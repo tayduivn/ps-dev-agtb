@@ -858,7 +858,6 @@
       margin-bottom: @labelOnSideVerticalSpacing;
 
       &:not(.label-pill) .record-label {
-        max-width: 100px;
         overflow: hidden;
         text-overflow: ellipsis;
       }
@@ -881,6 +880,14 @@
 
     .record-link-wrapper {
       max-width: 100%;
+    }
+
+    .record-label {
+      max-width: 100%;
+    }
+
+    .fieldset-field .record-label {
+      max-width: 100px;
     }
   }
 }
