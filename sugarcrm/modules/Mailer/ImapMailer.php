@@ -45,7 +45,7 @@ class ImapMailer implements Inbound
     private $storage;
 
     /**
-     * Save the fetched messages so we don't fetch every time
+     * Save the fetched message so we don't fetch every time
      * @var array $messageCache
      */
     private $messageCache = [];
@@ -182,7 +182,8 @@ class ImapMailer implements Inbound
      */
     public function selectMailbox(string $mailbox)
     {
-        $this->client->select($mailbox);
+        $storage = $this->getStorage();
+        $storage->selectFolder($mailbox);
         $this->messageCache = [];
     }
 
