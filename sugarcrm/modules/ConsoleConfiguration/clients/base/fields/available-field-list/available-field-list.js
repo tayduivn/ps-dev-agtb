@@ -110,10 +110,13 @@
                 this.availableFieldLists.push({
                     'name': field.name,
                     'label': (field.label || field.vname),
-                    'display-name': app.lang.get(field.label || field.vname, moduleName)
+                    'displayName': app.lang.get(field.label || field.vname, moduleName)
                 });
             }
         }, this);
+
+        // Sort available fields alphabetically
+        this.availableFieldLists = _.sortBy(this.availableFieldLists, 'displayName');
     },
 
     /**
