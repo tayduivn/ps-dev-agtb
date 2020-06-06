@@ -57,6 +57,7 @@ $dictionary['ShiftException'] = [
             'validation' => ['type' => 'isbefore', 'compareto' => 'end_date', 'blank' => false],
             'required' => true,
             'audited' => true,
+            'massupdate' => false,
         ],
         'start_hour' => [
             'name' => 'start_hour',
@@ -93,6 +94,7 @@ $dictionary['ShiftException'] = [
             'comment' => 'The end date of the shift exception',
             'required' => true,
             'audited' => true,
+            'massupdate' => false,
         ],
         'end_hour' => [
             'name' => 'end_hour',

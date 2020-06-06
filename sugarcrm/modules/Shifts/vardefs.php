@@ -38,6 +38,7 @@ $dictionary['Shift'] = [
             'required' => true,
             'validation' => ['type' => 'isbefore', 'compareto' => 'date_end', 'blank' => false],
             'audited' => true,
+            'massupdate' => false,
         ],
         'date_end' => [
             'name' => 'date_end',
@@ -47,6 +48,7 @@ $dictionary['Shift'] = [
             'comment' => 'Date is which shift is scheduled to (or did) end',
             'required' => true,
             'audited' => true,
+            'massupdate' => false,
         ],
         'shifts_users' => [
             'name' => 'shifts_users',
