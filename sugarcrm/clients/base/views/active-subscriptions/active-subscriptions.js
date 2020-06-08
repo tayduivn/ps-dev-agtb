@@ -91,7 +91,11 @@
 
             if (contextModel && contextModel.get('_module') === baseModule) {
                 this.baseModel = contextModel;
-                break;
+
+                var parentHasRowModel = currContext.parent && currContext.parent.has('rowModel');
+                if (!parentHasRowModel) {
+                    break;
+                }
             }
 
             currContext = currContext.parent;
