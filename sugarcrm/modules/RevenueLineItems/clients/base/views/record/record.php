@@ -191,6 +191,46 @@ $fields = array(
             'date_closed_timestamp'
         )
     ),
+    array(
+        'name' => 'likely_case',
+        'type' => 'currency',
+        'related_fields' => array(
+            'likely_case',
+            'currency_id',
+            'base_rate',
+        ),
+        'convertToBase' => true,
+        'showTransactionalAmount' => true,
+        'currency_field' => 'currency_id',
+        'base_rate_field' => 'base_rate',
+    ),
+    'product_type',
+    array(
+        'name' => 'best_case',
+        'type' => 'currency',
+        'related_fields' => array(
+            'best_case',
+            'currency_id',
+            'base_rate',
+        ),
+        'convertToBase' => true,
+        'showTransactionalAmount' => true,
+        'currency_field' => 'currency_id',
+        'base_rate_field' => 'base_rate',
+    ),
+    array(
+        'name' => 'worst_case',
+        'type' => 'currency',
+        'related_fields' => array(
+            'worst_case',
+            'currency_id',
+            'base_rate',
+        ),
+        'convertToBase' => true,
+        'showTransactionalAmount' => true,
+        'currency_field' => 'currency_id',
+        'base_rate_field' => 'base_rate',
+    ),
     'product_template_name',
     array(
         'name' => 'category_name',
@@ -254,67 +294,14 @@ $fields = array(
         'base_rate_field' => 'base_rate',
     ),
     array(
-        'name' => 'likely_case',
-        'type' => 'currency',
-        'related_fields' => array(
-            'likely_case',
-            'currency_id',
-            'base_rate',
-        ),
-        'convertToBase' => true,
-        'showTransactionalAmount' => true,
-        'currency_field' => 'currency_id',
-        'base_rate_field' => 'base_rate',
-    ),
-    array(
-        'name' => 'quote_name',
-        'label' => 'LBL_ASSOCIATED_QUOTE',
-        'related_fields' => array('quote_id'),
-        // this is a hack to get the quote_id field loaded
-        'readonly' => true,
-        'related_fields' => array(
-            'mft_part_num',
-        ),
-    ),
-    array(
         'name' => 'tag',
         'span' => 12,
     ),
 );
 
 $fieldsHidden = array(
-    array(
-        'name' => 'best_case',
-        'type' => 'currency',
-        'related_fields' => array(
-            'best_case',
-            'currency_id',
-            'base_rate',
-        ),
-        'convertToBase' => true,
-        'showTransactionalAmount' => true,
-        'currency_field' => 'currency_id',
-        'base_rate_field' => 'base_rate',
-    ),
-    array(
-        'name' => 'worst_case',
-        'type' => 'currency',
-        'related_fields' => array(
-            'worst_case',
-            'currency_id',
-            'base_rate',
-        ),
-        'convertToBase' => true,
-        'showTransactionalAmount' => true,
-        'currency_field' => 'currency_id',
-        'base_rate_field' => 'base_rate',
-    ),
     // BEGIN SUGARCRM flav=ent ONLY
-    'renewable' => array(
-        'name' => 'renewable',
-        'label' => 'LBL_RENEWABLE',
-        'type' => 'bool',
-    ),
+    'service',
     array(
         'name' => 'service_duration',
         'type' => 'fieldset',
@@ -333,7 +320,6 @@ $fieldsHidden = array(
             ),
         ),
     ),
-    'service',
     'service_start_date' => array(
         'name' => 'service_start_date',
         'label' => 'LBL_SERVICE_START_DATE',
@@ -344,14 +330,15 @@ $fieldsHidden = array(
         'label' => 'LBL_SERVICE_END_DATE',
         'type' => 'service-enddate',
     ),
+    'renewable' => array(
+        'name' => 'renewable',
+        'label' => 'LBL_RENEWABLE',
+        'type' => 'bool',
+    ),
     // END SUGARCRM flav=ent ONLY
     'next_step',
-    'product_type',
     'lead_source',
     'campaign_name',
-    'purchasedlineitem_name',
-    'assigned_user_name',
-    'team_name',
     array(
         'name' => 'description',
         'span' => 12,
@@ -370,7 +357,6 @@ $fieldsHidden = array(
         'currency_field' => 'currency_id',
         'base_rate_field' => 'base_rate',
     ),
-    'tax_class',
     array(
         'name' => 'cost_price',
         'readonly' => true,
@@ -385,6 +371,23 @@ $fieldsHidden = array(
         'currency_field' => 'currency_id',
         'base_rate_field' => 'base_rate',
     ),
+    'tax_class',
+    array(
+        'name' => 'quote_name',
+        'label' => 'LBL_ASSOCIATED_QUOTE',
+        'related_fields' => array('quote_id'),
+        // this is a hack to get the quote_id field loaded
+        'readonly' => true,
+        'related_fields' => array(
+            'mft_part_num',
+        ),
+    ),
+    array (
+        'name' => 'purchasedlineitem_name',
+        'span' => 12,
+    ),
+    'team_name',
+    'assigned_user_name',
     array(
         'name' => 'date_entered_by',
         'readonly' => true,

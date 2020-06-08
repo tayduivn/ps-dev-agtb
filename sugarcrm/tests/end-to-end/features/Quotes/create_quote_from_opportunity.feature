@@ -284,6 +284,7 @@ Feature: Generate Quote From RLI subpanel in Opportunity record view
     Then I should see *RLI_1 in #RevenueLineItemsList.ListView
     When I select *RLI_1 in #RevenueLineItemsList.ListView
     Then I should see #RLI_1Record view
+    When I click show more button on #RLI_1Record view
     Then I verify fields on #RLI_1Record.HeaderView
       | fieldName | value  |
       | quote_id  | Quoted |
