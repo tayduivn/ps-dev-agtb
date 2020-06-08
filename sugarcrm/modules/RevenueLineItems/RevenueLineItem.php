@@ -126,7 +126,7 @@ class RevenueLineItem extends SugarBean
     public $purchaseCopyFields = [
         'account_id', 'account_name', 'acl_team_set_id', 'assigned_user_id',
         'assigned_user_name', 'category_id', 'product_template_id',
-        'product_template_name', 'name', 'service', 'team_id', 'team_set_id',
+        'product_template_name', 'name', 'service', 'renewable', 'team_id', 'team_set_id',
         'type_id',
     ];
 

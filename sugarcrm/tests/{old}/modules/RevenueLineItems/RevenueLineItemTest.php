@@ -876,6 +876,7 @@ class RevenueLineItemTest extends TestCase
                     'category_id' => '12345',
                     'type_id' => '54321',
                     'service' => '1',
+                    'renewable' => '1',
                     'assigned_user_id' => 'abc1234oi',
                     'assigned_user_name' => 'SugarTestUser9000',
                     'team_id' => '1234lkjsdf',
