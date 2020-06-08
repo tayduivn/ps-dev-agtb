@@ -411,6 +411,10 @@ class OpportunitiesSeedData {
             $opp->name .= ' - ' . $oppUnits . ' Renewal';
             $opp->sales_status = $app_list_strings['sales_status_dom']['In Progress'];
 
+            if (!in_array($rli->sales_stage, $rli->getClosedStages())) {
+                $opp->service_open_revenue_line_items++;
+            }
+
             if (!$usingRLIs) {
                 $seed = rand(1, 15);
                 if ($seed % 2 == 0) {
@@ -499,6 +503,7 @@ class OpportunitiesSeedData {
         $opp->total_revenue_line_items = $rlis_to_create;
         $opp->closed_revenue_line_items = 0;
         $opp->included_revenue_line_items = 0;
+        $opp->service_open_revenue_line_items = 0;
 
         $closedWon = 0;
         $closedLost = 0;
@@ -652,6 +657,9 @@ class OpportunitiesSeedData {
                 $opp->name = $rli->name;
                 $rli->service_start_date = $rli->date_closed;
                 $rli->service_end_date = self::setServiceEndDate($rli);
+                if (!in_array($rli->sales_stage, $rli->getClosedStages())) {
+                    $opp->service_open_revenue_line_items++;
+                }
             }
             //END SUGARCRM flav=ent ONLY
 
