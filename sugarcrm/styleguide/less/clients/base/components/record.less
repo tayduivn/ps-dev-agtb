@@ -93,7 +93,6 @@
     > span {
       display: block;
       min-height: 28px;
-      margin-bottom: 16px;
       box-sizing: border-box;
     }
 
@@ -725,10 +724,6 @@
     }
   }
 
-  .record-label-wrapper {
-    margin-bottom: @labelOnSideVerticalSpacing;
-  }
-
   &.label-pill {
     margin: 0;
   }
@@ -744,10 +739,6 @@
     > .detail,
     > .erased {
       margin-bottom: 0;
-    }
-
-    > .edit {
-      margin-bottom: 16px;
     }
   }
 
@@ -770,6 +761,7 @@
 
 .row-fluid > .record-cell {
   float: left;
+  margin-bottom: 8px;
 
   html.rtl & {
     float: right;
@@ -855,8 +847,6 @@
     }
 
     .record-cell {
-      margin-bottom: @labelOnSideVerticalSpacing;
-
       &:not(.label-pill) .record-label {
         overflow: hidden;
         text-overflow: ellipsis;
