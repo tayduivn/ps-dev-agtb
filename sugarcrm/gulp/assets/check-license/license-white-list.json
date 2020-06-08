@@ -45,6 +45,7 @@
     "modules/ACLActions/Forms.php",
     "modules/ACLFields/Forms.php",
     "modules/ACLRoles/Forms.php",
+    "modules/Mailer/LaminasOverrides/",
     "modules/ModuleBuilder/tpls/MBModule/form.tpl",
     "modules/ModuleBuilder/tpls/MBModule/main.tpl",
     "modules/ModuleBuilder/tpls/MBPackage/appLanguage.tpl",
