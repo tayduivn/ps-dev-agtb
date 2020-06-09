@@ -208,20 +208,6 @@ Feature: Generate Quote From RLI subpanel in Opportunity record view
     # 16. Verify user is returned to Opportunity record view
     Then I should see #Opp_1Record view
 
-    # 17. Verify that all 4 RLIs do NOT have link to generated quote
-    Then I verify fields for *RLI_1 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
-      | fieldName  | value |
-      | quote_name |       |
-    Then I verify fields for *RLI_2 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
-      | fieldName  | value |
-      | quote_name |       |
-    Then I verify fields for *RLI_3 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
-      | fieldName  | value |
-      | quote_name |       |
-    Then I verify fields for *RLI_4 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
-      | fieldName  | value |
-      | quote_name |       |
-
     # 18. Generate quote and Save
     When I toggleAll records in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
     When I select GenerateQuote action in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
@@ -265,21 +251,7 @@ Feature: Generate Quote From RLI subpanel in Opportunity record view
       | date_quote_expected_closed | 12/12/2020    |
       | total_usdollar             | $4,767.16     |
 
-    # 22. Verify that all 4 RLIs have link to generated quote in the list view
-    Then I verify fields for *RLI_1 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
-      | fieldName  | value         |
-      | quote_name | SugarCRM Inc. |
-    Then I verify fields for *RLI_2 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
-      | fieldName  | value         |
-      | quote_name | SugarCRM Inc. |
-    Then I verify fields for *RLI_3 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
-      | fieldName  | value         |
-      | quote_name | SugarCRM Inc. |
-    Then I verify fields for *RLI_4 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
-      | fieldName  | value         |
-      | quote_name | SugarCRM Inc. |
-
-    # 20. Verify that 'RLI_1' record have a label 'Quoted' in the header and link to the generated quote in record view
+    # 22. Verify that 'RLI_1' record have a label 'Quoted' in the header and link to the generated quote in record view
     When I choose RevenueLineItems in modules menu
     Then I should see *RLI_1 in #RevenueLineItemsList.ListView
     When I select *RLI_1 in #RevenueLineItemsList.ListView
