@@ -265,5 +265,6 @@ To create an {{module_name}}:
 
     // BEGIN SUGARCRM flav=ent ONLY
     'LBL_PIPELINE_ERR_CLOSED_SALES_STAGE' => 'Unable to change {{fieldName}} as this {{moduleSingular}} has no open line items.',
+    'TPL_ACTIVITY_TIMELINE_DASHLET' => 'Opportunity Interactions',
     // END SUGARCRM flav=ent ONLY
 );

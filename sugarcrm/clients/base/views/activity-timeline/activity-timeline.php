@@ -21,10 +21,7 @@ $viewdefs['base']['view']['activity-timeline'] = [
             'filter' => [
                 'view' => 'record',
                 'module' => [
-                    'Accounts',
-                    'Cases',
                     'Leads',
-                    'Opportunities',
                 ],
             ],
         ],
