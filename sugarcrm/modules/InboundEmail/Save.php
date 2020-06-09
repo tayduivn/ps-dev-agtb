@@ -15,6 +15,7 @@ use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 
 global $current_user;
 
+$error = '';
 $focus = BeanFactory::newBean('InboundEmail');
 $focus->disable_row_level_security = true;
 if(!empty($_REQUEST['record'])) {
@@ -203,7 +204,7 @@ $monitor_fields = array(
 
 $current_monitor_fields = array();
 foreach ($monitor_fields as $singleField) {
-    if(isset($focus->fetched_row[$singleField])) {
+    if (is_array($focus->fetched_row) && array_key_exists($singleField, $focus->fetched_row)) {
         $current_monitor_fields[$singleField] = $focus->fetched_row[$singleField];
     }
 }
@@ -221,11 +222,11 @@ if( empty($_REQUEST['id']) && empty($focus->groupfolder_id) )
 //after save.
 if( !empty($focus->groupfolder_id) )
 {
-    foreach ($monitor_fields as $singleField)
-    {
+    foreach ($current_monitor_fields as $singleField => $value) {
         //Check if the value is being changed during save.
-        if($current_monitor_fields[$singleField] != $focus->$singleField)
+        if ($value !== $focus->$singleField) {
             syncSugarFoldersWithBeanChanges($singleField, $focus);
+        }
     }
 }
 
