@@ -81,6 +81,7 @@ class PurchasedLineItem extends Basic
      */
     public function save($check_notify = false)
     {
+        $this->setServiceEndDate();
         $id = parent::save($check_notify);
         $this->updateRelatedPurchase($this->purchase_id);
 
@@ -187,5 +188,42 @@ class PurchasedLineItem extends Basic
 
         // Update rollups on parent records
         $this->updateRelatedPurchase($purchaseId);
+    }
+
+    /**
+     * Calculate service_end_date for service PLI.
+     *
+     * If 'service' or any required service-related fields are empty, or if
+     * setting the service end date fails, clear service-related fields to avoid
+     * problems resulting from partial service data.
+     */
+    protected function setServiceEndDate()
+    {
+        $clearServiceValues = false;
+        if (!empty($this->service) &&
+            !empty($this->service_start_date) &&
+            !empty($this->service_duration_value) &&
+            !empty($this->service_duration_unit)
+        ) {
+            try {
+                $this->service_end_date = TimeDate::getInstance()->fromString($this->service_start_date)
+                    ->modify('+' . $this->service_duration_value . ' ' . $this->service_duration_unit)
+                    ->modify('-1 day')
+                    ->asDbDate(false);
+            } catch (Exception $e) {
+                $msg = 'Error calculating the ending service date for Purchased Line Item ' . $this->name . ': ' . $e->getMessage();
+                LoggerManager::getLogger()->error($msg);
+                $clearServiceValues = true;
+            }
+        }
+
+        // If this is not a service PLI, or we encountered an error trying to
+        // calculate the end date, set default values for non-service PLI to
+        // avoid service-related calculation errors from incomplete data
+        if ($clearServiceValues) {
+            $this->service = false;
+            $this->service_duration_unit = 'day';
+            $this->service_duration_value = '1';
+        }
     }
 }

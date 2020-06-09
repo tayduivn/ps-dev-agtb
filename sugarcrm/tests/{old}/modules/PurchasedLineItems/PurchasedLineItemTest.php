@@ -90,6 +90,7 @@ class PurchasedLineItemTest extends TestCase
         $pli->discount_amount = $discount_amount;
         $pli->quantity = $quantity;
         $pli->service = $service;
+        $pli->service_start_date = '2020-01-01';
         $pli->service_duration_unit = $service_duration_unit;
         $pli->service_duration_value = $service_duration_value;
         $pli->save();
@@ -129,6 +130,8 @@ class PurchasedLineItemTest extends TestCase
             $pli = SugarTestPurchasedLineItemUtilities::createPurchasedLineItem();
             $pli->purchase_id = $purchase->id;
             $pli->service = $pliData['service'];
+            $pli->service_duration_unit = $pliData['service_duration_unit'];
+            $pli->service_duration_value = $pliData['service_duration_value'];
             $pli->service_start_date = $pliData['service_start_date'];
             $pli->service_end_date = $pliData['service_end_date'];
             $pli->save();
@@ -154,17 +157,40 @@ class PurchasedLineItemTest extends TestCase
             // 2 related service PLIs with different start and end dates
             array(
                 array(
-                    array('service' => 1, 'service_start_date' => '2020-01-01', 'service_end_date' => '2020-11-12'),
-                    array('service' => 1, 'service_start_date' => '2020-05-01', 'service_end_date' => '2025-05-01'),
+                    array(
+                        'service' => 1,
+                        'service_start_date' => '2020-01-01',
+                        'service_end_date' => '2020-11-12',
+                        'service_duration_unit' => 'day',
+                        'service_duration_value' => '317',
+                    ),
+                    array(
+                        'service' => 1,
+                        'service_start_date' => '2020-05-01',
+                        'service_end_date' => '2025-05-01',
+                        'service_duration_unit' => 'year',
+                        'service_duration_value' => '5',
+                    ),
                 ),
                 '2020-01-01',
-                '2025-05-01',
+                '2025-04-30',
             ),
             // 2 related goods PLIs with the same start and end dates
             array(
                 array(
-                    array('service' => 0, 'service_start_date' => '2019-10-05', 'service_end_date' => '2019-10-05'),
-                    array('service' => 0, 'service_start_date' => '2020-08-08', 'service_end_date' => '2020-08-08'),
+                    array(
+                        'service' => 0,
+                        'service_start_date' => '2019-10-05',
+                        'service_end_date' => '2019-10-05',
+                        'service_duration_unit' => 'day',
+                        'service_duration_value' => '1',
+                    ),
+                    array(
+                        'service' => 0,
+                        'service_start_date' => '2020-08-08',
+                        'service_end_date' => '2020-08-08',
+                        'service_duration_unit' => 'day',
+                        'service_duration_value' => '1',),
                 ),
                 '2019-10-05',
                 '2020-08-08',
@@ -172,13 +198,158 @@ class PurchasedLineItemTest extends TestCase
             // 3 related PLIs one of which is service
             array(
                 array(
-                    array('service' => 1, 'service_start_date' => '2017-01-31', 'service_end_date' => '2050-12-31'),
-                    array('service' => 0, 'service_start_date' => '2021-06-01', 'service_end_date' => '2021-06-01'),
-                    array('service' => 0, 'service_start_date' => '2060-10-05', 'service_end_date' => '2060-10-05'),
+                    array(
+                        'service' => 1,
+                        'service_start_date' => '2017-01-31',
+                        'service_end_date' => '2050-12-31',
+                        'service_duration_unit' => 'year',
+                        'service_duration_value' => '33',
+                    ),
+                    array(
+                        'service' => 0,
+                        'service_start_date' => '2021-06-01',
+                        'service_end_date' => '2021-06-01',
+                        'service_duration_unit' => 'day',
+                        'service_duration_value' => '1',
+                    ),
+                    array(
+                        'service' => 0,
+                        'service_start_date' => '2060-10-05',
+                        'service_end_date' => '2060-10-05',
+                        'service_duration_unit' => 'day',
+                        'service_duration_value' => '1',
+                    ),
                 ),
                 '2017-01-31',
                 '2060-10-05',
             ),
         );
+    }
+
+    /**
+     * @covers ::setServiceEndDate
+     * @dataProvider providerTestSetServiceEndDate
+     */
+    public function testSetServiceEndDate(array $serviceFields, ?string $expectedEndDate, $shouldClearFields)
+    {
+        $pli = SugarTestPurchasedLineItemUtilities::createPurchasedLineItem();
+
+        // Set the service fields accordingly
+        $pli->service = $serviceFields['service'];
+        $pli->service_start_date = $serviceFields['service_start_date'];
+        $pli->service_duration_value = $serviceFields['service_duration_value'];
+        $pli->service_duration_unit = $serviceFields['service_duration_unit'];
+
+        SugarTestReflection::callProtectedMethod($pli, 'setServiceEndDate');
+
+        $this->assertSame($expectedEndDate, $pli->service_end_date);
+
+        if ($shouldClearFields) {
+            $this->assertSame(false, $pli->service);
+            $this->assertSame('1', $pli->service_duration_value);
+            $this->assertSame('day', $pli->service_duration_unit);
+        }
+    }
+
+    public function providerTestSetServiceEndDate()
+    {
+        return [
+            // Test days
+            [
+                [
+                    'service' => true,
+                    'service_start_date' => '2019-09-25',
+                    'service_duration_value' => 1,
+                    'service_duration_unit' => 'day',
+                ],
+                '2019-09-25',
+                false,
+            ],
+            [
+                [
+                    'service' => true,
+                    'service_start_date' => '2019-09-25',
+                    'service_duration_value' => 7,
+                    'service_duration_unit' => 'day',
+                ],
+                '2019-10-01',
+                false,
+            ],
+            // Test months
+            [
+                [
+                    'service' => true,
+                    'service_start_date' => '2019-06-30',
+                    'service_duration_value' => 1,
+                    'service_duration_unit' => 'month',
+                ],
+                '2019-07-29',
+                false,
+            ],
+            [
+                [
+                    'service' => true,
+                    'service_start_date' => '2019-06-30',
+                    'service_duration_value' => 3,
+                    'service_duration_unit' => 'month',
+                ],
+                '2019-09-29',
+                false,
+            ],
+            // Test years
+            [
+                [
+                    'service' => true,
+                    'service_start_date' => '2019-09-30',
+                    'service_duration_value' => 1,
+                    'service_duration_unit' => 'year',
+                ],
+                '2020-09-29',
+                false,
+            ],
+            [
+                [
+                    'service' => true,
+                    'service_start_date' => '2019-09-30',
+                    'service_duration_value' => 3,
+                    'service_duration_unit' => 'year',
+                ],
+                '2022-09-29',
+                false,
+            ],
+            // Test non-service type
+            [
+                [
+                    'service' => false,
+                    'service_start_date' => null,
+                    'service_duration_value' => null,
+                    'service_duration_unit' => null,
+                ],
+                null,
+                false,
+            ],
+            // Test clearing of service data for non-services
+            [
+                [
+                    'service' => false,
+                    'service_start_date' => '2019-09-30',
+                    'service_duration_value' => 3,
+                    'service_duration_unit' => 'year',
+                ],
+                null,
+                true,
+            ],
+            // Test clearing of service data for end date calculation errors
+            [
+                [
+                    'service' => true,
+                    'service_start_date' => 'Not a real date',
+                    'service_duration_value' => 'Not a real number',
+                    'service_duration_unit' => null,
+                ],
+                null,
+                true,
+            ],
+        ];
     }
 }

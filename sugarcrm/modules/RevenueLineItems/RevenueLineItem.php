@@ -596,11 +596,11 @@ class RevenueLineItem extends SugarBean
         $this->copyFieldsToBean($pli, $this->pliCopyFields);
         $this->mapFieldsToBean($pli, $this->pliMapFields);
         $this->copyCustomFields($pli);
+        $purchase->mapFieldsToPli($pli);
         $pli->save();
 
         if ($purchase->load_relationship('purchasedlineitems')) {
             $purchase->purchasedlineitems->add($pli);
-            $purchase->mapFieldsToPli($pli);
         }
 
         if ($this->load_relationship('documents') &&
