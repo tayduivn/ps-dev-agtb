@@ -25,6 +25,18 @@ $viewdefs['Shifts']['base']['view']['list'] = [
                     'link' => true,
                 ],
                 [
+                    'name' => 'date_start',
+                    'label' => 'LBL_CALENDAR_START_DATE',
+                    'default' => true,
+                    'enabled' => true,
+                ],
+                [
+                    'name' => 'date_end',
+                    'label' => 'LBL_CALENDAR_END_DATE',
+                    'default' => true,
+                    'enabled' => true,
+                ],
+                [
                     'name' => 'timezone',
                     'label' => 'LBL_TIMEZONE',
                     'enabled' => true,
@@ -35,18 +47,6 @@ $viewdefs['Shifts']['base']['view']['list'] = [
                     'label' => 'LBL_DATE_MODIFIED',
                     'enabled' => true,
                     'default' => true,
-                ],
-                [
-                    'name' => 'date_start',
-                    'label' => 'LBL_CALENDAR_START_DATE',
-                    'default' => false,
-                    'enabled' => true,
-                ],
-                [
-                    'name' => 'date_end',
-                    'label' => 'LBL_CALENDAR_END_DATE',
-                    'default' => false,
-                    'enabled' => true,
                 ],
                 [
                     'name' => 'assigned_user_name',
