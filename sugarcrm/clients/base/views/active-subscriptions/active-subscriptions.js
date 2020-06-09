@@ -243,6 +243,8 @@
         var model = _.first(this.collection.models.filter(function(ele) {
             return ele.id === purchaseId;
         }));
+        var collectionIndex = this.collection.models.indexOf(model);
+        var currentSubscription = 0;
         var collections = model.get('pli_collection');
         var element;
         var quantity = 0;
@@ -255,6 +257,7 @@
                 var endDate = app.date(record.contents.service_end_date);
                 var today = app.date();
                 if (startDate <= today && endDate >= today) {
+                    currentSubscription++;
                     quantity += record.contents.quantity;
                     totalAmount += parseInt(record.contents.total_amount, 10);
                 }
@@ -262,6 +265,9 @@
         }, this);
         model.set('quantity', quantity);
         model.set('total_amount', totalAmount);
+        if (currentSubscription === 0) {
+            this.collection.models.splice(collectionIndex, 1);
+        }
         this._caseComparator();
         this._daysDifferenceCalculator();
         this.render();
