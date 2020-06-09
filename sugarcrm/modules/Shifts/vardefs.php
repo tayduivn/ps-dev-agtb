@@ -62,11 +62,6 @@ $dictionary['Shift'] = [
     ],
     'relationships' => [
     ],
-    'acls' => [
-        'SugarACLAdminOnly' => [
-            'allowUserRead' => true,
-        ],
-    ],
     'uses' => ['basic', 'assignable', 'team_security', 'business_hours'],
 ];
 
