@@ -32,11 +32,13 @@
                                 <div class="row-fluid">
                                     <div class="{{#if span}}span{{span}}{{/if}} record-cell">
                                         {{#if label}}
-                                            <div class="record-label pipeline-record-label" data-name="{{name}}">
-                                                <h5>
-                                                    {{str label ../../../../this.module}}
-                                                </h5>
-                                            </div>
+                                             {{#unless dismiss_label}}
+                                                  <div class="record-label pipeline-record-label" data-name="{{../name}}">
+                                                       <h5>
+                                                           {{str label ../../../../../this.module}}
+                                                       </h5>
+                                                   </div>
+                                             {{/unless}}
                                         {{/if}}
                                         <span class="normal">
                                             {{field ../../../../this model=../../this template="edit"}}

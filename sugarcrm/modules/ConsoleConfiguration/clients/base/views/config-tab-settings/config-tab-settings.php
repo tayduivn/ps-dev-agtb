@@ -63,7 +63,7 @@ $viewdefs['ConsoleConfiguration']['base']['view']['config-tab-settings'] = array
             'fields' => array(
                 array(
                     'name' => 'filter_def',
-                    'vname' => 'LBL_CONSOLE_FILTER_RULES',
+                    'dismiss_label' => true,
                     'type' => 'filter-field',
                 ),
             ),
