@@ -443,9 +443,6 @@ To configure additional system settings, click <a href="index.php?module=Adminis
     'LBL_ACTIVITY_STREAMS_SETTINGS_EDIT' => 'Enable Activity Streams',
     'LBL_ACTIVITY_STREAMS_SETTINGS_EDIT_HELP' => 'Turns on Activity Streams for the application',
 
-    // Marketing content settings
-    'LBL_ADDITIONAL_MARKETING_CONTENT' => 'Enable additional login screen content',
-
     //BEGIN SUGARCRM flav=ent ONLY
     // SugarBPM settings
     'LBL_ADVANCED_WORKFLOW_SETTINGS_AUTO_SAVE_INTERVAL' => 'Auto-save process definitions',

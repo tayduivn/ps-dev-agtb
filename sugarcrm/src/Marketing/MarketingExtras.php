@@ -64,25 +64,13 @@ class MarketingExtras
             $queryParams['test'] = $marketingExtrasSandboxTest;
         }
 
-        if ($this->areMarketingExtrasEnabled()) {
-            $url = $this->getMarketingExtrasUrl();
-            $contentUrl = $this->fetchMarketingContentInfo($url, $queryParams)['content_url'];
-            if (!$this->validateUrl($contentUrl)) {
-                throw new \Exception('content_url is not actually an HTTP(S) URL');
-            } else {
-                return $contentUrl;
-            }
+        $url = $this->getMarketingExtrasUrl();
+        $contentUrl = $this->fetchMarketingContentInfo($url, $queryParams)['content_url'];
+        if (!$this->validateUrl($contentUrl)) {
+            throw new \Exception('content_url is not actually an HTTP(S) URL');
+        } else {
+            return $contentUrl;
         }
-        return '';
-    }
-
-    /**
-     * Check if marketing extras are enabled.
-     * @return bool true if marketing extras are enabled, false otherwise.
-     */
-    public function areMarketingExtrasEnabled(): bool
-    {
-        return $this->getMarketingExtrasHelper()->getSugarConfig('marketing_extras_enabled', false);
     }
 
     /**

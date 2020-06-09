@@ -41,21 +41,22 @@ class MarketingExtrasTest extends TestCase
 
         $marketingExtras = $this->getMarketingExtrasMock(
             [
-                'areMarketingExtrasEnabled',
                 'getMarketingExtrasHelper',
+                'getMarketingExtrasUrl',
+                'fetchMarketingContentInfo',
             ]
         );
 
         $marketingExtras->method('getMarketingExtrasHelper')
             ->willReturn($marketingExtrasHelper);
-
-        $marketingExtras->expects($this->once())
-            ->method('areMarketingExtrasEnabled')
-            ->willReturn(false);
+        $marketingExtras->method('getMarketingExtrasUrl')
+            ->willReturn(self::$expectedContentUrl);
+        $marketingExtras->method('fetchMarketingContentInfo')
+            ->willReturn(['content_url' => self::$expectedContentUrl]);
 
         $contentUrl = $marketingExtras->getMarketingContentUrl('en_us');
 
-        $this->assertEquals('', $contentUrl);
+        $this->assertEquals(self::$expectedContentUrl, $contentUrl);
     }
 
     /**
@@ -84,7 +85,6 @@ class MarketingExtrasTest extends TestCase
 
         $marketingExtras = $this->getMarketingExtrasMock(
             [
-                'areMarketingExtrasEnabled',
                 'getMarketingExtrasUrl',
                 'fetchMarketingContentInfo',
                 'getMarketingExtrasHelper',
@@ -94,9 +94,6 @@ class MarketingExtrasTest extends TestCase
         $marketingExtras->method('getMarketingExtrasHelper')
             ->willReturn($marketingExtrasHelper);
 
-        $marketingExtras->expects($this->once())
-            ->method('areMarketingExtrasEnabled')
-            ->willReturn(true);
         $marketingExtras->expects($this->once())
             ->method('getMarketingExtrasUrl')
             ->willReturn('http://example.com/url');

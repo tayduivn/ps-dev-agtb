@@ -28,7 +28,6 @@ class MarketingExtrasApiTest extends TestCase
      * @dataProvider providerGetMarketingExtras
      */
     public function testGetMarketingExtras(
-        bool $marketingExtrasEnabled,
         string $marketingUrl,
         ?string $selectedLang,
         bool $marketingException,
@@ -43,7 +42,6 @@ class MarketingExtrasApiTest extends TestCase
         );
         $marketingExtras = $this->getMarketingExtrasMock(
             [
-                'areMarketingExtrasEnabled',
                 'getMarketingContentUrl',
                 'getBackgroundImageUrl',
             ]
@@ -51,33 +49,27 @@ class MarketingExtrasApiTest extends TestCase
         $api->method('getMarketingExtrasService')
             ->willReturn($marketingExtras);
 
-        $marketingExtras->expects($this->once())
-            ->method('areMarketingExtrasEnabled')
-            ->willReturn($marketingExtrasEnabled);
+        $getMarketingUrl = $marketingExtras->expects($this->once())
+            ->method('getMarketingContentUrl')
+            ->with($this->equalTo($selectedLang));
 
-        if ($marketingExtrasEnabled) {
-            $getMarketingUrl = $marketingExtras->expects($this->once())
-                ->method('getMarketingContentUrl')
-                ->with($this->equalTo($selectedLang));
+        $api->expects($this->once())
+            ->method('parseArgs')
+            ->willReturn(['language' => $selectedLang]);
 
-            $api->expects($this->once())
-                ->method('parseArgs')
-                ->willReturn(['language' => $selectedLang]);
+        if ($marketingException) {
+            $getMarketingUrl->will($this->throwException(new \Exception()));
+        } else {
+            $getMarketingUrl->willReturn($marketingUrl);
+        }
 
-            if ($marketingException) {
-                $getMarketingUrl->will($this->throwException(new \Exception()));
-            } else {
-                $getMarketingUrl->willReturn($marketingUrl);
-            }
+        $getImageUrl = $marketingExtras->expects($this->once())
+            ->method('getBackgroundImageUrl');
 
-            $getImageUrl = $marketingExtras->expects($this->once())
-                ->method('getBackgroundImageUrl');
-
-            if ($imageException) {
-                $getImageUrl->will($this->throwException(new \Exception()));
-            } else {
-                $getImageUrl->willReturn($imageUrl);
-            }
+        if ($imageException) {
+            $getImageUrl->will($this->throwException(new \Exception()));
+        } else {
+            $getImageUrl->willReturn($imageUrl);
         }
 
         $marketingContent = $api->getMarketingExtras($this->getRestServiceMock(), [$selectedLang]);
@@ -90,7 +82,6 @@ class MarketingExtrasApiTest extends TestCase
         return [
             // marketing extras on, normal result URL, default language, no exception
             [
-                true,
                 MarketingExtrasApiTest::$expectedContentUrl,
                 null,
                 false,
@@ -100,7 +91,6 @@ class MarketingExtrasApiTest extends TestCase
 
             // marketing extras on, French result URL, French language, no exception
             [
-                true,
                 MarketingExtrasApiTest::$frenchContentUrl,
                 'fr_FR',
                 false,
@@ -110,7 +100,6 @@ class MarketingExtrasApiTest extends TestCase
 
             // marketing extras off, empty results URL, language doesn't matter, no exception
             [
-                false,
                 '',
                 null,
                 false,
@@ -120,7 +109,6 @@ class MarketingExtrasApiTest extends TestCase
 
             // marketing extras on, normal content URL, default language, no content exception, image exception
             [
-                true,
                 MarketingExtrasApiTest::$expectedContentUrl,
                 null,
                 false,
@@ -130,7 +118,6 @@ class MarketingExtrasApiTest extends TestCase
 
             // marketing extras on, content exception is thrown, no image exception
             [
-                true,
                 '',
                 null,
                 true,

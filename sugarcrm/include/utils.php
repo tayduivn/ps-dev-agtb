@@ -494,7 +494,6 @@ function get_sugar_config_defaults()
             // minutes) for multiple Data Privacy records to be grouped in a single job before going into execution.
             'erasure_job_delay' => 0,
         ],
-        'marketing_extras_enabled' => true,
         'marketing_extras_url' => 'https://marketing.sugarcrm.com/content',
         'default_background_image' => 'include/images/login-background.png',
 
