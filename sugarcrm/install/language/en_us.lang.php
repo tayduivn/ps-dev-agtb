@@ -694,8 +694,12 @@ Report Run Date and Time: $report_time',
                 <p>You have been mentioned in the following record’s comment log:  <a href="$record_url">$record_name</a></p>
                 <p>Please log in to Sugar to view the comment.</p>
             </div>',
-        'txt_body' => 'You have been mentioned in the following record’s comment log: $record_name
-            Please log in to Sugar to view the comment.',
+        'txt_body' =>
+'You have been mentioned in the following record’s comment log: $record_name
+
+You may review this record at: <$record_url>
+
+Please log in to Sugar to view the comment.',
     ],
 
     'advanced_password_new_account_email' => array(

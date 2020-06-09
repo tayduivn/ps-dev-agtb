@@ -382,13 +382,17 @@ class CommentLog extends Basic
             $emailTemplate->body_html = str_replace('$record_url', $recordUrl, $emailTemplate->body_html);
 
             $emailTemplate->body = str_replace('$record_name', $recordName, $emailTemplate->body);
+            $emailTemplate->body = str_replace('$record_url', $recordUrl, $emailTemplate->body);
 
             // add the recipient...
             $mailer->addRecipientsTo(new EmailIdentity($user->email1, $user->full_name));
             // set the subject
             $mailer->setSubject($emailTemplate->subject);
-            $mailer->setHtmlBody($emailTemplate->body_html);
             $mailer->setTextBody($emailTemplate->body);
+            // set html content of the email
+            if (!isTruthy($emailTemplate->text_only)) {
+                $mailer->setHtmlBody($emailTemplate->body_html);
+            }
 
             $mailer->send();
         } catch (MailerException $me) {
