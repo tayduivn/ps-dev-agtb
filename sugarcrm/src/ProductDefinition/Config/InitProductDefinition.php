@@ -349,6 +349,8 @@ class InitProductDefinition
             "service_duration_value":["SUGAR_SELL"],
             "service_duration_unit":["SUGAR_SELL"],
             "purchasedlineitem":["SUGAR_SELL"],
+            "purchasedlineitem_name":["SUGAR_SELL"],
+            "purchasedlineitem_id":["SUGAR_SELL"],
             "generate_purchase":["SUGAR_SELL"]
         },
         "Users": {
