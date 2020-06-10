@@ -116,5 +116,20 @@ describe('Base.Field.RecordDecor', function() {
             expect(showStub).not.toHaveBeenCalled();
             child.dispose();
         });
+
+        it('should not toggle read only fields', function() {
+            var child = SugarTest.createField('base', 'name', 'name', 'detail');
+            child.def = {
+                readonly: true
+            };
+            child.model.set('name', '');
+            var setCellStyleStub = sinon.collection.stub(field, 'setCellStyle');
+            var showStub = sinon.collection.stub(child, 'show');
+            child.action = 'edit';
+            field.redecorate(child);
+            expect(setCellStyleStub).not.toHaveBeenCalled();
+            expect(showStub).not.toHaveBeenCalled();
+            child.dispose();
+        });
     });
 })

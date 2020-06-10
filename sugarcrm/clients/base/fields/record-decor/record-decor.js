@@ -162,6 +162,11 @@
             return;
         }
 
+        // Do not redecorate readonly fields
+        if (app.utils.isTruthy(field.def.readonly)) {
+            return;
+        }
+
         // First check if we are switching templates (setMode will have the new template)
         // Then check if the field is just re-rendering and use its action
         // Render based off the view's action if the field's action is unknown
