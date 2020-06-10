@@ -10,12 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 --}}
-<div class="input-append timeonly">
+<div class="input-append timeonly timeselect">
     <input
         type="text"
         data-type="time"
         name="{{name}}_time"
-        value="{{value.time}}"
+        value="{{value}}"
         autocomplete="off"
         {{#if def.tabindex}} tabindex="{{def.tabindex}}"{{/if}}
         placeholder="{{secondaryFieldPlaceholder}}"
