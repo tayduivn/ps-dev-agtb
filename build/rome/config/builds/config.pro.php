@@ -157,6 +157,7 @@ $config['blackList']['pro'] = array(
 'sugarcrm/metadata/contacts_purchasesMetaData.php' => 1,
 'sugarcrm/metadata/documents_purchasesMetaData.php' => 1,
 'sugarcrm/tests/{old}/modules/Purchases' => 1,
+'sugarcrm/tests/unit-js/modules/Purchases' => 1,
 'sugarcrm/metadata/documents_purchasedlineitemsMetaData.php' => 1,
 'sugarcrm/modules/PurchasedLineItems' => 1,
 'sugarcrm/include/SugarQueue/jobs/SugarJobCreatePurchasesAndPLIs.php' => 1,

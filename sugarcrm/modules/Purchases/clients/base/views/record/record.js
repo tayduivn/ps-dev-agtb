@@ -22,5 +22,15 @@
     initialize: function(options) {
         this.plugins = _.union(this.plugins || [], ['HistoricalSummary']);
         this._super('initialize', [options]);
-    }
+    },
+
+    /**
+     * @inheritdoc
+     */
+    setupDuplicateFields: function(prefill) {
+        var calculatedFields = ['start_date', 'end_date'];
+        _.each(calculatedFields, function(field) {
+            prefill.unset(field);
+        });
+    },
 })
