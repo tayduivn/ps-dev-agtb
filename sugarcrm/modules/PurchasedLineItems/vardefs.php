@@ -181,6 +181,7 @@ $dictionary['PurchasedLineItem'] = [
                 'currency_id',
                 'base_rate',
             ],
+            'studio' => false,
         ],
         'discount_amount_signed' => [
             'name' => 'discount_amount_signed',
@@ -236,6 +237,7 @@ $dictionary['PurchasedLineItem'] = [
             'type' => 'bool',
             'reportable' => false,
             'importable' => false,
+            'studio' => false,
         ],
         'discount_usdollar' => [
             'name' => 'discount_usdollar',
