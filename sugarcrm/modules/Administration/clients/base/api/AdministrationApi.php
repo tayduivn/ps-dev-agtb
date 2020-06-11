@@ -675,8 +675,11 @@ class AdministrationApi extends SugarApi
         $this->ensureAdminUser();
         $seats = SubscriptionManager::instance()->getSystemSubscriptionSeats();
         $defaultType = SubscriptionManager::instance()->getUserDefaultLicenseType();
+        $admin = Administration::getSettings();
+
         return [
             'default_limit' => $seats[$defaultType],
+            'limit_enforced' => empty($admin->settings['license_enforce_user_limit']) ? 0 : 1,
             'seats' => $seats,
         ];
     }
