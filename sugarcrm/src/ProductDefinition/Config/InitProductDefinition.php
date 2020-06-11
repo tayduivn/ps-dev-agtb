@@ -102,7 +102,8 @@ class InitProductDefinition
         "product-quick-picks-dashlet":["CURRENT","SUGAR_SELL"],
         "product-catalog":["CURRENT","SUGAR_SELL"],
         "sales-pipeline":["CURRENT","SUGAR_SELL"],
-        "twitter":["CURRENT"]
+        "twitter":["CURRENT"],
+        "active-subscriptions":["SUGAR_SERVE","SUGAR_SELL"]
     },
     "RECORDS": {
         "Dashboards": {
@@ -286,8 +287,7 @@ class InitProductDefinition
     "FIELDS": {
         "Accounts": {
             "business_center_id":["SUGAR_SERVE","SUGAR_SELL"],
-            "business_center_name":["SUGAR_SERVE","SUGAR_SELL"],
-            "next_renewal_date":["SUGAR_SELL"]
+            "business_center_name":["SUGAR_SERVE","SUGAR_SELL"]
         },
         "Bugs": {
             "hours_to_resolution":["SUGAR_SERVE"],
@@ -324,34 +324,7 @@ class InitProductDefinition
             "business_center_id":["SUGAR_SELL"],
             "business_center_name":["SUGAR_SELL"]
         },
-        "Opportunities": {
-            "renewal":["SUGAR_SELL"],
-            "service_start_date":["SUGAR_SELL"]
-        },
-        "Products": {
-            "service":["SUGAR_SELL"],
-            "service_start_date":["SUGAR_SELL"],
-            "service_end_date":["SUGAR_SELL"],
-            "renewable":["SUGAR_SELL"],
-            "service_duration":["SUGAR_SELL"],
-            "service_duration_value":["SUGAR_SELL"],
-            "service_duration_unit":["SUGAR_SELL"]
-        },
-        "ProductTemplates": {
-            "service":["SUGAR_SELL"],
-            "renewable":["SUGAR_SELL"],
-            "service_duration":["SUGAR_SELL"],
-            "service_duration_value":["SUGAR_SELL"],
-            "service_duration_unit":["SUGAR_SELL"]
-        },
         "RevenueLineItems": {
-            "service":["SUGAR_SELL"],
-            "service_start_date":["SUGAR_SELL"],
-            "service_end_date":["SUGAR_SELL"],
-            "renewable":["SUGAR_SELL"],
-            "service_duration":["SUGAR_SELL"],
-            "service_duration_value":["SUGAR_SELL"],
-            "service_duration_unit":["SUGAR_SELL"],
             "purchasedlineitem":["SUGAR_SELL"],
             "purchasedlineitem_name":["SUGAR_SELL"],
             "purchasedlineitem_id":["SUGAR_SELL"],

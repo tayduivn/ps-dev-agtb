@@ -221,11 +221,6 @@ class GetAclForModuleTest extends TestCase
                     'create' => 'no',
                     'license' => 'no',
                 ],
-                'next_renewal_date' => [
-                    'write' => 'no',
-                    'create' => 'no',
-                    'license' => 'no',
-                ],
                 //END SUGARCRM flav=ent ONLY
             ],
             'admin' => 'no',
@@ -266,11 +261,6 @@ class GetAclForModuleTest extends TestCase
                     'create' => 'no',
                     'license' => 'no',
                 ],
-                'next_renewal_date' => [
-                    'write' => 'no',
-                    'create' => 'no',
-                    'license' => 'no',
-                ],
                 //END SUGARCRM flav=ent ONLY
             ],
             'admin' => 'no',
@@ -307,11 +297,6 @@ class GetAclForModuleTest extends TestCase
                     'license' => 'no',
                 ],
                 'business_center_id' => [
-                    'write' => 'no',
-                    'create' => 'no',
-                    'license' => 'no',
-                ],
-                'next_renewal_date' => [
                     'write' => 'no',
                     'create' => 'no',
                     'license' => 'no',
