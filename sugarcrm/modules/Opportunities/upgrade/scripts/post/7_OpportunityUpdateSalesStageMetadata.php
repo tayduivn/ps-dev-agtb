@@ -23,15 +23,60 @@ class SugarUpgradeOpportunityUpdateSalesStageMetadata extends UpgradeScript
         if ($this->toFlavor('ent') &&
             version_compare($this->from_version, '10.1.0', '<') &&
             Opportunity::usingRevenueLineItems()) {
-            SugarAutoLoader::load('modules/Opportunities/include/OpportunityViews.php');
-            $view = new OpportunityViews();
-            $fieldMap = [
-                'sales_stage' => true,
-            ];
-            $view->processBaseRecordLayout($fieldMap);
-            $view->processMobileRecordLayout($fieldMap);
-            $view->processPreviewLayout($fieldMap);
-            $view->processListViews($fieldMap);
+            $this->fixExistingData();
+            $this->addNewData();
+        }
+    }
+
+    /**
+     * Adds 'sales_stage' to views.
+     */
+    protected function addNewData()
+    {
+        SugarAutoLoader::load('modules/Opportunities/include/OpportunityViews.php');
+        $view = new OpportunityViews();
+        $fieldMap = [
+            'sales_stage' => true,
+        ];
+        $view->processBaseRecordLayout($fieldMap);
+        $view->processMobileRecordLayout($fieldMap);
+        $view->processPreviewLayout($fieldMap);
+        $view->processListViews($fieldMap);
+    }
+
+    /**
+     * Updates 'sales_stage' field def if it already exists.
+     */
+    protected function fixExistingData()
+    {
+        $view = 'record';
+        $newDef = [
+            'name' => 'sales_stage',
+            'type' => 'enum-cascade',
+            'label' => 'LBL_LIST_SALES_STAGE',
+            'enabled' => true,
+            'default' => true,
+            'disable_field' => [
+                'total_revenue_line_items',
+                'closed_revenue_line_items',
+            ],
+        ];
+        $file = "custom/modules/Opportunities/clients/base/views/$view/$view.php";
+        include $file;
+        if ($viewdefs) {
+            $fields = $viewdefs['Opportunities']['base']['view'][$view]['panels'][1]['fields'];
+            foreach ($fields as $key => $field) {
+                if (is_array($field) && $field['name'] === 'sales_stage') {
+                    $field = array_merge($field, $newDef);
+                    $viewdefs['Opportunities']['base']['view'][$view]['panels'][1]['fields'][$key] = $field;
+                    write_array_to_file(
+                        "viewdefs['Opportunities']['base']['view']['$view']",
+                        $viewdefs['Opportunities']['base']['view'][$view],
+                        $file
+                    );
+                    break;
+                }
+            }
         }
     }
 }
