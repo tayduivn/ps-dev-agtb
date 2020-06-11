@@ -71,7 +71,7 @@ describe('PurchasedLineItems.Base.Plugins.PurchaseAndServiceChangeHandler', func
 
     });
 
-    describe('handleServiceChange()', function() {
+    describe('updateServiceDuration()', function() {
         var stub;
         beforeEach(function() {
             stub = sinon.collection.stub();
@@ -92,7 +92,7 @@ describe('PurchasedLineItems.Base.Plugins.PurchaseAndServiceChangeHandler', func
                 plugin.model.get = function(property) {
                     return property === 'service' ? true : '';
                 };
-                plugin.handleServiceChange();
+                plugin._updateServiceDuration();
 
                 expect(plugin.model.set).toHaveBeenCalledWith('service_duration_unit', 'year');
             }
@@ -100,24 +100,77 @@ describe('PurchasedLineItems.Base.Plugins.PurchaseAndServiceChangeHandler', func
 
         it('when service is true and service_duration_unit is set, should not set service_duration_unit', function() {
             plugin.model.get = function(property) {
-                return property === 'service_duration_unit' ? 'month' : false;
+                return property === 'service_duration_unit' ? 'month' : true;
             };
-            plugin.handleServiceChange();
+            plugin._updateServiceDuration();
 
             expect(plugin.model.set).not.toHaveBeenCalled();
         });
 
         it(
-            'when service is false and service_duration_unit is empty, should set service_duration_unit with day',
+            'set service duration to 1 and value to day when service is false',
             function() {
-                plugin.model.get = function(property) {
+                plugin.model.get = function() {
                     return false;
                 };
                 plugin.handleServiceChange();
 
-                expect(plugin.model.set).toHaveBeenCalledWith('service_duration_unit', 'day');
+                expect(plugin.model.set).toHaveBeenCalledWith({
+                    'service_duration_unit': 'day',
+                    'service_duration_value': 1
+                });
             }
         );
+    });
+
+    describe('updateStartEndDate()', function() {
+        var stub;
+        var calculateStub;
+        var field;
+        beforeEach(function() {
+            stub = sinon.collection.stub();
+            calculateStub = sinon.collection.stub();
+            field = {
+                calculateEndDate: calculateStub
+            };
+            plugin.model = {
+                set: stub,
+                off: stub
+            };
+            plugin.getField = function() {
+                return field;
+            };
+        });
+
+        afterEach(function() {
+            stub = null;
+            plugin.model = null;
+        });
+
+        describe('when model is service', function() {
+            it('should calculate end date', function() {
+                plugin.model.get = function(property) {
+                    return property === 'service';
+                };
+                plugin._updateStartEndDate();
+                expect(field.calculateEndDate).toHaveBeenCalled();
+                expect(plugin.model.set).not.toHaveBeenCalled();
+            });
+        });
+
+        describe('when model is not service', function() {
+            it('should not calculate, and should set start and end dates', function() {
+                plugin.model.get = function(property) {
+                    return property === 'date_closed' ? '2020-01-01' : false;
+                };
+                plugin._updateStartEndDate();
+                expect(field.calculateEndDate).not.toHaveBeenCalled();
+                expect(plugin.model.set).toHaveBeenCalledWith({
+                    'service_start_date': '2020-01-01',
+                    'service_end_date': '2020-01-01'
+                });
+            });
+        });
     });
 
     describe('handlePurchaseChange()', function() {

@@ -31,15 +31,53 @@
 
             /**
              * Handler for Service change event
-             * Switches between service duration unit as 'Year(s)' or 'Day(s)' based on service
-             * field. If the unit is already set, we should allow the existing enum handler to
-             * update that property.
+             * update Service Duration, Start Date, and End Date
              */
             handleServiceChange: function() {
-                var updatedServiceDurationUnit = this.model.get('service') ? 'year' : 'day';
+                this._updateServiceDuration();
+                this._updateStartEndDate();
+            },
 
-                if (_.isEmpty(this.model.get('service_duration_unit'))) {
-                    this.model.set('service_duration_unit', updatedServiceDurationUnit);
+            /**
+             * Switches between service duration unit as 'Year(s)' or 'Day(s)' based on service
+             * field. If the unit is already set, we should allow the existing enum handler to
+             * update that property for services.
+             *
+             * For non-services, we set the duration to 1 and the unit to day
+             */
+            _updateServiceDuration: function() {
+                var service = this.model.get('service');
+
+                if (service && _.isEmpty(this.model.get('service_duration_unit'))) {
+                    this.model.set('service_duration_unit', 'year');
+                } else if (!service) {
+                    this.model.set({
+                        'service_duration_unit': 'day',
+                        'service_duration_value': 1
+                    });
+                }
+            },
+
+            /**
+             * Updates start and end dates based on the 'service' field changing
+             * For services, start date should stay whatever it was before, and
+             * end date should be re-calculated
+             *
+             * For goods, Start and End date should be set to the expected close
+             * date
+             */
+            _updateStartEndDate: function() {
+                if (this.model.get('service')) {
+                    var endDate = this.getField('service_end_date');
+                    if (!_.isUndefined(endDate)) {
+                        endDate.calculateEndDate();
+                    }
+                } else {
+                    var closeDate = this.model.get('date_closed');
+                    this.model.set({
+                        'service_start_date': closeDate,
+                        'service_end_date': closeDate
+                    });
                 }
             },
 
