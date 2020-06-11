@@ -71,18 +71,19 @@
   width: auto;
   overflow: hidden;
   overflow-y: scroll;
-  border: 1px solid black;
+  border: 1px solid @btnSecondaryBorder;
   list-style-type: none;
   padding-inline-start: 5px;
   margin: 0;
   padding-top: 8px;
+  background-color: @white;
 }
 
 .config-side-pane .columns nav ul.multi-field {
   height: 63px;
   width: auto;
   border: 1px solid grey;
-  border-radius: 16px;
+  border-radius: 8px;
   list-style-type: none;
   padding-inline-start: 3px;
   padding-top: 5px;
@@ -94,11 +95,12 @@
 
 .config-side-pane .fields nav ul.field-list {
   width: auto;
-  border: 1px solid grey;
+  border: 1px solid @btnSecondaryBorder;
   list-style-type: none;
   padding-inline-start: 3px;
   padding-top: 5px;
   padding-bottom: 5px;
+  background-color: @white;
 }
 
 .config-side-pane .columns nav ul.field-list {
@@ -128,7 +130,7 @@
 }
 
 .config-side-pane .columns nav .pill {
-  border-radius: 16px;
+  border-radius: 8px;
   background-color: @gray;
   color: white;
   margin: 3px;
@@ -154,8 +156,6 @@
   > .fa {
     color: black;
   }
-
-  cursor: pointer;
 }
 
 .multi-line-list-view {
