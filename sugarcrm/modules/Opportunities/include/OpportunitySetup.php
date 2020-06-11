@@ -122,7 +122,7 @@ abstract class OpportunitySetup
     /**
      * Process the field vardefs as setup by the extending classes
      */
-    protected function processFields()
+    public function processFields()
     {
         // get the get_widget helper and the StandardField Helper
         SugarAutoLoader::load('modules/DynamicFields/FieldCases.php');

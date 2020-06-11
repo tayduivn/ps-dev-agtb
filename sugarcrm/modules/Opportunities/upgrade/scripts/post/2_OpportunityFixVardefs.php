@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-class SugarUpgradeOpportunityFixOppsOnlyVardefs extends UpgradeScript
+class SugarUpgradeOpportunityFixVardefs extends UpgradeScript
 {
     public $order = 2200;
     public $type = self::UPGRADE_CUSTOM;
@@ -20,15 +20,23 @@ class SugarUpgradeOpportunityFixOppsOnlyVardefs extends UpgradeScript
         // Only applies to 9.3.x and 10.0.x. Fixed in 10.1.0+
         if ($this->toFlavor('ent') &&
             version_compare($this->from_version, '9.3.0', '>=') &&
-            version_compare($this->from_version, '10.1.0', '<')) {
-            $settings = Opportunity::getSettings();
-            // If we're in Opps Only mode, run the fixed converter to fix vardefs
-            if (isset($settings['opps_view_by']) &&
-                $settings['opps_view_by'] !== 'RevenueLineItems') {
-                SugarAutoLoader::load('modules/Opportunities/include/OpportunityWithOutRevenueLineItem.php');
-                $converter = new OpportunityWithOutRevenueLineItem();
-                $converter->fixOpportunityModule();
-            }
+            version_compare($this->from_version, '10.1.0', '<'))
+        {
+            $getConverter = Opportunity::usingRevenueLineItems() ? 'getConverterWith' : 'getConverterWithout';
+            $converter = $this->{$getConverter}();
+            $converter->fixOpportunityModule();
         }
+    }
+
+    protected function getConverterWith()
+    {
+        $converter = new OpportunityWithRevenueLineItem();
+        $converter->processFields();
+        return $converter;
+    }
+
+    protected function getConverterWithout()
+    {
+        return new OpportunityWithOutRevenueLineItem();
     }
 }

@@ -50,6 +50,8 @@ class OpportunityWithRevenueLineItem extends OpportunitySetup
             'massupdate' => false,
         ),
         'date_closed' => array(
+            'calculated' => false,
+            'formula' => '',
             'audited' => false,
             'importable' => 'false',
             'required' => false,
@@ -63,6 +65,8 @@ class OpportunityWithRevenueLineItem extends OpportunitySetup
             'workflow' => false,
         ),
         'sales_stage' => array(
+            'calculated' => false,
+            'formula' => '',
             'audited' => false,
             'required' => false,
             'massupdate' => false,
@@ -165,7 +169,7 @@ class OpportunityWithRevenueLineItem extends OpportunitySetup
      * - Sets the dupe check to use `sales_status` instead of `sales_stage`
      * - Add a dependency extension that turns off the default oob dependencies
      */
-    protected function fixOpportunityModule()
+    public function fixOpportunityModule()
     {
         // lets make sure the dir is there
         SugarAutoLoader::ensureDir($this->moduleExtFolder . '/Vardefs');
