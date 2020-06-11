@@ -271,7 +271,7 @@ $dictionary['RevenueLineItem'] = array(
             'name' => 'discount_select',
             'vname' => 'LBL_DISCOUNT_SELECT',
             'type' => 'bool',
-            'default' => false,
+            'default' => true,
             'reportable' => false,
             'studio' => false,
         ),

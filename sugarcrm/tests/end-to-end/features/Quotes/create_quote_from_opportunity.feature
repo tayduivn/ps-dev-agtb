@@ -107,8 +107,8 @@ Feature: Generate Quote From RLI subpanel in Opportunity record view
       | *     | name  |
       | RLI_1 | RLI_1 |
     When I provide input for #RevenueLineItemsDrawer.RecordView view
-      | *     | date_closed | discount_price | quantity | currency_id | discount_amount |
-      | RLI_1 | 12/12/2020  | 175.00         | 3        | € (EUR)     | 75.34           |
+      | *     | date_closed | discount_price | quantity | currency_id | discount_amount | discount_select |
+      | RLI_1 | 12/12/2020  | 175.00         | 3        | € (EUR)     | 75.34           | € Euro          |
     When I click Save button on #RevenueLineItemsDrawer header
     When I close alert
 
@@ -127,8 +127,8 @@ Feature: Generate Quote From RLI subpanel in Opportunity record view
       | *     | name  |
       | RLI_2 | RLI_2 |
     When I provide input for #RevenueLineItemsDrawer.RecordView view
-      | *     | date_closed | discount_price | quantity | currency_id | discount_amount |
-      | RLI_2 | 12/13/2020  | 84.99          | 50       | руб (RUB)   | 84.99           |
+      | *     | date_closed | discount_price | quantity | currency_id | discount_amount | discount_select |
+      | RLI_2 | 12/13/2020  | 84.99          | 50       | руб (RUB)   | 84.99           | руб Rubles      |
     When I click Save button on #RevenueLineItemsDrawer header
     When I close alert
 

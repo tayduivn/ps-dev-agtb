@@ -36,6 +36,7 @@ class RevenueLineItemToQuoteConvertApiTests extends TestCase
         self::$revenueLineItem->opportunity_id = self::$opp->id;
         self::$revenueLineItem->quantity = '50';
         self::$revenueLineItem->discount_amount = '10.00';
+        self::$revenueLineItem->discount_select = false;
         self::$revenueLineItem->discount_amount_signed = '10.00';
         self::$revenueLineItem->likely_case = '40.00';
         self::$revenueLineItem->discount_price = '1.00';
