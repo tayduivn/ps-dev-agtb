@@ -28,12 +28,14 @@ $viewdefs['ShiftExceptions']['base']['view']['list'] = [
                     'label' => 'LBL_CALENDAR_START_DATE',
                     'default' => true,
                     'enabled' => true,
+                    'readonly' => true,
                 ],
                 [
                     'name' => 'end_date',
                     'label' => 'LBL_CALENDAR_END_DATE',
                     'default' => true,
                     'enabled' => true,
+                    'readonly' => true,
                 ],
                 [
                     'name' => 'shift_exception_type',
@@ -53,6 +55,7 @@ $viewdefs['ShiftExceptions']['base']['view']['list'] = [
                     'default' => false,
                     'enabled' => true,
                     'type' => 'all-day',
+                    'readonly' => true,
                 ],
                 [
                     'name' => 'enabled',

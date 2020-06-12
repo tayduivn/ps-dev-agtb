@@ -71,10 +71,16 @@
             }, this);
         }
 
-        this.model.addValidationTask(
-            'start_time_before_end_time' + this.cid,
-            _.bind(this._validateStartTime, this)
-        );
+        // Do not validate start and end time for list view because
+        // 1. start time and end time are not available in list view
+        // 2. start date, end date, and all_day are readonly in list view,
+        //    so no need to validate start and end time
+        if (this.view.tplName != 'list') {
+            this.model.addValidationTask(
+                'start_time_before_end_time' + this.cid,
+                _.bind(this._validateStartTime, this)
+            );
+        }
     },
 
     /**
