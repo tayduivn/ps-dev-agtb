@@ -29,6 +29,18 @@ class MarketingExtrasContent
     ];
 
     /**
+     * The marketing_extras_content config from Sugar Config
+     * @var array
+     */
+    private $marketingContentConfig = [];
+
+    /**
+     * The marketing_extras_content config defaults
+     * @var array
+     */
+    private $marketingContentConfigDefaults = [];
+
+    /**
      * Creates the MarketingExtrasHelper (if it doesn't exist) and return it
      *
      * @return MarketingExtrasHelper
@@ -43,6 +55,46 @@ class MarketingExtrasContent
     }
 
     /**
+     * Gets and returns the marketing_extras_content config from Sugar Config
+     *
+     * @return array The marketing_extras_content config
+     */
+    protected function getMarketingContentConfig(): array
+    {
+        if (empty($this->marketingContentConfig)) {
+            $this->marketingContentConfig = $this->getMarketingExtrasHelper()->getSugarConfig('login_page')['marketing_extras_content'];
+        }
+
+        return $this->marketingContentConfig;
+    }
+
+    /**
+     * Gets and returns the marketing_extras_content config defaults
+     *
+     * @return array The marketing_extras_content config defaults
+     */
+    protected function getMarketingContentConfigDefaults(): array
+    {
+        if (empty($this->marketingContentConfigDefaults)) {
+            $this->marketingContentConfigDefaults = get_sugar_config_defaults()['login_page']['marketing_extras_content'];
+        }
+
+        return $this->marketingContentConfigDefaults;
+    }
+
+    /**
+     * Gets the key's value from Sugar Config or config defaults if it doesn't exist
+     *
+     * @param string $key the key to get
+     * @return mixed string|int
+     */
+    protected function getConfigValue(string $key)
+    {
+        $valueFromSugarConfig = $this->getMarketingContentConfig()[$key];
+        return !empty($valueFromSugarConfig) ? $valueFromSugarConfig : $this->getMarketingContentConfigDefaults()[$key];
+    }
+
+    /**
      * Returns the marketing content URL. A URL for static content is returned if marketing URL is not
      * reachable
      *
@@ -50,9 +102,8 @@ class MarketingExtrasContent
      */
     public function getMarketingExtrasContentUrl(): string
     {
-        $marketingContentConfig = get_sugar_config_defaults()['login_page']['marketing_extras_content'];
-        $baseUrl = $marketingContentConfig['url'];
-        $staticUrl = $marketingContentConfig['static_url'];
+        $baseUrl = $this->getConfigValue('url');
+        $staticUrl = $this->getConfigValue('static_url');
 
         if (!empty($baseUrl)) {
             $queryParams = $this->getQueryParams();
@@ -105,8 +156,8 @@ class MarketingExtrasContent
      */
     protected function isContentDisplayable(string $url): bool
     {
-        // should not take more than 300ms to get headers
-        $timeoutInMs = 150;
+        $connectTimeoutInMs = $this->getConfigValue('connect_timeout_ms');
+        $timeoutInMs = $this->getConfigValue('timeout_ms');
 
         $curlHandle = curl_init($url);
         if ($curlHandle === false) {
@@ -116,8 +167,8 @@ class MarketingExtrasContent
 
         curl_setopt($curlHandle, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curlHandle, CURLOPT_HEADER, true);
-        curl_setopt($curlHandle, CURLOPT_CONNECTTIMEOUT_MS, $timeoutInMs);
-        curl_setopt($curlHandle, CURLOPT_TIMEOUT_MS, ($timeoutInMs * 2));
+        curl_setopt($curlHandle, CURLOPT_CONNECTTIMEOUT_MS, $connectTimeoutInMs);
+        curl_setopt($curlHandle, CURLOPT_TIMEOUT_MS, $timeoutInMs);
 
         $response = curl_exec($curlHandle);
         $headers = substr($response, 0, curl_getinfo($curlHandle, CURLINFO_HEADER_SIZE));

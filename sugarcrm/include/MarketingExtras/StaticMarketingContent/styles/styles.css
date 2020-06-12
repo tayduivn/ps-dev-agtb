@@ -3,100 +3,6 @@
 	margin: 0;
 	box-sizing: border-box;
 }
-h2 {
-	font-family: 'Roboto', sans-serif;
-	font-weight: 300;
-	font-size: 36px;
-	line-height: 44px;
-	color: #ffffff;
-}
-h3 {
-	font-family: 'Roboto', sans-serif;
-	font-weight: 300;
-	font-size: 18px;
-	line-height: 24px;
-	color: #ffffff;
-    padding: 0;
-    margin: 0;
-}
-h3 strong {
-	font-weight: 700;
-	font-size: 20px;
-	line-height: 28px;
-}
-
-@media (min-width: 544px) {
-h2 {
-	font-weight: 300;
-	font-size: 36px;
-}
-}
-
-@media (min-width:768px) {
-h2 {
-	font-size: 38px;
-	line-height: 50px;
-}
-}
-
-@media (min-width:992px) {
-h2 {
-	font-size: 44px;
-	line-height: 54px;
-}
-}
-
-@media (min-width:1200px) {
-h2 {
-	font-size: 44px;
-	line-height: 54px;
-}
-}
-.owl-slide-logo {
-	width: 175px;
-}
-.btn-primary.btn-outline {
-	color: #ffffff;
-	background-color: hsla(0,0%,100%,0);
-}
-[class*=btn-outline] {
-	border-width: 2px;
-}
-.btn {
-	display: inline-block;
-	text-align: center;
-	white-space: nowrap;
-	vertical-align: middle;
-	user-select: none;
-	border: 2px solid transparent;
-	padding: .375rem 2rem;
-	font-size: 1rem;
-	line-height: 1.5;
-	border-radius: .25rem;
-	transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
-	border-radius: 0;
-	font-weight: 700;
-	text-transform: uppercase;
-}
-.btn-primary {
-	color: #ffffff;
-	background-color: #ff8200;
-	border-color: #ff8200;
-}
-.btn-primary.btn-outline:hover {
-	background-color: #ff8200;
-	color: #fff;
-}
-.btn-primary:hover {
-	color: #fff;
-	background-color: #d96f00;
-	border-color: #cc6800;
-}
-.btn:hover {
-	text-decoration: none;
-}
 .static {
 	position: static;
 }
@@ -118,19 +24,19 @@ section {
 }
 
 @media(min-width:768px) {
-.cover {
-	background-position: center center;
-}
+	.cover {
+		background-position: center center;
+	}
 }
 
 @media(min-width:992px) {
-.cover {
-	background-position: center center;
-}
+	.cover {
+		background-position: center center;
+	}
 }
 
 @media(min-width:1200px) {
-.cover {
-	background-position: center center;
-}
+	.cover {
+		background-position: center center;
+	}
 }

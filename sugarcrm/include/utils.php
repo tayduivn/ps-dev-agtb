@@ -549,6 +549,8 @@ function get_sugar_config_defaults()
             'marketing_extras_content' => [
                 'url' => 'https://www.sugarcrm.com/product-login-page-service/',
                 'static_url' => 'include/MarketingExtras/StaticMarketingContent/static.html',
+                'connect_timeout_ms' => 150, // max number of ms to wait while trying to connect
+                'timeout_ms' => 300, // max number of ms to allow cURL execution (default is connect_timeout_ms * 2)
             ],
         ],
     );

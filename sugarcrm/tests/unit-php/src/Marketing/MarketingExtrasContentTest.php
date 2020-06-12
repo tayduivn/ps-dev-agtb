@@ -30,17 +30,24 @@ class MarketingExtrasContentTest extends TestCase
     protected function setUp() : void
     {
         $this->extrasContent = $this->getMarketingExtrasContentMock([
+            'getMarketingContentConfig',
             'getQueryParams',
             'isContentDisplayable',
         ]);
+
+        $this->marketingContentConfig = [
+            'url' => 'https://www.sugarcrm.com/',
+            'static_url' => 'include/static.html',
+        ];
+
+        $this->extrasContent->method('getMarketingContentConfig')
+            ->willReturn($this->marketingContentConfig);
 
         $this->extrasContent->method('getQueryParams')
             ->willReturn([
                 'flavor' => 'ent',
                 'version' => '10.1.0',
             ]);
-
-        $this->marketingContentConfig = get_sugar_config_defaults()['login_page']['marketing_extras_content'];
     }
 
     /**
