@@ -110,6 +110,7 @@ Feature: Create Quote From RLI
     When I choose RevenueLineItems in modules menu
     When I select *RLI_1 in #RevenueLineItemsList.ListView
     Then I should see #RLI_1Record view
+    When I click show more button on #RLI_1Record view
     When I open actions menu in #RLI_1Record and check:
       | menu_item     | active |
       | GenerateQuote | false  |
