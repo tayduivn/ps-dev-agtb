@@ -28,10 +28,6 @@ class SugarUpgradeWriteInitialProductDefinition extends UpgradeScript
      */
     public function run()
     {
-        if (version_compare($this->to_version, '10.0.0', '<') || version_compare($this->from_version, '10.0.0', '>=')) {
-            return;
-        }
-
         if (!$this->db->tableExists(Config\Cache\DbCache::TABLE_NAME)) {
             $dictionary = [];
             include 'metadata/product_definitionMetaData.php';
@@ -43,6 +39,6 @@ class SugarUpgradeWriteInitialProductDefinition extends UpgradeScript
             );
         }
 
-        (new Config\InitProductDefinition())->writeInitialProductDefinition();
+        (new Config\InitProductDefinition())->writeInitialProductDefinition(true);
     }
 }
