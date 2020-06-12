@@ -85,8 +85,4 @@ $viewdefs['Shifts']['base']['view']['list'] = [
             ],
         ],
     ],
-    'orderBy' => [
-        'field' => 'date_modified',
-        'direction' => 'desc',
-    ],
 ];
