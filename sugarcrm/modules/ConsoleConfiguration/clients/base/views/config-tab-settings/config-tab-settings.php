@@ -78,7 +78,6 @@ $viewdefs['ConsoleConfiguration']['base']['view']['config-tab-settings'] = array
             ],
         ],
         array(
-            'label' => 'LBL_CONSOLE_DIRECTIONS',
             'fields' => array(
                 array(
                     'name' => 'directions',

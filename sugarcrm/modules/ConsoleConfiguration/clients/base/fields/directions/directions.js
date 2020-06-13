@@ -41,6 +41,11 @@
     filterString: '',
 
     /**
+     * Link to detailed instructions
+     */
+    detailedInstructionsLink: '',
+
+    /**
      * @inheritdoc
      *
      * @param options
@@ -58,6 +63,12 @@
      */
     _initDefaults: function() {
         this.defaults = this.model.get('defaults') || {};
+
+        // Build detailedInstructionsLink
+        var serverInfo = app.metadata.getServerInfo();
+        this.detailedInstructionsLink = 'http://www.sugarcrm.com/crm/product_doc.php?edition=' +
+            serverInfo.flavor + '&version=' + serverInfo.version + '&lang=' + app.lang.getLanguage() +
+            '&module=ConsoleManagement';
 
         // Get the tabContent attribute, which includes a mapping of
         // {sort field value} => {sort field label}
