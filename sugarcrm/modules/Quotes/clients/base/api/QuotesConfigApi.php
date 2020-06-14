@@ -128,8 +128,9 @@ class QuotesConfigApi extends ConfigModuleApi
         $this->requireArgs($args, array('worksheet_columns', 'worksheet_columns_related_fields'));
         $settings = parent::configSave($api, $args);
         $this->applyWorksheetColumnsConfig();
-        $this-> applySummaryColumnsConfig();
-        $this-> applyFooterRowsConfig();
+        $this->applySummaryColumnsConfig();
+        $this->applyFooterRowsConfig();
+        $this->saveMobileWorksheetColumnConfig($args);
 
         MetaDataManager::refreshModulesCache(array('Quotes', 'Products'));
 
@@ -574,6 +575,28 @@ class QuotesConfigApi extends ConfigModuleApi
 
         //write out new quotes record.php
         $viewdefManager->saveViewdef($qRecordViewdef, 'Quotes', 'base', 'record');
+    }
+
+    /**
+     * Updates the Quotes worksheet_columns mobile config property to remove the
+     * unwanted `campaign_name` field.
+     * @param array $data Worksheet columns data from config
+     * @return void
+     */
+    public function saveMobileWorksheetColumnConfig(array $data) : void
+    {
+        $worksheet_columns = $data['worksheet_columns'];
+
+        // Get the key for the data array to see if there is a campaign_name field added
+        $key = array_search('campaign_name', array_column($worksheet_columns, 'name'));
+        if ($key !== false) {
+            // Remove the campaign field from the fields array
+            array_splice($worksheet_columns, $key, 1);
+
+            // Save the modified fields in the mobile config
+            $adminBean = BeanFactory::newBean('Administration');
+            $adminBean->saveSetting('Quotes', 'worksheet_columns', $worksheet_columns, 'mobile');
+        }
     }
 
     /**

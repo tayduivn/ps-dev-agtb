@@ -52,6 +52,8 @@ class QuotesConfigApiTest extends TestCase
         $GLOBALS['sugar_config'] = $this->oldConfig;
         $GLOBALS['moduleList'] = $this->moduleList;
         $GLOBALS['app_strings'] = $this->oldStrings;
+
+        \SugarTestConfigUtilities::resetConfig();
     }
 
     /**
@@ -174,5 +176,43 @@ class QuotesConfigApiTest extends TestCase
                 ], true,
             ],
         ];
+    }
+
+    /**
+     * @covers ::saveMobileWorksheetColumnConfig
+     */
+    public function testSaveMobileWorksheetColumnConfig()
+    {
+        $data = [
+            [
+                'name' => 'account_name',
+            ],
+            [
+                'name' => 'campaign_name',
+            ],
+            [
+                'name' => 'date_modified',
+            ],
+        ];
+
+        $expectedData = [
+            [
+                'name' => 'account_name',
+            ],
+            [
+                'name' => 'date_modified',
+            ],
+        ];
+
+        $api = new \QuotesConfigApi();
+        $api->saveMobileWorksheetColumnConfig([
+            'worksheet_columns' => $data,
+            'worksheet_columns_related_fields' => [],
+        ]);
+
+        $admin = \BeanFactory::newBean('Administration');
+        $results = $admin->getConfigForModule('Quotes', 'mobile');
+
+        $this->assertEquals($expectedData, $results['worksheet_columns']);
     }
 }
