@@ -541,6 +541,10 @@ abstract class AbstractMetaDataImplementation
      */
     public function _mergeFielddefs ( &$fielddefs , $layout )
     {
+        // nothing to merge
+        if (empty($layout)) {
+            return;
+        }
         $viewClient = empty($this->_viewClient) ? 'base' : $this->_viewClient;
         if (isset($layout[$viewClient]) && is_array($layout[$viewClient]) && isset($layout[$viewClient]['view']) && is_array($layout[$viewClient]['view'])) {
             $viewType = key($layout[$viewClient]['view']);
