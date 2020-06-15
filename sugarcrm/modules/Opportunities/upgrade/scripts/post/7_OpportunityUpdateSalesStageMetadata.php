@@ -49,7 +49,6 @@ class SugarUpgradeOpportunityUpdateSalesStageMetadata extends UpgradeScript
      */
     protected function fixExistingData()
     {
-        $view = 'record';
         $newDef = [
             'name' => 'sales_stage',
             'type' => 'enum-cascade',
@@ -61,22 +60,8 @@ class SugarUpgradeOpportunityUpdateSalesStageMetadata extends UpgradeScript
                 'closed_revenue_line_items',
             ],
         ];
-        $file = "custom/modules/Opportunities/clients/base/views/$view/$view.php";
-        include $file;
-        if ($viewdefs) {
-            $fields = $viewdefs['Opportunities']['base']['view'][$view]['panels'][1]['fields'];
-            foreach ($fields as $key => $field) {
-                if (is_array($field) && $field['name'] === 'sales_stage') {
-                    $field = array_merge($field, $newDef);
-                    $viewdefs['Opportunities']['base']['view'][$view]['panels'][1]['fields'][$key] = $field;
-                    write_array_to_file(
-                        "viewdefs['Opportunities']['base']['view']['$view']",
-                        $viewdefs['Opportunities']['base']['view'][$view],
-                        $file
-                    );
-                    break;
-                }
-            }
-        }
+        $parser = ParserFactory::getParser(MB_RECORDVIEW, 'Opportunities', null, null, 'base');
+        $parser->setFieldProps(['sales_stage'], $newDef);
+        $parser->handleSave(false, false);
     }
 }
