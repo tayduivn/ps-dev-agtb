@@ -24,5 +24,16 @@ $layout_defs['Employees'] = array(
             'top_buttons' => array(),
             'title_key' => 'LBL_SHIFTS_SUBPANEL_TITLE',
         ),
+        'shifts_exceptions' => array(
+            'order' => 32,
+            'sort_by' => 'name',
+            'sort_order' => 'asc',
+            'module' => 'ShiftExceptions',
+            'subpanel_name' => 'default',
+            'get_subpanel_data' => 'shift_exceptions',
+            'refresh_page' => 1,
+            'top_buttons' => array(),
+            'title_key' => 'LBL_SHIFTS_EXCEPTIONS_SUBPANEL_TITLE',
+        ),
     ),
 );

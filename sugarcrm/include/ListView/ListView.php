@@ -879,16 +879,15 @@ function displayArrow() {
  * All Rights Reserved.
  * Contributor(s): ______________________________________.
 */
- function getOffset($localVarName) {
- 	if($this->query_where_has_changed || isset($GLOBALS['record_has_changed'])) {
- 		$this->setSessionVariable($localVarName,"offset", 0);
- 	}
-	$offset = $this->getSessionVariable($localVarName,"offset");
-	if(isset($offset)) {
-		return $offset;
-	}
-	return 0;
-}
+    public function getOffset($localVarName)
+    {
+        if ($this->query_where_has_changed || isset($GLOBALS['record_has_changed'])) {
+            $this->setSessionVariable($localVarName, "offset", 0);
+        }
+        $offset = $this->getSessionVariable($localVarName, "offset");
+        
+        return (int) $offset;
+    }
 
 /**INTERNAL FUNCTION sets the offset in the session
  * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
