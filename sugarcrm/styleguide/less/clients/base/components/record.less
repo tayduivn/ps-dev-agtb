@@ -110,6 +110,12 @@
       }
     }
 
+    > .detail {
+      input[type=checkbox] {
+        z-index: 0;
+      }
+    }
+
     > .disabled:not(.edit) {
       padding: 5px 7px;
     }
@@ -354,7 +360,7 @@
     input[type="radio"],
     input[type="checkbox"],
     input[type="image"] {
-      margin: 8px 7px 4px;
+      margin: 7px 7px 4px;
     }
   }
 
@@ -499,7 +505,7 @@
     padding: 0;
     margin-left: 0;
     text-decoration: none;
-    cursor: text;
+    cursor: default;
 
     &.btn-invisible:hover {
       border: 1px solid transparent;
