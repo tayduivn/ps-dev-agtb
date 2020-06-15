@@ -35,6 +35,7 @@ class PurchasedLineItemTest extends TestCase
     {
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestPurchasedLineItemUtilities::removeAllCreatedPurchasedLineItems();
+        SugarTestRevenueLineItemUtilities::removeAllCreatedRevenueLineItems();
     }
 
     /**
@@ -351,5 +352,30 @@ class PurchasedLineItemTest extends TestCase
                 true,
             ],
         ];
+    }
+
+    /**
+     * testMarkRelationshipsDeleted
+     * This test will mark a PLI as deleted and test that the RLI association is updated to remove the recently deleted
+     * PLI id.
+     */
+    public function testMarkRelationshipsDeleted()
+    {
+        // Create an RLI and PLI, and link them together
+        $rli = SugarTestRevenueLineItemUtilities::createRevenueLineItem();
+        $pli = SugarTestPurchasedLineItemUtilities::createPurchasedLineItem();
+        $rli->load_relationship('purchasedlineitem');
+        $rli->purchasedlineitem->add($pli);
+        $rli->purchasedlineitem_id = $pli->id;
+        $rli->save();
+
+        // Mark PLI as deleted
+        $pli->mark_deleted($pli->id);
+
+        // Check that the RLI's purchasedlineitem_id has been cleared
+        $rli = BeanFactory::retrieveBean('RevenueLineItems', $rli->id, [
+            'use_cache' => false,
+        ]);
+        $this->assertEquals(null, $rli->purchasedlineitem_id);
     }
 }

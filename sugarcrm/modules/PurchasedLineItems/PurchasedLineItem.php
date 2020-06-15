@@ -191,6 +191,23 @@ class PurchasedLineItem extends Basic
     }
 
     /**
+     * The method will unset our PLI <-> RLI relationship when a PLI is deleted.
+     * @override SugarBean::mark_relationships_deleted()
+     * @param string $id  The ID of the record who's RLI relationship we want to update based on our deleted PLI.
+     */
+    public function mark_relationships_deleted($id)
+    {
+        if (!empty($this->revenuelineitem_id)) {
+            $qb = DBManagerFactory::getConnection()->createQueryBuilder();
+            $qb->update('revenue_line_items')
+                ->set('purchasedlineitem_id', DBManagerFactory::getInstance()->quoted(''));
+            $qb->where($qb->expr()->eq('id', $qb->createPositionalParameter($this->revenuelineitem_id)));
+            $qb->execute();
+        }
+        parent::mark_relationships_deleted($id);
+    }
+
+    /**
      * Calculate service_end_date for service PLI.
      *
      * If 'service' or any required service-related fields are empty, or if
