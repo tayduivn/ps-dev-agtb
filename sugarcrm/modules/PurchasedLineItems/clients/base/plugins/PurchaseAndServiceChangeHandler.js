@@ -117,6 +117,10 @@
                             success: _.bind(function(data) {
                                 var productPopulateList =
                                     _.pick(data, _.keys(populateList));
+                                if (!_.isUndefined(productPopulateList.name) &&
+                                    !_.isEmpty(this.model.get('name'))) {
+                                    delete productPopulateList.name;
+                                }
                                 this.model.set(productPopulateList);
 
                                 // if the created PLI is not a service reset duration to "1 Day(s)"
