@@ -1516,6 +1516,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
             var oCanvas = document.getElementById(canvasChartId);
             var d3Container = document.getElementById(svgChartId);
             var serializer = new XMLSerializer();
+            var saveToUrl = saveTo || 'index.php?action=DynamicAction&DynamicAction=saveImage&module=Charts&to_pdf=1';
 
             if (!oCanvas) {
                 return;
@@ -1535,7 +1536,7 @@ function loadSugarChart(chartId, jsonFilename, css, chartConfig, chartParams, ca
                             renderCallback: function() {
                                 var uri = oCanvas.toDataURL((imageExt === 'jpg' ? 'image/jpeg' : 'image/png'));
                                 var ctx = oCanvas.getContext('2d');
-                                $.post(saveTo, {imageStr: uri, filename: filename});
+                                $.post(saveToUrl, {imageStr: uri, filename: filename});
                                 ctx.clearRect(0, 0, 1440, 960);
                                 // fix chrome crash caused by large image
                                 d3sugar.select(d3ChartId + ' svg').remove();

@@ -111,9 +111,8 @@ class SugarApplication
             exit();
         } elseif ($this->controller->action === 'sidecar' ||
             (
-                $this->controller->action === 'index'
-                && $this->controller->module === 'Home'
-                && empty($_REQUEST['entryPoint'])
+                $this->controller->action === 'index' && $this->controller->module === 'Home' &&
+                (empty($_REQUEST['entryPoint']) || (isset($_REQUEST['action']) && $_REQUEST['action'] === 'DynamicAction'))
             ) ||
             empty($_REQUEST) || 
             (!empty($_REQUEST['entryPoint']) && !$this->controller->entryPointExists($_REQUEST['entryPoint']))

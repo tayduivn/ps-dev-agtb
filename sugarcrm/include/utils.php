@@ -3174,8 +3174,8 @@ function sugar_cleanup($exit = false)
     //check to see if this is not an `ajax call AND the user preference error flag is set
     if(
         (isset($_SESSION['USER_PREFRENCE_ERRORS']) && $_SESSION['USER_PREFRENCE_ERRORS'])
-        && $_REQUEST['action'] !== 'modulelistmenu'
-        && $_REQUEST['action'] !== 'favorites'
+        && ($_REQUEST['action']!=='modulelistmenu' && $_REQUEST['action']!=='DynamicAction')
+        && ($_REQUEST['action']!=='favorites' && $_REQUEST['action']!=='DynamicAction')
         && (empty($_REQUEST['to_pdf']) || !$_REQUEST['to_pdf'] )
         && (empty($_REQUEST['sugar_body_only']) || !$_REQUEST['sugar_body_only'] )
 
