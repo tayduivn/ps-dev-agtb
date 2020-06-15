@@ -437,11 +437,6 @@ return array(
             'version' => '*',
         ],
     ],
-    'Net-Results Marketing Automation' => [
-        [
-            'version' => '*',
-        ],
-    ],
     'CLI command and Scheduler job to purge from database old Activity Stream records' => [
         [
             'version' => '*',
