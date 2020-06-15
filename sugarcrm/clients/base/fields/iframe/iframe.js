@@ -32,6 +32,16 @@
     },
 
     /**
+     * Check if a field has a value.
+     * Custom iFrame fields can have a default value defined from Studio, which also counts as a value.
+     *
+     * @return {boolean} True if the field is empty.
+     */
+    isFieldEmpty: function() {
+        return this._super('isFieldEmpty') && !this.def.default;
+    },
+
+    /**
      * @inheritdoc
      */
     unformat: function(value) {

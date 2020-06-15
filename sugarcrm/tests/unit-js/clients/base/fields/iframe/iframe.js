@@ -94,4 +94,17 @@ describe('Base.Field.Iframe', function() {
             });
         });
     });
+
+    describe('isFieldEmpty', function() {
+        it('should be considered empty when lacks a value and default value', function() {
+            delete field.def.default;
+            expect(field.isFieldEmpty()).toBe(true);
+            field.def.default = '';
+            expect(field.isFieldEmpty()).toBe(true);
+        });
+
+        it('should not be considered empty when a default is defined', function() {
+            expect(field.isFieldEmpty()).toBe(false);
+        });
+    });
 });
