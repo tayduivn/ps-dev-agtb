@@ -21,6 +21,36 @@
     This API attempts to reach SugarCRM's marketing content URL. If the service is unreachable, a URL for the static content is returned.
 </span>
 
+<h2>Request Arguments</h2>
+<table class="table table-hover">
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Required</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>
+            selected_language
+        </td>
+        <td>
+            String
+        </td>
+        <td>
+            Code for the desired marketing content language. (Eg. <em>"en_us"</em>, <em>"fr_FR"</em>).
+            Providing a certain language code does not guarantee that content returned will be in the provided language.
+            If an invalid language is specified, will assume <em>"en_us"</em>.
+        </td>
+        <td>
+            False. It uses the configured language if this parameter is missing. Defaults to <em>"en_us"</em>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
 <h2>Response Arguments</h2>
 <table class="table table-hover">
     <thead>

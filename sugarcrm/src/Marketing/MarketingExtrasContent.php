@@ -98,15 +98,16 @@ class MarketingExtrasContent
      * Returns the marketing content URL. A URL for static content is returned if marketing URL is not
      * reachable
      *
+     * @param string $lang
      * @return string The marketing content URL
      */
-    public function getMarketingExtrasContentUrl(): string
+    public function getMarketingExtrasContentUrl($lang = ''): string
     {
         $baseUrl = $this->getConfigValue('url');
         $staticUrl = $this->getConfigValue('static_url');
 
         if (!empty($baseUrl)) {
-            $queryParams = $this->getQueryParams();
+            $queryParams = $this->getQueryParams($lang);
             $url = $this->getFullUrl($baseUrl, $queryParams);
 
             if ($this->isContentDisplayable($url)) {
@@ -120,16 +121,17 @@ class MarketingExtrasContent
     /**
      * Returns the query parameters for the request
      *
+     * @param string $lang
      * @return array The query parameters
      */
-    protected function getQueryParams(): array
+    protected function getQueryParams($lang = ''): array
     {
         $helper = $this->getMarketingExtrasHelper();
         $sugarDetails = $helper->getSugarDetails();
 
         return [
             'domain' => $sugarDetails['domain'],
-            'language' => $helper->chooseLanguage(null),
+            'language' => empty($lang) ? $helper->chooseLanguage(null) : $lang,
             'flavor' => $sugarDetails['flavor'],
             'version' => $sugarDetails['version'],
             'license'   => $sugarDetails['license'],

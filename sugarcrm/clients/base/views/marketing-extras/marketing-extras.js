@@ -26,13 +26,18 @@
         this._super('initialize', [options]);
 
         this.fetchMarketingContentUrl();
+
+        app.events.on('app:locale:change', function() {
+            app.router.refresh();
+        }, this);
     },
 
     /**
      * Fetch the marketing content URL
      */
     fetchMarketingContentUrl: function() {
-        var url = app.api.buildURL('login/marketingContentUrl', null, null, null);
+        var language = app.user.getLanguage();
+        var url = app.api.buildURL('login/marketingContentUrl', null, null, {selected_language: language});
         app.api.call('read', url, null, {
             success: _.bind(function(response) {
                 this.marketingContentUrl = response;
