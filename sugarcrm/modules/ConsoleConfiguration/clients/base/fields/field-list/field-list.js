@@ -221,6 +221,7 @@
      */
     handleMultiLineFieldStop: function(event) {
         this.updateMultiLineField($(event.target));
+        this.handleColumnsChanging();
         this.triggerPreviewUpdate();
     },
 
