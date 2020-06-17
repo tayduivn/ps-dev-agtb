@@ -372,16 +372,18 @@
      */
     getColumns: function(bean) {
         const module = bean.get('enabled_module');
-        const columns = bean.get('columns');
-        const multiLineFields = this._getMultiLineFields(module);
+        var columns = bean.get('columns');
+        var moduleFields = app.metadata.getModule(module, 'fields');
 
         _.each(columns, function(field, key) {
-            const metaField = _.find(multiLineFields, function(item) {
-                return item.name === field.name;
-            });
-
-            if (metaField) {
-                columns[key] = metaField;
+            // add related_fields from widgets, they should be sortable
+            if (!_.isEmpty(field.console) && !_.isEmpty(field.console.related_fields)) {
+                var relatedFields = field.console.related_fields;
+                _.each(relatedFields, function(field) {
+                    if (_.isEmpty(columns[field]) && !_.isEmpty(moduleFields[field])) {
+                        columns[field] = moduleFields[field];
+                    }
+                });
             }
         });
 

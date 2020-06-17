@@ -51,6 +51,16 @@ describe('ConsoleConfiguration.Layout.ConfigDrawer', function() {
                         type: 'name'
                     }
                 },
+                field1: {
+                    name: 'field1',
+                    property: '',
+                },
+                field2: {
+                    name: 'field2',
+                },
+                fieldX: {
+                    name: 'fieldX',
+                },
                 isBwcEnabled: false
             };
         });
@@ -676,37 +686,31 @@ describe('ConsoleConfiguration.Layout.ConfigDrawer', function() {
                 .withArgs('columns').returns({
                 field1: {
                     name: 'field1',
+                    console: {
+                        related_fields: ['fieldX']
+                    }
                 },
                 field2: {
-                    name: 'field2',
-                },
+                    name: 'field2'
+                }
             });
-
-            sinon.collection.stub(layout, '_getMultiLineFields')
-                .returns({
-                    field1: {
-                        name: 'field1',
-                        property: '',
-                    },
-                    field2: {
-                        name: 'field2',
-                    },
-                    field3: {
-                        name: 'field3',
-                    },
-                });
         });
 
-        it('!!should clear the secondary sort', function() {
+        it('!!should add related_fields', function() {
             const result = layout.getColumns(bean);
             expect(result).toEqual({
                 field1: {
                     name: 'field1',
-                    property: '',
+                    console: {
+                        related_fields: ['fieldX']
+                    }
                 },
                 field2: {
-                    name: 'field2',
+                    name: 'field2'
                 },
+                fieldX: {
+                    name: 'fieldX'
+                }
             });
         });
     });
