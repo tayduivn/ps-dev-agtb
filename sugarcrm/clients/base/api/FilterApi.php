@@ -169,11 +169,15 @@ class FilterApi extends SugarApi
         $options['offset'] = 0;
         $options['add_deleted'] = true;
 
-        if (!empty($args['max_num'])) {
-            $options['limit'] = (int) $args['max_num'];
+        if ($seed && isset($seed->force_limit)) {
+            $options['limit'] = $seed->force_limit;
+        } else {
+            if (!empty($args['max_num'])) {
+                $options['limit'] = (int) $args['max_num'];
+            }
+    
+            $options['limit'] = $this->checkMaxListLimit($options['limit']);
         }
-
-        $options['limit'] = $this->checkMaxListLimit($options['limit']);
 
         if (!empty($args['deleted'])) {
             $options['add_deleted'] = false;
