@@ -196,8 +196,6 @@ $admin_option_defs['any']['dropdowneditor']= array('Dropdown','LBL_DROPDOWN_EDIT
 $admin_option_defs['Administration']['sugarportal']= array('SugarPortal','LBL_SUGARPORTAL','LBL_SUGARPORTAL_DESC','./index.php?module=ModuleBuilder&action=index&type=sugarportal');
 //END SUGARCRM flav=ent ONLY
 
-//$admin_option_defs['migrate_custom_fields']= array('MigrateFields','LBL_EXTERNAL_DEV_TITLE','LBL_EXTERNAL_DEV_DESC','./index.php?module=Administration&action=Development');
-
 $admin_option_defs['any']['workflow_management']= array('WorkFlow','LBL_MANAGE_WORKFLOW','LBL_WORKFLOW_DESC','./index.php?module=WorkFlow&action=ListView');
 $admin_option_defs['Administration']['api_platforms'] = [
     'Administration',

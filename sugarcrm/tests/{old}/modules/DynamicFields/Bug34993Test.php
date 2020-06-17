@@ -41,13 +41,30 @@ class Bug34993Test extends TestCase
         $GLOBALS['db']->query("INSERT INTO {$this->tablename}_cstm (id_c) VALUES ('12345')");
 
         //Safety check in case the previous run had failed
-        $GLOBALS['db']->query("DELETE FROM fields_meta_data WHERE id in ('Accountsbug34993_test_c', 'Accountsbug34993_test2_c', 'Accountsfloat_test1_c', 'Accountsfloat_test2_c')");
+        $this->clearFieldsMetaData();
+    }
+
+    protected function clearFieldsMetaData()
+    {
+        global $db;
+        $fieldsMetaData = BeanFactory::newBean('EditCustomFields');
+        $builder = $db->getConnection()->createQueryBuilder();
+        $builder->delete($fieldsMetaData->getTableName())
+            ->where('custom_module = ?')
+            ->andWhere('name IN (?)')
+            ->setParameter(1, 'Accounts')
+            ->setParameter(
+                2,
+                ['bug34993_test_c', 'bug34993_test2_c', 'float_test1_c', 'float_test2_c'],
+                \Doctrine\DBAL\Connection::PARAM_STR_ARRAY
+            )
+            ->execute();
     }
 
     protected function tearDown() : void
     {
         $GLOBALS['db']->dropTableName($this->tablename . '_cstm');
-        $GLOBALS['db']->query("DELETE FROM fields_meta_data WHERE id in ('Accountsbug34993_test_c', 'Accountsbug34993_test2_c', 'Accountsfloat_test1_c', 'Accountsfloat_test2_c')");
+        $this->clearFieldsMetaData();
         if (isset($this->old_installing)) {
             $GLOBALS['installing'] = $this->old_installing;
         } else {
@@ -112,7 +129,7 @@ class Bug34993Test extends TestCase
         $bean->custom_fields->addFieldObject($templateText);
         $bean->custom_fields->retrieve();
         $this->assertEquals($bean->bug34993_test_c, null, "Assert that the custom text field has a default value set to NULL");
-
+        $bean->custom_fields->deleteField($templateText);
 
         //Simulate create a custom text field with a default value set to 123
         $templateText = get_widget('enum');
@@ -148,6 +165,7 @@ class Bug34993Test extends TestCase
         $bean->custom_fields->addFieldObject($templateText);
         $bean->custom_fields->retrieve();
         $this->assertEquals($bean->bug34993_test2_c, null, "Assert that the custom enum field has a default value set to NULL");
+        $bean->custom_fields->deleteField($templateText);
     }
 
     /**
@@ -193,7 +211,7 @@ class Bug34993Test extends TestCase
         $bean->custom_fields->addFieldObject($templateFloat);
         $bean->custom_fields->retrieve();
         $this->assertEquals($bean->float_test1_c, 0, "Assert that the custom float type field with default = 0");
-
+        $bean->custom_fields->deleteField($templateFloat);
 
         // custom field: float type required is false
         $templateFloat = get_widget('float');
@@ -232,5 +250,6 @@ class Bug34993Test extends TestCase
         $bean->custom_fields->addFieldObject($templateFloat);
         $bean->custom_fields->retrieve();
         $this->assertEquals($bean->float_test2_c, 0, "Assert that the custom float type with default value = 0");
+        $bean->custom_fields->deleteField($templateFloat);
     }
 }

@@ -12,7 +12,11 @@
 $dictionary['FieldsMetaData'] = array (
 	'table' => 'fields_meta_data',
 	'fields' => array (
-		'id'=>array('name' =>'id', 'type' =>'varchar', 'len'=>'255', 'reportable'=>false),
+        'id' => [
+            'name' => 'id',
+            'type' => 'id',
+            'reportable' => false,
+        ],
 		'name'=>array('name' =>'name', 'vname'=>'COLUMN_TITLE_NAME', 'type' =>'varchar', 'len'=>'255'),
 		'vname'=>array('name' =>'vname' ,'type' =>'varchar','vname'=>'COLUMN_TITLE_LABEL',  'len'=>'255'),
 		'comments'=>array('name' =>'comments' ,'type' =>'varchar','vname'=>'COLUMN_TITLE_LABEL',  'len'=>'255'),
@@ -38,5 +42,13 @@ $dictionary['FieldsMetaData'] = array (
 		array('name' =>'fields_meta_datapk', 'type' =>'primary', 'fields' => array('id')),
 		array('name' =>'idx_meta_id_del', 'type' =>'index', 'fields'=>array('id','deleted')),
 		array('name' => 'idx_meta_cm_del', 'type' => 'index', 'fields' => array('custom_module', 'deleted')),
+        [
+            'name' => 'idx_fields_meta_data_custom_module_name',
+            'type' => 'unique',
+            'fields' => [
+                'custom_module',
+                'name',
+            ],
+        ],
 	),
 );

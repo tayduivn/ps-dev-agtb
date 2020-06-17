@@ -455,7 +455,6 @@ class DynamicField {
         require_once('modules/DynamicFields/templates/Fields/TemplateField.php');
         global $beanList;
 
-        $db = DBManagerFactory::getInstance();
         if (!($widget instanceof TemplateField)) {
             $field_name = $widget;
             $widget = new TemplateField();
@@ -468,8 +467,14 @@ class DynamicField {
             $newName = BeanFactory::getObjectName($this->module);
             $object_name = $newName != false ? $newName : $object_name;
         }
-
-        $db->query("DELETE FROM fields_meta_data WHERE id=" . $db->quoted($this->module . $widget->name));
+        if (empty($widget->name) || empty($this->module)) {
+            return;
+        }
+        $fieldMetaData = (new FieldsMetaData())->retrieveByCustomModuleAndName($this->module, $widget->name);
+        if (empty($fieldMetaData)) {
+            return;
+        }
+        $fieldMetaData->mark_deleted($fieldMetaData->id);
         $sql = $widget->get_db_delete_alter_table( $this->bean->table_name . "_cstm" ) ;
         if (! empty( $sql ) )
             $GLOBALS['db']->query( $sql );
@@ -519,24 +524,24 @@ class DynamicField {
     public function addFieldObject($field)
     {
         $GLOBALS['log']->debug('adding field');
-        $object_name = $this->module;
-        $db_name = $field->name;
 
-        $fmd = BeanFactory::newBean('EditCustomFields');
-        $id =  $fmd->retrieve($object_name.$db_name,true, false);
-        $is_update = false;
-        $label = strtoupper( $field->label );
-        if(!empty($id)){
-            $is_update = true;
-        }else{
-            $db_name = $this->getDBName($field->name);
-            $field->name = $db_name;
+        if (empty($field) || empty($field->name) || empty($this->module)) {
+            return false;
         }
+
+        /** @var FieldsMetaData $fmd */
+        $fmd = BeanFactory::newBean('EditCustomFields');
+        $existedMetaData = $fmd->retrieveByCustomModuleAndName($this->module, $field->name, ['add_deleted' => false]);
+        if (!empty($existedMetaData)) {
+            $fmd = $existedMetaData;
+        } else {
+            $field->name = $this->getDBName($field->name);
+            $fmd->name = $field->name;
+            $fmd->custom_module = $this->module;
+        }
+
         $this->createCustomTable();
-        $fmd->id = $object_name.$db_name;
-        $fmd->custom_module= $object_name;
-        $fmd->name = $db_name;
-        $fmd->vname = $label;
+        $fmd->vname = strtoupper($field->label);
         $fmd->type = $field->type;
         $fmd->help = $field->help;
         if (!empty($field->len))
@@ -555,11 +560,8 @@ class DynamicField {
         // pii field is always auditable
         $fmd->audited = isTruthy($field->audited) || isTruthy($field->pii);
         $fmd->reportable = ($field->reportable ? 1 : 0);
-        if(!$is_update){
-            $fmd->new_with_id=true;
-        }
         if($field){
-            if(!$is_update){
+            if (!$fmd->isUpdate() || !empty($fmd->deleted)) {
                 //Do two SQL calls here in this case
             	//The first is to create the column in the custom table without the default value
             	//The second is to modify the column created in the custom table to set the default value
@@ -588,6 +590,9 @@ class DynamicField {
             	}
             }
             $fmd->save();
+            if (!empty($fmd->deleted)) {
+                $fmd->mark_undeleted($fmd->id);
+            }
             $this->buildCache($this->module);
             $this->saveExtendedAttributes($field, array_keys($fmd->field_defs));
             MetaDataManager::refreshModulesCache(array($this->module));

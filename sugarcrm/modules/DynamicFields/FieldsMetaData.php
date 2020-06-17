@@ -39,6 +39,7 @@ class FieldsMetaData extends SugarBean {
     var $reportable;
 	var $required_fields =  array("name"=>1, "date_start"=>2, "time_start"=>3,);
 
+    public $module_name = 'EditCustomFields';
 	var $table_name = 'fields_meta_data';
 	var $object_name = 'FieldsMetaData';
 	var $module_dir = 'DynamicFields';
@@ -88,15 +89,30 @@ class FieldsMetaData extends SugarBean {
 		parent::__construct();
 		$this->disable_row_level_security = true;
 	}
-	
-	function mark_deleted($id)
-	{
-        $query = "DELETE FROM {$this->table_name} WHERE id = ? ";
-        $conn = $this->db->getConnection();
-        $conn->executeQuery($query, array($id));
-		$this->mark_relationships_deleted($id);
 
-	}
+    /**
+     * retrieve by custom module and field name
+     * @param string $customModule
+     * @param string $name
+     * @param array $options
+     * @return SugarBean|null
+     * @throws SugarQueryException
+     */
+    public function retrieveByCustomModuleAndName(string $customModule, string $name, array $options = []):? SugarBean
+    {
+        if (empty($customModule) || empty($name)) {
+            return null;
+        }
+        $query = new SugarQuery();
+        $query->from($this, $options);
+        $query->where()->equals('custom_module', $customModule)->equals('name', $name);
+        $query->limit(1);
+        $result = $this->fetchFromQuery($query);
+        if (!empty($result)) {
+            return array_shift($result);
+        }
+        return null;
+    }
 
 	function get_list_view_data(){
 	    $data = parent::get_list_view_data();
