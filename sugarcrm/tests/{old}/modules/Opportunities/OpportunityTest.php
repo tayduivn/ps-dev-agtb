@@ -18,6 +18,8 @@ use PHPUnit\Framework\TestCase;
  */
 class OpportunityTest extends TestCase
 {
+    protected static $currentUser;
+
     public static function setUpBeforeClass() : void
     {
         SugarTestHelper::setUp('current_user');
@@ -37,6 +39,12 @@ class OpportunityTest extends TestCase
 
     protected function tearDown() : void
     {
+        // Clean up current user if needed
+        if (static::$currentUser) {
+            $GLOBALS['current_user'] = static::$currentUser;
+            static::$currentUser = null;
+        }
+
         SugarTestRevenueLineItemUtilities::removeAllCreatedRevenueLineItems();
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
         SugarTestCurrencyUtilities::removeAllCreatedCurrencies();
@@ -652,37 +660,97 @@ class OpportunityTest extends TestCase
 
     /**
      * @dataProvider dataProviderGeneratePurchaseRliIds
-     * @param $generate_purchases
-     * @param $sales_stage
-     * @param $expected
+     * @param string $generate_purchases The value for the purchase generation flag
+     * @param string $sales_stage The sales stage of the opp
+     * @param array $licenses Array of licenses for the test user
+     * @param int $count The number of expected results
+     * @param array $expected The expected result array
      * @throws SugarQueryException
      */
-    public function testGetGeneratePurchaseRliIDs($generate_purchase, $sales_stage, $expected): void
+    public function testGetGeneratePurchaseRliIDs($generate_purchase, $sales_stage, $licenses, $count, $expected): void
     {
         $opp = SugarTestOpportunityUtilities::createOpportunity();
+
+        if (!$opp->isLicensedForSell()) {
+            $this->markTestSkipped('This test can only run on licensed Sell instances');
+        }
+
+        static $idCounter = 1;
+        $rliId = 'ut-opp-test-' . $idCounter;
+        $idCounter++;
+
+        // Begin mocks for the collector
+        $userMock = $this->createPartialMock('User', [
+            'getLicenseTypes',
+            'isAdmin',
+        ]);
+
+        $userMock->expects($this->any())
+            ->method('getLicenseTypes')
+            ->willReturn($licenses);
+
+        $userMock->expects($this->any())
+            ->method('isAdmin')
+            ->willReturn(true);
+
+        $userMock->is_admin = '1';
+        $userMock->id = 'ut-opp-user';
+
+        if (isset($GLOBALS['current_user'])) {
+            static::$currentUser = $GLOBALS['current_user'];
+        }
+
+        // Current user needs to be set before the test objects for visibility reasons
+        $GLOBALS['current_user'] = $userMock;
+
         $opp->sales_stage = 'Closed Won';
-        $rli = SugarTestRevenueLineItemUtilities::createRevenueLineItem('123');
+        $rli = SugarTestRevenueLineItemUtilities::createRevenueLineItem($rliId);
         $rli->generate_purchase = $generate_purchase;
         $rli->sales_stage = $sales_stage;
         $opp->load_relationship('revenuelineitems');
         $opp->revenuelineitems->add($rli);
 
+        $this->assertEquals($rli->opportunity_id, $opp->id);
+        $this->assertTrue($rli->isLicensedForSell(), 'RLIs not licensed for sell');
+        $this->assertEquals($rli->generate_purchase, $generate_purchase);
+
+        // Used to ensure test data is the same as production data
+        $sql = "SELECT id
+                FROM revenue_line_items
+                WHERE opportunity_id = '$opp->id'
+                AND generate_purchase = '$generate_purchase'";
+        $rs = $rli->db->query($sql);
+        $rows = [];
+        while ($row = $rli->db->fetchByAssoc($rs)) {
+            $rows[] = $row;
+        }
+
+        $this->assertCount(1, $rows);
+
+
         $ids = $opp->getGeneratePurchaseRliIds();
+
+        // Begin licensed assertions
+        $this->assertCount($count, $ids);
+
+        //var_dump($ids);
         // Ensure IDs returned from DB are trimmed, as some DB2 enforces length
         // on our ID fields
         foreach ($ids as &$row) {
             $row['id'] = trim($row['id']);
         }
+
         $this->assertEquals($expected, $ids);
     }
 
     public function dataProviderGeneratePurchaseRliIds(): array
     {
         return [
-            ['Yes', 'Closed Won', [['id' => '123'],],],
-            ['No', 'Closed Won', [],],
-            ['Yes', 'Qualification', [['id' => '123'],],],
-            ['Completed', 'Closed Won', [],],
+            ['Yes', 'Closed Won', ['SUGAR_SERVE'], 0, [],],
+            ['Yes', 'Closed Won', ['SUGAR_SELL'], 1, [['id' => 'ut-opp-test-2'],],],
+            ['No', 'Closed Won', ['SUGAR_SELL'], 0, [],],
+            ['Yes', 'Qualification', ['SUGAR_SELL'], 1, [['id' => 'ut-opp-test-4'],],],
+            ['Completed', 'Closed Won', ['SUGAR_SELL'], 0, [],],
         ];
     }
     //END SUGARCRM flav=ent ONLY

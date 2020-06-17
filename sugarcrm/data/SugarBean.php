@@ -32,6 +32,8 @@ use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 use Sugarcrm\Sugarcrm\DataPrivacy\Erasure\Repository;
 use Sugarcrm\Sugarcrm\Security\Crypto\Blowfish;
 use Sugarcrm\Sugarcrm\Security\Subject;
+use Sugarcrm\Sugarcrm\Entitlements\SubscriptionManager;
+use Sugarcrm\Sugarcrm\Entitlements\Subscription;
 
 /**
  * SugarBean is the base class for all business objects in Sugar.  It implements
@@ -8772,5 +8774,37 @@ class SugarBean
         }
 
         return $erasedFields;
+    }
+
+    /**
+     * Checks to see if this instance is licensed for Sell
+     * @return boolean
+     */
+    final public function isLicensedForSell() : bool
+    {
+        $ret = false;
+        //BEGIN SUGARCRM flav=ent ONLY
+        $subs = SubscriptionManager::instance()->getSystemSubscriptionKeys();
+        if (array_key_exists(Subscription::SUGAR_SELL_KEY, $subs)) {
+            $ret = true;
+        }
+        //END SUGARCRM flav=ent ONLY
+        return $ret;
+    }
+
+    /**
+     * Checks to see if this instance is licensed for Serve
+     * @return boolean
+     */
+    final public function isLicensedForServe() : bool
+    {
+        $ret = false;
+        //BEGIN SUGARCRM flav=ent ONLY
+        $subs = SubscriptionManager::instance()->getSystemSubscriptionKeys();
+        if (array_key_exists(Subscription::SUGAR_SERVE_KEY, $subs)) {
+            $ret = true;
+        }
+        //END SUGARCRM flav=ent ONLY
+        return $ret;
     }
 }

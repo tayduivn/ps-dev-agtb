@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Entitlements\Subscription;
+
 // Product is used to store customer information.
 class RevenueLineItem extends SugarBean
 {
@@ -116,6 +118,12 @@ class RevenueLineItem extends SugarBean
     public $module_dir = 'RevenueLineItems';
     public $new_schema = true;
     public $importable = false;
+
+    /**
+     * Flag used for purchase generation within Sell
+     * @var string
+     */
+    public $generate_purchase;
 
     public $experts;
 
@@ -240,6 +248,7 @@ class RevenueLineItem extends SugarBean
 
         //BEGIN SUGARCRM flav=ent ONLY
         $this->setServiceEndDate();
+        $this->verifyPurchaseGeneration();
         //END SUGARCRM flav=ent ONLY
 
         $id = parent::save($check_notify);
@@ -255,6 +264,29 @@ class RevenueLineItem extends SugarBean
     }
 
     //BEGIN SUGARCRM flav=ent ONLY
+    /**
+     * Sets the generate purchase flag to empty for non Sell instances
+     */
+    protected function verifyPurchaseGeneration() : void
+    {
+        if (!$this->isLicensedForSell()) {
+            $this->generate_purchase = '';
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getFieldDefinitions(?string $property = null, array $filter = array()) : array
+    {
+        // Since this field doesn't exist outside of Sell, but still exists in vardef
+        $defs = parent::getFieldDefinitions($property, $filter);
+        if (!$this->isLicensedForSell()) {
+            unset($defs['generate_purchase']['default']);
+        }
+        return $defs;
+    }
+
     /**
      * Calculate service_end_date for service RLI.
      */
@@ -717,13 +749,14 @@ class RevenueLineItem extends SugarBean
      * ]
      *
      * @param array $data list of RLI Ids to schedule in a job
+     * @return array of ScheduleJob IDs
      */
-    public static function schedulePurchaseGenerationJob(array $data): void
+    public static function schedulePurchaseGenerationJob(array $data): array
     {
         global $current_user;
-        $licenses = $current_user->getLicenseTypes();
-        if (Opportunity::usingRevenueLineItems() &&
-            in_array('SUGAR_SELL', $licenses)) {
+
+        $ret = [];
+        if (Opportunity::usingRevenueLineItems() && $current_user->hasLicense(Subscription::SUGAR_SELL_KEY)) {
             $jobGroup = md5(microtime());
             $jq = new SugarJobQueue();
 
@@ -737,9 +770,11 @@ class RevenueLineItem extends SugarBean
                 $job->assigned_user_id = $current_user->id;
                 $job->job_group = empty($jobGroup) ? md5(microtime()) : $jobGroup;
 
-                $jq->submitJob($job);
+                $ret[] = $jq->submitJob($job);
             }
         }
+
+        return $ret;
     }
     //END SUGARCRM flav=ent ONLY
 

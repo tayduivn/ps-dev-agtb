@@ -1029,7 +1029,7 @@ class User extends Person {
      */
     public function retrieve_by_email_address($email)
     {
-        $query = 'SELECT u.id FROM users u 
+        $query = 'SELECT u.id FROM users u
                   INNER JOIN email_addr_bean_rel eabr ON eabr.bean_id = u.id
                   INNER JOIN email_addresses ea ON ea.id = eabr.email_address_id
                   WHERE ea.email_address_caps = ? AND eabr.bean_module = ? AND ea.deleted = 0 AND eabr.deleted = 0 ';
@@ -3027,5 +3027,20 @@ class User extends Person {
     public function canBeAuthenticated(): bool
     {
         return !empty($this->user_name) || $this->external_auth_only;
+    }
+
+    /**
+     * Checks if a user has a license by name
+     * @param string $license System license key like SUGAR_SERVE or SUGAR SELL
+     * @param bool $prepend Whether to add the SUGAR_ prefix
+     * @return boolean
+     */
+    final public function hasLicense(string $license, $prepend = true) : bool
+    {
+        if ($prepend && stripos($license, 'sugar_') === false) {
+            $license = 'SUGAR_' . strtoupper($license);
+        }
+
+        return in_array($license, $this->getLicenseTypes());
     }
 }

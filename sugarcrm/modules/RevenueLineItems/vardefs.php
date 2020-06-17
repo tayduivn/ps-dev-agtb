@@ -100,11 +100,11 @@ $dictionary['RevenueLineItem'] = array(
                             ),
                             ifElse(equal($discount_select, "1"),
                                 currencyMultiply(
-                                    currencyMultiply($discount_price, $quantity), 
+                                    currencyMultiply($discount_price, $quantity),
                                     currencyDivide($discount_amount, 100)
                                 ),
-                                ifElse(greaterThan($quantity, 0), 
-                                    ifElse(isNumeric(toString($discount_amount)), 
+                                ifElse(greaterThan($quantity, 0),
+                                    ifElse(isNumeric(toString($discount_amount)),
                                     $discount_amount, 0
                                 ),
                                 ifElse(isNumeric(toString($discount_amount)), negate($discount_amount), 0))
@@ -468,6 +468,8 @@ $dictionary['RevenueLineItem'] = array(
             'type' => 'enum',
             'options' => 'generate_purchase_dom',
             'default' => 'Yes',
+            // Prevent appending defaults on upgrade
+            'no_default' => true,
             'len' => 25,
             'importable' => 'true',
             'reportable' => true,

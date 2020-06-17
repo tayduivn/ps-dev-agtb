@@ -35,6 +35,46 @@ class OpportunitiesSeedData {
      */
     protected static $db;
 
+    protected static $products = [];
+
+    protected static function hasProductLicense(string $product) : bool
+    {
+        if (!empty(static::$products)) {
+            return array_key_exists($product, static::$products);
+        }
+
+        if (empty(self::$db)) {
+            self::$db = DBManagerFactory::getInstance();
+        }
+
+        $sql = "SELECT value FROM config WHERE category = 'license' AND name = 'subscription'";
+        $data = self::$db->getOne($sql);
+        $data = json_decode($data);
+
+        if ($data && isset($data->subscription) && isset($data->subscription->addons)) {
+            $addons = $data->subscription->addons;
+
+            $check = [
+                'SELL' => 'sell',
+                'SERVE' => 'serve',
+                'ENT' => 'enterprise',
+                //'HINT' => 'hint',
+            ];
+
+            foreach ($addons as $addon) {
+                if (!empty($addon->product_code_c)) {
+                    if (isset($check[$addon->product_code_c])) {
+                        static::$products[$check[$addon->product_code_c]] = true;
+                    }
+                }
+            }
+
+            return array_key_exists($product, static::$products);
+        }
+
+        return false;
+    }
+
     /**
      * populateSeedData
      *
@@ -88,7 +128,7 @@ class OpportunitiesSeedData {
         // BEGIN SUGARCRM flav = ent ONLY
         if ($usingRLIs) {
             // load up the product template_ids
-            $sql = 'SELECT id, list_price, cost_price, discount_price, category_id, mft_part_num, list_usdollar, 
+            $sql = 'SELECT id, list_price, cost_price, discount_price, category_id, mft_part_num, list_usdollar,
                         cost_usdollar, discount_usdollar, tax_class, weight, service, renewable, service_duration_value,
                         service_duration_unit
                   FROM product_templates WHERE deleted = 0';
@@ -312,6 +352,9 @@ class OpportunitiesSeedData {
             foreach (array_keys($serviceOpp) as $arrKey) {
                 $rli->$arrKey = $serviceOpp[$arrKey];
             }
+
+            // For sell based purchase generation
+            $rli->generate_purchase = static::hasProductLicense('sell') ? 'Yes' : '';
 
             // Updating RLI for renewal opp
             $rli->service_start_date = $timedate->fromString($rli->service_end_date)->modify('+1 day')->asDbDate();
@@ -661,6 +704,9 @@ class OpportunitiesSeedData {
                     $opp->service_open_revenue_line_items++;
                 }
             }
+
+            // For sell based purchase generation
+            $rli->generate_purchase = !$isClosed && static::hasProductLicense('sell') ? 'Yes' : '';
             //END SUGARCRM flav=ent ONLY
 
             $rli->total_amount = (($rli->discount_price-$rli->discount_amount)*$rli->quantity);

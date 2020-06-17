@@ -353,6 +353,7 @@ $app_list_strings = array (
     'T4' => 'Tier 4',
   ),
   'generate_purchase_dom' => [
+      '' => '',
       'Yes' => 'Yes',
       'No' => 'No',
       'Completed' => 'Completed',

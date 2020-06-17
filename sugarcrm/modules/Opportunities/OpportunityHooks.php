@@ -10,8 +10,18 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Entitlements\Subscription;
+
 class OpportunityHooks extends AbstractForecastHooks
 {
+    //BEGIN SUGARCRM flav=ent ONLY
+    /**
+     * List of scheduled jobs that have just be scheduled
+     * @var array
+     */
+    protected static $scheduledJobIDs = [];
+    //END SUGARCRM flav=ent ONLY
+
     /**
      * @return array
      */
@@ -84,6 +94,11 @@ class OpportunityHooks extends AbstractForecastHooks
      */
     public static function queueRLItoPurchaseJob(Opportunity $bean, string $event, array $args): bool
     {
+        global $current_user;
+        if (!$current_user->hasLicense(Subscription::SUGAR_SELL_KEY)) {
+            return false;
+        }
+
         if (!static::useRevenueLineItems()) {
             return false;
         }
@@ -93,9 +108,29 @@ class OpportunityHooks extends AbstractForecastHooks
             return false;
         }
 
-        $data = $bean->getGeneratePurchaseRliIds();
-        RevenueLineItem::schedulePurchaseGenerationJob($data);
+        static::$scheduledJobIDs = array_merge(
+            static::$scheduledJobIDs,
+            RevenueLineItem::schedulePurchaseGenerationJob($bean->getGeneratePurchaseRliIds())
+        );
+
         return true;
+    }
+
+    /**
+     * Gets the list of all ScheduledJobs IDs
+     * @return array
+     */
+    public static function getScheduledJobIDs() : array
+    {
+        return static::$scheduledJobIDs;
+    }
+
+    /**
+     * Resets the stack of scheduled job IDs
+     */
+    public static function resetScheduledJobIDs() : void
+    {
+        static::$scheduledJobIDs = [];
     }
     //END SUGARCRM flav=ent ONLY
 

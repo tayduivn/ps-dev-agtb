@@ -14,6 +14,10 @@ use PHPUnit\Framework\TestCase;
 
 class OpportunityHooksTest extends TestCase
 {
+    protected static $queuedPurchaseJobs = [];
+
+    protected static $currentUser;
+
     public static function setUpBeforeClass() : void
     {
         SugarTestForecastUtilities::setUpForecastConfig([
@@ -26,6 +30,22 @@ class OpportunityHooksTest extends TestCase
     {
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
         SugarTestRevenueLineItemUtilities::removeAllCreatedRevenueLineItems();
+
+        // Clean up current user if needed
+        if (static::$currentUser) {
+            $GLOBALS['current_user'] = static::$currentUser;
+            static::$currentUser = null;
+        }
+
+        $db = DBManagerFactory::getInstance();
+        $ids = [];
+        foreach (static::$queuedPurchaseJobs as $id) {
+            $ids[] = $db->quoted($id);
+        }
+
+        if ($ids) {
+            $db->query('DELETE FROM job_queue WHERE id IN (' . implode(',', $ids) . ')');
+        }
     }
 
     public static function tearDownAfterClass() : void
@@ -261,16 +281,31 @@ class OpportunityHooksTest extends TestCase
 
     //BEGIN SUGARCRM flav=ent ONLY
     /**
-     * @param $useRlis
-     * @param $args
-     * @param $result
+     * @param bool $useRlis Are we using RLIs
+     * @param string $salesStage The sales stage of the opp
+     * @param bool $licenses Current users licenses
+     * @param bool $result The expectation of the test
      * @throws SugarQueryException
      * @dataProvider dataProviderQueueRliToPurchase
      */
-    public function testQueueRliToPurchaseJob($useRlis, $salesStage, $result): void
+    public function testQueueRliToPurchaseJob($useRlis, $salesStage, $licenses, $result): void
     {
         $hookMock = new MockOpportunityHooks();
         $opp = SugarTestOpportunityUtilities::createOpportunity();
+
+        $userMock = $this->createPartialMock('User', [
+            'getLicenseTypes',
+        ]);
+
+        $userMock->expects($this->any())
+            ->method('getLicenseTypes')
+            ->willReturn($licenses);
+
+        if (isset($GLOBALS['current_user'])) {
+            static::$currentUser = $GLOBALS['current_user'];
+        }
+
+        $GLOBALS['current_user'] = $userMock;
 
         $args = [
             'dataChanges' => [
@@ -281,22 +316,30 @@ class OpportunityHooksTest extends TestCase
         ];
         $hookMock::$useRevenueLineItems = $useRlis;
 
-        $returnVal = $hookMock::queueRLItoPurchaseJob($opp, '', $args);
-        $this->assertEquals($result, $returnVal);
+        // Clean up the environment for each test
+        $hookMock::resetScheduledJobIDs();
 
-        if ($result) {
-            $db = DBManagerFactory::getInstance();
-            $db->query("DELETE FROM job_queue WHERE status='queued'");
-        }
+        // Run the test
+        $returnVal = $hookMock::queueRLItoPurchaseJob($opp, '', $args);
+
+        // Capture what needs cleanup
+        static::$queuedPurchaseJobs = array_merge(
+            static::$queuedPurchaseJobs,
+            $hookMock::getScheduledJobIDs()
+        );
+
+        // Handle assertions
+        $this->assertEquals($result, $returnVal);
     }
 
     public function dataProviderQueueRliToPurchase()
     {
         return [
-            [true, '', false,],
-            [true, Opportunity::STAGE_CLOSED_LOST, false,],
-            [false, Opportunity::STAGE_CLOSED_WON, false,],
-            [true, Opportunity::STAGE_CLOSED_WON, true,],
+            [true, '', ['SUGAR_SERVE'], false,],
+            [true, '', ['SUGAR_SELL'], false,],
+            [true, Opportunity::STAGE_CLOSED_LOST, ['SUGAR_SELL'], false,],
+            [false, Opportunity::STAGE_CLOSED_WON, ['SUGAR_SELL'], false,],
+            [true, Opportunity::STAGE_CLOSED_WON, ['SUGAR_SELL'], true,],
         ];
     }
     //END SUGARCRM flav=ent ONLY

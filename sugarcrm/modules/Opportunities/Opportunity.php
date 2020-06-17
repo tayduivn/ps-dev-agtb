@@ -10,7 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-use Sugarcrm\Sugarcrm\Entitlements\SubscriptionManager;
+use Sugarcrm\Sugarcrm\Entitlements\Subscription;
 
 // Opportunity is used to store customer information.
 class Opportunity extends SugarBean
@@ -642,12 +642,8 @@ class Opportunity extends SugarBean
      */
     public function canRenew(): bool
     {
-        // get the OpportunitySettings
-        $settings = Opportunity::getSettings();
-        $useRli = isset($settings['opps_view_by']) && $settings['opps_view_by'] === 'RevenueLineItems';
-        // get licenses
-        $licenses = SubscriptionManager::instance()->getSystemSubscriptionKeysInSortedValueArray();
-        return $useRli && in_array('SUGAR_SELL', $licenses);
+        // Renewals are only supported for Sell instances using RLIs
+        return static::usingRevenueLineItems() && $this->isLicensedForSell();
     }
 
     /**
@@ -735,7 +731,11 @@ class Opportunity extends SugarBean
      */
     public function getGeneratePurchaseRliIds()
     {
-        $closedWon = $this->getRliClosedWonStages();
+        global $current_user;
+        if (!$current_user->hasLicense(Subscription::SUGAR_SELL_KEY)) {
+            return [];
+        }
+
         $q = new SugarQuery();
         $q->from(BeanFactory::newBean('RevenueLineItems'));
         $q->select(['id']);

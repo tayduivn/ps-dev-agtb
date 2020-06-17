@@ -426,6 +426,9 @@ EOL;
                 $rli->team_set_id = $opp->team_set_id;
                 //BEGIN SUGARCRM flav=ent ONLY
                 $rli->acl_team_set_id = $opp->acl_team_set_id;
+
+                // make generate_purchase empty since we are coming from Opps only mode
+                $rli->generate_purchase = '';
                 //END SUGARCRM flav=ent ONLY
                 $rli->save();
 
