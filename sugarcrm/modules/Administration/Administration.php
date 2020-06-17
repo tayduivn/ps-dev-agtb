@@ -308,14 +308,17 @@ class Administration extends SugarBean {
         }
         $this->settings[$category] = true;
 
-        // outbound email settings
-        $oe = new OutboundEmail();
+        // We only need this if we are requesting all categories or the mail category
+        if ($category === false || $category === 'mail') {
+            // outbound email settings
+            $oe = new OutboundEmail();
 
-        if ($oe->getSystemMailerSettings(false)) {
-            foreach ($oe->field_defs as $name => $value) {
-                // Only set the value if the key starts with "mail_".
-                if (strpos($name, 'mail_') === 0) {
-                    $this->settings[$name] = $oe->$name;
+            if ($oe->getSystemMailerSettings(false)) {
+                foreach ($oe->field_defs as $name => $value) {
+                    // Only set the value if the key starts with "mail_".
+                    if (strpos($name, 'mail_') === 0) {
+                        $this->settings[$name] = $oe->$name;
+                    }
                 }
             }
         }
