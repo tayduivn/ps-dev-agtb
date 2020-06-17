@@ -37,6 +37,13 @@
     initialize: function(options) {
         // Use preview view if available, otherwise fallback to record view
         this.dataView = 'preview';
+        /**
+         * From SS-609.
+         * In certain instances of loading a preview, the view may fallback on the record view metadata and therefore be
+         * distinguished as 'record' view instead of 'preview'. This flag allows us to keep track of the origin of this
+         * component so we can update it upon save.
+         */
+        options.context.set('isPreview', true);
         var previewMeta = app.metadata.getView(options.module, 'preview');
         var recordMeta = app.metadata.getView(options.module, 'record');
 
