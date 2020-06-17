@@ -69,7 +69,7 @@ class ServiceDictionary {
             sugar_mkdir($this->cacheDir,null,true);
         }
 
-        sugar_file_put_contents($this->cacheDir.'ServiceDictionary.'.$apiType.'.php','<'."?php\n\$apiDictionary['".$apiType."'] = ".var_export($storageData,true).";\n");
+        sugar_file_put_contents_atomic($this->cacheDir.'ServiceDictionary.'.$apiType.'.php', '<'."?php\n\$apiDictionary['".$apiType."'] = ".var_export($storageData, true).";\n");
         
     }
 

@@ -339,7 +339,7 @@ class SugarTheme
                     || count($this->_imageCache) != $this->_initialCacheSize['imageCache']
                     || count($this->_templateCache) != $this->_initialCacheSize['templateCache']
                 ) {
-                sugar_file_put_contents(
+                sugar_file_put_contents_atomic(
                     "$cachedir/pathCache.php",
                     serialize(
                         array(
@@ -353,7 +353,7 @@ class SugarTheme
 
             }
 			if ( count($this->_spriteCache) != $this->_initialCacheSize['spriteCache']) {
-				sugar_file_put_contents(
+                sugar_file_put_contents_atomic(
 					"$cachedir/spriteCache.php",
 					serialize($this->_spriteCache)
 				);
@@ -962,7 +962,7 @@ EOHTML;
         }
 
         // now write the css to cache
-        sugar_file_put_contents($cssFilePath,$cssFileContents);
+        sugar_file_put_contents_atomic($cssFilePath, $cssFileContents);
 
         // make sure that there is the font folder in the cache for the given theme
         $path = sugar_cached($this->getFilePath() . '/font');
@@ -971,7 +971,7 @@ EOHTML;
             $defaultPath = $this->getDefaultFontPath();
             foreach(glob($defaultPath ."/*") as $filename) {
                 $name = substr($filename, strrpos($filename, '/'));
-                sugar_file_put_contents($path . $name, sugar_file_get_contents($filename));
+                sugar_file_put_contents_atomic($path . $name, sugar_file_get_contents($filename));
             }
         }
 
@@ -1032,7 +1032,7 @@ EOHTML;
         }
 
         // now write the js to cache
-        sugar_file_put_contents($jsFilePath,$jsFileContents);
+        sugar_file_put_contents_atomic($jsFilePath, $jsFileContents);
 
         $this->_jsCache[$jsFileName] = $fullFileName;
 

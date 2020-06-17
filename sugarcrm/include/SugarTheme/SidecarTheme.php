@@ -187,7 +187,7 @@ class SidecarTheme
             $hash = md5($css);
             // Write CSS file on the file system
             sugar_mkdir($this->paths['cache'], null, true);
-            sugar_file_put_contents($this->getCssFileLocation($lessFile, $hash), $css);
+            sugar_file_put_contents_atomic($this->getCssFileLocation($lessFile, $hash), $css);
             return $hash;
         } catch (Exception $e) {
             throw new SugarApiExceptionError('lessc fatal error:<br />' . $e->getMessage());
@@ -259,7 +259,7 @@ class SidecarTheme
                 '// created: ' . date('Y-m-d H:i:s') . "\n" .
                 '$lessdefs = ' .
                 var_export_helper($lessdefs) . ';';
-            sugar_file_put_contents($this->paths['custom'] . 'variables.php', $write);
+            sugar_file_put_contents_atomic($this->paths['custom'] . 'variables.php', $write);
         }
     }
 
