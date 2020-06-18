@@ -389,7 +389,8 @@
             module = app.controller.context.get('module'),
             route = this.routeParams.route,
             url = 'http://www.sugarcrm.com/crm/product_doc.php?edition=' + serverInfo.flavor +
-                '&version=' + serverInfo.version + '&lang=' + lang + '&module=' + module + '&route=' + route;
+                '&version=' + serverInfo.version + '&lang=' + lang + '&module=' + module + '&route=' + route +
+                '&products=' + encodeURIComponent(app.user.get('products').join(','));
         if (route == 'bwc') {
             var action = window.location.hash.match(/#bwc.*action=(\w*)/i);
             if (action && !_.isUndefined(action[1])) {

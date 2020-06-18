@@ -636,6 +636,9 @@ class CurrentUserApi extends SugarApi
         }
         $user_data['licenses'] = $licenses;
 
+        // Products
+        $user_data['products'] = getReadableProductNames($licenses);
+
         // Email addresses
         $fieldDef = $current_user->getFieldDefinition('email');
 

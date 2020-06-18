@@ -17,6 +17,7 @@ describe('Base.View.Helplet', function() {
     beforeEach(function() {
         sandbox = sinon.sandbox.create();
         sandbox.stub(app.help, 'get');
+        sandbox.stub(app.user, 'get').returns([]);
         SugarTest.loadComponent('base', 'view', 'helplet');
         layout = app.view.createLayout({type: 'base'});
         view = app.view.createView({
