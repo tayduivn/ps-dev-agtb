@@ -680,10 +680,12 @@ class OpportunityTest extends TestCase
         $idCounter++;
 
         // Begin mocks for the collector
-        $userMock = $this->createPartialMock('User', [
-            'getLicenseTypes',
-            'isAdmin',
-        ]);
+        $userMock = $this->getMockBuilder('User')
+            ->onlyMethods([
+                'getLicenseTypes',
+                'isAdmin',
+            ])
+            ->getMock();
 
         $userMock->expects($this->any())
             ->method('getLicenseTypes')
