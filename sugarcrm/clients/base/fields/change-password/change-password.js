@@ -44,6 +44,7 @@
      * - revertAttributes : to unset temporary attributes _new_password and _confirm_password
      */
     _extendModel: function() {
+        var isPasswordValidationSkipped = this.fieldDefs && this.fieldDefs.skip_password_validation;
         // _hasChangePasswordModifs is a flag to make sure model methods are overriden only once
         if (this.model && !this.model._hasChangePasswordModifs) {
             // Make a copy of the model
@@ -89,8 +90,9 @@
                             });
                         }
                     } else {
+                        // Custom password validation set by admin.
                         var data = app.utils.validatePassword(password);
-                        if (!data.isValid) {
+                        if (!data.isValid && !isPasswordValidationSkipped) {
                             var errMsg = app.lang.get('LBL_PASSWORD_ENFORCE_TITLE');
                             errors[fieldName] = errors[fieldName] || {};
                             errors[fieldName].confirm_password = true;
@@ -276,6 +278,5 @@
     _dispose: function() {
         this.model.removeValidationTask('password_confirmation_' + this.cid);
         this._super('_dispose');
-    }
-
+    },
 })

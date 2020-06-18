@@ -202,6 +202,7 @@ $dictionary['OutboundEmail'] = [
             'len' => 100,
             'reportable' => false,
             'duplicate_on_record_copy' => 'no',
+            'skip_password_validation' => true,
             'mandatory_fetch' => true,
         ],
         'mail_smtpauth_req' => [

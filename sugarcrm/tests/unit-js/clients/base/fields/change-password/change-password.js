@@ -73,7 +73,7 @@ describe('Change Password field', function() {
 
     describe('Model', function() {
 
-        it('shoud return an error when passwords don\'t match', function() {
+        it('should return an error when passwords don\'t match', function() {
             var data = {};
             data[fieldName] = '123';
             data[fieldName + '_new_password'] = 'abc';
@@ -88,7 +88,7 @@ describe('Change Password field', function() {
             expect(callback.args[0][2][fieldName].confirm_password).toBeTruthy();
         });
 
-        it('shoud not return an error if passwords match', function() {
+        it('should not return an error if passwords match', function() {
             var data = {};
             data[fieldName] = '123';
             data[fieldName + '_new_password'] = 'abc';
@@ -102,7 +102,7 @@ describe('Change Password field', function() {
             expect(callback.args[0][2][fieldName]).toBeUndefined();
         });
 
-        it('shoud delete temporary attributes on revertAttributes', function() {
+        it('should delete temporary attributes on revertAttributes', function() {
             var data = {};
             data[fieldName] = '123';
             data[fieldName + '_new_password'] = 'abc';
@@ -111,6 +111,115 @@ describe('Change Password field', function() {
             field.model.revertAttributes();
             expect(field.model.get(fieldName + '_new_password')).toBeUndefined();
             expect(field.model.get(fieldName + '_confirm_password')).toBeUndefined();
+        });
+    });
+
+    describe('Custom Validation based on admin preferences', function() {
+        var data;
+        var callback;
+
+        beforeEach(function() {
+            data = {};
+            callback = sinon.stub();
+            app.config.passwordsetting = {
+                'minpwdlength': 6,
+                'maxpwdlength': 0,
+                'oneupper': true,
+                'onelower': true,
+                'onenumber': true,
+                'onespecial': true,
+            };
+        });
+
+        using('password', [
+            ['asdf', false],
+            ['123456', false],
+            ['123Abc', false],
+            ['Mypass&123', true],
+            ['=-123abC', true]
+        ],
+
+        function(password, isValid) {
+            it('should set an error if password custom validation set by admin failed', function() {
+                data[fieldName + '_new_password'] = password;
+                data[fieldName + '_confirm_password'] = password;
+                field.model.set(data);
+                field.model._doValidatePasswordConfirmation(metadata.fields, {}, callback);
+
+                expect(callback).toHaveBeenCalled();
+                expect(callback.args[0]).toBeDefined();
+                if (isValid) {
+                    expect(callback.args[0][2][fieldName]).toBeUndefined();
+                } else {
+                    expect(callback.args[0][2][fieldName]).toBeDefined();
+                }
+            });
+        });
+    });
+
+    describe('OutboundEmail.Fields.ChangePassword should skip custom password validation', function() {
+        var app;
+        var data;
+        var field;
+        var callback;
+        var fieldName = 'mail_smtppass';
+        var moduleName = 'OutboundEmail';
+        var fieldDefs = {
+            'skip_password_validation': true,
+        };
+
+        beforeEach(function() {
+            data = {};
+            app = SugarTest.app;
+            callback = sinon.stub();
+            model = app.data.createBean(moduleName);
+
+            field = SugarTest.createField(
+                'base',
+                fieldName,
+                'change-password',
+                'view',
+                fieldDefs,
+                moduleName,
+                model,
+                null,
+                true
+            );
+
+            app.config.passwordsetting = {
+                'minpwdlength': 15,
+                'maxpwdlength': 0,
+                'oneupper': true,
+                'onelower': true,
+                'onenumber': true,
+                'onespecial': true,
+            };
+        });
+
+        afterEach(function() {
+            field = null;
+            app = null;
+        });
+
+        using('password', [
+            ['asdf'],
+            ['123456'],
+            ['123Abc'],
+            ['Mypass&123'],
+            ['=-123abC']
+        ],
+
+        function(password) {
+            it('should not validation mail_smtppass with custom password preferences set by admin', function() {
+                data[fieldName + '_new_password'] = password;
+                data[fieldName + '_confirm_password'] = password;
+                field.model.set(data);
+                field.model._doValidatePasswordConfirmation(metadata.fields, {}, callback);
+
+                expect(callback).toHaveBeenCalled();
+                expect(callback.args[0]).toBeDefined();
+                expect(callback.args[0][2][fieldName]).toBeUndefined();
+            });
         });
     });
 });
