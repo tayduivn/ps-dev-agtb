@@ -301,6 +301,32 @@
     },
 
     /**
+     * Initialize the SugarLogic plugin for the current model. As the dashlet is initialized,
+     * the current model is a config model which is swapped later to the actual record model.
+     * In case there are multiple tabs containing different records, we have to initialize
+     * the plugin for each model (there are 3 critical plugin inputs - the model, the collection
+     * and the fields displayed).
+     */
+    initTabSugarLogic: function() {
+        // ensure that the SugarLogic listeners are attached only once
+        if (!this.disposed && !this.model.hasSugarLogicEvents) {
+            // we may lack a collection, so we create one to be able to trigger onLoad logics
+            if (!this.collection) {
+                if (this.model.collection) {
+                    this.collection = this.model.collection;
+                } else {
+                    this.collection = app.data.createBeanCollection(this.model.module, [this.model]);
+                }
+            }
+
+            this._slCtx = this.initSugarLogic();
+            this.context.addFields(this._getDepFields());
+            this.collection.trigger('sync', this.collection, this.collection.models);
+            this.model.hasSugarLogicEvents = true;
+        }
+    },
+
+    /**
      * Gets the currently active tab object.
      *
      * @return {Object|undefined} The currently active tab object, or the
@@ -858,6 +884,8 @@
                         success: _.bind(function(model) {
                             if (self._isActiveTab(tab)) {
                                 self.render();
+                                // init SugarLogic only after fields have been rendered
+                                self.initTabSugarLogic();
                             }
                         }, this)
                     });
@@ -1613,7 +1641,7 @@
             return this._baseModule;
         }
 
-        return this. _getModuleFromLinkField(this._getBaseModuleFields()[linkName]);
+        return this._getModuleFromLinkField(this._getBaseModuleFields()[linkName]);
     },
 
     /**

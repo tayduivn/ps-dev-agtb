@@ -251,6 +251,41 @@ describe('Base.View.Dashablerecord', function() {
         });
     });
 
+    describe('initTabSugarLogic', function() {
+        var initStub;
+        var defaultCollection;
+
+        beforeEach(function() {
+            defaultCollection = view.collection;
+            initStub = sinon.collection.stub(view, 'initSugarLogic').returns({
+                model: view.model,
+                collection: view.collection
+            });
+        });
+
+        afterEach(function() {
+            view.collection = defaultCollection;
+        });
+
+        it('should re-initialize the SugarLogic with a new model', function() {
+            view.initTabSugarLogic();
+            expect(initStub).toHaveBeenCalled();
+            expect(view._slCtx.model.cid).toEqual(view.model.cid);
+        });
+
+        it('should not re-initialize the SugarLogic plugin with the same model', function() {
+            view.model.hasSugarLogicEvents = true;
+            view.initTabSugarLogic();
+            expect(initStub).not.toHaveBeenCalled();
+        });
+
+        it('should create a standard collection for the plugin if there is none', function() {
+            view.collection = undefined;
+            view.initTabSugarLogic();
+            expect(view.collection instanceof Backbone.Collection).toBe(true);
+        });
+    });
+
     describe('_getContextModel', function() {
         it('should clone context models before returning', function() {
             var cloneStub = sinon.collection.stub(view, '_cloneModel');
