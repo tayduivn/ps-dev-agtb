@@ -19,6 +19,7 @@ use \Sugarcrm\Sugarcrm\Security\Password\Hash;
 use Sugarcrm\Sugarcrm\Util\Arrays\ArrayFunctions\ArrayFunctions;
 use Sugarcrm\Sugarcrm\Denormalization\TeamSecurity\Listener;
 use Sugarcrm\Sugarcrm\DependencyInjection\Container;
+use Sugarcrm\Sugarcrm\ACL\Cache as AclCacheInterface;
 
 /**
  * User is used to store customer information.
@@ -671,7 +672,7 @@ class User extends Person {
 
         // When we change a user to or from admin status, we have to flush the ACL cache
         // or else the user will not be able to access some admin modules.
-        AclCache::getInstance()->clear();
+        AclCache::getInstance()->clearAll();
         // FIXME TY-1094: investigate if we should enforce admin/portal API user/group mutual exclusivity here
     }
 
@@ -2007,7 +2008,10 @@ class User extends Person {
      * @return array
      */
     public function getDeveloperModules() {
-        $cache = AclCache::getInstance();
+        if ($this->id === null) {
+            return [];
+        }
+        $cache = Container::getInstance()->get(AclCacheInterface::class);
         $modules = $cache->retrieve($this->id, 'developer_modules');
         if ($modules === null) {
             $modules = $this->_getModulesForACL('dev');
@@ -2049,7 +2053,10 @@ class User extends Person {
      * @return array
      */
     public function getAdminModules() {
-        $cache = AclCache::getInstance();
+        if ($this->id === null) {
+            return [];
+        }
+        $cache = Container::getInstance()->get(AclCacheInterface::class);
         $modules = $cache->retrieve($this->id, 'admin_modules');
         if ($modules === null) {
             $modules = $this->_getModulesForACL('admin');

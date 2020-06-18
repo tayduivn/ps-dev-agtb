@@ -9,11 +9,11 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-
+use Sugarcrm\Sugarcrm\ACL\Cache;
 /**
  * ACL data cache
  */
-class AclCache
+class AclCache implements Cache
 {
     const HASH_KEY = 'ACL';
 
@@ -50,6 +50,7 @@ class AclCache
 
     /**
      * Returns single instance of the class
+     * @deprecated Please use Container::getInstance()->get(AclCache::class)
      *
      * @return static
      */
@@ -74,18 +75,9 @@ class AclCache
 
     /**
      * Retrieve a value for a key from the cache. Returns NULL in case if the entry is not found.
-     *
-     * @param string $userId User ID
-     * @param string $key Entry key
-     *
-     * @return mixed
      */
-    public function retrieve($userId, $key)
+    public function retrieve(string $userId, string $key) : ?array
     {
-        if (!$userId) {
-            return null;
-        }
-
         $this->hashes = $this->getHashes();
 
         if (isset($this->hashes[$userId][$key])) {
@@ -99,17 +91,9 @@ class AclCache
 
     /**
      * Set a value for a key in the cache.
-     *
-     * @param string $userId User ID
-     * @param string $key Entry key
-     * @param mixed $value Value
      */
-    public function store($userId, $key, $value)
+    public function store(string $userId, string $key, array $value) : void
     {
-        if (!$userId) {
-            return;
-        }
-
         $hash = md5(serialize($value));
         $this->hashes = $this->getHashes();
         if (!isset($this->hashes[$userId][$key]) || $this->hashes[$userId][$key] !== $hash) {
@@ -121,11 +105,10 @@ class AclCache
     }
 
     /**
+     * @deprecated Please use {@link Cache::clearAll()} and {@link Cache::clearByUser()}
      * Clear cache.
-     * @param string $userId
-     * @param string $key
      */
-    public function clear($userId = null, $key = null)
+    public function clear(?string $userId = null, ?string $key = null) : void
     {
         // clear cache for a single user
         if ($userId) {
@@ -155,5 +138,20 @@ class AclCache
     protected function getHashes() : ?array
     {
         return $this->hashes?? $this->cache->get(self::HASH_KEY);
+    }
+
+    public function clearByUser(string $userId): void
+    {
+        $this->hashes = $this->getHashes();
+        if (isset($this->hashes[$userId])) {
+            unset($this->hashes[$userId]);
+            $this->cache->set(self::HASH_KEY, $this->hashes, 0);
+        }
+    }
+
+    public function clearAll(): void
+    {
+        $this->hashes = null;
+        unset($this->cache->{self::HASH_KEY});
     }
 }

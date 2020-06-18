@@ -12,6 +12,8 @@
  */
 
 use PHPUnit\Framework\TestCase;
+use Sugarcrm\Sugarcrm\ACL\Cache as AclCacheInterface;
+use Sugarcrm\Sugarcrm\DependencyInjection\Container;
 
 /**
  * Class ACLRolesTest
@@ -53,7 +55,7 @@ class ACLRolesTest extends TestCase
         $this->user->save();
         $this->user->update_date_modified = $oldUpdateDateModified;
 
-        $this->cache = AclCache::getInstance();
+        $this->cache = Container::getInstance()->get(AclCacheInterface::class);
     }
 
     protected function tearDown() : void
@@ -61,7 +63,7 @@ class ACLRolesTest extends TestCase
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestACLUtilities::tearDown();
         if ($this->cache) {
-            $this->cache->clear();
+            $this->cache->clearAll();
         }
     }
 

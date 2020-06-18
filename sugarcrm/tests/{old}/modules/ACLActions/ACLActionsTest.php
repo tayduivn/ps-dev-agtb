@@ -11,6 +11,8 @@
  */
 
 use PHPUnit\Framework\TestCase;
+use Sugarcrm\Sugarcrm\ACL\Cache as AclCacheInterface;
+use Sugarcrm\Sugarcrm\DependencyInjection\Container;
 
 class ACLActionsTest extends TestCase
 {
@@ -67,7 +69,7 @@ class ACLActionsTest extends TestCase
 
     public function testGetUserActions()
     {
-        AclCache::getInstance()->clear();
+        Container::getInstance()->get(AclCacheInterface::class)->clearAll();
         $actions = ACLAction::getUserActions($GLOBALS['current_user']->id, true);
         $this->assertEquals(ACL_ALLOW_NONE, $actions['Accounts']['module']['edit']['aclaccess'], 'aclaccess should be: '. ACL_ALLOW_NONE);
         $this->assertEquals(false, $actions['Accounts']['module']['edit']['isDefault'], 'aclaccess should be overridden.');
@@ -79,7 +81,7 @@ class ACLActionsTest extends TestCase
      */
     public function testKeepMostRestrictiveActions($actions, $expected)
     {
-        AclCache::getInstance()->clear();
+        Container::getInstance()->get(AclCacheInterface::class)->clearAll();
         $restrictive = SugarTestReflection::callProtectedMethod('ACLAction', 'keepMostRestrictiveActions', [$actions]);
         $this->assertEquals($expected, $restrictive['same action other role']['access_override'], 'aclaccess should be: '. $expected);
     }

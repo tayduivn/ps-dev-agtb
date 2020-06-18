@@ -10,15 +10,17 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\Sugarcrm\Cache\Backend;
+namespace Sugarcrm\Sugarcrm\ACL;
 
-use Symfony\Component\Cache\Simple\RedisCache;
-
-/**
- * Redis implementation of the cache backend
- *
- * @link http://pecl.php.net/package/redis
- */
-final class Redis extends RedisCache
+final class PhpValueSerializer implements ValueSerializer
 {
+    public function serialize($value): string
+    {
+        return serialize($value);
+    }
+
+    public function unserialize(string $value)
+    {
+        return unserialize($value, ['allowed_classes' => false]);
+    }
 }

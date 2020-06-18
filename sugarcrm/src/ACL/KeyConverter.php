@@ -10,15 +10,9 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\Sugarcrm\Cache\Backend;
+namespace Sugarcrm\Sugarcrm\ACL;
 
-use Symfony\Component\Cache\Simple\RedisCache;
-
-/**
- * Redis implementation of the cache backend
- *
- * @link http://pecl.php.net/package/redis
- */
-final class Redis extends RedisCache
+interface KeyConverter
 {
+    function convert(string $key): string;
 }
