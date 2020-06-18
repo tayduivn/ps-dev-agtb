@@ -186,7 +186,7 @@ export class Detail extends CurrencyField {
             // Get converted amount
             let valueConverted: string = await this.driver.getText(this.$('field.converted'));
             // Return both values with space in between
-            return valueOriginal.trim() + ' ' + valueConverted.trim();
+            return `${valueOriginal} ${valueConverted}`;
         } else {
             let value: string | string [] = await this.driver.getText(this.$('field.selector'));
             return value.toString().trim();

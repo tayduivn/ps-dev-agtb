@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@crud_modules_purchased_line_items @job2 @SS-381 @SS-424
+@crud_modules_purchased_line_items @job7 @SS-381 @SS-424
 Feature: Purchased Line Items module verification
 
   Background:
@@ -183,7 +183,7 @@ Feature: Purchased Line Items module verification
       | copy           | 2           | 2             |
 
 
-  @create @SS-473
+  @create @SS-473 @SS-625
   Scenario: Purchased Line Items > Create
     Given Accounts records exist:
       | *   | name        |
@@ -197,6 +197,11 @@ Feature: Purchased Line Items module verification
       | *name | date_closed               | likely_case | best_case | sales_stage | quantity   |
       | RLI_1 | 2020-10-19T19:20:22+00:00 | <likely>    | <best>    | Prospecting | <quantity> |
 
+    # Add EUR currency
+    When I add new currency
+      | iso4217 | conversion_rate |
+      | EUR     | 0.9             |
+
     # Click Create Purchased Line Items in Mega menu
     When I choose PurchasedLineItems in modules menu and select "Create Purchased Line Item" menu item
     When I click show more button on #PurchasedLineItemsDrawer view
@@ -206,32 +211,40 @@ Feature: Purchased Line Items module verification
       | PLI_1 | Chelsea FC |
     # Populate record data
     When I provide input for #PurchasedLineItemsDrawer.RecordView view
-      | *     | purchase_name | date_closed | revenue | quantity | discount_amount | service_start_date | service_duration_value | service_duration_unit | tag     | revenuelineitem_name | commentlog            | service | renewable |
-      | PLI_1 | Purchase 1    | 05/05/2020  | 2000    | 3        | 100             | 06/01/2020         | 2                      | Year(s)               | Chelsea | RLI_1                | Please buy Chelsea FC | true    | true      |
+      | *     | purchase_name | currency_id | date_closed | revenue | quantity | discount_amount | service_start_date | service_duration_value | service_duration_unit | tag     | revenuelineitem_name | commentlog            | service | renewable |
+      | PLI_1 | Purchase 1    | € (EUR)     | 05/05/2020  | 2000    | 3        | 100             | 06/01/2020         | 2                      | Year(s)               | Chelsea | RLI_1                | Please buy Chelsea FC | true    | true      |
 
     # Save
     When I click Save button on #PurchasesDrawer header
     When I close alert
 
+    Then PurchasedLineItems *PLI_1 should have the following values in the list view:
+      | fieldName     | value               |
+      | name          | Chelsea FC          |
+      | purchase_name | Purchase 1          |
+      | date_closed   | 05/05/2020          |
+      | revenue       | €2,000.00 $2,222.22 |
+      | total_amount  | €5,900.00 $6,555.56 |
+
     # Verify that record is created successfully
     Then PurchasedLineItems *PLI_1 should have the following values:
-      | fieldName              | value      |
-      | name                   | Chelsea FC |
-      | purchase_name          | Purchase 1 |
-      | date_closed            | 05/05/2020 |
-      | revenue                | $2,000.00  |
-      | total_amount           | $5,900.00  |
-      | quantity               | 3.00       |
-      | discount_amount        | $100.00    |
-      | service                | true       |
-      | renewable              | true       |
-      | service_start_date     | 06/01/2020 |
-      | service_duration_value | 2          |
-      | service_duration_unit  | Year(s)    |
-      | service_end_date       | 05/31/2022 |
-      | tag                    | Chelsea    |
-      | revenuelineitem_name   | RLI_1      |
-      | annual_revenue         | $2,950.00  |
+      | fieldName              | value               |
+      | name                   | Chelsea FC          |
+      | purchase_name          | Purchase 1          |
+      | date_closed            | 05/05/2020          |
+      | revenue                | €2,000.00 $2,222.22 |
+      | total_amount           | €5,900.00 $6,555.56 |
+      | quantity               | 3.00                |
+      | discount_amount        | €100.00 $111.11     |
+      | service                | true                |
+      | renewable              | true                |
+      | service_start_date     | 06/01/2020          |
+      | service_duration_value | 2                   |
+      | service_duration_unit  | Year(s)             |
+      | service_end_date       | 05/31/2022          |
+      | tag                    | Chelsea             |
+      | revenuelineitem_name   | RLI_1               |
+      | annual_revenue         | €2,950.00 $3,277.78 |
 
     When I click Edit button on #PLI_1Record header
     When I provide input for #PLI_1Record.RecordView view
@@ -242,12 +255,12 @@ Feature: Purchased Line Items module verification
 
     # Verify that calculation is correct when discount appied in percentages (SS-473)
     Then PurchasedLineItems *PLI_1 should have the following values:
-      | fieldName       | value     |
-      | revenue         | $2,000.00 |
-      | quantity        | 3.00      |
-      | discount_amount | 30.00%    |
-      | total_amount    | $4,200.00 |
-      | annual_revenue  | $2,100.00 |
+      | fieldName       | value               |
+      | revenue         | €2,000.00 $2,222.22 |
+      | discount_amount | 30.00%              |
+      | total_amount    | €4,200.00 $4,666.67 |
+      | annual_revenue  | €2,100.00 $2,333.33 |
+
 
 
   @SS-441

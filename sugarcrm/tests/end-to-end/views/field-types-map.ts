@@ -46,6 +46,7 @@ import * as NestedSetField from '../fields/nested-set-field';
 import * as TimeselectField from '../fields/timeselect-field';
 import * as DurationField from '../fields/duration-field';
 import * as PasswordField from '../fields/password-field';
+import * as DiscountAmountField from '../fields/discount-amount-field';
 
 export const FIELD_TYPES__MAP = {
     name: NameField,
@@ -79,6 +80,7 @@ export const FIELD_TYPES__MAP = {
     'currency_id': EnumField,
     'quote-footer-currency': CurrencyField,
     'discount-select': DiscountSelectField,
+    'discount-amount': DiscountAmountField,
     'pricing-formula': PricingFormula,
     teamset: TeamsetField,
     parent: ParentField,
