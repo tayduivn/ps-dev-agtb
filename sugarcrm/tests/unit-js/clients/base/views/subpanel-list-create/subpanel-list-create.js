@@ -260,12 +260,12 @@ describe('Base.View.SubpanelListCreate', function() {
     describe('render', function() {
         beforeEach(function() {
             sandbox.stub(view, '_super', function() {});
-            sandbox.stub(view, '_toggleFields', function() {});
+            sandbox.stub(view, '_toggleEdit', function() {});
         });
 
-        it('should call toggleFields', function() {
+        it('should call toggleEdit', function() {
             view.render();
-            expect(view._toggleFields).toHaveBeenCalledWith(true);
+            expect(view._toggleEdit).toHaveBeenCalledWith(true);
         });
     });
 

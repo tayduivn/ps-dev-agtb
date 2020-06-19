@@ -96,4 +96,22 @@ describe("Subpanel List View", function() {
             expect(routerStub).toHaveBeenCalled();
         });
     });
+
+    describe('_buildWidthKey', function() {
+        var original;
+        beforeEach(function() {
+            original = app.user.lastState;
+            sinonSandbox.spy(app.user.lastState, 'buildKey');
+        });
+        afterEach(function() {
+            sinonSandbox.restore();
+        });
+        it('should build a unique key using app.user.lastState', function() {
+            sinonSandbox.stub(view.context, 'get').returns('Accounts');
+            view._thisListViewFieldSizesKey = 'test:key';
+            var key = view._buildWidthKey();
+            expect(app.user.lastState.buildKey).toHaveBeenCalledWith('test:key', 'Accounts');
+            expect(key).toEqual('Accounts:test:key');
+        });
+    });
 });

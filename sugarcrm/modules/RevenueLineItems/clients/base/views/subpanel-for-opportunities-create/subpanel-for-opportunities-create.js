@@ -117,8 +117,9 @@
 
         // if forecast is not setup, we need to make sure that we hide the commit_stage field
         _.each(catalog, function (group, i) {
+            var filterMethod = _.isArray(group) ? 'filter' : 'pick';
             if (forecastConfig && forecastConfig.is_setup) {
-                catalog[i] = _.filter(group, function(fieldMeta) {
+                catalog[i] = _[filterMethod](group, function(fieldMeta) {
                     if (fieldMeta.name.indexOf('_case') != -1) {
                         var field = 'show_worksheet_' + fieldMeta.name.replace('_case', '');
                         return (forecastConfig[field] == 1);
@@ -127,7 +128,7 @@
                     return true;
                 });
             } else {
-                catalog[i] = _.filter(group, function (fieldMeta) {
+                catalog[i] = _[filterMethod](group, function(fieldMeta) {
                     return (fieldMeta.name != 'commit_stage');
                 });
             }

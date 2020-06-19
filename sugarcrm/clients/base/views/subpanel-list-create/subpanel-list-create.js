@@ -134,7 +134,7 @@
         this._super('render');
 
         // toggle fields to edit view
-        this._toggleFields(true);
+        this._toggleEdit(true);
 
         _.defer(_.bind(function() {
             this.checkButtons();
@@ -147,7 +147,7 @@
      * @param {Boolean} isEdit If we're toggling fields TO Edit view or not
      * @private
      */
-    _toggleFields: function(isEdit) {
+    _toggleEdit: function(isEdit) {
         isEdit = isEdit || false;
 
         // toggle the fields in the list to be in edit mode
