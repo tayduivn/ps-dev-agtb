@@ -318,7 +318,7 @@
         // can be used for sorting
         var fields = {};
         var sortFields = {};
-        var nonSortableTypes = ['id', 'relate', 'widget'];
+        var nonSortableTypes = ['id', 'relate', 'widget', 'assigned_user_name'];
         _.each(multiLineFields, function(field) {
             if (_.isObject(field) && app.acl.hasAccess('read', module, null, field.name)) {
                 // Set the field information
