@@ -131,5 +131,18 @@ describe('Base.Field.RecordDecor', function() {
             expect(showStub).not.toHaveBeenCalled();
             child.dispose();
         });
+
+        it('should handle disabled fields', function() {
+            var child = SugarTest.createField('base', 'name', 'name', 'detail');
+            child.model.set('name', '');
+            var setCellStyleStub = sinon.collection.stub(field, 'setCellStyle');
+            var showStub = sinon.collection.stub(child, 'show');
+            child.action = 'detail';
+            field.disabled = true;
+            field.redecorate(child);
+            expect(setCellStyleStub).toHaveBeenCalledWith('none');
+            expect(showStub).toHaveBeenCalled();
+            child.dispose();
+        });
     });
 })

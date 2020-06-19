@@ -25,6 +25,24 @@
         this._super('initialize', [options]);
         this.fields = [];
         this.actualFieldsMeta = [this.def.field];
+        this.disabled = false;
+        this.context.on('field:disabled', this._setDisabled, this);
+    },
+
+    /**
+     * Set the disable property and redecorate.
+     * @private
+     */
+    _setDisabled: function(fieldName) {
+        var field = this.getActualField();
+        if (!field || !field.name) {
+            return;
+        }
+        if (field.name == fieldName) {
+            this.disabled = true;
+            this.redecorate(field);
+
+        }
     },
 
     /**
@@ -175,7 +193,8 @@
         if (actionToCheck == 'detail') {
             const editAccess = app.acl.hasAccessToModel('edit', this.model, field.name);
 
-            if (field.isFieldEmpty() && editAccess) {
+            if (field.isFieldEmpty() && editAccess && !this.disabled &&
+                !(this.view && _.contains(this.view.noEditFields, field.name))) {
                 this.setCellStyle('pill');
                 field.hide();
             } else {
