@@ -450,47 +450,33 @@ Feature: Sugar Sell Renewals Console Verification > Accounts Tab
   @renewals-console @rc_accounts_active_subscriptions
   Scenario: Renewals Console > Accounts Tab > Active Subscriptions dashlet
     Given Accounts records exist:
-      | *   | name      |
-      | A_1 | Account_1 |
-    And Opportunities records exist related via opportunities link to *A_1:
-      | *name |
-      | Opp_1 |
+      | *   | name        | assigned_user_id |
+      | A_1 | Account One | 1                |
+
+    And Purchases records exist related via purchases link to *A_1:
+      | *     | name       | service | renewable | description            |
+      | Pur_1 | Purchase 1 | true    | true      | This is great purchase |
+
+    And PurchasedLineItems records exist related via purchasedlineitems link to *Pur_1:
+      | *     | name  | revenue | date_closed | quantity | service_start_date | service_duration_value | service_duration_unit | service | renewable | discount_price |
+      | PLI_1 | PLI_1 | 1000    | 2020-06-01  | 10.00    | now -2M            | 1                      | year                  | true    | true      | 2000           |
 
     # Navigate to Renewal Console
     When I choose Home in modules menu and select "Renewals Console" menu item
-
     # Select Accounts tab
     When I select Accounts tab in #RenewalsConsoleView
-
     # Click the record to open side panel
     When I select *A_1 in #AccountsList.MultilineListView
 
-    # Verify that dashlet is empty (nothing to display)
-    Then I verify 'No active subscriptions' message appears in #RenewalsConsoleView.ActiveSubscriptionsDashlet
+    # Verify record appears in Active Subscriptions dashlet
+    Then I should see [*Pur_1] on #RenewalsConsoleView.ActiveSubscriptionsDashlet.ListView dashlet
 
-    # Add RLI records
-    Given RevenueLineItems records exist related via revenuelineitems link to *Opp_1:
-      | *name | date_closed | likely_case | sales_stage | quantity | service | service_duration_value | service_duration_unit | service_start_date |
-      | RLI_1 | now         | 1000        | Closed Won  | 1        | true    | 2                      | year                  | 2019-11-06         |
-      | RLI_2 | now         | 2000        | Closed Won  | 1        | true    | 19                     | month                 | 2019-11-06         |
-      | RLI_3 | now         | 3000        | Closed Won  | 1        | true    | 17                     | month                 | 2019-11-06         |
-      | RLI_4 | now         | 4000        | Closed Won  | 1        | true    | 1                      | year                  | 2019-11-06         |
-      | RLI_5 | now         | 5000        | Closed Won  | 1        | true    | 90                     | day                   | 2019-11-06         |
-
-    # Mass Update service_start_date to today
-    When I perform mass update of all RevenueLineItems with the following values:
-      | fieldName          | value |
-      | service_start_date | today |
-
-    # Navigate to Renewal Console
-    When I choose Home in modules menu
-
-    # Select Accounts tab
-    When I select Accounts tab in #RenewalsConsoleView
-
-    # Click the record to open side panel
-    When I select *A_1 in #AccountsList.MultilineListView
-
+    Then I verify *Pur_1 record info in #RenewalsConsoleView.ActiveSubscriptionsDashlet.ListView
+      | fieldName | value         |
+      | name      | Purchase 1    |
+      | quantity  | , quantity 10 |
+      | date      | in 10 months  |
+      | total     | $20,000.00    |
 
   @renewals-console @rc_date_of_next_renewal
   Scenario: Renewal Console > Accounts Tab > Date of Next Renewal

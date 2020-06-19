@@ -10,8 +10,7 @@
  */
 
 import DashletView from './dashlet-view';
-import RecordInteractionsListView from './record-interactions-list-view';
-import PlannedActivitiesListView from './planned-activities-list-view';
+import ActiveSubscriptionsListView from './active-subscriptions-list-view';
 
 /**
  * Represents Active Subscriptions dashlet
@@ -21,20 +20,17 @@ import PlannedActivitiesListView from './planned-activities-list-view';
  */
 export default class ActiveSubscriptionsDashlet extends DashletView {
 
-    public ActivitiesList: PlannedActivitiesListView;
+    protected ListView: ActiveSubscriptionsListView;
 
     constructor(options) {
         super(options);
 
         this.selectors = this.mergeSelectors({
             $: `.dashlet-container[name=dashlet_${options.position}]`,
-
-            subscriptions: {
-                $: '.active-subscriptions'
-            }
         });
 
-        // Active Tasks shares PlannedActivitiesListView with Planned Activities dashlet
-        this.ActivitiesList = this.createComponent<PlannedActivitiesListView>(PlannedActivitiesListView);
+        this.ListView = this.createComponent<ActiveSubscriptionsListView>(ActiveSubscriptionsListView, {
+            module: options.module,
+        });
     }
 }

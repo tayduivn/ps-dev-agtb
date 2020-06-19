@@ -19,6 +19,7 @@ import {TableDefinition} from 'cucumber';
 import PipelineDashlet from '../views/pipeline-dashlet-view';
 import Top10RlisDashlet from '../views/top-10-rlis-dashlet';
 import HistoryDashlet from '../views/history-dashlet-view';
+import ActiveSubscriptionsListView from '../views/active-subscriptions-list-view';
 
 /**
  * Click dashlet's cog button
@@ -155,4 +156,18 @@ When(/^I select "([a-zA-Z0-9 ]+)" in (#\S+)$/,
         await view.selectFromDropdown(filterName, itemToSelect);
         await this.driver.waitForApp();
 
+    }, {waitForApp: true});
+
+
+/**
+ *  Click on the Purchase link in the Active Subscriptions dashlet
+ *
+ *  @example
+ *  When I click on *Pur_1 record in #RenewalsConsoleView.ActiveSubscriptionsDashlet.ListView
+ *
+ */
+When(/^I click on (\*[a-zA-Z](?:\w|\S)*) record in (#\S+)$/,
+    async function(record: { id: string }, view: ActiveSubscriptionsListView) {
+        let listItem = view.getListItem({id: record.id});
+        await listItem.selectRecord();
     }, {waitForApp: true});

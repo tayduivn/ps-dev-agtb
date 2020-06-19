@@ -196,6 +196,7 @@ Feature: Purchases and PLIs modules verification
       | start_date | 05/15/2020 |
       | end_date   | 06/28/2021 |
 
+
   @SS-441
   Scenario: Purchased Line Items > Calculate PLI's Annual Revenue field
     Given Accounts records exist:
@@ -326,6 +327,65 @@ Feature: Purchases and PLIs modules verification
       | fieldName      | value     |
       | total_amount   | $1,000.00 |
       | annual_revenue | $669.72   |
+
+
+  @SS-636
+  Scenario: Purchased Line Items > Active Subscriptions dashlet doesn't show purchases not currently ongoing
+    Given Accounts records exist:
+      | *   | name        | assigned_user_id |
+      | A_1 | Account One | 1                |
+
+    And Purchases records exist related via purchases link to *A_1:
+      | *     | name       | service | renewable | description            |
+      | Pur_1 | Purchase 1 | true    | true      | This is great purchase |
+
+    And PurchasedLineItems records exist related via purchasedlineitems link to *Pur_1:
+      | *     | name  | revenue | date_closed | quantity | service_start_date | service_duration_value | service_duration_unit | service | renewable | discount_price |
+      | PLI_1 | PLI_1 | 1000    | 2020-06-01  | 1.00     | now -2M            | 1                      | month                 | true    | true      | 2000           |
+      | PLI_2 | PLI_2 | 2000    | 2020-06-01  | 1.00     | now +1M            | 1                      | month                 | true    | true      | 2000           |
+      | PLI_3 | PLI_3 | 2000    | 2020-06-01  | 1.00     | now -2M            | 1                      | month                 | true    | true      | 2000           |
+
+    # Navigate to Renewal Console
+    When I choose Home in modules menu and select "Renewals Console" menu item
+    # Select Accounts tab
+    When I select Accounts tab in #RenewalsConsoleView
+    # Click the record to open side panel
+    When I select *A_1 in #AccountsList.MultilineListView
+
+    # Verify that dashlet is empty (nothing to display)
+    Then I verify 'No active subscriptions' message appears in #RenewalsConsoleView.ActiveSubscriptionsDashlet
+
+    # Update one PLI record so it spans today
+    When I choose PurchasedLineItems in modules menu
+    Then I should see *PLI_3 in #PurchasedLineItemsList.ListView
+    When I select *PLI_3 in #PurchasedLineItemsList.ListView
+    When I click show more button on #PLI_3Record view
+    When I click Edit button on #PLI_1Record header
+    When I provide input for #PLI_3Record.RecordView view
+      | service_duration_value |
+      | 3                      |
+    When I click Save button on #PLI_3Record header
+    When I close alert
+
+    # Navigate to Renewal Console
+    When I choose Home in modules menu
+    # Select Accounts tab
+    When I select Accounts tab in #RenewalsConsoleView
+    # Click the record to open side panel
+    When I select *A_1 in #AccountsList.MultilineListView
+
+    # Verify record appears in Active Subscriptions dashlet
+    Then I should see [*Pur_1] on #RenewalsConsoleView.ActiveSubscriptionsDashlet.ListView dashlet
+
+    Then I verify *Pur_1 record info in #RenewalsConsoleView.ActiveSubscriptionsDashlet.ListView
+      | fieldName | value        |
+      | name      | Purchase 1   |
+      | quantity  | , quantity 1 |
+      | date      | in 2 months  |
+      | total     | $2,000.00    |
+
+    When I click on *Pur_1 record in #RenewalsConsoleView.ActiveSubscriptionsDashlet.ListView
+    Then I should see #Pur_1Record view
 
 
   @user_profile

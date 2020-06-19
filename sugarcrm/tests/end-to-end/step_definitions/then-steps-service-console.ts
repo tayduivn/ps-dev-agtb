@@ -27,6 +27,8 @@ import PlannedActivitiesDashlet from '../views/planned-activities-dashlet-view';
 import ActiveTasksDashlet from '../views/active-tasks-dashlet-view';
 import InactiveTasksDashlet from '../views/inactive-tasks-dashlet-view';
 import HistoryDashlet from '../views/history-dashlet-view';
+import ActiveSubscriptionsListItemView from '../views/active-subscriptions-list-item-view';
+import ActiveSubscriptionsListView from '../views/active-subscriptions-list-view';
 
 /**
  *  Verify the order of the item in the multiline list view of Renewals or Service Console
@@ -217,6 +219,8 @@ Then(/^I verify (\*[a-zA-Z](?:\w|\S)*) record info in (#\S+)$/,
                 value = await (listItem as RecordInteractionsListItemView).getRecordInfo(i);
             } else if (view instanceof PlannedActivitiesListView) {
                 value = await (listItem as PlannedActivitiesListItemView).getRecordInfo(fieldName);
+            } else if (view instanceof ActiveSubscriptionsListView) {
+                value = await (listItem as ActiveSubscriptionsListItemView).getRecordInfo(fieldName);
             } else {
                 throw new Error('Error. Unexpected view type specified!');
             }
