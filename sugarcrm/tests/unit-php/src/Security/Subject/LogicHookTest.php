@@ -33,6 +33,7 @@ class LogicHookTest extends TestCase
             '_type' => 'logic-hook',
             'class' => 'FixEverything',
             'method' => 'run',
+            'label' => null,
         ], $hook->jsonSerialize());
     }
 }

@@ -20,4 +20,5 @@ $hook_array['before_save'][] = array(
     'modules/Opportunities/OpportunityHooks.php',
     'OpportunityHooks',
     'setSalesStatus',
+    'Before Opportunity Save',
 );

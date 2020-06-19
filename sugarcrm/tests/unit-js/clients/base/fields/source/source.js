@@ -87,5 +87,32 @@ describe('Base.Fields.Source', function() {
                 }
             })).toEqual('Michael Sphinx');
         });
+
+        it('should return "Logic Hook" when no source name is set', function() {
+            sinon.collection.stub(app.lang, 'get')
+                .withArgs('LBL_AUDIT_SUBJECT_LOGIC-HOOK')
+                .returns('Logic Hook');
+            expect(field.format({
+                subject: {
+                    class: 'DummyClass',
+                    method: 'performDummyAction',
+                    _type: 'logic-hook'
+                }
+            })).toEqual('Logic Hook');
+        });
+
+        it('should return "Logic Hook" with source name when provided', function() {
+            sinon.collection.stub(app.lang, 'get')
+                .withArgs('LBL_AUDIT_SUBJECT_LOGIC-HOOK')
+                .returns('Logic Hook');
+            expect(field.format({
+                subject: {
+                    label: 'Before Demo Action',
+                    class: 'DummyClass',
+                    method: 'performDummyAction',
+                    _type: 'logic-hook'
+                }
+            })).toEqual('Logic Hook Before Demo Action');
+        });
     });
 });
