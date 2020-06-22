@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@crud_modules_purchases @job1 @pr
+@crud_modules_purchases @job7
 Feature: Purchases module verification
 
   Background:
@@ -120,7 +120,7 @@ Feature: Purchases module verification
       | cancel deletion of | should     |
 
   @copy
-  Scenario Outline: Purchases > Record View > Copy > Save/Cancel
+  Scenario Outline: Purchases > Record View > Copy > Cancel
     Given Accounts records exist:
       | *   | name        |
       | A_1 | Account One |
@@ -128,6 +128,15 @@ Feature: Purchases module verification
     And Purchases records exist related via purchases link to *A_1:
       | *     | name       | service | renewable | description            |
       | Pur_1 | Purchase 1 | true    | true      | This is great purchase |
+
+    And PurchasedLineItems records exist related via purchasedlineitems link to *Pur_1:
+      | *     | name  | revenue | date_closed | quantity | service_start_date | service_end_date | service | renewable | discount_price | description            |
+      | PLI_1 | PLI_1 | 2000    | 2020-06-01  | 3.00     | 2020-06-01         | 2021-05-31       | true    | true      | 2000           | This is great purchase |
+
+    Then Purchases *Pur_1 should have the following values:
+      | fieldName  | value      |
+      | start_date | 06/01/2020 |
+      | end_date   | 05/31/2021 |
 
     # Copy (or cancel copy of) record in the record view
     When I <action> *Pur_1 record in Purchases record view with the following header values:
@@ -142,11 +151,52 @@ Feature: Purchases module verification
       | service      | true                     |
       | renewable    | true                     |
       | description  | This is great purchase   |
+      | start_date   | 06/01/2020               |
+      | end_date     | 05/31/2021               |
 
     Examples:
       | action         | changeIndex | expectedIndex |
       | cancel copy of | 2           | 1             |
-      | copy           | 2           | 2             |
+
+
+  @copy @xxx
+  Scenario Outline: Purchases > Record View > Copy > Save
+    Given Accounts records exist:
+      | *   | name        |
+      | A_1 | Account One |
+
+    And Purchases records exist related via purchases link to *A_1:
+      | *     | name       | service | renewable | description            |
+      | Pur_1 | Purchase 1 | true    | true      | This is great purchase |
+
+    And PurchasedLineItems records exist related via purchasedlineitems link to *Pur_1:
+      | *     | name  | revenue | date_closed | quantity | service_start_date | service_end_date | service | renewable | discount_price | description            |
+      | PLI_1 | PLI_1 | 2000    | 2020-06-01  | 3.00     | 2020-06-01         | 2021-05-31       | true    | true      | 2000           | This is great purchase |
+
+    Then Purchases *Pur_1 should have the following values:
+      | fieldName  | value      |
+      | start_date | 06/01/2020 |
+      | end_date   | 05/31/2021 |
+
+    # Copy (or cancel copy of) record in the record view
+    When I <action> *Pur_1 record in Purchases record view with the following header values:
+      | *     | name                   |
+      | Pur_2 | Purchase <changeIndex> |
+
+    # Verify if copy is (is not) created
+    Then Purchases *Pur_<expectedIndex> should have the following values:
+      | fieldName    | value                    |
+      | name         | Purchase <expectedIndex> |
+      | account_name | Account One              |
+      | service      | true                     |
+      | renewable    | true                     |
+      | description  | This is great purchase   |
+      | start_date   |                          |
+      | end_date     |                          |
+
+    Examples:
+      | action | changeIndex | expectedIndex |
+      | copy   | 2           | 2             |
 
   @create
   Scenario: Purchases > Create
@@ -262,7 +312,6 @@ Feature: Purchases module verification
       | name       | Purchase 1 |
       | start_date | 05/15/2020 |
       | end_date   | 06/28/2021 |
-
 
 
   @user_profile

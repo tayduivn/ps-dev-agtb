@@ -119,7 +119,24 @@ export class DetailEmptyValue extends BaseField {
     constructor(options) {
         super(options);
         this.selectors = this.mergeSelectors({
-            $: '.hide[field-name={{name}}][field-type={{type}}]',
+            $: '.disabled[field-name={{name}}][field-type={{type}}]',
+            field: {
+                selector: '',
+            }
+        });
+    }
+}
+
+/**
+ *   For Start Date and End Date fields in Purchases module there is 'nodata' class
+ *   indicating the empty value field
+ */
+export class DetailEmptyValueStartDateEndDate extends BaseField {
+
+    constructor(options) {
+        super(options);
+        this.selectors = this.mergeSelectors({
+            $: '.nodata[field-name={{name}}][field-type={{type}}]',
             field: {
                 selector: '',
             }
