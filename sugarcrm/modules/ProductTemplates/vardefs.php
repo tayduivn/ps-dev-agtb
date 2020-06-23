@@ -388,6 +388,13 @@ $dictionary['ProductTemplate'] = array(
             'default' => 0,
             'comment' => 'Indicates whether the sales item is a service or a product',
         ],
+        'lock_duration' => [
+            'name' => 'lock_duration',
+            'vname' => 'LBL_LOCK_DURATION',
+            'type' => 'bool',
+            'default' => 0,
+            'comment' => 'Indicates whether the duration can be manually changed',
+        ],
         // END SUGARCRM flav=ent ONLY
     ),
     'relationships' => array(

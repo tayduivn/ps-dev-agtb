@@ -147,6 +147,7 @@ $viewdefs['ProductTemplates']['base']['view']['record'] = array(
                 'mft_part_num',
                 // BEGIN SUGARCRM flav=ent ONLY
                 'service',
+                'renewable',
                 array(
                     'name' => 'service_duration',
                     'type' => 'fieldset',
@@ -165,7 +166,7 @@ $viewdefs['ProductTemplates']['base']['view']['record'] = array(
                         ),
                     ),
                 ),
-                'renewable',
+                'lock_duration',
                 // END SUGARCRM flav=ent ONLY
                 array(
                     'name' => 'vendor_part_num',

@@ -111,5 +111,6 @@ $mod_strings = array (
   // BEGIN SUGARCRM flav=ent ONLY
   'LBL_RENEWABLE' => 'Renewable',
   'LBL_SERVICE' => 'Service',
+  'LBL_LOCK_DURATION' => 'Lock Duration',
   // END SUGARCRM flav=ent ONLY
 );
