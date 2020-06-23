@@ -173,10 +173,15 @@ SUGAR.util.extend(SUGAR.forms.SetPanelVisibilityAction, SUGAR.forms.AbstractActi
 
         _.each(this.getPanelFieldNames(context, target), function(fieldName) {
             var field = context.view.getField(fieldName);
-            if (field && _.isUndefined(field.wasRequired)) {
-                field.wasRequired = field.def.required;
+            if (field) {
+                if (_.isUndefined(field.wasRequired) && !_.isUndefined(field.def)) {
+                    field.wasRequired = field.def.required;
+                }
+                if ((!_.isUndefined(field.name) && field.name === fieldName) ||
+                (!_.isUndefined(field.def) && field.def.name === fieldName)) {
+                    context.setFieldDisabled(fieldName, hide);
+                }
             }
-            context.setFieldDisabled(fieldName, hide);
             if (field.wasRequired === true)
                 context.setFieldRequired(fieldName, !hide);
 
