@@ -1220,14 +1220,12 @@ describe('includes.javascript.pmse.designer', function() {
     });
 
     describe('validateAtom', function() {
-
         var mockSearchInfo;
-        var mockData;
+        var mockResult;
         var mockAPICall;
         var correctURL;
 
         beforeEach(function() {
-
             // Mock a basic searchInfo object to return from a getSearchInfo stub
             mockSearchInfo = {
                 url: undefined,
@@ -1236,9 +1234,7 @@ describe('includes.javascript.pmse.designer', function() {
             };
 
             // Mock the API call result object
-            mockData = {
-                result: []
-            };
+            mockResult = {result: true};
 
             // Mock the correct API URL so that we can change it to see that error
             // code is successfully run if the API endpoint is not correct
@@ -1247,11 +1243,11 @@ describe('includes.javascript.pmse.designer', function() {
             // Mock the API call function to simulate the results of an API call
             mockAPICall = function(action, url, attributes, callbacks, options) {
                 if (url === correctURL) {
-                    callbacks.success(mockData);
+                    callbacks.success(mockResult);
                 } else {
-                    callbacks.error(mockData);
+                    callbacks.error(mockResult);
                 }
-                callbacks.complete(mockData);
+                callbacks.complete(mockResult);
             };
 
             // Replace the function calls with the stubbed functions
@@ -1273,9 +1269,8 @@ describe('includes.javascript.pmse.designer', function() {
             expect(mockSilentTracker.incrementTotalValidations).toHaveBeenCalledBefore(App.api.call);
         });
 
-        it('should App.api.call with the correct parameters if the searchInfo has a URL and key', function() {
+        it('should App.api.call with the correct parameters if the searchInfo has a URL', function() {
             mockSearchInfo.url = 'mockURL';
-            mockSearchInfo.key = 'mockKey';
             validateAtom('MODULE', 'Accounts', 'phone_alternate', '123', mockStartEvent, mockSilentValidationTools);
             expect(App.api.call).toHaveBeenCalledWith('read', 'mockURL', null, jasmine.any(Object), {
                 'bulk': 'validate_element_settings'
@@ -1283,88 +1278,61 @@ describe('includes.javascript.pmse.designer', function() {
         });
 
         it('should not validate the atom if no searchInfo URL exists', function() {
-            mockSearchInfo.key = 'mockKey';
+            mockSearchInfo.url = '';
             validateAtom('MODULE', 'Accounts', 'phone_alternate', '123', mockStartEvent, mockSilentValidationTools);
             expect(mockSilentTracker.incrementTotalValidations).not.toHaveBeenCalled();
             expect(App.api.call).not.toHaveBeenCalled();
         });
 
-        it('should not validate the atom if no searchInfo key exists', function() {
-            mockSearchInfo.URL = 'mockURL';
-            validateAtom('MODULE', 'Accounts', 'phone_alternate', '123', mockStartEvent, mockSilentValidationTools);
-            expect(mockSilentTracker.incrementTotalValidations).not.toHaveBeenCalled();
-            expect(App.api.call).not.toHaveBeenCalled();
-        });
-
-        it('should not generate an error if the URL is correct and the key exists in the result data', function() {
+        it('should not generate an error if the URL is correct and the key exists in the system', function() {
             mockSearchInfo.url = 'mockURL';
-            mockSearchInfo.key = 'phone_alternate';
             correctURL = 'mockURL';
-            mockData.result.push({
-                value: 'phone_alternate'
-            });
             validateAtom('MODULE', 'Accounts', 'phone_alternate', '123', mockStartEvent, mockSilentValidationTools);
             expect(createWarning).not.toHaveBeenCalled();
         });
 
         it('should generate an error if URL is correct, but the key does not exist in the result data', function() {
             mockSearchInfo.url = 'mockURL';
-            mockSearchInfo.key = 'phone_alternate';
             correctURL = 'mockURL';
+            mockResult = {result: false};
             validateAtom('MODULE', 'Accounts', 'phone_alternate', '123', mockStartEvent, mockSilentValidationTools);
             expect(createWarning).toHaveBeenCalled();
         });
 
         it('should generate an error if the URL is incorrect', function() {
-            mockSearchInfo.url = 'mockURL';
-            mockSearchInfo.key = 'mockKey';
-            mockSearchInfo.text = 'mockText';
-            correctURL = 'wrongURL';
+            mockSearchInfo.url = 'wrongURL';
+            correctURL = 'correctURL';
             validateAtom('MODULE', 'Accounts', 'phone_alternate', '123', mockStartEvent, mockSilentValidationTools);
             expect(createWarning).toHaveBeenCalled();
         });
 
         it('should increment the validated count after calling the success function (URL is correct)', function() {
             mockSearchInfo.url = 'mockURL';
-            mockSearchInfo.key = 'mockKey';
-            mockSearchInfo.text = 'mockText';
             correctURL = 'mockURL';
             validateAtom('MODULE', 'Accounts', 'phone_alternate', '123', mockStartEvent, mockSilentValidationTools);
             expect(mockSilentTracker.incrementValidated).toHaveBeenCalled();
         });
 
         it('should increment the validated count after calling the error function (URL is incorrect)', function() {
-            mockSearchInfo.url = 'mockURL';
-            mockSearchInfo.key = 'mockKey';
-            mockSearchInfo.text = 'mockText';
-            correctURL = 'wrongURL';
+            mockSearchInfo.url = 'wrongURL';
+            correctURL = 'correctURL';
             validateAtom('MODULE', 'Accounts', 'phone_alternate', '123', mockStartEvent, mockSilentValidationTools);
             expect(mockSilentTracker.incrementValidated).toHaveBeenCalled();
-        });
-
-        it('should call App.api.call even if the searchInfo.key is undefined', function() {
-            mockSearchInfo.url = 'mockURL';
-            mockSearchInfo.key = undefined;
-            mockSearchInfo.text = 'mockText';
-            validateAtom('TEMPLATE', null, null, undefined, mockStartEvent, mockSilentValidationTools);
-            expect(App.api.call).toHaveBeenCalled();
         });
     });
 
     describe('getSearchInfo', function() {
         it('should return the correct information for atoms of type "MODULE"', function() {
-            expect(getSearchInfo('MODULE', 'Accounts', 'phone_alternate', '123')).toEqual({
-                url: App.api.buildURL('pmse_Project/CrmData/fields/Accounts?base_module=Accounts'),
-                key: 'phone_alternate',
+            expect(getSearchInfo('MODULE', 'Accounts', 'name', '123')).toEqual({
+                url: App.api.buildURL('pmse_Project/validateCrmData/fields/Accounts?key=name&base_module=Accounts'),
                 text: 'Module field',
                 backupSearchFunction: jasmine.any(Function)
             });
         });
 
         it('should return the correct information for atoms of type "VARIABLE"', function() {
-            expect(getSearchInfo('VARIABLE', 'Accounts', undefined, 'date_entered')).toEqual({
-                url: App.api.buildURL('pmse_Project/CrmData/fields/Accounts?base_module=Accounts'),
-                key: 'date_entered',
+            expect(getSearchInfo('VARIABLE', 'Accounts', undefined, 'name')).toEqual({
+                url: App.api.buildURL('pmse_Project/validateCrmData/fields/Accounts?key=name&base_module=Accounts'),
                 text: 'Module field',
                 backupSearchFunction: jasmine.any(Function)
             });
@@ -1372,8 +1340,9 @@ describe('includes.javascript.pmse.designer', function() {
 
         it('should return the correct information for atoms of type "recipient"', function() {
             expect(getSearchInfo('recipient', 'Accounts', undefined, 'employees')).toEqual({
-                url: App.api.buildURL('pmse_Project/CrmData/fields/Accounts?base_module=Accounts'),
-                key: 'employees',
+                url: App.api.buildURL(
+                    'pmse_Project/validateCrmData/fields/Accounts?key=employees&base_module=Accounts'
+                ),
                 text: 'Module field',
                 backupSearchFunction: jasmine.any(Function)
             });
@@ -1381,89 +1350,93 @@ describe('includes.javascript.pmse.designer', function() {
 
         it('should return the correct information for atoms of type "USER_IDENTITY"', function() {
             expect(getSearchInfo('USER_IDENTITY', undefined, 'current_user', 'seed_sally_id')).toEqual({
-                url: App.api.buildURL('pmse_Project/CrmData/users/'),
-                key: 'seed_sally_id',
-                text: 'User'
+                url: App.api.buildURL('pmse_Project/validateCrmData/users/?key=seed_sally_id'),
+                text: 'User',
+                backupSearchFunction: null
             });
         });
 
         it('should return the correct information for atoms of type "USER_ROLE"', function() {
             expect(getSearchInfo('USER_ROLE', undefined, 'current_user', '5e03ac3c-cf10-11e8-9ffc')).toEqual({
-                url: App.api.buildURL('pmse_Project/CrmData/rolesList/'),
-                key: '5e03ac3c-cf10-11e8-9ffc',
-                text: 'Role'
+                url: App.api.buildURL('pmse_Project/validateCrmData/rolesList/?key=5e03ac3c-cf10-11e8-9ffc'),
+                text: 'Role',
+                backupSearchFunction: null
             });
         });
 
         it('should return the correct information for atoms of type "role"', function() {
             expect(getSearchInfo('role', undefined, undefined, '5e03ac3c-cf10-11e8-9ffc')).toEqual({
-                url: App.api.buildURL('pmse_Project/CrmData/rolesList/'),
-                key: '5e03ac3c-cf10-11e8-9ffc',
-                text: 'Role'
+                url: App.api.buildURL('pmse_Project/validateCrmData/rolesList/?key=5e03ac3c-cf10-11e8-9ffc'),
+                text: 'Role',
+                backupSearchFunction: null
             });
         });
 
         it('should return the correct information for atoms of type "RELATIONSHIP"', function() {
             expect(getSearchInfo('RELATIONSHIP', undefined, undefined, '5e03ac3c-cf10-11e8-9ffc')).toEqual({
-                url: App.api.buildURL('pmse_Project/CrmData/related/Accounts'),
-                key: '5e03ac3c-cf10-11e8-9ffc',
-                text: 'Module relationship'
+                url: App.api.buildURL('pmse_Project/validateCrmData/related/Accounts?key=5e03ac3c-cf10-11e8-9ffc'),
+                text: 'Module relationship',
+                backupSearchFunction: null
             });
         });
 
         it('should return the correct information for atoms of type "user"', function() {
             expect(getSearchInfo('user', 'Accounts', undefined, 'record_creator')).toEqual({
-                url: App.api.buildURL('pmse_Project/CrmData/related/Accounts'),
-                key: 'Accounts',
-                text: 'Module relationship'
+                url: App.api.buildURL('pmse_Project/validateCrmData/related/Accounts?key=Accounts'),
+                text: 'Module relationship',
+                backupSearchFunction: null
             });
         });
 
         it('should return the correct information for atoms of type "TEAM"', function() {
             expect(getSearchInfo('TEAM', undefined, undefined, 'mock_team')).toEqual({
-                url: App.api.buildURL('pmse_Project/CrmData/teams/all/'),
-                key: 'mock_team',
-                text: 'Team'
+                url: App.api.buildURL('pmse_Project/validateCrmData/teams/all?key=mock_team'),
+                text: 'Team',
+                backupSearchFunction: null
             });
         });
 
         it('should return the correct information for atoms of type "team"', function() {
             expect(getSearchInfo('team', undefined, undefined, 'east')).toEqual({
-                url: App.api.buildURL('pmse_Project/CrmData/teams/all/'),
-                key: 'east',
-                text: 'Team'
+                url: App.api.buildURL('pmse_Project/validateCrmData/teams/all?key=east'),
+                text: 'Team',
+                backupSearchFunction: null
             });
         });
 
         it('should return the correct information for atoms of type "CONTROL"', function() {
-            expect(getSearchInfo('CONTROL', undefined, '3968254445bc26b079cafb9024060955', 'Approved')).toEqual({
-                url: App.api.buildURL('pmse_Project/CrmData/activities/mockProjectID'),
-                key: '3968254445bc26b079cafb9024060955',
-                text: 'Form activity'
+            expect(getSearchInfo('CONTROL', undefined, '12345', 'Approved')).toEqual({
+                url: App.api.buildURL('pmse_Project/validateCrmData/activities/mockProjectID?key=12345'),
+                text: 'Form activity',
+                backupSearchFunction: null
             });
         });
 
         it('should return the correct information for atoms of type "ALL_BUSINESS_RULES"', function() {
             expect(getSearchInfo('ALL_BUSINESS_RULES', undefined, undefined, 'mockBusinessRuleID')).toEqual({
-                url: App.api.buildURL('pmse_Project/CrmData/rulesets/mockProjectID'),
-                key: 'mockBusinessRuleID',
-                text: 'Business rule'
+                url: App.api.buildURL('pmse_Project/validateCrmData/rulesets/mockProjectID?key=mockBusinessRuleID'),
+                text: 'Business rule',
+                backupSearchFunction: null
             });
         });
 
         it('should return the correct information for atoms of type "BUSINESS_RULES"', function() {
-            expect(getSearchInfo('BUSINESS_RULES', undefined, '5104c6d2-cf34-11e8-bbb5', '1')).toEqual({
-                url: App.api.buildURL('pmse_Project/CrmData/businessrules/mockProjectID'),
-                key: '5104c6d2-cf34-11e8-bbb5',
-                text: 'Business rule action'
+            expect(getSearchInfo('BUSINESS_RULES', undefined, '51d2-cf34-11e8-bbb5', '1')).toEqual({
+                url: App.api.buildURL(
+                    'pmse_Project/validateCrmData/businessrules/mockProjectID?key=51d2-cf34-11e8-bbb5'
+                ),
+                text: 'Business rule action',
+                backupSearchFunction: null
             });
         });
 
         it('should return the correct information for atoms of type "TEMPLATE"', function() {
             expect(getSearchInfo('TEMPLATE', undefined, undefined, 'a44737ee-cf2f-11e8-ba31')).toEqual({
-                url: App.api.buildURL('pmse_Project/CrmData/emailtemplates/Accounts'),
-                key: 'a44737ee-cf2f-11e8-ba31',
-                text: 'Email template'
+                url: App.api.buildURL(
+                    'pmse_Project/validateCrmData/emailtemplates/Accounts?key=a44737ee-cf2f-11e8-ba31'
+                ),
+                text: 'Email template',
+                backupSearchFunction: null
             });
         });
     });

@@ -2893,7 +2893,7 @@ class ModuleInstaller
             ),
             'alertsEl' => '#alerts',
             'alertAutoCloseDelay' => 2500,
-            'serverUrl' => $config->get('site_url') . '/rest/v11_9',
+            'serverUrl' => $config->get('site_url') . '/rest/v11_10',
             'siteUrl' => $config->get('site_url'),
             'unsecureRoutes' => [
                 'signup',
@@ -2959,7 +2959,7 @@ class ModuleInstaller
             ),
             'alertsEl' => '#alerts',
             'alertAutoCloseDelay' => 2500,
-            'serverUrl' => 'rest/v11_9',
+            'serverUrl' => 'rest/v11_10',
             'siteUrl' => '',
             'unsecureRoutes' => array(
                 'login',

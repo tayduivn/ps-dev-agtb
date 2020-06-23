@@ -689,7 +689,7 @@ class PMSECrmDataWrapper implements PMSEObservable
                 $output = $this->retrieveEmails($filter);
                 break;
             case 'teams':
-                $output = $this->retrieveTeams($filter);
+                $output = $this->retrieveTeams($filter, $args);
                 break;
             case 'fields':
                 $output = $this->retrieveFields($filter, $moduleApi, $type, $baseModule);
@@ -715,7 +715,7 @@ class PMSECrmDataWrapper implements PMSEObservable
                 $output = $this->retrieveFields($filter);
                 break;
             case 'users':
-                $output = $this->retrieveUsers($filter);
+                $output = $this->retrieveUsers($filter, $args);
                 break;
             case 'modules':
                 $output = $this->retrieveModules($filter);
@@ -933,9 +933,10 @@ SQL;
     /**
      * Retrieve list of Teams
      * @param string $filter
+     * @param array $args
      * @return object
      */
-    public function retrieveTeams($filter = '')
+    public function retrieveTeams($filter = '', $args = [])
     {
         $beansTeams = $this->getTeamsBean();
         $output = array();
@@ -958,6 +959,11 @@ SQL;
                     ->equals('private', 1);
             }
         }
+        if (!empty($args['key'])) {
+            $q->where()
+                ->equals('id', $args['key']);
+        }
+
 
         $q->orderBy('id', 'ASC');
         $q->select($fields);
@@ -985,9 +991,10 @@ SQL;
     /**
      * Retrieve list of Users
      * @param string $filter
+     * @param array $args
      * @return array
      */
-    public function retrieveUsers($filter = '')
+    public function retrieveUsers($filter = '', $args = [])
     {
         $users = BeanFactory::newBean('Users');
         $teams = BeanFactory::newBean('Teams');
@@ -1014,6 +1021,11 @@ SQL;
                 ->contains('last_name', $filter)
                 ->contains('user_name', $filter);
         }
+        if (!empty($args['key'])) {
+            $q->where()
+                ->equals('id', $args['key']);
+        }
+
         $result = [];
         $rows = $q->execute();
         foreach ($rows as $row) {
