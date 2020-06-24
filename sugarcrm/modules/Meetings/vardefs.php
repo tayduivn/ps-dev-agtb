@@ -10,10 +10,15 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-$dictionary['Meeting'] = array('table' => 'meetings','activity_enabled'=>true,
-	'unified_search' => true, 'full_text_search' => true, 'unified_search_default_enabled' => true,
-	'comment' => 'Meeting activities'
-                               ,'fields' => array (
+$dictionary['Meeting'] = array(
+    'table' => 'meetings',
+    'audited' => true,
+    'activity_enabled'=>true,
+    'unified_search' => true,
+    'full_text_search' => true,
+    'unified_search_default_enabled' => true,
+    'comment' => 'Meeting activities',
+    'fields' => array (
   'name' =>
   array (
     'name' => 'name',

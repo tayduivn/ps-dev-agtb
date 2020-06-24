@@ -76,6 +76,13 @@ $viewdefs['Notes']['base']['view']['record'] = array(
                     'label' => 'LBL_DUPLICATE_BUTTON_LABEL',
                     'acl_action' => 'create',
                 ),
+                [
+                    'type' => 'rowaction',
+                    'event' => 'button:audit_button:click',
+                    'name' => 'audit_button',
+                    'label' => 'LNK_VIEW_CHANGE_LOG',
+                    'acl_action' => 'view',
+                ],
                 array(
                     'type' => 'divider',
                 ),

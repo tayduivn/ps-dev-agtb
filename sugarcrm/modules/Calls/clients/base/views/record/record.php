@@ -97,6 +97,13 @@ $viewdefs['Calls']['base']['view']['record'] = array(
                     'acl_module' => 'Calls',
                     'acl_action' => 'create',
                 ),
+                [
+                    'type' => 'rowaction',
+                    'event' => 'button:audit_button:click',
+                    'name' => 'audit_button',
+                    'label' => 'LNK_VIEW_CHANGE_LOG',
+                    'acl_action' => 'view',
+                ],
                 array(
                     'type' => 'divider',
                 ),

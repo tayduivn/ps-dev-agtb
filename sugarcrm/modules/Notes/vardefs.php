@@ -15,6 +15,7 @@ $dictionary['Note'] = [
         'portal' => false,
         //END SUGARCRM flav=ent ONLY
     ],
+    'audited' => true,
     'favorites' => true,
     'table' => 'notes',
     'activity_enabled' => true,
