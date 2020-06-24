@@ -13,18 +13,6 @@ Feature: Renewal Opp > Auto-generate Renewal Opportunity when original renewable
   Background:
     Given I am logged in
 
-  @user_profile @pr
-  Scenario: User Profile > Change license type
-    When I choose Profile in the user actions menu
-    # Change the value of License Type field
-    When I change "LicenseTypes[]" enum-user-pref with "Sugar Sell" value in #UserProfile
-    When I click on Save button on #UserProfile
-    # Verify current value(s) of License Type field
-    Then I verify value of "LicenseTypes[]" enum-user-pref field in #UserProfile
-      | value                        |
-      | Sugar Enterprise, Sugar Sell |
-    When I click on Cancel button on #UserProfile
-
   @renewal_opportunity
   Scenario: Renewal Opportunity > Auto-generate Renewal Opportunity when original renewable service opp is closed as 'Closed Won'
     Given Accounts records exist:
@@ -420,7 +408,7 @@ Feature: Renewal Opp > Auto-generate Renewal Opportunity when original renewable
       | service_start_date | 01/05/2020 |
 
 
-  @multiple_RLI_renewal_oppertunity_cleanup @AT-328
+  @multiple_RLI_renewal_oppertunity_cleanup @AT-328 @pr
   Scenario: Opportunities >  Select all records > Mass Delete
     # Issue with seedbed not cleaning up created rewable opportunities and RLIs operation below handles the clean up. remove when fixed.
     When I choose Opportunities in modules menu
@@ -429,15 +417,3 @@ Feature: Renewal Opp > Auto-generate Renewal Opportunity when original renewable
     When I Confirm confirmation alert
     When I close alert
 
-
-  @user_profile @pr
-  Scenario: User Profile > Change license type
-    When I choose Profile in the user actions menu
-    # Change the value of License Type field
-    When I change "LicenseTypes[]" enum-user-pref with "Sugar Sell" value in #UserProfile
-    When I click on Save button on #UserProfile
-    # Verify current value(s) of License Type field
-    Then I verify value of "LicenseTypes[]" enum-user-pref field in #UserProfile
-      | value            |
-      | Sugar Enterprise |
-    When I click on Cancel button on #UserProfile

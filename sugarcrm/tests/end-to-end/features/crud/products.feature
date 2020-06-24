@@ -208,8 +208,9 @@ Feature: Products module verification
   @create
   Scenario: Products > Create QLI record from Product Template
     Given ProductTemplates records exist:
-      | *name  | discount_price | cost_price | list_price | quantity | mft_part_num                 | tax_class |
-      | Prod_1 | 500            | 300        | 700        | 10       | B.H. Edwards Inc 72868XYZ987 | Taxable   |
+      | *name  | discount_price | cost_price | list_price | quantity | mft_part_num                 | tax_class | service | renewable | service_duration_value | service_duration_unit |
+      | Prod_1 | 500            | 300        | 700        | 10       | B.H. Edwards Inc 72868XYZ987 | Taxable   | true    | true      | 18                     | month                 |
+
     Given I open about view and login
     When I go to "Products" url
     When I click Create button on #ProductsList header
@@ -217,18 +218,24 @@ Feature: Products module verification
       | *        | product_template_name | discount_amount | quantity |
       | RecordID | Prod_1                | 6               | 10       |
     When I click Save button on #ProductsDrawer header
+    When I close alert
     Then I should see *RecordID in #ProductsList.ListView
     When I click on preview button on *RecordID in #ProductsList.ListView
     Then I should see #RecordIDPreview view
     Then I verify fields on #RecordIDPreview.PreviewView
-      | fieldName       | value                        |
-      | name            | Prod_1                       |
-      | cost_price      | $300.00                      |
-      | list_price      | $700.00                      |
-      | discount_price  | $500.00                      |
-      | quantity        | 10.00                        |
-      | mft_part_num    | B.H. Edwards Inc 72868XYZ987 |
-      | discount_amount | 6.00%                        |
+      | fieldName              | value                        |
+      | name                   | Prod_1                       |
+      | cost_price             | $300.00                      |
+      | list_price             | $700.00                      |
+      | discount_price         | $500.00                      |
+      | quantity               | 10.00                        |
+      | mft_part_num           | B.H. Edwards Inc 72868XYZ987 |
+      | discount_amount        | 6.00%                        |
+      | service                | true                         |
+      | renewable              | true                         |
+      | service_duration_value | 18                           |
+      | service_duration_unit  | Month(s)                     |
+      | service_start_date     | now                          |
 
   @edit
   Scenario: Products > Edit existing QLI record > Cancel/Save

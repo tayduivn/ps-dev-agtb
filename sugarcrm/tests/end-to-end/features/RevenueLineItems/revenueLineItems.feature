@@ -18,8 +18,8 @@ Feature: RLI module verification
   Scenario: RLI > Verify that corresponding fields are auto populated when select product in the RLI edit mode
     # Create Product
     Given ProductTemplates records exist:
-      | *name     | discount_price | list_price | cost_price |
-      | Product_1 | 1000           | 2000       | 500        |
+      | *name     | discount_price | list_price | cost_price | service | renewable | service_duration_value | service_duration_unit |
+      | Product_1 | 1000           | 2000       | 500        | true    | true      | 18                     | month                 |
     # Could not related Product Category to Product Template via API
     Given ProductCategories records exist related via category_link link:
       | *name      |
@@ -62,12 +62,18 @@ Feature: RLI module verification
     When I click show more button on #RLI_1Record view
     # Verify that Product info is applied toRLI record
     Then I verify fields on #RLI_1Record.RecordView
-      | fieldName      | value      |
-      | discount_price | $1,000.00  |
-      | total_amount   | $5,000.00  |
-      | category_name  | Category_1 |
-      | list_price     | $2,000.00  |
-      | cost_price     | $500.00    |
+      | fieldName              | value      |
+      | discount_price         | $1,000.00  |
+      | total_amount           | $5,000.00  |
+      | category_name          | Category_1 |
+      | list_price             | $2,000.00  |
+      | cost_price             | $500.00    |
+      | service                | true       |
+      | renewable              | true       |
+      | service_duration_value | 18         |
+      | service_duration_unit  | Month(s)   |
+      | service_start_date     | now        |
+
     # Check Product Category link
     When I click category_name field on #RLI_1Record.RecordView view
     Then I should see #Category_1Record view
@@ -311,3 +317,5 @@ Feature: RLI module verification
       | myQuoantity | myUnitPrice | myDiscount | totalAmountFormatted | expectedValue | expectedValueFormatted |
       | 10          | 25          | 200        | $50.00               | 250.00        | $250.00                |
       | 1.5         | 5.50        | 3.25       | $5.00                | 8.25          | $8.25                  |
+
+

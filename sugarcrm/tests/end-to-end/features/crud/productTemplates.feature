@@ -182,7 +182,7 @@ Feature: ProductTemplates module verification
       | name              | description  | list_order |
       | C a t e g o r y 1 | new Category | 1          |
     Given I open about view and login
-    When I go to "ProductTemplates" url
+    When I choose ProductTemplates in modules menu
     # Cancel new QLI creation
     When I click Create button on #ProductTemplatesList header
     When I provide input for #ProductTemplatesDrawer.HeaderView view
@@ -202,8 +202,9 @@ Feature: ProductTemplates module verification
       | *        | cost_price | list_price | discount_price | status   | mft_part_num | description          | tax_class   | support_description |
       | RecordID | 5          | 5          | 5              | In Stock | Part#123.b   | New Product Template | Non-Taxable | Full Support        |
     When I provide input for #ProductTemplatesDrawer.RecordView view
-      | *        | qty_in_stock | date_available | date_cost_price | type_name | category_name     | support_name  | support_contact | support_term | website     | weight |
-      | RecordID | 50           | 10/12/2020     | 11/12/2020      | T y p e 1 | C a t e g o r y 1 | Alex Nisevich | Ruslan Golovach | One year     | www.abc.com | 150    |
+      | *        | qty_in_stock | date_available | date_cost_price | type_name | category_name     | support_name  | support_contact | support_term | website     | weight | service | renewable | service_duration_value | service_duration_unit |
+      | RecordID | 50           | 10/12/2020     | 11/12/2020      | T y p e 1 | C a t e g o r y 1 | Alex Nisevich | Ruslan Golovach | One year     | www.abc.com | 150    | true    | true      | 18                     | Month(s)              |
+
     When I click show less button on #ProductTemplatesDrawer view
     When I click Save button on #ProductTemplatesDrawer header
     When I close alert
@@ -212,27 +213,31 @@ Feature: ProductTemplates module verification
     Then I should see #RecordIDPreview view
     When I click show more button on #RecordIDPreview view
     Then I verify fields on #RecordIDPreview.PreviewView
-      | fieldName           | value                |
-      | name                | Alex123              |
-      | cost_price          | $5.00                |
-      | list_price          | $5.00                |
-      | discount_price      | $5.00                |
-      | status              | In Stock             |
-      | mft_part_num        | Part#123.b           |
-      | tax_class           | Non-Taxable          |
-      | description         | New Product Template |
-      | qty_in_stock        | 50                   |
-      | date_cost_price     | 11/12/2020           |
-      | type_name           | T y p e 1            |
-      | category_name       | C a t e g o r y 1    |
-      | support_name        | Alex Nisevich        |
-      | support_contact     | Ruslan Golovach      |
-      | support_description | Full Support         |
-      | website             | http://www.abc.com   |
-      | weight              | 150.00               |
+      | fieldName              | value                |
+      | name                   | Alex123              |
+      | cost_price             | $5.00                |
+      | list_price             | $5.00                |
+      | discount_price         | $5.00                |
+      | status                 | In Stock             |
+      | mft_part_num           | Part#123.b           |
+      | tax_class              | Non-Taxable          |
+      | description            | New Product Template |
+      | qty_in_stock           | 50                   |
+      | date_cost_price        | 11/12/2020           |
+      | type_name              | T y p e 1            |
+      | category_name          | C a t e g o r y 1    |
+      | support_name           | Alex Nisevich        |
+      | support_contact        | Ruslan Golovach      |
+      | support_description    | Full Support         |
+      | website                | http://www.abc.com   |
+      | weight                 | 150.00               |
+      | service                | true                 |
+      | renewable              | true                 |
+      | service_duration_value | 18                   |
+      | service_duration_unit  | Month(s)             |
 
 
-  @pricing_frmula
+  @pricing_formula
   Scenario Outline: Product Templates > Create > Default Pricing Formula
     Given  Contacts records exist:
       | first_name | last_name |
@@ -287,7 +292,7 @@ Feature: ProductTemplates module verification
     When I select *Alex1 in #ProductTemplatesList.ListView
     When I provide input for #Alex1Record.HeaderView view
       | my_favorite |
-      | False        |
+      | False       |
     When I go to "ProductTemplates" url
     Then I verify number of records in #ProductTemplatesList.ListView is 0
     When I choose for all_records in #ProductTemplatesList.FilterView view
