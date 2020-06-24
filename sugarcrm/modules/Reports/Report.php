@@ -1860,7 +1860,7 @@ class Report
                     $field_name = $table_alias . "." . $group_field['name'];
                     $this->from .= " INNER JOIN timeperiods tp" . $tp_count . " ON (" . $field_name .
                         " >= tp" . $tp_count . ".start_date AND " . $field_name . " <= tp" . $tp_count . ".end_date" .
-                        " AND tp" . $tp_count . ".type = 'Quarter')\n";
+                        " AND tp" . $tp_count . ".type = 'Quarter' AND tp" . $tp_count . ".deleted='0')\n";
                     $tp_count++;
                 }
             }
