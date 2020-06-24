@@ -161,8 +161,6 @@
             return;
         }
 
-        this._super('_renderHtml');
-
         if (typeof this.feed !== 'undefined') {
             whiteList = app.config.allowedLinkSchemes;
             this.feed.entries.forEach(function(el) {
@@ -175,5 +173,6 @@
                 }
             });
         }
+        this._super('_renderHtml');
     }
 })
