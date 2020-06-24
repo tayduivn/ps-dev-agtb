@@ -7715,6 +7715,11 @@ class SugarBean
                 {
                     $this->send_assignment_notifications($notify_user, $admin);
                 }
+                // if the send_invites is set
+                // unset the send_invites property since all the invitees/users have been notified
+                if (isset($this->send_invites)) {
+                    unset($this->send_invites);
+                }
             }
         }
     }
