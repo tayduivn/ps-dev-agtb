@@ -21,6 +21,7 @@
     plugins: [
         'SugarLogic',
         'ResizableColumns',
+        'ReorderableColumns',
         'ListColumnEllipsis',
         'ErrorDecoration',
         'Editable',

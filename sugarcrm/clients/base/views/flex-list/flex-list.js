@@ -504,11 +504,13 @@
         var encodedData = [];
 
         var fieldList = this._appendFieldsToAllListViewsFieldList();
-        var visibleIndex = 0;
+        var visibleIndex;
+        var value;
         _.each(fieldList, function(fieldName) {
-            var value = 0;
-            if (_.contains(decodedData.visible, fieldName)) {
-                value = decodedData.widths[visibleIndex++];
+            value = 0;
+            visibleIndex = _.indexOf(decodedData.visible, fieldName);
+            if (visibleIndex !== -1) {
+                value = decodedData.widths[visibleIndex];
             }
             encodedData.push(value);
         });
