@@ -673,53 +673,29 @@ class MetaDataManager implements LoggerAwareInterface
     public function getModuleViews($moduleName, MetaDataContextInterface $context = null)
     {
         $data = $this->getModuleClientData('view', $moduleName, $context);
-        $data = $this->removeDisabledFields($moduleName, $data);
+        $data = $this->removeDisabledFields($data);
         return $data;
     }
 
     /**
      * Removes disabled fields from view definition
      *
-     * @param string $moduleName
      * @param array $data
      * @return array
      */
-    protected function removeDisabledFields(string $moduleName, array $data)
+    protected function removeDisabledFields(array $data)
     {
         foreach ($data as $key => $value) {
             if (is_array($value)) {
                 if ($key === 'fields') {
-                    $value = array_filter($value, function ($field) use ($moduleName) {
-                        if (!is_array($field)) {
-                            return !is_array($field);
-                        }
-
-                        // check enable flag
-                        if (isset($field['enabled']) && empty($field['enabled'])) {
-                            return false;
-                        }
-
-                        // check AccessControl
-                        // This section of code is a portion of the code referred
-                        // to as Critical Control Software under the End User
-                        // License Agreement.  Neither the Company nor the Users
-                        // may modify any portion of the Critical Control Software.
-                        if (empty($field['name'])
-                            || (AccessControlManager::instance()->isFieldAccessControlledModule($moduleName)
-                                && !AccessControlManager::instance()->allowFieldAccess($moduleName, $field['name'])
-                            )
-                        ) {
-                            return false;
-                        }
-                        //END REQUIRED CODE DO NOT MODIFY
-                        return true;
-
+                    $value = array_filter($value, function ($field) {
+                        return !is_array($field) || !isset($field['enabled']) || $field['enabled'];
                     });
 
                     // make sure the resulting array has no gaps in keys
                     $value = array_values($value);
                 } else {
-                    $value = $this->removeDisabledFields($moduleName, $value);
+                    $value = $this->removeDisabledFields($value);
                 }
                 $data[$key] = $value;
             }
@@ -868,7 +844,7 @@ class MetaDataManager implements LoggerAwareInterface
             $vardefs['fields'] = MassUpdate::setMassUpdateFielddefs($vardefs['fields'], $moduleName);
         }
 
-        $data['fields'] = $this->getVardefFields($moduleName, $vardefs);
+        $data['fields'] = isset($vardefs['fields']) ? $vardefs['fields'] : array();
         // Add the _hash for the fields array
         $data['fields']['_hash'] = md5(serialize($data['fields']));
         $data['nameFormat'] = isset($vardefs['name_format_map'])?$vardefs['name_format_map']:null;
@@ -1029,33 +1005,6 @@ class MetaDataManager implements LoggerAwareInterface
         return $data;
     }
 
-    /**
-     * applying Field Access Control to vardefs' fields
-     * @param string $moduleName
-     * @param array $vardefs
-     * @return array
-     */
-    protected function getVardefFields(string $moduleName, array $vardefs) : array
-    {
-        if (!isset($vardefs['fields'])) {
-            return [];
-        }
-
-        $data = $vardefs['fields'];
-        // This section of code is a portion of the code referred
-        // to as Critical Control Software under the End User
-        // License Agreement.  Neither the Company nor the Users
-        // may modify any portion of the Critical Control Software.
-        if (AccessControlManager::instance()->isFieldAccessControlledModule($moduleName)) {
-            foreach ($data as $fieldName => $value) {
-                if (!AccessControlManager::instance()->allowFieldAccess($moduleName, $fieldName)) {
-                    unset($data[$fieldName]);
-                }
-            }
-        }
-        //END REQUIRED CODE DO NOT MODIFY
-        return $data;
-    }
     /**
      * Gets the ACL's for the module, will also expand them so the client side of the ACL's don't have to do as many checks.
      *

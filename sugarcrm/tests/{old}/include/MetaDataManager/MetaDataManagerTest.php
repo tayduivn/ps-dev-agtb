@@ -653,7 +653,7 @@ PLATFORMS;
     public function testRemoveDisabledFields($input, $expected)
     {
         $mm = new MetaDataManager();
-        $actual = SugarTestReflection::callProtectedMethod($mm, 'removeDisabledFields', ['Accounts', $input]);
+        $actual = SugarTestReflection::callProtectedMethod($mm, 'removeDisabledFields', array($input));
         $this->assertSame($actual, $expected);
     }
 
