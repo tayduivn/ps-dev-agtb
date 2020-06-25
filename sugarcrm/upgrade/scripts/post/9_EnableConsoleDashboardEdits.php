@@ -41,17 +41,42 @@ class SugarUpgradeEnableConsoleDashboardEdits extends UpgradeScript
     {
         $isUpgradeTo1010 = version_compare($this->from_version, '10.1.0', '<');
         if ($isUpgradeTo1010 && $this->toFlavor('ent')) {
+            // Consoles...
             foreach ($this->consoleIDs as $id) {
                 $this->changeSideDrawerType($id);
             }
 
+            // Multiline list views...
             foreach ($this->multiLineDashBoardIDs as $id) {
                 $this->addDashletRemoveButton($id);
             }
 
-            $this->log('Updated console dashboards, their side-drawers should be editable.');
+            $this->log('Console dashboards update process complete.');
         } else {
-            $this->log('Did not update console dashboards, their side-drawers will not be editable.');
+            $this->log('No changes to be made to console dashboards.');
+        }
+    }
+
+    /**
+     * Gets a dashboard bean if one can be found and loaded for the ID
+     * @param string $id The ID of the dashboard bean to get
+     * @return SugarBean if found, null otherwise
+     */
+    protected function getDashboardBean(string $id) : ?SugarBean
+    {
+        // Read the Dashoard we want to modify, wrapped inside a try catch because
+        // some beans have before retrieve hooks in place that throw exceptions
+        try {
+            $dashboard = BeanFactory::retrieveBean('Dashboards', $id);
+            if (!$dashboard) {
+                $this->log("Could not retrieve console component id $id");
+                return null;
+            }
+
+            return $dashboard;
+        } catch (Exception $e) {
+            $this->log("Could not collect console component id $id");
+            return null;
         }
     }
 
@@ -62,30 +87,31 @@ class SugarUpgradeEnableConsoleDashboardEdits extends UpgradeScript
      */
     public function changeSideDrawerType($id)
     {
-        // Read the Dashoard we want to modify
-        $dashboardController = new Dashboard();
-        $dashboardModel = $dashboardController->retrieve($id);
-        $dashboard = json_decode($dashboardModel->metadata);
+        if (($dashboard = $this->getDashboardBean($id)) === null) {
+            return;
+        }
+
+        $meta = json_decode($dashboard->metadata);
 
         // Iterate dashlets and find any tabs with side drawer layouts.
         // When found change the type to console-side-drawer.
         $hasChanges = false;
-        foreach ($dashboard->tabs as $tab) {
+        foreach ($meta->tabs as $tab) {
             foreach ($tab->components as $component) {
-                if (isset($component->layout)
-                    && isset($component->layout->type)
-                    && $component->layout->type === 'side-drawer') {
-                        $hasChanges = true;
-                        $component->layout->type = 'console-side-drawer';
+                if (isset($component->layout->type) && $component->layout->type === 'side-drawer') {
+                    $hasChanges = true;
+                    $component->layout->type = 'console-side-drawer';
                 }
             }
         }
 
         // If we have changed the side drawer type, save it.
         if ($hasChanges) {
-            $dashboardModel->metadata = json_encode($dashboard);
-            $dashboardModel->save();
-            $this->log('Updated a side drawer type to be console-side-drawer.');
+            $dashboard->metadata = json_encode($meta);
+            $dashboard->save();
+            $this->log("Updated dashboard $id from side-drawer type to console-side-drawer.");
+        } else {
+            $this->log("No changes made to drawer type for dashboard $id.");
         }
     }
 
@@ -105,40 +131,48 @@ class SugarUpgradeEnableConsoleDashboardEdits extends UpgradeScript
     }
 
     /**
+     * Determines if a metadata component object needs to have buttons added
+     * @param stdClass $buttons
+     * @return boolean
+     */
+    protected function needsButton($buttons) : bool
+    {
+        foreach ($buttons as $button) {
+            if ($button->action === 'removeClicked') {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
      * In previous versions activity timeline dashlet on console dashboards was missing the remove.
      * In order to fully support the editing of the console dashboards multi line list view side drawer dashboard's
      * edit mode, we add back the remove buttons to all instances of activity timelines dashlets.
      */
     public function addDashletRemoveButton($id)
     {
-        // Read the Dashoard we want to modify
-        $dashboardController = new Dashboard();
-        $dashboardModel = $dashboardController->retrieve($id);
-        $dashboard = json_decode($dashboardModel->metadata);
-        $dashboardRows = $dashboard->components[0]->rows;
+        if (($dashboard = $this->getDashboardBean($id)) === null) {
+            return;
+        }
+
+        $meta = json_decode($dashboard->metadata);
+        $rows = $meta->components[0]->rows ?? [];
 
         // Iterate dashlets and find any activity-timeline dashlets
         $hasChanges = false;
-        foreach ($dashboardRows as $row) {
-            foreach ($row as $dashlet) {
-                $view = $dashlet->view;
-                if (isset($view->type) && $view->type === 'activity-timeline') {
+        foreach ($rows as $row) {
+            // Each row will contain a dashlet
+            foreach ($row as $d) {
+                if (isset($d->view->type) && $d->view->type === 'activity-timeline') {
                     // Now we have an activity timelines dashlet. The next step is to check if it has
                     // the dashlet remove button and if not, add it.
-                    if (isset($view->custom_toolbar) && isset($view->custom_toolbar->buttons)) {
-                        foreach ($view->custom_toolbar->buttons as $buttonGroup) {
-                            if (isset($buttonGroup->dropdown_buttons)) {
-                                $lacksRemoveButton = true;
-                                foreach ($buttonGroup->dropdown_buttons as $button) {
-                                    if ($button->action === 'removeClicked') {
-                                        $lacksRemoveButton = false;
-                                        break;
-                                    }
-                                }
-                                if ($lacksRemoveButton) {
-                                    $hasChanges = true;
-                                    array_push($buttonGroup->dropdown_buttons, $this->getRemoveDashletButtonMeta());
-                                }
+                    if (isset($d->view->custom_toolbar) && isset($d->view->custom_toolbar->buttons)) {
+                        foreach ($d->view->custom_toolbar->buttons as $buttons) {
+                            if (isset($buttons->dropdown_buttons) && $this->needsButton($buttons->dropdown_buttons)) {
+                                $hasChanges = true;
+                                array_push($buttons->dropdown_buttons, $this->getRemoveDashletButtonMeta());
                             }
                         }
                     }
@@ -148,9 +182,11 @@ class SugarUpgradeEnableConsoleDashboardEdits extends UpgradeScript
 
         // If we have added the remove button to the metadata, save it.
         if ($hasChanges) {
-            $dashboardModel->metadata = json_encode($dashboard);
-            $dashboardModel->save();
-            $this->log('Updated a dashboard so activity-timeline dashlet would have a remove button.');
+            $dashboard->metadata = json_encode($meta);
+            $dashboard->save();
+            $this->log("Updated dashboard $id so activity-timeline dashlet can be removed.");
+        } else {
+            $this->log("No changes made to dashlets for dashboard $id.");
         }
     }
 }
