@@ -33,7 +33,6 @@ include("metadata/meetings_contactsMetaData.php");
 include("metadata/meetings_usersMetaData.php");
 include("metadata/meetings_leadsMetaData.php");
 include("metadata/opportunities_contactsMetaData.php");
-include("metadata/user_feedsMetaData.php");
 include("metadata/users_passwordLinkMetaData.php");
 include("metadata/team_sets_teamsMetaData.php");
 include("metadata/prospect_list_campaignsMetaData.php");
