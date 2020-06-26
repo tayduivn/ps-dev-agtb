@@ -17,6 +17,7 @@
     "fs-extra": "0.30.0",
     "glob": "^7.0.3",
     "globby": "^6.1.0",
+    "gridstack": "^1.1.2",
     "gulp": "^3.9.1",
     "gulp-cucumber": "0.0.23",
     "gulp-declare": "^0.3.0",

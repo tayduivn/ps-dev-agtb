@@ -20,6 +20,8 @@
         <link rel="shortcut icon" href="{sugar_getjspath file='themes/default/images/sugar_icon.ico'}">
         <!-- CSS -->
         <link rel="stylesheet" href="styleguide/assets/css/loading.css" type="text/css">
+        <link rel="stylesheet" href="styleguide/assets/css/gridstack.css" type="text/css">
+        <link rel="stylesheet" href="styleguide/assets/css/gridstack-extra.css" type="text/css">
         {foreach from=$css_url item=url}
             <link rel="stylesheet" href="{sugar_getjspath file=$url}"/>
         {/foreach}

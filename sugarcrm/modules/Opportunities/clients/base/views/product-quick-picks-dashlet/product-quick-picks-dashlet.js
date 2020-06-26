@@ -30,11 +30,12 @@
      * assign class name to the dashlet component
      * @inheritdoc
      */
-    render: function() {
+    _render: function() {
         if (!this.meta.config) {
-            this._super('render');
-            if (this.closestComponent('dashlet-cell').$el) {
-                this.closestComponent('dashlet-cell').$el.parents().eq(1).addClass('product-catalog-quick-picks');
+            this._super('_render');
+            var dashlet = this.$el.parents('.dashlet-container').first();
+            if (dashlet) {
+                dashlet.addClass('product-catalog-quick-picks');
             }
         }
     },

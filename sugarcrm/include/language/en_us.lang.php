@@ -2989,6 +2989,7 @@ $app_strings = array (
     'LBL_ADD_BUTTON_KEY' => 'A',
     'LBL_ADD_BUTTON_TITLE' => 'Add',
     'LBL_ADD_BUTTON' => 'Add',
+    'LBL_ADD_DASHLET_BUTTON' => 'Add Dashlet',
     'LBL_ADD_DOCUMENT' => 'Add Document',
     'LBL_REPLACE_BUTTON' => 'Replace',
     'LBL_ADD_TO_PROSPECT_LIST_BUTTON_KEY' => 'L',

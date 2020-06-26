@@ -36,26 +36,26 @@ export default class DashboardView extends BaseView {
             elements: {
                 HomeDashboard: '',
                 dashlet: '.dashlets.row-fluid',
-                FirstDashlet: '.row-fluid[name="dashlet_00"]',
-                SecondDashlet: '.row-fluid[name="dashlet_01"]',
+                FirstDashlet: '.dashlet-container[name="dashlet_0"]',
+                SecondDashlet: '.dashlet-container[name="dashlet_1"]',
                 ServiceConsoleOverview: '.agent_workbench_dashboard',
 
-                // 3x3 dashboard like Overview tab is Service Console
-                first_row_left_dashlet: '[name=dashlet_000]',
-                first_row_middle_dashlet: '[name=dashlet_001]',
-                first_row_right_dashlet: '[name=dashlet_002]',
-                second_row_left_dashlet: '[name=dashlet_010]',
-                second_row_middle_dashlet: '[name=dashlet_011]',
-                second_row_right_dashlet: '[name=dashlet_012]',
-                third_row_left_dashlet: '[name=dashlet_020]',
-                third_row_middle_dashlet: '[name=dashlet_021]',
-                third_row_right_dashlet: '[name=dashlet_022]',
+                // Default Service Console
+                first_row_left_dashlet: '[name=dashlet_0]',
+                first_row_middle_dashlet: '[name=dashlet_1]',
+                first_row_right_dashlet: '[name=dashlet_2]',
+                second_row_left_dashlet: '[name=dashlet_3]',
+                second_row_middle_dashlet: '[name=dashlet_4]',
+                second_row_right_dashlet: '[name=dashlet_5]',
+                third_row_left_dashlet: '[name=dashlet_6]',
+                third_row_middle_dashlet: '[name=dashlet_7]',
+                third_row_right_dashlet: '[name=dashlet_8]',
 
-                // 2x2 dashboard like Overview tab of Sales Renewal console
-                dashboard2by2_top_right: '[name=dashlet_100]',
-                dashboard2by2_bottom_right: '[name=dashlet_110]',
-                dashboard2by2_top_left: '[name=dashlet_000]',
-                dashboard2by2_bottom_left: '[name=dashlet_010]',
+                // Default Renewals Console
+                dashboard2by2_top_right: '[name=dashlet_2]',
+                dashboard2by2_bottom_right: '[name=dashlet_3]',
+                dashboard2by2_top_left: '[name=dashlet_0]',
+                dashboard2by2_bottom_left: '[name=dashlet_1]',
             }
         });
     }

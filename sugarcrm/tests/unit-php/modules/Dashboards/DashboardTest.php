@@ -20,13 +20,13 @@ use Sugarcrm\SugarcrmTestsUnit\TestReflection;
 class DashboardTest extends TestCase
 {
     /**
-     * @covers ::processMetadataWithAcl
+     * @covers ::processLegacyMetadataWithAcl
      *
-     * @dataProvider processMetadataWithAclProvider
+     * @dataProvider processLegacyMetadataWithAclProvider
      */
-    public function testProcessMetadataWithAcl($metadata, $allowedAccess, $expected)
+    public function testProcessLegacyMetadataWithAcl($metadata, $allowedAccess, $expected)
     {
-        $workBenachType = 'twitter';
+        $workBenchType = 'twitter';
         $dashboardMock = $this->getMockBuilder('Dashboard')
             ->setMethods(['allowedToAccessDashlet'])
             ->disableOriginalConstructor()
@@ -34,8 +34,36 @@ class DashboardTest extends TestCase
 
         $dashboardMock->expects($this->any())
             ->method('allowedToAccessDashlet')
-            ->willReturnCallback(function ($label) use ($allowedAccess, $workBenachType) {
-                if ($allowedAccess || $label != $workBenachType) {
+            ->willReturnCallback(function ($label) use ($allowedAccess, $workBenchType) {
+                if ($allowedAccess || $label != $workBenchType) {
+                    return true;
+                }
+                return false;
+            });
+
+        $md= json_decode($metadata);
+        $result = TestReflection::callProtectedMethod($dashboardMock, 'processLegacyMetadataWithAcl', [$md]);
+
+        $this->assertSame($expected, json_encode($result));
+    }
+
+    /**
+     * @covers ::processMetadataWithAcl
+     *
+     * @dataProvider processMetadataWithAclProvider
+     */
+    public function testProcessMetadataWithAcl($metadata, $allowedAccess, $expected)
+    {
+        $workBenchType = 'twitter';
+        $dashboardMock = $this->getMockBuilder('Dashboard')
+            ->setMethods(['allowedToAccessDashlet'])
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $dashboardMock->expects($this->any())
+            ->method('allowedToAccessDashlet')
+            ->willReturnCallback(function ($label) use ($allowedAccess, $workBenchType) {
+                if ($allowedAccess || $label != $workBenchType) {
                     return true;
                 }
                 return false;
@@ -47,7 +75,7 @@ class DashboardTest extends TestCase
         $this->assertSame($expected, json_encode($result));
     }
 
-    public function processMetadataWithAclProvider()
+    public function processLegacyMetadataWithAclProvider()
     {
         return [
             // @codingStandardsIgnoreStart
@@ -60,6 +88,24 @@ class DashboardTest extends TestCase
                 '{"components":[{"rows":[[{"view":{"type":"twitter","label":"LBL_DASHLET_WORKBENCH","limit":20},"width":12}]]},{"rows":[[{"view":{"type":"sales-pipeline","label":"LBL_DASHLET_PIPLINE_NAME","visibility":"user"},"width":12}],[{"view":{"type":"bubblechart","label":"LBL_DASHLET_TOP10_SALES_OPPORTUNITIES_NAME","filter_duration":"current","visibility":"user"},"width":12}]],"width":8}]}',
                 false,
                 '{"components":[{"rows":[]},{"rows":[[{"view":{"type":"sales-pipeline","label":"LBL_DASHLET_PIPLINE_NAME","visibility":"user"},"width":12}],[{"view":{"type":"bubblechart","label":"LBL_DASHLET_TOP10_SALES_OPPORTUNITIES_NAME","filter_duration":"current","visibility":"user"},"width":12}]],"width":8}]}',
+            ],
+            // @codingStandardsIgnoreEnd
+        ];
+    }
+
+    public function processMetadataWithAclProvider()
+    {
+        return [
+            // @codingStandardsIgnoreStart
+            [
+                '{"dashlets":[{"view":{"type":"twitter","label":"LBL_DASHLET_WORKBENCH","limit":20},"width":12},{"view":{"type":"sales-pipeline","label":"LBL_DASHLET_PIPLINE_NAME","visibility":"user"},"width":12},{"view":{"type":"bubblechart","label":"LBL_DASHLET_TOP10_SALES_OPPORTUNITIES_NAME","filter_duration":"current","visibility":"user"},"width":12}]}',
+                true,
+                '{"dashlets":[{"view":{"type":"twitter","label":"LBL_DASHLET_WORKBENCH","limit":20},"width":12},{"view":{"type":"sales-pipeline","label":"LBL_DASHLET_PIPLINE_NAME","visibility":"user"},"width":12},{"view":{"type":"bubblechart","label":"LBL_DASHLET_TOP10_SALES_OPPORTUNITIES_NAME","filter_duration":"current","visibility":"user"},"width":12}]}',
+            ],
+            [
+                '{"dashlets":[{"view":{"type":"twitter","label":"LBL_DASHLET_WORKBENCH","limit":20},"width":12},{"view":{"type":"sales-pipeline","label":"LBL_DASHLET_PIPLINE_NAME","visibility":"user"},"width":12},{"view":{"type":"bubblechart","label":"LBL_DASHLET_TOP10_SALES_OPPORTUNITIES_NAME","filter_duration":"current","visibility":"user"},"width":12}]}',
+                false,
+                '{"dashlets":[{"view":{"type":"sales-pipeline","label":"LBL_DASHLET_PIPLINE_NAME","visibility":"user"},"width":12},{"view":{"type":"bubblechart","label":"LBL_DASHLET_TOP10_SALES_OPPORTUNITIES_NAME","filter_duration":"current","visibility":"user"},"width":12}]}',
             ],
             // @codingStandardsIgnoreEnd
         ];

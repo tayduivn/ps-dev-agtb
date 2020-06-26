@@ -14,11 +14,19 @@ $viewdefs['Dashboards']['base']['view']['dashboard-headerpane'] = array(
         array(
             'type' => 'actiondropdown',
             'buttons' => array(
+                [
+                    "name"      => "add_dashlet_button",
+                    "type"      => "rowaction",
+                    "label"     => "LBL_ADD_DASHLET_BUTTON",
+                    'events' => [
+                        'click' => 'button:add_dashlet_button:click',
+                    ],
+                    'acl_action' => 'edit',
+                ],
                 array(
                     'name' => 'add_button',
                     'type' => 'rowaction',
                     'label' => 'LBL_CREATE_BUTTON_LABEL',
-                    'css_class' => 'btn',
                 ),
                 array(
                     'name' => 'edit_button',

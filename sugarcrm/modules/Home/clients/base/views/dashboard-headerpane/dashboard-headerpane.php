@@ -15,11 +15,31 @@ $viewdefs["Home"]["base"]["view"]["dashboard-headerpane"] = array(
             "type" => "actiondropdown",
             "primary" => true,
             "buttons" => array(
+                [
+                    "name"      => "add_dashlet_button",
+                    "type"      => "rowaction",
+                    "label"     => "LBL_ADD_DASHLET_BUTTON",
+                    'events' => [
+                        'click' => 'button:add_dashlet_button:click',
+                    ],
+                    'acl_action' => 'edit',
+                    'disallowed_layouts' => [
+                        [
+                            // service console
+                            'name' => 'dashboard',
+                            'id' => 'c108bb4a-775a-11e9-b570-f218983a1c3e',
+                        ],
+                        [
+                            // renewals console
+                            'name' => 'dashboard',
+                            'type' => 'renewals_console',
+                        ],
+                    ],
+                ],
                 array(
                     "name"      => "add_button",
                     "type"      => "rowaction",
                     "label"     => "LBL_CREATE_BUTTON_LABEL",
-                    "css_class" => "btn btn-primary",
                 ),
                 array(
                     "name"      => "edit_overview_tab_button",
@@ -127,6 +147,28 @@ $viewdefs["Home"]["base"]["view"]["dashboard-headerpane"] = array(
                 // END SUGARCRM flav=ent ONLY
             ],
         ),
+        [
+            "name"      => "add_dashlet_button_edit",
+            "type"      => "button",
+            "label"     => "LBL_ADD_DASHLET_BUTTON",
+            'events' => [
+                'click' => 'button:add_dashlet_button:click',
+            ],
+            'acl_action' => 'edit',
+            'showOn' => 'edit',
+            'allowed_layouts' => [
+                [
+                    // service console
+                    'name' => 'dashboard',
+                    'id' => 'c108bb4a-775a-11e9-b570-f218983a1c3e',
+                ],
+                [
+                    // renewals console
+                    'name' => 'dashboard',
+                    'type' => 'renewals_console',
+                ],
+            ],
+        ],
         array(
             "name"      => "save_button",
             "type"      => "button",

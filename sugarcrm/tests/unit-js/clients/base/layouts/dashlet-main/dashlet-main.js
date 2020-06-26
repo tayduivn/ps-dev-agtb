@@ -63,40 +63,25 @@ describe('Base.Layout.DashletMain', function() {
             expect(renderStub).not.toHaveBeenCalled();
         });
 
-        it('should initialize one dashlet-row per component', function() {
+        it('should initialize legacy components as grids', function() {
             var comps1 = {rows: ['row 1', 'row 2'], width: 5};
             var comps2 = {rows: ['row 3', 'row 4'], width: 8};
-            layout.model.set('metadata', {components: [comps1, comps2]}, {silent: true});
+            var initialMeta = {components: [comps1, comps2]};
+            layout.model.set('metadata', initialMeta, {silent: true});
 
             layout.setMetadata();
 
-            var expected1 = [
-                {
-                    layout: {
-                        type: 'dashlet-row',
-                        width: 5,
-                        components: ['row 1', 'row 2'],
-                        index: '0',
-                    },
-                }
+            var expected = [
+                {layout: {name: 'dashboard-grid', css_class: 'grid-stack'}}
             ];
-            var expected2 = [
-                {
-                    layout: {
-                        type: 'dashlet-row',
-                        width: 8,
-                        components: ['row 3', 'row 4'],
-                        index: '1',
-                    },
-                }
-            ];
-            expect(initComponentsStub).toHaveBeenCalledTwice();
-            expect(initComponentsStub).toHaveBeenCalledWith(expected1);
-            expect(initComponentsStub).toHaveBeenCalledWith(expected2);
+            var updatedMeta = layout.model.get('metadata');
+            expect(initComponentsStub).toHaveBeenCalledOnce();
+            expect(initComponentsStub).toHaveBeenCalledWith(expected);
             expect(triggerStub).not.toHaveBeenCalled();
+            expect(updatedMeta.legacyComponents).toEqual(initialMeta.components);
         });
 
-        it('should set up tabs, including the active tab', function() {
+        it('should set up tabs, including the active tab, but still convert legacy components', function() {
             var tab0 = {name: 'tab0', components: [{rows: ['row 1, tab 0', 'row 2, tab 0'], width: 22}]};
             var tab1 = {name: 'tab1', components: [{rows: ['row 1, tab 1', 'row 2, tab 1'], width: 14}]};
             var metadata = {tabs: [tab0, tab1]};
@@ -115,14 +100,7 @@ describe('Base.Layout.DashletMain', function() {
                 }
             );
             var expected = [
-                {
-                    layout: {
-                        type: 'dashlet-row',
-                        width: 14,
-                        components: ['row 1, tab 1', 'row 2, tab 1'],
-                        index: '0',
-                    }
-                }
+                {layout: {name: 'dashboard-grid', css_class: 'grid-stack'}}
             ];
             expect(initComponentsStub).toHaveBeenCalledWith(expected);
         });

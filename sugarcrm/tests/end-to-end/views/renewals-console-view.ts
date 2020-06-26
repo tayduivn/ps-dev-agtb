@@ -41,44 +41,44 @@ export default class RenewalsConsole extends DashboardView {
         // Overview Tab dashlets
         this.Top10RLIsDashlet = this.createComponent<Top10RLIsDashlet>(Top10RLIsDashlet, {
             module: options.module,
-            position: '110',
+            position: '3',
         });
 
         this.PipelineDashlet = this.createComponent<PipelineDashlet>(PipelineDashlet, {
             module: options.module,
-            position: '100',
+            position: '2',
         });
 
         // Accounts Tab dashlets
         this.DashableRecordDashlet = this.createComponent<DashableRecordDashlet>(DashableRecordDashlet, {
             module: options.module,
-            position: '000',
+            position: '0',
         });
 
         this.CommentLogDashlet = this.createComponent<CommentLogDashlet>(CommentLogDashlet, {
             module: options.module,
-            position: '001',
+            position: '1',
         });
 
         this.ActiveSubscriptionsDashlet = this.createComponent<ActiveSubscriptionsDashlet>(ActiveSubscriptionsDashlet, {
             module: options.module,
-            position: '010',
+            position: '2',
         });
 
         this.AccountsInteractionsDashlet = this.createComponent<RecordsInteractionsDashlet>(RecordsInteractionsDashlet, {
             module: options.module,
-            position: '011',
+            position: '3',
         });
 
         // Opportunities Tab dashlets
         this.AccountInfoDashlet = this.createComponent<DashableRecordDashlet>(DashableRecordDashlet, {
             module: options.module,
-            position: '010',
+            position: '2',
         });
 
         this.OpportunityInteractionsDashlet = this.createComponent<RecordsInteractionsDashlet>(RecordsInteractionsDashlet, {
             module: options.module,
-            position: '011',
+            position: '3',
         });
     }
 }

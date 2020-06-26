@@ -9,6 +9,7 @@
         "**/*.min.js",
         "include/javascript/clipboardjs/**",
         "include/javascript/fuse/**",
+        "include/javascript/gridstack/**",
         "include/javascript/jquery/**",
         "include/javascript/mousetrap/**",
         "include/javascript/nprogress/**",

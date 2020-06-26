@@ -41,12 +41,12 @@ export default class ServiceConsoleView extends DashboardView {
          */
         this.PlannedActivitiesDashlet = this.createComponent<PlannedActivitiesDashlet>(PlannedActivitiesDashlet, {
             module: options.module,
-            position: '001',
+            position: '1',
         });
 
         this.ActiveTasksDashlet = this.createComponent<ActiveTasksDashlet>(ActiveTasksDashlet, {
             module: options.module,
-            position: '002',
+            position: '2',
         });
 
         /*
@@ -54,22 +54,22 @@ export default class ServiceConsoleView extends DashboardView {
          */
         this.DashableRecordDashlet = this.createComponent<DashableRecordDashlet>(DashableRecordDashlet, {
             module: options.module,
-            position: '000',
+            position: '0',
         });
 
         this.CommentLogDashlet = this.createComponent<CommentLogDashlet>(CommentLogDashlet, {
             module: options.module,
-            position: '001',
+            position: '1',
         });
 
         this.AccountInfoDashlet = this.createComponent<DashableRecordDashlet>(DashableRecordDashlet, {
             module: options.module,
-            position: '010',
+            position: '2',
         });
 
         this.CasesInteractionsDashlet = this.createComponent<RecordInteractionsDashlet>(RecordInteractionsDashlet, {
             module: options.module,
-            position: '011',
+            position: '3',
         });
     }
 }

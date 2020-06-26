@@ -7,7 +7,8 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@dashboard @dashlets @job5
+@dashboard @dashlets @job5 @ci-excluded
+# Temporarily disable this test until new Dashboard behavior is complete
 Feature: History dashlet verification
 
   Background:

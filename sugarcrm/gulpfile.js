@@ -645,6 +645,19 @@ gulp.task('copy-sucrose', function() {
         .pipe(gulp.dest('include/javascript/d3fc-rebind/'));
 });
 
+gulp.task('copy-gridstack', function() {
+    gulp.src([
+        'node_modules/gridstack/dist/gridstack.js',
+        'node_modules/gridstack/dist/gridstack.JQueryUI.js',
+        ])
+        .pipe(gulp.dest('include/javascript/gridstack/'));
+    gulp.src([
+        'node_modules/gridstack/dist/gridstack.css',
+        'node_modules/gridstack/dist/gridstack-extra.css'
+        ])
+        .pipe(gulp.dest('styleguide/assets/css/'));
+});
+
 gulp.task('bdd:api', function() {
     const cucumberG = require('gulp-cucumber');
     commander

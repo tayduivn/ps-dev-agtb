@@ -33,10 +33,8 @@
 
         //set current model draggable
         this.on('render', function() {
-            // If the user has write access, allow drag & drop
-            if (app.acl.hasAccessToModel('edit', this.model)) {
-                this.model.trigger('applyDragAndDrop');
-            } else {
+            // If the user does not have write access, don't display drag/drop cursor
+            if (!app.acl.hasAccessToModel('edit', this.model)) {
                 this.$('[data-toggle=dashlet]').css('cursor', 'default');
             }
         }, this);
@@ -79,7 +77,7 @@
                 dashletMeta = app.metadata.getView(dashletDef.view.module, dashletDef.view.name || dashletDef.view.type);
                 dashletModule = dashletDef.view.module ? dashletDef.view.module : null;
             } else if (dashletDef.layout) {
-                toolbar = dashletDef.view['custom_toolbar'] || {};
+                toolbar = dashletDef.layout.custom_toolbar || {};
                 dashletMeta = app.metadata.getLayout(dashletDef.layout.module, dashletDef.layout.name || dashletDef.layout.type);
                 dashletModule = dashletDef.layout.module ? dashletDef.layout.module : null;
             }

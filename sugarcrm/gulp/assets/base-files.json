@@ -66,6 +66,8 @@
     "include/javascript/sugar7/shortcuts.js",
     "include/javascript/sugar7/clipboard.js",
     "include/javascript/clipboardjs/clipboard.min.js",
+    "include/javascript/gridstack/gridstack.js",
+    "include/javascript/gridstack/gridstack.JQueryUI.js",
 
     // jasmine and sinon core files
     "node_modules/sinon/pkg/sinon.js",

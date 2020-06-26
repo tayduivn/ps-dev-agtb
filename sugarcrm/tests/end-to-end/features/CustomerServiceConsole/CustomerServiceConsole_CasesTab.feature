@@ -552,7 +552,6 @@ Feature: Customer Service Console Verification
 
     # Save configuration changes
     When I click Save button on #DashableRecordConfig header
-    When I close alert
 
     # Verify that 2 more tabs are added to the dashlet
     Then I should see the following tabs in #ServiceConsoleView.DashableRecordDashlet dashlet:
@@ -601,7 +600,6 @@ Feature: Customer Service Console Verification
 
     # Save configuration changes
     When I click Save button on #DashableRecordConfig header
-    When I close alert
 
     # Verify that 2 previously added tabs are successfully removed
     Then I should not see the following tabs in #ServiceConsoleView.DashableRecordDashlet dashlet:
