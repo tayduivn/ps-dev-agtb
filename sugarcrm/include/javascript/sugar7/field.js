@@ -518,24 +518,25 @@
              * Remove error decoration from field if it exists.
              */
             clearErrorDecoration: function () {
-                var ftag = this.fieldTag || '',
-                    $ftag = this.$(ftag);
+                var ftag = this.fieldTag || '';
+                var $ftag = this.$(ftag);
+                var $parent = $ftag.parent().first();
 
                 // Remove previous exclamation then add back.
                 this.$('.add-on.error-tooltip').remove();
-                var isWrappedError = $ftag.parent().hasClass('input-append') && $ftag.parent().hasClass('error');
+                var isWrappedError = $parent.hasClass('input-append') && $parent.hasClass('error');
 
                 // FIXME: this check for datetime should be made generic (when
                 // SC-2568 gets in) based on use of normal addon
                 var isWrapperException = false;
                 _.each(['date', 'currency', 'timeselect'], function(item) {
-                    isWrapperException = isWrapperException || $ftag.parent().hasClass(item);
+                    isWrapperException = isWrapperException || $parent.hasClass(item);
                 });
 
                 if (isWrapperException) {
-                    $ftag.parent().removeClass('error');
+                    $parent.removeClass('error');
                 } else if (isWrappedError) {
-                    $ftag.unwrap();
+                    $ftag.unwrap('.input-append.error');
                 }
 
                 this.$el.removeClass(ftag);
