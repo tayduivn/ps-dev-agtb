@@ -61,30 +61,68 @@ class ProductConsoleHelperTest extends TestCase
         $helper->removeRenewalsConsole($this->bean, 'before_filter', [$sugarQuery]);
     }
 
+    public function checkRenewalsConsoleProvider()
+    {
+        return [
+            [
+                'rli' => true,
+                'aw' => false,
+            ],
+            [
+                'rli' => false,
+                'aw' => true,
+            ],
+        ];
+    }
+
     /**
      * @covers ::checkRenewalsConsole
+     * @dataProvider checkRenewalsConsoleProvider
      */
-    public function testCheckRenewalsConsole()
+    public function testCheckRenewalsConsole($rli, $aw)
     {
         $helper = $this->createPartialMock('\ProductConsoleHelper', [
             'useRevenueLineItems',
+            'isAdminWork',
         ]);
+
         $helper->expects($this->once())
         ->method('useRevenueLineItems')
-        ->willReturn(true);
+        ->willReturn($rli);
+
+        // isAdminWork will only be called if useRevenueLineItems returns true
+        $helper->expects($this->any())
+        ->method('isAdminWork')
+        ->willReturn($aw);
+
         $helper->checkRenewalsConsole(
             $this->bean,
             'before_retrieve',
             ['id' => 'da438c86-df5e-11e9-9801-3c15c2c53980']
         );
-        $this->assertTrue(true);
 
+        // Kinda needed for this to not be a risky test
+        $this->assertTrue(true);
+    }
+
+    /**
+     * @covers ::checkRenewalsConsole
+     */
+    public function testCheckRenewalsConsoleFailure()
+    {
         $helper = $this->createPartialMock('\ProductConsoleHelper', [
             'useRevenueLineItems',
+            'isAdminWork',
         ]);
+
         $helper->expects($this->once())
         ->method('useRevenueLineItems')
         ->willReturn(false);
+
+        $helper->expects($this->once())
+        ->method('isAdminWork')
+        ->willReturn(false);
+
         $this->expectException(SugarApiExceptionNotAuthorized::class);
         $helper->checkRenewalsConsole(
             $this->bean,
