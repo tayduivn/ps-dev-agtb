@@ -218,7 +218,9 @@ class DeployedSidecarSubpanelImplementation extends AbstractMetaDataImplementati
             return $subpanelName;
         }
 
-        $legacyDefs = $this->mdc->toLegacySubpanelLayoutDefs($viewdefs['subpanels']['meta']['components'], BeanFactory::newBean($loadedModule));
+        if (!empty($viewdefs['subpanels']['meta']['components'])) {
+            $legacyDefs = $this->mdc->toLegacySubpanelLayoutDefs($viewdefs['subpanels']['meta']['components'], BeanFactory::newBean($loadedModule));
+        }
 
         if(empty($legacyDefs['subpanel_setup'])) {
             if (isModuleBWC($loadedModule)) {
