@@ -185,7 +185,7 @@ class QueueManager
             $scheduler->job_interval = '*/1::*::*::*::*';
             $scheduler->status = 'Active';
             $scheduler->date_time_start = '2001-01-01 00:00:01';
-            $scheduler->date_time_end = '2037-12-31 23:59:59';
+            $scheduler->date_time_end = null;
             $scheduler->catch_up = '0';
             $this->getLogger()->info("Create elastic queue scheduler");
         } else {
