@@ -68,4 +68,6 @@ $mod_strings = [
     'LBL_SERVICE_START_DATE' => 'Start Date',
     'LBL_TOTAL_DISCOUNT_AMOUNT' => 'Total Discount Amount',
     'LBL_TYPE' => 'Type',
+    'LBL_RLI_ADDONS' => 'Add-On Revenue Line Items',
+    'LBL_RLI_ADDONS_SUBPANEL_TITLE' => 'Add-On Revenue Line Items',
 ];

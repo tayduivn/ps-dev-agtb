@@ -335,8 +335,8 @@ $fieldsHidden = array(
         'label' => 'LBL_RENEWABLE',
         'type' => 'bool',
     ),
+    'add_on_to_name',
     // END SUGARCRM flav=ent ONLY
-    'next_step',
     'lead_source',
     'campaign_name',
     array(
@@ -382,10 +382,8 @@ $fieldsHidden = array(
             'mft_part_num',
         ),
     ),
-    array (
-        'name' => 'purchasedlineitem_name',
-        'span' => 12,
-    ),
+    'next_step',
+    'name' => 'purchasedlineitem_name',
     'team_name',
     'assigned_user_name',
     array(

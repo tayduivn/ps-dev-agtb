@@ -634,6 +634,16 @@ $dictionary['PurchasedLineItem'] = [
             'source' => 'non-db',
             'vname' => 'LBL_NOTES',
         ],
+        'addon_rlis' => [
+            'name' => 'addon_rlis',
+            'type' => 'link',
+            'relationship' => 'revenuelineitem_pli_addons',
+            'vname' => 'LBL_RLI_ADDONS',
+            'module' => 'RevenueLineItems',
+            'bean_name' => 'RevenueLineItem',
+            'source' => 'non-db',
+            'workflow' => false,
+        ],
     ],
     'relationships' => [
         'purchasedlineitem_categories' => [
