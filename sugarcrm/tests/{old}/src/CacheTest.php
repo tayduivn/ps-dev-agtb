@@ -89,10 +89,6 @@ abstract class CacheTest extends TestCase
                 'binary-key',
                 base64_decode('R0lGODlhAQABAIAAAP///wAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw=='),
             ],
-            'null' => [
-                'null-key',
-                null,
-            ],
             'false' => [
                 'false-key',
                 false,

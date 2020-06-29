@@ -589,28 +589,25 @@ class SugarBean
                 $this->setupCustomFields($this->module_dir);
             }
 
-            if (empty($this->list_fields)) {
-                $this->list_fields = $this->_loadCachedArray(
-                    $this->module_name,
-                    $this->object_name,
-                    'list_fields'
-                );
+            static $moduleDefs = array();
+            if (file_exists('modules/' . $this->module_name . '/field_arrays.php')) {
+                // If the data was not loaded, try loading again....
+                if (!isset($moduleDefs[$this->object_name])) {
+                    include 'modules/' . $this->module_name . '/field_arrays.php';
+                    $moduleDefs[$this->object_name] = $fields_array;
+                }
             }
 
-            if (empty($this->column_fields)) {
-                $this->column_fields = $this->_loadCachedArray(
-                    $this->module_name,
-                    $this->object_name,
-                    'column_fields'
-                );
+            if (empty($this->list_fields) && isset($moduleDefs[$this->object_name][$this->object_name]['list_fields'])) {
+                $this->list_fields = $moduleDefs[$this->object_name][$this->object_name]['list_fields'];
             }
 
-            if (empty($this->required_fields)) {
-                $this->required_fields = $this->_loadCachedArray(
-                    $this->module_name,
-                    $this->object_name,
-                    'required_fields'
-                );
+            if (empty($this->column_fields) && isset($moduleDefs[$this->object_name][$this->object_name]['column_fields'])) {
+                $this->column_fields = $moduleDefs[$this->object_name][$this->object_name]['column_fields'];
+            }
+
+            if (empty($this->required_fields) && isset($moduleDefs[$this->object_name][$this->object_name]['required_fields'])) {
+                $this->required_fields = $moduleDefs[$this->object_name][$this->object_name]['required_fields'];
             }
 
             if(isset($GLOBALS['dictionary'][$this->object_name]) && !$this->disable_vardefs)
@@ -7767,62 +7764,6 @@ class SugarBean
     public function afterImportSave()
     {
     }
-
-    /**
-     * This function is designed to cache references to field arrays that were previously stored in the
-     * bean files and have since been moved to separate files. Was previously in include/CacheHandler.php
-     *
-     * @deprecated
-     * @param $module_name string the module directory
-     * @param $object_name string the object name
-     * @param $key string the type of field array we are referencing, i.e. list_fields, column_fields, required_fields
-     **/
-    private function _loadCachedArray(
-        $module_name,
-        $object_name,
-        $key
-        )
-    {
-        static $moduleDefs = array();
-
-        $fileName = 'field_arrays.php';
-
-        $cache_key = "load_cached_array.$module_name.$object_name.$key";
-        $result = sugar_cache_retrieve($cache_key);
-        if(!empty($result))
-        {
-        	// Use SugarCache::EXTERNAL_CACHE_NULL_VALUE to store null values in the cache.
-        	if($result == SugarCache::EXTERNAL_CACHE_NULL_VALUE)
-        	{
-        		return null;
-        	}
-
-            return $result;
-        }
-
-        if (file_exists('modules/'.$module_name.'/'.$fileName)) {
-            // If the data was not loaded, try loading again....
-            if (!isset($moduleDefs[$object_name])) {
-                include 'modules/' . $module_name . '/' . $fileName;
-                $moduleDefs[$object_name] = $fields_array;
-            }
-
-            // Now that we have tried loading, make sure it was loaded
-            if (empty($moduleDefs[$object_name][$object_name][$key])) {
-                // It was not loaded....  Fail.  Cache null to prevent future repeats of this calculation
-				sugar_cache_put($cache_key, SugarCache::EXTERNAL_CACHE_NULL_VALUE);
-                return  null;
-            }
-
-            // It has been loaded, cache the result.
-            sugar_cache_put($cache_key, $moduleDefs[$object_name][$object_name][$key]);
-            return $moduleDefs[$object_name][$object_name][$key];
-        }
-
-        // It was not loaded....  Fail.  Cache null to prevent future repeats of this calculation
-        sugar_cache_put($cache_key, SugarCache::EXTERNAL_CACHE_NULL_VALUE);
-		return null;
-	}
 
     /**
      * Returns the ACL category for this module; defaults to the SugarBean::$acl_category if defined
