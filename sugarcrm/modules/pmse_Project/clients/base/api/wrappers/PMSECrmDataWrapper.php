@@ -972,6 +972,13 @@ SQL;
             }
         }
 
+        if ($filter === 'all') {
+            $output[] = [
+                'value' => 'assigned_teams',
+                'text' => translate('LBL_PMSE_EMAILPICKER_ALL_ASSIGNED_TEAMS', 'pmse_Project'),
+            ];
+        }
+
         return $output;
     }
 

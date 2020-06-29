@@ -976,7 +976,7 @@ input[type="number"].required {
 
 .adam.form-panel-field.record-cell .form-panel-field-control {
   font-size: 12px;
-  padding: 2px 4px;
+  padding: 2px 0;
   min-height: 24px;
 }
 

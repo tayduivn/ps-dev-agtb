@@ -1949,7 +1949,7 @@ var getSearchInfo = function(type, module, field, value) {
             break;
         case 'TEAM':
         case 'team':
-            url = App.api.buildURL('pmse_Project/CrmData/teams/public/');
+            url = App.api.buildURL('pmse_Project/CrmData/teams/all/');
             text = 'Team';
             key = value;
             break;

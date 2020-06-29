@@ -1263,7 +1263,9 @@ AdamEvent.prototype.createConfigureAction = function () {
                         suggestionItemAddress: 'emailAddress',
                         suggestionDataURL: "pmse_Project/CrmData/emails/{$0}",
                         suggestionDataRoot: "result",
-                        teams: project.getMetadata('teams') || []
+                        teams: [
+                            {'text': translate('LBL_PMSE_EMAILPICKER_ALL_ASSIGNED_TEAMS'), 'value': 'assigned_teams'}
+                        ]
                     },
                     {
                         jtype: 'emailpicker',
@@ -1277,7 +1279,9 @@ AdamEvent.prototype.createConfigureAction = function () {
                         suggestionItemAddress: 'emailAddress',
                         suggestionDataURL: "pmse_Project/CrmData/emails/{$0}",
                         suggestionDataRoot: "result",
-                        teams: project.getMetadata('teams') || []
+                        teams: [
+                            {'text': translate('LBL_PMSE_EMAILPICKER_ALL_ASSIGNED_TEAMS'), 'value': 'assigned_teams'}
+                        ]
                     },
                     {
                         jtype: 'emailpicker',
@@ -1291,7 +1295,9 @@ AdamEvent.prototype.createConfigureAction = function () {
                         suggestionItemAddress: 'emailAddress',
                         suggestionDataURL: "pmse_Project/CrmData/emails/{$0}",
                         suggestionDataRoot: "result",
-                        teams: project.getMetadata('teams') || []
+                        teams: [
+                            {'text': translate('LBL_PMSE_EMAILPICKER_ALL_ASSIGNED_TEAMS'), 'value': 'assigned_teams'}
+                        ]
                     },
                     hiddenParams
                 ];
@@ -1355,33 +1361,6 @@ AdamEvent.prototype.createConfigureAction = function () {
                                         w.html.style.display = 'inline';
                                     }
                                 });
-                            }
-                        });
-
-                        //We load the teams
-                        project.addMetadata("teams", {
-                            dataURL: project.getMetadata("teamsDataSource").url,
-                            dataRoot: project.getMetadata("teamsDataSource").root,
-                            success: function(data) {
-                                var i;
-                                if(emailPickerFields.length) {
-                                    for (i = 0; i < emailPickerFields.length; i += 1) {
-                                        f.items[emailPickerFields[i]].setTeamTextField("text");
-                                        f.items[emailPickerFields[i]].setTeams(data);
-                                    }
-                                } else {
-                                    for (i = 0; i < f.items.length; i += 1) {
-                                        switch (f.items[i].name) {
-                                        case 'address_to':
-                                        case 'address_cc':
-                                        case 'address_bcc':
-                                            f.items[i].setTeamTextField("text");
-                                            f.items[i].setTeams(data);
-                                            break;
-                                        }
-                                    }
-                                }
-
                             }
                         });
 
@@ -1697,7 +1676,9 @@ AdamEvent.prototype.createConfigureAction = function () {
                     suggestionItemAddress: 'emailAddress',
                     suggestionDataURL: "pmse_Project/CrmData/emails/{$0}",
                     suggestionDataRoot: "result",
-                    teams: project.getMetadata('teams') || []
+                    teams: [
+                        {'text': translate('LBL_PMSE_EMAILPICKER_ALL_ASSIGNED_TEAMS'), 'value': 'assigned_teams'}
+                    ]
                 },
                 {
                     jtype: 'emailpicker',
@@ -1711,7 +1692,9 @@ AdamEvent.prototype.createConfigureAction = function () {
                     suggestionItemAddress: 'emailAddress',
                     suggestionDataURL: "pmse_Project/CrmData/emails/{$0}",
                     suggestionDataRoot: "result",
-                    teams: project.getMetadata('teams') || []
+                    teams: [
+                        {'text': translate('LBL_PMSE_EMAILPICKER_ALL_ASSIGNED_TEAMS'), 'value': 'assigned_teams'}
+                    ]
                 },
                 {
                     jtype: 'emailpicker',
@@ -1725,7 +1708,9 @@ AdamEvent.prototype.createConfigureAction = function () {
                     suggestionItemAddress: 'emailAddress',
                     suggestionDataURL: "pmse_Project/CrmData/emails/{$0}",
                     suggestionDataRoot: "result",
-                    teams: project.getMetadata('teams') || []
+                    teams: [
+                        {'text': translate('LBL_PMSE_EMAILPICKER_ALL_ASSIGNED_TEAMS'), 'value': 'assigned_teams'}
+                    ]
                 },
                 hiddenParams
             ];
@@ -1787,33 +1772,6 @@ AdamEvent.prototype.createConfigureAction = function () {
                                     w.html.style.display = 'inline';
                                 }
                             });
-                        }
-                    });
-
-                    //We load the teams
-                    project.addMetadata("teams", {
-                        dataURL: project.getMetadata("teamsDataSource").url,
-                        dataRoot: project.getMetadata("teamsDataSource").root,
-                        success: function (data) {
-                            var i;
-                            if (emailPickerFields.length) {
-                                for (i = 0; i < emailPickerFields.length; i += 1) {
-                                    f.items[emailPickerFields[i]].setTeamTextField("text");
-                                    f.items[emailPickerFields[i]].setTeams(data);
-                                }
-                            } else {
-                                for (i = 0; i < f.items.length; i += 1) {
-                                    switch (f.items[i].name) {
-                                        case 'address_to':
-                                        case 'address_cc':
-                                        case 'address_bcc':
-                                            f.items[i].setTeamTextField("text");
-                                            f.items[i].setTeams(data);
-                                            break;
-                                    }
-                                }
-                            }
-
                         }
                     });
 

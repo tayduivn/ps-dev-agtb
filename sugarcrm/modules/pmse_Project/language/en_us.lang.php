@@ -366,6 +366,7 @@ $mod_strings = array (
     'LBL_PMSE_FORMPANEL_SUBMIT' => 'Add',
     'LBL_PMSE_FORMPANEL_CLOSE' => 'Close',
 
+    'LBL_PMSE_EMAILPICKER_ALL_ASSIGNED_TEAMS' => 'All teams assigned to the record',
     'LBL_PMSE_EMAILPICKER_TEAMS' => 'Teams',
     'LBL_PMSE_EMAILPICKER_RELATED_TO' => '%RELATED% related to %MODULE%',
     'LBL_PMSE_EMAILPICKER_USER_CREATED' => 'User who created the %MODULE%',

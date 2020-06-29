@@ -1421,7 +1421,7 @@ describe('includes.javascript.pmse.designer', function() {
 
         it('should return the correct information for atoms of type "TEAM"', function() {
             expect(getSearchInfo('TEAM', undefined, undefined, 'mock_team')).toEqual({
-                url: App.api.buildURL('pmse_Project/CrmData/teams/public/'),
+                url: App.api.buildURL('pmse_Project/CrmData/teams/all/'),
                 key: 'mock_team',
                 text: 'Team'
             });
@@ -1429,7 +1429,7 @@ describe('includes.javascript.pmse.designer', function() {
 
         it('should return the correct information for atoms of type "team"', function() {
             expect(getSearchInfo('team', undefined, undefined, 'east')).toEqual({
-                url: App.api.buildURL('pmse_Project/CrmData/teams/public/'),
+                url: App.api.buildURL('pmse_Project/CrmData/teams/all/'),
                 key: 'east',
                 text: 'Team'
             });

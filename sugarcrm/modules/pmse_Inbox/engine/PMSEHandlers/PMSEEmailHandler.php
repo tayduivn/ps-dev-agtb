@@ -374,16 +374,24 @@ class PMSEEmailHandler
     public function processTeamEmails($bean, $entry, $flowData)
     {
         $res = array();
-        $team = $this->retrieveBean('Teams',$entry->value); //$beanFactory->getBean('Teams');
-        //$response = $team->getById();
-        $members = $team->get_team_members();
-        foreach ($members as $user) {
-            $userBean = $this->retrieveBean("Users", $user->id);
-            if ($this->isUserActiveForEmail($userBean)) {
-                $item = new stdClass();
-                $item->name = $userBean->full_name;
-                $item->address = $userBean->email1;
-                $res[] = $item;
+        $teams = [];
+        if ($entry->value === 'assigned_teams') {
+            if (!empty($bean->team_set_id)) {
+                $teams = BeanFactory::newBean('TeamSets')->getTeams($bean->team_set_id);
+            }
+        } else {
+            $teams[] = $this->retrieveBean('Teams', $entry->value);
+        }
+        foreach ($teams as $team) {
+            $members = $team->get_team_members();
+            foreach ($members as $user) {
+                $userBean = $this->retrieveBean("Users", $user->id);
+                if ($this->isUserActiveForEmail($userBean)) {
+                    $item = new stdClass();
+                    $item->name = $userBean->full_name;
+                    $item->address = $userBean->email1;
+                    $res[] = $item;
+                }
             }
         }
         return $res;
