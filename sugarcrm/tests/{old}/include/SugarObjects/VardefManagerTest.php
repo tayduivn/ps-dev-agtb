@@ -151,6 +151,7 @@ class VardefManagerTest extends TestCase
                     //BEGIN SUGARCRM flav=ent ONLY
                     'lockable_fields',
                     //END SUGARCRM flav=ent ONLY
+                    'integrate_fields',
                 ],
             ],
         ];
@@ -230,6 +231,7 @@ class VardefManagerTest extends TestCase
                     //BEGIN SUGARCRM flav=ent ONLY
                     'lockable_fields',
                     //END SUGARCRM flav=ent ONLY
+                    'integrate_fields',
                     'assignable',
                     'team_security',
                     'email_address',

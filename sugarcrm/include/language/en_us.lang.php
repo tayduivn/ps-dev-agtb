@@ -5760,6 +5760,14 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     'LBL_SERVICE_DURATION_UNIT' => 'Service Duration Unit',
 
 //END SUGARCRM flav=ent ONLY
+
+    'LBL_INTEGRATE_INVALID_FIELD' => 'Could not find field: {0} in module: {1}',
+    'LBL_INTEGRATE_INVALID_PARAM' => 'Could not find record with {0}: {1} in module: {2}',
+    'LBL_INTEGRATE_INVALID_RELATIONSHIP' => 'Could not find a relationship named: {0}',
+    'LBL_INTEGRATE_DUPLICATE_PARAM' => 'A database entry of id: {0}, with {1}: {2} in module: {3} already exists',
+    'LBL_INTEGRATE_DUPLICATE_RECORDS_DELETED' => 'soft deleted (with deleted flag = 1)',
+    'LBL_INTEGRATE_DUPLICATE_RECORDS' => 'Found multiple database records for {0} {1} on module {2}. ' .
+        'Please remove or update the matching records accordingly. Matching records: {3}',
 );
 
 $app_list_strings['activity_user_options'] = array (
