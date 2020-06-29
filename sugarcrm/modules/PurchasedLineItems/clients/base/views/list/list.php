@@ -193,6 +193,11 @@ $viewdefs['PurchasedLineItems']['base']['view']['list'] = [
                     'enabled' => true,
                     'default' => false,
                 ],
+                [
+                    'name' => 'account_name',
+                    'enabled' => true,
+                    'default' => false,
+                ],
             ],
         ],
     ],

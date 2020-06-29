@@ -144,7 +144,12 @@ $viewdefs['PurchasedLineItems']['base']['view']['record'] = [
             'fields' => [
                 'purchase_name',
                 'date_closed',
+                [
+                    'name' => 'account_name',
+                    'readonly' => true,
+                ],
                 'product_template_name',
+                'revenuelineitem_name',
                 [
                     'name' => 'revenue',
                     'type' => 'currency',
@@ -232,10 +237,6 @@ $viewdefs['PurchasedLineItems']['base']['view']['record'] = [
             'columns' => 2,
             'placeholders' => true,
             'fields' => [
-                [
-                    'name' => 'revenuelineitem_name',
-                    'span' => 12,
-                ],
                 'service',
                 [
                     'name' => 'annual_revenue',

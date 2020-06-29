@@ -173,6 +173,13 @@ $viewdefs['Accounts']['base']['layout']['subpanels'] = array (
                 'link' => 'purchases',
             ],
         ],
+        [
+            'layout' => 'subpanel',
+            'label' => 'LBL_PLI_SUBPANEL_TITLE',
+            'context' => [
+                'link' => 'purchasedlineitems',
+            ],
+        ],
         // END SUGARCRM flav=ent ONLY
     ),
 );

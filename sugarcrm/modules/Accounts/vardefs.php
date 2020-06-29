@@ -305,6 +305,18 @@ $dictionary['Account'] = array(
             'source' => 'non-db',
             'workflow' => false
         ),
+        // BEGIN SUGARCRM flav=ent ONLY
+        'purchasedlineitems' => [
+            'name' => 'purchasedlineitems',
+            'type' => 'link',
+            'relationship' => 'purchasedlineitems_accounts',
+            'vname' => 'LBL_PURCHASED_LINE_ITEMS',
+            'module' => 'PurchasedLineItems',
+            'bean_name' => 'PurchasedLineItem',
+            'source' => 'non-db',
+            'workflow' => false,
+        ],
+        // END SUGARCRM flav=ent ONLY
         'forecastworksheets' =>  array(
             'name' => 'forecastworksheets',
             'type' => 'link',

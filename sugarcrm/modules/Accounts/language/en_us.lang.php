@@ -19,6 +19,7 @@ $mod_strings = array (
 	'LBL_CONTRACTS'=>'Contracts',
 	'LBL_CONTRACTS_SUBPANEL_TITLE'=>'Contracts',
     'LBL_RLI_SUBPANEL_TITLE' => 'Revenue Line Items',
+    'LBL_PLI_SUBPANEL_TITLE' => 'Purchased Line Items',
 	'LBL_QUOTES_SUBPANEL_TITLE' => 'Quotes',
     'LBL_QUOTES_BILLTO' => 'Quotes (Bill To)',
     'LBL_QUOTES_SHIPTO' => 'Quotes (Ship To)',
@@ -180,6 +181,7 @@ $mod_strings = array (
     'LBL_CONTACT_HISTORY_SUBPANEL_TITLE' => 'Related Contacts\' Emails',
     'LBL_FILENAME' => 'Attachment',
     'LBL_REVENUELINEITEMS' => 'Revenue Line Items',
+    'LBL_PURCHASED_LINE_ITEMS' => 'Purchased Line Items',
     'LBL_DUNS_NUM' => 'DUNS:',
     'LBL_NOTES_SUBPANEL_TITLE' => 'Notes',
 
