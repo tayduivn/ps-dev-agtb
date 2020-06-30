@@ -650,17 +650,13 @@ class SugarController
             $mass = new $massUpdateClass();
             $mass->setSugarBean($seed);
 			$module = $this->request->getValidInputRequest('module', 'Assert\Mvc\ModuleName');
-			$query = $this->request->getValidInputRequest(
-				'current_query_by_page',
-				array('Assert\PhpSerialized' => array('base64Encoded' => true))
-			);
+            $query = unserialize(base64_decode($_REQUEST['current_query_by_page']), ['allowed_classes' => false]);
             if(isset($_REQUEST['entire']) && empty($_POST['mass'])) {
                 $mass->generateSearchWhere($module, $query);
             }
             $arr = $mass->handleMassUpdate();
             $storeQuery = new StoreQuery();//restore the current search. to solve bug 24722 for multi tabs massupdate.
             $temp_req = array(
-                'current_query_by_page' => $this->request->getValidInputRequest('current_query_by_page'),
                 'return_module' => $this->request->getValidInputRequest('return_module', 'Assert\Mvc\ModuleName'),
                 'return_action' => $this->request->getValidInputRequest('return_action'),
             );
