@@ -16,12 +16,31 @@ $viewdefs['base']['view']['active-subscriptions'] = [
         [
             'label' => 'LBL_ACTIVE_SUBSCRIPTIONS_DASHLET',
             'description' => 'LBL_ACTIVE_SUBSCRIPTIONS_DASHLET_DESCRIPTION',
-            'config' => [],
-            'preview' => [],
+            'config' => [
+                'linked_subscriptions_account_field' => null,
+            ],
+            'preview' => [
+                'linked_subscriptions_account_field' => null,
+            ],
             'filter' => [
                 'view' => 'record',
-                'module' => [
-                    'Accounts',
+            ],
+        ],
+    ],
+    'panels' => [
+        [
+            'name' => 'panel_body',
+            'columns' => 1,
+            'labelsOnTop' => true,
+            'placeholders' => true,
+            'fields' => [
+                [
+                    'name' => 'linked_subscriptions_account_field',
+                    'label' => 'LBL_LINKED_SUBSCRIPTIONS_ACCOUNT_FIELD',
+                    'options' => '',
+                    'type' => 'enum',
+                    'span' => 6,
+                    'required' => true,
                 ],
             ],
         ],

@@ -25,13 +25,6 @@
      */
     baseModule: null,
 
-    /**
-     * The model to show active subscriptions for.
-     *
-     * @property {Object}
-     */
-    baseModel: null,
-
     overallSubscriptionStartDate: 0,
 
     overallSubscriptionEndDate: 0,
@@ -41,6 +34,15 @@
     endDate: '',
 
     expiryComingSoon: false,
+
+    /**
+     * Object representing the initial state of our dropdown.
+     *
+     * @property {Object}
+     */
+    _defaultSettings: {
+        linked_subscriptions_account_field: null,
+    },
 
     /**
      * Flag indicating Purchases module is enabled.
@@ -54,13 +56,17 @@
      */
     initialize: function(options) {
         this._super('initialize', [options]);
+
+        this.currentModule = this.context.get('module');
         this.module = 'Purchases';
         this.moduleName = {'module_name': app.lang.getModuleName(this.module, {'plural': true})};
         this.baseModule = 'Accounts';
-        this._getBaseModel();
+
         if (!_.isUndefined(app.metadata.getModule('Purchases'))) {
             this.purchasesModule = true;
         }
+
+        this.linkToDocumentation = this._buildDocumentationUrl();
     },
 
     /**
@@ -69,13 +75,38 @@
      * @param {string} viewName Current view
      */
     initDashlet: function(viewName) {
+        this._initSettings();
+
         this._mode = viewName;
+
+        // Builds our dynamic dropdown list, but also populates the Account field in case it is not already set,
+        // for example on upgrade.
+        this._buildFieldsList();
+
         this._initCollection();
+    },
+
+    _buildDocumentationUrl: function() {
+        var serverInfo = app.metadata.getServerInfo();
+        var language = app.lang.getLanguage();
+        var module = 'activesubscriptionsdashlet';
+        var route = app.controller.context.get('layout');
+
+        var params = {
+            edition: serverInfo.flavor,
+            version: serverInfo.version,
+            lang: language,
+            module: module,
+            route: route,
+        };
+
+        return 'http://www.sugarcrm.com/crm/product_doc.php?' + $.param(params);
     },
 
     /**
      * Get base model from parent context.
      *
+     * @deprecated Since 10.2.0. Does not support non-Account module support.
      * @private
      */
     _getBaseModel: function() {
@@ -103,19 +134,145 @@
     },
 
     /**
+     * Build our settings object, based on defaults and the metadata, to be used throughout the controller.
+     *
+     * @private
+     */
+    _initSettings: function() {
+        var settings = _.extend({}, this._defaultSettings, this.settings.attributes);
+
+        this.settings.set(settings);
+
+        return this;
+    },
+
+    /**
+     * Fetches the metadata object that needs to be updated with the dynamically generated dropdown options.
+     *
+     * @private
+     */
+    _getDashletConfigField: function(fieldName) {
+        var configPanelMetadata = this.dashletConfig.panels;
+        var fieldMetadata = null;
+
+        _.each(configPanelMetadata, function(p) {
+            if (_.has(p, 'fields')) {
+                _.each(p.fields, function(f) {
+                    if (f.name === fieldName) {
+                        fieldMetadata = f;
+                        return;
+                    }
+                });
+            }
+        });
+
+        return fieldMetadata;
+    },
+
+    /**
+     * Create the dynamic dropdown options for the dashlet config page.
+     *
+     * @private
+     */
+    _buildFieldsList: function() {
+        var configPanel = this._getDashletConfigField('linked_subscriptions_account_field');
+        var configPanelOptions = {};
+
+        if (this.currentModule === this.baseModule) {
+            // If this dashlet is being added to the Accounts module record view, use the default ID field in the
+            // Account module
+            configPanelOptions.id = 'ID';
+        } else {
+            configPanelOptions = this._getRelationshipFields();
+        }
+
+        if (_.keys(configPanelOptions).length > 0) {
+            // Populate dropdown with relationship field options
+            configPanel.options = configPanelOptions;
+
+            // If we don't have any existing field selected, or the previously selected field is no longer present
+            if (
+                !this.settings.get('linked_subscriptions_account_field') ||
+                !configPanelOptions[this.settings.get('linked_subscriptions_account_field')]
+            ) {
+                this.settings.set({linked_subscriptions_account_field: _.first(Object.keys(configPanelOptions))});
+            }
+        }
+    },
+
+    /**
+     * Grabs the 1:* Account-related fields on our current module and returns them in the enum dropdown format.
+     *
+     * @private
+     */
+    _getRelationshipFields: function() {
+        var relFieldsForDropdown = {};
+
+        // Grab the view metadata that has all of the available fields
+        var currentModuleFields = app.metadata.getModule(this.currentModule, 'fields');
+        // Grab all the 1:* Account relationship (link) and Account relate fields on the current module
+        _.each(currentModuleFields, _.bind(function(f) {
+            // Relationship logic
+            var isRelationship = f.type === 'link';
+            var rel = app.metadata.getRelationship(f.relationship);
+            var isLinkedToAccounts = rel && (rel.lhs_module === this.baseModule || rel.rhs_module === this.baseModule);
+
+            // Relate field logic
+            var isRelateField = f.type === 'relate';
+            var isRelatedToAccounts = f.module === this.baseModule;
+
+            // Stores the current field that metadata is fetched for
+            var relField = null;
+
+            if (isRelationship && isLinkedToAccounts) {
+                var fieldKey = null;
+
+                // Determine which key to grab for field based on the type of relationship
+                if (rel.relationship_type === 'one-to-many') {
+                    fieldKey = rel.lhs_module === this.baseModule ? 'rhs_key' : 'lhs_key';
+                } else {
+                    fieldKey = rel.lhs_module === this.baseModule ? 'join_key_lhs' : 'join_key_rhs';
+                }
+
+                relField = app.metadata.getField({name: rel[fieldKey], module: this.currentModule});
+
+                if (_.has(relField, 'name')) {
+                    relFieldsForDropdown[relField.name] = app.lang.get(relField.vname, this.currentModule);
+                }
+            }
+
+            if (isRelateField && isRelatedToAccounts) {
+                // Relate fields stemming from the above relationship fields can be in our list, we want to filter
+                // those out by checking there isn't an existing entry in our dropdown options.
+                if (!relFieldsForDropdown[f.id_name] && _.has(f, 'id_name')) {
+                    relFieldsForDropdown[f.id_name] = app.lang.get(f.vname, this.currentModule);
+                }
+            }
+        }, this));
+
+        return relFieldsForDropdown;
+    },
+
+    /**
      * Initialize collection.
      *
      * @private
      */
     _initCollection: function() {
-        if (!this.baseModel || !this.purchasesModule) {
+        var linkedSubscriptionsAccountField = this.settings.get('linked_subscriptions_account_field');
+        var accountId = linkedSubscriptionsAccountField ?
+            this.context.get('model').get(linkedSubscriptionsAccountField) :
+            null;
+
+        if (!this.purchasesModule) {
             return;
         }
+
         var today = app.date().formatServer(true);
         var filter = [
             {
                 'account_id': {
-                    '$equals': this.baseModel.get('id')
+                    '$equals': accountId,
                 }
             },
             {
@@ -151,13 +308,13 @@
                     // add 1 day to display remaining time correctly
                     var nextDate = app.date(model.get('end_date')).add('1', 'day');
                     model.set('service_remaining_time', nextDate.fromNow());
-                    collections = model.get('pli_collection');
+                    var collections = model.get('pli_collection');
                     // create the payload
                     var bulkSaveRequests = self._createBulkCollectionsPayload(collections);
                     // send the payload
                     self._sendBulkCollectionsUpdate(bulkSaveRequests);
                 });
-            }, this)
+            }, this),
         };
         this.collection = app.data.createBeanCollection(this.module, null, options);
         this.collection.fieldsMeta = {
@@ -181,6 +338,16 @@
             return;
         }
         this.collection.fetch(options);
+    },
+
+    _render: function(options) {
+        this._super('_render', [options]);
+
+        if (!this.settings.get('linked_subscriptions_account_field')) {
+            // If we don't have any available fields, replace the dropdown with a label.
+            this.template = app.template.get(this.name + '.unavailable');
+            this._super('_render', [options]);
+        }
     },
 
     /**
