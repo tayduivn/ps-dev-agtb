@@ -40,7 +40,6 @@ $entry_point_registry = array(
 	'zipatcher' => array('file' => 'zipatcher.php', 'auth' => true),
     'mm_get_doc' => array('file' => 'modules/MailMerge/get_doc.php', 'auth' => true),
     'getImage' => array('file' => 'include/SugarTheme/getImage.php', 'auth' => false),
-    'GenerateQuickComposeFrame' => array('file' => 'modules/Emails/GenerateQuickComposeFrame.php', 'auth' => true),
     'DetailUserRole' => array('file' => 'modules/ACLRoles/DetailUserRole.php', 'auth' => true),
     'getYUIComboFile' => array('file' => 'include/javascript/getYUIComboFile.php', 'auth' => false),
     'UploadFileCheck' => array('file' => 'modules/Configurator/UploadFileCheck.php', 'auth' => true),
