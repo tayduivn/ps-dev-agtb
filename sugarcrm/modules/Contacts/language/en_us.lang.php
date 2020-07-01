@@ -25,6 +25,7 @@ $mod_strings = array (
     'LBL_SITE_USER_ID' => 'Hash of site_url and contact id',
     'LBL_COOKIE_CONSENT' => 'Cookie Consent',
     'LBL_COOKIE_CONSENT_RECEIVED_ON' => 'Cookie Consent Received On',
+    'TPL_ACTIVITY_TIMELINE_DASHLET' => 'Contact Interactions',
 // END SUGARCRM flav=ent ONLY
     'LNK_CONTACT_REPORTS' => 'View Contact Reports',
     'ERR_DELETE_RECORD' => 'Specify the record number to delete the Contact.',
