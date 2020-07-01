@@ -281,7 +281,6 @@ Feature: Renewal Opp > Auto-generate Renewal Opportunity when original renewable
     When I close alert
 
 
-
   @SS-316 @SS-317 @pr
   Scenario: Service Opportunity > Change Service Start Date of RLIs from Opportunity level
     Given Accounts records exist:

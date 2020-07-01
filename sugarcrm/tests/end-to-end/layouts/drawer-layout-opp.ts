@@ -12,7 +12,7 @@ import DrawerLayout from './drawer-layout';
 import RLITable from '../views/rli-table';
 
 /**
- * Represents a RLI secion of Opportunity page layout.
+ * Represents a RLI section of Opportunity page layout.
  *
  * @class RecordLayout
  * @extends BaseView

@@ -23,8 +23,8 @@ Feature: New fields for sugar sell Service, Renewable, Service Duration, Service
     When I click on Save button on #UserProfile
     # Verify current value(s) of License Type field
     Then I verify value of "LicenseTypes[]" enum-user-pref field in #UserProfile
-      | value                        |
-      | Sugar Enterprise, Sugar Sell |
+      | value      |
+      | Sugar Sell |
 
 
   Scenario: Revenue Line Items > Record View > Verify new Service related fields
@@ -282,7 +282,7 @@ Feature: New fields for sugar sell Service, Renewable, Service Duration, Service
     Given I open about view and login
     When I choose Profile in the user actions menu
     # Change the value of License Type field
-    When I change "LicenseTypes[]" enum-user-pref with "Sugar Sell" value in #UserProfile
+    When I change "LicenseTypes[]" enum-user-pref with "Sugar Enterprise" value in #UserProfile
     When I click on Save button on #UserProfile
     # Verify current value(s) of License Type field
     Then I verify value of "LicenseTypes[]" enum-user-pref field in #UserProfile

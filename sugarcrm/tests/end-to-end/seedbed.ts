@@ -76,8 +76,6 @@ export default (seedbed: Seedbed) => {
     // is called after cukes init, one time
     seedbed.addAsyncHandler(seedbed.events.AFTER_INIT, () => {
 
-        seedbed.defineComponent(`OpportunityDrawer`, DrawerLayoutOpp, {module: 'Opportunities'});
-
         seedbed.defineComponent(`Forecasts`, ForecastsListLayout, {module: 'Forecasts'});
 
         seedbed.defineComponent(`BPM`, BpmWindowView);
@@ -86,6 +84,7 @@ export default (seedbed: Seedbed) => {
 
         /*cache drawers for modules*/
         _.each(seedbed.meta.modules, (module, moduleName) => {
+
 
             seedbed.defineComponent(`${moduleName}List`, ListLayout, {module: moduleName});
 
@@ -100,15 +99,20 @@ export default (seedbed: Seedbed) => {
                 seedbed.defineComponent(`AuditLogDrawer`, AuditLogDrawerLayout, {module: moduleName});
                 seedbed.defineComponent(`BusinessRulesDesign`, BusinessRulesDesignLayout, {module: moduleName});
                 seedbed.defineComponent(`MergeDrawer`, MergeLayout, {module: moduleName});
-                seedbed.defineComponent(`LeadConversionDrawer`, LeadConversionLayout, {module: 'Leads'});
                 seedbed.defineComponent(`${moduleName}TileView`, TileView, {module: moduleName});
                 seedbed.defineComponent(`TileViewSettings`, TileViewSettings, {module: moduleName});
                 seedbed.defineComponent(`FindDuplicatesDrawer`, FindDuplicates, {module: moduleName});
                 seedbed.defineComponent(`DashableRecordConfig`, DashableRecordDashletConfig, {module: moduleName});
+
+                if (moduleName === 'Opportunities') {
+                    seedbed.defineComponent(`OpportunityDrawer`, DrawerLayoutOpp, {module: 'Opportunities'});
+                }
+                if (moduleName === 'Leads') {
+                    seedbed.defineComponent(`LeadConversionDrawer`, LeadConversionLayout, {module: 'Leads'});
+                }
             }
         });
 
-        seedbed.defineComponent(`LeadConversionDrawer`, LeadConversionLayout, {module: 'Leads'});
         seedbed.defineComponent(`Dashboard`, DashboardLayout, {module: 'Dashboards'});
         seedbed.defineComponent(`AddSugarDashletDrawer`, AddSugarDashletDrawerLayout, {module: 'Dashboards'});
         seedbed.components[`AdminPanel`] = new AdminPanelLayout({});

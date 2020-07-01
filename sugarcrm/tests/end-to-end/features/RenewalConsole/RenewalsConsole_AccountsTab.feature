@@ -23,8 +23,8 @@ Feature: Sugar Sell Renewals Console Verification > Accounts Tab
     When I click on Save button on #UserProfile
     # Verify current value(s) of License Type field
     Then I verify value of "LicenseTypes[]" enum-user-pref field in #UserProfile
-      | value                        |
-      | Sugar Enterprise, Sugar Sell |
+      | value      |
+      | Sugar Sell |
     When I click on Cancel button on #UserProfile
 
 
@@ -698,10 +698,11 @@ Feature: Sugar Sell Renewals Console Verification > Accounts Tab
   Scenario: User Profile > Change license type
     When I choose Profile in the user actions menu
     # Change the value of License Type field
-    When I change "LicenseTypes[]" enum-user-pref with "Sugar Sell" value in #UserProfile
+    When I change "LicenseTypes[]" enum-user-pref with "Sugar Enterprise" value in #UserProfile
     When I click on Save button on #UserProfile
     # Verify current value(s) of License Type field
     Then I verify value of "LicenseTypes[]" enum-user-pref field in #UserProfile
       | value            |
       | Sugar Enterprise |
     When I click on Cancel button on #UserProfile
+

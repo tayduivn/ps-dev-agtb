@@ -23,7 +23,7 @@ When<string, any>(
         await layout.clickButton(btnName);
         await this.driver.pause(4000);
         await this.driver.frame(null);
-        await this.driver.pause(10000);
+        await this.driver.pause(8000);
         await stepsHelper.updateMetadata();
     },
     { waitForApp: true }
@@ -140,5 +140,5 @@ export const navigateToFrame = async function (frameName: any) {
         await seedbed.client.driver.pause(2000);
     }
     await seedbed.client.driver.frame(frameName);
-    await seedbed.client.driver.pause(3000);
+    await seedbed.client.driver.pause(2000);
 };

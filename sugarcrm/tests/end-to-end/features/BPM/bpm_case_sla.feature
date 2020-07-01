@@ -12,8 +12,8 @@ Feature: Case SLA verification
     When I click on Save button on #UserProfile
     # Verify current value(s) of License Type field
     Then I verify value of "LicenseTypes[]" enum-user-pref field in #UserProfile
-      | value                         |
-      | Sugar Enterprise, Sugar Serve |
+      | value       |
+      | Sugar Serve |
     When I click on Cancel button on #UserProfile
 
   @service_console
@@ -108,7 +108,7 @@ Feature: Case SLA verification
   Scenario: User Profile > Change License type
     When I choose Profile in the user actions menu
     # Change value of License Type field
-    When I change "LicenseTypes[]" enum-user-pref with "Sugar Serve" value in #UserProfile
+    When I change "LicenseTypes[]" enum-user-pref with "Sugar Enterprise" value in #UserProfile
     When I click on Save button on #UserProfile
     # Verify current value(s) of License Type field
     Then I verify value of "LicenseTypes[]" enum-user-pref field in #UserProfile
