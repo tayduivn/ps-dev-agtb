@@ -58,15 +58,43 @@ class HttpSource implements SourceInterface
         }
 
         $base_uri = rtrim($options['base_uri'], " \t\n\r\0\x0B/") . '/';
-        $this->setHttpClient(new HttpClient([
+
+        $httpOptions = [
             'base_uri' => $base_uri,
             'http_errors' => false,
             'timeout' => static::HTTP_CLIENT_TIMEOUT,
-        ]));
+        ];
+        $proxyOption = $this->getHTTPClientProxy();
+        if (!empty($proxyOption)) {
+            $httpOptions = array_merge($httpOptions, ['proxy' => $proxyOption]);
+        }
+        $this->setHttpClient(new HttpClient($httpOptions));
 
         if (!empty($options['fallback_version']) && $this->getSugarVersion() !== $options['fallback_version']) {
             $this->fallbackVersion = $options['fallback_version'];
         }
+    }
+
+    /**
+     * Return HTTP client proxy
+     *
+     * @return string
+     */
+    protected function getHTTPClientProxy(): string
+    {
+        $proxy = '';
+        if (!empty(\BeanFactory::getBeanClass('Administration'))) {
+            $config = \Administration::getSettings('proxy');
+            if (!empty($config->settings)
+                && !empty($config->settings['proxy_on'])
+                && !empty($config->settings['proxy_host'])) {
+                $proxy = $config->settings['proxy_host'] . ':' . $config->settings['proxy_port'];
+                if (!empty($config->settings['proxy_auth'])) {
+                    $proxy = $config->settings['proxy_username'] . ':' . $config->settings['proxy_password'] . '@' . $proxy;
+                }
+            }
+        }
+        return $proxy;
     }
 
     /**
