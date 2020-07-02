@@ -8,7 +8,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-describe("BaseFooterLayout", function() {
+describe("BaseFooterLogosLayout", function() {
     var layout;
     var app;
     var sandbox;
@@ -16,10 +16,10 @@ describe("BaseFooterLayout", function() {
     beforeEach(function() {
         sandbox = sinon.sandbox.create();
         SugarTest.testMetadata.init();
-        SugarTest.loadComponent('base', 'layout', 'footer');
+        SugarTest.loadComponent('base', 'layout', 'footer-logos');
         SugarTest.testMetadata.set();
         app = SugarTest.app;
-        layout = SugarTest.createLayout('base', 'Users', 'footer', {});
+        layout = SugarTest.createLayout('base', 'Users', 'footer-logos', {});
     });
 
     afterEach(function() {

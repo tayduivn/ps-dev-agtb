@@ -15,14 +15,14 @@
  */
 ({
     /**
-     * Places all components within this layout inside `btn-toolbar` div.
+     * Places all components within this layout inside `more-logos` div.
      *
      * @param {View.View|View.Layout} component View or layout component.
      * @override
      * @protected
      */
     _placeComponent: function(component) {
-        this.$('.btn-toolbar').append(component.el);
+        this.$('.more-logos').append(component.el);
     },
 
     /**
