@@ -902,6 +902,10 @@ abstract class DBManager implements LoggerAwareInterface
 
         // build where clause
         $where_data = $this->updateWhereArray($bean);
+        if (count($where_data) == 0) {
+            $GLOBALS['log']->fatal('Unable to update Bean. The Bean does not have an ID.');
+            return false;
+        }
         if (isset($fields['deleted'])) {
             $where_data['deleted'] = "0";
         }

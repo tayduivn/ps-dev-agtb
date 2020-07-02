@@ -156,6 +156,7 @@ class DBManagerTest extends TestCase
         list($id) = $this->createRecords(1);
 
         $bean = new Contact();
+        $bean->id = $id;
         $bean->last_name = 'newfoobar' . mt_rand();
         $this->assertTrue($this->db->update($bean));
 
@@ -163,6 +164,28 @@ class DBManagerTest extends TestCase
         $row = $this->db->fetchByAssoc($result);
         $this->assertEquals($row['last_name'], $bean->last_name);
         $this->assertEquals($row['id'], $id);
+
+        $this->db->query("delete from contacts where id = '{$row['id']}'");
+    }
+
+    public function testEmptyUpdate()
+    {
+        list($id) = $this->createRecords(1);
+
+        $bean = new Contact();
+        $bean->last_name = 'newfoobar' . mt_rand();
+        $this->assertFalse($this->db->update($bean)); //$bean has an empty id, update will fail
+
+        $result = $this->db->query("select id, last_name from contacts where id = '{$id}'");
+        $row = $this->db->fetchByAssoc($result);
+        $this->assertNotEquals($row['last_name'], $bean->last_name); //Update failed, record was not updated in the DB
+
+        $bean->id = $id;
+        $this->assertTrue($this->db->update($bean)); //$bean has id now, update will work correctly
+
+        $result = $this->db->query("select id, last_name from contacts where id = '{$id}'");
+        $row = $this->db->fetchByAssoc($result);
+        $this->assertEquals($row['last_name'], $bean->last_name); // last_name was successfully saved in the DB
 
         $this->db->query("delete from contacts where id = '{$row['id']}'");
     }
