@@ -1,0 +1,52 @@
+/* Omnichannel Console
+  ----------------*/
+.omni-button {
+  .btn {
+    background-image: none;
+    background-color: transparent;
+    border: 2px solid transparent;
+    box-shadow: none;
+  }
+
+  .omni-circle {
+    height: 11px;
+    width: 11px;
+    background-color: transparent;
+    border-radius: 50%;
+    border: 0;
+    display: inline-block;
+    vertical-align: text-bottom;
+  }
+
+  .omni-label {
+    color: #000;
+    font-family: Open Sans;
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  .logged-out {
+    .omni-circle {
+      border: 1px solid #9aa5ad;
+    }
+  }
+
+  .logged-in {
+    .omni-circle {
+      background-color: #6cdf46;
+    }
+  }
+
+  .active-session {
+    background-color: #212121;
+    border: 2px solid #0c5ec8;
+
+    .omni-circle {
+      background-color: #6cdf46;
+    }
+
+    .omni-label {
+      color: #fff;
+    }
+  }
+}

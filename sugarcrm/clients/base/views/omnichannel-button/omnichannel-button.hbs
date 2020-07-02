@@ -10,5 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 --}}
-<a href="#Home" title="SugarCRM" class="logo"><img data-metadata="logo" src="" alt="SugarCRM"></a>
-<div class="more-logos"></div>
+{{#if isAvailable}}
+    <button data-action="omnichannel" class="btn logged-out" aria-label="Omnichannel" role="link" type="button">
+        <span class="omni-circle"></span> <span class="omni-label">Omnichannel</span>
+    </button>
+{{/if}}

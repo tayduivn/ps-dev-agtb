@@ -13,5 +13,6 @@
 
 $viewdefs['base']['layout']['footer-logos'] = array(
     'components' => array(
+        ['view' => 'omnichannel-button'],
     ),
 );
