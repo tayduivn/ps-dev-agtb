@@ -54,6 +54,32 @@
     /**
      * @inheritdoc
      *
+     * Apply inline css style to iframe elements in detail view.
+     */
+    setViewContent: function(value) {
+        if (!_.isEmpty(value)) {
+            var elemArr = $.parseHTML(value) || [];
+            if (elemArr.length > 0) {
+                var firstElem = $(elemArr[0]);
+                // This makes sure that the first element is aligned with the label
+                firstElem.css('margin', 'auto');
+                elemArr[0] = firstElem[0];
+                // clear the value string before assigning it modified value
+                value = '';
+
+                // iterate over each element
+                _.each(elemArr, function(elem) {
+                    // append the outerHTML of each element to recreate value string
+                    value += elem.outerHTML;
+                });
+            }
+        }
+        this._super('setViewContent', [value]);
+    },
+
+    /**
+     * @inheritdoc
+     *
      * Apply document css style to editor.
      */
     getTinyMCEConfig: function() {

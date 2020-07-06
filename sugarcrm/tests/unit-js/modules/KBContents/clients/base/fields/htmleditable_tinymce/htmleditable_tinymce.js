@@ -28,6 +28,7 @@ describe('modules.kbcontents.clients.base.fields.htmleditable_tinymce', function
     });
 
     afterEach(function() {
+        sinon.collection.restore();
         field.dispose();
         app.cache.cutAll();
         app.view.reset();
@@ -41,5 +42,24 @@ describe('modules.kbcontents.clients.base.fields.htmleditable_tinymce', function
         expect(config.content_css).toEqual(jasmine.any(Object));
         expect(config.body_class).toEqual('kbdocument-body');
     });
-    
+
+    describe('setViewContent', function() {
+        var value;
+        beforeEach(function() {
+            sinon.collection.stub(field, '_super');
+        });
+
+        it('should not add css when value is empty', function() {
+            value = '';
+            field.setViewContent(value);
+            expect(field._super).toHaveBeenCalledWith('setViewContent', ['']);
+        });
+
+        it('should add css when value is not empty', function() {
+            value = '<p>test</p><ul><li>test</li></ul><p>test</p>';
+            field.setViewContent(value);
+            expect(field._super).toHaveBeenCalledWith('setViewContent',
+                ['<p style="margin: auto;">test</p><ul><li>test</li></ul><p>test</p>']);
+        });
+    });
 });
