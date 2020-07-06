@@ -51,6 +51,28 @@ describe('Portal.Field.Html', function() {
             var formattedValue = field.format(secureExternalLink);
             expect(formattedValue).toEqual(secureExternalLink);
         });
+
+        using('different parameters positions', [
+            {
+                // right after question mark
+                srcParams: '?platform=base&amp;force_download=0',
+                expectedSrcParams: '?platform=portal&amp;force_download=0',
+            },
+            {
+                // after ampersand
+                srcParams: '?force_download=0&amp;platform=base',
+                expectedSrcParams: '?force_download=0&amp;platform=portal'
+            },
+        ], function(provider) {
+            it('should replace target `platform` param with `portal`', function() {
+                var baseUrl = 'http://sugar/rest/v11_9/EmbeddedFiles/c8afb9ec/file/kbdocument_body_file';
+                var src = baseUrl + provider.srcParams;
+                var expectedSrc = baseUrl + provider.expectedSrcParams;
+                var inputValue = '<img src="' + src + '">';
+                var expectedValue = '<img src="' + expectedSrc + '">';
+                expect(field.format(inputValue)).toEqual(expectedValue);
+            });
+        });
     });
 
 });
