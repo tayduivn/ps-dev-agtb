@@ -658,6 +658,9 @@ class PMSEUserAssignmentHandler
         // iterates from the beginning until the last assigned user
         $orderedUsers = array_column(array_merge($gtRows, $ltRows), 'id');
 
+        // used when required shift availability is set, otherwise will remain 0
+        $shiftTimeReqInSec = 0;
+
         $checkTime = null;
         if (!empty($bpmnElement['act_avl_count']) &&
             !empty($bpmnElement['act_avl_before_type']) &&
@@ -665,7 +668,16 @@ class PMSEUserAssignmentHandler
             // 'act_avl_before_type' has converted to UTC already when the record is saved.
             // We need to explicitly set UTC timezone in case the default timezone is not UTC.
             $checkTime = new \SugarDateTime($bean->{$bpmnElement['act_avl_before_type']}, new DateTimeZone('UTC'));
-            $checkTime->modify("-{$bpmnElement['act_avl_count']} {$bpmnElement['act_avl_type']}");
+
+            // convert act_avl_count (required shift availability) to seconds
+            switch ($bpmnElement['act_avl_type']) {
+                case 'minutes':
+                    $shiftTimeReqInSec = $bpmnElement['act_avl_count'] * 60;
+                    break;
+                case 'hours':
+                    $shiftTimeReqInSec = $bpmnElement['act_avl_count'] * 60 * 60;
+                    break;
+            }
         } else {
             // Required shift availability has count value set to 0 or blank.
             // Or other availability criteria is not set, we want to set the availability datetime to current time
@@ -680,7 +692,7 @@ class PMSEUserAssignmentHandler
             if (isset($user) &&
                 !$this->userHasShiftExceptions($user, $checkTime) &&
                 !$this->userHasHoliday($user, $checkTime) &&
-                $this->userAvailableInShifts($user, $checkTime)) {
+                $this->userAvailableInShifts($user, $checkTime, $shiftTimeReqInSec, $flowData)) {
                 $nextUserId = $user->id;
                 break;
             }
@@ -795,44 +807,367 @@ class PMSEUserAssignmentHandler
      *
      * @param SugarBean $user the user bean
      * @param SugarDateTime $checkTime the datetime to be checked for availablility
+     * @param int $shiftTimeReqInSec the shift time required (in seconds)
+     * @param $flowData the flow data
      * @return bool
      */
-    protected function userAvailableInShifts(SugarBean $user, \SugarDateTime $checkTime)
+    protected function userAvailableInShifts(SugarBean $user, \SugarDateTime $checkTime, int $shiftTimeReqInSec, $flowData)
     {
         if (!$user->load_relationship('shifts')) {
             return false;
         }
 
+        $timeAvail = $shiftNum = 0;
+
+        $nowTime = TimeDate::getInstance()->getNow();
+
         $shiftBeans = $user->shifts->getBeans();
         foreach ($shiftBeans as $shiftBean) {
+            $shiftNum++;
+
             $date_start = new \SugarDateTime(
                 $shiftBean->date_start,
                 new DateTimeZone($shiftBean->timezone)
             );
-            $date_start = $date_start->setTimezone(new DateTimeZone('UTC'));
             $date_end = new \SugarDateTime(
                 $shiftBean->date_end,
                 new DateTimeZone($shiftBean->timezone)
             );
             $date_end->setTime('23', '59', '59');
-            $date_end = $date_end->setTimezone(new DateTimeZone('UTC'));
-            if ($checkTime >= $date_start && $checkTime <= $date_end) {
-                $checkTime = $checkTime->setTimezone(new DateTimeZone($shiftBean->timezone));
+
+            $checkTime = $checkTime->setTimezone(new DateTimeZone($shiftBean->timezone));
+            $nowTime = $nowTime->setTimezone(new DateTimeZone($shiftBean->timezone));
+
+            if ($shiftTimeReqInSec > 0) {
+                // return false if deadline is in the past
+                if ($checkTime < $nowTime) {
+                    return false;
+                }
+
+                $timeAvail += $this->getAvailableTimeInShift($shiftBean, $nowTime, $checkTime);
+
+                if ($timeAvail >= $shiftTimeReqInSec) {
+                    $this->logger->info("[{$flowData['cas_id']}][{$flowData['cas_index']}]" . ' User ' . $user->full_name .
+                        ' meets the ' . $shiftTimeReqInSec . ' sec time requirement with ' . $timeAvail .
+                        ' sec availability via ' . $shiftNum . ' shift(s) for ' . $checkTime . ' deadline');
+
+                    return true;
+                }
+            } elseif ($checkTime >= $date_start && $checkTime <= $date_end) {
                 $weekDay = strtolower($checkTime->format("l"));
-                if ($shiftBean->isOpen($weekDay)) {
-                    $openTime = $shiftBean->getOpenTime($weekDay);
-                    $start_time = clone $checkTime;
-                    $start_time->setTime($openTime['hour'], $openTime['minutes']);
-                    $closeTime = $shiftBean->getCloseTime($weekDay);
-                    $end_time = clone $checkTime;
-                    $end_time->setTime($closeTime['hour'], $closeTime['minutes']);
-                    if ($checkTime >= $start_time && $checkTime <= $end_time) {
+
+                $dayShift = $this->getShiftTimeForDay($shiftBean, $weekDay, $checkTime);
+
+                if ($dayShift['isOpen']) {
+                    if ($checkTime >= $dayShift['startTime'] && $checkTime <= $dayShift['endTime']) {
                         return true;
                     }
                 }
             }
         }
         return false;
+    }
+
+    /**
+     * Calculate the shift time available between now and the specified deadline
+     *
+     * Calculation: first week time + (num of weeks * week time) + last week time
+     * Note: A week is defined as Sunday - Saturday, and NOT 7 days from today
+     * Example: if today is Thursday, first week time is Thursday + Friday + Saturday
+     *
+     * @param SugarBean $shiftBean
+     * @param SugarDateTime $nowTime the current time
+     * @param SugarDateTime $checkTime the deadline
+     * @return int the time available
+     */
+    protected function getAvailableTimeInShift(SugarBean $shiftBean, \SugarDateTime $nowTime, \SugarDateTime $checkTime)
+    {
+        $timeAvail = 0;
+
+        if ($checkTime < $nowTime) {
+            return $timeAvail;
+        }
+
+        $shiftTimes = $this->getShiftTimesForWeek($shiftBean);
+
+        [
+            'daysInFirstWeek' => $daysInFirstWeek,
+            'daysInLastWeek' => $daysInLastWeek,
+            'numOfWeeks' => $numOfWeeks,
+        ] = $this->getDayWeekTotalInShift($nowTime, $checkTime, $shiftTimes['shiftEndDate']);
+
+        $timeAvail += $this->getFirstAndFullWeekAvailabilityInShift(
+            $nowTime,
+            $checkTime,
+            $shiftTimes,
+            $daysInFirstWeek,
+            $daysInLastWeek,
+            $numOfWeeks
+        );
+
+        $timeAvail += $this->getLastWeekAvailabilityInShift($checkTime, $shiftTimes, $daysInLastWeek);
+
+        return $timeAvail;
+    }
+
+    /**
+     * Get the total number of days and weeks between today and deadline or shift end date (whichever is sooner)
+     *
+     * @param SugarDateTime $nowTime the current time
+     * @param SugarDateTime $checkTime the deadline
+     * @param string $shiftEndDateStr
+     * @return array
+     */
+    protected function getDayWeekTotalInShift(\SugarDateTime $nowTime, \SugarDateTime $checkTime, string $shiftEndDateStr)
+    {
+        $todayNum = intval($nowTime->format('w'));
+
+        // calculate the total number of days, including today
+        // if shift ends before the deadline, calculate days between now and shift end
+        // otherwise, calculate days between now and deadline
+        $nowTimeClone = clone $nowTime;
+        $nowTimeClone->setTime('00', '00', '00');
+        $shiftEndDate = new \SugarDateTime($shiftEndDateStr, $nowTimeClone->getTimezone());
+        $shiftEndDate->setTime('23', '59', '59');
+        $checkTimeClone = ($shiftEndDate < $checkTime) ? clone $shiftEndDate : clone $checkTime;
+        $checkTimeClone->setTime('00', '00', '00');
+        $totalDays = $checkTimeClone->diff($nowTimeClone)->days + 1;
+
+        $daysInFirstWeek = ($todayNum + $totalDays > \SugarDateTime::DOW_SAT) ?
+            \SugarDateTime::DOW_SAT - $todayNum + 1 :
+            $totalDays;
+        $totalDays -= $daysInFirstWeek;
+        $daysInLastWeek = $totalDays % 7;
+        $numOfWeeks = intval($totalDays / 7);
+
+        return [
+            'totalDays' => $totalDays,
+            'daysInFirstWeek' => $daysInFirstWeek,
+            'daysInLastWeek' => $daysInLastWeek,
+            'numOfWeeks' => $numOfWeeks,
+        ];
+    }
+
+    /**
+     * Calculates time available in shift for first and full weeks
+     *
+     * @param SugarDateTime $nowTime the current time
+     * @param SugarDateTime $checkTime the deadline
+     * @param array $shiftTimes
+     * @param int $daysInFirstWeek
+     * @param int $daysInLastWeek
+     * @param int $numOfWeeks
+     * @return int the time available in seconds
+     */
+    protected function getFirstAndFullWeekAvailabilityInShift(
+        \SugarDateTime $nowTime,
+        \SugarDateTime $checkTime,
+        array $shiftTimes,
+        int $daysInFirstWeek,
+        int $daysInLastWeek,
+        int $numOfWeeks
+    ) {
+        $timeAvail = 0;
+        $todayNum = intval($nowTime->format('w'));
+
+        // first week
+        for ($i = 0; $i < $daysInFirstWeek; $i++) {
+            $dayShiftTime = $shiftTimes[$todayNum + $i];
+
+            if (!$dayShiftTime['isOpen']) {
+                continue;
+            }
+
+            if ($i === 0) {
+                // the current day
+
+                $timeFormat = TimeDate::getInstance()->get_time_format();
+
+                $nowTimeStr = strtotime($nowTime);
+                $checkTimeStr = strtotime($checkTime);
+                $startTimeStr = strtotime($dayShiftTime['startTime']->format($timeFormat), $nowTimeStr);
+                $endTimeStr = strtotime($dayShiftTime['endTime']->format($timeFormat), $nowTimeStr);
+
+                if ($nowTimeStr < $startTimeStr) {
+                    // if shift has not started yet
+
+                    // if the deadline is before the shift end, calculate time between shift start and deadline
+                    // otherwise, use entire shift duration
+                    $timeLeft = ($checkTimeStr < $endTimeStr) ?
+                        $checkTimeStr - $startTimeStr :
+                        $dayShiftTime['durationInSec'];
+
+                    $timeAvail += $timeLeft;
+                } elseif ($nowTimeStr >= $startTimeStr && $nowTimeStr <= $endTimeStr) {
+                    // if shift is currently in progress
+
+                    // if the deadline is before the shift end, use deadline to calculate time
+                    // otherwise, use shift end to calculate
+                    $timeLeft = (($checkTimeStr < $endTimeStr) ? $checkTimeStr : $endTimeStr) - $nowTimeStr;
+
+                    $timeAvail += $timeLeft;
+                }
+                // else do nothing if shift ended for the day
+            } else {
+                if ($i === ($daysInFirstWeek - 1) && $daysInLastWeek === 0) {
+                    // last day and deadline is the same week
+
+                    $timeAvail += $this->getAvailableTimeInShiftOnLastDay($checkTime, $dayShiftTime);
+                } else {
+                    $timeAvail += $dayShiftTime['durationInSec'];
+                }
+            }
+        }
+
+        // calculate time for the full weeks
+        $timeAvail += $numOfWeeks * $shiftTimes['weekDurationInSec'];
+
+        return $timeAvail;
+    }
+
+    /**
+     * Calculates time available in shift for the last week
+     *
+     * @param SugarDateTime $checkTime the deadline
+     * @param array $shiftTimes
+     * @param int $daysInLastWeek
+     * @return int the time available in seconds
+     */
+    protected function getLastWeekAvailabilityInShift(\SugarDateTime $checkTime, array $shiftTimes, int $daysInLastWeek)
+    {
+        $timeAvail = 0;
+
+        for ($i = 0; $i < $daysInLastWeek; $i++) {
+            $dayShiftTime = $shiftTimes[$i];
+
+            if (!$dayShiftTime['isOpen']) {
+                continue;
+            }
+
+            if ($i === ($daysInLastWeek - 1)) {
+                // last day
+
+                $timeAvail += $this->getAvailableTimeInShiftOnLastDay($checkTime, $dayShiftTime);
+            } else {
+                $timeAvail += $dayShiftTime['durationInSec'];
+            }
+        }
+
+        return $timeAvail;
+    }
+
+    /**
+     * Calculate the time available on the deadline day (last day)
+     *
+     * @param SugarDateTime $checkTime the deadline
+     * @param array $dayShift
+     * @return int the time available
+     */
+    protected function getAvailableTimeInShiftOnLastDay(\SugarDateTime $checkTime, array $dayShift)
+    {
+        $timeAvail = 0;
+
+        $timeFormat = TimeDate::getInstance()->get_time_format();
+
+        $checkTimeStr = strtotime($checkTime);
+        $startTimeStr = strtotime($dayShift['startTime']->format($timeFormat), $checkTimeStr);
+        $endTimeStr = strtotime($dayShift['endTime']->format($timeFormat), $checkTimeStr);
+
+        if ($checkTimeStr > $endTimeStr) {
+            // if the deadline is after the shift, use entire shift duration
+
+            $timeAvail = $dayShift['durationInSec'];
+        } elseif ($checkTimeStr >= $startTimeStr && $checkTimeStr <= $endTimeStr) {
+            // if the deadline is in between the shift, calc the time between shift start and deadline
+
+            $timeAvail = $checkTimeStr - $startTimeStr;
+        }
+        // else do nothing if the deadline is before the shift start
+
+        return $timeAvail;
+    }
+
+    /**
+     * Get and return the shift times for the entire week
+     *
+     * @param SugarBean $shiftBean
+     * @return array
+     */
+    protected function getShiftTimesForWeek(SugarBean $shiftBean)
+    {
+        $daysOfWeek = [
+            \SugarDateTime::DOW_SUN => 'sunday',
+            \SugarDateTime::DOW_MON => 'monday',
+            \SugarDateTime::DOW_TUE => 'tuesday',
+            \SugarDateTime::DOW_WED => 'wednesday',
+            \SugarDateTime::DOW_THU => 'thursday',
+            \SugarDateTime::DOW_FRI => 'friday',
+            \SugarDateTime::DOW_SAT => 'saturday',
+        ];
+
+        $shiftTimes = [
+            'shiftStartDate' => $shiftBean->date_start,
+            'shiftEndDate' => $shiftBean->date_end,
+        ];
+
+        $weekDurationInSec = 0;
+
+        foreach ($daysOfWeek as $dayKey => $day) {
+            $shiftForDay = $this->getShiftTimeForDay($shiftBean, $day);
+
+            if ($shiftForDay['isOpen']) {
+                $shiftForDay['durationInSec'] = strtotime($shiftForDay['endTime']) - strtotime($shiftForDay['startTime']);
+
+                $weekDurationInSec += $shiftForDay['durationInSec'];
+            }
+
+            $shiftForDay['day'] = $day;
+            $shiftTimes[$dayKey] = $shiftForDay;
+        }
+
+        $shiftTimes['weekDurationInSec'] = $weekDurationInSec;
+
+        return $shiftTimes;
+    }
+
+    /**
+     * Get and return the shift times for the specified weekday
+     *
+     * @param SugarBean $shiftBean the Shift Bean
+     * @param string $weekDay the weekday to get
+     * @param SugarDateTime|null $dateTime
+     * @return array
+     */
+    protected function getShiftTimeForDay(SugarBean $shiftBean, string $weekDay, \SugarDateTime $dateTime = null)
+    {
+        $shiftTime = [
+            'isOpen' => false,
+        ];
+
+        $weekDay = strtolower($weekDay);
+
+        if ($shiftBean->isOpen($weekDay)) {
+            if (is_null($dateTime)) {
+                // set all fields to Unix Epoch with '!', as we only care about time
+                $dateTime = \SugarDateTime::createFromFormat('!H:i:s', '00:00:00', new DateTimeZone($shiftBean->timezone));
+            }
+
+            $openTime = $shiftBean->getOpenTime($weekDay);
+            $start_time = clone $dateTime;
+            $start_time->setTime($openTime['hour'], $openTime['minutes']);
+
+            $closeTime = $shiftBean->getCloseTime($weekDay);
+            $end_time = clone $dateTime;
+            $end_time->setTime($closeTime['hour'], $closeTime['minutes']);
+
+            $shiftTime = [
+                'isOpen' => true,
+                'startTime' => $start_time,
+                'endTime' => $end_time,
+            ];
+        }
+
+        return $shiftTime;
     }
 
     /**

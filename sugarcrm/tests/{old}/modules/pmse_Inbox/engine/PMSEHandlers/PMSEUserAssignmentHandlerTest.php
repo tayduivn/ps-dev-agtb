@@ -222,8 +222,10 @@ class PMSEUserAssignmentHandlerTest extends TestCase
      * @param string $checkTime Datetime to be checked
      * @param string $timeZone Timezone
      * @param bool $available
+     * @param int $shiftTimeReqInSec
+     * @param $flowData
      */
-    public function testUserAvailableInShifts(string $checkTime, string $timeZone, bool $available)
+    public function testUserAvailableInShifts(string $checkTime, string $timeZone, bool $available, int $shiftTimeReqInSec, $flowData)
     {
         $shift = BeanFactory::newBean('Shifts');
         $shift->date_start = '2020-04-23';
@@ -248,7 +250,7 @@ class PMSEUserAssignmentHandlerTest extends TestCase
             new DateTimeZone('UTC')
         );
 
-        $result = $userAssignmentHandlerMock->userAvailableInShifts($this->user, $checkTime);
+        $result = $userAssignmentHandlerMock->userAvailableInShifts($this->user, $checkTime, $shiftTimeReqInSec, $flowData);
 
         $this->assertSame($available, $result);
     }
@@ -264,31 +266,333 @@ class PMSEUserAssignmentHandlerTest extends TestCase
                 'checkTime' => '2020-04-24 12:00:00',
                 'timezone' => 'UTC',
                 'available' => true,
+                'shiftTimeReqInSec' => 0,
+                'flowData' => [],
             ],
             [
                 'checkTime' => '2020-04-25 12:00:00',
                 'timezone' => 'UTC',
                 'available' => false,
+                'shiftTimeReqInSec' => 0,
+                'flowData' => [],
             ],
             [
                 'checkTime' => '2020-04-23 12:00:00',
                 'timezone' => 'Asia/Taipei',
                 'available' => false,
+                'shiftTimeReqInSec' => 0,
+                'flowData' => [],
             ],
             [
                 'checkTime' => '2020-04-24 4:00:00',
                 'timezone' => 'Asia/Taipei',
                 'available' => true,
+                'shiftTimeReqInSec' => 0,
+                'flowData' => [],
             ],
             [
                 'checkTime' => '2020-04-24 12:00:00',
                 'timezone' => 'America/Los_Angeles',
                 'available' => false,
+                'shiftTimeReqInSec' => 0,
+                'flowData' => [],
             ],
             [
                 'checkTime' => '2020-04-24 23:00:00',
                 'timezone' => 'America/Los_Angeles',
                 'available' => true,
+                'shiftTimeReqInSec' => 0,
+                'flowData' => [],
+            ],
+        ];
+    }
+
+    /**
+     * Create and return the Shift bean
+     *
+     * @param array $shiftForWeek
+     * @return SugarBean
+     */
+    public function createShiftBean(array $shiftForWeek)
+    {
+        $shift = BeanFactory::newBean('Shifts');
+
+        if (!empty($shiftForWeek)) {
+            $shift->date_start = $shiftForWeek['dateStart'];
+            $shift->date_end = $shiftForWeek['dateEnd'];
+            $shift->timezone = $shiftForWeek['timezone'];
+
+            foreach ($shiftForWeek['weekdays'] as $day => $data) {
+                $shift->{'is_open_' . $day} = $data['open'];
+
+                if ($data['open']) {
+                    $shift->{$day . '_open_hour'} = $data['openHour'];
+                    $shift->{$day . '_open_minutes'} = $data['openMinutes'];
+                    $shift->{$day . '_close_hour'} = $data['closeHour'];
+                    $shift->{$day . '_close_minutes'} = $data['closeMinute'];
+                }
+            }
+
+            $shift->save();
+        }
+
+        $this->addBeanToDeleteList($shift);
+
+        return $shift;
+    }
+
+    /**
+     * Test to determine if the week's shift is accurately returned
+     *
+     * @covers ::getShiftTimesForWeek
+     * @covers ::getShiftTimeForDay
+     * @dataProvider getShiftTimesForWeekProvider
+     * @param array $shiftForWeek
+     */
+    public function testGetShiftTimesForWeek(array $shiftForWeek)
+    {
+        $userAssignmentHandlerMock = new PMSEUserAssignmentHandlerMock();
+
+        $expected = [
+            'shiftStartDate' => $shiftForWeek['dateStart'],
+            'shiftEndDate' => $shiftForWeek['dateEnd'],
+            'weekDurationInSec' => 0,
+        ];
+
+        $shiftBean = $this->createShiftBean($shiftForWeek);
+
+        foreach ($shiftForWeek['weekdays'] as $day => $data) {
+            if ($data['open']) {
+                $expected[$data['dayKey']] = [
+                    'isOpen' => $data['open'],
+                    'startTime' => \SugarDateTime::createFromFormat(
+                        '!H:i:s',
+                        $data['openHour'] . ':' . $data['openMinutes'] . ':00',
+                        new DateTimeZone($shiftForWeek['timezone'])
+                    ),
+                    'endTime' => \SugarDateTime::createFromFormat(
+                        '!H:i:s',
+                        $data['closeHour'] . ':' . $data['closeMinute'] . ':00',
+                        new DateTimeZone($shiftForWeek['timezone'])
+                    ),
+                    'durationInSec' => $data['durationInSec'],
+                    'day' => $day,
+                ];
+
+                $expected['weekDurationInSec'] += $data['durationInSec'];
+            } else {
+                $expected[$data['dayKey']] = [
+                    'isOpen' => $data['open'],
+                    'day' => $day,
+                ];
+            }
+        }
+
+        $actual = $userAssignmentHandlerMock->getShiftTimesForWeek($shiftBean);
+
+        $this->assertSame($expected['shiftStartDate'], $actual['shiftStartDate']);
+        $this->assertSame($expected['shiftEndDate'], $actual['shiftEndDate']);
+        $this->assertSame($expected['weekDurationInSec'], $actual['weekDurationInSec']);
+
+        foreach ($shiftForWeek['weekdays'] as $day => $data) {
+            $expectedDay = $expected[$data['dayKey']];
+            $actualDay = $actual[$data['dayKey']];
+
+            $this->assertSame($expectedDay['isOpen'], $actualDay['isOpen']);
+            $this->assertSame($expectedDay['day'], $actualDay['day']);
+
+            if ($expectedDay['isOpen']) {
+                $this->assertSame(strtotime($expectedDay['startTime']), strtotime($actualDay['startTime']));
+                $this->assertSame(strtotime($expectedDay['endTime']), strtotime($actualDay['endTime']));
+                $this->assertSame($expectedDay['durationInSec'], $actualDay['durationInSec']);
+            }
+        }
+    }
+
+    /**
+     * Provider for ::testGetShiftTimesForWeek
+     *
+     * @return array
+     */
+    public function getShiftTimesForWeekProvider()
+    {
+        return [
+            [
+                'shiftForWeek' => [
+                    'dateStart' => '2020-07-14',
+                    'dateEnd' => '2020-08-14',
+                    'timezone' => 'America/Los_Angeles',
+                    'weekdays' => [
+                        'sunday' => [
+                            'dayKey' => 0,
+                            'open' => false,
+                        ],
+                        'monday' => [
+                            'dayKey' => 1,
+                            'open' => true,
+                            'openHour' => '10',
+                            'openMinutes' => '00',
+                            'closeHour' => '18',
+                            'closeMinute' => '00',
+                            'durationInSec' => 28800, // 8 hours
+                        ],
+                        'tuesday' => [
+                            'dayKey' => 2,
+                            'open' => false,
+                        ],
+                        'wednesday' => [
+                            'dayKey' => 3,
+                            'open' => false,
+                        ],
+                        'thursday' => [
+                            'dayKey' => 4,
+                            'open' => false,
+                        ],
+                        'friday' => [
+                            'dayKey' => 5,
+                            'open' => true,
+                            'openHour' => '12',
+                            'openMinutes' => '00',
+                            'closeHour' => '16',
+                            'closeMinute' => '00',
+                            'durationInSec' => 14400, // 4 hours
+                        ],
+                        'saturday' => [
+                            'dayKey' => 6,
+                            'open' => false,
+                        ],
+                    ],
+                ],
+            ],
+        ];
+    }
+
+
+    /**
+     * Validates available time based on input
+     *
+     * @dataProvider getAvailableTimeInShiftProvider
+     * @param array $shiftForWeek
+     * @param SugarDateTime $nowTime
+     * @param SugarDateTime $checkTime
+     * @param int $expected
+     */
+    public function testGetAvailableTimeInShift(array $shiftForWeek, \SugarDateTime $nowTime, \SugarDateTime $checkTime, int $expected)
+    {
+        $userAssignmentHandlerMock = new PMSEUserAssignmentHandlerMock();
+
+        $shiftBean = $this->createShiftBean($shiftForWeek);
+
+        $actual = $userAssignmentHandlerMock->getAvailableTimeInShift($shiftBean, $nowTime, $checkTime);
+
+        $this->assertSame($expected, $actual);
+    }
+
+    /**
+     * Provider for ::testGetAvailableTimeInShift
+     * @return array
+     */
+    public function getAvailableTimeInShiftProvider()
+    {
+        return [
+            [
+                // deadline is in the past, return 0
+                'shiftForWeek' => [],
+                'nowTime' => new \SugarDateTime('2020-07-14 12:00:00', new DateTimeZone('America/Los_Angeles')),
+                'checkTime' => new \SugarDateTime('2020-07-10 12:00:00', new DateTimeZone('America/Los_Angeles')),
+                'expected' => 0,
+            ],
+            [
+                // deadline set to today, in-between a shift
+                'shiftForWeek' => [
+                    'dateStart' => '2020-07-14',
+                    'dateEnd' => '2020-07-24',
+                    'timezone' => 'America/Los_Angeles',
+                    'weekdays' => [
+                        'sunday' => [
+                            'dayKey' => 0,
+                            'open' => false,
+                        ],
+                        'monday' => [
+                            'dayKey' => 1,
+                            'open' => false,
+                        ],
+                        'tuesday' => [
+                            'dayKey' => 2,
+                            'open' => true,
+                            'openHour' => '10',
+                            'openMinutes' => '00',
+                            'closeHour' => '18',
+                            'closeMinute' => '00',
+                            'durationInSec' => 28800, // 8 hours
+                        ],
+                        'wednesday' => [
+                            'dayKey' => 3,
+                            'open' => false,
+                        ],
+                        'thursday' => [
+                            'dayKey' => 4,
+                            'open' => false,
+                        ],
+                        'friday' => [
+                            'dayKey' => 5,
+                            'open' => false,
+                        ],
+                        'saturday' => [
+                            'dayKey' => 6,
+                            'open' => false,
+                        ],
+                    ],
+                ],
+                'nowTime' => new \SugarDateTime('2020-07-14 12:00:00', new DateTimeZone('America/Los_Angeles')),
+                'checkTime' => new \SugarDateTime('2020-07-14 15:00:00', new DateTimeZone('America/Los_Angeles')),
+                'expected' => 10800, // 3 hours
+            ],
+            [
+                // deadline set to 4 weeks in order to trigger full week calculations
+                'shiftForWeek' => [
+                    'dateStart' => '2020-07-14',
+                    'dateEnd' => '2020-09-01',
+                    'timezone' => 'America/Los_Angeles',
+                    'weekdays' => [
+                        'sunday' => [
+                            'dayKey' => 0,
+                            'open' => false,
+                        ],
+                        'monday' => [
+                            'dayKey' => 1,
+                            'open' => false,
+                        ],
+                        'tuesday' => [
+                            'dayKey' => 2,
+                            'open' => true,
+                            'openHour' => '10',
+                            'openMinutes' => '00',
+                            'closeHour' => '18',
+                            'closeMinute' => '00',
+                            'durationInSec' => 28800, // 8 hours
+                        ],
+                        'wednesday' => [
+                            'dayKey' => 3,
+                            'open' => false,
+                        ],
+                        'thursday' => [
+                            'dayKey' => 4,
+                            'open' => false,
+                        ],
+                        'friday' => [
+                            'dayKey' => 5,
+                            'open' => false,
+                        ],
+                        'saturday' => [
+                            'dayKey' => 6,
+                            'open' => false,
+                        ],
+                    ],
+                ],
+                'nowTime' => new \SugarDateTime('2020-07-14 12:00:00', new DateTimeZone('America/Los_Angeles')),
+                'checkTime' => new \SugarDateTime('2020-08-11 12:00:00', new DateTimeZone('America/Los_Angeles')),
+                'expected' => 115200, // 32 hours, 6 hours today + (3 weeks * 8 hours a week) + 2 hours on final day
             ],
         ];
     }
@@ -315,8 +619,18 @@ class PMSEUserAssignmentHandlerMock extends PMSEUserAssignmentHandler
         return parent::userHasShiftExceptions($user, $checkTime);
     }
 
-    public function userAvailableInShifts($user, $checkTime)
+    public function userAvailableInShifts($user, $checkTime, $shiftTimeReqInSec, $flowData)
     {
-        return parent::userAvailableInShifts($user, $checkTime);
+        return parent::userAvailableInShifts($user, $checkTime, $shiftTimeReqInSec, $flowData);
+    }
+
+    public function getShiftTimesForWeek($shiftBean)
+    {
+        return parent::getShiftTimesForWeek($shiftBean);
+    }
+
+    public function getAvailableTimeInShift($shiftBean, $nowTime, $checkTime)
+    {
+        return parent::getAvailableTimeInShift($shiftBean, $nowTime, $checkTime);
     }
 }
