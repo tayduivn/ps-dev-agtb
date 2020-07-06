@@ -70,4 +70,6 @@ $mod_strings = [
     'LBL_TYPE' => 'Type',
     'LBL_RLI_ADDONS' => 'Add-On Revenue Line Items',
     'LBL_RLI_ADDONS_SUBPANEL_TITLE' => 'Add-On Revenue Line Items',
+    'LBL_RENEWAL_OPPORTUNITY' => 'Renewal Opportunity',
+    'LBL_RENEWAL_OPPORTUNITY_ID' => 'Renewal Opportunity ID',
 ];

@@ -316,6 +316,10 @@ class InitProductDefinition
             "business_center_id":["SUGAR_SELL"],
             "business_center_name":["SUGAR_SELL"]
         },
+        "PurchasedLineItems": {
+            "renewal_opp_id": ["SUGAR_SELL"],
+            "renewal_opp_name": ["SUGAR_SELL"]
+        },
         "RevenueLineItems": {
             "purchasedlineitem":["SUGAR_SELL"],
             "purchasedlineitem_name":["SUGAR_SELL"],

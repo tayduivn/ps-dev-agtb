@@ -668,6 +668,15 @@ $dictionary['Opportunity'] = array(
             'relationship' => 'opportunities_products',
             'source' => 'non-db',
         ),
+        'purchasedlineitems' => [
+            'name' => 'purchasedlineitems',
+            'type' => 'link',
+            'vname' => 'LBL_PURCHASED_LINE_ITEMS',
+            'relationship' => 'purchasedlineitem_renewal_opp',
+            'module' => 'PurchasedLineItems',
+            'bean_name' => 'PurchasedLineItem',
+            'source' => 'non-db',
+        ],
 
         // Marketo Fields
         'mkto_sync' =>
