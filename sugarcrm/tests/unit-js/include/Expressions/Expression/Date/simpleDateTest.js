@@ -82,6 +82,15 @@ describe('Simple Date Expression Functions', function() {
         });
     });
 
+    describe('Year Expression Function', function() {
+        it('should return the full year of the specified date', function() {
+            var dateString = new SUGAR.expressions.StringLiteralExpression(['7/19/2018']);
+            var date = new SUGAR.expressions.DefineDateExpression([dateString], getSLContext(model));
+            var res = new SUGAR.expressions.YearExpression([date], getSLContext(model));
+            expect(parseFloat(res.evaluate())).toBe(2018);
+        });
+    });
+
     describe('Days Until Expression Function', function() {
         it('returns number of days from now until the specified date.', function() {
             var days = 7;

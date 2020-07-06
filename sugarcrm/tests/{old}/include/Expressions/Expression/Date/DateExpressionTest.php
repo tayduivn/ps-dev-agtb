@@ -71,6 +71,15 @@ class DateExpressionTest extends TestCase
         $this->assertEquals(2, $result);
     }
 
+    public function testYear()
+    {
+        $task = new Task();
+        $task->date_due = '2011-01-09 21:00:00';
+        $expr = 'year($date_due)';
+        $result = Parser::evaluate($expr, $task)->evaluate();
+        $this->assertEquals(2011, $result);
+    }
+
     public function testDefineDate()
     {
         $task = new Task();
