@@ -587,6 +587,8 @@ class PackageManagerTest extends TestCase
             'createPackageZipFile',
             'getModuleInstaller',
             'uninstallPackage',
+            'backupSilentValue',
+            'restoreSilentValue',
         ]);
         $packageManager->setBaseTempDir($baseTempDir = 'upload/upgrades/temp');
         $packageManager->setSilent($silent = true);
@@ -630,10 +632,16 @@ class PackageManagerTest extends TestCase
                 [PackageZipFile::POST_INSTALL_FILE, $silent],
             );
 
+        $previousUpgradeHistoryManifest = $this->createMock(PackageManifest::class);
+        $previousUpgradeHistoryManifest->expects($this->once())->method('shouldTablesBeRemoved')->willReturn(true);
+
         $previousUpgradeHistory = $this->createMock(UpgradeHistory::class);
         $previousUpgradeHistory->version = 'previous';
         $previousUpgradeHistory->expects($this->once())->method('getFileName')->willReturn('previousFileName');
         $previousUpgradeHistory->expects($this->once())->method('mark_deleted');
+        $previousUpgradeHistory->expects($this->once())
+            ->method('getPackageManifest')
+            ->willReturn($previousUpgradeHistoryManifest);
 
         $this->upgradeHistory->expects($this->once())
             ->method('getPreviousInstalledVersion')
@@ -649,9 +657,13 @@ class PackageManagerTest extends TestCase
             ->with('uninstall_before_upgrade', false)
             ->willReturn(true);
 
+        $packageManager->expects($this->once())->method('backupSilentValue')->willReturnSelf();
+
         $packageManager->expects($this->once())
             ->method('uninstallPackage')
-            ->with($previousUpgradeHistory, false);
+            ->with($previousUpgradeHistory, true);
+
+        $packageManager->expects($this->once())->method('restoreSilentValue');
 
         $this->zipFile->expects($this->once())
             ->method('getPackageDir')

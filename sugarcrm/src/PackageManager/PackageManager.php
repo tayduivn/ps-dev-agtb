@@ -74,6 +74,12 @@ class PackageManager
     private $silent = true;
 
     /**
+     * $this->silent backup variable
+     * @var bool
+     */
+    private $silentBackup = true;
+
+    /**
      * PackageManager constructor.
      */
     public function __construct()
@@ -203,6 +209,24 @@ class PackageManager
     public function setSilent(bool $silent): PackageManager
     {
         $this->silent = $silent;
+        return $this;
+    }
+
+    /**
+     * @return PackageManager
+     */
+    public function backupSilentValue(): PackageManager
+    {
+        $this->silentBackup = $this->silent;
+        return $this;
+    }
+
+    /**
+     * @return PackageManager
+     */
+    public function restoreSilentValue(): PackageManager
+    {
+        $this->silent = $this->silentBackup;
         return $this;
     }
 
@@ -514,7 +538,12 @@ class PackageManager
         $moduleInstaller = $this->getModuleInstaller();
         $moduleInstaller->setPatch($history->getPackagePatch());
         if ($previousInstalled && $manifest->getManifestValue('uninstall_before_upgrade', false)) {
-            $this->uninstallPackage($previousInstalled, false);
+            $this->backupSilentValue()->setSilent(true);
+            $this->uninstallPackage(
+                $previousInstalled,
+                $previousInstalled->getPackageManifest()->shouldTablesBeRemoved()
+            );
+            $this->restoreSilentValue();
             $moduleInstaller->install($zipFile->getPackageDir(), true, $previousInstalled->version);
         } else {
             $moduleInstaller->install($zipFile->getPackageDir());
