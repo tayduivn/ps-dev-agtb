@@ -60,5 +60,14 @@ $viewdefs['RevenueLineItems']['base']['layout']['subpanels'] = array(
                 'link' => 'notes',
             ),
         ),
+        // BEGIN SUGARCRM flav=ent ONLY
+        [
+            'layout' => 'subpanel',
+            'label' => 'LBL_PARENT_RLIS_SUBPANEL_TITLE',
+            'context' => [
+                'link' => 'parent_rlis_link',
+            ],
+        ],
+        // END SUGARCRM flav=ent ONLY
     ),
 );
