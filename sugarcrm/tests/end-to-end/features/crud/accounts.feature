@@ -374,7 +374,7 @@ Feature: Accounts module verification
       | name      | http:// | website1       | industry | account_type | service_level | phone_office | phone_alternate | email       | phone_fax    | twitter | description | sic_code | ticker_symbol | annual_revenue | employees | ownership | rating | billing_address_city | billing_address_street | billing_address_postalcode | billing_address_state | billing_address_country |
       | Account_A | http:// | www.google.com | Apparel  | Analyst      | Tier 1        | 555-555-0000 | 555-555-0001    | bob@bob.com | 555-555-0002 | twitter | description | siccode  | tic           | 5000000        | 2         | Gates     | 0      | City 1               | Street address here    | 220051                     | WA                    | USA                     |
 
-  @find-duplicates
+  @find-duplicates @ci-excluded
   Scenario: Accounts > Record View > Find Duplicates
     Given Accounts records exist:
       | *   | name      | phone_office | billing_address_city | billing_address_street | billing_address_country |
