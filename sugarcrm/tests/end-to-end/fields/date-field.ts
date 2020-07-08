@@ -37,6 +37,7 @@ export default class DateField extends BaseField {
             await this.driver.click(this.$('field.cascadeCheckBox'));
         }
 
+        val = seedbed.support.fixDateInput(val, this.convertFormat(this.getDateTimePref()));
         await this.driver.setValue(this.$('field.selector'), val);
         await this.driver.execSync('blurActiveElement');
     }
