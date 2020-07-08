@@ -539,8 +539,7 @@ function get_sugar_config_defaults()
             'connector' => 'Pendo',
             'id' => '1dd345e9-b638-4bd2-7bfb-147a937d4728',
         ),
-        // portal
-        'portal' => [
+        'generic_search' => [
             'modules' => [
                 'KBContents',
             ],

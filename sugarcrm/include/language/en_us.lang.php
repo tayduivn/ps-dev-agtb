@@ -3934,6 +3934,12 @@ Sincerely, SugarCRM',
     'LBL_DASHLET_CATEGORIES_NAME' => 'Knowledge Base Categories & Published Articles',
     'LBL_DASHLET_CATEGORIES_DESCRIPTION' => 'Displays a tree view of knowledge base categories & published articles',
 
+    // BEGIN SUGARCRM flav=ent ONLY
+    /* Knowledge base category tree with search dashlet */
+    'LBL_DASHLET_KB_SEARCH_NAME' => 'Knowledge Base Search',
+    'LBL_DASHLET_KB_SEARCH_DESCRIPTION' => 'Displays a searchable tree view of published knowledge base articles and categories.',
+    // END SUGARCRM flav=ent ONLY
+
     /* Knowledge base localizations dashlet */
     'LBL_DASHLET_LOCALIZATIONS_NAME' => 'Published Articles in Other Languages',
     'LBL_DASHLET_LOCALIZATIONS_DESCRIPTION' => 'Displays a list of published, localized knowledge base articles',

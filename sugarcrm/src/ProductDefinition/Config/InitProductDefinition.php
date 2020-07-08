@@ -96,6 +96,7 @@ class InitProductDefinition
         "product-catalog":["CURRENT","SUGAR_SELL"],
         "sales-pipeline":["CURRENT","SUGAR_SELL"],
         "twitter":["CURRENT"],
+        "dashlet-searchable-kb-list":["SUGAR_SERVE","SUGAR_SELL"],        
         "active-subscriptions":["SUGAR_SERVE","SUGAR_SELL"],
         "request-closed-cases-dashlet":["SUGAR_SERVE"]
     },

@@ -10,15 +10,15 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-use Sugarcrm\Sugarcrm\Portal\Factory as PortalFactory;
+use Sugarcrm\Sugarcrm\Search\Factory as SearchFactory;
 
 /**
  *
- * PortalSearch API
+ * Generic Search API
  *
  *
  */
-class SearchPortalApi extends SugarApi
+class GenericSearchApi extends SugarApi
 {
     /**
      * Register endpoints
@@ -27,15 +27,15 @@ class SearchPortalApi extends SugarApi
     public function registerApiRest()
     {
         return [
-            // /portalsearch
-            'portalSearch' => [
+            // /genericsearch
+            'genericSearch' => [
                 'reqType' => ['GET', 'POST'],
-                'path' => ['portalsearch'],
+                'path' => ['genericsearch'],
                 'pathVars' => [''],
-                'method' => 'portalSearch',
-                'shortHelp' => 'Portal search',
-                'longHelp' => 'include/api/help/portal_search_get_help.html',
-                'minVersion' => '11.6',
+                'method' => 'genericSearch',
+                'shortHelp' => 'Generic search',
+                'longHelp' => 'include/api/help/generic_search_get_help.html',
+                //'minVersion' => '11.10',
                 'exceptions' => [
                     'SugarApiExceptionNotAuthorized',
                     'SugarApiExceptionSearchUnavailable',
@@ -49,28 +49,26 @@ class SearchPortalApi extends SugarApi
     }
 
     /**
-     * portalSearch endpoint
+     * genericSearch endpoint
      *
      * @param ServiceBase $api
      * @param array $args
      * @throws SugarApiExceptionMissingParameter
      * @throws SugarApiExceptionRequestMethodFailure
-     * @deprecated Since 10.2.0.
      * @return array
      */
-    public function portalSearch(ServiceBase $api, array $args) : array
+    public function genericSearch(ServiceBase $api, array $args) : array
     {
-        $msg = 'This endpoint is deprecated as of 10.2.0 and will be removed in a future release.';
-        $msg .= ' Use genericsearch instead.';
-        LoggerManager::getLogger()->deprecated($msg);
-
         $this->requireArgs($args, ['q']);
 
         $sugarConfig = \SugarConfig::getInstance();
-        $settings = $sugarConfig->get('portal');
+        $settings = $sugarConfig->get('generic_search');
+        if (empty($settings)) {
+            $settings = $sugarConfig->get('portal'); // backward compatibility
+        }
         // No modules configured for search
         if (empty($settings['modules'])) {
-            throw new SugarApiExceptionRequestMethodFailure('Portal search modules not configured');
+            throw new SugarApiExceptionRequestMethodFailure('Generic search modules not configured');
         }
         if (!empty($args['module_list'])) {
             $modulesToSearch = explode(',', $args['module_list']);
@@ -95,13 +93,13 @@ class SearchPortalApi extends SugarApi
         }
 
         // get the service provider
-        $provider = PortalFactory::getInstance('Search\\' . $providerType);
-        if ($provider && $provider instanceof Sugarcrm\Sugarcrm\Portal\Search\Search) {
+        $provider = SearchFactory::getInstance('Providers\\' . $providerType);
+        if ($provider && $provider instanceof Sugarcrm\Sugarcrm\Search\Providers\Search) {
             // call the provider to get data
             return $provider->getData($api, $args);
         } else {
             throw new SugarApiExceptionRequestMethodFailure(
-                sprintf('Portal search provider, %s not available', $providerType)
+                sprintf('Generic search provider, %s not available', $providerType)
             );
         }
     }

@@ -9,7 +9,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-describe('Portal.Views.ContentsearchResults', function() {
+describe('Base.Views.ContentsearchResults', function() {
     var app;
     var view;
     var renderStub;
@@ -17,9 +17,9 @@ describe('Portal.Views.ContentsearchResults', function() {
     beforeEach(function() {
         app = SugarTest.app;
         var context = new app.Context();
-        SugarTest.loadComponent('portal', 'view', 'contentsearch-results');
+        SugarTest.loadComponent('base', 'view', 'contentsearch-results');
         view = SugarTest.createView(
-            'portal',
+            'base',
             null,
             'contentsearch-results',
             null,
@@ -27,7 +27,7 @@ describe('Portal.Views.ContentsearchResults', function() {
             true,
             null,
             true,
-            'portal'
+            'base'
         );
         renderStub = sinon.collection.stub(view, 'render');
     });

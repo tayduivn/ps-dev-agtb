@@ -9,18 +9,15 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
- * @class View.Views.Portal.ContentsearchResultsView
- * @alias SUGAR.App.view.views.PortalContentsearchResultsView
+ * @class View.Views.Base.ContentsearchResultsView
+ * @alias SUGAR.App.view.views.BaseContentsearchResultsView
  * @extends View.View
- * @deprecated since 10.2, will be removed in the future.
  */
 ({
     /**
      * @inheritdoc
      */
     initialize: function(options) {
-        app.logger.warn('View.Views.Portal.ContentsearchDropdownLayout is deprecated since 10.2 and will be' +
-            ' removed in the future');
         this._super('initialize', [options]);
         this.dataFetched = false;
         this.records = [];

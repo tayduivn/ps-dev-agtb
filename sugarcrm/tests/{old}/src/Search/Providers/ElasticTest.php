@@ -10,14 +10,14 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\SugarcrmTests\Portal\Search;
+namespace Sugarcrm\SugarcrmTests\Search\Providers;
 
-use Sugarcrm\Sugarcrm\Portal\Search\Elastic;
+use Sugarcrm\Sugarcrm\Search\Providers\Elastic;
 use PHPUnit\Framework\TestCase;
 use SugarTestHelper;
 
 /**
- * @coversDefaultClass Sugarcrm\Sugarcrm\Portal\Search\Elastic
+ * @coversDefaultClass Sugarcrm\Sugarcrm\Search\Providers\Elastic
  */
 class ElasticTest extends TestCase
 {

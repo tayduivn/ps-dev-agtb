@@ -9,27 +9,38 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-describe('Portal.Views.ContentsearchDashlet', function() {
+describe('modules.KBContents.clients.base.view.KBSearchDashlet', function() {
     var app;
     var view;
     var layout;
+    var sandbox;
+    var moduleName = 'KBContents';
 
     beforeEach(function() {
         app = SugarTest.app;
         var context = new app.Context();
-        SugarTest.loadComponent('portal', 'view', 'contentsearchdashlet');
+        sandbox = sinon.sandbox.create();
+        sandbox.stub(app.metadata, 'getModule', function(module, type) {
+            if (type == 'config') {
+                return {
+                    category_root: null
+                };
+            }
+            return {};
+        });
+        SugarTest.loadComponent('base', 'view', 'dashlet-searchable-kb-list', moduleName);
         SugarTest.loadComponent('base', 'layout', 'default');
         layout = SugarTest.createLayout('base', null, 'default', {});
         view = SugarTest.createView(
-            'portal',
-            null,
-            'contentsearchdashlet',
+            'base',
+            moduleName,
+            'dashlet-searchable-kb-list',
             {name: 'test'},
             context,
             true,
             layout,
             true,
-            'portal'
+            'base'
         );
         sinon.collection.stub(layout, 'off');
         sinon.collection.stub(view, '$', function() {
@@ -49,41 +60,7 @@ describe('Portal.Views.ContentsearchDashlet', function() {
         layout.dispose();
         layout = null;
         sinon.collection.restore();
-    });
-
-    describe('searchCases', function() {
-        it('should create dropdown and search', function() {
-            sinon.collection.stub(app.view, 'createLayout', function() {
-                return {
-                    initComponents: $.noop,
-                    render: $.noop,
-                    hide: $.noop,
-                    show: $.noop
-                };
-            });
-            view.layout = {
-                _components: {
-                    push: $.noop
-                }
-            };
-            var searchStub = sinon.collection.stub(view, '_search');
-            view.searchCases();
-            expect(view.searchDropdown).toBeDefined();
-            expect(searchStub).toHaveBeenCalled();
-        });
-
-        it('should search without creating new dropdown', function() {
-            var dropdown = {
-                hide: $.noop,
-                show: $.noop
-            };
-            view.searchDropdown = dropdown;
-            var dropdownStub = sinon.collection.stub(app.view, 'createLayout');
-            var searchStub = sinon.collection.stub(view, '_search');
-            view.searchCases();
-            expect(dropdownStub).not.toHaveBeenCalled();
-            expect(searchStub).toHaveBeenCalled();
-        });
+        sandbox.restore();
     });
 
     describe('_search', function() {
@@ -198,3 +175,4 @@ describe('Portal.Views.ContentsearchDashlet', function() {
         });
     });
 });
+

@@ -9,15 +9,15 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-describe('Portal.Layouts.ContentsearchDropdown', function() {
+describe('Base.Layouts.ContentsearchDropdown', function() {
     var app;
     var layout;
 
     beforeEach(function() {
         app = SugarTest.app;
-        SugarTest.loadComponent('portal', 'layout', 'contentsearch-dropdown');
+        SugarTest.loadComponent('base', 'layout', 'contentsearch-dropdown');
         layout = SugarTest.createLayout(
-            'portal',
+            'base',
             null,
             'contentsearch-dropdown',
             null,
@@ -25,7 +25,7 @@ describe('Portal.Layouts.ContentsearchDropdown', function() {
             true,
             null,
             true,
-            'portal'
+            'base'
         );
         sinon.collection.stub(layout, '$', function() {
             return {

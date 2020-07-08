@@ -16,7 +16,7 @@ $dictionary['KBContent'] = array(
     'activity_enabled' => true,
     'unified_search' => true,
     'full_text_search' => true,
-    'portal_search' => [
+    'generic_search' => [
         'Elastic' => [
             'mapping' => [
                 'name' => 'name', 'description' => 'kbdocument_body',

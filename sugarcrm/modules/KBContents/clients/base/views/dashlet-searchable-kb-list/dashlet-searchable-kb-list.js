@@ -8,18 +8,16 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-
 /**
-* @class View.Views.Portal.ContentsearchdashletView
-* @alias SUGAR.App.view.views.PortalContentsearchdashletView
-* @extends View.View
-*/
+ * @class View.Views.Base.KBContents.DashletSearchableKbListView
+ * @alias SUGAR.App.view.views.BaseKBContentsDashletSearchableKbListView
+ * @extends View.DashletNestedsetListView
+ */
 ({
-    plugins: ['Dashlet'],
+    extendsFrom: 'KBContentsDashletNestedsetListView',
 
     events: {
-        'click [data-action="create-case"]': 'initCaseCreation',
-        'keyup [data-action="search"]': 'searchCases'
+        'keyup [data-action="search"]': 'searchKBs'
     },
 
     /**
@@ -32,30 +30,20 @@
     },
 
     /**
-     * Maximum number of characters of search results to display.
-     * @property {number}
-     */
-    maxChars: 500,
-
-    /**
      * @inheritdoc
      */
     initialize: function(options) {
         this._super('initialize', [options]);
-        this.module = 'Cases';
-        this.caseDeflection = this.isCaseDeflectionEnabled();
-        this.canCreateCase = app.acl.hasAccess('create', this.module);
-        this.greeting = app.lang.get('LBL_CONTENT_SEARCH_DASHLET_GREETING', this.module, {
-            username: app.user.get('full_name')
-        });
         this.searchDropdown = null;
         this.context.on('page:clicked', this._search, this);
     },
 
     /**
-     * Gets search and display options from dashlet settings if exist.
+     * Initialize dashlet properties.
      */
     initDashlet: function() {
+        this._super('initDashlet');
+
         this.searchOptions = {
             module_list: this.settings.get('module_list') || this.searchOptions.module_list,
             max_num: this.settings.get('max_num') || this.searchOptions.max_num
@@ -64,35 +52,9 @@
     },
 
     /**
-     * Checks if case deflection is enabled. In case it is enabled the dashlet
-     * will render a search bar for the users, if not it will render a message
-     * with the case creation button.
-     *
-     * @return {boolean} True if case deflection is enabled.
-     */
-    isCaseDeflectionEnabled: function() {
-        return _.isUndefined(app.config.caseDeflection) ||
-            app.config.caseDeflection === 'enabled';
-    },
-
-    /**
-     * Will display the case creation drawer from where
-     * the users are able to create a new case.
-     */
-    initCaseCreation: function() {
-        app.drawer.open({
-            layout: 'create',
-            context: {
-                create: true,
-                module: 'Cases'
-            }
-        });
-    },
-
-    /**
      * Starts a new search and show the search results dropdown.
      */
-    searchCases: _.debounce(function() {
+    searchKBs: _.debounce(function() {
         var $input = this.$('input[data-action=search]');
         var term = $input.val().trim();
 
@@ -108,8 +70,7 @@
         if (_.isNull(this.searchDropdown)) {
             this.searchDropdown = app.view.createLayout({
                 context: this.context,
-                name: 'contentsearch-dropdown',
-                module: 'Cases'
+                name: 'contentsearch-dropdown'
             });
             this.searchDropdown.initComponents();
             this.layout._components.push(this.searchDropdown);
@@ -196,11 +157,9 @@
     },
 
     /**
-     * @inheritdoc
+     * The view doesn't need standard handlers for data change because it use own events and handlers.
+     *
+     * @override
      */
-    _dispose: function() {
-        if (this.context) {
-            this.context.off('page:clicked', null, this);
-        }
-    }
+    bindDataChange: function() {}
 })
