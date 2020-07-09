@@ -55,6 +55,13 @@ $viewdefs['PurchasedLineItems']['base']['layout']['subpanels'] = [
         ],
         [
             'layout' => 'subpanel',
+            'label' => 'LBL_QLI_ADDONS_SUBPANEL_TITLE',
+            'context' => [
+                'link' => 'addon_qlis',
+            ],
+        ],
+        [
+            'layout' => 'subpanel',
             'label' => 'LBL_RLI_ADDONS_SUBPANEL_TITLE',
             'context' => [
                 'link' => 'addon_rlis',

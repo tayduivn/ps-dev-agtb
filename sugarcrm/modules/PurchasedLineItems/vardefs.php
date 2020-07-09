@@ -634,6 +634,16 @@ $dictionary['PurchasedLineItem'] = [
             'source' => 'non-db',
             'vname' => 'LBL_NOTES',
         ],
+        'addon_qlis' => [
+            'name' => 'addon_qlis',
+            'type' => 'link',
+            'relationship' => 'product_pli_addons',
+            'vname' => 'LBL_QLI_ADDONS',
+            'module' => 'Products',
+            'bean_name' => 'Product',
+            'source' => 'non-db',
+            'workflow' => false,
+        ],
         'addon_rlis' => [
             'name' => 'addon_rlis',
             'type' => 'link',

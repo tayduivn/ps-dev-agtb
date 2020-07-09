@@ -145,6 +145,8 @@ $mod_strings = array(
     'LBL_SALES_STAGE' => 'Sales Stage',
     'LBL_SALES_STATUS' => 'Revenue Line Status',
     'LBL_PIPELINE_TOTAL_IS' => 'Pipeline Total is ',
+    'LBL_ADD_ON_TO' => 'Add On To',
+    'LBL_ADD_ON_TO_ID' => 'Add On To ID',
 
     'LBL_CONVERT_TO_QUOTE_ERROR' => 'Error:',
     'LBL_CONVERT_TO_QUOTE_ERROR_MESSAGE' => 'There was an error converting this Quoted Line Item to a Quote',

@@ -738,6 +738,18 @@ $dictionary['Product'] = array(
             'source' => 'non-db',
             'duplicate_merge' => 'disabled',
         ), //bug 20184, add contact_link field
+        // BEGIN SUGARCRM flav=ent ONLY
+        'pli_addons_link' => [
+            'name' => 'pli_addons_link',
+            'type' => 'link',
+            'relationship' => 'product_pli_addons',
+            'vname' => 'LBL_ADD_ON_TO',
+            'link_type' => 'one',
+            'module' => 'PurchasedLineItems',
+            'bean_name' => 'PurchasedLineItem',
+            'source' => 'non-db',
+        ],
+        // END SUGARCRM flav=ent ONLY
         'account_name' => array(
             'name' => 'account_name',
             'rname' => 'name',
@@ -817,6 +829,35 @@ $dictionary['Product'] = array(
             'bean_name' => 'Manufacturer',
             'source' => 'non-db',
         ),
+        // BEGIN SUGARCRM flav=ent ONLY
+        'add_on_to_id' => [
+            'name' => 'add_on_to_id',
+            'comment' => 'Purchased line item that this is an add-on to',
+            'vname' => 'LBL_ADD_ON_TO_ID',
+            'rname' => 'id',
+            'type' => 'id',
+            'dbType' => 'id',
+            'table' => 'purchased_line_items',
+            'isnull' => 'true',
+            'module' => 'PurchasedLineItems',
+            'reportable' => false,
+            'massupdate' => false,
+            'duplicate_merge' => 'disabled',
+        ],
+        'add_on_to_name' => [
+            'name' => 'add_on_to_name',
+            'rname' => 'name',
+            'id_name' => 'add_on_to_id',
+            'vname' => 'LBL_ADD_ON_TO',
+            'type' => 'relate',
+            'save' => true,
+            'link' => 'pli_addons_link',
+            'isnull' => 'true',
+            'table' => 'purchased_line_items',
+            'module' => 'PurchasedLineItems',
+            'source' => 'non-db',
+        ],
+        // END SUGARCRM flav=ent ONLY
     ),
     'indices' => array(
         array(
@@ -964,6 +1005,17 @@ $dictionary['Product'] = array(
             'rhs_key' => 'manufacturer_id',
             'relationship_type' => 'one-to-many'
         ),
+        // BEGIN SUGARCRM flav=ent ONLY
+        'product_pli_addons' => [
+            'lhs_module' => 'PurchasedLineItems',
+            'lhs_table' => 'purchased_line_items',
+            'lhs_key' => 'id',
+            'rhs_module' => 'Products',
+            'rhs_table' => 'products',
+            'rhs_key' => 'add_on_to_id',
+            'relationship_type' => 'one-to-many',
+        ],
+        // END SUGARCRM flav=ent ONLY
     ),
     'duplicate_check' => array(
         'enabled' => true,

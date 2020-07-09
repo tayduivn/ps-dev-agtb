@@ -277,6 +277,7 @@ $viewdefs['Products']['base']['view']['record'] = array(
                     'label' => 'LBL_RENEWABLE',
                     'type' => 'bool',
                 ),
+                'add_on_to_name',
                 // END SUGARCRM flav=ent ONLY
                 'contact_name',
                 array(

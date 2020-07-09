@@ -327,6 +327,9 @@ class InitProductDefinition
             "generate_purchase":["SUGAR_SELL"],
             "add_on_to_name": ["SUGAR_SELL"]
         },
+        "Products": {
+            "add_on_to_name": ["SUGAR_SELL"]
+        },
         "Users": {
             "business_center_id":["SUGAR_SERVE","SUGAR_SELL"],
             "business_center_name":["SUGAR_SERVE","SUGAR_SELL"]

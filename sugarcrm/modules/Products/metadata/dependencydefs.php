@@ -86,6 +86,12 @@ $dependencies['Products']['service_fields_read_only'] = [
                 'target' => 'service_duration_unit',
                 'value' => 'or(equal($service,0),not(equal($product_template_id,"")))',
             ],
+        ], [
+            'name' => 'ReadOnly',
+            'params' => [
+                'target' => 'add_on_to_name',
+                'value' => 'equal($service, 0)',
+            ],
         ],
     ],
 ];
@@ -175,6 +181,24 @@ $dependencies['Products']['service_fields_values'] = [
                     equal($service, "1"),
                     $renewable,
                     0)',
+            ],
+        ], [
+            'name' => 'SetValue',
+            'params' => [
+                'target' => 'add_on_to_name',
+                'value' => 'ifElse(
+                    equal($service, "1"),
+                    $add_on_to_name,
+                    "")',
+            ],
+        ], [
+            'name' => 'SetValue',
+            'params' => [
+                'target' => 'add_on_to_id',
+                'value' => 'ifElse(
+                    equal($service, "1"),
+                    $add_on_to_id,
+                    "")',
             ],
         ],
     ],
