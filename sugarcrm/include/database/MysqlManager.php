@@ -239,7 +239,8 @@ abstract class MysqlManager extends DBManager
 		$result = $this->query("DESCRIBE $tablename");
 
 		$columns = array();
-		while (($row=$this->fetchByAssoc($result)) !=null) {
+
+        while (($row=$this->fetchByAssoc($result, false)) !=null) {
 			$name = strtolower($row['Field']);
 			$columns[$name]['name']=$name;
 			$matches = array();
