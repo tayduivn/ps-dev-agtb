@@ -668,6 +668,7 @@ $dictionary['Opportunity'] = array(
             'relationship' => 'opportunities_products',
             'source' => 'non-db',
         ),
+        // BEGIN SUGARCRM flav=ent ONLY
         'purchasedlineitems' => [
             'name' => 'purchasedlineitems',
             'type' => 'link',
@@ -677,6 +678,7 @@ $dictionary['Opportunity'] = array(
             'bean_name' => 'PurchasedLineItem',
             'source' => 'non-db',
         ],
+        // END SUGARCRM flav=ent ONLY
 
         // Marketo Fields
         'mkto_sync' =>

@@ -885,6 +885,7 @@ $dictionary['RevenueLineItem'] = array(
             'bean_name' => 'ProductType',
             'source' => 'non-db',
         ),
+        // BEGIN SUGARCRM flav=ent ONLY
         'pli_addons_link' => [
             'name' => 'pli_addons_link',
             'type' => 'link',
@@ -895,6 +896,7 @@ $dictionary['RevenueLineItem'] = array(
             'bean_name' => 'PurchasedLineItem',
             'source' => 'non-db',
         ],
+        // END SUGARCRM flav=ent ONLY
         'products' => array(
             'name' => 'products',
             'type' => 'link',
@@ -961,6 +963,7 @@ $dictionary['RevenueLineItem'] = array(
             'bean_name' => 'Manufacturer',
             'source' => 'non-db',
         ),
+        // BEGIN SUGARCRM flav=ent ONLY
         'add_on_to_id' => [
             'name' => 'add_on_to_id',
             'comment' => 'Purchased line item that this is an add-on to',
@@ -988,6 +991,7 @@ $dictionary['RevenueLineItem'] = array(
             'module' => 'PurchasedLineItems',
             'source' => 'non-db',
         ],
+        // END SUGARCRM flav=ent ONLY
     ),
     'indices' => array(
         array(
@@ -1148,6 +1152,7 @@ $dictionary['RevenueLineItem'] = array(
             'rhs_key' => 'manufacturer_id',
             'relationship_type' => 'one-to-many',
         ),
+        // BEGIN SUGARCRM flav=ent ONLY
         'revenuelineitem_pli_addons' => [
             'lhs_module' => 'PurchasedLineItems',
             'lhs_table' => 'purchased_line_items',
@@ -1157,6 +1162,7 @@ $dictionary['RevenueLineItem'] = array(
             'rhs_key' => 'add_on_to_id',
             'relationship_type' => 'one-to-many',
         ],
+        // END SUGARCRM flav=ent ONLY
     ),
     'duplicate_check' => array(
         'enabled' => true,
