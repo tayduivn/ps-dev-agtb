@@ -107,4 +107,5 @@ export const FIELD_TYPES__MAP = {
     duration: DurationField,
     timeselect: TimeselectField,
     'fieldset-cascade': BoolField,
+    'add-on-to': RelateField,
 };

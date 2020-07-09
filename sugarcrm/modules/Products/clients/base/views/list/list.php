@@ -90,6 +90,11 @@ $viewdefs['Products']['base']['view']['list'] = array(
                 array(
                     'name' => 'service',
                 ),
+                [
+                    'name' => 'add_on_to_name',
+                    'type' => 'add_on_to',
+                    'default' => false,
+                ],
                 // END SUGARCRM flav=ent ONLY
             ),
         ),

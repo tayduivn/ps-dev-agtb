@@ -78,13 +78,13 @@ $dependencies['Products']['service_fields_read_only'] = [
             'name' => 'ReadOnly',
             'params' => [
                 'target' => 'service_duration_value',
-                'value' => 'or(equal($service,0),and(not(equal($product_template_id,"")),equal($lock_duration,1)))',
+                'value' => 'or(equal($service,0),and(not(equal($product_template_id,"")),equal($lock_duration,1)), not(equal($add_on_to_id,"")))',
             ],
         ], [
             'name' => 'ReadOnly',
             'params' => [
                 'target' => 'service_duration_unit',
-                'value' => 'or(equal($service,0),and(not(equal($product_template_id,"")),equal($lock_duration,1)))',
+                'value' => 'or(equal($service,0),and(not(equal($product_template_id,"")),equal($lock_duration,1)), not(equal($add_on_to_id,"")))',
             ],
         ], [
             'name' => 'ReadOnly',

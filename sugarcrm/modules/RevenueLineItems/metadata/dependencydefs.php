@@ -186,7 +186,7 @@ $dependencies['RevenueLineItems']['likely_case_copy_when_closed'] = array(
 $dependencies['RevenueLineItems']['service_fields_read_only'] = [
     'hooks' => ['edit', 'view'],
     'trigger' => 'true',
-    'triggerFields' => ['service', 'product_template_id', 'lock_duration'],
+    'triggerFields' => ['service', 'product_template_id', 'lock_duration', 'add_on_to_id'],
     'onload' => true,
     'actions' => [
         [
@@ -211,13 +211,13 @@ $dependencies['RevenueLineItems']['service_fields_read_only'] = [
             'name' => 'ReadOnly',
             'params' => [
                 'target' => 'service_duration_value',
-                'value' => 'or(equal($service,0),and(not(equal($product_template_id,"")),equal($lock_duration,1)))',
+                'value' => 'or(equal($service,0),and(not(equal($product_template_id,"")),equal($lock_duration,1)), not(equal($add_on_to_id,"")))',
             ],
         ], [
             'name' => 'ReadOnly',
             'params' => [
                 'target' => 'service_duration_unit',
-                'value' => 'or(equal($service,0),and(not(equal($product_template_id,"")),equal($lock_duration,1)))',
+                'value' => 'or(equal($service,0),and(not(equal($product_template_id,"")),equal($lock_duration,1)), not(equal($add_on_to_id,"")))',
             ],
         ], [
             'name' => 'ReadOnly',

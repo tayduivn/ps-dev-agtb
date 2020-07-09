@@ -224,6 +224,11 @@ $fields = array(
         'type' => 'service-enddate',
         'default' => false,
     ),
+    'add_on_to_name' => [
+        'name' => 'add_on_to_name',
+        'type' => 'add-on-to',
+        'default' => false,
+    ],
     array(
         'name' => 'service_duration',
         'type' => 'fieldset',

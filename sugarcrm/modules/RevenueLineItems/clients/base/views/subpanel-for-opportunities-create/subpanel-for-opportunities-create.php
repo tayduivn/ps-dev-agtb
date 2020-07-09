@@ -179,6 +179,11 @@ $viewdefs['RevenueLineItems']['base']['view']['subpanel-for-opportunities-create
                     'label' => 'LBL_RENEWABLE',
                     'type' => 'bool',
                 ),
+                'add_on_to_name' => [
+                    'name' => 'add_on_to_name',
+                    'type' => 'add-on-to',
+                    'default' => false,
+                ],
                 // END SUGARCRM flav=ent ONLY
             ),
         ),

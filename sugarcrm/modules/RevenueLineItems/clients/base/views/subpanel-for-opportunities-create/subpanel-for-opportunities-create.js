@@ -97,9 +97,9 @@
 
         var addOnToData = this.context.parent.get('addOnToData');
         if (addOnToData) {
-            attrs.add_on_to_id = addOnToData.add_on_to_id;
-            attrs.add_on_to_name = addOnToData.add_on_to_name;
-            attrs.service = addOnToData.service;
+            _.each(addOnToData, function(value, key) {
+                attrs[key] = value;
+            }, this);
         }
 
         if (!_.isEmpty(attrs)) {

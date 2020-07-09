@@ -203,7 +203,12 @@ $fields = array(
         'sortable' => false,
         'enabled' => true,
         'default' => true
-    )
+    ),
+    [
+        'name' => 'add_on_to_name',
+        'type' => 'add-on-to',
+        'default' => false,
+    ],
 );
 //END SUGARCRM flav=ent ONLY
 

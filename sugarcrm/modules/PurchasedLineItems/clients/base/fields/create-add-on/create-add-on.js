@@ -9,8 +9,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
- * @class View.Fields.Base.CreateAddOnField
- * @alias SUGAR.App.view.fields.BaseCreateAddOnField
+ * @class View.Fields.Base.PurchasedLineItems.CreateAddOnField
+ * @alias SUGAR.App.view.fields.BasePurchasedLineItemsCreateAddOnField
  * @extends View.Fields.Base.RowactionField
  */
 ({
@@ -49,8 +49,6 @@
      * @param {Event} evt
      */
     existingOpportunityClicked: function(evt) {
-        var opportunityModel = app.data.createBean('Opportunities');
-        var revenueLineItemModel = app.data.createBean('RevenueLineItems');
         var parentModel = this.parent.model;
         var filterOptions = new app.utils.FilterOptions()
             .config({
@@ -77,28 +75,34 @@
      * @param {Event} evt
      */
     newOpportunityClicked: function(evt) {
+        var pliModel = this.parent.model;
+
+        // Set the values for the new Opportunity
         var opportunityModel = app.data.createBean('Opportunities');
-        var parentModel = this.parent.model;
-        var addOnToData = {
-            add_on_to_id: parentModel.get('id'),
-            add_on_to_name: parentModel.get('name'),
-            service: '1'
-        };
         opportunityModel.set({
-            account_id: parentModel.get('account_id'),
-            account_name: parentModel.get('account_name'),
+            account_id: pliModel.get('account_id'),
+            account_name: pliModel.get('account_name'),
         });
 
-        app.drawer.open({
-            layout: 'create',
-            context: {
-                create: true,
-                module: 'Opportunities',
-                model: opportunityModel,
-                addOnToData: addOnToData
-            }
-        },  _.bind(this.refreshRLISubpanel, this));
+        // Set the basic values for the new RLI
+        var addOnToData = {
+            add_on_to_id: pliModel.get('id'),
+            add_on_to_name: pliModel.get('name'),
+            service: '1'
+        };
 
+        var self = this;
+        this._getAddOnRelatedFieldValues(pliModel, addOnToData, function(rliData) {
+            app.drawer.open({
+                layout: 'create',
+                context: {
+                    create: true,
+                    module: 'Opportunities',
+                    model: opportunityModel,
+                    addOnToData: rliData
+                }
+            },  _.bind(self.refreshRLISubpanel, self));
+        });
     },
 
     /**
@@ -110,25 +114,79 @@
             return;
         }
         var revenueLineItemModel = app.data.createBean('RevenueLineItems');
-        var parentModel = this.parent.model;
+        var pliModel = this.parent.model;
         // set up RLI to open when opportunity is selected
-        revenueLineItemModel.set({
-            add_on_to_id: parentModel.get('id'),
-            add_on_to_name: parentModel.get('name'),
+        var addOnToData = {
+            add_on_to_id: pliModel.get('id'),
+            add_on_to_name: pliModel.get('name'),
             service: '1',
             opportunity_name: model.name,
             opportunity_id: model.id
-        });
+        };
 
-        //open Revenue Line Items create view
-        app.drawer.open({
-            layout: 'create',
-            context: {
-                create: true,
-                module: 'RevenueLineItems',
-                model: revenueLineItemModel
-            }
-        }, _.bind(this.refreshRLISubpanel, this));
+        var self = this;
+        this._getAddOnRelatedFieldValues(pliModel, addOnToData, function(rliData) {
+            revenueLineItemModel.set(rliData);
+            app.drawer.open({
+                layout: 'create',
+                context: {
+                    create: true,
+                    module: 'RevenueLineItems',
+                    model: revenueLineItemModel
+                }
+            }, _.bind(self.refreshRLISubpanel, self));
+        });
+    },
+
+    /**
+     * Retrieves data from a PLI model and its Product Template if applicable.
+     * Used by "Add On To" fields to populate default values from multiple sources
+     * based on the value of the "Add On To" field
+     *
+     * @param pliModel the PLI model
+     * @param addOnToData the object holding attributes related to the "Add On To" field
+     * @param callback the callback function to call when data is finished being retrieved
+     * @private
+     */
+    _getAddOnRelatedFieldValues: function(pliModel, addOnToData, callback) {
+        // Get the values to include on the RLI based on the PLI and/or its related
+        // Product Template
+        var rliFields = app.metadata.getModule('RevenueLineItems', 'fields');
+        if (rliFields && rliFields.add_on_to_name && !_.isEmpty(rliFields.add_on_to_name.copyFromPurchasedLineItem)) {
+            _.each(rliFields.add_on_to_name.copyFromPurchasedLineItem, function(fromField, toField) {
+                if (_.isEmpty(addOnToData[toField])) {
+                    addOnToData[toField] = pliModel.get(fromField);
+                }
+            }, this);
+        }
+        if (rliFields && rliFields.add_on_to_name && !_.isEmpty(rliFields.add_on_to_name.copyFromProductTemplate) &&
+            addOnToData.product_template_id) {
+            // The PLI is using a product template, and there are fields to copy
+            // from it, so fetch its data before opening the create drawer
+            var productTemplateBean = app.data.createBean('ProductTemplates', {id: addOnToData.product_template_id});
+            app.alert.show('fetching_product_template', {
+                level: 'process',
+                title: app.lang.get('LBL_LOADING'),
+                autoClose: false
+            });
+            productTemplateBean.fetch({
+                success: _.bind(function(templateData) {
+                    _.each(rliFields.add_on_to_name.copyFromProductTemplate, function(toField, fromField) {
+                        if (_.isEmpty(addOnToData[toField])) {
+                            addOnToData[toField] = templateData.get(fromField);
+                        }
+                    }, this);
+                }, this),
+                complete: _.bind(function() {
+                    app.alert.dismiss('fetching_product_template');
+                    callback(addOnToData);
+                }, this)
+            });
+        } else {
+            // The PLI is not using a product template, or there are no fields to
+            // copy from it, so just open the create drawer
+            callback(addOnToData);
+        }
     },
 
     refreshRLISubpanel: function(model) {

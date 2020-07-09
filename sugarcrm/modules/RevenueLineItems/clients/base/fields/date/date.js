@@ -1,3 +1,4 @@
+// FILE SUGARCRM flav=ent ONLY
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -16,8 +17,6 @@
 ({
     extendsFrom: 'DateField',
 
-    // BEGIN SUGARCRM flav=ent ONLY
-
     /**
      * @inheritdoc
      */
@@ -25,6 +24,7 @@
         this._super('bindDataChange');
 
         if (this.model && this.name && this.name === 'service_start_date') {
+            this.model.on('addon:pli:changed', this.handleRecalculateServiceDuration, this);
             this.model.on('change:' + this.name, this.handleRecalculateServiceDuration, this);
         }
     },
@@ -78,6 +78,4 @@
 
         return days > 0 ? 'day' : (months > 0 ? 'month' : (years > 0 ? 'year' : ''));
     }
-
-    // END SUGARCRM flav=ent ONLY
 })

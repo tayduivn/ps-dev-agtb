@@ -25,6 +25,7 @@
         this._super('bindDataChange');
 
         if (this.model && this.name && this.name === 'service_start_date') {
+            this.model.on('addon:pli:changed', this.handleRecalculateServiceDuration, this);
             this.model.on('change:' + this.name, this.handleRecalculateServiceDuration, this);
         }
     },

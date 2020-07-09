@@ -167,6 +167,11 @@ $vardefs = [
                 'renewable',
                 'service',
             ],
+            'validation' => [
+                'type' => 'isbefore',
+                'compareto' => 'service_end_date',
+                'datatype' => 'date',
+            ],
         ],
         // END SUGARCRM flav=ent ONLY
         'support_contact' => [

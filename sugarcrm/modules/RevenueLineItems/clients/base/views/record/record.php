@@ -335,7 +335,10 @@ $fieldsHidden = array(
         'label' => 'LBL_RENEWABLE',
         'type' => 'bool',
     ),
-    'add_on_to_name',
+    'add_on_to_name' => [
+        'name' => 'add_on_to_name',
+        'type' => 'add-on-to',
+    ],
     // END SUGARCRM flav=ent ONLY
     'lead_source',
     'next_step',

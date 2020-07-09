@@ -1,3 +1,4 @@
+// FILE SUGARCRM flav=ent ONLY
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -49,8 +50,6 @@ describe('RevenueLineItems.Base.Fields.Date', function() {
         layout = null;
         app = null;
     });
-
-    // BEGIN SUGARCRM flav=ent ONLY
 
     describe('bindDataChange()', function() {
         it('should set a field change listener for service_start_date', function() {
@@ -149,6 +148,4 @@ describe('RevenueLineItems.Base.Fields.Date', function() {
             });
         });
     });
-
-    // END SUGARCRM flav=ent ONLY
 });
