@@ -468,6 +468,18 @@ $dictionary['PurchasedLineItem'] = [
                 'service_duration_unit' => 'service_duration_unit',
             ],
         ],
+        'lock_duration' => [
+            'name' => 'lock_duration',
+            'vname' => 'LBL_LOCK_DURATION',
+            'type' => 'bool',
+            'default' => 0,
+            'studio' => false,
+            'enforced' => true,
+            'calculated' => true,
+            'massupdate' => false,
+            'formula' => 'related($product_templates, "lock_duration")',
+            'comment' => 'Turn on or off a user ability to directly edit the duration field',
+        ],
         'product_type' => [
             'name' => 'product_type',
             'type' => 'link',

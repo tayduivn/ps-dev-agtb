@@ -75,6 +75,18 @@ $dictionary['RevenueLineItem'] = array(
                 // END SUGARCRM flav=ent ONLY
             ),
         ),
+        'lock_duration' => [
+            'name' => 'lock_duration',
+            'vname' => 'LBL_LOCK_DURATION',
+            'type' => 'bool',
+            'default' => 0,
+            'studio' => false,
+            'enforced' => true,
+            'calculated' => true,
+            'massupdate' => false,
+            'formula' => 'related($rli_templates_link, "lock_duration")',
+            'comment' => 'Turn on or off a user ability to directly edit the duration field',
+        ],
         'account_id' => array(
             'name' => 'account_id',
             'type' => 'id',
