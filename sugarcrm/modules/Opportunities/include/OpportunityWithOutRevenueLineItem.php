@@ -184,8 +184,8 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
         SugarAutoLoader::ensureDir($this->moduleExtFolder . '/Vardefs');
         $file_contents = <<<EOL
 <?php
-\$dictionary['Opportunity']['fields']['renewal'] = null;
-\$dictionary['Opportunity']['fields']['renewal_parent_name'] = null;
+\$dictionary['Opportunity']['fields']['renewal']['studio'] = false;
+\$dictionary['Opportunity']['fields']['renewal_parent_name']['studio'] = false;
 EOL;
         sugar_file_put_contents($this->moduleExtFolder . '/Vardefs/' . $this->dupeCheckExtFile, $file_contents);
 

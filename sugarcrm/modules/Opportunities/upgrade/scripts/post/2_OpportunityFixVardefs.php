@@ -17,11 +17,11 @@ class SugarUpgradeOpportunityFixVardefs extends UpgradeScript
 
     public function run()
     {
-        // Only applies to 9.3.x and 10.0.x. Fixed in 10.1.0+
+        // Only applies to 9.3.x and 10.1.x. Fixed in 10.2.0+
         if ($this->toFlavor('ent') &&
             version_compare($this->from_version, '9.3.0', '>=') &&
-            version_compare($this->from_version, '10.1.0', '<'))
-        {
+            version_compare($this->from_version, '10.2.0', '<')
+        ) {
             $getConverter = Opportunity::usingRevenueLineItems() ? 'getConverterWith' : 'getConverterWithout';
             $converter = $this->{$getConverter}();
             $converter->fixOpportunityModule();
