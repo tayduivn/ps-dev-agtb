@@ -71,6 +71,10 @@ class OpportunityHooks extends AbstractForecastHooks
                     foreach ($rliBeans as $rliBean) {
                         // create new renewal RLI
                         $newRliBean = $renewalBean->createNewRenewalRLI($rliBean);
+
+                        // Link the renewal RLI to the RLI it is generating
+                        $rliBean->renewal_rli_id = $newRliBean->id;
+                        $rliBean->save();
                     }
 
                     return true;

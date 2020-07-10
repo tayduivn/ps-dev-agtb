@@ -27,7 +27,10 @@ class OpportunityHooksTest extends TestCase
     public function testGenerateRenewalOpportunity()
     {
         $rliBean = $this->createMock('RevenueLineItem');
+        // three cases using one RLI, so we expect save to be called three times total
+        $rliBean->expects($this->exactly(3))->method('save');
         $newRliBean = $this->createMock('RevenueLineItem');
+        $newRliBean->id = 'id';
         $renewalBean = $this->createMock('Opportunity', [
             'load_relationship',
             'createNewRenewalRLI',
@@ -37,6 +40,7 @@ class OpportunityHooksTest extends TestCase
         ->method('createNewRenewalRLI')
         ->with($rliBean)
         ->willReturn($newRliBean);
+
         // case1: parent renewal
         $parentBean = $this->createPartialMock('Opportunity', [
             'getExistingRenewalOpportunity',
@@ -54,6 +58,10 @@ class OpportunityHooksTest extends TestCase
         $opBean->method('getRenewalParent')->willReturn($parentBean);
         $args['dataChanges']['sales_status']['after'] = Opportunity::STATUS_CLOSED_WON;
         $this->assertTrue(OpportunityHooks::generateRenewalOpportunity($opBean, 'after_save', $args));
+
+        // check that the renewal RLI ID on the original RLI was set
+        $this->assertEquals($rliBean->renewal_rli_id, $newRliBean->id);
+
         // case2: existing renewal
         $opBean = $this->createPartialMock('Opportunity', [
             'getClosedWonRenewableRLIs',
@@ -66,6 +74,7 @@ class OpportunityHooksTest extends TestCase
         $opBean->method('getRenewalParent')->willReturn(null);
         $opBean->method('getExistingRenewalOpportunity')->willReturn($renewalBean);
         $this->assertTrue(OpportunityHooks::generateRenewalOpportunity($opBean, 'after_save', $args));
+
         // case3: new renewal
         $opBean = $this->createPartialMock('Opportunity', [
             'getClosedWonRenewableRLIs',

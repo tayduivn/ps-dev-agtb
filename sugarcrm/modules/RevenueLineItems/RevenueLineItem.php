@@ -107,6 +107,7 @@ class RevenueLineItem extends SugarBean
     public $related_product_id;
     public $contracts;
     public $product_index;
+    public $renewal_rli_id;
 
     public $table_name = "revenue_line_items";
     public $rel_manufacturers = "manufacturers";
