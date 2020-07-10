@@ -135,11 +135,6 @@ Feature: Customer Service Console Verification
       | fieldName | value    |
       | name      | Case_1.1 |
 
-    # Select Overview tab
-    When I select Overview tab in #ServiceConsoleView
-    # TODO: Temporary disable screenshots until AT-337 is fixed
-    # Then I verify that first_row_left_dashlet element from #ServiceConsoleView still looks like sc_overview_toprow_left
-
 
   @service-console @cs_dashable_record_dashlet
   Scenario: Service Console > Cases Tab > Dashable Record dashlet > Cancel/Save

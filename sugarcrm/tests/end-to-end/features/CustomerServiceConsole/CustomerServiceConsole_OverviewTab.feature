@@ -47,20 +47,16 @@ Feature: Customer Service Console Verification > Overview Tab
     When I choose Home in modules menu and select "Service Console" menu item
 
     # Verify chart in "My Open Cases by Follow Up Date" dashlet
-    # TODO: Temporary disable screenshots until AT-337 is fixed
-    # Then I verify that first_row_left_dashlet element from #ServiceConsoleView still looks like myOpenCasesByFollowUpDate
+    Then I verify that first_row_left_dashlet element from #ServiceConsoleView still looks like myOpenCasesByFollowUpDate
 
     # Verify chart in "My Open Cases by Status" dashlet
-    # TODO: Temporary disable screenshots until AT-337 is fixed
-    # Then I verify that second_row_left_dashlet element from #ServiceConsoleView still looks like myOpenCasesByStatus
+    Then I verify that second_row_left_dashlet element from #ServiceConsoleView still looks like myOpenCasesByStatus
 
     # Verify chart in "My Cases in the Last Week by Status" dashlet
-    # TODO: Temporary disable screenshots until AT-337 is fixed
-    # Then I verify that second_row_right_dashlet element from #ServiceConsoleView still looks like myCasesInTheLastWeekByStatus
+    Then I verify that second_row_right_dashlet element from #ServiceConsoleView still looks like myCasesInTheLastWeekByStatus
 
     # Verify chart in "Open Cases By User By Status" dashlet
-    # TODO: Temporary disable screenshots until AT-337 is fixed
-    # Then I verify that third_row_left_dashlet element from #ServiceConsoleView still looks like openCasesByUserByStatus
+    Then I verify that third_row_left_dashlet element from #ServiceConsoleView still looks like openCasesByUserByStatus
 
 
   @service_console @status_of_open_tasks_assigned_by_me
@@ -104,8 +100,7 @@ Feature: Customer Service Console Verification > Overview Tab
     When I choose Home in modules menu and select "Service Console" menu item
 
     # Verify chart in "Status of Open Tasks assigned to me" dashlet
-    # TODO: Temporary disable screenshots until AT-337 is fixed
-    # Then I verify that third_row_right_dashlet element from #ServiceConsoleView still looks like StatusOfOpenTasksAssignedByMe
+    Then I verify that third_row_right_dashlet element from #ServiceConsoleView still looks like StatusOfOpenTasksAssignedByMe
 
 
   @planned_activities_dashlet

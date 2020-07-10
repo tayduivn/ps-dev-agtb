@@ -268,10 +268,9 @@ Feature: Knowledge Base module verification
     When I verify number of records in #KB_rev1Record.SubpanelsLayout.subpanels.revisions is 1
     # Verify dashlet appearance
     When I click useful button on #KB_rev1Record view
-    # TODO: Temporary disable screenshots until AT-337 is fixed
-    # Then I verify that FirstDashlet element from #Dashboard.DashboardView still looks like useful1
+    Then I verify that FirstDashlet element from #Dashboard.DashboardView still looks like useful1
     When I click notuseful button on #KB_rev1Record view
-    # Then I verify that FirstDashlet element from #Dashboard.DashboardView still looks like useful2
+    Then I verify that FirstDashlet element from #Dashboard.DashboardView still looks like useful2
 
   @view_categories @job6
   Scenario: Knowledge Base > Create Category

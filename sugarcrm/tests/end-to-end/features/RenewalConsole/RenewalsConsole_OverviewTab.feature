@@ -69,8 +69,7 @@ Feature: Sugar Sell Renewal Console Verification > Overview Tab
     When I select "2021 Q4" in #RenewalsConsoleView.PipelineDashlet
 
     # Verify Pipeline chart is updated
-    # TODO: Temporary disable screenshots until AT-337 is fixed
-    # Then I verify that dashboard2by2_top_right element from #RenewalsConsoleView still looks like PipelineChart_1
+    Then I verify that dashboard2by2_top_right element from #RenewalsConsoleView still looks like PipelineChart_1
 
     # Generate opportunity record with RLIs with different sales stages linked to it
     Given Opportunities records exist:
@@ -85,8 +84,7 @@ Feature: Sugar Sell Renewal Console Verification > Overview Tab
     When I refresh #RenewalsConsoleView.PipelineDashlet dashlet
 
     # Verify Pipeline chart is updated
-    # TODO: Temporary disable screenshots until AT-337 is fixed
-    # Then I verify that dashboard2by2_top_right element from #RenewalsConsoleView still looks like PipelineChart_2
+    Then I verify that dashboard2by2_top_right element from #RenewalsConsoleView still looks like PipelineChart_2
 
     # Navigate to RLI module and delete one RLI item
     When I delete *RLI_1 record in RevenueLineItems list view
@@ -98,8 +96,7 @@ Feature: Sugar Sell Renewal Console Verification > Overview Tab
     When I select "2021 Q4" in #RenewalsConsoleView.PipelineDashlet
 
     # Verify Pipeline chart is updated
-    # TODO: Temporary disable screenshots until AT-337 is fixed
-    # Then I verify that dashboard2by2_top_right element from #RenewalsConsoleView still looks like PipelineChart_3
+    Then I verify that dashboard2by2_top_right element from #RenewalsConsoleView still looks like PipelineChart_3
 
 
   @user_profile
