@@ -5030,6 +5030,10 @@ Sincerely, SugarCRM',
     'LBL_RENEWALS_CONSOLE_NAME_ACCOUNT' => 'Name/Account Name',
     'LBL_RENEWALS_CONSOLE_AMOUNT' => 'Worst | Likely | Best',
 
+    // Omnichannel Console
+    'LBL_OMNICHANNEL' => 'Omnichannel',
+    'LBL_OMNICHANNEL_END_SESSION' => 'End Session',
+    
     //END SUGARCRM flav=ent ONLY
 
     //First time login wizard

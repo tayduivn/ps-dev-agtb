@@ -1,4 +1,5 @@
-{{!--
+<?php
+
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -9,9 +10,17 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
---}}
-{{#if isAvailable}}
-    <button data-action="omnichannel" class="btn logged-out" aria-label="Omnichannel" role="link" type="button">
-        <span class="omni-circle"></span> <span class="omni-label">{{str 'LBL_OMNICHANNEL'}}</span>
-    </button>
-{{/if}}
+
+$viewdefs['base']['layout']['omnichannel-console'] = [
+    'components' => [
+        [
+            'view' => 'omnichannel-header',
+        ],
+        [
+            'view' => 'omnichannel-ccp',
+        ],
+        [
+            'layout' => 'omnichannel-dashboard',
+        ],
+    ],
+];

@@ -170,4 +170,12 @@ $config['blackList']['pro'] = array(
 'sugarcrm/tests/{old}/SugarTestPurchasesUtilities.php' => 1,
 'sugarcrm/tests/unit-js/modules/PurchasedLineItems' => 1,
 'sugarcrm/themes/RacerX/images/icon_PurchasedLineItems_32.png' => 1,
+
+// Omnichannel Console
+'sugarcrm/clients/base/layouts/omnichannel-console' => 1,
+'sugarcrm/clients/base/views/omnichannel-dashboard' => 1,
+'sugarcrm/clients/base/views/omnichannel-button' => 1,
+'sugarcrm/clients/base/views/omnichannel-header' => 1,
+'sugarcrm/clients/base/views/omnichannel-ccp' => 1,
+'sugarcrm/tests/unit-js/clients/base/layouts/omnichannel-console' => 1,
 );

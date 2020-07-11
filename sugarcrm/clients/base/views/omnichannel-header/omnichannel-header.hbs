@@ -10,8 +10,5 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 --}}
-{{#if isAvailable}}
-    <button data-action="omnichannel" class="btn logged-out" aria-label="Omnichannel" role="link" type="button">
-        <span class="omni-circle"></span> <span class="omni-label">{{str 'LBL_OMNICHANNEL'}}</span>
-    </button>
-{{/if}}
+<div class="pull-right"><button type="button" class="btn btn-primary" data-action="end-session">{{str 'LBL_OMNICHANNEL_END_SESSION'}}</button><button type="button" class="btn btn-invisible" data-action="close"><i class="fa fa-minus fd-md"></i></button></div>
+<h4>{{str 'LBL_OMNICHANNEL'}}</h4>

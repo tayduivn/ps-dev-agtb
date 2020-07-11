@@ -26,7 +26,10 @@
      * Opens console.
      */
     openConsole: function() {
-        // TODO: CS-801
+        var console = this._getConsole();
+        if (console) {
+            console.open();
+        }
     },
 
     /**
@@ -50,5 +53,25 @@
             !!app.config.awsConnectInstanceName && // aws connect is configured
             _.indexOf(app.user.get('licenses'), 'SUGAR_SERVE') !== -1; // user has serve license
         this._super('_renderHtml');
-    }
+    },
+
+    /**
+     * Creates omnichannel console if not yet.
+     *
+     * @return {View.Layout} The console
+     * @private
+     */
+    _getConsole: function() {
+        if (_.isUndefined(app.omniConsole)) {
+            var console = app.view.createLayout({
+                type: 'omnichannel-console'
+            });
+            console.initComponents();
+            console.$el.hide();
+            console.render();
+            $('#sidecar').append(console.$el);
+            app.omniConsole = console;
+        }
+        return app.omniConsole;
+    },
 })

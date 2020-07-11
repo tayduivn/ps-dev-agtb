@@ -13,6 +13,8 @@
 
 $viewdefs['base']['layout']['footer-logos'] = array(
     'components' => array(
+        //BEGIN SUGARCRM flav=ent ONLY
         ['view' => 'omnichannel-button'],
+        //END SUGARCRM flav=ent ONLY
     ),
 );

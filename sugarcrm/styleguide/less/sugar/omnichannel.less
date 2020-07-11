@@ -1,4 +1,4 @@
-/* Omnichannel Console
+/* Omnichannel
   ----------------*/
 .omni-button {
   .btn {
@@ -48,5 +48,58 @@
     .omni-label {
       color: #fff;
     }
+  }
+}
+
+.omni-console {
+  position: absolute;
+  background-color: @grayLighter;
+  border-top-left-radius: @baseBorderRadius;
+  border-top-right-radius: @baseBorderRadius;
+  border-left: 1px solid fade(@black, 10%);
+  border-top: 1px solid fade(@black, 10%);
+  border-right: 1px solid fade(@black, 10%);
+  margin: 2px 2px 0;
+  z-index: @zindexHeaderpane + 1;
+
+  .omni-header {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 20px;
+    padding: 4px 8px;
+    border-bottom: 1px solid fade(@black, 10%);
+
+    h4 {
+      padding: 0;
+      margin: 0;
+    }
+
+    .btn {
+      padding: 0;
+    }
+  }
+
+  .omni-ccp {
+    position: absolute;
+    left: 0;
+    top: 28px;
+    bottom: 0;
+    width: 300px;
+
+    #containerDiv {
+      background-color: grey;
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  .omni-dashboard {
+    position: absolute;
+    left: 300px;
+    top: 28px;
+    right: 0;
+    bottom: 0;
   }
 }
