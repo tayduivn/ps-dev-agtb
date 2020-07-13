@@ -7,8 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@bpm @job2 @pr @ci-excluded
-# Temporarily disable this test due to seedbed loading the wrong dashboard after route
+@bpm @job2 @pr
 Feature: Assign new process user and routing type to the process
 
   Background:
@@ -121,4 +120,3 @@ Feature: Assign new process user and routing type to the process
     Then I verify fields for *Pr_1 in #pmse_InboxList.ListView
       | fieldName  | value     |
       | cas_status | COMPLETED |
-

@@ -1,5 +1,4 @@
-@bpm @job1 @ci-excluded
-# Temporarily disable this test due to seedbed loading the wrong dashboard after approve/reject
+@bpm @job1
 Feature: Importing files related to Business Process Management
 
   Background:
@@ -37,12 +36,6 @@ Feature: Importing files related to Business Process Management
     When I choose pmse_Inbox in modules menu
     When I filter for the pmse_Inbox record *Pr_1 named "Activity # 1"
     When I click on ShowProcess button for *Pr_1 in #pmse_InboxList.ListView
-
-    # Check process status
-    When I open actions menu in #Pr_1Record
-    And I choose Status from actions menu in #Pr_1Record
-    Then I verify that BpmWindowBody element from #BPM.BpmWindowCmp still looks like ProcessStatus
-    When I close BPM pop-up window
 
     # Add Notes
     When I open actions menu in #Pr_1Record
@@ -90,13 +83,6 @@ Feature: Importing files related to Business Process Management
     When I filter for the pmse_Inbox record *Pr_1 named "Activity # 1"
     When I click on ShowProcess button for *Pr_1 in #pmse_InboxList.ListView
 
-    # Check process status
-    When I open actions menu in #Pr_1Record
-    And I choose Status from actions menu in #Pr_1Record
-    # TODO: Uncomment this after screenshot is updated
-    # Then I verify that BpmWindowBody element from #BPM.BpmWindowCmp still looks like ProcessStatus
-    When I close BPM pop-up window
-
     # Add Notes
     When I open actions menu in #Pr_1Record
     And I choose AddNotes from actions menu in #Pr_1Record
@@ -127,7 +113,6 @@ Feature: Importing files related to Business Process Management
     # Delete Process Notes
     When I delete last note in BPM pop-up window
     When I close BPM pop-up window
-
 
     Examples:
       | approvedNote                           | rejectedNote                               |
