@@ -373,6 +373,19 @@ class SugarBean
     public $related_beans = array();
 
     /**
+     * Represents the state of the bean after its retrieval or last saving to the database.
+     * @var array
+     */
+    private $lastPersistedState = [];
+
+    /**
+     * This populates in saveData and contains the fields which were changed comparing to the previous bean state
+     *
+     * @var array
+     */
+    protected $stateChanges;
+
+    /**
      * Create Bean
      * @deprecated
      * @param string $beanName
@@ -1894,7 +1907,9 @@ class SugarBean
 
         $this->call_custom_logic('after_save', array(
             'isUpdate' => $isUpdate,
+            /* The usage of the dataChanges element is discouraged in favor of stateChanges */
             'dataChanges' => $this->dataChanges,
+            'stateChanges' => $this->stateChanges,
         ));
     }
 
@@ -1933,7 +1948,9 @@ class SugarBean
 
         $this->call_custom_logic('after_save', array(
             'isUpdate' => $isUpdate,
+            /* The usage of the dataChanges element is discouraged in favor of stateChanges */
             'dataChanges' => $this->dataChanges,
+            'stateChanges' => $this->stateChanges,
         ));
 
         return $this->id;
@@ -2125,6 +2142,7 @@ class SugarBean
         }
 
         $this->dataChanges = $this->db->getDataChanges($this);
+        $this->stateChanges = $this->getStateChanges();
 
         $this->_sendNotifications($check_notify);
 
@@ -2139,6 +2157,8 @@ class SugarBean
         }
 
         $this->updateRelatedCalcFields();
+
+        $this->capturePersistedState();
 
         if (!empty($this->fetched_row)) {
             // populate fetched row with newest changes in the bean
@@ -3517,6 +3537,8 @@ class SugarBean
             }
         }
 
+        $this->capturePersistedState();
+
         // call the custom business logic
         $custom_logic_arguments['id'] = $id;
         $custom_logic_arguments['encode'] = $encode;
@@ -3599,6 +3621,7 @@ class SugarBean
             //true parameter below tells populate to perform conversions on row data
             $bean->fetched_row = $bean->populateFromRow($row, true);
             $this->populateFetchedEmail();
+            $this->capturePersistedState();
             $bean->call_custom_logic("process_record");
             $beans[$bean->id] = $bean;
             $rawRows[$bean->id] = $row;
@@ -5883,6 +5906,7 @@ class SugarBean
             $bean->call_custom_logic("process_record");
             $bean->fetched_row = $row;
             $this->populateFetchedEmail();
+            $this->capturePersistedState();
 
             $list[] = $bean;
         }
@@ -6664,6 +6688,8 @@ class SugarBean
         $this->fromArray($row);
 		$this->is_updated_dependent_fields = false;
         $this->fill_in_additional_detail_fields();
+        $this->capturePersistedState();
+
         return $this;
     }
 
@@ -7513,6 +7539,7 @@ class SugarBean
         $this->fill_in_additional_list_fields();
 
         if($this->hasCustomFields())$this->custom_fields->fill_relationships();
+        $this->capturePersistedState();
         $this->call_custom_logic("process_record");
     }
 
@@ -8820,5 +8847,59 @@ class SugarBean
         }
         //END SUGARCRM flav=ent ONLY
         return $ret;
+    }
+
+    /**
+     * Returns an array contained Changed fields and their "before" and "after" values.
+     * A field is Changed if its value was changed comparing to previous state.
+     *
+     * @return array{ field_name: array{ before: string, after: string, field_name: string, data_type: string }, ?}
+     */
+    public function getStateChanges(): array
+    {
+        return $this->db->getStateChanges($this, $this->lastPersistedState);
+    }
+
+    /**
+     * Returns an array with Bean fields and their values
+     */
+    private function getCurrentState(): array
+    {
+        $state = [];
+
+        foreach ($this->getFieldDefinitions() as $name => $def) {
+            $isRelateField = $def['type'] === 'relate';
+            $isEmailField = $def['type'] === 'email';
+            $isNonDbField = isset($def['source']) && $def['source'] === 'non-db';
+
+            // non-db fields except relate and email excluded from a Bean state as their value isn't stored in the
+            // database
+            if ($isNonDbField && !$isRelateField && !$isEmailField) {
+                continue;
+            }
+
+            if (!property_exists($this, $name)) {
+                continue;
+            }
+
+            $state[$name] = $this->{$name};
+
+            // this a special case which was previously defined in DBManager::getStateChanges
+            if ($name === 'email') {
+                if (!empty($this->emailAddress) && !empty($this->emailAddress->hasFetched)) {
+                    $state[$name] = $this->emailAddress->addresses;
+                }
+            }
+        }
+
+        return $state;
+    }
+
+    /**
+     * Makes the current state as persisted
+     */
+    private function capturePersistedState(): void
+    {
+        $this->lastPersistedState = $this->getCurrentState();
     }
 }

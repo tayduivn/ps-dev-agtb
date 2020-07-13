@@ -48,7 +48,7 @@ class RS174Test extends TestCase
             [
                 'project_id' => $bean->id,
                 'parent_task_id' => 0,
-                'project_task_id' => create_guid(),
+                'project_task_id' => time(),
                 'percent_complete' => '30',
                 'name' => 'RS174Task',
             ]
