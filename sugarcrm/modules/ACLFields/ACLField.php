@@ -195,6 +195,13 @@ AND deleted = 0';
         {
             return self::$acl_fields[$user_id][$module_name];
         }
+        // do not fetch data for field ACL if it's disabled
+        // we need to use $dictionary directly instead of SugarBean as its constructor calls this method,
+        // and creating a new bean instance to access the dictionary data will create endless recursion
+        if (isset($dictionary[$object]['acl_fields']) && !$dictionary[$object]['acl_fields']) {
+            self::$acl_fields[$user_id][$module_name] = array();
+            return array();
+        }
 
         // We can not cache per user ID because ACLs are stored per role
         if(!$refresh) {
@@ -212,16 +219,6 @@ AND deleted = 0';
             if(isset(self::$acl_fields[$user_id][$module_name])) {
                 return self::$acl_fields[$user_id][$module_name];
             }
-        }
-
-        // do not fetch data for field ACL if it's disabled
-        // we need to use $dictionary directly instead of SugarBean as its constructor calls this method,
-        // and creating a new bean instance to access the dictionary data will create endless recursion
-        if (isset($dictionary[$object]['acl_fields']) && !$dictionary[$object]['acl_fields']) {
-            self::$acl_fields[$user_id][$module_name] = array();
-            self::storeToCache($user_id, 'fields', self::$acl_fields[$user_id]);
-
-            return array();
         }
 
         $query = 'SELECT af.name, af.aclaccess FROM acl_fields af '
