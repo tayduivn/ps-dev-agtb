@@ -18,6 +18,7 @@ use ModuleInstaller;
 use SugarAutoLoader;
 use Sugarcrm\Sugarcrm\Denormalization\Relate\Db\Db;
 use Sugarcrm\Sugarcrm\Denormalization\Relate\Db\OfflineOperations;
+use Sugarcrm\Sugarcrm\Denormalization\Relate\Hook\DatabaseConfiguration;
 use Sugarcrm\Sugarcrm\Denormalization\Relate\Process\Entity;
 use BeanFactory;
 use VardefManager;
@@ -190,7 +191,7 @@ final class Process
             $link['join_linked_key'] = $entity->relationship->join_key_lhs;
         }
 
-        $hookConfig = new HookConfig();
+        $hookConfig = new DatabaseConfiguration();
 
         // linked bean update options
         $hookConfig->setFieldConfiguration(

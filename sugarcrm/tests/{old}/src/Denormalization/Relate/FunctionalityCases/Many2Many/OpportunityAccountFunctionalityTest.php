@@ -15,6 +15,7 @@ namespace Sugarcrm\SugarcrmTests\Denormalization\Relate\FunctionalityCases\Many2
 use SugarBean;
 use SugarTestAccountUtilities;
 use SugarTestOpportunityUtilities;
+use SugarTestRevenueLineItemUtilities;
 
 class OpportunityAccountFunctionalityTest extends AbstractFunctionalityTest
 {
@@ -28,7 +29,21 @@ class OpportunityAccountFunctionalityTest extends AbstractFunctionalityTest
 
     protected function createPrimaryBean(?SugarBean $linkedBean): SugarBean
     {
-        return SugarTestOpportunityUtilities::createOpportunity(null, $linkedBean);
+        $opportunity = SugarTestOpportunityUtilities::createOpportunity();
+
+        // An Opportunity must have an RLI related
+        $rli = SugarTestRevenueLineItemUtilities::createRevenueLineItem();
+        $opportunity->load_relationship('revenuelineitems');
+        $opportunity->revenuelineitems->add($rli);
+
+        if ($linkedBean) {
+            $opportunity->account_id = $linkedBean->id;
+            $opportunity->account_name = $linkedBean->name;
+            $opportunity->save();
+        }
+
+
+        return $opportunity;
     }
 
     protected function createLinkedBean(): SugarBean
@@ -38,7 +53,8 @@ class OpportunityAccountFunctionalityTest extends AbstractFunctionalityTest
 
     protected static function removeCreatedBeans(): void
     {
-        SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
+        SugarTestAccountUtilities::removeAllCreatedAccounts();
+        SugarTestRevenueLineItemUtilities::removeAllCreatedRevenueLineItems();
     }
 }

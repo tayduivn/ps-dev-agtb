@@ -10,12 +10,12 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
-namespace Sugarcrm\Sugarcrm\Denormalization\Relate;
+namespace Sugarcrm\Sugarcrm\Denormalization\Relate\Hook;
 
 use Administration;
 use BeanFactory;
 
-final class HookConfig
+final class DatabaseConfiguration implements Configuration
 {
     private const CATEGORY = 'denormalization';
     private const NAME = 'fields';
