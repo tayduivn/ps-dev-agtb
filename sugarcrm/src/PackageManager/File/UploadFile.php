@@ -126,8 +126,8 @@ final class UploadFile
     public function cleanUploadedFiles(): void
     {
         try {
-            $uploadFilePath = $this->getPath();
-            unlink($uploadFilePath);
+            $streamFilePath = sprintf('%s://%s', UploadStream::STREAM_NAME, $this->storedFileName);
+            unlink($streamFilePath);
         } catch (\Exception $e) {
         }
     }
