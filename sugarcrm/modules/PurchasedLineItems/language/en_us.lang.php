@@ -72,6 +72,7 @@ $mod_strings = [
     'LBL_QLI_ADDONS_SUBPANEL_TITLE' => 'Add-On Quoted Line Items',
     'LBL_RLI_ADDONS' => 'Add-On Revenue Line Items',
     'LBL_RLI_ADDONS_SUBPANEL_TITLE' => 'Add-On Revenue Line Items',
+    'LBL_PLI_ADDONS' => 'Add-On Purchased Line Items',
     'LBL_RENEWAL_OPPORTUNITY' => 'Renewal Opportunity',
     'LBL_RENEWAL_OPPORTUNITY_ID' => 'Renewal Opportunity ID',
     'LBL_ACCOUNT_ID' => 'Account ID',

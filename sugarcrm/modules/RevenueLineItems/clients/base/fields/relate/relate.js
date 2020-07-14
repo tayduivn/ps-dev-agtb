@@ -29,6 +29,31 @@
         this._super('initialize', [options]);
     },
 
+    // BEGIN SUGARCRM flav=ent ONLY
+    /**
+     * Formats the filter options for add_on_to_name field.
+     *
+     * @param {boolean} force `true` to force retrieving the filter options whether or not it is available in memory.
+     * @return {Object} The filter options.
+     */
+    getFilterOptions: function(force) {
+        if (this.name && this.name === 'add_on_to_name' &&
+            this.model && !_.isEmpty(this.model.get('account_id'))) {
+            return new app.utils.FilterOptions()
+                .config({
+                    'initial_filter': 'add_on_plis',
+                    'initial_filter_label': 'LBL_PLI_ADDONS',
+                    'filter_populate': {
+                        'account_id': [this.model.get('account_id')]
+                    },
+                })
+                .format();
+        } else {
+            return this._super('getFilterOptions', [force]);
+        }
+    },
+    // END SUGARCRM flav=ent ONLY
+
     setValue: function(models) {
         if (!models) {
             return;
