@@ -1317,4 +1317,13 @@ Any integrations that rely on this platform will stop working.',
     'LBL_CLOUD_INSIGHTS_ADMIN_DESC' => 'View your organization\'s storage usage, license usage and gain access to logs',
     'LBL_VIEW_CLOUD_INSIGHTS' => 'View SugarCloud Insights',
     'LBL_FORM_ACCESS_CLOUD_INSIGHT' => 'Access SugarCloud Insights',
+
+    //BEGIN SUGARCRM flav=ent ONLY
+    'LBL_AWS' => 'Amazon Web Services',
+    'LBL_AWS_DESCR' => 'Configure and setup your Amazon Web Services',
+    'LBL_AWS_CONNECT_TITLE' => 'Amazon Connect settings',
+    'LBL_AWS_CONNECT_DESCR' => 'Edit your Amazon Connect settings',
+    'LBL_AWS_CONNECT_REGION' => 'Region',
+    'LBL_AWS_CONNECT_INST_NAME' => 'Instance Name',
+    //END SUGARCRM flav=ent ONLY
 );

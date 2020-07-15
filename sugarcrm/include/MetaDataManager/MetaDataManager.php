@@ -2271,6 +2271,13 @@ class MetaDataManager implements LoggerAwareInterface
         $configs['allowedLinkSchemes'] = isset($sugarConfig['allowed_link_schemes']) ?
             $sugarConfig['allowed_link_schemes'] : ['http', 'https'];
 
+        //make AWS Connect settings globally available
+        foreach ($administration->settings as $key => $value) {
+            if (substr($key, 0, 4) === 'aws_') {
+                $configs[$key] = $value;
+            }
+        }
+
         return $configs;
     }
 

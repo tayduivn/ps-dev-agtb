@@ -262,6 +262,14 @@ $admin_option_defs['Quotes']['quotes_config'] = array(
 );
 
 $admin_group_header[]= array('LBL_PRICE_LIST_TITLE','',false,$admin_option_defs, 'LBL_PRICE_LIST_DESC');
+
+//BEGIN SUGARCRM flav=ent ONLY
+//AWS Configuration
+$admin_option_defs=array();
+$admin_option_defs['Administration']['connect']= array('Administration','LBL_AWS_CONNECT_TITLE','LBL_AWS_CONNECT_DESCR','javascript:void(parent.SUGAR.App.router.navigate("Administration/awsconnect", {trigger: true}));');
+$admin_group_header[]= array('LBL_AWS','',false,$admin_option_defs, 'LBL_AWS_DESCR');
+//END SUGARCRM flav=ent ONLY
+
 //bug tracker.
 $admin_option_defs=array();
 $admin_option_defs['Bugs']['bug_tracker']= array('Releases','LBL_MANAGE_RELEASES','LBL_RELEASE','./index.php?module=Releases&action=index');

@@ -217,6 +217,24 @@ class AdministrationApi extends SugarApi
                 'exceptions' => ['SugarApiExceptionNotAuthorized'],
                 'ignoreSystemStatusError' => true,
             ],
+            'getAWSConfig' => [
+                'reqType' => ['GET'],
+                'path' => ['Administration', 'aws'],
+                'pathVars' => [''],
+                'method' => 'getAWSConfig',
+                'shortHelp' => 'get aws settings',
+                'exceptions' => ['SugarApiExceptionNotAuthorized'],
+                'ignoreSystemStatusError' => true,
+            ],
+            'setAWSConfig' => [
+                'reqType' => ['POST'],
+                'path' => ['Administration', 'aws'],
+                'pathVars' => [''],
+                'method' => 'setAWSConfig',
+                'shortHelp' => 'set aws settings',
+                'exceptions' => ['SugarApiExceptionNotAuthorized'],
+                'ignoreSystemStatusError' => true,
+            ],
         );
     }
 
@@ -683,6 +701,40 @@ class AdministrationApi extends SugarApi
             'seats' => $seats,
         ];
     }
+
+    /**
+     * Will read the AWS configuration options and return it through a call.
+     */
+    public function getAWSConfig(ServiceBase $api, array $args)
+    {
+        $this->ensureAdminUser();
+        $settings = Administration::getSettings();
+        $aws_config = [];
+        foreach ($settings->settings as $key => $value) {
+            if (substr($key, 0, 4) === 'aws_') {
+                $aws_config[$key] = $value;
+            }
+        }
+        return $aws_config;
+    }
+
+    /**
+     * Will save the AWS configuration options and return all options newly read.
+     */
+    public function setAWSConfig(ServiceBase $api, array $args)
+    {
+        $category = 'aws';
+        $admin = new Administration();
+        foreach ($args as $key => $value) {
+            //"__sugar_url" is sent through the model but must not be saved
+            if (substr($key, 0, 4) === 'aws_') {
+                $admin->saveSetting($category, str_replace('aws_', '', $key), $value, $api->platform);
+            }
+        }
+        self::clearCache();
+        return self::getAWSConfig($api, $args);
+    }
+
     /**
      * Factory method to mock Configurator
      *
