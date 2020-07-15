@@ -555,7 +555,8 @@ $rm->invokeArgs($converter, array('RevenueLineItems'));
 installLog('creating default dashboards');
 $defaultDashboardInstaller = new DefaultDashboardInstaller();
 global $moduleList;
-$defaultDashboardInstaller->buildDashboardsFromFiles($moduleList);
+$dashboardModule = ['Dashboards'];
+$defaultDashboardInstaller->buildDashboardsFromFiles(array_merge($dashboardModule, $moduleList));
 
 ///////////////////////////////////////////////////////////////////////////////
 ////    START DEMO DATA

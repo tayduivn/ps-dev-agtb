@@ -1907,8 +1907,10 @@
             fieldType = $ellipsisCell.data('type');
         if (fieldType === 'fullname' || fieldType === 'dashboardtitle') {
             ellipsifiedCell = this.getField($ellipsisCell.data('name'));
-            width -= ellipsifiedCell.getCellPadding();
-            ellipsifiedCell.setMaxWidth(width);
+            if (ellipsifiedCell) {
+                width -= ellipsifiedCell.getCellPadding();
+                ellipsifiedCell.setMaxWidth(width);
+            }
         } else {
             $ellipsisCell.css({'width': width}).children().css({'max-width': (width - 2) + 'px'});
         }

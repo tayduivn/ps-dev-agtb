@@ -20,6 +20,7 @@
 
     activeTab: 0,
     tabs: [],
+    sticky: true,
 
     /**
      * Hash key for stickness.
@@ -36,6 +37,9 @@
     initialize: function(options) {
         this._super('initialize', [options]);
         this._initTabs(options.meta);
+        if (options.meta && !_.isUndefined(options.meta.sticky)) {
+            this.sticky = options.meta.sticky;
+        }
     },
 
     /**
@@ -44,6 +48,10 @@
      * @return {string} hash key.
      */
     getLastStateKey: function() {
+        if (!this.sticky) {
+            return '';
+        }
+
         if (this.lastStateKey) {
             return this.lastStateKey;
         }
@@ -85,12 +93,49 @@
         if (index === this.activeTab) {
             return;
         }
-        // can't edit a non-dashboard tab
-        if (this.model.mode === 'edit' && !this._isDashboardTab(index)) {
+        // can't edit a non-dashboard tab or open a disabled tab
+        if ((this.model.mode === 'edit' && !this._isDashboardTab(index)) || !this.isTabEnabled(index)) {
             event.stopPropagation();
             return;
         }
         this.context.trigger('tabbed-dashboard:switch-tab', index);
+    },
+
+    /**
+     * Change active tab.
+     * @param {number} tabIndex
+     */
+    switchTab: function(tabIndex) {
+        if (index === this.activeTab ||
+            (this.model.mode === 'edit' && !this._isDashboardTab(index)) ||
+            !this.isTabEnabled(index)) {
+            return;
+        }
+        this.context.trigger('tabbed-dashboard:switch-tab', index);
+    },
+
+    /**
+     * Enable/disable a tab.
+     * @param {number} index The tab index
+     * @param {boolean} mode True to enable, false to disbale
+     */
+    setTabMode: function(index, mode) {
+        if (this.tabs && this.tabs[index]) {
+            this.tabs[index].enabled = mode;
+        }
+        var $tab = this.$('a[data-index="' + index + '"]').closest('.tab');
+        if ($tab) {
+            mode ? $tab.removeClass('disabled') : $tab.addClass('disabled');
+        }
+    },
+
+    /**
+     * Check if tab is enabled.
+     * @param {number} index The tab index
+     * @return {boolean} True if enabled, otherwise false
+     */
+    isTabEnabled: function(index) {
+        return !(this.tabs && this.tabs[index] && this.tabs[index].enabled === false);
     },
 
     /**

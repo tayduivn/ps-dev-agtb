@@ -2233,6 +2233,7 @@ $app_list_strings = array (
         'records' => 'List',
         'activities' => 'Activity Stream',
         'multi-line' => 'Multi-line List',
+        'omnichannel' => 'Omnichannel',
     ),
     'reportschedule_time_interval_dom' => array(
         '3600' => 'Hourly',
@@ -5057,7 +5058,7 @@ Sincerely, SugarCRM',
     // Omnichannel Console
     'LBL_OMNICHANNEL' => 'Omnichannel',
     'LBL_OMNICHANNEL_END_SESSION' => 'End Session',
-    
+    'LBL_OMNICHANNEL_DASHBOARD' => 'Omnichannel Dashboard',
     //END SUGARCRM flav=ent ONLY
 
     //First time login wizard

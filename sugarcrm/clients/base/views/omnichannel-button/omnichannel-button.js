@@ -67,6 +67,7 @@
                 type: 'omnichannel-console'
             });
             console.initComponents();
+            console.loadData();
             console.$el.hide();
             console.render();
             $('#sidecar').append(console.$el);

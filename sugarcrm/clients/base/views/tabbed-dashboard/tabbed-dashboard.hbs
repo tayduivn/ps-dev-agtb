@@ -21,6 +21,16 @@
                     data-toggle="tab"
                     data-original-title="{{str name}}"
                 >
+                    {{#if icon}}
+                        {{#if icon.module}}
+                            <span class="label label-module label-module-sm label-{{icon.module}}">
+                                {{moduleIconLabel icon.module}}
+                            </span>
+                        {{/if}}
+                        {{#if icon.image}}
+                            {{{icon.image}}}
+                        {{/if}}
+                    {{/if}}
                     <span class="tab-title">{{str name}}</span>
 
                     {{#each badges}}

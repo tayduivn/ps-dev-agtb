@@ -72,6 +72,17 @@ describe('Base.View.TabbedDashboardView', function() {
 
             expect(triggerStub).not.toHaveBeenCalled();
         });
+
+        it('should not do anything if tab is disabled', function() {
+            view.activeTab = 0;
+            var evt = {
+                currentTarget: 'tab 1',
+                stopPropagation: $.noop
+            };
+            sinon.collection.stub(view, 'isTabEnabled').withArgs(1).returns(false);
+            view.tabClicked(evt);
+            expect(triggerStub).not.toHaveBeenCalled();
+        });
     });
 
     describe('events', function() {
