@@ -315,7 +315,15 @@
     switchModel: function(model) {
         this.model && this.model.abortFetchRequest();
         this.stopListening(this.model);
+        if (_.isFunction(this.stopSugarLogic)) {
+            this.stopSugarLogic();
+        }
+
         this.model = model;
+
+        if (_.isFunction(this.startSugarLogic)) {
+            this.startSugarLogic();
+        }
 
         // Close preview when model destroyed by deleting the record
         this.listenTo(this.model, 'destroy', function() {
