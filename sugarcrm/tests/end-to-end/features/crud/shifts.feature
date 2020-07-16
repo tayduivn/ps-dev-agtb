@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@crud_modules_shift @job4 @xxx
+@crud_modules_shift @job8
 Feature: Shifts module verification
 
   Background:
