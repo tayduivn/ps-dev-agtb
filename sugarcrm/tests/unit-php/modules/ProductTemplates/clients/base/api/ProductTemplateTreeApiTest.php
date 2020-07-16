@@ -243,19 +243,30 @@ class ProductTemplateTreeApiTest extends TestCase
         }
 
         $mock = $this->getMockBuilder('\ProductTemplateTreeApi')
-            ->setMethods(['getFilteredTreeData', 'getRootedTreeData', 'getSugarConfig'])
+            ->setMethods(['getTreeDataWithFilter', 'getTreeDataWithRoot', 'getSugarConfig', 'checkContainsProduct'])
             ->disableOriginalConstructor()
             ->getMock();
 
         $mock->expects($this->exactly($filteredTreeCallCount))
-            ->method('getFilteredTreeData')
+            ->method('getTreeDataWithFilter')
             ->with(array_key_exists('filter', $args)? $args['filter']: '')
             ->will($this->returnValue($treeData));
 
-        $mock->expects($this->exactly($rootedTreeCallCount))
-            ->method('getRootedTreeData')
-            ->with(array_key_exists('root', $args)? $args['root']: '')
-            ->will($this->returnValue($treeData));
+        if (array_key_exists('root', $args)) {
+            $mock->expects($this->any())
+                ->method('getTreeDataWithRoot')
+                ->with($args['root'])
+                ->will($this->returnValue([$treeData[$args['root']-1]]));
+        } else {
+            $mock->expects($this->any())
+                ->method('getTreeDataWithRoot')
+                ->with('')
+                ->will($this->returnValue($treeData));
+        }
+
+        $mock->expects($this->any())
+            ->method('checkContainsProduct')
+            ->willReturn(true);
 
         $sugarConfigMock = $this->getMockBuilder('\SugarConfig')
             ->setMethods(['get'])
@@ -265,7 +276,7 @@ class ProductTemplateTreeApiTest extends TestCase
         $sugarConfigMock->expects($this->any())
             ->method('get')
             ->will($this->returnValue(20));
-        
+
         $mock->expects($this->any())
             ->method('getSugarConfig')
             ->will($this->returnValue($sugarConfigMock));
@@ -295,13 +306,13 @@ class ProductTemplateTreeApiTest extends TestCase
                 20,
             ],
             [
-                ['root' => 'foo'],
+                ['root' => 1],
                 0,
                 1,
                 0,
                 1,
                 true,
-                20,
+                1,
             ],
             [
                 ['filter' => 'foo', 'offset' => 100],

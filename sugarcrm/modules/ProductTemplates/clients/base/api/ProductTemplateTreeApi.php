@@ -39,7 +39,8 @@ class ProductTemplateTreeApi extends SugarApi
      * Gets the full tree data in a jstree structure
      * @param ServiceBase $api
      * @param array $args
-     * @return stdClass
+     * @return array
+     * @throws SugarQueryException
      */
     public function getTemplateTree(ServiceBase $api, array $args)
     {
@@ -53,11 +54,11 @@ class ProductTemplateTreeApi extends SugarApi
 
         //set parameters
         if (array_key_exists('filter', $args)) {
-            $data = $this->getFilteredTreeData($args['filter']);
+            $data = $this->getTreeDataWithFilter($args['filter']);
         } elseif (array_key_exists('root', $args)) {
-            $data = $this->getRootedTreeData($args['root']);
+            $data = $this->getTreeDataWithRoot($args['root']);
         } else {
-            $data = $this->getRootedTreeData(null);
+            $data = $this->getTreeDataWithRoot(null);
         }
 
         if (array_key_exists('offset', $args)) {
@@ -81,8 +82,10 @@ class ProductTemplateTreeApi extends SugarApi
             
             //build the treedata
             foreach ($data as $node) {
-                //create new leaf
-                $records[] = $this->generateNewLeaf($node, $offset);
+                if ($this->checkContainsProduct($node)) {
+                    //create new leaf
+                    $records[] = $this->generateNewLeaf($node, $offset);
+                }
                 $offset++;
             }
         }
@@ -95,6 +98,110 @@ class ProductTemplateTreeApi extends SugarApi
         $tree['next_offset'] = $offset;
 
         return $tree;
+    }
+
+    /**
+     * Check if there are any child products/categories in order to show/hide the parent
+     *
+     * @param array $node
+     * @return bool
+     * @throws SugarQueryException
+     */
+    protected function checkContainsProduct($node)
+    {
+        if ($node['type'] === 'product') {
+            return true;
+        } elseif (!count($this->getTreeDataWithRoot($node['id']))) {
+            return false;
+        } else {
+            $data = $this->getTreeDataWithRoot($node['id']);
+            foreach ($data as $value) {
+                if ($this->checkContainsProduct($value)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Create input array with given filter
+     *
+     * @param string $filter
+     * @return array
+     * @throws SugarQueryException
+     */
+    protected function getTreeDataWithFilter(string $filter)
+    {
+        $array = [
+            'ProductCategories' => $filter,
+            'ProductTemplates' => $filter,
+        ];
+
+        return $this->getTreeDataWithArray($array);
+    }
+
+    /**
+     * Create input array with given root 'id'
+     *
+     * @param string $root
+     * @return array
+     * @throws SugarQueryException
+     */
+    protected function getTreeDataWithRoot(string $root = null)
+    {
+        $array = [
+            'ProductCategories' => [
+                'parent_id' => $root,
+            ],
+            'ProductTemplates' => [
+                'category_id' => $root,
+            ],
+        ];
+
+        return $this->getTreeDataWithArray($array);
+    }
+
+    /**
+     * Get data using SugarQuery with the given input array
+     *
+     * @param array $input
+     * @return array
+     * @throws SugarQueryException
+     */
+    protected function getTreeDataWithArray(array $input = [])
+    {
+        $q = new SugarQuery();
+        foreach ($input as $table => $value) {
+            $bean = BeanFactory::newBean($table);
+            if (!is_null($bean)) {
+                if ($table === 'ProductCategories') {
+                    $type = 'category';
+                } elseif ($table === 'ProductTemplates') {
+                    $type = 'product';
+                }
+                $query = new SugarQuery();
+                $query->from($bean);
+                $query->select(['id', 'name']);
+                $query->select()->fieldRaw("'{$type}'", 'type');
+                if (is_array($value)) {
+                    foreach ($value as $key => $colValue) {
+                        if (is_null($colValue)) {
+                            $query->where()->isNull($key);
+                        } else {
+                            $query->where()->equals($key, $colValue);
+                        }
+                    }
+                } else {
+                    $query->where()->contains('name', $value);
+                }
+                 $q->union($query);
+            }
+        }
+        $q->orderBy('type', 'ASC');
+        $q->orderBy('name', 'ASC');
+        
+        return $q->execute();
     }
 
     /**
@@ -125,6 +232,11 @@ class ProductTemplateTreeApi extends SugarApi
         return $returnObj;
     }
 
+    /**
+     * @deprecated
+     * @param $filter
+     * @return mixed[][]
+     */
     protected function getFilteredTreeData($filter)
     {
         $filter = "%$filter%";
@@ -133,6 +245,11 @@ class ProductTemplateTreeApi extends SugarApi
         return $this->getTreeData($unionFilter, $unionFilter, [$filter, $filter]);
     }
 
+    /**
+     * @deprecated
+     * @param $root
+     * @return mixed[][]
+     */
     protected function getRootedTreeData($root)
     {
         $union1Root = '';
@@ -154,6 +271,7 @@ class ProductTemplateTreeApi extends SugarApi
     /**
      * Gets the tree data
      *
+     * @deprecated
      * @param string $union1Filter
      * @param string $union2Filter
      * @param array $params Query parameters
