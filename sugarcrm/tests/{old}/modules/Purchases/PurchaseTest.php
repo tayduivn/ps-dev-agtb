@@ -52,4 +52,47 @@ class PurchaseTest extends TestCase
             [false, 'Product Type Name 2', 'Product Category Name 2',],
         ];
     }
+
+    /**
+     * @covers ::save_relationship_changes
+     */
+    public function testSaveRelationshipChanges()
+    {
+        $purchase = $this->getMockBuilder('Purchase')
+            ->setMethods(
+                [
+                    'handle_remaining_relate_fields',
+                    'update_parent_relationships',
+                    'handle_request_relate',
+                    'load_relationship',
+                ]
+            )
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $purchase->id = 'test_purchase_id';
+        $purchase->account_id = 'test_account_id1';
+        $purchase->rel_fields_before_value['account_id'] = 'test_account_id2';
+
+        $linkPLIs = $this->getMockBuilder('Link2')
+            ->disableOriginalConstructor()
+            ->setMethods(['getBeans'])
+            ->getMock();
+
+        $mockPLI = $this->getMockBuilder('PurchasedLineItem')
+            ->setMethods(['save'])
+            ->getMock();
+
+        $mockPLI->expects($this->once())
+            ->method('save');
+
+        $linkPLIs->expects($this->once())
+            ->method('getBeans')
+            ->willReturn([$mockPLI]);
+
+        $purchase->purchasedlineitems = $linkPLIs;
+        $purchase->save_relationship_changes(true);
+
+        $this->assertEquals('test_account_id1', $mockPLI->account_id);
+    }
 }

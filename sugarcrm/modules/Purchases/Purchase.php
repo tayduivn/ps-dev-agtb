@@ -41,6 +41,10 @@ class Purchase extends Basic
         'category_name' => 'category_name',
     ];
 
+    public $relationship_fields = [
+        'account_id' => 'accounts',
+    ];
+
     /**
      * {@inheritDoc}
      *
@@ -59,5 +63,30 @@ class Purchase extends Basic
         foreach ($this->pliCopyFields as $purchaseField => $pliField) {
             $pli->$pliField = $this->$purchaseField;
         }
+    }
+
+    /**
+     * This function saves changes to accounts in Purchases' related module PurchasedLineItems.
+     *
+     * @param boolean $is_update    true if this save is an update
+     * @param array $exclude        exclude relationships
+     */
+    public function save_relationship_changes(bool $is_update, array $exclude = [])
+    {
+        if (!empty($this->account_id) &&
+            !empty($this->rel_fields_before_value['account_id']) &&
+            (trim($this->account_id) != trim($this->rel_fields_before_value['account_id']))
+        ) {
+            $relationshipsToBeTouched = ['purchasedlineitems'];
+            foreach ($relationshipsToBeTouched as $relationship) {
+                $this->load_relationship($relationship);
+                foreach ($this->$relationship->getBeans() as $bean) {
+                    $bean->account_id = $this->account_id;
+                    $bean->save();
+                }
+            }
+        }
+
+        parent::save_relationship_changes($is_update, $exclude);
     }
 }
