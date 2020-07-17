@@ -17,7 +17,7 @@ $viewdefs['Accounts']['base']['view']['activity-timeline'] = [
             'label' => 'TPL_ACTIVITY_TIMELINE_DASHLET',
             'description' => 'LBL_ACTIVITY_TIMELINE_DASHLET_DESCRIPTION',
             'config' => ['module' => 'Accounts'],
-            'preview' => [],
+            'preview' => ['module' => 'Accounts'],
             'filter' => [
                 'view' => 'record',
                 'module' => [

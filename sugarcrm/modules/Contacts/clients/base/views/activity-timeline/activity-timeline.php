@@ -17,7 +17,7 @@ $viewdefs['Contacts']['base']['view']['activity-timeline'] = [
             'label' => 'TPL_ACTIVITY_TIMELINE_DASHLET',
             'description' => 'LBL_ACTIVITY_TIMELINE_DASHLET_DESCRIPTION',
             'config' => ['module' => 'Contacts'],
-            'preview' => [],
+            'preview' => ['module' => 'Contacts'],
             'filter' => [
                 'view' => 'record',
                 'module' => [

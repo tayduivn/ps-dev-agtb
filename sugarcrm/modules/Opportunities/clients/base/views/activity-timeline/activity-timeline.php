@@ -17,7 +17,7 @@ $viewdefs['Opportunities']['base']['view']['activity-timeline'] = [
             'label' => 'TPL_ACTIVITY_TIMELINE_DASHLET',
             'description' => 'LBL_ACTIVITY_TIMELINE_DASHLET_DESCRIPTION',
             'config' => ['module' => 'Opportunities'],
-            'preview' => [],
+            'preview' => ['module' => 'Opportunities'],
             'filter' => [
                 'view' => 'record',
                 'module' => [

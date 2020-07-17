@@ -17,7 +17,7 @@ $viewdefs['Cases']['base']['view']['activity-timeline'] = [
             'label' => 'TPL_ACTIVITY_TIMELINE_DASHLET',
             'description' => 'LBL_ACTIVITY_TIMELINE_DASHLET_DESCRIPTION',
             'config' => ['module' => 'Cases'],
-            'preview' => [],
+            'preview' => ['module' => 'Cases'],
             'filter' => [
                 'view' => 'record',
                 'module' => [
