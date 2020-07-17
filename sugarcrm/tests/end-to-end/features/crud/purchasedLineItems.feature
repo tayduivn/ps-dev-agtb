@@ -13,7 +13,7 @@ Feature: Purchased Line Items module verification
   Background:
     Given I am logged in
 
-  @user_profile
+  @user_profile @pr
   Scenario: User Profile > Change license type
     When I choose Profile in the user actions menu
     # Change the value of License Type field
@@ -226,11 +226,21 @@ Feature: Purchased Line Items module verification
       | revenue       | €2,000.00 $2,222.22 |
       | total_amount  | €5,900.00 $6,555.56 |
 
+    Then PurchasedLineItems *PLI_1 should have the following values in the preview:
+      | fieldName     | value               |
+      | name          | Chelsea FC          |
+      | purchase_name | Purchase 1          |
+      | account_name  | Account One         |
+      | date_closed   | 05/05/2020          |
+      | revenue       | €2,000.00 $2,222.22 |
+      | total_amount  | €5,900.00 $6,555.56 |
+
     # Verify that record is created successfully
     Then PurchasedLineItems *PLI_1 should have the following values:
       | fieldName              | value               |
       | name                   | Chelsea FC          |
       | purchase_name          | Purchase 1          |
+      | account_name           | Account One         |
       | date_closed            | 05/05/2020          |
       | revenue                | €2,000.00 $2,222.22 |
       | total_amount           | €5,900.00 $6,555.56 |
@@ -262,8 +272,128 @@ Feature: Purchased Line Items module verification
       | annual_revenue  | €2,100.00 $2,333.33 |
 
 
+  @create @pr @SS-680 @SS-726
+  Scenario: Purchased Line Items > Create PLI from PLI subpanel on Account record view
+    Given Accounts records exist:
+      | *   | name        |
+      | A_1 | Account One |
+      | A_2 | Account Two |
 
-  @user_profile
+    And Purchases records exist related via purchases link to *A_1:
+      | *     | name       | service | renewable | description            |
+      | Pur_1 | Purchase 1 | true    | true      | This is great purchase |
+
+    # Click Create Purchased Line Items from PLI account subpanel
+    When I choose Accounts in modules menu
+    When I select *A_1 in #AccountsList.ListView
+    When I create_new record from purchasedlineitems subpanel on #A_1Record view
+
+    When I click show more button on #PurchasedLineItemsDrawer view
+
+    Then I verify fields on #PurchasedLineItemsDrawer.RecordView
+      | fieldName    | value       |
+      | account_name | Account One |
+
+    # Populate Header data
+    When I provide input for #PurchasedLineItemsDrawer.HeaderView view
+      | *     | name       |
+      | PLI_1 | Chelsea FC |
+    # Populate record data
+    When I provide input for #PurchasedLineItemsDrawer.RecordView view
+      | *     | purchase_name | date_closed | revenue | quantity | discount_amount | service_start_date | service_duration_value | service_duration_unit | tag     | commentlog            | service | renewable |
+      | PLI_1 | Purchase 1    | 05/05/2020  | 2000    | 3        | 100             | 06/01/2020         | 2                      | Year(s)               | Chelsea | Please buy Chelsea FC | true    | true      |
+
+    # Save
+    When I click Save button on #PurchasesDrawer header
+    When I close alert
+
+    # Verify PLI info in the PLI subpanel of account record view
+    Then I verify fields for *PLI_1 in #A_1Record.SubpanelsLayout.subpanels.purchasedlineitems
+      | fieldName     | value      |
+      | name          | Chelsea FC |
+      | purchase_name | Purchase 1 |
+      | date_closed   | 05/05/2020 |
+      | revenue       | $2,000.00  |
+      | total_amount  | $5,900.00  |
+      | quantity      | 3.00       |
+
+    When I select *PLI_1 in #A_1Record.SubpanelsLayout.subpanels.purchasedlineitems
+
+    # Verify that record is created successfully
+    Then PurchasedLineItems *PLI_1 should have the following values:
+      | fieldName              | value       |
+      | name                   | Chelsea FC  |
+      | purchase_name          | Purchase 1  |
+      | account_name           | Account One |
+      | date_closed            | 05/05/2020  |
+      | revenue                | $2,000.00   |
+      | total_amount           | $5,900.00   |
+      | quantity               | 3.00        |
+      | discount_amount        | $100.00     |
+      | service                | true        |
+      | renewable              | true        |
+      | service_start_date     | 06/01/2020  |
+      | service_duration_value | 2           |
+      | service_duration_unit  | Year(s)     |
+      | service_end_date       | 05/31/2022  |
+      | tag                    | Chelsea     |
+      | annual_revenue         | $2,950.00   |
+
+    # Delete Account
+    When I delete *A_1 record in Accounts list view
+
+    # Verify that account is not displayed in PLI preview
+    When I choose PurchasedLineItems in modules menu
+    Then PurchasedLineItems *PLI_1 should have the following values in the preview:
+      | fieldName     | value      |
+      | name          | Chelsea FC |
+      | purchase_name | Purchase 1 |
+      | account_name  |            |
+
+    # Verify that account is not displayed in PLI record view
+    When I select *PLI_1 in #PurchasedLineItemsList.ListView
+    Then PurchasedLineItems *PLI_1 should have the following values:
+      | fieldName     | value      |
+      | name          | Chelsea FC |
+      | purchase_name | Purchase 1 |
+      | account_name  |            |
+
+    # TODO: Re-enable this after SS-720 is merged
+    # Verify that account_name field is not editable in PLI record view
+#    Then I verify fields on #PLI_1Record.RecordView
+#      | fieldName    | state    |
+#      | account_name | readonly |
+
+    # Select another account for purchase record
+    When I choose Purchases in modules menu
+    When I select *Pur_1 in #PurchasesList.ListView
+    When I click Edit button on #Pur_1Record header
+    When I provide input for #Pur_1Record.RecordView view
+      | account_name |
+      | Account Two  |
+    When I click Save button on #Pur_1Record header
+    When I close alert
+
+    # Verify that account is updated in PLI preview
+    When I choose PurchasedLineItems in modules menu
+    Then PurchasedLineItems *PLI_1 should have the following values in the preview:
+      | fieldName     | value       |
+      | name          | Chelsea FC  |
+      | purchase_name | Purchase 1  |
+      # TODO: uncomment this file after SS-726 is fixed
+      # | account_name  | Account Two |
+
+    # Verify that account is updated in PLI record view
+    When I select *PLI_1 in #PurchasedLineItemsList.ListView
+    Then PurchasedLineItems *PLI_1 should have the following values:
+      | fieldName     | value       |
+      | name          | Chelsea FC  |
+      | purchase_name | Purchase 1  |
+      # TODO: uncomment this file after SS-726 is fixed
+      # | account_name  | Account Two |
+
+
+  @user_profile @pr
   Scenario: User Profile > Change license type
     When I choose Profile in the user actions menu
     # Change the value of License Type field
