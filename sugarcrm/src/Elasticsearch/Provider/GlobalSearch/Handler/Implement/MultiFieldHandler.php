@@ -49,8 +49,7 @@ class MultiFieldHandler extends AbstractHandler implements
         ),
         'text' => array(
             'gs_string',
-            // Disable wildcard search awaiting optimization
-            //'gs_text_wildcard',
+            'gs_string_wildcard',
         ),
         'datetime' => array(
             'gs_datetime',
@@ -104,7 +103,6 @@ class MultiFieldHandler extends AbstractHandler implements
      * @var array
      */
     protected $longFieldTypes = array(
-        'text',
         'longtext',
         'htmleditable_tinymce',
     );

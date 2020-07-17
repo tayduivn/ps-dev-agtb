@@ -23,6 +23,10 @@ use Sugarcrm\SugarcrmTestsUnit\TestReflection;
  */
 class MultiFieldHandlerTest extends TestCase
 {
+    protected function tearDown() : void
+    {
+        unset($GLOBALS['enable_long_text_search']);
+    }
     /**
      * @coversNothing
      */
@@ -229,6 +233,7 @@ class MultiFieldHandlerTest extends TestCase
      */
     public function testBuildMappingValidation($module, $field, array $defs, array $expected)
     {
+        $this->toggleLongTextSearch(true);
         $mapping = new Mapping($module);
         $sut = $this->getMultiFieldHandlerMock();
         $sut->buildMapping($mapping, $field, $defs);
@@ -328,15 +333,14 @@ class MultiFieldHandlerTest extends TestCase
                                 'analyzer' => 'gs_analyzer_string',
                                 'store' => true,
                             ],
-                            //'gs_text_wildcard' => array(
-                            //    'type' => 'string',
-                            //    'index' => 'analyzed',
-                            //    'index_analyzer' => 'gs_analyzer_text_ngram',
-                            //    'search_analyzer' => 'gs_analyzer_string',
-                            //    'store' => true,
-                            //),
+                            'gs_string_wildcard' => array(
+                                'type' => 'text',
+                                'index' => true,
+                                'analyzer' => 'gs_analyzer_string_ngram',
+                                'search_analyzer' => 'gs_analyzer_string',
+                                'store' => true,
+                            ),
                         ],
-                        'doc_values' => false,
                     ],
                     'description' => [
                         'type' => 'keyword',
@@ -344,7 +348,6 @@ class MultiFieldHandlerTest extends TestCase
                         'copy_to' => [
                             'Accounts__description',
                         ],
-                        'doc_values' => false,
                     ],
                 ],
             ],
@@ -721,6 +724,162 @@ class MultiFieldHandlerTest extends TestCase
     }
 
     /**
+     * Validation test long text for implemented mapping
+     * @coversNothing
+     * @dataProvider providerTestBuildMappingValidationNoLongText
+     */
+    public function testBuildMappingValidationNoLongText($module, $field, array $defs, array $expected)
+    {
+        $this->toggleLongTextSearch(false);
+        $mapping = new Mapping($module);
+        $sut = $this->getMultiFieldHandlerMock();
+        $sut->buildMapping($mapping, $field, $defs);
+        $this->assertEquals($expected, $mapping->compile());
+    }
+
+    public function providerTestBuildMappingValidationNoLongText()
+    {
+        return [
+            // test 'url' type
+            [
+                'Accounts',
+                'website',
+                [
+                    'type' => 'url',
+                ],
+                [
+                    'Accounts__website' => [
+                        'type' => 'keyword',
+                        'index' => false,
+                        'fields' => [
+                            'gs_url' =>  [
+                                'type' => 'text',
+                                'index' => true,
+                                'analyzer' => 'gs_analyzer_url',
+                                'store' => false,
+                            ],
+                            'gs_url_wildcard' => [
+                                'type' => 'text',
+                                'index' => true,
+                                'analyzer' => 'gs_analyzer_url_ngram',
+                                'search_analyzer' => 'gs_analyzer_url',
+                                'store' => false,
+                            ],
+                        ],
+                    ],
+                    'website' => [
+                        'type' => 'keyword',
+                        'index' => false,
+                        'copy_to' => [
+                            'Accounts__website',
+                        ],
+                    ],
+                ],
+            ],
+            // test 'longtext' type
+            [
+                'Accounts',
+                'description',
+                [
+                    'type' => 'longtext',
+                ],
+                [
+                    'Accounts__description' => [
+                        'type' => 'keyword',
+                        'index' => false,
+                        'fields' => [
+                            'gs_string' =>  [
+                                'type' => 'text',
+                                'index' => true,
+                                'analyzer' => 'gs_analyzer_string',
+                                'store' => true,
+                            ],
+                            //'gs_text_wildcard' => array(
+                            //    'type' => 'string',
+                            //    'index' => 'analyzed',
+                            //    'index_analyzer' => 'gs_analyzer_text_ngram',
+                            //    'search_analyzer' => 'gs_analyzer_string',
+                            //    'store' => true,
+                            //),
+                        ],
+                    ],
+                    'description' => [
+                        'type' => 'keyword',
+                        'index' => false,
+                        'copy_to' => [
+                            'Accounts__description',
+                        ],
+                    ],
+                ],
+            ],
+            // test 'htmleditable_tinymce' type
+            [
+                'KBContents',
+                'body',
+                [
+                    'type' => 'htmleditable_tinymce',
+                ],
+                [
+                    'KBContents__body' => [
+                        'type' => 'keyword',
+                        'index' => false,
+                        'fields' => [
+                            'gs_string' =>  [
+                                'type' => 'text',
+                                'index' => true,
+                                'analyzer' => 'gs_analyzer_string',
+                                'store' => true,
+                            ],
+                            //'gs_text_wildcard' => array(
+                            //    'type' => 'string',
+                            //    'index' => 'analyzed',
+                            //    'index_analyzer' => 'gs_analyzer_text_ngram',
+                            //    'search_analyzer' => 'gs_analyzer_string',
+                            //    'store' => true,
+                            //),
+                        ],
+                    ],
+                    'body' => [
+                        'type' => 'keyword',
+                        'index' => false,
+                        'copy_to' => [
+                            'KBContents__body',
+                        ],
+                    ],
+                ],
+            ],
+            // test 'enum' type
+            [
+                'Bugs',
+                'status',
+                [
+                    'type' => 'enum',
+                ],
+                [
+                    'Bugs__status' => [
+                        'type' => 'keyword',
+                        'index' => false,
+                        'fields' => [
+                            'gs_not_analyzed' => [
+                                'type' => 'keyword',
+                                'index' => true,
+                                'store' => true,
+                            ],
+                        ],
+                    ],
+                    'status' => [
+                        'type' => 'keyword',
+                        'index' => false,
+                        'copy_to' => [
+                            'Bugs__status',
+                        ],
+                    ],
+                ],
+            ],
+        ];
+    }
+
+    /**
      * @covers ::buildMapping
      * @covers ::getMultiFieldProperty
      * @dataProvider providerTestBuildMapping
@@ -990,5 +1149,11 @@ class MultiFieldHandlerTest extends TestCase
         return $this->getMockBuilder('Sugarcrm\Sugarcrm\Elasticsearch\Provider\GlobalSearch\Handler\Implement\MultiFieldHandler')
             ->setMethods($methods)
             ->getMock();
+    }
+
+    protected function toggleLongTextSearch(bool $flag)
+    {
+        global $sugar_config;
+        $sugar_config['enable_long_text_search'] = $flag;
     }
 }

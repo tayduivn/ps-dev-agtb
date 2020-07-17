@@ -155,7 +155,7 @@ class Mapping implements MappingInterface
 
     protected function getNotIndexedBase(bool $longField)
     {
-        if ($longField) {
+        if ($longField && $this->isLongTextEnabled()) {
             return $this->notIndexedBaseNotDoc;
         }
 
@@ -326,5 +326,18 @@ class Mapping implements MappingInterface
             throw new MappingException("Cannot redeclare field '{$field}' for module '{$this->module}'");
         }
         $this->properties[$field] = $property;
+    }
+
+    /**
+     * check sugar config if 'enable_long_text_search' is enabled
+     * @return bool
+     */
+    protected function isLongTextEnabled() : bool
+    {
+        global $sugar_config;
+        if ($sugar_config && !empty($sugar_config['enable_long_text_search'])) {
+            return true;
+        }
+        return false;
     }
 }

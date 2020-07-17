@@ -73,10 +73,15 @@ class Indexer
      * @var array
      */
     protected $longFieldTypes = array(
-        'text',
         'longtext',
         'htmleditable_tinymce',
     );
+
+    /**
+     * long text search flag
+     * @var bool
+     */
+    protected $longTextEnabled = false;
 
     /**
      * Ctor
@@ -92,7 +97,9 @@ class Indexer
         if (!empty($config['max_bulk_threshold'])) {
             $this->maxBulkThreshold = (int) $config['max_bulk_threshold'];
         }
-
+        if (!empty($config['enable_long_text_search'])) {
+            $this->longTextEnabled = (bool) $config['enable_long_text_search'];
+        }
         $this->container = $container;
         $this->db = $db;
     }
@@ -340,7 +347,8 @@ class Indexer
         $data = array();
         foreach ($fields as $field => $type) {
             if (isset($bean->$field)) {
-                if (is_string($bean->$field) && !in_array($type, $this->longFieldTypes)) {
+                if (is_string($bean->$field)
+                    && (!$this->longTextEnabled || !in_array($type, $this->longFieldTypes))) {
                     $data[$field] = mb_strcut($this->decodeBeanField($bean->$field), 0, self::MAX_SIZE_OF_TEXT);
                 } else {
                     $data[$field] = $this->decodeBeanField($bean->$field);
