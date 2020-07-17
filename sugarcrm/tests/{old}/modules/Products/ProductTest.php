@@ -29,6 +29,13 @@ class ProductTest extends TestCase
         SugarTestHelper::tearDown();
     }
 
+    public function tearDown(): void
+    {
+        // BEGIN SUGARCRM flav=ent ONLY
+        SugarTestPurchasedLineItemUtilities::removeAllCreatedPurchasedLineItems();
+        // END SUGARCRM flav=ent ONLY
+    }
+
     /**
      * @param String $amount
      * @param String $quantity
@@ -103,6 +110,60 @@ class ProductTest extends TestCase
             ['0.25', '89765', '21456.00', null, '985.250000'],
         ];
     }
+
+    // BEGIN SUGARCRM flav=ent ONLY
+
+    /**
+     * @param bool $has_add_on
+     * @dataProvider dataProviderConvertToRLICopiesAddOnPLI
+     * @covers ::convertToRevenueLineItem
+     */
+    public function testConvertToRLICopiesAddOnPLI($has_add_on)
+    {
+        /* @var $product Product */
+        $product = $this->getMockBuilder('Product')->setMethods(['save'])->getMock();
+
+        $product->expects($this->any())
+            ->method('save')
+            ->will($this->returnValue(true));
+
+        $product->name = 'Hello World';
+        $product->total_amount = '100.00';
+        $product->discount_price = '100.00';
+        $product->quantity = '1';
+        $product->discount_amount = '0';
+        $product->discount_select = null;
+        $product->fetched_row = [];
+
+        foreach ($product->getFieldDefinitions() as $field) {
+            $product->fetched_row[$field['name']] = $product->{$field['name']};
+        }
+
+        if ($has_add_on) {
+            $add_on_to_pli = SugarTestPurchasedLineItemUtilities::createPurchasedLineItem('add_on_to_pli_id');
+            $product->add_on_to_id = $add_on_to_pli->id;
+        }
+
+        SugarTestReflection::callProtectedMethod($product, 'calculateDiscountPrice');
+
+        $rli = $product->convertToRevenueLineItem();
+
+        if ($has_add_on) {
+            $this->assertEquals($product->add_on_to_id, $rli->add_on_to_id);
+        } else {
+            $this->assertNull($rli->add_on_to_id);
+        }
+    }
+
+    public function dataProviderConvertToRLICopiesAddOnPLI()
+    {
+        return [
+            [false],
+            [true],
+        ];
+    }
+
+    // END SUGARCRM flav=ent ONLY
 
     /**
      * @dataProvider dataProviderUpdateCurrencyBaseRate

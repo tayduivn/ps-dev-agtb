@@ -917,6 +917,12 @@ class RevenueLineItem extends SugarBean
             $product->discount_price = $this->likely_case;
         }
 
+        // BEGIN SUGARCRM flav=ent ONLY
+        if (!empty($this->add_on_to_id)) {
+            $product->add_on_to_id = $this->add_on_to_id;
+        }
+        // END SUGARCRM flav=ent ONLY
+
         return $product;
     }
 

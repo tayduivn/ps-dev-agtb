@@ -118,6 +118,44 @@ class RevenueLineItemTest extends TestCase
         $this->assertEquals('25.00', $product->discount_amount);
     }
 
+    // BEGIN SUGARCRM flav=ent ONLY
+    /**
+     * @param bool $had_add_on
+     * @dataProvider dataProviderConvertToQLICopiesAddOnPLI
+     * @covers ::convertToQuotedLineItem
+     */
+    public function testConvertToQLICopiesAddOnToPLI($has_add_on)
+    {
+        /* @var $rli RevenueLineItem */
+        $rli = $this->getMockBuilder('RevenueLineItem')->setMethods(['save'])->getMock();
+        $rli->likely_case = '100.00';
+        $rli->discount_price = '200.00';
+        $rli->sales_stage = 'Test';
+
+        if ($has_add_on) {
+            $add_on_to_pli = SugarTestPurchasedLineItemUtilities::createPurchasedLineItem('add_on_to_pli_id');
+            $rli->add_on_to_id = $add_on_to_pli->id;
+        }
+
+        $product = $rli->convertToQuotedLineItem();
+
+        if ($has_add_on) {
+            $this->assertEquals($rli->add_on_to_id, $product->add_on_to_id);
+        } else {
+            $this->assertNull($product->add_on_to_id);
+        }
+    }
+
+    public function dataProviderConvertToQLICopiesAddOnPLI()
+    {
+        return [
+            [false],
+            [true],
+        ];
+    }
+
+    // END SUGARCRM flav=ent ONLY
+
     /**
      * @dataProvider dataProviderSetDiscountPrice
      * @covers ::setDiscountPrice

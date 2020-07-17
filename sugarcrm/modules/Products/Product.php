@@ -579,6 +579,10 @@ class Product extends SugarBean
             $endDate = $datetime->modify($this->service_duration_value . ' ' . $this->service_duration_unit);
             $rli->service_end_date = $datetime->asDbDate($endDate, false);
         }
+        // copy the add on to relationship
+        if (!empty($this->add_on_to_id)) {
+            $rli->add_on_to_id = $this->add_on_to_id;
+        }
         // END SUGARCRM flav=ent ONLY
 
         // since we don't have a likely_case on products,
