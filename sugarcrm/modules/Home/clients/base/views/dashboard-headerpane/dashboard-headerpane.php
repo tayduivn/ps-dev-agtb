@@ -15,27 +15,6 @@ $viewdefs["Home"]["base"]["view"]["dashboard-headerpane"] = array(
             "type" => "actiondropdown",
             "primary" => true,
             "buttons" => array(
-                [
-                    "name"      => "add_dashlet_button",
-                    "type"      => "rowaction",
-                    "label"     => "LBL_ADD_DASHLET_BUTTON",
-                    'events' => [
-                        'click' => 'button:add_dashlet_button:click',
-                    ],
-                    'acl_action' => 'edit',
-                    'disallowed_layouts' => [
-                        [
-                            // service console
-                            'name' => 'dashboard',
-                            'id' => 'c108bb4a-775a-11e9-b570-f218983a1c3e',
-                        ],
-                        [
-                            // renewals console
-                            'name' => 'dashboard',
-                            'type' => 'renewals_console',
-                        ],
-                    ],
-                ],
                 array(
                     "name"      => "add_button",
                     "type"      => "rowaction",
@@ -116,6 +95,27 @@ $viewdefs["Home"]["base"]["view"]["dashboard-headerpane"] = array(
                         // END SUGARCRM flav=ent ONLY
                     ],
                 ),
+                [
+                    "name"      => "add_dashlet_button",
+                    "type"      => "rowaction",
+                    "label"     => "LBL_ADD_DASHLET_BUTTON",
+                    'events' => [
+                        'click' => 'button:add_dashlet_button:click',
+                    ],
+                    'acl_action' => 'edit',
+                    'disallowed_layouts' => [
+                        [
+                            // service console
+                            'name' => 'dashboard',
+                            'id' => 'c108bb4a-775a-11e9-b570-f218983a1c3e',
+                        ],
+                        [
+                            // renewals console
+                            'name' => 'dashboard',
+                            'type' => 'renewals_console',
+                        ],
+                    ],
+                ],
             ),
             "showOn" => "view",
         ),
@@ -212,11 +212,6 @@ $viewdefs["Home"]["base"]["view"]["dashboard-headerpane"] = array(
                     'label' => 'LBL_FAVORITE',
                     'type' => 'favorite',
                     'dismiss_label' => true,
-                ),
-                array(
-                    "type" => "layoutbutton",
-                    "name" => "layout",
-                    "showOn" => "edit",
                 ),
             )
         )

@@ -41,6 +41,9 @@
             options.template = app.template.getView(options.type);
         }
         this._super('initialize', [options]);
+        if (this.model.isNew()) {
+            this._setNewModelMeta();
+        }
         this.context.set('dataView', '');
         this.model.on('change change:layout change:metadata', function() {
             if (this.inlineEditMode) {
@@ -426,5 +429,18 @@
 
     toggleEdit: function(isEdit) {
         this.toggleFields(this.editableFields, isEdit);
-    }
+    },
+
+    /**
+     * Initialize metadata on new dashboard
+     * @private
+     */
+    _setNewModelMeta: function() {
+        var metadata = {
+            dashlets: []
+        };
+        this.model.set('metadata', metadata, {silent: true});
+        this.model.trigger('change:metadata');
+        this.model.changed = {};
+    },
 })

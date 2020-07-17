@@ -20,6 +20,13 @@
     className: 'dashboard-grid',
 
     /**
+     * Event listeners
+     */
+    events: {
+        'click .empty-grid': 'addDashletClicked'
+    },
+
+    /**
      * Reference to the grid managed by this controller
      */
     grid: null,
@@ -51,7 +58,9 @@
         autoPosition: false,
         x: 0,
         y: 0,
-        width: 4,
+        width: 12,
+        minWidth: 2,
+        minHeight: 3,
         height: 4,
     },
 
@@ -78,13 +87,6 @@
         this._super('initialize', [options]);
         this.tabIndex = this._getTabIndex(options);
         this._setInitialDashlets();
-
-        // If we aren't on a "Home" dashboard, we're in a list/record side drawer.
-        // our dashlets should be full-width in that case, and users can change
-        // them later if they want to.
-        if (this.model && this.model.get('dashboard_module') !== 'Home') {
-            this.defaultElementOptions.width = 12;
-        }
 
         try {
             this.grid = GridStack.init(this.defaultGridOptions, this.el);

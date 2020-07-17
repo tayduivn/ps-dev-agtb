@@ -14,15 +14,6 @@ $viewdefs['Dashboards']['base']['view']['dashboard-headerpane'] = array(
         array(
             'type' => 'actiondropdown',
             'buttons' => array(
-                [
-                    "name"      => "add_dashlet_button",
-                    "type"      => "rowaction",
-                    "label"     => "LBL_ADD_DASHLET_BUTTON",
-                    'events' => [
-                        'click' => 'button:add_dashlet_button:click',
-                    ],
-                    'acl_action' => 'edit',
-                ],
                 array(
                     'name' => 'add_button',
                     'type' => 'rowaction',
@@ -51,6 +42,15 @@ $viewdefs['Dashboards']['base']['view']['dashboard-headerpane'] = array(
                     'type' => 'rowaction',
                     'label' => 'LBL_DASHLET_MAXIMIZE_ALL',
                 ),
+                [
+                    "name"      => "add_dashlet_button",
+                    "type"      => "rowaction",
+                    "label"     => "LBL_ADD_DASHLET_BUTTON",
+                    'events' => [
+                        'click' => 'button:add_dashlet_button:click',
+                    ],
+                    'acl_action' => 'edit',
+                ],
             ),
             'showOn' => 'view',
         ),
@@ -110,10 +110,6 @@ $viewdefs['Dashboards']['base']['view']['dashboard-headerpane'] = array(
                     'label' => 'LBL_FAVORITE',
                     'type' => 'favorite',
                     'dismiss_label' => true,
-                ),
-                array(
-                    'type' => 'layoutbutton',
-                    'name' => 'layout',
                 ),
             ),
         ),

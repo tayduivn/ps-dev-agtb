@@ -14,6 +14,19 @@ $viewdefs["base"]["view"]["dashboard-headerpane"] = array(
         array(
             "type" => "actiondropdown",
             "buttons" => array(
+                array(
+                    "name"      => "add_button",
+                    "type"      => "rowaction",
+                    "label"     => "LBL_CREATE_BUTTON_LABEL",
+                    "css_class" => "btn",
+                ),
+
+                array(
+                    "name"      => "edit_button",
+                    "type"      => "rowaction",
+                    "label"     => "LBL_EDIT_BUTTON",
+                ),
+
                 [
                     "name"      => "add_dashlet_button",
                     "type"      => "rowaction",
@@ -35,18 +48,6 @@ $viewdefs["base"]["view"]["dashboard-headerpane"] = array(
                         ],
                     ],
                 ],
-                array(
-                    "name"      => "add_button",
-                    "type"      => "rowaction",
-                    "label"     => "LBL_CREATE_BUTTON_LABEL",
-                    "css_class" => "btn",
-                ),
-
-                array(
-                    "name"      => "edit_button",
-                    "type"      => "rowaction",
-                    "label"     => "LBL_EDIT_BUTTON",
-                ),
 
                 array(
                     "name"      => "collapse_button",
@@ -135,11 +136,6 @@ $viewdefs["base"]["view"]["dashboard-headerpane"] = array(
                     "type" => "dashboardtitle",
                     "name" => "name",
                     "placeholder" => "LBL_DASHBOARD_TITLE",
-                ),
-                array(
-                    "type" => "layoutbutton",
-                    "name" => "layout",
-                    "showOn" => "edit",
                 ),
             )
         )

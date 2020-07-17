@@ -59,4 +59,41 @@
     background-color: @lightPacific;
     border-radius: @baseBorderRadius;
   }
+
+  .empty-grid {
+    // Navbar height plus headerpane height minus grid margin and svg top space
+    @totalTopHeight: @navbarHeight + 41px;
+
+    display: none;
+    width: 276px;
+    height: 276px;
+    max-width: 90%;
+    margin: auto;
+    position: relative;
+    top: ~'calc(50vh - @{totalTopHeight})';
+    transform: translateY(-50%);
+    background: url('@{baseUrl}/img/dashboards/add-dashlet-normal-state.svg') no-repeat center center;
+    cursor: pointer;
+
+    &:hover {
+      background-image: url('@{baseUrl}/img/dashboards/add-dashlet-hover-state.svg');
+    }
+
+    &:focus {
+      outline: none;
+    }
+
+    &:only-child {
+      display: block;
+    }
+
+    .dashboard.edit & {
+      display: none;
+    }
+
+    .sidebar-content & {
+      top: 0;
+      transform: translateY(0);
+    }
+  }
 }
