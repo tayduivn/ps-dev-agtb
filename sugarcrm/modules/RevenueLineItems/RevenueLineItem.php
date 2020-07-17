@@ -645,6 +645,13 @@ class RevenueLineItem extends SugarBean
             $pli->service_duration_unit = 'day';
         }
 
+        if ($this->renewable && !empty($this->renewal_rli_id)) {
+            $renewalRli = BeanFactory::retrieveBean('RevenueLineItems', $this->renewal_rli_id);
+            if (!empty($renewalRli->id)) {
+                $pli->renewal_opp_id = $renewalRli->opportunity_id;
+            }
+        }
+
         $this->copyFieldsToBean($pli, $this->pliCopyFields);
         $this->mapFieldsToBean($pli, $this->pliMapFields);
         $this->copyCustomFields($pli);

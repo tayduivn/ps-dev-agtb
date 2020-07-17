@@ -16,7 +16,7 @@
  * Opportunity's RLIs when the Opportunity is closed won.
  */
 $hook_array['after_save'][] = [
-    1,
+    2,
     'queueRLItoPurchaseJob',
     'modules/Opportunities/OpportunityHooks.php',
     'OpportunityHooks',

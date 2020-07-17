@@ -897,8 +897,9 @@ class RevenueLineItemTest extends TestCase
      * @param $copyFields
      * @param $mappedFields
      * @param $expected
+     * @param $hasRenewalRli
      */
-    public function testGeneratePliFromRli($copyFields, $mappedFields, $expected): void
+    public function testGeneratePliFromRli($copyFields, $mappedFields, $expected, $hasRenewalRli): void
     {
         global $current_user, $timedate;
         $current_date = '2015-08-13 18:13:00';
@@ -912,7 +913,19 @@ class RevenueLineItemTest extends TestCase
         foreach ($mappedFields as $field => $mapping) {
             $rli->$field = $mapping['value'];
         }
+
+        if ($hasRenewalRli) {
+            $account = SugarTestAccountUtilities::createAccount();
+            $opportunity = SugarTestOpportunityUtilities::createOpportunity('opportunity_id', $account);
+            $renewalRli = SugarTestRevenueLineItemUtilities::createRevenueLineItem($id = 'renewal_rli');
+            $renewalRli->load_relationship('opportunities');
+            $renewalRli->opportunities->add($opportunity);
+            $renewalRli->save();
+            $rli->renewal_rli_id = $renewalRli->id;
+        }
+
         $rli->save();
+
         $purchase = SugarTestPurchaseUtilities::createPurchase();
         $purchase->service = $copyFields['service'];
 
@@ -931,6 +944,11 @@ class RevenueLineItemTest extends TestCase
         }
         foreach ($expected as $field => $value) {
             $this->assertEquals($pli->$field, $value);
+        }
+        if ($hasRenewalRli) {
+            $this->assertEquals($pli->renewal_opp_id, 'opportunity_id');
+        } else {
+            $this->assertNull($pli->renewal_opp_id);
         }
 
         SugarTestPurchasedLineItemUtilities::removePurchasedLineItemsByID([$pli->id]);
@@ -986,6 +1004,7 @@ class RevenueLineItemTest extends TestCase
                     'service_duration_unit' => 'day',
                     'service_duration_value' => 1,
                 ],
+                'hasRenewalRli' => false,
             ],
             'service' => [
                 'copy' => [
@@ -1034,6 +1053,56 @@ class RevenueLineItemTest extends TestCase
                 ],
                 'expected' => [
                 ],
+                'hasRenewalRli' => false,
+            ],
+            'coterm' => [
+                'copy' => [
+                    'name' => 'RliName',
+                    'date_closed' => '2020-08-13',
+                    'quantity' => 123,
+                    'discount_select' => 1,
+                    'discount_amount' => 10,
+                    'discount_price' => 123,
+                    'renewable' => '1',
+                    'description' => 'This RLI will become a product',
+                    'assigned_user_id' => 'abc123',
+                    'assigned_user_name' => 'Jimothy Jericho',
+                    'team_id' => '1234lkjsdf',
+                    'team_set_id' => '1234lkjsdf',
+                    'acl_team_set_id' => '1234lkjsdf',
+                    'asset_number' => '1209384',
+                    'base_rate' => 0.980000,
+                    'vendor_part_num' => '109238',
+                    'list_price' => 100.00,
+                    'tax_class' => 'Taxable',
+                    'weight' => 1.01,
+                    'website' => 'https://www.sugarcrm.com',
+                    'serial_number' => '12N658AA39PI',
+                    'cost_price' => 100.08,
+                    'mft_part_num' => '12n658aa39pi',
+                    'book_value_date' => '2020-08-13',
+                    'book_value' => 100.01,
+                    'support_term' => 'This is a text field',
+                    'support_title' => 'Another Text Field',
+                    'support_expires' => '3000-01-01',
+                    'support_starts' => '1750-07-28',
+                    'support_contact' => 'Contact is a text field',
+                    'support_desc' => 'Description of support',
+                    'service' => true,
+                    'service_start_date' => '2020-08-13',
+                    'service_end_date' => '2021-1-13',
+                    'service_duration_value' => 5,
+                    'service_duration_unit' => 'month',
+                ],
+                'mapped' => [
+                    'likely_case' => [
+                        'mappedField' => 'revenue',
+                        'value' => 123.01,
+                    ],
+                ],
+                'expected' => [
+                ],
+                'hasRenewalRli' => true,
             ],
         ];
     }
