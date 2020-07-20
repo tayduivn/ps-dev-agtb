@@ -429,7 +429,7 @@ To configure additional system settings, click <a href="index.php?module=Adminis
     'LBL_MOBILE_MOD_REPORTS_RESTRICTION2' => '* The Reports module is not available for the browser-based mobile view.',
 
 // Password settings
-    'ERR_MIN_LENGTH_GREATER_THAN_MAX' => 'Minimum Length should be greater than Maximum Length',
+    'ERR_MIN_LENGTH_GREATER_THAN_MAX' => 'Maximum Length should be greater than Minimum Length',
     'ERR_MIN_LENGTH_NEGATIVE' => 'Minimum Length should be positive value',
     'ERR_MAX_LENGTH_NEGATIVE' => 'Maximum Length should be positive value',
     'ERR_EMPTY_SAML_LOGIN' => 'SAML Login URL can not be empty',
