@@ -835,7 +835,7 @@ public function convert($string, $type, array $additional_parameters = array())
 	/**~
 	 * @see DBManager::oneColumnSQLRep()
 	 */
-	protected function oneColumnSQLRep($fieldDef, $ignoreRequired = false, $table = '', $return_as_array = false)
+    protected function oneColumnSQLRep($fieldDef, $ignoreRequired = false, $table = '', $return_as_array = false, $action = null)
 	{
 		if(isset($fieldDef['name'])){
 			if(stristr($this->getFieldType($fieldDef), 'decimal') && isset($fieldDef['len'])) {
@@ -843,7 +843,7 @@ public function convert($string, $type, array $additional_parameters = array())
 			}
 		}
 		//May need to add primary key and sequence stuff here
-		$ref = parent::oneColumnSQLRep($fieldDef, $ignoreRequired, $table, true);
+        $ref = parent::oneColumnSQLRep($fieldDef, $ignoreRequired, $table, true, $action);
 
 		$matches = array();
 		if(!empty($fieldDef['len']) &&
@@ -1075,7 +1075,7 @@ public function convert($string, $type, array $additional_parameters = array())
 	/**+
 	 * @see DBManager::setAutoIncrement()
 	 */
-    protected function setAutoIncrement($table, $field_name, array $platformOptions = [])
+    protected function setAutoIncrement($table, $field_name, array $platformOptions = [], $action = null)
 	{
 		$this->deleteAutoIncrement($table, $field_name);
         if (!empty($platformOptions['cache'])) {

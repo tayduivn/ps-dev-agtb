@@ -560,7 +560,9 @@ class DynamicField {
         // pii field is always auditable
         $fmd->audited = isTruthy($field->audited) || isTruthy($field->pii);
         $fmd->reportable = ($field->reportable ? 1 : 0);
+        $fmd->autoinc_next = $field->autoinc_next;
         if($field){
+            $field->tablename = $this->bean->table_name . '_cstm';
             if (!$fmd->isUpdate() || !empty($fmd->deleted)) {
                 //Do two SQL calls here in this case
             	//The first is to create the column in the custom table without the default value
@@ -977,7 +979,7 @@ class DynamicField {
         if (isset($types[$fieldType][$signed])) {
             return $types[$fieldType][$signed];
         }
-        
+
         return false;
     }
 
@@ -1068,4 +1070,3 @@ class DynamicField {
 
     ////////////////////////////END BACKWARDS COMPATIBILITY MODE FOR PRE 5.0 MODULES\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 }
-

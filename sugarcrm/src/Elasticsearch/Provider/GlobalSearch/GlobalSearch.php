@@ -93,6 +93,7 @@ class GlobalSearch extends AbstractProvider implements ContainerAwareInterface
         'htmleditable_tinymce',
         'email',
         'commentlog',
+        'autoincrement',
     );
 
     /**

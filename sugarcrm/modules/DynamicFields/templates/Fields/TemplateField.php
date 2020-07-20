@@ -49,6 +49,7 @@ class TemplateField{
 	var $audited= 0;
 	var $massupdate = 0;
 	var $importable = 'true' ;
+    public $autoinc_next = '';
     public $pii = false;
 
     /**
@@ -679,5 +680,27 @@ class TemplateField{
             'default_value' => 'default',
             'id_name' => 'ext3',
         );
+    }
+
+    /**
+     * Utility function to return the name of the DB we should using. If the field is custom, then it'll be
+     * <module_name>_cstm. If the field is not custom it'll fetch the correct module name from the field data.
+     */
+    public function getTableName()
+    {
+        $table = null;
+        if (isset($this->module) && isset($this->module->table_name)) {
+            $table = $this->module->table_name;
+        }
+
+        if (isset($this->custom_module)) {
+            $table = strtolower($this->custom_module) . '_cstm';
+        }
+
+        if (isset($this->tablename)) {
+            $table = $this->tablename;
+        }
+
+        return $table;
     }
 }

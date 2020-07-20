@@ -56,7 +56,7 @@ class ViewModulefield extends SugarView
                 $this->request->getValidInputRequest('name', 'Assert\ComponentName')
             ));
         }
-        
+
         // If this is a new field mark it as such
         $isNew = empty($field_name) || !empty($_REQUEST['is_new']);
 
@@ -128,7 +128,7 @@ class ViewModulefield extends SugarView
 
             // If this is a new field but we are loading this form a second time,
             // like from coming back from a dropdown create on a new field, then
-            // keep the 'name' field open to allow the create field process to 
+            // keep the 'name' field open to allow the create field process to
             // continue like normal
             if (empty($vardef['name']) || $isNew) {
                 if (!empty($_REQUEST['type'])) {
@@ -147,7 +147,11 @@ class ViewModulefield extends SugarView
 
 			require_once ('modules/DynamicFields/FieldCases.php') ;
             $tf = get_widget ( empty($vardef [ 'type' ]) ?  "" : $vardef [ 'type' ]) ;
-            $tf->module = $module;
+
+            if (!$isNew) {
+                $tf->module = $module;
+            }
+
             $tf->populateFromRow($vardef);
 			$vardef = array_merge($vardef, $tf->get_field_def());
 

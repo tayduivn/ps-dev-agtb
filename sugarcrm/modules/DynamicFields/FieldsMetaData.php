@@ -9,17 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-
-
-
-
-
-
-
-
-
-
-
 class FieldsMetaData extends SugarBean {
 	// database table columns
 	var $id;
@@ -37,6 +26,7 @@ class FieldsMetaData extends SugarBean {
 	var $audited;
     var $duplicate_merge;
     var $reportable;
+    public $autoinc_next;
 	var $required_fields =  array("name"=>1, "date_start"=>2, "time_start"=>3,);
 
     public $module_name = 'EditCustomFields';
@@ -60,6 +50,7 @@ class FieldsMetaData extends SugarBean {
 		'massupdate',
         'duplicate_merge',
         'reportable',
+        'autoinc_next',
 	);
 
 	var $list_fields = array(

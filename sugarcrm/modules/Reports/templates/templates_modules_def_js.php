@@ -601,6 +601,7 @@ filter_defs['float'] = qualifiers;
 filter_defs['decimal'] = qualifiers;
 filter_defs['currency'] = qualifiers;
 filter_defs['num'] = qualifiers;
+filter_defs['autoincrement'] = qualifiers;
 
 var qualifiers =  new Array();
 qualifiers[qualifiers.length] = {name:'is',value:'<?php echo $mod_strings['LBL_IS']; ?>'};

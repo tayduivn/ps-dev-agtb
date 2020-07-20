@@ -105,9 +105,12 @@ class FieldViewer{
 			case 'phone':
 				require_once('modules/DynamicFields/templates/Fields/Forms/phone.php');
 				return get_body($this->ss, $vardef);
-			case 'pricing-formula':
-				require_once('modules/DynamicFields/templates/Fields/Forms/enum2.php');
-				return get_body($this->ss, $vardef);
+            case 'pricing-formula':
+                require_once 'modules/DynamicFields/templates/Fields/Forms/enum2.php';
+                return get_body($this->ss, $vardef);
+            case 'autoincrement':
+                require_once 'modules/DynamicFields/templates/Fields/Forms/autoincrement.php';
+                return get_body($this->ss, $vardef);
 			default:
 			    if(SugarAutoLoader::requireWithCustom('modules/DynamicFields/templates/Fields/Forms/'. $vardef['type'] . '.php')) {
 					return get_body($this->ss, $vardef);

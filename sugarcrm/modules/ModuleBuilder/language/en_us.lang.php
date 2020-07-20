@@ -845,6 +845,7 @@ $mod_strings = array(
                 'encrypt'=>'Encrypt',
                 'datetimecombo' =>'Datetime',
                 'decimal'=>'Decimal',
+                'autoincrement' => 'AutoIncrement',
 ),
 'labelTypes' => array(
     "" => "Frequently used labels",

@@ -2962,9 +2962,11 @@ abstract class DBManager implements LoggerAwareInterface
 	 * @param  bool   $ignoreRequired  Optional, true if we should ignore this being a required field
 	 * @param  string $table           Optional, table name
 	 * @param  bool   $return_as_array Optional, true if we should return the result as an array instead of sql
+     * @param  string $action          Optional, 'add' or 'modify' based on path of execution. Used to determine how we
+     *                                           set the auto_increment property
      * @return string|string[]
 	 */
-	protected function oneColumnSQLRep($fieldDef, $ignoreRequired = false, $table = '', $return_as_array = false)
+    protected function oneColumnSQLRep($fieldDef, $ignoreRequired = false, $table = '', $return_as_array = false, $action = null)
 	{
 		$name = $fieldDef['name'];
 		$type = $this->getFieldType($fieldDef);
@@ -3007,7 +3009,8 @@ abstract class DBManager implements LoggerAwareInterface
             $auto_increment = $this->setAutoIncrement(
                 $table,
                 $fieldDef['name'],
-                $fieldDef['auto_increment_platform_options'] ?? []
+                $fieldDef['auto_increment_platform_options'] ?? [],
+                $action,
             );
 
 		$required = 'NULL';  // MySQL defaults to NULL, SQL Server defaults to NOT NULL -- must specify
@@ -3100,7 +3103,7 @@ abstract class DBManager implements LoggerAwareInterface
      * @param  array $platformOptions Options related to a platform autoincrement statement
 	 * @return string
 	 */
-    protected function setAutoIncrement($table, $field_name, array $platformOptions = [])
+    protected function setAutoIncrement($table, $field_name, array $platformOptions = [], $action = null)
 	{
 		$this->deleteAutoIncrement($table, $field_name);
 		return "";

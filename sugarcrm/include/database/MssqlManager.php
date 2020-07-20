@@ -1293,7 +1293,7 @@ WHERE TABLE_NAME = ?
         return $sql;
     }
 
-    protected function setAutoIncrement($table, $field_name, array $platformOptions = [])
+    protected function setAutoIncrement($table, $field_name, array $platformOptions = [], $action = null)
     {
 		return "identity(1,1)";
 	}
@@ -1599,7 +1599,7 @@ EOQ;
     /**
      * @see DBManager::oneColumnSQLRep()
      */
-    protected function oneColumnSQLRep($fieldDef, $ignoreRequired = false, $table = '', $return_as_array = false)
+    protected function oneColumnSQLRep($fieldDef, $ignoreRequired = false, $table = '', $return_as_array = false, $action = null)
     {
         if (!empty($fieldDef['len'])) {
             // Variable-length can be a value from 1 through 8,000 or 4,000 for (n).
@@ -1649,7 +1649,7 @@ EOQ;
 		}
 
 		// always return as array for post-processing
-		$ref = parent::oneColumnSQLRep($fieldDef, $ignoreRequired, $table, true);
+        $ref = parent::oneColumnSQLRep($fieldDef, $ignoreRequired, $table, true, $action);
 
 		// Bug 24307 - Don't add precision for float fields.
 		if ( stristr($ref['colType'],'float') )

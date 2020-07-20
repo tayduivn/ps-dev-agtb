@@ -955,7 +955,7 @@ WHERE OWNER = ?
 	/**
      * @see DBManager::oneColumnSQLRep()
      */
-    protected function oneColumnSQLRep($fieldDef, $ignoreRequired = false, $table = '', $return_as_array = false)
+    protected function oneColumnSQLRep($fieldDef, $ignoreRequired = false, $table = '', $return_as_array = false, $action = null)
     {
 		//Bug 25814
 		if(isset($fieldDef['name'])){
@@ -967,7 +967,7 @@ WHERE OWNER = ?
         if ($this->isTextType($type) && isset($fieldDef['len'])) {
             unset($fieldDef['len']);
         }
-		return parent::oneColumnSQLRep($fieldDef, $ignoreRequired, $table, $return_as_array);
+        return parent::oneColumnSQLRep($fieldDef, $ignoreRequired, $table, $return_as_array, $action);
 	}
 
     /**
@@ -1305,7 +1305,7 @@ WHERE OWNER = ?
     /**
      * @see DBManager::setAutoIncrement()
      */
-    protected function setAutoIncrement($table, $field_name, array $platformOptions = [])
+    protected function setAutoIncrement($table, $field_name, array $platformOptions = [], $action = null)
     {
         $this->deleteAutoIncrement($table, $field_name);
         $this->query(

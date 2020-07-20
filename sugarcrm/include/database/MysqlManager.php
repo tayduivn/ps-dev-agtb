@@ -233,7 +233,7 @@ abstract class MysqlManager extends DBManager
         if (empty($tablename)) {
             $this->logger->error(__METHOD__ . ' called with an empty tablename argument');
             return array();
-        }        
+        }
 
 		//find all unique indexes and primary keys.
 		$result = $this->query("DESCRIBE $tablename");
@@ -585,47 +585,50 @@ WHERE TABLE_SCHEMA = ?
 	/**
 	 * @see DBManager::oneColumnSQLRep()
 	 */
-	protected function oneColumnSQLRep($fieldDef, $ignoreRequired = false, $table = '', $return_as_array = false)
-	{
-		// always return as array for post-processing
-		$ref = parent::oneColumnSQLRep($fieldDef, $ignoreRequired, $table, true);
+    protected function oneColumnSQLRep($fieldDef, $ignoreRequired = false, $table = '', $return_as_array = false, $action = null)
+    {
+        // always return as array for post-processing
+        $ref = parent::oneColumnSQLRep($fieldDef, $ignoreRequired, $table, true, $action);
 
-		if ( $ref['colType'] == 'int' && !empty($fieldDef['len']) ) {
-			$ref['colType'] .= "(".$fieldDef['len'].")";
-		}
+        if ($ref['colType'] == 'int' && !empty($fieldDef['len'])) {
+            $ref['colType'] .= "(".$fieldDef['len'].")";
+        }
 
-		// bug 22338 - don't set a default value on text or blob fields
-		if ( isset($ref['default']) &&
-            in_array($ref['colBaseType'], array('text', 'blob', 'longtext', 'longblob')))
-			    $ref['default'] = '';
+        // bug 22338 - don't set a default value on text or blob fields
+        if (isset($ref['default']) && in_array($ref['colBaseType'], array('text', 'blob', 'longtext', 'longblob'))) {
+            $ref['default'] = '';
+        }
 
-		if ( $return_as_array )
-			return $ref;
-		else
-			return "{$ref['name']} {$ref['colType']} {$ref['default']} {$ref['required']} {$ref['auto_increment']}";
-	}
+        if ($return_as_array) {
+            return $ref;
+        } else {
+            return "{$ref['name']} {$ref['colType']} {$ref['default']} {$ref['required']} {$ref['auto_increment']}";
+        }
+    }
 
     /**
      * {@inheritDoc}
      */
-	protected function changeColumnSQL($tablename, $fieldDefs, $action, $ignoreRequired = false)
+    protected function changeColumnSQL($tablename, $fieldDefs, $action, $ignoreRequired = false)
 	{
-		$columns = array();
-		if ($this->isFieldArray($fieldDefs)){
-			foreach ($fieldDefs as $def){
-				if ($action == 'drop')
-					$columns[] = $def['name'];
-				else
-					$columns[] = $this->oneColumnSQLRep($def, $ignoreRequired);
-			}
-		} else {
-			if ($action == 'drop')
-				$columns[] = $fieldDefs['name'];
-		else
-			$columns[] = $this->oneColumnSQLRep($fieldDefs);
-		}
+        $columns = array();
+        if ($this->isFieldArray($fieldDefs)) {
+            foreach ($fieldDefs as $def) {
+                if ($action == 'drop') {
+                    $columns[] = $def['name'];
+                } else {
+                    $columns[] = $this->oneColumnSQLRep($def, $ignoreRequired);
+                }
+            }
+        } else {
+            if ($action == 'drop') {
+                $columns[] = $fieldDefs['name'];
+            } else {
+                $columns[] = $this->oneColumnSQLRep($fieldDefs, null, $tablename, null, $action);
+            }
+        }
 
-		return "ALTER TABLE $tablename $action COLUMN ".implode(",$action column ", $columns);
+        return "ALTER TABLE $tablename $action COLUMN ".implode(",$action column ", $columns);
 	}
 
 	/**
@@ -696,10 +699,23 @@ WHERE TABLE_SCHEMA = ?
 	/**
 	 * @see DBManager::setAutoIncrement()
 	 */
-    protected function setAutoIncrement($table, $field_name, array $platformOptions = [])
-	{
-		return "auto_increment";
-	}
+    protected function setAutoIncrement($table, $field_name, array $platformOptions = [], $action = null)
+    {
+        $auto_increment_string = "auto_increment";
+
+        /**
+         * Checking to make sure that the UNIQUE constraint is present so we can successfully create the column.
+         * Also make sure the action is 'add' because of the double execution of the query on L579 of
+         * DynamicField.php. If the query is made twice with the unique constraint, a duplicate and redundant
+         * constraint is created.
+         */
+        if (isset($platformOptions['unique']) && $platformOptions['unique'] == true && $action != 'modify') {
+            // The unique constraint is added because it is required when creating an auto_increment field
+            $auto_increment_string .= ' unique';
+        }
+
+        return $auto_increment_string;
+    }
 
 	/**
 	 * Sets the next auto-increment value of a column to a specific value.
