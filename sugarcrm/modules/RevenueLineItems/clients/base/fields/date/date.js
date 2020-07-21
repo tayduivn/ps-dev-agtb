@@ -9,8 +9,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 /**
- * @class View.Fields.Base.Quotes.DateField
- * @alias SUGAR.App.view.fields.BaseQuotesDateField
+ * @class View.Fields.Base.RevenueLineItems.DateField
+ * @alias SUGAR.App.view.fields.BaseRevenueLineItemsDateField
  * @extends View.Fields.Base.DateField
  */
 ({
@@ -30,7 +30,7 @@
     },
 
     /**
-     * If this is a coterm QLI, recalculate the service duration when the start date
+     * If this is a coterm RLI, recalculate the service duration when the start date
      * changes so that the end date remains constant.
      */
     handleRecalculateServiceDuration: function() {
@@ -47,20 +47,7 @@
             this.model.set('service_duration_unit', 'day');
             this.model.set('service_duration_value', diffDays);
         }
-    },
+    }
 
     // END SUGARCRM flav=ent ONLY
-
-    /**
-     * @inheritdoc
-     */
-    _dispose: function() {
-        // FIXME: this is a bad "fix" added -- when SC-2395 gets done to upgrade bootstrap we need to remove this
-        if (this._hasDatePicker && this.$(this.fieldTag).data('datepicker')) {
-            $(window).off('resize', this.$(this.fieldTag).data('datepicker').place);
-        }
-        this._hasDatePicker = false;
-
-        this._super('_dispose');
-    }
 })

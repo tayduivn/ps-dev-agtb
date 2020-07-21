@@ -621,5 +621,63 @@ class ProductTest extends TestCase
             ],
         ];
     }
+
+    /**
+     * @covers ::setDurationFields
+     * @dataProvider providerSetDurationFields
+     * @param bool $hasAddOnToId
+     * @param string $startDate
+     * @param string $endDate
+     * @param int $expectedDiff
+     */
+    public function testSetDurationFields($hasAddOnToId, $startDate, $endDate, $expectedDiff)
+    {
+        $qli = $this->getMockBuilder('Product')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $qli->service = true;
+        $qli->service_start_date = $startDate;
+        $qli->service_end_date = $endDate;
+
+        if ($hasAddOnToId) {
+            $pli = SugarTestPurchasedLineItemUtilities::createPurchasedLineItem($id = 'add_on_id');
+            $qli->add_on_to_id = $pli->id;
+        }
+
+        SugarTestReflection::callProtectedMethod($qli, 'setDurationFields');
+
+        if ($hasAddOnToId) {
+            $this->assertEquals('day', $qli->service_duration_unit);
+            $this->assertEquals($expectedDiff, $qli->service_duration_value);
+        } else {
+            $this->assertEquals(null, $qli->service_duratation_unit);
+            $this->assertEquals(null, $qli->service_duration_value);
+        }
+
+        // call setServiceEndDate and make sure the end date didn't change -
+        // if that function changed it, then the calculation this function does
+        // isn't right
+        SugarTestReflection::callProtectedMethod($qli, 'setServiceEndDate');
+        if ($hasAddOnToId) {
+            $this->assertEquals($endDate, $qli->service_end_date);
+        }
+
+        SugarTestPurchasedLineItemUtilities::removePurchasedLineItemsByID(['add_on_id']);
+    }
+
+    public function providerSetDurationFields()
+    {
+        // $hasAddOnToId, $startDate, $endDate, $expectedDiff
+        return [
+            [false, '2020-01-01', '2020-01-01', 1],
+            [true, '2020-01-01', '2020-01-01', 1],
+            [true, '2020-01-01', '2020-01-02', 2],
+            [true, '2020-01-01', '2020-02-01', 32],
+            [true, '2020-01-01', '2021-01-01', 367], // leap year
+            [true, '2021-01-01', '2022-01-01', 366], // non leap year
+            [true, '2020-07-06', '2020-09-15', 72],
+        ];
+    }
+
     //END SUGARCRM flav=ent ONLY
 }

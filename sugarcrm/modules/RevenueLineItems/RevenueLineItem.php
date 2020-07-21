@@ -108,6 +108,7 @@ class RevenueLineItem extends SugarBean
     public $contracts;
     public $product_index;
     public $renewal_rli_id;
+    public $add_on_to_id;
 
     public $table_name = "revenue_line_items";
     public $rel_manufacturers = "manufacturers";
@@ -248,6 +249,7 @@ class RevenueLineItem extends SugarBean
         $this->mapFieldsFromOpportunity();
 
         //BEGIN SUGARCRM flav=ent ONLY
+        $this->setDurationFields();
         $this->setServiceEndDate();
         $this->verifyPurchaseGeneration();
         //END SUGARCRM flav=ent ONLY
@@ -321,6 +323,23 @@ class RevenueLineItem extends SugarBean
             $this->service_end_date = null;
             $this->service_duration_value = null;
             $this->service_duration_unit = null;
+        }
+    }
+
+    /**
+     * Set the service duration for coterm RLIs so the end date remains constant
+     */
+    protected function setDurationFields()
+    {
+        if (!empty($this->add_on_to_id)) {
+            $startDate = TimeDate::getInstance()->fromString($this->service_start_date);
+            $endDate = TimeDate::getInstance()->fromString($this->service_end_date);
+
+            $diff = $startDate->diff($endDate);
+            $diffDays = $diff->days + 1;
+
+            $this->service_duration_unit = 'day';
+            $this->service_duration_value = $diffDays;
         }
     }
 

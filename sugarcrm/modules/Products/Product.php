@@ -96,6 +96,7 @@ class Product extends SugarBean
     public $contracts;
     public $product_index;
     public $revenuelineitem_id;
+    public $add_on_to_id;
 
 
     /**
@@ -349,6 +350,7 @@ class Product extends SugarBean
         $this->calculateDiscountPrice();
 
         //BEGIN SUGARCRM flav=ent ONLY
+        $this->setDurationFields();
         $this->setServiceEndDate();
         //END SUGARCRM flav=ent ONLY
 
@@ -390,6 +392,23 @@ class Product extends SugarBean
             $this->service_end_date = null;
             $this->service_duration_value = null;
             $this->service_duration_unit = null;
+        }
+    }
+
+    /**
+     * Set the service duration for coterm QLIs so the end date remains constant
+     */
+    protected function setDurationFields()
+    {
+        if (!empty($this->add_on_to_id)) {
+            $startDate = TimeDate::getInstance()->fromString($this->service_start_date);
+            $endDate = TimeDate::getInstance()->fromString($this->service_end_date);
+
+            $diff = $startDate->diff($endDate);
+            $diffDays = $diff->days + 1;
+
+            $this->service_duration_unit = 'day';
+            $this->service_duration_value = $diffDays;
         }
     }
     //END SUGARCRM flav=ent ONLY
