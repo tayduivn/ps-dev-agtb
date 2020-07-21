@@ -159,6 +159,13 @@ $dictionary['Bug'] = array(
             'default' => 1,
             'reportable' => false,
         ),
+        'messages' => [
+            'name' => 'messages',
+            'type' => 'link',
+            'relationship' => 'bug_messages',
+            'source' => 'non-db',
+            'vname' => 'LBL_MESSAGES',
+        ],
 // END SUGARCRM flav=ent ONLY
         'tasks' => array(
             'name' => 'tasks',
@@ -325,6 +332,19 @@ $dictionary['Bug'] = array(
             'relationship_role_column' => 'parent_type',
             'relationship_role_column_value' => 'Bugs',
         ),
+// BEGIN SUGARCRM flav=ent ONLY
+        'bug_messages' => [
+            'lhs_module' => 'Bugs',
+            'lhs_table' => 'bugs',
+            'lhs_key' => 'id',
+            'rhs_module' => 'Messages',
+            'rhs_table' => 'messages',
+            'rhs_key' => 'parent_id',
+            'relationship_type' => 'one-to-many',
+            'relationship_role_column' => 'parent_type',
+            'relationship_role_column_value' => 'Bugs',
+        ],
+// END SUGARCRM flav=ent ONLY
         'bugs_assigned_user' => array(
             'lhs_module' => 'Users',
             'lhs_table' => 'users',

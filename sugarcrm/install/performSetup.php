@@ -506,6 +506,7 @@ $enabled_tabs[] = 'BusinessCenters';
 $enabled_tabs[] = 'Shifts';
 $enabled_tabs[] = 'Purchases';
 $enabled_tabs[] = 'PurchasedLineItems';
+$enabled_tabs[] = 'Messages';
 
 if ($_SESSION['demoData'] != 'no') {
     $enabled_tabs[] = 'Bugs';

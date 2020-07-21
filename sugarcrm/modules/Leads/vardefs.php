@@ -526,6 +526,13 @@ $dictionary['Lead'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_BUSINESS_CENTER',
         ),
+        'messages' => [
+            'name' => 'messages',
+            'type' => 'link',
+            'relationship' => 'lead_messages',
+            'source' => 'non-db',
+            'vname' => 'LBL_MESSAGES',
+        ],
         //END SUGARCRM flav=ent ONLY
         'website' => array(
             'name' => 'website',
@@ -764,6 +771,19 @@ $dictionary['Lead'] = array(
             'relationship_role_column' => 'parent_type',
             'relationship_role_column_value' => 'Leads'
         ),
+// BEGIN SUGARCRM flav=ent ONLY
+        'lead_messages' => [
+            'lhs_module' => 'Leads',
+            'lhs_table' => 'leads',
+            'lhs_key' => 'id',
+            'rhs_module' => 'Messages',
+            'rhs_table' => 'messages',
+            'rhs_key' => 'parent_id',
+            'relationship_type' => 'one-to-many',
+            'relationship_role_column' => 'parent_type',
+            'relationship_role_column_value' => 'Leads',
+        ],
+// END SUGARCRM flav=ent ONLY
         'lead_meetings' => array(
             'lhs_module' => 'Leads',
             'lhs_table' => 'leads',

@@ -557,6 +557,15 @@ $dictionary['Opportunity'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_NOTES',
         ),
+// BEGIN SUGARCRM flav=ent ONLY
+        'messages' => [
+            'name' => 'messages',
+            'type' => 'link',
+            'relationship' => 'opportunity_messages',
+            'source' => 'non-db',
+            'vname' => 'LBL_MESSAGES',
+        ],
+// END SUGARCRM flav=ent ONLY
         'meetings' => array(
             'name' => 'meetings',
             'type' => 'link',
@@ -907,6 +916,17 @@ $dictionary['Opportunity'] = array(
             'relationship_type' => 'one-to-many',
         ),
         // BEGIN SUGARCRM flav=ent ONLY
+        'opportunity_messages' => [
+            'lhs_module' => 'Opportunities',
+            'lhs_table' => 'opportunities',
+            'lhs_key' => 'id',
+            'rhs_module' => 'Messages',
+            'rhs_table' => 'messages',
+            'rhs_key' => 'parent_id',
+            'relationship_type' => 'one-to-many',
+            'relationship_role_column' => 'parent_type',
+            'relationship_role_column_value' => 'Opportunities',
+        ],
         'renewals_opportunities' => [
             'lhs_module' => 'Opportunities',
             'lhs_table' => 'opportunities',

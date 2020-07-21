@@ -142,6 +142,15 @@ $dictionary['Account'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_BUSINESS_CENTER',
         ),
+        'messages' => [
+            'name' => 'messages',
+            'type' => 'link',
+            'relationship' => 'account_messages',
+            'module' => 'Messages',
+            'bean_name' => 'Message',
+            'source' => 'non-db',
+            'vname' => 'LBL_MESSAGES',
+        ],
 // END SUGARCRM flav=ent ONLY
         'tasks' => array(
             'name' => 'tasks',
@@ -555,6 +564,17 @@ $dictionary['Account'] = array(
             'relationship_type' => 'one-to-many'
         ),
         // BEGIN SUGARCRM flav=ent ONLY
+        'account_messages' => [
+            'lhs_module' => 'Accounts',
+            'lhs_table' => 'accounts',
+            'lhs_key' => 'id',
+            'rhs_module' => 'Messages',
+            'rhs_table' => 'messages',
+            'rhs_key' => 'parent_id',
+            'relationship_type' => 'one-to-many',
+            'relationship_role_column' => 'parent_type',
+            'relationship_role_column_value' => 'Accounts',
+        ],
         'account_purchases' => [
             'lhs_module' => 'Accounts',
             'lhs_table' => 'accounts',

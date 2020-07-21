@@ -505,6 +505,15 @@ $dictionary['Contact'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_NOTES',
         ),
+// BEGIN SUGARCRM flav=ent ONLY
+        'messages' => [
+            'name' => 'messages',
+            'type' => 'link',
+            'relationship' => 'contact_messages',
+            'source' => 'non-db',
+            'vname' => 'LBL_MESSAGES',
+        ],
+// END SUGARCRM flav=ent ONLY
         'project' => array(
             'name' => 'project',
             'type' => 'link',
@@ -917,6 +926,17 @@ $dictionary['Contact'] = array(
             'rhs_key' => 'contact_id',
             'relationship_type' => 'one-to-many',
         ),
+// BEGIN SUGARCRM flav=ent ONLY
+        'contact_messages' => [
+            'lhs_module' => 'Contacts',
+            'lhs_table' => 'contacts',
+            'lhs_key' => 'id',
+            'rhs_module' => 'Messages',
+            'rhs_table' => 'messages',
+            'rhs_key' => 'contact_id',
+            'relationship_type' => 'one-to-many',
+        ],
+// END SUGARCRM flav=ent ONLY
         'contact_notes_parent' => array(
             'lhs_module' => 'Contacts',
             'lhs_table' => 'contacts',

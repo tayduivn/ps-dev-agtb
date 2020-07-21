@@ -677,6 +677,15 @@ $dictionary['Product'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_NOTES',
         ),
+// BEGIN SUGARCRM flav=ent ONLY
+        'messages' => [
+            'name' => 'messages',
+            'type' => 'link',
+            'relationship' => 'product_messages',
+            'source' => 'non-db',
+            'vname' => 'LBL_MESSAGES',
+        ],
+// END SUGARCRM flav=ent ONLY
         'documents' => array(
             'name' => 'documents',
             'type' => 'link',
@@ -1008,6 +1017,19 @@ $dictionary['Product'] = array(
             'relationship_role_column' => 'parent_type',
             'relationship_role_column_value' => 'Products'
         ),
+// BEGIN SUGARCRM flav=ent ONLY
+        'product_messages' => [
+            'lhs_module' => 'Products',
+            'lhs_table' => 'products',
+            'lhs_key' => 'id',
+            'rhs_module' => 'Messages',
+            'rhs_table' => 'messages',
+            'rhs_key' => 'parent_id',
+            'relationship_type' => 'one-to-many',
+            'relationship_role_column' => 'parent_type',
+            'relationship_role_column_value' => 'Products',
+        ],
+// END SUGARCRM flav=ent ONLY
         'opportunities_products' => array(
             'lhs_module' => 'Opportunities',
             'lhs_table' => 'opportunities',

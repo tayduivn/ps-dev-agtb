@@ -55,6 +55,7 @@ class InitProductDefinition
         "ForecastWorksheets":["CURRENT","SUGAR_SELL"],
         "Forecasts":["CURRENT","SUGAR_SELL"],
         "Leads":["CURRENT","SUGAR_SELL"],
+        "Messages":["SUGAR_SERVE"],
         "Opportunities":["CURRENT","SUGAR_SELL"],
         "ProductBundleNotes":["CURRENT","SUGAR_SELL"],
         "ProductBundles":["CURRENT","SUGAR_SELL"],

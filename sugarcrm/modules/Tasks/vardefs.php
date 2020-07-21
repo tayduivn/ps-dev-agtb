@@ -279,6 +279,17 @@ $dictionary['Task'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_NOTES',
         ),
+// BEGIN SUGARCRM flav=ent ONLY
+        'messages' => [
+            'name' => 'messages',
+            'type' => 'link',
+            'relationship' => 'tasks_messages',
+            'module' => 'Notes',
+            'bean_name' => 'Note',
+            'source' => 'non-db',
+            'vname' => 'LBL_MESSAGES',
+        ],
+// END SUGARCRM flav=ent ONLY
         'quotes' => array(
             'name' => 'quotes',
             'type' => 'link',
@@ -337,6 +348,19 @@ $dictionary['Task'] = array(
             'relationship_role_column' => 'parent_type',
             'relationship_role_column_value' => 'Tasks'
         ),
+// BEGIN SUGARCRM flav=ent ONLY
+        'tasks_messages' => [
+            'lhs_module' => 'Tasks',
+            'lhs_table' => 'tasks',
+            'lhs_key' => 'id',
+            'rhs_module' => 'Messages',
+            'rhs_table' => 'messages',
+            'rhs_key' => 'parent_id',
+            'relationship_type' => 'one-to-many',
+            'relationship_role_column' => 'parent_type',
+            'relationship_role_column_value' => 'Tasks',
+        ],
+// END SUGARCRM flav=ent ONLY
         'tasks_assigned_user' => array(
             'lhs_module' => 'Users',
             'lhs_table' => 'users',

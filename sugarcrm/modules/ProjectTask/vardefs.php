@@ -388,6 +388,15 @@ $dictionary['ProjectTask'] = array('audited'=>true,
     		'source'=>'non-db',
 				'vname'=>'LBL_NOTES',
   		),
+// BEGIN SUGARCRM flav=ent ONLY
+        'messages' => [
+            'name' => 'messages',
+            'type' => 'link',
+            'relationship' => 'project_tasks_messages',
+            'source'=>'non-db',
+            'vname'=>'LBL_MESSAGES',
+        ],
+// END SUGARCRM flav=ent ONLY
 		'tasks' =>
   			array (
   			'name' => 'tasks',
@@ -499,6 +508,19 @@ array (
 	),
 
  'relationships' => array (
+// BEGIN SUGARCRM flav=ent ONLY
+     'project_tasks_messages' => [
+         'lhs_module'=> 'ProjectTask',
+         'lhs_table'=> 'project_task',
+         'lhs_key' => 'id',
+         'rhs_module'=> 'Messages',
+         'rhs_table'=> 'messages',
+         'rhs_key' => 'parent_id',
+         'relationship_type'=>'one-to-many',
+         'relationship_role_column'=>'parent_type',
+         'relationship_role_column_value'=>'ProjectTask',
+     ],
+// END SUGARCRM flav=ent ONLY
 	'project_tasks_notes' => array('lhs_module'=> 'ProjectTask', 'lhs_table'=> 'project_task', 'lhs_key' => 'id',
 							  'rhs_module'=> 'Notes', 'rhs_table'=> 'notes', 'rhs_key' => 'parent_id',
 							  'relationship_type'=>'one-to-many', 'relationship_role_column'=>'parent_type',

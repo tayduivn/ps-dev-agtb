@@ -475,6 +475,17 @@ $dictionary['Meeting'] = array(
     'source'=>'non-db',
 		'vname'=>'LBL_NOTES',
   ),
+// BEGIN SUGARCRM flav=ent ONLY
+        'messages' => [
+            'name' => 'messages',
+            'type' => 'link',
+            'relationship' => 'meetings_messages',
+            'module'=>'Messages',
+            'bean_name'=>'Message',
+            'source'=>'non-db',
+            'vname'=>'LBL_MESSAGES',
+        ],
+// END SUGARCRM flav=ent ONLY
 	'contact_id' => array(
 		'name' => 'contact_id',
         'type' => 'relate',
@@ -735,7 +746,20 @@ $dictionary['Meeting'] = array(
 	,'meetings_notes' => array('lhs_module'=> 'Meetings', 'lhs_table'=> 'meetings', 'lhs_key' => 'id',
 							  'rhs_module'=> 'Notes', 'rhs_table'=> 'notes', 'rhs_key' => 'parent_id',
 							  'relationship_type'=>'one-to-many', 'relationship_role_column'=>'parent_type',
-							  'relationship_role_column_value'=>'Meetings')
+                              'relationship_role_column_value' => 'Meetings'),
+// BEGIN SUGARCRM flav=ent ONLY
+     'meetings_messages' => [
+         'lhs_module'=> 'Meetings',
+         'lhs_table'=> 'meetings',
+         'lhs_key' => 'id',
+         'rhs_module'=> 'Messages',
+         'rhs_table'=> 'messages',
+         'rhs_key' => 'parent_id',
+         'relationship_type'=>'one-to-many',
+         'relationship_role_column'=>'parent_type',
+         'relationship_role_column_value'=>'Meetings',
+     ],
+// END SUGARCRM flav=ent ONLY
 	),
     'acls' => array('SugarACLOpi' => true, 'SugarACLStatic' => true),
 

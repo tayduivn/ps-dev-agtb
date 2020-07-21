@@ -129,6 +129,7 @@ $app_list_strings = array (
     'CommentLog' => 'Comment Log',
     'Holidays' => 'Holidays',
     'ChangeTimers' => 'Change Timers',
+    'Messages' => 'Messages',
   ),
 
     'moduleIconList' =>
@@ -266,6 +267,7 @@ $app_list_strings = array (
     'ReportSchedules' => 'Report Schedule',
     'Holidays' => 'Holiday',
     'ChangeTimers' => 'Change Timer',
+    'Messages' => 'Message',
   ),
 
 /*
@@ -345,6 +347,20 @@ $app_list_strings = array (
     'Other' => 'Other',
   ),
   //BEGIN SUGARCRM flav=ent ONLY
+    'message_status_dom' => [
+        '' => '',
+        'In Progress' => 'In Progress',
+        'Completed' => 'Completed',
+    ],
+    'message_direction_dom' => [
+        '' => '',
+        'Inbound' => 'Inbound',
+        'Outbound' => 'Outbound',
+    ],
+    'message_channel_type_dom' => [
+        '' => '',
+        'Chat' => 'Chat',
+    ],
   'service_level_dom' => array (
     '' => '',
     'T1' => 'Tier 1',
@@ -3023,6 +3039,8 @@ $app_strings = array (
     'LBL_SUBMIT_BUTTON_LABEL' => 'Submit',
     'LBL_CASE'=>'Case',
     'LBL_CASES'=>'Cases',
+    'LBL_MESSAGE'=>'Message',
+    'LBL_MESSAGES'=>'Messages',
     'LBL_CHANGE_BUTTON_KEY' => 'G',
     'LBL_CHANGE_PASSWORD' => 'Change password',
     'LBL_CHANGE_BUTTON_LABEL' => 'Change',

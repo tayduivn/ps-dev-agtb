@@ -74,6 +74,7 @@ function getAllowedReportModules(&$local_modListHeader, $skipCache = false) {
             'Manufacturers',
             'ChangeTimers',
             'ShiftExceptions',
+            'Messages',
         ];
         if (in_array($key, $specialModules)) {
             $report_modules[$key] = $value;

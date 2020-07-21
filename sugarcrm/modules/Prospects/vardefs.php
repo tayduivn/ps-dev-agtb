@@ -125,6 +125,15 @@ $dictionary['Prospect'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_NOTES',
         ),
+// BEGIN SUGARCRM flav=ent ONLY
+        'messages' => [
+            'name' => 'messages',
+            'type' => 'link',
+            'relationship' => 'prospect_messages',
+            'source' => 'non-db',
+            'vname' => 'LBL_MESSAGES',
+        ],
+// END SUGARCRM flav=ent ONLY
         'dataprivacy' => array(
             'name' => 'dataprivacy',
             'type' => 'link',
@@ -250,6 +259,19 @@ $dictionary['Prospect'] = array(
             'relationship_role_column' => 'parent_type',
             'relationship_role_column_value' => 'Prospects'
         ),
+// BEGIN SUGARCRM flav=ent ONLY
+        'prospect_messages' => [
+            'lhs_module' => 'Prospects',
+            'lhs_table' => 'prospects',
+            'lhs_key' => 'id',
+            'rhs_module' => 'Messages',
+            'rhs_table' => 'messages',
+            'rhs_key' => 'parent_id',
+            'relationship_type' => 'one-to-many',
+            'relationship_role_column' => 'parent_type',
+            'relationship_role_column_value' => 'Prospects',
+        ],
+// END SUGARCRM flav=ent ONLY
         'prospect_meetings' => array(
             'lhs_module' => 'Prospects',
             'lhs_table' => 'prospects',

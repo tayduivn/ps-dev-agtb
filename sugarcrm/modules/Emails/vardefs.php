@@ -636,6 +636,17 @@ $dictionary['Email'] = array(
             'bean_name' => 'Note',
             'source' => 'non-db',
         ),
+// BEGIN SUGARCRM flav=ent ONLY
+        'messages' => [
+            'name' => 'messages',
+            'vname' => 'LBL_EMAILS_MESSAGES_REL',
+            'type' => 'link',
+            'relationship' => 'emails_messages_rel',
+            'module' => 'Messages',
+            'bean_name' => 'Message',
+            'source' => 'non-db',
+        ],
+// END SUGARCRM flav=ent ONLY
         'attachments' => array(
             'bean_name' => 'Note',
             'module' => 'Notes',
@@ -831,6 +842,22 @@ $dictionary['Email'] = array(
             'relationship_role_column' => 'bean_module',
             'relationship_role_column_value' => 'Notes',
         ),
+// BEGIN SUGARCRM flav=ent ONLY
+        'emails_messages_rel' => [
+            'lhs_module' => 'Emails',
+            'lhs_table' => 'emails',
+            'lhs_key' => 'id',
+            'rhs_module' => 'Messages',
+            'rhs_table' => 'messages',
+            'rhs_key' => 'id',
+            'relationship_type' => 'many-to-many',
+            'join_table' => 'emails_beans',
+            'join_key_lhs' => 'email_id',
+            'join_key_rhs' => 'bean_id',
+            'relationship_role_column' => 'bean_module',
+            'relationship_role_column_value' => 'Messages',
+        ],
+// END SUGARCRM flav=ent ONLY
         'emails_revenuelineitems_rel' => array(
             'lhs_module' => 'Emails',
             'lhs_table' => 'emails',

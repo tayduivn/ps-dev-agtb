@@ -173,6 +173,17 @@ $dictionary['KBContent'] = array(
             'bean_name' => 'Note',
             'source' => 'non-db',
         ),
+// BEGIN SUGARCRM flav=ent ONLY
+        'messages' => [
+            'name' => 'messages',
+            'vname' => 'LBL_MESSAGES',
+            'type' => 'link',
+            'relationship' => 'kbcontent_messages',
+            'module' => 'Notes',
+            'bean_name' => 'Note',
+            'source' => 'non-db',
+        ],
+// END SUGARCRM flav=ent ONLY
         'attachments' => array(
             'name' => 'attachments',
             'vname' => 'LBL_ATTACHMENTS',
@@ -493,6 +504,19 @@ $dictionary['KBContent'] = array(
         ),
     ),
     'relationships' => array(
+// BEGIN SUGARCRM flav=ent ONLY
+        'kbcontent_messages' => [
+            'lhs_module' => 'KBContents',
+            'lhs_table' => 'kbcontents',
+            'lhs_key' => 'id',
+            'rhs_module' => 'Messages',
+            'rhs_table' => 'messages',
+            'rhs_key' => 'parent_id',
+            'relationship_type' => 'one-to-many',
+            'relationship_role_column' => 'parent_type',
+            'relationship_role_column_value' => 'KBContents',
+        ],
+// END SUGARCRM flav=ent ONLY
         'kbcontent_notes' => array(
             'lhs_module' => 'KBContents',
             'lhs_table' => 'kbcontents',

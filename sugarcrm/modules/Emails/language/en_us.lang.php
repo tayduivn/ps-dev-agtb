@@ -89,6 +89,7 @@ $mod_strings = array(
     'LBL_EMAILS_OPPORTUNITIES_REL' => 'Emails:Opportunities',
     'LBL_EMAILS_PURCHASES_REL' => 'Emails:Purchases',
     'LBL_EMAILS_NOTES_REL' => 'Emails:Notes',
+    'LBL_EMAILS_MESSAGES_REL' => 'Emails:Messages',
     'LBL_EMAILS_PROJECT_REL' => 'Emails:Project',
     'LBL_EMAILS_PROJECT_TASK_REL' => 'Emails:ProjectTask',
     'LBL_EMAILS_PROSPECT_REL' => 'Emails:Prospect',

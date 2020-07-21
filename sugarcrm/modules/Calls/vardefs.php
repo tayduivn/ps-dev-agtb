@@ -386,6 +386,17 @@ $dictionary['Call'] = array(
     'source'=>'non-db',
 		'vname'=>'LBL_NOTES',
   ),
+// BEGIN SUGARCRM flav=ent ONLY
+        'messages' => [
+            'name' => 'messages',
+            'type' => 'link',
+            'relationship' => 'calls_messages',
+            'module'=>'Notes',
+            'bean_name'=>'Note',
+            'source'=>'non-db',
+            'vname'=>'LBL_MESSAGES',
+        ],
+// END SUGARCRM flav=ent ONLY
   'created_by_link' =>
   array (
         'name' => 'created_by_link',
@@ -747,6 +758,19 @@ $dictionary['Call'] = array(
       'relationship_role_column'=>'parent_type',
       'relationship_role_column_value'=>'Calls',
 		),
+// BEGIN SUGARCRM flav=ent ONLY
+                                'calls_messages' => [
+                                    'lhs_module' => 'Calls',
+                                    'lhs_table' => 'calls',
+                                    'lhs_key' => 'id',
+                                    'rhs_module' => 'Messages',
+                                    'rhs_table' => 'messages',
+                                    'rhs_key' => 'parent_id',
+                                    'relationship_type' => 'one-to-many',
+                                    'relationship_role_column' => 'parent_type',
+                                    'relationship_role_column_value' => 'Calls',
+                                ],
+// END SUGARCRM flav=ent ONLY
 	),
     'acls' => array('SugarACLOpi' => true, 'SugarACLStatic' => true),
 //This enables optimistic locking for Saves From EditView

@@ -105,6 +105,7 @@ $config['blackList']['pro'] = array(
 'sugarcrm/include/SugarObjects/implements/business_hours/language/en_us.lang.php' => 1,
 'sugarcrm/include/SugarObjects/implements/business_hours/vardefs.php' => 1,
 'sugarcrm/modules/ChangeTimers' => 1,
+'sugarcrm/modules/Messages' => 1,
 'sugarcrm/clients/base/views/activity-timeline' => 1,
 'sugarcrm/tests/unit-js/clients/base/views/activity-timeline' => 1,
 
