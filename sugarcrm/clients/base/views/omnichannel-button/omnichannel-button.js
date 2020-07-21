@@ -29,13 +29,16 @@
         var console = this._getConsole();
         if (console) {
             console.open();
+            console.context.on('omnichannel:auth', function(status) {
+                this.setStatus(status);
+            }, this);
         }
     },
 
     /**
      * Sets button status.
      *
-     * @param {string} Status string: logged-out, logged-in, active-session
+     * @param {string} status string: logged-out, logged-in, active-session
      */
     setStatus: function(status) {
         var currentStatus = this.status || 'logged-out';
@@ -75,4 +78,14 @@
         }
         return app.omniConsole;
     },
+
+    /**
+     * @inheritdoc
+     */
+    _dispose: function() {
+        if (!_.isUndefined(app.omniConsole)) {
+            app.omniConsole.context.off('omnichannel:auth');
+        }
+        this._super('_dispose');
+    }
 })

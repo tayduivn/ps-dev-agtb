@@ -77,6 +77,7 @@
             app.router.on('route', this.closeImmediately, this);
             $main = app.$contentEl.children().first();
             $main.on('drawer:add.omniConsole', _.bind(this.closeImmediately, this));
+            this.trigger('omniconsole:open');
         }
     },
 

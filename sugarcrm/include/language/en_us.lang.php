@@ -5788,6 +5788,14 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     'LBL_SERVICE_DURATION_VALUE' => 'Service Duration Value',
     'LBL_SERVICE_DURATION_UNIT' => 'Service Duration Unit',
 
+// Omnichannel
+    'ERROR_OMNICHANNEL_LOAD_FAILED' => 'The Amazon Connect CCP was unable to load. Please' .
+        'ensure you are using a '.
+        '<a href="https://docs.aws.amazon.com/connect/latest/adminguide/browsers.html" target="_blank">supported browser</a>. ' .
+        'If the problem persist, please contact your Sugar Administrator.',
+    'ERROR_OMNICHANNEL_NOT_CONFIGURED' => 'Your Sugar Administrator has not configured your instance for Amazon Connect.',
+    'ERROR_OMNICHANNEL_TIMEOUT' => 'Unable to establish connection with Amazon Connect. Please contact your Sugar Administrator for assistance.',
+
 //END SUGARCRM flav=ent ONLY
 
     'LBL_INTEGRATE_INVALID_FIELD' => 'Could not find field: {0} in module: {1}',
