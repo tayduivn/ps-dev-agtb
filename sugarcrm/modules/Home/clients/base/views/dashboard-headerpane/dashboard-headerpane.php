@@ -96,6 +96,25 @@ $viewdefs["Home"]["base"]["view"]["dashboard-headerpane"] = array(
                     ],
                 ),
                 [
+                    'type' => 'rowaction',
+                    'name' => 'delete_button',
+                    'label' => 'LBL_DELETE_BUTTON_LABEL',
+                    'acl_module' => 'Dashboards',
+                    'acl_action' => 'delete',
+                    'disallowed_layouts' => [
+                        [
+                            'name' => 'dashboard',
+                            'id' => 'c108bb4a-775a-11e9-b570-f218983a1c3e',
+                        ],
+                        // BEGIN SUGARCRM flav=ent ONLY
+                        [
+                            'name' => 'dashboard',
+                            'type' => 'renewals_console',
+                        ],
+                        // END SUGARCRM flav=ent ONLY
+                    ],
+                ],
+                [
                     "name"      => "add_dashlet_button",
                     "type"      => "rowaction",
                     "label"     => "LBL_ADD_DASHLET_BUTTON",
@@ -125,27 +144,6 @@ $viewdefs["Home"]["base"]["view"]["dashboard-headerpane"] = array(
             "label"     => "LBL_CANCEL_BUTTON_LABEL",
             "css_class" => "btn-invisible btn-link",
             "showOn" => "edit",
-        ),
-        array(
-            "name"      => "delete_button",
-            "type"      => "button",
-            "label"     => "LBL_DELETE_BUTTON_LABEL",
-            "css_class" => "btn-danger",
-            "showOn" => "edit",
-            'disallowed_layouts' => [
-                [
-                    // this is the Agent Workbench
-                    'name' => 'dashboard',
-                    'id' => 'c108bb4a-775a-11e9-b570-f218983a1c3e',
-                ],
-                // BEGIN SUGARCRM flav=ent ONLY
-                [
-                    // this is new renewals console
-                    'name' => 'dashboard',
-                    'type' => 'renewals_console',
-                ],
-                // END SUGARCRM flav=ent ONLY
-            ],
         ),
         [
             "name"      => "add_dashlet_button_edit",

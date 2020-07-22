@@ -330,9 +330,7 @@
         this._setButtons();
         this.setButtonStates(this.context.get('create') ? 'create' : 'view');
         this.setEditableFields();
-        if (!this._isDashboard()) {
-            this._enableEditButton(false);
-        }
+        this._enableEditButton(false);
     },
 
     handleCancel: function() {

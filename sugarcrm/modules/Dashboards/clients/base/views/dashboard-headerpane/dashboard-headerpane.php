@@ -32,6 +32,12 @@ $viewdefs['Dashboards']['base']['view']['dashboard-headerpane'] = array(
                     'acl_module' => 'Dashboards',
                     'acl_action' => 'create',
                 ),
+                [
+                    'name' => 'delete_button',
+                    'type' => 'rowaction',
+                    'label' => 'LBL_DELETE_BUTTON_LABEL',
+                    'acl_action' => 'delete',
+                ],
                 array(
                     'name' => 'collapse_button',
                     'type' => 'rowaction',
@@ -59,13 +65,6 @@ $viewdefs['Dashboards']['base']['view']['dashboard-headerpane'] = array(
             'type' => 'button',
             'label' => 'LBL_CANCEL_BUTTON_LABEL',
             'css_class' => 'btn-invisible btn-link',
-            'showOn' => 'edit',
-        ),
-        array(
-            'name' => 'delete_button',
-            'type' => 'button',
-            'label' => 'LBL_DELETE_BUTTON_LABEL',
-            'css_class' => 'btn-danger',
             'showOn' => 'edit',
         ),
         array(
