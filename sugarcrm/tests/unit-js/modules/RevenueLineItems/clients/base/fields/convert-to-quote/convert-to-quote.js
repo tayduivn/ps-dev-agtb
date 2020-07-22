@@ -62,36 +62,6 @@ describe('RevenueLineItems.Base.Field.ConvertToQuote', function() {
         sandbox.restore();
     });
 
-    describe('_toggleDisable', function() {
-        beforeEach(function() {
-            field.render();
-        });
-
-        it('will set disabled class on the field element', function() {
-            field.model.set('quote_id', 'my_new_quote', {silent: true});
-            field._toggleDisable();
-            expect(field.getFieldElement().hasClass('disabled')).toBeTruthy();
-        });
-
-        it('will remove disabled class when quote_id changes to empty', function() {
-            field.model.set('quote_id', 'my_new_quote', {silent: true});
-            field._toggleDisable();
-            expect(field.getFieldElement().hasClass('disabled')).toBeTruthy();
-
-            field.model.set('quote_id', '');
-            expect(field.getFieldElement().hasClass('disabled')).toBeFalsy();
-        });
-
-        it('will remove disabled class when quote_id is unset', function() {
-            field.model.set('quote_id', 'my_new_quote', {silent: true});
-            field._toggleDisable();
-            expect(field.getFieldElement().hasClass('disabled')).toBeTruthy();
-
-            field.model.unset('quote_id');
-            expect(field.getFieldElement().hasClass('disabled')).toBeFalsy();
-        });
-    });
-
     describe('convertToQuote()', function() {
         var layoutTriggerStub;
         var massCollection;

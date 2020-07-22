@@ -47,8 +47,7 @@
 
                 var massQuote = this.context.get('mass_collection');
                 var errors = {
-                    'LBL_CONVERT_INVALID_RLI_PRODUCT_PLURAL': [],
-                    'LBL_CONVERT_INVALID_RLI_ALREADYQUOTED_PLURAL': []
+                    'LBL_CONVERT_INVALID_RLI_PRODUCT_PLURAL': []
                 };
                 var messageTpl;
 
@@ -57,9 +56,6 @@
                     // if product template is empty, but category is not, this RLI can not be converted to a quote
                     if (_.isEmpty(model.get('product_template_id')) && !_.isEmpty(model.get('category_id'))) {
                         errors['LBL_CONVERT_INVALID_RLI_PRODUCT_PLURAL'].push(model);
-                        return true;
-                    } else if (!_.isEmpty(model.get('quote_id'))) {
-                        errors['LBL_CONVERT_INVALID_RLI_ALREADYQUOTED_PLURAL'].push(model);
                         return true;
                     }
 

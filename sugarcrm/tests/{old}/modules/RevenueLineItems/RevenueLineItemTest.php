@@ -516,12 +516,6 @@ class RevenueLineItemTest extends TestCase
             ],
             [
                 [
-                    'quote_id' => 'test_quote_id',
-                ],
-                false,
-            ],
-            [
-                [
                     'id' => 'test',
                 ],
                 true,
