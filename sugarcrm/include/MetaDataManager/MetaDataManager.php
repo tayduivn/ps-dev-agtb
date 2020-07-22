@@ -2182,14 +2182,14 @@ class MetaDataManager implements LoggerAwareInterface
     {
         $sugarConfig = $this->getSugarConfig();
         $administration = new Administration();
-        $administration->retrieveSettings();
+        $administration->retrieveSettings(false, true);
 
         $idpConfig = $this->getIdpConfig();
         $properties = $this->getConfigProperties();
         $properties = $this->parseConfigProperties($sugarConfig, $properties);
         $configs = $this->handleConfigPropertiesExceptions($properties);
 
-        // FIXME: Clean up properties bellow in order to fit standards
+        // FIXME: Clean up properties below in order to fit standards
         // regarding property names
         if (isset($administration->settings['honeypot_on'])) {
             $configs['honeypot_on'] = true;
@@ -2271,10 +2271,13 @@ class MetaDataManager implements LoggerAwareInterface
         $configs['allowedLinkSchemes'] = isset($sugarConfig['allowed_link_schemes']) ?
             $sugarConfig['allowed_link_schemes'] : ['http', 'https'];
 
-        //make AWS Connect settings globally available
-        foreach ($administration->settings as $key => $value) {
-            if (substr($key, 0, 4) === 'aws_') {
-                $configs[$key] = $value;
+        // Get AWS configs for Serve
+        if ($administration->isLicensedForServe()) {
+            foreach ($administration->settings as $key => $value) {
+                if (substr($key, 0, 4) === 'aws_') {
+                    // Format the key for these configs correctly
+                    $configs[$this->translateConfigProperty($key)] = $value;
+                }
             }
         }
 

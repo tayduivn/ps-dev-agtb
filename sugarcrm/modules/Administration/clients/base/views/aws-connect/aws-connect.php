@@ -21,15 +21,15 @@ $viewdefs['Administration']['base']['view']['aws-connect'] = [
             'placeholders' => true,
             'fields' => [
                 [
-                    'name' => 'aws_connect_region',
-                    'type' => 'text',
-                    'label' => 'LBL_AWS_CONNECT_REGION',
-                    'span' => 6,
-                ],
-                [
                     'name' => 'aws_connect_instance_name',
                     'type' => 'text',
                     'label' => 'LBL_AWS_CONNECT_INST_NAME',
+                    'span' => 6,
+                ],
+                [
+                    'name' => 'aws_connect_region',
+                    'type' => 'text',
+                    'label' => 'LBL_AWS_CONNECT_REGION',
                     'span' => 6,
                 ],
             ],

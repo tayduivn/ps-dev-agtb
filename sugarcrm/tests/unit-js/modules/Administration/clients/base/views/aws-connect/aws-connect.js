@@ -60,8 +60,8 @@ describe('Administration.Views.AwsConnect', function() {
             var toggleStub = sinon.collection.stub(view, 'toggleHeaderButton');
             view.saveSuccessHandler(settings);
             expect(toggleStub).toHaveBeenCalled();
-            expect(app.config.aws_connect_region).toEqual('us-west-1');
-            expect(app.config.aws_connect_instance_name).toEqual('my_connect_instance_name');
+            expect(app.config.awsConnectRegion).toEqual('us-west-1');
+            expect(app.config.awsConnectInstanceName).toEqual('my_connect_instance_name');
         });
     });
 });

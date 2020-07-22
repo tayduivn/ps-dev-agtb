@@ -1286,6 +1286,17 @@
                 srnParts.splice(3, 1, '');  // delete region
                 srnParts.push('user', userId);
                 return srnParts.join(':');
+            },
+
+            /**
+             * Gets a stringKey value from an string_key input
+             * @param {string} str The underscore delimited input string
+             * @return {string} The camelCase string output
+             */
+            getUnderscoreToCamelCaseString: function(str) {
+                return str.replace(/_(\D)/g, function(a, b) {
+                    return b.toUpperCase();
+                });
             }
         });
     });

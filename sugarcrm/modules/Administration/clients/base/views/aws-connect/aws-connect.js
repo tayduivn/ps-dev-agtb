@@ -176,7 +176,7 @@
      */
     updateConfig: function(settings) {
         _.each(settings, function(value, key) {
-            app.config[key] = value;
+            app.config[app.utils.getUnderscoreToCamelCaseString(key)] = value;
         });
     },
 

@@ -222,7 +222,8 @@ class AdministrationApi extends SugarApi
                 'path' => ['Administration', 'aws'],
                 'pathVars' => [''],
                 'method' => 'getAWSConfig',
-                'shortHelp' => 'get aws settings',
+                'shortHelp' => 'Gets configuration settings for Amazon Web Services integrations',
+                'longHelp' => 'include/api/help/administration_get_aws_config_get_help.html',
                 'exceptions' => ['SugarApiExceptionNotAuthorized'],
                 'ignoreSystemStatusError' => true,
             ],
@@ -231,7 +232,8 @@ class AdministrationApi extends SugarApi
                 'path' => ['Administration', 'aws'],
                 'pathVars' => [''],
                 'method' => 'setAWSConfig',
-                'shortHelp' => 'set aws settings',
+                'shortHelp' => 'Sets configuration settings for Amazon Web Services integrations',
+                'longHelp' => 'include/api/help/administration_set_aws_config_post_help.html',
                 'exceptions' => ['SugarApiExceptionNotAuthorized'],
                 'ignoreSystemStatusError' => true,
             ],
@@ -703,36 +705,58 @@ class AdministrationApi extends SugarApi
     }
 
     /**
-     * Will read the AWS configuration options and return it through a call.
+     * Gets AWS configuration details for Serve instances
+     *
+     * @param ServiceBase $api The RestService object
+     * @param array $args Arguments passed to the service
+     * @return array
      */
     public function getAWSConfig(ServiceBase $api, array $args)
     {
         $this->ensureAdminUser();
-        $settings = Administration::getSettings();
-        $aws_config = [];
-        foreach ($settings->settings as $key => $value) {
-            if (substr($key, 0, 4) === 'aws_') {
-                $aws_config[$key] = $value;
-            }
+        $admin = BeanFactory::getBean('Administration');
+        if ($admin->isLicensedForServe()) {
+            return $admin->retrieveSettings('aws', true)->settings;
         }
-        return $aws_config;
+
+        return [];
     }
 
     /**
-     * Will save the AWS configuration options and return all options newly read.
+     * Saves new AWS configuration details for Serve instances and returns what was saved
+     *
+     * @param ServiceBase $api The RestService object
+     * @param array $args Arguments passed to the service
+     * @return array
      */
     public function setAWSConfig(ServiceBase $api, array $args)
     {
-        $category = 'aws';
-        $admin = new Administration();
-        foreach ($args as $key => $value) {
-            //"__sugar_url" is sent through the model but must not be saved
-            if (substr($key, 0, 4) === 'aws_') {
-                $admin->saveSetting($category, str_replace('aws_', '', $key), $value, $api->platform);
+        $this->ensureAdminUser();
+        $admin = BeanFactory::getBean('Administration');
+
+        // We only want to do this for Serve licensed intances
+        if ($admin->isLicensedForServe()) {
+            $category = 'aws';
+            $prefix = $category . '_';
+            $changes = [];
+
+            foreach($args as $key => $value) {
+                // Look specifically for anything prefixed with aws_
+                if (substr($key, 0, 4) === $prefix) {
+                    if ($admin->saveSetting($category, str_replace($prefix, '', $key), $value, $api->platform)) {
+                        $changes[$key] = $value;
+                    }
+                }
+            }
+
+            // Only reset the config metadata cache if there were changes to save
+            if ($changes) {
+                self::clearCache();
+                return $changes;
             }
         }
-        self::clearCache();
-        return self::getAWSConfig($api, $args);
+
+        return [];
     }
 
     /**
