@@ -97,6 +97,7 @@ class Product extends SugarBean
     public $product_index;
     public $revenuelineitem_id;
     public $add_on_to_id;
+    public $parent_rli_id;
 
 
     /**

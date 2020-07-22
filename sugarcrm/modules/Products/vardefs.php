@@ -762,6 +762,16 @@ $dictionary['Product'] = array(
             'source' => 'non-db',
         ],
         // END SUGARCRM flav=ent ONLY
+        'parent_rli_link' => [
+            'name' => 'parent_rli_link',
+            'type' => 'link',
+            'relationship' => 'products_parent_rli',
+            'vname' => 'LBL_REVENUELINEITEM',
+            'link_type' => 'one',
+            'module' => 'RevenueLineItems',
+            'bean_name' => 'RevenueLineItem',
+            'source' => 'non-db',
+        ],
         'account_name' => array(
             'name' => 'account_name',
             'rname' => 'name',
@@ -841,6 +851,34 @@ $dictionary['Product'] = array(
             'bean_name' => 'Manufacturer',
             'source' => 'non-db',
         ),
+        'parent_rli_id' => [
+            'name' => 'parent_rli_id',
+            'comment' => 'RLI this product was generated from',
+            'vname' => 'LBL_REVENUELINEITEM_ID',
+            'rname' => 'id',
+            'type' => 'id',
+            'dbType' => 'id',
+            'is_null' => true,
+            'reportable' => false,
+            'massupdate' => false,
+            'table' => 'revenue_line_items',
+            'module' => 'RevenueLineItems',
+            'duplicate_merge' => 'disabled',
+        ],
+        'parent_rli_name' => [
+            'name' => 'parent_rli_name',
+            'rname' => 'name',
+            'id_name' => 'parent_rli_id',
+            'vname' => 'LBL_REVENUELINEITEM',
+            'type' => 'relate',
+            'save' => true,
+            'isnull' => true,
+            'link' => 'parent_rli_link',
+            'table' => 'revenue_line_items',
+            'module' => 'RevenueLineItems',
+            'source' => 'non-db',
+            'studio' => false,
+        ],
         // BEGIN SUGARCRM flav=ent ONLY
         'add_on_to_id' => [
             'name' => 'add_on_to_id',
@@ -1017,6 +1055,15 @@ $dictionary['Product'] = array(
             'rhs_key' => 'manufacturer_id',
             'relationship_type' => 'one-to-many'
         ),
+        'products_parent_rli' => [
+            'lhs_module' => 'RevenueLineItems',
+            'lhs_table' => 'revenue_line_items',
+            'lhs_key' => 'id',
+            'rhs_module' => 'Products',
+            'rhs_table' => 'products',
+            'rhs_key' => 'parent_rli_id',
+            'relationship_type' => 'one-to-many',
+        ],
         // BEGIN SUGARCRM flav=ent ONLY
         'product_pli_addons' => [
             'lhs_module' => 'PurchasedLineItems',

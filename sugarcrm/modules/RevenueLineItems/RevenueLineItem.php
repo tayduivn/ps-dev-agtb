@@ -871,6 +871,8 @@ class RevenueLineItem extends SugarBean
             if ($field['name'] == 'id') {
                 // if it's the ID field, associate it back to the product on the relationship field
                 $product->revenuelineitem_id = $this->{$field['name']};
+                // In addition to the 1:1 relation above, set the ID for the 1:M relation
+                $product->parent_rli_id = $this->{$field['name']};
             } else {
                 $product->{$field['name']} = $this->{$field['name']};
             }

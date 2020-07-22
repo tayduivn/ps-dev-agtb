@@ -95,6 +95,7 @@
                     _.each(massQuote.models, function(rliModel) {
                         rliObj = rliModel.toJSON();
                         rliObj.revenuelineitem_id = rliObj.id;
+                        rliObj.parent_rli_id = rliObj.id;
 
                         _.each(this.blacklistRLIFields, function(fieldName) {
                             delete rliObj[fieldName];

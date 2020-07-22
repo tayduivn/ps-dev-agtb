@@ -916,6 +916,13 @@ $dictionary['RevenueLineItem'] = array(
             'vname' => 'LBL_PRODUCTS',
             'source' => 'non-db',
         ),
+        'generated_products' => [
+            'name' => 'generated_products',
+            'type' => 'link',
+            'relationship' => 'products_parent_rli',
+            'vname' => 'LBL_PRODUCTS',
+            'source' => 'non-db',
+        ],
         'account_name' => array(
             'name' => 'account_name',
             'rname' => 'name',

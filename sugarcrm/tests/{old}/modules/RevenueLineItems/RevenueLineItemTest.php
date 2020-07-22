@@ -55,10 +55,12 @@ class RevenueLineItemTest extends TestCase
         $rli->likely_case = '100.00';
         $rli->discount_price = '200.00';
         $rli->sales_stage = 'Test';
+        $rli->id = 'dummy_rli_id';
         $product = $rli->convertToQuotedLineItem();
 
         $this->assertEquals($rli->discount_price, $product->discount_price);
-        $this->assertEquals($rli->id, $product->revenuelineitem_id, 'RLI to QLI Link is not Set');
+        $this->assertEquals($rli->id, $product->revenuelineitem_id, 'RLI to QLI Link is not set (1:1)');
+        $this->assertEquals($rli->id, $product->parent_rli_id, 'RLI to QLI Link is not set (1:M)');
         $this->assertEquals('Test', $product->sales_stage, "Product does not match RevenueLineItem");
     }
 
@@ -73,10 +75,12 @@ class RevenueLineItemTest extends TestCase
         $rli->likely_case = '100.00';
         $rli->discount_price = '';
         $rli->sales_stage = 'Test';
+        $rli->id = 'dummy_rli_id';
         $product = $rli->convertToQuotedLineItem();
 
         $this->assertEquals($rli->likely_case, $product->discount_price);
-        $this->assertEquals($rli->id, $product->revenuelineitem_id, 'RLI to QLI Link is not Set');
+        $this->assertEquals($rli->id, $product->revenuelineitem_id, 'RLI to QLI Link is not set (1:1)');
+        $this->assertEquals($rli->id, $product->parent_rli_id, 'RLI to QLI Link is not set (1:M)');
         $this->assertEquals('Test', $product->sales_stage, "Product does not match RevenueLineItem");
     }
 
