@@ -121,7 +121,7 @@
      * On a successful save return to the Administration page.
      */
     closeView: function() {
-        if (app.drawer.count()) {
+        if (app.drawer && app.drawer.count()) {
             // close the drawer and return to Opportunities
             app.drawer.close(this.context, this.context.get('model'));
             // Config changed... reload metadata

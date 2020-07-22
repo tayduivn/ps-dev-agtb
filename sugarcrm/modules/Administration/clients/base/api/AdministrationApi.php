@@ -740,7 +740,7 @@ class AdministrationApi extends SugarApi
             $prefix = $category . '_';
             $changes = [];
 
-            foreach($args as $key => $value) {
+            foreach ($args as $key => $value) {
                 // Look specifically for anything prefixed with aws_
                 if (substr($key, 0, 4) === $prefix) {
                     if ($admin->saveSetting($category, str_replace($prefix, '', $key), $value, $api->platform)) {
