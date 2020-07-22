@@ -180,15 +180,19 @@ class WebLogicHook extends SugarBean implements RunnableSchedulerJob
             $data['id'] = $bean->id;
         }
 
-        if (!SugarACL::moduleSupportsACL($bean->webhook_target_module) || $bean->ACLAccess('detail')) {
+        /** @var User $contextUser */
+        $contextUser = $current_user;
+        if (!$contextUser->isAdmin()) {
+            $contextUser = $contextUser->getSystemUser();
+        }
+
+        if (!SugarACL::moduleSupportsACL($this->webhook_target_module) || $bean->ACLAccess('detail')) {
             $fieldList = $bean->field_defs;
 
-            $this->ACLFilterFieldList($fieldList, array(
-                'bean' => $bean
-            ));
+            SugarACL::listFilter($bean->getACLCategory(), $fieldList, ['bean' => $bean, 'user' => $contextUser]);
 
             $service = new RestService();
-            $service->user = $current_user;
+            $service->user = $contextUser;
             foreach ($fieldList as $fieldName => $properties) {
                 $fieldType = !empty($properties['custom_type']) ? $properties['custom_type'] : $properties['type'];
                 $field = $sfh->getSugarField($fieldType);
