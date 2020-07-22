@@ -8,7 +8,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-describe('Simple Numeric Functions Test', function() {
+describe('Simple String Functions Test', function() {
     var app;
     var oldApp;
     var dm;
@@ -155,6 +155,83 @@ describe('Simple Numeric Functions Test', function() {
             name_format = 's f l t'; // jscs:ignore
             var res = new SUGAR.expressions.FormatedNameExpression([a, b, c, d], getSLContext(model));
             expect(res.evaluate()).toEqual(a.evaluate() + ' ' + b.evaluate() + ' ' + c.evaluate() + ' ' + d.evaluate());
+        });
+    });
+
+    describe('StrReplace Expression Function', function() {
+        using('different input values', [
+            {
+                p1: 'hello',
+                p2: 'hi',
+                p3: 'hello world',
+                p4: false,
+                expected: 'hi world',
+            },
+            {
+                p1: 'hello',
+                p2: 'hi',
+                p3: 'hello world hello',
+                p4: false,
+                expected: 'hi world hi',
+            },
+            {
+                p1: 'hello',
+                p2: 'hi',
+                p3: 'Hello world',
+                p4: false,
+                expected: 'hi world',
+            },
+            {
+                p1: 'hello',
+                p2: 'hi',
+                p3: 'Hello world',
+                p4: true,
+                expected: 'Hello world',
+            },
+            {
+                p1: 'hello',
+                p2: 'hi',
+                p3: 'Hello world hello',
+                p4: true,
+                expected: 'Hello world hi',
+            },
+            {
+                p1: '(',
+                p2: '[',
+                p3: '(Hello \world hello)',
+                p4: true,
+                expected: '[Hello \world hello)',
+            },
+            {
+                p1: '(',
+                p2: '[',
+                p3: '(Hello (world) hello)',
+                p4: true,
+                expected: '[Hello [world) hello)',
+            },
+            {
+                p1: '$&',
+                p2: '',
+                p3: '(Hello$& world hello)',
+                p4: true,
+                expected: '(Hello world hello)',
+            },
+        ], function(data) {
+            it('should replace text', function() {
+                var a = new SUGAR.expressions.StringLiteralExpression([data.p1]);
+                var b = new SUGAR.expressions.StringLiteralExpression([data.p2]);
+                var c = new SUGAR.expressions.StringLiteralExpression([data.p3]);
+                var d;
+                if (data.p4 === true) {
+                    d = new SUGAR.expressions.TrueExpression([]);
+                } else if (data.p4 === false) {
+                    d = new SUGAR.expressions.FalseExpression([]);
+                }
+
+                var params = [a, b, c, d];
+                var res = new SUGAR.expressions.StrReplaceExpression([params], getSLContext(model));
+                expect(res.evaluate()).toEqual(data.expected);
+            });
         });
     });
 });
