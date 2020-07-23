@@ -322,6 +322,25 @@ class SugarEmailAddress extends SugarBean
     }
 
     /**
+     * Check if we can change primary email for bean of some module
+     * @param string $id Parent bean ID
+     * @param string $module Parent bean's module
+     * @return bool
+     */
+    private function canEditPrimaryEmail(?string $id, ?string $module): bool
+    {
+        /* check if we are in idmMode */
+        $idmConfig = new IdmConfig(\SugarConfig::getInstance());
+        $disabledForModule = $idmConfig->isIDMModeEnabled()
+            && in_array($module, $idmConfig->getIDMModeDisabledModules());
+
+        /* we can not change primary email in idmMode */
+        $can_edit_primary_email = !$disabledForModule;
+
+        return $can_edit_primary_email;
+    }
+
+    /**
      * Saves email addresses for a parent bean
      * @param string $id Parent bean ID
      * @param string $module Parent bean's module
@@ -341,6 +360,9 @@ class SugarEmailAddress extends SugarBean
         $defaultValues = array(null, null, array(), '', '', '', '', false);
         list($id, $module, $new_addrs, $primary, $replyTo, $invalid, $optOut, $in_workflow)
             = array_replace($defaultValues, func_get_args());
+
+        /* check if we can edit primary email */
+        $can_edit_primary_email = $this->canEditPrimaryEmail($id, $module);
 
         if (empty($this->addresses) || $in_workflow) {
             $this->populateAddresses($id, $module, $new_addrs, $primary);
@@ -365,65 +387,74 @@ class SugarEmailAddress extends SugarBean
                 if (!empty($address['email_address'])) {
                     $guid = create_guid();
 
-                    $emailId = isset($address['email_address_id'])
-                    && isset($current_links[$address['email_address_id']])
-                        ? $address['email_address_id'] : null;
-                    $optOut = $this->getEmailAddressOptoutValue($address);
-                    $emailId = $this->AddUpdateEmailAddress(
-                        $address['email_address'],
-                        $address['invalid_email'],
-                        $optOut,
-                        $emailId
-                    ); // this will save the email address if not found
+                    $current = $current_links[$address['email_address_id']] ?? null;
+                    $emailId = (isset($address['email_address_id']) && !is_null($current)) ? $address['email_address_id'] : null;
+
+                    if ($can_edit_primary_email ||
+                        /* change not primary address */
+                        (!is_null($current) && !$this->boolVal($current['primary_address']) && !$this->boolVal($address['primary_address'])) ||
+                        /* add new not primary address */
+                        (is_null($current) && !$this->boolVal($address['primary_address']))) {
+                        $optOut = $this->getEmailAddressOptoutValue($address);
+                        $emailId = $this->AddUpdateEmailAddress(
+                            $address['email_address'],
+                            $address['invalid_email'],
+                            $optOut,
+                            $emailId
+                        ); // this will save the email address if not found
+                    }
 
                     //verify linkage and flags.
                     if (isset($current_links[$emailId])) {
-                        if (!$isConversion) { // do not update anything if this is for lead conversion
-
-                            if ($address['primary_address'] != $current_links[$emailId]['primary_address']
-                                || $address['reply_to_address'] != $current_links[$emailId]['reply_to_address']) {
+                        // do not update anything if this is for lead conversion
+                        if (!$isConversion) {
+                            if ($can_edit_primary_email && ($address['primary_address'] != $current_links[$emailId]['primary_address'])) {
                                 $this->db->updateParams(
                                     'email_addr_bean_rel',
                                     $dictionary['email_addr_bean_rel']['fields'],
-                                    array(
-                                        'primary_address' => $address['primary_address'],
-                                        'reply_to_address' => $address['reply_to_address'],
-                                    ),
-                                    array(
-                                        'id' => $current_links[$emailId]['id'],
-                                    )
+                                    ['primary_address' => $address['primary_address']],
+                                    ['id' => $current_links[$emailId]['id']]
                                 );
                             }
-
+                            if ($address['reply_to_address'] != $current_links[$emailId]['reply_to_address']) {
+                                $this->db->updateParams(
+                                    'email_addr_bean_rel',
+                                    $dictionary['email_addr_bean_rel']['fields'],
+                                    ['reply_to_address' => $address['reply_to_address']],
+                                    ['id' => $current_links[$emailId]['id']]
+                                );
+                            }
                             unset($current_links[$emailId]);
                         }
                     } else {
-                        $primary = $address['primary_address'];
+
                         if (!empty($current_links) && $isConversion) {
                             foreach ($current_links as $eabr) {
-                                if ($eabr['primary_address'] == 1) {
+                                if ($this->boolVal($eabr['primary_address'])) {
                                     // for lead conversion, if there is already a primary email, do not insert another primary email
-                                    $primary = 0;
+                                    $address['primary_address'] = 0;
                                     break;
                                 }
                             }
                         }
 
-                        $now = TimeDate::getInstance()->nowDb();
-                        $this->db->insertParams(
-                            'email_addr_bean_rel',
-                            $dictionary['email_addr_bean_rel']['fields'],
-                            array(
-                                'id' => $guid,
-                                'email_address_id' => $emailId,
-                                'bean_id' => $id,
-                                'bean_module' => $module,
-                                'primary_address' => $primary,
-                                'reply_to_address' => $address['reply_to_address'],
-                                'date_created' => $now,
-                                'date_modified' => $now,
-                            )
-                        );
+                        if ($can_edit_primary_email || !$this->boolVal($address['primary_address'])) {
+                            $now = TimeDate::getInstance()->nowDb();
+                            $this->db->insertParams(
+                                'email_addr_bean_rel',
+                                $dictionary['email_addr_bean_rel']['fields'],
+                                array(
+                                    'id' => $guid,
+                                    'email_address_id' => $emailId,
+                                    'bean_id' => $id,
+                                    'bean_module' => $module,
+                                    'primary_address' => $address['primary_address'],
+                                    'reply_to_address' => $address['reply_to_address'],
+                                    'date_created' => $now,
+                                    'date_modified' => $now,
+                                )
+                            );
+                        }
                     }
                 }
             }
@@ -432,15 +463,16 @@ class SugarEmailAddress extends SugarBean
         //delete link to dropped email address.
         // for lead conversion, do not delete email addresses
         if (!empty($current_links) && !$isConversion) {
-
-            $delete = array_map(function (array $row) {
-                return $row['id'];
-            }, array_values($current_links));
-
+            $id_to_delete = [];
+            foreach ($current_links as $row) {
+                if ($can_edit_primary_email || !$this->boolVal($row['primary_address'])) {
+                    $id_to_delete[] = $row['id'];
+                }
+            }
             $conn->executeUpdate(
                 'UPDATE email_addr_bean_rel SET deleted = 1 WHERE id in (?)',
-                array($delete),
-                array(Connection::PARAM_STR_ARRAY)
+                [$id_to_delete],
+                [Connection::PARAM_STR_ARRAY]
             );
         }
         $this->hasFetched = true;
