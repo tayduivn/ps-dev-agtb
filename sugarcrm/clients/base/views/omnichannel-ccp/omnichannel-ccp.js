@@ -96,8 +96,8 @@
         if (!this.ccpLoaded) {
             connect.core.initCCP(_.first(this.$('#containerDiv')), this.defaultCCPOptions);
             this.loadAgentEventListeners();
-            this.loadGeneralEventListeners();
             this.loadContactEventListeners();
+            this.loadGeneralEventListeners();
             this.ccpLoaded = true;
         }
     },
@@ -123,7 +123,22 @@
         connect.agent(function(agent) {
             // When CCP agent is authenticated, we set the footer style
             self.styleFooterButton('logged-in');
-            // Attach further agent event listeners here
+        });
+    },
+
+    /**
+     * Load contact event listeners.
+     */
+    loadContactEventListeners: function() {
+        var self = this;
+        connect.core.onViewContact(function(event) {
+            self.layout.trigger('contact:view', event.contactId);
+        });
+        connect.contact(function(contact) {
+            // Attach contact event listeners here
+            contact.onConnecting(function(contact) {
+                self._handleIncomingContact(contact);
+            });
         });
     },
 
@@ -141,23 +156,13 @@
             self.tearDownCCP();
             self.layout.trigger('ccp:terminated');
         });
-        // This event is triggered when 'Clear Contact' button is clicked
-        eventBus.subscribe(connect.ContactEvents.DESTROYED, function(event) {
-            self.layout.trigger('contact:destroyed', event.contactId);
-        });
-    },
-
-    /**
-     * Load contact event listeners.
-     */
-    loadContactEventListeners: function() {
-        var self = this;
-        connect.core.onViewContact(function(event) {
-            self.layout.trigger('contact:view', event.contactId);
-        });
         // This event is fired if we cannot synchronize with the CCP server
         eventBus.subscribe(connect.EventType.ACK_TIMEOUT, function() {
             self._showConnectionWarning();
+        });
+        // This event is triggered when 'Clear Contact' button is clicked
+        eventBus.subscribe(connect.ContactEvents.DESTROYED, function(event) {
+            self.layout.trigger('contact:destroyed', event.contactId);
         });
     },
 
@@ -217,5 +222,16 @@
         this.defaultCCPOptions.ccpUrl = this.urlPrefix + instanceName + this.urlSuffix;
         this.defaultCCPOptions.region = region;
         return true;
+    },
+
+    /**
+     * Open the Omnichannel drawer if it is closed to allow agent to accept
+     * incoming call/chat.
+     *
+     * @param {Object} contact Contact making call/chat
+     * @private
+     */
+    _handleIncomingContact: function(contact) {
+        this.layout.open();
     },
 })

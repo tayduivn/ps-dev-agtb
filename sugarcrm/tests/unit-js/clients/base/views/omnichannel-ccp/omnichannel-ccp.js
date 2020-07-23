@@ -8,7 +8,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-describe('Base.Layout..OmnichannelCcpLayout', function() {
+describe('Base.Layout.OmnichannelCcpView', function() {
     var view;
     var sandbox;
     var layout;
@@ -18,15 +18,18 @@ describe('Base.Layout..OmnichannelCcpLayout', function() {
         layout = {
             on: sinon.stub(),
             off: sinon.stub(),
-            close: sinon.stub()
+            close: sinon.stub(),
+            open: sinon.stub()
         };
         window.connect = {
             core: {
                 terminate: sinon.stub(),
                 initCCP: sinon.stub(),
-                getEventBus: sinon.stub()
+                getEventBus: sinon.stub(),
+                onViewContact: sinon.stub()
             },
             agent: sinon.stub(),
+            contact: sinon.stub()
         };
         view = SugarTest.createView('base', 'Contacts', 'omnichannel-ccp', null, null, false, layout);
         app = SugarTest.app;
@@ -98,16 +101,18 @@ describe('Base.Layout..OmnichannelCcpLayout', function() {
                 subscribe: subscribeStub
             });
             connect.EventType = {
-                TERMINATED: 'TERMINATED'
+                TERMINATED: 'TERMINATED',
+                ACK_TIMEOUT: 'ACK_TIMEOUT'
             };
             connect.ContactEvents = {
                 DESTROYED: 'DESTROYED'
             };
             view.loadGeneralEventListeners();
             expect(connect.core.getEventBus.calledOnce).toBeTruthy();
-            expect(subscribeStub.callCount).toBe(2);
+            expect(subscribeStub.callCount).toBe(3);
             expect(subscribeStub.getCall(0)).toHaveBeenCalledWith('TERMINATED');
-            expect(subscribeStub.getCall(1)).toHaveBeenCalledWith('DESTROYED');
+            expect(subscribeStub.getCall(1)).toHaveBeenCalledWith('ACK_TIMEOUT');
+            expect(subscribeStub.getCall(2)).toHaveBeenCalledWith('DESTROYED');
         });
     });
 
@@ -115,6 +120,13 @@ describe('Base.Layout..OmnichannelCcpLayout', function() {
         it('should call connect.agent and attach appropriate listeners', function() {
             view.loadAgentEventListeners();
             expect(connect.agent.calledOnce).toBeTruthy();
+        });
+    });
+
+    describe('loadContactEventLIsteners', function() {
+        it('should call connect.contact to attach event listeners', function() {
+            view.loadContactEventListeners();
+            expect(connect.contact.calledOnce).toBeTruthy();
         });
     });
 
@@ -142,10 +154,10 @@ describe('Base.Layout..OmnichannelCcpLayout', function() {
                 sandbox.stub(view, 'loadContactEventListeners');
                 view.ccpLoaded = loaded;
                 view.initializeCCP();
-                expect(connect.core.initCCP.calledOnce).toEqual(!loaded);
-                expect(view.loadAgentEventListeners.calledOnce).toEqual(!loaded);
-                expect(view.loadGeneralEventListeners.calledOnce).toEqual(!loaded);
-                expect(view.loadContactEventListeners.calledOnce).toEqual(!loaded);
+                expect(connect.core.initCCP.callCount).toBe(loaded ? 0 : 1);
+                expect(view.loadAgentEventListeners.callCount).toBe(loaded ? 0 : 1);
+                expect(view.loadGeneralEventListeners.callCount).toBe(loaded ? 0 : 1);
+                expect(view.loadContactEventListeners.callCount).toBe(loaded ? 0 : 1);
                 expect(view.ccpLoaded).toEqual(true);
             });
         });
@@ -171,6 +183,13 @@ describe('Base.Layout..OmnichannelCcpLayout', function() {
                 expect(view.initializeCCP.callCount).toEqual(values.adminSuccess && values.libLoaded ? 1 : 0);
                 expect($.getScript.callCount).toEqual(values.adminSuccess && !values.libLoaded ? 1 : 0);
             });
+        });
+    });
+
+    describe('_handleIncomingContact', function() {
+        it('should call layout.open()', function() {
+            view._handleIncomingContact({});
+            expect(layout.open.calledOnce).toBeTruthy();
         });
     });
 });

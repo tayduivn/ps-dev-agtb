@@ -190,7 +190,7 @@
 
     /**
      * Set the size of the console.
-     * @param {boolean} True if showing ccp only, false otherwise
+     * @param {boolean} ccpOnly true if showing ccp only, false otherwise
      * @private
      */
     _setSize: function(ccpOnly) {
