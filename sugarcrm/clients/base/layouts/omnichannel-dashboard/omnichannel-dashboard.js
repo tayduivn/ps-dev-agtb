@@ -32,7 +32,7 @@
         // this tells dashboard controller which dashboard to load
         this.context.set('layout', 'omnichannel');
         this.context.set('module', 'Dashboards');
-        this.context = this.context.getChildContext({layout: 'omnichannel', module: 'Dashboards'});
+        this.context = this.context.getChildContext({forceNew: true, layout: 'omnichannel', module: 'Dashboards'});
     },
 
     /**

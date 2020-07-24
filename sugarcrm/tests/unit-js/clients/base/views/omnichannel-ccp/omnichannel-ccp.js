@@ -100,10 +100,14 @@ describe('Base.Layout..OmnichannelCcpLayout', function() {
             connect.EventType = {
                 TERMINATED: 'TERMINATED'
             };
+            connect.ContactEvents = {
+                DESTROYED: 'DESTROYED'
+            };
             view.loadGeneralEventListeners();
             expect(connect.core.getEventBus.calledOnce).toBeTruthy();
             expect(subscribeStub.callCount).toBe(2);
-            expect(subscribeStub).toHaveBeenCalledWith('TERMINATED');
+            expect(subscribeStub.getCall(0)).toHaveBeenCalledWith('TERMINATED');
+            expect(subscribeStub.getCall(1)).toHaveBeenCalledWith('DESTROYED');
         });
     });
 
@@ -135,11 +139,13 @@ describe('Base.Layout..OmnichannelCcpLayout', function() {
             it('should initialize CCP only if not already loaded', function() {
                 sandbox.stub(view, 'loadAgentEventListeners');
                 sandbox.stub(view, 'loadGeneralEventListeners');
+                sandbox.stub(view, 'loadContactEventListeners');
                 view.ccpLoaded = loaded;
                 view.initializeCCP();
                 expect(connect.core.initCCP.calledOnce).toEqual(!loaded);
                 expect(view.loadAgentEventListeners.calledOnce).toEqual(!loaded);
                 expect(view.loadGeneralEventListeners.calledOnce).toEqual(!loaded);
+                expect(view.loadContactEventListeners.calledOnce).toEqual(!loaded);
                 expect(view.ccpLoaded).toEqual(true);
             });
         });

@@ -36,9 +36,15 @@
      * @property {Object}
      */
     ccpSize: {
-        width: 300,
-        height: 435
+        width: 320,
+        height: 540
     },
+
+    /**
+     * Height of the console header.
+     * @property {number}
+     */
+    headerHeight: 28,
 
     /**
      * Showing ccp only or all.
@@ -51,8 +57,7 @@
      * @property {Object}
      */
     events: {
-        'click [data-action=close]': 'close',
-        'click [data-action=end-session]': 'toggleSession',
+        'click [data-action=close]': 'close'
     },
 
     /**
@@ -61,7 +66,7 @@
     initialize: function(options) {
         this._super('initialize', [options]);
         $(window).on('resize.omniConsole', _.bind(this._resize, this));
-        this._setSize(false);
+        this._setSize();
     },
 
     /**
@@ -90,6 +95,14 @@
     },
 
     /**
+     * Tell if console is expanded with dashbaord.
+     * @return {boolean} True if it's expanded, false otherwise
+     */
+    isExpanded: function() {
+        return !this.ccpOnly;
+    },
+
+    /**
      * Close the console immediately.
      */
     closeImmediately: function() {
@@ -99,9 +112,9 @@
     },
 
     /**
-     * Show/end session.
+     * Expand/shrink console.
      */
-    toggleSession: function() {
+    toggle: function() {
         if (this.isOpen()) {
             this.ccpOnly = !this.ccpOnly;
             this.$el.animate({
@@ -110,7 +123,6 @@
                 'right': this._determineRight(),
                 'bottom': this._determineBottom()
             });
-            this.$('[data-action=end-session]').toggle();
         }
     },
 
@@ -163,13 +175,17 @@
      * @private
      */
     _determineTop: function() {
-        var headerHeight = $('#header .navbar').outerHeight();
+        var top = $('#header .navbar').outerHeight();
         var footerHeight = $('footer').outerHeight();
         var windowHeight = $(window).height();
         if (this.ccpOnly) {
-            return windowHeight - footerHeight - this.ccpSize.height;
+            var ccpTop = windowHeight - footerHeight - this.ccpSize.height - this.headerHeight;
+            // if ccpTop < top, ccp will be partially covered by megamenu
+            if (ccpTop > top) {
+                top = ccpTop;
+            }
         }
-        return headerHeight;
+        return top;
     },
 
     /**

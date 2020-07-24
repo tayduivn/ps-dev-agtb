@@ -175,10 +175,14 @@ $config['blackList']['pro'] = array(
 // Omnichannel Console
 'sugarcrm/clients/base/layouts/omnichannel-console' => 1,
 'sugarcrm/clients/base/layouts/omnichannel-dashboard' => 1,
+'sugarcrm/clients/base/layouts/omnichannel-dashboard-switch' => 1,
 'sugarcrm/clients/base/views/omnichannel-button' => 1,
 'sugarcrm/clients/base/views/omnichannel-header' => 1,
 'sugarcrm/clients/base/views/omnichannel-ccp' => 1,
 'sugarcrm/modules/Dashboards/dashboards/omnichannel' => 1,
 'sugarcrm/tests/unit-js/clients/base/layouts/omnichannel-console' => 1,
 'sugarcrm/tests/unit-js/clients/base/layouts/omnichannel-dashboard' => 1,
+'sugarcrm/tests/unit-js/clients/base/layouts/omnichannel-dashboard-switch' => 1,
+'sugarcrm/tests/unit-js/clients/base/views/omnichannel-button' => 1,
+'sugarcrm/tests/unit-js/clients/base/views/omnichannel-ccp' => 1,
 );

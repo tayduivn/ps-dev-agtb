@@ -1,4 +1,5 @@
-{{!--
+<?php
+
 /*
  * Your installation or use of this SugarCRM file is subject to the applicable
  * terms available at
@@ -9,6 +10,8 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
---}}
-<div class="pull-right"><button type="button" class="btn btn-invisible" data-action="close"><i class="fa fa-minus fd-md"></i></button></div>
-<h4>{{str 'LBL_OMNICHANNEL'}}</h4>
+
+$viewdefs['base']['layout']['omnichannel-dashboard-switch'] = [
+    'components' => [
+    ],
+];

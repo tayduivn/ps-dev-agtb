@@ -5057,7 +5057,6 @@ Sincerely, SugarCRM',
 
     // Omnichannel Console
     'LBL_OMNICHANNEL' => 'Omnichannel',
-    'LBL_OMNICHANNEL_END_SESSION' => 'End Session',
     'LBL_OMNICHANNEL_DASHBOARD' => 'Omnichannel Dashboard',
     //END SUGARCRM flav=ent ONLY
 

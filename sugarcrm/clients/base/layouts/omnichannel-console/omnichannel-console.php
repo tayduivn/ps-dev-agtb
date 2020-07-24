@@ -20,7 +20,7 @@ $viewdefs['base']['layout']['omnichannel-console'] = [
             'view' => 'omnichannel-ccp',
         ],
         [
-            'layout' => 'omnichannel-dashboard',
+            'layout' => 'omnichannel-dashboard-switch',
         ],
     ],
 ];

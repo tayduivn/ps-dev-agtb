@@ -11,9 +11,9 @@
 /**
  * The ccp container of the Omnichannel console.
  *
- * @class View.Layouts.Base.OmnichannelCcpLayout
- * @alias SUGAR.App.view.layouts.BaseOmnichannelCcpLayout
- * @extends View.Layout
+ * @class View.Layouts.Base.OmnichannelCcpView
+ * @alias SUGAR.App.view.layouts.BaseOmnichannelCcpView
+ * @extends View.View
  */
 ({
     className: 'omni-ccp',
@@ -97,6 +97,7 @@
             connect.core.initCCP(_.first(this.$('#containerDiv')), this.defaultCCPOptions);
             this.loadAgentEventListeners();
             this.loadGeneralEventListeners();
+            this.loadContactEventListeners();
             this.ccpLoaded = true;
         }
     },
@@ -138,6 +139,21 @@
         // This event is fired when an agent logs out, or the connection is lost
         eventBus.subscribe(connect.EventType.TERMINATED, function() {
             self.tearDownCCP();
+            self.layout.trigger('ccp:terminated');
+        });
+        // This event is triggered when 'Clear Contact' button is clicked
+        eventBus.subscribe(connect.ContactEvents.DESTROYED, function(event) {
+            self.layout.trigger('contact:destroyed', event.contactId);
+        });
+    },
+
+    /**
+     * Load contact event listeners.
+     */
+    loadContactEventListeners: function() {
+        var self = this;
+        connect.core.onViewContact(function(event) {
+            self.layout.trigger('contact:view', event.contactId);
         });
         // This event is fired if we cannot synchronize with the CCP server
         eventBus.subscribe(connect.EventType.ACK_TIMEOUT, function() {

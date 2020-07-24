@@ -66,7 +66,7 @@ describe('Base.Layout.OmnichannelConsole', function() {
         });
     });
 
-    describe('toggleSession', function() {
+    describe('toggle', function() {
         var elToggleStub;
 
         beforeEach(function() {
@@ -78,13 +78,13 @@ describe('Base.Layout.OmnichannelConsole', function() {
                 toggle: $.noop
             });
             console.currentState = 'idle';
-            console.toggleSession();
+            console.toggle();
             expect(elToggleStub).toHaveBeenCalled();
         });
 
         it('should not toggle if console is not open', function() {
             console.currentState = '';
-            console.toggleSession();
+            console.toggle();
             expect(elToggleStub).not.toHaveBeenCalled();
         });
     });
