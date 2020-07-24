@@ -22,5 +22,16 @@
         this.def.lblString = app.lang.get('LBL_UPDATE_OPPORTUNITIES_RLIS', 'Opportunities') +
             ' ' +
             app.lang.getModuleName('RevenueLineItems', {plural: true});
+    },
+
+    /**
+     * @inheritdoc
+     */
+    _loadTemplate: function() {
+        if (this.action !== 'edit' && this.action !== 'disabled') {
+            this.type = 'enum';
+        }
+        this._super('_loadTemplate');
+        this.type = this.def.type;
     }
 })
