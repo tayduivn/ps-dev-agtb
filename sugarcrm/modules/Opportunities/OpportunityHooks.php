@@ -62,21 +62,26 @@ class OpportunityHooks extends AbstractForecastHooks
                     $renewalBean = $bean->getExistingRenewalOpportunity();
                 }
 
-                // create a new renewal opportunity
-                if (empty($renewalBean)) {
+                // create/update renewal RLIs if Add-On-To PLI is linked to an open renewal Opp
+                $rlisUpdated = $bean->updateRenewalRLIs($rliBeans);
+
+                // create a new renewal opportunity if it doesn't exist
+                if (empty($renewalBean) && count($rlisUpdated) < count($rliBeans)) {
                     $renewalBean = $bean->createNewRenewalOpportunity();
                 }
 
-                if ($renewalBean) {
-                    foreach ($rliBeans as $rliBean) {
-                        // create new renewal RLI
+                // create new renewal RLIs in a new or existing renewal Opp
+                foreach ($rliBeans as $rliBean) {
+                    if (!in_array($rliBean->id, $rlisUpdated)) {
                         $newRliBean = $renewalBean->createNewRenewalRLI($rliBean);
 
                         // Link the renewal RLI to the RLI it is generating
                         $rliBean->renewal_rli_id = $newRliBean->id;
                         $rliBean->save();
                     }
+                }
 
+                if ($renewalBean) {
                     return true;
                 }
             }

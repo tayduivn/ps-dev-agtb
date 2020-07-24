@@ -374,6 +374,18 @@ class RevenueLineItem extends SugarBean
             }
         }
     }
+
+    /**
+     * Check if it is an open renewal Revenue Line Item.
+     *
+     * @return bool
+     */
+    public function isOpenRenewalRLI()
+    {
+        return ($this->sales_stage !== Opportunity::STATUS_CLOSED_WON &&
+            $this->sales_stage !== Opportunity::STATUS_CLOSED_LOST &&
+            $this->renewable == 1);
+    }
     //END SUGARCRM flav=ent ONLY
 
     /**

@@ -46,6 +46,7 @@ class OpportunityTest extends TestCase
         }
 
         SugarTestRevenueLineItemUtilities::removeAllCreatedRevenueLineItems();
+        SugarTestPurchasedLineItemUtilities::removeAllCreatedPurchasedLineItems();
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
         SugarTestCurrencyUtilities::removeAllCreatedCurrencies();
         SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
@@ -754,6 +755,104 @@ class OpportunityTest extends TestCase
             ['Yes', 'Qualification', ['SUGAR_SELL'], 1, [['id' => 'ut-opp-test-4'],],],
             ['Completed', 'Closed Won', ['SUGAR_SELL'], 0, [],],
         ];
+    }
+
+    /**
+     * @covers ::updateRenewalRLIs()
+     */
+    public function testUpdateRenewalRLIs()
+    {
+        $rli = SugarTestRevenueLineItemUtilities::createRevenueLineItem();
+        $rli->sales_stage = 'Prospecting';
+        $rli->renewable = 1;
+        $rli->product_template_id = '1234-5678';
+        $rli->quantity = '20';
+        $rli->likely_case = '2000';
+        $rli->save();
+
+        $reNewOppBean = SugarTestOpportunityUtilities::createOpportunity();
+        $reNewOppBean->sales_status = 'Prospecting';
+        $reNewOppBean->renewal = 1;
+        $reNewOppBean->revenuelineitems->add($rli);
+        $reNewOppBean->save();
+
+        $pliBean = SugarTestPurchasedLineItemUtilities::createPurchasedLineItem();
+        $pliBean->renewal_opp_id = $reNewOppBean->id;
+        $pliBean->save();
+
+        $rliBeans = [];
+
+        $rliBean1 = SugarTestRevenueLineItemUtilities::createRevenueLineItem();
+        $rliBean1->name = 'RLI1';
+        // Add-On-To PLI that links to an open renewal Opp ($reNewOppBean)
+        $rliBean1->add_on_to_id = $pliBean->id;
+        // $reNewOppBean has an existing RLI whose Product (1234-5678) matches current RLI
+        $rliBean1->product_template_id = '1234-5678';
+        $rliBean1->quantity = '15';
+        $rliBean1->likely_case = '1500';
+        $rliBean1->currency_id = '-99';
+        $rliBean1->service = true;
+        $rliBean1->service_start_date = '2020-08-11';
+        $rliBean1->service_end_date = '2020-10-10';
+        $rliBean1->service_duration_value = '2';
+        $rliBean1->service_duration_unit = 'month';
+        $rliBean1->save();
+        $rliBeans[] = $rliBean1;
+
+        $rliBean2 = SugarTestRevenueLineItemUtilities::createRevenueLineItem();
+        $rliBean2->name = 'RLI2';
+        // Add-On-To PLI that links to an open renewal Opp ($reNewOppBean)
+        $rliBean2->add_on_to_id = $pliBean->id;
+        // $reNewOppBean has an existing RLI whose Product (1234-5678) doesn't match current RLI
+        $rliBean2->product_template_id = '8765-4321';
+        $rliBean2->quantity = '10';
+        $rliBean2->likely_case = '1000';
+        $rliBean2->currency_id = '-99';
+        $rliBean2->service = true;
+        $rliBean2->service_start_date = '2020-08-11';
+        $rliBean2->service_end_date = '2020-10-10';
+        $rliBean2->service_duration_value = '2';
+        $rliBean2->service_duration_unit = 'month';
+        $rliBean2->save();
+        $rliBeans[] = $rliBean2;
+
+        $rliBean3 = SugarTestRevenueLineItemUtilities::createRevenueLineItem();
+        $rliBean3->name = 'RLI3';
+        // Add-On-To PLI that doesn't link to an open renewal Opp
+        $rliBean3->add_on_to_id = '';
+        $rliBean3->product_template_id = '';
+        $rliBean3->quantity = '5';
+        $rliBean3->likely_case = '500';
+        $rliBean3->currency_id = '-99';
+        $rliBean3->service = true;
+        $rliBean3->service_start_date = '2020-08-11';
+        $rliBean3->service_end_date = '2020-10-10';
+        $rliBean3->service_duration_value = '2';
+        $rliBean3->service_duration_unit = 'month';
+        $rliBean3->save();
+        $rliBeans[] = $rliBean3;
+
+        $oppBean = SugarTestOpportunityUtilities::createOpportunity();
+        $rlisUpdated = $oppBean->updateRenewalRLIs($rliBeans);
+
+        // Only $rliBean1 is added to the existing renewal RLI in the existing renewal Opp
+        $this->assertEquals('35', $rli->quantity);
+        $this->assertEquals('3500', $rli->likely_case);
+
+        $reNewOppBean->load_relationship('revenuelineitems');
+        $beanArr = [];
+        foreach ($reNewOppBean->revenuelineitems->getBeans() as $bean) {
+            $beanArr[] = $bean->name;
+        }
+        $this->assertFalse(in_array($rliBean1->name, $beanArr));
+        // A new renewal RLI is created/added to the existing renewal Opp based on $rliBean2
+        $this->assertTrue(in_array($rliBean2->name, $beanArr));
+        $this->assertFalse(in_array($rliBean3->name, $beanArr));
+
+        $this->assertTrue(in_array($rliBean1->id, $rlisUpdated));
+        $this->assertTrue(in_array($rliBean2->id, $rlisUpdated));
+        // $rliBean3 is not in the $rlisUpdated that is returned by $oppBean->updateRenewalRLIs($rliBeans)
+        $this->assertFalse(in_array($rliBean3->id, $rlisUpdated));
     }
     //END SUGARCRM flav=ent ONLY
 }

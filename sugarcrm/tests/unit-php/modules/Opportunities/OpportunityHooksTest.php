@@ -51,11 +51,13 @@ class OpportunityHooksTest extends TestCase
         $opBean = $this->createPartialMock('Opportunity', [
             'getClosedWonRenewableRLIs',
             'getRenewalParent',
+            'updateRenewalRLIs',
             'canRenew',
         ]);
         $opBean->method('canRenew')->willReturn(true);
         $opBean->method('getClosedWonRenewableRLIs')->willReturn([$rliBean]);
         $opBean->method('getRenewalParent')->willReturn($parentBean);
+        $opBean->method('updateRenewalRLIs')->with([$rliBean])->willReturn([]);
         $args['dataChanges']['sales_status']['after'] = Opportunity::STATUS_CLOSED_WON;
         $this->assertTrue(OpportunityHooks::generateRenewalOpportunity($opBean, 'after_save', $args));
 

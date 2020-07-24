@@ -775,6 +775,86 @@ class Opportunity extends SugarBean
     }
 
     /**
+     * Create/update renewal RLIs if Add-On-To PLI is linked to an open renewal Opp
+     *
+     * #1. Closed Won renewable RLIs with an Add-On-To PLI that links to an open renewal Opp where the renewal Opp
+     *    has no existing open RLI whose Product matches my newly won RLI, create a new renewal RLI in this
+     *    existing renewal Opp.
+     *
+     * #2. Closed Won renewable RLIs with an Add-On-To PLI that links to an open renewal Opp where the renewal Opp
+     *    has an existing open RLI whose Product matches my current won RLI, update the existing renewal RLI.
+     *
+     * @param array $rliBeans Closed Won renewable RLI Beans to be processed
+     * @return array beans that have ben processed
+     */
+    public function updateRenewalRLIs(array $rliBeans)
+    {
+        $rlisUpdated = [];
+        foreach ($rliBeans as $rliBean) {
+            if (!empty($rliBean->add_on_to_id)) {
+                $pli = BeanFactory::retrieveBean('PurchasedLineItems', $rliBean->add_on_to_id);
+                if ($pli && !empty($pli->renewal_opp_id)) {
+                    $renewalOpp = BeanFactory::retrieveBean('Opportunities', $pli->renewal_opp_id);
+                    // checks if this is a renewal open Opportunity and gets its related RLIs
+                    if ($renewalOpp->isOpenRenewalOpportunity() &&
+                        $renewalOpp->load_relationship('revenuelineitems')) {
+                        $rlis = $renewalOpp->revenuelineitems->getBeans();
+                        $rliProcessed = false;
+                        foreach ($rlis as $rli) {
+                            // checks if there is an open RLI whose Product matches the Closed Won renewable RLI
+                            if ($rli->isOpenRenewalRLI() &&
+                                !empty($rliBean->product_template_id) &&
+                                !empty($rli->product_template_id) &&
+                                $rliBean->product_template_id === $rli->product_template_id) {
+                                // #2 update the existing renewal RLI in existing renewal Opp
+                                $rli->quantity += $rliBean->quantity;
+                                // we need to convert the amount to the existing renewal RLI's currency
+                                // when $rliBean & $rli have different currency_id
+                                if ($rliBean->currency_id !== $rli->currency_id) {
+                                    $rli->likely_case +=
+                                        SugarCurrency::convertAmount(
+                                            (float)$rliBean->likely_case,
+                                            $rliBean->currency_id,
+                                            $rli->currency_id
+                                        );
+                                } else {
+                                    $rli->likely_case += $rliBean->likely_case;
+                                }
+                                $rli->save();
+                                $rliProcessed = true;
+                                break;
+                            }
+                        }
+                        if (!$rliProcessed) {
+                            // #1 create a new renewal RLI in existing renewal Opp
+                            $newRliBean = $renewalOpp->createNewRenewalRLI($rliBean);
+
+                            // Link the renewal RLI to the RLI it is generating
+                            $rliBean->renewal_rli_id = $newRliBean->id;
+                            $rliBean->save();
+                        }
+                        $rlisUpdated[] = $rliBean->id;
+                    }
+                }
+            }
+        }
+
+        return $rlisUpdated;
+    }
+
+    /**
+     * Check if it is an open renewal opportunity.
+     *
+     * @return bool
+     */
+    public function isOpenRenewalOpportunity()
+    {
+        return ($this->sales_status !== Opportunity::STATUS_CLOSED_WON &&
+            $this->sales_status !== Opportunity::STATUS_CLOSED_LOST &&
+            $this->renewal == 1);
+    }
+
+    /**
      * Create a new renewal opportuinty.
      *
      * @return Opportunity
