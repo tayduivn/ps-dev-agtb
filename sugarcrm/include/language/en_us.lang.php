@@ -4124,6 +4124,8 @@ Sincerely, SugarCRM',
     'LBL_DURATION_HOURS' => 'hours',
     'LBL_DURATION_MINUTES' => 'minutes',
     'LBL_DURATION_SECONDS' => 'seconds',
+    'LBL_DURATION_IN_DAYS' => 'Duration in days',
+    'LBL_CATALOG_DURATION_IN_DAYS' => 'Catalog duration in days',
 
     //Calendar widget labels
     'LBL_CHOOSE_MONTH' => 'Choose Month',

@@ -679,5 +679,86 @@ class ProductTest extends TestCase
         ];
     }
 
+
+
+    /**
+     * Calculate total amount considering flexible duration
+     *
+     * @dataProvider dataProviderTotalAmountCalculation
+     * @param $quantity
+     * @param $discount_price
+     * @param $discount_amount
+     * @param $discount_select
+     * @param $service_duration_value
+     * @param $service_duration_unit
+     * @param $cat_service_duration_value
+     * @param $cat_service_duration_unit
+     * @param $total_amount
+     */
+    public function testTotalAmountCalculation(
+        $quantity,
+        $discount_price,
+        $discount_amount,
+        $discount_select,
+        $service_duration_value,
+        $service_duration_unit,
+        $cat_service_duration_value,
+        $cat_service_duration_unit,
+        $total_amount
+    ): void {
+        $product = SugarTestProductUtilities::createProduct();
+        $product->discount_price = $discount_price;
+        $product->discount_amount = $discount_amount;
+        $product->discount_select = $discount_select;
+        $product->quantity = $quantity;
+        $product->service = 1;
+        $product->service_start_date = '2020-08-13';
+        $product->service_duration_value = $service_duration_value;
+        $product->service_duration_unit = $service_duration_unit;
+        $product->duration_in_days = $this->convertToDays($service_duration_value, $service_duration_unit);
+        $product->catalog_duration_in_days = $this->convertToDays($cat_service_duration_value, $cat_service_duration_unit);
+        $product->save();
+        $this->assertEquals($total_amount, round($product->total_amount, 2));
+    }
+
+    protected function convertToDays($value, $unit)
+    {
+        if ($unit === 'year') {
+            return $value * 365;
+        } elseif ($unit === 'month') {
+            return $value * (365/12);
+        } elseif ($unit === 'day') {
+            return $value;
+        }
+        return "";
+    }
+
+    public function dataProviderTotalAmountCalculation(): array
+    {
+        //        $quantity,
+        //        $discount_price,
+        //        $discount_amount,
+        //        $discount_select,
+        //        $service_duration_value,
+        //        $service_duration_unit,
+        //        $cat_service_duration_value,
+        //        $cat_service_duration_unit,
+        //        $total_amount
+        return [
+            ['1', '100', 0, 0, '1', 'year', '1', 'year', '100'],
+            ['10', '100', 0, 0, '1', 'year', '1', 'year', '1000'],
+            ['1', '100', 0, 0, '3', 'year', '1', 'year', '300'],
+            ['1', '100', 0, 0, '1', 'month', '1', 'year', '8.33'],
+            ['1', '100', 0, 0, '18', 'month', '1', 'year', '150'],
+            ['1', '100', 0, 0, '1', 'month', '2', 'year', '4.17'],
+            ['1', '10', 0, 0, '7', 'day', '1', 'month', '2.30'],
+            ['1', '10', 0, 0, '1', 'day', '3', 'month', '0.11'],
+            ['1', '10', 0, 0, '6', 'month', '1', 'day', '1825'],
+            ['1', '10', 0, 0, '18', 'month', '7', 'day', '782.14'],
+            ['1', '10', 2, 0, '6', 'month', '1', 'day', '1460'],
+            ['1', '10', 10, 1, '18', 'month', '7', 'day', '703.93'],
+            ['1', '100', 10, 1, '730', 'day', '1', 'year', '180'],
+        ];
+    }
     //END SUGARCRM flav=ent ONLY
 }

@@ -138,6 +138,53 @@ $dictionary['Product'] = array(
             'audited' => true,
             'comment' => 'Contact this product is associated with'
         ),
+        'catalog_duration_in_days' => [
+            'name' => 'catalog_duration_in_days',
+            'vname' => 'LBL_CATALOG_DURATION_IN_DAYS',
+            'type' => 'decimal',
+            'studio' => false,
+            'len' => '26,6',
+            'enforced' => true,
+            'calculated' => true,
+            'massupdate' => false,
+            'formula' => '
+            ifElse(equal($catalog_duration_in_days, ""),
+                ifElse(equal(related($product_templates_link, "service_duration_unit"), "year"),
+                    ifElse(isNumeric(related($product_templates_link, "service_duration_value")), multiply($service_duration_value, 365), ""),
+                    ifElse(equal(related($product_templates_link, "service_duration_unit"), "month"),
+                        ifElse(isNumeric(related($product_templates_link, "service_duration_value")), multiply($service_duration_value, divide(365,12)), ""),
+                        ifElse(equal(related($product_templates_link, "service_duration_unit"), "day"),
+                            ifElse(isNumeric(related($product_templates_link, "service_duration_value")), $service_duration_value, ""),
+                            ""
+                        )
+                    )
+                ),
+                $catalog_duration_in_days
+            )',
+            'comment' => 'Catalog duration in days',
+        ],
+        'duration_in_days' => [
+            'name' => 'duration_in_days',
+            'vname' => 'LBL_DURATION_IN_DAYS',
+            'type' => 'decimal',
+            'studio' => false,
+            'enforced' => true,
+            'calculated' => true,
+            'massupdate' => false,
+            'source'=>'non-db',
+            'formula' => '
+            ifElse(equal($service_duration_unit, "year"),
+                ifElse(isNumeric($service_duration_value), multiply($service_duration_value, 365), ""),
+                ifElse(equal($service_duration_unit, "month"),
+                    ifElse(isNumeric($service_duration_value), multiply($service_duration_value, divide(365,12)), ""),
+                    ifElse(equal($service_duration_unit, "day"),
+                        ifElse(isNumeric($service_duration_value), $service_duration_value, ""),
+                        ""
+                    )
+                )
+            )',
+            'comment' => 'Duration in days',
+        ],
         'subtotal' => array(
             'name' => 'subtotal',
             'vname' => 'LBL_SUBTOTAL',
@@ -151,9 +198,18 @@ $dictionary['Product'] = array(
                 'quantity'
             ),
             'formula' => '
-                 ifElse(and(isNumeric($quantity), isNumeric($discount_price)),
-                   ifElse(equal($quantity, 0), "0", currencyMultiply($discount_price, $quantity))
-                 , "")',
+            divide(
+                multiply(
+                    ifElse(equal($duration_in_days, ""), 1, $duration_in_days),
+                    ifElse(and(isNumeric($quantity), isNumeric($discount_price)),
+                        ifElse(equal($quantity, 0), "0", currencyMultiply($discount_price, $quantity))
+                        , "")
+                ),
+                ifElse(equal($catalog_duration_in_days, ""), 
+                    ifElse(equal($duration_in_days, ""), 1, $duration_in_days), 
+                    $catalog_duration_in_days
+                )
+            )',
             'calculated' => true,
             'enforced' => true,
         ),
@@ -161,19 +217,28 @@ $dictionary['Product'] = array(
             'name' => 'total_amount',
             'default' => '0.00',
             'formula' => '
-                ifElse(and(isNumeric(toString($quantity)), isNumeric(toString($discount_price))),
-                    currencySubtract(
-                        currencyMultiply(
-                            $discount_price,
-                            $quantity
-                        ),
-                        ifElse(equal($discount_select, "1"),
-                            currencyMultiply(currencyMultiply($discount_price, $quantity), currencyDivide($discount_amount, 100)),
-                            ifElse(greaterThan($quantity, 0), ifElse(isNumeric(toString($discount_amount)), $discount_amount, 0),
-                            ifElse(isNumeric(toString($discount_amount)), negate($discount_amount), 0))
+                divide(
+                    multiply(
+                        ifElse(equal($duration_in_days, ""), 1, $duration_in_days),
+                        ifElse(and(isNumeric(toString($quantity)), isNumeric(toString($discount_price))),
+                            currencySubtract(
+                                currencyMultiply(
+                                    $discount_price,
+                                    $quantity
+                                ),
+                                ifElse(equal($discount_select, "1"),
+                                    currencyMultiply(currencyMultiply($discount_price, $quantity), currencyDivide($discount_amount, 100)),
+                                    ifElse(greaterThan($quantity, 0), ifElse(isNumeric(toString($discount_amount)), $discount_amount, 0),
+                                    ifElse(isNumeric(toString($discount_amount)), negate($discount_amount), 0))
+                                )
+                            ),
+                            ""
                         )
                     ),
-                    ""
+                    ifElse(equal($catalog_duration_in_days, ""), 
+                        ifElse(equal($duration_in_days, ""), 1, $duration_in_days), 
+                        $catalog_duration_in_days
+                    )
                 )',
             'calculated' => true,
             'enforced' => true,
