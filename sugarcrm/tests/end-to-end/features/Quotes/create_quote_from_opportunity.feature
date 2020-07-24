@@ -251,19 +251,6 @@ Feature: Generate Quote From RLI subpanel in Opportunity record view
       | date_quote_expected_closed | 12/12/2020    |
       | total_usdollar             | $4,767.16     |
 
-    # 22. Verify that 'RLI_1' record have a label 'Quoted' in the header and link to the generated quote in record view
-    When I choose RevenueLineItems in modules menu
-    Then I should see *RLI_1 in #RevenueLineItemsList.ListView
-    When I select *RLI_1 in #RevenueLineItemsList.ListView
-    Then I should see #RLI_1Record view
-    When I click show more button on #RLI_1Record view
-    Then I verify fields on #RLI_1Record.HeaderView
-      | fieldName | value  |
-      | quote_id  | Quoted |
-    Then I verify fields on #RLI_1Record.RecordView
-      | fieldName  | value         |
-      | quote_name | SugarCRM Inc. |
-
 
 
     # TITLE:  Verify that all RLIs can be deleted from RLI subpanel of opportunity record view

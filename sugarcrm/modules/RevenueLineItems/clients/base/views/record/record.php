@@ -338,7 +338,7 @@ $fieldsHidden = array(
     'add_on_to_name',
     // END SUGARCRM flav=ent ONLY
     'lead_source',
-    'campaign_name',
+    'next_step',
     array(
         'name' => 'description',
         'span' => 12,
@@ -372,17 +372,6 @@ $fieldsHidden = array(
         'base_rate_field' => 'base_rate',
     ),
     'tax_class',
-    array(
-        'name' => 'quote_name',
-        'label' => 'LBL_ASSOCIATED_QUOTE',
-        'related_fields' => array('quote_id'),
-        // this is a hack to get the quote_id field loaded
-        'readonly' => true,
-        'related_fields' => array(
-            'mft_part_num',
-        ),
-    ),
-    'next_step',
     'name' => 'purchasedlineitem_name',
     'team_name',
     'assigned_user_name',

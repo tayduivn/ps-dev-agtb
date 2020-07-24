@@ -194,14 +194,6 @@ $fields = array(
         'default' => true,
     ),
     array(
-        'name' => 'quote_name',
-        'label' => 'LBL_ASSOCIATED_QUOTE',
-        'related_fields' => array('quote_id'),
-        'readonly' => true,
-        'enabled' => true,
-        'default' => true,
-    ),
-    array(
         'name' => 'assigned_user_name',
         'enabled' => true,
         'default' => true,
