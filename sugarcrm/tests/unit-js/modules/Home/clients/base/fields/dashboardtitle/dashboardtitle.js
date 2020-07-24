@@ -99,6 +99,27 @@ describe('Home.Base.Field.Dashboardtitle', function() {
         });
     });
 
+    describe('editClicked', function() {
+        it('should bind events', function() {
+            field = SugarTest.createField({
+                name: 'test_field',
+                type: 'dashboardtitle',
+                viewName: 'testViewName',
+                fieldDef: {},
+                module: 'Home',
+                loadFromModule: true,
+            });
+            field.view = {
+                editClicked: sandbox.stub(),
+                toggleField: sandbox.stub(),
+            };
+            sandbox.stub(field, '_bindEvents');
+
+            field.editClicked(null);
+            expect(field._bindEvents).toHaveBeenCalled();
+        });
+    });
+
     describe('managerClicked', function() {
         beforeEach(function() {
             field = SugarTest.createField({

@@ -24,6 +24,7 @@
 
     events: {
         'click [name=edit_button]': 'editClicked',
+        'click [name=save_button]': 'saveClicked',
         'click [name=cancel_button]': 'cancelClicked',
         'click [name=create_cancel_button]': 'createCancelClicked',
         'click [name=duplicate_button]': 'duplicateClicked',
@@ -122,6 +123,29 @@
         this.model.trigger('setMode', 'edit');
     },
 
+    /**
+     * Get the dashboard name field and toggle states
+     * @param {boolean} isEdit
+     */
+    toggleNameField: function(isEdit) {
+        var field = this.getField('name');
+        this.toggleField(field, !!isEdit);
+    },
+
+    /**
+     * Run save function and switch to view mode
+     */
+    saveHandle: function() {
+        var changes = this.model.changedAttributes(this.model.getSynced());
+        if (changes && changes.name) {
+            this.layout.handleSave();
+        }
+
+        this.setButtonStates('view');
+        this.toggleEdit(false);
+        this.model.trigger('setMode', 'view');
+    },
+
     cancelClicked: function(evt) {
         this.changed = false;
         this.model.unset('updated');
@@ -129,6 +153,7 @@
         this.setButtonStates('view');
         this.handleCancel();
         this.model.trigger('setMode', 'view');
+        this.toggleNameField();
     },
 
     /**
@@ -208,7 +233,9 @@
      *
      * The save function is handled by {@link View.Layouts.Dashboards.DashboardLayout#handleSave}.
      */
-    saveClicked: $.noop,
+    saveClicked: function(evt) {
+        this.toggleNameField();
+    },
 
     createCancelClicked: function(evt) {
         if (this.context.parent) {
@@ -426,6 +453,10 @@
     },
 
     toggleEdit: function(isEdit) {
+        this.editableFields = this.editableFields.filter(function(item) {
+            return item.name !== 'name';
+        });
+
         this.toggleFields(this.editableFields, isEdit);
     },
 

@@ -804,7 +804,7 @@
         app.view.View.prototype._renderHtml.call(this);
         this._initButtons();
         this.setEditableFields();
-        this.adjustHeaderpane();
+        _.bind(_.debounce(this.adjustHeaderpane, 800), this)();
     },
 
     /**

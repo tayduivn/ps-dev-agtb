@@ -17,9 +17,63 @@
     events: {
         'click .dropdown-toggle': 'toggleClicked',
         'click a[data-id]': 'navigateClicked',
-        'click a[data-action=manager]': 'managerClicked'
+        'click a[data-action=manager]': 'managerClicked',
+        'click a[data-type=dashboardtitle]': 'editClicked',
     },
     dashboards: null,
+
+    hasEditAccess: true,
+
+    /**
+     * @inheritdoc
+     */
+    initialize: function(options) {
+        this._super('initialize', [options]);
+
+        if (!app.acl.hasAccessToModel('edit', this.model, this.name)) {
+            this.hasEditAccess = false;
+        }
+    },
+
+    /**
+     * Handle the click by dashboard title
+     * @param {Object} evt The jQuery Event Object
+     */
+    _bindEvents: function() {
+        var field = this.$(this.fieldTag);
+
+        var enterHandle = _.bind(function(e) {
+            this.model.set('name', field.val(), {silent: true});
+            if (e.keyCode === 13 || e.keyCode === 9) {
+                this.view.saveHandle();
+                this.view.toggleField(this);
+            }
+        }, this);
+
+        this.unbindKeyDown = _.bind(function() {
+            this.view.saveHandle();
+            field.off('keydown.record', enterHandle);
+        }, this);
+
+        field.on('keydown.record', enterHandle);
+    },
+
+    /**
+     * Handle the click by dashboard title
+     * @param {Object} evt The jQuery Event Object
+     */
+    editClicked: function(evt) {
+        // Reinitialize hasChanges function to provide opportunity
+        // to collapse the field with changes
+        this.hasChanged = function() {
+            return false;
+        };
+
+        this.view.editClicked(evt);
+        this.view.toggleField(this, true);
+        this._bindEvents();
+    },
+
     toggleClicked: function(evt) {
         var self = this;
         if (!_.isEmpty(this.dashboards)) {
@@ -97,7 +151,8 @@
         if (this.context && this.context.get('model') &&
             this.context.get('model').dashboardModule === 'Home'
         ) {
-            this.template = app.template.getField('base', this.tplName) || this.template;
+            var tpl = (this.tplName === 'detail') ? 'dashboardtitle' : this.tplName;
+            this.template = app.template.getField('dashboardtitle', tpl, this.module) || this.template;
         }
     },
 

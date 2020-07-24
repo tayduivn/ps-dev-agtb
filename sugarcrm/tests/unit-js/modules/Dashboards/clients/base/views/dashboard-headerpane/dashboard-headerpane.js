@@ -155,6 +155,34 @@ describe('Dashboards.Base.View.DashboardHeaderpane', function() {
         });
     });
 
+    describe('toggleNameField', function() {
+        it('should call toggleField', function() {
+            var field = 'test';
+            view = SugarTest.createView('base', 'Dashboards', 'dashboard-headerpane');
+            sandbox.stub(view, 'getField').returns(field);
+            view.toggleField = sandbox.stub();
+
+            view.toggleNameField(true);
+            expect(view.toggleField).toHaveBeenCalledWith(field, true);
+        });
+    });
+
+    describe('saveHandle', function() {
+        it('should call handleSave', function() {
+            view = SugarTest.createView('base', 'Dashboards', 'dashboard-headerpane');
+
+            sandbox.stub(view.model, 'changedAttributes').returns({'name': true});
+            view.layout = {
+                handleSave: sinon.stub(),
+            };
+            view.setButtonStates = sandbox.stub();
+            view.toggleEdit = sandbox.stub();
+
+            view.saveHandle();
+            expect(view.layout.handleSave).toHaveBeenCalled();
+        });
+    });
+
     describe('editOverviewTabClicked', function() {
         it('should switch tab and call editClicked', function() {
             view = SugarTest.createView('base', 'Dashboards', 'dashboard-headerpane');
