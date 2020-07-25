@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@modules @sugarsell @job6
+@modules @sugarsell @job6 @ent-only
 Feature: New fields for sugar sell Service, Renewable, Service Duration, Service Start Date, Service End Date.
 
   Background:

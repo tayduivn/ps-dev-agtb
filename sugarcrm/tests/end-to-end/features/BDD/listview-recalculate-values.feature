@@ -87,7 +87,7 @@ Feature: RLI module Recalculate Values verification
       | quote_stage                | Closed Lost |
 
 
-  @rli_recalculate_value @e2e
+  @rli_recalculate_value @e2e @ent-only
   Scenario: RevenueLineItems > List View > Recalculate Values > All Records
     Given RevenueLineItems records exist:
       | *name | date_closed               | likely_case | best_case | sales_stage | quantity |

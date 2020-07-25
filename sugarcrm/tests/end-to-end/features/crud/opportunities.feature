@@ -97,7 +97,7 @@ Feature: Opportunities
       | lead_source      | Existing Customer |
       | opportunity_type | New Business      |
 
-  @list-delete
+  @list-delete @ent-only
   Scenario: Opportunities > List View > Delete
     Given RevenueLineItems records exist:
       | *name | date_closed               | worst_case | likely_case | best_case | sales_stage | quantity |
@@ -126,7 +126,7 @@ Feature: Opportunities
     When I choose RevenueLineItems in modules menu
     Then I should not see *RLI_1 in #RevenueLineItemsList.ListView
 
-  @delete
+  @delete @ent-only
   Scenario: Opportunities >  Record View > Delete
     Given RevenueLineItems records exist:
       | *name | date_closed               | worst_case | likely_case | best_case | sales_stage | quantity |
@@ -160,7 +160,7 @@ Feature: Opportunities
     Then I should not see *RLI_1 in #RevenueLineItemsList.ListView
 
 
-  @copy
+  @copy @ent-only
   Scenario: Opportunities > Record view > Copy
     Given RevenueLineItems records exist:
       | *name | date_closed               | worst_case | likely_case | best_case | sales_stage | quantity |
@@ -217,7 +217,7 @@ Feature: Opportunities
       | opportunity_type | New Business      |
       | amount           | $200.00           |
 
-  @edit
+  @edit @ent-only
   Scenario: Opportunities > Record View > Edit
     Given RevenueLineItems records exist:
       | *name | date_closed               | worst_case | likely_case | best_case | sales_stage | quantity |
@@ -269,7 +269,7 @@ Feature: Opportunities
       | lead_source      | Existing Customer  |
       | opportunity_type | New Business       |
 
-  @create_opportunity
+  @create_opportunity @ent-only
   Scenario Outline: Opportunities >  Create opportunity with RLIs
     Given Accounts records exist:
       | *name |
@@ -323,7 +323,7 @@ Feature: Opportunities
       | best_case1 | likely_case1 | best_case2 | likely_case2 | best_case3 | likely_case3 |
       | 300        | 200          | 500        | 400          | 50         | 40           |
 
-  @create_opportunity_with_negative_values
+  @create_opportunity_with_negative_values @ent-only
   Scenario Outline: Opportunities >  Create opportunity with negative RLIs
     Given Accounts records exist:
       | *name |
@@ -363,7 +363,7 @@ Feature: Opportunities
       | worst_case | likely_case | best_case | currencySymbol |
       | -300.00    | -200.00     | -100.00   | $              |
 
-  @change_rli_currency_when_opp_is_created
+  @change_rli_currency_when_opp_is_created @ent-only
   Scenario: Opportunities >  Change currency of the RLI when creating new opportunity
     # Create 3 product records
     Given 3 ProductTemplates records exist:

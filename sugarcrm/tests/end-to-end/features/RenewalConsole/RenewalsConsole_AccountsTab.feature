@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@modules @job5 @pr
+@modules @job5 @pr @ent-only
 Feature: Sugar Sell Renewals Console Verification > Accounts Tab
   As a sales agent I need to be able to verify Accounts Tab functionality of Renewals Console
 

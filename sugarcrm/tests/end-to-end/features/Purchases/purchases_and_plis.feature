@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@modules @Purchases @PLIs @job7 @pr
+@modules @Purchases @PLIs @job7 @pr @ent-only
 Feature: Purchases and PLIs modules verification
 
   Background:

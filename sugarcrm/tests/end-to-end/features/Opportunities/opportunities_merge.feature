@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@modules @opportunities_merge @job3
+@modules @opportunities_merge @job3 @ent-only
 Feature: Opportunities > List View > Merge
 
   Background:

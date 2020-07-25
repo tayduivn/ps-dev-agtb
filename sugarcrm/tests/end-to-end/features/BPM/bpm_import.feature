@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@bpm @job1 @pr
+@bpm @job1 @pr @ent-only
 Feature: Importing files related to Business Process Management
 
   Background:

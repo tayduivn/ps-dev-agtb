@@ -194,7 +194,7 @@ Feature: Mass update verification:
       | fieldName    | value       |
       | account_name | New Account |
 
-  @rli_mass_updates @e2e
+  @rli_mass_updates @e2e @ent-only
   Scenario: RevenueLineItems > List View > Mass Update > All
     Given RevenueLineItems records exist:
       | *name | date_closed               | likely_case | best_case | sales_stage | quantity |

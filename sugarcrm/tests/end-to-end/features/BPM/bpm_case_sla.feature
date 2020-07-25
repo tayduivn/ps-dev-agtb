@@ -1,4 +1,4 @@
-@bpm @job6 @pr
+@bpm @job6 @pr @ent-only
 Feature: Case SLA verification
 
   Background:

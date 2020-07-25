@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@bpm @job2 @pr
+@bpm @job2 @pr @ent-only
 Feature: Assign new process user and routing type to the process
 
   Background:

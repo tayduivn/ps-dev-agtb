@@ -6,7 +6,7 @@
 # install or use this SugarCRM file.
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@modules @process_email_templates @job3
+@modules @process_email_templates @job3 @ent-only
 Feature: pmse process email templates module verification.
 
 Background:

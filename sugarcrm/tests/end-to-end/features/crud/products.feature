@@ -205,7 +205,7 @@ Feature: Products module verification
       | discount_amount | 7.00%          |
       | description     | New QLI Record |
 
-  @create
+  @create @ent-only
   Scenario: Products > Create QLI record from Product Template
     Given ProductTemplates records exist:
       | *name  | discount_price | cost_price | list_price | quantity | mft_part_num                 | tax_class | service | renewable | service_duration_value | service_duration_unit |

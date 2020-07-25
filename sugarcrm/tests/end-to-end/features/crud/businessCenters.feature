@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@crud_modules_business_center @job4
+@crud_modules_business_center @job4 @ent-only
 Feature: Business Center module verification
 
   Background:

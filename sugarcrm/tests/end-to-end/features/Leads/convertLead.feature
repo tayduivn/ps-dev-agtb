@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@leads @job4 @pr
+@leads @job4 @pr @ent-only
 Feature: Leads module verification
 
   Background:

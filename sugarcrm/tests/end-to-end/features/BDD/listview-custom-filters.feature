@@ -141,7 +141,7 @@ Feature: Custom filters
     Then I should see [*A_1, *A_2, *A_3, *A_4] on Accounts list view
 
 
-  @custom_filter_reset @ENT-only
+  @custom_filter_reset @ent-only
   Scenario: Custom list view filter > Reset
     Given RevenueLineItems records exist:
       | *name | date_closed               | likely_case | best_case | sales_stage        | quantity |

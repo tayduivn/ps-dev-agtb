@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@modules @job5
+@modules @job5 @ent-only
 Feature: Sugar Sell Renewal Console Verification > Overview Tab
   As a sales agent I need to be able to verify main Renewal Console functionality
 

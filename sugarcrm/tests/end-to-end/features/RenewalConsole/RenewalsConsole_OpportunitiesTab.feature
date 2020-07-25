@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@modules @job3 @pr
+@modules @job3 @pr @ent-only
 Feature: Sugar Sell Renewals Console Verification > Opportunities Tab
   As a sales agent I need to be able to verify Opportunities Tab functionality of Renewals Console
 

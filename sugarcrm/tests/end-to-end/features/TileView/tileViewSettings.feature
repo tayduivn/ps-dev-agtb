@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@job1
+@job1 @ent-only
 Feature: Tile View Settings
 
   Background:

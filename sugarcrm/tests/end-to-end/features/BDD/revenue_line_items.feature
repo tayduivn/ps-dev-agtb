@@ -6,7 +6,7 @@
 # install or use this SugarCRM file.
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@modules @rli @job2
+@modules @rli @job2 @ent-only
 Feature: RLI module verification
 
   Background:

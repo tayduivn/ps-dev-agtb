@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@modules @rli_merge @job6
+@modules @rli_merge @job6 @ent-only
 Feature: Merge verification: As a Sugar user, I need to be able to merge RLI records in RLI list view
 
   Background:

@@ -6,7 +6,7 @@
 # install or use this SugarCRM file.
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@modules @pmse_business_rules
+@modules @pmse_business_rules @ent-only
 Feature: pmse_Business_Rules module verification
 
   Background:

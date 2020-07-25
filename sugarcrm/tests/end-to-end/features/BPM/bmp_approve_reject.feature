@@ -1,4 +1,4 @@
-@bpm @job1
+@bpm @job1 @ent-only
 Feature: Importing files related to Business Process Management
 
   Background:

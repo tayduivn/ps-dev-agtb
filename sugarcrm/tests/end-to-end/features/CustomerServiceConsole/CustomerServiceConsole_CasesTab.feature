@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@modules @job4 @pr
+@modules @job4 @pr @ent-only
 Feature: Customer Service Console Verification
   As a customer service agent I need to be able to verify main Service Console functionality
 

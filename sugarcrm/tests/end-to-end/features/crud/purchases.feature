@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@crud_modules_purchases @job7
+@crud_modules_purchases @job7 @ent-only
 Feature: Purchases module verification
 
   Background:

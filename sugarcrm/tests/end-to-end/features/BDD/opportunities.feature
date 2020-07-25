@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@modules @Opportunity @job6
+@modules @Opportunity @job6 @ent-only
 Feature: Opportunity characteristic verification
   As a Sugar user, I need to be able to create, update, and track Opportunities related to Accounts
   through the Opportunity itself and through the use of Revenue Line Items

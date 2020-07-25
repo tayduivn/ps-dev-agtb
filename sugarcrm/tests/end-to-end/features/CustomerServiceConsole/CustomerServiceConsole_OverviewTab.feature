@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@modules @job4
+@modules @job4 @ent-only
 Feature: Customer Service Console Verification > Overview Tab
   As a customer service agent I need to be able to verify main CS console functionality
 

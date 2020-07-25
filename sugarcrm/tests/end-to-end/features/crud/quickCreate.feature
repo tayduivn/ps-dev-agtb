@@ -98,7 +98,7 @@ Feature: Sugar Mega Menu > Quick Create
       | title                      | Automation Engineer |
 
 
-  @quick_create_opportunity @pr
+  @quick_create_opportunity @pr @ent-only
   Scenario: Sugar Mega Menu > Quick Create > Opportunity
     Given Accounts records exist:
       | *name | website        | industry | account_type | service_level | phone_office | phone_alternate |
@@ -304,7 +304,7 @@ Feature: Sugar Mega Menu > Quick Create
       | description | Note1 description |
       | parent_name | Acc_1             |
 
-  @quick_create_revenue_line_item
+  @quick_create_revenue_line_item @ent-only
   Scenario: Sugar Mega Menu > Quick Create > Create Revenue Line Item
     Given Opportunities records exist:
       | name  |

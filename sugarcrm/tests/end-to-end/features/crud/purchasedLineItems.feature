@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@crud_modules_purchased_line_items @job7 @SS-381 @SS-424
+@crud_modules_purchased_line_items @job7 @SS-381 @SS-424 @ent-only
 Feature: Purchased Line Items module verification
 
   Background:
