@@ -54,6 +54,7 @@ class OpportunityTest extends TestCase
         SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
         SugarTestProductUtilities::removeAllCreatedProducts();
         SugarTestAccountUtilities::removeAllCreatedAccounts();
+        SugarTestProductTemplatesUtilities::removeAllCreatedProductTemplate();
     }
 
     public static function tearDownAfterClass() : void
@@ -468,6 +469,7 @@ class OpportunityTest extends TestCase
      *
      * @param array $rliDataArray array of RLIs to create
      * @param array $expected the array of expected field values for the rollup fields
+     * @throws SugarQueryException
      */
     public function testUpdateRLIRollupFields($rliDataArray, $expected)
     {
@@ -486,9 +488,17 @@ class OpportunityTest extends TestCase
                 $rli->service_start_date = $rliData['service_start_date'];
                 $rli->date_closed = $rliData['date_closed'];
                 $rli->service = $rliData['service'];
-                if (!empty($rli->service)) {
-                    $rli->service_duration_value = 1;
-                    $rli->service_duration_unit = 'year';
+                $rli->service_duration_value = $rliData['service_duration_value'];
+                $rli->service_duration_unit = $rliData['service_duration_unit'];
+                if (!empty($rliData['add_on_to_id'])) {
+                    $rli->add_on_to_id = $rliData['add_on_to_id'];
+                }
+                if (!empty($rliData['product_template_id'])) {
+                    $pt = SugarTestProductTemplatesUtilities::createProductTemplate($id = $rliData['product_template_id']);
+                    $pt->service = 1;
+                    $pt->lock_duration = $rliData['product_template_lock_duration'];
+                    $pt->save();
+                    $rli->product_template_id = $pt->id;
                 }
                 $opportunity->revenuelineitems->add($rli);
             }
@@ -498,6 +508,8 @@ class OpportunityTest extends TestCase
         $this->assertEquals($expected['service_start_date'], $opportunity->service_start_date);
         $this->assertEquals($expected['sales_stage'], $opportunity->sales_stage);
         $this->assertEquals($expected['date_closed'], $opportunity->date_closed);
+        $this->assertEquals($expected['service_duration_value'], $opportunity->service_duration_value);
+        $this->assertEquals($expected['service_duration_unit'], $opportunity->service_duration_unit);
     }
 
     public function providerTestUpdateRLIRollupFields()
@@ -505,29 +517,284 @@ class OpportunityTest extends TestCase
         return [
             [
                 [],
-                ['service_start_date' => '', 'sales_stage' => '', 'date_closed' => ''],
+                [
+                    'service_start_date' => '',
+                    'sales_stage' => '',
+                    'date_closed' => '',
+                    'service_duration_value' => '',
+                    'service_duration_unit' => '',
+                ],
             ],
             [
                 [
-                    ['sales_stage' => 'Prospecting', 'service' => 1, 'service_start_date' => '2020-04-01', 'date_closed' => '2020-03-15'],
+                    [
+                        'sales_stage' => 'Prospecting',
+                        'service' => 1,
+                        'service_start_date' => '2020-04-01',
+                        'date_closed' => '2020-03-15',
+                        'service_duration_value' => 1,
+                        'service_duration_unit' => 'year',
+                    ],
                 ],
-                ['service_start_date' => '2020-04-01', 'sales_stage' => 'Prospecting', 'date_closed' => '2020-03-15'],
+                [
+                    'service_start_date' => '2020-04-01',
+                    'sales_stage' => 'Prospecting',
+                    'date_closed' => '2020-03-15',
+                    'service_duration_value' => 1,
+                    'service_duration_unit' => 'year',
+                ],
             ],
             [
                 [
-                    ['sales_stage' => 'Closed Won', 'service' => 1, 'service_start_date' => '2019-01-01', 'date_closed' => '2019-10-15'],
-                    ['sales_stage' => 'Closed Lost', 'service' => 1, 'service_start_date' => '2020-01-01', 'date_closed' => '2020-01-10'],
+                    [
+                        'sales_stage' => 'Closed Won',
+                        'service' => 1,
+                        'service_start_date' => '2019-01-01',
+                        'date_closed' => '2019-10-15',
+                        'service_duration_value' => 10,
+                        'service_duration_unit' => 'month',
+                    ],
+                    [
+                        'sales_stage' => 'Closed Lost',
+                        'service' => 1,
+                        'service_start_date' => '2020-01-01',
+                        'date_closed' => '2020-01-10',
+                        'service_duration_value' => 1,
+                        'service_duration_unit' => 'year',
+                    ],
                 ],
-                ['service_start_date' => '2019-01-01', 'sales_stage' => 'Closed Won', 'date_closed' => '2019-10-15'],
+                [
+                    'service_start_date' => '2019-01-01',
+                    'sales_stage' => 'Closed Won',
+                    'date_closed' => '2019-10-15',
+                    'service_duration_value' => 10,
+                    'service_duration_unit' => 'month',
+                ],
             ],
             [
                 [
-                    ['sales_stage' => 'Closed Won', 'service' => 1, 'service_start_date' => '2020-01-01', 'date_closed' => '2020-03-15'],
-                    ['sales_stage' => 'Qualification', 'service' => 1, 'service_start_date' => '2019-01-01', 'date_closed' => '2020-01-20'],
-                    ['sales_stage' => 'Prospecting', 'service' => 1, 'service_start_date' => '2019-06-01', 'date_closed' => '2020-03-05'],
-                    ['sales_stage' => 'Closed Lost', 'service' => 1, 'service_start_date' => '2018-01-01', 'date_closed' => '2020-03-15'],
+                    [
+                        'sales_stage' => 'Closed Lost',
+                        'service' => 1,
+                        'service_start_date' => '2019-01-01',
+                        'date_closed' => '2019-10-15',
+                        'service_duration_value' => 10,
+                        'service_duration_unit' => 'month',
+                    ],
+                    [
+                        'sales_stage' => 'Closed Lost',
+                        'service' => 1,
+                        'service_start_date' => '2020-01-01',
+                        'date_closed' => '2020-01-10',
+                        'service_duration_value' => 1,
+                        'service_duration_unit' => 'year',
+                    ],
                 ],
-                ['service_start_date' => '2019-01-01', 'sales_stage' => 'Qualification', 'date_closed' => '2020-03-05'],
+                [
+                    'service_start_date' => '',
+                    'sales_stage' => 'Closed Lost',
+                    'date_closed' => '2020-01-10',
+                    'service_duration_value' => 1,
+                    'service_duration_unit' => 'year',
+                ],
+            ],
+            [
+                [
+                    [
+                        'sales_stage' => 'Closed Won',
+                        'service' => 1,
+                        'service_start_date' => '2020-01-01',
+                        'date_closed' => '2020-03-15',
+                        'service_duration_value' => 10,
+                        'service_duration_unit' => 'month',
+                    ],
+                    [
+                        'sales_stage' => 'Qualification',
+                        'service' => 1,
+                        'service_start_date' => '2019-01-01',
+                        'date_closed' => '2020-01-20',
+                        'service_duration_value' => 1,
+                        'service_duration_unit' => 'month',
+                    ],
+                    [
+                        'sales_stage' => 'Prospecting',
+                        'service' => 1,
+                        'service_start_date' => '2019-06-01',
+                        'date_closed' => '2020-03-05',
+                        'service_duration_value' => 20,
+                        'service_duration_unit' => 'day',
+                    ],
+                    [
+                        'sales_stage' => 'Closed Lost',
+                        'service' => 1,
+                        'service_start_date' => '2018-01-01',
+                        'date_closed' => '2020-03-15',
+                        'service_duration_value' => 2,
+                        'service_duration_unit' => 'year',
+                    ],
+                ],
+                [
+                    'service_start_date' => '2019-01-01',
+                    'sales_stage' => 'Qualification',
+                    'date_closed' => '2020-03-05',
+                    'service_duration_value' => 1,
+                    'service_duration_unit' => 'month',
+                ],
+            ],
+            [
+                [
+                    [
+                        'sales_stage' => 'Closed Won',
+                        'service' => 1,
+                        'service_start_date' => '2020-01-01',
+                        'date_closed' => '2020-03-15',
+                        'service_duration_value' => 10,
+                        'service_duration_unit' => 'month',
+                    ],
+                    [
+                        'sales_stage' => 'Qualification',
+                        'service' => 1,
+                        'service_start_date' => '2019-01-01',
+                        'date_closed' => '2020-01-20',
+                        'service_duration_value' => 1,
+                        'service_duration_unit' => 'month',
+                        'add_on_to_id' => 'my_add_on_to_pli',
+                    ],
+                    [
+                        'sales_stage' => 'Prospecting',
+                        'service' => 1,
+                        'service_start_date' => '2019-06-01',
+                        'date_closed' => '2020-03-05',
+                        'service_duration_value' => 20,
+                        'service_duration_unit' => 'day',
+                    ],
+                    [
+                        'sales_stage' => 'Closed Lost',
+                        'service' => 1,
+                        'service_start_date' => '2018-01-01',
+                        'date_closed' => '2020-03-15',
+                        'service_duration_value' => 2,
+                        'service_duration_unit' => 'year',
+                    ],
+                ],
+                [
+                    'service_start_date' => '2019-01-01',
+                    'sales_stage' => 'Qualification',
+                    'date_closed' => '2020-03-05',
+                    'service_duration_value' => 20,
+                    'service_duration_unit' => 'day',
+                ],
+            ],
+            [
+                [
+                    [
+                        'sales_stage' => 'Closed Won',
+                        'service' => 1,
+                        'service_start_date' => '2020-01-01',
+                        'date_closed' => '2020-03-15',
+                        'service_duration_value' => 20,
+                        'service_duration_unit' => 'month',
+                    ],
+                    [
+                        'sales_stage' => 'Qualification',
+                        'service' => 1,
+                        'service_start_date' => '2019-01-01',
+                        'date_closed' => '2020-01-20',
+                        'service_duration_value' => 1,
+                        'service_duration_unit' => 'month',
+                        'add_on_to_id' => 'my_add_on_to_pli_1',
+                    ],
+                    [
+                        'sales_stage' => 'Prospecting',
+                        'service' => 1,
+                        'service_start_date' => '2019-06-01',
+                        'date_closed' => '2020-03-05',
+                        'service_duration_value' => 20,
+                        'service_duration_unit' => 'day',
+                        'add_on_to_id' => 'my_add_on_to_pli_2',
+                    ],
+                    [
+                        'sales_stage' => 'Closed Lost',
+                        'service' => 1,
+                        'service_start_date' => '2018-01-01',
+                        'date_closed' => '2020-03-15',
+                        'service_duration_value' => 2,
+                        'service_duration_unit' => 'year',
+                    ],
+                ],
+                [
+                    'service_start_date' => '2019-01-01',
+                    'sales_stage' => 'Qualification',
+                    'date_closed' => '2020-03-05',
+                    'service_duration_value' => 20,
+                    'service_duration_unit' => 'month',
+                ],
+            ],
+            [
+                [
+                    [
+                        'sales_stage' => 'Closed Won',
+                        'service' => 1,
+                        'service_start_date' => '2020-01-01',
+                        'date_closed' => '2020-03-15',
+                        'service_duration_value' => 10,
+                        'service_duration_unit' => 'month',
+                    ],
+                    [
+                        'sales_stage' => 'Closed Lost',
+                        'service' => 1,
+                        'service_start_date' => '2020-01-01',
+                        'date_closed' => '2020-03-15',
+                        'service_duration_value' => 11,
+                        'service_duration_unit' => 'month',
+                    ],
+                    [
+                        'sales_stage' => 'Qualification',
+                        'service' => 1,
+                        'service_start_date' => '2020-01-01',
+                        'date_closed' => '2020-01-20',
+                        'service_duration_value' => 1,
+                        'service_duration_unit' => 'month',
+                        'product_template_id' => 'my_product_template_id',
+                        'product_template_lock_duration' => 1,
+                    ],
+                ],
+                [
+                    'service_start_date' => '2020-01-01',
+                    'sales_stage' => 'Qualification',
+                    'date_closed' => '2020-01-20',
+                    'service_duration_value' => 10,
+                    'service_duration_unit' => 'month',
+                ],
+            ],
+            [
+                [
+                    [
+                        'sales_stage' => 'Closed Won',
+                        'service' => 1,
+                        'service_start_date' => '2020-01-01',
+                        'date_closed' => '2020-03-15',
+                        'service_duration_value' => 2,
+                        'service_duration_unit' => 'year',
+                    ],
+                    [
+                        'sales_stage' => 'Qualification',
+                        'service' => 1,
+                        'service_start_date' => '2020-01-01',
+                        'date_closed' => '2020-01-20',
+                        'service_duration_value' => 1,
+                        'service_duration_unit' => 'month',
+                        'product_template_id' => 'my_product_template_id',
+                        'product_template_lock_duration' => 0,
+                    ],
+                ],
+                [
+                    'service_start_date' => '2020-01-01',
+                    'sales_stage' => 'Qualification',
+                    'date_closed' => '2020-01-20',
+                    'service_duration_value' => 1,
+                    'service_duration_unit' => 'month',
+                ],
             ],
         ];
     }
@@ -536,8 +803,13 @@ class OpportunityTest extends TestCase
      * @dataProvider dataProviderCascade
      * @covers::cascade
      */
-    public function testCascade($sales_stage, $service_start_date, $date_closed)
-    {
+    public function testCascade(
+        $sales_stage,
+        $service_start_date,
+        $date_closed,
+        $service_duration_value,
+        $service_duration_unit
+    ) {
         $opp = SugarTestOpportunityUtilities::createOpportunity();
 
         $rli1 = SugarTestRevenueLineItemUtilities::createRevenueLineItem();
@@ -571,6 +843,11 @@ class OpportunityTest extends TestCase
         $rli3->service_duration_value = 1;
         $rli3->service_duration_unit = 'year';
 
+        $pt = SugarTestProductTemplatesUtilities::createProductTemplate('product_template_id');
+        $pt->service = 1;
+        $pt->lock_duration = 1;
+        $rli3->product_template_id = $pt->id;
+
         $opp->revenuelineitems->add($rli3);
 
         $rli4 = SugarTestRevenueLineItemUtilities::createRevenueLineItem();
@@ -582,10 +859,23 @@ class OpportunityTest extends TestCase
 
         $opp->revenuelineitems->add($rli4);
 
+        $rli5 = SugarTestRevenueLineItemUtilities::createRevenueLineItem();
+        $rli5->opportunity_id = $opp->id;
+        $rli5->sales_stage = 'Needs Analysis';
+        $rli5->date_closed = '2020-08-08';
+        $rli5->service = 1;
+        $rli5->service_start_date = '2021-04-28';
+        $rli5->service_duration_value = 1;
+        $rli5->service_duration_unit = 'day';
+
+        $opp->revenuelineitems->add($rli5);
+
         // Opp level RLI management fields  will have been recalculated above, so reset it
         $opp->sales_stage_cascade = $sales_stage;
         $opp->service_start_date_cascade = $service_start_date;
         $opp->date_closed_cascade = $date_closed;
+        $opp->service_duration_value_cascade = $service_duration_value;
+        $opp->service_duration_unit_cascade = $service_duration_unit;
         SugarTestReflection::callProtectedMethod(
             $opp,
             'cascade'
@@ -594,26 +884,40 @@ class OpportunityTest extends TestCase
         $this->assertSame($rli1->sales_stage, 'Closed Won');
         $this->assertSame($rli1->service_start_date, '2019-09-25');
         $this->assertSame($rli1->date_closed, '2019-10-25');
+        $this->assertSame($rli1->service_duration_value, 1);
+        $this->assertSame($rli1->service_duration_unit, 'year');
 
         $this->assertSame($rli2->sales_stage, 'Closed Lost');
         $this->assertSame($rli2->service_start_date, '2021-04-28');
         $this->assertSame($rli2->date_closed, '2020-08-20');
+        $this->assertSame($rli2->service_duration_value, 1);
+        $this->assertSame($rli2->service_duration_unit, 'year');
 
         $this->assertSame($rli3->sales_stage, $sales_stage);
         $this->assertSame($rli3->service_start_date, $service_start_date);
         $this->assertSame($rli3->date_closed, $date_closed);
+        $this->assertSame($rli3->service_duration_value, 1);
+        $this->assertSame($rli3->service_duration_unit, 'year');
 
         $this->assertSame($rli4->sales_stage, $sales_stage);
         $this->assertSame($rli4->service_start_date, null);
         $this->assertSame($rli4->date_closed, $date_closed);
+        $this->assertSame($rli4->service_duration_value, null);
+        $this->assertSame($rli4->service_duration_unit, null);
+
+        $this->assertSame($rli5->sales_stage, $sales_stage);
+        $this->assertSame($rli5->service_start_date, $service_start_date);
+        $this->assertSame($rli5->date_closed, $date_closed);
+        $this->assertSame($rli5->service_duration_value, $service_duration_value);
+        $this->assertSame($rli5->service_duration_unit, $service_duration_unit);
     }
 
     public function dataProviderCascade()
     {
-        // $sales_stage, $service_start_date, $date_closed
+        // $sales_stage, $service_start_date, $date_closed, $service_duration_value, $service_duration_unit
         return [
-            ['Prospecting','2020-02-20','2019-08-25',],
-            ['Value Proposition','2020-02-20','2019-09-26',],
+            ['Prospecting','2020-02-20','2019-08-25', 13, 'month'],
+            ['Value Proposition','2020-02-20','2019-09-26', 2, 'year'],
         ];
     }
 
@@ -663,7 +967,7 @@ class OpportunityTest extends TestCase
 
     /**
      * @dataProvider dataProviderGeneratePurchaseRliIds
-     * @param string $generate_purchases The value for the purchase generation flag
+     * @param string $generate_purchase The value for the purchase generation flag
      * @param string $sales_stage The sales stage of the opp
      * @param array $licenses Array of licenses for the test user
      * @param int $count The number of expected results

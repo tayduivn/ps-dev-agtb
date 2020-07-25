@@ -51,6 +51,11 @@ class Opportunity extends SugarBean
     public $team_id;
     public $quote_id;
     public $service_start_date;
+    // BEGIN SUGARCRM flav=ent ONLY
+    public $service_duration_value;
+    public $service_duration_unit;
+    public $service_open_flex_duration_rlis;
+    // END SUGARCRM flav=ent ONLY
 
     // These are related
     public $account_name;
@@ -89,6 +94,10 @@ class Opportunity extends SugarBean
         'date_closed' => 'cascadeWhenOpen',
         'sales_stage' => 'cascadeWhenOpen',
         'service_start_date' => 'cascadeWhenServiceOpen',
+        // BEGIN SUGARCRM flav=ent ONLY
+        'service_duration_value' => 'cascadeWhenDurationEditableServiceOpen',
+        'service_duration_unit' => 'cascadeWhenDurationEditableServiceOpen',
+        // END SUGARCRM flav=ent ONLY
     ];
     private const OPERATION_CASCADE = 'cascading_opportunity_';
 
@@ -985,7 +994,9 @@ class Opportunity extends SugarBean
                 'sales_stage' => $this->calculateOpportunitySalesStage(),
                 'date_closed' => $this->calculateOpportunityExpectedCloseDate(),
                 'service_open_revenue_line_items' => $this->calculateServiceOpenRLI(),
+                'service_open_flex_duration_rlis' => sizeof($this->getEditableDurationServiceRLIs()),
             ];
+            $rollupFields = array_merge($rollupFields, $this->calculateServiceDuration());
 
             // Update the Opportunity with the calculated rollup values. If any
             // values have changed on the Opportunity, then save it afterward
@@ -997,6 +1008,182 @@ class Opportunity extends SugarBean
         }
 
         return $this;
+    }
+
+    /**
+     * Runs DB queries to calculate the rollup value for the service duration
+     * fields from the related RLIs
+     *
+     * @return array service duration value and unit
+     * @throws SugarQueryException
+     */
+    public function calculateServiceDuration()
+    {
+        // If there are no service RLIs, set the service duration to blank
+        $serviceRLICount = $this->getServiceRLIs(true);
+        if ($serviceRLICount === 0) {
+            return [
+                'service_duration_value' => '',
+                'service_duration_unit' => '',
+            ];
+        }
+
+        $closedLostStages = $this->getRliClosedLostStages();
+        $closedWonStages = $this->getRliClosedWonStages();
+
+        $closedServiceRLICount = $this->getServiceRLIs(true, 'in', array_merge($closedLostStages, $closedWonStages));
+        if ($serviceRLICount === $closedServiceRLICount) {
+            $closedLostServiceRLICount = $this->getServiceRLIs(true, 'in', $closedLostStages);
+            if ($closedServiceRLICount === $closedLostServiceRLICount) {
+                // If there are service RLIs and they're all closed and lost,
+                // use the max duration of the lost service RLIs.
+                $rlis = $this->getServiceRLIs(false, 'in', $closedLostStages);
+            } else {
+                // If there are service RLIs and they're all closed with at least one
+                // that is won, use the max duration of the won service RLIs.
+                $rlis = $this->getServiceRLIs(false, 'in', $closedWonStages);
+            }
+        } else {
+            $editableDurationServiceRLICount = $this->getEditableDurationServiceRLIs(true);
+            if ($editableDurationServiceRLICount > 0) {
+                // If there are service RLIs and at least one is open and has an editable
+                // duration, use the max duration of the open, service, flex duration RLIs.
+                $rlis = $this->getEditableDurationServiceRLIs();
+            } else {
+                // If there are service RLIs and at least one is open but none have an
+                // editable duration, use the max duration of the open and closed-won
+                // service RLIs.
+                $rlis = $this->getServiceRLIs(false, 'notIn', $closedLostStages);
+            }
+        }
+
+        $maxDurationRLI = $this->getRLIWithMaxDuration($rlis);
+        return [
+            'service_duration_value' => $maxDurationRLI['service_duration_value'],
+            'service_duration_unit' => $maxDurationRLI['service_duration_unit'],
+        ];
+    }
+
+    /**
+     * Finds the RLI with the maximum duration
+     * @param array $rlis
+     * @return array
+     */
+    private function getRLIWithMaxDuration($rlis)
+    {
+        // Safety check, if we got here with an empty array then return a blank
+        // service duration.
+        if (empty($rlis)) {
+            return [
+                'service_duration_value' => '',
+                'service_duration_unit' => '',
+            ];
+        }
+
+        $timedate = TimeDate::getInstance();
+        $now = $timedate->fromString($timedate->now());
+
+        $durations = [];
+        foreach ($rlis as $rli) {
+            $modify_by = '+' . $rli['service_duration_value'] . ' ' . $rli['service_duration_unit'];
+            $ts = (clone $now)->modify($modify_by)->getTimestamp();
+            $durations[$ts] = $rli;
+        }
+
+        $maxTs = max(array_keys($durations));
+        return $durations[$maxTs];
+    }
+
+    /**
+     * Gets service RLIs related to this opportunity. If $op and $sales_stages
+     * are null then gets all service RLIs. Otherwise only gets service RLIs that
+     * match given sales stage criteria.
+     * @param bool $count_only
+     * @param 'in'|'notIn'|null $op
+     * @param array|null $sales_stages
+     * @return array
+     * @throws SugarQueryException
+     */
+    private function getServiceRLIs($count_only = false, $op = null, $sales_stages = null)
+    {
+        $q = new SugarQuery();
+        $q->from(BeanFactory::newBean('RevenueLineItems'));
+        if ($count_only) {
+            $q->select()->setCountQuery();
+        } else {
+            $q->select(['id', 'service_duration_unit', 'service_duration_value']);
+        }
+        $queryAnd = $q->where()->queryAnd();
+        $queryAnd
+            ->equals('opportunity_id', $this->id)
+            ->equals('service', 1);
+        if (!empty($op) && !empty($sales_stages) && in_array($op, ['in', 'notIn'])) {
+            $queryAnd->{$op}('sales_stage', $sales_stages);
+        }
+
+        if ($count_only) {
+            $data = $q->execute();
+            return $data[0]['record_count'];
+        } else {
+            return $q->execute();
+        }
+    }
+
+    /**
+     * Gets service RLIs with editable durations that are related to this
+     * opportunity.
+     * @return array
+     * @throws SugarQueryException
+     */
+    public function getEditableDurationServiceRLIs($count_only = false)
+    {
+        $closedStages = $this->getClosedStages();
+
+        // RLIs with no product template
+        $q1 = new SugarQuery();
+        $q1->from(BeanFactory::newBean('RevenueLineItems'));
+        if ($count_only) {
+            $q1->select()->setCountQuery();
+        } else {
+            $q1->select(['id', 'service_duration_unit', 'service_duration_value']);
+        }
+        $q1->where()->queryAnd()
+            ->equals('opportunity_id', $this->id)
+            ->equals('service', 1)
+            ->notIn('sales_stage', $closedStages)
+            ->isEmpty('add_on_to_id')
+            ->isEmpty('product_template_id');
+
+        // RLIs with an unlocked duration product template
+        $q2 = new SugarQuery();
+        $q2->from(BeanFactory::newBean('RevenueLineItems'));
+        $q2->joinTable('product_templates', [
+            'alias' => 'pt',
+        ])->on()
+            ->equalsField('pt.id', 'product_template_id')
+            ->notEquals('pt.lock_duration', 1);
+        if ($count_only) {
+            $q2->select()->setCountQuery();
+        } else {
+            $q2->select(['id', 'service_duration_unit', 'service_duration_value']);
+        }
+        $q2->where()->queryAnd()
+            ->equals('opportunity_id', $this->id)
+            ->equals('service', 1)
+            ->notIn('sales_stage', $closedStages)
+            ->isEmpty('add_on_to_id');
+
+        if ($count_only) {
+            $data1 = $q1->execute();
+            $data2 = $q2->execute();
+            return $data1[0]['record_count'] + $data2[0]['record_count'];
+        } else {
+            $q = new SugarQuery();
+            $q->union($q1);
+            $q->union($q2);
+
+            return $q->execute();
+        }
     }
 
     /**
@@ -1224,6 +1411,25 @@ class Opportunity extends SugarBean
     public function cascadeWhenServiceOpen($rli)
     {
         return (isTruthy($rli->service) && $this->cascadeWhenOpen($rli));
+    }
+
+    /**
+     * Returns true when RLI is open, marked as a service, and has an editable
+     * duration.
+     *
+     * @param RevenueLineItem $rli
+     * @return bool
+     */
+    public function cascadeWhenDurationEditableServiceOpen($rli)
+    {
+        if (!$this->cascadeWhenServiceOpen($rli) || !empty($rli->add_on_to_id)) {
+            return false;
+        }
+        $productTemplate = BeanFactory::retrieveBean('ProductTemplates', $rli->product_template_id);
+        if ($productTemplate->id) {
+            return isFalsy($productTemplate->lock_duration);
+        }
+        return true;
     }
 
     /**

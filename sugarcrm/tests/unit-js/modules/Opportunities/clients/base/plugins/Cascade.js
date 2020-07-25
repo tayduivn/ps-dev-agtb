@@ -150,6 +150,7 @@ describe('Opportunities.Base.Plugins.Cascade', function() {
         it('should set model value to synced value, and clear cascade field', function() {
             plugin.baseFieldName = 'sales_stage';
             plugin.model = model;
+            plugin.fieldNames = ['sales_stage'];
             sinon.collection.stub(model, 'getSynced', function() {
                 return 'beforeValue';
             });

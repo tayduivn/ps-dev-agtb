@@ -155,7 +155,13 @@ class OpportunityTest extends TestCase
         $opBean = $this->createPartialMock('Opportunity', ['getSettings']);
         Opportunity::$settings = ['opps_view_by' => 'RevenueLineItems'];
         $opBean->setDisabledImportFields();
-        $this->assertEquals(['date_closed', 'sales_stage', 'service_start_date'], $opBean->disableImportFields);
+        $this->assertEquals([
+            'date_closed',
+            'sales_stage',
+            'service_start_date',
+            'service_duration_value',
+            'service_duration_unit',
+        ], $opBean->disableImportFields);
 
         $opBean = $this->createPartialMock('Opportunity', ['getSettings']);
         Opportunity::$settings = ['opps_view_by' => 'OpportunitiesOnly'];

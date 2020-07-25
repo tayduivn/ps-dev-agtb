@@ -96,6 +96,32 @@ $viewdefs['Opportunities']['base']['view']['subpanel-list'] = array(
                         'service_open_revenue_line_items',
                     ),
                 ),
+                [
+                    'name' => 'service_duration',
+                    'type' => 'fieldset-cascade',
+                    'label' => 'LBL_SERVICE_DURATION',
+                    'inline' => true,
+                    'show_child_labels' => false,
+                    'css_class' => 'service-duration-field',
+                    'fields' => [
+                        [
+                            'name' => 'service_duration_value',
+                            'label' => 'LBL_SERVICE_DURATION_VALUE',
+                        ],
+                        [
+                            'name' => 'service_duration_unit',
+                            'label' => 'LBL_SERVICE_DURATION_UNIT',
+                        ],
+                    ],
+                    'orderBy' => 'service_duration_unit',
+                    'related_fields' => [
+                        'service_duration_value',
+                        'service_duration_unit',
+                        'service_open_flex_duration_rlis',
+                    ],
+                    'disable_field' => 'service_open_flex_duration_rlis',
+                    'default' => false,
+                ],
                 // END SUGARCRM flav=ent ONLY
                 array(
                     'name' => 'amount',

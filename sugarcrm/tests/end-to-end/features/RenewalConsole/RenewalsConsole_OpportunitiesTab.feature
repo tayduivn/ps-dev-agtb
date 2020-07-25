@@ -202,6 +202,7 @@ Feature: Sugar Sell Renewals Console Verification > Opportunities Tab
 
     # Edit record inside the dashlet and cancel
     When I click Edit button in #RenewalsConsoleView.DashableRecordDashlet
+    When I click show more button on #Opp_1Record view
     When I provide input for #Opp_1Record.RecordView view
       | opportunity_type  |
       | Existing Business |
@@ -224,7 +225,6 @@ Feature: Sugar Sell Renewals Console Verification > Opportunities Tab
       | amount       | $2,000.00   |
       | sales_status | In Progress |
       | best_case    | $3,000.00   |
-      | worst_case   | $1,000.00   |
 
     # Edit record inside the dashlet and save
     When I click Edit button in #RenewalsConsoleView.DashableRecordDashlet

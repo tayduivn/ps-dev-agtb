@@ -73,16 +73,10 @@ $viewdefs['Opportunities']['base']['view']['recorddashlet'] = [
             'placeholders' => true,
             'fields' => [
                 [
-                    'name' => 'amount',
-                    'readonly' => true,
-                ],
-                [
-                    'name' => 'best_case',
-                    'readonly' => true,
-                ],
-                [
-                    'name' => 'worst_case',
-                    'readonly' => true,
+                    'name' => 'account_name',
+                    'related_fields' => [
+                        'account_id',
+                    ],
                 ],
                 // BEGIN SUGARCRM flav!=ent ONLY
                 [
@@ -123,7 +117,10 @@ $viewdefs['Opportunities']['base']['view']['recorddashlet'] = [
                     ],
                 ],
                 // END SUGARCRM flav=ent ONLY
-                'opportunity_type',
+                [
+                    'name' => 'amount',
+                    'readonly' => true,
+                ],
                 // BEGIN SUGARCRM flav=ent ONLY
                 [
                     'name' => 'service_start_date',
@@ -133,6 +130,33 @@ $viewdefs['Opportunities']['base']['view']['recorddashlet'] = [
                     'related_fields' => [
                         'service_open_revenue_line_items',
                     ],
+                ],
+                [
+                    'name' => 'renewal',
+                ],
+                [
+                    'name' => 'service_duration',
+                    'type' => 'fieldset-cascade',
+                    'label' => 'LBL_SERVICE_DURATION',
+                    'inline' => true,
+                    'show_child_labels' => false,
+                    'css_class' => 'service-duration-field',
+                    'fields' => [
+                        [
+                            'name' => 'service_duration_value',
+                            'label' => 'LBL_SERVICE_DURATION_VALUE',
+                        ],
+                        [
+                            'name' => 'service_duration_unit',
+                            'label' => 'LBL_SERVICE_DURATION_UNIT',
+                        ],
+                    ],
+                    'related_fields' => [
+                        'service_duration_value',
+                        'service_duration_unit',
+                        'service_open_flex_duration_rlis',
+                    ],
+                    'disable_field' => 'service_open_flex_duration_rlis',
                 ],
                 // END SUGARCRM flav=ent ONLY
             ],
@@ -145,10 +169,13 @@ $viewdefs['Opportunities']['base']['view']['recorddashlet'] = [
             'placeholders' => true,
             'columns' => 2,
             'fields' => [
+                [
+                    'name' => 'best_case',
+                    'readonly' => true,
+                ],
                 'next_step',
-                'renewal_parent_name',
                 'lead_source',
-                'campaign_name',
+                'opportunity_type',
                 [
                     'name' => 'description',
                     'span' => 12,

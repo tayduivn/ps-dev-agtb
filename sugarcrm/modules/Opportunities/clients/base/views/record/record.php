@@ -249,6 +249,32 @@ $viewdefs['Opportunities']['base']['view']['record'] = array(
                     'currency_field' => 'currency_id',
                     'base_rate_field' => 'base_rate',
                 ),
+                // BEGIN SUGARCRM flav=ent ONLY
+                [
+                    'name' => 'service_duration',
+                    'type' => 'fieldset-cascade',
+                    'label' => 'LBL_SERVICE_DURATION',
+                    'inline' => true,
+                    'show_child_labels' => false,
+                    'css_class' => 'service-duration-field',
+                    'fields' => [
+                        [
+                            'name' => 'service_duration_value',
+                            'label' => 'LBL_SERVICE_DURATION_VALUE',
+                        ],
+                        [
+                            'name' => 'service_duration_unit',
+                            'label' => 'LBL_SERVICE_DURATION_UNIT',
+                        ],
+                    ],
+                    'related_fields' => [
+                        'service_duration_value',
+                        'service_duration_unit',
+                        'service_open_flex_duration_rlis',
+                    ],
+                    'disable_field' => 'service_open_flex_duration_rlis',
+                ],
+                // END SUGARCRM flav=ent ONLY
                 array(
                     'name' => 'worst_case',
                     'type' => 'currency',
@@ -261,6 +287,19 @@ $viewdefs['Opportunities']['base']['view']['record'] = array(
                     'currency_field' => 'currency_id',
                     'base_rate_field' => 'base_rate',
                 ),
+                [
+                    'name' => 'commentlog',
+                    'label' => 'LBL_COMMENTLOG',
+                    'displayParams' => [
+                        'type' => 'commentlog',
+                        'fields' => [
+                            'entry',
+                            'date_entered',
+                            'created_by_name',
+                        ],
+                        'max_num' => 100,
+                    ],
+                ],
                 array(
                     'name' => 'tag',
                     'span' => 12,
@@ -280,7 +319,6 @@ $viewdefs['Opportunities']['base']['view']['record'] = array(
                 'renewal_parent_name',
                 // END SUGARCRM flav=ent ONLY
                 'lead_source',
-                'campaign_name',
                 array(
                     'name' => 'description',
                     'span' => 12,

@@ -27,6 +27,14 @@ $viewdefs['Opportunities']['base']['filter']['default'] = array(
         'date_entered' => array(),
         'date_modified' => array(),
         'date_closed' => array(),
+        'service_duration' => [
+            'dbFields' => [
+                'service_duration_value',
+                'service_duration_unit',
+            ],
+            'vname' => 'LBL_SERVICE_DURATION',
+            'type' => 'text',
+        ],
         'tag' => array(),
         'assigned_user_name' => array(),
         '$owner' => array(

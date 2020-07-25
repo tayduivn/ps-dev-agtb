@@ -16,6 +16,8 @@
          */
         app.plugins.register('Cascade', ['field'], {
             baseFieldName: null,
+            baseFieldType: null,
+            fieldNames: null,
             field: null,
             model: null,
 
@@ -36,6 +38,15 @@
                 this.baseFieldName = component.options.def.name;
                 this.field = component;
                 this.model = this.field.options.model;
+                this.baseFieldType = this.field.options.def.type;
+
+                if (this.baseFieldType === 'fieldset-cascade') {
+                    this.fieldNames = _.map(this.field.options.def.fields, function(field) {
+                        return field.name;
+                    });
+                } else {
+                    this.fieldNames = [this.field.baseFieldName];
+                }
 
                 var oppConfig = app.metadata.getModule('Opportunities', 'config');
                 if (!oppConfig || oppConfig.opps_view_by !== 'RevenueLineItems') {
@@ -57,7 +68,9 @@
                     this.field.on('render', this.bindEditActions, this);
                 }
 
-                this.model.on('change:' + this.baseFieldName, this.setCascadeValue, this);
+                _.each(this.fieldNames, function(fieldName) {
+                    this.model.on('change:' + fieldName, this.setCascadeValue, this);
+                }, this);
                 this.model.on('sync', this.clearCascadeValue, this);
 
                 if (this.options && this.options.def && this.options.def.disable_field) {
@@ -161,8 +174,10 @@
              * Used when un-checking the checkbox in edit mode.
              */
             resetModelValue: function() {
-                this.model.set(this.baseFieldName, this.model.getSynced(this.baseFieldName));
-                this.model.set(this.baseFieldName + '_cascade', '');
+                _.each(this.fieldNames, function(fieldName) {
+                    this.model.set(fieldName, this.model.getSynced(fieldName));
+                    this.model.set(fieldName + '_cascade', '');
+                }, this);
             },
 
             /**
@@ -170,15 +185,19 @@
              * property needed to cause cascading changes.
              */
             setCascadeValue: function() {
-                this.model.set(this.baseFieldName + '_cascade', this.model.get(this.baseFieldName));
+                _.each(this.fieldNames, function(fieldName) {
+                    this.model.set(fieldName + '_cascade', this.model.get(fieldName));
+                }, this);
             },
 
             /**
              * Clear cascade field
              */
             clearCascadeValue: function() {
-                if (this.context.attributes.layout  && this.context.attributes.layout == 'record') {
-                    this.model.set(this.baseFieldName + '_cascade', '');
+                if (this.context.attributes.layout  && this.context.attributes.layout === 'record') {
+                    _.each(this.fieldNames, function(fieldName) {
+                        this.model.set(fieldName + '_cascade', '');
+                    }, this);
                 }
             }
         });
