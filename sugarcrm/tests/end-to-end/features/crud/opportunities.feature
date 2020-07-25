@@ -15,7 +15,7 @@ Feature: Opportunities
     Given I use default account
     Given I launch App
 
-  @list
+  @list @ent-only
   Scenario: Opportunities > List View > Preview
     # Create Opportunity
     Given Opportunities records exist:
@@ -64,7 +64,7 @@ Feature: Opportunities
       | lead_source      | Existing Customer |
       | opportunity_type | New Business      |
 
-  @list-edit
+  @list-edit @ent-only
   Scenario: Opportunities > List View > Inline Edit
     Given Opportunities records exist:
       | *name | opportunity_type  | lead_source | description       |

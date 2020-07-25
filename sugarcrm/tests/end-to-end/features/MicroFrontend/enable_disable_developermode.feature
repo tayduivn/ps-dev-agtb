@@ -14,7 +14,7 @@ Feature: Admin
     Given I use default account
     Given I launch App
 
-  @change_system_settings
+  @change_system_settings @ent-only
   Scenario: Admin > Change System Settings
     When I open about view and login
     When I go to "bwc/index.php?module=Administration" url

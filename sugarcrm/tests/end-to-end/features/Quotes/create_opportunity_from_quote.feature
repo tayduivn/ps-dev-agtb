@@ -14,7 +14,7 @@ Feature: Create Opportunity from Quote
     Given I use default account
     Given I launch App
 
-  @create_opportunity_from_quote @pr
+  @create_opportunity_from_quote @pr @ent-only
   Scenario: Quotes > Record view > Create Opportunity from Quote
     # Create a quote
     Given Quotes records exist:
@@ -148,7 +148,6 @@ Feature: Create Opportunity from Quote
       | fieldName        | value           |
       | date_closed      | 10/19/2018      |
       | account_name     | Acc_1           |
-      | sales_status     | In Progress     |
       | amount           | €147.50 $295.00 |
       | best_case        | €147.50 $295.00 |
       | worst_case       | €147.50 $295.00 |

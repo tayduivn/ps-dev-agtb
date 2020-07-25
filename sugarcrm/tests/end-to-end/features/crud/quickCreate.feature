@@ -23,8 +23,8 @@ Feature: Sugar Mega Menu > Quick Create
       | *   | name   |
       | A_1 | <name> |
     When I provide input for #AccountsDrawer.RecordView view
-      | *   | website   | industry   | account_type   | service_level   | phone_office   | phone_alternate   | email   | phone_fax   | twitter   | description   | sic_code   | ticker_symbol   | annual_revenue   | employees   | ownership   | rating   | billing_address_city   | billing_address_street   | billing_address_postalcode   | billing_address_state   | billing_address_country   |
-      | A_1 | <website> | <industry> | <account_type> | <service_level> | <phone_office> | <phone_alternate> | <email> | <phone_fax> | <twitter> | <description> | <sic_code> | <ticker_symbol> | <annual_revenue> | <employees> | <ownership> | <rating> | <billing_address_city> | <billing_address_street> | <billing_address_postalcode> | <billing_address_state> | <billing_address_country> |
+      | *   | website   | industry   | account_type   | phone_office   | phone_alternate   | email   | phone_fax   | twitter   | description   | sic_code   | ticker_symbol   | annual_revenue   | employees   | ownership   | rating   | billing_address_city   | billing_address_street   | billing_address_postalcode   | billing_address_state   | billing_address_country   |
+      | A_1 | <website> | <industry> | <account_type> | <phone_office> | <phone_alternate> | <email> | <phone_fax> | <twitter> | <description> | <sic_code> | <ticker_symbol> | <annual_revenue> | <employees> | <ownership> | <rating> | <billing_address_city> | <billing_address_street> | <billing_address_postalcode> | <billing_address_state> | <billing_address_country> |
     When I click Save button on #AccountsDrawer header
     When I close alert
     When I choose Accounts in modules menu
@@ -40,7 +40,6 @@ Feature: Sugar Mega Menu > Quick Create
       | website                    | <http://><website>           |
       | industry                   | <industry>                   |
       | account_type               | <account_type>               |
-      | service_level              | <service_level>              |
       | phone_office               | <phone_office>               |
       | phone_alternate            | <phone_alternate>            |
       | email                      | <email>                      |
@@ -60,8 +59,8 @@ Feature: Sugar Mega Menu > Quick Create
       | billing_address_country    | <billing_address_country>    |
 
     Examples:
-      | name      | http:// | website        | industry | account_type | service_level | phone_office | phone_alternate | email       | phone_fax    | twitter | description | sic_code | ticker_symbol | annual_revenue | employees | ownership | rating | billing_address_city | billing_address_street | billing_address_postalcode | billing_address_state | billing_address_country |
-      | Account_A | http:// | www.google.com | Apparel  | Analyst      | Tier 1        | 555-555-0000 | 555-555-0001    | bob@bob.com | 555-555-0002 | twitter | description | siccode  | tic           | 5000000        | 2         | Gates     | 0      | City 1               | Street address here    | 220051                     | WA                    | USA                     |
+      | name      | http:// | website        | industry | account_type | phone_office | phone_alternate | email       | phone_fax    | twitter | description | sic_code | ticker_symbol | annual_revenue | employees | ownership | rating | billing_address_city | billing_address_street | billing_address_postalcode | billing_address_state | billing_address_country |
+      | Account_A | http:// | www.google.com | Apparel  | Analyst      | 555-555-0000 | 555-555-0001    | bob@bob.com | 555-555-0002 | twitter | description | siccode  | tic           | 5000000        | 2         | Gates     | 0      | City 1               | Street address here    | 220051                     | WA                    | USA                     |
 
 
   @quick_create_contact

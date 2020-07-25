@@ -440,7 +440,7 @@ Feature: Product Catalog Quick Picks Dashlet
     # Verify number of records in the 'Recently Used' tab
     # Verify that correct products are listed in the 'Recently Used' tab
 
-  @product_catalog_quick_picks_dashlet @opportunity_create_view
+  @product_catalog_quick_picks_dashlet @opportunity_create_view @ent-only
   Scenario: Product Catalog Quick Picks Dashlet in Opportunity Create View
     # Generate Product records in Product Catalog
     Given ProductTemplates records exist:

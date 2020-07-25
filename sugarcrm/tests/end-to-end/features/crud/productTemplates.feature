@@ -173,7 +173,7 @@ Feature: ProductTemplates module verification
       | list_price     | $5.00 |
       | discount_price | $5.00 |
 
-  @create
+  @create @ent-only
   Scenario: Product Templates > Create record record from scratch
     Given  ProductTypes records exist:
       | name      | description | list_order |

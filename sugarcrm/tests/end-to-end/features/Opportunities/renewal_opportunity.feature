@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@Opportunities @job4
+@Opportunities @job4 @ent-only
 Feature: Renewal Opp > Auto-generate Renewal Opportunity when original renewable opportunity is closed as 'Closed Won'
 
   Background:

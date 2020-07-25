@@ -50,7 +50,6 @@ Feature: Accounts module verification
       | website                    | <http://><website1>          |
       | industry                   | <industry>                   |
       | account_type               | <account_type>               |
-      | service_level              | <service_level>              |
       | phone_office               | <phone_office>               |
       | phone_alternate            | <phone_alternate>            |
       | email                      | <email>                      |
@@ -69,10 +68,9 @@ Feature: Accounts module verification
       | billing_address_state      | <billing_address_state>      |
       | billing_address_country    | <billing_address_country>    |
 
-
     Examples:
-      | name      | http:// | website1       | industry | account_type | service_level | phone_office | phone_alternate | email       | phone_fax    | twitter | description | sic_code | ticker_symbol | annual_revenue | employees | ownership | rating | billing_address_city | billing_address_street | billing_address_postalcode | billing_address_state | billing_address_country |
-      | Account_A | http:// | www.google.com | Apparel  | Analyst      | Tier 1        | 555-555-0000 | 555-555-0001    | bob@bob.com | 555-555-0002 | twitter | description | siccode  | tic           | 5000000        | 2         | Gates     | 0      | City 1               | Street address here    | 220051                     | WA                    | USA                     |
+      | name      | http:// | website1       | industry | account_type | phone_office | phone_alternate | email       | phone_fax    | twitter | description | sic_code | ticker_symbol | annual_revenue | employees | ownership | rating | billing_address_city | billing_address_street | billing_address_postalcode | billing_address_state | billing_address_country |
+      | Account_A | http:// | www.google.com | Apparel  | Analyst      | 555-555-0000 | 555-555-0001    | bob@bob.com | 555-555-0002 | twitter | description | siccode  | tic           | 5000000        | 2         | Gates     | 0      | City 1               | Street address here    | 220051                     | WA                    | USA                     |
 
 
   @list-search
@@ -218,7 +216,6 @@ Feature: Accounts module verification
       | website                    | <http://><website1>          |
       | industry                   | <industry>                   |
       | account_type               | <account_type>               |
-      | service_level              | <service_level>              |
       | phone_office               | <phone_office>               |
       | phone_alternate            | <phone_alternate>            |
       | email                      | <email>                      |
@@ -240,8 +237,8 @@ Feature: Accounts module verification
     # preview edit, preview for cancel
     When I click on Edit button in #Account_APreview.PreviewHeaderView
     When I provide input for #Account_APreview.PreviewView view
-      | name   | website    | industry   | account_type   | service_level   | phone_office   | phone_alternate   | email   | phone_fax   | twitter   | description   | sic_code   | ticker_symbol   | annual_revenue   | employees   | ownership   | rating   | billing_address_city   | billing_address_street   | billing_address_postalcode   | billing_address_state   | billing_address_country   |
-      | <name> | <website2> | <industry> | <account_type> | <service_level> | <phone_office> | <phone_alternate> | <email> | <phone_fax> | <twitter> | <description> | <sic_code> | <ticker_symbol> | <annual_revenue> | <employees> | <ownership> | <rating> | <billing_address_city> | <billing_address_street> | <billing_address_postalcode> | <billing_address_state> | <billing_address_country> |
+      | name   | website    | industry   | account_type   | phone_office   | phone_alternate   | email   | phone_fax   | twitter   | description   | sic_code   | ticker_symbol   | annual_revenue   | employees   | ownership   | rating   | billing_address_city   | billing_address_street   | billing_address_postalcode   | billing_address_state   | billing_address_country   |
+      | <name> | <website2> | <industry> | <account_type> | <phone_office> | <phone_alternate> | <email> | <phone_fax> | <twitter> | <description> | <sic_code> | <ticker_symbol> | <annual_revenue> | <employees> | <ownership> | <rating> | <billing_address_city> | <billing_address_street> | <billing_address_postalcode> | <billing_address_state> | <billing_address_country> |
 
     When I click on Cancel button in #Account_APreview.PreviewHeaderView
 
@@ -252,7 +249,6 @@ Feature: Accounts module verification
       | website                    | <http://><website1>          |
       | industry                   | <industry>                   |
       | account_type               | <account_type>               |
-      | service_level              | <service_level>              |
       | phone_office               | <phone_office>               |
       | phone_alternate            | <phone_alternate>            |
       | email                      | <email>                      |
@@ -274,8 +270,8 @@ Feature: Accounts module verification
     # preview edit, preview for save
     When I click on Edit button in #Account_APreview.PreviewHeaderView
     When I provide input for #Account_APreview.PreviewView view
-      | name   | website    | industry   | account_type   | service_level   | phone_office   | phone_alternate   | email   | phone_fax   | twitter   | description   | sic_code   | ticker_symbol   | annual_revenue   | employees   | ownership   | rating   | billing_address_city   | billing_address_street   | billing_address_postalcode   | billing_address_state   | billing_address_country   |
-      | <name> | <website2> | <industry> | <account_type> | <service_level> | <phone_office> | <phone_alternate> | <email> | <phone_fax> | <twitter> | <description> | <sic_code> | <ticker_symbol> | <annual_revenue> | <employees> | <ownership> | <rating> | <billing_address_city> | <billing_address_street> | <billing_address_postalcode> | <billing_address_state> | <billing_address_country> |
+      | name   | website    | industry   | account_type   | phone_office   | phone_alternate   | email   | phone_fax   | twitter   | description   | sic_code   | ticker_symbol   | annual_revenue   | employees   | ownership   | rating   | billing_address_city   | billing_address_street   | billing_address_postalcode   | billing_address_state   | billing_address_country   |
+      | <name> | <website2> | <industry> | <account_type> | <phone_office> | <phone_alternate> | <email> | <phone_fax> | <twitter> | <description> | <sic_code> | <ticker_symbol> | <annual_revenue> | <employees> | <ownership> | <rating> | <billing_address_city> | <billing_address_street> | <billing_address_postalcode> | <billing_address_state> | <billing_address_country> |
 
     When I click on Save button in #Account_APreview.PreviewHeaderView
     When I close alert
@@ -287,7 +283,6 @@ Feature: Accounts module verification
       | website                    | <http://><website2>          |
       | industry                   | <industry>                   |
       | account_type               | <account_type>               |
-      | service_level              | <service_level>              |
       | phone_office               | <phone_office>               |
       | phone_alternate            | <phone_alternate>            |
       | email                      | <email>                      |
@@ -307,8 +302,8 @@ Feature: Accounts module verification
       | billing_address_country    | <billing_address_country>    |
 
     Examples:
-      | name      | http:// | website1       | website2      | industry | account_type | service_level | phone_office | phone_alternate | email       | phone_fax    | twitter | description | sic_code | ticker_symbol | annual_revenue | employees | ownership | rating | billing_address_city | billing_address_street | billing_address_postalcode | billing_address_state | billing_address_country |
-      | Account_A | http:// | www.google.com | www.yahoo.com | Apparel  | Analyst      | Tier 1        | 555-555-0000 | 555-555-0001    | bob@bob.com | 555-555-0002 | twitter | description | siccode  | tic           | 5000000        | 2         | Gates     | 0      | City 1               | Street address here    | 220051                     | WA                    | USA                     |
+      | name      | http:// | website1       | website2      | industry | account_type | phone_office | phone_alternate | email       | phone_fax    | twitter | description | sic_code | ticker_symbol | annual_revenue | employees | ownership | rating | billing_address_city | billing_address_street | billing_address_postalcode | billing_address_state | billing_address_country |
+      | Account_A | http:// | www.google.com | www.yahoo.com | Apparel  | Analyst      | 555-555-0000 | 555-555-0001    | bob@bob.com | 555-555-0002 | twitter | description | siccode  | tic           | 5000000        | 2         | Gates     | 0      | City 1               | Street address here    | 220051                     | WA                    | USA                     |
 
   @share
   Scenario Outline: Accounts > List View > Record View > Share
@@ -424,8 +419,8 @@ Feature: Accounts module verification
       | name    |
       | <name2> |
     When I provide input for #AccountsDrawer.RecordView view
-      | website    | industry    | account_type    | service_level    | phone_office    | phone_alternate    | email    | phone_fax    | twitter    | description    | sic_code    | ticker_symbol    | annual_revenue    | employees    | ownership    | rating    | billing_address_city    | billing_address_street    | billing_address_postalcode    | billing_address_state    | billing_address_country    |
-      | <website2> | <industry2> | <account_type2> | <service_level2> | <phone_office2> | <phone_alternate2> | <email2> | <phone_fax2> | <twitter2> | <description2> | <sic_code2> | <ticker_symbol2> | <annual_revenue2> | <employees2> | <ownership2> | <rating2> | <billing_address_city2> | <billing_address_street2> | <billing_address_postalcode2> | <billing_address_state2> | <billing_address_country2> |
+      | website    | industry    | account_type    | phone_office    | phone_alternate    | email    | phone_fax    | twitter    | description    | sic_code    | ticker_symbol    | annual_revenue    | employees    | ownership    | rating    | billing_address_city    | billing_address_street    | billing_address_postalcode    | billing_address_state    | billing_address_country    |
+      | <website2> | <industry2> | <account_type2> | <phone_office2> | <phone_alternate2> | <email2> | <phone_fax2> | <twitter2> | <description2> | <sic_code2> | <ticker_symbol2> | <annual_revenue2> | <employees2> | <ownership2> | <rating2> | <billing_address_city2> | <billing_address_street2> | <billing_address_postalcode2> | <billing_address_state2> | <billing_address_country2> |
     When I click Cancel button on #AccountsDrawer header
     Then I verify fields on #Account_ARecord
       | fieldName                  | value                        |
@@ -433,7 +428,6 @@ Feature: Accounts module verification
       | website                    | <http://><website1>          |
       | industry                   | <industry>                   |
       | account_type               | <account_type>               |
-      | service_level              | <service_level>              |
       | phone_office               | <phone_office>               |
       | phone_alternate            | <phone_alternate>            |
       | email                      | <email>                      |
@@ -452,15 +446,15 @@ Feature: Accounts module verification
       | billing_address_state      | <billing_address_state>      |
       | billing_address_country    | <billing_address_country>    |
 
-# Copy Accounts > Save
+    # Copy Accounts > Save
     When I open actions menu in #Account_ARecord
     When I choose Copy from actions menu in #Account_ARecord
     When I provide input for #AccountsDrawer.HeaderView view
       | name    |
       | <name2> |
     When I provide input for #AccountsDrawer.RecordView view
-      | website    | industry    | account_type    | service_level    | phone_office    | phone_alternate    | email    | phone_fax    | twitter    | description    | sic_code    | ticker_symbol    | annual_revenue    | employees    | ownership    | rating    | billing_address_city    | billing_address_street    | billing_address_postalcode    | billing_address_state    | billing_address_country    |
-      | <website2> | <industry2> | <account_type2> | <service_level2> | <phone_office2> | <phone_alternate2> | <email2> | <phone_fax2> | <twitter2> | <description2> | <sic_code2> | <ticker_symbol2> | <annual_revenue2> | <employees2> | <ownership2> | <rating2> | <billing_address_city2> | <billing_address_street2> | <billing_address_postalcode2> | <billing_address_state2> | <billing_address_country2> |
+      | website    | industry    | account_type    | phone_office    | phone_alternate    | email    | phone_fax    | twitter    | description    | sic_code    | ticker_symbol    | annual_revenue    | employees    | ownership    | rating    | billing_address_city    | billing_address_street    | billing_address_postalcode    | billing_address_state    | billing_address_country    |
+      | <website2> | <industry2> | <account_type2> | <phone_office2> | <phone_alternate2> | <email2> | <phone_fax2> | <twitter2> | <description2> | <sic_code2> | <ticker_symbol2> | <annual_revenue2> | <employees2> | <ownership2> | <rating2> | <billing_address_city2> | <billing_address_street2> | <billing_address_postalcode2> | <billing_address_state2> | <billing_address_country2> |
     When I click Save button on #AccountsDrawer header
     When I close alert
     Then I verify fields on #Account_ARecord
@@ -469,7 +463,6 @@ Feature: Accounts module verification
       | website                    | <http://><website2>           |
       | industry                   | <industry2>                   |
       | account_type               | <account_type2>               |
-      | service_level              | <service_level2>              |
       | phone_office               | <phone_office2>               |
       | phone_alternate            | <phone_alternate2>            |
       | email                      | <email2>                      |
@@ -504,8 +497,8 @@ Feature: Accounts module verification
       | name   |
       | <name> |
     When I provide input for #AccountsDrawer.RecordView view
-      | website   | industry   | account_type   | service_level   | phone_office   | phone_alternate   | email   | phone_fax   | twitter   | description   | sic_code   | ticker_symbol   | annual_revenue   | employees   | ownership   | rating   | billing_address_city   | billing_address_street   | billing_address_postalcode   | billing_address_state   | billing_address_country   |
-      | <website> | <industry> | <account_type> | <service_level> | <phone_office> | <phone_alternate> | <email> | <phone_fax> | <twitter> | <description> | <sic_code> | <ticker_symbol> | <annual_revenue> | <employees> | <ownership> | <rating> | <billing_address_city> | <billing_address_street> | <billing_address_postalcode> | <billing_address_state> | <billing_address_country> |
+      | website   | industry   | account_type   | phone_office   | phone_alternate   | email   | phone_fax   | twitter   | description   | sic_code   | ticker_symbol   | annual_revenue   | employees   | ownership   | rating   | billing_address_city   | billing_address_street   | billing_address_postalcode   | billing_address_state   | billing_address_country   |
+      | <website> | <industry> | <account_type> | <phone_office> | <phone_alternate> | <email> | <phone_fax> | <twitter> | <description> | <sic_code> | <ticker_symbol> | <annual_revenue> | <employees> | <ownership> | <rating> | <billing_address_city> | <billing_address_street> | <billing_address_postalcode> | <billing_address_state> | <billing_address_country> |
     When I click Cancel button on #AccountsDrawer header
     Then I should see #AccountsList.ListView view
 
@@ -516,8 +509,8 @@ Feature: Accounts module verification
       | *   | name   |
       | A_1 | <name> |
     When I provide input for #AccountsDrawer.RecordView view
-      | *   | website   | industry   | account_type   | service_level   | phone_office   | phone_alternate   | email   | phone_fax   | twitter   | description   | sic_code   | ticker_symbol   | annual_revenue   | employees   | ownership   | rating   | billing_address_city   | billing_address_street   | billing_address_postalcode   | billing_address_state   | billing_address_country   |
-      | A_1 | <website> | <industry> | <account_type> | <service_level> | <phone_office> | <phone_alternate> | <email> | <phone_fax> | <twitter> | <description> | <sic_code> | <ticker_symbol> | <annual_revenue> | <employees> | <ownership> | <rating> | <billing_address_city> | <billing_address_street> | <billing_address_postalcode> | <billing_address_state> | <billing_address_country> |
+      | *   | website   | industry   | account_type   | phone_office   | phone_alternate   | email   | phone_fax   | twitter   | description   | sic_code   | ticker_symbol   | annual_revenue   | employees   | ownership   | rating   | billing_address_city   | billing_address_street   | billing_address_postalcode   | billing_address_state   | billing_address_country   |
+      | A_1 | <website> | <industry> | <account_type> | <phone_office> | <phone_alternate> | <email> | <phone_fax> | <twitter> | <description> | <sic_code> | <ticker_symbol> | <annual_revenue> | <employees> | <ownership> | <rating> | <billing_address_city> | <billing_address_street> | <billing_address_postalcode> | <billing_address_state> | <billing_address_country> |
     When I click Save button on #AccountsDrawer header
     When I close alert
     Then I should see *A_1 in #AccountsList.ListView
@@ -532,7 +525,6 @@ Feature: Accounts module verification
       | website                    | <http://><website>           |
       | industry                   | <industry>                   |
       | account_type               | <account_type>               |
-      | service_level              | <service_level>              |
       | phone_office               | <phone_office>               |
       | phone_alternate            | <phone_alternate>            |
       | email                      | <email>                      |
@@ -552,8 +544,8 @@ Feature: Accounts module verification
       | billing_address_country    | <billing_address_country>    |
 
     Examples:
-      | name      | http:// | website        | industry | account_type | service_level | phone_office | phone_alternate | email       | phone_fax    | twitter | description | sic_code | ticker_symbol | annual_revenue | employees | ownership | rating | billing_address_city | billing_address_street | billing_address_postalcode | billing_address_state | billing_address_country |
-      | Account_A | http:// | www.google.com | Apparel  | Analyst      | Tier 1        | 555-555-0000 | 555-555-0001    | bob@bob.com | 555-555-0002 | twitter | description | siccode  | tic           | 5000000        | 2         | Gates     | 0      | City 1               | Street address here    | 220051                     | WA                    | USA                     |
+      | name      | http:// | website        | industry | account_type | phone_office | phone_alternate | email       | phone_fax    | twitter | description | sic_code | ticker_symbol | annual_revenue | employees | ownership | rating | billing_address_city | billing_address_street | billing_address_postalcode | billing_address_state | billing_address_country |
+      | Account_A | http:// | www.google.com | Apparel  | Analyst      | 555-555-0000 | 555-555-0001    | bob@bob.com | 555-555-0002 | twitter | description | siccode  | tic           | 5000000        | 2         | Gates     | 0      | City 1               | Street address here    | 220051                     | WA                    | USA                     |
 
   @member_of
   Scenario: Account > Edit > Member Of

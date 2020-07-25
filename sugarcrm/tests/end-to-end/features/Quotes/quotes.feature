@@ -1242,7 +1242,7 @@ Feature: Quotes module E2E testing
       | shipping  | $280.25     |
       | total     | $280.25     |
 
-  @email_quote_invoice
+  @email_quote_invoice @ent-only
   Scenario: Quotes > Record View > Email > Invoice
     Given Quotes records exist:
       | *name   | billing_address_city | billing_address_street | billing_address_postalcode | billing_address_state | billing_address_country | date_quote_expected_closed | quote_stage |
