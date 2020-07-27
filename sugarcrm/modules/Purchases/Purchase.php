@@ -71,7 +71,7 @@ class Purchase extends Basic
      * @param boolean $is_update    true if this save is an update
      * @param array $exclude        exclude relationships
      */
-    public function save_relationship_changes(bool $is_update, array $exclude = [])
+    public function save_relationship_changes($is_update, $exclude = [])
     {
         if (!empty($this->account_id) &&
             !empty($this->rel_fields_before_value['account_id']) &&
