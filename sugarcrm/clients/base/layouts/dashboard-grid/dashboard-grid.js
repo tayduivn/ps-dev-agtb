@@ -315,7 +315,7 @@
      * @return {View.Layout} Dashlet Grid Item layout
      * @private
      */
-    _initializeDashlet(dashletDef) {
+    _initializeDashlet: function(dashletDef) {
         var dashletGridWrapper = app.view.createLayout({
             name: 'dashlet-grid-wrapper',
             layout: this,

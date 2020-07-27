@@ -27,6 +27,7 @@ $layout_defs['Users'] = array(
 			),
 			'title_key' => 'LBL_USER_HOLIDAY_SUBPANEL_TITLE',
 		),
+        //BEGIN SUGARCRM flav=ent ONLY
         'shifts' => array(
             'order' => 31,
             'sort_by' => 'name',
@@ -49,6 +50,7 @@ $layout_defs['Users'] = array(
             'top_buttons' => array(),
             'title_key' => 'LBL_SHIFTS_EXCEPTIONS_SUBPANEL_TITLE',
         ),
+        //END SUGARCRM flav=ent ONLY
 	),
 	'default_subpanel_define' => array(
 		'subpanel_title' => 'LBL_DEFAULT_SUBPANEL_TITLE',

@@ -12,6 +12,7 @@
 
 $layout_defs['Employees'] = array(
     // default subpanel provided by this SugarBean
+    //BEGIN SUGARCRM flav=ent ONLY
     'subpanel_setup' => array(
         'shifts' => array(
             'order' => 31,
@@ -35,5 +36,6 @@ $layout_defs['Employees'] = array(
             'top_buttons' => array(),
             'title_key' => 'LBL_SHIFTS_EXCEPTIONS_SUBPANEL_TITLE',
         ),
+    //END SUGARCRM flav=ent ONLY
     ),
 );

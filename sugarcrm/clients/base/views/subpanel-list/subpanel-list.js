@@ -212,7 +212,7 @@
      * @return {string} Unique key for this subpanel/parent module combination
      * @private
      */
-    _buildWidthKey() {
+    _buildWidthKey: function() {
         return app.user.lastState.buildKey(this._thisListViewFieldSizesKey, this.context.get('parentModule'));
     },
 })
