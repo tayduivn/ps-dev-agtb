@@ -455,16 +455,7 @@
      * @private
      */
     _getTabIndex: function(options) {
-        var tabIndex = 0;
-        if (options && !_.isUndefined(options.tabIndex)) {
-            tabIndex = options.tabIndex;
-        } else {
-            var tabComp = this.layout && this.layout.getComponent('tabbed-dashboard') || null;
-            if (tabComp) {
-                tabIndex = tabComp.activeTab;
-            }
-        }
-        return tabIndex;
+        return this.context.get('activeTab') || 0;
     },
 
     /**

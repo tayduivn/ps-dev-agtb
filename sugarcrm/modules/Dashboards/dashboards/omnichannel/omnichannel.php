@@ -86,9 +86,6 @@ return [
                                     ],
                                     'width' => 6,
                                 ],
-                                [
-                                    'width' => 6,
-                                ],
                             ],
                             // row 2
                             [
@@ -104,73 +101,236 @@ return [
                     'module' => 'Cases',
                 ],
                 'name' => 'LBL_CASE',
-                'components' => [
-                    //TODO: CS-821
+                'dashlets' => [
                     [
-                        'rows' => [
-                            // row 1
-                            [
+                        'view' => [
+                            'type' => 'dashablerecord',
+                            'module' => 'Cases',
+                            'tabs' => [
                                 [
-                                    'view' => [
-                                        'type' => 'dashablerecord',
-                                        'module' => 'Cases',
-                                        'tabs' => [
-                                            [
-                                                'active' => true,
-                                                'label' => 'LBL_MODULE_NAME_SINGULAR',
-                                                'link' => '',
-                                                'module' => 'Cases',
-                                            ],
-                                            [
-                                                'active' => false,
-                                                'link' => 'tasks',
-                                                'module' => 'Tasks',
-                                                'order_by' => [
-                                                    'field' => 'date_entered',
-                                                    'direction' => 'desc',
-                                                ],
-                                                'limit' => 5,
-                                                'fields' => [
-                                                    'name',
-                                                    'assigned_user_name',
-                                                    'date_entered',
-                                                ],
-                                            ],
-                                            [
-                                                'active' => false,
-                                                'link' => 'documents',
-                                                'module' => 'Documents',
-                                                'order_by' => [
-                                                    'field' => 'active_date',
-                                                    'direction' => 'desc',
-                                                ],
-                                                'limit' => 5,
-                                                'fields' => [
-                                                    'document_name',
-                                                    'active_date',
-                                                ],
-                                            ],
-                                        ],
-                                        'tab_list' => [
-                                            'Cases',
-                                            'tasks',
-                                            'documents',
-                                        ],
-                                    ],
-                                    'context' => [
-                                        'module' => 'Cases',
-                                    ],
-                                    'width' => 6,
+                                    'active' => true,
+                                    'label' => 'LBL_MODULE_NAME_SINGULAR',
+                                    'link' => '',
+                                    'module' => 'Cases',
                                 ],
                                 [
-                                    'width' => 6,
+                                    'active' => false,
+                                    'link' => 'tasks',
+                                    'module' => 'Tasks',
+                                    'order_by' => [
+                                        'field' => 'date_entered',
+                                        'direction' => 'desc',
+                                    ],
+                                    'limit' => 5,
+                                    'fields' => [
+                                        'name',
+                                        'assigned_user_name',
+                                        'date_entered',
+                                    ],
+                                ],
+                                [
+                                    'active' => false,
+                                    'link' => 'contacts',
+                                    'module' => 'Contacts',
+                                    'order_by' => [
+                                        'field' => 'date_entered',
+                                        'direction' => 'desc',
+                                    ],
+                                    'limit' => 5,
+                                    'fields' => [
+                                        'name',
+                                        'assigned_user_name',
+                                        'date_entered',
+                                    ],
+                                ],
+                                [
+                                    'active' => false,
+                                    'link' => 'documents',
+                                    'module' => 'Documents',
+                                    'order_by' => [
+                                        'field' => 'active_date',
+                                        'direction' => 'desc',
+                                    ],
+                                    'limit' => 5,
+                                    'fields' => [
+                                        'document_name',
+                                        'active_date',
+                                    ],
                                 ],
                             ],
-                            // row 2
-                            [
+                            'tab_list' => [
+                                'cases',
+                                'tasks',
+                                'documents',
                             ],
                         ],
-                        'width' => 12,
+                        'context' => [
+                            'module' => 'Cases',
+                        ],
+                        'width' => 6,
+                        'height' => 5,
+                        'x' => 0,
+                        'y' => 0,
+                        'autoPosition' => false,
+                    ],
+                    [
+                        'view' => [
+                            'type' => 'dashablerecord',
+                            'module' => 'Accounts',
+                            'tabs' => [
+                                [
+                                    'module' => 'Accounts',
+                                    'link' => 'accounts',
+                                ],
+                            ],
+                            'tab_list' => [
+                                'accounts',
+                            ],
+                        ],
+                        'context' => [
+                            'module' => 'Cases',
+                        ],
+                        'width' => 6,
+                        'height' => 5,
+                        'x' => 0,
+                        'y' => 5,
+                        'autoPosition' => false,
+                    ],
+                    [
+                        'view' => [
+                            'type' => 'dashlet-searchable-kb-list',
+                            'name' => 'LBL_DASHLET_KB_SEARCH_NAME',
+                            'data_provider' => 'Categories',
+                            'config_provider' => 'KBContents',
+                            'root_name' => 'category_root',
+                            'extra_provider' => [
+                                'module' => 'KBContents',
+                                'field' => 'category_id',
+                            ],
+                        ],
+                        'context' => [
+                            'module' => 'KBContents',
+                        ],
+                        'width' => 6,
+                        'height' => 3,
+                        'x' => 6,
+                        'y' => 0,
+                        'autoPosition' => false,
+                    ],
+                    [
+                        'view' => [
+                            'type' => 'commentlog-dashlet',
+                            'label' => 'LBL_DASHLET_COMMENTLOG_NAME',
+                        ],
+                        'context' => [
+                            'module' => 'Cases',
+                        ],
+                        'width' => 6,
+                        'height' => 4,
+                        'x' => 6,
+                        'y' => 3,
+                        'autoPosition' => false,
+                    ],
+                    [
+                        'view' => [
+                            'type' => 'activity-timeline',
+                            'label' => 'TPL_ACTIVITY_TIMELINE_DASHLET',
+                            'module' => 'Cases',
+                            'custom_toolbar' => [
+                                'buttons' => [
+                                    [
+                                        'type' => 'actiondropdown',
+                                        'no_default_action' => true,
+                                        'icon' => 'fa-plus',
+                                        'buttons' => [
+                                            [
+                                                'type' => 'dashletaction',
+                                                'action' => 'composeEmail',
+                                                'params' => [
+                                                    'link' => 'emails',
+                                                    'module' => 'Emails',
+                                                ],
+                                                'label' => 'LBL_COMPOSE_EMAIL_BUTTON_LABEL',
+                                                'icon' => 'fa-plus',
+                                                'acl_action' => 'create',
+                                                'acl_module' => 'Emails',
+                                            ],
+                                            [
+                                                'type' => 'dashletaction',
+                                                'action' => 'createRecord',
+                                                'params' => [
+                                                    'link' => 'calls',
+                                                    'module' => 'Calls',
+                                                ],
+                                                'label' => 'LBL_SCHEDULE_CALL',
+                                                'icon' => 'fa-phone',
+                                                'acl_action' => 'create',
+                                                'acl_module' => 'Calls',
+                                            ],
+                                            [
+                                                'type' => 'dashletaction',
+                                                'action' => 'createRecord',
+                                                'params' => [
+                                                    'link' => 'meetings',
+                                                    'module' => 'Meetings',
+                                                ],
+                                                'label' => 'LBL_SCHEDULE_MEETING',
+                                                'icon' => 'fa-calendar',
+                                                'acl_action' => 'create',
+                                                'acl_module' => 'Meetings',
+                                            ],
+                                            [
+                                                'type' => 'dashletaction',
+                                                'action' => 'createRecord',
+                                                'params' => [
+                                                    'link' => 'notes',
+                                                    'module' => 'Notes',
+                                                ],
+                                                'label' => 'LBL_CREATE_NOTE_OR_ATTACHMENT',
+                                                'icon' => 'fa-plus',
+                                                'acl_action' => 'create',
+                                                'acl_module' => 'Notes',
+                                            ],
+                                        ],
+                                    ],
+                                    [
+                                        'type' => 'dashletaction',
+                                        'css_class' => 'dashlet-toggle btn btn-invisible minify',
+                                        'icon' => 'fa-chevron-up',
+                                        'action' => 'toggleMinify',
+                                        'tooltip' => 'LBL_DASHLET_MINIMIZE',
+                                    ],
+                                    [
+                                        'dropdown_buttons' => [
+                                            [
+                                                'type' => 'dashletaction',
+                                                'action' => 'editClicked',
+                                                'label' => 'LBL_DASHLET_CONFIG_EDIT_LABEL',
+                                            ],
+                                            [
+                                                'type' => 'dashletaction',
+                                                'action' => 'reloadData',
+                                                'label' => 'LBL_DASHLET_REFRESH_LABEL',
+                                            ],
+                                            [
+                                                'type' => 'dashletaction',
+                                                'action' => 'removeClicked',
+                                                'label' => 'LBL_DASHLET_REMOVE_LABEL',
+                                                'name' => 'remove_button',
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'context' => [
+                            'module' => 'Cases',
+                        ],
+                        'width' => 6,
+                        'height' => 3,
+                        'x' => 6,
+                        'y' => 7,
+                        'autoPosition' => false,
                     ],
                 ],
             ],
