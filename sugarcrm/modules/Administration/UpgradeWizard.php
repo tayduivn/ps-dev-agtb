@@ -23,6 +23,7 @@ use Sugarcrm\Sugarcrm\PackageManager\PackageManager;
 use UploadFile as BaseUploadFile;
 use Sugarcrm\Sugarcrm\PackageManager\File\UploadFile;
 use Sugarcrm\Sugarcrm\PackageManager\File\PackageZipFile;
+use Sugarcrm\Sugarcrm\PackageManager\Exception\ModuleScannerException;
 
 global $mod_strings;
 
@@ -58,6 +59,9 @@ if ($run !== "" && empty($GLOBALS['sugar_config']['use_common_ml_dir'])) {
             $uploadFile->moveToUpload();
             $zipFile = new PackageZipFile($uploadFile->getPath(), $packageManager->getBaseTempDir());
             $packageManager->uploadPackageFromFile($zipFile, PackageManifest::PACKAGE_TYPE_MODULE);
+        } catch (ModuleScannerException $e) {
+            $e->getModuleScanner()->displayIssues();
+            sugar_cleanup(true);
         } catch (\SugarException $e) {
             sugar_die($e->getMessage());
         }

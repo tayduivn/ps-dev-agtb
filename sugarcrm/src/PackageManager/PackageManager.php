@@ -236,6 +236,7 @@ class PackageManager
      * @param string $expectedPackageType
      * @return UpgradeHistory
      * @throws Exception\InvalidPackageException
+     * @throws Exception\ModuleScannerException
      * @throws Exception\NoPackageManifestFileException
      * @throws Exception\NotAcceptableTypeException
      * @throws Exception\OnlyPackagePatchTypeAcceptableException
@@ -339,14 +340,16 @@ class PackageManager
     /**
      * Scan package
      * @param string $packageDir
-     * @throws Exception\InvalidPackageException
+     * @throws Exception\ModuleScannerException
      */
     private function scanPackage(string $packageDir):void
     {
         $this->moduleScanner->scanPackage($packageDir);
         if ($this->moduleScanner->hasIssues()) {
-            $exception = new Exception\InvalidPackageException();
-            $exception->setErrorDescription($this->moduleScanner->getFormattedIssues());
+            $exception = new Exception\ModuleScannerException();
+            $exception
+                ->setErrorDescription($this->moduleScanner->getFormattedIssues())
+                ->setModuleScanner($this->moduleScanner);
             throw $exception;
         }
     }
