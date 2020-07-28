@@ -28,8 +28,24 @@ class SugarUpgradeFixFieldsMetaDataIdLength extends UpgradeScript
         if (version_compare($this->to_version, '10.1.0', '<')) {
             return;
         }
-        $tracker = BeanFactory::newBean('Trackers');
+        global $dictionary;
+
         $fieldsMetaData = BeanFactory::newBean('EditCustomFields');
+
+        if ($this->db instanceof IBMDB2Manager) {
+            $tableName = $fieldsMetaData->getTableName();
+            $tableIndexDefinitions = $dictionary['FieldsMetaData']['indices'];
+            $tableIdDefinition = $dictionary['FieldsMetaData']['fields']['id'];
+            $tableColumns = $this->db->get_columns($tableName);
+            $tableIndexes = $this->db->get_indices($tableName);
+            if (!empty($tableColumns['id']['len']) && $tableColumns['id']['len'] > 36) {
+                $this->db->dropIndexes($tableName, $tableIndexes, true);
+                $this->db->alterColumn($tableName, $tableIdDefinition);
+                $this->db->addIndexes($tableName, $tableIndexDefinitions, true);
+            }
+        }
+
+        $tracker = BeanFactory::newBean('Trackers');
         $conn = $this->db->getConnection();
         $idLengthExpression = $this->db->convert('id', 'length');
 
