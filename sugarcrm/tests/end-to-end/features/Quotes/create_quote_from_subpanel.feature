@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@subpanels @create_quote @job4
+@subpanels @create_quote_from_subpanel @job4
 Feature: Create Quote record from subpanel
 
   Background:
@@ -276,7 +276,7 @@ Feature: Create Quote record from subpanel
       | date_quote_expected_closed | 12/31/2021 |
 
 
-  @create_quote_record_from_OpportunityRecordView_Quotes_Subpanel
+  @create_quote_record_from_OpportunityRecordView_Quotes_Subpanel @ent-only
   Scenario: Opportunity Record View > Quotes Subpanel > Create Quote > Cancel
     Given RevenueLineItems records exist:
       | *name | date_closed               | worst_case | likely_case | best_case | sales_stage | quantity |
@@ -325,7 +325,7 @@ Feature: Create Quote record from subpanel
     Then I verify number of records in #Opp_1Record.SubpanelsLayout.subpanels.quotes is 0
 
 
-  @create_quote_record_from_OpportunityRecordView_Quotes_Subpanel @pr
+  @create_quote_record_from_OpportunityRecordView_Quotes_Subpanel @pr @ent-only
   Scenario: Opportunity Record View > Quotes Subpanel > Create Quote > Save
     Given RevenueLineItems records exist:
       | *name | date_closed               | worst_case | likely_case | best_case | sales_stage | quantity |

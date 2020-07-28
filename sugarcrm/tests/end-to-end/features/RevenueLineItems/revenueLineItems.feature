@@ -268,8 +268,8 @@ Feature: RLI module verification
       | RecordID | Test |
     # Fill-out some fields in the record view
     When I provide input for #RevenueLineItemsDrawer.RecordView view
-      | *        | date_closed | quantity      | discount_price | opportunity_name |
-      | RecordID | 11/20/2018  | <myQuoantity> | <myUnitPrice>  | Opp_1            |
+      | *        | date_closed | quantity      | discount_price | discount_select | opportunity_name |
+      | RecordID | 11/20/2018  | <myQuoantity> | <myUnitPrice>  | $ US Dollar     | Opp_1            |
 
     # Verification before discount is set
     Then I verify fields on #RevenueLineItemsDrawer.RecordView

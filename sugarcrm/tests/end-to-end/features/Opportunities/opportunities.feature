@@ -7,7 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@modules @Opportunity @job3
+@modules @Opportunity @job3 @ent-only
 Feature: RLI module verification
 
   Background:
