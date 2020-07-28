@@ -21,24 +21,6 @@ $viewdefs["Home"]["base"]["view"]["dashboard-headerpane"] = array(
                     "label"     => "LBL_CREATE_BUTTON_LABEL",
                 ),
                 array(
-                    "name"      => "edit_overview_tab_button",
-                    "type"      => "rowaction",
-                    "label"     => "LBL_EDIT_OVERVIEW_TAB_BUTTON",
-                    'acl_action' => 'edit',
-                    'allowed_layouts' => [
-                        [
-                            // service console
-                            'name' => 'dashboard',
-                            'id' => 'c108bb4a-775a-11e9-b570-f218983a1c3e',
-                        ],
-                        [
-                            // renewals console
-                            'name' => 'dashboard',
-                            'type' => 'renewals_console',
-                        ],
-                    ],
-                ),
-                array(
                     "name"      => "edit_module_tabs_button",
                     "type"      => "rowaction",
                     "label"     => "LBL_EDIT_MODULE_TABS_BUTTON",
@@ -122,18 +104,6 @@ $viewdefs["Home"]["base"]["view"]["dashboard-headerpane"] = array(
                         'click' => 'button:add_dashlet_button:click',
                     ],
                     'acl_action' => 'edit',
-                    'disallowed_layouts' => [
-                        [
-                            // service console
-                            'name' => 'dashboard',
-                            'id' => 'c108bb4a-775a-11e9-b570-f218983a1c3e',
-                        ],
-                        [
-                            // renewals console
-                            'name' => 'dashboard',
-                            'type' => 'renewals_console',
-                        ],
-                    ],
                 ],
             ),
             "showOn" => "view",

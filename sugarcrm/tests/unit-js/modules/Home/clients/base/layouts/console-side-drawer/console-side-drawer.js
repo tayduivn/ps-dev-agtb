@@ -68,26 +68,10 @@ describe('Home.Layouts.ConsoleSideDrawer', function() {
             expect(layout.areActionsEnabled).toEqual(true);
         });
 
-        it('should disable button actions', function() {
-            layout.edit();
-            expect(layout.areActionsEnabled).toEqual(false);
-        });
-
         it('should propagate the close action when possible', function() {
             sinon.collection.spy(layout, '_super');
             layout.close();
             expect(layout._super).toHaveBeenCalledWith('close');
-        });
-
-        it('should not let perform actions if they are disabled', function() {
-            sinon.collection.spy(app.events, 'trigger');
-            sinon.collection.spy(layout, '_super');
-            layout.edit();
-            layout.close();
-            layout.edit();
-            expect(layout.areActionsEnabled).toEqual(false);
-            expect(app.events.trigger).toHaveBeenCalledOnce();
-            expect(layout._super).not.toHaveBeenCalled();
         });
     });
 });

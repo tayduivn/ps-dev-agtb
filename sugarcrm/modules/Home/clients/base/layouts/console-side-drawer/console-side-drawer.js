@@ -18,11 +18,11 @@
 
     /**
      * @inheritdoc
-     * Added edit action.
+     * Add actions.
      */
     events: {
-        'click [data-action=edit]': 'edit',
-        'click [data-action=close]': 'close'
+        'click [data-action=close]': 'close',
+        'click [data-action=add-dashlet]': 'addDashlet',
     },
 
     /**
@@ -48,11 +48,11 @@
     },
 
     /**
-     * Stores the close and edit buttons on the component so they would be accessible easier.
+     * Stores the close and dashlet buttons on the component so they would be accessible easier.
      */
     initComponentVariables: function() {
         this.$closeButton = $(this.$el.children()[1]);
-        this.$editButton = $(this.$el.children()[2]);
+        this.$addDashletButton = $(this.$el.children()[2]);
     },
 
     /**
@@ -60,6 +60,15 @@
      */
     bindEvents: function() {
         app.events.on('drawer:enable:actions', this.enableButtonActions, this);
+    },
+
+    /**
+     * Run the event to select a dashlet
+     */
+    addDashlet: function() {
+        var layout = this.getComponent('row-model-data').getComponent('row-model-data');
+        var dashboard = layout.getComponent('dashboard');
+        dashboard.context.trigger('button:add_dashlet_button:click');
     },
 
     /**
@@ -75,39 +84,11 @@
     },
 
     /**
-     * Will switch to edit mode.
-     */
-    edit: function() {
-        if (this.areActionsEnabled) {
-            this.disableButtonActions();
-            app.events.trigger('drawer:edit');
-        }
-    },
-
-    /**
      * Close only if the action is enabled.
      */
     close: function() {
         if (this.areActionsEnabled) {
             this._super('close');
         }
-    },
-
-    /**
-     * It will enable close and edit actions on the side-drawer.
-     */
-    enableButtonActions: function() {
-        this.areActionsEnabled = true;
-        this.$closeButton.removeClass('disabled');
-        this.$editButton.removeClass('disabled');
-    },
-
-    /**
-     * It will disable close and edit actions on the side-drawer.
-     */
-    disableButtonActions: function() {
-        this.areActionsEnabled = false;
-        this.$closeButton.addClass('disabled');
-        this.$editButton.addClass('disabled');
     },
 })

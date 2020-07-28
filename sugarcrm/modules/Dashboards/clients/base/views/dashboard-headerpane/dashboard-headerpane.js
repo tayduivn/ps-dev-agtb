@@ -33,7 +33,8 @@
         'click [name=collapse_button]': 'collapseClicked',
         'click [name=expand_button]': 'expandClicked',
         'click [name=edit_overview_tab_button]': 'editOverviewTabClicked',
-        'click [name=edit_module_tabs_button]': 'editModuleTabsClicked'
+        'click [name=edit_module_tabs_button]': 'editModuleTabsClicked',
+        'click [name=add_dashlet_button]': 'addDashletClicked',
     },
 
     initialize: function(options) {
@@ -274,6 +275,7 @@
     switchTab: function(tabIndex) {
         this.context.set('activeTab', tabIndex);
         this._enableEditButton(this._isDashboard());
+        this._enableAddDashletButton(this._isDashboard());
     },
 
     /**
@@ -289,7 +291,32 @@
             return true;
         }
         var tabIndex = this.context.get('activeTab') || 0;
-        return tabs[tabIndex] && tabs[tabIndex].components && tabs[tabIndex].components[0].rows;
+        return tabs[tabIndex] &&
+            ((tabs[tabIndex].components && tabs[tabIndex].components[0].rows) || tabs[tabIndex].dashlets || false);
+    },
+
+    /**
+     * Show/hide add dashlet button.
+     *
+     * @param {bool} state True to show, false to hide
+     * @private
+     */
+    _enableAddDashletButton: function(state) {
+        var dropdown = _.find(this.buttons, function(button) {
+            return button.type === 'actiondropdown';
+        });
+
+        if (dropdown) {
+            var button =  _.find(dropdown.fields, function(field) {
+                return field.name === 'add_dashlet_button';
+            });
+            if (button) {
+                button.setDisabled(!state);
+                button.isHidden = !state;
+                dropdown._orderButtons();
+                dropdown.render();
+            }
+        }
     },
 
     /**
@@ -358,6 +385,9 @@
         this.setButtonStates(this.context.get('create') ? 'create' : 'view');
         this.setEditableFields();
         this._enableEditButton(false);
+        if (!this._isDashboard()) {
+            this._enableAddDashletButton(false);
+        }
     },
 
     handleCancel: function() {
