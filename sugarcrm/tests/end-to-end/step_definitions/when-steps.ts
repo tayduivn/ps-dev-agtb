@@ -940,3 +940,25 @@ When(/^I choose (\w+) in the Quick Create actions menu$/,
         await quickCreateMenuCmp.clickItem(itemName);
     },
     { waitForApp: true });
+
+
+/**
+ *  Search record by name and select it in Search and Select drawer
+ *
+ *  @example
+ *  When I select Opp_1 record from Opportunities SearchAndSelect drawer
+ */
+When(/^I select (\S+) record from (\S+) SearchAndSelect drawer$/,
+    async function(recordName: string, module: string): Promise<void> {
+
+        // Search record by name in the list off available records
+        await seedbed.components[`${module}SearchAndSelect`].FilterView.setSearchField(recordName);
+        await this.driver.waitForApp();
+
+        // Select record in 'Search And Select' drawer
+        await seedbed.components[`${module}SearchAndSelect`].selectRecordByName(recordName, module);
+        await this.driver.waitForApp();
+
+    }, {waitForApp: true});
+
+

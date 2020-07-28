@@ -388,6 +388,272 @@ Feature: Purchases and PLIs modules verification
     Then I should see #Pur_1Record view
 
 
+  @SS-682
+  Scenario: PLI > Add-On > New Opportunity
+    Given Accounts records exist:
+      | *   | name        |
+      | A_1 | Account One |
+      | A_2 | Account Two |
+
+    And Purchases records exist related via purchases link to *A_1:
+      | *     | name       | service | description            |
+      | Pur_1 | Purchase 1 | true    | This is great purchase |
+
+    # Generate Service PLI linked to "parent" Purchase record
+    When I choose Purchases in modules menu
+    When I select *Pur_1 in #PurchasesList.ListView
+    When I create_new record from purchasedlineitems subpanel on #Pur_1Record view
+    When I click show more button on #PurchasedLineItemsDrawer view
+    When I provide input for #PurchasedLineItemsDrawer.HeaderView view
+      | *     | name  |
+      | PLI_1 | PLI_1 |
+    # Populate record data
+    When I provide input for #PurchasedLineItemsDrawer.RecordView view
+      | *     | date_closed | revenue | service | service_start_date | service_duration_value | service_duration_unit |
+      | PLI_1 | 05/05/2020  | 2000    | true    | now                | 1                      | Year(s)               |
+    # Save
+    When I click Save button on #PurchasedLineItemsDrawer header
+    When I close alert
+
+    # Open PLI record view from the PLI subpanel
+    When I select *PLI_1 in #Pur_1Record.SubpanelsLayout.subpanels.purchasedlineitems
+    Then I should see #PLI_1Record view
+
+    # Create add-on opportunity > Cancel
+    When I open actions menu in #PLI_1Record
+    When I choose create_add_on_button from actions menu in #PLI_1Record
+    When I choose new_opportunity_button from actions menu in #PLI_1Record
+
+    # Verify that the new Opportunity's Account is defaulted to the same Account as the PLI
+    Then I verify fields on #OpportunitiesDrawer.RecordView
+      | fieldName    | value       |
+      | account_name | Account One |
+
+    When I provide input for #OpportunitiesDrawer.HeaderView view
+      | *     | name               |
+      | Opp_1 | Add-On Opportunity |
+
+    # Verify that default account can still be editable
+    When I provide input for #OpportunitiesDrawer.RecordView view
+      | *     | account_name |
+      | Opp_1 | Account Two  |
+
+    # Provide input for the default RLI
+    When I provide input for #OpportunityDrawer.RLITable view for 1 row
+      | *name      | date_closed | sales_stage   | quantity | likely_case |
+      | AddOnRLI_1 | 12/12/2020  | Qualification | 5        | 1000        |
+
+    # Cancel Add-On opportunity creation
+    When I click Cancel button on #OpportunitiesDrawer header
+    When I open the addon_rlis subpanel on #PLI_1Record view
+    Then I verify number of records in #PLI_1Record.SubpanelsLayout.subpanels.addon_rlis is 0
+
+    # Create add-on opportunity > Save
+    When I open actions menu in #PLI_1Record
+    When I choose new_opportunity_button from actions menu in #PLI_1Record
+
+    # Verify that the new Opportunity's Account is defaulted to the same Account as the PLI
+    Then I verify fields on #OpportunitiesDrawer.RecordView
+      | fieldName    | value       |
+      | account_name | Account One |
+
+    # Name add-on opportunity
+    When I provide input for #OpportunitiesDrawer.HeaderView view
+      | *     | name               |
+      | Opp_1 | Add-On Opportunity |
+
+    # Verify that default account can still be editable
+    When I provide input for #OpportunitiesDrawer.RecordView view
+      | *     | account_name |
+      | Opp_1 | Account Two  |
+
+    # Provide input for the default RLI
+    When I provide input for #OpportunityDrawer.RLITable view for 1 row
+      | *name      | date_closed | sales_stage   | quantity | likely_case |
+      | AddOnRLI_1 | 12/12/2020  | Qualification | 5        | 1000        |
+
+    # Save add-on opportunity
+    When I click Save button on #OpportunitiesDrawer header
+    Then I check alert
+      | type    | message                                                              |
+      | Success | Success You successfully created the opportunity Add-On Opportunity. |
+    When I close alert
+
+    # Verify user is returned to PLI record view
+    Then I should see #PLI_1Record view
+
+    # Verify add-on RLI subpanel is populated with created RLI record
+    When I open the addon_rlis subpanel on #PLI_1Record view
+    Then I verify number of records in #PLI_1Record.SubpanelsLayout.subpanels.addon_rlis is 1
+    Then I verify fields for *AddOnRLI_1 in #PLI_1Record.SubpanelsLayout.subpanels.addon_rlis
+      | fieldName        | value              |
+      | name             | AddOnRLI_1         |
+      | opportunity_name | Add-On Opportunity |
+      | sales_stage      | Qualification      |
+
+    # Navigate to RLI record view by clicking the link in the subpanel
+    When I select *AddOnRLI_1 in #PLI_1Record.SubpanelsLayout.subpanels.addon_rlis
+    Then I should see #AddOnRLI_1Record view
+    When I click show more button on #AddOnRLI_1Record view
+
+    # Verify that the Add-On RLI field is populated with link to related PLI record
+    Then I verify fields on #AddOnRLI_1Record.RecordView
+      | fieldName      | value |
+      | add_on_to_name | PLI_1 |
+
+  @SS-682
+  Scenario: PLI > Add-On > Existing Opportunity
+    Given Accounts records exist:
+      | *   | name        |
+      | A_1 | Account One |
+      | A_2 | Account Two |
+
+    And Opportunities records exist related via opportunities link to *A_1:
+      | *name |
+      | Opp_1 |
+      | Opp_2 |
+
+    And Opportunities records exist related via opportunities link to *A_2:
+      | *name |
+      | Opp_3 |
+
+    Given Purchases records exist related via purchases link to *A_1:
+      | *     | name       | service | description            |
+      | Pur_1 | Purchase 1 | true    | This is great purchase |
+
+    # Generate Service PLI linked to "parent" Purchase record
+    When I choose Purchases in modules menu
+    When I select *Pur_1 in #PurchasesList.ListView
+    When I create_new record from purchasedlineitems subpanel on #Pur_1Record view
+    When I click show more button on #PurchasedLineItemsDrawer view
+    When I provide input for #PurchasedLineItemsDrawer.HeaderView view
+      | *     | name  |
+      | PLI_1 | PLI_1 |
+    # Populate record data
+    When I provide input for #PurchasedLineItemsDrawer.RecordView view
+      | *     | date_closed | revenue | service | service_start_date | service_duration_value | service_duration_unit |
+      | PLI_1 | 05/05/2020  | 2000    | true    | now                | 1                      | Year(s)               |
+    # Save
+    When I click Save button on #PurchasedLineItemsDrawer header
+    When I close alert
+
+    # Open PLI record view from the PLI subpanel
+    When I select *PLI_1 in #Pur_1Record.SubpanelsLayout.subpanels.purchasedlineitems
+    Then I should see #PLI_1Record view
+
+    # Add RLI to existing opportunity > Cancel
+    When I open actions menu in #PLI_1Record
+    When I choose create_add_on_button from actions menu in #PLI_1Record
+    When I choose existing_opportunity_button from actions menu in #PLI_1Record
+
+    # Cancel linking
+    When I click Close button on #OpportunitiesSearchAndSelect header
+
+    # Verify that user is returned to PLI record view and no record added to Add-on RLI subpanel
+    Then I should see #PLI_1Record view
+    When I open the addon_rlis subpanel on #PLI_1Record view
+    Then I verify number of records in #PLI_1Record.SubpanelsLayout.subpanels.addon_rlis is 0
+
+    # Add RLI to existing opportunity > Save
+    When I open actions menu in #PLI_1Record
+    When I choose existing_opportunity_button from actions menu in #PLI_1Record
+
+    # Verify that only opportunities related to the PLI's account are displayed
+    Then I should see *Opp_1 in #OpportunitiesList.ListView
+    Then I should see *Opp_2 in #OpportunitiesList.ListView
+    Then I should not see *Opp_3 in #OpportunitiesList.ListView
+
+    # Further filter the Search and Select the opportunity record
+    When I select Opp_1 record from Opportunities SearchAndSelect drawer
+
+    # Verify that the new RLI's Opportunity field is set to the chosen Opp
+    Then I verify fields on #RevenueLineItemsDrawer.RecordView
+      | fieldName        | value |
+      | opportunity_name | Opp_1 |
+
+    # Verify that the new RLI's "Add On To" field is set to the related PLI
+    When I click show more button on #RevenueLineItemsDrawer view
+    Then I verify fields on #RevenueLineItemsDrawer.RecordView
+      | fieldName      | value |
+      | add_on_to_name | PLI_1 |
+
+    # Complete RLI's required fields
+    When I provide input for #RevenueLineItemsDrawer.HeaderView view
+      | *     | name         |
+      | RLI_1 | Add-on RLI_1 |
+    When I provide input for #RevenueLineItemsDrawer.RecordView view
+      | *     | date_closed | likely_case | sales_stage    | quantity |
+      | RLI_1 | now         | 3000        | Needs Analysis | 5        |
+
+    # Cancel RLI Creation from RLI create drawer
+    When I click Cancel button on #RevenueLineItemsDrawer header
+
+    # Verify that user is returned to PLI record view and no RLI is added to Add-on RLI subpanel
+    Then I should see #PLI_1Record view
+    When I open the addon_rlis subpanel on #PLI_1Record view
+    Then I verify number of records in #PLI_1Record.SubpanelsLayout.subpanels.addon_rlis is 0
+
+    # Create RLI > Save
+    When I open actions menu in #PLI_1Record
+    When I choose existing_opportunity_button from actions menu in #PLI_1Record
+
+    # Verify that only opportunities related to the PLI's account are displayed
+    Then I should see *Opp_1 in #OpportunitiesList.ListView
+    Then I should see *Opp_2 in #OpportunitiesList.ListView
+    Then I should not see *Opp_3 in #OpportunitiesList.ListView
+
+    # Further filter the Search and Select the opportunity record
+    When I select Opp_1 record from Opportunities SearchAndSelect drawer
+
+    # Verify that the new RLI's Opportunity field is set to the chosen Opp
+    Then I verify fields on #RevenueLineItemsDrawer.RecordView
+      | fieldName        | value |
+      | opportunity_name | Opp_1 |
+
+    # Verify that the new RLI's "Add On To" field is set to the related PLI
+    When I click show more button on #RevenueLineItemsDrawer view
+    Then I verify fields on #RevenueLineItemsDrawer.RecordView
+      | fieldName      | value |
+      | add_on_to_name | PLI_1 |
+
+    # Complete RLI's required fields
+    When I provide input for #RevenueLineItemsDrawer.HeaderView view
+      | *     | name         |
+      | RLI_1 | Add-on RLI_1 |
+    When I provide input for #RevenueLineItemsDrawer.RecordView view
+      | *     | date_closed | likely_case | sales_stage    | quantity |
+      | RLI_1 | now         | 3000        | Needs Analysis | 5        |
+
+    # Save add-on RLI
+    When I click Save button on #RevenueLineItemsDrawer header
+    Then I check alert
+      | type    | message                                                              |
+      | Success | Success You successfully created the revenue line item Add-on RLI_1. |
+    When I close alert
+
+    # Verify user is returned to PLI record view
+    Then I should see #PLI_1Record view
+
+    # Verify add-on RLI subpanel is populated with created RLI record
+    When I open the addon_rlis subpanel on #PLI_1Record view
+    Then I verify number of records in #PLI_1Record.SubpanelsLayout.subpanels.addon_rlis is 1
+    Then I verify fields for *RLI_1 in #PLI_1Record.SubpanelsLayout.subpanels.addon_rlis
+      | fieldName        | value          |
+      | name             | Add-on RLI_1   |
+      | opportunity_name | Opp_1          |
+      | sales_stage      | Needs Analysis |
+
+    # Navigate to RLI record view by clicking the link in the subpanel
+    When I select *RLI_1 in #PLI_1Record.SubpanelsLayout.subpanels.addon_rlis
+    Then I should see #RLI_1Record view
+    When I click show more button on #RLI_1Record view
+
+    # Verify that the Add-on RLI field is populated with link to related PLI record
+    Then I verify fields on #RLI_1Record.RecordView
+      | fieldName      | value |
+      | add_on_to_name | PLI_1 |
+
+
   @user_profile
   Scenario: User Profile > Change license type
     When I choose Profile in the user actions menu

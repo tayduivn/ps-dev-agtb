@@ -108,7 +108,7 @@ When(/^I link (\S+) returned by '([a-zA-Z][a-zA-Z ]+)' report to (#\S+) target l
         await this.driver.waitForApp();
 
         // Select report in 'Search And Select Report' drawer
-        await seedbed.components['ReportsSearchAndSelect'].selectReportByName(reportName);
+        await seedbed.components['ReportsSearchAndSelect'].selectRecordByName(reportName, 'Reports');
         await this.driver.waitForApp();
 
     }, {waitForApp: true});

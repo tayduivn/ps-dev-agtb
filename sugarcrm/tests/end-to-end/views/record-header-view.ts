@@ -121,6 +121,11 @@ export default class RecordHeaderView extends BaseView {
                 // Serve Console and Renewal Console
                 'edit_overview_tab_button': 'a[name="edit_overview_tab_button"]:not(.hide)',
                 'edit_module_tabs_button': 'a[name="edit_module_tabs_button"]:not(.hide)',
+
+                // Purchased Line Items
+                'create_add_on_button': 'a[name="create_add_on_button"]:not(.hide)',
+                'new_opportunity_button': 'a[name="new_opportunity_button"]:not(.hide)',
+                'existing_opportunity_button': 'a[name="existing_opportunity_button"]:not(.hide)',
             },
 
             title: {
