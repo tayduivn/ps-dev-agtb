@@ -7,14 +7,14 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@crud_modules_knowledgeBase
+@crud_modules_knowledgeBase @job8
 Feature: Knowledge Base module verification
 
   Background:
     Given I use default account
     Given I launch App
 
-  @list @job1
+  @list
   Scenario: Knowledge Base > List View > Review
     Given KBContents records exist:
       | *    | name      | kbdocument_body |
@@ -36,7 +36,7 @@ Feature: Knowledge Base module verification
       | is_external | false     |
 
 
-  @list-search @job1
+  @list-search
   Scenario: Knowledge Base > List View > Filter
     Given KBContents records exist:
       | *    | name      | kbdocument_body |
@@ -60,7 +60,7 @@ Feature: Knowledge Base module verification
       | language  | English   |
 
 
-  @list-edit @job2
+  @list-edit
   Scenario: Knowledge Base > List View > Inline Edit
     Given KBContents records exist:
       | *    | name      | kbdocument_body |
@@ -88,7 +88,7 @@ Feature: Knowledge Base module verification
       | status    | In Review   |
 
 
-  @list-delete @job2
+  @list-delete
   Scenario: Knowledge Base > List View > Delete
     Given KBContents records exist:
       | *    | name      | kbdocument_body |
@@ -104,7 +104,7 @@ Feature: Knowledge Base module verification
     Then I should not see *KB_1 in #KBContentsList.ListView
 
 
-  @delete @job3
+  @delete
   Scenario: Knowledge Base > Record View > Delete
     Given KBContents records exist:
       | *name | kbdocument_body |
@@ -129,7 +129,7 @@ Feature: Knowledge Base module verification
     Then I should not see *KB_1 in #KBContentsList.ListView
 
 
-  @copy_cancel @job3
+  @copy_cancel
   Scenario:  Knowledge Base > Record View > Copy > Cancel
     Given KBContents records exist:
       | *name | kbdocument_body |
@@ -153,7 +153,7 @@ Feature: Knowledge Base module verification
       | kbdocument_body | Hello World! |
 
 
-  @copy_save @job4
+  @copy_save
   Scenario:  Knowledge Base > Record View > Copy > Save
     Given KBContents records exist:
       | *name | kbdocument_body |
@@ -178,7 +178,7 @@ Feature: Knowledge Base module verification
       | kbdocument_body | <p>Hello World! (copy)Hello World!</p> |
 
 
-  @create_cancel @create_save @job6
+  @create_cancel @create_save
   Scenario: Knowledge Base > Create > Cancel/Save
     Given Users records exist:
       | *      | status | user_name | user_hash | last_name | first_name | email              |
@@ -226,7 +226,7 @@ Feature: Knowledge Base module verification
       | tag              | article1,kb      |
 
 
-  @record_localization @job6
+  @record_localization
   Scenario: Knowledge Base > Localization
     Given KBContents records exist:
       | *    | name      | kbdocument_body |
@@ -239,7 +239,7 @@ Feature: Knowledge Base module verification
     When I close alert
 
 
-  @record_revision @job6
+  @record_revision
   Scenario: Knowledge Base > Revisions
     Given KBContents records exist:
       | *    | name      | kbdocument_body |
@@ -272,7 +272,7 @@ Feature: Knowledge Base module verification
     When I click notuseful button on #KB_rev1Record view
     # Then I verify that FirstDashlet element from #Dashboard.DashboardView still looks like useful2
 
-  @view_categories @job6
+  @view_categories
   Scenario: Knowledge Base > Create Category
     Given KBContents records exist:
       | *    | name      | kbdocument_body |
@@ -291,7 +291,7 @@ Feature: Knowledge Base module verification
     Then I should see *KBC_1 in #KBViewCategoriesDrawer.KBCategoriesList
 
 
-  @list @job5
+  @list
   Scenario: Knowledge Base Templates > List View > Review
     Given KBContentTemplates records exist:
       | *     | name       | body          |
@@ -312,7 +312,7 @@ Feature: Knowledge Base module verification
 #      | body      | My Template 1 |
 
 
-  @kbTemplates_use_existing @job1
+  @kbTemplates_use_existing
   Scenario: Knowledge Base > Use Templates
     Given KBContentTemplates records exist:
       | *     | name       | body          |
@@ -350,7 +350,7 @@ Feature: Knowledge Base module verification
       | revision        | 1             |
 
 
-  @kbTemplates_createNew @job1
+  @kbTemplates_createNew
   Scenario: Knowledge Base > Create New Template on the fly
     Given I open KBContents view and login
     When I click Create button on #KBContentsList header
@@ -394,7 +394,7 @@ Feature: Knowledge Base module verification
       | revision        | 1                   |
 
 
-  @kbSettings @job1 @ci-excluded
+  @kbSettings @ci-excluded
   Scenario: Knowledge Base > Settings
     Given KBContents records exist:
       | *    | name      | kbdocument_body |
@@ -418,7 +418,7 @@ Feature: Knowledge Base module verification
     When I close alert
 
 
-  @edit_categories @job2
+  @edit_categories
   Scenario: Knowledge Base > Categories List view > Edit/Move/Delete
     Given KBContents records exist:
       | *    | name      | kbdocument_body |
