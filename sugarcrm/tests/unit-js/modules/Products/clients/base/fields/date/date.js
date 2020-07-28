@@ -79,36 +79,61 @@ describe('Products.Base.Fields.Date', function() {
             {
                 startDate: '2020-01-01',
                 endDate: '2020-01-01',
+                unit: 'day',
                 expectedDiff: 1
             },
             {
                 startDate: '2020-01-01',
-                endDate: '2020-01-02',
-                expectedDiff: 2
-            },
-            {
-                startDate: '2020-01-01',
-                endDate: '2020-02-01',
-                expectedDiff: 32
-            },
-            {
-                startDate: '2020-01-01',
                 endDate: '2021-01-01',
+                unit: 'day',
                 expectedDiff: 367 // leap year
             },
             {
                 startDate: '2021-01-01',
                 endDate: '2022-01-01',
+                unit: 'day',
                 expectedDiff: 366 // non leap year
             },
             {
                 startDate: '2020-07-06',
                 endDate: '2020-09-15',
+                unit: 'day',
                 expectedDiff: 72
+            },
+            {
+                startDate: '2020-07-01',
+                endDate: '2020-07-31',
+                unit: 'month',
+                expectedDiff: 1
+            },
+            {
+                startDate: '2020-07-01',
+                endDate: '2021-01-31',
+                unit: 'month',
+                expectedDiff: 7
+            },
+            {
+                startDate: '2020-07-14',
+                endDate: '2021-07-13',
+                unit: 'year',
+                expectedDiff: 1
+            },
+            {
+                startDate: '2020-01-01',
+                endDate: '2025-12-31',
+                unit: 'year',
+                expectedDiff: 6
+            },
+            {
+                startDate: '2020-07-14',
+                endDate: '2025-07-13',
+                unit: 'year',
+                expectedDiff: 5
             },
             {
                 startDate: '2020-01-02',
                 endDate: '2020-01-01',
+                unit: 'day',
                 expectedDiff: -1
             }
         ], function(provider) {
@@ -119,7 +144,7 @@ describe('Products.Base.Fields.Date', function() {
 
                 field.handleRecalculateServiceDuration();
 
-                expect(view.model.get('service_duration_unit')).toBe('day');
+                expect(view.model.get('service_duration_unit')).toBe(provider.unit);
                 expect(view.model.get('service_duration_value')).toBe(provider.expectedDiff);
             });
         });

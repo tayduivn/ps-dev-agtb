@@ -38,15 +38,45 @@
             var startDate = app.date(this.model.get('service_start_date'));
             var endDate = app.date(this.model.get('service_end_date'));
 
-            var diffDays = endDate.diff(startDate, 'days');
             if (startDate.isSameOrBefore(endDate)) {
-                diffDays += 1; // we want to be inclusive of the end date
+                // we want to be inclusive of the end date
+                endDate.add(1, 'days');
             }
 
-            // For now, we always use days as our unit
-            this.model.set('service_duration_unit', 'day');
-            this.model.set('service_duration_value', diffDays);
+            // calculates the whole years, months, or days
+            var wholeDurationUnit = this.getWholeDurationUnit(
+                startDate.format('YYYY-MM-DD'),
+                endDate.format('YYYY-MM-DD')
+            );
+
+            if (!_.isEmpty(wholeDurationUnit)) {
+                this.model.set('service_duration_unit', wholeDurationUnit);
+                this.model.set('service_duration_value', endDate.diff(startDate, wholeDurationUnit + 's'));
+            } else {
+                this.model.set('service_duration_unit', 'day');
+                this.model.set('service_duration_value', endDate.diff(startDate, 'days'));
+            }
         }
+    },
+
+    /**
+     * Gets the whole years, months, or days between two dates
+     *
+     * @param {string} startDate the start date
+     * @param {string} endDate the end date
+     * @return {string} whole year, month or day unit
+     */
+    getWholeDurationUnit: function(startDate, endDate) {
+        var start = app.date(startDate);
+        var end = app.date(endDate);
+
+        var years = end.diff(start, 'years');
+        start.add(years, 'years');
+        var months = end.diff(start, 'months');
+        start.add(months, 'months');
+        var days = end.diff(start, 'days');
+
+        return days > 0 ? 'day' : (months > 0 ? 'month' : (years > 0 ? 'year' : ''));
     },
 
     // END SUGARCRM flav=ent ONLY

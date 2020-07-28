@@ -1244,9 +1244,10 @@ class RevenueLineItemTest extends TestCase
      * @param bool $hasAddOnToId
      * @param string $startDate
      * @param string $endDate
+     * @param string $unit
      * @param int $expectedDiff
      */
-    public function testSetDurationFields($hasAddOnToId, $startDate, $endDate, $expectedDiff)
+    public function testSetDurationFields($hasAddOnToId, $startDate, $endDate, $unit, $expectedDiff)
     {
         $rli = $this->getMockBuilder('RevenueLineItem')
             ->disableOriginalConstructor()
@@ -1263,7 +1264,7 @@ class RevenueLineItemTest extends TestCase
         SugarTestReflection::callProtectedMethod($rli, 'setDurationFields');
 
         if ($hasAddOnToId) {
-            $this->assertEquals('day', $rli->service_duration_unit);
+            $this->assertEquals($unit, $rli->service_duration_unit);
             $this->assertEquals($expectedDiff, $rli->service_duration_value);
         } else {
             $this->assertEquals(null, $rli->service_duratation_unit);
@@ -1285,13 +1286,16 @@ class RevenueLineItemTest extends TestCase
     {
         // $hasAddOnToId, $startDate, $endDate, $expectedDiff
         return [
-            [false, '2020-01-01', '2020-01-01', 1],
-            [true, '2020-01-01', '2020-01-01', 1],
-            [true, '2020-01-01', '2020-01-02', 2],
-            [true, '2020-01-01', '2020-02-01', 32],
-            [true, '2020-01-01', '2021-01-01', 367], // leap year
-            [true, '2021-01-01', '2022-01-01', 366], // non leap year
-            [true, '2020-07-06', '2020-09-15', 72],
+            [false, '2020-01-01', '2020-01-01', 'day', 1],
+            [true, '2020-01-01', '2020-01-01', 'day', 1],
+            [true, '2020-01-01', '2020-02-01', 'day', 32],
+            [true, '2020-01-01', '2021-01-01', 'day', 367], // leap year
+            [true, '2021-01-01', '2022-01-01', 'day', 366], // non leap year
+            [true, '2020-07-06', '2020-09-15', 'day', 72],
+            [true, '2020-07-01', '2020-07-31', 'month', 1],
+            [true, '2020-07-01', '2021-01-31', 'month', 7],
+            [true, '2020-07-14', '2021-07-13', 'year', 1],
+            [true, '2020-07-14', '2025-07-13', 'year', 5],
         ];
     }
 

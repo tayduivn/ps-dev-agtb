@@ -332,14 +332,26 @@ class RevenueLineItem extends SugarBean
     protected function setDurationFields()
     {
         if (!empty($this->add_on_to_id)) {
-            $startDate = TimeDate::getInstance()->fromString($this->service_start_date);
-            $endDate = TimeDate::getInstance()->fromString($this->service_end_date);
+            $startDate = new \SugarDateTime($this->service_start_date);
+            // calculates inclusive of the end date
+            $endDate = new \SugarDateTime($this->service_end_date);
+            $endDate->modify('+1 day');
 
+            // calculates whole years/months, otherwise, days is used
             $diff = $startDate->diff($endDate);
-            $diffDays = $diff->days + 1;
-
-            $this->service_duration_unit = 'day';
-            $this->service_duration_value = $diffDays;
+            if ($diff->d > 0) {
+                $this->service_duration_unit = 'day';
+                $this->service_duration_value = $diff->days;
+            } elseif ($diff->m > 0) {
+                $this->service_duration_unit = 'month';
+                $this->service_duration_value = $diff->y * 12 + $diff->m;
+            } elseif ($diff->y > 0) {
+                $this->service_duration_unit = 'year';
+                $this->service_duration_value = $diff->y;
+            } else {
+                $this->service_duration_unit = 'day';
+                $this->service_duration_value = -1;
+            }
         }
     }
 
