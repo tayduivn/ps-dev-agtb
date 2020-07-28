@@ -98,26 +98,26 @@ class SugarBeanPersistedStateTest extends TestCase
     {
         $bean = $this->createTestBean();
 
-        $beforeRelateField = $bean->business_center_name;
-        $beforeRelateIdField = $bean->business_center_id;
-        $bean->business_center_name = 'relateFieldValue';
-        $bean->business_center_id = 'relateIdFieldValue';
+        $beforeRelateField = $bean->parent_name;
+        $beforeRelateIdField = $bean->parent_id;
+        $bean->parent_name = 'relateFieldValue';
+        $bean->parent_id = 'relateIdFieldValue';
         $changes = $bean->getStateChanges();
-        $this->assertArrayHasKey('business_center_name', $changes);
-        $this->assertArrayHasKey('business_center_id', $changes);
+        $this->assertArrayHasKey('parent_name', $changes);
+        $this->assertArrayHasKey('parent_id', $changes);
 
         $expect = [
-            'business_center_name' => [
-                'field_name' => 'business_center_name',
-                'data_type' => 'varchar',
+            'parent_name' => [
+                'field_name' => 'parent_name',
+                'data_type' => 'relate',
                 'before' => $beforeRelateField,
-                'after' => $bean->business_center_name,
+                'after' => $bean->parent_name,
             ],
-            'business_center_id' => [
-                'field_name' => 'business_center_id',
+            'parent_id' => [
+                'field_name' => 'parent_id',
                 'data_type' => 'id',
                 'before' => $beforeRelateIdField,
-                'after' => $bean->business_center_id,
+                'after' => $bean->parent_id,
             ],
         ];
         $this->assertEquals($expect, $changes);
