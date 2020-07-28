@@ -49,6 +49,12 @@ $viewdefs['PurchasedLineItems']['base']['view']['record'] = [
                     'acl_action' => 'view',
                 ],
                 [
+                    'type' => 'create-add-on',
+                    'name' => 'create_add_on_button',
+                    'label' => 'LBL_CREATE_ADD_ON',
+                    'acl_action' => 'view',
+                ],
+                [
                     'type' => 'pdfaction',
                     'name' => 'download-pdf',
                     'label' => 'LBL_PDF_VIEW',
@@ -96,6 +102,9 @@ $viewdefs['PurchasedLineItems']['base']['view']['record'] = [
                     'name' => 'delete_button',
                     'label' => 'LBL_DELETE_BUTTON_LABEL',
                     'acl_action' => 'delete',
+                ],
+                [
+                    'type' => 'divider',
                 ],
             ],
         ],

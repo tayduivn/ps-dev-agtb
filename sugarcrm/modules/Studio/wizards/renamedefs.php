@@ -776,6 +776,8 @@ $renamedefs = array(
             array('name' => 'LBL_RLI', 'type' => 'singular', 'source' => 'RevenueLineItems'),
             array('name' => 'LBL_RLI_ID', 'type' => 'singular', 'source' => 'RevenueLineItems'),
             array('name' => 'LBL_RLI_NAME', 'type' => 'singular', 'source' => 'RevenueLineItems'),
+            array('name' => 'LBL_NEW_OPPORTUNITY', 'type' => 'singular', 'source' => 'Opportunities'),
+            array('name' => 'LBL_EXISTING_OPPORTUNITY', 'type' => 'singular', 'source' => 'Opportunities'),
         ),
         // END SUGARCRM flav=ent ONLY
         'Quotes' => array(

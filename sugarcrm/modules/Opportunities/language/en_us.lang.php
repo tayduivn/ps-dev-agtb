@@ -175,6 +175,8 @@ $mod_strings = array(
     //END SUGARCRM flav=ent ONLY
 
     'LBL_QUOTE_SUBPANEL_TITLE' => 'Quotes',
+    'LBL_FILTER_OPPORTUNITY_TEMPLATE' => 'Opportunities By A Dynamic Account',
+
 
     // Config
     'LBL_OPPS_CONFIG_VIEW_BY_LABEL' => 'Opportunity Hierarchy',

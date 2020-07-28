@@ -95,13 +95,19 @@
             attrs.base_rate = app.metadata.getCurrency(userCurrencyId).conversion_rate;
         }
 
+        var addOnToData = this.context.parent.get('addOnToData');
+        if (addOnToData) {
+            attrs.add_on_to_id = addOnToData.add_on_to_id;
+            attrs.add_on_to_name = addOnToData.add_on_to_name;
+            attrs.service = addOnToData.service;
+        }
+
         if (!_.isEmpty(attrs)) {
             // we need to set the defaults
             bean.setDefault(attrs);
             // just to make sure that any attributes that were already set, are set again.
             bean.set(attrs);
         }
-
         return bean;
     },
 

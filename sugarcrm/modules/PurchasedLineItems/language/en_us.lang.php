@@ -76,4 +76,7 @@ $mod_strings = [
     'LBL_RENEWAL_OPPORTUNITY' => 'Renewal Opportunity',
     'LBL_RENEWAL_OPPORTUNITY_ID' => 'Renewal Opportunity ID',
     'LBL_ACCOUNT_ID' => 'Account ID',
+    'LBL_NEW_OPPORTUNITY' => 'New Opportunity',
+    'LBL_EXISTING_OPPORTUNITY' => 'Existing Opportunity',
+    'LBL_CREATE_ADD_ON' => 'Create Add-On',
 ];
