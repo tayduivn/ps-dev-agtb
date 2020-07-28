@@ -92,6 +92,8 @@ $config['blackList']['pro'] = array(
 // Customer Service
 'sugarcrm/clients/base/views/dashablerecord' => 1,
 'sugarcrm/clients/base/views/multi-line-list' => 1,
+'sugarcrm/clients/base/views/request-closed-cases-dashlet' => 1,
+'sugarcrm/tests/unit-js/modules/Cases/clients/base/views/request-closed-cases-dashlet' => 1,
 'sugarcrm/modules/BusinessCenters' => 1,
 'sugarcrm/tests/unit-js/clients/base/views/dashablerecord' => 1,
 'sugarcrm/tests/unit-js/clients/base/views/multi-line-list' => 1,

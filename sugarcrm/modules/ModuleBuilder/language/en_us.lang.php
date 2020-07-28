@@ -610,6 +610,7 @@ $mod_strings = array(
     'LBL_PORTAL_CONFIGURE' => 'Configure Portal',
     'LBL_PORTAL_ENABLE_PORTAL' => 'Enable portal',
     'LBL_PORTAL_ENABLE_SEARCH' => 'Enable search before opening a case',
+    'LBL_PORTAL_ALLOW_CLOSE_CASE' => 'Allow portal users to close case',
     'LBL_PORTAL_THEME' => 'Theme Portal',
     'LBL_PORTAL_ENABLE' => 'Enable',
     'LBL_PORTAL_SITE_URL' => 'Your portal site is available at:',

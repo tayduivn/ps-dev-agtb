@@ -31,6 +31,20 @@ return [
                             'width' => 12,
                         ),
                     ),
+                    //BEGIN SUGARCRM flav=ent ONLY
+                    array(
+                        array(
+                            'view' => array(
+                                'type' => 'request-closed-cases-dashlet',
+                                'label' => 'LBL_DASHLET_MY_REQUESTED_CLOSE_CASES_NAME',
+                            ),
+                            'context' => array(
+                                'module' => 'Cases',
+                            ),
+                            'width' => 12,
+                        ),
+                    ),
+                    //END SUGARCRM flav=ent ONLY
                     array(
                         array(
                             'view' => array(

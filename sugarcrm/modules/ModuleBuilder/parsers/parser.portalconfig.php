@@ -37,12 +37,21 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
             }
         }
 
+        if (isset($settings['allowCloseCase'])) {
+            if ($settings['allowCloseCase'] === 'true') {
+                $settings['allowCloseCase'] = 'allow';
+            } else {
+                $settings['allowCloseCase'] = 'disallow';
+            }
+        }
+
         $portalFields = [
             'caseDeflection',
             'defaultUser',
             'appName',
             'logoURL',
             'logomarkURL',
+            'allowCloseCase',
             'serverUrl',
             'maxQueryResult',
             'maxSearchQueryResult',
@@ -112,6 +121,7 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
             'logFormatter' => 'SimpleFormatter',
             'metadataTypes' => array(),
             'defaultModule' => 'Cases',
+            'allowCloseCase' => PortalFactory::getInstance('Settings')->isServe() ? 'allow' : 'disallow',
             'caseDeflection' => PortalFactory::getInstance('Settings')->isServe() ? 'enabled' : 'disabled',
             'contactInfo' => [
                 'contactPhone' => '',

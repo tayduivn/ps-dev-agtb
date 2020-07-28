@@ -95,7 +95,8 @@ class InitProductDefinition
         "product-catalog":["CURRENT","SUGAR_SELL"],
         "sales-pipeline":["CURRENT","SUGAR_SELL"],
         "twitter":["CURRENT"],
-        "active-subscriptions":["SUGAR_SERVE","SUGAR_SELL"]
+        "active-subscriptions":["SUGAR_SERVE","SUGAR_SELL"],
+        "request-closed-cases-dashlet":["SUGAR_SERVE"]
     },
     "RECORDS": {
         "Dashboards": {
@@ -299,7 +300,9 @@ class InitProductDefinition
             "first_response_user_link":["SUGAR_SERVE"],
             "first_response_sent":["SUGAR_SERVE"],
             "hours_to_resolution":["SUGAR_SERVE"],
-            "business_hours_to_resolution":["SUGAR_SERVE"]
+            "business_hours_to_resolution":["SUGAR_SERVE"],
+            "request_close":["SUGAR_SERVE"],
+            "request_close_date":["SUGAR_SERVE"]
         },
         "Contacts": {
             "business_center_id":["SUGAR_SERVE","SUGAR_SELL"],

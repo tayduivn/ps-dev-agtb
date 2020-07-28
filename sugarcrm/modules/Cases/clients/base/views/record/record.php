@@ -249,6 +249,18 @@ $viewdefs['Cases']['base']['view']['record'] = array(
                         ),
                     ),
                 ),
+                //BEGIN SUGARCRM flav=ent ONLY
+                array(
+                    'name' => 'request_close',
+                    'readonly' => true,
+                    'label' => 'LBL_REQUEST_CLOSE',
+                ),
+                array(
+                    'name' => 'request_close_date',
+                    'readonly' => true,
+                    'label' => 'LBL_REQUEST_CLOSE_DATE',
+                ),
+                //END SUGARCRM flav=ent ONLY
             ),
         ),
     ),

@@ -169,6 +169,26 @@ $dictionary['Case'] = array(
             'comment' => 'The resolution of the case',
         ),
 // BEGIN SUGARCRM flav=ent ONLY
+        'request_close' => [
+            'name' => 'request_close',
+            'type' => 'bool',
+            'default' => null,
+            'readonly' => true,
+            'audited' => true,
+            'reportable' => true,
+            'vname' => 'LBL_REQUEST_CLOSE',
+            'comment'=> 'The request close status of the case',
+        ],
+        'request_close_date' => [
+            'name' => 'request_close_date',
+            'type' => 'datetimecombo',
+            'default' => null,
+            'readonly' => true,
+            'audited' => true,
+            'reportable' => true,
+            'vname' => 'LBL_REQUEST_CLOSE_DATE',
+            'comment' => 'The date/time that the request close was initiated',
+        ],
         'portal_viewable' => array(
             'name' => 'portal_viewable',
             'vname' => 'LBL_SHOW_IN_PORTAL',
