@@ -11,12 +11,25 @@
 /**
  * The ccp container of the Omnichannel console.
  *
- * @class View.Layouts.Base.OmnichannelCcpView
- * @alias SUGAR.App.view.layouts.BaseOmnichannelCcpView
+ * @class View.Views.Base.OmnichannelCcpView
+ * @alias SUGAR.App.view.views.BaseOmnichannelCcpView
  * @extends View.View
  */
 ({
     className: 'omni-ccp',
+
+    /**
+     * A map of contact type to module
+     */
+    contactTypeModule: {
+        voice: 'Calls',
+        chat: 'Messages',
+    },
+
+    /**
+     * The list of connected contacts
+     */
+    connectedContacts: {},
 
     /**
      * Is the ccp loaded?
@@ -78,7 +91,8 @@
                 self.libraryLoaded = true;
                 self.initializeCCP();
             });
-            // Load chat library here once required
+            // Load chat library here once required, must be loaded after connect-streams
+            $.getScript('include/javascript/amazon-connect/amazon-connect-chat.js');
         } catch (error) {
             app.alert.show(error.name, {
                 level: 'error',
@@ -131,13 +145,50 @@
      */
     loadContactEventListeners: function() {
         var self = this;
+
         connect.core.onViewContact(function(event) {
             self.layout.trigger('contact:view', event.contactId);
         });
+
         connect.contact(function(contact) {
-            // Attach contact event listeners here
             contact.onConnecting(function(contact) {
                 self._handleIncomingContact(contact);
+            });
+
+            contact.onConnected(function(contact) {
+                self.addContactToContactsList(contact);
+            });
+
+            contact.onDestroy(function(contact) {
+                self.removeContactFromContactsList(contact);
+            });
+
+            contact.onACW(function(contact) {
+                // do nothing if contact was from a previous session
+                if (!_.has(self.connectedContacts, contact.getContactId())) {
+                    return;
+                }
+
+                var data;
+                var type = contact.getType();
+                var module = self.contactTypeModule[type];
+
+                switch (type) {
+                    case connect.ContactType.VOICE:
+                        data = self.getVoiceContactInfo(contact);
+                        break;
+                    case connect.ContactType.CHAT:
+                        data = self.getChatContactInfo(contact);
+                        break;
+                    default:
+                        app.logger.error(`Amazon Connect: Contact type (type: ${type}) is not voice or chat`);
+                        return;
+                }
+
+                data = _.extendOwn(data, self.getGenericContactInfo(contact));
+
+                var model = self.getNewModelForContact(module, data);
+                self.openCreateDrawer(module, model);
             });
         });
     },
@@ -233,5 +284,202 @@
      */
     _handleIncomingContact: function(contact) {
         this.layout.open();
+    },
+
+    /**
+     * Add the contact to the list of connected contacts
+     *
+     * @param contact
+     */
+    addContactToContactsList: function(contact) {
+        this.connectedContacts[contact.getContactId()] = {
+            connectedTimestamp: contact.getStatus().timestamp,
+        };
+    },
+
+    /**
+     * Remove the contact from the list of connected contacts, if it exists
+     *
+     * @param contact
+     */
+    removeContactFromContactsList: function(contact) {
+        var contactId = contact.getContactId();
+
+        if (_.has(this.connectedContacts, contactId)) {
+            this.connectedContacts = _.omit(this.connectedContacts, contactId);
+        }
+    },
+
+    /**
+     * Get generic contact info that all contact types should have
+     *
+     * @param contact
+     * @return {Object}
+     */
+    getGenericContactInfo: function(contact) {
+        var data = {};
+
+        try {
+            data.isContactInbound = contact.isInbound();
+        } catch (err) {
+            app.logger.error(`Amazon Connect: Unable to determine contact inbound/outbound direction`);
+        }
+
+        data.contactType = contact.getType();
+        data.startTime = this.getContactConnectedTime(contact);
+
+        return data;
+    },
+
+    /**
+     * Get the relevant information for a voice type contact
+     *
+     * @param contact
+     * @return {Object}
+     */
+    getVoiceContactInfo: function(contact) {
+        var conn = contact.getInitialConnection();
+        var endpoint = conn.getEndpoint();
+
+        return {
+            phoneNumber: endpoint.phoneNumber,
+        };
+    },
+
+    /**
+     * Get the relevant information for a chat type contact
+     *
+     * @param contact
+     * @return {Object}
+     */
+    getChatContactInfo: function(contact) {
+        return {
+            name: app.lang.get('LBL_OMNICHANNEL_DEFAULT_CUSTOMER_NAME'),
+        };
+    },
+
+    /**
+     * Get the Utils/Date from the contact's timestamp
+     *
+     * @param contact
+     * @return {Date}
+     */
+    getContactConnectedTime: function(contact) {
+        var timestamp = this.connectedContacts[contact.getContactId()].connectedTimestamp;
+
+        return app.date(timestamp);
+    },
+
+    /**
+     * Get a readable title per the contact type
+     *
+     * @param module
+     * @param data
+     * @return {string}
+     */
+    getRecordTitle: function(module, data) {
+        var contactType = data.contactType;
+        var title = '';
+
+        // if unfamiliar type, return empty
+        if (!(contactType === connect.ContactType.VOICE || contactType === connect.ContactType.CHAT)) {
+            return title;
+        }
+
+        var contactTypeStr = (contactType === connect.ContactType.VOICE) ? 'Call' : 'Chat';
+        var identifier = (contactType === connect.ContactType.VOICE) ? data.phoneNumber : data.name;
+        var direction = _.has(data, 'isContactInbound') ? (data.isContactInbound ? 'from' : 'to') : 'from';
+
+        title = app.lang.get('TPL_OMNICHANNEL_NEW_RECORD_TITLE',
+            module,
+            {
+                type: contactTypeStr,
+                direction: direction,
+                identifier: identifier,
+                time: data.startTime.formatUser(),
+            }
+        );
+
+        return title;
+    },
+
+    /**
+     * Get the time in server format and calculate the duration
+     *
+     * @param data
+     * @return {Object}
+     */
+    getTimeAndDuration: function(data) {
+        var startTime = data.startTime;
+        var nowTime = app.date();
+
+        var timeDiff = nowTime.diff(startTime);
+        var durationHours = Math.floor(app.date.duration(timeDiff).asHours());
+        var durationMinutes = app.date.duration(timeDiff).minutes();
+
+        return {
+            startTime: startTime.formatServer(),
+            nowTime: nowTime.formatServer(),
+            durationHours: durationHours,
+            durationMinutes: durationMinutes,
+        };
+    },
+
+    /**
+     * Create the model and set appropriate attributes for the contact
+     *
+     * @param module
+     * @param data
+     * @return {Object} the model
+     */
+    getNewModelForContact: function(module, data) {
+        var model = app.data.createBean(module);
+
+        var timeData = this.getTimeAndDuration(data);
+
+        if (_.has(data, 'isContactInbound')) {
+            model.set({
+                direction: data.isContactInbound ? 'Inbound' : 'Outbound',
+            });
+        }
+
+        if (data.contactType === connect.ContactType.VOICE) {
+            model.set({
+                duration_hours: timeData.durationHours,
+                duration_minutes: timeData.durationMinutes,
+                status: 'Held',
+            });
+        } else if (data.contactType === connect.ContactType.CHAT) {
+            model.set({
+                channel_type: 'Chat',
+            });
+        }
+
+        model.set({
+            name: this.getRecordTitle(module, data),
+            date_start: timeData.startTime,
+            date_end: timeData.nowTime,
+        });
+
+        return model;
+    },
+
+    /**
+     * Open the create drawer with create-no-cancel-button layout
+     *
+     * @param module
+     * @param model
+     */
+    openCreateDrawer: function(module, model) {
+        app.drawer.open({
+            layout: 'create-no-cancel-button',
+            context: {
+                create: true,
+                module: module,
+                model: model,
+            },
+        }, _.bind(function() {
+            this.layout.open();
+        }, this));
     },
 })

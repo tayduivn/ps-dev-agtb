@@ -5059,6 +5059,9 @@ Sincerely, SugarCRM',
     // Omnichannel Console
     'LBL_OMNICHANNEL' => 'Service Live',
     'LBL_OMNICHANNEL_DASHBOARD' => 'Omnichannel Dashboard',
+    'LBL_OMNICHANNEL_DEFAULT_CUSTOMER_NAME' => 'Customer',
+    'TPL_OMNICHANNEL_NEW_RECORD_TITLE' => '{{type}} {{direction}} {{identifier}} at {{time}}',
+    
     //END SUGARCRM flav=ent ONLY
 
     //First time login wizard

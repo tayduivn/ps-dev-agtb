@@ -107,6 +107,7 @@
             this.view.name === 'create' ||
             this.view.name === 'dashablerecord' ||
             this.view.name === 'create-nodupecheck' ||
+            this.view.name === 'create-no-cancel-button' ||
             this.view.name === 'pmse-case') &&
             this.type === 'fieldset' &&
             !_.contains(this.fallbackActions, this.action)
