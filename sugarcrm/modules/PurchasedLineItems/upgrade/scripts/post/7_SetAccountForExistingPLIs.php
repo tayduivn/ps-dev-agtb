@@ -25,10 +25,16 @@ class SugarUpgradeSetAccountForExistingPLIs extends UpgradeScript
         ) {
             $this->log('Setting account_id for existing PLIs');
 
-            $updateSql = 'UPDATE purchased_line_items pli ';
-            $updateSql .= 'INNER JOIN purchases p ON pli.purchase_id = p.id ';
-            $updateSql .= 'SET pli.account_id = p.account_id';
-            $this->db->query($updateSql);
+            // QueryBuilder does not support using joins in update calls, so
+            // we must use a subquery here
+            $subQuery = $this->db->getConnection()->createQueryBuilder()
+                ->select('p.account_id')
+                ->from('purchases', 'p')
+                ->where('p.id = pli.purchase_id');
+            $query = $this->db->getConnection()->createQueryBuilder()
+                ->update('purchased_line_items', 'pli')
+                ->set('pli.account_id', '(' . $subQuery->getSQL() . ')');
+            $query->execute();
         }
     }
 }
