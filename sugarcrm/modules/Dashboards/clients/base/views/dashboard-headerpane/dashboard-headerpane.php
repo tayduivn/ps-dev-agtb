@@ -61,23 +61,6 @@ $viewdefs['Dashboards']['base']['view']['dashboard-headerpane'] = array(
             'showOn' => 'view',
         ),
         array(
-            'name' => 'cancel_button',
-            'type' => 'button',
-            'label' => 'LBL_CANCEL_BUTTON_LABEL',
-            'css_class' => 'btn-invisible btn-link',
-            'showOn' => 'edit',
-        ),
-        array(
-            'name' => 'save_button',
-            'type' => 'button',
-            'events' => array(
-                'click' => 'button:save_button:click',
-            ),
-            'label' => 'LBL_SAVE_BUTTON_LABEL',
-            'css_class' => 'btn-primary',
-            'showOn' => 'edit',
-        ),
-        array(
             'name' => 'create_cancel_button',
             'type' => 'button',
             'label' => 'LBL_CANCEL_BUTTON_LABEL',
