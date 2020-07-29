@@ -437,3 +437,14 @@ $viewdefs[$moduleName]['base']['menu']['sweetspot'] = array(
     ),
     //END SUGARCRM flav=ent ONLY
 );
+
+// Sugar Cloud Settings
+if ($idpConfig->isIDMModeEnabled()) {
+    $viewdefs[$moduleName]['base']['menu']['sweetspot'][] = [
+        'label' => 'LBL_SUGAR_CLOUD_SETTINGS_TITLE',
+        'acl_action' => 'studio',
+        'module' => $moduleName,
+        'icon' => 'fa-cogs',
+        'idm_mode_link' => $idpConfig->buildCloudConsoleUrl('/', [], $GLOBALS['current_user']->id),
+    ];
+}

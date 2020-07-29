@@ -15,10 +15,31 @@ use Sugarcrm\Sugarcrm\IdentityProvider\Authentication;
 global $current_user,$admin_group_header;
 
 $config = \SugarConfig::getInstance();
+$idpConfig = new Authentication\Config($config);
+$idmModeConfig = $idpConfig->getIDMModeConfig();
+$admin_option_defs = [];
+
+if ($idpConfig->isIDMModeEnabled()) {
+    if (!key_exists('Administration', $admin_option_defs)) {
+        $admin_option_defs['Administration'] = [];
+    }
+    $admin_option_defs['Administration']['sugarCloudSettings'] = [
+        'Administration',
+        'LBL_SUGAR_CLOUD_SETTINGS_TITLE',
+        'LBL_SUGAR_CLOUD_SETTINGS_DESC',
+        $idpConfig->buildCloudConsoleUrl('/', [], $GLOBALS['current_user']->id),
+        null,
+        null,
+        '_blank',
+    ];
+}
 
 // Needed to see if this is configured for Sugar Cloud Insights
 $insights = $config->get('cloud_insight', []);
 if (!empty($insights['enabled'])) {
+    if (!key_exists('Administration', $admin_option_defs)) {
+        $admin_option_defs['Administration'] = [];
+    }
     $admin_option_defs['Administration']['insights'] = [
         'LeadReports',
         'LBL_CLOUD_INSIGHTS_ADMIN_TITLE',
@@ -31,7 +52,11 @@ if (!empty($insights['enabled'])) {
             $insights['key']
         ),
     ];
+}
 
+if (key_exists('Administration', $admin_option_defs) &&
+    (key_exists('insights', $admin_option_defs['Administration'])
+        || key_exists('sugarCloudSettings', $admin_option_defs['Administration']))) {
     $admin_group_header[] = [
         'LBL_SUGAR_CLOUD_TITLE',
         '',
@@ -47,8 +72,6 @@ $admin_option_defs['Users']['user_management']= array('Users','LBL_MANAGE_USERS_
 $admin_option_defs['Users']['roles_management']= array('Roles','LBL_MANAGE_ROLES_TITLE','LBL_MANAGE_ROLES','./index.php?module=ACLRoles&action=index');
 $admin_option_defs['Users']['teams_management']= array('Teams','LBL_MANAGE_TEAMS_TITLE','LBL_MANAGE_TEAMS','./index.php?module=Teams&action=index');
 
-$idpConfig = new Authentication\Config($config);
-$idmModeConfig = $idpConfig->getIDMModeConfig();
 if ($idpConfig->isIDMModeEnabled()) {
     $passwordManagerUrl = $idpConfig->buildCloudConsoleUrl('passwordManagement', [], $GLOBALS['current_user']->id);
     $passwordManagerTarget = '_blank';
