@@ -14,12 +14,12 @@ Feature: Create Quote From RLI
     Given I use default account
     Given I launch App
 
-  @generate_quote_from_rli
+  @generate_quote_from_rli @ent-only
   Scenario: Quotes > Generate Quote from RLI > Save
     # Create RLI
     Given RevenueLineItems records exist:
-      | *name | date_closed               | likely_case | best_case | sales_stage | quantity | discount_amount |
-      | RLI_1 | 2018-10-19T19:20:22+00:00 | 3000        | 3000      | Prospecting | 3        | 60              |
+      | *name | date_closed               | likely_case | best_case | sales_stage | quantity | discount_amount | discount_select |
+      | RLI_1 | 2018-10-19T19:20:22+00:00 | 3000        | 3000      | Prospecting | 3        | 60              | false           |
     # Create Opportunity
     Given Opportunities records exist related via opportunities link to *RLI_1:
       | *name |
@@ -111,9 +111,6 @@ Feature: Create Quote From RLI
     When I select *RLI_1 in #RevenueLineItemsList.ListView
     Then I should see #RLI_1Record view
     When I click show more button on #RLI_1Record view
-    When I open actions menu in #RLI_1Record and check:
-      | menu_item     | active |
-      | GenerateQuote | false  |
     Then I verify fields on #RLI_1Record.RecordView
       | fieldName  | value |
       | quote_name | RLI_1 |

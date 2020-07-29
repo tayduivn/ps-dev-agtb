@@ -168,16 +168,24 @@ Feature: Cases module verification
       | name1  | account1  | priority1 | status1 | type1          | source1  | description1      | commentlog1 |
       | Case 1 | Account 1 | High      | New     | Administration | Internal | Cases Description | Comment Log |
 
-  @create_article
+  @create_article @ci-excluded
+  # TODO: Re-enable after SS-758 is fixed
   Scenario Outline: Cases > Record view > Create Article
-    Given Cases records exist:
-      | *  | name    |
-      | C1 | <name1> |
-    And Accounts records exist:
-      | *  | name       |
-      | A1 | <account1> |
-
+    Given Accounts records exist:
+      | *     | name       |
+      | Acc_1 | <account1> |
+    # Create new case
     When I choose Cases in modules menu
+    When I click Create button on #CasesList header
+    When I provide input for #CasesDrawer.HeaderView view
+      | *     | name       |
+      | C1 | <name1> |
+    When I provide input for #CasesDrawer.RecordView view
+      | *     | account_name          |
+      | C1 | <account1> |
+    When I click Save button on #CasesDrawer header
+    When I close alert
+    
     Then I should see *C1 in #CasesList.ListView
     When I select *C1 in #CasesList.ListView
     Then I should see #C1Record view
@@ -186,19 +194,22 @@ Feature: Cases module verification
     When I open actions menu in #C1Record
     When I choose CreateArticle from actions menu in #C1Record
     When I provide input for #KBContentsDrawer.HeaderView view
-      | *    | name | status    |
-      | KB_1 | KB_1 | In Review |
+      | *name | status    |
+      | KB_1  | In Review |
     When I click Save button on #KBContentsDrawer header
     And I close alert
     Then I should see #C1Record view
 
     When I open the kbcontents subpanel on #C1Record view
-    Then I verify fields for *KB_1 in #C1Record.SubpanelsLayout.subpanels.kbcontents
-      | fieldName | value |
-      | name      | KB_1  |
+    Then I select *KB_1 in #C1Record.SubpanelsLayout.subpanels.kbcontents
+    When I click show more button on #KB_1Record view
 
-    Then KBContents *KB_1 should have the following values:
-      | fieldName       | value                                                                  |
+    Then I verify fields on #KB_1Record.HeaderView
+      | fieldName | value     |
+      | name      | KB_1      |
+      | status    | In Review |
+    Then I verify fields on #KB_1Record.RecordView
+      | fieldName       | value                                                             |
       | kbdocument_body | <p>Cases Number: {*C1.case_number}</p>    <p>Subject: <name1></p> |
 
     Examples:

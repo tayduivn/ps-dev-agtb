@@ -106,10 +106,18 @@ Feature: Knowledge Base module verification
 
   @delete
   Scenario: Knowledge Base > Record View > Delete
-    Given KBContents records exist:
-      | *name | kbdocument_body |
-      | KB_1  | Hello World!    |
     Given I open KBContents view and login
+    # Create KB article
+    When I click Create button on #KBContentsList header
+    When I provide input for #KBContentsDrawer.HeaderView view
+      | *    | name | status    |
+      | KB_1 | KB_1 | In Review |
+    When I provide input for #KBContentsDrawer.RecordView view
+      | *    | kbdocument_body |
+      | KB_1 | Hello World!    |
+    When I click Save button on #KBContentsDrawer header
+    When I close alert
+
     When I select *KB_1 in #KBContentsList.ListView
     When I open actions menu in #KB_1Record
     When I choose Delete from actions menu in #KB_1Record
@@ -131,10 +139,18 @@ Feature: Knowledge Base module verification
 
   @copy_cancel
   Scenario:  Knowledge Base > Record View > Copy > Cancel
-    Given KBContents records exist:
-      | *name | kbdocument_body |
-      | KB_1  | Hello World!    |
     Given I open KBContents view and login
+    # Create KB article
+    When I click Create button on #KBContentsList header
+    When I provide input for #KBContentsDrawer.HeaderView view
+      | *    | name | status    |
+      | KB_1 | KB_1 | In Review |
+    When I provide input for #KBContentsDrawer.RecordView view
+      | *    | kbdocument_body |
+      | KB_1 | Hello World!    |
+    When I click Save button on #KBContentsDrawer header
+    When I close alert
+
     When I select *KB_1 in #KBContentsList.ListView
     When I open actions menu in #KB_1Record
     When I choose Copy from actions menu in #KB_1Record
@@ -149,16 +165,24 @@ Feature: Knowledge Base module verification
       | fieldName | value |
       | name      | KB_1  |
     Then I verify fields on #KB_1Record.RecordView
-      | fieldName       | value        |
-      | kbdocument_body | Hello World! |
+      | fieldName       | value                                     |
+      | kbdocument_body | <p style="margin: auto;">Hello World!</p> |
 
 
   @copy_save
   Scenario:  Knowledge Base > Record View > Copy > Save
-    Given KBContents records exist:
-      | *name | kbdocument_body |
-      | KB_1  | Hello World!    |
     Given I open KBContents view and login
+    When I click Create button on #KBContentsList header
+    When I click show more button on #KBContentsDrawer view
+    When I provide input for #KBContentsDrawer.HeaderView view
+      | *    | name | status    |
+      | KB_1 | KB_1 | In Review |
+    When I provide input for #KBContentsDrawer.RecordView view
+      | *    | kbdocument_body |
+      | KB_1 | Hello World!    |
+    When I click Save button on #KBContentsDrawer header
+    When I close alert
+
     When I select *KB_1 in #KBContentsList.ListView
     When I open actions menu in #KB_1Record
     When I choose Copy from actions menu in #KB_1Record
@@ -174,8 +198,8 @@ Feature: Knowledge Base module verification
       | fieldName | value |
       | name      | KB_2  |
     Then I verify fields on #KB_1Record.RecordView
-      | fieldName       | value                                  |
-      | kbdocument_body | <p>Hello World! (copy)Hello World!</p> |
+      | fieldName       | value                                                        |
+      | kbdocument_body | <p style="margin: auto;">Hello World! (copy)Hello World!</p> |
 
 
   @create_cancel @create_save
@@ -241,10 +265,18 @@ Feature: Knowledge Base module verification
 
   @record_revision
   Scenario: Knowledge Base > Revisions
-    Given KBContents records exist:
-      | *    | name      | kbdocument_body |
-      | KB_1 | Article 1 | Hello World!    |
     Given I open KBContents view and login
+    # Create KB article
+    When I click Create button on #KBContentsList header
+    When I provide input for #KBContentsDrawer.HeaderView view
+      | *    | name      |
+      | KB_1 | Article 1 |
+    When I provide input for #KBContentsDrawer.RecordView view
+      | *    | kbdocument_body |
+      | KB_1 | Hello World!    |
+    When I click Save button on #KBContentsDrawer header
+    When I close alert
+
     # Create revision
     When I click on revision button for *KB_1 in #KBContentsList.ListView
     When I provide input for #KB_1Drawer.HeaderView view
@@ -261,8 +293,8 @@ Feature: Knowledge Base module verification
       | name      | KB_1 - revision 1 |
       | status    | In Review         |
     Then I verify fields on #KB_rev1Record.RecordView
-      | fieldName       | value                         |
-      | kbdocument_body | <p>Revision 1Hello World!</p> |
+      | fieldName       | value                                               |
+      | kbdocument_body | <p style="margin: auto;">Revision 1Hello World!</p> |
     # Check revision subpanels
     When I open the revisions subpanel on #KB_rev1Record view
     When I verify number of records in #KB_rev1Record.SubpanelsLayout.subpanels.revisions is 1
@@ -293,10 +325,18 @@ Feature: Knowledge Base module verification
 
   @list
   Scenario: Knowledge Base Templates > List View > Review
-    Given KBContentTemplates records exist:
-      | *     | name       | body          |
-      | KBT_1 | Template 1 | My Template 1 |
-    Given I open about view and login
+    Given I open KBContentTemplates view and login
+    # Create KB Template record
+    When I click Create button on #KBContentTemplatesList header
+    When I provide input for #KBContentTemplatesDrawer.HeaderView view
+      | *     | name       |
+      | KBT_1 | Template 1 |
+    When I provide input for #KBContentTemplatesDrawer.RecordView view
+      | *     | body          |
+      | KBT_1 | My Template 1 |
+    When I click Save button on #KBContentTemplatesDrawer header
+    When I close alert
+
     When I go to "KBContentTemplates" url
     Then I should see *KBT_1 in #KBContentTemplatesList.ListView
     Then I verify fields for *KBT_1 in #KBContentTemplatesList.ListView
@@ -314,11 +354,29 @@ Feature: Knowledge Base module verification
 
   @kbTemplates_use_existing
   Scenario: Knowledge Base > Use Templates
-    Given KBContentTemplates records exist:
-      | *     | name       | body          |
-      | KBT_1 | Template 1 | My Template 1 |
-      | KBT_2 | Template 2 | My Template 2 |
-    Given I open KBContents view and login
+    Given I open KBContentTemplates view and login
+    # Create KB Template record
+    When I click Create button on #KBContentTemplatesList header
+    When I provide input for #KBContentTemplatesDrawer.HeaderView view
+      | *     | name       |
+      | KBT_1 | Template 1 |
+    When I provide input for #KBContentTemplatesDrawer.RecordView view
+      | *     | body          |
+      | KBT_1 | My Template 1 |
+    When I click Save button on #KBContentTemplatesDrawer header
+    When I close alert
+
+    When I click Create button on #KBContentTemplatesList header
+    When I provide input for #KBContentTemplatesDrawer.HeaderView view
+      | *     | name       |
+      | KBT_2 | Template 2 |
+    When I provide input for #KBContentTemplatesDrawer.RecordView view
+      | *     | body          |
+      | KBT_2 | My Template 2 |
+    When I click Save button on #KBContentTemplatesDrawer header
+    When I close alert
+
+    When I go to "KBContents" url
     When I click Create button on #KBContentsList header
     # Select existing template for a new article
     When I use existing template *KBT_1 for the new article on #KBContentsDrawer view
@@ -344,10 +402,10 @@ Feature: Knowledge Base module verification
       | name      | KB_1      |
       | status    | In Review |
     Then I verify fields on #KB_1Record.RecordView
-      | fieldName       | value         |
-      | kbdocument_body | My Template 2 |
-      | language        | English       |
-      | revision        | 1             |
+      | fieldName       | value                                      |
+      | kbdocument_body | <p style="margin: auto;">My Template 2</p> |
+      | language        | English                                    |
+      | revision        | 1                                          |
 
 
   @kbTemplates_createNew
@@ -388,10 +446,10 @@ Feature: Knowledge Base module verification
       | name      | KB_1     |
       | status    | Approved |
     Then I verify fields on #T_1Record.RecordView
-      | fieldName       | value               |
-      | kbdocument_body | <p>New Template</p> |
-      | language        | English             |
-      | revision        | 1                   |
+      | fieldName       | value                                     |
+      | kbdocument_body | <p style="margin: auto;">New Template</p> |
+      | language        | English                                   |
+      | revision        | 1                                         |
 
 
   @kbSettings @ci-excluded
@@ -400,7 +458,7 @@ Feature: Knowledge Base module verification
       | *    | name      | kbdocument_body |
       | KB_1 | Article 1 | Hello World!    |
     Given I open KBContents view and login
-  # Select Settings in KB menga menu
+    # Select Settings in KB menga menu
     When I click on "Settings" menu item
     When I add a new language on #KBSettingsDrawer
       | language_code | language_label | primary |
@@ -413,7 +471,7 @@ Feature: Knowledge Base module verification
       | KB_1  | In Review |
     When I provide input for #KBContentsDrawer.RecordView view
       | *    | kbdocument_body | language |
-      | KB_1 | New Article     | Russian  |
+      | KB_1 | New Article     | German   |
     When I click Save button on #KBContentsDrawer header
     When I close alert
 
