@@ -329,6 +329,12 @@ class SugarEmailAddress extends SugarBean
      */
     private function canEditPrimaryEmail(?string $id, ?string $module): bool
     {
+        if (isset($GLOBALS['service']) && $GLOBALS['service'] instanceof RestService) {
+            $args = $GLOBALS['service']->getRequest()->getArgs();
+            if (!empty($args['skip_idm_mode_restrictions'])) {
+                return true;
+            }
+        }
         /* check if we are in idmMode */
         $idmConfig = new IdmConfig(\SugarConfig::getInstance());
         $disabledForModule = $idmConfig->isIDMModeEnabled()
