@@ -155,3 +155,115 @@ Feature: Create Quote From RLI
     Then I verify fields on #QLI_1Record.RecordView
       | fieldName          | value            |
       | assigned_user_name | sally sallyLName |
+
+
+  @generate_quote_from_rli @ent-only @SS-503 @pr
+  Scenario: Quotes > Generate multiple quote records from RLI
+    Given Accounts records exist:
+      | *name |
+      | Acc_1 |
+    Given Opportunities records exist related via opportunities link to *Acc_1:
+      | *name |
+      | Opp_1 |
+    Given RevenueLineItems records exist related via revenuelineitems link to *Opp_1:
+      | *name | date_closed               | likely_case | best_case | sales_stage | quantity | discount_amount | discount_select |
+      | RLI_1 | 2018-10-19T19:20:22+00:00 | 3000        | 3000      | Prospecting | 3        | 60              | false           |
+
+    Given I open about view and login
+    When I choose RevenueLineItems in modules menu
+    When I select *RLI_1 in #RevenueLineItemsList.ListView
+    Then I should see #RLI_1Record view
+    # Manually add account info to Opportunity
+    When I click Edit button on #RLI_1Record header
+    When I provide input for #RLI_1Record.RecordView view
+      | opportunity_name |
+      | Opp_1            |
+    When I click Save button on #RLI_1Record header
+    When I close alert
+
+    # Generate First Quote from RLI
+    When I open actions menu in #RLI_1Record
+    * I choose GenerateQuote from actions menu in #RLI_1Record
+    Then I should see #QuotesRecord view
+    When I toggle Billing_and_Shipping panel on #QuotesRecord.RecordView view
+    # Provide input for the following fields and Save
+    When I provide input for #QuotesRecord.HeaderView view
+      | *   | name     |
+      | Q_1 | Quote v1 |
+    When I provide input for #QuotesRecord.RecordView view
+      | *   | quote_stage | date_quote_expected_closed |
+      | Q_1 | Delivered   | 12/12/2018                 |
+    # Set shipping amount
+    When I provide input for #QuotesRecord.QliTable view
+      | shipping |
+      | 200      |
+    When I click Save button on #QuotesRecord header
+    When I close alert
+    # Verify that quote is saved successfully
+    When I toggle Billing_and_Shipping panel on #Q_1Record.RecordView view
+    Then I verify fields on #Q_1Record.HeaderView
+      | fieldName | value    |
+      | name      | Quote v1 |
+    Then I verify fields on #Q_1Record.RecordView
+      | fieldName                  | value      |
+      | quote_stage                | Delivered  |
+      | opportunity_name           | Opp_1      |
+      | billing_account_name       | Acc_1      |
+      | date_quote_expected_closed | 12/12/2018 |
+    # Verify that Amounts on Grand Total bar are calculated correctly
+    Then I verify fields on QLI total header on #Q_1Record view
+      | fieldName | value        |
+      | deal_tot  | 2.00% $60.00 |
+      | new_sub   | $2,940.00    |
+      | tax       | $0.00        |
+      | shipping  | $200.00      |
+      | total     | $3,140.00    |
+
+    # Update RLI record
+    When I choose RevenueLineItems in modules menu
+    When I select *RLI_1 in #RevenueLineItemsList.ListView
+    When I click Edit button on #RLI_1Record header
+    When I provide input for #RLI_1Record.RecordView view
+      | discount_select |
+      | % Percent       |
+    When I click Save button on #RLI_1Record header
+    When I close alert
+    # TODO: remove the following 'close alert' line after SS-760 is fixed
+    When I close alert
+
+    # Generate Second Quote from RLI
+    When I open actions menu in #RLI_1Record
+    * I choose GenerateQuote from actions menu in #RLI_1Record
+    Then I should see #QuotesRecord view
+    When I toggle Billing_and_Shipping panel on #QuotesRecord.RecordView view
+    # Provide input for the following fields and Save
+    When I provide input for #QuotesRecord.HeaderView view
+      | *   | name     |
+      | Q_2 | Quote v2 |
+    When I provide input for #QuotesRecord.RecordView view
+      | *   | quote_stage | date_quote_expected_closed |
+      | Q_2 | Negotiation | now                        |
+    # Set shipping amount
+    When I provide input for #QuotesRecord.QliTable view
+      | shipping |
+      | 100      |
+    When I click Save button on #QuotesRecord header
+    When I close alert
+    # Verify that quote is saved successfully
+    Then I verify fields on #Q_2Record.HeaderView
+      | fieldName | value    |
+      | name      | Quote v2 |
+    Then I verify fields on #Q_2Record.RecordView
+      | fieldName                  | value       |
+      | quote_stage                | Negotiation |
+      | opportunity_name           | Opp_1       |
+      | billing_account_name       | Acc_1       |
+      | date_quote_expected_closed | now         |
+    # Verify that Amounts on Grand Total bar are calculated correctly
+    Then I verify fields on QLI total header on #Q_2Record view
+      | fieldName | value            |
+      | deal_tot  | 60.00% $1,800.00 |
+      | new_sub   | $1,200.00        |
+      | tax       | $0.00            |
+      | shipping  | $100.00          |
+      | total     | $1,300.00        |
