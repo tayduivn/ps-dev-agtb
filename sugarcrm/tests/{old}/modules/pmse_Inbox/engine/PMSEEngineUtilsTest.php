@@ -31,10 +31,6 @@ class PMSEEngineUtilsTest extends TestCase
      */
     protected $oldTimedata;
     /**
-     * @var Log
-     */
-    protected $oldLog;
-    /**
      * @var ModuleList
      */
     protected $oldModuleList;
@@ -79,13 +75,6 @@ class PMSEEngineUtilsTest extends TestCase
         }
         $GLOBALS['timedate'] = TimeDate::getInstance();
 
-        if (!empty($GLOBALS['log'])) {
-            $this->oldLog = $GLOBALS['log'];
-        }
-        $levels = \LoggerManager::getLoggerLevels();
-        $levels = array_keys($levels);
-        $GLOBALS['log'] = $this->createPartialMock(\stdClass::class, $levels);
-
         if (!empty($GLOBALS['app_list_strings']['moduleList'])) {
             $this->oldModuleList = $GLOBALS['app_list_strings']['moduleList'];
         }
@@ -117,12 +106,6 @@ class PMSEEngineUtilsTest extends TestCase
             $GLOBALS['timedate'] = $this->oldTimedata;
         } else {
             unset($GLOBALS['timedate']);
-        }
-
-        if (!empty($this->oldLog)) {
-            $GLOBALS['log'] = $this->oldLog;
-        } else {
-            unset($GLOBALS['log']);
         }
 
         if (!empty($this->oldModuleList)) {
@@ -221,6 +204,86 @@ class PMSEEngineUtilsTest extends TestCase
                 'isSupportedModule' => false,
                 'message' => 'callType is set but not defined in processes of vardefs. ' .
                     'Emails should not be a supported module. ',
+            ],
+        ];
+    }
+
+    /**
+     * Test whether Relate Field is a valid field in different actions
+     *
+     * @covers PMSEEngineUtils::isValidField
+     * @dataProvider getIsValidFieldData
+     * @param $def
+     * @param $type
+     * @param $result
+     */
+    public function testIsValidField($def, $type, $result)
+    {
+        $this->object = $this->getMockBuilder('PMSEEngineUtils')
+            ->disableOriginalConstructor()
+            ->setMethods(['blackListFields', 'specialFields', 'isDisallowedNonDbField'])
+            ->getMock();
+
+        $this->object->method('blackListFields')
+            ->will($this->returnValue(true));
+
+        $this->object->method('specialFields')
+            ->will($this->returnValue(false));
+
+        $this->object->method('isDisallowedNonDbField')
+            ->will($this->returnValue(false));
+
+        $validField = $this->object->isValidField($def, $type);
+        if ($result === true) {
+            $this->assertTrue($validField);
+        } else {
+            $this->assertFalse($validField);
+        }
+    }
+
+    public function getIsValidFieldData()
+    {
+        return [
+            [
+                'def' => [
+                    'name' => 'account_id',
+                    'type' => 'id',
+                ],
+                'type' => 'PD',
+                'result' => true,
+            ],
+            [
+                'def' => [
+                    'name' => 'account_name',
+                    'type' => 'id',
+                    'id_name' => 'account_id',
+                ],
+                'type' => 'PD',
+                'result' => false,
+            ],
+            [
+                'def' => [
+                    'name' => 'id',
+                    'type' => 'id',
+                ],
+                'type' => 'PD',
+                'result' => false,
+            ],
+            [
+                'def' => [
+                    'name' => 'account_id',
+                    'type' => 'id',
+                ],
+                'type' => 'CF',
+                'result' => false,
+            ],
+            [
+                'def' => [
+                    'name' => 'account_id',
+                    'type' => 'relate',
+                ],
+                'type' => 'PD',
+                'result' => true,
             ],
         ];
     }

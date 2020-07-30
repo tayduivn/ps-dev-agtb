@@ -173,7 +173,7 @@ FilterField.prototype._typeToControl = {
     //flex relate: 'flexrelate',
     phone: 'text',
     radio: 'radio',
-    //relate: 'related',
+    relate: 'related',
     textarea: 'text',//'textarea',
     url: 'text',
     textfield: 'text',
@@ -421,6 +421,28 @@ FilterField.prototype.processValueDependency = function(type) {
                 settings.searchLabel = PMSE_USER_SEARCH.text;
                 settings.searchURL = PMSE_USER_SEARCH.url;
                 break;
+            case 'related':
+                settings.options = [];
+                var relateBean = App.data.createRelatedBean(App.data.createBean(PROJECT_MODULE), null, this.module);
+                var fields = relateBean && relateBean.fields ? relateBean.fields : [];
+                var fieldName = this.selectField.value;
+                var relateFieldDef = fields && fieldName && fields[fieldName] ? fields[fieldName] : {};
+                var searchModule = relateFieldDef && relateFieldDef.module ? relateFieldDef.module : '';
+                settings.searchMore = {
+                    module: searchModule,
+                    fields: ['id', 'name'],
+                    filterOptions: null
+                };
+                settings.searchValue = 'id';
+                settings.searchLabel = 'name';
+                if (!_.isEmpty(searchModule)) {
+                    settings.searchURL = searchModule +
+                        '?filter[0][$and][1][$or][0][name][$starts]={%TERM%}&fields=id,' +
+                        'name&max_num={%PAGESIZE%}&offset={%OFFSET%}';
+                } else {
+                    settings.searchURL = '';
+                }
+                break;
             case 'datetime':
                 settings.timeFormat = this.timeFormat;
             case 'date':
@@ -505,6 +527,7 @@ FilterField.prototype.createValueElements = function(settings) {
             valueElement = this.createCurrencyValueElement(settings);
             break;
         case 'friendlydropdown':
+        case 'related':
             valueElement = this.createFriendlyDropdownValueElement(settings);
             break;
         case 'decimal':

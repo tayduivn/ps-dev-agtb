@@ -113,6 +113,7 @@ FormPanel.prototype._createField = function (settings) {
             field = new FormPanelDropdown(defaults);
             break;
         case 'friendlydropdown':
+        case 'related':
             field = new FormPanelFriendlyDropdown(defaults);
             break;
         case 'date':

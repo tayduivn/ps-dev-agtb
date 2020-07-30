@@ -39,7 +39,6 @@ $dictionary['Product'] = array(
             'dbType' => 'varchar',
             'len' => '255',
             'source' => 'non-db',
-            'source' => 'non-db',
             'studio' => false,
             'massupdate' => false,
         ),

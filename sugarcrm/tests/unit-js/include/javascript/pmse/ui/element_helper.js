@@ -413,4 +413,61 @@ describe('includes.javascript.pmse.ui.element_helper', function() {
                 checkProcessValueDependency(false, false, null);
         });
     });
+
+    describe('processValueDependency', function() {
+        var parentField;
+        var dependantField;
+        var operatorField;
+        beforeEach(function() {
+            parentField = new FormPanelDropdown({
+                _name: 'field'
+            });
+            dependantField = new FormPanelText({
+                _name: 'value',
+                _label: 'Value',
+            });
+            operatorField = new FormPanelDropdown({
+                _name: 'operator'
+            });
+        });
+
+        it('Check relate field has Search and Select criteria set', function() {
+            helper._parent = new ExpressionControl({});
+            helper._parent._name = 'evn_criteria';
+
+            var select = document.createElement('select');
+            select.id = 'testSelect';
+            var option1 = document.createElement('option');
+            option1.text = 'Name';
+            option1.value = 'name';
+            select.add(option1, null);
+
+            var option2 = document.createElement('option');
+            option2.text = 'Account Id';
+            option2.value = 'account_id';
+            $(option2).data('data', {module: 'Cases', type: '<Cases>', value: 'account_id'});
+            select.add(option2, null);
+            select.selectedIndex = '1';
+
+            parentField.html = select;
+            sinon.collection.stub(App.data, 'createBean').returns({fields: {account_id: {module: 'Cases'}}});
+            var ret = new FormPanelFriendlyDropdown();
+            var createFieldStub = sinon.collection.stub(FormPanel.prototype, '_createField').returns(ret);
+            var form = new FormPanel();
+
+            helper.processValueDependency(
+                dependantField,
+                parentField,
+                operatorField,
+                'related',
+                null,
+                form
+            );
+
+            expect(createFieldStub.args[0][0].searchValue).toEqual('id');
+            expect(createFieldStub.args[0][0].searchLabel).toEqual('name');
+            expect(createFieldStub.args[0][0].searchURL).toEqual('Cases?filter[0][$and][1][$or][0][name][$starts]=' +
+                '{%TERM%}&fields=id,name&max_num={%PAGESIZE%}&offset={%OFFSET%}');
+        });
+    });
 });

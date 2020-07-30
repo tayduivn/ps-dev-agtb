@@ -380,6 +380,13 @@ class PMSERelatedModule
             case 'multienum':
                 $value = !empty($value) ? unencodeMultienum($value) : array();
                 break;
+            case 'relate':
+                if (!empty($def['id_name']) &&
+                    !empty($newBean->field_defs[$def['id_name']]) &&
+                    !empty($newBean->{$def['id_name']})) {
+                    $value = $newBean->{$def['id_name']};
+                }
+                break;
           }
           return $value;
     }

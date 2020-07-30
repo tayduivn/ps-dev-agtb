@@ -2244,8 +2244,8 @@ SQL;
                 $field['vname'] = 'LBL_ASSIGNED_TO';
                 $field['required'] = true;
                 break;
-            case 'created_by':
-            case 'modified_user_id':
+            case 'created_by_name':
+            case 'modified_by_name':
                 $field['type'] = 'user';
                 break;
             case 'teams':

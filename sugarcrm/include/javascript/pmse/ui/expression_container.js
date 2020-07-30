@@ -35,8 +35,7 @@ ExpressionContainer.prototype.unsupportedDataTypes = [
     'IFrame',
     'Image',
     'MultiSelect',
-    'FlexRelate',
-    'Relate'
+    'FlexRelate'
 ];
 
 ExpressionContainer.prototype.init = function (options, parent) {
