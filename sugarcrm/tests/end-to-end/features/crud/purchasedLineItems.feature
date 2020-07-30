@@ -90,7 +90,7 @@ Feature: Purchased Line Items module verification
       | name          | PLI_<changeIndex>      |
       | purchase_name | Purchase <changeIndex> |
       | date_closed   | 06/0<changeIndex>/2020 |
-      | revenue       | <changeIndex>000       |
+      | quantity      | <changeIndex>          |
 
     # Verify if edit (or cancel) is successful
     Then PurchasedLineItems *PLI_1 should have the following values in the list view:
@@ -98,7 +98,7 @@ Feature: Purchased Line Items module verification
       | name          | PLI_<expectedIndex>      |
       | purchase_name | Purchase <expectedIndex> |
       | date_closed   | 06/0<expectedIndex>/2020 |
-      | revenue       | $<expectedIndex>,000.00  |
+      | quantity      | <expectedIndex>.00       |
 
     Examples:
       | action            | changeIndex | expectedIndex |
@@ -377,18 +377,18 @@ Feature: Purchased Line Items module verification
     # Verify that account is updated in PLI preview
     When I choose PurchasedLineItems in modules menu
     Then PurchasedLineItems *PLI_1 should have the following values in the preview:
-      | fieldName     | value       |
-      | name          | Chelsea FC  |
-      | purchase_name | Purchase 1  |
+      | fieldName     | value      |
+      | name          | Chelsea FC |
+      | purchase_name | Purchase 1 |
       # TODO: uncomment this file after SS-726 is fixed
       # | account_name  | Account Two |
 
     # Verify that account is updated in PLI record view
     When I select *PLI_1 in #PurchasedLineItemsList.ListView
     Then PurchasedLineItems *PLI_1 should have the following values:
-      | fieldName     | value       |
-      | name          | Chelsea FC  |
-      | purchase_name | Purchase 1  |
+      | fieldName     | value      |
+      | name          | Chelsea FC |
+      | purchase_name | Purchase 1 |
       # TODO: uncomment this file after SS-726 is fixed
       # | account_name  | Account Two |
 

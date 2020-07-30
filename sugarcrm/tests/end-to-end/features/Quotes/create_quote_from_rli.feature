@@ -56,9 +56,6 @@ Feature: Create Quote From RLI
     When I Confirm confirmation alert
     # Verify that quote is not created
     Then I should see #RLI_1Record view
-    Then I verify fields on #RLI_1Record.RecordView
-      | fieldName  | value |
-      | quote_name |       |
 
     # Generate Quote from RLI > Save
     When I open actions menu in #RLI_1Record
@@ -102,20 +99,7 @@ Feature: Create Quote From RLI
       | tax       | $0.00        |
       | shipping  | $200.00      |
       | total     | $3,140.00    |
-    # Verify that "Create Opportunity" menu item is now disabled
-    When I open actions menu in #RecordIDRecord and check:
-      | menu_item         | active |
-      | CreateOpportunity | false  |
-    # Verify that RLI has a link to generated quote
-    When I choose RevenueLineItems in modules menu
-    When I select *RLI_1 in #RevenueLineItemsList.ListView
-    Then I should see #RLI_1Record view
-    When I click show more button on #RLI_1Record view
-    Then I verify fields on #RLI_1Record.RecordView
-      | fieldName  | value |
-      | quote_name | RLI_1 |
-    When I click quote_name field on #RLI_1Record.RecordView view
-    Then I should see #RecordIDRecord view
+
 
   @verification_assigned_user_qli @SS-261 @AT-350
   Scenario: Quotes > Verify Assigned User on QLI is correctly set

@@ -130,6 +130,7 @@ When(/^I (approve|reject|route) the Business Process request on (#[a-zA-Z](?:\w|
 
         // Confirm request
         await closeWarning('Confirm');
+        await this.driver.pause(5000);
         // Close success message
         await closeAlert();
 
