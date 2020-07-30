@@ -79,6 +79,8 @@
     switchModel: function(tabIndex) {
         if (this.tabModels[tabIndex]) {
             this.context.parent.set('rowModel', this.tabModels[tabIndex]);
+            // for interaction dashlets
+            this.context.set('rowModel', this.tabModels[tabIndex]);
         }
     },
 

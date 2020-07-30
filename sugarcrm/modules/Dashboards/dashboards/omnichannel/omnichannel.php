@@ -55,70 +55,174 @@ return [
                     'module' => 'Contacts',
                 ],
                 'name' => 'LBL_CONTACT',
-                'components' => [
-                    //TODO: CS-770
+                'dashlets' => [
                     [
-                        'rows' => [
-                            // row 1
-                            [
+                        'view' => [
+                            'type' => 'dashablerecord',
+                            'module' => 'Contacts',
+                            'tabs' => [
                                 [
-                                    'view' => [
-                                        'type' => 'dashablerecord',
-                                        'module' => 'Contacts',
-                                        'tabs' => [
-                                            [
-                                                'active' => true,
-                                                'label' => 'LBL_MODULE_NAME_SINGULAR',
-                                                'link' => '',
-                                                'module' => 'Contacts',
-                                            ],
-                                            [
-                                                'active' => false,
-                                                'link' => 'tasks',
-                                                'module' => 'Tasks',
-                                                'order_by' => [
-                                                    'field' => 'date_entered',
-                                                    'direction' => 'desc',
-                                                ],
-                                                'limit' => 5,
-                                                'fields' => [
-                                                    'name',
-                                                    'assigned_user_name',
-                                                    'date_entered',
-                                                ],
-                                            ],
-                                            [
-                                                'active' => false,
-                                                'link' => 'documents',
-                                                'module' => 'Documents',
-                                                'order_by' => [
-                                                    'field' => 'active_date',
-                                                    'direction' => 'desc',
-                                                ],
-                                                'limit' => 5,
-                                                'fields' => [
-                                                    'document_name',
-                                                    'active_date',
-                                                ],
-                                            ],
-                                        ],
-                                        'tab_list' => [
-                                            'Contacts',
-                                            'tasks',
-                                            'documents',
-                                        ],
-                                    ],
-                                    'context' => [
-                                        'module' => 'Contacts',
-                                    ],
-                                    'width' => 6,
+                                    'active' => true,
+                                    'label' => 'LBL_MODULE_NAME_SINGULAR',
+                                    'link' => '',
+                                    'module' => 'Contacts',
+                                ],
+                                [
+                                    'active' => false,
+                                    'label' => 'LBL_MODULE_NAME_SINGULAR',
+                                    'link' => 'accounts',
+                                    'module' => 'Accounts',
                                 ],
                             ],
-                            // row 2
-                            [
+                            'tab_list' => [
+                                'contacts',
+                                'accounts',
                             ],
                         ],
-                        'width' => 12,
+                        'context' => [
+                            'module' => 'Contacts',
+                        ],
+                        'width' => 6,
+                        'height' => 5,
+                        'x' => 0,
+                        'y' => 0,
+                        'autoPosition' => false,
+                    ],
+                    [
+                        'view' => [
+                            'type' => 'dashlet-searchable-kb-list',
+                            'name' => 'LBL_DASHLET_KB_SEARCH_NAME',
+                            'data_provider' => 'Categories',
+                            'config_provider' => 'KBContents',
+                            'root_name' => 'category_root',
+                            'extra_provider' => [
+                                'module' => 'KBContents',
+                                'field' => 'category_id',
+                            ],
+                        ],
+                        'context' => [
+                            'module' => 'KBContents',
+                        ],
+                        'width' => 6,
+                        'height' => 5,
+                        'x' => 6,
+                        'y' => 0,
+                        'autoPosition' => false,
+                    ],
+                    [
+                        'view' => [
+                            'type' => 'dashlet-console-list',
+                            'module' => 'Cases',
+                        ],
+                        'context' => [
+                            'module' => 'Cases',
+                        ],
+                        'width' => 6,
+                        'height' => 5,
+                        'x' => 0,
+                        'y' => 5,
+                        'autoPosition' => false,
+                    ],
+                    [
+                        'view' => [
+                            'type' => 'activity-timeline',
+                            'label' => 'TPL_ACTIVITY_TIMELINE_DASHLET',
+                            'module' => 'Contacts',
+                            'custom_toolbar' => [
+                                'buttons' => [
+                                    [
+                                        'type' => 'actiondropdown',
+                                        'no_default_action' => true,
+                                        'icon' => 'fa-plus',
+                                        'buttons' => [
+                                            [
+                                                'type' => 'dashletaction',
+                                                'action' => 'composeEmail',
+                                                'params' => [
+                                                    'link' => 'emails',
+                                                    'module' => 'Emails',
+                                                ],
+                                                'label' => 'LBL_COMPOSE_EMAIL_BUTTON_LABEL',
+                                                'icon' => 'fa-plus',
+                                                'acl_action' => 'create',
+                                                'acl_module' => 'Emails',
+                                            ],
+                                            [
+                                                'type' => 'dashletaction',
+                                                'action' => 'createRecord',
+                                                'params' => [
+                                                    'link' => 'calls',
+                                                    'module' => 'Calls',
+                                                ],
+                                                'label' => 'LBL_SCHEDULE_CALL',
+                                                'icon' => 'fa-phone',
+                                                'acl_action' => 'create',
+                                                'acl_module' => 'Calls',
+                                            ],
+                                            [
+                                                'type' => 'dashletaction',
+                                                'action' => 'createRecord',
+                                                'params' => [
+                                                    'link' => 'meetings',
+                                                    'module' => 'Meetings',
+                                                ],
+                                                'label' => 'LBL_SCHEDULE_MEETING',
+                                                'icon' => 'fa-calendar',
+                                                'acl_action' => 'create',
+                                                'acl_module' => 'Meetings',
+                                            ],
+                                            [
+                                                'type' => 'dashletaction',
+                                                'action' => 'createRecord',
+                                                'params' => [
+                                                    'link' => 'notes',
+                                                    'module' => 'Notes',
+                                                ],
+                                                'label' => 'LBL_CREATE_NOTE_OR_ATTACHMENT',
+                                                'icon' => 'fa-plus',
+                                                'acl_action' => 'create',
+                                                'acl_module' => 'Notes',
+                                            ],
+                                        ],
+                                    ],
+                                    [
+                                        'type' => 'dashletaction',
+                                        'css_class' => 'dashlet-toggle btn btn-invisible minify',
+                                        'icon' => 'fa-chevron-up',
+                                        'action' => 'toggleMinify',
+                                        'tooltip' => 'LBL_DASHLET_MINIMIZE',
+                                    ],
+                                    [
+                                        'dropdown_buttons' => [
+                                            [
+                                                'type' => 'dashletaction',
+                                                'action' => 'editClicked',
+                                                'label' => 'LBL_DASHLET_CONFIG_EDIT_LABEL',
+                                            ],
+                                            [
+                                                'type' => 'dashletaction',
+                                                'action' => 'reloadData',
+                                                'label' => 'LBL_DASHLET_REFRESH_LABEL',
+                                            ],
+                                            [
+                                                'type' => 'dashletaction',
+                                                'action' => 'removeClicked',
+                                                'label' => 'LBL_DASHLET_REMOVE_LABEL',
+                                                'name' => 'remove_button',
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                        'context' => [
+                            'module' => 'Contacts',
+                        ],
+                        'width' => 6,
+                        'height' => 5,
+                        'x' => 6,
+                        'y' => 5,
+                        'autoPosition' => false,
                     ],
                 ],
             ],
