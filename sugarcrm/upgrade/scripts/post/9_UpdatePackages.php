@@ -63,7 +63,7 @@ class SugarUpgradeUpdatePackages extends UpgradeScript
 
     public function run()
     {
-        if (version_compare($this->to_version, '10.1.0', '<') || version_compare($this->to_version, '10.2.0', '>=')) {
+        if (version_compare($this->from_version, '10.1.0', '>=')) {
             return;
         }
 
