@@ -1582,6 +1582,15 @@ if (typeof(ModuleBuilder) == 'undefined') {
             Dom.get('dependency').disabled = !enable;
 			Dom.get('dependent').value = enable;
         },
+            toggleRequiredFormula: function(enable) {
+                if (typeof(enable) == 'undefined') {
+                    enable = Dom.get('required').checked;
+                }
+                var display = enable ? '' : 'none';
+                Dom.setStyle('requiredFormulaRow', 'display', display);
+                Dom.get('required_formula').disabled = !enable;
+                Dom.get('required').value = enable;
+            },
         //We can only have a formula or a vis_grid. Before we save we need to clear the one we aren't using
         validateDD: function() {
             if ($('#depTypeSelect').val() != "parent")

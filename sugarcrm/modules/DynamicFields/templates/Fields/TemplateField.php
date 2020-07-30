@@ -113,6 +113,7 @@ class TemplateField{
         'dependency' => 'dependency',
         'related_fields' => 'related_fields',
         'pii' => 'pii',
+        'required_formula' => 'required_formula',
 	);
 
     /**
@@ -134,7 +135,7 @@ class TemplateField{
 
     // Bug #48826
     // fields to decode from post request
-    var $decode_from_request_fields_map = array('formula', 'dependency');
+    public $decode_from_request_fields_map = array('formula', 'dependency', 'required_formula');
 	/*
 		HTML FUNCTIONS
 		*/
@@ -391,6 +392,9 @@ class TemplateField{
         }
         if (!empty($this->dependency) && is_string($this->dependency)) {
             $array['dependency'] = html_entity_decode($this->dependency);
+        }
+        if (!empty($this->required_formula) && is_string($this->required_formula)) {
+            $array['required_formula'] = html_entity_decode($this->required_formula);
         }
         if (!empty($this->len)) {
             $array['len'] = $this->len;

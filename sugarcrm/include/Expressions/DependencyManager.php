@@ -171,6 +171,32 @@ class DependencyManager
     }
 
     /**
+     * Used to get a set of Dependencies to drive the required fields for this module.
+     *
+     * @param array  $fields fielddef array to create the dependencies from
+     * @return array <Dependency>
+     */
+    public static function getRequiredFieldDependencies($fields)
+    {
+        $deps = array();
+
+        foreach ($fields as $field => $def) {
+            if (!empty($def['required_formula'])) {
+                $value = $def['required_formula'];
+                $triggerFields = Parser::getFieldsFromExpression($def['required_formula'], $fields);
+
+                $dep = new Dependency($field . '_required');
+                $dep->setTrigger(new Trigger('true', $triggerFields));
+                $dep->addAction(ActionFactory::getNewAction('SetRequired', array('target' => $field, 'value' => $value)));
+                $dep->setFireOnLoad(true);
+                $deps[] = $dep;
+            }
+        }
+
+        return $deps;
+    }
+
+    /**
      * Used to get a set of Dependencies to drive the dependent fields for this module.
      * @static
      * @param array $fields fielddef array to create the dependencies from
@@ -447,6 +473,7 @@ class DependencyManager
             return array_merge(
                 self::getCalculatedFieldDependencies($fields, true, false, $view),
                 self::getDependentFieldDependencies($fields),
+                self::getRequiredFieldDependencies($fields),
                 self::getDropDownDependencies($fields));
         }
     }

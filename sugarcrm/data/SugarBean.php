@@ -2260,25 +2260,27 @@ class SugarBean
     function updateCalculatedFields()
     {
         $deps = DependencyManager::getCalculatedFieldDependencies($this->field_defs, false, true);
-        foreach($deps as $dep)
-        {
-            if ($dep->getFireOnLoad())
-            {
+        foreach ($deps as $dep) {
+            if ($dep->getFireOnLoad()) {
                 $dep->fire($this);
             }
         }
         $deps = DependencyManager::getDependentFieldDependencies($this->field_defs, 'save');
-        foreach($deps as $dep) {
+        foreach ($deps as $dep) {
+            if ($dep->getFireOnLoad()) {
+                $dep->fire($this);
+            }
+        }
+        $deps = DependencyManager::getRequiredFieldDependencies($this->field_defs, 'save');
+        foreach ($deps as $dep) {
             if ($dep->getFireOnLoad()) {
                 $dep->fire($this);
             }
         }
         //Check for other on-save dependencies
         $deps = DependencyManager::getModuleDependenciesForAction($this->module_dir, "save");
-        foreach($deps as $dep)
-        {
-            if ($dep->getFireOnLoad())
-            {
+        foreach ($deps as $dep) {
+            if ($dep->getFireOnLoad()) {
                 $dep->fire($this);
             }
         }

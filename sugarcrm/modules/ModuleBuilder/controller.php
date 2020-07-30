@@ -484,6 +484,9 @@ class ModuleBuilderController extends SugarController
                 if (!empty($field->formula)) {
                     $relatedMods = array_merge($relatedMods, VardefManager::getLinkedModulesFromFormula($bean, $field->formula));
                 }
+                if (!empty($field->required_formula)) {
+                    $relatedMods = array_merge($relatedMods, VardefManager::getLinkedModulesFromFormula($bean, $field->required_formula));
+                }
 
                 // But only if there are related modules to work on, otherwise
                 // we end up handling these processes for ALL THE MODULES
@@ -560,12 +563,20 @@ class ModuleBuilderController extends SugarController
 
         //Ensure the vardefs are up to date for this module before we rebuild the cache now.
         VardefManager::loadVardef($module, $obj, true);
+
         //Make sure to clear the vardef for related modules as well
-        $relatedMods = array();
-        if (!empty($field->dependency))
+        $relatedMods = [];
+
+        if (!empty($field->dependency)) {
             $relatedMods = array_merge($relatedMods, VardefManager::getLinkedModulesFromFormula($mod, $field->dependency));
-        if (!empty($field->formula))
+        }
+        if (!empty($field->formula)) {
             $relatedMods = array_merge($relatedMods, VardefManager::getLinkedModulesFromFormula($mod, $field->formula));
+        }
+        if (!empty($field->required_formula)) {
+            $relatedMods = array_merge($relatedMods, VardefManager::getLinkedModulesFromFormula($mod, $field->required_formula));
+        }
+
         foreach ($relatedMods as $mName => $oName) {
             $repair->repairAndClearAll(array('clearVardefs', 'clearTpls'), array($mName), true, false);
             VardefManager::clearVardef($mName, $oName);

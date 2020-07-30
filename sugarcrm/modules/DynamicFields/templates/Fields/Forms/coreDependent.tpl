@@ -55,3 +55,27 @@
     </td>
 </tr>
 {/if}
+{if $vardef.type != 'bool' && !$hideRequired}
+    <tr>
+        <td class='mbLBL'>{sugar_translate module="DynamicFields" label="COLUMN_TITLE_REQUIRED_OPTION"}:</td>
+        <td>
+            <input type="checkbox" name="required" id="required" value="1" onclick ="ModuleBuilder.toggleRequiredFormula()"
+                   {if !empty($vardef.required)}CHECKED{/if} {if $hideLevel > 5}disabled{/if}/>
+            {if $hideLevel > 5}<input type="hidden" name="required" value="{$vardef.required}">{/if}
+            {sugar_help text=$mod_strings.LBL_POPHELP_REQUIRED FIXX=250 FIXY=80}
+        </td>
+    </tr>
+    <tr id='requiredFormulaRow' {if empty($vardef.required)}style="display:none"{/if}>
+        <td class='mbLBL'>{sugar_translate module="DynamicFields" label="LBL_REQUIRED_IF"}:</td>
+        <td>
+            <input id="required_formula" type="hidden" name="required_formula"
+                   value="{if empty($vardef.required_formula)}always{else}{$vardef.required_formula|escape:'html'}{/if}"
+                   onchange="document.getElementById('required_formula_display').value = this.value"/>
+            <input id="required_formula_display" type="text" name="required_formula_display"
+                   value="{if empty($vardef.required_formula)}always{else}{$vardef.required_formula|escape:'html'}{/if}"
+                   readonly="1" style="background-color:#eee"/>
+            <input class="button" type=button name="editFormula" value="{sugar_translate label="LBL_BTN_EDIT_FORMULA"}"
+                   onclick="ModuleBuilder.moduleLoadFormula(YAHOO.util.Dom.get('required_formula').value, 'required_formula', 'boolean')"/>
+        </td>
+    </tr>
+{/if}
