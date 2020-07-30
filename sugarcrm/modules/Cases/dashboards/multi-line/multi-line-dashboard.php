@@ -175,6 +175,18 @@ return [
                                                     'acl_action' => 'create',
                                                     'acl_module' => 'Notes',
                                                 ],
+                                                [
+                                                    'type' => 'dashletaction',
+                                                    'action' => 'createRecord',
+                                                    'params' => [
+                                                        'link' => 'messages',
+                                                        'module' => 'Messages',
+                                                    ],
+                                                    'label' => 'LBL_CREATE_MESSAGE',
+                                                    'icon' => 'fa-comment',
+                                                    'acl_action' => 'create',
+                                                    'acl_module' => 'Messages',
+                                                ],
                                             ],
                                         ],
                                         [

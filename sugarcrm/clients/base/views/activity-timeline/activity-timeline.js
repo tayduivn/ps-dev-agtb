@@ -25,6 +25,7 @@
         Calls: 'fa-phone',
         Emails: 'fa-envelope',
         Meetings: 'fa-calendar',
+        Messages: 'fa-comment',
         Notes: 'fa-file-text',
     },
 
@@ -35,6 +36,7 @@
         'Calls',
         'Emails',
         'Meetings',
+        'Messages',
         'Notes',
     ],
 

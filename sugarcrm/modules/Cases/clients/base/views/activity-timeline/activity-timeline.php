@@ -73,6 +73,21 @@ $viewdefs['Cases']['base']['view']['activity-timeline'] = [
             ],
         ],
         [
+            'module' => 'Messages',
+            'record_date' => 'date_start',
+            'fields' => [
+                'name',
+                'contact_name',
+                'description',
+                'direction',
+                'date_start',
+                'date_end',
+                'conversation',
+                'conversation_link',
+                'assigned_user_name',
+            ],
+        ],
+        [
             'module' => 'Notes',
             'record_date' => 'date_entered',
             'fields' => [
@@ -140,6 +155,18 @@ $viewdefs['Cases']['base']['view']['activity-timeline'] = [
                         'icon' => 'fa-plus',
                         'acl_action' => 'create',
                         'acl_module' => 'Notes',
+                    ],
+                    [
+                        'type' => 'dashletaction',
+                        'action' => 'createRecord',
+                        'params' => [
+                            'link' => 'messages',
+                            'module' => 'Messages',
+                        ],
+                        'label' => 'LBL_CREATE_MESSAGE',
+                        'icon' => 'fa-comment',
+                        'acl_action' => 'create',
+                        'acl_module' => 'Messages',
                     ],
                 ],
             ],
