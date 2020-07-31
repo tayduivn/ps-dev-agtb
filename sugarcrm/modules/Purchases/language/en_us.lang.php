@@ -48,4 +48,9 @@ $mod_strings = [
     'LBL_LIST_PRODUCT_TEMPLATE_NAME' => 'Product Catalog Name',
     'LBL_LIST_CATEGORY_NAME' => 'Product Category',
     'LBL_LIST_TYPE_NAME' => 'Product Type',
+
+    // Dashboard
+    'LBL_PURCHASES_LIST_DASHBOARD' => 'Purchases List Dashboard',
+    'LBL_PURCHASES_RECORD_DASHBOARD' => 'Purchases Record Dashboard',
+    'LBL_RELATED_ACCOUNT' => 'Related Account',
 ];

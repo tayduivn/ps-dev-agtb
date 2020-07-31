@@ -759,6 +759,9 @@ $renamedefs = array(
             array('name' => 'LBL_PRODUCT_TEMPLATE_NAME', 'type' => 'singular', 'source' => 'ProductTemplates'),
             array('name' => 'LBL_PRODUCT_TEMPLATES', 'type' => 'plural', 'source' => 'ProductTemplates'),
             array('name' => 'LBL_PURCHASED_LINE_ITEMS', 'type' => 'plural', 'source' => 'PurchasedLineItems'),
+            ['name' => 'LBL_RELATED_ACCOUNT', 'type' => 'singular', 'source' => 'Accounts'],
+            ['name' => 'LBL_PURCHASES_LIST_DASHBOARD', 'type' => 'plural', 'source' => 'Purchases'],
+            ['name' => 'LBL_PURCHASES_RECORD_DASHBOARD', 'type' => 'plural', 'source' => 'Purchases'],
         ),
         'PurchasedLineItems' => array(
             array('name' => 'LBL_CATEGORY_ID', 'type' => 'singular', 'source' => 'ProductCategories'),
@@ -778,6 +781,9 @@ $renamedefs = array(
             array('name' => 'LBL_RLI_NAME', 'type' => 'singular', 'source' => 'RevenueLineItems'),
             array('name' => 'LBL_NEW_OPPORTUNITY', 'type' => 'singular', 'source' => 'Opportunities'),
             array('name' => 'LBL_EXISTING_OPPORTUNITY', 'type' => 'singular', 'source' => 'Opportunities'),
+            ['name' => 'LBL_PARENT_PURCHASE', 'type' => 'singular', 'source' => 'Purchases'],
+            ['name' => 'LBL_PURCHASEDLINEITEMS_LIST_DASHBOARD', 'type' => 'plural', 'source' => 'PurchasedLineItems'],
+            ['name' => 'LBL_PURCHASEDLINEITEMS_RECORD_DASHBOARD', 'type' => 'plural', 'source' => 'PurchasedLineItems'],
         ),
         // END SUGARCRM flav=ent ONLY
         'Quotes' => array(

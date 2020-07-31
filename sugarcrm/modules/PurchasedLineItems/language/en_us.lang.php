@@ -79,4 +79,9 @@ $mod_strings = [
     'LBL_NEW_OPPORTUNITY' => 'New Opportunity',
     'LBL_EXISTING_OPPORTUNITY' => 'Existing Opportunity',
     'LBL_CREATE_ADD_ON' => 'Create Add-On',
+
+    // Dashboard
+    'LBL_PURCHASEDLINEITEMS_LIST_DASHBOARD' => 'Purchased Line Items List Dashboard',
+    'LBL_PURCHASEDLINEITEMS_RECORD_DASHBOARD' => 'Purchased Line Items Record Dashboard',
+    'LBL_PARENT_PURCHASE' => 'Parent Purchase',
 ];
