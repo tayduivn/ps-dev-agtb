@@ -50,7 +50,16 @@
                     if (sideDrawer) {
                         sideDrawer.before(
                             'side-drawer:close side-drawer:content-changed',
-                            this.beforeSideDrawerChange,
+                            this.beforeContainerChange,
+                            this
+                        );
+                    }
+
+                    var omniDashboard = this.closestComponent('omnichannel-dashboard');
+                    if (omniDashboard) {
+                        omniDashboard.before(
+                            'omni-dashboard:close',
+                            this.beforeContainerChange,
                             this
                         );
                     }
@@ -76,6 +85,10 @@
              * @return {Boolean} True only if it contains unsaved changes.
              */
             beforeRouteChange: function(params) {
+                if (this.closestComponent('omnichannel-dashboard')) {
+                    // don't block for omnichannnel dashboard
+                    return false;
+                }
                 var onConfirm = _.bind(this.onConfirmRoute, this);
                 return this.warnUnsavedChanges(onConfirm);
             },
@@ -105,14 +118,14 @@
             },
 
             /**
-             * Pre-event handler for closing or changing the side-drawer component.
+             * Pre-event handler for closing or changing the container component.
              *
              * @param {Object} params Parameters passed from caller.
              * @param {Function} params.callback Callback function.
              * @param {string} [params.message] Custom (translatable) message.
              * @return {boolean} `true` only if it contains unsaved changes.
              */
-            beforeSideDrawerChange: function(params) {
+            beforeContainerChange: function(params) {
                 var callback = params.callback;
                 var message = params.message || 'LBL_ONE_OR_MORE_UNSAVED_CHANGES';
                 return this.beforeViewChange({callback: callback, message: message});
@@ -504,7 +517,16 @@
                 if (sideDrawer) {
                     sideDrawer.offBefore(
                         'side-drawer:close side-drawer:content-changed',
-                        this.beforeSideDrawerChange,
+                        this.beforeContainerChange,
+                        this
+                    );
+                }
+
+                var omniDashboard = this.closestComponent('omnichannel-dashboard');
+                if (omniDashboard) {
+                    omniDashboard.offBefore(
+                        'omni-dashboard:close',
+                        this.beforeContainerChange,
                         this
                     );
                 }

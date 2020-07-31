@@ -11,6 +11,17 @@
  */
 return [
     'metadata' => [
+        'buttons' => [
+            [
+                'name' => 'clear',
+                'type' => 'button',
+                'label' => 'LBL_CLEAR_BUTTON_LABEL',
+                'css_class' => 'btn btn-secondary clear-button hidden',
+                'events' => [
+                    'click' => 'button:clear_button:click',
+                ],
+            ],
+        ],
         'tabs' => [
             // TAB 1
             [

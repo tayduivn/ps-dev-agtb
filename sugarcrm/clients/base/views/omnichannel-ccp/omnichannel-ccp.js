@@ -124,7 +124,6 @@
     tearDownCCP: function() {
         this.styleFooterButton('logged-out');
         connect.core.terminate();
-        this.layout.close();
         this.$el.find('#containerDiv').empty();
         this.ccpLoaded = false;
     },

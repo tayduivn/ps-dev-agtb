@@ -142,7 +142,6 @@ describe('Base.Layout.OmnichannelCcpView', function() {
             expect(view.styleFooterButton).toHaveBeenCalledWith('logged-out');
             expect(emptyStub.calledOnce).toBeTruthy();
             expect(view.ccpLoaded).toBe(false);
-            expect(layout.close.calledOnce).toBeTruthy();
         });
     });
 

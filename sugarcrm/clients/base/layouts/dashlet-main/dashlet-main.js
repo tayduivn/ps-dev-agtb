@@ -82,6 +82,9 @@
             components = metadata.tabs[tabIndex].components;
             var tabs = app.utils.deepCopy(metadata.tabs);
             var tabOptions = {activeTab: tabIndex, tabs: tabs};
+            if (!_.isUndefined(metadata.buttons)) {
+                tabOptions.buttons = app.utils.deepCopy(metadata.buttons);
+            }
             this.context.trigger('tabbed-dashboard:update', tabOptions);
         }
 

@@ -573,14 +573,26 @@
   }
 }
 
-.dashboard .tabbable {
+.dashboard .tabbed-dashboard-pane {
   background-color: #fff;
+  display: flex;
+
+  .tabbable-toolbar {
+    border-bottom: 1px solid #ddd;
+    padding-top: 4px;
+    padding-right: 4px;
+    height: 32px;
+  }
+}
+
+.dashboard .tabbable {
+  flex-grow: 1;
 
   .nav-tabs > li > a {
     border-radius: 0;
     margin-left: -1px;
-    border-left: 1px solid @grayLighter;
-    border-right: 1px solid @grayLighter;
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
     outline: none;
   }
 }

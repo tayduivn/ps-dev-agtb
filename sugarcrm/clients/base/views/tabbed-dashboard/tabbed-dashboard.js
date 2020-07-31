@@ -14,6 +14,8 @@
  * @extends View.View
  */
 ({
+    className: 'tabbed-dashboard-pane',
+
     events: {
         'click [data-toggle=tab]': 'tabClicked',
     },
@@ -21,6 +23,7 @@
     activeTab: 0,
     tabs: [],
     sticky: true,
+    buttons: [],
 
     /**
      * Hash key for stickness.
@@ -186,6 +189,10 @@
             this.context.set('tabs', this.tabs);
             this.context.set('activeTab', this.activeTab);
             this._initTabBadges();
+        }
+
+        if (!_.isUndefined(options.buttons)) {
+            this.buttons = options.buttons;
         }
     },
 

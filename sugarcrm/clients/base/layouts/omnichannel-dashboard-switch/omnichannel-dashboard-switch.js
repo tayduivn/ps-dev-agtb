@@ -83,9 +83,46 @@
      * @param {string} contactId
      */
     removeDashboard: function(contactId) {
+        var self = this;
         var index = _.indexOf(this.contactIds, contactId);
         if (index !== -1) {
             var dashboard = this._components[index];
+            var _remove = function() {
+                self._removeDashboard(index);
+            };
+            if (!dashboard.triggerBefore('omni-dashboard:close', {callback: _remove})) {
+                self._showClearButton(index);
+                return;
+            }
+            _remove();
+        }
+    },
+
+    /**
+     * Show 'Clear' button on a dashboard.
+     * @param {number} index
+     */
+    _showClearButton: function(index) {
+        var self = this;
+        var _remove = function() {
+            self._removeDashboard(index);
+        };
+        var dashboard = this._components[index];
+        var tabbedDashboard = dashboard._getTabbedDashboard();
+        var $button = tabbedDashboard.$el.find('a[name=clear]');
+        if ($button) {
+            $button.removeClass('hidden');
+            tabbedDashboard.context.on('button:clear_button:click', _remove);
+        }
+    },
+
+    /**
+     * Remove a contact's dashboard by index.
+     * @param {number} index
+     */
+    _removeDashboard: function(index) {
+        var dashboard = this._components[index];
+        if (dashboard) {
             dashboard.dispose();
             this._components.splice(index, 1);
             this.contactIds.splice(index, 1);
@@ -102,12 +139,20 @@
      * Remove all dashboards.
      */
     removeAllDashboards: function() {
-        var console = this.layout;
-        if (console.isExpanded()) {
-            console.toggle();
-        }
-        this._disposeComponents();
-        this.contactIds = [];
-        this.zIndex = 1;
+        var self = this;
+        _.each(this._components, function(dashboard, index) {
+            var _remove = function() {
+                self._removeDashboard(index);
+                if (self.contactIds.length < 1) {
+                    self.layout.close();
+                    self.zIndex = 1;
+                }
+            };
+            if (!dashboard.triggerBefore('omni-dashboard:close', {callback: _remove})) {
+                self._showClearButton(index);
+                return;
+            }
+            _remove();
+        });
     }
 })

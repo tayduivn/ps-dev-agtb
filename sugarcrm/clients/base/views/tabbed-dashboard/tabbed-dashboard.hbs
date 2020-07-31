@@ -42,3 +42,10 @@
     </ul>
 </div>
 {{/if}}
+{{#if buttons}}
+<div class="tabbable-toolbar">
+    {{#each buttons}}
+        {{field ../this}}
+    {{/each}}
+</div>
+{{/if}}

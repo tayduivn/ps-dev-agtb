@@ -69,7 +69,10 @@ describe('Base.Layout.OmnichannelDashboardSwitch', function() {
             var disposeStub = sinon.collection.stub();
             dashboardSwitch._components = [
                 {
-                    dispose: disposeStub
+                    dispose: disposeStub,
+                    triggerBefore: function() {
+                        return true;
+                    }
                 }
             ];
             var toggleStub = sinon.collection.stub();
@@ -90,20 +93,31 @@ describe('Base.Layout.OmnichannelDashboardSwitch', function() {
 
     describe('removeAllDashboards', function() {
         it('should remove dashboards and show ccp only', function() {
-            var disposeStub = sinon.collection.stub(dashboardSwitch, '_disposeComponents');
+            var disposeStub = sinon.collection.stub();
+            dashboardSwitch._components = [
+                {
+                    dispose: disposeStub,
+                    triggerBefore: function() {
+                        return true;
+                    }
+                }
+            ];
             var toggleStub = sinon.collection.stub();
+            var closeStub = sinon.collection.stub();
             dashboardSwitch.layout = {
                 isExpanded: function() {
                     return true;
                 },
                 toggle: toggleStub,
-                off: $.noop
+                off: $.noop,
+                close: closeStub
             };
             dashboardSwitch.contactIds = ['fakeId'];
             dashboardSwitch.removeAllDashboards();
             expect(disposeStub).toHaveBeenCalled();
             expect(dashboardSwitch.contactIds.length).toEqual(0);
             expect(toggleStub).toHaveBeenCalled();
+            expect(closeStub).toHaveBeenCalled();
         });
     });
 });
