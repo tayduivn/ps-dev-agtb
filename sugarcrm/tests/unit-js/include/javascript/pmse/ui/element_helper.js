@@ -188,7 +188,7 @@ describe('includes.javascript.pmse.ui.element_helper', function() {
         var checkOperator = function(operatorField, operator) {
             var op = false;
             if (operatorField._htmlControl && operatorField._htmlControl[0]) {
-                for (i = 0; i < operatorField._htmlControl[0].length; i++) {
+                for (var i = 0; i < operatorField._htmlControl[0].length; i++) {
                     if (operatorField._htmlControl[0][i].value === operator) {
                         op = true;
                         break;
@@ -261,6 +261,42 @@ describe('includes.javascript.pmse.ui.element_helper', function() {
             radioAny.setAttribute('value', 'Any');
 
             sinon.collection.stub(FormPanel.prototype, '_createField').returns(ret);
+        });
+
+        describe('multiselect fields', function() {
+            var type = 'multiselect';
+            var parent;
+            var elementHelper;
+            beforeEach(function() {
+                elementHelper = new PMSE.ElementHelper({});
+                parent =  new FormPanelDropdown({
+                    _name: 'field',
+                    dataURL: 'pmse_Project/CrmData/fields/Contacts'
+                });
+                parent.setAttributes({base_module: 'Contacts', call_type: 'PD'});
+                sinon.collection.stub(parent, 'getSelectedData').returns({optionItem: []});
+            });
+
+            it('should include the correct operators for New Records Only', function() {
+                var setVal = 'new';
+                elementHelper.processValueDependency(dependantField, parent, operatorField, type, setVal, form);
+                expect(checkOperator(operatorField, 'equals')).toBeTruthy();
+                expect(checkOperator(operatorField, 'not_equals')).toBeTruthy();
+                expect(checkOperator(operatorField, 'array_has_any')).toBeTruthy();
+                // Multiselects have only 3 operators on New Records Only
+                expect(operatorField._htmlControl[0].length).toEqual(3);
+
+            });
+
+            it('should include the correct operators for updated records', function() {
+                var setVal = 'updated';
+                elementHelper.processValueDependency(dependantField, parent, operatorField, type, setVal, form);
+                expect(checkOperator(operatorField, 'equals')).toBeTruthy();
+                expect(checkOperator(operatorField, 'not_equals')).toBeTruthy();
+                expect(checkOperator(operatorField, 'array_has_any')).toBeTruthy();
+                // Multiselects have 6 operators for first update and all updates
+                expect(operatorField._htmlControl[0].length).toEqual(6);
+            });
         });
 
         it('Include changes operator and enable field when a target module is chosen', function() {

@@ -45,6 +45,7 @@ trait PMSEEvalRelations
             "changes",
             "changes_from",
             "changes_to",
+            'array_has_any',
         );
 
         // Set the result
@@ -128,6 +129,21 @@ trait PMSEEvalRelations
                 break;
             case 'does_not_contain':
                 $result = strpos($value1, $value2) === false;
+                break;
+            case 'array_has_any':
+                // getting a null value doesn't make sense
+                if (is_null($value1) || is_null($value2)) {
+                    break;
+                }
+                if (!is_array($value1) && is_string($value1)) {
+                    $value1 = [$value1];
+                }
+                foreach ($value1 as $element) {
+                    if (in_array($element, $value2)) {
+                        $result = true;
+                        break;
+                    }
+                }
                 break;
             default:
         }

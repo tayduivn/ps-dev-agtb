@@ -282,4 +282,13 @@ class PMSEEvalCriteriaTest extends TestCase
         $this->assertEquals('!', $this->object->logicSimbol('NOT'));
         $this->assertEquals('ES', $this->object->logicSimbol('OTHRES'));
     }
+
+    public function testEvalRelationsArrayHasAny()
+    {
+        $this->assertEquals(1, $this->object->evalRelations(['123'], 'array_has_any', ['123'], 'MultiSelect'));
+        $this->assertEquals(1, $this->object->evalRelations(['123', '456'], 'array_has_any', ['123'], 'MultiSelect'));
+        $this->assertEquals(1, $this->object->evalRelations(['123'], 'array_has_any', ['123', '456'], 'MultiSelect'));
+        $this->assertEquals(1, $this->object->evalRelations(['123', '456'], 'array_has_any', ['123', '456'], 'MultiSelect'));
+        $this->assertEquals(0, $this->object->evalRelations([''], 'array_has_any', ['123'], 'MultiSelect'));
+    }
 }

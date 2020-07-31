@@ -721,6 +721,11 @@ PMSE.ElementHelper.prototype.processValueDependency = function (dependantField, 
         case 'dropdown':
             labelField = 'text';
         case 'multiselect':
+            operators.push(
+                {
+                    textfield: App.lang.get('LBL_PMSE_EXPCONTROL_OPERATOR_MULTISELECT_IS_ON_OF', 'pmse_Project'),
+                    value: 'array_has_any',
+                });
         case 'radio':
             var aux = parentField.getSelectedData() ||
                 parentField._getFirstAvailableOption(),
