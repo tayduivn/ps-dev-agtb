@@ -3852,6 +3852,10 @@ Sincerely, SugarCRM',
     'LBL_DASHLET_LISTVIEW_NAME' => 'List View',
     'LBL_DASHLET_LISTVIEW_DESCRIPTION' => 'Lists records from a particular module according to criteria you define.',
 
+    // Console List view dashlet
+    'LBL_DASHLET_CONSOLE_LISTVIEW_NAME' => 'Console List View',
+    'LBL_DASHLET_CONSOLE_LISTVIEW_DESCRIPTION' => 'Lists records from a particular module that are related to the record you are viewing in the console.',
+
     // Record view dashlet
     'LBL_DASHLET_RECORDVIEW_NAME' => 'Record View',
     'LBL_DASHLET_RECORDVIEW_DESCRIPTION' => 'Displays a record and optionally related records in tabs.',

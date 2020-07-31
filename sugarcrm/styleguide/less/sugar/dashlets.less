@@ -121,6 +121,12 @@
 
   &:not(.collapsed):not(.empty) {
     min-height: 140px;
+
+    .dashlet-console-list {
+      .console-list-view-table {
+        overflow: auto;
+      }
+    }
   }
 
   &.collapsed {
@@ -1008,8 +1014,26 @@
     }
   }
 }
-// END SUGARCRM flav=ent ONLY
 
+/* Console List View Dashlet */
+
+.dashlet-console-list {
+  .filter.controls.btn-group-fit.controls-two {
+    padding-right: 36px;
+  }
+
+  .dashlet-console-list-row {
+    &:hover {
+      color: @darkPacific;
+    }
+
+    &:active {
+      color: @darkIndigo;
+    }
+  }
+}
+
+// END SUGARCRM flav=ent ONLY
 /* Activity Timeline Dashlet */
 .activity-timeline {
   .timeline-entry {

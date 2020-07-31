@@ -18,8 +18,35 @@ return [
                     'image' => '<i class="fa fa-search"></i>',
                 ],
                 'name' => 'LBL_SEARCH',
-                'components' => [
-                    //TODO: CS-810
+                'dashlets' => [
+                    [
+                        'view' => [
+                            'type' => 'dashlet-console-list',
+                            'module' => 'Cases',
+                        ],
+                        'context' => [
+                            'module' => 'Cases',
+                        ],
+                        'width' => 12,
+                        'height' => 5,
+                        'x' => 0,
+                        'y' => 0,
+                        'autoPosition' => false,
+                    ],
+                    [
+                        'view' => [
+                            'type' => 'dashlet-console-list',
+                            'module' => 'Contacts',
+                        ],
+                        'context' => [
+                            'module' => 'Contacts',
+                        ],
+                        'width' => 12,
+                        'height' => 5,
+                        'x' => 0,
+                        'y' => 6,
+                        'autoPosition' => false,
+                    ],
                 ],
             ],
             // TAB 2

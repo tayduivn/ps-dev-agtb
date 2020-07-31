@@ -106,12 +106,12 @@
      * @param {number} tabIndex
      */
     switchTab: function(tabIndex) {
-        if (index === this.activeTab ||
-            (this.model.mode === 'edit' && !this._isDashboardTab(index)) ||
-            !this.isTabEnabled(index)) {
+        if (tabIndex === this.activeTab ||
+            (this.model.mode === 'edit' && !this._isDashboardTab(tabIndex)) ||
+            !this.isTabEnabled(tabIndex)) {
             return;
         }
-        this.context.trigger('tabbed-dashboard:switch-tab', index);
+        this.context.trigger('tabbed-dashboard:switch-tab', tabIndex);
     },
 
     /**
