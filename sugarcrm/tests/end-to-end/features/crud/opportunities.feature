@@ -9,7 +9,6 @@
 
 @crud_modules_opportunities @job4
 Feature: Opportunities
-  product-catalog-quick-picks
 
   Background:
     Given I use default account
