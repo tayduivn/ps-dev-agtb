@@ -325,9 +325,11 @@ class InitProductDefinition
             "purchasedlineitem_name":["SUGAR_SELL"],
             "purchasedlineitem_id":["SUGAR_SELL"],
             "generate_purchase":["SUGAR_SELL"],
+            "add_on_to_id": ["SUGAR_SELL"],
             "add_on_to_name": ["SUGAR_SELL"]
         },
         "Products": {
+            "add_on_to_id": ["SUGAR_SELL"],
             "add_on_to_name": ["SUGAR_SELL"]
         },
         "Users": {
