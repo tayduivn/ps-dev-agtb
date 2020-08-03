@@ -5056,7 +5056,7 @@ Sincerely, SugarCRM',
     'LBL_RENEWALS_CONSOLE_AMOUNT' => 'Worst | Likely | Best',
 
     // Omnichannel Console
-    'LBL_OMNICHANNEL' => 'Omnichannel',
+    'LBL_OMNICHANNEL' => 'Service Live',
     'LBL_OMNICHANNEL_DASHBOARD' => 'Omnichannel Dashboard',
     //END SUGARCRM flav=ent ONLY
 
