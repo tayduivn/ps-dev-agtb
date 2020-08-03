@@ -376,4 +376,17 @@ describe('View.Layouts.Base.DashboardGridLayout', function() {
             });
         });
     });
+
+    describe('_setDefaultGridOptions', function() {
+        using('different ACL edit values', [false, true], function(hasAccess) {
+            it('should disable dragging and resizing if user lacks edit acces', function() {
+                sinon.collection.stub(app.acl, 'hasAccessToModel', function() {
+                    return hasAccess;
+                });
+                layout._setDefaultGridOptions();
+                expect(layout.defaultGridOptions.disableDrag).toEqual(!hasAccess);
+                expect(layout.defaultGridOptions.disableResize).toEqual(!hasAccess);
+            });
+        });
+    });
 });

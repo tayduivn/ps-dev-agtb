@@ -85,6 +85,7 @@
      */
     initialize: function(options) {
         this._super('initialize', [options]);
+        this._setDefaultGridOptions();
         this.tabIndex = this._getTabIndex(options);
         this._setInitialDashlets();
 
@@ -486,5 +487,17 @@
         }
         delete metadata.legacyComponents;
         return metadata;
+    },
+
+    /**
+     * Disable dragging and resizing for dashlets if user lacks edit access to
+     * the dashboard.
+     *
+     * @private
+     */
+    _setDefaultGridOptions: function() {
+        var editable = !app.acl.hasAccessToModel('edit', this.model);
+        this.defaultGridOptions.disableDrag = editable;
+        this.defaultGridOptions.disableResize = editable;
     },
 })
