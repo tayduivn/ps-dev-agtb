@@ -159,6 +159,7 @@ $dictionary['User'] = array(
             ) ,
             'len' => '510',
             'studio' => array('formula' => false),
+            'idm_mode_disabled' => true,
         ) ,
         'name' => array(
             'name' => 'name',
@@ -174,6 +175,7 @@ $dictionary['User'] = array(
             ) ,
             'len' => '510',
             'studio' => array('formula' => false),
+            'idm_mode_disabled' => true,
         ),
         'is_admin' => array(
             'name' => 'is_admin',
@@ -189,6 +191,7 @@ $dictionary['User'] = array(
             // This would tell the field to be pushed through an additional validation
             // step when being fetched for relationships
             'processes' => false,
+            'idm_mode_disabled' => true,
         ) ,
         'external_auth_only' => array(
             'name' => 'external_auth_only',

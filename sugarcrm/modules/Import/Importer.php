@@ -11,6 +11,7 @@
  */
 
 use Sugarcrm\Sugarcrm\AccessControl\AccessControlManager;
+use Sugarcrm\Sugarcrm\IdentityProvider\Authentication\IdmModeLimitationTrait;
 use Sugarcrm\Sugarcrm\Security\InputValidation\InputValidation;
 use Sugarcrm\Sugarcrm\Security\InputValidation\Request;
 //BEGIN SUGARCRM flav=ent ONLY
@@ -18,6 +19,7 @@ use Sugarcrm\Sugarcrm\ProcessManager\Registry;
 //END SUGARCRM flav=ent ONLY
 class Importer
 {
+    use IdmModeLimitationTrait;
     /**
      * @var ImportFieldSanitize
      */
@@ -450,8 +452,13 @@ class Importer
                 break;
             }
 
-            $focus->$field = $rowValue;
             unset($defaultRowValue);
+
+            if ($this->isLimitedForFieldInIdmMode($focus->module_dir, $fieldDef)) {
+                continue;
+            }
+
+            $focus->$field = $rowValue;
         }
 
         // Now try to validate flex relate fields
@@ -563,6 +570,16 @@ class Importer
             $this->importSource->writeError(
                 $e->getMessage(),
                 $fieldTranslated,
+                $focus->id
+            );
+            $do_save = false;
+        }
+
+        if ($this->isLimitedForModuleInIdmMode($focus->module_dir) &&
+            (empty($focus->id) || $focus->new_with_id)) {
+            $this->importSource->writeError(
+                $mod_strings['LBL_IDM_RECORD_CANNOT_BE_CREATED'],
+                'id',
                 $focus->id
             );
             $do_save = false;
@@ -845,6 +862,9 @@ class Importer
         // triggered start events so they can continue to trigger.
         Registry\Registry::getInstance()->drop('triggered_starts');
         //END SUGARCRM flav=ent ONLY
+        if ($this->isLimitedForModuleInIdmMode($this->bean->module_dir) && $focus->emailAddress) {
+            $focus->emailAddress->dontLegacySave = true;
+        }
         $focus->save(false);
 
         //now that save is done, let's make sure that parent and related id's were saved as relationships

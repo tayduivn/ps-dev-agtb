@@ -48,6 +48,11 @@ class Bug50678Test extends TestCase
             'http://www.sugarcrm.com/crm/product_doc.php?edition=arg0&version=arg1&lang=arg2&module=arg3&help_action=arg4&status=arg5&key=arg6&anchor=arg7',
             get_help_url('arg0', 'arg1', 'arg2', 'arg3', 'arg4', 'arg5', 'arg6', 'arg7')
         );
+
+        $this->assertSame(
+            'http://www.sugarcrm.com/crm/product_doc.php?edition=arg0&version=arg1&lang=arg2&module=arg3&help_action=arg4&status=arg5&key=arg6&anchor=arg7&products=arg8',
+            get_help_url('arg0', 'arg1', 'arg2', 'arg3', 'arg4', 'arg5', 'arg6', 'arg7', 'arg8')
+        );
     }
 
     public function testGetCustomHelpURL()

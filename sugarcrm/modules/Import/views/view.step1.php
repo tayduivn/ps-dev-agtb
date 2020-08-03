@@ -142,7 +142,9 @@ class ImportViewStep1 extends ImportView
         foreach ($beanList as $moduleName => $beanName)
         {
             $tmp = BeanFactory::newBean($moduleName);
-            if( !empty($tmp->importable) && ($tmp instanceof Person)) {
+            if (!empty($tmp->importable) &&
+                ($tmp instanceof Person) &&
+                !$this->isLimitedForModuleInIdmMode($moduleName)) {
                 $results[$moduleName] = $moduleName;
             }
         }

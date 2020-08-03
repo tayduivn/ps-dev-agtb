@@ -63,16 +63,23 @@
             <td scope="row" colspan="3">
                 <h3>{$MOD.LBL_IMPORT_TYPE}&nbsp;</h3></td>
           </tr>
+        {if !$idm_update_mode_only}
           <tr>
             <td scope="row" colspan="3">
                 <input id="import_create" class="radio" type="radio" name="type" value="import" checked="checked" />
                 &nbsp;<label for="type">{$MOD.LBL_IMPORT_BUTTON}</label> &nbsp;{sugar_help text=$MOD.LBL_CREATE_BUTTON_HELP}
             </td>
           </tr>
+        {/if}
           <tr>
             <td scope="row" colspan="3">
-                <input id="import_update" class="radio" type="radio" name="type" id="type" value="update" />
-                &nbsp;<label for="type">{$MOD.LBL_UPDATE_BUTTON}</label> &nbsp;{sugar_help text=$MOD.LBL_UPDATE_BUTTON_HELP}
+                <input id="import_update" class="radio" type="radio"
+                       name="type" id="type" value="update" {if $idm_update_mode_only}checked="checked"{/if} />
+                {if $idm_update_mode_only}
+                    &nbsp;<label for="type">{$MOD.LBL_IDM_UPDATE_ONLY_BUTTON}</label> &nbsp;{sugar_help text=$MOD.LBL_UPDATE_BUTTON_HELP}
+                {else}
+                    &nbsp;<label for="type">{$MOD.LBL_UPDATE_BUTTON}</label> &nbsp;{sugar_help text=$MOD.LBL_UPDATE_BUTTON_HELP}
+                {/if}
             </td>
           </tr>
 	</table>

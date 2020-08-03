@@ -82,7 +82,7 @@ div.resultsTable {
                 </div>
                 <div class="yui-bd">
                     <ul class="subpanelTablist" id="tabList">
-                        <li id="pageNumIW_0" class="active" >
+                        <li id="pageNumIW_0" class="active" {if $idm_update_mode_only} style="display: none" {/if}>
                             <a id="pageNumIW_0_anchor" class="current" href="javascript:SUGAR.IV.togglePages('0');">
                             <span id="pageNum_0_input_span" style="display:none;">
                             <input type="hidden" id="pageNum_0_name_hidden_input" value="{$pageData.pageTitle}"/>
@@ -93,7 +93,7 @@ div.resultsTable {
                             </span>
                             </a>
                         </li>
-                        <li id="pageNumIW_1" >
+                        <li id="pageNumIW_1" {if $idm_update_mode_only} style="display: none" {/if}>
                             <a id="pageNumIW_1_anchor" class="" href="javascript:SUGAR.IV.togglePages('1');">
                             <span id="pageNum_1_input_span" style="display:none;">
                             <input type="hidden" id="pageNum_1_name_hidden_input" value="{$pageData.pageTitle}"/>
