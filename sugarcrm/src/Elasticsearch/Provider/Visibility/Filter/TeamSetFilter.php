@@ -31,13 +31,25 @@ class TeamSetFilter implements FilterInterface
     protected $defaultField = 'team_set_id.set';
 
     /**
+     * common fields array, this is referring to the field was create in "Common__" format
+     * @var array
+     */
+    protected $commonFields = [
+        'acl_team_set_id.set',
+        ];
+
+    /**
      * {@inheritdoc}
      */
     public function buildFilter(array $options = array())
     {
         $teamSetIds = $this->getTeamSetIds($options['user']);
         $field = !empty($options['field']) ? $options['field'] : $this->defaultField;
-        $field = $options['module'] . Mapping::PREFIX_SEP . $field;
+        if (in_array($field, $this->commonFields)) {
+            $field = Mapping::PREFIX_COMMON . $field;
+        } else {
+            $field = $options['module'] . Mapping::PREFIX_SEP . $field;
+        }
         return new \Elastica\Query\Terms($field, $teamSetIds);
     }
 
