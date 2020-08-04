@@ -46,7 +46,9 @@ class OpportunityTest extends TestCase
         }
 
         SugarTestRevenueLineItemUtilities::removeAllCreatedRevenueLineItems();
+        // BEGIN SUGARCRM flav=ent ONLY
         SugarTestPurchasedLineItemUtilities::removeAllCreatedPurchasedLineItems();
+        // END SUGARCRM flav=ent ONLY
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
         SugarTestCurrencyUtilities::removeAllCreatedCurrencies();
         SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
