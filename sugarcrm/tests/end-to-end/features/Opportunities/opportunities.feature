@@ -517,3 +517,173 @@ Feature: RLI module verification
     Examples:
       | December_2020 | January_2021 |
       | 12/12/2020    | 01/01/2021   |
+
+
+  @opportunity_service_duration @SS-728 @pr
+  Scenario: Opportunities > Record view > Editing Duration for all open service RLIs in an Opportunity level
+    # Create 2 product records: one with locked duration and another with unlocked duration
+    Given ProductTemplates records exist:
+      | *name     | discount_price | list_price | cost_price | service | service_duration_value | service_duration_unit | lock_duration |
+      | Product_1 | 1000           | 2000       | 500        | true    | 18                     | month                 | true          |
+      | Product_2 | 1001           | 2001       | 501        | true    | 18                     | month                 | false         |
+    Given Accounts records exist:
+      | *name     |
+      | Account_1 |
+    # Create opportunity records with linked RLIs
+    And Opportunities records exist related via opportunities link to *Account_1:
+      | *name | lead_source | opportunity_type  |
+      | Opp_1 | Cold Call   | Existing Business |
+    And RevenueLineItems records exist related via revenuelineitems link to *Opp_1:
+      | *name | date_closed               | likely_case | sales_stage         |
+      | RLI_1 | 2020-04-18T19:20:22+00:00 | 1000        | Prospecting         |
+      | RLI_2 | 2020-04-17T19:20:22+00:00 | 2000        | Qualification       |
+      | RLI_3 | 2020-04-16T19:20:22+00:00 | 3000        | Perception Analysis |
+      | RLI_4 | 2020-04-15T19:20:22+00:00 | 4000        | Value Proposition   |
+
+    Given I open about view and login
+
+    # Navigate to Opportunities module
+    When I choose Opportunities in modules menu
+    When I select *Opp_1 in #OpportunitiesList.ListView
+
+    # Verify value of service_duration field is empty
+    Then I verify fields on #Opp_1Record.RecordView
+      | fieldName              | value |
+      | service_duration_value |       |
+      | service_duration_unit  |       |
+
+    # Change one of the RLIs to be 90 days service
+    When I update RevenueLineItems *RLI_2 with the following values:
+      | service | service_duration_value | service_duration_unit |
+      | true    | 90                     | Day(s)                |
+
+    # Verify value of service-duration field is updated properly
+    Then Opportunities *Opp_1 should have the following values:
+      | fieldName              | value  |
+      | service_duration_value | 90     |
+      | service_duration_unit  | Day(s) |
+
+    # Change one of the RLIs to be 3 Months service
+    When I update RevenueLineItems *RLI_3 with the following values:
+      | service | service_duration_value | service_duration_unit |
+      | true    | 3                      | Month(s)              |
+
+    # Verify value of service duration field is updated properly
+    Then Opportunities *Opp_1 should have the following values:
+      | fieldName              | value    |
+      | service_duration_value | 3        |
+      | service_duration_unit  | Month(s) |
+
+    # Mark one of the RLIs as Closed Won
+    When I open the revenuelineitems subpanel on #Opp_1Record view
+    When I click on Edit button for *RLI_3 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
+    When I set values for *RLI_3 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
+      | fieldName   | value      |
+      | sales_stage | Closed Won |
+    When I click on Save button for *RLI_3 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
+    When I close alert
+
+    # Verify value of service_duration field is updated properly
+    Then I verify fields on #Opp_1Record.RecordView
+      | fieldName              | value  |
+      | service_duration_value | 90     |
+      | service_duration_unit  | Day(s) |
+
+    # Edit service duration from opportunity record view level
+    When I click Edit button on #Opp_1Record header
+    When I provide input for #Opp_1Record.RecordView view
+      | service_duration | service_duration_value | service_duration_unit |
+      | true             | 2                      | Year(s)               |
+    When I click Save button on #Opp_1Record header
+    When I close alert
+
+    # Verify service duration is updated in Opportunity record view
+    Then I verify fields on #Opp_1Record.RecordView
+      | fieldName              | value   |
+      | service_duration_value | 2       |
+      | service_duration_unit  | Year(s) |
+
+    # Verify value of service duration field is updated properly for open service-type RLIs
+    Then I verify fields for *RLI_2 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
+      | fieldName              | value   |
+      | service_duration_value | 2       |
+      | service_duration_unit  | Year(s) |
+
+    # Verify that service duration is NOT updated for closed service -type RLIs
+    Then I verify fields for *RLI_3 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
+      | fieldName              | value    |
+      | service_duration_value | 3        |
+      | service_duration_unit  | Month(s) |
+
+    # Change one of the RLIs to use product with locked duration
+    When I update RevenueLineItems *RLI_1 with the following values:
+      | sales_stage | product_template_name |
+      | Prospecting | Product_1             |
+
+    # Change one of the RLIs to use product with Not locked duration
+    When I update RevenueLineItems *RLI_4 with the following values:
+      | sales_stage | product_template_name |
+      | Prospecting | Product_2             |
+
+
+    # Edit service duration from opportunity preview level
+    When I choose Opportunities in modules menu
+    When I click on preview button on *Opp_1 in #OpportunitiesList.ListView
+    When I click on Edit button in #Opp_1Preview.PreviewHeaderView
+    When I provide input for #Opp_1Preview.PreviewView view
+      | service_duration |service_duration_value |
+      | true             |5                      |
+    When I click on Save button in #Opp_1Preview.PreviewHeaderView
+    When I close alert
+
+    When I select *Opp_1 in #OpportunitiesList.ListView
+    # Verify value of service duration field is updated properly for open RLI
+    Then I verify fields for *RLI_1 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
+      | fieldName              | value    |
+      | service_duration_value | 18       |
+      | service_duration_unit  | Month(s) |
+
+    # Verify value of service duration field is updated properly for open RLI
+    Then I verify fields for *RLI_2 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
+      | fieldName              | value   |
+      | service_duration_value | 5       |
+      | service_duration_unit  | Year(s) |
+
+    # Verify that service duration is NOT updated for closed RLIs
+    Then I verify fields for *RLI_3 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
+      | fieldName              | value    |
+      | service_duration_value | 3        |
+      | service_duration_unit  | Month(s) |
+
+    # Verify value of service duration field is updated properly for open RLI
+    Then I verify fields for *RLI_4 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
+      | fieldName              | value   |
+      | service_duration_value | 5       |
+      | service_duration_unit  | Year(s) |
+
+    # Perform Mass Update to change sales stage of all open service RLIs to closed lost
+    When I perform mass update of RevenueLineItems [*RLI_1, *RLI_2, *RLI_4] with the following values:
+      | fieldName   | value       |
+      | sales_stage | Closed Lost |
+
+    # Verify service duration is updated in Opportunity record view
+    When I choose Opportunities in modules menu
+    When I select *Opp_1 in #OpportunitiesList.ListView
+    Then I verify fields on #Opp_1Record.RecordView
+      | fieldName              | value    |
+      | service_duration_value | 3        |
+      | service_duration_unit  | Month(s) |
+
+    # Change sales stage to closed won RLI3 to be closed lost
+    When I click on Edit button for *RLI_3 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
+    When I set values for *RLI_3 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
+      | fieldName   | value       |
+      | sales_stage | Closed Lost |
+    When I click on Save button for *RLI_3 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
+    When I close alert
+
+    # Verify that service_duration is updated properly
+    Then I verify fields on #Opp_1Record.RecordView
+      | fieldName              | value   |
+      | service_duration_value | 5       |
+      | service_duration_unit  | Year(s) |

@@ -22,12 +22,20 @@ export default class BoolField extends BaseField {
         this.selectors = this.mergeSelectors({
             $: '[field-name={{name}}]',
             field: {
-                selector: 'input'
+                selector: 'input',
+                cascadeCheckBox: '.' + this.name + '_should_cascade',
             }
         });
     }
 
     public async setValue(val: string): Promise<void> {
+
+        // In case of service_duration field which is a fieldset of two fields there is a need to activate 'cascade'
+        // checkbox before any service duration can be set from opportunity level.
+        let isCheckBoxExists = await this.driver.isElementExist(this.$('field.cascadeCheckBox'));
+        if(isCheckBoxExists) {
+            await this.driver.click(this.$('field.cascadeCheckBox'));
+        }
 
         let curValue = await this.driver.isSelected(this.$('field.selector'));
         // Toggle value only if current check box state is not equal to new state

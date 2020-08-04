@@ -49,20 +49,22 @@ export class Detail extends IntField {
     }
 }
 
-export class List extends IntField {
+/**
+ *  This class handling field empty value case in record/list/preview views
+ *  to the field's css path which this class is taking advantage of.
+ */
+export class DetailEmptyValue extends BaseField {
 
     constructor(options) {
         super(options);
-
         this.selectors = this.mergeSelectors({
+            $: '.disabled[field-name={{name}}]',
             field: {
-                selector: 'div'
+                selector: '',
             }
         });
-
     }
-
 }
 
 export const Preview = Detail;
-
+export const List = Detail;

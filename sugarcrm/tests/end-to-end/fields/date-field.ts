@@ -112,7 +112,7 @@ export class Detail extends DateField {
 
 /**
  *  This class handling date field empty value case in record/list/preview views
- *  In case of empty value there is 'hide' class added
+ *  In case of empty value there is 'disabled' class added
  *  to the field's css path which this class is taking advantage of.
  */
 export class DetailEmptyValue extends BaseField {

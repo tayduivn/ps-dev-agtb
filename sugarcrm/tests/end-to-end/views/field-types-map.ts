@@ -106,4 +106,5 @@ export const FIELD_TYPES__MAP = {
     nestedset: NestedSetField,
     duration: DurationField,
     timeselect: TimeselectField,
+    'fieldset-cascade': BoolField,
 };

@@ -78,6 +78,30 @@ export class Detail extends BaseField {
 
 }
 
+/**
+ *  This class handling field empty value case in record/list/preview views
+ *  In case of empty value there is 'disabled' class added
+ *  to the field's css path which this class is taking advantage of.
+ */
+export class DetailEmptyValue extends BaseField {
+
+    constructor(options) {
+        super(options);
+        this.selectors = this.mergeSelectors({
+            $: '.disabled[field-name={{name}}]',
+            field: {
+                selector: '',
+            }
+        });
+    }
+
+    public async getText(selector: string): Promise<string> {
+        let value: string  = await this.driver.getText(selector);
+        return value;
+    }
+}
+
+
 export class List extends BaseField {
 
     constructor(options) {
