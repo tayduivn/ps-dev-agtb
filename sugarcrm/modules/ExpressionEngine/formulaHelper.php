@@ -69,6 +69,9 @@ class FormulaHelper
                     if ($includeLinks)
                         $fieldArray[$fieldName] = array($fieldName, 'relate');
                     break;
+                case "multienum":
+                    $fieldArray[$fieldName] = array($fieldName, 'enum');
+                    break;
                 default:
                     //Do Nothing
                     break;
