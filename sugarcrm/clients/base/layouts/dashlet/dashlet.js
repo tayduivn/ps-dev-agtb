@@ -440,6 +440,9 @@
         this.$(".dashlet-toggle > i").toggleClass("fa-chevron-up", !collapsed);
         this.$(".thumbnail").toggleClass("collapsed", collapsed);
         this.$("[data-dashlet=dashlet]").toggleClass("hide", collapsed);
+
+        this.$el.toggleClass('collapsed', collapsed);
+        this.layout.collapseDashlet(this);
     },
 
     /**

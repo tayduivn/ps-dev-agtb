@@ -243,6 +243,29 @@
         this.handleSave();
     },
 
+    collapseDashlet: function(dashlet) {
+        var grid = this.grid;
+        var el = dashlet.$el;
+        var isCollapsed = el.hasClass('collapsed');
+        var node = el.data('_gridstack_node');
+
+        if (isCollapsed) {
+            el
+                .data('expand-min-height', node.minHeight)
+                .data('expand-height', node.height);
+
+            grid
+                .resizable(el, false)
+                .minHeight(el, null)
+                .resize(el, null, 0);
+        } else {
+            grid
+                .resizable(el, true)
+                .minHeight(el, el.data('expand-min-height'))
+                .resize(el, null, el.data('expand-height'));
+        }
+    },
+
     /**
      * Called when clicking "Edit" in the gear menu on a dashlet. Updates the
      * dashlet metadata and saves most recent user preferences
