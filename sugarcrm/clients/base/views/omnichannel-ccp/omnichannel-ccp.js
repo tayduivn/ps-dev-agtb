@@ -332,7 +332,9 @@
      * @private
      */
     _handleIncomingContact: function(contact) {
+        var type = contact.getType();
         this.layout.open();
+        this.layout.trigger(type + ':incoming', contact);
     },
 
     /**

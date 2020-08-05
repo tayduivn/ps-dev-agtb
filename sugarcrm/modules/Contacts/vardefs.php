@@ -1100,3 +1100,10 @@ $dictionary['Contact']['fields']['phone_fax']['full_text_search']['boost'] = 1.0
 $dictionary['Contact']['fields']['description']['full_text_search']['boost'] = 0.71;
 $dictionary['Contact']['fields']['primary_address_street']['full_text_search']['boost'] = 0.33;
 $dictionary['Contact']['fields']['alt_address_street']['full_text_search']['boost'] = 0.32;
+
+// enable assistant_phone for full text search
+$dictionary['Contact']['fields']['assistant_phone']['full_text_search'] = [
+    'enabled' => true,
+    'searchable' => true,
+    'boost' => 1.05,
+];

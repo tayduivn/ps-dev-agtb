@@ -39,6 +39,7 @@
             this.layout.on('ccp:terminated', this.removeAllDashboards, this);
             this.layout.on('contact:view', this.showDashboard, this);
             this.layout.on('contact:destroyed', this.removeDashboard, this);
+            this.layout.on('voice:incoming', this.handleIncomingCall, this);
         }
     },
 
@@ -168,4 +169,50 @@
         }
         return null;
     },
+
+    /**
+     * Search for contact by phone number. If we find exactly one match, set the
+     * contact model on the appropriate dashboard.
+     *
+     * @param {Object} contact - connect-streams Contact object
+     */
+    handleIncomingCall: function(contact) {
+        var connection = contact.getInitialConnection();
+        var endpoint = connection.getEndpoint();
+        var maxNum = app.config && app.config.maxSearchQueryResult ? app.config.maxSearchQueryResult : 5;
+        var searchParams = {
+            q: endpoint.phoneNumber,
+            fields: 'phone_home, phone_mobile, phone_work, phone_other, assistant_phone',
+            module_list: 'Contacts',
+            max_num: maxNum
+        };
+        var successCallback = _.bind(function(data) {
+            var self = this;
+            setTimeout(function() {
+                self._setContactModel(contact, data);
+            }, 1000);
+        }, this);
+        app.api.search(searchParams, {success: successCallback});
+    },
+
+    /**
+     * Sets contact model for dashboard in a particular tab. This function is
+     * the success callback used in the search API on incoming calls.
+     *
+     * @param {Object} contact - connect-streams Contact object
+     * @param {Object} data - data returned by Search api
+     * @private
+     */
+    _setContactModel: function(contact, data) {
+        var index = _.indexOf(this.contactIds, contact.contactId);
+
+        // If we have a dashboard for this contact, and our search returned
+        // exactly one record, set that record on the contact tab of the
+        // appropriate dashboard
+        if (index !== -1 && _.isArray(data.records) && data.records.length === 1) {
+            var contactBean = app.data.createBean('Contacts', _.first(data.records));
+            this._components[index].setModel(1, contactBean);
+            this._components[index].switchTab(1);
+        }
+    }
 })

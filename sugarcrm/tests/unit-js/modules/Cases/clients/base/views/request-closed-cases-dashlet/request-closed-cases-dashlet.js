@@ -8,7 +8,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-ddescribe('View.Views.Base.Cases.RequestClosedCasesDashlet', function() {
+describe('View.Views.Base.Cases.RequestClosedCasesDashlet', function() {
     var app;
     var layout;
     var view;

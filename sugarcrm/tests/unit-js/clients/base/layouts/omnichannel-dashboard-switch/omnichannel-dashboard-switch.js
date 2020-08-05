@@ -137,4 +137,73 @@ describe('Base.Layout.OmnichannelDashboardSwitch', function() {
             expect(actual).not.toEqual(null);
         });
     });
+
+    describe('handleIncomingCall', function() {
+        it('should call search api with appropriate params', function() {
+            var endpointStub = sinon.stub().returns({phoneNumber: '+11234567890'});
+            var connectionStub = sinon.stub().returns({
+                getEndpoint: endpointStub
+            });
+            var contact = {
+                getInitialConnection: connectionStub
+            };
+            var expected = {
+                q: '+11234567890',
+                fields: 'phone_home, phone_mobile, phone_work, phone_other, assistant_phone',
+                module_list: 'Contacts',
+                max_num: app.config.maxSearchQueryResult
+            };
+            sinon.collection.stub(app.api, 'search');
+            dashboardSwitch.handleIncomingCall(contact);
+            expect(app.api.search.args[0][0]).toEqual(expected);
+        });
+    });
+
+    describe('_setContactModel', function() {
+        using('different result sets and contactIds', [
+            // Conditions met
+            {
+                contact: {contactId: 'abc123'},
+                data: {nextOffset: -1, records: [{id: 'def456'}]},
+                contactIds: ['abc123'],
+                matchExpected: true
+            },
+            // Multiple API results
+            {
+                contact: {contactId: 'abc123'},
+                data: {nextOffset: -1, records: [{id: 'def456'}, {id: 'ghi789'}]},
+                contactIds: ['abc123'],
+                matchExpected: false
+            },
+            // No matching contactId on layout
+            {
+                contact: {contactId: 'abc123'},
+                data: {nextOffset: -1, records: [{id: 'def456'}]},
+                contactIds: ['poi098'],
+                matchExpected: false
+            }
+        ], function(values) {
+            it('should set the tab model if a match is found', function() {
+                var setModelStub = sinon.stub();
+                var switchTabStub = sinon.stub();
+                sinon.collection.stub(app.data, 'createBean').returns('Mocked Return');
+                dashboardSwitch.contactIds = values.contactIds;
+                dashboardSwitch._components = [{
+                    setModel: setModelStub,
+                    dispose: function() {},
+                    switchTab: switchTabStub
+                }];
+
+                dashboardSwitch._setContactModel(values.contact, values.data);
+
+                expect(app.data.createBean.callCount).toBe(values.matchExpected ? 1 : 0);
+                expect(setModelStub.callCount).toBe(values.matchExpected ? 1 : 0);
+                if (values.matchExpected) {
+                    expect(app.data.createBean).toHaveBeenCalledWith('Contacts', values.data.records[0]);
+                    expect(setModelStub).toHaveBeenCalledWith(1, 'Mocked Return');
+                    expect(switchTabStub).toHaveBeenCalledWith(1);
+                }
+            });
+        });
+    });
 });
