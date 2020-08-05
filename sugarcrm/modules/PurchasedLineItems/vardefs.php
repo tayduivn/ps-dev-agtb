@@ -654,6 +654,7 @@ $dictionary['PurchasedLineItem'] = [
             'vname' => 'LBL_RLI_NAME',
             'source' => 'non-db',
             'comment' => 'RLI Name',
+            'showInMode' => 'RevenueLineItems',
         ],
         // Fields for "Activity" relationships
         'calls' => [

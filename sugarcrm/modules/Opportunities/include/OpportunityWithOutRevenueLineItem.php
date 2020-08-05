@@ -284,12 +284,38 @@ EOL;
         }
     }
 
+    protected $rliRelatedDataToRemove = [
+        'purchased_line_items' => [
+            'revenuelineitem_id',
+        ],
+    ];
+
+    /**
+     * Clear the related RLI data before truncating the RLI table
+     *
+     * @return array
+     */
+    protected function deleteRLIRelatedData()
+    {
+        $rowsEffected = [];
+        foreach ($this->rliRelatedDataToRemove as $tableName => $fields) {
+            $query = DBManagerFactory::getConnection()->createQueryBuilder();
+            $query->update($tableName);
+            foreach ($fields as $field) {
+                $query->set($field, $query->createPositionalParameter(null));
+            }
+            $rowsEffected[$tableName] = $query->execute();
+        }
+        return $rowsEffected;
+    }
+
     /**
      * Delete all the RLI data, since it not needed any more
      */
     protected function deleteRevenueLineItems()
     {
         $rli = BeanFactory::newBean('RevenueLineItems');
+        $rowsEffected = $this->deleteRLIRelatedData();
         /* @var $db DBManager */
         $db = DBManagerFactory::getInstance();
         $db->commit();
