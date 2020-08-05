@@ -376,24 +376,6 @@
                         };
                         bulkCalls.push(bulkRequest);
                     }
-
-                    // if the product exists but doesn't have a account ID saved, save it
-                    if (_.isEmpty(itemModel.get('account_id')) && accountId) {
-                        bulkUrl = app.api.buildURL('Products/' + prodId + '/link/account_link/' + accountId);
-                        bulkRequest = {
-                            url: bulkUrl.substr(4),
-                            method: 'POST',
-                            data: {
-                                id: prodId,
-                                link: 'account_link',
-                                relatedId: accountId,
-                                related: {
-                                    account_id: accountId
-                                }
-                            }
-                        };
-                        bulkCalls.push(bulkRequest);
-                    }
                 }
             }, this);
         }, this);
