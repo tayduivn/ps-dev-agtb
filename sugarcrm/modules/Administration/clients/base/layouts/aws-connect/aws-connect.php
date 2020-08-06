@@ -20,10 +20,12 @@ $viewdefs['Administration']['base']['layout']['aws-connect'] = [
                         'layout' => [
                             'type' => 'simple',
                             'name' => 'main-pane',
-                            'css_class' => 'main-pane span12',
+                            'css_class' => 'main-pane span12 omni-admin',
                             'components' => [
+                                ['view' => 'aws-connect-body-header'],
                                 ['view' => 'aws-connect'],
                                 ['view' => 'aws-connect-header'],
+                                ['view' => 'aws-connect-footer'],
                             ],
                         ],
                     ],

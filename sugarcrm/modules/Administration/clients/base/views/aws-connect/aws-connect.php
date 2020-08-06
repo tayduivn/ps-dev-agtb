@@ -16,7 +16,7 @@ $viewdefs['Administration']['base']['view']['aws-connect'] = [
         [
             'name' => 'panel_body',
             'label' => 'LBL_PANEL_1',
-            'columns' => 2,
+            'columns' => 1,
             'labelsOnTop' => true,
             'placeholders' => true,
             'fields' => [
@@ -24,13 +24,17 @@ $viewdefs['Administration']['base']['view']['aws-connect'] = [
                     'name' => 'aws_connect_instance_name',
                     'type' => 'text',
                     'label' => 'LBL_AWS_CONNECT_INST_NAME',
-                    'span' => 6,
+                    'required' => true,
+                    'labelSpan' => 2,
+                    'span' => 4,
                 ],
                 [
                     'name' => 'aws_connect_region',
                     'type' => 'text',
                     'label' => 'LBL_AWS_CONNECT_REGION',
-                    'span' => 6,
+                    'required' => true,
+                    'labelSpan' => 2,
+                    'span' => 4,
                 ],
             ],
         ],

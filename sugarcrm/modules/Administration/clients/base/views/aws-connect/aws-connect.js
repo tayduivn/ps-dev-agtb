@@ -16,6 +16,8 @@
 ({
     extendsFrom: 'RecordView',
 
+    className: 'omni-admin-body',
+
     /**
      * @inheritdoc
      */
@@ -75,15 +77,14 @@
      * @param {Function} callback Callback to be called at the end of the validation.
      */
     validateRequiredFields: function(fields, errors, callback) {
-        var requiredFields = [];
-        var instanceName = this.get('aws_connect_instance_name');
-        if (instanceName) {
-            requiredFields.push('aws_connect_region');
-        }
-        _.each(requiredFields, function(key) {
-            if (!this.get(key)) {
-                errors[key] = errors[key] || {};
-                errors[key].required = true;
+        _.each(fields, function(field) {
+            if (_.has(field, 'required') && field.required) {
+                var key = field.name;
+
+                if (!this.get(key)) {
+                    errors[key] = errors[key] || {};
+                    errors[key].required = true;
+                }
             }
         }, this);
         callback(null, fields, errors);

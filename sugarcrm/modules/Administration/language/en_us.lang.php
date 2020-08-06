@@ -1323,7 +1323,10 @@ Any integrations that rely on this platform will stop working.',
     'LBL_AWS_DESCR' => 'Configure Amazon Web Services.',
     'LBL_AWS_CONNECT_TITLE' => 'Amazon Connect Settings',
     'LBL_AWS_CONNECT_DESCR' => 'Configure Amazon Connect for use in Sugar',
+    'LBL_AWS_CONNECT_BODY_TITLE' => 'Instance Information',
     'LBL_AWS_CONNECT_REGION' => 'Instance Region',
     'LBL_AWS_CONNECT_INST_NAME' => 'Instance Name',
+    'LBL_AWS_CONNECT_REGION_HELP_TEXT' => 'Enter the region (e.g. "us-west-2") of your Amazon Connect instance. The region can be found in the Amazon Console.',
+    'LBL_AWS_CONNECT_INST_NAME_HELP_TEXT' => 'Enter the name of your Amazon Connect instance. For example, in the following Amazon Connect URL, the instance name is "example": https://example.awsapps.com/connect/ccp-v2.',
     //END SUGARCRM flav=ent ONLY
 );
