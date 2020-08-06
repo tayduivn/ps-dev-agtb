@@ -676,6 +676,10 @@ class RevenueLineItem extends SugarBean
             }
         }
 
+        if (!empty($purchase->account_id)) {
+            $pli->account_id = $purchase->account_id;
+        }
+
         $this->copyFieldsToBean($pli, $this->pliCopyFields);
         $this->mapFieldsToBean($pli, $this->pliMapFields);
         $this->copyCustomFields($pli);

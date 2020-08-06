@@ -926,6 +926,8 @@ class RevenueLineItemTest extends TestCase
 
         $purchase = SugarTestPurchaseUtilities::createPurchase();
         $purchase->service = $copyFields['service'];
+        $acct = SugarTestAccountUtilities::createAccount();
+        $purchase->account_id = $acct->id;
 
         $pli = $rli->generatePliFromRli($purchase);
         $this->assertEquals($current_user->id, $pli->created_by);
@@ -933,6 +935,7 @@ class RevenueLineItemTest extends TestCase
         $this->assertEquals($current_date, $pli->date_modified);
         $this->assertEquals($current_date, $pli->date_entered);
         $this->assertEquals($purchase->id, $pli->purchase_id);
+        $this->assertEquals($purchase->account_id, $pli->account_id);
 
         foreach (array_keys($copyFields) as $field) {
             $this->assertEquals($rli->$field, $pli->$field);
