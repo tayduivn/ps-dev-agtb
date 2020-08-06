@@ -76,14 +76,6 @@ Feature: Product Catalog Quick Picks Dashlet
       | label                              |
       | My Recently used and Fav. Products |
 
-    # TODO: Remove this block after the Warning Message issue CS-862 is fixed
-    # Workaround for bugs in dashlet.
-    When I choose Contacts in modules menu
-    When I Confirm confirmation alert
-    When I choose Opportunities in modules menu
-    When I select *Opp_1 in #OpportunitiesList.ListView
-    When I close alert
-
     # Verify that new dashboard is successfully created and saved
     Then I verify fields on #Dashboard.HeaderView
       | fieldName | value              |
@@ -290,13 +282,6 @@ Feature: Product Catalog Quick Picks Dashlet
     When I add ProductCatalogQuickPicks dashlet to #Dashboard
       | label                              |
       | My Recently used and Fav. Products |
-
-    # TODO: Remove this block after the Warning Message issue CS-862 is fixed
-    # Workaround for bug in dashlet.
-    When I choose Contacts in modules menu
-    When I Confirm confirmation alert
-    When I choose Quotes in modules menu
-    When I select *Quote_1 in #OpportunitiesList.ListView
 
     # Verify that new dashboard is successfully created and saved
     Then I verify fields on #Dashboard.HeaderView

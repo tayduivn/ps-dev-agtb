@@ -123,9 +123,6 @@ Feature: Active Subscription dashlet on the record view
 
     When I choose Opportunities in modules menu
 
-    # TODO: Remove this block after the Warning Message issue CS-862 is fixed
-    When I Confirm confirmation alert
-
     # Edit Opportunity record
     When I select *Opp_1 in #OpportunitiesList.ListView
     When I click Edit button on #Opp_1Record header
@@ -168,8 +165,7 @@ Feature: Active Subscription dashlet on the record view
 
     # Refresh dashlet
     When I refresh the browser
-    # TODO: Remove this block after the Warning Message issue CS-862 is fixed
-    When I Confirm confirmation alert
+
     # Verify there is no information displayed in the dashlet
     Then I verify '<message>' message appears in #Dashboard.ActiveSubscriptionsDashlet
 

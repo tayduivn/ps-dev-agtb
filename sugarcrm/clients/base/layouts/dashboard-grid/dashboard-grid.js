@@ -203,11 +203,12 @@
                 return;
             }
             var conf = model.toJSON();
+            var ctx = {module: model.get('module')};
+            if (model.get('link')) {
+                ctx.link = model.get('link');
+            }
             var dashletDef = {
-                context: {
-                    module: model.get('module'),
-                    link: model.get('link')
-                }
+                context: ctx
             };
             var type = conf.componentType;
             delete conf.config;
@@ -215,7 +216,9 @@
             if (_.isEmpty(dashletDef.context.module) && _.isEmpty(dashletDef.context.link)) {
                 delete dashletDef.context;
             }
-            dashletDef[type] = conf;
+            // use deepCopy to get rid of any undefined attributes that may
+            // cause the Unsaved data warning.
+            dashletDef[type] = app.utils.deepCopy(conf);
             self.addNewDashlet(dashletDef);
         });
     },
