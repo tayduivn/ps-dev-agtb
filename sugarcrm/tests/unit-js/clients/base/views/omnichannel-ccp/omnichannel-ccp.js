@@ -8,7 +8,7 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-describe('Base.Layout.OmnichannelCcpView', function() {
+describe('Base.View.OmnichannelCcpView', function() {
     var view;
     var sandbox;
     var layout;

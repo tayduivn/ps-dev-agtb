@@ -286,7 +286,7 @@ $dictionary['Message'] = [
     ],
     'indices' => [
         [
-            'name' => 'idx_parent',
+            'name' => 'idx_parent_message',
             'type' => 'index',
             'fields' => [
                 'parent_id',

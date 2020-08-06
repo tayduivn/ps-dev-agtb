@@ -275,7 +275,7 @@
      * @return {boolean} whether or not config was loaded
      * @private
      */
-    _loadAdminConfig() {
+    _loadAdminConfig: function() {
         var instanceName = App.config.awsConnectInstanceName;
         var region = App.config.awsConnectRegion;
         if (_.isEmpty(instanceName) || _.isEmpty(region)) {
