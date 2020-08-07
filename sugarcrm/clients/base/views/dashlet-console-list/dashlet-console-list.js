@@ -196,7 +196,7 @@
 
         var filter = this.layout.filters && this.layout.filters.collection ?
             this.layout.filters.collection.get(id) : {};
-        var filterDef = filter.get('filter_definition') || [];
+        var filterDef = !_.isEmpty(filter) ? filter.get('filter_definition') : [];
 
         filterDef = this.buildFilterDefinition(filterDef, this.currentSearch);
         this.currentFilterDef = filterDef;
@@ -293,13 +293,12 @@
         var arrowElem = this.$('.select2-arrow') || [];
         var caratElem = this.$('.fa.fa-caret-down') || [];
         var filterElem = this.$('.select2-chosen') || [];
-        var dashletElem = this.$('.dashlet');
 
-        if (arrowElem.length !== 0 && filterElem.length !== 0) {
+        if (arrowElem.length !== 0) {
             arrowElem.remove();
         }
 
-        if (caratElem.length === 0) {
+        if (caratElem.length === 0  && filterElem.length !== 0) {
             filterElem.append('<i class="fa fa-caret-down"></i>');
         }
     },

@@ -185,4 +185,8 @@ $config['blackList']['pro'] = array(
 'sugarcrm/tests/unit-js/clients/base/layouts/omnichannel-dashboard-switch' => 1,
 'sugarcrm/tests/unit-js/clients/base/views/omnichannel-button' => 1,
 'sugarcrm/tests/unit-js/clients/base/views/omnichannel-ccp' => 1,
+
+// Console List view dashlet
+'sugarcrm/clients/base/views/dashlet-console-list' => 1,
+'sugarcrm/tests/unit-js/clients/base/views/dashlet-console-list' => 1,
 );
