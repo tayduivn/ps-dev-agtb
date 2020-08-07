@@ -141,6 +141,14 @@
     },
 
     /**
+     * Gets the active contacts.
+     * @return {contacts} Active contacts
+     */
+    getContacts: function() {
+        return new connect.Agent().getContacts();
+    },
+
+    /**
      * Load contact event listeners.
      */
     loadContactEventListeners: function() {
@@ -156,10 +164,15 @@
             });
 
             contact.onConnected(function(contact) {
+                self.styleFooterButton('active-session');
                 self.addContactToContactsList(contact);
             });
 
             contact.onDestroy(function(contact) {
+                if (_.isEmpty(self.getContacts())) {
+                    // no more active contacts
+                    self.styleFooterButton('logged-in');
+                }
                 self.removeContactFromContactsList(contact);
             });
 
