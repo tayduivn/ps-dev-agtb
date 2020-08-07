@@ -40,7 +40,7 @@ EOQ;
      */
     public static function getOperationName()
     {
-        return ['true', 'always'];
+        return '';
     }
 
     /**

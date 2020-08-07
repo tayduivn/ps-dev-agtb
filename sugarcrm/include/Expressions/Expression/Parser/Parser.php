@@ -235,7 +235,6 @@ class Parser {
         // a boolean
         switch ($expr) {
             case 'true':
-            case 'always':
                 return new TrueExpression();
             case 'false':
                 return new FalseExpression();
