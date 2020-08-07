@@ -278,7 +278,8 @@ $dictionary['Message'] = [
         'conversation' => [
             'name' => 'conversation',
             'vname' => 'LBL_CONVERSATION',
-            'type' => 'text',
+            'readonly' => true,
+            'type' => 'longtext',
             'duplicate_on_record_copy' => 'always',
         ],
     ],

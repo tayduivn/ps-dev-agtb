@@ -125,6 +125,10 @@ $viewdefs['Messages']['base']['view']['record'] = [
                 [
                     'name' => 'conversation',
                     'rows' => 5,
+                    'type' => 'textarea',
+                    'settings' => [
+                        'max_display_chars' => 10000,
+                    ],
                 ],
                 'direction',
                 'channel_type',

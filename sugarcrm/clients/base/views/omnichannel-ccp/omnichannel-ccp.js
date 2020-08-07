@@ -37,6 +37,16 @@
     connectedContacts: {},
 
     /**
+     * Chat controllers, keyed by contact ID
+     */
+    chatControllers: {},
+
+    /**
+     * Transcripts of chat messages, keyed by contact ID
+     */
+    chatTranscripts: {},
+
+    /**
      * Is the ccp loaded?
      */
     ccpLoaded: false,
@@ -98,11 +108,14 @@
             var self = this;
             // Load the connect-streams library and initialize the CCP
             $.getScript('include/javascript/amazon-connect/amazon-connect-1.4.9-1-gf9242a0.js', function() {
-                self.libraryLoaded = true;
-                self.initializeCCP();
+                // Load chat library here, must be loaded after connect-streams
+                $.getScript('include/javascript/amazon-connect/amazon-connect-chat.js', function() {
+                    self.libraryLoaded = true;
+                    self.initializeCCP();
+                    self.initializeChat();
+                });
             });
-            // Load chat library here once required, must be loaded after connect-streams
-            $.getScript('include/javascript/amazon-connect/amazon-connect-chat.js');
+
         } catch (error) {
             app.alert.show(error.name, {
                 level: 'error',
@@ -124,6 +137,16 @@
             this.loadGeneralEventListeners();
             this.ccpLoaded = true;
         }
+    },
+
+    /**
+     * Provide initial chat config for use with amazon-connect-chatjs library
+     */
+    initializeChat: function() {
+        var globalConfig = {
+            region: this.defaultCCPOptions.region
+        };
+        connect.ChatSession.setGlobalConfig(globalConfig);
     },
 
     /**
@@ -183,6 +206,12 @@
         });
 
         connect.contact(function(contact) {
+
+            var connection = contact.getAgentConnection();
+            if (connection.getMediaType() === connect.MediaType.CHAT) {
+                self.loadChatListeners(connection);
+            }
+
             contact.onConnecting(function(contact) {
                 self._handleIncomingContact(contact);
             });
@@ -200,7 +229,7 @@
                     // empty the active contact
                     self._unsetActiveContact();
                 }
-                self.removeContactFromContactsList(contact);
+                self.removeStoredContactData(contact);
             });
 
             contact.onACW(function(contact) {
@@ -383,11 +412,19 @@
      *
      * @param contact
      */
-    removeContactFromContactsList: function(contact) {
+    removeStoredContactData: function(contact) {
         var contactId = contact.getContactId();
 
         if (_.has(this.connectedContacts, contactId)) {
             this.connectedContacts = _.omit(this.connectedContacts, contactId);
+        }
+
+        if (_.has(this.chatControllers, contactId)) {
+            this.chatControllers = _.omit(this.chatControllers, contactId);
+        }
+
+        if (_.has(this.chatTranscripts, contactId)) {
+            this.chatTranscripts = _.omit(this.chatTranscripts, contactId);
         }
     },
 
@@ -442,9 +479,12 @@
             lastName = connectionInfo.chatMediaInfo.customerName;
         }
 
+        var chatTranscript = this._getTranscriptForContact(contact);
+
         return {
             last_name: lastName,
             name: (lastName) ? lastName : app.lang.get('LBL_OMNICHANNEL_DEFAULT_CUSTOMER_NAME'),
+            conversation: chatTranscript
         };
     },
 
@@ -542,6 +582,7 @@
         } else if (data.contactType === connect.ContactType.CHAT) {
             model.set({
                 channel_type: 'Chat',
+                conversation: data.conversation
             });
         }
 
@@ -571,5 +612,101 @@
         }, _.bind(function() {
             this.layout.open();
         }, this));
+    },
+
+    /**
+     * Load event listeners specific to chat sessions
+     *
+     * @param {Object} connection - connect-streams Connection object
+     */
+    loadChatListeners: function(connection) {
+        var controllerHandler = _.bind(this._handleChatMediaController, this);
+        connection.getMediaController().then(controllerHandler);
+    },
+
+    /**
+     * Bind any event listeners onto chat media controllers.
+     *
+     * @param {Object} controller - ChatSessionController from connect-streams-chatjs
+     * @private
+     */
+    _handleChatMediaController: function(controller) {
+        var contactId = controller.controller.contactId;
+        this.chatControllers[contactId] = controller;
+        controller.onMessage(_.bind(this._handleChatMessage, this));
+    },
+
+    /**
+     * ChatSessionController.onMessage event handler. Receives the API response
+     * object from when messages are sent/received. Overwrites the existing chat
+     * transcript for this contact with the most up-to-date version so whenever
+     * the chat is ended we can save the transcript.
+     *
+     * @param {Object} response - connect-streams-chatjs API response
+     * @private
+     */
+    _handleChatMessage: function(response) {
+        var controller = this.chatControllers[response.chatDetails.contactId];
+        controller.getTranscript({})
+        .then(_.bind(this._setChatTranscript, this))
+        .catch(function(error) {
+            console.log(error);
+        });
+    },
+
+    /**
+     * Sets a chat transcript to this object's context for reference when the
+     * chat session ends
+     *
+     * @param {Object} transcript - connect-streams-chatjs Transcript object
+     * @private
+     */
+    _setChatTranscript: function(transcript) {
+        var currentTranscript = this.chatTranscripts[transcript.data.InitialContactId];
+        this.chatTranscripts[transcript.data.InitialContactId] = _.uniq(_.union(
+            currentTranscript, transcript.data.Transcript
+        ), function(message) {
+            return message.Id;
+        });
+    },
+
+    /**
+     * Get a human-readable chat transcript for this contact. This function is
+     * called when chat sessions end, and the return value is set on the model
+     * when the Messages create drawer opens.
+     *
+     * @param {Object} contact - connect-streams Contact object
+     * @return {string} readableTranscript - human readable chat transcript
+     * @private
+     */
+    _getTranscriptForContact: function(contact) {
+        var readableTranscript = '';
+
+        if (!_.isUndefined(this.chatTranscripts[contact.contactId])) {
+            var transcriptJson = this.chatTranscripts[contact.contactId];
+            _.each(transcriptJson, function(message) {
+                readableTranscript += this._formatChatMessage(message);
+            }, this);
+        }
+        return readableTranscript.trim();
+    },
+
+    /**
+     * Convert a single chat message from JSON to a human-readable format
+     *
+     * @param {Object} message - JSON-format chat message
+     * @return {string} readableMessage - single human-readable chat message
+     * @private
+     */
+    _formatChatMessage: function(message) {
+        if (_.isEmpty(message.Content)) {
+            return '';
+        }
+        var offset = app.user.getPreference('tz_offset_sec');
+        var dateTime = app.date(message.AbsoluteTime).utcOffset(offset / 60);
+        var timeStamp = dateTime.format(app.date.getUserTimeFormat());
+        var header = '[' + message.ParticipantRole + ' ' + message.DisplayName + ']';
+        header += ' ' + timeStamp;
+        return header + '\n' + message.Content + '\n\n';
     },
 })

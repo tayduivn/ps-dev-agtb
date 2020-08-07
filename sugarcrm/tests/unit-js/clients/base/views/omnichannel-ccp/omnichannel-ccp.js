@@ -181,7 +181,7 @@ describe('Base.View.OmnichannelCcpView', function() {
                 expect(view._loadAdminConfig.calledOnce).toBeTruthy();
                 expect(view._showNonConfiguredWarning.callCount).toEqual(!values.adminSuccess ? 1 : 0);
                 expect(view.initializeCCP.callCount).toEqual(values.adminSuccess && values.libLoaded ? 1 : 0);
-                expect($.getScript.callCount).toEqual(values.adminSuccess && !values.libLoaded ? 2 : 0);
+                expect($.getScript.callCount).toEqual(values.adminSuccess && !values.libLoaded ? 1 : 0);
             });
         });
     });
@@ -210,28 +210,46 @@ describe('Base.View.OmnichannelCcpView', function() {
         });
     });
 
-    describe('removeContactFromContactsList', function() {
-        it('should remove the contact from the connected contacts list', function() {
-            var expected = {
-                123: {
-                    connectedTimestamp: '2020-07-29T12:00:00-04:00',
+    describe('removeStoredContactData', function() {
+        using('different combinations of contact information', [
+            {
+                connectedContacts: {
+                    123: {
+                        connectedTimestamp: '2020-07-29T12:00:00-04:00',
+                    },
                 },
-            };
+                chatControllers: {
+                    123: {getTranscript: function() {}}
+                },
+                chatTranscripts: {
+                    123: [{DisplayName: 'SYSTEM', Content: 'Message Content'}]
+                }
+            }
+        ], function(expected) {
+            it('should remove the contact from the connected contacts list', function() {
+                view.connectedContacts = _.extendOwn({}, expected.connectedContacts, {
+                    456: {
+                        connectedTimestamp: '2020-07-29T15:00:00-04:00',
+                    },
+                });
+                view.chatControllers = _.extendOwn({}, expected.chatControllers, {
+                    456: {getTranscript: function() {}}
+                });
+                view.chatTranscripts = _.extendOwn({}, expected.chatTranscripts, {
+                    456: [{DisplayName: 'Customer', Content: 'Customer Message Content'}]
+                });
 
-            view.connectedContacts = _.extendOwn({}, expected, {
-                456: {
-                    connectedTimestamp: '2020-07-29T15:00:00-04:00',
-                },
+                var contact = {
+                    getContactId: function() {
+                        return 456;
+                    },
+                };
+
+                view.removeStoredContactData(contact);
+                expect(view.connectedContacts).toEqual(expected.connectedContacts);
+                expect(view.chatControllers).toEqual(expected.chatControllers);
+                expect(view.chatTranscripts).toEqual(expected.chatTranscripts);
             });
-
-            var contact = {
-                getContactId: function() {
-                    return 456;
-                },
-            };
-
-            view.removeContactFromContactsList(contact);
-            expect(view.connectedContacts).toEqual(expected);
         });
     });
 
@@ -314,6 +332,7 @@ describe('Base.View.OmnichannelCcpView', function() {
             expect(actual).toEqual({
                 last_name: 'Customer',
                 name: 'Customer',
+                conversation: '',
             });
         });
     });
@@ -567,5 +586,122 @@ describe('Base.View.OmnichannelCcpView', function() {
 
             expect(actual).toEqual('123');
         });
+    });
+
+    describe('_getTranscriptForContact', function() {
+        using('different time formats',
+            [{
+                timepref: 'HH:mm',
+                expected: '[SYSTEM SYSTEM_MESSAGE] 16:40\n' +
+                    'You are now being placed in queue to chat with an agent.\n' +
+                    '\n' +
+                    '[CUSTOMER Customer] 16:40\n' +
+                    'Hello I am the Customer\n' +
+                    '\n' +
+                    '[AGENT Jay] 16:41\n' +
+                    'Hello I am the Agent'
+            }, {
+                timepref: 'h:mm A',
+                expected: '[SYSTEM SYSTEM_MESSAGE] 4:40 PM\n' +
+                    'You are now being placed in queue to chat with an agent.\n' +
+                    '\n' +
+                    '[CUSTOMER Customer] 4:40 PM\n' +
+                    'Hello I am the Customer\n' +
+                    '\n' +
+                    '[AGENT Jay] 4:41 PM\n' +
+                    'Hello I am the Agent',
+            }], function(values) {
+            it('should make human-readable transcript from JSON', function() {
+                sinon.collection.stub(app.user, 'getPreference').returns(-240);
+                sinon.collection.stub(app.date, 'getUserTimeFormat').returns(values.timepref);
+
+                var chatFixture = SugarTest.loadFixture('amazon-chat-transcript');
+                var contact = {
+                    contactId: 'abc123'
+                };
+                view.chatTranscripts = {
+                    abc123: chatFixture
+                };
+
+                var actual = view._getTranscriptForContact(contact);
+                expect(actual).toEqual(values.expected);
+            });
+        });
+    });
+
+    describe('_setChatTranscript', function() {
+        using('different combinations of transcripts', [
+            {
+                existing: {123: [
+                    {Content: 'message 1', Id: 1},
+                    {Content: 'message 2', Id: 2},
+                    {Content: 'message 3', Id: 3}
+                ]},
+                incoming: {
+                    data: {
+                        InitialContactId: 123,
+                        Transcript: [
+                            {Content: 'message 3', Id: 3},
+                            {Content: 'message 4', Id: 4}
+                        ]
+                    }
+                },
+                expected: {123: [
+                    {Content: 'message 1', Id: 1},
+                    {Content: 'message 2', Id: 2},
+                    {Content: 'message 3', Id: 3},
+                    {Content: 'message 4', Id: 4}
+                ]}
+            },
+            {
+                existing: {123: []},
+                incoming: {
+                    data: {
+                        InitialContactId: 123,
+                        Transcript: [
+                            {Content: 'message 3', Id: 3},
+                            {Content: 'message 4', Id: 4}
+                        ]
+                    }
+                },
+                expected: {123: [
+                    {Content: 'message 3', Id: 3},
+                    {Content: 'message 4', Id: 4}
+                ]}
+            },{
+                existing: {123: [
+                    {Content: 'message 1', Id: 1},
+                    {Content: 'message 2', Id: 2},
+                    {Content: 'message 3', Id: 3}
+                ]},
+                incoming: {
+                    data: {
+                        InitialContactId: 456,
+                        Transcript: [
+                            {Content: 'message 3', Id: 3},
+                            {Content: 'message 4', Id: 4}
+                        ]
+                    }
+                },
+                expected: {
+                    123: [
+                        {Content: 'message 1', Id: 1},
+                        {Content: 'message 2', Id: 2},
+                        {Content: 'message 3', Id: 3}
+                    ],
+                    456: [
+                        {Content: 'message 3', Id: 3},
+                        {Content: 'message 4', Id: 4}
+                    ]
+                }
+            },
+        ], function(values) {
+            it('should store the union between new and existing transcripts', function() {
+                view.chatTranscripts = values.existing;
+                view._setChatTranscript(values.incoming);
+                expect(view.chatTranscripts).toEqual(values.expected);
+            });
+        });
+
     });
 });
