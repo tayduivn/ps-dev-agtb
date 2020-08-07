@@ -600,8 +600,8 @@ class Team extends SugarBean
                             $membership->save();
                         }else{
                              $GLOBALS['log']->debug("Remove membership record {$manager->user_name} from {$this->name}");
-                             $this->users->delete($this->id, $manager->id);
                             $this->getListener()->userRemovedFromTeam($manager->id, $this->id);
+                            $this->users->delete($this->id, $manager->id);
                         }
                     }
                 }

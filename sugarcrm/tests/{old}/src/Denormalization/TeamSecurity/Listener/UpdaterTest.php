@@ -209,6 +209,28 @@ class UpdaterTest extends TestCase
     }
 
     /**
+     * @test
+     */
+    public function userManagerChanged()
+    {
+        $user = $this->createUser();
+        $manager = $this->createUser();
+
+        $team = $this->getPrivateTeam($user);
+        $teamSet = $this->createTeamSet($team);
+
+        // manager added
+        $team->user_manager_changed($user->id, '', $manager->id);
+        $this->assertUserBelongsToTeamSet($user, $teamSet);
+        $this->assertUserBelongsToTeamSet($manager, $teamSet);
+
+        // manager removed
+        $team->user_manager_changed($user->id, $manager->id, '');
+        $this->assertUserBelongsToTeamSet($user, $teamSet);
+        $this->assertUserNotBelongsToTeamSet($manager, $teamSet);
+    }
+
+    /**
      * @return User
      */
     private function createUser()
@@ -279,6 +301,15 @@ class UpdaterTest extends TestCase
         foreach ($teams as $team) {
             $team->remove_user_from_team($user->id);
         }
+    }
+
+    /**
+     * @param User $user
+     * @return Team|null
+     */
+    private function getPrivateTeam(User $user)
+    {
+        return BeanFactory::retrieveBean('Teams', $user->getPrivateTeamID(), ['use_cache' => false]);
     }
 
     private function assertUserBelongsToTeamSet(User $user, TeamSet $teamSet)
