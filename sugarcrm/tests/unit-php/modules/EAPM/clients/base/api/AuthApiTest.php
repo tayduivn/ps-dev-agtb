@@ -23,7 +23,7 @@ class AuthApiTest extends TestCase
      */
     public function testGetAuthInfo()
     {
-        $this->expectException(\SugarApiExceptionNotFound::class);
+        $this->expectException(\SugarApiExceptionMissingParameter::class);
 
         $expected = [
             'auth_warning' => 'fake_warning',

@@ -50,13 +50,6 @@ final class HeaderName
     public static function isValid($name)
     {
         // SS-634: Disable character validation, which causes errors on valid email imports
-//        $tot = strlen($name);
-//        for ($i = 0; $i < $tot; $i += 1) {
-//            $ord = ord($name[$i]);
-//            if ($ord < 33 || $ord > 126 || $ord === 58) {
-//                return false;
-//            }
-//        }
         return true;
     }
 

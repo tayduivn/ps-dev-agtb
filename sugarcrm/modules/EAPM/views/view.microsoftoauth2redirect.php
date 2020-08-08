@@ -12,6 +12,8 @@
 
 class EAPMViewMicrosoftOauth2Redirect extends SugarView
 {
+    use Oauth2RedirectTrait;
+
     /**
      * @var string $context the context in which this redirect URL was called
      */
@@ -22,23 +24,9 @@ class EAPMViewMicrosoftOauth2Redirect extends SugarView
      */
     private $api;
 
-    /**
-     * {@inheritDoc}
-     *
-     * @param array $params Ignored
-     */
-    public function process($params = array())
-    {
-        global $sugar_config;
-        $this->context = $_REQUEST['state'] ?? '';
+    private $templateFile = 'modules/EAPM/tpls/MicrosoftOauth2Redirect.tpl';
 
-        $tokenData = $this->authenticate();
-        $response = $this->buildResponse($tokenData);
-
-        $this->ss->assign('response', $response);
-        $this->ss->assign('siteUrl', $sugar_config['site_url']);
-        $this->ss->display('modules/EAPM/tpls/MicrosoftOauth2Redirect.tpl');
-    }
+    private $dataSource = 'microsoftEmailRedirect';
 
     protected function authenticate()
     {
@@ -100,25 +88,6 @@ class EAPMViewMicrosoftOauth2Redirect extends SugarView
             'dataSource' => 'microsoftOauthRedirect',
         );
 
-        return $response;
-    }
-
-    /**
-     * Constructs a response object that includes additional information about
-     * the EAPM bean created
-     *
-     * @param $authResult
-     * @return array
-     */
-    protected function buildEmailContextResponse($authResult)
-    {
-        $response = $this->buildBasicResponse($authResult['token'] ?? null);
-        $response['dataSource'] = 'microsoftEmailRedirect';
-        if (!empty($response['result'])) {
-            $response['eapmId'] = $authResult['eapmId'] ?? null;
-            $response['emailAddress'] = $authResult['emailAddress'] ?? null;
-            $response['userName'] = $authResult['userName'] ?? null;
-        }
         return $response;
     }
 }

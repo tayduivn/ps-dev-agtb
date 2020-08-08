@@ -12,6 +12,8 @@
 
 class EAPMViewGoogleOauth2Redirect extends SugarView
 {
+    use Oauth2RedirectTrait;
+
     /**
      * @var string $context the context in which this redirect URL was called
      */
@@ -22,23 +24,9 @@ class EAPMViewGoogleOauth2Redirect extends SugarView
      */
     private $api;
 
-    /**
-     * {@inheritDoc}
-     *
-     * @param array $params Ignored
-     */
-    public function process($params = array())
-    {
-        global $sugar_config;
-        $this->context = $_GET['state'] ?? '';
+    private $templateFile = 'modules/EAPM/tpls/GoogleOauth2Redirect.tpl';
 
-        $tokenData = $this->authenticate();
-        $response = $this->buildResponse($tokenData);
-
-        $this->ss->assign('response', $response);
-        $this->ss->assign('siteUrl', $sugar_config['site_url']);
-        $this->ss->display('modules/EAPM/tpls/GoogleOauth2Redirect.tpl');
-    }
+    private $dataSource = 'googleEmailRedirect';
 
     /**
      * Authenticates a Google authorization code with Google servers, storing
@@ -106,25 +94,6 @@ class EAPMViewGoogleOauth2Redirect extends SugarView
             'dataSource' => 'googleOauthRedirect',
         );
 
-        return $response;
-    }
-
-    /**
-     * Constructs a response object that includes additional information about
-     * the EAPM bean created and the email address of the authorized account
-     *
-     * @param $authResult
-     * @return array
-     */
-    protected function buildEmailContextResponse($authResult)
-    {
-        $response = $this->buildBasicResponse($authResult['token'] ?? null);
-        $response['dataSource'] = 'googleEmailRedirect';
-        if (!empty($response['result'])) {
-            $response['eapmId'] = $authResult['eapmId'] ?? null;
-            $response['emailAddress'] = $authResult['emailAddress'] ?? null;
-            $response['userName'] = $authResult['userName'] ?? null;
-        }
         return $response;
     }
 }

@@ -36,14 +36,12 @@ class AuthApi extends SugarApi
      *
      * @param ServiceBase $api The API class of the request
      * @param array $args The arguments array passed in from the API
-     * @return string Auth URL
-     * @throws SugarApiExceptionNotFound
+     * @return array Auth URL
+     * @throws SugarApiExceptionMissingParameter
      */
     public function getAuthInfo(ServiceBase $api, array $args): array
     {
-        if (!isset($args['application'])) {
-            throw new SugarApiExceptionNotFound('Application not found');
-        }
+        $this->requireArgs($args, ['application']);
         $authWarning = $this->getAuthWarning($args['application']);
         $data = ['auth_warning' => $authWarning];
         $extApi = $this->getExternalApi($args['application']);
