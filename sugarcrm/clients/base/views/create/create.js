@@ -598,6 +598,10 @@
         //if we have model attributes, use them to build the message, otherwise use a generic message
         if (model && model.attributes) {
             modelAttributes = model.attributes;
+
+            if (model.get('no_success_label_link')) {
+                successLabel = 'LBL_RECORD_SAVED_SUCCESS_NO_LINK';
+            }
         } else {
             modelAttributes = {};
             successLabel = 'LBL_RECORD_SAVED';

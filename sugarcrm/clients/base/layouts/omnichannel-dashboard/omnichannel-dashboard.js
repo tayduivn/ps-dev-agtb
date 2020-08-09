@@ -19,6 +19,14 @@
     className: 'omni-dashboard dashboard-pane',
 
     /**
+     * Maps the module to the appropriate tab index
+     */
+    moduleTabIndex: {
+        Contacts: 1,
+        Cases: 2,
+    },
+
+    /**
      * Context models for tabs.
      * @property {Array}
      */

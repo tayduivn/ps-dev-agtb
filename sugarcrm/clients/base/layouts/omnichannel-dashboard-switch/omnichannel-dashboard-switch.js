@@ -154,5 +154,18 @@
             }
             _remove();
         });
-    }
+    },
+
+    /**
+     *
+     * @param contactId
+     * @return {View.Layout|null}
+     */
+    getDashboard: function(contactId) {
+        var index = _.indexOf(this.contactIds, contactId);
+        if (index !== -1) {
+            return this._components[index];
+        }
+        return null;
+    },
 })

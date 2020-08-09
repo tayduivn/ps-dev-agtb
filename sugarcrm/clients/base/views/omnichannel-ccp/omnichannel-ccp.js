@@ -27,6 +27,11 @@
     },
 
     /**
+     * The active contact
+     */
+    activeContact: null,
+
+    /**
      * The list of connected contacts
      */
     connectedContacts: {},
@@ -148,12 +153,25 @@
     },
 
     /**
+     * Get the contact id for the active contact
+     *
+     * @return {string} the contact id or empty string if no active contact
+     */
+    getActiveContactId: function() {
+        if (this.activeContact) {
+            return this.activeContact.getContactId();
+        }
+        return '';
+    },
+
+    /**
      * Load contact event listeners.
      */
     loadContactEventListeners: function() {
         var self = this;
 
         connect.core.onViewContact(function(event) {
+            self._setActiveContact(event.contactId);
             self.layout.trigger('contact:view', event.contactId);
         });
 
@@ -171,38 +189,57 @@
                 if (_.isEmpty(self.getContacts())) {
                     // no more active contacts
                     self.styleFooterButton('logged-in');
+
+                    // empty the active contact
+                    self._unsetActiveContact();
                 }
                 self.removeContactFromContactsList(contact);
             });
 
             contact.onACW(function(contact) {
+                // do nothing if contact type is unfamiliar
+                if (!_.has(self.contactTypeModule, contact.getType())) {
+                    app.logger.error(`Amazon Connect: Contact type (type: ${type}) is not voice or chat`);
+                    return;
+                }
+
                 // do nothing if contact was from a previous session
                 if (!_.has(self.connectedContacts, contact.getContactId())) {
                     return;
                 }
 
-                var data;
-                var type = contact.getType();
-                var module = self.contactTypeModule[type];
-
-                switch (type) {
-                    case connect.ContactType.VOICE:
-                        data = self.getVoiceContactInfo(contact);
-                        break;
-                    case connect.ContactType.CHAT:
-                        data = self.getChatContactInfo(contact);
-                        break;
-                    default:
-                        app.logger.error(`Amazon Connect: Contact type (type: ${type}) is not voice or chat`);
-                        return;
-                }
-
-                data = _.extendOwn(data, self.getGenericContactInfo(contact));
-
+                var data = _.extendOwn(
+                    self.getContactInfo(contact),
+                    self.getGenericContactInfo(contact)
+                );
+                var module = self.contactTypeModule[contact.getType()];
                 var model = self.getNewModelForContact(module, data);
+
                 self.openCreateDrawer(module, model);
             });
         });
+    },
+
+    /**
+     * Get relevant contact information based on contact type
+     *
+     * @param contact
+     * @return {Object}
+     */
+    getContactInfo: function(contact) {
+        var data;
+        var type = contact.getType();
+
+        switch (type) {
+            case connect.ContactType.VOICE:
+                data = this.getVoiceContactInfo(contact);
+                break;
+            case connect.ContactType.CHAT:
+                data = this.getChatContactInfo(contact);
+                break;
+        }
+
+        return data;
     },
 
     /**
@@ -299,6 +336,27 @@
     },
 
     /**
+     * Caches the last viewed contact
+     *
+     * @param {string} id
+     * @private
+     */
+    _setActiveContact: function(id) {
+        this.activeContact = _.findWhere(this.getContacts(), {contactId: id});
+    },
+
+    /**
+     * Unset the active contact and other relevant data
+     *
+     * @private
+     */
+    _unsetActiveContact: function() {
+        this.activeContact = null;
+        this.context.unset('quickcreateModelData');
+        this.context.unset('quickcreateCreatedModel');
+    },
+
+    /**
      * Add the contact to the list of connected contacts
      *
      * @param contact
@@ -354,7 +412,7 @@
         var endpoint = conn.getEndpoint();
 
         return {
-            phoneNumber: endpoint.phoneNumber,
+            phone_work: endpoint.phoneNumber,
         };
     },
 
@@ -365,8 +423,17 @@
      * @return {Object}
      */
     getChatContactInfo: function(contact) {
+        var lastName = '';
+        var data = contact._getData();
+
+        var connectionInfo = _.findWhere(data.connections, {type: 'inbound'});
+        if (connectionInfo) {
+            lastName = connectionInfo.chatMediaInfo.customerName;
+        }
+
         return {
-            name: app.lang.get('LBL_OMNICHANNEL_DEFAULT_CUSTOMER_NAME'),
+            last_name: lastName,
+            name: (lastName) ? lastName : app.lang.get('LBL_OMNICHANNEL_DEFAULT_CUSTOMER_NAME'),
         };
     },
 
@@ -399,7 +466,7 @@
         }
 
         var contactTypeStr = (contactType === connect.ContactType.VOICE) ? 'Call' : 'Chat';
-        var identifier = (contactType === connect.ContactType.VOICE) ? data.phoneNumber : data.name;
+        var identifier = (contactType === connect.ContactType.VOICE) ? data.phone_work : data.name;
         var direction = _.has(data, 'isContactInbound') ? (data.isContactInbound ? 'from' : 'to') : 'from';
 
         title = app.lang.get('TPL_OMNICHANNEL_NEW_RECORD_TITLE',

@@ -5065,7 +5065,6 @@ Sincerely, SugarCRM',
     'LBL_OMNICHANNEL_DASHBOARD' => 'Omnichannel Dashboard',
     'LBL_OMNICHANNEL_DEFAULT_CUSTOMER_NAME' => 'Customer',
     'TPL_OMNICHANNEL_NEW_RECORD_TITLE' => '{{type}} {{direction}} {{identifier}} at {{time}}',
-    
     //END SUGARCRM flav=ent ONLY
 
     //First time login wizard
@@ -5343,6 +5342,7 @@ Sincerely, SugarCRM',
     //record save
     'LBL_RECORD_SAVED' => 'Record saved.', // use when there is no information about the record
     'LBL_RECORD_SAVED_SUCCESS' => 'You successfully created the {{moduleSingularLower}} <a href="#{{buildRoute model=this}}">{{name}}</a>.', // use when a model is available
+    'LBL_RECORD_SAVED_SUCCESS_NO_LINK' => 'You successfully created the {{moduleSingularLower}}.',
     'LBL_RECORD_SAVED_ACCESS_DENIED' => 'You successfully created this record, but you do not have permission to access this record.', // use when user has no access to the model
     'LBL_VALIDATING' => 'Validating...',
 

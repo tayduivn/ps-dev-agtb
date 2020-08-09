@@ -288,18 +288,33 @@ describe('Base.View.OmnichannelCcpView', function() {
             var actual = view.getVoiceContactInfo(contact);
 
             expect(actual).toEqual({
-                phoneNumber: phoneNumber,
+                phone_work: phoneNumber,
             });
         });
     });
 
     describe('getChatContactInfo', function() {
         it('should get contact info for chat type', function() {
-            var name = app.lang.get('LBL_OMNICHANNEL_DEFAULT_CUSTOMER_NAME');
-            var actual = view.getChatContactInfo({});
+            var contact = {
+                _getData: function() {
+                    return {
+                        connections: [
+                            {
+                                type: 'inbound',
+                                chatMediaInfo: {
+                                    customerName: 'Customer'
+                                },
+                            },
+                        ],
+                    };
+                },
+            };
+
+            var actual = view.getChatContactInfo(contact);
 
             expect(actual).toEqual({
-                name: name,
+                last_name: 'Customer',
+                name: 'Customer',
             });
         });
     });
@@ -343,7 +358,7 @@ describe('Base.View.OmnichannelCcpView', function() {
                 },
                 data: {
                     contactType: 'voice',
-                    phoneNumber: '+01234567890',
+                    phone_work: '+01234567890',
                     isContactInbound: false,
                 },
             },
@@ -493,6 +508,59 @@ describe('Base.View.OmnichannelCcpView', function() {
         it('should call layout.open()', function() {
             view._handleIncomingContact({});
             expect(layout.open.calledOnce).toBeTruthy();
+        });
+    });
+
+    describe('_setActiveContact', function() {
+        it('should set the active contact to the supplied contact id', function() {
+            var expected = {
+                contactId: 123,
+            };
+
+            window.connect.Agent = function() {
+                this.getContacts = function() {
+                    return [{contactId: expected.contactId}];
+                };
+            };
+
+            view._setActiveContact(expected.contactId);
+
+            expect(view.activeContact).toEqual(expected);
+        });
+    });
+
+    describe('_unsetActiveContact', function() {
+        it('should unset the active contact and other relevant data', function() {
+            view.activeContact = {
+                contactId: 123,
+            };
+
+            var stub = sinon.stub();
+
+            view.context = {
+                unset: stub,
+                off: sinon.stub(),
+            };
+
+            view._unsetActiveContact();
+
+            expect(view.activeContact).toBeNull;
+            expect(stub).toHaveBeenCalledWith('quickcreateModelData');
+            expect(stub).toHaveBeenCalledWith('quickcreateCreatedModel');
+        });
+    });
+
+    describe('getActiveContactId', function() {
+        it('should get the contact id for the active contact', function() {
+            view.activeContact = {
+                getContactId: function() {
+                    return '123';
+                },
+            };
+
+            var actual = view.getActiveContactId();
+
+            expect(actual).toEqual('123');
         });
     });
 });

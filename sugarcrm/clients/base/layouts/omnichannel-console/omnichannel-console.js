@@ -60,6 +60,17 @@
         'click [data-action=close]': 'close'
     },
 
+
+    /**
+     * The omnichannel dashboard switch component
+     */
+    omniDashboardSwitch: null,
+
+    /**
+     * The CCP component
+     */
+    ccpComponent: null,
+
     /**
      * @inheritdoc
      */
@@ -67,6 +78,189 @@
         this._super('initialize', [options]);
         $(window).on('resize.omniConsole', _.bind(this._resize, this));
         this._setSize();
+    },
+
+    /**
+     * @inheritdoc
+     */
+    bindDataChange: function() {
+        this._super('bindDataChange');
+
+        // when the quickcreate dropdown is clicked, load the model data to context
+        $('.btn.dropdown-toggle[track="click:quickCreate"]')
+            .click(_.bind(this._addQuickcreateModelDataToContext, this));
+
+        // when the quickcreate drawer is closed, perform the necessary steps
+        this.context.on('quickcreate-drawer:closed', this._handleClosedQuickcreateDrawer, this);
+    },
+
+    /**
+     * Add custom quickcreateModelData to the context so the quickcreate drawer can pre-populate
+     * relevant data
+     *
+     * @private
+     */
+    _addQuickcreateModelDataToContext: function() {
+        if (this.isOpen()) {
+            var ccp = this._getCCPComponent();
+
+            if (ccp.activeContact) {
+                this.context.set('quickcreateModelData',
+                    _.extendOwn(
+                        ccp.getContactInfo(ccp.activeContact),
+                        this.getContactModelDataForQuickcreate(),
+                        {
+                            no_success_label_link: true,
+                        }
+                    )
+                );
+            }
+        }
+    },
+
+    /**
+     * Handle when the quickcreate drawer is closed, regardless if a new record
+     * was created. If no new record was created, simply re-open the console
+     *
+     * @private
+     */
+    _handleClosedQuickcreateDrawer: function() {
+        var dashboard = this._getOmnichannelDashboard();
+        var qcModel = this.context.get('quickcreateCreatedModel');
+
+        if (dashboard && !_.isEmpty(qcModel)) {
+            var module = qcModel.get('_module');
+            var tabIndex = dashboard.moduleTabIndex[module];
+
+            // if a new Case was created, set the relevant model in the Contacts tab
+            if (module === 'Cases') {
+                var contactId = qcModel.get('primary_contact_id');
+
+                if (contactId) {
+                    var setContactModel = function(data) {
+                        var model = app.data.createBean('Contacts', data);
+
+                        dashboard.setModel(dashboard.moduleTabIndex.Contacts, model);
+                    };
+
+                    this.fetchModelData('Contacts', contactId, setContactModel);
+                }
+            }
+
+            dashboard.setModel(tabIndex, qcModel);
+            dashboard.switchTab(tabIndex);
+
+            this.context.unset('quickcreateCreatedModel');
+        }
+
+        this.open(); // re-open the console
+    },
+
+    /**
+     * Get and return the omnichannel dashboard switch component
+     *
+     * @return {View.Layout}
+     * @private
+     */
+    _getOmnichannelDashboardSwitch: function() {
+        if (!this.omniDashboardSwitch) {
+            this.omniDashboardSwitch = this.getComponent('omnichannel-dashboard-switch');
+        }
+
+        return this.omniDashboardSwitch;
+    },
+
+    /**
+     * Get and return the omnichannel dashboard for the active contact
+     *
+     * @return {View.Layout}
+     * @private
+     */
+    _getOmnichannelDashboard: function() {
+        var ccp = this._getCCPComponent();
+        var contactId = ccp.getActiveContactId();
+
+        return this._getOmnichannelDashboardSwitch().getDashboard(contactId);
+    },
+
+    /**
+     * Get and return the CCP component
+     *
+     * @return {View.View}
+     * @private
+     */
+    _getCCPComponent: function() {
+        if (!this.ccpComponent) {
+            this.ccpComponent = this.getComponent('omnichannel-ccp');
+        }
+
+        return this.ccpComponent;
+    },
+
+    /**
+     * Get relevant model data from the selected Contact, if there is one selected
+     *
+     * @return {Object}
+     */
+    getContactModelDataForQuickcreate: function() {
+        var dashboard = this._getOmnichannelDashboard();
+        var tabModels = dashboard.tabModels;
+
+        var data = {};
+
+        // if there is no selected Contact, return empty
+        if (!tabModels[dashboard.moduleTabIndex.Contacts]) {
+            return data;
+        }
+
+        // these attributes will be deleted from data after retrieving them as the
+        // model requires a different attribute name
+        var modelAttributes = [
+            'id',
+            'name',
+        ];
+
+        var attributes = modelAttributes.concat([
+            'account_id',
+            'account_name',
+        ]);
+
+        var model = tabModels[dashboard.moduleTabIndex.Contacts];
+
+        _.each(attributes, function(attr) {
+            data[attr] = model.get(attr);
+        });
+
+        // update the attribute names so they're friendly for the new model
+        data.primary_contact_id = data.id;
+        data.primary_contact_name = data.name;
+
+        // remove the attributes that were updated
+        _.each(modelAttributes, function(attr) {
+            delete data[attr];
+        });
+
+        return data;
+    },
+
+    /**
+     * Fetch model data for the supplied module/id and call the callback,
+     * if supplied
+     *
+     * @param {string} module
+     * @param {string} id
+     * @param callback
+     */
+    fetchModelData: function(module, id, callback) {
+        var url = app.api.buildURL(module + '/' + id);
+
+        app.api.call('read', url, null, {
+            success: function(data) {
+                if (callback) {
+                    callback(data);
+                }
+            }
+        });
     },
 
     /**

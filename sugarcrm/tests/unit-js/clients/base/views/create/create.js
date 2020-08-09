@@ -620,13 +620,14 @@ describe('Base.View.Create', function() {
         it("Should build correct success message if model is returned from the API", function() {
             var moduleName = 'Contacts',
                 labelSpy = sinonSandbox.spy(app.lang, 'get'),
-                model = {
-                    attributes: {
-                        id: '123',
-                        name: 'foo'
-                    }
-                },
                 messageContext;
+
+            var model = app.data.createBean(moduleName, {
+                attributes: {
+                    id: '123',
+                    name: 'foo',
+                }
+            });
 
             view.buildSuccessMessage(model);
             expect(labelSpy.calledWith('LBL_RECORD_SAVED_SUCCESS', moduleName)).toBeTruthy();

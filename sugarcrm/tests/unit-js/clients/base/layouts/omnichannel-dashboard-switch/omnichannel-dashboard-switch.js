@@ -120,4 +120,21 @@ describe('Base.Layout.OmnichannelDashboardSwitch', function() {
             expect(closeStub).toHaveBeenCalled();
         });
     });
+
+    describe('getDashboard', function() {
+        it('should get the dashboard per the specified contact id', function() {
+            dashboardSwitch.contactIds = ['123'];
+
+            dashboardSwitch._components = [
+                {
+                    dispose: sinon.collection.stub(),
+                    triggerBefore: sinon.collection.stub(),
+                }
+            ];
+
+            var actual = dashboardSwitch.getDashboard('123');
+
+            expect(actual).not.toEqual(null);
+        });
+    });
 });

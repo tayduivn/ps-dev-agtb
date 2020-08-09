@@ -113,14 +113,6 @@
     filterModels: [],
 
     /**
-     * Key value pair of modules and their corresponding tabs on the omnichannel dashboard
-     */
-    tabId: {
-        'Contacts': 1,
-        'Cases': 2
-    },
-
-    /**
      * @inheritdoc
      */
     'events': {
@@ -525,8 +517,8 @@
 
         // set current row as model for the dashboard tab and switch tab based on module
         if (dashboard && loadModel.length !== 0) {
-            dashboard.setModel(this.tabId[this.module], loadModel[0]);
-            dashboard.switchTab(this.tabId[this.module]);
+            dashboard.setModel(dashboard.moduleTabIndex[this.module], loadModel[0]);
+            dashboard.switchTab(dashboard.moduleTabIndex[this.module]);
         }
     },
 

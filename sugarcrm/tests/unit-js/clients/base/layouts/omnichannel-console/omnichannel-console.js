@@ -16,11 +16,13 @@ describe('Base.Layout.OmnichannelConsole', function() {
         SugarTest.loadComponent('base', 'layout', 'omnichannel-console');
         console = SugarTest.createLayout('base', 'layout', 'omnichannel-console', {});
         app = SugarTest.app;
+        app.routing.start();
     });
 
     afterEach(function() {
         sinon.collection.restore();
         console.dispose();
+        app.router.stop();
     });
 
     describe('open', function() {
@@ -108,6 +110,111 @@ describe('Base.Layout.OmnichannelConsole', function() {
             console.currentState = '';
             console.close();
             expect(elHideStub).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('_addQuickcreateModelDataToContext', function() {
+        it('should add model data to context for the quickcreate drawer', function() {
+            console.getComponent = function() {
+                return {
+                    activeContact: 123,
+                    getContactInfo: function(id) {
+                        return {
+                            phone_work: '+01234567890',
+                        };
+                    },
+                };
+            };
+
+            sinon.collection.stub(console, 'isOpen').returns(true);
+            sinon.collection.stub(console, 'getContactModelDataForQuickcreate').returns({
+                account_id: 456,
+                account_name: 'Account 1',
+            });
+
+            console._addQuickcreateModelDataToContext();
+
+            expect(console.context.get('quickcreateModelData')).toEqual({
+                phone_work: '+01234567890',
+                account_id: 456,
+                account_name: 'Account 1',
+                no_success_label_link: true,
+            });
+        });
+    });
+
+    describe('_handleClosedQuickcreateDrawer', function() {
+        it('should perform various actions after the quickcreate drawer is closed', function() {
+            var module = 'Cases';
+
+            var moduleTabIndex = {
+                Contacts: 1,
+                Cases: 2,
+            };
+
+            var setModelStub = sinon.collection.stub();
+            var switchTabStub = sinon.collection.stub();
+            var openStub = sinon.collection.stub(console, 'open');
+
+            sinon.collection.stub(console, '_getOmnichannelDashboard').returns({
+                moduleTabIndex: moduleTabIndex,
+                setModel: setModelStub,
+                switchTab: switchTabStub,
+            });
+
+            var model = app.data.createBean(module);
+
+            model.set({
+                _module: module,
+                primary_contact_id: 123,
+            });
+
+            console.context.set('quickcreateCreatedModel', model);
+
+            var fetchStub = sinon.collection.stub(console, 'fetchModelData');
+
+            console._handleClosedQuickcreateDrawer();
+
+            expect(fetchStub).toHaveBeenCalled();
+            expect(setModelStub).toHaveBeenCalledWith(moduleTabIndex[module], model);
+            expect(switchTabStub).toHaveBeenCalledWith(moduleTabIndex[module]);
+            expect(console.context.get('quickcreateCreatedModel')).toBeUndefined();
+            expect(openStub).toHaveBeenCalled();
+        });
+    });
+
+    describe('getContactModelDataForQuickcreate', function() {
+        it('should get model data from the Contact for the quickcreate drawer', function() {
+            var model = app.data.createBean('Contacts');
+
+            model.set({
+                id: 123,
+                name: 'Customer',
+                account_id: 456,
+                account_name: 'Account 1',
+            });
+
+            var moduleTabIndex = {
+                Contacts: 1,
+                Cases: 2,
+            };
+
+            sinon.collection.stub(console, '_getOmnichannelDashboard').returns({
+                moduleTabIndex: moduleTabIndex,
+                tabModels: [
+                    {},
+                    model,
+                ]
+            });
+
+            var actual = console.getContactModelDataForQuickcreate();
+
+            expect(actual).toEqual({
+                primary_contact_id: 123,
+                primary_contact_name: 'Customer',
+                account_id: 456,
+                account_name: 'Account 1',
+            });
         });
     });
 });
