@@ -81,7 +81,6 @@ $viewdefs["Home"]["base"]["view"]["dashboard-headerpane"] = array(
                     'type' => 'rowaction',
                     'name' => 'delete_button',
                     'label' => 'LBL_DELETE_BUTTON_LABEL',
-                    'acl_module' => 'Dashboards',
                     'acl_action' => 'delete',
                     'disallowed_layouts' => [
                         [
