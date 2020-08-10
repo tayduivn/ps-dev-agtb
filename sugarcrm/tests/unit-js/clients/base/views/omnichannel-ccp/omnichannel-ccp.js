@@ -203,11 +203,9 @@ describe('Base.View.OmnichannelCcpView', function() {
 
             expect(view.connectedContacts).toEqual({});
             view.addContactToContactsList(contact);
-            expect(view.connectedContacts).toEqual({
-                [id]: {
-                    connectedTimestamp: timestamp,
-                },
-            });
+            var obj = {};
+            obj[id] = {connectedTimestamp: timestamp};
+            expect(view.connectedContacts).toEqual(obj);
         });
     });
 

@@ -199,7 +199,7 @@
             contact.onACW(function(contact) {
                 // do nothing if contact type is unfamiliar
                 if (!_.has(self.contactTypeModule, contact.getType())) {
-                    app.logger.error(`Amazon Connect: Contact type (type: ${type}) is not voice or chat`);
+                    app.logger.error('Amazon Connect: Contact type (type: ${type}) is not voice or chat');
                     return;
                 }
 
@@ -392,7 +392,7 @@
         try {
             data.isContactInbound = contact.isInbound();
         } catch (err) {
-            app.logger.error(`Amazon Connect: Unable to determine contact inbound/outbound direction`);
+            app.logger.error('Amazon Connect: Unable to determine contact inbound/outbound direction');
         }
 
         data.contactType = contact.getType();
