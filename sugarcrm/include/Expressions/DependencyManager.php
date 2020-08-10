@@ -197,6 +197,32 @@ class DependencyManager
     }
 
     /**
+     * Used to get a set of Dependencies to drive the readonly fields for this module.
+     *
+     * @param array  $fields fielddef array to create the dependencies from
+     * @return array <Dependency>
+     */
+    public static function getReadOnlyFieldDependencies($fields)
+    {
+        $deps = [];
+
+        foreach ($fields as $field => $def) {
+            if (!empty($def['readonly_formula'])) {
+                $value = $def['readonly_formula'];
+                $triggerFields = Parser::getFieldsFromExpression($def['readonly_formula'], $fields);
+
+                $dep = new Dependency($field . '_readonly');
+                $dep->setTrigger(new Trigger('true', $triggerFields));
+                $dep->addAction(ActionFactory::getNewAction('ReadOnly', ['target' => $field, 'value' => $value]));
+                $dep->setFireOnLoad(true);
+                $deps[] = $dep;
+            }
+        }
+
+        return $deps;
+    }
+
+    /**
      * Used to get a set of Dependencies to drive the dependent fields for this module.
      * @static
      * @param array $fields fielddef array to create the dependencies from
@@ -474,6 +500,7 @@ class DependencyManager
                 self::getCalculatedFieldDependencies($fields, true, false, $view),
                 self::getDependentFieldDependencies($fields),
                 self::getRequiredFieldDependencies($fields),
+                self::getReadOnlyFieldDependencies($fields),
                 self::getDropDownDependencies($fields));
         }
     }

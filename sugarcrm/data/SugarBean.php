@@ -2277,6 +2277,12 @@ class SugarBean
                 $dep->fire($this);
             }
         }
+        $deps = DependencyManager::getReadOnlyFieldDependencies($this->field_defs, 'save');
+        foreach ($deps as $dep) {
+            if ($dep->getFireOnLoad()) {
+                $dep->fire($this);
+            }
+        }
         //Check for other on-save dependencies
         $deps = DependencyManager::getModuleDependenciesForAction($this->module_dir, "save");
         foreach ($deps as $dep) {

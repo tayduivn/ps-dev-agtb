@@ -62,7 +62,7 @@ class ReadOnlyAction extends AbstractAction
                         return;
                     }
 
-                    context.setFieldDisabled(this.target, readOnly);
+                    context.setFieldReadOnly(this.target, readOnly);
                 } else {
                     this.bwcExec(context, readOnly);
                 }
