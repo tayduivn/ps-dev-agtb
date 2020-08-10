@@ -197,13 +197,6 @@ return [
                                         ],
                                     ],
                                     [
-                                        'type' => 'dashletaction',
-                                        'css_class' => 'dashlet-toggle btn btn-invisible minify',
-                                        'icon' => 'fa-chevron-up',
-                                        'action' => 'toggleMinify',
-                                        'tooltip' => 'LBL_DASHLET_MINIMIZE',
-                                    ],
-                                    [
                                         'dropdown_buttons' => [
                                             [
                                                 'type' => 'dashletaction',
@@ -214,12 +207,6 @@ return [
                                                 'type' => 'dashletaction',
                                                 'action' => 'reloadData',
                                                 'label' => 'LBL_DASHLET_REFRESH_LABEL',
-                                            ],
-                                            [
-                                                'type' => 'dashletaction',
-                                                'action' => 'removeClicked',
-                                                'label' => 'LBL_DASHLET_REMOVE_LABEL',
-                                                'name' => 'remove_button',
                                             ],
                                         ],
                                     ],
@@ -436,13 +423,6 @@ return [
                                         ],
                                     ],
                                     [
-                                        'type' => 'dashletaction',
-                                        'css_class' => 'dashlet-toggle btn btn-invisible minify',
-                                        'icon' => 'fa-chevron-up',
-                                        'action' => 'toggleMinify',
-                                        'tooltip' => 'LBL_DASHLET_MINIMIZE',
-                                    ],
-                                    [
                                         'dropdown_buttons' => [
                                             [
                                                 'type' => 'dashletaction',
@@ -453,12 +433,6 @@ return [
                                                 'type' => 'dashletaction',
                                                 'action' => 'reloadData',
                                                 'label' => 'LBL_DASHLET_REFRESH_LABEL',
-                                            ],
-                                            [
-                                                'type' => 'dashletaction',
-                                                'action' => 'removeClicked',
-                                                'label' => 'LBL_DASHLET_REMOVE_LABEL',
-                                                'name' => 'remove_button',
                                             ],
                                         ],
                                     ],

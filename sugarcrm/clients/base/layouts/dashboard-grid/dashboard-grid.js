@@ -90,7 +90,7 @@
         this._setInitialDashlets();
 
         try {
-            this.grid = GridStack.init(this.defaultGridOptions, this.el);
+            this.grid = GridStack.init(this._getGridOptions(), this.el);
         } catch (e) {
             console.warn('failed to load gridstack');
         }
@@ -98,6 +98,19 @@
         // This property is used by existing dashboards to apply legacy drag/drop
         // functionality that we no longer want.
         this.model.set('drag_and_drop', false);
+    },
+
+    /**
+     * Get grid options.
+     * @return {Object}
+     * @private
+     */
+    _getGridOptions: function() {
+        var gridOptions = _.extend({}, this.defaultGridOptions);
+        if (this.context.parent && this.context.parent.get('readonly')) {
+            gridOptions = _.extend(gridOptions, {disableDrag: true, disableResize: true});
+        }
+        return gridOptions;
     },
 
     /**
