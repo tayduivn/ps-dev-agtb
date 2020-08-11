@@ -10,6 +10,7 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Entitlements\Subscription;
 
 /**
  * Description: view handler for step 3 of the import process
@@ -137,8 +138,19 @@ class ImportViewStep3 extends ImportView
         $this->ss->assign("PUBLISH_INLINE_PNG",  SugarThemeRegistry::current()->getImage('advanced_search','align="absmiddle" alt="'.$mod_strings['LBL_PUBLISH'].'" border="0"'));
 
         if ($this->isLimitedForModuleInIdmMode($import_module)) {
+
+            $licenses = [Subscription::SUGAR_BASIC_KEY];
+            try {
+                $lt = $current_user->getLicenseTypes();
+                if (is_array($lt) && !empty($lt)) {
+                    $licenses = $lt;
+                }
+            } catch (SugarApiException $e) {
+            }
+
             $instruction = $this->instruction = string_format(
-                $mod_strings['LBL_IDM_SELECT_MAPPING_INSTRUCTION'],
+                $mod_strings['LBL_IDM_SELECT_MAPPING_INSTRUCTION'] . '<br/><br/>' .
+                $mod_strings['LBL_IDM_SELECT_MAPPING_FIELDS_INSTRUCTION'],
                 [
                     get_help_url(
                         $GLOBALS['sugar_flavor'],
@@ -149,7 +161,7 @@ class ImportViewStep3 extends ImportView
                         '',
                         '',
                         '',
-                        'SEL,SERVE'
+                        implode(',', getReadableProductNames($licenses))
                     ),
                 ]
             );
