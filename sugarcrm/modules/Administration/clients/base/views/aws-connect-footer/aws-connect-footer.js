@@ -49,7 +49,7 @@
      *
      * @return array
      */
-    generateHelpBlock() {
+    generateHelpBlock: function() {
         var block = [];
 
         _.each(this.helpLabels, function(label) {

@@ -42,7 +42,6 @@
      * @inheritdoc
      */
     initialize: function(options) {
-        debugger;
         this._super('initialize', [options]);
         this._initCollection();
     },

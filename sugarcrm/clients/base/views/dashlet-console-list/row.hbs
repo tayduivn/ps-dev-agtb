@@ -11,7 +11,7 @@
  */
 --}}
 {{#with rowModel}}
-    <tr class="single dashlet-console-list-row"{{#if id}} data-id="{{id}}"{{/if}}>
+    <tr name="{{../module}}_{{id}}" class="single dashlet-console-list-row"{{#if id}} data-id="{{id}}"{{/if}}>
         {{#each ../metaFields}}
             <td{{#if align}} class="{{align}}"{{/if}}{{#if name}} data-fieldname="{{name}}"{{/if}}>
                 {{#eq name 'team_name'}}
