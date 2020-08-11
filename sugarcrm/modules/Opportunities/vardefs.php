@@ -741,6 +741,7 @@ $dictionary['Opportunity'] = array(
             'workflow' => false,
             'reportable' => false,
             'importable' => false,
+            'default' => 0,
         ],
         // END SUGARCRM flav=ent ONLY
 

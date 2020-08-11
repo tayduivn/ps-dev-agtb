@@ -37,7 +37,6 @@ class SugarUpgradeOpportunitySetServiceDuration extends UpgradeScript
             foreach ($opps as $opp) {
                 $this->setServiceDurationFields($opp['opportunity_id']);
             }
-            $this->setServiceOpenFlexDurationRLI(array_column($opps, 'opportunity_id'));
         }
     }
 
@@ -75,23 +74,5 @@ class SugarUpgradeOpportunitySetServiceDuration extends UpgradeScript
         $opp->service_open_flex_duration_rlis = sizeof($opp->getEditableDurationServiceRLIs());
 
         $opp->save();
-    }
-
-    /**
-     * Sets the service_open_flex_duration_rlis field, used for determining
-     * editability of the service duration fields, for opps with no service RLIS.
-     * @param array $opps_with_service_rlis
-     * @throws Exception
-     */
-    private function setServiceOpenFlexDurationRLI($opps_with_service_rlis)
-    {
-        $ids = implode('","', $opps_with_service_rlis);
-
-        $update = $this->db->getConnection()->createQueryBuilder()
-            ->update('opportunities')
-            ->set('service_open_flex_duration_rlis', 0)
-            ->where('id NOT IN ("' . $ids . '")');
-
-        $update->execute();
     }
 }
