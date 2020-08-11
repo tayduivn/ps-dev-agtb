@@ -145,7 +145,7 @@
         app.alert.show('aws-info', {
             autoClose: true,
             level: 'success',
-            messages: app.lang.get('LBL_SAVED')
+            messages: app.lang.get('LBL_AWS_CONNECT_SAVED', this.module)
         });
     },
 

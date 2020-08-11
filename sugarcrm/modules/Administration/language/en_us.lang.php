@@ -1321,6 +1321,7 @@ Any integrations that rely on this platform will stop working.',
     //BEGIN SUGARCRM flav=ent ONLY
     'LBL_AWS' => 'Amazon Web Services',
     'LBL_AWS_DESCR' => 'Configure Amazon Web Services.',
+    'LBL_AWS_CONNECT_SAVED' => 'Amazon Connect settings have been saved',
     'LBL_AWS_CONNECT_TITLE' => 'Amazon Connect Settings',
     'LBL_AWS_CONNECT_DESCR' => 'Configure Amazon Connect for use in Sugar',
     'LBL_AWS_CONNECT_BODY_TITLE' => 'Instance Information',
