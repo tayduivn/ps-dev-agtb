@@ -122,11 +122,11 @@
      * On a successful save return to the Administration page.
      */
     closeView: function() {
+        // Config changed... reload metadata
+        app.sync();
         if (app.drawer && app.drawer.count()) {
             // close the drawer and return to Opportunities
             app.drawer.close(this.context, this.context.get('model'));
-            // Config changed... reload metadata
-            app.sync();
         } else {
             app.router.navigate(this.module, {trigger: true});
         }
