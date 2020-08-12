@@ -47,6 +47,11 @@
     libraryLoaded: false,
 
     /**
+     * Is agent logged in?
+     */
+    agentLoggedIn: false,
+
+    /**
      * Default CCP settings. Will be overridden by admin settings in the future
      */
     defaultCCPOptions: {
@@ -131,6 +136,7 @@
         connect.core.terminate();
         this.$el.find('#containerDiv').empty();
         this.ccpLoaded = false;
+        this.agentLoggedIn = false;
     },
 
     /**
@@ -141,6 +147,7 @@
         connect.agent(function(agent) {
             // When CCP agent is authenticated, we set the footer style
             self.styleFooterButton('logged-in');
+            self.agentLoggedIn = true;
         });
     },
 
@@ -258,7 +265,9 @@
         });
         // This event is fired if we cannot synchronize with the CCP server
         eventBus.subscribe(connect.EventType.ACK_TIMEOUT, function() {
-            self._showConnectionWarning();
+            if (self.agentLoggedIn) {
+                self._showConnectionWarning();
+            }
         });
         // This event is triggered when 'Clear Contact' button is clicked
         eventBus.subscribe(connect.ContactEvents.DESTROYED, function(event) {
