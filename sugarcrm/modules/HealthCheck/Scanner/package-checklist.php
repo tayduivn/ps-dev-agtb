@@ -442,4 +442,9 @@ return array(
             'version' => '*',
         ],
     ],
+    'Sugar Integrate Essentials' => [
+        [
+            'version' => '*',
+        ],
+    ],
 );
