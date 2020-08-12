@@ -1007,7 +1007,10 @@
         ) {
             filter.name = this.layout.getComponent('filter-actions').getFilterName();
         }
-        this.layout.getComponent('filter').saveFilterEditState(filter);
+
+        if (!_.isUndefined(this.layout.getComponent('filter'))) {
+            this.layout.getComponent('filter').saveFilterEditState(filter);
+        }
     },
 
     /**

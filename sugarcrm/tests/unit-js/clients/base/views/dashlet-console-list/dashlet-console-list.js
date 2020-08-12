@@ -845,6 +845,64 @@ describe('Base.View.DashletConsoleList', function() {
 
     });
 
+    describe('updateFilterForModule', function() {
+        using('various settings for custom filter', [{
+            activeTab: 2,
+            module: 'Cases',
+            input: [{'name': {'$starts': 'A'}}, {'$favorite': ''}],
+            expected: [{'name': {'$starts': 'A'}}, {'$favorite': ''}]
+        },{
+            activeTab: 1,
+            module: 'Test',
+            input: [],
+            expected: []
+        },{
+            activeTab: 1,
+            module: 'Cases',
+            input: [{'name': {'$starts': 'A'}}, {'$favorite': ''}],
+            expected: [{'name': {'$starts': 'A'}}, {'$favorite': ''}, {primary_contact_id: {$equals: 'testId'}}]
+        },{
+            activeTab: 1,
+            module: 'Cases',
+            input: [],
+            expected: [{primary_contact_id: {$equals: 'testId'}}]
+        }], function(value) {
+            it('should append custom filter only if Contacts is the active tab', function() {
+                view.moduleFilterField = {
+                    Contacts: 'primary_contact_id'
+                };
+                view.customFilterModuleList = ['Cases'];
+                view.module = value.module;
+                stub: sinon.collection.stub(view, 'closestComponent', function() {
+                    return {
+                        getComponent: function() {
+                            return {
+                                getComponent: function() {
+                                    return {
+                                        activeTab: value.activeTab
+                                    };
+                                }
+                            };
+                        },
+                        context: {
+                            get: function() {
+                                return {
+                                    id: 'testId'
+                                };
+                            }
+                        },
+                        moduleTabIndex: {
+                            Contacts: 1,
+                            Cases: 2,
+                        }
+                    };
+                });
+
+                expect(view.updateFilterForModule(value.input)).toEqual(value.expected);
+            });
+        });
+    });
+
     describe('loadData', function() {
         it('should not call _super loadData if filter is inaccessible', function() {
             view.filterIsAccessible = false;
@@ -1185,6 +1243,7 @@ describe('Base.View.DashletConsoleList', function() {
         var filter1 = {'name': {'$starts': 'A'}};
         var filter2 = {'name_c': {'$starts': 'B'}};
         var filter3 = {'$favorite': ''};
+        var filter4 = {'$custom': 'testId'};
         var fakeModuleMeta =
             {
                 'fields': {'name': {}},
@@ -1207,9 +1266,13 @@ describe('Base.View.DashletConsoleList', function() {
 
         it('should apply the field-filtered filterDef on the context collection', function() {
             var testFilterDef = [filter1, filter2, filter3];
-
+            sinon.collection.stub(view, 'updateFilterForModule', function() {
+                return [filter1, filter2, filter4];
+            });
             view._applyFilterDef(testFilterDef);
-            expect(view.context.get('collection').filterDef).toEqual([filter1, filter3]);
+
+            expect(view.updateFilterForModule).toHaveBeenCalledWith([filter1, filter3]);
+            expect(view.context.get('collection').filterDef).toEqual([filter1, filter2, filter4]);
         });
 
         it('should not apply the filterDef on the context collection if not supplied', function() {

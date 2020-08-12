@@ -113,6 +113,22 @@
     filterModels: [],
 
     /**
+     * An object for different modules and their fields to filter results against
+     *
+     * @property {Object}
+     */
+    moduleFilterField: {
+        Contacts: 'primary_contact_id',
+    },
+
+    /**
+     * A list of all the modules available for custom filters
+     *
+     * @property {Array}
+     */
+    customFilterModuleList: ['Cases'],
+
+    /**
      * @inheritdoc
      */
     'events': {
@@ -688,6 +704,47 @@
     },
 
     /**
+     * Adds a custom filter to display cases relevant to Current Contact for the Contacts Tab in omnichannel-dashboard.
+     * Here we update the current filter just before it gets applied and fetches data, so we only get relevant data.
+     * This approach makes sure that the actual filter models are not overwritten so that they show default behavior
+     * in other cases.
+     *
+     * @param {Array} filterDef the original filter definition to be applied
+     * @return {Array} updated filter definition for the Cases dashlet in Contacts tab
+     */
+    updateFilterForModule: function(filterDef) {
+        var dashboard = this.closestComponent('omnichannel-dashboard') || null;
+
+        if (dashboard !== null) {
+            var dashboardComp = !_.isUndefined(dashboard) && !_.isUndefined(dashboard.getComponent('dashboard')) ?
+                dashboard.getComponent('dashboard') : null;
+            var activeTab = !_.isUndefined(dashboardComp) && dashboardComp.getComponent('tabbed-dashboard') ?
+                dashboardComp.getComponent('tabbed-dashboard').activeTab : 0;
+
+            // if Contacts tab is active and it is Cases Console List view dashlet
+            if (!_.isUndefined(dashboard.moduleTabIndex) &&
+                activeTab === dashboard.moduleTabIndex.Contacts && this.module === this.customFilterModuleList[0]) {
+                // get the model Id for current contact
+                var rowId = !_.isUndefined(dashboard.context) && !_.isUndefined(dashboard.context.get('rowModel')) ?
+                    dashboard.context.get('rowModel').id : '';
+
+                // get the field to filter result against
+                var field = this.moduleFilterField.Contacts || '';
+
+                // create a custom filter to get cases relevant to current Contact
+                if (rowId && !_.isEmpty(field)) {
+                    var customFilterDef = {};
+                    customFilterDef[field] =  {$equals: rowId};
+                    // append the custom filter to the existing filter
+                    filterDef.push(customFilterDef);
+                }
+            }
+        }
+
+        return filterDef;
+    },
+
+    /**
      * @inheritdoc
      * Don't load data if dashlet filter is not accessible.
      */
@@ -991,6 +1048,9 @@
             filterDef = this.filterSelectedFilter(filterDef);
 
             if (!_.isUndefined(this.context) && !_.isUndefined(this.context.get('collection'))) {
+                // get custom filter def for Contacts tab if needed
+                filterDef = this.updateFilterForModule(filterDef);
+
                 this.context.get('collection').filterDef = filterDef;
             }
         }
