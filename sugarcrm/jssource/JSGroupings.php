@@ -338,6 +338,7 @@
                     'include/javascript/mousetrap/mousetrap.min.js' => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/clipboardjs/clipboard.min.js' => 'include/javascript/sugar_sidecar.min.js',
                     // Library for flex-grid layouts
+                    'include/javascript/gridstack/gridstack-poly.js' => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/gridstack/gridstack.js' => 'include/javascript/sugar_sidecar.min.js',
                     'include/javascript/gridstack/gridstack.JQueryUI.js' => 'include/javascript/sugar_sidecar.min.js',
                )

@@ -66,6 +66,7 @@
     "include/javascript/sugar7/shortcuts.js",
     "include/javascript/sugar7/clipboard.js",
     "include/javascript/clipboardjs/clipboard.min.js",
+    "include/javascript/gridstack/gridstack-poly.js",
     "include/javascript/gridstack/gridstack.js",
     "include/javascript/gridstack/gridstack.JQueryUI.js",
     "/include/javascript/amazon-connect/amazon-connect-1.4.9-1-gf9242a0.js",

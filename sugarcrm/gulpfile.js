@@ -649,6 +649,7 @@ gulp.task('copy-gridstack', function() {
     gulp.src([
         'node_modules/gridstack/dist/gridstack.js',
         'node_modules/gridstack/dist/gridstack.JQueryUI.js',
+        'node_modules/gridstack/dist/gridstack-poly.js',
         ])
         .pipe(gulp.dest('include/javascript/gridstack/'));
     gulp.src([

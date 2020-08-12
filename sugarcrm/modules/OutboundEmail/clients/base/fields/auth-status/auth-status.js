@@ -39,7 +39,7 @@
     /**
      * @inheritdoc
      */
-    _render() {
+    _render: function() {
         this.status = app.lang.get(this.model.get('eapm_id') ? 'LBL_EMAIL_AUTHORIZED' : 'LBL_EMAIL_NOT_AUTHORIZED');
         this._super('_render');
     }

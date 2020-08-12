@@ -1,4 +1,3 @@
-//@codingStandardsIgnoreStart
 /** gridstack.js 1.1.2 - JQuery UI Drag&Drop plugin @preserve */
 /**
  * https://gridstackjs.com/
@@ -89,4 +88,3 @@
 
   return JQueryUIGridStackDragDropPlugin;
 });
-//@codingStandardsIgnoreEnd

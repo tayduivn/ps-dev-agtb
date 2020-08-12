@@ -1,4 +1,3 @@
-//@codingStandardsIgnoreStart
 /**
  * gridstack.js 1.1.2
  * https://gridstackjs.com/
@@ -2132,4 +2131,3 @@
 
   return scope.GridStack;
 });
-//@codingStandardsIgnoreEnd
