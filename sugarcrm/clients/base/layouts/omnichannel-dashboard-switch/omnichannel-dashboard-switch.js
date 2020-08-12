@@ -141,6 +141,10 @@
      */
     removeAllDashboards: function() {
         var self = this;
+        if (this._components.length < 1) {
+            this.layout.close();
+            return;
+        }
         _.each(this._components, function(dashboard, index) {
             var _remove = function() {
                 self._removeDashboard(index);
