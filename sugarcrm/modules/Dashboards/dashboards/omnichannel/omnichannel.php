@@ -33,10 +33,10 @@ return [
                     [
                         'view' => [
                             'type' => 'dashlet-console-list',
-                            'module' => 'Cases',
+                            'module' => 'Contacts',
                         ],
                         'context' => [
-                            'module' => 'Cases',
+                            'module' => 'Contacts',
                         ],
                         'width' => 12,
                         'height' => 5,
@@ -47,10 +47,10 @@ return [
                     [
                         'view' => [
                             'type' => 'dashlet-console-list',
-                            'module' => 'Contacts',
+                            'module' => 'Cases',
                         ],
                         'context' => [
-                            'module' => 'Contacts',
+                            'module' => 'Cases',
                         ],
                         'width' => 12,
                         'height' => 5,
