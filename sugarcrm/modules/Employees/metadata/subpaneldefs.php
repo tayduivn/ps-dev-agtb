@@ -36,6 +36,6 @@ $layout_defs['Employees'] = array(
             'top_buttons' => array(),
             'title_key' => 'LBL_SHIFTS_EXCEPTIONS_SUBPANEL_TITLE',
         ),
-    //END SUGARCRM flav=ent ONLY
     ),
+    //END SUGARCRM flav=ent ONLY
 );
