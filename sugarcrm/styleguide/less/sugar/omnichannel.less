@@ -105,6 +105,37 @@
     top: 28px;
     right: 0;
     bottom: 0;
+
+    .nav-tabs {
+      li.tab.tab-badgeable.disabled {
+        .tab-title {
+          color: @grayMid;
+        }
+
+        .label {
+          border: none;
+          color: @grayMid;
+          background-color: @grayLighter;
+        }
+
+        a {
+          line-height: inherit;
+
+          // Nuke hover effects
+          &:hover {
+            text-decoration: none;
+            color: @grayMid;
+            background-color: @tabBackgroundInactive;
+            border-top-color: @tabBackgroundInactive;
+            border-bottom-color: @tabBackgroundInactive;
+          }
+
+          .label-module {
+            cursor: default;
+          }
+        }
+      }
+    }
   }
 }
 
