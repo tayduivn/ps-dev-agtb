@@ -652,6 +652,11 @@
         .catch(function(error) {
             console.log(error);
         });
+        if (response.data &&
+            response.data.Type === 'MESSAGE' &&
+            response.data.ParticipantRole === 'CUSTOMER') {
+            this.layout.trigger('omnichannel:message');
+        }
     },
 
     /**

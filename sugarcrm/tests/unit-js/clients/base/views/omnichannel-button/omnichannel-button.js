@@ -110,4 +110,42 @@ describe('Base.View.OmnichannelButton', function() {
             expect(view.status).toBe('logged-in');
         });
     });
+
+    describe('notifyUser', function() {
+        beforeEach(function() {
+            sandbox.stub(app.api, 'isAuthenticated', function() {
+                return true;
+            });
+            sandbox.stub(app.user, 'get', function() {
+                return ['SUGAR_SERVE'];
+            });
+            view.render();
+        });
+
+        it('should add notify class to button', function() {
+            sandbox.stub(view, '_getConsole').returns({
+                isOpen: function() { return false; }
+            });
+            view._notifyUser();
+            expect(view.$('.btn').hasClass('notification-pulse')).toBe(true);
+        });
+    });
+
+    describe('_clearNotifications', function() {
+        beforeEach(function() {
+            sandbox.stub(app.api, 'isAuthenticated', function() {
+                return true;
+            });
+            sandbox.stub(app.user, 'get', function() {
+                return ['SUGAR_SERVE'];
+            });
+            view.render();
+        });
+
+        it('should remove notification-pulse class', function() {
+            view.$('.btn').addClass('notification-pulse');
+            view._clearNotifications();
+            expect(view.$('.btn').hasClass('notification-pulse')).toBe(false);
+        });
+    });
 });

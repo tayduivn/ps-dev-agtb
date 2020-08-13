@@ -29,9 +29,7 @@
         var console = this._getConsole();
         if (console) {
             console.open();
-            console.context.on('omnichannel:auth', function(status) {
-                this.setStatus(status);
-            }, this);
+            this.$('.btn').removeClass('notification-pulse');
         }
     },
 
@@ -77,6 +75,7 @@
             console.loadData();
             console.$el.hide();
             console.render();
+            this._bindConsoleListeners(console);
             $('#sidecar').append(console.$el);
             app.omniConsole = console;
         }
@@ -89,7 +88,44 @@
     _dispose: function() {
         if (!_.isUndefined(app.omniConsole)) {
             app.omniConsole.context.off('omnichannel:auth');
+            app.omniConsole.off('omnichannel:message');
+            app.omniConsole.off('omniconsole:open');
         }
         this._super('_dispose');
+    },
+
+    /**
+     * Show user notification if the console is closed when a message comes in
+     *
+     * @private
+     */
+    _notifyUser: function() {
+        var omniConsole = this._getConsole();
+        if (!omniConsole.isOpen()) {
+            this.$('.btn').addClass('notification-pulse');
+        }
+    },
+
+    /**
+     * Clear notifications
+     *
+     * @private
+     */
+    _clearNotifications: function() {
+        this.$('.btn').removeClass('notification-pulse');
+    },
+
+    /**
+     * Bind listeners to the omnichannel-console layout
+     *
+     * @param {Layout} console - Omnichannel Console layout
+     * @private
+     */
+    _bindConsoleListeners: function(console) {
+        console.on('omnichannel:message', this._notifyUser, this);
+        console.on('omniconsole:open', this._clearNotifications, this);
+        console.context.on('omnichannel:auth', function(status) {
+            this.setStatus(status);
+        }, this);
     }
 })

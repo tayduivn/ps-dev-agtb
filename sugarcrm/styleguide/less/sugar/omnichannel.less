@@ -39,7 +39,7 @@
 
   .active-session {
     background-color: @rock;
-    border: 2px solid @stone;
+    border: 2px solid @grayMid;
 
     .omni-circle {
       background-color: @army;
@@ -47,6 +47,46 @@
 
     .omni-label {
       color: @white;
+    }
+
+    .bg-pulse(@bgColor, @borderColor, @animation) {
+      background-color: @bgColor;
+      border-color: @borderColor;
+      animation-timing-function: @animation;
+    }
+
+    @keyframes message-pulse {
+      0% {
+        .bg-pulse(@rock, @grayMid, ease-in-out);
+      }
+
+      13% {
+        .bg-pulse(@lime, @darkGreen, ease-in-out);
+      }
+
+      26% {
+        .bg-pulse(@rock, @grayMid, ease-in);
+      }
+
+      35% {
+        .bg-pulse(@lime, @darkGreen, ease-in);
+      }
+
+      44% {
+        .bg-pulse(@rock, @grayMid, ease-in);
+      }
+
+      53% {
+        .bg-pulse(@lime, @darkGreen, ease-in);
+      }
+
+      62% {
+        .bg-pulse(@rock, @grayMid, ease-in-out);
+      }
+    }
+
+    &.notification-pulse {
+      animation: message-pulse 2.65s infinite;
     }
   }
 }
