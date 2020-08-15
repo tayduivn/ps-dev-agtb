@@ -7,8 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@dashboard @dashlets @job6 @pr @ci-excluded
-# Temporarily disable this test until new Dashboard behavior is complete
+@dashboard @dashlets @job6 @pr
 Feature: Shareable Dashboards functionality verification
 
   Background:
@@ -24,24 +23,24 @@ Feature: Shareable Dashboards functionality verification
     And I go to "Home" url
 
     # Create new dashboard > Save
-    When I create new dashboard with three column layout
+    When I create new dashboard
       | *   | name            |
       | D_1 | <dashboardName> |
 
     # Add multiple dashlets to various columns of home dashboard
-    When I add ActiveTasks dashlet to #Dashboard at column 1
-      | label         |
+    When I add ActiveTasks dashlet to #Dashboard
+      | label        |
       | Active Tasks |
 
-    And I add KBArticles dashlet to #Dashboard at column 2
+    And I add KBArticles dashlet to #Dashboard
       | label       |
       | KB Articles |
 
-    And I add ListView dashlet to #Dashboard at column 3
+    And I add ListView dashlet to #Dashboard
       | label       | module   | limit |
       | KB Articles | Contacts | 10    |
 
-    And I add History dashlet to #Dashboard at column 1
+    And I add History dashlet to #Dashboard
       | label          |
       | Recent History |
 
@@ -75,7 +74,10 @@ Feature: Shareable Dashboards functionality verification
 
     When I go to "Home" url
 
-    # Then I verify that HomeDashboard element from #Dashboard.DashboardView still looks like HomeDashboard
+    # Verify the "Shared Dashboard" dashboard is shared successfully
+    Then I verify fields on #Dashboard.HeaderView
+      | fieldName | value           |
+      | name      | <dashboardName> |
 
     Examples:
       | dashboardName    |

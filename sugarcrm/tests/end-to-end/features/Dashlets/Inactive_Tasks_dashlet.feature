@@ -7,8 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@dashboard @dashlets @job5 @ci-excluded
-# Temporarily disable this test until new Dashboard behavior is complete
+@dashboard @dashlets @job5
 Feature: Inactive Tasks dashlet verification
 
   Background:
@@ -31,14 +30,19 @@ Feature: Inactive Tasks dashlet verification
     And I go to "Home" url
 
     # Create new dashboard > Save
-    When I create new dashboard with two column layout
+    When I create new dashboard
       | *   | name        |
       | D_1 | Dashboard 1 |
 
-    # Add multiple dashlets to various columns of home dashboard
-    When I add InactiveTasks dashlet to #Dashboard at column 1
+    # Add Inactive Tasks dashlet to the home dashboard
+    When I add InactiveTasks dashlet to #Dashboard
       | label          |
       | Inactive Tasks |
+
+    # Verify dashboard is successfully created
+    Then I verify fields on #Dashboard.HeaderView
+      | fieldName | value       |
+      | name      | Dashboard 1 |
 
     # Create 'Deferred' task record
     When I Create Task in #Dashboard.InactiveTasksDashlet

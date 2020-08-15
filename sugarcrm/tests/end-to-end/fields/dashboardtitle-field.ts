@@ -20,7 +20,7 @@ export class Detail extends BaseField {
 
         this.selectors = this.mergeSelectors({
             field: {
-                selector: '.btn-invisible',
+                selector: '.ellipsis_inline',
                 button: '.btn.dropdown-toggle',
             }
         });

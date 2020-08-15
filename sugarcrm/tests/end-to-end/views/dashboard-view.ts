@@ -25,8 +25,7 @@ export default class DashboardView extends BaseView {
         this.selectors = this.mergeSelectors({
             $: '.dashboard',
             buttons: {
-                newrow: '.row-fluid[name="dashlet_last_{{index}}0"] .add-row.empty',
-                adddashlet: '.add-dashlet .fa.fa-plus',
+                adddashlet: '.empty-grid',
             },
 
             // Service and Renewals console

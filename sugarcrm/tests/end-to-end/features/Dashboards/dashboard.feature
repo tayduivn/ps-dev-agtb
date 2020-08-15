@@ -7,8 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@dashboard @dashlets @job4 @pr @ci-excluded
-# Temporarily disable this test until new Dashboard behavior is complete
+@dashboard @dashlets @job8
 Feature: Dashboard main functionality verification
 
   Background:
@@ -33,7 +32,7 @@ Feature: Dashboard main functionality verification
       | fieldName | value                   |
       | name      | Accounts List Dashboard |
 
-  @create_dashboard @add_dashlet @delete_dashboard @pr @job6
+  @create_dashboard @add_dashlet @delete_dashboard @pr
   Scenario: List View > Create Dashboard > Add Dashlets > Save > Delete Dashboard
     Given Accounts records exist:
       | *name |
@@ -46,18 +45,18 @@ Feature: Dashboard main functionality verification
       | *           | name          |
       | DashboardID | New Dashboard |
 
-    # Add 3 Dashlets
-#    When I add MyActivityStream dashlet to #Dashboard
-#      | label         |
-#      | My Activities |
+    # Add 3 Dashlets to the newly created dashboard
+    When I add Top10Sales dashlet to #Dashboard
+      | label        |
+      | Top 10 Sales |
 
     And I add KBArticles dashlet to #Dashboard
       | label       |
       | KB Articles |
 
     And I add ListView dashlet to #Dashboard
-      | label       | module   | limit |
-      | KB Articles | Contacts | 10    |
+      | label         | module   | limit |
+      | Contacts List | Contacts | 10    |
 
     # Verify that new dashboard is created
     Then I verify fields on #Dashboard.HeaderView
@@ -93,10 +92,23 @@ Feature: Dashboard main functionality verification
       | label           |
       | Product Catalog |
 
+    When I add ActiveTasks dashlet to #Dashboard
+      | label           | visibility |
+      | My Active Tasks | No         |
+
     # Verify that new dashboard is created
     Then I verify fields on #Dashboard.HeaderView
       | fieldName | value                |
       | name      | RecordView Dashboard |
+
+    # Delete dashboard
+    When I delete dashboard
+
+    # Verify the dashboard is successfully deleted
+    Then I verify fields on #Dashboard.HeaderView
+      | fieldName | value                     |
+      | name      | Accounts Record Dashboard |
+
 
   @homeDashboard_create  @add_dashlet
   Scenario: Home > Create Dashboard > Add Dashlets > Save > Delete Dashboard
@@ -104,24 +116,24 @@ Feature: Dashboard main functionality verification
     When I go to "Home" url
 
     # Create new dashboard > Save
-    When I create new dashboard with three column layout
+    When I create new dashboard
       | *           | name          |
       | DashboardID | New Dashboard |
 
     # Add multiple dashlets to various columns of home dashboard
-#    When I add MyActivityStream dashlet to #Dashboard at column 1
-#      | label         |
-#      | My Activities |
+    When I add Top10Sales dashlet to #Dashboard
+      | label         |
+      | My Activities |
 
-    And I add KBArticles dashlet to #Dashboard at column 2
+    And I add KBArticles dashlet to #Dashboard
       | label       |
       | KB Articles |
 
-    And I add ListView dashlet to #Dashboard at column 3
+    And I add ListView dashlet to #Dashboard
       | label       | module   | limit |
       | KB Articles | Contacts | 10    |
 
-    When I add History dashlet to #Dashboard at column 1
+    When I add History dashlet to #Dashboard
       | label          |
       | Recent History |
 
@@ -132,3 +144,8 @@ Feature: Dashboard main functionality verification
 
     # Delete home dashboard
     When I delete dashboard
+
+     # Verify the dashboard is successfully deleted
+    Then I verify fields on #Dashboard.HeaderView
+      | fieldName | value          |
+      | name      | Home Dashboard |

@@ -18,6 +18,7 @@ import ForecastsBarChartDashlet from '../views/forecasts-bar-chart-dashlet';
 import ListViewDashlet from '../views/list-view-dashlet-view';
 import InactiveTasksDashlet from '../views/inactive-tasks-dashlet-view';
 import HistoryDashlet from '../views/history-dashlet-view';
+import ActiveSubscriptionsDashlet from '../views/active-subscriptions-dashlet-view'
 
 /**
  * Represents a Sugar Dashboard layout.
@@ -36,6 +37,7 @@ export default class DashboardLayout extends BaseView {
     public ListViewDashlet: DashletView;
     public InactiveTasksDashlet: DashletView;
     public HistoryDashlet: DashletView;
+    public ActiveSubscriptionsDashlet: DashletView;
 
     protected type: string;
 
@@ -76,12 +78,17 @@ export default class DashboardLayout extends BaseView {
 
         this.InactiveTasksDashlet = this.createComponent<InactiveTasksDashlet>(InactiveTasksDashlet, {
             module: options.module,
-            position: '000',
+            position: '0',
         });
 
         this.HistoryDashlet = this.createComponent<HistoryDashlet>(HistoryDashlet, {
             module: options.module,
-            position: '000',
+            position: '0',
+        });
+
+        this.ActiveSubscriptionsDashlet = this.createComponent<ActiveSubscriptionsDashlet>(ActiveSubscriptionsDashlet, {
+            module: options.module,
+            position: '0',
         });
     }
 }

@@ -32,8 +32,8 @@ When(/^I click (NewRow|AddDashlet) in (#\S+)$/,
  *
  * @example "I add KBArticles dashlet to #Dashborad"
  */
-When(/^I add ([a-zA-Z](?:\w|\S)*) dashlet to (#\S+)(?: at column (1|2|3))?$/,
-    async function (shortDashletName: String, dashboard: DashboardLayout, column?: number, data?: TableDefinition): Promise<void> {
+When(/^I add ([a-zA-Z](?:\w|\S)*) dashlet to (#\S+)$/,
+    async function (shortDashletName: String, dashboard: DashboardLayout, data?: TableDefinition): Promise<void> {
         const dashletNamesMap = {
             ListView: 'List View',
             KBArticles: 'Most Useful Published Knowledge Base Articles',
@@ -50,7 +50,8 @@ When(/^I add ([a-zA-Z](?:\w|\S)*) dashlet to (#\S+)(?: at column (1|2|3))?$/,
             InactiveTasks: 'Inactive Tasks',
             NotesAndAttachments: 'Notes & Attachments',
             PlannedActivities: 'Planned Activities',
-            ProductCatalogQuickPicks: 'Product Catalog Quick Picks'
+            ProductCatalogQuickPicks: 'Product Catalog Quick Picks',
+            ActiveSubscriptions: 'Active Subscriptions'
         };
 
         const name = dashletNamesMap[shortDashletName.toString()];
@@ -58,20 +59,9 @@ When(/^I add ([a-zA-Z](?:\w|\S)*) dashlet to (#\S+)(?: at column (1|2|3))?$/,
             throw new Error(`Dashlet with the name ${shortDashletName} is not found!`);
         }
 
-        if (!column) {
-            column = 1;
-        }
-
-        // Open Dashboard dropdown and select edit
+        // Select 'Add Dashlet' menu item to add a new dashlet to the dashboard
         await openMenuAndCheck(dashboard, false);
-        await dashboard.HeaderView.clickButton('edit');
-
-        // Add New Row
-        await dashboard.DashboardView.clickPlusButton('NewRow', column - 1);
-        await this.driver.waitForApp();
-
-        // Click + to add a new dashlet
-        await dashboard.DashboardView.clickButton('AddDashlet');
+        await dashboard.HeaderView.clickButton('add_dashlet');
         await this.driver.waitForApp();
 
         // Select Dashlet
@@ -90,24 +80,19 @@ When(/^I add ([a-zA-Z](?:\w|\S)*) dashlet to (#\S+)(?: at column (1|2|3))?$/,
         await seedbed.components.AddSugarDashletDrawer.HeaderView.clickButton('save');
         await this.driver.waitForApp();
 
-        // Save Dashboard
-        await dashboard.HeaderView.clickButton('edit_save');
-        await this.driver.waitForApp();
-        await closeAlert();
-
     }, {waitForApp: true});
 
 /**
  * Create or cancel creation of new dashboard
  *
  * @example
- * When I create new dashboard with two column layout
+ * When I create new dashboard
  *       | *   | name            |
  *       | D_1 | <dashboardName> |
  *
  */
-When(/^I (create|cancel creation of) new dashboard(?: with (one|two|three) column layout)?$/,
-    async function (action: string, dashboardLayout: string, data: TableDefinition): Promise<void> {
+When(/^I (create|cancel creation of) new dashboard$/,
+    async function (action: string, data: TableDefinition): Promise<void> {
         let dashboard = await seedbed.components[`Dashboard`];
         let dashboardHeaderView = await seedbed.components[`Dashboard`].HeaderView;
 
@@ -131,12 +116,6 @@ When(/^I (create|cancel creation of) new dashboard(?: with (one|two|three) colum
         };
 
         await dashboardHeaderView.setFieldsValue(inputData);
-
-        // Select home dashboard layout
-        if (dashboardLayout) {
-            await dashboardHeaderView.clickButton(`${dashboardLayout}ColumnLayout`);
-            await closeWarning('confirm');
-        }
 
         switch (action ) {
             case 'create':
@@ -164,7 +143,6 @@ When(/^I delete dashboard$/,
         let dashboard = await seedbed.components[`Dashboard`];
 
         await openMenuAndCheck(dashboard, false);
-        await dashboard.HeaderView.clickButton('edit');
         await dashboard.HeaderView.clickButton('delete');
         await this.driver.waitForApp();
 

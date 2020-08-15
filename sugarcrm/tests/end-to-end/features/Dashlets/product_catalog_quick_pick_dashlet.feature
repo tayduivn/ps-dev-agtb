@@ -50,8 +50,7 @@ Feature: Product Catalog Quick Picks Dashlet
     # Verify number of records in the 'Favorites' tab
     # Remove Product Catalog Quick Picks Dashlet
 
-  @product_catalog_quick_picks_dashlet @opportunity_record_view @ci-excluded
-  # Temporarily disable this test until new Dashboard behavior is complete
+  @product_catalog_quick_picks_dashlet @opportunity_record_view @pr
   Scenario: Product Catalog Quick Picks Dashlet in Opportunity record view
     # Generate Product records in Product Catalog
     Given ProductTemplates records exist:
@@ -72,15 +71,18 @@ Feature: Product Catalog Quick Picks Dashlet
       | *           | name               |
       | DashboardID | Products Dashboard |
 
-    # Add Product Catalog dashlet to the dashboard
-    When I add ProductCatalog dashlet to #Dashboard
-      | label              |
-      | My Product Catalog |
-
     # Add Product Catalog Quick Picks Dashlets to the dashboard
     When I add ProductCatalogQuickPicks dashlet to #Dashboard
       | label                              |
       | My Recently used and Fav. Products |
+
+    # TODO: Remove this block after the Warning Message issue CS-862 is fixed
+    # Workaround for bugs in dashlet.
+    When I choose Contacts in modules menu
+    When I Confirm confirmation alert
+    When I choose Opportunities in modules menu
+    When I select *Opp_1 in #OpportunitiesList.ListView
+    When I close alert
 
     # Verify that new dashboard is successfully created and saved
     Then I verify fields on #Dashboard.HeaderView
@@ -156,7 +158,6 @@ Feature: Product Catalog Quick Picks Dashlet
     When I toggle checkbox for *RLI_2 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
     When I select Delete action in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
     When I Confirm confirmation alert
-    When I close alert
 
     # Verify number of records in the 'Recently Used' tab
     When I verify number of records in #Dashboard.ProductCatalogQuickPicksDashlet is 1
@@ -252,7 +253,7 @@ Feature: Product Catalog Quick Picks Dashlet
     # Verify that product added to favorites exists in the 'Favorites' tab
     # Remove Product Catalog Quick Picks Dashlet
 
-  @product_catalog_quick_picks_dashlet @quote_record_view @ci-excluded
+  @product_catalog_quick_picks_dashlet @quote_record_view
   # Temporarily disable this test until new Dashboard behavior is complete
   Scenario: Product Catalog Quick Picks Dashlet in Quotes record view
     # Generate Product records in Product Catalog
@@ -285,15 +286,17 @@ Feature: Product Catalog Quick Picks Dashlet
       | *           | name               |
       | DashboardID | Products Dashboard |
 
-    # Add Product Catalog dashlet to the dashboard
-    When I add ProductCatalog dashlet to #Dashboard
-      | label              |
-      | My Product Catalog |
-
     # Add Product Catalog Quick Picks Dashlets to the dashboard
     When I add ProductCatalogQuickPicks dashlet to #Dashboard
       | label                              |
       | My Recently used and Fav. Products |
+
+    # TODO: Remove this block after the Warning Message issue CS-862 is fixed
+    # Workaround for bug in dashlet.
+    When I choose Contacts in modules menu
+    When I Confirm confirmation alert
+    When I choose Quotes in modules menu
+    When I select *Quote_1 in #OpportunitiesList.ListView
 
     # Verify that new dashboard is successfully created and saved
     Then I verify fields on #Dashboard.HeaderView
@@ -669,40 +672,37 @@ Feature: Product Catalog Quick Picks Dashlet
     # Verify number of records in the 'Favorites' tab
     When I verify number of records in #Dashboard.ProductCatalogQuickPicksDashlet is 1
 
-    # --------------------------------------------------
-    # RE-ENABLE the commented part after AT-148 is fixed
-    # --------------------------------------------------
     # Logout from Admin and Login as another user
-#    When I go to "logout" url
-#    When I use account "user"
-#    When I open Home view and login
-#
-#    # Navigate to quote record view
-#    When I choose Quotes in modules menu
-#    When I select *Q_1 in #QuotesList.ListView
-#
-#    # Verify number of records in the 'Recently Used' tab for another user
-#    When I verify number of records in #Dashboard.ProductCatalogQuickPicksDashlet is 0
-#
-#    # Select 'Favorites' tab in Product Catalog Quick Picks dashlet
-#    When I select Favorites tab in #Dashboard.ProductCatalogQuickPicksDashlet
-#
-#    # Verify number of records in the 'Favorites' tab for another user
-#    When I verify number of records in #Dashboard.ProductCatalogQuickPicksDashlet is 0
-#
-#    # Add one QLI to a quote while logged as non-admin user
-#    When I choose createLineItem on QLI section on #Q_1Record view
-#    When I provide input for #Q_1Record.QliTable.QliRecord view
-#      | *       | product_template_name |
-#      | MyQLI_1 | Prod_2                |
-#    #Save new QLI
-#    When I click on save button on QLI #Q_1Record.QliTable.QliRecord record
-#
-#    # Select 'Recently Used' tab in Product Catalog Quick Picks dashlet
-#    When I select Recently Used tab in #Dashboard.ProductCatalogQuickPicksDashlet
-#
-#    #Verify that product used to create QLI appears in Recently Used tab
-#    Then I verify product *Prod_2 exists in #Dashboard.ProductCatalogQuickPicksDashlet
+    When I go to "logout" url
+    When I use account "user"
+    When I open Home view and login
+
+    # Navigate to quote record view
+    When I choose Quotes in modules menu
+    When I select *Q_1 in #QuotesList.ListView
+
+    # Verify number of records in the 'Recently Used' tab for another user
+    When I verify number of records in #Dashboard.ProductCatalogQuickPicksDashlet is 0
+
+    # Select 'Favorites' tab in Product Catalog Quick Picks dashlet
+    When I select Favorites tab in #Dashboard.ProductCatalogQuickPicksDashlet
+
+    # Verify number of records in the 'Favorites' tab for another user
+    When I verify number of records in #Dashboard.ProductCatalogQuickPicksDashlet is 0
+
+    # Add one QLI to a quote while logged as non-admin user
+    When I choose createLineItem on QLI section on #Q_1Record view
+    When I provide input for #Q_1Record.QliTable.QliRecord view
+      | *       | product_template_name |
+      | MyQLI_1 | Prod_2                |
+    #Save new QLI
+    When I click on save button on QLI #Q_1Record.QliTable.QliRecord record
+
+    # Select 'Recently Used' tab in Product Catalog Quick Picks dashlet
+    When I select Recently Used tab in #Dashboard.ProductCatalogQuickPicksDashlet
+
+    #Verify that product used to create QLI appears in Recently Used tab
+    Then I verify product *Prod_2 exists in #Dashboard.ProductCatalogQuickPicksDashlet
 
 
   @product_catalog_quick_picks_dashlet

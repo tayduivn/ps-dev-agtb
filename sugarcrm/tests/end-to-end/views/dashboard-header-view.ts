@@ -29,15 +29,13 @@ export default class DashboardHeaderView extends BaseView {
                 save: '.btn-toolbar a[name="create_button"]',
                 cancel: '.btn-toolbar a[name="create_cancel_button"]',
                 actions: '.actions:not([style*="display: none"]) a.btn.dropdown-toggle',
-                edit: 'a[name="edit_button"]',
+                duplicate: 'a[name="duplicate_button"]',
                 delete: 'a[name="delete_button"]',
+                collapse: 'a[name="collapse_button"]',
+                open_all: 'a[name="expand_button"]',
+                add_dashlet: 'a[name="add_dashlet_button"]',
                 edit_save: 'a[name="save_button"]',
                 edit_cancel: 'a[name="cancel_button"]',
-
-                // Various layout buttons while creating home dashboard
-                onecolumnlayout: '.fa-list-alt',
-                twocolumnlayout: '.fa-columns',
-                threecolumnlayout: '.fa-table',
             }
         });
     }

@@ -7,8 +7,7 @@
 #
 # Copyright (C) SugarCRM Inc. All rights reserved.
 
-@dashboard @dashlets @job5 @ci-excluded
-# Temporarily disable this test until new Dashboard behavior is complete
+@dashboard @dashlets @job5
 Feature: History dashlet verification
 
   Background:
@@ -47,12 +46,17 @@ Feature: History dashlet verification
     When I go to "Home" url
 
     # Create new dashboard > Save
-    When I create new dashboard with two column layout
+    When I create new dashboard
       | *   | name        |
       | D_1 | Dashboard 1 |
 
-    # Add multiple dashlets to various columns of home dashboard
-    When I add History dashlet to #Dashboard at column 1
+    # Verify dashboard is successfully created
+    Then I verify fields on #Dashboard.HeaderView
+      | fieldName | value       |
+      | name      | Dashboard 1 |
+
+    # Add History dashlet to the dashboard
+    When I add History dashlet to #Dashboard
       | label   |
       | History |
 
@@ -117,7 +121,6 @@ Feature: History dashlet verification
     When I edit dashlet settings of #Dashboard.HistoryDashlet with the following values:
       | label          | limit |
       | History Update | 5     |
-    And I close alert
 
     # When I select last quarter
     When I select "Last Quarter" in #Dashboard.HistoryDashlet
