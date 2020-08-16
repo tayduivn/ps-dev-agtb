@@ -91,7 +91,9 @@
      */
     switchModel: function(tabIndex) {
         if (this.tabModels[tabIndex]) {
-            this.context.parent.set('rowModel', this.tabModels[tabIndex]);
+            if (this.context.parent) {
+                this.context.parent.set('rowModel', this.tabModels[tabIndex]);
+            }
             // for interaction dashlets
             this.context.set('rowModel', this.tabModels[tabIndex]);
         }
@@ -104,8 +106,8 @@
     switchTab: function(tabIndex) {
         var tabbedDashboard = this._getTabbedDashboard();
         if (tabbedDashboard) {
-            tabbedDashboard.switchTab(tabIndex);
             this.switchModel(tabIndex);
+            tabbedDashboard.switchTab(tabIndex);
         }
     },
 

@@ -87,7 +87,7 @@
             beforeRouteChange: function(params) {
                 if (this.closestComponent('omnichannel-dashboard')) {
                     // don't block for omnichannnel dashboard
-                    return false;
+                    return true;
                 }
                 var onConfirm = _.bind(this.onConfirmRoute, this);
                 return this.warnUnsavedChanges(onConfirm);

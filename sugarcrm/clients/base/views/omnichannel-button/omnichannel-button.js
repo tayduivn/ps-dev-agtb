@@ -66,8 +66,12 @@
      */
     _getConsole: function() {
         if (_.isUndefined(app.omniConsole)) {
+            var context = app.controller.context.getChildContext({forceNew: true, module: 'Dashboards'});
+            // remove it from parent so that it won't get cleared when loading a new view
+            app.controller.context.children.pop();
             var console = app.view.createLayout({
-                type: 'omnichannel-console'
+                type: 'omnichannel-console',
+                context: context
             });
             console.initComponents();
             console.loadData();

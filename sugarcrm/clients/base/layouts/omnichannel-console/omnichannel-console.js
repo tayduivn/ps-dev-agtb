@@ -60,7 +60,6 @@
         'click [data-action=close]': 'close'
     },
 
-
     /**
      * The omnichannel dashboard switch component
      */
@@ -77,6 +76,7 @@
     initialize: function(options) {
         this._super('initialize', [options]);
         $(window).on('resize.omniConsole', _.bind(this._resize, this));
+        app.router.on('route', this.closeImmediately, this);
         this._setSize();
     },
 
@@ -273,7 +273,6 @@
             this.currentState = 'opening';
             this.$el.show('slide', {direction: 'down'}, 300);
             this.currentState = 'idle';
-            app.router.on('route', this.closeImmediately, this);
             $main = app.$contentEl.children().first();
             $main.on('drawer:add.omniConsole', _.bind(this.closeImmediately, this));
             this.trigger('omniconsole:open');
@@ -337,7 +336,6 @@
      * @private
      */
     _offEvents: function() {
-        app.router.off('route', this.closeImmediately);
         $main = app.$contentEl.children().first();
         $main.off('drawer:add.omniConsole', this.closeImmediately);
     },

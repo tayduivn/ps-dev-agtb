@@ -68,8 +68,10 @@
      * @private
      */
     _createDashboard: function() {
+        var context = this.context.getChildContext({forceNew: true, module: 'Dashboards'});
         var dashboard = app.view.createLayout({
-            type: 'omnichannel-dashboard'
+            type: 'omnichannel-dashboard',
+            context: context
         });
         this._components.push(dashboard);
         this.$el.append(dashboard.$el);
