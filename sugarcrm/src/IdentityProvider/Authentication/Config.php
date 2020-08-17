@@ -174,7 +174,7 @@ class Config
         }
 
         $stsUrl = rtrim($this->getIdmSettingsByKey('stsUrl', '/ '));
-        $ipdUrl = rtrim($this->getIdmSettingsByKey('idpUrl', '/ '));
+        $idpUrl = rtrim($this->getIdmSettingsByKey('idpUrl', '/ '));
         $stsKeySetId = $this->getIdmSettingsByKey('stsKeySetId');
         $urlKeys = $stsKeySetId ? $stsUrl . '/keys/' . $stsKeySetId : null;
 
@@ -185,7 +185,7 @@ class Config
             'clientId' => $this->getIdmSettingsByKey('clientId'),
             'clientSecret' => $this->getIdmSettingsByKey('clientSecret'),
             'stsUrl' => $stsUrl,
-            'idpUrl' => $ipdUrl,
+            'idpUrl' => $idpUrl,
             'redirectUri' => rtrim($this->get('site_url'), '/') . '/?module=Users&action=OAuth2CodeExchange',
             'urlAuthorize' => $endpointService->getOAuth2Endpoint(EndpointInterface::AUTH_ENDPOINT),
             'urlAccessToken' => $endpointService->getOAuth2Endpoint(EndpointInterface::TOKEN_ENDPOINT),
@@ -194,6 +194,7 @@ class Config
             'http_client' => $this->getIdmSettingsByKey('http_client', []),
             'cloudConsoleUrl' => $this->getIdmSettingsByKey('cloudConsoleUrl', ''),
             'cloudConsoleRoutes' => $this->getIdmSettingsByKey('cloudConsoleRoutes', []),
+            'profileUrls' => $this->getIdmSettingsByKey('profileUrls', ['changePassword' => $idpUrl . '/password/change']),
             'caching' => array_replace_recursive($this->getIDMModeDefaultCachingConfig(), $this->getIdmSettingsByKey('caching') ?? []),
             'crmOAuthScope' => $this->getIdmSettingsByKey('crmOAuthScope', ''),
             'requestedOAuthScopes' => $this->getIdmSettingsByKey('requestedOAuthScopes', []),

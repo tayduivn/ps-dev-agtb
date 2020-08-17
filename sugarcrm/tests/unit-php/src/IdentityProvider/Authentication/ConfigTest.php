@@ -667,6 +667,7 @@ class ConfigTest extends TestCase
                     'tid' => 'srn:cluster:sugar:eu:0000000001:tenant',
                     'cloudConsoleUrl' => '',
                     'cloudConsoleRoutes' => [],
+                    'profileUrls' => ['changePassword' => 'http://login.sugarcrm.local/password/change'],
                     'caching' => [
                         'ttl' => [
                             'introspectToken' => 10,
@@ -715,6 +716,7 @@ class ConfigTest extends TestCase
                     'tid' => 'srn:cluster:sugar:eu:0000000001:tenant',
                     'cloudConsoleUrl' => 'http://console.sugarcrm.local',
                     'cloudConsoleRoutes' => [],
+                    'profileUrls' => ['changePassword' => 'http://login.sugarcrm.local/password/change'],
                     'caching' => [
                         'ttl' => [
                             'introspectToken' => 10,
@@ -770,6 +772,7 @@ class ConfigTest extends TestCase
                         'userManagement' => 'management/users',
                         'passwordManagement' => 'management/password',
                     ],
+                    'profileUrls' => ['changePassword' => 'http://login.sugarcrm.local/password/change'],
                     'caching' => [
                         'ttl' => [
                             'introspectToken' => 10,
@@ -811,6 +814,7 @@ class ConfigTest extends TestCase
                     'tid' => 'srn:cluster:sugar:eu:0000000001:tenant',
                     'cloudConsoleUrl' => '',
                     'cloudConsoleRoutes' => [],
+                    'profileUrls' => ['changePassword' => 'http://login.sugarcrm.local/password/change'],
                     'caching' => [
                         'ttl' => [
                             'introspectToken' => 10,
@@ -856,6 +860,7 @@ class ConfigTest extends TestCase
                     'tid' => 'srn:cluster:sugar:eu:0000000001:tenant',
                     'cloudConsoleUrl' => '',
                     'cloudConsoleRoutes' => [],
+                    'profileUrls' => ['changePassword' => 'http://login.sugarcrm.local/password/change'],
                     'caching' => [
                         'ttl' => [
                             'introspectToken' => 20,
@@ -897,6 +902,7 @@ class ConfigTest extends TestCase
                     'tid' => 'srn:cluster:sugar:eu:0000000001:tenant',
                     'cloudConsoleUrl' => '',
                     'cloudConsoleRoutes' => [],
+                    'profileUrls' => ['changePassword' => 'http://login.sugarcrm.local/password/change'],
                     'caching' => [
                         'ttl' => [
                             'introspectToken' => 10,
@@ -946,6 +952,7 @@ class ConfigTest extends TestCase
                     'tid' => 'srn:cluster:sugar:eu:0000000001:tenant',
                     'cloudConsoleUrl' => '',
                     'cloudConsoleRoutes' => [],
+                    'profileUrls' => ['changePassword' => 'http://login.sugarcrm.local/password/change'],
                     'caching' => [
                         'ttl' => [
                             'introspectToken' => 10,
@@ -997,6 +1004,7 @@ class ConfigTest extends TestCase
                     'tid' => 'srn:cluster:sugar:eu:0000000001:tenant',
                     'cloudConsoleUrl' => '',
                     'cloudConsoleRoutes' => [],
+                    'profileUrls' => ['changePassword' => 'http://login.sugarcrm.local/password/change'],
                     'caching' => [
                         'ttl' => [
                             'introspectToken' => 10,
