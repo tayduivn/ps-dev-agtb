@@ -180,7 +180,7 @@ describe('Change Password field', function() {
                 'change-password',
                 'view',
                 fieldDefs,
-                moduleName,
+                '',
                 model,
                 null,
                 true
@@ -220,6 +220,20 @@ describe('Change Password field', function() {
                 expect(callback.args[0]).toBeDefined();
                 expect(callback.args[0][2][fieldName]).toBeUndefined();
             });
+        });
+    });
+
+    describe('_resetModelExtensions', function() {
+        it('should remove module attributes added during _extendModels', function() {
+            var model = field.model;
+            expect(model._hasChangePasswordModifs).toBe(true);
+            expect(model._doValidatePasswordConfirmation).not.toBeUndefined();
+            expect(_.keys(model._validationTasks)).toContain('password_confirmation_' + field.cid);
+            field._resetModelExtensions();
+
+            expect(model._hasChangePasswordModifs).toBe(false);
+            expect(model._doValidatePasswordConfirmation).toBeUndefined();
+            expect(_.keys(model._validationTasks)).not.toContain('password_confirmation_' + field.cid);
         });
     });
 });

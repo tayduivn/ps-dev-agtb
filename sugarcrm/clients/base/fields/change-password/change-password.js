@@ -25,6 +25,19 @@
     },
 
     /**
+     * Cache of original functions modified during _extendModel
+     */
+    originalFunctions: {},
+
+    /**
+     * List of function names added during _extendModel
+     */
+    extendFunctions: [
+        '_doValidatePasswordConfirmation',
+        'revertAttributes'
+    ],
+
+    /**
      * @override
      * @param options
      */
@@ -45,13 +58,18 @@
      */
     _extendModel: function() {
         var isPasswordValidationSkipped = this.fieldDefs && this.fieldDefs.skip_password_validation;
-        // _hasChangePasswordModifs is a flag to make sure model methods are overriden only once
+        // _hasChangePasswordModifs is a flag to make sure model methods are overridden only once
         if (this.model && !this.model._hasChangePasswordModifs) {
             // Make a copy of the model
             var _proto = _.clone(this.model);
 
             // This is the flag to make sure we do extend model only once
             this.model._hasChangePasswordModifs = true;
+
+            // Cache overridden functions to remove on dispose
+            _.each(this.extendFunctions, function(functionName) {
+                this.originalFunctions[functionName] = this.model[functionName];
+            }, this);
 
             /**
              * Validates new password and confirmation match
@@ -272,11 +290,24 @@
     },
 
     /**
-     * Remove validation on the model.
+     * Remove extensions added to model.
      * @inheritdoc
      */
     _dispose: function() {
-        this.model.removeValidationTask('password_confirmation_' + this.cid);
+        this._resetModelExtensions();
         this._super('_dispose');
+    },
+
+    /**
+     * Undo changes made in _extendModel when field is disposed
+     *
+     * @private
+     */
+    _resetModelExtensions: function() {
+        _.each(this.originalFunctions, function(value, key) {
+            this.model[key] = value;
+        }, this);
+        this.model._hasChangePasswordModifs = false;
+        this.model.removeValidationTask('password_confirmation_' + this.cid);
     },
 })
