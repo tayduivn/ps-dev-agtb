@@ -309,6 +309,15 @@ class ViewModulefield extends SugarView
         $json = getJSONobj();
 
         $this->fv->ss->assign('field_name_exceptions', $json->encode($field_name_exceptions));
+
+        // Only one AutoIncrement field can exist on a module, with the exception of Cases, that can have 2 because
+        // case_number is a Number field that behaves with auto increment properties. Check if this module has an
+        // existing AutoIncrement field, if so remove it from the list of field types in the Studio dropdown editor.
+        $existingAutoIncrementField = $module->getFieldDefinitions('type', ['autoincrement']);
+        if (!empty($existingAutoIncrementField)) {
+            $field_types = array_diff_key($field_types, ['autoincrement' => '']);
+        }
+
         ksort($field_types);
         $this->fv->ss->assign('field_types', $field_types);
 
