@@ -299,6 +299,44 @@ describe('includes.javascript.pmse.ui.element_helper', function() {
             });
         });
 
+        describe('dropdown fields', function() {
+            var type = 'dropdown';
+            var parent;
+            var elementHelper;
+            beforeEach(function() {
+                elementHelper = new PMSE.ElementHelper({});
+                parent =  new FormPanelDropdown({
+                    _name: 'field',
+                    dataURL: 'pmse_Project/CrmData/fields/Contacts'
+                });
+                parent.setAttributes({base_module: 'Contacts', call_type: 'PD'});
+                sinon.collection.stub(parent, 'getSelectedData').returns({optionItem: []});
+            });
+
+            it('should include the correct operators for New Records Only', function() {
+                var setVal = 'new';
+                elementHelper.processValueDependency(dependantField, parent, operatorField, type, setVal, form);
+                expect(checkOperator(operatorField, 'equals')).toBeTruthy();
+                expect(checkOperator(operatorField, 'not_equals')).toBeTruthy();
+                // Dropdowns don't have array_has_any operator
+                expect(checkOperator(operatorField, 'array_has_any')).toBeFalsy();
+                // Dropdowns have only 2 operators on New Records Only
+                expect(operatorField._htmlControl[0].length).toEqual(2);
+
+            });
+
+            it('should include the correct operators for updated records', function() {
+                var setVal = 'updated';
+                elementHelper.processValueDependency(dependantField, parent, operatorField, type, setVal, form);
+                expect(checkOperator(operatorField, 'equals')).toBeTruthy();
+                expect(checkOperator(operatorField, 'not_equals')).toBeTruthy();
+                // Dropdowns don't have array_has_any operator
+                expect(checkOperator(operatorField, 'array_has_any')).toBeFalsy();
+                // Dropdowns have 5 operators for first update and all updates
+                expect(operatorField._htmlControl[0].length).toEqual(5);
+            });
+        });
+
         it('Include changes operator and enable field when a target module is chosen', function() {
 
             // Tasks module is chosen that is a target (base) module
