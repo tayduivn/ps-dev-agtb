@@ -487,9 +487,6 @@ class ModuleBuilderController extends SugarController
                 if (!empty($field->required_formula)) {
                     $relatedMods = array_merge($relatedMods, VardefManager::getLinkedModulesFromFormula($bean, $field->required_formula));
                 }
-                if (!empty($field->readonly_formula)) {
-                    $relatedMods = array_merge($relatedMods, VardefManager::getLinkedModulesFromFormula($bean, $field->readonly_formula));
-                }
 
                 // But only if there are related modules to work on, otherwise
                 // we end up handling these processes for ALL THE MODULES
@@ -578,9 +575,6 @@ class ModuleBuilderController extends SugarController
         }
         if (!empty($field->required_formula)) {
             $relatedMods = array_merge($relatedMods, VardefManager::getLinkedModulesFromFormula($mod, $field->required_formula));
-        }
-        if (!empty($field->readonly_formula)) {
-            $relatedMods = array_merge($relatedMods, VardefManager::getLinkedModulesFromFormula($mod, $field->readonly_formula));
         }
 
         foreach ($relatedMods as $mName => $oName) {

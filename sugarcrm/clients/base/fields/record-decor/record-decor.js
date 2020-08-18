@@ -181,7 +181,7 @@
         }
 
         // Do not redecorate readonly fields
-        if (app.utils.isTruthy(field.def.readonly) && field.isFieldEmpty()) {
+        if (app.utils.isTruthy(field.def.readonly)) {
             return;
         }
 

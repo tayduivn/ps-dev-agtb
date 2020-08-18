@@ -80,27 +80,3 @@
         </td>
     </tr>
 {/if}
-{if $vardef.type != 'bool'}
-    <tr>
-        <td class='mbLBL'>{sugar_translate module="DynamicFields" label="COLUMN_TITLE_READONLY_OPTION"}:</td>
-        <td>
-            <input type="checkbox" name="readonly" id="readonly" value="1" onclick ="ModuleBuilder.toggleReadOnlyFormula()"
-                   {if !empty($vardef.readonly)}CHECKED{/if} {if $hideLevel > 5}disabled{/if}/>
-            {if $hideLevel > 5}<input type="hidden" name="readonly" value="{$vardef.readonly}">{/if}
-            {sugar_help text=$mod_strings.LBL_POPHELP_READONLY FIXX=250 FIXY=80}
-        </td>
-    </tr>
-    <tr id='readonlyFormulaRow' {if empty($vardef.readonly)}style="display:none"{/if}>
-        <td class='mbLBL'>{sugar_translate module="DynamicFields" label="LBL_READONLY_IF"}:</td>
-        <td>
-            <input id="readonly_formula" type="hidden" name="readonly_formula"
-                   value="{$vardef.readonly_formula|escape:'html'}"
-                   onchange="document.getElementById('readonly_formula_display').value = this.value"/>
-            <input id="readonly_formula_display" type="text" name="readonly_formula_display"
-                   value="{$vardef.readonly_formula|escape:'html'}"
-                   readonly="1" style="background-color:#eee"/>
-            <input class="button" type=button name="editFormula" value="{sugar_translate label="LBL_BTN_EDIT_FORMULA"}"
-                   onclick="ModuleBuilder.moduleLoadFormula(YAHOO.util.Dom.get('readonly_formula').value, 'readonly_formula', 'boolean')"/>
-        </td>
-    </tr>
-{/if}

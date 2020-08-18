@@ -51,7 +51,6 @@ class TemplateField{
 	var $importable = 'true' ;
     public $autoinc_next = '';
     public $pii = false;
-    public $readonly = false;
 
     /**
      * "duplicate_merge" attribute is considered enabled, if not specified
@@ -116,8 +115,6 @@ class TemplateField{
         'related_fields' => 'related_fields',
         'pii' => 'pii',
         'required_formula' => 'required_formula',
-        'readonly' => 'readonly',
-        'readonly_formula' => 'readonly_formula',
 	);
 
     /**
@@ -139,7 +136,7 @@ class TemplateField{
 
     // Bug #48826
     // fields to decode from post request
-    public $decode_from_request_fields_map = array('formula', 'dependency', 'required_formula', 'readonly_formula');
+    public $decode_from_request_fields_map = array('formula', 'dependency', 'required_formula');
 	/*
 		HTML FUNCTIONS
 		*/
@@ -350,7 +347,6 @@ class TemplateField{
     {
         $array = array(
             'required' => $this->convertBooleanValue($this->required),
-            'readonly' => $this->convertBooleanValue($this->readonly),
             'source' => 'custom_fields',
             'name' => $this->name,
             'vname' => $this->vname,
@@ -400,9 +396,6 @@ class TemplateField{
         }
         if (!empty($this->required_formula) && is_string($this->required_formula)) {
             $array['required_formula'] = html_entity_decode($this->required_formula);
-        }
-        if (!empty($this->readonly) && !empty($this->readonly_formula) && is_string($this->readonly_formula)) {
-            $array['readonly_formula'] = html_entity_decode($this->readonly_formula);
         }
         if (!empty($this->len)) {
             $array['len'] = $this->len;

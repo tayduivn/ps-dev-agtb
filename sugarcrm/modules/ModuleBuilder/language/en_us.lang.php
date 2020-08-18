@@ -810,10 +810,6 @@ $mod_strings = array(
     . "Required fields will follow the formula in the browser-based mobile view, <br/>"
     . "but will not follow the formula in the native applications, such as Sugar Mobile for iPhone. <br/>"
     . "They will not follow the formula in the Sugar Self-Service Portal.",
-'LBL_POPHELP_READONLY'=>"Create a formula to determine whether this field is read only in layouts.<br/>"
-        . "Read only fields will follow the formula in the browser-based mobile view, <br/>"
-        . "but will not follow the formula in the native applications, such as Sugar Mobile for iPhone. <br/>"
-        . "They will not follow the formula in the Sugar Self-Service Portal.",
 'LBL_POPHELP_GLOBAL_SEARCH'=>'Select to use this field when searching for records using the Global Search on this module.',
 //Revert Module labels
 'LBL_RESET' => 'Reset',
