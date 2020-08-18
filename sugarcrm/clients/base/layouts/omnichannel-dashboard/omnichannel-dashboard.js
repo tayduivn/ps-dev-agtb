@@ -37,6 +37,7 @@
      */
     initialize: function(options) {
         this._super('initialize', [options]);
+        this.tabModels = [];
         // this tells dashboard controller which dashboard to load
         this.context.set('layout', 'omnichannel');
         this.context.set('module', 'Dashboards');
