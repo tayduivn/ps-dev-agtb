@@ -845,8 +845,6 @@ class HealthCheckScanner
         // Check for quotes customizations, can be removed after 7.9 is the base.
         $this->checkQuotesCustomizations();
 
-        $this->checkForForbiddenStatementsInUpgrades();
-
         // TODO: custom dashlets
         $this->log("VERDICT: {$this->status}", 'STATUS');
         if ($GLOBALS['sugar_config']['site_url']) {
@@ -880,30 +878,6 @@ class HealthCheckScanner
         $query->where()->equals('status', 'installed');
         $query->where()->equals('type', $type);
         return $history->fetchFromQuery($query);
-    }
-
-    protected function checkForForbiddenStatementsInUpgrades()
-    {
-        $moduleScanner = new ModuleScanner();
-        if (!method_exists($moduleScanner, 'scanArchive')) {
-            return;
-        }
-        $modules = $this->getInstalledPackagesByType('module');
-        foreach ($modules as $module) {
-            $filename = $module->filename;
-            if (!file_exists($filename)) {
-                continue;
-            }
-
-            $moduleScanner->scanArchive($filename);
-            if ($moduleScanner->hasIssues()) {
-                foreach ($moduleScanner->getIssues()['file'] as $file => $issues) {
-                    foreach ($issues as $issue) {
-                        $this->updateStatus('forbiddenStatement', $file, $issue);
-                    }
-                }
-            }
-        }
     }
 
     /**
