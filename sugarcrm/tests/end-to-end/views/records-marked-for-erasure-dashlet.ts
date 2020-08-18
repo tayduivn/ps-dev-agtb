@@ -23,7 +23,7 @@ export default class RecordsMarkedForErasureDashlet extends DashletView {
         super(options);
 
         this.selectors = this.mergeSelectors({
-            $: '.row-fluid.sortable[name="dashlet_00"]',
+            $: '.dashlet-container[name="dashlet_0"]',
             header: {
                 $: '.header[data-module="{{module}}"] td',
             },

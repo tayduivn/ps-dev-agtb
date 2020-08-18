@@ -68,7 +68,7 @@ When(/^I link existing record (\*[a-zA-Z](?:\w|\S)*) to (\S+) subpanel on (#\S+)
         await this.driver.waitForApp();
 
         // Toggle checkbox in Search And Add Drawer
-        let listItem = seedbed.components[`${_.capitalize(subpanelName)}SearchAndAdd`].ListView.getListItem({id: record.id});
+        let listItem = await seedbed.components[`${_.capitalize(subpanelName)}SearchAndAdd`].ListView.getListItem({id: record.id});
         await listItem.clickItem(controlName);
         await this.driver.waitForApp();
 
