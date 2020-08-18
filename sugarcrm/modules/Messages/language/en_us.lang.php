@@ -31,4 +31,5 @@ $mod_strings = [
     'LNK_MESSAGE_LIST' => 'View Messages',
     'LNK_MESSAGE_REPORTS' => 'View Message Reports',
     'LNK_IMPORT_MESSAGES' => 'Import Messages',
+    'LBL_CREATED_BY' => 'Created By',
 ];
