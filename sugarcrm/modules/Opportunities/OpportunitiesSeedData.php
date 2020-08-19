@@ -110,6 +110,7 @@ class OpportunitiesSeedData {
         /* @var $opp Opportunity */
         $opp = BeanFactory::newBean('Opportunities');
         $oppFieldDefs = $opp->getFieldDefinitions();
+        $oppIndices = $opp->getIndices();
         $oppDbData = self::toDatabaseArray($opp);
         $oppSql = 'INSERT INTO '. $opp->table_name . ' ('. join(',', array_keys($oppDbData)) . ') VALUES';
         $oppRows = array();
@@ -153,6 +154,7 @@ class OpportunitiesSeedData {
         $fw->date_modified = $now;
 
         $fwFieldDefs = $fw->getFieldDefinitions();
+        $fwIndices = $fw->getIndices();
         $fwRows = array();
         $fwDbData = self::toDatabaseArray($fw);
         $fwSql = 'INSERT INTO ' . $fw->table_name . '(' . join(',', array_keys($fwDbData)) . ') VALUES';
@@ -235,6 +237,7 @@ class OpportunitiesSeedData {
 
             $sqlValues = array();
             foreach($values as $key => $value) {
+                $value = self::evaluateIndexedValue($key, $value, $oppIndices);
                 $sqlValues[] = self::$db->massageValue($value, $oppFieldDefs[$key]);
             }
             $oppRows[] = '(' . join(',', $sqlValues) . ')';
@@ -250,6 +253,7 @@ class OpportunitiesSeedData {
 
                 $sqlValues = array();
                 foreach ($fwValues as $key => $value) {
+                    $value = self::evaluateIndexedValue($key, $value, $fwIndices);
                     $sqlValues[$key] = self::$db->massageValue($value, $fwFieldDefs[$key]);
                 }
                 $fwRows[] = '(' . join(',', $sqlValues) . ')';
@@ -324,6 +328,7 @@ class OpportunitiesSeedData {
             /* @var $opp Opportunity */
             $opp = BeanFactory::newBean('Opportunities');
             $oppFieldDefs = $opp->getFieldDefinitions();
+            $oppIndices = $opp->getIndices();
             $oppSalesStageFieldDef = $oppFieldDefs['sales_stage'];
             $opp->id = create_guid();
 
@@ -338,6 +343,7 @@ class OpportunitiesSeedData {
             $fw->date_modified = $now;
 
             $fwFieldDefs = $fw->getFieldDefinitions();
+            $fwIndices = $fw->getIndices();
             $fwRows = array();
             $fwDbData = self::toDatabaseArray($fw);
             $fwSql = 'INSERT INTO ' . $fw->table_name . '(' . join(',', array_keys($fwDbData)) . ') VALUES';
@@ -345,6 +351,7 @@ class OpportunitiesSeedData {
             /* @var $rli RevenueLineItem */
             $rli = BeanFactory::newBean('RevenueLineItems');
             $rliFieldDefs = $rli->getFieldDefinitions();
+            $rliIndices = $rli->getIndices();
             $rliSql = array();
             $rliDbData = self::toDatabaseArray($rli);
             $sqlRli = 'INSERT INTO '. $rli->table_name . '('. join(',', array_keys($rliDbData)) . ') VALUES';
@@ -375,6 +382,7 @@ class OpportunitiesSeedData {
 
             $sqlValues = array();
             foreach ($values as $key => $value) {
+                $value = self::evaluateIndexedValue($key, $value, $rliIndices);
                 $sqlValues[] = self::$db->massageValue($value, $rliFieldDefs[$key]);
             }
 
@@ -387,6 +395,7 @@ class OpportunitiesSeedData {
             $fwValues = self::toDatabaseArray($fw);
             $sqlValues = array();
             foreach ($fwValues as $key => $value) {
+                $value = self::evaluateIndexedValue($key, $value, $fwIndices);
                 $sqlValues[$key] = self::$db->massageValue($value, $fwFieldDefs[$key]);
             }
             $fwRows[] = $sqlValues;
@@ -488,6 +497,7 @@ class OpportunitiesSeedData {
 
             $sqlValues = array();
             foreach ($values as $key => $value) {
+                $value = self::evaluateIndexedValue($key, $value, $oppIndices);
                 $sqlValues[] = self::$db->massageValue($value, $oppFieldDefs[$key]);
             }
             $oppRows[] = '(' . join(',', $sqlValues) . ')';
@@ -503,6 +513,7 @@ class OpportunitiesSeedData {
 
                 $sqlValues = array();
                 foreach ($fwValues as $key => $value) {
+                    $value = self::evaluateIndexedValue($key, $value, $fwIndices);
                     $sqlValues[$key] = self::$db->massageValue($value, $fwFieldDefs[$key]);
                 }
                 $fwRows[] = '(' . join(',', $sqlValues) . ')';
@@ -557,6 +568,7 @@ class OpportunitiesSeedData {
         /* @var $rli RevenueLineItem */
         $rli = BeanFactory::newBean('RevenueLineItems');
         $rliFieldDefs = $rli->getFieldDefinitions();
+        $rliIndices = $rli->getIndices();
         $rliSql = array();
         $sqlRli = 'INSERT INTO '. $rli->table_name . '('. join(',', array_keys(self::toDatabaseArray($rli))) . ') VALUES';
 
@@ -570,6 +582,7 @@ class OpportunitiesSeedData {
         $fw->modified_user_id = $opp->modified_user_id;
         $fw->created_by = $opp->created_by;
         $fwFieldDefs = $fw->getFieldDefinitions();
+        $fwIndices = $fw->getIndices();
         $fwRows = array();
         $fwSql = 'INSERT INTO '. $fw->table_name . '('. join(',', array_keys(self::toDatabaseArray($fw))) . ') VALUES';
 
@@ -716,11 +729,11 @@ class OpportunitiesSeedData {
             $rli->modified_user_id = $opp->modified_user_id;
             $rli->created_by = $opp->created_by;
 
-
             $values = self::toDatabaseArray($rli);
 
             $sqlValues = array();
             foreach($values as $key => $value) {
+                $value = self::evaluateIndexedValue($key, $value, $rliIndices);
                 $sqlValues[] = self::$db->massageValue($value, $rliFieldDefs[$key]);
             }
 
@@ -734,6 +747,7 @@ class OpportunitiesSeedData {
 
             $sqlValues = array();
             foreach($fwValues as $key => $value) {
+                $value = self::evaluateIndexedValue($key, $value, $fwIndices);
                 $sqlValues[$key] = self::$db->massageValue($value, $fwFieldDefs[$key]);
             }
             $fwRows[] = $sqlValues;
@@ -922,6 +936,39 @@ class OpportunitiesSeedData {
         }
         $now->setTime(0, 0, 0); // always default it to midnight
         return $timedate->asDbDate($now->get_day_begin($day));
+    }
+
+    /**
+     * @static evaluates indexed value
+     * @param string $name field name from a bean
+     * @param int|string|null $value field value from a bean
+     * @param array $indices index definitions of the module
+     * @return
+     */
+    public static function evaluateIndexedValue(string $name, $value, array $indices)
+    {
+        $indexDef = [];
+        // Most indices don't have the field name defined as key in the $indices array, even it does,
+        // we cannot rely on the key as a valid field name, so we need to find out if it exists
+        // in the 'fields' of $index meta data.
+        foreach ($indices as $key => $index) {
+            if (!empty($index['fields']) &&
+                is_array($index['fields']) &&
+                in_array($name, $index['fields'])) {
+                $indexDef = $index;
+                break;
+            }
+        }
+
+        // Field with unique index type and has empty value should return null because DBs treat
+        // empty string as unique value, null as not set. Thus, such empty field value needs to be
+        // converted to null to avoid inserting duplicate entry error for database.
+        if (empty($value) &&
+            isset($indexDef['type']) &&
+            $indexDef['type'] === 'unique') {
+            return null;
+        }
+        return $value;
     }
 
     /**
