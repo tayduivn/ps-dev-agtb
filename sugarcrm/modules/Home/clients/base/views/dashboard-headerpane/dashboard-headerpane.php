@@ -107,28 +107,6 @@ $viewdefs["Home"]["base"]["view"]["dashboard-headerpane"] = array(
             ),
             "showOn" => "view",
         ),
-        [
-            "name"      => "add_dashlet_button_edit",
-            "type"      => "button",
-            "label"     => "LBL_ADD_DASHLET_BUTTON",
-            'events' => [
-                'click' => 'button:add_dashlet_button:click',
-            ],
-            'acl_action' => 'edit',
-            'showOn' => 'edit',
-            'allowed_layouts' => [
-                [
-                    // service console
-                    'name' => 'dashboard',
-                    'id' => 'c108bb4a-775a-11e9-b570-f218983a1c3e',
-                ],
-                [
-                    // renewals console
-                    'name' => 'dashboard',
-                    'type' => 'renewals_console',
-                ],
-            ],
-        ],
         array(
             "name"      => "create_cancel_button",
             "type"      => "button",
