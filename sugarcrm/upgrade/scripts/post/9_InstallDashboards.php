@@ -57,6 +57,15 @@ class SugarUpgradeInstallDashboards extends UpgradeScript
             'version' => '10.2',
             'version_operator' => '<',
         ],
+        [
+            'file' => 'modules/Dashboards/dashboards/omnichannel/omnichannel.php',
+            'module' => 'Dashboards',
+            'layout' => 'omnichannel',
+            'from_flavor' => 'ent',
+            'to_flavor' => 'ent',
+            'version' => '10.2',
+            'version_operator' => '<',
+        ],
     ];
 
     /**
