@@ -616,7 +616,11 @@
                 model: model,
             },
         }, _.bind(function() {
-            this.layout.open();
+            var drawers = app.drawer._getDrawers(true);
+            // open the console if there is no open drawers
+            if (!drawers.$top) {
+                this.layout.open();
+            }
         }, this));
     },
 
