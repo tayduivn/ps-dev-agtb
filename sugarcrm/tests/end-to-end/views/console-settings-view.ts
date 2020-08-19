@@ -60,7 +60,7 @@ export default class ConsoleSettingsConfig extends DrawerLayout {
         // Only click tab if it is not already active
         let isSelected = await this.driver.isElementExist(this.$('tabs.activeTab', {tabName}));
         if (!isSelected) {
-            let selector = this.$('tabs.tab', {tabName});
+            let selector = await this.$('tabs.tab', {tabName});
             await this.driver.click(selector);
         }
     }
@@ -76,7 +76,7 @@ export default class ConsoleSettingsConfig extends DrawerLayout {
      */
     public async setSortCriteria(tabName: string, val: string, sortingOrderField: string, sortingDirection: string ):Promise <void> {
 
-        let  selector = this.$('fields.field', {tabName, sortingOrderField});
+        let  selector = await this.$('fields.field', {tabName, sortingOrderField});
         // set sorting order field
         if ( await this.driver.isElementExist(selector) ) {
             await this.driver.click(selector);
@@ -86,9 +86,10 @@ export default class ConsoleSettingsConfig extends DrawerLayout {
         }
 
         // set sort direction
-        selector = this.$('fields.direction', {tabName, sortingOrderField, sortingDirection});
+        selector = await this.$('fields.direction', {tabName, sortingOrderField, sortingDirection});
         if ( await this.driver.isElementExist(selector) ) {
             await this.driver.click(selector);
+            await this.driver.waitForApp();
         }
     }
 

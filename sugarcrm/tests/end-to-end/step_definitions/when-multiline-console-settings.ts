@@ -22,7 +22,7 @@ When(/^I navigate to (\S+) tab in (#\S+) view$/,
     async function(tabName: string, view: ConsoleSettingsConfig) {
 
         // Open Console Settings drawer in multiline view
-        let dView = seedbed.components['AccountsRecord'].HeaderView;
+        let dView = await seedbed.components['AccountsRecord'].HeaderView;
         await dView.clickButton('actions');
         await dView.clickButton('edit_module_tabs_button');
 
@@ -144,7 +144,7 @@ When(/^I restore defaults in (\S+) tab of (#\S+) view$/,
  */
 const openConsoleSettingsDrawer = async function () {
     // Open Console Settings drawer in multiline view
-    let headerView = seedbed.components['AccountsRecord'].HeaderView;
+    let headerView = await seedbed.components['AccountsRecord'].HeaderView;
     await headerView.clickButton('actions');
     await headerView.clickButton('edit_module_tabs_button');
     await seedbed.client.driver.waitForApp();
@@ -156,9 +156,11 @@ const openConsoleSettingsDrawer = async function () {
  * @returns {Promise<void>}
  */
 const saveChanges = async function () {
-    let headerView = seedbed.components['AccountsRecord'].HeaderView;
+    let headerView = await seedbed.components['AccountsRecord'].HeaderView;
     // Save changes and close confirmation alert
     await headerView.clickButton('save');
     await closeAlert();
+    await seedbed.client.driver.pause(8000);
+    await seedbed.client.driver.waitForApp();
 };
 

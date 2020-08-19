@@ -57,7 +57,7 @@ Then(/^I verify records order in (#\S+)$/,
 
             if (record) {
                 // Get list item
-                let listItem = view.getListItem({id: record.id});
+                let listItem = await view.getListItem({id: record.id});
 
                 // Find
                 orderActual = await listItem.getListItemPosition();

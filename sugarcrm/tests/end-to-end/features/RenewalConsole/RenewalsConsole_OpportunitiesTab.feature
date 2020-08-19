@@ -96,7 +96,7 @@ Feature: Sugar Sell Renewals Console Verification > Opportunities Tab
 
     # Select another record while side drawer is opened
     When I select *Opp_4 in #OpportunitiesList.MultilineListView
-    # Verify that accont name is updated in the header of Dashable Record dashlet
+    # Verify that account name is updated in the header of Dashable Record dashlet
     Then I verify fields on #RenewalsConsoleView.DashableRecordDashlet
       | fieldName | value |
       | name      | Opp_4 |
@@ -529,7 +529,6 @@ Feature: Sugar Sell Renewals Console Verification > Opportunities Tab
 
 
   @renewals-console @rc_opportunities_config
-  @ci-excluded
   Scenario: Renewals Console > Console Settings > Opportunities Tab
     # Create an account record
     Given Accounts records exist:
@@ -538,8 +537,8 @@ Feature: Sugar Sell Renewals Console Verification > Opportunities Tab
 
     # Create an Opportunity related to the account
     Given Opportunities records exist related via Opportunities link to *A_1:
-      | *     | name          | my_favorite | lead_source | assigned_user_id |
-      | Opp_1 | Opportunity 1 | true        | Employee    | 1                |
+      | *     | name          | my_favorite | lead_source | assigned_user_id | next_step      |
+      | Opp_1 | Opportunity 1 | true        | Employee    | 1                | Needs Analysis |
 
     # Add RLI record related to the above opportunity
     Given RevenueLineItems records exist related via revenuelineitems link to *Opp_1:
@@ -548,8 +547,8 @@ Feature: Sugar Sell Renewals Console Verification > Opportunities Tab
 
     # Create an Opportunity related to the account
     Given Opportunities records exist related via Opportunities link to *A_1:
-      | *     | name          | my_favorite | lead_source | assigned_user_id |
-      | Opp_2 | Opportunity 2 | false       | Cold Call   | 1                |
+      | *     | name          | my_favorite | lead_source | assigned_user_id | next_step   |
+      | Opp_2 | Opportunity 2 | false       | Cold Call   | 1                | Prospecting |
 
     # Add RLI record related to the above opportunity
     Given RevenueLineItems records exist related via revenuelineitems link to *Opp_2:
@@ -558,8 +557,8 @@ Feature: Sugar Sell Renewals Console Verification > Opportunities Tab
 
     # Create an Opportunity related to the account
     Given Opportunities records exist related via Opportunities link to *A_1:
-      | *     | name          | my_favorite | lead_source | assigned_user_id |
-      | Opp_3 | Opportunity 3 | true        | Conference  | 1                |
+      | *     | name          | my_favorite | lead_source | assigned_user_id | next_step           |
+      | Opp_3 | Opportunity 3 | true        | Conference  | 1                | Perception Analysis |
 
     # Add RLI record related to the above opportunity
     Given RevenueLineItems records exist related via revenuelineitems link to *Opp_3:
@@ -568,8 +567,8 @@ Feature: Sugar Sell Renewals Console Verification > Opportunities Tab
 
     # Create an Opportunity related to the account
     Given Opportunities records exist related via Opportunities link to *A_1:
-      | *     | name          | my_favorite | lead_source | assigned_user_id |
-      | Opp_4 | Opportunity 4 | false       | Trade Show  | 1                |
+      | *     | name          | my_favorite | lead_source | assigned_user_id | next_step   |
+      | Opp_4 | Opportunity 4 | false       | Trade Show  | 1                | Prospecting |
 
     # Add RLI record related to the above opportunity
     Given RevenueLineItems records exist related via revenuelineitems link to *Opp_4:
@@ -578,8 +577,8 @@ Feature: Sugar Sell Renewals Console Verification > Opportunities Tab
 
     # Create an Opportunity related to the account
     Given Opportunities records exist related via Opportunities link to *A_1:
-      | *     | name          | my_favorite | lead_source | assigned_user_id |
-      | Opp_5 | Opportunity 5 | true        | Direct Mail | 1                |
+      | *     | name          | my_favorite | lead_source | assigned_user_id | next_step          |
+      | Opp_5 | Opportunity 5 | true        | Direct Mail | 1                | Negotiation/Review |
 
     # Add RLI record related to the above opportunity
     Given RevenueLineItems records exist related via revenuelineitems link to *Opp_5:
@@ -609,7 +608,7 @@ Feature: Sugar Sell Renewals Console Verification > Opportunities Tab
     # Set sorting order in the Console Settings > Opportunities tab and save
     When I set sort order in Opportunities tab of #ConsoleSettingsConfig view:
       | sortOrderField | sortBy           | sortDirection |
-      | primary        | Sales Stage      | Ascending     |
+      | primary        | Next Step        | Ascending     |
       | secondary      | Opportunity Name | Ascending     |
 
     # Verify the order of records in the multiline list view after sorting order is changed

@@ -94,7 +94,7 @@ Feature: Sugar Sell Renewals Console Verification > Accounts Tab
 
     # Select another account while side drawer is opened
     When I select *A_2 in #AccountsList.MultilineListView
-    # Verify that accont name is updated in the header of Dashable Record dashlet
+    # Verify that account name is updated in the header of Dashable Record dashlet
     Then I verify fields on #RenewalsConsoleView.DashableRecordDashlet
       | fieldName | value     |
       | name      | Account 2 |
@@ -539,7 +539,6 @@ Feature: Sugar Sell Renewals Console Verification > Accounts Tab
 
 
   @renewals-console @rc_accounts_config
-  @ci-excluded
   Scenario: Renewals Console > Console Settings > Accounts Tab
     Given Accounts records exist:
       | *   | name      | industry     | annual_revenue | service_level | type     | my_favorite |
@@ -608,7 +607,6 @@ Feature: Sugar Sell Renewals Console Verification > Accounts Tab
       | A_5               | 3                   |
       | A_3               | 4                   |
       | A_2               | 5                   |
-
 
     # Set sorting order in the Console Settings > Accounts tab and save
     When I set sort order in Accounts tab of #ConsoleSettingsConfig view:
