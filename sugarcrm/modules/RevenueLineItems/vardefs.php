@@ -1204,6 +1204,15 @@ $dictionary['RevenueLineItem'] = array(
                 'date_closed',
             ),
         ),
+        [
+            'name' => 'idx_renewal_rli_id_del',
+            'type' => 'index',
+            'fields' => [
+                'deleted',
+                'renewal_rli_id',
+                'id',
+            ],
+        ],
         //END SUGARCRM flav=ent ONLY
     ),
     'relationships' => array(
