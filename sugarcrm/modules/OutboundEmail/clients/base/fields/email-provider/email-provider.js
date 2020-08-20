@@ -63,11 +63,13 @@
             var width = 600;
             var left = (screen.width - width) / 2;
             var top = (screen.height - height) / 4;
-            window.open(
-                this.oauth2Types[this.value].auth_url,
+            var submitWindow = window.open(
+                '/',
                 '_blank',
                 'width=' + width + ',height=' + height + ',left=' + left + ',top=' + top + ',resizable=1'
             );
+            submitWindow.location.href = 'about:blank';
+            submitWindow.location.href = this.oauth2Types[this.value].auth_url;
         }
     },
 

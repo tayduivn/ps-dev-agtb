@@ -365,7 +365,9 @@ function authorize() {
         var width = 600;
         var left = (window.parent.screen.width - width) / 2;
         var top = (window.parent.screen.height - height) / 4;
-        window.open(authInfo[provider]['auth_url'], '_blank', 'width=' + width + ',height=' + height + ',left=' + left + ',top=' + top + ',resizable=1');
+        var submitWindow = window.open('/', '_blank', 'width=' + width + ',height=' + height + ',left=' + left + ',top=' + top + ',resizable=1');
+        submitWindow.location.href = 'about:blank';
+        submitWindow.location.href = authInfo[provider]['auth_url'];
     }
 }
 
