@@ -470,11 +470,11 @@ class DynamicField {
         if (empty($widget->name) || empty($this->module)) {
             return;
         }
-        $fieldMetaData = (new FieldsMetaData())->retrieveByCustomModuleAndName($this->module, $widget->name);
-        if (empty($fieldMetaData)) {
+        $fieldsMetaData = (new FieldsMetaData())->retrieveByCustomModuleAndName($this->module, $widget->name);
+        if (empty($fieldsMetaData)) {
             return;
         }
-        $fieldMetaData->mark_deleted($fieldMetaData->id);
+        $fieldsMetaData->mark_deleted($fieldsMetaData->id);
         $sql = $widget->get_db_delete_alter_table( $this->bean->table_name . "_cstm" ) ;
         if (! empty( $sql ) )
             $GLOBALS['db']->query( $sql );
@@ -528,6 +528,9 @@ class DynamicField {
         if (empty($field) || empty($field->name) || empty($this->module)) {
             return false;
         }
+        // All field metadata are related to field name. All field names are stored in the DB with _c at the end.
+        // Transform field name to DB format to find previous deleted field by name
+        $field->name = $this->getDBName($field->name);
 
         /** @var FieldsMetaData $fmd */
         $fmd = BeanFactory::newBean('EditCustomFields');
@@ -535,7 +538,6 @@ class DynamicField {
         if (!empty($existedMetaData)) {
             $fmd = $existedMetaData;
         } else {
-            $field->name = $this->getDBName($field->name);
             $fmd->name = $field->name;
             $fmd->custom_module = $this->module;
         }
