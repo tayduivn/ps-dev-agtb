@@ -152,6 +152,9 @@ describe('Base.View.OmnichannelCcpView', function() {
                 sandbox.stub(view, 'loadAgentEventListeners');
                 sandbox.stub(view, 'loadGeneralEventListeners');
                 sandbox.stub(view, 'loadContactEventListeners');
+                window.connect.core.loginWindow = {
+                    focus: $.noop
+                };
                 view.ccpLoaded = loaded;
                 view.initializeCCP();
                 expect(connect.core.initCCP.callCount).toBe(loaded ? 0 : 1);

@@ -23,6 +23,12 @@
     },
 
     /**
+     * Agent's current status.
+     * @property {string}
+     */
+    status: 'logged-out',
+
+    /**
      * Opens console.
      */
     openConsole: function() {
@@ -78,6 +84,9 @@
             this._bindConsoleListeners(console);
             $('#sidecar').append(console.$el);
             app.omniConsole = console;
+        } else if (this.status === 'logged-out') {
+            var ccp = app.omniConsole.getComponent('omnichannel-ccp');
+            ccp.loadCCP();
         }
         return app.omniConsole;
     },

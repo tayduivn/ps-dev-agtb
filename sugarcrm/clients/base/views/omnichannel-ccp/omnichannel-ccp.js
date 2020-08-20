@@ -136,6 +136,12 @@
             this.loadContactEventListeners();
             this.loadGeneralEventListeners();
             this.ccpLoaded = true;
+        } else if (!this.agentLoggedIn) {
+            if (connect.core.loginWindow == null || connect.core.loginWindow.closed) {
+                connect.core.loginWindow = window.open(this.defaultCCPOptions.ccpUrl, connect.MasterTopics.LOGIN_POPUP);
+            } else {
+                connect.core.loginWindow.focus();
+            }
         }
     },
 
