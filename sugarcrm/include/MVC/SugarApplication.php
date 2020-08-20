@@ -751,6 +751,7 @@ EOF;
         'wizard',
         'historyContactsEmails',
         'GoogleOauth2Redirect',
+        'MicrosoftOauth2Redirect',
         'OAuth2CodeExchange',
     );
 

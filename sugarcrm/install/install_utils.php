@@ -711,7 +711,7 @@ EOQ;
     RewriteRule ^cache/Expressions/functions_cache(_debug)?.js$ rest/v10/ExpressionEngine/functions?debug=$1 [N,QSA,DPI]
     RewriteRule ^cache/jsLanguage/(.._..).js$ index.php?entryPoint=jslang&module=app_strings&lang=$1 [L,QSA,DPI]
     RewriteRule ^cache/jsLanguage/(\w*)/(.._..).js$ index.php?entryPoint=jslang&module=$1&lang=$2 [L,QSA,DPI]
-    RewriteRule ^oauth-handler/(.*) index.php?module=EAPM&action=$1 [L,QSA]
+    RewriteRule ^oauth-handler/(.*)$ index.php?module=EAPM&action=$1 [L,QSA]
 //BEGIN SUGARCRM flav=ent ONLY
     RewriteRule ^portal/(.*)$ portal2/$1 [L,QSA]
     RewriteRule ^portal$ portal/? [R=301,L]
@@ -834,6 +834,10 @@ function handleWebConfig($iisCheck = true)
             '1' => 'rest/(.*)$',
             '2' => 'api/rest.php?__sugar_url={R:1}',
         ),
+        [
+            '1' => '^oauth-handler/(.*)$',
+            '2' => 'index.php?module=EAPM&action={R:1}',
+        ],
     );
 
     $xmldoc = new XMLWriter();
