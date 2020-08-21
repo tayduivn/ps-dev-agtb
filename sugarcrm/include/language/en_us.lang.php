@@ -2756,6 +2756,7 @@ $app_strings = array (
     'LBL_EMAIL_AUTHORIZED'                  => 'Authorized',
     'LBL_EMAIL_NOT_AUTHORIZED'              => 'Not Authorized',
     'LBL_EMAIL_AUTH_WARNING'                => 'An administrator must configure the {0} Connector via Admin > Connectors before you can set up this account. For more information, refer to the {1} documentation.',
+    'LBL_EMAIL_AUTH_API_ERROR'              => 'Error retrieving Connector information',
     'LBL_EMAIL_AUTH_FAILURE'                => 'Authorization failure.',
     'LBL_EMAIL_PLEASE_AUTHORIZE'            => 'Please authorize the account before saving.',
     'LBL_EMAIL_PLEASE_AUTHORIZE_TESTING'    => 'Please authorize the account before testing.',

@@ -41,6 +41,9 @@ describe('OutboundEmail.BaseEmailProviderField', function() {
         context.prepare(true);
         model = context.get('model');
 
+        sandbox = sinon.sandbox.create();
+        sandbox.stub(app.api, 'triggerBulkCall');
+
         field = SugarTest.createField({
             name: 'mail_smtptype',
             type: 'email-provider',
@@ -57,7 +60,8 @@ describe('OutboundEmail.BaseEmailProviderField', function() {
             loadFromModule: true
         });
 
-        sandbox = sinon.sandbox.create();
+        // Mock the connector information already being loaded
+        field.connectorsLoaded = true;
     });
 
     afterEach(function() {
@@ -85,14 +89,14 @@ describe('OutboundEmail.BaseEmailProviderField', function() {
         });
     });
 
-    describe('handleOauthComplete()', function() {
+    describe('handleAuthorizeComplete', function() {
         it('should return false if dataSource is wrong', function() {
             let data = {
                 dataSource: 'fake source'
             };
             let e = {data: JSON.stringify(data)};
-            field.value = 'google_oauth2';
-            expect(field.handleOauthComplete(e)).toBeFalsy();
+            field.model.set(field.name, 'google_oauth2');
+            expect(field.handleAuthorizeComplete(e, field.value)).toBeFalsy();
         });
 
         it('should set eapm_id, authorized_account, and mail_smtpuser in model', function() {
@@ -103,43 +107,34 @@ describe('OutboundEmail.BaseEmailProviderField', function() {
                 userName: 'fakeUserName'
             };
             let e = {data: JSON.stringify(data)};
-            field.value = 'google_oauth2';
+            field.model.set(field.name, 'google_oauth2');
             field.model.set('eapm_id', '');
-            field.handleOauthComplete(e);
+            field.handleAuthorizeComplete(e, field.value);
             expect(field.model.get('eapm_id')).toEqual('fakeId');
             expect(field.model.get('authorized_account')).toEqual('fakeEmail');
             expect(field.model.get('mail_smtpuser')).toEqual('fakeUserName');
         });
     });
 
-    describe('_checkAuth()', function() {
-        it('should do nothing for non oauth2 providers', function() {
-            let stub = sandbox.stub(field, 'render');
-            field._checkAuth('exchange');
-            expect(stub).not.toHaveBeenCalled();
+    describe('_displayAuthorizationElements', function() {
+        it('should have no warning or button for non-oauth2 providers', function() {
+            field._displayAuthorizationElements('exchange');
+            expect(field.authWarning).toEqual('');
+            expect(field.authButton).toEqual(false);
         });
 
-        it('should call auth api', function() {
-            let urlStub = sandbox.stub(app.api, 'buildURL').returns('fakeUrl');
-            let callStub = sandbox.stub(app.api,'call');
-            field._checkAuth('google_oauth2');
-            expect(callStub).toHaveBeenCalled();
-        });
-
-        it('should show warning, disable button and do not call auth api', function() {
+        it('should have a warning and disabled button for oauth2 providers that are not configured', function() {
             field.oauth2Types.google_oauth2.auth_url = false;
-            let callStub = sandbox.stub(app.api,'call');
-            field._checkAuth('google_oauth2');
-            expect(callStub).not.toHaveBeenCalled();
-            expect(field.authWarning).toEqual(field.oauth2Types.google_oauth2.auth_warning);
+            field.oauth2Types.google_oauth2.auth_warning = 'This connector is not configured';
+            field._displayAuthorizationElements('google_oauth2');
+            expect(field.authWarning).toEqual('This connector is not configured');
             expect(field.authButton).toEqual('disabled');
         });
 
-        it('should enable button and show no warning', function() {
-            field.oauth2Types.google_oauth2.auth_url = 'fakeUrl';
-            let callStub = sandbox.stub(app.api,'call');
-            field._checkAuth('google_oauth2');
-            expect(callStub).not.toHaveBeenCalled();
+        it('should have no warning and an enabled button for oauth2 providers that are configured', function() {
+            field.oauth2Types.google_oauth2.auth_url = 'fakeURL';
+            field.oauth2Types.google_oauth2.auth_warning = 'This connector is not configured';
+            field._displayAuthorizationElements('google_oauth2');
             expect(field.authWarning).toEqual('');
             expect(field.authButton).toEqual('enabled');
         });

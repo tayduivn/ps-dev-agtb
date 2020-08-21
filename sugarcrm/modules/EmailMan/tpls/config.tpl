@@ -734,131 +734,109 @@ function changeEmailScreenDisplay(smtptype, clear)
 	    document.getElementById("mail_smtpuser_label").innerHTML = '{/literal}{$MOD.LBL_MAIL_SMTPUSER}{literal}';
     }
 
-    switch (smtptype) {
-    case "yahoomail":
-        document.getElementById("mail_smtpserver").value = 'plus.smtp.mail.yahoo.com';
-        document.getElementById("mail_smtpport").value = '465';
-        document.getElementById("mail_smtpauth_req").checked = true;
-        var ssl = document.getElementById("mail_smtpssl");
-        for(var j=0;j<ssl.options.length;j++) {
-            if(ssl.options[j].text == 'SSL') {
-                ssl.options[j].selected = true;
-                break;
-            }
-        }
-        document.getElementById("mailsettings1").style.display = 'none';
-        document.getElementById("mailsettings2").style.display = 'none';
-        document.getElementById("mail_smtppass_label").innerHTML =
-        document.getElementById("mail_smtppass_label").innerHTML = '{/literal}{$MOD.LBL_YAHOOMAIL_SMTPPASS}{literal}';
-        document.getElementById("mail_smtpuser_label").innerHTML = '{/literal}{$MOD.LBL_YAHOOMAIL_SMTPUSER}{literal}';
-        break;
-    case "gmail":
-        if(document.getElementById("mail_smtpserver").value == "" || document.getElementById("mail_smtpserver").value == 'plus.smtp.mail.yahoo.com') {
-            document.getElementById("mail_smtpserver").value = 'smtp.gmail.com';
-            document.getElementById("mail_smtpport").value = '587';
+    switch(smtptype) {
+        case 'yahoomail':
+            document.getElementById("mail_smtpserver").value = 'plus.smtp.mail.yahoo.com';
+            document.getElementById("mail_smtpport").value = '465';
             document.getElementById("mail_smtpauth_req").checked = true;
             var ssl = document.getElementById("mail_smtpssl");
             for(var j=0;j<ssl.options.length;j++) {
-                if(ssl.options[j].text == 'TLS') {
+                if(ssl.options[j].text == 'SSL') {
                     ssl.options[j].selected = true;
                     break;
                 }
             }
-        }
-        //document.getElementById("mailsettings1").style.display = 'none';
-        //document.getElementById("mailsettings2").style.display = 'none';
-        document.getElementById("mail_smtppass_label").innerHTML = '{/literal}{$MOD.LBL_GMAIL_SMTPPASS}{literal}';
-        document.getElementById("mail_smtpuser_label").innerHTML = '{/literal}{$MOD.LBL_GMAIL_SMTPUSER}{literal}';
-        break;
-    case "google_oauth2":
-        document.getElementById("auth_block").style.display = '';
-        document.getElementById("mailsettings0").style.display = '';
-        document.getElementById("mail_smtpauth_req").disabled = true;
-        document.getElementById("mail_smtpauth_req").checked = true;
-        document.getElementById("mail_authtype").value = 'oauth2';
-        document.getElementById("eapm_id").value = authInfo['google_oauth2']['eapm_id'];
-        document.getElementById("authorized_account").value = authInfo['google_oauth2']['authorized_account'];
-        document.getElementById("mail_smtpuser").value = authInfo['google_oauth2']['mail_smtpuser'];
-        document.getElementById("auth_email").value = document.getElementById("authorized_account").value;
-        if (!authInfo['google_oauth2']['auth_url']) {
-            document.getElementById("auth_warning").style.display = 'block';
-            document.getElementById("auth_warning").innerHTML = authInfo['google_oauth2']['auth_warning'];
-            document.getElementById("auth_button").disabled = true;
-        } else {
-            document.getElementById("auth_warning").style.display = 'none';
-            document.getElementById("auth_button").disabled = false;
-        }
-        if(document.getElementById("mail_smtpserver").value == "" || document.getElementById("mail_smtpserver").value == 'plus.smtp.mail.yahoo.com') {
-            document.getElementById("mail_smtpserver").value = 'smtp.gmail.com';
-            document.getElementById("mail_smtpport").value = '587';
-            var ssl = document.getElementById("mail_smtpssl");
-            for(var j=0;j<ssl.options.length;j++) {
-                if(ssl.options[j].text == 'TLS') {
-                    ssl.options[j].selected = true;
-                    break;
+            document.getElementById("mailsettings1").style.display = 'none';
+            document.getElementById("mailsettings2").style.display = 'none';
+            document.getElementById("mail_smtppass_label").innerHTML =
+                    document.getElementById("mail_smtppass_label").innerHTML = '{/literal}{$MOD.LBL_YAHOOMAIL_SMTPPASS}{literal}';
+            document.getElementById("mail_smtpuser_label").innerHTML = '{/literal}{$MOD.LBL_YAHOOMAIL_SMTPUSER}{literal}';
+            break;
+        case 'gmail':
+            if(document.getElementById("mail_smtpserver").value == "" || document.getElementById("mail_smtpserver").value == 'plus.smtp.mail.yahoo.com') {
+                document.getElementById("mail_smtpserver").value = 'smtp.gmail.com';
+                document.getElementById("mail_smtpport").value = '587';
+                document.getElementById("mail_smtpauth_req").checked = true;
+                var ssl = document.getElementById("mail_smtpssl");
+                for(var j=0;j<ssl.options.length;j++) {
+                    if(ssl.options[j].text == 'TLS') {
+                        ssl.options[j].selected = true;
+                        break;
+                    }
                 }
             }
-        }
-        document.getElementById("smtp_auth1").style.display = 'none';
-        document.getElementById("smtp_auth2").style.display = 'none';
-        document.getElementById("smtp_auth1").style.visibility = 'hidden';
-        document.getElementById("smtp_auth2").style.visibility = 'hidden';
-        break;
-    case "exchange_online":
-        document.getElementById("auth_block").style.display = '';
-        document.getElementById("mailsettings0").style.display = '';
-        document.getElementById("mail_smtpauth_req").disabled = true;
-        document.getElementById("mail_smtpauth_req").checked = true;
-        document.getElementById("mail_authtype").value = 'oauth2';
-        document.getElementById("eapm_id").value = authInfo['exchange_online']['eapm_id'];
-        document.getElementById("authorized_account").value = authInfo['exchange_online']['authorized_account'];
-        document.getElementById("mail_smtpuser").value = authInfo['exchange_online']['mail_smtpuser'];
-        document.getElementById("auth_email").value = document.getElementById("authorized_account").value;
-        if (!authInfo['exchange_online']['auth_url']) {
-            document.getElementById("auth_warning").style.display = 'block';
-            document.getElementById("auth_warning").innerHTML = authInfo['exchange_online']['auth_warning'];
-            document.getElementById("auth_button").disabled = true;
-        } else {
-            document.getElementById("auth_warning").style.display = 'none';
-            document.getElementById("auth_button").disabled = false;
-        }
-        if (document.getElementById("mail_smtpserver").value == 'plus.smtp.mail.yahoo.com' ||
-            document.getElementById("mail_smtpserver").value == 'smtp.gmail.com' || 
-            document.getElementById("mail_smtpserver").value === '') {
-            document.getElementById("mail_smtpserver").value = 'smtp.office365.com';
-            var ssl = document.getElementById("mail_smtpssl");
-            for(var j=0;j<ssl.options.length;j++) {
-                if(ssl.options[j].text == 'TLS') {
-                    ssl.options[j].selected = true;
-                    break;
-                }
+            document.getElementById("mail_smtppass_label").innerHTML = '{/literal}{$MOD.LBL_GMAIL_SMTPPASS}{literal}';
+            document.getElementById("mail_smtpuser_label").innerHTML = '{/literal}{$MOD.LBL_GMAIL_SMTPUSER}{literal}';
+            break;
+        case 'exchange_online':
+            document.getElementById("mail_smtpport_label").innerHTML = '{/literal}{$MOD.LBL_EXCHANGE_SMTPPORT}{literal}';
+            document.getElementById("mail_smtpserver_label").innerHTML = '{/literal}{$MOD.LBL_EXCHANGE_SMTPSERVER}{literal}';
+            var defaults = {
+                mail_smtpserver: 'smtp.office365.com',
+                mail_smtpport: '587',
+                mail_smtpssl: '2'
+            };
+        case 'google_oauth2':
+            var defaults = defaults || {
+                mail_smtpserver: 'smtp.gmail.com',
+                mail_smtpport: '587',
+                mail_smtpssl: '2'
+            };
+            handleOauth2TabSwitch(smtptype, defaults);
+            break;
+        case 'exchange':
+            if ( document.getElementById("mail_smtpserver").value == 'plus.smtp.mail.yahoo.com'
+                    || document.getElementById("mail_smtpserver").value == 'smtp.gmail.com' ) {
+                document.getElementById("mail_smtpserver").value = '';
             }
-        }
-        document.getElementById("mail_smtpport_label").innerHTML = '{/literal}{$MOD.LBL_EXCHANGE_SMTPPORT}{literal}';
-        document.getElementById("mail_smtpserver_label").innerHTML = '{/literal}{$MOD.LBL_EXCHANGE_SMTPSERVER}{literal}';
-        document.getElementById("smtp_auth1").style.display = 'none';
-        document.getElementById("smtp_auth2").style.display = 'none';
-        document.getElementById("smtp_auth1").style.visibility = 'hidden';
-        document.getElementById("smtp_auth2").style.visibility = 'hidden';
-        break;
-    case "exchange":
-        if ( document.getElementById("mail_smtpserver").value == 'plus.smtp.mail.yahoo.com'
-                || document.getElementById("mail_smtpserver").value == 'smtp.gmail.com' ) {
-            document.getElementById("mail_smtpserver").value = '';
-        }
-        //document.getElementById("mail_smtpport").value = '25';
-        //document.getElementById("mail_smtpauth_req").checked = true; bug 40998
-        document.getElementById("mailsettings1").style.display = '';
-        document.getElementById("mailsettings2").style.display = '';
-        document.getElementById("mail_smtppass_label").innerHTML = '{/literal}{$MOD.LBL_EXCHANGE_SMTPPASS}{literal}';
-        document.getElementById("mail_smtpport_label").innerHTML = '{/literal}{$MOD.LBL_EXCHANGE_SMTPPORT}{literal}';
-        document.getElementById("mail_smtpserver_label").innerHTML = '{/literal}{$MOD.LBL_EXCHANGE_SMTPSERVER}{literal}';
-        document.getElementById("mail_smtpuser_label").innerHTML = '{/literal}{$MOD.LBL_EXCHANGE_SMTPUSER}{literal}';
-        break;
+            document.getElementById("mailsettings1").style.display = '';
+            document.getElementById("mailsettings2").style.display = '';
+            document.getElementById("mail_smtppass_label").innerHTML = '{/literal}{$MOD.LBL_EXCHANGE_SMTPPASS}{literal}';
+            document.getElementById("mail_smtpport_label").innerHTML = '{/literal}{$MOD.LBL_EXCHANGE_SMTPPORT}{literal}';
+            document.getElementById("mail_smtpserver_label").innerHTML = '{/literal}{$MOD.LBL_EXCHANGE_SMTPSERVER}{literal}';
+            document.getElementById("mail_smtpuser_label").innerHTML = '{/literal}{$MOD.LBL_EXCHANGE_SMTPUSER}{literal}';
+            break;
     }
     setDefaultSMTPPort();
     notify_setrequired(document.ConfigureSettings);
 }
+
+var handleOauth2TabSwitch = function(smtptype, defaults) {
+	// Hide the username/password fields
+	document.getElementById("smtp_auth1").style.display = 'none';
+	document.getElementById("smtp_auth2").style.display = 'none';
+	document.getElementById("smtp_auth1").style.visibility = 'hidden';
+	document.getElementById("smtp_auth2").style.visibility = 'hidden';
+
+	// Show the OAuth2 fields
+	document.getElementById("auth_block").style.display = '';
+	document.getElementById("mailsettings0").style.display = '';
+	if (!authInfo[smtptype]['auth_url']) {
+		document.getElementById("auth_warning").style.display = 'block';
+		document.getElementById("auth_warning").innerHTML = authInfo[smtptype]['auth_warning'];
+		document.getElementById("auth_button").disabled = true;
+	} else {
+		document.getElementById("auth_warning").style.display = 'none';
+		document.getElementById("auth_button").disabled = false;
+	}
+
+	// Set the default values for the selected tab
+	document.getElementById("mail_authtype").value = 'oauth2';
+	document.getElementById("mail_smtpauth_req").disabled = true;
+	document.getElementById("mail_smtpauth_req").checked = true;
+	_.each(defaults, function(value, key) {
+		document.getElementById(key).value = value;
+	});
+
+	// Set the authorized values of the oauth fields if they exist
+	document.getElementById("authorized_account").value = authInfo[smtptype]['authorized_account'] || '';
+	document.getElementById("auth_email").value = authInfo[smtptype]['authorized_account'] || '';
+	document.getElementById("eapm_id").value = authInfo[smtptype]['eapm_id'] || '';
+	document.getElementById("mail_smtpuser").value = authInfo[smtptype]['mail_smtpuser'] || '';
+	document.getElementById('auth_status').value = authInfo[smtptype]['eapm_id'] ?
+			'{/literal}{$APP.LBL_EMAIL_AUTHORIZED}{literal}' : '{/literal}{$APP.LBL_EMAIL_NOT_AUTHORIZED}{literal}';
+}
+
 var oButtonGroup = new YAHOO.widget.ButtonGroup("smtpButtonGroup");
 oButtonGroup.subscribe('checkedButtonChange', function(e)
 {

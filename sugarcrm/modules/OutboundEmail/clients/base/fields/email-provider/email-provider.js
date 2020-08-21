@@ -17,7 +17,7 @@
     extendsFrom: 'RadioenumField',
 
     'events': {
-        'click .btn': 'authorize'
+        'click .btn': 'handleAuthorizeStart'
     },
 
     /**
@@ -25,40 +25,84 @@
      *
      * @property {Object}
      */
-    oauth2Types: {
-        google_oauth2: {
-            application: 'GoogleEmail',
-            auth_warning: '',
-            auth_url: null,
-            eapm_id: null,
-            mail_smtpuser: null,
-            authorized_account: null,
-            dataSource: 'googleEmailRedirect'
-        },
-        exchange_online: {
-            application: 'MicrosoftEmail',
-            auth_warning: '',
-            auth_url: null,
-            eapm_id: null,
-            mail_smtpuser: null,
-            authorized_account: null,
-            dataSource: 'microsoftEmailRedirect'
+    oauth2Types: null,
+
+    /**
+     * Stores dynamic window message listener to clear it on dispose
+     */
+    messageListeners: [],
+
+    initialize: function(options) {
+        this._super('initialize', [options]);
+        this.oauth2Types = {
+            google_oauth2: {
+                application: 'GoogleEmail',
+                dataSource: 'googleEmailRedirect'
+            },
+            exchange_online: {
+                application: 'MicrosoftEmail',
+                dataSource: 'microsoftEmailRedirect'
+            }
         }
+    },
+
+    /**
+     * Handles storing/retrieving OAuth2 values when switching between OAuth2 tabs
+     */
+    bindDataChange: function() {
+        this.model.on('change:' + this.name, function() {
+            var previousValue = this.model.previous(this.name);
+            var newValue = this.model.get(this.name);
+
+            if (!this.oauth2Types[newValue]) {
+                // This is not an OAuth2 tab
+                this.model.set('mail_authtype', null);
+            } else {
+                // This is an OAuth2 tab
+                var oauth2Values = {
+                    eapm_id: this.model.get('eapm_id'),
+                    authorized_account: this.model.get('authorized_account'),
+                    mail_smtpuser: this.model.get('mail_smtpuser')
+                };
+                if (_.isUndefined(previousValue)) {
+                    // When the record first loads on an OAuth2 tab, store the values
+                    // for that tab
+                    this.storeOauth2Values(newValue, oauth2Values);
+                } else {
+                    // When switching from an OAuth2 tab, store the values for that
+                    // tab
+                    if (this.oauth2Types[previousValue]) {
+                        this.storeOauth2Values(previousValue, oauth2Values);
+                    }
+                }
+            }
+        }, this);
+        this._super('bindDataChange');
+    },
+
+    /**
+     * Stores the OAuth2 authorization values for an OAuth2 tab
+     * @param smtpType the unique indicator of the OAuth2 tab
+     * @param {Object} values to store for the OAuth2 tab
+     */
+    storeOauth2Values: function(smtpType, values) {
+        _.extendOwn(this.oauth2Types[smtpType], values || {});
     },
 
     /**
      * Handles auth when the button is clicked.
      */
-    authorize: function() {
-        var self = this;
-
-        if (this.oauth2Types[this.value] && this.oauth2Types[this.value].auth_url) {
-            var listener = function(e) {
-                if (!self || self.handleOauthComplete(e)) {
-                    window.removeEventListener('message', listener);
+    handleAuthorizeStart: function() {
+        var smtpType = this.model.get(this.name);
+        if (this.oauth2Types[smtpType] && this.oauth2Types[smtpType].auth_url) {
+            let authorizationListener = _.bind(function(e) {
+                if (this) {
+                    this.handleAuthorizeComplete(e, smtpType);
                 }
-            };
-            window.addEventListener('message', listener);
+                window.removeEventListener('message', authorizationListener);
+            }, this);
+            window.addEventListener('message', authorizationListener);
+            this.messageListeners.push(authorizationListener);
             var height = 600;
             var width = 600;
             var left = (screen.width - width) / 2;
@@ -80,109 +124,128 @@
      * @param {Object} e
      * @return {boolean} True if success, otherwise false
      */
-    handleOauthComplete: function(e) {
-        var data = JSON.parse(e.data);
+    handleAuthorizeComplete: function(e, smtpType) {
+        var data = JSON.parse(e.data) || {};
         if (!data.dataSource ||
-            !this.oauth2Types[this.value] ||
-            data.dataSource !== this.oauth2Types[this.value].dataSource) {
+            !this.oauth2Types[smtpType] ||
+            data.dataSource !== this.oauth2Types[smtpType].dataSource) {
             return false;
         }
         if (data.eapmId && data.emailAddress && data.userName) {
-            this.model.set('eapm_id', data.eapmId);
-            this.model.set('authorized_account', data.emailAddress);
-            this.model.set('mail_smtpuser', data.userName);
-            // save data in case user switches to another email provider and back
-            this.oauth2Types[this.value].eapm_id = data.eapmId;
-            this.oauth2Types[this.value].authorized_account = data.emailAddress;
-            this.oauth2Types[this.value].mail_smtpuser = data.userName;
+            // Store the authorization information for the OAuth smtpType
+            this.storeOauth2Values(smtpType, {
+                eapm_id: data.eapmId,
+                authorized_account: data.emailAddress,
+                mail_smtpuser: data.userName
+            });
         } else {
             app.alert.show('error', {
                 level: 'error',
                 messages: app.lang.get('LBL_EMAIL_AUTH_FAILURE', this.module)
             });
         }
+        this.render();
         return true;
     },
 
     /**
-     * Listens to model sync to make sure oauth2Type data is properly set when
-     * the record initially loads
-     */
-    bindDataChange: function() {
-        this.model.on('sync', function() {
-            var smtpType = this.model.get(this.name);
-            if (this.oauth2Types[smtpType]) {
-                this.oauth2Types[smtpType].eapm_id = this.model.get('eapm_id');
-                this.oauth2Types[smtpType].authorized_account = this.model.get('authorized_account');
-                this.oauth2Types[smtpType].mail_smtpuser = this.model.get('mail_smtpuser');
-            }
-        }, this);
-
-        this._super('bindDataChange');
-    },
-
-    /**
-     * Sets the proper values of authorization fields based on the current
-     * email provider selected before rendering
+     * Extends the parent _render to hide the field until connector information
+     * is loaded in order to guarantee that OAuth2 tabs show the correct
+     * connector authorization elements
      * @private
      */
     _render: function() {
-        this._checkAuth(this.model.get(this.name));
-        this._super('_render');
+        // Load connector information before rendering
+        if (!this.connectorsLoaded) {
+            this.hide();
+            if (!this.connectorsAreLoading) {
+                this.connectorsAreLoading = true;
+                this._loadOauth2TypeInformation(_.bind(function() {
+                    if (!this.disposed) {
+                        this.connectorsAreLoading = false;
+                        this.connectorsLoaded = true;
+                        this.render();
+                    }
+                }, this));
+            }
+        } else {
+            var smtpType = this.model.get(this.name);
+            this._loadOauth2Values(smtpType);
+            this._displayAuthorizationElements(smtpType);
+            this.show();
+            this._super('_render');
+        }
     },
 
     /**
-     * Gets and displays auth info for OAuth2.
+     * Initializes the authorization information for the OAuth2 tabs
+     * @private
+     */
+    _loadOauth2TypeInformation: function(callback) {
+        _.each(this.oauth2Types, function(properties, smtpType) {
+            if (!_.isUndefined(properties.auth_url)) {
+                return;
+            }
+            var url = app.api.buildURL('EAPM', 'auth', {}, {application: properties.application});
+            var callbacks = {
+                success: _.bind(function(data) {
+                    if (data) {
+                        this.oauth2Types[smtpType].auth_url = data.auth_url || false;
+                        this.oauth2Types[smtpType].auth_warning = data.auth_warning || '';
+                    }
+                }, this),
+                error: _.bind(function() {
+                    this.oauth2Types[smtpType].auth_url = false;
+                    this.oauth2Types[smtpType].auth_warning = app.lang.get('LBL_EMAIL_AUTH_API_ERROR');
+                }, this),
+                complete: _.bind(function() {
+                    callback.call(this);
+                }, this)
+            };
+            var options = {
+                showAlerts: false,
+                bulk: 'loadOauth2TypeInformation',
+            };
+            app.api.call('read', url, {}, callbacks, options);
+        }, this);
+        app.api.triggerBulkCall('loadOauth2TypeInformation');
+    },
+
+    /**
+     * Loads any existing OAuth2 authorization values for a tab
+     * @param smtpType the unique indicator of the tab
+     */
+    _loadOauth2Values: function(smtpType) {
+        if (!this.oauth2Types[smtpType]) {
+            return;
+        }
+        this.model.set({
+            mail_authtype: 'oauth2',
+            eapm_id: this.oauth2Types[smtpType].eapm_id || null,
+            authorized_account: this.oauth2Types[smtpType].authorized_account || '',
+            mail_smtpuser: this.oauth2Types[smtpType].mail_smtpuser || ''
+        });
+    },
+
+    /**
+     * Determines what authorization elements to show based on the selected tab
      *
      * @param {string} smtpType
      */
-    _checkAuth: function(smtpType) {
-        var self = this;
+    _displayAuthorizationElements: function(smtpType) {
         this.authWarning = '';
         this.authButton = false;
 
+        // If this is an OAuth2 tab, display the correct authorization controls
         if (this.oauth2Types[smtpType]) {
-            this.model.set('mail_authtype', 'oauth2');
-            if (this.oauth2Types[smtpType].auth_url === null) {
-
-                var options = {
-                    showAlerts: false,
-                    success: _.bind(function(data) {
-                        if (data && data.auth_url) {
-                            self.oauth2Types[smtpType].auth_url = data.auth_url;
-                            self.oauth2Types[smtpType].auth_warning = data.auth_warning || '';
-                            self.authButton = 'enabled';
-                        } else {
-                            self.oauth2Types[smtpType].auth_url = false;
-                            self.oauth2Types[smtpType].auth_warning = data.auth_warning || '';
-                            self.authWarning = self.oauth2Types[smtpType].auth_warning;
-                            self.authButton = 'disabled';
-                        }
-                        self.render();
-                    }),
-                    error: function() {
-                        self.oauth2Types[smtpType].auth_url = false;
-                        self.authWarning = self.oauth2Types[smtpType].auth_warning;
-                        self.authButton = 'disabled';
-                        self.render();
-                    }
-                };
-                var url = app.api.buildURL('EAPM', 'auth', {}, {application: this.oauth2Types[smtpType].application});
-                app.api.call('read', url, {}, options);
-            } else if (!this.oauth2Types[smtpType].auth_url) {
+            if (this.oauth2Types[smtpType].auth_url) {
+                // This tab's connector is enabled, so enable the authorization button
+                this.authButton = 'enabled';
+            } else if (this.oauth2Types[smtpType].auth_url === false) {
+                // This tab's connector is not enabled, so disable the authorization button
                 this.authWarning = this.oauth2Types[smtpType].auth_warning;
                 this.authButton = 'disabled';
-            } else {
-                this.model.set('eapm_id', this.oauth2Types[smtpType].eapm_id || '');
-                this.model.set('authorized_account', this.oauth2Types[smtpType].authorized_account || '');
-                this.model.set('mail_smtpuser', this.oauth2Types[smtpType].mail_smtpuser || '');
-                this.authButton = 'enabled';
             }
-        } else {
-            this.model.set('mail_authtype', '');
-            this.model.set('eapm_id', '');
-            this.model.set('authorized_account', '');
-            this.model.set('mail_smtpuser', '');
         }
     },
 
@@ -201,5 +264,17 @@
         }
 
         return this._super('_getFallbackTemplate', [viewName]);
+    },
+
+    /**
+     * Extends parent _dispose to remove any leftover window listeners
+     * @private
+     */
+    _dispose: function() {
+        _.each(this.messageListeners, function(listener) {
+            window.removeEventListener('message', listener);
+        }, this);
+        this.messageListeners = [];
+        this._super('_dispose');
     }
 })
