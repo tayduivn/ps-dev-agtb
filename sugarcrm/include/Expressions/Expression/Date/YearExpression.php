@@ -34,8 +34,11 @@ class YearExpression extends NumericExpression
     public static function getJSEvaluate()
     {
         return <<<EOQ
-			var time = this.getParameters().evaluate();
-			return new Date(time).getFullYear();
+            var time = this.getParameters().evaluate();
+            if (_.isString(time) && _.isEmpty(time)) {
+                return '';
+            }
+            return new Date(time).getFullYear();
 EOQ;
     }
 

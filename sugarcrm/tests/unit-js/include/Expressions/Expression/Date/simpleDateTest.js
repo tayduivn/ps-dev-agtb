@@ -80,6 +80,12 @@ describe('Simple Date Expression Functions', function() {
             var res = new SUGAR.expressions.MonthOfYearExpression([date], getSLContext(model));
             expect(parseFloat(res.evaluate())).toBe(7);
         });
+
+        it('should return empty string when no date is entered', function() {
+            var emptyString = new SUGAR.expressions.StringLiteralExpression(['']);
+            var res = new SUGAR.expressions.MonthOfYearExpression([emptyString], getSLContext(model));
+            expect(res.evaluate()).toBe('');
+        });
     });
 
     describe('Year Expression Function', function() {
@@ -88,6 +94,12 @@ describe('Simple Date Expression Functions', function() {
             var date = new SUGAR.expressions.DefineDateExpression([dateString], getSLContext(model));
             var res = new SUGAR.expressions.YearExpression([date], getSLContext(model));
             expect(parseFloat(res.evaluate())).toBe(2018);
+        });
+
+        it('should return empty string when no date is entered', function() {
+            var emptyString = new SUGAR.expressions.StringLiteralExpression(['']);
+            var res = new SUGAR.expressions.YearExpression([emptyString], getSLContext(model));
+            expect(res.evaluate()).toBe('');
         });
     });
 
