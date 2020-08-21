@@ -92,12 +92,12 @@ class Opportunity extends SugarBean
      */
     public const CASCADE_FIELD_CONDITIONS = [
         'date_closed' => 'cascadeWhenOpen',
-        'sales_stage' => 'cascadeWhenOpen',
         'service_start_date' => 'cascadeWhenServiceOpen',
         // BEGIN SUGARCRM flav=ent ONLY
         'service_duration_value' => 'cascadeWhenDurationEditableServiceOpen',
         'service_duration_unit' => 'cascadeWhenDurationEditableServiceOpen',
         // END SUGARCRM flav=ent ONLY
+        'sales_stage' => 'cascadeWhenOpen',
     ];
     private const OPERATION_CASCADE = 'cascading_opportunity_';
 
