@@ -440,11 +440,12 @@ $viewdefs[$moduleName]['base']['menu']['sweetspot'] = array(
 
 // Sugar Cloud Settings
 if ($idpConfig->isIDMModeEnabled()) {
+    $userId = $GLOBALS['current_user'] && $GLOBALS['current_user']->id ? $GLOBALS['current_user']->id : '';
     $viewdefs[$moduleName]['base']['menu']['sweetspot'][] = [
         'label' => 'LBL_SUGAR_CLOUD_SETTINGS_TITLE',
         'acl_action' => 'studio',
         'module' => $moduleName,
         'icon' => 'fa-cogs',
-        'idm_mode_link' => $idpConfig->buildCloudConsoleUrl('/', [], $GLOBALS['current_user']->id),
+        'idm_mode_link' => $idpConfig->buildCloudConsoleUrl('/', [], $userId),
     ];
 }
