@@ -986,6 +986,7 @@ $dictionary['Product'] = array(
                 'service_end_date' => 'service_end_date',
             ],
             'copyFromProductTemplate' => [
+                'name' => 'name',
                 'category_id' => 'category_id',
                 'category_name' => 'category_name',
                 'mft_part_num' => 'mft_part_num',

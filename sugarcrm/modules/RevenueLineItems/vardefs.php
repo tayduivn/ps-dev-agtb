@@ -48,6 +48,7 @@ $dictionary['RevenueLineItem'] = array(
             'studio' => array('editview' => false, 'detailview' => false, 'quickcreate' => false),
             'auto_populate' => true,
             'populate_list' => array(
+                'name' => 'name',
                 'category_id' => 'category_id',
                 'category_name' => 'category_name',
                 'mft_part_num' => 'mft_part_num',
@@ -1081,6 +1082,7 @@ $dictionary['RevenueLineItem'] = array(
                 'service_end_date' => 'service_end_date',
             ],
             'copyFromProductTemplate' => [
+                'name' => 'name',
                 'category_id' => 'category_id',
                 'category_name' => 'category_name',
                 'mft_part_num' => 'mft_part_num',

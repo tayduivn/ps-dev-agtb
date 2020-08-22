@@ -53,7 +53,7 @@
      */
     _addCustomFieldsToBean: function(bean, skipCurrency) {
         var dom;
-        var attrs;
+        var attrs = {};
         var userCurrencyId;
         var userCurrency = app.user.getCurrency();
         var createInPreferred = userCurrency.currency_create_in_preferred;
@@ -62,9 +62,7 @@
 
         if (bean.has('sales_stage')) {
             dom = app.lang.getAppListStrings('sales_probability_dom');
-            attrs = {
-                probability: dom[bean.get('sales_stage')]
-            };
+            attrs.probability = dom[bean.get('sales_stage')];
         }
 
         if (skipCurrency && createInPreferred) {

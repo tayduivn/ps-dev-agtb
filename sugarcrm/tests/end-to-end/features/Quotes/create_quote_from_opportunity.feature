@@ -143,9 +143,6 @@ Feature: Generate Quote From RLI subpanel in Opportunity record view
     # 10. Create 'RLI_3' record from RLI subpanel of opportunity record view using EUR currency
     When I open the revenuelineitems subpanel on #Opp_1Record view
     When I create_new record from revenuelineitems subpanel on #Opp_1Record view
-    When I provide input for #RevenueLineItemsDrawer.HeaderView view
-      | *     | name  |
-      | RLI_3 | RLI_3 |
     When I provide input for #RevenueLineItemsDrawer.RecordView view
       | *     | date_closed | product_template_name |
       | RLI_3 | 12/14/2020  | Prod_1                |
@@ -156,16 +153,13 @@ Feature: Generate Quote From RLI subpanel in Opportunity record view
     When I open the revenuelineitems subpanel on #Opp_1Record view
     Then I verify fields for *RLI_3 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
       | fieldName   | value          |
-      | name        | RLI_3          |
+      | name        | Prod_1         |
       | date_closed | 12/14/2020     |
       | likely_case | €50.00 $100.00 |
 
     # 12. Create 'RLI_4' record from RLI subpanel of opportunity record view using RUB currency
     When I open the revenuelineitems subpanel on #Opp_1Record view
     When I create_new record from revenuelineitems subpanel on #Opp_1Record view
-    When I provide input for #RevenueLineItemsDrawer.HeaderView view
-      | *     | name  |
-      | RLI_4 | RLI_4 |
     When I provide input for #RevenueLineItemsDrawer.RecordView view
       | *     | date_closed | product_template_name |
       | RLI_4 | 12/11/2020  | Prod_2                |
@@ -176,7 +170,7 @@ Feature: Generate Quote From RLI subpanel in Opportunity record view
     When I open the revenuelineitems subpanel on #Opp_1Record view
     Then I verify fields for *RLI_4 in #Opp_1Record.SubpanelsLayout.subpanels.revenuelineitems
       | fieldName   | value            |
-      | name        | RLI_4            |
+      | name        | Prod_2           |
       | date_closed | 12/11/2020       |
       | likely_case | руб150.00 $100.00 |
 

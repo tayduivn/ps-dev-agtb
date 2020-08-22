@@ -307,10 +307,9 @@
             beanId = app.utils.generateUUID();
             addAtZeroIndex = !_.isEmpty(prepopulateData);
 
-            prepopulateData.id = beanId;
             bean = app.data.createBean(this.module);
-            bean.set(prepopulateData);
             bean._module = this.module;
+            bean.set('id', beanId);
 
             // check the parent record to see if an assigned user ID/name has been set
             if (this.context.parent && this.context.parent.has('model')) {
@@ -327,14 +326,15 @@
                 }
             }
 
-            bean = this._addCustomFieldsToBean(bean, addAtZeroIndex);
-
             // must add to this.collection so the bean shows up in the subpanel list
             if (addAtZeroIndex) {
-                this.collection.unshift(bean);
+                bean = this.collection.unshift(bean);
             } else {
-                this.collection.add(bean);
+                bean = this.collection.add(bean);
             }
+
+            bean.set(prepopulateData);
+            this._addCustomFieldsToBean(bean, addAtZeroIndex);
         }
 
         this.checkButtons();
