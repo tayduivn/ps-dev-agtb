@@ -50,7 +50,7 @@ Feature: Product Catalog Quick Picks Dashlet
     # Verify number of records in the 'Favorites' tab
     # Remove Product Catalog Quick Picks Dashlet
 
-  @product_catalog_quick_picks_dashlet @opportunity_record_view @pr
+  @product_catalog_quick_picks_dashlet @opportunity_record_view @pr @ent-only
   Scenario: Product Catalog Quick Picks Dashlet in Opportunity record view
     # Generate Product records in Product Catalog
     Given ProductTemplates records exist:
