@@ -11,5 +11,5 @@
  */
 }}
 <iframe data-htmleditable="{{def.fieldSelector}}"
-     class="kbdocument-body{{#if def.span}} span{{def.span}}{{/if}}" sandbox style="border:0" >
+     class="kbdocument-body{{#if def.span}} span{{def.span}}{{/if}}" sandbox="{{#if def.sandbox}}{{def.sandbox}}{{else}}allow-same-origin{{/if}}" style="border:0" >
 </iframe>

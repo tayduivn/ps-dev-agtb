@@ -98,10 +98,16 @@
                     type: 'text/css'
                 }));
             }
-
-            editable.contents().find('body').html(value);
+            var frame = editable.get(0);
+            frame.contentWindow.document.open();
+            frame.contentWindow.document.write(value);
+            frame.contentWindow.document.close();
         } else {
-            editable.attr('srcdoc', value);
+            // If the element has no body, the iframe hasn't loaded. Wait until
+            // it loads so we don't write to non-sandboxed element
+            editable.on('load', function() {
+                this.setViewContent(value);
+            }, this);
         }
     },
 
