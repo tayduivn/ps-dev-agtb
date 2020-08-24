@@ -242,6 +242,9 @@ class EAPM extends Basic {
 function getEAPMExternalApiDropDown() {
     $apiList = ExternalAPIFactory::getModuleDropDown('',true, true);
 
+    // Reject Email Oauth connections
+    $reject = ['GoogleEmail' => 0, 'MicrosoftEmail' => 1];
+    $apiList = array_diff_key($apiList, $reject);
     return $apiList;
 
 }
