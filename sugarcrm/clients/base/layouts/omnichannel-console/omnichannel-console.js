@@ -71,6 +71,14 @@
     ccpComponent: null,
 
     /**
+     * Fields to NOT pre-fill in when quick-creating contacts/cases
+     */
+    qcBlackListFields: [
+        'last_name',
+        'name'
+    ],
+
+    /**
      * @inheritdoc
      */
     initialize: function(options) {
@@ -91,7 +99,8 @@
             .click(_.bind(this._addQuickcreateModelDataToContext, this));
 
         // when the quickcreate drawer is closed, perform the necessary steps
-        this.context.on('quickcreate-drawer:closed', this._handleClosedQuickcreateDrawer, this);
+        var qcContext = this._getTopLevelContext();
+        qcContext.on('quickcreate-drawer:closed', this._handleClosedQuickcreateDrawer, this);
     },
 
     /**
@@ -103,11 +112,12 @@
     _addQuickcreateModelDataToContext: function() {
         if (this.isOpen()) {
             var ccp = this._getCCPComponent();
-
+            var context = this._getTopLevelContext();
             if (ccp.activeContact) {
-                this.context.set('quickcreateModelData',
+                var contactInfo = _.omit(ccp.getContactInfo(ccp.activeContact), this.qcBlackListFields);
+                context.set('quickcreateModelData',
                     _.extendOwn(
-                        ccp.getContactInfo(ccp.activeContact),
+                        contactInfo,
                         this.getContactModelDataForQuickcreate(),
                         {
                             no_success_label_link: true,
@@ -126,7 +136,8 @@
      */
     _handleClosedQuickcreateDrawer: function() {
         var dashboard = this._getOmnichannelDashboard();
-        var qcModel = this.context.get('quickcreateCreatedModel');
+        var context = this._getTopLevelContext();
+        var qcModel = context.get('quickcreateCreatedModel');
 
         if (dashboard && !_.isEmpty(qcModel)) {
             var module = qcModel.get('_module');
@@ -150,7 +161,7 @@
             dashboard.setModel(tabIndex, qcModel);
             dashboard.switchTab(tabIndex);
 
-            this.context.unset('quickcreateCreatedModel');
+            context.unset('quickcreateCreatedModel');
         }
 
         this.open(); // re-open the console
@@ -418,5 +429,19 @@
         $(window).off('resize.omniConsole');
         app.router.off('route', null, this);
         this._super('_dispose');
-    }
+    },
+
+    /**
+     * Get top-level context for setting Quick Create models
+     *
+     * @return {Object} context
+     * @private
+     */
+    _getTopLevelContext: function() {
+        var context = this.context;
+        while (context.parent) {
+            context = context.parent;
+        }
+        return context;
+    },
 })
