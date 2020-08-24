@@ -29,9 +29,25 @@
     status: 'logged-out',
 
     /**
+     * List of browsers supported by AWS Connect CCP.
+     * @property {Array}
+     */
+    supportedBrowsers: [
+        'Chrome',
+        'Firefox'
+    ],
+
+    /**
      * Opens console.
      */
     openConsole: function() {
+        if (!this._checkBrowser()) {
+            app.alert.show('omnichannel-unsupported-browser', {
+                level: 'error',
+                messages: app.lang.get('LBL_OMNICHANNEL_UNSUPPORTED_BROWSER')
+            });
+            return;
+        }
         var console = this._getConsole();
         if (console) {
             console.open();
@@ -60,6 +76,19 @@
             !!app.config.awsConnectInstanceName && // aws connect is configured
             _.indexOf(app.user.get('licenses'), 'SUGAR_SERVE') !== -1; // user has serve license
         this._super('_renderHtml');
+    },
+
+    /**
+     * Checks if browser is supported by AWS Connect.
+     * @return {boolean} True if its supported, false otherwise.
+     */
+    _checkBrowser: function() {
+        var UA = navigator.userAgent;
+        return !!_.find(this.supportedBrowsers, function(browserName) {
+            return UA.indexOf(browserName) !== -1 &&
+                // exclude Microsoft Edge ('Edg' for newer versions)
+                UA.indexOf('Edg') === -1;
+        });
     },
 
     /**
