@@ -1074,6 +1074,7 @@ $dictionary['RevenueLineItem'] = array(
             'table' => 'purchased_line_items',
             'module' => 'PurchasedLineItems',
             'source' => 'non-db',
+            'massupdate' => false,
             'copyFromPurchasedLineItem' => [
                 'product_template_id' => 'product_template_id',
                 'product_template_name' => 'product_template_name',
