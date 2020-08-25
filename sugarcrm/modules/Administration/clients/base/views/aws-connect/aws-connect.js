@@ -37,6 +37,13 @@
     },
 
     /**
+     * Remove validation tasks from the current model
+     */
+    removeValidationTask: function() {
+        this.model.removeValidationTask('aws_required');
+    },
+
+    /**
      * Set the aws connect settings on the model.
      *
      * @param {Object} settings The AWS config details.
@@ -54,7 +61,10 @@
      */
     loadSettings: function() {
         var options = {
-            success: _.bind(this.copySettingsToModel, this)
+            success: _.bind(function(settings) {
+                this.copySettingsToModel(settings);
+                this._bindEvents();
+            }, this),
         };
         app.api.call('get', app.api.buildURL(this.module, 'aws'), [], options, {context: this});
     },
@@ -67,6 +77,36 @@
         this._super('render');
         this.action = 'edit';
         this.toggleEdit(true);
+    },
+
+    /**
+     * Attach events to fields
+     * @inheritdoc
+     */
+    _bindEvents: function() {
+        var nameField = this.getField('aws_connect_instance_name');
+        var regionField = this.getField('aws_connect_region');
+
+        var setRegionRequired = _.bind(function() {
+            var val = nameField.$el.find('input') ?
+                nameField.$el.find('input').val().trim() :
+                this.model.get(nameField.name);
+
+            var required = !!val;
+
+            if (regionField.def.required !== required) {
+                var metaRegionField = _.findWhere(this.options.meta.panels[0].fields, {'name': regionField.name});
+                required ? this.addValidationTask() : this.removeValidationTask();
+                regionField.def.required = metaRegionField.required = required;
+                regionField._render();
+            }
+        }, this);
+
+        nameField.$el.on('keyup', function() {
+            setRegionRequired();
+        });
+
+        setRegionRequired();
     },
 
     /**
