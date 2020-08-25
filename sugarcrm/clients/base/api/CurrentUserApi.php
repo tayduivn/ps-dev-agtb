@@ -12,6 +12,7 @@
 
 require_once('modules/Users/password_utils.php');
 use Sugarcrm\Sugarcrm\Entitlements\Subscription;
+use Sugarcrm\Sugarcrm\Entitlements\SubscriptionManager;
 
 class CurrentUserApi extends SugarApi
 {
@@ -618,22 +619,8 @@ class CurrentUserApi extends SugarApi
         }
         $user_data['site_user_id'] = $current_user->site_user_id;
 
-        // Start with the default license case
-        $licenses = [Subscription::SUGAR_BASIC_KEY];
-        try {
-            $lt = $current_user->getLicenseTypes();
-            if (is_array($lt) && !empty($lt)) {
-                $licenses = $lt;
-            }
-        } catch (SugarApiException $e) {
-            LoggerManager::getLogger()->fatal(
-                sprintf(
-                    'Could not get license types for user ID %s: %s',
-                    $current_user->id,
-                    $e->getMessage()
-                )
-            );
-        }
+        // licenses
+        $licenses = SubscriptionManager::instance()->getUserSubscriptions($current_user);
         $user_data['licenses'] = $licenses;
 
         // Products
