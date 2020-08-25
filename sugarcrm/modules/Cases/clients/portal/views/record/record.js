@@ -18,6 +18,15 @@
 ({
     extendsFrom: 'PortalRecordView',
 
+    /**
+     * List of statuses for which the Request To Close button is not shown
+     * @property {Array}
+     */
+    blackListOfStatuses: [
+        'Closed',
+        'Rejected',
+    ],
+
     initialize: function(options) {
         this._super('initialize', [options]);
         this.events = _.extend({}, this.events, {
@@ -56,7 +65,7 @@
     shouldShowCloseButton: function() {
         return this.model.get('request_close') === false &&
             app.metadata.getConfig('Cases').allowCloseCase === 'allow' &&
-            !_.contains(this.resolved, this.model.get('status'));
+            !_.contains(this.blackListOfStatuses, this.model.get('status'));
     },
 
     /**
