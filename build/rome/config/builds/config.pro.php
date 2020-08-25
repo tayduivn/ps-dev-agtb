@@ -189,4 +189,8 @@ $config['blackList']['pro'] = array(
 // Console List view dashlet
 'sugarcrm/clients/base/views/dashlet-console-list' => 1,
 'sugarcrm/tests/unit-js/clients/base/views/dashlet-console-list' => 1,
+
+// KB Search Dashlet
+'sugarcrm/modules/KBContents/clients/base/views/dashlet-searchable-kb-list' => 1,
+'sugarcrm/tests/unit-js/modules/KBContents/clients/base/views/dashlet-searchable-kb-list' => 1,
 );
