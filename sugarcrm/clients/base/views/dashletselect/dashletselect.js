@@ -44,6 +44,11 @@
         }, this);
 
         this.context.on('dashletlist:preview:fire', function(model) {
+            let currentElem = this.$('tr[data-type=' + model.get('type') + '] a.rowaction.btn');
+
+            this.$('a.rowaction.btn').removeClass('active');
+            currentElem.addClass('active');
+
             this.previewDashlet(model.get('metadata'));
         }, this);
     },

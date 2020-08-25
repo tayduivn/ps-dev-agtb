@@ -245,6 +245,20 @@ input[type="button"] {
       color: @white !important;
     }
   }
+
+  &.rowaction {
+    &.active {
+      &:focus {
+        outline: none;
+      }
+    }
+
+    .fa {
+      &:focus {
+        outline: none;
+      }
+    }
+  }
 }
 
 // invisible appears as no button
