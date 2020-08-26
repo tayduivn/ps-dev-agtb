@@ -15,7 +15,7 @@
  */
 class SugarUpgradeSetProductCatalogLockDuration extends UpgradeScript
 {
-    public $order = 7550;
+    public $order = 7500;
     public $type = self::UPGRADE_DB;
 
     public function run()
