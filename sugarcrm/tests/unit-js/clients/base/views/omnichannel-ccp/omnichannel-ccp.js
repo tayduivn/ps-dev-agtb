@@ -527,12 +527,11 @@ describe('Base.View.OmnichannelCcpView', function() {
 
     describe('_handleIncomingContact', function() {
         using('different contact types', ['voice', 'chat'], function(type) {
-            it('should open the layout, and trigger the incoming layout event', function() {
+            it('should trigger the incoming layout event', function() {
                 var contact = {
                     getType: function() { return type; }
                 };
                 view._handleIncomingContact(contact);
-                expect(layout.open.calledOnce).toBeTruthy();
                 expect(layout.trigger).toHaveBeenCalledWith(type + ':incoming', contact);
             });
         });

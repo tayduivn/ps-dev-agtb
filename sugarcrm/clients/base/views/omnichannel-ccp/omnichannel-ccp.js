@@ -207,8 +207,9 @@
         var self = this;
 
         connect.core.onViewContact(function(event) {
-            self._setActiveContact(event.contactId);
-            self.layout.trigger('contact:view', event.contactId);
+            if (self.connectedContacts[event.contactId]) {
+                self._setActiveContact(event.contactId);
+            }
         });
 
         connect.contact(function(contact) {
@@ -219,12 +220,16 @@
             }
 
             contact.onConnecting(function(contact) {
-                self._handleIncomingContact(contact);
+                self.layout.open();
             });
 
             contact.onConnected(function(contact) {
                 self.styleFooterButton('active-session');
                 self.addContactToContactsList(contact);
+                self._setActiveContact(contact.contactId);
+                if (contact.isInbound()) {
+                    self._handleIncomingContact(contact);
+                }
             });
 
             contact.onDestroy(function(contact) {
@@ -369,15 +374,13 @@
     },
 
     /**
-     * Open the Omnichannel drawer if it is closed to allow agent to accept
-     * incoming call/chat.
+     * Send an 'incoming' event to the console.
      *
      * @param {Object} contact Contact making call/chat
      * @private
      */
     _handleIncomingContact: function(contact) {
         var type = contact.getType();
-        this.layout.open();
         this.layout.trigger(type + ':incoming', contact);
     },
 
@@ -389,6 +392,7 @@
      */
     _setActiveContact: function(id) {
         this.activeContact = _.findWhere(this.getContacts(), {contactId: id});
+        this.layout.trigger('contact:view', id);
     },
 
     /**
