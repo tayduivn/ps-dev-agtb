@@ -13,10 +13,10 @@ describe('Base.Layout.OmnichannelConsole', function() {
     var app;
 
     beforeEach(function() {
-        SugarTest.loadComponent('base', 'layout', 'omnichannel-console');
-        console = SugarTest.createLayout('base', 'layout', 'omnichannel-console', {});
         app = SugarTest.app;
         app.routing.start();
+        SugarTest.loadComponent('base', 'layout', 'omnichannel-console');
+        console = SugarTest.createLayout('base', 'layout', 'omnichannel-console', {});
     });
 
     afterEach(function() {
@@ -160,6 +160,7 @@ describe('Base.Layout.OmnichannelConsole', function() {
                 moduleTabIndex: moduleTabIndex,
                 setModel: setModelStub,
                 switchTab: switchTabStub,
+                getComponent: $.noop
             });
 
             var model = app.data.createBean(module);

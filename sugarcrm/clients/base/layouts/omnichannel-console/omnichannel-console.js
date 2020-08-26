@@ -181,6 +181,16 @@
             dashboard.setModel(tabIndex, qcModel);
             dashboard.switchTab(tabIndex);
 
+            // Tabbed dashboard by default do not allow refreshing the active tab,
+            // the console's dashboard is an exception and the event has to be triggered manually.
+            var regularDashboard = dashboard.getComponent('dashboard');
+            if (regularDashboard) {
+                var tabbedDashboard = regularDashboard.getComponent('tabbed-dashboard');
+                if (tabbedDashboard && tabbedDashboard.activeTab === tabIndex) {
+                    tabbedDashboard.context.trigger('tabbed-dashboard:switch-tab', tabIndex);
+                }
+            }
+
             context.unset('quickcreateCreatedModel');
         }
 
