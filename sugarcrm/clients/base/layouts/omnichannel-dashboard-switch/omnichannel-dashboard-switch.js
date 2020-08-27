@@ -94,7 +94,7 @@
                 self._removeDashboard(index);
             };
             if (!dashboard.triggerBefore('omni-dashboard:close', {callback: _remove})) {
-                self._showClearButton(index);
+                self._showClearButton(index, contactId);
                 return;
             }
             _remove();
@@ -103,12 +103,13 @@
 
     /**
      * Show 'Clear' button on a dashboard.
-     * @param {number} index
+     * @param {number} index - Current index of dashboard
+     * @param {string} contactId - Id of connect Contact associated with dashboard
      */
-    _showClearButton: function(index) {
+    _showClearButton: function(index, contactId) {
         var self = this;
         var _remove = function() {
-            self._removeDashboard(index);
+            self._clearButtonClicked(contactId);
         };
         var dashboard = this._components[index];
         var tabbedDashboard = dashboard._getTabbedDashboard();
@@ -135,6 +136,18 @@
             if (console.isExpanded()) {
                 console.toggle();
             }
+        }
+    },
+
+    /**
+     * Close appropriate dashboard for contactId when user click's Clear button
+     * @param {string} contactId
+     * @private
+     */
+    _clearButtonClicked: function(contactId) {
+        var index = _.indexOf(this.contactIds, contactId);
+        if (index > -1) {
+            this._removeDashboard(index);
         }
     },
 

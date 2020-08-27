@@ -206,4 +206,37 @@ describe('Base.Layout.OmnichannelDashboardSwitch', function() {
             });
         });
     });
+
+    describe('_clearButtonClicked', function() {
+        using('different existing contactId sets', [
+            {
+                contactIds: ['1', '2', '3'],
+                idParam: '2',
+                expectedIndex: 1
+            },{
+                contactIds: ['1', '4', '8'],
+                idParam: '5',
+                expectedIndex: -1
+            },{
+                contactIds: ['2',],
+                idParam: '2',
+                expectedIndex: 0
+            },{
+                contactIds: [],
+                idParam: '1',
+                expectedIndex: -1
+            }
+        ], function(values) {
+            it('should remove the dashboard with the appropriate index', function() {
+                sinon.collection.stub(dashboardSwitch, '_removeDashboard');
+                dashboardSwitch.contactIds = values.contactIds;
+                dashboardSwitch._clearButtonClicked(values.idParam);
+                if (values.expectedIndex !== -1) {
+                    expect(dashboardSwitch._removeDashboard).toHaveBeenCalledWith(values.expectedIndex);
+                } else {
+                    expect(dashboardSwitch._removeDashboard).not.toHaveBeenCalled();
+                }
+            });
+        });
+    });
 });
