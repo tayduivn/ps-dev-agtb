@@ -57,7 +57,11 @@
      * @property {Object}
      */
     events: {
-        'click [data-action=close]': 'close'
+        'click [data-action=close]': 'close',
+        // Editing dashlet
+        'click [data-dashletaction="editClicked"]': '_handleDashletToolbarActions',
+        // Adding Interactions
+        'click [data-dashletaction="composeEmail"], [data-dashletaction="createRecord"]': '_handleDashletToolbarActions'
     },
 
     /**
@@ -101,6 +105,22 @@
         // when the quickcreate drawer is closed, perform the necessary steps
         var qcContext = this._getTopLevelContext();
         qcContext.on('quickcreate-drawer:closed', this._handleClosedQuickcreateDrawer, this);
+    },
+
+    /**
+     * Handler for dashlet toolbar action like edit or create record.
+     * This listens for drawer:remove event to reopen the omniconsole
+     *
+     * @private
+     */
+    _handleDashletToolbarActions: function() {
+        var drawers = app.drawer._getDrawers(true);
+        // if a new drawer is about to open
+        if (!_.isUndefined(drawers) && drawers.$next.length > 0) {
+            $main = app.$contentEl.children().first();
+            // open console once the toolbar action drawer is closed
+            $main.on('drawer:remove.omniConsole', _.bind(this.open, this));
+        }
     },
 
     /**
@@ -287,7 +307,16 @@
             $main = app.$contentEl.children().first();
             $main.on('drawer:add.omniConsole', _.bind(this.closeImmediately, this));
             this.trigger('omniconsole:open');
+            this.removeToolbarActionListener();
         }
+    },
+
+    /**
+     * Unsubscribe to dashlet toolbar events that open a new drawer.
+     */
+    removeToolbarActionListener: function() {
+        $main = app.$contentEl.children().first();
+        $main.off('drawer:remove.omniConsole', this.open);
     },
 
     /**
