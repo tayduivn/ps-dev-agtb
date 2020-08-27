@@ -442,6 +442,11 @@
             y = 0;
             _.each(component.rows, function(row) {
                 _.each(row, function(dashlet, dashletIndex) {
+                    // do not convert component without view metadata
+                    if (!_.has(dashlet, 'view')) {
+                        return;
+                    }
+
                     // Convert legacy dashboard width to grid-style width.
                     // Legacy dashboard "components" were sized in a 12-column
                     // grid, and each dashlet-row also contained 12 columns

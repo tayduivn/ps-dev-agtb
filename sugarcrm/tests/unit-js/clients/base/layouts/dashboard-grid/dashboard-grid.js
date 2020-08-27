@@ -228,63 +228,75 @@ describe('View.Layouts.Base.DashboardGridLayout', function() {
                 legacy: [{
                     width: 12,
                     rows: [
-                        [{width: 12}],
-                        [{width: 6}, {width: 6}]
+                        [{width: 12, view: {}}],
+                        [{width: 6, view: {}}, {width: 6, view: {}}]
                     ]
                 }],
                 expected: [
-                    {x: 0, y: 0, width: 12, height: 4},
-                    {x: 0, y: 4, width: 6, height: 4},
-                    {x: 6, y: 4, width: 6, height: 4}
+                    {x: 0, y: 0, width: 12, height: 4, view: {}},
+                    {x: 0, y: 4, width: 6, height: 4, view: {}},
+                    {x: 6, y: 4, width: 6, height: 4, view: {}}
                 ]
             }, {
                 // Two Column Dashboard
                 legacy: [{
                     width: 4,
                     rows: [
-                        [{width: 12}]
+                        [{width: 12, view: {}}]
                     ]
                 }, {
                     width: 8,
                     rows: [
-                        [{width: 6}, {width: 6}],
-                        [{width: 12}]
+                        [{width: 6, view: {}}, {width: 6, view: {}}],
+                        [{width: 12, view: {}}]
                     ]
                 }],
                 expected: [
-                    {x: 0, y: 0, width: 4, height: 4},
-                    {x: 4, y: 0, width: 4, height: 4},
-                    {x: 8, y: 0, width: 4, height: 4},
-                    {x: 4, y: 4, width: 8, height: 4}
+                    {x: 0, y: 0, width: 4, height: 4, view: {}},
+                    {x: 4, y: 0, width: 4, height: 4, view: {}},
+                    {x: 8, y: 0, width: 4, height: 4, view: {}},
+                    {x: 4, y: 4, width: 8, height: 4, view: {}}
                 ]
             }, {
                 // Three Column Dashboard
                 legacy: [{
                     width: 4,
                     rows: [
-                        [{width: 12}]
+                        [{width: 12, view: {}}]
                     ]
                 }, {
                     width: 4,
                     rows: [
-                        [{width: 12}],
-                        [{width: 12}]
+                        [{width: 12, view: {}}],
+                        [{width: 12, view: {}}]
                     ]
                 }, {
                     width: 4,
                     rows: [
-                        [{width: 12}],
-                        [{width: 12}],
+                        [{width: 12, view: {}}],
+                        [{width: 12, view: {}}],
+                        [{width: 12, view: {}}]
+                    ]
+                }],
+                expected: [
+                    {x: 0, y: 0, width: 4, height: 4, view: {}},
+                    {x: 4, y: 0, width: 4, height: 4, view: {}},
+                    {x: 4, y: 4, width: 4, height: 4, view: {}},
+                    {x: 8, y: 0, width: 4, height: 4, view: {}},
+                    {x: 8, y: 4, width: 4, height: 4, view: {}},
+                    {x: 8, y: 8, width: 4, height: 4, view: {}},
+                ]
+            }, {
+                // Dashboard without view metadata
+                legacy: [{
+                    width: 12,
+                    rows: [
+                        [{width: 12, view: {}}],
                         [{width: 12}]
                     ]
                 }],
                 expected: [
-                    {x: 0, y: 0, width: 4, height: 4},
-                    {x: 4, y: 0, width: 4, height: 4},
-                    {x: 4, y: 4, width: 4, height: 4},
-                    {x: 8, y: 0, width: 4, height: 4},
-                    {x: 8, y: 4, width: 4, height: 4},
-                    {x: 8, y: 8, width: 4, height: 4},
+                    {x: 0, y: 0, width: 12, height: 4, view: {}}
                 ]
             }
         ], function(values) {

@@ -126,10 +126,12 @@
         //pass the parent context only to the main dashlet component
         if (def.view && !_.isUndefined(def.view.toolbar)) {
             var dashlet = _.first(this._components);
-            if (_.isFunction(dashlet.getLabel)) {
-                def.view.label = dashlet.getLabel();
+            if (dashlet) {
+                if (_.isFunction(dashlet.getLabel)) {
+                    def.view.label = dashlet.getLabel();
+                }
+                context = dashlet.context;
             }
-            context = dashlet.context;
         }
         //set default skipFetch as false
         var skipFetch = def.view ? def.view.skipFetch : def.layout.skipFetch;
