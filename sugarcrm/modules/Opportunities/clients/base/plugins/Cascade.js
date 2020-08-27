@@ -20,6 +20,7 @@
             fieldNames: null,
             field: null,
             model: null,
+            attachAction: null,
 
             /**
              * Set the appropriate field attribute for Opps+RLIs to handle
@@ -39,6 +40,7 @@
                 this.field = component;
                 this.model = this.field.options.model;
                 this.baseFieldType = this.field.options.def.type;
+                this.attachAction = this.field.action;
 
                 if (this.baseFieldType === 'fieldset-cascade') {
                     this.fieldNames = _.map(this.field.options.def.fields, function(field) {
@@ -114,6 +116,14 @@
              * as a field on our model.
              */
             bindEditActions: function() {
+                // If the plugin attached directly on edit mode (e.g. if the user refreshed
+                // while on the edit view), the checkbox won't have been rendered yet. Make
+                // sure it is available to attach the listener to.
+                if (this.attachAction === 'edit') {
+                    this.attachAction = null;
+                    this.field.render();
+                }
+
                 var checkbox = this.field.$el.find('input[type=checkbox]');
                 var self = this;
                 checkbox.click(function() {
@@ -163,7 +173,10 @@
                 }
 
                 // Force to set the checkbox to false only on entering the edit mode and not during the other flow
-                if (app.utils.isTruthy(editClick)) {
+                // Also check the state of the checkbox - if we loaded directly into edit mode, the previous check
+                // wouldn't apply
+                var checkbox = this.field.$el.find('input[type=checkbox]');
+                if (app.utils.isTruthy(editClick) || (this.field.action === 'edit' && !checkbox.prop('checked'))) {
                     this.field.setDisabled(true, {trigger: true});
                 }
                 this.bindEditActions();

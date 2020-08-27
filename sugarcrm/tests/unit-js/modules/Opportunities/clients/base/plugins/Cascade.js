@@ -168,7 +168,14 @@ describe('Opportunities.Base.Plugins.Cascade', function() {
         var setDisabled;
         beforeEach(function() {
             setDisabled = sinon.stub();
-            plugin.field = {setDisabled: setDisabled, $el: true};
+            plugin.field = {
+                setDisabled: setDisabled,
+                $el: {
+                    find: function() {
+                        return true;
+                    }
+                }
+            };
             plugin.model = SugarTest.app.data.createBean(moduleName);
             sinon.collection.stub(plugin, 'bindEditActions');
         });
