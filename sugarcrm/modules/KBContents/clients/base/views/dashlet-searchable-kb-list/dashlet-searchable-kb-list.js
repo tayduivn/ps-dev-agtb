@@ -157,6 +157,15 @@
     },
 
     /**
+     * Open a document in new tab.
+     * @inheritdoc
+     */
+    _openDocument: function(module, id) {
+        var route = app.router.buildRoute(module, id);
+        window.open('#' + route, '_blank');
+    },
+
+    /**
      * The view doesn't need standard handlers for data change because it use own events and handlers.
      *
      * @override
