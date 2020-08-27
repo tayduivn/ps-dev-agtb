@@ -1030,4 +1030,23 @@ describe("Sugar7 utils", function() {
                 });
             });
     });
+
+    describe('getFieldLabels', function() {
+        it('retrieves the labels for the fields that are searchable in the quicksearch', function() {
+            sinon.collection.stub(app.metadata, 'getModule', function() {
+                return {
+                    fields: {
+                        first_name: {
+                            vname: 'lbl_first_name'
+                        },
+                        last_name: {
+                            vname: 'lbl_last_name'
+                        }
+                    }
+                };
+            });
+            expect(app.utils.getFieldLabels('Cases', ['first_name', 'last_name']))
+                .toEqual(['lbl_first_name', 'lbl_last_name']);
+        });
+    });
 });

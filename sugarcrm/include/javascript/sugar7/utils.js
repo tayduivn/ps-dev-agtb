@@ -924,6 +924,27 @@
             },
 
             /**
+             * Retrieves the labels for the fields that are searchable in the quicksearch.
+             *
+             * @param {string} moduleName The module name the fields belong to.
+             * @param {string[]} fields The list of searchable fields.
+             * @return {string[]} The list of labels.
+             */
+            getFieldLabels: function(moduleName, fields) {
+                var moduleMeta = app.metadata.getModule(moduleName);
+                var labels = [];
+
+                _.each(_.flatten(fields), function(fieldName) {
+                    var fieldMeta = moduleMeta.fields[fieldName];
+                    if (fieldMeta) {
+                        labels.push(app.lang.get(fieldMeta.vname, moduleName));
+                    }
+                });
+
+                return labels;
+            },
+
+            /**
              * Convert a raw file size into a human readable size
              *
              * @param {int} size

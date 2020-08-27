@@ -175,6 +175,7 @@
                 }
 
                 var searchElem = this.$('input.search-name');
+                this.updatePlaceholder(searchElem);
 
                 // if search string is present but not displayed on the search bar
                 if (!_.isEmpty(this.currentSearch) && searchElem.val() === '') {
@@ -215,6 +216,18 @@
         if (this.context.parent) {
             this.context.parent.set(this.getLastFilterKey(), filterId);
         }
+    },
+
+    /**
+     * Update quick search placeholder to Search by Field1, Field2, Field3 when the module changes
+     * @param {Object} el
+     */
+    updatePlaceholder: function(el) {
+        var filtersBeanPrototype = app.data.getBeanClass('Filters').prototype;
+        var fields = filtersBeanPrototype.getModuleQuickSearchMeta(this.module).fieldNames;
+        var fieldLabels = app.utils.getFieldLabels(this.module, fields);
+        var label = app.lang.get('LBL_SEARCH_BY') + ' ' + fieldLabels.join(', ').toLowerCase() + '...';
+        return el.attr('placeholder', label);
     },
 
     /**

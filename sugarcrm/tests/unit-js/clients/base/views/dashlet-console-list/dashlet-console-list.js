@@ -99,6 +99,35 @@ describe('Base.View.DashletConsoleList', function() {
         });
     });
 
+    describe('updatePlaceholder', function() {
+        beforeEach(function() {
+            SugarTest.declareData('base', 'Filters');
+            filtersBeanPrototype = app.data.getBeanClass('Filters').prototype;
+        });
+        it('should update placeholder with field labels on filter', function() {
+            sinon.collection.stub(app.metadata, 'getModule', function() {
+                return {
+                    fields: {
+                        first_name: {
+                            vname: 'lbl_first_name'
+                        },
+                        last_name: {
+                            vname: 'lbl_last_name'
+                        }
+                    }
+                };
+            });
+            sinon.collection.stub(filtersBeanPrototype, 'getModuleQuickSearchMeta', function() {
+                return {
+                    fieldNames: ['first_name', 'last_name']
+                };
+            });
+            view.$el.html('<input type="text" class="search-name">');
+            view.updatePlaceholder(view.$el);
+            expect(view.$el.attr('placeholder')).toEqual('LBL_SEARCH_BY lbl_first_name, lbl_last_name...');
+        });
+    });
+
     describe('handleSelect', function() {
         var evt;
         beforeEach(function() {
