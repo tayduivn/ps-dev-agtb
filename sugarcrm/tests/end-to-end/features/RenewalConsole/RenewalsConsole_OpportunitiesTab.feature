@@ -172,8 +172,8 @@ Feature: Sugar Sell Renewals Console Verification > Opportunities Tab
       | *name | assigned_user_id |
       | Opp_1 | 1                |
     And RevenueLineItems records exist related via revenuelineitems link to *Opp_1:
-      | *name | date_closed | worst_case | likely_case | best_case | sales_stage | quantity | service | service_duration_value | service_duration_unit |
-      | RLI_1 | now         | 1000       | 2000        | 3000      | Prospecting | 1        | true    | 2                      | year                  |
+      | *name | date_closed | worst_case | likely_case | best_case | sales_stage | quantity | service | service_start_date | service_duration_value | service_duration_unit |
+      | RLI_1 | now         | 1000       | 2000        | 3000      | Prospecting | 1        | true    | now + 10d          | 2                      | year                  |
 
     # Create Quote records related to the account
     Given Quotes records exist related via quotes link to *Opp_1:
@@ -221,7 +221,7 @@ Feature: Sugar Sell Renewals Console Verification > Opportunities Tab
 
     # Verify the edited value are not saved
     Then I verify fields on #Opp_1Record.RecordView
-      | fieldName    | value       |
+      | fieldName    | value |
       | amount       | $2,000.00   |
       | sales_status | In Progress |
       | best_case    | $3,000.00   |
@@ -229,23 +229,17 @@ Feature: Sugar Sell Renewals Console Verification > Opportunities Tab
     # Edit record inside the dashlet and save
     When I click Edit button in #RenewalsConsoleView.DashableRecordDashlet
     When I provide input for #Opp_1Record.RecordView view
-      | opportunity_type |
-      | New Business     |
+      | sales_stage   | date_closed | service_start_date |
+      | Qualification | now + 1d    | now +30d           |
     When I click Save button in #RenewalsConsoleView.DashableRecordDashlet
     When I close alert
 
-    # Verify the edited value is successfully saved
+    # Verify the edited values are successfully saved in Opportunities record view dashlet
     Then I verify fields on #Opp_1Record.RecordView
-      | fieldName        | value        |
-      | opportunity_type | New Business |
-
-
-    # Switch to Revenue Line Items tab inside the Dashable Record dashlet
-    When I switch to Revenue Line Items tab in #RenewalsConsoleView.DashableRecordDashlet
-    # Verify RLI records related to the opportunity appear in RLI tab of Dashable Record dashlet
-    Then I verify number of records in #RenewalsConsoleView.DashableRecordDashlet.ListView is 1
-    And I should see [*RLI_1] on #RenewalsConsoleView.DashableRecordDashlet.ListView dashlet
-
+      | fieldName          | value         |
+      | sales_stage        | Qualification |
+      | date_closed        | now + 1d      |
+      | service_start_date | now + 30d     |
 
     # Switch to Contacts tab inside the Dashable Record dashlet
     When I switch to Contacts tab in #RenewalsConsoleView.DashableRecordDashlet
@@ -259,9 +253,23 @@ Feature: Sugar Sell Renewals Console Verification > Opportunities Tab
     Then I verify number of records in #RenewalsConsoleView.DashableRecordDashlet.ListView is 2
     And I should see [*Q_1, *Q_2] on #RenewalsConsoleView.DashableRecordDashlet.ListView dashlet
 
-    # Click item from the Quotes tab
-    When I select *Q_1 in #RenewalsConsoleView.DashableRecordDashlet.ListView
-    Then I should see #Q_1Record view
+    # Switch to Revenue Line Items tab inside the Dashable Record dashlet
+    When I switch to Revenue Line Items tab in #RenewalsConsoleView.DashableRecordDashlet
+    # Verify RLI records related to the opportunity appear in RLI tab of Dashable Record dashlet
+    Then I verify number of records in #RenewalsConsoleView.DashableRecordDashlet.ListView is 1
+    And I should see [*RLI_1] on #RenewalsConsoleView.DashableRecordDashlet.ListView dashlet
+
+    # Click item from the RLI tab
+    When I select *RLI_1 in #RenewalsConsoleView.DashableRecordDashlet.ListView
+    Then I should see #RLI_1Record view
+    When I click show more button on #RLI_1Record view
+
+    # Verify the edited value is successfully saved
+    Then I verify fields on #RLI_1Record.RecordView
+      | fieldName          | value         |
+      | sales_stage        | Qualification |
+      | date_closed        | now + 1d      |
+      | service_start_date | now + 30d     |
 
 
   @renewals-console @rc_comment_log_dashlet
