@@ -430,7 +430,8 @@
                 if (startDate <= today && endDate >= today) {
                     currentSubscription++;
                     quantity += record.contents.quantity;
-                    totalAmount += parseInt(record.contents.total_amount, 10);
+                    totalAmount += app.currency.convertWithRate(parseFloat(record.contents.total_amount),
+                        record.contents.base_rate);
                 }
             }
         }, this);
