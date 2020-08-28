@@ -50,52 +50,6 @@ foreach ($fields as $field) {
 
 // BEGIN SUGARCRM flav=ent ONLY
 // Handle dependencies related to service fields
-$dependencies['Products']['service_fields_read_only'] = [
-    'hooks' => ['edit', 'view'],
-    'trigger' => 'true',
-    'triggerFields' => ['service', 'product_template_id', 'lock_duration'],
-    'onload' => true,
-    'actions' => [
-        [
-            'name' => 'ReadOnly',
-            'params' => [
-                'target' => 'service',
-                'value' => 'not(equal($product_template_id,""))',
-            ],
-        ], [
-            'name' => 'ReadOnly',
-            'params' => [
-                'target' => 'renewable',
-                'value' => 'equal($service,0)',
-            ],
-        ], [
-            'name' => 'ReadOnly',
-            'params' => [
-                'target' => 'service_start_date',
-                'value' => 'equal($service,0)',
-            ],
-        ], [
-            'name' => 'ReadOnly',
-            'params' => [
-                'target' => 'service_duration_value',
-                'value' => 'or(equal($service,0),and(not(equal($product_template_id,"")),equal($lock_duration,1)), not(equal($add_on_to_id,"")))',
-            ],
-        ], [
-            'name' => 'ReadOnly',
-            'params' => [
-                'target' => 'service_duration_unit',
-                'value' => 'or(equal($service,0),and(not(equal($product_template_id,"")),equal($lock_duration,1)), not(equal($add_on_to_id,"")))',
-            ],
-        ], [
-            'name' => 'ReadOnly',
-            'params' => [
-                'target' => 'add_on_to_name',
-                'value' => 'equal($service, 0)',
-            ],
-        ],
-    ],
-];
-
 $dependencies['Products']['service_fields_required'] = [
     'hooks' => array('edit'),
     'trigger' => 'true',
@@ -199,6 +153,52 @@ $dependencies['Products']['service_fields_values'] = [
                     equal($service, "1"),
                     $add_on_to_id,
                     "")',
+            ],
+        ],
+    ],
+];
+
+$dependencies['Products']['service_fields_read_only'] = [
+    'hooks' => ['edit', 'view'],
+    'trigger' => 'true',
+    'triggerFields' => ['service', 'product_template_id', 'lock_duration'],
+    'onload' => true,
+    'actions' => [
+        [
+            'name' => 'ReadOnly',
+            'params' => [
+                'target' => 'service',
+                'value' => 'not(equal($product_template_id,""))',
+            ],
+        ], [
+            'name' => 'ReadOnly',
+            'params' => [
+                'target' => 'renewable',
+                'value' => 'equal($service,0)',
+            ],
+        ], [
+            'name' => 'ReadOnly',
+            'params' => [
+                'target' => 'service_start_date',
+                'value' => 'equal($service,0)',
+            ],
+        ], [
+            'name' => 'ReadOnly',
+            'params' => [
+                'target' => 'service_duration_value',
+                'value' => 'or(equal($service,0),and(not(equal($product_template_id,"")),equal($lock_duration,1)), not(equal($add_on_to_id,"")))',
+            ],
+        ], [
+            'name' => 'ReadOnly',
+            'params' => [
+                'target' => 'service_duration_unit',
+                'value' => 'or(equal($service,0),and(not(equal($product_template_id,"")),equal($lock_duration,1)), not(equal($add_on_to_id,"")))',
+            ],
+        ], [
+            'name' => 'ReadOnly',
+            'params' => [
+                'target' => 'add_on_to_name',
+                'value' => 'equal($service, 0)',
             ],
         ],
     ],

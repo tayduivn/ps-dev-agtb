@@ -34,7 +34,7 @@
      * changes so that the end date remains constant.
      */
     handleRecalculateServiceDuration: function() {
-        if (!_.isEmpty(this.model.get('add_on_to_id'))) {
+        if (!_.isEmpty(this.model.get('add_on_to_id')) && app.utils.isTruthy(this.model.get('service'))) {
             var startDate = app.date(this.model.get('service_start_date'));
             var endDate = app.date(this.model.get('service_end_date'));
 

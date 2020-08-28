@@ -36,6 +36,7 @@ describe('RevenueLineItems.Base.Fields.Date', function() {
             loadFromModule: true
         });
 
+        view.model.set('service', '1');
         view.model.set('add_on_to_id', 'dummy_id');
 
         sinon.collection.stub(field, '_super');
