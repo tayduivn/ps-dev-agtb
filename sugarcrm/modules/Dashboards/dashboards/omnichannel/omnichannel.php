@@ -86,7 +86,7 @@ return [
                                 ],
                             ],
                             'tab_list' => [
-                                'contacts',
+                                'Contacts',
                                 'accounts',
                             ],
                         ],
@@ -288,8 +288,9 @@ return [
                                 ],
                             ],
                             'tab_list' => [
-                                'cases',
+                                'Cases',
                                 'tasks',
+                                'contacts',
                                 'documents',
                             ],
                         ],
