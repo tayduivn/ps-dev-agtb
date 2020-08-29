@@ -14,6 +14,7 @@ use Sugarcrm\Sugarcrm\Security\ModuleScanner\CodeScanner;
 use Sugarcrm\Sugarcrm\Security\Validator\Constraints\DropdownList as ConstraintsDropdownList;
 use Sugarcrm\Sugarcrm\Security\Validator\Validator;
 use Sugarcrm\Sugarcrm\Util\Files\FileLoader;
+use Sugarcrm\Sugarcrm\Entitlements\SubscriptionManager;
 
 class ModuleScanner{
 	private $manifestMap = array(
@@ -509,7 +510,7 @@ class ModuleScanner{
         if ($this->isVardefsFileNameOrDir($file)) {
             return true;
         }
-        
+
         // check manifest file
         if (isset($this->installdefs['vardefs'])) {
             foreach ($this->installdefs['vardefs'] as $pack) {
@@ -552,10 +553,10 @@ class ModuleScanner{
         if (basename($fileInfo['dirname']) === 'Vardefs') {
             return true;
         }
-        
+
         return false;
     }
-    
+
     /**
      * Scans a directory and calls on scan file for each file
      * @param string $path path of the directory to be scanned
@@ -924,9 +925,18 @@ class ModuleScanner{
 	 *This function will take all issues of the current instance and print them to the screen
 	 **/
 	public function displayIssues($package='Package'){
-		global $sugar_version, $sugar_flavor;
-		echo '<h2>'.str_replace('{PACKAGE}' , $package ,translate('ML_PACKAGE_SCANNING')). '</h2><BR><h2 class="error">' . translate('ML_INSTALLATION_FAILED') . '</h2><br><p>' .str_replace('{PACKAGE}' , $package ,translate('ML_PACKAGE_NOT_CONFIRM')). '</p><ul><li>'. translate('ML_OBTAIN_NEW_PACKAGE') . '<li>' . translate('ML_RELAX_LOCAL').
-'</ul></p><br>' . ' <a href="http://www.sugarcrm.com/crm/product_doc.php?module=FailPackageScan&version=' . $sugar_version . '&edtion=' . $sugar_flavor . '" target="_blank">' . translate('ML_PKG_SCAN_GUIDE') . '</a>'.'<br><br>';
+        global $sugar_version, $sugar_flavor, $current_user;
+        $readableProductNames =
+            getReadableProductNames(SubscriptionManager::instance()->getUserSubscriptions($current_user));
+        $readableProductNames = urlencode(implode(',', $readableProductNames));
+        echo '<h2>' . str_replace('{PACKAGE}', $package, translate('ML_PACKAGE_SCANNING')) .
+            '</h2><BR><h2 class="error">' . translate('ML_INSTALLATION_FAILED') . '</h2><br><p>' .
+            str_replace('{PACKAGE}', $package, translate('ML_PACKAGE_NOT_CONFIRM')) .
+            '</p><ul><li>'. translate('ML_OBTAIN_NEW_PACKAGE') . '<li>' . translate('ML_RELAX_LOCAL') .
+            '</ul></p><br>' .
+            ' <a href="http://www.sugarcrm.com/crm/product_doc.php?module=FailPackageScan&version=' .
+            $sugar_version . '&edtion=' . $sugar_flavor . '&products=' . $readableProductNames .
+            '" target="_blank">' . translate('ML_PKG_SCAN_GUIDE') . '</a>'.'<br><br>';
 
 
 		foreach($this->issues as $type=>$issues){

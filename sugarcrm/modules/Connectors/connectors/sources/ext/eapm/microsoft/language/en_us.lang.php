@@ -9,6 +9,15 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
+use Sugarcrm\Sugarcrm\Entitlements\SubscriptionManager;
+
+$readableProductNames =
+    getReadableProductNames(SubscriptionManager::instance()->getUserSubscriptions($GLOBALS['current_user']));
+$readableProductNames = urlencode(implode(',', $readableProductNames));
+
+$url = 'http://www.sugarcrm.com/crm/product_doc.php?edition=' . $GLOBALS['sugar_flavor'] . '&version=' .
+    $GLOBALS['sugar_version'] . '&lang=' . $GLOBALS['current_language'] . '&module=Connectors&route=Microsoft' .
+    '&products=' . $readableProductNames;
 
 $connector_strings = array(
     'LBL_LICENSING_INFO' => '<table border="0" cellspacing="1"><tr><td valign="top" width="35%" class="dataLabel">' .

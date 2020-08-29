@@ -137,6 +137,10 @@
             url = 'http://www.sugarcrm.com/crm/product_doc.php?edition=' + serverInfo.flavor
                 + '&version=' + serverInfo.version + '&lang=' + lang + '&module=' + module + '&route=' + layoutName;
 
+            url += app.user.get('products') ?
+                '&products=' + encodeURIComponent(app.user.get('products').join(',')) :
+                '';
+
             if (layoutName == 'bwc') {
                 var action = window.location.hash.match(/#bwc.*action=(\w*)/i);
                 if (action && !_.isUndefined(action[1])) {

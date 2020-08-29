@@ -10,6 +10,8 @@
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
 
+use Sugarcrm\Sugarcrm\Entitlements\SubscriptionManager;
+
 class AuthApi extends SugarApi
 {
     const CONNECTOR_LABELS = [
@@ -62,6 +64,10 @@ class AuthApi extends SugarApi
     {
         $docUrl = 'http://www.sugarcrm.com/crm/product_doc.php?edition=' . $GLOBALS['sugar_flavor'] . '&version=' .
             $GLOBALS['sugar_version'] . '&lang=' . $GLOBALS['current_language'] . '&module=Emails&route=Outgoing';
+        $readableProductNames =
+            getReadableProductNames(SubscriptionManager::instance()->getUserSubscriptions($GLOBALS['current_user']));
+        $readableProductNames = urlencode(implode(',', $readableProductNames));
+        $docUrl .= '&products=' . $readableProductNames;
         $docLink = '<a href="' . $docUrl . '" target="_blank">' . translate('LBL_EMAILS') . '</a>';
         $connectorName = translate(self::CONNECTOR_LABELS[$application] ?? '');
         return string_format(translate('LBL_EMAIL_AUTH_WARNING'), [$connectorName, $docLink]);

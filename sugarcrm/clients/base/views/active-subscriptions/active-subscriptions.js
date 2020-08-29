@@ -91,14 +91,20 @@
         var language = app.lang.getLanguage();
         var module = 'activesubscriptionsdashlet';
         var route = app.controller.context.get('layout');
+        var products = app.user.get('products') ?
+            app.user.get('products').join(',') :
+            '';
 
         var params = {
             edition: serverInfo.flavor,
             version: serverInfo.version,
             lang: language,
             module: module,
-            route: route,
+            route: route
         };
+        if (!_.isEmpty(products)) {
+            params.products = products;
+        }
 
         return 'http://www.sugarcrm.com/crm/product_doc.php?' + $.param(params);
     },
