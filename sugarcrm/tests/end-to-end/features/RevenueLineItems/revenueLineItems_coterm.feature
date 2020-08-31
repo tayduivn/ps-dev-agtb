@@ -129,27 +129,10 @@ Feature: RLI module verification - coterm
       | service_end_date       | <service_end_date> |
       | renewable              | true               |
       | discount_price         | $100.00            |
-      | total_amount           | $0.43              |
+      | total_amount           | $100.00            |
       | category_name          | Category_1         |
       | list_price             | $300.00            |
       | cost_price             | $200.00            |
-
-    # Edit RLI - move service start date by 1 day
-    When I click Edit button on #RLI_1Record header
-    When I provide input for #RLI_1Record.RecordView view
-      | service_start_date |
-      | 07/02/2030         |
-    When I click Save button on #RLI_1Record header
-    When I close alert
-
-    # Verify service duration is updated properly
-    Then I verify fields on #RLI_1Record.RecordView
-      | fieldName              | value              |
-      | service_duration_value | 548                |
-      | service_duration_unit  | Day(s)             |
-      | service_start_date     | 07/02/2030         |
-      | service_end_date       | <service_end_date> |
-      | total_amount           | $0.43              |
 
     # Edit RLI - move service start date by 6 months
     When I click Edit button on #RLI_1Record header
@@ -166,7 +149,41 @@ Feature: RLI module verification - coterm
       | service_duration_unit  | Year(s)            |
       | service_start_date     | 01/01/2031         |
       | service_end_date       | <service_end_date> |
-      | total_amount           | $0.29              |
+      | total_amount           | $66.67             |
+
+    # Edit RLI - move service start date back 15 days
+    When I click Edit button on #RLI_1Record header
+    When I provide input for #RLI_1Record.RecordView view
+      | service_start_date |
+      | 12/17/2030         |
+    When I click Save button on #RLI_1Record header
+    When I close alert
+
+    # Verify service duration is updated properly
+    Then I verify fields on #RLI_1Record.RecordView
+      | fieldName              | value              |
+      | service_duration_value | 380                |
+      | service_duration_unit  | Day(s)             |
+      | service_start_date     | 12/17/2030         |
+      | service_end_date       | <service_end_date> |
+      | total_amount           | $69.41             |
+
+    # Edit RLI - move service start date forward 1 day
+    When I click Edit button on #RLI_1Record header
+    When I provide input for #RLI_1Record.RecordView view
+      | service_start_date |
+      | 12/18/2030         |
+    When I click Save button on #RLI_1Record header
+    When I close alert
+
+    # Verify service duration is updated properly
+    Then I verify fields on #RLI_1Record.RecordView
+      | fieldName              | value              |
+      | service_duration_value | 379                |
+      | service_duration_unit  | Day(s)             |
+      | service_start_date     | 12/18/2030         |
+      | service_end_date       | <service_end_date> |
+      | total_amount           | $69.22             |
 
     # Edit RLI - make service start day one day after service end day
     When I click Edit button on #RLI_1Record header
@@ -195,7 +212,7 @@ Feature: RLI module verification - coterm
       | service_duration_unit  | Day(s)             |
       | service_start_date     | <service_end_date> |
       | service_end_date       | <service_end_date> |
-      | total_amount           | $0.00              |
+      | total_amount           | $0.18              |
 
     Examples:
       | service_end_date |

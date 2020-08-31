@@ -145,6 +145,87 @@ $vardefs = [
             'massupdate' => false,
             'comment' => 'Service Duration unit like Year(s), Month(s) or Day(s)',
         ],
+        'catalog_service_duration_value' => [
+            'name' => 'catalog_service_duration_value',
+            'vname' => 'LBL_CATALOG_SERVICE_DURATION_VALUE',
+            'type' => 'int',
+            'min' => '1',
+            'len' => '5',
+            'required' => false,
+            'studio' => false,
+            'massupdate' => false,
+            'readonly' => true,
+            'related_fields' => [
+                'service_duration_multiplier',
+            ],
+            'comment' => 'Stores a Product Catalog item\'s Service Duration Value, used for duration comparisons',
+        ],
+        'catalog_service_duration_unit' => [
+            'name' => 'catalog_service_duration_unit',
+            'vname' => 'LBL_CATALOG_SERVICE_DURATION_UNIT',
+            'type' => 'enum',
+            'options' => 'service_duration_unit_dom',
+            'len' => 50,
+            'audited' => false,
+            'studio' => false,
+            'massupdate' => false,
+            'readonly' => true,
+            'related_fields' => [
+                'service_duration_multiplier',
+            ],
+            'comment' => 'Stores a Product Catalog item\'s Service Duration Unit, used for duration comparisons',
+        ],
+        'service_duration_multiplier' => [
+            'name' => 'service_duration_multiplier',
+            'vname' => 'LBL_SERVICE_DURATION_MULTIPLIER',
+            'type' => 'decimal',
+            'studio' => false,
+            'calculated' => true,
+            'enforced' => true,
+            'formula' => '
+            ifElse(
+                and(
+                    isNumeric($service_duration_value),
+                    isNumeric($catalog_service_duration_value),
+                    or(equal($service_duration_unit, "year"), equal($service_duration_unit, "month"), equal($service_duration_unit, "day")),
+                    or(equal($catalog_service_duration_unit, "year"), equal($catalog_service_duration_unit, "month"), equal($catalog_service_duration_unit, "day"))
+                ),
+                divide(
+                    ifElse(
+                        equal($service_duration_unit, "year"),
+                        multiply($service_duration_value, 365),
+                        ifElse(
+                            equal($service_duration_unit, "month"),
+                            multiply($service_duration_value, divide(365,12)),
+                            ifElse(
+                                equal($service_duration_unit, "day"),
+                                $service_duration_value,
+                                ""
+                            )
+                        )
+                    ),
+                    ifElse(
+                        equal($catalog_service_duration_unit, "year"),
+                        multiply($catalog_service_duration_value, 365),
+                        ifElse(
+                            equal($catalog_service_duration_unit, "month"),
+                            multiply($catalog_service_duration_value, divide(365,12)),
+                            ifElse(
+                                equal($catalog_service_duration_unit, "day"),
+                                $catalog_service_duration_value,
+                                ""
+                            )
+                        )
+                    )
+                ),
+                1
+            )',
+            'related_fields' => [
+                'catalog_service_duration_value',
+                'catalog_service_duration_unit',
+            ],
+            'comment' => 'Stores a multiplier based on the ratio of this sales item\'s duration to another duration (such as a Product Template\'s)',
+        ],
         'service_end_date' => [
             'name' => 'service_end_date',
             'vname' => 'LBL_SERVICE_END_DATE',

@@ -702,15 +702,17 @@
         var newData = {},
             self = this;
         _.each(this.def.populate_list, function(target, source) {
-            source = _.isNumber(source) ? target : source;
-            if (!_.isUndefined(model[source]) && app.acl.hasAccessToModel('edit', this.model, target)) {
-                var before = this.model.get(target),
-                    after = model[source];
-
-                if (before !== after) {
-                    newData[target] = model[source];
+            target = !_.isArray(target) ? [target] : target;
+            _.each(target, function(targetName) {
+                source = _.isNumber(source) ? targetName : source;
+                if (!_.isUndefined(model[source]) && app.acl.hasAccessToModel('edit', this.model, targetName)) {
+                    var before = this.model.get(targetName);
+                    var after = model[source];
+                    if (before !== after) {
+                        newData[targetName] = model[source];
+                    }
                 }
-            }
+            }, this);
         }, this);
 
         if (_.isEmpty(newData)) {

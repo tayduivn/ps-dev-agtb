@@ -69,8 +69,8 @@ $dictionary['RevenueLineItem'] = array(
                 // BEGIN SUGARCRM flav=ent ONLY
                 'service_start_date' => 'service_start_date',
                 'service_end_date' => 'service_end_date',
-                'service_duration_value' => 'service_duration_value',
-                'service_duration_unit' => 'service_duration_unit',
+                'service_duration_value' => ['service_duration_value', 'catalog_service_duration_value'],
+                'service_duration_unit' => ['service_duration_unit', 'catalog_service_duration_unit'],
                 'renewable' => 'renewable',
                 'service' => 'service',
                 // END SUGARCRM flav=ent ONLY
@@ -100,59 +100,15 @@ $dictionary['RevenueLineItem'] = array(
             'enforced' => true,
             'calculated' => true,
         ),
-        'catalog_duration_in_days' => [
-            'name' => 'catalog_duration_in_days',
-            'vname' => 'LBL_CATALOG_DURATION_IN_DAYS',
-            'type' => 'decimal',
-            'studio' => false,
-            'len' => '26,6',
-            'enforced' => true,
-            'calculated' => true,
-            'massupdate' => false,
-            'formula' => '
-            ifElse(equal($catalog_duration_in_days, ""),
-                ifElse(equal(related($rli_templates_link, "service_duration_unit"), "year"),
-                    ifElse(isNumeric(related($rli_templates_link, "service_duration_value")), multiply($service_duration_value, 365), ""),
-                    ifElse(equal(related($rli_templates_link, "service_duration_unit"), "month"),
-                        ifElse(isNumeric(related($rli_templates_link, "service_duration_value")), multiply($service_duration_value, divide(365,12)), ""),
-                        ifElse(equal(related($rli_templates_link, "service_duration_unit"), "day"),
-                            ifElse(isNumeric(related($rli_templates_link, "service_duration_value")), $service_duration_value, ""),
-                            ""
-                        )
-                    )
-                ),
-                $catalog_duration_in_days
-            )',
-            'comment' => 'Catalog duration in days',
-        ],
-        'duration_in_days' => [
-            'name' => 'duration_in_days',
-            'vname' => 'LBL_DURATION_IN_DAYS',
-            'type' => 'decimal',
-            'studio' => false,
-            'enforced' => true,
-            'calculated' => true,
-            'massupdate' => false,
-            'source'=>'non-db',
-            'formula' => '
-            ifElse(equal($service_duration_unit, "year"),
-                ifElse(isNumeric($service_duration_value), multiply($service_duration_value, 365), ""),
-                ifElse(equal($service_duration_unit, "month"),
-                    ifElse(isNumeric($service_duration_value), multiply($service_duration_value, divide(365,12)), ""),
-                    ifElse(equal($service_duration_unit, "day"),
-                        ifElse(isNumeric($service_duration_value), $service_duration_value, ""),
-                        ""
-                    )
-                )
-            )',
-            'comment' => 'Duration in days',
-        ],
         'total_amount' => array(
             'name' => 'total_amount',
             'formula' => '
-            divide(
                 multiply(
-                    ifElse(equal($duration_in_days, ""), 1, $duration_in_days),
+                    ifElse(
+                        isNumeric($service_duration_multiplier),
+                        $service_duration_multiplier,
+                        1
+                    ),
                     ifElse(and(isNumeric($quantity), isNumeric($discount_price)),
                         ifElse(equal($quantity, 0),
                             $total_amount,
@@ -175,12 +131,7 @@ $dictionary['RevenueLineItem'] = array(
                             )
                         ), ""
                     )
-                ), 
-                ifElse(equal($catalog_duration_in_days, ""), 
-                    ifElse(equal($duration_in_days, ""), 1, $duration_in_days), 
-                    $catalog_duration_in_days
-                )
-            )',
+                )',
             'calculated' => true,
             'enforced' => true,
             'vname' => 'LBL_CALCULATED_LINE_ITEM_AMOUNT',
@@ -189,7 +140,9 @@ $dictionary['RevenueLineItem'] = array(
             'related_fields' => array(
                 'discount_price',
                 'quantity',
-                'discount_amount'
+                'discount_amount',
+                'discount_select',
+                'service_duration_multiplier',
             )
         ),
         'type_id' => array(
@@ -1102,6 +1055,8 @@ $dictionary['RevenueLineItem'] = array(
                 'type_name' => 'type_name',
                 'renewable' => 'renewable',
                 'service' => 'service',
+                'service_duration_value' => 'catalog_service_duration_value',
+                'service_duration_unit' => 'catalog_service_duration_unit',
             ],
         ],
         'parent_rlis_link' => [

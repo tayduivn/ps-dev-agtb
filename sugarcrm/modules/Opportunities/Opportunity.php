@@ -933,6 +933,8 @@ class Opportunity extends SugarBean
             'service',
             'service_duration_value',
             'service_duration_unit',
+            'catalog_service_duration_value',
+            'catalog_service_duration_unit',
             'assigned_user_id',
             'team_id',
             'team_set_id',

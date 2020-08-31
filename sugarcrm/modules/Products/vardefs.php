@@ -98,8 +98,8 @@ $dictionary['Product'] = array(
                 // BEGIN SUGARCRM flav=ent ONLY
                 'service_start_date' => 'service_start_date',
                 'service_end_date' => 'service_end_date',
-                'service_duration_value' => 'service_duration_value',
-                'service_duration_unit' => 'service_duration_unit',
+                'service_duration_value' => ['service_duration_value', 'catalog_service_duration_value'],
+                'service_duration_unit' => ['service_duration_unit', 'catalog_service_duration_unit'],
                 'renewable' => 'renewable',
                 'service' => 'service',
                 // END SUGARCRM flav=ent ONLY
@@ -137,53 +137,6 @@ $dictionary['Product'] = array(
             'audited' => true,
             'comment' => 'Contact this product is associated with'
         ),
-        'catalog_duration_in_days' => [
-            'name' => 'catalog_duration_in_days',
-            'vname' => 'LBL_CATALOG_DURATION_IN_DAYS',
-            'type' => 'decimal',
-            'studio' => false,
-            'len' => '26,6',
-            'enforced' => true,
-            'calculated' => true,
-            'massupdate' => false,
-            'formula' => '
-            ifElse(equal($catalog_duration_in_days, ""),
-                ifElse(equal(related($product_templates_link, "service_duration_unit"), "year"),
-                    ifElse(isNumeric(related($product_templates_link, "service_duration_value")), multiply($service_duration_value, 365), ""),
-                    ifElse(equal(related($product_templates_link, "service_duration_unit"), "month"),
-                        ifElse(isNumeric(related($product_templates_link, "service_duration_value")), multiply($service_duration_value, divide(365,12)), ""),
-                        ifElse(equal(related($product_templates_link, "service_duration_unit"), "day"),
-                            ifElse(isNumeric(related($product_templates_link, "service_duration_value")), $service_duration_value, ""),
-                            ""
-                        )
-                    )
-                ),
-                $catalog_duration_in_days
-            )',
-            'comment' => 'Catalog duration in days',
-        ],
-        'duration_in_days' => [
-            'name' => 'duration_in_days',
-            'vname' => 'LBL_DURATION_IN_DAYS',
-            'type' => 'decimal',
-            'studio' => false,
-            'enforced' => true,
-            'calculated' => true,
-            'massupdate' => false,
-            'source'=>'non-db',
-            'formula' => '
-            ifElse(equal($service_duration_unit, "year"),
-                ifElse(isNumeric($service_duration_value), multiply($service_duration_value, 365), ""),
-                ifElse(equal($service_duration_unit, "month"),
-                    ifElse(isNumeric($service_duration_value), multiply($service_duration_value, divide(365,12)), ""),
-                    ifElse(equal($service_duration_unit, "day"),
-                        ifElse(isNumeric($service_duration_value), $service_duration_value, ""),
-                        ""
-                    )
-                )
-            )',
-            'comment' => 'Duration in days',
-        ],
         'subtotal' => array(
             'name' => 'subtotal',
             'vname' => 'LBL_SUBTOTAL',
@@ -194,20 +147,19 @@ $dictionary['Product'] = array(
                 'currency_id',
                 'base_rate',
                 'discount_price',
-                'quantity'
+                'quantity',
+                'service_duration_multiplier',
             ),
             'formula' => '
-            divide(
-                multiply(
-                    ifElse(equal($duration_in_days, ""), 1, $duration_in_days),
-                    ifElse(and(isNumeric($quantity), isNumeric($discount_price)),
-                        ifElse(equal($quantity, 0), "0", currencyMultiply($discount_price, $quantity))
-                        , "")
+            multiply(
+                ifElse(
+                    isNumeric($service_duration_multiplier),
+                    $service_duration_multiplier,
+                    1
                 ),
-                ifElse(equal($catalog_duration_in_days, ""), 
-                    ifElse(equal($duration_in_days, ""), 1, $duration_in_days), 
-                    $catalog_duration_in_days
-                )
+                ifElse(and(isNumeric($quantity), isNumeric($discount_price)),
+                    ifElse(equal($quantity, 0), "0", currencyMultiply($discount_price, $quantity))
+                    , "")
             )',
             'calculated' => true,
             'enforced' => true,
@@ -216,29 +168,27 @@ $dictionary['Product'] = array(
             'name' => 'total_amount',
             'default' => '0.00',
             'formula' => '
-                divide(
-                    multiply(
-                        ifElse(equal($duration_in_days, ""), 1, $duration_in_days),
-                        ifElse(and(isNumeric(toString($quantity)), isNumeric(toString($discount_price))),
-                            currencySubtract(
-                                currencyMultiply(
-                                    $discount_price,
-                                    $quantity
-                                ),
-                                ifElse(equal($discount_select, "1"),
-                                    currencyMultiply(currencyMultiply($discount_price, $quantity), currencyDivide($discount_amount, 100)),
-                                    ifElse(greaterThan($quantity, 0), ifElse(isNumeric(toString($discount_amount)), $discount_amount, 0),
-                                    ifElse(isNumeric(toString($discount_amount)), negate($discount_amount), 0))
-                                )
-                            ),
-                            ""
+            multiply(
+                ifElse(
+                    isNumeric($service_duration_multiplier),
+                    $service_duration_multiplier,
+                    1
+                ),
+                ifElse(and(isNumeric(toString($quantity)), isNumeric(toString($discount_price))),
+                    currencySubtract(
+                        currencyMultiply(
+                            $discount_price,
+                            $quantity
+                        ),
+                        ifElse(equal($discount_select, "1"),
+                            currencyMultiply(currencyMultiply($discount_price, $quantity), currencyDivide($discount_amount, 100)),
+                            ifElse(greaterThan($quantity, 0), ifElse(isNumeric(toString($discount_amount)), $discount_amount, 0),
+                            ifElse(isNumeric(toString($discount_amount)), negate($discount_amount), 0))
                         )
                     ),
-                    ifElse(equal($catalog_duration_in_days, ""), 
-                        ifElse(equal($duration_in_days, ""), 1, $duration_in_days), 
-                        $catalog_duration_in_days
-                    )
-                )',
+                    ""
+                )
+            )',
             'calculated' => true,
             'enforced' => true,
             'vname' => 'LBL_CALCULATED_LINE_ITEM_AMOUNT',
@@ -250,7 +200,8 @@ $dictionary['Product'] = array(
                 'quantity',
                 'discount_price',
                 'discount_select',
-                'discount_amount'
+                'discount_amount',
+                'service_duration_multiplier',
             ),
         ),
         'contact_name' => array(
@@ -1006,6 +957,8 @@ $dictionary['Product'] = array(
                 'type_name' => 'type_name',
                 'renewable' => 'renewable',
                 'service' => 'service',
+                'service_duration_value' => 'catalog_service_duration_value',
+                'service_duration_unit' => 'catalog_service_duration_unit',
             ],
         ],
         // END SUGARCRM flav=ent ONLY

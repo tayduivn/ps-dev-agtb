@@ -92,6 +92,8 @@
             attrs.currency_id = userCurrencyId;
             attrs.base_rate = app.metadata.getCurrency(userCurrencyId).conversion_rate;
         }
+        attrs.catalog_service_duration_value = bean.get('service_duration_value');
+        attrs.catalog_service_duration_unit = bean.get('service_duration_unit');
 
         var addOnToData = this.context.parent.get('addOnToData');
         if (addOnToData) {

@@ -1375,22 +1375,10 @@ class RevenueLineItemTest extends TestCase
         $rli->service_start_date = '2020-08-13';
         $rli->service_duration_value = $service_duration_value;
         $rli->service_duration_unit = $service_duration_unit;
-        $rli->duration_in_days = $this->convertToDays($service_duration_value, $service_duration_unit);
-        $rli->catalog_duration_in_days = $this->convertToDays($cat_service_duration_value, $cat_service_duration_unit);
+        $rli->catalog_service_duration_value = $cat_service_duration_value;
+        $rli->catalog_service_duration_unit = $cat_service_duration_unit;
         $rli->save();
         $this->assertEquals($total_amount, round($rli->total_amount, 2));
-    }
-
-    protected function convertToDays($value, $unit)
-    {
-        if ($unit === 'year') {
-            return $value * 365;
-        } elseif ($unit === 'month') {
-            return $value * (365/12);
-        } elseif ($unit === 'day') {
-            return $value;
-        }
-        return "";
     }
 
     public function dataProviderTotalAmountCalculation(): array

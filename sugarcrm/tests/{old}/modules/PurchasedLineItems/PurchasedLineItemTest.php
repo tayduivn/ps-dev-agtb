@@ -409,22 +409,14 @@ class PurchasedLineItemTest extends TestCase
         $pli->discount_amount = $discount_amount;
         $pli->discount_select = $discount_select;
         $pli->quantity = $quantity;
-        $pli->duration_in_days = $this->convertToDays($service_duration_value, $service_duration_unit);
-        $pli->catalog_duration_in_days = $this->convertToDays($cat_service_duration_value, $cat_service_duration_unit);
+        $pli->service = 1;
+        $pli->service_start_date = '2020-08-13';
+        $pli->service_duration_value = $service_duration_value;
+        $pli->service_duration_unit = $service_duration_unit;
+        $pli->catalog_service_duration_value = $cat_service_duration_value;
+        $pli->catalog_service_duration_unit = $cat_service_duration_unit;
         $pli->save();
         $this->assertEquals($total_amount, round($pli->total_amount, 2));
-    }
-
-    protected function convertToDays($value, $unit)
-    {
-        if ($unit === 'year') {
-            return $value * 365;
-        } elseif ($unit === 'month') {
-            return $value * (365/12);
-        } elseif ($unit === 'day') {
-            return $value;
-        }
-        return "";
     }
 
     public function dataProviderTotalAmountCalculation(): array

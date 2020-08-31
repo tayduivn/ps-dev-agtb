@@ -129,6 +129,10 @@
                                     this.model.set('service_duration_value', '1');
                                 }
 
+                                // Always store the service duration values from the product template
+                                this.model.set('catalog_service_duration_value', data.service_duration_value);
+                                this.model.set('catalog_service_duration_unit', data.service_duration_unit);
+
                                 // when adding additional items to the list, causing additional renders,
                                 // this.changed gets set undefined on re-initialize, so we need to make sure
                                 // if this is an unsaved model and this.changed is undefined, that we set changed true
