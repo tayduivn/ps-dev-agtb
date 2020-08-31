@@ -155,6 +155,16 @@ $dependencies['Products']['service_fields_values'] = [
                     "")',
             ],
         ],
+        [
+            'name' => 'SetValue',
+            'params' => [
+                'target' => 'service_end_date',
+                'value' => 'ifElse(
+                    equal($service, "1"),
+                    $service_end_date,
+                    "")',
+            ],
+        ],
     ],
 ];
 
