@@ -102,7 +102,7 @@ return [
                     [
                         'view' => [
                             'type' => 'dashlet-searchable-kb-list',
-                            'name' => 'LBL_DASHLET_KB_SEARCH_NAME',
+                            'label' => 'LBL_DASHLET_KB_SEARCH_NAME',
                             'data_provider' => 'Categories',
                             'config_provider' => 'KBContents',
                             'root_name' => 'category_root',
@@ -329,7 +329,7 @@ return [
                     [
                         'view' => [
                             'type' => 'dashlet-searchable-kb-list',
-                            'name' => 'LBL_DASHLET_KB_SEARCH_NAME',
+                            'label' => 'LBL_DASHLET_KB_SEARCH_NAME',
                             'data_provider' => 'Categories',
                             'config_provider' => 'KBContents',
                             'root_name' => 'category_root',
