@@ -67,6 +67,16 @@ class SugarUpgradeUpdatePackages extends UpgradeScript
             return;
         }
 
+        // Some databases like MSSQL sets NULL to new field and ignores default.
+        // Set Mango default value to deleted field instead of NULL
+        $history = new UpgradeHistory();
+        $qb = $this->db->getConnection()->createQueryBuilder();
+        $qb->update($history->getTableName())
+            ->set('deleted', 0)
+            ->where($qb->expr()->isNull('deleted'));
+        $qb->execute();
+
+
         // Those types use the same way to install.
         // Manage it together
         $packageTypes = [

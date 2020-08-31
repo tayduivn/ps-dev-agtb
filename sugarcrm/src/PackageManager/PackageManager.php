@@ -93,8 +93,8 @@ class PackageManager
         $this->moduleScanner = new ModuleScanner();
         $this->upgradeHistoryFactory = new UpgradeHistoryFactory();
 
-        $this->baseTempDir = UploadStream::getDir() . '/temp';
-        $this->baseUpgradeDir = UploadStream::getDir() . '/upgrades';
+        $this->baseTempDir = UploadStream::getDir() . DIRECTORY_SEPARATOR . 'temp';
+        $this->baseUpgradeDir = UploadStream::getDir() . DIRECTORY_SEPARATOR . 'upgrades';
     }
 
     /**
@@ -418,7 +418,7 @@ class PackageManager
     {
         $result = true;
         $manifestAcceptableFlavors = $manifest->getManifestValue('acceptable_sugar_flavors', []);
-        if (!empty($manifestAcceptableFlavors)) {
+        if (!empty($this->sugarFlavor) && !empty($manifestAcceptableFlavors)) {
             $result = false;
             foreach ($manifestAcceptableFlavors as $flavor) {
                 if (strtolower($this->sugarFlavor) === strtolower($flavor)) {
