@@ -331,7 +331,9 @@ class RevenueLineItem extends SugarBean
      */
     protected function setDurationFields()
     {
-        if (!empty($this->add_on_to_id)) {
+        if (!empty($this->add_on_to_id) &&
+            !empty($this->service_start_date) &&
+            !empty($this->service_end_date)) {
             $startDate = new \SugarDateTime($this->service_start_date);
             // calculates inclusive of the end date
             $endDate = new \SugarDateTime($this->service_end_date);

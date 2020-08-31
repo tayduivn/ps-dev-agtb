@@ -74,7 +74,7 @@ class Purchase extends Basic
     public function save_relationship_changes($is_update, $exclude = [])
     {
         if (!empty($this->account_id) &&
-            !empty($this->rel_fields_before_value['account_id']) &&
+            isset($this->rel_fields_before_value['account_id']) &&
             (trim($this->account_id) != trim($this->rel_fields_before_value['account_id']))
         ) {
             $relationshipsToBeTouched = ['purchasedlineitems'];
