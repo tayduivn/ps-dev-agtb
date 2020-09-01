@@ -34,31 +34,4 @@
 
         return options;
     },
-
-    /**
-     * Set min-width on cascade fields on entering edit mode
-     *
-     * @param model
-     * @param field
-     */
-    editClicked: function(model, field) {
-        this._super('editClicked', [model,field]);
-        $('td[data-type="date-cascade"]').addClass('cascade-width');
-        $('td[data-type="enum-cascade"]').addClass('cascade-width');
-    },
-
-    /**
-     * Remove the min-width on leaving the edit mode
-     *
-     * @param modelId
-     * @param isEdit
-     */
-    toggleRow: function(modelId, isEdit) {
-        if (!isEdit) {
-            $('td[data-type="date-cascade"]').removeClass('cascade-width');
-            $('td[data-type="enum-cascade"]').removeClass('cascade-width');
-            this.resize();
-        }
-        this._super('toggleRow', [modelId,isEdit]);
-    },
 })
