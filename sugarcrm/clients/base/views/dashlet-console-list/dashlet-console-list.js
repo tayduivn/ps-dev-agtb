@@ -173,6 +173,35 @@
     },
 
     /**
+     * Build the cache key for last filter.
+     * @return {string} hash key.
+     */
+    getLastFilterKey: function() {
+        return this.options.meta.last_state + '.' + this.module + '.last_filter_id';
+    },
+
+    /**
+     * Get last filter id if cached.
+     * @return {string|null} last filter id or null
+     */
+    getLastFilterId: function() {
+        if (this.context.parent) {
+            return this.context.parent.get(this.getLastFilterKey());
+        }
+        return null;
+    },
+
+    /**
+     * Cache filter id.
+     * @param {string} filterId
+     */
+    setLastFilterId: function(filterId) {
+        if (this.context.parent) {
+            this.context.parent.set(this.getLastFilterKey(), filterId);
+        }
+    },
+
+    /**
      * select2 change handler to update the list based on selected filter
      *
      * @param {Event} evt
@@ -200,6 +229,7 @@
 
         filterDef = this.buildFilterDefinition(filterDef, this.currentSearch);
         this.currentFilterDef = filterDef;
+        this.setLastFilterId(id);
         this._displayDashlet(filterDef);
     },
 
@@ -760,6 +790,9 @@
     _initializeSettings: function() {
         if (!this.settings.get('limit')) {
             this.settings.set('limit', this._defaultSettings.limit);
+        }
+        if (this.getLastFilterId()) {
+            this.settings.set('filter_id', this.getLastFilterId());
         }
         if (!this.settings.get('filter_id')) {
             this.settings.set('filter_id', this._defaultSettings.filter_id);
