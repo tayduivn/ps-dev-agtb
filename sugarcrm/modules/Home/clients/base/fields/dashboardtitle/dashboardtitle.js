@@ -42,20 +42,24 @@
     _bindEvents: function() {
         var field = this.$(this.fieldTag);
 
+        var blurHandle = _.bind(function(e) {
+            this.view.saveHandle();
+            this.view.toggleField(this);
+        }, this);
+
         var enterHandle = _.bind(function(e) {
             this.model.set('name', field.val(), {silent: true});
-            if (e.keyCode === 13 || e.keyCode === 9) {
-                this.view.saveHandle();
-                this.view.toggleField(this);
+            if (e.keyCode === 13 || e.keyCode === 27) {
+                blurHandle();
             }
         }, this);
 
-        this.unbindKeyDown = _.bind(function() {
-            this.view.saveHandle();
-            field.off('keydown.record', enterHandle);
-        }, this);
+        field
+            .off('keydown.record')
+            .on('keydown.record', enterHandle)
+            .off('blur')
+            .on('blur', blurHandle);
 
-        field.on('keydown.record', enterHandle);
     },
 
     /**
