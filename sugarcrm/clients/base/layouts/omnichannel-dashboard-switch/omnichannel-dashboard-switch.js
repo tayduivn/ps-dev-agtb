@@ -113,6 +113,7 @@
         };
         var dashboard = this._components[index];
         var tabbedDashboard = dashboard._getTabbedDashboard();
+        this._markClearButtonAsVisible(tabbedDashboard);
         var $button = tabbedDashboard.$el.find('a[name=clear]');
         if ($button) {
             $button.removeClass('hidden');
@@ -125,6 +126,23 @@
                 _remove();
             });
         }
+    },
+
+    /**
+     * Marks the clear button from the metadata as visible. This way when the header is re-rendered
+     * the buttons will stay visible. This mark will be reset OOTB once the dashboard is closed.
+     *
+     * @param {Object} tabbedDashboard It is the tabbed dashboard component.
+     */
+    _markClearButtonAsVisible: function(tabbedDashboard) {
+        // We have only 1 button which is the clear button.
+        var metaData = tabbedDashboard.model.get('metadata');
+        var buttonMeta = metaData.buttons[0];
+        // Remove the default 'hidden' class.
+        buttonMeta.css_class = buttonMeta.css_class.replace(' hidden', '');
+        // Set it on the dashboards's meta so on render it would be displayed.
+        metaData.buttons[0] = buttonMeta;
+        tabbedDashboard.model.set('metadata', metaData);
     },
 
     /**
