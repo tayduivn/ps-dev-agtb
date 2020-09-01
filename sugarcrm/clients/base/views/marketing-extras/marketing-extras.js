@@ -45,4 +45,13 @@
             }, this),
         });
     },
+
+    _render: function() {
+        this._super('_render');
+        try {
+            this.$el.find('iframe').attr('src', this.marketingContentUrl);
+        } catch (e) {
+            app.logger.warn(e);
+        }
+    }
 })
