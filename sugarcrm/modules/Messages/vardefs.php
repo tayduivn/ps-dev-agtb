@@ -112,6 +112,7 @@ $dictionary['Message'] = [
             'isnull' => 'true',
             'module' => 'Contacts',
             'source' => 'non-db',
+            'massupdate' => false,
         ],
         'contact' => [
             'name' => 'contact',
@@ -119,6 +120,7 @@ $dictionary['Message'] = [
             'relationship' => 'contact_messages',
             'vname' => 'LBL_LIST_CONTACT_NAME',
             'source' => 'non-db',
+            'massupdate' => false,
         ],
         'cases' => [
             'name' => 'cases',
@@ -266,6 +268,7 @@ $dictionary['Message'] = [
             'len' => 50,
             'duplicate_on_record_copy' => 'always',
             'merge_filter' => 'enabled',
+            'massupdate' => false,
         ],
         'conversation_link' => [
             'name' => 'conversation_link',
