@@ -69,8 +69,8 @@
     "include/javascript/gridstack/gridstack-poly.js",
     "include/javascript/gridstack/gridstack.js",
     "include/javascript/gridstack/gridstack.JQueryUI.js",
-    "/include/javascript/amazon-connect/amazon-connect-1.4.9-1-gf9242a0.js",
-    "/include/javascript/amazon-connect/amazon-connect-chat.js",
+    "include/javascript/amazon-connect/amazon-connect-1.4.9-1-gf9242a0.js",
+    "include/javascript/amazon-connect/amazon-connect-chat.js",
 
     // jasmine and sinon core files
     "node_modules/sinon/pkg/sinon.js",

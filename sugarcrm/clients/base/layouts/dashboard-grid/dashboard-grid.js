@@ -337,17 +337,6 @@
     },
 
     /**
-     * @inheritdoc
-     * @private
-     */
-    _dispose: function() {
-        if (this.context) {
-            this.context.off('button:add_dashlet_button:click');
-        }
-        this.grid.off('change');
-    },
-
-    /**
      * Create a dashboard-grid container layout from the dashlet metadata passed
      * in
      *
@@ -535,4 +524,16 @@
         this.defaultGridOptions.disableDrag = editable;
         this.defaultGridOptions.disableResize = editable;
     },
+
+    /**
+     * @inheritdoc
+     * @private
+     */
+    _dispose: function() {
+        if (this.context) {
+            this.context.off('button:add_dashlet_button:click');
+        }
+        this.grid.off('change');
+        this._super('_dispose');
+    }
 })

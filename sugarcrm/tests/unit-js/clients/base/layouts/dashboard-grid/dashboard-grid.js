@@ -127,11 +127,11 @@ describe('View.Layouts.Base.DashboardGridLayout', function() {
     describe('handleSave', function() {
         using('different acl access values', [[true], [false]], function(hasAccess) {
             beforeEach(function() {
-                layout.model = {
+                _.extend(layout.model, {
                     set: sinon.stub(),
                     save: sinon.stub(),
                     unset: sinon.stub()
-                };
+                });
                 layout.dashlets = [{
                     id: '1'
                 }];
@@ -159,18 +159,22 @@ describe('View.Layouts.Base.DashboardGridLayout', function() {
         var addDashletStub;
         var removeClassStub;
         var findStub;
-        var expected;
+        var wrapperLayoutStub;
+        var wrapperLayout;
         beforeEach(function() {
             addDashletStub = sinon.stub();
             removeClassStub = sinon.stub();
             findStub = sinon.stub().returns({removeClass: removeClassStub});
-            expected = {
-                addDashlet: addDashletStub,
-                $el: {
-                    find: findStub
-                }
-            };
-            app.view.createLayout = sinon.stub().returns(expected);
+            wrapperLayout = app.view.createLayout({
+                name: 'dashlet-grid-wrapper',
+                layout: layout,
+            });
+            wrapperLayout.addDashlet = addDashletStub;
+            wrapperLayout.$el.find = findStub;
+
+            wrapperLayoutStub = sinon.collection.stub(app.view, 'createLayout', function() {
+                return wrapperLayout;
+            });
         });
         afterEach(function() {
             sinon.restore();
@@ -178,11 +182,17 @@ describe('View.Layouts.Base.DashboardGridLayout', function() {
         it('should create a new dashlet-grid-wrapper layout', function() {
             var dashletDef = {test: 'test metadata'};
             var actual = layout._initializeDashlet(dashletDef);
-            expect(actual).toEqual(expected);
-            expect(layout._components).toEqual([expected]);
+            expect(actual).toEqual(wrapperLayout);
+            expect(layout._components).toEqual([wrapperLayout]);
             expect(addDashletStub).toHaveBeenCalled(dashletDef);
             expect(findStub).toHaveBeenCalledWith('.dashlet');
             expect(removeClassStub).toHaveBeenCalledWith('ui-draggable');
+            expect(wrapperLayoutStub).toHaveBeenCalledWith({
+                name: 'dashlet-grid-wrapper',
+                layout: layout,
+                meta: {name: _.size(layout._components) - 1},
+                context: layout.context
+            });
         });
     });
 
@@ -338,9 +348,7 @@ describe('View.Layouts.Base.DashboardGridLayout', function() {
         ], function(values) {
             beforeEach(function() {
                 layout._convertLegacyComponents = sinon.stub().returns(values.expected);
-                layout.model = {
-                    get: sinon.stub().returns(values.metadata)
-                };
+                layout.model.get = sinon.stub().returns(values.metadata);
                 layout.tabIndex = 0;
             });
             afterEach(function() {
@@ -371,9 +379,7 @@ describe('View.Layouts.Base.DashboardGridLayout', function() {
             }
         ], function(values) {
             it('should set the appropriate metadata based on tabbed dashboards', function() {
-                layout.model = {
-                    get: sinon.stub().returns(values.metadata)
-                };
+                layout.model.get = sinon.stub().returns(values.metadata);
                 layout.tabIndex = 0;
                 layout.dashlets = values.dashlets;
                 var actual = layout._updateModelMeta();
