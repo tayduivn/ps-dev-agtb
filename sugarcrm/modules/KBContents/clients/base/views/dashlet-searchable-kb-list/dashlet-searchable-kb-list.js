@@ -17,7 +17,8 @@
     extendsFrom: 'KBContentsDashletNestedsetListView',
 
     events: {
-        'keyup [data-action="search"]': 'searchKBs'
+        'keyup [data-action="search"]': 'searchKBs',
+        'click .fa-times': 'clearQuickSearch'
     },
 
     /**
@@ -36,6 +37,36 @@
         this._super('initialize', [options]);
         this.searchDropdown = null;
         this.context.on('page:clicked', this._search, this);
+    },
+
+    /**
+     * Handler for clearing the quick search bar
+     *
+     * @param {Event} event A click event on the close button of search bar
+     */
+    clearQuickSearch: function(event) {
+        // clear the input
+        this.$('input[data-action=search]').val('');
+
+        // clear the drop down
+        if (this.searchDropdown) {
+            this.searchDropdown.hide();
+        }
+
+        // remove the icon
+        this.toggleClearQuickSearchIcon(false);
+    },
+
+    /**
+     * Append or remove an icon to the quicksearch input so the user can clear the search easily
+     * @param {boolean} addIt TRUE if you want to add it, FALSE to remove
+     */
+    toggleClearQuickSearchIcon: function(addIt) {
+        if (addIt && !this.$('.fa-times')[0]) {
+            this.$('.search-container').append('<i class="fa fa-times"></i>');
+        } else if (!addIt) {
+            this.$('.fa-times').remove();
+        }
     },
 
     /**
@@ -62,6 +93,7 @@
             if (this.searchDropdown) {
                 this.searchDropdown.hide();
             }
+            this.toggleClearQuickSearchIcon(false);
             return;
         }
 
@@ -82,6 +114,7 @@
         this.context.trigger('data:fetching');
         this.searchDropdown.show();
         this._search();
+        this.toggleClearQuickSearchIcon(true);
     }, 400),
 
     /**

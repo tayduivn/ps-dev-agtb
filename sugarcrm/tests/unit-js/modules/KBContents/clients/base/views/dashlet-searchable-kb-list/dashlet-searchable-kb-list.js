@@ -174,5 +174,13 @@ describe('modules.KBContents.clients.base.view.KBSearchDashlet', function() {
             expect(shortened).toEqual('This str ...');
         });
     });
+
+    describe('clearQuickSearch', function() {
+        it('should call toggleClearQuickSearchIcon with false', function() {
+            var stub = sinon.collection.stub(view, 'toggleClearQuickSearchIcon');
+            view.clearQuickSearch();
+            expect(stub).toHaveBeenCalledWith(false);
+        });
+    });
 });
 
