@@ -734,7 +734,7 @@
             // We are editing/creating a new filter
             if (!context.editingFilter.get('name')) {
                 context.editingFilter.set('name', app.lang.get('LBL_DASHLET') +
-                    ': ' + this.settings.get('label'));
+                    ': ' + app.lang.get(this.settings.get('label'), this.settings.get('module')));
             }
             // Triggers the save on `filter-rows` which then triggers
             // `filter:add` which then calls `updateDashletFilterAndSave`
