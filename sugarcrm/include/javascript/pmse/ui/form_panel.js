@@ -361,6 +361,9 @@ FormPanel.prototype.createHTML = function () {
         jQuery(this._htmlClose).on('click', function() {
             if (self._expressionControl instanceof ExpressionControl) {
                 self._expressionControl._closeParentPanels();
+            } else if (self._parent instanceof MultipleCollapsiblePanel &&
+                self._parent._parent && typeof self._parent._parent.close === 'function') {
+                self._parent._parent.close()
             }
         });
 
