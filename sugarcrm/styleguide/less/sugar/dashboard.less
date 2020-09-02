@@ -240,6 +240,8 @@
 //FIXME: UIUX-2174 will refactor this part.
 .sidebar-content {
   .dashboard {
+    padding-top: 0;
+
     .headerpane {
       width: calc(~"34.042553198% + 1px");
       border-left: @borderWidget;
@@ -256,9 +258,7 @@
       .record-cell:first-child {
         display: table-cell;
         position: relative;
-        padding-left: 10px;
-        padding-top: 14px;
-        padding-right: 0;
+        padding: 13px 0 0 18px;
         max-width: none;
       }
 
@@ -425,21 +425,6 @@
       > .record-cell {
         /* override */
         padding-top: 10px;
-      }
-    }
-  }
-}
-
-/* Dashboard inside right hand side panel */
-.sidebar-content {
-  .dashboard {
-    /* override */
-    padding-top: 0;
-
-    .headerpane {
-      .record-cell:first-child {
-        /* override */
-        padding-top: 11px;
       }
     }
   }
