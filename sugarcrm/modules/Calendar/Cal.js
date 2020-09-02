@@ -2059,10 +2059,9 @@ CAL.updateDateTimeMeridiem = function(dateTime) {
     var pm = isMeridiemLowerCase ? 'pm' : 'PM';
 
     var localeData = app.date.localeData();
-    var langMeridiem = {
-        [am]: localeData.meridiem(1, 0, isMeridiemLowerCase),
-        [pm]: localeData.meridiem(13, 0, isMeridiemLowerCase),
-    };
+    var langMeridiem = {};
+    langMeridiem[am] = localeData.meridiem(1, 0, isMeridiemLowerCase);
+    langMeridiem[pm] = localeData.meridiem(13, 0, isMeridiemLowerCase);
 
     var meridiem = dateTime.indexOf(am) !== -1 ? am :
         dateTime.indexOf(pm) !== -1 ? pm :
