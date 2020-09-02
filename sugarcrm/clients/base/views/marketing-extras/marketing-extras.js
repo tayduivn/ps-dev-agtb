@@ -20,6 +20,11 @@
     marketingContentUrl: '',
 
     /**
+     * Have we forced a static fetch?
+     */
+    staticFetched: false,
+
+    /**
      * @inheritdoc
      */
     initialize: function(options) {
@@ -34,10 +39,19 @@
 
     /**
      * Fetch the marketing content URL
+     *
+     * @param {boolean} forceStatic - flag to force retrieving static content URL
      */
-    fetchMarketingContentUrl: function() {
+    fetchMarketingContentUrl: function(forceStatic) {
+        forceStatic = forceStatic || false;
+        if (forceStatic) {
+            this.staticFetched = true;
+        }
         var language = app.user.getLanguage();
-        var url = app.api.buildURL('login/marketingContentUrl', null, null, {selected_language: language});
+        var url = app.api.buildURL('login/marketingContentUrl', null, null, {
+            selected_language: language,
+            static: forceStatic
+        });
         app.api.call('read', url, null, {
             success: _.bind(function(response) {
                 this.marketingContentUrl = response;
@@ -52,6 +66,9 @@
             this.$el.find('iframe').attr('src', this.marketingContentUrl);
         } catch (e) {
             app.logger.warn(e);
+            if (!this.staticFetched) {
+                this.fetchMarketingContentUrl(true);
+            }
         }
     }
 })

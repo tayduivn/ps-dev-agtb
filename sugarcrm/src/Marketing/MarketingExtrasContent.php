@@ -99,12 +99,17 @@ class MarketingExtrasContent
      * reachable
      *
      * @param string $lang
+     * @param bool $static
      * @return string The marketing content URL
      */
-    public function getMarketingExtrasContentUrl($lang = ''): string
+    public function getMarketingExtrasContentUrl($lang = '', $static = false): string
     {
         $baseUrl = $this->getConfigValue('url');
         $staticUrl = $this->getConfigValue('static_url');
+
+        if (isTruthy($static)) {
+            return $staticUrl;
+        }
 
         if (!empty($baseUrl)) {
             $queryParams = $this->getQueryParams($lang);

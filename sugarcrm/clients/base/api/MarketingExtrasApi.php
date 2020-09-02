@@ -78,7 +78,8 @@ class MarketingExtrasApi extends SugarApi
     public function getMarketingContentUrl(ServiceBase $api, array $args): string
     {
         $options = $this->parseArgs($args);
-        return $this->getMarketingExtrasContentService()->getMarketingExtrasContentUrl($options['language']);
+        $static = isset($args['static']) ? $args['static'] : false;
+        return $this->getMarketingExtrasContentService()->getMarketingExtrasContentUrl($options['language'], $static);
     }
 
     /**
