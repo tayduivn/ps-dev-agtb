@@ -32,7 +32,7 @@ class HttpSource implements SourceInterface
     /**
      * Default fallback version
      */
-    const DEFAULT_FALLBACK_VERSION = '10.1.0';
+    const DEFAULT_FALLBACK_VERSION = '10.2.0';
 
     /**
      * Http client
