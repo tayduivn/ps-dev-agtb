@@ -522,8 +522,10 @@
      */
     _setDefaultGridOptions: function() {
         var editable = !app.acl.hasAccessToModel('edit', this.model);
+        var rtl = app.lang.direction === 'rtl';
         this.defaultGridOptions.disableDrag = editable;
         this.defaultGridOptions.disableResize = editable;
+        this.defaultGridOptions.rtl = rtl;
     },
 
     /**
