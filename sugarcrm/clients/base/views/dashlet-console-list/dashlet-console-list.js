@@ -121,8 +121,8 @@
 
         // filter quick search events
         'click .add-on.fa-times': 'clearQuickSearch',
-        'keyup .search-name': 'throttledSearch',
-        'paste .search-name': 'throttledSearch',
+        'keyup .search-name': 'search',
+        'paste .search-name': 'search',
 
         // filter dropdown events
         'click .choice-filter-close': 'handleClearFilter',
@@ -375,11 +375,21 @@
     }, 400),
 
     /**
+     * Wrapper to throttle search
+     * @param {Event} event A keyup event.
+     */
+    search: function(event) {
+        this.currentSearch = this.$('input.search-name').val();
+        this.throttledSearch(event);
+    },
+
+    /**
      * Handler for clearing the quick search bar
      *
      * @param {Event} event A click event on the close button of search bar
      */
     clearQuickSearch: function(event) {
+        this.currentSearch = '';
         this.$('input.search-name').val('');
         this.applyQuickSearch(true, event.type);
     },
@@ -393,14 +403,19 @@
      */
     applyQuickSearch: function(force, evtType) {
         force = !_.isUndefined(force) ? force : false;
-        var searchElem = this.$('input.search-name');
-        var newSearch = searchElem.val();
+        if (!force) {
+            var searchElem = this.$('input.search-name');
+            var newSearch = searchElem.val();
 
-        if (force || this.currentSearch !== newSearch) {
-            this.currentSearch = newSearch;
+            if (this.currentSearch !== newSearch) {
+                this.currentSearch = newSearch;
+                force = true;
+            }
+        }
 
+        if (force) {
             // an empty filterDef is the same as all_records filters, so we use that as our fallback
-            var filterDef = this.buildFilterDefinition(this.currentFilterDef || [], newSearch);
+            var filterDef = this.buildFilterDefinition(this.currentFilterDef || [], this.currentSearch);
 
             this._displayDashlet(filterDef);
 
@@ -409,7 +424,9 @@
                 this.toggleClearQuickSearchIcon(!_.isEmpty(this.currentSearch));
 
                 var searchElem = this.$('input.search-name');
-                searchElem.val(this.currentSearch);
+                if (!searchElem.val().length) {
+                    searchElem.val(this.currentSearch);
+                }
 
                 // keep focus on input field for all keyup events only
                 // not for click events on the clear button
@@ -1026,6 +1043,7 @@
      * @inheritdoc
      */
     _render: function() {
+        this.currentSearch = this.$('input.search-name').val();
         if (!this.meta || !this.meta.config) {
             return this._super('_render');
         }
