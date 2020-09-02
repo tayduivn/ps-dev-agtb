@@ -159,4 +159,61 @@ describe("Base.View.Massupdate", function() {
             expect(routerStub).toHaveBeenCalled();
         });
     });
+    describe('Service Start Date exceeds service End Date', function() {
+        var sinonSandbox;
+        var rliModule = 'RevenueLineItems';
+        beforeEach(function() {
+            app = SugarTest.app;
+            sinonSandbox = sinon.sandbox.create();
+            layout = SugarTest.createLayout('base', rliModule, 'list', {});
+            view = SugarTest.createView('base', rliModule, 'massupdate', {}, null, true, layout);
+            view.model = app.data.createBean(rliModule, {service_start_date: '2020-09-03'}, []);
+        });
+
+        afterEach(function() {
+            sinonSandbox.restore();
+        });
+
+        using('mass update data setup', [
+            [
+                {
+                    id: 1,
+                    service_start_date: '2020-09-03',
+                    service_end_date: '2020-09-02',
+                    add_on_to_id: '1',
+                },
+                [{name: 'name'}, {name: 'service_start_date'}],
+                false
+            ],
+            [
+                {
+                    id: 1,
+                    service_start_date: '2020-09-03',
+                    service_end_date: '2020-09-03',
+                    add_on_to_id: '1',
+                },
+                [{name: 'name'}, {name: 'service_start_date'}],
+                true
+            ],
+            [
+                {
+                    id: 1,
+                    service_start_date: '2020-09-03',
+                    service_end_date: '2020-09-02',
+                    add_on_to_id: '1',
+                },
+                [{name: 'name'}, {name: 'status'}],
+                true
+            ],
+        ], function(recordData, fieldsToValidate, expectedResult) {
+            it('should stop mass-update if selected service start date exceeds record service end date', function() {
+                var rliModels = {models: [app.data.createBean(rliModule, recordData)]};
+
+                sinonSandbox.stub(view, 'getMassUpdateModel').returns(rliModels);
+                sinonSandbox.stub(view, '_getFieldsToValidate').returns(fieldsToValidate);
+
+                expect(view.isEndDateEditableByStartDate()).toBe(expectedResult);
+            });
+        });
+    });
 });
