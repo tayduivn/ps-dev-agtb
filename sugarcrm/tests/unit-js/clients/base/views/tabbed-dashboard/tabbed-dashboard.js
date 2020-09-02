@@ -55,6 +55,7 @@ describe('Base.View.TabbedDashboardView', function() {
             sinon.collection.stub(view, '$').withArgs('tab 1').returns({
                 data: sinon.collection.stub().withArgs('index').returns(1)
             });
+            sinon.collection.stub(view, 'canSwitchTab').returns(true);
         });
 
         it('should trigger tabbed-dashboard:switch-tab on the context if the active tab changed', function() {
@@ -196,6 +197,30 @@ describe('Base.View.TabbedDashboardView', function() {
         it('should enable tab', function() {
             view._setMode('view');
             expect($tab.removeClass).toHaveBeenCalledWith('disabled');
+        });
+    });
+
+    describe('canSwitchTab', function() {
+        it('should return true with no components', function() {
+            sinon.collection.stub(view, '_getSideDrawer').returns(null);
+            sinon.collection.stub(view, '_getOmnichannelDashboard').returns(null);
+
+            var actual = view.canSwitchTab(0);
+
+            expect(actual).toEqual(true);
+        });
+
+        it('should return false with a blocking component', function() {
+            sinon.collection.stub(view, '_getSideDrawer').returns(null);
+            sinon.collection.stub(view, '_getOmnichannelDashboard').returns({
+                triggerBefore: function() {
+                    return false;
+                }
+            });
+
+            var actual = view.canSwitchTab(0);
+
+            expect(actual).toEqual(false);
         });
     });
 });

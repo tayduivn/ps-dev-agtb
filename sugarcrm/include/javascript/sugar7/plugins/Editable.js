@@ -58,7 +58,7 @@
                     var omniDashboard = this.closestComponent('omnichannel-dashboard');
                     if (omniDashboard) {
                         omniDashboard.before(
-                            'omni-dashboard:close',
+                            'omni-dashboard:close omni-dashboard:content-changed',
                             this.beforeContainerChange,
                             this
                         );
@@ -110,6 +110,8 @@
                     return true;
                 }
                 var onConfirm = _.bind(function() {
+                    app.events.trigger('editable:beforehandlers:off');
+
                     if (param.callback && _.isFunction(param.callback)) {
                         param.callback.call(this);
                     }
@@ -525,7 +527,7 @@
                 var omniDashboard = this.closestComponent('omnichannel-dashboard');
                 if (omniDashboard) {
                     omniDashboard.offBefore(
-                        'omni-dashboard:close',
+                        'omni-dashboard:close omni-dashboard:content-changed',
                         this.beforeContainerChange,
                         this
                     );

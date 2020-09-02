@@ -47,6 +47,10 @@
             module: 'Dashboards',
             readonly: true
         });
+
+        this.before('tabbed-dashboard:switch-tab', function(params) {
+            return this.triggerBefore('omni-dashboard:content-changed', {callback: params.callback});
+        }, this);
     },
 
     /**

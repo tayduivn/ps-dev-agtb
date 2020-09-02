@@ -116,7 +116,14 @@
         var $button = tabbedDashboard.$el.find('a[name=clear]');
         if ($button) {
             $button.removeClass('hidden');
-            tabbedDashboard.context.on('button:clear_button:click', _remove);
+            tabbedDashboard.context.on('button:clear_button:click', function() {
+                // check if there are any unsaved changes before removing
+                if (!dashboard.triggerBefore('omni-dashboard:close', {callback: _remove})) {
+                    return;
+                }
+
+                _remove();
+            });
         }
     },
 

@@ -97,11 +97,41 @@
             return;
         }
         // can't edit a non-dashboard tab or open a disabled tab
-        if ((this.model.mode === 'edit' && !this._isDashboardTab(index)) || !this.isTabEnabled(index)) {
+        if (!this.canSwitchTab(index) ||
+            (this.model.mode === 'edit' && !this._isDashboardTab(index)) ||
+            !this.isTabEnabled(index)) {
             event.stopPropagation();
             return;
         }
         this.context.trigger('tabbed-dashboard:switch-tab', index);
+    },
+
+    /**
+     * Determine if anything is blocking a graceful tab switch
+     *
+     * @return boolean true if nothing blocking, false otherwise
+     */
+    canSwitchTab: function(index) {
+        var components = [];
+
+        var sideDrawer = this._getSideDrawer();
+        if (sideDrawer && sideDrawer.isOpen()) {
+            components.push(sideDrawer);
+        }
+
+        var omniDashboard = this._getOmnichannelDashboard();
+        if (omniDashboard) {
+            components.push(omniDashboard);
+        }
+
+        var blocked = _.find(components, function(component) {
+            var switchTab = _.bind(this.switchTab, this, index);
+
+            // return the first component that blocks tab switching
+            return component.triggerBefore('tabbed-dashboard:switch-tab', {callback: switchTab}) === false;
+        }, this);
+
+        return _.isUndefined(blocked);
     },
 
     /**
@@ -230,6 +260,29 @@
     _setTabs: function(options) {
         this._initTabs(options);
         this.render();
+    },
+
+    /**
+     * Get the side drawer
+     *
+     * @return {Object} The side drawer
+     * @private
+     */
+    _getSideDrawer: function() {
+        var dashboard = this.closestComponent('dashboard');
+        var dmComponent = dashboard.getComponent('dashlet-main');
+
+        return dmComponent.getComponent('side-drawer');
+    },
+
+    /**
+     * Get the omnichannel dashboard
+     *
+     * @return {Object} The omnichannel dashboard
+     * @private
+     */
+    _getOmnichannelDashboard: function() {
+        return this.closestComponent('omnichannel-dashboard');
     },
 
     /**

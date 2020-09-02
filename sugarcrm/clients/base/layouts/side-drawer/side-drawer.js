@@ -94,6 +94,21 @@
                 }
             }
         });
+
+        this.before('tabbed-dashboard:switch-tab', function(params) {
+            var callback = _.bind(function() {
+                this._close();
+                if (params.callback && _.isFunction(params.callback)) {
+                    params.callback.call(this);
+                }
+            }, this);
+
+            if (this.hasUnsavedChanges(callback)) {
+                return false;
+            }
+            this._close();
+            return true;
+        }, this);
     },
 
     /**
@@ -177,11 +192,21 @@
     },
 
     /**
+     * Determines if there are any unsaved changes
+     *
+     * @param callback the callback
+     * @return boolean true if has unsaved changes, false otherwise
+     */
+    hasUnsavedChanges: function(callback) {
+        return !this.triggerBefore('side-drawer:close', {callback: callback});
+    },
+
+    /**
      * Check if it's okay to close the drawer before doing so.
      */
     close: function() {
         var _close = _.bind(this._close, this);
-        if (!this.triggerBefore('side-drawer:close', {callback: _close})) {
+        if (this.hasUnsavedChanges(_close)) {
             return;
         }
         _close();
