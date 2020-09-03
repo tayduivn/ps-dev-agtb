@@ -105,6 +105,7 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
             'reportable' => false,
             'workflow' => false
         ),
+
     );
 
     /**
@@ -142,6 +143,7 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
                 'probability' => true,
                 'renewal' => false,
                 'renewal_parent_name' => false,
+                'service_duration' => false,
             )
         );
 
@@ -154,6 +156,7 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
                 'probability' => true,
                 'renewal' => false,
                 'renewal_parent_name' => false,
+                'service_duration' => false,
             )
         );
 
@@ -163,6 +166,7 @@ class OpportunityWithOutRevenueLineItem extends OpportunitySetup
                 'sales_status' => false,
                 'service_start_date' => false,
                 'probability' => true,
+                'service_duration' => false,
             )
         );
     }

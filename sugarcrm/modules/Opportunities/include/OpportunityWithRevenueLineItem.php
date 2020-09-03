@@ -141,6 +141,7 @@ class OpportunityWithRevenueLineItem extends OpportunitySetup
                 'probability' => false,
                 'renewal' => true,
                 'renewal_parent_name' => true,
+                'service_duration' => true,
             )
         );
 
@@ -151,6 +152,7 @@ class OpportunityWithRevenueLineItem extends OpportunitySetup
                 'sales_status' => true,
                 'probability' => false,
                 'commit_stage' => false,
+                'service_duration' => true,
             )
         );
 
@@ -160,6 +162,7 @@ class OpportunityWithRevenueLineItem extends OpportunitySetup
                 'sales_status' => true,
                 'service_start_date' => true,
                 'probability' => false,
+                'service_duration' => true,
             )
         );
     }
