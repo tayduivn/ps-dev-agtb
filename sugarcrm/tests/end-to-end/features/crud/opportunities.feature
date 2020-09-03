@@ -424,21 +424,21 @@ Feature: Opportunities
       | Opp_1 | Acc_1        |
     # Provide input for the first (default) RLI
     When I provide input for #OpportunityDrawer.RLITable view for 1 row
-      | *name | date_closed | product_template_name | currency_id |
-      | RLI1  | 12/12/2020  | Prod_1                | € (EUR)     |
+      | date_closed | product_template_name | currency_id | *name |
+      | 12/12/2020  | Prod_1                | € (EUR)     | RLI1  |
 
     # Add second RLI by clicking '+' button on the first row
     When I choose addRLI on #OpportunityDrawer.RLITable view for 1 row
     # Provide input for the second RLI
     When I provide input for #OpportunityDrawer.RLITable view for 2 row
-      | *name | date_closed | product_template_name | currency_id |
-      | RLI2  | 12/12/2021  | Prod_2                | € (EUR)     |
+      | date_closed | product_template_name | currency_id | *name |
+      | 12/12/2021  | Prod_2                | € (EUR)     | RLI2  |
     # Add third RLI by clicking '+' button on the second row
     When I choose addRLI on #OpportunityDrawer.RLITable view for 2 row
     # Provide input for the third RLI
     When I provide input for #OpportunityDrawer.RLITable view for 3 row
-      | *name | date_closed | product_template_name | currency_id |
-      | RLI3  | 12/12/2022  | Prod_3                | € (EUR)     |
+      | date_closed | product_template_name | currency_id | *name |
+      | 12/12/2022  | Prod_3                | € (EUR)     | RLI3  |
 
     # Save new opportunity
     When I click Save button on #OpportunitiesDrawer header

@@ -469,8 +469,8 @@ Feature: Product Catalog Quick Picks Dashlet
     # Add another RLI (not through Product Catalog) and select product from the Product drop-down
     When I choose addRLI on #OpportunityDrawer.RLITable view for 2 row
     When I provide input for #OpportunityDrawer.RLITable view for 3 row
-      | *name | date_closed | product_template_name |
-      | RLI_3 | 12/14/2020  | Prod_3                |
+      | date_closed | product_template_name | *name |
+      | 12/14/2020  | Prod_3                | RLI_3 |
 
     # Verify opportunity roll-up numbers are updated based on added RLI
     Then I verify fields on #OpportunityDrawer.RecordView

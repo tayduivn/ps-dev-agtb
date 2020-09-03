@@ -130,8 +130,8 @@ Feature: Renewal Opp > Auto-generate Renewal Opportunity when original renewable
 
     # Provide input for the RLI
     When I provide input for #OpportunityDrawer.RLITable view for 1 row
-      | *name | date_closed | product_template_name |
-      | RLI1  | 12/12/2020  | Alex1                 |
+      | date_closed | product_template_name | *name |
+      | 12/12/2020  | Alex1                 | RLI1  |
 
     # Save new opportunity
     When I click Save button on #OpportunitiesDrawer header
@@ -171,8 +171,8 @@ Feature: Renewal Opp > Auto-generate Renewal Opportunity when original renewable
 
     # Provide input for the RLI
     When I provide input for #OpportunityDrawer.RLITable view for 1 row
-      | *name | date_closed | product_template_name |
-      | RLI2  | 12/12/2020  | Alex1                 |
+      | date_closed | product_template_name | *name |
+      | 12/12/2020  | Alex1                 | RLI2  |
 
     # Save 2nd opportunity
     When I click Save button on #OpportunitiesDrawer header
