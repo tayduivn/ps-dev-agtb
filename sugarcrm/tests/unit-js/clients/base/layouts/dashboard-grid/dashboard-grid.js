@@ -407,4 +407,16 @@ describe('View.Layouts.Base.DashboardGridLayout', function() {
             });
         });
     });
+
+    describe('_setDefaultElementOptions', function() {
+        using('whether we are in a side-drawer or not',
+            [{sideDrawer: true, expectedWidth: 6}, {sideDrawer: undefined, expectedWidth: 2}],
+            function(values) {
+            it('should set the minWidth appropriately', function() {
+                sinon.collection.stub(layout, 'closestComponent').returns(values.sideDrawer);
+                layout._setDefaultElementOptions();
+                expect(layout.defaultElementOptions.minWidth).toEqual(values.expectedWidth);
+            });
+        });
+    });
 });

@@ -86,6 +86,7 @@
     initialize: function(options) {
         this._super('initialize', [options]);
         this._setDefaultGridOptions();
+        this._setDefaultElementOptions();
         this.tabIndex = this._getTabIndex(options);
         this._setInitialDashlets();
 
@@ -535,5 +536,19 @@
         }
         this.grid.off('change');
         this._super('_dispose');
-    }
+    },
+
+    /**
+     * Set default values based on whether or not the dashboard is in a side drawer
+     * @private
+     */
+    _setDefaultElementOptions: function() {
+        if (!_.isUndefined(this.closestComponent('dashboard-pane'))) {
+            this.defaultElementOptions.minWidth = 6;
+        } else {
+            // When navigating from list/record views to home, the previous view's
+            // value is still set when `initialize` is called
+            this.defaultElementOptions.minWidth = 2;
+        }
+    },
 })
