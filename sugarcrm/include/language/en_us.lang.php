@@ -2800,10 +2800,10 @@ $app_strings = array (
     'LBL_TO' => 'To',
     'LBL_CC' => 'CC',
     'LBL_BCC' => 'BCC',
-    
+
     'LBL_START_DATE' => 'Start Date',
     'LBL_END_DATE' => 'End Date',
-    
+
     'LBL_LINK_NONE'=> 'None',
     'LBL_LINK_ALL'=> 'All',
     'LBL_LINK_RECORDS'=> 'Records',
@@ -5754,6 +5754,9 @@ To create a new record using the values you have entered, click "Ignore Duplicat
     'TPL_DATAPRIVACY_PII_TITLE' => 'Personal Info for {{{name}}}',
 
     'LBL_CHANGETIMERS_SUBPANEL_TITLE' => 'Change Timers',
+//BEGIN SUGARCRM flav=ent ONLY
+    'LBL_MESSAGES_SUBPANEL_TITLE' => 'Messages',
+//END SUGARCRM flav=ent ONLY
 
     'LBL_TEXT_COPIED_TO_CLIPBOARD_SUCCESS' => 'Copied to your clipboard!',
     'LBL_TEXT_COPIED_TO_CLIPBOARD_ERROR' => 'Could not copy to your clipboard',

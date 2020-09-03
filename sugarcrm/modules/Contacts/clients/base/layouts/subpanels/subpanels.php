@@ -150,6 +150,13 @@ $viewdefs['Contacts']['base']['layout']['subpanels'] = array(
                 'link' => 'purchases',
             ],
         ],
+        [
+            'layout' => 'subpanel',
+            'label' => 'LBL_MESSAGES_SUBPANEL_TITLE',
+            'context' => [
+                'link' => 'messages',
+            ],
+        ],
         // END SUGARCRM flav=ent ONLY
     ),
 );
