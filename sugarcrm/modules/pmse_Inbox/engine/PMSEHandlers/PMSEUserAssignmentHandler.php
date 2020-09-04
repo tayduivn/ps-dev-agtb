@@ -980,13 +980,17 @@ class PMSEUserAssignmentHandler
 
             if ($i === 0) {
                 // the current day
-
+                $startTime = $dayShiftTime['startTime'];
+                $endTime = $dayShiftTime['endTime'];
+                $startOffset = $startTime->getTimezone()->getOffset($nowTime);
+                $endOffset = $endTime->getTimezone()->getOffset($nowTime);
                 $timeFormat = TimeDate::getInstance()->get_time_format();
 
                 $nowTimeStr = strtotime($nowTime);
                 $checkTimeStr = strtotime($checkTime);
-                $startTimeStr = strtotime($dayShiftTime['startTime']->format($timeFormat), $nowTimeStr);
-                $endTimeStr = strtotime($dayShiftTime['endTime']->format($timeFormat), $nowTimeStr);
+
+                $startTimeStr = strtotime($startTime->format($timeFormat), $nowTimeStr) - $startOffset;
+                $endTimeStr = strtotime($endTime->format($timeFormat), $nowTimeStr) - $endOffset;
 
                 if ($nowTimeStr < $startTimeStr) {
                     // if shift has not started yet
@@ -1067,11 +1071,15 @@ class PMSEUserAssignmentHandler
     {
         $timeAvail = 0;
 
+        $startTime = $dayShift['startTime'];
+        $endTime = $dayShift['endTime'];
+        $startOffset = $startTime->getTimezone()->getOffset($checkTime);
+        $endOffset = $endTime->getTimezone()->getOffset($checkTime);
         $timeFormat = TimeDate::getInstance()->get_time_format();
 
         $checkTimeStr = strtotime($checkTime);
-        $startTimeStr = strtotime($dayShift['startTime']->format($timeFormat), $checkTimeStr);
-        $endTimeStr = strtotime($dayShift['endTime']->format($timeFormat), $checkTimeStr);
+        $startTimeStr = strtotime($startTime->format($timeFormat), $checkTimeStr) - $startOffset;
+        $endTimeStr = strtotime($endTime->format($timeFormat), $checkTimeStr) - $endOffset;
 
         if ($checkTimeStr > $endTimeStr) {
             // if the deadline is after the shift, use entire shift duration
