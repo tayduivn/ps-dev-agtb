@@ -129,7 +129,11 @@
   transition: 0;
 
   &:not(.collapsed):not(.empty) {
-    min-height: 140px;
+    min-height: 132px;
+
+    &:first-child {
+      overflow: hidden;
+    }
 
     .dashlet-console-list {
       .console-list-view-table {

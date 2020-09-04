@@ -40,7 +40,8 @@
         handleClass: 'dashlet-header',
         maxRow: 0, // 0 means no maximum
         minRow: 1,
-        verticalMargin: 15
+        verticalMargin: 15,
+        cellHeight: 34,
     },
 
     /**
@@ -60,8 +61,8 @@
         y: 0,
         width: 12,
         minWidth: 2,
-        minHeight: 3,
-        height: 4,
+        minHeight: 5,
+        height: 6,
     },
 
     /**

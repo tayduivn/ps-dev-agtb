@@ -243,9 +243,9 @@ describe('View.Layouts.Base.DashboardGridLayout', function() {
                     ]
                 }],
                 expected: [
-                    {x: 0, y: 0, width: 12, height: 4, view: {}},
-                    {x: 0, y: 4, width: 6, height: 4, view: {}},
-                    {x: 6, y: 4, width: 6, height: 4, view: {}}
+                    {x: 0, y: 0, width: 12, height: 6, view: {}},
+                    {x: 0, y: 6, width: 6, height: 6, view: {}},
+                    {x: 6, y: 6, width: 6, height: 6, view: {}}
                 ]
             }, {
                 // Two Column Dashboard
@@ -262,10 +262,10 @@ describe('View.Layouts.Base.DashboardGridLayout', function() {
                     ]
                 }],
                 expected: [
-                    {x: 0, y: 0, width: 4, height: 4, view: {}},
-                    {x: 4, y: 0, width: 4, height: 4, view: {}},
-                    {x: 8, y: 0, width: 4, height: 4, view: {}},
-                    {x: 4, y: 4, width: 8, height: 4, view: {}}
+                    {x: 0, y: 0, width: 4, height: 6, view: {}},
+                    {x: 4, y: 0, width: 4, height: 6, view: {}},
+                    {x: 8, y: 0, width: 4, height: 6, view: {}},
+                    {x: 4, y: 6, width: 8, height: 6, view: {}}
                 ]
             }, {
                 // Three Column Dashboard
@@ -289,12 +289,12 @@ describe('View.Layouts.Base.DashboardGridLayout', function() {
                     ]
                 }],
                 expected: [
-                    {x: 0, y: 0, width: 4, height: 4, view: {}},
-                    {x: 4, y: 0, width: 4, height: 4, view: {}},
-                    {x: 4, y: 4, width: 4, height: 4, view: {}},
-                    {x: 8, y: 0, width: 4, height: 4, view: {}},
-                    {x: 8, y: 4, width: 4, height: 4, view: {}},
-                    {x: 8, y: 8, width: 4, height: 4, view: {}},
+                    {x: 0, y: 0, width: 4, height: 6, view: {}},
+                    {x: 4, y: 0, width: 4, height: 6, view: {}},
+                    {x: 4, y: 6, width: 4, height: 6, view: {}},
+                    {x: 8, y: 0, width: 4, height: 6, view: {}},
+                    {x: 8, y: 6, width: 4, height: 6, view: {}},
+                    {x: 8, y: 12, width: 4, height: 6, view: {}},
                 ]
             }, {
                 // Dashboard without view metadata
@@ -306,7 +306,7 @@ describe('View.Layouts.Base.DashboardGridLayout', function() {
                     ]
                 }],
                 expected: [
-                    {x: 0, y: 0, width: 12, height: 4, view: {}}
+                    {x: 0, y: 0, width: 12, height: 6, view: {}}
                 ]
             }
         ], function(values) {
