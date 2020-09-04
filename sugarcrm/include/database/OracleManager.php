@@ -58,8 +58,8 @@ class OracleManager extends DBManager
 
     protected $maxNameLengths = array(
         'table' => 30,
-        'column' => 30,
-        'index' => 30,
+        'column' => 128,
+        'index' => 128,
         'alias' => 30
     );
 
