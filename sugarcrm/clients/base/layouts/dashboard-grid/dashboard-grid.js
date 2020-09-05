@@ -42,6 +42,7 @@
         minRow: 1,
         verticalMargin: 15,
         cellHeight: 34,
+        disableOneColumnMode: true
     },
 
     /**
