@@ -797,8 +797,8 @@
             this.$el.addClass('right-actions');
         }
 
-        var displayWidthSetting = this._thisListViewFieldSizes ||
-            !_.isUndefined(app.user.lastState.get(this._thisListViewFieldSizesKey));
+        var displayWidthSetting = !!(this._thisListViewFieldSizes ||
+            !_.isUndefined(app.user.lastState.get(this._thisListViewFieldSizesKey)));
         var displayOrderSetting = false;
         if (this._thisListViewFieldList) {
             var customOrder = _.union(this._thisListViewFieldList.position, this._defaultFieldOrder);
