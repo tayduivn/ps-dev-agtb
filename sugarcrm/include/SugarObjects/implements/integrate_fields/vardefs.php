@@ -18,7 +18,6 @@ $vardefs = [
             'vname' => 'LBL_SYNC_KEY',
             'type' => 'varchar',
             'enforced' => '',
-            'dependency' => 'dependency',
             'required' => false,
             'massupdate' => false,
             'readonly' => true,
