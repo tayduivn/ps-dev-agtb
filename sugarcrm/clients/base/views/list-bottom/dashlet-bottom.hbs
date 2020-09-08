@@ -17,9 +17,9 @@
         </div>
     {{/notEq}}
 {{else}}
-    {{#if moduleIsAvailable}}
-        <div class="block-footer">
+    <div class="block-footer">
+        {{#if moduleIsAvailable}}
             {{loading 'LBL_ALERT_TITLE_LOADING'}}
-        </div>
-    {{/if}}
+        {{/if}}
+    </div>
 {{/if}}
