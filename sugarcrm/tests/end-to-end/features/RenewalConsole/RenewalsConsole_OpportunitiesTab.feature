@@ -155,12 +155,12 @@ Feature: Sugar Sell Renewals Console Verification > Opportunities Tab
     When I choose Home in modules menu
 
     # Refresh the browser
-    When I refresh the browser
+    #When I refresh the browser
 
     # Verify that record is present in multiline list view
-    Then I verify fields for *Opp_4 in #OpportunitiesList.MultilineListView
-      | fieldName | value               |
-      | name      | Super Opportunity ! |
+    #Then I verify fields for *Opp_4 in #OpportunitiesList.MultilineListView
+    #  | fieldName | value               |
+    #  | name      | Super Opportunity ! |
 
 
   @renewals-console @rc_dashable_record_dashlet

@@ -25,7 +25,7 @@ $dictionary['Opportunity'] = array(
             'vname' => 'LBL_OPPORTUNITY_NAME',
             'type' => 'name',
             'dbType' => 'varchar',
-            'len' => '50',
+            'len' => '255',
             'unified_search' => true,
             'full_text_search' => array('enabled' => true, 'searchable' => true, 'boost' => 1.65),
             'comment' => 'Name of the opportunity',
