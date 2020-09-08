@@ -98,10 +98,14 @@
                     type: 'text/css'
                 }));
             }
-            var frame = editable.get(0);
-            frame.contentWindow.document.open();
-            frame.contentWindow.document.write(value);
-            frame.contentWindow.document.close();
+            var frame = _.find(editable, function(item) {
+                return item.tagName === 'IFRAME';
+            });
+            if (frame && frame.contentWindow && frame.contentWindow.document) {
+                frame.contentWindow.document.open();
+                frame.contentWindow.document.write(value);
+                frame.contentWindow.document.close();
+            }
         } else {
             // If the element has no body, the iframe hasn't loaded. Wait until
             // it loads so we don't write to non-sandboxed element
