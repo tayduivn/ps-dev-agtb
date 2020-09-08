@@ -326,6 +326,9 @@ $dictionary['Opportunity'] = array(
             'related_fields' => [
                 'service_open_revenue_line_items',
             ],
+            'studio' => array(
+                'calculated' => false,
+            ),
         ],
         'service_open_revenue_line_items' => array(
             'name' => 'service_open_revenue_line_items',
