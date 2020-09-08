@@ -186,6 +186,7 @@ $dictionary['Purchase'] = [
             'links' => array('purchasedlineitems'),
             'source' => 'non-db',
             'hideacl' => true,
+            'duplicate_on_record_copy' => 'no',
         ),
         'product_templates' => [
             'name' => 'product_templates',
