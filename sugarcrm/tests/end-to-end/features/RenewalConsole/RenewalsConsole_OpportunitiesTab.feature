@@ -28,7 +28,7 @@ Feature: Sugar Sell Renewals Console Verification > Opportunities Tab
     When I click on Cancel button on #UserProfile
 
 
-  @renewals_console @dashlets_verification
+  @renewals_console @dashlets_verification @ci-excluded
   Scenario: Renewal Console > Opportunities Tab > Main
 
     Given Accounts records exist:

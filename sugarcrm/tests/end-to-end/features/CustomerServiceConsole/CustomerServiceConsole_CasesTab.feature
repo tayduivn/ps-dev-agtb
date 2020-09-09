@@ -28,7 +28,7 @@ Feature: Customer Service Console Verification
     When I click on Cancel button on #UserProfile
 
 
-  @service_console
+  @service_console @ci-excluded
   Scenario: Service Console > Cases Tab > Navigation/Case Update
 
     # Create new non-admin user
