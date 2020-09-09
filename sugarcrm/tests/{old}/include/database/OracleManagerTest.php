@@ -289,4 +289,23 @@ class OracleManagerTest extends TestCase
     {
         $this->assertEquals($expectedResult, $this->db->compareVarDefs($fieldDef1, $fieldDef2));
     }
+
+    /**
+     * Test that the updated length for columns and indexes works on the Oracle version.
+     */
+    public function testUpdatedLength()
+    {
+        $this->assertEquals(
+            'idx_test_123_456_foo_bar_hello_world_sugarcrm_id',
+            getValidDBName('idx_test_123_456_foo_bar_hello_world_sugarcrm_id', false)
+        );
+
+        $this->assertNotEquals(
+            'idx_test_123_456_foo_bar_hello_world_sugarcrm_test_test_test_sequence_autoincrement_test_hello_world_test_id_sequence_foo_bar_123_id',
+            getValidDBName(
+                'idx_test_123_456_foo_bar_hello_world_sugarcrm_test_test_test_sequence_autoincrement_test_hello_world_test_id_sequence_foo_bar_123_id',
+                false
+            )
+        );
+    }
 }
