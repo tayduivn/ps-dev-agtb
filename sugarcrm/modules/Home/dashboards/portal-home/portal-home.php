@@ -72,6 +72,7 @@ return [
                                 'module' => 'KBContents',
                             ],
                             'width' => 4,
+                            'height' => 8,
                         ],
                     ],
                 ],

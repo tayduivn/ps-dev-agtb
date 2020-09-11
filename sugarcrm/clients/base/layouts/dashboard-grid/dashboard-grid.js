@@ -444,6 +444,8 @@
                     // grid, and each dashlet-row also contained 12 columns
                     var dashletWidth = dashlet.width || 12;
                     width = dashletWidth / 12 * component.width;
+                    height = dashlet.height || height;
+
                     var dashletDef = _.extend(dashlet, {
                         x: x + width * dashletIndex,
                         y: y,
@@ -547,7 +549,7 @@
      * @private
      */
     _setDefaultElementOptions: function() {
-        if (!_.isUndefined(this.closestComponent('dashboard-pane'))) {
+        if (!_.isUndefined(this.closestComponent('dashboard-pane')) && app.config.platform !== 'portal') {
             this.defaultElementOptions.minWidth = 6;
         } else {
             // When navigating from list/record views to home, the previous view's

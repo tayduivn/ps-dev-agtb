@@ -4,8 +4,24 @@
     display: table;
   }
 
-  .thumbnail.dashlet {
-    margin: 0 10px;
+  .dashlet-container {
+    box-sizing: border-box;
+    height: 100%;
+
+    .thumbnail.dashlet {
+      height: calc(~"100% - 40px");
+      display: flex;
+      flex-direction: column;
+      box-sizing: border-box;
+
+      .dashlet-content {
+        height: 100%;
+
+        .list-view {
+          overflow: auto;
+        }
+      }
+    }
   }
 
   .dashlet h4 {
