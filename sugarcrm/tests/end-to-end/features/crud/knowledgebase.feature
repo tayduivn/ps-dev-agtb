@@ -408,7 +408,7 @@ Feature: Knowledge Base module verification
       | revision        | 1                                          |
 
 
-  @kbTemplates_createNew
+  @kbTemplates_createNew @ci-excluded
   Scenario: Knowledge Base > Create New Template on the fly
     Given I open KBContents view and login
     When I click Create button on #KBContentsList header
