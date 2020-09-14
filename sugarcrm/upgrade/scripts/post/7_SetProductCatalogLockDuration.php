@@ -23,8 +23,28 @@ class SugarUpgradeSetProductCatalogLockDuration extends UpgradeScript
         if ($this->fromFlavor('ent') &&
             version_compare($this->from_version, '10.2.0', '<')
         ) {
-            $this->log('Setting lock_duration to true for all products where service is true.');
-            $this->db->query('UPDATE product_templates SET lock_duration = 1 WHERE service = 1');
+            $this->log('Setting lock_duration for all product templates marked as a service');
+            $ptQuery = $this->db->getConnection()->createQueryBuilder()
+                ->update('product_templates')
+                ->set('lock_duration', '1');
+            $ptQuery->where($ptQuery->expr()->eq('service', '1'));
+            $ptQuery->execute();
+
+            // Next we need to do that for all related line items
+            $lineItemTables = ['products', 'revenue_line_items'];
+            foreach ($lineItemTables as $lineItemTable) {
+                $this->log("Setting lock_duration for all $lineItemTable linked to service product templates");
+
+                $ptSubquery = $this->db->getConnection()->createQueryBuilder()
+                    ->select('lock_duration')
+                    ->from('product_templates');
+                $ptSubquery->where($ptSubquery->expr()->eq('id', $lineItemTable . '.product_template_id'));
+
+                $lineItemQuery = $this->db->getConnection()->createQueryBuilder()
+                    ->update($lineItemTable)
+                    ->set('lock_duration', '(' . $ptSubquery->getSQL() .')');
+                $lineItemQuery->execute();
+            }
         }
     }
 }
