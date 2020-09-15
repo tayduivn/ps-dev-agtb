@@ -14,12 +14,15 @@ describe('Base.Layout.Dashlet', function() {
 
     beforeEach(function() {
         layout = SugarTest.createLayout('base', 'Home', 'dashlet', {empty: true});
+        app = SugarTest.app;
     });
 
     afterEach(function() {
         sinon.collection.restore();
         layout.dispose();
         layout = null;
+        app.cache.cutAll();
+        app.view.reset();
     });
 
     describe('getComponentsFromMetadata', function() {
@@ -33,6 +36,43 @@ describe('Base.Layout.Dashlet', function() {
                 off: $.noop
             };
             expect(layout.getComponentsFromMetadata(metadata)).toEqual(metadata.tabs [currentTab].components);
+        });
+    });
+
+    describe('_setDashletContens', function() {
+        using('different combinations of empty metadata and contents', [
+            {emptyMeta: true, hasContent: false},
+            {emptyMeta: false, hasContent: false},
+            {emptyMeta: true, hasContent: true},
+            {emptyMeta: false, hasContent: true},
+        ], function(values) {
+            it('should set content with appropriate method based on content', function() {
+                layout.meta.empty = values.emptyMeta;
+                var emptyContent = 'emptyMeta';
+                var nonEmptyContent = 'nonEmptyMeta';
+                var expectedContent = values.emptyMeta ? emptyContent : nonEmptyContent;
+                sinon.collection.stub(app.template, 'empty', function() {
+                    return emptyContent;
+                });
+                sinon.collection.stub(layout, 'template', function() {
+                    return nonEmptyContent;
+                });
+                var replaceStub = sinon.stub();
+                sinon.collection.stub(layout.$el, 'children', function() {
+                    return {
+                        first: function() {
+                            return values.hasContent ? {replaceWith: replaceStub} : {};
+                        }
+                    };
+                });
+                sinon.collection.stub(layout.$el, 'html');
+                layout._setDashletContents();
+                if (values.hasContent) {
+                    expect(replaceStub).toHaveBeenCalledWith(expectedContent);
+                } else {
+                    expect(layout.$el.html).toHaveBeenCalledWith(expectedContent);
+                }
+            });
         });
     });
 });

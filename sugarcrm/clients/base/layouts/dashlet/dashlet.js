@@ -107,14 +107,28 @@
                 this.hasToolbar = false;
             }
         }
-        if (this.meta.empty) {
-            this.$el.html(app.template.empty(this));
-        } else {
-            this.$el.html(this.template(this));
-        }
+
+        this._setDashletContents();
 
         var context = this.context.parent || this.context;
         this._super('_addComponentsFromDef', [components, context, context.get("module")]);
+    },
+
+    /**
+     * Set contents of `.dashlet-container` element. If we're initializing an
+     * empty dashlet, set the innerHTML of `this.$el`. If we're updating an
+     * existing dashlet, update with `replaceWith` to not overwrite neighbors or
+     * their event listeners
+     * @private
+     */
+    _setDashletContents: function() {
+        var htmlContent = this.meta.empty ? app.template.empty(this) : this.template(this);
+        var currentContent = this.$el.children('.dashlet-container').first();
+        if (!_.isEmpty(currentContent)) {
+            currentContent.replaceWith(htmlContent);
+        } else {
+            this.$el.html(htmlContent);
+        }
     },
 
     /**
