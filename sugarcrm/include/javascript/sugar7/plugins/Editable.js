@@ -82,7 +82,7 @@
              * Pass `onConfirmRoute` as callback to continue navigating after confirmation.
              *
              * @param {Object} params Parameters that is passed from caller.
-             * @return {Boolean} True only if it contains unsaved changes.
+             * @return {boolean} True if it doesn't contain unsaved changes, false otherwise.
              */
             beforeRouteChange: function(params) {
                 if (this.closestComponent('omnichannel-dashboard')) {
@@ -102,7 +102,7 @@
              * @param {Object} param Parameters that is passed from caller.
              * @param {Function} param.callback Callback function.
              * @param {string} [param.message] Custom message.
-             * @return {boolean} `true` only if it contains unsaved changes.
+             * @return {boolean} True if it doesn't contain unsaved changes, false otherwise.
              */
             beforeViewChange: function(param) {
                 if (!(param && _.isFunction(param.callback))) {
@@ -125,7 +125,7 @@
              * @param {Object} params Parameters passed from caller.
              * @param {Function} params.callback Callback function.
              * @param {string} [params.message] Custom (translatable) message.
-             * @return {boolean} `true` only if it contains unsaved changes.
+             * @return {boolean} True if it doesn't contain unsaved changes, false otherwise.
              */
             beforeContainerChange: function(params) {
                 var callback = params.callback;
@@ -141,13 +141,18 @@
              * @param {Function} onConfirm Callback function which is executed once the user clicks "ok".
              * @param {string} [customMessage] Custom warning message.
              * @param {Function} [onCancel] Callback function which is executed once the users clicks "cancel".
-             * @return {boolean} `true` only if it contains unsaved changes.
+             * @return {boolean} True if it doesn't contain unsaved changes, false otherwise.
              */
             warnUnsavedChanges: function(onConfirm, customMessage, onCancel) {
-                // When we reload the page after retrying a save or when this is from a disposed component,
+                // When we reload the page after retrying a save,
                 // never block it
-                if (this.resavingAfterMetadataSync || this.disposed) {
+                if (this.resavingAfterMetadataSync) {
                     return false;
+                }
+                // If current view is already disposed,
+                // it should be treated as there is no unsaved changes
+                if (this.disposed) {
+                    return true;
                 }
                 this.$(':focus').trigger('change');
                 if (_.isFunction(this.hasUnsavedChanges) && this.hasUnsavedChanges()) {
