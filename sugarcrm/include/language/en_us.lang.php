@@ -5065,7 +5065,7 @@ Sincerely, SugarCRM',
     'LBL_OMNICHANNEL_DASHBOARD' => 'Omnichannel Dashboard',
     'LBL_OMNICHANNEL_DEFAULT_CUSTOMER_NAME' => 'Customer',
     'TPL_OMNICHANNEL_NEW_RECORD_TITLE' => '{{type}} {{direction}} {{identifier}} at {{time}}',
-    'LBL_OMNICHANNEL_UNSUPPORTED_BROWSER' => 'Your browser is not supported for Service Live. Please use Google Chrome or Mozilla Firefox.',
+    'LBL_OMNICHANNEL_UNSUPPORTED_BROWSER' => 'Your browser is not supported for SugarLive. Please use Google Chrome or Mozilla Firefox.',
     //END SUGARCRM flav=ent ONLY
 
     //First time login wizard
