@@ -1239,6 +1239,7 @@
             this.settings.set('tabs', configTabs);
         }
         this.settings.set('tab_list', initialTabs);
+        this.settings.set('label', 'LBL_DASHLET_RECORDVIEW_NAME');
 
         this._bindSettingsEvents();
         this._bindSaveEvents();
