@@ -1134,6 +1134,29 @@ class MBModule
     }
 
     /**
+     * Returns an array of field definitions for this bean's module.
+     *
+     * Optionally, you can filter the returned list of field definitions by
+     * field type, name, etc (any property).
+     *
+     * @param string|null $property Field def property to filter by (e.g. type).
+     * @param array $filter An array of values to filter the returned field definitions.
+     * @return array Field definitions.
+     */
+    public function getFieldDefinitions(?string $property = null, array $filter = array()) : array
+    {
+        $definitions = $this->getVardefs()['fields'] ?? [];
+
+        if (empty($property) || empty($filter)) {
+            return $definitions;
+        }
+
+        return array_filter($definitions, function (array $def) use ($property, $filter) : bool {
+            return isset($def[$property]) && in_array($def[$property], $filter);
+        });
+    }
+
+    /**
      * remove team field in recordview when team_security is disabled
      */
     public function cleanupLayout()
