@@ -33,7 +33,7 @@ class SugarTestUserUtilitiesTest extends TestCase
     private function takeUserDBSnapshot()
     {
         $snapshot = [];
-        $query = 'SELECT * FROM users';
+        $query = 'SELECT * FROM users ORDER BY id';
         $result = $GLOBALS['db']->query($query);
         while ($row = $GLOBALS['db']->fetchByAssoc($result)) {
             $snapshot[] = $row;
@@ -114,7 +114,7 @@ class SugarTestUserUtilitiesTest extends TestCase
             $userIds[] = SugarTestUserUtilities::createAnonymousUser()->id;
         }
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        
+
         $this->assertEquals(
             $this->before_snapshot,
             $this->takeUserDBSnapshot(),
