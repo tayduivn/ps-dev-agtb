@@ -149,7 +149,6 @@ class ModuleInstaller
             'post_execute',
             'reset_opcodes',
             'reset_file_cache',
-            'setup_elastic_mapping',
         );
 
         $total_steps += count($tasks);
@@ -269,6 +268,9 @@ class ModuleInstaller
 
             $dict = new ServiceDictionaryRest();
             $dict->buildAllDictionaries();
+
+            // setup elastic mapping
+            $this->setup_elastic_mapping();
 
             $this->log('<br><b>' . translate('LBL_MI_COMPLETE') . '</b>');
         }else{

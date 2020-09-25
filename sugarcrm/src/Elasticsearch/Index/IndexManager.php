@@ -235,9 +235,17 @@ class IndexManager
             return false;
         }
 
-        // add the mapping without re-creating the indices if indices exist,
-        // create new indices if indices don't exist
-        $this->syncIndices($modules, false, true);
+        $enabledModules = [];
+        foreach ($modules as $module) {
+            if ($this->container->metaDataHelper->isModuleEnabled($module)) {
+                $enabledModules[] = $module;
+            }
+        }
+
+        // need to create full index since there could be a mapping mismatch
+        if (!empty($enabledModules)) {
+            $this->scheduleIndexing([], true);
+        }
 
         return true;
     }
