@@ -17,11 +17,6 @@ use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Psr\SimpleCache\CacheException;
 use Psr\SimpleCache\CacheInterface;
-use Sugarcrm\Sugarcrm\ACL\Backend\Redis as AclCacheRedis;
-use Sugarcrm\Sugarcrm\ACL\EncryptionKey;
-use Sugarcrm\Sugarcrm\ACL\InstanceKeyPrefix;
-use Sugarcrm\Sugarcrm\ACL\MultitenantValueSerializer;
-use Sugarcrm\Sugarcrm\ACL\PhpValueSerializer;
 use Sugarcrm\Sugarcrm\Audit\EventRepository;
 use Sugarcrm\Sugarcrm\Audit\Formatter as AuditFormatter;
 use Sugarcrm\Sugarcrm\Audit\Formatter\CompositeFormatter;
@@ -31,7 +26,6 @@ use Sugarcrm\Sugarcrm\Cache\Backend\InMemory as InMemoryCache;
 use Sugarcrm\Sugarcrm\Cache\Backend\Memcached as MemcachedCache;
 use Sugarcrm\Sugarcrm\Cache\Backend\Redis as RedisCache;
 use Sugarcrm\Sugarcrm\Cache\Backend\WinCache;
-use Sugarcrm\Sugarcrm\Cache\Exception as SugarCacheException;
 use Sugarcrm\Sugarcrm\Cache\Middleware\DefaultTTL;
 use Sugarcrm\Sugarcrm\Cache\Middleware\MultiTenant as MultiTenantCache;
 use Sugarcrm\Sugarcrm\Cache\Middleware\MultiTenant\KeyStorage\Configuration as ConfigurationKeyStorage;
@@ -60,7 +54,6 @@ use Sugarcrm\Sugarcrm\Security\Validator\Validator;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use UltraLite\Container\Container;
 use Sugarcrm\Sugarcrm\Performance\Dbal\XhprofLogger;
-use Sugarcrm\Sugarcrm\ACL\Cache as AclCacheInterface;
 
 return new Container([
     SugarConfig::class => function (): SugarConfig {
@@ -227,8 +220,17 @@ return new Container([
         }
     },
     RedisCache::class => function (ContainerInterface $container) : RedisCache {
+        $config = $container->get(SugarConfig::class)->get('external_cache.redis');
+        $persistentId = $container->get(SugarConfig::class)->get('unique_key');
+
         try {
-            return new RedisCache($container->get(Redis::class));
+            return new RedisCache(
+                $config['host'] ?? '127.0.0.1',
+                $config['port'] ?? 6379,
+                $config['persistent'] ?? false,
+                $config['timeout'] ?? 0,
+                $persistentId ?? ''
+            );
         } catch (CacheException $e) {
             throw new ServiceUnavailable($e->getMessage(), 0, $e);
         }
@@ -254,64 +256,5 @@ return new Container([
     },
     Validator::class => function (): ValidatorInterface {
         return Validator::getService();
-    },
-    AclCacheInterface::class => function (ContainerInterface $container) : AclCacheInterface {
-        if (SugarCache::electBackend() instanceof SugarCacheRedis) {
-            $config = $container->get(SugarConfig::class);
-
-            $valueSerializer = new PhpValueSerializer();
-            if ($config->get('cache.multi_tenant')) {
-                $encryptionKey = (new EncryptionKey(new ConfigurationKeyStorage($config)))->get();
-                $valueSerializer = new MultitenantValueSerializer(
-                    $valueSerializer,
-                    $encryptionKey,
-                    $container->get(LoggerInterface::class)
-                );
-            }
-            $keyConverter = new InstanceKeyPrefix($config->get('unique_key'));
-
-            $backend = new AclCacheRedis(
-                $container->get(Redis::class),
-                $keyConverter,
-                $valueSerializer
-            );
-
-            return $backend;
-        }
-        return AclCache::getInstance();
-    },
-    Redis::class => function (ContainerInterface $container) : Redis {
-        if (!extension_loaded('redis')) {
-            throw new SugarCacheException('Redis extension is not loaded');
-        }
-
-        $client = new Redis();
-
-        $config = $container->get(SugarConfig::class)->get('external_cache.redis');
-        $persistentId = $container->get(SugarConfig::class)->get('unique_key');
-
-        $host = $config['host'] ?? '127.0.0.1';
-        $port = $config['port'] ?? 6379;
-        $timeout = $config['timeout'] ?? 0;
-        $persistentId = $persistentId ?? '';
-        $persistent = $config['persistent'] ?? false;
-
-        if (version_compare(phpversion('redis'), '4.0.0') >= 0) {
-            try {
-                if ($persistent) {
-                    $client->pconnect($host, $port, $timeout, $persistentId);
-                } else {
-                    $client->connect($host, $port, $timeout);
-                }
-            } catch (RedisException $e) {
-                throw new SugarCacheException($e->getMessage(), 0, $e);
-            }
-        } else {
-            if (!@$client->connect($host, $port, $timeout)) {
-                throw new SugarCacheException(error_get_last()['message']);
-            }
-        }
-
-        return $client;
     },
 ]);

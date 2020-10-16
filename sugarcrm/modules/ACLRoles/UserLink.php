@@ -9,8 +9,6 @@
  *
  * Copyright (C) SugarCRM Inc. All rights reserved.
  */
-use Sugarcrm\Sugarcrm\ACL\Cache as AclCacheInterface;
-use Sugarcrm\Sugarcrm\DependencyInjection\Container;
 
 /**
  * Class UserLink
@@ -33,15 +31,13 @@ class UserLink extends Link2
             }
             foreach ($rel_keys as $rel_key) {
                 if ($rel_key instanceof User) {
-                    if (!is_null($rel_key->id)) {
-                        Container::getInstance()->get(AclCacheInterface::class)->clearByUser($rel_key->id);
-                    }
+                    AclCache::getInstance()->clear($rel_key->id);
                 } else {
-                    Container::getInstance()->get(AclCacheInterface::class)->clearByUser($rel_key);
+                    AclCache::getInstance()->clear($rel_key);
                 }
             }
-        } elseif ($this->focus instanceof User && !is_null($this->focus->id)) {
-            Container::getInstance()->get(AclCacheInterface::class)->clearByUser($this->focus->id);
+        } elseif ($this->focus instanceof User) {
+            AclCache::getInstance()->clear($this->focus->id);
         }
         return parent::add($rel_keys, $additional_values);
     }
@@ -63,7 +59,7 @@ class UserLink extends Link2
                 $db = DBManagerFactory::getInstance();
                 $result = $db->query($query);
                 while ($row = $db->fetchByAssoc($result, false)) {
-                    Container::getInstance()->get(AclCacheInterface::class)->clearByUser($row['id']);
+                    AclCache::getInstance()->clear($row['id']);
                 }
             }
             return parent::delete($id, $related_id);
@@ -78,7 +74,7 @@ class UserLink extends Link2
         $userBean->setModifiedDate(TimeDate::getInstance()->nowDb());
         $userBean->save();
         // clear acl acche
-        Container::getInstance()->get(AclCacheInterface::class)->clearByUser($related_id);
+        AclCache::getInstance()->clear($related_id);
         return parent::delete($id, $related_id);
     }
 
