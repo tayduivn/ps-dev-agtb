@@ -323,7 +323,7 @@ array (
             array (
               0 => 
               array (
-                'name' => 'language_2',
+                'name' => 'language_1',
                 'label' => 'LBL_LANGUAGE',
               ),
               1 => 
@@ -333,7 +333,7 @@ array (
               ),
               2 => 
               array (
-                'name' => 'language_1',
+                'name' => 'language_2',
                 'label' => 'LBL_LANGUAGE',
               ),
               3 => 
@@ -343,7 +343,7 @@ array (
               ),
               4 => 
               array (
-                'name' => 'language_6',
+                'name' => 'language_3',
                 'label' => 'LBL_LANGUAGE',
               ),
               5 => 
@@ -353,7 +353,7 @@ array (
               ),
               6 => 
               array (
-                'name' => 'language_5',
+                'name' => 'language_4',
                 'label' => 'LBL_LANGUAGE',
               ),
               7 => 
@@ -363,7 +363,7 @@ array (
               ),
               8 => 
               array (
-                'name' => 'language_4',
+                'name' => 'language_5',
                 'label' => 'LBL_LANGUAGE',
               ),
               9 => 
@@ -373,7 +373,7 @@ array (
               ),
               10 => 
               array (
-                'name' => 'language_3',
+                'name' => 'language_6',
                 'label' => 'LBL_LANGUAGE',
               ),
               11 => 

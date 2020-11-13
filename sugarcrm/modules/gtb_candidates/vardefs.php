@@ -220,7 +220,7 @@ $dictionary['gtb_candidates'] = array(
     'required' => true,
     'name' => 'oe_mobility',
     'vname' => 'LBL_OE_MOBILITY',
-    'type' => 'enum',
+    'type' => 'multienum',
     'massupdate' => true,
     'hidemassupdate' => false,
     'no_default' => false,
@@ -234,12 +234,13 @@ $dictionary['gtb_candidates'] = array(
     'unified_search' => false,
     'merge_filter' => 'disabled',
     'pii' => false,
-    'default' => 'ADEUS',
+    'default' => '',
     'calculated' => false,
     'len' => 100,
     'size' => '20',
     'options' => 'gtb_oe_mobility_list',
     'dependency' => false,
+    'isMultiSelect' => true,
   ),
   'target_roles' => 
   array (
