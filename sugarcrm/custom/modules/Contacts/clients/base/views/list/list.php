@@ -1,13 +1,5 @@
 <?php
-$viewdefs['Contacts'] = 
-array (
-  'base' => 
-  array (
-    'view' => 
-    array (
-      'list' => 
-      array (
-        'panels' => 
+$viewdefs['Contacts']['base']['view']['list']['panels'] =
         array (
           0 => 
           array (
@@ -120,8 +112,4 @@ array (
               ),
             ),
           ),
-        ),
-      ),
-    ),
-  ),
 );

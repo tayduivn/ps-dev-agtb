@@ -1,11 +1,5 @@
 <?php
-$viewdefs['Contacts'] = 
-array (
-  'base' => 
-  array (
-    'view' => 
-    array (
-      'recorddashlet' => 
+$viewdefs['Contacts']['base']['view']['recorddashlet'] =
       array (
         'buttons' => 
         array (
@@ -222,7 +216,4 @@ array (
         array (
           'useTabs' => false,
         ),
-      ),
-    ),
-  ),
 );

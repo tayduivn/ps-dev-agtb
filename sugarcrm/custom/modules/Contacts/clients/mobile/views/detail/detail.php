@@ -1,11 +1,5 @@
 <?php
-$viewdefs['Contacts'] = 
-array (
-  'mobile' => 
-  array (
-    'view' => 
-    array (
-      'detail' => 
+$viewdefs['Contacts']['mobile']['view']['detail'] =
       array (
         'templateMeta' => 
         array (
@@ -76,7 +70,4 @@ array (
             ),
           ),
         ),
-      ),
-    ),
-  ),
 );

@@ -1,11 +1,5 @@
 <?php
-$viewdefs['Contacts'] = 
-array (
-  'base' => 
-  array (
-    'view' => 
-    array (
-      'preview' => 
+$viewdefs['Contacts']['base']['view']['preview'] =
       array (
         'panels' => 
         array (
@@ -169,7 +163,4 @@ array (
           'maxColumns' => 1,
           'useTabs' => false,
         ),
-      ),
-    ),
-  ),
 );
