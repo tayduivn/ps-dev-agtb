@@ -157,7 +157,7 @@ $viewdefs[$module_name]['base']['view']['record'] = array (
       'label' => 'LBL_RECORD_BODY',
       'columns' => 2,
       'placeholders' => true,
-      'newTab' => false,
+      'newTab' => true,
       'panelDefault' => 'expanded',
       'fields' =>
       array (
@@ -175,24 +175,28 @@ $viewdefs[$module_name]['base']['view']['record'] = array (
         array (
           'name' => 'fulfillment',
           'label' => 'LBL_FULFILLMENT',
-          'span' => 12,
+          'span' => 6,
         ),
         3 =>
+        array (
+          'span' => 6,
+        ),
+        4 =>
         array (
           'name' => 'func_mobility_fulfilled',
           'label' => 'LBL_FUNC_MOBILITY_FULFILLED',
         ),
-        4 =>
+        5 =>
         array (
           'name' => 'geo_mobility_fulfilled',
           'label' => 'LBL_GEO_MOBILITY_FULFILLED',
         ),
-        5 =>
+        6 =>
         array (
           'name' => 'oe_mobility_fulfilled',
           'label' => 'LBL_OE_MOBILITY_FULFILLED',
         ),
-        6 =>
+        7 =>
         array (
           'name' => 'tag',
         ),
@@ -205,7 +209,7 @@ $viewdefs[$module_name]['base']['view']['record'] = array (
       'hide' => true,
       'columns' => 2,
       'placeholders' => true,
-      'newTab' => false,
+      'newTab' => true,
       'panelDefault' => 'expanded',
       'fields' =>
       array (
@@ -264,6 +268,6 @@ $viewdefs[$module_name]['base']['view']['record'] = array (
   ),
   'templateMeta' =>
   array (
-    'useTabs' => false,
+    'useTabs' => true,
   ),
 );

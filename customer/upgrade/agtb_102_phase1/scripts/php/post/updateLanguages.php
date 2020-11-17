@@ -22,9 +22,6 @@ try {
                     '%s: Upgrade failed: calling UpdateConfigFile failed with error: %s', $_SERVER['argv'][0], $e->getMessage()
             )
     );
-    exit(1);
 }
 
 $logger->debug(sprintf('%s: finished UpdateConfigFile call', $_SERVER['argv'][0]));
-
-exit(0);
