@@ -1,12 +1,12 @@
 <?php
 
-require_once('modules/pmse_Inbox/engine/PMSEProjectImporter.php');
+require_once('custom/install/CustomBPMProjectImporter.php');
 
 // import workflow
-$bpmFilename = 'custom/install/data/Reminder_on_proposition_answer.bpm';
+$bpmFilename = 'custom/install/bpm/Reminder_on_proposition_answer.php';
 // E-Mail Template ID
 $options['selectedIds'] = array('915b36fc-25d7-11eb-ac45-0242ac120008');
-$importer = new PMSEProjectImporter();
+$importer = new CustomBPMProjectImporter();
 $importer->importProject($bpmFilename, $options);
 
 // enable workflow
@@ -32,3 +32,4 @@ function getWorkflowId($name){
     }
     return 0;
 }
+
