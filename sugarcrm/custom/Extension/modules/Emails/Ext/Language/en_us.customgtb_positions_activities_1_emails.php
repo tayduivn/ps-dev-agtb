@@ -1,0 +1,3 @@
+<?php
+
+$mod_strings['LBL_GTB_POSITIONS_ACTIVITIES_1_EMAILS_FROM_DSI_JOB_SITES_TITLE'] = 'Positions';
