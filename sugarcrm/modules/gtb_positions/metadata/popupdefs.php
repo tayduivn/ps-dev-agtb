@@ -13,7 +13,7 @@ $popupMeta = array (
   3 => 'status',
 ),
     'listviewdefs' => array (
-  'NAME' => 
+  'NAME' =>
   array (
     'type' => 'name',
     'default' => true,
@@ -21,7 +21,7 @@ $popupMeta = array (
     'width' => 10,
     'name' => 'name',
   ),
-  'POS_FUNCTION' => 
+  'POS_FUNCTION' =>
   array (
     'type' => 'enum',
     'default' => true,
@@ -29,7 +29,7 @@ $popupMeta = array (
     'width' => 10,
     'name' => 'pos_function',
   ),
-  'REGION' => 
+  'REGION' =>
   array (
     'type' => 'enum',
     'default' => true,
@@ -37,7 +37,7 @@ $popupMeta = array (
     'width' => 10,
     'name' => 'region',
   ),
-  'ORG_UNIT' => 
+  'ORG_UNIT' =>
   array (
     'type' => 'varchar',
     'default' => true,
@@ -45,7 +45,7 @@ $popupMeta = array (
     'width' => 10,
     'name' => 'org_unit',
   ),
-  'LOCATION' => 
+  'LOCATION' =>
   array (
     'type' => 'varchar',
     'default' => true,
@@ -53,7 +53,7 @@ $popupMeta = array (
     'width' => 10,
     'name' => 'location',
   ),
-  'PROCESS_STEP' => 
+  'PROCESS_STEP' =>
   array (
     'type' => 'enum',
     'default' => true,
