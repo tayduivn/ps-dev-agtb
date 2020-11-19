@@ -103,4 +103,6 @@ $mod_strings = array (
   'LBL_GTB_CONTACTS_SUBPANEL_TITLE' => 'Contacts',
   'LBL_NEW_FORM_TITLE' => 'New Contact',
   'LBL_IMPORT' => 'Import Contacts',
+  'LBL_SHOW_MORE' => 'System Information',
+  'LBL_ASSIGNED_TO' => 'Assigned to',
 );

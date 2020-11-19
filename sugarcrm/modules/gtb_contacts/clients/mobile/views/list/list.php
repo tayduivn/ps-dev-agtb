@@ -1,43 +1,56 @@
 <?php
-
-/*
- * Your installation or use of this SugarCRM file is subject to the applicable
- * terms available at
- * http://support.sugarcrm.com/Resources/Master_Subscription_Agreements/.
- * If you do not agree to all of the applicable terms or do not have the
- * authority to bind the entity as an authorized representative, then do not
- * install or use this SugarCRM file.
- *
- * Copyright (C) SugarCRM Inc. All rights reserved.
- */
 $module_name = 'gtb_contacts';
-$viewdefs[$module_name]['mobile']['view']['list'] = array(
-    'panels' => array(
-        array(
-            'label' => 'LBL_PANEL_DEFAULT',
-            'fields' => array(
-                array(
-                    'name' => 'name',
-                    'label' => 'LBL_NAME',
-                    'default' => true,
-                    'enabled' => true,
-                    'link' => true,
-                    'related_fields' => array('first_name', 'last_name', 'salutation'),
-                ),
-                array(
-                    'name' => 'team_name',
-                    'label' => 'LBL_TEAM',
-                    'default' => true,
-                    'enabled' => true,
-                ),
-                array(
-                    'name' => 'assigned_user_name',
-                    'label' => 'LBL_ASSIGNED_TO_NAME',
-                    'default' => true,
-                    'enabled' => true,
-                    'link' => true,
-                ),
-            ),
+$viewdefs[$module_name]['mobile']['view']['list'] = array (
+  'panels' =>
+  array (
+    0 =>
+    array (
+      'label' => 'LBL_PANEL_DEFAULT',
+      'fields' =>
+      array (
+        0 =>
+        array (
+          'name' => 'name',
+          'label' => 'LBL_NAME',
+          'default' => true,
+          'enabled' => true,
+          'link' => true,
+          'related_fields' =>
+          array (
+            0 => 'first_name',
+            1 => 'last_name',
+            2 => 'salutation',
+          ),
         ),
+        1 =>
+        array (
+          'name' => 'title',
+          'label' => 'LBL_TITLE',
+          'enabled' => true,
+          'default' => true,
+        ),
+        2 =>
+        array (
+          'name' => 'department',
+          'label' => 'LBL_DEPARTMENT',
+          'enabled' => true,
+          'default' => false,
+        ),
+        3 =>
+        array (
+          'name' => 'phone_mobile',
+          'label' => 'LBL_MOBILE_PHONE',
+          'enabled' => true,
+          'default' => false,
+        ),
+        4 =>
+        array (
+          'name' => 'phone_work',
+          'label' => 'LBL_OFFICE_PHONE',
+          'enabled' => true,
+          'default' => false,
+        ),
+      ),
     ),
+  ),
 );
