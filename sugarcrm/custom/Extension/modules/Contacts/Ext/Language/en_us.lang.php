@@ -1,0 +1,44 @@
+<?php
+// WARNING: The contents of this file are auto-generated.
+$mod_strings['LBL_GENDER'] = 'Gender';
+$mod_strings['LBL_TITLE'] = 'Job Title';
+$mod_strings['LBL_ORG_UNIT_C'] = 'OE';
+$mod_strings['LBL_FUNCTION_C'] = 'Function';
+$mod_strings['LBL_FUNCTIONAL_MOBILITY_C'] = 'Functional Mobility';
+$mod_strings['LBL_OE_MOBILITY_C'] = 'Cross OE Mobility';
+$mod_strings['LBL_TARGET_ROLES_C'] = 'Potential Target Roles';
+$mod_strings['LBL_MOBILITY_COMMENTS_C'] = 'Mobility Comments';
+$mod_strings['LBL_LANGUAGE_1_C'] = 'Language';
+$mod_strings['LBL_LANGUAGE'] = 'Language';
+$mod_strings['LBL_PROF_LEVEL'] = 'Proficiency Level';
+$mod_strings['LBL_PRIMARY_ADDRESS_COUNTRY'] = 'Country';
+$mod_strings['LBL_CAREER_DISCUSSION_C'] = 'Date of Career Aspiration Discussion';
+$mod_strings['LBL_COMMENTLOG'] = 'Executive Summary';
+$mod_strings['LBL_COMMENTLOG_LINK'] = 'Executive Summary';
+$mod_strings['LBL_GEO_MOBILITY_C'] = 'Geographical Mobility';
+$mod_strings['LBL_LEAD_SOURCE'] = 'Source';
+$mod_strings['LBL_AVAILABILITY_C'] = 'Availability';
+$mod_strings['LBL_CLUSTER_C'] = 'Cluster';
+
+$mod_strings['LNK_CONTACT_REPORTS'] = 'View Candidate Reports';
+$mod_strings['LNK_NEW_CONTACT'] = 'Create Candidate';
+$mod_strings['LBL_MODULE_NAME'] = 'Candidates';
+$mod_strings['LBL_MODULE_NAME_SINGULAR'] = 'Candidate';
+$mod_strings['LBL_NEW_FORM_TITLE'] = 'New Candidate';
+$mod_strings['LNK_ACCOUNT_LIST'] = 'View Candidates';
+$mod_strings['LNK_IMPORT_CONTACTS'] = 'Import Candidates';
+$mod_strings['MSG_SHOW_DUPLICATES'] = 'The Candidate record you are about to create might be a duplicate of an Candidate record that already exists. Candidate records containing similar names are listed below.Click Save to continue creating this new Candidate, or click Cancel to return to the module without creating the Candidate.';
+$mod_strings['LBL_SAVE_CONTACT'] = 'Save Candidate';
+$mod_strings['LBL_LIST_FORM_TITLE'] = 'Candidate List';
+$mod_strings['LBL_SEARCH_FORM_TITLE'] = 'Candidate Search';
+$mod_strings['LBL_CONTACTS_SUBPANEL_TITLE'] = 'Candidates';
+$mod_strings['LBL_HOMEPAGE_TITLE'] = 'My Candidates';
+$mod_strings['ERR_DELETE_RECORD'] = 'You must specify a record number in order to delete the Candidate.';
+$mod_strings['LBL_CONTACT_NAME'] = 'Candidate Name';
+$mod_strings['LBL_CONTACT'] = 'Candidate';
+$mod_strings['LBL_DEFAULT_SUBPANEL_TITLE'] = 'Candidates';
+$mod_strings['LBL_DUPLICATE'] = 'Possible Duplicate Candidate';
+$mod_strings['LBL_MODULE_TITLE'] = 'Candidates: Home';
+$mod_strings['LBL_MODULE_ID'] = 'Candidates';
+$mod_strings['LNK_CONTACT_LIST'] = 'View Candidates';
+$mod_strings['LNK_IMPORT_VCARD'] = 'Create Candidate From vCard';
