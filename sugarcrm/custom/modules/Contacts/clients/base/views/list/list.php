@@ -29,21 +29,22 @@ $viewdefs['Contacts']['base']['view']['list']['panels'] =
               ),
               2 => 
               array (
-                'name' => 'department',
-                'label' => 'LBL_DEPARTMENT',
+                'name' => 'gtb_cluster_c',
+                'label' => 'LBL_GTB_CLUSTER_C',
                 'enabled' => true,
                 'default' => true,
               ),
               3 => 
               array (
-                'name' => 'phone_mobile',
-                'label' => 'LBL_MOBILE_PHONE',
+                'name' => 'org_unit_c',
+                'label' => 'LBL_ORG_UNIT_C',
                 'enabled' => true,
                 'default' => true,
               ),
               4 => 
               array (
-                'name' => 'email',
+                'name' => 'function_c',
+                'label' => 'LBL_FUNCTION_C',
                 'enabled' => true,
                 'default' => true,
               ),
@@ -65,48 +66,62 @@ $viewdefs['Contacts']['base']['view']['list']['panels'] =
               array (
                 'name' => 'date_entered',
                 'enabled' => true,
-                'default' => false,
+                'default' => true,
                 'readonly' => true,
               ),
               8 => 
-              array (
-                'name' => 'phone_fax',
-                'label' => 'LBL_FAX_PHONE',
-                'enabled' => true,
-                'default' => false,
-              ),
-              9 => 
-              array (
-                'name' => 'primary_address_street',
-                'label' => 'LBL_PRIMARY_ADDRESS_STREET',
-                'enabled' => true,
-                'sortable' => false,
-                'default' => false,
-              ),
-              10 => 
-              array (
-                'name' => 'primary_address_city',
-                'label' => 'LBL_PRIMARY_ADDRESS_CITY',
-                'enabled' => true,
-                'default' => false,
-              ),
-              11 => 
-              array (
-                'name' => 'primary_address_postalcode',
-                'label' => 'LBL_PRIMARY_ADDRESS_POSTALCODE',
-                'enabled' => true,
-                'default' => false,
-              ),
-              12 => 
               array (
                 'name' => 'primary_address_country',
                 'label' => 'LBL_PRIMARY_ADDRESS_COUNTRY',
                 'enabled' => true,
                 'default' => false,
               ),
+              9 => 
+              array (
+                'name' => 'phone_mobile',
+                'label' => 'LBL_MOBILE_PHONE',
+                'enabled' => true,
+                'default' => false,
+              ),
+              10 => 
+              array (
+                'name' => 'lead_source',
+                'label' => 'LBL_LEAD_SOURCE',
+                'enabled' => true,
+                'default' => false,
+              ),
+              11 => 
+              array (
+                'name' => 'functional_mobility_c',
+                'label' => 'LBL_FUNCTIONAL_MOBILITY_C',
+                'enabled' => true,
+                'default' => false,
+              ),
+              12 => 
+              array (
+                'name' => 'oe_mobility_c',
+                'label' => 'LBL_OE_MOBILITY_C',
+                'enabled' => true,
+                'sortable' => false,
+                'default' => false,
+              ),
               13 => 
               array (
-                'name' => 'phone_work',
+                'name' => 'career_discussion_c',
+                'label' => 'LBL_CAREER_DISCUSSION_C',
+                'enabled' => true,
+                'default' => false,
+              ),
+              14 => 
+              array (
+                'name' => 'email',
+                'enabled' => true,
+                'default' => false,
+              ),
+              15 => 
+              array (
+                'name' => 'availability_c',
+                'label' => 'LBL_AVAILABILITY_C',
                 'enabled' => true,
                 'default' => false,
               ),

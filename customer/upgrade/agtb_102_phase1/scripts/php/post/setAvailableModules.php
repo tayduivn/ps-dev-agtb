@@ -1,0 +1,65 @@
+<?php
+$modulesToShow = array(
+    'Home',
+    'Contacts',
+    'gtb_positions',
+    'gtb_matches',
+    'gtb_contacts',
+    'Calendar',
+    'Reports',
+    'Documents',
+    'Emails',
+    'Meetings',
+    'Calls',
+    'Tasks',
+    'Notes',
+    'Tags',
+    'pmse_Project',
+);
+
+$wirelessModulesToShow = array(
+    'Home',
+    'Contacts',
+    'gtb_positions',
+    'gtb_matches',
+    'gtb_contacts',
+    'Calendar',
+    'Reports',
+    'Documents',
+    'Emails',
+    'Meetings',
+    'Calls',
+    'Tasks',
+    'Notes',
+    'Tags',
+);
+
+$hiddenSubpanels = array(
+    'project',
+    'bugs',
+    'revenuelineitems',
+    'contracts',
+    'quotes',
+    'Campaigns',
+    'cases',
+    'leads',
+    'contacts',
+    'opportunities',
+    'Products',
+    'CampaignLog',
+);
+
+// Navigation Bar
+require_once 'modules/MySettings/TabController.php';
+$tabs = new TabController();
+$tabs->set_system_tabs($modulesToShow);
+
+// Hidden Subpanels
+require_once('include/SubPanel/SubPanelDefinitions.php');
+SubPanelDefinitions::set_hidden_subpanels($hiddenSubpanels);
+
+// Mobile
+$_REQUEST['enabled_modules'] = implode(',', $wirelessModulesToShow);
+$controller = new AdministrationController();
+$controller->action_updatewirelessenabledmodules();
+unset($_REQUEST['enabled_modules']);
