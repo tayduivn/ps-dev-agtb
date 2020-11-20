@@ -22,33 +22,34 @@ $viewdefs['Contacts']['mobile']['view']['list']['panels'] =
               ),
               1 => 
               array (
-                'name' => 'title',
-                'label' => 'LBL_TITLE',
+                'name' => 'gtb_cluster_c',
+                'label' => 'LBL_GTB_CLUSTER_C',
                 'enabled' => true,
                 'default' => true,
               ),
               2 => 
               array (
-                'name' => 'phone_work',
-                'label' => 'LBL_OFFICE_PHONE',
+                'name' => 'email',
                 'enabled' => true,
                 'default' => false,
               ),
               3 => 
               array (
-                'name' => 'phone_mobile',
+                'name' => 'function_c',
+                'label' => 'LBL_FUNCTION_C',
                 'enabled' => true,
                 'default' => false,
               ),
               4 => 
               array (
-                'name' => 'primary_address_street',
+                'name' => 'phone_mobile',
                 'enabled' => true,
                 'default' => false,
               ),
               5 => 
               array (
-                'name' => 'primary_address_city',
+                'name' => 'org_unit_c',
+                'label' => 'LBL_ORG_UNIT_C',
                 'enabled' => true,
                 'default' => false,
               ),
@@ -60,7 +61,8 @@ $viewdefs['Contacts']['mobile']['view']['list']['panels'] =
               ),
               7 => 
               array (
-                'name' => 'email',
+                'name' => 'title',
+                'label' => 'LBL_TITLE',
                 'enabled' => true,
                 'default' => false,
               ),
