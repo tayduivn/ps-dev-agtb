@@ -1,12 +1,6 @@
 <?php
 $module_name = 'gtb_positions';
-$viewdefs[$module_name] = 
-array (
-  'base' => 
-  array (
-    'view' => 
-    array (
-      'preview' => 
+$viewdefs[$module_name]['base']['view']['preview'] =
       array (
         'panels' => 
         array (
@@ -173,7 +167,4 @@ array (
           'maxColumns' => 1,
           'useTabs' => true,
         ),
-      ),
-    ),
-  ),
 );

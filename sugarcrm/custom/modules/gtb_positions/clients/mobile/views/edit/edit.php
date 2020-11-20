@@ -1,12 +1,6 @@
 <?php
 $module_name = 'gtb_positions';
-$viewdefs[$module_name] = 
-array (
-  'mobile' => 
-  array (
-    'view' => 
-    array (
-      'edit' => 
+$viewdefs[$module_name]['mobile']['view']['edit'] =
       array (
         'templateMeta' => 
         array (
@@ -97,7 +91,4 @@ array (
             ),
           ),
         ),
-      ),
-    ),
-  ),
 );

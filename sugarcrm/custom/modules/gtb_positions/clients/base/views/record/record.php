@@ -1,12 +1,6 @@
 <?php
 $module_name = 'gtb_positions';
-$viewdefs[$module_name] = 
-array (
-  'base' => 
-  array (
-    'view' => 
-    array (
-      'record' => 
+$viewdefs[$module_name]['base']['view']['record'] =
       array (
         'buttons' => 
         array (
@@ -301,7 +295,4 @@ array (
         array (
           'useTabs' => true,
         ),
-      ),
-    ),
-  ),
 );

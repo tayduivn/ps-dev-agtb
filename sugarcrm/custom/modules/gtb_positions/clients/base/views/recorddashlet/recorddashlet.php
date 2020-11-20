@@ -1,12 +1,6 @@
 <?php
 $module_name = 'gtb_positions';
-$viewdefs[$module_name] = 
-array (
-  'base' => 
-  array (
-    'view' => 
-    array (
-      'recorddashlet' => 
+$viewdefs[$module_name]['base']['view']['recorddashlet'] =
       array (
         'buttons' => 
         array (
@@ -221,7 +215,4 @@ array (
         array (
           'useTabs' => true,
         ),
-      ),
-    ),
-  ),
 );

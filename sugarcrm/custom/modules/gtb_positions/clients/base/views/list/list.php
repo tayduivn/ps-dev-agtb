@@ -1,12 +1,6 @@
 <?php
 $module_name = 'gtb_positions';
-$viewdefs[$module_name] = 
-array (
-  'base' => 
-  array (
-    'view' => 
-    array (
-      'list' => 
+$viewdefs[$module_name]['base']['view']['list'] =
       array (
         'panels' => 
         array (
@@ -124,7 +118,4 @@ array (
           'field' => 'date_modified',
           'direction' => 'desc',
         ),
-      ),
-    ),
-  ),
 );
