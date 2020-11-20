@@ -1,5 +1,5 @@
 <?php
-$viewdefs['Contacts']['base']['view']['list']['panels'] =
+$viewdefs['Contacts']['base']['view']['selection-list']['panels'] =
         array (
           0 => 
           array (
@@ -50,54 +50,33 @@ $viewdefs['Contacts']['base']['view']['list']['panels'] =
               ),
               5 => 
               array (
-                'name' => 'assigned_user_name',
-                'label' => 'LBL_LIST_ASSIGNED_USER',
-                'id' => 'ASSIGNED_USER_ID',
+                'name' => 'email',
                 'enabled' => true,
-                'default' => true,
+                'default' => false,
               ),
               6 => 
               array (
-                'name' => 'date_modified',
+                'name' => 'geo_mobility_c',
+                'label' => 'LBL_GEO_MOBILITY_C',
                 'enabled' => true,
-                'default' => true,
+                'default' => false,
               ),
               7 => 
-              array (
-                'name' => 'date_entered',
-                'enabled' => true,
-                'default' => true,
-                'readonly' => true,
-              ),
-              8 => 
-              array (
-                'name' => 'primary_address_country',
-                'label' => 'LBL_PRIMARY_ADDRESS_COUNTRY',
-                'enabled' => true,
-                'default' => false,
-              ),
-              9 => 
-              array (
-                'name' => 'phone_mobile',
-                'label' => 'LBL_MOBILE_PHONE',
-                'enabled' => true,
-                'default' => false,
-              ),
-              10 => 
-              array (
-                'name' => 'lead_source',
-                'label' => 'LBL_LEAD_SOURCE',
-                'enabled' => true,
-                'default' => false,
-              ),
-              11 => 
               array (
                 'name' => 'functional_mobility_c',
                 'label' => 'LBL_FUNCTIONAL_MOBILITY_C',
                 'enabled' => true,
                 'default' => false,
               ),
-              12 => 
+              8 => 
+              array (
+                'name' => 'assigned_user_name',
+                'label' => 'LBL_LIST_ASSIGNED_USER',
+                'id' => 'ASSIGNED_USER_ID',
+                'enabled' => true,
+                'default' => false,
+              ),
+              9 => 
               array (
                 'name' => 'oe_mobility_c',
                 'label' => 'LBL_OE_MOBILITY_C',
@@ -105,25 +84,19 @@ $viewdefs['Contacts']['base']['view']['list']['panels'] =
                 'sortable' => false,
                 'default' => false,
               ),
-              13 => 
-              array (
-                'name' => 'career_discussion_c',
-                'label' => 'LBL_CAREER_DISCUSSION_C',
-                'enabled' => true,
-                'default' => false,
-              ),
-              14 => 
-              array (
-                'name' => 'email',
-                'enabled' => true,
-                'default' => false,
-              ),
-              15 => 
+              10 => 
               array (
                 'name' => 'availability_c',
                 'label' => 'LBL_AVAILABILITY_C',
                 'enabled' => true,
                 'default' => false,
+              ),
+              11 => 
+              array (
+                'name' => 'date_entered',
+                'enabled' => true,
+                'default' => false,
+                'readonly' => true,
               ),
             ),
           ),

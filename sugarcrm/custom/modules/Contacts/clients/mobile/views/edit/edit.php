@@ -28,6 +28,12 @@ $viewdefs['Contacts']['mobile']['view']['edit'] =
             array (
               0 => 
               array (
+                'name' => 'salutation',
+                'comment' => 'Contact salutation (e.g., Mr, Ms)',
+                'label' => 'LBL_SALUTATION',
+              ),
+              1 => 
+              array (
                 'name' => 'first_name',
                 'customCode' => '{html_options name="salutation" options=$fields.salutation.options selected=$fields.salutation.value}&nbsp;<input name="first_name" size="15" maxlength="25" type="text" value="{$fields.first_name.value}">',
                 'displayParams' => 
@@ -35,7 +41,7 @@ $viewdefs['Contacts']['mobile']['view']['edit'] =
                   'wireless_edit_only' => true,
                 ),
               ),
-              1 => 
+              2 => 
               array (
                 'name' => 'last_name',
                 'displayParams' => 
@@ -44,24 +50,74 @@ $viewdefs['Contacts']['mobile']['view']['edit'] =
                   'wireless_edit_only' => true,
                 ),
               ),
-              2 => 'title',
-              3 => 
+              3 => 'title',
+              4 => 
               array (
-                'name' => 'department',
-                'comment' => 'The department of the contact',
-                'label' => 'LBL_DEPARTMENT',
+                'name' => 'gender_c',
+                'label' => 'LBL_GENDER_C',
               ),
-              4 => 'phone_work',
-              5 => 'phone_mobile',
-              6 => 'email',
-              7 => 'tag',
-              8 => 'primary_address_street',
-              9 => 'primary_address_city',
-              10 => 'primary_address_state',
-              11 => 'primary_address_postalcode',
-              12 => 'primary_address_country',
-              13 => 'assigned_user_name',
-              14 => 'team_name',
+              5 => 
+              array (
+                'name' => 'gtb_cluster_c',
+                'label' => 'LBL_GTB_CLUSTER_C',
+              ),
+              6 => 
+              array (
+                'name' => 'org_unit_c',
+                'label' => 'LBL_ORG_UNIT_C',
+              ),
+              7 => 
+              array (
+                'name' => 'function_c',
+                'label' => 'LBL_FUNCTION_C',
+              ),
+              8 => 'primary_address_country',
+              9 => 'phone_mobile',
+              10 => 'email',
+              11 => 
+              array (
+                'name' => 'lead_source',
+                'comment' => 'How did the contact come about',
+                'label' => 'LBL_LEAD_SOURCE',
+              ),
+              12 => 'tag',
+              13 => 
+              array (
+                'name' => 'functional_mobility_c',
+                'label' => 'LBL_FUNCTIONAL_MOBILITY_C',
+              ),
+              14 => 
+              array (
+                'name' => 'oe_mobility_c',
+                'label' => 'LBL_OE_MOBILITY_C',
+              ),
+              15 => 
+              array (
+                'name' => 'geo_mobility_c',
+                'label' => 'LBL_GEO_MOBILITY_C',
+              ),
+              16 => 
+              array (
+                'name' => 'mobility_comments_c',
+                'label' => 'LBL_MOBILITY_COMMENTS_C',
+              ),
+              17 => 
+              array (
+                'name' => 'target_roles_c',
+                'label' => 'LBL_TARGET_ROLES_C',
+              ),
+              18 => 
+              array (
+                'name' => 'career_discussion_c',
+                'label' => 'LBL_CAREER_DISCUSSION_C',
+              ),
+              19 => 
+              array (
+                'name' => 'availability_c',
+                'label' => 'LBL_AVAILABILITY_C',
+              ),
+              20 => 'assigned_user_name',
+              21 => 'team_name',
             ),
           ),
         ),
