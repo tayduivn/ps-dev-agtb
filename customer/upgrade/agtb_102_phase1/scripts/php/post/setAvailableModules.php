@@ -18,13 +18,10 @@ $modulesToShow = array(
 );
 
 $wirelessModulesToShow = array(
-    'Home',
     'Contacts',
     'gtb_positions',
     'gtb_matches',
     'gtb_contacts',
-    'Calendar',
-    'Reports',
     'Documents',
     'Emails',
     'Meetings',
@@ -47,6 +44,8 @@ $hiddenSubpanels = array(
     'opportunities',
     'Products',
     'CampaignLog',
+    'Purchases',
+    'DataPrivacy'
 );
 
 // Navigation Bar
