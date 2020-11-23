@@ -46,8 +46,8 @@ $viewdefs[$module_name]['base']['view']['preview'] =
               ),
               2 => 
               array (
-                'name' => 'org_unit',
-                'label' => 'LBL_ORG_UNIT',
+                'name' => 'country',
+                'label' => 'LBL_COUNTRY',
               ),
               3 => 
               array (
@@ -56,43 +56,48 @@ $viewdefs[$module_name]['base']['view']['preview'] =
               ),
               4 => 
               array (
+                'name' => 'org_unit',
+                'label' => 'LBL_ORG_UNIT',
+              ),
+              5 => 
+              array (
                 'name' => 'gtb_cluster',
                 'label' => 'LBL_GTB_CLUSTER',
               ),
-              5 => 
+              6 => 
               array (
                 'name' => 'gtb_source',
                 'label' => 'LBL_GTB_SOURCE',
               ),
-              6 => 
+              7 => 
               array (
                 'name' => 'gtb_contacts_gtb_positions_1_name',
               ),
-              7 => 
+              8 => 
               array (
                 'name' => 'tag',
               ),
-              8 => 
+              9 => 
               array (
                 'name' => 'status',
                 'label' => 'LBL_STATUS',
               ),
-              9 => 
+              10 => 
               array (
                 'name' => 'process_step',
                 'label' => 'LBL_PROCESS_STEP',
               ),
-              10 => 
+              11 => 
               array (
                 'name' => 'real_position',
                 'label' => 'LBL_REAL_POSITION',
               ),
-              11 => 
+              12 => 
               array (
                 'name' => 'reason_not_filled',
                 'label' => 'LBL_REASON_NOT_FILLED',
               ),
-              12 => 
+              13 => 
               array (
                 'name' => 'description',
               ),

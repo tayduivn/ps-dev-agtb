@@ -110,6 +110,13 @@ $viewdefs[$module_name]['base']['view']['list'] =
                 'sortable' => false,
                 'default' => false,
               ),
+              14 => 
+              array (
+                'name' => 'country',
+                'label' => 'LBL_COUNTRY',
+                'enabled' => true,
+                'default' => false,
+              ),
             ),
           ),
         ),

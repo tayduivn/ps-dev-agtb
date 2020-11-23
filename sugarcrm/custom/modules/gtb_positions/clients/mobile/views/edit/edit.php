@@ -45,8 +45,8 @@ $viewdefs[$module_name]['mobile']['view']['edit'] =
               ),
               3 => 
               array (
-                'name' => 'org_unit',
-                'label' => 'LBL_ORG_UNIT',
+                'name' => 'country',
+                'label' => 'LBL_COUNTRY',
               ),
               4 => 
               array (
@@ -55,39 +55,44 @@ $viewdefs[$module_name]['mobile']['view']['edit'] =
               ),
               5 => 
               array (
+                'name' => 'org_unit',
+                'label' => 'LBL_ORG_UNIT',
+              ),
+              6 => 
+              array (
                 'name' => 'gtb_cluster',
                 'label' => 'LBL_GTB_CLUSTER',
               ),
-              6 => 
+              7 => 
               array (
                 'name' => 'gtb_source',
                 'label' => 'LBL_GTB_SOURCE',
               ),
-              7 => 
+              8 => 
               array (
                 'name' => 'gtb_contacts_gtb_positions_1_name',
                 'label' => 'LBL_GTB_CONTACTS_GTB_POSITIONS_1_FROM_GTB_CONTACTS_TITLE',
               ),
-              8 => 'tag',
-              9 => 
+              9 => 'tag',
+              10 => 
               array (
                 'name' => 'process_step',
                 'label' => 'LBL_PROCESS_STEP',
               ),
-              10 => 
+              11 => 
               array (
                 'name' => 'real_position',
                 'label' => 'LBL_REAL_POSITION',
               ),
-              11 => 
+              12 => 
               array (
                 'name' => 'description',
                 'comment' => 'Full text of the note',
                 'studio' => 'visible',
                 'label' => 'LBL_DESCRIPTION',
               ),
-              12 => 'assigned_user_name',
-              13 => 'team_name',
+              13 => 'assigned_user_name',
+              14 => 'team_name',
             ),
           ),
         ),

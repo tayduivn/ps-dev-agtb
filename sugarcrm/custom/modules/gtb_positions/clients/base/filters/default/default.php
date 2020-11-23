@@ -1,5 +1,5 @@
 <?php
-// created: 2020-11-12 06:21:03
+// created: 2020-11-12 13:56:55
 $viewdefs['gtb_positions']['base']['filter']['default'] = array (
   'default_filter' => 'all_records',
   'fields' => 
@@ -18,10 +18,19 @@ $viewdefs['gtb_positions']['base']['filter']['default'] = array (
       'predefined_filter' => true,
       'vname' => 'LBL_CURRENT_USER_FILTER',
     ),
+    'gtb_cluster' => 
+    array (
+    ),
+    'region' => 
+    array (
+    ),
     '$favorite' => 
     array (
       'predefined_filter' => true,
       'vname' => 'LBL_FAVORITES_FILTER',
+    ),
+    'country' => 
+    array (
     ),
     'date_entered' => 
     array (

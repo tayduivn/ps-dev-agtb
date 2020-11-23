@@ -69,4 +69,5 @@ $mod_strings = array (
   'LBL_REASON_NOT_FILLED' => 'Reason for Not Filled',
   'LBL_RECORD_BODY' => 'General Information',
   'LBL_SHOW_MORE' => 'System Information',
+  'LBL_COUNTRY' => 'Country',
 );
