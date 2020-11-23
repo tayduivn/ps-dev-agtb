@@ -208,16 +208,17 @@ $viewdefs[$module_name]['base']['view']['record'] =
               array (
                 'name' => 'tag',
               ),
-              10 => 
+                10 =>
+                    array (
+                        'name' => 'process_step',
+                        'label' => 'LBL_PROCESS_STEP',
+                    ),
+              11 =>
               array (
                 'name' => 'status',
                 'label' => 'LBL_STATUS',
               ),
-              11 => 
-              array (
-                'name' => 'process_step',
-                'label' => 'LBL_PROCESS_STEP',
-              ),
+
               12 => 
               array (
                 'name' => 'real_position',
