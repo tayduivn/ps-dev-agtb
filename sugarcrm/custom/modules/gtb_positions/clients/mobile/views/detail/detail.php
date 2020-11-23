@@ -1,6 +1,6 @@
 <?php
 $module_name = 'gtb_positions';
-$viewdefs[$module_name]['mobile']['view']['detail'] =
+$viewdefs[$module_name]['mobile']['view']['detail']  =
       array (
         'templateMeta' => 
         array (
@@ -54,59 +54,64 @@ $viewdefs[$module_name]['mobile']['view']['detail'] =
               ),
               3 => 
               array (
+                'name' => 'country',
+                'label' => 'LBL_COUNTRY',
+              ),
+              4 => 
+              array (
                 'name' => 'org_unit',
                 'label' => 'LBL_ORG_UNIT',
               ),
-              4 => 
+              5 => 
               array (
                 'name' => 'location',
                 'label' => 'LBL_LOCATION',
               ),
-              5 => 
+              6 => 
               array (
                 'name' => 'gtb_cluster',
                 'label' => 'LBL_GTB_CLUSTER',
               ),
-              6 => 
+              7 => 
               array (
                 'name' => 'gtb_source',
                 'label' => 'LBL_GTB_SOURCE',
               ),
-              7 => 
+              8 => 
               array (
                 'name' => 'gtb_contacts_gtb_positions_1_name',
                 'label' => 'LBL_GTB_CONTACTS_GTB_POSITIONS_1_FROM_GTB_CONTACTS_TITLE',
               ),
-              8 => 'tag',
-              9 => 
+              9 => 'tag',
+              10 => 
               array (
                 'name' => 'status',
                 'label' => 'LBL_STATUS',
               ),
-              10 => 
+              11 => 
               array (
                 'name' => 'process_step',
                 'label' => 'LBL_PROCESS_STEP',
               ),
-              11 => 
+              12 => 
               array (
                 'name' => 'real_position',
                 'label' => 'LBL_REAL_POSITION',
               ),
-              12 => 
+              13 => 
               array (
                 'name' => 'description',
                 'comment' => 'Full text of the note',
                 'studio' => 'visible',
                 'label' => 'LBL_DESCRIPTION',
               ),
-              13 => 
+              14 => 
               array (
                 'name' => 'reason_not_filled',
                 'label' => 'LBL_REASON_NOT_FILLED',
               ),
-              14 => 'assigned_user_name',
-              15 => 
+              15 => 'assigned_user_name',
+              16 => 
               array (
                 'name' => 'date_entered',
                 'comment' => 'Date record created',
@@ -117,7 +122,7 @@ $viewdefs[$module_name]['mobile']['view']['detail'] =
                 'readonly' => true,
                 'label' => 'LBL_DATE_ENTERED',
               ),
-              16 => 
+              17 => 
               array (
                 'name' => 'date_modified',
                 'comment' => 'Date record last modified',
@@ -128,7 +133,7 @@ $viewdefs[$module_name]['mobile']['view']['detail'] =
                 'readonly' => true,
                 'label' => 'LBL_DATE_MODIFIED',
               ),
-              17 => 'team_name',
+              18 => 'team_name',
             ),
           ),
         ),

@@ -169,58 +169,67 @@ $viewdefs[$module_name]['base']['view']['record'] =
               ),
               1 => 
               array (
+              ),
+              2 => 
+              array (
                 'name' => 'region',
                 'label' => 'LBL_REGION',
               ),
-              2 => 
+              3 => 
+              array (
+                'name' => 'country',
+                'label' => 'LBL_COUNTRY',
+              ),
+              4 => 
               array (
                 'name' => 'org_unit',
                 'label' => 'LBL_ORG_UNIT',
               ),
-              3 => 
+              5 => 
               array (
                 'name' => 'location',
                 'label' => 'LBL_LOCATION',
               ),
-              4 => 
+              6 => 
               array (
                 'name' => 'gtb_cluster',
                 'label' => 'LBL_GTB_CLUSTER',
               ),
-              5 => 
+              7 => 
               array (
                 'name' => 'gtb_source',
                 'label' => 'LBL_GTB_SOURCE',
               ),
-              6 => 
+              8 => 
               array (
                 'name' => 'gtb_contacts_gtb_positions_1_name',
               ),
-              7 => 
+              9 => 
               array (
                 'name' => 'tag',
               ),
-              8 => 
+                10 =>
+                    array (
+                        'name' => 'process_step',
+                        'label' => 'LBL_PROCESS_STEP',
+                    ),
+              11 =>
               array (
                 'name' => 'status',
                 'label' => 'LBL_STATUS',
               ),
-              9 => 
-              array (
-                'name' => 'process_step',
-                'label' => 'LBL_PROCESS_STEP',
-              ),
-              10 => 
+
+              12 => 
               array (
                 'name' => 'real_position',
                 'label' => 'LBL_REAL_POSITION',
               ),
-              11 => 
+              13 => 
               array (
                 'name' => 'reason_not_filled',
                 'label' => 'LBL_REASON_NOT_FILLED',
               ),
-              12 => 
+              14 => 
               array (
                 'name' => 'description',
                 'span' => 12,
