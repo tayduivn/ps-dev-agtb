@@ -13,6 +13,7 @@
 $app_list_strings['moduleList']['gtb_positions'] = 'Positions';
 $app_list_strings['moduleListSingular']['gtb_positions'] = 'Position';
 
+$app_list_strings['gtb_region_list'][''] = '';
 $app_list_strings['gtb_region_list']['Americas'] = 'Americas';
 $app_list_strings['gtb_region_list']['Asia_Pacific'] = 'Asia Pacific';
 $app_list_strings['gtb_region_list']['CEE'] = 'Central & Eastern Europe';
