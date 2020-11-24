@@ -27,7 +27,7 @@ $dictionary['Contact']['fields']['gtb_cluster_c'] = [
       'len' => 100,
       'size' => '20',
       'options' => 'gtb_cluster_list',
-      'default' => NULL,
+      'default' => '',
       'id' => 'bd3fc388-2379-11eb-a24f-0242ac150007',
       'custom_module' => 'Contacts',
 ];
