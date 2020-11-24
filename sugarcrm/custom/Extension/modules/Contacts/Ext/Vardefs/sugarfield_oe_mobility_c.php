@@ -9,7 +9,8 @@ $dictionary['Contact']['fields']['oe_mobility_c']['required']=true;
 $dictionary['Contact']['fields']['oe_mobility_c']['source']='custom_fields';
 $dictionary['Contact']['fields']['oe_mobility_c']['name']='oe_mobility_c';
 $dictionary['Contact']['fields']['oe_mobility_c']['vname']='LBL_OE_MOBILITY_C';
-$dictionary['Contact']['fields']['oe_mobility_c']['type']='text';
+$dictionary['Contact']['fields']['oe_mobility_c']['type']='multienum';
+$dictionary['Contact']['fields']['oe_mobility_c']['options']='gtb_oe_mobility_list';
 $dictionary['Contact']['fields']['oe_mobility_c']['massupdate']=false;
 $dictionary['Contact']['fields']['oe_mobility_c']['hidemassupdate']=false;
 $dictionary['Contact']['fields']['oe_mobility_c']['no_default']=false;
@@ -24,7 +25,3 @@ $dictionary['Contact']['fields']['oe_mobility_c']['unified_search']=false;
 $dictionary['Contact']['fields']['oe_mobility_c']['merge_filter']='disabled';
 $dictionary['Contact']['fields']['oe_mobility_c']['pii']=false;
 $dictionary['Contact']['fields']['oe_mobility_c']['calculated']=false;
-$dictionary['Contact']['fields']['oe_mobility_c']['rows']='4';
-$dictionary['Contact']['fields']['oe_mobility_c']['cols']='20';
-
- ?>
