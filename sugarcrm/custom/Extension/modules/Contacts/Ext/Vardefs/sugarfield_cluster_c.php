@@ -1,14 +1,14 @@
 <?php
  // created: 2020-11-10 17:25:33
-$dictionary['Contact']['fields']['cluster_c'] = [
+$dictionary['Contact']['fields']['gtb_cluster_c'] = [
 'labelValue' => 'Cluster',
       'dependency' => '',
       'required_formula' => '',
       'visibility_grid' => '',
       'required' => true,
       'source' => 'custom_fields',
-      'name' => 'cluster_c',
-      'vname' => 'LBL_CLUSTER_C',
+      'name' => 'gtb_cluster_c',
+      'vname' => 'LBL_GTB_CLUSTER_C',
       'type' => 'enum',
       'massupdate' => true,
       'hidemassupdate' => false,
@@ -27,7 +27,7 @@ $dictionary['Contact']['fields']['cluster_c'] = [
       'len' => 100,
       'size' => '20',
       'options' => 'gtb_cluster_list',
-      'default' => NULL,
+      'default' => '',
       'id' => 'bd3fc388-2379-11eb-a24f-0242ac150007',
       'custom_module' => 'Contacts',
 ];

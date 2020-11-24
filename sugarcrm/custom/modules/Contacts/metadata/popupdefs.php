@@ -12,7 +12,6 @@ $popupMeta = array (
   'org_unit_c' => 'contacts_cstm.org_unit_c',
   'availability_c' => 'contacts_cstm.availability_c',
   'gtb_cluster_c' => 'contacts_cstm.gtb_cluster_c',
-  'geo_mobility_c' => 'contacts_cstm.geo_mobility_c',
   'function_c' => 'contacts_cstm.function_c',
   'primary_address_country' => 'contacts.primary_address_country',
   'title' => 'contacts.title',
@@ -27,7 +26,6 @@ $popupMeta = array (
   7 => 'org_unit_c',
   8 => 'availability_c',
   9 => 'gtb_cluster_c',
-  10 => 'geo_mobility_c',
   11 => 'function_c',
   12 => 'primary_address_country',
   13 => 'title',
@@ -98,13 +96,6 @@ $popupMeta = array (
     'label' => 'LBL_GTB_CLUSTER_C',
     'width' => 10,
     'name' => 'gtb_cluster_c',
-  ),
-  'geo_mobility_c' => 
-  array (
-    'type' => 'enum',
-    'label' => 'LBL_GEO_MOBILITY_C',
-    'width' => 10,
-    'name' => 'geo_mobility_c',
   ),
   'function_c' => 
   array (
