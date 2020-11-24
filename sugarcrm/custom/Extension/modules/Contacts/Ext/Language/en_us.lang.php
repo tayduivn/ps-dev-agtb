@@ -1,6 +1,6 @@
 <?php
 // WARNING: The contents of this file are auto-generated.
-$mod_strings['LBL_GENDER'] = 'Gender';
+$mod_strings['LBL_GENDER_C'] = 'Gender';
 $mod_strings['LBL_TITLE'] = 'Job Title';
 $mod_strings['LBL_ORG_UNIT_C'] = 'OE';
 $mod_strings['LBL_FUNCTION_C'] = 'Function';
@@ -18,7 +18,7 @@ $mod_strings['LBL_COMMENTLOG_LINK'] = 'Executive Summary';
 $mod_strings['LBL_GEO_MOBILITY_C'] = 'Geographical Mobility';
 $mod_strings['LBL_LEAD_SOURCE'] = 'Source';
 $mod_strings['LBL_AVAILABILITY_C'] = 'Availability';
-$mod_strings['LBL_CLUSTER_C'] = 'Cluster';
+$mod_strings['LBL_GTB_CLUSTER_C'] = 'Cluster';
 $mod_strings['LNK_CONTACT_REPORTS'] = 'View Candidate Reports';
 $mod_strings['LNK_NEW_CONTACT'] = 'Create Candidate';
 $mod_strings['LBL_MODULE_NAME'] = 'Candidates';
