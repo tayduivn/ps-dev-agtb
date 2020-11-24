@@ -19,7 +19,6 @@ $mod_strings['LBL_GEO_MOBILITY_C'] = 'Geographical Mobility';
 $mod_strings['LBL_LEAD_SOURCE'] = 'Source';
 $mod_strings['LBL_AVAILABILITY_C'] = 'Availability';
 $mod_strings['LBL_CLUSTER_C'] = 'Cluster';
-
 $mod_strings['LNK_CONTACT_REPORTS'] = 'View Candidate Reports';
 $mod_strings['LNK_NEW_CONTACT'] = 'Create Candidate';
 $mod_strings['LBL_MODULE_NAME'] = 'Candidates';
@@ -42,3 +41,6 @@ $mod_strings['LBL_MODULE_TITLE'] = 'Candidates: Home';
 $mod_strings['LBL_MODULE_ID'] = 'Candidates';
 $mod_strings['LNK_CONTACT_LIST'] = 'View Candidates';
 $mod_strings['LNK_IMPORT_VCARD'] = 'Create Candidate From vCard';
+$mod_strings['LBL_CONTACTS_GTB_MATCHES_1_FROM_GTB_MATCHES_TITLE'] = 'Matched Positions';
+$mod_strings['LBL_CONTACTS_GTB_MATCHES_1_FROM_CONTACTS_TITLE'] = 'Matched Positions';
+$mod_strings['LBL_GTB_CLUSTER_MATCH_C'] = 'Cluster Match';
