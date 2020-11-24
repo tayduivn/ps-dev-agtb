@@ -12,18 +12,15 @@
 
 $app_list_strings['moduleList']['gtb_positions'] = 'Positions';
 $app_list_strings['moduleListSingular']['gtb_positions'] = 'Position';
-$app_list_strings['gtb_region_list']['Asia_Pacific'] = 'Asia Pacific';
-$app_list_strings['gtb_region_list']['Australia'] = 'Australia';
-$app_list_strings['gtb_region_list']['CEE'] = 'CEE';
-$app_list_strings['gtb_region_list']['DCH'] = 'DCH';
-$app_list_strings['gtb_region_list']['Ibero_LatAm'] = 'Ibero LatAm';
-$app_list_strings['gtb_region_list']['Northern_America'] = 'Northern America';
-$app_list_strings['gtb_region_list']['Northern_Europe'] = 'Northern Europe';
-$app_list_strings['gtb_region_list']['Mena'] = 'Mena';
-$app_list_strings['gtb_region_list']['Africa'] = 'Africa';
-$app_list_strings['gtb_region_list']['Southern_Europe'] = 'Southern Europe';
-$app_list_strings['gtb_region_list']['UK_Ireland'] = 'UK Ireland';
+
 $app_list_strings['gtb_region_list'][''] = '';
+$app_list_strings['gtb_region_list']['Americas'] = 'Americas';
+$app_list_strings['gtb_region_list']['Asia_Pacific'] = 'Asia Pacific';
+$app_list_strings['gtb_region_list']['CEE'] = 'Central & Eastern Europe';
+$app_list_strings['gtb_region_list']['Africa'] = 'Middle East & Africa';
+$app_list_strings['gtb_region_list']['Europe'] = 'Western Europe';
+$app_list_strings['gtb_region_list']['Other'] = 'Other';
+
 $app_list_strings['gtb_pos_source_list']['eRec'] = 'eRec';
 $app_list_strings['gtb_pos_source_list']['Business'] = 'Business';
 $app_list_strings['gtb_pos_source_list']['HR'] = 'HR';
