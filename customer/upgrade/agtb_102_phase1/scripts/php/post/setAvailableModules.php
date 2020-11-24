@@ -15,6 +15,9 @@ $modulesToShow = array(
     'Notes',
     'Tags',
     'pmse_Project',
+    'pmse_Emails_Templates',
+    'pmse_Inbox',
+    'pmse_Business_Rules',
 );
 
 $wirelessModulesToShow = array(
