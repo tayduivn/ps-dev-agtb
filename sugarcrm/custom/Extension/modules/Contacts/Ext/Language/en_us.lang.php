@@ -20,7 +20,6 @@ $mod_strings['LBL_PRIMARY_ADDRESS_COUNTRY'] = 'Country';
 $mod_strings['LBL_CAREER_DISCUSSION_C'] = 'Date of Career Aspiration Discussion';
 $mod_strings['LBL_COMMENTLOG'] = 'Executive Summary';
 $mod_strings['LBL_COMMENTLOG_LINK'] = 'Executive Summary';
-$mod_strings['LBL_GEO_MOBILITY_C'] = 'Geographical Mobility';
 $mod_strings['LBL_LEAD_SOURCE'] = 'Source';
 $mod_strings['LBL_AVAILABILITY_C'] = 'Availability';
 $mod_strings['LBL_GTB_CLUSTER_C'] = 'Cluster';
