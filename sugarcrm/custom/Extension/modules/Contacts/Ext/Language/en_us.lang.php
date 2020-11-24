@@ -41,5 +41,20 @@ $mod_strings['LBL_MODULE_TITLE'] = 'Candidates: Home';
 $mod_strings['LBL_MODULE_ID'] = 'Candidates';
 $mod_strings['LNK_CONTACT_LIST'] = 'View Candidates';
 $mod_strings['LNK_IMPORT_VCARD'] = 'Create Candidate From vCard';
+
 $mod_strings['LBL_CONTACTS_GTB_MATCHES_1_FROM_GTB_MATCHES_TITLE'] = 'Matched Positions';
 $mod_strings['LBL_CONTACTS_GTB_MATCHES_1_FROM_CONTACTS_TITLE'] = 'Matched Positions';
+
+$mod_strings['LBL_CONTACT_OPP_FORM_TITLE'] = 'Candidate-Opportunity:';
+$mod_strings['LBL_CREATED_CONTACT'] = 'Created a new Candidate';
+$mod_strings['LBL_EXISTING_CONTACT'] = 'Used an existing Candidate';
+$mod_strings['LBL_IMPORT_VCARDTEXT'] = 'Automatically create a new Candidate by importing a vCard from your file system.';
+$mod_strings['LBL_LIST_CONTACT_NAME'] = 'Candidate Name';
+$mod_strings['LBL_VIEW_FORM_TITLE'] = 'Candidate View';
+$mod_strings['LBL_RELATED_CONTACTS_TITLE'] = 'Related Candidates';
+$mod_strings['LBL_SELECT_CHECKED_BUTTON_LABEL'] = 'Select Checked Candidates';
+$mod_strings['LBL_SELECT_CHECKED_BUTTON_TITLE'] = 'Select Checked Candidates';
+$mod_strings['MSG_DUPLICATE'] = 'The Candidate record you are about to create might be a duplicate of a Candidate record that already exists. Candidate records containing similar names are listed below.Click Create Candidate to continue creating this new Candidate, or select an existing Candidate listed below.';
+$mod_strings['NTC_REMOVE_CONFIRMATION'] = 'Are you sure you want to remove this Candidate from the Case?';
+$mod_strings['LBL_CONTACT_HISTORY_SUBPANEL_TITLE'] = 'Related Candidates&#039; Emails';
+$mod_strings['LBL_PORTAL_TOUR_PROFILE_INTRO'] = 'The Profile is where you can manage your Candidate information, password, and language preferences.';
