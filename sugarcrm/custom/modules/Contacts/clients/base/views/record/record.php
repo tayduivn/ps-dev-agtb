@@ -326,7 +326,7 @@ $viewdefs['Contacts']['base']['view']['record'] =
               0 => 
               array (
                 'name' => 'language_1_c',
-                'label' => 'LBL_LANGUAGE',
+                'label' => 'LBL_LANGUAGE_1_C',
               ),
               1 => 
               array (
@@ -336,7 +336,7 @@ $viewdefs['Contacts']['base']['view']['record'] =
               2 => 
               array (
                 'name' => 'language_2_c',
-                'label' => 'LBL_LANGUAGE',
+                'label' => 'LBL_LANGUAGE_2_C',
               ),
               3 => 
               array (
@@ -346,7 +346,7 @@ $viewdefs['Contacts']['base']['view']['record'] =
               4 => 
               array (
                 'name' => 'language_3_c',
-                'label' => 'LBL_LANGUAGE',
+                'label' => 'LBL_LANGUAGE_3_C',
               ),
               5 => 
               array (
@@ -356,7 +356,7 @@ $viewdefs['Contacts']['base']['view']['record'] =
               6 => 
               array (
                 'name' => 'language_4_c',
-                'label' => 'LBL_LANGUAGE',
+                'label' => 'LBL_LANGUAGE_4_C',
               ),
               7 => 
               array (
@@ -366,7 +366,7 @@ $viewdefs['Contacts']['base']['view']['record'] =
               8 => 
               array (
                 'name' => 'language_5_c',
-                'label' => 'LBL_LANGUAGE',
+                'label' => 'LBL_LANGUAGE_5_C',
               ),
               9 => 
               array (
@@ -376,7 +376,7 @@ $viewdefs['Contacts']['base']['view']['record'] =
               10 => 
               array (
                 'name' => 'language_6_c',
-                'label' => 'LBL_LANGUAGE',
+                'label' => 'LBL_LANGUAGE_6_C',
               ),
               11 => 
               array (
