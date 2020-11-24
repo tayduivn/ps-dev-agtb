@@ -44,9 +44,6 @@ $viewdefs['Contacts']['base']['filter']['default'] = array (
     'target_roles_c' => 
     array (
     ),
-    'geo_mobility_c' => 
-    array (
-    ),
     'availability_c' => 
     array (
     ),

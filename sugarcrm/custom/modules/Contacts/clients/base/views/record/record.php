@@ -283,12 +283,6 @@ $viewdefs['Contacts']['base']['view']['record'] =
                 'label' => 'LBL_OE_MOBILITY_C',
                 'span' => 12,
               ),
-              3 => 
-              array (
-                'name' => 'geo_mobility_c',
-                'label' => 'LBL_GEO_MOBILITY_C',
-                'span' => 12,
-              ),
               4 => 
               array (
                 'name' => 'mobility_comments_c',
