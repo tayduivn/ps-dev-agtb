@@ -317,7 +317,7 @@ $dictionary['gtb_positions'] = array(
         array (
           0 => 'Closed',
         ),
-        '' => 
+        'Position_Identified' =>
         array (
           0 => 'New',
         ),
@@ -343,7 +343,7 @@ $dictionary['gtb_positions'] = array(
     'unified_search' => false,
     'merge_filter' => 'disabled',
     'pii' => false,
-    'default' => '',
+    'default' => 'Position_Identified',
     'calculated' => false,
     'len' => 100,
     'size' => '20',
