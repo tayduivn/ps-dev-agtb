@@ -160,3 +160,4 @@ $dictionary['Contact']['fields']['geo_mobility_region_6_c'] = array (
   'options' => 'gtb_region_list',
   'dependency' => false,
 );
+

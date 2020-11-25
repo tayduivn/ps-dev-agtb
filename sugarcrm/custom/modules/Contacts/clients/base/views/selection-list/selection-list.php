@@ -1,5 +1,6 @@
 <?php
-$viewdefs['Contacts']['base']['view']['selection-list']['panels'] =
+$viewdefs['Contacts']['base']['view']['selection-list'] = array (
+        'panels' => 
         array (
           0 => 
           array (
@@ -54,22 +55,14 @@ $viewdefs['Contacts']['base']['view']['selection-list']['panels'] =
                 'enabled' => true,
                 'default' => false,
               ),
-              7 => 
+              6 => 
               array (
                 'name' => 'functional_mobility_c',
                 'label' => 'LBL_FUNCTIONAL_MOBILITY_C',
                 'enabled' => true,
                 'default' => false,
               ),
-              8 => 
-              array (
-                'name' => 'assigned_user_name',
-                'label' => 'LBL_LIST_ASSIGNED_USER',
-                'id' => 'ASSIGNED_USER_ID',
-                'enabled' => true,
-                'default' => false,
-              ),
-              9 => 
+              7 => 
               array (
                 'name' => 'oe_mobility_c',
                 'label' => 'LBL_OE_MOBILITY_C',
@@ -77,14 +70,22 @@ $viewdefs['Contacts']['base']['view']['selection-list']['panels'] =
                 'sortable' => false,
                 'default' => false,
               ),
-              10 => 
+              8 => 
               array (
                 'name' => 'availability_c',
                 'label' => 'LBL_AVAILABILITY_C',
                 'enabled' => true,
                 'default' => false,
               ),
-              11 => 
+              9 => 
+              array (
+                'name' => 'assigned_user_name',
+                'label' => 'LBL_LIST_ASSIGNED_USER',
+                'id' => 'ASSIGNED_USER_ID',
+                'enabled' => true,
+                'default' => false,
+              ),
+              10 => 
               array (
                 'name' => 'date_entered',
                 'enabled' => true,
@@ -93,4 +94,5 @@ $viewdefs['Contacts']['base']['view']['selection-list']['panels'] =
               ),
             ),
           ),
+        ),
 );

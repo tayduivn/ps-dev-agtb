@@ -57,10 +57,8 @@ $mod_strings['LBL_MODULE_TITLE'] = 'Candidates: Home';
 $mod_strings['LBL_MODULE_ID'] = 'Candidates';
 $mod_strings['LNK_CONTACT_LIST'] = 'View Candidates';
 $mod_strings['LNK_IMPORT_VCARD'] = 'Create Candidate From vCard';
-
 $mod_strings['LBL_CONTACTS_GTB_MATCHES_1_FROM_GTB_MATCHES_TITLE'] = 'Matched Positions';
 $mod_strings['LBL_CONTACTS_GTB_MATCHES_1_FROM_CONTACTS_TITLE'] = 'Matched Positions';
-
 $mod_strings['LBL_CONTACT_OPP_FORM_TITLE'] = 'Candidate-Opportunity:';
 $mod_strings['LBL_CREATED_CONTACT'] = 'Created a new Candidate';
 $mod_strings['LBL_EXISTING_CONTACT'] = 'Used an existing Candidate';
@@ -74,3 +72,4 @@ $mod_strings['MSG_DUPLICATE'] = 'The Candidate record you are about to create mi
 $mod_strings['NTC_REMOVE_CONFIRMATION'] = 'Are you sure you want to remove this Candidate from the Case?';
 $mod_strings['LBL_CONTACT_HISTORY_SUBPANEL_TITLE'] = 'Related Candidates&#039; Emails';
 $mod_strings['LBL_PORTAL_TOUR_PROFILE_INTRO'] = 'The Profile is where you can manage your Candidate information, password, and language preferences.';
+$mod_strings['LBL_RECORDVIEW_PANEL3'] = 'Geographical Mobility';

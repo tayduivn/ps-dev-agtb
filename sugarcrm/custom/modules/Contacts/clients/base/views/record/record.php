@@ -1,6 +1,5 @@
 <?php
-$viewdefs['Contacts']['base']['view']['record'] =
-      array (
+$viewdefs['Contacts']['base']['view']['record'] = array (
         'buttons' => 
         array (
           0 => 
@@ -231,20 +230,7 @@ $viewdefs['Contacts']['base']['view']['record'] =
               array (
                 'name' => 'tag',
               ),
-            ),
-          ),
-          2 => 
-          array (
-            'columns' => 2,
-            'name' => 'panel_hidden',
-            'label' => 'LBL_RECORD_SHOWMORE',
-            'hide' => true,
-            'placeholders' => true,
-            'newTab' => true,
-            'panelDefault' => 'expanded',
-            'fields' => 
-            array (
-              0 => 
+              10 => 
               array (
                 'name' => 'commentlog',
                 'displayParams' => 
@@ -271,39 +257,111 @@ $viewdefs['Contacts']['base']['view']['record'] =
                 'label' => 'LBL_COMMENTLOG',
                 'span' => 12,
               ),
-              1 => 
+              11 => 
               array (
                 'name' => 'functional_mobility_c',
                 'label' => 'LBL_FUNCTIONAL_MOBILITY_C',
                 'span' => 12,
               ),
-              2 => 
+              12 => 
               array (
                 'name' => 'oe_mobility_c',
                 'label' => 'LBL_OE_MOBILITY_C',
                 'span' => 12,
               ),
-              4 => 
+              13 => 
               array (
                 'name' => 'mobility_comments_c',
                 'label' => 'LBL_MOBILITY_COMMENTS_C',
                 'span' => 12,
               ),
-              5 => 
+              14 => 
               array (
                 'name' => 'target_roles_c',
                 'label' => 'LBL_TARGET_ROLES_C',
                 'span' => 12,
               ),
-              6 => 
+              15 => 
               array (
                 'name' => 'career_discussion_c',
                 'label' => 'LBL_CAREER_DISCUSSION_C',
               ),
-              7 => 
+              16 => 
               array (
                 'name' => 'availability_c',
                 'label' => 'LBL_AVAILABILITY_C',
+              ),
+            ),
+          ),
+          2 => 
+          array (
+            'newTab' => false,
+            'panelDefault' => 'expanded',
+            'name' => 'LBL_RECORDVIEW_PANEL3',
+            'label' => 'LBL_RECORDVIEW_PANEL3',
+            'columns' => 2,
+            'placeholders' => 1,
+            'fields' => 
+            array (
+              0 => 
+              array (
+                'name' => 'geo_mobility_region_1_c',
+                'label' => 'LBL_GEO_MOBILITY_REGION_1_C',
+              ),
+              1 => 
+              array (
+                'name' => 'geo_mobility_country_1_c',
+                'label' => 'LBL_GEO_MOBILITY_COUNTRY_1_C',
+              ),
+              2 => 
+              array (
+                'name' => 'geo_mobility_region_2_c',
+                'label' => 'LBL_GEO_MOBILITY_REGION_2_C',
+              ),
+              3 => 
+              array (
+                'name' => 'geo_mobility_country_2_c',
+                'label' => 'LBL_GEO_MOBILITY_COUNTRY_2_C',
+              ),
+              4 => 
+              array (
+                'name' => 'geo_mobility_region_3_c',
+                'label' => 'LBL_GEO_MOBILITY_REGION_3_C',
+              ),
+              5 => 
+              array (
+                'name' => 'geo_mobility_country_3_c',
+                'label' => 'LBL_GEO_MOBILITY_COUNTRY_3_C',
+              ),
+              6 => 
+              array (
+                'name' => 'geo_mobility_region_4_c',
+                'label' => 'LBL_GEO_MOBILITY_REGION_4_C',
+              ),
+              7 => 
+              array (
+                'name' => 'geo_mobility_country_4_c',
+                'label' => 'LBL_GEO_MOBILITY_COUNTRY_4_C',
+              ),
+              8 => 
+              array (
+                'name' => 'geo_mobility_region_5_c',
+                'label' => 'LBL_GEO_MOBILITY_REGION_5_C',
+              ),
+              9 => 
+              array (
+                'name' => 'geo_mobility_country_5_c',
+                'label' => 'LBL_GEO_MOBILITY_COUNTRY_5_C',
+              ),
+              10 => 
+              array (
+                'name' => 'geo_mobility_region_6_c',
+                'label' => 'LBL_GEO_MOBILITY_REGION_6_C',
+              ),
+              11 => 
+              array (
+                'name' => 'geo_mobility_country_6_c',
+                'label' => 'LBL_GEO_MOBILITY_COUNTRY_6_C',
               ),
             ),
           ),
