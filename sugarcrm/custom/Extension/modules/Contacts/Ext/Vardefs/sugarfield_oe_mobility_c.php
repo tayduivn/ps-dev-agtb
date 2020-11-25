@@ -10,6 +10,7 @@ $dictionary['Contact']['fields']['oe_mobility_c']['source']='custom_fields';
 $dictionary['Contact']['fields']['oe_mobility_c']['name']='oe_mobility_c';
 $dictionary['Contact']['fields']['oe_mobility_c']['vname']='LBL_OE_MOBILITY_C';
 $dictionary['Contact']['fields']['oe_mobility_c']['type']='multienum';
+$dictionary['Contact']['fields']['oe_mobility_c']['isMultiSelect'] = true;
 $dictionary['Contact']['fields']['oe_mobility_c']['options']='gtb_oe_mobility_list';
 $dictionary['Contact']['fields']['oe_mobility_c']['massupdate']=false;
 $dictionary['Contact']['fields']['oe_mobility_c']['hidemassupdate']=false;
