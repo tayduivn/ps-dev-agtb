@@ -73,3 +73,5 @@ $mod_strings['NTC_REMOVE_CONFIRMATION'] = 'Are you sure you want to remove this 
 $mod_strings['LBL_CONTACT_HISTORY_SUBPANEL_TITLE'] = 'Related Candidates&#039; Emails';
 $mod_strings['LBL_PORTAL_TOUR_PROFILE_INTRO'] = 'The Profile is where you can manage your Candidate information, password, and language preferences.';
 $mod_strings['LBL_RECORDVIEW_PANEL3'] = 'Geographical Mobility';
+$mod_strings['LBL_GTB_COUNTRY_MATCH_C'] = 'Country Match';
+$mod_strings['LBL_GTB_FUNCTION_MATCH_C'] = 'Function Match';
