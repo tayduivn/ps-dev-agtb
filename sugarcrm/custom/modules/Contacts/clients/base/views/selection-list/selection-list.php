@@ -54,13 +54,6 @@ $viewdefs['Contacts']['base']['view']['selection-list']['panels'] =
                 'enabled' => true,
                 'default' => false,
               ),
-              6 => 
-              array (
-                'name' => 'geo_mobility_c',
-                'label' => 'LBL_GEO_MOBILITY_C',
-                'enabled' => true,
-                'default' => false,
-              ),
               7 => 
               array (
                 'name' => 'functional_mobility_c',

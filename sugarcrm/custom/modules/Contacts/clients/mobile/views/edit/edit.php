@@ -91,11 +91,6 @@ $viewdefs['Contacts']['mobile']['view']['edit'] =
                 'name' => 'oe_mobility_c',
                 'label' => 'LBL_OE_MOBILITY_C',
               ),
-              15 => 
-              array (
-                'name' => 'geo_mobility_c',
-                'label' => 'LBL_GEO_MOBILITY_C',
-              ),
               16 => 
               array (
                 'name' => 'mobility_comments_c',

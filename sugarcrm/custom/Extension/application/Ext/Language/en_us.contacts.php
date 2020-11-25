@@ -149,7 +149,6 @@ $app_list_strings['gtb_language_list']['Thai'] = 'Thai';
 $app_list_strings['gtb_language_list']['Turkish'] = 'Turkish';
 $app_list_strings['gtb_language_list']['Ukrainian'] = 'Ukrainian';
 $app_list_strings['gtb_language_list'][''] = '';
-$app_list_strings['gtb_geo_mobility_list'][''] = '';
 $app_list_strings['gtb_proficiency_list']['Beginner'] = '1. Beginner';
 $app_list_strings['gtb_proficiency_list']['Intermediate'] = '2. Intermediate';
 $app_list_strings['gtb_proficiency_list']['Working'] = '3. Working Knowledge';
