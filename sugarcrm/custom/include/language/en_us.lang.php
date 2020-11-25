@@ -18,3 +18,5 @@ $app_strings['LBL_ACCESSKEY_CLEAR_CONTACTS_LABEL']='Clear Candidate';
 $app_strings['LBL_SHIP_TO_CONTACT']='Ship to Candidate';
 $app_strings['LBL_CREATE_CONTACT']='Create Candidate';
 $app_strings['LBL_RELATED_CONTACT']='Related Candidate';
+$app_strings['LBL_CANDIDATES_MATCHING_DASHLET']='Candidates Matching Dashlet';
+$app_strings['LBL_CANDIDATES_MATCHING_DASHLET_DESCRIPTION']='Displays all Candidates matching for one Position';
