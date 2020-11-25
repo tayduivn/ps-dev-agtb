@@ -1,5 +1,6 @@
 <?php
-$viewdefs['Contacts']['mobile']['view']['list']['panels'] =
+$viewdefs['Contacts']['mobile']['view']['list'] = array (
+        'panels' => 
         array (
           0 => 
           array (
@@ -29,43 +30,26 @@ $viewdefs['Contacts']['mobile']['view']['list']['panels'] =
               ),
               2 => 
               array (
-                'name' => 'email',
+                'name' => 'title',
+                'label' => 'LBL_TITLE',
                 'enabled' => true,
                 'default' => false,
               ),
               3 => 
-              array (
-                'name' => 'function_c',
-                'label' => 'LBL_FUNCTION_C',
-                'enabled' => true,
-                'default' => false,
-              ),
-              4 => 
-              array (
-                'name' => 'phone_mobile',
-                'enabled' => true,
-                'default' => false,
-              ),
-              5 => 
               array (
                 'name' => 'org_unit_c',
                 'label' => 'LBL_ORG_UNIT_C',
                 'enabled' => true,
                 'default' => false,
               ),
-              6 => 
+              4 => 
               array (
-                'name' => 'primary_address_country',
-                'enabled' => true,
-                'default' => false,
-              ),
-              7 => 
-              array (
-                'name' => 'title',
-                'label' => 'LBL_TITLE',
+                'name' => 'function_c',
+                'label' => 'LBL_FUNCTION_C',
                 'enabled' => true,
                 'default' => false,
               ),
             ),
           ),
+        ),
 );

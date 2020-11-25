@@ -162,6 +162,7 @@ $popupMeta = array (
     'default' => true,
     'label' => 'LBL_GTB_CLUSTER_C',
     'width' => 10,
+    'name' => 'gtb_cluster_c',
   ),
   'ORG_UNIT_C' => 
   array (
@@ -169,6 +170,7 @@ $popupMeta = array (
     'label' => 'LBL_ORG_UNIT_C',
     'width' => 10,
     'default' => true,
+    'name' => 'org_unit_c',
   ),
   'FUNCTION_C' => 
   array (
@@ -176,6 +178,7 @@ $popupMeta = array (
     'default' => true,
     'label' => 'LBL_FUNCTION_C',
     'width' => 10,
+    'name' => 'function_c',
   ),
 ),
 );

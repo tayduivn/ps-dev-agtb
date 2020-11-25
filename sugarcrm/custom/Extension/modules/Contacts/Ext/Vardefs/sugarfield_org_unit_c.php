@@ -26,5 +26,3 @@ $dictionary['Contact']['fields']['org_unit_c']['merge_filter']='disabled';
 $dictionary['Contact']['fields']['org_unit_c']['pii']=false;
 $dictionary['Contact']['fields']['org_unit_c']['calculated']=false;
 $dictionary['Contact']['fields']['org_unit_c']['len']='255';
-
- ?>
