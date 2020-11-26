@@ -1,14 +1,21 @@
 ({
     extendsFrom: 'DashablelistView',
-
     /**
      * @inheritdoc
      * Don't load data if dashlet filter is not accessible.
      */
     loadData: function(options) {
+        if(!this.already) {
+            this.model.on('change:country', this.loadData, this);
+            this.model.on('change:pos_function', this.loadData, this);
+            this.model.on('change:gtb_cluster', this.loadData, this);
+            this.already = true;
+        }
         this._super('loadData', [options]);
         filterDef = [];
-        this._displayDashlet(filterDef);
+        if(typeof this.context.get('collection') !== 'undefined') {
+            this._displayDashlet(filterDef);
+        }
     },
 
     _buildFilterDef: function(fieldName, operator, searchTerm) {
@@ -30,5 +37,13 @@
         filterDef = _.extend({}, filterDef, filterOptions2);
         filterDef = _.extend({}, filterDef, filterOptions3);
         this._super('_displayDashlet', [filterDef]);
+    },
+
+    _dispose: function() {
+        this.model.on('change:country', this.loadData);
+        this.model.on('change:pos_function', this.loadData);
+        this.model.on('change:gtb_cluster', this.loadData);
+
+        this._super('_dispose');
     },
 })

@@ -13,7 +13,7 @@ $viewdefs['base']['view']['candidates-matching-dashlet'] = array(
                     'name',
                     'title',
                     'org_unit_c',
-                    'gtb_function_c',
+                    'function_c',
                     'gtb_cluster_c',
                 ),
                 'filter_id' => 'all_records',
