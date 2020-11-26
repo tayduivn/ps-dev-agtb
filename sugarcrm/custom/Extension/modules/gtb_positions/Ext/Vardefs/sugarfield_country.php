@@ -29,6 +29,7 @@ $dictionary['gtb_positions']['fields']['country']['visibility_grid']=array (
       9 => 'AUSTRALIA',
       10 => 'INDONESIA',
       11 => 'MALAYSIA',
+        12 => '',
     ),
     'CEE' => 
     array (
@@ -41,6 +42,7 @@ $dictionary['gtb_positions']['fields']['country']['visibility_grid']=array (
       6 => 'CROATIA',
       7 => 'AUSTRIA',
       8 => 'SLOVAKIA',
+        9 => '',
     ),
     'Africa' => 
     array (
@@ -52,6 +54,7 @@ $dictionary['gtb_positions']['fields']['country']['visibility_grid']=array (
       5 => 'MOROCCO',
       6 => 'REUNION',
       7 => 'LEBANON',
+        8 => '',
     ),
     'Europe' => 
     array (
@@ -71,6 +74,7 @@ $dictionary['gtb_positions']['fields']['country']['visibility_grid']=array (
       13 => 'NETHERLANDS',
       14 => 'FINLAND',
       15 => 'PORTUGAL',
+        16 => '',
     ),
     'Other' => 
     array (

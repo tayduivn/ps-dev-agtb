@@ -137,7 +137,7 @@ $dictionary['gtb_positions'] = array(
   ),
         'country' =>
             array (
-                'required' => false,
+                'required' => true,
                 'name' => 'country',
                 'vname' => 'LBL_COUNTRY',
                 'type' => 'enum',
