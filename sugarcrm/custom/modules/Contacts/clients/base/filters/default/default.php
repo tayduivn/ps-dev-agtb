@@ -68,6 +68,9 @@ $viewdefs['Contacts']['base']['filter']['default'] = array (
     'function_c' => 
     array (
     ),
+      'gtb_country_match_c' =>
+          array (
+          ),
     'date_entered' => 
     array (
     ),
