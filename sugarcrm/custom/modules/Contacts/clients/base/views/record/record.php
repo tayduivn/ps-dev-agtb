@@ -383,7 +383,7 @@ $viewdefs['Contacts']['base']['view']['record'] = array (
               1 => 
               array (
                 'name' => 'prof_level_1_c',
-                'label' => 'LBL_PROF_LEVEL',
+                'label' => 'LBL_PROF_LEVEL_1',
               ),
               2 => 
               array (
@@ -393,7 +393,7 @@ $viewdefs['Contacts']['base']['view']['record'] = array (
               3 => 
               array (
                 'name' => 'prof_level_2_c',
-                'label' => 'LBL_PROF_LEVEL',
+                'label' => 'LBL_PROF_LEVEL_2',
               ),
               4 => 
               array (
@@ -403,7 +403,7 @@ $viewdefs['Contacts']['base']['view']['record'] = array (
               5 => 
               array (
                 'name' => 'prof_level_3_c',
-                'label' => 'LBL_PROF_LEVEL',
+                'label' => 'LBL_PROF_LEVEL_3',
               ),
               6 => 
               array (
@@ -413,7 +413,7 @@ $viewdefs['Contacts']['base']['view']['record'] = array (
               7 => 
               array (
                 'name' => 'prof_level_4_c',
-                'label' => 'LBL_PROF_LEVEL',
+                'label' => 'LBL_PROF_LEVEL_4',
               ),
               8 => 
               array (
@@ -423,7 +423,7 @@ $viewdefs['Contacts']['base']['view']['record'] = array (
               9 => 
               array (
                 'name' => 'prof_level_5_c',
-                'label' => 'LBL_PROF_LEVEL',
+                'label' => 'LBL_PROF_LEVEL_5',
               ),
               10 => 
               array (
@@ -433,7 +433,7 @@ $viewdefs['Contacts']['base']['view']['record'] = array (
               11 => 
               array (
                 'name' => 'prof_level_6_c',
-                'label' => 'LBL_PROF_LEVEL',
+                'label' => 'LBL_PROF_LEVEL_6',
               ),
             ),
           ),
