@@ -1,5 +1,6 @@
 <?php
-$viewdefs['Contacts']['base']['view']['list']['panels'] =
+$viewdefs['Contacts']['base']['view']['list'] = array (
+        'panels' => 
         array (
           0 => 
           array (
@@ -125,6 +126,91 @@ $viewdefs['Contacts']['base']['view']['list']['panels'] =
                 'enabled' => true,
                 'default' => false,
               ),
+              16 => 
+              array (
+                'name' => 'geo_mobility_region_1_c',
+                'label' => 'LBL_GEO_MOBILITY_REGION_1_C',
+                'enabled' => true,
+                'default' => false,
+              ),
+              17 => 
+              array (
+                'name' => 'geo_mobility_region_2_c',
+                'label' => 'LBL_GEO_MOBILITY_REGION_2_C',
+                'enabled' => true,
+                'default' => false,
+              ),
+              18 => 
+              array (
+                'name' => 'geo_mobility_region_3_c',
+                'label' => 'LBL_GEO_MOBILITY_REGION_3_C',
+                'enabled' => true,
+                'default' => false,
+              ),
+              19 => 
+              array (
+                'name' => 'geo_mobility_region_4_c',
+                'label' => 'LBL_GEO_MOBILITY_REGION_4_C',
+                'enabled' => true,
+                'default' => false,
+              ),
+              20 => 
+              array (
+                'name' => 'geo_mobility_region_5_c',
+                'label' => 'LBL_GEO_MOBILITY_REGION_5_C',
+                'enabled' => true,
+                'default' => false,
+              ),
+              21 => 
+              array (
+                'name' => 'geo_mobility_region_6_c',
+                'label' => 'LBL_GEO_MOBILITY_REGION_6_C',
+                'enabled' => true,
+                'default' => false,
+              ),
+              22 => 
+              array (
+                'name' => 'geo_mobility_country_1_c',
+                'label' => 'LBL_GEO_MOBILITY_COUNTRY_1_C',
+                'enabled' => true,
+                'default' => false,
+              ),
+              23 => 
+              array (
+                'name' => 'geo_mobility_country_2_c',
+                'label' => 'LBL_GEO_MOBILITY_COUNTRY_2_C',
+                'enabled' => true,
+                'default' => false,
+              ),
+              24 => 
+              array (
+                'name' => 'geo_mobility_country_3_c',
+                'label' => 'LBL_GEO_MOBILITY_COUNTRY_3_C',
+                'enabled' => true,
+                'default' => false,
+              ),
+              25 => 
+              array (
+                'name' => 'geo_mobility_country_4_c',
+                'label' => 'LBL_GEO_MOBILITY_COUNTRY_4_C',
+                'enabled' => true,
+                'default' => false,
+              ),
+              26 => 
+              array (
+                'name' => 'geo_mobility_country_5_c',
+                'label' => 'LBL_GEO_MOBILITY_COUNTRY_5_C',
+                'enabled' => true,
+                'default' => false,
+              ),
+              27 => 
+              array (
+                'name' => 'geo_mobility_country_6_c',
+                'label' => 'LBL_GEO_MOBILITY_COUNTRY_6_C',
+                'enabled' => true,
+                'default' => false,
+              ),
             ),
           ),
+        ),
 );
