@@ -212,6 +212,9 @@ $viewdefs['Contacts']['base']['view']['record'] =
               array (
                 'name' => 'gtb_cluster_c',
                 'label' => 'LBL_GTB_CLUSTER_C',
+                'related_fields' => array(
+                  'gtb_cluster_match_c',
+                ),
               ),
               5 => 
               array (
@@ -227,6 +230,9 @@ $viewdefs['Contacts']['base']['view']['record'] =
               array (
                 'name' => 'primary_address_country',
                 'label' => 'LBL_PRIMARY_ADDRESS_COUNTRY',
+                'related_fields' => array(
+                  'gtb_country_match_c',
+                ),
               ),
               8 => 'phone_mobile',
               9 => 
@@ -270,6 +276,9 @@ $viewdefs['Contacts']['base']['view']['record'] =
                 'name' => 'functional_mobility_c',
                 'label' => 'LBL_FUNCTIONAL_MOBILITY_C',
                 'span' => 12,
+                'related_fields' => array(
+                  'gtb_function_match_c',
+                ),
               ),
               14 => 
               array (
