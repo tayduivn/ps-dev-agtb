@@ -1,5 +1,6 @@
 <?php
-$viewdefs['Contacts']['base']['view']['record'] = array (
+$viewdefs['Contacts']['base']['view']['record'] =
+      array (
         'buttons' => 
         array (
           0 => 
@@ -194,43 +195,50 @@ $viewdefs['Contacts']['base']['view']['record'] = array (
             'panelDefault' => 'expanded',
             'fields' => 
             array (
-              0 => 'title',
+              0 => 
+              array (
+                'name' => 'assigned_user_name',
+              ),
               1 => 
+              array (
+              ),
+              2 => 'title',
+              3 => 
               array (
                 'name' => 'gender_c',
                 'label' => 'LBL_GENDER_C',
               ),
-              2 => 
+              4 => 
               array (
                 'name' => 'gtb_cluster_c',
                 'label' => 'LBL_GTB_CLUSTER_C',
               ),
-              3 => 
+              5 => 
               array (
                 'name' => 'org_unit_c',
                 'label' => 'LBL_ORG_UNIT_C',
               ),
-              4 => 
+              6 => 
               array (
                 'name' => 'function_c',
                 'label' => 'LBL_FUNCTION_C',
               ),
-              5 => 
+              7 => 
               array (
                 'name' => 'primary_address_country',
                 'label' => 'LBL_PRIMARY_ADDRESS_COUNTRY',
               ),
-              6 => 'phone_mobile',
-              7 => 
+              8 => 'phone_mobile',
+              9 => 
               array (
                 'name' => 'email',
               ),
-              8 => 'lead_source',
-              9 => 
+              10 => 'lead_source',
+              11 => 
               array (
                 'name' => 'tag',
               ),
-              10 => 
+              12 => 
               array (
                 'name' => 'commentlog',
                 'displayParams' => 
@@ -257,36 +265,36 @@ $viewdefs['Contacts']['base']['view']['record'] = array (
                 'label' => 'LBL_COMMENTLOG',
                 'span' => 12,
               ),
-              11 => 
+              13 => 
               array (
                 'name' => 'functional_mobility_c',
                 'label' => 'LBL_FUNCTIONAL_MOBILITY_C',
                 'span' => 12,
               ),
-              12 => 
+              14 => 
               array (
                 'name' => 'oe_mobility_c',
                 'label' => 'LBL_OE_MOBILITY_C',
                 'span' => 12,
               ),
-              13 => 
+              15 => 
               array (
                 'name' => 'mobility_comments_c',
                 'label' => 'LBL_MOBILITY_COMMENTS_C',
                 'span' => 12,
               ),
-              14 => 
+              16 => 
               array (
                 'name' => 'target_roles_c',
                 'label' => 'LBL_TARGET_ROLES_C',
                 'span' => 12,
               ),
-              15 => 
+              17 => 
               array (
                 'name' => 'career_discussion_c',
                 'label' => 'LBL_CAREER_DISCUSSION_C',
               ),
-              16 => 
+              18 => 
               array (
                 'name' => 'availability_c',
                 'label' => 'LBL_AVAILABILITY_C',
@@ -449,7 +457,7 @@ $viewdefs['Contacts']['base']['view']['record'] = array (
             array (
               0 => 
               array (
-                'name' => 'assigned_user_name',
+                'name' => 'sync_contact',
               ),
               1 => 
               array (
@@ -502,7 +510,6 @@ $viewdefs['Contacts']['base']['view']['record'] = array (
               ),
               4 => 
               array (
-                'name' => 'sync_contact',
               ),
               5 => 
               array (
