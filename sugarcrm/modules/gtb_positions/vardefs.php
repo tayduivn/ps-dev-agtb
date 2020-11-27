@@ -14,7 +14,7 @@
 $dictionary['gtb_positions'] = array(
     'table' => 'gtb_positions',
     'audited' => true,
-    'activity_enabled' => false,
+    'activity_enabled' => true,
     'duplicate_merge' => true,
     'fields' => array (
   'pos_function' => 
