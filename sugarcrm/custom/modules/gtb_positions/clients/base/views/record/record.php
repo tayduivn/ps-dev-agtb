@@ -162,13 +162,11 @@ $viewdefs[$module_name]['base']['view']['record'] =
             'panelDefault' => 'expanded',
             'fields' => 
             array (
-              0 => 
+              0 => 'assigned_user_name',
+              1 => 
               array (
                 'name' => 'pos_function',
                 'label' => 'LBL_POS_FUNCTION',
-              ),
-              1 => 
-              array (
               ),
               2 => 
               array (
@@ -208,17 +206,16 @@ $viewdefs[$module_name]['base']['view']['record'] =
               array (
                 'name' => 'tag',
               ),
-                10 =>
-                    array (
-                        'name' => 'process_step',
-                        'label' => 'LBL_PROCESS_STEP',
-                    ),
-              11 =>
+              10 => 
+              array (
+                'name' => 'process_step',
+                'label' => 'LBL_PROCESS_STEP',
+              ),
+              11 => 
               array (
                 'name' => 'status',
                 'label' => 'LBL_STATUS',
               ),
-
               12 => 
               array (
                 'name' => 'real_position',
@@ -247,8 +244,7 @@ $viewdefs[$module_name]['base']['view']['record'] =
             'panelDefault' => 'expanded',
             'fields' => 
             array (
-              0 => 'assigned_user_name',
-              1 => 
+              0 => 
               array (
                 'name' => 'date_entered_by',
                 'readonly' => true,
@@ -272,8 +268,7 @@ $viewdefs[$module_name]['base']['view']['record'] =
                   ),
                 ),
               ),
-              2 => 'team_name',
-              3 => 
+              1 => 
               array (
                 'name' => 'date_modified_by',
                 'readonly' => true,
@@ -296,6 +291,13 @@ $viewdefs[$module_name]['base']['view']['record'] =
                     'name' => 'modified_by_name',
                   ),
                 ),
+              ),
+              2 => 
+              array (
+                'name' => 'team_name',
+              ),
+              3 => 
+              array (
               ),
             ),
           ),
