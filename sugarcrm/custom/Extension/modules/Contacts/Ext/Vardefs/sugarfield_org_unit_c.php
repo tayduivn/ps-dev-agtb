@@ -14,6 +14,7 @@ $dictionary['Contact']['fields']['org_unit_c']['options']='gtb_oe_mobility_list'
 $dictionary['Contact']['fields']['org_unit_c']['massupdate']=false;
 $dictionary['Contact']['fields']['org_unit_c']['hidemassupdate']=false;
 $dictionary['Contact']['fields']['org_unit_c']['no_default']=false;
+$dictionary['Contact']['fields']['org_unit_c']['default']='';
 $dictionary['Contact']['fields']['org_unit_c']['comments']='';
 $dictionary['Contact']['fields']['org_unit_c']['help']='';
 $dictionary['Contact']['fields']['org_unit_c']['importable']='true';
