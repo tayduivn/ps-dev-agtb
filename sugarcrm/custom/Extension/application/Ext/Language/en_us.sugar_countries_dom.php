@@ -51,4 +51,5 @@ $app_list_strings['countries_dom'] = array(
     'USA' => 'USA',
     'UNITED ARAB EMIRATES' => 'Utd.Arab Emir.',
     'OTHER' => 'Other',
+    'All' => 'All',
 );

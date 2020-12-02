@@ -20,6 +20,8 @@ $app_list_strings['gtb_region_list']['CEE'] = 'Central & Eastern Europe';
 $app_list_strings['gtb_region_list']['Africa'] = 'Middle East & Africa';
 $app_list_strings['gtb_region_list']['Europe'] = 'Western Europe';
 $app_list_strings['gtb_region_list']['Other'] = 'Other';
+$app_list_strings['gtb_region_list']['Worldwide'] = 'Worldwide';
+
 
 $app_list_strings['gtb_pos_source_list']['eRec'] = 'eRec';
 $app_list_strings['gtb_pos_source_list']['Business'] = 'Business';
