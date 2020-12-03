@@ -40,6 +40,7 @@ $dictionary['Contact']['fields']['geo_mobility_country_1_c'] = array (
                         2 => 'CANADA',
                         3 => 'COLOMBIA',
                         4 => 'USA',
+                        5 => 'All',
                     ),
                 'Asia_Pacific' =>
                     array (
@@ -56,6 +57,7 @@ $dictionary['Contact']['fields']['geo_mobility_country_1_c'] = array (
                         10 => 'KOREA, SOUTH',
                         11 => 'TAIWAN',
                         12 => 'THAILAND',
+                        13 => 'All',
                     ),
                 'CEE' =>
                     array (
@@ -69,6 +71,7 @@ $dictionary['Contact']['fields']['geo_mobility_country_1_c'] = array (
                         7 => 'RUSSIA',
                         8 => 'SLOVAKIA',
                         9 => 'TURKEY',
+                        10 => 'All',
                     ),
                 'Africa' =>
                     array (
@@ -81,6 +84,7 @@ $dictionary['Contact']['fields']['geo_mobility_country_1_c'] = array (
                         6 => 'SOUTH AFRICA',
                         7 => 'TUNISIA',
                         8 => 'UNITED ARAB EMIRATES',
+                        9 => 'All',
                     ),
                 'Europe' =>
                     array (
@@ -101,10 +105,15 @@ $dictionary['Contact']['fields']['geo_mobility_country_1_c'] = array (
                         14 => 'NETHERLANDS',
                         15 => 'FINLAND',
                         16 => 'PORTUGAL',
+                        17 => 'All',
                     ),
                 'Other' =>
                     array (
                         0 => 'OTHER',
+                    ),
+                'Worldwide' =>
+                    array(
+                        0 => 'All',
                     ),
             ),
     ),
@@ -151,6 +160,7 @@ $dictionary['Contact']['fields']['geo_mobility_country_2_c'] = array (
                         2 => 'CANADA',
                         3 => 'COLOMBIA',
                         4 => 'USA',
+                        5 => 'All',
                     ),
                 'Asia_Pacific' =>
                     array (
@@ -167,6 +177,7 @@ $dictionary['Contact']['fields']['geo_mobility_country_2_c'] = array (
                         10 => 'KOREA, SOUTH',
                         11 => 'TAIWAN',
                         12 => 'THAILAND',
+                        13 => 'All',
                     ),
                 'CEE' =>
                     array (
@@ -180,6 +191,7 @@ $dictionary['Contact']['fields']['geo_mobility_country_2_c'] = array (
                         7 => 'RUSSIA',
                         8 => 'SLOVAKIA',
                         9 => 'TURKEY',
+                        10 => 'All',
                     ),
                 'Africa' =>
                     array (
@@ -192,6 +204,7 @@ $dictionary['Contact']['fields']['geo_mobility_country_2_c'] = array (
                         6 => 'SOUTH AFRICA',
                         7 => 'TUNISIA',
                         8 => 'UNITED ARAB EMIRATES',
+                        9 => 'All',
                     ),
                 'Europe' =>
                     array (
@@ -212,11 +225,17 @@ $dictionary['Contact']['fields']['geo_mobility_country_2_c'] = array (
                         14 => 'NETHERLANDS',
                         15 => 'FINLAND',
                         16 => 'PORTUGAL',
+                        17 => 'All',
                     ),
                 'Other' =>
                     array (
                         0 => 'OTHER',
                     ),
+                'Worldwide' =>
+                    array(
+                        0 => 'All',
+                    ),
+
             ),
     ),
 );
@@ -262,6 +281,7 @@ $dictionary['Contact']['fields']['geo_mobility_country_3_c'] = array (
                         2 => 'CANADA',
                         3 => 'COLOMBIA',
                         4 => 'USA',
+                        5 => 'All',
                     ),
                 'Asia_Pacific' =>
                     array (
@@ -278,6 +298,7 @@ $dictionary['Contact']['fields']['geo_mobility_country_3_c'] = array (
                         10 => 'KOREA, SOUTH',
                         11 => 'TAIWAN',
                         12 => 'THAILAND',
+                        13 => 'All',
                     ),
                 'CEE' =>
                     array (
@@ -291,6 +312,7 @@ $dictionary['Contact']['fields']['geo_mobility_country_3_c'] = array (
                         7 => 'RUSSIA',
                         8 => 'SLOVAKIA',
                         9 => 'TURKEY',
+                        10 => 'All',
                     ),
                 'Africa' =>
                     array (
@@ -303,6 +325,7 @@ $dictionary['Contact']['fields']['geo_mobility_country_3_c'] = array (
                         6 => 'SOUTH AFRICA',
                         7 => 'TUNISIA',
                         8 => 'UNITED ARAB EMIRATES',
+                        9 => 'All',
                     ),
                 'Europe' =>
                     array (
@@ -323,11 +346,17 @@ $dictionary['Contact']['fields']['geo_mobility_country_3_c'] = array (
                         14 => 'NETHERLANDS',
                         15 => 'FINLAND',
                         16 => 'PORTUGAL',
+                        17 => 'All',
                     ),
                 'Other' =>
                     array (
                         0 => 'OTHER',
                     ),
+                'Worldwide' =>
+                    array(
+                        0 => 'All',
+                    ),
+
             ),
     ),
 );
@@ -373,6 +402,7 @@ $dictionary['Contact']['fields']['geo_mobility_country_4_c'] = array (
                         2 => 'CANADA',
                         3 => 'COLOMBIA',
                         4 => 'USA',
+                        5 => 'All',
                     ),
                 'Asia_Pacific' =>
                     array (
@@ -389,6 +419,7 @@ $dictionary['Contact']['fields']['geo_mobility_country_4_c'] = array (
                         10 => 'KOREA, SOUTH',
                         11 => 'TAIWAN',
                         12 => 'THAILAND',
+                        13 => 'All',
                     ),
                 'CEE' =>
                     array (
@@ -402,6 +433,7 @@ $dictionary['Contact']['fields']['geo_mobility_country_4_c'] = array (
                         7 => 'RUSSIA',
                         8 => 'SLOVAKIA',
                         9 => 'TURKEY',
+                        10 => 'All',
                     ),
                 'Africa' =>
                     array (
@@ -414,6 +446,7 @@ $dictionary['Contact']['fields']['geo_mobility_country_4_c'] = array (
                         6 => 'SOUTH AFRICA',
                         7 => 'TUNISIA',
                         8 => 'UNITED ARAB EMIRATES',
+                        9 => 'All',
                     ),
                 'Europe' =>
                     array (
@@ -434,11 +467,17 @@ $dictionary['Contact']['fields']['geo_mobility_country_4_c'] = array (
                         14 => 'NETHERLANDS',
                         15 => 'FINLAND',
                         16 => 'PORTUGAL',
+                        17 => 'All',
                     ),
                 'Other' =>
                     array (
                         0 => 'OTHER',
                     ),
+                'Worldwide' =>
+                    array(
+                        0 => 'All',
+                    ),
+
             ),
     ),
 );
@@ -484,6 +523,7 @@ $dictionary['Contact']['fields']['geo_mobility_country_5_c'] = array (
                         2 => 'CANADA',
                         3 => 'COLOMBIA',
                         4 => 'USA',
+                        5 => 'All',
                     ),
                 'Asia_Pacific' =>
                     array (
@@ -500,6 +540,7 @@ $dictionary['Contact']['fields']['geo_mobility_country_5_c'] = array (
                         10 => 'KOREA, SOUTH',
                         11 => 'TAIWAN',
                         12 => 'THAILAND',
+                        13 => 'All',
                     ),
                 'CEE' =>
                     array (
@@ -513,6 +554,7 @@ $dictionary['Contact']['fields']['geo_mobility_country_5_c'] = array (
                         7 => 'RUSSIA',
                         8 => 'SLOVAKIA',
                         9 => 'TURKEY',
+                        10 => 'All',
                     ),
                 'Africa' =>
                     array (
@@ -525,6 +567,7 @@ $dictionary['Contact']['fields']['geo_mobility_country_5_c'] = array (
                         6 => 'SOUTH AFRICA',
                         7 => 'TUNISIA',
                         8 => 'UNITED ARAB EMIRATES',
+                        9 => 'All',
                     ),
                 'Europe' =>
                     array (
@@ -545,11 +588,17 @@ $dictionary['Contact']['fields']['geo_mobility_country_5_c'] = array (
                         14 => 'NETHERLANDS',
                         15 => 'FINLAND',
                         16 => 'PORTUGAL',
+                        17 => 'All',
                     ),
                 'Other' =>
                     array (
                         0 => 'OTHER',
                     ),
+                'Worldwide' =>
+                    array(
+                        0 => 'All',
+                    ),
+
             ),
     ),
 );
@@ -595,6 +644,7 @@ $dictionary['Contact']['fields']['geo_mobility_country_6_c'] = array (
                         2 => 'CANADA',
                         3 => 'COLOMBIA',
                         4 => 'USA',
+                        5 => 'All',
                     ),
                 'Asia_Pacific' =>
                     array (
@@ -611,6 +661,7 @@ $dictionary['Contact']['fields']['geo_mobility_country_6_c'] = array (
                         10 => 'KOREA, SOUTH',
                         11 => 'TAIWAN',
                         12 => 'THAILAND',
+                        13 => 'All',
                     ),
                 'CEE' =>
                     array (
@@ -624,6 +675,7 @@ $dictionary['Contact']['fields']['geo_mobility_country_6_c'] = array (
                         7 => 'RUSSIA',
                         8 => 'SLOVAKIA',
                         9 => 'TURKEY',
+                        10 => 'All',
                     ),
                 'Africa' =>
                     array (
@@ -636,6 +688,7 @@ $dictionary['Contact']['fields']['geo_mobility_country_6_c'] = array (
                         6 => 'SOUTH AFRICA',
                         7 => 'TUNISIA',
                         8 => 'UNITED ARAB EMIRATES',
+                        9 => 'All',
                     ),
                 'Europe' =>
                     array (
@@ -656,11 +709,17 @@ $dictionary['Contact']['fields']['geo_mobility_country_6_c'] = array (
                         14 => 'NETHERLANDS',
                         15 => 'FINLAND',
                         16 => 'PORTUGAL',
+                        17 => 'All',
                     ),
                 'Other' =>
                     array (
                         0 => 'OTHER',
                     ),
+                'Worldwide' =>
+                    array(
+                        0 => 'All',
+                    ),
+
             ),
     ),
 );
