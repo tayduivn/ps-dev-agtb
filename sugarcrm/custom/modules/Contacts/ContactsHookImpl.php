@@ -2,73 +2,6 @@
 
 class ContactsHookImpl
 {
-    protected $countries = array (
-        'Americas' =>
-            array (
-                1 => 'BRAZIL',
-                2 => 'CANADA',
-                3 => 'COLOMBIA',
-                4 => 'USA',
-            ),
-        'Asia_Pacific' =>
-            array (
-                1 => 'AUSTRALIA',
-                2 => 'CHINA',
-                3 => 'HONG KONG',
-                4 => 'INDIA',
-                5 => 'INDONESIA',
-                6 => 'JAPAN',
-                7 => 'MALAYSIA',
-                8 => 'PHILIPPINES',
-                9 => 'SINGAPORE',
-                10 => 'KOREA, SOUTH',
-                11 => 'TAIWAN',
-                12 => 'THAILAND',
-            ),
-        'CEE' =>
-            array (
-                1 => 'AUSTRIA',
-                2 => 'BULGARIA',
-                3 => 'CROATIA',
-                4 => 'CZECH REPUBLIC',
-                5 => 'POLAND',
-                6 => 'ROMANIA',
-                7 => 'RUSSIA',
-                8 => 'SLOVAKIA',
-                9 => 'TURKEY',
-            ),
-        'Africa' =>
-            array (
-                1 => 'KENYA',
-                2 => 'LEBANON',
-                3 => 'MOROCCO',
-                4 => 'REUNION',
-                5 => 'SAUDI ARABIA',
-                6 => 'SOUTH AFRICA',
-                7 => 'TUNISIA',
-                8 => 'UNITED ARAB EMIRATES',
-            ),
-        'Europe' =>
-            array (
-                1 => 'BELGIUM',
-                2 => 'FRANCE',
-                3 => 'GERMANY',
-                4 => 'GREECE',
-                5 => 'IRELAND',
-                6 => 'ITALY',
-                7 => 'LUXEMBOURG',
-                8 => 'NORWAY',
-                9 => 'SPAIN',
-                10 => 'SWEDEN',
-                11 => 'SWITZERLAND',
-                12 => 'UNITED KINGDOM',
-                13 => 'DENMARK',
-                14 => 'NETHERLANDS',
-                15 => 'FINLAND',
-                16 => 'PORTUGAL',
-            ),
-        );
-
     public function before_save($bean, $event, $arguments)
     {
         $this->calcMatchFields($bean, $event, $arguments);
@@ -103,16 +36,25 @@ class ContactsHookImpl
 
     protected function getCountriesFromMultiEnum($country_field, $region_field)
     {
+        // According to AGTB-62 we assume that Candidate->geo_mobility_country_1_c field will be ALWAYS there
+        // ...and there will be ALWAYS dependent dropdown visibility_grid with region->countries hierarcy
+        if(     empty($GLOBALS['dictionary']['Contact']['fields']['geo_mobility_country_1_c']['visibility_grid']['values'])
+            ||  !is_array($GLOBALS['dictionary']['Contact']['fields']['geo_mobility_country_1_c']['visibility_grid']['values']))
+        {
+            $GLOBALS['log']->error('Issue in Candidates Logic Hook: field geo_mobility_country_1_c is missing visibility_grid (dependency dropdown hierarcy) to work properly for values All and Worldwide');
+            return [];
+        }
+        $grid = $GLOBALS['dictionary']['Contact']['fields']['geo_mobility_country_1_c']['visibility_grid']['values'];
         $result = explode('^,^', trim($country_field, '^')) ?? [];
         if(in_array('All', $result)) {
-            unset($result[array_search('All', $result)]);
-            if(in_array($region_field, array_keys($this->countries))) {
-                $result = array_merge($result, $this->countries[$region_field]);
+            if(in_array($region_field, array_keys($grid))) {
+                $result = array_merge($result, $grid[$region_field]);
             } elseif ($region_field == 'Worldwide') {
-                foreach($this->countries as $key => $region_countries) {
+                foreach($grid as $key => $region_countries) {
                     $result = array_merge($result, $region_countries);
                 }
             }
+            $result = array_filter($result, function ($val) {return $val !== 'All';});
         }
         return $result;
     }
