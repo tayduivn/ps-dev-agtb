@@ -28,6 +28,7 @@ class ContactsHookImpl
         $result = array_merge($result, $this->getCountriesFromMultiEnum($bean->geo_mobility_country_5_c, $bean->geo_mobility_region_5_c));
         $result = array_merge($result, $this->getCountriesFromMultiEnum($bean->geo_mobility_country_6_c, $bean->geo_mobility_region_6_c));
         $result = array_unique($result);
+        $result = $this->arrayfilter($result);
 
         if(count($result)) {
             $bean->gtb_country_match_c = '^'.implode('^,^', $result).'^';
@@ -54,7 +55,20 @@ class ContactsHookImpl
                     $result = array_merge($result, $region_countries);
                 }
             }
-            $result = array_filter($result, function ($val) {return $val !== 'All';});
+            $result = $this->arrayfilter($result, ['All']);
+        }
+        return $result;
+    }
+
+    private function arrayfilter($input_arr, $filter_out_values = [''])
+    {
+        $result = [];
+        if(is_array($input_arr)) {
+            foreach ($input_arr as $key => $value) {
+                if(!in_array($value, $filter_out_values, true)) {
+                    $result[$key] = $value;
+                }
+            }
         }
         return $result;
     }
