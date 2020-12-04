@@ -1,12 +1,13 @@
 <?php
- // created: 2020-11-13 18:01:32
 
-$app_list_strings['gtb_matches_stage_list']=array (
-  'Positions_tobe' => '0. Position to be shared',
-  'Positions_Shared' => '1. Positions Shared',
-  'Candidate_Suggested' => '2. Candidate Suggested',
-  'In_Discussions' => '3. In Discussions',
-  'Short_Listed' => '4. Short listed',
-  'Closed' => '5. Closed',
-  '' => '',
-);
+$app_list_strings['gtb_pos_process_step_list']['Position_Identified'] = '0. Position Identified';
+$app_list_strings['gtb_pos_process_step_list']['Contacted_Recruiter'] = '1.a Contacted Recruiter';
+$app_list_strings['gtb_pos_process_step_list']['Contacted_Manager'] = '1.b Contacted Hiring Manager';
+$app_list_strings['gtb_pos_process_step_list']['Identify_Candidates'] = '2. Identify Candidates';
+$app_list_strings['gtb_pos_process_step_list']['Profiles_Sent'] = '3. Profiles Sent';
+$app_list_strings['gtb_pos_process_step_list']['Refined_Search'] = '4.a Refined Search';
+$app_list_strings['gtb_pos_process_step_list']['On_Hold'] = '4.b On Hold';
+$app_list_strings['gtb_pos_process_step_list']['Filled_by_GTB'] = '5.a Filled by GTB';
+$app_list_strings['gtb_pos_process_step_list']['Not_Filled_by_GTB'] = '5.b Not Filled by GTB';
+$app_list_strings['gtb_pos_process_step_list']['Out_of_Scope'] = '5.c Out of Scope';
+$app_list_strings['gtb_pos_process_step_list']['Not_Truly_Vacant'] = '5.d Not Truly Vacant';
