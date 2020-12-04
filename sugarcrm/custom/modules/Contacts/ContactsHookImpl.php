@@ -48,12 +48,12 @@ class ContactsHookImpl
         $grid = $GLOBALS['dictionary']['Contact']['fields']['geo_mobility_country_1_c']['visibility_grid']['values'];
         $result = explode('^,^', trim($country_field, '^')) ?? [];
         if(in_array('All', $result)) {
-            if(in_array($region_field, array_keys($grid))) {
-                $result = array_merge($result, $grid[$region_field]);
-            } elseif ($region_field == 'Worldwide') {
+            if ($region_field == 'Worldwide') {
                 foreach($grid as $key => $region_countries) {
                     $result = array_merge($result, $region_countries);
                 }
+            } elseif(in_array($region_field, array_keys($grid))) {
+                $result = array_merge($result, $grid[$region_field]);
             }
             $result = $this->arrayfilter($result, ['All']);
         }
