@@ -187,6 +187,9 @@ $viewdefs[$module_name]['base']['view']['record'] = array (
         ),
         5 => 
         array (
+          'name' => 'description',
+          'comment' => 'Full text of the note',
+          'label' => 'LBL_DESCRIPTION',
           'span' => 6,
         ),
         6 => 

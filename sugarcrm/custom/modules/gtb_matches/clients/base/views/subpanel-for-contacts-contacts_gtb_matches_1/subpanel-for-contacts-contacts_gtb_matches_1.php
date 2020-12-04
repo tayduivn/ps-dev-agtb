@@ -1,5 +1,5 @@
 <?php
-// created: 2020-11-12 18:34:37
+// created: 2020-12-04 09:23:37
 $viewdefs['gtb_matches']['base']['view']['subpanel-for-contacts-contacts_gtb_matches_1'] = array (
   'panels' => 
   array (
@@ -46,6 +46,14 @@ $viewdefs['gtb_matches']['base']['view']['subpanel-for-contacts-contacts_gtb_mat
           'enabled' => true,
           'default' => true,
           'name' => 'date_modified',
+        ),
+        5 => 
+        array (
+          'name' => 'description',
+          'label' => 'LBL_DESCRIPTION',
+          'enabled' => true,
+          'sortable' => false,
+          'default' => true,
         ),
       ),
     ),

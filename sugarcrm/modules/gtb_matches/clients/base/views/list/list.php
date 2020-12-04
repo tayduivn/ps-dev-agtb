@@ -105,6 +105,14 @@ $viewdefs[$module_name]['base']['view']['list'] = array (
           'default' => false,
           'enabled' => true,
         ),
+        13 => 
+        array (
+          'name' => 'description',
+          'label' => 'LBL_DESCRIPTION',
+          'enabled' => true,
+          'sortable' => false,
+          'default' => false,
+        ),
       ),
     ),
   ),

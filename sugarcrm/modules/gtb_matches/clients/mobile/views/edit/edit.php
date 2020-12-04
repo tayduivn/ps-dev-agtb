@@ -59,21 +59,27 @@ $viewdefs[$module_name]['mobile']['view']['edit'] = array (
         ),
         6 => 
         array (
+          'name' => 'description',
+          'comment' => 'Full text of the note',
+          'label' => 'LBL_DESCRIPTION',
+        ),
+        7 => 
+        array (
           'name' => 'func_mobility_fulfilled',
           'label' => 'LBL_FUNC_MOBILITY_FULFILLED',
         ),
-        7 => 
+        8 => 
         array (
           'name' => 'geo_mobility_fulfilled',
           'label' => 'LBL_GEO_MOBILITY_FULFILLED',
         ),
-        8 => 
+        9 => 
         array (
           'name' => 'oe_mobility_fulfilled',
           'label' => 'LBL_OE_MOBILITY_FULFILLED',
         ),
-        9 => 'assigned_user_name',
-        10 => 'team_name',
+        10 => 'assigned_user_name',
+        11 => 'team_name',
       ),
     ),
   ),
