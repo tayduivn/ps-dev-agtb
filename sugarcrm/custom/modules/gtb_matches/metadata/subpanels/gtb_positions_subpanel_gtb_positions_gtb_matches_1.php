@@ -1,5 +1,5 @@
 <?php
-// created: 2020-11-12 18:33:39
+// created: 2020-12-04 09:23:25
 $subpanel_layout['list_fields'] = array (
   'contacts_gtb_matches_1_name' => 
   array (
@@ -37,6 +37,14 @@ $subpanel_layout['list_fields'] = array (
   'date_modified' => 
   array (
     'vname' => 'LBL_DATE_MODIFIED',
+    'width' => 10,
+    'default' => true,
+  ),
+  'description' => 
+  array (
+    'type' => 'text',
+    'vname' => 'LBL_DESCRIPTION',
+    'sortable' => false,
     'width' => 10,
     'default' => true,
   ),
