@@ -1,7 +1,7 @@
 [submodule "sugarcrm/sidecar"]
 	path = sugarcrm/sidecar
-	url = git@github.com:sugarcrm/sidecar.git
+	url = https://github.com/sugarcrm/sidecar.git
 
 [submodule "sugarcrm/dist/identity-provider"]
 	path = sugarcrm/dist/identity-provider
-	url = git@github.com:sugarcrm/IdentityProvider.git
+	url = https://github.com/sugarcrm/IdentityProvider.git
